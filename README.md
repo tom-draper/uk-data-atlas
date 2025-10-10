@@ -1,2 +1,2 @@
-# uk-data-explorer
-UK Data Explorer
+# uk-data-atlas
+UK Data Atlas
