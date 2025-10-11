@@ -5,11 +5,11 @@ export default function Home() {
     <div style={{ backgroundImage: 'url(/map-background.png)', backgroundSize: 'cover', minHeight: '100vh' }}>
       <Navigation />
 
-      <div className="pt-[25vh] px-[15%]">
+      <div className="pt-[25vh] px-[16%]">
         <div className="p-5">
           <h1 className="text-5xl font-semibold">UK Data Atlas</h1>
           <div className="mt-[10px]">
-            <p>The most powerful mapping tool for visualizing data that shapes the United Kingdom.</p>
+            <p>The powerful mapping tool for visualizing data that shapes the United Kingdom.</p>
           </div>
 
           <div className="pt-12 flex">
