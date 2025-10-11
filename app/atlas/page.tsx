@@ -34,6 +34,7 @@ export default function MapsPage() {
     const [allGeoJSON, setAllGeoJSON] = useState<any>(null);
     const [chartData, setChartData] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
     const [chartTitle, setChartTitle] = useState<string>('Greater Manchester');
+    const [chartWardCode, setChartWardCode] = useState<string>('');
     const currentWardRef = useRef<string | null>(null);
     const lastHoveredFeatureRef = useRef<any>(null);
 
@@ -241,6 +242,7 @@ export default function MapsPage() {
         const locationStats = calculateLocationStats(location, geoData);
         setChartData(locationStats);
         setChartTitle(location.name);
+        setChartWardCode('');
 
         // Filter features for this location
         const filteredFeatures = geoData.features.filter((f: any) =>
@@ -364,6 +366,8 @@ export default function MapsPage() {
 
                 // Update chart with ward data
                 const data = wardData[wardCode];
+                console.log('Hovering ward:', props.WD24NM, wardCode, 'Data:', data);
+                console.log('Winning party:', props.winningParty, partyNames[props.winningParty] || 'Unknown');
                 if (data) {
                     setChartData({
                         LAB: (data.LAB as number) || 0,
@@ -374,6 +378,7 @@ export default function MapsPage() {
                         IND: (data.IND as number) || 0
                     });
                     setChartTitle((data.wardName as string) || 'Unknown Ward');
+                    setChartWardCode((wardCode as string) || 'Unknown Ward Code');
                 }
             }
         });
@@ -394,6 +399,7 @@ export default function MapsPage() {
             const locationStats = calculateLocationStats(location, geoData);
             setChartData(locationStats);
             setChartTitle(location.name);
+            setChartWardCode('');
         });
 
         console.log('Total wards loaded for location:', locationData.features.length);
@@ -468,12 +474,30 @@ export default function MapsPage() {
                     </div>
                 </div>
 
-                <div className="absolute right-0 flex flex-row-reverse h-full">
+                <div className="absolute right-0 flex h-full">
+                    {/* Legend */}
+                    <div className="pointer-events-none place-content-end py-[10px]">
+                        <div className="bg-[rgba(255,255,255,0.8)] pointer-events-auto p-[10px] rounded-md backdrop-blur-md shadow-lg">
+                            <h3 className="font-bold text-sm mb-2">Local Elections 2024</h3>
+                            <div className="space-y-1 text-xs">
+                                {partyInfo.map(party => (
+                                    <div key={party.key} className="flex items-center gap-2">
+                                        <div className="w-3 h-3" style={{ backgroundColor: party.color }}></div>
+                                        <span>{party.name}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Right pane */}
                     <div className="pointer-events-auto p-[10px] flex flex-col h-full w-[250px]">
-                        <div className="bg-[rgba(255,255,255,0.8)] rounded-md backdrop-blur-md shadow-lg p-[10px] flex flex-col">
-                            <h2 className="font-semibold text-sm min-h-[40px]">{chartTitle}</h2>
-                            <div className="space-y-3">
+                        <div className="bg-[rgba(255,255,255,0.8)] rounded-md backdrop-blur-md shadow-lg h-[100%] p-[10px] flex flex-col">
+                            <div className="min-h-[60px]">
+                                <h2 className="font-semibold text-sm">{chartTitle}</h2>
+                                <div className="text-gray-500 text-xs">{chartWardCode}</div >
+                            </div>
+                            <div className="space-y-2">
                                 {partyInfo.map(party => (
                                     <div key={party.key}>
                                         <div className="flex justify-between items-center mb-1">
@@ -496,20 +520,6 @@ export default function MapsPage() {
                         </div>
                     </div>
 
-                    {/* Legend */}
-                    <div className="pointer-events-auto py-[10px] mt-auto">
-                        <div className="bg-[rgba(255,255,255,0.8)] p-[10px] rounded-md backdrop-blur-md shadow-lg">
-                            <h3 className="font-bold text-sm mb-2">Local Elections 2024</h3>
-                            <div className="space-y-1 text-xs">
-                                {partyInfo.map(party => (
-                                    <div key={party.key} className="flex items-center gap-2">
-                                        <div className="w-3 h-3" style={{ backgroundColor: party.color }}></div>
-                                        <span>{party.name}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div
