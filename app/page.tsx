@@ -2,7 +2,7 @@ import Navigation from "./components/navigation";
 
 export default function Home() {
   return (
-    <div>
+    <div style={{ backgroundImage: 'url(/map-background.png)', backgroundSize: 'cover', minHeight: '100vh' }}>
       <Navigation />
 
       <div className="pt-[25vh] px-[15%]">
