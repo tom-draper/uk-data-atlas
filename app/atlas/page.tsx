@@ -14,6 +14,15 @@ interface LocationBounds {
     bounds: [number, number, number, number];
 }
 
+interface ChartData {
+    LAB: number;
+    CON: number;
+    LD: number;
+    GREEN: number;
+    REF: number;
+    IND: number;
+}
+
 export default function MapsPage() {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
@@ -23,6 +32,8 @@ export default function MapsPage() {
     const [wardData, setWardData] = useState<Record<string, WardData>>({});
     const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
     const [allGeoJSON, setAllGeoJSON] = useState<any>(null);
+    const [chartData, setChartData] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
+    const [chartTitle, setChartTitle] = useState<string>('Greater Manchester');
     const currentWardRef = useRef<string | null>(null);
     const lastHoveredFeatureRef = useRef<any>(null);
 
@@ -42,7 +53,6 @@ export default function MapsPage() {
             lad_codes: ['E06000007'],
             bounds: [-2.6, 53.35, -2.5, 53.45]
         },
-
         {
             name: 'Chester',
             lad_codes: ['E06000050'],
@@ -64,94 +74,9 @@ export default function MapsPage() {
             bounds: [-1.6, 53.3, -1.3, 53.5]
         },
         {
-            name: 'Nottingham',
-            lad_codes: ['E06000018', 'E06000019'],
-            bounds: [-1.3, 52.9, -1.0, 53.1]
-        },
-        {
-            name: 'Derby',
-            lad_codes: ['E06000015'],
-            bounds: [-1.6, 52.85, -1.4, 53.0]
-        },
-        {
-            name: 'Leicester',
-            lad_codes: ['E06000016'],
-            bounds: [-1.3, 52.55, -1.1, 52.7]
-        },
-        {
-            name: 'Coventry',
-            lad_codes: ['E08000034'],
-            bounds: [-1.6, 52.35, -1.3, 52.5]
-        },
-        {
-            name: 'Stoke-on-Trent',
-            lad_codes: ['E06000023'],
-            bounds: [-2.3, 52.9, -2.0, 53.1]
-        },
-        {
-            name: 'Bristol',
-            lad_codes: ['E06000023', 'E06000024'],
-            bounds: [-2.7, 51.4, -2.4, 51.6]
-        },
-        {
-            name: 'Southampton',
-            lad_codes: ['E06000045'],
-            bounds: [-1.5, 50.85, -1.3, 51.0]
-        },
-        {
-            name: 'Portsmouth',
-            lad_codes: ['E06000046'],
-            bounds: [-1.2, 50.75, -1.0, 50.85]
-        },
-        {
-            name: 'Plymouth',
-            lad_codes: ['E06000053'],
-            bounds: [-4.2, 50.3, -3.9, 50.5]
-        },
-        {
-            name: 'Cornwall',
-            lad_codes: ['E06000052'],
-            bounds: [-5.7, 49.9, -4.5, 50.7]
-        },
-        {
-            name: 'Bournemouth, Christchurch and Poole',
-            lad_codes: ['E06000059'],
-            bounds: [-2.1, 50.6, -1.7, 50.8]
-        },
-        {
-            name: 'Milton Keynes',
-            lad_codes: ['E06000042'],
-            bounds: [-0.9, 51.9, -0.6, 52.1]
-        },
-        {
-            name: 'Cambridge',
-            lad_codes: ['E06000008'],
-            bounds: [0.0, 52.1, 0.3, 52.3]
-        },
-        {
-            name: 'Peterborough',
-            lad_codes: ['E06000015'],
-            bounds: [-0.4, 52.4, -0.1, 52.6]
-        },
-        {
-            name: 'Norwich',
-            lad_codes: ['E06000041'],
-            bounds: [1.2, 52.6, 1.4, 52.7]
-        },
-        {
-            name: 'Ipswich',
-            lad_codes: ['E06000014'],
-            bounds: [1.1, 52.0, 1.3, 52.1]
-        },
-        {
-            name: 'Southend-on-Sea',
-            lad_codes: ['E06000056'],
-            bounds: [0.7, 51.5, 0.9, 51.6]
-        },
-        {
-            name: 'Luton',
-            lad_codes: ['E06000032'],
-            bounds: [-0.5, 51.8, -0.3, 51.9]
+            name: 'Glasgow',
+            lad_codes: ['S12000049', 'S12000050', 'S12000051', 'S12000052', 'S12000053', 'S12000054', 'S12000055', 'S12000056', 'S12000057', 'S12000058', 'S12000059', 'S12000060', 'S12000061', 'S12000062', 'S12000063', 'S12000064', 'S12000065'],
+            bounds: [-4.4, 55.7, -3.9, 56.0]
         },
         {
             name: 'London',
@@ -286,8 +211,36 @@ export default function MapsPage() {
         };
     }, [wardResults, wardData]);
 
+    const calculateLocationStats = (location: LocationBounds, geoData: any): ChartData => {
+        const filteredFeatures = geoData.features.filter((f: any) =>
+            location.lad_codes.includes(f.properties.LAD24CD)
+        );
+
+        const stats: ChartData = { LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 };
+
+        filteredFeatures.forEach((feature: any) => {
+            const wardCode = feature.properties.WD24CD;
+            const data = wardData[wardCode];
+            if (data) {
+                stats.LAB += (data.LAB as number) || 0;
+                stats.CON += (data.CON as number) || 0;
+                stats.LD += (data.LD as number) || 0;
+                stats.GREEN += (data.GREEN as number) || 0;
+                stats.REF += (data.REF as number) || 0;
+                stats.IND += (data.IND as number) || 0;
+            }
+        });
+
+        return stats;
+    };
+
     const updateMapForLocation = (location: LocationBounds, geoData: any) => {
         if (!map.current) return;
+
+        // Calculate location-wide stats
+        const locationStats = calculateLocationStats(location, geoData);
+        setChartData(locationStats);
+        setChartTitle(location.name);
 
         // Filter features for this location
         const filteredFeatures = geoData.features.filter((f: any) =>
@@ -368,12 +321,6 @@ export default function MapsPage() {
             }
         });
 
-        const popup = new mapboxgl.Popup({
-            closeButton: true,
-            closeOnClick: false,
-            offset: 10
-        });
-
         const partyNames: Record<string, string> = {
             'LAB': 'Labour',
             'CON': 'Conservative',
@@ -415,48 +362,21 @@ export default function MapsPage() {
 
                 currentWardRef.current = wardCode;
 
+                // Update chart with ward data
                 const data = wardData[wardCode];
-                const partyColumns = ['LAB', 'CON', 'LD', 'GREEN', 'REF', 'IND'];
-                const chartData = partyColumns.map(party => ({
-                    party: partyNames[party],
-                    votes: (data?.[party] as number) || 0,
-                    color: {
-                        'LAB': '#DC241f',
-                        'CON': '#0087DC',
-                        'LD': '#FAA61A',
-                        'GREEN': '#6AB023',
-                        'REF': '#12B6CF',
-                        'IND': '#CCCCCC'
-                    }[party]
-                }));
-
-                const maxVotes = Math.max(...chartData.map(d => d.votes));
-
-                const html = `
-                    <div style="width: 220px; pointer-events: none;">
-                      <strong style="font-size: 14px;">${props.WD24NM || 'Unknown Ward'}</strong><br/>
-                      <span style="color: #666; font-size: 12px;">Winner: <strong>${partyNames[props.winningParty] || 'Unknown'}</strong></span>
-                      <div style="margin-top: 12px;">
-                        ${chartData.map(item => `
-                          <div style="margin-bottom: 4px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                              <span style="font-size: 12px; color: #333;">${item.party}</span>
-                              <span style="font-size: 12px; font-weight: bold;">${item.votes.toLocaleString()}</span>
-                            </div>
-                            <div style="height: 16px; background-color: #eee; border-radius: 2px; overflow: hidden;">
-                              <div style="height: 100%; width: ${maxVotes > 0 ? (item.votes / maxVotes * 100) : 0}%; background-color: ${item.color}; transition: width 0.2s;"></div>
-                            </div>
-                          </div>
-                        `).join('')}
-                      </div>
-                    </div>
-                  `;
-
-                popup.setLngLat(e.lngLat).setHTML(html).addTo(map.current);
+                if (data) {
+                    setChartData({
+                        LAB: (data.LAB as number) || 0,
+                        CON: (data.CON as number) || 0,
+                        LD: (data.LD as number) || 0,
+                        GREEN: (data.GREEN as number) || 0,
+                        REF: (data.REF as number) || 0,
+                        IND: (data.IND as number) || 0
+                    });
+                    setChartTitle((data.wardName as string) || 'Unknown Ward');
+                }
             }
         });
-
-        let popupHovered = false;
 
         map.current.on('mouseleave', 'wards-fill', () => {
             if (!map.current) return;
@@ -469,31 +389,11 @@ export default function MapsPage() {
                 lastHoveredFeatureRef.current = null;
             }
 
-            setTimeout(() => {
-                if (!popupHovered) {
-                    map.current!.getCanvas().style.cursor = '';
-                    currentWardRef.current = null;
-                    popup.remove();
-                }
-            }, 50);
-        });
-
-        map.current.on('mousemove', () => {
-            const popupEl = document.querySelector('.mapboxgl-popup');
-            if (popupEl) {
-                popupEl.addEventListener('mouseenter', () => {
-                    popupHovered = true;
-                }, { once: true });
-
-                popupEl.addEventListener('mouseleave', () => {
-                    popupHovered = false;
-                    if (map.current) {
-                        map.current.getCanvas().style.cursor = '';
-                        currentWardRef.current = null;
-                        popup.remove();
-                    }
-                }, { once: true });
-            }
+            currentWardRef.current = null;
+            // Reset chart to location stats
+            const locationStats = calculateLocationStats(location, geoData);
+            setChartData(locationStats);
+            setChartTitle(location.name);
         });
 
         console.log('Total wards loaded for location:', locationData.features.length);
@@ -512,6 +412,17 @@ export default function MapsPage() {
             }
         }
     };
+
+    const maxVotes = Math.max(chartData.LAB, chartData.CON, chartData.LD, chartData.GREEN, chartData.REF, chartData.IND);
+
+    const partyInfo = [
+        { key: 'LAB', name: 'Labour', color: '#DC241f' },
+        { key: 'CON', name: 'Conservative', color: '#0087DC' },
+        { key: 'LD', name: 'Liberal Democrat', color: '#FAA61A' },
+        { key: 'GREEN', name: 'Green', color: '#6AB023' },
+        { key: 'REF', name: 'Reform', color: '#12B6CF' },
+        { key: 'IND', name: 'Independent', color: '#CCCCCC' }
+    ];
 
     if (error) {
         return (
@@ -534,8 +445,8 @@ export default function MapsPage() {
             <div className="fixed inset-0 z-100 h-full w-full pointer-events-none">
                 {/* Left pane */}
                 <div className="absolute left-0 flex h-full">
-                    <div className="pointer-events-auto p-[10px]">
-                        <div className="bg-[rgba(255,255,255,0.8)] text-sm rounded-md backdrop-blur-md shadow-lg w-[200px]">
+                    <div className="pointer-events-auto p-[10px] w-[250px]">
+                        <div className="bg-[rgba(255,255,255,0.8)] text-sm rounded-md backdrop-blur-md shadow-lg  max-h-[90vh] overflow-y-auto">
                             <div className="p-[10px] border-b border-gray-200">
                                 <h2 className="font-semibold mb-4">Locations</h2>
                                 <div className="space-y-2">
@@ -543,7 +454,7 @@ export default function MapsPage() {
                                         <button
                                             key={location.name}
                                             onClick={() => handleLocationClick(location)}
-                                            className={`w-full text-left px-3 py-2 rounded transition-colors ${selectedLocation === location.name
+                                            className={`w-full text-left px-3 py-1 rounded transition-colors text-xs ${selectedLocation === location.name
                                                     ? 'bg-blue-500 text-white'
                                                     : 'bg-gray-100 hover:bg-gray-200 text-gray-900'
                                                 }`}
@@ -557,135 +468,49 @@ export default function MapsPage() {
                     </div>
                 </div>
 
-                <div className="absolute right-0 flex h-full">
-                    {/* Legend */}
-                    <div className="pointer-events-auto py-[10px] mt-auto">
-                        <div className="bg-[rgba(255,255,255,0.8)] p-[10px] rounded-md backdrop-blur-md shadow-lg">
-                            <h3 className="font-bold text-sm mb-2">Local Elections 2024</h3>
-                            <div className="space-y-1 text-xs">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#DC241f' }}></div>
-                                    <span>Labour</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#0087DC' }}></div>
-                                    <span>Conservative</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#FAA61A' }}></div>
-                                    <span>Liberal Democrat</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#6AB023' }}></div>
-                                    <span>Green</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#12B6CF' }}></div>
-                                    <span>Reform</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#CCCCCC' }}></div>
-                                    <span>Independent</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="absolute right-0 flex h-full">
-                    {/* Legend */}
-                    <div className="pointer-events-auto py-[10px] mt-auto">
-                        <div className="bg-[rgba(255,255,255,0.8)] p-[10px] rounded-md backdrop-blur-md shadow-lg">
-                            <h3 className="font-bold text-sm mb-2">Local Elections 2024</h3>
-                            <div className="space-y-1 text-xs">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#DC241f' }}></div>
-                                    <span>Labour</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#0087DC' }}></div>
-                                    <span>Conservative</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#FAA61A' }}></div>
-                                    <span>Liberal Democrat</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#6AB023' }}></div>
-                                    <span>Green</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#12B6CF' }}></div>
-                                    <span>Reform</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4" style={{ backgroundColor: '#CCCCCC' }}></div>
-                                    <span>Independent</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                <div className="absolute right-0 flex flex-row-reverse h-full">
                     {/* Right pane */}
-                    <div className="pointer-events-auto p-[10px]">
-                        <div className="bg-[rgba(255,255,255,0.8)] rounded-md backdrop-blur-md shadow-lg w-[200px] h-[100%]">
-                            <div className="border border-gray-400 text-sm p-[10px] rounded">
-                                <h2 className="font-semibold">
-                                    Local Elections 2024
-                                </h2>
-                                <div className="margin-top: 12px;">
-                                    <div className="margin-bottom: 4px;">
-                                        <div className="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                                            <span className="font-size: 12px; color: #333;">Conservative</span>
-                                            <span className="font-size: 12px; font-weight: bold;">{100}</span>
+                    <div className="pointer-events-auto p-[10px] flex flex-col h-full w-[250px]">
+                        <div className="bg-[rgba(255,255,255,0.8)] rounded-md backdrop-blur-md shadow-lg p-[10px] flex flex-col">
+                            <h2 className="font-semibold text-sm min-h-[40px]">{chartTitle}</h2>
+                            <div className="space-y-3">
+                                {partyInfo.map(party => (
+                                    <div key={party.key}>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-xs font-medium">{party.name}</span>
+                                            <span className="text-xs font-bold">{(chartData[party.key as keyof ChartData] as number).toLocaleString()}</span>
                                         </div>
-                                        <div className="height: 16px; background-color: #eee; border-radius: 2px; overflow: hidden;">
-                                            <div className="height: 100%; width: ${maxVotes > 0 ? (item.votes / maxVotes * 100) : 0}%; background-color: ${item.color}; transition: width 0.2s;"></div>
-                                        </div>
-                                    </div>
-                                    <div className="margin-bottom: 4px;">
-                                        <div className="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                                            <span className="font-size: 12px; color: #333;">Labour</span>
-                                            <span className="font-size: 12px; font-weight: bold;">{50}</span>
-                                        </div>
-                                        <div className="height: 16px; background-color: #eee; border-radius: 2px; overflow: hidden;">
-                                            <div className="height: 100%; width: ${maxVotes > 0 ? (item.votes / maxVotes * 100) : 0}%; background-color: ${item.color}; transition: width 0.2s;"></div>
+                                        <div className="h-6 bg-gray-200 rounded overflow-hidden">
+                                            <div
+                                                style={{
+                                                    height: '100%',
+                                                    width: maxVotes > 0 ? ((chartData[party.key as keyof ChartData] as number) / maxVotes * 100) : 0,
+                                                    backgroundColor: party.color,
+                                                    transition: 'width 0.3s ease'
+                                                }}
+                                            ></div>
                                         </div>
                                     </div>
-                                </div>
+                                ))}
                             </div>
+                        </div>
+                    </div>
 
-                            <div className="text-sm p-[10px]">
-                                <h2 className="font-semibold">
-                                    Local Elections 2020
-                                </h2>
-                                <div className="margin-top: 12px;">
-                                    <div className="margin-bottom: 4px;">
-                                        <div className="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                                            <span className="font-size: 12px; color: #333;">Conservative</span>
-                                            <span className="font-size: 12px; font-weight: bold;">{100}</span>
-                                        </div>
-                                        <div className="height: 16px; background-color: #eee; border-radius: 2px; overflow: hidden;">
-                                            <div className="height: 100%; width: ${maxVotes > 0 ? (item.votes / maxVotes * 100) : 0}%; background-color: ${item.color}; transition: width 0.2s;"></div>
-                                        </div>
+                    {/* Legend */}
+                    <div className="pointer-events-auto py-[10px] mt-auto">
+                        <div className="bg-[rgba(255,255,255,0.8)] p-[10px] rounded-md backdrop-blur-md shadow-lg">
+                            <h3 className="font-bold text-sm mb-2">Local Elections 2024</h3>
+                            <div className="space-y-1 text-xs">
+                                {partyInfo.map(party => (
+                                    <div key={party.key} className="flex items-center gap-2">
+                                        <div className="w-3 h-3" style={{ backgroundColor: party.color }}></div>
+                                        <span>{party.name}</span>
                                     </div>
-                                    <div className="margin-bottom: 4px;">
-                                        <div className="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                                            <span className="font-size: 12px; color: #333;">Labour</span>
-                                            <span className="font-size: 12px; font-weight: bold;">{50}</span>
-                                        </div>
-                                        <div className="height: 16px; background-color: #eee; border-radius: 2px; overflow: hidden;">
-                                            <div className="height: 100%; width: ${maxVotes > 0 ? (item.votes / maxVotes * 100) : 0}%; background-color: ${item.color}; transition: width 0.2s;"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
-
                         </div>
                     </div>
                 </div>
-
-
             </div>
             <div
                 ref={mapContainer}
