@@ -26,3 +26,27 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.mapboxgl-popup-content {
+  pointer-events: none !important;
+  padding: 10px 10px 10px !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.mapboxgl-popup-close-button {
+  display: none;
+}
+
+.crop {
+  width: 50%;      /* Show half the width */
+  height: 50%;     /* Show half the height */
+  overflow: hidden;
+}
+
+.crop img {
+  width: 200%;     /* Double the image so only 1/4 shows */
+  height: 200%;
+  object-fit: cover;
+  object-position: top left;
+}
