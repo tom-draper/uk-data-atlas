@@ -1,5 +1,5 @@
 // lib/data/locations.ts
-import { LocationBounds } from '@lib/types';
+import { LocationBounds } from '@/lib/types/index';
 
 export const LOCATIONS: LocationBounds[] = [
     {
@@ -24,7 +24,7 @@ export const LOCATIONS: LocationBounds[] = [
     },
     {
         name: 'Birmingham',
-        lad_codes: ['E08000025', 'E08000026', 'E08000027', 'E08000028', 'E08000029', 'E08000030', 'E08000031', 'E08000032'],
+        lad_codes: ['E08000025', 'E08000026', 'E08000027', 'E08000028', 'E08000029', 'E08000030', 'E08000031', 'E08000032', 'E08000033'],
         bounds: [-2.0, 52.35, -1.5, 52.6]
     },
     {

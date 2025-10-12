@@ -1,4 +1,3 @@
-
 // lib/types/index.ts
 export interface WardData {
     [key: string]: string | number;
@@ -23,4 +22,14 @@ export interface Party {
     key: keyof ChartData;
     name: string;
     color: string;
+}
+
+export interface Dataset {
+    id: string;
+    name: string;
+    year: number;
+    wardResults: Record<string, string>;
+    wardData: Record<string, WardData>;
+    partyColumns: string[];
+    partyInfo: Party[];
 }

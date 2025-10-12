@@ -9,14 +9,14 @@ import { LegendPanel } from '@/components/LegendPanel';
 import { ChartPanel } from '@/components/ChartPanel';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { MapManager } from '@/lib/utils/mapManager';
-import { calculateLocationStats } from '@/lib/utils/statsCalculator';
+import { calculateLocationStats, mapWard2023ToGeojson } from '@/lib/utils/statsCalculator';
 import { LOCATIONS } from '@/lib/data/locations';
-import { ChartData, WardData, LocationBounds } from '@/lib/types';
+import { ChartData, WardData, LocationBounds, Dataset } from '@/lib/types';
 
 export default function MapsPage() {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useMapboxMap(mapContainer);
-    const { wardResults, wardData, loading: dataLoading, error: dataError } = useElectionData();
+    const { datasets, loading: dataLoading, error: dataError } = useElectionData();
 
     const [error, setError] = useState<string>(dataError || '');
     const [loading, setLoading] = useState(true);
@@ -25,14 +25,22 @@ export default function MapsPage() {
     const [chartData, setChartData] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
     const [chartTitle, setChartTitle] = useState<string>('Greater Manchester');
     const [chartWardCode, setChartWardCode] = useState<string>('');
+    const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
     const mapManagerRef = useRef<MapManager | null>(null);
 
+    const activeDataset = datasets.find(d => d.id === activeDatasetId) || datasets[0];
+
     useEffect(() => {
-        if (error) setError(error);
+        if (dataError) setError(dataError);
     }, [dataError]);
 
     useEffect(() => {
-        if (!map.current || Object.keys(wardResults).length === 0) return;
+        console.log('Page useEffect triggered:', { mapLoaded: !!map.current, datasetsLength: datasets.length, activeDatasetId });
+        
+        if (!map.current || datasets.length === 0) {
+            console.log('Skipping - map or datasets missing', { mapLoaded: !!map.current, datasetsLength: datasets.length });
+            return;
+        }
 
         const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
         if (!token) {
@@ -42,10 +50,34 @@ export default function MapsPage() {
         }
 
         const onMapLoad = () => {
-            fetch('/data/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson')
-                .then(res => res.json())
+            console.log('onMapLoad called');
+            // Load the correct GeoJSON based on active dataset
+            const url = activeDataset.id === '2023' 
+                ? '/data/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson'
+                : '/data/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson';
+
+            console.log('Loading GeoJSON:', url);
+
+            fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return res.json();
+                })
                 .then(data => {
+                    console.log('GeoJSON loaded, features:', data.features?.length);
                     setAllGeoJSON(data);
+
+                    // For 2023, match ward names to ward codes in the GeoJSON
+                    let activeWardResults = activeDataset.wardResults;
+                    let activeWardData = activeDataset.wardData;
+
+                    if (activeDataset.id === '2023') {
+                        console.log('Mapping 2023 data...');
+                        const { wardResults: mapped2023Results, wardData: mapped2023Data } = 
+                            mapWard2023ToGeojson(activeDataset, data);
+                        activeWardResults = mapped2023Results;
+                        activeWardData = mapped2023Data;
+                    }
 
                     mapManagerRef.current = new MapManager(map.current!, {
                         onWardHover: (data, wardName, wardCode) => {
@@ -70,47 +102,68 @@ export default function MapsPage() {
                     });
 
                     const initialLocation = LOCATIONS[0];
-                    const locationStats = calculateLocationStats(initialLocation, data, wardData);
+                    const locationStats = calculateLocationStats(initialLocation, data, activeWardData);
                     mapManagerRef.current.updateMapForLocation(
                         initialLocation,
                         data,
-                        wardResults,
-                        wardData,
-                        locationStats
+                        activeWardResults,
+                        activeWardData,
+                        locationStats,
+                        activeDataset.partyInfo
                     );
 
                     setSelectedLocation(initialLocation.name);
+                    console.log('Map setup complete');
                     setLoading(false);
                 })
                 .catch(err => {
+                    console.error('Error loading/processing data:', err);
                     setError(`Failed to load ward data: ${err.message}`);
                     setLoading(false);
                 });
         };
 
+        const handleLoad = () => {
+            console.log('Map load event fired');
+            onMapLoad();
+        };
+
         if (map.current.loaded()) {
+            console.log('Map already loaded, calling onMapLoad');
             onMapLoad();
         } else {
-            map.current.on('load', onMapLoad);
+            console.log('Waiting for map load event');
+            map.current.on('load', handleLoad);
         }
 
         return () => {
             if (map.current) {
-                map.current.off('load', onMapLoad);
+                map.current.off('load', handleLoad);
             }
         };
-    }, [map, wardResults, wardData]);
+    }, [map, datasets.length, activeDatasetId]);
 
     const handleLocationClick = (location: LocationBounds) => {
         setSelectedLocation(location.name);
-        if (allGeoJSON && mapManagerRef.current && map.current) {
+        if (allGeoJSON && mapManagerRef.current && map.current && activeDataset) {
+            let wardResults = activeDataset.wardResults;
+            let wardData = activeDataset.wardData;
+
+            if (activeDataset.id === '2023') {
+                const { wardResults: mapped, wardData: mappedData } = 
+                    mapWard2023ToGeojson(activeDataset, allGeoJSON);
+                wardResults = mapped;
+                wardData = mappedData;
+            }
+
             const locationStats = calculateLocationStats(location, allGeoJSON, wardData);
             mapManagerRef.current.updateMapForLocation(
                 location,
                 allGeoJSON,
                 wardResults,
                 wardData,
-                locationStats
+                locationStats,
+                activeDataset.partyInfo
             );
             map.current.fitBounds(location.bounds, {
                 padding: 40,
@@ -119,13 +172,51 @@ export default function MapsPage() {
         }
     };
 
+    const handleDatasetChange = (datasetId: string) => {
+        setActiveDatasetId(datasetId);
+        setChartData({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
+        setChartTitle('Greater Manchester');
+        setChartWardCode('');
+
+        // Reset and reload map with new dataset
+        if (allGeoJSON && mapManagerRef.current && map.current) {
+            const newDataset = datasets.find(d => d.id === datasetId);
+            if (!newDataset) return;
+
+            let wardResults = newDataset.wardResults;
+            let wardData = newDataset.wardData;
+
+            if (datasetId === '2023') {
+                const { wardResults: mapped, wardData: mappedData } = 
+                    mapWard2023ToGeojson(newDataset, allGeoJSON);
+                wardResults = mapped;
+                wardData = mappedData;
+            }
+
+            const initialLocation = LOCATIONS[0];
+            const locationStats = calculateLocationStats(initialLocation, allGeoJSON, wardData);
+            mapManagerRef.current.updateMapForLocation(
+                initialLocation,
+                allGeoJSON,
+                wardResults,
+                wardData,
+                locationStats,
+                newDataset.partyInfo
+            );
+        }
+    };
+
     if (error) {
         return <ErrorDisplay message={error} />;
     }
 
+    if (!activeDataset) {
+        return <ErrorDisplay message="No datasets loaded" />;
+    }
+
     return (
         <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
-            {loading || dataLoading && (
+            {(loading || dataLoading) && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
                     <div className="text-lg">Loading map...</div>
                 </div>
@@ -136,8 +227,15 @@ export default function MapsPage() {
                 </div>
 
                 <div className="absolute right-0 flex h-full">
-                    <LegendPanel />
-                    <ChartPanel title={chartTitle} wardCode={chartWardCode} chartData={chartData} />
+                    <LegendPanel activeDataset={activeDataset} />
+                    <ChartPanel 
+                        title={chartTitle} 
+                        wardCode={chartWardCode} 
+                        chartData={chartData}
+                        activeDataset={activeDataset}
+                        availableDatasets={datasets}
+                        onDatasetChange={handleDatasetChange}
+                    />
                 </div>
             </div>
             <div

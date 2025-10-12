@@ -1,5 +1,5 @@
 // lib/data/parties.ts
-import { Party } from '@/lib/types';
+import { Party } from '@/lib/types/index';
 
 export const PARTY_INFO: Party[] = [
     { key: 'LAB', name: 'Labour', color: '#DC241f' },

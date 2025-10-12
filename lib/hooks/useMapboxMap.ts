@@ -6,14 +6,22 @@ export const useMapboxMap = (containerRef: React.RefObject<HTMLDivElement>) => {
     const map = useRef<mapboxgl.Map | null>(null);
 
     useEffect(() => {
+        // Skip if map already exists
         if (map.current) return;
 
-        const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-        if (!token) return;
+        // Skip if no container
+        if (!containerRef.current) return;
 
+        const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+        if (!token) {
+            console.error('Missing NEXT_PUBLIC_MAPBOX_TOKEN');
+            return;
+        }
+
+        console.log('Initializing Mapbox');
         mapboxgl.accessToken = token;
 
-        if (containerRef.current) {
+        try {
             map.current = new mapboxgl.Map({
                 container: containerRef.current,
                 style: 'mapbox://styles/mapbox/light-v11',
@@ -22,6 +30,10 @@ export const useMapboxMap = (containerRef: React.RefObject<HTMLDivElement>) => {
             });
 
             map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+            console.log('Map initialized');
+
+        } catch (err) {
+            console.error('Failed to initialize map:', err);
         }
 
         return () => {
