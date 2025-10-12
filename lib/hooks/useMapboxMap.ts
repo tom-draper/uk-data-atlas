@@ -7,10 +7,16 @@ export const useMapboxMap = (containerRef: React.RefObject<HTMLDivElement>) => {
 
     useEffect(() => {
         // Skip if map already exists
-        if (map.current) return;
+        if (map.current) {
+            console.log('Skipping map already exists')
+            return;
+        }
 
         // Skip if no container
-        if (!containerRef.current) return;
+        if (!containerRef.current) {
+            console.log('Skipping no container')
+            return;
+        }
 
         const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
         if (!token) {

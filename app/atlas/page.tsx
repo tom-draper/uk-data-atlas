@@ -1,9 +1,8 @@
 // page.tsx
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useElectionData } from '@/lib/hooks/useElectionData';
-import { useMapboxMap } from '@/lib/hooks/useMapboxMap';
 import { LocationPanel } from '@/components/LocationPanel';
 import { LegendPanel } from '@/components/LegendPanel';
 import { ChartPanel } from '@/components/ChartPanel';
@@ -11,11 +10,12 @@ import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { MapManager } from '@/lib/utils/mapManager';
 import { calculateLocationStats, mapWard2023ToGeojson } from '@/lib/utils/statsCalculator';
 import { LOCATIONS } from '@/lib/data/locations';
-import { ChartData, WardData, LocationBounds, Dataset } from '@/lib/types';
+import { ChartData, LocationBounds } from '@/lib/types';
+import mapboxgl from 'mapbox-gl';
 
 export default function MapsPage() {
     const mapContainer = useRef<HTMLDivElement>(null);
-    const map = useMapboxMap(mapContainer);
+    const map = useRef<mapboxgl.Map | null>(null);
     const { datasets, loading: dataLoading, error: dataError } = useElectionData();
 
     const [error, setError] = useState<string>(dataError || '');
@@ -34,9 +34,40 @@ export default function MapsPage() {
         if (dataError) setError(dataError);
     }, [dataError]);
 
+    const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
+        mapContainer.current = el;
+
+        if (!el) return;
+        if (map.current) return;
+
+        const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+        if (!token) {
+            console.error('Missing NEXT_PUBLIC_MAPBOX_TOKEN');
+            setError('Missing NEXT_PUBLIC_MAPBOX_TOKEN');
+            return;
+        }
+
+        console.log('Initializing Mapbox from callback ref');
+        mapboxgl.accessToken = token;
+
+        try {
+            map.current = new mapboxgl.Map({
+                container: el,
+                style: 'mapbox://styles/mapbox/light-v11',
+                center: [-2.3, 53.5],
+                zoom: 10,
+            });
+            map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+            console.log('Map initialized');
+        } catch (err) {
+            console.error('Failed to initialize map:', err);
+            setError(`Failed to initialize map: ${err}`);
+        }
+    }, []);
+
     useEffect(() => {
         console.log('Page useEffect triggered:', { mapLoaded: !!map.current, datasetsLength: datasets.length, activeDatasetId });
-        
+
         if (!map.current || datasets.length === 0) {
             console.log('Skipping - map or datasets missing', { mapLoaded: !!map.current, datasetsLength: datasets.length });
             return;
@@ -52,7 +83,7 @@ export default function MapsPage() {
         const onMapLoad = () => {
             console.log('onMapLoad called');
             // Load the correct GeoJSON based on active dataset
-            const url = activeDataset.id === '2023' 
+            const url = activeDataset.id === '2023'
                 ? '/data/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson'
                 : '/data/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson';
 
@@ -73,7 +104,7 @@ export default function MapsPage() {
 
                     if (activeDataset.id === '2023') {
                         console.log('Mapping 2023 data...');
-                        const { wardResults: mapped2023Results, wardData: mapped2023Data } = 
+                        const { wardResults: mapped2023Results, wardData: mapped2023Data } =
                             mapWard2023ToGeojson(activeDataset, data);
                         activeWardResults = mapped2023Results;
                         activeWardData = mapped2023Data;
@@ -150,7 +181,7 @@ export default function MapsPage() {
             let wardData = activeDataset.wardData;
 
             if (activeDataset.id === '2023') {
-                const { wardResults: mapped, wardData: mappedData } = 
+                const { wardResults: mapped, wardData: mappedData } =
                     mapWard2023ToGeojson(activeDataset, allGeoJSON);
                 wardResults = mapped;
                 wardData = mappedData;
@@ -187,7 +218,7 @@ export default function MapsPage() {
             let wardData = newDataset.wardData;
 
             if (datasetId === '2023') {
-                const { wardResults: mapped, wardData: mappedData } = 
+                const { wardResults: mapped, wardData: mappedData } =
                     mapWard2023ToGeojson(newDataset, allGeoJSON);
                 wardResults = mapped;
                 wardData = mappedData;
@@ -228,9 +259,9 @@ export default function MapsPage() {
 
                 <div className="absolute right-0 flex h-full">
                     <LegendPanel activeDataset={activeDataset} />
-                    <ChartPanel 
-                        title={chartTitle} 
-                        wardCode={chartWardCode} 
+                    <ChartPanel
+                        title={chartTitle}
+                        wardCode={chartWardCode}
                         chartData={chartData}
                         activeDataset={activeDataset}
                         availableDatasets={datasets}
@@ -239,7 +270,7 @@ export default function MapsPage() {
                 </div>
             </div>
             <div
-                ref={mapContainer}
+                ref={handleMapContainer}
                 style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
             />
         </div>
