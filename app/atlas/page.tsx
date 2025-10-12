@@ -47,7 +47,6 @@ export default function MapsPage() {
             return;
         }
 
-        console.log('Initializing Mapbox from callback ref');
         mapboxgl.accessToken = token;
 
         try {

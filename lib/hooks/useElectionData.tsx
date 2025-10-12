@@ -1,7 +1,7 @@
 // lib/hooks/useElectionData.ts
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import { WardData, Dataset, Party } from '@/lib/types/index';
+import { WardData, Dataset } from '@/lib/types/index';
 
 const parseElection2024 = async (): Promise<Dataset> => {
     const res = await fetch('/data/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv');
