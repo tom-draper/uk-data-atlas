@@ -22,11 +22,35 @@ export default function MapsPage() {
     const [loading, setLoading] = useState(true);
     const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
     const [allGeoJSON, setAllGeoJSON] = useState<any>(null);
-    const [chartData, setChartData] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
+    const [chartData2024, setChartData2024] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
+    const [chartData2023, setChartData2023] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
+    const [chartData2022, setChartData2022] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
+    const [chartData2021, setChartData2021] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
     const [chartTitle, setChartTitle] = useState<string>('Greater Manchester');
     const [chartWardCode, setChartWardCode] = useState<string>('');
     const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
     const mapManagerRef = useRef<MapManager | null>(null);
+    
+    // Store ward data for all years
+    const wardDataRef = useRef<{
+        data2024: any;
+        data2023: any;
+        data2022: any;
+        data2021: any;
+        results2024: any;
+        results2023: any;
+        results2022: any;
+        results2021: any;
+    }>({
+        data2024: null,
+        data2023: null,
+        data2022: null,
+        data2021: null,
+        results2024: null,
+        results2023: null,
+        results2022: null,
+        results2021: null,
+    });
 
     const activeDataset = datasets.find(d => d.id === activeDatasetId) || datasets[0];
 
@@ -47,6 +71,7 @@ export default function MapsPage() {
             return;
         }
 
+        console.log('Initializing Mapbox from callback ref');
         mapboxgl.accessToken = token;
 
         try {
@@ -79,78 +104,173 @@ export default function MapsPage() {
             return;
         }
 
-        const onMapLoad = () => {
+        const onMapLoad = async () => {
             console.log('onMapLoad called');
-            // Load the correct GeoJSON based on active dataset
-            const url = activeDataset.id === '2023'
-                ? '/data/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson'
-                : '/data/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson';
+            
+            try {
+                // Fetch all GeoJSON files
+                const [geojson2024, geojson2023, geojson2022, geojson2021] = await Promise.all([
+                    fetch('/data/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson').then(r => r.json()),
+                    fetch('/data/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson').then(r => r.json()),
+                    fetch('/data/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson').then(r => r.json()),
+                    fetch('/data/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson').then(r => r.json()),
+                ]);
 
-            console.log('Loading GeoJSON:', url);
+                console.log('All GeoJSON files loaded');
+                
+                // Use active dataset's GeoJSON for map display
+                const activeGeoJSON = activeDatasetId === '2023' ? geojson2023 
+                    : activeDatasetId === '2022' ? geojson2022
+                    : activeDatasetId === '2021' ? geojson2021
+                    : geojson2024;
+                    
+                setAllGeoJSON(activeGeoJSON);
 
-            fetch(url)
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                    return res.json();
-                })
-                .then(data => {
-                    console.log('GeoJSON loaded, features:', data.features?.length);
-                    setAllGeoJSON(data);
+                // Prepare data for all datasets
+                const dataset2024 = datasets.find(d => d.id === '2024');
+                const dataset2023 = datasets.find(d => d.id === '2023');
+                const dataset2022 = datasets.find(d => d.id === '2022');
+                const dataset2021 = datasets.find(d => d.id === '2021');
 
-                    // For 2023, match ward names to ward codes in the GeoJSON
-                    let activeWardResults = activeDataset.wardResults;
-                    let activeWardData = activeDataset.wardData;
+                let results2024 = dataset2024?.wardResults || {};
+                let data2024 = dataset2024?.wardData || {};
+                let results2023 = dataset2023?.wardResults || {};
+                let data2023 = dataset2023?.wardData || {};
+                let results2022 = dataset2022?.wardResults || {};
+                let data2022 = dataset2022?.wardData || {};
+                let results2021 = dataset2021?.wardResults || {};
+                let data2021 = dataset2021?.wardData || {};
 
-                    if (activeDataset.id === '2023') {
-                        console.log('Mapping 2023 data...');
-                        const { wardResults: mapped2023Results, wardData: mapped2023Data } =
-                            mapWard2023ToGeojson(activeDataset, data);
-                        activeWardResults = mapped2023Results;
-                        activeWardData = mapped2023Data;
-                    }
+                // Map 2023, 2022, 2021 data if needed
+                if (dataset2023) {
+                    const { wardResults: mapped2023Results, wardData: mapped2023Data } =
+                        mapWard2023ToGeojson(dataset2023, geojson2023);
+                    results2023 = mapped2023Results;
+                    data2023 = mapped2023Data;
+                }
 
-                    mapManagerRef.current = new MapManager(map.current!, {
-                        onWardHover: (data, wardName, wardCode) => {
-                            if (data) {
-                                setChartData({
-                                    LAB: (data.LAB as number) || 0,
-                                    CON: (data.CON as number) || 0,
-                                    LD: (data.LD as number) || 0,
-                                    GREEN: (data.GREEN as number) || 0,
-                                    REF: (data.REF as number) || 0,
-                                    IND: (data.IND as number) || 0
-                                });
-                                setChartTitle(wardName);
-                                setChartWardCode(wardCode);
-                            }
-                        },
-                        onLocationChange: (stats, location) => {
-                            setChartData(stats);
-                            setChartTitle(location.name);
-                            setChartWardCode('');
+                // if (dataset2022) {
+                //     const { wardResults: mapped2022Results, wardData: mapped2022Data } =
+                //         mapWardToGeojson(dataset2022, geojson2022);
+                //     results2022 = mapped2022Results;
+                //     data2022 = mapped2022Data;
+                // }
+
+                // if (dataset2021) {
+                //     const { wardResults: mapped2021Results, wardData: mapped2021Data } =
+                //         mapWardToGeojson(dataset2021, geojson2021);
+                //     results2021 = mapped2021Results;
+                //     data2021 = mapped2021Data;
+                // }
+
+                // Store all in ref for lookup during hover
+                wardDataRef.current = {
+                    data2024,
+                    data2023,
+                    data2022,
+                    data2021,
+                    results2024,
+                    results2023,
+                    results2022,
+                    results2021,
+                };
+
+                // Use active dataset for initial map rendering
+                let activeWardResults = results2024;
+                let activeWardData = data2024;
+
+                if (activeDatasetId === '2023') {
+                    activeWardResults = results2023;
+                    activeWardData = data2023;
+                } else if (activeDatasetId === '2022') {
+                    activeWardResults = results2022;
+                    activeWardData = data2022;
+                } else if (activeDatasetId === '2021') {
+                    activeWardResults = results2021;
+                    activeWardData = data2021;
+                }
+
+                mapManagerRef.current = new MapManager(map.current!, {
+                    onWardHover: (data, wardName, wardCode) => {
+                        if (data) {
+                            // Look up data from ALL datasets
+                            const data2024Obj: ChartData = {
+                                LAB: (wardDataRef.current.data2024[wardCode]?.LAB as number) || 0,
+                                CON: (wardDataRef.current.data2024[wardCode]?.CON as number) || 0,
+                                LD: (wardDataRef.current.data2024[wardCode]?.LD as number) || 0,
+                                GREEN: (wardDataRef.current.data2024[wardCode]?.GREEN as number) || 0,
+                                REF: (wardDataRef.current.data2024[wardCode]?.REF as number) || 0,
+                                IND: (wardDataRef.current.data2024[wardCode]?.IND as number) || 0
+                            };
+
+                            const data2023Obj: ChartData = {
+                                LAB: (wardDataRef.current.data2023[wardCode]?.LAB as number) || 0,
+                                CON: (wardDataRef.current.data2023[wardCode]?.CON as number) || 0,
+                                LD: (wardDataRef.current.data2023[wardCode]?.LD as number) || 0,
+                                GREEN: (wardDataRef.current.data2023[wardCode]?.GREEN as number) || 0,
+                                REF: (wardDataRef.current.data2023[wardCode]?.REF as number) || 0,
+                                IND: (wardDataRef.current.data2023[wardCode]?.IND as number) || 0
+                            };
+
+                            const data2022Obj: ChartData = {
+                                LAB: (wardDataRef.current.data2022[wardCode]?.LAB as number) || 0,
+                                CON: (wardDataRef.current.data2022[wardCode]?.CON as number) || 0,
+                                LD: (wardDataRef.current.data2022[wardCode]?.LD as number) || 0,
+                                GREEN: (wardDataRef.current.data2022[wardCode]?.GREEN as number) || 0,
+                                REF: (wardDataRef.current.data2022[wardCode]?.REF as number) || 0,
+                                IND: (wardDataRef.current.data2022[wardCode]?.IND as number) || 0
+                            };
+
+                            const data2021Obj: ChartData = {
+                                LAB: (wardDataRef.current.data2021[wardCode]?.LAB as number) || 0,
+                                CON: (wardDataRef.current.data2021[wardCode]?.CON as number) || 0,
+                                LD: (wardDataRef.current.data2021[wardCode]?.LD as number) || 0,
+                                GREEN: (wardDataRef.current.data2021[wardCode]?.GREEN as number) || 0,
+                                REF: (wardDataRef.current.data2021[wardCode]?.REF as number) || 0,
+                                IND: (wardDataRef.current.data2021[wardCode]?.IND as number) || 0
+                            };
+
+                            // Update all chart datasets
+                            setChartData2024(data2024Obj);
+                            setChartData2023(data2023Obj);
+                            setChartData2022(data2022Obj);
+                            setChartData2021(data2021Obj);
+
+                            setChartTitle(wardName);
+                            setChartWardCode(wardCode);
                         }
-                    });
+                    },
+                    onLocationChange: (stats, location) => {
+                        // Set stats for all datasets
+                        setChartData2024(stats);
+                        setChartData2023(stats);
+                        setChartData2022(stats);
+                        setChartData2021(stats);
 
-                    const initialLocation = LOCATIONS[0];
-                    const locationStats = calculateLocationStats(initialLocation, data, activeWardData);
-                    mapManagerRef.current.updateMapForLocation(
-                        initialLocation,
-                        data,
-                        activeWardResults,
-                        activeWardData,
-                        locationStats,
-                        activeDataset.partyInfo
-                    );
-
-                    setSelectedLocation(initialLocation.name);
-                    console.log('Map setup complete');
-                    setLoading(false);
-                })
-                .catch(err => {
-                    console.error('Error loading/processing data:', err);
-                    setError(`Failed to load ward data: ${err.message}`);
-                    setLoading(false);
+                        setChartTitle(location.name);
+                        setChartWardCode('');
+                    }
                 });
+
+                const initialLocation = LOCATIONS[0];
+                const locationStats = calculateLocationStats(initialLocation, activeGeoJSON, activeWardData);
+                mapManagerRef.current.updateMapForLocation(
+                    initialLocation,
+                    activeGeoJSON,
+                    activeWardResults,
+                    activeWardData,
+                    locationStats,
+                    activeDataset.partyInfo
+                );
+
+                setSelectedLocation(initialLocation.name);
+                console.log('Map setup complete');
+                setLoading(false);
+            } catch (err) {
+                console.error('Error loading/processing data:', err);
+                setError(`Failed to load ward data: ${err instanceof Error ? err.message : 'Unknown error'}`);
+                setLoading(false);
+            }
         };
 
         const handleLoad = () => {
@@ -204,12 +324,11 @@ export default function MapsPage() {
 
     const handleDatasetChange = (datasetId: string) => {
         setActiveDatasetId(datasetId);
-        setChartData({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
         setChartTitle('Greater Manchester');
         setChartWardCode('');
 
         // Reset and reload map with new dataset
-        if (allGeoJSON && mapManagerRef.current && map.current) {
+        if (mapManagerRef.current && map.current) {
             const newDataset = datasets.find(d => d.id === datasetId);
             if (!newDataset) return;
 
@@ -261,7 +380,10 @@ export default function MapsPage() {
                     <ChartPanel
                         title={chartTitle}
                         wardCode={chartWardCode}
-                        chartData={chartData}
+                        chartData2024={chartData2024}
+                        chartData2023={chartData2023}
+                        chartData2022={chartData2022}
+                        chartData2021={chartData2021}
                         activeDataset={activeDataset}
                         availableDatasets={datasets}
                         onDatasetChange={handleDatasetChange}

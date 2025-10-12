@@ -256,7 +256,7 @@ const parseElection2021 = async (): Promise<Dataset> => {
                 const partyColumns = ['LAB', 'CON', 'LD', 'GREEN', 'REF', 'IND'];
 
                 results.data.forEach((row: any) => {
-                    const wardCode = row['Ward code']?.trim();
+                    const wardCode = row['Ward/ED code']?.trim();
                     if (!wardCode) return;
 
                     let maxVotes = 0;
