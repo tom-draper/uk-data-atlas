@@ -24,14 +24,10 @@ export default function MapsPage() {
 	const [loading, setLoading] = useState(true);
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 	const [allGeoJSON, setAllGeoJSON] = useState<any>(null);
-	const [chartData2024, setChartData2024] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
-	const [chartData2023, setChartData2023] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
-	const [chartData2022, setChartData2022] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
-	const [chartData2021, setChartData2021] = useState<ChartData>({ LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 });
+	const [aggregatedChartData, setAggregatedChartData] = useState<ChartData | null>(null);
 	const [chartTitle, setChartTitle] = useState<string>('Greater Manchester');
 	const [chartWardCode, setChartWardCode] = useState<string>('');
 	const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
-	const [genderFilter, setGenderFilter] = useState<'total' | 'males' | 'females'>('total');
 	const mapManagerRef = useRef<MapManager | null>(null);
 
 	const allDatasets = useMemo(() => {
@@ -134,6 +130,7 @@ export default function MapsPage() {
 					: activeDatasetId === '2022' ? geojson2022
 						: activeDatasetId === '2021' ? geojson2021
 							: geojson2024;
+				console.log(`Using ${activeDatasetId} geojson ward boundaries`)
 
 				setAllGeoJSON(activeGeoJSON);
 
@@ -207,74 +204,34 @@ export default function MapsPage() {
 
 				mapManagerRef.current = new MapManager(map.current!, {
 					onWardHover: (data, wardName, wardCode) => {
-						console.log('Hovering:', wardName, wardCode)
+						console.log('--- Ward Hover Debug ---');
+						console.log('Hovered Ward Name (from Map):', wardName);
+						console.log('Hovered Ward Code (from Map):', wardCode); // GeoJSON code
+						console.log('Population Data Keys (first 5):', Object.keys(populationData).slice(0, 5));
 						
 						// Try to find population data by ward code first, then by name
 						let populationWardCode = wardCode;
 						if (!(wardCode in populationData)) {
 							const normalizedName = wardName.toLowerCase().trim();
 							populationWardCode = wardNameToPopCode[normalizedName] || '';
-							console.log('Mapped ward name to code:', normalizedName, '->', populationWardCode);
+							console.log('Mapped Pop Code (by Name Lookup):', populationWardCode); // Pop Data code
 						}
-						
+
+						if (!populationData[populationWardCode]) {
+							console.log('FINAL MAPPED POPULATION CODE HAS NO DATA:', populationWardCode);
+						}
+
 						if (data) {
-							// Look up data from ALL datasets
-							const data2024Obj: ChartData = {
-								LAB: (wardDataRef.current.data2024[wardCode]?.LAB as number) || 0,
-								CON: (wardDataRef.current.data2024[wardCode]?.CON as number) || 0,
-								LD: (wardDataRef.current.data2024[wardCode]?.LD as number) || 0,
-								GREEN: (wardDataRef.current.data2024[wardCode]?.GREEN as number) || 0,
-								REF: (wardDataRef.current.data2024[wardCode]?.REF as number) || 0,
-								IND: (wardDataRef.current.data2024[wardCode]?.IND as number) || 0
-							};
-
-							const data2023Obj: ChartData = {
-								LAB: (wardDataRef.current.data2023[wardCode]?.LAB as number) || 0,
-								CON: (wardDataRef.current.data2023[wardCode]?.CON as number) || 0,
-								LD: (wardDataRef.current.data2023[wardCode]?.LD as number) || 0,
-								GREEN: (wardDataRef.current.data2023[wardCode]?.GREEN as number) || 0,
-								REF: (wardDataRef.current.data2023[wardCode]?.REF as number) || 0,
-								IND: (wardDataRef.current.data2023[wardCode]?.IND as number) || 0
-							};
-
-							const data2022Obj: ChartData = {
-								LAB: (wardDataRef.current.data2022[wardCode]?.LAB as number) || 0,
-								CON: (wardDataRef.current.data2022[wardCode]?.CON as number) || 0,
-								LD: (wardDataRef.current.data2022[wardCode]?.LD as number) || 0,
-								GREEN: (wardDataRef.current.data2022[wardCode]?.GREEN as number) || 0,
-								REF: (wardDataRef.current.data2022[wardCode]?.REF as number) || 0,
-								IND: (wardDataRef.current.data2022[wardCode]?.IND as number) || 0
-							};
-
-							const data2021Obj: ChartData = {
-								LAB: (wardDataRef.current.data2021[wardCode]?.LAB as number) || 0,
-								CON: (wardDataRef.current.data2021[wardCode]?.CON as number) || 0,
-								LD: (wardDataRef.current.data2021[wardCode]?.LD as number) || 0,
-								GREEN: (wardDataRef.current.data2021[wardCode]?.GREEN as number) || 0,
-								REF: (wardDataRef.current.data2021[wardCode]?.REF as number) || 0,
-								IND: (wardDataRef.current.data2021[wardCode]?.IND as number) || 0
-							};
-
-							// Update all chart datasets
-							setChartData2024(data2024Obj);
-							setChartData2023(data2023Obj);
-							setChartData2022(data2022Obj);
-							setChartData2021(data2021Obj);
-
 							setChartTitle(wardName);
-							setChartWardCode(populationWardCode); // Use the mapped population ward code
+							setChartWardCode(wardCode); // Use the mapped population ward code
+							setAggregatedChartData(null); // Clear aggregated data on ward hover
 						} else {
 							console.log('No data for ward hover');
 						}
 					},
 					onLocationChange: (stats, location) => {
 						console.log('📍 Location change:', location.name);
-						// Set stats for all datasets
-						setChartData2024(stats);
-						setChartData2023(stats);
-						setChartData2022(stats);
-						setChartData2021(stats);
-
+						setAggregatedChartData(stats);
 						setChartTitle(location.name);
 						setChartWardCode('');
 					}
@@ -282,6 +239,9 @@ export default function MapsPage() {
 
 				const initialLocation = LOCATIONS[0];
 				const locationStats = calculateLocationStats(initialLocation, activeGeoJSON, activeWardData);
+
+				setAggregatedChartData(locationStats);
+
 				mapManagerRef.current.updateMapForLocation(
 					initialLocation,
 					activeGeoJSON,
@@ -332,6 +292,9 @@ export default function MapsPage() {
 			}
 
 			const locationStats = calculateLocationStats(location, allGeoJSON, wardData);
+
+			setAggregatedChartData(locationStats);
+
 			mapManagerRef.current.updateMapForLocation(
 				location,
 				allGeoJSON,
@@ -349,11 +312,13 @@ export default function MapsPage() {
 
 	const handleDatasetChange = (datasetId: string) => {
 		setActiveDatasetId(datasetId);
-		setChartTitle('Greater Manchester');
+
+		const initialLocation = LOCATIONS[0];
+		setChartTitle(initialLocation.name);
 		setChartWardCode('');
 
 		// Reset and reload map with new dataset
-		if (mapManagerRef.current && map.current) {
+		if (mapManagerRef.current && map.current & allGeoJSON) {
 			const newDataset = allDatasets.find(d => d.id === datasetId);
 			if (!newDataset) return;
 
@@ -369,6 +334,9 @@ export default function MapsPage() {
 
 			const initialLocation = LOCATIONS[0];
 			const locationStats = calculateLocationStats(initialLocation, allGeoJSON, wardData);
+
+			setAggregatedChartData(locationStats);
+
 			mapManagerRef.current.updateMapForLocation(
 				initialLocation,
 				allGeoJSON,
@@ -406,13 +374,11 @@ export default function MapsPage() {
 						title={chartTitle}
 						wardCode={chartWardCode}
 						population={populationData}
-						chartData2024={chartData2024}
-						chartData2023={chartData2023}
-						chartData2022={chartData2022}
-						chartData2021={chartData2021}
 						activeDataset={activeDataset}
 						availableDatasets={allDatasets}
 						onDatasetChange={handleDatasetChange}
+                        wardData={wardDataRef.current}
+                        aggregatedData={aggregatedChartData}
 					/>
 				</div>
 			</div>
