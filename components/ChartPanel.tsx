@@ -20,6 +20,12 @@ interface ChartPanelProps {
 	availableDatasets: Dataset[];
 	onDatasetChange: (datasetId: string) => void;
 	aggregatedData: ChartData | null;
+	aggregatedDataAllYears: {
+		data2024: ChartData | null;
+		data2023: ChartData | null;
+		data2022: ChartData | null;
+		data2021: ChartData | null;
+	};
 	wardCodeMap: { [name: string]: string };
 }
 
@@ -32,6 +38,7 @@ export const ChartPanel = ({
 	availableDatasets,
 	onDatasetChange,
 	aggregatedData,
+    aggregatedDataAllYears,
 	wardCodeMap
 }: ChartPanelProps) => {
 	console.log('ChartPanel render:', { 
@@ -68,6 +75,7 @@ export const ChartPanel = ({
 						wardCode={wardCode}
 						wardData={wardData}
 						aggregatedData={aggregatedData}
+                        aggregatedDataAllYears={aggregatedDataAllYears}
 					/>
 					{/* Population Section */}
 					<div className="pt-3 border-t border-gray-200">

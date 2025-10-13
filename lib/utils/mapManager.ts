@@ -21,11 +21,13 @@ export class MapManager {
     calculateAndCacheLocation(
         location: LocationBounds,
         geoData: any,
-        wardData: Record<string, WardData>
+        wardData: Record<string, WardData>,
+        year: string = ''
     ): ChartData {
-        if (this.cache[location.name]) {
-            console.log('Using cached data for', location.name);
-            return this.cache[location.name];
+        const key = location.name + year;
+        if (this.cache[key]) {
+            console.log('Using cached data for', key);
+            return this.cache[key];
         }
 
         // Aggregate stats for all wards within this location

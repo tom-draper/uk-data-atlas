@@ -17,6 +17,12 @@ interface LocalElectionResultChartProps {
 	wardCode: string;
 	wardData: AllYearsWardData | null;
 	aggregatedData: ChartData | null;
+	aggregatedDataAllYears: {
+		data2024: ChartData | null;
+		data2023: ChartData | null;
+		data2022: ChartData | null;
+		data2021: ChartData | null;
+	};
 }
 
 export const LocalElectionResultChart = ({
@@ -26,14 +32,11 @@ export const LocalElectionResultChart = ({
 	wardCode,
 	wardData,
 	aggregatedData,
+	aggregatedDataAllYears,
 }: LocalElectionResultChartProps) => {
 	const { chartData2024, chartData2023, chartData2022, chartData2021 } = useMemo(() => {
-		const getChartData = (yearData: any): ChartData | undefined => {
-			// If aggregated data is provided (location selected), use it
-			if (aggregatedData) {
-				return aggregatedData;
-			}
-			// If a specific ward is hovered, look up its data for the given year
+		const getChartData = (yearData: any, year: string): ChartData | undefined => {
+			// If we have a specific ward selected (hovering), use that ward's data
 			if (wardCode && wardCode.trim() && yearData && yearData[wardCode]) {
 				const data = yearData[wardCode];
 				return {
@@ -45,19 +48,31 @@ export const LocalElectionResultChart = ({
 					IND: (data.IND as number) || 0,
 				};
 			}
+
+			// If viewing a location (no ward hovered), only show aggregated data for active year
+			// Historical years don't have cached location aggregations
+			if (!wardCode && aggregatedDataAllYears[`data${year}`]) {
+				return aggregatedDataAllYears[`data${year}`];
+			}
+
+			// No data available for this combination
+			if (!wardCode) {
+				console.log(`No aggregated data for ${year} (only active year ${activeDataset.id} has aggregation)`);
+			}
 			return undefined;
 		};
 
-		// Check if wardData exists before accessing its properties
+		// Calculate data for each year independently
 		const data = {
-			chartData2024: getChartData(wardData?.data2024),
-			chartData2023: getChartData(wardData?.data2023),
-			chartData2022: getChartData(wardData?.data2022),
-			chartData2021: getChartData(wardData?.data2021),
+			chartData2024: getChartData(wardData?.data2024, '2024'),
+			chartData2023: getChartData(wardData?.data2023, '2023'),
+			chartData2022: getChartData(wardData?.data2022, '2022'),
+			chartData2021: getChartData(wardData?.data2021, '2021'),
 		};
-		
+
+		console.log('Computed chart data:', data);
 		return data;
-	}, [wardCode, wardData, aggregatedData]);
+	}, [wardCode, wardData, aggregatedData, activeDataset]);
 
 	const dataset2024 = availableDatasets.find(d => d.id === '2024');
 	const dataset2023 = availableDatasets.find(d => d.id === '2023');
