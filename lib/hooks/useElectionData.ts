@@ -23,6 +23,8 @@ const parseElection2024 = async (): Promise<Dataset> => {
                     const wardCode = row['Ward code']?.trim();
                     if (!wardCode) return;
 
+                    console.log(row);
+
                     let maxVotes = 0;
                     let winningParty = 'OTHER';
                     const partyVotes: Record<string, number> = {};
@@ -39,6 +41,8 @@ const parseElection2024 = async (): Promise<Dataset> => {
                     wardWinners[wardCode] = winningParty;
                     allWardData[wardCode] = {
                         wardName: row['Ward name'] || 'Unknown',
+                        localAuthorityName: row['Local authority name'] || 'Unknown',
+                        localAuthorityCode: row['Local authority code'] || 'Unknown',
                         ...partyVotes
                     };
                 });
@@ -117,7 +121,6 @@ const parseCouncil2023 = async (): Promise<Dataset> => {
                     const nameKey = `${county}|${district}|${ward}`;
                     
                     let maxVotes = 0;
-                    let winningParty = 'OTHER';
                     const partyVotes: Record<string, number> = {};
 
                     partyColumns.forEach(party => {
@@ -132,7 +135,6 @@ const parseCouncil2023 = async (): Promise<Dataset> => {
                         partyVotes[party] = votes;
                         if (votes > maxVotes) {
                             maxVotes = votes;
-                            winningParty = party;
                         }
                     });
 
@@ -211,6 +213,8 @@ const parseElection2022 = async (): Promise<Dataset> => {
                     wardWinners[wardCode] = winningParty;
                     allWardData[wardCode] = {
                         wardName: row['Ward name'] || 'Unknown',
+                        localAuthorityName: row['Local authority name'] || 'Unknown',
+                        localAuthorityCode: row['Local authority code'] || 'Unknown',
                         ...partyVotes
                     };
                 });
@@ -273,6 +277,8 @@ const parseElection2021 = async (): Promise<Dataset> => {
                     wardWinners[wardCode] = winningParty;
                     allWardData[wardCode] = {
                         wardName: row['Ward name'] || 'Unknown',
+                        localAuthorityName: row['Local authority name'] || 'Unknown',
+                        localAuthorityCode: row['Local authority code'] || 'Unknown',
                         ...partyVotes
                     };
                 });

@@ -17,7 +17,7 @@ export const PopulationChart = ({
 	wardCodeMap
 }: PopulationChartProps) => {
 	const populationStats = useMemo(() => {
-		if (Object.keys(population).length === 0) return null;
+		if (!population || Object.keys(population).length === 0) return null;
 
 		const calculateTotal = (ageData: { [age: string]: number }) => {
 			return Object.values(ageData).reduce((sum, count) => sum + count, 0);

@@ -8,6 +8,8 @@ interface ChartPanelProps {
 	title: string;
 	wardName: string;
 	wardCode: string;
+	localAuthorityName: string;
+	localAuthorityCode: string;
 	population: PopulationWardData;
 	activeDataset: Dataset;
 	availableDatasets: Dataset[];
@@ -21,6 +23,8 @@ export const ChartPanel = ({
 	title,
 	wardName,
 	wardCode,
+	localAuthorityName,
+	localAuthorityCode,
 	population,
 	activeDataset,
 	availableDatasets,
@@ -33,9 +37,17 @@ export const ChartPanel = ({
 		<div className="pointer-events-auto p-[10px] flex flex-col h-full w-[320px]">
 			<div className="bg-[rgba(255,255,255,0.6)] rounded-md backdrop-blur-md shadow-lg h-[100%] p-3 flex flex-col overflow-y-auto">
 				{/* Header */}
-				<div className="min-h-[45px] pb-2 border-b border-gray-200">
+				<div className="pb-2 border-b border-gray-200">
 					<h2 className="font-semibold text-sm">{title}</h2>
-					{wardCode && <div className="text-gray-500 text-xs">{wardCode}</div>}
+					<div className="text-gray-500 text-xs">
+						{wardCode ? (
+							<div className="flex space-x-1">
+								<span className="flex-grow">{localAuthorityName}</span>
+								<span>{localAuthorityCode}</span>
+								<span>{wardCode}</span>
+							</div>
+						): 'North West, England'}
+					</div>
 				</div>
 
 				{/* Main Content Area */}

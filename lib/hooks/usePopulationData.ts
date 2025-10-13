@@ -2,10 +2,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
-import { PopulationWardData, AgeData } from '@/lib/types';
+import { PopulationWardData, AgeData, Dataset } from '@/lib/types';
 
 export const usePopulationData = () => {
-	const [populationData, setPopulationData] = useState<PopulationWardData>({});
+	const [populationData, setPopulationData] = useState<Dataset[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>('');
 
@@ -119,7 +119,20 @@ export const usePopulationData = () => {
 					};
 				});
 
-				setPopulationData(combinedData);
+				const populationDatasetsArray: Dataset[] = [
+					{
+						id: 'pop-persons',
+						name: 'Population (Total) 2020',
+						year: 2020,
+						type: 'population',
+						populationData: populationData,
+						partyInfo: [
+							{ key: 'TOTAL', name: 'Total Population', color: '#3b82f6' }
+						],
+					},
+				];
+				setPopulationData(populationDatasetsArray);
+
 				setLoading(false);
 			} catch (err) {
 				console.error('Population data loading error:', err);
@@ -133,5 +146,5 @@ export const usePopulationData = () => {
 		loadPopulationData();
 	}, []);
 
-	return { populationData, loading, error };
+	return { datasets: populationData, loading, error };
 };

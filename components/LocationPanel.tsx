@@ -32,8 +32,8 @@ export const LocationPanel = ({ selectedLocation, onLocationClick }: LocationPan
                                     onClick={() => onLocationClick(location)}
                                     className={`w-full text-left px-0 py-[2px] rounded transition-colors text-xs cursor-pointer ${
                                         selectedLocation === location.name
-                                            ? 'text-black font-bold'
-                                            : 'hover:font-bold text-[gray]'
+                                            ? 'text-black'
+                                            : 'hover:text-black text-[gray]'
                                     }`}
                                 >
                                     {location.name}
