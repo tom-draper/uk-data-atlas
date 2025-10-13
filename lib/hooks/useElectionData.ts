@@ -101,8 +101,6 @@ const parseCouncil2023 = async (): Promise<Dataset> => {
                     return;
                 }
 
-                console.log('Results', results);
-
                 // Create lookup map for matching ward names to IDs later
                 const wardNameLookup: Record<string, string> = {};
 

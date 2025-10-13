@@ -24,12 +24,15 @@ export interface Party {
     color: string;
 }
 
-export interface PopulationData {
+export interface AgeData {
+    [age: string]: number; // age -> count mapping (e.g., "0": 157, "1": 150, etc.)
+}
+
+export interface PopulationWardData {
     [wardCode: string]: {
-        FEMALES?: number;
-        MALES?: number;
-        PERSONS?: number;
-        [key: string]: number | undefined;
+        total: AgeData;
+        males: AgeData;
+        females: AgeData;
     };
 }
 
@@ -37,9 +40,9 @@ export interface Dataset {
     id: string;
     name: string;
     year: number;
-    wardResults: Record<string, string>;
-    wardData: Record<string, WardData>;
-    populationData?: PopulationData; // Add population data field
-    partyColumns: string[];
+    type: 'election' | 'population';
+    wardResults?: any;
+    wardData?: any;
+    populationData?: PopulationWardData;
     partyInfo: Party[];
 }
