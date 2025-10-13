@@ -24,12 +24,22 @@ export interface Party {
     color: string;
 }
 
+export interface PopulationData {
+    [wardCode: string]: {
+        FEMALES?: number;
+        MALES?: number;
+        PERSONS?: number;
+        [key: string]: number | undefined;
+    };
+}
+
 export interface Dataset {
     id: string;
     name: string;
     year: number;
     wardResults: Record<string, string>;
     wardData: Record<string, WardData>;
+    populationData?: PopulationData; // Add population data field
     partyColumns: string[];
     partyInfo: Party[];
 }

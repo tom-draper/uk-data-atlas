@@ -1,8 +1,10 @@
 // page.tsx
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useElectionData } from '@/lib/hooks/useElectionData';
+import { usePopulationData } from '@/lib/hooks/usePopulationData';
 import { LocationPanel } from '@/components/LocationPanel';
 import { LegendPanel } from '@/components/LegendPanel';
 import { ChartPanel } from '@/components/ChartPanel';
@@ -11,12 +13,12 @@ import { MapManager } from '@/lib/utils/mapManager';
 import { calculateLocationStats, mapWard2023ToGeojson } from '@/lib/utils/statsCalculator';
 import { LOCATIONS } from '@/lib/data/locations';
 import { ChartData, LocationBounds } from '@/lib/types';
-import mapboxgl from 'mapbox-gl';
 
 export default function MapsPage() {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
     const { datasets, loading: dataLoading, error: dataError } = useElectionData();
+    const { populationDatasets, loading: popLoading, error: popError } = usePopulationData();
 
     const [error, setError] = useState<string>(dataError || '');
     const [loading, setLoading] = useState(true);
