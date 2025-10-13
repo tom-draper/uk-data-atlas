@@ -26,7 +26,9 @@ export default function MapsPage() {
 	const [allGeoJSON, setAllGeoJSON] = useState<any>(null);
 	const [aggregatedChartData, setAggregatedChartData] = useState<ChartData | null>(null);
 	const [chartTitle, setChartTitle] = useState<string>('Greater Manchester');
+	const [chartWardName, setChartWardName] = useState<string>('');
 	const [chartWardCode, setChartWardCode] = useState<string>('');
+	const [wardNameToPopCodeMap, setWardNameToPopCodeMap] = useState<{ [name: string]: string }>({});
 	const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
 	const mapManagerRef = useRef<MapManager | null>(null);
 
@@ -184,49 +186,59 @@ export default function MapsPage() {
 					activeWardData = data2021;
 				}
 
-				// Create a ward name to code mapping for population data
+				// Create and store the ward name to code mapping in state
 				const wardNameToPopCode: { [name: string]: string } = {};
 				for (const wardCode of Object.keys(populationData)) {
-					// Find the ward name from the GeoJSON
-					const feature = activeGeoJSON.features.find((f: any) => 
-						f.properties.WD23CD === wardCode || 
-						f.properties.WD24CD === wardCode ||
-						f.properties.WD22CD === wardCode ||
-						f.properties.WD21CD === wardCode
+					const feature = activeGeoJSON.features.find((f: any) =>
+						f.properties.WD23CD === wardCode || f.properties.WD24CD === wardCode ||
+						f.properties.WD22CD === wardCode || f.properties.WD21CD === wardCode
 					);
 					if (feature) {
-						const name = (feature.properties.WD23NM || feature.properties.WD24NM || feature.properties.WD22NM || feature.properties.WD21NM || '').toLowerCase().trim();
-						if (name) {
-							wardNameToPopCode[name] = wardCode;
-						}
+						const name = (feature.properties.WD23NM || '').toLowerCase().trim();
+						if (name) wardNameToPopCode[name] = wardCode;
 					}
 				}
+				setWardNameToPopCodeMap(wardNameToPopCode);
 
 				mapManagerRef.current = new MapManager(map.current!, {
+					// onWardHover: (data, wardName, wardCode) => {
+					// 	if (data) {
+					// 		setChartTitle(wardName);
+					// 		setChartWardCode(wardCode); // Use the mapped population ward code
+					// 		setChartWardName(wardName); // Use the mapped population ward code
+					// 		setAggregatedChartData(null); // Clear aggregated data on ward hover
+					// 	} else {
+					// 		console.log('No data for ward hover');
+					// 	}
+					// },
 					onWardHover: (data, wardName, wardCode) => {
-						console.log('--- Ward Hover Debug ---');
-						console.log('Hovered Ward Name (from Map):', wardName);
-						console.log('Hovered Ward Code (from Map):', wardCode); // GeoJSON code
-						console.log('Population Data Keys (first 5):', Object.keys(populationData).slice(0, 5));
-						
-						// Try to find population data by ward code first, then by name
-						let populationWardCode = wardCode;
-						if (!(wardCode in populationData)) {
-							const normalizedName = wardName.toLowerCase().trim();
-							populationWardCode = wardNameToPopCode[normalizedName] || '';
-							console.log('Mapped Pop Code (by Name Lookup):', populationWardCode); // Pop Data code
-						}
-
-						if (!populationData[populationWardCode]) {
-							console.log('FINAL MAPPED POPULATION CODE HAS NO DATA:', populationWardCode);
-						}
-
 						if (data) {
 							setChartTitle(wardName);
-							setChartWardCode(wardCode); // Use the mapped population ward code
+							setChartWardCode(wardCode);
+							setChartWardName(wardName);
 							setAggregatedChartData(null); // Clear aggregated data on ward hover
 						} else {
-							console.log('No data for ward hover');
+							// Restore the current location's aggregated data when leaving a ward
+							if (selectedLocation) {
+								const currentLocation = LOCATIONS.find(loc => loc.name === selectedLocation);
+								if (currentLocation && allGeoJSON && wardDataRef.current) {
+									// Determine which ward data to use based on active dataset
+									let wardData = wardDataRef.current.data2024;
+									if (activeDatasetId === '2023') {
+										wardData = wardDataRef.current.data2023;
+									} else if (activeDatasetId === '2022') {
+										wardData = wardDataRef.current.data2022;
+									} else if (activeDatasetId === '2021') {
+										wardData = wardDataRef.current.data2021;
+									}
+
+									const locationStats = calculateLocationStats(currentLocation, allGeoJSON, wardData);
+									setAggregatedChartData(locationStats);
+									setChartTitle(currentLocation.name);
+									setChartWardCode('');
+									setChartWardName('');
+								}
+							}
 						}
 					},
 					onLocationChange: (stats, location) => {
@@ -234,6 +246,7 @@ export default function MapsPage() {
 						setAggregatedChartData(stats);
 						setChartTitle(location.name);
 						setChartWardCode('');
+						setChartWardName('');
 					}
 				});
 
@@ -284,6 +297,7 @@ export default function MapsPage() {
 			let wardResults = activeDataset.wardResults;
 			let wardData = activeDataset.wardData;
 
+			// 2023 data did not come with any ward codes, so find equivalent
 			if (activeDataset.id === '2023') {
 				const { wardResults: mapped, wardData: mappedData } =
 					mapWard2023ToGeojson(activeDataset, allGeoJSON);
@@ -325,6 +339,7 @@ export default function MapsPage() {
 			let wardResults = newDataset.wardResults;
 			let wardData = newDataset.wardData;
 
+			// 2023 data did not come with any ward codes, so find equivalent
 			if (datasetId === '2023') {
 				const { wardResults: mapped, wardData: mappedData } =
 					mapWard2023ToGeojson(newDataset, allGeoJSON);
@@ -377,8 +392,10 @@ export default function MapsPage() {
 						activeDataset={activeDataset}
 						availableDatasets={allDatasets}
 						onDatasetChange={handleDatasetChange}
-                        wardData={wardDataRef.current}
-                        aggregatedData={aggregatedChartData}
+						wardData={wardDataRef.current}
+						aggregatedData={aggregatedChartData}
+						wardName={chartWardName}
+						wardCodeMap={wardNameToPopCodeMap}
 					/>
 				</div>
 			</div>
