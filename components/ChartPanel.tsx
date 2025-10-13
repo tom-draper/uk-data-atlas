@@ -74,29 +74,52 @@ export const ChartPanel = ({
 					total: calculateAgeGroups(wardData.total),
 					males: calculateAgeGroups(wardData.males),
 					females: calculateAgeGroups(wardData.females),
-				}
+				},
+				isWardSpecific: true
 			};
 		} else {
-			const result = {
-				total: 0,
-				males: 0,
-				females: 0,
-				ageGroups: {
-					total: {},
-					males: {},
-					females: {}
-				}
-			}
-			for (const [wardCode, wardData] of Object.entries(population)) {
-				result.total += calculateTotal(wardData.total);
-				result.males += calculateTotal(wardData.males);
-				result.females += calculateTotal(wardData.females);
-				result.ageGroups.total = calculateAgeGroups(wardData.total);
-				result.ageGroups.males = calculateAgeGroups(wardData.males);
-				result.ageGroups.females = calculateAgeGroups(wardData.females);
+			// Debug: log if we have a wardCode but no matching population data
+			if (wardCode) {
+				console.log('Ward code provided but no matching population data:', wardCode);
+				console.log('Available population keys (first 5):', Object.keys(population).slice(0, 5));
 			}
 
-			return result;
+			// Aggregate all wards
+			let totalPop = 0;
+			let malesPop = 0;
+			let femalesPop = 0;
+			const aggregatedAgeGroups = {
+				total: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 },
+				males: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 },
+				females: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 }
+			};
+
+			for (const [_, wardData] of Object.entries(population)) {
+				totalPop += calculateTotal(wardData.total);
+				malesPop += calculateTotal(wardData.males);
+				femalesPop += calculateTotal(wardData.females);
+				
+				const wardAgeGroups = {
+					total: calculateAgeGroups(wardData.total),
+					males: calculateAgeGroups(wardData.males),
+					females: calculateAgeGroups(wardData.females)
+				};
+
+				// Aggregate age groups
+				Object.keys(aggregatedAgeGroups.total).forEach(ageGroup => {
+					aggregatedAgeGroups.total[ageGroup] += wardAgeGroups.total[ageGroup];
+					aggregatedAgeGroups.males[ageGroup] += wardAgeGroups.males[ageGroup];
+					aggregatedAgeGroups.females[ageGroup] += wardAgeGroups.females[ageGroup];
+				});
+			}
+
+			return {
+				total: totalPop,
+				males: malesPop,
+				females: femalesPop,
+				ageGroups: aggregatedAgeGroups,
+				isWardSpecific: false
+			};
 		}
 	}, [population, wardCode]);
 
@@ -204,7 +227,14 @@ export const ChartPanel = ({
 			<div className="space-y-3">
 				{/* Total Population Overview */}
 				<div className="bg-gradient-to-r from-blue-50 to-purple-50 p-2 rounded">
-					<div className="text-xs font-bold text-gray-700 mb-2">Population Overview</div>
+					<div className="text-xs font-bold text-gray-700 mb-2">
+						Population Overview
+						{populationStats.isWardSpecific && (
+							<span className="ml-2 text-[9px] bg-blue-500 text-white px-1.5 py-0.5 rounded font-semibold">
+								WARD
+							</span>
+						)}
+					</div>
 					<div className="grid grid-cols-3 gap-2 text-center">
 						<div>
 							<div className="text-[10px] text-gray-500">Total</div>

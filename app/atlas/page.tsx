@@ -196,8 +196,41 @@ export default function MapsPage() {
 					activeWardData = data2021;
 				}
 
+				// Create a ward name to code mapping for population data
+				const wardNameToPopCode: { [name: string]: string } = {};
+				for (const wardCode of Object.keys(populationData)) {
+					// Find the ward name from the GeoJSON
+					const feature = activeGeoJSON.features.find((f: any) => 
+						f.properties.WD23CD === wardCode || 
+						f.properties.WD24CD === wardCode ||
+						f.properties.WD22CD === wardCode ||
+						f.properties.WD21CD === wardCode
+					);
+					if (feature) {
+						const name = (feature.properties.WD23NM || feature.properties.WD24NM || feature.properties.WD22NM || feature.properties.WD21NM || '').toLowerCase().trim();
+						if (name) {
+							wardNameToPopCode[name] = wardCode;
+						}
+					}
+				}
+
+				console.log('📋 Created ward name mapping with', Object.keys(wardNameToPopCode).length, 'entries');
+				console.log('📋 Sample mappings:', Object.entries(wardNameToPopCode).slice(0, 3));
+
 				mapManagerRef.current = new MapManager(map.current!, {
 					onWardHover: (data, wardName, wardCode) => {
+						console.log('🎯 Ward hover triggered:', { wardName, wardCode, hasData: !!data });
+						
+						// Try to find population data by ward code first, then by name
+						let populationWardCode = wardCode;
+						if (!(wardCode in populationData)) {
+							const normalizedName = wardName.toLowerCase().trim();
+							populationWardCode = wardNameToPopCode[normalizedName] || '';
+							console.log('🔄 Mapped ward name to code:', normalizedName, '->', populationWardCode);
+						}
+						
+						console.log('🔍 Final population ward code:', populationWardCode, 'exists:', populationWardCode in populationData);
+						
 						if (data) {
 							// Look up data from ALL datasets
 							const data2024Obj: ChartData = {
@@ -237,16 +270,20 @@ export default function MapsPage() {
 							};
 
 							// Update all chart datasets
+							console.log('✅ Setting chart data for ward:', wardCode, 'using population code:', populationWardCode);
 							setChartData2024(data2024Obj);
 							setChartData2023(data2023Obj);
 							setChartData2022(data2022Obj);
 							setChartData2021(data2021Obj);
 
 							setChartTitle(wardName);
-							setChartWardCode(wardCode);
+							setChartWardCode(populationWardCode); // Use the mapped population ward code
+						} else {
+							console.log('❌ No data for ward hover');
 						}
 					},
 					onLocationChange: (stats, location) => {
+						console.log('📍 Location change:', location.name);
 						// Set stats for all datasets
 						setChartData2024(stats);
 						setChartData2023(stats);
@@ -297,7 +334,7 @@ export default function MapsPage() {
 				map.current.off('load', handleLoad);
 			}
 		};
-	}, [map, allDatasets.length, activeDatasetId]);
+	}, [map, allDatasets.length, activeDatasetId, populationData]);
 
 	const handleLocationClick = (location: LocationBounds) => {
 		setSelectedLocation(location.name);

@@ -23,7 +23,7 @@ export const LocationPanel = ({ selectedLocation, onLocationClick }: LocationPan
 
             <div className="pointer-events-auto p-[10px] pb-0 w-[320px] flex-grow">
                 <div className="bg-[rgba(255,255,255,0.6)] h-[100%] text-sm rounded-md backdrop-blur-md shadow-lg overflow-y-auto">
-                    <div className="p-[10px] border-b border-gray-200">
+                    <div className="p-[10px] border-b border-gray-200 h-[100%]">
                         <h2 className="font-semibold mb-2">Locations</h2>
                         <div className="space-y-0">
                             {LOCATIONS.map((location) => (
