@@ -67,7 +67,7 @@ const parseElection2024 = async (): Promise<Dataset> => {
     });
 };
 
-const parseCouncil2023 = async (): Promise<Dataset> => {
+const parseCouncil2023 = async (data2024?: Dataset): Promise<Dataset> => {
     const res = await fetch('/data/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv');
     const csvText = await res.text();
 
@@ -103,8 +103,19 @@ const parseCouncil2023 = async (): Promise<Dataset> => {
                     return;
                 }
 
-                // Create lookup map for matching ward names to IDs later
-                const wardNameLookup: Record<string, string> = {};
+                // Create lookup map for matching ward names to IDs from 2024 data
+                const wardName2024Lookup: Record<string, string> = {};
+                
+                if (data2024?.wardData) {
+                    Object.entries(data2024.wardData).forEach(([wardCode, data]) => {
+                        const normalizedName = data.wardName.toLowerCase().trim();
+                        const normalizedAuth = data.localAuthorityName?.toLowerCase().trim() || '';
+                        const key = `${normalizedAuth}|${normalizedName}`;
+                        wardName2024Lookup[key] = wardCode;
+                    });
+                }
+
+                const tempWardData: Record<string, any> = {};
 
                 results.data.forEach((row: any) => {
                     if (!row || typeof row !== 'object') return;
@@ -114,11 +125,9 @@ const parseCouncil2023 = async (): Promise<Dataset> => {
                     const ward = (row.WARDNAME || '').toString().trim();
                     
                     if (!ward) return;
-
-                    // Store by ward name for later lookup
-                    const nameKey = `${county}|${district}|${ward}`;
                     
                     let maxVotes = 0;
+                    let winningParty = 'OTHER';
                     const partyVotes: Record<string, number> = {};
 
                     partyColumns.forEach(party => {
@@ -133,21 +142,54 @@ const parseCouncil2023 = async (): Promise<Dataset> => {
                         partyVotes[party] = votes;
                         if (votes > maxVotes) {
                             maxVotes = votes;
+                            winningParty = party;
                         }
                     });
 
                     if (maxVotes > 0) {
-                        wardNameLookup[nameKey] = nameKey; // placeholder, will be updated during mapping
-                        allWardData[nameKey] = {
-                            wardName: ward,
-                            districtName: district,
-                            countyName: county,
-                            ...partyVotes
-                        };
+                        // Try to find matching ward code from 2024 data
+                        const normalizedWard = ward.toLowerCase().trim();
+                        const normalizedDistrict = district.toLowerCase().trim();
+                        
+                        // Try matching with district name first
+                        let lookupKey = `${normalizedDistrict}|${normalizedWard}`;
+                        let wardCode = wardName2024Lookup[lookupKey];
+                        
+                        if (!wardCode) {
+                            // Try with county name
+                            const normalizedCounty = county.toLowerCase().trim();
+                            lookupKey = `${normalizedCounty}|${normalizedWard}`;
+                            wardCode = wardName2024Lookup[lookupKey];
+                        }
+                        
+                        if (wardCode) {
+                            // Successfully mapped to a ward code
+                            wardWinners[wardCode] = winningParty;
+                            allWardData[wardCode] = {
+                                wardName: ward || 'Unknown',
+                                localAuthorityName: district || county || 'Unknown',
+                                localAuthorityCode: wardCode.substring(0, 9) || 'Unknown', // Extract LA code from ward code
+                                districtName: district || '',
+                                countyName: county || '',
+                                ...partyVotes
+                            };
+                        } else {
+                            // Store with original name key if no match found
+                            const nameKey = `${county}|${district}|${ward}`;
+                            tempWardData[nameKey] = {
+                                wardName: ward || 'Unknown',
+                                localAuthorityName: district || county || 'Unknown',
+                                districtName: district || '',
+                                countyName: county || '',
+                                winningParty,
+                                ...partyVotes
+                            };
+                        }
                     }
                 });
 
-                console.log('2023 parsed ward names:', Object.keys(allWardData).length);
+                console.log('2023 mapped to ward codes:', Object.keys(allWardData).length);
+                console.log('2023 unmapped wards:', Object.keys(tempWardData).length);
 
                 resolve({
                     id: '2023',
@@ -164,7 +206,7 @@ const parseCouncil2023 = async (): Promise<Dataset> => {
                         { key: 'REF', name: 'Reform', color: '#12B6CF' },
                         { key: 'IND', name: 'Independent', color: '#CCCCCC' }
                     ],
-                    wardNameLookup
+                    unmappedWards: tempWardData
                 });
             },
             error: (err) => {
@@ -311,9 +353,11 @@ export const useElectionData = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const [data2024, data2023, data2022, data2021] = await Promise.all([
-                    parseElection2024(),
-                    parseCouncil2023().catch(() => null),
+                // Load 2024 data first to use for mapping 2023 ward names
+                const data2024 = await parseElection2024();
+                
+                const [data2023, data2022, data2021] = await Promise.all([
+                    parseCouncil2023(data2024).catch(() => null),
                     parseElection2022(),
                     parseElection2021(),
                 ]);

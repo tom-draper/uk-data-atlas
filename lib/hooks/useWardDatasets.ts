@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { mapWard2023ToGeojson } from '@/lib/utils/statsCalculator';
 import type { Dataset } from '@/lib/types';
 
 export function useWardDatasets(allDatasets: Dataset[], activeDatasetId: string, populationDatasets: any[]) {
@@ -40,12 +39,6 @@ export function useWardDatasets(allDatasets: Dataset[], activeDatasetId: string,
             let data2022 = dataset2022?.wardData || {};
             let results2021 = dataset2021?.wardResults || {};
             let data2021 = dataset2021?.wardData || {};
-
-            if (dataset2023) {
-                const { wardResults: mapped2023Results, wardData: mapped2023Data } = mapWard2023ToGeojson(dataset2023, geojson2023);
-                results2023 = mapped2023Results;
-                data2023 = mapped2023Data;
-            }
 
             const activeResults = activeDatasetId === '2023' ? results2023 : activeDatasetId === '2022' ? results2022 : activeDatasetId === '2021' ? results2021 : results2024;
             const activeData = activeDatasetId === '2023' ? data2023 : activeDatasetId === '2022' ? data2022 : activeDatasetId === '2021' ? data2021 : data2024;

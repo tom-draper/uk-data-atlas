@@ -41,15 +41,6 @@ export const ChartPanel = ({
     aggregatedDataAllYears,
 	wardCodeMap
 }: ChartPanelProps) => {
-	console.log('ChartPanel render:', { 
-		title, 
-		wardCode, 
-		wardCodeLength: wardCode?.length,
-		hasPopulation: !!population,
-		populationKeys: population ? Object.keys(population).length : 0,
-		wardCodeMapKeys: wardCodeMap ? Object.keys(wardCodeMap).length : 0
-	});
-
 	return (
 		<div className="pointer-events-auto p-[10px] flex flex-col h-full w-[320px]">
 			<div className="bg-[rgba(255,255,255,0.6)] rounded-md backdrop-blur-md shadow-lg h-[100%] p-3 flex flex-col overflow-y-auto">

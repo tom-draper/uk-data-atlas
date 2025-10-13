@@ -45,12 +45,6 @@ export const PopulationChart = ({
 				resolvedPopCode = wardCodeMap[normalizedName] || '';
 			}
 
-			console.log('wardName', wardName);
-			console.log('wardCode', wardCode);
-			console.log('population', population);
-			console.log('wardCodeMap', wardCodeMap);
-			console.log('resolvedPopCode', resolvedPopCode);
-
 			// If we found valid data for this specific ward, calculate its stats.
 			if (resolvedPopCode && population[resolvedPopCode]) {
 				const wardData = population[resolvedPopCode];

@@ -70,7 +70,6 @@ export const LocalElectionResultChart = ({
 			chartData2021: getChartData(wardData?.data2021, '2021'),
 		};
 
-		console.log('Computed chart data:', data);
 		return data;
 	}, [wardCode, wardData, aggregatedData, activeDataset]);
 

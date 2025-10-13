@@ -54,10 +54,6 @@ export default function MapsPage() {
         };
     }, [electionDatasets]);
 
-    console.log('allYearsWardData:', allYearsWardData);
-    console.log('populationDatasets:', populationDatasets);
-    console.log('populationData:', populationDatasets[0]?.populationData);
-
     const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
         mapContainer.current = el;
 
@@ -88,27 +84,29 @@ export default function MapsPage() {
         mapRef: map,
         geojson: activeGeoJSON,
         onWardHover: (params) => {
-            console.log('onWardHover called in page.tsx - full params:', params);
-            console.log('params.data:', params.data);
-            console.log('params.wardCode:', params.wardCode);
-
             const { data, wardCode } = params;
-            console.log('After destructuring - data:', data, 'wardCode:', wardCode);
 
             if (!data) {
-                console.log('No data, clearing selection');
+                // Revert to location
+                setChartTitle(selectedLocation || '');
                 setSelectedWardCode('');
                 setSelectedWard(null);
+                const currentLocation = LOCATIONS.find(location => location.name === selectedLocation);
+                const currentStats = mapManagerRef.current.calculateAndCacheLocation(
+                    currentLocation,
+                    activeGeoJSON,
+                    wardData
+
+                );
+                setAggregatedChartData(currentStats);
                 return;
             }
-            console.log('Setting wardCode to:', wardCode);
             setChartTitle(data.wardName || '');
             setSelectedWardCode(wardCode);
             setSelectedWard(data);
             setAggregatedChartData(null);
         },
         onLocationChange: (stats, location) => {
-            console.log('onLocationChange called - location:', location.name);
             setChartTitle(location.name);
             setSelectedWardCode('');
             setSelectedWard(null);
@@ -127,7 +125,7 @@ export default function MapsPage() {
             initialLocation,
             activeGeoJSON,
             wardData
-            
+
         );
         setAggregatedChartData(currentStats);
 
@@ -249,23 +247,18 @@ export default function MapsPage() {
 
                 <div className="absolute right-0 flex h-full">
                     <LegendPanel activeDataset={activeDataset} />
-                    {(() => {
-                        console.log('Rendering ChartPanel with wardCode:', selectedWardCode);
-                        return (
-                            <ChartPanel
-                                title={chartTitle}
-                                wardCode={selectedWardCode}
-                                wardData={allYearsWardData}
-                                population={populationDatasets[0]?.populationData ?? {}}
-                                activeDataset={activeDataset}
-                                availableDatasets={allDatasets}
-                                onDatasetChange={handleDatasetChange}
-                                aggregatedData={aggregatedChartData}
-                                aggregatedDataAllYears={aggregatedChartDataAllYears}
-                                wardCodeMap={wardNameToPopCode}
-                            />
-                        );
-                    })()}
+                    <ChartPanel
+                        title={chartTitle}
+                        wardCode={selectedWardCode}
+                        wardData={allYearsWardData}
+                        population={populationDatasets[0]?.populationData ?? {}}
+                        activeDataset={activeDataset}
+                        availableDatasets={allDatasets}
+                        onDatasetChange={handleDatasetChange}
+                        aggregatedData={aggregatedChartData}
+                        aggregatedDataAllYears={aggregatedChartDataAllYears}
+                        wardCodeMap={wardNameToPopCode}
+                    />
                 </div>
             </div>
 
