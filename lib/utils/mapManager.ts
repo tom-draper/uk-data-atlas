@@ -69,6 +69,7 @@ export class MapManager {
         locationStats: ChartData,
         partyInfo: Party[]
     ) {
+        console.log('updateMap', location, geoData, wardData, wardResults)
         // Determine ward code property from the first feature
         const firstFeature = geoData.features[0];
         const wardCodeProp = firstFeature?.properties.WD23CD ? 'WD23CD'
