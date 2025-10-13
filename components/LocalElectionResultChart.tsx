@@ -1,15 +1,22 @@
 // components/LocalElectionResultChart.tsx
 'use client';
-import { ChartData, Dataset } from '@/lib/types';
+import { ChartData, Dataset, WardData } from '@/lib/types';
 import { useMemo } from 'react';
+
+interface AllYearsWardData {
+	data2024: { [wardCode: string]: any };
+	data2023: { [wardCode: string]: any };
+	data2022: { [wardCode: string]: any };
+	data2021: { [wardCode: string]: any };
+}
 
 interface LocalElectionResultChartProps {
 	activeDataset: Dataset;
 	availableDatasets: Dataset[];
 	onDatasetChange: (datasetId: string) => void;
-	wardCode: string; // The currently hovered ward code
-	wardData: any; // The ref object containing all years' data
-	aggregatedData: ChartData | null; // Data for an entire location (e.g., Manchester)
+	wardCode: string;
+	wardData: AllYearsWardData | null;
+	aggregatedData: ChartData | null;
 }
 
 export const LocalElectionResultChart = ({
@@ -20,16 +27,14 @@ export const LocalElectionResultChart = ({
 	wardData,
 	aggregatedData,
 }: LocalElectionResultChartProps) => {
-
-	// Calculate the chart data for all years based on the current context (ward or location)
 	const { chartData2024, chartData2023, chartData2022, chartData2021 } = useMemo(() => {
-		const getChartData = (yearData: any): ChartData => {
-			// If aggregated data is provided (location selected), use it for all charts
+		const getChartData = (yearData: any): ChartData | undefined => {
+			// If aggregated data is provided (location selected), use it
 			if (aggregatedData) {
 				return aggregatedData;
 			}
 			// If a specific ward is hovered, look up its data for the given year
-			if (wardCode && yearData && yearData[wardCode]) {
+			if (wardCode && wardCode.trim() && yearData && yearData[wardCode]) {
 				const data = yearData[wardCode];
 				return {
 					LAB: (data.LAB as number) || 0,
@@ -40,16 +45,18 @@ export const LocalElectionResultChart = ({
 					IND: (data.IND as number) || 0,
 				};
 			}
-			// Default to zero if no data
-			return { LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 };
+			return undefined;
 		};
 
-		return {
-			chartData2024: getChartData(wardData.data2024),
-			chartData2023: getChartData(wardData.data2023),
-			chartData2022: getChartData(wardData.data2022),
-			chartData2021: getChartData(wardData.data2021),
+		// Check if wardData exists before accessing its properties
+		const data = {
+			chartData2024: getChartData(wardData?.data2024),
+			chartData2023: getChartData(wardData?.data2023),
+			chartData2022: getChartData(wardData?.data2022),
+			chartData2021: getChartData(wardData?.data2021),
 		};
+		
+		return data;
 	}, [wardCode, wardData, aggregatedData]);
 
 	const dataset2024 = availableDatasets.find(d => d.id === '2024');
@@ -57,18 +64,16 @@ export const LocalElectionResultChart = ({
 	const dataset2022 = availableDatasets.find(d => d.id === '2022');
 	const dataset2021 = availableDatasets.find(d => d.id === '2021');
 
-	// ... (The rest of the component's rendering logic remains the same)
-	// renderCompactBar and renderYearBar functions do not need to change.
 	const renderCompactBar = (data: ChartData | undefined, dataset: Dataset) => {
 		if (!data) {
-			return <div className="text-xs text-gray-400 py-2">No data</div>;
+			return <div className="text-xs text-gray-400 py-2">No data available</div>;
 		}
 
 		const parties = dataset.partyInfo;
 		const totalVotes = parties.reduce((sum, p) => sum + (data[p.key] || 0), 0);
 
 		if (totalVotes === 0) {
-			return <div className="text-xs text-gray-400 py-2">No data</div>;
+			return <div className="text-xs text-gray-400 py-2">No votes recorded</div>;
 		}
 
 		return (
@@ -116,7 +121,10 @@ export const LocalElectionResultChart = ({
 	};
 
 	const renderYearBar = (year: string, data: ChartData | undefined, dataset: Dataset | undefined, isActive: boolean) => {
-		if (!dataset) return null;
+		if (!dataset) {
+			console.log(`Dataset for ${year} not found`);
+			return null;
+		}
 
 		const yearColors: Record<string, { bg: string; border: string; badge: string; text: string }> = {
 			'2024': { bg: 'bg-blue-50', border: 'border-blue-300', badge: 'bg-blue-300 text-blue-900', text: 'bg-blue-200 text-blue-800' },
@@ -148,7 +156,6 @@ export const LocalElectionResultChart = ({
 			</div>
 		);
 	};
-
 
 	return (
 		<div className="space-y-2">

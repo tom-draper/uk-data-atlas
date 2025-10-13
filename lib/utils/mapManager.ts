@@ -1,10 +1,9 @@
 // lib/utils/mapManager.ts
 import mapboxgl from 'mapbox-gl';
-import { LocationBounds, ChartData, WardData } from '@lib/types';
-import { PARTY_COLORS } from '@lib/data/parties';
+import { LocationBounds, ChartData, WardData, Party } from '@/lib/types';
 
 interface MapManagerCallbacks {
-    onWardHover: (wardData: WardData | null, wardName: string, wardCode: string) => void;
+    onWardHover: (params: { data: WardData | null; wardCode: string }) => void;
     onLocationChange: (stats: ChartData, location: LocationBounds) => void;
 }
 
@@ -12,10 +11,53 @@ export class MapManager {
     private map: mapboxgl.Map;
     private callbacks: MapManagerCallbacks;
     private lastHoveredFeatureId: any = null;
+    private cache: Record<string, ChartData> = {};
 
     constructor(map: mapboxgl.Map, callbacks: MapManagerCallbacks) {
         this.map = map;
         this.callbacks = callbacks;
+    }
+
+    calculateAndCacheLocation(
+        location: LocationBounds,
+        geoData: any,
+        wardData: Record<string, WardData>
+    ): ChartData {
+        if (this.cache[location.name]) {
+            console.log('Using cached data for', location.name);
+            return this.cache[location.name];
+        }
+
+        // Aggregate stats for all wards within this location
+        const wardsInLocation = geoData.features.filter((f: any) =>
+            location.lad_codes.includes(f.properties.LAD24CD)
+        );
+
+        const aggregated: ChartData = {
+            LAB: 0,
+            CON: 0,
+            LD: 0,
+            GREEN: 0,
+            REF: 0,
+            IND: 0,
+        };
+
+        wardsInLocation.forEach((f: any) => {
+            const code = f.properties.WD24CD;
+            const ward = wardData[code];
+            if (ward) {
+                // Assuming ward has party vote counts
+                aggregated.LAB += (ward.LAB as number) || 0;
+                aggregated.CON += (ward.CON as number) || 0;
+                aggregated.LD += (ward.LD as number) || 0;
+                aggregated.GREEN += (ward.GREEN as number) || 0;
+                aggregated.REF += (ward.REF as number) || 0;
+                aggregated.IND += (ward.IND as number) || 0;
+            }
+        });
+
+        this.cache[location.name] = aggregated;
+        return aggregated;
     }
 
     updateMapForLocation(
@@ -23,7 +65,8 @@ export class MapManager {
         geoData: any,
         wardResults: Record<string, string>,
         wardData: Record<string, WardData>,
-        locationStats: ChartData
+        locationStats: ChartData,
+        partyInfo: Party[]
     ) {
         const filteredFeatures = geoData.features.filter((f: any) =>
             location.lad_codes.includes(f.properties.LAD24CD)
@@ -42,7 +85,7 @@ export class MapManager {
 
         this.removeExistingLayers();
         this.addSource(locationData);
-        this.addLayers();
+        this.addLayers(partyInfo);
         this.setupEventHandlers(location, geoData, wardData);
 
         this.callbacks.onLocationChange(locationStats, location);
@@ -63,23 +106,23 @@ export class MapManager {
         });
     }
 
-    private addLayers() {
+    private addLayers(partyInfo: Party[]) {
+        // Build color match expression from partyInfo
+        const colorExpression: any[] = ['match', ['get', 'winningParty']];
+        
+        partyInfo.forEach(party => {
+            colorExpression.push(party.key, party.color);
+        });
+        
+        // Default color for no winner
+        colorExpression.push('#cccccc');
+
         this.map.addLayer({
             id: 'wards-fill',
             type: 'fill',
             source: 'location-wards',
             paint: {
-                'fill-color': [
-                    'match',
-                    ['get', 'winningParty'],
-                    'LAB', PARTY_COLORS.LAB,
-                    'CON', PARTY_COLORS.CON,
-                    'LD', PARTY_COLORS.LD,
-                    'GREEN', PARTY_COLORS.GREEN,
-                    'REF', PARTY_COLORS.REF,
-                    'IND', PARTY_COLORS.IND,
-                    PARTY_COLORS.NONE
-                ],
+                'fill-color': colorExpression,
                 'fill-opacity': [
                     'case',
                     ['boolean', ['feature-state', 'hover'], false],
@@ -123,7 +166,7 @@ export class MapManager {
                 );
             }
             this.map.getCanvas().style.cursor = '';
-            this.callbacks.onWardHover(null, '', '');
+            this.callbacks.onWardHover({ data: null, wardCode: '' });
         });
     }
 
@@ -142,14 +185,12 @@ export class MapManager {
         this.lastHoveredFeatureId = feature.id;
 
         const wardCode = feature.properties.WD24CD;
-        const data = wardData[wardCode];
+        const wardDataForCode = wardData[wardCode];
 
-        if (data) {
-            this.callbacks.onWardHover(
-                data,
-                data.wardName as string,
-                wardCode
-            );
+        if (wardDataForCode) {
+            this.callbacks.onWardHover({ data: wardDataForCode, wardCode: wardCode });
+        } else {
+            this.callbacks.onWardHover({ data: null, wardCode: wardCode });
         }
     }
 }

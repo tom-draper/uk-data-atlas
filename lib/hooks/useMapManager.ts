@@ -1,36 +1,45 @@
-import { useEffect, useRef } from 'react';
-import type mapboxgl from 'mapbox-gl';
+import { useEffect, useRef, useCallback } from 'react';
 import { MapManager } from '@/lib/utils/mapManager';
-import type { ChartData, LocationBounds } from '@/lib/types';
+import type { ChartData, LocationBounds, WardData } from '@/lib/types';
 
 type UseMapManagerOptions = {
     mapRef: React.RefObject<mapboxgl.Map | null>;
     geojson: any | null;
-    onWardHover?: (info: { data: any; wardName: string; wardCode: string } | null) => void;
+    onWardHover?: (params: { data: WardData | null; wardCode: string }) => void;
     onLocationChange?: (stats: ChartData | null, location: LocationBounds) => void;
 };
 
 export function useMapManager(opts: UseMapManagerOptions) {
     const managerRef = useRef<MapManager | null>(null);
+    const callbacksRef = useRef(opts);
+
+    // Update callbacks ref without triggering re-initialization
+    useEffect(() => {
+        callbacksRef.current = opts;
+    });
 
     useEffect(() => {
         if (!opts.mapRef?.current || !opts.geojson) return;
 
         managerRef.current = new MapManager(opts.mapRef.current, {
-            onWardHover: (data, wardName, wardCode) => {
-                if (opts.onWardHover) opts.onWardHover(data ? { data, wardName, wardCode } : null);
+            onWardHover: (params) => {
+                // Use the ref to get the latest callback
+                if (callbacksRef.current.onWardHover) {
+                    callbacksRef.current.onWardHover(params);
+                }
             },
             onLocationChange: (stats, location) => {
-                if (opts.onLocationChange) opts.onLocationChange(stats, location);
+                // Use the ref to get the latest callback
+                if (callbacksRef.current.onLocationChange) {
+                    callbacksRef.current.onLocationChange(stats, location);
+                }
             }
         });
 
         return () => {
-            // MapManager might have its own teardown, but we null our ref to allow GC
             managerRef.current = null;
         };
-    }, [opts.mapRef, opts.geojson]);
+    }, [opts.mapRef, opts.geojson]); // Only re-run when map or geojson changes
 
-    // expose the ref so callers can call methods
     return managerRef;
 }
