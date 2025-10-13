@@ -8,6 +8,7 @@ export function useWardDatasets(allDatasets: Dataset[], activeDatasetId: string,
     const [wardNameToPopCode, setWardNameToPopCode] = useState<{ [k: string]: string }>({});
 
     useEffect(() => {
+        console.log('useWardDatasets', activeDatasetId)
         let cancelled = false;
 
         async function loadAll() {
@@ -46,6 +47,8 @@ export function useWardDatasets(allDatasets: Dataset[], activeDatasetId: string,
             if (cancelled) return;
             setWardData(activeData);
             setWardResults(activeResults);
+
+            console.log(activeData, activeResults, activeGeo)
 
             // Build ward name -> population code map from active geojson and population dataset
             const mapObj: { [name: string]: string } = {};

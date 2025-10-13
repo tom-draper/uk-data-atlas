@@ -26,7 +26,6 @@ export class MapManager {
     ): ChartData {
         const key = location.name + year;
         if (this.cache[key]) {
-            console.log('Using cached data for', key);
             return this.cache[key];
         }
 
@@ -58,7 +57,7 @@ export class MapManager {
             }
         });
 
-        this.cache[location.name] = aggregated;
+        this.cache[key] = aggregated;  // Fixed: use key instead of location.name
         return aggregated;
     }
 
@@ -70,6 +69,13 @@ export class MapManager {
         locationStats: ChartData,
         partyInfo: Party[]
     ) {
+        // Determine ward code property from the first feature
+        const firstFeature = geoData.features[0];
+        const wardCodeProp = firstFeature?.properties.WD23CD ? 'WD23CD'
+            : firstFeature?.properties.WD22CD ? 'WD22CD'
+            : firstFeature?.properties.WD21CD ? 'WD21CD'
+            : 'WD24CD';
+
         const filteredFeatures = geoData.features.filter((f: any) =>
             location.lad_codes.includes(f.properties.LAD24CD)
         );
@@ -80,7 +86,7 @@ export class MapManager {
                 ...feature,
                 properties: {
                     ...feature.properties,
-                    winningParty: wardResults[feature.properties.WD24CD] || 'NONE'
+                    winningParty: wardResults[feature.properties[wardCodeProp]] || 'NONE'
                 }
             }))
         };
@@ -88,7 +94,7 @@ export class MapManager {
         this.removeExistingLayers();
         this.addSource(locationData);
         this.addLayers(partyInfo);
-        this.setupEventHandlers(location, geoData, wardData);
+        this.setupEventHandlers(location, geoData, wardData, wardCodeProp);
 
         this.callbacks.onLocationChange(locationStats, location);
     }
@@ -149,14 +155,15 @@ export class MapManager {
     private setupEventHandlers(
         location: LocationBounds,
         geoData: any,
-        wardData: Record<string, WardData>
+        wardData: Record<string, WardData>,
+        wardCodeProp: string = 'WD24CD'
     ) {
         this.map.on('mousemove', 'wards-fill', (e) => {
             this.map.getCanvas().style.cursor = 'pointer';
 
             if (e.features && e.features.length > 0) {
                 const feature = e.features[0];
-                this.handleFeatureHover(feature, wardData);
+                this.handleFeatureHover(feature, wardData, wardCodeProp);
             }
         });
 
@@ -172,7 +179,7 @@ export class MapManager {
         });
     }
 
-    private handleFeatureHover(feature: any, wardData: Record<string, WardData>) {
+    private handleFeatureHover(feature: any, wardData: Record<string, WardData>, wardCodeProp: string = 'WD24CD') {
         if (this.lastHoveredFeatureId !== null && this.lastHoveredFeatureId !== feature.id) {
             this.map.setFeatureState(
                 { source: 'location-wards', id: this.lastHoveredFeatureId },
@@ -186,7 +193,7 @@ export class MapManager {
         );
         this.lastHoveredFeatureId = feature.id;
 
-        const wardCode = feature.properties.WD24CD;
+        const wardCode = feature.properties[wardCodeProp];
         const wardDataForCode = wardData[wardCode];
 
         if (wardDataForCode) {

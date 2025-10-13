@@ -1,6 +1,6 @@
 // components/ChartPanel.tsx
 'use client';
-import { ChartData, Dataset, PopulationWardData, WardData } from '@/lib/types';
+import { ChartData, Dataset, PopulationWardData } from '@/lib/types';
 import { LocalElectionResultChart } from './LocalElectionResultChart';
 import { PopulationChart } from './PopulationChart';
 

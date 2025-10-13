@@ -23,7 +23,6 @@ export default function MapsPage() {
 
     const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
     const [selectedWardCode, setSelectedWardCode] = useState<string>('');
-    const [selectedWard, setSelectedWard] = useState<WardData | null>(null);
     const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
     const [aggregatedChartData, setAggregatedChartData] = useState<ChartData | null>(null);
     const [aggregatedChartDataAllYears, setAggregatedChartDataAllYears] = useState<{
@@ -90,33 +89,37 @@ export default function MapsPage() {
                 // Revert to location
                 setChartTitle(selectedLocation || '');
                 setSelectedWardCode('');
-                setSelectedWard(null);
                 const currentLocation = LOCATIONS.find(location => location.name === selectedLocation);
+                if (!mapManagerRef.current || !currentLocation) return;
                 const currentStats = mapManagerRef.current.calculateAndCacheLocation(
                     currentLocation,
                     activeGeoJSON,
-                    wardData
-
+                    wardData,
+                    activeDatasetId
                 );
                 setAggregatedChartData(currentStats);
                 return;
             }
             setChartTitle(data.wardName || '');
             setSelectedWardCode(wardCode);
-            setSelectedWard(data);
             setAggregatedChartData(null);
         },
         onLocationChange: (stats, location) => {
+            console.log('OnLocationChange')
             setChartTitle(location.name);
             setSelectedWardCode('');
-            setSelectedWard(null);
             setAggregatedChartData(stats);
         }
     });
 
     // initial selection effect: when datasets and geojson ready set initial location
+    // This should ONLY run once when data first loads, not on every dataset change
+    const hasInitialized = useRef(false);
     useEffect(() => {
         if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset) return;
+        if (hasInitialized.current) return; // Only run once
+
+        hasInitialized.current = true;
 
         const initialLocation = LOCATIONS[0];
 
@@ -124,8 +127,8 @@ export default function MapsPage() {
         const currentStats = mapManagerRef.current.calculateAndCacheLocation(
             initialLocation,
             activeGeoJSON,
-            wardData
-
+            wardData,
+            activeDatasetId
         );
         setAggregatedChartData(currentStats);
 
@@ -163,26 +166,55 @@ export default function MapsPage() {
         setSelectedLocation(initialLocation.name);
         setChartTitle(initialLocation.name);
         setSelectedWardCode('');
-        setSelectedWard(null);
     }, [activeGeoJSON, wardData, wardResults, activeDataset, mapManagerRef, electionDatasets]);
 
+    // Effect to update map and chart when activeDatasetId changes
+    useEffect(() => {
+        if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset || !selectedLocation) return;
+
+        // CRITICAL: Verify that wardData actually matches the active dataset
+        // This prevents using stale data from useWardDatasets
+        const expectedWardCount = Object.keys(activeDataset.wardData || {}).length;
+        const actualWardCount = Object.keys(wardData).length;
+
+        if (expectedWardCount !== actualWardCount) {
+            return;
+        }
+
+        const currentLocation = LOCATIONS.find(loc => loc.name === selectedLocation);
+        if (!currentLocation) {
+            return;
+        }
+
+        const stats = mapManagerRef.current.calculateAndCacheLocation(
+            currentLocation,
+            activeGeoJSON,
+            wardData,
+            activeDatasetId
+        );
+
+        setAggregatedChartData(stats);
+
+        // Update map visualization
+        mapManagerRef.current.updateMapForLocation(
+            currentLocation,
+            activeGeoJSON,
+            wardResults,
+            wardData,
+            stats,
+            activeDataset.partyInfo
+        );
+    }, [activeDatasetId, activeGeoJSON, wardData, wardResults, activeDataset, selectedLocation, mapManagerRef]);
 
     const handleLocationClick = (location: LocationBounds) => {
         setSelectedLocation(location.name);
         if (!mapManagerRef.current || !activeGeoJSON || !activeDataset) return;
 
-        let results = activeDataset.wardResults;
-        let data = activeDataset.wardData;
-        if (activeDataset.id === '2023') {
-            // use mapped values returned earlier by useWardDatasets
-            results = wardResults || results;
-            data = wardData || data;
-        }
-
         const stats = mapManagerRef.current.calculateAndCacheLocation(
             location,
             activeGeoJSON,
-            data
+            activeDataset.wardData,
+            activeDatasetId
         );
         setAggregatedChartData(stats);
 
@@ -200,7 +232,8 @@ export default function MapsPage() {
             newAggregates[`data${year}`] = mapManagerRef.current.calculateAndCacheLocation(
                 location,
                 activeGeoJSON,
-                dataset.wardData
+                dataset.wardData,
+                year
             );
         }
 
@@ -209,8 +242,8 @@ export default function MapsPage() {
         mapManagerRef.current.updateMapForLocation(
             location,
             activeGeoJSON,
-            results,
-            data,
+            activeDataset.wardResults,
+            activeDataset.wardData,
             stats,
             activeDataset.partyInfo
         );
