@@ -23,8 +23,6 @@ const parseElection2024 = async (): Promise<Dataset> => {
                     const wardCode = row['Ward code']?.trim();
                     if (!wardCode) return;
 
-                    console.log(row);
-
                     let maxVotes = 0;
                     let winningParty = 'OTHER';
                     const partyVotes: Record<string, number> = {};
