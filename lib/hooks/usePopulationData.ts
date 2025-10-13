@@ -125,7 +125,7 @@ export const usePopulationData = () => {
 						name: 'Population (Total) 2020',
 						year: 2020,
 						type: 'population',
-						populationData: populationData,
+						populationData: combinedData,
 						partyInfo: [
 							{ key: 'TOTAL', name: 'Total Population', color: '#3b82f6' }
 						],
