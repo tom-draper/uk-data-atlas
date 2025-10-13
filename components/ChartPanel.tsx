@@ -1,10 +1,11 @@
 // components/ChartPanel.tsx
 'use client';
-import { ChartData, Dataset } from '@/lib/types';
+import { ChartData, Dataset, PopulationData } from '@/lib/types';
 
 interface ChartPanelProps {
     title: string;
     wardCode: string;
+    population: PopulationData;
     chartData2024: ChartData;
     chartData2023: ChartData;
     chartData2022: ChartData;
@@ -29,6 +30,7 @@ export const ChartPanel = ({
     const dataset2023 = availableDatasets.find(d => d.id === '2023');
     const dataset2022 = availableDatasets.find(d => d.id === '2022');
     const dataset2021 = availableDatasets.find(d => d.id === '2021');
+    const datasetPopulation = availableDatasets.find(d => d.id === 'pop-persons')
 
     const renderCompactBar = (data: ChartData | undefined, dataset: Dataset) => {
         if (!data) {
@@ -110,11 +112,10 @@ export const ChartPanel = ({
         return (
             <div
                 key={year}
-                className={`p-2 rounded transition-all cursor-pointer ${
-                    isActive
-                        ? `${colors.bg} border-2 ${colors.border}`
-                        : `bg-gray-50 border-2 border-gray-200 hover:${colors.border.replace('border-', 'hover:border-')}`
-                }`}
+                className={`p-2 rounded transition-all cursor-pointer ${isActive
+                    ? `${colors.bg} border-2 ${colors.border}`
+                    : `bg-gray-50 border-2 border-gray-200 hover:${colors.border.replace('border-', 'hover:border-')}`
+                    }`}
                 onClick={() => onDatasetChange(year)}
             >
                 <div className="flex items-center justify-between mb-1.5">
@@ -129,6 +130,47 @@ export const ChartPanel = ({
             </div>
         );
     };
+
+    const renderDatasetBar = (dataset: Dataset, chartData: ChartData | undefined, isActive: boolean) => {
+        if (!dataset) return null;
+
+        const colorMap: Record<string, { bg: string; border: string; badge: string }> = {
+            'election': { bg: 'bg-blue-50', border: 'border-blue-300', badge: 'bg-blue-300 text-blue-900' },
+            'population': { bg: 'bg-green-50', border: 'border-green-300', badge: 'bg-green-300 text-green-900' },
+        };
+
+        // Year-specific colors for election data
+        const yearColors: Record<string, { bg: string; border: string; badge: string }> = {
+            '2024': { bg: 'bg-blue-50', border: 'border-blue-300', badge: 'bg-blue-300 text-blue-900' },
+            '2023': { bg: 'bg-amber-50', border: 'border-amber-300', badge: 'bg-amber-300 text-amber-900' },
+            '2022': { bg: 'bg-purple-50', border: 'border-purple-300', badge: 'bg-purple-300 text-purple-900' },
+            '2021': { bg: 'bg-emerald-50', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900' },
+        };
+
+        const colors = dataset.type === 'election' ? yearColors[dataset.id] || yearColors['2024'] : colorMap['population'];
+
+        return (
+            <div
+                key={dataset.id}
+                className={`p-2 rounded transition-all cursor-pointer ${isActive
+                        ? `${colors.bg} border-2 ${colors.border}`
+                        : `bg-gray-50 border-2 border-gray-200 hover:${colors.border.replace('border-', 'hover:border-')}`
+                    }`}
+                onClick={() => onDatasetChange(dataset.id)}
+            >
+                <div className="flex items-center justify-between mb-1.5">
+                    <h3 className="text-xs font-bold">{dataset.name}</h3>
+                    {isActive && (
+                        <span className={`text-[9px] ${colors.badge} px-1.5 py-0.5 rounded font-semibold`}>
+                            ACTIVE
+                        </span>
+                    )}
+                </div>
+                {renderCompactBar(chartData, dataset)}
+            </div>
+        );
+    };
+
 
     return (
         <div className="pointer-events-auto p-[10px] flex flex-col h-full w-[320px]">

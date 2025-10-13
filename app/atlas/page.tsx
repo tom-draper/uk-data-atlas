@@ -1,6 +1,6 @@
 // page.tsx
 'use client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useElectionData } from '@/lib/hooks/useElectionData';
@@ -12,7 +12,7 @@ import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { MapManager } from '@/lib/utils/mapManager';
 import { calculateLocationStats, mapWard2023ToGeojson } from '@/lib/utils/statsCalculator';
 import { LOCATIONS } from '@/lib/data/locations';
-import { ChartData, LocationBounds } from '@/lib/types';
+import { ChartData, Dataset, LocationBounds } from '@/lib/types';
 
 export default function MapsPage() {
     const mapContainer = useRef<HTMLDivElement>(null);
@@ -32,6 +32,43 @@ export default function MapsPage() {
     const [chartWardCode, setChartWardCode] = useState<string>('');
     const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
     const mapManagerRef = useRef<MapManager | null>(null);
+
+    const allDatasets = useMemo(() => {
+        const populationDatasetsArray: Dataset[] = [
+            {
+                id: 'pop-persons',
+                name: 'Population (Total) 2020',
+                year: 2020,
+                type: 'population',
+                populationData: populationDatasets.persons,
+                partyInfo: [
+                    { key: 'TOTAL', name: 'Total Population', color: '#3b82f6' }
+                ],
+            },
+            {
+                id: 'pop-males',
+                name: 'Population (Males) 2020',
+                year: 2020,
+                type: 'population',
+                populationData: populationDatasets.males,
+                partyInfo: [
+                    { key: 'TOTAL', name: 'Males', color: '#60a5fa' }
+                ],
+            },
+            {
+                id: 'pop-females',
+                name: 'Population (Females) 2020',
+                year: 2020,
+                type: 'population',
+                populationData: populationDatasets.females,
+                partyInfo: [
+                    { key: 'TOTAL', name: 'Females', color: '#f472b6' }
+                ],
+            },
+        ];
+        
+        return [...datasets, ...populationDatasetsArray];
+    }, [datasets, populationDatasets]);
     
     // Store ward data for all years
     const wardDataRef = useRef<{
@@ -54,7 +91,7 @@ export default function MapsPage() {
         results2021: null,
     });
 
-    const activeDataset = datasets.find(d => d.id === activeDatasetId) || datasets[0];
+    const activeDataset = allDatasets.find(d => d.id === activeDatasetId) || allDatasets[0];
 
     useEffect(() => {
         if (dataError) setError(dataError);
@@ -92,10 +129,10 @@ export default function MapsPage() {
     }, []);
 
     useEffect(() => {
-        console.log('Page useEffect triggered:', { mapLoaded: !!map.current, datasetsLength: datasets.length, activeDatasetId });
+        console.log('Page useEffect triggered:', { mapLoaded: !!map.current, datasetsLength: allDatasets.length, activeDatasetId });
 
-        if (!map.current || datasets.length === 0) {
-            console.log('Skipping - map or datasets missing', { mapLoaded: !!map.current, datasetsLength: datasets.length });
+        if (!map.current || allDatasets.length === 0) {
+            console.log('Skipping - map or datasets missing', { mapLoaded: !!map.current, datasetsLength: allDatasets.length });
             return;
         }
 
@@ -129,10 +166,10 @@ export default function MapsPage() {
                 setAllGeoJSON(activeGeoJSON);
 
                 // Prepare data for all datasets
-                const dataset2024 = datasets.find(d => d.id === '2024');
-                const dataset2023 = datasets.find(d => d.id === '2023');
-                const dataset2022 = datasets.find(d => d.id === '2022');
-                const dataset2021 = datasets.find(d => d.id === '2021');
+                const dataset2024 = allDatasets.find(d => d.id === '2024');
+                const dataset2023 = allDatasets.find(d => d.id === '2023');
+                const dataset2022 = allDatasets.find(d => d.id === '2022');
+                const dataset2021 = allDatasets.find(d => d.id === '2021');
 
                 let results2024 = dataset2024?.wardResults || {};
                 let data2024 = dataset2024?.wardData || {};
@@ -150,20 +187,6 @@ export default function MapsPage() {
                     results2023 = mapped2023Results;
                     data2023 = mapped2023Data;
                 }
-
-                // if (dataset2022) {
-                //     const { wardResults: mapped2022Results, wardData: mapped2022Data } =
-                //         mapWardToGeojson(dataset2022, geojson2022);
-                //     results2022 = mapped2022Results;
-                //     data2022 = mapped2022Data;
-                // }
-
-                // if (dataset2021) {
-                //     const { wardResults: mapped2021Results, wardData: mapped2021Data } =
-                //         mapWardToGeojson(dataset2021, geojson2021);
-                //     results2021 = mapped2021Results;
-                //     data2021 = mapped2021Data;
-                // }
 
                 // Store all in ref for lookup during hover
                 wardDataRef.current = {
@@ -293,7 +316,7 @@ export default function MapsPage() {
                 map.current.off('load', handleLoad);
             }
         };
-    }, [map, datasets.length, activeDatasetId]);
+    }, [map, allDatasets.length, activeDatasetId]);
 
     const handleLocationClick = (location: LocationBounds) => {
         setSelectedLocation(location.name);
@@ -331,7 +354,7 @@ export default function MapsPage() {
 
         // Reset and reload map with new dataset
         if (mapManagerRef.current && map.current) {
-            const newDataset = datasets.find(d => d.id === datasetId);
+            const newDataset = allDatasets.find(d => d.id === datasetId);
             if (!newDataset) return;
 
             let wardResults = newDataset.wardResults;
@@ -382,12 +405,13 @@ export default function MapsPage() {
                     <ChartPanel
                         title={chartTitle}
                         wardCode={chartWardCode}
+                        population={populationDatasets.persons}
                         chartData2024={chartData2024}
                         chartData2023={chartData2023}
                         chartData2022={chartData2022}
                         chartData2021={chartData2021}
                         activeDataset={activeDataset}
-                        availableDatasets={datasets}
+                        availableDatasets={allDatasets}
                         onDatasetChange={handleDatasetChange}
                     />
                 </div>
