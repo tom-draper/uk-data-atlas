@@ -91,7 +91,6 @@ export default function MapsPage() {
 			return;
 		}
 
-		console.log('Initializing Mapbox from callback ref');
 		mapboxgl.accessToken = token;
 
 		try {
@@ -102,7 +101,6 @@ export default function MapsPage() {
 				zoom: 10,
 			});
 			map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-			console.log('Map initialized');
 		} catch (err) {
 			console.error('Failed to initialize map:', err);
 			setError(`Failed to initialize map: ${err}`);
@@ -110,10 +108,7 @@ export default function MapsPage() {
 	}, []);
 
 	useEffect(() => {
-		console.log('Page useEffect triggered:', { mapLoaded: !!map.current, datasetsLength: allDatasets.length, activeDatasetId });
-
 		if (!map.current || allDatasets.length === 0) {
-			console.log('Skipping - map or datasets missing', { mapLoaded: !!map.current, datasetsLength: allDatasets.length });
 			return;
 		}
 
@@ -125,8 +120,6 @@ export default function MapsPage() {
 		}
 
 		const onMapLoad = async () => {
-			console.log('onMapLoad called');
-
 			try {
 				// Fetch all GeoJSON files
 				const [geojson2024, geojson2023, geojson2022, geojson2021] = await Promise.all([
@@ -135,8 +128,6 @@ export default function MapsPage() {
 					fetch('/data/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson').then(r => r.json()),
 					fetch('/data/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson').then(r => r.json()),
 				]);
-
-				console.log('All GeoJSON files loaded');
 
 				// Use active dataset's GeoJSON for map display
 				const activeGeoJSON = activeDatasetId === '2023' ? geojson2023
@@ -214,22 +205,17 @@ export default function MapsPage() {
 					}
 				}
 
-				console.log('📋 Created ward name mapping with', Object.keys(wardNameToPopCode).length, 'entries');
-				console.log('📋 Sample mappings:', Object.entries(wardNameToPopCode).slice(0, 3));
-
 				mapManagerRef.current = new MapManager(map.current!, {
 					onWardHover: (data, wardName, wardCode) => {
-						console.log('🎯 Ward hover triggered:', { wardName, wardCode, hasData: !!data });
+						console.log('Hovering:', wardName, wardCode)
 						
 						// Try to find population data by ward code first, then by name
 						let populationWardCode = wardCode;
 						if (!(wardCode in populationData)) {
 							const normalizedName = wardName.toLowerCase().trim();
 							populationWardCode = wardNameToPopCode[normalizedName] || '';
-							console.log('🔄 Mapped ward name to code:', normalizedName, '->', populationWardCode);
+							console.log('Mapped ward name to code:', normalizedName, '->', populationWardCode);
 						}
-						
-						console.log('🔍 Final population ward code:', populationWardCode, 'exists:', populationWardCode in populationData);
 						
 						if (data) {
 							// Look up data from ALL datasets
@@ -270,7 +256,6 @@ export default function MapsPage() {
 							};
 
 							// Update all chart datasets
-							console.log('✅ Setting chart data for ward:', wardCode, 'using population code:', populationWardCode);
 							setChartData2024(data2024Obj);
 							setChartData2023(data2023Obj);
 							setChartData2022(data2022Obj);
@@ -279,7 +264,7 @@ export default function MapsPage() {
 							setChartTitle(wardName);
 							setChartWardCode(populationWardCode); // Use the mapped population ward code
 						} else {
-							console.log('❌ No data for ward hover');
+							console.log('No data for ward hover');
 						}
 					},
 					onLocationChange: (stats, location) => {
@@ -317,15 +302,12 @@ export default function MapsPage() {
 		};
 
 		const handleLoad = () => {
-			console.log('Map load event fired');
 			onMapLoad();
 		};
 
 		if (map.current.loaded()) {
-			console.log('Map already loaded, calling onMapLoad');
 			onMapLoad();
 		} else {
-			console.log('Waiting for map load event');
 			map.current.on('load', handleLoad);
 		}
 
