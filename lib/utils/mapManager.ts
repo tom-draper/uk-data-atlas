@@ -1,5 +1,4 @@
 // lib/utils/mapManager.ts
-import mapboxgl from 'mapbox-gl';
 import { LocationBounds, ChartData, WardData, Party } from '@/lib/types';
 
 interface MapManagerCallbacks {
@@ -11,27 +10,51 @@ export class MapManager {
     private map: mapboxgl.Map;
     private callbacks: MapManagerCallbacks;
     private lastHoveredFeatureId: any = null;
-    private cache: Record<string, ChartData> = {};
+    private cache = new Map();
 
     constructor(map: mapboxgl.Map, callbacks: MapManagerCallbacks) {
         this.map = map;
         this.callbacks = callbacks;
     }
 
-    calculateAndCacheLocation(
+    private detectWardCodeProperty(geoData: any): string {
+        const firstFeature = geoData.features[0];
+        if (!firstFeature) return 'WD24CD';
+
+        return firstFeature.properties.WD23CD ? 'WD23CD'
+            : firstFeature.properties.WD22CD ? 'WD22CD'
+                : firstFeature.properties.WD21CD ? 'WD21CD'
+                    : 'WD24CD';
+    }
+
+    private detectLocationCodeProperty(geoData: any): string {
+        const firstFeature = geoData.features[0];
+        if (!firstFeature) return 'LAD24CD';
+
+        return firstFeature.properties.WD23CD ? 'LAD23CD'
+            : firstFeature.properties.WD22CD ? 'LAD22CD'
+                : firstFeature.properties.WD21CD ? 'LAD21CD'
+                    : 'LAD24CD';
+    }
+
+    calculateLocationStats(
         location: LocationBounds,
         geoData: any,
         wardData: Record<string, WardData>,
-        year: string = ''
     ): ChartData {
-        const key = location.name + year;
-        if (this.cache[key]) {
-            return this.cache[key];
+        // Detect the correct ward code property based on the geojson
+        const wardCodeProp = this.detectWardCodeProperty(geoData);
+        const locationCodeProp = this.detectLocationCodeProperty(geoData);
+
+        const cacheKey = `${location.name}-${wardCodeProp}-${locationCodeProp}`
+
+        if (this.cache.has(cacheKey)) {
+            return this.cache.get(cacheKey)
         }
 
         // Aggregate stats for all wards within this location
-        const wardsInLocation = geoData.features.filter((f: any) =>
-            location.lad_codes.includes(f.properties.LAD24CD)
+        const wardsInLocation = geoData.features.filter((f: any) => 
+            location.lad_codes.includes(f.properties[locationCodeProp])
         );
 
         const aggregated: ChartData = {
@@ -44,7 +67,8 @@ export class MapManager {
         };
 
         wardsInLocation.forEach((f: any) => {
-            const code = f.properties.WD24CD;
+            // Use the detected ward code property instead of hardcoded WD24CD
+            const code = f.properties[wardCodeProp];
             const ward = wardData[code];
             if (ward) {
                 // Assuming ward has party vote counts
@@ -57,7 +81,10 @@ export class MapManager {
             }
         });
 
-        this.cache[key] = aggregated;  // Fixed: use key instead of location.name
+        console.log('LOCATION', location);
+        console.log('AGGREGATED', aggregated);
+
+        this.cache.set(cacheKey, aggregated);
         return aggregated;
     }
 
@@ -69,17 +96,36 @@ export class MapManager {
         locationStats: ChartData,
         partyInfo: Party[]
     ) {
-        console.log('updateMap', location, geoData, wardData, wardResults)
-        // Determine ward code property from the first feature
-        const firstFeature = geoData.features[0];
-        const wardCodeProp = firstFeature?.properties.WD23CD ? 'WD23CD'
-            : firstFeature?.properties.WD22CD ? 'WD22CD'
-            : firstFeature?.properties.WD21CD ? 'WD21CD'
-            : 'WD24CD';
+        console.log('=== updateMapForLocation START ===');
+        console.log('geoData feature count:', geoData.features.length);
+        console.log('geoData first feature properties:', geoData.features[0]?.properties);
 
-        const filteredFeatures = geoData.features.filter((f: any) =>
-            location.lad_codes.includes(f.properties.LAD24CD)
-        );
+        const wardCodeProp = this.detectWardCodeProperty(geoData);
+        console.log('Detected wardCodeProp:', wardCodeProp);
+
+        // Sample a few ward codes from wardResults to see which dataset it is
+        const sampleWardCodes = Object.keys(wardResults).slice(0, 3);
+        console.log('Sample wardResults keys:', sampleWardCodes);
+        console.log('Sample wardResults values:', sampleWardCodes.map(k => wardResults[k]));
+
+        const locationCodeProp = this.detectLocationCodeProperty(geoData);
+
+        console.log('LOCATION', location);
+        console.log(wardCodeProp, locationCodeProp)
+
+        // Sample a few codes from the first filtered feature
+        const filteredFeatures = geoData.features.filter((f: any) => {
+            return location.lad_codes.includes(f.properties[locationCodeProp])
+        });
+
+        console.log('Filtered features count:', filteredFeatures.length);
+        if (filteredFeatures.length > 0) {
+            const firstFilteredFeature = filteredFeatures[0];
+            const codeFromFeature = firstFilteredFeature.properties[wardCodeProp];
+            console.log('First filtered feature code:', codeFromFeature);
+            console.log('Does wardResults have this code?', codeFromFeature in wardResults);
+            console.log('Winning party for this ward:', wardResults[codeFromFeature]);
+        }
 
         const locationData = {
             type: 'FeatureCollection' as const,
@@ -97,6 +143,7 @@ export class MapManager {
         this.addLayers(partyInfo);
         this.setupEventHandlers(location, geoData, wardData, wardCodeProp);
 
+        console.log('=== updateMapForLocation END ===');
         this.callbacks.onLocationChange(locationStats, location);
     }
 
@@ -118,11 +165,11 @@ export class MapManager {
     private addLayers(partyInfo: Party[]) {
         // Build color match expression from partyInfo
         const colorExpression: any[] = ['match', ['get', 'winningParty']];
-        
+
         partyInfo.forEach(party => {
             colorExpression.push(party.key, party.color);
         });
-        
+
         // Default color for no winner
         colorExpression.push('#cccccc');
 

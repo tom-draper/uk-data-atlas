@@ -1,6 +1,6 @@
 // components/LocalElectionResultChart.tsx
 'use client';
-import { ChartData, Dataset, WardData } from '@/lib/types';
+import { ChartData, Dataset } from '@/lib/types';
 import { useMemo } from 'react';
 
 interface AllYearsWardData {
@@ -10,19 +10,20 @@ interface AllYearsWardData {
 	data2021: { [wardCode: string]: any };
 }
 
+interface AllYearsAggregatedData {
+	data2024: ChartData | null;
+	data2023: ChartData | null;
+	data2022: ChartData | null;
+	data2021: ChartData | null;
+}
+
 interface LocalElectionResultChartProps {
 	activeDataset: Dataset;
 	availableDatasets: Dataset[];
 	onDatasetChange: (datasetId: string) => void;
 	wardCode: string;
 	wardData: AllYearsWardData | null;
-	aggregatedData: ChartData | null;
-	aggregatedDataAllYears: {
-		data2024: ChartData | null;
-		data2023: ChartData | null;
-		data2022: ChartData | null;
-		data2021: ChartData | null;
-	};
+	aggregatedData: AllYearsAggregatedData;
 }
 
 export const LocalElectionResultChart = ({
@@ -32,8 +33,8 @@ export const LocalElectionResultChart = ({
 	wardCode,
 	wardData,
 	aggregatedData,
-	aggregatedDataAllYears,
 }: LocalElectionResultChartProps) => {
+	console.log('AGGREDATED ', aggregatedData)
 	const { chartData2024, chartData2023, chartData2022, chartData2021 } = useMemo(() => {
 		const getChartData = (yearData: any, year: string): ChartData | undefined => {
 			// If we have a specific ward selected (hovering), use that ward's data
@@ -51,8 +52,8 @@ export const LocalElectionResultChart = ({
 
 			// If viewing a location (no ward hovered), only show aggregated data for active year
 			// Historical years don't have cached location aggregations
-			if (!wardCode && aggregatedDataAllYears[`data${year}`]) {
-				return aggregatedDataAllYears[`data${year}`];
+			if (!wardCode && aggregatedData[`data${year}`]) {
+				return aggregatedData[`data${year}`];
 			}
 
 			// No data available for this combination
@@ -71,7 +72,7 @@ export const LocalElectionResultChart = ({
 		};
 
 		return data;
-	}, [wardCode, wardData, aggregatedData, activeDataset]);
+	}, [wardCode, wardData, activeDataset, aggregatedData]);
 
 	const dataset2024 = availableDatasets.find(d => d.id === '2024');
 	const dataset2023 = availableDatasets.find(d => d.id === '2023');

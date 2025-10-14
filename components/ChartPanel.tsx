@@ -11,6 +11,13 @@ interface AllYearsWardData {
 	data2021: { [wardCode: string]: any };
 }
 
+interface AllYearsAggregatedData {
+	data2024: ChartData | null;
+	data2023: ChartData | null;
+	data2022: ChartData | null;
+	data2021: ChartData | null;
+}
+
 interface ChartPanelProps {
 	title: string;
 	wardCode: string;
@@ -19,13 +26,7 @@ interface ChartPanelProps {
 	activeDataset: Dataset;
 	availableDatasets: Dataset[];
 	onDatasetChange: (datasetId: string) => void;
-	aggregatedData: ChartData | null;
-	aggregatedDataAllYears: {
-		data2024: ChartData | null;
-		data2023: ChartData | null;
-		data2022: ChartData | null;
-		data2021: ChartData | null;
-	};
+	aggregatedData: AllYearsAggregatedData;
 	wardCodeMap: { [name: string]: string };
 }
 
@@ -38,7 +39,6 @@ export const ChartPanel = ({
 	availableDatasets,
 	onDatasetChange,
 	aggregatedData,
-    aggregatedDataAllYears,
 	wardCodeMap
 }: ChartPanelProps) => {
 	return (
@@ -65,8 +65,7 @@ export const ChartPanel = ({
 						onDatasetChange={onDatasetChange}
 						wardCode={wardCode}
 						wardData={wardData}
-						aggregatedData={aggregatedData}
-                        aggregatedDataAllYears={aggregatedDataAllYears}
+                        aggregatedData={aggregatedData}
 					/>
 					{/* Population Section */}
 					<div className="pt-3 border-t border-gray-200">

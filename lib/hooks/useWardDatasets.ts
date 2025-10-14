@@ -6,10 +6,12 @@ export function useWardDatasets(allDatasets: Dataset[], activeDatasetId: string,
     const [wardData, setWardData] = useState<any | null>(null);
     const [wardResults, setWardResults] = useState<any | null>(null);
     const [wardNameToPopCode, setWardNameToPopCode] = useState<{ [k: string]: string }>({});
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         console.log('useWardDatasets', activeDatasetId)
         let cancelled = false;
+        setIsLoading(true);
 
         async function loadAll() {
             const [geojson2024, geojson2023, geojson2022, geojson2021] = await Promise.all([
@@ -23,6 +25,8 @@ export function useWardDatasets(allDatasets: Dataset[], activeDatasetId: string,
                 : activeDatasetId === '2022' ? geojson2022
                     : activeDatasetId === '2021' ? geojson2021
                         : geojson2024;
+
+            console.log('Selected geojson for', activeDatasetId, ':', activeGeo.features.length);
 
             if (cancelled) return;
             setGeojson(activeGeo);
@@ -45,10 +49,6 @@ export function useWardDatasets(allDatasets: Dataset[], activeDatasetId: string,
             const activeData = activeDatasetId === '2023' ? data2023 : activeDatasetId === '2022' ? data2022 : activeDatasetId === '2021' ? data2021 : data2024;
 
             if (cancelled) return;
-            setWardData(activeData);
-            setWardResults(activeResults);
-
-            console.log(activeData, activeResults, activeGeo)
 
             // Build ward name -> population code map from active geojson and population dataset
             const mapObj: { [name: string]: string } = {};
@@ -63,12 +63,23 @@ export function useWardDatasets(allDatasets: Dataset[], activeDatasetId: string,
                 }
             }
 
+            if (cancelled) return;
             setWardNameToPopCode(mapObj);
+
+            // Set ward data and results together to ensure they stay synchronized
+            // and to signal that the data is ready
+            setWardData(activeData);
+            setWardResults(activeResults);
+            setIsLoading(false);
         }
 
-        loadAll().catch(err => console.error(err));
+        loadAll().catch(err => {
+            console.error(err);
+            setIsLoading(false);
+        });
+        
         return () => { cancelled = true; };
     }, [allDatasets, activeDatasetId, populationDatasets]);
 
-    return { geojson, wardData, wardResults, wardNameToPopCode };
+    return { geojson, wardData, wardResults, wardNameToPopCode, isLoading };
 }
