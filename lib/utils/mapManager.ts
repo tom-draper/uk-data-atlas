@@ -81,9 +81,6 @@ export class MapManager {
             }
         });
 
-        console.log('LOCATION', location);
-        console.log('AGGREGATED', aggregated);
-
         this.cache.set(cacheKey, aggregated);
         return aggregated;
     }
@@ -96,36 +93,14 @@ export class MapManager {
         locationStats: ChartData,
         partyInfo: Party[]
     ) {
-        console.log('=== updateMapForLocation START ===');
-        console.log('geoData feature count:', geoData.features.length);
-        console.log('geoData first feature properties:', geoData.features[0]?.properties);
-
+        console.log('updateMap!')
         const wardCodeProp = this.detectWardCodeProperty(geoData);
-        console.log('Detected wardCodeProp:', wardCodeProp);
-
-        // Sample a few ward codes from wardResults to see which dataset it is
-        const sampleWardCodes = Object.keys(wardResults).slice(0, 3);
-        console.log('Sample wardResults keys:', sampleWardCodes);
-        console.log('Sample wardResults values:', sampleWardCodes.map(k => wardResults[k]));
-
         const locationCodeProp = this.detectLocationCodeProperty(geoData);
-
-        console.log('LOCATION', location);
-        console.log(wardCodeProp, locationCodeProp)
 
         // Sample a few codes from the first filtered feature
         const filteredFeatures = geoData.features.filter((f: any) => {
             return location.lad_codes.includes(f.properties[locationCodeProp])
         });
-
-        console.log('Filtered features count:', filteredFeatures.length);
-        if (filteredFeatures.length > 0) {
-            const firstFilteredFeature = filteredFeatures[0];
-            const codeFromFeature = firstFilteredFeature.properties[wardCodeProp];
-            console.log('First filtered feature code:', codeFromFeature);
-            console.log('Does wardResults have this code?', codeFromFeature in wardResults);
-            console.log('Winning party for this ward:', wardResults[codeFromFeature]);
-        }
 
         const locationData = {
             type: 'FeatureCollection' as const,
@@ -143,7 +118,6 @@ export class MapManager {
         this.addLayers(partyInfo);
         this.setupEventHandlers(location, geoData, wardData, wardCodeProp);
 
-        console.log('=== updateMapForLocation END ===');
         this.callbacks.onLocationChange(locationStats, location);
     }
 

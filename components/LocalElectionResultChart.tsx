@@ -34,7 +34,6 @@ export const LocalElectionResultChart = ({
 	wardData,
 	aggregatedData,
 }: LocalElectionResultChartProps) => {
-	console.log('AGGREDATED ', aggregatedData)
 	const { chartData2024, chartData2023, chartData2022, chartData2021 } = useMemo(() => {
 		const getChartData = (yearData: any, year: string): ChartData | undefined => {
 			// If we have a specific ward selected (hovering), use that ward's data
@@ -56,10 +55,6 @@ export const LocalElectionResultChart = ({
 				return aggregatedData[`data${year}`];
 			}
 
-			// No data available for this combination
-			if (!wardCode) {
-				console.log(`No aggregated data for ${year} (only active year ${activeDataset.id} has aggregation)`);
-			}
 			return undefined;
 		};
 
@@ -137,7 +132,6 @@ export const LocalElectionResultChart = ({
 
 	const renderYearBar = (year: string, data: ChartData | undefined, dataset: Dataset | undefined, isActive: boolean) => {
 		if (!dataset) {
-			console.log(`Dataset for ${year} not found`);
 			return null;
 		}
 
