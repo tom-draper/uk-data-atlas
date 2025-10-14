@@ -102,7 +102,6 @@ export function useWardDatasets(
 
 		async function loadAll() {
 			try {
-				console.log('loadAll');
 				// Determine which year to load
 				const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
 				

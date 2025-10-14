@@ -14,12 +14,14 @@ interface CategoryPopulationWardData {
 }
 
 export const usePopulationData = () => {
+	console.log('usePopulationData')
 	const [datasets, setDatasets] = useState<Dataset[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>('');
 
 	useEffect(() => {
 		const loadPopulationData = async () => {
+			console.log('loading population data')
 			try {
 				const [femalesResponse, malesResponse, personsResponse] = await Promise.all([
 					fetch('/data/age/Mid-2020 Females-Table 1.csv'),

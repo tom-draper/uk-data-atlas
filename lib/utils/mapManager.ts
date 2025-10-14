@@ -42,6 +42,7 @@ export class MapManager {
         geoData: any,
         wardData: Record<string, WardData>,
     ): ChartData {
+        console.log('Calculate location stats')
         // Detect the correct ward code property based on the geojson
         const wardCodeProp = this.detectWardCodeProperty(geoData);
         const locationCodeProp = this.detectLocationCodeProperty(geoData);
@@ -86,6 +87,7 @@ export class MapManager {
         locationStats: ChartData,
         partyInfo: Party[]
     ) {
+        console.log('Update map for location')
         const wardCodeProp = this.detectWardCodeProperty(geoData);
         const locationCodeProp = this.detectLocationCodeProperty(geoData);
 

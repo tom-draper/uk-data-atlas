@@ -1,7 +1,7 @@
 import { LOCATIONS } from "@/lib/data/locations";
 import { WardGeojson } from "@/lib/hooks/useWardDatasets";
 import { LocationBounds, PopulationWardData } from "@/lib/types";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 
 interface LocationPanelProps {
     selectedLocation: string | null;
@@ -9,7 +9,7 @@ interface LocationPanelProps {
     population: PopulationWardData;
 }
 
-export default function LocationPane({ selectedLocation, onLocationClick, population }: LocationPanelProps) {
+export default memo(function LocationPane({ selectedLocation, onLocationClick, population }: LocationPanelProps) {
     // Add state for 2021 geojson
     const [geojson2021, setGeojson2021] = useState<WardGeojson | null>(null);
 
@@ -21,59 +21,49 @@ export default function LocationPane({ selectedLocation, onLocationClick, popula
             .catch(err => console.error('Failed to load 2021 geojson:', err));
     }, []);
 
+    const geojsonFeatureMap = useMemo(() => {
+        if (!geojson2021) return {};
+
+        const map: Record<string, any> = {};
+        geojson2021.features.forEach(f => {
+            map[f.properties.WD21CD] = f;
+        });
+
+        return map;
+    }, [geojson2021]);
+
     const populationWithBounds = useMemo(() => {
         if (!geojson2021 || !population) return population;
 
-        // Create enriched population data with bounds
         const enriched: any = {};
-
-        Object.entries(population).forEach(([wardCode, wardData]: [string, any]) => {
-            // Find the matching feature in 2021 geojson
-            const feature = geojson2021.features.find((f: any) =>
-                f.properties.WD21CD === wardCode
-            );
-
+        Object.entries(population).forEach(([wardCode, wardData]) => {
+            const feature = geojsonFeatureMap[wardCode];
             let bounds: [number, number, number, number] = [-1, -1, -1, -1];
 
             if (feature?.geometry) {
-                // Calculate bounds from geometry coordinates
-                const coords = feature.geometry.coordinates;
+                let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
 
-                // Initialize with extreme values
-                let minLng = Infinity;
-                let minLat = Infinity;
-                let maxLng = -Infinity;
-                let maxLat = -Infinity;
-
-                // Helper function to process coordinates recursively
-                const processCoords = (coordArray: any) => {
-                    if (typeof coordArray[0] === 'number') {
-                        // This is a [lng, lat] pair
-                        const [lng, lat] = coordArray;
+                const processCoords = (coords: any) => {
+                    if (typeof coords[0] === 'number') {
+                        const [lng, lat] = coords;
                         minLng = Math.min(minLng, lng);
                         maxLng = Math.max(maxLng, lng);
                         minLat = Math.min(minLat, lat);
                         maxLat = Math.max(maxLat, lat);
                     } else {
-                        // This is an array of coordinates, recurse
-                        coordArray.forEach(processCoords);
+                        coords.forEach(processCoords);
                     }
                 };
 
-                processCoords(coords);
-
-                // Mapbox bounds format: [west, south, east, north]
+                processCoords(feature.geometry.coordinates);
                 bounds = [minLng, minLat, maxLng, maxLat];
             }
 
-            enriched[wardCode] = {
-                ...wardData,
-                bounds,
-            };
+            enriched[wardCode] = { ...wardData, bounds };
         });
 
         return enriched;
-    }, [population, geojson2021]);
+    }, [population, geojsonFeatureMap]);
 
     // Convert population object into an array of ward locations
     const wardLocations = useMemo(() => {
@@ -99,52 +89,43 @@ export default function LocationPane({ selectedLocation, onLocationClick, popula
             .filter(({ bounds }) => bounds.bounds[0] !== -1);
     }, [populationWithBounds]);
 
-    // Convert larger locations to the same format
-    // const largerLocations = useMemo(() => {
-    //     return LOCATIONS.map(location => ({
-    //         wardCode: location.name, // Use name as unique key
-    //         wardName: location.name,
-    //         laName: '', // No LA name for larger areas
-    //         totalPopulation: 0, // Could calculate if needed
-    //         isWard: false,
-    //         bounds: location,
-    //     }));
-    // }, []);
+    // Convert larger locations to the same format with calculated population
+    const largerLocations = useMemo(() => {
+        return LOCATIONS.map(location => {
+            // Calculate total population by summing all wards in the constituent LADs
+            const totalPopulation = Object.values(populationWithBounds).reduce((sum: number, wardData: any) => {
+                // Check if this ward belongs to any of the LADs in this location
+                if (location.lad_codes.includes(wardData.laCode)) {
+                    const wardPop = Object.values(wardData.total).reduce(
+                        (wardSum: number, val: any) => wardSum + Number(val),
+                        0
+                    );
+                    return sum + wardPop;
+                }
+                return sum;
+            }, 0);
 
-// Convert larger locations to the same format with calculated population
-const largerLocations = useMemo(() => {
-    return LOCATIONS.map(location => {
-        // Calculate total population by summing all wards in the constituent LADs
-        const totalPopulation = Object.values(populationWithBounds).reduce((sum: number, wardData: any) => {
-            // Check if this ward belongs to any of the LADs in this location
-            if (location.lad_codes.includes(wardData.laCode)) {
-                const wardPop = Object.values(wardData.total).reduce(
-                    (wardSum: number, val: any) => wardSum + Number(val),
-                    0
-                );
-                return sum + wardPop;
-            }
-            return sum;
-        }, 0);
+            return {
+                wardCode: location.name,
+                wardName: location.name,
+                laName: '',
+                totalPopulation,
+                isWard: false,
+                bounds: location,
+            };
+        });
+    }, [populationWithBounds]);
 
-        return {
-            wardCode: location.name,
-            wardName: location.name,
-            laName: '',
-            totalPopulation,
-            isWard: false,
-            bounds: location,
-        };
-    });
-}, [populationWithBounds]);
-
-    // Combine and sort: larger locations first, then wards by population
     const sortedLocations = useMemo(() => {
+        if (!largerLocations.length || !wardLocations.length) return [];
+
         return [
             ...largerLocations,
             ...wardLocations
         ].sort((a, b) => b.totalPopulation - a.totalPopulation);
     }, [largerLocations, wardLocations]);
+
+    console.log('SORTED LOCATIONS', sortedLocations)
 
     return (
         <div className="bg-[rgba(255,255,255,0.6)] text-sm rounded-md backdrop-blur-md shadow-lg flex flex-col h-full">
@@ -170,4 +151,4 @@ const largerLocations = useMemo(() => {
             </div>
         </div>
     )
-}
+})

@@ -18,7 +18,6 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".", // Must be present
     "paths": {
       "@/*": ["./*"],
       "@components/*": ["./components/*"],

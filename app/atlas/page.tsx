@@ -1,4 +1,4 @@
-// page.tsx
+// page.tsx - Optimized version
 'use client';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
@@ -35,10 +35,12 @@ const MAP_CONFIG = {
 };
 
 export default function MapsPage() {
+	console.log('MapPage')
 	// Refs
-	const mapContainer = useRef<HTMLDivElement | null>(null);
 	const map = useRef<mapboxgl.Map | null>(null);
 	const hasInitialized = useRef(false);
+	const isInitializing = useRef(false);
+	const lastCalcRef = useRef<{ locName: string, data: AggregatedChartData } | null>(null);
 
 	// Data hooks
 	const { datasets: electionDatasets, loading: dataLoading, error: dataError } = useElectionData();
@@ -56,7 +58,12 @@ export default function MapsPage() {
 		data2021: null,
 	});
 
-	// Computed values
+	const selectedLocationRef = useRef(selectedLocation);
+	useEffect(() => {
+		selectedLocationRef.current = selectedLocation;
+	}, [selectedLocation]);
+
+	// Computed values - memoize to prevent unnecessary recalculations
 	const allDatasets = useMemo(
 		() => [...electionDatasets, ...populationDatasets],
 		[electionDatasets, populationDatasets]
@@ -70,6 +77,7 @@ export default function MapsPage() {
 	const { geojson: activeGeoJSON, wardData, wardResults, wardNameToPopCode, isLoading: wardDataLoading } =
 		useWardDatasets(allDatasets, activeDatasetId, populationDatasets);
 
+	// Memoize this to prevent recalculation on every render
 	const allYearsWardData = useMemo(() => ({
 		data2024: electionDatasets.find(d => d.id === '2024')?.wardData || {},
 		data2023: electionDatasets.find(d => d.id === '2023')?.wardData || {},
@@ -77,9 +85,11 @@ export default function MapsPage() {
 		data2021: electionDatasets.find(d => d.id === '2021')?.wardData || {},
 	}), [electionDatasets]);
 
-	// Map initialization
+	// Memoize population data to prevent unnecessary re-renders
+	const populationData = useMemo(() => populationDatasets[0]?.populationData ?? {}, [populationDatasets]);
+
+	// Map initialization - only run once
 	const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
-		mapContainer.current = el;
 		if (!el || map.current) return;
 
 		const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -103,31 +113,39 @@ export default function MapsPage() {
 		}
 	}, []);
 
+	// Memoize callbacks to prevent recreation
+	const onWardHover = useCallback((params: any) => {
+		const { data, wardCode } = params;
+
+		if (!data) {
+			setChartTitle(prev => selectedLocationRef.current || prev);
+			setSelectedWard(null);
+			return;
+		}
+
+		setChartTitle(data.wardName || '');
+		setSelectedWard({ ...data, wardCode });
+	}, [selectedLocation]);
+
+	const onLocationChange = useCallback((stats: any, location: any) => {
+		setChartTitle(location.name);
+		setSelectedWard(null);
+	}, []);
+
 	// Map manager setup
 	const mapManagerRef = useMapManager({
 		mapRef: map,
 		geojson: activeGeoJSON,
-		onWardHover: (params) => {
-			const { data, wardCode } = params;
-
-			if (!data) {
-				setChartTitle(selectedLocation || '');
-				setSelectedWard(null);
-				return;
-			}
-
-			setChartTitle(data.wardName || '');
-			setSelectedWard({ ...data, wardCode });
-		},
-		onLocationChange: (stats, location) => {
-			console.log('OnLocationChange');
-			setChartTitle(location.name);
-			setSelectedWard(null);
-		},
+		onWardHover,
+		onLocationChange,
 	});
 
-	// Helper function to calculate all years data
+	// Helper function to calculate all years data - memoized
 	const calculateAllYearsData = useCallback((location: LocationBounds): AggregatedChartData => {
+		if (lastCalcRef.current?.locName === location.name) {
+			return lastCalcRef.current.data;
+		}
+
 		if (!mapManagerRef.current || !activeGeoJSON) {
 			return { data2024: null, data2023: null, data2022: null, data2021: null };
 		}
@@ -140,42 +158,55 @@ export default function MapsPage() {
 				: null;
 		}
 
-		return result as AggregatedChartData;
+		const output = result as AggregatedChartData;
+		lastCalcRef.current = { locName: location.name, data: output };
+		return output;
 	}, [mapManagerRef, activeGeoJSON, electionDatasets]);
 
-	// Initial location setup (runs once on data load)
+	// Initial location setup - CRITICAL: Only run once with proper guards
 	useEffect(() => {
+		// Prevent multiple initializations
+		if (hasInitialized.current || isInitializing.current) return;
 		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset) return;
-		if (hasInitialized.current) return;
 
-		hasInitialized.current = true;
+		isInitializing.current = true;
 
-		const currentStats = mapManagerRef.current.calculateLocationStats(
-			INITIAL_LOCATION,
-			activeGeoJSON,
-			wardData
-		);
+		// Batch all state updates together
+		const initializeMap = () => {
+			const currentStats = mapManagerRef.current!.calculateLocationStats(
+				INITIAL_LOCATION,
+				activeGeoJSON,
+				wardData
+			);
 
-		const allYearAggregates = calculateAllYearsData(INITIAL_LOCATION);
-		console.log('Setting aggregate', allYearAggregates);
-		setAggregatedChartData(allYearAggregates);
+			const allYearAggregates = calculateAllYearsData(INITIAL_LOCATION);
 
-		mapManagerRef.current.updateMapForLocation(
-			INITIAL_LOCATION,
-			activeGeoJSON,
-			wardResults,
-			wardData,
-			currentStats,
-			activeDataset.partyInfo
-		);
+			mapManagerRef.current!.updateMapForLocation(
+				INITIAL_LOCATION,
+				activeGeoJSON,
+				wardResults,
+				wardData,
+				currentStats,
+				activeDataset.partyInfo
+			);
 
-		setSelectedLocation(INITIAL_LOCATION.name);
-		setChartTitle(INITIAL_LOCATION.name);
-		setSelectedWard(null);
+			// Batch state updates
+			setAggregatedChartData(allYearAggregates);
+			setSelectedLocation(INITIAL_LOCATION.name);
+			setChartTitle(INITIAL_LOCATION.name);
+			setSelectedWard(null);
+
+			hasInitialized.current = true;
+			isInitializing.current = false;
+		};
+
+		// Use requestAnimationFrame to ensure map is ready
+		requestAnimationFrame(initializeMap);
 	}, [activeGeoJSON, wardData, wardResults, activeDataset, mapManagerRef, calculateAllYearsData]);
 
-	// Update map when dataset changes
+	// Update map when dataset changes - ONLY if already initialized
 	useEffect(() => {
+		if (!hasInitialized.current) return;
 		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset || !selectedLocation) return;
 
 		const currentLocation = LOCATIONS.find(loc => loc.name === selectedLocation);
@@ -197,10 +228,11 @@ export default function MapsPage() {
 		);
 	}, [activeDatasetId, activeGeoJSON, wardData, wardResults, activeDataset, selectedLocation, mapManagerRef]);
 
-	// Handlers
+	// Handlers - memoized with proper dependencies
 	const handleLocationClick = useCallback((location: LocationBounds) => {
-		setSelectedLocation(location.name);
 		if (!mapManagerRef.current || !activeGeoJSON || !activeDataset) return;
+
+		setSelectedLocation(location.name);
 
 		const stats = mapManagerRef.current.calculateLocationStats(
 			location,
@@ -209,7 +241,8 @@ export default function MapsPage() {
 		);
 
 		const newAggregates = calculateAllYearsData(location);
-		console.log('Setting aggregate', newAggregates);
+
+		// Batch updates
 		setAggregatedChartData(newAggregates);
 
 		mapManagerRef.current.updateMapForLocation(
@@ -229,6 +262,15 @@ export default function MapsPage() {
 
 	const handleDatasetChange = useCallback((id: string) => {
 		setActiveDatasetId(id);
+	}, []);
+
+	useEffect(() => {
+		return () => {
+			if (map.current) {
+				map.current.remove();
+				map.current = null;
+			}
+		};
 	}, []);
 
 	const isLoading = dataLoading || popLoading;
@@ -257,7 +299,7 @@ export default function MapsPage() {
 					<ControlPanel
 						selectedLocation={selectedLocation}
 						onLocationClick={handleLocationClick}
-						population={populationDatasets[0]?.populationData ?? {}}
+						population={populationData}
 					/>
 				</div>
 
@@ -267,7 +309,7 @@ export default function MapsPage() {
 						title={chartTitle}
 						selectedWard={selectedWard}
 						wardData={allYearsWardData}
-						population={populationDatasets[0]?.populationData ?? {}}
+						population={populationData}
 						activeDataset={activeDataset}
 						availableDatasets={allDatasets}
 						onDatasetChange={handleDatasetChange}
