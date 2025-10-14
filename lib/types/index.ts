@@ -29,11 +29,14 @@ export interface AgeData {
 }
 
 export interface PopulationWardData {
-    [wardCode: string]: {
-        total: AgeData;
-        males: AgeData;
-        females: AgeData;
-    };
+  [wardCode: string]: {
+    total: AgeData;
+    males: AgeData;
+    females: AgeData;
+    wardName: string;
+    laCode: string;
+    laName: string;
+  };
 }
 
 export interface Dataset {
@@ -45,4 +48,18 @@ export interface Dataset {
     wardData?: any;
     populationData?: PopulationWardData;
     partyInfo: Party[];
+}
+
+export interface AllYearsWardData {
+	data2024: { [wardCode: string]: any };
+	data2023: { [wardCode: string]: any };
+	data2022: { [wardCode: string]: any };
+	data2021: { [wardCode: string]: any };
+}
+
+export interface AllYearsAggregatedData {
+	data2024: ChartData | null;
+	data2023: ChartData | null;
+	data2022: ChartData | null;
+	data2021: ChartData | null;
 }

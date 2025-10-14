@@ -1,21 +1,7 @@
 // components/LocalElectionResultChart.tsx
 'use client';
-import { ChartData, Dataset } from '@/lib/types';
+import { AllYearsAggregatedData, AllYearsWardData, ChartData, Dataset } from '@/lib/types';
 import { useMemo } from 'react';
-
-interface AllYearsWardData {
-	data2024: { [wardCode: string]: any };
-	data2023: { [wardCode: string]: any };
-	data2022: { [wardCode: string]: any };
-	data2021: { [wardCode: string]: any };
-}
-
-interface AllYearsAggregatedData {
-	data2024: ChartData | null;
-	data2023: ChartData | null;
-	data2022: ChartData | null;
-	data2021: ChartData | null;
-}
 
 interface LocalElectionResultChartProps {
 	activeDataset: Dataset;
@@ -26,14 +12,14 @@ interface LocalElectionResultChartProps {
 	aggregatedData: AllYearsAggregatedData;
 }
 
-export const LocalElectionResultChart = ({
+export default function LocalElectionResultChart({
 	activeDataset,
 	availableDatasets,
 	onDatasetChange,
 	wardCode,
 	wardData,
 	aggregatedData,
-}: LocalElectionResultChartProps) => {
+}: LocalElectionResultChartProps) {
 	const { chartData2024, chartData2023, chartData2022, chartData2021 } = useMemo(() => {
 		const getChartData = (yearData: any, year: string): ChartData | undefined => {
 			// If we have a specific ward selected (hovering), use that ward's data

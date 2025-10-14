@@ -1,26 +1,12 @@
 // components/ChartPanel.tsx
 'use client';
-import { ChartData, Dataset, PopulationWardData } from '@/lib/types';
-import { LocalElectionResultChart } from './LocalElectionResultChart';
-import { PopulationChart } from './PopulationChart';
-
-interface AllYearsWardData {
-	data2024: { [wardCode: string]: any };
-	data2023: { [wardCode: string]: any };
-	data2022: { [wardCode: string]: any };
-	data2021: { [wardCode: string]: any };
-}
-
-interface AllYearsAggregatedData {
-	data2024: ChartData | null;
-	data2023: ChartData | null;
-	data2022: ChartData | null;
-	data2021: ChartData | null;
-}
+import { AllYearsAggregatedData, AllYearsWardData, ChartData, Dataset, PopulationWardData, WardData } from '@/lib/types';
+import LocalElectionResultChart from './LocalElectionResultChart';
+import PopulationChart from './PopulationChart';
 
 interface ChartPanelProps {
 	title: string;
-	wardCode: string;
+	selectedWard: WardData | null;
 	wardData: AllYearsWardData | null;
 	population: PopulationWardData;
 	activeDataset: Dataset;
@@ -30,9 +16,9 @@ interface ChartPanelProps {
 	wardCodeMap: { [name: string]: string };
 }
 
-export const ChartPanel = ({
+export default function ChartPanel({
 	title,
-	wardCode,
+	selectedWard,
 	wardData,
 	population,
 	activeDataset,
@@ -40,7 +26,7 @@ export const ChartPanel = ({
 	onDatasetChange,
 	aggregatedData,
 	wardCodeMap
-}: ChartPanelProps) => {
+}: ChartPanelProps) {
 	return (
 		<div className="pointer-events-auto p-[10px] flex flex-col h-full w-[320px]">
 			<div className="bg-[rgba(255,255,255,0.6)] rounded-md backdrop-blur-md shadow-lg h-[100%] p-3 flex flex-col overflow-y-auto">
@@ -48,10 +34,11 @@ export const ChartPanel = ({
 				<div className="pb-2 border-b border-gray-200">
 					<h2 className="font-semibold text-sm">{title}</h2>
 					<div className="text-gray-500 text-xs">
-						{wardCode ? (
+						{selectedWard?.wardCode ? (
 							<div className="flex space-x-1">
-								<span className="flex-grow">Ward selected</span>
-								<span>{wardCode}</span>
+								<span className="flex-grow">{selectedWard?.localAuthorityName}</span>
+								<span>{selectedWard?.localAuthorityCode}</span>
+								<span>{selectedWard?.wardCode}</span>
 							</div>
 						) : 'North West, England'}
 					</div>
@@ -63,7 +50,7 @@ export const ChartPanel = ({
 						activeDataset={activeDataset}
 						availableDatasets={availableDatasets}
 						onDatasetChange={onDatasetChange}
-						wardCode={wardCode}
+						wardCode={selectedWard?.wardCode.toString() ?? ''}
 						wardData={wardData}
                         aggregatedData={aggregatedData}
 					/>
@@ -72,7 +59,7 @@ export const ChartPanel = ({
 						<h3 className="text-xs font-bold text-gray-700 mb-2">Population (Mid-2020)</h3>
 						<PopulationChart
 							population={population}
-							wardCode={wardCode}
+							wardCode={selectedWard?.wardCode.toString() ?? ''}
 							wardName={title}
 							wardCodeMap={wardCodeMap}
 						/>

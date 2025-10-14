@@ -10,12 +10,12 @@ interface PopulationChartProps {
 	wardCodeMap: { [name: string]: string }; // The map to find the population code
 }
 
-export const PopulationChart = ({
+export default function PopulationChart({
 	population,
 	wardCode,
 	wardName,
 	wardCodeMap
-}: PopulationChartProps) => {
+}: PopulationChartProps) {
 	const populationStats = useMemo(() => {
 		if (!population || Object.keys(population).length === 0) return null;
 

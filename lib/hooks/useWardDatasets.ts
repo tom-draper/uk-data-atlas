@@ -3,7 +3,7 @@ import type { Dataset } from '@/lib/types';
 
 type Year = '2024' | '2023' | '2022' | '2021';
 
-interface WardGeojson {
+export interface WardGeojson {
 	features: Array<{
 		properties: {
 			WD24CD?: string;
@@ -102,6 +102,7 @@ export function useWardDatasets(
 
 		async function loadAll() {
 			try {
+				console.log('loadAll');
 				// Determine which year to load
 				const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
 				

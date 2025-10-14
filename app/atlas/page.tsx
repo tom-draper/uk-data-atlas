@@ -9,14 +9,13 @@ import { usePopulationData } from '@/lib/hooks/usePopulationData';
 import { useWardDatasets } from '@/lib/hooks/useWardDatasets';
 import { useMapManager } from '@/lib/hooks/useMapManager';
 
-import { LocationPanel } from '@/components/LocationPanel';
-import { LegendPanel } from '@/components/LegendPanel';
-import { ChartPanel } from '@/components/ChartPanel';
-import { ErrorDisplay } from '@/components/ErrorDisplay';
-import { LoadingOverlay } from '@/components/LoadingOverlay';
+import ControlPanel from '@/components/ControlPanel';
+import LegendPanel from '@/components/LegendPanel';
+import ChartPanel from '@/components/ChartPanel';
+import ErrorDisplay from '@/components/ErrorDisplay';
 
 import { LOCATIONS } from '@/lib/data/locations';
-import type { ChartData, LocationBounds } from '@/lib/types';
+import type { ChartData, LocationBounds, WardData } from '@/lib/types';
 
 interface AggregatedChartData {
 	data2024: ChartData | null;
@@ -47,7 +46,7 @@ export default function MapsPage() {
 
 	// State
 	const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
-	const [selectedWardCode, setSelectedWardCode] = useState<string>('');
+	const [selectedWard, setSelectedWard] = useState<WardData | null>(null);
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 	const [chartTitle, setChartTitle] = useState<string>('Greater Manchester');
 	const [aggregatedChartData, setAggregatedChartData] = useState<AggregatedChartData>({
@@ -68,7 +67,7 @@ export default function MapsPage() {
 		[allDatasets, activeDatasetId]
 	);
 
-	const { geojson: activeGeoJSON, wardData, wardResults, wardNameToPopCode, isLoading: wardDataLoading } = 
+	const { geojson: activeGeoJSON, wardData, wardResults, wardNameToPopCode, isLoading: wardDataLoading } =
 		useWardDatasets(allDatasets, activeDatasetId, populationDatasets);
 
 	const allYearsWardData = useMemo(() => ({
@@ -113,17 +112,17 @@ export default function MapsPage() {
 
 			if (!data) {
 				setChartTitle(selectedLocation || '');
-				setSelectedWardCode('');
+				setSelectedWard(null);
 				return;
 			}
 
 			setChartTitle(data.wardName || '');
-			setSelectedWardCode(wardCode);
+			setSelectedWard({ ...data, wardCode });
 		},
 		onLocationChange: (stats, location) => {
 			console.log('OnLocationChange');
 			setChartTitle(location.name);
-			setSelectedWardCode('');
+			setSelectedWard(null);
 		},
 	});
 
@@ -158,6 +157,7 @@ export default function MapsPage() {
 		);
 
 		const allYearAggregates = calculateAllYearsData(INITIAL_LOCATION);
+		console.log('Setting aggregate', allYearAggregates);
 		setAggregatedChartData(allYearAggregates);
 
 		mapManagerRef.current.updateMapForLocation(
@@ -171,7 +171,7 @@ export default function MapsPage() {
 
 		setSelectedLocation(INITIAL_LOCATION.name);
 		setChartTitle(INITIAL_LOCATION.name);
-		setSelectedWardCode('');
+		setSelectedWard(null);
 	}, [activeGeoJSON, wardData, wardResults, activeDataset, mapManagerRef, calculateAllYearsData]);
 
 	// Update map when dataset changes
@@ -209,6 +209,7 @@ export default function MapsPage() {
 		);
 
 		const newAggregates = calculateAllYearsData(location);
+		console.log('Setting aggregate', newAggregates);
 		setAggregatedChartData(newAggregates);
 
 		mapManagerRef.current.updateMapForLocation(
@@ -231,7 +232,7 @@ export default function MapsPage() {
 	}, []);
 
 	const isLoading = dataLoading || popLoading;
-	
+
 	if (isLoading) {
 		return (
 			<div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
@@ -253,17 +254,18 @@ export default function MapsPage() {
 		<div style={{ width: '100%', height: '100vh', position: 'relative' }}>
 			<div className="fixed inset-0 z-[50] h-full w-full pointer-events-none">
 				<div className="absolute left-0 flex h-full">
-					<LocationPanel 
-						selectedLocation={selectedLocation} 
-						onLocationClick={handleLocationClick} 
+					<ControlPanel
+						selectedLocation={selectedLocation}
+						onLocationClick={handleLocationClick}
+						population={populationDatasets[0]?.populationData ?? {}}
 					/>
 				</div>
 
 				<div className="absolute right-0 flex h-full">
-					<LegendPanel activeDataset={activeDataset} />
+					<LegendPanel />
 					<ChartPanel
 						title={chartTitle}
-						wardCode={selectedWardCode}
+						selectedWard={selectedWard}
 						wardData={allYearsWardData}
 						population={populationDatasets[0]?.populationData ?? {}}
 						activeDataset={activeDataset}

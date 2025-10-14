@@ -2,7 +2,7 @@
 'use client';
 import { PARTY_INFO } from '@/lib/data/parties';
 
-export const LegendPanel = () => {
+export default function LegendPanel() {
     return (
         <div className="pointer-events-none place-content-end py-[10px]">
             <div className="bg-[rgba(255,255,255,0.6)] pointer-events-auto p-[10px] rounded-md backdrop-blur-md shadow-lg">

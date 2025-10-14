@@ -46,12 +46,6 @@ export class MapManager {
         const wardCodeProp = this.detectWardCodeProperty(geoData);
         const locationCodeProp = this.detectLocationCodeProperty(geoData);
 
-        const cacheKey = `${location.name}-${wardCodeProp}-${locationCodeProp}`
-
-        if (this.cache.has(cacheKey)) {
-            return this.cache.get(cacheKey)
-        }
-
         // Aggregate stats for all wards within this location
         const wardsInLocation = geoData.features.filter((f: any) => 
             location.lad_codes.includes(f.properties[locationCodeProp])
@@ -81,7 +75,6 @@ export class MapManager {
             }
         });
 
-        this.cache.set(cacheKey, aggregated);
         return aggregated;
     }
 
@@ -93,7 +86,6 @@ export class MapManager {
         locationStats: ChartData,
         partyInfo: Party[]
     ) {
-        console.log('updateMap!')
         const wardCodeProp = this.detectWardCodeProperty(geoData);
         const locationCodeProp = this.detectLocationCodeProperty(geoData);
 
