@@ -49,7 +49,7 @@ export default function MapsPage() {
 		const data = populationDatasets[0]?.populationData;
 		return data ? data : {};
 	}, [populationDatasets?.[0]?.populationData]);
-	
+
 	// Map
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
 
@@ -93,6 +93,7 @@ export default function MapsPage() {
 	} = useWardInteractionHandlers({
 		setChartTitle,
 		setSelectedWard,
+		selectedLocation,
 		setSelectedLocation,
 	});
 
@@ -129,11 +130,9 @@ export default function MapsPage() {
 	// Update map when dataset changes - ONLY if already initialized
 	useEffect(() => {
 		if (!hasInitialized.current) return;
-        if (wardDataLoading) return;
+		if (wardDataLoading) return;
 		if (activeDataset?.id !== activeDatasetId) return;
 		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset || !selectedLocation) return;
-
-		console.log('HERE', wardData)
 
 		const wardDataMatchesDataset = wardData === activeDataset.wardData;
 		if (!wardDataMatchesDataset) return;
@@ -146,7 +145,7 @@ export default function MapsPage() {
 			currentLocation,
 			activeGeoJSON,
 			wardData,
-			activeDataset.id
+			activeDatasetId
 		);
 
 		console.log('Updating map for location! (expensive)')
@@ -158,7 +157,7 @@ export default function MapsPage() {
 			stats,
 			activeDataset.partyInfo
 		);
-	}, [wardData, wardResults, activeGeoJSON, selectedLocation, activeDataset, mapManagerRef, wardDataLoading]);
+	}, [wardData, wardResults, activeGeoJSON, activeDataset, mapManagerRef, wardDataLoading]);
 
 
 	// Handlers - memoized with proper dependencies
@@ -173,7 +172,7 @@ export default function MapsPage() {
 			location,
 			activeGeoJSON,
 			activeDataset.wardData,
-			activeDataset.id,
+			activeDatasetId,
 		);
 
 		const newAggregates = calculateAllYearsData(location);

@@ -129,12 +129,12 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
 
     return (
         <div className="bg-[rgba(255,255,255,0.6)] text-sm rounded-md backdrop-blur-md shadow-lg flex flex-col h-full">
-            <div className="p-[10px] border-b border-gray-200 flex-shrink-0">
-                <h2 className="font-semibold mb-2">Locations</h2>
+            <div className="border-b border-gray-200 flex-shrink-0">
+                <h2 className="font-semibold p-3 pb-2">Locations</h2>
             </div>
 
             {/* Scrollable list */}
-            <div className="overflow-y-auto flex-1 p-[10px] space-y-[2px]">
+            <div className="overflow-y-auto scroll-container flex-1 px-3 py-1 space-y-[2px]">
                 {sortedLocations.map(({ wardCode, wardName, totalPopulation, bounds }) => (
                     <button
                         key={wardCode}

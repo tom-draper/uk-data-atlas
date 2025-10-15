@@ -61,6 +61,8 @@ export class MapManager {
             location.lad_codes.includes(f.properties[locationCodeProp])
         );
 
+        console.log('Filtered wards', wardsInLocation);
+
         const aggregated: ChartData = {
             LAB: 0,
             CON: 0,
@@ -102,13 +104,15 @@ export class MapManager {
         const locationCodeProp = this.detectLocationCodeProperty(geoData);
 
         // Sample a few codes from the first filtered feature
-        const filteredFeatures = geoData.features.filter((f: any) => {
+        const wardsInLocation = geoData.features.filter((f: any) => {
             return location.lad_codes.includes(f.properties[locationCodeProp])
         });
 
+        console.log('Filtered wards', wardsInLocation);
+
         const locationData = {
             type: 'FeatureCollection' as const,
-            features: filteredFeatures.map((feature: any) => ({
+            features: wardsInLocation.map((feature: any) => ({
                 ...feature,
                 properties: {
                     ...feature.properties,

@@ -39,14 +39,57 @@ body {
 }
 
 .crop {
-  width: 50%;      /* Show half the width */
-  height: 50%;     /* Show half the height */
+  width: 50%;
+  /* Show half the width */
+  height: 50%;
+  /* Show half the height */
   overflow: hidden;
 }
 
 .crop img {
-  width: 200%;     /* Double the image so only 1/4 shows */
+  width: 200%;
+  /* Double the image so only 1/4 shows */
   height: 200%;
   object-fit: cover;
   object-position: top left;
+}
+
+@media screen and (max-width: 1300px) {
+  nav>div {
+    width: 90%;
+  }
+}
+
+.scroll-container {
+  height: 300px;
+  /* or whatever height */
+  overflow: auto;
+  /* enables scrollbar */
+}
+
+/* WebKit browsers */
+.scroll-container::-webkit-scrollbar {
+  width: 12px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  backdrop-filter: blur(6px);
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Firefox */
+.scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.4) rgba(255, 255, 255, 0.1);
 }

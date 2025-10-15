@@ -33,7 +33,7 @@ export function useAggregatedChartData({ mapManagerRef, activeGeoJSON, electionD
 			for (const year of YEARS) {
 				const dataset = electionDatasets.find(d => d.id === year);
 				result[`data${year}`] = dataset?.wardData
-					? mapManagerRef.current.calculateLocationStats(location, activeGeoJSON, dataset.wardData)
+					? mapManagerRef.current.calculateLocationStats(location, activeGeoJSON, dataset.wardData, year)
 					: null;
 			}
 

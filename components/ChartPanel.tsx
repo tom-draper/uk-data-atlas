@@ -17,7 +17,7 @@ interface ChartPanelProps {
 	wardCodeMap: { [name: string]: string };
 }
 
-export default function ChartPanel({
+export default memo(function ChartPanel({
 	title,
 	selectedWard,
 	wardData,
@@ -30,9 +30,9 @@ export default function ChartPanel({
 }: ChartPanelProps) {
 	return (
 		<div className="pointer-events-auto p-[10px] flex flex-col h-full w-[320px]">
-			<div className="bg-[rgba(255,255,255,0.6)] rounded-md backdrop-blur-md shadow-lg h-[100%] p-3 flex flex-col overflow-y-auto">
+			<div className="bg-[rgba(255,255,255,0.6)] rounded-md backdrop-blur-md shadow-lg h-[100%] flex flex-col">
 				{/* Header */}
-				<div className="pb-2 border-b border-gray-200">
+				<div className="pb-2 pt-[10px] px-[10px] border-b border-gray-200">
 					<h2 className="font-semibold text-sm">{title}</h2>
 					<div className="text-gray-500 text-xs">
 						{selectedWard?.wardCode ? (
@@ -45,7 +45,7 @@ export default function ChartPanel({
 					</div>
 				</div>
 				{/* Main Content Area */}
-				<div className="space-y-2 flex-1 overflow-y-auto">
+				<div className="space-y-2 flex-1 px-[10px] overflow-y-auto scroll-container">
 					{/* Election Results Section */}
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
@@ -67,10 +67,10 @@ export default function ChartPanel({
 					</div>
 				</div>
 				{/* Footer */}
-				<div className="text-[9px] text-gray-400 pt-2 border-t border-gray-200 mt-auto">
+				<div className="text-[9px] px-[10px] pb-[10px] text-gray-400 pt-2 border-t border-gray-200 mt-auto">
 					Click to switch which dataset shows on map
 				</div>
 			</div>
 		</div>
 	);
-};
+});

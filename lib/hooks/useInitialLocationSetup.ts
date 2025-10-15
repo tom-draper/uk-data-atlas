@@ -44,7 +44,8 @@ export function useInitialLocationSetup({
 			const stats = mapManagerRef.current!.calculateLocationStats(
 				initialLocation,
 				activeGeoJSON,
-				wardData
+				wardData,
+				activeDataset.id
 			);
 
 			const aggregates = calculateAllYearsData(initialLocation);

@@ -4,6 +4,7 @@ import type { WardData } from '@/lib/types';
 interface UseWardInteractionHandlersParams {
 	setChartTitle: (title: string) => void;
 	setSelectedWard: (ward: WardData | null) => void;
+	selectedLocation: string | null;
 	setSelectedLocation: (location: string | null) => void;
 }
 
@@ -14,14 +15,13 @@ interface UseWardInteractionHandlersParams {
 export function useWardInteractionHandlers({
 	setChartTitle,
 	setSelectedWard,
+	selectedLocation,
 	setSelectedLocation,
 }: UseWardInteractionHandlersParams) {
-	const selectedLocationRef = useRef<string | null>(null);
 	const lastHoveredWardRef = useRef<string | null>(null);
 
 	// Initialize state tracking
 	useEffect(() => {
-		selectedLocationRef.current = null;
 		lastHoveredWardRef.current = null;
 	}, []);
 
@@ -39,12 +39,12 @@ export function useWardInteractionHandlers({
 
 			if (!data) {
 				// Reset to previous chart title or location name
-				setChartTitle(prev => selectedLocationRef.current || prev);
+				setChartTitle(selectedLocation || '');
 				setSelectedWard(null);
 				return;
 			}
 
-			setChartTitle(data.wardName || '');
+			setChartTitle(data.wardName.toString() || '');
 			setSelectedWard({ ...data, wardCode });
 		},
 		[setChartTitle, setSelectedWard]
