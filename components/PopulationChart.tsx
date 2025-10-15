@@ -111,8 +111,17 @@ export default function PopulationChart({
 
 	if (!populationStats) {
 		return (
-			<div className="text-xs text-gray-400 py-2 text-center">
-				Hover over a ward to see population data
+			<div
+				className={`p-2 rounded transition-all cursor-pointer bg-gray-50 border-2 border-gray-200`}
+				onClick={() => { }}
+			>
+				<div className="flex items-center justify-between mb-1.5">
+					<h3 className="text-xs font-bold">Population (2020)</h3>
+				</div>
+
+				<div className="text-xs text-gray-400 py-2 text-left">
+					No data available
+				</div>
 			</div>
 		);
 	}
@@ -121,22 +130,22 @@ export default function PopulationChart({
 
 	return (
 		<div className="space-y-3">
-			{/* Total Population Overview */}
-			<div className="bg-gradient-to-r from-blue-50 to-purple-50 p-2 rounded">
-				<div className="text-xs font-bold text-gray-700 mb-2">
-					Population Overview
-					{populationStats.isWardSpecific && (
-						<span className="ml-2 text-[9px] bg-blue-500 text-white px-1.5 py-0.5 rounded font-semibold">WARD</span>
-					)}
+			<div
+				className={`p-2 h-[95px] rounded transition-all cursor-pointer bg-gray-50 border-2 border-gray-200`}
+				onClick={() => { }}
+			>
+				<div className="flex items-center justify-between mb-5">
+					<h3 className="text-xs font-bold">Population (2020)</h3>
 				</div>
+
 				<div className="grid grid-cols-3 gap-2 text-center">
 					<div>
 						<div className="text-[10px] text-gray-500">Total</div>
-						<div className="text-sm font-bold text-blue-600">{total.toLocaleString()}</div>
+						<div className="text-sm font-bold text-green-600">{total.toLocaleString()}</div>
 					</div>
 					<div>
 						<div className="text-[10px] text-gray-500">Males</div>
-						<div className="text-sm font-bold text-indigo-600">{males.toLocaleString()}</div>
+						<div className="text-sm font-bold text-blue-600">{males.toLocaleString()}</div>
 					</div>
 					<div>
 						<div className="text-[10px] text-gray-500">Females</div>
@@ -146,21 +155,101 @@ export default function PopulationChart({
 			</div>
 
 			{/* Age Distribution */}
-			<div>
-				<div className="text-xs font-bold text-gray-700 mb-2">Age Distribution</div>
-				<div className="space-y-1.5">
-					{renderPopulationBar('0-17', ageGroups.total['0-17'], total, '#10b981')}
-					{renderPopulationBar('18-29', ageGroups.total['18-29'], total, '#3b82f6')}
-					{renderPopulationBar('30-44', ageGroups.total['30-44'], total, '#8b5cf6')}
-					{renderPopulationBar('45-64', ageGroups.total['45-64'], total, '#f59e0b')}
-					{renderPopulationBar('65+', ageGroups.total['65+'], total, '#ef4444')}
+			<div className="mx-2">
+				<div className="text-xs font-bold text-gray-700 mb-[-10px]">Age Distribution</div>
+				{/* Detailed Age Chart (0-99) */}
+				<div className="">
+					{/* <div className="text-[10px] font-semibold text-gray-600 mb-2">Detailed Age Distribution</div> */}
+					{(() => {
+						// Get the actual age data from the population
+						let ageData: { [age: string]: number } = {};
+
+						if (wardCode) {
+							let resolvedPopCode = wardCode;
+							if (!population[wardCode]) {
+								const normalizedName = wardName?.toLowerCase().trim();
+								resolvedPopCode = wardCodeMap[normalizedName] || '';
+							}
+							if (resolvedPopCode && population[resolvedPopCode]) {
+								ageData = population[resolvedPopCode].total;
+							}
+						} else {
+							// Aggregate all wards
+							for (const wardData of Object.values(population)) {
+								Object.entries(wardData.total).forEach(([age, count]) => {
+									ageData[age] = (ageData[age] || 0) + count;
+								});
+							}
+						}
+
+						// Create array of ages 0-99 with their counts
+						const ages = Array.from({ length: 100 }, (_, i) => ({
+							age: i,
+							count: ageData[i.toString()] || 0
+						}));
+
+						const age90Plus = ages[90].count;
+						const weights: number[] = [];
+						const decayRate = 0.15; // Approximately 15% decline per year
+
+						for (let i = 0; i < 10; i++) {
+							weights.push(Math.exp(-decayRate * i));
+						}
+
+						const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+
+						// Distribute the 90+ population according to the weights
+						for (let i = 90; i < 100; i++) {
+							const weight = weights[i - 90];
+							ages[i] = { age: i, count: (age90Plus * weight) / totalWeight };
+						}
+
+						const maxCount = Math.max(...ages.map(a => a.count), 1);
+
+						return (
+							<div className="flex items-end h-32 overflow-x-hidden pt-4">
+								{ages.map(({ age, count }) => {
+									const heightPercentage = (count / maxCount) * 100;
+									const color = age <= 17 ? '#10b981' : age <= 29 ? '#3b82f6' : age <= 44 ? '#8b5cf6' : age <= 64 ? '#f59e0b' : '#ef4444';
+
+									return (
+										<div
+											key={age}
+											className="flex-1 hover:opacity-80 transition-opacity relative group"
+											style={{ height: `${heightPercentage}%`, backgroundColor: color, minHeight: count > 0 ? '2px' : '0' }}
+											title={`Age ${age}: ${count.toLocaleString()}`}
+										>
+											<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[8px] rounded-xs px-1 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-10">
+												{age}: {count.toLocaleString()}
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						);
+					})()}
+					<div className="flex justify-between text-[8px] text-gray-500 mt-1 mb-2">
+						<span>0</span>
+						<span>25</span>
+						<span>50</span>
+						<span>75</span>
+						<span>99</span>
+					</div>
+
+					<div className="space-y-1.5">
+						{renderPopulationBar('0-17', ageGroups.total['0-17'], total, '#10b981')}
+						{renderPopulationBar('18-29', ageGroups.total['18-29'], total, '#3b82f6')}
+						{renderPopulationBar('30-44', ageGroups.total['30-44'], total, '#8b5cf6')}
+						{renderPopulationBar('45-64', ageGroups.total['45-64'], total, '#f59e0b')}
+						{renderPopulationBar('65+', ageGroups.total['65+'], total, '#ef4444')}
+					</div>
 				</div>
 			</div>
 
 			{/* Gender Breakdown by Age */}
-			<div>
+			<div className="px-2">
 				<div className="text-xs font-bold text-gray-700 mb-2">Gender by Age Group</div>
-				<div className="space-y-2">
+				<div className="space-y-1">
 					{Object.entries(ageGroups.total).map(([ageGroup, totalCount]) => {
 						const maleCount = ageGroups.males[ageGroup as keyof typeof ageGroups.males] || 0;
 						const femaleCount = ageGroups.females[ageGroup as keyof typeof ageGroups.females] || 0;
@@ -169,7 +258,7 @@ export default function PopulationChart({
 							<div key={ageGroup}>
 								<div className="text-[9px] text-gray-500 mb-0.5">{ageGroup}</div>
 								<div className="flex h-3 rounded overflow-hidden bg-gray-200">
-									<div className="bg-indigo-500" style={{ width: `${malePercentage}%` }} title={`Males: ${maleCount.toLocaleString()}`} />
+									<div className="bg-blue-500" style={{ width: `${malePercentage}%` }} title={`Males: ${maleCount.toLocaleString()}`} />
 									<div className="bg-pink-500" style={{ width: `${100 - malePercentage}%` }} title={`Females: ${femaleCount.toLocaleString()}`} />
 								</div>
 								<div className="flex justify-between text-[9px] text-gray-600 mt-0.5">
@@ -183,4 +272,3 @@ export default function PopulationChart({
 			</div>
 		</div>
 	);
-};

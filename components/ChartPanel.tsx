@@ -57,7 +57,7 @@ export default memo(function ChartPanel({
 					/>
 					{/* Population Section */}
 					<div className="pt-3 border-t border-gray-200">
-						<h3 className="text-xs font-bold text-gray-700 mb-2">Population (Mid-2020)</h3>
+						{/* <h3 className="text-xs font-bold text-gray-700 mb-2">Population (Mid-2020)</h3> */}
 						<PopulationChart
 							population={population}
 							wardCode={selectedWard?.wardCode.toString() ?? ''}
