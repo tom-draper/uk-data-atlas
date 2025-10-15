@@ -219,7 +219,7 @@ export default function PopulationChart({
 											style={{ height: `${heightPercentage}%`, backgroundColor: color, minHeight: count > 0 ? '2px' : '0' }}
 											title={`Age ${age}: ${count.toLocaleString()}`}
 										>
-											<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[8px] rounded-xs px-1 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-10">
+											<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[8px] rounded-xs px-1 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[100]">
 												{age}: {count.toLocaleString()}
 											</div>
 										</div>
@@ -272,3 +272,4 @@ export default function PopulationChart({
 			</div>
 		</div>
 	);
+}
