@@ -63,3 +63,16 @@ export interface AllYearsAggregatedData {
 	data2022: ChartData | null;
 	data2021: ChartData | null;
 }
+
+export interface WardGeojson { 
+    features: Array<{ 
+        properties: { 
+            WD24CD?: string; 
+            WD23CD?: string; 
+            WD22CD?: string; 
+            WD21CD?: string; 
+            WD23NM?: string; 
+        }; 
+    }>;
+ }
+
