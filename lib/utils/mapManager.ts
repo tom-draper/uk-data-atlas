@@ -1,5 +1,6 @@
 // lib/utils/mapManager.ts
 import { LocationBounds, ChartData, WardData, Party } from '@/lib/types';
+import { WardGeojson } from '../hooks/useWardDatasets';
 
 interface MapManagerCallbacks {
     onWardHover: (params: { data: WardData | null; wardCode: string }) => void;
@@ -39,9 +40,17 @@ export class MapManager {
 
     calculateLocationStats(
         location: LocationBounds,
-        geoData: any,
+        geoData: WardGeojson,
         wardData: Record<string, WardData>,
+        year: string = ''
     ): ChartData {
+        const cacheKey = `${location.name}-${year}`
+        console.log(cacheKey)
+        if (this.cache.has(cacheKey)) {
+            console.log('using cache')
+            return this.cache.get(cacheKey)
+        }
+
         console.log('Calculate location stats')
         // Detect the correct ward code property based on the geojson
         const wardCodeProp = this.detectWardCodeProperty(geoData);
@@ -76,6 +85,7 @@ export class MapManager {
             }
         });
 
+        this.cache.set(cacheKey, aggregated);
         return aggregated;
     }
 

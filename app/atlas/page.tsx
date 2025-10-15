@@ -133,6 +133,8 @@ export default function MapsPage() {
 		if (activeDataset?.id !== activeDatasetId) return;
 		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset || !selectedLocation) return;
 
+		console.log('HERE', wardData)
+
 		const wardDataMatchesDataset = wardData === activeDataset.wardData;
 		if (!wardDataMatchesDataset) return;
 
@@ -143,7 +145,8 @@ export default function MapsPage() {
 		const stats = mapManagerRef.current.calculateLocationStats(
 			currentLocation,
 			activeGeoJSON,
-			wardData
+			wardData,
+			activeDataset.id
 		);
 
 		console.log('Updating map for location! (expensive)')
@@ -169,7 +172,8 @@ export default function MapsPage() {
 		const stats = mapManagerRef.current.calculateLocationStats(
 			location,
 			activeGeoJSON,
-			activeDataset.wardData
+			activeDataset.wardData,
+			activeDataset.id,
 		);
 
 		const newAggregates = calculateAllYearsData(location);
@@ -203,7 +207,7 @@ export default function MapsPage() {
 	if (isLoading) {
 		return (
 			<div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-				<div className="text-sm">Loading map...</div>
+				<div className="text-sm text-gray-500">Loading map...</div>
 			</div>
 		);
 	}
