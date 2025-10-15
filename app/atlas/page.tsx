@@ -130,7 +130,11 @@ export default function MapsPage() {
 	useEffect(() => {
 		if (!hasInitialized.current) return;
         if (wardDataLoading) return;
+		if (activeDataset?.id !== activeDatasetId) return;
 		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset || !selectedLocation) return;
+
+		const wardDataMatchesDataset = wardData === activeDataset.wardData;
+		if (!wardDataMatchesDataset) return;
 
 		const currentLocation = LOCATIONS.find(loc => loc.name === selectedLocation);
 		if (!currentLocation) return;
