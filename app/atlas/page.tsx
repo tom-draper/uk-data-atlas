@@ -44,6 +44,12 @@ export default function MapsPage() {
 	const { datasets: electionDatasets, loading: electionDataLoading, error: electionDataError } = useElectionData();
 	const { datasets: populationDatasets, loading: populationDataLoading, error: populationDataError } = usePopulationData();
 
+	// Memoize population data to prevent unnecessary re-renders
+	const populationData = useMemo(() => {
+		const data = populationDatasets[0]?.populationData;
+		return data ? data : {};
+	}, [populationDatasets?.[0]?.populationData]);
+
 	// Map
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
 
@@ -60,10 +66,10 @@ export default function MapsPage() {
 	});
 
 	// Computed values - memoize to prevent unnecessary recalculations
-	const allDatasets = useMemo(
-		() => [...electionDatasets, ...populationDatasets],
-		[electionDatasets, populationDatasets]
-	);
+	const allDatasets = useMemo(() => {
+		if (!electionDatasets.length && !populationDatasets.length) return [];
+		return [...electionDatasets, ...populationDatasets];
+	}, [electionDatasets, populationDatasets]);
 
 	const activeDataset = useMemo(
 		() => allDatasets.find(d => d.id === activeDatasetId) || allDatasets[0],
@@ -71,7 +77,7 @@ export default function MapsPage() {
 	);
 
 	const { geojson: activeGeoJSON, wardData, wardResults, wardNameToPopCode, isLoading: wardDataLoading } =
-		useWardDatasets(allDatasets, activeDatasetId, populationDatasets);
+		useWardDatasets(allDatasets, activeDatasetId, populationData);
 
 	// Memoize this to prevent recalculation on every render
 	const allYearsWardData = useMemo(() => ({
@@ -80,9 +86,6 @@ export default function MapsPage() {
 		data2022: electionDatasets.find(d => d.id === '2022')?.wardData || {},
 		data2021: electionDatasets.find(d => d.id === '2021')?.wardData || {},
 	}), [electionDatasets]);
-
-	// Memoize population data to prevent unnecessary re-renders
-	const populationData = useMemo(() => populationDatasets[0]?.populationData ?? {}, [populationDatasets]);
 
 	const {
 		onWardHover,
@@ -120,23 +123,26 @@ export default function MapsPage() {
 		setSelectedLocation,
 		setChartTitle,
 		setSelectedWard,
+		hasInitialized
 	});
 
 	// Update map when dataset changes - ONLY if already initialized
 	useEffect(() => {
-		console.log('Update map when dataset changes')
 		if (!hasInitialized.current) return;
+        if (wardDataLoading) return;
 		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset || !selectedLocation) return;
 
 		const currentLocation = LOCATIONS.find(loc => loc.name === selectedLocation);
 		if (!currentLocation) return;
 
+		console.log('Calculating location stats! (expensive)')
 		const stats = mapManagerRef.current.calculateLocationStats(
 			currentLocation,
 			activeGeoJSON,
 			wardData
 		);
 
+		console.log('Updating map for location! (expensive)')
 		mapManagerRef.current.updateMapForLocation(
 			currentLocation,
 			activeGeoJSON,
@@ -145,7 +151,8 @@ export default function MapsPage() {
 			stats,
 			activeDataset.partyInfo
 		);
-	}, [activeDatasetId, activeGeoJSON, wardData, wardResults, activeDataset, selectedLocation, mapManagerRef]);
+	}, [wardData, wardResults, activeGeoJSON, selectedLocation, activeDataset, mapManagerRef, wardDataLoading]);
+
 
 	// Handlers - memoized with proper dependencies
 	const handleLocationClick = useCallback((location: LocationBounds) => {
@@ -154,6 +161,7 @@ export default function MapsPage() {
 
 		setSelectedLocation(location.name);
 
+		console.log('Calculating location stats because of click! (expensive)')
 		const stats = mapManagerRef.current.calculateLocationStats(
 			location,
 			activeGeoJSON,
@@ -165,6 +173,7 @@ export default function MapsPage() {
 		// Batch updates
 		setAggregatedChartData(newAggregates);
 
+		console.log('Updating map for location because of click! (expensive)')
 		mapManagerRef.current.updateMapForLocation(
 			location,
 			activeGeoJSON,
@@ -181,7 +190,7 @@ export default function MapsPage() {
 	}, [mapManagerRef, activeGeoJSON, activeDataset, calculateAllYearsData]);
 
 	const handleDatasetChange = useCallback((id: string) => {
-		console.log('Handling dataset changing')
+		console.log('Dataset clicked!')
 		setActiveDatasetId(id);
 	}, []);
 

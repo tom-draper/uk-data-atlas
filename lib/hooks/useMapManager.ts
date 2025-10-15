@@ -15,14 +15,13 @@ export function useMapManager(opts: UseMapManagerOptions) {
 
     // Update callbacks ref without triggering re-initialization
     useEffect(() => {
-        console.log('Update map manager callback ref')
         callbacksRef.current = opts;
     });
 
     useEffect(() => {
-        console.log('Update map manager options')
         if (!opts.mapRef?.current || !opts.geojson) return;
-
+        
+        console.log('Update map manager options...')
         managerRef.current = new MapManager(opts.mapRef.current, {
             onWardHover: (params) => {
                 // Use the ref to get the latest callback

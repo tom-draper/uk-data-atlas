@@ -11,7 +11,6 @@ export function useMapInitialization({ style, center, zoom }: UseMapInitializati
 	const mapRef = useRef<mapboxgl.Map | null>(null);
 
 	const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
-		console.log('handleMapContainer')
 		if (!el || mapRef.current) return;
 
 		const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;

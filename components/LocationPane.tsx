@@ -125,7 +125,7 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
         ].sort((a, b) => b.totalPopulation - a.totalPopulation);
     }, [largerLocations, wardLocations]);
 
-    console.log('SORTED LOCATIONS', sortedLocations)
+    // console.log('SORTED LOCATIONS', sortedLocations)
 
     return (
         <div className="bg-[rgba(255,255,255,0.6)] text-sm rounded-md backdrop-blur-md shadow-lg flex flex-col h-full">

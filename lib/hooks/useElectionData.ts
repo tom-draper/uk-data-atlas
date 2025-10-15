@@ -368,7 +368,7 @@ export const useElectionData = () => {
                 if (data2022) loadedDatasets.push(data2022);
                 if (data2021) loadedDatasets.push(data2021);
 
-                console.log('Loaded datasets:', loadedDatasets);
+                console.log('Storing election datasets:', loadedDatasets);
                 
                 setDatasets(loadedDatasets);
                 setLoading(false);

@@ -3,6 +3,7 @@
 import { AllYearsAggregatedData, AllYearsWardData, ChartData, Dataset, PopulationWardData, WardData } from '@/lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
+import { memo } from 'react';
 
 interface ChartPanelProps {
 	title: string;

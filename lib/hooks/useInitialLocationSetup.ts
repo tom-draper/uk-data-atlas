@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 import type { LocationBounds } from '@/lib/types';
 
 interface UseInitialLocationSetupParams {
@@ -13,6 +13,7 @@ interface UseInitialLocationSetupParams {
 	setSelectedLocation: (loc: string) => void;
 	setChartTitle: (title: string) => void;
 	setSelectedWard: (ward: any) => void;
+	hasInitialized: RefObject<boolean>; // Add this line
 }
 
 export function useInitialLocationSetup({
@@ -27,18 +28,19 @@ export function useInitialLocationSetup({
 	setSelectedLocation,
 	setChartTitle,
 	setSelectedWard,
+	hasInitialized,
 }: UseInitialLocationSetupParams) {
-	const hasInitialized = useRef(false);
 	const isInitializing = useRef(false);
 
 	useEffect(() => {
-		console.log('Initialising location')
 		if (hasInitialized.current || isInitializing.current) return;
 		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset) return;
+
 
 		isInitializing.current = true;
 
 		const initialize = () => {
+			console.log('Initialize location...')
 			const stats = mapManagerRef.current!.calculateLocationStats(
 				initialLocation,
 				activeGeoJSON,
@@ -69,14 +71,7 @@ export function useInitialLocationSetup({
 	}, [
 		activeGeoJSON,
 		wardData,
-		wardResults,
 		activeDataset,
-		mapManagerRef,
-		calculateAllYearsData,
-		initialLocation,
-		setAggregatedChartData,
-		setSelectedLocation,
-		setChartTitle,
-		setSelectedWard,
+		mapManagerRef
 	]);
 }
