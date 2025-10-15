@@ -12,35 +12,45 @@ type UseMapManagerOptions = {
 export function useMapManager(opts: UseMapManagerOptions) {
     const managerRef = useRef<MapManager | null>(null);
     const callbacksRef = useRef(opts);
+    const hasInitialized = useRef(false);
 
     // Update callbacks ref without triggering re-initialization
     useEffect(() => {
         callbacksRef.current = opts;
     });
 
+    // Initialize manager once when both map and geojson are ready
     useEffect(() => {
         if (!opts.mapRef?.current || !opts.geojson) return;
+        if (hasInitialized.current) {
+            console.log('Skipping map manager re-init - already initialized');
+            return;
+        }
         
-        console.log('Update map manager options...')
+        console.log('Initializing map manager...')
         managerRef.current = new MapManager(opts.mapRef.current, {
             onWardHover: (params) => {
-                // Use the ref to get the latest callback
                 if (callbacksRef.current.onWardHover) {
                     callbacksRef.current.onWardHover(params);
                 }
             },
             onLocationChange: (stats, location) => {
-                // Use the ref to get the latest callback
                 if (callbacksRef.current.onLocationChange) {
                     callbacksRef.current.onLocationChange(stats, location);
                 }
             }
         });
+        
+        hasInitialized.current = true;
 
         return () => {
-            managerRef.current = null;
+            // Only cleanup if the map itself is being destroyed
+            if (!opts.mapRef?.current) {
+                managerRef.current = null;
+                hasInitialized.current = false;
+            }
         };
-    }, [opts.mapRef, opts.geojson]); // Only re-run when map or geojson changes
+    }, [opts.mapRef, opts.geojson]);
 
     return managerRef;
 }

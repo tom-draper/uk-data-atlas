@@ -55,6 +55,268 @@ function buildWardNameToPopCodeMap(
 	return map;
 }
 
+// export function useWardDatasets(
+// 	allDatasets: Dataset[],
+// 	activeDatasetId: string,
+// 	populationData: PopulationWardData
+// ): WardDatasets {
+// 	const [geojson, setGeojson] = useState<WardGeojson | null>(null);
+// 	const [wardData, setWardData] = useState<any | null>(null);
+// 	const [wardResults, setWardResults] = useState<any | null>(null);
+// 	const [wardNameToPopCode, setWardNameToPopCode] = useState<Record<string, string>>({});
+// 	const [isLoading, setIsLoading] = useState(true);
+
+// 	// Cache of loaded geojson files (per year)
+// 	const geojsonCache = useRef<Record<string, WardGeojson>>({});
+
+// 	const activeDataset = useMemo(
+// 		() => allDatasets.find(d => d.id === activeDatasetId),
+// 		[allDatasets, activeDatasetId]
+// 	);
+
+// 	// Memoize population codes to prevent unnecessary recalculations
+// 	const populationCodes = useMemo(
+// 		() => Object.keys(populationData || {}),
+// 		[populationData]
+// 	);
+
+// 	// Fetch GeoJSON ONCE per dataset/year
+// 	useEffect(() => {
+// 		let cancelled = false;
+// 		const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
+
+// 		async function loadGeoJSON() {
+// 			if (geojsonCache.current[activeYear]) {
+// 				console.log('Using cached geojson')
+// 				setGeojson(geojsonCache.current[activeYear]);
+// 				setIsLoading(false);
+// 				return;
+// 			}
+
+// 			setIsLoading(true);
+// 			console.log('Fetching geojson! (expensive)');
+// 			try {
+// 				const data = await fetchGeojson(activeYear);
+// 				if (cancelled) return;
+
+// 				geojsonCache.current[activeYear] = data;
+// 				setGeojson(data);
+// 			} catch (err) {
+// 				console.error('Error fetching GeoJSON:', err);
+// 				if (!cancelled) setGeojson(null);
+// 			} finally {
+// 				if (!cancelled) setIsLoading(false);
+// 			}
+// 		}
+
+// 		loadGeoJSON();
+// 		return () => {
+// 			cancelled = true;
+// 		};
+// 	}, [activeDatasetId]);
+
+// 	// Update ward data and mapping when inputs change (but NOT refetching GeoJSON)
+// 	// useEffect(() => {
+// 	// 	if (!geojson || !activeDataset) return;
+
+// 	// 	const populationCodes = Object.keys(populationData || {});
+// 	// 	const wardNameMap = buildWardNameToPopCodeMap(geojson, populationCodes);
+
+// 	// 	console.log('Storing ward data:', activeDataset);
+// 	// 	setWardData(activeDataset.wardData || {});
+// 	// 	setWardResults(activeDataset.wardResults || {});
+// 	// 	setWardNameToPopCode(wardNameMap);
+// 	// }, [geojson, activeDataset, populationData]);
+// 	useEffect(() => {
+// 		if (!geojson || !activeDataset) return;
+
+// 		console.log('Storing ward data:', activeDataset);
+// 		setWardData(activeDataset.wardData || {});
+// 		setWardResults(activeDataset.wardResults || {});
+// 		setIsLoading(false);
+// 	}, [geojson, activeDataset]); // Removed populationData dependency
+
+// 	// Update ward name mapping separately when population data changes
+// 	useEffect(() => {
+// 		if (!geojson) return;
+		
+// 		console.log('build ward map')
+// 		const wardNameMap = buildWardNameToPopCodeMap(geojson, populationCodes);
+// 		setWardNameToPopCode(wardNameMap);
+// 	}, [geojson, populationCodes]);
+
+// 	return { geojson, wardData, wardResults, wardNameToPopCode, isLoading };
+// }
+
+// export function useWardDatasets(
+// 	allDatasets: Dataset[],
+// 	activeDatasetId: string,
+// 	populationData: PopulationWardData
+// ): WardDatasets {
+// 	const [geojson, setGeojson] = useState<WardGeojson | null>(null);
+// 	const [wardData, setWardData] = useState<any | null>(null);
+// 	const [wardResults, setWardResults] = useState<any | null>(null);
+// 	const [wardNameToPopCode, setWardNameToPopCode] = useState<Record<string, string>>({});
+// 	const [isLoading, setIsLoading] = useState(true);
+
+// 	const geojsonCache = useRef<Record<string, WardGeojson>>({});
+// 	const lastProcessedDatasetId = useRef<string>(''); // Track what we've processed
+
+// 	const activeDataset = useMemo(
+// 		() => allDatasets.find(d => d.id === activeDatasetId),
+// 		[allDatasets, activeDatasetId]
+// 	);
+
+// 	const populationCodes = useMemo(
+// 		() => Object.keys(populationData || {}),
+// 		[populationData]
+// 	);
+
+// 	// Fetch GeoJSON ONCE per dataset/year
+// 	useEffect(() => {
+// 		let cancelled = false;
+// 		const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
+
+// 		async function loadGeoJSON() {
+// 			if (geojsonCache.current[activeYear]) {
+// 				console.log('Using cached geojson')
+// 				setGeojson(geojsonCache.current[activeYear]);
+// 				return;
+// 			}
+
+// 			setIsLoading(true);
+// 			console.log('Fetching geojson! (expensive)');
+// 			try {
+// 				const data = await fetchGeojson(activeYear);
+// 				if (cancelled) return;
+
+// 				geojsonCache.current[activeYear] = data;
+// 				setGeojson(data);
+// 			} catch (err) {
+// 				console.error('Error fetching GeoJSON:', err);
+// 				if (!cancelled) {
+// 					setGeojson(null);
+// 					setIsLoading(false);
+// 				}
+// 			}
+// 		}
+
+// 		loadGeoJSON();
+// 		return () => {
+// 			cancelled = true;
+// 		};
+// 	}, [activeDatasetId]);
+
+// 	// Update ward data when dataset changes
+// 	useEffect(() => {
+// 		if (!geojson || !activeDataset) return;
+		
+// 		// Skip if we've already processed this exact dataset
+// 		if (lastProcessedDatasetId.current === activeDataset.id) {
+// 			console.log('Skipping - already processed:', activeDataset.id);
+// 			return;
+// 		}
+
+// 		console.log('Storing ward data:', activeDataset);
+// 		lastProcessedDatasetId.current = activeDataset.id;
+		
+// 		const wardNameMap = buildWardNameToPopCodeMap(geojson, populationCodes);
+		
+// 		setWardData(activeDataset.wardData || {});
+// 		setWardResults(activeDataset.wardResults || {});
+// 		setWardNameToPopCode(wardNameMap);
+// 		setIsLoading(false);
+// 	}, [geojson, activeDataset, populationCodes]);
+
+// 	return { geojson, wardData, wardResults, wardNameToPopCode, isLoading };
+// }
+
+
+// export function useWardDatasets(
+// 	allDatasets: Dataset[],
+// 	activeDatasetId: string,
+// 	populationData: PopulationWardData
+// ): WardDatasets {
+// 	const [geojson, setGeojson] = useState<WardGeojson | null>(null);
+// 	const [wardData, setWardData] = useState<any | null>(null);
+// 	const [wardResults, setWardResults] = useState<any | null>(null);
+// 	const [wardNameToPopCode, setWardNameToPopCode] = useState<Record<string, string>>({});
+// 	const [isLoading, setIsLoading] = useState(true);
+
+// 	const geojsonCache = useRef<Record<string, WardGeojson>>({});
+// 	const currentGeojsonYear = useRef<string>(''); // Track which year's geojson is loaded
+
+// 	const activeDataset = useMemo(
+// 		() => allDatasets.find(d => d.id === activeDatasetId),
+// 		[allDatasets, activeDatasetId]
+// 	);
+
+// 	const populationCodes = useMemo(
+// 		() => Object.keys(populationData || {}),
+// 		[populationData]
+// 	);
+
+// 	// Fetch GeoJSON ONCE per dataset/year
+// 	useEffect(() => {
+// 		let cancelled = false;
+// 		const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
+
+// 		async function loadGeoJSON() {
+// 			if (geojsonCache.current[activeYear]) {
+// 				console.log('Using cached geojson')
+// 				currentGeojsonYear.current = activeYear; // Track the year
+// 				setGeojson(geojsonCache.current[activeYear]);
+// 				return;
+// 			}
+
+// 			setIsLoading(true);
+// 			console.log('Fetching geojson! (expensive)');
+// 			try {
+// 				const data = await fetchGeojson(activeYear);
+// 				if (cancelled) return;
+
+// 				geojsonCache.current[activeYear] = data;
+// 				currentGeojsonYear.current = activeYear; // Track the year
+// 				setGeojson(data);
+// 			} catch (err) {
+// 				console.error('Error fetching GeoJSON:', err);
+// 				if (!cancelled) {
+// 					setGeojson(null);
+// 					setIsLoading(false);
+// 				}
+// 			}
+// 		}
+
+// 		loadGeoJSON();
+// 		return () => {
+// 			cancelled = true;
+// 		};
+// 	}, [activeDatasetId]);
+
+// 	// Update ward data when dataset changes - but ONLY if geojson matches
+// 	useEffect(() => {
+// 		if (!geojson || !activeDataset) return;
+		
+// 		// CRITICAL: Only update if the geojson year matches the dataset year
+// 		const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
+// 		if (currentGeojsonYear.current !== activeYear) {
+// 			console.log('Skipping - geojson/dataset mismatch:', currentGeojsonYear.current, 'vs', activeYear);
+// 			return;
+// 		}
+
+// 		console.log('Storing ward data:', activeDataset);
+		
+// 		const wardNameMap = buildWardNameToPopCodeMap(geojson, populationCodes);
+		
+// 		setWardData(activeDataset.wardData || {});
+// 		setWardResults(activeDataset.wardResults || {});
+// 		setWardNameToPopCode(wardNameMap);
+// 		setIsLoading(false);
+// 	}, [geojson, activeDataset, populationCodes, activeDatasetId]);
+
+// 	return { geojson, wardData, wardResults, wardNameToPopCode, isLoading };
+// }
+
 export function useWardDatasets(
 	allDatasets: Dataset[],
 	activeDatasetId: string,
@@ -66,12 +328,18 @@ export function useWardDatasets(
 	const [wardNameToPopCode, setWardNameToPopCode] = useState<Record<string, string>>({});
 	const [isLoading, setIsLoading] = useState(true);
 
-	// Cache of loaded geojson files (per year)
 	const geojsonCache = useRef<Record<string, WardGeojson>>({});
+	const currentGeojsonYear = useRef<string>('');
+	const lastProcessedKey = useRef<string>(''); // Track processed combination
 
 	const activeDataset = useMemo(
 		() => allDatasets.find(d => d.id === activeDatasetId),
 		[allDatasets, activeDatasetId]
+	);
+
+	const populationCodes = useMemo(
+		() => Object.keys(populationData || {}),
+		[populationData]
 	);
 
 	// Fetch GeoJSON ONCE per dataset/year
@@ -82,8 +350,8 @@ export function useWardDatasets(
 		async function loadGeoJSON() {
 			if (geojsonCache.current[activeYear]) {
 				console.log('Using cached geojson')
+				currentGeojsonYear.current = activeYear;
 				setGeojson(geojsonCache.current[activeYear]);
-				setIsLoading(false);
 				return;
 			}
 
@@ -94,12 +362,14 @@ export function useWardDatasets(
 				if (cancelled) return;
 
 				geojsonCache.current[activeYear] = data;
+				currentGeojsonYear.current = activeYear;
 				setGeojson(data);
 			} catch (err) {
 				console.error('Error fetching GeoJSON:', err);
-				if (!cancelled) setGeojson(null);
-			} finally {
-				if (!cancelled) setIsLoading(false);
+				if (!cancelled) {
+					setGeojson(null);
+					setIsLoading(false);
+				}
 			}
 		}
 
@@ -109,18 +379,34 @@ export function useWardDatasets(
 		};
 	}, [activeDatasetId]);
 
-	// Update ward data and mapping when inputs change (but NOT refetching GeoJSON)
+	// Update ward data when dataset changes - but ONLY if geojson matches
 	useEffect(() => {
 		if (!geojson || !activeDataset) return;
+		
+		// CRITICAL: Only update if the geojson year matches the dataset year
+		const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
+		if (currentGeojsonYear.current !== activeYear) {
+			console.log('Skipping - geojson/dataset mismatch:', currentGeojsonYear.current, 'vs', activeYear);
+			return;
+		}
 
-		const populationCodes = Object.keys(populationData || {});
-		const wardNameMap = buildWardNameToPopCodeMap(geojson, populationCodes);
+		// Create a unique key for this combination
+		const processingKey = `${activeDataset.id}-${currentGeojsonYear.current}-${populationCodes.length}`;
+		if (lastProcessedKey.current === processingKey) {
+			console.log('Skipping - already processed:', processingKey);
+			return;
+		}
 
 		console.log('Storing ward data:', activeDataset);
+		lastProcessedKey.current = processingKey;
+		
+		const wardNameMap = buildWardNameToPopCodeMap(geojson, populationCodes);
+		
 		setWardData(activeDataset.wardData || {});
 		setWardResults(activeDataset.wardResults || {});
 		setWardNameToPopCode(wardNameMap);
-	}, [geojson, activeDataset, populationData]);
+		setIsLoading(false);
+	}, [geojson, activeDataset, populationCodes, activeDatasetId]);
 
 	return { geojson, wardData, wardResults, wardNameToPopCode, isLoading };
 }

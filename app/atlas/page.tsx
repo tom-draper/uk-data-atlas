@@ -49,7 +49,7 @@ export default function MapsPage() {
 		const data = populationDatasets[0]?.populationData;
 		return data ? data : {};
 	}, [populationDatasets?.[0]?.populationData]);
-
+	
 	// Map
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
 
