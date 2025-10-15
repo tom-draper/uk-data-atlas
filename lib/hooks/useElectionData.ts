@@ -352,6 +352,7 @@ export const useElectionData = () => {
 
     useEffect(() => {
         const loadData = async () => {
+            console.log('Loading election data')
             try {
                 // Load 2024 data first to use for mapping 2023 ward names
                 const data2024 = await parseElection2024();

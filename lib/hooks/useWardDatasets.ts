@@ -96,11 +96,11 @@ export function useWardDatasets(
 	}), [allDatasets]);
 
 	useEffect(() => {
-		console.log('useWardDatasets', activeDatasetId);
 		let cancelled = false;
 		setIsLoading(true);
 
 		async function loadAll() {
+			console.log('Loading ward datasets');
 			try {
 				// Determine which year to load
 				const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;

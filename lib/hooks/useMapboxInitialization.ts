@@ -1,45 +1,50 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 
+interface UseMapInitializationOptions {
+	style: string;
+	center: [number, number];
+	zoom: number;
+}
 
-export function useMapboxInitialization(containerRef: React.RefObject<HTMLDivElement>) {
-    const mapRef = useRef<mapboxgl.Map | null>(null);
+export function useMapInitialization({ style, center, zoom }: UseMapInitializationOptions) {
+	const mapRef = useRef<mapboxgl.Map | null>(null);
 
-    useEffect(() => {
-        const el = containerRef.current;
-        if (!el) return;
-        if (mapRef.current) return;
+	const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
+		console.log('handleMapContainer')
+		if (!el || mapRef.current) return;
 
+		const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+		if (!token) {
+			console.error('Missing NEXT_PUBLIC_MAPBOX_TOKEN');
+			return;
+		}
 
-        const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-        if (!token) {
-            console.error('Missing NEXT_PUBLIC_MAPBOX_TOKEN');
-            return;
-        }
+		mapboxgl.accessToken = token;
 
-        mapboxgl.accessToken = token;
+		try {
+			console.log('Creating map...')
+			mapRef.current = new mapboxgl.Map({
+				container: el,
+				style,
+				center,
+				zoom,
+			});
+			mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+		} catch (err) {
+			console.error('Failed to initialize map:', err);
+		}
+	}, [style, center, zoom]);
 
-        try {
-            const map = new mapboxgl.Map({
-                container: el,
-                style: 'mapbox://styles/mapbox/light-v11',
-                center: [-2.3, 53.5],
-                zoom: 10,
-            });
-            map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-            mapRef.current = map;
-        } catch (err) {
-            console.error('Failed to initialize map', err);
-        }
+	useEffect(() => {
+		console.log('Cleaning up map')
+		return () => {
+			if (mapRef.current) {
+				mapRef.current.remove();
+				mapRef.current = null;
+			}
+		};
+	}, []);
 
-
-        return () => {
-            if (mapRef.current) {
-                mapRef.current.remove();
-                mapRef.current = null;
-            }
-        };
-    }, [containerRef]);
-
-    return mapRef;
+	return { mapRef, handleMapContainer };
 }

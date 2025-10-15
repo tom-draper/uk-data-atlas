@@ -1,13 +1,15 @@
 // page.tsx - Optimized version
 'use client';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { useElectionData } from '@/lib/hooks/useElectionData';
 import { usePopulationData } from '@/lib/hooks/usePopulationData';
 import { useWardDatasets } from '@/lib/hooks/useWardDatasets';
 import { useMapManager } from '@/lib/hooks/useMapManager';
+import { useMapInitialization } from '@/lib/hooks/useMapboxInitialization';
+import { useAggregatedChartData } from '@/lib/hooks/useAggregatedChartData';
+import { useInitialLocationSetup } from '@/lib/hooks/useInitialLocationSetup';
 
 import ControlPanel from '@/components/ControlPanel';
 import LegendPanel from '@/components/LegendPanel';
@@ -16,6 +18,7 @@ import ErrorDisplay from '@/components/ErrorDisplay';
 
 import { LOCATIONS } from '@/lib/data/locations';
 import type { ChartData, LocationBounds, WardData } from '@/lib/types';
+import { useWardInteractionHandlers } from '@/lib/hooks/useWardInteractionHandlers';
 
 interface AggregatedChartData {
 	data2024: ChartData | null;
@@ -24,7 +27,6 @@ interface AggregatedChartData {
 	data2021: ChartData | null;
 }
 
-const YEARS = ['2024', '2023', '2022', '2021'] as const;
 const INITIAL_LOCATION = LOCATIONS[0];
 const MAP_CONFIG = {
 	style: 'mapbox://styles/mapbox/light-v11',
@@ -35,16 +37,15 @@ const MAP_CONFIG = {
 };
 
 export default function MapsPage() {
-	console.log('MapPage')
 	// Refs
-	const map = useRef<mapboxgl.Map | null>(null);
 	const hasInitialized = useRef(false);
-	const isInitializing = useRef(false);
-	const lastCalcRef = useRef<{ locName: string, data: AggregatedChartData } | null>(null);
 
 	// Data hooks
-	const { datasets: electionDatasets, loading: dataLoading, error: dataError } = useElectionData();
-	const { datasets: populationDatasets, loading: popLoading, error: popError } = usePopulationData();
+	const { datasets: electionDatasets, loading: electionDataLoading, error: electionDataError } = useElectionData();
+	const { datasets: populationDatasets, loading: populationDataLoading, error: populationDataError } = usePopulationData();
+
+	// Map
+	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
 
 	// State
 	const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
@@ -57,11 +58,6 @@ export default function MapsPage() {
 		data2022: null,
 		data2021: null,
 	});
-
-	const selectedLocationRef = useRef(selectedLocation);
-	useEffect(() => {
-		selectedLocationRef.current = selectedLocation;
-	}, [selectedLocation]);
 
 	// Computed values - memoize to prevent unnecessary recalculations
 	const allDatasets = useMemo(
@@ -88,49 +84,14 @@ export default function MapsPage() {
 	// Memoize population data to prevent unnecessary re-renders
 	const populationData = useMemo(() => populationDatasets[0]?.populationData ?? {}, [populationDatasets]);
 
-	// Map initialization - only run once
-	const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
-		if (!el || map.current) return;
-
-		const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-		if (!token) {
-			console.error('Missing NEXT_PUBLIC_MAPBOX_TOKEN');
-			return;
-		}
-
-		mapboxgl.accessToken = token;
-
-		try {
-			map.current = new mapboxgl.Map({
-				container: el,
-				style: MAP_CONFIG.style,
-				center: MAP_CONFIG.center,
-				zoom: MAP_CONFIG.zoom,
-			});
-			map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-		} catch (err) {
-			console.error('Failed to initialize map:', err);
-		}
-	}, []);
-
-	// Memoize callbacks to prevent recreation
-	const onWardHover = useCallback((params: any) => {
-		const { data, wardCode } = params;
-
-		if (!data) {
-			setChartTitle(prev => selectedLocationRef.current || prev);
-			setSelectedWard(null);
-			return;
-		}
-
-		setChartTitle(data.wardName || '');
-		setSelectedWard({ ...data, wardCode });
-	}, [selectedLocation]);
-
-	const onLocationChange = useCallback((stats: any, location: any) => {
-		setChartTitle(location.name);
-		setSelectedWard(null);
-	}, []);
+	const {
+		onWardHover,
+		onLocationChange,
+	} = useWardInteractionHandlers({
+		setChartTitle,
+		setSelectedWard,
+		setSelectedLocation,
+	});
 
 	// Map manager setup
 	const mapManagerRef = useMapManager({
@@ -140,72 +101,30 @@ export default function MapsPage() {
 		onLocationChange,
 	});
 
-	// Helper function to calculate all years data - memoized
-	const calculateAllYearsData = useCallback((location: LocationBounds): AggregatedChartData => {
-		if (lastCalcRef.current?.locName === location.name) {
-			return lastCalcRef.current.data;
-		}
+	const { calculateAllYearsData } = useAggregatedChartData({
+		mapManagerRef,
+		activeGeoJSON,
+		electionDatasets,
+	});
 
-		if (!mapManagerRef.current || !activeGeoJSON) {
-			return { data2024: null, data2023: null, data2022: null, data2021: null };
-		}
-
-		const result: any = {};
-		for (const year of YEARS) {
-			const dataset = electionDatasets.find(d => d.id === year);
-			result[`data${year}`] = dataset?.wardData
-				? mapManagerRef.current.calculateLocationStats(location, activeGeoJSON, dataset.wardData)
-				: null;
-		}
-
-		const output = result as AggregatedChartData;
-		lastCalcRef.current = { locName: location.name, data: output };
-		return output;
-	}, [mapManagerRef, activeGeoJSON, electionDatasets]);
-
-	// Initial location setup - CRITICAL: Only run once with proper guards
-	useEffect(() => {
-		// Prevent multiple initializations
-		if (hasInitialized.current || isInitializing.current) return;
-		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset) return;
-
-		isInitializing.current = true;
-
-		// Batch all state updates together
-		const initializeMap = () => {
-			const currentStats = mapManagerRef.current!.calculateLocationStats(
-				INITIAL_LOCATION,
-				activeGeoJSON,
-				wardData
-			);
-
-			const allYearAggregates = calculateAllYearsData(INITIAL_LOCATION);
-
-			mapManagerRef.current!.updateMapForLocation(
-				INITIAL_LOCATION,
-				activeGeoJSON,
-				wardResults,
-				wardData,
-				currentStats,
-				activeDataset.partyInfo
-			);
-
-			// Batch state updates
-			setAggregatedChartData(allYearAggregates);
-			setSelectedLocation(INITIAL_LOCATION.name);
-			setChartTitle(INITIAL_LOCATION.name);
-			setSelectedWard(null);
-
-			hasInitialized.current = true;
-			isInitializing.current = false;
-		};
-
-		// Use requestAnimationFrame to ensure map is ready
-		requestAnimationFrame(initializeMap);
-	}, [activeGeoJSON, wardData, wardResults, activeDataset, mapManagerRef, calculateAllYearsData]);
+	// Initialise location - run once
+	useInitialLocationSetup({
+		activeGeoJSON,
+		wardData,
+		wardResults,
+		activeDataset,
+		mapManagerRef,
+		calculateAllYearsData,
+		initialLocation: INITIAL_LOCATION,
+		setAggregatedChartData,
+		setSelectedLocation,
+		setChartTitle,
+		setSelectedWard,
+	});
 
 	// Update map when dataset changes - ONLY if already initialized
 	useEffect(() => {
+		console.log('Update map when dataset changes')
 		if (!hasInitialized.current) return;
 		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset || !selectedLocation) return;
 
@@ -230,6 +149,7 @@ export default function MapsPage() {
 
 	// Handlers - memoized with proper dependencies
 	const handleLocationClick = useCallback((location: LocationBounds) => {
+		console.log('Location click!')
 		if (!mapManagerRef.current || !activeGeoJSON || !activeDataset) return;
 
 		setSelectedLocation(location.name);
@@ -261,19 +181,11 @@ export default function MapsPage() {
 	}, [mapManagerRef, activeGeoJSON, activeDataset, calculateAllYearsData]);
 
 	const handleDatasetChange = useCallback((id: string) => {
+		console.log('Handling dataset changing')
 		setActiveDatasetId(id);
 	}, []);
 
-	useEffect(() => {
-		return () => {
-			if (map.current) {
-				map.current.remove();
-				map.current = null;
-			}
-		};
-	}, []);
-
-	const isLoading = dataLoading || popLoading;
+	const isLoading = electionDataLoading || populationDataLoading;
 
 	if (isLoading) {
 		return (
@@ -284,8 +196,8 @@ export default function MapsPage() {
 	}
 
 	// Error states
-	if (dataError || popError) {
-		return <ErrorDisplay message={(dataError || popError) ?? 'Error loading data'} />;
+	if (electionDataError || populationDataError) {
+		return <ErrorDisplay message={(electionDataError || populationDataError) ?? 'Error loading data'} />;
 	}
 
 	if (!activeDataset) {

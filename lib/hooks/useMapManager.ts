@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import { MapManager } from '@/lib/utils/mapManager';
 import type { ChartData, LocationBounds, WardData } from '@/lib/types';
 
@@ -15,10 +15,12 @@ export function useMapManager(opts: UseMapManagerOptions) {
 
     // Update callbacks ref without triggering re-initialization
     useEffect(() => {
+        console.log('Update map manager callback ref')
         callbacksRef.current = opts;
     });
 
     useEffect(() => {
+        console.log('Update map manager options')
         if (!opts.mapRef?.current || !opts.geojson) return;
 
         managerRef.current = new MapManager(opts.mapRef.current, {
