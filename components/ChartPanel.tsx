@@ -1,6 +1,6 @@
 // components/ChartPanel.tsx
 'use client';
-import { AllYearsAggregatedData, AllYearsWardData, ChartData, Dataset, PopulationWardData, WardData } from '@/lib/types';
+import { AllYearsAggregatedData, Dataset, PopulationWardData, WardData } from '@/lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import { memo } from 'react';
@@ -8,7 +8,6 @@ import { memo } from 'react';
 interface ChartPanelProps {
 	selectedLocation: string | null;
 	selectedWard: WardData | null;
-	wardData: AllYearsWardData | null;
 	population: PopulationWardData;
 	activeDataset: Dataset;
 	availableDatasets: Dataset[];
@@ -20,7 +19,6 @@ interface ChartPanelProps {
 export default memo(function ChartPanel({
 	selectedLocation,
 	selectedWard,
-	wardData,
 	population,
 	activeDataset,
 	availableDatasets,
@@ -54,7 +52,6 @@ export default memo(function ChartPanel({
 						availableDatasets={availableDatasets}
 						onDatasetChange={onDatasetChange}
 						wardCode={selectedWard?.wardCode.toString() ?? ''}
-						wardData={wardData}
                         aggregatedData={aggregatedData}
 					/>
 					{/* Population Section */}
@@ -63,7 +60,7 @@ export default memo(function ChartPanel({
 						<PopulationChart
 							population={population}
 							wardCode={selectedWard?.wardCode.toString() ?? ''}
-							wardName={selectedWard?.wardName || ''}
+							wardName={selectedWard?.wardName.toString() || ''}
 							wardCodeMap={wardCodeMap}
 						/>
 					</div>

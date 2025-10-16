@@ -1,6 +1,6 @@
 // components/LocalElectionResultChart.tsx
 'use client';
-import { AllYearsAggregatedData, AllYearsWardData, ChartData, Dataset } from '@/lib/types';
+import { AllYearsAggregatedData, ChartData, Dataset } from '@/lib/types';
 import { useMemo } from 'react';
 
 interface LocalElectionResultChartProps {
@@ -8,7 +8,6 @@ interface LocalElectionResultChartProps {
 	availableDatasets: Dataset[];
 	onDatasetChange: (datasetId: string) => void;
 	wardCode: string;
-	wardData: AllYearsWardData | null;
 	aggregatedData: AllYearsAggregatedData;
 }
 
@@ -17,9 +16,15 @@ export default function LocalElectionResultChart({
 	availableDatasets,
 	onDatasetChange,
 	wardCode,
-	wardData,
 	aggregatedData,
 }: LocalElectionResultChartProps) {
+	const allYearsWardData = useMemo(() => ({
+		data2024: availableDatasets.find(d => d.id === '2024')?.wardData || {},
+		data2023: availableDatasets.find(d => d.id === '2023')?.wardData || {},
+		data2022: availableDatasets.find(d => d.id === '2022')?.wardData || {},
+		data2021: availableDatasets.find(d => d.id === '2021')?.wardData || {},
+	}), [availableDatasets]);
+
 	const { chartData2024, chartData2023, chartData2022, chartData2021 } = useMemo(() => {
 		const getChartData = (yearData: any, year: string): ChartData | undefined => {
 			// If we have a specific ward selected (hovering), use that ward's data
@@ -46,14 +51,14 @@ export default function LocalElectionResultChart({
 
 		// Calculate data for each year independently
 		const data = {
-			chartData2024: getChartData(wardData?.data2024, '2024'),
-			chartData2023: getChartData(wardData?.data2023, '2023'),
-			chartData2022: getChartData(wardData?.data2022, '2022'),
-			chartData2021: getChartData(wardData?.data2021, '2021'),
+			chartData2024: getChartData(allYearsWardData?.data2024, '2024'),
+			chartData2023: getChartData(allYearsWardData?.data2023, '2023'),
+			chartData2022: getChartData(allYearsWardData?.data2022, '2022'),
+			chartData2021: getChartData(allYearsWardData?.data2021, '2021'),
 		};
 
 		return data;
-	}, [wardCode, wardData, activeDataset, aggregatedData]);
+	}, [wardCode, allYearsWardData, activeDataset, aggregatedData]);
 
 	const dataset2024 = availableDatasets.find(d => d.id === '2024');
 	const dataset2023 = availableDatasets.find(d => d.id === '2023');

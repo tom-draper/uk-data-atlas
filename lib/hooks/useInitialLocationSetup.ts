@@ -2,7 +2,7 @@ import { RefObject, useEffect, useRef } from 'react';
 import type { LocationBounds } from '@/lib/types';
 
 interface UseInitialLocationSetupParams {
-	activeGeoJSON: any;
+	geojson: any;
 	wardData: any;
 	wardResults: any;
 	activeDataset: any;
@@ -17,7 +17,7 @@ interface UseInitialLocationSetupParams {
 }
 
 export function useInitialLocationSetup({
-	activeGeoJSON,
+	geojson,
 	wardData,
 	wardResults,
 	activeDataset,
@@ -34,7 +34,7 @@ export function useInitialLocationSetup({
 
 	useEffect(() => {
 		if (hasInitialized.current || isInitializing.current) return;
-		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset) return;
+		if (!geojson || !wardData || !mapManagerRef.current || !activeDataset) return;
 
 		isInitializing.current = true;
 
@@ -43,7 +43,7 @@ export function useInitialLocationSetup({
 			console.log('Calculating location stats! (expensive)');
 			const stats = mapManagerRef.current!.calculateLocationStats(
 				initialLocation,
-				activeGeoJSON,
+				geojson,
 				wardData,
 				activeDataset.id
 			);
@@ -53,7 +53,7 @@ export function useInitialLocationSetup({
 			console.log('Updating map for location! (expensive)');
 			mapManagerRef.current!.updateMapForLocation(
 				initialLocation,
-				activeGeoJSON,
+				geojson,
 				wardResults,
 				wardData,
 				stats,
@@ -71,7 +71,7 @@ export function useInitialLocationSetup({
 
 		requestAnimationFrame(initialize);
 	}, [
-		activeGeoJSON,
+		geojson,
 		wardData,
 		activeDataset,
 		mapManagerRef
