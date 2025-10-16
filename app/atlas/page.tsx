@@ -177,7 +177,8 @@ export default function MapsPage() {
 		setAggregatedChartData,
 		setSelectedLocation,
 		setSelectedWard,
-		hasInitialized
+		hasInitialized,
+		lastProcessedDatasetId
 	});
 
 	// Update map when dataset changes - ONLY if already initialized
@@ -196,7 +197,7 @@ export default function MapsPage() {
 
 		console.log('Dataset changed, updating map');
 		updateMapForCurrentLocation(false);
-	}, [activeDatasetId, hasInitialized.current, wardDataLoading, activeDataset, selectedLocation, updateMapForCurrentLocation]);
+	}, [activeDatasetId, wardDataLoading, selectedLocation, updateMapForCurrentLocation]);
 
 	// Handlers - memoized with proper dependencies
 	const handleLocationClick = useCallback((location: LocationBounds) => {

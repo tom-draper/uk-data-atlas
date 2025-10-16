@@ -13,6 +13,7 @@ interface UseInitialLocationSetupParams {
 	setSelectedLocation: (loc: string) => void;
 	setSelectedWard: (ward: any) => void;
 	hasInitialized: RefObject<boolean>; // Add this line
+	lastProcessedDatasetId: RefObject<string | null>;
 }
 
 export function useInitialLocationSetup({
@@ -27,6 +28,7 @@ export function useInitialLocationSetup({
 	setSelectedLocation,
 	setSelectedWard,
 	hasInitialized,
+	lastProcessedDatasetId,
 }: UseInitialLocationSetupParams) {
 	const isInitializing = useRef(false);
 
@@ -34,11 +36,11 @@ export function useInitialLocationSetup({
 		if (hasInitialized.current || isInitializing.current) return;
 		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset) return;
 
-
 		isInitializing.current = true;
 
 		const initialize = () => {
 			console.log('Initialize location...')
+			console.log('Calculating location stats! (expensive)');
 			const stats = mapManagerRef.current!.calculateLocationStats(
 				initialLocation,
 				activeGeoJSON,
@@ -48,6 +50,7 @@ export function useInitialLocationSetup({
 
 			const aggregates = calculateAllYearsData(initialLocation);
 
+			console.log('Updating map for location! (expensive)');
 			mapManagerRef.current!.updateMapForLocation(
 				initialLocation,
 				activeGeoJSON,
@@ -62,6 +65,7 @@ export function useInitialLocationSetup({
 			setSelectedWard(null);
 
 			hasInitialized.current = true;
+			lastProcessedDatasetId.current = activeDataset.id;
 			isInitializing.current = false;
 		};
 
