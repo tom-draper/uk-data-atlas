@@ -2,7 +2,6 @@ import { useCallback, useRef, useEffect } from 'react';
 import type { WardData } from '@/lib/types';
 
 interface UseWardInteractionHandlersParams {
-	setChartTitle: (title: string) => void;
 	setSelectedWard: (ward: WardData | null) => void;
 	selectedLocation: string | null;
 	setSelectedLocation: (location: string | null) => void;
@@ -13,7 +12,6 @@ interface UseWardInteractionHandlersParams {
  * Optimized to prevent redundant updates when hovering within the same ward.
  */
 export function useWardInteractionHandlers({
-	setChartTitle,
 	setSelectedWard,
 	selectedLocation,
 	setSelectedLocation,
@@ -34,30 +32,24 @@ export function useWardInteractionHandlers({
 
 			if (!data) {
 				// Reset to previous chart title or location name
-				console.log('NO DATA SET CHART TITLE', selectedLocation);
-				setChartTitle(selectedLocation || '');
 				setSelectedWard(null);
 				return;
 			}
 
-			console.log('DATA SET CHART TITLE', selectedLocation);
-			setChartTitle(data.wardName.toString() || '');
 			setSelectedWard({ ...data, wardCode });
 		},
-		[setChartTitle, setSelectedWard, selectedLocation]
+		[setSelectedWard, selectedLocation]
 	);
 
 	const onLocationChange = useCallback(
 		(_stats: any, location: { name: string }) => {
-			console.log('LOCATION CHANGE SET CHART TITLE', location.name);
-			setChartTitle(location.name);
 			setSelectedWard(null);
 			setSelectedLocation(location.name);
 
 			// Reset last hovered ward since location changed
 			lastHoveredWardRef.current = null;
 		},
-		[setChartTitle, setSelectedWard, setSelectedLocation]
+		[setSelectedWard, setSelectedLocation]
 	);
 
 	return {

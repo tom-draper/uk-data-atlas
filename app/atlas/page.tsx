@@ -1,4 +1,4 @@
-// page.tsx - Optimized version with fixes
+// page.tsx
 'use client';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -57,9 +57,8 @@ export default function MapsPage() {
 
 	// State
 	const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
-	const [selectedWard, setSelectedWard] = useState<WardData | null>(null);
+	const [selectedWardData, setSelectedWard] = useState<WardData | null>(null);
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
-	const [chartTitle, setChartTitle] = useState<string>('Greater Manchester');
 	const [aggregatedChartData, setAggregatedChartData] = useState<AggregatedChartData>({
 		data2024: null,
 		data2023: null,
@@ -93,7 +92,6 @@ export default function MapsPage() {
 		onWardHover,
 		onLocationChange,
 	} = useWardInteractionHandlers({
-		setChartTitle,
 		setSelectedWard,
 		selectedLocation,
 		setSelectedLocation,
@@ -168,7 +166,6 @@ export default function MapsPage() {
 		calculateAllYearsData,
 	]);
 
-	// Initialise location - run once
 	useInitialLocationSetup({
 		activeGeoJSON,
 		wardData,
@@ -179,7 +176,6 @@ export default function MapsPage() {
 		initialLocation: INITIAL_LOCATION,
 		setAggregatedChartData,
 		setSelectedLocation,
-		setChartTitle,
 		setSelectedWard,
 		hasInitialized
 	});
@@ -207,7 +203,6 @@ export default function MapsPage() {
 		console.log('Location click!');
 		if (!mapManagerRef.current || !activeGeoJSON || !activeDataset) return;
 
-		console.log('SET SELECTED LOCATION LOCATION CLICK', location.name)
 		setSelectedLocation(location.name);
 
 		// Use requestAnimationFrame to batch the heavy calculations
@@ -290,8 +285,8 @@ export default function MapsPage() {
 				<div className="absolute right-0 flex h-full">
 					<LegendPanel />
 					<ChartPanel
-						title={chartTitle}
-						selectedWard={selectedWard}
+						selectedLocation={selectedLocation}
+						selectedWard={selectedWardData}
 						wardData={allYearsWardData}
 						population={populationData}
 						activeDataset={activeDataset}

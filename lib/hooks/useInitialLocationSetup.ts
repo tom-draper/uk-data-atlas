@@ -11,7 +11,6 @@ interface UseInitialLocationSetupParams {
 	initialLocation: LocationBounds;
 	setAggregatedChartData: (data: any) => void;
 	setSelectedLocation: (loc: string) => void;
-	setChartTitle: (title: string) => void;
 	setSelectedWard: (ward: any) => void;
 	hasInitialized: RefObject<boolean>; // Add this line
 }
@@ -26,7 +25,6 @@ export function useInitialLocationSetup({
 	initialLocation,
 	setAggregatedChartData,
 	setSelectedLocation,
-	setChartTitle,
 	setSelectedWard,
 	hasInitialized,
 }: UseInitialLocationSetupParams) {
@@ -61,8 +59,6 @@ export function useInitialLocationSetup({
 
 			setAggregatedChartData(aggregates);
 			setSelectedLocation(initialLocation.name);
-			console.log('INITIAL LOCAITON SET CHART TITLE', initialLocation.name)
-			setChartTitle(initialLocation.name);
 			setSelectedWard(null);
 
 			hasInitialized.current = true;

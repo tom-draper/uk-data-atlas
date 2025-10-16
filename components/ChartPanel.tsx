@@ -6,7 +6,7 @@ import PopulationChart from './PopulationChart';
 import { memo } from 'react';
 
 interface ChartPanelProps {
-	title: string;
+	selectedLocation: string | null;
 	selectedWard: WardData | null;
 	wardData: AllYearsWardData | null;
 	population: PopulationWardData;
@@ -18,7 +18,7 @@ interface ChartPanelProps {
 }
 
 export default memo(function ChartPanel({
-	title,
+	selectedLocation,
 	selectedWard,
 	wardData,
 	population,
@@ -28,6 +28,8 @@ export default memo(function ChartPanel({
 	aggregatedData,
 	wardCodeMap
 }: ChartPanelProps) {
+	const title = selectedWard?.wardName || selectedLocation || 'Greater Manchester';
+
 	return (
 		<div className="pointer-events-auto p-[10px] flex flex-col h-full w-[320px]">
 			<div className="bg-[rgba(255,255,255,0.6)] rounded-md backdrop-blur-md shadow-lg h-[100%] flex flex-col">
@@ -61,7 +63,7 @@ export default memo(function ChartPanel({
 						<PopulationChart
 							population={population}
 							wardCode={selectedWard?.wardCode.toString() ?? ''}
-							wardName={title}
+							wardName={selectedWard?.wardName || ''}
 							wardCodeMap={wardCodeMap}
 						/>
 					</div>
