@@ -114,9 +114,10 @@ export default function MapsPage() {
 			stats,
 			activeDataset.partyInfo
 		);
-	}, [mapManagerRef, geojson, activeDataset, activeDatasetId, calculateAllYearsData]);
+	}, [geojson, activeDataset, activeDatasetId, calculateAllYearsData]);
 
 	const hasInitialized = useRef(false);
+	const lastRenderedDatasetId = useRef<string | null>(null);
 
 	useEffect(() => {
 		if (hasInitialized.current) return;
@@ -126,27 +127,29 @@ export default function MapsPage() {
 		hasInitialized.current = true;
 		setSelectedLocation(INITIAL_LOCATION.name);
 		updateMapForLocation(INITIAL_LOCATION, false);
-	}, [geojson, activeDataset, geojsonLoading, updateMapForLocation]);
 
-	const previousDatasetId = useRef<string | null>(null);
+		lastRenderedDatasetId.current = activeDatasetId;
+	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, updateMapForLocation]);
 
 	// Update map when dataset changes - ONLY if already initialized
 	useEffect(() => {
 		if (!hasInitialized.current) return;
-		if (!selectedLocation || !geojson || !activeDataset || geojsonLoading) return;
+		if (geojsonLoading) return;
+		if (!geojson || !activeDataset) return;
 
-		if (previousDatasetId.current === activeDatasetId) {
-			console.log('Skipping update map -> previousDatasetId.current === activeDatasetId')
+		if (lastRenderedDatasetId.current === activeDatasetId) {
+			console.log('Skipping update map -> already rendered dataset:', activeDatasetId)
 			return;
 		}
-		previousDatasetId.current = activeDatasetId;
 
 		const location = LOCATIONS.find(loc => loc.name === selectedLocation);
 		if (!location) return;
 
-		console.log('Dataset changed, updating map');
+		console.log('New dataset & geojson ready -> updating map for dataset', activeDatasetId);
 		updateMapForLocation(location, false);
-	}, [geojson, activeDataset, selectedLocation, geojsonLoading, previousDatasetId, updateMapForLocation]);
+
+		lastRenderedDatasetId.current = activeDatasetId;
+	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, selectedLocation, updateMapForLocation]);
 
 	const handleLocationClick = useCallback((location: LocationBounds) => {
 		if (!mapManagerRef.current || !geojson || !activeDataset) return;
@@ -163,7 +166,7 @@ export default function MapsPage() {
 				duration: MAP_CONFIG.fitBoundsDuration,
 			});
 		});
-	}, [mapManagerRef, geojson, activeDataset, updateMapForLocation, map]);
+	}, [geojson, activeDataset, updateMapForLocation, map]);
 
 	const handleDatasetChange = useCallback((id: string) => {
 		console.log('Dataset clicked!');
