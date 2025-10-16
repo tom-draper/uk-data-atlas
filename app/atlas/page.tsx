@@ -195,7 +195,6 @@ export default function MapsPage() {
 		// This prevents using stale data from previous dataset
 		if (wardData !== activeDataset.wardData) return;
 
-		console.log('Dataset changed, updating map');
 		updateMapForCurrentLocation(false);
 	}, [activeDatasetId, wardDataLoading, selectedLocation, updateMapForCurrentLocation]);
 

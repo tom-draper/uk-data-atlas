@@ -45,13 +45,10 @@ export class MapManager {
         year: string = ''
     ): ChartData {
         const cacheKey = `${location.name}-${year}`
-        // console.log(cacheKey)
         if (this.cache.has(cacheKey)) {
-            // console.log('using cache')
             return this.cache.get(cacheKey)
         }
 
-        // console.log('Calculate location stats')
         // Detect the correct ward code property based on the geojson
         const wardCodeProp = this.detectWardCodeProperty(geoData);
         const locationCodeProp = this.detectLocationCodeProperty(geoData);
@@ -61,7 +58,8 @@ export class MapManager {
             location.lad_codes.includes(f.properties[locationCodeProp])
         );
 
-        // console.log('Filtered wards', wardsInLocation);
+        console.log(cacheKey);
+        console.log('calculateLocationStats: Filtered wards', wardsInLocation);
 
         const aggregated: ChartData = {
             LAB: 0,
@@ -93,13 +91,12 @@ export class MapManager {
 
     updateMapForLocation(
         location: LocationBounds,
-        geoData: any,
+        geoData: WardGeojson,
         wardResults: Record<string, string>,
         wardData: Record<string, WardData>,
         locationStats: ChartData,
         partyInfo: Party[]
     ) {
-        console.log('Update map for location')
         const wardCodeProp = this.detectWardCodeProperty(geoData);
         const locationCodeProp = this.detectLocationCodeProperty(geoData);
 
@@ -108,7 +105,7 @@ export class MapManager {
             return location.lad_codes.includes(f.properties[locationCodeProp])
         });
 
-        // console.log('Filtered wards', wardsInLocation);
+        console.log('updateMapForLocation: Filtered wards', wardsInLocation);
 
         const locationData = {
             type: 'FeatureCollection' as const,

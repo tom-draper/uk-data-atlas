@@ -101,6 +101,7 @@ export function useWardDatasets(
 
 				geojsonCache.current[activeYear] = data;
 				currentGeojsonYear.current = activeYear;
+				console.log('Storing geojson', data);
 				setGeojson(data);
 			} catch (err) {
 				console.error('Error fetching GeoJSON:', err);

@@ -62,7 +62,7 @@ export default function LocalElectionResultChart({
 
 	const renderCompactBar = (data: ChartData | undefined, dataset: Dataset) => {
 		if (!data) {
-			return <div className="text-xs text-gray-400 py-2">No data available</div>;
+			return <div className="text-xs text-gray-400 pt-3 text-center">No data available</div>;
 		}
 
 		const parties = dataset.partyInfo;
@@ -133,7 +133,7 @@ export default function LocalElectionResultChart({
 		return (
 			<div
 				key={year}
-				className={`p-2 rounded transition-all cursor-pointer ${isActive
+				className={`p-2 h-[95px] rounded transition-all cursor-pointer ${isActive
 					? `${colors.bg} border-2 ${colors.border}`
 					: `bg-gray-50 border-2 border-gray-200 hover:${colors.border.replace('border-', 'hover:border-')}`
 					}`}
