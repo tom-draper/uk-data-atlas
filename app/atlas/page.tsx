@@ -1,4 +1,4 @@
-// page.tsx - Optimized version
+// page.tsx - Optimized version with fixes
 'use client';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -39,6 +39,8 @@ const MAP_CONFIG = {
 export default function MapsPage() {
 	// Refs
 	const hasInitialized = useRef(false);
+	const lastProcessedDatasetId = useRef<string | null>(null);
+	const isProcessingUpdate = useRef(false);
 
 	// Data hooks
 	const { datasets: electionDatasets, loading: electionDataLoading, error: electionDataError } = useElectionData();
@@ -111,6 +113,61 @@ export default function MapsPage() {
 		electionDatasets,
 	});
 
+	// Centralized function to update map for a location
+	const updateMapForCurrentLocation = useCallback((skipAggregatedData = false) => {
+		if (!mapManagerRef.current || !activeGeoJSON || !wardData || !activeDataset || !selectedLocation) {
+			return;
+		}
+
+		// Prevent concurrent updates
+		if (isProcessingUpdate.current) {
+			return;
+		}
+
+		const currentLocation = LOCATIONS.find(loc => loc.name === selectedLocation);
+		if (!currentLocation) return;
+
+		isProcessingUpdate.current = true;
+
+		try {
+			console.log('Calculating location stats! (expensive)');
+			const stats = mapManagerRef.current.calculateLocationStats(
+				currentLocation,
+				activeGeoJSON,
+				wardData,
+				activeDatasetId
+			);
+
+			if (!skipAggregatedData) {
+				const newAggregates = calculateAllYearsData(currentLocation);
+				setAggregatedChartData(newAggregates);
+			}
+
+			console.log('Updating map for location! (expensive)');
+			mapManagerRef.current.updateMapForLocation(
+				currentLocation,
+				activeGeoJSON,
+				wardResults,
+				wardData,
+				stats,
+				activeDataset.partyInfo
+			);
+
+			lastProcessedDatasetId.current = activeDatasetId;
+		} finally {
+			isProcessingUpdate.current = false;
+		}
+	}, [
+		mapManagerRef,
+		activeGeoJSON,
+		wardData,
+		wardResults,
+		activeDataset,
+		selectedLocation,
+		activeDatasetId,
+		calculateAllYearsData,
+	]);
+
 	// Initialise location - run once
 	useInitialLocationSetup({
 		activeGeoJSON,
@@ -128,77 +185,76 @@ export default function MapsPage() {
 	});
 
 	// Update map when dataset changes - ONLY if already initialized
+	// Use activeDatasetId as the primary trigger instead of wardData/wardResults
 	useEffect(() => {
 		if (!hasInitialized.current) return;
 		if (wardDataLoading) return;
-		if (activeDataset?.id !== activeDatasetId) return;
-		if (!activeGeoJSON || !wardData || !mapManagerRef.current || !activeDataset || !selectedLocation) return;
+		if (!activeDataset || !selectedLocation) return;
+		
+		// Skip if we've already processed this dataset
+		if (lastProcessedDatasetId.current === activeDatasetId) return;
 
-		const wardDataMatchesDataset = wardData === activeDataset.wardData;
-		if (!wardDataMatchesDataset) return;
+		// Ensure ward data matches the active dataset before updating
+		// This prevents using stale data from previous dataset
+		if (wardData !== activeDataset.wardData) return;
 
-		const currentLocation = LOCATIONS.find(loc => loc.name === selectedLocation);
-		if (!currentLocation) return;
-
-		console.log('Calculating location stats! (expensive)')
-		const stats = mapManagerRef.current.calculateLocationStats(
-			currentLocation,
-			activeGeoJSON,
-			wardData,
-			activeDatasetId
-		);
-
-		console.log('Updating map for location! (expensive)')
-		mapManagerRef.current.updateMapForLocation(
-			currentLocation,
-			activeGeoJSON,
-			wardResults,
-			wardData,
-			stats,
-			activeDataset.partyInfo
-		);
-	}, [wardData, wardResults, activeGeoJSON, activeDataset, mapManagerRef, wardDataLoading]);
-
+		console.log('Dataset changed, updating map');
+		updateMapForCurrentLocation(false);
+	}, [activeDatasetId, hasInitialized.current, wardDataLoading, activeDataset, selectedLocation, updateMapForCurrentLocation]);
 
 	// Handlers - memoized with proper dependencies
 	const handleLocationClick = useCallback((location: LocationBounds) => {
-		console.log('Location click!')
+		console.log('Location click!');
 		if (!mapManagerRef.current || !activeGeoJSON || !activeDataset) return;
 
+		console.log('SET SELECTED LOCATION LOCATION CLICK', location.name)
 		setSelectedLocation(location.name);
 
-		console.log('Calculating location stats because of click! (expensive)')
-		const stats = mapManagerRef.current.calculateLocationStats(
-			location,
-			activeGeoJSON,
-			activeDataset.wardData,
-			activeDatasetId,
-		);
+		// Use requestAnimationFrame to batch the heavy calculations
+		// after state updates have been processed
+		requestAnimationFrame(() => {
+			if (!mapManagerRef.current || !activeGeoJSON || !activeDataset) return;
 
-		const newAggregates = calculateAllYearsData(location);
+			console.log('Calculating location stats because of click! (expensive)');
+			const stats = mapManagerRef.current.calculateLocationStats(
+				location,
+				activeGeoJSON,
+				activeDataset.wardData,
+				activeDatasetId,
+			);
 
-		// Batch updates
-		setAggregatedChartData(newAggregates);
+			const newAggregates = calculateAllYearsData(location);
+			setAggregatedChartData(newAggregates);
 
-		console.log('Updating map for location because of click! (expensive)')
-		mapManagerRef.current.updateMapForLocation(
-			location,
-			activeGeoJSON,
-			activeDataset.wardResults,
-			activeDataset.wardData,
-			stats,
-			activeDataset.partyInfo
-		);
+			console.log('Updating map for location because of click! (expensive)');
+			mapManagerRef.current.updateMapForLocation(
+				location,
+				activeGeoJSON,
+				activeDataset.wardResults,
+				activeDataset.wardData,
+				stats,
+				activeDataset.partyInfo
+			);
 
-		map.current?.fitBounds(location.bounds, {
-			padding: MAP_CONFIG.fitBoundsPadding,
-			duration: MAP_CONFIG.fitBoundsDuration,
+			map.current?.fitBounds(location.bounds, {
+				padding: MAP_CONFIG.fitBoundsPadding,
+				duration: MAP_CONFIG.fitBoundsDuration,
+			});
 		});
-	}, [mapManagerRef, activeGeoJSON, activeDataset, calculateAllYearsData]);
+	}, [
+		mapManagerRef,
+		activeGeoJSON,
+		activeDataset,
+		activeDatasetId,
+		calculateAllYearsData,
+		map,
+	]);
 
 	const handleDatasetChange = useCallback((id: string) => {
-		console.log('Dataset clicked!')
+		console.log('Dataset clicked!');
 		setActiveDatasetId(id);
+		// Reset the processed tracker so the effect will run
+		lastProcessedDatasetId.current = null;
 	}, []);
 
 	const isLoading = electionDataLoading || populationDataLoading;

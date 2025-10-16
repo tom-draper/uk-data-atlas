@@ -20,11 +20,6 @@ export function useWardInteractionHandlers({
 }: UseWardInteractionHandlersParams) {
 	const lastHoveredWardRef = useRef<string | null>(null);
 
-	// Initialize state tracking
-	useEffect(() => {
-		lastHoveredWardRef.current = null;
-	}, []);
-
 	const onWardHover = useCallback(
 		(params: { data: WardData | null; wardCode: string }) => {
 			const { data, wardCode } = params;
@@ -39,19 +34,22 @@ export function useWardInteractionHandlers({
 
 			if (!data) {
 				// Reset to previous chart title or location name
+				console.log('NO DATA SET CHART TITLE', selectedLocation);
 				setChartTitle(selectedLocation || '');
 				setSelectedWard(null);
 				return;
 			}
 
+			console.log('DATA SET CHART TITLE', selectedLocation);
 			setChartTitle(data.wardName.toString() || '');
 			setSelectedWard({ ...data, wardCode });
 		},
-		[setChartTitle, setSelectedWard]
+		[setChartTitle, setSelectedWard, selectedLocation]
 	);
 
 	const onLocationChange = useCallback(
 		(_stats: any, location: { name: string }) => {
+			console.log('LOCATION CHANGE SET CHART TITLE', location.name);
 			setChartTitle(location.name);
 			setSelectedWard(null);
 			setSelectedLocation(location.name);

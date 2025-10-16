@@ -61,6 +61,7 @@ export function useInitialLocationSetup({
 
 			setAggregatedChartData(aggregates);
 			setSelectedLocation(initialLocation.name);
+			console.log('INITIAL LOCAITON SET CHART TITLE', initialLocation.name)
 			setChartTitle(initialLocation.name);
 			setSelectedWard(null);
 
