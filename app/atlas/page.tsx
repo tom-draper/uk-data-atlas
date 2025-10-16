@@ -8,6 +8,8 @@ import { usePopulationData } from '@/lib/hooks/usePopulationData';
 import { useMapManager } from '@/lib/hooks/useMapManager';
 import { useMapInitialization } from '@/lib/hooks/useMapboxInitialization';
 import { useAggregatedChartData } from '@/lib/hooks/useAggregatedChartData';
+import { useWardInteractionHandlers } from '@/lib/hooks/useWardInteractionHandlers';
+import { useWardGeoJSON } from '@/lib/hooks/useWardGeoJSON';
 
 import ControlPanel from '@/components/ControlPanel';
 import LegendPanel from '@/components/LegendPanel';
@@ -16,8 +18,6 @@ import ErrorDisplay from '@/components/ErrorDisplay';
 
 import { LOCATIONS } from '@/lib/data/locations';
 import type { ChartData, LocationBounds, WardData } from '@/lib/types';
-import { useWardInteractionHandlers } from '@/lib/hooks/useWardInteractionHandlers';
-import { useWardGeoJSON } from '@/lib/hooks/useWardGeoJSON';
 
 interface AggregatedChartData {
 	data2024: ChartData | null;
@@ -128,18 +128,25 @@ export default function MapsPage() {
 		updateMapForLocation(INITIAL_LOCATION, false);
 	}, [geojson, activeDataset, geojsonLoading, updateMapForLocation]);
 
+	const previousDatasetId = useRef<string | null>(null);
+
 	// Update map when dataset changes - ONLY if already initialized
-	// Use activeDatasetId as the primary trigger instead of wardData/wardResults
 	useEffect(() => {
 		if (!hasInitialized.current) return;
 		if (!selectedLocation || !geojson || !activeDataset || geojsonLoading) return;
+
+		if (previousDatasetId.current === activeDatasetId) {
+			console.log('Skipping update map -> previousDatasetId.current === activeDatasetId')
+			return;
+		}
+		previousDatasetId.current = activeDatasetId;
 
 		const location = LOCATIONS.find(loc => loc.name === selectedLocation);
 		if (!location) return;
 
 		console.log('Dataset changed, updating map');
 		updateMapForLocation(location, false);
-	}, [activeDatasetId, geojson, activeDataset, selectedLocation, geojsonLoading, updateMapForLocation]);
+	}, [geojson, activeDataset, selectedLocation, geojsonLoading, previousDatasetId, updateMapForLocation]);
 
 	const handleLocationClick = useCallback((location: LocationBounds) => {
 		if (!mapManagerRef.current || !geojson || !activeDataset) return;
