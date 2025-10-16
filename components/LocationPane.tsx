@@ -1,7 +1,7 @@
 import { LOCATIONS } from "@/lib/data/locations";
 import { WardGeojson } from "@/lib/hooks/useWardDatasets";
 import { LocationBounds, PopulationWardData } from "@/lib/types";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 interface LocationPanelProps {
     selectedLocation: string | null;
