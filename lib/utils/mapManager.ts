@@ -26,22 +26,22 @@ export class MapManager {
     buildWardToLadMapping(geojson: WardGeojson): void {
         const wardCodeProp = this.detectWardCodeProperty(geojson);
         const locationCodeInfo = this.detectLocationCodeProperty(geojson);
-        
+
         // Only build mapping if LAD codes exist
         if (!locationCodeInfo.fallbackToWardMapping && locationCodeInfo.property) {
             console.log(`Building ward-to-LAD mapping from ${wardCodeProp} -> ${locationCodeInfo.property}`);
             let mappedCount = 0;
-            
+
             geojson.features.forEach((feature: any) => {
                 const wardCode = feature.properties[wardCodeProp];
                 const ladCode = feature.properties[locationCodeInfo.property!];
-                
+
                 if (wardCode && ladCode) {
                     this.wardToLadMapping.set(wardCode, ladCode);
                     mappedCount++;
                 }
             });
-            
+
             console.log(`Built ${mappedCount} ward-to-LAD mappings. Total mappings: ${this.wardToLadMapping.size}`);
             console.log(this.wardToLadMapping);
         }
@@ -58,21 +58,21 @@ export class MapManager {
                     : 'WD24CD';
     }
 
-    private detectLocationCodeProperty(geojson: WardGeojson): { 
-        property: string | null; 
-        fallbackToWardMapping: boolean 
+    private detectLocationCodeProperty(geojson: WardGeojson): {
+        property: string | null;
+        fallbackToWardMapping: boolean
     } {
         const firstFeature = geojson.features[0];
         if (!firstFeature) return { property: 'LAD24CD', fallbackToWardMapping: false };
 
         const props = firstFeature.properties;
-        
+
         // Check for LAD codes
         if (props.LAD24CD) return { property: 'LAD24CD', fallbackToWardMapping: false };
         if (props.LAD23CD) return { property: 'LAD23CD', fallbackToWardMapping: false };
         if (props.LAD22CD) return { property: 'LAD22CD', fallbackToWardMapping: false };
         if (props.LAD21CD) return { property: 'LAD21CD', fallbackToWardMapping: false };
-        
+
         // No LAD codes found - we'll need to use ward code mapping
         console.warn('No LAD codes found in GeoJSON - falling back to ward code filtering');
         return { property: null, fallbackToWardMapping: true };
@@ -83,14 +83,8 @@ export class MapManager {
         const wardCodeProp = this.detectWardCodeProperty(geojson);
 
         let wardsInLocation: any[];
-        
         if (locationCodeInfo.fallbackToWardMapping) {
-            console.log('here', geojson);
-            console.log(this.wardToLadMapping)
             wardsInLocation = geojson.features.filter((f: any) => {
-                // console.log('wardCodeProp', wardCodeProp);
-                // console.log('get', f.properties[wardCodeProp]);
-                // console.log('properties', f.properties);
                 const locationCode = this.wardToLadMapping.get(f.properties[wardCodeProp]);
                 return location.lad_codes.includes(locationCode || '');
             });
