@@ -30,6 +30,7 @@ export function useMapManager(opts: UseMapManagerOptions) {
         console.log('Initializing map manager...')
         managerRef.current = new MapManager(opts.mapRef.current, {
             onWardHover: (params) => {
+                console.log('managerRef onWardHover', params)
                 if (callbacksRef.current.onWardHover) {
                     callbacksRef.current.onWardHover(params);
                 }
