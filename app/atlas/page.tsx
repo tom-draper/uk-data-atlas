@@ -123,7 +123,7 @@ export default function MapsPage() {
 		if (hasInitialized.current) return;
 		if (!geojson || !activeDataset || geojsonLoading) return;
 
-		console.log('Initial setup');
+		console.log('Selecting location and updating map for initial setup...');
 		hasInitialized.current = true;
 		setSelectedLocation(INITIAL_LOCATION.name);
 		updateMapForLocation(INITIAL_LOCATION, false);

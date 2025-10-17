@@ -37,7 +37,7 @@ const calculateTotal = (ageData: { [age: string]: number }): number => {
 
 const calculateAgeGroups = (ageData: { [age: string]: number }): AgeGroups => {
 	const groups: AgeGroups = { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 };
-	
+
 	Object.entries(ageData).forEach(([age, count]) => {
 		const ageNum = parseInt(age);
 		if (ageNum <= 17) groups['0-17'] += count;
@@ -46,7 +46,7 @@ const calculateAgeGroups = (ageData: { [age: string]: number }): AgeGroups => {
 		else if (ageNum <= 64) groups['45-64'] += count;
 		else groups['65+'] += count;
 	});
-	
+
 	return groups;
 };
 
@@ -70,22 +70,22 @@ const getAgeColor = (age: number): string => {
 };
 
 // Sub-components
-const PopulationBar = ({ label, value, total, color }: { 
-	label: string; 
-	value: number; 
-	total: number; 
+const PopulationBar = ({ label, value, total, color }: {
+	label: string;
+	value: number;
+	total: number;
 	color: string;
 }) => {
 	const percentage = total > 0 ? (value / total) * 100 : 0;
-	
+
 	return (
 		<div className="flex items-center gap-2">
 			<div className="w-16 text-[10px] font-medium text-gray-600">{label}</div>
 			<div className="flex-1 flex items-center gap-2">
 				<div className="flex-1 h-4 bg-gray-200 rounded overflow-hidden">
-					<div 
-						className="h-full transition-all" 
-						style={{ width: `${percentage}%`, backgroundColor: color }} 
+					<div
+						className="h-full transition-all"
+						style={{ width: `${percentage}%`, backgroundColor: color }}
 					/>
 				</div>
 				<div className="w-14 text-[10px] font-bold text-right">
@@ -96,9 +96,9 @@ const PopulationBar = ({ label, value, total, color }: {
 	);
 };
 
-const PopulationSummary = ({ total, males, females }: { 
-	total: number; 
-	males: number; 
+const PopulationSummary = ({ total, males, females }: {
+	total: number;
+	males: number;
 	females: number;
 }) => (
 	<div className="p-2 h-[95px] rounded transition-all cursor-pointer bg-gray-50 border-2 border-gray-200">
@@ -133,12 +133,12 @@ const NoDataView = () => (
 	</div>
 );
 
-const AgeDistributionChart = ({ 
-	ageData, 
-	total, 
-	ageGroups 
-}: { 
-	ageData: { [age: string]: number }; 
+const AgeDistributionChart = ({
+	ageData,
+	total,
+	ageGroups
+}: {
+	ageData: { [age: string]: number };
 	total: number;
 	ageGroups: AgeGroups;
 }) => {
@@ -167,7 +167,7 @@ const AgeDistributionChart = ({
 	return (
 		<div className="mx-2">
 			<div className="text-xs font-bold text-gray-700 mb-[-10px]">Age Distribution</div>
-			
+
 			{/* Detailed Age Chart */}
 			<div className="flex items-end h-32 overflow-x-hidden pt-4">
 				{ages.map(({ age, count }) => {
@@ -178,10 +178,10 @@ const AgeDistributionChart = ({
 						<div
 							key={age}
 							className="flex-1 hover:opacity-80 transition-opacity relative group"
-							style={{ 
-								height: `${heightPercentage}%`, 
-								backgroundColor: color, 
-								minHeight: count > 0 ? '2px' : '0' 
+							style={{
+								height: `${heightPercentage}%`,
+								backgroundColor: color,
+								minHeight: count > 0 ? '2px' : '0'
 							}}
 							title={`Age ${age}: ${count.toLocaleString()}`}
 						>
@@ -218,8 +218,8 @@ const AgeDistributionChart = ({
 	);
 };
 
-const GenderBreakdown = ({ ageGroups }: { 
-	ageGroups: { total: AgeGroups; males: AgeGroups; females: AgeGroups } 
+const GenderBreakdown = ({ ageGroups }: {
+	ageGroups: { total: AgeGroups; males: AgeGroups; females: AgeGroups }
 }) => (
 	<div className="px-2">
 		<div className="text-xs font-bold text-gray-700 mb-2">Gender by Age Group</div>
@@ -233,15 +233,15 @@ const GenderBreakdown = ({ ageGroups }: {
 					<div key={ageGroup}>
 						<div className="text-[9px] text-gray-500 mb-0.5">{ageGroup}</div>
 						<div className="flex h-3 rounded overflow-hidden bg-gray-200">
-							<div 
-								className="bg-blue-500" 
-								style={{ width: `${malePercentage}%` }} 
-								title={`Males: ${maleCount.toLocaleString()}`} 
+							<div
+								className="bg-blue-500"
+								style={{ width: `${malePercentage}%` }}
+								title={`Males: ${maleCount.toLocaleString()}`}
 							/>
-							<div 
-								className="bg-pink-500" 
-								style={{ width: `${100 - malePercentage}%` }} 
-								title={`Females: ${femaleCount.toLocaleString()}`} 
+							<div
+								className="bg-pink-500"
+								style={{ width: `${100 - malePercentage}%` }}
+								title={`Females: ${femaleCount.toLocaleString()}`}
 							/>
 						</div>
 						<div className="flex justify-between text-[9px] text-gray-600 mt-0.5">
@@ -254,6 +254,82 @@ const GenderBreakdown = ({ ageGroups }: {
 		</div>
 	</div>
 );
+
+const GenderBalanceByAge = ({ population, wardCode, wardName, wardCodeMap }: PopulationChartProps) => {
+	const resolvedCode = resolveWardCode(wardCode, wardName, population, wardCodeMap);
+
+	// Collect raw male/female per age
+	const ageData = useMemo(() => {
+		const ageRange = Array.from({ length: 100 }, (_, i) => i.toString());
+		const maleCounts: number[] = [];
+		const femaleCounts: number[] = [];
+
+		if (resolvedCode && population[resolvedCode]) {
+			const males = population[resolvedCode].males;
+			const females = population[resolvedCode].females;
+
+			for (const age of ageRange) {
+				maleCounts.push(males[age] || 0);
+				femaleCounts.push(females[age] || 0);
+			}
+		} else {
+			const aggregate = { males: {} as Record<string, number>, females: {} as Record<string, number> };
+
+			for (const ward of Object.values(population)) {
+				Object.entries(ward.males).forEach(([age, count]) => {
+					aggregate.males[age] = (aggregate.males[age] || 0) + count;
+				});
+				Object.entries(ward.females).forEach(([age, count]) => {
+					aggregate.females[age] = (aggregate.females[age] || 0) + count;
+				});
+			}
+
+			for (const age of ageRange) {
+				maleCounts.push(aggregate.males[age] || 0);
+				femaleCounts.push(aggregate.females[age] || 0);
+			}
+		}
+
+		return { ageRange, maleCounts, femaleCounts };
+	}, [population, wardCode, wardName, wardCodeMap, resolvedCode]);
+
+	const { ageRange, maleCounts, femaleCounts } = ageData;
+	const proportions = ageRange.map((age, i) => {
+		const total = maleCounts[i] + femaleCounts[i];
+		return total > 0 ? (maleCounts[i] / total) * 100 : 50; // 50 means balanced
+	});
+
+	return (
+		<div className="px-2 pt-3">
+			<div className="text-xs font-bold text-gray-700 mb-2">Gender Balance by Single Age</div>
+			<div className="relative h-24 bg-gray-200 rounded overflow-hidden flex">
+				{proportions.map((malePct, i) => {
+					const color = malePct > 50
+						? `rgba(59,130,246,${0.3 + (malePct - 50) / 50})` // blue if more boys
+						: `rgba(236,72,153,${0.3 + (50 - malePct) / 50})`; // pink if more girls
+					return (
+						<div
+							key={i}
+							className="flex-1"
+							style={{ backgroundColor: color }}
+							title={`Age ${ageRange[i]}: ${malePct.toFixed(1)}% male`}
+						/>
+					);
+				})}
+			</div>
+			<div className="flex justify-between text-[8px] text-gray-500 mt-1">
+				<span>0</span>
+				<span>25</span>
+				<span>50</span>
+				<span>75</span>
+				<span>99</span>
+			</div>
+			<div className="text-[9px] text-gray-500 text-center mt-1">
+				Blue → more males &nbsp;&nbsp;|&nbsp;&nbsp; Pink → more females
+			</div>
+		</div>
+	);
+};
 
 // Main component
 export default function PopulationChart({
@@ -268,7 +344,7 @@ export default function PopulationChart({
 		// Ward-specific data
 		if (wardCode) {
 			const resolvedCode = resolveWardCode(wardCode, wardName, population, wardCodeMap);
-			
+
 			if (resolvedCode && population[resolvedCode]) {
 				const wardData = population[resolvedCode];
 				return {
@@ -283,7 +359,7 @@ export default function PopulationChart({
 					isWardSpecific: true
 				};
 			}
-			
+
 			return null;
 		}
 
@@ -299,7 +375,7 @@ export default function PopulationChart({
 			totalPop += calculateTotal(wardData.total);
 			malesPop += calculateTotal(wardData.males);
 			femalesPop += calculateTotal(wardData.females);
-			
+
 			const wardAgeGroups = {
 				total: calculateAgeGroups(wardData.total),
 				males: calculateAgeGroups(wardData.males),
@@ -313,12 +389,12 @@ export default function PopulationChart({
 			});
 		}
 
-		return { 
-			total: totalPop, 
-			males: malesPop, 
-			females: femalesPop, 
-			ageGroups: aggregatedAgeGroups, 
-			isWardSpecific: false 
+		return {
+			total: totalPop,
+			males: malesPop,
+			females: femalesPop,
+			ageGroups: aggregatedAgeGroups,
+			isWardSpecific: false
 		};
 	}, [population, wardCode, wardName, wardCodeMap]);
 
@@ -352,6 +428,12 @@ export default function PopulationChart({
 			<PopulationSummary total={total} males={males} females={females} />
 			<AgeDistributionChart ageData={ageData} total={total} ageGroups={ageGroups.total} />
 			<GenderBreakdown ageGroups={ageGroups} />
+			<GenderBalanceByAge
+				population={population}
+				wardCode={wardCode}
+				wardName={wardName}
+				wardCodeMap={wardCodeMap}
+			/>
 		</div>
 	);
 }

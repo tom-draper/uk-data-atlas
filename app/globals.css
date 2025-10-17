@@ -61,10 +61,8 @@ body {
 }
 
 .scroll-container {
-  height: 300px;
-  /* or whatever height */
+  /* height: 300px; */
   overflow: auto;
-  /* enables scrollbar */
 }
 
 /* WebKit browsers */

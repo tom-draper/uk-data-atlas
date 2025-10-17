@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef } from 'react';
 import type { WardData } from '@/lib/types';
 
 interface UseWardInteractionHandlersParams {
