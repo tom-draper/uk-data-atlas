@@ -45,7 +45,7 @@ const GEOJSON_PATHS: Record<Year, string> = {
  * if (error) return <Error message={error.message} />;
  * return <Map geojson={geojson} />;
  */
-export function useWardGeoJSON(year: Year): UseWardGeoJSONResult {
+export function useWardGeoJSON(year: Year | null): UseWardGeoJSONResult {
 	const [geojson, setGeojson] = useState<WardGeojson | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
@@ -57,6 +57,8 @@ export function useWardGeoJSON(year: Year): UseWardGeoJSONResult {
 		let cancelled = false;
 
 		async function loadGeoJSON() {
+			if (year === null) return;
+
 			// Return cached data immediately if available
 			if (cache.current[year]) {
 				console.log(`[useWardGeoJSON] Using cached GeoJSON for ${year}`);

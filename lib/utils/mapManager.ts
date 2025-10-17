@@ -1,6 +1,6 @@
 // lib/utils/mapManager.ts
 import { LocationBounds, ChartData, WardData, Party } from '@/lib/types';
-import { WardGeojson } from '../hooks/useWardDatasets';
+import { WardGeojson } from '@/lib/hooks/useWardDatasets';
 
 interface MapManagerCallbacks {
     onWardHover: (params: { data: WardData | null; wardCode: string }) => void;
@@ -12,35 +12,101 @@ export class MapManager {
     private callbacks: MapManagerCallbacks;
     private lastHoveredFeatureId: any = null;
     private cache = new Map();
+    private wardToLadMapping = new Map<string, string>(); // Ward code -> LAD code mapping
 
     constructor(map: mapboxgl.Map, callbacks: MapManagerCallbacks) {
         this.map = map;
         this.callbacks = callbacks;
     }
 
-    private detectWardCodeProperty(geoData: any): string {
-        const firstFeature = geoData.features[0];
+    /**
+     * Build a mapping of ward codes to LAD codes from GeoJSON that contains both
+     * This should be called whenever you have GeoJSON with LAD codes
+     */
+    buildWardToLadMapping(geojson: WardGeojson): void {
+        const wardCodeProp = this.detectWardCodeProperty(geojson);
+        const locationCodeInfo = this.detectLocationCodeProperty(geojson);
+        
+        // Only build mapping if LAD codes exist
+        if (!locationCodeInfo.fallbackToWardMapping && locationCodeInfo.property) {
+            console.log(`Building ward-to-LAD mapping from ${wardCodeProp} -> ${locationCodeInfo.property}`);
+            let mappedCount = 0;
+            
+            geojson.features.forEach((feature: any) => {
+                const wardCode = feature.properties[wardCodeProp];
+                const ladCode = feature.properties[locationCodeInfo.property!];
+                
+                if (wardCode && ladCode) {
+                    this.wardToLadMapping.set(wardCode, ladCode);
+                    mappedCount++;
+                }
+            });
+            
+            console.log(`Built ${mappedCount} ward-to-LAD mappings. Total mappings: ${this.wardToLadMapping.size}`);
+            console.log(this.wardToLadMapping);
+        }
+    }
+
+    private detectWardCodeProperty(geojson: WardGeojson): string {
+        const firstFeature = geojson.features[0];
         if (!firstFeature) return 'WD24CD';
 
-        return firstFeature.properties.WD23CD ? 'WD23CD'
-            : firstFeature.properties.WD22CD ? 'WD22CD'
-                : firstFeature.properties.WD21CD ? 'WD21CD'
+        const props = firstFeature.properties;
+        return props.WD23CD ? 'WD23CD'
+            : props.WD22CD ? 'WD22CD'
+                : props.WD21CD ? 'WD21CD'
                     : 'WD24CD';
     }
 
-    private detectLocationCodeProperty(geoData: any): string {
-        const firstFeature = geoData.features[0];
-        if (!firstFeature) return 'LAD24CD';
+    private detectLocationCodeProperty(geojson: WardGeojson): { 
+        property: string | null; 
+        fallbackToWardMapping: boolean 
+    } {
+        const firstFeature = geojson.features[0];
+        if (!firstFeature) return { property: 'LAD24CD', fallbackToWardMapping: false };
 
-        return firstFeature.properties.WD23CD ? 'LAD23CD'
-            : firstFeature.properties.WD22CD ? 'LAD22CD'
-                : firstFeature.properties.WD21CD ? 'LAD21CD'
-                    : 'LAD24CD';
+        const props = firstFeature.properties;
+        
+        // Check for LAD codes
+        if (props.LAD24CD) return { property: 'LAD24CD', fallbackToWardMapping: false };
+        if (props.LAD23CD) return { property: 'LAD23CD', fallbackToWardMapping: false };
+        if (props.LAD22CD) return { property: 'LAD22CD', fallbackToWardMapping: false };
+        if (props.LAD21CD) return { property: 'LAD21CD', fallbackToWardMapping: false };
+        
+        // No LAD codes found - we'll need to use ward code mapping
+        console.warn('No LAD codes found in GeoJSON - falling back to ward code filtering');
+        return { property: null, fallbackToWardMapping: true };
+    }
+
+    private getWardsInLocation(geojson: WardGeojson, location: LocationBounds) {
+        const locationCodeInfo = this.detectLocationCodeProperty(geojson);
+        const wardCodeProp = this.detectWardCodeProperty(geojson);
+
+        let wardsInLocation: any[];
+        
+        if (locationCodeInfo.fallbackToWardMapping) {
+            console.log('here', geojson);
+            console.log(this.wardToLadMapping)
+            wardsInLocation = geojson.features.filter((f: any) => {
+                // console.log('wardCodeProp', wardCodeProp);
+                // console.log('get', f.properties[wardCodeProp]);
+                // console.log('properties', f.properties);
+                const locationCode = this.wardToLadMapping.get(f.properties[wardCodeProp]);
+                return location.lad_codes.includes(locationCode || '');
+            });
+        } else {
+            wardsInLocation = geojson.features.filter((f: any) => {
+                const locationCode = f.properties[locationCodeInfo.property!];
+                return location.lad_codes.includes(locationCode);
+            });
+        }
+
+        return wardsInLocation;
     }
 
     calculateLocationStats(
         location: LocationBounds,
-        geoData: WardGeojson,
+        geojson: WardGeojson,
         wardData: Record<string, WardData>,
         year: string = ''
     ): ChartData {
@@ -49,17 +115,9 @@ export class MapManager {
             return this.cache.get(cacheKey)
         }
 
-        // Detect the correct ward code property based on the geojson
-        const wardCodeProp = this.detectWardCodeProperty(geoData);
-        const locationCodeProp = this.detectLocationCodeProperty(geoData);
+        const wardsInLocation = this.getWardsInLocation(geojson, location);
 
-        // Aggregate stats for all wards within this location
-        const wardsInLocation = geoData.features.filter((f: any) => 
-            location.lad_codes.includes(f.properties[locationCodeProp])
-        );
-
-        console.log(cacheKey);
-        console.log('calculateLocationStats: Filtered wards', wardsInLocation);
+        console.log(`calculateLocationStats: [${cacheKey}] Filtered ${wardsInLocation.length} wards`);
 
         const aggregated: ChartData = {
             LAB: 0,
@@ -70,12 +128,11 @@ export class MapManager {
             IND: 0,
         };
 
+        const wardCodeProp = this.detectWardCodeProperty(geojson);
         wardsInLocation.forEach((f: any) => {
-            // Use the detected ward code property instead of hardcoded WD24CD
             const code = f.properties[wardCodeProp];
             const ward = wardData[code];
             if (ward) {
-                // Assuming ward has party vote counts
                 aggregated.LAB += (ward.LAB as number) || 0;
                 aggregated.CON += (ward.CON as number) || 0;
                 aggregated.LD += (ward.LD as number) || 0;
@@ -91,22 +148,17 @@ export class MapManager {
 
     updateMapForLocation(
         location: LocationBounds,
-        geoData: WardGeojson,
+        geojson: WardGeojson,
         wardResults: Record<string, string>,
         wardData: Record<string, WardData>,
         locationStats: ChartData,
         partyInfo: Party[]
     ) {
-        const wardCodeProp = this.detectWardCodeProperty(geoData);
-        const locationCodeProp = this.detectLocationCodeProperty(geoData);
-
-        // Sample a few codes from the first filtered feature
-        const wardsInLocation = geoData.features.filter((f: any) => {
-            return location.lad_codes.includes(f.properties[locationCodeProp])
-        });
+        const wardsInLocation = this.getWardsInLocation(geojson, location);
 
         console.log('updateMapForLocation: Filtered wards', wardsInLocation);
 
+        const wardCodeProp = this.detectWardCodeProperty(geojson);
         const locationData = {
             type: 'FeatureCollection' as const,
             features: wardsInLocation.map((feature: any) => ({
@@ -121,7 +173,8 @@ export class MapManager {
         this.removeExistingLayers();
         this.addSource(locationData);
         this.addLayers(partyInfo);
-        this.setupEventHandlers(location, geoData, wardData, wardCodeProp);
+        this.setupEventHandlers(location, geojson, wardData, wardCodeProp);
+        this.buildWardToLadMapping(geojson);
 
         this.callbacks.onLocationChange(locationStats, location);
     }

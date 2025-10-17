@@ -36,7 +36,6 @@ export function useMapInitialization({ style, center, zoom }: UseMapInitializati
 	}, [style, center, zoom]);
 
 	useEffect(() => {
-		console.log('Cleaning up map')
 		return () => {
 			if (mapRef.current) {
 				mapRef.current.remove();

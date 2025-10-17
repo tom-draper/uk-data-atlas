@@ -27,6 +27,7 @@ interface AggregatedChartData {
 }
 
 const INITIAL_LOCATION = LOCATIONS[0];
+const INITIAL_DATASET_ID = '2024';
 const MAP_CONFIG = {
 	style: 'mapbox://styles/mapbox/light-v11',
 	center: [-2.3, 53.5] as [number, number],
@@ -37,7 +38,7 @@ const MAP_CONFIG = {
 
 export default function MapsPage() {
 	// State
-	const [activeDatasetId, setActiveDatasetId] = useState<string>('2024');
+	const [activeDatasetId, setActiveDatasetId] = useState<string>(INITIAL_DATASET_ID);
 	const [selectedWardData, setSelectedWard] = useState<WardData | null>(null);
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 	const [aggregatedChartData, setAggregatedChartData] = useState<AggregatedChartData>({
@@ -59,9 +60,7 @@ export default function MapsPage() {
 		return populationDatasets[0]?.populationData || {};
 	}, [populationDatasets]);
 
-	const { geojson, isLoading: geojsonLoading } = useWardGeoJSON(
-		activeDataset?.year || '2024'
-	);
+	const { geojson, isLoading: geojsonLoading } = useWardGeoJSON(activeDataset?.year || null);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
@@ -90,6 +89,7 @@ export default function MapsPage() {
 		if (!mapManagerRef.current || !geojson || !activeDataset) return;
 
 		console.log('Updating map for location');
+		console.log('geojson properties:', Object.keys(geojson.features[0].properties));
 
 		// Calculate stats using the dataset's data directly
 		const stats = mapManagerRef.current.calculateLocationStats(
@@ -137,6 +137,26 @@ export default function MapsPage() {
 		if (geojsonLoading) return;
 		if (!geojson || !activeDataset) return;
 
+		const geojsonYear = (() => {
+			const props = geojson.features[0]?.properties;
+			if (!props) return null;
+			
+			// Check for year-specific ward code properties
+			if (props.WD24CD) return 2024;
+			if (props.WD23CD) return 2023;
+			if (props.WD22CD) return 2022;
+			if (props.WD21CD) return 2021;
+			
+			return null;
+		})();
+
+		if (geojsonYear && geojsonYear !== activeDataset.year) {
+			console.log(`Waiting for matching GeoJSON: have ${geojsonYear}, need ${activeDataset.year}`);
+			return;
+		}
+
+		// If I uncomment this, it renders once with new election data, but continues to use old ward data
+		// If I keep this commented, it renders twice, the first time with new election data & old ward data, then a second time with updated ward data
 		if (lastRenderedDatasetId.current === activeDatasetId) {
 			console.log('Skipping update map -> already rendered dataset:', activeDatasetId)
 			return;
