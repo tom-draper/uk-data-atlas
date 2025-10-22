@@ -9,7 +9,7 @@
 
 #
 
-<p align="center">The powerful mapping tool for visualizing data that shapes the United Kingdom.</p>
+<p align="center">A powerful mapping tool for visualizing data that shapes the United Kingdom.</p>
 
 ## Datasets
 
