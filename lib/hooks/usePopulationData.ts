@@ -2,7 +2,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
-import { PopulationWardData, AgeData, Dataset } from '@/lib/types';
+import { PopulationWardData, AgeData, Dataset } from '@lib/types';
 
 interface CategoryPopulationWardData {
 	[wardCode: string]: {

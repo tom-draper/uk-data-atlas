@@ -1,5 +1,5 @@
 'use client';
-import { LocationBounds, PopulationWardData } from '@/lib/types';
+import { LocationBounds, PopulationWardData } from '@lib/types';
 import TitlePane from './TitlePane';
 import LocationPane from './LocationPane';
 import MapOptions from './MapOptions';

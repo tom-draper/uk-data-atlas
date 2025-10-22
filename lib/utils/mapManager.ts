@@ -1,6 +1,6 @@
 // lib/utils/mapManager.ts
-import { LocationBounds, ChartData, WardData, Party } from '@/lib/types';
-import { WardGeojson } from '@/lib/hooks/useWardDatasets';
+import { LocationBounds, ChartData, WardData, Party } from '@lib/types';
+import { WardGeojson } from '@lib/hooks/useWardDatasets';
 
 interface MapManagerCallbacks {
     onWardHover: (params: { data: WardData | null; wardCode: string }) => void;

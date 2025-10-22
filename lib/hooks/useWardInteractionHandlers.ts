@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import type { WardData } from '@/lib/types';
+import type { WardData } from '@lib/types';
 
 interface UseWardInteractionHandlersParams {
 	setSelectedWard: (ward: WardData | null) => void;

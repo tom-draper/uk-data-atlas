@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import type { ChartData, LocationBounds } from '@/lib/types';
+import type { ChartData, LocationBounds } from '@lib/types';
 
 interface AggregatedChartData {
 	data2024: ChartData | null;

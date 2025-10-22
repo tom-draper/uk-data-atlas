@@ -1,5 +1,5 @@
 // lib/data/locations.ts
-import { LocationBounds } from '@/lib/types/index';
+import { LocationBounds } from '@lib/types/index';
 
 export const LOCATIONS: LocationBounds[] = [
     {

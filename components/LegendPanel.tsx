@@ -1,6 +1,6 @@
 // components/LegendPanel.tsx
 'use client';
-import { PARTY_INFO } from '@/lib/data/parties';
+import { PARTY_INFO } from '@lib/data/parties';
 import { memo } from 'react';
 
 export default memo(function LegendPanel() {

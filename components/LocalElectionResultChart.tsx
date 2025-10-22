@@ -1,6 +1,6 @@
 // components/LocalElectionResultChart.tsx
 'use client';
-import { AllYearsAggregatedData, ChartData, Dataset } from '@/lib/types';
+import { AllYearsAggregatedData, ChartData, Dataset } from '@lib/types';
 import { useMemo } from 'react';
 
 interface LocalElectionResultChartProps {
@@ -74,7 +74,7 @@ export default function LocalElectionResultChart({
 		const totalVotes = parties.reduce((sum, p) => sum + (data[p.key] || 0), 0);
 
 		if (totalVotes === 0) {
-			return <div className="text-xs text-gray-400 py-2">No votes recorded</div>;
+			return <div className="text-xs text-gray-400 pt-3 text-center">No votes recorded</div>;
 		}
 
 		return (

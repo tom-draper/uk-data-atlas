@@ -76,3 +76,29 @@ export interface WardGeojson {
     }>;
  }
 
+ export interface AgeGroups {
+	'0-17': number;
+	'18-29': number;
+	'30-44': number;
+	'45-64': number;
+	'65+': number;
+}
+
+export interface PopulationStats {
+	total: number;
+	males: number;
+	females: number;
+	ageGroups: {
+		total: AgeGroups;
+		males: AgeGroups;
+		females: AgeGroups;
+	};
+	isWardSpecific: boolean;
+}
+
+export interface PopulationChartProps {
+	population: PopulationWardData;
+	wardCode: string;
+	wardName: string;
+	wardCodeMap: { [name: string]: string };
+}

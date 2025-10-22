@@ -1,6 +1,6 @@
 // components/ChartPanel.tsx
 'use client';
-import { AllYearsAggregatedData, Dataset, PopulationWardData, WardData } from '@/lib/types';
+import { AllYearsAggregatedData, Dataset, PopulationWardData, WardData } from '@lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import { memo } from 'react';

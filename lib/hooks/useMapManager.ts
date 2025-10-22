@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { MapManager } from '@/lib/utils/mapManager';
-import type { ChartData, LocationBounds, WardData } from '@/lib/types';
+import { MapManager } from '@lib/utils/mapManager';
+import type { ChartData, LocationBounds, WardData } from '@lib/types';
 
 type UseMapManagerOptions = {
     mapRef: React.RefObject<mapboxgl.Map | null>;

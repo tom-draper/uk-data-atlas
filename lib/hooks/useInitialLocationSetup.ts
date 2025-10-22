@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useRef } from 'react';
-import type { LocationBounds } from '@/lib/types';
+import type { LocationBounds } from '@lib/types';
 
 interface UseInitialLocationSetupParams {
 	geojson: any;

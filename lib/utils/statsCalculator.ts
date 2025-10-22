@@ -1,6 +1,6 @@
 
 // lib/utils/statsCalculator.ts
-import { ChartData, LocationBounds, WardData } from '@lib//types';
+import { ChartData, LocationBounds, WardData } from '@lib/types';
 
 export const calculateLocationStats = (
     location: LocationBounds,

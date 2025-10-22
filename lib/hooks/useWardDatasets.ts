@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
-import type { Dataset, PopulationWardData } from '@/lib/types';
+import type { Dataset, PopulationWardData } from '@lib/types';
 
 type Year = '2024' | '2023' | '2022' | '2021';
 

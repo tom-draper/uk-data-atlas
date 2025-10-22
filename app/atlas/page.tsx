@@ -3,21 +3,21 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-import { useElectionData } from '@/lib/hooks/useElectionData';
-import { usePopulationData } from '@/lib/hooks/usePopulationData';
-import { useMapManager } from '@/lib/hooks/useMapManager';
-import { useMapInitialization } from '@/lib/hooks/useMapboxInitialization';
-import { useAggregatedChartData } from '@/lib/hooks/useAggregatedChartData';
-import { useWardInteractionHandlers } from '@/lib/hooks/useWardInteractionHandlers';
-import { useWardGeoJSON } from '@/lib/hooks/useWardGeoJSON';
+import { useElectionData } from '@lib/hooks/useElectionData';
+import { usePopulationData } from '@lib/hooks/usePopulationData';
+import { useMapManager } from '@lib/hooks/useMapManager';
+import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
+import { useAggregatedChartData } from '@lib/hooks/useAggregatedChartData';
+import { useWardInteractionHandlers } from '@lib/hooks/useWardInteractionHandlers';
+import { useWardGeoJSON } from '@lib/hooks/useWardGeoJSON';
 
-import ControlPanel from '@/components/ControlPanel';
-import LegendPanel from '@/components/LegendPanel';
-import ChartPanel from '@/components/ChartPanel';
-import ErrorDisplay from '@/components/ErrorDisplay';
+import ControlPanel from '@components/ControlPanel';
+import LegendPanel from '@components/LegendPanel';
+import ChartPanel from '@components/ChartPanel';
+import ErrorDisplay from '@components/ErrorDisplay';
 
-import { LOCATIONS } from '@/lib/data/locations';
-import type { ChartData, LocationBounds, WardData } from '@/lib/types';
+import { LOCATIONS } from '@lib/data/locations';
+import type { ChartData, LocationBounds, WardData } from '@lib/types';
 
 interface AggregatedChartData {
 	data2024: ChartData | null;

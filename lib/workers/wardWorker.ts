@@ -1,5 +1,5 @@
 // lib/workers/wardWorker.ts
-import type { WardGeojson } from '@/lib/types';
+import type { WardGeojson } from '@lib/types';
 
 const GEOJSON_PATHS: Record<string, string> = {
     '2024': '/data/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson',
