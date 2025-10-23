@@ -10,7 +10,7 @@ interface LocationPanelProps {
 }
 
 export default memo(function LocationPane({ selectedLocation, onLocationClick, population }: LocationPanelProps) {
-    // Add state for 2021 geojson
+    // Add state for 2021 geojson - population data uses the 2021 ward codes and boundaries
     const [geojson2021, setGeojson2021] = useState<WardGeojson | null>(null);
 
     // Load it once
@@ -126,24 +126,24 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
     }, [largerLocations, wardLocations]);
 
     return (
-        <div className="bg-[rgba(255,255,255,0.6)] text-sm rounded-md backdrop-blur-md shadow-lg flex flex-col h-full">
-            <div className="border-b border-gray-200 flex-shrink-0">
-                <h2 className="font-semibold p-3 pb-2">Locations</h2>
+        <div className="bg-[rgba(255,255,255,0.5)] rounded-lg backdrop-blur-xl shadow-xl border border-white/30 flex flex-col h-full">
+            <div className="border-b border-gray-200/40 shrink-0 bg-white/20">
+                <h2 className="px-2.5 pb-1.5 pt-2.5 text-sm font-semibold">Locations</h2>
             </div>
 
             {/* Scrollable list */}
-            <div className="overflow-y-auto scroll-container flex-1 px-3 py-1 space-y-[2px]">
+            <div className="overflow-y-auto scroll-container flex-1 px-1 py-1 pt-0">
                 {sortedLocations.map(({ wardCode, wardName, totalPopulation, bounds }) => (
                     <button
                         key={wardCode}
                         onClick={() => onLocationClick(bounds)}
-                        className={`w-full text-left py-[4px] rounded transition-colors text-xs cursor-pointer flex justify-between ${selectedLocation === wardName
-                            ? 'text-black font-medium'
-                            : 'hover:text-black text-[gray]'
+                        className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${selectedLocation === wardName
+                            ? 'bg-white/60 text-gray-800'
+                            : 'hover:bg-white/40 text-gray-600 hover:text-gray-800'
                             }`}
                     >
-                        <span>{wardName}</span>
-                        <span className="text-[gray]">{totalPopulation.toLocaleString()}</span>
+                        <span className="font-normal truncate mr-2">{wardName}</span>
+                        <span className="text-gray-500 text-xs tabular-nums flex-shrink-0">{totalPopulation.toLocaleString()}</span>
                     </button>
                 ))}
             </div>

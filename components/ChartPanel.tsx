@@ -29,15 +29,15 @@ export default memo(function ChartPanel({
 	const title = selectedWard?.wardName || selectedLocation || 'Greater Manchester';
 
 	return (
-		<div className="pointer-events-auto p-[10px] flex flex-col h-full w-[320px]">
-			<div className="bg-[rgba(255,255,255,0.6)] rounded-md backdrop-blur-md shadow-lg h-[100%] flex flex-col">
+		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
+			<div className="bg-[rgba(255,255,255,0.6)] rounded-md backdrop-blur-md shadow-lg h-full flex flex-col">
 				{/* Header */}
-				<div className="pb-2 pt-[10px] px-[10px] border-b border-gray-200">
+				<div className="pb-2 pt-2.5 px-2.5 border-b border-gray-200">
 					<h2 className="font-semibold text-sm">{title}</h2>
 					<div className="text-gray-500 text-xs">
 						{selectedWard?.wardCode ? (
 							<div className="flex space-x-1">
-								<span className="flex-grow">{selectedWard?.localAuthorityName}</span>
+								<span className="grow">{selectedWard?.localAuthorityName}</span>
 								<span>{selectedWard?.localAuthorityCode}</span>
 								<span>{selectedWard?.wardCode}</span>
 							</div>
@@ -45,7 +45,7 @@ export default memo(function ChartPanel({
 					</div>
 				</div>
 				{/* Main Content Area */}
-				<div className="space-y-2 flex-1 px-[10px] overflow-y-auto scroll-container">
+				<div className="space-y-2 flex-1 px-2.5 overflow-y-auto scroll-container">
 					{/* Election Results Section */}
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
@@ -66,7 +66,7 @@ export default memo(function ChartPanel({
 					</div>
 				</div>
 				{/* Footer */}
-				<div className="text-[9px] px-[10px] pb-[10px] text-gray-400 pt-2 border-t border-gray-200 mt-auto">
+				<div className="text-[9px] px-2.5 pb-2.5 text-gray-400 pt-2 border-t border-gray-200 mt-auto">
 					Click to switch which dataset shows on map
 				</div>
 			</div>
