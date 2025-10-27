@@ -1,6 +1,6 @@
 // lib/types/index.ts
 export interface WardData {
-    [key: string]: string | number;
+    [key: string]: string | number | undefined;
 }
 
 export interface LocationBounds {
