@@ -4,6 +4,39 @@ import Papa from 'papaparse';
 import { WardData, Dataset } from '@lib/types/index';
 import { PARTY_INFO } from '../data/parties';
 
+// Common party abbreviations to look for
+const KNOWN_PARTIES = ['LAB', 'CON', 'LD', 'GREEN', 'REF', 'IND'];
+
+// Utility to detect party columns from CSV headers
+const detectPartyColumns = (headers: string[]): string[] => {
+    return headers.filter(h => {
+        const upper = h.toUpperCase().trim();
+        return KNOWN_PARTIES.includes(upper);
+    });
+};
+
+// Utility to parse vote counts efficiently
+const parseVotes = (value: any): number => {
+    if (!value || value === '') return 0;
+    const parsed = parseInt(String(value).replace(/,/g, '').trim());
+    return isNaN(parsed) ? 0 : parsed;
+};
+
+// Utility to find winning party
+const findWinner = (partyVotes: Record<string, number>): string => {
+    let maxVotes = 0;
+    let winner = 'OTHER';
+    
+    for (const [party, votes] of Object.entries(partyVotes)) {
+        if (votes > maxVotes) {
+            maxVotes = votes;
+            winner = party;
+        }
+    }
+    
+    return winner;
+};
+
 const parseElection2024 = async (): Promise<Dataset> => {
     const res = await fetch('/data/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv');
     const csvText = await res.text();
@@ -15,44 +48,40 @@ const parseElection2024 = async (): Promise<Dataset> => {
         Papa.parse(cleanedCsv, {
             header: true,
             skipEmptyLines: true,
+            dynamicTyping: false,
             complete: (results) => {
+                const partyColumns = detectPartyColumns(results.meta.fields || []);
                 const wardWinners: Record<string, string> = {};
                 const allWardData: Record<string, WardData> = {};
-                const partyColumns = ['LAB', 'CON', 'LD', 'GREEN', 'REF', 'IND'];
 
-                results.data.forEach((row: any) => {
+                for (const row of results.data as any[]) {
                     const wardCode = row['Ward code']?.trim();
-                    if (!wardCode) return;
+                    if (!wardCode) continue;
 
-                    let maxVotes = 0;
-                    let winningParty = 'OTHER';
                     const partyVotes: Record<string, number> = {};
+                    
+                    for (const party of partyColumns) {
+                        partyVotes[party] = parseVotes(row[party]);
+                    }
 
-                    partyColumns.forEach(party => {
-                        const votes = parseInt(row[party]?.replace(/,/g, '') || '0');
-                        partyVotes[party] = votes;
-                        if (votes > maxVotes) {
-                            maxVotes = votes;
-                            winningParty = party;
-                        }
-                    });
-
-                    wardWinners[wardCode] = winningParty;
+                    const winner = findWinner(partyVotes);
+                    
+                    wardWinners[wardCode] = winner;
                     allWardData[wardCode] = {
                         wardName: row['Ward name'] || 'Unknown',
                         localAuthorityName: row['Local authority name'] || 'Unknown',
                         localAuthorityCode: row['Local authority code'] || 'Unknown',
                         ...partyVotes
                     };
-                });
+                }
 
                 resolve({
                     id: '2024',
+                    type: 'election',
                     name: 'Local Elections 2024',
                     year: 2024,
                     wardResults: wardWinners,
                     wardData: allWardData,
-                    partyColumns,
                     partyInfo: PARTY_INFO
                 });
             },
@@ -70,129 +99,104 @@ const parseCouncil2023 = async (data2024?: Dataset): Promise<Dataset> => {
             header: true,
             skipEmptyLines: true,
             dynamicTyping: false,
-            delimiter: ',',
             complete: (results) => {
-                const wardWinners: Record<string, string> = {};
-                const allWardData: Record<string, WardData> = {};
-                const partyColumns = ['CON', 'LAB', 'LD', 'GREEN', 'REF', 'IND'];
-
                 if (!results.data || results.data.length === 0) {
                     console.warn('2023: No data rows found');
                     resolve({
                         id: '2023',
+                        type: 'election',
                         name: 'Council Elections 2023',
                         year: 2023,
                         wardResults: {},
                         wardData: {},
-                        partyColumns,
                         partyInfo: PARTY_INFO
                     });
                     return;
                 }
 
-                // Create lookup map for matching ward names to IDs from 2024 data
-                const wardName2024Lookup: Record<string, string> = {};
+                const partyColumns = detectPartyColumns(results.meta.fields || []);
+                const wardWinners: Record<string, string> = {};
+                const allWardData: Record<string, WardData> = {};
+
+                // Build lookup map efficiently
+                const wardLookup = new Map<string, string>();
                 
                 if (data2024?.wardData) {
-                    Object.entries(data2024.wardData).forEach(([wardCode, data]) => {
-                        const normalizedName = data.wardName.toLowerCase().trim();
-                        const normalizedAuth = data.localAuthorityName?.toLowerCase().trim() || '';
-                        const key = `${normalizedAuth}|${normalizedName}`;
-                        wardName2024Lookup[key] = wardCode;
-                    });
+                    for (const [wardCode, data] of Object.entries(data2024.wardData)) {
+                        const name = data.wardName.toLowerCase().trim();
+                        const auth = data.localAuthorityName?.toLowerCase().trim() || '';
+                        wardLookup.set(`${auth}|${name}`, wardCode);
+                    }
                 }
 
                 const tempWardData: Record<string, any> = {};
 
-                results.data.forEach((row: any) => {
-                    if (!row || typeof row !== 'object') return;
+                for (const row of results.data as any[]) {
+                    if (!row || typeof row !== 'object') continue;
 
-                    const county = (row.COUNTYNAME || '').toString().trim();
-                    const district = (row.DISTRICTNAME || '').toString().trim();
-                    const ward = (row.WARDNAME || '').toString().trim();
+                    const county = String(row.COUNTYNAME || '').trim();
+                    const district = String(row.DISTRICTNAME || '').trim();
+                    const ward = String(row.WARDNAME || '').trim();
                     
-                    if (!ward) return;
+                    if (!ward) continue;
                     
-                    let maxVotes = 0;
-                    let winningParty = 'OTHER';
                     const partyVotes: Record<string, number> = {};
+                    
+                    for (const party of partyColumns) {
+                        partyVotes[party] = parseVotes(row[party]);
+                    }
 
-                    partyColumns.forEach(party => {
-                        let votes = 0;
-                        const cellValue = row[party];
-                        
-                        if (cellValue && cellValue !== '') {
-                            const parsed = parseInt(cellValue.toString().replace(/,/g, '').trim());
-                            votes = isNaN(parsed) ? 0 : parsed;
-                        }
-                        
-                        partyVotes[party] = votes;
-                        if (votes > maxVotes) {
-                            maxVotes = votes;
-                            winningParty = party;
-                        }
-                    });
+                    const winner = findWinner(partyVotes);
+                    const maxVotes = Math.max(...Object.values(partyVotes));
 
                     if (maxVotes > 0) {
-                        // Try to find matching ward code from 2024 data
+                        // Try to find matching ward code
                         const normalizedWard = ward.toLowerCase().trim();
                         const normalizedDistrict = district.toLowerCase().trim();
+                        const normalizedCounty = county.toLowerCase().trim();
                         
-                        // Try matching with district name first
-                        let lookupKey = `${normalizedDistrict}|${normalizedWard}`;
-                        let wardCode = wardName2024Lookup[lookupKey];
-                        
-                        if (!wardCode) {
-                            // Try with county name
-                            const normalizedCounty = county.toLowerCase().trim();
-                            lookupKey = `${normalizedCounty}|${normalizedWard}`;
-                            wardCode = wardName2024Lookup[lookupKey];
-                        }
+                        let wardCode = wardLookup.get(`${normalizedDistrict}|${normalizedWard}`) 
+                                    || wardLookup.get(`${normalizedCounty}|${normalizedWard}`);
                         
                         if (wardCode) {
-                            // Successfully mapped to a ward code
-                            wardWinners[wardCode] = winningParty;
+                            wardWinners[wardCode] = winner;
                             allWardData[wardCode] = {
-                                wardName: ward || 'Unknown',
+                                wardName: ward,
                                 localAuthorityName: district || county || 'Unknown',
-                                localAuthorityCode: wardCode.substring(0, 9) || 'Unknown', // Extract LA code from ward code
-                                districtName: district || '',
-                                countyName: county || '',
+                                localAuthorityCode: wardCode.substring(0, 9),
+                                districtName: district,
+                                countyName: county,
                                 ...partyVotes
                             };
                         } else {
-                            // Store with original name key if no match found
+                            // Store unmapped wards
                             const nameKey = `${county}|${district}|${ward}`;
                             tempWardData[nameKey] = {
-                                wardName: ward || 'Unknown',
+                                wardName: ward,
                                 localAuthorityName: district || county || 'Unknown',
-                                districtName: district || '',
-                                countyName: county || '',
-                                winningParty,
+                                districtName: district,
+                                countyName: county,
+                                winningParty: winner,
                                 ...partyVotes
                             };
                         }
                     }
-                });
+                }
 
-                console.log('2023 mapped to ward codes:', Object.keys(allWardData).length);
-                console.log('2023 unmapped wards:', Object.keys(tempWardData).length);
+                console.log('2023 mapped:', Object.keys(allWardData).length, 'unmapped:', Object.keys(tempWardData).length);
 
                 resolve({
                     id: '2023',
+                    type: 'election',
                     name: 'Local Elections 2023',
                     year: 2023,
                     wardResults: wardWinners,
                     wardData: allWardData,
-                    partyColumns,
                     partyInfo: PARTY_INFO,
-                    unmappedWards: tempWardData
+                    // unmappedWards: tempWardData
                 });
             },
-            error: (err) => {
-                console.error('2023 CSV parse error:', err);
-                reject(err);
-            }
+            error: reject
         });
     });
 };
@@ -208,44 +212,40 @@ const parseElection2022 = async (): Promise<Dataset> => {
         Papa.parse(cleanedCsv, {
             header: true,
             skipEmptyLines: true,
+            dynamicTyping: false,
             complete: (results) => {
+                const partyColumns = detectPartyColumns(results.meta.fields || []);
                 const wardWinners: Record<string, string> = {};
                 const allWardData: Record<string, WardData> = {};
-                const partyColumns = ['LAB', 'CON', 'LD', 'GREEN', 'REF', 'IND'];
 
-                results.data.forEach((row: any) => {
+                for (const row of results.data as any[]) {
                     const wardCode = row['Ward code']?.trim();
-                    if (!wardCode) return;
+                    if (!wardCode) continue;
 
-                    let maxVotes = 0;
-                    let winningParty = 'OTHER';
                     const partyVotes: Record<string, number> = {};
+                    
+                    for (const party of partyColumns) {
+                        partyVotes[party] = parseVotes(row[party]);
+                    }
 
-                    partyColumns.forEach(party => {
-                        const votes = parseInt(row[party]?.replace(/,/g, '') || '0');
-                        partyVotes[party] = votes;
-                        if (votes > maxVotes) {
-                            maxVotes = votes;
-                            winningParty = party;
-                        }
-                    });
-
-                    wardWinners[wardCode] = winningParty;
+                    const winner = findWinner(partyVotes);
+                    
+                    wardWinners[wardCode] = winner;
                     allWardData[wardCode] = {
                         wardName: row['Ward name'] || 'Unknown',
                         localAuthorityName: row['Local authority name'] || 'Unknown',
                         localAuthorityCode: row['Local authority code'] || 'Unknown',
                         ...partyVotes
                     };
-                });
+                }
 
                 resolve({
                     id: '2022',
+                    type: 'election',
                     name: 'Local Elections 2022',
                     year: 2022,
                     wardResults: wardWinners,
                     wardData: allWardData,
-                    partyColumns,
                     partyInfo: PARTY_INFO
                 });
             },
@@ -265,44 +265,40 @@ const parseElection2021 = async (): Promise<Dataset> => {
         Papa.parse(cleanedCsv, {
             header: true,
             skipEmptyLines: true,
+            dynamicTyping: false,
             complete: (results) => {
+                const partyColumns = detectPartyColumns(results.meta.fields || []);
                 const wardWinners: Record<string, string> = {};
                 const allWardData: Record<string, WardData> = {};
-                const partyColumns = ['LAB', 'CON', 'LD', 'GREEN', 'REF', 'IND'];
 
-                results.data.forEach((row: any) => {
+                for (const row of results.data as any[]) {
                     const wardCode = row['Ward/ED code']?.trim();
-                    if (!wardCode) return;
+                    if (!wardCode) continue;
 
-                    let maxVotes = 0;
-                    let winningParty = 'OTHER';
                     const partyVotes: Record<string, number> = {};
+                    
+                    for (const party of partyColumns) {
+                        partyVotes[party] = parseVotes(row[party]);
+                    }
 
-                    partyColumns.forEach(party => {
-                        const votes = parseInt(row[party]?.replace(/,/g, '') || '0');
-                        partyVotes[party] = votes;
-                        if (votes > maxVotes) {
-                            maxVotes = votes;
-                            winningParty = party;
-                        }
-                    });
-
-                    wardWinners[wardCode] = winningParty;
+                    const winner = findWinner(partyVotes);
+                    
+                    wardWinners[wardCode] = winner;
                     allWardData[wardCode] = {
                         wardName: row['Ward name'] || 'Unknown',
                         localAuthorityName: row['Local authority name'] || 'Unknown',
                         localAuthorityCode: row['Local authority code'] || 'Unknown',
                         ...partyVotes
                     };
-                });
+                }
 
                 resolve({
                     id: '2021',
+                    type: 'election',
                     name: 'Local Elections 2021',
                     year: 2021,
                     wardResults: wardWinners,
                     wardData: allWardData,
-                    partyColumns,
                     partyInfo: PARTY_INFO
                 });
             },
@@ -318,23 +314,27 @@ export const useElectionData = () => {
 
     useEffect(() => {
         const loadData = async () => {
-            console.log('Loading election data')
             try {
-                // Load 2024 data first to use for mapping 2023 ward names
+                // Load 2024 first for ward mapping
                 const data2024 = await parseElection2024();
                 
+                // Load remaining datasets in parallel
                 const [data2023, data2022, data2021] = await Promise.all([
-                    parseCouncil2023(data2024).catch(() => null),
-                    parseElection2022(),
-                    parseElection2021(),
+                    parseCouncil2023(data2024).catch(err => {
+                        console.error('2023 load failed:', err);
+                        return null;
+                    }),
+                    parseElection2022().catch(err => {
+                        console.error('2022 load failed:', err);
+                        return null;
+                    }),
+                    parseElection2021().catch(err => {
+                        console.error('2021 load failed:', err);
+                        return null;
+                    }),
                 ]);
                 
-                const loadedDatasets = [data2024];
-                if (data2023) loadedDatasets.push(data2023);
-                if (data2022) loadedDatasets.push(data2022);
-                if (data2021) loadedDatasets.push(data2021);
-
-                console.log('Storing election datasets:', loadedDatasets);
+                const loadedDatasets = [data2024, data2023, data2022, data2021].filter(Boolean) as Dataset[];
                 
                 setDatasets(loadedDatasets);
                 setLoading(false);

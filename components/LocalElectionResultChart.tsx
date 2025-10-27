@@ -70,6 +70,8 @@ export default function LocalElectionResultChart({
 			return <div className="text-xs text-gray-400 pt-3 text-center">No data available</div>;
 		}
 
+		console.log('dataset', dataset);
+
 		const parties = dataset.partyInfo;
 		const totalVotes = parties.reduce((sum, p) => sum + (data[p.key] || 0), 0);
 
@@ -145,7 +147,7 @@ export default function LocalElectionResultChart({
 				onClick={() => onDatasetChange(year)}
 			>
 				<div className="flex items-center justify-between mb-1.5">
-					<h3 className="text-xs font-bold">{year} Elections</h3>
+					<h3 className="text-xs font-bold">{year} Local Elections</h3>
 					{isActive && (
 						<span className={`text-[9px] ${colors.badge} px-1.5 py-0.5 rounded font-semibold`}>
 							ACTIVE
@@ -159,7 +161,7 @@ export default function LocalElectionResultChart({
 
 	return (
 		<div className="space-y-2">
-			<h3 className="text-xs font-bold text-gray-700 pt-2">Election Results</h3>
+			<h3 className="text-xs font-bold text-gray-700 pt-2">Local Election Results</h3>
 			{renderYearBar('2024', chartData2024, dataset2024, activeDataset.id === '2024')}
 			{renderYearBar('2023', chartData2023, dataset2023, activeDataset.id === '2023')}
 			{renderYearBar('2022', chartData2022, dataset2022, activeDataset.id === '2022')}
