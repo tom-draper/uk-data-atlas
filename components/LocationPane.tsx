@@ -128,7 +128,7 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
     return (
         <div className="bg-[rgba(255,255,255,0.5)] rounded-lg backdrop-blur-xl shadow-xl border border-white/30 flex flex-col h-full">
             <div className="shrink-0 bg-white/20">
-                <h2 className="px-2.5 pb-1.5 pt-2.5 text-sm font-semibold">Locations</h2>
+                <h2 className="px-2.5 pb-2 pt-2.5 text-sm font-semibold">Locations</h2>
             </div>
 
             {/* Scrollable list */}
