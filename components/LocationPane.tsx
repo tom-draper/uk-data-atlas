@@ -132,7 +132,7 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
             </div>
 
             {/* Scrollable list */}
-            <div className="overflow-y-auto scroll-container flex-1 px-1 py-1 pt-0">
+            <div className="overflow-y-auto scroll-container flex-1 px-1 py-1 pt-0.5">
                 {sortedLocations.map(({ wardCode, wardName, totalPopulation, bounds }) => (
                     <button
                         key={wardCode}
@@ -143,7 +143,7 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
                             }`}
                     >
                         <span className="font-normal truncate mr-2">{wardName}</span>
-                        <span className="text-gray-500 text-xs tabular-nums flex-shrink-0">{totalPopulation.toLocaleString()}</span>
+                        <span className="text-gray-500 text-xs tabular-nums shrink-0">{totalPopulation.toLocaleString()}</span>
                     </button>
                 ))}
             </div>

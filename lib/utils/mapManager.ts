@@ -1,6 +1,7 @@
 // lib/utils/mapManager.ts
 import { LocationBounds, ChartData, WardData, Party } from '@lib/types';
 import { WardGeojson } from '@lib/hooks/useWardDatasets';
+import { PARTY_COLORS } from '../data/parties';
 
 interface MapManagerCallbacks {
     onWardHover: (params: { data: WardData | null; wardCode: string }) => void;
@@ -193,7 +194,7 @@ export class MapManager {
         const colorExpression: any[] = ['match', ['get', 'winningParty']];
 
         partyInfo.forEach(party => {
-            colorExpression.push(party.key, party.color);
+            colorExpression.push(party.key, PARTY_COLORS[party.key]);
         });
 
         // Default color for no winner

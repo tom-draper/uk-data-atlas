@@ -21,7 +21,6 @@ export interface ChartData {
 export interface Party {
     key: keyof ChartData;
     name: string;
-    color: string;
 }
 
 export interface AgeData {

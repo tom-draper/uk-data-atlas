@@ -2,12 +2,12 @@
 import { Party } from '@lib/types/index';
 
 export const PARTY_INFO: Party[] = [
-    { key: 'LAB', name: 'Labour', color: '#e4003b' },
-    { key: 'CON', name: 'Conservative', color: '#29a6db' },
-    { key: 'LD', name: 'Liberal Democrat', color: '#ff6400' },
-    { key: 'GREEN', name: 'Green', color: '#01a357' },
-    { key: 'REF', name: 'Reform', color: '#1db2c9' },
-    { key: 'IND', name: 'Independent', color: '#CCCCCC' }
+    { key: 'LAB', name: 'Labour' },
+    { key: 'CON', name: 'Conservative' },
+    { key: 'LD', name: 'Liberal Democrat' },
+    { key: 'GREEN', name: 'Green' },
+    { key: 'REF', name: 'Reform' },
+    { key: 'IND', name: 'Independent' }
 ];
 
 export const PARTY_COLORS: Record<string, string> = {

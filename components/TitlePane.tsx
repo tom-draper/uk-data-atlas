@@ -1,14 +1,14 @@
 
 export default function TitlePane() {
     return (
-        <div className="bg-[rgba(255,255,255,0.6)] text-sm rounded-md backdrop-blur-md shadow-lg">
-            <div className="p-[10px] border-b border-gray-200 flex items-center">
+        <div className="bg-[rgba(255,255,255,0.5)] text-sm rounded-md backdrop-blur-md shadow-lg border border-white/30">
+            <div className="p-2.5 flex items-center bg-white/20">
                 <img
                     src="/union-jack.png"
                     alt="UK Data Atlas Logo"
-                    className="h-[24px] opacity-100 rounded grayscale-0 mr-3 mt-[2px] transform scale-x-[-1] hover:grayscale-0 transition-all duration-1000 cursor-pointer"
+                    className="h-5 opacity-100 rounded grayscale-0 mr-3 mt-0.5 transform scale-x-[-1] hover:grayscale-0 transition-all duration-1000 cursor-pointer"
                 />
-                <h1 className="font-semibold text-lg">UK Data Atlas</h1>
+                <h1 className="font-semibold text-[16px]">UK Data Atlas</h1>
             </div>
         </div>
     )

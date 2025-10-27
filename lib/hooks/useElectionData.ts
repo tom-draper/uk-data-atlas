@@ -41,14 +41,14 @@ const parseElectorate = (value: any): number | undefined => {
 const findWinner = (partyVotes: Record<string, number>): string => {
     let maxVotes = 0;
     let winner = 'OTHER';
-    
+
     for (const [party, votes] of Object.entries(partyVotes)) {
         if (votes > maxVotes) {
             maxVotes = votes;
             winner = party;
         }
     }
-    
+
     return winner;
 };
 
@@ -74,13 +74,13 @@ const parseElection2024 = async (): Promise<Dataset> => {
                     if (!wardCode) continue;
 
                     const partyVotes: Record<string, number> = {};
-                    
+
                     for (const party of partyColumns) {
                         partyVotes[party] = parseVotes(row[party]);
                     }
 
                     const winner = findWinner(partyVotes);
-                    
+
                     wardWinners[wardCode] = winner;
                     allWardData[wardCode] = {
                         wardName: row['Ward name'] || 'Unknown',
@@ -108,7 +108,7 @@ const parseElection2024 = async (): Promise<Dataset> => {
     });
 };
 
-const parseCouncil2023 = async (): Promise<Dataset & {unmappedWards?: any}> => {
+const parseCouncil2023 = async (): Promise<Dataset & { unmappedWards?: any }> => {
     const res = await fetch('/data/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv');
     const csvText = await res.text();
 
@@ -141,11 +141,11 @@ const parseCouncil2023 = async (): Promise<Dataset & {unmappedWards?: any}> => {
                     const county = String(row.COUNTYNAME || '').trim();
                     const district = String(row.DISTRICTNAME || '').trim();
                     const ward = String(row.WARDNAME || '').trim();
-                    
+
                     if (!ward) continue;
-                    
+
                     const partyVotes: Record<string, number> = {};
-                    
+
                     for (const party of partyColumns) {
                         partyVotes[party] = parseVotes(row[party]);
                     }
@@ -161,9 +161,9 @@ const parseCouncil2023 = async (): Promise<Dataset & {unmappedWards?: any}> => {
                             districtName: district,
                             countyName: county,
                             winningParty: winner,
-                            turnoutPercent: parseTurnout(row['Turnout (%)']),
-                            electorate: parseElectorate(row['Electorate']),
-                            totalVotes: parseVotes(row['Total votes']),
+                            turnoutPercent: parseTurnout(row['TURNOUT']),
+                            electorate: parseElectorate(row['ELECT']),
+                            totalVotes: parseVotes(row['Grand Total']),
                             ...partyVotes
                         };
                     }
@@ -209,13 +209,13 @@ const parseElection2022 = async (): Promise<Dataset> => {
                     if (!wardCode) continue;
 
                     const partyVotes: Record<string, number> = {};
-                    
+
                     for (const party of partyColumns) {
                         partyVotes[party] = parseVotes(row[party]);
                     }
 
                     const winner = findWinner(partyVotes);
-                    
+
                     wardWinners[wardCode] = winner;
                     allWardData[wardCode] = {
                         wardName: row['Ward name'] || 'Unknown',
@@ -265,13 +265,13 @@ const parseElection2021 = async (): Promise<Dataset> => {
                     if (!wardCode) continue;
 
                     const partyVotes: Record<string, number> = {};
-                    
+
                     for (const party of partyColumns) {
                         partyVotes[party] = parseVotes(row[party]);
                     }
 
                     const winner = findWinner(partyVotes);
-                    
+
                     wardWinners[wardCode] = winner;
                     allWardData[wardCode] = {
                         wardName: row['Ward name'] || 'Unknown',
@@ -300,7 +300,7 @@ const parseElection2021 = async (): Promise<Dataset> => {
 };
 
 // Map 2023 data using ward codes from other datasets
-const map2023WardCodes = (data2023: Dataset & {unmappedWards?: any}, referenceSets: Dataset[]): Dataset => {
+const map2023WardCodes = (data2023: Dataset & { unmappedWards?: any }, referenceSets: Dataset[]): Dataset => {
     if (!data2023.unmappedWards) {
         console.warn('2023: No unmapped wards to process');
         return data2023;
@@ -308,14 +308,14 @@ const map2023WardCodes = (data2023: Dataset & {unmappedWards?: any}, referenceSe
 
     // Build comprehensive ward lookup from all reference datasets
     const wardLookup = new Map<string, string>();
-    
+
     for (const dataset of referenceSets) {
         if (dataset.wardData) {
             for (const [wardCode, data] of Object.entries(dataset.wardData)) {
                 const name = data.wardName.toLowerCase().trim();
                 const auth = data.localAuthorityName?.toLowerCase().trim() || '';
                 const key = `${auth}|${name}`;
-                
+
                 // Only add if not already present (prioritize earlier years)
                 if (!wardLookup.has(key)) {
                     wardLookup.set(key, wardCode);
@@ -333,9 +333,9 @@ const map2023WardCodes = (data2023: Dataset & {unmappedWards?: any}, referenceSe
     for (const wardInfo of Object.values(unmappedWards)) {
         const normalizedWard = wardInfo.wardName.toLowerCase().trim();
         const normalizedAuth = wardInfo.localAuthorityName?.toLowerCase().trim() || '';
-        
+
         const wardCode = wardLookup.get(`${normalizedAuth}|${normalizedWard}`);
-        
+
         if (wardCode) {
             mappedWardResults[wardCode] = wardInfo.winningParty;
             const { winningParty, ...restData } = wardInfo;
@@ -387,15 +387,15 @@ export const useElectionData = () => {
                         return null;
                     }),
                 ]);
-                
+
                 // Build reference datasets for mapping (excluding 2023)
                 const referenceSets = [data2024, data2022, data2021].filter(Boolean) as Dataset[];
-                
+
                 // Map 2023 using all available reference datasets
                 const data2023 = data2023Raw ? map2023WardCodes(data2023Raw, referenceSets) : null;
-                
+
                 const loadedDatasets = [data2024, data2023, data2022, data2021].filter(Boolean) as Dataset[];
-                
+
                 setDatasets(loadedDatasets);
                 setLoading(false);
             } catch (err: any) {

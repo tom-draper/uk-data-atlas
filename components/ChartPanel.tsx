@@ -30,9 +30,9 @@ export default memo(function ChartPanel({
 
 	return (
 		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
-			<div className="bg-[rgba(255,255,255,0.6)] rounded-md backdrop-blur-md shadow-lg h-full flex flex-col">
+			<div className="bg-[rgba(255,255,255,0.5)] rounded-md backdrop-blur-md shadow-lg h-full flex flex-col border border-white/30">
 				{/* Header */}
-				<div className="pb-2 pt-2.5 px-2.5 border-b border-gray-200">
+				<div className="pb-2 pt-2.5 px-2.5 bg-white/20">
 					<h2 className="font-semibold text-sm">{title}</h2>
 					<div className="text-gray-500 text-xs">
 						{selectedWard?.wardCode ? (
@@ -45,28 +45,28 @@ export default memo(function ChartPanel({
 					</div>
 				</div>
 				{/* Main Content Area */}
-				<div className="space-y-2 flex-1 px-2.5 overflow-y-auto scroll-container">
+				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
 					{/* Election Results Section */}
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
 						availableDatasets={availableDatasets}
 						onDatasetChange={onDatasetChange}
-						wardCode={selectedWard?.wardCode.toString() ?? ''}
+						wardCode={selectedWard?.wardCode?.toString() ?? ''}
                         aggregatedData={aggregatedData}
 					/>
 					{/* Population Section */}
-					<div className="pt-3 border-t border-gray-200">
+					<div className="pt-2.5 border-t border-gray-200/80">
 						{/* <h3 className="text-xs font-bold text-gray-700 mb-2">Population (Mid-2020)</h3> */}
 						<PopulationChart
 							population={population}
-							wardCode={selectedWard?.wardCode.toString() ?? ''}
-							wardName={selectedWard?.wardName.toString() || ''}
+							wardCode={selectedWard?.wardCode?.toString() ?? ''}
+							wardName={selectedWard?.wardName?.toString() || ''}
 							wardCodeMap={wardCodeMap}
 						/>
 					</div>
 				</div>
 				{/* Footer */}
-				<div className="text-[9px] px-2.5 pb-2.5 text-gray-400 pt-2 border-t border-gray-200 mt-auto">
+				<div className="text-[9px] px-2.5 pb-2 text-gray-400 bg-white/20 pt-2 mt-auto">
 					Click to switch which dataset shows on map
 				</div>
 			</div>
