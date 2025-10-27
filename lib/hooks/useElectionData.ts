@@ -22,6 +22,21 @@ const parseVotes = (value: any): number => {
     return isNaN(parsed) ? 0 : parsed;
 };
 
+// Utility to parse turnout percentage
+const parseTurnout = (value: any): number | undefined => {
+    if (!value || value === '') return undefined;
+    const str = String(value).replace('%', '').trim();
+    const parsed = parseFloat(str);
+    return isNaN(parsed) ? undefined : parsed;
+};
+
+// Utility to parse electorate
+const parseElectorate = (value: any): number | undefined => {
+    if (!value || value === '') return undefined;
+    const parsed = parseInt(String(value).replace(/,/g, '').trim());
+    return isNaN(parsed) ? undefined : parsed;
+};
+
 // Utility to find winning party
 const findWinner = (partyVotes: Record<string, number>): string => {
     let maxVotes = 0;
@@ -71,13 +86,15 @@ const parseElection2024 = async (): Promise<Dataset> => {
                         wardName: row['Ward name'] || 'Unknown',
                         localAuthorityName: row['Local authority name'] || 'Unknown',
                         localAuthorityCode: row['Local authority code'] || 'Unknown',
+                        turnoutPercent: parseTurnout(row['Turnout (%)']),
+                        electorate: parseElectorate(row['Electorate']),
+                        totalVotes: parseVotes(row['Total votes']),
                         ...partyVotes
                     };
                 }
 
                 resolve({
                     id: '2024',
-                    type: 'election',
                     name: 'Local Elections 2024',
                     year: 2024,
                     wardResults: wardWinners,
@@ -104,7 +121,6 @@ const parseCouncil2023 = async (data2024?: Dataset): Promise<Dataset> => {
                     console.warn('2023: No data rows found');
                     resolve({
                         id: '2023',
-                        type: 'election',
                         name: 'Council Elections 2023',
                         year: 2023,
                         wardResults: {},
@@ -166,6 +182,9 @@ const parseCouncil2023 = async (data2024?: Dataset): Promise<Dataset> => {
                                 localAuthorityCode: wardCode.substring(0, 9),
                                 districtName: district,
                                 countyName: county,
+                                turnoutPercent: parseTurnout(row['Turnout (%)']),
+                                electorate: parseElectorate(row['Electorate']),
+                                totalVotes: parseVotes(row['Total votes']),
                                 ...partyVotes
                             };
                         } else {
@@ -177,6 +196,9 @@ const parseCouncil2023 = async (data2024?: Dataset): Promise<Dataset> => {
                                 districtName: district,
                                 countyName: county,
                                 winningParty: winner,
+                                turnoutPercent: parseTurnout(row['Turnout (%)']),
+                                electorate: parseElectorate(row['Electorate']),
+                                totalVotes: parseVotes(row['Total votes']),
                                 ...partyVotes
                             };
                         }
@@ -187,13 +209,12 @@ const parseCouncil2023 = async (data2024?: Dataset): Promise<Dataset> => {
 
                 resolve({
                     id: '2023',
-                    type: 'election',
                     name: 'Local Elections 2023',
                     year: 2023,
                     wardResults: wardWinners,
                     wardData: allWardData,
                     partyInfo: PARTY_INFO,
-                    // unmappedWards: tempWardData
+                    unmappedWards: tempWardData
                 });
             },
             error: reject
@@ -235,13 +256,15 @@ const parseElection2022 = async (): Promise<Dataset> => {
                         wardName: row['Ward name'] || 'Unknown',
                         localAuthorityName: row['Local authority name'] || 'Unknown',
                         localAuthorityCode: row['Local authority code'] || 'Unknown',
+                        turnoutPercent: parseTurnout(row['Turnout (%)']),
+                        electorate: parseElectorate(row['Electorate']),
+                        totalVotes: parseVotes(row['Total votes']),
                         ...partyVotes
                     };
                 }
 
                 resolve({
                     id: '2022',
-                    type: 'election',
                     name: 'Local Elections 2022',
                     year: 2022,
                     wardResults: wardWinners,
@@ -294,7 +317,6 @@ const parseElection2021 = async (): Promise<Dataset> => {
 
                 resolve({
                     id: '2021',
-                    type: 'election',
                     name: 'Local Elections 2021',
                     year: 2021,
                     wardResults: wardWinners,
