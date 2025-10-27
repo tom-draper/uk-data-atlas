@@ -197,8 +197,10 @@ export default function MapsPage() {
 
 	if (isLoading) {
 		return (
-			<div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
-				<div className="text-sm text-gray-500">Loading map...</div>
+			<div className="absolute inset-0 flex items-center justify-center bg-white z-10">
+				<div className="text-sm text-gray-500">
+					<img src="uk.png" alt="" className="h-36 mb-8 mr-4" />
+				</div>
 			</div>
 		);
 	}
