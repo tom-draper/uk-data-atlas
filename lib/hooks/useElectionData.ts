@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { WardData, Dataset } from '@lib/types/index';
+import { PARTY_INFO } from '../data/parties';
 
 const parseElection2024 = async (): Promise<Dataset> => {
     const res = await fetch('/data/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv');
@@ -52,14 +53,7 @@ const parseElection2024 = async (): Promise<Dataset> => {
                     wardResults: wardWinners,
                     wardData: allWardData,
                     partyColumns,
-                    partyInfo: [
-                        { key: 'LAB', name: 'Labour', color: '#DC241f' },
-                        { key: 'CON', name: 'Conservative', color: '#0087DC' },
-                        { key: 'LD', name: 'Liberal Democrat', color: '#FAA61A' },
-                        { key: 'GREEN', name: 'Green', color: '#6AB023' },
-                        { key: 'REF', name: 'Reform', color: '#12B6CF' },
-                        { key: 'IND', name: 'Independent', color: '#CCCCCC' }
-                    ]
+                    partyInfo: PARTY_INFO
                 });
             },
             error: reject
@@ -91,14 +85,7 @@ const parseCouncil2023 = async (data2024?: Dataset): Promise<Dataset> => {
                         wardResults: {},
                         wardData: {},
                         partyColumns,
-                        partyInfo: [
-                            { key: 'CON', name: 'Conservative', color: '#0087DC' },
-                            { key: 'LAB', name: 'Labour', color: '#DC241f' },
-                            { key: 'LD', name: 'Liberal Democrat', color: '#FAA61A' },
-                            { key: 'GREEN', name: 'Green', color: '#6AB023' },
-                            { key: 'REF', name: 'Reform', color: '#12B6CF' },
-                            { key: 'IND', name: 'Independent', color: '#CCCCCC' }
-                        ]
+                        partyInfo: PARTY_INFO
                     });
                     return;
                 }
@@ -198,14 +185,7 @@ const parseCouncil2023 = async (data2024?: Dataset): Promise<Dataset> => {
                     wardResults: wardWinners,
                     wardData: allWardData,
                     partyColumns,
-                    partyInfo: [
-                        { key: 'CON', name: 'Conservative', color: '#0087DC' },
-                        { key: 'LAB', name: 'Labour', color: '#DC241f' },
-                        { key: 'LD', name: 'Liberal Democrat', color: '#FAA61A' },
-                        { key: 'GREEN', name: 'Green', color: '#6AB023' },
-                        { key: 'REF', name: 'Reform', color: '#12B6CF' },
-                        { key: 'IND', name: 'Independent', color: '#CCCCCC' }
-                    ],
+                    partyInfo: PARTY_INFO,
                     unmappedWards: tempWardData
                 });
             },
@@ -266,14 +246,7 @@ const parseElection2022 = async (): Promise<Dataset> => {
                     wardResults: wardWinners,
                     wardData: allWardData,
                     partyColumns,
-                    partyInfo: [
-                        { key: 'LAB', name: 'Labour', color: '#DC241f' },
-                        { key: 'CON', name: 'Conservative', color: '#0087DC' },
-                        { key: 'LD', name: 'Liberal Democrat', color: '#FAA61A' },
-                        { key: 'GREEN', name: 'Green', color: '#6AB023' },
-                        { key: 'REF', name: 'Reform', color: '#12B6CF' },
-                        { key: 'IND', name: 'Independent', color: '#CCCCCC' }
-                    ]
+                    partyInfo: PARTY_INFO
                 });
             },
             error: reject
@@ -330,14 +303,7 @@ const parseElection2021 = async (): Promise<Dataset> => {
                     wardResults: wardWinners,
                     wardData: allWardData,
                     partyColumns,
-                    partyInfo: [
-                        { key: 'LAB', name: 'Labour', color: '#DC241f' },
-                        { key: 'CON', name: 'Conservative', color: '#0087DC' },
-                        { key: 'LD', name: 'Liberal Democrat', color: '#FAA61A' },
-                        { key: 'GREEN', name: 'Green', color: '#6AB023' },
-                        { key: 'REF', name: 'Reform', color: '#12B6CF' },
-                        { key: 'IND', name: 'Independent', color: '#CCCCCC' }
-                    ]
+                    partyInfo: PARTY_INFO
                 });
             },
             error: reject
