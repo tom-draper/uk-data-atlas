@@ -96,6 +96,8 @@ export class MapManager {
             });
         }
 
+        console.log('WARDS IN LOCATION HERE', wardsInLocation);
+
         return wardsInLocation;
     }
 
@@ -107,12 +109,13 @@ export class MapManager {
     ): ChartData {
         const cacheKey = `${location.name}-${year}`
         if (this.cache.has(cacheKey)) {
+            console.log('[CACHE HIT] calculateLocationStats:', cacheKey);
             return this.cache.get(cacheKey)
         }
 
         const wardsInLocation = this.getWardsInLocation(geojson, location);
 
-        console.log(`calculateLocationStats: [${cacheKey}] Filtered ${wardsInLocation.length} wards`);
+        console.log(`[EXPENSIVE] calculateLocationStats: [${cacheKey}] Filtered ${wardsInLocation.length} wards`);
 
         const aggregated: ChartData = {
             LAB: 0,
@@ -151,7 +154,7 @@ export class MapManager {
     ) {
         const wardsInLocation = this.getWardsInLocation(geojson, location);
 
-        console.log('updateMapForLocation: Filtered wards', wardsInLocation);
+        console.log('[EXPENSIVE] updateMapForLocation: Filtered wards', wardsInLocation);
 
         const wardCodeProp = this.detectWardCodeProperty(geojson);
         const locationData = {

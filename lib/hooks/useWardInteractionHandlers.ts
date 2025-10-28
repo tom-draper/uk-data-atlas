@@ -21,8 +21,7 @@ export function useWardInteractionHandlers({
 	const onWardHover = useCallback(
 		(params: { data: WardData | null; wardCode: string }) => {
 			const { data, wardCode } = params;
-
-			console.log('onWardHover', wardCode, data);
+			console.log('WARD INTERACTION: onWardHover ward:', wardCode, data);
 
 			// Skip if hovering over same ward
 			if (wardCode && wardCode === lastHoveredWardRef.current) {
@@ -45,6 +44,7 @@ export function useWardInteractionHandlers({
 
 	const onLocationChange = useCallback(
 		(_stats: any, location: { name: string }) => {
+			console.log('WARD INTERACTION: onLocationChange ward:', location.name);
 			setSelectedWard(null);
 			setSelectedLocation(location.name);
 

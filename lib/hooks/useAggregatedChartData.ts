@@ -20,6 +20,7 @@ export function useAggregatedChartData({ mapManagerRef, geojson, electionDataset
 
 	const calculateAllYearsData = useCallback(
 		(location: LocationBounds): AggregatedChartData => {
+			console.log('aa');
 			if (lastCalcRef.current?.locName === location.name) {
 				return lastCalcRef.current.data;
 			}

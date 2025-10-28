@@ -88,8 +88,8 @@ export default function MapsPage() {
 	const updateMapForLocation = useCallback((location: LocationBounds, skipAggregates = false) => {
 		if (!mapManagerRef.current || !geojson || !activeDataset) return;
 
-		console.log('Updating map for location');
-		console.log('geojson properties:', Object.keys(geojson.features[0].properties));
+		console.log('UPDATE MAP FOR LOCATION:', location.name);
+		console.log('UPDATE MAP FOR LOCATION: geojson properties:', Object.keys(geojson.features[0].properties));
 
 		// Calculate stats using the dataset's data directly
 		const stats = mapManagerRef.current.calculateLocationStats(
@@ -116,54 +116,58 @@ export default function MapsPage() {
 		);
 	}, [geojson, activeDataset, activeDatasetId, calculateAllYearsData]);
 
-	const hasInitialized = useRef(false);
+	const isInitialized = useRef(false);
 	const lastRenderedDatasetId = useRef<string | null>(null);
 
+	// Initial map setup effect
 	useEffect(() => {
-		if (hasInitialized.current) return;
+		if (isInitialized.current) return;
 		if (!geojson || !activeDataset || geojsonLoading) return;
 
-		console.log('Selecting location and updating map for initial setup...');
-		hasInitialized.current = true;
+		console.log('INITIAL SETUP: Setting location and updating map...');
+		isInitialized.current = true;
 		setSelectedLocation(INITIAL_LOCATION.name);
 		updateMapForLocation(INITIAL_LOCATION, false);
 
 		lastRenderedDatasetId.current = activeDatasetId;
 	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, updateMapForLocation]);
 
+	const getGeojsonYear = (geojson: any): number | null => {
+		const props = geojson.features[0]?.properties;
+		if (!props) return null;
+
+		if (props.WD24CD) return 2024;
+		if (props.WD23CD) return 2023;
+		if (props.WD22CD) return 2022;
+		if (props.WD21CD) return 2021;
+
+		return null;
+	};
+
 	// Update map when dataset changes - ONLY if already initialized
 	useEffect(() => {
-		if (!hasInitialized.current) return;
-		if (geojsonLoading) return;
-		if (!geojson || !activeDataset) return;
+		if (!isInitialized.current) return;
+		if (!geojson || !activeDataset || geojsonLoading) return;
 
-		const geojsonYear = (() => {
-			const props = geojson.features[0]?.properties;
-			if (!props) return null;
-			
-			// Check for year-specific ward code properties
-			if (props.WD24CD) return 2024;
-			if (props.WD23CD) return 2023;
-			if (props.WD22CD) return 2022;
-			if (props.WD21CD) return 2021;
-			
-			return null;
-		})();
+		console.log('DATASET CHANGE: Updating map...');
 
-		if (geojsonYear && geojsonYear !== activeDataset.year) {
-			console.log(`Waiting for matching GeoJSON: have ${geojsonYear}, need ${activeDataset.year}`);
+		// Avoid redundant updates
+		if (lastRenderedDatasetId.current === activeDatasetId) {
+			console.log('DATASET CHANGE: Skipping update map -> already rendered dataset:', activeDatasetId)
 			return;
 		}
 
-		if (lastRenderedDatasetId.current === activeDatasetId) {
-			console.log('Skipping update map -> already rendered dataset:', activeDatasetId)
+		// Wait until geojson has been loaded and matches the active dataset year
+		const geojsonYear = getGeojsonYear(geojson);
+		if (geojsonYear && geojsonYear !== activeDataset.year) {
+			console.log(`DATASET CHANGE: Waiting for matching GeoJSON: have ${geojsonYear}, need ${activeDataset.year}`);
 			return;
 		}
 
 		const location = LOCATIONS.find(loc => loc.name === selectedLocation);
 		if (!location) return;
 
-		console.log('New dataset & geojson ready -> updating map for dataset', activeDatasetId);
+		console.log('DATASET CHANGE: New dataset & geojson ready -> updating map for dataset', activeDatasetId);
 		updateMapForLocation(location, false);
 
 		lastRenderedDatasetId.current = activeDatasetId;
@@ -195,9 +199,9 @@ export default function MapsPage() {
 
 	if (isLoading) {
 		return (
-			<div className="absolute inset-0 flex items-center justify-center bg-[#dbdbdc] z-10">
+			<div className="absolute inset-0 flex items-center justify-center bg-white z-10">
 				<div className="text-sm text-gray-500">
-					<img src="uk-background.png" alt="" className="h-36 mb-8 mr-4" />
+					<img src="uk.png" alt="" className="h-32 mb-8 mr-4" />
 				</div>
 			</div>
 		);
