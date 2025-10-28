@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
         ignoreBuildErrors: true
     },
     productionBrowserSourceMaps: true,
+    reactCompiler: true
 };
 
 export default nextConfig;

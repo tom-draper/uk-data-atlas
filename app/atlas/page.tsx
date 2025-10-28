@@ -101,6 +101,7 @@ export default function MapsPage() {
 
 		// Update aggregated data if needed
 		if (!skipAggregates) {
+			console.log('CALCULATING NEW AGGREGATES FOR LOCATION:', location.name);
 			const newAggregates = calculateAllYearsData(location);
 			setAggregatedChartData(newAggregates);
 		}
@@ -201,7 +202,7 @@ export default function MapsPage() {
 		return (
 			<div className="absolute inset-0 flex items-center justify-center bg-white z-10">
 				<div className="text-sm text-gray-500">
-					<img src="uk.png" alt="" className="h-32 mb-8 mr-4" />
+					<img src="uk.png" alt="" className="h-[200px] mb-8 mr-4" />
 				</div>
 			</div>
 		);

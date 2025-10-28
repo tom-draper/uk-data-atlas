@@ -10,9 +10,9 @@ export default function TitlePane() {
                 <img
                     src="/union-jack.png"
                     alt="UK Data Atlas Logo"
-                    className="h-10 opacity-60 -m-px mr-4 rounded-r-md transform scale-x-[-1] cursor-pointer filter saturate-110 brightness-110 contrast-90 blur-[0px]"
+                    className="h-9 opacity-70 -m-px mr-4 rounded-r-md transform scale-x-[-1] cursor-pointer filter saturate-110 brightness-110 contrast-90 blur-[0px]"
                 />
-                <h1 className="font-semibold text-[16px]">UK Data Atlas</h1>
+                <h1 className="font-semibold text-[14px]">UK Data Atlas</h1>
                 <span className="text-xs text-gray-400/60 font-mono ml-auto mr-5 select-none mt-0.5">
                     v{version}
                 </span>
