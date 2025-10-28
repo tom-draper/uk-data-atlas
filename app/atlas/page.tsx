@@ -155,8 +155,6 @@ export default function MapsPage() {
 			return;
 		}
 
-		// If I uncomment this, it renders once with new election data, but continues to use old ward data
-		// If I keep this commented, it renders twice, the first time with new election data & old ward data, then a second time with updated ward data
 		if (lastRenderedDatasetId.current === activeDatasetId) {
 			console.log('Skipping update map -> already rendered dataset:', activeDatasetId)
 			return;
@@ -197,9 +195,9 @@ export default function MapsPage() {
 
 	if (isLoading) {
 		return (
-			<div className="absolute inset-0 flex items-center justify-center bg-white z-10">
+			<div className="absolute inset-0 flex items-center justify-center bg-[#dbdbdc] z-10">
 				<div className="text-sm text-gray-500">
-					<img src="uk.png" alt="" className="h-36 mb-8 mr-4" />
+					<img src="uk-background.png" alt="" className="h-36 mb-8 mr-4" />
 				</div>
 			</div>
 		);
@@ -216,7 +214,7 @@ export default function MapsPage() {
 
 	return (
 		<div style={{ width: '100%', height: '100vh', position: 'relative' }}>
-			<div className="fixed inset-0 z-[50] h-full w-full pointer-events-none">
+			<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
 				<div className="absolute left-0 flex h-full">
 					<ControlPanel
 						selectedLocation={selectedLocation}

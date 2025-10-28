@@ -6,7 +6,7 @@ export default function TitlePane() {
                 <img
                     src="/union-jack.png"
                     alt="UK Data Atlas Logo"
-                    className="h-5 opacity-100 rounded grayscale-0 mr-3 mt-0.5 transform scale-x-[-1] hover:grayscale-0 transition-all duration-1000 cursor-pointer"
+                    className="h-5 opacity-100 rounded mr-3 mt-0.5 transform scale-x-[-1] transition-all duration-1000 cursor-pointer"
                 />
                 <h1 className="font-semibold text-[16px]">UK Data Atlas</h1>
             </div>

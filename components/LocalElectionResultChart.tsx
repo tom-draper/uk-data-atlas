@@ -26,8 +26,6 @@ export default function LocalElectionResultChart({
 		data2021: availableDatasets.find(d => d.id === '2021')?.wardData || {},
 	}), [availableDatasets]);
 
-	console.log('Aggregated Data:', aggregatedData);
-
 	const { chartData2024, chartData2023, chartData2022, chartData2021, turnout2024, turnout2023, turnout2022, turnout2021 } = useMemo(() => {
 		const getChartData = (yearData: any, year: string): { chartData: ChartData | undefined; turnout: number | undefined } => {
 			// If we have a specific ward selected (hovering), use that ward's data
