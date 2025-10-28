@@ -40,7 +40,6 @@ export function useInitialLocationSetup({
 
 		const initialize = () => {
 			console.log('Initialize location...')
-			console.log('Calculating location stats! (expensive)');
 			const stats = mapManagerRef.current!.calculateLocationStats(
 				initialLocation,
 				geojson,
@@ -50,7 +49,6 @@ export function useInitialLocationSetup({
 
 			const aggregates = calculateAllYearsData(initialLocation);
 
-			console.log('Updating map for location! (expensive)');
 			mapManagerRef.current!.updateMapForLocation(
 				initialLocation,
 				geojson,

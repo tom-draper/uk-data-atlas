@@ -42,9 +42,6 @@ export class MapManager {
                     mappedCount++;
                 }
             });
-
-            console.log(`Built ${mappedCount} ward-to-LAD mappings. Total mappings: ${this.wardToLadMapping.size}`);
-            console.log(this.wardToLadMapping);
         }
     }
 
@@ -75,7 +72,6 @@ export class MapManager {
         if (props.LAD21CD) return { property: 'LAD21CD', fallbackToWardMapping: false };
 
         // No LAD codes found - we'll need to use ward code mapping
-        console.warn('No LAD codes found in GeoJSON - falling back to ward code filtering');
         return { property: null, fallbackToWardMapping: true };
     }
 
@@ -96,8 +92,6 @@ export class MapManager {
             });
         }
 
-        console.log('WARDS IN LOCATION HERE', wardsInLocation);
-
         return wardsInLocation;
     }
 
@@ -109,13 +103,13 @@ export class MapManager {
     ): ChartData {
         const cacheKey = `${location.name}-${year}`
         if (this.cache.has(cacheKey)) {
-            console.log('[CACHE HIT] calculateLocationStats:', cacheKey);
+            console.log('calculateLocationStats cache hit:', cacheKey);
             return this.cache.get(cacheKey)
         }
 
         const wardsInLocation = this.getWardsInLocation(geojson, location);
 
-        console.log(`[EXPENSIVE] calculateLocationStats: [${cacheKey}] Filtered ${wardsInLocation.length} wards`);
+        console.log(`EXPENSIVE: calculateLocationStats: [${cacheKey}] Filtered ${wardsInLocation.length} wards`);
 
         const aggregated: ChartData = {
             LAB: 0,
@@ -154,7 +148,7 @@ export class MapManager {
     ) {
         const wardsInLocation = this.getWardsInLocation(geojson, location);
 
-        console.log('[EXPENSIVE] updateMapForLocation: Filtered wards', wardsInLocation);
+        console.log('EXPENSIVE: updateMapForLocation: Filtered wards', wardsInLocation);
 
         const wardCodeProp = this.detectWardCodeProperty(geojson);
         const locationData = {

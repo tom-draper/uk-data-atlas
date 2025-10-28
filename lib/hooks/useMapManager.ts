@@ -12,7 +12,7 @@ type UseMapManagerOptions = {
 export function useMapManager(opts: UseMapManagerOptions) {
     const managerRef = useRef<MapManager | null>(null);
     const callbacksRef = useRef(opts);
-    const hasInitialized = useRef(false);
+    const isInitialized = useRef(false);
 
     // Update callbacks ref without triggering re-initialization
     useEffect(() => {
@@ -22,12 +22,10 @@ export function useMapManager(opts: UseMapManagerOptions) {
     // Initialize manager once when both map and geojson are ready
     useEffect(() => {
         if (!opts.mapRef?.current || !opts.geojson) return;
-        if (hasInitialized.current) {
-            console.log('Skipping map manager re-init - already initialized');
+        if (isInitialized.current) {
             return;
         }
         
-        console.log('Initializing map manager...')
         managerRef.current = new MapManager(opts.mapRef.current, {
             onWardHover: (params) => {
                 // console.log('MAP MANAGER onWardHover params:', params)
@@ -43,13 +41,13 @@ export function useMapManager(opts: UseMapManagerOptions) {
             }
         });
         
-        hasInitialized.current = true;
+        isInitialized.current = true;
 
         return () => {
             // Only cleanup if the map itself is being destroyed
             if (!opts.mapRef?.current) {
                 managerRef.current = null;
-                hasInitialized.current = false;
+                isInitialized.current = false;
             }
         };
     }, [opts.mapRef, opts.geojson]);

@@ -28,7 +28,6 @@ export function useAggregatedChartData({ mapManagerRef, geojson, electionDataset
 				return { data2024: null, data2023: null, data2022: null, data2021: null };
 			}
 
-			console.log('Calculating aggregated chart data! (expensive)');
 			const result: any = {};
 			for (const year of YEARS) {
 				const dataset = electionDatasets.find(d => d.id === year);

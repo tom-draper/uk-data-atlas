@@ -61,7 +61,7 @@ export function useWardGeoJSON(year: Year | null): UseWardGeoJSONResult {
 
 			// Return cached data immediately if available
 			if (cache.current[year]) {
-				console.log(`[useWardGeoJSON] Using cached GeoJSON for ${year}`);
+				console.log(`Using cached geojson for ${year}`);
 				setGeojson(cache.current[year]);
 				setIsLoading(false);
 				setError(null);
@@ -69,7 +69,7 @@ export function useWardGeoJSON(year: Year | null): UseWardGeoJSONResult {
 			}
 
 			// Start loading
-			console.log(`[useWardGeoJSON] Fetching GeoJSON for ${year}`);
+			console.log(`EXPENSIVE: Loading geojson for ${year}`);
 			setIsLoading(true);
 			setError(null);
 
@@ -87,14 +87,14 @@ export function useWardGeoJSON(year: Year | null): UseWardGeoJSONResult {
 
 				// Cache the result
 				cache.current[year] = data;
-				console.log(`[useWardGeoJSON] Cached GeoJSON for ${year} (${data.features.length} features)`);
+				console.log(`Stored geojson for ${year} (${data.features.length} features)`);
 
 				setGeojson(data);
 				setIsLoading(false);
 			} catch (err) {
 				if (!cancelled) {
-					const error = err instanceof Error ? err : new Error('Failed to load GeoJSON');
-					console.error(`[useWardGeoJSON] Error loading ${year}:`, error);
+					const error = err instanceof Error ? err : new Error('Failed to load geojson');
+					console.error(`Error loading ${year}:`, error);
 					setError(error);
 					setIsLoading(false);
 				}
@@ -119,19 +119,19 @@ export function useWardGeoJSON(year: Year | null): UseWardGeoJSONResult {
  * @example
  * // In your app initialization
  * useEffect(() => {
- *   preloadWardGeoJSON(['2023', '2022', '2021']);
+ *   preloadWardGeojson(['2023', '2022', '2021']);
  * }, []);
  */
-export async function preloadWardGeoJSON(years: Year[]): Promise<void> {
+export async function preloadWardGeojson(years: Year[]): Promise<void> {
 	const promises = years.map(async (year) => {
 		try {
 			const response = await fetch(GEOJSON_PATHS[year]);
 			if (response.ok) {
 				await response.json();
-				console.log(`[preload] Cached GeoJSON for ${year}`);
+				console.log(`[preloadWardGeojson] Cached Geojson for ${year}`);
 			}
 		} catch (err) {
-			console.warn(`[preload] Failed to preload ${year}:`, err);
+			console.warn(`[preloadWardGeojson] Failed to preload ${year}:`, err);
 		}
 	});
 

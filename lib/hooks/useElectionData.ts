@@ -302,7 +302,6 @@ const parseElection2021 = async (): Promise<Dataset> => {
 // Map 2023 data using ward codes from other datasets
 const map2023WardCodes = (data2023: Dataset & { unmappedWards?: any }, referenceSets: Dataset[]): Dataset => {
     if (!data2023.unmappedWards) {
-        console.warn('2023: No unmapped wards to process');
         return data2023;
     }
 
@@ -350,8 +349,6 @@ const map2023WardCodes = (data2023: Dataset & { unmappedWards?: any }, reference
     const finalWardResults = { ...data2023.wardResults, ...mappedWardResults };
     const finalWardData = { ...data2023.wardData, ...mappedWardData };
 
-    console.log('2023 remapping complete:', Object.keys(finalWardData).length, 'total wards');
-
     return {
         ...data2023,
         wardResults: finalWardResults,
@@ -368,6 +365,7 @@ export const useElectionData = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
+                console.log('EXPENSIVE: Loading election data...');
                 // Load all datasets in parallel for maximum performance
                 const [data2024, data2023Raw, data2022, data2021] = await Promise.all([
                     parseElection2024().catch(err => {
@@ -396,6 +394,7 @@ export const useElectionData = () => {
 
                 const loadedDatasets = [data2024, data2023, data2022, data2021].filter(Boolean) as Dataset[];
 
+                console.log('Storing election datasets', loadedDatasets);
                 setDatasets(loadedDatasets);
                 setLoading(false);
             } catch (err: any) {

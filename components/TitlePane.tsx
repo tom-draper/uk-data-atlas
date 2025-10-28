@@ -12,8 +12,8 @@ export default function TitlePane() {
                     alt="UK Data Atlas Logo"
                     className="h-9 opacity-70 -m-px mr-4 rounded-r-md transform scale-x-[-1] cursor-pointer filter saturate-110 brightness-110 contrast-90 blur-[0px]"
                 />
-                <h1 className="font-semibold text-[14px]">UK Data Atlas</h1>
-                <span className="text-xs text-gray-400/60 font-mono ml-auto mr-5 select-none mt-0.5">
+                <h1 className="font-semibold text-[15px]">UK Data Atlas</h1>
+                <span className="text-xs text-gray-400/60 text-gray-500 font-mono ml-auto mr-5 select-none mt-0.5">
                     v{version}
                 </span>
             </div>

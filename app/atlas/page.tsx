@@ -88,9 +88,6 @@ export default function MapsPage() {
 	const updateMapForLocation = useCallback((location: LocationBounds, skipAggregates = false) => {
 		if (!mapManagerRef.current || !geojson || !activeDataset) return;
 
-		console.log('UPDATE MAP FOR LOCATION:', location.name);
-		console.log('UPDATE MAP FOR LOCATION: geojson properties:', Object.keys(geojson.features[0].properties));
-
 		// Calculate stats using the dataset's data directly
 		const stats = mapManagerRef.current.calculateLocationStats(
 			location,
@@ -101,7 +98,6 @@ export default function MapsPage() {
 
 		// Update aggregated data if needed
 		if (!skipAggregates) {
-			console.log('CALCULATING NEW AGGREGATES FOR LOCATION:', location.name);
 			const newAggregates = calculateAllYearsData(location);
 			setAggregatedChartData(newAggregates);
 		}
@@ -125,7 +121,6 @@ export default function MapsPage() {
 		if (isInitialized.current) return;
 		if (!geojson || !activeDataset || geojsonLoading) return;
 
-		console.log('INITIAL SETUP: Setting location and updating map...');
 		isInitialized.current = true;
 		setSelectedLocation(INITIAL_LOCATION.name);
 		updateMapForLocation(INITIAL_LOCATION, false);
@@ -150,25 +145,20 @@ export default function MapsPage() {
 		if (!isInitialized.current) return;
 		if (!geojson || !activeDataset || geojsonLoading) return;
 
-		console.log('DATASET CHANGE: Updating map...');
-
 		// Avoid redundant updates
 		if (lastRenderedDatasetId.current === activeDatasetId) {
-			console.log('DATASET CHANGE: Skipping update map -> already rendered dataset:', activeDatasetId)
 			return;
 		}
 
 		// Wait until geojson has been loaded and matches the active dataset year
 		const geojsonYear = getGeojsonYear(geojson);
 		if (geojsonYear && geojsonYear !== activeDataset.year) {
-			console.log(`DATASET CHANGE: Waiting for matching GeoJSON: have ${geojsonYear}, need ${activeDataset.year}`);
 			return;
 		}
 
 		const location = LOCATIONS.find(loc => loc.name === selectedLocation);
 		if (!location) return;
 
-		console.log('DATASET CHANGE: New dataset & geojson ready -> updating map for dataset', activeDatasetId);
 		updateMapForLocation(location, false);
 
 		lastRenderedDatasetId.current = activeDatasetId;
@@ -177,7 +167,6 @@ export default function MapsPage() {
 	const handleLocationClick = useCallback((location: LocationBounds) => {
 		if (!mapManagerRef.current || !geojson || !activeDataset) return;
 
-		console.log('Location clicked:', location.name);
 		setSelectedLocation(location.name);
 
 		// Batch the heavy work
@@ -192,7 +181,6 @@ export default function MapsPage() {
 	}, [geojson, activeDataset, updateMapForLocation, map]);
 
 	const handleDatasetChange = useCallback((id: string) => {
-		console.log('Dataset clicked!');
 		setActiveDatasetId(id);
 	}, []);
 
@@ -202,7 +190,7 @@ export default function MapsPage() {
 		return (
 			<div className="absolute inset-0 flex items-center justify-center bg-white z-10">
 				<div className="text-sm text-gray-500">
-					<img src="uk.png" alt="" className="h-[200px] mb-8 mr-4" />
+					<img src="uk.png" alt="" className="h-[200px] mb-10 mr-4" />
 				</div>
 			</div>
 		);

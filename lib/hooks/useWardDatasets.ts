@@ -94,7 +94,7 @@ export function useWardDatasets(
 			}
 
 			setIsLoading(true);
-			console.log('Fetching geojson! (expensive)');
+			console.log('EXPENSIVE: Fetching geojson');
 			try {
 				const data = await fetchGeojson(activeYear);
 				if (cancelled) return;
@@ -125,18 +125,15 @@ export function useWardDatasets(
 		// CRITICAL: Only update if the geojson year matches the dataset year
 		const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
 		if (currentGeojsonYear.current !== activeYear) {
-			console.log('Skipping - geojson/dataset mismatch:', currentGeojsonYear.current, 'vs', activeYear);
 			return;
 		}
 
 		// Create a unique key for this combination
 		const processingKey = `${activeDataset.id}-${currentGeojsonYear.current}-${populationCodes.length}`;
 		if (lastProcessedKey.current === processingKey) {
-			console.log('Skipping - already processed:', processingKey);
 			return;
 		}
 
-		console.log('Storing ward data:', activeDataset);
 		lastProcessedKey.current = processingKey;
 		
 		const wardNameMap = buildWardNameToPopCodeMap(geojson, populationCodes);
