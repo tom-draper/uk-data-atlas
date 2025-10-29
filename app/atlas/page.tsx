@@ -52,15 +52,23 @@ export default function MapsPage() {
 	const { datasets: electionDatasets, loading: electionDataLoading, error: electionDataError } = useElectionData();
 	const { datasets: populationDatasets, loading: populationDataLoading, error: populationDataError } = usePopulationData();
 
+	// Determine if we're in population mode
+	const isPopulationMode = activeDatasetId === 'population';
+
 	const activeDataset = useMemo(() => {
+		if (isPopulationMode) {
+			return populationDatasets[0]; // Use the population dataset
+		}
 		return electionDatasets.find(d => d.id === activeDatasetId) || electionDatasets[0];
-	}, [electionDatasets, activeDatasetId]);
+	}, [electionDatasets, populationDatasets, activeDatasetId, isPopulationMode]);
 
 	const populationData = useMemo(() => {
 		return populationDatasets[0]?.populationData || {};
 	}, [populationDatasets]);
 
-	const { geojson, isLoading: geojsonLoading } = useWardGeoJSON(activeDataset?.year || null);
+	// Load geojson based on mode - 2021 for population, otherwise use active dataset year
+	const targetYear = isPopulationMode ? 2021 : (activeDataset?.year || null);
+	const { geojson, isLoading: geojsonLoading } = useWardGeoJSON(targetYear);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
@@ -88,30 +96,39 @@ export default function MapsPage() {
 	const updateMapForLocation = useCallback((location: LocationBounds, skipAggregates = false) => {
 		if (!mapManagerRef.current || !geojson || !activeDataset) return;
 
-		// Calculate stats using the dataset's data directly
-		const stats = mapManagerRef.current.calculateLocationStats(
-			location,
-			geojson,
-			activeDataset.wardData, // Use directly from dataset
-			activeDatasetId
-		);
+		if (isPopulationMode) {
+			// Population mode: render age heatmap
+			mapManagerRef.current.updateMapForPopulation(
+				location,
+				geojson,
+				populationData
+			);
+		} else {
+			// Election mode: render party colors
+			const stats = mapManagerRef.current.calculateLocationStats(
+				location,
+				geojson,
+				activeDataset.wardData,
+				activeDatasetId
+			);
 
-		// Update aggregated data if needed
-		if (!skipAggregates) {
-			const newAggregates = calculateAllYearsData(location);
-			setAggregatedChartData(newAggregates);
+			// Update aggregated data if needed
+			if (!skipAggregates) {
+				const newAggregates = calculateAllYearsData(location);
+				setAggregatedChartData(newAggregates);
+			}
+
+			// Update the map visualization
+			mapManagerRef.current.updateMapForLocation(
+				location,
+				geojson,
+				activeDataset.wardResults,
+				activeDataset.wardData,
+				stats,
+				activeDataset.partyInfo
+			);
 		}
-
-		// Update the map visualization
-		mapManagerRef.current.updateMapForLocation(
-			location,
-			geojson,
-			activeDataset.wardResults, // Use directly from dataset
-			activeDataset.wardData,
-			stats,
-			activeDataset.partyInfo
-		);
-	}, [geojson, activeDataset, activeDatasetId, calculateAllYearsData]);
+	}, [geojson, activeDataset, activeDatasetId, calculateAllYearsData, isPopulationMode, populationData]);
 
 	const isInitialized = useRef(false);
 	const lastRenderedDatasetId = useRef<string | null>(null);
@@ -150,9 +167,10 @@ export default function MapsPage() {
 			return;
 		}
 
-		// Wait until geojson has been loaded and matches the active dataset year
+		// Wait until geojson has been loaded and matches the target year
 		const geojsonYear = getGeojsonYear(geojson);
-		if (geojsonYear && geojsonYear !== activeDataset.year) {
+		const expectedYear = isPopulationMode ? 2021 : activeDataset.year;
+		if (geojsonYear && geojsonYear !== expectedYear) {
 			return;
 		}
 
@@ -162,7 +180,7 @@ export default function MapsPage() {
 		updateMapForLocation(location, false);
 
 		lastRenderedDatasetId.current = activeDatasetId;
-	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, selectedLocation, updateMapForLocation]);
+	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, selectedLocation, updateMapForLocation, isPopulationMode]);
 
 	const handleLocationClick = useCallback((location: LocationBounds) => {
 		if (!mapManagerRef.current || !geojson || !activeDataset) return;
@@ -218,7 +236,7 @@ export default function MapsPage() {
 				</div>
 
 				<div className="absolute right-0 flex h-full">
-					<LegendPanel />
+					<LegendPanel isPopulationMode={isPopulationMode} />
 					<ChartPanel
 						selectedLocation={selectedLocation}
 						selectedWard={selectedWardData}
