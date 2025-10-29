@@ -1,9 +1,16 @@
 // components/population/GenderBalanceByAge.tsx
 import { useMemo } from 'react';
-import { PopulationChartProps } from '@/lib/types';
+import { PopulationWardData } from '@/lib/types';
 import { resolveWardCode } from '@/lib/utils/populationHelpers';
 
-export default function GenderBalanceByAge({ population, wardCode, wardName, wardCodeMap }: PopulationChartProps) {
+export interface GenderBalanceByAgeProps {
+	population: PopulationWardData;
+	wardCode: string;
+	wardName: string;
+	wardCodeMap: { [name: string]: string };
+}
+
+export default function GenderBalanceByAge({ population, wardCode, wardName, wardCodeMap }: GenderBalanceByAgeProps) {
 	const resolvedCode = resolveWardCode(wardCode, wardName, population, wardCodeMap);
 
 	// Collect raw male/female per age (0-90)

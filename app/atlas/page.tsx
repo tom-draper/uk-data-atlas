@@ -181,6 +181,7 @@ export default function MapsPage() {
 	}, [geojson, activeDataset, updateMapForLocation, map]);
 
 	const handleDatasetChange = useCallback((id: string) => {
+		console.log('Changing dataset to', id);
 		setActiveDatasetId(id);
 	}, []);
 

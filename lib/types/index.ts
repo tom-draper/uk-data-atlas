@@ -97,6 +97,7 @@ export interface PopulationStats {
 
 export interface PopulationChartProps {
 	population: PopulationWardData;
+    onDatasetChange: (datasetId: string) => void;
 	wardCode: string;
 	wardName: string;
 	wardCodeMap: { [name: string]: string };

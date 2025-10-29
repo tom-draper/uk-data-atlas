@@ -172,11 +172,6 @@ export default function LocalElectionResultChart({
 								{turnout.toFixed(1)}% turnout
 							</span>
 						)}
-						{/* {isActive && (
-							<span className={`text-[9px] ${colors.badge} px-1.5 py-0.5 rounded font-semibold`}>
-								ACTIVE
-							</span>
-						)} */}
 					</div>
 				</div>
 				{renderCompactBar(data, dataset)}

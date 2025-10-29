@@ -62,6 +62,8 @@ export default memo(function ChartPanel({
 							wardCode={selectedWard?.wardCode?.toString() ?? ''}
 							wardName={selectedWard?.wardName?.toString() || ''}
 							wardCodeMap={wardCodeMap}
+							onDatasetChange={onDatasetChange}
+							activeDataset={activeDataset}
 						/>
 					</div>
 				</div>
