@@ -10,7 +10,7 @@ export default function TitlePane() {
                 <img
                     src="/union-jack.png"
                     alt="UK Data Atlas Logo"
-                    className="h-9 opacity-50 -m-px mr-3 rounded-r-md transform scale-x-[-1] cursor-pointer"
+                    className="h-9 opacity-60 -m-px mr-3 rounded-r-md transform scale-x-[-1] cursor-pointer"
                     style={{
                         filter: "contrast(0.2) grayscale(1) brightness(1.8)"
                     }}

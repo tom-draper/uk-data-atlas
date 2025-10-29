@@ -1,26 +1,18 @@
 // components/LegendPanel.tsx
 'use client';
+import { PARTY_COLORS, PARTY_INFO } from '@/lib/data/parties';
 import { memo } from 'react';
 
 interface LegendPanelProps {
     isPopulationMode?: boolean;
 }
 
-const PARTY_LEGEND = [
-    { color: '#DC241f', label: 'Labour' },
-    { color: '#0087DC', label: 'Conservative' },
-    { color: '#FAA61A', label: 'Liberal Democrat' },
-    { color: '#6AB023', label: 'Green' },
-    { color: '#12B6CF', label: 'Reform UK' },
-    { color: '#DDDDDD', label: 'Independent' },
-];
-
 export default memo(function LegendPanel({ isPopulationMode = false }: LegendPanelProps) {
     return (
-        <div className="pointer-events-none p-2.5 flex flex-col h-full">
-            <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg p-2.5 border border-white/30">
+        <div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full">
+            <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg p-[10px] border border-white/30">
                 {isPopulationMode ? (
-                    <div className="space-y-2">
+                    <div className="">
                         <div className="h-40 w-6 rounded" style={{
                             background: 'linear-gradient(to top, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))'
                         }} />
@@ -34,13 +26,13 @@ export default memo(function LegendPanel({ isPopulationMode = false }: LegendPan
                     </div>
                 ) : (
                     <div className="space-y-1.5">
-                        {PARTY_LEGEND.map((item) => (
-                            <div key={item.label} className="flex items-center gap-2">
+                        {PARTY_INFO.map((item) => (
+                            <div key={item.key} className="flex items-center gap-2">
                                 <div
-                                    className="w-4 h-4 rounded-sm shrink-0"
-                                    style={{ backgroundColor: item.color }}
+                                    className="w-3 h-3 rounded-xs shrink-0"
+                                    style={{ backgroundColor: PARTY_COLORS[item.key] }}
                                 />
-                                <span className="text-xs text-gray-700">{item.label}</span>
+                                <span className="text-xs text-gray-700">{item.name}</span>
                             </div>
                         ))}
                     </div>

@@ -11,12 +11,12 @@ export const PARTY_INFO: Party[] = [
 ];
 
 export const PARTY_COLORS: Record<string, string> = {
-    'LAB': '#e4003b',
-    'CON': '#29a6db',
-    'LD': '#ff6400',
-    'GREEN': '#01a357',
-    'REF': '#1db2c9',
-    'IND': '#CCCCCC',
+    'LAB': '#E91D0E',
+    'CON': '#0575C9',
+    'LD': '#FF9A02',
+    'GREEN': '#5FB25F',
+    'REF': '#0AD1E0',
+    'IND': '#FC86C2',
     'OTHER': '#999999',
     'NONE': '#EEEEEE'
 };

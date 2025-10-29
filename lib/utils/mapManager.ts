@@ -132,7 +132,7 @@ export class MapManager {
     private getColorForAge(meanAge: number | null): string {
         if (meanAge === null) return 'rgb(253, 253, 253)'; // Default color for missing data
 
-        const t = Math.max(0, Math.min(1, (meanAge - 25) / 30));
+        const t = 1 - Math.max(0, Math.min(1, (meanAge - 25) / 30));
 
         const colors = [
             { pos: 0.00, color: [68, 1, 84] },      // purple
