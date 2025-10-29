@@ -30,7 +30,6 @@ export class MapManager {
 
         // Only build mapping if LAD codes exist
         if (!locationCodeInfo.fallbackToWardMapping && locationCodeInfo.property) {
-            console.log(`Building ward-to-LAD mapping from ${wardCodeProp} -> ${locationCodeInfo.property}`);
             let mappedCount = 0;
 
             geojson.features.forEach((feature: any) => {
@@ -103,7 +102,7 @@ export class MapManager {
     ): ChartData {
         const cacheKey = `${location.name}-${year}`
         if (this.cache.has(cacheKey)) {
-            console.log('calculateLocationStats cache hit:', cacheKey);
+            console.log(`CACHE HIT: calculateLocationStats: [${cacheKey}]`);
             return this.cache.get(cacheKey)
         }
 

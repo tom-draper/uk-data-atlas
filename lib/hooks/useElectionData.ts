@@ -169,8 +169,6 @@ const parseCouncil2023 = async (): Promise<Dataset & { unmappedWards?: any }> =>
                     }
                 }
 
-                console.log('2023 parsed:', Object.keys(unmappedWards).length, 'wards (pending mapping)');
-
                 resolve({
                     id: '2023',
                     type: 'election',
@@ -394,7 +392,7 @@ export const useElectionData = () => {
 
                 const loadedDatasets = [data2024, data2023, data2022, data2021].filter(Boolean) as Dataset[];
 
-                console.log('Storing election datasets', loadedDatasets);
+                console.log('Storing election datasets:', loadedDatasets);
                 setDatasets(loadedDatasets);
                 setLoading(false);
             } catch (err: any) {

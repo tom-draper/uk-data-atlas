@@ -155,7 +155,7 @@ export const usePopulationData = () => {
 						],
 					},
 				];
-				console.log('Storing population data:', populationDatasetsArray);
+				console.log('Storing population datasets:', populationDatasetsArray);
 				setDatasets(populationDatasetsArray);
 
 				setLoading(false);

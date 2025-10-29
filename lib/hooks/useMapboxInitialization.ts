@@ -22,7 +22,6 @@ export function useMapInitialization({ style, center, zoom }: UseMapInitializati
 		mapboxgl.accessToken = token;
 
 		try {
-			console.log('Creating map...')
 			mapRef.current = new mapboxgl.Map({
 				container: el,
 				style,

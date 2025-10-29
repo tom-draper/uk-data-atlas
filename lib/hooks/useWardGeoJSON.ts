@@ -69,7 +69,7 @@ export function useWardGeoJSON(year: Year | null): UseWardGeoJSONResult {
 			}
 
 			// Start loading
-			console.log(`EXPENSIVE: Loading geojson for ${year}`);
+			console.log(`EXPENSIVE: Loading geojson for ${year}...`);
 			setIsLoading(true);
 			setError(null);
 
@@ -87,7 +87,7 @@ export function useWardGeoJSON(year: Year | null): UseWardGeoJSONResult {
 
 				// Cache the result
 				cache.current[year] = data;
-				console.log(`Stored geojson for ${year} (${data.features.length} features)`);
+				console.log(`Storing geojson for ${year}:`, data);
 
 				setGeojson(data);
 				setIsLoading(false);
@@ -110,30 +110,4 @@ export function useWardGeoJSON(year: Year | null): UseWardGeoJSONResult {
 	}, [year]);
 
 	return { geojson, isLoading, error };
-}
-
-/**
- * Preload GeoJSON for multiple years in the background
- * Useful for warming the cache before user interaction
- * 
- * @example
- * // In your app initialization
- * useEffect(() => {
- *   preloadWardGeojson(['2023', '2022', '2021']);
- * }, []);
- */
-export async function preloadWardGeojson(years: Year[]): Promise<void> {
-	const promises = years.map(async (year) => {
-		try {
-			const response = await fetch(GEOJSON_PATHS[year]);
-			if (response.ok) {
-				await response.json();
-				console.log(`[preloadWardGeojson] Cached Geojson for ${year}`);
-			}
-		} catch (err) {
-			console.warn(`[preloadWardGeojson] Failed to preload ${year}:`, err);
-		}
-	});
-
-	await Promise.all(promises);
 }
