@@ -46,7 +46,6 @@ export default memo(function ChartPanel({
 				</div>
 				{/* Main Content Area */}
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
-					{/* Election Results Section */}
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
 						availableDatasets={availableDatasets}
@@ -54,18 +53,14 @@ export default memo(function ChartPanel({
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
                         aggregatedData={aggregatedData}
 					/>
-					{/* Population Section */}
-					<div className="pt-2.5 border-t border-gray-200/80">
-						{/* <h3 className="text-xs font-bold text-gray-700 mb-2">Population (Mid-2020)</h3> */}
-						<PopulationChart
-							population={population}
-							wardCode={selectedWard?.wardCode?.toString() ?? ''}
-							wardName={selectedWard?.wardName?.toString() || ''}
-							wardCodeMap={wardCodeMap}
-							onDatasetChange={onDatasetChange}
-							activeDataset={activeDataset}
-						/>
-					</div>
+					<PopulationChart
+						population={population}
+						wardCode={selectedWard?.wardCode?.toString() ?? ''}
+						wardName={selectedWard?.wardName?.toString() || ''}
+						wardCodeMap={wardCodeMap}
+						onDatasetChange={onDatasetChange}
+						activeDataset={activeDataset}
+					/>
 				</div>
 				{/* Footer */}
 				<div className="text-[9px] px-2.5 pb-2 text-gray-400 bg-white/20 pt-2 mt-auto">
