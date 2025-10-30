@@ -1,6 +1,6 @@
 // page.tsx
 'use client';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { useElectionData } from '@lib/hooks/useElectionData';
@@ -9,7 +9,7 @@ import { useMapManager } from '@lib/hooks/useMapManager';
 import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
 import { useAggregatedChartData } from '@lib/hooks/useAggregatedChartData';
 import { useWardInteractionHandlers } from '@lib/hooks/useWardInteractionHandlers';
-import { useWardGeoJSON } from '@lib/hooks/useWardGeoJSON';
+import { useWardGeojson } from '@lib/hooks/useWardDatasets';
 
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
@@ -68,14 +68,13 @@ export default function MapsPage() {
 
 	// Load geojson based on mode - 2021 for population, otherwise use active dataset year
 	const targetYear = isPopulationMode ? 2021 : (activeDataset?.year || null);
-	const { geojson, isLoading: geojsonLoading } = useWardGeoJSON(targetYear);
+	const { geojson, isLoading: geojsonLoading } = useWardGeojson(targetYear);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
 
 	const { onWardHover, onLocationChange } = useWardInteractionHandlers({
 		setSelectedWard,
-		selectedLocation,
 		setSelectedLocation,
 	});
 

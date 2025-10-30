@@ -30,9 +30,28 @@ const GEOJSON_PATHS: Record<Year, string> = {
 	'2021': '/data/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson',
 };
 
+// Shared cache across all hook instances
+const geojsonCache: Record<Year, WardGeojson> = {} as Record<Year, WardGeojson>;
+
 async function fetchGeojson(year: Year): Promise<WardGeojson> {
+	// Return cached if available
+	if (geojsonCache[year]) {
+		console.log(`Using cached ${year} geojson`);
+		return geojsonCache[year];
+	}
+
+	console.log(`EXPENSIVE: Loading ${year} geojson...`);
 	const response = await fetch(GEOJSON_PATHS[year]);
-	return response.json();
+	
+	if (!response.ok) {
+		throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+	}
+	
+	const data: WardGeojson = await response.json();
+	geojsonCache[year] = data;
+	console.log(`Storing geojson for ${year}:`, data);
+	
+	return data;
 }
 
 function buildWardNameToPopCodeMap(
@@ -66,9 +85,8 @@ export function useWardDatasets(
 	const [wardNameToPopCode, setWardNameToPopCode] = useState<Record<string, string>>({});
 	const [isLoading, setIsLoading] = useState(true);
 
-	const geojsonCache = useRef<Record<string, WardGeojson>>({});
 	const currentGeojsonYear = useRef<string>('');
-	const lastProcessedKey = useRef<string>(''); // Track processed combination
+	const lastProcessedKey = useRef<string>('');
 
 	const activeDataset = useMemo(
 		() => allDatasets.find(d => d.id === activeDatasetId),
@@ -80,31 +98,20 @@ export function useWardDatasets(
 		[populationData]
 	);
 
-	// Fetch GeoJSON ONCE per dataset/year
 	useEffect(() => {
 		let cancelled = false;
 		const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
 
-		async function loadGeoJSON() {
-			if (geojsonCache.current[activeYear]) {
-				console.log('Using cached geojson')
-				currentGeojsonYear.current = activeYear;
-				setGeojson(geojsonCache.current[activeYear]);
-				return;
-			}
-
+		async function loadGeojson() {
 			setIsLoading(true);
-			console.log('EXPENSIVE: Fetching geojson');
 			try {
 				const data = await fetchGeojson(activeYear);
 				if (cancelled) return;
 
-				geojsonCache.current[activeYear] = data;
 				currentGeojsonYear.current = activeYear;
-				console.log('Storing geojson:', data);
 				setGeojson(data);
 			} catch (err) {
-				console.error('Error fetching GeoJSON:', err);
+				console.error('Error fetching geojson:', err);
 				if (!cancelled) {
 					setGeojson(null);
 					setIsLoading(false);
@@ -112,23 +119,20 @@ export function useWardDatasets(
 			}
 		}
 
-		loadGeoJSON();
+		loadGeojson();
 		return () => {
 			cancelled = true;
 		};
 	}, [activeDatasetId]);
 
-	// Update ward data when dataset changes - but ONLY if geojson matches
 	useEffect(() => {
 		if (!geojson || !activeDataset) return;
 		
-		// CRITICAL: Only update if the geojson year matches the dataset year
 		const activeYear = (activeDatasetId in GEOJSON_PATHS ? activeDatasetId : '2024') as Year;
 		if (currentGeojsonYear.current !== activeYear) {
 			return;
 		}
 
-		// Create a unique key for this combination
 		const processingKey = `${activeDataset.id}-${currentGeojsonYear.current}-${populationCodes.length}`;
 		if (lastProcessedKey.current === processingKey) {
 			return;
@@ -145,4 +149,71 @@ export function useWardDatasets(
 	}, [geojson, activeDataset, populationCodes, activeDatasetId]);
 
 	return { geojson, wardData, wardResults, wardNameToPopCode, isLoading };
+}
+
+interface UseWardGeojsonResult {
+	geojson: WardGeojson | null;
+	isLoading: boolean;
+	error: Error | null;
+}
+
+/**
+ * Loads and caches Ward boundary GeoJSON data for a specific year
+ * 
+ * Features:
+ * - Automatic caching (won't re-fetch same year)
+ * - Loading and error states
+ * - Cleanup on unmount
+ * 
+ * @param year - The boundary year to load ('2024', '2023', '2022', or '2021')
+ * @returns Object with geojson data, loading state, and error
+ * 
+ * @example
+ * const { geojson, isLoading, error } = useWardGeoJSON('2024');
+ * 
+ * if (isLoading) return <Spinner />;
+ * if (error) return <Error message={error.message} />;
+ * return <Map geojson={geojson} />;
+ */
+export function useWardGeojson(year: Year | null): UseWardGeojsonResult {
+	const [geojson, setGeojson] = useState<WardGeojson | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<Error | null>(null);
+
+	useEffect(() => {
+		let cancelled = false;
+
+		async function loadGeoJSON() {
+			if (year === null) {
+				setIsLoading(false);
+				return;
+			}
+
+			setIsLoading(true);
+			setError(null);
+
+			try {
+				const data = await fetchGeojson(year);
+				if (cancelled) return;
+
+				setGeojson(data);
+				setIsLoading(false);
+			} catch (err) {
+				if (!cancelled) {
+					const error = err instanceof Error ? err : new Error('Failed to load geojson');
+					console.error(`Error loading ${year}:`, error);
+					setError(error);
+					setIsLoading(false);
+				}
+			}
+		}
+
+		loadGeoJSON();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [year]);
+
+	return { geojson, isLoading, error };
 }

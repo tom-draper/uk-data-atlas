@@ -3,7 +3,7 @@ import type { WardData } from '@lib/types';
 
 interface UseWardInteractionHandlersParams {
 	setSelectedWard: (ward: WardData | null) => void;
-	selectedLocation: string | null;
+	// selectedLocation: string | null;
 	setSelectedLocation: (location: string | null) => void;
 }
 
@@ -13,7 +13,7 @@ interface UseWardInteractionHandlersParams {
  */
 export function useWardInteractionHandlers({
 	setSelectedWard,
-	selectedLocation,
+	// selectedLocation,
 	setSelectedLocation,
 }: UseWardInteractionHandlersParams) {
 	const lastHoveredWardRef = useRef<string | null>(null);
@@ -38,7 +38,7 @@ export function useWardInteractionHandlers({
 
 			setSelectedWard({ ...data, wardCode });
 		},
-		[setSelectedWard, selectedLocation]
+		[setSelectedWard]
 	);
 
 	const onLocationChange = useCallback(

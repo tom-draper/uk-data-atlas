@@ -8,17 +8,6 @@ interface MapManagerCallbacks {
     onLocationChange: (stats: ChartData, location: LocationBounds) => void;
 }
 
-// Age heatmap color scale
-const AGE_COLORS = {
-    ranges: [
-        { max: 20, color: '#4a148c' },   // 0-20: Deep purple
-        { max: 40, color: '#1976d2' },   // 20-40: Blue
-        { max: 60, color: '#388e3c' },   // 40-60: Green
-        { max: 80, color: '#f57c00' },   // 60-80: Orange
-        { max: Infinity, color: '#c62828' } // 80+: Red
-    ]
-};
-
 export class MapManager {
     private map: mapboxgl.Map;
     private callbacks: MapManagerCallbacks;

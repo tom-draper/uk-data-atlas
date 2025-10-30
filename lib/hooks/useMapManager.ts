@@ -28,13 +28,11 @@ export function useMapManager(opts: UseMapManagerOptions) {
         
         managerRef.current = new MapManager(opts.mapRef.current, {
             onWardHover: (params) => {
-                // console.log('MAP MANAGER onWardHover params:', params)
                 if (callbacksRef.current.onWardHover) {
                     callbacksRef.current.onWardHover(params);
                 }
             },
             onLocationChange: (stats, location) => {
-                // console.log('MAP MANAGER onLocationChange location:', location.name, stats)
                 if (callbacksRef.current.onLocationChange) {
                     callbacksRef.current.onLocationChange(stats, location);
                 }
