@@ -1,6 +1,5 @@
 // lib/utils/mapManager.ts
-import { LocationBounds, ChartData, WardData, Party, PopulationWardData } from '@lib/types';
-import { WardGeojson } from '@lib/hooks/useWardDatasets';
+import { LocationBounds, ChartData, WardData, Party, PopulationWardData, WardGeojson } from '@lib/types';
 import { PARTY_COLORS } from '../data/parties';
 
 interface MapManagerCallbacks {
@@ -44,33 +43,34 @@ export class MapManager {
         }
     }
 
-    private detectWardCodeProperty(geojson: WardGeojson): string {
+    private detectWardCodeProperty(geojson: WardGeojson) {
+        const wardCodeKeys = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'];
         const firstFeature = geojson.features[0];
-        if (!firstFeature) return 'WD24CD';
+        if (!firstFeature) return wardCodeKeys[0];
 
-        const props = firstFeature.properties;
-        return props.WD23CD ? 'WD23CD'
-            : props.WD22CD ? 'WD22CD'
-                : props.WD21CD ? 'WD21CD'
-                    : 'WD24CD';
+        const props = firstFeature.properties as Record<string, unknown>;
+
+        // Check each in order of newest to oldest
+        const match = wardCodeKeys.find(key => key in props);
+        return match ?? wardCodeKeys[0];
     }
 
     private detectLocationCodeProperty(geojson: WardGeojson): {
         property: string | null;
-        fallbackToWardMapping: boolean
+        fallbackToWardMapping: boolean;
     } {
+        const ladCodeKeys = ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'];
         const firstFeature = geojson.features[0];
-        if (!firstFeature) return { property: 'LAD24CD', fallbackToWardMapping: false };
+        if (!firstFeature) return { property: ladCodeKeys[0], fallbackToWardMapping: false };
 
-        const props = firstFeature.properties;
+        const props = firstFeature.properties as Record<string, unknown>;
 
-        // Check for LAD codes
-        if (props.LAD24CD) return { property: 'LAD24CD', fallbackToWardMapping: false };
-        if (props.LAD23CD) return { property: 'LAD23CD', fallbackToWardMapping: false };
-        if (props.LAD22CD) return { property: 'LAD22CD', fallbackToWardMapping: false };
-        if (props.LAD21CD) return { property: 'LAD21CD', fallbackToWardMapping: false };
+        const ladMatch = ladCodeKeys.find(key => key in props);
+        if (ladMatch) {
+            return { property: ladMatch, fallbackToWardMapping: false };
+        }
 
-        // No LAD codes found - we'll need to use ward code mapping
+        // No LAD codes found → fallback
         return { property: null, fallbackToWardMapping: true };
     }
 

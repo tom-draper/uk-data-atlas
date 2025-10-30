@@ -1,6 +1,5 @@
 import { LOCATIONS } from "@lib/data/locations";
-import { WardGeojson } from "@lib/hooks/useWardDatasets";
-import { LocationBounds, PopulationWardData } from "@lib/types";
+import { LocationBounds, PopulationWardData, WardGeojson } from "@lib/types";
 import { memo, useEffect, useMemo, useState } from "react";
 
 interface LocationPanelProps {
@@ -11,30 +10,30 @@ interface LocationPanelProps {
 
 export default memo(function LocationPane({ selectedLocation, onLocationClick, population }: LocationPanelProps) {
     // Add state for 2021 geojson - population data uses the 2021 ward codes and boundaries
-    const [geojson2021, setGeojson2021] = useState<WardGeojson | null>(null);
+    const [geojson, setGeojson] = useState<WardGeojson<2021> | null>(null);
 
     // Load it once
     useEffect(() => {
         console.log('EXPENSIVE: Loading 2021 geojson for LocationPane...');
         fetch('/data/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson')
             .then(r => r.json())
-            .then(data => setGeojson2021(data))
+            .then(data => setGeojson(data))
             .catch(err => console.error('Failed to load 2021 geojson:', err));
     }, []);
 
     const geojsonFeatureMap = useMemo(() => {
-        if (!geojson2021) return {};
+        if (!geojson) return {};
 
         const map: Record<string, any> = {};
-        geojson2021.features.forEach(f => {
+        geojson.features.forEach(f => {
             map[f.properties.WD21CD] = f;
         });
 
         return map;
-    }, [geojson2021]);
+    }, [geojson]);
 
     const populationWithBounds = useMemo(() => {
-        if (!geojson2021 || !population) return population;
+        if (!geojson || !population) return population;
 
         const enriched: any = {};
         Object.entries(population).forEach(([wardCode, wardData]) => {
