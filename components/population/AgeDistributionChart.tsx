@@ -34,11 +34,11 @@ export default function AgeDistributionChart({ ageData, total, ageGroups }: AgeD
 	const maxCount = Math.max(...ages.map(a => a.count), 1);
 
 	return (
-		<div className="mx-2">
-			<div className="text-xs font-bold text-gray-700 -mb-2.5">Age Distribution</div>
+		<div className="mx-1 -mt-4">
+			{/* <div className="text-xs font-bold text-gray-700 -mb-2.5">Age Distribution</div> */}
 
 			{/* Detailed Age Chart */}
-			<div className="flex items-end h-32 overflow-x-hidden pt-4">
+			<div className="flex items-end h-28 overflow-x-hidden pt-4">
 				{ages.map(({ age, count }) => {
 					const heightPercentage = (count / maxCount) * 100;
 					const color = getAgeColor(age);

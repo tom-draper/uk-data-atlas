@@ -54,11 +54,11 @@ export default function GenderBalanceByAge({ population, wardCode, wardName, war
 	}, [population, wardCode, wardName, wardCodeMap, resolvedCode]);
 
 	return (
-		<div className="px-2 pt-3">
-			<div className="text-xs font-bold text-gray-700 mb-0">Gender Balance by Age</div>
+		<div className="px-1 pt-0 -my-1">
+			{/* <div className="text-xs font-bold text-gray-700 mb-0">Gender Balance by Age</div> */}
 
 			{/* Age labels */}
-			<div className="flex justify-center text-[8px] text-gray-500 mt-1 mx-auto">
+			<div className="flex justify-center text-[8px] text-gray-500 mt-0 mx-auto">
 				<span>0</span>
 			</div>
 			
@@ -103,7 +103,7 @@ export default function GenderBalanceByAge({ population, wardCode, wardName, war
 
 			{/* Age labels */}
 			<div className="flex justify-center text-[8px] text-gray-500 mt-1">
-				<span>90+</span>
+				<span>90</span>
 			</div>
 		</div>
 	);
