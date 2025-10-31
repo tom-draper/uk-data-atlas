@@ -23,9 +23,9 @@ export const usePopulationData = () => {
 			console.log('EXPENSIVE: Loading population data...')
 			try {
 				const [femalesResponse, malesResponse, personsResponse] = await Promise.all([
-					fetch('/data/age/Mid-2020 Females-Table 1.csv'),
-					fetch('/data/age/Mid-2020 Males-Table 1.csv'),
-					fetch('/data/age/Mid-2020 Persons-Table 1.csv'),
+					fetch('/data/population/Mid-2020 Females-Table 1.csv'),
+					fetch('/data/population/Mid-2020 Males-Table 1.csv'),
+					fetch('/data/population/Mid-2020 Persons-Table 1.csv'),
 				]);
 
 				const [femalesText, malesText, personsText] = await Promise.all([

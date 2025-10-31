@@ -53,7 +53,7 @@ const findWinner = (partyVotes: Record<string, number>): string => {
 };
 
 const parseElection2024 = async (): Promise<Dataset> => {
-    const res = await fetch('/data/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv');
+    const res = await fetch('/data/elections/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv');
     const csvText = await res.text();
     const lines = csvText.split('\n');
     const dataStart = lines.findIndex(line => line.includes('Local authority name'));
@@ -109,7 +109,7 @@ const parseElection2024 = async (): Promise<Dataset> => {
 };
 
 const parseCouncil2023 = async (): Promise<Dataset & { unmappedWards?: any }> => {
-    const res = await fetch('/data/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv');
+    const res = await fetch('/data/elections/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv');
     const csvText = await res.text();
 
     return new Promise((resolve, reject) => {
@@ -186,7 +186,7 @@ const parseCouncil2023 = async (): Promise<Dataset & { unmappedWards?: any }> =>
 };
 
 const parseElection2022 = async (): Promise<Dataset> => {
-    const res = await fetch('/data/local-elections/local-elections-2022/Wards-results-Table 1.csv');
+    const res = await fetch('/data/elections/local-elections/local-elections-2022/Wards-results-Table 1.csv');
     const csvText = await res.text();
     const lines = csvText.split('\n');
     const dataStart = lines.findIndex(line => line.includes('Local authority name'));
@@ -242,7 +242,7 @@ const parseElection2022 = async (): Promise<Dataset> => {
 };
 
 const parseElection2021 = async (): Promise<Dataset> => {
-    const res = await fetch('/data/local-elections/local_elections_2021_results-2/Wards-results-Table 1.csv');
+    const res = await fetch('/data/elections/local-elections/local_elections_2021_results-2/Wards-results-Table 1.csv');
     const csvText = await res.text();
     const lines = csvText.split('\n');
     const dataStart = lines.findIndex(line => line.includes('Local authority name'));

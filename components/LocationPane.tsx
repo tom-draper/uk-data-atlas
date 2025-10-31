@@ -15,7 +15,7 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
     // Load it once
     useEffect(() => {
         console.log('EXPENSIVE: Loading 2021 geojson for LocationPane...');
-        fetch('/data/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson')
+        fetch('/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson')
             .then(r => r.json())
             .then(data => setGeojson(data))
             .catch(err => console.error('Failed to load 2021 geojson:', err));

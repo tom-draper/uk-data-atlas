@@ -29,7 +29,7 @@ export default function GenderBalanceByAge({ population, wardCode, wardName, war
 					females: females[age.toString()] || 0
 				});
 			}
-		} else {
+		} else if (!wardCode) {
 			const aggregate = { males: {} as Record<string, number>, females: {} as Record<string, number> };
 
 			for (const ward of Object.values(population)) {
@@ -53,6 +53,14 @@ export default function GenderBalanceByAge({ population, wardCode, wardName, war
 		return data;
 	}, [population, wardCode, wardName, wardCodeMap, resolvedCode]);
 
+	if (ageData.length === 0) {
+		return <div className="text-xs h-[111px] text-gray-400 text-center grid place-items-center">
+			<div className="mb-4">
+				No data available
+			</div>
+		</div>
+	}
+
 	return (
 		<div className="px-1 pt-0 -my-1">
 			{/* <div className="text-xs font-bold text-gray-700 mb-0">Gender Balance by Age</div> */}
@@ -61,11 +69,11 @@ export default function GenderBalanceByAge({ population, wardCode, wardName, war
 			<div className="flex justify-center text-[8px] text-gray-500 mt-0 mx-auto">
 				<span>0</span>
 			</div>
-			
+
 			<div className="relative rounded overflow-hidden">
 				{/* Center line */}
 				<div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-300 z-10" style={{ marginLeft: '-0.5px' }} />
-				
+
 				{/* Stack of age rows */}
 				<div className="relative">
 					{ageData.map(({ age, males, females }) => {
@@ -90,7 +98,7 @@ export default function GenderBalanceByAge({ population, wardCode, wardName, war
 									className="bg-pink-400"
 									style={{ width: `${femalePercentage}%` }}
 								/>
-								
+
 								{/* Tooltip on hover */}
 								<div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 bg-gray-800 text-white text-[8px] rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-20">
 									Age {age}: {males.toLocaleString()}M / {females.toLocaleString()}F ({malePercentage.toFixed(1)}% male)
