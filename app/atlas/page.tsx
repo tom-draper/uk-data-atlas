@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-import { useElectionData } from '@lib/hooks/useElectionData';
+import { useLocalElectionData } from '@/lib/hooks/useLocalElectionData';
 import { usePopulationData } from '@lib/hooks/usePopulationData';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
 import { useAggregatedChartData } from '@lib/hooks/useAggregatedChartData';
 import { useWardInteractionHandlers } from '@lib/hooks/useWardInteractionHandlers';
-import { useWardData } from '@lib/hooks/useWardDatasets';
+import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
 
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
@@ -49,7 +49,7 @@ export default function MapsPage() {
 	});
 
 	// Data loading
-	const { datasets: electionDatasets, loading: electionDataLoading, error: electionDataError } = useElectionData();
+	const { datasets: electionDatasets, loading: electionDataLoading, error: electionDataError } = useLocalElectionData();
 	const { datasets: populationDatasets, loading: populationDataLoading, error: populationDataError } = usePopulationData();
 
 	// Determine if we're in population mode
@@ -68,7 +68,7 @@ export default function MapsPage() {
 
 	// Load geojson based on mode - 2021 for population, otherwise use active dataset year
 	const targetYear = isPopulationMode ? 2021 : (activeDataset?.year || null);
-	const { geojson, isLoading: geojsonLoading } = useWardData(targetYear);
+	const { geojson, isLoading: geojsonLoading } = useBoundaryData('ward', targetYear);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);

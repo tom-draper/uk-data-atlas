@@ -180,7 +180,7 @@ export default function LocalElectionResultChart({
 	};
 
 	return (
-		<div className="space-y-2">
+		<div className="space-y-2 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold text-gray-700 pt-2">Local Election Results</h3>
 			{renderYearBar('2024', chartData2024, dataset2024, turnout2024, activeDataset.id === '2024')}
 			{renderYearBar('2023', chartData2023, dataset2023, turnout2023, activeDataset.id === '2023')}

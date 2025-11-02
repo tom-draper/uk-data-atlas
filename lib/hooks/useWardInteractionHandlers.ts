@@ -27,6 +27,8 @@ export function useWardInteractionHandlers({
 				return;
 			}
 
+			console.log('HERE', data, wardCode)
+
 			// Update last hovered ward
 			lastHoveredWardRef.current = wardCode || null;
 

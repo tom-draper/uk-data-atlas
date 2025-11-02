@@ -4,6 +4,7 @@ import { AllYearsAggregatedData, Dataset, PopulationWardData, WardData } from '@
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import { memo } from 'react';
+import GeneralElectionResultChart from './GeneralElectionResultChart copy';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
@@ -46,6 +47,13 @@ export default memo(function ChartPanel({
 				</div>
 				{/* Main Content Area */}
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
+					<GeneralElectionResultChart
+						activeDataset={activeDataset}
+						availableDatasets={availableDatasets}
+						onDatasetChange={onDatasetChange}
+						wardCode={selectedWard?.wardCode?.toString() ?? ''}
+                        aggregatedData={aggregatedData}
+					/>
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
 						availableDatasets={availableDatasets}
