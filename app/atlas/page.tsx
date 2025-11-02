@@ -18,6 +18,7 @@ import ErrorDisplay from '@components/ErrorDisplay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import type { ChartData, LocationBounds, WardData } from '@lib/types';
+import { useGeneralElectionData } from '@/lib/hooks/useGeneralElectionData';
 
 interface AggregatedChartData {
 	data2024: ChartData | null;
@@ -49,7 +50,8 @@ export default function MapsPage() {
 	});
 
 	// Data loading
-	const { datasets: electionDatasets, loading: electionDataLoading, error: electionDataError } = useLocalElectionData();
+	const { datasets: generalElectionDatasets, loading: generalElectionDataLoading, error: generalElectionDataError } = useGeneralElectionData();
+	const { datasets: localElectionDatasets, loading: localElectionDataLoading, error: localElectionDataError } = useLocalElectionData();
 	const { datasets: populationDatasets, loading: populationDataLoading, error: populationDataError } = usePopulationData();
 
 	// Determine if we're in population mode
@@ -59,8 +61,8 @@ export default function MapsPage() {
 		if (isPopulationMode) {
 			return populationDatasets[0]; // Use the population dataset
 		}
-		return electionDatasets.find(d => d.id === activeDatasetId) || electionDatasets[0];
-	}, [electionDatasets, populationDatasets, activeDatasetId, isPopulationMode]);
+		return localElectionDatasets.find(d => d.id === activeDatasetId) || localElectionDatasets[0];
+	}, [localElectionDatasets, populationDatasets, activeDatasetId, isPopulationMode]);
 
 	const populationData = useMemo(() => {
 		return populationDatasets[0]?.populationData || {};
@@ -88,7 +90,7 @@ export default function MapsPage() {
 	const { calculateAllYearsData } = useAggregatedChartData({
 		mapManagerRef,
 		geojson,
-		electionDatasets,
+		electionDatasets: localElectionDatasets,
 	});
 
 	// Location update logic
@@ -202,7 +204,7 @@ export default function MapsPage() {
 		setActiveDatasetId(id);
 	}, []);
 
-	const isLoading = electionDataLoading || populationDataLoading;
+	const isLoading =  localElectionDataLoading || populationDataLoading;
 
 	if (isLoading) {
 		return (
@@ -215,8 +217,8 @@ export default function MapsPage() {
 	}
 
 	// Error states
-	if (electionDataError || populationDataError) {
-		return <ErrorDisplay message={(electionDataError || populationDataError) ?? 'Error loading data'} />;
+	if (localElectionDataError || populationDataError) {
+		return <ErrorDisplay message={(localElectionDataError || populationDataError) ?? 'Error loading data'} />;
 	}
 
 	if (!activeDataset) {
@@ -241,7 +243,8 @@ export default function MapsPage() {
 						selectedWard={selectedWardData}
 						population={populationData}
 						activeDataset={activeDataset}
-						availableDatasets={electionDatasets}
+						localElectionDatasets={localElectionDatasets}
+						generalElectionDatasets={generalElectionDatasets}
 						onDatasetChange={handleDatasetChange}
 						aggregatedData={aggregatedChartData}
 						wardCodeMap={{}}

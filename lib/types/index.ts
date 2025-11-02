@@ -149,7 +149,7 @@ type AnyFeature = {
 }[keyof YearToProperties];
 
 // Generic WardGeojson with default type
-export interface WardGeojson<Y extends keyof YearToProperties = keyof YearToProperties> {
+export interface BoundaryGeojson<Y extends keyof YearToProperties = keyof YearToProperties> {
     crs: {
         type: string;
         properties: {

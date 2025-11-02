@@ -1,5 +1,5 @@
 import { LOCATIONS } from "@lib/data/locations";
-import { LocationBounds, PopulationWardData, WardGeojson } from "@lib/types";
+import { LocationBounds, PopulationWardData, BoundaryGeojson } from "@lib/types";
 import { memo, useEffect, useMemo, useState } from "react";
 
 interface LocationPanelProps {
@@ -10,7 +10,7 @@ interface LocationPanelProps {
 
 export default memo(function LocationPane({ selectedLocation, onLocationClick, population }: LocationPanelProps) {
     // Add state for 2021 geojson - population data uses the 2021 ward codes and boundaries
-    const [geojson, setGeojson] = useState<WardGeojson<2021> | null>(null);
+    const [geojson, setGeojson] = useState<BoundaryGeojson<2021> | null>(null);
 
     // Load it once
     useEffect(() => {

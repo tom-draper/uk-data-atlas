@@ -35,7 +35,6 @@ export default function AgeDistributionChart({ ageData, total, ageGroups }: AgeD
 
 	return (
 		<div className="mx-1 -mt-4">
-			{/* <div className="text-xs font-bold text-gray-700 -mb-2.5">Age Distribution</div> */}
 
 			{/* Detailed Age Chart */}
 			<div className="flex items-end h-28 overflow-x-hidden pt-4">

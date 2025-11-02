@@ -4,14 +4,15 @@ import { AllYearsAggregatedData, Dataset, PopulationWardData, WardData } from '@
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import { memo } from 'react';
-import GeneralElectionResultChart from './GeneralElectionResultChart copy';
+import GeneralElectionResultChart from './GeneralElectionResultChart';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
 	selectedWard: WardData | null;
 	population: PopulationWardData;
 	activeDataset: Dataset;
-	availableDatasets: Dataset[];
+	localElectionDatasets: Dataset[];
+	generalElectionDatasets: Dataset[];
 	onDatasetChange: (datasetId: string) => void;
 	aggregatedData: AllYearsAggregatedData;
 	wardCodeMap: { [name: string]: string };
@@ -22,7 +23,8 @@ export default memo(function ChartPanel({
 	selectedWard,
 	population,
 	activeDataset,
-	availableDatasets,
+	localElectionDatasets,
+	generalElectionDatasets,
 	onDatasetChange,
 	aggregatedData,
 	wardCodeMap
@@ -49,14 +51,14 @@ export default memo(function ChartPanel({
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
 					<GeneralElectionResultChart
 						activeDataset={activeDataset}
-						availableDatasets={availableDatasets}
+						availableDatasets={generalElectionDatasets}
 						onDatasetChange={onDatasetChange}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
                         aggregatedData={aggregatedData}
 					/>
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
-						availableDatasets={availableDatasets}
+						availableDatasets={localElectionDatasets}
 						onDatasetChange={onDatasetChange}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
                         aggregatedData={aggregatedData}

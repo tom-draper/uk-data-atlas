@@ -63,8 +63,6 @@ export default function GenderBalanceByAge({ population, wardCode, wardName, war
 
 	return (
 		<div className="px-1 pt-0 -my-1">
-			{/* <div className="text-xs font-bold text-gray-700 mb-0">Gender Balance by Age</div> */}
-
 			{/* Age labels */}
 			<div className="flex justify-center text-[8px] text-gray-500 mt-0 mx-auto">
 				<span>0</span>

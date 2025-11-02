@@ -1,5 +1,5 @@
 // lib/utils/mapManager.ts
-import { LocationBounds, ChartData, WardData, Party, PopulationWardData, WardGeojson } from '@lib/types';
+import { LocationBounds, ChartData, WardData, Party, PopulationWardData, BoundaryGeojson } from '@lib/types';
 import { PARTY_COLORS } from '../data/parties';
 
 interface MapManagerCallbacks {
@@ -23,7 +23,7 @@ export class MapManager {
      * Build a mapping of ward codes to LAD codes from GeoJSON that contains both
      * This should be called whenever you have GeoJSON with LAD codes
      */
-    buildWardToLadMapping(geojson: WardGeojson): void {
+    buildWardToLadMapping(geojson: BoundaryGeojson): void {
         const wardCodeProp = this.detectWardCodeProperty(geojson);
         const locationCodeInfo = this.detectLocationCodeProperty(geojson);
 
@@ -43,7 +43,7 @@ export class MapManager {
         }
     }
 
-    private detectWardCodeProperty(geojson: WardGeojson) {
+    private detectWardCodeProperty(geojson: BoundaryGeojson) {
         const wardCodeKeys = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'];
         const firstFeature = geojson.features[0];
         if (!firstFeature) return wardCodeKeys[0];
@@ -55,7 +55,7 @@ export class MapManager {
         return match ?? wardCodeKeys[0];
     }
 
-    private detectLocationCodeProperty(geojson: WardGeojson): {
+    private detectLocationCodeProperty(geojson: BoundaryGeojson): {
         property: string | null;
         fallbackToWardMapping: boolean;
     } {
@@ -74,7 +74,7 @@ export class MapManager {
         return { property: null, fallbackToWardMapping: true };
     }
 
-    private getWardsInLocation(geojson: WardGeojson, location: LocationBounds) {
+    private getWardsInLocation(geojson: BoundaryGeojson, location: LocationBounds) {
         const locationCodeInfo = this.detectLocationCodeProperty(geojson);
         const wardCodeProp = this.detectWardCodeProperty(geojson);
 
@@ -225,7 +225,7 @@ export class MapManager {
      */
     updateMapForPopulation(
         location: LocationBounds,
-        geojson: WardGeojson,
+        geojson: BoundaryGeojson,
         populationData: PopulationWardData
     ) {
         const wardsInLocation = this.getWardsInLocation(geojson, location);
@@ -373,7 +373,7 @@ export class MapManager {
 
     calculateLocationStats(
         location: LocationBounds,
-        geojson: WardGeojson,
+        geojson: BoundaryGeojson,
         wardData: Record<string, WardData>,
         year: string = ''
     ): ChartData {
@@ -416,7 +416,7 @@ export class MapManager {
 
     updateMapForLocation(
         location: LocationBounds,
-        geojson: WardGeojson,
+        geojson: BoundaryGeojson,
         wardResults: Record<string, string>,
         wardData: Record<string, WardData>,
         locationStats: ChartData,

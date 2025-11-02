@@ -1,10 +1,10 @@
-// components/LocalElectionResultChart.tsx
+// components/GeneralElectionResultChart.tsx
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
 import { AllYearsAggregatedData, ChartData, Dataset } from '@lib/types';
 import { useMemo } from 'react';
 
-interface LocalElectionResultChartProps {
+interface GeneralElectionResultChartProps {
 	activeDataset: Dataset;
 	availableDatasets: Dataset[];
 	onDatasetChange: (datasetId: string) => void;
@@ -18,9 +18,9 @@ export default function GeneralElectionResultChart({
 	onDatasetChange,
 	wardCode,
 	aggregatedData,
-}: LocalElectionResultChartProps) {
+}: GeneralElectionResultChartProps) {
 	const allYearsWardData = useMemo(() => ({
-		data2024: availableDatasets.find(d => d.id === '2024')?.wardData || {},
+		data2024: availableDatasets.find(d => d.id === 'general-election')?.wardData || {},
 	}), [availableDatasets]);
 
 	const { chartData2024, turnout2024 } = useMemo(() => {
@@ -167,7 +167,7 @@ export default function GeneralElectionResultChart({
 	return (
 		<div className="space-y-2">
 			<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
-			{renderYearBar('2024', chartData2024, dataset2024, turnout2024, activeDataset.id === '2024')}
+			{renderYearBar('2024', chartData2024, dataset2024, turnout2024, activeDataset.id === 'general-election')}
 		</div>
 	);
 };

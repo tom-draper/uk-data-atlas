@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { PARTY_INFO } from '../data/parties';
+import { Dataset } from '../types';
 
 export interface ConstituencyData {
     constituencyName: string;
@@ -55,7 +56,7 @@ const parseVotes = (value: any): number => {
     return isNaN(parsed) ? 0 : parsed;
 };
 
-const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
+const parseGeneralElection2024 = async (): Promise<Dataset> => {
     const res = await fetch('/data/elections/general-elections/HoC-GE2024-results-by-constituency/Data-Table 1.csv');
     const csvText = await res.text();
 
