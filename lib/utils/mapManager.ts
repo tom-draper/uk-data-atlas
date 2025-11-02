@@ -2,8 +2,17 @@
 import { LocationBounds, ChartData, WardData, Party, PopulationWardData, BoundaryGeojson } from '@lib/types';
 import { PARTY_COLORS } from '../data/parties';
 
+interface ConstituencyData {
+    onsId: string;
+    constituencyName: string;
+    regionName: string;
+    countryName: string;
+    [key: string]: any;
+}
+
 interface MapManagerCallbacks {
-    onWardHover: (params: { data: WardData | null; wardCode: string }) => void;
+    onWardHover?: (params: { data: WardData | null; wardCode: string }) => void;
+    onConstituencyHover?: (data: ConstituencyData | null) => void;
     onLocationChange: (stats: ChartData, location: LocationBounds) => void;
 }
 
@@ -17,6 +26,159 @@ export class MapManager {
     constructor(map: mapboxgl.Map, callbacks: MapManagerCallbacks) {
         this.map = map;
         this.callbacks = callbacks;
+    }
+
+    /**
+     * Detect constituency code property from GeoJSON
+     */
+    private detectConstituencyCodeProperty(geojson: BoundaryGeojson): string {
+        const constituencyCodeKeys = ['PCON24CD', 'PCON25CD'];
+        const firstFeature = geojson.features[0];
+        if (!firstFeature) return constituencyCodeKeys[0];
+
+        const props = firstFeature.properties as Record<string, unknown>;
+        const match = constituencyCodeKeys.find(key => key in props);
+        return match ?? constituencyCodeKeys[0];
+    }
+
+    /**
+     * Get constituencies in a location
+     * For constituencies, we filter by checking if the constituency's region/country matches
+     * or if it intersects with the location bounds
+     */
+    private getConstituenciesInLocation(geojson: BoundaryGeojson, location: LocationBounds) {
+        // Check if this is actually constituency data by looking at the properties
+        const firstFeature = geojson.features[0];
+        if (!firstFeature) return [];
+        
+        const hasConstituencyProps = 'PCON24CD' in firstFeature.properties || 'PCON25CD' in firstFeature.properties;
+        
+        if (!hasConstituencyProps) {
+            console.warn('getConstituenciesInLocation called with non-constituency geojson');
+            return [];
+        }
+        
+        // For Greater Manchester, we can filter by region or just return all UK constituencies
+        // TODO: Implement proper geographic filtering based on location bounds
+        return geojson.features;
+    }
+
+    /**
+     * Update map to show constituency election results
+     */
+    updateMapForConstituencies(
+        location: LocationBounds,
+        geojson: BoundaryGeojson,
+        constituencyResults: Record<string, string>, // onsId -> party
+        constituencyData: Record<string, ConstituencyData>,
+        partyInfo: Party[]
+    ) {
+        const constituenciesInLocation = this.getConstituenciesInLocation(geojson, location);
+        const constituencyCodeProp = this.detectConstituencyCodeProperty(geojson);
+
+        console.log('EXPENSIVE: updateMapForConstituencies');
+        console.log('- Geojson feature count:', geojson.features.length);
+        console.log('- Filtered constituencies:', constituenciesInLocation.length);
+        console.log('- Constituency code property:', constituencyCodeProp);
+        console.log('- Sample constituency codes from geojson:', constituenciesInLocation.slice(0, 3).map((f: any) => f.properties[constituencyCodeProp]));
+        console.log('- Sample constituency codes from data:', Object.keys(constituencyData).slice(0, 3));
+        console.log('- Total constituencies in data:', Object.keys(constituencyData).length);
+
+        const locationData = {
+            type: 'FeatureCollection' as const,
+            features: constituenciesInLocation.map((feature: any) => {
+                const onsId = feature.properties[constituencyCodeProp];
+                const winningParty = constituencyResults[onsId] || 'NONE';
+                return {
+                    ...feature,
+                    properties: {
+                        ...feature.properties,
+                        winningParty
+                    }
+                };
+            })
+        };
+
+        console.log('- Sample winning parties:', locationData.features.slice(0, 3).map((f: any) => ({ 
+            id: f.properties[constituencyCodeProp], 
+            party: f.properties.winningParty 
+        })));
+
+        this.removeExistingLayers();
+        this.addSource(locationData);
+        this.addLayers(partyInfo);
+        this.setupConstituencyEventHandlers(location, geojson, constituencyData, constituencyCodeProp);
+
+        // Calculate dummy stats for constituencies
+        const dummyStats: ChartData = { LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 };
+        this.callbacks.onLocationChange(dummyStats, location);
+    }
+
+    /**
+     * Setup event handlers for constituency hover
+     */
+    private setupConstituencyEventHandlers(
+        location: LocationBounds,
+        geoData: any,
+        constituencyData: Record<string, ConstituencyData>,
+        constituencyCodeProp: string
+    ) {
+        this.map.on('mousemove', 'wards-fill', (e) => {
+            this.map.getCanvas().style.cursor = 'pointer';
+
+            if (e.features && e.features.length > 0) {
+                const feature = e.features[0];
+                this.handleConstituencyFeatureHover(feature, constituencyData, constituencyCodeProp);
+            }
+        });
+
+        this.map.on('mouseleave', 'wards-fill', () => {
+            if (this.lastHoveredFeatureId !== null) {
+                this.map.setFeatureState(
+                    { source: 'location-wards', id: this.lastHoveredFeatureId },
+                    { hover: false }
+                );
+            }
+            this.map.getCanvas().style.cursor = '';
+            if (this.callbacks.onConstituencyHover) {
+                this.callbacks.onConstituencyHover(null);
+            }
+        });
+    }
+
+    /**
+     * Handle constituency hover
+     */
+    private handleConstituencyFeatureHover(
+        feature: any,
+        constituencyData: Record<string, ConstituencyData>,
+        constituencyCodeProp: string
+    ) {
+        if (this.lastHoveredFeatureId !== null && this.lastHoveredFeatureId !== feature.id) {
+            this.map.setFeatureState(
+                { source: 'location-wards', id: this.lastHoveredFeatureId },
+                { hover: false }
+            );
+        }
+
+        this.map.setFeatureState(
+            { source: 'location-wards', id: feature.id },
+            { hover: true }
+        );
+        this.lastHoveredFeatureId = feature.id;
+
+        const onsId = feature.properties[constituencyCodeProp];
+        console.log('Constituency hover - ONS ID:', onsId, 'Available codes:', Object.keys(constituencyData).slice(0, 5));
+        
+        const constData = constituencyData[onsId];
+
+        if (constData && this.callbacks.onConstituencyHover) {
+            console.log('Found constituency data:', constData.constituencyName);
+            this.callbacks.onConstituencyHover(constData);
+        } else if (this.callbacks.onConstituencyHover) {
+            console.log('No constituency data found for:', onsId);
+            this.callbacks.onConstituencyHover(null);
+        }
     }
 
     /**
@@ -322,7 +484,9 @@ export class MapManager {
                 );
             }
             this.map.getCanvas().style.cursor = '';
-            this.callbacks.onWardHover({ data: null, wardCode: '' });
+            if (this.callbacks.onWardHover) {
+                this.callbacks.onWardHover({ data: null, wardCode: '' });
+            }
         });
     }
 
@@ -350,7 +514,7 @@ export class MapManager {
         const wardCode = feature.properties[wardCodeProp];
         const wardPopData = populationData[wardCode];
 
-        if (wardPopData) {
+        if (wardPopData && this.callbacks.onWardHover) {
             // Create a WardData-like object for the callback
             const wardData: WardData = {
                 wardCode: wardCode,
@@ -366,7 +530,7 @@ export class MapManager {
                 IND: 0
             };
             this.callbacks.onWardHover({ data: wardData, wardCode: wardCode });
-        } else {
+        } else if (this.callbacks.onWardHover) {
             this.callbacks.onWardHover({ data: null, wardCode: wardCode });
         }
     }
@@ -523,7 +687,9 @@ export class MapManager {
                 );
             }
             this.map.getCanvas().style.cursor = '';
-            this.callbacks.onWardHover({ data: null, wardCode: '' });
+            if (this.callbacks.onWardHover) {
+                this.callbacks.onWardHover({ data: null, wardCode: '' });
+            }
         });
     }
 
@@ -544,9 +710,9 @@ export class MapManager {
         const wardCode = feature.properties[wardCodeProp];
         const wardDataForCode = wardData[wardCode];
 
-        if (wardDataForCode) {
+        if (wardDataForCode && this.callbacks.onWardHover) {
             this.callbacks.onWardHover({ data: wardDataForCode, wardCode: wardCode });
-        } else {
+        } else if (this.callbacks.onWardHover) {
             this.callbacks.onWardHover({ data: null, wardCode: wardCode });
         }
     }

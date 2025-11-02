@@ -13,7 +13,7 @@ const GEOJSON_PATHS = {
 		'2021': '/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson',
 	},
 	constituency: {
-		'2024': '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC.geojson',
+		'2024': '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson',
 	}
 } as const;
 

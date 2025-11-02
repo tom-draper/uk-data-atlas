@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { useLocalElectionData } from '@/lib/hooks/useLocalElectionData';
+import { useGeneralElectionData } from '@/lib/hooks/useGeneralElectionData';
 import { usePopulationData } from '@lib/hooks/usePopulationData';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
@@ -18,7 +19,7 @@ import ErrorDisplay from '@components/ErrorDisplay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import type { ChartData, LocationBounds, WardData } from '@lib/types';
-import { useGeneralElectionData } from '@/lib/hooks/useGeneralElectionData';
+import type { ConstituencyData } from '@/lib/hooks/useGeneralElectionData';
 
 interface AggregatedChartData {
 	data2024: ChartData | null;
@@ -41,6 +42,7 @@ export default function MapsPage() {
 	// State
 	const [activeDatasetId, setActiveDatasetId] = useState<string>(INITIAL_DATASET_ID);
 	const [selectedWardData, setSelectedWard] = useState<WardData | null>(null);
+	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 	const [aggregatedChartData, setAggregatedChartData] = useState<AggregatedChartData>({
 		data2024: null,
@@ -54,36 +56,50 @@ export default function MapsPage() {
 	const { datasets: localElectionDatasets, loading: localElectionDataLoading, error: localElectionDataError } = useLocalElectionData();
 	const { datasets: populationDatasets, loading: populationDataLoading, error: populationDataError } = usePopulationData();
 
-	// Determine if we're in population mode
+	// Determine mode
 	const isPopulationMode = activeDatasetId === 'population';
+	const isGeneralElectionMode = activeDatasetId === 'general-2024';
 
+	// Get active dataset
 	const activeDataset = useMemo(() => {
 		if (isPopulationMode) {
-			return populationDatasets[0]; // Use the population dataset
+			return populationDatasets[0];
+		}
+		if (isGeneralElectionMode) {
+			return generalElectionDatasets.find(d => d.id === activeDatasetId);
 		}
 		return localElectionDatasets.find(d => d.id === activeDatasetId) || localElectionDatasets[0];
-	}, [localElectionDatasets, populationDatasets, activeDatasetId, isPopulationMode]);
+	}, [localElectionDatasets, generalElectionDatasets, populationDatasets, activeDatasetId, isPopulationMode, isGeneralElectionMode]);
 
 	const populationData = useMemo(() => {
 		return populationDatasets[0]?.populationData || {};
 	}, [populationDatasets]);
 
-	// Load geojson based on mode - 2021 for population, otherwise use active dataset year
+	// Load appropriate boundaries based on mode
+	const boundaryType = isGeneralElectionMode ? 'constituency' : 'ward';
 	const targetYear = isPopulationMode ? 2021 : (activeDataset?.year || null);
-	const { geojson, isLoading: geojsonLoading } = useBoundaryData('ward', targetYear);
+	const { geojson, isLoading: geojsonLoading } = useBoundaryData(boundaryType, targetYear);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
 
+	// Interaction handlers - need to handle both ward and constituency hovers
 	const { onWardHover, onLocationChange } = useWardInteractionHandlers({
 		setSelectedWard,
 		setSelectedLocation,
 	});
 
+	// Custom constituency hover handler
+	const onConstituencyHover = useCallback((constituencyData: ConstituencyData | null) => {
+		console.log('Constituency hover:', constituencyData?.onsId, constituencyData?.constituencyName);
+		setSelectedConstituency(constituencyData);
+	}, []);
+
 	const mapManagerRef = useMapManager({
 		mapRef: map,
 		geojson,
-		onWardHover,
+		onWardHover: isGeneralElectionMode ? undefined : onWardHover,
+		onConstituencyHover: isGeneralElectionMode ? onConstituencyHover : undefined,
 		onLocationChange,
 	});
 
@@ -104,8 +120,18 @@ export default function MapsPage() {
 				geojson,
 				populationData
 			);
+		} else if (isGeneralElectionMode) {
+			// General election mode: render constituency colors
+			const generalDataset = activeDataset as any; // Cast to general election dataset type
+			mapManagerRef.current.updateMapForConstituencies(
+				location,
+				geojson,
+				generalDataset.constituencyResults,
+				generalDataset.constituencyData,
+				generalDataset.partyInfo
+			);
 		} else {
-			// Election mode: render party colors
+			// Local election mode: render ward colors
 			const stats = mapManagerRef.current.calculateLocationStats(
 				location,
 				geojson,
@@ -129,7 +155,7 @@ export default function MapsPage() {
 				activeDataset.partyInfo
 			);
 		}
-	}, [geojson, activeDataset, activeDatasetId, calculateAllYearsData, isPopulationMode, populationData]);
+	}, [geojson, activeDataset, activeDatasetId, calculateAllYearsData, isPopulationMode, isGeneralElectionMode, populationData]);
 
 	const isInitialized = useRef(false);
 	const lastRenderedDatasetId = useRef<string | null>(null);
@@ -150,10 +176,14 @@ export default function MapsPage() {
 		const props = geojson.features[0]?.properties;
 		if (!props) return null;
 
+		// Ward boundaries
 		if (props.WD24CD) return 2024;
 		if (props.WD23CD) return 2023;
 		if (props.WD22CD) return 2022;
 		if (props.WD21CD) return 2021;
+
+		// Constituency boundaries
+		if (props.PCON24CD) return 2024;
 
 		return null;
 	};
@@ -178,10 +208,17 @@ export default function MapsPage() {
 		const location = LOCATIONS.find(loc => loc.name === selectedLocation);
 		if (!location) return;
 
+		// Clear the opposite selection when switching modes
+		if (isGeneralElectionMode) {
+			setSelectedWard(null);
+		} else {
+			setSelectedConstituency(null);
+		}
+
 		updateMapForLocation(location, false);
 
 		lastRenderedDatasetId.current = activeDatasetId;
-	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, selectedLocation, updateMapForLocation, isPopulationMode]);
+	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, selectedLocation, updateMapForLocation, isPopulationMode, isGeneralElectionMode]);
 
 	const handleLocationClick = useCallback((location: LocationBounds) => {
 		if (!mapManagerRef.current || !geojson || !activeDataset) return;
@@ -204,7 +241,7 @@ export default function MapsPage() {
 		setActiveDatasetId(id);
 	}, []);
 
-	const isLoading =  localElectionDataLoading || populationDataLoading;
+	const isLoading = localElectionDataLoading || generalElectionDataLoading || populationDataLoading;
 
 	if (isLoading) {
 		return (
@@ -217,8 +254,8 @@ export default function MapsPage() {
 	}
 
 	// Error states
-	if (localElectionDataError || populationDataError) {
-		return <ErrorDisplay message={(localElectionDataError || populationDataError) ?? 'Error loading data'} />;
+	if (localElectionDataError || generalElectionDataError || populationDataError) {
+		return <ErrorDisplay message={(localElectionDataError || generalElectionDataError || populationDataError) ?? 'Error loading data'} />;
 	}
 
 	if (!activeDataset) {
@@ -241,6 +278,7 @@ export default function MapsPage() {
 					<ChartPanel
 						selectedLocation={selectedLocation}
 						selectedWard={selectedWardData}
+						selectedConstituency={selectedConstituencyData}
 						population={populationData}
 						activeDataset={activeDataset}
 						localElectionDatasets={localElectionDatasets}

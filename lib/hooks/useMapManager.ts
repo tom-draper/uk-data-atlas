@@ -6,6 +6,7 @@ type UseMapManagerOptions = {
     mapRef: React.RefObject<mapboxgl.Map | null>;
     geojson: any | null;
     onWardHover?: (params: { data: WardData | null; wardCode: string }) => void;
+    onConstituencyHover?: (data: any | null) => void;
     onLocationChange?: (stats: ChartData | null, location: LocationBounds) => void;
 };
 
@@ -32,6 +33,11 @@ export function useMapManager(opts: UseMapManagerOptions) {
                     callbacksRef.current.onWardHover(params);
                 }
             },
+            onConstituencyHover: (data) => {
+                if (callbacksRef.current.onConstituencyHover) {
+                    callbacksRef.current.onConstituencyHover(data);
+                }
+            },
             onLocationChange: (stats, location) => {
                 if (callbacksRef.current.onLocationChange) {
                     callbacksRef.current.onLocationChange(stats, location);
@@ -40,7 +46,6 @@ export function useMapManager(opts: UseMapManagerOptions) {
         });
         
         isInitialized.current = true;
-
         return () => {
             // Only cleanup if the map itself is being destroyed
             if (!opts.mapRef?.current) {

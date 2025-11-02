@@ -1,76 +1,73 @@
 // components/GeneralElectionResultChart.tsx
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
-import { AllYearsAggregatedData, ChartData, Dataset } from '@lib/types';
+import { ChartData, GeneralElectionDataset } from '@lib/types';
 import { useMemo } from 'react';
 
 interface GeneralElectionResultChartProps {
-	activeDataset: Dataset;
-	availableDatasets: Dataset[];
+	activeDataset: any; // Could be local or general election dataset
+	availableDatasets: GeneralElectionDataset[];
 	onDatasetChange: (datasetId: string) => void;
-	wardCode: string;
-	aggregatedData: AllYearsAggregatedData;
+	constituencyId?: string; // ONS ID when hovering over a constituency
 }
 
 export default function GeneralElectionResultChart({
 	activeDataset,
 	availableDatasets,
 	onDatasetChange,
-	wardCode,
-	aggregatedData,
+	constituencyId,
 }: GeneralElectionResultChartProps) {
-	const allYearsWardData = useMemo(() => ({
-		data2024: availableDatasets.find(d => d.id === 'general-election')?.wardData || {},
-	}), [availableDatasets]);
+	
+	console.log('GeneralElectionResultChart props:', { activeDataset, availableDatasets, constituencyId });
+	console.log('availableDatasets details:', availableDatasets.map(d => ({ id: d.id, name: d.name, type: d.type })));
+	
+	const dataset2024 = availableDatasets.find(d => d.id === 'general-2024');
+	
+	console.log('Found dataset2024:', dataset2024);
 
-	const { chartData2024, turnout2024 } = useMemo(() => {
-		const getChartData = (yearData: any, year: string): { chartData: ChartData | undefined; turnout: number | undefined } => {
-			// If we have a specific ward selected (hovering), use that ward's data
-			if (wardCode && wardCode.trim() && yearData && yearData[wardCode]) {
-				const data = yearData[wardCode];
-				return {
-					chartData: {
-						LAB: (data.LAB as number) || 0,
-						CON: (data.CON as number) || 0,
-						LD: (data.LD as number) || 0,
-						GREEN: (data.GREEN as number) || 0,
-						REF: (data.REF as number) || 0,
-						IND: (data.IND as number) || 0,
-					},
-					turnout: data.turnoutPercent
-				};
-			}
+	const { chartData2024, turnout2024, constituencyName } = useMemo(() => {
+		if (!dataset2024) {
+			return { chartData2024: undefined, turnout2024: undefined, constituencyName: undefined };
+		}
 
-			// If viewing a location (no ward hovered), only show aggregated data for active year
-			// Historical years don't have cached location aggregations
-			if (!wardCode && aggregatedData[`data${year}` as keyof AllYearsAggregatedData]) {
-				return {
-					chartData: aggregatedData[`data${year}` as keyof AllYearsAggregatedData] as ChartData,
-					turnout: undefined // Aggregated data doesn't include turnout
-				};
-			}
+		// If we have a specific constituency selected (hovering), use that constituency's data
+		if (constituencyId && constituencyId.trim() && dataset2024.constituencyData[constituencyId]) {
+			const data = dataset2024.constituencyData[constituencyId];
 
-			return { chartData: undefined, turnout: undefined };
-		};
+			console.log('HEEEEER', data)
+			
+			return {
+				chartData2024: {
+					LAB: data.LAB || 0,
+					CON: data.CON || 0,
+					LD: data.LD || 0,
+					GREEN: data.GREEN || 0,
+					REF: data.RUK || 0,
+					SNP: data.SNP || 0,
+					PC: data.PC || 0,
+					DUP: data.DUP || 0,
+					SF: data.SF || 0,
+					IND: data.OTHER || 0,
+				},
+				turnout2024: data.turnoutPercent,
+				constituencyName: data.constituencyName,
+			};
+		}
 
-		// Calculate data for each year independently
-		const data2024 = getChartData(allYearsWardData?.data2024, '2024');
+		// No constituency selected - could show aggregated data here in the future
+		return { chartData2024: undefined, turnout2024: undefined, constituencyName: undefined };
+	}, [constituencyId, dataset2024]);
 
-		return {
-			chartData2024: data2024.chartData,
-			turnout2024: data2024.turnout,
-		};
-	}, [wardCode, allYearsWardData, activeDataset, aggregatedData]);
-
-	const dataset2024 = availableDatasets.find(d => d.id === '2024');
-
-	const renderCompactBar = (data: ChartData | undefined, dataset: Dataset) => {
+	const renderCompactBar = (data: ChartData | undefined, dataset: GeneralElectionDataset) => {
 		if (!data) {
-			return <div className="text-xs text-gray-400 pt-3 text-center">No data available</div>;
+			return <div className="text-xs text-gray-400 pt-3 text-center">Hover over a constituency</div>;
 		}
 
 		const parties = dataset.partyInfo;
 		const totalVotes = parties.reduce((sum, p) => sum + (data[p.key] || 0), 0);
+
+		console.log('DATASET', dataset)
+		console.log('PARTIES', parties)
 
 		if (totalVotes === 0) {
 			return <div className="text-xs text-gray-400 pt-3 text-center">No votes recorded</div>;
@@ -79,10 +76,17 @@ export default function GeneralElectionResultChart({
 		return (
 			<div className="space-y-1">
 				{/* Main bar showing all parties */}
-				<div className="flex h-5 rounded overflow-hidden bg-gray-200  gap-0">
+				<div className="flex h-5 rounded overflow-hidden bg-gray-200 gap-0">
 					{parties.map(party => {
+						console.log(data);
+						console.log('Rendering party:', party);
+						console.log('Party votes:', data[party.key]);
+						console.log('Total votes:', totalVotes);
 						const votes = data[party.key] || 0;
 						const percentage = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
+						
+						if (percentage === 0) return null;
+						
 						return (
 							<div
 								key={party.key}
@@ -90,7 +94,7 @@ export default function GeneralElectionResultChart({
 									width: `${percentage}%`,
 									backgroundColor: PARTY_COLORS[party.key],
 								}}
-								title={`${party.name}: ${votes.toLocaleString()}`}
+								title={`${party.name}: ${votes.toLocaleString()} (${percentage.toFixed(1)}%)`}
 								className="group relative hover:opacity-80 transition-opacity"
 							>
 								{percentage > 12 && (
@@ -104,17 +108,19 @@ export default function GeneralElectionResultChart({
 				</div>
 				{/* Compact legend */}
 				<div className="grid grid-cols-3 gap-0.5 text-[9px]">
-					{parties.map(party => (
-						<div key={party.key} className="flex items-center gap-1">
-							<div
-								className="w-1.5 h-1.5 rounded-sm shrink-0"
-								style={{ backgroundColor: PARTY_COLORS[party.key] }}
-							/>
-							<span className="truncate font-medium">
-								{(data[party.key] || 0).toLocaleString()}
-							</span>
-						</div>
-					))}
+					{parties
+						.filter(party => (data[party.key] || 0) > 0)
+						.map(party => (
+							<div key={party.key} className="flex items-center gap-1">
+								<div
+									className="w-1.5 h-1.5 rounded-sm shrink-0"
+									style={{ backgroundColor: PARTY_COLORS[party.key] }}
+								/>
+								<span className="truncate font-medium">
+									{party.key}: {(data[party.key] || 0).toLocaleString()}
+								</span>
+							</div>
+						))}
 				</div>
 			</div>
 		);
@@ -123,34 +129,38 @@ export default function GeneralElectionResultChart({
 	const renderYearBar = (
 		year: string,
 		data: ChartData | undefined,
-		dataset: Dataset | undefined,
+		dataset: GeneralElectionDataset | undefined,
 		turnout: number | undefined,
+		constituencyName: string | undefined,
 		isActive: boolean
 	) => {
 		if (!dataset) {
 			return null;
 		}
 
-		const yearColors: Record<string, { bg: string; border: string; badge: string; text: string }> = {
-			'2024': { bg: 'bg-blue-50/60', border: 'border-blue-300', badge: 'bg-blue-300 text-blue-900', text: 'bg-blue-200 text-blue-800' },
-			'2023': { bg: 'bg-amber-50/60', border: 'border-amber-300', badge: 'bg-amber-300 text-amber-900', text: 'bg-amber-200 text-amber-800' },
-			'2022': { bg: 'bg-purple-50/60', border: 'border-purple-300', badge: 'bg-purple-300 text-purple-900', text: 'bg-purple-200 text-purple-800' },
-			'2021': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800' },
+		const yearColors: Record<string, { bg: string; border: string }> = {
+			'general-2024': { bg: 'bg-indigo-50/60', border: 'border-indigo-400' },
 		};
 
-		const colors = yearColors[year] || yearColors['2024'];
+		const colors = yearColors[dataset.id] || { bg: 'bg-indigo-50/60', border: 'border-indigo-400' };
 
 		return (
 			<div
-				key={year}
-				className={`p-2 h-[95px] rounded transition-all cursor-pointer ${isActive
-					? `${colors.bg} border-2 ${colors.border}`
-					: `bg-white/60 border-2 border-gray-200/80 hover:${colors.border.replace('border-', 'hover:border-')}`
-					}`}
-				onClick={() => onDatasetChange(year)}
+				key={dataset.id}
+				className={`p-2 rounded transition-all cursor-pointer ${
+					isActive
+						? `${colors.bg} border-2 ${colors.border}`
+						: `bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300`
+				}`}
+				onClick={() => onDatasetChange(dataset.id)}
 			>
 				<div className="flex items-center justify-between mb-1.5">
-					<h3 className="text-xs font-bold">{year} General Elections</h3>
+					<div>
+						<h3 className="text-xs font-bold">{year} General Election</h3>
+						{/* {constituencyName && (
+							<p className="text-[9px] text-gray-600 mt-0.5">{constituencyName}</p>
+						)} */}
+					</div>
 					<div className="flex items-center gap-1.5">
 						{turnout !== undefined && (
 							<span className="text-[9px] text-gray-500 font-medium">
@@ -164,10 +174,30 @@ export default function GeneralElectionResultChart({
 		);
 	};
 
+	if (!dataset2024) {
+		console.log('No general election dataset found. Available datasets:', availableDatasets);
+		return (
+			<div className="space-y-2">
+				<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
+				<div className="text-xs text-gray-400 p-3 text-center bg-white/60 rounded">
+					No general election data loaded
+					{availableDatasets.length === 0 && ' (datasets array is empty)'}
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="space-y-2">
 			<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
-			{renderYearBar('2024', chartData2024, dataset2024, turnout2024, activeDataset.id === 'general-election')}
+			{renderYearBar(
+				'2024',
+				chartData2024,
+				dataset2024,
+				turnout2024,
+				constituencyName,
+				activeDataset.id === 'general-2024'
+			)}
 		</div>
 	);
 };
