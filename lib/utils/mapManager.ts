@@ -50,14 +50,14 @@ export class MapManager {
         // Check if this is actually constituency data by looking at the properties
         const firstFeature = geojson.features[0];
         if (!firstFeature) return [];
-        
+
         const hasConstituencyProps = 'PCON24CD' in firstFeature.properties || 'PCON25CD' in firstFeature.properties;
-        
+
         if (!hasConstituencyProps) {
             console.warn('getConstituenciesInLocation called with non-constituency geojson');
             return [];
         }
-        
+
         // For Greater Manchester, we can filter by region or just return all UK constituencies
         // TODO: Implement proper geographic filtering based on location bounds
         return geojson.features;
@@ -99,9 +99,9 @@ export class MapManager {
             })
         };
 
-        console.log('- Sample winning parties:', locationData.features.slice(0, 3).map((f: any) => ({ 
-            id: f.properties[constituencyCodeProp], 
-            party: f.properties.winningParty 
+        console.log('- Sample winning parties:', locationData.features.slice(0, 3).map((f: any) => ({
+            id: f.properties[constituencyCodeProp],
+            party: f.properties.winningParty
         })));
 
         this.removeExistingLayers();
@@ -168,15 +168,15 @@ export class MapManager {
         this.lastHoveredFeatureId = feature.id;
 
         const onsId = feature.properties[constituencyCodeProp];
-        console.log('Constituency hover - ONS ID:', onsId, 'Available codes:', Object.keys(constituencyData).slice(0, 5));
-        
+        // console.log('Constituency hover - ONS ID:', onsId, 'Available codes:', Object.keys(constituencyData).slice(0, 5));
+
         const constData = constituencyData[onsId];
 
         if (constData && this.callbacks.onConstituencyHover) {
-            console.log('Found constituency data:', constData.constituencyName);
+            // console.log('Found constituency data:', constData.constituencyName);
             this.callbacks.onConstituencyHover(constData);
         } else if (this.callbacks.onConstituencyHover) {
-            console.log('No constituency data found for:', onsId);
+            // console.log('No constituency data found for:', onsId);
             this.callbacks.onConstituencyHover(null);
         }
     }
@@ -609,6 +609,64 @@ export class MapManager {
         this.buildWardToLadMapping(geojson);
 
         this.callbacks.onLocationChange(locationStats, location);
+    }
+
+    /**
+     * Calculate aggregated constituency stats for a location
+     */
+    calculateConstituencyStats(
+        location: LocationBounds,
+        geojson: BoundaryGeojson,
+        constituencyResults: Record<string, any>, // onsId -> { winner, votes: {...} }
+        year: string = ''
+    ): {
+        totalSeats: number;
+        partySeats: Record<string, number>;
+        totalVotes: number;
+        partyVotes: Record<string, number>;
+    } {
+        const cacheKey = `constituency-${location.name}-${year}`;
+        if (this.cache.has(cacheKey)) {
+            console.log(`CACHE HIT: calculateConstituencyStats: [${cacheKey}]`);
+            return this.cache.get(cacheKey);
+        }
+
+        const constituenciesInLocation = this.getConstituenciesInLocation(geojson, location);
+        const constituencyCodeProp = this.detectConstituencyCodeProperty(geojson);
+
+        console.log(`EXPENSIVE: calculateConstituencyStats: [${cacheKey}] Filtered ${constituenciesInLocation.length} constituencies`);
+
+        const aggregated = {
+            totalSeats: 0,
+            partySeats: {} as Record<string, number>,
+            totalVotes: 0,
+            partyVotes: {} as Record<string, number>,
+        };
+
+        constituenciesInLocation.forEach((feature: any) => {
+            const onsId = feature.properties[constituencyCodeProp];
+            const result = constituencyResults[onsId];
+
+            if (!result) return;
+
+            aggregated.totalSeats += 1;
+
+            // Count seat for winning party
+            const winningParty = result.winner;
+            aggregated.partySeats[winningParty] = (aggregated.partySeats[winningParty] || 0) + 1;
+
+            // Aggregate votes
+            if (result.votes) {
+                Object.entries(result.votes).forEach(([party, votes]) => {
+                    const voteCount = votes as number;
+                    aggregated.totalVotes += voteCount;
+                    aggregated.partyVotes[party] = (aggregated.partyVotes[party] || 0) + voteCount;
+                });
+            }
+        });
+
+        this.cache.set(cacheKey, aggregated);
+        return aggregated;
     }
 
     private removeExistingLayers() {

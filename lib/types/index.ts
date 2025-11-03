@@ -62,11 +62,19 @@ export interface AllYearsWardData {
     data2021: { [wardCode: string]: any };
 }
 
-export interface AllYearsAggregatedData {
+export interface AggregatedLocalElectionData {
     data2024: ChartData | null;
     data2023: ChartData | null;
     data2022: ChartData | null;
     data2021: ChartData | null;
+}
+
+export interface AggregateGeneralElectionData {
+	totalSeats: number;
+	partySeats: Record<string, number>;
+	totalVotes: number;
+	partyVotes: Record<string, number>;
+	partyInfo: Record<string, { name: string; color: string }>;
 }
 
 // Common geometry type

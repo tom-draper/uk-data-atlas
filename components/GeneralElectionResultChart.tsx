@@ -2,14 +2,15 @@
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
 import { GeneralElectionDataset } from '@/lib/hooks/useGeneralElectionData';
-import { ChartData } from '@lib/types';
+import { AggregateGeneralElectionData, ChartData } from '@lib/types';
 import { useMemo } from 'react';
 
 interface GeneralElectionResultChartProps {
-	activeDataset: any; // Could be local or general election dataset
+	activeDataset: any;
 	availableDatasets: GeneralElectionDataset[];
 	onDatasetChange: (datasetId: string) => void;
-	constituencyId?: string; // ONS ID when hovering over a constituency
+	constituencyId?: string;
+	aggregatedConstituencyData: AggregateGeneralElectionData | null;
 }
 
 export default function GeneralElectionResultChart({
@@ -17,25 +18,24 @@ export default function GeneralElectionResultChart({
 	availableDatasets,
 	onDatasetChange,
 	constituencyId,
+	aggregatedConstituencyData
 }: GeneralElectionResultChartProps) {
 	
-	console.log('GeneralElectionResultChart props:', { activeDataset, availableDatasets, constituencyId });
-	console.log('availableDatasets details:', availableDatasets.map(d => ({ id: d.id, name: d.name, type: d.type })));
-	
 	const dataset2024 = availableDatasets.find(d => d.id === 'general-2024');
-	
-	console.log('Found dataset2024:', dataset2024);
 
-	const { chartData2024, turnout2024, constituencyName } = useMemo(() => {
+	const { chartData2024, turnout2024, constituencyName, isAggregated } = useMemo(() => {
 		if (!dataset2024) {
-			return { chartData2024: undefined, turnout2024: undefined, constituencyName: undefined };
+			return { 
+				chartData2024: undefined, 
+				turnout2024: undefined, 
+				constituencyName: undefined,
+				isAggregated: false 
+			};
 		}
 
 		// If we have a specific constituency selected (hovering), use that constituency's data
 		if (constituencyId && constituencyId.trim() && dataset2024.constituencyData[constituencyId]) {
 			const data = dataset2024.constituencyData[constituencyId];
-
-			console.log('HEEEEER', data)
 			
 			return {
 				chartData2024: {
@@ -52,23 +52,39 @@ export default function GeneralElectionResultChart({
 				},
 				turnout2024: data.turnoutPercent,
 				constituencyName: data.constituencyName,
+				isAggregated: false,
 			};
 		}
 
-		// No constituency selected - could show aggregated data here in the future
-		return { chartData2024: undefined, turnout2024: undefined, constituencyName: undefined };
-	}, [constituencyId, dataset2024]);
+		// No constituency selected - use aggregated data for the location
+		if (aggregatedConstituencyData) {
+			return {
+				chartData2024: aggregatedConstituencyData.partyVotes as ChartData,
+				turnout2024: undefined, // Could calculate average turnout if needed
+				constituencyName: undefined,
+				isAggregated: true,
+			};
+		}
 
-	const renderCompactBar = (data: ChartData | undefined, dataset: GeneralElectionDataset) => {
+		return { 
+			chartData2024: undefined, 
+			turnout2024: undefined, 
+			constituencyName: undefined,
+			isAggregated: false 
+		};
+	}, [constituencyId, dataset2024, aggregatedConstituencyData]);
+
+	const renderCompactBar = (
+		data: ChartData | undefined, 
+		dataset: GeneralElectionDataset,
+		isAggregated: boolean
+	) => {
 		if (!data) {
 			return <div className="text-xs text-gray-400 pt-3 text-center">No data available</div>;
 		}
 
 		const parties = dataset.partyInfo;
 		const totalVotes = parties.reduce((sum, p) => sum + (data[p.key] || 0), 0);
-
-		console.log('DATASET', dataset)
-		console.log('PARTIES', parties)
 
 		if (totalVotes === 0) {
 			return <div className="text-xs text-gray-400 pt-3 text-center">No votes recorded</div>;
@@ -79,10 +95,6 @@ export default function GeneralElectionResultChart({
 				{/* Main bar showing all parties */}
 				<div className="flex h-5 rounded overflow-hidden bg-gray-200 gap-0">
 					{parties.map(party => {
-						console.log(data);
-						console.log('Rendering party:', party);
-						console.log('Party votes:', data[party.key]);
-						console.log('Total votes:', totalVotes);
 						const votes = data[party.key] || 0;
 						const percentage = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
 						
@@ -123,6 +135,29 @@ export default function GeneralElectionResultChart({
 							</div>
 						))}
 				</div>
+				{/* Show seats breakdown if aggregated */}
+				{isAggregated && aggregatedConstituencyData && (
+					<div className="mt-2 pt-2 border-t border-gray-200">
+						<div className="text-[9px] font-medium text-gray-600 mb-1">
+							Seats won: {aggregatedConstituencyData.totalSeats}
+						</div>
+						<div className="grid grid-cols-3 gap-0.5 text-[9px]">
+							{Object.entries(aggregatedConstituencyData.partySeats)
+								.sort(([, a], [, b]) => (b as number) - (a as number))
+								.map(([partyKey, seats]) => (
+									<div key={partyKey} className="flex items-center gap-1">
+										<div
+											className="w-1.5 h-1.5 rounded-sm shrink-0"
+											style={{ backgroundColor: PARTY_COLORS[partyKey] }}
+										/>
+										<span className="truncate font-medium">
+											{partyKey}: {seats}
+										</span>
+									</div>
+								))}
+						</div>
+					</div>
+				)}
 			</div>
 		);
 	};
@@ -133,7 +168,8 @@ export default function GeneralElectionResultChart({
 		dataset: GeneralElectionDataset | undefined,
 		turnout: number | undefined,
 		constituencyName: string | undefined,
-		isActive: boolean
+		isActive: boolean,
+		isAggregated: boolean
 	) => {
 		if (!dataset) {
 			return <div className="text-xs text-gray-400 pt-3 text-center">No data available</div>;
@@ -148,7 +184,7 @@ export default function GeneralElectionResultChart({
 		return (
 			<div
 				key={dataset.id}
-				className={`p-2 h-[95px] rounded transition-all cursor-pointer ${
+				className={`p-2 ${isAggregated ? 'h-[140px]' : 'h-[95px]'} rounded transition-all cursor-pointer ${
 					isActive
 						? `${colors.bg} border-2 ${colors.border}`
 						: `bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300`
@@ -157,7 +193,10 @@ export default function GeneralElectionResultChart({
 			>
 				<div className="flex items-center justify-between mb-1.5">
 					<div>
-						<h3 className="text-xs font-bold">{year} General Election</h3>
+						<h3 className="text-xs font-bold">
+							{year} General Election
+							{isAggregated && <span className="text-gray-500 font-normal"> (Location)</span>}
+						</h3>
 					</div>
 					<div className="flex items-center gap-1.5">
 						{turnout !== undefined && (
@@ -167,7 +206,7 @@ export default function GeneralElectionResultChart({
 						)}
 					</div>
 				</div>
-				{renderCompactBar(data, dataset)}
+				{renderCompactBar(data, dataset, isAggregated)}
 			</div>
 		);
 	};
@@ -181,8 +220,9 @@ export default function GeneralElectionResultChart({
 				dataset2024,
 				turnout2024,
 				constituencyName,
-				activeDataset.id === 'general-2024'
+				activeDataset.id === 'general-2024',
+				isAggregated
 			)}
 		</div>
 	);
-};
+}

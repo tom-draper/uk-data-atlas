@@ -8,7 +8,7 @@ import { useGeneralElectionData } from '@/lib/hooks/useGeneralElectionData';
 import { usePopulationData } from '@lib/hooks/usePopulationData';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
-import { useAggregatedChartData } from '@lib/hooks/useAggregatedChartData';
+import { useAggregatedLocalElectionData, useAggregatedGeneralElectionData, useAggregatedElectionData } from '@lib/hooks/useAggregatedChartData';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
 import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
 
@@ -18,15 +18,9 @@ import ChartPanel from '@components/ChartPanel';
 import ErrorDisplay from '@components/ErrorDisplay';
 
 import { LOCATIONS } from '@lib/data/locations';
-import type { ChartData, LocationBounds, WardData } from '@lib/types';
+import type { AggregatedLocalElectionData, LocationBounds, WardData } from '@lib/types';
 import type { ConstituencyData } from '@/lib/hooks/useGeneralElectionData';
-
-interface AggregatedChartData {
-	data2024: ChartData | null;
-	data2023: ChartData | null;
-	data2022: ChartData | null;
-	data2021: ChartData | null;
-}
+import LoadingDisplay from '@/components/LoadingDisplay';
 
 const INITIAL_LOCATION = LOCATIONS[0];
 const INITIAL_DATASET_ID = '2024';
@@ -44,12 +38,6 @@ export default function MapsPage() {
 	const [selectedWardData, setSelectedWard] = useState<WardData | null>(null);
 	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
-	const [aggregatedChartData, setAggregatedChartData] = useState<AggregatedChartData>({
-		data2024: null,
-		data2023: null,
-		data2022: null,
-		data2021: null,
-	});
 
 	// Data loading
 	const { datasets: generalElectionDatasets, loading: generalElectionDataLoading, error: generalElectionDataError } = useGeneralElectionData();
@@ -98,10 +86,13 @@ export default function MapsPage() {
 		onLocationChange,
 	});
 
-	const { calculateAllYearsData } = useAggregatedChartData({
+	const { aggregatedLocalElectionData, aggregatedGeneralElectionData } = useAggregatedElectionData({
 		mapManagerRef,
 		geojson,
-		electionDatasets: localElectionDatasets,
+		localElectionDatasets,
+		generalElectionDatasets,
+		selectedLocation,
+		isGeneralElectionMode,
 	});
 
 	// Location update logic
@@ -134,12 +125,6 @@ export default function MapsPage() {
 				activeDatasetId
 			);
 
-			// Update aggregated data if needed
-			if (!skipAggregates) {
-				const newAggregates = calculateAllYearsData(location);
-				setAggregatedChartData(newAggregates);
-			}
-
 			// Update the map visualization
 			mapManagerRef.current.updateMapForLocation(
 				location,
@@ -150,7 +135,7 @@ export default function MapsPage() {
 				activeDataset.partyInfo
 			);
 		}
-	}, [geojson, activeDataset, activeDatasetId, calculateAllYearsData, isPopulationMode, isGeneralElectionMode, populationData]);
+	}, [geojson, activeDataset, activeDatasetId, isPopulationMode, isGeneralElectionMode, populationData]);
 
 	const isInitialized = useRef(false);
 	const lastRenderedDatasetId = useRef<string | null>(null);
@@ -237,25 +222,12 @@ export default function MapsPage() {
 	}, []);
 
 	const isLoading = localElectionDataLoading || generalElectionDataLoading || populationDataLoading;
+	if (isLoading) return <LoadingDisplay />;
 
-	if (isLoading) {
-		return (
-			<div className="absolute inset-0 flex items-center justify-center bg-white z-10">
-				<div className="text-sm text-gray-500">
-					<img src="uk.png" alt="" className="h-[200px] mb-10 mr-4" />
-				</div>
-			</div>
-		);
-	}
+	const errorMessage = localElectionDataError || generalElectionDataError || populationDataError;
+	if (errorMessage) return <ErrorDisplay message={errorMessage ?? 'Error loading data'} />;
 
-	// Error states
-	if (localElectionDataError || generalElectionDataError || populationDataError) {
-		return <ErrorDisplay message={(localElectionDataError || generalElectionDataError || populationDataError) ?? 'Error loading data'} />;
-	}
-
-	if (!activeDataset) {
-		return <ErrorDisplay message="No datasets loaded" />;
-	}
+	if (!activeDataset) return <ErrorDisplay message="No datasets loaded" />;
 
 	return (
 		<div style={{ width: '100%', height: '100vh', position: 'relative' }}>
@@ -279,7 +251,8 @@ export default function MapsPage() {
 						localElectionDatasets={localElectionDatasets}
 						generalElectionDatasets={generalElectionDatasets}
 						onDatasetChange={handleDatasetChange}
-						aggregatedData={aggregatedChartData}
+						aggregatedLocalElectionData={aggregatedLocalElectionData}
+						aggregatedGeneralElectionData={aggregatedGeneralElectionData}
 						wardCodeMap={{}}
 					/>
 				</div>

@@ -1,6 +1,6 @@
 // components/ChartPanel.tsx
 'use client';
-import { AllYearsAggregatedData, Dataset, PopulationWardData, WardData } from '@lib/types';
+import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, PopulationWardData, WardData } from '@lib/types';
 import { ConstituencyData } from '@/lib/hooks/useGeneralElectionData';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
@@ -16,7 +16,8 @@ interface ChartPanelProps {
 	localElectionDatasets: Dataset[];
 	generalElectionDatasets: any[];
 	onDatasetChange: (datasetId: string) => void;
-	aggregatedData: AllYearsAggregatedData;
+	aggregatedLocalElectionData: AggregatedLocalElectionData;
+	aggregatedGeneralElectionData: AggregateGeneralElectionData | null;
 	wardCodeMap: { [name: string]: string };
 }
 
@@ -29,7 +30,8 @@ export default memo(function ChartPanel({
 	localElectionDatasets,
 	generalElectionDatasets,
 	onDatasetChange,
-	aggregatedData,
+	aggregatedLocalElectionData,
+	aggregatedGeneralElectionData,
 	wardCodeMap
 }: ChartPanelProps) {
 	// Determine what to show in the title
@@ -72,6 +74,7 @@ export default memo(function ChartPanel({
 						availableDatasets={generalElectionDatasets}
 						onDatasetChange={onDatasetChange}
 						constituencyId={selectedConstituency?.onsId}
+						aggregatedData={aggregatedGeneralElectionData}
 					/>
 					
 					<LocalElectionResultChart
@@ -79,7 +82,7 @@ export default memo(function ChartPanel({
 						availableDatasets={localElectionDatasets}
 						onDatasetChange={onDatasetChange}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
-						aggregatedData={aggregatedData}
+						aggregatedData={aggregatedLocalElectionData}
 					/>
 					
 					<PopulationChart

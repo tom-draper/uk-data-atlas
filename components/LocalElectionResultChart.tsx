@@ -1,7 +1,7 @@
 // components/LocalElectionResultChart.tsx
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
-import { AllYearsAggregatedData, ChartData, Dataset } from '@lib/types';
+import { AggregatedLocalElectionData, ChartData, Dataset } from '@lib/types';
 import { useMemo } from 'react';
 
 interface LocalElectionResultChartProps {
@@ -9,7 +9,7 @@ interface LocalElectionResultChartProps {
 	availableDatasets: Dataset[];
 	onDatasetChange: (datasetId: string) => void;
 	wardCode: string;
-	aggregatedData: AllYearsAggregatedData;
+	aggregatedData: AggregatedLocalElectionData;
 }
 
 export default function LocalElectionResultChart({
@@ -46,9 +46,9 @@ export default function LocalElectionResultChart({
 
 			// If viewing a location (no ward hovered), only show aggregated data for active year
 			// Historical years don't have cached location aggregations
-			if (!wardCode && aggregatedData[`data${year}` as keyof AllYearsAggregatedData]) {
+			if (!wardCode && aggregatedData[`data${year}` as keyof AggregatedLocalElectionData]) {
 				return {
-					chartData: aggregatedData[`data${year}` as keyof AllYearsAggregatedData] as ChartData,
+					chartData: aggregatedData[`data${year}` as keyof AggregatedLocalElectionData] as ChartData,
 					turnout: undefined // Aggregated data doesn't include turnout
 				};
 			}
