@@ -7,7 +7,7 @@ export default function Home() {
 			<div className="pt-[25vh] px-[16%]">
 				<div className="p-5">
 					<h1 className="text-5xl font-semibold">UK Data Atlas</h1>
-					<div className="mt-[10px]">
+					<div className="mt-2.5">
 						<p>The powerful mapping tool for visualizing data that shapes the United Kingdom.</p>
 					</div>
 

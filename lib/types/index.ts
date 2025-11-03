@@ -15,6 +15,12 @@ export interface ChartData {
     LD: number;
     GREEN: number;
     REF: number;
+    SNP: number;
+    DUP: number;
+    PC: number;
+    SF: number;
+    APNI: number;
+    SDLP: number;
     IND: number;
 }
 

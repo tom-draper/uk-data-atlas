@@ -119,7 +119,7 @@ export default function LocalElectionResultChart({
 				</div>
 				{/* Compact legend */}
 				<div className="grid grid-cols-3 gap-0.5 text-[9px]">
-					{parties.map(party => (
+					{parties.filter((party) => data[party.key] != undefined).map(party => (
 						<div key={party.key} className="flex items-center gap-1">
 							<div
 								className="w-1.5 h-1.5 rounded-sm shrink-0"
