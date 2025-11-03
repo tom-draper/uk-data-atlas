@@ -1,22 +1,24 @@
 import { useCallback, useRef } from 'react';
 import type { WardData } from '@lib/types';
+import { ConstituencyData } from './useGeneralElectionData';
 
-interface UseWardInteractionHandlersParams {
+interface UseInteractionHandlersParams {
 	setSelectedWard: (ward: WardData | null) => void;
-	// selectedLocation: string | null;
+	setSelectedConstituency: (constituency: ConstituencyData | null) => void;
 	setSelectedLocation: (location: string | null) => void;
 }
 
 /**
  * Provides stable callbacks for ward hover and location change interactions.
- * Optimized to prevent redundant updates when hovering within the same ward.
+ * Optimized to prevent redundant updates when hovering within the same ward or constituency.
  */
-export function useWardInteractionHandlers({
+export function useInteractionHandlers({
 	setSelectedWard,
-	// selectedLocation,
+	setSelectedConstituency,
 	setSelectedLocation,
-}: UseWardInteractionHandlersParams) {
+}: UseInteractionHandlersParams) {
 	const lastHoveredWardRef = useRef<string | null>(null);
+	const lastHoveredConstituencyRef = useRef<string | null>(null);
 
 	const onWardHover = useCallback(
 		(params: { data: WardData | null; wardCode: string }) => {
@@ -27,13 +29,10 @@ export function useWardInteractionHandlers({
 				return;
 			}
 
-			console.log('HERE', data, wardCode)
-
 			// Update last hovered ward
 			lastHoveredWardRef.current = wardCode || null;
 
 			if (!data) {
-				// Reset to previous chart title or location name
 				setSelectedWard(null);
 				return;
 			}
@@ -43,19 +42,38 @@ export function useWardInteractionHandlers({
 		[setSelectedWard]
 	);
 
+	const onConstituencyHover = useCallback(
+		(constituencyData: ConstituencyData | null) => {
+			const constituencyId = constituencyData?.onsId || null;
+
+			// Skip if hovering over same constituency
+			if (constituencyId && constituencyId === lastHoveredConstituencyRef.current) {
+				return;
+			}
+
+			// Update last hovered constituency
+			lastHoveredConstituencyRef.current = constituencyId;
+
+			setSelectedConstituency(constituencyData);
+		},
+		[setSelectedConstituency]
+	);
+
 	const onLocationChange = useCallback(
-		(_stats: any, location: { name: string }) => {
+		(_stats: unknown, location: { name: string }) => {
 			setSelectedWard(null);
 			setSelectedLocation(location.name);
 
-			// Reset last hovered ward since location changed
+			// Reset last hovered refs since location changed
 			lastHoveredWardRef.current = null;
+			lastHoveredConstituencyRef.current = null;
 		},
 		[setSelectedWard, setSelectedLocation]
 	);
 
 	return {
 		onWardHover,
+		onConstituencyHover,
 		onLocationChange,
 	};
 }

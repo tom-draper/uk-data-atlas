@@ -37,16 +37,28 @@ export default function PopulationChart({
 		<div className="pt-2.5 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold text-gray-700 mb-2">Demographics</h3>
 			<div className="space-y-3">
-				<PopulationSummary total={total} males={males} females={females} onDatasetChange={onDatasetChange} activeDataset={activeDataset} />
-				{/* <AgeDistributionChart ageData={ageData} total={total} ageGroups={ageGroups.total} /> */}
-				<AgeChart ageData={ageData} total={total} ageGroups={ageGroups.total} onDatasetChange={onDatasetChange} activeDataset={activeDataset}/>
-				<GenderChart population={population} wardCode={wardCode} wardName={wardName} wardCodeMap={wardCodeMap} onDatasetChange={onDatasetChange} activeDataset={activeDataset} />
-				{/* <GenderBalanceByAge
-					population={population}
-					wardCode={wardCode}
-					wardName={wardName}
-					wardCodeMap={wardCodeMap}
-				/> */}
+				<PopulationSummary 
+					total={total} 
+					males={males} 
+					females={females} 
+					onDatasetChange={onDatasetChange} 
+					activeDataset={activeDataset}
+				/>
+				<AgeChart 
+					ageData={ageData} 
+					total={total} 
+					ageGroups={ageGroups.total} 
+					onDatasetChange={onDatasetChange} 
+					activeDataset={activeDataset}
+				/>
+				<GenderChart 
+					population={population} 
+					wardCode={wardCode} 
+					wardName={wardName} 
+					wardCodeMap={wardCodeMap} 
+					onDatasetChange={onDatasetChange} 
+					activeDataset={activeDataset}
+				/>
 			</div>
 		</div>
 	);

@@ -35,7 +35,6 @@ export default function AgeDistributionChart({ ageData, total, ageGroups }: AgeD
 
 	return (
 		<div className="mx-1 -mt-4">
-
 			{/* Detailed Age Chart */}
 			<div className="flex items-end h-28 overflow-x-hidden pt-4">
 				{ages.map(({ age, count }) => {
@@ -53,7 +52,7 @@ export default function AgeDistributionChart({ ageData, total, ageGroups }: AgeD
 							}}
 							title={`Age ${age}: ${count.toLocaleString()}`}
 						>
-							<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[8px] rounded-xs px-1 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[100]">
+							<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[8px] rounded-xs px-1 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-100">
 								{age}: {count.toLocaleString()}
 							</div>
 						</div>

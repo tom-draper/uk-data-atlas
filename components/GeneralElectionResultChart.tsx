@@ -1,7 +1,8 @@
 // components/GeneralElectionResultChart.tsx
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
-import { ChartData, GeneralElectionDataset } from '@lib/types';
+import { GeneralElectionDataset } from '@/lib/hooks/useGeneralElectionData';
+import { ChartData } from '@lib/types';
 import { useMemo } from 'react';
 
 interface GeneralElectionResultChartProps {
@@ -60,7 +61,7 @@ export default function GeneralElectionResultChart({
 
 	const renderCompactBar = (data: ChartData | undefined, dataset: GeneralElectionDataset) => {
 		if (!data) {
-			return <div className="text-xs text-gray-400 pt-3 text-center">Hover over a constituency</div>;
+			return <div className="text-xs text-gray-400 pt-3 text-center">No data available</div>;
 		}
 
 		const parties = dataset.partyInfo;
@@ -135,7 +136,7 @@ export default function GeneralElectionResultChart({
 		isActive: boolean
 	) => {
 		if (!dataset) {
-			return null;
+			return <div className="text-xs text-gray-400 pt-3 text-center">No data available</div>;
 		}
 
 		const yearColors: Record<string, { bg: string; border: string }> = {
@@ -147,7 +148,7 @@ export default function GeneralElectionResultChart({
 		return (
 			<div
 				key={dataset.id}
-				className={`p-2 rounded transition-all cursor-pointer ${
+				className={`p-2 h-[95px] rounded transition-all cursor-pointer ${
 					isActive
 						? `${colors.bg} border-2 ${colors.border}`
 						: `bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300`
@@ -157,9 +158,6 @@ export default function GeneralElectionResultChart({
 				<div className="flex items-center justify-between mb-1.5">
 					<div>
 						<h3 className="text-xs font-bold">{year} General Election</h3>
-						{/* {constituencyName && (
-							<p className="text-[9px] text-gray-600 mt-0.5">{constituencyName}</p>
-						)} */}
 					</div>
 					<div className="flex items-center gap-1.5">
 						{turnout !== undefined && (
@@ -173,19 +171,6 @@ export default function GeneralElectionResultChart({
 			</div>
 		);
 	};
-
-	if (!dataset2024) {
-		console.log('No general election dataset found. Available datasets:', availableDatasets);
-		return (
-			<div className="space-y-2">
-				<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
-				<div className="text-xs text-gray-400 p-3 text-center bg-white/60 rounded">
-					No general election data loaded
-					{availableDatasets.length === 0 && ' (datasets array is empty)'}
-				</div>
-			</div>
-		);
-	}
 
 	return (
 		<div className="space-y-2">

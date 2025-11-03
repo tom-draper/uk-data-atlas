@@ -9,7 +9,7 @@ import { usePopulationData } from '@lib/hooks/usePopulationData';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
 import { useAggregatedChartData } from '@lib/hooks/useAggregatedChartData';
-import { useWardInteractionHandlers } from '@lib/hooks/useWardInteractionHandlers';
+import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
 import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
 
 import ControlPanel from '@components/ControlPanel';
@@ -84,16 +84,11 @@ export default function MapsPage() {
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
 
 	// Interaction handlers - need to handle both ward and constituency hovers
-	const { onWardHover, onLocationChange } = useWardInteractionHandlers({
+	const { onWardHover, onConstituencyHover, onLocationChange } = useInteractionHandlers({
 		setSelectedWard,
+		setSelectedConstituency,
 		setSelectedLocation,
 	});
-
-	// Custom constituency hover handler
-	const onConstituencyHover = useCallback((constituencyData: ConstituencyData | null) => {
-		console.log('Constituency hover:', constituencyData?.onsId, constituencyData?.constituencyName);
-		setSelectedConstituency(constituencyData);
-	}, []);
 
 	const mapManagerRef = useMapManager({
 		mapRef: map,
