@@ -51,6 +51,8 @@ export class MapManager {
         const firstFeature = geojson.features[0];
         if (!firstFeature) return [];
 
+        console.log('All properties:', firstFeature.properties);
+
         const hasConstituencyProps = 'PCON24CD' in firstFeature.properties || 'PCON25CD' in firstFeature.properties;
 
         if (!hasConstituencyProps) {
@@ -611,13 +613,14 @@ export class MapManager {
         this.callbacks.onLocationChange(locationStats, location);
     }
 
+
     /**
      * Calculate aggregated constituency stats for a location
      */
     calculateConstituencyStats(
         location: LocationBounds,
         geojson: BoundaryGeojson,
-        constituencyResults: Record<string, any>, // onsId -> { winner, votes: {...} }
+        constituencyData: Record<string, any>, // onsId -> { LAB, CON, LD, etc. }
         year: string = ''
     ): {
         totalSeats: number;
@@ -625,7 +628,7 @@ export class MapManager {
         totalVotes: number;
         partyVotes: Record<string, number>;
     } {
-        const cacheKey = `constituency-${location.name}-${year}`;
+        const cacheKey = `constituency-v2-${location.name}-${year}`;
         if (this.cache.has(cacheKey)) {
             console.log(`CACHE HIT: calculateConstituencyStats: [${cacheKey}]`);
             return this.cache.get(cacheKey);
@@ -643,31 +646,107 @@ export class MapManager {
             partyVotes: {} as Record<string, number>,
         };
 
+        // Party keys to aggregate (matching the data structure)
+        const partyKeys = ['LAB', 'CON', 'LD', 'GREEN', 'RUK', 'SNP', 'PC', 'DUP', 'SF', 'OTHER'];
+
         constituenciesInLocation.forEach((feature: any) => {
             const onsId = feature.properties[constituencyCodeProp];
-            const result = constituencyResults[onsId];
+            const data = constituencyData[onsId];
 
-            if (!result) return;
+            if (!data) {
+                console.log(`No data found for constituency code: ${onsId}`);
+                return;
+            }
 
             aggregated.totalSeats += 1;
 
+            // Find winning party by highest vote count
+            let winningParty = '';
+            let maxVotes = 0;
+            partyKeys.forEach(party => {
+                const votes = data[party] || 0;
+                if (votes > maxVotes) {
+                    maxVotes = votes;
+                    winningParty = party;
+                }
+            });
+
             // Count seat for winning party
-            const winningParty = result.winner;
-            aggregated.partySeats[winningParty] = (aggregated.partySeats[winningParty] || 0) + 1;
+            if (winningParty) {
+                aggregated.partySeats[winningParty] = (aggregated.partySeats[winningParty] || 0) + 1;
+            }
 
             // Aggregate votes
-            if (result.votes) {
-                Object.entries(result.votes).forEach(([party, votes]) => {
-                    const voteCount = votes as number;
-                    aggregated.totalVotes += voteCount;
-                    aggregated.partyVotes[party] = (aggregated.partyVotes[party] || 0) + voteCount;
-                });
-            }
+            partyKeys.forEach(party => {
+                const votes = data[party] || 0;
+                if (votes > 0) {
+                    aggregated.totalVotes += votes;
+                    aggregated.partyVotes[party] = (aggregated.partyVotes[party] || 0) + votes;
+                }
+            });
         });
 
         this.cache.set(cacheKey, aggregated);
         return aggregated;
     }
+
+    // /**
+    //  * Calculate aggregated constituency stats for a location
+    //  */
+    // calculateConstituencyStats(
+    //     location: LocationBounds,
+    //     geojson: BoundaryGeojson,
+    //     constituencyResults: Record<string, any>, // onsId -> { winner, votes: {...} }
+    //     year: string = ''
+    // ): {
+    //     totalSeats: number;
+    //     partySeats: Record<string, number>;
+    //     totalVotes: number;
+    //     partyVotes: Record<string, number>;
+    // } {
+    //     const cacheKey = `constituency-${location.name}-${year}`;
+    //     if (this.cache.has(cacheKey)) {
+    //         console.log(`CACHE HIT: calculateConstituencyStats: [${cacheKey}]`);
+    //         return this.cache.get(cacheKey);
+    //     }
+
+    //     const constituenciesInLocation = this.getConstituenciesInLocation(geojson, location);
+    //     const constituencyCodeProp = this.detectConstituencyCodeProperty(geojson);
+
+    //     console.log(`EXPENSIVE: calculateConstituencyStats: [${cacheKey}] Filtered ${constituenciesInLocation.length} constituencies`);
+
+    //     const aggregated = {
+    //         totalSeats: 0,
+    //         partySeats: {} as Record<string, number>,
+    //         totalVotes: 0,
+    //         partyVotes: {} as Record<string, number>,
+    //     };
+
+    //     constituenciesInLocation.forEach((feature: any) => {
+    //         const onsId = feature.properties[constituencyCodeProp];
+    //         const result = constituencyResults[onsId];
+
+    //         if (!result) return;
+
+    //         aggregated.totalSeats += 1;
+
+    //         // Count seat for winning party
+    //         const winningParty = result.winner;
+    //         aggregated.partySeats[winningParty] = (aggregated.partySeats[winningParty] || 0) + 1;
+
+    //         // Aggregate votes
+    //         if (result.votes) {
+    //             Object.entries(result.votes).forEach(([party, votes]) => {
+    //                 const voteCount = votes as number;
+    //                 aggregated.totalVotes += voteCount;
+    //                 aggregated.partyVotes[party] = (aggregated.partyVotes[party] || 0) + voteCount;
+    //             });
+    //         }
+    //     });
+
+    //     this.cache.set(cacheKey, aggregated);
+    //     return aggregated;
+    // }
 
     private removeExistingLayers() {
         if (this.map.getSource('location-wards')) {

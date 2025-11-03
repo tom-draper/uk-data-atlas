@@ -8,7 +8,7 @@ import { useGeneralElectionData } from '@/lib/hooks/useGeneralElectionData';
 import { usePopulationData } from '@lib/hooks/usePopulationData';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
-import { useAggregatedLocalElectionData, useAggregatedGeneralElectionData, useAggregatedElectionData } from '@lib/hooks/useAggregatedChartData';
+import { useAggregatedElectionData } from '@lib/hooks/useAggregatedChartData';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
 import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
 
@@ -18,7 +18,7 @@ import ChartPanel from '@components/ChartPanel';
 import ErrorDisplay from '@components/ErrorDisplay';
 
 import { LOCATIONS } from '@lib/data/locations';
-import type { AggregatedLocalElectionData, LocationBounds, WardData } from '@lib/types';
+import type { LocationBounds, WardData } from '@lib/types';
 import type { ConstituencyData } from '@/lib/hooks/useGeneralElectionData';
 import LoadingDisplay from '@/components/LoadingDisplay';
 

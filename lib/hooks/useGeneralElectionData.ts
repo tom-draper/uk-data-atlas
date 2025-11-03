@@ -158,6 +158,9 @@ export const useGeneralElectionData = () => {
 					return null;
 				});
 
+				console.log('Sample constituencyResults:', Object.entries(data2024.constituencyResults).slice(0, 2));
+				console.log('Sample constituencyData:', Object.entries(data2024.constituencyData).slice(0, 2));
+
 				const loadedDatasets = [data2024].filter(Boolean) as GeneralElectionDataset[];
 
 				console.log('Storing general election datasets:', loadedDatasets);

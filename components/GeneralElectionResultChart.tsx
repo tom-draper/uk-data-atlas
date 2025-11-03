@@ -10,7 +10,7 @@ interface GeneralElectionResultChartProps {
 	availableDatasets: GeneralElectionDataset[];
 	onDatasetChange: (datasetId: string) => void;
 	constituencyId?: string;
-	aggregatedConstituencyData: AggregateGeneralElectionData | null;
+	aggregatedData: AggregateGeneralElectionData | null;
 }
 
 export default function GeneralElectionResultChart({
@@ -18,23 +18,21 @@ export default function GeneralElectionResultChart({
 	availableDatasets,
 	onDatasetChange,
 	constituencyId,
-	aggregatedConstituencyData
+	aggregatedData
 }: GeneralElectionResultChartProps) {
-	
 	const dataset2024 = availableDatasets.find(d => d.id === 'general-2024');
 
-	const { chartData2024, turnout2024, constituencyName, isAggregated } = useMemo(() => {
+	const { chartData2024, turnout2024, isAggregated } = useMemo(() => {
 		if (!dataset2024) {
 			return { 
 				chartData2024: undefined, 
 				turnout2024: undefined, 
-				constituencyName: undefined,
 				isAggregated: false 
 			};
 		}
 
 		// If we have a specific constituency selected (hovering), use that constituency's data
-		if (constituencyId && constituencyId.trim() && dataset2024.constituencyData[constituencyId]) {
+		if (constituencyId && dataset2024.constituencyData[constituencyId]) {
 			const data = dataset2024.constituencyData[constituencyId];
 			
 			return {
@@ -51,28 +49,27 @@ export default function GeneralElectionResultChart({
 					IND: data.OTHER || 0,
 				},
 				turnout2024: data.turnoutPercent,
-				constituencyName: data.constituencyName,
 				isAggregated: false,
 			};
 		}
 
 		// No constituency selected - use aggregated data for the location
-		if (aggregatedConstituencyData) {
+		if (aggregatedData && aggregatedData.partyVotes) {
+			console.log('Using aggregated constituency data:', aggregatedData);
 			return {
-				chartData2024: aggregatedConstituencyData.partyVotes as ChartData,
+				chartData2024: aggregatedData.partyVotes as ChartData,
 				turnout2024: undefined, // Could calculate average turnout if needed
-				constituencyName: undefined,
 				isAggregated: true,
 			};
 		}
 
+		console.log('No aggregated data available:', { aggregatedData, constituencyId });
 		return { 
 			chartData2024: undefined, 
 			turnout2024: undefined, 
-			constituencyName: undefined,
 			isAggregated: false 
 		};
-	}, [constituencyId, dataset2024, aggregatedConstituencyData]);
+	}, [constituencyId, dataset2024, aggregatedData]);
 
 	const renderCompactBar = (
 		data: ChartData | undefined, 
@@ -136,13 +133,13 @@ export default function GeneralElectionResultChart({
 						))}
 				</div>
 				{/* Show seats breakdown if aggregated */}
-				{isAggregated && aggregatedConstituencyData && (
+				{isAggregated && aggregatedData && (
 					<div className="mt-2 pt-2 border-t border-gray-200">
 						<div className="text-[9px] font-medium text-gray-600 mb-1">
-							Seats won: {aggregatedConstituencyData.totalSeats}
+							Seats won: {aggregatedData.totalSeats}
 						</div>
 						<div className="grid grid-cols-3 gap-0.5 text-[9px]">
-							{Object.entries(aggregatedConstituencyData.partySeats)
+							{Object.entries(aggregatedData.partySeats)
 								.sort(([, a], [, b]) => (b as number) - (a as number))
 								.map(([partyKey, seats]) => (
 									<div key={partyKey} className="flex items-center gap-1">
@@ -167,7 +164,6 @@ export default function GeneralElectionResultChart({
 		data: ChartData | undefined,
 		dataset: GeneralElectionDataset | undefined,
 		turnout: number | undefined,
-		constituencyName: string | undefined,
 		isActive: boolean,
 		isAggregated: boolean
 	) => {
@@ -219,7 +215,6 @@ export default function GeneralElectionResultChart({
 				chartData2024,
 				dataset2024,
 				turnout2024,
-				constituencyName,
 				activeDataset.id === 'general-2024',
 				isAggregated
 			)}
