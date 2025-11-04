@@ -1,4 +1,5 @@
 // components/population/PopulationSummary.tsx
+import { GeneralElectionDataset } from "@/lib/hooks/useGeneralElectionData";
 import { Dataset } from "@/lib/types";
 
 interface PopulationSummaryProps {
@@ -6,12 +7,17 @@ interface PopulationSummaryProps {
 	males: number;
 	females: number;
 	onDatasetChange: (datasetId: string) => void;
-	activeDataset: Dataset
+	activeDataset: GeneralElectionDataset | Dataset
 }
 
 export default function PopulationSummary({ total, males, females, onDatasetChange, activeDataset }: PopulationSummaryProps) {
-	const isActive = activeDataset.type === 'population'; 
-	const colors = { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800' };
+	const isActive = activeDataset.type === 'population';
+	const colors = { 
+		bg: 'bg-emerald-50/60', 
+		border: 'border-emerald-300', 
+		badge: 'bg-emerald-300 text-emerald-900', 
+		text: 'bg-emerald-200 text-emerald-800' 
+	};
 	return (
 		<div
 			className={`p-2 h-[95px] rounded transition-all cursor-pointer ${isActive

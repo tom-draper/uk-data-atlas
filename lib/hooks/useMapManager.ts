@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { MapManager } from '@lib/utils/mapManager';
-import type { ChartData, LocationBounds, WardData } from '@lib/types';
+import type { ChartData, WardData } from '@lib/types';
 
 type UseMapManagerOptions = {
     mapRef: React.RefObject<mapboxgl.Map | null>;
     geojson: any | null;
     onWardHover?: (params: { data: WardData | null; wardCode: string }) => void;
     onConstituencyHover?: (data: any | null) => void;
-    onLocationChange?: (stats: ChartData | null, location: LocationBounds) => void;
+    onLocationChange?: (stats: ChartData | null, location: string) => void;
 };
 
 export function useMapManager(opts: UseMapManagerOptions) {

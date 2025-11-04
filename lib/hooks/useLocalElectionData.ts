@@ -123,7 +123,7 @@ const parseCouncil2023 = async (): Promise<Dataset & { unmappedWards?: any }> =>
                     resolve({
                         id: '2023',
                         type: 'election',
-                        name: 'Council Elections 2023',
+                        name: 'Local Elections 2023',
                         year: 2023,
                         wardResults: {},
                         wardData: {},
@@ -356,7 +356,7 @@ const map2023WardCodes = (data2023: Dataset & { unmappedWards?: any }, reference
 };
 
 export const useLocalElectionData = () => {
-    const [datasets, setDatasets] = useState<Dataset[]>([]);
+    const [datasets, setDatasets] = useState<Record<string, Dataset | null>>({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
 
@@ -390,7 +390,12 @@ export const useLocalElectionData = () => {
                 // Map 2023 using all available reference datasets
                 const data2023 = data2023Raw ? map2023WardCodes(data2023Raw, referenceSets) : null;
 
-                const loadedDatasets = [data2024, data2023, data2022, data2021].filter(Boolean) as Dataset[];
+                const loadedDatasets = {
+                    '2024': data2024,
+                    '2023': data2023,
+                    '2022': data2022,
+                    '2021': data2021,
+                }
 
                 console.log('Storing election datasets:', loadedDatasets);
                 setDatasets(loadedDatasets);

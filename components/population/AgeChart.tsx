@@ -2,13 +2,14 @@
 import { useMemo } from "react";
 import { AgeGroups, Dataset } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
+import { GeneralElectionDataset } from "@/lib/hooks/useGeneralElectionData";
 
 interface AgeChartProps {
+	activeDataset: GeneralElectionDataset | Dataset
 	ageData: { [age: string]: number };
 	total: number;
 	ageGroups: AgeGroups;
 	onDatasetChange: (datasetId: string) => void;
-	activeDataset: Dataset
 }
 
 export default function AgeChart({ ageData, total, ageGroups, onDatasetChange, activeDataset }: AgeChartProps) {

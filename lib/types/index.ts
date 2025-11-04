@@ -4,7 +4,6 @@ export interface WardData {
 }
 
 export interface LocationBounds {
-    name: string;
     lad_codes: string[];
     bounds: [number, number, number, number];
 }
@@ -192,12 +191,4 @@ export interface PopulationStats {
         females: AgeGroups;
     };
     isWardSpecific: boolean;
-}
-
-export interface PopulationChartProps {
-    population: PopulationWardData;
-    onDatasetChange: (datasetId: string) => void;
-    wardCode: string;
-    wardName: string;
-    wardCodeMap: { [name: string]: string };
 }

@@ -7,11 +7,10 @@ export interface GenderBalanceByAgeProps {
 	population: PopulationWardData;
 	wardCode: string;
 	wardName: string;
-	wardCodeMap: { [name: string]: string };
 }
 
-export default function GenderBalanceByAge({ population, wardCode, wardName, wardCodeMap }: GenderBalanceByAgeProps) {
-	const resolvedCode = resolveWardCode(wardCode, wardName, population, wardCodeMap);
+export default function GenderBalanceByAge({ population, wardCode, wardName }: GenderBalanceByAgeProps) {
+	const resolvedCode = resolveWardCode(wardCode, wardName, population, {});
 
 	// Collect raw male/female per age (0-90)
 	const ageData = useMemo(() => {
@@ -51,7 +50,7 @@ export default function GenderBalanceByAge({ population, wardCode, wardName, war
 		}
 
 		return data;
-	}, [population, wardCode, wardName, wardCodeMap, resolvedCode]);
+	}, [population, wardCode, wardName, resolvedCode]);
 
 	if (ageData.length === 0) {
 		return <div className="text-xs h-[111px] text-gray-400 text-center grid place-items-center">

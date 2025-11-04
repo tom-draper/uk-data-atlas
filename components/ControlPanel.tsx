@@ -7,7 +7,7 @@ import { memo } from 'react';
 
 interface ControlPanelProps {
     selectedLocation: string | null;
-    onLocationClick: (location: LocationBounds) => void;
+    onLocationClick: (location: string, bounds: LocationBounds) => void;
     population: PopulationWardData;
 }
 

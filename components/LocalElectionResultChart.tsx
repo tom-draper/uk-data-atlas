@@ -1,12 +1,13 @@
 // components/LocalElectionResultChart.tsx
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
+import { GeneralElectionDataset } from '@/lib/hooks/useGeneralElectionData';
 import { AggregatedLocalElectionData, ChartData, Dataset } from '@lib/types';
 import { useMemo } from 'react';
 
 interface LocalElectionResultChartProps {
-	activeDataset: Dataset;
-	availableDatasets: Dataset[];
+	activeDataset: GeneralElectionDataset | Dataset;
+	availableDatasets: Record<string, Dataset | null>;
 	onDatasetChange: (datasetId: string) => void;
 	wardCode: string;
 	aggregatedData: AggregatedLocalElectionData;
@@ -19,13 +20,6 @@ export default function LocalElectionResultChart({
 	wardCode,
 	aggregatedData,
 }: LocalElectionResultChartProps) {
-	const allYearsWardData = useMemo(() => ({
-		data2024: availableDatasets.find(d => d.id === '2024')?.wardData || {},
-		data2023: availableDatasets.find(d => d.id === '2023')?.wardData || {},
-		data2022: availableDatasets.find(d => d.id === '2022')?.wardData || {},
-		data2021: availableDatasets.find(d => d.id === '2021')?.wardData || {},
-	}), [availableDatasets]);
-
 	const { chartData2024, chartData2023, chartData2022, chartData2021, turnout2024, turnout2023, turnout2022, turnout2021 } = useMemo(() => {
 		const getChartData = (yearData: any, year: string): { chartData: ChartData | undefined; turnout: number | undefined } => {
 			// If we have a specific ward selected (hovering), use that ward's data
@@ -57,10 +51,10 @@ export default function LocalElectionResultChart({
 		};
 
 		// Calculate data for each year independently
-		const data2024 = getChartData(allYearsWardData?.data2024, '2024');
-		const data2023 = getChartData(allYearsWardData?.data2023, '2023');
-		const data2022 = getChartData(allYearsWardData?.data2022, '2022');
-		const data2021 = getChartData(allYearsWardData?.data2021, '2021');
+		const data2024 = getChartData(availableDatasets['2024'].wardData, '2024');
+		const data2023 = getChartData(availableDatasets['2023'].wardData, '2023');
+		const data2022 = getChartData(availableDatasets['2022'].wardData, '2022');
+		const data2021 = getChartData(availableDatasets['2021'].wardData, '2021');
 
 		return {
 			chartData2024: data2024.chartData,
@@ -72,12 +66,7 @@ export default function LocalElectionResultChart({
 			turnout2022: data2022.turnout,
 			turnout2021: data2021.turnout,
 		};
-	}, [wardCode, allYearsWardData, activeDataset, aggregatedData]);
-
-	const dataset2024 = availableDatasets.find(d => d.id === '2024');
-	const dataset2023 = availableDatasets.find(d => d.id === '2023');
-	const dataset2022 = availableDatasets.find(d => d.id === '2022');
-	const dataset2021 = availableDatasets.find(d => d.id === '2021');
+	}, [wardCode, activeDataset, aggregatedData]);
 
 	const renderCompactBar = (data: ChartData | undefined, dataset: Dataset) => {
 		if (!data) {
@@ -182,10 +171,10 @@ export default function LocalElectionResultChart({
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold text-gray-700 pt-2">Local Election Results</h3>
-			{renderYearBar('2024', chartData2024, dataset2024, turnout2024, activeDataset.id === '2024')}
-			{renderYearBar('2023', chartData2023, dataset2023, turnout2023, activeDataset.id === '2023')}
-			{renderYearBar('2022', chartData2022, dataset2022, turnout2022, activeDataset.id === '2022')}
-			{renderYearBar('2021', chartData2021, dataset2021, turnout2021, activeDataset.id === '2021')}
+			{renderYearBar('2024', chartData2024, availableDatasets['2024'], turnout2024, activeDataset.id === '2024')}
+			{renderYearBar('2023', chartData2023, availableDatasets['2023'], turnout2023, activeDataset.id === '2023')}
+			{renderYearBar('2022', chartData2022, availableDatasets['2022'], turnout2022, activeDataset.id === '2022')}
+			{renderYearBar('2021', chartData2021, availableDatasets['2021'], turnout2021, activeDataset.id === '2021')}
 		</div>
 	);
 };

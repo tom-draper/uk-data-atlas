@@ -2,18 +2,18 @@ import { useEffect, useState, useRef } from 'react';
 import { BoundaryGeojson } from '@lib/types';
 
 export type BoundaryType = 'ward' | 'constituency';
-type WardYear = '2024' | '2023' | '2022' | '2021';
-type ConstituencyYear = '2024';
+export type WardYear = 2024 | 2023 | 2022 | 2021;
+export type ConstituencyYear = 2024;
 
 const GEOJSON_PATHS = {
 	ward: {
-		'2024': '/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson',
-		'2023': '/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson',
-		'2022': '/data/boundaries/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson',
-		'2021': '/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson',
+		2024: '/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson',
+		2023: '/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson',
+		2022: '/data/boundaries/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson',
+		2021: '/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson',
 	},
 	constituency: {
-		'2024': '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson',
+		2024: '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson',
 	}
 } as const;
 
@@ -50,7 +50,7 @@ export function useBoundaryData(
 	const [error, setError] = useState<Error | null>(null);
 	const geojsonCache = useRef<Record<string, BoundaryGeojson>>({});
 
-	const fetchGeojson = async (type: BoundaryType, year: string) => {
+	const fetchGeojson = async (type: BoundaryType, year: number) => {
 		const cacheKey = `${type}-${year}`;
 		
 		// Return cached if available

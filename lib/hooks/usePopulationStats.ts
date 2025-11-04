@@ -7,14 +7,13 @@ export function usePopulationStats(
 	population: PopulationWardData,
 	wardCode: string,
 	wardName: string,
-	wardCodeMap: { [name: string]: string }
 ): PopulationStats | null {
 	return useMemo((): PopulationStats | null => {
 		if (!population || Object.keys(population).length === 0) return null;
 
 		// Ward-specific data
 		if (wardCode) {
-			const resolvedCode = resolveWardCode(wardCode, wardName, population, wardCodeMap);
+			const resolvedCode = resolveWardCode(wardCode, wardName, population, {});
 
 			if (resolvedCode && population[resolvedCode]) {
 				const wardData = population[resolvedCode];
@@ -67,20 +66,19 @@ export function usePopulationStats(
 			ageGroups: aggregatedAgeGroups,
 			isWardSpecific: false
 		};
-	}, [population, wardCode, wardName, wardCodeMap]);
+	}, [population, wardCode, wardName]);
 }
 
 export function useAgeData(
 	population: PopulationWardData,
 	wardCode: string,
 	wardName: string,
-	wardCodeMap: { [name: string]: string }
 ): { [age: string]: number } {
 	return useMemo(() => {
 		const data: { [age: string]: number } = {};
 
 		if (wardCode) {
-			const resolvedCode = resolveWardCode(wardCode, wardName, population, wardCodeMap);
+			const resolvedCode = resolveWardCode(wardCode, wardName, population, {});
 			if (resolvedCode && population[resolvedCode]) {
 				return population[resolvedCode].total;
 			}
@@ -93,5 +91,5 @@ export function useAgeData(
 		}
 
 		return data;
-	}, [population, wardCode, wardName, wardCodeMap]);
+	}, [population, wardCode, wardName]);
 }

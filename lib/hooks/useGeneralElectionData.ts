@@ -36,7 +36,6 @@ export interface ConstituencyData {
 }
 
 export interface GeneralElectionDataset {
-	id: string;
 	type: 'general-election';
 	name: string;
 	year: number;
@@ -129,7 +128,6 @@ const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 				}
 
 				resolve({
-					id: 'general-2024',
 					type: 'general-election',
 					name: 'General Election 2024',
 					year: 2024,
@@ -144,7 +142,7 @@ const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 };
 
 export const useGeneralElectionData = () => {
-	const [datasets, setDatasets] = useState<GeneralElectionDataset[]>([]);
+	const [datasets, setDatasets] = useState<Record<string, GeneralElectionDataset | null>>({});
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>('');
 
@@ -158,10 +156,12 @@ export const useGeneralElectionData = () => {
 					return null;
 				});
 
-				console.log('Sample constituencyResults:', Object.entries(data2024.constituencyResults).slice(0, 2));
-				console.log('Sample constituencyData:', Object.entries(data2024.constituencyData).slice(0, 2));
+				console.log('Sample constituencyResults:', Object.entries(data2024?.constituencyResults).slice(0, 2));
+				console.log('Sample constituencyData:', Object.entries(data2024?.constituencyData).slice(0, 2));
 
-				const loadedDatasets = [data2024].filter(Boolean) as GeneralElectionDataset[];
+				const loadedDatasets = {
+					'general-2024': data2024,
+				}
 
 				console.log('Storing general election datasets:', loadedDatasets);
 				setDatasets(loadedDatasets);

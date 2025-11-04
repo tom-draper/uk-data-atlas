@@ -4,7 +4,7 @@ import { memo, useEffect, useMemo, useState } from "react";
 
 interface LocationPanelProps {
     selectedLocation: string | null;
-    onLocationClick: (location: LocationBounds) => void;
+    onLocationClick: (location: string, bounds: LocationBounds) => void;
     population: PopulationWardData;
 }
 
@@ -74,16 +74,15 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
                     0
                 );
                 return {
-                    wardCode,
+                    name: wardData.wardName,
+                    wardCode: wardCode,
                     wardName: wardData.wardName,
                     laName: wardData.laName,
                     totalPopulation,
-                    isWard: true,
                     bounds: {
-                        name: wardData.wardName,
                         lad_codes: [wardData.laCode],
                         bounds: wardData.bounds || [-1, -1, -1, -1]
-                    } as LocationBounds,
+                    },
                 };
             })
             .filter(({ bounds }) => bounds.bounds[0] !== -1);
@@ -91,11 +90,11 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
 
     // Convert larger locations to the same format with calculated population
     const largerLocations = useMemo(() => {
-        return LOCATIONS.map(location => {
+        return Object.entries(LOCATIONS).map(([location, bounds]) => {
             // Calculate total population by summing all wards in the constituent LADs
             const totalPopulation = Object.values(populationWithBounds).reduce((sum: number, wardData: any) => {
                 // Check if this ward belongs to any of the LADs in this location
-                if (location.lad_codes.includes(wardData.laCode)) {
+                if (bounds.lad_codes.includes(wardData.laCode)) {
                     const wardPop = Object.values(wardData.total).reduce(
                         (wardSum: number, val: any) => wardSum + Number(val),
                         0
@@ -106,12 +105,12 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
             }, 0);
 
             return {
-                wardCode: location.name,
-                wardName: location.name,
+                name: location,
+                wardCode: '',
+                wardName: '',
                 laName: '',
                 totalPopulation,
-                isWard: false,
-                bounds: location,
+                bounds,
             };
         });
     }, [populationWithBounds]);
@@ -133,16 +132,16 @@ export default memo(function LocationPane({ selectedLocation, onLocationClick, p
 
             {/* Scrollable list */}
             <div className="overflow-y-auto scroll-container flex-1 px-1 py-1 pt-0.5">
-                {sortedLocations.map(({ wardCode, wardName, totalPopulation, bounds }) => (
+                {sortedLocations.map(({ name, wardCode, totalPopulation, bounds }) => (
                     <button
-                        key={wardCode}
-                        onClick={() => onLocationClick(bounds)}
-                        className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${selectedLocation === wardName
+                        key={name + wardCode}
+                        onClick={() => onLocationClick(name, bounds)}
+                        className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${selectedLocation === name
                             ? 'bg-white/60 text-gray-800'
                             : 'hover:bg-white/40 text-gray-600 hover:text-gray-800'
                             }`}
                     >
-                        <span className="font-normal truncate mr-2">{wardName}</span>
+                        <span className="font-normal truncate mr-2">{name}</span>
                         <span className="text-gray-500 text-xs tabular-nums shrink-0">{totalPopulation.toLocaleString()}</span>
                     </button>
                 ))}

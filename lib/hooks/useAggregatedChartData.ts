@@ -1,16 +1,16 @@
 // lib/hooks/useAggregatedElectionData.ts
 import { RefObject, useMemo } from 'react';
-import type { AggregatedLocalElectionData, AggregateGeneralElectionData } from '@lib/types';
+import type { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset } from '@lib/types';
 import { MapManager } from '../utils/mapManager';
 import { LOCATIONS } from '../data/locations';
+import { GeneralElectionDataset } from './useGeneralElectionData';
 
 interface UseAggregatedElectionDataParams {
 	mapManagerRef: RefObject<MapManager | null>;
 	geojson: any;
-	localElectionDatasets: any[];
-	generalElectionDatasets: any[];
 	selectedLocation: string | null;
-	isGeneralElectionMode: boolean;
+	localElectionDatasets: Record<string, Dataset | null>;
+	generalElectionDatasets: Record<string, GeneralElectionDataset | null>;
 }
 
 /**
@@ -20,12 +20,11 @@ interface UseAggregatedElectionDataParams {
 export function useAggregatedElectionData({
 	mapManagerRef,
 	geojson,
+	selectedLocation,
 	localElectionDatasets,
 	generalElectionDatasets,
-	selectedLocation,
-	isGeneralElectionMode,
 }: UseAggregatedElectionDataParams) {
-	const YEARS = ['2024', '2023', '2022', '2021'] as const;
+	const LOCAL_ELECTION_IDS = ['2024', '2023', '2022', '2021'] as const;
 
 	/**
 	 * Memoized aggregated local election data across all years.
@@ -37,17 +36,12 @@ export function useAggregatedElectionData({
 			return { data2024: null, data2023: null, data2022: null, data2021: null };
 		}
 
-		const location = LOCATIONS.find(loc => loc.name === selectedLocation);
-		if (!location) {
-			return { data2024: null, data2023: null, data2022: null, data2021: null };
-		}
-
 		const result: Partial<AggregatedLocalElectionData> = {};
 		
-		for (const year of YEARS) {
-			const dataset = localElectionDatasets.find(d => d.id === year);
+		for (const year of LOCAL_ELECTION_IDS) {
+			const dataset = localElectionDatasets[year];
 			result[`data${year}` as keyof AggregatedLocalElectionData] = dataset?.wardData
-				? mapManagerRef.current.calculateLocationStats(location, geojson, dataset.wardData, year)
+				? mapManagerRef.current.calculateLocalElectionLocationStats(selectedLocation, geojson, dataset.wardData, year)
 				: null;
 		}
 
@@ -60,19 +54,16 @@ export function useAggregatedElectionData({
 	 */
 	const aggregatedGeneralElectionData = useMemo((): AggregateGeneralElectionData | null => {
 		// Early returns for missing dependencies or wrong mode
-		if (!isGeneralElectionMode || !geojson || !mapManagerRef.current || !selectedLocation) {
+		if (!mapManagerRef.current || !geojson || !selectedLocation) {
 			return null;
 		}
 
-		const location = LOCATIONS.find(loc => loc.name === selectedLocation);
-		if (!location) return null;
-
-		const dataset = generalElectionDatasets.find(d => d.id === 'general-2024');
+		const dataset = generalElectionDatasets['general-2024'];
 		if (!dataset) return null;
 
 		// Calculate constituency stats using MapManager
 		const stats = mapManagerRef.current.calculateConstituencyStats(
-			location,
+			selectedLocation,
 			geojson,
 			dataset.constituencyResults,
 			'general-2024'
@@ -82,7 +73,7 @@ export function useAggregatedElectionData({
 			...stats,
 			partyInfo: dataset.partyInfo || {},
 		};
-	}, [isGeneralElectionMode, geojson, mapManagerRef, selectedLocation, generalElectionDatasets]);
+	}, [geojson, mapManagerRef, selectedLocation, generalElectionDatasets]);
 
 	return {
 		aggregatedLocalElectionData,

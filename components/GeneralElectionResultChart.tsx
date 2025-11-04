@@ -7,9 +7,9 @@ import { useMemo } from 'react';
 
 interface GeneralElectionResultChartProps {
 	activeDataset: any;
-	availableDatasets: GeneralElectionDataset[];
+	availableDatasets: Record<string, GeneralElectionDataset | null>;
 	onDatasetChange: (datasetId: string) => void;
-	constituencyId?: string;
+	constituencyCode?: string;
 	aggregatedData: AggregateGeneralElectionData | null;
 }
 
@@ -17,10 +17,10 @@ export default function GeneralElectionResultChart({
 	activeDataset,
 	availableDatasets,
 	onDatasetChange,
-	constituencyId,
+	constituencyCode: constituencyId,
 	aggregatedData
 }: GeneralElectionResultChartProps) {
-	const dataset2024 = availableDatasets.find(d => d.id === 'general-2024');
+	const dataset2024 = availableDatasets['general-2024'];
 
 	const { chartData2024, turnout2024, isAggregated } = useMemo(() => {
 		if (!dataset2024) {

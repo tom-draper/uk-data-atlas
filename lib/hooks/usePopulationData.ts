@@ -14,7 +14,7 @@ interface CategoryPopulationWardData {
 }
 
 export const usePopulationData = () => {
-	const [datasets, setDatasets] = useState<Dataset[]>([]);
+	const [datasets, setDatasets] = useState<Record<string, Dataset>>({});
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>('');
 
@@ -143,21 +143,22 @@ export const usePopulationData = () => {
 					};
 				});
 
-				const populationDatasetsArray: Dataset[] = [
-					{
-						id: 'pop-persons',
-						name: 'Population (Total) 2020',
-						year: 2020,
-						type: 'population',
-						populationData: combinedData,
-						partyInfo: [
-							{ key: 'TOTAL', name: 'Total Population', color: '#3b82f6' }
-						],
-					},
-				];
-				console.log('Storing population datasets:', populationDatasetsArray);
-				setDatasets(populationDatasetsArray);
+				const population2020: Dataset = {
+					name: 'Population 2020',
+					year: 2020,
+					type: 'population',
+					populationData: combinedData,
+					partyInfo: [
+						{ key: 'TOTAL', name: 'Total Population', color: '#3b82f6' }
+					],
+				};
 
+				const loadedDatasets: Record<string, Dataset> = {
+					'population': population2020,
+				};
+
+				console.log('Storing population datasets:', loadedDatasets);
+				setDatasets(loadedDatasets);
 				setLoading(false);
 			} catch (err) {
 				console.error('Population data loading error:', err);
@@ -171,5 +172,5 @@ export const usePopulationData = () => {
 		loadPopulationData();
 	}, []);
 
-	return { datasets: datasets, loading, error };
+	return { datasets, loading, error };
 };

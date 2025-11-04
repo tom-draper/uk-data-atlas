@@ -1,7 +1,7 @@
 // components/ChartPanel.tsx
 'use client';
 import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, PopulationWardData, WardData } from '@lib/types';
-import { ConstituencyData } from '@/lib/hooks/useGeneralElectionData';
+import { ConstituencyData, GeneralElectionDataset } from '@/lib/hooks/useGeneralElectionData';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
@@ -11,28 +11,26 @@ interface ChartPanelProps {
 	selectedLocation: string | null;
 	selectedWard: WardData | null;
 	selectedConstituency: ConstituencyData | null;
-	population: PopulationWardData;
-	activeDataset: Dataset;
-	localElectionDatasets: Dataset[];
-	generalElectionDatasets: any[];
+	activeDataset: GeneralElectionDataset | Dataset;
+	localElectionDatasets: Record<string, Dataset | null>;
+	generalElectionDatasets: Record<string, GeneralElectionDataset | null>;
+	populationDatasets: Record<string, Dataset>;
 	onDatasetChange: (datasetId: string) => void;
 	aggregatedLocalElectionData: AggregatedLocalElectionData;
 	aggregatedGeneralElectionData: AggregateGeneralElectionData | null;
-	wardCodeMap: { [name: string]: string };
 }
 
 export default memo(function ChartPanel({
 	selectedLocation,
 	selectedWard,
 	selectedConstituency,
-	population,
 	activeDataset,
 	localElectionDatasets,
 	generalElectionDatasets,
+	populationDatasets,
 	onDatasetChange,
 	aggregatedLocalElectionData,
 	aggregatedGeneralElectionData,
-	wardCodeMap
 }: ChartPanelProps) {
 	// Determine what to show in the title
 	let title = selectedLocation || 'Greater Manchester';
@@ -59,7 +57,7 @@ export default memo(function ChartPanel({
 						{code ? (
 							<div className="flex justify-between">
 								<span>{subtitle}</span>
-								<span className="font-mono text-[10px]">{code}</span>
+								<span>{code}</span>
 							</div>
 						) : (
 							subtitle
@@ -72,26 +70,25 @@ export default memo(function ChartPanel({
 					<GeneralElectionResultChart
 						activeDataset={activeDataset}
 						availableDatasets={generalElectionDatasets}
-						onDatasetChange={onDatasetChange}
-						constituencyId={selectedConstituency?.onsId}
 						aggregatedData={aggregatedGeneralElectionData}
+						onDatasetChange={onDatasetChange}
+						constituencyCode={selectedConstituency?.onsId}
 					/>
 					
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
 						availableDatasets={localElectionDatasets}
+						aggregatedData={aggregatedLocalElectionData}
 						onDatasetChange={onDatasetChange}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
-						aggregatedData={aggregatedLocalElectionData}
 					/>
 					
 					<PopulationChart
-						population={population}
+						activeDataset={activeDataset}
+						availableDatasets={populationDatasets}
+						onDatasetChange={onDatasetChange}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
 						wardName={selectedWard?.wardName?.toString() || ''}
-						wardCodeMap={wardCodeMap}
-						onDatasetChange={onDatasetChange}
-						activeDataset={activeDataset}
 					/>
 				</div>
 

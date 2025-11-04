@@ -3,21 +3,23 @@ import { useMemo } from "react";
 import { Dataset, PopulationWardData } from "@/lib/types";
 import { resolveWardCode } from "@/lib/utils/populationHelpers";
 import GenderBalanceByAge from "./GenderBalanceByAge";
+import { GeneralElectionDataset } from "@/lib/hooks/useGeneralElectionData";
+
 interface GenderChartProps {
 	population: PopulationWardData;
 	wardCode: string;
 	wardName: string;
-	wardCodeMap: { [name: string]: string };
 	onDatasetChange: (datasetId: string) => void;
-	activeDataset: Dataset
+	activeDataset: GeneralElectionDataset | Dataset
 }
-export default function GenderChart({ population, wardCode, wardName, wardCodeMap, onDatasetChange, activeDataset }: GenderChartProps) {
+
+export default function GenderChart({ population, wardCode, wardName, onDatasetChange, activeDataset }: GenderChartProps) {
 	const isActive = activeDataset.type === 'population';
 	const colors = { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800' };
 	
 	// Calculate total males and females
 	const { totalMales, totalFemales } = useMemo(() => {
-		const resolvedCode = resolveWardCode(wardCode, wardName, population, wardCodeMap);
+		const resolvedCode = resolveWardCode(wardCode, wardName, population, {});
 		let males = 0;
 		let females = 0;
 
@@ -34,7 +36,7 @@ export default function GenderChart({ population, wardCode, wardName, wardCodeMa
 		}
 
 		return { totalMales: males, totalFemales: females };
-	}, [population, wardCode, wardName, wardCodeMap]);
+	}, [population, wardCode, wardName]);
 
 	return (
 		<div
@@ -54,7 +56,6 @@ export default function GenderChart({ population, wardCode, wardName, wardCodeMa
 				population={population}
 				wardCode={wardCode}
 				wardName={wardName}
-				wardCodeMap={wardCodeMap}
 			/>
 		</div>
 	);

@@ -60,9 +60,9 @@ export function useInteractionHandlers({
 	);
 
 	const onLocationChange = useCallback(
-		(_stats: unknown, location: { name: string }) => {
+		(_stats: unknown, location: string) => {
 			setSelectedWard(null);
-			setSelectedLocation(location.name);
+			setSelectedLocation(location);
 
 			// Reset last hovered refs since location changed
 			lastHoveredWardRef.current = null;
