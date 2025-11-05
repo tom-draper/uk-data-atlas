@@ -2,8 +2,6 @@ import { useEffect, useState, useRef } from 'react';
 import { BoundaryGeojson } from '@lib/types';
 import { LOCATIONS } from '@lib/data/locations';
 
-export type BoundaryType = 'ward' | 'constituency';
-
 const GEOJSON_PATHS = {
 	ward: {
 		2024: '/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson',
@@ -16,20 +14,26 @@ const GEOJSON_PATHS = {
 	}
 } as const;
 
-const WARD_CODE_KEYS = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'];
-const LAD_CODE_KEYS = ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'];
+export type BoundaryType = keyof typeof GEOJSON_PATHS;
 
-type BoundaryData = {
-	ward: {
-		2024: BoundaryGeojson | null;
-		2023: BoundaryGeojson | null;
-		2022: BoundaryGeojson | null;
-		2021: BoundaryGeojson | null;
-	};
-	constituency: {
-		2024: BoundaryGeojson | null;
-	};
+export type WardYear = keyof typeof GEOJSON_PATHS['ward'] & number;
+export type ConstituencyYear = keyof typeof GEOJSON_PATHS['constituency'] & number;
+
+export type BoundaryYears<T extends BoundaryType> = keyof typeof GEOJSON_PATHS[T] & number;
+
+type BoundaryYearMap<T extends BoundaryType> = {
+	[Y in BoundaryYears<T>]: BoundaryGeojson | null;
 };
+
+export type BoundaryData = {
+	[T in BoundaryType]: BoundaryYearMap<T>;
+};
+
+export const WARD_CODE_KEYS = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'] as const;
+export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
+
+export const LAD_CODE_KEYS = ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'] as const;
+export type LadCodeKey = (typeof LAD_CODE_KEYS)[number];
 
 /**
  * Loads all boundary GeoJSON files and returns them filtered by location.
