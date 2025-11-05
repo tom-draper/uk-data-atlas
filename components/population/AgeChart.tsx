@@ -9,10 +9,10 @@ interface AgeChartProps {
 	ageData: { [age: string]: number };
 	total: number;
 	ageGroups: AgeGroups;
-	onDatasetChange: (datasetId: string) => void;
+	setActiveDatasetId: (datasetId: string) => void;
 }
 
-export default function AgeChart({ ageData, total, ageGroups, onDatasetChange, activeDataset }: AgeChartProps) {
+export default function AgeChart({ ageData, total, ageGroups, setActiveDatasetId, activeDataset }: AgeChartProps) {
 	const isActive = activeDataset.type === 'population'; 
 	const colors = { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800' };
 	
@@ -53,7 +53,7 @@ export default function AgeChart({ ageData, total, ageGroups, onDatasetChange, a
 				? `${colors.bg} border-2 ${colors.border}`
 				: `bg-white/60 border-2 border-gray-200/80 hover:${colors.border.replace('border-', 'hover:border-')}`
 				}`}
-			onClick={() => onDatasetChange('population')}
+			onClick={() => setActiveDatasetId('population')}
 		>
 			<div className="flex items-center justify-between mb-2">
 				<h3 className="text-xs font-bold">Age Distribution (2020)</h3>

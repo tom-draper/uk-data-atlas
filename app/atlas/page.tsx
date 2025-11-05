@@ -41,7 +41,7 @@ export default function MapsPage() {
 	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
 	const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
 
-	// Data loading - all hooks now return datasetsById
+	// Data loading
 	const generalElectionData = useGeneralElectionDatasets();
 	const localElectionData = useLocalElectionDatasets();
 	const populationData = usePopulationDatasets();
@@ -67,16 +67,17 @@ export default function MapsPage() {
 		setSelectedLocation,
 	});
 
-	// Map manager
+	// Map manager - simplified callbacks
 	const mapManagerRef = useMapManager({
 		mapRef: map,
 		geojson,
+		// Only provide the callback that's relevant for the current mode
 		onWardHover: DATASET_IDS.GENERAL_ELECTION.has(activeDatasetId) ? undefined : onWardHover,
 		onConstituencyHover: DATASET_IDS.GENERAL_ELECTION.has(activeDatasetId) ? onConstituencyHover : undefined,
 		onLocationChange,
 	});
 
-	// Aggregated data
+	// Aggregated data (this might now be redundant for some use cases)
 	const { aggregatedLocalElectionData, aggregatedGeneralElectionData } = useAggregatedElectionData({
 		mapManagerRef,
 		geojson,
@@ -89,39 +90,40 @@ export default function MapsPage() {
 	const isInitialized = useRef(false);
 	const lastRenderedDatasetId = useRef<string | null>(null);
 
-	// Map update function
+	// Simplified map update function - stats are now calculated internally
 	const updateMap = useCallback(
 		(location: string) => {
 			if (!mapManagerRef.current || !geojson || !activeDataset) return;
 
+			const locationData = LOCATIONS[location];
+			if (!locationData) return;
+
 			if (DATASET_IDS.POPULATION.has(activeDatasetId)) {
-				mapManagerRef.current.updateMapForPopulationLocation(
+				// Population mode
+				mapManagerRef.current.updateMapForPopulation(
 					location, 
 					geojson, 
 					activeDataset.populationData
 				);
 			} else if (DATASET_IDS.GENERAL_ELECTION.has(activeDatasetId)) {
-				mapManagerRef.current.updateMapForGeneralElectionLocation(
+				// General election mode
+				mapManagerRef.current.updateMapForGeneralElection(
 					location,
 					geojson,
 					activeDataset.constituencyResults,
 					activeDataset.constituencyData,
-					activeDataset.partyInfo
+					activeDataset.partyInfo,
+					activeDatasetId // Pass year for caching
 				);
 			} else {
-				const stats = mapManagerRef.current.calculateLocalElectionLocationStats(
-					location,
-					geojson,
-					activeDataset.wardData,
-					activeDatasetId
-				);
-				mapManagerRef.current.updateMapForLocalElectionLocation(
+				// Local election mode
+				mapManagerRef.current.updateMapForLocalElection(
 					location,
 					geojson,
 					activeDataset.wardResults,
 					activeDataset.wardData,
-					stats,
-					activeDataset.partyInfo
+					activeDataset.partyInfo,
+					activeDatasetId // Pass year for caching
 				);
 			}
 		},
@@ -157,16 +159,19 @@ export default function MapsPage() {
 		lastRenderedDatasetId.current = activeDatasetId;
 	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, selectedLocation, updateMap]);
 
-	// Event handlers
+	// Location click handler
 	const handleLocationClick = useCallback(
 		(location: string) => {
 			if (!mapManagerRef.current || !geojson || !activeDataset) return;
+
+			const locationData = LOCATIONS[location];
+			if (!locationData) return;
 
 			setSelectedLocation(location);
 
 			requestAnimationFrame(() => {
 				updateMap(location);
-				map.current?.fitBounds(LOCATIONS[location].bounds, {
+				map.current?.fitBounds(locationData.bounds, {
 					padding: MAP_CONFIG.fitBoundsPadding,
 					duration: MAP_CONFIG.fitBoundsDuration,
 				});
@@ -174,8 +179,6 @@ export default function MapsPage() {
 		},
 		[geojson, activeDataset, updateMap, map, mapManagerRef]
 	);
-
-	const handleDatasetChange = useCallback((id: string) => setActiveDatasetId(id), []);
 
 	// Loading and error states
 	const isLoading = localElectionData.loading || generalElectionData.loading || populationData.loading;
@@ -208,7 +211,7 @@ export default function MapsPage() {
 						localElectionDatasets={localElectionData.datasets}
 						generalElectionDatasets={generalElectionData.datasets}
 						populationDatasets={populationData.datasets}
-						onDatasetChange={handleDatasetChange}
+						setActiveDatasetId={setActiveDatasetId}
 						aggregatedLocalElectionData={aggregatedLocalElectionData}
 						aggregatedGeneralElectionData={aggregatedGeneralElectionData}
 					/>

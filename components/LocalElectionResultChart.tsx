@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 interface LocalElectionResultChartProps {
 	activeDataset: GeneralElectionDataset | Dataset;
 	availableDatasets: Record<string, Dataset | null>;
-	onDatasetChange: (datasetId: string) => void;
+	setActiveDatasetId: (datasetId: string) => void;
 	wardCode: string;
 	aggregatedData: AggregatedLocalElectionData;
 }
@@ -16,7 +16,7 @@ interface LocalElectionResultChartProps {
 export default function LocalElectionResultChart({
 	activeDataset,
 	availableDatasets,
-	onDatasetChange,
+	setActiveDatasetId,
 	wardCode,
 	aggregatedData,
 }: LocalElectionResultChartProps) {
@@ -151,7 +151,7 @@ export default function LocalElectionResultChart({
 					? `${colors.bg} border-2 ${colors.border}`
 					: `bg-white/60 border-2 border-gray-200/80 hover:${colors.border.replace('border-', 'hover:border-')}`
 					}`}
-				onClick={() => onDatasetChange(year)}
+				onClick={() => setActiveDatasetId(year)}
 			>
 				<div className="flex items-center justify-between mb-1.5">
 					<h3 className="text-xs font-bold">{year} Local Elections</h3>

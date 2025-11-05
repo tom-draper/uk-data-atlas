@@ -15,7 +15,12 @@ interface GenderChartProps {
 
 export default function GenderChart({ population, wardCode, wardName, onDatasetChange, activeDataset }: GenderChartProps) {
 	const isActive = activeDataset.type === 'population';
-	const colors = { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800' };
+	const colors = { 
+		bg: 'bg-emerald-50/60', 
+		border: 'border-emerald-300', 
+		badge: 'bg-emerald-300 text-emerald-900', 
+		text: 'bg-emerald-200 text-emerald-800' 
+	};
 	
 	// Calculate total males and females
 	const { totalMales, totalFemales } = useMemo(() => {

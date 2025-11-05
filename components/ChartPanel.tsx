@@ -15,7 +15,7 @@ interface ChartPanelProps {
 	localElectionDatasets: Record<string, Dataset | null>;
 	generalElectionDatasets: Record<string, GeneralElectionDataset | null>;
 	populationDatasets: Record<string, Dataset>;
-	onDatasetChange: (datasetId: string) => void;
+	setActiveDatasetId: (datasetId: string) => void;
 	aggregatedLocalElectionData: AggregatedLocalElectionData;
 	aggregatedGeneralElectionData: AggregateGeneralElectionData | null;
 }
@@ -28,7 +28,7 @@ export default memo(function ChartPanel({
 	localElectionDatasets,
 	generalElectionDatasets,
 	populationDatasets,
-	onDatasetChange,
+	setActiveDatasetId,
 	aggregatedLocalElectionData,
 	aggregatedGeneralElectionData,
 }: ChartPanelProps) {
@@ -71,7 +71,7 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={generalElectionDatasets}
 						aggregatedData={aggregatedGeneralElectionData}
-						onDatasetChange={onDatasetChange}
+						setActiveDatasetId={setActiveDatasetId}
 						constituencyCode={selectedConstituency?.onsId}
 					/>
 					
@@ -79,14 +79,14 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={localElectionDatasets}
 						aggregatedData={aggregatedLocalElectionData}
-						onDatasetChange={onDatasetChange}
+						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
 					/>
 					
 					<PopulationChart
 						activeDataset={activeDataset}
 						availableDatasets={populationDatasets}
-						onDatasetChange={onDatasetChange}
+						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
 						wardName={selectedWard?.wardName?.toString() || ''}
 					/>

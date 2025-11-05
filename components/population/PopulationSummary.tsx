@@ -3,14 +3,14 @@ import { GeneralElectionDataset } from "@/lib/hooks/useGeneralElectionData";
 import { Dataset } from "@/lib/types";
 
 interface PopulationSummaryProps {
+	activeDataset: GeneralElectionDataset | Dataset
 	total: number;
 	males: number;
 	females: number;
-	onDatasetChange: (datasetId: string) => void;
-	activeDataset: GeneralElectionDataset | Dataset
+	setActiveDatasetId: (datasetId: string) => void;
 }
 
-export default function PopulationSummary({ total, males, females, onDatasetChange, activeDataset }: PopulationSummaryProps) {
+export default function PopulationSummary({ total, males, females, setActiveDatasetId, activeDataset }: PopulationSummaryProps) {
 	const isActive = activeDataset.type === 'population';
 	const colors = { 
 		bg: 'bg-emerald-50/60', 
@@ -24,7 +24,7 @@ export default function PopulationSummary({ total, males, females, onDatasetChan
 				? `${colors.bg} border-2 ${colors.border}`
 				: `bg-white/60 border-2 border-gray-200/80 hover:${colors.border.replace('border-', 'hover:border-')}`
 				}`}
-			onClick={() => onDatasetChange('population')}
+			onClick={() => setActiveDatasetId('population')}
 		>
 			<div className="flex items-center justify-between mb-5">
 				<h3 className="text-xs font-bold">Population (2020)</h3>

@@ -12,7 +12,7 @@ export interface PopulationChartProps {
 	availableDatasets: Record<string, Dataset>;
 	wardCode: string;
 	wardName: string;
-	onDatasetChange: (datasetId: string) => void;
+	setActiveDatasetId: (datasetId: string) => void;
 }
 
 export default function PopulationChart({
@@ -20,7 +20,7 @@ export default function PopulationChart({
 	availableDatasets,
 	wardCode,
 	wardName,
-	onDatasetChange
+	setActiveDatasetId
 }: PopulationChartProps) {
 	const population = availableDatasets['population']?.populationData || {};
 	const populationStats = usePopulationStats(population, wardCode, wardName);
@@ -35,26 +35,26 @@ export default function PopulationChart({
 		<div className="pt-2.5 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold text-gray-700 mb-2">Demographics</h3>
 			<div className="space-y-3">
-				<PopulationSummary 
+				<PopulationSummary
 					activeDataset={activeDataset}
-					total={total} 
-					males={males} 
-					females={females} 
-					onDatasetChange={onDatasetChange} 
+					total={total}
+					males={males}
+					females={females}
+					setActiveDatasetId={setActiveDatasetId}
 				/>
-				<AgeChart 
+				<AgeChart
 					activeDataset={activeDataset}
-					ageData={ageData} 
-					total={total} 
-					ageGroups={ageGroups.total} 
-					onDatasetChange={onDatasetChange} 
+					ageData={ageData}
+					total={total}
+					ageGroups={ageGroups.total}
+					setActiveDatasetId={setActiveDatasetId}
 				/>
-				<GenderChart 
+				<GenderChart
 					activeDataset={activeDataset}
-					population={population} 
-					wardCode={wardCode} 
-					wardName={wardName} 
-					onDatasetChange={onDatasetChange} 
+					population={population}
+					wardCode={wardCode}
+					wardName={wardName}
+					setActiveDatasetId={setActiveDatasetId}
 				/>
 			</div>
 		</div>

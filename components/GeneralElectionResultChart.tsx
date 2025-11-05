@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 interface GeneralElectionResultChartProps {
 	activeDataset: any;
 	availableDatasets: Record<string, GeneralElectionDataset | null>;
-	onDatasetChange: (datasetId: string) => void;
+	setActiveDatasetId: (datasetId: string) => void;
 	constituencyCode?: string;
 	aggregatedData: AggregateGeneralElectionData | null;
 }
@@ -16,25 +16,25 @@ interface GeneralElectionResultChartProps {
 export default function GeneralElectionResultChart({
 	activeDataset,
 	availableDatasets,
-	onDatasetChange,
-	constituencyCode: constituencyId,
+	setActiveDatasetId,
+	constituencyCode,
 	aggregatedData
 }: GeneralElectionResultChartProps) {
 	const dataset2024 = availableDatasets['general-2024'];
 
 	const { chartData2024, turnout2024, isAggregated } = useMemo(() => {
 		if (!dataset2024) {
-			return { 
-				chartData2024: undefined, 
-				turnout2024: undefined, 
-				isAggregated: false 
+			return {
+				chartData2024: undefined,
+				turnout2024: undefined,
+				isAggregated: false
 			};
 		}
 
 		// If we have a specific constituency selected (hovering), use that constituency's data
-		if (constituencyId && dataset2024.constituencyData[constituencyId]) {
-			const data = dataset2024.constituencyData[constituencyId];
-			
+		if (constituencyCode && dataset2024.constituencyData[constituencyCode]) {
+			const data = dataset2024.constituencyData[constituencyCode];
+
 			return {
 				chartData2024: {
 					LAB: data.LAB || 0,
@@ -63,16 +63,16 @@ export default function GeneralElectionResultChart({
 			};
 		}
 
-		console.log('No aggregated data available:', { aggregatedData, constituencyId });
-		return { 
-			chartData2024: undefined, 
-			turnout2024: undefined, 
-			isAggregated: false 
+		console.log('No aggregated data available:', { aggregatedData, constituencyCode });
+		return {
+			chartData2024: undefined,
+			turnout2024: undefined,
+			isAggregated: false
 		};
-	}, [constituencyId, dataset2024, aggregatedData]);
+	}, [constituencyCode, dataset2024, aggregatedData]);
 
 	const renderCompactBar = (
-		data: ChartData | undefined, 
+		data: ChartData | undefined,
 		dataset: GeneralElectionDataset,
 		isAggregated: boolean
 	) => {
@@ -94,9 +94,9 @@ export default function GeneralElectionResultChart({
 					{parties.map(party => {
 						const votes = data[party.key] || 0;
 						const percentage = totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
-						
+
 						if (percentage === 0) return null;
-						
+
 						return (
 							<div
 								key={party.key}
@@ -179,13 +179,12 @@ export default function GeneralElectionResultChart({
 
 		return (
 			<div
-				key={dataset.id}
-				className={`p-2 ${isAggregated ? 'h-[140px]' : 'h-[95px]'} rounded transition-all cursor-pointer ${
-					isActive
+				key={'general-' + year}
+				className={`p-2 ${isAggregated ? 'h-[140px]' : 'h-[95px]'} rounded transition-all cursor-pointer ${isActive
 						? `${colors.bg} border-2 ${colors.border}`
 						: `bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300`
-				}`}
-				onClick={() => onDatasetChange(dataset.id)}
+					}`}
+				onClick={() => setActiveDatasetId('general-' + year)}
 			>
 				<div className="flex items-center justify-between mb-1.5">
 					<div>
