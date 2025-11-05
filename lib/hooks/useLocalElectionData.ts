@@ -1,7 +1,7 @@
 // lib/hooks/useElectionData.ts
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import { WardData, Dataset, LocalElectionDataset } from '@lib/types/index';
+import { WardData, LocalElectionDataset } from '@lib/types/index';
 import { PARTY_INFO } from '../data/parties';
 
 // Common party abbreviations to look for
@@ -53,6 +53,7 @@ const findWinner = (partyVotes: Record<string, number>): string => {
 };
 
 const parseLocalElection2024 = async (): Promise<LocalElectionDataset> => {
+	console.log('Loading local election 2024 data...');
     const res = await fetch('/data/elections/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv');
     const csvText = await res.text();
     const lines = csvText.split('\n');
@@ -109,6 +110,7 @@ const parseLocalElection2024 = async (): Promise<LocalElectionDataset> => {
 };
 
 const parseLocalElection2023 = async (): Promise<LocalElectionDataset & { unmappedWards?: any }> => {
+	console.log('Loading local election 2023 data...');
     const res = await fetch('/data/elections/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv');
     const csvText = await res.text();
 
@@ -186,6 +188,7 @@ const parseLocalElection2023 = async (): Promise<LocalElectionDataset & { unmapp
 };
 
 const parseLocalElection2022 = async (): Promise<LocalElectionDataset> => {
+	console.log('Loading local election 2022 data...');
     const res = await fetch('/data/elections/local-elections/local-elections-2022/Wards-results-Table 1.csv');
     const csvText = await res.text();
     const lines = csvText.split('\n');
@@ -242,6 +245,7 @@ const parseLocalElection2022 = async (): Promise<LocalElectionDataset> => {
 };
 
 const parseLocalElection2021 = async (): Promise<LocalElectionDataset> => {
+	console.log('Loading local election 2021 data...');
     const res = await fetch('/data/elections/local-elections/local_elections_2021_results-2/Wards-results-Table 1.csv');
     const csvText = await res.text();
     const lines = csvText.split('\n');
@@ -298,7 +302,7 @@ const parseLocalElection2021 = async (): Promise<LocalElectionDataset> => {
 };
 
 // Map 2023 data using ward codes from other datasets
-const map2023WardCodes = (data2023: Dataset & { unmappedWards?: any }, referenceSets: LocalElectionDataset[]) => {
+const map2023WardCodes = (data2023: LocalElectionDataset & { unmappedWards?: any }, referenceSets: LocalElectionDataset[]) => {
     if (!data2023.unmappedWards) {
         return data2023;
     }

@@ -61,7 +61,7 @@ export interface LocalElectionDataset {
     type: 'local-election';
     year: number;
     wardResults: any;
-    wardData: WardData;
+    wardData: Record<string, WardData>;
     partyInfo: Party[];
 }
 

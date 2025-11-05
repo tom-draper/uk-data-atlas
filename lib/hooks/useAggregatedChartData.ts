@@ -35,7 +35,7 @@ export function useAggregatedElectionData({
 
 		for (const [year, geojson] of Object.entries(boundaryData.ward)) {
 			const dataset = localElectionDatasets[year];
-			result[year] = dataset.wardData && geojson
+			result[year] = dataset?.wardData && geojson
 				? mapManagerRef.current.calculateLocalElectionStats(geojson, dataset.wardData, year)
 				: null;
 		}

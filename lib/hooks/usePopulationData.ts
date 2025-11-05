@@ -19,8 +19,9 @@ export const usePopulationData = () => {
 	const [error, setError] = useState<string>('');
 
 	useEffect(() => {
+		console.log('EXPENSIVE: Loading population data...')
 		const loadPopulationData = async () => {
-			console.log('EXPENSIVE: Loading population data...')
+			console.log('Loading population 2020 data...')
 			try {
 				const [femalesResponse, malesResponse, personsResponse] = await Promise.all([
 					fetch('/data/population/Mid-2020 Females-Table 1.csv'),

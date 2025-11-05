@@ -2,9 +2,7 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { PARTY_INFO } from '../data/parties';
-import { GeneralElectionDataset } from '../types';
-
-
+import { ConstituencyData, GeneralElectionDataset } from '../types';
 
 // Common party abbreviations in general elections
 const KNOWN_PARTIES = ['Con', 'Lab', 'LD', 'RUK', 'Green', 'SNP', 'PC', 'DUP', 'SF', 'SDLP', 'UUP', 'APNI'];
@@ -24,6 +22,7 @@ const calculateTurnout = (validVotes: number, invalidVotes: number, electorate: 
 };
 
 const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
+	console.log('Loading general election 2024 data...');
 	const res = await fetch('/data/elections/general-elections/HoC-GE2024-results-by-constituency/Data-Table 1.csv');
 	const csvText = await res.text();
 
@@ -118,9 +117,6 @@ export const useGeneralElectionData = () => {
 					console.error('2024 general election load failed:', err);
 					return null;
 				});
-
-				console.log('Sample constituencyResults:', Object.entries(data2024?.constituencyResults).slice(0, 2));
-				console.log('Sample constituencyData:', Object.entries(data2024?.constituencyData).slice(0, 2));
 
 				const loadedDatasets = {
 					'general-2024': data2024,

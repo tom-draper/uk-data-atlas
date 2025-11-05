@@ -145,6 +145,7 @@ export default function MapsPage() {
 		if (isInitialized.current || !geojson || !activeDataset || geojsonLoading) return;
 
 		isInitialized.current = true;
+		setSelectedLocation(INITIAL_LOCATION);
 		updateMap(INITIAL_LOCATION);
 		lastRenderedDatasetId.current = activeDatasetId;
 	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, updateMap]);

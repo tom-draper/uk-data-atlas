@@ -50,39 +50,42 @@ export type LadCodeKey = (typeof LAD_CODE_KEYS)[number];
  */
 export function useBoundaryData(selectedLocation?: string | null) {
 	const [boundaryData, setBoundaryData] = useState<BoundaryData>({
-		ward: { 
-			2024: null, 
-			2023: null, 
-			2022: null, 
+		ward: {
+			2024: null,
+			2023: null,
+			2022: null,
 			2021: null
 		},
 		constituency: { 2024: null }
 	});
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
-	
+
+	// Some datasets do not have consistent LAD code property names
+	const wardToLadCodeMap = useRef<Record<string, string>>({});
+
 	// Cache full datasets
 	const fullGeojsonCache = useRef<Record<string, BoundaryGeojson>>({});
 
 	const fetchGeojson = async (type: BoundaryType, year: number): Promise<BoundaryGeojson> => {
 		const cacheKey = `${type}-${year}`;
-		
+
 		if (fullGeojsonCache.current[cacheKey]) {
 			console.log(`Using cached ${type} ${year} geojson`);
 			return fullGeojsonCache.current[cacheKey];
 		}
 
 		console.log(`EXPENSIVE: Loading ${type} ${year} geojson...`);
-		
+
 		const paths = GEOJSON_PATHS[type];
 		const path = paths[year as keyof typeof paths];
-		
+
 		if (!path) {
 			throw new Error(`No boundary data available for ${type} ${year}`);
 		}
 
 		const response = await fetch(path);
-		
+
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 		}
@@ -92,6 +95,21 @@ export function useBoundaryData(selectedLocation?: string | null) {
 		console.log(`Cached full ${type} geojson for ${year}: ${data.features.length} features`);
 		return data;
 	};
+
+	const updateWardToLadCodeMap = (geojson: BoundaryGeojson) => {
+		const firstFeature = geojson.features[0];
+		const ladCodeProp = LAD_CODE_KEYS.find(key => key in (firstFeature?.properties || {}));
+
+		if (ladCodeProp) {
+			geojson.features.forEach((feature: any) => {
+				const wardCode = feature.properties[Object.keys(feature.properties).find(key => WARD_CODE_KEYS.includes(key as WardCodeKey))!];
+				const ladCode = feature.properties[ladCodeProp];
+				if (wardCode && ladCode) {
+					wardToLadCodeMap.current[wardCode] = ladCode;
+				}
+			});
+		}
+	}
 
 	const filterGeojsonByLocation = (
 		fullGeojson: BoundaryGeojson,
@@ -105,21 +123,28 @@ export function useBoundaryData(selectedLocation?: string | null) {
 		const ladCodes = locationData.lad_codes;
 
 		// For wards, filter by LAD codes
-		if (type === 'ward') {
-			const firstFeature = fullGeojson.features[0];
-			const ladCodeProp = LAD_CODE_KEYS.find(key => key in (firstFeature?.properties || {})) || LAD_CODE_KEYS[0];
+		switch (type) {
+			case 'ward': {
+				const firstFeature = fullGeojson.features[0];
+				const wardCodeProp = WARD_CODE_KEYS.find(key => key in (firstFeature?.properties || {}));
+				const ladCodeProp = LAD_CODE_KEYS.find(key => key in (firstFeature?.properties || {}));
 
-			const filtered = fullGeojson.features.filter((feature: any) => {
-				const ladCode = feature.properties[ladCodeProp];
-				return ladCodes.includes(ladCode);
-			});
+				const filtered = fullGeojson.features.filter((feature: any) => {
+					const ladCode = feature.properties[ladCodeProp] || wardToLadCodeMap.current[feature.properties[wardCodeProp]];
+					return ladCodes.includes(ladCode);
+				});
 
-			console.log(`Filtered ${location} ${type}: ${filtered.length}/${fullGeojson.features.length}`);
+				console.log(`Filtered ${location} ${type}: ${filtered.length}/${fullGeojson.features.length}`);
 
-			return {
-				type: 'FeatureCollection',
-				features: filtered
-			};
+				return {
+					type: 'FeatureCollection',
+					features: filtered
+				};
+			}
+			case 'constituency': {
+				// Currently no LAD code mapping for constituencies, return full
+				return fullGeojson;
+			}
 		}
 
 		// For constituencies, return all for now
@@ -144,6 +169,12 @@ export function useBoundaryData(selectedLocation?: string | null) {
 				]);
 
 				if (cancelled) return;
+
+				// Update ward to LAD code map
+				updateWardToLadCodeMap(ward2024);
+				updateWardToLadCodeMap(ward2023);
+				updateWardToLadCodeMap(ward2022);
+				updateWardToLadCodeMap(ward2021);
 
 				// Filter by location if provided
 				const filtered: BoundaryData = {
