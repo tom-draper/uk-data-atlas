@@ -1,6 +1,6 @@
 // page.tsx
 'use client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { useLocalElectionData as useLocalElectionDatasets } from '@/lib/hooks/useLocalElectionData';
@@ -55,7 +55,16 @@ export default function MapsPage() {
 	);
 
 	// Boundary data
-	const { geojson, isLoading: geojsonLoading } = useBoundaryData(boundaryType, targetYear);
+	const { boundaryData, isLoading: geojsonLoading } = useBoundaryData(selectedLocation);
+
+	const geojson = useMemo(() => {
+		if (boundaryType === 'ward' && targetYear) {
+			return boundaryData.ward[targetYear];
+		} else if (boundaryType === 'constituency') {
+			return boundaryData.constituency[2024];
+		}
+		return null;
+	}, [boundaryData, boundaryType, targetYear]);
 
 	// Map initialization
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
@@ -71,7 +80,6 @@ export default function MapsPage() {
 	const mapManagerRef = useMapManager({
 		mapRef: map,
 		geojson,
-		// Only provide the callback that's relevant for the current mode
 		onWardHover: DATASET_IDS.GENERAL_ELECTION.has(activeDatasetId) ? undefined : onWardHover,
 		onConstituencyHover: DATASET_IDS.GENERAL_ELECTION.has(activeDatasetId) ? onConstituencyHover : undefined,
 		onLocationChange,

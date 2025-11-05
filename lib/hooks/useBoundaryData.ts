@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { BoundaryGeojson } from '@lib/types';
+import { LOCATIONS } from '@lib/data/locations';
 
 export type BoundaryType = 'ward' | 'constituency';
-export type WardYear = 2024 | 2023 | 2022 | 2021;
-export type ConstituencyYear = 2024;
 
 const GEOJSON_PATHS = {
 	ward: {
@@ -17,46 +16,51 @@ const GEOJSON_PATHS = {
 	}
 } as const;
 
+const WARD_CODE_KEYS = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'];
+const LAD_CODE_KEYS = ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'];
+
+type BoundaryData = {
+	ward: {
+		2024: BoundaryGeojson | null;
+		2023: BoundaryGeojson | null;
+		2022: BoundaryGeojson | null;
+		2021: BoundaryGeojson | null;
+	};
+	constituency: {
+		2024: BoundaryGeojson | null;
+	};
+};
+
 /**
- * Loads and caches boundary GeoJSON data for wards or constituencies
+ * Loads all boundary GeoJSON files and returns them filtered by location.
+ * Full datasets cached once, filtered data returned per location.
  * 
- * Features:
- * - Automatic caching (won't re-fetch same boundary/year combo)
- * - Loading and error states
- * - Cleanup on unmount
- * - Supports both ward and constituency boundaries
- * 
- * @param boundaryType - Type of boundary ('ward' or 'constituency')
- * @param year - The boundary year to load
- * @returns Object with geojson data, loading state, and error
+ * @param selectedLocation - Optional location name to filter features by
+ * @returns All boundary data filtered for location, loading state, and error
  * 
  * @example
- * // Load ward boundaries
- * const { geojson, isLoading, error } = useBoundaryData('ward', '2024');
- * 
- * // Load constituency boundaries
- * const { geojson, isLoading, error } = useBoundaryData('constituency', '2024');
- * 
- * if (isLoading) return <Spinner />;
- * if (error) return <Error message={error.message} />;
- * return <Map geojson={geojson} />;
+ * const { boundaryData, isLoading } = useBoundaryData('Greater Manchester');
+ * // boundaryData.ward[2024] = only Greater Manchester 2024 wards
+ * // boundaryData.ward[2023] = only Greater Manchester 2023 wards
+ * // etc.
  */
-export function useBoundaryData(
-	boundaryType: BoundaryType,
-	year: WardYear | ConstituencyYear | null
-) {
-	const [geojson, setGeojson] = useState<BoundaryGeojson | null>(null);
+export function useBoundaryData(selectedLocation?: string | null) {
+	const [boundaryData, setBoundaryData] = useState<BoundaryData>({
+		ward: { 2024: null, 2023: null, 2022: null, 2021: null },
+		constituency: { 2024: null }
+	});
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
-	const geojsonCache = useRef<Record<string, BoundaryGeojson>>({});
+	
+	// Cache full datasets
+	const fullGeojsonCache = useRef<Record<string, BoundaryGeojson>>({});
 
-	const fetchGeojson = async (type: BoundaryType, year: number) => {
+	const fetchGeojson = async (type: BoundaryType, year: number): Promise<BoundaryGeojson> => {
 		const cacheKey = `${type}-${year}`;
 		
-		// Return cached if available
-		if (geojsonCache.current[cacheKey]) {
+		if (fullGeojsonCache.current[cacheKey]) {
 			console.log(`Using cached ${type} ${year} geojson`);
-			return geojsonCache.current[cacheKey];
+			return fullGeojsonCache.current[cacheKey];
 		}
 
 		console.log(`EXPENSIVE: Loading ${type} ${year} geojson...`);
@@ -75,45 +79,94 @@ export function useBoundaryData(
 		}
 
 		const data: BoundaryGeojson = await response.json();
-		geojsonCache.current[cacheKey] = data;
-		console.log(`Storing ${type} geojson for ${year}:`, data);
+		fullGeojsonCache.current[cacheKey] = data;
+		console.log(`Cached full ${type} geojson for ${year}: ${data.features.length} features`);
 		return data;
-	}
+	};
+
+	const filterGeojsonByLocation = (
+		fullGeojson: BoundaryGeojson,
+		location: string | null | undefined,
+		type: BoundaryType
+	): BoundaryGeojson => {
+		if (!location) return fullGeojson;
+		const locationData = LOCATIONS[location];
+		if (!locationData || !locationData.lad_codes) return fullGeojson;
+
+		const ladCodes = locationData.lad_codes;
+
+		// For wards, filter by LAD codes
+		if (type === 'ward') {
+			const firstFeature = fullGeojson.features[0];
+			const ladCodeProp = LAD_CODE_KEYS.find(key => key in (firstFeature?.properties || {})) || LAD_CODE_KEYS[0];
+
+			const filtered = fullGeojson.features.filter((feature: any) => {
+				const ladCode = feature.properties[ladCodeProp];
+				return ladCodes.includes(ladCode);
+			});
+
+			console.log(`Filtered ${location} ${type}: ${filtered.length}/${fullGeojson.features.length}`);
+
+			return {
+				type: 'FeatureCollection',
+				features: filtered
+			};
+		}
+
+		// For constituencies, return all for now
+		return fullGeojson;
+	};
 
 	useEffect(() => {
 		let cancelled = false;
 
-		async function loadGeoJSON() {
-			if (year === null) {
-				setIsLoading(false);
-				return;
-			}
-
+		async function loadAllBoundaries() {
 			setIsLoading(true);
 			setError(null);
 
 			try {
-				const data = await fetchGeojson(boundaryType, year);
+				// Load all ward years
+				const [ward2024, ward2023, ward2022, ward2021, constituency2024] = await Promise.all([
+					fetchGeojson('ward', 2024),
+					fetchGeojson('ward', 2023),
+					fetchGeojson('ward', 2022),
+					fetchGeojson('ward', 2021),
+					fetchGeojson('constituency', 2024),
+				]);
+
 				if (cancelled) return;
 
-				setGeojson(data);
+				// Filter by location if provided
+				const filtered: BoundaryData = {
+					ward: {
+						2024: filterGeojsonByLocation(ward2024, selectedLocation, 'ward'),
+						2023: filterGeojsonByLocation(ward2023, selectedLocation, 'ward'),
+						2022: filterGeojsonByLocation(ward2022, selectedLocation, 'ward'),
+						2021: filterGeojsonByLocation(ward2021, selectedLocation, 'ward'),
+					},
+					constituency: {
+						2024: filterGeojsonByLocation(constituency2024, selectedLocation, 'constituency'),
+					}
+				};
+
+				setBoundaryData(filtered);
 				setIsLoading(false);
 			} catch (err) {
 				if (!cancelled) {
-					const error = err instanceof Error ? err : new Error(`Failed to load ${boundaryType} geojson`);
-					console.error(`Error loading ${boundaryType} ${year}:`, error);
+					const error = err instanceof Error ? err : new Error('Failed to load boundary data');
+					console.error('Error loading boundaries:', error);
 					setError(error);
 					setIsLoading(false);
 				}
 			}
 		}
 
-		loadGeoJSON();
+		loadAllBoundaries();
 
 		return () => {
 			cancelled = true;
 		};
-	}, [boundaryType, year]);
+	}, [selectedLocation]);
 
-	return { geojson, isLoading, error };
+	return { boundaryData, isLoading, error };
 }
