@@ -11,7 +11,7 @@ interface ChartPanelProps {
 	selectedLocation: string | null;
 	selectedWard: WardData | null;
 	selectedConstituency: ConstituencyData | null;
-	activeDataset: GeneralElectionDataset | Dataset;
+	activeDataset: Dataset;
 	localElectionDatasets: Record<string, Dataset | null>;
 	generalElectionDatasets: Record<string, GeneralElectionDataset | null>;
 	populationDatasets: Record<string, Dataset>;

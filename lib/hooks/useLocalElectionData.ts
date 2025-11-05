@@ -1,7 +1,7 @@
 // lib/hooks/useElectionData.ts
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import { WardData, Dataset } from '@lib/types/index';
+import { WardData, Dataset, LocalElectionDataset } from '@lib/types/index';
 import { PARTY_INFO } from '../data/parties';
 
 // Common party abbreviations to look for
@@ -52,7 +52,7 @@ const findWinner = (partyVotes: Record<string, number>): string => {
     return winner;
 };
 
-const parseElection2024 = async (): Promise<Dataset> => {
+const parseLocalElection2024 = async (): Promise<LocalElectionDataset> => {
     const res = await fetch('/data/elections/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv');
     const csvText = await res.text();
     const lines = csvText.split('\n');
@@ -95,7 +95,7 @@ const parseElection2024 = async (): Promise<Dataset> => {
 
                 resolve({
                     id: '2024',
-                    type: 'election',
+                    type: 'local-election',
                     name: 'Local Elections 2024',
                     year: 2024,
                     wardResults: wardWinners,
@@ -108,7 +108,7 @@ const parseElection2024 = async (): Promise<Dataset> => {
     });
 };
 
-const parseCouncil2023 = async (): Promise<Dataset & { unmappedWards?: any }> => {
+const parseLocalElection2023 = async (): Promise<LocalElectionDataset & { unmappedWards?: any }> => {
     const res = await fetch('/data/elections/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv');
     const csvText = await res.text();
 
@@ -185,7 +185,7 @@ const parseCouncil2023 = async (): Promise<Dataset & { unmappedWards?: any }> =>
     });
 };
 
-const parseElection2022 = async (): Promise<Dataset> => {
+const parseLocalElection2022 = async (): Promise<LocalElectionDataset> => {
     const res = await fetch('/data/elections/local-elections/local-elections-2022/Wards-results-Table 1.csv');
     const csvText = await res.text();
     const lines = csvText.split('\n');
@@ -228,7 +228,7 @@ const parseElection2022 = async (): Promise<Dataset> => {
 
                 resolve({
                     id: '2022',
-                    type: 'election',
+                    type: 'local-election',
                     name: 'Local Elections 2022',
                     year: 2022,
                     wardResults: wardWinners,
@@ -241,7 +241,7 @@ const parseElection2022 = async (): Promise<Dataset> => {
     });
 };
 
-const parseElection2021 = async (): Promise<Dataset> => {
+const parseLocalElection2021 = async (): Promise<LocalElectionDataset> => {
     const res = await fetch('/data/elections/local-elections/local_elections_2021_results-2/Wards-results-Table 1.csv');
     const csvText = await res.text();
     const lines = csvText.split('\n');
@@ -284,7 +284,7 @@ const parseElection2021 = async (): Promise<Dataset> => {
 
                 resolve({
                     id: '2021',
-                    type: 'election',
+                    type: 'local-election',
                     name: 'Local Elections 2021',
                     year: 2021,
                     wardResults: wardWinners,
@@ -298,7 +298,7 @@ const parseElection2021 = async (): Promise<Dataset> => {
 };
 
 // Map 2023 data using ward codes from other datasets
-const map2023WardCodes = (data2023: Dataset & { unmappedWards?: any }, referenceSets: Dataset[]): Dataset => {
+const map2023WardCodes = (data2023: Dataset & { unmappedWards?: any }, referenceSets: LocalElectionDataset[]) => {
     if (!data2023.unmappedWards) {
         return data2023;
     }
@@ -356,7 +356,7 @@ const map2023WardCodes = (data2023: Dataset & { unmappedWards?: any }, reference
 };
 
 export const useLocalElectionData = () => {
-    const [datasets, setDatasets] = useState<Record<string, Dataset | null>>({});
+    const [datasets, setDatasets] = useState<Record<string, LocalElectionDataset | null>>({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
 
@@ -366,35 +366,35 @@ export const useLocalElectionData = () => {
                 console.log('EXPENSIVE: Loading election data...');
                 // Load all datasets in parallel for maximum performance
                 const [data2024, data2023Raw, data2022, data2021] = await Promise.all([
-                    parseElection2024().catch(err => {
+                    parseLocalElection2024().catch(err => {
                         console.error('2024 load failed:', err);
                         return null;
                     }),
-                    parseCouncil2023().catch(err => {
+                    parseLocalElection2023().catch(err => {
                         console.error('2023 load failed:', err);
                         return null;
                     }),
-                    parseElection2022().catch(err => {
+                    parseLocalElection2022().catch(err => {
                         console.error('2022 load failed:', err);
                         return null;
                     }),
-                    parseElection2021().catch(err => {
+                    parseLocalElection2021().catch(err => {
                         console.error('2021 load failed:', err);
                         return null;
                     }),
                 ]);
 
                 // Build reference datasets for mapping (excluding 2023)
-                const referenceSets = [data2024, data2022, data2021].filter(Boolean) as Dataset[];
+                const referenceSets = [data2024, data2022, data2021].filter(Boolean) as LocalElectionDataset[];
 
                 // Map 2023 using all available reference datasets
                 const data2023 = data2023Raw ? map2023WardCodes(data2023Raw, referenceSets) : null;
 
                 const loadedDatasets = {
-                    '2024': data2024,
-                    '2023': data2023,
-                    '2022': data2022,
-                    '2021': data2021,
+                    2024: data2024,
+                    2023: data2023,
+                    2022: data2022,
+                    2021: data2021,
                 }
 
                 console.log('Storing election datasets:', loadedDatasets);

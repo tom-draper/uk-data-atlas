@@ -50,7 +50,12 @@ export type LadCodeKey = (typeof LAD_CODE_KEYS)[number];
  */
 export function useBoundaryData(selectedLocation?: string | null) {
 	const [boundaryData, setBoundaryData] = useState<BoundaryData>({
-		ward: { 2024: null, 2023: null, 2022: null, 2021: null },
+		ward: { 
+			2024: null, 
+			2023: null, 
+			2022: null, 
+			2021: null
+		},
 		constituency: { 2024: null }
 	});
 	const [isLoading, setIsLoading] = useState(true);

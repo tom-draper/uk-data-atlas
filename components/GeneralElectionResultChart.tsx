@@ -180,7 +180,7 @@ export default function GeneralElectionResultChart({
 		return (
 			<div
 				key={'general-' + year}
-				className={`p-2 ${isAggregated ? 'h-[140px]' : 'h-[95px]'} rounded transition-all cursor-pointer ${isActive
+				className={`p-2 ${isAggregated ? 'h-[210px]' : 'h-[95px]'} rounded transition-all cursor-pointer ${isActive
 						? `${colors.bg} border-2 ${colors.border}`
 						: `bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300`
 					}`}
@@ -190,7 +190,6 @@ export default function GeneralElectionResultChart({
 					<div>
 						<h3 className="text-xs font-bold">
 							{year} General Election
-							{isAggregated && <span className="text-gray-500 font-normal"> (Location)</span>}
 						</h3>
 					</div>
 					<div className="flex items-center gap-1.5">

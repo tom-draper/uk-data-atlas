@@ -2,47 +2,9 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { PARTY_INFO } from '../data/parties';
+import { GeneralElectionDataset } from '../types';
 
-export interface ConstituencyData {
-	constituencyName: string;
-	onsId: string;
-	regionName: string;
-	countryName: string;
-	constituencyType: string;
-	memberFirstName: string;
-	memberSurname: string;
-	memberGender: string;
-	result: string;
-	firstParty: string;
-	secondParty: string;
-	electorate: number;
-	validVotes: number;
-	invalidVotes: number;
-	majority: number;
-	// Party vote counts
-	CON?: number;
-	LAB?: number;
-	LD?: number;
-	RUK?: number;
-	GREEN?: number;
-	SNP?: number;
-	PC?: number;
-	DUP?: number;
-	SF?: number;
-	SDLP?: number;
-	UUP?: number;
-	APNI?: number;
-	OTHER?: number;
-}
 
-export interface GeneralElectionDataset {
-	type: 'general-election';
-	name: string;
-	year: number;
-	constituencyResults: Record<string, string>; // onsId -> winning party
-	constituencyData: Record<string, ConstituencyData>; // onsId -> full data
-	partyInfo: typeof PARTY_INFO;
-}
 
 // Common party abbreviations in general elections
 const KNOWN_PARTIES = ['Con', 'Lab', 'LD', 'RUK', 'Green', 'SNP', 'PC', 'DUP', 'SF', 'SDLP', 'UUP', 'APNI'];
@@ -128,6 +90,7 @@ const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 				}
 
 				resolve({
+					id : 'general-2024',
 					type: 'general-election',
 					name: 'General Election 2024',
 					year: 2024,

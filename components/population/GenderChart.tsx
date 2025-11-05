@@ -10,7 +10,7 @@ interface GenderChartProps {
 	wardCode: string;
 	wardName: string;
 	onDatasetChange: (datasetId: string) => void;
-	activeDataset: GeneralElectionDataset | Dataset
+	activeDataset: Dataset
 }
 
 export default function GenderChart({ population, wardCode, wardName, onDatasetChange, activeDataset }: GenderChartProps) {

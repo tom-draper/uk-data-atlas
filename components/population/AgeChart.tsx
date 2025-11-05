@@ -2,10 +2,9 @@
 import { useMemo } from "react";
 import { AgeGroups, Dataset } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
-import { GeneralElectionDataset } from "@/lib/hooks/useGeneralElectionData";
 
 interface AgeChartProps {
-	activeDataset: GeneralElectionDataset | Dataset
+	activeDataset: Dataset
 	ageData: { [age: string]: number };
 	total: number;
 	ageGroups: AgeGroups;
@@ -14,7 +13,12 @@ interface AgeChartProps {
 
 export default function AgeChart({ ageData, total, ageGroups, setActiveDatasetId, activeDataset }: AgeChartProps) {
 	const isActive = activeDataset.type === 'population'; 
-	const colors = { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800' };
+	const colors = { 
+		bg: 'bg-emerald-50/60', 
+		border: 'border-emerald-300', 
+		badge: 'bg-emerald-300 text-emerald-900',
+		text: 'bg-emerald-200 text-emerald-800' 
+	};
 	
 	const medianAge = useMemo(() => {
 		const ages = Array.from({ length: 100 }, (_, i) => ({

@@ -1,3 +1,5 @@
+import { PARTY_INFO } from "../data/parties";
+
 // lib/types/index.ts
 export interface WardData {
     [key: string]: string | number | undefined;
@@ -43,37 +45,81 @@ export interface PopulationWardData {
     };
 }
 
-export interface Dataset {
+export type Dataset = GeneralElectionDataset | PopulationDataset | LocalElectionDataset;
+
+export interface PopulationDataset {
     id: string;
     name: string;
+    type: 'population';
     year: number;
-    type: 'election' | 'population';
-    wardResults?: any;
-    wardData?: any;
-    populationData?: PopulationWardData;
+    populationData: PopulationWardData;
+}
+
+export interface LocalElectionDataset {
+    id: string;
+    name: string;
+    type: 'local-election';
+    year: number;
+    wardResults: any;
+    wardData: WardData;
     partyInfo: Party[];
 }
 
-export interface AllYearsWardData {
-    data2024: { [wardCode: string]: any };
-    data2023: { [wardCode: string]: any };
-    data2022: { [wardCode: string]: any };
-    data2021: { [wardCode: string]: any };
+export interface ConstituencyData {
+    constituencyName: string;
+    onsId: string;
+    regionName: string;
+    countryName: string;
+    constituencyType: string;
+    memberFirstName: string;
+    memberSurname: string;
+    memberGender: string;
+    result: string;
+    firstParty: string;
+    secondParty: string;
+    electorate: number;
+    validVotes: number;
+    invalidVotes: number;
+    majority: number;
+    // Party vote counts
+    CON?: number;
+    LAB?: number;
+    LD?: number;
+    RUK?: number;
+    GREEN?: number;
+    SNP?: number;
+    PC?: number;
+    DUP?: number;
+    SF?: number;
+    SDLP?: number;
+    UUP?: number;
+    APNI?: number;
+    OTHER?: number;
+}
+
+export interface GeneralElectionDataset {
+    id: string;
+    name: string;
+    type: 'general-election';
+    year: number;
+    constituencyResults: Record<string, string>; // onsId -> winning party
+    constituencyData: Record<string, ConstituencyData>; // onsId -> full data
+    partyInfo: typeof PARTY_INFO;
 }
 
 export interface AggregatedLocalElectionData {
-    data2024: ChartData | null;
-    data2023: ChartData | null;
-    data2022: ChartData | null;
-    data2021: ChartData | null;
+    2024: ChartData | null;
+    2023: ChartData | null;
+    2022: ChartData | null;
+    2021: ChartData | null;
 }
 
 export interface AggregateGeneralElectionData {
-	totalSeats: number;
-	partySeats: Record<string, number>;
-	totalVotes: number;
-	partyVotes: Record<string, number>;
-	partyInfo: Record<string, { name: string; color: string }>;
+    totalSeats: number;
+    partySeats: Record<string, number>;
+    totalVotes: number;
+    partyVotes: Record<string, number>;
+    partyInfo: Record<string, { name: string; color: string }>;
 }
 
 // Common geometry type

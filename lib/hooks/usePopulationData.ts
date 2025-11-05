@@ -2,7 +2,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
-import { PopulationWardData, AgeData, Dataset } from '@lib/types';
+import { PopulationWardData, AgeData, PopulationDataset } from '@lib/types';
 
 interface CategoryPopulationWardData {
 	[wardCode: string]: {
@@ -14,7 +14,7 @@ interface CategoryPopulationWardData {
 }
 
 export const usePopulationData = () => {
-	const [datasets, setDatasets] = useState<Record<string, Dataset>>({});
+	const [datasets, setDatasets] = useState<Record<string, PopulationDataset>>({});
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>('');
 
@@ -143,17 +143,15 @@ export const usePopulationData = () => {
 					};
 				});
 
-				const population2020: Dataset = {
+				const population2020: PopulationDataset = {
+					id: 'population-2020',
 					name: 'Population 2020',
-					year: 2020,
 					type: 'population',
+					year: 2020,
 					populationData: combinedData,
-					partyInfo: [
-						{ key: 'TOTAL', name: 'Total Population', color: '#3b82f6' }
-					],
 				};
 
-				const loadedDatasets: Record<string, Dataset> = {
+				const loadedDatasets: Record<string, PopulationDataset> = {
 					'population': population2020,
 				};
 

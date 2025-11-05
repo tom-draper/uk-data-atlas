@@ -8,7 +8,7 @@ import GenderChart from './population/GenderChart';
 import { GeneralElectionDataset } from '@/lib/hooks/useGeneralElectionData';
 
 export interface PopulationChartProps {
-	activeDataset: GeneralElectionDataset | Dataset;
+	activeDataset: Dataset;
 	availableDatasets: Record<string, Dataset>;
 	wardCode: string;
 	wardName: string;

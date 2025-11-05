@@ -1,18 +1,16 @@
 // lib/hooks/useAggregatedElectionData.ts
 import { RefObject, useMemo } from 'react';
-import type { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset } from '@lib/types';
+import type { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, GeneralElectionDataset, LocalElectionDataset } from '@lib/types';
 import { MapManager } from '../utils/mapManager';
-import { GeneralElectionDataset } from './useGeneralElectionData';
+import { BoundaryData } from './useBoundaryData';
 
 interface UseAggregatedElectionDataParams {
 	mapManagerRef: RefObject<MapManager | null>;
-	geojson: any;
+	boundaryData: BoundaryData;
 	selectedLocation: string | null;
-	localElectionDatasets: Record<string, Dataset | null>;
+	localElectionDatasets: Record<string, LocalElectionDataset | null>;
 	generalElectionDatasets: Record<string, GeneralElectionDataset | null>;
 }
-
-const LOCAL_ELECTION_IDS = ['2024', '2023', '2022', '2021'] as const;
 
 /**
  * Aggregates both local and general election data for the current location.
@@ -20,8 +18,7 @@ const LOCAL_ELECTION_IDS = ['2024', '2023', '2022', '2021'] as const;
  */
 export function useAggregatedElectionData({
 	mapManagerRef,
-	geojson,
-	selectedLocation,
+	boundaryData,
 	localElectionDatasets,
 	generalElectionDatasets,
 }: UseAggregatedElectionDataParams) {
@@ -30,37 +27,39 @@ export function useAggregatedElectionData({
 	 * Only recalculates when location or datasets change.
 	 */
 	const aggregatedLocalElectionData = useMemo((): AggregatedLocalElectionData => {
-		if (!mapManagerRef.current || !geojson || !selectedLocation) {
-			return { data2024: null, data2023: null, data2022: null, data2021: null };
+		if (!mapManagerRef.current || !boundaryData) {
+			return { 2024: null, 2023: null, 2022: null, 2021: null };
 		}
 
 		const result: Partial<AggregatedLocalElectionData> = {};
 
-		for (const year of LOCAL_ELECTION_IDS) {
+		for (const [year, geojson] of Object.entries(boundaryData.ward)) {
 			const dataset = localElectionDatasets[year];
-			result[`data${year}` as keyof AggregatedLocalElectionData] = dataset?.wardData
-				? mapManagerRef.current.calculateLocalElectionStats(selectedLocation, geojson, dataset.wardData, year)
+			result[year] = dataset.wardData && geojson
+				? mapManagerRef.current.calculateLocalElectionStats(geojson, dataset.wardData, year)
 				: null;
 		}
 
 		return result as AggregatedLocalElectionData;
-	}, [mapManagerRef, geojson, localElectionDatasets, selectedLocation]);
+	}, [mapManagerRef, boundaryData, localElectionDatasets]);
 
 	/**
 	 * Aggregated general election data - fixed to pass constituencyData instead of constituencyResults.
 	 * MapManager caches this calculation internally.
 	 */
 	const aggregatedGeneralElectionData = useMemo((): AggregateGeneralElectionData | null => {
-		if (!mapManagerRef.current || !geojson || !selectedLocation) {
+		if (!mapManagerRef.current || !boundaryData) {
 			return null;
 		}
 
 		const dataset = generalElectionDatasets['general-2024'];
 		if (!dataset?.constituencyData) return null;
 
+		const geojson = boundaryData.constituency[2024];
+		if (!geojson) return null;
+
 		// Pass constituencyData (not constituencyResults) - this was the bug
 		const stats = mapManagerRef.current.calculateGeneralElectionStats(
-			selectedLocation,
 			geojson,
 			dataset.constituencyData,
 			'general-2024'
@@ -70,7 +69,7 @@ export function useAggregatedElectionData({
 			...stats,
 			partyInfo: dataset.partyInfo || {},
 		};
-	}, [geojson, mapManagerRef, selectedLocation, generalElectionDatasets]);
+	}, [mapManagerRef, boundaryData, generalElectionDatasets]);
 
 	return {
 		aggregatedLocalElectionData,

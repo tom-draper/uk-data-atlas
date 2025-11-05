@@ -1,8 +1,7 @@
 // lib/hooks/useDatasetManager.ts
 import { useMemo } from 'react';
-import { BoundaryType } from './useBoundaryData';
-import { GeneralElectionDataset } from './useGeneralElectionData';
-import { Dataset } from '../types';
+import { BoundaryType, WardYear } from './useBoundaryData';
+import { Dataset, GeneralElectionDataset } from '../types';
 
 export const DATASET_IDS = {
     POPULATION: new Set(['population']),

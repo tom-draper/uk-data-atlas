@@ -20,8 +20,7 @@ import ErrorDisplay from '@components/ErrorDisplay';
 import LoadingDisplay from '@/components/LoadingDisplay';
 
 import { LOCATIONS } from '@lib/data/locations';
-import type { WardData } from '@lib/types';
-import type { ConstituencyData } from '@/lib/hooks/useGeneralElectionData';
+import type { ConstituencyData, WardData } from '@lib/types';
 
 // Constants
 const INITIAL_LOCATION = 'Greater Manchester';
@@ -39,7 +38,7 @@ export default function MapsPage() {
 	const [activeDatasetId, setActiveDatasetId] = useState(INITIAL_DATASET_ID);
 	const [selectedWardData, setSelectedWard] = useState<WardData | null>(null);
 	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
-	const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+	const [selectedLocation, setSelectedLocation] = useState<string | null>(INITIAL_LOCATION);
 
 	// Data loading
 	const generalElectionData = useGeneralElectionDatasets();
@@ -80,15 +79,15 @@ export default function MapsPage() {
 	const mapManagerRef = useMapManager({
 		mapRef: map,
 		geojson,
-		onWardHover: DATASET_IDS.GENERAL_ELECTION.has(activeDatasetId) ? undefined : onWardHover,
-		onConstituencyHover: DATASET_IDS.GENERAL_ELECTION.has(activeDatasetId) ? onConstituencyHover : undefined,
+		onWardHover: activeDataset?.type === 'local-election' || activeDataset?.type === 'population' ? undefined : onWardHover,
+		onConstituencyHover: activeDataset?.id === 'general-election' ? onConstituencyHover : undefined,
 		onLocationChange,
 	});
 
 	// Aggregated data (this might now be redundant for some use cases)
 	const { aggregatedLocalElectionData, aggregatedGeneralElectionData } = useAggregatedElectionData({
 		mapManagerRef,
-		geojson,
+		boundaryData,
 		localElectionDatasets: localElectionData.datasets,
 		generalElectionDatasets: generalElectionData.datasets,
 		selectedLocation
@@ -106,33 +105,36 @@ export default function MapsPage() {
 			const locationData = LOCATIONS[location];
 			if (!locationData) return;
 
-			if (DATASET_IDS.POPULATION.has(activeDatasetId)) {
-				// Population mode
-				mapManagerRef.current.updateMapForPopulation(
-					location, 
-					geojson, 
-					activeDataset.populationData
-				);
-			} else if (DATASET_IDS.GENERAL_ELECTION.has(activeDatasetId)) {
-				// General election mode
-				mapManagerRef.current.updateMapForGeneralElection(
-					location,
-					geojson,
-					activeDataset.constituencyResults,
-					activeDataset.constituencyData,
-					activeDataset.partyInfo,
-					activeDatasetId // Pass year for caching
-				);
-			} else {
-				// Local election mode
-				mapManagerRef.current.updateMapForLocalElection(
-					location,
-					geojson,
-					activeDataset.wardResults,
-					activeDataset.wardData,
-					activeDataset.partyInfo,
-					activeDatasetId // Pass year for caching
-				);
+			switch (activeDataset.type) {
+				case 'population':
+					// Population mode
+					mapManagerRef.current.updateMapForPopulation(
+						geojson,
+						activeDataset.populationData,
+					);
+					break;
+				case 'general-election':
+					// General election mode
+					mapManagerRef.current.updateMapForGeneralElection(
+						geojson,
+						activeDataset.constituencyResults,
+						activeDataset.constituencyData,
+						activeDataset.partyInfo,
+						selectedLocation,
+						targetYear,
+					);
+					break;
+				case 'local-election':
+					// Local election mode
+					mapManagerRef.current.updateMapForLocalElection(
+						geojson,
+						activeDataset.wardResults,
+						activeDataset.wardData,
+						activeDataset.partyInfo,
+						selectedLocation,
+						targetYear,
+					);
+					break;
 			}
 		},
 		[mapManagerRef, geojson, activeDataset, activeDatasetId]
@@ -143,7 +145,6 @@ export default function MapsPage() {
 		if (isInitialized.current || !geojson || !activeDataset || geojsonLoading) return;
 
 		isInitialized.current = true;
-		setSelectedLocation(INITIAL_LOCATION);
 		updateMap(INITIAL_LOCATION);
 		lastRenderedDatasetId.current = activeDatasetId;
 	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, updateMap]);
@@ -157,7 +158,7 @@ export default function MapsPage() {
 		if (!location) return;
 
 		// Clear opposite selection when switching modes
-		if (DATASET_IDS.GENERAL_ELECTION.has(activeDatasetId)) {
+		if (activeDataset.type === 'general-election') {
 			setSelectedWard(null);
 		} else {
 			setSelectedConstituency(null);
