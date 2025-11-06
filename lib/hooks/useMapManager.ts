@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapManager } from '@lib/utils/mapManager';
-import type { ChartData, WardData } from '@lib/types';
+import type { ChartData, LocalElectionWardData } from '@lib/types';
 
 type UseMapManagerOptions = {
     mapRef: React.RefObject<mapboxgl.Map | null>;
     geojson: any | null;
-    onWardHover?: (params: { data: WardData | null; wardCode: string }) => void;
+    onWardHover?: (params: { data: LocalElectionWardData | null; wardCode: string }) => void;
     onConstituencyHover?: (data: any | null) => void;
     onLocationChange?: (stats: ChartData | null, location: string) => void;
 };
 
 export function useMapManager(opts: UseMapManagerOptions) {
-    const mapManagerRef = useRef<MapManager | null>(null);
+    const [mapManager, setMapManager] = useState<MapManager | null>(null);
     const callbacksRef = useRef(opts);
-    const [isManagerReady, setIsManagerReady] = useState(false);
     const isInitialized = useRef(false);
 
     // Update callbacks ref without triggering re-initialization
@@ -23,12 +22,9 @@ export function useMapManager(opts: UseMapManagerOptions) {
 
     // Initialize manager once when both map and geojson are ready
     useEffect(() => {
-        if (!opts.mapRef?.current || !opts.geojson) return;
-        if (isInitialized.current) {
-            return;
-        }
+        if (!opts.mapRef?.current || !opts.geojson || isInitialized.current) return;
         
-        mapManagerRef.current = new MapManager(opts.mapRef.current, {
+        const manager = new MapManager(opts.mapRef.current, {
             onWardHover: (params) => {
                 if (callbacksRef.current.onWardHover) {
                     callbacksRef.current.onWardHover(params);
@@ -46,16 +42,17 @@ export function useMapManager(opts: UseMapManagerOptions) {
             }
         });
         
+        setMapManager(manager);
         isInitialized.current = true;
-        setIsManagerReady(true);
+
         return () => {
             // Only cleanup if the map itself is being destroyed
             if (!opts.mapRef?.current) {
-                mapManagerRef.current = null;
+                setMapManager(null);
                 isInitialized.current = false;
             }
         };
     }, [opts.mapRef, opts.geojson]);
 
-    return { mapManagerRef, isManagerReady };
+    return { mapManager };
 }

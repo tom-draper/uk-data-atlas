@@ -1,8 +1,8 @@
 import { useCallback, useRef } from 'react';
-import type { ConstituencyData, WardData } from '@lib/types';
+import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
 
 interface UseInteractionHandlersParams {
-	setSelectedWard: (ward: WardData | null) => void;
+	setSelectedWard: (ward: LocalElectionWardData | null) => void;
 	setSelectedConstituency: (constituency: ConstituencyData | null) => void;
 	setSelectedLocation: (location: string | null) => void;
 }
@@ -20,7 +20,7 @@ export function useInteractionHandlers({
 	const lastHoveredConstituencyRef = useRef<string | null>(null);
 
 	const onWardHover = useCallback(
-		(params: { data: WardData | null; wardCode: string }) => {
+		(params: { data: LocalElectionWardData | null; wardCode: string }) => {
 			const { data, wardCode } = params;
 
 			// Skip if hovering over same ward

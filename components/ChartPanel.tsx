@@ -1,6 +1,6 @@
 // components/ChartPanel.tsx
 'use client';
-import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, PopulationWardData, WardData } from '@lib/types';
+import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, PopulationWardData, LocalElectionWardData } from '@lib/types';
 import { ConstituencyData, GeneralElectionDataset } from '@/lib/hooks/useGeneralElectionData';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
@@ -9,7 +9,7 @@ import { memo } from 'react';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
-	selectedWard: WardData | null;
+	selectedWard: LocalElectionWardData | null;
 	selectedConstituency: ConstituencyData | null;
 	activeDataset: Dataset;
 	localElectionDatasets: Record<string, Dataset | null>;

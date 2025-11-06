@@ -1,10 +1,10 @@
 // lib/utils/mapManager.ts
-import { ChartData, WardData, Party, PopulationWardData, BoundaryGeojson, ConstituencyData } from '@lib/types';
+import { ChartData, LocalElectionWardData, Party, PopulationWardData, BoundaryGeojson, ConstituencyData } from '@lib/types';
 import { PARTY_COLORS } from '../data/parties';
 import { GeoJSONFeature } from 'mapbox-gl';
 
 interface MapManagerCallbacks {
-    onWardHover?: (params: { data: WardData | null; wardCode: string }) => void;
+    onWardHover?: (params: { data: LocalElectionWardData | null; wardCode: string }) => void;
     onConstituencyHover?: (data: ConstituencyData | null) => void;
     onLocationChange: (stats: ChartData, location: string) => void;
 }
@@ -57,7 +57,7 @@ export class MapManager {
     updateMapForLocalElection(
         geojson: BoundaryGeojson,
         wardResults: Record<string, string>,
-        wardData: WardData,
+        wardData: LocalElectionWardData,
         partyInfo: Party[],
         location: string | null = null,
         datasetId: string | null = null
@@ -200,7 +200,7 @@ export class MapManager {
      */
     calculateLocalElectionStats(
         geojson: BoundaryGeojson,
-        wardData: WardData,
+        wardData: LocalElectionWardData,
         datasetId: string | null = null
     ): ChartData {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
@@ -241,7 +241,7 @@ export class MapManager {
     private calculateLocalElectionStatsInternal(
         geojson: BoundaryGeojson['features'],
         wardCodeProp: string,
-        wardData: WardData,
+        wardData: LocalElectionWardData,
         location: string | null = null,
         datasetId: string | null = null
     ): ChartData {
@@ -553,7 +553,7 @@ export class MapManager {
      */
     private setupEventHandlers(
         mode: MapMode,
-        data: WardData | Record<string, ConstituencyData> | PopulationWardData,
+        data: LocalElectionWardData | Record<string, ConstituencyData> | PopulationWardData,
         codeProp: string
     ) {
         // Remove existing handlers
@@ -576,7 +576,7 @@ export class MapManager {
     private handleMouseMove(
         e: mapboxgl.MapMouseEvent,
         mode: MapMode,
-        data: WardData | Record<string, ConstituencyData> | PopulationWardData,
+        data: LocalElectionWardData | Record<string, ConstituencyData> | PopulationWardData,
         codeProp: string
     ) {
         this.map.getCanvas().style.cursor = 'pointer';
@@ -587,7 +587,7 @@ export class MapManager {
 
             switch (mode) {
                 case 'local-election':
-                    this.handleLocalElectionHover(feature, data as WardData, codeProp);
+                    this.handleLocalElectionHover(feature, data as LocalElectionWardData, codeProp);
                     break;
                 case 'general-election':
                     this.handleGeneralElectionHover(feature, data as ConstituencyData, codeProp);
@@ -648,7 +648,7 @@ export class MapManager {
      */
     private handleLocalElectionHover(
         feature: GeoJSONFeature,
-        wardData: WardData,
+        wardData: LocalElectionWardData,
         wardCodeProp: string
     ) {
         const wardCode = feature.properties[wardCodeProp];
@@ -690,7 +690,7 @@ export class MapManager {
         const wardPopData = populationData[wardCode];
 
         if (wardPopData && this.callbacks.onWardHover) {
-            const wardData: WardData = {
+            const wardData: LocalElectionWardData = {
                 wardCode: wardCode,
                 wardName: wardPopData.wardName || '',
                 localAuthorityCode: wardPopData.laCode || '',

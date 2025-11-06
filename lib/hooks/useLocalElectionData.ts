@@ -1,7 +1,7 @@
 // lib/hooks/useElectionData.ts
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import { WardData, LocalElectionDataset } from '@lib/types/index';
+import { LocalElectionWardData, LocalElectionDataset } from '@lib/types/index';
 import { PARTY_INFO } from '../data/parties';
 
 // Common party abbreviations to look for
@@ -68,7 +68,7 @@ const parseLocalElection2024 = async (): Promise<LocalElectionDataset> => {
             complete: (results) => {
                 const partyColumns = detectPartyColumns(results.meta.fields || []);
                 const wardWinners: Record<string, string> = {};
-                const allWardData: Record<string, WardData> = {};
+                const allWardData: Record<string, LocalElectionWardData> = {};
 
                 for (const row of results.data as any[]) {
                     const wardCode = row['Ward code']?.trim();
@@ -203,7 +203,7 @@ const parseLocalElection2022 = async (): Promise<LocalElectionDataset> => {
             complete: (results) => {
                 const partyColumns = detectPartyColumns(results.meta.fields || []);
                 const wardWinners: Record<string, string> = {};
-                const allWardData: Record<string, WardData> = {};
+                const allWardData: Record<string, LocalElectionWardData> = {};
 
                 for (const row of results.data as any[]) {
                     const wardCode = row['Ward code']?.trim();
@@ -260,7 +260,7 @@ const parseLocalElection2021 = async (): Promise<LocalElectionDataset> => {
             complete: (results) => {
                 const partyColumns = detectPartyColumns(results.meta.fields || []);
                 const wardWinners: Record<string, string> = {};
-                const allWardData: Record<string, WardData> = {};
+                const allWardData: Record<string, LocalElectionWardData> = {};
 
                 for (const row of results.data as any[]) {
                     const wardCode = row['Ward/ED code']?.trim();
@@ -327,7 +327,7 @@ const map2023WardCodes = (data2023: LocalElectionDataset & { unmappedWards?: any
 
     // Remap 2023 data
     const mappedWardResults: Record<string, string> = {};
-    const mappedWardData: Record<string, WardData> = {};
+    const mappedWardData: Record<string, LocalElectionWardData> = {};
     const unmappedWards: Record<string, any> = data2023.unmappedWards || {};
 
     // Process unmapped wards with the comprehensive lookup

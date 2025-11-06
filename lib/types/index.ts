@@ -1,8 +1,21 @@
 import { PARTY_INFO } from "../data/parties";
 
 // lib/types/index.ts
-export interface WardData {
-    [key: string]: string | number | undefined;
+export interface LocalElectionWardData {
+    [wardCode: string]: {
+        CON: number
+        electorate: number
+        GREEN: number;
+        IND: number;
+        LAB: number;
+        LD: number;
+        localAuthorityCode: string
+        localAuthorityName: string
+        REF: number
+        totalVotes: number;
+        turnoutPercent: number;
+        wardName: string;
+    }
 }
 
 export interface LocationBounds {
@@ -61,7 +74,7 @@ export interface LocalElectionDataset {
     type: 'local-election';
     year: number;
     wardResults: any;
-    wardData: Record<string, WardData>;
+    wardData: LocalElectionWardData;
     partyInfo: Party[];
 }
 
