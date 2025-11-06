@@ -4,7 +4,7 @@ import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
 interface UseInteractionHandlersParams {
 	setSelectedWard: (ward: LocalElectionWardData | null) => void;
 	setSelectedConstituency: (constituency: ConstituencyData | null) => void;
-	setSelectedLocation: (location: string | null) => void;
+	setSelectedLocation: (location: string) => void;
 }
 
 /**
@@ -19,56 +19,49 @@ export function useInteractionHandlers({
 	const lastHoveredWardRef = useRef<string | null>(null);
 	const lastHoveredConstituencyRef = useRef<string | null>(null);
 
-	const onWardHover = useCallback(
-		(params: { data: LocalElectionWardData | null; wardCode: string }) => {
-			const { data, wardCode } = params;
+	const onWardHover = useCallback((params: { data: LocalElectionWardData | null; wardCode: string }) => {
+		const { data, wardCode } = params;
 
-			// Skip if hovering over same ward
-			if (wardCode && wardCode === lastHoveredWardRef.current) {
-				return;
-			}
+		// console.log('PARAMS', params);
 
-			// Update last hovered ward
-			lastHoveredWardRef.current = wardCode || null;
+		// Skip if hovering over same ward
+		if (wardCode && wardCode === lastHoveredWardRef.current) {
+			return;
+		}
 
-			if (!data) {
-				setSelectedWard(null);
-				return;
-			}
+		// Update last hovered ward
+		lastHoveredWardRef.current = wardCode || null;
 
-			setSelectedWard({ ...data, wardCode });
-		},
-		[setSelectedWard]
-	);
-
-	const onConstituencyHover = useCallback(
-		(constituencyData: ConstituencyData | null) => {
-			const constituencyId = constituencyData?.onsId || null;
-
-			// Skip if hovering over same constituency
-			if (constituencyId && constituencyId === lastHoveredConstituencyRef.current) {
-				return;
-			}
-
-			// Update last hovered constituency
-			lastHoveredConstituencyRef.current = constituencyId;
-
-			setSelectedConstituency(constituencyData);
-		},
-		[setSelectedConstituency]
-	);
-
-	const onLocationChange = useCallback(
-		(_stats: unknown, location: string) => {
+		if (!data) {
 			setSelectedWard(null);
-			setSelectedLocation(location);
+			return;
+		}
 
-			// Reset last hovered refs since location changed
-			lastHoveredWardRef.current = null;
-			lastHoveredConstituencyRef.current = null;
-		},
-		[setSelectedWard, setSelectedLocation]
-	);
+		setSelectedWard({ ...data, wardCode });
+	}, [setSelectedWard]);
+
+	const onConstituencyHover = useCallback((constituencyData: ConstituencyData | null) => {
+		const constituencyId = constituencyData?.onsId || null;
+
+		// Skip if hovering over same constituency
+		if (constituencyId && constituencyId === lastHoveredConstituencyRef.current) {
+			return;
+		}
+
+		// Update last hovered constituency
+		lastHoveredConstituencyRef.current = constituencyId;
+
+		setSelectedConstituency(constituencyData);
+	}, [setSelectedConstituency]);
+
+	const onLocationChange = useCallback((location: string) => {
+		setSelectedWard(null);
+		setSelectedLocation(location);
+
+		// Reset last hovered refs since location changed
+		lastHoveredWardRef.current = null;
+		lastHoveredConstituencyRef.current = null;
+	}, [setSelectedWard, setSelectedLocation]);
 
 	return {
 		onWardHover,

@@ -1,5 +1,5 @@
 'use client';
-import { LocationBounds, PopulationWardData } from '@lib/types';
+import { LocationBounds, PopulationDataset } from '@lib/types';
 import TitlePane from './TitlePane';
 import LocationPane from './LocationPane';
 import MapOptions from './MapOptions';
@@ -8,7 +8,7 @@ import { memo } from 'react';
 interface ControlPanelProps {
     selectedLocation: string | null;
     onLocationClick: (location: string, bounds: LocationBounds) => void;
-    population: PopulationWardData;
+    population: PopulationDataset['populationData'];
 }
 
 export default memo(function ControlPanel({ selectedLocation, onLocationClick, population }: ControlPanelProps) {

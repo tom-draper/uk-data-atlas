@@ -1,21 +1,20 @@
+// lib/types/index.ts
 import { PARTY_INFO } from "../data/parties";
 
-// lib/types/index.ts
 export interface LocalElectionWardData {
-    [wardCode: string]: {
-        CON: number
-        electorate: number
-        GREEN: number;
-        IND: number;
-        LAB: number;
-        LD: number;
-        localAuthorityCode: string
-        localAuthorityName: string
-        REF: number
-        totalVotes: number;
-        turnoutPercent: number;
-        wardName: string;
-    }
+    CON: number
+    electorate: number
+    GREEN: number;
+    IND: number;
+    LAB: number;
+    LD: number;
+    localAuthorityCode: string
+    localAuthorityName: string
+    REF: number
+    totalVotes: number;
+    turnoutPercent: number;
+    wardName: string;
+    wardCode: string;
 }
 
 export interface LocationBounds {
@@ -48,14 +47,12 @@ export interface AgeData {
 }
 
 export interface PopulationWardData {
-    [wardCode: string]: {
-        total: AgeData;
-        males: AgeData;
-        females: AgeData;
-        wardName: string;
-        laCode: string;
-        laName: string;
-    };
+    total: AgeData;
+    males: AgeData;
+    females: AgeData;
+    wardName: string;
+    laCode: string;
+    laName: string;
 }
 
 export type Dataset = GeneralElectionDataset | PopulationDataset | LocalElectionDataset;
@@ -65,7 +62,7 @@ export interface PopulationDataset {
     name: string;
     type: 'population';
     year: number;
-    populationData: PopulationWardData;
+    populationData: { [wardCode: string]: PopulationWardData };
 }
 
 export interface LocalElectionDataset {
@@ -74,7 +71,7 @@ export interface LocalElectionDataset {
     type: 'local-election';
     year: number;
     wardResults: any;
-    wardData: LocalElectionWardData;
+    wardData: { [wardCode: string]: LocalElectionWardData };
     partyInfo: Party[];
 }
 
@@ -116,8 +113,8 @@ export interface GeneralElectionDataset {
     type: 'general-election';
     year: number;
     constituencyResults: Record<string, string>; // onsId -> winning party
-    constituencyData: Record<string, ConstituencyData>; // onsId -> full data
-    partyInfo: typeof PARTY_INFO;
+    constituencyData: { [constituencyCode: string]: ConstituencyData }; // onsId -> full data
+    partyInfo: Party[];
 }
 
 export interface AggregatedLocalElectionData {

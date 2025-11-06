@@ -1,11 +1,11 @@
 import { LOCATIONS } from "@lib/data/locations";
-import { LocationBounds, PopulationWardData, BoundaryGeojson } from "@lib/types";
+import { LocationBounds, BoundaryGeojson, PopulationDataset } from "@lib/types";
 import { memo, useEffect, useMemo, useState } from "react";
 
 interface LocationPanelProps {
     selectedLocation: string | null;
     onLocationClick: (location: string, bounds: LocationBounds) => void;
-    population: PopulationWardData;
+    population: PopulationDataset['populationData'];
 }
 
 export default memo(function LocationPane({ selectedLocation, onLocationClick, population }: LocationPanelProps) {

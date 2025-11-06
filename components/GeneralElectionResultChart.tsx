@@ -55,7 +55,6 @@ export default function GeneralElectionResultChart({
 
 		// No constituency selected - use aggregated data for the location
 		if (aggregatedData && aggregatedData.partyVotes) {
-			console.log('Using aggregated constituency data:', aggregatedData);
 			return {
 				chartData2024: aggregatedData.partyVotes as ChartData,
 				turnout2024: undefined, // Could calculate average turnout if needed
@@ -63,7 +62,6 @@ export default function GeneralElectionResultChart({
 			};
 		}
 
-		console.log('No aggregated data available:', { aggregatedData, constituencyCode });
 		return {
 			chartData2024: undefined,
 			turnout2024: undefined,

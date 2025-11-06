@@ -1,12 +1,12 @@
 // lib/utils/mapManager.ts
-import { ChartData, LocalElectionWardData, Party, PopulationWardData, BoundaryGeojson, ConstituencyData } from '@lib/types';
+import { ChartData, LocalElectionWardData, Party, PopulationWardData, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset } from '@lib/types';
 import { PARTY_COLORS } from '../data/parties';
 import { GeoJSONFeature } from 'mapbox-gl';
 
 interface MapManagerCallbacks {
     onWardHover?: (params: { data: LocalElectionWardData | null; wardCode: string }) => void;
     onConstituencyHover?: (data: ConstituencyData | null) => void;
-    onLocationChange: (stats: ChartData, location: string) => void;
+    onLocationChange: (location: string) => void;
 }
 
 interface LocationCodeInfo {
@@ -56,24 +56,14 @@ export class MapManager {
      */
     updateMapForLocalElection(
         geojson: BoundaryGeojson,
-        wardResults: Record<string, string>,
-        wardData: LocalElectionWardData,
+        wardResults: LocalElectionDataset['wardResults'],
+        wardData: LocalElectionDataset['wardData'],
         partyInfo: Party[],
-        location: string | null = null,
-        datasetId: string | null = null
-    ): ChartData {
+        // location: string | null, 
+    ) {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
 
         console.log('EXPENSIVE: updateMapForLocalElection: Filtered wards', geojson.features.length);
-
-        // Calculate stats
-        const locationStats = this.calculateLocalElectionStatsInternal(
-            geojson.features,
-            wardCodeProp,
-            wardData,
-            location,
-            datasetId
-        );
 
         // Build and render map
         const locationData = this.buildFeatureCollection(
@@ -85,8 +75,9 @@ export class MapManager {
         this.setupEventHandlers('local-election', wardData, wardCodeProp);
         this.buildWardToLadMapping(geojson);
 
-        this.callbacks.onLocationChange(locationStats, location || '');
-        return locationStats;
+        // if (location) {
+        //     this.callbacks.onLocationChange(location);
+        // }
     }
 
     /**
@@ -95,24 +86,14 @@ export class MapManager {
      */
     updateMapForGeneralElection(
         geojson: BoundaryGeojson,
-        constituencyResults: Record<string, string>,
-        constituencyData: Record<string, ConstituencyData>,
+        constituencyResults: GeneralElectionDataset['constituencyResults'],
+        constituencyData: GeneralElectionDataset['constituencyData'],
         partyInfo: Party[],
-        location: string | null = null,
-        datasetId: string | null = null
-    ): ConstituencyStats {
+        // location: string | null,
+    ) {
         const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
 
         console.log('EXPENSIVE: updateMapForGeneralElection: Filtered constituencies:', geojson.features.length);
-
-        // Calculate stats
-        const locationStats = this.calculateGeneralElectionStatsInternal(
-            geojson.features,
-            constituencyCodeProp,
-            constituencyData,
-            location,
-            datasetId,
-        );
 
         // Build and render map
         const locationData = this.buildFeatureCollection(
@@ -123,11 +104,9 @@ export class MapManager {
         this.updateMapLayers(locationData, partyInfo);
         this.setupEventHandlers('general-election', constituencyData, constituencyCodeProp);
 
-        // Convert constituency stats to ChartData for callback
-        const chartData = this.constituencyStatsToChartData(locationStats);
-        this.callbacks.onLocationChange(chartData, location || '');
-        
-        return locationStats;
+        // if (location) {
+        //     this.callbacks.onLocationChange(location);
+        // }
     }
 
     /**
@@ -135,7 +114,7 @@ export class MapManager {
      */
     updateMapForPopulation(
         geojson: BoundaryGeojson,
-        populationData: PopulationWardData
+        populationData: PopulationDataset['populationData'] ,
     ): void {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
 
@@ -165,15 +144,15 @@ export class MapManager {
         this.setupEventHandlers('population', populationData, wardCodeProp);
         this.buildWardToLadMapping(geojson);
 
-        // Empty stats for population mode
-        const emptyStats: ChartData = { LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0 };
-        this.callbacks.onLocationChange(emptyStats, '');
+        // if (location) {
+        //     this.callbacks.onLocationChange(location);
+        // }
     }
 
     /**
      * Build mapping of ward codes to LAD codes
      */
-    buildWardToLadMapping(geojson: BoundaryGeojson): void {
+    buildWardToLadMapping(geojson: BoundaryGeojson) {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
         const locationCodeInfo = this.detectLocationCodeInfo(geojson);
 
@@ -200,7 +179,7 @@ export class MapManager {
      */
     calculateLocalElectionStats(
         geojson: BoundaryGeojson,
-        wardData: LocalElectionWardData,
+        wardData: LocalElectionDataset['wardData'],
         datasetId: string | null = null
     ): ChartData {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
@@ -218,7 +197,7 @@ export class MapManager {
      */
     calculateGeneralElectionStats(
         geojson: BoundaryGeojson,
-        constituencyData: Record<string, ConstituencyData>,
+        constituencyData: GeneralElectionDataset['constituencyData'],
         datasetId: string | null = null
     ): ConstituencyStats {
         const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
@@ -241,12 +220,12 @@ export class MapManager {
     private calculateLocalElectionStatsInternal(
         geojson: BoundaryGeojson['features'],
         wardCodeProp: string,
-        wardData: LocalElectionWardData,
+        wardData: LocalElectionDataset['wardData'],
         location: string | null = null,
         datasetId: string | null = null
     ): ChartData {
         const cacheKey = `local-election-${location}-${datasetId}`;
-        
+
         if (this.cache.has(cacheKey)) {
             console.log(`CACHE HIT: calculateLocalElectionStats: [${cacheKey}]`);
             return this.cache.get(cacheKey);
@@ -272,7 +251,7 @@ export class MapManager {
         geojson.forEach((feature: any) => {
             const wardCode = feature.properties[wardCodeProp];
             const ward = wardData[wardCode];
-            
+
             if (ward) {
                 aggregated.LAB += (ward.LAB as number) || 0;
                 aggregated.CON += (ward.CON as number) || 0;
@@ -299,12 +278,12 @@ export class MapManager {
     private calculateGeneralElectionStatsInternal(
         geojson: BoundaryGeojson['features'],
         constituencyCodeProp: string,
-        constituencyData: Record<string, ConstituencyData>,
+        constituencyData: GeneralElectionDataset['constituencyData'],
         location: string | null = null,
         datasetId: string | null = null
     ): ConstituencyStats {
         const cacheKey = `general-election-${location}-${datasetId}`;
-        
+
         if (this.cache.has(cacheKey)) {
             console.log(`CACHE HIT: calculateGeneralElectionStats: [${cacheKey}]`);
             return this.cache.get(cacheKey);
@@ -350,22 +329,22 @@ export class MapManager {
     /**
      * Convert constituency stats to ChartData format
      */
-    private constituencyStatsToChartData(stats: ConstituencyStats): ChartData {
-        return {
-            LAB: stats.partyVotes.LAB || 0,
-            CON: stats.partyVotes.CON || 0,
-            LD: stats.partyVotes.LD || 0,
-            GREEN: stats.partyVotes.GREEN || 0,
-            REF: stats.partyVotes.RUK || 0, // Map RUK to REF
-            IND: stats.partyVotes.OTHER || 0, // Map OTHER to IND
-            DUP: stats.partyVotes.DUP || 0,
-            SF: stats.partyVotes.SF || 0,
-            SDLP: stats.partyVotes.SDLP || 0,
-            APNI: stats.partyVotes.APNI || 0,
-            SNP: stats.partyVotes.SNP || 0,
-            PC: stats.partyVotes.PC || 0,
-        };
-    }
+    // private constituencyStatsToChartData(stats: ConstituencyStats): ChartData {
+    //     return {
+    //         LAB: stats.partyVotes.LAB || 0,
+    //         CON: stats.partyVotes.CON || 0,
+    //         LD: stats.partyVotes.LD || 0,
+    //         GREEN: stats.partyVotes.GREEN || 0,
+    //         REF: stats.partyVotes.RUK || 0, // Map RUK to REF
+    //         IND: stats.partyVotes.OTHER || 0, // Map OTHER to IND
+    //         DUP: stats.partyVotes.DUP || 0,
+    //         SF: stats.partyVotes.SF || 0,
+    //         SDLP: stats.partyVotes.SDLP || 0,
+    //         APNI: stats.partyVotes.APNI || 0,
+    //         SNP: stats.partyVotes.SNP || 0,
+    //         PC: stats.partyVotes.PC || 0,
+    //     };
+    // }
 
     // ============================================================================
     // Property Detection Methods
@@ -401,40 +380,6 @@ export class MapManager {
 
         return { property: null, fallbackToWardMapping: true };
     }
-
-    // ============================================================================
-    // Feature Filtering Methods
-    // ============================================================================
-
-    /**
-     * Get wards in a location
-     */
-    // private getWardsInLocation(geojson: BoundaryGeojson, location: string) {
-    //     const locationCodeInfo = this.detectLocationCodeInfo(geojson);
-    //     const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
-    //     const ladCodes = LOCATIONS[location]?.lad_codes;
-
-    //     if (locationCodeInfo.fallbackToWardMapping) {
-    //         return geojson.features.filter((feature: any) => {
-    //             const wardCode = feature.properties[wardCodeProp];
-    //             const locationCode = this.wardToLadMapping.get(wardCode);
-    //             return ladCodes.includes(locationCode || '');
-    //         });
-    //     } else {
-    //         return geojson.features.filter((feature: any) => {
-    //             const locationCode = feature.properties[locationCodeInfo.property!];
-    //             return ladCodes.includes(locationCode);
-    //         });
-    //     }
-    // }
-
-    /**
-     * Get constituencies in a location
-     */
-    // private getConstituenciesInLocation(geojson: BoundaryGeojson, location: string) {
-    //     // Return all constituencies for now (filtering logic can be added later)
-    //     return geojson.features;
-    // }
 
     // ============================================================================
     // Map Layer Management
@@ -553,7 +498,7 @@ export class MapManager {
      */
     private setupEventHandlers(
         mode: MapMode,
-        data: LocalElectionWardData | Record<string, ConstituencyData> | PopulationWardData,
+        data: LocalElectionDataset['wardData'] | GeneralElectionDataset['constituencyData'] | PopulationDataset['populationData'],
         codeProp: string
     ) {
         // Remove existing handlers
@@ -576,7 +521,7 @@ export class MapManager {
     private handleMouseMove(
         e: mapboxgl.MapMouseEvent,
         mode: MapMode,
-        data: LocalElectionWardData | Record<string, ConstituencyData> | PopulationWardData,
+        data: LocalElectionDataset['wardData'] | GeneralElectionDataset['constituencyData'] | PopulationDataset['populationData'],
         codeProp: string
     ) {
         this.map.getCanvas().style.cursor = 'pointer';
@@ -587,13 +532,13 @@ export class MapManager {
 
             switch (mode) {
                 case 'local-election':
-                    this.handleLocalElectionHover(feature, data as LocalElectionWardData, codeProp);
+                    this.handleLocalElectionHover(feature, data as LocalElectionDataset['wardData'], codeProp);
                     break;
                 case 'general-election':
-                    this.handleGeneralElectionHover(feature, data as ConstituencyData, codeProp);
+                    this.handleGeneralElectionHover(feature, data as GeneralElectionDataset['constituencyData'], codeProp);
                     break;
                 case 'population':
-                    this.handlePopulationHover(feature, data as PopulationWardData, codeProp);
+                    this.handlePopulationHover(feature, data as PopulationDataset['populationData'], codeProp);
                     break;
             }
         }
@@ -648,7 +593,7 @@ export class MapManager {
      */
     private handleLocalElectionHover(
         feature: GeoJSONFeature,
-        wardData: LocalElectionWardData,
+        wardData: LocalElectionDataset['wardData'],
         wardCodeProp: string
     ) {
         const wardCode = feature.properties[wardCodeProp];
@@ -667,7 +612,7 @@ export class MapManager {
      */
     private handleGeneralElectionHover(
         feature: GeoJSONFeature,
-        constituencyData: Record<string, ConstituencyData>,
+        constituencyData: GeneralElectionDataset['constituencyData'],
         constituencyCodeProp: string
     ) {
         const onsId = feature.properties[constituencyCodeProp];
@@ -683,14 +628,14 @@ export class MapManager {
      */
     private handlePopulationHover(
         feature: GeoJSONFeature,
-        populationData: PopulationWardData,
+        populationData: PopulationDataset['populationData'],
         wardCodeProp: string
     ) {
         const wardCode = feature.properties[wardCodeProp];
         const wardPopData = populationData[wardCode];
 
         if (wardPopData && this.callbacks.onWardHover) {
-            const wardData: LocalElectionWardData = {
+            const wardData: PopulationDataset['populationData'] = {
                 wardCode: wardCode,
                 wardName: wardPopData.wardName || '',
                 localAuthorityCode: wardPopData.laCode || '',
@@ -752,7 +697,7 @@ export class MapManager {
     /**
      * Calculate median age for a ward
      */
-    private calculateMedianAge(wardPopulation: PopulationWardData): number | null {
+    private calculateMedianAge(wardPopulation: PopulationDataset['populationData']): number | null {
         if (!wardPopulation?.total) return null;
 
         const ageData = wardPopulation.total;

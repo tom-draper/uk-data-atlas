@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapManager } from '@lib/utils/mapManager';
-import type { ChartData, LocalElectionWardData } from '@lib/types';
+import type { LocalElectionWardData } from '@lib/types';
 
 type UseMapManagerOptions = {
     mapRef: React.RefObject<mapboxgl.Map | null>;
     geojson: any | null;
     onWardHover?: (params: { data: LocalElectionWardData | null; wardCode: string }) => void;
     onConstituencyHover?: (data: any | null) => void;
-    onLocationChange?: (stats: ChartData | null, location: string) => void;
+    onLocationChange?: (location: string) => void;
 };
 
 export function useMapManager(opts: UseMapManagerOptions) {
@@ -35,9 +35,9 @@ export function useMapManager(opts: UseMapManagerOptions) {
                     callbacksRef.current.onConstituencyHover(data);
                 }
             },
-            onLocationChange: (stats, location) => {
+            onLocationChange: (location) => {
                 if (callbacksRef.current.onLocationChange) {
-                    callbacksRef.current.onLocationChange(stats, location);
+                    callbacksRef.current.onLocationChange(location);
                 }
             }
         });
@@ -54,5 +54,5 @@ export function useMapManager(opts: UseMapManagerOptions) {
         };
     }, [opts.mapRef, opts.geojson]);
 
-    return { mapManager };
+    return mapManager;
 }

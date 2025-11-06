@@ -72,8 +72,6 @@ export default function LocalElectionResultChart({
 			return { chartData: undefined, turnout: undefined };
 		};
 
-		console.log('RENDERING LOCAL ELECTION CHART DATA:', wardCode, activeDataset, aggregatedData);
-
 		// Calculate data for each year independently
 		const data2024 = getChartData(availableDatasets['2024'].wardData, '2024');
 		const data2023 = getChartData(availableDatasets['2023'].wardData, '2023');

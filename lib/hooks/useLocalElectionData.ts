@@ -173,7 +173,7 @@ const parseLocalElection2023 = async (): Promise<LocalElectionDataset & { unmapp
 
                 resolve({
                     id: '2023',
-                    type: 'election',
+                    type: 'local-election',
                     name: 'Local Elections 2023',
                     year: 2023,
                     wardResults: {},
@@ -401,7 +401,7 @@ export const useLocalElectionData = () => {
                     2021: data2021,
                 }
 
-                console.log('Storing election datasets:', loadedDatasets);
+                console.log('Storing local election datasets:', loadedDatasets);
                 setDatasets(loadedDatasets);
                 setLoading(false);
             } catch (err: any) {

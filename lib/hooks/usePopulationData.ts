@@ -125,7 +125,7 @@ export const usePopulationData = () => {
 				const totalAgeData = parsePopulationData(personsText);
 
 				// Combine into single structure with males, females, and total per ward
-				const combinedData: PopulationWardData = {};
+				const combinedData: PopulationDataset['populationData'] = {};
 
 				const allWardCodes = new Set([
 					...Object.keys(femalesAgeData),
