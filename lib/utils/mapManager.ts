@@ -161,7 +161,8 @@ export class MapManager {
     calculateGeneralElectionStats(
         geojson: BoundaryGeojson,
         constituencyData: GeneralElectionDataset['constituencyData'],
-        datasetId: string | null = null
+        location: string | null = null,
+        datasetId: string | null = null,
     ): ConstituencyStats {
         const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
 
@@ -170,6 +171,7 @@ export class MapManager {
             constituencyCodeProp,
             constituencyData,
             location,
+            datasetId,
         );
     }
 
@@ -218,9 +220,10 @@ export class MapManager {
         geojson: BoundaryGeojson['features'],
         constituencyCodeProp: string,
         constituencyData: GeneralElectionDataset['constituencyData'],
+        location: string | null = null,
         datasetId: string | null = null
     ): ConstituencyStats {
-        const cacheKey = `general-election-${datasetId}`;
+        const cacheKey = `general-election-${location}-${datasetId}`;
 
         if (this.cache.has(cacheKey)) {
             console.log(`CACHE HIT: calculateGeneralElectionStats: [${cacheKey}]`);

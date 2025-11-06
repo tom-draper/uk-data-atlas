@@ -16,10 +16,10 @@ export const LOCATIONS: Record<string, LocationBounds> = {
     },
 
     // West Midlands
-    'West Midlands': {
-        lad_codes: ['E08000025', 'E08000026', 'E08000027', 'E08000028', 'E08000029', 'E08000030', 'E08000031'],
-        bounds: [-2.2, 52.35, -1.7, 52.65]
-    },
+    // 'West Midlands': {
+    //     lad_codes: ['E08000025', 'E08000026', 'E08000027', 'E08000028', 'E08000029', 'E08000030', 'E08000031'],
+    //     bounds: [-2.2, 52.35, -1.7, 52.65]
+    // },
     'Coventry': {
         lad_codes: ['E08000026'],
         bounds: [-1.6, 52.35, -1.45, 52.45]
@@ -260,7 +260,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         lad_codes: ['E06000027'],
         bounds: [-3.55, 50.43, -3.48, 50.48]
     },
-    'Truro': {
+    'Cornwall': {
         lad_codes: ['E06000052'],
         bounds: [-5.1, 50.23, -5.0, 50.28]
     },
@@ -410,7 +410,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         lad_codes: ['S12000038'],
         bounds: [-4.45, 55.83, -4.4, 55.87]
     },
-    
+
     // Wales
     'Cardiff': {
         lad_codes: ['W06000015'],
@@ -436,7 +436,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         lad_codes: ['W06000008'],
         bounds: [-4.1, 52.4, -4.05, 52.43]
     },
-    
+
     // Northern Ireland
     'Belfast': {
         lad_codes: ['N09000003'],
@@ -453,5 +453,389 @@ export const LOCATIONS: Record<string, LocationBounds> = {
     'Newry': {
         lad_codes: ['N09000010'],
         bounds: [-6.37, 54.17, -6.32, 54.2]
+    },
+
+    // North West England
+    'North West': {
+        lad_codes: [
+            // Greater Manchester
+            'E08000001', 'E08000002', 'E08000003', 'E08000004', 'E08000005', 'E08000006',
+            'E08000007', 'E08000008', 'E08000009', 'E08000010',
+            // Merseyside
+            'E08000011', 'E08000012', 'E08000013', 'E08000014', 'E08000015',
+            // Cheshire
+            'E06000049', 'E06000050', 'E06000006', 'E06000007',
+            // Lancashire
+            'E07000117', 'E07000118', 'E07000119', 'E07000120', 'E07000121', 'E07000122', 'E07000123',
+            'E07000124', 'E07000125', 'E07000126', 'E07000127', 'E07000128', 'E07000129', 'E07000130',
+            // Cumbria
+            'E07000026', 'E07000027', 'E07000028', 'E07000029', 'E07000030', 'E07000031'
+        ],
+        bounds: [-3.6, 53.3, -2.1, 55.1]
+    },
+
+    // North East England
+    'North East': {
+        lad_codes: [
+            'E06000001', 'E06000002', 'E06000003', 'E06000004', 'E06000005', 'E06000047', // Tees Valley
+            'E08000020', 'E08000021', 'E08000022', 'E08000023', 'E08000024' // Tyne & Wear
+        ],
+        bounds: [-2.2, 54.5, -1.1, 55.8]
+    },
+
+    // West Midlands
+    'West Midlands': {
+        lad_codes: [
+            'E08000025', 'E08000026', 'E08000027', 'E08000028', 'E08000029', 'E08000030', 'E08000031', // Metro area
+            'E07000192', 'E07000193', 'E07000194', 'E07000195', 'E07000196', // Staffordshire
+            'E06000019', 'E06000021', // Telford, Stoke
+            'E07000218', 'E07000219', 'E07000220', 'E07000221', 'E07000222' // Warwickshire
+        ],
+        bounds: [-3.1, 52.2, -1.4, 53.0]
+    },
+
+    // South West England
+    'South West': {
+        lad_codes: [
+            // Devon
+            'E07000040', 'E07000041', 'E07000042', 'E07000043', 'E07000044', 'E07000045', 'E07000046', 'E07000047',
+            'E06000052',
+            // Cornwall
+            'E06000052', 'E06000053',
+            // Somerset
+            'E07000187', 'E07000188', 'E07000189', 'E07000190', 'E07000191',
+            // Dorset
+            'E06000059', 'E06000058'
+        ],
+        bounds: [-5.3, 50.2, -1.9, 51.3]
+    },
+
+    // South East England
+    'South East': {
+        lad_codes: [
+            'E06000035', 'E06000036', 'E06000037', 'E06000038', 'E06000039', // Hampshire/Isle of Wight
+            'E07000061', 'E07000062', 'E07000063', 'E07000064', 'E07000065', 'E07000066', 'E07000067', // Kent
+            'E07000207', 'E07000208', 'E07000209', 'E07000210', // Oxfordshire
+            'E07000175', 'E07000176', 'E07000177', 'E07000178', // Surrey
+            'E06000043', 'E06000044', // Brighton & Hove, East Sussex
+            'E07000084', 'E07000085', 'E07000086', 'E07000087', // Buckinghamshire
+        ],
+        bounds: [-1.8, 50.7, 1.5, 52.1]
+    },
+
+    // East of England
+    'East of England': {
+        lad_codes: [
+            'E06000031', 'E06000032', 'E06000033', 'E06000034', // Essex/Thurrock/Southend
+            'E07000100', 'E07000101', 'E07000102', 'E07000103', 'E07000104', 'E07000105', // Cambridgeshire
+            'E07000200', 'E07000201', 'E07000202', 'E07000203', 'E07000204', // Norfolk
+            'E07000095', 'E07000096', 'E07000097', 'E07000098', 'E07000099', // Suffolk
+            'E07000207', 'E07000208', 'E07000209', 'E07000210' // Hertfordshire
+        ],
+        bounds: [-0.6, 51.6, 1.8, 53.2]
+    },
+
+    // Devon
+    'Devon': {
+        lad_codes: [
+            'E07000040', 'E07000041', 'E07000042', 'E07000043', 'E07000044', 'E07000045', 'E07000046', 'E07000047', // Devon districts
+            'E06000052' // Plymouth
+        ],
+        bounds: [-4.9, 50.2, -2.9, 51.3]
+    },
+
+    // Cornwall
+    // 'Cornwall': {
+    //     lad_codes: ['E06000052', 'E06000053'],
+    //     bounds: [-5.7, 49.9, -4.0, 50.7]
+    // },
+
+    // Somerset
+    'Somerset': {
+        lad_codes: [
+            'E07000187', 'E07000188', 'E07000189', 'E07000190', 'E07000191'
+        ],
+        bounds: [-3.8, 50.9, -2.2, 51.4]
+    },
+
+    // Dorset
+    'Dorset': {
+        lad_codes: ['E06000058', 'E06000059'],
+        bounds: [-2.8, 50.6, -1.6, 51.1]
+    },
+
+    // Hampshire
+    'Hampshire': {
+        lad_codes: [
+            'E07000084', 'E07000085', 'E07000086', 'E07000087', 'E07000088',
+            'E07000089', 'E07000090', 'E07000091', 'E07000092', 'E07000093', // Hampshire districts
+            'E06000044' // Portsmouth, Southampton
+        ],
+        bounds: [-1.9, 50.7, -0.7, 51.4]
+    },
+
+    // Kent
+    'Kent': {
+        lad_codes: [
+            'E07000105', 'E07000106', 'E07000107', 'E07000108', 'E07000109', 'E07000110', 'E07000111',
+            'E07000112', 'E07000113', 'E07000114', 'E07000115', 'E07000116',
+            'E06000035', 'E06000036' // Medway, Thurrock
+        ],
+        bounds: [0.3, 50.8, 1.6, 51.5]
+    },
+
+    // Sussex (combined East + West)
+    'Sussex': {
+        lad_codes: [
+            'E07000223', 'E07000224', 'E07000225', 'E07000226', // West Sussex
+            'E07000061', 'E07000062', 'E07000063', 'E07000064', 'E06000043' // East Sussex & Brighton
+        ],
+        bounds: [-0.9, 50.7, 1.0, 51.2]
+    },
+
+    // Essex
+    'Essex': {
+        lad_codes: [
+            'E07000066', 'E07000067', 'E07000068', 'E07000069', 'E07000070', 'E07000071',
+            'E07000072', 'E07000073', 'E07000074', 'E07000075', 'E07000076',
+            'E06000032', 'E06000033' // Thurrock, Southend
+        ],
+        bounds: [0.2, 51.5, 1.3, 52.1]
+    },
+
+    // Hertfordshire
+    'Hertfordshire': {
+        lad_codes: [
+            'E07000095', 'E07000096', 'E07000097', 'E07000098', 'E07000099', 'E07000100', 'E07000101', 'E07000102', 'E07000103', 'E07000104'
+        ],
+        bounds: [-0.6, 51.6, 0.3, 52.1]
+    },
+
+    // Oxfordshire
+    'Oxfordshire': {
+        lad_codes: [
+            'E07000175', 'E07000176', 'E07000177', 'E07000178', 'E07000179'
+        ],
+        bounds: [-1.8, 51.5, -0.9, 52.2]
+    },
+
+    // Gloucestershire
+    'Gloucestershire': {
+        lad_codes: [
+            'E07000077', 'E07000078', 'E07000079', 'E07000080', 'E07000081', 'E07000082'
+        ],
+        bounds: [-2.6, 51.6, -1.7, 52.1]
+    },
+
+    // Lancashire
+    'Lancashire': {
+        lad_codes: [
+            'E07000117', 'E07000118', 'E07000119', 'E07000120', 'E07000121', 'E07000122', 'E07000123',
+            'E07000124', 'E07000125', 'E07000126', 'E07000127', 'E07000128', 'E07000129', 'E07000130'
+        ],
+        bounds: [-3.2, 53.7, -2.2, 54.2]
+    },
+
+    // Cheshire
+    'Cheshire': {
+        lad_codes: ['E06000049', 'E06000050', 'E06000006', 'E06000007'],
+        bounds: [-3.1, 53.0, -2.3, 53.5]
+    },
+
+    // Yorkshire (combined)
+    'Yorkshire': {
+        lad_codes: [
+            // West Yorkshire
+            'E08000032', 'E08000033', 'E08000034', 'E08000035',
+            // South Yorkshire
+            'E08000016', 'E08000017', 'E08000018', 'E08000019',
+            // North Yorkshire
+            'E07000163', 'E07000164', 'E07000165', 'E07000166', 'E07000167', 'E06000010', 'E06000011',
+            // East Riding
+            'E06000009'
+        ],
+        bounds: [-2.6, 53.3, -0.3, 54.6]
+    },
+
+    // Lincolnshire
+    'Lincolnshire': {
+        lad_codes: [
+            'E07000136', 'E07000137', 'E07000138', 'E07000139', 'E07000140', 'E07000141', 'E07000142',
+            'E06000013', 'E06000014', 'E06000015' // North & NE Lincs, Hull
+        ],
+        bounds: [-0.8, 52.6, 0.4, 53.7]
+    },
+
+    // Norfolk
+    'Norfolk': {
+        lad_codes: [
+            'E07000143', 'E07000144', 'E07000145', 'E07000146', 'E07000147', 'E07000148', 'E07000149'
+        ],
+        bounds: [0.2, 52.3, 1.8, 53.0]
+    },
+
+    // Suffolk
+    'Suffolk': {
+        lad_codes: [
+            'E07000200', 'E07000201', 'E07000202', 'E07000203', 'E07000204'
+        ],
+        bounds: [0.3, 51.9, 1.7, 52.6]
+    },
+
+    // Staffordshire
+    'Staffordshire': {
+        lad_codes: [
+            'E07000192', 'E07000193', 'E07000194', 'E07000195', 'E07000196',
+            'E06000021' // Stoke-on-Trent
+        ],
+        bounds: [-2.3, 52.6, -1.5, 53.2]
+    },
+
+    // Derbyshire
+    'Derbyshire': {
+        lad_codes: [
+            'E07000032', 'E07000033', 'E07000034', 'E07000035', 'E07000036', 'E07000037', 'E07000038',
+            'E06000015' // Derby
+        ],
+        bounds: [-2.0, 52.8, -1.3, 53.5]
+    },
+
+    // ----------------------------
+    // SCOTLAND
+    // ----------------------------
+
+    // The Highlands
+    'The Highlands': {
+        lad_codes: ['S12000017'], // Highland Council
+        bounds: [-6.0, 56.3, -3.0, 58.7]
+    },
+
+    // Grampian (Aberdeenshire + Aberdeen City + Moray)
+    'Grampian': {
+        lad_codes: ['S12000033', 'S12000020', 'S12000013'],
+        bounds: [-3.8, 56.8, -1.8, 58.0]
+    },
+
+    // Central Belt (Glasgow + Edinburgh + Stirling + Falkirk + West Lothian)
+    'Central Belt': {
+        lad_codes: ['S12000049', 'S12000036', 'S12000030', 'S12000014', 'S12000039'],
+        bounds: [-4.6, 55.7, -3.0, 56.1]
+    },
+
+    // Scottish Borders
+    'Scottish Borders': {
+        lad_codes: ['S12000026'],
+        bounds: [-3.7, 55.0, -2.0, 55.9]
+    },
+
+    // The Hebrides (Na h-Eileanan Siar + Skye)
+    'The Hebrides': {
+        lad_codes: ['S12000013', 'S12000048'], // Western Isles + Highland (Skye area)
+        bounds: [-8.0, 56.7, -5.5, 58.4]
+    },
+
+    // Tayside (Perth & Kinross, Angus, Dundee)
+    'Tayside': {
+        lad_codes: ['S12000041', 'S12000045', 'S12000042'],
+        bounds: [-4.6, 56.2, -2.5, 57.2]
+    },
+
+    // Lowlands (South Ayrshire, Dumfries & Galloway)
+    'Lowlands': {
+        lad_codes: ['S12000028', 'S12000006'],
+        bounds: [-5.5, 54.8, -2.9, 55.5]
+    },
+
+    // Greater Glasgow & Clyde
+    'Greater Glasgow and Clyde': {
+        lad_codes: [
+            'S12000049', // Glasgow City
+            'S12000035', // East Renfrewshire
+            'S12000038', // Renfrewshire
+            'S12000045', // Inverclyde
+            'S12000046', // East Dunbartonshire
+            'S12000047', // West Dunbartonshire
+        ],
+        bounds: [-4.6, 55.7, -4.0, 56.1]
+    },
+
+    // North East Scotland
+    'North East Scotland': {
+        lad_codes: ['S12000020', 'S12000033', 'S12000013'],
+        bounds: [-3.8, 56.9, -1.9, 58.0]
+    },
+
+    // Islands (Orkney + Shetland + Western Isles)
+    'Scottish Islands': {
+        lad_codes: ['S12000023', 'S12000027', 'S12000013'],
+        bounds: [-8.6, 56.7, -0.8, 60.9]
+    },
+
+    // ----------------------------
+    // WALES
+    // ----------------------------
+
+    // North Wales
+    'North Wales': {
+        lad_codes: [
+            'W06000001', // Isle of Anglesey
+            'W06000002', // Gwynedd
+            'W06000003', // Conwy
+            'W06000004', // Denbighshire
+            'W06000005', // Flintshire
+            'W06000006', // Wrexham
+        ],
+        bounds: [-4.8, 52.7, -2.8, 53.5]
+    },
+
+    // Mid Wales
+    'Mid Wales': {
+        lad_codes: [
+            'W06000023', // Powys
+            'W06000024', // Ceredigion
+        ],
+        bounds: [-4.8, 51.8, -2.9, 52.8]
+    },
+
+    // South Wales
+    'South Wales': {
+        lad_codes: [
+            'W06000009', 'W06000010', 'W06000011', 'W06000012', 'W06000013',
+            'W06000014', 'W06000015', 'W06000016', 'W06000018', 'W06000019',
+            'W06000020', 'W06000021', 'W06000022'
+        ],
+        bounds: [-4.8, 51.3, -2.8, 51.8]
+    },
+
+    // West Wales (Pembrokeshire + Carmarthenshire + Swansea)
+    'West Wales': {
+        lad_codes: ['W06000008', 'W06000010', 'W06000011'],
+        bounds: [-5.5, 51.4, -3.7, 52.2]
+    },
+
+    // Cardiff & The Valleys
+    'Cardiff and The Valleys': {
+        lad_codes: [
+            'W06000015', 'W06000016', 'W06000018', 'W06000019', 'W06000020', 'W06000021', 'W06000022'
+        ],
+        bounds: [-3.5, 51.4, -2.8, 51.8]
+    },
+
+    // South East Wales
+    'South East Wales': {
+        lad_codes: ['W06000013', 'W06000014', 'W06000015', 'W06000016', 'W06000018'],
+        bounds: [-3.3, 51.4, -2.6, 51.8]
+    },
+
+    // The Valleys (Rhondda Cynon Taf, Merthyr, Caerphilly, Blaenau Gwent, Torfaen)
+    'The Valleys': {
+        lad_codes: ['W06000019', 'W06000024', 'W06000020', 'W06000021', 'W06000022'],
+        bounds: [-3.5, 51.5, -2.9, 51.8]
+    },
+
+    // Pembrokeshire Coast
+    'Pembrokeshire Coast': {
+        lad_codes: ['W06000009'],
+        bounds: [-5.5, 51.6, -4.5, 52.1]
     }
 };

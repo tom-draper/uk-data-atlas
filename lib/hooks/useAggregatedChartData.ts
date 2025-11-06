@@ -21,6 +21,7 @@ export function useAggregatedElectionData({
 	boundaryData,
 	localElectionDatasets,
 	generalElectionDatasets,
+	location
 }: UseAggregatedElectionDataParams) {
 	/**
 	 * Aggregated local election data - MapManager caches internally.
@@ -35,13 +36,15 @@ export function useAggregatedElectionData({
 
 		for (const [year, geojson] of Object.entries(boundaryData.ward)) {
 			const dataset = localElectionDatasets[year];
-			result[year] = dataset?.wardData && geojson
-				? mapManager.calculateLocalElectionStats(geojson, dataset.wardData, year)
-				: null;
+			if (dataset?.wardData && geojson) {
+				result[year] = mapManager.calculateLocalElectionStats(geojson, dataset.wardData, location, year)
+			} else {
+				result[year] = null
+			}
 		}
 
 		return result as AggregatedLocalElectionData;
-	}, [mapManager, boundaryData.ward, localElectionDatasets]);
+	}, [mapManager, boundaryData, localElectionDatasets]);
 
 	/**
 	 * Aggregated general election data - fixed to pass constituencyData instead of constituencyResults.
