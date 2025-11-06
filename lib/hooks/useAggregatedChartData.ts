@@ -1,13 +1,13 @@
 // lib/hooks/useAggregatedElectionData.ts
 import { RefObject, useMemo } from 'react';
-import type { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, GeneralElectionDataset, LocalElectionDataset } from '@lib/types';
-import { MapManager } from '../utils/mapManager';
+import type { AggregatedLocalElectionData, AggregateGeneralElectionData, GeneralElectionDataset, LocalElectionDataset } from '@lib/types';
 import { BoundaryData } from './useBoundaryData';
+import { MapManager } from '../utils/mapManager';
 
 interface UseAggregatedElectionDataParams {
 	mapManagerRef: RefObject<MapManager | null>;
+	isManagerReady: boolean;
 	boundaryData: BoundaryData;
-	selectedLocation: string | null;
 	localElectionDatasets: Record<string, LocalElectionDataset | null>;
 	generalElectionDatasets: Record<string, GeneralElectionDataset | null>;
 }
@@ -18,6 +18,7 @@ interface UseAggregatedElectionDataParams {
  */
 export function useAggregatedElectionData({
 	mapManagerRef,
+	isManagerReady,
 	boundaryData,
 	localElectionDatasets,
 	generalElectionDatasets,
@@ -27,7 +28,7 @@ export function useAggregatedElectionData({
 	 * Only recalculates when location or datasets change.
 	 */
 	const aggregatedLocalElectionData = useMemo((): AggregatedLocalElectionData => {
-		if (!mapManagerRef.current || !boundaryData) {
+		if (!isManagerReady || !mapManagerRef.current || !boundaryData?.ward) {
 			return { 2024: null, 2023: null, 2022: null, 2021: null };
 		}
 
@@ -41,14 +42,14 @@ export function useAggregatedElectionData({
 		}
 
 		return result as AggregatedLocalElectionData;
-	}, [mapManagerRef, boundaryData, localElectionDatasets]);
+	}, [isManagerReady, mapManagerRef, boundaryData.ward, localElectionDatasets]);
 
 	/**
 	 * Aggregated general election data - fixed to pass constituencyData instead of constituencyResults.
 	 * MapManager caches this calculation internally.
 	 */
 	const aggregatedGeneralElectionData = useMemo((): AggregateGeneralElectionData | null => {
-		if (!mapManagerRef.current || !boundaryData) {
+		if (!isManagerReady || !mapManagerRef.current || !boundaryData?.constituency) {
 			return null;
 		}
 
@@ -69,7 +70,7 @@ export function useAggregatedElectionData({
 			...stats,
 			partyInfo: dataset.partyInfo || {},
 		};
-	}, [mapManagerRef, boundaryData, generalElectionDatasets]);
+	}, [isManagerReady, mapManagerRef, boundaryData.constituency, generalElectionDatasets]);
 
 	return {
 		aggregatedLocalElectionData,

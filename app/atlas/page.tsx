@@ -76,7 +76,7 @@ export default function MapsPage() {
 	});
 
 	// Map manager - simplified callbacks
-	const mapManagerRef = useMapManager({
+	const { mapManagerRef, isManagerReady } = useMapManager({
 		mapRef: map,
 		geojson,
 		onWardHover: activeDataset?.type === 'local-election' || activeDataset?.type === 'population' ? undefined : onWardHover,
@@ -87,10 +87,10 @@ export default function MapsPage() {
 	// Aggregated data (this might now be redundant for some use cases)
 	const { aggregatedLocalElectionData, aggregatedGeneralElectionData } = useAggregatedElectionData({
 		mapManagerRef,
+		isManagerReady,
 		boundaryData,
 		localElectionDatasets: localElectionData.datasets,
 		generalElectionDatasets: generalElectionData.datasets,
-		selectedLocation
 	});
 
 	// Refs for tracking state
@@ -145,7 +145,6 @@ export default function MapsPage() {
 		if (isInitialized.current || !geojson || !activeDataset || geojsonLoading) return;
 
 		isInitialized.current = true;
-		setSelectedLocation(INITIAL_LOCATION);
 		updateMap(INITIAL_LOCATION);
 		lastRenderedDatasetId.current = activeDatasetId;
 	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, updateMap]);
@@ -170,25 +169,21 @@ export default function MapsPage() {
 	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, selectedLocation, updateMap]);
 
 	// Location click handler
-	const handleLocationClick = useCallback(
-		(location: string) => {
-			if (!mapManagerRef.current || !geojson || !activeDataset) return;
+	const handleLocationClick = useCallback((location: string) => {
+		if (!mapManagerRef.current || !geojson || !activeDataset) return;
+		const locationData = LOCATIONS[location];
+		if (!locationData) return;
 
-			const locationData = LOCATIONS[location];
-			if (!locationData) return;
+		setSelectedLocation(location);
 
-			setSelectedLocation(location);
-
-			requestAnimationFrame(() => {
-				updateMap(location);
-				map.current?.fitBounds(locationData.bounds, {
-					padding: MAP_CONFIG.fitBoundsPadding,
-					duration: MAP_CONFIG.fitBoundsDuration,
-				});
+		requestAnimationFrame(() => {
+			updateMap(location);
+			map.current?.fitBounds(locationData.bounds, {
+				padding: MAP_CONFIG.fitBoundsPadding,
+				duration: MAP_CONFIG.fitBoundsDuration,
 			});
-		},
-		[geojson, activeDataset, updateMap, map, mapManagerRef]
-	);
+		});
+	}, [geojson, activeDataset, updateMap, map, mapManagerRef]);
 
 	// Loading and error states
 	const isLoading = localElectionData.loading || generalElectionData.loading || populationData.loading;

@@ -1,7 +1,7 @@
 // components/LocalElectionResultChart.tsx
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
-import { AggregatedLocalElectionData, ChartData, Dataset, GeneralElectionDataset } from '@lib/types';
+import { AggregatedLocalElectionData, ChartData, Dataset } from '@lib/types';
 import { useMemo } from 'react';
 
 interface LocalElectionResultChartProps {
@@ -71,6 +71,8 @@ export default function LocalElectionResultChart({
 
 			return { chartData: undefined, turnout: undefined };
 		};
+
+		console.log('RENDERING LOCAL ELECTION CHART DATA:', wardCode, activeDataset, aggregatedData);
 
 		// Calculate data for each year independently
 		const data2024 = getChartData(availableDatasets['2024'].wardData, '2024');

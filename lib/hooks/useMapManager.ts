@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MapManager } from '@lib/utils/mapManager';
 import type { ChartData, WardData } from '@lib/types';
 
@@ -11,8 +11,9 @@ type UseMapManagerOptions = {
 };
 
 export function useMapManager(opts: UseMapManagerOptions) {
-    const managerRef = useRef<MapManager | null>(null);
+    const mapManagerRef = useRef<MapManager | null>(null);
     const callbacksRef = useRef(opts);
+    const [isManagerReady, setIsManagerReady] = useState(false);
     const isInitialized = useRef(false);
 
     // Update callbacks ref without triggering re-initialization
@@ -27,7 +28,7 @@ export function useMapManager(opts: UseMapManagerOptions) {
             return;
         }
         
-        managerRef.current = new MapManager(opts.mapRef.current, {
+        mapManagerRef.current = new MapManager(opts.mapRef.current, {
             onWardHover: (params) => {
                 if (callbacksRef.current.onWardHover) {
                     callbacksRef.current.onWardHover(params);
@@ -46,14 +47,15 @@ export function useMapManager(opts: UseMapManagerOptions) {
         });
         
         isInitialized.current = true;
+        setIsManagerReady(true);
         return () => {
             // Only cleanup if the map itself is being destroyed
             if (!opts.mapRef?.current) {
-                managerRef.current = null;
+                mapManagerRef.current = null;
                 isInitialized.current = false;
             }
         };
     }, [opts.mapRef, opts.geojson]);
 
-    return managerRef;
+    return { mapManagerRef, isManagerReady };
 }
