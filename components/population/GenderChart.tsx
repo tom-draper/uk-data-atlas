@@ -1,19 +1,26 @@
 // components/population/GenderChart.tsx
 import { useMemo } from "react";
-import { Dataset, PopulationWardData } from "@/lib/types";
-import { resolveWardCode } from "@/lib/utils/populationHelpers";
+import { Dataset, PopulationDataset } from "@/lib/types";
 import GenderBalanceByAge from "./GenderBalanceByAge";
-import { GeneralElectionDataset } from "@/lib/hooks/useGeneralElectionData";
+import { WardCodeMapper } from "@/lib/hooks/useWardCodeMapper";
 
 interface GenderChartProps {
-	population: PopulationWardData;
+	population: PopulationDataset['populationData'];
 	wardCode: string;
 	wardName: string;
-	onDatasetChange: (datasetId: string) => void;
-	activeDataset: Dataset
+	setActiveDatasetId: (datasetId: string) => void;
+	activeDataset: Dataset;
+	wardCodeMapper: WardCodeMapper;
 }
 
-export default function GenderChart({ population, wardCode, wardName, onDatasetChange, activeDataset }: GenderChartProps) {
+export default function GenderChart({ 
+	population, 
+	wardCode, 
+	wardName, 
+	setActiveDatasetId, 
+	activeDataset, 
+	wardCodeMapper 
+}: GenderChartProps) {
 	const isActive = activeDataset.type === 'population';
 	const colors = { 
 		bg: 'bg-emerald-50/60', 
@@ -24,15 +31,25 @@ export default function GenderChart({ population, wardCode, wardName, onDatasetC
 	
 	// Calculate total males and females
 	const { totalMales, totalFemales } = useMemo(() => {
-		const resolvedCode = resolveWardCode(wardCode, wardName, population, {});
 		let males = 0;
 		let females = 0;
 
-		if (resolvedCode && population[resolvedCode]) {
-			const ward = population[resolvedCode];
-			males = Object.values(ward.males).reduce((sum, count) => sum + count, 0);
-			females = Object.values(ward.females).reduce((sum, count) => sum + count, 0);
-		} else if (!wardCode) {
+		if (wardCode) {
+			// Try to find the ward data - population uses 2021 codes
+			const codesToTry = [
+				wardCode,
+				wardCodeMapper.convertWardCode(wardCode, 2021)
+			].filter((code): code is string => code !== null);
+
+			for (const code of codesToTry) {
+				if (population[code]) {
+					const ward = population[code];
+					males = Object.values(ward.males).reduce((sum, count) => sum + count, 0);
+					females = Object.values(ward.females).reduce((sum, count) => sum + count, 0);
+					break; // Found the data, stop looking
+				}
+			}
+		} else {
 			// Aggregate all wards
 			for (const ward of Object.values(population)) {
 				males += Object.values(ward.males).reduce((sum, count) => sum + count, 0);
@@ -41,7 +58,7 @@ export default function GenderChart({ population, wardCode, wardName, onDatasetC
 		}
 
 		return { totalMales: males, totalFemales: females };
-	}, [population, wardCode, wardName]);
+	}, [population, wardCode, wardCodeMapper]);
 
 	return (
 		<div
@@ -49,11 +66,11 @@ export default function GenderChart({ population, wardCode, wardName, onDatasetC
 				? `${colors.bg} border-2 ${colors.border}`
 				: `bg-white/60 border-2 border-gray-200/80 hover:${colors.border.replace('border-', 'hover:border-')}`
 				}`}
-			onClick={() => onDatasetChange('population')}
+			onClick={() => setActiveDatasetId('population')}
 		>
 			<div className="flex items-center justify-between mb-0">
 				<h3 className="text-xs font-bold">Gender (2020)</h3>
-				<span className="text-[10px] text-gray-600">
+				<span className="text-[10px] text-gray-600 mr-2">
 					<span className="text-blue-600">{totalMales.toLocaleString()}</span> / <span className="text-pink-600">{totalFemales.toLocaleString()}</span>
 				</span>
 			</div>
@@ -61,6 +78,7 @@ export default function GenderChart({ population, wardCode, wardName, onDatasetC
 				population={population}
 				wardCode={wardCode}
 				wardName={wardName}
+				wardCodeMapper={wardCodeMapper}
 			/>
 		</div>
 	);

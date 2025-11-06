@@ -1,35 +1,44 @@
 // lib/population/usePopulationStats.ts
 import { useMemo } from 'react';
-import { PopulationWardData, AgeGroups, PopulationStats } from '@lib/types';
-import { calculateTotal, calculateAgeGroups, resolveWardCode } from '@lib/utils/populationHelpers';
+import { AgeGroups, PopulationStats, PopulationDataset } from '@lib/types';
+import { WardCodeMapper } from '@lib/hooks/useWardCodeMapper';
+import { calculateTotal, calculateAgeGroups } from '@lib/utils/populationHelpers';
 
 export function usePopulationStats(
-	population: PopulationWardData,
+	population: PopulationDataset['populationData'],
 	wardCode: string,
 	wardName: string,
+	wardCodeMapper: WardCodeMapper
 ): PopulationStats | null {
 	return useMemo((): PopulationStats | null => {
 		if (!population || Object.keys(population).length === 0) return null;
 
 		// Ward-specific data
 		if (wardCode) {
-			const resolvedCode = resolveWardCode(wardCode, wardName, population, {});
+			// Try to find the ward data - population uses 2021 codes
+			const codesToTry = [
+				wardCode,
+				wardCodeMapper.convertWardCode(wardCode, 2021)
+			].filter((code): code is string => code !== null);
 
-			if (resolvedCode && population[resolvedCode]) {
-				const wardData = population[resolvedCode];
-				return {
-					total: calculateTotal(wardData.total),
-					males: calculateTotal(wardData.males),
-					females: calculateTotal(wardData.females),
-					ageGroups: {
-						total: calculateAgeGroups(wardData.total),
-						males: calculateAgeGroups(wardData.males),
-						females: calculateAgeGroups(wardData.females),
-					},
-					isWardSpecific: true
-				};
+			for (const code of codesToTry) {
+				if (population[code]) {
+					const wardData = population[code];
+					return {
+						total: calculateTotal(wardData.total),
+						males: calculateTotal(wardData.males),
+						females: calculateTotal(wardData.females),
+						ageGroups: {
+							total: calculateAgeGroups(wardData.total),
+							males: calculateAgeGroups(wardData.males),
+							females: calculateAgeGroups(wardData.females),
+						},
+						isWardSpecific: true
+					};
+				}
 			}
 
+			// No data found for this ward
 			return null;
 		}
 
@@ -66,23 +75,35 @@ export function usePopulationStats(
 			ageGroups: aggregatedAgeGroups,
 			isWardSpecific: false
 		};
-	}, [population, wardCode, wardName]);
+	}, [population, wardCode, wardName, wardCodeMapper]);
 }
 
 export function useAgeData(
-	population: PopulationWardData,
+	population: PopulationDataset['populationData'],
 	wardCode: string,
 	wardName: string,
+	wardCodeMapper: WardCodeMapper
 ): { [age: string]: number } {
 	return useMemo(() => {
 		const data: { [age: string]: number } = {};
 
 		if (wardCode) {
-			const resolvedCode = resolveWardCode(wardCode, wardName, population, {});
-			if (resolvedCode && population[resolvedCode]) {
-				return population[resolvedCode].total;
+			// Try to find the ward data - population uses 2021 codes
+			const codesToTry = [
+				wardCode,
+				wardCodeMapper.convertWardCode(wardCode, 2021)
+			].filter((code): code is string => code !== null);
+
+			for (const code of codesToTry) {
+				if (population[code]) {
+					return population[code].total;
+				}
 			}
+
+			// No data found, return empty
+			return data;
 		} else {
+			// Aggregate all wards
 			for (const wardData of Object.values(population)) {
 				Object.entries(wardData.total).forEach(([age, count]) => {
 					data[age] = (data[age] || 0) + count;
@@ -91,5 +112,5 @@ export function useAgeData(
 		}
 
 		return data;
-	}, [population, wardCode, wardName]);
+	}, [population, wardCode, wardName, wardCodeMapper]);
 }

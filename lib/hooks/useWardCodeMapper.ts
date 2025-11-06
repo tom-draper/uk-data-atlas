@@ -3,7 +3,7 @@ import { BoundaryData, WARD_CODE_KEYS, WARD_NAME_KEYS, WardCodeKey, WardNameKey 
 
 type WardYear = 2024 | 2023 | 2022 | 2021;
 
-interface WardCodeMapper {
+export interface WardCodeMapper {
 	/**
 	 * Convert a ward code from any year to the equivalent code in the target year
 	 * @param wardCode - Source ward code (from any year)

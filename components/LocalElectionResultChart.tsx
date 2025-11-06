@@ -1,16 +1,17 @@
 // components/LocalElectionResultChart.tsx
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
+import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 import { AggregatedLocalElectionData, ChartData, Dataset, LocalElectionDataset } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
-// --- (Prop interfaces remain the same) ---
 interface LocalElectionResultChartProps {
 	activeDataset: Dataset;
 	availableDatasets: Record<string, LocalElectionDataset | null>;
 	setActiveDatasetId: (datasetId: string) => void;
 	wardCode: string;
 	aggregatedData: AggregatedLocalElectionData;
+	wardCodeMapper: WardCodeMapper
 }
 
 const ELECTION_YEARS = ['2024', '2023', '2022', '2021'] as const;
@@ -138,6 +139,7 @@ export default function LocalElectionResultChart({
 	setActiveDatasetId,
 	wardCode,
 	aggregatedData,
+	wardCodeMapper
 }: LocalElectionResultChartProps) {
 
 	// This useMemo hook is already optimized from before
@@ -148,33 +150,48 @@ export default function LocalElectionResultChart({
 		const getChartData = (year: ElectionYear): { chartData: ChartData | undefined; turnout: number | undefined } => {
 			const yearData = availableDatasets[year]?.wardData;
 
-			if (wardCode && yearData && yearData[wardCode]) {
-				const data = yearData[wardCode];
-				return {
-					chartData: {
-						LAB: (data.LAB as number) || 0,
-						CON: (data.CON as number) || 0,
-						LD: (data.LD as number) || 0,
-						GREEN: (data.GREEN as number) || 0,
-						REF: (data.REF as number) || 0,
-						IND: (data.IND as number) || 0,
-						DUP: (data.DUP as number) || 0,
-						PC: (data.PC as number) || 0,
-						SNP: (data.SNP as number) || 0,
-						SF: (data.SF as number) || 0,
-						APNI: (data.APNI as number) || 0,
-						SDLP: (data.SDLP as number) || 0,
-					},
-					turnout: data.turnoutPercent
-				};
+			if (wardCode && yearData) {
+				// Try the ward code directly first
+				let data = yearData[wardCode];
+
+				// If not found, try converting the ward code to this year
+				if (!data) {
+					const convertedCode = wardCodeMapper.convertWardCode(wardCode, parseInt(year) as 2024 | 2023 | 2022 | 2021);
+					if (convertedCode) {
+						data = yearData[convertedCode];
+					}
+				}
+
+				// If we found data, return it
+				if (data) {
+					return {
+						chartData: {
+							LAB: (data.LAB as number) || 0,
+							CON: (data.CON as number) || 0,
+							LD: (data.LD as number) || 0,
+							GREEN: (data.GREEN as number) || 0,
+							REF: (data.REF as number) || 0,
+							IND: (data.IND as number) || 0,
+							DUP: (data.DUP as number) || 0,
+							PC: (data.PC as number) || 0,
+							SNP: (data.SNP as number) || 0,
+							SF: (data.SF as number) || 0,
+							APNI: (data.APNI as number) || 0,
+							SDLP: (data.SDLP as number) || 0,
+						},
+						turnout: data.turnoutPercent
+					};
+				}
 			}
 
+			// Fallback to aggregated data
 			if (!wardCode && aggregatedData && aggregatedData[year]) {
 				return {
 					chartData: aggregatedData[year],
 					turnout: undefined
 				};
 			}
+
 			return { chartData: undefined, turnout: undefined };
 		};
 

@@ -61,7 +61,7 @@ export default function AgeChart({ ageData, total, ageGroups, setActiveDatasetId
 		>
 			<div className="flex items-center justify-between mb-2">
 				<h3 className="text-xs font-bold">Age Distribution (2020)</h3>
-				<span className="text-[10px] text-gray-600">
+				<span className="text-[10px] text-gray-600 mr-2">
 					Median: <span className="font-semibold">{medianAge}</span>
 				</span>
 			</div>

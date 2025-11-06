@@ -1,5 +1,4 @@
 // components/population/PopulationSummary.tsx
-import { GeneralElectionDataset } from "@/lib/hooks/useGeneralElectionData";
 import { Dataset } from "@/lib/types";
 
 interface PopulationSummaryProps {

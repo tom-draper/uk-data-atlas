@@ -1,23 +1,24 @@
 // components/ChartPanel.tsx
 'use client';
-import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, PopulationWardData, LocalElectionWardData } from '@lib/types';
-import { ConstituencyData, GeneralElectionDataset } from '@/lib/hooks/useGeneralElectionData';
+import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, PopulationWardData, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData } from '@lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
 import { memo } from 'react';
+import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
 	selectedWard: LocalElectionWardData | null;
 	selectedConstituency: ConstituencyData | null;
 	activeDataset: Dataset;
-	localElectionDatasets: Record<string, Dataset | null>;
-	generalElectionDatasets: Record<string, GeneralElectionDataset | null>;
-	populationDatasets: Record<string, Dataset>;
+	localElectionDatasets: Record<string, LocalElectionDataset>;
+	generalElectionDatasets: Record<string, GeneralElectionDataset>;
+	populationDatasets: Record<string, PopulationDataset>;
 	setActiveDatasetId: (datasetId: string) => void;
 	aggregatedLocalElectionData: AggregatedLocalElectionData;
-	aggregatedGeneralElectionData: AggregateGeneralElectionData | null;
+	aggregatedGeneralElectionData: AggregateGeneralElectionData;
+	wardCodeMapper: WardCodeMapper
 }
 
 export default memo(function ChartPanel({
@@ -31,6 +32,7 @@ export default memo(function ChartPanel({
 	setActiveDatasetId,
 	aggregatedLocalElectionData,
 	aggregatedGeneralElectionData,
+	wardCodeMapper
 }: ChartPanelProps) {
 	// Determine what to show in the title
 	let title = selectedLocation || 'Greater Manchester';
@@ -81,6 +83,7 @@ export default memo(function ChartPanel({
 						aggregatedData={aggregatedLocalElectionData}
 						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
+						wardCodeMapper={wardCodeMapper}
 					/>
 					
 					<PopulationChart
@@ -89,6 +92,7 @@ export default memo(function ChartPanel({
 						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
 						wardName={selectedWard?.wardName?.toString() || ''}
+						wardCodeMapper={wardCodeMapper}
 					/>
 				</div>
 

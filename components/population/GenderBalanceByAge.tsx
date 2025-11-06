@@ -1,35 +1,62 @@
 // components/population/GenderBalanceByAge.tsx
 import { useMemo } from 'react';
-import { PopulationWardData } from '@/lib/types';
-import { resolveWardCode } from '@/lib/utils/populationHelpers';
+import { PopulationDataset } from '@/lib/types';
+import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 export interface GenderBalanceByAgeProps {
-	population: PopulationWardData;
+	population: PopulationDataset['populationData'];
 	wardCode: string;
 	wardName: string;
+	wardCodeMapper: WardCodeMapper;
 }
 
-export default function GenderBalanceByAge({ population, wardCode, wardName }: GenderBalanceByAgeProps) {
-	const resolvedCode = resolveWardCode(wardCode, wardName, population, {});
-
+export default function GenderBalanceByAge({ 
+	population, 
+	wardCode, 
+	wardName, 
+	wardCodeMapper 
+}: GenderBalanceByAgeProps) {
 	// Collect raw male/female per age (0-90)
 	const ageData = useMemo(() => {
 		const ageRange = Array.from({ length: 91 }, (_, i) => i);
 		const data: Array<{ age: number; males: number; females: number }> = [];
 
-		if (resolvedCode && population[resolvedCode]) {
-			const males = population[resolvedCode].males;
-			const females = population[resolvedCode].females;
+		if (wardCode) {
+			// Try to find the ward data - population uses 2021 codes
+			const codesToTry = [
+				wardCode,
+				wardCodeMapper.convertWardCode(wardCode, 2021)
+			].filter((code): code is string => code !== null);
 
-			for (const age of ageRange) {
-				data.push({
-					age,
-					males: males[age.toString()] || 0,
-					females: females[age.toString()] || 0
-				});
+			let foundData = false;
+			for (const code of codesToTry) {
+				if (population[code]) {
+					const males = population[code].males;
+					const females = population[code].females;
+
+					for (const age of ageRange) {
+						data.push({
+							age,
+							males: males[age.toString()] || 0,
+							females: females[age.toString()] || 0
+						});
+					}
+
+					foundData = true;
+					break; // Found the data, stop looking
+				}
 			}
-		} else if (!wardCode) {
-			const aggregate = { males: {} as Record<string, number>, females: {} as Record<string, number> };
+
+			// If no data found, return empty array
+			if (!foundData) {
+				return [];
+			}
+		} else {
+			// Aggregate all wards
+			const aggregate = { 
+				males: {} as Record<string, number>, 
+				females: {} as Record<string, number> 
+			};
 
 			for (const ward of Object.values(population)) {
 				Object.entries(ward.males).forEach(([age, count]) => {
@@ -50,7 +77,7 @@ export default function GenderBalanceByAge({ population, wardCode, wardName }: G
 		}
 
 		return data;
-	}, [population, wardCode, wardName, resolvedCode]);
+	}, [population, wardCode, wardCodeMapper]);
 
 	if (ageData.length === 0) {
 		return <div className="text-xs h-[111px] text-gray-400 text-center grid place-items-center">

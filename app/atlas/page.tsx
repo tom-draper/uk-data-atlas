@@ -21,6 +21,7 @@ import LoadingDisplay from '@/components/LoadingDisplay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
+import { useWardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 // Constants
 const INITIAL_STATE = {
@@ -57,6 +58,8 @@ export default function MapsPage() {
 
 	// Boundary data
 	const { boundaryData, isLoading: geojsonLoading } = useBoundaryData(selectedLocation);
+
+	const wardCodeMapper = useWardCodeMapper(boundaryData);
 
 	const geojson = useMemo(() => {
 		if (boundaryType === 'ward' && targetYear) {
@@ -175,6 +178,7 @@ export default function MapsPage() {
 						setActiveDatasetId={setActiveDatasetId}
 						aggregatedLocalElectionData={aggregatedLocalElectionData}
 						aggregatedGeneralElectionData={aggregatedGeneralElectionData}
+						wardCodeMapper={wardCodeMapper}
 					/>
 				</div>
 			</div>

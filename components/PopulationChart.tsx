@@ -1,18 +1,19 @@
 // components/PopulationChart.tsx
 'use client';
-import { Dataset, PopulationWardData } from '@lib/types';
+import { Dataset, PopulationDataset } from '@lib/types';
 import { usePopulationStats, useAgeData } from '@lib/hooks/usePopulationStats';
 import PopulationSummary from '@components/population/PopulationSummary';
 import AgeChart from './population/AgeChart';
 import GenderChart from './population/GenderChart';
-import { GeneralElectionDataset } from '@/lib/hooks/useGeneralElectionData';
+import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 export interface PopulationChartProps {
 	activeDataset: Dataset;
-	availableDatasets: Record<string, Dataset>;
+	availableDatasets: Record<string, PopulationDataset>;
 	wardCode: string;
 	wardName: string;
 	setActiveDatasetId: (datasetId: string) => void;
+	wardCodeMapper: WardCodeMapper
 }
 
 export default function PopulationChart({
@@ -20,11 +21,12 @@ export default function PopulationChart({
 	availableDatasets,
 	wardCode,
 	wardName,
-	setActiveDatasetId
+	setActiveDatasetId,
+	wardCodeMapper
 }: PopulationChartProps) {
 	const population = availableDatasets['population']?.populationData || {};
-	const populationStats = usePopulationStats(population, wardCode, wardName);
-	const ageData = useAgeData(population, wardCode, wardName);
+	const populationStats = usePopulationStats(population, wardCode, wardName, wardCodeMapper);
+	const ageData = useAgeData(population, wardCode, wardName, wardCodeMapper);
 
 	const total = populationStats?.total || 0;
 	const males = populationStats?.males || 0;
@@ -55,6 +57,7 @@ export default function PopulationChart({
 					wardCode={wardCode}
 					wardName={wardName}
 					setActiveDatasetId={setActiveDatasetId}
+					wardCodeMapper={wardCodeMapper}
 				/>
 			</div>
 		</div>

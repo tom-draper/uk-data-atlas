@@ -1,5 +1,5 @@
 // lib/population/utils.ts
-import { PopulationWardData, AgeGroups } from '@lib/types';
+import { AgeGroups, PopulationDataset } from '@lib/types';
 
 export const calculateTotal = (ageData: { [age: string]: number }): number => {
 	return Object.values(ageData).reduce((sum, count) => sum + count, 0);
@@ -23,7 +23,7 @@ export const calculateAgeGroups = (ageData: { [age: string]: number }): AgeGroup
 export const resolveWardCode = (
 	wardCode: string,
 	wardName: string,
-	population: PopulationWardData,
+	population: PopulationDataset['populationData'],
 	wardCodeMap: { [name: string]: string }
 ): string => {
 	if (population[wardCode]) return wardCode;
