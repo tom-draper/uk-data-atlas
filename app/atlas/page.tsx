@@ -21,12 +21,11 @@ import LoadingDisplay from '@/components/LoadingDisplay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
-import { useWardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 // Constants
 const INITIAL_STATE = {
-  location: 'Greater Manchester',
-  datasetId: '2024',
+	location: 'Greater Manchester',
+	datasetId: '2024',
 } as const;
 const MAP_CONFIG = {
 	style: 'mapbox://styles/mapbox/light-v11',
@@ -58,8 +57,6 @@ export default function MapsPage() {
 
 	// Boundary data
 	const { boundaryData, isLoading: geojsonLoading } = useBoundaryData(selectedLocation);
-
-	const wardMapper = useWardCodeMapper(boundaryData);
 
 	const geojson = useMemo(() => {
 		if (boundaryType === 'ward' && targetYear) {
@@ -95,6 +92,7 @@ export default function MapsPage() {
 		boundaryData,
 		localElectionDatasets: localElectionData.datasets,
 		generalElectionDatasets: generalElectionData.datasets,
+		location: selectedLocation
 	});
 
 	// Dataset change handler

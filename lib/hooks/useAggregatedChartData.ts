@@ -9,6 +9,7 @@ interface UseAggregatedElectionDataParams {
 	boundaryData: BoundaryData;
 	localElectionDatasets: Record<string, LocalElectionDataset | null>;
 	generalElectionDatasets: Record<string, GeneralElectionDataset | null>;
+	location: string | null
 }
 
 /**
