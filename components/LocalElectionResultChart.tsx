@@ -19,7 +19,7 @@ type ElectionYear = typeof ELECTION_YEARS[number];
 
 interface CompactBarProps {
 	data: PartyVotes | undefined;
-	dataset: Dataset;
+	dataset: LocalElectionDataset;
 	isActive: boolean;
 }
 

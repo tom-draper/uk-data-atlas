@@ -91,7 +91,7 @@ export default memo(function ChartPanel({
 						availableDatasets={populationDatasets}
 						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
-						wardName={selectedWard?.wardName?.toString() || ''}
+						wardName={selectedWard?.wardName?.toString() ?? ''}
 						wardCodeMapper={wardCodeMapper}
 					/>
 				</div>
