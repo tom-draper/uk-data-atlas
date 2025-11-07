@@ -11,6 +11,7 @@ interface ChartPanelProps {
 	selectedLocation: string | null;
 	selectedWard: LocalElectionWardData | null;
 	selectedConstituency: ConstituencyData | null;
+	activeDatasetId: string;
 	activeDataset: Dataset;
 	localElectionDatasets: Record<string, LocalElectionDataset>;
 	generalElectionDatasets: Record<string, GeneralElectionDataset>;
@@ -25,6 +26,7 @@ export default memo(function ChartPanel({
 	selectedLocation,
 	selectedWard,
 	selectedConstituency,
+	activeDatasetId,
 	activeDataset,
 	localElectionDatasets,
 	generalElectionDatasets,
@@ -87,7 +89,7 @@ export default memo(function ChartPanel({
 					/>
 					
 					<PopulationChart
-						activeDataset={activeDataset}
+					 	activeDatasetId={activeDatasetId}
 						availableDatasets={populationDatasets}
 						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}

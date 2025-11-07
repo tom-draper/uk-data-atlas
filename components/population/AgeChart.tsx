@@ -1,18 +1,18 @@
 // components/population/AgeChart.tsx
 import { useMemo } from "react";
-import { AgeGroups, Dataset } from "@/lib/types";
+import { AgeGroups } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
 
 interface AgeChartProps {
-	activeDataset: Dataset
+	activeDatasetId: string;
 	ageData: { [age: string]: number };
 	total: number;
 	ageGroups: AgeGroups;
 	setActiveDatasetId: (datasetId: string) => void;
 }
 
-export default function AgeChart({ ageData, total, ageGroups, setActiveDatasetId, activeDataset }: AgeChartProps) {
-	const isActive = activeDataset.type === 'population';
+export default function AgeChart({ ageData, total, ageGroups, setActiveDatasetId, activeDatasetId }: AgeChartProps) {
+	const isActive = activeDatasetId === 'population';
 	const colors = {
 		bg: 'bg-emerald-50/60',
 		border: 'border-emerald-300',

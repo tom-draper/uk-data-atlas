@@ -1,6 +1,6 @@
 // components/population/GenderChart.tsx
 import { useMemo } from "react";
-import { Dataset, PopulationDataset } from "@/lib/types";
+import { PopulationDataset } from "@/lib/types";
 import GenderBalanceByAge from "./GenderBalanceByAge";
 import { WardCodeMapper } from "@/lib/hooks/useWardCodeMapper";
 
@@ -8,7 +8,7 @@ interface GenderChartProps {
 	population: PopulationDataset['populationData'];
 	wardCode: string;
 	setActiveDatasetId: (datasetId: string) => void;
-	activeDataset: Dataset;
+	activeDatasetId: string;
 	wardCodeMapper: WardCodeMapper;
 }
 
@@ -16,10 +16,10 @@ export default function GenderChart({
 	population,
 	wardCode,
 	setActiveDatasetId,
-	activeDataset,
+	activeDatasetId,
 	wardCodeMapper
 }: GenderChartProps) {
-	const isActive = activeDataset.type === 'population';
+	const isActive = activeDatasetId === 'gender';
 	const colors = {
 		bg: 'bg-emerald-50/60',
 		border: 'border-emerald-300',
@@ -64,7 +64,7 @@ export default function GenderChart({
 				? `${colors.bg} border-2 ${colors.border}`
 				: `bg-white/60 border-2 border-gray-200/80 hover:${colors.border.replace('border-', 'hover:border-')}`
 				}`}
-			onClick={() => setActiveDatasetId('population')}
+			onClick={() => setActiveDatasetId('gender')}
 		>
 			<div className="flex items-center justify-between mb-0">
 				<h3 className="text-xs font-bold">Gender (2020)</h3>

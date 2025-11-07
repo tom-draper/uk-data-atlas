@@ -1,16 +1,14 @@
 // components/population/PopulationSummary.tsx
-import { Dataset } from "@/lib/types";
-
 interface PopulationSummaryProps {
-	activeDataset: Dataset
+	activeDatasetId: string;
 	total: number;
 	males: number;
 	females: number;
 	setActiveDatasetId: (datasetId: string) => void;
 }
 
-export default function PopulationSummary({ total, males, females, setActiveDatasetId, activeDataset }: PopulationSummaryProps) {
-	const isActive = activeDataset.type === 'population';
+export default function PopulationSummary({ total, males, females, setActiveDatasetId, activeDatasetId }: PopulationSummaryProps) {
+	const isActive = activeDatasetId === 'population';
 	const colors = {
 		bg: 'bg-emerald-50/60',
 		border: 'border-emerald-300',

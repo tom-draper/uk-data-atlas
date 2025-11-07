@@ -1,6 +1,6 @@
 // page.tsx
 'use client';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { useLocalElectionData as useLocalElectionDatasets } from '@/lib/hooks/useLocalElectionData';
@@ -11,7 +11,7 @@ import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
 import { useAggregatedElectionData } from '@lib/hooks/useAggregatedChartData';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
 import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
-import { useDatasetManager, DATASET_IDS } from '@/lib/hooks/useDatasetManager';
+import { useDatasetManager } from '@/lib/hooks/useDatasetManager';
 
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
@@ -104,29 +104,23 @@ export default function MapsPage() {
 
 		switch (activeDataset.type) {
 			case 'population':
-				mapManager.updateMapForPopulation(
-					geojson,
-					activeDataset.populationData,
-				);
+				switch (activeDatasetId) {
+					case 'gender':
+						mapManager.updateMapForGender(geojson, activeDataset)
+						break
+					case 'population':
+						mapManager.updateMapForPopulation(geojson, activeDataset);
+						break;
+				}
 				break;
 			case 'general-election':
-				mapManager.updateMapForGeneralElection(
-					geojson,
-					activeDataset.constituencyResults,
-					activeDataset.constituencyData,
-					activeDataset.partyInfo,
-				);
+				mapManager.updateMapForGeneralElection(geojson, activeDataset);
 				break;
 			case 'local-election':
-				mapManager.updateMapForLocalElection(
-					geojson,
-					activeDataset.wardResults,
-					activeDataset.wardData,
-					activeDataset.partyInfo,
-				);
+				mapManager.updateMapForLocalElection(geojson, activeDataset);
 				break;
 		}
-	}, [geojson, geojsonLoading, activeDataset, mapManager]);
+	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, mapManager]);
 
 	// Location click handler
 	const handleLocationClick = useCallback((location: string) => {
@@ -165,11 +159,12 @@ export default function MapsPage() {
 				</div>
 
 				<div className="absolute right-0 flex h-full">
-					<LegendPanel isPopulationMode={DATASET_IDS.POPULATION.has(activeDatasetId)} />
+					<LegendPanel isPopulationMode={activeDatasetId === 'population' || activeDatasetId === 'gender'} />
 					<ChartPanel
 						selectedLocation={selectedLocation}
 						selectedWard={selectedWardData}
 						selectedConstituency={selectedConstituencyData}
+						activeDatasetId={activeDatasetId}
 						activeDataset={activeDataset}
 						localElectionDatasets={localElectionData.datasets}
 						generalElectionDatasets={generalElectionData.datasets}

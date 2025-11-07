@@ -8,7 +8,7 @@ import GenderChart from './population/GenderChart';
 import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 export interface PopulationChartProps {
-	activeDataset: Dataset;
+	activeDatasetId: string;
 	availableDatasets: Record<string, PopulationDataset>;
 	wardCode: string;
 	wardName: string;
@@ -17,7 +17,7 @@ export interface PopulationChartProps {
 }
 
 export default function PopulationChart({
-	activeDataset,
+	activeDatasetId,
 	availableDatasets,
 	wardCode,
 	wardName,
@@ -38,21 +38,21 @@ export default function PopulationChart({
 			<h3 className="text-xs font-bold text-gray-700 mb-2">Demographics</h3>
 			<div className="space-y-3">
 				<PopulationSummary
-					activeDataset={activeDataset}
+					activeDatasetId={activeDatasetId}
 					total={total}
 					males={males}
 					females={females}
 					setActiveDatasetId={setActiveDatasetId}
 				/>
 				<AgeChart
-					activeDataset={activeDataset}
+					activeDatasetId={activeDatasetId}
 					ageData={ageData}
 					total={total}
 					ageGroups={ageGroups.total}
 					setActiveDatasetId={setActiveDatasetId}
 				/>
 				<GenderChart
-					activeDataset={activeDataset}
+				 	activeDatasetId={activeDatasetId}
 					population={population}
 					wardCode={wardCode}
 					setActiveDatasetId={setActiveDatasetId}
