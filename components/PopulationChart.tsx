@@ -39,23 +39,23 @@ export default function PopulationChart({
 			<div className="space-y-3">
 				<PopulationSummary
 					activeDatasetId={activeDatasetId}
+					setActiveDatasetId={setActiveDatasetId}
 					total={total}
 					males={males}
 					females={females}
-					setActiveDatasetId={setActiveDatasetId}
 				/>
 				<AgeChart
 					activeDatasetId={activeDatasetId}
+					setActiveDatasetId={setActiveDatasetId}
 					ageData={ageData}
 					total={total}
 					ageGroups={ageGroups.total}
-					setActiveDatasetId={setActiveDatasetId}
 				/>
 				<GenderChart
 				 	activeDatasetId={activeDatasetId}
+					setActiveDatasetId={setActiveDatasetId}
 					population={population}
 					wardCode={wardCode}
-					setActiveDatasetId={setActiveDatasetId}
 					wardCodeMapper={wardCodeMapper}
 				/>
 			</div>

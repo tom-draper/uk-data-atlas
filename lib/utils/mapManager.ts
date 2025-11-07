@@ -153,6 +153,51 @@ export class MapManager {
         this.buildWardToLadMapping(geojson);
     }
 
+    updateMapForPopulationDensity(
+        geojson: BoundaryGeojson,
+        dataset: PopulationDataset,
+    ): void {
+        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
+        console.log('EXPENSIVE: updateMapForGender: Filtered wards', geojson.features.length);
+
+        const locationData = {
+            type: 'FeatureCollection' as const,
+            features: geojson.features.map((feature) => {
+                const wardCode = feature.properties[wardCodeProp];
+                const wardPopulation = dataset.populationData[wardCode];
+
+                let totalPopulation = 0;
+                if (wardPopulation) {
+                    const malesTotal = wardPopulation.males ? Object.values(wardPopulation.males).reduce((total, num) => total + num, 0) : 0
+                    const femalesTotal = wardPopulation.females ? Object.values(wardPopulation.females).reduce((total, num) => total + num, 0) : 0
+                    totalPopulation = malesTotal + femalesTotal;
+                }
+
+                // Compute approximate area
+                const coordinates = feature.geometry.coordinates;
+                const areaSqKm = this.polygonAreaSqKm(coordinates);
+
+                // Compute density
+                const density = areaSqKm > 0 ? totalPopulation / areaSqKm : 0;
+
+                return {
+                    ...feature,
+                    properties: {
+                        ...feature.properties,
+                        color: this.getColorForDensity(density),
+                        density
+                    }
+                };
+            })
+        };
+
+        this.removeExistingLayers();
+        this.addSource(locationData);
+        this.addPopulationLayers();
+        this.setupEventHandlers('population', dataset.populationData, wardCodeProp);
+        this.buildWardToLadMapping(geojson);
+    }
+
     buildWardToLadMapping(geojson: BoundaryGeojson) {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
         const locationCodeInfo = this.detectLocationCodeInfo(geojson);
@@ -587,6 +632,41 @@ export class MapManager {
         return null;
     }
 
+    // Calculates polygon area in square kilometers (roughly accurate for small areas)
+    private polygonAreaSqKm(coordinates: number[][][]): number {
+        const R = 6371; // Earth's radius in km
+
+        // Assuming coordinates[0] is the outer ring
+        const ring = coordinates[0];
+        let area = 0;
+
+        for (let i = 0; i < ring.length - 1; i++) {
+            const [lon1, lat1] = ring[i];
+            const [lon2, lat2] = ring[i + 1];
+
+            // Convert degrees to radians
+            const x1 = (lon1 * Math.PI) / 180;
+            const y1 = (lat1 * Math.PI) / 180;
+            const x2 = (lon2 * Math.PI) / 180;
+            const y2 = (lat2 * Math.PI) / 180;
+
+            // Spherical excess approximation for small polygons
+            area += (x2 - x1) * (2 + Math.sin(y1) + Math.sin(y2));
+        }
+
+        area = (area * R * R) / 2;
+        return Math.abs(area);
+    }
+
+    private getColorForDensity(density: number): string {
+        if (density > 10000) return '#440154'; // dark purple
+        if (density > 5000) return '#3b528b';
+        if (density > 2000) return '#21918c';
+        if (density > 1000) return '#5ec962';
+        if (density > 500) return '#fde725'; // bright yellow
+        return '#ffffe0'; // pale for very low density
+    }
+
     private getColorForAge(meanAge: number | null): string {
         if (meanAge === null) return 'rgb(253, 253, 253)';
 
@@ -610,6 +690,7 @@ export class MapManager {
                 return `rgb(${r}, ${g}, ${b})`;
             }
         }
+
         return 'rgb(253, 253, 253)';
     }
 

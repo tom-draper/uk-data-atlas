@@ -105,12 +105,15 @@ export default function MapsPage() {
 		switch (activeDataset.type) {
 			case 'population':
 				switch (activeDatasetId) {
-					case 'gender':
-						mapManager.updateMapForGender(geojson, activeDataset)
-						break
 					case 'population':
 						mapManager.updateMapForPopulation(geojson, activeDataset);
 						break;
+					case 'density':
+						mapManager.updateMapForPopulationDensity(geojson, activeDataset)
+						break
+					case 'gender':
+						mapManager.updateMapForGender(geojson, activeDataset)
+						break
 				}
 				break;
 			case 'general-election':
@@ -159,7 +162,7 @@ export default function MapsPage() {
 				</div>
 
 				<div className="absolute right-0 flex h-full">
-					<LegendPanel isPopulationMode={activeDatasetId === 'population' || activeDatasetId === 'gender'} />
+					<LegendPanel activeDatasetId={activeDatasetId} />
 					<ChartPanel
 						selectedLocation={selectedLocation}
 						selectedWard={selectedWardData}
