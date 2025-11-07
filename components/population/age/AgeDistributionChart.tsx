@@ -8,9 +8,10 @@ interface AgeDistributionChartProps {
 	ageData: { [age: string]: number };
 	total: number;
 	ageGroups: AgeGroups;
+	isActive: boolean;
 }
 
-export default function AgeDistributionChart({ ageData, total, ageGroups }: AgeDistributionChartProps) {
+export default function AgeDistributionChart({ ageData, total, ageGroups, isActive }: AgeDistributionChartProps) {
 	const ages = useMemo(() => {
 		const ageArray = Array.from({ length: 100 }, (_, i) => ({
 			age: i,
@@ -61,7 +62,7 @@ export default function AgeDistributionChart({ ageData, total, ageGroups }: AgeD
 			</div>
 
 			{/* Age axis labels */}
-			<div className="flex justify-between text-[8px] text-gray-500 mt-1 mb-2">
+			<div className="flex justify-between text-[8px] text-gray-500 mt-1 -mb-1">
 				<span>0</span>
 				<span>25</span>
 				<span>50</span>
@@ -70,7 +71,13 @@ export default function AgeDistributionChart({ ageData, total, ageGroups }: AgeD
 			</div>
 
 			{/* Age group bars */}
-			<div className="space-y-1.5">
+			<div 
+				className={`space-y-1.5 transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${isActive ? 'mt-3' : ''}`}
+				style={{
+					maxHeight: isActive ? '104px' : '0px',
+					opacity: isActive ? 1 : 0
+				}}
+			>
 				{(Object.keys(ageGroups) as Array<keyof AgeGroups>).map(ageGroup => (
 					<AgeGroupBar
 						key={ageGroup}

@@ -61,11 +61,13 @@ export default function AgeChart({ ageData, total, ageGroups, setActiveDatasetId
 		>
 			<div className="flex items-center justify-between mb-2">
 				<h3 className="text-xs font-bold">Age Distribution (2020)</h3>
-				<span className="text-[10px] text-gray-500 mr-1">
-					Median: {medianAge}
-				</span>
+				{medianAge > 0 && (
+					<span className="text-[10px] text-gray-500 mr-1">
+						Median: {medianAge}
+					</span>
+				)}
 			</div>
-			<AgeDistributionChart ageData={ageData} total={total} ageGroups={ageGroups} />
+			<AgeDistributionChart ageData={ageData} total={total} ageGroups={ageGroups} isActive={isActive} />
 		</div>
 	);
 }

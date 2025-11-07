@@ -659,6 +659,7 @@ export class MapManager {
     }
 
     private getColorForDensity(density: number): string {
+        if (density === 0) return '#EEEEEE';
         if (density > 10000) return '#440154'; // dark purple
         if (density > 5000) return '#3b528b';
         if (density > 2000) return '#21918c';
@@ -668,7 +669,7 @@ export class MapManager {
     }
 
     private getColorForAge(meanAge: number | null): string {
-        if (meanAge === null) return 'rgb(253, 253, 253)';
+        if (meanAge === null) return '#EEEEEE';
 
         const t = 1 - Math.max(0, Math.min(1, (meanAge - 25) / 30));
         const colors = [
@@ -691,11 +692,11 @@ export class MapManager {
             }
         }
 
-        return 'rgb(253, 253, 253)';
+        return '#EEEEEE';
     }
 
     private getColorForGenderRatio(ratio: number | null): string {
-        if (ratio === 0 || ratio === null || isNaN(ratio)) return 'rgb(253, 253, 253)'; // neutral background
+        if (ratio === 0 || ratio === null || isNaN(ratio)) return '#EEEEEE'; // neutral background
 
         // Clamp ratio extremes to prevent crazy colors
         const clamped = Math.max(0.5, Math.min(2, ratio));

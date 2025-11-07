@@ -1,4 +1,5 @@
 // components/LocationPanel.tsx
+
 export default function Navigation() {
     return (
         <nav>

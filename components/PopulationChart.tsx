@@ -1,6 +1,6 @@
 // components/PopulationChart.tsx
 'use client';
-import { Dataset, PopulationDataset } from '@lib/types';
+import { PopulationDataset } from '@lib/types';
 import { usePopulationStats, useAgeData } from '@lib/hooks/usePopulationStats';
 import PopulationSummary from '@/components/population/density/PopulationDensityChart';
 import AgeChart from './population/age/AgeChart';
