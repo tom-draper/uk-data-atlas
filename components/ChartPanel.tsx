@@ -16,8 +16,8 @@ interface ChartPanelProps {
 	generalElectionDatasets: Record<string, GeneralElectionDataset>;
 	populationDatasets: Record<string, PopulationDataset>;
 	setActiveDatasetId: (datasetId: string) => void;
-	aggregatedLocalElectionData: AggregatedLocalElectionData;
-	aggregatedGeneralElectionData: AggregateGeneralElectionData;
+	aggregatedLocalElectionData: AggregatedLocalElectionData | null;
+	aggregatedGeneralElectionData: AggregateGeneralElectionData | null;
 	wardCodeMapper: WardCodeMapper
 }
 
@@ -55,7 +55,7 @@ export default memo(function ChartPanel({
 				{/* Header */}
 				<div className="pb-2 pt-2.5 px-2.5 bg-white/20">
 					<h2 className="font-semibold text-sm">{title}</h2>
-					<div className="text-gray-500 text-xs">
+					<div className="text-gray-400/80 text-xs">
 						{code ? (
 							<div className="flex justify-between">
 								<span>{subtitle}</span>

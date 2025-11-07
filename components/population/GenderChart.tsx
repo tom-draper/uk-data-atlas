@@ -7,28 +7,26 @@ import { WardCodeMapper } from "@/lib/hooks/useWardCodeMapper";
 interface GenderChartProps {
 	population: PopulationDataset['populationData'];
 	wardCode: string;
-	wardName: string;
 	setActiveDatasetId: (datasetId: string) => void;
 	activeDataset: Dataset;
 	wardCodeMapper: WardCodeMapper;
 }
 
-export default function GenderChart({ 
-	population, 
-	wardCode, 
-	wardName, 
-	setActiveDatasetId, 
-	activeDataset, 
-	wardCodeMapper 
+export default function GenderChart({
+	population,
+	wardCode,
+	setActiveDatasetId,
+	activeDataset,
+	wardCodeMapper
 }: GenderChartProps) {
 	const isActive = activeDataset.type === 'population';
-	const colors = { 
-		bg: 'bg-emerald-50/60', 
-		border: 'border-emerald-300', 
-		badge: 'bg-emerald-300 text-emerald-900', 
-		text: 'bg-emerald-200 text-emerald-800' 
+	const colors = {
+		bg: 'bg-emerald-50/60',
+		border: 'border-emerald-300',
+		badge: 'bg-emerald-300 text-emerald-900',
+		text: 'bg-emerald-200 text-emerald-800'
 	};
-	
+
 	// Calculate total males and females
 	const { totalMales, totalFemales } = useMemo(() => {
 		let males = 0;
@@ -70,14 +68,13 @@ export default function GenderChart({
 		>
 			<div className="flex items-center justify-between mb-0">
 				<h3 className="text-xs font-bold">Gender (2020)</h3>
-				<span className="text-[10px] text-gray-600 mr-2">
+				<span className="text-[10px] text-gray-600 mr-1">
 					<span className="text-blue-600">{totalMales.toLocaleString()}</span> / <span className="text-pink-600">{totalFemales.toLocaleString()}</span>
 				</span>
 			</div>
 			<GenderBalanceByAge
 				population={population}
 				wardCode={wardCode}
-				wardName={wardName}
 				wardCodeMapper={wardCodeMapper}
 			/>
 		</div>

@@ -90,7 +90,7 @@ const parseLocalElection2024 = async (): Promise<LocalElectionDataset> => {
                         turnoutPercent: parseTurnout(row['Turnout (%)']),
                         electorate: parseElectorate(row['Electorate']),
                         totalVotes: parseVotes(row['Total votes']),
-                        ...partyVotes
+                        partyVotes
                     };
                 }
 
@@ -166,7 +166,7 @@ const parseLocalElection2023 = async (): Promise<LocalElectionDataset & { unmapp
                             turnoutPercent: parseTurnout(row['TURNOUT']),
                             electorate: parseElectorate(row['ELECT']),
                             totalVotes: parseVotes(row['Grand Total']),
-                            ...partyVotes
+                            partyVotes
                         };
                     }
                 }
@@ -225,7 +225,7 @@ const parseLocalElection2022 = async (): Promise<LocalElectionDataset> => {
                         turnoutPercent: parseTurnout(row['Turnout (%)']),
                         electorate: parseElectorate(row['Electorate']),
                         totalVotes: parseVotes(row['Total votes']),
-                        ...partyVotes
+                        partyVotes
                     };
                 }
 
@@ -282,7 +282,7 @@ const parseLocalElection2021 = async (): Promise<LocalElectionDataset> => {
                         turnoutPercent: parseTurnout(row['Turnout (%)']),
                         electorate: parseElectorate(row['Electorate']),
                         totalVotes: parseVotes(row['Total votes']),
-                        ...partyVotes
+                        partyVotes
                     };
                 }
 
@@ -360,7 +360,7 @@ const map2023WardCodes = (data2023: LocalElectionDataset & { unmappedWards?: any
 };
 
 export const useLocalElectionData = () => {
-    const [datasets, setDatasets] = useState<Record<string, LocalElectionDataset | null>>({});
+    const [datasets, setDatasets] = useState<Record<string, LocalElectionDataset>>({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
 

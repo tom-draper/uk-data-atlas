@@ -84,7 +84,7 @@ const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 						invalidVotes,
 						majority: parseVotes(row['Majority']),
 						turnoutPercent: calculateTurnout(validVotes, invalidVotes, electorate),
-						...partyVotes
+						partyVotes
 					};
 				}
 
@@ -104,7 +104,7 @@ const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 };
 
 export const useGeneralElectionData = () => {
-	const [datasets, setDatasets] = useState<Record<string, GeneralElectionDataset | null>>({});
+	const [datasets, setDatasets] = useState<Record<string, GeneralElectionDataset>>({});
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string>('');
 

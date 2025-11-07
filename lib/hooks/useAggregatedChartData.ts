@@ -27,9 +27,9 @@ export function useAggregatedElectionData({
 	 * Aggregated local election data - MapManager caches internally.
 	 * Only recalculates when location or datasets change.
 	 */
-	const aggregatedLocalElectionData = useMemo((): AggregatedLocalElectionData => {
+	const aggregatedLocalElectionData = useMemo((): AggregatedLocalElectionData | null => {
 		if (!mapManager || !boundaryData?.ward) {
-			return { 2024: null, 2023: null, 2022: null, 2021: null };
+			return null;
 		}
 
 		const result: Partial<AggregatedLocalElectionData> = {};
@@ -69,8 +69,10 @@ export function useAggregatedElectionData({
 		);
 
 		return {
-			...stats,
-			partyInfo: dataset.partyInfo || {},
+			2024: {
+				...stats,
+				partyInfo: dataset.partyInfo || [],
+			}
 		};
 	}, [mapManager, boundaryData.constituency, generalElectionDatasets]);
 

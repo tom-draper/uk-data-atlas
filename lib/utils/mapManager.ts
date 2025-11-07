@@ -1,5 +1,5 @@
 // lib/utils/mapManager.ts
-import { ChartData, LocalElectionWardData, Party, PopulationWardData, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset } from '@lib/types';
+import { PartyVotes, LocalElectionWardData, Party, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, PopulationWardData } from '@lib/types';
 import { PARTY_COLORS } from '../data/parties';
 import { GeoJSONFeature } from 'mapbox-gl';
 
@@ -146,7 +146,7 @@ export class MapManager {
         wardData: LocalElectionDataset['wardData'],
         location: string | null = null,
         datasetId: string | null = null,
-    ): ChartData {
+    ): PartyVotes {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
 
         return this.calculateLocalElectionStatsInternal(
@@ -185,7 +185,7 @@ export class MapManager {
         wardData: LocalElectionDataset['wardData'],
         location: string | null = null,
         datasetId: string | null = null,
-    ): ChartData {
+    ): PartyVotes {
         const cacheKey = `local-election-${location}-${datasetId}`;
 
         if (this.cache.has(cacheKey)) {
@@ -195,7 +195,7 @@ export class MapManager {
 
         console.log(`EXPENSIVE: calculateLocalElectionStats: [${cacheKey}] Processing ${geojson.length} wards`);
 
-        const aggregated: ChartData = {
+        const aggregated: PartyVotes = {
             LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0,
             DUP: 0, PC: 0, SNP: 0, SF: 0, APNI: 0, SDLP: 0,
         };
@@ -206,8 +206,8 @@ export class MapManager {
 
             if (ward) {
                 // Aggregate party data
-                (Object.keys(aggregated) as Array<keyof ChartData>).forEach(party => {
-                    aggregated[party] += (ward[party] as number) || 0;
+                (Object.keys(aggregated) as Array<keyof PartyVotes>).forEach(party => {
+                    aggregated[party] += (ward.partyVotes[party] as number) || 0;
                 });
             }
         });
@@ -241,19 +241,19 @@ export class MapManager {
 
         geojson.forEach((feature: BoundaryGeojson['features'][0]) => {
             const onsId = feature.properties[constituencyCodeProp];
-            const data = constituencyData[onsId];
+            const constituency = constituencyData[onsId];
 
-            if (!data) return;
+            if (!constituency) return;
 
             aggregated.totalSeats += 1;
 
-            const winningParty = this.getWinningParty(data);
+            const winningParty = this.getWinningParty(constituency);
             if (winningParty) {
                 aggregated.partySeats[winningParty] = (aggregated.partySeats[winningParty] || 0) + 1;
             }
 
             MapManager.PARTY_KEYS.forEach(party => {
-                const votes = data[party] || 0;
+                const votes = constituency.partyVotes[party] || 0;
                 if (votes > 0) {
                     aggregated.totalVotes += votes;
                     aggregated.partyVotes[party] = (aggregated.partyVotes[party] || 0) + votes;
@@ -273,7 +273,7 @@ export class MapManager {
         const firstFeature = geojson.features[0];
         if (!firstFeature) return possibleKeys[0];
 
-        const props = firstFeature.properties as Record<string, unknown>;
+        const props = firstFeature.properties;
         return possibleKeys.find(key => key in props) ?? possibleKeys[0];
     }
 
@@ -283,7 +283,7 @@ export class MapManager {
             return { property: MapManager.LAD_CODE_KEYS[0], fallbackToWardMapping: false };
         }
 
-        const props = firstFeature.properties as Record<string, unknown>;
+        const props = firstFeature.properties;
         const ladMatch = MapManager.LAD_CODE_KEYS.find(key => key in props);
 
         return ladMatch 
@@ -517,12 +517,12 @@ export class MapManager {
         };
     }
 
-    private getWinningParty(data: Record<string, any>): string {
+    private getWinningParty(data: ConstituencyData): string {
         let winningParty = '';
         let maxVotes = 0;
 
         MapManager.PARTY_KEYS.forEach(party => {
-            const votes = data[party] || 0;
+            const votes = data.partyVotes[party] || 0;
             if (votes > maxVotes) {
                 maxVotes = votes;
                 winningParty = party;
@@ -532,7 +532,7 @@ export class MapManager {
         return winningParty;
     }
 
-    private calculateMedianAge(wardPopulation: any): number | null {
+    private calculateMedianAge(wardPopulation: PopulationWardData): number | null {
         if (!wardPopulation?.total) return null;
 
         const ageData = wardPopulation.total;

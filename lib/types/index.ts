@@ -1,20 +1,14 @@
 // lib/types/index.ts
-import { PARTY_INFO } from "../data/parties";
 
 export interface LocalElectionWardData {
-    CON: number
-    electorate: number
-    GREEN: number;
-    IND: number;
-    LAB: number;
-    LD: number;
     localAuthorityCode: string
     localAuthorityName: string
-    REF: number
     totalVotes: number;
     turnoutPercent: number;
     wardName: string;
     wardCode: string;
+    electorate: number;
+    partyVotes: PartyVotes
 }
 
 export interface LocationBounds {
@@ -22,23 +16,26 @@ export interface LocationBounds {
     bounds: [number, number, number, number];
 }
 
-export interface ChartData {
-    LAB: number;
-    CON: number;
-    LD: number;
-    GREEN: number;
-    REF: number;
-    SNP: number;
-    DUP: number;
-    PC: number;
-    SF: number;
-    APNI: number;
-    SDLP: number;
-    IND: number;
+export interface PartyVotes {
+    LAB?: number;
+    CON?: number;
+    LD?: number;
+    GREEN?: number;
+    REF?: number;
+    SNP?: number;
+    DUP?: number;
+    PC?: number;
+    SF?: number;
+    APNI?: number;
+    SDLP?: number;
+    IND?: number;
+    RUK?: number;
+    UUP?: number;
+    OTHER?: number;
 }
 
 export interface Party {
-    key: keyof ChartData;
+    key: keyof PartyVotes;
     name: string;
 }
 
@@ -70,7 +67,7 @@ export interface LocalElectionDataset {
     name: string;
     type: 'local-election';
     year: number;
-    wardResults: any;
+    wardResults: Record<string, string>;
     wardData: { [wardCode: string]: LocalElectionWardData };
     partyInfo: Party[];
 }
@@ -91,20 +88,8 @@ export interface ConstituencyData {
     validVotes: number;
     invalidVotes: number;
     majority: number;
-    // Party vote counts
-    CON?: number;
-    LAB?: number;
-    LD?: number;
-    RUK?: number;
-    GREEN?: number;
-    SNP?: number;
-    PC?: number;
-    DUP?: number;
-    SF?: number;
-    SDLP?: number;
-    UUP?: number;
-    APNI?: number;
-    OTHER?: number;
+    partyVotes: PartyVotes;
+    turnoutPercent: number;
 }
 
 export interface GeneralElectionDataset {
@@ -118,18 +103,20 @@ export interface GeneralElectionDataset {
 }
 
 export interface AggregatedLocalElectionData {
-    2024: ChartData | null;
-    2023: ChartData | null;
-    2022: ChartData | null;
-    2021: ChartData | null;
+    2024: PartyVotes;
+    2023: PartyVotes;
+    2022: PartyVotes;
+    2021: PartyVotes;
 }
 
 export interface AggregateGeneralElectionData {
-    totalSeats: number;
-    partySeats: Record<string, number>;
-    totalVotes: number;
-    partyVotes: Record<string, number>;
-    partyInfo: Record<string, { name: string; color: string }>;
+    2024: {
+        totalSeats: number;
+        partySeats: Record<string, number>;
+        totalVotes: number;
+        partyVotes: PartyVotes;
+        partyInfo: Party[];
+    }
 }
 
 // Common geometry type

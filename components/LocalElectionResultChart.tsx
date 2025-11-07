@@ -2,7 +2,7 @@
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
 import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
-import { AggregatedLocalElectionData, ChartData, Dataset, LocalElectionDataset } from '@lib/types';
+import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
 interface LocalElectionResultChartProps {
@@ -10,7 +10,7 @@ interface LocalElectionResultChartProps {
 	availableDatasets: Record<string, LocalElectionDataset | null>;
 	setActiveDatasetId: (datasetId: string) => void;
 	wardCode: string;
-	aggregatedData: AggregatedLocalElectionData;
+	aggregatedData: AggregatedLocalElectionData | null;
 	wardCodeMapper: WardCodeMapper
 }
 
@@ -18,24 +18,25 @@ const ELECTION_YEARS = ['2024', '2023', '2022', '2021'] as const;
 type ElectionYear = typeof ELECTION_YEARS[number];
 
 interface CompactBarProps {
-	data: ChartData | undefined;
+	data: PartyVotes | undefined;
 	dataset: Dataset;
+	isActive: boolean;
 }
 
 /**
  * Memoized component to render the party vote bar and legend.
  * Will not re-render if `data` and `dataset` props are unchanged.
  */
-const CompactBar = React.memo(({ data, dataset }: CompactBarProps) => {
+const CompactBar = React.memo(({ data, dataset, isActive }: CompactBarProps) => {
 	if (!data) {
-		return <div className="text-xs text-gray-400 pt-3 text-center">No data available</div>;
+		return <div className="text-xs text-gray-400/80 pt-1 text-center">No data available</div>;
 	}
 
 	const parties = dataset.partyInfo;
 	const totalVotes = parties.reduce((sum, p) => sum + (data[p.key] || 0), 0);
 
 	if (totalVotes === 0) {
-		return <div className="text-xs text-gray-400 pt-3 text-center">No votes recorded</div>;
+		return <div className="text-xs text-gray-400/80 pt-1 text-center">No votes recorded</div>;
 	}
 
 	return (
@@ -64,20 +65,24 @@ const CompactBar = React.memo(({ data, dataset }: CompactBarProps) => {
 					);
 				})}
 			</div>
-			{/* Compact legend */}
-			<div className="grid grid-cols-3 gap-0.5 text-[9px]">
-				{parties.filter((party) => data[party.key]).map(party => (
-					<div key={party.key} className="flex items-center gap-1">
-						<div
-							className="w-1.5 h-1.5 rounded-sm shrink-0"
-							style={{ backgroundColor: PARTY_COLORS[party.key] }}
-						/>
-						<span className="truncate font-medium">
-							{(data[party.key] || 0).toLocaleString()}
-						</span>
+			{/* Compact legend - only show when active */}
+			{isActive && (
+				<div className="animate-in fade-in duration-200">
+					<div className="grid grid-cols-3 gap-0.5 text-[9px]">
+						{parties.filter((party) => data[party.key]).map(party => (
+							<div key={party.key} className="flex items-center gap-1">
+								<div
+									className="w-1.5 h-1.5 rounded-sm shrink-0"
+									style={{ backgroundColor: PARTY_COLORS[party.key] }}
+								/>
+								<span className="truncate font-medium">
+									{party.key}: {(data[party.key] || 0).toLocaleString()}
+								</span>
+							</div>
+						))}
 					</div>
-				))}
-			</div>
+				</div>
+			)}
 		</div>
 	);
 });
@@ -86,8 +91,8 @@ CompactBar.displayName = 'CompactBar';
 
 interface YearBarProps {
 	year: string;
-	data: ChartData | undefined;
-	dataset: Dataset; // No longer nullable, we'll check this in the parent
+	data: PartyVotes | undefined;
+	dataset: LocalElectionDataset;
 	turnout: number | undefined;
 	isActive: boolean;
 	setActiveDatasetId: (datasetId: string) => void;
@@ -109,10 +114,13 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 
 	return (
 		<div
-			className={`p-2 h-[95px] rounded transition-all cursor-pointer ${isActive
+			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${isActive
 				? `${colors.bg} border-2 ${colors.border}`
 				: `bg-white/60 border-2 border-gray-200/80 hover:${colors.border.replace('border-', 'hover:border-')}`
 				}`}
+			style={{
+				height: isActive ? '95px' : '65px'
+			}}
 			onClick={handleClick}
 		>
 			<div className="flex items-center justify-between mb-1.5">
@@ -125,8 +133,7 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 					)}
 				</div>
 			</div>
-			{/* Render the memoized CompactBar component */}
-			<CompactBar data={data} dataset={dataset} />
+			<CompactBar data={data} dataset={dataset} isActive={isActive} />
 		</div>
 	);
 });
@@ -144,10 +151,10 @@ export default function LocalElectionResultChart({
 
 	// This useMemo hook is already optimized from before
 	const { chartData, turnout } = useMemo(() => {
-		const newChartData: Partial<Record<ElectionYear, ChartData | undefined>> = {};
+		const newChartData: Partial<Record<ElectionYear, PartyVotes | undefined>> = {};
 		const newTurnout: Partial<Record<ElectionYear, number | undefined>> = {};
 
-		const getChartData = (year: ElectionYear): { chartData: ChartData | undefined; turnout: number | undefined } => {
+		const getChartData = (year: ElectionYear): { chartData: PartyVotes | undefined; turnout: number | undefined } => {
 			const yearData = availableDatasets[year]?.wardData;
 
 			if (wardCode && yearData) {
@@ -166,18 +173,18 @@ export default function LocalElectionResultChart({
 				if (data) {
 					return {
 						chartData: {
-							LAB: (data.LAB as number) || 0,
-							CON: (data.CON as number) || 0,
-							LD: (data.LD as number) || 0,
-							GREEN: (data.GREEN as number) || 0,
-							REF: (data.REF as number) || 0,
-							IND: (data.IND as number) || 0,
-							DUP: (data.DUP as number) || 0,
-							PC: (data.PC as number) || 0,
-							SNP: (data.SNP as number) || 0,
-							SF: (data.SF as number) || 0,
-							APNI: (data.APNI as number) || 0,
-							SDLP: (data.SDLP as number) || 0,
+							LAB: (data.partyVotes.LAB as number) || 0,
+							CON: (data.partyVotes.CON as number) || 0,
+							LD: (data.partyVotes.LD as number) || 0,
+							GREEN: (data.partyVotes.GREEN as number) || 0,
+							REF: (data.partyVotes.REF as number) || 0,
+							IND: (data.partyVotes.IND as number) || 0,
+							DUP: (data.partyVotes.DUP as number) || 0,
+							PC: (data.partyVotes.PC as number) || 0,
+							SNP: (data.partyVotes.SNP as number) || 0,
+							SF: (data.partyVotes.SF as number) || 0,
+							APNI: (data.partyVotes.APNI as number) || 0,
+							SDLP: (data.partyVotes.SDLP as number) || 0,
 						},
 						turnout: data.turnoutPercent
 					};

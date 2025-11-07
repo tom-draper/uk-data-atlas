@@ -55,7 +55,6 @@ export default function PopulationChart({
 					activeDataset={activeDataset}
 					population={population}
 					wardCode={wardCode}
-					wardName={wardName}
 					setActiveDatasetId={setActiveDatasetId}
 					wardCodeMapper={wardCodeMapper}
 				/>

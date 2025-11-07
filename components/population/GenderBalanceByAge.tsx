@@ -6,15 +6,13 @@ import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 export interface GenderBalanceByAgeProps {
 	population: PopulationDataset['populationData'];
 	wardCode: string;
-	wardName: string;
 	wardCodeMapper: WardCodeMapper;
 }
 
-export default function GenderBalanceByAge({ 
-	population, 
-	wardCode, 
-	wardName, 
-	wardCodeMapper 
+export default function GenderBalanceByAge({
+	population,
+	wardCode,
+	wardCodeMapper
 }: GenderBalanceByAgeProps) {
 	// Collect raw male/female per age (0-90)
 	const ageData = useMemo(() => {
@@ -53,9 +51,9 @@ export default function GenderBalanceByAge({
 			}
 		} else {
 			// Aggregate all wards
-			const aggregate = { 
-				males: {} as Record<string, number>, 
-				females: {} as Record<string, number> 
+			const aggregate = {
+				males: {} as Record<string, number>,
+				females: {} as Record<string, number>
 			};
 
 			for (const ward of Object.values(population)) {
@@ -80,7 +78,7 @@ export default function GenderBalanceByAge({
 	}, [population, wardCode, wardCodeMapper]);
 
 	if (ageData.length === 0) {
-		return <div className="text-xs h-[111px] text-gray-400 text-center grid place-items-center">
+		return <div className="text-xs h-[111px] text-gray-400/80 text-center grid place-items-center">
 			<div className="mb-4">
 				No data available
 			</div>
@@ -88,7 +86,7 @@ export default function GenderBalanceByAge({
 	}
 
 	return (
-		<div className="px-1 pt-0 -my-1">
+		<div className="px-0.5 pt-0 -my-1">
 			{/* Age labels */}
 			<div className="flex justify-center text-[8px] text-gray-500 mt-0 mx-auto">
 				<span>0</span>

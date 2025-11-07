@@ -153,7 +153,6 @@ export default function MapsPage() {
 
 	if (!activeDataset) return <ErrorDisplay message="No datasets loaded" />;
 
-	// Render
 	return (
 		<div style={{ width: '100%', height: '100vh', position: 'relative' }}>
 			<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
