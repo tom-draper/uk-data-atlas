@@ -1,7 +1,7 @@
 'use client';
 import { LocationBounds, PopulationDataset } from '@lib/types';
 import TitlePane from './TitlePane';
-import LocationPane from './LocationPane';
+import LocationPane from './LocationPanel';
 import MapOptions from './MapOptions';
 import { memo } from 'react';
 

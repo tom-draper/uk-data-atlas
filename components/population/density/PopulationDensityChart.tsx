@@ -7,7 +7,7 @@ interface PopulationSummaryProps {
 	setActiveDatasetId: (datasetId: string) => void;
 }
 
-export default function PopulationSummary({ total, males, females, setActiveDatasetId, activeDatasetId }: PopulationSummaryProps) {
+export default function PopulationDensityChart({ total, males, females, setActiveDatasetId, activeDatasetId }: PopulationSummaryProps) {
 	const isActive = activeDatasetId === 'density';
 	const colors = {
 		bg: 'bg-emerald-50/60',

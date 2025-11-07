@@ -8,7 +8,7 @@ interface LocationPanelProps {
     population: PopulationDataset['populationData'];
 }
 
-export default memo(function LocationPane({ selectedLocation, onLocationClick, population }: LocationPanelProps) {
+export default memo(function LocationPanel({ selectedLocation, onLocationClick, population }: LocationPanelProps) {
     // Add state for 2021 geojson - population data uses the 2021 ward codes and boundaries
     const [geojson, setGeojson] = useState<BoundaryGeojson<2021> | null>(null);
 

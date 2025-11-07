@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import { AgeGroups } from '@lib/types';
 import { getAgeColor } from '@lib/utils/populationHelpers';
-import PopulationBar from '@components/population/PopulationBar';
+import AgeGroupBar from '@/components/population/age/AgeGroupBar';
 
 interface AgeDistributionChartProps {
 	ageData: { [age: string]: number };
@@ -72,7 +72,7 @@ export default function AgeDistributionChart({ ageData, total, ageGroups }: AgeD
 			{/* Age group bars */}
 			<div className="space-y-1.5">
 				{(Object.keys(ageGroups) as Array<keyof AgeGroups>).map(ageGroup => (
-					<PopulationBar
+					<AgeGroupBar
 						key={ageGroup}
 						label={ageGroup}
 						value={ageGroups[ageGroup]}

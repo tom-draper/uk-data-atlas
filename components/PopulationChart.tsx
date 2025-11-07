@@ -2,9 +2,9 @@
 'use client';
 import { Dataset, PopulationDataset } from '@lib/types';
 import { usePopulationStats, useAgeData } from '@lib/hooks/usePopulationStats';
-import PopulationSummary from '@components/population/PopulationSummary';
-import AgeChart from './population/AgeChart';
-import GenderChart from './population/GenderChart';
+import PopulationSummary from '@/components/population/density/PopulationDensityChart';
+import AgeChart from './population/age/AgeChart';
+import GenderChart from './population/gender/GenderChart';
 import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 export interface PopulationChartProps {

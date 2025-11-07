@@ -12,16 +12,16 @@ import { useAggregatedElectionData } from '@lib/hooks/useAggregatedChartData';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
 import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
 import { useDatasetManager } from '@/lib/hooks/useDatasetManager';
+import { useWardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
 import ChartPanel from '@components/ChartPanel';
-import ErrorDisplay from '@components/ErrorDisplay';
-import LoadingDisplay from '@/components/LoadingDisplay';
+import ErrorDisplay from '@/components/displays/ErrorDisplay';
+import LoadingDisplay from '@/components/displays/LoadingDisplay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
-import { useWardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 // Constants
 const INITIAL_STATE = {

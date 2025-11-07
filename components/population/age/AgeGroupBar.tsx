@@ -1,4 +1,4 @@
-// components/population/PopulationBar.tsx
+// // components/population/PopulationBar.tsx
 interface PopulationBarProps {
 	label: string;
 	value: number;
