@@ -51,7 +51,6 @@ const detectPropertyKey = (geojson: BoundaryGeojson) => {
 	return possibleKeys.find(key => key in props) ?? possibleKeys[0];
 }
 
-// Mock data for demonstration
 const PopulationDensityChart = ({
 	total,
 	geojson,
@@ -59,8 +58,8 @@ const PopulationDensityChart = ({
 }: PopulationDensityChartProps) => {
 	if (total === 0) {
 		return (
-			<div className="text-xs h-9 text-gray-400/80 text-center grid place-items-center">
-				<div className="mb-4">No data available</div>
+			<div className="text-xs h-20 text-gray-400/80 text-center grid place-items-center">
+				<div>No data available</div>
 			</div>
 		);
 	}
@@ -91,15 +90,14 @@ const PopulationDensityChart = ({
 
 	if (densityInfo === null) {
 		return (
-			<div className="text-xs h-9 text-gray-400/80 text-center grid place-items-center">
-				<div className="mb-4">No data available</div>
+			<div className="text-xs h-20 text-gray-400/80 text-center grid place-items-center">
+				<div>No data available</div>
 			</div>
 		);
 	}
 
 	// Calculate density category for visualization
-	// Assuming typical urban densities: Low <2000, Medium 2000-5000, High >5000
-	const getDensityCategory = (density) => {
+	const getDensityCategory = (density: number) => {
 		if (density < 2000) return { label: 'Low', color: 'bg-green-500', fill: 0.3 };
 		if (density < 5000) return { label: 'Medium', color: 'bg-yellow-500', fill: 0.6 };
 		return { label: 'High', color: 'bg-red-500', fill: 0.9 };
@@ -107,90 +105,59 @@ const PopulationDensityChart = ({
 
 	const category = getDensityCategory(densityInfo.density);
 	
-	// Create a grid visualization (10x10 grid = 100 squares)
-	const gridSize = 10;
-	const totalSquares = gridSize * gridSize;
+	// Create a grid visualization (20x5 grid = 100 squares for wide aspect ratio)
+	const gridWidth = 18;
+	const gridHeight = 4;
+	const totalSquares = gridWidth * gridHeight;
 	const filledSquares = Math.round(totalSquares * category.fill);
 
 	return (
-		<div className="space-y-4 p-4">
-			{/* Main Density Display */}
-			<div className="text-center space-y-1">
-				<div className="text-2xl font-bold text-gray-800">
-					{densityInfo.density.toFixed(0)}
-				</div>
-				<div className="text-xs text-gray-500 uppercase tracking-wide">
-					people per km²
-				</div>
-				<div className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
-					{category.label} Density
-				</div>
+		<div className="relative h-14 overflow-hidden">
+			{/* Background grid - full width */}
+			<div 
+				className="absolute inset-0 grid gap-0.5 p-0 opacity-25"
+				style={{ 
+					gridTemplateColumns: `repeat(${gridWidth}, 1fr)`,
+					gridTemplateRows: `repeat(${gridHeight}, 1fr)`
+				}}
+			>
+				{Array.from({ length: totalSquares }).map((_, i) => (
+					<div
+						key={i}
+						className={`rounded-sm transition-all duration-300 ${
+							i < filledSquares 
+								? category.color 
+								: 'bg-gray-300'
+						}`}
+					/>
+				))}
 			</div>
 
-			{/* Visual Density Grid */}
-			<div className="flex justify-center">
-				<div 
-					className="grid gap-1 p-3 bg-gray-50 rounded-lg"
-					style={{ 
-						gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-						width: 'fit-content'
-					}}
-				>
-					{Array.from({ length: totalSquares }).map((_, i) => (
-						<div
-							key={i}
-							className={`w-3 h-3 rounded-sm transition-all duration-300 ${
-								i < filledSquares 
-									? category.color 
-									: 'bg-gray-200'
-							}`}
-						/>
-					))}
+			{/* Content overlay */}
+			<div className="relative py-1 h-full flex flex-col justify-between pl-4">
+				{/* Left side - Main metric */}
+				<div className="flex items-baseline gap-2">
+					<div className="text-xl font-bold text-black">
+						{densityInfo.density.toFixed(0)}
+					</div>
+					<div className="text-sm">
+						people/km²
+					</div>
 				</div>
-			</div>
 
-			{/* Stats Row */}
-			<div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-200">
-				<div className="text-center">
-					<div className="text-xs text-gray-500 mb-1">Population</div>
-					<div className="text-sm font-semibold text-gray-800">
-						{total.toLocaleString()}
+				{/* Right side - Supporting metrics */}
+				<div className="flex gap-4 text-left text-xs pb-1">
+					<div className="flex">
+						<div className="mr-1">Population</div>
+						<div className="font-semibold">
+							{total.toLocaleString()}
+						</div>
 					</div>
-				</div>
-				<div className="text-center">
-					<div className="text-xs text-gray-500 mb-1">Area</div>
-					<div className="text-sm font-semibold text-gray-800">
-						{densityInfo.areaSqKm.toFixed(2)} km²
-					</div>
-				</div>
-			</div>
-
-			{/* Visual comparison bars */}
-			<div className="space-y-2 pt-2">
-				<div className="space-y-1">
-					<div className="flex justify-between text-[10px] text-gray-500">
-						<span>Population</span>
-						<span>{total.toLocaleString()}</span>
-					</div>
-					<div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-						<div 
-							className="h-full bg-linear-to-r from-blue-400 to-blue-600 transition-all duration-500"
-							style={{ width: '100%' }}
-						/>
-					</div>
-				</div>
-				<div className="space-y-1">
-					<div className="flex justify-between text-[10px] text-gray-500">
-						<span>Area</span>
-						<span>{densityInfo.areaSqKm.toFixed(2)} km²</span>
-					</div>
-					<div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-						<div 
-							className="h-full bg-linear-to-r from-green-400 to-green-600 transition-all duration-500"
-							style={{ 
-								width: `${Math.min((densityInfo.areaSqKm / 10) * 100, 100)}%` 
-							}}
-						/>
+					<div className="flex">
+						<div className="mr-1">Area</div>
+						<div className="font-semibold">
+							{densityInfo.areaSqKm.toFixed(1)} km²
+						</div>
 					</div>
 				</div>
 			</div>

@@ -27,7 +27,7 @@ export default function PopulationDensity({ total, geojson, wardCode, setActiveD
 				}`}
 			onClick={() => setActiveDatasetId('density')}
 		>
-			<div className="flex items-center justify-between mb-5">
+			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">Population Density (2020)</h3>
 			</div>
 			<PopulationDensityChart geojson={geojson} wardCode={wardCode} total={total} />
