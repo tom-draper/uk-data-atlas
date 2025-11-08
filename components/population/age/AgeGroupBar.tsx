@@ -1,12 +1,12 @@
-// // components/population/PopulationBar.tsx
-interface PopulationBarProps {
+// components/population/age/AgeGroupBar.tsx
+interface AgeGroupBarProps {
 	label: string;
 	value: number;
 	total: number;
 	color: string;
 }
 
-export default function PopulationBar({ label, value, total, color }: PopulationBarProps) {
+export default function AgeGroupBar({ label, value, total, color }: AgeGroupBarProps) {
 	const percentage = total > 0 ? (value / total) * 100 : 0;
 
 	return (

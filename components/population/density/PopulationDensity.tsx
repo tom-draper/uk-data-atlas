@@ -1,4 +1,4 @@
-// components/population/density/PopulationDensityChart.tsx
+// components/population/density/PopulationDensity.tsx
 import { BoundaryGeojson } from "@/lib/types";
 
 interface PopulationDensityChartProps {

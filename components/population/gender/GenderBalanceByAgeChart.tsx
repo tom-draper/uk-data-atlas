@@ -1,19 +1,19 @@
-// components/population/GenderBalanceByAge.tsx
+// components/population/gender/GenderBalanceByAgeChart.tsx
 import { useMemo } from 'react';
 import { PopulationDataset } from '@/lib/types';
 import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
-export interface GenderBalanceByAgeProps {
+export interface GenderBalanceByAgeChartProps {
 	population: PopulationDataset['populationData'];
 	wardCode: string;
 	wardCodeMapper: WardCodeMapper;
 }
 
-export default function GenderBalanceByAge({
+export default function GenderBalanceByAgeChart({
 	population,
 	wardCode,
 	wardCodeMapper
-}: GenderBalanceByAgeProps) {
+}: GenderBalanceByAgeChartProps) {
 	// Collect raw male/female per age (0-90)
 	const ageData = useMemo(() => {
 		const ageRange = Array.from({ length: 91 }, (_, i) => i);

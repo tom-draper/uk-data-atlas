@@ -1,15 +1,16 @@
 // components/PopulationChart.tsx
 'use client';
-import { PopulationDataset } from '@lib/types';
+import { BoundaryGeojson, PopulationDataset } from '@lib/types';
 import { usePopulationStats, useAgeData } from '@lib/hooks/usePopulationStats';
-import PopulationSummary from '@/components/population/density/PopulationDensityChart';
-import AgeChart from './population/age/AgeChart';
-import GenderChart from './population/gender/GenderChart';
+import PopulationDensityChart from '@/components/population/density/PopulationDensityChart';
+import AgeChart from './population/age/AgeDistribution';
+import Gender from './population/gender/Gender';
 import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
 
 export interface PopulationChartProps {
 	activeDatasetId: string;
 	availableDatasets: Record<string, PopulationDataset>;
+	geojson: BoundaryGeojson | null;
 	wardCode: string;
 	wardName: string;
 	setActiveDatasetId: (datasetId: string) => void;
@@ -19,6 +20,7 @@ export interface PopulationChartProps {
 export default function PopulationChart({
 	activeDatasetId,
 	availableDatasets,
+	geojson,
 	wardCode,
 	wardName,
 	setActiveDatasetId,
@@ -37,9 +39,10 @@ export default function PopulationChart({
 		<div className="pt-2.5 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold text-gray-700 mb-2">Demographics</h3>
 			<div className="space-y-3">
-				<PopulationSummary
+				<PopulationDensityChart
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
+					geojson={geojson}
 					total={total}
 					males={males}
 					females={females}
@@ -51,8 +54,8 @@ export default function PopulationChart({
 					total={total}
 					ageGroups={ageGroups.total}
 				/>
-				<GenderChart
-				 	activeDatasetId={activeDatasetId}
+				<Gender
+					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
 					population={population}
 					wardCode={wardCode}

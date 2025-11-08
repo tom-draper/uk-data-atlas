@@ -1,4 +1,4 @@
-// components/population/AgeDistributionChart.tsx
+// components/population/age/AgeDistributionChart.tsx
 import { useMemo } from 'react';
 import { AgeGroups } from '@lib/types';
 import { getAgeColor } from '@lib/utils/populationHelpers';

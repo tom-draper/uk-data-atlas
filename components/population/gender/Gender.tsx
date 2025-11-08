@@ -1,10 +1,10 @@
-// components/population/GenderChart.tsx
+// components/population/gender/Gender.tsx
 import { useMemo } from "react";
 import { PopulationDataset } from "@/lib/types";
-import GenderBalanceByAge from "./GenderBalanceByAge";
+import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { WardCodeMapper } from "@/lib/hooks/useWardCodeMapper";
 
-interface GenderChartProps {
+interface GenderProps {
 	population: PopulationDataset['populationData'];
 	wardCode: string;
 	setActiveDatasetId: (datasetId: string) => void;
@@ -12,13 +12,13 @@ interface GenderChartProps {
 	wardCodeMapper: WardCodeMapper;
 }
 
-export default function GenderChart({
+export default function Gender({
 	population,
 	wardCode,
 	setActiveDatasetId,
 	activeDatasetId,
 	wardCodeMapper
-}: GenderChartProps) {
+}: GenderProps) {
 	const isActive = activeDatasetId === 'gender';
 	const colors = {
 		bg: 'bg-emerald-50/60',
@@ -74,7 +74,7 @@ export default function GenderChart({
 				</span>
 				)}
 			</div>
-			<GenderBalanceByAge
+			<GenderBalanceByAgeChart
 				population={population}
 				wardCode={wardCode}
 				wardCodeMapper={wardCodeMapper}

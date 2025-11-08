@@ -169,6 +169,7 @@ export default function MapsPage() {
 						selectedConstituency={selectedConstituencyData}
 						activeDatasetId={activeDatasetId}
 						activeDataset={activeDataset}
+						geojson={geojson}
 						localElectionDatasets={localElectionData.datasets}
 						generalElectionDatasets={generalElectionData.datasets}
 						populationDatasets={populationData.datasets}
