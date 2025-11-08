@@ -2,7 +2,7 @@
 'use client';
 import { BoundaryGeojson, PopulationDataset } from '@lib/types';
 import { usePopulationStats, useAgeData } from '@lib/hooks/usePopulationStats';
-import PopulationDensityChart from '@/components/population/density/PopulationDensityChart';
+import PopulationDensity from '@/components/population/density/PopulationDensity';
 import AgeChart from './population/age/AgeDistribution';
 import Gender from './population/gender/Gender';
 import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
@@ -39,10 +39,11 @@ export default function PopulationChart({
 		<div className="pt-2.5 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold text-gray-700 mb-2">Demographics</h3>
 			<div className="space-y-3">
-				<PopulationDensityChart
+				<PopulationDensity
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
 					geojson={geojson}
+					wardCode={wardCode}
 					total={total}
 					males={males}
 					females={females}
