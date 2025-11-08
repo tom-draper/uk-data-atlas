@@ -58,7 +58,7 @@ const PopulationDensityChart = ({
 }: PopulationDensityChartProps) => {
 	if (total === 0) {
 		return (
-			<div className="text-xs h-20 text-gray-400/80 text-center grid place-items-center">
+			<div className="text-xs h-13 text-gray-400/80 text-center grid place-items-center mb-1">
 				<div>No data available</div>
 			</div>
 		);
@@ -82,6 +82,8 @@ const PopulationDensityChart = ({
 			return getWardPopulationDensity(feature, total / geojson.features.length);
 		});
 
+		console.log(allDensities)
+
 		const totalArea = allDensities.reduce((sum, d) => sum + d.areaSqKm, 0);
 		const avgDensity = totalArea > 0 ? total / totalArea : 0;
 
@@ -90,7 +92,7 @@ const PopulationDensityChart = ({
 
 	if (densityInfo === null) {
 		return (
-			<div className="text-xs h-20 text-gray-400/80 text-center grid place-items-center">
+			<div className="text-xs h-13 text-gray-400/80 text-center grid place-items-center mb-1">
 				<div>No data available</div>
 			</div>
 		);
@@ -98,18 +100,46 @@ const PopulationDensityChart = ({
 
 	// Calculate density category for visualization
 	const getDensityCategory = (density: number) => {
-		if (density < 2000) return { label: 'Low', color: 'bg-green-500', fill: 0.3 };
-		if (density < 5000) return { label: 'Medium', color: 'bg-yellow-500', fill: 0.6 };
-		return { label: 'High', color: 'bg-red-500', fill: 0.9 };
+		if (density < 2000) return { label: 'Low', color: 'bg-green-500', count: 15 };
+		if (density < 5000) return { label: 'Medium', color: 'bg-yellow-500', count: 30 };
+		return { label: 'High', color: 'bg-red-500', count: 50 };
 	};
 
 	const category = getDensityCategory(densityInfo.density);
 	
-	// Create a grid visualization (20x5 grid = 100 squares for wide aspect ratio)
+	// Create a grid visualization
 	const gridWidth = 18;
 	const gridHeight = 4;
 	const totalSquares = gridWidth * gridHeight;
-	const filledSquares = Math.round(totalSquares * category.fill);
+	
+	// Color variations for each category
+	const colorVariations = {
+		'bg-green-500': ['bg-green-400', 'bg-green-500', 'bg-green-600'],
+		'bg-yellow-500': ['bg-yellow-400', 'bg-yellow-500', 'bg-yellow-600'],
+		'bg-red-500': ['bg-red-400', 'bg-red-500', 'bg-red-600']
+	};
+
+	// Create array of all indices and shuffle them
+	const indices = Array.from({ length: totalSquares }, (_, i) => i);
+	
+	// Seeded random shuffle for consistency based on density
+	const seed = Math.floor(densityInfo.density);
+	let currentSeed = seed;
+	const seededRandom = () => {
+		currentSeed = (currentSeed * 9301 + 49297) % 233280;
+		return currentSeed / 233280;
+	};
+	
+	const shuffledIndices = indices.sort(() => seededRandom() - 0.5);
+	
+	// Map of indices to their colors
+	const squareColors = new Map();
+	const variations = colorVariations[category.color as keyof typeof colorVariations];
+	
+	shuffledIndices.slice(0, category.count).forEach((index) => {
+		const colorIndex = Math.floor(seededRandom() * variations.length);
+		squareColors.set(index, variations[colorIndex]);
+	});
 
 	return (
 		<div className="relative h-14 overflow-hidden">
@@ -124,10 +154,10 @@ const PopulationDensityChart = ({
 				{Array.from({ length: totalSquares }).map((_, i) => (
 					<div
 						key={i}
-						className={`rounded-sm transition-all duration-300 ${
-							i < filledSquares 
-								? category.color 
-								: 'bg-gray-300'
+						className={`rounded-xs transition-all duration-300 ${
+							squareColors.has(i)
+								? squareColors.get(i)
+								: 'bg-gray-200'
 						}`}
 					/>
 				))}
@@ -138,7 +168,7 @@ const PopulationDensityChart = ({
 				{/* Left side - Main metric */}
 				<div className="flex items-baseline gap-2">
 					<div className="text-xl font-bold text-black">
-						{densityInfo.density.toFixed(0)}
+						{Math.round(densityInfo.density).toLocaleString()}
 					</div>
 					<div className="text-sm">
 						people/km²
