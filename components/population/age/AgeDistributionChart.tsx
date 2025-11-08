@@ -34,6 +34,14 @@ export default function AgeDistributionChart({ ageData, total, ageGroups, isActi
 
 	const maxCount = Math.max(...ages.map(a => a.count), 1);
 
+	if (maxCount === 1) {
+		return <div className="text-xs h-27 text-gray-400/80 text-center grid place-items-center">
+			<div className="mb-4">
+				No data available
+			</div>
+		</div>
+	}
+
 	return (
 		<div className="mx-1 -mt-4">
 			{/* Detailed Age Chart */}

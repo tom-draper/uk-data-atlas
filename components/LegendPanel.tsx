@@ -15,7 +15,7 @@ export default memo(function LegendPanel({ activeDatasetId }: LegendPanelProps) 
                     {activeDatasetId === 'population' ? (
                         <div>
                             <div className="h-40 w-6 rounded" style={{
-                                background: 'linear-gradient(to top, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))'
+                                background: 'linear-gradient(to bottom, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))'
                             }} />
                             <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8">
                                 <span>55</span>
@@ -28,7 +28,7 @@ export default memo(function LegendPanel({ activeDatasetId }: LegendPanelProps) 
                     ) : activeDatasetId === 'density' ? (
                         <div>
                             <div className="h-40 w-6 rounded" style={{
-                                background: 'linear-gradient(to top, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))'
+                                background: 'linear-gradient(to bottom, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))'
                             }} />
                             <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8">
                                 <span>10000</span>

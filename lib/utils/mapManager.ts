@@ -660,18 +660,50 @@ export class MapManager {
 
     private getColorForDensity(density: number): string {
         if (density === 0) return '#EEEEEE';
-        if (density > 10000) return '#440154'; // dark purple
-        if (density > 5000) return '#3b528b';
-        if (density > 2000) return '#21918c';
-        if (density > 1000) return '#5ec962';
-        if (density > 500) return '#fde725'; // bright yellow
-        return '#ffffe0'; // pale for very low density
+
+        // Viridis color scale points
+        const viridisColors = [
+            { threshold: 0, color: [68, 1, 84] },      // #440154 - dark purple
+            { threshold: 0.2, color: [59, 82, 139] },  // #3b528b - blue
+            { threshold: 0.4, color: [33, 145, 140] }, // #21918c - teal
+            { threshold: 0.6, color: [94, 201, 98] },  // #5ec962 - green
+            { threshold: 0.8, color: [253, 231, 37] }, // #fde725 - yellow
+            { threshold: 1.0, color: [253, 231, 37] }  // #fde725 - yellow (cap)
+        ];
+
+        // Normalize density to 0-1 scale (adjust max as needed)
+        const maxDensity = 10000;
+        const normalizedDensity = Math.min(density / maxDensity, 1);
+
+        // Find the two colors to interpolate between
+        let lowerIndex = 0;
+        for (let i = 0; i < viridisColors.length - 1; i++) {
+            if (normalizedDensity >= viridisColors[i].threshold) {
+                lowerIndex = i;
+            }
+        }
+
+        const upperIndex = Math.min(lowerIndex + 1, viridisColors.length - 1);
+        const lower = viridisColors[lowerIndex];
+        const upper = viridisColors[upperIndex];
+
+        // Calculate interpolation factor
+        const range = upper.threshold - lower.threshold;
+        const factor = range === 0 ? 0 : (normalizedDensity - lower.threshold) / range;
+
+        // Interpolate RGB values
+        const r = Math.round(lower.color[0] + (upper.color[0] - lower.color[0]) * factor);
+        const g = Math.round(lower.color[1] + (upper.color[1] - lower.color[1]) * factor);
+        const b = Math.round(lower.color[2] + (upper.color[2] - lower.color[2]) * factor);
+
+        // Convert to hex
+        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
     }
 
     private getColorForAge(meanAge: number | null): string {
         if (meanAge === null) return '#EEEEEE';
 
-        const t = 1 - Math.max(0, Math.min(1, (meanAge - 25) / 30));
+        const t = Math.max(0, Math.min(1, (meanAge - 25) / 30));
         const colors = [
             { pos: 0.00, color: [68, 1, 84] },
             { pos: 0.25, color: [59, 82, 139] },

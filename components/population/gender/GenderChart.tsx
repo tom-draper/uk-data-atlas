@@ -68,9 +68,11 @@ export default function GenderChart({
 		>
 			<div className="flex items-center justify-between mb-0">
 				<h3 className="text-xs font-bold">Gender (2020)</h3>
+				{totalMales + totalFemales > 0 && (
 				<span className="text-[10px] text-gray-600 mr-1">
 					<span className="text-blue-600">{totalMales.toLocaleString()}</span> <span className="text-gray-500">/</span> <span className="text-pink-600">{totalFemales.toLocaleString()}</span>
 				</span>
+				)}
 			</div>
 			<GenderBalanceByAge
 				population={population}
