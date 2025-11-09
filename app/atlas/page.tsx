@@ -12,7 +12,7 @@ import { useAggregatedElectionData } from '@lib/hooks/useAggregatedChartData';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
 import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
 import { useDatasetManager } from '@/lib/hooks/useDatasetManager';
-import { useWardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
+import { useCodeMapper } from '@/lib/hooks/useCodeMapper';
 
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
@@ -59,7 +59,7 @@ export default function MapsPage() {
 	// Boundary data
 	const { boundaryData, isLoading: geojsonLoading } = useBoundaryData(selectedLocation);
 
-	const wardCodeMapper = useWardCodeMapper(boundaryData);
+	const codeMapper = useCodeMapper(boundaryData);
 
 	const geojson = useMemo(() => {
 		if (boundaryType === 'ward' && targetYear) {
@@ -176,7 +176,7 @@ export default function MapsPage() {
 						setActiveDatasetId={setActiveDatasetId}
 						aggregatedLocalElectionData={aggregatedLocalElectionData}
 						aggregatedGeneralElectionData={aggregatedGeneralElectionData}
-						wardCodeMapper={wardCodeMapper}
+						codeMapper={codeMapper}
 					/>
 				</div>
 			</div>

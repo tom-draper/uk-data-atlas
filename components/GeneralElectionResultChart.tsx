@@ -1,6 +1,7 @@
 // components/GeneralElectionResultChart.tsx
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
+import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { AggregateGeneralElectionData, GeneralElectionDataset, PartyVotes } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
@@ -10,6 +11,7 @@ interface GeneralElectionResultChartProps {
 	setActiveDatasetId: (datasetId: string) => void;
 	constituencyCode?: string;
 	aggregatedData: AggregateGeneralElectionData | null;
+	codeMapper: CodeMapper
 }
 
 interface CompactBarProps {
@@ -122,15 +124,15 @@ interface YearBarProps {
 	setActiveDatasetId: (datasetId: string) => void;
 }
 
-const YearBar = React.memo(({ 
-	year, 
-	data, 
-	dataset, 
-	turnout, 
-	isActive, 
+const YearBar = React.memo(({
+	year,
+	data,
+	dataset,
+	turnout,
+	isActive,
 	isAggregated,
 	aggregatedData,
-	setActiveDatasetId 
+	setActiveDatasetId
 }: YearBarProps) => {
 	const yearColors: Record<number, { bg: string; border: string }> = {
 		2024: { bg: 'bg-indigo-50/60', border: 'border-indigo-400' },
@@ -147,11 +149,10 @@ const YearBar = React.memo(({
 
 	return (
 		<div
-			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${
-				isActive
-					? `${colors.bg} border-2 ${colors.border}`
-					: `bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300`
-			}`}
+			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${isActive
+				? `${colors.bg} border-2 ${colors.border}`
+				: `bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300`
+				}`}
 			style={{
 				height: isActive && isAggregated ? '205px' : isActive ? '95px' : '65px'
 			}}
@@ -171,10 +172,10 @@ const YearBar = React.memo(({
 					)}
 				</div>
 			</div>
-			<CompactBar 
-				data={data} 
-				dataset={dataset} 
-				isAggregated={isAggregated} 
+			<CompactBar
+				data={data}
+				dataset={dataset}
+				isAggregated={isAggregated}
 				isActive={isActive}
 				aggregatedData={aggregatedData}
 				year={year}
@@ -191,7 +192,8 @@ export default function GeneralElectionResultChart({
 	availableDatasets,
 	setActiveDatasetId,
 	constituencyCode,
-	aggregatedData
+	aggregatedData,
+	codeMapper
 }: GeneralElectionResultChartProps) {
 	const yearDataMap = useMemo(() => {
 		const map: Record<number, {
@@ -203,7 +205,7 @@ export default function GeneralElectionResultChart({
 
 		for (const year of ELECTION_YEARS) {
 			const dataset = availableDatasets[`general-${year}`];
-			
+
 			if (!dataset || !aggregatedData) {
 				map[year] = {
 					dataset: null,
@@ -215,29 +217,49 @@ export default function GeneralElectionResultChart({
 			}
 
 			// If we have a specific constituency selected (hovering), use that constituency's data
-			if (constituencyCode && dataset.constituencyData[constituencyCode]) {
-				const data = dataset.constituencyData[constituencyCode];
-				
-				// Map party keys to standardized format
-				const chartData: PartyVotes = {
-					LAB: data.partyVotes.LAB || 0,
-					CON: data.partyVotes.CON || 0,
-					LD: data.partyVotes.LD || 0,
-					GREEN: data.partyVotes.GREEN || 0,
-					REF: data.partyVotes.RUK || data.partyVotes.BRX || data.partyVotes.UKIP || 0,
-					SNP: data.partyVotes.SNP || 0,
-					PC: data.partyVotes.PC || 0,
-					DUP: data.partyVotes.DUP || 0,
-					SF: data.partyVotes.SF || 0,
-					IND: data.partyVotes.OTHER || 0,
-				};
+			if (constituencyCode) {
+				let data = dataset.constituencyData[constituencyCode];
 
-				map[year] = {
-					dataset,
-					chartData,
-					turnout: data.turnoutPercent,
-					isAggregated: false
-				};
+				// If not found, try converting the ward code to this year
+				if (!data) {
+					const convertedCode = codeMapper.convertConstituencyCode(constituencyCode, year);
+					if (convertedCode) {
+						data = dataset.constituencyData[convertedCode];
+					}
+				}
+
+
+
+				try {
+					// Map party keys to standardized format
+					const chartData: PartyVotes = {
+						LAB: data.partyVotes.LAB || 0,
+						CON: data.partyVotes.CON || 0,
+						LD: data.partyVotes.LD || 0,
+						GREEN: data.partyVotes.GREEN || 0,
+						REF: data.partyVotes.RUK || data.partyVotes.BRX || data.partyVotes.UKIP || 0,
+						SNP: data.partyVotes.SNP || 0,
+						PC: data.partyVotes.PC || 0,
+						DUP: data.partyVotes.DUP || 0,
+						SF: data.partyVotes.SF || 0,
+						IND: data.partyVotes.OTHER || 0,
+					};
+
+					map[year] = {
+						dataset,
+						chartData,
+						turnout: data.turnoutPercent,
+						isAggregated: false
+					};
+				} catch (e) {
+					map[year] = {
+						dataset,
+						chartData: undefined,
+						turnout: undefined,
+						isAggregated: false
+					};
+				}
+
 			} else if (aggregatedData && aggregatedData[year]?.partyVotes) {
 				// No constituency selected - use aggregated data for the location
 				map[year] = {
@@ -271,7 +293,7 @@ export default function GeneralElectionResultChart({
 			<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
 			{availableYears.map(year => {
 				const { dataset, chartData, turnout, isAggregated } = yearDataMap[year];
-				
+
 				if (!dataset) return null;
 
 				return (

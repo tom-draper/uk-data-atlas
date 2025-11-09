@@ -1,24 +1,24 @@
 // lib/population/usePopulationStats.ts
 import { useMemo } from 'react';
 import { AgeGroups, PopulationStats, PopulationDataset } from '@lib/types';
-import { WardCodeMapper } from '@lib/hooks/useWardCodeMapper';
+import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTotal, calculateAgeGroups } from '@lib/utils/populationHelpers';
 
 export function usePopulationStats(
 	population: PopulationDataset['populationData'],
 	wardCode: string,
 	wardName: string,
-	wardCodeMapper: WardCodeMapper
+	codeMapper: CodeMapper
 ): PopulationStats | null {
 	return useMemo((): PopulationStats | null => {
-		if (!population || Object.keys(population).length === 0) return null;
+		if (!population || !codeMapper || Object.keys(population).length === 0) return null;
 
 		// Ward-specific data
 		if (wardCode) {
 			// Try to find the ward data - population uses 2021 codes
 			const codesToTry = [
 				wardCode,
-				wardCodeMapper.convertWardCode(wardCode, 2021)
+				codeMapper.convertWardCode(wardCode, 2021)
 			].filter((code): code is string => code !== null);
 
 			for (const code of codesToTry) {
@@ -75,14 +75,14 @@ export function usePopulationStats(
 			ageGroups: aggregatedAgeGroups,
 			isWardSpecific: false
 		};
-	}, [population, wardCode, wardName, wardCodeMapper]);
+	}, [population, wardCode, wardName, codeMapper]);
 }
 
 export function useAgeData(
 	population: PopulationDataset['populationData'],
 	wardCode: string,
 	wardName: string,
-	wardCodeMapper: WardCodeMapper
+	codeMapper: CodeMapper
 ): { [age: string]: number } {
 	return useMemo(() => {
 		const data: { [age: string]: number } = {};
@@ -91,7 +91,7 @@ export function useAgeData(
 			// Try to find the ward data - population uses 2021 codes
 			const codesToTry = [
 				wardCode,
-				wardCodeMapper.convertWardCode(wardCode, 2021)
+				codeMapper.convertWardCode(wardCode, 2021)
 			].filter((code): code is string => code !== null);
 
 			for (const code of codesToTry) {
@@ -112,5 +112,5 @@ export function useAgeData(
 		}
 
 		return data;
-	}, [population, wardCode, wardName, wardCodeMapper]);
+	}, [population, wardCode, wardName, codeMapper]);
 }

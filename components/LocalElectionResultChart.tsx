@@ -1,7 +1,7 @@
 // components/LocalElectionResultChart.tsx
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
-import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
+import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
@@ -11,7 +11,7 @@ interface LocalElectionResultChartProps {
 	setActiveDatasetId: (datasetId: string) => void;
 	wardCode: string;
 	aggregatedData: AggregatedLocalElectionData | null;
-	wardCodeMapper: WardCodeMapper
+	codeMapper: CodeMapper
 }
 
 const ELECTION_YEARS = ['2024', '2023', '2022', '2021'] as const;
@@ -146,7 +146,7 @@ export default function LocalElectionResultChart({
 	setActiveDatasetId,
 	wardCode,
 	aggregatedData,
-	wardCodeMapper
+	codeMapper
 }: LocalElectionResultChartProps) {
 
 	// This useMemo hook is already optimized from before
@@ -163,7 +163,7 @@ export default function LocalElectionResultChart({
 
 				// If not found, try converting the ward code to this year
 				if (!data) {
-					const convertedCode = wardCodeMapper.convertWardCode(wardCode, parseInt(year) as 2024 | 2023 | 2022 | 2021);
+					const convertedCode = codeMapper.convertWardCode(wardCode, parseInt(year) as 2024 | 2023 | 2022 | 2021);
 					if (convertedCode) {
 						data = yearData[convertedCode];
 					}

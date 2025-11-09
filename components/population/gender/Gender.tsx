@@ -2,14 +2,14 @@
 import { useMemo } from "react";
 import { PopulationDataset } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
-import { WardCodeMapper } from "@/lib/hooks/useWardCodeMapper";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface GenderProps {
 	population: PopulationDataset['populationData'];
 	wardCode: string;
 	setActiveDatasetId: (datasetId: string) => void;
 	activeDatasetId: string;
-	wardCodeMapper: WardCodeMapper;
+	codeMapper: CodeMapper;
 }
 
 export default function Gender({
@@ -17,7 +17,7 @@ export default function Gender({
 	wardCode,
 	setActiveDatasetId,
 	activeDatasetId,
-	wardCodeMapper
+	codeMapper
 }: GenderProps) {
 	const isActive = activeDatasetId === 'gender';
 	const colors = {
@@ -36,7 +36,7 @@ export default function Gender({
 			// Try to find the ward data - population uses 2021 codes
 			const codesToTry = [
 				wardCode,
-				wardCodeMapper.convertWardCode(wardCode, 2021)
+				codeMapper.convertWardCode(wardCode, 2021)
 			].filter((code): code is string => code !== null);
 
 			for (const code of codesToTry) {
@@ -56,7 +56,7 @@ export default function Gender({
 		}
 
 		return { totalMales: males, totalFemales: females };
-	}, [population, wardCode, wardCodeMapper]);
+	}, [population, wardCode, codeMapper]);
 
 	return (
 		<div
@@ -77,7 +77,7 @@ export default function Gender({
 			<GenderBalanceByAgeChart
 				population={population}
 				wardCode={wardCode}
-				wardCodeMapper={wardCodeMapper}
+				codeMapper={codeMapper}
 			/>
 		</div>
 	);

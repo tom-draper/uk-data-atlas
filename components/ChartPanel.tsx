@@ -5,7 +5,7 @@ import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
 import { memo } from 'react';
-import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
+import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
@@ -20,7 +20,7 @@ interface ChartPanelProps {
 	setActiveDatasetId: (datasetId: string) => void;
 	aggregatedLocalElectionData: AggregatedLocalElectionData | null;
 	aggregatedGeneralElectionData: AggregateGeneralElectionData | null;
-	wardCodeMapper: WardCodeMapper
+	codeMapper: CodeMapper
 }
 
 export default memo(function ChartPanel({
@@ -36,7 +36,7 @@ export default memo(function ChartPanel({
 	setActiveDatasetId,
 	aggregatedLocalElectionData,
 	aggregatedGeneralElectionData,
-	wardCodeMapper
+	codeMapper
 }: ChartPanelProps) {
 	// Determine what to show in the title
 	let title = selectedLocation || 'Greater Manchester';
@@ -79,6 +79,7 @@ export default memo(function ChartPanel({
 						aggregatedData={aggregatedGeneralElectionData}
 						setActiveDatasetId={setActiveDatasetId}
 						constituencyCode={selectedConstituency?.onsId}
+						codeMapper={codeMapper}
 					/>
 					
 					<LocalElectionResultChart
@@ -87,7 +88,7 @@ export default memo(function ChartPanel({
 						aggregatedData={aggregatedLocalElectionData}
 						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
-						wardCodeMapper={wardCodeMapper}
+						codeMapper={codeMapper}
 					/>
 					
 					<PopulationChart
@@ -97,7 +98,7 @@ export default memo(function ChartPanel({
 						geojson={geojson}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
 						wardName={selectedWard?.wardName?.toString() ?? ''}
-						wardCodeMapper={wardCodeMapper}
+						codeMapper={codeMapper}
 					/>
 				</div>
 

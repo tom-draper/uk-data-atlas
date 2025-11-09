@@ -5,7 +5,7 @@ import { usePopulationStats, useAgeData } from '@lib/hooks/usePopulationStats';
 import PopulationDensity from '@/components/population/density/PopulationDensity';
 import AgeChart from './population/age/AgeDistribution';
 import Gender from './population/gender/Gender';
-import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
+import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 
 export interface PopulationChartProps {
 	activeDatasetId: string;
@@ -14,7 +14,7 @@ export interface PopulationChartProps {
 	wardCode: string;
 	wardName: string;
 	setActiveDatasetId: (datasetId: string) => void;
-	wardCodeMapper: WardCodeMapper
+	codeMapper: CodeMapper
 }
 
 export default function PopulationChart({
@@ -24,15 +24,13 @@ export default function PopulationChart({
 	wardCode,
 	wardName,
 	setActiveDatasetId,
-	wardCodeMapper
+	codeMapper
 }: PopulationChartProps) {
 	const population = availableDatasets['population']?.populationData || {};
-	const populationStats = usePopulationStats(population, wardCode, wardName, wardCodeMapper);
-	const ageData = useAgeData(population, wardCode, wardName, wardCodeMapper);
+	const populationStats = usePopulationStats(population, wardCode, wardName, codeMapper);
+	const ageData = useAgeData(population, wardCode, wardName, codeMapper);
 
 	const total = populationStats?.total || 0;
-	const males = populationStats?.males || 0;
-	const females = populationStats?.females || 0;
 	const ageGroups = populationStats?.ageGroups || { total: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } };
 
 	return (
@@ -45,8 +43,6 @@ export default function PopulationChart({
 					geojson={geojson}
 					wardCode={wardCode}
 					total={total}
-					males={males}
-					females={females}
 				/>
 				<AgeChart
 					activeDatasetId={activeDatasetId}
@@ -60,7 +56,7 @@ export default function PopulationChart({
 					setActiveDatasetId={setActiveDatasetId}
 					population={population}
 					wardCode={wardCode}
-					wardCodeMapper={wardCodeMapper}
+					codeMapper={codeMapper}
 				/>
 			</div>
 		</div>

@@ -1,18 +1,18 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
 import { useMemo } from 'react';
 import { PopulationDataset } from '@/lib/types';
-import { WardCodeMapper } from '@/lib/hooks/useWardCodeMapper';
+import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 
 export interface GenderBalanceByAgeChartProps {
 	population: PopulationDataset['populationData'];
 	wardCode: string;
-	wardCodeMapper: WardCodeMapper;
+	codeMapper: CodeMapper;
 }
 
 export default function GenderBalanceByAgeChart({
 	population,
 	wardCode,
-	wardCodeMapper
+	codeMapper
 }: GenderBalanceByAgeChartProps) {
 	// Collect raw male/female per age (0-90)
 	const ageData = useMemo(() => {
@@ -23,7 +23,7 @@ export default function GenderBalanceByAgeChart({
 			// Try to find the ward data - population uses 2021 codes
 			const codesToTry = [
 				wardCode,
-				wardCodeMapper.convertWardCode(wardCode, 2021)
+				codeMapper.convertWardCode(wardCode, 2021)
 			].filter((code): code is string => code !== null);
 
 			let foundData = false;
@@ -75,7 +75,7 @@ export default function GenderBalanceByAgeChart({
 		}
 
 		return data;
-	}, [population, wardCode, wardCodeMapper]);
+	}, [population, wardCode, codeMapper]);
 
 	if (ageData.length === 0) {
 		return <div className="text-xs h-[111px] text-gray-400/80 text-center grid place-items-center">
