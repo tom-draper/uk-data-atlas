@@ -12,6 +12,8 @@ interface UseAggregatedElectionDataParams {
 	location: string | null
 }
 
+const GENERAL_ELECTION_YEARS = [2024, 2019, 2017, 2015] as const;
+
 /**
  * Aggregates both local and general election data for the current location.
  * Leverages MapManager's internal caching to avoid redundant calculations.
@@ -47,7 +49,7 @@ export function useAggregatedElectionData({
 	}, [mapManager, boundaryData, localElectionDatasets]);
 
 	/**
-	 * Aggregated general election data - fixed to pass constituencyData instead of constituencyResults.
+	 * Aggregated general election data - processes all available years.
 	 * MapManager caches this calculation internally.
 	 */
 	const aggregatedGeneralElectionData = useMemo((): AggregateGeneralElectionData | null => {
@@ -55,25 +57,30 @@ export function useAggregatedElectionData({
 			return null;
 		}
 
-		const dataset = generalElectionDatasets['general-2024'];
-		if (!dataset?.constituencyData) return null;
+		const result: Partial<AggregateGeneralElectionData> = {};
 
-		const geojson = boundaryData.constituency[2024];
-		if (!geojson) return null;
+		for (const year of GENERAL_ELECTION_YEARS) {
+			const dataset = generalElectionDatasets[`general-${year}`];
+			const geojson = boundaryData.constituency[year];
 
-		// Pass constituencyData (not constituencyResults) - this was the bug
-		const stats = mapManager.calculateGeneralElectionStats(
-			geojson,
-			dataset.constituencyData,
-			'general-2024'
-		);
+			if (dataset?.constituencyData && geojson) {
+				// Pass constituencyData (not constituencyResults)
+				const stats = mapManager.calculateGeneralElectionStats(
+					geojson,
+					dataset.constituencyData,
+					`general-${year}`
+				);
 
-		return {
-			2024: {
-				...stats,
-				partyInfo: dataset.partyInfo || [],
+				result[year] = {
+					...stats,
+					partyInfo: dataset.partyInfo || [],
+				};
+			} else {
+				result[year] = null;
 			}
-		};
+		}
+
+		return result as AggregateGeneralElectionData;
 	}, [mapManager, boundaryData.constituency, generalElectionDatasets]);
 
 	return {

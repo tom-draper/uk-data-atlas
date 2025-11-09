@@ -1,0 +1,651 @@
+ONS ID,ONS region ID,Constituency name,County name,Region name,Country name,Constituency type,Declaration time,Member first name,Member surname,Member gender,Result,First party,Second party,Electorate,Valid votes,Invalid votes,Majority,Con,Lab,LD,UKIP,Green,SNP,PC,DUP,SF,SDLP,UUP (as UCUNF),APNI,All other candidates
+W07000049,W92000004,Aberavon,,Wales,Wales,County,07/05/2010 03:05,Hywel,Francis,M,Lab hold,Lab,LD,50838,30958,44,11039,4411,16073,5034,489,0,0,2198,0,0,0,0,0,2753
+W07000058,W92000004,Aberconwy,,Wales,Wales,County,07/05/2010 02:12,Guto,Bebb,M,Con gain from Lab,Con,Lab,44593,29966,69,3398,10734,7336,5786,632,0,0,5341,0,0,0,0,0,137
+S14000001,S92000003,Aberdeen North,,Scotland,Scotland,Burgh,07/05/2010 04:35,Frank,Doran,M,Lab hold,Lab,SNP,64808,37701,76,8361,4666,16746,7001,0,0,8385,0,0,0,0,0,0,903
+S14000002,S92000003,Aberdeen South,,Scotland,Scotland,Burgh,07/05/2010 03:41,Anne,Begg,F,Lab hold,Lab,LD,64031,43034,49,3506,8914,15722,12216,0,413,5102,0,0,0,0,0,0,667
+S14000003,S92000003,Airdrie and Shotts,,Scotland,Scotland,County,07/05/2010 02:14,Pamela,Nash,F,Lab hold,Lab,SNP,62364,35849,56,12408,3133,20849,2898,0,0,8441,0,0,0,0,0,0,528
+E14000530,E12000008,Aldershot,,South East,England,Borough,07/05/2010 04:17,Gerald,Howarth,M,Con hold,Con,LD,71465,45384,100,5586,21203,5489,15617,2041,0,0,0,0,0,0,0,0,1034
+E14000531,E12000005,Aldridge-Brownhills,,West Midlands,England,Borough,07/05/2010 03:51,Richard,Shepherd,M,Con hold,Con,Lab,58909,38634,177,15266,22913,7647,6833,0,847,0,0,0,0,0,0,0,394
+E14000532,E12000002,Altrincham and Sale West,,North West,England,Borough,07/05/2010 05:36,Graham,Brady,M,Con hold,Con,LD,72208,49393,154,11595,24176,11073,12581,1563,0,0,0,0,0,0,0,0,0
+W07000043,W92000004,Alyn and Deeside,,Wales,Wales,County,07/05/2010 03:05,Mark,Tami,M,Lab hold,Lab,Con,60931,39923,67,2919,12885,15804,7308,1009,0,0,1549,0,0,0,0,0,1368
+E14000533,E12000004,Amber Valley,,East Midlands,England,County,07/05/2010 15:14,Nigel,Mills,M,Con gain from Lab,Con,Lab,70171,45958,100,536,17746,17210,6636,906,0,0,0,0,0,0,0,0,3460
+S14000004,S92000003,Angus,,Scotland,Scotland,County,07/05/2010 01:59,Mike,Weir,M,SNP hold,SNP,Con,62860,37960,62,3282,11738,6535,4090,577,0,15020,0,0,0,0,0,0,0
+W07000057,W92000004,Arfon,,Wales,Wales,County,07/05/2010 00:59,Hywel,Williams,M,PC gain from Lab,PC,Lab,41198,26078,78,1455,4416,7928,3666,685,0,0,9383,0,0,0,0,0,0
+S14000005,S92000003,Argyll and Bute,,Scotland,Scotland,County,07/05/2010 13:16,Alan,Reid,M,LD hold,LD,Con,67165,45207,86,3431,10861,10274,14292,0,789,8563,0,0,0,0,0,0,428
+E14000534,E12000008,Arundel and South Downs,,South East,England,County,07/05/2010 05:46,Nick,Herbert,M,Con hold,Con,LD,76835,55982,103,16691,32333,4835,15642,3172,0,0,0,0,0,0,0,0,0
+E14000535,E12000004,Ashfield,,East Midlands,England,County,07/05/2010 03:49,Gloria,de Piero,F,Lab hold,Lab,LD,77379,48196,61,192,10698,16239,16047,933,0,0,0,0,0,0,0,0,4279
+E14000536,E12000008,Ashford,,South East,England,County,07/05/2010 03:30,Damian,Green,M,Con hold,Con,LD,81271,55185,93,17297,29878,9204,12581,2508,1014,0,0,0,0,0,0,0,0
+E14000537,E12000002,Ashton-under-Lyne,,North West,England,Borough,07/05/2010 06:26,David,Heyes,M,Lab hold,Lab,Con,67714,38432,165,9094,9510,18604,5703,1686,0,0,0,0,0,0,0,0,2929
+E14000538,E12000008,Aylesbury,,South East,England,County,07/05/2010 02:26,David,Lidington,M,Con hold,Con,LD,77844,53162,111,12618,27736,6695,15118,3613,0,0,0,0,0,0,0,0,0
+S14000006,S92000003,"Ayr, Carrick and Cumnock",,Scotland,Scotland,County,07/05/2010 03:36,Sandra,Osborne,F,Lab hold,Lab,Con,73320,45893,66,9911,11721,21632,4264,0,0,8276,0,0,0,0,0,0,0
+E14000539,E12000008,Banbury,,South East,England,County,07/05/2010 04:52,Tony,Baldry,M,Con hold,Con,LD,84379,56241,157,18227,29703,10773,11476,2806,959,0,0,0,0,0,0,0,524
+S14000007,S92000003,Banff and Buchan,,Scotland,Scotland,County,07/05/2010 03:54,Eilidh,Whiteford,F,SNP hold,SNP,Con,64300,38466,47,4027,11841,5382,4365,0,0,15868,0,0,0,0,0,0,1010
+E14000540,E12000007,Barking,,London,England,Borough,07/05/2010 05:58,Margaret,Hodge,F,Lab hold,Lab,Con,73868,45343,262,16555,8073,24628,3719,1300,317,0,0,0,0,0,0,0,7306
+E14000541,E12000003,Barnsley Central,,Yorkshire and The Humber,England,Borough,07/05/2010 02:05,Eric,Illsley,M,Lab hold,Lab,LD,65543,37001,86,11093,6388,17487,6394,1727,0,0,0,0,0,0,0,0,5005
+E14000542,E12000003,Barnsley East,,Yorkshire and The Humber,England,County,07/05/2010 02:47,Michael,Dugher,M,Lab hold,Lab,LD,68435,38386,88,11090,6329,18059,6969,1731,0,0,0,0,0,0,0,0,5298
+E14000543,E12000002,Barrow and Furness,,North West,England,County,07/05/2010 04:15,John,Woodcock,M,Lab hold,Lab,Con,68943,44124,86,5208,16018,21226,4424,841,530,0,0,0,0,0,0,0,1085
+E14000544,E12000006,Basildon and Billericay,,East of England ,England,Borough,07/05/2010 04:48,John,Baron,M,Con hold,Con,Lab,65515,41569,114,12338,21922,9584,6538,1591,0,0,0,0,0,0,0,0,1934
+E14000545,E12000008,Basingstoke,,South East,England,Borough,07/05/2010 04:40,Maria,Miller,F,Con hold,Con,LD,75473,50654,118,13176,25590,10327,12414,2076,0,0,0,0,0,0,0,0,247
+E14000546,E12000004,Bassetlaw,,East Midlands,England,County,07/05/2010 04:29,John,Mann,M,Lab hold,Lab,Con,76513,49577,148,8215,16803,25018,5570,1779,0,0,0,0,0,0,0,0,407
+E14000547,E12000009,Bath,,South West,England,Borough,07/05/2010 03:32,Don,Foster,M,LD hold,LD,Con,66686,47086,83,11883,14768,3251,26651,890,1120,0,0,0,0,0,0,0,406
+E14000548,E12000003,Batley and Spen,,Yorkshire and The Humber,England,Borough,07/05/2010 04:54,Mike,Wood,M,Lab hold,Lab,Con,76738,51109,133,4406,17159,21565,8095,0,605,0,0,0,0,0,0,0,3685
+E14000549,E12000007,Battersea,,London,England,Borough,07/05/2010 01:35,Jane,Ellison,F,Con gain from Lab,Con,Lab,74311,48792,87,5977,23103,17126,7176,505,559,0,0,0,0,0,0,0,323
+E14000550,E12000008,Beaconsfield,,South East,England,County,07/05/2010 03:53,Dominic,Grieve,M,Con hold,Con,LD,74982,52490,53,21782,32053,6135,10271,2597,768,0,0,0,0,0,0,0,666
+E14000551,E12000007,Beckenham,,London,England,Borough,07/05/2010 05:44,Bob,Stewart,M,Con hold,Con,LD,66219,47686,110,17784,27597,6893,9813,1551,608,0,0,0,0,0,0,0,1224
+E14000552,E12000006,Bedford,,East of England ,England,Borough,07/05/2010 03:29,Richard,Fuller,M,Con gain from Lab,Con,Lab,68530,45102,99,1353,17546,16193,8957,1136,393,0,0,0,0,0,0,0,877
+N06000001,N92000002,Belfast East,,Northern Ireland,Northern Ireland,Borough,07/05/2010 00:48,Naomi,Long,F,APNI gain from DUP,APNI,DUP,59007,34488,124,1533,0,0,0,0,0,0,0,11306,817,365,7305,12839,1856
+N06000002,N92000002,Belfast North,,Northern Ireland,Northern Ireland,Borough,07/05/2010 02:45,Nigel,Dodds,M,DUP hold,DUP,SF,65504,36993,240,2224,0,0,0,0,0,0,0,14812,12588,4544,2837,1809,403
+N06000003,N92000002,Belfast South,,Northern Ireland,Northern Ireland,Borough,07/05/2010 01:42,Alasdair,McDonnell,M,SDLP hold,SDLP,DUP,59524,34186,173,5926,0,0,0,0,1036,0,0,8100,0,14026,5910,5114,0
+N06000004,N92000002,Belfast West,,Northern Ireland,Northern Ireland,Borough,07/05/2010 01:26,Gerry,Adams,M,SF hold,SF,SDLP,59522,32133,549,17579,0,0,0,0,0,0,0,2436,22840,5261,1000,596,0
+E14000553,E12000007,Bermondsey and Old Southwark,,London,England,Borough,07/05/2010 06:33,Simon,Hughes,M,LD hold,LD,Lab,77628,44651,141,8530,7638,13060,21590,0,718,0,0,0,0,0,0,0,1645
+S14000008,S92000003,"Berwickshire, Roxburgh and Selkirk",,Scotland,Scotland,County,07/05/2010 03:35,Michael,Moore,M,LD hold,LD,Con,73826,49014,70,5675,16555,5003,22230,595,0,4497,0,0,0,0,0,0,134
+E14000554,E12000001,Berwick-upon-Tweed,,North East,England,County,07/05/2010 12:49,Alan,Beith,M,LD hold,LD,Con,56578,38439,84,2690,14116,5061,16806,1243,0,0,0,0,0,0,0,0,1213
+E14000555,E12000007,Bethnal Green and Bow,,London,England,Borough,07/05/2010 12:37,Rushanara,Ali,F,Lab gain from Res,Lab,LD,81243,50728,662,11574,7071,21784,10210,0,856,0,0,0,0,0,0,0,10807
+E14000556,E12000003,Beverley and Holderness,,Yorkshire and The Humber,England,County,07/05/2010 02:48,Graham,Stuart,M,Con hold,Con,LD,79318,53199,79,12987,25063,11224,12076,1845,686,0,0,0,0,0,0,0,2305
+E14000557,E12000008,Bexhill and Battle,,South East,England,County,07/05/2010 02:52,Gregory,Barker,M,Con hold,Con,LD,81032,54587,138,12880,28147,6524,15267,0,0,0,0,0,0,0,0,0,4649
+E14000558,E12000007,Bexleyheath and Crayford,,London,England,Borough,07/05/2010 04:52,David,Evennett,M,Con hold,Con,Lab,65015,43182,117,10344,21794,11450,5502,1557,371,0,0,0,0,0,0,0,2508
+E14000559,E12000002,Birkenhead,,North West,England,Borough,07/05/2010 04:48,Frank,Field,M,Lab hold,Lab,Con,62773,35323,226,15395,6687,22082,6554,0,0,0,0,0,0,0,0,0,0
+E14000560,E12000005,"Birmingham, Edgbaston",,West Midlands,England,Borough,07/05/2010 05:09,Gisela,Stuart,F,Lab hold,Lab,Con,68573,41571,88,1274,15620,16894,6387,732,469,0,0,0,0,0,0,0,1469
+E14000561,E12000005,"Birmingham, Erdington",,West Midlands,England,Borough,07/05/2010 04:08,Jack,Dromey,M,Lab hold,Lab,Con,66405,35546,114,3277,11592,14869,5742,842,0,0,0,0,0,0,0,0,2501
+E14000562,E12000005,"Birmingham, Hall Green",,West Midlands,England,Borough,07/05/2010 05:59,Roger,Godsiff,M,Lab hold,Lab,Res,76580,48727,355,3799,7320,16039,11988,950,0,0,0,0,0,0,0,0,12430
+E14000563,E12000005,"Birmingham, Hodge Hill",,West Midlands,England,Borough,07/05/2010 04:55,Liam,Byrne,M,Lab hold,Lab,LD,75040,42472,426,10302,4936,22077,11775,714,0,0,0,0,0,0,0,0,2970
+E14000564,E12000005,"Birmingham, Ladywood",,West Midlands,England,Borough,07/05/2010 03:21,Shabana,Mahmood,F,Lab hold,Lab,LD,73646,35833,367,10105,4277,19950,9845,902,859,0,0,0,0,0,0,0,0
+E14000565,E12000005,"Birmingham, Northfield",,West Midlands,England,Borough,07/05/2010 04:21,Richard,Burden,M,Lab hold,Lab,Con,71338,41814,72,2782,14059,16841,6550,1363,406,0,0,0,0,0,0,0,2595
+E14000566,E12000005,"Birmingham, Perry Barr",,West Midlands,England,Borough,07/05/2010 05:37,Khalid,Mahmood,M,Lab hold,Lab,LD,71304,42045,293,11908,8960,21142,9234,1675,0,0,0,0,0,0,0,0,1034
+E14000567,E12000005,"Birmingham, Selly Oak",,West Midlands,England,Borough,07/05/2010 05:25,Stephen,McCabe,M,Lab hold,Lab,Con,74805,46563,104,3482,14468,17950,10371,1131,664,0,0,0,0,0,0,0,1979
+E14000568,E12000005,"Birmingham, Yardley",,West Midlands,England,Borough,07/05/2010 04:54,John,Hemming,M,LD hold,LD,Lab,72321,40850,139,3002,7836,13160,16162,1190,0,0,0,0,0,0,0,0,2502
+E14000569,E12000001,Bishop Auckland,,North East,England,County,07/05/2010 02:14,Helen,Goodman,F,Lab hold,Lab,Con,68368,41136,73,5218,10805,16023,9189,1119,0,0,0,0,0,0,0,0,4000
+E14000570,E12000002,Blackburn,,North West,England,Borough,07/05/2010 03:56,Jack,Straw,M,Lab hold,Lab,Con,72331,45499,1718,9856,11895,21751,6918,942,0,0,0,0,0,0,0,0,3993
+E14000571,E12000002,Blackley and Broughton,,North West,England,Borough,07/05/2010 06:46,Graham,Stringer,M,Lab hold,Lab,Con,69489,34204,150,12303,6260,18563,4861,894,0,0,0,0,0,0,0,0,3626
+E14000572,E12000002,Blackpool North and Cleveleys,,North West,England,Borough,07/05/2010 02:53,Paul,Maynard,M,Con gain from Lab,Con,Lab,66017,40591,58,2150,16964,14814,5400,1659,0,0,0,0,0,0,0,0,1754
+E14000573,E12000002,Blackpool South,,North West,England,Borough,07/05/2010 02:38,Gordon,Marsden,M,Lab hold,Lab,Con,63027,35192,60,1852,12597,14449,5082,1352,0,0,0,0,0,0,0,0,1712
+W07000072,W92000004,Blaenau Gwent,,Wales,Wales,County,07/05/2010 01:55,Nick,Smith,M,Lab gain from BGPV,Lab,BGPV,52442,32395,71,10516,2265,16974,3285,488,0,0,1333,0,0,0,0,0,8050
+E14000574,E12000001,Blaydon,,North East,England,Borough,07/05/2010 03:46,David,Anderson,M,Lab hold,Lab,LD,67808,44913,157,9117,7159,22297,13180,0,0,0,0,0,0,0,0,0,2277
+E14000575,E12000001,Blyth Valley,,North East,England,Borough,07/05/2010 13:39,Ronnie,Campbell,M,Lab hold,Lab,LD,62900,38566,49,6668,6412,17156,10488,1665,0,0,0,0,0,0,0,0,2845
+E14000576,E12000008,Bognor Regis and Littlehampton,,South East,England,County,07/05/2010 03:24,Nick,Gibb,M,Con hold,Con,LD,70816,46852,83,13063,24087,6580,11024,3036,0,0,0,0,0,0,0,0,2125
+E14000577,E12000004,Bolsover,,East Midlands,England,County,07/05/2010 03:32,Dennis,Skinner,M,Lab hold,Lab,Con,72766,43988,54,11182,10812,21994,6821,1721,0,0,0,0,0,0,0,0,2640
+E14000578,E12000002,Bolton North East,,North West,England,Borough,07/05/2010 02:21,David,Crausby,M,Lab hold,Lab,Con,66846,43277,168,4084,15786,19870,5624,1815,0,0,0,0,0,0,0,0,182
+E14000579,E12000002,Bolton South East,,North West,England,Borough,07/05/2010 03:07,Yasmin,Qureshi,F,Lab hold,Lab,Con,69499,39604,224,8634,10148,18782,6289,1564,614,0,0,0,0,0,0,0,2207
+E14000580,E12000002,Bolton West,,North West,England,County,07/05/2010 05:07,Julie,Hilling,F,Lab hold,Lab,Con,71284,47576,159,92,18235,18327,8177,1901,545,0,0,0,0,0,0,0,391
+E14000581,E12000002,Bootle,,North West,England,Borough,07/05/2010 04:40,Joe,Benton,M,Lab hold,Lab,LD,71422,41277,162,21181,3678,27426,6245,2514,0,0,0,0,0,0,0,0,1414
+E14000582,E12000004,Boston and Skegness,,East Midlands,England,County,07/05/2010 02:52,Mark,Simmonds,M,Con hold,Con,Lab,67186,43125,53,12426,21325,8899,6371,4081,0,0,0,0,0,0,0,0,2449
+E14000583,E12000004,Bosworth,,East Midlands,England,County,07/05/2010 02:54,David,Tredinnick,M,Con hold,Con,LD,77296,54274,91,5032,23132,8674,18100,1098,0,0,0,0,0,0,0,0,3270
+E14000584,E12000009,Bournemouth East,,South West,England,Borough,07/05/2010 03:27,Tobias,Ellwood,M,Con hold,Con,LD,71125,44024,84,7728,21320,5836,13592,3027,0,0,0,0,0,0,0,0,249
+E14000585,E12000009,Bournemouth West,,South West,England,Borough,07/05/2010 03:17,Conor,Burns,M,Con hold,Con,LD,71753,41659,78,5583,18808,6171,13225,2999,0,0,0,0,0,0,0,0,456
+E14000586,E12000008,Bracknell,,South East,England,County,07/05/2010 02:54,Philip,Lee,M,Con hold,Con,LD,76888,52136,73,15704,27327,8755,11623,2297,821,0,0,0,0,0,0,0,1313
+E14000587,E12000003,Bradford East,,Yorkshire and The Humber,England,Borough,07/05/2010 07:12,David,Ward,M,LD gain from Lab,LD,Lab,65116,40457,200,365,10860,13272,13637,0,0,0,0,0,0,0,0,0,2688
+E14000588,E12000003,Bradford South,,Yorkshire and The Humber,England,Borough,07/05/2010 06:10,Gerry,Sutcliffe,M,Lab hold,Lab,Con,63580,37995,123,4622,11060,15682,6948,1339,0,0,0,0,0,0,0,0,2966
+E14000589,E12000003,Bradford West,,Yorkshire and The Humber,England,Borough,07/05/2010 06:41,Marsha,Singh,M,Lab hold,Lab,Con,62519,40576,254,5763,12638,18401,4732,812,940,0,0,0,0,0,0,0,3053
+E14000590,E12000006,Braintree,,East of England ,England,County,07/05/2010 02:34,Brooks,Newmark,M,Con hold,Con,Lab,71163,49203,54,16121,25901,9780,9247,2477,718,0,0,0,0,0,0,0,1080
+W07000068,W92000004,Brecon and Radnorshire,,Wales,Wales,County,07/05/2010 03:15,Roger,Williams,M,LD hold,LD,Con,53589,38845,51,3747,14182,4096,17929,876,341,0,989,0,0,0,0,0,432
+E14000591,E12000007,Brent Central,,London,England,Borough,07/05/2010 11:10,Sarah,Teather,F,LD gain from Lab,LD,Lab,74046,45323,462,1345,5067,18681,20026,0,668,0,0,0,0,0,0,0,881
+E14000592,E12000007,Brent North,,London,England,Borough,07/05/2010 10:32,Barry,Gardiner,M,Lab hold,Lab,Con,83896,52298,452,8028,16486,24514,8879,380,725,0,0,0,0,0,0,0,1314
+E14000593,E12000007,Brentford and Isleworth,,London,England,Borough,07/05/2010 05:58,Mary,Macleod,F,Con gain from Lab,Con,Lab,83546,53765,305,1958,20022,18064,12718,863,787,0,0,0,0,0,0,0,1311
+E14000594,E12000006,Brentwood and Ongar,,East of England ,England,County,07/05/2010 03:46,Eric,Pickles,M,Con hold,Con,LD,69309,50592,127,16921,28793,4992,11872,2037,584,0,0,0,0,0,0,0,2314
+W07000073,W92000004,Bridgend,,Wales,Wales,County,07/05/2010 03:05,Madeleine,Moon,F,Lab hold,Lab,Con,58700,38347,78,2263,11668,13931,8658,801,0,0,2269,0,0,0,0,0,1020
+E14000595,E12000009,Bridgwater and West Somerset,,South West,England,County,07/05/2010 02:25,Ian,Liddell-Grainger,M,Con hold,Con,LD,82180,54493,65,9249,24675,9332,15426,2604,859,0,0,0,0,0,0,0,1597
+E14000596,E12000003,Brigg and Goole,,Yorkshire and The Humber,England,County,07/05/2010 04:14,Andrew,Percy,M,Con gain from Lab,Con,Lab,67345,43874,69,5147,19680,14533,6414,1749,0,0,0,0,0,0,0,0,1498
+E14000597,E12000008,"Brighton, Kemptown",,South East,England,Borough,07/05/2010 05:34,Simon,Kirby,M,Con gain from Lab,Con,Lab,66015,42705,65,1328,16217,14889,7691,1384,2330,0,0,0,0,0,0,0,194
+E14000598,E12000008,"Brighton, Pavilion",,South East,England,Borough,07/05/2010 05:50,Caroline,Lucas,F,Green gain from Lab,Green,Lab,74009,51834,81,1252,12275,14986,7159,948,16238,0,0,0,0,0,0,0,228
+E14000599,E12000009,Bristol East,,South West,England,Borough,07/05/2010 04:12,Kerry,McCarthy,F,Lab hold,Lab,Con,69448,45017,90,3722,12749,16471,10993,1510,803,0,0,0,0,0,0,0,2491
+E14000600,E12000009,Bristol North West,,South West,England,Borough,07/05/2010 05:23,Charlotte,Leslie,F,Con gain from Lab,Con,LD,73469,50336,118,3274,19115,13059,15841,1175,511,0,0,0,0,0,0,0,635
+E14000601,E12000009,Bristol South,,South West,England,Borough,07/05/2010 05:38,Dawn,Primarolo,F,Lab hold,Lab,LD,78579,48377,133,4734,11086,18600,13866,1264,1216,0,0,0,0,0,0,0,2345
+E14000602,E12000009,Bristol West,,South West,England,Borough,07/05/2010 03:39,Stephen,Williams,M,LD hold,LD,Lab,82728,55347,112,11366,10169,15227,26593,655,2090,0,0,0,0,0,0,0,613
+E14000603,E12000006,Broadland,,East of England ,England,County,07/05/2010 13:30,Keith,Simpson,M,Con hold,Con,LD,72445,52676,54,7292,24338,7287,17046,2382,752,0,0,0,0,0,0,0,871
+E14000604,E12000007,Bromley and Chislehurst,,London,England,Borough,07/05/2010 05:50,Bob,Neill,M,Con hold,Con,LD,65427,44037,94,13900,23569,7295,9669,1451,607,0,0,0,0,0,0,0,1446
+E14000605,E12000005,Bromsgrove,,West Midlands,England,County,07/05/2010 04:30,Sajid,Javid,M,Con hold,Con,Lab,73036,51630,98,11308,22558,11250,10124,2950,0,0,0,0,0,0,0,0,4748
+E14000606,E12000006,Broxbourne,,East of England ,England,Borough,07/05/2010 01:05,Charles,Walker,M,Con hold,Con,Lab,71391,45658,97,18804,26844,8040,6107,1890,0,0,0,0,0,0,0,0,2777
+E14000607,E12000004,Broxtowe,,East Midlands,England,County,07/05/2010 02:56,Anna,Soubry,F,Con gain from Lab,Con,Lab,72042,52727,61,389,20585,20196,8907,1194,423,0,0,0,0,0,0,0,1422
+E14000608,E12000008,Buckingham,,South East,England,County,07/05/2010 13:52,John,Bercow,M,Spk gain from Con,Spk,Ind,74989,48335,1067,12529,0,0,0,8401,0,0,0,0,0,0,0,0,39934
+E14000609,E12000002,Burnley,,North West,England,Borough,07/05/2010 03:30,Gordon,Birtwistle,M,LD gain from Lab,LD,Lab,66615,41845,121,1818,6950,13114,14932,929,0,0,0,0,0,0,0,0,5920
+E14000610,E12000005,Burton,,West Midlands,England,County,07/05/2010 04:06,Andrew,Griffiths,M,Con gain from Lab,Con,Lab,74874,49823,109,6304,22188,15884,7891,1451,0,0,0,0,0,0,0,0,2409
+E14000611,E12000002,Bury North,,North West,England,Borough,07/05/2010 04:59,David,Nuttall,M,Con gain from Lab,Con,Lab,66759,44961,136,2243,18070,15827,7645,1282,0,0,0,0,0,0,0,0,2137
+E14000612,E12000002,Bury South,,North West,England,Borough,07/05/2010 04:55,Ivan,Lewis,M,Lab hold,Lab,Con,73544,48267,112,3292,16216,19508,8796,1017,493,0,0,0,0,0,0,0,2237
+E14000613,E12000006,Bury St Edmunds,,East of England ,England,County,07/05/2010 03:32,David,Ruffley,M,Con hold,Con,LD,84716,58718,79,12380,27899,9776,15519,3003,2521,0,0,0,0,0,0,0,0
+W07000076,W92000004,Caerphilly,,Wales,Wales,County,07/05/2010 02:25,Wayne,David,M,Lab hold,Lab,Con,62122,38692,95,10755,6622,17377,5688,910,0,0,6460,0,0,0,0,0,1635
+S14000009,S92000003,"Caithness, Sutherland and Easter Ross",,Scotland,Scotland,County,07/05/2010 03:36,John,Thurso,M,LD hold,LD,Lab,47263,28768,80,4826,3744,7081,11907,0,0,5516,0,0,0,0,0,0,520
+E14000614,E12000003,Calder Valley,,Yorkshire and The Humber,England,County,07/05/2010 07:04,Craig,Whittaker,M,Con gain from Lab,Con,Lab,76903,51780,159,6431,20397,13966,13037,1173,858,0,0,0,0,0,0,0,2349
+E14000615,E12000007,Camberwell and Peckham,,London,England,Borough,07/05/2010 06:04,Harriet,Harman,F,Lab hold,Lab,LD,78627,46659,279,17187,6080,27619,10432,0,1361,0,0,0,0,0,0,0,1167
+E14000616,E12000009,Camborne and Redruth,,South West,England,County,07/05/2010 06:57,George,Eustice,M,Con gain from LD,Con,LD,63975,42493,77,66,15969,6945,15903,2152,581,0,0,0,0,0,0,0,943
+E14000617,E12000006,Cambridge,,East of England ,England,Borough,07/05/2010 05:23,Julian,Huppert,M,LD hold,LD,Con,74699,50130,158,6792,12829,12174,19621,1195,3804,0,0,0,0,0,0,0,507
+E14000618,E12000005,Cannock Chase,,West Midlands,England,County,07/05/2010 04:26,Aidan,Burley,M,Con gain from Lab,Con,Lab,74508,45559,88,3195,18271,15076,7732,1580,0,0,0,0,0,0,0,0,2900
+E14000619,E12000008,Canterbury,,South East,England,County,07/05/2010 01:58,Julian,Brazier,M,Con hold,Con,LD,74121,49209,73,6048,22050,7940,16002,1907,1137,0,0,0,0,0,0,0,173
+W07000050,W92000004,Cardiff Central,,Wales,Wales,Borough,07/05/2010 03:15,Jenny,Willott,F,LD hold,LD,Lab,61165,36151,103,4576,7799,10400,14976,765,575,0,1246,0,0,0,0,0,390
+W07000051,W92000004,Cardiff North,,Wales,Wales,Borough,07/05/2010 05:14,Jonathan,Evans,M,Con gain from Lab,Con,Lab,65553,47630,73,194,17860,17666,8724,1130,362,0,1588,0,0,0,0,0,300
+W07000080,W92000004,Cardiff South and Penarth,,Wales,Wales,Borough,07/05/2010 02:52,Alun,Michael,M,Lab hold,Lab,Con,73707,44369,98,4709,12553,17262,9875,1145,554,0,1851,0,0,0,0,0,1129
+W07000079,W92000004,Cardiff West,,Wales,Wales,Borough,07/05/2010 03:28,Kevin,Brennan,M,Lab hold,Lab,Con,62787,40958,85,4751,12143,16894,7186,1117,750,0,2868,0,0,0,0,0,0
+E14000620,E12000002,Carlisle,,North West,England,County,07/05/2010 03:42,John,Stevenson,M,Con gain from Lab,Con,Lab,65263,42200,100,853,16589,15736,6567,969,614,0,0,0,0,0,0,0,1725
+W07000067,W92000004,Carmarthen East and Dinefwr,,Wales,Wales,County,07/05/2010 02:27,Jonathan,Edwards,M,PC hold,PC,Lab,52385,38011,77,3481,8506,10065,4609,1285,0,0,13546,0,0,0,0,0,0
+W07000066,W92000004,Carmarthen West and South Pembrokeshire,,Wales,Wales,County,07/05/2010 03:53,Simon,Hart,M,Con gain from Lab,Con,Lab,58108,40507,67,3423,16649,13226,4890,1146,0,0,4232,0,0,0,0,0,364
+E14000621,E12000007,Carshalton and Wallington,,London,England,Borough,07/05/2010 04:11,Tom,Brake,M,LD hold,LD,Con,66524,45918,122,5260,16920,4015,22180,1348,355,0,0,0,0,0,0,0,1100
+E14000622,E12000006,Castle Point,,East of England ,England,Borough,07/05/2010 02:04,Rebecca,Harris,F,Con hold,Con,ISGB,67284,45026,73,7632,19806,6609,4232,0,0,0,0,0,0,0,0,0,14379
+S14000010,S92000003,Central Ayrshire,,Scotland,Scotland,County,07/05/2010 03:24,Brian,Donohoe,M,Lab hold,Lab,Con,68352,43915,87,12007,8943,20950,5236,0,0,8364,0,0,0,0,0,0,422
+E14000623,E12000009,Central Devon,,South West,England,County,07/05/2010 03:58,Mel,Stride,M,Con hold,Con,LD,71203,53873,86,9230,27737,3715,18507,2870,1044,0,0,0,0,0,0,0,0
+E14000624,E12000006,Central Suffolk and North Ipswich,,East of England ,England,County,07/05/2010 02:44,Daniel,Poulter,M,Con hold,Con,LD,75786,53420,94,13786,27125,8636,13339,2361,1452,0,0,0,0,0,0,0,507
+W07000064,W92000004,Ceredigion,,Wales,Wales,County,07/05/2010 02:20,Mark,Williams,M,LD hold,LD,PC,59882,38258,63,8324,4421,2210,19139,977,696,0,10815,0,0,0,0,0,0
+E14000625,E12000004,Charnwood,,East Midlands,England,County,07/05/2010 02:16,Stephen,Dorrell,M,Con hold,Con,LD,74473,53542,84,15029,26560,10536,11531,1799,0,0,0,0,0,0,0,0,3116
+E14000626,E12000008,Chatham and Aylesford,,South East,England,County,07/05/2010 04:53,Tracey,Crouch,F,Con gain from Lab,Con,Lab,67964,43807,54,6069,20230,14161,5832,1314,396,0,0,0,0,0,0,0,1874
+E14000627,E12000002,Cheadle,,North West,England,Borough,07/05/2010 04:50,Mark,Hunter,M,LD hold,LD,Con,71635,52512,144,3272,21445,4920,24717,1430,0,0,0,0,0,0,0,0,0
+E14000628,E12000006,Chelmsford,,East of England ,England,Borough,07/05/2010 02:57,Simon,Burns,M,Con hold,Con,LD,77525,54593,42,5110,25207,5980,20097,1527,476,0,0,0,0,0,0,0,1306
+E14000629,E12000007,Chelsea and Fulham,,London,England,Borough,07/05/2010 05:50,Greg,Hands,M,Con hold,Con,Lab,66257,39856,192,16722,24093,7371,6473,478,671,0,0,0,0,0,0,0,770
+E14000630,E12000009,Cheltenham,,South West,England,Borough,07/05/2010 14:05,Martin,Horwood,M,LD hold,LD,Con,78998,52786,97,4920,21739,2703,26659,1192,0,0,0,0,0,0,0,0,493
+E14000631,E12000008,Chesham and Amersham,,South East,England,County,07/05/2010 02:26,Cheryl,Gillan,F,Con hold,Con,LD,70333,52444,106,16710,31658,2942,14948,2129,767,0,0,0,0,0,0,0,0
+E14000632,E12000004,Chesterfield,,East Midlands,England,Borough,07/05/2010 04:24,Toby,Perkins,M,Lab gain from LD,Lab,LD,71878,45839,85,549,7214,17891,17342,1432,600,0,0,0,0,0,0,0,1360
+E14000633,E12000008,Chichester,,South East,England,County,07/05/2010 04:05,Andrew,Tyrie,M,Con hold,Con,LD,81576,56787,129,15877,31427,5937,15550,3873,0,0,0,0,0,0,0,0,0
+E14000634,E12000007,Chingford and Woodford Green,,London,England,County,07/05/2010 07:16,Iain,Duncan Smith,M,Con hold,Con,Lab,64831,43106,156,12963,22743,9780,7242,1133,650,0,0,0,0,0,0,0,1558
+E14000635,E12000009,Chippenham,,South West,England,County,07/05/2010 04:46,Duncan,Hames,M,LD hold,LD,Con,72106,52385,58,2470,21500,3620,23970,1783,446,0,0,0,0,0,0,0,1066
+E14000636,E12000007,Chipping Barnet,,London,England,Borough,07/05/2010 06:41,Theresa,Villiers,F,Con hold,Con,Lab,75120,50608,189,11927,24700,12773,10202,1442,1021,0,0,0,0,0,0,0,470
+E14000637,E12000002,Chorley,,North West,England,County,07/05/2010 07:18,Lindsay,Hoyle,M,Lab hold,Lab,Con,70976,49774,148,2593,18922,21515,6957,2021,0,0,0,0,0,0,0,0,359
+E14000638,E12000009,Christchurch,,South West,England,County,07/05/2010 01:42,Christopher,Chope,M,Con hold,Con,LD,68859,49416,91,15410,27888,4849,12478,4201,0,0,0,0,0,0,0,0,0
+E14000639,E12000007,Cities of London and Westminster,,London,England,Borough,07/05/2010 04:40,Mark,Field,M,Con hold,Con,Lab,66849,36931,237,11076,19264,8188,7574,664,778,0,0,0,0,0,0,0,463
+E14000640,E12000002,City of Chester,,North West,England,County,07/05/2010 02:30,Stephen,Mosley,M,Con gain from Lab,Con,Lab,70131,46790,63,2583,18995,16412,8930,1225,535,0,0,0,0,0,0,0,693
+E14000641,E12000001,City of Durham,,North East,England,County,07/05/2010 01:32,Roberta,Blackman-Woods,F,Lab hold,Lab,LD,68832,46252,61,3067,6146,20496,17429,856,0,0,0,0,0,0,0,0,1325
+E14000642,E12000006,Clacton,,East of England ,England,County,07/05/2010 01:42,Douglas,Carswell,M,Con hold,Con,Lab,67194,43123,81,12068,22867,10799,5577,0,535,0,0,0,0,0,0,0,3345
+E14000643,E12000003,Cleethorpes,,Yorkshire and The Humber,England,County,07/05/2010 03:54,Martin,Vickers,M,Con gain from Lab,Con,Lab,70214,44966,127,4298,18939,14641,8192,3194,0,0,0,0,0,0,0,0,0
+W07000062,W92000004,Clwyd South,,Wales,Wales,County,07/05/2010 01:35,Susan,Jones,F,Lab hold,Lab,Con,53748,34681,42,2834,10477,13311,5965,819,0,0,3009,0,0,0,0,0,1100
+W07000059,W92000004,Clwyd West,,Wales,Wales,County,07/05/2010 03:12,David,Jones,M,Con hold,Con,Lab,57913,38111,67,6419,15833,9414,5801,864,0,0,5864,0,0,0,0,0,335
+S14000011,S92000003,"Coatbridge, Chryston and Bellshill",,Scotland,Scotland,Burgh,07/05/2010 01:55,Tom,Clarke,M,Lab hold,Lab,SNP,70067,41635,131,20714,3374,27728,3519,0,0,7014,0,0,0,0,0,0,0
+E14000644,E12000006,Colchester,,East of England ,England,Borough,07/05/2010 04:20,Bob,Russell,M,LD hold,LD,Con,74064,46139,101,6982,15169,5680,22151,1350,694,0,0,0,0,0,0,0,1095
+E14000645,E12000003,Colne Valley,,Yorkshire and The Humber,England,County,07/05/2010 05:18,Jason,McCartney,M,Con gain from Lab,Con,LD,80060,55296,105,4837,20440,14589,15603,1163,867,0,0,0,0,0,0,0,2634
+E14000646,E12000002,Congleton,,North West,England,County,07/05/2010 04:36,Fiona,Bruce,F,Con hold,Con,LD,72280,50780,98,7063,23250,8747,16187,2147,0,0,0,0,0,0,0,0,449
+E14000647,E12000002,Copeland,,North West,England,County,07/05/2010 13:14,Jamie,Reed,M,Lab hold,Lab,Con,63149,42787,70,3833,15866,19699,4365,994,389,0,0,0,0,0,0,0,1474
+E14000648,E12000004,Corby,,East Midlands,England,County,07/05/2010 04:13,Louise,Bagshawe,F,Con gain from Lab,Con,Lab,78024,54236,109,1895,22886,20991,7834,0,0,0,0,0,0,0,0,0,2525
+E14000649,E12000005,Coventry North East,,West Midlands,England,Borough,07/05/2010 05:53,Bob,Ainsworth,M,Lab hold,Lab,Con,73035,43383,180,11775,9609,21384,7210,1291,0,0,0,0,0,0,0,0,3889
+E14000650,E12000005,Coventry North West,,West Midlands,England,Borough,07/05/2010 05:33,Geoffrey,Robinson,M,Lab hold,Lab,Con,72871,46560,123,6288,13648,19936,8344,1295,497,0,0,0,0,0,0,0,2840
+E14000651,E12000005,Coventry South,,West Midlands,England,Borough,07/05/2010 05:44,Jim,Cunningham,M,Lab hold,Lab,Con,73652,45924,172,3845,15352,19197,8278,1767,639,0,0,0,0,0,0,0,691
+E14000652,E12000008,Crawley,,South East,England,Borough,07/05/2010 03:45,Henry,Smith,M,Con gain from Lab,Con,Lab,72781,47504,121,5928,21264,15336,6844,1382,598,0,0,0,0,0,0,0,2080
+E14000653,E12000002,Crewe and Nantwich,,North West,England,County,07/05/2010 03:28,Edward,Timpson,M,Con gain from Lab,Con,Lab,79728,51084,49,6046,23420,17374,7656,1414,0,0,0,0,0,0,0,0,1220
+E14000654,E12000007,Croydon Central,,London,England,Borough,07/05/2010 04:42,Gavin,Barwell,M,Con gain from Lab,Con,Lab,76349,49667,154,2879,19567,16688,6553,997,581,0,0,0,0,0,0,0,5281
+E14000655,E12000007,Croydon North,,London,England,Borough,07/05/2010 05:48,Malcolm,Wicks,M,Lab hold,Lab,Con,85216,51676,195,16481,12466,28947,7226,891,1017,0,0,0,0,0,0,0,1129
+E14000656,E12000007,Croydon South,,London,England,Borough,07/05/2010 05:33,Richard,Ottaway,M,Con hold,Con,LD,81303,56322,166,15818,28684,11287,12866,2504,981,0,0,0,0,0,0,0,0
+S14000012,S92000003,"Cumbernauld, Kilsyth and Kirkintilloch East",,Scotland,Scotland,County,07/05/2010 02:09,Gregg,McClymont,M,Lab hold,Lab,SNP,64037,41150,82,13755,3407,23549,3924,0,0,9794,0,0,0,0,0,0,476
+W07000070,W92000004,Cynon Valley,,Wales,Wales,County,07/05/2010 03:29,Ann,Clwyd,F,Lab hold,Lab,PC,50650,29876,72,9617,3010,15681,4120,1001,0,0,6064,0,0,0,0,0,0
+E14000657,E12000007,Dagenham and Rainham,,London,England,Borough,07/05/2010 06:15,Jon,Cruddas,M,Lab hold,Lab,Con,69764,44232,166,2630,15183,17813,3806,1569,296,0,0,0,0,0,0,0,5565
+E14000658,E12000001,Darlington,,North East,England,Borough,07/05/2010 00:48,Jenny,Chapman,F,Lab hold,Lab,Con,68168,42896,63,3388,13503,16891,10046,1194,0,0,0,0,0,0,0,0,1262
+E14000659,E12000008,Dartford,,South East,England,County,07/05/2010 03:23,Gareth,Johnson,M,Con gain from Lab,Con,Lab,76271,50080,82,10628,24428,13800,7361,1842,0,0,0,0,0,0,0,0,2649
+E14000660,E12000004,Daventry,,East Midlands,England,County,07/05/2010 04:22,Chris,Heaton-Harris,M,Con hold,Con,LD,71452,51774,97,19188,29252,8168,10064,2333,770,0,0,0,0,0,0,0,1187
+W07000042,W92000004,Delyn,,Wales,Wales,County,07/05/2010 03:06,David,Hanson,M,Lab hold,Lab,Con,53470,36984,57,2272,12811,15083,5747,655,0,0,1844,0,0,0,0,0,844
+E14000661,E12000002,Denton and Reddish,,North West,England,Borough,07/05/2010 06:29,Andrew,Gwynne,M,Lab hold,Lab,Con,66330,37635,173,9831,9360,19191,6727,2060,0,0,0,0,0,0,0,0,297
+E14000662,E12000004,Derby North,,East Midlands,England,Borough,07/05/2010 04:09,Chris,Williamson,M,Lab hold,Lab,Con,71474,45080,132,613,14283,14896,12638,829,0,0,0,0,0,0,0,0,2434
+E14000663,E12000004,Derby South,,East Midlands,England,Borough,07/05/2010 03:56,Margaret,Beckett,F,Lab hold,Lab,Con,70999,41188,246,6122,11729,17851,8430,1821,0,0,0,0,0,0,0,0,1357
+E14000664,E12000004,Derbyshire Dales,,East Midlands,England,County,07/05/2010 03:24,Patrick,McLoughlin,M,Con hold,Con,LD,63376,46780,95,13866,24378,9061,10512,1779,772,0,0,0,0,0,0,0,278
+E14000665,E12000009,Devizes,,South West,England,County,07/05/2010 03:58,Claire,Perry,F,Con hold,Con,LD,67379,46340,60,13005,25519,4711,12514,2076,813,0,0,0,0,0,0,0,707
+E14000666,E12000003,Dewsbury,,Yorkshire and The Humber,England,County,07/05/2010 04:38,Simon,Reevell,M,Con gain from Lab,Con,Lab,78910,54008,159,1526,18898,17372,9150,0,849,0,0,0,0,0,0,0,7739
+E14000667,E12000003,Don Valley,,Yorkshire and The Humber,England,County,07/05/2010 02:48,Caroline,Flint,F,Lab hold,Lab,Con,72597,43420,129,3595,12877,16472,7422,1904,0,0,0,0,0,0,0,0,4745
+E14000668,E12000003,Doncaster Central,,Yorkshire and The Humber,England,Borough,07/05/2010 03:17,Rosie,Winterton,F,Lab hold,Lab,Con,72985,41745,119,6229,10340,16569,8795,1421,0,0,0,0,0,0,0,0,4620
+E14000669,E12000003,Doncaster North,,Yorkshire and The Humber,England,County,07/05/2010 03:06,Edward,Miliband,M,Lab hold,Lab,Con,71681,41483,139,10909,8728,19637,6174,1797,0,0,0,0,0,0,0,0,5147
+E14000670,E12000008,Dover,,South East,England,County,07/05/2010 03:06,Charlie,Elphicke,M,Con gain from Lab,Con,Lab,71833,50385,86,5274,22174,16900,7962,1747,0,0,0,0,0,0,0,0,1602
+E14000671,E12000005,Dudley North,,West Midlands,England,Borough,07/05/2010 15:31,Ian,Austin,M,Lab hold,Lab,Con,60838,38602,93,649,14274,14923,4066,3267,0,0,0,0,0,0,0,0,2072
+E14000672,E12000005,Dudley South,,West Midlands,England,Borough,07/05/2010 04:17,Chris,Kelly,M,Con gain from Lab,Con,Lab,60572,38165,92,3856,16450,12594,5989,3132,0,0,0,0,0,0,0,0,0
+E14000673,E12000007,Dulwich and West Norwood,,London,England,Borough,07/05/2010 07:31,Tessa,Jowell,F,Lab hold,Lab,LD,72817,48214,208,9365,10684,22461,13096,707,1266,0,0,0,0,0,0,0,0
+S14000013,S92000003,Dumfries and Galloway,,Scotland,Scotland,County,07/05/2010 04:04,Russell,Brown,M,Lab hold,Lab,Con,74584,52173,98,7449,16501,23950,4608,695,0,6419,0,0,0,0,0,0,0
+S14000014,S92000003,"Dumfriesshire, Clydesdale and Tweeddale",,Scotland,Scotland,County,07/05/2010 03:48,David,Mundell,M,Con hold,Con,Lab,66627,45892,70,4194,17457,13263,9080,637,510,4945,0,0,0,0,0,0,0
+S14000015,S92000003,Dundee East,,Scotland,Scotland,Burgh,07/05/2010 02:12,Stewart,Hosie,M,SNP hold,SNP,Lab,65471,40568,72,1821,6177,13529,4285,431,542,15350,0,0,0,0,0,0,254
+S14000016,S92000003,Dundee West,,Scotland,Scotland,Burgh,07/05/2010 01:44,Jim,McGovern,M,Lab hold,Lab,SNP,63013,37126,76,7278,3461,17994,4233,0,0,10716,0,0,0,0,0,0,722
+S14000017,S92000003,Dunfermline and West Fife,,Scotland,Scotland,County,07/05/2010 02:04,Thomas,Docherty,M,Lab hold,Lab,LD,73590,48947,79,5470,3305,22639,17169,633,0,5201,0,0,0,0,0,0,0
+W07000061,W92000004,Dwyfor Meirionnydd,,Wales,Wales,County,07/05/2010 02:36,Elfyn,Llwyd,M,PC hold,PC,Con,45354,28906,62,6367,6447,4021,3538,776,0,0,12814,0,0,0,0,0,1310
+E14000674,E12000007,Ealing Central and Acton,,London,England,Borough,07/05/2010 08:23,Angie,Bray,F,Con gain from Lab,Con,Lab,70251,47200,218,3716,17944,14228,13041,765,737,0,0,0,0,0,0,0,485
+E14000675,E12000007,Ealing North,,London,England,Borough,07/05/2010 07:25,Stephen,Pound,M,Lab hold,Lab,Con,73104,47678,288,9301,14722,24023,6283,685,505,0,0,0,0,0,0,0,1460
+E14000676,E12000007,"Ealing, Southall",,London,England,Borough,07/05/2010 07:42,Virendra,Sharma,M,Lab hold,Lab,Con,66970,42756,468,9291,12733,22024,6383,0,705,0,0,0,0,0,0,0,911
+E14000677,E12000001,Easington,,North East,England,County,07/05/2010 01:08,Grahame,Morris,M,Lab hold,Lab,LD,63879,34914,63,14982,4790,20579,5597,1631,0,0,0,0,0,0,0,0,2317
+N06000005,N92000002,East Antrim,,Northern Ireland,Northern Ireland,County,07/05/2010 01:37,Sammy,Wilson,M,DUP hold,DUP,UCUNF,60204,30502,138,6770,0,0,0,0,0,0,0,13993,2064,2019,7223,3377,1826
+E14000678,E12000009,East Devon,,South West,England,County,07/05/2010 02:18,Hugo,Swire,M,Con hold,Con,LD,73109,53092,230,9114,25662,5721,16548,4346,815,0,0,0,0,0,0,0,0
+S14000018,S92000003,East Dunbartonshire,,Scotland,Scotland,County,07/05/2010 03:14,Jo,Swinson,F,LD hold,LD,Lab,63795,47948,93,2184,7431,16367,18551,545,0,5054,0,0,0,0,0,0,0
+E14000679,E12000007,East Ham,,London,England,Borough,07/05/2010 09:07,Stephen,Timms,M,Lab hold,Lab,Con,90674,50373,529,27826,7645,35471,5849,0,586,0,0,0,0,0,0,0,822
+E14000680,E12000008,East Hampshire,,South East,England,County,07/05/2010 03:14,Damian,Hinds,M,Con hold,Con,LD,72262,51317,86,13497,29137,4043,15640,1477,0,0,0,0,0,0,0,0,1020
+S14000019,S92000003,"East Kilbride, Strathaven and Lesmahagow",,Scotland,Scotland,County,07/05/2010 01:28,Michael,McCann,M,Lab hold,Lab,SNP,76534,50946,86,14503,6613,26241,5052,0,1003,11738,0,0,0,0,0,0,299
+N06000006,N92000002,East Londonderry,,Northern Ireland,Northern Ireland,County,07/05/2010 04:51,Gregory,Campbell,M,DUP hold,DUP,SF,63220,34950,136,5355,0,0,0,0,0,0,0,12097,6742,5399,6218,1922,2572
+S14000020,S92000003,East Lothian,,Scotland,Scotland,County,07/05/2010 01:42,Fiona,O'Donnell,F,Lab hold,Lab,Con,73348,49161,60,12258,9661,21919,8288,548,862,7883,0,0,0,0,0,0,0
+S14000021,S92000003,East Renfrewshire,,Scotland,Scotland,County,07/05/2010 02:39,Jim,Murphy,M,Lab hold,Lab,Con,66249,51181,77,10420,15567,25987,4720,372,0,4535,0,0,0,0,0,0,0
+E14000681,E12000008,East Surrey,,South East,England,County,07/05/2010 03:25,Sam,Gyimah,M,Con hold,Con,LD,76855,54640,140,16874,31007,4925,14133,3770,0,0,0,0,0,0,0,0,805
+E14000682,E12000008,East Worthing and Shoreham,,South East,England,County,07/05/2010 06:54,Tim,Loughton,M,Con hold,Con,LD,74001,48397,110,11105,23458,8087,12353,2984,1126,0,0,0,0,0,0,0,389
+E14000683,E12000003,East Yorkshire,,Yorkshire and The Humber,England,County,07/05/2010 02:42,Greg,Knight,M,Con hold,Con,LD,80105,51254,74,13486,24328,10401,10842,2142,762,0,0,0,0,0,0,0,2779
+E14000684,E12000008,Eastbourne,,South East,England,Borough,07/05/2010 02:41,Stephen,Lloyd,M,LD gain from Con,LD,Con,77840,52124,73,3435,21223,2497,24658,1305,0,0,0,0,0,0,0,0,2441
+E14000685,E12000008,Eastleigh,,South East,England,Borough,07/05/2010 02:43,Chris,Huhne,M,LD hold,LD,Con,77436,53650,75,3864,21102,5153,24966,1933,0,0,0,0,0,0,0,0,496
+E14000686,E12000002,Eddisbury,,North West,England,County,07/05/2010 02:55,Stephen,O'Brien,M,Con hold,Con,LD,72100,45414,109,13255,23472,9794,10217,1931,0,0,0,0,0,0,0,0,0
+S14000022,S92000003,Edinburgh East,,Scotland,Scotland,Burgh,07/05/2010 02:47,Sheila,Gilmore,F,Lab hold,Lab,SNP,60945,39865,69,9181,4358,17314,7751,0,2035,8133,0,0,0,0,0,0,274
+S14000023,S92000003,Edinburgh North and Leith,,Scotland,Scotland,Burgh,07/05/2010 03:18,Mark,Lazarowicz,M,Lab hold,Lab,LD,69207,47356,79,1724,7079,17740,16016,0,1062,4568,0,0,0,0,0,0,891
+S14000024,S92000003,Edinburgh South,,Scotland,Scotland,Burgh,07/05/2010 04:53,Ian,Murray,M,Lab hold,Lab,LD,59362,43801,78,316,9452,15215,14899,0,881,3354,0,0,0,0,0,0,0
+S14000025,S92000003,Edinburgh South West,,Scotland,Scotland,Burgh,07/05/2010 03:07,Alistair,Darling,M,Lab hold,Lab,Con,66361,45462,88,8447,11026,19473,8194,0,872,5530,0,0,0,0,0,0,367
+S14000026,S92000003,Edinburgh West,,Scotland,Scotland,Burgh,07/05/2010 03:32,Mike,Crockart,M,LD hold,LD,Lab,65159,46447,115,3803,10767,12881,16684,0,0,6115,0,0,0,0,0,0,0
+E14000687,E12000007,Edmonton,,London,England,Borough,07/05/2010 04:12,Andy,Love,M,Lab hold,Lab,Con,63904,40377,334,9613,12052,21665,4252,1036,516,0,0,0,0,0,0,0,856
+E14000688,E12000002,Ellesmere Port and Neston,,North West,England,County,07/05/2010 11:00,Andrew,Miller,M,Lab hold,Lab,Con,66509,44233,65,4331,15419,19750,6663,1619,0,0,0,0,0,0,0,0,782
+E14000689,E12000003,Elmet and Rothwell,,Yorkshire and The Humber,England,County,07/05/2010 05:21,Alec,Shelbrooke,M,Con gain from Lab,Con,Lab,77724,55789,84,4521,23778,19257,9109,1593,0,0,0,0,0,0,0,0,2052
+E14000690,E12000007,Eltham,,London,England,Borough,07/05/2010 07:24,Clive,Efford,M,Lab hold,Lab,Con,62590,41964,177,1663,15753,17416,5299,1011,419,0,0,0,0,0,0,0,2066
+E14000691,E12000007,Enfield North,,London,England,Borough,07/05/2010 04:35,Nick,de Bois,M,Con hold,Con,Lab,66261,44453,198,1692,18804,17112,5403,938,489,0,0,0,0,0,0,0,1707
+E14000692,E12000007,"Enfield, Southgate",,London,England,Borough,07/05/2010 04:49,David,Burrowes,M,Con hold,Con,Lab,64139,44352,221,7626,21928,14302,6124,505,632,0,0,0,0,0,0,0,861
+E14000693,E12000006,Epping Forest,,East of England ,England,County,07/05/2010 03:32,Eleanor,Laing,F,Con hold,Con,LD,72186,46584,134,15131,25148,6641,10017,1852,659,0,0,0,0,0,0,0,2267
+E14000694,E12000008,Epsom and Ewell,,South East,England,Borough,07/05/2010 03:28,Chris,Grayling,M,Con hold,Con,LD,79908,54955,287,16134,30868,6538,14734,2549,0,0,0,0,0,0,0,0,266
+E14000695,E12000004,Erewash,,East Midlands,England,County,07/05/2010 02:44,Jessica,Lee,F,Con gain from Lab,Con,Lab,69655,47642,41,2501,18805,16304,8343,855,534,0,0,0,0,0,0,0,2801
+E14000696,E12000007,Erith and Thamesmead,,London,England,Borough,07/05/2010 09:40,Teresa,Pearce,F,Lab hold,Lab,Con,69900,42476,197,5703,13365,19068,5116,1139,322,0,0,0,0,0,0,0,3466
+E14000697,E12000008,Esher and Walton,,South East,England,Borough,07/05/2010 03:52,Dominic,Raab,M,Con hold,Con,LD,75338,54543,148,18593,32134,5829,13541,1783,0,0,0,0,0,0,0,0,1256
+E14000698,E12000009,Exeter,,South West,England,Borough,07/05/2010 02:03,Ben,Bradshaw,M,Lab hold,Lab,Con,77158,52247,83,2721,17221,19942,10581,1930,792,0,0,0,0,0,0,0,1781
+S14000028,S92000003,Falkirk,,Scotland,Scotland,County,07/05/2010 01:56,Eric,Joyce,M,Lab hold,Lab,SNP,81869,50777,91,7843,5698,23207,5225,1283,0,15364,0,0,0,0,0,0,0
+E14000699,E12000008,Fareham,,South East,England,County,07/05/2010 04:29,Mark,Hoban,M,Con hold,Con,LD,75915,54345,132,17092,30037,7719,12945,2235,791,0,0,0,0,0,0,0,618
+E14000700,E12000008,Faversham and Mid Kent,,South East,England,County,07/05/2010 04:39,Hugh,Robertson,M,Con hold,Con,LD,68858,46712,92,17088,26250,7748,9162,1722,890,0,0,0,0,0,0,0,940
+E14000701,E12000007,Feltham and Heston,,London,England,Borough,07/05/2010 05:33,Alan,Keen,M,Lab hold,Lab,Con,81058,48536,373,4658,16516,21174,6679,992,530,0,0,0,0,0,0,0,2645
+N06000007,N92000002,Fermanagh and South Tyrone,,Northern Ireland,Northern Ireland,County,07/05/2010 15:02,Michelle,Gildernew,F,SF hold,SF,Ind,67908,46803,263,4,0,0,0,0,0,0,0,0,21304,3574,0,437,21488
+E14000702,E12000009,Filton and Bradley Stoke,,South West,England,County,07/05/2010 01:20,Jack,Lopresti,M,Con hold,Con,Lab,69003,48301,35,6914,19686,12772,12197,1506,441,0,0,0,0,0,0,0,1699
+E14000703,E12000007,Finchley and Golders Green,,London,England,Borough,07/05/2010 06:56,Mike,Freer,M,Con hold,Con,Lab,70722,47157,198,5809,21688,15879,8036,817,737,0,0,0,0,0,0,0,0
+E14000704,E12000008,Folkestone and Hythe,,South East,England,County,07/05/2010 02:25,Damian,Collins,M,Con hold,Con,LD,78005,52800,79,10122,26109,5719,15987,2439,637,0,0,0,0,0,0,0,1909
+E14000705,E12000009,Forest of Dean,,South West,England,County,07/05/2010 03:47,Mark,Harper,M,Con hold,Con,Lab,68419,48763,57,11064,22853,11789,10676,2522,923,0,0,0,0,0,0,0,0
+N06000008,N92000002,Foyle,,Northern Ireland,Northern Ireland,County,07/05/2010 02:23,Mark,Durkan,M,SDLP hold,SDLP,SF,65843,37889,301,4824,0,0,0,0,0,0,0,4489,12098,16922,1221,223,2936
+E14000706,E12000002,Fylde,,North West,England,County,07/05/2010 03:24,Mark,Menzies,M,Con hold,Con,LD,65926,43690,81,13185,22826,8624,9641,1945,654,0,0,0,0,0,0,0,0
+E14000707,E12000004,Gainsborough,,East Midlands,England,County,07/05/2010 03:46,Edward,Leigh,M,Con hold,Con,LD,72939,49251,115,10559,24266,7701,13707,2065,0,0,0,0,0,0,0,0,1512
+E14000708,E12000002,Garston and Halewood,,North West,England,Borough,07/05/2010 05:27,Maria,Eagle,F,Lab hold,Lab,LD,71312,42825,182,16877,6908,25493,8616,1540,0,0,0,0,0,0,0,0,268
+E14000709,E12000001,Gateshead,,North East,England,Borough,07/05/2010 03:59,Ian,Mearns,M,Lab hold,Lab,LD,66492,38257,86,12549,5716,20712,8163,1103,379,0,0,0,0,0,0,0,2184
+E14000710,E12000004,Gedling,,East Midlands,England,County,07/05/2010 01:51,Vernon,Coaker,M,Lab hold,Lab,Con,70866,48190,69,1859,17962,19821,7350,1459,0,0,0,0,0,0,0,0,1598
+E14000711,E12000008,Gillingham and Rainham,,South East,England,Borough,07/05/2010 05:48,Rehman,Chishti,M,Con gain from Lab,Con,Lab,70814,46786,66,8680,21624,12944,8484,1515,356,0,0,0,0,0,0,0,1863
+S14000029,S92000003,Glasgow Central,,Scotland,Scotland,Burgh,07/05/2010 02:18,Anas,Sarwar,M,Lab hold,Lab,SNP,60105,30580,85,10551,2158,15908,5010,246,800,5357,0,0,0,0,0,0,1101
+S14000030,S92000003,Glasgow East,,Scotland,Scotland,Burgh,07/05/2010 02:06,Margaret,Curran,F,Lab hold,Lab,SNP,61865,32164,50,11840,1453,19797,1617,209,0,7957,0,0,0,0,0,0,1131
+S14000031,S92000003,Glasgow North,,Scotland,Scotland,Burgh,07/05/2010 02:33,Ann,McKechin,F,Lab hold,Lab,LD,51490,29613,69,3898,2089,13181,9283,0,947,3530,0,0,0,0,0,0,583
+S14000032,S92000003,Glasgow North East,,Scotland,Scotland,Burgh,07/05/2010 03:15,Wille,Bain,M,Lab gain from Spk,Lab,SNP,59861,29409,88,15942,1569,20100,2262,0,0,4158,0,0,0,0,0,0,1320
+S14000033,S92000003,Glasgow North West,,Scotland,Scotland,Burgh,07/05/2010 03:09,John,Robertson,M,Lab hold,Lab,LD,60997,35582,82,13611,3537,19233,5622,0,882,5430,0,0,0,0,0,0,878
+S14000034,S92000003,Glasgow South,,Scotland,Scotland,Burgh,07/05/2010 02:57,Tom,Harris,M,Lab hold,Lab,SNP,65069,40094,78,12658,4592,20736,4739,0,961,8078,0,0,0,0,0,0,988
+S14000035,S92000003,Glasgow South West,,Scotland,Scotland,Burgh,07/05/2010 02:46,Ian,Davidson,M,Lab hold,Lab,SNP,58191,31781,88,14671,2084,19863,2870,0,0,5192,0,0,0,0,0,0,1772
+S14000036,S92000003,Glenrothes,,Scotland,Scotland,County,07/05/2010 01:43,Lindsay,Roy,M,Lab hold,Lab,SNP,67765,40501,67,16448,2922,25247,3108,425,0,8799,0,0,0,0,0,0,0
+E14000712,E12000009,Gloucester,,South West,England,Borough,07/05/2010 05:46,Richard,Graham,M,Con gain from Lab,Con,Lab,79321,50764,126,2420,20267,17847,9767,1808,511,0,0,0,0,0,0,0,564
+S14000037,S92000003,Gordon,,Scotland,Scotland,County,07/05/2010 04:21,Malcolm,Bruce,M,LD hold,LD,SNP,73420,48775,50,6748,9111,9811,17575,0,752,10827,0,0,0,0,0,0,699
+E14000713,E12000008,Gosport,,South East,England,Borough,07/05/2010 04:51,Caroline,Dinenage,F,Con hold,Con,LD,72816,46939,135,14413,24300,7944,9887,1496,573,0,0,0,0,0,0,0,2739
+W07000046,W92000004,Gower,,Wales,Wales,County,07/05/2010 02:56,Martin,Caton,M,Lab hold,Lab,Con,61696,41671,66,2683,13333,16016,7947,652,0,0,2760,0,0,0,0,0,963
+E14000714,E12000004,Grantham and Stamford,,East Midlands,England,County,07/05/2010 02:51,Nick,Boles,M,Con hold,Con,LD,78008,52799,75,14826,26552,9503,11726,1604,0,0,0,0,0,0,0,0,3414
+E14000715,E12000008,Gravesham,,South East,England,County,07/05/2010 02:35,Adam,Holloway,M,Con hold,Con,Lab,70195,47303,73,9312,22956,13644,6293,2265,675,0,0,0,0,0,0,0,1470
+E14000716,E12000003,Great Grimsby,,Yorkshire and The Humber,England,Borough,07/05/2010 04:12,Austin,Mitchell,M,Lab hold,Lab,Con,61229,32954,94,714,10063,10777,7388,2043,0,0,0,0,0,0,0,0,2683
+E14000717,E12000006,Great Yarmouth,,East of England ,England,County,07/05/2010 05:02,Brandon,Lewis,M,Con gain from Lab,Con,Lab,70315,43057,149,4276,18571,14295,6188,2066,416,0,0,0,0,0,0,0,1521
+E14000718,E12000007,Greenwich and Woolwich,,London,England,Borough,07/05/2010 07:38,Nick,Raynsford,M,Lab hold,Lab,Con,65489,41188,180,10153,10109,20262,7498,0,1054,0,0,0,0,0,0,0,2265
+E14000719,E12000008,Guildford,,South East,England,County,07/05/2010 01:44,Anne,Milton,F,Con hold,Con,LD,77082,55567,95,7782,29618,2812,21836,1021,0,0,0,0,0,0,0,0,280
+E14000720,E12000007,Hackney North and Stoke Newington,,London,England,Borough,07/05/2010 14:33,Diane,Abbott,F,Lab hold,Lab,LD,73906,46461,350,14461,6759,25553,11092,0,2133,0,0,0,0,0,0,0,924
+E14000721,E12000007,Hackney South and Shoreditch,,London,England,Borough,07/05/2010 15:07,Meg,Hillier,F,Lab hold,Lab,LD,72841,42858,421,14288,5800,23888,9600,651,1493,0,0,0,0,0,0,0,1426
+E14000722,E12000005,Halesowen and Rowley Regis,,West Midlands,England,Borough,07/05/2010 04:31,James,Morris,M,Con gain from Lab,Con,Lab,63693,43979,141,2023,18115,16092,6515,2824,0,0,0,0,0,0,0,0,433
+E14000723,E12000003,Halifax,,Yorkshire and The Humber,England,Borough,07/05/2010 06:46,Linda,Riordan,F,Lab hold,Lab,Con,70380,43555,242,1472,14806,16278,8335,654,0,0,0,0,0,0,0,0,3482
+E14000724,E12000003,Haltemprice and Howden,,Yorkshire and The Humber,England,County,07/05/2010 04:17,David,Davis,M,Con hold,Con,LD,70254,48737,85,11602,24486,7630,12884,0,669,0,0,0,0,0,0,0,3068
+E14000725,E12000002,Halton,,North West,England,County,07/05/2010 02:07,Derek,Twigg,M,Lab hold,Lab,Con,68846,41338,114,15504,8339,23843,5718,1228,647,0,0,0,0,0,0,0,1563
+E14000726,E12000007,Hammersmith,,London,England,Borough,07/05/2010 05:26,Andy,Slaughter,M,Lab hold,Lab,Con,72348,47452,214,3549,17261,20810,7567,551,696,0,0,0,0,0,0,0,567
+E14000727,E12000007,Hampstead and Kilburn,,London,England,Borough,07/05/2010 08:22,Glenda,Jackson,F,Lab hold,Lab,Con,80373,52822,226,42,17290,17332,16491,408,759,0,0,0,0,0,0,0,542
+E14000728,E12000004,Harborough,,East Midlands,England,County,07/05/2010 04:55,Edward,Garnier,M,Con hold,Con,LD,77917,54945,82,9797,26894,6981,17097,1462,0,0,0,0,0,0,0,0,2511
+E14000729,E12000006,Harlow,,East of England ,England,County,07/05/2010 03:17,Robert,Halfon,M,Con gain from Lab,Con,Lab,67583,43878,149,4925,19691,14766,5990,1591,0,0,0,0,0,0,0,0,1840
+E14000730,E12000003,Harrogate and Knaresborough,,Yorkshire and The Humber,England,County,07/05/2010 02:44,Andrew,Jones,M,Con gain from LD,Con,LD,74760,53134,75,1039,24305,3413,23266,1056,0,0,0,0,0,0,0,0,1094
+E14000731,E12000007,Harrow East,,London,England,Borough,07/05/2010 07:06,Bob,Blackman,M,Con gain from Lab,Con,Lab,70510,48006,218,3403,21435,18032,6850,896,793,0,0,0,0,0,0,0,0
+E14000732,E12000007,Harrow West,,London,England,Borough,07/05/2010 06:01,Gareth,Thomas,M,Lab hold,Lab,Con,68554,46116,159,3143,16968,20111,7458,954,625,0,0,0,0,0,0,0,0
+E14000733,E12000001,Hartlepool,,North East,England,Borough,07/05/2010 02:47,Iain,Wright,M,Lab hold,Lab,Con,68927,38242,146,5509,10758,16267,6533,2682,0,0,0,0,0,0,0,0,2002
+E14000734,E12000006,Harwich and North Essex,,East of England ,England,County,07/05/2010 04:47,Bernard,Jenkin,M,Con hold,Con,LD,70743,49000,76,11447,23001,9774,11554,2527,909,0,0,0,0,0,0,0,1235
+E14000735,E12000008,Hastings and Rye,,South East,England,County,07/05/2010 03:37,Amber,Rudd,F,Con gain from Lab,Con,Lab,77030,49814,115,1993,20468,18475,7825,1397,0,0,0,0,0,0,0,0,1649
+E14000736,E12000008,Havant,,South East,England,Borough,07/05/2010 03:03,David,Willetts,M,Con hold,Con,LD,69662,43903,135,12160,22433,7777,10273,2611,0,0,0,0,0,0,0,0,809
+E14000737,E12000007,Hayes and Harlington,,London,England,Borough,07/05/2010 06:21,John,McDonnell,M,Lab hold,Lab,Con,70231,42637,279,10824,12553,23377,3726,0,348,0,0,0,0,0,0,0,2633
+E14000738,E12000002,Hazel Grove,,North West,England,County,07/05/2010 04:57,Andrew,Stunell,M,LD hold,LD,Con,62300,41981,97,6371,14114,5234,20485,2148,0,0,0,0,0,0,0,0,0
+E14000739,E12000006,Hemel Hempstead,,East of England ,England,County,07/05/2010 02:32,Mike,Penning,M,Con hold,Con,LD,72752,49471,55,13406,24721,10295,11315,1254,0,0,0,0,0,0,0,0,1886
+E14000740,E12000003,Hemsworth,,Yorkshire and The Humber,England,County,07/05/2010 05:49,Jon,Trickett,M,Lab hold,Lab,Con,75542,43840,108,9844,10662,20506,5667,0,0,0,0,0,0,0,0,0,7005
+E14000741,E12000007,Hendon,,London,England,Borough,07/05/2010 09:13,Matthew,Offord,M,Con gain from Lab,Con,Lab,72943,46374,173,106,19635,19529,5734,958,518,0,0,0,0,0,0,0,0
+E14000742,E12000008,Henley,,South East,England,County,07/05/2010 03:12,John,Howell,M,Con hold,Con,LD,73123,53520,67,16588,30054,5835,13466,1817,1328,0,0,0,0,0,0,0,1020
+E14000743,E12000005,Hereford and South Herefordshire,,West Midlands,England,County,07/05/2010 04:08,Jesse,Norman,M,Con gain from LD,Con,LD,72021,48381,72,2481,22366,3506,19885,1638,0,0,0,0,0,0,0,0,986
+E14000744,E12000006,Hertford and Stortford,,East of England ,England,County,07/05/2010 02:13,Mark,Prisk,M,Con hold,Con,LD,78459,55377,80,15437,29810,7620,14373,1716,0,0,0,0,0,0,0,0,1858
+E14000745,E12000006,Hertsmere,,East of England ,England,County,07/05/2010 02:31,James,Clappison,M,Con hold,Con,Lab,73057,47270,140,17605,26476,8871,8210,1712,604,0,0,0,0,0,0,0,1397
+E14000746,E12000001,Hexham,,North East,England,County,07/05/2010 13:53,Guy,Opperman,M,Con hold,Con,LD,60360,43483,60,5788,18795,8253,13007,0,0,0,0,0,0,0,0,0,3428
+E14000747,E12000002,Heywood and Middleton,,North West,England,County,07/05/2010 04:18,Jim,Dobbin,M,Lab hold,Lab,Con,80171,46125,124,5971,12528,18499,10474,1215,0,0,0,0,0,0,0,0,3409
+E14000748,E12000004,High Peak,,East Midlands,England,County,07/05/2010 02:29,Andrew,Bingham,M,Con gain from Lab,Con,Lab,71458,50337,99,4677,20587,15910,10993,1690,922,0,0,0,0,0,0,0,235
+E14000749,E12000006,Hitchin and Harpenden,,East of England ,England,County,07/05/2010 04:34,Peter,Lilley,M,Con hold,Con,LD,73851,54707,135,15271,29869,7413,14598,1663,807,0,0,0,0,0,0,0,357
+E14000750,E12000007,Holborn and St Pancras,,London,England,Borough,07/05/2010 06:31,Frank,Dobson,M,Lab hold,Lab,LD,86563,54649,302,9942,11134,25198,15256,587,1480,0,0,0,0,0,0,0,994
+E14000751,E12000007,Hornchurch and Upminster,,London,England,Borough,07/05/2010 06:06,Angela,Watkinson,F,Con hold,Con,Lab,78547,53390,156,16371,27469,11098,7426,2848,542,0,0,0,0,0,0,0,4007
+E14000752,E12000007,Hornsey and Wood Green,,London,England,Borough,07/05/2010 06:29,Lynne,Featherstone,F,LD hold,LD,Lab,78748,55042,245,6875,9174,18720,25595,0,1261,0,0,0,0,0,0,0,292
+E14000753,E12000008,Horsham,,South East,England,County,07/05/2010 06:05,Francis,Maude,M,Con hold,Con,LD,77564,55841,66,11460,29447,4189,17987,2839,570,0,0,0,0,0,0,0,809
+E14000754,E12000001,Houghton and Sunderland South,,North East,England,Borough,06/05/2010 22:52,Bridget,Phillipson,F,Lab hold,Lab,Con,68729,38021,230,10990,8147,19137,5292,1022,0,0,0,0,0,0,0,0,4423
+E14000755,E12000008,Hove,,South East,England,Borough,07/05/2010 05:20,Mike,Weatherley,M,Con gain from Lab,Con,Lab,71720,49819,89,1868,18294,16426,11240,1206,2568,0,0,0,0,0,0,0,85
+E14000756,E12000003,Huddersfield,,Yorkshire and The Humber,England,Borough,07/05/2010 04:50,Barry,Sheerman,M,Lab hold,Lab,Con,66318,40524,155,4472,11253,15725,10023,0,1641,0,0,0,0,0,0,0,1882
+E14000757,E12000006,Huntingdon,,East of England ,England,County,07/05/2010 13:14,Jonathan,Djanogly,M,Con hold,Con,LD,83557,54266,134,10819,26516,5982,15697,3258,652,0,0,0,0,0,0,0,2161
+E14000758,E12000002,Hyndburn,,North West,England,Borough,07/05/2010 04:14,Graham,Jones,M,Lab hold,Lab,Con,67221,42672,215,3090,14441,17531,5033,1481,463,0,0,0,0,0,0,0,3723
+E14000759,E12000007,Ilford North,,London,England,Borough,07/05/2010 05:35,Lee,Scott,M,Con hold,Con,Lab,72372,47018,197,5404,21506,16102,5966,871,572,0,0,0,0,0,0,0,2001
+E14000760,E12000007,Ilford South,,London,England,Borough,07/05/2010 07:02,Mike,Gapes,M,Lab hold,Lab,Con,86220,51191,353,11287,14014,25301,8679,1132,1319,0,0,0,0,0,0,0,746
+S14000038,S92000003,Inverclyde,,Scotland,Scotland,County,07/05/2010 02:03,David,Cairns,M,Lab hold,Lab,SNP,59209,37512,71,14416,4502,20993,5007,433,0,6577,0,0,0,0,0,0,0
+S14000039,S92000003,"Inverness, Nairn, Badenoch and Strathspey",,Scotland,Scotland,County,07/05/2010 04:13,Danny,Alexander,M,LD hold,LD,Lab,72528,47086,60,8765,6278,10407,19172,574,789,8803,0,0,0,0,0,0,1063
+E14000761,E12000006,Ipswich,,East of England ,England,Borough,07/05/2010 05:50,Benedict,Gummer,M,Con gain from Lab,Con,Lab,75770,46941,89,2079,18371,16292,8556,1365,775,0,0,0,0,0,0,0,1582
+E14000762,E12000008,Isle of Wight,,South East,England,County,07/05/2010 03:08,Andrew,Turner,M,Con hold,Con,LD,109922,70264,112,10527,32810,8169,22283,2435,931,0,0,0,0,0,0,0,3636
+E14000763,E12000007,Islington North,,London,England,Borough,07/05/2010 05:09,Jeremy,Corbyn,M,Lab hold,Lab,LD,68119,44554,134,12401,6339,24276,11875,716,1348,0,0,0,0,0,0,0,0
+E14000764,E12000007,Islington South and Finsbury,,London,England,Borough,07/05/2010 04:56,Emily,Thornberry,F,Lab hold,Lab,LD,67650,43555,170,3569,8449,18407,14838,701,710,0,0,0,0,0,0,0,450
+W07000077,W92000004,Islwyn,,Wales,Wales,County,07/05/2010 01:38,Chris,Evans,M,Lab hold,Lab,Con,54866,34684,70,12215,4854,17069,3597,930,0,0,4518,0,0,0,0,0,3716
+E14000765,E12000001,Jarrow,,North East,England,Borough,07/05/2010 02:58,Stephen,Hepburn,M,Lab hold,Lab,Con,64350,38784,113,12908,8002,20910,7163,0,0,0,0,0,0,0,0,0,2709
+E14000766,E12000003,Keighley,,Yorkshire and The Humber,England,County,07/05/2010 06:06,Kris,Hopkins,M,Con gain from Lab,Con,Lab,65893,47692,230,2940,20003,17063,7059,1470,0,0,0,0,0,0,0,0,2097
+E14000767,E12000005,Kenilworth and Southam,,West Midlands,England,County,07/05/2010 12:52,Jeremy,Wright,M,Con hold,Con,LD,64362,48431,77,12552,25945,6949,13393,1214,568,0,0,0,0,0,0,0,362
+E14000768,E12000007,Kensington,,London,England,Borough,07/05/2010 04:27,Malcolm,Rifkind,M,Con hold,Con,Lab,65975,35150,255,8616,17595,8979,6872,754,753,0,0,0,0,0,0,0,197
+E14000769,E12000004,Kettering,,East Midlands,England,County,07/05/2010 02:07,Philip,Hollobone,M,Con hold,Con,Lab,68824,47328,55,9094,23247,14153,7498,0,0,0,0,0,0,0,0,0,2430
+S14000040,S92000003,Kilmarnock and Loudoun,,Scotland,Scotland,County,07/05/2010 01:50,Cathie,Jamieson,F,Lab hold,Lab,SNP,74131,46553,105,12378,6592,24460,3419,0,0,12082,0,0,0,0,0,0,0
+E14000770,E12000007,Kingston and Surbiton,,London,England,Borough,07/05/2010 05:25,Edward,Davey,M,LD hold,LD,Con,81115,57111,151,7560,20868,5337,28428,1450,555,0,0,0,0,0,0,0,473
+E14000771,E12000003,Kingston upon Hull East,,Yorkshire and The Humber,England,Borough,07/05/2010 02:51,Karl,Turner,M,Lab hold,Lab,LD,67530,34184,86,8597,5667,16387,7790,2745,0,0,0,0,0,0,0,0,1595
+E14000772,E12000003,Kingston upon Hull North,,Yorkshire and The Humber,England,Borough,07/05/2010 05:00,Diana,Johnson,F,Lab hold,Lab,LD,64082,33291,101,641,4365,13044,12403,1358,478,0,0,0,0,0,0,0,1643
+E14000773,E12000003,Kingston upon Hull West and Hessle,,Yorkshire and The Humber,England,Borough,07/05/2010 02:29,Alan,Johnson,M,Lab hold,Lab,LD,57264,31505,62,5742,6361,13378,7636,1688,0,0,0,0,0,0,0,0,2442
+E14000774,E12000009,Kingswood,,South West,England,Borough,07/05/2010 01:02,Chris,Skidmore,M,Con gain from Lab,Con,Lab,66361,47906,36,2445,19362,16917,8072,1528,383,0,0,0,0,0,0,0,1644
+S14000041,S92000003,Kirkcaldy and Cowdenbeath,,Scotland,Scotland,County,07/05/2010 01:33,Gordon,Brown,M,Lab hold,Lab,SNP,73534,45802,60,23009,4258,29559,4269,760,0,6550,0,0,0,0,0,0,406
+E14000775,E12000002,Knowsley,,North West,England,Borough,07/05/2010 02:49,George,Howarth,M,Lab hold,Lab,LD,79564,44658,168,25686,4004,31650,5964,1145,0,0,0,0,0,0,0,0,1895
+N06000009,N92000002,Lagan Valley,,Northern Ireland,Northern Ireland,County,07/05/2010 00:58,Jeffrey,Donaldson,M,DUP hold,DUP,UCUNF,65257,36540,138,10486,0,0,0,0,0,0,0,18199,1465,1835,7713,4174,3154
+S14000042,S92000003,Lanark and Hamilton East,,Scotland,Scotland,County,07/05/2010 01:40,Jim,Hood,M,Lab hold,Lab,SNP,74773,46554,81,13478,6981,23258,5249,616,0,9780,0,0,0,0,0,0,670
+E14000776,E12000002,Lancaster and Fleetwood,,North West,England,County,07/05/2010 15:37,Eric,Ollerenshaw,M,Con gain from Lab,Con,Lab,67379,42701,72,333,15404,15071,8167,1020,1888,0,0,0,0,0,0,0,1151
+E14000777,E12000003,Leeds Central,,Yorkshire and The Humber,England,Borough,07/05/2010 05:12,Hilary,Benn,M,Lab hold,Lab,LD,81266,37394,148,10645,7541,18434,7789,0,0,0,0,0,0,0,0,0,3630
+E14000778,E12000003,Leeds East,,Yorkshire and The Humber,England,Borough,07/05/2010 04:36,George,Mudie,M,Lab hold,Lab,Con,64698,37813,93,10293,8763,19056,6618,0,0,0,0,0,0,0,0,0,3376
+E14000779,E12000003,Leeds North East,,Yorkshire and The Humber,England,Borough,07/05/2010 05:04,Fabian,Hamilton,M,Lab hold,Lab,Con,67899,47535,129,4545,15742,20287,9310,842,0,0,0,0,0,0,0,0,1354
+E14000780,E12000003,Leeds North West,,Yorkshire and The Humber,England,Borough,07/05/2010 05:28,Greg,Mulholland,M,LD hold,LD,Con,65399,43483,106,9103,11550,9132,20653,600,508,0,0,0,0,0,0,0,1040
+E14000781,E12000003,Leeds West,,Yorkshire and The Humber,England,Borough,07/05/2010 04:28,Rachel,Reeves,F,Lab hold,Lab,LD,67453,38752,126,7016,7641,16389,9373,1140,1832,0,0,0,0,0,0,0,2377
+E14000782,E12000004,Leicester East,,East Midlands,England,Borough,07/05/2010 04:39,Keith,Vaz,M,Lab hold,Lab,Con,72986,47995,125,14082,11722,25804,6817,725,733,0,0,0,0,0,0,0,2194
+E14000783,E12000004,Leicester South,,East Midlands,England,Borough,07/05/2010 04:57,Peter,Soulsby,M,Lab hold,Lab,LD,77175,47124,109,8808,10066,21479,12671,720,770,0,0,0,0,0,0,0,1418
+E14000784,E12000004,Leicester West,,East Midlands,England,Borough,07/05/2010 03:56,Liz,Kendall,F,Lab hold,Lab,Con,64900,35819,89,4017,9728,13745,8107,883,639,0,0,0,0,0,0,0,2717
+E14000785,E12000002,Leigh,,North West,England,County,07/05/2010 04:59,Andy,Burnham,M,Lab hold,Lab,Con,75903,44332,149,12011,9284,21295,8049,1535,0,0,0,0,0,0,0,0,4169
+E14000786,E12000008,Lewes,,South East,England,County,07/05/2010 03:07,Norman,Baker,M,LD hold,LD,Con,68708,50088,61,7647,18401,2508,26048,1728,729,0,0,0,0,0,0,0,674
+E14000787,E12000007,Lewisham East,,London,England,Borough,07/05/2010 08:37,Heidi,Alexander,F,Lab hold,Lab,LD,65926,41719,204,6216,9850,17966,11750,771,624,0,0,0,0,0,0,0,758
+E14000788,E12000007,Lewisham West and Penge,,London,England,Borough,07/05/2010 09:05,Jim,Dowd,M,Lab hold,Lab,LD,69022,45028,205,5828,11489,18501,12673,1117,931,0,0,0,0,0,0,0,317
+E14000789,E12000007,"Lewisham, Deptford",,London,England,Borough,07/05/2010 09:27,Joan,Ruddock,F,Lab hold,Lab,LD,67058,41220,326,12499,5551,22132,9633,0,2772,0,0,0,0,0,0,0,1132
+E14000790,E12000007,Leyton and Wanstead,,London,England,County,07/05/2010 08:19,John,Cryer,M,Lab hold,Lab,LD,63541,40159,237,6416,8928,17511,11095,1080,562,0,0,0,0,0,0,0,983
+E14000791,E12000005,Lichfield,,West Midlands,England,County,07/05/2010 02:38,Michael,Fabricant,M,Con hold,Con,LD,72586,51563,89,17683,28048,10230,10365,2920,0,0,0,0,0,0,0,0,0
+E14000792,E12000004,Lincoln,,East Midlands,England,Borough,07/05/2010 03:28,Karl,McCartney,M,Con gain from Lab,Con,Lab,73540,45721,85,1058,17163,16105,9256,1004,0,0,0,0,0,0,0,0,2193
+S14000043,S92000003,Linlithgow and East Falkirk,,Scotland,Scotland,County,07/05/2010 02:24,Michael,Connarty,M,Lab hold,Lab,SNP,80907,51450,136,12553,6146,25634,6589,0,0,13081,0,0,0,0,0,0,0
+E14000793,E12000002,"Liverpool, Riverside",,North West,England,Borough,07/05/2010 05:09,Louise,Ellman,F,Lab hold,Lab,LD,74539,38801,147,14173,4243,22998,8825,674,1355,0,0,0,0,0,0,0,706
+E14000794,E12000002,"Liverpool, Walton",,North West,England,Borough,07/05/2010 06:26,Steve,Rotheram,M,Lab hold,Lab,LD,62612,34335,162,19818,2241,24709,4891,898,0,0,0,0,0,0,0,0,1596
+E14000795,E12000002,"Liverpool, Wavertree",,North West,England,Borough,07/05/2010 05:55,Luciana,Berger,F,Lab hold,Lab,LD,62518,37914,119,7167,2830,20132,12965,890,598,0,0,0,0,0,0,0,499
+E14000796,E12000002,"Liverpool, West Derby",,North West,England,Borough,07/05/2010 06:05,Stephen,Twigg,M,Lab hold,Lab,LD,63082,35784,171,18467,3311,22953,4486,1093,0,0,0,0,0,0,0,0,3941
+S14000044,S92000003,Livingston,,Scotland,Scotland,County,07/05/2010 02:10,Graeme,Morrice,M,Lab hold,Lab,SNP,75924,47907,60,10791,5158,23215,5316,443,0,12424,0,0,0,0,0,0,1351
+W07000045,W92000004,Llanelli,,Wales,Wales,County,07/05/2010 01:34,Nia,Griffith,F,Lab hold,Lab,PC,55637,37461,49,4701,5381,15916,3902,1047,0,0,11215,0,0,0,0,0,0
+E14000797,E12000004,Loughborough,,East Midlands,England,County,07/05/2010 02:05,Nicky,Morgan,F,Con gain from Lab,Con,Lab,77505,52838,109,3744,21971,18227,9675,925,0,0,0,0,0,0,0,0,2040
+E14000798,E12000004,Louth and Horncastle,,East Midlands,England,County,07/05/2010 03:13,Peter,Tapsell,M,Con hold,Con,LD,77650,50494,86,13871,25065,8760,11194,2183,0,0,0,0,0,0,0,0,3292
+E14000799,E12000005,Ludlow,,West Midlands,England,County,07/05/2010 03:59,Philip,Dunne,M,Con hold,Con,LD,66632,48732,62,9749,25720,3272,15971,2127,447,0,0,0,0,0,0,0,1195
+E14000800,E12000006,Luton North,,East of England ,England,Borough,07/05/2010 03:20,Kelvin,Hopkins,M,Lab hold,Lab,Con,65645,43018,89,7520,13672,21192,4784,1564,490,0,0,0,0,0,0,0,1316
+E14000801,E12000006,Luton South,,East of England ,England,Borough,07/05/2010 04:27,Gavin,Shuker,M,Lab hold,Lab,Con,65219,42216,119,2329,12396,14725,9567,975,366,0,0,0,0,0,0,0,4187
+E14000802,E12000002,Macclesfield,,North West,England,County,07/05/2010 04:02,David,Rutley,M,Con hold,Con,LD,75370,50059,80,11959,23503,10164,11544,1418,840,0,0,0,0,0,0,0,2590
+E14000803,E12000008,Maidenhead,,South East,England,County,07/05/2010 04:52,Theresa,May,F,Con hold,Con,LD,72844,53720,87,16769,31937,3795,15168,1243,482,0,0,0,0,0,0,0,1095
+E14000804,E12000008,Maidstone and The Weald,,South East,England,County,07/05/2010 03:34,Helen,Grant,F,Con hold,Con,LD,71041,48928,75,5889,23491,4769,17602,1637,655,0,0,0,0,0,0,0,774
+E14000805,E12000002,Makerfield,,North West,England,County,07/05/2010 03:44,Yvonne,Fovargue,F,Lab hold,Lab,Con,73813,43771,159,12490,8210,20700,7082,0,0,0,0,0,0,0,0,0,7779
+E14000806,E12000006,Maldon,,East of England ,England,County,07/05/2010 03:29,John,Whittingdale,M,Con hold,Con,LD,68777,47895,59,19407,28661,6070,9254,2446,0,0,0,0,0,0,0,0,1464
+E14000807,E12000002,Manchester Central,,North West,England,Borough,07/05/2010 08:08,Tony,Lloyd,M,Lab hold,Lab,LD,90110,39927,138,10439,4704,21059,10620,607,915,0,0,0,0,0,0,0,2022
+E14000808,E12000002,"Manchester, Gorton",,North West,England,Borough,07/05/2010 07:14,Gerald,Kaufman,M,Lab hold,Lab,LD,75933,38325,205,6703,4224,19211,12508,0,1048,0,0,0,0,0,0,0,1334
+E14000809,E12000002,"Manchester, Withington",,North West,England,Borough,07/05/2010 08:02,John,Leech,M,LD hold,LD,Lab,74371,45031,123,1894,5005,18216,20110,698,798,0,0,0,0,0,0,0,204
+E14000810,E12000004,Mansfield,,East Midlands,England,County,07/05/2010 03:21,Alan,Meale,M,Lab hold,Lab,Con,80069,48395,84,6012,12741,18753,7469,2985,0,0,0,0,0,0,0,0,6447
+E14000811,E12000008,Meon Valley,,South East,England,County,07/05/2010 06:41,George,Hollingbery,M,Con hold,Con,LD,70488,51238,111,12125,28818,3266,16693,1490,0,0,0,0,0,0,0,0,971
+E14000812,E12000005,Meriden,,West Midlands,England,County,07/05/2010 05:34,Caroline,Spelman,F,Con hold,Con,Lab,82228,52162,106,16253,26956,10703,9278,1378,678,0,0,0,0,0,0,0,3169
+W07000071,W92000004,Merthyr Tydfil and Rhymney,,Wales,Wales,County,07/05/2010 02:44,Dai,Havard,M,Lab hold,Lab,LD,54715,32076,80,4056,2412,14007,9951,872,0,0,1621,0,0,0,0,0,3213
+E14000813,E12000006,Mid Bedfordshire,,East of England ,England,County,07/05/2010 03:02,Nadine,Dorries,F,Con hold,Con,LD,76310,54897,86,15152,28815,8108,13663,2826,773,0,0,0,0,0,0,0,712
+E14000814,E12000004,Mid Derbyshire,,East Midlands,England,County,07/05/2010 04:03,Pauline,Latham,F,Con hold,Con,Lab,66074,47342,97,11292,22877,11585,9711,1252,0,0,0,0,0,0,0,0,1917
+E14000815,E12000009,Mid Dorset and North Poole,,South West,England,County,07/05/2010 04:47,Annette,Brooke,F,LD hold,LD,Con,64660,46788,90,269,20831,2748,21100,2109,0,0,0,0,0,0,0,0,0
+E14000816,E12000006,Mid Norfolk,,East of England ,England,County,07/05/2010 03:52,George,Freeman,M,Con hold,Con,LD,74260,50765,66,13856,25123,8857,11267,2800,1457,0,0,0,0,0,0,0,1261
+E14000817,E12000008,Mid Sussex,,South East,England,County,07/05/2010 05:40,Nicholas,Soames,M,Con hold,Con,LD,77199,55855,100,7402,28329,3689,20927,1423,645,0,0,0,0,0,0,0,842
+N06000010,N92000002,Mid Ulster,,Northern Ireland,Northern Ireland,County,07/05/2010 03:00,Martin,McGuinness,M,SF hold,SF,DUP,64594,40842,297,15363,0,0,0,0,0,0,0,5876,21239,5826,4509,397,2995
+E14000818,E12000005,Mid Worcestershire,,West Midlands,England,County,07/05/2010 02:18,Peter,Luff,M,Con hold,Con,LD,72145,50931,65,15864,27770,7613,11906,3049,593,0,0,0,0,0,0,0,0
+E14000819,E12000001,Middlesbrough,,North East,England,Borough,07/05/2010 01:32,Stuart,Bell,M,Lab hold,Lab,LD,65148,33455,62,8689,6283,15351,6662,1236,0,0,0,0,0,0,0,0,3923
+E14000820,E12000001,Middlesbrough South and East Cleveland,,North East,England,County,07/05/2010 04:22,Tom,Blenkinsop,M,Lab hold,Lab,Con,72666,46214,57,1677,16461,18138,7340,1881,0,0,0,0,0,0,0,0,2394
+S14000045,S92000003,Midlothian,,Scotland,Scotland,County,07/05/2010 02:24,David,Hamilton,M,Lab hold,Lab,SNP,61387,39242,50,10349,4661,18449,6711,364,595,8100,0,0,0,0,0,0,362
+E14000821,E12000008,Milton Keynes North,,South East,England,County,07/05/2010 07:51,Mark,Lancaster,M,Con gain from Lab,Con,Lab,82432,53888,77,8961,23419,14458,11894,1772,733,0,0,0,0,0,0,0,1612
+E14000822,E12000008,Milton Keynes South,,South East,England,Borough,07/05/2010 07:21,Iain,Stewart,M,Con gain from Lab,Con,Lab,86559,55333,83,5201,23034,17833,9787,2074,774,0,0,0,0,0,0,0,1831
+E14000823,E12000007,Mitcham and Morden,,London,England,Borough,07/05/2010 04:49,Siobhain,McDonagh,F,Lab hold,Lab,Con,65939,43797,192,13666,11056,24722,5202,857,381,0,0,0,0,0,0,0,1579
+E14000824,E12000008,Mole Valley,,South East,England,County,07/05/2010 03:41,Paul,Beresford,M,Con hold,Con,LD,72297,54324,124,15653,31263,3804,15610,2752,895,0,0,0,0,0,0,0,0
+W07000054,W92000004,Monmouth,,Wales,Wales,County,07/05/2010 03:51,David,Davies,M,Con hold,Con,Lab,64538,46519,75,10425,22466,12041,9026,1126,587,0,1273,0,0,0,0,0,0
+W07000063,W92000004,Montgomeryshire,,Wales,Wales,County,07/05/2010 02:21,Glyn,Davies,M,Con gain from LD,Con,LD,48730,33813,58,1184,13976,2407,12792,1128,0,0,2802,0,0,0,0,0,708
+S14000046,S92000003,Moray,,Scotland,Scotland,County,07/05/2010 02:56,Angus,Robertson,M,SNP hold,SNP,Con,65925,41004,66,5590,10683,7007,5956,1085,0,16273,0,0,0,0,0,0,0
+E14000825,E12000002,Morecambe and Lunesdale,,North West,England,County,07/05/2010 15:15,David,Morris,M,Con gain from Lab,Con,Lab,69576,43436,82,866,18035,17169,5791,1843,598,0,0,0,0,0,0,0,0
+E14000826,E12000003,Morley and Outwood,,Yorkshire and The Humber,England,County,07/05/2010 04:51,Ed,Balls,M,Lab hold,Lab,Con,74891,48856,70,1101,17264,18365,8186,1506,0,0,0,0,0,0,0,0,3535
+S14000047,S92000003,Motherwell and Wishaw,,Scotland,Scotland,Burgh,07/05/2010 01:13,Frank,Roy,M,Lab hold,Lab,SNP,66918,39123,104,16806,3660,23910,3840,0,0,7104,0,0,0,0,0,0,609
+S14000027,S92000003,Na h-Eileanan an Iar,,Scotland,Scotland,County,07/05/2010 01:36,Angus,MacNeil,M,SNP hold,SNP,Lab,21780,14717,26,1885,647,4838,1097,0,0,6723,0,0,0,0,0,0,1412
+W07000069,W92000004,Neath,,Wales,Wales,County,07/05/2010 03:07,Peter,Hain,M,Lab hold,Lab,PC,57295,37122,67,9775,4847,17172,5535,829,0,0,7397,0,0,0,0,0,1342
+E14000827,E12000008,New Forest East,,South East,England,County,07/05/2010 03:10,Julian,Lewis,M,Con hold,Con,LD,72858,50036,77,11307,26443,4915,15136,2518,1024,0,0,0,0,0,0,0,0
+E14000828,E12000008,New Forest West,,South East,England,County,07/05/2010 04:00,Desmond,Swayne,M,Con hold,Con,LD,68332,47572,66,16896,27980,4666,11084,2783,1059,0,0,0,0,0,0,0,0
+E14000829,E12000004,Newark,,East Midlands,England,County,07/05/2010 03:29,Patrick,Mercer,M,Con hold,Con,Lab,71755,51228,112,16152,27590,11438,10246,1954,0,0,0,0,0,0,0,0,0
+E14000830,E12000008,Newbury,,South East,England,County,07/05/2010 01:50,Richard,Benyon,M,Con hold,Con,LD,79144,58589,56,12248,33057,2505,20809,1475,490,0,0,0,0,0,0,0,253
+E14000831,E12000001,Newcastle upon Tyne Central,,North East,England,Borough,07/05/2010 03:22,Chinyelu,Onwurah,F,Lab hold,Lab,LD,60507,34157,92,7466,6611,15694,8228,754,568,0,0,0,0,0,0,0,2302
+E14000832,E12000001,Newcastle upon Tyne East,,North East,England,Borough,07/05/2010 03:43,Nicholas,Brown,M,Lab hold,Lab,LD,64487,37840,74,4453,6068,17043,12590,0,620,0,0,0,0,0,0,0,1519
+E14000833,E12000001,Newcastle upon Tyne North,,North East,England,Borough,07/05/2010 03:52,Catherine,McKinnell,F,Lab hold,Lab,LD,67110,43946,68,3414,7966,17950,14536,1285,319,0,0,0,0,0,0,0,1890
+E14000834,E12000005,Newcastle-under-Lyme,,West Midlands,England,Borough,07/05/2010 04:36,Paul,Farrelly,M,Lab hold,Lab,Con,69433,43191,112,1552,14841,16393,8466,3491,0,0,0,0,0,0,0,0,0
+W07000055,W92000004,Newport East,,Wales,Wales,County,07/05/2010 02:04,Jessica,Morden,F,Lab hold,Lab,LD,54437,34448,38,1650,7918,12744,11094,677,0,0,724,0,0,0,0,0,1291
+W07000056,W92000004,Newport West,,Wales,Wales,County,07/05/2010 02:45,Paul,Flynn,M,Lab hold,Lab,Con,62111,39720,55,3544,12845,16389,6587,1144,450,0,1122,0,0,0,0,0,1183
+N06000011,N92000002,Newry and Armagh,,Northern Ireland,Northern Ireland,County,07/05/2010 03:31,Conor,Murphy,M,SF hold,SF,SDLP,74308,44906,343,8331,0,0,0,0,0,0,0,5764,18857,10526,8558,545,656
+E14000835,E12000009,Newton Abbot,,South West,England,County,07/05/2010 03:19,Anne,Morris,F,Con gain from LD,Con,LD,69319,48283,76,523,20774,3387,20251,3088,701,0,0,0,0,0,0,0,82
+E14000836,E12000003,"Normanton, Pontefract and Castleford",,Yorkshire and The Humber,England,County,07/05/2010 06:37,Yvette,Cooper,F,Lab hold,Lab,Con,82336,46239,105,10979,11314,22293,7585,0,0,0,0,0,0,0,0,0,5047
+N06000012,N92000002,North Antrim,,Northern Ireland,Northern Ireland,County,07/05/2010 00:39,Ian,Paisley,M,DUP hold,DUP,TUV,73338,42397,182,12558,0,0,0,0,0,0,0,19672,5265,3738,4634,1368,7720
+S14000048,S92000003,North Ayrshire and Arran,,Scotland,Scotland,County,07/05/2010 03:48,Katy,Clark,F,Lab hold,Lab,SNP,74223,46116,126,9895,7212,21860,4630,0,0,11965,0,0,0,0,0,0,449
+E14000837,E12000009,North Cornwall,,South West,England,County,07/05/2010 06:23,Dan,Rogerson,M,LD hold,LD,Con,67940,46844,79,2981,19531,1971,22512,2300,0,0,0,0,0,0,0,0,530
+E14000838,E12000009,North Devon,,South West,England,County,07/05/2010 03:25,Nick,Harvey,M,LD hold,LD,Con,74508,51321,82,5821,18484,2671,24305,3720,697,0,0,0,0,0,0,0,1444
+E14000839,E12000009,North Dorset,,South West,England,County,07/05/2010 04:37,Robert,Walter,M,Con hold,Con,LD,73741,54141,71,7625,27640,2910,20015,2812,546,0,0,0,0,0,0,0,218
+N06000013,N92000002,North Down,,Northern Ireland,Northern Ireland,County,07/05/2010 01:14,Sylvia,Hermon,F,Ind gain from UUP,Ind,UCUNF,60698,33481,62,14364,0,0,0,0,1043,0,0,0,250,680,6817,1876,22815
+E14000840,E12000001,North Durham,,North East,England,County,07/05/2010 00:49,Kevan,Jones,M,Lab hold,Lab,Con,67544,40967,73,12076,8622,20698,8617,1344,0,0,0,0,0,0,0,0,1686
+E14000841,E12000006,North East Bedfordshire,,East of England ,England,County,07/05/2010 03:21,Alistair,Burt,M,Con hold,Con,LD,78060,55552,83,18942,30989,8957,12047,2294,0,0,0,0,0,0,0,0,1265
+E14000842,E12000006,North East Cambridgeshire,,East of England ,England,County,07/05/2010 03:37,Stephen,Barclay,M,Con hold,Con,LD,73224,52064,68,16425,26862,9274,10437,2791,0,0,0,0,0,0,0,0,2700
+E14000843,E12000004,North East Derbyshire,,East Midlands,England,County,07/05/2010 02:37,Natascha,Engel,F,Lab hold,Lab,Con,71398,47034,105,2445,15503,17948,10947,2636,0,0,0,0,0,0,0,0,0
+S14000049,S92000003,North East Fife,,Scotland,Scotland,County,07/05/2010 01:30,Menzies,Campbell,M,LD hold,LD,Con,62771,40064,92,9048,8715,6869,17763,1032,0,5685,0,0,0,0,0,0,0
+E14000844,E12000008,North East Hampshire,,South East,England,County,07/05/2010 12:03,James,Arbuthnot,M,Con hold,Con,LD,72196,52939,105,18597,32075,5173,13478,2213,0,0,0,0,0,0,0,0,0
+E14000845,E12000006,North East Hertfordshire,,East of England ,England,County,07/05/2010 03:36,Oliver,Heald,M,Con hold,Con,LD,72200,50425,149,15194,26995,8291,11801,2075,875,0,0,0,0,0,0,0,388
+E14000846,E12000009,North East Somerset,,South West,England,County,07/05/2010 03:56,Jacob,Rees-Mogg,M,Con hold,Con,Lab,67881,51203,76,4914,21130,16216,11433,1754,670,0,0,0,0,0,0,0,0
+E14000847,E12000005,North Herefordshire,,West Midlands,England,County,07/05/2010 04:21,Bill,Wiggin,M,Con hold,Con,LD,66946,47568,69,9887,24631,3373,14744,2701,1533,0,0,0,0,0,0,0,586
+E14000848,E12000006,North Norfolk,,East of England ,England,County,07/05/2010 03:45,Norman,Lamb,M,LD hold,LD,Con,67851,49661,76,11626,15928,2896,27554,2680,508,0,0,0,0,0,0,0,95
+E14000849,E12000005,North Shropshire,,West Midlands,England,County,07/05/2010 04:38,Owen,Paterson,M,Con hold,Con,LD,78930,51869,91,15828,26692,9406,10864,2432,808,0,0,0,0,0,0,0,1667
+E14000850,E12000009,North Somerset,,South West,England,County,07/05/2010 02:51,Liam,Fox,M,Con hold,Con,LD,77306,57941,110,7862,28549,6448,20687,2257,0,0,0,0,0,0,0,0,0
+E14000851,E12000009,North Swindon,,South West,England,County,07/05/2010 04:50,Justin,Tomlinson,M,Con gain from Lab,Con,Lab,78384,50295,170,7060,22408,15348,8668,1842,487,0,0,0,0,0,0,0,1542
+E14000852,E12000008,North Thanet,,South East,England,County,07/05/2010 02:50,Roger,Gale,M,Con hold,Con,Lab,68602,43343,83,13528,22826,9298,8400,2819,0,0,0,0,0,0,0,0,0
+E14000853,E12000001,North Tyneside,,North East,England,Borough,07/05/2010 05:57,Mary,Glindon,F,Lab hold,Lab,LD,77690,46405,124,12884,8514,23505,10621,1306,0,0,0,0,0,0,0,0,2459
+E14000854,E12000005,North Warwickshire,,West Midlands,England,County,07/05/2010 04:26,Daniel,Byles,M,Con gain from Lab,Con,Lab,70138,47265,96,54,18993,18939,5481,1335,0,0,0,0,0,0,0,0,2517
+E14000855,E12000006,North West Cambridgeshire,,East of England ,England,County,07/05/2010 04:42,Shailesh,Vara,M,Con hold,Con,LD,88851,58283,158,16677,29425,9877,12748,4826,0,0,0,0,0,0,0,0,1407
+E14000856,E12000001,North West Durham,,North East,England,County,07/05/2010 01:31,Pat,Glass,F,Lab hold,Lab,LD,70350,43815,85,7612,8766,18539,10927,1259,0,0,0,0,0,0,0,0,4324
+E14000857,E12000008,North West Hampshire,,South East,England,County,07/05/2010 03:37,George,Young,M,Con hold,Con,LD,76695,53292,87,18583,31072,6980,12489,2751,0,0,0,0,0,0,0,0,0
+E14000858,E12000004,North West Leicestershire,,East Midlands,England,County,07/05/2010 02:21,Andrew,Bridgen,M,Con gain from Lab,Con,Lab,71217,51952,75,7511,23147,15636,8639,1134,0,0,0,0,0,0,0,0,3396
+E14000859,E12000006,North West Norfolk,,East of England ,England,County,07/05/2010 06:43,Henry,Bellingham,M,Con hold,Con,LD,73105,47800,65,14810,25916,6353,11106,1841,745,0,0,0,0,0,0,0,1839
+E14000860,E12000009,North Wiltshire,,South West,England,County,07/05/2010 04:11,James,Gray,M,Con hold,Con,LD,66315,48699,75,7483,25114,3239,17631,1908,599,0,0,0,0,0,0,0,208
+E14000861,E12000004,Northampton North,,East Midlands,England,Borough,07/05/2010 04:46,Michael,Ellis,M,Con gain from Lab,Con,Lab,61850,40271,93,1936,13735,11799,11250,1238,443,0,0,0,0,0,0,0,1806
+E14000862,E12000004,Northampton South,,East Midlands,England,Borough,07/05/2010 04:13,Brian,Binley,M,Con gain from Lab,Con,Lab,63105,38978,86,6004,15917,9913,7579,1897,363,0,0,0,0,0,0,0,3309
+E14000863,E12000006,Norwich North,,East of England ,England,Borough,07/05/2010 13:04,Chloe,Smith,F,Con gain from Lab,Con,Lab,64814,42573,40,3901,17280,13379,7783,1878,1245,0,0,0,0,0,0,0,1008
+E14000864,E12000006,Norwich South,,East of England ,England,Borough,07/05/2010 04:52,Simon,Wright,M,LD gain from Lab,LD,Lab,73649,47551,70,310,10902,13650,13960,1145,7095,0,0,0,0,0,0,0,799
+E14000865,E12000004,Nottingham East,,East Midlands,England,Borough,07/05/2010 03:18,Christopher,Leslie,M,Lab hold,Lab,LD,58705,33112,133,6969,7846,15022,8053,1138,928,0,0,0,0,0,0,0,125
+E14000866,E12000004,Nottingham North,,East Midlands,England,Borough,07/05/2010 02:32,Graham,Allen,M,Lab hold,Lab,Con,63240,34285,75,8138,8508,16646,5849,1338,0,0,0,0,0,0,0,0,1944
+E14000867,E12000004,Nottingham South,,East Midlands,England,Borough,07/05/2010 03:04,Lilian,Greenwood,F,Lab hold,Lab,Con,67441,40789,68,1772,13437,15209,9406,967,630,0,0,0,0,0,0,0,1140
+E14000868,E12000005,Nuneaton,,West Midlands,England,County,07/05/2010 02:24,Marcus,Jones,M,Con gain from Lab,Con,Lab,67837,44646,112,2069,18536,16467,6846,0,0,0,0,0,0,0,0,0,2797
+S14000050,S92000003,Ochil and South Perthshire,,Scotland,Scotland,County,07/05/2010 04:13,Gordon,Banks,M,Lab hold,Lab,SNP,75115,50469,56,5187,10342,19131,5754,689,609,13944,0,0,0,0,0,0,0
+W07000074,W92000004,Ogmore,,Wales,Wales,County,07/05/2010 02:31,Huw,Irranca-Davies,M,Lab hold,Lab,Con,55527,34650,68,13246,5398,18644,5260,780,0,0,3326,0,0,0,0,0,1242
+E14000869,E12000007,Old Bexley and Sidcup,,London,England,Borough,07/05/2010 09:31,James,Brokenshire,M,Con hold,Con,Lab,65699,45492,172,15857,24625,8768,6996,1532,371,0,0,0,0,0,0,0,3200
+E14000870,E12000002,Oldham East and Saddleworth,,North West,England,County,07/05/2010 11:03,Phil,Woolas,M,Lab hold,Lab,LD,72557,44520,204,103,11773,14186,14083,1720,0,0,0,0,0,0,0,0,2758
+E14000871,E12000002,Oldham West and Royton,,North West,England,Borough,07/05/2010 06:00,Michael,Meacher,M,Lab hold,Lab,Con,72359,42910,253,9352,10151,19503,8193,1387,0,0,0,0,0,0,0,0,3676
+S14000051,S92000003,Orkney and Shetland,,Scotland,Scotland,County,07/05/2010 06:24,Alistair,Carmichael,M,LD hold,LD,Lab,33085,19346,61,9928,2032,2061,11989,1222,0,2042,0,0,0,0,0,0,0
+E14000872,E12000007,Orpington,,London,England,Borough,07/05/2010 05:21,Jo,Johnson,M,Con hold,Con,LD,67732,48911,110,17200,29200,4400,12000,1360,511,0,0,0,0,0,0,0,1440
+E14000873,E12000008,Oxford East,,South East,England,Borough,07/05/2010 03:22,Andrew,Smith,M,Lab hold,Lab,LD,81903,51651,168,4581,9727,21938,17357,1202,1238,0,0,0,0,0,0,0,189
+E14000874,E12000008,Oxford West and Abingdon,,South East,England,County,07/05/2010 04:22,Nicola,Blackwood,F,Con gain from LD,Con,LD,86458,56480,119,176,23906,5999,23730,1518,1184,0,0,0,0,0,0,0,143
+S14000052,S92000003,Paisley and Renfrewshire North,,Scotland,Scotland,County,07/05/2010 02:25,Jim,Sheridan,M,Lab hold,Lab,SNP,63704,43707,74,15280,6381,23613,4597,0,0,8333,0,0,0,0,0,0,783
+S14000053,S92000003,Paisley and Renfrewshire South,,Scotland,Scotland,County,07/05/2010 02:11,Douglas,Alexander,M,Lab hold,Lab,SNP,61197,39998,96,16614,3979,23842,3812,0,0,7228,0,0,0,0,0,0,1137
+E14000875,E12000002,Pendle,,North West,England,Borough,07/05/2010 02:42,Andrew,Stephenson,M,Con gain from Lab,Con,Lab,66422,45045,154,3585,17512,13927,9095,1476,0,0,0,0,0,0,0,0,3035
+E14000876,E12000003,Penistone and Stocksbridge,,Yorkshire and The Humber,England,County,07/05/2010 06:26,Angela,Smith,F,Lab hold,Lab,Con,68480,46516,83,3049,14516,17565,9800,1936,0,0,0,0,0,0,0,0,2699
+E14000877,E12000002,Penrith and The Border,,North West,England,County,07/05/2010 14:30,Rory,Stewart,M,Con hold,Con,LD,64484,45087,81,11241,24071,5834,12830,1259,0,0,0,0,0,0,0,0,1093
+S14000054,S92000003,Perth and North Perthshire,,Scotland,Scotland,County,07/05/2010 02:33,Pete,Wishart,M,SNP hold,SNP,Con,72141,48268,65,4379,14739,7923,5954,0,0,19118,0,0,0,0,0,0,534
+E14000878,E12000006,Peterborough,,East of England ,England,Borough,07/05/2010 04:00,Stewart,Jackson,M,Con hold,Con,Lab,70278,44927,192,4861,18133,13272,8816,3007,523,0,0,0,0,0,0,0,1176
+E14000879,E12000009,"Plymouth, Moor View",,South West,England,Borough,07/05/2010 03:42,Alison,Seabeck,F,Lab hold,Lab,Con,68062,41526,93,1588,13845,15433,7016,3188,398,0,0,0,0,0,0,0,1646
+E14000880,E12000009,"Plymouth, Sutton and Devonport",,South West,England,Borough,07/05/2010 05:27,Oliver,Colvile,M,Con gain from Lab,Con,Lab,72938,43894,139,1149,15050,13901,10829,2854,904,0,0,0,0,0,0,0,356
+W07000075,W92000004,Pontypridd,,Wales,Wales,County,07/05/2010 03:36,Owen,Smith,M,Lab hold,Lab,LD,58205,36671,75,2785,5932,14220,11435,1229,361,0,2673,0,0,0,0,0,821
+E14000881,E12000009,Poole,,South West,England,Borough,07/05/2010 04:38,Robert,Syms,M,Con hold,Con,LD,72641,47436,103,7541,22532,6041,14991,2507,0,0,0,0,0,0,0,0,1365
+E14000882,E12000007,Poplar and Limehouse,,London,England,Borough,07/05/2010 11:01,Jim,Fitzpatrick,M,Lab hold,Lab,Con,74955,46700,713,6030,12649,18679,5209,565,449,0,0,0,0,0,0,0,9149
+E14000883,E12000008,Portsmouth North,,South East,England,Borough,07/05/2010 06:22,Penny,Mordaunt,F,Con gain from Lab,Con,Lab,70329,44118,154,7289,19533,12244,8874,1812,461,0,0,0,0,0,0,0,1194
+E14000884,E12000008,Portsmouth South,,South East,England,Borough,07/05/2010 06:10,Mike,Hancock,M,LD hold,LD,Con,70242,41264,153,5200,13721,5640,18921,876,716,0,0,0,0,0,0,0,1390
+W07000065,W92000004,Preseli Pembrokeshire,,Wales,Wales,County,07/05/2010 04:17,Stephen,Crabb,M,Con hold,Con,Lab,57400,39602,80,4605,16944,12339,5759,906,0,0,3654,0,0,0,0,0,0
+E14000885,E12000002,Preston,,North West,England,Borough,07/05/2010 04:20,Mark,Hendrick,M,Lab hold,Lab,LD,61187,32505,132,7733,7060,15668,7935,1462,0,0,0,0,0,0,0,0,380
+E14000886,E12000003,Pudsey,,Yorkshire and The Humber,England,Borough,07/05/2010 04:43,Stuart,Andrew,M,Con gain from Lab,Con,Lab,69257,49083,91,1659,18874,17215,10224,1221,0,0,0,0,0,0,0,0,1549
+E14000887,E12000007,Putney,,London,England,Borough,07/05/2010 01:14,Justine,Greening,F,Con hold,Con,Lab,63371,40785,97,10053,21223,11170,6907,435,591,0,0,0,0,0,0,0,459
+E14000888,E12000006,Rayleigh and Wickford,,East of England ,England,County,07/05/2010 04:38,Mark,Francois,M,Con hold,Con,LD,75661,52343,116,22338,30257,7577,7919,2211,0,0,0,0,0,0,0,0,4379
+E14000889,E12000008,Reading East,,South East,England,Borough,07/05/2010 06:43,Rob,Wilson,M,Con hold,Con,LD,74929,49985,118,7605,21269,12729,13664,1086,1069,0,0,0,0,0,0,0,168
+E14000890,E12000008,Reading West,,South East,England,County,07/05/2010 05:36,Alok,Sharma,M,Con gain from Lab,Con,Lab,72120,47530,89,6004,20523,14519,9546,1508,582,0,0,0,0,0,0,0,852
+E14000891,E12000001,Redcar,,North East,England,Borough,07/05/2010 03:50,Ian,Swales,M,LD gain from Lab,LD,Lab,67127,41963,45,5214,5790,13741,18955,1875,0,0,0,0,0,0,0,0,1602
+E14000892,E12000005,Redditch,,West Midlands,England,County,07/05/2010 04:35,Karen,Lumley,F,Con gain from Lab,Con,Lab,66573,44018,72,5821,19138,13317,7750,1497,393,0,0,0,0,0,0,0,1923
+E14000893,E12000008,Reigate,,South East,England,Borough,07/05/2010 03:32,Crispin,Blunt,M,Con hold,Con,LD,71604,49978,108,13591,26688,5672,13097,2089,1087,0,0,0,0,0,0,0,1345
+W07000052,W92000004,Rhondda,,Wales,Wales,County,07/05/2010 03:08,Chris,Bryant,M,Lab hold,Lab,PC,51554,31072,71,11553,1993,17183,3309,358,0,0,5630,0,0,0,0,0,2599
+E14000894,E12000002,Ribble Valley,,North West,England,County,07/05/2010 02:02,Nigel,Evans,M,Con hold,Con,Lab,77789,52287,73,14769,26298,11529,10732,3496,0,0,0,0,0,0,0,0,232
+E14000895,E12000003,Richmond (Yorks),,Yorkshire and The Humber,England,County,07/05/2010 03:30,William,Hague,M,Con hold,Con,LD,80563,53412,135,23336,33541,8150,10205,0,1516,0,0,0,0,0,0,0,0
+E14000896,E12000007,Richmond Park,,London,England,Borough,07/05/2010 05:53,Zac,Goldsmith,M,Con gain from LD,Con,LD,77751,59268,130,4091,29461,2979,25370,669,572,0,0,0,0,0,0,0,217
+E14000897,E12000002,Rochdale,,North West,England,County,07/05/2010 03:45,Simon,Danczuk,M,Lab hold,Lab,LD,78952,45907,240,889,8305,16699,15810,1999,0,0,0,0,0,0,0,0,3094
+E14000898,E12000008,Rochester and Strood,,South East,England,County,07/05/2010 05:32,Mark,Reckless,M,Con hold,Con,Lab,73758,47971,73,9953,23604,13651,7800,0,734,0,0,0,0,0,0,0,2182
+E14000899,E12000006,Rochford and Southend East,,East of England ,England,County,07/05/2010 04:46,James,Duddridge,M,Con hold,Con,Lab,71467,41631,110,11050,19509,8459,8084,2405,707,0,0,0,0,0,0,0,2467
+E14000900,E12000007,Romford,,London,England,Borough,07/05/2010 05:08,Andrew,Rosindell,M,Con hold,Con,Lab,71306,46481,177,16954,26031,9077,5572,2050,447,0,0,0,0,0,0,0,3304
+E14000901,E12000008,Romsey and Southampton North,,South East,England,County,07/05/2010 03:46,Caroline,Nokes,F,Con gain from LD,Con,LD,68157,48939,90,4156,24345,3116,20189,1289,0,0,0,0,0,0,0,0,0
+S14000055,S92000003,"Ross, Skye and Lochaber",,Scotland,Scotland,County,07/05/2010 04:40,Charles,Kennedy,M,LD hold,LD,Lab,51836,34838,48,13070,4260,5265,18335,659,777,5263,0,0,0,0,0,0,279
+E14000902,E12000002,Rossendale and Darwen,,North West,England,Borough,07/05/2010 04:37,Jake,Berry,M,Con gain from Lab,Con,Lab,73229,47128,149,4493,19691,15198,8541,1617,0,0,0,0,0,0,0,0,2081
+E14000903,E12000003,Rother Valley,,Yorkshire and The Humber,England,County,07/05/2010 03:12,Kevin,Barron,M,Lab hold,Lab,Con,72847,46758,94,5866,13281,19147,8111,2613,0,0,0,0,0,0,0,0,3606
+E14000904,E12000003,Rotherham,,Yorkshire and The Humber,England,Borough,07/05/2010 03:28,Denis,Macshane,M,Lab hold,Lab,Con,63563,37506,95,10462,6279,16741,5994,2220,0,0,0,0,0,0,0,0,6272
+E14000905,E12000005,Rugby,,West Midlands,England,County,07/05/2010 05:00,Mark,Pawsey,M,Con gain from Lab,Con,Lab,68914,47468,92,6000,20901,14901,9434,406,451,0,0,0,0,0,0,0,1375
+E14000906,E12000007,"Ruislip, Northwood and Pinner",,London,England,Borough,07/05/2010 06:28,Nick,Hurd,M,Con hold,Con,Lab,70873,50205,152,19060,28866,9806,8345,1351,740,0,0,0,0,0,0,0,1097
+E14000907,E12000008,Runnymede and Weybridge,,South East,England,County,07/05/2010 03:13,Philip,Hammond,M,Con hold,Con,LD,72566,48150,89,16509,26915,6446,10406,3146,696,0,0,0,0,0,0,0,541
+E14000908,E12000004,Rushcliffe,,East Midlands,England,County,07/05/2010 01:42,Ken,Clarke,M,Con hold,Con,LD,72955,53687,147,15811,27470,11128,11659,2179,1251,0,0,0,0,0,0,0,0
+S14000056,S92000003,Rutherglen and Hamilton West,,Scotland,Scotland,Burgh,07/05/2010 01:06,Tom,Greatrex,M,Lab hold,Lab,SNP,76408,46981,91,21002,4540,28566,5636,675,0,7564,0,0,0,0,0,0,0
+E14000909,E12000004,Rutland and Melton,,East Midlands,England,County,07/05/2010 04:44,Alan,Duncan,M,Con hold,Con,LD,77185,55220,110,14000,28228,7893,14228,2526,0,0,0,0,0,0,0,0,2345
+E14000910,E12000006,Saffron Walden,,East of England ,England,County,07/05/2010 12:29,Alan,Haselhurst,M,Con hold,Con,LD,76035,54369,69,15242,30155,5288,14913,2228,735,0,0,0,0,0,0,0,1050
+E14000911,E12000002,Salford and Eccles,,North West,England,Borough,07/05/2010 05:07,Hazel,Blears,F,Lab hold,Lab,LD,75483,41533,169,5725,8497,16655,10930,1084,0,0,0,0,0,0,0,0,4367
+E14000912,E12000009,Salisbury,,South West,England,County,07/05/2010 04:19,John,Glen,M,Con hold,Con,LD,67430,48481,43,5966,23859,3690,17893,1392,506,0,0,0,0,0,0,0,1141
+E14000913,E12000003,Scarborough and Whitby,,Yorkshire and The Humber,England,County,07/05/2010 02:59,Robert,Goodwill,M,Con hold,Con,Lab,75470,49282,46,8130,21108,12978,11093,1484,734,0,0,0,0,0,0,0,1885
+E14000914,E12000003,Scunthorpe,,Yorkshire and The Humber,England,County,07/05/2010 03:32,Nick,Dakin,M,Lab hold,Lab,Con,63089,37034,42,2549,12091,14640,6774,1686,396,0,0,0,0,0,0,0,1447
+E14000915,E12000001,Sedgefield,,North East,England,County,07/05/2010 01:19,Phil,Wilson,M,Lab hold,Lab,Con,64728,40222,76,8696,9445,18141,8033,1479,0,0,0,0,0,0,0,0,3124
+E14000916,E12000002,Sefton Central,,North West,England,County,07/05/2010 05:40,Bill,Esterson,M,Lab hold,Lab,Con,67511,48463,176,3862,16445,20307,9656,2055,0,0,0,0,0,0,0,0,0
+E14000917,E12000003,Selby and Ainsty,,Yorkshire and The Humber,England,County,07/05/2010 04:55,Nigel,Adams,M,Con hold,Con,Lab,72804,51728,75,12265,25562,13297,9180,1635,0,0,0,0,0,0,0,0,2054
+E14000918,E12000008,Sevenoaks,,South East,England,County,07/05/2010 01:49,Michael,Fallon,M,Con hold,Con,LD,69591,49408,85,17515,28076,6541,10561,1782,0,0,0,0,0,0,0,0,2448
+E14000919,E12000003,Sheffield Central,,Yorkshire and The Humber,England,Borough,07/05/2010 07:00,Paul,Blomfield,M,Lab hold,Lab,LD,67554,41468,141,165,4206,17138,16973,652,1556,0,0,0,0,0,0,0,943
+E14000920,E12000003,Sheffield South East,,Yorkshire and The Humber,England,Borough,07/05/2010 05:14,Clive,Betts,M,Lab hold,Lab,LD,67068,41408,139,10505,7202,20169,9664,1889,0,0,0,0,0,0,0,0,2484
+E14000921,E12000003,"Sheffield, Brightside and Hillsborough",,Yorkshire and The Humber,England,Borough,07/05/2010 05:26,David,Blunkett,M,Lab hold,Lab,LD,67740,38914,155,13632,4468,21400,7768,1596,0,0,0,0,0,0,0,0,3682
+E14000922,E12000003,"Sheffield, Hallam",,Yorkshire and The Humber,England,County,07/05/2010 06:34,Nick,Clegg,M,LD hold,LD,Con,68798,51135,128,15284,12040,8228,27324,1195,919,0,0,0,0,0,0,0,1429
+E14000923,E12000003,"Sheffield, Heeley",,Yorkshire and The Humber,England,Borough,07/05/2010 05:41,Meg,Munn,F,Lab hold,Lab,LD,65571,40871,109,5807,7081,17409,11602,1530,989,0,0,0,0,0,0,0,2260
+E14000924,E12000004,Sherwood,,East Midlands,England,County,07/05/2010 05:45,Mark,Spencer,M,Con gain from Lab,Con,Lab,71443,48954,67,214,19211,18997,7283,1490,0,0,0,0,0,0,0,0,1973
+E14000925,E12000003,Shipley,,Yorkshire and The Humber,England,County,07/05/2010 05:31,Philip,Davies,M,Con hold,Con,Lab,67689,49427,173,9944,24002,14058,9890,0,1477,0,0,0,0,0,0,0,0
+E14000926,E12000005,Shrewsbury and Atcham,,West Midlands,England,County,07/05/2010 03:52,Daniel,Kawczynski,M,Con hold,Con,LD,75446,53045,73,7944,23313,10915,15369,1627,565,0,0,0,0,0,0,0,1256
+E14000927,E12000008,Sittingbourne and Sheppey,,South East,England,County,07/05/2010 04:06,Gordon,Henderson,M,Con hold,Con,Lab,75855,48578,93,12383,24313,11930,7943,2610,0,0,0,0,0,0,0,0,1782
+E14000928,E12000003,Skipton and Ripon,,Yorkshire and The Humber,England,County,07/05/2010 13:07,Julian,Smith,M,Con hold,Con,LD,77381,54724,151,9950,27685,5498,17735,1909,0,0,0,0,0,0,0,0,1897
+E14000929,E12000004,Sleaford and North Hykeham,,East Midlands,England,County,07/05/2010 04:13,Stephen,Phillips,M,Con hold,Con,LD,84806,59530,79,19905,30719,10051,10814,2163,0,0,0,0,0,0,0,0,5783
+E14000930,E12000008,Slough,,South East,England,Borough,07/05/2010 06:35,Fiona,Mactaggart,F,Lab hold,Lab,Con,77473,47742,213,5523,16361,21884,6943,1517,542,0,0,0,0,0,0,0,495
+E14000931,E12000005,Solihull,,West Midlands,England,Borough,07/05/2010 07:16,Lorely,Burt,F,LD gain from Con,LD,Con,76288,55129,101,175,23460,4891,23635,1200,0,0,0,0,0,0,0,0,1943
+E14000932,E12000009,Somerton and Frome,,South West,England,County,07/05/2010 02:35,David,Heath,M,LD hold,LD,Con,81548,60612,78,1817,26976,2675,28793,1932,0,0,0,0,0,0,0,0,236
+N06000014,N92000002,South Antrim,,Northern Ireland,Northern Ireland,County,07/05/2010 02:30,William,McCrea,M,DUP hold,DUP,UCUNF,63054,34009,134,1183,0,0,0,0,0,0,0,11536,4729,2955,10353,2607,1829
+E14000933,E12000006,South Basildon and East Thurrock,,East of England ,England,County,07/05/2010 02:27,Stephen,Metcalfe,M,Con gain from Lab,Con,Lab,71874,44735,100,5772,19624,13852,5977,2639,0,0,0,0,0,0,0,0,2643
+E14000934,E12000006,South Cambridgeshire,,East of England ,England,County,07/05/2010 03:01,Andrew,Lansley,M,Con hold,Con,LD,78995,59056,106,7838,27995,6024,20157,1873,1039,0,0,0,0,0,0,0,1968
+E14000935,E12000004,South Derbyshire,,East Midlands,England,County,07/05/2010 02:52,Heather,Wheeler,F,Con gain from Lab,Con,Lab,70608,50419,71,7128,22935,15807,8012,1206,0,0,0,0,0,0,0,0,2459
+E14000936,E12000009,South Dorset,,South West,England,County,07/05/2010 05:36,Richard,Drax,M,Con gain from Lab,Con,Lab,73360,50310,89,7443,22667,15224,9557,2034,595,0,0,0,0,0,0,0,233
+N06000015,N92000002,South Down,,Northern Ireland,Northern Ireland,County,07/05/2010 03:06,Margaret,Ritchie,F,SDLP hold,SDLP,SF,70784,42589,251,8412,0,0,0,0,901,0,0,3645,12236,20648,3093,560,1506
+E14000937,E12000006,South East Cambridgeshire,,East of England ,England,County,07/05/2010 05:51,James,Paice,M,Con hold,Con,LD,83068,57602,122,5946,27629,4380,21683,2138,766,0,0,0,0,0,0,0,1006
+E14000938,E12000009,South East Cornwall,,South West,England,County,07/05/2010 04:51,Sheryll,Murray,F,Con gain from LD,Con,LD,71373,49617,72,3220,22390,3507,19170,3083,826,0,0,0,0,0,0,0,641
+E14000939,E12000004,South Holland and The Deepings,,East Midlands,England,County,07/05/2010 03:53,John,Hayes,M,Con hold,Con,LD,76243,50188,52,21880,29639,7024,7759,3246,724,0,0,0,0,0,0,0,1796
+E14000940,E12000004,South Leicestershire,,East Midlands,England,County,07/05/2010 04:28,Andrew,Robathan,M,Con hold,Con,LD,76633,54577,79,15524,27000,11392,11476,1988,0,0,0,0,0,0,0,0,2721
+E14000941,E12000006,South Norfolk,,East of England ,England,County,07/05/2010 02:02,Richard,Bacon,M,Con hold,Con,LD,76179,54993,84,10940,27133,7252,16193,2329,1000,0,0,0,0,0,0,0,1086
+E14000942,E12000004,South Northamptonshire,,East Midlands,England,County,07/05/2010 04:08,Andrea,Leadsom,F,Con hold,Con,LD,82033,59890,320,20478,33081,10380,12603,2406,685,0,0,0,0,0,0,0,735
+E14000943,E12000002,South Ribble,,North West,England,County,07/05/2010 03:43,Lorraine,Fullbrook,F,Con gain from Lab,Con,Lab,75822,51458,70,5554,23396,17842,7271,1895,0,0,0,0,0,0,0,0,1054
+E14000944,E12000001,South Shields,,North East,England,Borough,07/05/2010 02:56,David,Miliband,M,Lab hold,Lab,Con,64084,36518,111,11109,7886,18995,5189,0,762,0,0,0,0,0,0,0,3686
+E14000945,E12000005,South Staffordshire,,West Midlands,England,County,07/05/2010 02:02,Gavin,Williamson,M,Con hold,Con,Lab,73849,50440,56,16590,26834,10244,8427,2753,0,0,0,0,0,0,0,0,2182
+E14000946,E12000006,South Suffolk,,East of England ,England,County,07/05/2010 03:22,Tim,Yeo,M,Con hold,Con,LD,72498,51416,87,8689,24550,7368,15861,3637,0,0,0,0,0,0,0,0,0
+E14000947,E12000009,South Swindon,,South West,England,County,07/05/2010 04:20,Robert,Buckland,M,Con gain from Lab,Con,Lab,72619,47119,306,3544,19687,16143,8305,2029,619,0,0,0,0,0,0,0,336
+E14000948,E12000008,South Thanet,,South East,England,County,07/05/2010 03:18,Laura,Sandys,F,Con hold,Con,Lab,70045,45933,90,7617,22043,14426,6935,2529,0,0,0,0,0,0,0,0,0
+E14000949,E12000006,South West Bedfordshire,,East of England ,England,County,07/05/2010 01:47,Andrew,Selous,M,Con hold,Con,LD,76559,50774,99,16649,26815,9948,10166,2142,0,0,0,0,0,0,0,0,1703
+E14000950,E12000009,South West Devon,,South West,England,County,07/05/2010 05:04,Gary,Streeter,M,Con hold,Con,LD,70813,49860,105,15874,27908,6193,12034,3084,641,0,0,0,0,0,0,0,0
+E14000951,E12000006,South West Hertfordshire,,East of England ,England,County,07/05/2010 04:02,David,Gauke,M,Con hold,Con,LD,78248,56750,128,14920,30773,6526,15853,1450,0,0,0,0,0,0,0,0,2148
+E14000952,E12000006,South West Norfolk,,East of England ,England,County,07/05/2010 06:47,Elizabeth,Truss,F,Con hold,Con,LD,73758,49150,64,13140,23753,9119,10613,3061,830,0,0,0,0,0,0,0,1774
+E14000953,E12000008,South West Surrey,,South East,England,County,07/05/2010 02:58,Jeremy,Hunt,M,Con hold,Con,LD,76501,57259,98,16318,33605,3419,17287,1486,690,0,0,0,0,0,0,0,772
+E14000954,E12000009,South West Wiltshire,,South West,England,County,07/05/2010 03:44,Andrew,Murrison,M,Con hold,Con,LD,71647,49018,91,10367,25321,5613,14954,2684,0,0,0,0,0,0,0,0,446
+E14000955,E12000008,"Southampton, Itchen",,South East,England,Borough,07/05/2010 05:11,John,Denham,M,Lab hold,Lab,Con,74532,44412,104,192,16134,16326,9256,1928,600,0,0,0,0,0,0,0,168
+E14000956,E12000008,"Southampton, Test",,South East,England,Borough,07/05/2010 05:13,Alan,Whitehead,M,Lab hold,Lab,Con,71931,44187,114,2413,14588,17001,9865,1726,881,0,0,0,0,0,0,0,126
+E14000957,E12000006,Southend West,,East of England ,England,Borough,07/05/2010 04:56,David,Amess,M,Con hold,Con,LD,66918,43606,62,7270,20086,5850,12816,1714,644,0,0,0,0,0,0,0,2496
+E14000958,E12000002,Southport,,North West,England,Borough,07/05/2010 03:46,John,Pugh,M,LD hold,LD,Con,67200,43757,167,6024,15683,4116,21707,2251,0,0,0,0,0,0,0,0,0
+E14000959,E12000008,Spelthorne,,South East,England,Borough,07/05/2010 02:53,Kwasi,Kwarteng,M,Con hold,Con,LD,70479,47304,92,10019,22261,7789,12242,4009,0,0,0,0,0,0,0,0,1003
+E14000960,E12000006,St Albans,,East of England ,England,County,07/05/2010 04:11,Anne,Main,F,Con hold,Con,LD,70058,52835,155,2305,21533,9288,19228,2028,758,0,0,0,0,0,0,0,0
+E14000961,E12000009,St Austell and Newquay,,South West,England,County,07/05/2010 06:14,Stephen,Gilbert,M,LD hold,LD,Con,75284,47238,63,1312,18877,3386,20189,1757,0,0,0,0,0,0,0,0,3029
+E14000962,E12000002,St Helens North,,North West,England,Borough,07/05/2010 05:24,Dave,Watts,M,Lab hold,Lab,Con,74985,44556,220,13101,9940,23041,8992,2100,0,0,0,0,0,0,0,0,483
+E14000963,E12000002,St Helens South and Whiston,,North West,England,Borough,07/05/2010 05:25,Shaun,Woodward,M,Lab hold,Lab,LD,77975,46081,218,14122,8209,24364,10242,1226,0,0,0,0,0,0,0,0,2040
+E14000964,E12000009,St Ives,,South West,England,County,07/05/2010 15:10,Andrew,George,M,LD hold,LD,Con,66944,45921,70,1719,17900,3751,19619,2560,1308,0,0,0,0,0,0,0,783
+E14000965,E12000005,Stafford,,West Midlands,England,County,07/05/2010 02:43,Jeremy,Lefroy,M,Con gain from Lab,Con,Lab,70667,50239,84,5460,22047,16587,8211,1727,564,0,0,0,0,0,0,0,1103
+E14000966,E12000005,Staffordshire Moorlands,,West Midlands,England,County,07/05/2010 01:47,Karen,Bradley,F,Con hold,Con,Lab,62137,43815,71,6689,19793,13104,7338,3580,0,0,0,0,0,0,0,0,0
+E14000967,E12000002,Stalybridge and Hyde,,North West,England,County,07/05/2010 06:13,Jonathan,Reynolds,M,Lab hold,Lab,Con,69081,40879,155,2744,13445,16189,6965,1342,679,0,0,0,0,0,0,0,2259
+E14000968,E12000006,Stevenage,,East of England ,England,County,07/05/2010 05:17,Stephen,McPartland,M,Con gain from Lab,Con,Lab,68937,44651,101,3578,18491,14913,7432,2004,0,0,0,0,0,0,0,0,1811
+S14000057,S92000003,Stirling,,Scotland,Scotland,County,07/05/2010 02:22,Anne,McGuire,F,Lab hold,Lab,Con,66080,46841,61,8304,11254,19558,6797,395,746,8091,0,0,0,0,0,0,0
+E14000969,E12000002,Stockport,,North West,England,Borough,07/05/2010 05:16,Ann,Coffey,F,Lab hold,Lab,Con,62879,39128,89,6784,9913,16697,9778,862,677,0,0,0,0,0,0,0,1201
+E14000970,E12000001,Stockton North,,North East,England,Borough,07/05/2010 02:23,Alex,Cunningham,M,Lab hold,Lab,Con,66752,39498,39,6676,10247,16923,6342,1556,0,0,0,0,0,0,0,0,4430
+E14000971,E12000001,Stockton South,,North East,England,Borough,07/05/2010 03:58,James,Wharton,M,Con gain from Lab,Con,Lab,73840,50284,48,332,19577,19245,7600,1471,0,0,0,0,0,0,0,0,2391
+E14000972,E12000005,Stoke-on-Trent Central,,West Midlands,England,Borough,07/05/2010 04:24,Tristram,Hunt,M,Lab hold,Lab,LD,61003,32470,98,5566,6833,12605,7039,1402,0,0,0,0,0,0,0,0,4591
+E14000973,E12000005,Stoke-on-Trent North,,West Midlands,England,Borough,07/05/2010 03:56,Joan,Walley,F,Lab hold,Lab,Con,72054,40196,108,8235,9580,17815,7120,2485,0,0,0,0,0,0,0,0,3196
+E14000974,E12000005,Stoke-on-Trent South,,West Midlands,England,Borough,07/05/2010 04:46,Robert,Flello,M,Lab hold,Lab,Con,68032,39852,110,4130,11316,15446,6323,1363,0,0,0,0,0,0,0,0,5404
+E14000975,E12000005,Stone,,West Midlands,England,County,07/05/2010 03:57,Bill,Cash,M,Con hold,Con,LD,67062,47229,80,13292,23890,9770,10598,2481,490,0,0,0,0,0,0,0,0
+E14000976,E12000005,Stourbridge,,West Midlands,England,Borough,07/05/2010 04:54,Margot,James,F,Con gain from Lab,Con,Lab,69637,47234,82,5164,20153,14989,7733,2103,394,0,0,0,0,0,0,0,1862
+N06000016,N92000002,Strangford,,Northern Ireland,Northern Ireland,County,07/05/2010 02:55,Jim,Shannon,M,DUP hold,DUP,UCUNF,60539,32505,95,5876,0,0,0,0,562,0,0,14926,1161,2164,9050,2828,1814
+E14000977,E12000005,Stratford-on-Avon,,West Midlands,England,County,07/05/2010 04:02,Nadhim,Zahawi,M,Con hold,Con,LD,69517,50542,95,11346,26052,4809,14706,1846,527,0,0,0,0,0,0,0,2602
+E14000978,E12000007,Streatham,,London,England,Borough,07/05/2010 08:07,Chuka,Umunna,M,Lab hold,Lab,LD,74532,46837,222,3259,8578,20037,16778,0,861,0,0,0,0,0,0,0,583
+E14000979,E12000002,Stretford and Urmston,,North West,England,Borough,07/05/2010 05:24,Kate,Green,F,Lab hold,Lab,Con,70991,44910,174,8935,12886,21821,7601,1508,916,0,0,0,0,0,0,0,178
+E14000980,E12000009,Stroud,,South West,England,County,07/05/2010 04:17,Neil,Carmichael,M,Con gain from Lab,Con,Lab,78286,57973,114,1299,23679,22380,8955,1301,1542,0,0,0,0,0,0,0,116
+E14000981,E12000006,Suffolk Coastal,,East of England ,England,County,07/05/2010 02:51,Therese,Coffey,F,Con hold,Con,LD,76572,54893,188,9128,25475,8812,16347,3156,1103,0,0,0,0,0,0,0,0
+E14000982,E12000001,Sunderland Central,,North East,England,Borough,06/05/2010 23:41,Julie,Elliott,F,Lab hold,Lab,Con,74485,42463,219,6725,12770,19495,7191,1094,0,0,0,0,0,0,0,0,1913
+E14000983,E12000008,Surrey Heath,,South East,England,County,07/05/2010 03:33,Michael,Gove,M,Con hold,Con,LD,78107,54347,85,17289,31326,5552,14037,3432,0,0,0,0,0,0,0,0,0
+E14000984,E12000007,Sutton and Cheam,,London,England,Borough,07/05/2010 04:37,Paul,Burstow,M,LD hold,LD,Con,66658,48508,189,1608,20548,3376,22156,950,246,0,0,0,0,0,0,0,1232
+E14000985,E12000005,Sutton Coldfield,,West Midlands,England,Borough,07/05/2010 03:00,Andrew,Mitchell,M,Con hold,Con,Lab,74489,50589,96,17005,27303,10298,9117,1587,535,0,0,0,0,0,0,0,1749
+W07000048,W92000004,Swansea East,,Wales,Wales,Borough,07/05/2010 02:17,Siân,James,F,Lab hold,Lab,LD,59823,32676,65,10838,4823,16819,5981,839,318,0,2181,0,0,0,0,0,1715
+W07000047,W92000004,Swansea West,,Wales,Wales,Borough,07/05/2010 02:32,Geraint,Davies,M,Lab hold,Lab,LD,61334,35593,61,504,7407,12335,11831,716,404,0,1437,0,0,0,0,0,1463
+E14000986,E12000005,Tamworth,,West Midlands,England,County,07/05/2010 02:24,Chris,Pincher,M,Con gain from Lab,Con,Lab,71962,46390,92,6090,21238,15148,7516,2253,0,0,0,0,0,0,0,0,235
+E14000987,E12000002,Tatton,,North West,England,County,07/05/2010 03:41,George,Osborne,M,Con hold,Con,LD,66746,45231,86,14487,24687,7803,10200,0,0,0,0,0,0,0,0,0,2541
+E14000988,E12000009,Taunton Deane,,South West,England,County,07/05/2010 02:53,Jeremy,Browne,M,LD hold,LD,Con,82507,58150,84,3993,24538,2967,28531,2114,0,0,0,0,0,0,0,0,0
+E14000989,E12000005,Telford,,West Midlands,England,Borough,07/05/2010 01:35,David,Wright,M,Lab hold,Lab,Con,65061,41310,69,978,14996,15974,6399,2428,0,0,0,0,0,0,0,0,1513
+E14000990,E12000009,Tewkesbury,,South West,England,County,07/05/2010 04:45,Laurence,Robertson,M,Con hold,Con,LD,76655,53961,90,6310,25472,6253,19162,2230,525,0,0,0,0,0,0,0,319
+E14000991,E12000009,The Cotswolds,,South West,England,County,07/05/2010 04:02,Geoffrey,Clifton-Brown,M,Con hold,Con,LD,76729,54832,71,12864,29075,5886,16211,2292,940,0,0,0,0,0,0,0,428
+E14000992,E12000005,The Wrekin,,West Midlands,England,County,07/05/2010 01:42,Mark,Pritchard,M,Con hold,Con,Lab,65544,45968,110,9450,21922,12472,8019,2050,0,0,0,0,0,0,0,0,1505
+E14000993,E12000003,Thirsk and Malton,,Yorkshire and The Humber,England,County,28/05/2010 00:00,Anne,McIntosh,F,Con hold,Con,LD,76416,38142,73,11281,20167,5169,8886,2502,0,0,0,0,0,0,0,0,1418
+E14000994,E12000009,Thornbury and Yate,,South West,England,County,07/05/2010 00:48,Steve,Webb,M,LD hold,LD,Con,64092,48226,95,7116,17916,3385,25032,1709,0,0,0,0,0,0,0,0,184
+E14000995,E12000006,Thurrock,,East of England ,England,Borough,07/05/2010 10:09,Jackie,Doyle-Price,F,Con gain from Lab,Con,Lab,77758,45821,168,92,16869,16777,4901,3390,0,0,0,0,0,0,0,0,3884
+E14000996,E12000009,Tiverton and Honiton,,South West,England,County,07/05/2010 03:10,Neil,Parish,M,Con hold,Con,LD,76808,54894,82,9320,27614,4907,18294,3277,802,0,0,0,0,0,0,0,0
+E14000997,E12000008,Tonbridge and Malling,,South East,England,County,07/05/2010 04:14,John,Stanley,M,Con hold,Con,LD,71790,51314,75,18178,29723,6476,11545,1911,764,0,0,0,0,0,0,0,895
+E14000998,E12000007,Tooting,,London,England,Borough,07/05/2010 01:45,Sadiq,Khan,M,Lab hold,Lab,Con,73840,50655,85,2524,19514,22038,7509,624,609,0,0,0,0,0,0,0,361
+E14000999,E12000009,Torbay,,South West,England,Borough,07/05/2010 01:10,Adrian,Sanders,M,LD hold,LD,Con,76244,49210,36,4078,19048,3231,23126,2628,468,0,0,0,0,0,0,0,709
+W07000053,W92000004,Torfaen,,Wales,Wales,County,07/05/2010 03:25,Paul,Murphy,M,Lab hold,Lab,Con,61183,37640,46,9306,7541,16847,6264,862,438,0,2005,0,0,0,0,0,3683
+E14001000,E12000009,Torridge and West Devon,,South West,England,County,07/05/2010 17:06,Geoffrey,Cox,M,Con hold,Con,LD,77360,55257,67,2957,25230,2917,22273,3021,1050,0,0,0,0,0,0,0,766
+E14001001,E12000009,Totnes,,South West,England,County,07/05/2010 02:44,Sarah,Wollaston,F,Con hold,Con,LD,67962,47843,68,4927,21940,3538,17013,2890,1181,0,0,0,0,0,0,0,1281
+E14001002,E12000007,Tottenham,,London,England,Borough,07/05/2010 06:38,David,Lammy,M,Lab hold,Lab,LD,68834,40687,357,16931,6064,24128,7197,466,980,0,0,0,0,0,0,0,1852
+E14001003,E12000009,Truro and Falmouth,,South West,England,County,07/05/2010 07:26,Sarah,Newton,F,Con gain from LD,Con,LD,70598,48768,73,435,20349,4697,19914,1911,858,0,0,0,0,0,0,0,1039
+E14001004,E12000008,Tunbridge Wells,,South East,England,County,07/05/2010 03:21,Greg,Clark,M,Con hold,Con,LD,73855,50320,100,15576,28302,5448,12726,2054,914,0,0,0,0,0,0,0,876
+E14001005,E12000007,Twickenham,,London,England,Borough,07/05/2010 05:42,Vincent,Cable,M,LD hold,LD,Con,80569,59721,125,12140,20343,4583,32483,868,674,0,0,0,0,0,0,0,770
+E14001006,E12000001,Tynemouth,,North East,England,Borough,07/05/2010 06:19,Alan,Campbell,M,Lab hold,Lab,Con,75680,52668,88,5739,18121,23860,7845,900,538,0,0,0,0,0,0,0,1404
+N06000017,N92000002,Upper Bann,,Northern Ireland,Northern Ireland,County,07/05/2010 01:07,David,Simpson,M,DUP hold,DUP,UCUNF,74732,41383,298,3361,0,0,0,0,0,0,0,14000,10237,5276,10639,1231,0
+E14001007,E12000007,Uxbridge and South Ruislip,,London,England,Borough,07/05/2010 06:10,John,Randall,M,Con hold,Con,Lab,71160,45076,146,11216,21758,10542,8995,1234,477,0,0,0,0,0,0,0,2070
+W07000060,W92000004,Vale of Clwyd,,Wales,Wales,County,07/05/2010 01:23,Chris,Ruane,M,Lab hold,Lab,Con,55781,35534,55,2509,12508,15017,4472,515,0,0,2068,0,0,0,0,0,954
+W07000078,W92000004,Vale of Glamorgan,,Wales,Wales,County,07/05/2010 02:21,Alun,Cairns,M,Con gain from Lab,Con,Lab,70211,48667,90,4307,20341,16034,7403,1529,457,0,2667,0,0,0,0,0,236
+E14001008,E12000007,Vauxhall,,London,England,Borough,07/05/2010 08:30,Kate,Hoey,F,Lab hold,Lab,LD,74811,43191,267,10651,9301,21498,10847,0,708,0,0,0,0,0,0,0,837
+E14001009,E12000003,Wakefield,,Yorkshire and The Humber,England,County,07/05/2010 05:19,Mary,Creagh,F,Lab hold,Lab,Con,70812,44444,94,1613,15841,17454,7256,0,873,0,0,0,0,0,0,0,3020
+E14001010,E12000002,Wallasey,,North West,England,Borough,07/05/2010 04:42,Angela,Eagle,F,Lab hold,Lab,Con,65915,41654,141,8507,13071,21578,5693,1205,0,0,0,0,0,0,0,0,107
+E14001011,E12000005,Walsall North,,West Midlands,England,Borough,07/05/2010 04:41,David,Winnick,M,Lab hold,Lab,Con,64034,36187,86,990,12395,13385,4754,1737,0,0,0,0,0,0,0,0,3916
+E14001012,E12000005,Walsall South,,West Midlands,England,Borough,07/05/2010 04:29,Valerie,Vaz,F,Lab hold,Lab,Con,64387,40882,254,1755,14456,16211,5880,3449,0,0,0,0,0,0,0,0,886
+E14001013,E12000007,Walthamstow,,London,England,County,07/05/2010 07:45,Stella,Creasy,F,Lab hold,Lab,LD,64625,40994,303,9478,5734,21252,11774,823,767,0,0,0,0,0,0,0,644
+E14001014,E12000001,Wansbeck,,North East,England,County,07/05/2010 13:54,Ian,Lavery,M,Lab hold,Lab,LD,61782,38273,61,7031,6714,17548,10517,974,601,0,0,0,0,0,0,0,1919
+E14001015,E12000008,Wantage,,South East,England,County,07/05/2010 03:24,Edward,Vaizey,M,Con hold,Con,LD,80456,56341,120,13547,29284,7855,15737,2421,1044,0,0,0,0,0,0,0,0
+E14001016,E12000005,Warley,,West Midlands,England,Borough,07/05/2010 04:02,John,Spellar,M,Lab hold,Lab,Con,62751,38270,269,10756,9484,20240,5929,2617,0,0,0,0,0,0,0,0,0
+E14001017,E12000002,Warrington North,,North West,England,Borough,07/05/2010 05:56,Helen,Jones,F,Lab hold,Lab,Con,70473,44211,165,6771,13364,20135,9196,0,0,0,0,0,0,0,0,0,1516
+E14001018,E12000002,Warrington South,,North West,England,Borough,07/05/2010 06:27,David,Mowat,M,Con gain from Lab,Con,Lab,79182,54874,133,1553,19641,18088,15094,1624,427,0,0,0,0,0,0,0,0
+E14001019,E12000005,Warwick and Leamington,,West Midlands,England,Borough,07/05/2010 12:26,Chris,White,M,Con gain from Lab,Con,Lab,67800,49032,96,3513,20876,17363,8977,926,693,0,0,0,0,0,0,0,197
+E14001020,E12000001,Washington and Sunderland West,,North East,England,Borough,06/05/2010 23:26,Sharon,Hodgson,F,Lab hold,Lab,Con,68910,37334,194,11458,8157,19615,6382,1267,0,0,0,0,0,0,0,0,1913
+E14001021,E12000006,Watford,,East of England ,England,Borough,07/05/2010 08:41,Richard,Harrington,M,Con gain from Lab,Con,LD,80798,55208,202,1425,19291,14750,17866,1199,885,0,0,0,0,0,0,0,1217
+E14001022,E12000006,Waveney,,East of England ,England,County,07/05/2010 05:35,Peter,Aldous,M,Con gain from Lab,Con,Lab,78532,51141,88,769,20571,19802,6811,2684,1167,0,0,0,0,0,0,0,106
+E14001023,E12000008,Wealden,,South East,England,County,07/05/2010 03:37,Charles,Hendry,M,Con hold,Con,LD,76537,54969,69,17179,31090,5266,13911,3319,1383,0,0,0,0,0,0,0,0
+E14001024,E12000002,Weaver Vale,,North West,England,County,07/05/2010 05:09,Graham,Evans,M,Con gain from Lab,Con,Lab,67269,43990,71,991,16953,15962,8196,1018,338,0,0,0,0,0,0,0,1523
+E14001025,E12000004,Wellingborough,,East Midlands,England,County,07/05/2010 03:19,Peter,Bone,M,Con hold,Con,Lab,76846,51661,73,11787,24918,13131,8848,1636,480,0,0,0,0,0,0,0,2648
+E14001026,E12000009,Wells,,South West,England,County,07/05/2010 06:45,Tessa,Munt,F,LD gain from Con,LD,Con,79432,55864,99,800,23760,4198,24560,1711,631,0,0,0,0,0,0,0,1004
+E14001027,E12000006,Welwyn Hatfield,,East of England ,England,County,07/05/2010 03:23,Grant,Shapps,M,Con hold,Con,Lab,72058,48972,107,17423,27894,10471,8010,1643,796,0,0,0,0,0,0,0,158
+E14001028,E12000003,Wentworth and Dearne,,Yorkshire and The Humber,England,County,07/05/2010 03:21,John,Healey,M,Lab hold,Lab,Con,72586,42106,81,13920,7396,21316,6787,3418,0,0,0,0,0,0,0,0,3189
+S14000058,S92000003,West Aberdeenshire and Kincardine,,Scotland,Scotland,County,07/05/2010 04:08,Robert,Smith,M,LD hold,LD,Con,66110,45195,61,3684,13678,6159,17362,397,0,7086,0,0,0,0,0,0,513
+E14001029,E12000005,West Bromwich East,,West Midlands,England,Borough,07/05/2010 04:08,Tom,Watson,M,Lab hold,Lab,Con,62668,37950,139,6696,10961,17657,4993,984,0,0,0,0,0,0,0,0,3355
+E14001030,E12000005,West Bromwich West,,West Midlands,England,Borough,07/05/2010 04:18,Adrian,Bailey,M,Lab hold,Lab,Con,64859,36171,148,5651,10612,16263,4336,1566,0,0,0,0,0,0,0,0,3394
+E14001031,E12000009,West Dorset,,South West,England,County,07/05/2010 02:20,Oliver,Letwin,M,Con hold,Con,LD,76869,57337,81,3923,27287,3815,23364,2196,675,0,0,0,0,0,0,0,0
+S14000059,S92000003,West Dunbartonshire,,Scotland,Scotland,County,07/05/2010 02:43,Gemma,Doyle,F,Lab hold,Lab,SNP,66086,42266,94,17408,3242,25905,3434,683,0,8497,0,0,0,0,0,0,505
+E14001032,E12000007,West Ham,,London,England,Borough,07/05/2010 09:11,Lyn,Brown,F,Lab hold,Lab,Con,85313,46951,507,22534,6888,29422,5392,766,645,0,0,0,0,0,0,0,3838
+E14001033,E12000002,West Lancashire,,North West,England,County,07/05/2010 05:45,Rosie,Cooper,F,Lab hold,Lab,Con,73835,48473,95,4343,17540,21883,6573,1775,485,0,0,0,0,0,0,0,217
+E14001034,E12000006,West Suffolk,,East of England ,England,County,07/05/2010 02:58,Matthew,Hancock,M,Con hold,Con,LD,74374,48089,81,13050,24312,7089,11262,3085,0,0,0,0,0,0,0,0,2341
+N06000018,N92000002,West Tyrone,,Northern Ireland,Northern Ireland,County,07/05/2010 00:36,Pat,Doherty,M,SF hold,SF,DUP,61148,37275,341,10685,0,0,0,0,0,0,0,7365,18050,5212,5281,859,508
+E14001035,E12000005,West Worcestershire,,West Midlands,England,County,07/05/2010 03:15,Harriett,Baldwin,F,Con hold,Con,LD,72807,54093,107,6754,27213,3661,20459,2119,641,0,0,0,0,0,0,0,0
+E14001036,E12000007,Westminster North,,London,England,Borough,07/05/2010 04:55,Karen,Buck,F,Lab hold,Lab,Con,66739,39598,297,2126,15251,17377,5513,315,478,0,0,0,0,0,0,0,664
+E14001037,E12000002,Westmorland and Lonsdale,,North West,England,County,07/05/2010 14:18,Tim,Farron,M,LD hold,LD,Con,66988,51487,82,12264,18632,1158,30896,801,0,0,0,0,0,0,0,0,0
+E14001038,E12000009,Weston-Super-Mare,,South West,England,County,07/05/2010 02:50,John,Penrose,M,Con hold,Con,LD,78487,52716,55,2691,23356,5772,20665,1406,0,0,0,0,0,0,0,0,1517
+E14001039,E12000002,Wigan,,North West,England,County,07/05/2010 04:10,Lisa,Nandy,F,Lab hold,Lab,Con,75407,44140,162,10487,10917,21404,6797,2516,0,0,0,0,0,0,0,0,2506
+E14001040,E12000007,Wimbledon,,London,England,Borough,07/05/2010 04:43,Stephen,Hammond,M,Con hold,Con,LD,65723,47395,144,11408,23257,10550,11849,914,590,0,0,0,0,0,0,0,235
+E14001041,E12000008,Winchester,,South East,England,County,07/05/2010 05:34,Steve,Brine,M,Con gain from LD,Con,LD,73805,55955,105,3048,27155,3051,24107,1139,0,0,0,0,0,0,0,0,503
+E14001042,E12000008,Windsor,,South East,England,County,07/05/2010 04:23,Adam,Afriyie,M,Con hold,Con,LD,69511,49588,73,19054,30172,4910,11118,1612,628,0,0,0,0,0,0,0,1148
+E14001043,E12000002,Wirral South,,North West,England,County,07/05/2010 05:25,Alison,McGovern,F,Lab hold,Lab,Con,56099,39906,149,531,15745,16276,6611,1274,0,0,0,0,0,0,0,0,0
+E14001044,E12000002,Wirral West,,North West,England,County,07/05/2010 05:07,Esther,McVey,F,Con hold,Con,Lab,55050,39372,77,2436,16726,14290,6630,899,0,0,0,0,0,0,0,0,827
+E14001045,E12000006,Witham,,East of England ,England,County,07/05/2010 03:05,Priti,Patel,F,Con hold,Con,LD,66969,46835,89,15196,24448,8656,9252,3060,1419,0,0,0,0,0,0,0,0
+E14001046,E12000008,Witney,,South East,England,County,07/05/2010 02:57,David,Cameron,M,Con hold,Con,LD,78766,57769,117,22740,33973,7511,11233,2001,2385,0,0,0,0,0,0,0,666
+E14001047,E12000008,Woking,,South East,England,County,07/05/2010 05:12,Jonathan,Lord,M,Con hold,Con,LD,73837,52786,133,6807,26551,4246,19744,1997,0,0,0,0,0,0,0,0,248
+E14001048,E12000008,Wokingham,,South East,England,County,07/05/2010 05:15,John,Redwood,M,Con hold,Con,LD,76386,54528,92,13492,28754,5516,15262,1664,567,0,0,0,0,0,0,0,2765
+E14001049,E12000005,Wolverhampton North East,,West Midlands,England,Borough,07/05/2010 04:45,Emma,Reynolds,F,Lab hold,Lab,Con,58931,34894,136,2484,11964,14448,4711,1138,0,0,0,0,0,0,0,0,2633
+E14001050,E12000005,Wolverhampton South East,,West Midlands,England,Borough,07/05/2010 04:37,Pat,McFadden,M,Lab hold,Lab,Con,59884,34707,229,6593,9912,16505,5277,2675,0,0,0,0,0,0,0,0,338
+E14001051,E12000005,Wolverhampton South West,,West Midlands,England,Borough,07/05/2010 05:13,Paul,Uppal,M,Con gain from Lab,Con,Lab,58845,40160,163,691,16344,15653,6430,1487,0,0,0,0,0,0,0,0,246
+E14001052,E12000005,Worcester,,West Midlands,England,Borough,07/05/2010 04:36,Robin,Walker,M,Con gain from Lab,Con,Lab,72835,48974,99,2982,19358,16376,9525,1360,735,0,0,0,0,0,0,0,1620
+E14001053,E12000002,Workington,,North West,England,County,07/05/2010 02:46,Tony,Cunningham,M,Lab hold,Lab,Con,59607,39259,80,4575,13290,17865,5318,876,0,0,0,0,0,0,0,0,1910
+E14001054,E12000002,Worsley and Eccles South,,North West,England,County,07/05/2010 04:24,Barbara,Keeley,F,Lab hold,Lab,Con,72473,41701,183,4337,13555,17892,6883,2037,0,0,0,0,0,0,0,0,1334
+E14001055,E12000008,Worthing West,,South East,England,Borough,07/05/2010 07:04,Peter,Bottomley,M,Con hold,Con,LD,75945,49123,126,11729,25416,5800,13687,2924,996,0,0,0,0,0,0,0,300
+W07000044,W92000004,Wrexham,,Wales,Wales,County,07/05/2010 01:48,Ian,Lucas,M,Lab hold,Lab,LD,50872,32976,41,3658,8375,12161,8503,774,0,0,2029,0,0,0,0,0,1134
+E14001056,E12000008,Wycombe,,South East,England,County,07/05/2010 03:18,Steve,Baker,M,Con hold,Con,LD,74175,48151,143,9560,23423,8326,13863,2123,0,0,0,0,0,0,0,0,416
+E14001057,E12000002,Wyre and Preston North,,North West,England,County,07/05/2010 02:47,Ben,Wallace,M,Con hold,Con,LD,70201,51308,118,15844,26877,10932,11033,2466,0,0,0,0,0,0,0,0,0
+E14001058,E12000005,Wyre Forest,,West Midlands,England,County,07/05/2010 04:03,Mark,Garnier,M,Con gain from KHHC,Con,KHHC,76713,50899,135,2643,18793,7298,6040,1498,0,0,0,0,0,0,0,0,17270
+E14001059,E12000002,Wythenshawe and Sale East,,North West,England,Borough,07/05/2010 09:14,Paul,Goggins,M,Lab hold,Lab,Con,79923,40751,136,7575,10412,17987,9107,1405,0,0,0,0,0,0,0,0,1840
+E14001060,E12000009,Yeovil,,South West,England,County,07/05/2010 01:36,David,Laws,M,LD hold,LD,Con,82314,57160,81,13036,18807,2991,31843,2357,0,0,0,0,0,0,0,0,1162
+W07000041,W92000004,Ynys Môn,,Wales,Wales,County,07/05/2010 01:19,Albert,Owen,M,Lab hold,Lab,PC,50075,34444,70,2461,7744,11490,2592,1201,0,0,9029,0,0,0,0,0,2388
+E14001061,E12000003,York Central,,Yorkshire and The Humber,England,Borough,07/05/2010 04:51,Hugh,Bayley,M,Lab hold,Lab,Con,76439,46483,66,6451,12122,18573,11694,1100,1669,0,0,0,0,0,0,0,1325
+E14001062,E12000003,York Outer,,Yorkshire and The Humber,England,County,07/05/2010 04:28,Julian,Sturdy,M,Con gain from LD,Con,LD,75939,53300,75,3688,22912,9108,19224,1100,0,0,0,0,0,0,0,0,956

@@ -82,8 +82,6 @@ const PopulationDensityChart = ({
 			return getWardPopulationDensity(feature, total / geojson.features.length);
 		});
 
-		console.log(allDensities)
-
 		const totalArea = allDensities.reduce((sum, d) => sum + d.areaSqKm, 0);
 		const avgDensity = totalArea > 0 ? total / totalArea : 0;
 
@@ -167,7 +165,7 @@ const PopulationDensityChart = ({
 			<div className="relative py-1 h-full flex flex-col justify-between pl-4">
 				{/* Left side - Main metric */}
 				<div className="flex items-baseline gap-2">
-					<div className="text-xl font-bold text-black">
+					<div className="text-xl font-bold">
 						{Math.round(densityInfo.density).toLocaleString()}
 					</div>
 					<div className="text-sm">

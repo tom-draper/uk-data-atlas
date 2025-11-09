@@ -11,6 +11,9 @@ const GEOJSON_PATHS = {
 	},
 	constituency: {
 		2024: '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson',
+		2019: '/data/boundaries/constituencies/WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.geojson',
+		2017: '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.geojson',
+		2015: '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.geojson',
 	}
 } as const;
 
@@ -36,6 +39,7 @@ export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
 export type LadCodeKey = (typeof LAD_CODE_KEYS)[number];
 
 const WARD_YEARS = [2024, 2023, 2022, 2021] as const;
+const CONSTITUENCY_YEARS = [2024, 2019, 2017, 2015] as const;
 
 /**
  * Loads all boundary GeoJSON files and returns them filtered by location.
@@ -44,7 +48,7 @@ const WARD_YEARS = [2024, 2023, 2022, 2021] as const;
 export function useBoundaryData(selectedLocation?: string | null) {
 	const [boundaryData, setBoundaryData] = useState<BoundaryData>({
 		ward: { 2024: null, 2023: null, 2022: null, 2021: null },
-		constituency: { 2024: null }
+		constituency: { 2024: null, 2019: null, 2017: null, 2015: null }
 	});
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
@@ -107,7 +111,7 @@ export function useBoundaryData(selectedLocation?: string | null) {
 		type: BoundaryType
 	): BoundaryGeojson => {
 		if (!location) return fullGeojson;
-		
+
 		const locationData = LOCATIONS[location];
 		if (!locationData?.lad_codes) return fullGeojson;
 
@@ -141,9 +145,11 @@ export function useBoundaryData(selectedLocation?: string | null) {
 
 			try {
 				const wardPromises = WARD_YEARS.map(year => fetchGeojson('ward', year));
-				const [constituency2024, ...wardGeojsons] = await Promise.all([
-					fetchGeojson('constituency', 2024),
-					...wardPromises
+				const constituencyPromises = CONSTITUENCY_YEARS.map(year => fetchGeojson('constituency', year));
+				
+				const [wardGeojsons, constituencyGeojsons] = await Promise.all([
+					Promise.all(wardPromises),
+					Promise.all(constituencyPromises)
 				]);
 
 				if (cancelled) return;
@@ -159,9 +165,12 @@ export function useBoundaryData(selectedLocation?: string | null) {
 							filterGeojsonByLocation(wardGeojsons[idx], selectedLocation, 'ward')
 						])
 					) as BoundaryYearMap<'ward'>,
-					constituency: {
-						2024: filterGeojsonByLocation(constituency2024, selectedLocation, 'constituency')
-					}
+					constituency: Object.fromEntries(
+						CONSTITUENCY_YEARS.map((year, idx) => [
+							year,
+							filterGeojsonByLocation(constituencyGeojsons[idx], selectedLocation, 'constituency')
+						])
+					) as BoundaryYearMap<'constituency'>
 				};
 
 				setBoundaryData(filtered);

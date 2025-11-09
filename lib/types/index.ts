@@ -116,6 +116,27 @@ export interface AggregateGeneralElectionData {
         totalVotes: number;
         partyVotes: PartyVotes;
         partyInfo: Party[];
+    },
+    2019: {
+        totalSeats: number;
+        partySeats: Record<string, number>;
+        totalVotes: number;
+        partyVotes: PartyVotes;
+        partyInfo: Party[];
+    },
+    2017: {
+        totalSeats: number;
+        partySeats: Record<string, number>;
+        totalVotes: number;
+        partyVotes: PartyVotes;
+        partyInfo: Party[];
+    },
+    2015: {
+        totalSeats: number;
+        partySeats: Record<string, number>;
+        totalVotes: number;
+        partyVotes: PartyVotes;
+        partyInfo: Party[];
     }
 }
 

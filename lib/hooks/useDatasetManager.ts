@@ -20,7 +20,10 @@ export function useDatasetManager(
             case "density":
                 return populationDatasets['population']
             case "general-2024":
-                return generalElectionDatasets['general-2024']
+            case "general-2019":
+            case "general-2017":
+            case "general-2015":
+                return generalElectionDatasets[activeDatasetId]
             case "2021":
             case "2022":
             case "2023":
@@ -29,7 +32,7 @@ export function useDatasetManager(
         }
     }, [localElectionDatasets, generalElectionDatasets, populationDatasets, activeDatasetId]);
 
-    const boundaryType: BoundaryType = activeDatasetId === 'general-2024' ? 'constituency' : 'ward';
+    const boundaryType: BoundaryType = activeDatasetId === 'general-2024' || activeDatasetId === 'general-2019' || activeDatasetId === 'general-2017' || activeDatasetId === 'general-2015' ? 'constituency' : 'ward';
     const targetYear: WardYear = activeDatasetId === 'population' || activeDatasetId === 'gender' || activeDatasetId === 'density' ? 2021 : activeDataset?.year || null;
 
     return {

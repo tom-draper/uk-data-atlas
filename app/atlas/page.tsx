@@ -65,7 +65,7 @@ export default function MapsPage() {
 		if (boundaryType === 'ward' && targetYear) {
 			return boundaryData.ward[targetYear];
 		} else if (boundaryType === 'constituency') {
-			return boundaryData.constituency[2024];
+			return boundaryData.constituency[targetYear];
 		}
 		return null;
 	}, [boundaryData, boundaryType, targetYear]);

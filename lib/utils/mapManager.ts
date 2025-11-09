@@ -38,7 +38,7 @@ export class MapManager {
     // Property detection keys
     private static readonly WARD_CODE_KEYS = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'];
     private static readonly LAD_CODE_KEYS = ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'];
-    private static readonly CONSTITUENCY_CODE_KEYS = ['PCON24CD', 'PCON25CD'];
+    private static readonly CONSTITUENCY_CODE_KEYS = ['PCON24CD', 'PCON25CD', 'pcon19cd', 'PCON17CD', 'PCON15CD'];
     private static readonly PARTY_KEYS = ['LAB', 'CON', 'LD', 'GREEN', 'RUK', 'SNP', 'PC', 'DUP', 'SF', 'OTHER'];
 
     constructor(map: mapboxgl.Map, callbacks: MapManagerCallbacks) {

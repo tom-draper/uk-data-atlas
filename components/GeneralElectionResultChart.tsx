@@ -18,9 +18,10 @@ interface CompactBarProps {
 	isAggregated: boolean;
 	isActive: boolean;
 	aggregatedData: AggregateGeneralElectionData | null;
+	year: number;
 }
 
-const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregatedData }: CompactBarProps) => {
+const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregatedData, year }: CompactBarProps) => {
 	if (!data || !aggregatedData) {
 		return <div className="text-xs text-gray-400/80 pt-1 text-center">No data available</div>;
 	}
@@ -81,13 +82,13 @@ const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregat
 							))}
 					</div>
 					{/* Show seats breakdown if aggregated */}
-					{isAggregated && aggregatedData && (
+					{isAggregated && aggregatedData && aggregatedData[year] && (
 						<div className="mt-2 pt-2 border-t border-gray-200">
 							<div className="text-[9px] font-medium text-gray-600 mb-1">
-								Seats won: {aggregatedData[2024].totalSeats}
+								Seats won: {aggregatedData[year].totalSeats}
 							</div>
 							<div className="grid grid-cols-3 gap-0.5 text-[9px]">
-								{Object.entries(aggregatedData[2024].partySeats)
+								{Object.entries(aggregatedData[year].partySeats)
 									.sort(([, a], [, b]) => (b as number) - (a as number))
 									.map(([partyKey, seats]) => (
 										<div key={partyKey} className="flex items-center gap-1">
@@ -111,7 +112,7 @@ const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregat
 CompactBar.displayName = 'CompactBar';
 
 interface YearBarProps {
-	year: string;
+	year: number;
 	data: PartyVotes | undefined;
 	dataset: GeneralElectionDataset;
 	turnout: number | undefined;
@@ -131,11 +132,14 @@ const YearBar = React.memo(({
 	aggregatedData,
 	setActiveDatasetId 
 }: YearBarProps) => {
-	const yearColors: Record<string, { bg: string; border: string }> = {
-		'general-2024': { bg: 'bg-indigo-50/60', border: 'border-indigo-400' },
+	const yearColors: Record<number, { bg: string; border: string }> = {
+		2024: { bg: 'bg-indigo-50/60', border: 'border-indigo-400' },
+		2019: { bg: 'bg-blue-50/60', border: 'border-blue-400' },
+		2017: { bg: 'bg-purple-50/60', border: 'border-purple-400' },
+		2015: { bg: 'bg-violet-50/60', border: 'border-violet-400' },
 	};
 
-	const colors = yearColors[dataset.id] || { bg: 'bg-indigo-50/60', border: 'border-indigo-400' };
+	const colors = yearColors[year] || { bg: 'bg-indigo-50/60', border: 'border-indigo-400' };
 
 	const handleClick = useCallback(() => {
 		setActiveDatasetId('general-' + year);
@@ -173,11 +177,14 @@ const YearBar = React.memo(({
 				isAggregated={isAggregated} 
 				isActive={isActive}
 				aggregatedData={aggregatedData}
+				year={year}
 			/>
 		</div>
 	);
 });
 YearBar.displayName = 'YearBar';
+
+const ELECTION_YEARS = [2024, 2019, 2017, 2015] as const;
 
 export default function GeneralElectionResultChart({
 	activeDataset,
@@ -186,72 +193,101 @@ export default function GeneralElectionResultChart({
 	constituencyCode,
 	aggregatedData
 }: GeneralElectionResultChartProps) {
-	const dataset2024 = availableDatasets['general-2024'];
+	const yearDataMap = useMemo(() => {
+		const map: Record<number, {
+			dataset: GeneralElectionDataset | null;
+			chartData: PartyVotes | undefined;
+			turnout: number | undefined;
+			isAggregated: boolean;
+		}> = {} as any;
 
-	const { chartData2024, turnout2024, isAggregated } = useMemo(() => {
-		if (!dataset2024 || !aggregatedData) {
-			return {
-				chartData2024: undefined,
-				turnout2024: undefined,
-				isAggregated: false
-			};
-		}
+		for (const year of ELECTION_YEARS) {
+			const dataset = availableDatasets[`general-${year}`];
+			
+			if (!dataset || !aggregatedData) {
+				map[year] = {
+					dataset: null,
+					chartData: undefined,
+					turnout: undefined,
+					isAggregated: false
+				};
+				continue;
+			}
 
-		// If we have a specific constituency selected (hovering), use that constituency's data
-		if (constituencyCode && dataset2024.constituencyData[constituencyCode]) {
-			const data = dataset2024.constituencyData[constituencyCode];
-
-			return {
-				chartData2024: {
+			// If we have a specific constituency selected (hovering), use that constituency's data
+			if (constituencyCode && dataset.constituencyData[constituencyCode]) {
+				const data = dataset.constituencyData[constituencyCode];
+				
+				// Map party keys to standardized format
+				const chartData: PartyVotes = {
 					LAB: data.partyVotes.LAB || 0,
 					CON: data.partyVotes.CON || 0,
 					LD: data.partyVotes.LD || 0,
 					GREEN: data.partyVotes.GREEN || 0,
-					REF: data.partyVotes.RUK || 0,
+					REF: data.partyVotes.RUK || data.partyVotes.BRX || data.partyVotes.UKIP || 0,
 					SNP: data.partyVotes.SNP || 0,
 					PC: data.partyVotes.PC || 0,
 					DUP: data.partyVotes.DUP || 0,
 					SF: data.partyVotes.SF || 0,
 					IND: data.partyVotes.OTHER || 0,
-				},
-				turnout2024: data.turnoutPercent,
-				isAggregated: false,
-			};
+				};
+
+				map[year] = {
+					dataset,
+					chartData,
+					turnout: data.turnoutPercent,
+					isAggregated: false
+				};
+			} else if (aggregatedData && aggregatedData[year]?.partyVotes) {
+				// No constituency selected - use aggregated data for the location
+				map[year] = {
+					dataset,
+					chartData: aggregatedData[year].partyVotes as PartyVotes,
+					turnout: undefined, // Could calculate average turnout if needed
+					isAggregated: true
+				};
+			} else {
+				map[year] = {
+					dataset,
+					chartData: undefined,
+					turnout: undefined,
+					isAggregated: false
+				};
+			}
 		}
 
-		// No constituency selected - use aggregated data for the location
-		if (aggregatedData && aggregatedData[2024].partyVotes) {
-			return {
-				chartData2024: aggregatedData[2024].partyVotes as PartyVotes,
-				turnout2024: undefined, // Could calculate average turnout if needed
-				isAggregated: true,
-			};
-		}
+		return map;
+	}, [constituencyCode, availableDatasets, aggregatedData]);
 
-		return {
-			chartData2024: undefined,
-			turnout2024: undefined,
-			isAggregated: false
-		};
-	}, [constituencyCode, dataset2024, aggregatedData]);
+	// Filter to only show years with datasets
+	const availableYears = ELECTION_YEARS.filter(year => yearDataMap[year].dataset);
 
-	if (!dataset2024) {
+	if (availableYears.length === 0) {
 		return null;
 	}
 
 	return (
 		<div className="space-y-2">
 			<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
-			<YearBar
-				year="2024"
-				data={chartData2024}
-				dataset={dataset2024}
-				turnout={turnout2024}
-				isActive={activeDataset.id === 'general-2024'}
-				isAggregated={isAggregated}
-				aggregatedData={aggregatedData}
-				setActiveDatasetId={setActiveDatasetId}
-			/>
+			{availableYears.map(year => {
+				const { dataset, chartData, turnout, isAggregated } = yearDataMap[year];
+				
+				if (!dataset) return null;
+
+				return (
+					<YearBar
+						key={year}
+						year={year}
+						data={chartData}
+						dataset={dataset}
+						turnout={turnout}
+						isActive={activeDataset.id === `general-${year}`}
+						isAggregated={isAggregated}
+						aggregatedData={aggregatedData}
+						setActiveDatasetId={setActiveDatasetId}
+					/>
+				);
+			})}
 		</div>
 	);
 }
