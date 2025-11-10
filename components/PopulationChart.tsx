@@ -5,12 +5,13 @@ import PopulationDensity from '@/components/population/density/PopulationDensity
 import AgeChart from './population/age/AgeDistribution';
 import Gender from './population/gender/Gender';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
+import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 
 export interface PopulationChartProps {
 	activeDatasetId: string;
 	availableDatasets: Record<string, PopulationDataset>;
 	aggregatedData: AggregatedPopulationData | null;
-	geojson: BoundaryGeojson | null;
+	boundaryData: BoundaryData;
 	wardCode: string;
 	setActiveDatasetId: (datasetId: string) => void;
 	codeMapper: CodeMapper
@@ -20,7 +21,7 @@ export default function PopulationChart({
 	activeDatasetId,
 	availableDatasets,
 	aggregatedData,
-	geojson,
+	boundaryData,
 	wardCode,
 	setActiveDatasetId,
 	codeMapper
@@ -36,7 +37,7 @@ export default function PopulationChart({
 					setActiveDatasetId={setActiveDatasetId}
 					dataset={dataset}
 					aggregatedData={aggregatedData}
-					geojson={geojson}
+					boundaryData={boundaryData}
 					wardCode={wardCode}
 					codeMapper={codeMapper}
 				/>

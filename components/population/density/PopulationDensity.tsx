@@ -2,18 +2,19 @@
 import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset } from "@/lib/types";
 import PopulationDensityChart from "./PopulationDensityChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
 	activeDatasetId: string;
-	geojson: BoundaryGeojson | null;
+	boundaryData: BoundaryData;
 	aggregatedData: AggregatedPopulationData | null;
 	wardCode: string | null;
 	setActiveDatasetId: (datasetId: string) => void;
 	codeMapper: CodeMapper;
 }
 
-export default function PopulationDensity({ dataset, aggregatedData, geojson, wardCode, setActiveDatasetId, activeDatasetId, codeMapper }: PopulationDensityChartProps) {
+export default function PopulationDensity({ dataset, aggregatedData, boundaryData, wardCode, setActiveDatasetId, activeDatasetId, codeMapper }: PopulationDensityChartProps) {
 	const isActive = activeDatasetId === 'density';
 	const colors = {
 		bg: 'bg-emerald-50/60',
@@ -33,7 +34,7 @@ export default function PopulationDensity({ dataset, aggregatedData, geojson, wa
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">Population Density (2020)</h3>
 			</div>
-			<PopulationDensityChart dataset={dataset} aggregatedData={aggregatedData} geojson={geojson} wardCode={wardCode} codeMapper={codeMapper} />
+			<PopulationDensityChart dataset={dataset} aggregatedData={aggregatedData} boundaryData={boundaryData} wardCode={wardCode} codeMapper={codeMapper} />
 		</div>
 	);
 }

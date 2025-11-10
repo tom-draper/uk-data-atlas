@@ -53,10 +53,10 @@ export default memo(function LegendPanel({ activeDatasetId }: LegendPanelProps) 
                             {PARTY_INFO.map((item) => (
                                 <div key={item.key} className="flex items-center gap-2">
                                     <div
-                                        className="w-3 h-3 rounded-xs shrink-0"
+                                        className="w-3 h-3 rounded-xs shrink-0 opacity-80"
                                         style={{ backgroundColor: PARTY_COLORS[item.key] }}
                                     />
-                                    <span className="text-xs text-gray-700">{item.name}</span>
+                                    <span className="text-xs text-gray-500">{item.name}</span>
                                 </div>
                             ))}
                         </div>

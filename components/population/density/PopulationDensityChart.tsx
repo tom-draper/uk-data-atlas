@@ -1,4 +1,5 @@
 // components/population/density/PopulationDensityChart.tsx
+import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset } from "@/lib/types";
 import { calculateTotal, polygonAreaSqKm } from "@/lib/utils/populationHelpers";
@@ -7,7 +8,7 @@ import { useMemo } from "react";
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
 	aggregatedData: AggregatedPopulationData | null;
-	geojson: BoundaryGeojson | null;
+	boundaryData: BoundaryData;
 	wardCode: string | null;
 	codeMapper: CodeMapper;
 }
@@ -34,11 +35,12 @@ const detectPropertyKey = (geojson: BoundaryGeojson) => {
 const PopulationDensityChart = ({
 	dataset,
 	aggregatedData,
-	geojson,
+	boundaryData,
 	wardCode,
 	codeMapper,
 }: PopulationDensityChartProps) => {
 	const { density, areaSqKm, total } = useMemo(() => {
+		const geojson = boundaryData.ward[2021]
 		if (wardCode && geojson) {
 			const codesToTry = [
 				wardCode,
@@ -63,7 +65,7 @@ const PopulationDensityChart = ({
 		}
 
 		return { density: null, areaSqKm: null, total: null };
-	}, [geojson, dataset, wardCode])
+	}, [boundaryData, dataset, wardCode])
 
 	if (!total) {
 		return (

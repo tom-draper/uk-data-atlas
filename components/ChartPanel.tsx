@@ -1,11 +1,12 @@
 // components/ChartPanel.tsx
 'use client';
-import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData, BoundaryGeojson, AggregatedPopulationData } from '@lib/types';
+import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData, AggregatedPopulationData } from '@lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
 import { memo } from 'react';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
+import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
@@ -13,7 +14,7 @@ interface ChartPanelProps {
 	selectedConstituency: ConstituencyData | null;
 	activeDatasetId: string;
 	activeDataset: Dataset;
-	geojson: BoundaryGeojson | null;
+	boundaryData: BoundaryData;
 	localElectionDatasets: Record<string, LocalElectionDataset>;
 	generalElectionDatasets: Record<string, GeneralElectionDataset>;
 	populationDatasets: Record<string, PopulationDataset>;
@@ -30,7 +31,7 @@ export default memo(function ChartPanel({
 	selectedConstituency,
 	activeDatasetId,
 	activeDataset,
-	geojson,
+	boundaryData,
 	localElectionDatasets,
 	generalElectionDatasets,
 	populationDatasets,
@@ -98,15 +99,20 @@ export default memo(function ChartPanel({
 						availableDatasets={populationDatasets}
 						aggregatedData={aggregatedPopulationData}
 						setActiveDatasetId={setActiveDatasetId}
-						geojson={geojson}
+						boundaryData={boundaryData}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
 						codeMapper={codeMapper}
 					/>
 				</div>
 
 				{/* Footer */}
-				<div className="text-[9px] px-2.5 pb-2 text-gray-400 bg-white/20 pt-2 mt-auto">
-					Click to switch which dataset shows on map
+				<div className="text-[9px] px-2.5 pb-1.5 text-gray-400/80 bg-white/20 pt-2 mt-auto flex">
+					<div className="grow hover:underline cursor-pointer">
+						UK Data Atlas
+					</div>
+					<div className="hover:underline cursor-pointer">
+						View Sources
+					</div>
 				</div>
 			</div>
 		</div>
