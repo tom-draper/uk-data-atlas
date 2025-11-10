@@ -1,16 +1,16 @@
 // components/population/density/PopulationDensity.tsx
-import { BoundaryGeojson } from "@/lib/types";
+import { AggregatedPopulationData, BoundaryGeojson } from "@/lib/types";
 import PopulationDensityChart from "./PopulationDensityChart";
 
 interface PopulationDensityChartProps {
 	activeDatasetId: string;
 	geojson: BoundaryGeojson | null;
+	aggregatedData: AggregatedPopulationData | null;
 	wardCode: string | null;
-	total: number;
 	setActiveDatasetId: (datasetId: string) => void;
 }
 
-export default function PopulationDensity({ total, geojson, wardCode, setActiveDatasetId, activeDatasetId }: PopulationDensityChartProps) {
+export default function PopulationDensity({ aggregatedData, geojson, wardCode, setActiveDatasetId, activeDatasetId }: PopulationDensityChartProps) {
 	const isActive = activeDatasetId === 'density';
 	const colors = {
 		bg: 'bg-emerald-50/60',
@@ -30,7 +30,7 @@ export default function PopulationDensity({ total, geojson, wardCode, setActiveD
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">Population Density (2020)</h3>
 			</div>
-			<PopulationDensityChart geojson={geojson} wardCode={wardCode} total={total} />
+			<PopulationDensityChart geojson={geojson} wardCode={wardCode} total={aggregatedData[2020]?.populationStats.total} />
 		</div>
 	);
 }

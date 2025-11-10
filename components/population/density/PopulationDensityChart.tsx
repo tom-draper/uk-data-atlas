@@ -174,7 +174,7 @@ const PopulationDensityChart = ({
 				</div>
 
 				{/* Right side - Supporting metrics */}
-				<div className="flex gap-4 text-left text-xs pb-1">
+				<div className="flex gap-3 text-left text-xs pb-1">
 					<div className="flex">
 						<div className="mr-1">Population</div>
 						<div className="font-semibold">

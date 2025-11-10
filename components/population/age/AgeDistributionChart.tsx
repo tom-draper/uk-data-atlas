@@ -1,37 +1,16 @@
 // components/population/age/AgeDistributionChart.tsx
-import { useMemo } from 'react';
 import { AgeGroups } from '@lib/types';
 import { getAgeColor } from '@lib/utils/populationHelpers';
 import AgeGroupBar from '@/components/population/age/AgeGroupBar';
 
 interface AgeDistributionChartProps {
-	ageData: { [age: string]: number };
+	ages: Array<{ age: number; count: number }>;
 	total: number;
 	ageGroups: AgeGroups;
 	isActive: boolean;
 }
 
-export default function AgeDistributionChart({ ageData, total, ageGroups, isActive }: AgeDistributionChartProps) {
-	const ages = useMemo(() => {
-		const ageArray = Array.from({ length: 100 }, (_, i) => ({
-			age: i,
-			count: ageData[i.toString()] || 0
-		}));
-
-		// Distribute 90+ population with exponential decay
-		const age90Plus = ageArray[90].count;
-		const decayRate = 0.15;
-		const weights = Array.from({ length: 10 }, (_, i) => Math.exp(-decayRate * i));
-		const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-
-		for (let i = 90; i < 100; i++) {
-			const weight = weights[i - 90];
-			ageArray[i] = { age: i, count: (age90Plus * weight) / totalWeight };
-		}
-
-		return ageArray;
-	}, [ageData]);
-
+export default function AgeDistributionChart({ ages, total, ageGroups, isActive }: AgeDistributionChartProps) {
 	const maxCount = Math.max(...ages.map(a => a.count), 1);
 
 	if (maxCount === 1) {

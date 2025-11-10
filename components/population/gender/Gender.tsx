@@ -1,11 +1,12 @@
 // components/population/gender/Gender.tsx
 import { useMemo } from "react";
-import { PopulationDataset } from "@/lib/types";
+import { AggregatedPopulationData, PopulationDataset } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface GenderProps {
-	population: PopulationDataset['populationData'];
+	dataset: PopulationDataset;
+	aggregatedData: AggregatedPopulationData | null;
 	wardCode: string;
 	setActiveDatasetId: (datasetId: string) => void;
 	activeDatasetId: string;
@@ -13,7 +14,8 @@ interface GenderProps {
 }
 
 export default function Gender({
-	population,
+	dataset,
+	aggregatedData,
 	wardCode,
 	setActiveDatasetId,
 	activeDatasetId,
@@ -29,10 +31,10 @@ export default function Gender({
 
 	// Calculate total males and females
 	const { totalMales, totalFemales } = useMemo(() => {
-		let males = 0;
-		let females = 0;
+		if (wardCode && dataset) {
+			let males = 0;
+			let females = 0;
 
-		if (wardCode) {
 			// Try to find the ward data - population uses 2021 codes
 			const codesToTry = [
 				wardCode,
@@ -40,23 +42,21 @@ export default function Gender({
 			].filter((code): code is string => code !== null);
 
 			for (const code of codesToTry) {
-				if (population[code]) {
-					const ward = population[code];
+				if (dataset.populationData[code]) {
+					const ward = dataset.populationData[code];
 					males = Object.values(ward.males).reduce((sum, count) => sum + count, 0);
 					females = Object.values(ward.females).reduce((sum, count) => sum + count, 0);
-					break; // Found the data, stop looking
+					break
 				}
 			}
-		} else {
-			// Aggregate all wards
-			for (const ward of Object.values(population)) {
-				males += Object.values(ward.males).reduce((sum, count) => sum + count, 0);
-				females += Object.values(ward.females).reduce((sum, count) => sum + count, 0);
-			}
-		}
 
-		return { totalMales: males, totalFemales: females };
-	}, [population, wardCode, codeMapper]);
+			return { totalMales: males, totalFemales: females }
+		} else if (aggregatedData) {
+			return { totalMales: aggregatedData[2020].populationStats.males, totalFemales: aggregatedData[2020].populationStats.females }
+		} else {
+			return { totalMales: 0, totalFemales: 0 }
+		}
+	}, [dataset, wardCode, codeMapper]);
 
 	return (
 		<div
@@ -69,13 +69,14 @@ export default function Gender({
 			<div className="flex items-center justify-between mb-0">
 				<h3 className="text-xs font-bold">Gender (2020)</h3>
 				{totalMales + totalFemales > 0 && (
-				<span className="text-[10px] text-gray-600 mr-1">
-					<span className="text-blue-600">{totalMales.toLocaleString()}</span> <span className="text-gray-500">/</span> <span className="text-pink-600">{totalFemales.toLocaleString()}</span>
-				</span>
+					<span className="text-[10px] text-gray-600 mr-1">
+						<span className="text-blue-600">{totalMales.toLocaleString()}</span> <span className="text-gray-500">/</span> <span className="text-pink-600">{totalFemales.toLocaleString()}</span>
+					</span>
 				)}
 			</div>
 			<GenderBalanceByAgeChart
-				population={population}
+				dataset={dataset}
+				aggregatedData={aggregatedData}
 				wardCode={wardCode}
 				codeMapper={codeMapper}
 			/>

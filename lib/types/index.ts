@@ -115,28 +115,34 @@ export interface AggregateGeneralElectionData {
         partySeats: Record<string, number>;
         totalVotes: number;
         partyVotes: PartyVotes;
-        partyInfo: Party[];
     },
     2019: {
         totalSeats: number;
         partySeats: Record<string, number>;
         totalVotes: number;
         partyVotes: PartyVotes;
-        partyInfo: Party[];
     },
     2017: {
         totalSeats: number;
         partySeats: Record<string, number>;
         totalVotes: number;
         partyVotes: PartyVotes;
-        partyInfo: Party[];
     },
     2015: {
         totalSeats: number;
         partySeats: Record<string, number>;
         totalVotes: number;
         partyVotes: PartyVotes;
-        partyInfo: Party[];
+    }
+}
+
+export interface AggregatedPopulationData {
+    2020: {
+        populationStats: PopulationStats;
+        ageData: { [age: string]: number };
+        ages: Array<{ age: number; count: number }>;
+        genderAgeData: Array<{ age: number; males: number; females: number }>;
+        medianAge: number;
     }
 }
 

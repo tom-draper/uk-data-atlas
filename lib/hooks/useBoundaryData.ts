@@ -146,7 +146,7 @@ export function useBoundaryData(selectedLocation?: string | null) {
 			try {
 				const wardPromises = WARD_YEARS.map(year => fetchGeojson('ward', year));
 				const constituencyPromises = CONSTITUENCY_YEARS.map(year => fetchGeojson('constituency', year));
-				
+
 				const [wardGeojsons, constituencyGeojsons] = await Promise.all([
 					Promise.all(wardPromises),
 					Promise.all(constituencyPromises)

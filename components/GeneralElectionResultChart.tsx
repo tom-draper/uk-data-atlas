@@ -25,14 +25,14 @@ interface CompactBarProps {
 
 const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregatedData, year }: CompactBarProps) => {
 	if (!data || !aggregatedData) {
-		return <div className="text-xs text-gray-400/80 pt-1 text-center">No data available</div>;
+		return <div className="text-xs text-gray-400/80 pt-0.5 text-center">No data available</div>;
 	}
 
 	const parties = dataset.partyInfo;
 	const totalVotes = parties.reduce((sum, p) => sum + (data[p.key] || 0), 0);
 
 	if (totalVotes === 0) {
-		return <div className="text-xs text-gray-400/80 pt-1 text-center">No votes recorded</div>;
+		return <div className="text-xs text-gray-400/80 pt-0.5 text-center">No votes recorded</div>;
 	}
 
 	return (
@@ -227,8 +227,6 @@ export default function GeneralElectionResultChart({
 						data = dataset.constituencyData[convertedCode];
 					}
 				}
-
-
 
 				try {
 					// Map party keys to standardized format

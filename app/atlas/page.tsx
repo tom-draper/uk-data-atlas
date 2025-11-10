@@ -90,12 +90,14 @@ export default function MapsPage() {
 	});
 
 	// Aggregated data (this might now be redundant for some use cases)
-	const { aggregatedLocalElectionData, aggregatedGeneralElectionData } = useAggregatedElectionData({
+	const { aggregatedLocalElectionData, aggregatedGeneralElectionData, aggregatedPopulationData } = useAggregatedElectionData({
 		mapManager,
 		boundaryData,
 		localElectionDatasets: localElectionData.datasets,
 		generalElectionDatasets: generalElectionData.datasets,
-		location: selectedLocation
+		populationDatasets: populationData.datasets,
+		location: selectedLocation,
+		codeMapper
 	});
 
 	// Dataset change handler
@@ -176,6 +178,7 @@ export default function MapsPage() {
 						setActiveDatasetId={setActiveDatasetId}
 						aggregatedLocalElectionData={aggregatedLocalElectionData}
 						aggregatedGeneralElectionData={aggregatedGeneralElectionData}
+						aggregatedPopulationData={aggregatedPopulationData}
 						codeMapper={codeMapper}
 					/>
 				</div>

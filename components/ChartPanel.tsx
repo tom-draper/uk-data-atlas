@@ -1,6 +1,6 @@
 // components/ChartPanel.tsx
 'use client';
-import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, PopulationWardData, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData, BoundaryGeojson } from '@lib/types';
+import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, PopulationWardData, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData, BoundaryGeojson, AggregatedPopulationData } from '@lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
@@ -20,6 +20,7 @@ interface ChartPanelProps {
 	setActiveDatasetId: (datasetId: string) => void;
 	aggregatedLocalElectionData: AggregatedLocalElectionData | null;
 	aggregatedGeneralElectionData: AggregateGeneralElectionData | null;
+	aggregatedPopulationData: AggregatedPopulationData | null;
 	codeMapper: CodeMapper
 }
 
@@ -36,6 +37,7 @@ export default memo(function ChartPanel({
 	setActiveDatasetId,
 	aggregatedLocalElectionData,
 	aggregatedGeneralElectionData,
+	aggregatedPopulationData,
 	codeMapper
 }: ChartPanelProps) {
 	// Determine what to show in the title
@@ -94,10 +96,10 @@ export default memo(function ChartPanel({
 					<PopulationChart
 					 	activeDatasetId={activeDatasetId}
 						availableDatasets={populationDatasets}
+						aggregatedData={aggregatedPopulationData}
 						setActiveDatasetId={setActiveDatasetId}
 						geojson={geojson}
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
-						wardName={selectedWard?.wardName?.toString() ?? ''}
 						codeMapper={codeMapper}
 					/>
 				</div>

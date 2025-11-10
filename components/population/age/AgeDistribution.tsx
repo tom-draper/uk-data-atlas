@@ -1,63 +1,117 @@
 // components/population/age/AgeDistribution.tsx
 import { useMemo } from "react";
-import { AgeGroups } from "@/lib/types";
+import { AggregatedPopulationData, PopulationDataset, AgeGroups } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface AgeDistributionProps {
+	dataset: PopulationDataset;
+	aggregatedData: AggregatedPopulationData | null;
+	wardCode: string;
 	activeDatasetId: string;
-	ageData: { [age: string]: number };
-	total: number;
-	ageGroups: AgeGroups;
 	setActiveDatasetId: (datasetId: string) => void;
+	codeMapper: CodeMapper;
 }
 
-export default function AgeDistributionProps({ ageData, total, ageGroups, setActiveDatasetId, activeDatasetId }: AgeDistributionProps) {
-	const isActive = activeDatasetId === 'population';
+export default function AgeDistribution({
+	dataset,
+	aggregatedData,
+	wardCode,
+	setActiveDatasetId,
+	activeDatasetId,
+	codeMapper,
+}: AgeDistributionProps) {
+	const isActive = activeDatasetId === "population";
 	const colors = {
-		bg: 'bg-emerald-50/60',
-		border: 'border-emerald-300',
-		badge: 'bg-emerald-300 text-emerald-900',
-		text: 'bg-emerald-200 text-emerald-800'
+		bg: "bg-emerald-50/60",
+		border: "border-emerald-300",
+		badge: "bg-emerald-300 text-emerald-900",
+		text: "bg-emerald-200 text-emerald-800",
 	};
 
-	const medianAge = useMemo(() => {
-		const ages = Array.from({ length: 100 }, (_, i) => ({
-			age: i,
-			count: ageData[i.toString()] || 0
-		}));
+	// 🧠 Memoized calculation for ward/aggregated population data
+	const { medianAge, ageGroups, total, ages } = useMemo(() => {
+		// Helper function for age group mapping
+		const getAgeGroupKey = (age: number): keyof AgeGroups => {
+			if (age <= 17) return "0-17";
+			if (age <= 29) return "18-29";
+			if (age <= 44) return "30-44";
+			if (age <= 64) return "45-64";
+			return "65+";
+		};
 
-		// Distribute 90+ population with exponential decay
-		const age90Plus = ages[90].count;
-		const decayRate = 0.15;
-		const weights = Array.from({ length: 10 }, (_, i) => Math.exp(-decayRate * i));
-		const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-		for (let i = 90; i < 100; i++) {
-			const weight = weights[i - 90];
-			ages[i] = { age: i, count: (age90Plus * weight) / totalWeight };
-		}
+		const ageGroups = {
+			"0-17": 0, "18-29": 0, "30-44": 0, "45-64": 0, "65+": 0
+		};
 
-		const totalPop = ages.reduce((sum, { count }) => sum + count, 0);
-		if (totalPop === 0) return 0;
+		if (wardCode && dataset) {
+			const codesToTry = [
+				wardCode,
+				codeMapper.convertWardCode(wardCode, 2021),
+			].filter((code): code is string => code !== null);
 
-		const halfPop = totalPop / 2;
-		let cumulative = 0;
+			for (const code of codesToTry) {
+				const wardData = dataset.populationData[code];
+				if (!wardData) continue;
 
-		for (const { age, count } of ages) {
-			cumulative += count;
-			if (cumulative >= halfPop) {
-				return age;
+				const agesCountTotal = wardData.total;
+
+				const agesArray = Object.entries(agesCountTotal).map(([age, count]) => ({
+					age: Number(age),
+					count,
+				}));
+
+				const totalPopulation = Object.values(agesCountTotal).reduce(
+					(sum, c) => sum + c,
+					0
+				);
+
+				// Compute median age
+				let cumulative = 0;
+				let median = 0;
+				const sortedAges = agesArray.sort((a, b) => a.age - b.age);
+				for (const { age, count } of sortedAges) {
+					cumulative += count;
+					if (cumulative >= totalPopulation / 2) {
+						median = age;
+						break;
+					}
+				}
+
+				// Fill grouped buckets for total/males/females
+				for (const [ageStr, count] of Object.entries(agesCountTotal)) {
+					const age = Number(ageStr);
+					const key = getAgeGroupKey(age);
+					ageGroups[key] += count;
+				}
+
+				return {
+					medianAge: median,
+					ageGroups: ageGroups,
+					total: totalPopulation,
+					ages: agesArray,
+				};
 			}
+		} else if (aggregatedData) {
+			return {
+				medianAge: aggregatedData[2020].medianAge ?? 0,
+				ageGroups: aggregatedData[2020].ageGroups.total ?? ageGroups,
+				total: aggregatedData[2020].total ?? 0,
+				ages: aggregatedData[2020].ages ?? [],
+			};
 		}
-		return 0;
-	}, [ageData]);
+
+		return { medianAge: 0, ageGroups: ageGroups, total: 0, ages: [] };
+	}, [wardCode, dataset, aggregatedData, codeMapper]);
 
 	return (
 		<div
-			className={`p-2 rounded transition-all cursor-pointer ${isActive
-				? `${colors.bg} border-2 ${colors.border}`
-				: `bg-white/60 border-2 border-gray-200/80 hover:${colors.border.replace('border-', 'hover:border-')}`
-				}`}
-			onClick={() => setActiveDatasetId('population')}
+			className={`p-2 rounded transition-all cursor-pointer ${
+				isActive
+					? `${colors.bg} border-2 ${colors.border}`
+					: `bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300`
+			}`}
+			onClick={() => setActiveDatasetId("population")}
 		>
 			<div className="flex items-center justify-between mb-2">
 				<h3 className="text-xs font-bold">Age Distribution (2020)</h3>
@@ -67,7 +121,12 @@ export default function AgeDistributionProps({ ageData, total, ageGroups, setAct
 					</span>
 				)}
 			</div>
-			<AgeDistributionChart ageData={ageData} total={total} ageGroups={ageGroups} isActive={isActive} />
+			<AgeDistributionChart
+				ages={ages}
+				total={total}
+				ageGroups={ageGroups}
+				isActive={isActive}
+			/>
 		</div>
 	);
 }

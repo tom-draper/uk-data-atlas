@@ -1,7 +1,6 @@
 // components/PopulationChart.tsx
 'use client';
-import { BoundaryGeojson, PopulationDataset } from '@lib/types';
-import { usePopulationStats, useAgeData } from '@lib/hooks/usePopulationStats';
+import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset } from '@lib/types';
 import PopulationDensity from '@/components/population/density/PopulationDensity';
 import AgeChart from './population/age/AgeDistribution';
 import Gender from './population/gender/Gender';
@@ -10,9 +9,9 @@ import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 export interface PopulationChartProps {
 	activeDatasetId: string;
 	availableDatasets: Record<string, PopulationDataset>;
+	aggregatedData: AggregatedPopulationData | null;
 	geojson: BoundaryGeojson | null;
 	wardCode: string;
-	wardName: string;
 	setActiveDatasetId: (datasetId: string) => void;
 	codeMapper: CodeMapper
 }
@@ -20,18 +19,13 @@ export interface PopulationChartProps {
 export default function PopulationChart({
 	activeDatasetId,
 	availableDatasets,
+	aggregatedData,
 	geojson,
 	wardCode,
-	wardName,
 	setActiveDatasetId,
 	codeMapper
 }: PopulationChartProps) {
-	const population = availableDatasets['population']?.populationData || {};
-	const populationStats = usePopulationStats(population, wardCode, wardName, codeMapper);
-	const ageData = useAgeData(population, wardCode, wardName, codeMapper);
-
-	const total = populationStats?.total || 0;
-	const ageGroups = populationStats?.ageGroups || { total: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } };
+	const dataset = availableDatasets['population'] || {};
 
 	return (
 		<div className="pt-2.5 border-t border-gray-200/80">
@@ -40,24 +34,26 @@ export default function PopulationChart({
 				<PopulationDensity
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
+					aggregatedData={aggregatedData}
 					geojson={geojson}
 					wardCode={wardCode}
-					total={total}
 				/>
 				<AgeChart
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
-					ageData={ageData}
-					total={total}
-					ageGroups={ageGroups.total}
+					aggregatedData={aggregatedData}
+					dataset={dataset}
+					wardCode={wardCode}
+					codeMapper={codeMapper}
 				/>
 				<Gender
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
-					population={population}
+					dataset={dataset}
+					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					codeMapper={codeMapper}
-				/>
+				/> 
 			</div>
 		</div>
 	);

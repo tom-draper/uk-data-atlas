@@ -1,16 +1,18 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
 import { useMemo } from 'react';
-import { PopulationDataset } from '@/lib/types';
+import { AggregatedPopulationData, PopulationDataset } from '@/lib/types';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 
 export interface GenderBalanceByAgeChartProps {
-	population: PopulationDataset['populationData'];
+	dataset: PopulationDataset;
+	aggregatedData: AggregatedPopulationData | null;
 	wardCode: string;
 	codeMapper: CodeMapper;
 }
 
 export default function GenderBalanceByAgeChart({
-	population,
+	dataset,
+	aggregatedData,
 	wardCode,
 	codeMapper
 }: GenderBalanceByAgeChartProps) {
@@ -19,7 +21,7 @@ export default function GenderBalanceByAgeChart({
 		const ageRange = Array.from({ length: 91 }, (_, i) => i);
 		const data: Array<{ age: number; males: number; females: number }> = [];
 
-		if (wardCode) {
+		if (wardCode && dataset) {
 			// Try to find the ward data - population uses 2021 codes
 			const codesToTry = [
 				wardCode,
@@ -28,9 +30,9 @@ export default function GenderBalanceByAgeChart({
 
 			let foundData = false;
 			for (const code of codesToTry) {
-				if (population[code]) {
-					const males = population[code].males;
-					const females = population[code].females;
+				if (dataset.populationData[code]) {
+					const males = dataset.populationData[code].males;
+					const females = dataset.populationData[code].females;
 
 					for (const age of ageRange) {
 						data.push({
@@ -49,33 +51,14 @@ export default function GenderBalanceByAgeChart({
 			if (!foundData) {
 				return [];
 			}
+		} else if (aggregatedData) {
+			return aggregatedData[2020].genderAgeData;
 		} else {
-			// Aggregate all wards
-			const aggregate = {
-				males: {} as Record<string, number>,
-				females: {} as Record<string, number>
-			};
-
-			for (const ward of Object.values(population)) {
-				Object.entries(ward.males).forEach(([age, count]) => {
-					aggregate.males[age] = (aggregate.males[age] || 0) + count;
-				});
-				Object.entries(ward.females).forEach(([age, count]) => {
-					aggregate.females[age] = (aggregate.females[age] || 0) + count;
-				});
-			}
-
-			for (const age of ageRange) {
-				data.push({
-					age,
-					males: aggregate.males[age.toString()] || 0,
-					females: aggregate.females[age.toString()] || 0
-				});
-			}
+			return [];
 		}
 
 		return data;
-	}, [population, wardCode, codeMapper]);
+	}, [dataset, wardCode, codeMapper]);
 
 	if (ageData.length === 0) {
 		return <div className="text-xs h-[111px] text-gray-400/80 text-center grid place-items-center">
