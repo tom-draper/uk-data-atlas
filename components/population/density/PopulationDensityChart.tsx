@@ -1,36 +1,12 @@
 // components/population/density/PopulationDensityChart.tsx
 import { BoundaryGeojson } from "@/lib/types";
+import { polygonAreaSqKm } from "@/lib/utils/populationHelpers";
 
 interface PopulationDensityChartProps {
 	geojson: BoundaryGeojson | null;
 	total: number;
 	wardCode: string | null;
 }
-
-const polygonAreaSqKm = (coordinates: number[][][]) => {
-	const R = 6371; // Earth's radius in km
-
-	// Assuming coordinates[0] is the outer ring
-	const ring = coordinates[0];
-	let area = 0;
-
-	for (let i = 0; i < ring.length - 1; i++) {
-		const [lon1, lat1] = ring[i];
-		const [lon2, lat2] = ring[i + 1];
-
-		// Convert degrees to radians
-		const x1 = (lon1 * Math.PI) / 180;
-		const y1 = (lat1 * Math.PI) / 180;
-		const x2 = (lon2 * Math.PI) / 180;
-		const y2 = (lat2 * Math.PI) / 180;
-
-		// Spherical excess approximation for small polygons
-		area += (x2 - x1) * (2 + Math.sin(y1) + Math.sin(y2));
-	}
-
-	area = (area * R * R) / 2;
-	return Math.abs(area);
-};
 
 const getWardPopulationDensity = (feature: any, total: number) => {
 	// Compute approximate area

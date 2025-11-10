@@ -19,6 +19,8 @@ export default function PopulationDensity({ aggregatedData, geojson, wardCode, s
 		text: 'bg-emerald-200 text-emerald-800'
 	};
 
+	const total = aggregatedData ? aggregatedData[2020]?.populationStats.total : 0;
+
 	return (
 		<div
 			className={`p-2 rounded transition-all cursor-pointer ${isActive
@@ -30,7 +32,7 @@ export default function PopulationDensity({ aggregatedData, geojson, wardCode, s
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">Population Density (2020)</h3>
 			</div>
-			<PopulationDensityChart geojson={geojson} wardCode={wardCode} total={aggregatedData[2020]?.populationStats.total} />
+			<PopulationDensityChart geojson={geojson} wardCode={wardCode} total={total} />
 		</div>
 	);
 }

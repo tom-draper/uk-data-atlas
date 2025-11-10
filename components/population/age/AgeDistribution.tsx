@@ -56,21 +56,28 @@ export default function AgeDistribution({
 
 				const agesCountTotal = wardData.total;
 
-				const agesArray = Object.entries(agesCountTotal).map(([age, count]) => ({
-					age: Number(age),
-					count,
+				// Build ages array 0-99
+				const agesArray = Array.from({ length: 100 }, (_, i) => ({
+					age: i,
+					count: agesCountTotal[i.toString()] || 0
 				}));
 
-				const totalPopulation = Object.values(agesCountTotal).reduce(
-					(sum, c) => sum + c,
-					0
-				);
+				// Apply 90+ smoothing (same as aggregated method)
+				const age90Plus = agesArray[90].count;
+				const decayRate = 0.15;
+				const weights = Array.from({ length: 10 }, (_, i) => Math.exp(-decayRate * i));
+				const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+				for (let i = 90; i < 100; i++) {
+					const weight = weights[i - 90];
+					agesArray[i] = { age: i, count: (age90Plus * weight) / totalWeight };
+				}
+
+				const totalPopulation = agesArray.reduce((sum, { count }) => sum + count, 0);
 
 				// Compute median age
 				let cumulative = 0;
 				let median = 0;
-				const sortedAges = agesArray.sort((a, b) => a.age - b.age);
-				for (const { age, count } of sortedAges) {
+				for (const { age, count } of agesArray) {
 					cumulative += count;
 					if (cumulative >= totalPopulation / 2) {
 						median = age;
@@ -78,9 +85,8 @@ export default function AgeDistribution({
 					}
 				}
 
-				// Fill grouped buckets for total/males/females
-				for (const [ageStr, count] of Object.entries(agesCountTotal)) {
-					const age = Number(ageStr);
+				// Fill grouped buckets
+				for (const { age, count } of agesArray) {
 					const key = getAgeGroupKey(age);
 					ageGroups[key] += count;
 				}
@@ -95,8 +101,8 @@ export default function AgeDistribution({
 		} else if (aggregatedData) {
 			return {
 				medianAge: aggregatedData[2020].medianAge ?? 0,
-				ageGroups: aggregatedData[2020].ageGroups.total ?? ageGroups,
-				total: aggregatedData[2020].total ?? 0,
+				ageGroups: aggregatedData[2020].populationStats.ageGroups.total ?? ageGroups,
+				total: aggregatedData[2020].populationStats.total ?? 0,
 				ages: aggregatedData[2020].ages ?? [],
 			};
 		}
