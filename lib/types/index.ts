@@ -103,37 +103,33 @@ export interface GeneralElectionDataset {
 }
 
 export interface AggregatedLocalElectionData {
-    2024: PartyVotes;
-    2023: PartyVotes;
-    2022: PartyVotes;
-    2021: PartyVotes;
+    2024: WardStats;
+    2023: WardStats;
+    2022: WardStats;
+    2021: WardStats;
+}
+
+export interface WardStats {
+    partyVotes: PartyVotes,
+    electorate: number
+    totalVotes: number
 }
 
 export interface AggregateGeneralElectionData {
-    2024: {
-        totalSeats: number;
-        partySeats: Record<string, number>;
-        totalVotes: number;
-        partyVotes: PartyVotes;
-    },
-    2019: {
-        totalSeats: number;
-        partySeats: Record<string, number>;
-        totalVotes: number;
-        partyVotes: PartyVotes;
-    },
-    2017: {
-        totalSeats: number;
-        partySeats: Record<string, number>;
-        totalVotes: number;
-        partyVotes: PartyVotes;
-    },
-    2015: {
-        totalSeats: number;
-        partySeats: Record<string, number>;
-        totalVotes: number;
-        partyVotes: PartyVotes;
-    }
+    2024: ConstituencyStats,
+    2019: ConstituencyStats,
+    2017: ConstituencyStats,
+    2015: ConstituencyStats
+}
+
+export interface ConstituencyStats {
+    totalSeats: number;
+    partySeats: Record<string, number>;
+    totalVotes: number;
+    partyVotes: PartyVotes;
+    electorate: number;
+    validVotes: number;
+    invalidVotes: number;
 }
 
 export interface AggregatedPopulationData {
@@ -143,6 +139,8 @@ export interface AggregatedPopulationData {
         ages: Array<{ age: number; count: number }>;
         genderAgeData: Array<{ age: number; males: number; females: number }>;
         medianAge: number;
+        totalArea: number;
+        density: number;
     }
 }
 

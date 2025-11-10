@@ -15,12 +15,7 @@ const parseVotes = (value: any): number => {
 	return isNaN(parsed) ? 0 : parsed;
 };
 
-// Calculate turnout percentage from electorate and valid votes
-const calculateTurnout = (validVotes: number, invalidVotes: number, electorate: number): number | undefined => {
-	if (!electorate || electorate === 0) return undefined;
-	const totalVotes = validVotes + invalidVotes;
-	return (totalVotes / electorate) * 100;
-};
+
 
 const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 	console.log('Loading general election 2024 data...');
@@ -84,7 +79,7 @@ const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 						validVotes,
 						invalidVotes,
 						majority: parseVotes(row['Majority']),
-						turnoutPercent: calculateTurnout(validVotes, invalidVotes, electorate),
+						// turnoutPercent: calculateTurnout(validVotes, invalidVotes, electorate),
 						partyVotes
 					};
 				}
@@ -168,7 +163,7 @@ const parseGeneralElectionPre2024 = async (year: 2019 | 2017 | 2015): Promise<Ge
 						validVotes,
 						invalidVotes,
 						majority: parseVotes(row['Majority']),
-						turnoutPercent: calculateTurnout(validVotes, invalidVotes, electorate),
+						// turnoutPercent: calculateTurnout(validVotes, invalidVotes, electorate),
 						partyVotes
 					};
 				}

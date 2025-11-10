@@ -1,11 +1,15 @@
 // components/population/density/PopulationDensityChart.tsx
-import { BoundaryGeojson } from "@/lib/types";
-import { polygonAreaSqKm } from "@/lib/utils/populationHelpers";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset } from "@/lib/types";
+import { calculateTotal, polygonAreaSqKm } from "@/lib/utils/populationHelpers";
+import { useMemo } from "react";
 
 interface PopulationDensityChartProps {
+	dataset: PopulationDataset;
+	aggregatedData: AggregatedPopulationData | null;
 	geojson: BoundaryGeojson | null;
-	total: number;
 	wardCode: string | null;
+	codeMapper: CodeMapper;
 }
 
 const getWardPopulationDensity = (feature: any, total: number) => {
@@ -28,43 +32,40 @@ const detectPropertyKey = (geojson: BoundaryGeojson) => {
 }
 
 const PopulationDensityChart = ({
-	total,
+	dataset,
+	aggregatedData,
 	geojson,
 	wardCode,
+	codeMapper,
 }: PopulationDensityChartProps) => {
-	if (total === 0) {
-		return (
-			<div className="text-xs h-13 text-gray-400/80 text-center grid place-items-center mb-1">
-				<div>No data available</div>
-			</div>
-		);
-	}
+	const { density, areaSqKm, total } = useMemo(() => {
+		if (wardCode && geojson) {
+			const codesToTry = [
+				wardCode,
+				codeMapper.convertWardCode(wardCode, 2021)
+			].filter((code): code is string => code !== null);
+			const wardCodeProp = detectPropertyKey(geojson);
+			for (const code of codesToTry) {
+				if (dataset.populationData[code]) {
+					const wardFeature = geojson.features.find((f) => f.properties?.[wardCodeProp] === code);
 
-	let densityInfo = null;
-
-	if (wardCode && geojson) {
-		const wardCodeProp = detectPropertyKey(geojson);
-		// Find the specific ward feature
-		const wardFeature = geojson.features.find((f) => f.properties?.[wardCodeProp] === wardCode);
-
-		if (wardFeature) {
-			densityInfo = getWardPopulationDensity(wardFeature, total);
+					if (wardFeature) {
+						const total = calculateTotal(dataset.populationData[code].total);
+						return {
+							...getWardPopulationDensity(wardFeature, total),
+							total
+						}
+					}
+				}
+			}
+		} else if (aggregatedData) {
+			return { density: aggregatedData[2020].density, areaSqKm: aggregatedData[2020].totalArea, total: aggregatedData[2020].populationStats.total }
 		}
-	} else if (geojson) {
-		// Calculate average density across all wards
-		const allDensities = geojson.features.map((feature) => {
-			// You'd need population data per ward here
-			// This is a simplified version
-			return getWardPopulationDensity(feature, total / geojson.features.length);
-		});
 
-		const totalArea = allDensities.reduce((sum, d) => sum + d.areaSqKm, 0);
-		const avgDensity = totalArea > 0 ? total / totalArea : 0;
+		return { density: null, areaSqKm: null, total: null };
+	}, [geojson, dataset, wardCode])
 
-		densityInfo = { density: avgDensity, areaSqKm: totalArea };
-	}
-
-	if (densityInfo === null) {
+	if (!total) {
 		return (
 			<div className="text-xs h-13 text-gray-400/80 text-center grid place-items-center mb-1">
 				<div>No data available</div>
@@ -79,13 +80,13 @@ const PopulationDensityChart = ({
 		return { label: 'High', color: 'bg-red-500', count: 50 };
 	};
 
-	const category = getDensityCategory(densityInfo.density);
-	
+	const category = getDensityCategory(density);
+
 	// Create a grid visualization
 	const gridWidth = 18;
 	const gridHeight = 4;
 	const totalSquares = gridWidth * gridHeight;
-	
+
 	// Color variations for each category
 	const colorVariations = {
 		'bg-green-500': ['bg-green-400', 'bg-green-500', 'bg-green-600'],
@@ -95,21 +96,21 @@ const PopulationDensityChart = ({
 
 	// Create array of all indices and shuffle them
 	const indices = Array.from({ length: totalSquares }, (_, i) => i);
-	
+
 	// Seeded random shuffle for consistency based on density
-	const seed = Math.floor(densityInfo.density);
+	const seed = Math.floor(density);
 	let currentSeed = seed;
 	const seededRandom = () => {
 		currentSeed = (currentSeed * 9301 + 49297) % 233280;
 		return currentSeed / 233280;
 	};
-	
+
 	const shuffledIndices = indices.sort(() => seededRandom() - 0.5);
-	
+
 	// Map of indices to their colors
 	const squareColors = new Map();
 	const variations = colorVariations[category.color as keyof typeof colorVariations];
-	
+
 	shuffledIndices.slice(0, category.count).forEach((index) => {
 		const colorIndex = Math.floor(seededRandom() * variations.length);
 		squareColors.set(index, variations[colorIndex]);
@@ -117,10 +118,9 @@ const PopulationDensityChart = ({
 
 	return (
 		<div className="relative h-14 overflow-hidden">
-			{/* Background grid - full width */}
-			<div 
+			<div
 				className="absolute inset-0 grid gap-0.5 p-0 opacity-25"
-				style={{ 
+				style={{
 					gridTemplateColumns: `repeat(${gridWidth}, 1fr)`,
 					gridTemplateRows: `repeat(${gridHeight}, 1fr)`
 				}}
@@ -128,11 +128,10 @@ const PopulationDensityChart = ({
 				{Array.from({ length: totalSquares }).map((_, i) => (
 					<div
 						key={i}
-						className={`rounded-xs transition-all duration-300 ${
-							squareColors.has(i)
-								? squareColors.get(i)
-								: 'bg-gray-200'
-						}`}
+						className={`rounded-xs transition-all duration-300 ${squareColors.has(i)
+							? squareColors.get(i)
+							: 'bg-gray-200'
+							}`}
 					/>
 				))}
 			</div>
@@ -142,7 +141,7 @@ const PopulationDensityChart = ({
 				{/* Left side - Main metric */}
 				<div className="flex items-baseline gap-2">
 					<div className="text-xl font-bold">
-						{Math.round(densityInfo.density).toLocaleString()}
+						{Math.round(density).toLocaleString()}
 					</div>
 					<div className="text-sm">
 						people/km²
@@ -160,7 +159,7 @@ const PopulationDensityChart = ({
 					<div className="flex">
 						<div className="mr-1">Area</div>
 						<div className="font-semibold">
-							{densityInfo.areaSqKm.toFixed(1)} km²
+							{areaSqKm.toFixed(1)} km²
 						</div>
 					</div>
 				</div>

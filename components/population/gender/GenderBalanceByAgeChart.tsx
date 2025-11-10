@@ -16,7 +16,6 @@ export default function GenderBalanceByAgeChart({
 	wardCode,
 	codeMapper
 }: GenderBalanceByAgeChartProps) {
-	// Collect raw male/female per age (0-90)
 	const ageData = useMemo(() => {
 		const ageRange = Array.from({ length: 91 }, (_, i) => i);
 		const data: Array<{ age: number; males: number; females: number }> = [];
@@ -28,7 +27,6 @@ export default function GenderBalanceByAgeChart({
 				codeMapper.convertWardCode(wardCode, 2021)
 			].filter((code): code is string => code !== null);
 
-			let foundData = false;
 			for (const code of codesToTry) {
 				if (dataset.populationData[code]) {
 					const males = dataset.populationData[code].males;
@@ -41,20 +39,11 @@ export default function GenderBalanceByAgeChart({
 							females: females[age.toString()] || 0
 						});
 					}
-
-					foundData = true;
-					break; // Found the data, stop looking
+					break;
 				}
-			}
-
-			// If no data found, return empty array
-			if (!foundData) {
-				return [];
 			}
 		} else if (aggregatedData) {
 			return aggregatedData[2020].genderAgeData;
-		} else {
-			return [];
 		}
 
 		return data;

@@ -1,7 +1,7 @@
 // lib/population/utils.ts
 import { AgeGroups, PopulationDataset, PopulationWardData } from '@lib/types';
 
-export const calculateTotal = (ageData: { [age: string]: number }): number => {
+export const calculateTotal = (ageData: { [age: string]: number }) => {
 	return Object.values(ageData).reduce((sum, count) => sum + count, 0);
 };
 

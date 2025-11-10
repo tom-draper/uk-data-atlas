@@ -58,7 +58,7 @@ export default function AgeDistributionChart({ ages, total, ageGroups, isActive 
 			</div>
 
 			{/* Age group bars */}
-			<div 
+			<div
 				className={`space-y-1.5 transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${isActive ? 'mt-3' : ''}`}
 				style={{
 					maxHeight: isActive ? '104px' : '0px',

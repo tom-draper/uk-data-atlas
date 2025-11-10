@@ -34,15 +34,17 @@ export default function PopulationChart({
 				<PopulationDensity
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
+					dataset={dataset}
 					aggregatedData={aggregatedData}
 					geojson={geojson}
 					wardCode={wardCode}
+					codeMapper={codeMapper}
 				/>
 				<AgeChart
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
-					aggregatedData={aggregatedData}
 					dataset={dataset}
+					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					codeMapper={codeMapper}
 				/>

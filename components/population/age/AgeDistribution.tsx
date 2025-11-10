@@ -29,9 +29,7 @@ export default function AgeDistribution({
 		text: "bg-emerald-200 text-emerald-800",
 	};
 
-	// 🧠 Memoized calculation for ward/aggregated population data
 	const { medianAge, ageGroups, total, ages } = useMemo(() => {
-		// Helper function for age group mapping
 		const getAgeGroupKey = (age: number): keyof AgeGroups => {
 			if (age <= 17) return "0-17";
 			if (age <= 29) return "18-29";

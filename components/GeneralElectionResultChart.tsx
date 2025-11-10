@@ -2,6 +2,7 @@
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
+import { calculateTurnout } from '@/lib/utils/generalElectionHelpers';
 import { AggregateGeneralElectionData, GeneralElectionDataset, PartyVotes } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
@@ -15,7 +16,7 @@ interface GeneralElectionResultChartProps {
 }
 
 interface CompactBarProps {
-	data: PartyVotes | undefined;
+	data: PartyVotes | null;
 	dataset: GeneralElectionDataset;
 	isAggregated: boolean;
 	isActive: boolean;
@@ -115,9 +116,9 @@ CompactBar.displayName = 'CompactBar';
 
 interface YearBarProps {
 	year: number;
-	data: PartyVotes | undefined;
+	data: PartyVotes | null;
 	dataset: GeneralElectionDataset;
-	turnout: number | undefined;
+	turnout: number | null;
 	isActive: boolean;
 	isAggregated: boolean;
 	aggregatedData: AggregateGeneralElectionData | null;
@@ -165,7 +166,7 @@ const YearBar = React.memo(({
 					</h3>
 				</div>
 				<div className="flex items-center gap-1.5">
-					{turnout !== undefined && (
+					{turnout !== null && (
 						<span className="text-[9px] text-gray-500 font-medium">
 							{turnout.toFixed(1)}% turnout
 						</span>
@@ -198,26 +199,16 @@ export default function GeneralElectionResultChart({
 	const yearDataMap = useMemo(() => {
 		const map: Record<number, {
 			dataset: GeneralElectionDataset | null;
-			chartData: PartyVotes | undefined;
-			turnout: number | undefined;
+			chartData: PartyVotes | null;
+			turnout: number | null;
 			isAggregated: boolean;
 		}> = {} as any;
 
 		for (const year of ELECTION_YEARS) {
 			const dataset = availableDatasets[`general-${year}`];
 
-			if (!dataset || !aggregatedData) {
-				map[year] = {
-					dataset: null,
-					chartData: undefined,
-					turnout: undefined,
-					isAggregated: false
-				};
-				continue;
-			}
-
 			// If we have a specific constituency selected (hovering), use that constituency's data
-			if (constituencyCode) {
+			if (constituencyCode && dataset) {
 				let data = dataset.constituencyData[constituencyCode];
 
 				// If not found, try converting the ward code to this year
@@ -246,31 +237,30 @@ export default function GeneralElectionResultChart({
 					map[year] = {
 						dataset,
 						chartData,
-						turnout: data.turnoutPercent,
+						turnout: calculateTurnout(data.validVotes, data.invalidVotes, data.electorate),
 						isAggregated: false
 					};
 				} catch (e) {
 					map[year] = {
 						dataset,
-						chartData: undefined,
-						turnout: undefined,
+						chartData: null,
+						turnout: null,
 						isAggregated: false
 					};
 				}
-
 			} else if (aggregatedData && aggregatedData[year]?.partyVotes) {
 				// No constituency selected - use aggregated data for the location
 				map[year] = {
 					dataset,
 					chartData: aggregatedData[year].partyVotes as PartyVotes,
-					turnout: undefined, // Could calculate average turnout if needed
+					turnout: calculateTurnout(aggregatedData[year].validVotes, aggregatedData[year].invalidVotes, aggregatedData[year].electorate), // Could calculate average turnout if needed
 					isAggregated: true
 				};
 			} else {
 				map[year] = {
 					dataset,
-					chartData: undefined,
-					turnout: undefined,
+					chartData: null,
+					turnout: null,
 					isAggregated: false
 				};
 			}
@@ -279,20 +269,15 @@ export default function GeneralElectionResultChart({
 		return map;
 	}, [constituencyCode, availableDatasets, aggregatedData]);
 
-	// Filter to only show years with datasets
-	const availableYears = ELECTION_YEARS.filter(year => yearDataMap[year].dataset);
-
-	if (availableYears.length === 0) {
-		return null;
-	}
-
 	return (
 		<div className="space-y-2">
 			<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
-			{availableYears.map(year => {
+			{ELECTION_YEARS.map(year => {
 				const { dataset, chartData, turnout, isAggregated } = yearDataMap[year];
 
-				if (!dataset) return null;
+				if (!dataset) {
+					return null;
+				}
 
 				return (
 					<YearBar

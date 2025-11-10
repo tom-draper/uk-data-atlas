@@ -1,6 +1,6 @@
 // components/ChartPanel.tsx
 'use client';
-import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, PopulationWardData, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData, BoundaryGeojson, AggregatedPopulationData } from '@lib/types';
+import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData, BoundaryGeojson, AggregatedPopulationData } from '@lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
@@ -83,7 +83,7 @@ export default memo(function ChartPanel({
 						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
 					/>
-					
+
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
 						availableDatasets={localElectionDatasets}
@@ -92,9 +92,9 @@ export default memo(function ChartPanel({
 						wardCode={selectedWard?.wardCode?.toString() ?? ''}
 						codeMapper={codeMapper}
 					/>
-					
+
 					<PopulationChart
-					 	activeDatasetId={activeDatasetId}
+						activeDatasetId={activeDatasetId}
 						availableDatasets={populationDatasets}
 						aggregatedData={aggregatedPopulationData}
 						setActiveDatasetId={setActiveDatasetId}

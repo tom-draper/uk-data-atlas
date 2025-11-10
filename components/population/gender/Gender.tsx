@@ -46,16 +46,14 @@ export default function Gender({
 					const ward = dataset.populationData[code];
 					males = Object.values(ward.males).reduce((sum, count) => sum + count, 0);
 					females = Object.values(ward.females).reduce((sum, count) => sum + count, 0);
-					break
+					return { totalMales: males, totalFemales: females }
 				}
 			}
-
-			return { totalMales: males, totalFemales: females }
 		} else if (aggregatedData) {
 			return { totalMales: aggregatedData[2020].populationStats.males, totalFemales: aggregatedData[2020].populationStats.females }
-		} else {
-			return { totalMales: 0, totalFemales: 0 }
 		}
+
+		return { totalMales: 0, totalFemales: 0 }
 	}, [dataset, wardCode, codeMapper]);
 
 	return (

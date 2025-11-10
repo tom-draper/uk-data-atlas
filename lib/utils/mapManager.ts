@@ -1,5 +1,5 @@
 // lib/utils/mapManager.ts
-import { PartyVotes, LocalElectionWardData, Party, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, PopulationWardData, AgeData, PopulationStats, AgeGroups } from '@lib/types';
+import { PartyVotes, LocalElectionWardData, Party, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, PopulationStats, AgeGroups, ConstituencyStats, WardStats } from '@lib/types';
 import { PARTY_COLORS } from '../data/parties';
 import { GeoJSONFeature } from 'mapbox-gl';
 import { calculateAgeGroups, calculateMedianAge, calculateTotal, polygonAreaSqKm } from './populationHelpers';
@@ -14,13 +14,6 @@ interface MapManagerCallbacks {
 interface LocationCodeInfo {
     property: string | null;
     fallbackToWardMapping: boolean;
-}
-
-interface ConstituencyStats {
-    totalSeats: number;
-    partySeats: Record<string, number>;
-    totalVotes: number;
-    partyVotes: Record<string, number>;
 }
 
 type MapMode = 'local-election' | 'general-election' | 'population';
@@ -290,7 +283,7 @@ export class MapManager {
         wardData: LocalElectionDataset['wardData'],
         location: string | null = null,
         datasetId: string | null = null,
-    ): PartyVotes {
+    ): WardStats {
         const cacheKey = `local-election-${location}-${datasetId}`;
 
         if (this.cache.has(cacheKey)) {
@@ -300,20 +293,26 @@ export class MapManager {
 
         console.log(`EXPENSIVE: calculateLocalElectionStats: [${cacheKey}] Processing ${geojson.length} wards`);
 
-        const aggregated: PartyVotes = {
-            LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0,
-            DUP: 0, PC: 0, SNP: 0, SF: 0, APNI: 0, SDLP: 0,
+        const aggregated = {
+            partyVotes: {
+                LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0,
+                DUP: 0, PC: 0, SNP: 0, SF: 0, APNI: 0, SDLP: 0
+            },
+            electorate: 0,
+            totalVotes: 0
         };
 
         geojson.forEach((feature) => {
             const wardCode = feature.properties[wardCodeProp];
             const ward = wardData[wardCode];
-
+            
             if (ward) {
                 // Aggregate party data
-                (Object.keys(aggregated) as Array<keyof PartyVotes>).forEach(party => {
-                    aggregated[party] += (ward.partyVotes[party] as number) || 0;
+                (Object.keys(aggregated.partyVotes) as Array<keyof PartyVotes>).forEach(party => {
+                    aggregated.partyVotes[party] += (ward.partyVotes[party] as number) || 0;
                 });
+                aggregated.electorate += ward.electorate;
+                aggregated.totalVotes += ward.totalVotes;
             }
         });
 
@@ -339,6 +338,9 @@ export class MapManager {
 
         const aggregated: ConstituencyStats = {
             totalSeats: 0,
+            electorate: 0,
+            validVotes: 0,
+            invalidVotes: 0,
             partySeats: {},
             totalVotes: 0,
             partyVotes: {},
@@ -351,6 +353,9 @@ export class MapManager {
             if (!constituency) return;
 
             aggregated.totalSeats += 1;
+            aggregated.electorate += constituency.electorate;
+            aggregated.validVotes += constituency.validVotes;
+            aggregated.invalidVotes += constituency.invalidVotes;
 
             const winningParty = getWinningParty(constituency);
             if (winningParty) {
@@ -370,7 +375,6 @@ export class MapManager {
         return aggregated;
     }
 
-
     private calculatePopulationStatsInternal(
         geojson: BoundaryGeojson['features'],
         wardCodeProp: string,
@@ -383,6 +387,8 @@ export class MapManager {
         ages: Array<{ age: number; count: number }>;
         genderAgeData: Array<{ age: number; males: number; females: number }>;
         medianAge: number;
+        totalArea: number;
+        density: number;
     } | null {
         const cacheKey = `population-${location}-${datasetId}`;
 
@@ -394,6 +400,7 @@ export class MapManager {
         console.log(`EXPENSIVE: calculatePopulationStats: [${cacheKey}] Processing ${geojson.length} wards`);
 
         let totalPop = 0, malesPop = 0, femalesPop = 0;
+        let totalArea = 0;
         const aggregatedAgeGroups = {
             total: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
             males: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
@@ -401,12 +408,20 @@ export class MapManager {
         };
         const ageData: { [age: string]: number } = {};
 
+        // Aggregate data for gender distribution (for later use)
+        const aggregate = {
+            males: {} as Record<string, number>,
+            females: {} as Record<string, number>
+        };
+
+        // Single loop to gather all data
         geojson.forEach((feature) => {
             const wardCode = feature.properties[wardCodeProp];
             const ward = populationData[wardCode];
 
             if (!ward) return;
 
+            // Accumulate totals and aggregate data in one pass
             totalPop += calculateTotal(ward.total);
             malesPop += calculateTotal(ward.males);
             femalesPop += calculateTotal(ward.females);
@@ -423,9 +438,23 @@ export class MapManager {
                 aggregatedAgeGroups.females[ageGroup] += wardAgeGroups.females[ageGroup];
             });
 
+            // Aggregate all age data in single loop
             Object.entries(ward.total).forEach(([age, count]) => {
                 ageData[age] = (ageData[age] || 0) + count;
             });
+
+            Object.entries(ward.males).forEach(([age, count]) => {
+                aggregate.males[age] = (aggregate.males[age] || 0) + count;
+            });
+
+            Object.entries(ward.females).forEach(([age, count]) => {
+                aggregate.females[age] = (aggregate.females[age] || 0) + count;
+            });
+
+            // Calculate area for this ward
+            const coordinates = feature.geometry.coordinates;
+            const areaSqKm = polygonAreaSqKm(coordinates);
+            totalArea += areaSqKm;
         });
 
         const populationStats: PopulationStats = {
@@ -451,36 +480,14 @@ export class MapManager {
             ages[i] = { age: i, count: (age90Plus * weight) / totalWeight };
         }
 
-        // Process gender data by age (0-90)
+        // Process gender data by age (0-90) - data already aggregated above
         const ageRange = Array.from({ length: 91 }, (_, i) => i);
-        const genderAgeData: Array<{ age: number; males: number; females: number }> = [];
-
-        const aggregate = {
-            males: {} as Record<string, number>,
-            females: {} as Record<string, number>
-        };
-
-        geojson.forEach((feature) => {
-            const wardCode = feature.properties[wardCodeProp];
-            const ward = populationData[wardCode];
-
-            if (!ward) return;
-
-            Object.entries(ward.males).forEach(([age, count]) => {
-                aggregate.males[age] = (aggregate.males[age] || 0) + count;
-            });
-            Object.entries(ward.females).forEach(([age, count]) => {
-                aggregate.females[age] = (aggregate.females[age] || 0) + count;
-            });
-        });
-
-        for (const age of ageRange) {
-            genderAgeData.push({
+        const genderAgeData: Array<{ age: number; males: number; females: number }> =
+            ageRange.map(age => ({
                 age,
                 males: aggregate.males[age.toString()] || 0,
                 females: aggregate.females[age.toString()] || 0
-            });
-        }
+            }));
 
         // Calculate median age
         let medianAge = 0;
@@ -496,17 +503,159 @@ export class MapManager {
             }
         }
 
+        // Calculate overall density
+        const density = totalArea > 0 ? totalPop / totalArea : 0;
+
         const result = {
             populationStats,
             ageData,
             ages,
             genderAgeData,
             medianAge,
+            totalArea,
+            density,
         };
 
         this.cache.set(cacheKey, result);
         return result;
     }
+
+    // private calculatePopulationStatsInternal(
+    //     geojson: BoundaryGeojson['features'],
+    //     wardCodeProp: string,
+    //     populationData: PopulationDataset['populationData'],
+    //     location: string | null = null,
+    //     datasetId: string | null = null,
+    // ): {
+    //     populationStats: PopulationStats;
+    //     ageData: { [age: string]: number };
+    //     ages: Array<{ age: number; count: number }>;
+    //     genderAgeData: Array<{ age: number; males: number; females: number }>;
+    //     medianAge: number;
+    // } | null {
+    //     const cacheKey = `population-${location}-${datasetId}`;
+
+    //     if (this.cache.has(cacheKey)) {
+    //         console.log(`CACHE HIT: calculatePopulationStats: [${cacheKey}]`);
+    //         return this.cache.get(cacheKey);
+    //     }
+
+    //     console.log(`EXPENSIVE: calculatePopulationStats: [${cacheKey}] Processing ${geojson.length} wards`);
+
+    //     let totalPop = 0, malesPop = 0, femalesPop = 0;
+    //     const aggregatedAgeGroups = {
+    //         total: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
+    //         males: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
+    //         females: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups
+    //     };
+    //     const ageData: { [age: string]: number } = {};
+
+    //     geojson.forEach((feature) => {
+    //         const wardCode = feature.properties[wardCodeProp];
+    //         const ward = populationData[wardCode];
+
+    //         if (!ward) return;
+
+    //         totalPop += calculateTotal(ward.total);
+    //         malesPop += calculateTotal(ward.males);
+    //         femalesPop += calculateTotal(ward.females);
+
+    //         const wardAgeGroups = {
+    //             total: calculateAgeGroups(ward.total),
+    //             males: calculateAgeGroups(ward.males),
+    //             females: calculateAgeGroups(ward.females)
+    //         };
+
+    //         (Object.keys(aggregatedAgeGroups.total) as Array<keyof AgeGroups>).forEach(ageGroup => {
+    //             aggregatedAgeGroups.total[ageGroup] += wardAgeGroups.total[ageGroup];
+    //             aggregatedAgeGroups.males[ageGroup] += wardAgeGroups.males[ageGroup];
+    //             aggregatedAgeGroups.females[ageGroup] += wardAgeGroups.females[ageGroup];
+    //         });
+
+    //         Object.entries(ward.total).forEach(([age, count]) => {
+    //             ageData[age] = (ageData[age] || 0) + count;
+    //         });
+    //     });
+
+    //     const populationStats: PopulationStats = {
+    //         total: totalPop,
+    //         males: malesPop,
+    //         females: femalesPop,
+    //         ageGroups: aggregatedAgeGroups,
+    //         isWardSpecific: false
+    //     };
+
+    //     // Process ages array with 90+ distribution
+    //     const ages = Array.from({ length: 100 }, (_, i) => ({
+    //         age: i,
+    //         count: ageData[i.toString()] || 0
+    //     }));
+
+    //     const age90Plus = ages[90].count;
+    //     const decayRate = 0.15;
+    //     const weights = Array.from({ length: 10 }, (_, i) => Math.exp(-decayRate * i));
+    //     const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+    //     for (let i = 90; i < 100; i++) {
+    //         const weight = weights[i - 90];
+    //         ages[i] = { age: i, count: (age90Plus * weight) / totalWeight };
+    //     }
+
+    //     // Process gender data by age (0-90)
+    //     const ageRange = Array.from({ length: 91 }, (_, i) => i);
+    //     const genderAgeData: Array<{ age: number; males: number; females: number }> = [];
+
+    //     const aggregate = {
+    //         males: {} as Record<string, number>,
+    //         females: {} as Record<string, number>
+    //     };
+
+    //     geojson.forEach((feature) => {
+    //         const wardCode = feature.properties[wardCodeProp];
+    //         const ward = populationData[wardCode];
+
+    //         if (!ward) return;
+
+    //         Object.entries(ward.males).forEach(([age, count]) => {
+    //             aggregate.males[age] = (aggregate.males[age] || 0) + count;
+    //         });
+    //         Object.entries(ward.females).forEach(([age, count]) => {
+    //             aggregate.females[age] = (aggregate.females[age] || 0) + count;
+    //         });
+    //     });
+
+    //     for (const age of ageRange) {
+    //         genderAgeData.push({
+    //             age,
+    //             males: aggregate.males[age.toString()] || 0,
+    //             females: aggregate.females[age.toString()] || 0
+    //         });
+    //     }
+
+    //     // Calculate median age
+    //     let medianAge = 0;
+    //     if (totalPop > 0) {
+    //         const halfPop = totalPop / 2;
+    //         let cumulative = 0;
+    //         for (const { age, count } of ages) {
+    //             cumulative += count;
+    //             if (cumulative >= halfPop) {
+    //                 medianAge = age;
+    //                 break;
+    //             }
+    //         }
+    //     }
+
+    //     const result = {
+    //         populationStats,
+    //         ageData,
+    //         ages,
+    //         genderAgeData,
+    //         medianAge,
+    //     };
+
+    //     this.cache.set(cacheKey, result);
+    //     return result;
+    // }
 
     // ============================================================================
     // Property Detection

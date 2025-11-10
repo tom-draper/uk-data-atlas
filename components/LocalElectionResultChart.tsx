@@ -2,6 +2,7 @@
 'use client';
 import { PARTY_COLORS } from '@/lib/data/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
+import { calculateTurnout } from '@/lib/utils/generalElectionHelpers';
 import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
@@ -18,7 +19,7 @@ const ELECTION_YEARS = ['2024', '2023', '2022', '2021'] as const;
 type ElectionYear = typeof ELECTION_YEARS[number];
 
 interface CompactBarProps {
-	data: PartyVotes | undefined;
+	data: PartyVotes | null;
 	dataset: LocalElectionDataset;
 	isActive: boolean;
 }
@@ -86,14 +87,13 @@ const CompactBar = React.memo(({ data, dataset, isActive }: CompactBarProps) => 
 		</div>
 	);
 });
-// Add a display name for better debugging
 CompactBar.displayName = 'CompactBar';
 
 interface YearBarProps {
 	year: string;
-	data: PartyVotes | undefined;
+	data: PartyVotes | null;
 	dataset: LocalElectionDataset;
-	turnout: number | undefined;
+	turnout: number | null;
 	isActive: boolean;
 	setActiveDatasetId: (datasetId: string) => void;
 }
@@ -119,14 +119,14 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 				: `bg-white/60 border-2 border-gray-200/80 hover:${colors.border.replace('border-', 'hover:border-')}`
 				}`}
 			style={{
-				height: isActive ? '95px' : '65px'
+				height: isActive && data ? '95px' : '65px'
 			}}
 			onClick={handleClick}
 		>
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">{year} Local Elections</h3>
 				<div className="flex items-center gap-1.5">
-					{turnout !== undefined && (
+					{turnout !== null && (
 						<span className="text-[9px] text-gray-500 font-medium">
 							{turnout.toFixed(1)}% turnout
 						</span>
@@ -151,10 +151,10 @@ export default function LocalElectionResultChart({
 
 	// This useMemo hook is already optimized from before
 	const { chartData, turnout } = useMemo(() => {
-		const newChartData: Partial<Record<ElectionYear, PartyVotes | undefined>> = {};
-		const newTurnout: Partial<Record<ElectionYear, number | undefined>> = {};
+		const newChartData: Partial<Record<ElectionYear, PartyVotes | null>> = {};
+		const newTurnout: Partial<Record<ElectionYear, number | null>> = {};
 
-		const getChartData = (year: ElectionYear): { chartData: PartyVotes | undefined; turnout: number | undefined } => {
+		const getChartData = (year: ElectionYear): { chartData: PartyVotes | null; turnout: number | null } => {
 			const yearData = availableDatasets[year]?.wardData;
 
 			if (wardCode && yearData) {
@@ -194,12 +194,12 @@ export default function LocalElectionResultChart({
 			// Fallback to aggregated data
 			if (!wardCode && aggregatedData && aggregatedData[year]) {
 				return {
-					chartData: aggregatedData[year],
-					turnout: undefined
+					chartData: aggregatedData[year].partyVotes,
+					turnout: calculateTurnout(aggregatedData[year].totalVotes, 0, aggregatedData[year].electorate)
 				};
 			}
 
-			return { chartData: undefined, turnout: undefined };
+			return { chartData: null, turnout: null };
 		};
 
 		for (const year of ELECTION_YEARS) {

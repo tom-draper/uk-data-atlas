@@ -1,16 +1,19 @@
 // components/population/density/PopulationDensity.tsx
-import { AggregatedPopulationData, BoundaryGeojson } from "@/lib/types";
+import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset } from "@/lib/types";
 import PopulationDensityChart from "./PopulationDensityChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface PopulationDensityChartProps {
+	dataset: PopulationDataset;
 	activeDatasetId: string;
 	geojson: BoundaryGeojson | null;
 	aggregatedData: AggregatedPopulationData | null;
 	wardCode: string | null;
 	setActiveDatasetId: (datasetId: string) => void;
+	codeMapper: CodeMapper;
 }
 
-export default function PopulationDensity({ aggregatedData, geojson, wardCode, setActiveDatasetId, activeDatasetId }: PopulationDensityChartProps) {
+export default function PopulationDensity({ dataset, aggregatedData, geojson, wardCode, setActiveDatasetId, activeDatasetId, codeMapper }: PopulationDensityChartProps) {
 	const isActive = activeDatasetId === 'density';
 	const colors = {
 		bg: 'bg-emerald-50/60',
@@ -18,8 +21,6 @@ export default function PopulationDensity({ aggregatedData, geojson, wardCode, s
 		badge: 'bg-emerald-300 text-emerald-900',
 		text: 'bg-emerald-200 text-emerald-800'
 	};
-
-	const total = aggregatedData ? aggregatedData[2020]?.populationStats.total : 0;
 
 	return (
 		<div
@@ -32,7 +33,7 @@ export default function PopulationDensity({ aggregatedData, geojson, wardCode, s
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">Population Density (2020)</h3>
 			</div>
-			<PopulationDensityChart geojson={geojson} wardCode={wardCode} total={total} />
+			<PopulationDensityChart dataset={dataset} aggregatedData={aggregatedData} geojson={geojson} wardCode={wardCode} codeMapper={codeMapper} />
 		</div>
 	);
 }
