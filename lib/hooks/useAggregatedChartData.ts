@@ -61,7 +61,7 @@ export function useAggregatedElectionData({
 		}
 
 		return result as AggregatedLocalElectionData;
-	}, [mapManager, boundaryData, localElectionDatasets, location]);
+	}, [mapManager, boundaryData, localElectionDatasets]);
 
 	/**
 	 * Aggregated general election data - processes all available years.
@@ -89,7 +89,7 @@ export function useAggregatedElectionData({
 		}
 
 		return result as AggregateGeneralElectionData;
-	}, [mapManager, boundaryData.constituency, generalElectionDatasets, location]);
+	}, [mapManager, boundaryData.constituency, generalElectionDatasets]);
 
 	/**
 	 * Aggregated population data - calculates stats and age data.
@@ -121,7 +121,7 @@ export function useAggregatedElectionData({
 		}
 
 		return result as AggregatedPopulationData;
-	}, [mapManager, boundaryData.ward, populationDatasets, location]);
+	}, [mapManager, boundaryData.ward, populationDatasets]);
 
 	return {
 		aggregatedLocalElectionData,
