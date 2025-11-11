@@ -1,5 +1,6 @@
 // components/LocalElectionResultChart.tsx
 'use client';
+import { PARTIES } from '@/lib/data/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElectionHelpers';
 import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset } from '@lib/types';

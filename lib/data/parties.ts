@@ -35,20 +35,3 @@ export const PARTIES = {
     'UUP': { color: '#FC86C2', name: 'UUP' },
     'OTHER': { color: '#999999', name: 'Other' }
 } as const;
-
-export const PARTY_COLORS: Record<string, string> = {
-    'LAB': '#E91D0E',
-    'CON': '#0575C9',
-    'LD': '#FF9A02',
-    'GREEN': '#5FB25F',
-    'REF': '#0AD1E0',
-    'IND': '#FC86C2',
-    'SNP': '#ffd02c',
-    'PC': '#4eecaf',
-    'SF': '#24aa83',
-    'DUP': '#c9235f',
-    'SDLP': '#577557',
-    'APNI': '#d6b429',
-    'OTHER': '#999999',
-    'NONE': '#EEEEEE'
-};

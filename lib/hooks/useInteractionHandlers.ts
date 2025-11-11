@@ -22,8 +22,6 @@ export function useInteractionHandlers({
 	const onWardHover = useCallback((params: { data: LocalElectionWardData | null; wardCode: string }) => {
 		const { data, wardCode } = params;
 
-		// console.log('PARAMS', params);
-
 		// Skip if hovering over same ward
 		if (wardCode && wardCode === lastHoveredWardRef.current) {
 			return;

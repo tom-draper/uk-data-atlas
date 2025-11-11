@@ -5,6 +5,7 @@ import { calculateAgeGroups, calculateMedianAge, calculateTotal, polygonAreaSqKm
 import { getWinningParty } from './generalElectionHelpers';
 import { GeneralElectionMapOptions, LocalElectionMapOptions } from '../types/mapOptions';
 import { getColorForAge, getColorForDensity, getColorForGenderRatio, hexToRgb } from './colorHelpers';
+import { PARTIES } from '../data/parties';
 
 interface MapManagerCallbacks {
     onWardHover?: (params: { data: LocalElectionWardData | null; wardCode: string }) => void;
@@ -411,7 +412,7 @@ export class MapManager {
         this.removeExistingLayers();
         this.addSource(locationData);
 
-        const baseColor = PARTY_COLORS[partyCode] || '#999999';
+        const baseColor = PARTIES[partyCode].color || '#999999';
         const partyRgb = hexToRgb(baseColor);
         const lightRgb = { r: 245, g: 245, b: 245 };
 

@@ -111,8 +111,8 @@ export default function AgeDistribution({
 	return (
 		<div
 			className={`p-2 rounded transition-all cursor-pointer ${isActive
-					? `${colors.bg} border-2 ${colors.border}`
-					: `bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300`
+				? `${colors.bg} border-2 ${colors.border}`
+				: `bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300`
 				}`}
 			onClick={() => setActiveDatasetId("population")}
 		>
