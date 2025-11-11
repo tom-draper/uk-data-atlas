@@ -4,6 +4,8 @@ import { PARTY_COLORS } from '../data/parties';
 import { GeoJSONFeature } from 'mapbox-gl';
 import { calculateAgeGroups, calculateMedianAge, calculateTotal, polygonAreaSqKm } from './populationHelpers';
 import { getWinningParty } from './generalElectionHelpers';
+import { GeneralElectionMapOptions, LocalElectionMapOptions } from '../types/mapOptions';
+import { getColorForAge, getColorForDensity, getColorForGenderRatio, hexToRgb } from './colorHelpers';
 
 interface MapManagerCallbacks {
     onWardHover?: (params: { data: LocalElectionWardData | null; wardCode: string }) => void;
@@ -43,21 +45,40 @@ export class MapManager {
 
     // ============================================================================
     // Public API Methods
-    // ============================================================================
+    // =============o===============================================================
 
     updateMapForLocalElection(
         geojson: BoundaryGeojson,
-        dataset: LocalElectionDataset
+        dataset: LocalElectionDataset,
+        options?: LocalElectionMapOptions
     ) {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
         console.log('EXPENSIVE: updateMapForLocalElection: Filtered wards', geojson.features.length);
 
-        const locationData = this.buildFeatureCollection(
-            geojson.features,
-            (feature) => dataset.wardResults[feature.properties[wardCodeProp]] || 'NONE'
-        );
+        const mode = options?.mode || 'winner';
+        const selectedParty = options?.selectedParty;
 
-        this.updateMapLayers(locationData, dataset.partyInfo);
+        let locationData;
+
+        if (mode === 'party-percentage' && selectedParty) {
+            // Party percentage mode
+            locationData = this.buildPartyPercentageFeatureCollection(
+                geojson.features,
+                dataset.wardData,
+                selectedParty,
+                wardCodeProp,
+                (feature) => dataset.wardResults[feature.properties[wardCodeProp]] || 'NONE'
+            );
+            this.updateMapLayersForPartyPercentage(locationData, dataset.partyInfo, selectedParty);
+        } else {
+            // Winner mode (default)
+            locationData = this.buildFeatureCollection(
+                geojson.features,
+                (feature) => dataset.wardResults[feature.properties[wardCodeProp]] || 'NONE'
+            );
+            this.updateMapLayers(locationData, dataset.partyInfo);
+        }
+
         this.setupEventHandlers('local-election', dataset.wardData, wardCodeProp);
         this.buildWardToLadMapping(geojson);
     }
@@ -65,18 +86,70 @@ export class MapManager {
     updateMapForGeneralElection(
         geojson: BoundaryGeojson,
         dataset: GeneralElectionDataset,
+        options?: GeneralElectionMapOptions
     ) {
         const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
         console.log('EXPENSIVE: updateMapForGeneralElection: Filtered constituencies:', geojson.features.length);
 
-        const locationData = this.buildFeatureCollection(
-            geojson.features,
-            (feature) => dataset.constituencyResults[feature.properties[constituencyCodeProp]] || 'NONE'
-        );
+        const mode = options?.mode || 'winner';
+        const selectedParty = options?.selectedParty;
 
-        this.updateMapLayers(locationData, dataset.partyInfo);
+        let locationData;
+
+        if (mode === 'party-percentage' && selectedParty) {
+            // Party percentage mode
+            locationData = this.buildPartyPercentageFeatureCollection(
+                geojson.features,
+                dataset.constituencyData,
+                selectedParty,
+                constituencyCodeProp,
+                (feature) => dataset.constituencyResults[feature.properties[constituencyCodeProp]] || 'NONE'
+            );
+            this.updateMapLayersForPartyPercentage(locationData, dataset.partyInfo, selectedParty);
+        } else {
+            // Winner mode (default)
+            locationData = this.buildFeatureCollection(
+                geojson.features,
+                (feature) => dataset.constituencyResults[feature.properties[constituencyCodeProp]] || 'NONE'
+            );
+            this.updateMapLayers(locationData, dataset.partyInfo);
+        }
+
         this.setupEventHandlers('general-election', dataset.constituencyData, constituencyCodeProp);
     }
+
+    // updateMapForLocalElection(
+    //     geojson: BoundaryGeojson,
+    //     dataset: LocalElectionDataset
+    // ) {
+    //     const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
+    //     console.log('EXPENSIVE: updateMapForLocalElection: Filtered wards', geojson.features.length);
+
+    //     const locationData = this.buildFeatureCollection(
+    //         geojson.features,
+    //         (feature) => dataset.wardResults[feature.properties[wardCodeProp]] || 'NONE'
+    //     );
+
+    //     this.updateMapLayers(locationData, dataset.partyInfo);
+    //     this.setupEventHandlers('local-election', dataset.wardData, wardCodeProp);
+    //     this.buildWardToLadMapping(geojson);
+    // }
+
+    // updateMapForGeneralElection(
+    //     geojson: BoundaryGeojson,
+    //     dataset: GeneralElectionDataset,
+    // ) {
+    //     const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
+    //     console.log('EXPENSIVE: updateMapForGeneralElection: Filtered constituencies:', geojson.features.length);
+
+    //     const locationData = this.buildFeatureCollection(
+    //         geojson.features,
+    //         (feature) => dataset.constituencyResults[feature.properties[constituencyCodeProp]] || 'NONE'
+    //     );
+
+    //     this.updateMapLayers(locationData, dataset.partyInfo);
+    //     this.setupEventHandlers('general-election', dataset.constituencyData, constituencyCodeProp);
+    // }
 
     updateMapForPopulation(
         geojson: BoundaryGeojson,
@@ -96,7 +169,7 @@ export class MapManager {
                     ...feature,
                     properties: {
                         ...feature.properties,
-                        color: this.getColorForAge(medianAge),
+                        color: getColorForAge(medianAge),
                         medianAge,
                     }
                 };
@@ -134,7 +207,7 @@ export class MapManager {
                     ...feature,
                     properties: {
                         ...feature.properties,
-                        color: this.getColorForGenderRatio(ratio),
+                        color: getColorForGenderRatio(ratio),
                         ratio,
                     }
                 };
@@ -179,7 +252,7 @@ export class MapManager {
                     ...feature,
                     properties: {
                         ...feature.properties,
-                        color: this.getColorForDensity(density),
+                        color: getColorForDensity(density),
                         density
                     }
                 };
@@ -305,7 +378,7 @@ export class MapManager {
         geojson.forEach((feature) => {
             const wardCode = feature.properties[wardCodeProp];
             const ward = wardData[wardCode];
-            
+
             if (ward) {
                 // Aggregate party data
                 (Object.keys(aggregated.partyVotes) as Array<keyof PartyVotes>).forEach(party => {
@@ -519,143 +592,6 @@ export class MapManager {
         this.cache.set(cacheKey, result);
         return result;
     }
-
-    // private calculatePopulationStatsInternal(
-    //     geojson: BoundaryGeojson['features'],
-    //     wardCodeProp: string,
-    //     populationData: PopulationDataset['populationData'],
-    //     location: string | null = null,
-    //     datasetId: string | null = null,
-    // ): {
-    //     populationStats: PopulationStats;
-    //     ageData: { [age: string]: number };
-    //     ages: Array<{ age: number; count: number }>;
-    //     genderAgeData: Array<{ age: number; males: number; females: number }>;
-    //     medianAge: number;
-    // } | null {
-    //     const cacheKey = `population-${location}-${datasetId}`;
-
-    //     if (this.cache.has(cacheKey)) {
-    //         console.log(`CACHE HIT: calculatePopulationStats: [${cacheKey}]`);
-    //         return this.cache.get(cacheKey);
-    //     }
-
-    //     console.log(`EXPENSIVE: calculatePopulationStats: [${cacheKey}] Processing ${geojson.length} wards`);
-
-    //     let totalPop = 0, malesPop = 0, femalesPop = 0;
-    //     const aggregatedAgeGroups = {
-    //         total: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
-    //         males: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
-    //         females: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups
-    //     };
-    //     const ageData: { [age: string]: number } = {};
-
-    //     geojson.forEach((feature) => {
-    //         const wardCode = feature.properties[wardCodeProp];
-    //         const ward = populationData[wardCode];
-
-    //         if (!ward) return;
-
-    //         totalPop += calculateTotal(ward.total);
-    //         malesPop += calculateTotal(ward.males);
-    //         femalesPop += calculateTotal(ward.females);
-
-    //         const wardAgeGroups = {
-    //             total: calculateAgeGroups(ward.total),
-    //             males: calculateAgeGroups(ward.males),
-    //             females: calculateAgeGroups(ward.females)
-    //         };
-
-    //         (Object.keys(aggregatedAgeGroups.total) as Array<keyof AgeGroups>).forEach(ageGroup => {
-    //             aggregatedAgeGroups.total[ageGroup] += wardAgeGroups.total[ageGroup];
-    //             aggregatedAgeGroups.males[ageGroup] += wardAgeGroups.males[ageGroup];
-    //             aggregatedAgeGroups.females[ageGroup] += wardAgeGroups.females[ageGroup];
-    //         });
-
-    //         Object.entries(ward.total).forEach(([age, count]) => {
-    //             ageData[age] = (ageData[age] || 0) + count;
-    //         });
-    //     });
-
-    //     const populationStats: PopulationStats = {
-    //         total: totalPop,
-    //         males: malesPop,
-    //         females: femalesPop,
-    //         ageGroups: aggregatedAgeGroups,
-    //         isWardSpecific: false
-    //     };
-
-    //     // Process ages array with 90+ distribution
-    //     const ages = Array.from({ length: 100 }, (_, i) => ({
-    //         age: i,
-    //         count: ageData[i.toString()] || 0
-    //     }));
-
-    //     const age90Plus = ages[90].count;
-    //     const decayRate = 0.15;
-    //     const weights = Array.from({ length: 10 }, (_, i) => Math.exp(-decayRate * i));
-    //     const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-    //     for (let i = 90; i < 100; i++) {
-    //         const weight = weights[i - 90];
-    //         ages[i] = { age: i, count: (age90Plus * weight) / totalWeight };
-    //     }
-
-    //     // Process gender data by age (0-90)
-    //     const ageRange = Array.from({ length: 91 }, (_, i) => i);
-    //     const genderAgeData: Array<{ age: number; males: number; females: number }> = [];
-
-    //     const aggregate = {
-    //         males: {} as Record<string, number>,
-    //         females: {} as Record<string, number>
-    //     };
-
-    //     geojson.forEach((feature) => {
-    //         const wardCode = feature.properties[wardCodeProp];
-    //         const ward = populationData[wardCode];
-
-    //         if (!ward) return;
-
-    //         Object.entries(ward.males).forEach(([age, count]) => {
-    //             aggregate.males[age] = (aggregate.males[age] || 0) + count;
-    //         });
-    //         Object.entries(ward.females).forEach(([age, count]) => {
-    //             aggregate.females[age] = (aggregate.females[age] || 0) + count;
-    //         });
-    //     });
-
-    //     for (const age of ageRange) {
-    //         genderAgeData.push({
-    //             age,
-    //             males: aggregate.males[age.toString()] || 0,
-    //             females: aggregate.females[age.toString()] || 0
-    //         });
-    //     }
-
-    //     // Calculate median age
-    //     let medianAge = 0;
-    //     if (totalPop > 0) {
-    //         const halfPop = totalPop / 2;
-    //         let cumulative = 0;
-    //         for (const { age, count } of ages) {
-    //             cumulative += count;
-    //             if (cumulative >= halfPop) {
-    //                 medianAge = age;
-    //                 break;
-    //             }
-    //         }
-    //     }
-
-    //     const result = {
-    //         populationStats,
-    //         ageData,
-    //         ages,
-    //         genderAgeData,
-    //         medianAge,
-    //     };
-
-    //     this.cache.set(cacheKey, result);
-    //     return result;
-    // }
 
     // ============================================================================
     // Property Detection
@@ -889,6 +825,92 @@ export class MapManager {
         }
     }
 
+    /**
+ * Updates map layers for party percentage mode
+ */
+    private updateMapLayersForPartyPercentage(
+        locationData: any,
+        partyInfo: any,
+        partyCode: string
+    ) {
+        if (!this.map) return;
+
+        const source = this.map.getSource('locations');
+        if (source && source.type === 'geojson') {
+            source.setData(locationData);
+        } else {
+            this.map.addSource('locations', {
+                type: 'geojson',
+                data: locationData
+            });
+        }
+
+        // Get the party color
+        const baseColor = partyInfo[partyCode]?.color || '#999999';
+        const partyRgb = hexToRgb(baseColor);
+        const lightRgb = { r: 245, g: 245, b: 245 };
+
+        // Create interpolated color expression
+        const fillColorExpression: any = [
+            'case',
+            ['==', ['get', 'percentage'], null],
+            '#f5f5f5',
+            [
+                'interpolate',
+                ['linear'],
+                ['get', 'percentage'],
+                0, `rgb(${lightRgb.r}, ${lightRgb.g}, ${lightRgb.b})`,
+                100, `rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`
+            ]
+        ];
+
+        // Update or create fill layer
+        const fillLayerId = 'locations-fill';
+        if (this.map.getLayer(fillLayerId)) {
+            this.map.setPaintProperty(fillLayerId, 'fill-color', fillColorExpression);
+            this.map.setPaintProperty(fillLayerId, 'fill-opacity', 0.7);
+        } else {
+            this.map.addLayer({
+                id: fillLayerId,
+                type: 'fill',
+                source: 'locations',
+                paint: {
+                    'fill-color': fillColorExpression,
+                    'fill-opacity': 0.7,
+                }
+            });
+        }
+
+        // Update or create border layer
+        const borderLayerId = 'locations-border';
+        if (!this.map.getLayer(borderLayerId)) {
+            this.map.addLayer({
+                id: borderLayerId,
+                type: 'line',
+                source: 'locations',
+                paint: {
+                    'line-color': '#666',
+                    'line-width': 1,
+                }
+            });
+        }
+
+        // Update or create hover layer
+        const hoverLayerId = 'locations-hover';
+        if (!this.map.getLayer(hoverLayerId)) {
+            this.map.addLayer({
+                id: hoverLayerId,
+                type: 'line',
+                source: 'locations',
+                paint: {
+                    'line-color': '#000',
+                    'line-width': 2,
+                },
+                filter: ['==', ['get', 'code'], '']
+            });
+        }
+    }
+
     // ============================================================================
     // Utility Methods
     // ============================================================================
@@ -909,106 +931,31 @@ export class MapManager {
         };
     }
 
+    /**
+     * Builds feature collection for party percentage mode
+     */
+    private buildPartyPercentageFeatureCollection(
+        features: BoundaryGeojson['features'],
+        data: LocalElectionDataset['wardData'] | GeneralElectionDataset['constituencyData'],
+        partyCode: string,
+        codeProp: string
+    ): any {
+        return {
+            type: 'FeatureCollection',
+            features: features.map(feature => {
+                const code = feature.properties[codeProp];
+                const partyVotes = data[code].partyVotes[partyCode];
+                const totalVotes = Object.values(data[code].partyVotes).reduce((total, num) => total + num, 0);
 
-    private getColorForDensity(density: number): string {
-        if (density === 0) return '#EEEEEE';
-
-        // Viridis color scale points
-        const viridisColors = [
-            { threshold: 0, color: [68, 1, 84] },      // #440154 - dark purple
-            { threshold: 0.2, color: [59, 82, 139] },  // #3b528b - blue
-            { threshold: 0.4, color: [33, 145, 140] }, // #21918c - teal
-            { threshold: 0.6, color: [94, 201, 98] },  // #5ec962 - green
-            { threshold: 0.8, color: [253, 231, 37] }, // #fde725 - yellow
-            { threshold: 1.0, color: [253, 231, 37] }  // #fde725 - yellow (cap)
-        ];
-
-        // Normalize density to 0-1 scale (adjust max as needed)
-        const maxDensity = 10000;
-        const normalizedDensity = Math.min(density / maxDensity, 1);
-
-        // Find the two colors to interpolate between
-        let lowerIndex = 0;
-        for (let i = 0; i < viridisColors.length - 1; i++) {
-            if (normalizedDensity >= viridisColors[i].threshold) {
-                lowerIndex = i;
-            }
-        }
-
-        const upperIndex = Math.min(lowerIndex + 1, viridisColors.length - 1);
-        const lower = viridisColors[lowerIndex];
-        const upper = viridisColors[upperIndex];
-
-        // Calculate interpolation factor
-        const range = upper.threshold - lower.threshold;
-        const factor = range === 0 ? 0 : (normalizedDensity - lower.threshold) / range;
-
-        // Interpolate RGB values
-        const r = Math.round(lower.color[0] + (upper.color[0] - lower.color[0]) * factor);
-        const g = Math.round(lower.color[1] + (upper.color[1] - lower.color[1]) * factor);
-        const b = Math.round(lower.color[2] + (upper.color[2] - lower.color[2]) * factor);
-
-        // Convert to hex
-        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-    }
-
-    private getColorForAge(meanAge: number | null): string {
-        if (meanAge === null) return '#EEEEEE';
-
-        const t = Math.max(0, Math.min(1, (meanAge - 25) / 30));
-        const colors = [
-            { pos: 0.00, color: [68, 1, 84] },
-            { pos: 0.25, color: [59, 82, 139] },
-            { pos: 0.50, color: [33, 145, 140] },
-            { pos: 0.75, color: [94, 201, 98] },
-            { pos: 1.00, color: [253, 231, 37] }
-        ];
-
-        for (let i = 0; i < colors.length - 1; i++) {
-            if (t >= colors[i].pos && t <= colors[i + 1].pos) {
-                const localT = (t - colors[i].pos) / (colors[i + 1].pos - colors[i].pos);
-                const [r1, g1, b1] = colors[i].color;
-                const [r2, g2, b2] = colors[i + 1].color;
-                const r = Math.round(r1 + (r2 - r1) * localT);
-                const g = Math.round(g1 + (g2 - g1) * localT);
-                const b = Math.round(b1 + (b2 - b1) * localT);
-                return `rgb(${r}, ${g}, ${b})`;
-            }
-        }
-
-        return '#EEEEEE';
-    }
-
-    private getColorForGenderRatio(ratio: number | null): string {
-        if (ratio === 0 || ratio === null || isNaN(ratio)) return '#EEEEEE'; // neutral background
-
-        // Clamp ratio extremes to prevent crazy colors
-        const clamped = Math.max(0.5, Math.min(2, ratio));
-
-        // Map 0.5 → 0 (pink), 1 → 0.5 (neutral), 2 → 1 (blue)
-        const t = (clamped - 0.5) / 1.5;
-
-        // Define the gradient endpoints
-        const pink = [255, 105, 180];  // HotPink
-        const neutral = [240, 240, 240]; // light gray
-        const blue = [70, 130, 180];   // SteelBlue
-
-        let r: number, g: number, b: number;
-
-        if (t < 0.5) {
-            // Interpolate from pink → neutral
-            const localT = t / 0.5;
-            r = Math.round(pink[0] + (neutral[0] - pink[0]) * localT);
-            g = Math.round(pink[1] + (neutral[1] - pink[1]) * localT);
-            b = Math.round(pink[2] + (neutral[2] - pink[2]) * localT);
-        } else {
-            // Interpolate from neutral → blue
-            const localT = (t - 0.5) / 0.5;
-            r = Math.round(neutral[0] + (blue[0] - neutral[0]) * localT);
-            g = Math.round(neutral[1] + (blue[1] - neutral[1]) * localT);
-            b = Math.round(neutral[2] + (blue[2] - neutral[2]) * localT);
-        }
-
-        return `rgb(${r}, ${g}, ${b})`;
+                return {
+                    ...feature,
+                    properties: {
+                        ...feature.properties,
+                        percentage: partyVotes / totalVotes,
+                        partyCode
+                    }
+                };
+            })
+        };
     }
 }

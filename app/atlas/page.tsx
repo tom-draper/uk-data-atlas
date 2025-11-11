@@ -13,6 +13,7 @@ import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
 import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
 import { useDatasetManager } from '@/lib/hooks/useDatasetManager';
 import { useCodeMapper } from '@/lib/hooks/useCodeMapper';
+import { useMapOptions } from '@/lib/hooks/useMapOptions';
 
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
@@ -22,6 +23,7 @@ import LoadingDisplay from '@/components/displays/LoadingDisplay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
+import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
 
 // Constants
 const INITIAL_STATE = {
@@ -88,8 +90,11 @@ export default function MapsPage() {
 		onConstituencyHover: activeDataset?.type === 'general-election' ? onConstituencyHover : undefined,
 		onLocationChange,
 	});
+	
+	// Map options using custom hook
+	const { mapOptions, setMapOptions: handleMapOptionsChange } = useMapOptions(DEFAULT_MAP_OPTIONS);
 
-	// Aggregated data (this might now be redundant for some use cases)
+	// Aggregated data
 	const { aggregatedLocalElectionData, aggregatedGeneralElectionData, aggregatedPopulationData } = useAggregatedElectionData({
 		mapManager,
 		boundaryData,
@@ -119,13 +124,21 @@ export default function MapsPage() {
 				}
 				break;
 			case 'general-election':
-				mapManager.updateMapForGeneralElection(geojson, activeDataset);
+				mapManager.updateMapForGeneralElection(
+					geojson, 
+					activeDataset, 
+					mapOptions['general-election']
+				);
 				break;
 			case 'local-election':
-				mapManager.updateMapForLocalElection(geojson, activeDataset);
+				mapManager.updateMapForLocalElection(
+					geojson, 
+					activeDataset, 
+					mapOptions['local-election']
+				);
 				break;
 		}
-	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, mapManager]);
+	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, mapManager, mapOptions]);
 
 	// Location click handler
 	const handleLocationClick = useCallback((location: string) => {
@@ -164,7 +177,12 @@ export default function MapsPage() {
 				</div>
 
 				<div className="absolute right-0 flex h-full">
-					<LegendPanel activeDatasetId={activeDatasetId} />
+					<LegendPanel 
+						activeDatasetId={activeDatasetId}
+						activeDataset={activeDataset}
+						mapOptions={mapOptions}
+						onMapOptionsChange={handleMapOptionsChange}
+					/>
 					<ChartPanel
 						selectedLocation={selectedLocation}
 						selectedWard={selectedWardData}

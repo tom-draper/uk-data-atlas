@@ -56,7 +56,7 @@ export default function PopulationChart({
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					codeMapper={codeMapper}
-				/> 
+				/>
 			</div>
 		</div>
 	);

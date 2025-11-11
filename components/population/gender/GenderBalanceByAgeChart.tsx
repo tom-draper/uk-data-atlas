@@ -47,7 +47,7 @@ export default function GenderBalanceByAgeChart({
 		}
 
 		return data;
-	}, [dataset, wardCode, codeMapper]);
+	}, [wardCode, dataset, aggregatedData, codeMapper]);
 
 	if (ageData.length === 0) {
 		return <div className="text-xs h-[111px] text-gray-400/80 text-center grid place-items-center">

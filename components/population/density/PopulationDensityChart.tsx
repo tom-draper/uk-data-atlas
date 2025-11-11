@@ -65,7 +65,7 @@ const PopulationDensityChart = ({
 		}
 
 		return { density: null, areaSqKm: null, total: null };
-	}, [boundaryData, dataset, wardCode])
+	}, [boundaryData, dataset, aggregatedData, wardCode])
 
 	if (!total) {
 		return (
