@@ -66,10 +66,9 @@ export class MapManager {
                 geojson.features,
                 dataset.wardData,
                 selectedParty,
-                wardCodeProp,
-                (feature) => dataset.wardResults[feature.properties[wardCodeProp]] || 'NONE'
+                wardCodeProp
             );
-            this.updateMapLayersForPartyPercentage(locationData, dataset.partyInfo, selectedParty);
+            this.updateMapLayersForPartyPercentage(locationData, selectedParty);
         } else {
             // Winner mode (default)
             locationData = this.buildFeatureCollection(
@@ -102,10 +101,9 @@ export class MapManager {
                 geojson.features,
                 dataset.constituencyData,
                 selectedParty,
-                constituencyCodeProp,
-                (feature) => dataset.constituencyResults[feature.properties[constituencyCodeProp]] || 'NONE'
+                constituencyCodeProp
             );
-            this.updateMapLayersForPartyPercentage(locationData, dataset.partyInfo, selectedParty);
+            this.updateMapLayersForPartyPercentage(locationData, selectedParty);
         } else {
             // Winner mode (default)
             locationData = this.buildFeatureCollection(
@@ -117,39 +115,6 @@ export class MapManager {
 
         this.setupEventHandlers('general-election', dataset.constituencyData, constituencyCodeProp);
     }
-
-    // updateMapForLocalElection(
-    //     geojson: BoundaryGeojson,
-    //     dataset: LocalElectionDataset
-    // ) {
-    //     const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
-    //     console.log('EXPENSIVE: updateMapForLocalElection: Filtered wards', geojson.features.length);
-
-    //     const locationData = this.buildFeatureCollection(
-    //         geojson.features,
-    //         (feature) => dataset.wardResults[feature.properties[wardCodeProp]] || 'NONE'
-    //     );
-
-    //     this.updateMapLayers(locationData, dataset.partyInfo);
-    //     this.setupEventHandlers('local-election', dataset.wardData, wardCodeProp);
-    //     this.buildWardToLadMapping(geojson);
-    // }
-
-    // updateMapForGeneralElection(
-    //     geojson: BoundaryGeojson,
-    //     dataset: GeneralElectionDataset,
-    // ) {
-    //     const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
-    //     console.log('EXPENSIVE: updateMapForGeneralElection: Filtered constituencies:', geojson.features.length);
-
-    //     const locationData = this.buildFeatureCollection(
-    //         geojson.features,
-    //         (feature) => dataset.constituencyResults[feature.properties[constituencyCodeProp]] || 'NONE'
-    //     );
-
-    //     this.updateMapLayers(locationData, dataset.partyInfo);
-    //     this.setupEventHandlers('general-election', dataset.constituencyData, constituencyCodeProp);
-    // }
 
     updateMapForPopulation(
         geojson: BoundaryGeojson,
@@ -180,7 +145,7 @@ export class MapManager {
         this.addSource(locationData);
         this.addPopulationLayers();
         this.setupEventHandlers('population', dataset.populationData, wardCodeProp);
-        this.buildWardToLadMapping(geojson);
+        // this.buildWardToLadMapping(geojson);
     }
 
     updateMapForGender(
@@ -218,7 +183,7 @@ export class MapManager {
         this.addSource(locationData);
         this.addPopulationLayers();
         this.setupEventHandlers('population', dataset.populationData, wardCodeProp);
-        this.buildWardToLadMapping(geojson);
+        // this.buildWardToLadMapping(geojson);
     }
 
     updateMapForPopulationDensity(
@@ -293,7 +258,7 @@ export class MapManager {
         wardData: LocalElectionDataset['wardData'],
         location: string | null = null,
         datasetId: string | null = null,
-    ): PartyVotes {
+    ) {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
 
         return this.calculateLocalElectionStatsInternal(
@@ -310,7 +275,7 @@ export class MapManager {
         constituencyData: GeneralElectionDataset['constituencyData'],
         location: string | null = null,
         datasetId: string | null = null,
-    ): ConstituencyStats {
+    ) {
         const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
 
         return this.calculateGeneralElectionStatsInternal(
@@ -328,13 +293,7 @@ export class MapManager {
         populationData: PopulationDataset['populationData'],
         location: string | null = null,
         datasetId: string | null = null,
-    ): {
-        populationStats: PopulationStats;
-        ageData: { [age: string]: number };
-        ages: Array<{ age: number; count: number }>;
-        genderAgeData: Array<{ age: number; males: number; females: number }>;
-        medianAge: number;
-    } | null {
+    ) {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
 
         return this.calculatePopulationStatsInternal(
@@ -356,7 +315,7 @@ export class MapManager {
         wardData: LocalElectionDataset['wardData'],
         location: string | null = null,
         datasetId: string | null = null,
-    ): WardStats {
+    ) {
         const cacheKey = `local-election-${location}-${datasetId}`;
 
         if (this.cache.has(cacheKey)) {
@@ -366,7 +325,7 @@ export class MapManager {
 
         console.log(`EXPENSIVE: calculateLocalElectionStats: [${cacheKey}] Processing ${geojson.length} wards`);
 
-        const aggregated = {
+        const aggregated: WardStats = {
             partyVotes: {
                 LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0,
                 DUP: 0, PC: 0, SNP: 0, SF: 0, APNI: 0, SDLP: 0
@@ -454,15 +413,7 @@ export class MapManager {
         populationData: PopulationDataset['populationData'],
         location: string | null = null,
         datasetId: string | null = null,
-    ): {
-        populationStats: PopulationStats;
-        ageData: { [age: string]: number };
-        ages: Array<{ age: number; count: number }>;
-        genderAgeData: Array<{ age: number; males: number; females: number }>;
-        medianAge: number;
-        totalArea: number;
-        density: number;
-    } | null {
+    ) {
         const cacheKey = `population-${location}-${datasetId}`;
 
         if (this.cache.has(cacheKey)) {
@@ -634,10 +585,12 @@ export class MapManager {
     */
     private updateMapLayersForPartyPercentage(
         locationData: BoundaryGeojson,
-        partyInfo: Party[],
         partyCode: string
     ) {
         if (!this.map) return;
+
+
+        this.removeExistingLayers();
 
         const source = this.map.getSource('locations');
         if (source && source.type === 'geojson') {
@@ -650,7 +603,7 @@ export class MapManager {
         }
 
         // Get the party color
-        const baseColor = partyInfo[partyCode]?.color || '#999999';
+        const baseColor = PARTY_COLORS[partyCode] || '#999999';
         const partyRgb = hexToRgb(baseColor);
         const lightRgb = { r: 245, g: 245, b: 245 };
 

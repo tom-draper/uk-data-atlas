@@ -113,8 +113,8 @@ export default memo(function LegendPanel({
                         key={item.key}
                         onClick={() => handlePartyClick(item.key)}
                         className={`flex items-center gap-2 px-1 py-[3px] w-full text-left rounded transition-all cursor-pointer ${isSelected
-                                ? 'bg-blue-100/50 ring-1 ring-blue-400/50'
-                                : 'hover:bg-gray-100/30'
+                            ? 'bg-blue-100/50 ring-1 ring-blue-400/50'
+                            : 'hover:bg-gray-100/30'
                             }`}
                     >
                         <div
@@ -131,15 +131,13 @@ export default memo(function LegendPanel({
             })}
 
             {isElectionDataset && currentOptions?.mode === 'party-percentage' && currentOptions.selectedParty && (
-                <div className="my-1 border-t border-gray-200/80">
-                    <div className="mb-0 pt-2 text-center">
-                        <p className="text-[10px] text-gray-500 leading-relaxed">
-                            Showing vote % for <span  style={{ color: PARTY_COLORS[currentOptions.selectedParty] }}>{currentOptions.selectedParty}</span>
-                        </p>
-                    </div>
-                    <div className="mt-0 pt-1">
+                <div className="my-1 mx-1 border-t border-gray-200/80">
+                    <div className="pt-2">
                         <div className="text-[10px] text-gray-400 mb-1.5 flex justify-between px-1">
                             <span>0%</span>
+                            <p className="text-[10px] text-gray-500 leading-relaxed">
+                                Showing vote % for <span style={{ color: PARTY_COLORS[currentOptions.selectedParty] }}>{currentOptions.selectedParty}</span>
+                            </p>
                             <span>100%</span>
                         </div>
                         <div className="h-3 rounded" style={{
