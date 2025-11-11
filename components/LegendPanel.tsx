@@ -136,7 +136,6 @@ export default memo(function LegendPanel({
                         <p className="text-[10px] text-gray-500 leading-relaxed">
                             Showing vote % for <span  style={{ color: PARTY_COLORS[currentOptions.selectedParty] }}>{currentOptions.selectedParty}</span>
                         </p>
-                        {/* <p className="text-[10px] text-gray-400 mt-1">Click again to show winners</p> */}
                     </div>
                     <div className="mt-0 pt-1">
                         <div className="text-[10px] text-gray-400 mb-1.5 flex justify-between px-1">

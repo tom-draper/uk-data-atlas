@@ -39,7 +39,6 @@ export const getAgeColor = (age: number): string => {
 	return '#ef4444';
 };
 
-
 export const calculateMedianAge = (wardPopulation: PopulationWardData): number | null => {
 	if (!wardPopulation?.total) return null;
 

@@ -629,6 +629,92 @@ export class MapManager {
         this.addElectionLayers(partyInfo);
     }
 
+    /**
+     * Updates map layers for party percentage mode
+    */
+    private updateMapLayersForPartyPercentage(
+        locationData: BoundaryGeojson,
+        partyInfo: Party[],
+        partyCode: string
+    ) {
+        if (!this.map) return;
+
+        const source = this.map.getSource('locations');
+        if (source && source.type === 'geojson') {
+            source.setData(locationData);
+        } else {
+            this.map.addSource('locations', {
+                type: 'geojson',
+                data: locationData
+            });
+        }
+
+        // Get the party color
+        const baseColor = partyInfo[partyCode]?.color || '#999999';
+        const partyRgb = hexToRgb(baseColor);
+        const lightRgb = { r: 245, g: 245, b: 245 };
+
+        // Create interpolated color expression
+        const fillColorExpression: any = [
+            'case',
+            ['==', ['get', 'percentage'], null],
+            '#f5f5f5',
+            [
+                'interpolate',
+                ['linear'],
+                ['get', 'percentage'],
+                0, `rgb(${lightRgb.r}, ${lightRgb.g}, ${lightRgb.b})`,
+                100, `rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`
+            ]
+        ];
+
+        // Update or create fill layer
+        const fillLayerId = 'locations-fill';
+        if (this.map.getLayer(fillLayerId)) {
+            this.map.setPaintProperty(fillLayerId, 'fill-color', fillColorExpression);
+            this.map.setPaintProperty(fillLayerId, 'fill-opacity', 0.7);
+        } else {
+            this.map.addLayer({
+                id: fillLayerId,
+                type: 'fill',
+                source: 'locations',
+                paint: {
+                    'fill-color': fillColorExpression,
+                    'fill-opacity': 0.7,
+                }
+            });
+        }
+
+        // Update or create border layer
+        const borderLayerId = 'locations-border';
+        if (!this.map.getLayer(borderLayerId)) {
+            this.map.addLayer({
+                id: borderLayerId,
+                type: 'line',
+                source: 'locations',
+                paint: {
+                    'line-color': '#666',
+                    'line-width': 1,
+                }
+            });
+        }
+
+        // Update or create hover layer
+        const hoverLayerId = 'locations-hover';
+        if (!this.map.getLayer(hoverLayerId)) {
+            this.map.addLayer({
+                id: hoverLayerId,
+                type: 'line',
+                source: 'locations',
+                paint: {
+                    'line-color': '#000',
+                    'line-width': 2,
+                },
+                filter: ['==', ['get', 'code'], '']
+            });
+        }
+    }
+
     private removeExistingLayers() {
         if (this.map.getSource(MapManager.SOURCE_ID)) {
             [MapManager.FILL_LAYER_ID, MapManager.LINE_LAYER_ID].forEach(layerId => {
@@ -825,91 +911,7 @@ export class MapManager {
         }
     }
 
-    /**
- * Updates map layers for party percentage mode
- */
-    private updateMapLayersForPartyPercentage(
-        locationData: any,
-        partyInfo: any,
-        partyCode: string
-    ) {
-        if (!this.map) return;
 
-        const source = this.map.getSource('locations');
-        if (source && source.type === 'geojson') {
-            source.setData(locationData);
-        } else {
-            this.map.addSource('locations', {
-                type: 'geojson',
-                data: locationData
-            });
-        }
-
-        // Get the party color
-        const baseColor = partyInfo[partyCode]?.color || '#999999';
-        const partyRgb = hexToRgb(baseColor);
-        const lightRgb = { r: 245, g: 245, b: 245 };
-
-        // Create interpolated color expression
-        const fillColorExpression: any = [
-            'case',
-            ['==', ['get', 'percentage'], null],
-            '#f5f5f5',
-            [
-                'interpolate',
-                ['linear'],
-                ['get', 'percentage'],
-                0, `rgb(${lightRgb.r}, ${lightRgb.g}, ${lightRgb.b})`,
-                100, `rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`
-            ]
-        ];
-
-        // Update or create fill layer
-        const fillLayerId = 'locations-fill';
-        if (this.map.getLayer(fillLayerId)) {
-            this.map.setPaintProperty(fillLayerId, 'fill-color', fillColorExpression);
-            this.map.setPaintProperty(fillLayerId, 'fill-opacity', 0.7);
-        } else {
-            this.map.addLayer({
-                id: fillLayerId,
-                type: 'fill',
-                source: 'locations',
-                paint: {
-                    'fill-color': fillColorExpression,
-                    'fill-opacity': 0.7,
-                }
-            });
-        }
-
-        // Update or create border layer
-        const borderLayerId = 'locations-border';
-        if (!this.map.getLayer(borderLayerId)) {
-            this.map.addLayer({
-                id: borderLayerId,
-                type: 'line',
-                source: 'locations',
-                paint: {
-                    'line-color': '#666',
-                    'line-width': 1,
-                }
-            });
-        }
-
-        // Update or create hover layer
-        const hoverLayerId = 'locations-hover';
-        if (!this.map.getLayer(hoverLayerId)) {
-            this.map.addLayer({
-                id: hoverLayerId,
-                type: 'line',
-                source: 'locations',
-                paint: {
-                    'line-color': '#000',
-                    'line-width': 2,
-                },
-                filter: ['==', ['get', 'code'], '']
-            });
-        }
-    }
 
     // ============================================================================
     // Utility Methods
