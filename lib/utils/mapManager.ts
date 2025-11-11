@@ -13,28 +13,20 @@ interface MapManagerCallbacks {
     onLocationChange: (location: string) => void;
 }
 
-interface LocationCodeInfo {
-    property: string | null;
-    fallbackToWardMapping: boolean;
-}
-
 type MapMode = 'local-election' | 'general-election' | 'population';
+type PopulationMode = 'age' | 'gender' | 'density';
 
 export class MapManager {
     private map: mapboxgl.Map;
     private callbacks: MapManagerCallbacks;
     private lastHoveredFeatureId: any = null;
     private cache = new Map<string, any>();
-    private wardToLadMapping = new Map<string, string>();
 
-    // Layer and source constants
+    // Constants
     private static readonly SOURCE_ID = 'location-wards';
     private static readonly FILL_LAYER_ID = 'wards-fill';
     private static readonly LINE_LAYER_ID = 'wards-line';
-
-    // Property detection keys
     private static readonly WARD_CODE_KEYS = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'];
-    private static readonly LAD_CODE_KEYS = ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'];
     private static readonly CONSTITUENCY_CODE_KEYS = ['PCON24CD', 'PCON25CD', 'pcon19cd', 'PCON17CD', 'PCON15CD'];
     private static readonly PARTY_KEYS = ['LAB', 'CON', 'LD', 'GREEN', 'RUK', 'SNP', 'PC', 'DUP', 'SF', 'OTHER'];
 
@@ -44,8 +36,8 @@ export class MapManager {
     }
 
     // ============================================================================
-    // Public API Methods
-    // =============o===============================================================
+    // Public API - Election Methods
+    // ============================================================================
 
     updateMapForLocalElection(
         geojson: BoundaryGeojson,
@@ -56,30 +48,17 @@ export class MapManager {
         console.log('EXPENSIVE: updateMapForLocalElection: Filtered wards', geojson.features.length);
 
         const mode = options?.mode || 'winner';
-        const selectedParty = options?.selectedParty;
+        const locationData = mode === 'party-percentage' && options?.selectedParty
+            ? this.buildPartyPercentageFeatures(geojson.features, dataset.wardData, options.selectedParty, wardCodeProp)
+            : this.buildWinnerFeatures(geojson.features, wardCodeProp, (code) => dataset.wardResults[code] || 'NONE');
 
-        let locationData;
-
-        if (mode === 'party-percentage' && selectedParty) {
-            // Party percentage mode
-            locationData = this.buildPartyPercentageFeatureCollection(
-                geojson.features,
-                dataset.wardData,
-                selectedParty,
-                wardCodeProp
-            );
-            this.updateMapLayersForPartyPercentage(locationData, selectedParty);
+        if (mode === 'party-percentage' && options?.selectedParty) {
+            this.updatePartyPercentageLayers(locationData, options.selectedParty);
         } else {
-            // Winner mode (default)
-            locationData = this.buildFeatureCollection(
-                geojson.features,
-                (feature) => dataset.wardResults[feature.properties[wardCodeProp]] || 'NONE'
-            );
-            this.updateMapLayers(locationData, dataset.partyInfo);
+            this.updateElectionLayers(locationData, dataset.partyInfo);
         }
 
         this.setupEventHandlers('local-election', dataset.wardData, wardCodeProp);
-        this.buildWardToLadMapping(geojson);
     }
 
     updateMapForGeneralElection(
@@ -91,166 +70,86 @@ export class MapManager {
         console.log('EXPENSIVE: updateMapForGeneralElection: Filtered constituencies:', geojson.features.length);
 
         const mode = options?.mode || 'winner';
-        const selectedParty = options?.selectedParty;
+        const locationData = mode === 'party-percentage' && options?.selectedParty
+            ? this.buildPartyPercentageFeatures(geojson.features, dataset.constituencyData, options.selectedParty, constituencyCodeProp)
+            : this.buildWinnerFeatures(geojson.features, constituencyCodeProp, (code) => dataset.constituencyResults[code] || 'NONE');
 
-        let locationData;
-
-        if (mode === 'party-percentage' && selectedParty) {
-            // Party percentage mode
-            locationData = this.buildPartyPercentageFeatureCollection(
-                geojson.features,
-                dataset.constituencyData,
-                selectedParty,
-                constituencyCodeProp
-            );
-            this.updateMapLayersForPartyPercentage(locationData, selectedParty);
+        if (mode === 'party-percentage' && options?.selectedParty) {
+            this.updatePartyPercentageLayers(locationData, options.selectedParty);
         } else {
-            // Winner mode (default)
-            locationData = this.buildFeatureCollection(
-                geojson.features,
-                (feature) => dataset.constituencyResults[feature.properties[constituencyCodeProp]] || 'NONE'
-            );
-            this.updateMapLayers(locationData, dataset.partyInfo);
+            this.updateElectionLayers(locationData, dataset.partyInfo);
         }
 
         this.setupEventHandlers('general-election', dataset.constituencyData, constituencyCodeProp);
     }
 
-    updateMapForPopulation(
-        geojson: BoundaryGeojson,
-        dataset: PopulationDataset,
-    ): void {
-        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
-        console.log('EXPENSIVE: updateMapForPopulation: Filtered wards', geojson.features.length);
+    // ============================================================================
+    // Public API - Population Methods
+    // ============================================================================
 
-        const locationData = {
-            type: 'FeatureCollection' as const,
-            features: geojson.features.map((feature) => {
-                const wardCode = feature.properties[wardCodeProp];
-                const wardPopulation = dataset.populationData[wardCode];
-                const medianAge = calculateMedianAge(wardPopulation);
-
-                return {
-                    ...feature,
-                    properties: {
-                        ...feature.properties,
-                        color: getColorForAge(medianAge),
-                        medianAge,
-                    }
-                };
-            })
-        };
-
-        this.removeExistingLayers();
-        this.addSource(locationData);
-        this.addPopulationLayers();
-        this.setupEventHandlers('population', dataset.populationData, wardCodeProp);
-        // this.buildWardToLadMapping(geojson);
+    updateMapForPopulation(geojson: BoundaryGeojson, dataset: PopulationDataset): void {
+        this.updatePopulationMap(geojson, dataset, 'age');
     }
 
-    updateMapForGender(
-        geojson: BoundaryGeojson,
-        dataset: PopulationDataset,
-    ): void {
-        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
-        console.log('EXPENSIVE: updateMapForGender: Filtered wards', geojson.features.length);
-
-        const locationData = {
-            type: 'FeatureCollection' as const,
-            features: geojson.features.map((feature) => {
-                const wardCode = feature.properties[wardCodeProp];
-                const wardPopulation = dataset.populationData[wardCode];
-
-                let ratio = 0;
-                if (wardPopulation) {
-                    const malesTotal = wardPopulation.males ? Object.values(wardPopulation.males).reduce((total, num) => total + num, 0) : 0
-                    const femalesTotal = wardPopulation.females ? Object.values(wardPopulation.females).reduce((total, num) => total + num, 0) : 0
-                    ratio = malesTotal / femalesTotal;
-                }
-
-                return {
-                    ...feature,
-                    properties: {
-                        ...feature.properties,
-                        color: getColorForGenderRatio(ratio),
-                        ratio,
-                    }
-                };
-            })
-        };
-
-        this.removeExistingLayers();
-        this.addSource(locationData);
-        this.addPopulationLayers();
-        this.setupEventHandlers('population', dataset.populationData, wardCodeProp);
-        // this.buildWardToLadMapping(geojson);
+    updateMapForGender(geojson: BoundaryGeojson, dataset: PopulationDataset): void {
+        this.updatePopulationMap(geojson, dataset, 'gender');
     }
 
-    updateMapForPopulationDensity(
-        geojson: BoundaryGeojson,
-        dataset: PopulationDataset,
-    ): void {
-        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
-        console.log('EXPENSIVE: updateMapForGender: Filtered wards', geojson.features.length);
-
-        const locationData = {
-            type: 'FeatureCollection' as const,
-            features: geojson.features.map((feature) => {
-                const wardCode = feature.properties[wardCodeProp];
-                const wardPopulation = dataset.populationData[wardCode];
-
-                let totalPopulation = 0;
-                if (wardPopulation) {
-                    const malesTotal = wardPopulation.males ? Object.values(wardPopulation.males).reduce((total, num) => total + num, 0) : 0
-                    const femalesTotal = wardPopulation.females ? Object.values(wardPopulation.females).reduce((total, num) => total + num, 0) : 0
-                    totalPopulation = malesTotal + femalesTotal;
-                }
-
-                // Compute approximate area
-                const coordinates = feature.geometry.coordinates;
-                const areaSqKm = polygonAreaSqKm(coordinates);
-
-                // Compute density
-                const density = areaSqKm > 0 ? totalPopulation / areaSqKm : 0;
-
-                return {
-                    ...feature,
-                    properties: {
-                        ...feature.properties,
-                        color: getColorForDensity(density),
-                        density
-                    }
-                };
-            })
-        };
-
-        this.removeExistingLayers();
-        this.addSource(locationData);
-        this.addPopulationLayers();
-        this.setupEventHandlers('population', dataset.populationData, wardCodeProp);
-        this.buildWardToLadMapping(geojson);
+    updateMapForPopulationDensity(geojson: BoundaryGeojson, dataset: PopulationDataset): void {
+        this.updatePopulationMap(geojson, dataset, 'density');
     }
 
-    buildWardToLadMapping(geojson: BoundaryGeojson) {
+    private updatePopulationMap(
+        geojson: BoundaryGeojson,
+        dataset: PopulationDataset,
+        mode: PopulationMode
+    ): void {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
-        const locationCodeInfo = this.detectLocationCodeInfo(geojson);
+        console.log(`EXPENSIVE: updateMapForPopulation (${mode}): Filtered wards`, geojson.features.length);
 
-        if (locationCodeInfo.fallbackToWardMapping || !locationCodeInfo.property) {
-            return;
-        }
-
-        geojson.features.forEach((feature: any) => {
-            const wardCode = feature.properties[wardCodeProp];
-            const ladCode = feature.properties[locationCodeInfo.property!];
-
-            if (wardCode && ladCode) {
-                this.wardToLadMapping.set(wardCode, ladCode);
+        const colorFunctions = {
+            age: (wardPop: any) => getColorForAge(calculateMedianAge(wardPop)),
+            gender: (wardPop: any) => {
+                const males = calculateTotal(wardPop.males);
+                const females = calculateTotal(wardPop.females);
+                return getColorForGenderRatio(females > 0 ? males / females : 0);
+            },
+            density: (wardPop: any, areaSqKm: number) => {
+                const total = calculateTotal(wardPop.males) + calculateTotal(wardPop.females);
+                return getColorForDensity(areaSqKm > 0 ? total / areaSqKm : 0);
             }
-        });
+        };
+
+        const locationData = {
+            type: 'FeatureCollection' as const,
+            features: geojson.features.map((feature) => {
+                const wardCode = feature.properties[wardCodeProp];
+                const wardPopulation = dataset.populationData[wardCode];
+
+                if (!wardPopulation) {
+                    return { ...feature, properties: { ...feature.properties, color: '#cccccc' } };
+                }
+
+                const areaSqKm = mode === 'density' ? polygonAreaSqKm(feature.geometry.coordinates) : 0;
+                const color = mode === 'density'
+                    ? colorFunctions[mode](wardPopulation, areaSqKm)
+                    : colorFunctions[mode](wardPopulation);
+
+                return {
+                    ...feature,
+                    properties: { ...feature.properties, color }
+                };
+            })
+        };
+
+        this.removeExistingLayers();
+        this.addSource(locationData);
+        this.addPopulationLayers();
+        this.setupEventHandlers('population', dataset.populationData, wardCodeProp);
     }
 
     // ============================================================================
-    // Stats Calculation Methods (for external use)
+    // Public API - Stats Calculation
     // ============================================================================
 
     calculateLocalElectionStats(
@@ -259,73 +158,16 @@ export class MapManager {
         location: string | null = null,
         datasetId: string | null = null,
     ) {
-        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
-
-        return this.calculateLocalElectionStatsInternal(
-            geojson.features,
-            wardCodeProp,
-            wardData,
-            location,
-            datasetId,
-        );
-    }
-
-    calculateGeneralElectionStats(
-        geojson: BoundaryGeojson,
-        constituencyData: GeneralElectionDataset['constituencyData'],
-        location: string | null = null,
-        datasetId: string | null = null,
-    ) {
-        const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
-
-        return this.calculateGeneralElectionStatsInternal(
-            geojson.features,
-            constituencyCodeProp,
-            constituencyData,
-            location,
-            datasetId,
-        );
-    }
-
-
-    calculatePopulationStats(
-        geojson: BoundaryGeojson,
-        populationData: PopulationDataset['populationData'],
-        location: string | null = null,
-        datasetId: string | null = null,
-    ) {
-        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
-
-        return this.calculatePopulationStatsInternal(
-            geojson.features,
-            wardCodeProp,
-            populationData,
-            location,
-            datasetId,
-        );
-    }
-
-    // ============================================================================
-    // Internal Stats Calculation
-    // ============================================================================
-
-    private calculateLocalElectionStatsInternal(
-        geojson: BoundaryGeojson['features'],
-        wardCodeProp: string,
-        wardData: LocalElectionDataset['wardData'],
-        location: string | null = null,
-        datasetId: string | null = null,
-    ) {
         const cacheKey = `local-election-${location}-${datasetId}`;
-
         if (this.cache.has(cacheKey)) {
             console.log(`CACHE HIT: calculateLocalElectionStats: [${cacheKey}]`);
             return this.cache.get(cacheKey);
         }
 
-        console.log(`EXPENSIVE: calculateLocalElectionStats: [${cacheKey}] Processing ${geojson.length} wards`);
+        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
+        console.log(`EXPENSIVE: calculateLocalElectionStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
 
-        const aggregated: WardStats = {
+        const stats: WardStats = {
             partyVotes: {
                 LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0,
                 DUP: 0, PC: 0, SNP: 0, SF: 0, APNI: 0, SDLP: 0
@@ -334,41 +176,37 @@ export class MapManager {
             totalVotes: 0
         };
 
-        geojson.forEach((feature) => {
-            const wardCode = feature.properties[wardCodeProp];
-            const ward = wardData[wardCode];
+        geojson.features.forEach((feature) => {
+            const ward = wardData[feature.properties[wardCodeProp]];
+            if (!ward) return;
 
-            if (ward) {
-                // Aggregate party data
-                (Object.keys(aggregated.partyVotes) as Array<keyof PartyVotes>).forEach(party => {
-                    aggregated.partyVotes[party] += (ward.partyVotes[party] as number) || 0;
-                });
-                aggregated.electorate += ward.electorate;
-                aggregated.totalVotes += ward.totalVotes;
-            }
+            (Object.keys(stats.partyVotes) as Array<keyof PartyVotes>).forEach(party => {
+                stats.partyVotes[party] += (ward.partyVotes[party] as number) || 0;
+            });
+            stats.electorate += ward.electorate;
+            stats.totalVotes += ward.totalVotes;
         });
 
-        this.cache.set(cacheKey, aggregated);
-        return aggregated;
+        this.cache.set(cacheKey, stats);
+        return stats;
     }
 
-    private calculateGeneralElectionStatsInternal(
-        geojson: BoundaryGeojson['features'],
-        constituencyCodeProp: string,
+    calculateGeneralElectionStats(
+        geojson: BoundaryGeojson,
         constituencyData: GeneralElectionDataset['constituencyData'],
         location: string | null = null,
-        datasetId: string | null = null
-    ): ConstituencyStats {
+        datasetId: string | null = null,
+    ) {
         const cacheKey = `general-election-${location}-${datasetId}`;
-
         if (this.cache.has(cacheKey)) {
             console.log(`CACHE HIT: calculateGeneralElectionStats: [${cacheKey}]`);
             return this.cache.get(cacheKey);
         }
 
-        console.log(`EXPENSIVE: calculateGeneralElectionStats: [${cacheKey}] Processing ${geojson.length} constituencies`);
+        const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
+        console.log(`EXPENSIVE: calculateGeneralElectionStats: [${cacheKey}] Processing ${geojson.features.length} constituencies`);
 
-        const aggregated: ConstituencyStats = {
+        const stats: ConstituencyStats = {
             totalSeats: 0,
             electorate: 0,
             validVotes: 0,
@@ -378,77 +216,70 @@ export class MapManager {
             partyVotes: {},
         };
 
-        geojson.forEach((feature) => {
-            const onsId = feature.properties[constituencyCodeProp];
-            const constituency = constituencyData[onsId];
-
+        geojson.features.forEach((feature) => {
+            const constituency = constituencyData[feature.properties[constituencyCodeProp]];
             if (!constituency) return;
 
-            aggregated.totalSeats += 1;
-            aggregated.electorate += constituency.electorate;
-            aggregated.validVotes += constituency.validVotes;
-            aggregated.invalidVotes += constituency.invalidVotes;
+            stats.totalSeats += 1;
+            stats.electorate += constituency.electorate;
+            stats.validVotes += constituency.validVotes;
+            stats.invalidVotes += constituency.invalidVotes;
 
             const winningParty = getWinningParty(constituency);
             if (winningParty) {
-                aggregated.partySeats[winningParty] = (aggregated.partySeats[winningParty] || 0) + 1;
+                stats.partySeats[winningParty] = (stats.partySeats[winningParty] || 0) + 1;
             }
 
             MapManager.PARTY_KEYS.forEach(party => {
                 const votes = constituency.partyVotes[party] || 0;
                 if (votes > 0) {
-                    aggregated.totalVotes += votes;
-                    aggregated.partyVotes[party] = (aggregated.partyVotes[party] || 0) + votes;
+                    stats.totalVotes += votes;
+                    stats.partyVotes[party] = (stats.partyVotes[party] || 0) + votes;
                 }
             });
         });
 
-        this.cache.set(cacheKey, aggregated);
-        return aggregated;
+        this.cache.set(cacheKey, stats);
+        return stats;
     }
 
-    private calculatePopulationStatsInternal(
-        geojson: BoundaryGeojson['features'],
-        wardCodeProp: string,
+    calculatePopulationStats(
+        geojson: BoundaryGeojson,
         populationData: PopulationDataset['populationData'],
         location: string | null = null,
         datasetId: string | null = null,
     ) {
         const cacheKey = `population-${location}-${datasetId}`;
-
         if (this.cache.has(cacheKey)) {
             console.log(`CACHE HIT: calculatePopulationStats: [${cacheKey}]`);
             return this.cache.get(cacheKey);
         }
 
-        console.log(`EXPENSIVE: calculatePopulationStats: [${cacheKey}] Processing ${geojson.length} wards`);
+        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
+        console.log(`EXPENSIVE: calculatePopulationStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
 
-        let totalPop = 0, malesPop = 0, femalesPop = 0;
-        let totalArea = 0;
-        const aggregatedAgeGroups = {
-            total: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
-            males: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
-            females: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups
-        };
-        const ageData: { [age: string]: number } = {};
-
-        // Aggregate data for gender distribution (for later use)
-        const aggregate = {
+        const aggregated = {
+            totalPop: 0,
+            malesPop: 0,
+            femalesPop: 0,
+            totalArea: 0,
+            ageGroups: {
+                total: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
+                males: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
+                females: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups
+            },
+            ageData: {} as Record<string, number>,
             males: {} as Record<string, number>,
             females: {} as Record<string, number>
         };
 
-        // Single loop to gather all data
-        geojson.forEach((feature) => {
-            const wardCode = feature.properties[wardCodeProp];
-            const ward = populationData[wardCode];
-
+        geojson.features.forEach((feature) => {
+            const ward = populationData[feature.properties[wardCodeProp]];
             if (!ward) return;
 
-            // Accumulate totals and aggregate data in one pass
-            totalPop += calculateTotal(ward.total);
-            malesPop += calculateTotal(ward.males);
-            femalesPop += calculateTotal(ward.females);
+            aggregated.totalPop += calculateTotal(ward.total);
+            aggregated.malesPop += calculateTotal(ward.males);
+            aggregated.femalesPop += calculateTotal(ward.females);
 
             const wardAgeGroups = {
                 total: calculateAgeGroups(ward.total),
@@ -456,67 +287,71 @@ export class MapManager {
                 females: calculateAgeGroups(ward.females)
             };
 
-            (Object.keys(aggregatedAgeGroups.total) as Array<keyof AgeGroups>).forEach(ageGroup => {
-                aggregatedAgeGroups.total[ageGroup] += wardAgeGroups.total[ageGroup];
-                aggregatedAgeGroups.males[ageGroup] += wardAgeGroups.males[ageGroup];
-                aggregatedAgeGroups.females[ageGroup] += wardAgeGroups.females[ageGroup];
+            (Object.keys(aggregated.ageGroups.total) as Array<keyof AgeGroups>).forEach(ageGroup => {
+                aggregated.ageGroups.total[ageGroup] += wardAgeGroups.total[ageGroup];
+                aggregated.ageGroups.males[ageGroup] += wardAgeGroups.males[ageGroup];
+                aggregated.ageGroups.females[ageGroup] += wardAgeGroups.females[ageGroup];
             });
 
-            // Aggregate all age data in single loop
             Object.entries(ward.total).forEach(([age, count]) => {
-                ageData[age] = (ageData[age] || 0) + count;
+                aggregated.ageData[age] = (aggregated.ageData[age] || 0) + count;
             });
 
             Object.entries(ward.males).forEach(([age, count]) => {
-                aggregate.males[age] = (aggregate.males[age] || 0) + count;
+                aggregated.males[age] = (aggregated.males[age] || 0) + count;
             });
 
             Object.entries(ward.females).forEach(([age, count]) => {
-                aggregate.females[age] = (aggregate.females[age] || 0) + count;
+                aggregated.females[age] = (aggregated.females[age] || 0) + count;
             });
 
-            // Calculate area for this ward
-            const coordinates = feature.geometry.coordinates;
-            const areaSqKm = polygonAreaSqKm(coordinates);
-            totalArea += areaSqKm;
+            aggregated.totalArea += polygonAreaSqKm(feature.geometry.coordinates);
         });
 
+        const result = this.buildPopulationStatsResult(aggregated);
+        this.cache.set(cacheKey, result);
+        return result;
+    }
+
+    // ============================================================================
+    // Private Helper Methods
+    // ============================================================================
+
+    private buildPopulationStatsResult(aggregated: any) {
         const populationStats: PopulationStats = {
-            total: totalPop,
-            males: malesPop,
-            females: femalesPop,
-            ageGroups: aggregatedAgeGroups,
+            total: aggregated.totalPop,
+            males: aggregated.malesPop,
+            females: aggregated.femalesPop,
+            ageGroups: aggregated.ageGroups,
             isWardSpecific: false
         };
 
-        // Process ages array with 90+ distribution
+        // Distribute 90+ age data
         const ages = Array.from({ length: 100 }, (_, i) => ({
             age: i,
-            count: ageData[i.toString()] || 0
+            count: aggregated.ageData[i.toString()] || 0
         }));
 
         const age90Plus = ages[90].count;
         const decayRate = 0.15;
         const weights = Array.from({ length: 10 }, (_, i) => Math.exp(-decayRate * i));
         const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+
         for (let i = 90; i < 100; i++) {
-            const weight = weights[i - 90];
-            ages[i] = { age: i, count: (age90Plus * weight) / totalWeight };
+            ages[i] = { age: i, count: (age90Plus * weights[i - 90]) / totalWeight };
         }
 
-        // Process gender data by age (0-90) - data already aggregated above
-        const ageRange = Array.from({ length: 91 }, (_, i) => i);
-        const genderAgeData: Array<{ age: number; males: number; females: number }> =
-            ageRange.map(age => ({
-                age,
-                males: aggregate.males[age.toString()] || 0,
-                females: aggregate.females[age.toString()] || 0
-            }));
+        // Build gender age data
+        const genderAgeData = Array.from({ length: 91 }, (_, age) => ({
+            age,
+            males: aggregated.males[age.toString()] || 0,
+            females: aggregated.females[age.toString()] || 0
+        }));
 
         // Calculate median age
         let medianAge = 0;
-        if (totalPop > 0) {
-            const halfPop = totalPop / 2;
+        if (aggregated.totalPop > 0) {
+            const halfPop = aggregated.totalPop / 2;
             let cumulative = 0;
             for (const { age, count } of ages) {
                 cumulative += count;
@@ -527,87 +362,60 @@ export class MapManager {
             }
         }
 
-        // Calculate overall density
-        const density = totalArea > 0 ? totalPop / totalArea : 0;
+        const density = aggregated.totalArea > 0 ? aggregated.totalPop / aggregated.totalArea : 0;
 
-        const result = {
+        return {
             populationStats,
-            ageData,
+            ageData: aggregated.ageData,
             ages,
             genderAgeData,
             medianAge,
-            totalArea,
+            totalArea: aggregated.totalArea,
             density,
         };
-
-        this.cache.set(cacheKey, result);
-        return result;
     }
 
-    // ============================================================================
-    // Property Detection
-    // ============================================================================
-
-    private detectPropertyKey(geojson: BoundaryGeojson, possibleKeys: string[]) {
+    private detectPropertyKey(geojson: BoundaryGeojson, possibleKeys: string[]): string {
         const firstFeature = geojson.features[0];
         if (!firstFeature) return possibleKeys[0];
-
-        const props = firstFeature.properties;
-        return possibleKeys.find(key => key in props) ?? possibleKeys[0];
-    }
-
-    private detectLocationCodeInfo(geojson: BoundaryGeojson): LocationCodeInfo {
-        const firstFeature = geojson.features[0];
-        if (!firstFeature) {
-            return { property: MapManager.LAD_CODE_KEYS[0], fallbackToWardMapping: false };
-        }
-
-        const props = firstFeature.properties;
-        const ladMatch = MapManager.LAD_CODE_KEYS.find(key => key in props);
-
-        return ladMatch
-            ? { property: ladMatch, fallbackToWardMapping: false }
-            : { property: null, fallbackToWardMapping: true };
+        return possibleKeys.find(key => key in firstFeature.properties) ?? possibleKeys[0];
     }
 
     // ============================================================================
-    // Map Layer Management
+    // Layer Management
     // ============================================================================
 
-    private updateMapLayers(locationData: BoundaryGeojson, partyInfo: Party[]) {
+    private updateElectionLayers(locationData: BoundaryGeojson, partyInfo: Party[]) {
         this.removeExistingLayers();
         this.addSource(locationData);
-        this.addElectionLayers(partyInfo);
+
+        const colorExpression: any[] = ['match', ['get', 'winningParty']];
+        partyInfo.forEach(party => {
+            colorExpression.push(party.key, PARTY_COLORS[party.key]);
+        });
+        colorExpression.push('#cccccc');
+
+        this.map.addLayer({
+            id: MapManager.FILL_LAYER_ID,
+            type: 'fill',
+            source: MapManager.SOURCE_ID,
+            paint: {
+                'fill-color': colorExpression,
+                'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
+            }
+        });
+
+        this.addBorderLayer();
     }
 
-    /**
-     * Updates map layers for party percentage mode
-    */
-    private updateMapLayersForPartyPercentage(
-        locationData: BoundaryGeojson,
-        partyCode: string
-    ) {
-        if (!this.map) return;
-
-
+    private updatePartyPercentageLayers(locationData: BoundaryGeojson, partyCode: string) {
         this.removeExistingLayers();
+        this.addSource(locationData);
 
-        const source = this.map.getSource('locations');
-        if (source && source.type === 'geojson') {
-            source.setData(locationData);
-        } else {
-            this.map.addSource('locations', {
-                type: 'geojson',
-                data: locationData
-            });
-        }
-
-        // Get the party color
         const baseColor = PARTY_COLORS[partyCode] || '#999999';
         const partyRgb = hexToRgb(baseColor);
         const lightRgb = { r: 245, g: 245, b: 245 };
 
-        // Create interpolated color expression
         const fillColorExpression: any = [
             'case',
             ['==', ['get', 'percentage'], null],
@@ -621,51 +429,44 @@ export class MapManager {
             ]
         ];
 
-        // Update or create fill layer
-        const fillLayerId = 'locations-fill';
-        if (this.map.getLayer(fillLayerId)) {
-            this.map.setPaintProperty(fillLayerId, 'fill-color', fillColorExpression);
-            this.map.setPaintProperty(fillLayerId, 'fill-opacity', 0.7);
-        } else {
-            this.map.addLayer({
-                id: fillLayerId,
-                type: 'fill',
-                source: 'locations',
-                paint: {
-                    'fill-color': fillColorExpression,
-                    'fill-opacity': 0.7,
-                }
-            });
-        }
+        this.map.addLayer({
+            id: MapManager.FILL_LAYER_ID,
+            type: 'fill',
+            source: MapManager.SOURCE_ID,
+            paint: {
+                'fill-color': fillColorExpression,
+                'fill-opacity': 0.7,
+            }
+        });
 
-        // Update or create border layer
-        const borderLayerId = 'locations-border';
-        if (!this.map.getLayer(borderLayerId)) {
-            this.map.addLayer({
-                id: borderLayerId,
-                type: 'line',
-                source: 'locations',
-                paint: {
-                    'line-color': '#666',
-                    'line-width': 1,
-                }
-            });
-        }
+        this.addBorderLayer();
+    }
 
-        // Update or create hover layer
-        const hoverLayerId = 'locations-hover';
-        if (!this.map.getLayer(hoverLayerId)) {
-            this.map.addLayer({
-                id: hoverLayerId,
-                type: 'line',
-                source: 'locations',
-                paint: {
-                    'line-color': '#000',
-                    'line-width': 2,
-                },
-                filter: ['==', ['get', 'code'], '']
-            });
-        }
+    private addPopulationLayers() {
+        this.map.addLayer({
+            id: MapManager.FILL_LAYER_ID,
+            type: 'fill',
+            source: MapManager.SOURCE_ID,
+            paint: {
+                'fill-color': ['get', 'color'],
+                'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
+            }
+        });
+
+        this.addBorderLayer();
+    }
+
+    private addBorderLayer() {
+        this.map.addLayer({
+            id: MapManager.LINE_LAYER_ID,
+            type: 'line',
+            source: MapManager.SOURCE_ID,
+            paint: {
+                'line-color': '#000',
+                'line-width': 1,
+                'line-opacity': 0.05
+            }
+        });
     }
 
     private removeExistingLayers() {
@@ -686,56 +487,52 @@ export class MapManager {
         });
     }
 
-    private addElectionLayers(partyInfo: Party[]) {
-        const colorExpression: any[] = ['match', ['get', 'winningParty']];
-        partyInfo.forEach(party => {
-            colorExpression.push(party.key, PARTY_COLORS[party.key]);
-        });
-        colorExpression.push('#cccccc');
+    // ============================================================================
+    // Feature Building
+    // ============================================================================
 
-        this.map.addLayer({
-            id: MapManager.FILL_LAYER_ID,
-            type: 'fill',
-            source: MapManager.SOURCE_ID,
-            paint: {
-                'fill-color': colorExpression,
-                'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
-            }
-        });
-
-        this.map.addLayer({
-            id: MapManager.LINE_LAYER_ID,
-            type: 'line',
-            source: MapManager.SOURCE_ID,
-            paint: {
-                'line-color': '#000',
-                'line-width': 1,
-                'line-opacity': 0.05
-            }
-        });
+    private buildWinnerFeatures(
+        features: BoundaryGeojson['features'],
+        codeProp: string,
+        getWinner: (code: string) => string
+    ): BoundaryGeojson {
+        return {
+            type: 'FeatureCollection',
+            features: features.map(feature => ({
+                ...feature,
+                properties: {
+                    ...feature.properties,
+                    winningParty: getWinner(feature.properties[codeProp])
+                }
+            }))
+        };
     }
 
-    private addPopulationLayers() {
-        this.map.addLayer({
-            id: MapManager.FILL_LAYER_ID,
-            type: 'fill',
-            source: MapManager.SOURCE_ID,
-            paint: {
-                'fill-color': ['get', 'color'],
-                'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
-            }
-        });
+    private buildPartyPercentageFeatures(
+        features: BoundaryGeojson['features'],
+        data: LocalElectionDataset['wardData'] | GeneralElectionDataset['constituencyData'],
+        partyCode: string,
+        codeProp: string
+    ): BoundaryGeojson {
+        return {
+            type: 'FeatureCollection',
+            features: features.map(feature => {
+                const code = feature.properties[codeProp];
+                const locationData = data[code];
+                const partyVotes = locationData?.partyVotes[partyCode] || 0;
+                const totalVotes = Object.values(locationData?.partyVotes || {}).reduce((sum, v) => sum + v, 0);
+                const percentage = totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
 
-        this.map.addLayer({
-            id: MapManager.LINE_LAYER_ID,
-            type: 'line',
-            source: MapManager.SOURCE_ID,
-            paint: {
-                'line-color': '#000',
-                'line-width': 1,
-                'line-opacity': 0.05
-            }
-        });
+                return {
+                    ...feature,
+                    properties: {
+                        ...feature.properties,
+                        percentage,
+                        partyCode
+                    }
+                };
+            })
+        };
     }
 
     // ============================================================================
@@ -744,51 +541,57 @@ export class MapManager {
 
     private setupEventHandlers(
         mode: MapMode,
-        data: LocalElectionDataset['wardData'] | GeneralElectionDataset['constituencyData'] | PopulationDataset['populationData'],
+        data: any,
         codeProp: string,
     ) {
         this.map.off('mousemove', MapManager.FILL_LAYER_ID);
         this.map.off('mouseleave', MapManager.FILL_LAYER_ID);
 
         this.map.on('mousemove', MapManager.FILL_LAYER_ID, (e) => {
-            this.handleMouseMove(e, mode, data, codeProp);
-        });
+            if (!e.features?.length) return;
 
-        this.map.on('mouseleave', MapManager.FILL_LAYER_ID, () => {
-            this.handleMouseLeave(mode);
-        });
-    }
-
-    private handleMouseMove(
-        e: mapboxgl.MapMouseEvent,
-        mode: MapMode,
-        data: any,
-        codeProp: string,
-    ) {
-        this.map.getCanvas().style.cursor = 'pointer';
-
-        if (e.features?.length) {
+            this.map.getCanvas().style.cursor = 'pointer';
             const feature = e.features[0];
             this.updateHoverState(feature);
 
-            const handlers = {
-                'local-election': () => this.handleLocalElectionHover(feature, data, codeProp),
-                'general-election': () => this.handleGeneralElectionHover(feature, data, codeProp),
-                'population': () => this.handlePopulationHover(feature, data, codeProp),
-            };
+            const code = feature.properties[codeProp];
+            const locationData = data[code];
 
-            handlers[mode]?.();
-        }
+            if (mode === 'general-election') {
+                this.callbacks.onConstituencyHover?.(locationData || null);
+            } else if (mode === 'population') {
+                this.handlePopulationHover(code, locationData);
+            } else {
+                this.callbacks.onWardHover?.({ data: locationData || null, wardCode: code });
+            }
+        });
+
+        this.map.on('mouseleave', MapManager.FILL_LAYER_ID, () => {
+            this.clearHoverState();
+            this.map.getCanvas().style.cursor = '';
+
+            if (mode === 'general-election') {
+                this.callbacks.onConstituencyHover?.(null);
+            } else {
+                this.callbacks.onWardHover?.({ data: null, wardCode: '' });
+            }
+        });
     }
 
-    private handleMouseLeave(mode: MapMode) {
-        this.clearHoverState();
-        this.map.getCanvas().style.cursor = '';
+    private handlePopulationHover(wardCode: string, wardPopData: any) {
+        if (!this.callbacks.onWardHover) return;
 
-        if (mode === 'general-election' && this.callbacks.onConstituencyHover) {
-            this.callbacks.onConstituencyHover(null);
-        } else if (this.callbacks.onWardHover) {
-            this.callbacks.onWardHover({ data: null, wardCode: '' });
+        if (wardPopData) {
+            const wardData: any = {
+                wardCode,
+                wardName: wardPopData.wardName || '',
+                localAuthorityCode: wardPopData.laCode || '',
+                localAuthorityName: wardPopData.laName || '',
+                LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0
+            };
+            this.callbacks.onWardHover({ data: wardData, wardCode });
+        } else {
+            this.callbacks.onWardHover({ data: null, wardCode });
         }
     }
 
@@ -813,104 +616,7 @@ export class MapManager {
                 { source: MapManager.SOURCE_ID, id: this.lastHoveredFeatureId },
                 { hover: false }
             );
+            this.lastHoveredFeatureId = null;
         }
-    }
-
-    private handleLocalElectionHover(
-        feature: GeoJSONFeature,
-        wardData: LocalElectionDataset['wardData'],
-        wardCodeProp: string,
-    ) {
-        const wardCode = feature.properties[wardCodeProp];
-        const data = wardData[wardCode];
-
-        if (this.callbacks.onWardHover) {
-            this.callbacks.onWardHover({ data: data || null, wardCode });
-        }
-    }
-
-    private handleGeneralElectionHover(
-        feature: GeoJSONFeature,
-        constituencyData: GeneralElectionDataset['constituencyData'],
-        constituencyCodeProp: string
-    ) {
-        const onsId = feature.properties[constituencyCodeProp];
-        const data = constituencyData[onsId];
-
-        if (this.callbacks.onConstituencyHover) {
-            this.callbacks.onConstituencyHover(data || null);
-        }
-    }
-
-    private handlePopulationHover(
-        feature: GeoJSONFeature,
-        populationData: PopulationDataset['populationData'],
-        wardCodeProp: string
-    ) {
-        const wardCode = feature.properties[wardCodeProp];
-        const wardPopData = populationData[wardCode];
-
-        if (wardPopData && this.callbacks.onWardHover) {
-            const wardData: any = {
-                wardCode,
-                wardName: wardPopData.wardName || '',
-                localAuthorityCode: wardPopData.laCode || '',
-                localAuthorityName: wardPopData.laName || '',
-                LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0
-            };
-            this.callbacks.onWardHover({ data: wardData, wardCode });
-        } else if (this.callbacks.onWardHover) {
-            this.callbacks.onWardHover({ data: null, wardCode });
-        }
-    }
-
-
-
-    // ============================================================================
-    // Utility Methods
-    // ============================================================================
-
-    private buildFeatureCollection(
-        features: BoundaryGeojson['features'],
-        getWinningParty: (feature: GeoJSONFeature) => string
-    ): BoundaryGeojson {
-        return {
-            type: 'FeatureCollection',
-            features: features.map(feature => ({
-                ...feature,
-                properties: {
-                    ...feature.properties,
-                    winningParty: getWinningParty(feature)
-                }
-            }))
-        };
-    }
-
-    /**
-     * Builds feature collection for party percentage mode
-     */
-    private buildPartyPercentageFeatureCollection(
-        features: BoundaryGeojson['features'],
-        data: LocalElectionDataset['wardData'] | GeneralElectionDataset['constituencyData'],
-        partyCode: string,
-        codeProp: string
-    ): any {
-        return {
-            type: 'FeatureCollection',
-            features: features.map(feature => {
-                const code = feature.properties[codeProp];
-                const partyVotes = data[code].partyVotes[partyCode];
-                const totalVotes = Object.values(data[code].partyVotes).reduce((total, num) => total + num, 0);
-
-                return {
-                    ...feature,
-                    properties: {
-                        ...feature.properties,
-                        percentage: partyVotes / totalVotes,
-                        partyCode
-                    }
-                };
-            })
-        };
     }
 }

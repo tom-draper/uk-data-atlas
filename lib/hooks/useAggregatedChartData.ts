@@ -10,7 +10,6 @@ import type {
 } from '@lib/types';
 import { BoundaryData } from './useBoundaryData';
 import { MapManager } from '../utils/mapManager';
-import { CodeMapper } from './useCodeMapper';
 
 interface UseAggregatedElectionDataParams {
 	mapManager: MapManager | null;
@@ -19,7 +18,6 @@ interface UseAggregatedElectionDataParams {
 	generalElectionDatasets: Record<string, GeneralElectionDataset | null>;
 	populationDatasets: Record<string, PopulationDataset | null>;
 	location: string | null;
-	codeMapper: CodeMapper;
 }
 
 /**
@@ -33,7 +31,6 @@ export function useAggregatedElectionData({
 	generalElectionDatasets,
 	populationDatasets,
 	location,
-	codeMapper
 }: UseAggregatedElectionDataParams) {
 	/**
 	 * Aggregated local election data - MapManager caches internally.

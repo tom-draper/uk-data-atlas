@@ -1,13 +1,14 @@
 // components/LegendPanel.tsx
 'use client';
-import { PARTY_COLORS, PARTY_INFO } from '@/lib/data/parties';
-import { memo } from 'react';
+import { PARTIES } from '@/lib/data/parties';
+import { memo, useMemo } from 'react';
 import type { MapOptions } from '@lib/types/mapOptions';
-import type { Dataset } from '@/lib/types';
+import type { Dataset, PartyVotes } from '@/lib/types';
 
 interface LegendPanelProps {
     activeDatasetId: string;
     activeDataset: Dataset;
+    aggregatedData: { partyVotes: PartyVotes };
     mapOptions: MapOptions;
     onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
 }
@@ -15,6 +16,7 @@ interface LegendPanelProps {
 export default memo(function LegendPanel({
     activeDatasetId,
     activeDataset,
+    aggregatedData,
     mapOptions,
     onMapOptionsChange
 }: LegendPanelProps) {
@@ -102,54 +104,66 @@ export default memo(function LegendPanel({
         </div>
     );
 
-    const renderElectionLegend = () => (
-        <div>
-            {PARTY_INFO.map((item) => {
-                const isSelected = currentOptions?.mode === 'party-percentage'
-                    && currentOptions.selectedParty === item.key;
+    const renderElectionLegend = () => {
+        const parties = useMemo(() => {
+            if (!aggregatedData) return [];
+            return Object.entries(aggregatedData.partyVotes)
+                .filter(([_, votes]) => votes > 0) // remove zero votes
+                .sort((a, b) => b[1] - a[1]) // sort by vote count descending
+                .map(([id]) => ({
+                    id,
+                    color: PARTIES[id].color,
+                    name: PARTIES[id].name,
+                }));
+        }, [aggregatedData])
 
-                return (
-                    <button
-                        key={item.key}
-                        onClick={() => handlePartyClick(item.key)}
-                        className={`flex items-center gap-2 px-1 py-[3px] w-full text-left rounded transition-all cursor-pointer ${isSelected
-                            ? 'bg-blue-100/50 ring-1 ring-blue-400/50'
-                            : 'hover:bg-gray-100/30'
-                            }`}
-                    >
-                        <div
-                            className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? 'opacity-100 ring-1 ring-blue-400' : 'opacity-80'
+        return (
+            <div>
+                {parties.map((party) => {
+                    const isSelected = currentOptions?.mode === 'party-percentage'
+                        && currentOptions.selectedParty === party.id;
+
+                    return (
+                        <button
+                            key={party.id}
+                            onClick={() => handlePartyClick(party.id)}
+                            className={`flex items-center gap-2 px-1 py-[3px] w-full text-left rounded transition-all cursor-pointer ${isSelected
+                                ? 'bg-blue-100/50 ring-1 ring-blue-400/50'
+                                : 'hover:bg-gray-100/30'
                                 }`}
-                            style={{ backgroundColor: PARTY_COLORS[item.key] }}
-                        />
-                        <span className={`text-xs ${isSelected ? 'text-gray-700 font-medium' : 'text-gray-500'
-                            }`}>
-                            {item.name}
-                        </span>
-                    </button>
-                );
-            })}
+                        >
+                            <div
+                                className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? 'opacity-100 ring-1 ring-blue-400' : 'opacity-100'
+                                    }`}
+                                style={{ backgroundColor: party.color }}
+                            />
+                            <span className={`text-xs ${isSelected ? 'text-gray-700 font-medium' : 'text-gray-500'
+                                }`}>
+                                {party.name}
+                            </span>
+                        </button>
+                    );
+                })}
 
-            {isElectionDataset && currentOptions?.mode === 'party-percentage' && currentOptions.selectedParty && (
-                <div className="my-1 mx-1 border-t border-gray-200/80">
-                    <div className="pt-2">
-                        <div className="text-[10px] text-gray-400 mb-1.5 flex justify-between px-1">
-                            <span>0%</span>
-                            <p className="text-[10px] text-gray-500 leading-relaxed">
-                                Showing vote % for <span style={{ color: PARTY_COLORS[currentOptions.selectedParty] }}>{currentOptions.selectedParty}</span>
-                            </p>
-                            <span>100%</span>
+                {isElectionDataset && currentOptions?.mode === 'party-percentage' && currentOptions.selectedParty && (
+                    <div className="my-1 mx-1 border-t border-gray-200/80">
+                        <div className="pt-2">
+                            <div className="text-[10px] text-gray-400 mb-1.5 flex justify-between px-1">
+                                <span>0%</span>
+                                <p className="text-[10px] text-gray-400 leading-relaxed px-2">
+                                    Showing vote % for <span style={{ color: PARTIES[currentOptions.selectedParty].color }}>{currentOptions.selectedParty}</span>
+                                </p>
+                                <span>100%</span>
+                            </div>
+                            <div className="h-3 rounded" style={{
+                                background: `linear-gradient(to right, #f5f5f5, ${PARTIES[currentOptions.selectedParty].color || '#999'})`
+                            }} />
                         </div>
-                        <div className="h-3 rounded" style={{
-                            background: `linear-gradient(to right, #f5f5f5, ${PARTY_COLORS[currentOptions.selectedParty] || '#999'
-                                })`
-                        }} />
                     </div>
-
-                </div>
-            )}
-        </div>
-    );
+                )}
+            </div>
+        )
+    }
 
     const renderLegendContent = () => {
         switch (activeDatasetId) {

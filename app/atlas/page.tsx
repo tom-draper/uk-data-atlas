@@ -101,9 +101,21 @@ export default function MapsPage() {
 		localElectionDatasets: localElectionData.datasets,
 		generalElectionDatasets: generalElectionData.datasets,
 		populationDatasets: populationData.datasets,
-		location: selectedLocation,
-		codeMapper
+		location: selectedLocation
 	});
+
+	const aggregatedData = useMemo(() => {
+		if (!activeDataset || !aggregatedLocalElectionData || !aggregatedGeneralElectionData || !aggregatedPopulationData) return null;
+
+		switch (activeDataset.type) {
+			case 'local-election':
+				return aggregatedLocalElectionData[activeDataset.year]
+			case 'general-election':
+				return aggregatedGeneralElectionData[activeDataset.year]
+			case 'population':
+				return aggregatedPopulationData[activeDataset.year]
+		}
+	}, [activeDataset, aggregatedGeneralElectionData, aggregatedLocalElectionData, aggregatedPopulationData])
 
 	// Dataset change handler
 	useEffect(() => {
@@ -180,6 +192,7 @@ export default function MapsPage() {
 					<LegendPanel 
 						activeDatasetId={activeDatasetId}
 						activeDataset={activeDataset}
+						aggregatedData={aggregatedData}
 						mapOptions={mapOptions}
 						onMapOptionsChange={handleMapOptionsChange}
 					/>
