@@ -1,6 +1,6 @@
 // components/GeneralElectionResultChart.tsx
 'use client';
-import { PARTY_COLORS } from '@/lib/data/parties';
+import { PARTIES } from '@/lib/data/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElectionHelpers';
 import { AggregateGeneralElectionData, GeneralElectionDataset, PartyVotes } from '@lib/types';
@@ -51,7 +51,7 @@ const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregat
 							key={party.key}
 							style={{
 								width: `${percentage}%`,
-								backgroundColor: PARTY_COLORS[party.key],
+								backgroundColor: PARTIES[party.key].color,
 							}}
 							title={`${party.name}: ${votes.toLocaleString()} (${percentage.toFixed(1)}%)`}
 							className="group relative hover:opacity-80 transition-opacity"
@@ -76,7 +76,7 @@ const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregat
 								<div key={party.key} className="flex items-center gap-1">
 									<div
 										className="w-1.5 h-1.5 rounded-sm shrink-0"
-										style={{ backgroundColor: PARTY_COLORS[party.key] }}
+										style={{ backgroundColor: PARTIES[party.key].color }}
 									/>
 									<span className="truncate font-medium">
 										{party.key}: {(data[party.key] || 0).toLocaleString()}
@@ -97,7 +97,7 @@ const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregat
 										<div key={partyKey} className="flex items-center gap-1">
 											<div
 												className="w-1.5 h-1.5 rounded-sm shrink-0"
-												style={{ backgroundColor: PARTY_COLORS[partyKey] }}
+												style={{ backgroundColor: PARTIES[partyKey].color }}
 											/>
 											<span className="truncate font-medium">
 												{partyKey}: {seats}
@@ -226,7 +226,9 @@ export default function GeneralElectionResultChart({
 						CON: data.partyVotes.CON || 0,
 						LD: data.partyVotes.LD || 0,
 						GREEN: data.partyVotes.GREEN || 0,
-						REF: data.partyVotes.RUK || data.partyVotes.BRX || data.partyVotes.UKIP || 0,
+						REF: data.partyVotes.RUK || 0,
+						BRX: data.partyVotes.BRX || 0,
+						UKIP: data.partyVotes.UKIP || 0,
 						SNP: data.partyVotes.SNP || 0,
 						PC: data.partyVotes.PC || 0,
 						DUP: data.partyVotes.DUP || 0,

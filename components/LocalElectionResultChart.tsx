@@ -1,6 +1,5 @@
 // components/LocalElectionResultChart.tsx
 'use client';
-import { PARTY_COLORS } from '@/lib/data/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElectionHelpers';
 import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset } from '@lib/types';
@@ -52,7 +51,7 @@ const CompactBar = React.memo(({ data, dataset, isActive }: CompactBarProps) => 
 							key={party.key}
 							style={{
 								width: `${percentage}%`,
-								backgroundColor: PARTY_COLORS[party.key],
+								backgroundColor: PARTIES[party.key].color,
 							}}
 							title={`${party.name}: ${votes.toLocaleString()}`}
 							className="group relative hover:opacity-80 transition-opacity"
@@ -74,7 +73,7 @@ const CompactBar = React.memo(({ data, dataset, isActive }: CompactBarProps) => 
 							<div key={party.key} className="flex items-center gap-1">
 								<div
 									className="w-1.5 h-1.5 rounded-sm shrink-0"
-									style={{ backgroundColor: PARTY_COLORS[party.key] }}
+									style={{ backgroundColor: PARTIES[party.key].color }}
 								/>
 								<span className="truncate font-medium">
 									{party.key}: {(data[party.key] || 0).toLocaleString()}

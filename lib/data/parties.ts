@@ -22,6 +22,7 @@ export const PARTIES = {
     'LD': { color: '#FF9A02', name: 'Liberal Democrat' },
     'GREEN': { color: '#5FB25F', name: 'Green' },
     'REF': { color: '#0AD1E0', name: 'Reform' },
+    'RUK': { color: '#0AD1E0', name: 'Reform' },
     'SNP': { color: '#ffd02c', name: 'Scottish National Party' },
     'PC': { color: '#4eecaf', name: 'Plaid Cymru' },
     'SF': { color: '#24aa83', name: 'Sinn Fein' },
@@ -29,8 +30,10 @@ export const PARTIES = {
     'SDLP': { color: '#577557', name: 'Social Democratic & Labour Party' },
     'APNI': { color: '#d6b429', name: 'Alliance Party' },
     'BRX': { color: '#11b0c9', name: 'Brexit Party' },
-    'UKP': { color: '#6a2f73', name: 'UKIP' },
-    'IND': { color: '#FC86C2', name: 'Independent' }
+    'UKIP': { color: '#6a2f73', name: 'UKIP' },
+    'IND': { color: '#FC86C2', name: 'Independent' },
+    'UUP': { color: '#FC86C2', name: 'UUP' },
+    'OTHER': { color: '#999999', name: 'Other' }
 } as const;
 
 export const PARTY_COLORS: Record<string, string> = {

@@ -1,6 +1,5 @@
 // lib/utils/mapManager.ts
 import { PartyVotes, LocalElectionWardData, Party, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, PopulationStats, AgeGroups, ConstituencyStats, WardStats } from '@lib/types';
-import { PARTY_COLORS } from '../data/parties';
 import { GeoJSONFeature } from 'mapbox-gl';
 import { calculateAgeGroups, calculateMedianAge, calculateTotal, polygonAreaSqKm } from './populationHelpers';
 import { getWinningParty } from './generalElectionHelpers';
@@ -391,7 +390,7 @@ export class MapManager {
 
         const colorExpression: any[] = ['match', ['get', 'winningParty']];
         partyInfo.forEach(party => {
-            colorExpression.push(party.key, PARTY_COLORS[party.key]);
+            colorExpression.push(party.key, PARTIES[party.key].color);
         });
         colorExpression.push('#cccccc');
 

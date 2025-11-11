@@ -22,6 +22,8 @@ export interface PartyVotes {
     LD?: number;
     GREEN?: number;
     REF?: number;
+    BRX?: number;
+    UKIP?: number;
     SNP?: number;
     DUP?: number;
     PC?: number;
