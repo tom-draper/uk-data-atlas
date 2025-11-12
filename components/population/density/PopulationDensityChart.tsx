@@ -2,7 +2,7 @@
 import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset } from "@/lib/types";
-import { calculateTotal, polygonAreaSqKm } from "@/lib/utils/populationHelpers";
+import { calculateTotal, polygonAreaSqKm } from "@/lib/utils/population";
 import { useMemo } from "react";
 
 interface PopulationDensityChartProps {

@@ -1,7 +1,7 @@
 // components/LegendPanel.tsx
 'use client';
 import { PARTIES } from '@/lib/data/parties';
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState, useRef, useEffect } from 'react';
 import type { MapOptions } from '@lib/types/mapOptions';
 import type { Dataset, PartyVotes } from '@/lib/types';
 
@@ -11,6 +11,100 @@ interface LegendPanelProps {
     aggregatedData: { partyVotes: PartyVotes };
     mapOptions: MapOptions;
     onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
+}
+
+interface RangeControlProps {
+    min: number;
+    max: number;
+    currentMin: number;
+    currentMax: number;
+    gradient: string;
+    labels: string[];
+    onRangeChange: (min: number, max: number) => void;
+}
+
+function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRangeChange }: RangeControlProps) {
+    const [isDraggingMin, setIsDraggingMin] = useState(false);
+    const [isDraggingMax, setIsDraggingMax] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const getValueFromPosition = (clientY: number) => {
+        if (!containerRef.current) return currentMax;
+        const rect = containerRef.current.getBoundingClientRect();
+        const relativeY = clientY - rect.top;
+        const percentage = Math.max(0, Math.min(1, relativeY / rect.height));
+        return max - (percentage * (max - min));
+    };
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (isDraggingMin) {
+                const newMin = Math.min(getValueFromPosition(e.clientY), currentMax - (max - min) * 0.05);
+                onRangeChange(newMin, currentMax);
+            } else if (isDraggingMax) {
+                const newMax = Math.max(getValueFromPosition(e.clientY), currentMin + (max - min) * 0.05);
+                onRangeChange(currentMin, newMax);
+            }
+        };
+
+        const handleMouseUp = () => {
+            setIsDraggingMin(false);
+            setIsDraggingMax(false);
+        };
+
+        if (isDraggingMin || isDraggingMax) {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+            return () => {
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            };
+        }
+    }, [isDraggingMin, isDraggingMax, currentMin, currentMax, min, max, onRangeChange]);
+
+    const maxPosition = ((max - currentMax) / (max - min)) * 100;
+    const minPosition = ((max - currentMin) / (max - min)) * 100;
+
+    return (
+        <div className="p-1 relative select-none">
+            <div ref={containerRef} className="h-40 w-6 rounded relative" style={{ background: gradient }}>
+                {/* Max handle (top) */}
+                <div
+                    className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group"
+                    style={{ top: `${maxPosition}%`, transform: 'translateY(-50%)' }}
+                    onMouseDown={(e) => {
+                        e.preventDefault();
+                        setIsDraggingMax(true);
+                    }}
+                >
+                    <div className="absolute -left-1 -top-1.5 w-8 h-4 flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full shadow-md border border-gray-300 group-hover:scale-125 transition-transform" />
+                    </div>
+                </div>
+
+                {/* Min handle (bottom) */}
+                <div
+                    className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group"
+                    style={{ top: `${minPosition}%`, transform: 'translateY(-50%)' }}
+                    onMouseDown={(e) => {
+                        e.preventDefault();
+                        setIsDraggingMin(true);
+                    }}
+                >
+                    <div className="absolute -left-1 -top-1.5 w-8 h-4 flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full shadow-md border border-gray-300 group-hover:scale-125 transition-transform" />
+                    </div>
+                </div>
+            </div>
+
+            {/* Labels */}
+            <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8 pointer-events-none">
+                {labels.map((label, i) => (
+                    <span key={i}>{label}</span>
+                ))}
+            </div>
+        </div>
+    );
 }
 
 export default memo(function LegendPanel({
@@ -26,14 +120,12 @@ export default memo(function LegendPanel({
 
         const currentOptions = mapOptions[electionType];
 
-        // Toggle: if clicking the same party, go back to winner mode
         if (currentOptions.mode === 'party-percentage' && currentOptions.selectedParty === partyCode) {
             onMapOptionsChange(electionType, {
                 mode: 'winner',
                 selectedParty: undefined,
             });
         } else {
-            // Switch to party percentage mode
             onMapOptionsChange(electionType, {
                 mode: 'party-percentage',
                 selectedParty: partyCode,
@@ -49,47 +141,95 @@ export default memo(function LegendPanel({
 
     const isElectionDataset = activeDataset.type === 'general-election' || activeDataset.type === 'local-election';
 
-    const renderPopulationLegend = () => (
-        <div className="p-1">
-            <div className="h-40 w-6 rounded" style={{
-                background: 'linear-gradient(to bottom, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))'
-            }} />
-            <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8">
-                <span>55</span>
-                <span>47</span>
-                <span>40</span>
-                <span>32</span>
-                <span>25</span>
-            </div>
-        </div>
-    );
+    const handleRangeChange = (datasetId: string, min: number, max: number) => {
+        // Store ranges in mapOptions based on dataset type
+        if (datasetId === 'population') {
+            onMapOptionsChange('population', { colorRange: { min, max } });
+        } else if (datasetId === 'density') {
+            onMapOptionsChange('density', { colorRange: { min, max } });
+        } else if (datasetId === 'gender') {
+            onMapOptionsChange('gender', { colorRange: { min, max } });
+        }
+    };
 
-    const renderDensityLegend = () => (
-        <div className="p-1">
-            <div className="h-40 w-6 rounded" style={{
-                background: 'linear-gradient(to bottom, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))'
-            }} />
-            <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8">
-                <span>10000</span>
-                <span>5000</span>
-                <span>2000</span>
-                <span>1000</span>
-                <span>500</span>
-            </div>
-        </div>
-    );
+    const handlePartyRangeChange = (min: number, max: number) => {
+        const electionType = activeDataset.type as 'general-election' | 'local-election';
+        if (electionType === 'general-election' || electionType === 'local-election') {
+            onMapOptionsChange(electionType, { 
+                partyPercentageRange: { min, max }
+            });
+        }
+    };
 
-    const renderGenderLegend = () => (
-        <div className="p-1">
-            <div className="h-40 w-6 rounded" style={{
-                background: 'linear-gradient(to top, rgba(255,105,180,0.8), rgba(240,240,240,0.8), rgba(70,130,180,0.8))'
-            }} />
-            <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8">
-                <span>M</span>
-                <span>F</span>
-            </div>
-        </div>
-    );
+    const renderPopulationLegend = () => {
+        const options = mapOptions.population;
+        const currentMin = options?.colorRange?.min ?? 25;
+        const currentMax = options?.colorRange?.max ?? 55;
+        
+        return (
+            <RangeControl
+                min={18}
+                max={80}
+                currentMin={currentMin}
+                currentMax={currentMax}
+                gradient="linear-gradient(to bottom, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))"
+                labels={[
+                    currentMax.toFixed(0),
+                    ((currentMax - currentMin) * 0.75 + currentMin).toFixed(0),
+                    ((currentMax - currentMin) * 0.5 + currentMin).toFixed(0),
+                    ((currentMax - currentMin) * 0.25 + currentMin).toFixed(0),
+                    currentMin.toFixed(0)
+                ]}
+                onRangeChange={(min, max) => handleRangeChange('population', min, max)}
+            />
+        );
+    };
+
+    const renderDensityLegend = () => {
+        const options = mapOptions.density;
+        const currentMin = options?.colorRange?.min ?? 500;
+        const currentMax = options?.colorRange?.max ?? 10000;
+        
+        return (
+            <RangeControl
+                min={0}
+                max={20000}
+                currentMin={currentMin}
+                currentMax={currentMax}
+                gradient="linear-gradient(to bottom, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))"
+                labels={[
+                    currentMax.toFixed(0),
+                    ((currentMax - currentMin) * 0.75 + currentMin).toFixed(0),
+                    ((currentMax - currentMin) * 0.5 + currentMin).toFixed(0),
+                    ((currentMax - currentMin) * 0.25 + currentMin).toFixed(0),
+                    currentMin.toFixed(0)
+                ]}
+                onRangeChange={(min, max) => handleRangeChange('density', min, max)}
+            />
+        );
+    };
+
+    const renderGenderLegend = () => {
+        const options = mapOptions.gender;
+        const currentMin = options?.colorRange?.min ?? -0.1;
+        const currentMax = options?.colorRange?.max ?? 0.1;
+        
+        return (
+            <RangeControl
+                min={-0.5}
+                max={0.5}
+                currentMin={currentMin}
+                currentMax={currentMax}
+                gradient="linear-gradient(to top, rgba(255,105,180,0.8), rgba(240,240,240,0.8), rgba(70,130,180,0.8))"
+                labels={[
+                    `M ${(currentMax * 100).toFixed(0)}%`,
+                    '0%',
+                    `F ${(Math.abs(currentMin) * 100).toFixed(0)}%`
+                ]}
+                onRangeChange={(min, max) => handleRangeChange('gender', min, max)}
+            />
+        );
+    };
 
     const renderElectionLegend = () => {
         const parties = useMemo(() => {
@@ -165,18 +305,21 @@ export default memo(function LegendPanel({
             {isElectionDataset && currentOptions?.mode === 'party-percentage' && currentOptions.selectedParty && (
                 <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
                     <div className="bg-white/20 p-1 overflow-hidden">
-                        <div className="p-1">
-                            <div className="h-40 w-6 rounded" style={{
-                                background: `linear-gradient(to bottom, ${PARTIES[currentOptions.selectedParty].color || '#999'}, #f5f5f5)`
-                            }} />
-                            <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8">
-                                <span>100%</span>
-                                <span>75%</span>
-                                <span>50%</span>
-                                <span>25%</span>
-                                <span>0%</span>
-                            </div>
-                        </div>
+                        <RangeControl
+                            min={0}
+                            max={100}
+                            currentMin={currentOptions.partyPercentageRange?.min ?? 0}
+                            currentMax={currentOptions.partyPercentageRange?.max ?? 100}
+                            gradient={`linear-gradient(to bottom, ${PARTIES[currentOptions.selectedParty].color || '#999'}, #f5f5f5)`}
+                            labels={[
+                                `${(currentOptions.partyPercentageRange?.max ?? 100).toFixed(0)}%`,
+                                `${((currentOptions.partyPercentageRange?.max ?? 100) * 0.75 + (currentOptions.partyPercentageRange?.min ?? 0) * 0.25).toFixed(0)}%`,
+                                `${((currentOptions.partyPercentageRange?.max ?? 100) * 0.5 + (currentOptions.partyPercentageRange?.min ?? 0) * 0.5).toFixed(0)}%`,
+                                `${((currentOptions.partyPercentageRange?.max ?? 100) * 0.25 + (currentOptions.partyPercentageRange?.min ?? 0) * 0.75).toFixed(0)}%`,
+                                `${(currentOptions.partyPercentageRange?.min ?? 0).toFixed(0)}%`
+                            ]}
+                            onRangeChange={handlePartyRangeChange}
+                        />
                     </div>
                 </div>
             )}

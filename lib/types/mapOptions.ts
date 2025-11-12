@@ -2,37 +2,60 @@
 
 export type MapMode = 'winner' | 'party-percentage';
 
-export interface GeneralElectionMapOptions {
-    mode: MapMode;
-    selectedParty?: string; // Party code like 'Lab', 'Con', etc.
+export interface ColorRange {
+    min: number;
+    max: number;
 }
 
-export interface LocalElectionMapOptions {
-    mode: MapMode;
+export interface GeneralElectionOptions {
+    mode: 'winner' | 'party-percentage';
     selectedParty?: string;
+    partyPercentageRange?: ColorRange;
 }
 
-export interface PopulationMapOptions {
-    // Future options for population maps
-    mode: 'absolute' | 'density';
+export interface LocalElectionOptions {
+    mode: 'winner' | 'party-percentage';
+    selectedParty?: string;
+    partyPercentageRange?: ColorRange;
 }
 
-export type MapOptions = {
-    'general-election': GeneralElectionMapOptions;
-    'local-election': LocalElectionMapOptions;
-    'population': PopulationMapOptions;
-};
+export interface PopulationOptions {
+    colorRange?: ColorRange;
+}
 
+export interface DensityOptions {
+    colorRange?: ColorRange;
+}
+
+export interface GenderOptions {
+    colorRange?: ColorRange;
+}
+
+export interface MapOptions {
+    'general-election': GeneralElectionOptions;
+    'local-election': LocalElectionOptions;
+    'population': PopulationOptions;
+    'density': DensityOptions;
+    'gender': GenderOptions;
+}
+
+// Default values
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
     'general-election': {
         mode: 'winner',
-        selectedParty: undefined,
+        partyPercentageRange: { min: 0, max: 100 }
     },
     'local-election': {
         mode: 'winner',
-        selectedParty: undefined,
+        partyPercentageRange: { min: 0, max: 100 }
     },
     'population': {
-        mode: 'absolute',
+        colorRange: { min: 25, max: 55 }
     },
+    'density': {
+        colorRange: { min: 500, max: 10000 }
+    },
+    'gender': {
+        colorRange: { min: -0.1, max: 0.1 }
+    }
 };

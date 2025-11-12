@@ -2,7 +2,7 @@
 'use client';
 import { PARTIES } from '@/lib/data/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
-import { calculateTurnout } from '@/lib/utils/generalElectionHelpers';
+import { calculateTurnout } from '@/lib/utils/generalElection';
 import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
