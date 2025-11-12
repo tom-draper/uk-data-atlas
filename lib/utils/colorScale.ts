@@ -1,5 +1,5 @@
 // lib/utils/colorScale.ts
-import type { GeneralElectionOptions, LocalElectionOptions, MapOptions } from '@/lib/types/mapOptions';
+import type { DensityOptions, GenderOptions, GeneralElectionOptions, LocalElectionOptions, MapOptions, PopulationOptions } from '@/lib/types/mapOptions';
 
 /**
  * Normalizes a value to a 0-1 range based on min/max bounds
@@ -48,8 +48,8 @@ export function getViridisColor(normalizedValue: number): string {
 /**
  * Gets color for population/age data with dynamic range
  */
-export function getColorForAge(medianAge: number, mapOptions: MapOptions): string {
-    const range = mapOptions.population.colorRange || { min: 25, max: 55 };
+export function getColorForAge(medianAge: number, mapOptions: PopulationOptions): string {
+    const range = mapOptions.colorRange || { min: 25, max: 55 };
     const normalized = normalizeValue(medianAge, range.min, range.max);
     return getViridisColor(1 - normalized); // Invert so higher ages are darker
 }
@@ -57,8 +57,8 @@ export function getColorForAge(medianAge: number, mapOptions: MapOptions): strin
 /**
  * Gets color for density data with dynamic range
  */
-export function getColorForDensity(density: number, mapOptions: MapOptions): string {
-    const range = mapOptions.density.colorRange || { min: 500, max: 10000 };
+export function getColorForDensity(density: number, mapOptions: DensityOptions): string {
+    const range = mapOptions.colorRange || { min: 500, max: 10000 };
     const normalized = normalizeValue(density, range.min, range.max);
     return getViridisColor(1 - normalized); // Invert so higher density is darker
 }
@@ -66,8 +66,8 @@ export function getColorForDensity(density: number, mapOptions: MapOptions): str
 /**
  * Gets color for gender ratio data with dynamic range
  */
-export function getColorForGenderRatio(ratio: number, mapOptions: MapOptions): string {
-    const range = mapOptions.gender.colorRange || { min: -0.1, max: 0.1 };
+export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions): string {
+    const range = mapOptions.colorRange || { min: -0.1, max: 0.1 };
     const normalized = normalizeValue(ratio, range.min, range.max);
     
     // Pink for female-skewed, blue for male-skewed, gray for balanced

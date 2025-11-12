@@ -20,10 +20,11 @@ interface RangeControlProps {
     currentMax: number;
     gradient: string;
     labels: string[];
-    onRangeChange: (min: number, max: number) => void;
+    onRangeInput: (min: number, max: number) => void; // Changed from onRangeChange
+    onRangeChangeEnd: () => void; // Added for mouseup event
 }
 
-function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRangeChange }: RangeControlProps) {
+function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRangeInput, onRangeChangeEnd }: RangeControlProps) {
     const [isDraggingMin, setIsDraggingMin] = useState(false);
     const [isDraggingMax, setIsDraggingMax] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -40,16 +41,19 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
         const handleMouseMove = (e: MouseEvent) => {
             if (isDraggingMin) {
                 const newMin = Math.min(getValueFromPosition(e.clientY), currentMax - (max - min) * 0.05);
-                onRangeChange(newMin, currentMax);
+                onRangeInput(newMin, currentMax); // Use onRangeInput for live update
             } else if (isDraggingMax) {
                 const newMax = Math.max(getValueFromPosition(e.clientY), currentMin + (max - min) * 0.05);
-                onRangeChange(currentMin, newMax);
+                onRangeInput(currentMin, newMax); // Use onRangeInput for live update
             }
         };
 
         const handleMouseUp = () => {
-            setIsDraggingMin(false);
-            setIsDraggingMax(false);
+            if (isDraggingMin || isDraggingMax) {
+                setIsDraggingMin(false);
+                setIsDraggingMax(false);
+                onRangeChangeEnd(); // Call change end handler on mouse up
+            }
         };
 
         if (isDraggingMin || isDraggingMax) {
@@ -60,7 +64,7 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
                 document.removeEventListener('mouseup', handleMouseUp);
             };
         }
-    }, [isDraggingMin, isDraggingMax, currentMin, currentMax, min, max, onRangeChange]);
+    }, [isDraggingMin, isDraggingMax, currentMin, currentMax, min, max, onRangeInput, onRangeChangeEnd]); // Updated dependencies
 
     const maxPosition = ((max - currentMax) / (max - min)) * 100;
     const minPosition = ((max - currentMin) / (max - min)) * 100;
@@ -114,10 +118,29 @@ export default memo(function LegendPanel({
     mapOptions,
     onMapOptionsChange
 }: LegendPanelProps) {
+    // Local state to hold "live" changes during a drag for responsive UI
+    const [liveOptions, setLiveOptions] = useState<MapOptions | null>(null);
+
+    // Use liveOptions if dragging, otherwise fall back to mapOptions from props
+    const displayOptions = liveOptions || mapOptions;
+
+    const parties = useMemo(() => {
+        if (!aggregatedData || !aggregatedData.partyVotes) return [];
+        return Object.entries(aggregatedData.partyVotes)
+            .filter(([_, votes]) => votes > 0)
+            .sort((a, b) => b[1] - a[1])
+            .map(([id]) => ({
+                id,
+                color: PARTIES[id].color,
+                name: PARTIES[id].name,
+            }));
+    }, [aggregatedData])
+
     const handlePartyClick = (partyCode: string) => {
         const electionType = activeDataset.type as 'general-election' | 'local-election';
         if (electionType !== 'general-election' && electionType !== 'local-election') return;
 
+        // Use mapOptions for clicks, as this is a new action, not a drag
         const currentOptions = mapOptions[electionType];
 
         if (currentOptions.mode === 'party-percentage' && currentOptions.selectedParty === partyCode) {
@@ -133,46 +156,89 @@ export default memo(function LegendPanel({
         }
     };
 
+    // Use displayOptions to render the current state
     const currentOptions = activeDataset.type === 'general-election'
-        ? mapOptions['general-election']
+        ? displayOptions['general-election']
         : activeDataset.type === 'local-election'
-            ? mapOptions['local-election']
+            ? displayOptions['local-election']
             : null;
 
     const isElectionDataset = activeDataset.type === 'general-election' || activeDataset.type === 'local-election';
 
-    const handleRangeChange = (datasetId: string, min: number, max: number) => {
-        // Store ranges in mapOptions based on dataset type
-        if (datasetId === 'population') {
-            onMapOptionsChange('population', { colorRange: { min, max } });
-        } else if (datasetId === 'density') {
-            onMapOptionsChange('density', { colorRange: { min, max } });
-        } else if (datasetId === 'gender') {
-            onMapOptionsChange('gender', { colorRange: { min, max } });
-        }
+    // "Input" handler: Updates local state (cheap)
+    const handleRangeInput = (datasetId: string, min: number, max: number) => {
+        setLiveOptions(prev => {
+            const base = prev || mapOptions;
+            const newOptions = { ...base };
+            if (datasetId === 'population') {
+                newOptions.population = { ...base.population, colorRange: { min, max } };
+            } else if (datasetId === 'density') {
+                newOptions.density = { ...base.density, colorRange: { min, max } };
+            } else if (datasetId === 'gender') {
+                newOptions.gender = { ...base.gender, colorRange: { min, max } };
+            }
+            return newOptions;
+        });
     };
 
-    const handlePartyRangeChange = (min: number, max: number) => {
+    // "ChangeEnd" handler: Updates parent state (expensive)
+    const handleRangeChangeEnd = (datasetId: string) => {
+        if (!liveOptions) return; // No drag happened
+
+        if (datasetId === 'population' && liveOptions.population.colorRange) {
+            onMapOptionsChange('population', { colorRange: liveOptions.population.colorRange });
+        } else if (datasetId === 'density' && liveOptions.density.colorRange) {
+            onMapOptionsChange('density', { colorRange: liveOptions.density.colorRange });
+        } else if (datasetId === 'gender' && liveOptions.gender.colorRange) {
+            onMapOptionsChange('gender', { colorRange: liveOptions.gender.colorRange });
+        }
+        setLiveOptions(null); // Clear local state
+    };
+
+    // "Input" handler for party percentage
+    const handlePartyRangeInput = (min: number, max: number) => {
         const electionType = activeDataset.type as 'general-election' | 'local-election';
-        if (electionType === 'general-election' || electionType === 'local-election') {
-            onMapOptionsChange(electionType, { 
-                partyPercentageRange: { min, max }
+        if (electionType !== 'general-election' && electionType !== 'local-election') return;
+
+        setLiveOptions(prev => {
+            const base = prev || mapOptions;
+            return {
+                ...base,
+                [electionType]: {
+                    ...base[electionType],
+                    partyPercentageRange: { min, max }
+                }
+            };
+        });
+    };
+
+    // "ChangeEnd" handler for party percentage
+    const handlePartyRangeChangeEnd = () => {
+        if (!liveOptions) return;
+
+        const electionType = activeDataset.type as 'general-election' | 'local-election';
+        if (electionType !== 'general-election' && electionType !== 'local-election') return;
+
+        if (liveOptions[electionType]?.partyPercentageRange) {
+            onMapOptionsChange(electionType, {
+                partyPercentageRange: liveOptions[electionType].partyPercentageRange
             });
         }
+        setLiveOptions(null);
     };
 
     const renderPopulationLegend = () => {
-        const options = mapOptions.population;
+        const options = displayOptions.population; // Use displayOptions
         const currentMin = options?.colorRange?.min ?? 25;
         const currentMax = options?.colorRange?.max ?? 55;
-        
+
         return (
             <RangeControl
                 min={18}
                 max={80}
                 currentMin={currentMin}
                 currentMax={currentMax}
-                gradient="linear-gradient(to bottom, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))"
+                gradient="linear-gradient(to top, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))"
                 labels={[
                     currentMax.toFixed(0),
                     ((currentMax - currentMin) * 0.75 + currentMin).toFixed(0),
@@ -180,23 +246,24 @@ export default memo(function LegendPanel({
                     ((currentMax - currentMin) * 0.25 + currentMin).toFixed(0),
                     currentMin.toFixed(0)
                 ]}
-                onRangeChange={(min, max) => handleRangeChange('population', min, max)}
+                onRangeInput={(min, max) => handleRangeInput('population', min, max)}
+                onRangeChangeEnd={() => handleRangeChangeEnd('population')}
             />
         );
     };
 
     const renderDensityLegend = () => {
-        const options = mapOptions.density;
+        const options = displayOptions.density; // Use displayOptions
         const currentMin = options?.colorRange?.min ?? 500;
         const currentMax = options?.colorRange?.max ?? 10000;
-        
+
         return (
             <RangeControl
                 min={0}
-                max={20000}
+                max={10000}
                 currentMin={currentMin}
                 currentMax={currentMax}
-                gradient="linear-gradient(to bottom, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))"
+                gradient="linear-gradient(to top, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))"
                 labels={[
                     currentMax.toFixed(0),
                     ((currentMax - currentMin) * 0.75 + currentMin).toFixed(0),
@@ -204,16 +271,17 @@ export default memo(function LegendPanel({
                     ((currentMax - currentMin) * 0.25 + currentMin).toFixed(0),
                     currentMin.toFixed(0)
                 ]}
-                onRangeChange={(min, max) => handleRangeChange('density', min, max)}
+                onRangeInput={(min, max) => handleRangeInput('density', min, max)}
+                onRangeChangeEnd={() => handleRangeChangeEnd('density')}
             />
         );
     };
 
     const renderGenderLegend = () => {
-        const options = mapOptions.gender;
+        const options = displayOptions.gender; // Use displayOptions
         const currentMin = options?.colorRange?.min ?? -0.1;
         const currentMax = options?.colorRange?.max ?? 0.1;
-        
+
         return (
             <RangeControl
                 min={-0.5}
@@ -226,27 +294,17 @@ export default memo(function LegendPanel({
                     '0%',
                     `F ${(Math.abs(currentMin) * 100).toFixed(0)}%`
                 ]}
-                onRangeChange={(min, max) => handleRangeChange('gender', min, max)}
+                onRangeInput={(min, max) => handleRangeInput('gender', min, max)}
+                onRangeChangeEnd={() => handleRangeChangeEnd('gender')}
             />
         );
     };
 
     const renderElectionLegend = () => {
-        const parties = useMemo(() => {
-            if (!aggregatedData) return [];
-            return Object.entries(aggregatedData.partyVotes)
-                .filter(([_, votes]) => votes > 0)
-                .sort((a, b) => b[1] - a[1])
-                .map(([id]) => ({
-                    id,
-                    color: PARTIES[id].color,
-                    name: PARTIES[id].name,
-                }));
-        }, [aggregatedData])
-
         return (
             <div>
                 {parties.map((party) => {
+                    // currentOptions reads from displayOptions, so this is fine
                     const isSelected = currentOptions?.mode === 'party-percentage'
                         && currentOptions.selectedParty === party.id;
                     return (
@@ -318,7 +376,8 @@ export default memo(function LegendPanel({
                                 `${((currentOptions.partyPercentageRange?.max ?? 100) * 0.25 + (currentOptions.partyPercentageRange?.min ?? 0) * 0.75).toFixed(0)}%`,
                                 `${(currentOptions.partyPercentageRange?.min ?? 0).toFixed(0)}%`
                             ]}
-                            onRangeChange={handlePartyRangeChange}
+                            onRangeInput={handlePartyRangeInput}
+                            onRangeChangeEnd={handlePartyRangeChangeEnd}
                         />
                     </div>
                 </div>

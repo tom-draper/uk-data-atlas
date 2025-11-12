@@ -3,7 +3,7 @@ import { PartyVotes, LocalElectionWardData, Party, BoundaryGeojson, Constituency
 import { GeoJSONFeature } from 'mapbox-gl';
 import { calculateMedianAge, calculateTotal, polygonAreaSqKm } from './population';
 import { getWinningParty } from './generalElection';
-import { GeneralElectionOptions, LocalElectionOptions } from '../types/mapOptions';
+import { DensityOptions, GenderOptions, GeneralElectionOptions, LocalElectionOptions, PopulationOptions } from '../types/mapOptions';
 import { PARTIES } from '../data/parties';
 import { getColorForAge, getColorForDensity, getColorForGenderRatio, getPartyPercentageColorExpression } from './colorScale';
 import { calculateAgeGroups } from './ageDistribution';
@@ -43,18 +43,18 @@ export class MapManager {
     updateMapForLocalElection(
         geojson: BoundaryGeojson,
         dataset: LocalElectionDataset,
-        options?: LocalElectionOptions
+        mapOptions?: LocalElectionOptions
     ) {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
         console.log('EXPENSIVE: updateMapForLocalElection: Filtered wards', geojson.features.length);
 
-        const mode = options?.mode || 'winner';
-        const locationData = mode === 'party-percentage' && options?.selectedParty
-            ? this.buildPartyPercentageFeatures(geojson.features, dataset.wardData, options.selectedParty, wardCodeProp)
+        const mode = mapOptions?.mode || 'winner';
+        const locationData = mode === 'party-percentage' && mapOptions?.selectedParty
+            ? this.buildPartyPercentageFeatures(geojson.features, dataset.wardData, mapOptions.selectedParty, wardCodeProp)
             : this.buildWinnerFeatures(geojson.features, wardCodeProp, (code) => dataset.wardResults[code] || 'NONE');
 
-        if (mode === 'party-percentage' && options?.selectedParty) {
-            this.updatePartyPercentageLayers(locationData, options);
+        if (mode === 'party-percentage' && mapOptions?.selectedParty) {
+            this.updatePartyPercentageLayers(locationData, mapOptions);
         } else {
             this.updateElectionLayers(locationData, dataset.partyInfo);
         }
@@ -65,18 +65,18 @@ export class MapManager {
     updateMapForGeneralElection(
         geojson: BoundaryGeojson,
         dataset: GeneralElectionDataset,
-        options?: GeneralElectionOptions
+        mapOptions?: GeneralElectionOptions
     ) {
         const constituencyCodeProp = this.detectPropertyKey(geojson, MapManager.CONSTITUENCY_CODE_KEYS);
         console.log('EXPENSIVE: updateMapForGeneralElection: Filtered constituencies:', geojson.features.length);
 
-        const mode = options?.mode || 'winner';
-        const locationData = mode === 'party-percentage' && options?.selectedParty
-            ? this.buildPartyPercentageFeatures(geojson.features, dataset.constituencyData, options.selectedParty, constituencyCodeProp)
+        const mode = mapOptions?.mode || 'winner';
+        const locationData = mode === 'party-percentage' && mapOptions?.selectedParty
+            ? this.buildPartyPercentageFeatures(geojson.features, dataset.constituencyData, mapOptions.selectedParty, constituencyCodeProp)
             : this.buildWinnerFeatures(geojson.features, constituencyCodeProp, (code) => dataset.constituencyResults[code] || 'NONE');
 
-        if (mode === 'party-percentage' && options?.selectedParty) {
-            this.updatePartyPercentageLayers(locationData, options);
+        if (mode === 'party-percentage' && mapOptions?.selectedParty) {
+            this.updatePartyPercentageLayers(locationData, mapOptions);
         } else {
             this.updateElectionLayers(locationData, dataset.partyInfo);
         }
@@ -88,38 +88,42 @@ export class MapManager {
     // Public API - Population Methods
     // ============================================================================
 
-    updateMapForPopulation(geojson: BoundaryGeojson, dataset: PopulationDataset): void {
-        this.updatePopulationMap(geojson, dataset, 'age');
+    updateMapForPopulation(geojson: BoundaryGeojson, dataset: PopulationDataset, mapOptions: PopulationOptions) {
+        this.updatePopulationMap(geojson, dataset, mapOptions, 'age');
     }
 
-    updateMapForGender(geojson: BoundaryGeojson, dataset: PopulationDataset): void {
-        this.updatePopulationMap(geojson, dataset, 'gender');
+    updateMapForGender(geojson: BoundaryGeojson, dataset: PopulationDataset, mapOptions: PopulationOptions) {
+        this.updatePopulationMap(geojson, dataset, mapOptions, 'gender');
     }
 
-    updateMapForPopulationDensity(geojson: BoundaryGeojson, dataset: PopulationDataset): void {
-        this.updatePopulationMap(geojson, dataset, 'density');
+    updateMapForPopulationDensity(geojson: BoundaryGeojson, dataset: PopulationDataset, mapOptions: PopulationOptions) {
+        this.updatePopulationMap(geojson, dataset, mapOptions, 'density');
     }
 
     private updatePopulationMap(
         geojson: BoundaryGeojson,
         dataset: PopulationDataset,
-        mode: PopulationMode
-    ): void {
+        mapOptions: PopulationOptions | GenderOptions | DensityOptions,
+        mode: PopulationMode,
+    ) {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
         console.log(`EXPENSIVE: updateMapForPopulation (${mode}): Filtered wards`, geojson.features.length);
 
         const colorFunctions = {
-            age: (wardPop: any) => getColorForAge(calculateMedianAge(wardPop), this.mapOptions),
+            age: (wardPop: any) => {
+                const medianAge = calculateMedianAge(wardPop);
+                return getColorForAge(medianAge, mapOptions);
+            },
             gender: (wardPop: any) => {
                 const males = calculateTotal(wardPop.males);
                 const females = calculateTotal(wardPop.females);
                 const ratio = females > 0 ? (males - females) / females : 0;
-                return getColorForGenderRatio(ratio, this.mapOptions);
+                return getColorForGenderRatio(ratio, mapOptions);
             },
             density: (wardPop: any, areaSqKm: number) => {
                 const total = calculateTotal(wardPop.males) + calculateTotal(wardPop.females);
                 const density = areaSqKm > 0 ? total / areaSqKm : 0;
-                return getColorForDensity(density, this.mapOptions);
+                return getColorForDensity(density, mapOptions);
             }
         };
 

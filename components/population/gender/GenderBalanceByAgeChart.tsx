@@ -43,7 +43,7 @@ export default function GenderBalanceByAgeChart({
 				}
 			}
 		} else if (aggregatedData) {
-			return aggregatedData[2020].genderAgeData;
+			return aggregatedData[2020].medianAge !== 0 ? aggregatedData[2020].genderAgeData : [];
 		}
 
 		return data;

@@ -125,13 +125,13 @@ export default function MapsPage() {
 			case 'population':
 				switch (activeDatasetId) {
 					case 'population':
-						mapManager.updateMapForPopulation(geojson, activeDataset);
+						mapManager.updateMapForPopulation(geojson, activeDataset, mapOptions['population']);
 						break;
 					case 'density':
-						mapManager.updateMapForPopulationDensity(geojson, activeDataset)
+						mapManager.updateMapForPopulationDensity(geojson, activeDataset, mapOptions['density'])
 						break
 					case 'gender':
-						mapManager.updateMapForGender(geojson, activeDataset)
+						mapManager.updateMapForGender(geojson, activeDataset, mapOptions['gender'])
 						break
 				}
 				break;
