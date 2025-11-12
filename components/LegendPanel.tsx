@@ -21,36 +21,23 @@ export default memo(function LegendPanel({
     onMapOptionsChange
 }: LegendPanelProps) {
     const handlePartyClick = (partyCode: string) => {
-        if (activeDataset.type === 'general-election') {
-            const currentOptions = mapOptions['general-election'];
+        const electionType = activeDataset.type as 'general-election' | 'local-election';
+        if (electionType !== 'general-election' && electionType !== 'local-election') return;
 
-            // Toggle: if clicking the same party, go back to winner mode
-            if (currentOptions.mode === 'party-percentage' && currentOptions.selectedParty === partyCode) {
-                onMapOptionsChange('general-election', {
-                    mode: 'winner',
-                    selectedParty: undefined,
-                });
-            } else {
-                // Switch to party percentage mode
-                onMapOptionsChange('general-election', {
-                    mode: 'party-percentage',
-                    selectedParty: partyCode,
-                });
-            }
-        } else if (activeDataset.type === 'local-election') {
-            const currentOptions = mapOptions['local-election'];
+        const currentOptions = mapOptions[electionType];
 
-            if (currentOptions.mode === 'party-percentage' && currentOptions.selectedParty === partyCode) {
-                onMapOptionsChange('local-election', {
-                    mode: 'winner',
-                    selectedParty: undefined,
-                });
-            } else {
-                onMapOptionsChange('local-election', {
-                    mode: 'party-percentage',
-                    selectedParty: partyCode,
-                });
-            }
+        // Toggle: if clicking the same party, go back to winner mode
+        if (currentOptions.mode === 'party-percentage' && currentOptions.selectedParty === partyCode) {
+            onMapOptionsChange(electionType, {
+                mode: 'winner',
+                selectedParty: undefined,
+            });
+        } else {
+            // Switch to party percentage mode
+            onMapOptionsChange(electionType, {
+                mode: 'party-percentage',
+                selectedParty: partyCode,
+            });
         }
     };
 
@@ -108,8 +95,8 @@ export default memo(function LegendPanel({
         const parties = useMemo(() => {
             if (!aggregatedData) return [];
             return Object.entries(aggregatedData.partyVotes)
-                .filter(([_, votes]) => votes > 0) // remove zero votes
-                .sort((a, b) => b[1] - a[1]) // sort by vote count descending
+                .filter(([_, votes]) => votes > 0)
+                .sort((a, b) => b[1] - a[1])
                 .map(([id]) => ({
                     id,
                     color: PARTIES[id].color,
@@ -122,20 +109,26 @@ export default memo(function LegendPanel({
                 {parties.map((party) => {
                     const isSelected = currentOptions?.mode === 'party-percentage'
                         && currentOptions.selectedParty === party.id;
-
                     return (
                         <button
                             key={party.id}
                             onClick={() => handlePartyClick(party.id)}
-                            className={`flex items-center gap-2 px-1 py-[3px] w-full text-left rounded transition-all cursor-pointer ${isSelected
-                                ? 'bg-blue-100/50 ring-1 ring-blue-400/50'
+                            className={`flex items-center gap-2 px-1 py-[3px] w-full text-left rounded-sm transition-all cursor-pointer ${isSelected
+                                ? 'ring-1'
                                 : 'hover:bg-gray-100/30'
                                 }`}
+                            style={isSelected ? {
+                                backgroundColor: `${party.color}15`,
+                                '--tw-ring-color': `${party.color}80`
+                            } as React.CSSProperties : {}}
                         >
                             <div
-                                className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? 'opacity-100 ring-1 ring-blue-400' : 'opacity-100'
+                                className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? 'opacity-100 ring-1' : 'opacity-100'
                                     }`}
-                                style={{ backgroundColor: party.color }}
+                                style={{
+                                    backgroundColor: party.color,
+                                    ...(isSelected ? { '--tw-ring-color': party.color } as React.CSSProperties : {})
+                                }}
                             />
                             <span className={`text-xs ${isSelected ? 'text-gray-700 font-medium' : 'text-gray-500'
                                 }`}>
@@ -144,23 +137,6 @@ export default memo(function LegendPanel({
                         </button>
                     );
                 })}
-
-                {isElectionDataset && currentOptions?.mode === 'party-percentage' && currentOptions.selectedParty && (
-                    <div className="my-1 mx-1 border-t border-gray-200/80">
-                        <div className="pt-2">
-                            <div className="text-[10px] text-gray-400 mb-1.5 flex justify-between px-1">
-                                <span>0%</span>
-                                <p className="text-[10px] text-gray-400 leading-relaxed px-2">
-                                    Showing vote % for <span style={{ color: PARTIES[currentOptions.selectedParty].color }}>{currentOptions.selectedParty}</span>
-                                </p>
-                                <span>100%</span>
-                            </div>
-                            <div className="h-3 rounded" style={{
-                                background: `linear-gradient(to right, #f5f5f5, ${PARTIES[currentOptions.selectedParty].color || '#999'})`
-                            }} />
-                        </div>
-                    </div>
-                )}
             </div>
         )
     }
@@ -179,12 +155,31 @@ export default memo(function LegendPanel({
     };
 
     return (
-        <div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full">
+        <div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full gap-2.5">
             <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30">
                 <div className="bg-white/20 p-1 overflow-hidden">
                     {renderLegendContent()}
                 </div>
             </div>
+
+            {isElectionDataset && currentOptions?.mode === 'party-percentage' && currentOptions.selectedParty && (
+                <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
+                    <div className="bg-white/20 p-1 overflow-hidden">
+                        <div className="p-1">
+                            <div className="h-40 w-6 rounded" style={{
+                                background: `linear-gradient(to bottom, ${PARTIES[currentOptions.selectedParty].color || '#999'}, #f5f5f5)`
+                            }} />
+                            <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8">
+                                <span>100%</span>
+                                <span>75%</span>
+                                <span>50%</span>
+                                <span>25%</span>
+                                <span>0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 });
