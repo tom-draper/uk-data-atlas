@@ -1,53 +1,100 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { AggregatedPopulationData, PopulationDataset } from '@/lib/types';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 
 export interface GenderBalanceByAgeChartProps {
 	dataset: PopulationDataset;
 	aggregatedData: AggregatedPopulationData | null;
-	wardCode: string;
+	wardCode?: string;
+	constituencyCode?: string;
 	codeMapper: CodeMapper;
 }
 
-export default function GenderBalanceByAgeChart({
+// Memoized row component to prevent unnecessary re-renders
+const AgeRow = memo(({ 
+	age, 
+	males, 
+	females 
+}: { 
+	age: number; 
+	males: number; 
+	females: number 
+}) => {
+	const total = males + females;
+	const malePercentage = total > 0 ? (males / total) * 100 : 50;
+	const femalePercentage = 100 - malePercentage;
+
+	return (
+		<div
+			className="flex h-px group relative"
+			title={`Age ${age}: ${males.toLocaleString()} males, ${females.toLocaleString()} females`}
+		>
+			{/* Males (left side - blue) */}
+			<div
+				className="bg-blue-400"
+				style={{ width: `${malePercentage}%` }}
+			/>
+
+			{/* Females (right side - pink) */}
+			<div
+				className="bg-pink-400"
+				style={{ width: `${femalePercentage}%` }}
+			/>
+
+			{/* Tooltip on hover */}
+			<div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 bg-gray-800 text-white text-[8px] rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-20">
+				Age {age}: {males.toLocaleString()}M / {females.toLocaleString()}F ({malePercentage.toFixed(1)}% male)
+			</div>
+		</div>
+	);
+});
+AgeRow.displayName = 'AgeRow';
+
+function GenderBalanceByAgeChart({
 	dataset,
 	aggregatedData,
 	wardCode,
+	constituencyCode,
 	codeMapper
 }: GenderBalanceByAgeChartProps) {
 	const ageData = useMemo(() => {
-		const ageRange = Array.from({ length: 91 }, (_, i) => i);
-		const data: Array<{ age: number; males: number; females: number }> = [];
-
-		if (wardCode && dataset) {
-			// Try to find the ward data - population uses 2021 codes
-			const codesToTry = [
-				wardCode,
-				codeMapper.convertWardCode(wardCode, 2021)
-			].filter((code): code is string => code !== null);
-
-			for (const code of codesToTry) {
-				if (dataset.populationData[code]) {
-					const males = dataset.populationData[code].males;
-					const females = dataset.populationData[code].females;
-
-					for (const age of ageRange) {
-						data.push({
-							age,
-							males: males[age.toString()] || 0,
-							females: females[age.toString()] || 0
-						});
-					}
-					break;
-				}
-			}
-		} else if (aggregatedData) {
+		// Early return for aggregated data case
+		if (!wardCode && !constituencyCode && aggregatedData) {
 			return aggregatedData[2020].medianAge !== 0 ? aggregatedData[2020].genderAgeData : [];
 		}
 
-		return data;
-	}, [wardCode, dataset, aggregatedData, codeMapper]);
+		if (!wardCode || !dataset) {
+			return [];
+		}
+
+		// Try to find the ward data - population uses 2021 codes
+		const codesToTry = [
+			wardCode,
+			codeMapper.convertWardCode(wardCode, 2021)
+		].filter((code): code is string => code !== null);
+
+		for (const code of codesToTry) {
+			const wardData = dataset.populationData[code];
+			if (wardData) {
+				const { males, females } = wardData;
+				const data: Array<{ age: number; males: number; females: number }> = new Array(91);
+
+				// Single loop with direct array assignment
+				for (let age = 0; age < 91; age++) {
+					const ageStr = age.toString();
+					data[age] = {
+						age,
+						males: males[ageStr] || 0,
+						females: females[ageStr] || 0
+					};
+				}
+				return data;
+			}
+		}
+
+		return [];
+	}, [wardCode, constituencyCode, dataset, aggregatedData, codeMapper]);
 
 	if (ageData.length === 0) {
 		return <div className="text-xs h-[111px] text-gray-400/80 text-center grid place-items-center">
@@ -70,36 +117,9 @@ export default function GenderBalanceByAgeChart({
 
 				{/* Stack of age rows */}
 				<div className="relative">
-					{ageData.map(({ age, males, females }) => {
-						const total = males + females;
-						const malePercentage = total > 0 ? (males / total) * 100 : 50;
-						const femalePercentage = 100 - malePercentage;
-
-						return (
-							<div
-								key={age}
-								className="flex h-px group relative"
-								title={`Age ${age}: ${males.toLocaleString()} males, ${females.toLocaleString()} females`}
-							>
-								{/* Males (left side - blue) */}
-								<div
-									className="bg-blue-400"
-									style={{ width: `${malePercentage}%` }}
-								/>
-
-								{/* Females (right side - pink) */}
-								<div
-									className="bg-pink-400"
-									style={{ width: `${femalePercentage}%` }}
-								/>
-
-								{/* Tooltip on hover */}
-								<div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 bg-gray-800 text-white text-[8px] rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-20">
-									Age {age}: {males.toLocaleString()}M / {females.toLocaleString()}F ({malePercentage.toFixed(1)}% male)
-								</div>
-							</div>
-						);
-					})}
+					{ageData.map(({ age, males, females }) => (
+						<AgeRow key={age} age={age} males={males} females={females} />
+					))}
 				</div>
 			</div>
 
@@ -110,3 +130,5 @@ export default function GenderBalanceByAgeChart({
 		</div>
 	);
 }
+
+export default memo(GenderBalanceByAgeChart);

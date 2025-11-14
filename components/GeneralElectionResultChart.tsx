@@ -10,6 +10,7 @@ interface GeneralElectionResultChartProps {
 	activeDataset: any;
 	availableDatasets: Record<string, GeneralElectionDataset | null>;
 	setActiveDatasetId: (datasetId: string) => void;
+	wardCode?: string;
 	constituencyCode?: string;
 	aggregatedData: AggregateGeneralElectionData | null;
 	codeMapper: CodeMapper
@@ -192,6 +193,7 @@ export default function GeneralElectionResultChart({
 	activeDataset,
 	availableDatasets,
 	setActiveDatasetId,
+	wardCode,
 	constituencyCode,
 	aggregatedData,
 	codeMapper
@@ -250,7 +252,7 @@ export default function GeneralElectionResultChart({
 						isAggregated: false
 					};
 				}
-			} else if (aggregatedData && aggregatedData[year]?.partyVotes) {
+			} else if (!constituencyCode && !wardCode && aggregatedData && aggregatedData[year]?.partyVotes) {
 				// No constituency selected - use aggregated data for the location
 				map[year] = {
 					dataset,
@@ -269,7 +271,7 @@ export default function GeneralElectionResultChart({
 		}
 
 		return map;
-	}, [constituencyCode, availableDatasets, aggregatedData]);
+	}, [wardCode, constituencyCode, availableDatasets, aggregatedData]);
 
 	return (
 		<div className="space-y-2">

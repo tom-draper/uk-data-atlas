@@ -10,7 +10,8 @@ interface LocalElectionResultChartProps {
 	activeDataset: Dataset;
 	availableDatasets: Record<string, LocalElectionDataset | null>;
 	setActiveDatasetId: (datasetId: string) => void;
-	wardCode: string;
+	wardCode?: string;
+	constituencyCode?: string;
 	aggregatedData: AggregatedLocalElectionData | null;
 	codeMapper: CodeMapper
 }
@@ -145,6 +146,7 @@ export default function LocalElectionResultChart({
 	availableDatasets,
 	setActiveDatasetId,
 	wardCode,
+	constituencyCode,
 	aggregatedData,
 	codeMapper
 }: LocalElectionResultChartProps) {
@@ -192,7 +194,7 @@ export default function LocalElectionResultChart({
 			}
 
 			// Fallback to aggregated data
-			if (!wardCode && aggregatedData && aggregatedData[year]) {
+			if (!wardCode && !constituencyCode && aggregatedData && aggregatedData[year]) {
 				return {
 					chartData: aggregatedData[year].partyVotes,
 					turnout: calculateTurnout(aggregatedData[year].totalVotes, 0, aggregatedData[year].electorate)
@@ -212,7 +214,7 @@ export default function LocalElectionResultChart({
 			chartData: newChartData,
 			turnout: newTurnout
 		};
-	}, [wardCode, availableDatasets, aggregatedData]);
+	}, [wardCode, constituencyCode, availableDatasets, aggregatedData]);
 
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">

@@ -12,7 +12,8 @@ export interface PopulationChartProps {
 	availableDatasets: Record<string, PopulationDataset>;
 	aggregatedData: AggregatedPopulationData | null;
 	boundaryData: BoundaryData;
-	wardCode: string;
+	wardCode?: string;
+	constituencyCode?: string;
 	setActiveDatasetId: (datasetId: string) => void;
 	codeMapper: CodeMapper
 }
@@ -23,6 +24,7 @@ export default function PopulationChart({
 	aggregatedData,
 	boundaryData,
 	wardCode,
+	constituencyCode,
 	setActiveDatasetId,
 	codeMapper
 }: PopulationChartProps) {
@@ -39,6 +41,7 @@ export default function PopulationChart({
 					aggregatedData={aggregatedData}
 					boundaryData={boundaryData}
 					wardCode={wardCode}
+					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
 				/>
 				<AgeChart
@@ -47,6 +50,7 @@ export default function PopulationChart({
 					dataset={dataset}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
+					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
 				/>
 				<Gender
@@ -55,6 +59,7 @@ export default function PopulationChart({
 					dataset={dataset}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
+					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
 				/>
 			</div>

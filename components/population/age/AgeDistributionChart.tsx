@@ -2,6 +2,7 @@
 import { AgeGroups } from '@lib/types';
 import AgeGroupBar from '@/components/population/age/AgeGroupBar';
 import { getAgeColor } from '@/lib/utils/ageDistribution';
+import { useMemo, memo } from 'react';
 
 interface AgeDistributionChartProps {
 	ages: Array<{ age: number; count: number }>;
@@ -10,8 +11,62 @@ interface AgeDistributionChartProps {
 	isActive: boolean;
 }
 
-export default function AgeDistributionChart({ ages, total, ageGroups, isActive }: AgeDistributionChartProps) {
-	const maxCount = Math.max(...ages.map(a => a.count), 1);
+// Pre-calculate age group order (constant)
+const AGE_GROUP_ORDER: Array<keyof AgeGroups> = ['0-17', '18-29', '30-44', '45-64', '65+'];
+
+// Memoized age bar component
+const AgeBar = memo(({ 
+	age, 
+	count, 
+	heightPercentage, 
+	color 
+}: { 
+	age: number; 
+	count: number; 
+	heightPercentage: number; 
+	color: string;
+}) => (
+	<div
+		className="flex-1 hover:opacity-80 transition-opacity relative group"
+		style={{
+			height: `${heightPercentage}%`,
+			backgroundColor: color,
+			minHeight: count > 0 ? '2px' : '0'
+		}}
+		title={`Age ${age}: ${count.toLocaleString()}`}
+	>
+		<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[8px] rounded-xs px-1 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-100">
+			{age}: {count.toLocaleString()}
+		</div>
+	</div>
+));
+
+AgeBar.displayName = 'AgeBar';
+
+function AgeDistributionChart({ ages, total, ageGroups, isActive }: AgeDistributionChartProps) {
+	// Memoize max calculation and bar data
+	const { maxCount, barData } = useMemo(() => {
+		let max = 1;
+		for (let i = 0; i < ages.length; i++) {
+			if (ages[i].count > max) {
+				max = ages[i].count;
+			}
+		}
+
+		// Pre-calculate all bar properties
+		const bars = new Array(ages.length);
+		for (let i = 0; i < ages.length; i++) {
+			const { age, count } = ages[i];
+			bars[i] = {
+				age,
+				count,
+				heightPercentage: (count / max) * 100,
+				color: getAgeColor(age)
+			};
+		}
+
+		return { maxCount: max, barData: bars };
+	}, [ages]);
 
 	if (maxCount === 1) {
 		return <div className="text-xs h-27 text-gray-400/80 text-center grid place-items-center">
@@ -25,27 +80,15 @@ export default function AgeDistributionChart({ ages, total, ageGroups, isActive 
 		<div className="mx-1 -mt-4">
 			{/* Detailed Age Chart */}
 			<div className="flex items-end h-28 overflow-x-hidden pt-4">
-				{ages.map(({ age, count }) => {
-					const heightPercentage = (count / maxCount) * 100;
-					const color = getAgeColor(age);
-
-					return (
-						<div
-							key={age}
-							className="flex-1 hover:opacity-80 transition-opacity relative group"
-							style={{
-								height: `${heightPercentage}%`,
-								backgroundColor: color,
-								minHeight: count > 0 ? '2px' : '0'
-							}}
-							title={`Age ${age}: ${count.toLocaleString()}`}
-						>
-							<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[8px] rounded-xs px-1 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-100">
-								{age}: {count.toLocaleString()}
-							</div>
-						</div>
-					);
-				})}
+				{barData.map(({ age, count, heightPercentage, color }) => (
+					<AgeBar 
+						key={age} 
+						age={age} 
+						count={count} 
+						heightPercentage={heightPercentage} 
+						color={color} 
+					/>
+				))}
 			</div>
 
 			{/* Age axis labels */}
@@ -65,7 +108,7 @@ export default function AgeDistributionChart({ ages, total, ageGroups, isActive 
 					opacity: isActive ? 1 : 0
 				}}
 			>
-				{(Object.keys(ageGroups) as Array<keyof AgeGroups>).map(ageGroup => (
+				{AGE_GROUP_ORDER.map(ageGroup => (
 					<AgeGroupBar
 						key={ageGroup}
 						label={ageGroup}
@@ -78,3 +121,5 @@ export default function AgeDistributionChart({ ages, total, ageGroups, isActive 
 		</div>
 	);
 }
+
+export default memo(AgeDistributionChart);

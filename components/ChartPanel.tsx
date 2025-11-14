@@ -81,6 +81,7 @@ export default memo(function ChartPanel({
 						availableDatasets={generalElectionDatasets}
 						aggregatedData={aggregatedGeneralElectionData}
 						setActiveDatasetId={setActiveDatasetId}
+						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
 					/>
@@ -90,7 +91,8 @@ export default memo(function ChartPanel({
 						availableDatasets={localElectionDatasets}
 						aggregatedData={aggregatedLocalElectionData}
 						setActiveDatasetId={setActiveDatasetId}
-						wardCode={selectedWard?.wardCode?.toString() ?? ''}
+						wardCode={selectedWard?.wardCode?.toString()}
+						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
 					/>
 
@@ -100,7 +102,8 @@ export default memo(function ChartPanel({
 						aggregatedData={aggregatedPopulationData}
 						setActiveDatasetId={setActiveDatasetId}
 						boundaryData={boundaryData}
-						wardCode={selectedWard?.wardCode?.toString() ?? ''}
+						wardCode={selectedWard?.wardCode?.toString()}
+						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
 					/>
 				</div>
