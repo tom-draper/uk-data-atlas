@@ -255,7 +255,7 @@ export default memo(function LegendPanel({
     const renderDensityLegend = () => {
         const options = displayOptions.density; // Use displayOptions
         const currentMin = options?.colorRange?.min ?? 500;
-        const currentMax = options?.colorRange?.max ?? 10000;
+        const currentMax = options?.colorRange?.max ?? 8000;
 
         return (
             <RangeControl
