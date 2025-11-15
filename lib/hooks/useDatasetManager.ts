@@ -1,6 +1,5 @@
 // lib/hooks/useDatasetManager.ts
 import { useMemo } from 'react';
-import { BoundaryType } from './useBoundaryData';
 import { Dataset, GeneralElectionDataset } from '../types';
 
 /**
@@ -15,10 +14,18 @@ export function useDatasetManager(
 ) {
     const activeDataset = useMemo(() => {
         switch (activeDatasetId) {
-            case "population":
-            case "gender":
-            case "density":
-                return populationDatasets['population']
+            case "population-2020":
+            case "gender-2020":
+            case "density-2020":
+                return populationDatasets['population-2020']
+            case "population-2021":
+            case "gender-2021":
+            case "density-2021":
+                return populationDatasets['population-2021']
+            case "population-2022":
+            case "gender-2022":
+            case "density-2022":
+                return populationDatasets['population-2022']
             case "general-2024":
             case "general-2019":
             case "general-2017":
@@ -32,12 +39,5 @@ export function useDatasetManager(
         }
     }, [localElectionDatasets, generalElectionDatasets, populationDatasets, activeDatasetId]);
 
-    const boundaryType: BoundaryType = activeDatasetId === 'general-2024' || activeDatasetId === 'general-2019' || activeDatasetId === 'general-2017' || activeDatasetId === 'general-2015' ? 'constituency' : 'ward';
-    const targetYear = activeDatasetId === 'population' || activeDatasetId === 'gender' || activeDatasetId === 'density' ? 2021 : activeDataset?.year || null;
-
-    return {
-        activeDataset,
-        boundaryType,
-        targetYear,
-    };
+    return activeDataset;
 }

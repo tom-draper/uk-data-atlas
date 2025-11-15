@@ -28,8 +28,6 @@ export default function PopulationChart({
 	setActiveDatasetId,
 	codeMapper
 }: PopulationChartProps) {
-	const dataset = availableDatasets['population'] || {};
-
 	return (
 		<div className="pt-2.5 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold text-gray-700 mb-2">Demographics</h3>
@@ -37,9 +35,39 @@ export default function PopulationChart({
 				<PopulationDensity
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
-					dataset={dataset}
+					dataset={availableDatasets['population-2020']}
 					aggregatedData={aggregatedData}
 					boundaryData={boundaryData}
+					wardCode={wardCode}
+					constituencyCode={constituencyCode}
+					codeMapper={codeMapper}
+				/>
+				<PopulationDensity
+					activeDatasetId={activeDatasetId}
+					setActiveDatasetId={setActiveDatasetId}
+					dataset={availableDatasets['population-2021']}
+					aggregatedData={aggregatedData}
+					boundaryData={boundaryData}
+					wardCode={wardCode}
+					constituencyCode={constituencyCode}
+					codeMapper={codeMapper}
+				/>
+				<PopulationDensity
+					activeDatasetId={activeDatasetId}
+					setActiveDatasetId={setActiveDatasetId}
+					dataset={availableDatasets['population-2022']}
+					aggregatedData={aggregatedData}
+					boundaryData={boundaryData}
+					wardCode={wardCode}
+					constituencyCode={constituencyCode}
+					codeMapper={codeMapper}
+				/>
+
+				<AgeChart
+					activeDatasetId={activeDatasetId}
+					setActiveDatasetId={setActiveDatasetId}
+					dataset={availableDatasets['population-2020']}
+					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
@@ -47,7 +75,26 @@ export default function PopulationChart({
 				<AgeChart
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
-					dataset={dataset}
+					dataset={availableDatasets['population-2021']}
+					aggregatedData={aggregatedData}
+					wardCode={wardCode}
+					constituencyCode={constituencyCode}
+					codeMapper={codeMapper}
+				/>
+				<AgeChart
+					activeDatasetId={activeDatasetId}
+					setActiveDatasetId={setActiveDatasetId}
+					dataset={availableDatasets['population-2022']}
+					aggregatedData={aggregatedData}
+					wardCode={wardCode}
+					constituencyCode={constituencyCode}
+					codeMapper={codeMapper}
+				/>
+
+				<Gender
+					activeDatasetId={activeDatasetId}
+					setActiveDatasetId={setActiveDatasetId}
+					dataset={availableDatasets['population-2020']}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					constituencyCode={constituencyCode}
@@ -56,7 +103,16 @@ export default function PopulationChart({
 				<Gender
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
-					dataset={dataset}
+					dataset={availableDatasets['population-2021']}
+					aggregatedData={aggregatedData}
+					wardCode={wardCode}
+					constituencyCode={constituencyCode}
+					codeMapper={codeMapper}
+				/>
+				<Gender
+					activeDatasetId={activeDatasetId}
+					setActiveDatasetId={setActiveDatasetId}
+					dataset={availableDatasets['population-2022']}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					constituencyCode={constituencyCode}

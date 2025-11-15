@@ -61,6 +61,8 @@ export interface PopulationDataset {
     name: string;
     type: 'population';
     year: number;
+    wardYear: number;
+    boundaryType: 'ward'
     populationData: { [wardCode: string]: PopulationWardData };
 }
 
@@ -69,6 +71,8 @@ export interface LocalElectionDataset {
     name: string;
     type: 'local-election';
     year: number;
+    wardYear: number;
+    boundaryType: 'ward'
     wardResults: Record<string, string>;
     wardData: { [wardCode: string]: LocalElectionWardData };
     partyInfo: Party[];
@@ -99,6 +103,8 @@ export interface GeneralElectionDataset {
     name: string;
     type: 'general-election';
     year: number;
+    constituencyYear: number;
+    boundaryType: 'constituency';
     constituencyResults: Record<string, string>; // onsId -> winning party
     constituencyData: { [constituencyCode: string]: ConstituencyData }; // onsId -> full data
     partyInfo: Party[];

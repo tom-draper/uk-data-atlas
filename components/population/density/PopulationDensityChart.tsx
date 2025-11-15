@@ -123,20 +123,20 @@ function PopulationDensityChart({
 		// Early return for aggregated data case
 		if (!wardCode && !constituencyCode && aggregatedData) {
 			return {
-				density: aggregatedData[2020].density,
-				areaSqKm: aggregatedData[2020].totalArea,
-				total: aggregatedData[2020].populationStats.total
+				density: aggregatedData[dataset.year].density,
+				areaSqKm: aggregatedData[dataset.year].totalArea,
+				total: aggregatedData[dataset.year].populationStats.total
 			};
 		}
 
-		const geojson = boundaryData.ward[2021];
+		const geojson = boundaryData.ward[dataset.wardYear];
 		if (!wardCode || !geojson) {
 			return { density: null, areaSqKm: null, total: null };
 		}
 
 		const codesToTry = [
 			wardCode,
-			codeMapper.convertWardCode(wardCode, 2021)
+			codeMapper.convertWardCode(wardCode, dataset.wardYear)
 		].filter((code): code is string => code !== null);
 
 		const wardCodeProp = detectPropertyKey(geojson);

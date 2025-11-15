@@ -99,6 +99,8 @@ const parseLocalElection2024 = async (): Promise<LocalElectionDataset> => {
                     type: 'local-election',
                     name: 'Local Elections 2024',
                     year: 2024,
+                    wardYear: 2024,
+                    boundaryType: 'ward',
                     wardResults: wardWinners,
                     wardData: allWardData,
                     partyInfo: PARTY_INFO
@@ -176,6 +178,8 @@ const parseLocalElection2023 = async (): Promise<LocalElectionDataset & { unmapp
                     type: 'local-election',
                     name: 'Local Elections 2023',
                     year: 2023,
+                    wardYear: 2023,
+                    boundaryType: 'ward',
                     wardResults: {},
                     wardData: {},
                     partyInfo: PARTY_INFO,
@@ -234,6 +238,8 @@ const parseLocalElection2022 = async (): Promise<LocalElectionDataset> => {
                     type: 'local-election',
                     name: 'Local Elections 2022',
                     year: 2022,
+                    wardYear: 2022,
+                    boundaryType: 'ward',
                     wardResults: wardWinners,
                     wardData: allWardData,
                     partyInfo: PARTY_INFO
@@ -291,6 +297,8 @@ const parseLocalElection2021 = async (): Promise<LocalElectionDataset> => {
                     type: 'local-election',
                     name: 'Local Elections 2021',
                     year: 2021,
+                    wardYear: 2021,
+                    boundaryType: 'ward',
                     wardResults: wardWinners,
                     wardData: allWardData,
                     partyInfo: PARTY_INFO

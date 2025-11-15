@@ -26,11 +26,12 @@ function PopulationDensity({
 	activeDatasetId,
 	codeMapper
 }: PopulationDensityChartProps) {
-	const isActive = activeDatasetId === 'density';
+	const datasetId = `density-${dataset.year}`
+	const isActive = activeDatasetId === datasetId;
 
 	// Memoize the click handler to prevent child re-renders
 	const handleClick = useCallback(() => {
-		setActiveDatasetId('density');
+		setActiveDatasetId(datasetId);
 	}, [setActiveDatasetId]);
 
 	return (
@@ -42,7 +43,7 @@ function PopulationDensity({
 			onClick={handleClick}
 		>
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">Population Density (2020)</h3>
+				<h3 className="text-xs font-bold">Population Density ({dataset.year})</h3>
 			</div>
 			<PopulationDensityChart
 				dataset={dataset}

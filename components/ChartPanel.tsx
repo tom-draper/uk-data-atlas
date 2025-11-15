@@ -106,6 +106,7 @@ export default memo(function ChartPanel({
 						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
 					/>
+
 				</div>
 
 				{/* Footer */}

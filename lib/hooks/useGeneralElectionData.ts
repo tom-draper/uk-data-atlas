@@ -89,6 +89,8 @@ const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 					type: 'general-election',
 					name: 'General Election 2024',
 					year: 2024,
+					constituencyYear: 2024,
+					boundaryType: 'constituency',
 					constituencyResults,
 					constituencyData,
 					partyInfo: PARTY_INFO
@@ -173,6 +175,8 @@ const parseGeneralElectionPre2024 = async (year: 2019 | 2017 | 2015): Promise<Ge
 					type: 'general-election',
 					name: `General Election ${year}`,
 					year,
+					constituencyYear: year,
+					boundaryType: 'constituency',
 					constituencyResults,
 					constituencyData,
 					partyInfo: PARTY_INFO

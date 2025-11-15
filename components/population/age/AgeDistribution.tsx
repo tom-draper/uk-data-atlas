@@ -51,7 +51,8 @@ function AgeDistribution({
 	activeDatasetId,
 	codeMapper,
 }: AgeDistributionProps) {
-	const isActive = activeDatasetId === "population";
+ 	const datasetId = `population-${dataset.year}`
+	const isActive = activeDatasetId === datasetId;
 
 	const { medianAge, ageGroups, total, ages } = useMemo(() => {
 		const emptyAgeGroups: AgeGroups = {
@@ -137,7 +138,7 @@ function AgeDistribution({
 
 	// Memoize the click handler
 	const handleClick = useCallback(() => {
-		setActiveDatasetId("population");
+		setActiveDatasetId(datasetId);
 	}, [setActiveDatasetId]);
 
 	return (
@@ -150,7 +151,7 @@ function AgeDistribution({
 			onClick={handleClick}
 		>
 			<div className="flex items-center justify-between mb-2">
-				<h3 className="text-xs font-bold">Age Distribution (2020)</h3>
+				<h3 className="text-xs font-bold">Age Distribution ({dataset.year})</h3>
 				{medianAge > 0 && (
 					<span className="text-[10px] text-gray-500 mr-1">
 						Median: {medianAge}

@@ -51,7 +51,7 @@ export default function MapsPage() {
 	const populationData = usePopulationDatasets();
 
 	// Consolidated dataset management
-	const { activeDataset, boundaryType, targetYear } = useDatasetManager(
+	const activeDataset = useDatasetManager(
 		activeDatasetId,
 		localElectionData.datasets,
 		generalElectionData.datasets,
@@ -64,13 +64,14 @@ export default function MapsPage() {
 	const codeMapper = useCodeMapper(boundaryData);
 
 	const geojson = useMemo(() => {
-		if (boundaryType === 'ward' && targetYear) {
-			return boundaryData.ward[targetYear];
-		} else if (boundaryType === 'constituency') {
-			return boundaryData.constituency[targetYear];
+		if (!activeDataset) return null;
+		if (activeDataset.boundaryType === 'ward') {
+			return boundaryData.ward[activeDataset.wardYear];
+		} else if (activeDataset.boundaryType === 'constituency') {
+			return boundaryData.constituency[activeDataset.constituencyYear];
 		}
 		return null;
-	}, [boundaryData, boundaryType, targetYear]);
+	}, [activeDataset, boundaryData]);
 
 	// Map initialization
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
@@ -86,8 +87,8 @@ export default function MapsPage() {
 	const mapManager = useMapManager({
 		mapRef: map,
 		geojson,
-		onWardHover: activeDataset?.type === 'local-election' || activeDataset?.type === 'population' ? onWardHover : undefined,
-		onConstituencyHover: activeDataset?.type === 'general-election' ? onConstituencyHover : undefined,
+		onWardHover: activeDataset?.boundaryType === 'ward' ? onWardHover : undefined,
+		onConstituencyHover: activeDataset?.boundaryType === 'constituency' ? onConstituencyHover : undefined,
 		onLocationChange,
 	});
 	
@@ -124,13 +125,19 @@ export default function MapsPage() {
 		switch (activeDataset.type) {
 			case 'population':
 				switch (activeDatasetId) {
-					case 'population':
+					case 'population-2020':
+					case 'population-2021':
+					case 'population-2022':
 						mapManager.updateMapForPopulation(geojson, activeDataset, mapOptions['population']);
 						break;
-					case 'density':
+					case 'density-2020':
+					case 'density-2021':
+					case 'density-2022':
 						mapManager.updateMapForPopulationDensity(geojson, activeDataset, mapOptions['density'])
 						break
-					case 'gender':
+					case 'gender-2020':
+					case 'gender-2021':
+					case 'gender-2022':
 						mapManager.updateMapForGender(geojson, activeDataset, mapOptions['gender'])
 						break
 				}
@@ -139,14 +146,14 @@ export default function MapsPage() {
 				mapManager.updateMapForGeneralElection(
 					geojson, 
 					activeDataset, 
-					mapOptions['general-election']
+					mapOptions[activeDataset.type]
 				);
 				break;
 			case 'local-election':
 				mapManager.updateMapForLocalElection(
 					geojson, 
 					activeDataset, 
-					mapOptions['local-election']
+					mapOptions[activeDataset.type]
 				);
 				break;
 		}
@@ -184,7 +191,7 @@ export default function MapsPage() {
 					<ControlPanel
 						selectedLocation={selectedLocation}
 						onLocationClick={handleLocationClick}
-						population={populationData.datasets['population'].populationData!}
+						population={populationData.datasets['population-2022'].populationData!}
 					/>
 				</div>
 

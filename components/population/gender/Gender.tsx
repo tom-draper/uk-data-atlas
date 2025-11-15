@@ -23,7 +23,8 @@ function Gender({
 	activeDatasetId,
 	codeMapper
 }: GenderProps) {
-	const isActive = activeDatasetId === 'gender';
+	const datasetId = `gender-${dataset.year}`;
+	const isActive = activeDatasetId === datasetId;
 
 	// Calculate total males and females
 	const { totalMales, totalFemales } = useMemo(() => {
@@ -72,7 +73,7 @@ function Gender({
 
 	// Memoize the click handler to prevent GenderBalanceByAgeChart re-renders
 	const handleClick = useCallback(() => {
-		setActiveDatasetId('gender');
+		setActiveDatasetId(datasetId);
 	}, [setActiveDatasetId]);
 
 	const total = totalMales + totalFemales;
@@ -88,7 +89,7 @@ function Gender({
 			onClick={handleClick}
 		>
 			<div className="flex items-center justify-between mb-0">
-				<h3 className="text-xs font-bold">Gender (2020)</h3>
+				<h3 className="text-xs font-bold">Gender ({dataset.year})</h3>
 				{hasData && (
 					<span className="text-[10px] text-gray-600 mr-1">
 						<span className="text-blue-600">{totalMales.toLocaleString()}</span>
