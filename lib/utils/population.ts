@@ -45,27 +45,27 @@ export const polygonAreaSqKm = (coordinates: number[][][]): number => {
 		if (ring.length < 4) {
 			return 0;
 		}
-		
+
 		let area = 0;
 		for (let i = 0; i < ring.length - 1; i++) {
-			const [lon1, lat1] = ring[i];
-			const [lon2, lat2] = ring[i + 1];
+			const [lonStart, latStart] = ring[i];
+			const [lonEnd, latEnd] = ring[i + 1];
 
-			const φ1 = (lat1 * Math.PI) / 180;
-			const φ2 = (lat2 * Math.PI) / 180;
-			const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+			const latStartRad = (latStart * Math.PI) / 180;
+			const latEndRad = (latEnd * Math.PI) / 180;
+			const deltaLonRad = ((lonEnd - lonStart) * Math.PI) / 180;
 
-			area += Δλ * (Math.sin(φ1) + Math.sin(φ2));
+			area += deltaLonRad * (Math.sin(latStartRad) + Math.sin(latEndRad));
 		}
 
 		return area * R * R / 2;
 	};
 
 	let totalArea = 0;
-	
+
 	// Check if coordinates[0][0][0] is a number (simple) or array (multi-chunk)
 	const isSimplePolygon = typeof coordinates[0]?.[0]?.[0] === 'number';
-	
+
 	if (isSimplePolygon) {
 		// Simple case: coordinates[0] is the ring
 		totalArea = Math.abs(calculateRingArea(coordinates[0]));
