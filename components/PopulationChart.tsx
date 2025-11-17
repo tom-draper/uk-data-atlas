@@ -35,7 +35,7 @@ export default function PopulationChart({
 				<PopulationDensity
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
-					dataset={availableDatasets['population-2020']}
+					dataset={availableDatasets['population-2022']}
 					aggregatedData={aggregatedData}
 					boundaryData={boundaryData}
 					wardCode={wardCode}
@@ -52,21 +52,11 @@ export default function PopulationChart({
 					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
 				/>
-				<PopulationDensity
-					activeDatasetId={activeDatasetId}
-					setActiveDatasetId={setActiveDatasetId}
-					dataset={availableDatasets['population-2022']}
-					aggregatedData={aggregatedData}
-					boundaryData={boundaryData}
-					wardCode={wardCode}
-					constituencyCode={constituencyCode}
-					codeMapper={codeMapper}
-				/>
 
 				<AgeChart
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
-					dataset={availableDatasets['population-2020']}
+					dataset={availableDatasets['population-2022']}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					constituencyCode={constituencyCode}
@@ -81,20 +71,11 @@ export default function PopulationChart({
 					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
 				/>
-				<AgeChart
-					activeDatasetId={activeDatasetId}
-					setActiveDatasetId={setActiveDatasetId}
-					dataset={availableDatasets['population-2022']}
-					aggregatedData={aggregatedData}
-					wardCode={wardCode}
-					constituencyCode={constituencyCode}
-					codeMapper={codeMapper}
-				/>
 
 				<Gender
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
-					dataset={availableDatasets['population-2020']}
+					dataset={availableDatasets['population-2022']}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					constituencyCode={constituencyCode}
@@ -104,15 +85,6 @@ export default function PopulationChart({
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
 					dataset={availableDatasets['population-2021']}
-					aggregatedData={aggregatedData}
-					wardCode={wardCode}
-					constituencyCode={constituencyCode}
-					codeMapper={codeMapper}
-				/>
-				<Gender
-					activeDatasetId={activeDatasetId}
-					setActiveDatasetId={setActiveDatasetId}
-					dataset={availableDatasets['population-2022']}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					constituencyCode={constituencyCode}

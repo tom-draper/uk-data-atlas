@@ -62,10 +62,10 @@ function AgeDistribution({
 		// Early return for aggregated data case
 		if (!wardCode && !constituencyCode && aggregatedData) {
 			return {
-				medianAge: aggregatedData[2020].medianAge ?? 0,
-				ageGroups: aggregatedData[2020].populationStats.ageGroups.total ?? emptyAgeGroups,
-				total: aggregatedData[2020].populationStats.total ?? 0,
-				ages: aggregatedData[2020].ages ?? [],
+				medianAge: aggregatedData[dataset.year].medianAge ?? 0,
+				ageGroups: aggregatedData[dataset.year].populationStats.ageGroups.total ?? emptyAgeGroups,
+				total: aggregatedData[dataset.year].populationStats.total ?? 0,
+				ages: aggregatedData[dataset.year].ages ?? [],
 			};
 		}
 
@@ -75,7 +75,7 @@ function AgeDistribution({
 
 		const codesToTry = [
 			wardCode,
-			codeMapper.convertWardCode(wardCode, 2021),
+			codeMapper.convertWardCode(wardCode, dataset.wardYear),
 		].filter((code): code is string => code !== null);
 
 		for (const code of codesToTry) {

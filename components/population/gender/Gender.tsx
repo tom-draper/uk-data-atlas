@@ -31,8 +31,8 @@ function Gender({
 		// Early return for aggregated data case
 		if (!wardCode && !constituencyCode && aggregatedData) {
 			return { 
-				totalMales: aggregatedData[2020].populationStats.males, 
-				totalFemales: aggregatedData[2020].populationStats.females 
+				totalMales: aggregatedData[dataset.year].populationStats.males, 
+				totalFemales: aggregatedData[dataset.year].populationStats.females 
 			};
 		}
 
@@ -43,7 +43,7 @@ function Gender({
 		// Try to find the ward data - population uses 2021 codes
 		const codesToTry = [
 			wardCode,
-			codeMapper.convertWardCode(wardCode, 2021)
+			codeMapper.convertWardCode(wardCode, dataset.wardYear)
 		].filter((code): code is string => code !== null);
 
 		for (const code of codesToTry) {

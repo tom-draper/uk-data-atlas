@@ -8,18 +8,27 @@ interface LocationPanelProps {
     population: PopulationDataset['populationData'];
 }
 
+const COUNTRY_PREFIXES: Record<string, string> = {
+    'United Kingdom': '',
+    'England': 'E',
+    'Scotland': 'S',
+    'Wales': 'W',
+    'Northern Ireland': 'N'
+};
+
+const COUNTRY_LOCATIONS = new Set(['England', 'Scotland', 'Wales', 'Northern Ireland', 'United Kingdom']);
+
 export default memo(function LocationPanel({ selectedLocation, onLocationClick, population }: LocationPanelProps) {
-    // Add state for 2021 geojson - population data uses the 2021 ward codes and boundaries
-    const [geojson, setGeojson] = useState<BoundaryGeojson<2021> | null>(null);
+    // Add state for 2023 geojson - population data uses the 2023 ward codes and boundaries
+    const [geojson, setGeojson] = useState<BoundaryGeojson<2023> | null>(null);
 
     // Load it once
     useEffect(() => {
         console.log('EXPENSIVE: Loading 2023 geojson for LocationPanel...');
-        // fetch('/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson')
         fetch('/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson')
             .then(r => r.json())
             .then(data => setGeojson(data))
-            .catch(err => console.error('Failed to load 2021 geojson:', err));
+            .catch(err => console.error('Failed to load 2023 geojson:', err));
     }, []);
 
     const geojsonFeatureMap = useMemo(() => {
@@ -89,13 +98,38 @@ export default memo(function LocationPanel({ selectedLocation, onLocationClick, 
             .filter(({ bounds }) => bounds.bounds[0] !== -1);
     }, [populationWithBounds]);
 
-    // Convert larger locations to the same format with calculated population
-    const largerLocations = useMemo(() => {
-        return Object.entries(LOCATIONS).map(([location, bounds]) => {
-            // Calculate total population by summing all wards in the constituent LADs
-            const totalPopulation = Object.values(populationWithBounds).reduce((sum: number, wardData: any) => {
-                // Check if this ward belongs to any of the LADs in this location
-                if (bounds.lad_codes.includes(wardData.laCode)) {
+    // Calculate population for a location based on LAD codes or country prefix
+    const calculateLocationPopulation = (location: string, locationBounds: LocationBounds): number => {
+        // Country-level filtering by ward code prefix
+        if (COUNTRY_LOCATIONS.has(location)) {
+            return Object.entries(populationWithBounds).reduce((sum: number, [wardCode, wardData]: [string, any]) => {
+                // United Kingdom = all wards
+                if (location === 'United Kingdom') {
+                    const wardPop = Object.values(wardData.total).reduce(
+                        (wardSum: number, val: any) => wardSum + Number(val),
+                        0
+                    );
+                    return sum + wardPop;
+                }
+
+                // Other countries - filter by prefix
+                const prefix = COUNTRY_PREFIXES[location];
+                if (prefix && wardCode.startsWith(prefix)) {
+                    const wardPop = Object.values(wardData.total).reduce(
+                        (wardSum: number, val: any) => wardSum + Number(val),
+                        0
+                    );
+                    return sum + wardPop;
+                }
+
+                return sum;
+            }, 0);
+        }
+
+        // Specific location filtering by LAD codes
+        if (locationBounds.lad_codes && locationBounds.lad_codes.length > 0) {
+            return Object.values(populationWithBounds).reduce((sum: number, wardData: any) => {
+                if (locationBounds.lad_codes.includes(wardData.laCode)) {
                     const wardPop = Object.values(wardData.total).reduce(
                         (wardSum: number, val: any) => wardSum + Number(val),
                         0
@@ -104,26 +138,37 @@ export default memo(function LocationPanel({ selectedLocation, onLocationClick, 
                 }
                 return sum;
             }, 0);
+        }
 
-            return {
-                name: location,
-                wardCode: '',
-                wardName: '',
-                laName: '',
-                totalPopulation,
-                bounds,
-            };
-        });
+        return 0;
+    };
+
+    // Convert larger locations to the same format with calculated population
+    const largerLocations = useMemo(() => {
+        return Object.entries(LOCATIONS)
+            .map(([location, bounds]) => {
+                const totalPopulation = calculateLocationPopulation(location, bounds);
+
+                return {
+                    name: location,
+                    wardCode: '',
+                    wardName: '',
+                    laName: '',
+                    totalPopulation,
+                    bounds,
+                };
+            })
+            .filter(({ totalPopulation }) => totalPopulation > 0); // Filter out zero population
     }, [populationWithBounds]);
 
     const sortedLocations = useMemo(() => {
-        if (!largerLocations.length || !wardLocations.length) return [];
+        if (!largerLocations.length) return [];
 
         return [
             ...largerLocations,
-            // ...wardLocations
+            ...wardLocations  // Uncomment to include individual wards
         ].sort((a, b) => b.totalPopulation - a.totalPopulation);
-    }, [largerLocations, wardLocations]);
+    }, [largerLocations]);
 
     return (
         <div className="bg-[rgba(255,255,255,0.5)] rounded-lg backdrop-blur-xl shadow-xl border border-white/30 flex flex-col h-full">

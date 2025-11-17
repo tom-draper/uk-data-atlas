@@ -113,7 +113,7 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 	const colors = YEAR_COLORS[year] || YEAR_COLORS['2024'];
 
 	const handleClick = useCallback(() => {
-		setActiveDatasetId(year);
+		setActiveDatasetId(year.toString());
 	}, [setActiveDatasetId, year]);
 
 	// Pre-calculate height to avoid inline calculation

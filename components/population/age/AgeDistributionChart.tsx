@@ -69,7 +69,7 @@ function AgeDistributionChart({ ages, total, ageGroups, isActive }: AgeDistribut
 	}, [ages]);
 
 	if (maxCount === 1) {
-		return <div className="text-xs h-27 text-gray-400/80 text-center grid place-items-center">
+		return <div className="text-xs h-25 text-gray-400/80 text-center grid place-items-center">
 			<div className="mb-4">
 				No data available
 			</div>
@@ -79,7 +79,7 @@ function AgeDistributionChart({ ages, total, ageGroups, isActive }: AgeDistribut
 	return (
 		<div className="mx-1 -mt-4">
 			{/* Detailed Age Chart */}
-			<div className="flex items-end h-28 overflow-x-hidden pt-4">
+			<div className="flex items-end h-26 overflow-x-hidden pt-4">
 				{barData.map(({ age, count, heightPercentage, color }) => (
 					<AgeBar 
 						key={age} 

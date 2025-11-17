@@ -33,13 +33,26 @@ export type BoundaryData = {
 export const WARD_CODE_KEYS = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'] as const;
 export const WARD_NAME_KEYS = ['WD24NM', 'WD23NM', 'WD22NM', 'WD21NM'] as const;
 export const LAD_CODE_KEYS = ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'] as const;
+export const CONSTITUENCY_CODE_KEYS = ['PCON24CD', 'PCON19CD', 'PCON17CD', 'PCON15CD'] as const;
+export const CONSTITUENCY_NAME_KEYS = ['PCON24NM', 'PCON19NM', 'PCON17NM', 'PCON15NM'] as const;
 
 export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
 export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
 export type LadCodeKey = (typeof LAD_CODE_KEYS)[number];
+export type ConstituencyCodeKey = (typeof CONSTITUENCY_CODE_KEYS)[number];
+export type ConstituencyNameKey = (typeof CONSTITUENCY_NAME_KEYS)[number];
 
 const WARD_YEARS = [2024, 2023, 2022, 2021] as const;
 const CONSTITUENCY_YEARS = [2024, 2019, 2017, 2015] as const;
+
+const COUNTRY_PREFIXES: Record<string, string> = {
+	'England': 'E',
+	'Scotland': 'S',
+	'Wales': 'W',
+	'Northern Ireland': 'N'
+};
+
+const COUNTRY_LOCATIONS = new Set(['England', 'Scotland', 'Wales', 'Northern Ireland', 'United Kingdom']);
 
 /**
  * Loads all boundary GeoJSON files and returns them filtered by location.
@@ -105,6 +118,74 @@ export function useBoundaryData(selectedLocation?: string | null) {
 		}
 	};
 
+	const filterByCountry = (
+		features: any[],
+		location: string,
+		codeProperty: string
+	): any[] => {
+		// United Kingdom = no filtering
+		if (location === 'United Kingdom') {
+			return features;
+		}
+
+		const prefix = COUNTRY_PREFIXES[location];
+		if (!prefix) return features;
+
+		return features.filter((feature: any) => {
+			const code = feature.properties[codeProperty];
+			return code && code.startsWith(prefix);
+		});
+	};
+
+	const filterWardsByLadCodes = (
+		features: any[],
+		ladCodes: string[],
+		wardCodeProp: string,
+		ladCodeProp: string | undefined
+	): any[] => {
+		return features.filter((feature: any) => {
+			const wardCode = feature.properties[wardCodeProp];
+			const ladCode = feature.properties[ladCodeProp] || wardToLadCodeMap.current[wardCode];
+			return ladCodes.includes(ladCode);
+		});
+	};
+
+	const filterConstituenciesByBounds = (
+		features: any[],
+		bounds: [number, number, number, number]
+	): any[] => {
+		const [west, south, east, north] = bounds;
+
+		return features.filter((feature: any) => {
+			const geometry = feature.geometry;
+			if (!geometry || !geometry.coordinates) return false;
+
+			// Extract coordinates based on geometry type
+			let coordinates: number[][][] = [];
+			
+			if (geometry.type === 'Polygon') {
+				coordinates = [geometry.coordinates];
+			} else if (geometry.type === 'MultiPolygon') {
+				coordinates = geometry.coordinates;
+			} else {
+				return false;
+			}
+
+			// Check if any point of the constituency falls within bounds
+			for (const polygon of coordinates) {
+				for (const ring of polygon) {
+					for (const [lng, lat] of ring) {
+						if (lng >= west && lng <= east && lat >= south && lat <= north) {
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		});
+	};
+
 	const filterGeojsonByLocation = (
 		fullGeojson: BoundaryGeojson,
 		location: string | null | undefined,
@@ -112,46 +193,52 @@ export function useBoundaryData(selectedLocation?: string | null) {
 	): BoundaryGeojson => {
 		if (!location) return fullGeojson;
 
+		const firstFeature = fullGeojson.features[0];
+		if (!firstFeature) return fullGeojson;
 
-		if (location === 'United Kingdom' || location === 'England' || location === 'Scotland' || location === 'Wales' || location === 'Northern Ireland') {
-			const firstFeature = fullGeojson.features[0];
-			const wardCodeProp = findPropertyKey(firstFeature?.properties, WARD_CODE_KEYS);
+		let filteredFeatures = fullGeojson.features;
 
-			const prefix = location === 'England' ? 'E' : location === 'Scotland' ? 'S' : location === 'Wales' ? 'W' : location === 'Northern Ireland' ? 'NE' : null
+		// Filter by country prefix
+		if (COUNTRY_LOCATIONS.has(location)) {
+			const codeProperty = type === 'ward' 
+				? findPropertyKey(firstFeature.properties, WARD_CODE_KEYS)
+				: findPropertyKey(firstFeature.properties, CONSTITUENCY_CODE_KEYS);
 
-			const filtered = fullGeojson.features.filter((feature: any) => {
-				if (prefix === null) return true;
-				const wardCode = feature.properties[wardCodeProp];
-				return wardCode && wardCode.startsWith(prefix);
-			});
-			return {
-				type: 'FeatureCollection',
-				features: filtered
+			if (codeProperty) {
+				filteredFeatures = filterByCountry(filteredFeatures, location, codeProperty);
 			}
-		}
-
-		const locationData = LOCATIONS[location];
-		if (!locationData?.lad_codes) return fullGeojson;
-
-		if (type === 'ward') {
-			const firstFeature = fullGeojson.features[0];
-			const wardCodeProp = findPropertyKey(firstFeature?.properties, WARD_CODE_KEYS);
-			const ladCodeProp = findPropertyKey(firstFeature?.properties, LAD_CODE_KEYS);
-
-			const filtered = fullGeojson.features.filter((feature: any) => {
-				const wardCode = feature.properties[wardCodeProp];
-				const ladCode = feature.properties[ladCodeProp] || wardToLadCodeMap.current[wardCode];
-				return locationData.lad_codes.includes(ladCode);
-			});
 
 			return {
 				type: 'FeatureCollection',
-				features: filtered
+				features: filteredFeatures
 			};
 		}
 
-		// Constituencies not filtered yet
-		return fullGeojson;
+		// Filter by specific location
+		const locationData = LOCATIONS[location];
+		if (!locationData) return fullGeojson;
+
+		if (type === 'ward' && locationData.lad_codes && locationData.lad_codes.length > 0) {
+			const wardCodeProp = findPropertyKey(firstFeature.properties, WARD_CODE_KEYS);
+			const ladCodeProp = findPropertyKey(firstFeature.properties, LAD_CODE_KEYS);
+
+			if (wardCodeProp) {
+				filteredFeatures = filterWardsByLadCodes(
+					filteredFeatures,
+					locationData.lad_codes,
+					wardCodeProp,
+					ladCodeProp
+				);
+			}
+		} else if (type === 'constituency' && locationData.bounds) {
+			// Filter constituencies by geographic bounds
+			filteredFeatures = filterConstituenciesByBounds(filteredFeatures, locationData.bounds);
+		}
+
+		return {
+			type: 'FeatureCollection',
+			features: filteredFeatures
+		};
 	};
 
 	useEffect(() => {

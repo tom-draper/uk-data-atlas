@@ -61,7 +61,7 @@ function GenderBalanceByAgeChart({
 	const ageData = useMemo(() => {
 		// Early return for aggregated data case
 		if (!wardCode && !constituencyCode && aggregatedData) {
-			return aggregatedData[2020].medianAge !== 0 ? aggregatedData[2020].genderAgeData : [];
+			return aggregatedData[dataset.year].medianAge !== 0 ? aggregatedData[dataset.year].genderAgeData : [];
 		}
 
 		if (!wardCode || !dataset) {
@@ -71,7 +71,7 @@ function GenderBalanceByAgeChart({
 		// Try to find the ward data - population uses 2021 codes
 		const codesToTry = [
 			wardCode,
-			codeMapper.convertWardCode(wardCode, 2021)
+			codeMapper.convertWardCode(wardCode, dataset.wardYear)
 		].filter((code): code is string => code !== null);
 
 		for (const code of codesToTry) {
