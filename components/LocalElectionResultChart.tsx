@@ -16,7 +16,7 @@ interface LocalElectionResultChartProps {
 	codeMapper: CodeMapper
 }
 
-const ELECTION_YEARS = ['2024', '2023', '2022', '2021'] as const;
+const ELECTION_YEARS = [2024, 2023, 2022, 2021] as const;
 
 interface CompactBarProps {
 	data: PartyVotes | null;
@@ -122,8 +122,8 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 	return (
 		<div
 			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${isActive
-					? `${colors.bg} border-2 ${colors.border}`
-					: 'bg-white/60 border-2 border-gray-200/80 hover:border-blue-300'
+				? `${colors.bg} border-2 ${colors.border}`
+				: 'bg-white/60 border-2 border-gray-200/80 hover:border-blue-300'
 				}`}
 			style={{ height }}
 			onClick={handleClick}
@@ -167,7 +167,6 @@ export default function LocalElectionResultChart({
 	aggregatedData,
 	codeMapper
 }: LocalElectionResultChartProps) {
-
 	const yearDataMap = useMemo(() => {
 		const map: Record<string, {
 			chartData: PartyVotes | null;
@@ -186,6 +185,12 @@ export default function LocalElectionResultChart({
 		const isWardMode = !!wardCode;
 		const isAggregatedMode = !wardCode && !constituencyCode;
 
+		// Helper to calculate total votes from chartData
+		const calcTotal = (d: PartyVotes) =>
+			(d.LAB || 0) + (d.CON || 0) + (d.LD || 0) + (d.GREEN || 0) +
+			(d.REF || 0) + (d.IND || 0) + (d.DUP || 0) + (d.PC || 0) +
+			(d.SNP || 0) + (d.SF || 0) + (d.APNI || 0) + (d.SDLP || 0);
+
 		for (const year of ELECTION_YEARS) {
 			const dataset = availableDatasets[year];
 
@@ -194,56 +199,44 @@ export default function LocalElectionResultChart({
 				continue;
 			}
 
-			const yearData = dataset.wardData;
+			if (isWardMode) {
+				const yearData = dataset.wardData;
+				if (!yearData) {
+					map[year] = nullResult;
+					continue;
+				}
 
-			if (isWardMode && yearData) {
-				// Try direct lookup first
 				let data = yearData[wardCode];
-
-				// If not found, try converting the ward code to this year
 				if (!data) {
-					const yearNum = parseInt(year) as 2024 | 2023 | 2022 | 2021;
-					const convertedCode = codeMapper.convertWardCode(wardCode, yearNum);
+					const convertedCode = codeMapper.convertWardCode(wardCode, year);
 					if (convertedCode) {
 						data = yearData[convertedCode];
 					}
 				}
 
-				// If we found data, process it
 				if (data) {
-					const pv = data.partyVotes;
-					const chartData = mapPartyVotes(pv);
-					// Calculate total votes in one pass - direct property access is fastest
-					const totalVotes = (chartData.LAB || 0) + (chartData.CON || 0) + (chartData.LD || 0) +
-						(chartData.GREEN || 0) + (chartData.REF || 0) + (chartData.IND || 0) +
-						(chartData.DUP || 0) + (chartData.PC || 0) + (chartData.SNP || 0) +
-						(chartData.SF || 0) + (chartData.APNI || 0) + (chartData.SDLP || 0);
-
+					const chartData = mapPartyVotes(data.partyVotes);
 					map[year] = {
 						chartData,
 						turnout: data.turnoutPercent,
-						totalVotes
+						totalVotes: calcTotal(chartData)
 					};
 					continue;
 				}
 			}
 
 			// Fallback to aggregated data
-			if (isAggregatedMode && aggregatedData?.[year]) {
-				const yearAggData = aggregatedData[year];
-				const chartData = yearAggData.partyVotes;
-				// Calculate total votes in one pass
-				const totalVotes = (chartData.LAB || 0) + (chartData.CON || 0) + (chartData.LD || 0) +
-					(chartData.GREEN || 0) + (chartData.REF || 0) + (chartData.IND || 0) +
-					(chartData.DUP || 0) + (chartData.PC || 0) + (chartData.SNP || 0) +
-					(chartData.SF || 0) + (chartData.APNI || 0) + (chartData.SDLP || 0);
-
-				map[year] = {
-					chartData,
-					turnout: calculateTurnout(yearAggData.totalVotes, 0, yearAggData.electorate),
-					totalVotes
-				};
-				continue;
+			if (isAggregatedMode) {
+				const yearAggData = aggregatedData?.[year];
+				if (yearAggData) {
+					const chartData = yearAggData.partyVotes;
+					map[year] = {
+						chartData,
+						turnout: calculateTurnout(yearAggData.totalVotes, 0, yearAggData.electorate),
+						totalVotes: calcTotal(chartData)
+					};
+					continue;
+				}
 			}
 
 			// No data found

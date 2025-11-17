@@ -2,6 +2,27 @@
 import { LocationBounds } from '@lib/types/index';
 
 export const LOCATIONS: Record<string, LocationBounds> = {
+    'England': {
+        lad_codes: [],
+        bounds: [-2.5, 53.3, -2.0, 53.7]
+    },
+    'Scotland': {
+        lad_codes: [],
+        bounds: [-2.5, 53.3, -2.0, 53.7]
+    },
+    'Wales': {
+        lad_codes: [],
+        bounds: [-2.5, 53.3, -2.0, 53.7]
+    },
+    'Northern Ireland': {
+        lad_codes: [],
+        bounds: [-2.5, 53.3, -2.0, 53.7]
+    },
+    'United Kingdom': {
+        lad_codes: [],
+        bounds: [-2.5, 53.3, -2.0, 53.7]
+    },
+
     'Greater Manchester': {
         lad_codes: ['E08000001', 'E08000002', 'E08000003', 'E08000004', 'E08000005', 'E08000006', 'E08000007', 'E08000008', 'E08000009', 'E08000010'],
         bounds: [-2.5, 53.3, -2.0, 53.7]

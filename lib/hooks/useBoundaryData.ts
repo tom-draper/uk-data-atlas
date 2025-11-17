@@ -112,6 +112,24 @@ export function useBoundaryData(selectedLocation?: string | null) {
 	): BoundaryGeojson => {
 		if (!location) return fullGeojson;
 
+
+		if (location === 'United Kingdom' || location === 'England' || location === 'Scotland' || location === 'Wales' || location === 'Northern Ireland') {
+			const firstFeature = fullGeojson.features[0];
+			const wardCodeProp = findPropertyKey(firstFeature?.properties, WARD_CODE_KEYS);
+
+			const prefix = location === 'England' ? 'E' : location === 'Scotland' ? 'S' : location === 'Wales' ? 'W' : location === 'Northern Ireland' ? 'NE' : null
+
+			const filtered = fullGeojson.features.filter((feature: any) => {
+				if (prefix === null) return true;
+				const wardCode = feature.properties[wardCodeProp];
+				return wardCode && wardCode.startsWith(prefix);
+			});
+			return {
+				type: 'FeatureCollection',
+				features: filtered
+			}
+		}
+
 		const locationData = LOCATIONS[location];
 		if (!locationData?.lad_codes) return fullGeojson;
 

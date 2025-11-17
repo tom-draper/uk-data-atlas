@@ -14,8 +14,9 @@ export default memo(function LocationPanel({ selectedLocation, onLocationClick, 
 
     // Load it once
     useEffect(() => {
-        console.log('EXPENSIVE: Loading 2021 geojson for LocationPane...');
-        fetch('/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson')
+        console.log('EXPENSIVE: Loading 2023 geojson for LocationPanel...');
+        // fetch('/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson')
+        fetch('/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson')
             .then(r => r.json())
             .then(data => setGeojson(data))
             .catch(err => console.error('Failed to load 2021 geojson:', err));
@@ -26,7 +27,7 @@ export default memo(function LocationPanel({ selectedLocation, onLocationClick, 
 
         const map: Record<string, any> = {};
         geojson.features.forEach(f => {
-            map[f.properties.WD21CD] = f;
+            map[f.properties.WD23CD] = f;
         });
 
         return map;
@@ -120,7 +121,7 @@ export default memo(function LocationPanel({ selectedLocation, onLocationClick, 
 
         return [
             ...largerLocations,
-            ...wardLocations
+            // ...wardLocations
         ].sort((a, b) => b.totalPopulation - a.totalPopulation);
     }, [largerLocations, wardLocations]);
 

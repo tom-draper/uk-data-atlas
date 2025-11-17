@@ -16,6 +16,8 @@ interface GeneralElectionResultChartProps {
 	codeMapper: CodeMapper
 }
 
+const ELECTION_YEARS = [2024, 2019, 2017, 2015] as const;
+
 interface CompactBarProps {
 	data: PartyVotes | null;
 	dataset: GeneralElectionDataset;
@@ -36,9 +38,9 @@ const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregat
 	}
 
 	const parties = dataset.partyInfo;
-	
+
 	// Pre-calculate party data to avoid recalculating in JSX
-	const partyData = useMemo(() => 
+	const partyData = useMemo(() =>
 		parties.map(party => {
 			const votes = data[party.key] || 0;
 			const percentage = (votes / totalVotes) * 100;
@@ -50,7 +52,7 @@ const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregat
 	// Pre-calculate seats data for aggregated view
 	const seatsData = useMemo(() => {
 		if (!isAggregated || !aggregatedData[year]) return null;
-		
+
 		return {
 			totalSeats: aggregatedData[year].totalSeats,
 			sortedSeats: Object.entries(aggregatedData[year].partySeats)
@@ -167,11 +169,10 @@ const YearBar = React.memo(({
 
 	return (
 		<div
-			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${
-				isActive
-					? `${colors.bg} border-2 ${colors.border}`
-					: 'bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300'
-			}`}
+			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${isActive
+				? `${colors.bg} border-2 ${colors.border}`
+				: 'bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300'
+				}`}
 			style={{ height }}
 			onClick={handleClick}
 		>
@@ -199,7 +200,6 @@ const YearBar = React.memo(({
 });
 YearBar.displayName = 'YearBar';
 
-const ELECTION_YEARS = [2024, 2019, 2017, 2015] as const;
 
 // Helper to map party votes once
 const mapPartyVotes = (partyVotes: any): PartyVotes => ({
@@ -226,7 +226,7 @@ export default function GeneralElectionResultChart({
 	aggregatedData,
 	codeMapper
 }: GeneralElectionResultChartProps) {
-		const yearDataMap = useMemo(() => {
+	const yearDataMap = useMemo(() => {
 		const map: Record<number, {
 			dataset: GeneralElectionDataset | null;
 			chartData: PartyVotes | null;
@@ -244,13 +244,17 @@ export default function GeneralElectionResultChart({
 			totalVotes: 0
 		};
 
-		// Check if we're in constituency mode once
 		const isConstituencyMode = !!constituencyCode;
 		const isAggregatedMode = !wardCode && !constituencyCode;
 
+		// Helper to calculate total votes from chartData
+		const calcTotal = (d: PartyVotes) =>
+			(d.LAB || 0) + (d.CON || 0) + (d.LD || 0) + (d.GREEN || 0) +
+			(d.REF || 0) + (d.BRX || 0) + (d.UKIP || 0) + (d.SNP || 0) +
+			(d.PC || 0) + (d.DUP || 0) + (d.SF || 0) + (d.IND || 0);
+
 		for (const year of ELECTION_YEARS) {
-			const datasetKey = `general-${year}`;
-			const dataset = availableDatasets[datasetKey];
+			const dataset = availableDatasets[`general-${year}`];
 
 			if (!dataset) {
 				map[year] = nullResult;
@@ -258,57 +262,55 @@ export default function GeneralElectionResultChart({
 			}
 
 			if (isConstituencyMode) {
-				// Try direct lookup first, then fallback to conversion
-				let data = dataset.constituencyData[constituencyCode];
-				
-				if (!data) {
-					const convertedCode = codeMapper.convertConstituencyCode(constituencyCode, year);
-					if (convertedCode) {
-						data = dataset.constituencyData[convertedCode];
-					}
-				}
-
-				if (!data) {
-					map[year] = { ...nullResult, dataset };
+				const yearData = dataset.constituencyData;
+				if (!yearData) {
+					map[year] = nullResult;
 					continue;
 				}
 
-				const chartData = mapPartyVotes(data.partyVotes);
-				// Calculate total votes more efficiently
-				const totalVotes = (chartData.LAB || 0) + (chartData.CON || 0) + (chartData.LD || 0) + 
-					(chartData.GREEN || 0) + (chartData.REF || 0) + (chartData.BRX || 0) + (chartData.UKIP || 0) +
-					(chartData.SNP || 0) + (chartData.PC || 0) + (chartData.DUP || 0) + (chartData.SF || 0) + (chartData.IND || 0);
-				
-				map[year] = {
-					dataset,
-					chartData,
-					turnout: calculateTurnout(data.validVotes, data.invalidVotes, data.electorate),
-					isAggregated: false,
-					totalVotes
-				};
-			} else if (isAggregatedMode && aggregatedData?.[year]?.partyVotes) {
-				const yearData = aggregatedData[year];
-				const chartData = yearData.partyVotes as PartyVotes;
-				// Calculate total votes more efficiently
-				const totalVotes = (chartData.LAB || 0) + (chartData.CON || 0) + (chartData.LD || 0) + 
-					(chartData.GREEN || 0) + (chartData.REF || 0) + (chartData.BRX || 0) + (chartData.UKIP || 0) +
-					(chartData.SNP || 0) + (chartData.PC || 0) + (chartData.DUP || 0) + (chartData.SF || 0) + (chartData.IND || 0);
-				
-				map[year] = {
-					dataset,
-					chartData,
-					turnout: calculateTurnout(yearData.validVotes, yearData.invalidVotes, yearData.electorate),
-					isAggregated: true,
-					totalVotes
-				};
-			} else {
-				map[year] = { ...nullResult, dataset };
+				// Try direct lookup first, then fallback to conversion
+				let data = yearData[constituencyCode];
+				if (!data) {
+					const convertedCode = codeMapper.convertConstituencyCode(constituencyCode, year);
+					if (convertedCode) {
+						data = yearData[convertedCode];
+					}
+				}
+
+				if (data) {
+					const chartData = mapPartyVotes(data.partyVotes);
+					map[year] = {
+						dataset,
+						chartData,
+						turnout: calculateTurnout(data.validVotes, data.invalidVotes, data.electorate),
+						isAggregated: false,
+						totalVotes: calcTotal(chartData)
+					};
+					continue;
+				}
 			}
+
+			if (isAggregatedMode) {
+				const yearAggData = aggregatedData?.[year];
+				if (yearAggData?.partyVotes) {
+					const chartData = yearAggData.partyVotes as PartyVotes;
+					map[year] = {
+						dataset,
+						chartData,
+						turnout: calculateTurnout(yearAggData.validVotes, yearAggData.invalidVotes, yearAggData.electorate),
+						isAggregated: true,
+						totalVotes: calcTotal(chartData)
+					};
+					continue;
+				}
+			}
+
+			map[year] = { ...nullResult, dataset };
 		}
 
 		return map;
 	}, [wardCode, constituencyCode, availableDatasets, aggregatedData, codeMapper]);
-	
+
 	return (
 		<div className="space-y-2">
 			<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>

@@ -53,7 +53,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
         colorRange: { min: 25, max: 55 }
     },
     'density': {
-        colorRange: { min: 0, max: 6000 }
+        colorRange: { min: 0, max: 10000 }
     },
     'gender': {
         colorRange: { min: -0.1, max: 0.1 }

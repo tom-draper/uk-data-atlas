@@ -255,7 +255,7 @@ export default memo(function LegendPanel({
     const renderDensityLegend = () => {
         const options = displayOptions.density; // Use displayOptions
         const currentMin = options?.colorRange?.min ?? 500;
-        const currentMax = options?.colorRange?.max ?? 8000;
+        const currentMax = options?.colorRange?.max ?? 10000;
 
         return (
             <RangeControl
@@ -341,11 +341,17 @@ export default memo(function LegendPanel({
 
     const renderLegendContent = () => {
         switch (activeDatasetId) {
-            case 'population':
+            case 'population-2020':
+            case 'population-2021':
+            case 'population-2022':
                 return renderPopulationLegend();
-            case 'density':
+            case 'density-2020':
+            case 'density-2021':
+            case 'density-2022':
                 return renderDensityLegend();
-            case 'gender':
+            case 'gender-2020':
+            case 'gender-2021':
+            case 'gender-2022':
                 return renderGenderLegend();
             default:
                 return renderElectionLegend();
