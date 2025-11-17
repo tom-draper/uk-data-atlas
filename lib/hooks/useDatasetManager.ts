@@ -14,27 +14,27 @@ export function useDatasetManager(
 ) {
     const activeDataset = useMemo(() => {
         switch (activeDatasetId) {
-            case "population-2020":
+            case "age-distribution-2020":
+            case "population-density-2020":
             case "gender-2020":
-            case "density-2020":
                 return populationDatasets['population-2020']
-            case "population-2021":
+            case "age-distribution-2021":
+            case "population-density-2021":
             case "gender-2021":
-            case "density-2021":
                 return populationDatasets['population-2021']
-            case "population-2022":
+            case "age-distribution-2022":
+            case "population-density-2022":
             case "gender-2022":
-            case "density-2022":
                 return populationDatasets['population-2022']
-            case "general-2024":
-            case "general-2019":
-            case "general-2017":
-            case "general-2015":
+            case "general-election-2024":
+            case "general-election-2019":
+            case "general-election-2017":
+            case "general-election-2015":
                 return generalElectionDatasets[activeDatasetId]
-            case "2021":
-            case "2022":
-            case "2023":
-            case "2024":
+            case "local-election-2021":
+            case "local-election-2022":
+            case "local-election-2023":
+            case "local-election-2024":
                 return localElectionDatasets[activeDatasetId];
         }
     }, [localElectionDatasets, generalElectionDatasets, populationDatasets, activeDatasetId]);

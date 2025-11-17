@@ -85,7 +85,7 @@ const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 				}
 
 				resolve({
-					id: 'general-2024',
+					id: 'general-election-2024',
 					type: 'general-election',
 					name: 'General Election 2024',
 					year: 2024,
@@ -171,7 +171,7 @@ const parseGeneralElectionPre2024 = async (year: 2019 | 2017 | 2015): Promise<Ge
 				}
 
 				resolve({
-					id: `general-${year}`,
+					id: `general-election-${year}`,
 					type: 'general-election',
 					name: `General Election ${year}`,
 					year,
@@ -218,10 +218,10 @@ export const useGeneralElectionData = () => {
 
 				const loadedDatasets: Record<string, GeneralElectionDataset> = {};
 				
-				if (data2024) loadedDatasets['general-2024'] = data2024;
-				if (data2019) loadedDatasets['general-2019'] = data2019;
-				if (data2017) loadedDatasets['general-2017'] = data2017;
-				if (data2015) loadedDatasets['general-2015'] = data2015;
+				if (data2024) loadedDatasets['general-election-2024'] = data2024;
+				if (data2019) loadedDatasets['general-election-2019'] = data2019;
+				if (data2017) loadedDatasets['general-election-2017'] = data2017;
+				if (data2015) loadedDatasets['general-election-2015'] = data2015;
 
 				console.log('Storing general election datasets:', loadedDatasets);
 				setDatasets(loadedDatasets);

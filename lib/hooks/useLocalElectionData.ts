@@ -95,7 +95,7 @@ const parseLocalElection2024 = async (): Promise<LocalElectionDataset> => {
                 }
 
                 resolve({
-                    id: '2024',
+                    id: 'local-election-2024',
                     type: 'local-election',
                     name: 'Local Elections 2024',
                     year: 2024,
@@ -125,7 +125,7 @@ const parseLocalElection2023 = async (): Promise<LocalElectionDataset & { unmapp
                 if (!results.data || results.data.length === 0) {
                     console.warn('2023: No data rows found');
                     resolve({
-                        id: '2023',
+                        id: 'local-election-2023',
                         type: 'election',
                         name: 'Local Elections 2023',
                         year: 2023,
@@ -174,7 +174,7 @@ const parseLocalElection2023 = async (): Promise<LocalElectionDataset & { unmapp
                 }
 
                 resolve({
-                    id: '2023',
+                    id: 'local-election-2023',
                     type: 'local-election',
                     name: 'Local Elections 2023',
                     year: 2023,
@@ -234,7 +234,7 @@ const parseLocalElection2022 = async (): Promise<LocalElectionDataset> => {
                 }
 
                 resolve({
-                    id: '2022',
+                    id: 'local-election-2022',
                     type: 'local-election',
                     name: 'Local Elections 2022',
                     year: 2022,
@@ -293,7 +293,7 @@ const parseLocalElection2021 = async (): Promise<LocalElectionDataset> => {
                 }
 
                 resolve({
-                    id: '2021',
+                    id: 'local-election-2021',
                     type: 'local-election',
                     name: 'Local Elections 2021',
                     year: 2021,
@@ -403,10 +403,10 @@ export const useLocalElectionData = () => {
                 const data2023 = data2023Raw ? map2023WardCodes(data2023Raw, referenceSets) : null;
 
                 const loadedDatasets = {
-                    2024: data2024,
-                    2023: data2023,
-                    2022: data2022,
-                    2021: data2021,
+                    'local-election-2024': data2024,
+                    'local-election-2023': data2023,
+                    'local-election-2022': data2022,
+                    'local-election-2021': data2021,
                 }
 
                 console.log('Storing local election datasets:', loadedDatasets);

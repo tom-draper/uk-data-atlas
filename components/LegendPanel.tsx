@@ -170,12 +170,12 @@ export default memo(function LegendPanel({
         setLiveOptions(prev => {
             const base = prev || mapOptions;
             const newOptions = { ...base };
-            if (datasetId === 'population') {
-                newOptions.population = { ...base.population, colorRange: { min, max } };
-            } else if (datasetId === 'density') {
-                newOptions.density = { ...base.density, colorRange: { min, max } };
+            if (datasetId === 'age-distribution') {
+                newOptions['age-distribution'] = { ...base['age-distribution'], colorRange: { min, max } };
+            } else if (datasetId === 'population-density') {
+                newOptions['population-density'] = { ...base['population-density'], colorRange: { min, max } };
             } else if (datasetId === 'gender') {
-                newOptions.gender = { ...base.gender, colorRange: { min, max } };
+                newOptions.gender = { ...base['gender'], colorRange: { min, max } };
             }
             return newOptions;
         });
@@ -185,10 +185,10 @@ export default memo(function LegendPanel({
     const handleRangeChangeEnd = (datasetId: string) => {
         if (!liveOptions) return; // No drag happened
 
-        if (datasetId === 'population' && liveOptions.population.colorRange) {
-            onMapOptionsChange('population', { colorRange: liveOptions.population.colorRange });
-        } else if (datasetId === 'density' && liveOptions.density.colorRange) {
-            onMapOptionsChange('density', { colorRange: liveOptions.density.colorRange });
+        if (datasetId === 'age-distribution' && liveOptions['age-distribution'].colorRange) {
+            onMapOptionsChange('age-distribution', { colorRange: liveOptions['age-distribution'].colorRange });
+        } else if (datasetId === 'population-density' && liveOptions['population-density'].colorRange) {
+            onMapOptionsChange('population-density', { colorRange: liveOptions['population-density'].colorRange });
         } else if (datasetId === 'gender' && liveOptions.gender.colorRange) {
             onMapOptionsChange('gender', { colorRange: liveOptions.gender.colorRange });
         }
@@ -228,7 +228,7 @@ export default memo(function LegendPanel({
     };
 
     const renderPopulationLegend = () => {
-        const options = displayOptions.population; // Use displayOptions
+        const options = displayOptions['age-distribution']; // Use displayOptions
         const currentMin = options?.colorRange?.min ?? 25;
         const currentMax = options?.colorRange?.max ?? 55;
 
@@ -246,14 +246,14 @@ export default memo(function LegendPanel({
                     ((currentMax - currentMin) * 0.25 + currentMin).toFixed(0),
                     currentMin.toFixed(0)
                 ]}
-                onRangeInput={(min, max) => handleRangeInput('population', min, max)}
-                onRangeChangeEnd={() => handleRangeChangeEnd('population')}
+                onRangeInput={(min, max) => handleRangeInput('age-distribution', min, max)}
+                onRangeChangeEnd={() => handleRangeChangeEnd('age-distribution')}
             />
         );
     };
 
     const renderDensityLegend = () => {
-        const options = displayOptions.density; // Use displayOptions
+        const options = displayOptions['population-density']; // Use displayOptions
         const currentMin = options?.colorRange?.min ?? 500;
         const currentMax = options?.colorRange?.max ?? 8000;
 
@@ -271,14 +271,14 @@ export default memo(function LegendPanel({
                     ((currentMax - currentMin) * 0.25 + currentMin).toFixed(0),
                     currentMin.toFixed(0)
                 ]}
-                onRangeInput={(min, max) => handleRangeInput('density', min, max)}
-                onRangeChangeEnd={() => handleRangeChangeEnd('density')}
+                onRangeInput={(min, max) => handleRangeInput('population-density', min, max)}
+                onRangeChangeEnd={() => handleRangeChangeEnd('population-density')}
             />
         );
     };
 
     const renderGenderLegend = () => {
-        const options = displayOptions.gender; // Use displayOptions
+        const options = displayOptions['gender']; // Use displayOptions
         const currentMin = options?.colorRange?.min ?? -0.1;
         const currentMax = options?.colorRange?.max ?? 0.1;
 
@@ -341,13 +341,13 @@ export default memo(function LegendPanel({
 
     const renderLegendContent = () => {
         switch (activeDatasetId) {
-            case 'population-2020':
-            case 'population-2021':
-            case 'population-2022':
+            case 'age-distribution-2020':
+            case 'age-distribution-2021':
+            case 'age-distribution-2022':
                 return renderPopulationLegend();
-            case 'density-2020':
-            case 'density-2021':
-            case 'density-2022':
+            case 'population-density-2020':
+            case 'population-density-2021':
+            case 'population-density-2022':
                 return renderDensityLegend();
             case 'gender-2020':
             case 'gender-2021':

@@ -26,7 +26,7 @@ function PopulationDensity({
 	activeDatasetId,
 	codeMapper
 }: PopulationDensityChartProps) {
-	const datasetId = `density-${dataset.year}`
+	const datasetId = `population-density-${dataset.year}`
 	const isActive = activeDatasetId === datasetId;
 
 	// Memoize the click handler to prevent child re-renders

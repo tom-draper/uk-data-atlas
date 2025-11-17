@@ -113,7 +113,7 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 	const colors = YEAR_COLORS[year] || YEAR_COLORS['2024'];
 
 	const handleClick = useCallback(() => {
-		setActiveDatasetId(year.toString());
+		setActiveDatasetId(`local-election-${year}`);
 	}, [setActiveDatasetId, year]);
 
 	// Pre-calculate height to avoid inline calculation
@@ -130,9 +130,9 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 		>
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">{year} Local Elections</h3>
-				{turnout !== null && (
+				{turnout && (
 					<span className="text-[9px] text-gray-500 font-medium">
-						{turnout?.toFixed(1)}% turnout
+						{turnout.toFixed(1)}% turnout
 					</span>
 				)}
 			</div>
@@ -192,7 +192,7 @@ export default function LocalElectionResultChart({
 			(d.SNP || 0) + (d.SF || 0) + (d.APNI || 0) + (d.SDLP || 0);
 
 		for (const year of ELECTION_YEARS) {
-			const dataset = availableDatasets[year];
+			const dataset = availableDatasets[`local-election-${year}`];
 
 			if (!dataset) {
 				map[year] = nullResult;
@@ -251,7 +251,8 @@ export default function LocalElectionResultChart({
 			<h3 className="text-xs font-bold text-gray-700 pt-2">Local Election Results</h3>
 
 			{ELECTION_YEARS.map(year => {
-				const dataset = availableDatasets[year];
+				const datasetId = `local-election-${year}`
+				const dataset = availableDatasets[datasetId];
 				if (!dataset) {
 					return null;
 				}
@@ -265,7 +266,7 @@ export default function LocalElectionResultChart({
 						data={yearData.chartData}
 						dataset={dataset}
 						turnout={yearData.turnout}
-						isActive={activeDataset.id === year.toString()}
+						isActive={activeDataset.id === datasetId}
 						setActiveDatasetId={setActiveDatasetId}
 						totalVotes={yearData.totalVotes}
 					/>

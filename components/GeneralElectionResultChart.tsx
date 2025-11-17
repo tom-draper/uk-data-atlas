@@ -161,7 +161,7 @@ const YearBar = React.memo(({
 	const colors = YEAR_COLORS[year] || { bg: 'bg-indigo-50/60', border: 'border-indigo-400' };
 
 	const handleClick = useCallback(() => {
-		setActiveDatasetId('general-' + year);
+		setActiveDatasetId(`general-election-${year}`);
 	}, [setActiveDatasetId, year]);
 
 	// Pre-calculate height to avoid inline calculation
@@ -228,7 +228,6 @@ export default function GeneralElectionResultChart({
 }: GeneralElectionResultChartProps) {
 	const yearDataMap = useMemo(() => {
 		const map: Record<number, {
-			dataset: GeneralElectionDataset | null;
 			chartData: PartyVotes | null;
 			turnout: number | null;
 			isAggregated: boolean;
@@ -254,7 +253,7 @@ export default function GeneralElectionResultChart({
 			(d.PC || 0) + (d.DUP || 0) + (d.SF || 0) + (d.IND || 0);
 
 		for (const year of ELECTION_YEARS) {
-			const dataset = availableDatasets[`general-${year}`];
+			const dataset = availableDatasets[`general-election-${year}`];
 
 			if (!dataset) {
 				map[year] = nullResult;
@@ -280,7 +279,6 @@ export default function GeneralElectionResultChart({
 				if (data) {
 					const chartData = mapPartyVotes(data.partyVotes);
 					map[year] = {
-						dataset,
 						chartData,
 						turnout: calculateTurnout(data.validVotes, data.invalidVotes, data.electorate),
 						isAggregated: false,
@@ -295,7 +293,6 @@ export default function GeneralElectionResultChart({
 				if (yearAggData?.partyVotes) {
 					const chartData = yearAggData.partyVotes as PartyVotes;
 					map[year] = {
-						dataset,
 						chartData,
 						turnout: calculateTurnout(yearAggData.validVotes, yearAggData.invalidVotes, yearAggData.electorate),
 						isAggregated: true,
@@ -305,7 +302,7 @@ export default function GeneralElectionResultChart({
 				}
 			}
 
-			map[year] = { ...nullResult, dataset };
+			map[year] = { ...nullResult};
 		}
 
 		return map;
@@ -315,20 +312,22 @@ export default function GeneralElectionResultChart({
 		<div className="space-y-2">
 			<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
 			{ELECTION_YEARS.map(year => {
-				const yearData = yearDataMap[year];
-
-				if (!yearData.dataset) {
+				const datasetId = `general-election-${year}`
+				const dataset = availableDatasets[datasetId];
+				if (!dataset) {
 					return null;
 				}
+
+				const yearData = yearDataMap[year];
 
 				return (
 					<YearBar
 						key={year}
 						year={year}
 						data={yearData.chartData}
-						dataset={yearData.dataset}
+						dataset={dataset}
 						turnout={yearData.turnout}
-						isActive={activeDataset.id === `general-${year}`}
+						isActive={activeDataset.id === datasetId}
 						isAggregated={yearData.isAggregated}
 						aggregatedData={aggregatedData}
 						setActiveDatasetId={setActiveDatasetId}

@@ -51,7 +51,7 @@ function AgeDistribution({
 	activeDatasetId,
 	codeMapper,
 }: AgeDistributionProps) {
- 	const datasetId = `population-${dataset.year}`
+ 	const datasetId = `age-distribution-${dataset.year}`
 	const isActive = activeDatasetId === datasetId;
 
 	const { medianAge, ageGroups, total, ages } = useMemo(() => {

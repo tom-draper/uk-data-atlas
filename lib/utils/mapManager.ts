@@ -88,7 +88,7 @@ export class MapManager {
     // Public API - Population Methods
     // ============================================================================
 
-    updateMapForPopulation(geojson: BoundaryGeojson, dataset: PopulationDataset, mapOptions: PopulationOptions) {
+    updateMapForAgeDistribution(geojson: BoundaryGeojson, dataset: PopulationDataset, mapOptions: PopulationOptions) {
         this.updatePopulationMap(geojson, dataset, mapOptions, 'age');
     }
 

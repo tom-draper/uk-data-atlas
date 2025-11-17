@@ -34,8 +34,8 @@ export interface GenderOptions {
 export interface MapOptions {
     'general-election': GeneralElectionOptions;
     'local-election': LocalElectionOptions;
-    'population': PopulationOptions;
-    'density': DensityOptions;
+    'age-distribution': PopulationOptions;
+    'population-density': DensityOptions;
     'gender': GenderOptions;
 }
 
@@ -49,10 +49,10 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
         mode: 'winner',
         partyPercentageRange: { min: 0, max: 100 }
     },
-    'population': {
+    'age-distribution': {
         colorRange: { min: 25, max: 55 }
     },
-    'density': {
+    'population-density': {
         colorRange: { min: 0, max: 8000 }
     },
     'gender': {

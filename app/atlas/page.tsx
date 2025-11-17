@@ -28,7 +28,7 @@ import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
 // Constants
 const INITIAL_STATE = {
 	location: 'Greater Manchester',
-	datasetId: '2024',
+	datasetId: 'local-election-2024',
 } as const;
 const MAP_CONFIG = {
 	style: 'mapbox://styles/mapbox/light-v11',
@@ -91,7 +91,7 @@ export default function MapsPage() {
 		onConstituencyHover: activeDataset?.boundaryType === 'constituency' ? onConstituencyHover : undefined,
 		onLocationChange,
 	});
-	
+
 	// Map options using custom hook
 	const { mapOptions, setMapOptions: handleMapOptionsChange } = useMapOptions(DEFAULT_MAP_OPTIONS);
 
@@ -125,15 +125,15 @@ export default function MapsPage() {
 		switch (activeDataset.type) {
 			case 'population':
 				switch (activeDatasetId) {
-					case 'population-2020':
-					case 'population-2021':
-					case 'population-2022':
-						mapManager.updateMapForPopulation(geojson, activeDataset, mapOptions['population']);
+					case 'age-distribution-2020':
+					case 'age-distribution-2021':
+					case 'age-distribution-2022':
+						mapManager.updateMapForAgeDistribution(geojson, activeDataset, mapOptions['age-distribution']);
 						break;
-					case 'density-2020':
-					case 'density-2021':
-					case 'density-2022':
-						mapManager.updateMapForPopulationDensity(geojson, activeDataset, mapOptions['density'])
+					case 'population-density-2020':
+					case 'population-density-2021':
+					case 'population-density-2022':
+						mapManager.updateMapForPopulationDensity(geojson, activeDataset, mapOptions['population-density'])
 						break
 					case 'gender-2020':
 					case 'gender-2021':
@@ -144,15 +144,15 @@ export default function MapsPage() {
 				break;
 			case 'general-election':
 				mapManager.updateMapForGeneralElection(
-					geojson, 
-					activeDataset, 
+					geojson,
+					activeDataset,
 					mapOptions[activeDataset.type]
 				);
 				break;
 			case 'local-election':
 				mapManager.updateMapForLocalElection(
-					geojson, 
-					activeDataset, 
+					geojson,
+					activeDataset,
 					mapOptions[activeDataset.type]
 				);
 				break;
@@ -196,7 +196,7 @@ export default function MapsPage() {
 				</div>
 
 				<div className="absolute right-0 flex h-full">
-					<LegendPanel 
+					<LegendPanel
 						activeDatasetId={activeDatasetId}
 						activeDataset={activeDataset}
 						aggregatedData={aggregatedData}
