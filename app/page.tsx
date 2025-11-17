@@ -8,7 +8,7 @@ export default function Home() {
 				<div className="p-5">
 					<h1 className="text-5xl font-semibold">UK Data Atlas</h1>
 					<div className="mt-2.5">
-						<p>The powerful mapping tool for visualizing data that shapes the United Kingdom.</p>
+						<p>A powerful mapping platform for visualizing data that shapes the United Kingdom.</p>
 					</div>
 
 					<div className="pt-12 flex">

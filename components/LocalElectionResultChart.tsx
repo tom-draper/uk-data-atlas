@@ -92,7 +92,7 @@ const CompactBar = React.memo(({ data, dataset, isActive, totalVotes }: CompactB
 CompactBar.displayName = 'CompactBar';
 
 interface YearBarProps {
-	year: string;
+	year: number;
 	data: PartyVotes | null;
 	dataset: LocalElectionDataset;
 	turnout: number | null;
@@ -132,7 +132,7 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 				<h3 className="text-xs font-bold">{year} Local Elections</h3>
 				{turnout !== null && (
 					<span className="text-[9px] text-gray-500 font-medium">
-						{turnout.toFixed(1)}% turnout
+						{turnout?.toFixed(1)}% turnout
 					</span>
 				)}
 			</div>
@@ -265,7 +265,7 @@ export default function LocalElectionResultChart({
 						data={yearData.chartData}
 						dataset={dataset}
 						turnout={yearData.turnout}
-						isActive={activeDataset.id === year}
+						isActive={activeDataset.id === year.toString()}
 						setActiveDatasetId={setActiveDatasetId}
 						totalVotes={yearData.totalVotes}
 					/>

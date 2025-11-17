@@ -1,6 +1,6 @@
 // components/PopulationChart.tsx
 'use client';
-import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset } from '@lib/types';
+import { AggregatedPopulationData, PopulationDataset } from '@lib/types';
 import PopulationDensity from '@/components/population/density/PopulationDensity';
 import AgeChart from './population/age/AgeDistribution';
 import Gender from './population/gender/Gender';

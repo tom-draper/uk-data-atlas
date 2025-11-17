@@ -161,7 +161,6 @@ export const usePopulationData = () => {
 								const wardName = row[3]?.trim() || '';
 								const total = row[4]?.trim();
 
-								// if (wardCode && wardCode.startsWith('E05')) {
 								const femaleAgeData: AgeData = {};
 								const maleAgeData: AgeData = {};
 								const totalAgeData: AgeData = {};

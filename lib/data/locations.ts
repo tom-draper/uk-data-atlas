@@ -2,25 +2,26 @@
 import { LocationBounds } from '@lib/types/index';
 
 export const LOCATIONS: Record<string, LocationBounds> = {
+
     'England': {
         lad_codes: [],
-        bounds: [-2.5, 53.3, -2.0, 53.7]
+        bounds: [-6.5, 49.9, 1.8, 55.8]
     },
     'Scotland': {
         lad_codes: [],
-        bounds: [-2.5, 53.3, -2.0, 53.7]
+        bounds: [-8.6, 54.6, 1.8, 60.9]
     },
     'Wales': {
         lad_codes: [],
-        bounds: [-2.5, 53.3, -2.0, 53.7]
+        bounds: [-5.3, 51.3, -2.6, 53.5]
     },
     'Northern Ireland': {
         lad_codes: [],
-        bounds: [-2.5, 53.3, -2.0, 53.7]
+        bounds: [-8.3, 53.9, -5.3, 55.4]
     },
     'United Kingdom': {
         lad_codes: [],
-        bounds: [-2.5, 53.3, -2.0, 53.7]
+        bounds: [-8.6, 49.9, 1.8, 60.9]
     },
 
     'Greater Manchester': {
@@ -497,62 +498,237 @@ export const LOCATIONS: Record<string, LocationBounds> = {
     },
 
     // North East England
-    'North East': {
-        lad_codes: [
-            'E06000001', 'E06000002', 'E06000003', 'E06000004', 'E06000005', 'E06000047', // Tees Valley
-            'E08000020', 'E08000021', 'E08000022', 'E08000023', 'E08000024' // Tyne & Wear
-        ],
-        bounds: [-2.2, 54.5, -1.1, 55.8]
-    },
+    // 'North East': {
+    //     lad_codes: [
+    //         'E06000001', 'E06000002', 'E06000003', 'E06000004', 'E06000005', 'E06000047', // Tees Valley
+    //         'E08000020', 'E08000021', 'E08000022', 'E08000023', 'E08000024' // Tyne & Wear
+    //     ],
+    //     bounds: [-2.2, 54.5, -1.1, 55.8]
+    // },
+
+    // North East England
+'North East': {
+    lad_codes: [
+        // Tees Valley Unitary Authorities
+        'E06000001', // Hartlepool
+        'E06000002', // Middlesbrough
+        'E06000003', // Redcar and Cleveland
+        'E06000004', // Stockton-on-Tees
+        'E06000005', // Darlington
+
+        // County Durham and Northumberland Unitary Authorities
+        'E06000047', // County Durham
+        'E06000048', // Northumberland (***This was missing from your list***)
+
+        // Tyne and Wear Metropolitan Districts
+        'E08000037', // Gateshead (***The correct code for Gateshead***)
+        'E08000021', // Newcastle upon Tyne
+        'E08000022', // North Tyneside
+        'E08000023', // South Tyneside
+        'E08000024'  // Sunderland
+    ],
+    // Corrected bounding box
+    bounds: [-2.7, 54.2, -0.5, 55.9]
+},
 
     // West Midlands
     'West Midlands': {
         lad_codes: [
             'E08000025', 'E08000026', 'E08000027', 'E08000028', 'E08000029', 'E08000030', 'E08000031', // Metro area
-            'E07000192', 'E07000193', 'E07000194', 'E07000195', 'E07000196', // Staffordshire
-            'E06000019', 'E06000021', // Telford, Stoke
-            'E07000218', 'E07000219', 'E07000220', 'E07000221', 'E07000222' // Warwickshire
+            'E07000192', 'E07000193', 'E07000194', 'E07000195', 'E07000196', 'E07000197', 'E07000199', // Staffordshire
+            'E06000019', 'E06000020', 'E06000021', // Telford, Stoke
+            'E06000051',
+            'E07000218', 'E07000219', 'E07000220', 'E07000221', 'E07000222', // Warwickshire
+            'E07000234', 'E07000235', 'E07000236', 'E07000237', 'E07000238', 'E07000239'
         ],
         bounds: [-3.1, 52.2, -1.4, 53.0]
     },
 
+    // // South West England
+    // 'South West': {
+    //     lad_codes: [
+    //         // Devon
+    //         'E07000040', 'E07000041', 'E07000042', 'E07000043', 'E07000044', 'E07000045', 'E07000046', 'E07000047',
+    //         'E06000052',
+    //         // Cornwall
+    //         'E06000052', 'E06000053',
+    //         // Somerset
+    //         'E07000187', 'E07000188', 'E07000189', 'E07000190', 'E07000191',
+    //         // Dorset
+    //         'E06000059', 'E06000058'
+    //     ],
+    //     bounds: [-5.3, 50.2, -1.9, 51.3]
+    // },
     // South West England
     'South West': {
         lad_codes: [
-            // Devon
-            'E07000040', 'E07000041', 'E07000042', 'E07000043', 'E07000044', 'E07000045', 'E07000046', 'E07000047',
-            'E06000052',
-            // Cornwall
-            'E06000052', 'E06000053',
-            // Somerset
-            'E07000187', 'E07000188', 'E07000189', 'E07000190', 'E07000191',
-            // Dorset
-            'E06000059', 'E06000058'
+            // Bristol, Bath and Somerset Unitaries/Authorities
+            'E06000023', // Bristol, City of
+            'E06000022', // Bath and North East Somerset
+            'E06000024', // North Somerset
+            // 'E06000056', // Somerset (Unitary Authority since 2023)
+
+            // Cornwall and Devon Unitaries/Authorities
+            'E06000052', // Cornwall
+            'E06000053', // Isles of Scilly
+            'E06000028', // Plymouth, City of
+            'E06000027', // Torbay
+            'E07000040', // East Devon
+            'E07000041', // Exeter
+            'E07000042', // Mid Devon
+            'E07000043', // North Devon
+            'E07000044', // South Hams
+            'E07000045', // Teignbridge
+            'E07000046', // Tiverton (West Devon)
+            'E07000047', // Torridge
+
+            // Dorset Unitaries
+            'E06000058', // Bournemouth, Christchurch and Poole
+            'E06000059', // Dorset Council
+            'E06000066', // Dorset Council
+
+            // Gloucestershire Authorities
+            'E06000025', // South Gloucestershire
+            'E06000026', // South Gloucestershire
+            'E07000078', // Cheltenham
+            'E07000079', // Cotswold
+            'E07000080', // Forest of Dean
+            'E07000081', // Gloucester
+            'E07000082', // Stroud
+            'E07000083', // Tewkesbury
+
+            // Wiltshire Unitaries
+            'E06000054', // Swindon
+            // 'E06000055'  // Wiltshire Council
         ],
-        bounds: [-5.3, 50.2, -1.9, 51.3]
+        // Corrected bounding box
+        bounds: [-6.5, 49.9, -1.3, 52.1]
     },
 
     // South East England
-    'South East': {
-        lad_codes: [
-            'E06000035', 'E06000036', 'E06000037', 'E06000038', 'E06000039', // Hampshire/Isle of Wight
-            'E07000061', 'E07000062', 'E07000063', 'E07000064', 'E07000065', 'E07000066', 'E07000067', // Kent
-            'E07000207', 'E07000208', 'E07000209', 'E07000210', // Oxfordshire
-            'E07000175', 'E07000176', 'E07000177', 'E07000178', // Surrey
-            'E06000043', 'E06000044', // Brighton & Hove, East Sussex
-            'E07000084', 'E07000085', 'E07000086', 'E07000087', // Buckinghamshire
+    "South East": {
+        "lad_codes": [
+            // Unitary Authorities (13 codes)
+            "E06000035", // Medway
+            "E06000036", // Bracknell Forest
+            "E06000037", // West Berkshire
+            "E06000038", // Reading
+            "E06000039", // Slough
+            "E06000040", // Windsor and Maidenhead
+            "E06000041", // Wokingham
+            "E06000042", // Milton Keynes
+            "E06000043", // Brighton and Hove
+            "E06000044", // Portsmouth
+            "E06000045", // Southampton
+            "E06000046", // Isle of Wight
+            "E06000060", // Buckinghamshire UA (Supersedes E07 codes for Aylesbury Vale, Chiltern, South Bucks, Wycombe)
+
+            // East Sussex (5 codes)
+            "E07000061", // Eastbourne
+            "E07000062", // Hastings
+            "E07000063", // Lewes
+            "E07000064", // Rother
+            "E07000065", // Wealden
+
+            // Hampshire Districts (13 codes)
+            "E07000084", // Basingstoke and Deane
+            "E07000085", // East Hampshire
+            "E07000086", // Eastleigh
+            "E07000087", // Fareham
+            "E07000088", // Gosport
+            "E07000089", // Hart
+            "E07000090", // Havant
+            "E07000091", // New Forest
+            "E07000092", // Rushmoor
+            "E07000093", // Test Valley
+            "E07000094", // Winchester
+            // "E07000095", // City of London (While technically a separate entity, sometimes grouped with wider region data)
+            // "E07000096", // Westminster (Similar note to above)
+
+            // Kent Districts (12 codes)
+            "E07000105", // Ashford
+            "E07000106", // Ashford
+            "E07000107", // Ashford
+            "E07000108", // Canterbury
+            "E07000109", // Dartford
+            "E07000110", // Dover
+            "E07000111", // Gravesham
+            "E07000112", // Maidstone
+            "E07000113", // Sevenoaks
+            "E07000114", // Shepway (now Folkestone and Hythe)
+            "E07000115", // Swale
+            "E07000116", // Thanet
+            // "E07000117", // Tonbridge and Malling
+            // "E07000118", // Tunbridge Wells
+
+            // Oxfordshire Districts (5 codes)
+            // "E07000176", // Cherwell
+            // "E07000177", // Oxford
+            "E07000178", // South Oxfordshire
+            "E07000179", // Vale of White Horse
+            "E07000180", // West Oxfordshire
+
+            // Surrey Districts (11 codes)
+            "E07000207", // Elmbridge
+            "E07000208", // Epsom and Ewell
+            "E07000209", // Guildford
+            "E07000210", // Mole Valley
+            "E07000211", // Reigate and Banstead
+            "E07000212", // Runnymede
+            "E07000213", // Spelthorne
+            "E07000214", // Surrey Heath
+            "E07000215", // Tandridge
+            "E07000216", // Waverley
+            "E07000217", // Woking
+
+            // West Sussex Districts (7 codes - Missing from your original list)
+            // "E07000218", // Adur
+            // "E07000219", // Arun
+            // "E07000220", // Chichester
+            // "E07000221", // Crawley
+            // "E07000222", // Horsham
+            "E07000223", // Mid Sussex
+            "E07000224",  // Worthing
+            "E07000225",  // Worthing
+            "E07000226",  // Worthing
+            "E07000227",  // Worthing
+            "E07000228",  // Worthing
         ],
-        bounds: [-1.8, 50.7, 1.5, 52.1]
+        "bounds": [-1.8, 50.7, 1.5, 52.1]
     },
+
+    // East of England
+    // 'East of England': {
+    //     lad_codes: [
+    //         'E06000031', 'E06000032', 'E06000033', 'E06000034', // Essex/Thurrock/Southend
+    //         'E07000100', 'E07000101', 'E07000102', 'E07000103', 'E07000104', 'E07000105', // Cambridgeshire
+    //         'E07000200', 'E07000201', 'E07000202', 'E07000203', 'E07000204', // Norfolk
+    //         'E07000095', 'E07000096', 'E07000097', 'E07000098', 'E07000099', // Suffolk
+    //         'E07000207', 'E07000208', 'E07000209', 'E07000210' // Hertfordshire
+    //     ],
+    //     bounds: [-0.6, 51.6, 1.8, 53.2]
+    // },
 
     // East of England
     'East of England': {
         lad_codes: [
-            'E06000031', 'E06000032', 'E06000033', 'E06000034', // Essex/Thurrock/Southend
-            'E07000100', 'E07000101', 'E07000102', 'E07000103', 'E07000104', 'E07000105', // Cambridgeshire
-            'E07000200', 'E07000201', 'E07000202', 'E07000203', 'E07000204', // Norfolk
-            'E07000095', 'E07000096', 'E07000097', 'E07000098', 'E07000099', // Suffolk
-            'E07000207', 'E07000208', 'E07000209', 'E07000210' // Hertfordshire
+            // Bedfordshire UAs: Bedford, Central Bedfordshire, Luton
+            'E06000032', 'E06000055', 'E06000056',
+
+            // Cambridgeshire UAs/LADs: Peterborough UA, Cambridge, East Cambs, Fenland, Huntingdonshire, South Cambs
+            'E06000031', 'E07000008', 'E07000009', 'E07000010', 'E07000011', 'E07000012',
+
+            // Essex UAs/LADs: Southend-on-Sea UA, Thurrock UA, Basildon, Braintree, Brentwood, Castle Point, Chelmsford, Colchester, Epping Forest, Harlow, Maldon, Rochford, Tendring, Uttlesford
+            'E06000033', 'E06000034', 'E07000066', 'E07000067', 'E07000068', 'E07000069', 'E07000070', 'E07000071', 'E07000072', 'E07000073', 'E07000074', 'E07000075', 'E07000076', 'E07000077',
+
+            // Hertfordshire LADs: Broxbourne, Dacorum, East Herts, Hertsmere, North Herts, St Albans, Stevenage, Three Rivers, Watford, Welwyn Hatfield
+            'E07000095', 'E07000096', 'E07000097', 'E07000098', 'E07000099', 'E07000100', 'E07000101', 'E07000102', 'E07000103', 'E07000104',
+
+            // Suffolk LADs: Ipswich, East Suffolk, West Suffolk (incorporating boundary changes up to 2019)
+            'E07000200', 'E07000201', 'E07000202', 'E07000203', 'E07000240', 'E07000241', 'E07000242', 'E07000243', 'E07000244', 'E07000245',
+
+            // Norfolk LADs: Breckland, Broadland, Great Yarmouth, King's Lynn & West Norfolk, North Norfolk, Norwich, South Norfolk
+            'E07000143', 'E07000144', 'E07000145', 'E07000146', 'E07000147', 'E07000148', 'E07000149'
         ],
         bounds: [-0.6, 51.6, 1.8, 53.2]
     },
@@ -591,7 +767,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         lad_codes: [
             'E07000084', 'E07000085', 'E07000086', 'E07000087', 'E07000088',
             'E07000089', 'E07000090', 'E07000091', 'E07000092', 'E07000093', // Hampshire districts
-            'E06000044' // Portsmouth, Southampton
+            'E06000044', 'E06000045' // Portsmouth, Southampton
         ],
         bounds: [-1.9, 50.7, -0.7, 51.4]
     },
@@ -601,7 +777,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         lad_codes: [
             'E07000105', 'E07000106', 'E07000107', 'E07000108', 'E07000109', 'E07000110', 'E07000111',
             'E07000112', 'E07000113', 'E07000114', 'E07000115', 'E07000116',
-            'E06000035', 'E06000036' // Medway, Thurrock
+            'E06000035', 'E06000036', 'E07000094', 'E07000093' // Medway, Thurrock
         ],
         bounds: [0.3, 50.8, 1.6, 51.5]
     },
@@ -620,7 +796,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         lad_codes: [
             'E07000066', 'E07000067', 'E07000068', 'E07000069', 'E07000070', 'E07000071',
             'E07000072', 'E07000073', 'E07000074', 'E07000075', 'E07000076',
-            'E06000032', 'E06000033' // Thurrock, Southend
+            'E06000033' // Thurrock, Southend
         ],
         bounds: [0.2, 51.5, 1.3, 52.1]
     },
@@ -653,7 +829,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
     'Lancashire': {
         lad_codes: [
             'E07000117', 'E07000118', 'E07000119', 'E07000120', 'E07000121', 'E07000122', 'E07000123',
-            'E07000124', 'E07000125', 'E07000126', 'E07000127', 'E07000128', 'E07000129', 'E07000130'
+            'E07000124', 'E07000125', 'E07000126', 'E07000127', 'E07000128',
         ],
         bounds: [-3.2, 53.7, -2.2, 54.2]
     },
@@ -668,13 +844,13 @@ export const LOCATIONS: Record<string, LocationBounds> = {
     'Yorkshire': {
         lad_codes: [
             // West Yorkshire
-            'E08000032', 'E08000033', 'E08000034', 'E08000035',
+            'E08000032', 'E08000033', 'E08000034', 'E08000035', 'E08000036',
             // South Yorkshire
             'E08000016', 'E08000017', 'E08000018', 'E08000019',
             // North Yorkshire
             'E07000163', 'E07000164', 'E07000165', 'E07000166', 'E07000167', 'E06000010', 'E06000011',
             // East Riding
-            'E06000009'
+            'E06000014', 'E06000065',
         ],
         bounds: [-2.6, 53.3, -0.3, 54.6]
     },

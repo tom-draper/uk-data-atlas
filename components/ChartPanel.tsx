@@ -112,7 +112,7 @@ export default memo(function ChartPanel({
 				{/* Footer */}
 				<div className="text-[9px] px-2.5 pb-1.5 text-gray-400/80 bg-white/20 pt-2 mt-auto flex">
 					<div className="grow hover:underline cursor-pointer">
-						UK Data Atlas
+						UK Data Atlas v0.1.0
 					</div>
 					<div className="hover:underline cursor-pointer">
 						View Sources

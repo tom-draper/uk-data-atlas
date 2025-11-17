@@ -15,9 +15,9 @@ export default function TitlePane() {
                     }}
                 />
                 <h1 className="font-semibold text-[15px]">UK Data Atlas</h1>
-                <span className="text-xs text-gray-400/80 font-mono ml-auto mr-5 select-none mt-0.5">
+                {/* <span className="text-xs text-gray-400/80 font-mono ml-auto mr-5 select-none mt-0.5">
                     v{version}
-                </span>
+                </span> */}
             </div>
         </div>
     );

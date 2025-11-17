@@ -187,8 +187,8 @@ function PopulationDensityChart({
 				</div>
 
 				{/* Right side - Supporting metrics */}
-				<div className="flex gap-3 text-left text-xs pb-1">
-					<div className="flex">
+				<div className="flex text-left text-xs pb-1">
+					<div className="flex pr-3">
 						<div className="mr-1">Population</div>
 						<div className="font-semibold">
 							{total.toLocaleString()}
