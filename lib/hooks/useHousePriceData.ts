@@ -38,7 +38,7 @@ const parseHousePriceData = async (): Promise<Record<string, WardHousePriceData>
 
                     // Parse all years of price data
                     const prices: Record<number, number> = {};
-                    
+
                     timePeriodHeaders.forEach(period => {
                         const price = parsePrice(row[period]);
                         if (price !== null) {
