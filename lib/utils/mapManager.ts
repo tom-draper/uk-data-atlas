@@ -1,11 +1,11 @@
 // lib/utils/mapManager.ts
-import { PartyVotes, LocalElectionWardData, Party, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, PopulationStats, AgeGroups, ConstituencyStats, WardStats } from '@lib/types';
+import { PartyVotes, LocalElectionWardData, Party, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, PopulationStats, AgeGroups, ConstituencyStats, WardStats, WardHousePriceData, HousePriceDataset } from '@lib/types';
 import { GeoJSONFeature } from 'mapbox-gl';
 import { calculateMedianAge, calculateTotal, polygonAreaSqKm } from './population';
 import { getWinningParty } from './generalElection';
-import { DensityOptions, GenderOptions, GeneralElectionOptions, LocalElectionOptions, PopulationOptions } from '../types/mapOptions';
+import { DensityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, LocalElectionOptions, PopulationOptions } from '../types/mapOptions';
 import { PARTIES } from '../data/parties';
-import { getColorForAge, getColorForDensity, getColorForGenderRatio, getPartyPercentageColorExpression } from './colorScale';
+import { getColorForAge, getColorForDensity, getColorForGenderRatio, getColorForHousePrice, getPartyPercentageColorExpression } from './colorScale';
 import { calculateAgeGroups } from './ageDistribution';
 
 interface MapManagerCallbacks {
@@ -14,7 +14,7 @@ interface MapManagerCallbacks {
     onLocationChange: (location: string) => void;
 }
 
-type MapMode = 'local-election' | 'general-election' | 'population';
+type MapMode = 'local-election' | 'general-election' | 'population' | 'house-price';
 type PopulationMode = 'age' | 'gender' | 'density';
 
 export class MapManager {
@@ -83,6 +83,53 @@ export class MapManager {
 
         this.setupEventHandlers('general-election', dataset.constituencyData, constituencyCodeProp);
     }
+
+    updateMapForHousePrices(
+        geojson: BoundaryGeojson,
+        dataset: HousePriceDataset,
+        mapOptions?: HousePriceOptions
+    ) {
+        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
+        console.log('EXPENSIVE: updateMapForHousePrices: Filtered wards', geojson.features.length);
+
+        // Collect all valid prices to determine min/max for color scaling
+        const prices: number[] = [];
+        geojson.features.forEach((feature) => {
+            const ward = dataset.wardData[feature.properties[wardCodeProp]];
+            if (ward?.prices[2023]) {
+                prices.push(ward.prices[2023]);
+            }
+        });
+
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+
+        const locationData = {
+            type: 'FeatureCollection' as const,
+            features: geojson.features.map((feature) => {
+                const wardCode = feature.properties[wardCodeProp];
+                const ward = dataset.wardData[wardCode];
+
+                if (!ward || ward.prices[2023] === null) {
+                    return { ...feature, properties: { ...feature.properties, color: '#cccccc' } };
+                }
+
+                // const color = getColorForHousePrice(ward.prices[2023], minPrice, maxPrice, mapOptions);
+                const color = "#ff0000";
+
+                return {
+                    ...feature,
+                    properties: { ...feature.properties, color }
+                };
+            })
+        };
+
+        this.removeExistingLayers();
+        this.addSource(locationData);
+        this.addHousePriceLayers();
+        this.setupEventHandlers('house-price', dataset.wardData, wardCodeProp);
+    }
+
 
     // ============================================================================
     // Public API - Population Methods
@@ -154,6 +201,7 @@ export class MapManager {
         this.addPopulationLayers();
         this.setupEventHandlers('population', dataset.populationData, wardCodeProp);
     }
+
 
     // ============================================================================
     // Public API - Stats Calculation
@@ -320,6 +368,41 @@ export class MapManager {
         return result;
     }
 
+    calculateHousePriceStats(
+        geojson: BoundaryGeojson,
+        wardData: Record<string, WardHousePriceData>,
+        location: string | null = null,
+        datasetId: string | null = null,
+    ) {
+        const cacheKey = `house-price-${location}-${datasetId}`;
+        if (this.cache.has(cacheKey)) {
+            console.log(`CACHE HIT: calculateHousePriceStats: [${cacheKey}]`);
+            return this.cache.get(cacheKey);
+        }
+
+        const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
+        console.log(`EXPENSIVE: calculateHousePriceStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
+
+        let totalPrice = 0;
+        let wardCount = 0;
+
+        geojson.features.forEach((feature) => {
+            const ward = wardData[feature.properties[wardCodeProp]];
+            if (!ward || ward.price === null) return;
+
+            totalPrice += ward.price;
+            wardCount += 1;
+        });
+
+        const result = {
+            averagePrice: wardCount > 0 ? totalPrice / wardCount : 0,
+            wardCount
+        };
+
+        this.cache.set(cacheKey, result);
+        return result;
+    }
+
     // ============================================================================
     // Private Helper Methods
     // ============================================================================
@@ -416,8 +499,8 @@ export class MapManager {
     }
 
     private updatePartyPercentageLayers(
-        locationData: BoundaryGeojson, 
-        options: LocalElectionOptions | GeneralElectionOptions, 
+        locationData: BoundaryGeojson,
+        options: LocalElectionOptions | GeneralElectionOptions,
     ) {
         this.removeExistingLayers();
         this.addSource(locationData);
@@ -439,6 +522,20 @@ export class MapManager {
     }
 
     private addPopulationLayers() {
+        this.map.addLayer({
+            id: MapManager.FILL_LAYER_ID,
+            type: 'fill',
+            source: MapManager.SOURCE_ID,
+            paint: {
+                'fill-color': ['get', 'color'],
+                'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
+            }
+        });
+
+        this.addBorderLayer();
+    }
+
+    private addHousePriceLayers() {
         this.map.addLayer({
             id: MapManager.FILL_LAYER_ID,
             type: 'fill',

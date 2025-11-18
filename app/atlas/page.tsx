@@ -8,7 +8,7 @@ import { useGeneralElectionData as useGeneralElectionDatasets } from '@/lib/hook
 import { usePopulationData as usePopulationDatasets } from '@lib/hooks/usePopulationData';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
-import { useAggregatedElectionData } from '@lib/hooks/useAggregatedChartData';
+import { useAggregatedChartData } from '@lib/hooks/useAggregatedChartData';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
 import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
 import { useDatasetManager } from '@/lib/hooks/useDatasetManager';
@@ -24,6 +24,7 @@ import LoadingDisplay from '@/components/displays/LoadingDisplay';
 import { LOCATIONS } from '@lib/data/locations';
 import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
 import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
+import { useHousePriceData } from '@/lib/hooks/useHousePriceData';
 
 // Constants
 const INITIAL_STATE = {
@@ -49,13 +50,15 @@ export default function MapsPage() {
 	const generalElectionData = useGeneralElectionDatasets();
 	const localElectionData = useLocalElectionDatasets();
 	const populationData = usePopulationDatasets();
+	const housePriceData = useHousePriceData();
 
 	// Consolidated dataset management
 	const activeDataset = useDatasetManager(
 		activeDatasetId,
 		localElectionData.datasets,
 		generalElectionData.datasets,
-		populationData.datasets
+		populationData.datasets,
+		housePriceData.datasets,
 	);
 
 	// Boundary data
@@ -96,12 +99,13 @@ export default function MapsPage() {
 	const { mapOptions, setMapOptions: handleMapOptionsChange } = useMapOptions(DEFAULT_MAP_OPTIONS);
 
 	// Aggregated data
-	const { aggregatedLocalElectionData, aggregatedGeneralElectionData, aggregatedPopulationData } = useAggregatedElectionData({
+	const { aggregatedLocalElectionData, aggregatedGeneralElectionData, aggregatedPopulationData, aggregatedHousePriceData } = useAggregatedChartData({
 		mapManager,
 		boundaryData,
 		localElectionDatasets: localElectionData.datasets,
 		generalElectionDatasets: generalElectionData.datasets,
 		populationDatasets: populationData.datasets,
+		housePriceDatasets: housePriceData.datasets,
 		location: selectedLocation
 	});
 
@@ -115,8 +119,10 @@ export default function MapsPage() {
 				return aggregatedGeneralElectionData[activeDataset.year]
 			case 'population':
 				return aggregatedPopulationData[activeDataset.year]
+			case 'house-price':
+				return aggregatedHousePriceData[activeDataset.year]
 		}
-	}, [activeDataset, aggregatedGeneralElectionData, aggregatedLocalElectionData, aggregatedPopulationData])
+	}, [activeDataset, aggregatedGeneralElectionData, aggregatedLocalElectionData, aggregatedPopulationData, aggregatedHousePriceData])
 
 	// Dataset change handler
 	useEffect(() => {
@@ -151,6 +157,13 @@ export default function MapsPage() {
 				break;
 			case 'local-election':
 				mapManager.updateMapForLocalElection(
+					geojson,
+					activeDataset,
+					mapOptions[activeDataset.type]
+				);
+				break;
+			case 'house-price':
+				mapManager.updateMapForHousePrices(
 					geojson,
 					activeDataset,
 					mapOptions[activeDataset.type]

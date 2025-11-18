@@ -19,6 +19,9 @@ export interface LocalElectionOptions {
     partyPercentageRange?: ColorRange;
 }
 
+export interface HousePriceOptions {
+}
+
 export interface PopulationOptions {
     colorRange?: ColorRange;
 }
@@ -37,6 +40,7 @@ export interface MapOptions {
     'age-distribution': PopulationOptions;
     'population-density': DensityOptions;
     'gender': GenderOptions;
+    'house-price': HousePriceOptions;
 }
 
 // Default values
@@ -57,5 +61,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
     },
     'gender': {
         colorRange: { min: -0.1, max: 0.1 }
+    },
+    'house-price': {
     }
 };

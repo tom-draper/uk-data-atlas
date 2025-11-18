@@ -1,5 +1,5 @@
 // lib/utils/colorScale.ts
-import type { DensityOptions, GenderOptions, GeneralElectionOptions, LocalElectionOptions, MapOptions, PopulationOptions } from '@/lib/types/mapOptions';
+import type { DensityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, LocalElectionOptions, MapOptions, PopulationOptions } from '@/lib/types/mapOptions';
 
 /**
  * Normalizes a value to a 0-1 range based on min/max bounds
@@ -118,4 +118,28 @@ export function getPartyPercentageColorExpression(
             range.max, `rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`
         ]
     ];
+}
+
+export function getColorForHousePrice(
+    price: number,
+    minPrice: number,
+    maxPrice: number,
+    options?: HousePriceOptions
+): string {
+    // Normalize price to 0-1 range
+    const normalized = (price - minPrice) / (maxPrice - minPrice);
+    
+    // Use a color scale from blue (low) to red (high)
+    // You can customize these colors based on your design
+    const colors = [
+        '#2166ac', // Low (blue)
+        '#67a9cf',
+        '#d1e5f0',
+        '#fddbc7',
+        '#ef8a62',
+        '#b2182b'  // High (red)
+    ];
+    
+    const index = Math.min(Math.floor(normalized * colors.length), colors.length - 1);
+    return colors[index];
 }

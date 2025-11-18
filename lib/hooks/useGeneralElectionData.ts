@@ -15,8 +15,6 @@ const parseVotes = (value: any): number => {
 	return isNaN(parsed) ? 0 : parsed;
 };
 
-
-
 const parseGeneralElection2024 = async (): Promise<GeneralElectionDataset> => {
 	console.log('Loading general election 2024 data...');
 	const res = await fetch('/data/elections/general-elections/HoC-GE2024-results-by-constituency.csv');

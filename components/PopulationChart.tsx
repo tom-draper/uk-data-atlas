@@ -42,17 +42,6 @@ export default function PopulationChart({
 					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
 				/>
-				{/* <PopulationDensity
-					activeDatasetId={activeDatasetId}
-					setActiveDatasetId={setActiveDatasetId}
-					dataset={availableDatasets['population-2021']}
-					aggregatedData={aggregatedData}
-					boundaryData={boundaryData}
-					wardCode={wardCode}
-					constituencyCode={constituencyCode}
-					codeMapper={codeMapper}
-				/> */}
-
 				<AgeChart
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
@@ -62,16 +51,6 @@ export default function PopulationChart({
 					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
 				/>
-				{/* <AgeChart
-					activeDatasetId={activeDatasetId}
-					setActiveDatasetId={setActiveDatasetId}
-					dataset={availableDatasets['population-2021']}
-					aggregatedData={aggregatedData}
-					wardCode={wardCode}
-					constituencyCode={constituencyCode}
-					codeMapper={codeMapper}
-				/> */}
-
 				<Gender
 					activeDatasetId={activeDatasetId}
 					setActiveDatasetId={setActiveDatasetId}
@@ -81,15 +60,6 @@ export default function PopulationChart({
 					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
 				/>
-				{/* <Gender
-					activeDatasetId={activeDatasetId}
-					setActiveDatasetId={setActiveDatasetId}
-					dataset={availableDatasets['population-2021']}
-					aggregatedData={aggregatedData}
-					wardCode={wardCode}
-					constituencyCode={constituencyCode}
-					codeMapper={codeMapper}
-				/> */}
 			</div>
 		</div>
 	);

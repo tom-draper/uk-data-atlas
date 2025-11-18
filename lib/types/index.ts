@@ -54,7 +54,7 @@ export interface PopulationWardData {
     laName: string;
 }
 
-export type Dataset = GeneralElectionDataset | PopulationDataset | LocalElectionDataset;
+export type Dataset = GeneralElectionDataset | PopulationDataset | LocalElectionDataset | HousePriceDataset;
 
 export interface PopulationDataset {
     id: string;
@@ -108,6 +108,24 @@ export interface GeneralElectionDataset {
     constituencyResults: Record<string, string>; // onsId -> winning party
     constituencyData: { [constituencyCode: string]: ConstituencyData }; // onsId -> full data
     partyInfo: Party[];
+}
+
+export interface WardHousePriceData {
+    localAuthorityCode: string;
+    localAuthorityName: string;
+    wardCode: string;
+    wardName: string;
+    prices: {[year: number]: number};
+}
+
+export interface HousePriceDataset {
+    id: string;
+    name: string;
+    type: 'house-price';
+    year: number;
+    wardYear: number;
+    boundaryType: 'ward',
+    wardData: Record<string, WardHousePriceData>; // Keyed by ward code
 }
 
 export interface AggregatedLocalElectionData {

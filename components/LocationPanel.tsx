@@ -194,9 +194,11 @@ export default memo(function LocationPanel({ selectedLocation, onLocationClick, 
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && filteredLocations.length === 1) {
+        if (e.key === 'Enter') {
             const location = filteredLocations[0];
             onLocationClick(location.name, location.bounds);
+        } else if (e.key === 'Esc' && searchOpen) {
+            handleSearchToggle()
         }
     };
 
@@ -215,7 +217,7 @@ export default memo(function LocationPanel({ selectedLocation, onLocationClick, 
                             onChange={handleSearchChange}
                             onKeyDown={handleKeyDown}
                             placeholder="Search locations..."
-                            className={`outline-none text-gray-500 text-xs px-1 py-1 mt-[2px] transition-all !border-b border-gray-200/20 duration-200 w-full ${
+                            className={`outline-none text-gray-500 text-xs px-1 py-1 mt-0.5 transition-all border-b! border-gray-200/20 duration-200 w-full ${
                                 searchOpen ? 'opacity-100' : 'opacity-0 px-0'
                             }`}
                         />

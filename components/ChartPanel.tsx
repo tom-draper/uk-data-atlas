@@ -7,6 +7,7 @@ import GeneralElectionResultChart from './GeneralElectionResultChart';
 import { memo } from 'react';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
+import HousePriceChart from './HousePriceChart';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
@@ -106,6 +107,17 @@ export default memo(function ChartPanel({
 						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
 					/>
+
+					<HousePriceChart
+						activeDataset={activeDataset}
+						availableDatasets={localElectionDatasets}
+						aggregatedData={aggregatedLocalElectionData}
+						setActiveDatasetId={setActiveDatasetId}
+						wardCode={selectedWard?.wardCode?.toString()}
+						constituencyCode={selectedConstituency?.onsId}
+						codeMapper={codeMapper}
+					/>
+
 
 				</div>
 

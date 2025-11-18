@@ -324,10 +324,8 @@ export const usePopulationData = () => {
 				};
 
 				const loadedDatasets: Record<string, PopulationDataset> = {
-					// 'population-2020': population2020,
 					'population-2021': population2021,
 					'population-2022': population2022,
-					// 'population': population2020, // Default to most recent
 				};
 
 				console.log('Storing population datasets:', loadedDatasets);

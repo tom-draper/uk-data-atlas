@@ -3,10 +3,12 @@ import { useMemo } from 'react';
 import type {
 	AggregatedLocalElectionData,
 	AggregateGeneralElectionData,
+	AggregatedPopulationData,
+	AggregatedHousePriceData,
 	GeneralElectionDataset,
 	LocalElectionDataset,
 	PopulationDataset,
-	AggregatedPopulationData,
+	HousePriceDataset,
 } from '@lib/types';
 import { BoundaryData } from './useBoundaryData';
 import { MapManager } from '../utils/mapManager';
@@ -17,19 +19,21 @@ interface UseAggregatedElectionDataParams {
 	localElectionDatasets: Record<string, LocalElectionDataset>;
 	generalElectionDatasets: Record<string, GeneralElectionDataset>;
 	populationDatasets: Record<string, PopulationDataset>;
+	housePriceDatasets: Record<string, HousePriceDataset>;
 	location: string | null;
 }
 
 /**
- * Aggregates local, general election, and population data for the current location.
+ * Aggregates local, general election, population, and house price data for the current location.
  * Leverages MapManager's internal caching to avoid redundant calculations.
  */
-export function useAggregatedElectionData({
+export function useAggregatedChartData({
 	mapManager,
 	boundaryData,
 	localElectionDatasets,
 	generalElectionDatasets,
 	populationDatasets,
+	housePriceDatasets,
 	location,
 }: UseAggregatedElectionDataParams) {
 	/**
@@ -45,7 +49,7 @@ export function useAggregatedElectionData({
 
 		for (const [datasetId, dataset] of Object.entries(localElectionDatasets)) {
 			const geojson = boundaryData.ward[dataset.wardYear];
-			if (dataset?.wardData && geojson) {
+			if (dataset.wardData && geojson) {
 				result[dataset.year] = mapManager.calculateLocalElectionStats(
 					geojson,
 					dataset.wardData,
@@ -58,7 +62,7 @@ export function useAggregatedElectionData({
 		}
 
 		return result as AggregatedLocalElectionData;
-	}, [mapManager, boundaryData, localElectionDatasets]);
+	}, [mapManager, boundaryData, localElectionDatasets, location]);
 
 	/**
 	 * Aggregated general election data - processes all available years.
@@ -86,7 +90,7 @@ export function useAggregatedElectionData({
 		}
 
 		return result as AggregateGeneralElectionData;
-	}, [mapManager, boundaryData.constituency, generalElectionDatasets]);
+	}, [mapManager, boundaryData.constituency, generalElectionDatasets, location]);
 
 	/**
 	 * Aggregated population data - calculates stats and age data.
@@ -101,7 +105,7 @@ export function useAggregatedElectionData({
 
 		for (const [datasetId, dataset] of Object.entries(populationDatasets)) {
 			const geojson = boundaryData.ward[dataset.wardYear]; 
-			if (dataset?.populationData && geojson) {
+			if (dataset.populationData && geojson) {
 				result[dataset.year] = mapManager.calculatePopulationStats(
 					geojson,
 					dataset.populationData,
@@ -111,15 +115,44 @@ export function useAggregatedElectionData({
 			} else {
 				result[dataset.year] = null;
 			}
-
 		}
 
 		return result as AggregatedPopulationData;
-	}, [mapManager, boundaryData.ward, populationDatasets]);
+	}, [mapManager, boundaryData.ward, populationDatasets, location]);
+
+	/**
+	 * Aggregated house price data - MapManager caches internally.
+	 * Only recalculates when location or datasets change.
+	 */
+	const aggregatedHousePriceData = useMemo((): AggregatedHousePriceData | null => {
+		if (!mapManager || !boundaryData?.ward) {
+			return null;
+		}
+
+		const result: Partial<AggregatedHousePriceData> = {};
+
+		for (const [datasetId, dataset] of Object.entries(housePriceDatasets)) {
+			// Use 2023 ward boundaries for house price data
+			const geojson = boundaryData.ward[dataset.wardYear];
+			if (dataset.wardData && geojson) {
+				result[dataset.year] = mapManager.calculateHousePriceStats(
+					geojson,
+					dataset.wardData,
+					location,
+					datasetId
+				);
+			} else {
+				result[dataset.year] = null;
+			}
+		}
+
+		return result as AggregatedHousePriceData;
+	}, [mapManager, boundaryData.ward, housePriceDatasets, location]);
 
 	return {
 		aggregatedLocalElectionData,
 		aggregatedGeneralElectionData,
 		aggregatedPopulationData,
+		aggregatedHousePriceData,
 	};
 }
