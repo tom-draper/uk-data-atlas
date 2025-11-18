@@ -170,6 +170,14 @@ export interface AggregatedPopulationData {
     }
 }
 
+export interface AggregatedHousePriceData {
+    2023: {
+        averagePrice: number;
+        averagePrices: {[year: number]: number};
+        wardCount: number;
+    }
+}
+
 // Common geometry type
 type PolygonGeometry = {
     type: "Polygon";

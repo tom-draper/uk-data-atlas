@@ -37,11 +37,6 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         bounds: [-2.0, 52.4, -1.75, 52.6]
     },
 
-    // West Midlands
-    // 'West Midlands': {
-    //     lad_codes: ['E08000025', 'E08000026', 'E08000027', 'E08000028', 'E08000029', 'E08000030', 'E08000031'],
-    //     bounds: [-2.2, 52.35, -1.7, 52.65]
-    // },
     'Coventry': {
         lad_codes: ['E08000026'],
         bounds: [-1.6, 52.35, -1.45, 52.45]
@@ -498,38 +493,29 @@ export const LOCATIONS: Record<string, LocationBounds> = {
     },
 
     // North East England
-    // 'North East': {
-    //     lad_codes: [
-    //         'E06000001', 'E06000002', 'E06000003', 'E06000004', 'E06000005', 'E06000047', // Tees Valley
-    //         'E08000020', 'E08000021', 'E08000022', 'E08000023', 'E08000024' // Tyne & Wear
-    //     ],
-    //     bounds: [-2.2, 54.5, -1.1, 55.8]
-    // },
+    'North East': {
+        lad_codes: [
+            // Tees Valley Unitary Authorities
+            'E06000001', // Hartlepool
+            'E06000002', // Middlesbrough
+            'E06000003', // Redcar and Cleveland
+            'E06000004', // Stockton-on-Tees
+            'E06000005', // Darlington
 
-    // North East England
-'North East': {
-    lad_codes: [
-        // Tees Valley Unitary Authorities
-        'E06000001', // Hartlepool
-        'E06000002', // Middlesbrough
-        'E06000003', // Redcar and Cleveland
-        'E06000004', // Stockton-on-Tees
-        'E06000005', // Darlington
+            // County Durham and Northumberland Unitary Authorities
+            'E06000047', // County Durham
+            'E06000048', // Northumberland (***This was missing from your list***)
 
-        // County Durham and Northumberland Unitary Authorities
-        'E06000047', // County Durham
-        'E06000048', // Northumberland (***This was missing from your list***)
-
-        // Tyne and Wear Metropolitan Districts
-        'E08000037', // Gateshead (***The correct code for Gateshead***)
-        'E08000021', // Newcastle upon Tyne
-        'E08000022', // North Tyneside
-        'E08000023', // South Tyneside
-        'E08000024'  // Sunderland
-    ],
-    // Corrected bounding box
-    bounds: [-2.7, 54.2, -0.5, 55.9]
-},
+            // Tyne and Wear Metropolitan Districts
+            'E08000037', // Gateshead (***The correct code for Gateshead***)
+            'E08000021', // Newcastle upon Tyne
+            'E08000022', // North Tyneside
+            'E08000023', // South Tyneside
+            'E08000024'  // Sunderland
+        ],
+        // Corrected bounding box
+        bounds: [-2.7, 54.2, -0.5, 55.9]
+    },
 
     // West Midlands
     'West Midlands': {
@@ -544,21 +530,6 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         bounds: [-3.1, 52.2, -1.4, 53.0]
     },
 
-    // // South West England
-    // 'South West': {
-    //     lad_codes: [
-    //         // Devon
-    //         'E07000040', 'E07000041', 'E07000042', 'E07000043', 'E07000044', 'E07000045', 'E07000046', 'E07000047',
-    //         'E06000052',
-    //         // Cornwall
-    //         'E06000052', 'E06000053',
-    //         // Somerset
-    //         'E07000187', 'E07000188', 'E07000189', 'E07000190', 'E07000191',
-    //         // Dorset
-    //         'E06000059', 'E06000058'
-    //     ],
-    //     bounds: [-5.3, 50.2, -1.9, 51.3]
-    // },
     // South West England
     'South West': {
         lad_codes: [
@@ -642,8 +613,6 @@ export const LOCATIONS: Record<string, LocationBounds> = {
             "E07000092", // Rushmoor
             "E07000093", // Test Valley
             "E07000094", // Winchester
-            // "E07000095", // City of London (While technically a separate entity, sometimes grouped with wider region data)
-            // "E07000096", // Westminster (Similar note to above)
 
             // Kent Districts (12 codes)
             "E07000105", // Ashford
@@ -682,11 +651,6 @@ export const LOCATIONS: Record<string, LocationBounds> = {
             "E07000217", // Woking
 
             // West Sussex Districts (7 codes - Missing from your original list)
-            // "E07000218", // Adur
-            // "E07000219", // Arun
-            // "E07000220", // Chichester
-            // "E07000221", // Crawley
-            // "E07000222", // Horsham
             "E07000223", // Mid Sussex
             "E07000224",  // Worthing
             "E07000225",  // Worthing
@@ -696,18 +660,6 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         ],
         "bounds": [-1.8, 50.7, 1.5, 52.1]
     },
-
-    // East of England
-    // 'East of England': {
-    //     lad_codes: [
-    //         'E06000031', 'E06000032', 'E06000033', 'E06000034', // Essex/Thurrock/Southend
-    //         'E07000100', 'E07000101', 'E07000102', 'E07000103', 'E07000104', 'E07000105', // Cambridgeshire
-    //         'E07000200', 'E07000201', 'E07000202', 'E07000203', 'E07000204', // Norfolk
-    //         'E07000095', 'E07000096', 'E07000097', 'E07000098', 'E07000099', // Suffolk
-    //         'E07000207', 'E07000208', 'E07000209', 'E07000210' // Hertfordshire
-    //     ],
-    //     bounds: [-0.6, 51.6, 1.8, 53.2]
-    // },
 
     // East of England
     'East of England': {
@@ -742,12 +694,6 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         bounds: [-4.9, 50.2, -2.9, 51.3]
     },
 
-    // Cornwall
-    // 'Cornwall': {
-    //     lad_codes: ['E06000052', 'E06000053'],
-    //     bounds: [-5.7, 49.9, -4.0, 50.7]
-    // },
-
     // Somerset
     'Somerset': {
         lad_codes: [
@@ -777,7 +723,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
         lad_codes: [
             'E07000105', 'E07000106', 'E07000107', 'E07000108', 'E07000109', 'E07000110', 'E07000111',
             'E07000112', 'E07000113', 'E07000114', 'E07000115', 'E07000116',
-            'E06000035', 'E06000036', 'E07000094', 'E07000093' // Medway, Thurrock
+            'E06000035', 'E06000036', // Medway, Thurrock
         ],
         bounds: [0.3, 50.8, 1.6, 51.5]
     },

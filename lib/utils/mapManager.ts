@@ -1,5 +1,5 @@
 // lib/utils/mapManager.ts
-import { PartyVotes, LocalElectionWardData, Party, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, PopulationStats, AgeGroups, ConstituencyStats, WardStats, WardHousePriceData, HousePriceDataset } from '@lib/types';
+import { PartyVotes, LocalElectionWardData, Party, BoundaryGeojson, ConstituencyData, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, PopulationStats, AgeGroups, ConstituencyStats, WardStats, WardHousePriceData, HousePriceDataset, AggregatedHousePriceData } from '@lib/types';
 import { GeoJSONFeature } from 'mapbox-gl';
 import { calculateMedianAge, calculateTotal, polygonAreaSqKm } from './population';
 import { getWinningParty } from './generalElection';
@@ -87,7 +87,7 @@ export class MapManager {
     updateMapForHousePrices(
         geojson: BoundaryGeojson,
         dataset: HousePriceDataset,
-        mapOptions?: HousePriceOptions
+        mapOptions: HousePriceOptions
     ) {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
         console.log('EXPENSIVE: updateMapForHousePrices: Filtered wards', geojson.features.length);
@@ -101,21 +101,17 @@ export class MapManager {
             }
         });
 
-        const minPrice = Math.min(...prices);
-        const maxPrice = Math.max(...prices);
-
         const locationData = {
             type: 'FeatureCollection' as const,
             features: geojson.features.map((feature) => {
                 const wardCode = feature.properties[wardCodeProp];
                 const ward = dataset.wardData[wardCode];
 
-                if (!ward || ward.prices[2023] === null) {
+                if (!ward || !ward.prices[2023]) {
                     return { ...feature, properties: { ...feature.properties, color: '#cccccc' } };
                 }
 
-                // const color = getColorForHousePrice(ward.prices[2023], minPrice, maxPrice, mapOptions);
-                const color = "#ff0000";
+                const color = getColorForHousePrice(ward.prices[2023], mapOptions);
 
                 return {
                     ...feature,
@@ -383,20 +379,41 @@ export class MapManager {
         const wardCodeProp = this.detectPropertyKey(geojson, MapManager.WARD_CODE_KEYS);
         console.log(`EXPENSIVE: calculateHousePriceStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
 
+        const yearlyTotals: Record<number, number> = {};
+        const yearlyCounts: Record<number, number> = {};
         let totalPrice = 0;
         let wardCount = 0;
 
         geojson.features.forEach((feature) => {
             const ward = wardData[feature.properties[wardCodeProp]];
-            if (!ward || ward.price === null) return;
+            if (!ward) return;
 
-            totalPrice += ward.price;
-            wardCount += 1;
+            // Calculate averages for all years
+            Object.entries(ward.prices).forEach(([year, price]) => {
+                const yearNum = Number(year);
+                if (price !== null && yearNum <= 2023) {
+                    yearlyTotals[yearNum] = (yearlyTotals[yearNum] || 0) + price;
+                    yearlyCounts[yearNum] = (yearlyCounts[yearNum] || 0) + 1;
+                }
+            });
+
+            // Keep the 2023-specific calculation
+            if (ward.prices[2023] !== null) {
+                totalPrice += ward.prices[2023] ?? 0;
+                wardCount += 1;
+            }
         });
 
-        const result = {
+        const averagePrices: Record<number, number> = {};
+        Object.keys(yearlyTotals).forEach(year => {
+            const yearNum = Number(year);
+            averagePrices[yearNum] = yearlyTotals[yearNum] / yearlyCounts[yearNum];
+        });
+
+        const result: AggregatedHousePriceData[2023] = {
             averagePrice: wardCount > 0 ? totalPrice / wardCount : 0,
-            wardCount
+            wardCount,
+            averagePrices
         };
 
         this.cache.set(cacheKey, result);

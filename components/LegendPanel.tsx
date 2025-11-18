@@ -20,8 +20,8 @@ interface RangeControlProps {
     currentMax: number;
     gradient: string;
     labels: string[];
-    onRangeInput: (min: number, max: number) => void; // Changed from onRangeChange
-    onRangeChangeEnd: () => void; // Added for mouseup event
+    onRangeInput: (min: number, max: number) => void;
+    onRangeChangeEnd: () => void;
 }
 
 function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRangeInput, onRangeChangeEnd }: RangeControlProps) {
@@ -41,10 +41,10 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
         const handleMouseMove = (e: MouseEvent) => {
             if (isDraggingMin) {
                 const newMin = Math.min(getValueFromPosition(e.clientY), currentMax - (max - min) * 0.05);
-                onRangeInput(newMin, currentMax); // Use onRangeInput for live update
+                onRangeInput(newMin, currentMax);
             } else if (isDraggingMax) {
                 const newMax = Math.max(getValueFromPosition(e.clientY), currentMin + (max - min) * 0.05);
-                onRangeInput(currentMin, newMax); // Use onRangeInput for live update
+                onRangeInput(currentMin, newMax);
             }
         };
 
@@ -52,7 +52,7 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
             if (isDraggingMin || isDraggingMax) {
                 setIsDraggingMin(false);
                 setIsDraggingMax(false);
-                onRangeChangeEnd(); // Call change end handler on mouse up
+                onRangeChangeEnd();
             }
         };
 
@@ -64,7 +64,7 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
                 document.removeEventListener('mouseup', handleMouseUp);
             };
         }
-    }, [isDraggingMin, isDraggingMax, currentMin, currentMax, min, max, onRangeInput, onRangeChangeEnd]); // Updated dependencies
+    }, [isDraggingMin, isDraggingMax, currentMin, currentMax, min, max, onRangeInput, onRangeChangeEnd]);
 
     const maxPosition = ((max - currentMax) / (max - min)) * 100;
     const minPosition = ((max - currentMin) / (max - min)) * 100;
@@ -140,7 +140,6 @@ export default memo(function LegendPanel({
         const electionType = activeDataset.type as 'general-election' | 'local-election';
         if (electionType !== 'general-election' && electionType !== 'local-election') return;
 
-        // Use mapOptions for clicks, as this is a new action, not a drag
         const currentOptions = mapOptions[electionType];
 
         if (currentOptions.mode === 'party-percentage' && currentOptions.selectedParty === partyCode) {
@@ -176,6 +175,8 @@ export default memo(function LegendPanel({
                 newOptions['population-density'] = { ...base['population-density'], colorRange: { min, max } };
             } else if (datasetId === 'gender') {
                 newOptions.gender = { ...base['gender'], colorRange: { min, max } };
+            } else if (datasetId === 'house-price') {
+                newOptions['house-price'] = { ...base['house-price'], colorRange: { min, max } };
             }
             return newOptions;
         });
@@ -183,7 +184,7 @@ export default memo(function LegendPanel({
 
     // "ChangeEnd" handler: Updates parent state (expensive)
     const handleRangeChangeEnd = (datasetId: string) => {
-        if (!liveOptions) return; // No drag happened
+        if (!liveOptions) return;
 
         if (datasetId === 'age-distribution' && liveOptions['age-distribution'].colorRange) {
             onMapOptionsChange('age-distribution', { colorRange: liveOptions['age-distribution'].colorRange });
@@ -191,8 +192,10 @@ export default memo(function LegendPanel({
             onMapOptionsChange('population-density', { colorRange: liveOptions['population-density'].colorRange });
         } else if (datasetId === 'gender' && liveOptions.gender.colorRange) {
             onMapOptionsChange('gender', { colorRange: liveOptions.gender.colorRange });
+        } else if (datasetId === 'house-price' && liveOptions['house-price'].colorRange) {
+            onMapOptionsChange('house-price', { colorRange: liveOptions['house-price'].colorRange });
         }
-        setLiveOptions(null); // Clear local state
+        setLiveOptions(null);
     };
 
     // "Input" handler for party percentage
@@ -228,7 +231,7 @@ export default memo(function LegendPanel({
     };
 
     const renderPopulationLegend = () => {
-        const options = displayOptions['age-distribution']; // Use displayOptions
+        const options = displayOptions['age-distribution'];
         const currentMin = options?.colorRange?.min ?? 25;
         const currentMax = options?.colorRange?.max ?? 55;
 
@@ -253,7 +256,7 @@ export default memo(function LegendPanel({
     };
 
     const renderDensityLegend = () => {
-        const options = displayOptions['population-density']; // Use displayOptions
+        const options = displayOptions['population-density'];
         const currentMin = options?.colorRange?.min ?? 500;
         const currentMax = options?.colorRange?.max ?? 8000;
 
@@ -278,7 +281,7 @@ export default memo(function LegendPanel({
     };
 
     const renderGenderLegend = () => {
-        const options = displayOptions['gender']; // Use displayOptions
+        const options = displayOptions['gender'];
         const currentMin = options?.colorRange?.min ?? -0.1;
         const currentMax = options?.colorRange?.max ?? 0.1;
 
@@ -300,11 +303,44 @@ export default memo(function LegendPanel({
         );
     };
 
+    const renderHousePriceLegend = () => {
+        const options = displayOptions['house-price'];
+        const currentMin = options?.colorRange?.min ?? 80000;
+        const currentMax = options?.colorRange?.max ?? 500000;
+
+        const formatPrice = (value: number) => {
+            if (value >= 1000000) {
+                return `£${(value / 1000000).toFixed(1)}M`;
+            } else if (value >= 1000) {
+                return `£${(value / 1000).toFixed(0)}K`;
+            }
+            return `£${value.toFixed(0)}`;
+        };
+
+        return (
+            <RangeControl
+                min={0}
+                max={1000000}
+                currentMin={currentMin}
+                currentMax={currentMax}
+                gradient="linear-gradient(to top, rgb(253,231,37), rgb(94,201,98), rgb(33,145,140), rgb(59,82,139), rgb(68,1,84))"
+                labels={[
+                    formatPrice(currentMax),
+                    formatPrice((currentMax - currentMin) * 0.75 + currentMin),
+                    formatPrice((currentMax - currentMin) * 0.5 + currentMin),
+                    formatPrice((currentMax - currentMin) * 0.25 + currentMin),
+                    formatPrice(currentMin)
+                ]}
+                onRangeInput={(min, max) => handleRangeInput('house-price', min, max)}
+                onRangeChangeEnd={() => handleRangeChangeEnd('house-price')}
+            />
+        );
+    };
+
     const renderElectionLegend = () => {
         return (
             <div>
                 {parties.map((party) => {
-                    // currentOptions reads from displayOptions, so this is fine
                     const isSelected = currentOptions?.mode === 'party-percentage'
                         && currentOptions.selectedParty === party.id;
                     return (
@@ -353,6 +389,8 @@ export default memo(function LegendPanel({
             case 'gender-2021':
             case 'gender-2022':
                 return renderGenderLegend();
+            case 'house-price-2023':
+                return renderHousePriceLegend();
             default:
                 return renderElectionLegend();
         }

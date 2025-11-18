@@ -1,6 +1,7 @@
 // components/ChartPanel.tsx
 'use client';
-import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData, AggregatedPopulationData } from '@lib/types';
+import packageJson from '../package.json';
+import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData, AggregatedPopulationData, AggregatedHousePriceData, HousePriceDataset } from '@lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
@@ -19,10 +20,12 @@ interface ChartPanelProps {
 	localElectionDatasets: Record<string, LocalElectionDataset>;
 	generalElectionDatasets: Record<string, GeneralElectionDataset>;
 	populationDatasets: Record<string, PopulationDataset>;
+	housePriceDatasets: Record<string, HousePriceDataset>;
 	setActiveDatasetId: (datasetId: string) => void;
 	aggregatedLocalElectionData: AggregatedLocalElectionData | null;
 	aggregatedGeneralElectionData: AggregateGeneralElectionData | null;
 	aggregatedPopulationData: AggregatedPopulationData | null;
+	aggregatedHousePriceData: AggregatedHousePriceData | null;
 	codeMapper: CodeMapper
 }
 
@@ -36,10 +39,12 @@ export default memo(function ChartPanel({
 	localElectionDatasets,
 	generalElectionDatasets,
 	populationDatasets,
+	housePriceDatasets,
 	setActiveDatasetId,
 	aggregatedLocalElectionData,
 	aggregatedGeneralElectionData,
 	aggregatedPopulationData,
+	aggregatedHousePriceData,
 	codeMapper
 }: ChartPanelProps) {
 	// Determine what to show in the title
@@ -56,6 +61,8 @@ export default memo(function ChartPanel({
 		subtitle = selectedWard.localAuthorityName;
 		code = `${selectedWard.localAuthorityCode} ${selectedWard.wardCode}`;
 	}
+
+	const version = packageJson.version;
 
 	return (
 		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
@@ -110,21 +117,19 @@ export default memo(function ChartPanel({
 
 					<HousePriceChart
 						activeDataset={activeDataset}
-						availableDatasets={localElectionDatasets}
-						aggregatedData={aggregatedLocalElectionData}
+						availableDatasets={housePriceDatasets}
+						aggregatedData={aggregatedHousePriceData}
 						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
 					/>
-
-
 				</div>
 
 				{/* Footer */}
 				<div className="text-[9px] px-2.5 pb-1.5 text-gray-400/80 bg-white/20 pt-2 mt-auto flex">
 					<div className="grow hover:underline cursor-pointer">
-						UK Data Atlas v0.1.0
+						UK Data Atlas v{version}
 					</div>
 					<div className="hover:underline cursor-pointer">
 						View Sources

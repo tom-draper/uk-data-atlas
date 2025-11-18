@@ -226,10 +226,12 @@ export default function MapsPage() {
 						localElectionDatasets={localElectionData.datasets}
 						generalElectionDatasets={generalElectionData.datasets}
 						populationDatasets={populationData.datasets}
+						housePriceDatasets={housePriceData.datasets}
 						setActiveDatasetId={setActiveDatasetId}
 						aggregatedLocalElectionData={aggregatedLocalElectionData}
 						aggregatedGeneralElectionData={aggregatedGeneralElectionData}
 						aggregatedPopulationData={aggregatedPopulationData}
+						aggregatedHousePriceData={aggregatedHousePriceData}
 						codeMapper={codeMapper}
 					/>
 				</div>

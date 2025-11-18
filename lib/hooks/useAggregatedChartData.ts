@@ -62,7 +62,7 @@ export function useAggregatedChartData({
 		}
 
 		return result as AggregatedLocalElectionData;
-	}, [mapManager, boundaryData, localElectionDatasets, location]);
+	}, [mapManager, boundaryData.ward, localElectionDatasets]);
 
 	/**
 	 * Aggregated general election data - processes all available years.
@@ -90,7 +90,7 @@ export function useAggregatedChartData({
 		}
 
 		return result as AggregateGeneralElectionData;
-	}, [mapManager, boundaryData.constituency, generalElectionDatasets, location]);
+	}, [mapManager, boundaryData.constituency, generalElectionDatasets]);
 
 	/**
 	 * Aggregated population data - calculates stats and age data.
@@ -118,7 +118,7 @@ export function useAggregatedChartData({
 		}
 
 		return result as AggregatedPopulationData;
-	}, [mapManager, boundaryData.ward, populationDatasets, location]);
+	}, [mapManager, boundaryData.ward, populationDatasets]);
 
 	/**
 	 * Aggregated house price data - MapManager caches internally.
@@ -147,7 +147,7 @@ export function useAggregatedChartData({
 		}
 
 		return result as AggregatedHousePriceData;
-	}, [mapManager, boundaryData.ward, housePriceDatasets, location]);
+	}, [mapManager, boundaryData.ward, housePriceDatasets]);
 
 	return {
 		aggregatedLocalElectionData,

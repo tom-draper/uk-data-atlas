@@ -1,7 +1,7 @@
-import packageJson from '../package.json';
+// import packageJson from '../package.json';
 
 export default function TitlePane() {
-    const version = packageJson.version;
+    // const version = packageJson.version;
 
     return (
         <div className="bg-[rgba(255,255,255,0.5)] text-sm rounded-md backdrop-blur-md shadow-lg border border-white/30 relative">

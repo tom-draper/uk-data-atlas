@@ -20,6 +20,7 @@ export interface LocalElectionOptions {
 }
 
 export interface HousePriceOptions {
+    colorRange?: ColorRange;
 }
 
 export interface PopulationOptions {
@@ -63,5 +64,6 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
         colorRange: { min: -0.1, max: 0.1 }
     },
     'house-price': {
+        colorRange: { min: 80000, max: 500000 }
     }
 };

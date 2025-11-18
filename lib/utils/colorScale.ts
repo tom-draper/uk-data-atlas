@@ -1,10 +1,10 @@
 // lib/utils/colorScale.ts
-import type { DensityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, LocalElectionOptions, MapOptions, PopulationOptions } from '@/lib/types/mapOptions';
+import type { DensityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, LocalElectionOptions, PopulationOptions } from '@/lib/types/mapOptions';
 
 /**
  * Normalizes a value to a 0-1 range based on min/max bounds
  */
-export function normalizeValue(value: number, min: number, max: number): number {
+export function normalizeValue(value: number, min: number, max: number) {
     if (max === min) return 0.5;
     return Math.max(0, Math.min(1, (value - min) / (max - min)));
 }
@@ -12,22 +12,22 @@ export function normalizeValue(value: number, min: number, max: number): number 
 /**
  * Interpolates between two colors based on a normalized value (0-1)
  */
-export function interpolateColor(color1: string, color2: string, factor: number): string {
+export function interpolateColor(color1: string, color2: string, factor: number) {
     // Parse RGB colors
     const c1 = color1.match(/\d+/g)?.map(Number) || [0, 0, 0];
     const c2 = color2.match(/\d+/g)?.map(Number) || [255, 255, 255];
-    
+
     const r = Math.round(c1[0] + factor * (c2[0] - c1[0]));
     const g = Math.round(c1[1] + factor * (c2[1] - c1[1]));
     const b = Math.round(c1[2] + factor * (c2[2] - c1[2]));
-    
+
     return `rgb(${r}, ${g}, ${b})`;
 }
 
 /**
  * Gets color from viridis-like gradient (yellow -> green -> teal -> blue -> purple)
  */
-export function getViridisColor(normalizedValue: number): string {
+export function getViridisColor(normalizedValue: number) {
     const colors = [
         'rgb(68,1,84)',      // 0.0 - dark purple
         'rgb(59,82,139)',    // 0.25 - blue
@@ -35,12 +35,12 @@ export function getViridisColor(normalizedValue: number): string {
         'rgb(94,201,98)',    // 0.75 - green
         'rgb(253,231,37)'    // 1.0 - yellow
     ];
-    
+
     const index = normalizedValue * (colors.length - 1);
     const lower = Math.floor(index);
     const upper = Math.ceil(index);
     const factor = index - lower;
-    
+
     if (lower === upper) return colors[lower];
     return interpolateColor(colors[lower], colors[upper], factor);
 }
@@ -48,7 +48,7 @@ export function getViridisColor(normalizedValue: number): string {
 /**
  * Gets color for population/age data with dynamic range
  */
-export function getColorForAge(medianAge: number, mapOptions: PopulationOptions): string {
+export function getColorForAge(medianAge: number, mapOptions: PopulationOptions) {
     const range = mapOptions.colorRange || { min: 25, max: 55 };
     const normalized = normalizeValue(medianAge, range.min, range.max);
     return getViridisColor(1 - normalized); // Invert so higher ages are darker
@@ -57,7 +57,7 @@ export function getColorForAge(medianAge: number, mapOptions: PopulationOptions)
 /**
  * Gets color for density data with dynamic range
  */
-export function getColorForDensity(density: number, mapOptions: DensityOptions): string {
+export function getColorForDensity(density: number, mapOptions: DensityOptions) {
     const range = mapOptions.colorRange || { min: 500, max: 10000 };
     const normalized = normalizeValue(density, range.min, range.max);
     return getViridisColor(1 - normalized); // Invert so higher density is darker
@@ -66,10 +66,10 @@ export function getColorForDensity(density: number, mapOptions: DensityOptions):
 /**
  * Gets color for gender ratio data with dynamic range
  */
-export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions): string {
+export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions) {
     const range = mapOptions.colorRange || { min: -0.1, max: 0.1 };
     const normalized = normalizeValue(ratio, range.min, range.max);
-    
+
     // Pink for female-skewed, blue for male-skewed, gray for balanced
     if (ratio < 0) {
         // Female-skewed: interpolate from pink to gray
@@ -85,7 +85,7 @@ export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions)
 /**
  * Converts hex color to RGB object
  */
-export function hexToRgb(hex: string): { r: number; g: number; b: number } {
+export function hexToRgb(hex: string) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
         r: parseInt(result[1], 16),
@@ -100,9 +100,9 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } {
 export function getPartyPercentageColorExpression(
     partyColor: string,
     mapOptions: LocalElectionOptions | GeneralElectionOptions,
-): any {
+) {
     const range = mapOptions.partyPercentageRange || { min: 0, max: 100 };
-    
+
     const partyRgb = hexToRgb(partyColor);
     const lightRgb = { r: 245, g: 245, b: 245 };
 
@@ -122,24 +122,9 @@ export function getPartyPercentageColorExpression(
 
 export function getColorForHousePrice(
     price: number,
-    minPrice: number,
-    maxPrice: number,
-    options?: HousePriceOptions
-): string {
-    // Normalize price to 0-1 range
-    const normalized = (price - minPrice) / (maxPrice - minPrice);
-    
-    // Use a color scale from blue (low) to red (high)
-    // You can customize these colors based on your design
-    const colors = [
-        '#2166ac', // Low (blue)
-        '#67a9cf',
-        '#d1e5f0',
-        '#fddbc7',
-        '#ef8a62',
-        '#b2182b'  // High (red)
-    ];
-    
-    const index = Math.min(Math.floor(normalized * colors.length), colors.length - 1);
-    return colors[index];
+    options: HousePriceOptions
+) {
+    const range = options.colorRange || { min: 80000, max: 500000 };
+    const normalized = normalizeValue(price, Math.min(range.min, price), Math.max(range.max, price));
+    return getViridisColor(normalized);
 }
