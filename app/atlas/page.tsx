@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-import { useLocalElectionData as useLocalElectionDatasets } from '@/lib/hooks/useLocalElectionData';
-import { useGeneralElectionData as useGeneralElectionDatasets } from '@/lib/hooks/useGeneralElectionData';
-import { usePopulationData as usePopulationDatasets } from '@lib/hooks/usePopulationData';
+// Hooks
+import { useLocalElectionData } from '@/lib/hooks/useLocalElectionData';
+import { useGeneralElectionData } from '@/lib/hooks/useGeneralElectionData';
+import { usePopulationData } from '@lib/hooks/usePopulationData';
+import { useHousePriceData } from '@/lib/hooks/useHousePriceData';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
 import { useAggregatedChartData } from '@lib/hooks/useAggregatedChartData';
@@ -15,22 +17,24 @@ import { useDatasetManager } from '@/lib/hooks/useDatasetManager';
 import { useCodeMapper } from '@/lib/hooks/useCodeMapper';
 import { useMapOptions } from '@/lib/hooks/useMapOptions';
 
+// Components
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
 import ChartPanel from '@components/ChartPanel';
 import ErrorDisplay from '@/components/displays/ErrorDisplay';
 import LoadingDisplay from '@/components/displays/LoadingDisplay';
 
+// Data & Types
 import { LOCATIONS } from '@lib/data/locations';
-import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
 import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
-import { useHousePriceData } from '@/lib/hooks/useHousePriceData';
+import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
 
 // Constants
 const INITIAL_STATE = {
 	location: 'Greater Manchester',
 	datasetId: 'local-election-2024',
 } as const;
+
 const MAP_CONFIG = {
 	style: 'mapbox://styles/mapbox/light-v11',
 	center: [-2.3, 53.5] as [number, number],
@@ -46,13 +50,13 @@ export default function MapsPage() {
 	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
 	const [selectedLocation, setSelectedLocation] = useState<string>(INITIAL_STATE.location);
 
-	// Data loading
-	const generalElectionData = useGeneralElectionDatasets();
-	const localElectionData = useLocalElectionDatasets();
-	const populationData = usePopulationDatasets();
+	// Data hooks
+	const localElectionData = useLocalElectionData();
+	const generalElectionData = useGeneralElectionData();
+	const populationData = usePopulationData();
 	const housePriceData = useHousePriceData();
 
-	// Consolidated dataset management
+	// Derived data
 	const activeDataset = useDatasetManager(
 		activeDatasetId,
 		localElectionData.datasets,
@@ -61,23 +65,19 @@ export default function MapsPage() {
 		housePriceData.datasets,
 	);
 
-	// Boundary data
 	const { boundaryData, isLoading: geojsonLoading } = useBoundaryData(selectedLocation);
-
 	const codeMapper = useCodeMapper(boundaryData);
-
+	
 	const geojson = useMemo(() => {
 		if (!activeDataset) return null;
-		if (activeDataset.boundaryType === 'ward') {
-			return boundaryData.ward[activeDataset.wardYear];
-		} else if (activeDataset.boundaryType === 'constituency') {
-			return boundaryData.constituency[activeDataset.constituencyYear];
-		}
+		if (activeDataset.boundaryType === 'ward') return boundaryData.ward[activeDataset.wardYear];
+		if (activeDataset.boundaryType === 'constituency') return boundaryData.constituency[activeDataset.constituencyYear];
 		return null;
 	}, [activeDataset, boundaryData]);
 
-	// Map initialization
+	// Map setup
 	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
+	const { mapOptions, setMapOptions: handleMapOptionsChange } = useMapOptions(DEFAULT_MAP_OPTIONS);
 
 	// Interaction handlers
 	const { onWardHover, onConstituencyHover, onLocationChange } = useInteractionHandlers({
@@ -86,7 +86,6 @@ export default function MapsPage() {
 		setSelectedLocation,
 	});
 
-	// Map manager - simplified callbacks
 	const mapManager = useMapManager({
 		mapRef: map,
 		geojson,
@@ -95,11 +94,13 @@ export default function MapsPage() {
 		onLocationChange,
 	});
 
-	// Map options using custom hook
-	const { mapOptions, setMapOptions: handleMapOptionsChange } = useMapOptions(DEFAULT_MAP_OPTIONS);
-
-	// Aggregated data
-	const { aggregatedLocalElectionData, aggregatedGeneralElectionData, aggregatedPopulationData, aggregatedHousePriceData } = useAggregatedChartData({
+	// Aggregated chart data
+	const { 
+		aggregatedLocalElectionData, 
+		aggregatedGeneralElectionData, 
+		aggregatedPopulationData, 
+		aggregatedHousePriceData 
+	} = useAggregatedChartData({
 		mapManager,
 		boundaryData,
 		localElectionDatasets: localElectionData.datasets,
@@ -110,73 +111,56 @@ export default function MapsPage() {
 	});
 
 	const aggregatedData = useMemo(() => {
-		if (!activeDataset || !aggregatedLocalElectionData || !aggregatedGeneralElectionData || !aggregatedPopulationData) return null;
+		if (!activeDataset) return null;
 
-		switch (activeDataset.type) {
-			case 'local-election':
-				return aggregatedLocalElectionData[activeDataset.year]
-			case 'general-election':
-				return aggregatedGeneralElectionData[activeDataset.year]
-			case 'population':
-				return aggregatedPopulationData[activeDataset.year]
-			case 'house-price':
-				return aggregatedHousePriceData[activeDataset.year]
-		}
-	}, [activeDataset, aggregatedGeneralElectionData, aggregatedLocalElectionData, aggregatedPopulationData, aggregatedHousePriceData])
+		const dataMap = {
+			'local-election': aggregatedLocalElectionData,
+			'general-election': aggregatedGeneralElectionData,
+			'population': aggregatedPopulationData,
+			'house-price': aggregatedHousePriceData,
+		};
 
-	// Dataset change handler
+		return dataMap[activeDataset.type]?.[activeDataset.year] ?? null;
+	}, [activeDataset, aggregatedLocalElectionData, aggregatedGeneralElectionData, aggregatedPopulationData, aggregatedHousePriceData]);
+
+	// Update map when dataset changes
 	useEffect(() => {
 		if (!geojson || geojsonLoading || !activeDataset || !mapManager) return;
 
-		switch (activeDataset.type) {
-			case 'population':
-				switch (activeDatasetId) {
-					case 'age-distribution-2020':
-					case 'age-distribution-2021':
-					case 'age-distribution-2022':
-						mapManager.updateMapForAgeDistribution(geojson, activeDataset, mapOptions['age-distribution']);
-						break;
-					case 'population-density-2020':
-					case 'population-density-2021':
-					case 'population-density-2022':
-						mapManager.updateMapForPopulationDensity(geojson, activeDataset, mapOptions['population-density'])
-						break
-					case 'gender-2020':
-					case 'gender-2021':
-					case 'gender-2022':
-						mapManager.updateMapForGender(geojson, activeDataset, mapOptions['gender'])
-						break
-				}
-				break;
-			case 'general-election':
-				mapManager.updateMapForGeneralElection(
-					geojson,
-					activeDataset,
-					mapOptions[activeDataset.type]
-				);
-				break;
-			case 'local-election':
-				mapManager.updateMapForLocalElection(
-					geojson,
-					activeDataset,
-					mapOptions[activeDataset.type]
-				);
-				break;
-			case 'house-price':
-				mapManager.updateMapForHousePrices(
-					geojson,
-					activeDataset,
-					mapOptions[activeDataset.type]
-				);
-				break;
-		}
+		const updateMap = () => {
+			switch (activeDataset.type) {
+				case 'population':
+					const populationHandlers = {
+						'age-distribution': () => mapManager.updateMapForAgeDistribution(geojson, activeDataset, mapOptions['age-distribution']),
+						'population-density': () => mapManager.updateMapForPopulationDensity(geojson, activeDataset, mapOptions['population-density']),
+						'gender': () => mapManager.updateMapForGender(geojson, activeDataset, mapOptions['gender']),
+					};
+					
+					const handlerKey = Object.keys(populationHandlers).find(key => activeDatasetId.startsWith(key));
+					populationHandlers[handlerKey as keyof typeof populationHandlers]?.();
+					break;
+
+				case 'general-election':
+					mapManager.updateMapForGeneralElection(geojson, activeDataset, mapOptions[activeDataset.type]);
+					break;
+
+				case 'local-election':
+					mapManager.updateMapForLocalElection(geojson, activeDataset, mapOptions[activeDataset.type]);
+					break;
+
+				case 'house-price':
+					mapManager.updateMapForHousePrices(geojson, activeDataset, mapOptions[activeDataset.type]);
+					break;
+			}
+		};
+
+		updateMap();
 	}, [geojson, geojsonLoading, activeDataset, activeDatasetId, mapManager, mapOptions]);
 
-	// Location click handler
+	// Location navigation
 	const handleLocationClick = useCallback((location: string) => {
-		if (!mapManager) return;
 		const locationData = LOCATIONS[location];
-		if (!locationData) return;
+		if (!mapManager || !locationData) return;
 
 		setSelectedLocation(location);
 
@@ -188,17 +172,17 @@ export default function MapsPage() {
 		});
 	}, [map, mapManager]);
 
-	// Loading and error states
+	// Loading & error states
 	const isLoading = localElectionData.loading || generalElectionData.loading || populationData.loading;
-	if (isLoading) return <LoadingDisplay />;
-
 	const errorMessage = localElectionData.error || generalElectionData.error || populationData.error;
-	if (errorMessage) return <ErrorDisplay message={errorMessage ?? 'Error loading data'} />;
 
+	if (isLoading) return <LoadingDisplay />;
+	if (errorMessage) return <ErrorDisplay message={errorMessage ?? 'Error loading data'} />;
 	if (!activeDataset) return <ErrorDisplay message="No datasets loaded" />;
 
 	return (
 		<div style={{ width: '100%', height: '100vh', position: 'relative' }}>
+			{/* UI Overlay */}
 			<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
 				<div className="absolute left-0 flex h-full">
 					<ControlPanel
@@ -237,6 +221,7 @@ export default function MapsPage() {
 				</div>
 			</div>
 
+			{/* Map Container */}
 			<div
 				ref={handleMapContainer}
 				style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}

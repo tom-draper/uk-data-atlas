@@ -28,7 +28,6 @@ export function useMapInitialization({ style, center, zoom }: UseMapInitializati
 				center,
 				zoom,
 			});
-			mapRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 		} catch (err) {
 			console.error('Failed to initialize map:', err);
 		}

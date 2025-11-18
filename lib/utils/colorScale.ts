@@ -68,7 +68,7 @@ export function getColorForDensity(density: number, mapOptions: DensityOptions) 
  */
 export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions) {
     const range = mapOptions.colorRange || { min: -0.1, max: 0.1 };
-    const normalized = normalizeValue(ratio, range.min, range.max);
+    // const normalized = normalizeValue(ratio, range.min, range.max);
 
     // Pink for female-skewed, blue for male-skewed, gray for balanced
     if (ratio < 0) {
@@ -126,5 +126,5 @@ export function getColorForHousePrice(
 ) {
     const range = options.colorRange || { min: 80000, max: 500000 };
     const normalized = normalizeValue(price, Math.min(range.min, price), Math.max(range.max, price));
-    return getViridisColor(normalized);
+    return getViridisColor(1 - normalized);
 }

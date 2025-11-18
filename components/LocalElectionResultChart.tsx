@@ -142,6 +142,12 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 });
 YearBar.displayName = 'YearBar';
 
+// Helper function to calculate total votes (moved outside to avoid recreation)
+const calcTotalVotes = (d: PartyVotes): number =>
+	(d.LAB || 0) + (d.CON || 0) + (d.LD || 0) + (d.GREEN || 0) +
+	(d.REF || 0) + (d.IND || 0) + (d.DUP || 0) + (d.PC || 0) +
+	(d.SNP || 0) + (d.SF || 0) + (d.APNI || 0) + (d.SDLP || 0);
+
 // Helper function to map party votes efficiently
 const mapPartyVotes = (partyVotes: any): PartyVotes => ({
 	LAB: partyVotes.LAB || 0,
@@ -158,6 +164,9 @@ const mapPartyVotes = (partyVotes: any): PartyVotes => ({
 	SDLP: partyVotes.SDLP || 0,
 });
 
+// Cache for ward lookups to avoid repeated code conversions
+const wardLookupCache = new Map<string, Map<number, any>>();
+
 export default function LocalElectionResultChart({
 	activeDataset,
 	availableDatasets,
@@ -167,6 +176,38 @@ export default function LocalElectionResultChart({
 	aggregatedData,
 	codeMapper
 }: LocalElectionResultChartProps) {
+	// Optimize ward data lookup with caching
+	const getWardData = useCallback((year: number, wardCode: string) => {
+		const dataset = availableDatasets[`local-election-${year}`];
+		if (!dataset?.wardData) return null;
+
+		// Check cache first
+		const cacheKey = wardCode;
+		if (!wardLookupCache.has(cacheKey)) {
+			wardLookupCache.set(cacheKey, new Map());
+		}
+		const yearCache = wardLookupCache.get(cacheKey)!;
+		
+		if (yearCache.has(year)) {
+			return yearCache.get(year);
+		}
+
+		// Try direct lookup first
+		let data = dataset.wardData[wardCode];
+		
+		// Fallback to conversion if needed
+		if (!data) {
+			const convertedCode = codeMapper.convertWardCode(wardCode, year);
+			if (convertedCode) {
+				data = dataset.wardData[convertedCode];
+			}
+		}
+
+		// Cache the result (even if null)
+		yearCache.set(year, data || null);
+		return data || null;
+	}, [availableDatasets, codeMapper]);
+
 	const yearDataMap = useMemo(() => {
 		const map: Record<string, {
 			chartData: PartyVotes | null;
@@ -185,12 +226,6 @@ export default function LocalElectionResultChart({
 		const isWardMode = !!wardCode;
 		const isAggregatedMode = !wardCode && !constituencyCode;
 
-		// Helper to calculate total votes from chartData
-		const calcTotal = (d: PartyVotes) =>
-			(d.LAB || 0) + (d.CON || 0) + (d.LD || 0) + (d.GREEN || 0) +
-			(d.REF || 0) + (d.IND || 0) + (d.DUP || 0) + (d.PC || 0) +
-			(d.SNP || 0) + (d.SF || 0) + (d.APNI || 0) + (d.SDLP || 0);
-
 		for (const year of ELECTION_YEARS) {
 			const dataset = availableDatasets[`local-election-${year}`];
 
@@ -199,27 +234,15 @@ export default function LocalElectionResultChart({
 				continue;
 			}
 
-			if (isWardMode) {
-				const yearData = dataset.wardData;
-				if (!yearData) {
-					map[year] = nullResult;
-					continue;
-				}
-
-				let data = yearData[wardCode];
-				if (!data) {
-					const convertedCode = codeMapper.convertWardCode(wardCode, year);
-					if (convertedCode) {
-						data = yearData[convertedCode];
-					}
-				}
+			if (isWardMode && wardCode) {
+				const data = getWardData(year, wardCode);
 
 				if (data) {
 					const chartData = mapPartyVotes(data.partyVotes);
 					map[year] = {
 						chartData,
 						turnout: data.turnoutPercent,
-						totalVotes: calcTotal(chartData)
+						totalVotes: calcTotalVotes(chartData)
 					};
 					continue;
 				}
@@ -233,7 +256,7 @@ export default function LocalElectionResultChart({
 					map[year] = {
 						chartData,
 						turnout: calculateTurnout(yearAggData.totalVotes, 0, yearAggData.electorate),
-						totalVotes: calcTotal(chartData)
+						totalVotes: calcTotalVotes(chartData)
 					};
 					continue;
 				}
@@ -244,7 +267,7 @@ export default function LocalElectionResultChart({
 		}
 
 		return map;
-	}, [wardCode, constituencyCode, availableDatasets, aggregatedData, codeMapper]);
+	}, [wardCode, constituencyCode, availableDatasets, aggregatedData, getWardData]);
 
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">

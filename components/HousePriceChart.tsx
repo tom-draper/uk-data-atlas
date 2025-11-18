@@ -21,6 +21,7 @@ interface PriceChartProps {
 	aggregatedData: AggregatedHousePriceData | null;
 	isActive: boolean;
 	setActiveDatasetId: (datasetId: string) => void;
+	codeMapper: CodeMapper;
 }
 
 // Move year colors outside component to avoid recreating on each render
@@ -31,22 +32,65 @@ const YEAR_COLORS: Record<string, { bg: string; border: string; badge: string; t
 	'2021': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800', line: '#10b981' },
 };
 
-const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, aggregatedData, setActiveDatasetId }: PriceChartProps) => {
+// Cache for ward/constituency lookups
+const housePriceLookupCache = new Map<string, Map<string, any>>();
+
+const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, aggregatedData, setActiveDatasetId, codeMapper }: PriceChartProps) => {
 	const colors = YEAR_COLORS[dataset.year] || YEAR_COLORS['2024'];
 
 	const handleClick = useCallback(() => {
 		setActiveDatasetId(dataset.id);
 	}, [setActiveDatasetId, dataset.id]);
 
-	// Get price data for the chart
+	// Get price data for the chart with caching
 	const { priceData, currentPrice } = useMemo(() => {
 		let prices: Record<number, number> = {};
 		let price2023: number | null = null;
 
-		if (wardCode && dataset.wardData[wardCode]) {
-			prices = dataset.wardData[wardCode].prices;
-			price2023 = prices[2023];
-		} else if (!wardCode && aggregatedData) {
+		// Ward mode - with code conversion support
+		if (wardCode) {
+			// Check cache first
+			const cacheKey = `ward-${wardCode}`;
+			if (!housePriceLookupCache.has(cacheKey)) {
+				housePriceLookupCache.set(cacheKey, new Map());
+			}
+			const yearCache = housePriceLookupCache.get(cacheKey)!;
+			
+			if (yearCache.has(dataset.year)) {
+				const cached = yearCache.get(dataset.year);
+				prices = cached?.prices || {};
+				price2023 = prices[2023] || null;
+			} else {
+				// Try direct lookup first
+				let data = dataset.wardData?.[wardCode];
+				
+				// Fallback to conversion if needed
+				if (!data) {
+					const convertedCode = codeMapper.convertWardCode(wardCode, Number(dataset.year));
+					if (convertedCode && dataset.wardData) {
+						data = dataset.wardData[convertedCode];
+					}
+				}
+
+				if (data) {
+					prices = data.prices;
+					price2023 = prices[2023] || null;
+				}
+
+				// Cache the result
+				yearCache.set(dataset.year, data || null);
+			}
+		}
+		// Constituency mode - house prices should NOT show for constituencies
+		else if (constituencyCode) {
+			// House prices are ward-level data only, return empty
+			return {
+				priceData: [],
+				currentPrice: null
+			};
+		}
+		// Aggregated mode
+		else if (!wardCode && !constituencyCode && aggregatedData) {
 			prices = aggregatedData[2023]?.averagePrices || {};
 			price2023 = aggregatedData[2023]?.averagePrice || null;
 		}
@@ -61,11 +105,16 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 			priceData: sortedPrices,
 			currentPrice: price2023
 		};
-	}, [wardCode, dataset, aggregatedData]);
+	}, [wardCode, constituencyCode, dataset, aggregatedData, codeMapper]);
+
+	// Don't render if we're in constituency mode (house prices are ward-level only)
+	if (constituencyCode) {
+		return null;
+	}
 
 	// Calculate SVG path for the line chart with gradient area
-	const { linePath, areaPath } = useMemo(() => {
-		if (priceData.length < 2) return { linePath: '', areaPath: '' };
+	const { linePath, areaPath, points } = useMemo(() => {
+		if (priceData.length < 2) return { linePath: '', areaPath: '', points: [] };
 
 		const width = 100;
 		const height = 60;
@@ -73,24 +122,24 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 		const maxPrice = 700000;
 		const minPrice = 0;
 
-		const points = priceData.map((d, i) => {
+		const calculatedPoints = priceData.map((d, i) => {
 			const x = padding + (i / (priceData.length - 1)) * (width - 2 * padding);
 			const normalizedPrice = Math.min(d.price, maxPrice);
 			const y = height - padding - ((normalizedPrice - minPrice) / (maxPrice - minPrice)) * (height - 2 * padding);
 			return { x, y };
 		});
 
-		const line = `M ${points.map(p => `${p.x},${p.y}`).join(' L ')}`;
-		
-		// Create area path (same as line but closed at bottom)
-		const area = `M ${padding},${height - padding} L ${points.map(p => `${p.x},${p.y}`).join(' L ')} L ${width - padding},${height - padding} Z`;
+		const line = `M ${calculatedPoints.map(p => `${p.x},${p.y}`).join(' L ')}`;
 
-		return { linePath: line, areaPath: area };
+		// Create area path (same as line but closed at bottom)
+		const area = `M ${padding},${height - padding} L ${calculatedPoints.map(p => `${p.x},${p.y}`).join(' L ')} L ${width - padding},${height - padding} Z`;
+
+		return { linePath: line, areaPath: area, points: calculatedPoints };
 	}, [priceData]);
 
-	const formattedPrice = currentPrice 
+	const formattedPrice = currentPrice
 		? `£${Math.round(currentPrice).toLocaleString()}`
-		: 'N/A';
+		: 'No data';
 
 	return (
 		<div
@@ -101,14 +150,14 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 			onClick={handleClick}
 		>
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">House Prices {dataset.year}</h3>
+				<h3 className="text-xs font-bold">{dataset.name}</h3>
 			</div>
 
 			{/* Line chart background with gradient */}
-			{priceData.length >= 2 && (
-				<svg 
-					className="absolute inset-0 w-full h-full" 
-					viewBox="0 0 100 60" 
+			{priceData.length >= 2 && linePath && (
+				<svg
+					className="absolute inset-0 w-full h-full"
+					viewBox="0 0 100 60"
 					preserveAspectRatio="none"
 				>
 					<defs>
@@ -117,20 +166,20 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 							<stop offset="100%" stopColor={colors.line} stopOpacity="0.05" />
 						</linearGradient>
 						<filter id={`glow-${dataset.year}`}>
-							<feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
+							<feGaussianBlur stdDeviation="0.5" result="coloredBlur" />
 							<feMerge>
-								<feMergeNode in="coloredBlur"/>
-								<feMergeNode in="SourceGraphic"/>
+								<feMergeNode in="coloredBlur" />
+								<feMergeNode in="SourceGraphic" />
 							</feMerge>
 						</filter>
 					</defs>
-					
+
 					{/* Gradient area under the line */}
 					<path
 						d={areaPath}
 						fill={`url(#gradient-${dataset.year})`}
 					/>
-					
+
 					{/* Main line with glow effect */}
 					<path
 						d={linePath}
@@ -142,35 +191,24 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 						filter={`url(#glow-${dataset.year})`}
 						vectorEffect="non-scaling-stroke"
 					/>
-					
+
 					{/* Data points */}
-					{priceData.map((d, i) => {
-						const width = 100;
-						const height = 60;
-						const padding = 5;
-						const maxPrice = 700000;
-						const minPrice = 0;
-						const x = padding + (i / (priceData.length - 1)) * (width - 2 * padding);
-						const normalizedPrice = Math.min(d.price, maxPrice);
-						const y = height - padding - ((normalizedPrice - minPrice) / (maxPrice - minPrice)) * (height - 2 * padding);
-						
-						return (
-							<circle
-								key={i}
-								cx={x}
-								cy={y}
-								r="1.5"
-								fill={colors.line}
-								opacity="0.8"
-							/>
-						);
-					})}
+					{points.map((point, i) => (
+						<circle
+							key={i}
+							cx={point.x}
+							cy={point.y}
+							r="1.5"
+							fill={colors.line}
+							opacity="0.8"
+						/>
+					))}
 				</svg>
 			)}
 
 			{/* Price display in bottom right */}
 			<div className="relative flex justify-end items-end mt-4">
-				<div className="text-xl font-bold">
+				<div className={`text-xl font-bold ${!currentPrice ? 'text-gray-400 text-sm' : ''}`}>
 					{formattedPrice}
 				</div>
 			</div>
@@ -188,9 +226,16 @@ export default function HousePriceChart({
 	aggregatedData,
 	codeMapper,
 }: HousePriceChartProps) {
+	// Don't render at all if in constituency mode (house prices are ward-level only)
+	if (constituencyCode) {
+		return null;
+	}
+
 	if (!availableDatasets) return null;
-	const datasetId = `house-price-2023`
+	
+	const datasetId = `house-price-2023`;
 	const dataset = availableDatasets[datasetId];
+	
 	if (!dataset) {
 		return null;
 	}
@@ -208,6 +253,7 @@ export default function HousePriceChart({
 				constituencyCode={constituencyCode}
 				aggregatedData={aggregatedData}
 				setActiveDatasetId={setActiveDatasetId}
+				codeMapper={codeMapper}
 			/>
 		</div>
 	);

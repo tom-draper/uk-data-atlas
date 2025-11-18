@@ -28,6 +28,12 @@ interface CompactBarProps {
 	totalVotes: number;
 }
 
+// Pre-calculate total votes helper (moved outside to avoid recreation)
+const calcTotalVotes = (d: PartyVotes): number =>
+	(d.LAB || 0) + (d.CON || 0) + (d.LD || 0) + (d.GREEN || 0) +
+	(d.REF || 0) + (d.BRX || 0) + (d.UKIP || 0) + (d.SNP || 0) +
+	(d.PC || 0) + (d.DUP || 0) + (d.SF || 0) + (d.IND || 0);
+
 const CompactBar = React.memo(({ data, dataset, isAggregated, isActive, aggregatedData, year, totalVotes }: CompactBarProps) => {
 	if (!data || !aggregatedData) {
 		return <div className="text-xs text-gray-400/80 pt-0.5 text-center">No data available</div>;
@@ -161,7 +167,7 @@ const YearBar = React.memo(({
 	const colors = YEAR_COLORS[year] || { bg: 'bg-indigo-50/60', border: 'border-indigo-400' };
 
 	const handleClick = useCallback(() => {
-		setActiveDatasetId(`general-election-${year}`);
+		setActiveDatasetId(dataset.id);
 	}, [setActiveDatasetId, year]);
 
 	// Pre-calculate height to avoid inline calculation
@@ -201,7 +207,7 @@ const YearBar = React.memo(({
 YearBar.displayName = 'YearBar';
 
 
-// Helper to map party votes once
+// Helper to map party votes once (memoize to avoid recreating object if values are the same)
 const mapPartyVotes = (partyVotes: any): PartyVotes => ({
 	LAB: partyVotes.LAB || 0,
 	CON: partyVotes.CON || 0,
@@ -217,6 +223,9 @@ const mapPartyVotes = (partyVotes: any): PartyVotes => ({
 	IND: partyVotes.OTHER || 0,
 });
 
+// Cache for constituency lookups to avoid repeated code conversions
+const constituencyLookupCache = new Map<string, Map<number, any>>();
+
 export default function GeneralElectionResultChart({
 	activeDataset,
 	availableDatasets,
@@ -226,6 +235,38 @@ export default function GeneralElectionResultChart({
 	aggregatedData,
 	codeMapper
 }: GeneralElectionResultChartProps) {
+	// Optimize constituency data lookup with caching
+	const getConstituencyData = useCallback((year: number, constituencyCode: string) => {
+		const dataset = availableDatasets[`general-election-${year}`];
+		if (!dataset?.constituencyData) return null;
+
+		// Check cache first
+		const cacheKey = constituencyCode;
+		if (!constituencyLookupCache.has(cacheKey)) {
+			constituencyLookupCache.set(cacheKey, new Map());
+		}
+		const yearCache = constituencyLookupCache.get(cacheKey)!;
+		
+		if (yearCache.has(year)) {
+			return yearCache.get(year);
+		}
+
+		// Try direct lookup first
+		let data = dataset.constituencyData[constituencyCode];
+		
+		// Fallback to conversion if needed
+		if (!data) {
+			const convertedCode = codeMapper.convertConstituencyCode(constituencyCode, year);
+			if (convertedCode) {
+				data = dataset.constituencyData[convertedCode];
+			}
+		}
+
+		// Cache the result (even if null)
+		yearCache.set(year, data || null);
+		return data || null;
+	}, [availableDatasets, codeMapper]);
+
 	const yearDataMap = useMemo(() => {
 		const map: Record<number, {
 			chartData: PartyVotes | null;
@@ -236,7 +277,6 @@ export default function GeneralElectionResultChart({
 
 		// Null result object (reused to avoid creating multiple identical objects)
 		const nullResult = {
-			dataset: null,
 			chartData: null,
 			turnout: null,
 			isAggregated: false,
@@ -246,12 +286,6 @@ export default function GeneralElectionResultChart({
 		const isConstituencyMode = !!constituencyCode;
 		const isAggregatedMode = !wardCode && !constituencyCode;
 
-		// Helper to calculate total votes from chartData
-		const calcTotal = (d: PartyVotes) =>
-			(d.LAB || 0) + (d.CON || 0) + (d.LD || 0) + (d.GREEN || 0) +
-			(d.REF || 0) + (d.BRX || 0) + (d.UKIP || 0) + (d.SNP || 0) +
-			(d.PC || 0) + (d.DUP || 0) + (d.SF || 0) + (d.IND || 0);
-
 		for (const year of ELECTION_YEARS) {
 			const dataset = availableDatasets[`general-election-${year}`];
 
@@ -260,21 +294,8 @@ export default function GeneralElectionResultChart({
 				continue;
 			}
 
-			if (isConstituencyMode) {
-				const yearData = dataset.constituencyData;
-				if (!yearData) {
-					map[year] = nullResult;
-					continue;
-				}
-
-				// Try direct lookup first, then fallback to conversion
-				let data = yearData[constituencyCode];
-				if (!data) {
-					const convertedCode = codeMapper.convertConstituencyCode(constituencyCode, year);
-					if (convertedCode) {
-						data = yearData[convertedCode];
-					}
-				}
+			if (isConstituencyMode && constituencyCode) {
+				const data = getConstituencyData(year, constituencyCode);
 
 				if (data) {
 					const chartData = mapPartyVotes(data.partyVotes);
@@ -282,7 +303,7 @@ export default function GeneralElectionResultChart({
 						chartData,
 						turnout: calculateTurnout(data.validVotes, data.invalidVotes, data.electorate),
 						isAggregated: false,
-						totalVotes: calcTotal(chartData)
+						totalVotes: calcTotalVotes(chartData)
 					};
 					continue;
 				}
@@ -296,17 +317,17 @@ export default function GeneralElectionResultChart({
 						chartData,
 						turnout: calculateTurnout(yearAggData.validVotes, yearAggData.invalidVotes, yearAggData.electorate),
 						isAggregated: true,
-						totalVotes: calcTotal(chartData)
+						totalVotes: calcTotalVotes(chartData)
 					};
 					continue;
 				}
 			}
 
-			map[year] = { ...nullResult};
+			map[year] = nullResult;
 		}
 
 		return map;
-	}, [wardCode, constituencyCode, availableDatasets, aggregatedData, codeMapper]);
+	}, [constituencyCode, wardCode, availableDatasets, aggregatedData, getConstituencyData]);
 
 	return (
 		<div className="space-y-2">
