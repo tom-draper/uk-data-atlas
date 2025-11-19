@@ -1,84 +1,63 @@
-import { useMemo } from 'react';
-import { useLocalElectionData } from './useLocalElectionData';
-import { useGeneralElectionData } from './useGeneralElectionData';
-import { usePopulationData } from './usePopulationData';
-import { useHousePriceData } from './useHousePriceData';
-import { useBoundaryData } from './useBoundaryData';
-import { useAggregatedData } from './useAggregatedData';
+'use client';
 
-interface UseAllDataParams {
-	location: string;
-	mapManager: any; // Pass this from MapInterface after map is initialized
+import { useMemo } from 'react';
+
+import { useLocalElectionData } from '@lib/hooks/useLocalElectionData';
+import { useGeneralElectionData } from '@lib/hooks/useGeneralElectionData';
+import { usePopulationData } from '@lib/hooks/usePopulationData';
+import { useHousePriceData } from '@lib/hooks/useHousePriceData';
+
+export interface UseDatasetsResult {
+	datasets: {
+		'local-election': any;
+		'general-election': any;
+		'population': any;
+		'house-price': any;
+	};
+	loading: boolean;
+	errors: string[];
 }
 
-export function useDatasets({ location, mapManager }: UseAllDataParams) {
-	// Load all raw datasets
+export function useDatasets(): UseDatasetsResult {
+	// Load all dataset groups
 	const localElection = useLocalElectionData();
 	const generalElection = useGeneralElectionData();
 	const population = usePopulationData();
 	const housePrice = useHousePriceData();
 
-	const { boundaryData, isLoading: boundaryLoading } = useBoundaryData(location);
+	// Combine datasets
+	const datasets = useMemo(
+		() => ({
+			'local-election': localElection.datasets,
+			'general-election': generalElection.datasets,
+			population: population.datasets,
+			'house-price': housePrice.datasets,
+		}),
+		[
+			localElection.datasets,
+			generalElection.datasets,
+			population.datasets,
+			housePrice.datasets,
+		]
+	);
 
-	// Combine all datasets
-	const datasets = useMemo(() => ({
-		'local-election': localElection.datasets,
-		'general-election': generalElection.datasets,
-		'population': population.datasets,
-		'house-price': housePrice.datasets,
-	}), [
-		localElection.datasets,
-		generalElection.datasets,
-		population.datasets,
-		housePrice.datasets,
-	]);
+	// Combined loading state
+	const loading = localElection.loading || generalElection.loading || population.loading || housePrice.loading;
 
-	// Use your existing aggregation hook
-	const {
-		aggregatedLocalElectionData,
-		aggregatedGeneralElectionData,
-		aggregatedPopulationData,
-		aggregatedHousePriceData,
-	} = useAggregatedData({
-		mapManager,
-		boundaryData,
-		localElectionDatasets: localElection.datasets,
-		generalElectionDatasets: generalElection.datasets,
-		populationDatasets: population.datasets,
-		housePriceDatasets: housePrice.datasets,
-		location,
-	});
-
-	// Combine aggregated data
-	const aggregatedData = useMemo(() => ({
-		'local-election': aggregatedLocalElectionData,
-		'general-election': aggregatedGeneralElectionData,
-		'population': aggregatedPopulationData,
-		'house-price': aggregatedHousePriceData,
-	}), [
-		aggregatedLocalElectionData,
-		aggregatedGeneralElectionData,
-		aggregatedPopulationData,
-		aggregatedHousePriceData,
-	]);
-
-	// Combine loading states
-	const loading = 
-		localElection.loading ||
-		generalElection.loading ||
-		population.loading ||
-		housePrice.loading ||
-		boundaryLoading;
-
-	// Combine errors
+	// Collect all errors
 	const errors = useMemo(() => {
-		const errs: Record<string, string> = {};
-		if (localElection.error) errs['local-election'] = localElection.error;
-		if (generalElection.error) errs['general-election'] = generalElection.error;
-		if (population.error) errs['population'] = population.error;
-		if (housePrice.error) errs['house-price'] = housePrice.error;
+		const errs: string[] = [];
+		if (localElection.error) errs.push(localElection.error);
+		if (generalElection.error) errs.push(generalElection.error);
+		if (population.error) errs.push(population.error);
+		if (housePrice.error) errs.push(housePrice.error);
 		return errs;
-	}, [localElection.error, generalElection.error, population.error, housePrice.error]);
+	}, [
+		localElection.error,
+		generalElection.error,
+		population.error,
+		housePrice.error,
+	]);
 
-	return { datasets, aggregatedData, boundaryData, loading, errors };
+	return { datasets, loading, errors };
 }

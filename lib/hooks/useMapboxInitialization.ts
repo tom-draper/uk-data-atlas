@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 
+
 interface UseMapInitializationOptions {
 	style: string;
 	center: [number, number];

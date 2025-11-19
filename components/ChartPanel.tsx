@@ -1,7 +1,7 @@
 // components/ChartPanel.tsx
 'use client';
 import packageJson from '../package.json';
-import { AggregatedLocalElectionData, AggregateGeneralElectionData, Dataset, LocalElectionWardData, LocalElectionDataset, PopulationDataset, GeneralElectionDataset, ConstituencyData, AggregatedPopulationData, AggregatedHousePriceData, HousePriceDataset } from '@lib/types';
+import { Dataset, LocalElectionWardData, ConstituencyData, Datasets } from '@lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
@@ -14,18 +14,11 @@ interface ChartPanelProps {
 	selectedLocation: string | null;
 	selectedWard: LocalElectionWardData | null;
 	selectedConstituency: ConstituencyData | null;
-	activeDatasetId: string;
-	activeDataset: Dataset;
+	activeDataset: Dataset | null;
 	boundaryData: BoundaryData;
-	localElectionDatasets: Record<string, LocalElectionDataset>;
-	generalElectionDatasets: Record<string, GeneralElectionDataset>;
-	populationDatasets: Record<string, PopulationDataset>;
-	housePriceDatasets: Record<string, HousePriceDataset>;
+	datasets: Datasets;
 	setActiveDatasetId: (datasetId: string) => void;
-	aggregatedLocalElectionData: AggregatedLocalElectionData | null;
-	aggregatedGeneralElectionData: AggregateGeneralElectionData | null;
-	aggregatedPopulationData: AggregatedPopulationData | null;
-	aggregatedHousePriceData: AggregatedHousePriceData | null;
+	aggregatedData: any;
 	codeMapper: CodeMapper
 }
 
@@ -33,18 +26,11 @@ export default memo(function ChartPanel({
 	selectedLocation,
 	selectedWard,
 	selectedConstituency,
-	activeDatasetId,
 	activeDataset,
 	boundaryData,
-	localElectionDatasets,
-	generalElectionDatasets,
-	populationDatasets,
-	housePriceDatasets,
+	datasets,
 	setActiveDatasetId,
-	aggregatedLocalElectionData,
-	aggregatedGeneralElectionData,
-	aggregatedPopulationData,
-	aggregatedHousePriceData,
+	aggregatedData,
 	codeMapper
 }: ChartPanelProps) {
 	// Determine what to show in the title
@@ -86,8 +72,8 @@ export default memo(function ChartPanel({
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
 					<GeneralElectionResultChart
 						activeDataset={activeDataset}
-						availableDatasets={generalElectionDatasets}
-						aggregatedData={aggregatedGeneralElectionData}
+						availableDatasets={datasets['general-election']}
+						aggregatedData={aggregatedData['general-election']}
 						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
@@ -96,8 +82,8 @@ export default memo(function ChartPanel({
 
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
-						availableDatasets={localElectionDatasets}
-						aggregatedData={aggregatedLocalElectionData}
+						availableDatasets={datasets['local-election']}
+						aggregatedData={aggregatedData['local-election']}
 						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
@@ -105,9 +91,9 @@ export default memo(function ChartPanel({
 					/>
 
 					<PopulationChart
-						activeDatasetId={activeDatasetId}
-						availableDatasets={populationDatasets}
-						aggregatedData={aggregatedPopulationData}
+					 	activeDatasetId={activeDataset?.id ?? null}
+						availableDatasets={datasets['population']}
+						aggregatedData={aggregatedData['population']}
 						setActiveDatasetId={setActiveDatasetId}
 						boundaryData={boundaryData}
 						wardCode={selectedWard?.wardCode?.toString()}
@@ -117,8 +103,8 @@ export default memo(function ChartPanel({
 
 					<HousePriceChart
 						activeDataset={activeDataset}
-						availableDatasets={housePriceDatasets}
-						aggregatedData={aggregatedHousePriceData}
+						availableDatasets={datasets['house-price']}
+						aggregatedData={aggregatedData['house-price']}
 						setActiveDatasetId={setActiveDatasetId}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}

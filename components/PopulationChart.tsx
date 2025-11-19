@@ -8,7 +8,7 @@ import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 
 export interface PopulationChartProps {
-	activeDatasetId: string;
+	activeDatasetId: string | null;
 	availableDatasets: Record<string, PopulationDataset>;
 	aggregatedData: AggregatedPopulationData | null;
 	boundaryData: BoundaryData;

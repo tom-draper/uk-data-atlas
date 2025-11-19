@@ -8,7 +8,7 @@ import { memo } from 'react';
 interface ControlPanelProps {
     selectedLocation: string | null;
     onLocationClick: (location: string, bounds: LocationBounds) => void;
-    population: PopulationDataset['populationData'];
+    population: PopulationDataset
 }
 
 export default memo(function ControlPanel({ selectedLocation, onLocationClick, population }: ControlPanelProps) {

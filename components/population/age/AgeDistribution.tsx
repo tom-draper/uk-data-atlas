@@ -9,7 +9,7 @@ interface AgeDistributionProps {
 	aggregatedData: AggregatedPopulationData | null;
 	wardCode?: string;
 	constituencyCode?: string;
-	activeDatasetId: string;
+	activeDatasetId: string | null;
 	setActiveDatasetId: (datasetId: string) => void;
 	codeMapper: CodeMapper;
 }
@@ -136,11 +136,6 @@ function AgeDistribution({
 		return { medianAge: 0, ageGroups: emptyAgeGroups, total: 0, ages: [] };
 	}, [wardCode, constituencyCode, dataset, aggregatedData, codeMapper]);
 
-	// Memoize the click handler
-	const handleClick = useCallback(() => {
-		setActiveDatasetId(datasetId);
-	}, [setActiveDatasetId]);
-
 	return (
 		<div
 			className={`p-2 rounded transition-all cursor-pointer ${
@@ -148,7 +143,7 @@ function AgeDistribution({
 					? 'bg-emerald-50/60 border-2 border-emerald-300'
 					: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
 			}`}
-			onClick={handleClick}
+			onClick={() => setActiveDatasetId(datasetId)}
 		>
 			<div className="flex items-center justify-between mb-2">
 				<h3 className="text-xs font-bold">Age Distribution ({dataset.year})</h3>

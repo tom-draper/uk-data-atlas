@@ -1,5 +1,6 @@
 // components/LocalElectionResultChart.tsx
 'use client';
+import { WardYear } from '@/lib/data/boundaries/boundaries';
 import { PARTIES } from '@/lib/data/election/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElection';
@@ -7,8 +8,8 @@ import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset 
 import React, { useMemo, useCallback } from 'react';
 
 interface LocalElectionResultChartProps {
-	activeDataset: Dataset;
-	availableDatasets: Record<string, LocalElectionDataset | null>;
+	activeDataset: Dataset | null;
+	availableDatasets: Record<string, LocalElectionDataset>;
 	setActiveDatasetId: (datasetId: string) => void;
 	wardCode?: string;
 	constituencyCode?: string;
@@ -177,7 +178,7 @@ export default function LocalElectionResultChart({
 	codeMapper
 }: LocalElectionResultChartProps) {
 	// Optimize ward data lookup with caching
-	const getWardData = useCallback((year: number, wardCode: string) => {
+	const getWardData = useCallback((year: WardYear, wardCode: string) => {
 		const dataset = availableDatasets[`local-election-${year}`];
 		if (!dataset?.wardData) return null;
 
@@ -289,7 +290,7 @@ export default function LocalElectionResultChart({
 						data={yearData.chartData}
 						dataset={dataset}
 						turnout={yearData.turnout}
-						isActive={activeDataset.id === datasetId}
+						isActive={activeDataset?.id === datasetId}
 						setActiveDatasetId={setActiveDatasetId}
 						totalVotes={yearData.totalVotes}
 					/>

@@ -10,7 +10,7 @@ interface GenderProps {
 	wardCode?: string;
 	constituencyCode?: string;
 	setActiveDatasetId: (datasetId: string) => void;
-	activeDatasetId: string;
+	activeDatasetId: string | null;
 	codeMapper: CodeMapper;
 }
 
@@ -71,11 +71,6 @@ function Gender({
 		return { totalMales: 0, totalFemales: 0 };
 	}, [dataset, wardCode, constituencyCode, aggregatedData, codeMapper]);
 
-	// Memoize the click handler to prevent GenderBalanceByAgeChart re-renders
-	const handleClick = useCallback(() => {
-		setActiveDatasetId(datasetId);
-	}, [setActiveDatasetId]);
-
 	const total = totalMales + totalFemales;
 	const hasData = total > 0;
 
@@ -86,7 +81,7 @@ function Gender({
 					? 'bg-emerald-50/60 border-2 border-emerald-300'
 					: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
 			}`}
-			onClick={handleClick}
+			onClick={() => setActiveDatasetId(datasetId)}
 		>
 			<div className="flex items-center justify-between mb-0">
 				<h3 className="text-xs font-bold">Gender ({dataset.year})</h3>

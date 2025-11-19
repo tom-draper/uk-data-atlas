@@ -5,12 +5,12 @@ import { AggregatedHousePriceData, Dataset, HousePriceDataset } from '@lib/types
 import React, { useCallback, useMemo } from 'react';
 
 interface HousePriceChartProps {
-	activeDataset: Dataset;
-	availableDatasets: Record<string, HousePriceDataset | null>;
+	activeDataset: Dataset | null;
+	availableDatasets: Record<string, HousePriceDataset>;
 	setActiveDatasetId: (datasetId: string) => void;
 	wardCode?: string;
 	constituencyCode?: string;
-	aggregatedData: AggregatedHousePriceData | null;
+	aggregatedData: AggregatedHousePriceData;
 	codeMapper: CodeMapper
 }
 
@@ -18,7 +18,7 @@ interface PriceChartProps {
 	dataset: HousePriceDataset;
 	wardCode?: string;
 	constituencyCode?: string;
-	aggregatedData: AggregatedHousePriceData | null;
+	aggregatedData: AggregatedHousePriceData;
 	isActive: boolean;
 	setActiveDatasetId: (datasetId: string) => void;
 	codeMapper: CodeMapper;
@@ -33,7 +33,7 @@ const YEAR_COLORS: Record<string, { bg: string; border: string; badge: string; t
 };
 
 // Cache for ward/constituency lookups
-const housePriceLookupCache = new Map<string, Map<string, any>>();
+const housePriceLookupCache = new Map<string, Map<number, any>>();
 
 const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, aggregatedData, setActiveDatasetId, codeMapper }: PriceChartProps) => {
 	const colors = YEAR_COLORS[dataset.year] || YEAR_COLORS['2024'];
@@ -66,7 +66,7 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 				
 				// Fallback to conversion if needed
 				if (!data) {
-					const convertedCode = codeMapper.convertWardCode(wardCode, Number(dataset.year));
+					const convertedCode = codeMapper.convertWardCode(wardCode, dataset.wardYear);
 					if (convertedCode && dataset.wardData) {
 						data = dataset.wardData[convertedCode];
 					}
@@ -240,7 +240,7 @@ export default function HousePriceChart({
 		return null;
 	}
 
-	const isActive = activeDataset.id === datasetId;
+	const isActive = activeDataset?.id === datasetId;
 
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">

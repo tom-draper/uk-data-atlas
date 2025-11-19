@@ -4,20 +4,12 @@ import { GeneralElectionDataset } from '@lib/types';
 import { fetchAndParseGeneralElectionData } from '../data/election/general-election/load';
 import { GENERAL_ELECTION_SOURCES } from '../data/election/general-election/config';
 
-const DATA_CACHE: Record<string, GeneralElectionDataset> = {};
-
 export const useGeneralElectionData = () => {
-    const [datasets, setDatasets] = useState<Record<string, GeneralElectionDataset>>(DATA_CACHE);
-    const [loading, setLoading] = useState(Object.keys(DATA_CACHE).length === 0);
+    const [datasets, setDatasets] = useState<Record<string, GeneralElectionDataset>>({});
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
 
     useEffect(() => {
-        // If data is already in the cache, skip fetching
-        if (Object.keys(DATA_CACHE).length > 0) {
-            setLoading(false);
-            return;
-        }
-
         const loadData = async () => {
             try {
                 console.log('EXPENSIVE: Loading general election data...');
@@ -38,9 +30,6 @@ export const useGeneralElectionData = () => {
                         loadedDatasets[dataset.id] = dataset;
                     }
                 });
-
-                // Mutate the global cache and update local state
-                Object.assign(DATA_CACHE, loadedDatasets);
 
                 console.log('Storing general election datasets:', loadedDatasets);
                 setDatasets(loadedDatasets);

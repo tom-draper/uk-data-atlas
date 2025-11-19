@@ -54,6 +54,13 @@ export interface PopulationWardData {
     laName: string;
 }
 
+export type Datasets = {
+    'local-election': Record<string, LocalElectionDataset>;
+    'general-election': Record<string, GeneralElectionDataset>;
+    'population': Record<string, PopulationDataset>;
+    'house-price': Record<string, HousePriceDataset>;
+}
+
 export type Dataset = GeneralElectionDataset | PopulationDataset | LocalElectionDataset | HousePriceDataset;
 
 export interface PopulationDataset {
@@ -176,6 +183,13 @@ export interface AggregatedHousePriceData {
         averagePrices: {[year: number]: number};
         wardCount: number;
     }
+}
+
+export type AggregatedData = {
+    'local-election': AggregatedLocalElectionData | null;
+    'general-election': AggregateGeneralElectionData | null;
+    'population': AggregatedPopulationData | null;
+    'house-price': AggregatedHousePriceData | null;
 }
 
 // Common geometry type

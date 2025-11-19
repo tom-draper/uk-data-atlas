@@ -5,16 +5,8 @@ import { memo, useEffect, useMemo, useState, useTransition, useDeferredValue, us
 interface LocationPanelProps {
     selectedLocation: string | null;
     onLocationClick: (location: string, bounds: LocationBounds) => void;
-    population: PopulationDataset['populationData'];
+    population: PopulationDataset | null;
 }
-
-const COUNTRY_PREFIXES: Record<string, string> = {
-    'United Kingdom': '',
-    'England': 'E',
-    'Scotland': 'S',
-    'Wales': 'W',
-    'Northern Ireland': 'N'
-};
 
 const COUNTRY_LOCATIONS = new Set(['England', 'Scotland', 'Wales', 'Northern Ireland', 'United Kingdom']);
 
@@ -62,7 +54,7 @@ export default memo(function LocationPanel({ selectedLocation, onLocationClick, 
 
         const enriched: Record<string, any> = {};
         
-        Object.entries(population).forEach(([wardCode, wardData]) => {
+        Object.entries(population.populationData).forEach(([wardCode, wardData]) => {
             const feature = geojsonFeatureMap[wardCode];
             let bounds: [number, number, number, number] = [-1, -1, -1, -1];
 

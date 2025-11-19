@@ -1,18 +1,17 @@
 // lib/contexts/dataContext.tsx
 import { createContext, useContext, useMemo, useCallback, ReactNode } from 'react';
-import type { Dataset } from '@lib/types';
+import type { Dataset, GeneralElectionDataset, HousePriceDataset, LocalElectionDataset, PopulationDataset } from '@lib/types';
 
 interface DataContextValue {
-	datasets: Record<string, Record<string, Dataset>>;
+	datasets: {
+		'local-election': Record<string, LocalElectionDataset>;
+		'general-election': Record<string, GeneralElectionDataset>;
+		'population': Record<string, PopulationDataset>;
+		'house-price': Record<string, HousePriceDataset>;
+	};
 	activeDatasetId: string;
 	activeDataset: Dataset | null;
 	selectedLocation: string;
-	aggregatedData: {
-		aggregatedLocalElectionData: Record<string, any>;
-		aggregatedGeneralElectionData: Record<string, any>;
-		aggregatedPopulationData: Record<string, any>;
-		aggregatedHousePriceData: Record<string, any>;
-	} | null;
 	setActiveDatasetId: (id: string) => void;
 	setSelectedLocation: (location: string) => void;
 }
@@ -27,10 +26,14 @@ export function useData() {
 
 interface DataProviderProps {
 	children: ReactNode;
-	datasets: Record<string, Record<string, Dataset>>;
+	datasets: {
+		'local-election': Record<string, LocalElectionDataset>;
+		'general-election': Record<string, GeneralElectionDataset>;
+		'population': Record<string, PopulationDataset>;
+		'house-price': Record<string, HousePriceDataset>;
+	};
 	activeDatasetId: string;
 	selectedLocation: string;
-	aggregatedData: DataContextValue['aggregatedData'];
 	onDatasetChange: (id: string) => void;
 	onLocationChange: (location: string) => void;
 }
@@ -40,20 +43,10 @@ export function DataProvider({
 	datasets,
 	activeDatasetId,
 	selectedLocation,
-	aggregatedData,
 	onDatasetChange,
 	onLocationChange,
 }: DataProviderProps) {
-	// Memoize dataset lookup
-	const activeDataset = useMemo(() => {
-		for (const datasetsByType of Object.values(datasets)) {
-			const dataset = Object.values(datasetsByType).find(
-				ds => ds.id === activeDatasetId
-			);
-			if (dataset) return dataset;
-		}
-		return null;
-	}, [datasets, activeDatasetId]);
+
 
 	// Stable callback references
 	const handleDatasetChange = useCallback((id: string) => {
@@ -64,25 +57,14 @@ export function DataProvider({
 		onLocationChange(location);
 	}, [onLocationChange]);
 
-	const value = useMemo(
-		() => ({
-			datasets,
-			activeDatasetId,
-			activeDataset,
-			selectedLocation,
-			aggregatedData,
-			setActiveDatasetId: handleDatasetChange,
-			setSelectedLocation: handleLocationChange,
-		}),
-		[
-			datasets,
-			activeDatasetId,
-			activeDataset,
-			selectedLocation,
-			aggregatedData,
-			handleDatasetChange,
-			handleLocationChange,
-		]
+	const value = useMemo(() => ({
+		datasets,
+		activeDatasetId,
+		activeDataset,
+		selectedLocation,
+		setActiveDatasetId: handleDatasetChange,
+		setSelectedLocation: handleLocationChange,
+	}), [datasets, activeDatasetId, activeDataset, selectedLocation, handleDatasetChange, handleLocationChange]
 	);
 
 	return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

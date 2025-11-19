@@ -1,7 +1,6 @@
 // components/MapInterface.tsx
 'use client';
 import { useCallback, useMemo, useState } from 'react';
-import { useData } from '@lib/contexts/dataContext';
 import { useMapInitialization } from '@lib/hooks/useMapboxInitialization';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
@@ -14,8 +13,16 @@ import UIOverlay from '@components/UIOverlay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
-import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
+import type { ConstituencyData, Datasets, LocalElectionWardData } from '@lib/types';
 import { useAggregatedData } from '@/lib/hooks/useAggregatedData';
+
+interface MapInterfaceProps {
+	datasets: Datasets;
+	activeDatasetId: string;
+	setActiveDatasetId: (id: string) => void;
+	selectedLocation: string;
+	setSelectedLocation: (location: string) => void;
+}
 
 const MAP_CONFIG = {
 	style: 'mapbox://styles/mapbox/light-v11',
@@ -25,9 +32,13 @@ const MAP_CONFIG = {
 	fitBoundsDuration: 1000,
 } as const;
 
-export default function MapInterface() {
-	const { activeDataset, datasets, selectedLocation, setSelectedLocation } = useData();
-
+export default function MapInterface({
+	datasets,
+	activeDatasetId,
+	setActiveDatasetId,
+	selectedLocation,
+	setSelectedLocation,
+}: MapInterfaceProps) {
 	// Local state
 	const [selectedWardData, setSelectedWard] = useState<LocalElectionWardData | null>(null);
 	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
@@ -46,6 +57,15 @@ export default function MapInterface() {
 		setSelectedConstituency,
 		setSelectedLocation,
 	});
+
+	const activeDataset = useMemo(() => {
+		for (const datasetsByType of Object.values(datasets)) {
+			if (datasetsByType[activeDatasetId]) {
+				return datasetsByType[activeDatasetId];
+			}
+		}
+		return null;
+	}, [datasets, activeDatasetId]);
 
 	// Get geojson for active dataset
 	const geojson = useMemo(() => {
@@ -79,17 +99,12 @@ export default function MapInterface() {
 		});
 	}, [map, mapManager, setSelectedLocation]);
 
-	// Compute aggregated data
 	const aggregatedData = useAggregatedData({
 		mapManager,
 		boundaryData,
 		datasets,
 		location: selectedLocation,
 	});
-
-	if (!activeDataset) return null;
-
-	if (!activeDataset) return null;
 
 	return (
 		<div style={{ width: '100%', height: '100vh', position: 'relative' }}>
@@ -98,19 +113,23 @@ export default function MapInterface() {
 				selectedWardData={selectedWardData}
 				selectedConstituencyData={selectedConstituencyData}
 				boundaryData={boundaryData}
-				aggregatedData={aggregatedData}
 				codeMapper={codeMapper}
 				mapOptions={mapOptions}
 				onMapOptionsChange={handleMapOptionsChange}
 				onLocationClick={handleLocationClick}
+				activeDataset={activeDataset}
+				setActiveDatasetId={setActiveDatasetId}
+				aggregatedData={aggregatedData}
+				datasets={datasets}
+				location={selectedLocation}
 			/>
 			<MapView
-				mapRef={map}
+				activeDataset={activeDataset}
 				geojson={geojson}
 				mapManager={mapManager}
 				mapOptions={mapOptions}
 				handleMapContainer={handleMapContainer}
 			/>
-		</div>
+		</div >
 	);
 }

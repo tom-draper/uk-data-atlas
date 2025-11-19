@@ -115,11 +115,11 @@ export function useAggregatedData({
 			calculateStats: (mm: MapManager, geojson: any, dataset: HousePriceDataset, loc: string | null, id: string) =>
 				mm.calculateHousePriceStats(geojson, dataset.wardData!, loc, id),
 		},
-	}), [datasets]);
+	}), [datasets['local-election'], datasets['general-election'], datasets['population'], datasets['house-price']]);
 
 	// Aggregate all datasets using the same logic
 	const aggregatedData = useMemo(() => {
-		if (!mapManager) return null;
+		if (!mapManager) return {'local-election': null, 'general-election': null, 'population': null, 'house-price': null};
 
 		return {
 			'local-election': aggregateDataset(configs.localElection, mapManager, boundaryData, location),

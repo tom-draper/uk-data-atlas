@@ -1,14 +1,15 @@
 // components/GeneralElectionResultChart.tsx
 'use client';
+import { ConstituencyYear } from '@/lib/data/boundaries/boundaries';
 import { PARTIES } from '@/lib/data/election/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElection';
-import { AggregateGeneralElectionData, GeneralElectionDataset, PartyVotes } from '@lib/types';
+import { AggregateGeneralElectionData, Dataset, GeneralElectionDataset, PartyVotes } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
 interface GeneralElectionResultChartProps {
-	activeDataset: any;
-	availableDatasets: Record<string, GeneralElectionDataset | null>;
+	activeDataset: Dataset | null;
+	availableDatasets: Record<string, GeneralElectionDataset>;
 	setActiveDatasetId: (datasetId: string) => void;
 	wardCode?: string;
 	constituencyCode?: string;
@@ -236,7 +237,7 @@ export default function GeneralElectionResultChart({
 	codeMapper
 }: GeneralElectionResultChartProps) {
 	// Optimize constituency data lookup with caching
-	const getConstituencyData = useCallback((year: number, constituencyCode: string) => {
+	const getConstituencyData = useCallback((year: ConstituencyYear, constituencyCode: string) => {
 		const dataset = availableDatasets[`general-election-${year}`];
 		if (!dataset?.constituencyData) return null;
 
@@ -348,7 +349,7 @@ export default function GeneralElectionResultChart({
 						data={yearData.chartData}
 						dataset={dataset}
 						turnout={yearData.turnout}
-						isActive={activeDataset.id === datasetId}
+						isActive={activeDataset?.id === datasetId}
 						isAggregated={yearData.isAggregated}
 						aggregatedData={aggregatedData}
 						setActiveDatasetId={setActiveDatasetId}

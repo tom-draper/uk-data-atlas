@@ -1,9 +1,9 @@
 import { type MapManager } from '@/lib/utils/mapManager';
-import { useData } from '@lib/contexts/dataContext';
 import { useMapUpdates } from '@lib/hooks/useMapUpdates';
+import { Dataset } from '@/lib/types';
 
 interface MapViewProps {
-	mapRef: any;
+	activeDataset: Dataset | null;
 	geojson: any;
 	mapManager: MapManager | null;
 	mapOptions: any;
@@ -11,19 +11,16 @@ interface MapViewProps {
 }
 
 export default function MapView({
-	mapRef,
+	activeDataset,
 	geojson,
 	mapManager,
 	mapOptions,
 	handleMapContainer,
 }: MapViewProps) {
-	const { activeDatasetId, activeDataset } = useData();
-
 	// Handle all map updates through custom hook
 	useMapUpdates({
 		geojson,
 		activeDataset,
-		activeDatasetId,
 		mapManager,
 		mapOptions,
 	});

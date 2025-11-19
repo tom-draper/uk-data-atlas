@@ -3,12 +3,11 @@
 import { PARTIES } from '@/lib/data/election/parties';
 import { memo, useMemo, useState, useRef, useEffect } from 'react';
 import type { MapOptions } from '@lib/types/mapOptions';
-import type { Dataset, PartyVotes } from '@/lib/types';
+import { AggregatedData, Dataset } from '@/lib/types';
 
 interface LegendPanelProps {
-    activeDatasetId: string;
-    activeDataset: Dataset;
-    aggregatedData: { partyVotes: PartyVotes };
+    activeDataset: Dataset | null;
+    aggregatedData: AggregatedData;
     mapOptions: MapOptions;
     onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
 }
@@ -112,7 +111,6 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
 }
 
 export default memo(function LegendPanel({
-    activeDatasetId,
     activeDataset,
     aggregatedData,
     mapOptions,
@@ -137,7 +135,7 @@ export default memo(function LegendPanel({
     }, [aggregatedData])
 
     const handlePartyClick = (partyCode: string) => {
-        const electionType = activeDataset.type as 'general-election' | 'local-election';
+        const electionType = activeDataset?.type as 'general-election' | 'local-election';
         if (electionType !== 'general-election' && electionType !== 'local-election') return;
 
         const currentOptions = mapOptions[electionType];
@@ -156,13 +154,13 @@ export default memo(function LegendPanel({
     };
 
     // Use displayOptions to render the current state
-    const currentOptions = activeDataset.type === 'general-election'
+    const currentOptions = activeDataset?.type === 'general-election'
         ? displayOptions['general-election']
-        : activeDataset.type === 'local-election'
+        : activeDataset?.type === 'local-election'
             ? displayOptions['local-election']
             : null;
 
-    const isElectionDataset = activeDataset.type === 'general-election' || activeDataset.type === 'local-election';
+    const isElectionDataset = activeDataset?.type === 'general-election' || activeDataset?.type === 'local-election';
 
     // "Input" handler: Updates local state (cheap)
     const handleRangeInput = (datasetId: string, min: number, max: number) => {
@@ -200,7 +198,7 @@ export default memo(function LegendPanel({
 
     // "Input" handler for party percentage
     const handlePartyRangeInput = (min: number, max: number) => {
-        const electionType = activeDataset.type as 'general-election' | 'local-election';
+        const electionType = activeDataset?.type as 'general-election' | 'local-election';
         if (electionType !== 'general-election' && electionType !== 'local-election') return;
 
         setLiveOptions(prev => {
@@ -219,7 +217,7 @@ export default memo(function LegendPanel({
     const handlePartyRangeChangeEnd = () => {
         if (!liveOptions) return;
 
-        const electionType = activeDataset.type as 'general-election' | 'local-election';
+        const electionType = activeDataset?.type as 'general-election' | 'local-election';
         if (electionType !== 'general-election' && electionType !== 'local-election') return;
 
         if (liveOptions[electionType]?.partyPercentageRange) {
@@ -376,7 +374,7 @@ export default memo(function LegendPanel({
     }
 
     const renderLegendContent = () => {
-        switch (activeDatasetId) {
+        switch (activeDataset?.id) {
             case 'age-distribution-2020':
             case 'age-distribution-2021':
             case 'age-distribution-2022':
