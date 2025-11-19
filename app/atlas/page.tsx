@@ -56,7 +56,6 @@ export default function MapsPage() {
 	const populationData = usePopulationData();
 	const housePriceData = useHousePriceData();
 
-	// Derived data
 	const activeDataset = useDatasetManager(
 		activeDatasetId,
 		localElectionData.datasets,

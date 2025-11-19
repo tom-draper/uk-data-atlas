@@ -1,6 +1,6 @@
 // components/GeneralElectionResultChart.tsx
 'use client';
-import { PARTIES } from '@/lib/data/parties';
+import { PARTIES } from '@/lib/data/election/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElection';
 import { AggregateGeneralElectionData, GeneralElectionDataset, PartyVotes } from '@lib/types';
@@ -246,14 +246,14 @@ export default function GeneralElectionResultChart({
 			constituencyLookupCache.set(cacheKey, new Map());
 		}
 		const yearCache = constituencyLookupCache.get(cacheKey)!;
-		
+
 		if (yearCache.has(year)) {
 			return yearCache.get(year);
 		}
 
 		// Try direct lookup first
 		let data = dataset.constituencyData[constituencyCode];
-		
+
 		// Fallback to conversion if needed
 		if (!data) {
 			const convertedCode = codeMapper.convertConstituencyCode(constituencyCode, year);

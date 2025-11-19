@@ -1,7 +1,7 @@
 // lib/utils/mapManager/layerManager.ts
 import { BoundaryGeojson, Party } from '@lib/types';
 import { LocalElectionOptions, GeneralElectionOptions } from '@lib/types/mapOptions';
-import { PARTIES } from '@lib/data/parties';
+import { PARTIES } from '@/lib/data/election/parties';
 import { getPartyPercentageColorExpression } from '../colorScale';
 
 const SOURCE_ID = 'location-wards';

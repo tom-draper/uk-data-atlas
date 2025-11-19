@@ -1,15 +1,6 @@
 import { useMemo } from 'react';
-import { BoundaryData, WARD_CODE_KEYS, WARD_NAME_KEYS, WardCodeKey, WardNameKey } from './useBoundaryData';
-
-type WardYear = 2024 | 2023 | 2022 | 2021;
-type ConstituencyYear = 2024 | 2019 | 2017 | 2015;
-
-// Constituency property keys - adjust these based on your actual GeoJSON properties
-const CONSTITUENCY_CODE_KEYS = ['PCON24CD', 'PCON19CD', 'PCON17CD', 'PCON15CD'] as const;
-const CONSTITUENCY_NAME_KEYS = ['PCON24NM', 'PCON19NM', 'PCON17NM', 'PCON15NM'] as const;
-
-type ConstituencyCodeKey = (typeof CONSTITUENCY_CODE_KEYS)[number];
-type ConstituencyNameKey = (typeof CONSTITUENCY_NAME_KEYS)[number];
+import { BoundaryData } from './useBoundaryData';
+import { CONSTITUENCY_CODE_KEYS, CONSTITUENCY_NAME_KEYS, ConstituencyCodeKey, ConstituencyNameKey, ConstituencyYear, WARD_CODE_KEYS, WARD_NAME_KEYS, WardCodeKey, WardNameKey, WardYear } from '../data/boundaries/boundaries';
 
 export interface CodeMapper {
 	/**

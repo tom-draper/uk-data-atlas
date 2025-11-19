@@ -1,6 +1,6 @@
 // components/LocalElectionResultChart.tsx
 'use client';
-import { PARTIES } from '@/lib/data/parties';
+import { PARTIES } from '@/lib/data/election/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElection';
 import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset } from '@lib/types';
@@ -113,7 +113,7 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 	const colors = YEAR_COLORS[year] || YEAR_COLORS['2024'];
 
 	const handleClick = useCallback(() => {
-		setActiveDatasetId(`local-election-${year}`);
+		setActiveDatasetId(dataset.id);
 	}, [setActiveDatasetId, year]);
 
 	// Pre-calculate height to avoid inline calculation
@@ -129,7 +129,7 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 			onClick={handleClick}
 		>
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">{year} Local Elections</h3>
+				<h3 className="text-xs font-bold">{dataset.name}</h3>
 				{turnout && (
 					<span className="text-[9px] text-gray-500 font-medium">
 						{turnout.toFixed(1)}% turnout
@@ -187,14 +187,14 @@ export default function LocalElectionResultChart({
 			wardLookupCache.set(cacheKey, new Map());
 		}
 		const yearCache = wardLookupCache.get(cacheKey)!;
-		
+
 		if (yearCache.has(year)) {
 			return yearCache.get(year);
 		}
 
 		// Try direct lookup first
 		let data = dataset.wardData[wardCode];
-		
+
 		// Fallback to conversion if needed
 		if (!data) {
 			const convertedCode = codeMapper.convertWardCode(wardCode, year);

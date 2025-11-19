@@ -1,6 +1,6 @@
 // components/LegendPanel.tsx
 'use client';
-import { PARTIES } from '@/lib/data/parties';
+import { PARTIES } from '@/lib/data/election/parties';
 import { memo, useMemo, useState, useRef, useEffect } from 'react';
 import type { MapOptions } from '@lib/types/mapOptions';
 import type { Dataset, PartyVotes } from '@/lib/types';
