@@ -4,13 +4,13 @@ import { ConstituencyYear } from '@/lib/data/boundaries/boundaries';
 import { PARTIES } from '@/lib/data/election/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElection';
-import { AggregateGeneralElectionData, Dataset, GeneralElectionDataset, PartyVotes } from '@lib/types';
+import { ActiveViz, AggregateGeneralElectionData, Dataset, GeneralElectionDataset, PartyVotes } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
 interface GeneralElectionResultChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, GeneralElectionDataset>;
-	setActiveDatasetId: (datasetId: string) => void;
+	setActiveViz: (value: ActiveViz) => void;
 	wardCode?: string;
 	constituencyCode?: string;
 	aggregatedData: AggregateGeneralElectionData | null;
@@ -142,7 +142,7 @@ interface YearBarProps {
 	isActive: boolean;
 	isAggregated: boolean;
 	aggregatedData: AggregateGeneralElectionData | null;
-	setActiveDatasetId: (datasetId: string) => void;
+	setActiveViz: (value: ActiveViz) => void;
 	totalVotes: number;
 }
 
@@ -162,14 +162,10 @@ const YearBar = React.memo(({
 	isActive,
 	isAggregated,
 	aggregatedData,
-	setActiveDatasetId,
+	setActiveViz,
 	totalVotes
 }: YearBarProps) => {
 	const colors = YEAR_COLORS[year] || { bg: 'bg-indigo-50/60', border: 'border-indigo-400' };
-
-	const handleClick = useCallback(() => {
-		setActiveDatasetId(dataset.id);
-	}, [setActiveDatasetId, year]);
 
 	// Pre-calculate height to avoid inline calculation
 	const height = isActive ? (isAggregated ? '205px' : '95px') : '65px';
@@ -181,7 +177,7 @@ const YearBar = React.memo(({
 				: 'bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300'
 				}`}
 			style={{ height }}
-			onClick={handleClick}
+			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetId: dataset.id })}
 		>
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">
@@ -207,7 +203,6 @@ const YearBar = React.memo(({
 });
 YearBar.displayName = 'YearBar';
 
-
 // Helper to map party votes once (memoize to avoid recreating object if values are the same)
 const mapPartyVotes = (partyVotes: any): PartyVotes => ({
 	LAB: partyVotes.LAB || 0,
@@ -230,7 +225,7 @@ const constituencyLookupCache = new Map<string, Map<number, any>>();
 export default function GeneralElectionResultChart({
 	activeDataset,
 	availableDatasets,
-	setActiveDatasetId,
+	setActiveViz,
 	wardCode,
 	constituencyCode,
 	aggregatedData,
@@ -352,7 +347,7 @@ export default function GeneralElectionResultChart({
 						isActive={activeDataset?.id === datasetId}
 						isAggregated={yearData.isAggregated}
 						aggregatedData={aggregatedData}
-						setActiveDatasetId={setActiveDatasetId}
+						setActiveViz={setActiveViz}
 						totalVotes={yearData.totalVotes}
 					/>
 				);

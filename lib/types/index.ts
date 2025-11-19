@@ -1,5 +1,7 @@
 // lib/types/index.ts
 
+import { ConstituencyYear, WardYear } from "../data/boundaries/boundaries";
+
 export interface LocalElectionWardData {
     localAuthorityCode: string
     localAuthorityName: string
@@ -61,6 +63,12 @@ export type Datasets = {
     'house-price': Record<string, HousePriceDataset>;
 }
 
+export type ActiveViz = {
+    vizId: string;
+    datasetType: keyof Datasets;
+    datasetId: string;
+}
+
 export type Dataset = GeneralElectionDataset | PopulationDataset | LocalElectionDataset | HousePriceDataset;
 
 export interface PopulationDataset {
@@ -68,7 +76,7 @@ export interface PopulationDataset {
     name: string;
     type: 'population';
     year: number;
-    wardYear: number;
+    wardYear: WardYear;
     boundaryType: 'ward'
     populationData: { [wardCode: string]: PopulationWardData };
 }
@@ -78,7 +86,7 @@ export interface LocalElectionDataset {
     name: string;
     type: 'local-election';
     year: number;
-    wardYear: number;
+    wardYear: WardYear;
     boundaryType: 'ward'
     wardResults: Record<string, string>;
     wardData: { [wardCode: string]: LocalElectionWardData };
@@ -110,7 +118,7 @@ export interface GeneralElectionDataset {
     name: string;
     type: 'general-election';
     year: number;
-    constituencyYear: number;
+    constituencyYear: ConstituencyYear;
     boundaryType: 'constituency';
     constituencyResults: Record<string, string>; // onsId -> winning party
     constituencyData: { [constituencyCode: string]: ConstituencyData }; // onsId -> full data
@@ -130,7 +138,7 @@ export interface HousePriceDataset {
     name: string;
     type: 'house-price';
     year: number;
-    wardYear: number;
+    wardYear: WardYear;
     boundaryType: 'ward',
     wardData: Record<string, WardHousePriceData>; // Keyed by ward code
 }

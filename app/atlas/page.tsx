@@ -8,9 +8,14 @@ import ErrorDisplay from '@/components/displays/ErrorDisplay';
 import LoadingDisplay from '@/components/displays/LoadingDisplay';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useDatasets } from '@/lib/hooks/useDatasets';
+import { ActiveViz } from '@/lib/types';
 
 export default function MapsPage() {
-    const [activeDatasetId, setActiveDatasetId] = useState('local-election-2024');
+    const [activeViz, setActiveViz] = useState<ActiveViz>({ 
+        vizId: 'local-election-2024', 
+        datasetType: 'local-election',
+        datasetId: 'local-election-2024' 
+    });
     const [selectedLocation, setSelectedLocation] = useState('Greater Manchester');
 
     const { datasets, loading, errors } = useDatasets();
@@ -24,8 +29,8 @@ export default function MapsPage() {
                 datasets={datasets}
                 selectedLocation={selectedLocation}
                 setSelectedLocation={setSelectedLocation}
-                activeDatasetId={activeDatasetId}
-                setActiveDatasetId={setActiveDatasetId}
+                activeViz={activeViz}
+                setActiveViz={setActiveViz}
             />
         </ErrorBoundary>
     );

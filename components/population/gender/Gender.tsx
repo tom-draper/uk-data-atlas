@@ -1,6 +1,6 @@
 // components/population/gender/Gender.tsx
 import { useMemo, memo, useCallback } from "react";
-import { AggregatedPopulationData, PopulationDataset } from "@/lib/types";
+import { ActiveViz, AggregatedPopulationData, PopulationDataset } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
@@ -9,8 +9,8 @@ interface GenderProps {
 	aggregatedData: AggregatedPopulationData | null;
 	wardCode?: string;
 	constituencyCode?: string;
-	setActiveDatasetId: (datasetId: string) => void;
-	activeDatasetId: string | null;
+	activeViz: ActiveViz;
+	setActiveViz: (value: ActiveViz) => void;
 	codeMapper: CodeMapper;
 }
 
@@ -19,12 +19,12 @@ function Gender({
 	aggregatedData,
 	wardCode,
 	constituencyCode,
-	setActiveDatasetId,
-	activeDatasetId,
+	activeViz,
+	setActiveViz,
 	codeMapper
 }: GenderProps) {
-	const datasetId = `gender-${dataset.year}`;
-	const isActive = activeDatasetId === datasetId;
+	const vizId = `gender-${dataset.year}`;
+	const isActive = activeViz.vizId === vizId;
 
 	// Calculate total males and females
 	const { totalMales, totalFemales } = useMemo(() => {
@@ -81,7 +81,7 @@ function Gender({
 					? 'bg-emerald-50/60 border-2 border-emerald-300'
 					: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
 			}`}
-			onClick={() => setActiveDatasetId(datasetId)}
+			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetId: dataset.id })}
 		>
 			<div className="flex items-center justify-between mb-0">
 				<h3 className="text-xs font-bold">Gender ({dataset.year})</h3>

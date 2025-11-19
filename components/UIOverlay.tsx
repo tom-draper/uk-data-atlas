@@ -1,7 +1,7 @@
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
 import ChartPanel from '@components/ChartPanel';
-import type { ConstituencyData, Dataset, Datasets, LocalElectionWardData } from '@lib/types';
+import type { ActiveViz, ConstituencyData, Dataset, Datasets, LocalElectionWardData } from '@lib/types';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 import { MapOptions } from '@/lib/types/mapOptions';
@@ -10,7 +10,8 @@ interface UIOverlayProps {
 	datasets: Datasets;
 	activeDataset: Dataset | null;
 	aggregatedData: any;
-	setActiveDatasetId: (id: string) => void;
+	activeViz: ActiveViz;
+	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
 	selectedWardData: LocalElectionWardData | null;
 	selectedConstituencyData: ConstituencyData | null;
@@ -24,7 +25,8 @@ interface UIOverlayProps {
 export default function UIOverlay({
 	datasets,
 	activeDataset,
-	setActiveDatasetId,
+	activeViz,
+	setActiveViz,
 	aggregatedData,
 	selectedLocation,
 	selectedWardData,
@@ -54,7 +56,8 @@ export default function UIOverlay({
 				/>
 				<ChartPanel
 					datasets={datasets}
-					setActiveDatasetId={setActiveDatasetId}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
 					activeDataset={activeDataset}
 					aggregatedData={aggregatedData}
 					selectedLocation={selectedLocation}

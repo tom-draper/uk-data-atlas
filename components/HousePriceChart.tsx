@@ -1,13 +1,13 @@
 // components/HousePriceChart.tsx
 'use client';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
-import { AggregatedHousePriceData, Dataset, HousePriceDataset } from '@lib/types';
-import React, { useCallback, useMemo } from 'react';
+import { ActiveViz, AggregatedHousePriceData, Dataset, HousePriceDataset } from '@lib/types';
+import React, { useMemo } from 'react';
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, HousePriceDataset>;
-	setActiveDatasetId: (datasetId: string) => void;
+	setActiveViz: (value: ActiveViz) => void;
 	wardCode?: string;
 	constituencyCode?: string;
 	aggregatedData: AggregatedHousePriceData;
@@ -20,7 +20,7 @@ interface PriceChartProps {
 	constituencyCode?: string;
 	aggregatedData: AggregatedHousePriceData;
 	isActive: boolean;
-	setActiveDatasetId: (datasetId: string) => void;
+	setActiveViz: (value: ActiveViz) => void;
 	codeMapper: CodeMapper;
 }
 
@@ -35,12 +35,8 @@ const YEAR_COLORS: Record<string, { bg: string; border: string; badge: string; t
 // Cache for ward/constituency lookups
 const housePriceLookupCache = new Map<string, Map<number, any>>();
 
-const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, aggregatedData, setActiveDatasetId, codeMapper }: PriceChartProps) => {
+const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, aggregatedData, setActiveViz, codeMapper }: PriceChartProps) => {
 	const colors = YEAR_COLORS[dataset.year] || YEAR_COLORS['2024'];
-
-	const handleClick = useCallback(() => {
-		setActiveDatasetId(dataset.id);
-	}, [setActiveDatasetId, dataset.id]);
 
 	// Get price data for the chart with caching
 	const { priceData, currentPrice } = useMemo(() => {
@@ -147,7 +143,7 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 				? `${colors.bg} border-2 ${colors.border}`
 				: 'bg-white/60 border-2 border-gray-200/80 hover:border-blue-300'
 				}`}
-			onClick={handleClick}
+			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetId: dataset.id })}
 		>
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">{dataset.name}</h3>
@@ -220,7 +216,7 @@ PriceChart.displayName = 'PriceChart';
 export default function HousePriceChart({
 	activeDataset,
 	availableDatasets,
-	setActiveDatasetId,
+	setActiveViz,
 	wardCode,
 	constituencyCode,
 	aggregatedData,
@@ -252,7 +248,7 @@ export default function HousePriceChart({
 				wardCode={wardCode}
 				constituencyCode={constituencyCode}
 				aggregatedData={aggregatedData}
-				setActiveDatasetId={setActiveDatasetId}
+				setActiveViz={setActiveViz}
 				codeMapper={codeMapper}
 			/>
 		</div>

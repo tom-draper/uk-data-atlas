@@ -4,13 +4,13 @@ import { WardYear } from '@/lib/data/boundaries/boundaries';
 import { PARTIES } from '@/lib/data/election/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElection';
-import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset } from '@lib/types';
+import { AggregatedLocalElectionData, PartyVotes, Dataset, LocalElectionDataset, ActiveViz } from '@lib/types';
 import React, { useMemo, useCallback } from 'react';
 
 interface LocalElectionResultChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, LocalElectionDataset>;
-	setActiveDatasetId: (datasetId: string) => void;
+	setActiveViz: (value: ActiveViz) => void;
 	wardCode?: string;
 	constituencyCode?: string;
 	aggregatedData: AggregatedLocalElectionData | null;
@@ -98,7 +98,7 @@ interface YearBarProps {
 	dataset: LocalElectionDataset;
 	turnout: number | null;
 	isActive: boolean;
-	setActiveDatasetId: (datasetId: string) => void;
+	setActiveViz: (value: ActiveViz) => void;
 	totalVotes: number;
 }
 
@@ -110,12 +110,8 @@ const YEAR_COLORS: Record<string, { bg: string; border: string; badge: string; t
 	'2021': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800' },
 };
 
-const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveDatasetId, totalVotes }: YearBarProps) => {
+const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveViz, totalVotes }: YearBarProps) => {
 	const colors = YEAR_COLORS[year] || YEAR_COLORS['2024'];
-
-	const handleClick = useCallback(() => {
-		setActiveDatasetId(dataset.id);
-	}, [setActiveDatasetId, year]);
 
 	// Pre-calculate height to avoid inline calculation
 	const height = isActive && data ? '95px' : '65px';
@@ -127,7 +123,7 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveD
 				: 'bg-white/60 border-2 border-gray-200/80 hover:border-blue-300'
 				}`}
 			style={{ height }}
-			onClick={handleClick}
+			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetId: dataset.id })}
 		>
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">{dataset.name}</h3>
@@ -171,7 +167,7 @@ const wardLookupCache = new Map<string, Map<number, any>>();
 export default function LocalElectionResultChart({
 	activeDataset,
 	availableDatasets,
-	setActiveDatasetId,
+	setActiveViz,
 	wardCode,
 	constituencyCode,
 	aggregatedData,
@@ -291,7 +287,7 @@ export default function LocalElectionResultChart({
 						dataset={dataset}
 						turnout={yearData.turnout}
 						isActive={activeDataset?.id === datasetId}
-						setActiveDatasetId={setActiveDatasetId}
+						setActiveViz={setActiveViz}
 						totalVotes={yearData.totalVotes}
 					/>
 				);

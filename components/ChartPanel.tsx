@@ -1,7 +1,7 @@
 // components/ChartPanel.tsx
 'use client';
 import packageJson from '../package.json';
-import { Dataset, LocalElectionWardData, ConstituencyData, Datasets } from '@lib/types';
+import { Dataset, LocalElectionWardData, ConstituencyData, Datasets, ActiveViz } from '@lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
@@ -17,7 +17,8 @@ interface ChartPanelProps {
 	activeDataset: Dataset | null;
 	boundaryData: BoundaryData;
 	datasets: Datasets;
-	setActiveDatasetId: (datasetId: string) => void;
+	activeViz: ActiveViz;
+	setActiveViz: (value: ActiveViz) => void;
 	aggregatedData: any;
 	codeMapper: CodeMapper
 }
@@ -29,7 +30,8 @@ export default memo(function ChartPanel({
 	activeDataset,
 	boundaryData,
 	datasets,
-	setActiveDatasetId,
+	activeViz,
+	setActiveViz,
 	aggregatedData,
 	codeMapper
 }: ChartPanelProps) {
@@ -74,7 +76,7 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={datasets['general-election']}
 						aggregatedData={aggregatedData['general-election']}
-						setActiveDatasetId={setActiveDatasetId}
+						setActiveViz={setActiveViz}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
@@ -84,17 +86,17 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={datasets['local-election']}
 						aggregatedData={aggregatedData['local-election']}
-						setActiveDatasetId={setActiveDatasetId}
+						setActiveViz={setActiveViz}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
 					/>
 
 					<PopulationChart
-					 	activeDatasetId={activeDataset?.id ?? null}
+					 	activeViz={activeViz}
+						setActiveViz={setActiveViz}
 						availableDatasets={datasets['population']}
 						aggregatedData={aggregatedData['population']}
-						setActiveDatasetId={setActiveDatasetId}
 						boundaryData={boundaryData}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
@@ -105,7 +107,7 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={datasets['house-price']}
 						aggregatedData={aggregatedData['house-price']}
-						setActiveDatasetId={setActiveDatasetId}
+						setActiveViz={setActiveViz}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}

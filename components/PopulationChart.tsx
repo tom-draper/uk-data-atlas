@@ -1,6 +1,6 @@
 // components/PopulationChart.tsx
 'use client';
-import { AggregatedPopulationData, PopulationDataset } from '@lib/types';
+import { ActiveViz, AggregatedPopulationData, PopulationDataset } from '@lib/types';
 import PopulationDensity from '@/components/population/density/PopulationDensity';
 import AgeChart from './population/age/AgeDistribution';
 import Gender from './population/gender/Gender';
@@ -8,24 +8,24 @@ import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 
 export interface PopulationChartProps {
-	activeDatasetId: string | null;
 	availableDatasets: Record<string, PopulationDataset>;
 	aggregatedData: AggregatedPopulationData | null;
 	boundaryData: BoundaryData;
 	wardCode?: string;
 	constituencyCode?: string;
-	setActiveDatasetId: (datasetId: string) => void;
+	activeViz: ActiveViz;
+	setActiveViz: (value: ActiveViz) => void;
 	codeMapper: CodeMapper
 }
 
 export default function PopulationChart({
-	activeDatasetId,
 	availableDatasets,
 	aggregatedData,
 	boundaryData,
 	wardCode,
 	constituencyCode,
-	setActiveDatasetId,
+	activeViz,
+	setActiveViz,
 	codeMapper
 }: PopulationChartProps) {
 	return (
@@ -33,8 +33,8 @@ export default function PopulationChart({
 			<h3 className="text-xs font-bold text-gray-700 mb-2">Demographics</h3>
 			<div className="space-y-3">
 				<PopulationDensity
-					activeDatasetId={activeDatasetId}
-					setActiveDatasetId={setActiveDatasetId}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
 					dataset={availableDatasets['population-2022']}
 					aggregatedData={aggregatedData}
 					boundaryData={boundaryData}
@@ -43,8 +43,8 @@ export default function PopulationChart({
 					codeMapper={codeMapper}
 				/>
 				<AgeChart
-					activeDatasetId={activeDatasetId}
-					setActiveDatasetId={setActiveDatasetId}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
 					dataset={availableDatasets['population-2022']}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
@@ -52,8 +52,8 @@ export default function PopulationChart({
 					codeMapper={codeMapper}
 				/>
 				<Gender
-					activeDatasetId={activeDatasetId}
-					setActiveDatasetId={setActiveDatasetId}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
 					dataset={availableDatasets['population-2022']}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}

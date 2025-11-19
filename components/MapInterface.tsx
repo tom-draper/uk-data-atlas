@@ -13,13 +13,13 @@ import UIOverlay from '@components/UIOverlay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
-import type { ConstituencyData, Datasets, LocalElectionWardData } from '@lib/types';
+import type { ActiveViz, ConstituencyData, Datasets, LocalElectionWardData } from '@lib/types';
 import { useAggregatedData } from '@/lib/hooks/useAggregatedData';
 
 interface MapInterfaceProps {
 	datasets: Datasets;
-	activeDatasetId: string;
-	setActiveDatasetId: (id: string) => void;
+	activeViz: ActiveViz;
+	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
 	setSelectedLocation: (location: string) => void;
 }
@@ -34,8 +34,8 @@ const MAP_CONFIG = {
 
 export default function MapInterface({
 	datasets,
-	activeDatasetId,
-	setActiveDatasetId,
+	activeViz,
+	setActiveViz,
 	selectedLocation,
 	setSelectedLocation,
 }: MapInterfaceProps) {
@@ -59,13 +59,8 @@ export default function MapInterface({
 	});
 
 	const activeDataset = useMemo(() => {
-		for (const datasetsByType of Object.values(datasets)) {
-			if (datasetsByType[activeDatasetId]) {
-				return datasetsByType[activeDatasetId];
-			}
-		}
-		return null;
-	}, [datasets, activeDatasetId]);
+		return datasets[activeViz.datasetType][activeViz.datasetId]
+	}, [datasets, activeViz]);
 
 	// Get geojson for active dataset
 	const geojson = useMemo(() => {
@@ -118,7 +113,8 @@ export default function MapInterface({
 				onMapOptionsChange={handleMapOptionsChange}
 				onLocationClick={handleLocationClick}
 				activeDataset={activeDataset}
-				setActiveDatasetId={setActiveDatasetId}
+				activeViz={activeViz}
+				setActiveViz={setActiveViz}
 				aggregatedData={aggregatedData}
 				datasets={datasets}
 				location={selectedLocation}

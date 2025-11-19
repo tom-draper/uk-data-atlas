@@ -12,7 +12,7 @@ interface DataContextValue {
 	activeDatasetId: string;
 	activeDataset: Dataset | null;
 	selectedLocation: string;
-	setActiveDatasetId: (id: string) => void;
+	setActiveViz: (id: string) => void;
 	setSelectedLocation: (location: string) => void;
 }
 
@@ -62,7 +62,7 @@ export function DataProvider({
 		activeDatasetId,
 		activeDataset,
 		selectedLocation,
-		setActiveDatasetId: handleDatasetChange,
+		setActiveViz: handleDatasetChange,
 		setSelectedLocation: handleLocationChange,
 	}), [datasets, activeDatasetId, activeDataset, selectedLocation, handleDatasetChange, handleLocationChange]
 	);

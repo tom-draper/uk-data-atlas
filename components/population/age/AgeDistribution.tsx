@@ -1,6 +1,6 @@
 // components/population/age/AgeDistribution.tsx
-import { useMemo, memo, useCallback } from "react";
-import { AggregatedPopulationData, PopulationDataset, AgeGroups } from "@/lib/types";
+import { useMemo, memo } from "react";
+import { AggregatedPopulationData, PopulationDataset, AgeGroups, ActiveViz } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
@@ -9,8 +9,8 @@ interface AgeDistributionProps {
 	aggregatedData: AggregatedPopulationData | null;
 	wardCode?: string;
 	constituencyCode?: string;
-	activeDatasetId: string | null;
-	setActiveDatasetId: (datasetId: string) => void;
+	activeViz: ActiveViz;
+	setActiveViz: (value: ActiveViz) => void;
 	codeMapper: CodeMapper;
 }
 
@@ -47,12 +47,12 @@ function AgeDistribution({
 	aggregatedData,
 	wardCode,
 	constituencyCode,
-	setActiveDatasetId,
-	activeDatasetId,
+	activeViz,
+	setActiveViz,
 	codeMapper,
 }: AgeDistributionProps) {
- 	const datasetId = `age-distribution-${dataset.year}`
-	const isActive = activeDatasetId === datasetId;
+ 	const vizId = `age-distribution-${dataset.year}`
+	const isActive = activeViz.vizId === vizId;
 
 	const { medianAge, ageGroups, total, ages } = useMemo(() => {
 		const emptyAgeGroups: AgeGroups = {
@@ -143,7 +143,7 @@ function AgeDistribution({
 					? 'bg-emerald-50/60 border-2 border-emerald-300'
 					: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
 			}`}
-			onClick={() => setActiveDatasetId(datasetId)}
+			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetId: dataset.id })}
 		>
 			<div className="flex items-center justify-between mb-2">
 				<h3 className="text-xs font-bold">Age Distribution ({dataset.year})</h3>
