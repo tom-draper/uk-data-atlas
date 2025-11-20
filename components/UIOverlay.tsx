@@ -20,6 +20,9 @@ interface UIOverlayProps {
 	mapOptions: any;
 	onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
 	onLocationClick: (location: string) => void;
+	onZoomIn: () => void;
+	onZoomOut: () => void;
+	handleMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
 }
 
 export default function UIOverlay({
@@ -36,6 +39,9 @@ export default function UIOverlay({
 	mapOptions,
 	onMapOptionsChange,
 	onLocationClick,
+	onZoomIn,
+	onZoomOut,
+	handleMapOptionsChange
 }: UIOverlayProps) {
 	return (
 		<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
@@ -44,6 +50,9 @@ export default function UIOverlay({
 					population={datasets['population'][2022]}
 					selectedLocation={selectedLocation}
 					onLocationClick={onLocationClick}
+					onZoomIn={onZoomIn}
+					onZoomOut={onZoomOut}
+					handleMapOptionsChange={handleMapOptionsChange}
 				/>
 			</div>
 

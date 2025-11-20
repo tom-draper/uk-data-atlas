@@ -1,4 +1,5 @@
 // components/population/density/PopulationDensityChart.tsx
+import { WARD_CODE_KEYS } from "@/lib/data/boundaries/boundaries";
 import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset } from "@/lib/types";
@@ -25,15 +26,14 @@ const getWardPopulationDensity = (feature: any, total: number) => {
 };
 
 const detectPropertyKey = (geojson: BoundaryGeojson) => {
-	const possibleKeys = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'];
 	const firstFeature = geojson.features[0];
-	if (!firstFeature) return possibleKeys[0];
+	if (!firstFeature) return WARD_CODE_KEYS[0];
 
 	const props = firstFeature.properties;
-	for (let i = 0; i < possibleKeys.length; i++) {
-		if (possibleKeys[i] in props) return possibleKeys[i];
+	for (let i = 0; i < WARD_CODE_KEYS.length; i++) {
+		if (WARD_CODE_KEYS[i] in props) return WARD_CODE_KEYS[i];
 	}
-	return possibleKeys[0];
+	return WARD_CODE_KEYS[0];
 }
 
 // Seeded random number generator (extracted to avoid recreating in useMemo)

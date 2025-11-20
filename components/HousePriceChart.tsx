@@ -240,7 +240,7 @@ export default function HousePriceChart({
 
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">
-			<h3 className="text-xs font-bold text-gray-700 pt-2">House Price</h3>
+			<h3 className="text-xs font-bold pt-2">Economics</h3>
 			<PriceChart
 				key={dataset.year}
 				dataset={dataset}

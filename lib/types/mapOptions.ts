@@ -42,6 +42,9 @@ export interface MapOptions {
     'population-density': DensityOptions;
     'gender': GenderOptions;
     'house-price': HousePriceOptions;
+    general: {
+        theme: 'viridis' | 'plasma' | 'inferno' | 'magma';
+    }
 }
 
 // Default values
@@ -65,5 +68,8 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
     },
     'house-price': {
         colorRange: { min: 80000, max: 500000 }
+    },
+    'general': {
+        theme: 'viridis'
     }
 };

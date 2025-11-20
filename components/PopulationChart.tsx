@@ -30,7 +30,7 @@ export default function PopulationChart({
 }: PopulationChartProps) {
 	return (
 		<div className="pt-2.5 border-t border-gray-200/80">
-			<h3 className="text-xs font-bold text-gray-700 mb-2">Demographics</h3>
+			<h3 className="text-xs font-bold mb-2">Demographics</h3>
 			<div className="space-y-3">
 				<PopulationDensity
 					activeViz={activeViz}

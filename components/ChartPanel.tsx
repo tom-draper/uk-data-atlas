@@ -116,7 +116,7 @@ export default memo(function ChartPanel({
 
 				{/* Footer */}
 				<div className="text-[9px] px-2.5 pb-1.5 text-gray-400/80 bg-white/20 pt-2 mt-auto flex">
-					<div className="grow hover:underline cursor-pointer">
+					<div className="hover:underline cursor-pointer mr-auto">
 						UK Data Atlas v{version}
 					</div>
 					<div className="hover:underline cursor-pointer">

@@ -4,75 +4,52 @@ import type { MapManager } from '../utils/mapManager';
 import { MapOptions } from '../types/mapOptions';
 
 interface UseMapUpdatesParams {
-	geojson: any;
-	activeViz: ActiveViz
-	activeDataset: Dataset | null;
-	mapManager: MapManager | null;
-	mapOptions: MapOptions;
+    geojson: any;
+    activeViz: ActiveViz;
+    activeDataset: Dataset | null;
+    mapManager: MapManager | null;
+    mapOptions: MapOptions;
 }
 
 export function useMapUpdates({
-	geojson,
-	activeViz,
-	activeDataset,
-	mapManager,
-	mapOptions,
+    geojson,
+    activeViz,
+    activeDataset,
+    mapManager,
+    mapOptions,
 }: UseMapUpdatesParams) {
-	useEffect(() => {
-		if (!geojson || !activeDataset || !mapManager) return;
+    useEffect(() => {
+        if (!geojson || !activeDataset || !mapManager) return;
 
-		const updateStrategies = {
-			'population': () => {
-				const handlers = {
-					'age-distribution': () => 
-						mapManager.updateMapForAgeDistribution(
-							geojson, 
-							activeDataset, 
-							mapOptions['age-distribution']
-						),
-					'population-density': () => 
-						mapManager.updateMapForPopulationDensity(
-							geojson, 
-							activeDataset, 
-							mapOptions['population-density']
-						),
-					'gender': () => 
-						mapManager.updateMapForGender(
-							geojson, 
-							activeDataset, 
-							mapOptions['gender']
-						),
-				};
-				
-				const handlerKey = Object.keys(handlers).find(
-					key => activeViz.vizId.startsWith(key)
-				);
-				
-				if (handlerKey) {
-					handlers[handlerKey as keyof typeof handlers]();
-				}
-			},
-			'general-election': () => 
-				mapManager.updateMapForGeneralElection(
-					geojson, 
-					activeDataset, 
-					mapOptions[activeDataset.type]
-				),
-			'local-election': () => 
-				mapManager.updateMapForLocalElection(
-					geojson, 
-					activeDataset, 
-					mapOptions[activeDataset.type]
-				),
-			'house-price': () => 
-				mapManager.updateMapForHousePrices(
-					geojson, 
-					activeDataset, 
-					mapOptions[activeDataset.type]
-				),
-		};
+        const performUpdate = () => {
+            switch (activeDataset.type) {
+                case 'general-election':
+                    return mapManager.updateMapForGeneralElection(geojson, activeDataset, mapOptions);
+                
+                case 'local-election':
+                    return mapManager.updateMapForLocalElection(geojson, activeDataset, mapOptions);
+                
+                case 'house-price':
+                    return mapManager.updateMapForHousePrices(geojson, activeDataset, mapOptions);
 
-		const updateStrategy = updateStrategies[activeDataset.type as keyof typeof updateStrategies];
-		updateStrategy?.();
-	}, [geojson, activeDataset, activeViz, mapManager, mapOptions]);
+                case 'population':
+                    // Handle population sub-categories
+                    if (activeViz.vizId.startsWith('age-distribution')) {
+                        return mapManager.updateMapForAgeDistribution(geojson, activeDataset, mapOptions);
+                    }
+                    if (activeViz.vizId.startsWith('population-density')) {
+                        return mapManager.updateMapForPopulationDensity(geojson, activeDataset, mapOptions);
+                    }
+                    if (activeViz.vizId.startsWith('gender')) {
+                        return mapManager.updateMapForGender(geojson, activeDataset, mapOptions);
+                    }
+                    break;
+
+                default:
+                    console.warn(`No map update strategy found for dataset type: ${activeDataset.type}`);
+            }
+        };
+
+        performUpdate();
+    }, [geojson, activeDataset, activeViz, mapManager, mapOptions]);
 }

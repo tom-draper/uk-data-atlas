@@ -289,7 +289,7 @@ export default function GeneralElectionResultChart({
 
 	return (
 		<div className="space-y-2">
-			<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
+			<h3 className="text-xs font-bold pt-2">General Election Results</h3>
 			{yearData.map((data) => (
 				<ElectionYearCard
 					key={data.year}

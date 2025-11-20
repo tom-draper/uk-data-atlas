@@ -1,45 +1,54 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { themes } from '@/lib/utils/colorScale';
+import { MapOptions as MapOptionsType } from '@/lib/types/mapOptions';
 
-export default function MapOptions({ map, onThemeChange = () => {} }) {
+interface MapOptionsProps {
+    onZoomIn: () => void;
+    onZoomOut: () => void;
+	handleMapOptionsChange: (type: keyof MapOptionsType, options: Partial<MapOptionsType[typeof type]>) => void;
+}
+
+export default function MapOptions({ onZoomIn, onZoomOut, handleMapOptionsChange }: MapOptionsProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTheme, setSelectedTheme] = useState('viridis');
+    const containerRef = useRef<HTMLDivElement>(null);
 
-    const themes = [
-        { id: 'viridis', label: 'Viridis', gradient: 'linear-gradient(90deg, #440154, #31688e, #35b779, #fde724)' },
-        { id: 'plasma', label: 'Plasma', gradient: 'linear-gradient(90deg, #0d0887, #7e03a8, #cc4778, #f89540, #f0f921)' },
-        { id: 'inferno', label: 'Inferno', gradient: 'linear-gradient(90deg, #000004, #420a68, #932667, #fca236, #fcfdbf)' },
-        { id: 'magma', label: 'Magma', gradient: 'linear-gradient(90deg, #000004, #3b0f70, #8c2981, #fcfdbf)' },
-    ];
-
-    const handleZoomIn = () => {
-        if (map) map.zoomTo(map.getZoom() + 1);
-    };
-
-    const handleZoomOut = () => {
-        if (map) map.zoomTo(map.getZoom() - 1);
-    };
-
-    const handleThemeChange = (themeId) => {
+    const handleThemeChange = (themeId: string) => {
         setSelectedTheme(themeId);
         setIsOpen(false);
-        onThemeChange(themeId);
+        handleMapOptionsChange('general', { theme: themeId });
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }
+    }, [isOpen]);
 
     return (
         <div className="bg-[rgba(255,255,255,0.5)] text-sm rounded-md backdrop-blur-md shadow-lg border border-white/30">
             <div className="p-2.5 relative">
                 <h2 className="font-semibold mb-2">Map Options</h2>
                 <div className="flex items-end justify-between gap-2 min-h-26">
-                    <div className="absolute flex flex-col top-3 right-3 border border-white/20 rounded-sm overflow-hidden bg-white/10 backdrop-blur-md shadow-sm">
-                        <button 
-                            onClick={handleZoomIn}
+                    <div className="absolute flex flex-col top-2.5 right-2.5 border border-white/20 rounded-sm overflow-hidden bg-white/10 backdrop-blur-md shadow-sm">
+                        <button
+                            onClick={onZoomIn}
                             className="px-2 py-1 text-sm hover:bg-white/20 transition-all duration-200 text-gray-500 font-semibold leading-none border-b border-gray-200/30 cursor-pointer"
                         >
                             +
                         </button>
-                        <button 
-                            onClick={handleZoomOut}
+                        <button
+                            onClick={onZoomOut}
                             className="px-2 py-1 text-sm hover:bg-white/20 transition-all duration-200 text-gray-500 font-semibold leading-none cursor-pointer"
                         >
                             −
@@ -47,27 +56,27 @@ export default function MapOptions({ map, onThemeChange = () => {} }) {
                     </div>
 
                     <div className="relative">
-                        <button 
+                        <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="border border-white/20 rounded-sm px-2 py-1.5 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 font-medium cursor-pointer flex items-center gap-1.5"
+                            className="border border-white/20 rounded-sm px-2 py-1.5 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 cursor-pointer flex items-center gap-1.5"
                         >
-                            <div 
+                            <div
                                 className="w-3 h-3 rounded-sm"
                                 style={{ background: themes.find(t => t.id === selectedTheme)?.gradient }}
                             />
                             Theme
-                            <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                            <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
                         </button>
 
                         {isOpen && (
-                            <div className="absolute top-full mt-1 right-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-sm shadow-lg overflow-hidden z-10">
+                            <div ref={containerRef} className="absolute bottom-full mb-2 left-0 bg-[#f9f9fa]/90 backdrop-blur-xl border border-white/20 rounded-sm shadow-lg z-10">
                                 {themes.map((theme) => (
                                     <button
                                         key={theme.id}
                                         onClick={() => handleThemeChange(theme.id)}
-                                        className="w-full px-2.5 py-1.5 text-xs text-left hover:bg-white/20 transition-colors duration-150 border-b border-white/10 last:border-b-0 flex items-center gap-2"
+                                        className="w-full px-2.5 py-1.5 text-xs text-left hover:bg-white/20 transition-colors duration-150 border-b border-white/10 last:border-b-0 flex items-center gap-2 cursor-pointer"
                                     >
-                                        <div 
+                                        <div
                                             className="w-4 h-4 rounded-sm shrink-0"
                                             style={{ background: theme.gradient }}
                                         />
@@ -81,7 +90,7 @@ export default function MapOptions({ map, onThemeChange = () => {} }) {
                         )}
                     </div>
 
-                    <button className="border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 font-medium cursor-pointer">
+                    <button className="absolute right-2.5 bottom-2.5 border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 cursor-pointer">
                         Export
                     </button>
                 </div>

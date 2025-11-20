@@ -54,7 +54,8 @@ export class FeatureBuilder {
         geojson: BoundaryGeojson,
         dataset: PopulationDataset,
         wardCodeProp: string,
-        mapOptions: PopulationOptions
+        mapOptions: PopulationOptions,
+        themeId: string = 'viridis'
     ): BoundaryGeojson {
         return {
             type: 'FeatureCollection',
@@ -67,7 +68,7 @@ export class FeatureBuilder {
                 }
 
                 const medianAge = calculateMedianAge(wardPopulation);
-                const color = getColorForAge(medianAge, mapOptions);
+                const color = getColorForAge(medianAge, mapOptions, themeId);
 
                 return {
                     ...feature,
@@ -110,7 +111,8 @@ export class FeatureBuilder {
         geojson: BoundaryGeojson,
         dataset: PopulationDataset,
         wardCodeProp: string,
-        mapOptions: DensityOptions
+        mapOptions: DensityOptions,
+        themeId: string = 'viridis'
     ): BoundaryGeojson {
         return {
             type: 'FeatureCollection',
@@ -125,7 +127,7 @@ export class FeatureBuilder {
                 const total = calculateTotal(wardPopulation.males) + calculateTotal(wardPopulation.females);
                 const areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
                 const density = areaSqKm > 0 ? total / areaSqKm : 0;
-                const color = getColorForDensity(density, mapOptions);
+                const color = getColorForDensity(density, mapOptions, themeId);
 
                 return {
                     ...feature,
@@ -139,7 +141,8 @@ export class FeatureBuilder {
         geojson: BoundaryGeojson,
         dataset: HousePriceDataset,
         wardCodeProp: string,
-        mapOptions: HousePriceOptions
+        mapOptions: HousePriceOptions,
+        themeId: string = 'viridis'
     ): BoundaryGeojson {
         return {
             type: 'FeatureCollection',
@@ -151,7 +154,7 @@ export class FeatureBuilder {
                     return { ...feature, properties: { ...feature.properties, color: '#cccccc' } };
                 }
 
-                const color = getColorForHousePrice(ward.prices[2023], mapOptions);
+                const color = getColorForHousePrice(ward.prices[2023], mapOptions, themeId);
 
                 return {
                     ...feature,

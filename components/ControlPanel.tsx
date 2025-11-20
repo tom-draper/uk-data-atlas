@@ -4,14 +4,25 @@ import TitlePane from './TitlePane';
 import LocationPane from './LocationPanel';
 import MapOptions from './MapOptions';
 import { memo } from 'react';
+import { MapOptions as MapOptionsType } from '@/lib/types/mapOptions';
 
 interface ControlPanelProps {
     selectedLocation: string | null;
     onLocationClick: (location: string, bounds: LocationBounds) => void;
     population: PopulationDataset
+    onZoomIn: () => void;
+    onZoomOut: () => void;
+	handleMapOptionsChange: (type: keyof MapOptionsType, options: Partial<MapOptionsType[typeof type]>) => void;
 }
 
-export default memo(function ControlPanel({ selectedLocation, onLocationClick, population }: ControlPanelProps) {
+export default memo(function ControlPanel({ 
+    selectedLocation, 
+    onLocationClick, 
+    population, 
+    onZoomIn, 
+    onZoomOut,
+    handleMapOptionsChange
+}: ControlPanelProps) {
     return (
         <div className="flex flex-col h-full max-h-screen">
             {/* Title */}
@@ -26,7 +37,7 @@ export default memo(function ControlPanel({ selectedLocation, onLocationClick, p
 
             {/* Map Options */}
             <div className="pointer-events-auto p-2.5 w-[320px] shrink-0">
-                <MapOptions />
+                <MapOptions onZoomIn={onZoomIn} onZoomOut={onZoomOut} handleMapOptionsChange={handleMapOptionsChange} />
             </div>
         </div>
     );

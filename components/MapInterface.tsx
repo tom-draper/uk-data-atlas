@@ -94,6 +94,18 @@ export default function MapInterface({
 		});
 	}, [map, mapManager, setSelectedLocation]);
 
+	const handleZoomIn = useCallback(() => {
+		if (map.current) {
+			map.current.zoomTo(map.current.getZoom() + 1);
+		}
+	}, []);
+
+	const handleZoomOut = useCallback(() => {
+		if (map.current) {
+			map.current.zoomTo(map.current.getZoom() - 1);
+		}
+	}, []);
+
 	const aggregatedData = useAggregatedData({
 		mapManager,
 		boundaryData,
@@ -112,11 +124,14 @@ export default function MapInterface({
 				mapOptions={mapOptions}
 				onMapOptionsChange={handleMapOptionsChange}
 				onLocationClick={handleLocationClick}
+				onZoomIn={handleZoomIn}
+				onZoomOut={handleZoomOut}
 				activeDataset={activeDataset}
 				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 				aggregatedData={aggregatedData}
 				datasets={datasets}
+				handleMapOptionsChange={handleMapOptionsChange}
 			/>
 			<MapView
 				activeDataset={activeDataset}

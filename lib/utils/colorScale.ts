@@ -10,7 +10,28 @@ export function normalizeValue(value: number, min: number, max: number) {
 }
 
 /**
+ * Converts hex color to RGB object
+ */
+export function hexToRgb(hex: string) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : { r: 0, g: 0, b: 0 };
+}
+
+/**
+ * Helper to convert hex to "rgb(r, g, b)" string for the interpolator
+ */
+function hexToRgbString(hex: string) {
+    const { r, g, b } = hexToRgb(hex);
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+/**
  * Interpolates between two colors based on a normalized value (0-1)
+ * Expects strings in format "rgb(r, g, b)"
  */
 export function interpolateColor(color1: string, color2: string, factor: number) {
     // Parse RGB colors
@@ -24,51 +45,92 @@ export function interpolateColor(color1: string, color2: string, factor: number)
     return `rgb(${r}, ${g}, ${b})`;
 }
 
-/**
- * Gets color from viridis-like gradient (yellow -> green -> teal -> blue -> purple)
- */
-export function getViridisColor(normalizedValue: number) {
-    const colors = [
-        'rgb(68,1,84)',      // 0.0 - dark purple
-        'rgb(59,82,139)',    // 0.25 - blue
-        'rgb(33,145,140)',   // 0.5 - teal
-        'rgb(94,201,98)',    // 0.75 - green
-        'rgb(253,231,37)'    // 1.0 - yellow
-    ];
+// Define themes with specific color steps
+const themeDefinitions = [
+    { 
+        id: 'viridis', 
+        label: 'Viridis', 
+        colors: ['#440154', '#31688e', '#35b779', '#fde724'] 
+    },
+    { 
+        id: 'plasma', 
+        label: 'Plasma', 
+        colors: ['#0d0887', '#7e03a8', '#cc4778', '#f89540', '#f0f921'] 
+    },
+    { 
+        id: 'inferno', 
+        label: 'Inferno', 
+        colors: ['#000004', '#420a68', '#932667', '#fca236', '#fcfdbf'] 
+    },
+    { 
+        id: 'magma', 
+        label: 'Magma', 
+        colors: ['#000004', '#3b0f70', '#8c2981', '#fcfdbf'] 
+    },
+];
 
+// Export themes with the generated gradient string for UI use
+export const themes = themeDefinitions.map(t => ({
+    ...t,
+    gradient: `linear-gradient(90deg, ${t.colors.join(', ')})`
+}));
+
+/**
+ * Gets color from a specific theme based on a normalized value (0-1)
+ */
+export function getThemeColor(normalizedValue: number, themeId: string = 'viridis') {
+    // Find theme or fallback to viridis
+    const theme = themes.find(t => t.id === themeId) || themes[0];
+    const colors = theme.colors;
+
+    // Calculate position in the color array
     const index = normalizedValue * (colors.length - 1);
     const lower = Math.floor(index);
     const upper = Math.ceil(index);
     const factor = index - lower;
 
-    if (lower === upper) return colors[lower];
-    return interpolateColor(colors[lower], colors[upper], factor);
+    if (lower === upper) return hexToRgbString(colors[lower]);
+    
+    return interpolateColor(
+        hexToRgbString(colors[lower]), 
+        hexToRgbString(colors[upper]), 
+        factor
+    );
 }
 
 /**
  * Gets color for population/age data with dynamic range
  */
-export function getColorForAge(medianAge: number, mapOptions: PopulationOptions) {
+export function getColorForAge(medianAge: number, mapOptions: PopulationOptions, themeId: string = 'viridis') {
     const range = mapOptions.colorRange || { min: 25, max: 55 };
     const normalized = normalizeValue(medianAge, range.min, range.max);
-    return getViridisColor(1 - normalized); // Invert so higher ages are darker
+    return getThemeColor(1 - normalized, themeId); // Invert so higher ages are darker (if using Viridis logic)
 }
 
 /**
  * Gets color for density data with dynamic range
  */
-export function getColorForDensity(density: number, mapOptions: DensityOptions) {
+export function getColorForDensity(density: number, mapOptions: DensityOptions, themeId: string = 'viridis') {
     const range = mapOptions.colorRange || { min: 500, max: 10000 };
     const normalized = normalizeValue(density, range.min, range.max);
-    return getViridisColor(1 - normalized); // Invert so higher density is darker
+    return getThemeColor(1 - normalized, themeId); // Invert so higher density is darker
+}
+
+/**
+ * Gets color for house price data with dynamic range
+ */
+export function getColorForHousePrice(price: number, options: HousePriceOptions, themeId: string = 'viridis') {
+    const range = options.colorRange || { min: 80000, max: 500000 };
+    const normalized = normalizeValue(price, Math.min(range.min, price), Math.max(range.max, price));
+    return getThemeColor(1 - normalized, themeId);
 }
 
 /**
  * Gets color for gender ratio data with dynamic range
+ * Note: This keeps custom logic (Pink/Blue) and does not use the generic themes
  */
 export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions) {
     const range = mapOptions.colorRange || { min: -0.1, max: 0.1 };
-    // const normalized = normalizeValue(ratio, range.min, range.max);
 
     // Pink for female-skewed, blue for male-skewed, gray for balanced
     if (ratio < 0) {
@@ -80,18 +142,6 @@ export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions)
         const factor = normalizeValue(ratio, 0, range.max);
         return interpolateColor('rgba(240,240,240,0.8)', 'rgba(70,130,180,0.8)', factor);
     }
-}
-
-/**
- * Converts hex color to RGB object
- */
-export function hexToRgb(hex: string) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : { r: 0, g: 0, b: 0 };
 }
 
 /**
@@ -118,13 +168,4 @@ export function getPartyPercentageColorExpression(
             range.max, `rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`
         ]
     ];
-}
-
-export function getColorForHousePrice(
-    price: number,
-    options: HousePriceOptions
-) {
-    const range = options.colorRange || { min: 80000, max: 500000 };
-    const normalized = normalizeValue(price, Math.min(range.min, price), Math.max(range.max, price));
-    return getViridisColor(1 - normalized);
 }
