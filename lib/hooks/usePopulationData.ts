@@ -38,13 +38,11 @@ export const usePopulationData = () => {
 
 				// Load 2021 and 2022 data (combined files)
 				console.log('Loading population 2021 and 2022 data...')
-				const [data2021Response, data2022Response] = await Promise.all([
-					fetch('/data/population/Mid-2021 Ward 2023.csv'),
+				const [data2022Response] = await Promise.all([
 					fetch('/data/population/Mid-2022 Ward 2023.csv'),
 				]);
 
-				const [data2021Text, data2022Text] = await Promise.all([
-					data2021Response.text(),
+				const [data2022Text] = await Promise.all([
 					data2022Response.text(),
 				]);
 
@@ -253,24 +251,24 @@ export const usePopulationData = () => {
 				// });
 
 				// Parse 2021 data
-				const parsed2021 = parsePopulationDataCombined(data2021Text);
-				const combinedData2021: PopulationDataset['populationData'] = {};
-				const allWardCodes2021 = new Set([
-					...Object.keys(parsed2021.femalesData),
-					...Object.keys(parsed2021.malesData),
-					...Object.keys(parsed2021.totalData),
-				]);
+				// const parsed2021 = parsePopulationDataCombined(data2021Text);
+				// const combinedData2021: PopulationDataset['populationData'] = {};
+				// const allWardCodes2021 = new Set([
+				// 	...Object.keys(parsed2021.femalesData),
+				// 	...Object.keys(parsed2021.malesData),
+				// 	...Object.keys(parsed2021.totalData),
+				// ]);
 
-				allWardCodes2021.forEach((wardCode) => {
-					combinedData2021[wardCode] = {
-						total: parsed2021.totalData[wardCode]?.ageData || {},
-						males: parsed2021.malesData[wardCode]?.ageData || {},
-						females: parsed2021.femalesData[wardCode]?.ageData || {},
-						wardName: parsed2021.totalData[wardCode]?.wardName || '',
-						laCode: parsed2021.totalData[wardCode]?.laCode || '',
-						laName: parsed2021.totalData[wardCode]?.laName || '',
-					};
-				});
+				// allWardCodes2021.forEach((wardCode) => {
+				// 	combinedData2021[wardCode] = {
+				// 		total: parsed2021.totalData[wardCode]?.ageData || {},
+				// 		males: parsed2021.malesData[wardCode]?.ageData || {},
+				// 		females: parsed2021.femalesData[wardCode]?.ageData || {},
+				// 		wardName: parsed2021.totalData[wardCode]?.wardName || '',
+				// 		laCode: parsed2021.totalData[wardCode]?.laCode || '',
+				// 		laName: parsed2021.totalData[wardCode]?.laName || '',
+				// 	};
+				// });
 
 				// Parse 2022 data
 				const parsed2022 = parsePopulationDataCombined(data2022Text);
@@ -303,14 +301,14 @@ export const usePopulationData = () => {
 				// 	populationData: combinedData2020,
 				// };
 
-				const population2021: PopulationDataset = {
-					id: 'population-2021',
-					type: 'population',
-					year: 2021,
-					wardYear: 2023,
-					boundaryType: 'ward',
-					populationData: combinedData2021,
-				};
+				// const population2021: PopulationDataset = {
+				// 	id: 'population-2021',
+				// 	type: 'population',
+				// 	year: 2021,
+				// 	wardYear: 2023,
+				// 	boundaryType: 'ward',
+				// 	populationData: combinedData2021,
+				// };
 
 				const population2022: PopulationDataset = {
 					id: 'population-2022',
@@ -322,7 +320,7 @@ export const usePopulationData = () => {
 				};
 
 				const loadedDatasets: Record<number, PopulationDataset> = {
-					2021: population2021,
+					// 2021: population2021,
 					2022: population2022,
 				};
 

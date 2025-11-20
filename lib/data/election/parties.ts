@@ -13,7 +13,12 @@ export const PARTY_INFO: Party[] = [
     { key: 'DUP', name: 'Democratic Unionist Party' },
     { key: 'SDLP', name: 'Social Democratic & Labour Party' },
     { key: 'APNI', name: 'Alliance Party' },
-    { key: 'IND', name: 'Independent' }
+    { key: 'IND', name: 'Independent' },
+    { key: 'BRX', name: 'Brexit Party' },
+    { key: 'UKIP', name: 'UKIP' },
+    { key: 'RUK', name: 'Reform' },
+    { key: 'UUP', name: 'UUP' },
+    { key: 'OTHER', name: 'Other' }
 ];
 
 export const PARTIES = {

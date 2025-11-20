@@ -50,6 +50,7 @@ export default function UIOverlay({
 			<div className="absolute right-0 flex h-full">
 				<LegendPanel
 					activeDataset={activeDataset}
+					activeViz={activeViz}
 					aggregatedData={aggregatedData}
 					mapOptions={mapOptions}
 					onMapOptionsChange={onMapOptionsChange}

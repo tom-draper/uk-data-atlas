@@ -3,10 +3,11 @@
 import { PARTIES } from '@/lib/data/election/parties';
 import { memo, useMemo, useState, useRef, useEffect } from 'react';
 import type { MapOptions } from '@lib/types/mapOptions';
-import { AggregatedData, Dataset } from '@/lib/types';
+import { ActiveViz, AggregatedData, Dataset } from '@/lib/types';
 
 interface LegendPanelProps {
     activeDataset: Dataset | null;
+    activeViz: ActiveViz;
     aggregatedData: AggregatedData;
     mapOptions: MapOptions;
     onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
@@ -112,6 +113,7 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
 
 export default memo(function LegendPanel({
     activeDataset,
+    activeViz,
     aggregatedData,
     mapOptions,
     onMapOptionsChange
@@ -123,8 +125,10 @@ export default memo(function LegendPanel({
     const displayOptions = liveOptions || mapOptions;
 
     const parties = useMemo(() => {
-        if (!aggregatedData || !aggregatedData.partyVotes) return [];
-        return Object.entries(aggregatedData.partyVotes)
+        if (!activeDataset || aggregatedData[activeDataset.type] === null) return [];
+        const partyVotes = aggregatedData[activeDataset.type][activeDataset.year].partyVotes;
+        if (!partyVotes) return [];
+        return Object.entries(partyVotes)
             .filter(([_, votes]) => votes > 0)
             .sort((a, b) => b[1] - a[1])
             .map(([id]) => ({
@@ -132,7 +136,7 @@ export default memo(function LegendPanel({
                 color: PARTIES[id].color,
                 name: PARTIES[id].name,
             }));
-    }, [aggregatedData])
+    }, [aggregatedData, activeDataset])
 
     const handlePartyClick = (partyCode: string) => {
         const electionType = activeDataset?.type as 'general-election' | 'local-election';
@@ -362,7 +366,7 @@ export default memo(function LegendPanel({
                                     ...(isSelected ? { '--tw-ring-color': party.color } as React.CSSProperties : {})
                                 }}
                             />
-                            <span className={`text-xs ${isSelected ? 'text-gray-700 font-medium' : 'text-gray-500'
+                            <span className={`text-xs ${isSelected ? 'text-gray-700' : 'text-gray-500'
                                 }`}>
                                 {party.name}
                             </span>
@@ -374,7 +378,7 @@ export default memo(function LegendPanel({
     }
 
     const renderLegendContent = () => {
-        switch (activeDataset?.id) {
+        switch (activeViz.vizId) {
             case 'age-distribution-2020':
             case 'age-distribution-2021':
             case 'age-distribution-2022':

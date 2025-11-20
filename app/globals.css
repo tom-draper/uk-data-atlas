@@ -25,6 +25,7 @@ body {
   background: var(--background);
   color: rgba(23, 23, 23, 0.8);
   font-family: Arial, Helvetica, sans-serif;
+  font-family: ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 }
 
 .mapboxgl-popup-content {

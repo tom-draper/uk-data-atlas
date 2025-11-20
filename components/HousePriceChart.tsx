@@ -229,14 +229,14 @@ export default function HousePriceChart({
 
 	if (!availableDatasets) return null;
 
-	const datasetId = `house-price-2023`;
-	const dataset = availableDatasets[datasetId];
+	const vizId = `house-price-2023`;
+	const dataset = availableDatasets[2023];
 
 	if (!dataset) {
 		return null;
 	}
 
-	const isActive = activeDataset?.id === datasetId;
+	const isActive = activeDataset?.id === vizId;
 
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">
