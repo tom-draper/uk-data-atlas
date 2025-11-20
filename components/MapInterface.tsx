@@ -117,10 +117,10 @@ export default function MapInterface({
 				setActiveViz={setActiveViz}
 				aggregatedData={aggregatedData}
 				datasets={datasets}
-				location={selectedLocation}
 			/>
 			<MapView
 				activeDataset={activeDataset}
+				activeViz={activeViz}
 				geojson={geojson}
 				mapManager={mapManager}
 				mapOptions={mapOptions}

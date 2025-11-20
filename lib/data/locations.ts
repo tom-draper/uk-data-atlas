@@ -758,7 +758,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
     // Oxfordshire
     'Oxfordshire': {
         lad_codes: [
-            'E07000175', 'E07000176', 'E07000177', 'E07000178', 'E07000179'
+            'E07000177', 'E07000178', 'E07000179'
         ],
         bounds: [-1.8, 51.5, -0.9, 52.2]
     },

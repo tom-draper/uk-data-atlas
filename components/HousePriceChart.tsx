@@ -51,7 +51,7 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 				housePriceLookupCache.set(cacheKey, new Map());
 			}
 			const yearCache = housePriceLookupCache.get(cacheKey)!;
-			
+
 			if (yearCache.has(dataset.year)) {
 				const cached = yearCache.get(dataset.year);
 				prices = cached?.prices || {};
@@ -59,7 +59,7 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 			} else {
 				// Try direct lookup first
 				let data = dataset.wardData?.[wardCode];
-				
+
 				// Fallback to conversion if needed
 				if (!data) {
 					const convertedCode = codeMapper.convertWardCode(wardCode, dataset.wardYear);
@@ -228,10 +228,10 @@ export default function HousePriceChart({
 	}
 
 	if (!availableDatasets) return null;
-	
+
 	const datasetId = `house-price-2023`;
 	const dataset = availableDatasets[datasetId];
-	
+
 	if (!dataset) {
 		return null;
 	}

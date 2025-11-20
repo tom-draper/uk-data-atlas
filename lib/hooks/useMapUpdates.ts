@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { Dataset } from '@lib/types';
+import { ActiveViz, Dataset } from '@lib/types';
 import type { MapManager } from '../utils/mapManager';
 import { MapOptions } from '../types/mapOptions';
 
 interface UseMapUpdatesParams {
 	geojson: any;
+	activeViz: ActiveViz
 	activeDataset: Dataset | null;
 	mapManager: MapManager | null;
 	mapOptions: MapOptions;
@@ -12,6 +13,7 @@ interface UseMapUpdatesParams {
 
 export function useMapUpdates({
 	geojson,
+	activeViz,
 	activeDataset,
 	mapManager,
 	mapOptions,
@@ -43,7 +45,7 @@ export function useMapUpdates({
 				};
 				
 				const handlerKey = Object.keys(handlers).find(
-					key => activeDataset.id.startsWith(key)
+					key => activeViz.vizId.startsWith(key)
 				);
 				
 				if (handlerKey) {
@@ -72,5 +74,5 @@ export function useMapUpdates({
 
 		const updateStrategy = updateStrategies[activeDataset.type as keyof typeof updateStrategies];
 		updateStrategy?.();
-	}, [geojson, activeDataset, mapManager, mapOptions]);
+	}, [geojson, activeDataset, activeViz, mapManager, mapOptions]);
 }
