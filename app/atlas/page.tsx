@@ -14,7 +14,7 @@ export default function MapsPage() {
     const [activeViz, setActiveViz] = useState<ActiveViz>({ 
         vizId: 'local-election-2024', 
         datasetType: 'local-election',
-        datasetId: 'local-election-2024' 
+        datasetYear: 2024 
     });
     const [selectedLocation, setSelectedLocation] = useState('Greater Manchester');
 

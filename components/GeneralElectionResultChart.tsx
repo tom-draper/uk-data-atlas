@@ -177,7 +177,7 @@ const YearBar = React.memo(({
 				: 'bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300'
 				}`}
 			style={{ height }}
-			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetId: dataset.id })}
+			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">
@@ -233,7 +233,7 @@ export default function GeneralElectionResultChart({
 }: GeneralElectionResultChartProps) {
 	// Optimize constituency data lookup with caching
 	const getConstituencyData = useCallback((year: ConstituencyYear, constituencyCode: string) => {
-		const dataset = availableDatasets[`general-election-${year}`];
+		const dataset = availableDatasets[year];
 		if (!dataset?.constituencyData) return null;
 
 		// Check cache first
@@ -283,7 +283,7 @@ export default function GeneralElectionResultChart({
 		const isAggregatedMode = !wardCode && !constituencyCode;
 
 		for (const year of ELECTION_YEARS) {
-			const dataset = availableDatasets[`general-election-${year}`];
+			const dataset = availableDatasets[year];
 
 			if (!dataset) {
 				map[year] = nullResult;
@@ -330,7 +330,7 @@ export default function GeneralElectionResultChart({
 			<h3 className="text-xs font-bold text-gray-700 pt-2">General Election Results</h3>
 			{ELECTION_YEARS.map(year => {
 				const datasetId = `general-election-${year}`
-				const dataset = availableDatasets[datasetId];
+				const dataset = availableDatasets[year];
 				if (!dataset) {
 					return null;
 				}

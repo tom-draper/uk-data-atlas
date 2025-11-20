@@ -59,7 +59,7 @@ export default function MapInterface({
 	});
 
 	const activeDataset = useMemo(() => {
-		return datasets[activeViz.datasetType][activeViz.datasetId]
+		return datasets[activeViz.datasetType][activeViz.datasetYear]
 	}, [datasets, activeViz]);
 
 	// Get geojson for active dataset

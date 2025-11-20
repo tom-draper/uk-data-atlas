@@ -35,7 +35,7 @@ export default function PopulationChart({
 				<PopulationDensity
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
-					dataset={availableDatasets['population-2022']}
+					dataset={availableDatasets[2022]}
 					aggregatedData={aggregatedData}
 					boundaryData={boundaryData}
 					wardCode={wardCode}
@@ -45,7 +45,7 @@ export default function PopulationChart({
 				<AgeChart
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
-					dataset={availableDatasets['population-2022']}
+					dataset={availableDatasets[2022]}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					constituencyCode={constituencyCode}
@@ -54,7 +54,7 @@ export default function PopulationChart({
 				<Gender
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
-					dataset={availableDatasets['population-2022']}
+					dataset={availableDatasets[2022]}
 					aggregatedData={aggregatedData}
 					wardCode={wardCode}
 					constituencyCode={constituencyCode}

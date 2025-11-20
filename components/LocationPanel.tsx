@@ -195,7 +195,7 @@ export default memo(function LocationPanel({ selectedLocation, onLocationClick, 
     };
 
     return (
-        <div className="bg-[rgba(255,255,255,0.5)] rounded-lg backdrop-blur-xl shadow-xl border border-white/30 flex flex-col h-full">
+        <div className="bg-[rgba(255,255,255,0.5)] rounded-md backdrop-blur-md shadow-lg border border-white/30 flex flex-col h-full">
             <div className="shrink-0 bg-white/20 flex items-center overflow-hidden">
                 <h2 className="px-2.5 pb-2 pt-2.5 text-sm font-semibold grow">
                     Locations

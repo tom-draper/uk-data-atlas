@@ -143,10 +143,10 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 				? `${colors.bg} border-2 ${colors.border}`
 				: 'bg-white/60 border-2 border-gray-200/80 hover:border-blue-300'
 				}`}
-			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetId: dataset.id })}
+			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">{dataset.name}</h3>
+				<h3 className="text-xs font-bold">House Price ({dataset.year})</h3>
 			</div>
 
 			{/* Line chart background with gradient */}

@@ -123,10 +123,10 @@ const YearBar = React.memo(({ year, data, dataset, turnout, isActive, setActiveV
 				: 'bg-white/60 border-2 border-gray-200/80 hover:border-blue-300'
 				}`}
 			style={{ height }}
-			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetId: dataset.id })}
+			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">{dataset.name}</h3>
+				<h3 className="text-xs font-bold">Local Elections ({dataset.year})</h3>
 				{turnout && (
 					<span className="text-[9px] text-gray-500 font-medium">
 						{turnout.toFixed(1)}% turnout
@@ -175,7 +175,7 @@ export default function LocalElectionResultChart({
 }: LocalElectionResultChartProps) {
 	// Optimize ward data lookup with caching
 	const getWardData = useCallback((year: WardYear, wardCode: string) => {
-		const dataset = availableDatasets[`local-election-${year}`];
+		const dataset = availableDatasets[year];
 		if (!dataset?.wardData) return null;
 
 		// Check cache first
@@ -224,7 +224,7 @@ export default function LocalElectionResultChart({
 		const isAggregatedMode = !wardCode && !constituencyCode;
 
 		for (const year of ELECTION_YEARS) {
-			const dataset = availableDatasets[`local-election-${year}`];
+			const dataset = availableDatasets[year];
 
 			if (!dataset) {
 				map[year] = nullResult;
@@ -272,7 +272,7 @@ export default function LocalElectionResultChart({
 
 			{ELECTION_YEARS.map(year => {
 				const datasetId = `local-election-${year}`
-				const dataset = availableDatasets[datasetId];
+				const dataset = availableDatasets[year];
 				if (!dataset) {
 					return null;
 				}

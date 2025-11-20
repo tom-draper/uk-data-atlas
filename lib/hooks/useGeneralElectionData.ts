@@ -23,11 +23,11 @@ export const useGeneralElectionData = () => {
 
                 const results = await Promise.all(dataPromises);
                 
-                const loadedDatasets: Record<string, GeneralElectionDataset> = {};
+                const loadedDatasets: Record<number, GeneralElectionDataset> = {};
                 
                 results.forEach(dataset => {
                     if (dataset) {
-                        loadedDatasets[dataset.id] = dataset;
+                        loadedDatasets[dataset.year] = dataset;
                     }
                 });
 

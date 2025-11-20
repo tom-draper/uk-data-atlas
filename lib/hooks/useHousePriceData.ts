@@ -80,9 +80,8 @@ export const useHousePriceData = () => {
                 const wardData = await parseHousePriceData();
 
                 const loadedDatasets: Record<string, HousePriceDataset> = {
-                    'house-price-2023': {
+                    2023: {
                         id: 'house-price-2023',
-                        name: 'House Prices 2023',
                         type: 'house-price',
                         year: 2023,
                         wardYear: 2021,

@@ -66,14 +66,13 @@ export type Datasets = {
 export type ActiveViz = {
     vizId: string;
     datasetType: keyof Datasets;
-    datasetId: string;
+    datasetYear: number;
 }
 
 export type Dataset = GeneralElectionDataset | PopulationDataset | LocalElectionDataset | HousePriceDataset;
 
 export interface PopulationDataset {
     id: string;
-    name: string;
     type: 'population';
     year: number;
     wardYear: WardYear;
@@ -83,7 +82,6 @@ export interface PopulationDataset {
 
 export interface LocalElectionDataset {
     id: string;
-    name: string;
     type: 'local-election';
     year: number;
     wardYear: WardYear;
@@ -115,7 +113,6 @@ export interface ConstituencyData {
 
 export interface GeneralElectionDataset {
     id: string;
-    name: string;
     type: 'general-election';
     year: number;
     constituencyYear: ConstituencyYear;
@@ -135,7 +132,6 @@ export interface WardHousePriceData {
 
 export interface HousePriceDataset {
     id: string;
-    name: string;
     type: 'house-price';
     year: number;
     wardYear: WardYear;

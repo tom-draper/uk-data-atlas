@@ -35,7 +35,7 @@ function PopulationDensity({
 				? 'bg-emerald-50/60 border-2 border-emerald-300'
 				: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
 				}`}
-			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetId: dataset.id })}
+			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">Population Density ({dataset.year})</h3>

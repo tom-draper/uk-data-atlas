@@ -31,10 +31,10 @@ export const useLocalElectionData = () => {
                 }
 
                 // Combine and cache
-                const finalMap: Record<string, LocalElectionDataset> = {};
+                const finalMap: Record<number, LocalElectionDataset> = {};
 
-                refs.forEach(d => finalMap[`local-election-${d.year}`] = d);
-                if (data2023) finalMap[`local-election-${data2023.year}`] = data2023;
+                refs.forEach(d => finalMap[d.year] = d);
+                if (data2023) finalMap[data2023.year] = data2023;
 
                 setDatasets(finalMap);
 

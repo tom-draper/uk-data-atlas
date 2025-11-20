@@ -305,7 +305,6 @@ export const usePopulationData = () => {
 
 				const population2021: PopulationDataset = {
 					id: 'population-2021',
-					name: 'Population 2021',
 					type: 'population',
 					year: 2021,
 					wardYear: 2023,
@@ -315,7 +314,6 @@ export const usePopulationData = () => {
 
 				const population2022: PopulationDataset = {
 					id: 'population-2022',
-					name: 'Population 2022',
 					type: 'population',
 					year: 2022,
 					wardYear: 2023,
@@ -323,9 +321,9 @@ export const usePopulationData = () => {
 					populationData: combinedData2022,
 				};
 
-				const loadedDatasets: Record<string, PopulationDataset> = {
-					'population-2021': population2021,
-					'population-2022': population2022,
+				const loadedDatasets: Record<number, PopulationDataset> = {
+					2021: population2021,
+					2022: population2022,
 				};
 
 				console.log('Storing population datasets:', loadedDatasets);
