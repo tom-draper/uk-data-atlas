@@ -78,8 +78,8 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
     const minPosition = ((max - currentMin) / (max - min)) * 100;
 
     return (
-        <div className="p-1 relative select-none">
-            <div ref={containerRef} className="h-40 w-6 rounded relative" style={{ background: gradient }}>
+        <div className="p-2.5 relative select-none">
+            <div ref={containerRef} className="h-40 w-6 rounded-md relative" style={{ background: gradient }}>
                 {/* Max handle */}
                 <div
                     className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
@@ -104,7 +104,7 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
             </div>
 
             {/* Labels */}
-            <div className="flex flex-col justify-between h-40 text-[10px] text-gray-500 font-medium -mt-40 ml-8 pointer-events-none">
+            <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8 pointer-events-none">
                 {labels.map((label, i) => (
                     <span key={i} className="whitespace-nowrap drop-shadow-sm">{label}</span>
                 ))}
@@ -112,8 +112,6 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
         </div>
     );
 }
-
-// --- Main Component ---
 
 export default memo(function LegendPanel({
     activeDataset,
@@ -133,7 +131,7 @@ export default memo(function LegendPanel({
     
     // Construct a vertical gradient based on the active theme's colors
     const verticalThemeGradient = useMemo(() => 
-        `linear-gradient(to top, ${activeTheme.colors.join(', ')})`, 
+        `linear-gradient(to bottom, ${activeTheme.colors.join(', ')})`, 
     [activeTheme]);
 
     // 3. Resolve Election Parties
@@ -258,22 +256,22 @@ export default memo(function LegendPanel({
         const options = displayOptions[type];
 
         return (
-            <div className="flex flex-col gap-0.5 max-h-[60vh] overflow-y-auto">
+            <div className="flex flex-col max-h-[60vh] gap-1 overflow-y-auto py-1 px-1">
                 {parties.map((party) => {
                     const isSelected = options?.mode === 'party-percentage' && options.selectedParty === party.id;
                     return (
                         <button
                             key={party.id}
                             onClick={() => handlePartyClick(party.id)}
-                            className={`flex items-center gap-2 px-2 py-1 w-full text-left rounded-sm transition-all cursor-pointer ${
+                            className={`flex items-center gap-2 px-1.5 py-0.5 w-full text-left rounded-xs transition-all cursor-pointer ${
                                 isSelected ? 'bg-gray-100 ring-1 ring-gray-300' : 'hover:bg-gray-50'
                             }`}
                         >
                             <div
-                                className="w-3 h-3 rounded-sm shrink-0"
+                                className="w-3 h-3 rounded-xs shrink-0"
                                 style={{ backgroundColor: party.color }}
                             />
-                            <span className={`text-xs ${isSelected ? 'font-semibold text-gray-800' : 'text-gray-600'}`}>
+                            <span className={`text-xs ${isSelected ? 'text-gray-800' : 'text-gray-600'}`}>
                                 {party.name}
                             </span>
                         </button>
@@ -282,8 +280,6 @@ export default memo(function LegendPanel({
             </div>
         );
     };
-
-    // --- Main Render Switch ---
 
     const renderLegendContent = () => {
         if (!activeDataset) return null;
@@ -331,7 +327,7 @@ export default memo(function LegendPanel({
             {['general-election', 'local-election'].includes(activeDataset?.type || '') && 
              displayOptions[activeDataset!.type as 'general-election' | 'local-election']?.mode === 'party-percentage' && (
                 <div className="bg-white/80 pointer-events-auto rounded-lg backdrop-blur-md shadow-xl border border-white/40 w-fit ml-auto">
-                     <div className="p-2 overflow-hidden">
+                     <div className="overflow-hidden">
                         <RangeControl
                             min={0}
                             max={100}
