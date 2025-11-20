@@ -3,7 +3,7 @@
 
 import { memo, useMemo, useState, useRef, useEffect } from 'react';
 import { PARTIES } from '@/lib/data/election/parties';
-import { themes } from '@/lib/utils/colorScale'; // Import themes
+import { themes } from '@/lib/utils/colorScale';
 import type { MapOptions } from '@/lib/types/mapOptions';
 import { ActiveViz, AggregatedData, Dataset } from '@/lib/types';
 
@@ -15,7 +15,6 @@ interface LegendPanelProps {
     onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
 }
 
-// --- Helper: Range Control Component ---
 interface RangeControlProps {
     min: number;
     max: number;
@@ -37,21 +36,16 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
         const rect = containerRef.current.getBoundingClientRect();
         const relativeY = clientY - rect.top;
         const percentage = Math.max(0, Math.min(1, relativeY / rect.height));
-        // Flip percentage because DOM Y coordinates go down, but graph Y goes up
         return max - (percentage * (max - min));
     };
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
             if (isDraggingMin) {
-                // Ensure min doesn't cross max (with 5% buffer)
                 const newMin = Math.min(getValueFromPosition(e.clientY), currentMax - (max - min) * 0.05);
-                // Ensure min doesn't go below absolute min
                 onRangeInput(Math.max(newMin, min), currentMax);
             } else if (isDraggingMax) {
-                // Ensure max doesn't cross min
                 const newMax = Math.max(getValueFromPosition(e.clientY), currentMin + (max - min) * 0.05);
-                // Ensure max doesn't go above absolute max
                 onRangeInput(currentMin, Math.min(newMax, max));
             }
         };
@@ -78,9 +72,9 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
     const minPosition = ((max - currentMin) / (max - min)) * 100;
 
     return (
-        <div className="p-2.5 relative select-none">
-            <div ref={containerRef} className="h-40 w-6 rounded-md relative" style={{ background: gradient }}>
-                {/* Max handle */}
+        <div className="p-1 relative select-none">
+            <div ref={containerRef} className="h-40 w-6 rounded relative" style={{ background: gradient }}>
+                {/* Max handle (top) */}
                 <div
                     className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
                     style={{ top: `${maxPosition}%`, transform: 'translateY(-50%)' }}
@@ -91,7 +85,7 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
                     </div>
                 </div>
 
-                {/* Min handle */}
+                {/* Min handle (bottom) */}
                 <div
                     className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
                     style={{ top: `${minPosition}%`, transform: 'translateY(-50%)' }}
@@ -103,10 +97,10 @@ function RangeControl({ min, max, currentMin, currentMax, gradient, labels, onRa
                 </div>
             </div>
 
-            {/* Labels */}
+            {/* Labels - Restored original styling */}
             <div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8 pointer-events-none">
                 {labels.map((label, i) => (
-                    <span key={i} className="whitespace-nowrap drop-shadow-sm">{label}</span>
+                    <span key={i}>{label}</span>
                 ))}
             </div>
         </div>
@@ -122,24 +116,22 @@ export default memo(function LegendPanel({
 }: LegendPanelProps) {
     const [liveOptions, setLiveOptions] = useState<MapOptions | null>(null);
 
-    // 1. Resolve Options
+    // Use liveOptions if dragging, otherwise fall back to mapOptions from props
     const displayOptions = liveOptions || mapOptions;
-    
-    // 2. Resolve Theme Gradient
+
+    // --- Theme Logic ---
     const themeId = displayOptions.general?.theme || 'viridis';
     const activeTheme = useMemo(() => themes.find(t => t.id === themeId) || themes[0], [themeId]);
     
-    // Construct a vertical gradient based on the active theme's colors
+    // Generated gradient based on theme colors
     const verticalThemeGradient = useMemo(() => 
         `linear-gradient(to bottom, ${activeTheme.colors.join(', ')})`, 
     [activeTheme]);
 
-    // 3. Resolve Election Parties
     const parties = useMemo(() => {
         if (!activeDataset || !aggregatedData[activeDataset.type as keyof AggregatedData]) return [];
-        // Safe access to nested data
         const datasetData = aggregatedData[activeDataset.type as keyof AggregatedData];
-        // @ts-ignore - complex union type handling
+        // @ts-ignore
         const yearData = datasetData?.[activeDataset.year]; 
         
         if (!yearData?.partyVotes) return [];
@@ -171,7 +163,7 @@ export default memo(function LegendPanel({
 
     const handleRangeChangeEnd = (datasetKey: keyof MapOptions) => {
         if (!liveOptions) return;
-        // @ts-ignore - Dynamic key access
+        // @ts-ignore
         const range = liveOptions[datasetKey]?.colorRange;
         if (range) {
             onMapOptionsChange(datasetKey, { colorRange: range });
@@ -195,7 +187,6 @@ export default memo(function LegendPanel({
 
     // --- Renderers ---
 
-    // Generic Renderer for Age, Density, House Prices (DRY principle)
     const renderDynamicLegend = (
         datasetKey: keyof MapOptions,
         absMin: number,
@@ -209,6 +200,15 @@ export default memo(function LegendPanel({
         // @ts-ignore
         const currentMax = displayOptions[datasetKey]?.colorRange?.max ?? defaultMax;
 
+        // Labels derived directly from currentMin/Max ensures they update during drag
+        const labels = [
+            formatLabel(currentMax),
+            formatLabel((currentMax - currentMin) * 0.75 + currentMin),
+            formatLabel((currentMax - currentMin) * 0.5 + currentMin),
+            formatLabel((currentMax - currentMin) * 0.25 + currentMin),
+            formatLabel(currentMin)
+        ];
+
         return (
             <RangeControl
                 min={absMin}
@@ -216,13 +216,7 @@ export default memo(function LegendPanel({
                 currentMin={currentMin}
                 currentMax={currentMax}
                 gradient={verticalThemeGradient}
-                labels={[
-                    formatLabel(currentMax),
-                    formatLabel((currentMax - currentMin) * 0.75 + currentMin),
-                    formatLabel((currentMax - currentMin) * 0.5 + currentMin),
-                    formatLabel((currentMax - currentMin) * 0.25 + currentMin),
-                    formatLabel(currentMin)
-                ]}
+                labels={labels}
                 onRangeInput={(min, max) => handleRangeInput(datasetKey, min, max)}
                 onRangeChangeEnd={() => handleRangeChangeEnd(datasetKey)}
             />
@@ -232,7 +226,7 @@ export default memo(function LegendPanel({
     const renderGenderLegend = () => {
         const currentMin = displayOptions.gender?.colorRange?.min ?? -0.1;
         const currentMax = displayOptions.gender?.colorRange?.max ?? 0.1;
-        // Gender keeps its specific Pink/Blue gradient regardless of theme
+
         return (
             <RangeControl
                 min={-0.5}
@@ -256,22 +250,33 @@ export default memo(function LegendPanel({
         const options = displayOptions[type];
 
         return (
-            <div className="flex flex-col max-h-[60vh] gap-1 overflow-y-auto py-1 px-1">
+            <div>
                 {parties.map((party) => {
                     const isSelected = options?.mode === 'party-percentage' && options.selectedParty === party.id;
+                    
+                    // Restored exact original party button styling logic
                     return (
                         <button
                             key={party.id}
                             onClick={() => handlePartyClick(party.id)}
-                            className={`flex items-center gap-2 px-1.5 py-0.5 w-full text-left rounded-xs transition-all cursor-pointer ${
-                                isSelected ? 'bg-gray-100 ring-1 ring-gray-300' : 'hover:bg-gray-50'
+                            className={`flex items-center gap-2 px-1 py-[3px] w-full text-left rounded-sm transition-all cursor-pointer ${
+                                isSelected ? 'ring-1' : 'hover:bg-gray-100/30'
                             }`}
+                            style={isSelected ? {
+                                backgroundColor: `${party.color}15`, // ~8% opacity
+                                '--tw-ring-color': `${party.color}80`
+                            } as React.CSSProperties : {}}
                         >
                             <div
-                                className="w-3 h-3 rounded-xs shrink-0"
-                                style={{ backgroundColor: party.color }}
+                                className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${
+                                    isSelected ? 'opacity-100 ring-1' : 'opacity-100'
+                                }`}
+                                style={{ 
+                                    backgroundColor: party.color,
+                                    ...(isSelected ? { '--tw-ring-color': party.color } as React.CSSProperties : {})
+                                }}
                             />
-                            <span className={`text-xs ${isSelected ? 'text-gray-800' : 'text-gray-600'}`}>
+                            <span className={`text-xs ${isSelected ? 'text-gray-700' : 'text-gray-500'}`}>
                                 {party.name}
                             </span>
                         </button>
@@ -315,10 +320,11 @@ export default memo(function LegendPanel({
         }
     };
 
+    // Restored container classes exactly
     return (
         <div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full gap-2.5">
-            <div className="bg-white/80 pointer-events-auto rounded-lg backdrop-blur-md shadow-xl border border-white/40">
-                <div className="p-2 overflow-hidden">
+            <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30">
+                <div className="bg-white/20 p-1 overflow-hidden">
                     {renderLegendContent()}
                 </div>
             </div>
@@ -326,8 +332,8 @@ export default memo(function LegendPanel({
             {/* Special secondary legend for Election Party Percentage Mode */}
             {['general-election', 'local-election'].includes(activeDataset?.type || '') && 
              displayOptions[activeDataset!.type as 'general-election' | 'local-election']?.mode === 'party-percentage' && (
-                <div className="bg-white/80 pointer-events-auto rounded-lg backdrop-blur-md shadow-xl border border-white/40 w-fit ml-auto">
-                     <div className="overflow-hidden">
+                <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
+                     <div className="bg-white/20 p-1 overflow-hidden">
                         <RangeControl
                             min={0}
                             max={100}
@@ -339,7 +345,13 @@ export default memo(function LegendPanel({
                                 // @ts-ignore
                                 PARTIES[displayOptions[activeDataset.type].selectedParty]?.color || '#999'
                             }, #f5f5f5)`}
-                            labels={['100%', '75%', '50%', '25%', '0%']}
+                            labels={[
+                                // Dynamic labels based on current range
+                                `${(displayOptions[activeDataset!.type as 'general-election'].partyPercentageRange?.max ?? 100).toFixed(0)}%`,
+                                // ... intermediate labels calculated in UI if needed, or simplified:
+                                '', '', '', 
+                                `${(displayOptions[activeDataset!.type as 'general-election'].partyPercentageRange?.min ?? 0).toFixed(0)}%`
+                            ]}
                             onRangeInput={(min, max) => {
                                 setLiveOptions(prev => {
                                     const base = prev || mapOptions;
