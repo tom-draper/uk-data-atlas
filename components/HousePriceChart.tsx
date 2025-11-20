@@ -26,9 +26,9 @@ interface PriceChartProps {
 
 // Move year colors outside component to avoid recreating on each render
 const YEAR_COLORS: Record<string, { bg: string; border: string; badge: string; text: string; line: string }> = {
-	'2024': { bg: 'bg-blue-50/60', border: 'border-blue-300', badge: 'bg-blue-300 text-blue-900', text: 'bg-blue-200 text-blue-800', line: '#3b82f6' },
-	'2023': { bg: 'bg-amber-50/60', border: 'border-amber-300', badge: 'bg-amber-300 text-amber-900', text: 'bg-amber-200 text-amber-800', line: '#f59e0b' },
-	'2022': { bg: 'bg-purple-50/60', border: 'border-purple-300', badge: 'bg-purple-300 text-purple-900', text: 'bg-purple-200 text-purple-800', line: '#a855f7' },
+	'2024': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800', line: '#10b981' },
+	'2023': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800', line: '#10b981' },
+	'2022': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800', line: '#10b981' },
 	'2021': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800', line: '#10b981' },
 };
 
@@ -108,29 +108,29 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 		return null;
 	}
 
-	// Calculate SVG path for the line chart with gradient area
-	const { linePath, areaPath, points } = useMemo(() => {
-		if (priceData.length < 2) return { linePath: '', areaPath: '', points: [] };
+	// Calculate SVG path for the line chart with straight lines
+	const { linePath, areaPath } = useMemo(() => {
+		if (priceData.length < 2) return { linePath: '', areaPath: '' };
 
 		const width = 100;
-		const height = 60;
-		const padding = 5;
+		const height = 100;
 		const maxPrice = 700000;
 		const minPrice = 0;
 
 		const calculatedPoints = priceData.map((d, i) => {
-			const x = padding + (i / (priceData.length - 1)) * (width - 2 * padding);
+			const x = (i / (priceData.length - 1)) * width;
 			const normalizedPrice = Math.min(d.price, maxPrice);
-			const y = height - padding - ((normalizedPrice - minPrice) / (maxPrice - minPrice)) * (height - 2 * padding);
+			const y = height - ((normalizedPrice - minPrice) / (maxPrice - minPrice)) * height;
 			return { x, y };
 		});
 
+		// Create straight line path
 		const line = `M ${calculatedPoints.map(p => `${p.x},${p.y}`).join(' L ')}`;
 
-		// Create area path (same as line but closed at bottom)
-		const area = `M ${padding},${height - padding} L ${calculatedPoints.map(p => `${p.x},${p.y}`).join(' L ')} L ${width - padding},${height - padding} Z`;
+		// Create area path extending to bottom
+		const area = `${line} L ${width},${height} L 0,${height} Z`;
 
-		return { linePath: line, areaPath: area, points: calculatedPoints };
+		return { linePath: line, areaPath: area };
 	}, [priceData]);
 
 	const formattedPrice = currentPrice
@@ -141,69 +141,49 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 		<div
 			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative ${isActive
 				? `${colors.bg} border-2 ${colors.border}`
-				: 'bg-white/60 border-2 border-gray-200/80 hover:border-blue-300'
+				: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
 				}`}
 			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
-			<div className="flex items-center justify-between mb-1.5">
+			<div className="flex items-center justify-between mb-1.5 relative z-10">
 				<h3 className="text-xs font-bold">House Price ({dataset.year})</h3>
 			</div>
 
-			{/* Line chart background with gradient */}
+			{/* Line chart background */}
 			{priceData.length >= 2 && linePath && (
 				<svg
 					className="absolute inset-0 w-full h-full"
-					viewBox="0 0 100 60"
+					viewBox="0 0 100 100"
 					preserveAspectRatio="none"
 				>
 					<defs>
 						<linearGradient id={`gradient-${dataset.year}`} x1="0%" y1="0%" x2="0%" y2="100%">
-							<stop offset="0%" stopColor={colors.line} stopOpacity="0.3" />
-							<stop offset="100%" stopColor={colors.line} stopOpacity="0.05" />
+							<stop offset="0%" stopColor={colors.line} stopOpacity="0.08" />
+							<stop offset="100%" stopColor={colors.line} stopOpacity="0.08" />
 						</linearGradient>
-						<filter id={`glow-${dataset.year}`}>
-							<feGaussianBlur stdDeviation="0.5" result="coloredBlur" />
-							<feMerge>
-								<feMergeNode in="coloredBlur" />
-								<feMergeNode in="SourceGraphic" />
-							</feMerge>
-						</filter>
 					</defs>
 
-					{/* Gradient area under the line */}
+					{/* Solid faint area under the line */}
 					<path
 						d={areaPath}
 						fill={`url(#gradient-${dataset.year})`}
 					/>
 
-					{/* Main line with glow effect */}
+					{/* Main smooth line */}
 					<path
 						d={linePath}
 						fill="none"
 						stroke={colors.line}
-						strokeWidth="2"
+						strokeWidth="2.5"
 						strokeLinecap="round"
 						strokeLinejoin="round"
-						filter={`url(#glow-${dataset.year})`}
 						vectorEffect="non-scaling-stroke"
 					/>
-
-					{/* Data points */}
-					{points.map((point, i) => (
-						<circle
-							key={i}
-							cx={point.x}
-							cy={point.y}
-							r="1.5"
-							fill={colors.line}
-							opacity="0.8"
-						/>
-					))}
 				</svg>
 			)}
 
 			{/* Price display in bottom right */}
-			<div className="relative flex justify-end items-end mt-4">
+			<div className="relative flex justify-end items-end mt-4 z-10">
 				<div className={`text-xl font-bold ${!currentPrice ? 'text-gray-400 text-sm' : ''}`}>
 					{formattedPrice}
 				</div>
