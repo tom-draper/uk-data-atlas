@@ -26,17 +26,14 @@ interface PriceChartProps {
 
 // Move year colors outside component to avoid recreating on each render
 const YEAR_COLORS: Record<string, { bg: string; border: string; badge: string; text: string; line: string }> = {
-	'2024': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800', line: '#10b981' },
 	'2023': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800', line: '#10b981' },
-	'2022': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800', line: '#10b981' },
-	'2021': { bg: 'bg-emerald-50/60', border: 'border-emerald-300', badge: 'bg-emerald-300 text-emerald-900', text: 'bg-emerald-200 text-emerald-800', line: '#10b981' },
 };
 
 // Cache for ward/constituency lookups
 const housePriceLookupCache = new Map<string, Map<number, any>>();
 
 const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, aggregatedData, setActiveViz, codeMapper }: PriceChartProps) => {
-	const colors = YEAR_COLORS[dataset.year] || YEAR_COLORS['2024'];
+	const colors = YEAR_COLORS[dataset.year] || YEAR_COLORS['2023'];
 
 	// Get price data for the chart with caching
 	const { priceData, currentPrice } = useMemo(() => {
@@ -146,7 +143,7 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className="text-xs font-bold">House Price ({dataset.year})</h3>
+				<h3 className="text-xs font-bold">House Price [{dataset.year}]</h3>
 			</div>
 
 			{/* Line chart background */}
@@ -202,11 +199,6 @@ export default function HousePriceChart({
 	aggregatedData,
 	codeMapper,
 }: HousePriceChartProps) {
-	// Don't render at all if in constituency mode (house prices are ward-level only)
-	if (constituencyCode) {
-		return null;
-	}
-
 	if (!availableDatasets) return null;
 
 	const vizId = `house-price-2023`;

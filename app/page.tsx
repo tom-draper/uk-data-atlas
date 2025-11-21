@@ -15,9 +15,9 @@ export default function Home() {
 						<a className="bg-black text-white px-6 py-3 rounded-md hover:opacity-80 cursor-pointer" href="/atlas">
 							Get Started
 						</a>
-						<a className="text-[#4e4e4e] pt-0 my-auto pl-8 hover:underline cursor-pointer" href="/atlas?demo=true">
+						{/* <a className="text-[#4e4e4e] pt-0 my-auto pl-8 hover:underline cursor-pointer" href="/atlas?demo=true">
 							Or try the demo
-						</a>
+						</a> */}
 					</div>
 				</div>
 			</div>

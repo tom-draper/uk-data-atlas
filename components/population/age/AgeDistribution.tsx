@@ -146,7 +146,7 @@ function AgeDistribution({
 			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<div className="flex items-center justify-between mb-2">
-				<h3 className="text-xs font-bold">Age Distribution ({dataset.year})</h3>
+				<h3 className="text-xs font-bold">Age Distribution [{dataset.year}]</h3>
 				{medianAge > 0 && (
 					<span className="text-[10px] text-gray-500 mr-1">
 						Median: {medianAge}

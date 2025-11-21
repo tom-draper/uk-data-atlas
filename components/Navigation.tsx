@@ -1,4 +1,4 @@
-// components/LocationPanel.tsx
+// components/Navigation.tsx
 
 export default function Navigation() {
     return (
@@ -7,9 +7,9 @@ export default function Navigation() {
                 <h1 className="font-semibold text-xl w-[200px]">UK Data Atlas</h1>
                 <div className="flex place-items-center grow text-[#4e4e4e]">
                     <div className="ml-auto grow text-right">
-                        {/* <a href="/" className="px-4 content-center cursor-pointer hover:underline">Home</a> */}
-                        <a href="/" className="px-4 content-center cursor-pointer hover:underline">Demo</a>
-                        <a href="/" className="px-4 content-center cursor-pointer hover:underline">Pricing</a>
+                        <a href="/" className="px-4 content-center cursor-pointer hover:underline">Home</a>
+                        {/* <a href="/" className="px-4 content-center cursor-pointer hover:underline">Demo</a> */}
+                        {/* <a href="/" className="px-4 content-center cursor-pointer hover:underline">Pricing</a> */}
                         <a href="/" className="px-4 content-center cursor-pointer hover:underline">Sources</a>
                         <a href="/" className="px-4 content-center cursor-pointer hover:underline">About</a>
                     </div>

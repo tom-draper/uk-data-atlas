@@ -38,7 +38,7 @@ export type ConstituencyNameKey = (typeof CONSTITUENCY_NAME_KEYS)[number];
 export const PROPERTY_KEYS = {
     wardCode: ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'],
     ladCode: ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'],
-    constituencyCode: ['PCON24CD', 'PCON19CD', 'PCON17CD', 'PCON15CD'],
+    constituencyCode: ['PCON24CD', 'pcon19cd', 'PCON17CD', 'PCON15CD'],
 } as const;
 
 const COUNTRY_PREFIXES: Record<string, string> = {

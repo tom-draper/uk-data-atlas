@@ -84,7 +84,7 @@ function Gender({
 			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<div className="flex items-center justify-between mb-0">
-				<h3 className="text-xs font-bold">Gender ({dataset.year})</h3>
+				<h3 className="text-xs font-bold">Gender [{dataset.year}]</h3>
 				{hasData && (
 					<span className="text-[10px] text-gray-600 mr-1">
 						<span className="text-blue-600">{totalMales.toLocaleString()}</span>

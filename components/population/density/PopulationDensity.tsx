@@ -38,7 +38,7 @@ function PopulationDensity({
 			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">Population Density ({dataset.year})</h3>
+				<h3 className="text-xs font-bold">Population Density [{dataset.year}]</h3>
 			</div>
 			<PopulationDensityChart
 				dataset={dataset}
