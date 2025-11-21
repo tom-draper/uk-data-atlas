@@ -23,21 +23,21 @@ export function useMapUpdates({
 
         const performUpdate = () => {
             switch (activeDataset.type) {
-                case 'general-election':
+                case 'generalElection':
                     return mapManager.updateMapForGeneralElection(geojson, activeDataset, mapOptions);
                 
-                case 'local-election':
+                case 'localElection':
                     return mapManager.updateMapForLocalElection(geojson, activeDataset, mapOptions);
                 
-                case 'house-price':
+                case 'housePrice':
                     return mapManager.updateMapForHousePrices(geojson, activeDataset, mapOptions);
 
                 case 'population':
                     // Handle population sub-categories
-                    if (activeViz.vizId.startsWith('age-distribution')) {
+                    if (activeViz.vizId.startsWith('ageDistribution')) {
                         return mapManager.updateMapForAgeDistribution(geojson, activeDataset, mapOptions);
                     }
-                    if (activeViz.vizId.startsWith('population-density')) {
+                    if (activeViz.vizId.startsWith('populationDensity')) {
                         return mapManager.updateMapForPopulationDensity(geojson, activeDataset, mapOptions);
                     }
                     if (activeViz.vizId.startsWith('gender')) {

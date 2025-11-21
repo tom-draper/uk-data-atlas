@@ -292,29 +292,29 @@ export const usePopulationData = () => {
 
 				// Create datasets
 				// const population2020: PopulationDataset = {
-				// 	id: 'population-2020',
+				// 	id: 'population2020',
 				// 	name: 'Population 2020',
 				// 	type: 'population',
 				// 	year: 2020,
-				// 	wardYear: 2021,
+				// 	boundaryYear: 2021,
 				// 	boundaryType: 'ward',
 				// 	populationData: combinedData2020,
 				// };
 
 				// const population2021: PopulationDataset = {
-				// 	id: 'population-2021',
+				// 	id: 'population2021',
 				// 	type: 'population',
 				// 	year: 2021,
-				// 	wardYear: 2023,
+				// 	boundaryYear: 2023,
 				// 	boundaryType: 'ward',
 				// 	populationData: combinedData2021,
 				// };
 
 				const population2022: PopulationDataset = {
-					id: 'population-2022',
+					id: 'population2022',
 					type: 'population',
 					year: 2022,
-					wardYear: 2023,
+					boundaryYear: 2023,
 					boundaryType: 'ward',
 					populationData: combinedData2022,
 				};

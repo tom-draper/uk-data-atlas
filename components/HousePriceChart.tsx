@@ -10,7 +10,7 @@ interface HousePriceChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 	wardCode?: string;
 	constituencyCode?: string;
-	aggregatedData: AggregatedHousePriceData;
+	aggregatedData: AggregatedHousePriceData | null;
 	codeMapper: CodeMapper
 }
 
@@ -18,7 +18,7 @@ interface PriceChartProps {
 	dataset: HousePriceDataset;
 	wardCode?: string;
 	constituencyCode?: string;
-	aggregatedData: AggregatedHousePriceData;
+	aggregatedData: AggregatedHousePriceData | null;
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper: CodeMapper;
@@ -59,7 +59,7 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 
 				// Fallback to conversion if needed
 				if (!data) {
-					const convertedCode = codeMapper.convertWardCode(wardCode, dataset.wardYear);
+					const convertedCode = codeMapper.convertWardCode(wardCode, dataset.boundaryYear);
 					if (convertedCode && dataset.wardData) {
 						data = dataset.wardData[convertedCode];
 					}
@@ -101,9 +101,9 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 	}, [wardCode, constituencyCode, dataset, aggregatedData, codeMapper]);
 
 	// Don't render if we're in constituency mode (house prices are ward-level only)
-	if (constituencyCode) {
-		return null;
-	}
+	// if (constituencyCode) {
+	// 	return null;
+	// }
 
 	// Calculate SVG path for the line chart with straight lines
 	const { linePath, areaPath } = useMemo(() => {
@@ -201,7 +201,7 @@ export default function HousePriceChart({
 }: HousePriceChartProps) {
 	if (!availableDatasets) return null;
 
-	const vizId = `house-price-2023`;
+	const vizId = `housePrice2023`;
 	const dataset = availableDatasets[2023];
 
 	if (!dataset) {

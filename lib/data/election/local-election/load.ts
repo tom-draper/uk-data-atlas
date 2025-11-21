@@ -74,11 +74,10 @@ export const fetchAndParseCsv = async (config: ElectionSourceConfig): Promise<Lo
                 });
 
                 resolve({
-                    id: `local-election-${config.year}`,
-                    type: 'local-election',
-                    name: `${config.year} Local Elections`,
+                    id: `localElection${config.year}`,
+                    type: 'localElection',
                     year: config.year,
-                    wardYear: config.year,
+                    boundaryYear: config.year,
                     boundaryType: 'ward',
                     wardResults: wardWinners,
                     wardData,

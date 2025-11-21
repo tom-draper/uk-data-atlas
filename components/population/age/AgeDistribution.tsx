@@ -51,7 +51,7 @@ function AgeDistribution({
 	setActiveViz,
 	codeMapper,
 }: AgeDistributionProps) {
- 	const vizId = `age-distribution-${dataset.year}`
+ 	const vizId = `ageDistribution${dataset.year}`
 	const isActive = activeViz.vizId === vizId;
 
 	const { medianAge, ageGroups, total, ages } = useMemo(() => {
@@ -75,7 +75,7 @@ function AgeDistribution({
 
 		const codesToTry = [
 			wardCode,
-			codeMapper.convertWardCode(wardCode, dataset.wardYear),
+			codeMapper.convertWardCode(wardCode, dataset.boundaryYear),
 		].filter((code): code is string => code !== null);
 
 		for (const code of codesToTry) {

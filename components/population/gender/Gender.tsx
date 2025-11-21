@@ -1,5 +1,5 @@
 // components/population/gender/Gender.tsx
-import { useMemo, memo, useCallback } from "react";
+import { useMemo, memo } from "react";
 import { ActiveViz, AggregatedPopulationData, PopulationDataset } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
@@ -43,7 +43,7 @@ function Gender({
 		// Try to find the ward data - population uses 2021 codes
 		const codesToTry = [
 			wardCode,
-			codeMapper.convertWardCode(wardCode, dataset.wardYear)
+			codeMapper.convertWardCode(wardCode, dataset.boundaryYear)
 		].filter((code): code is string => code !== null);
 
 		for (const code of codesToTry) {

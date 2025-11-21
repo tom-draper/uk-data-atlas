@@ -13,6 +13,13 @@ export const GEOJSON_PATHS = {
         2019: '/data/boundaries/constituencies/WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.geojson',
         2017: '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.geojson',
         2015: '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.geojson',
+    },
+    localAuthority: {
+        2025: '/data/boundaries/lad/LAD_MAY_2025_UK_BGC_V2_1110015208521213948.geojson',
+        2024: '/data/boundaries/lad/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson',
+        2023: '/data/boundaries/lad/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson',
+        2022: '/data/boundaries/lad/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.geojson',
+        2021: '/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.geojson',
     }
 } as const;
 
@@ -20,25 +27,31 @@ export type BoundaryType = keyof typeof GEOJSON_PATHS;
 
 export type WardYear = keyof typeof GEOJSON_PATHS.ward;
 export type ConstituencyYear = keyof typeof GEOJSON_PATHS.constituency;
+export type LocalAuthorityYear = keyof typeof GEOJSON_PATHS.localAuthority;
 
-// Constituency property keys - adjust these based on your actual GeoJSON properties
+// Property keys for each boundary type
 export const WARD_CODE_KEYS = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'] as const;
 export const WARD_NAME_KEYS = ['WD24NM', 'WD23NM', 'WD22NM', 'WD21NM'] as const;
 export const LAD_CODE_KEYS = ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'] as const;
-export const CONSTITUENCY_CODE_KEYS = ['PCON24CD', 'PCON19CD', 'PCON17CD', 'PCON15CD'] as const;
-export const CONSTITUENCY_NAME_KEYS = ['PCON24NM', 'PCON19NM', 'PCON17NM', 'PCON15NM'] as const;
+export const LAD_NAME_KEYS = ['LAD24NM', 'LAD23NM', 'LAD22NM', 'LAD21NM'] as const;
+export const CONSTITUENCY_CODE_KEYS = ['PCON24CD', 'pcon19cd', 'PCON17CD', 'PCON15CD'] as const;
+export const CONSTITUENCY_NAME_KEYS = ['PCON24NM', 'pcon19nm', 'PCON17NM', 'PCON15NM'] as const;
 
 export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
 export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
+export type LADCodeKey = (typeof LAD_CODE_KEYS)[number];
+export type LADNameKey = (typeof LAD_NAME_KEYS)[number];
 export type ConstituencyCodeKey = (typeof CONSTITUENCY_CODE_KEYS)[number];
 export type ConstituencyNameKey = (typeof CONSTITUENCY_NAME_KEYS)[number];
 
-
 // Keys configuration
 export const PROPERTY_KEYS = {
-    wardCode: ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'],
-    ladCode: ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'],
-    constituencyCode: ['PCON24CD', 'pcon19cd', 'PCON17CD', 'PCON15CD'],
+    wardCode: WARD_CODE_KEYS,
+    wardName: WARD_NAME_KEYS,
+    ladCode: LAD_CODE_KEYS,
+    ladName: LAD_NAME_KEYS,
+    constituencyCode: CONSTITUENCY_CODE_KEYS,
+    constituencyName: CONSTITUENCY_NAME_KEYS,
 } as const;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
@@ -59,8 +72,6 @@ export const getProp = (props: any, keys: readonly string[]) => {
 
 // Build lookup map once per dataset
 export const populateLadMap = (features: any[]) => {
-    // Optimization: Only process if we haven't seen these features, 
-    // or just process lazily. For now, we run it on load.
     features.forEach(f => {
         const wCode = getProp(f.properties, PROPERTY_KEYS.wardCode);
         const lCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
@@ -73,16 +84,8 @@ export const populateLadMap = (features: any[]) => {
 const isFeatureInBounds = (feature: any, bounds: [number, number, number, number]) => {
     const [west, south, east, north] = bounds;
 
-    // If feature already has a bbox, use it. If not, we might need to compute it once.
-    // Assuming raw GeoJSON doesn't always have bbox, checking the first coordinate 
-    // is a cheap heuristic, but calculating extent is safer.
-
-    // Simplified check: Does the feature have ANY geometry?
     if (!feature.geometry?.coordinates) return false;
 
-    // Deep traverse to find min/max lng/lat of the feature
-    // Note: For critical performance, use a library like 'geojson-bounds' or 'turf/bbox'
-    // Here is a simplified flattening approach:
     const flatCoords = feature.geometry.type === 'MultiPolygon'
         ? feature.geometry.coordinates.flat(2)
         : feature.geometry.coordinates.flat(1);
@@ -96,7 +99,6 @@ const isFeatureInBounds = (feature: any, bounds: [number, number, number, number
         if (y > fMaxY) fMaxY = y;
     }
 
-    // Check for Overlap
     return (fMinX <= east && fMaxX >= west && fMinY <= north && fMaxY >= south);
 };
 
@@ -120,14 +122,18 @@ export const fetchBoundaryFile = async (path: string): Promise<BoundaryGeojson> 
 export const filterFeatures = (
     geojson: BoundaryGeojson,
     location: string | null,
-    type: 'ward' | 'constituency'
+    type: 'ward' | 'constituency' | 'localAuthority'
 ): BoundaryGeojson => {
     if (!location || location === 'United Kingdom') return geojson;
 
     // 1. Filter by Country Prefix
     if (COUNTRY_PREFIXES[location]) {
         const prefix = COUNTRY_PREFIXES[location];
-        const keys = type === 'ward' ? PROPERTY_KEYS.wardCode : PROPERTY_KEYS.constituencyCode;
+        let keys: readonly string[];
+
+        if (type === 'ward') keys = PROPERTY_KEYS.wardCode;
+        else if (type === 'constituency') keys = PROPERTY_KEYS.constituencyCode;
+        else keys = PROPERTY_KEYS.ladCode;
 
         return {
             ...geojson,
@@ -153,7 +159,18 @@ export const filterFeatures = (
         };
     }
 
-    // 3. Filter Constituency by Bounds
+    // 3. Filter Local Authorities by LAD Code
+    if (type === 'localAuthority' && locData.lad_codes?.length) {
+        return {
+            ...geojson,
+            features: geojson.features.filter(f => {
+                const lCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
+                return locData.lad_codes.includes(lCode);
+            })
+        };
+    }
+
+    // 4. Filter Constituency by Bounds
     if (type === 'constituency' && locData.bounds) {
         return {
             ...geojson,

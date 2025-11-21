@@ -14,7 +14,7 @@ export interface MapManagerCallbacks {
     onLocationChange: (location: string) => void;
 }
 
-export type MapMode = 'local-election' | 'general-election' | 'population' | 'house-price';
+export type MapMode = 'localElection' | 'generalElection' | 'population' | 'housePrice';
 
 export class MapManager {
     private layerManager: LayerManager;
@@ -45,12 +45,12 @@ export class MapManager {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
         console.log('updateMapForLocalElection: Filtered wards', geojson.features.length);
 
-        const mode = mapOptions['local-election'].mode || 'winner';
-        const locationData = mode === 'party-percentage' && mapOptions['local-election'].selectedParty
+        const mode = mapOptions.localElection.mode || 'winner';
+        const locationData = mode === 'party-percentage' && mapOptions.localElection.selectedParty
             ? this.featureBuilder.buildPartyPercentageFeatures(
                 geojson.features,
                 dataset.wardData,
-                mapOptions['local-election'].selectedParty,
+                mapOptions.localElection.selectedParty,
                 wardCodeProp
             )
             : this.featureBuilder.buildWinnerFeatures(
@@ -59,13 +59,13 @@ export class MapManager {
                 (code) => dataset.wardResults[code] || 'NONE'
             );
 
-        if (mode === 'party-percentage' && mapOptions['local-election'].selectedParty) {
-            this.layerManager.updatePartyPercentageLayers(locationData, mapOptions['local-election']);
+        if (mode === 'party-percentage' && mapOptions.localElection.selectedParty) {
+            this.layerManager.updatePartyPercentageLayers(locationData, mapOptions.localElection);
         } else {
             this.layerManager.updateElectionLayers(locationData, dataset.partyInfo);
         }
 
-        this.eventHandler.setupEventHandlers('local-election', dataset.wardData, wardCodeProp);
+        this.eventHandler.setupEventHandlers('localElection', dataset.wardData, wardCodeProp);
     }
 
     updateMapForGeneralElection(
@@ -76,12 +76,12 @@ export class MapManager {
         const constituencyCodeProp = this.propertyDetector.detectConstituencyCode(geojson);
         console.log('updateMapForGeneralElection: Filtered constituencies:', geojson.features.length);
 
-        const mode = mapOptions['general-election'].mode || 'winner';
-        const locationData = mode === 'party-percentage' && mapOptions['general-election'].selectedParty
+        const mode = mapOptions.generalElection.mode || 'winner';
+        const locationData = mode === 'party-percentage' && mapOptions.generalElection.selectedParty
             ? this.featureBuilder.buildPartyPercentageFeatures(
                 geojson.features,
                 dataset.constituencyData,
-                mapOptions['general-election'].selectedParty,
+                mapOptions.generalElection.selectedParty,
                 constituencyCodeProp
             )
             : this.featureBuilder.buildWinnerFeatures(
@@ -90,13 +90,13 @@ export class MapManager {
                 (code) => dataset.constituencyResults[code] || 'NONE'
             );
 
-        if (mode === 'party-percentage' && mapOptions['general-election'].selectedParty) {
-            this.layerManager.updatePartyPercentageLayers(locationData, mapOptions['general-election']);
+        if (mode === 'party-percentage' && mapOptions.generalElection.selectedParty) {
+            this.layerManager.updatePartyPercentageLayers(locationData, mapOptions.generalElection);
         } else {
             this.layerManager.updateElectionLayers(locationData, dataset.partyInfo);
         }
 
-        this.eventHandler.setupEventHandlers('general-election', dataset.constituencyData, constituencyCodeProp);
+        this.eventHandler.setupEventHandlers('generalElection', dataset.constituencyData, constituencyCodeProp);
     }
 
     // ============================================================================
@@ -109,7 +109,7 @@ export class MapManager {
         mapOptions: MapOptions
     ): void {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        const locationData = this.featureBuilder.buildAgeFeatures(geojson, dataset, wardCodeProp, mapOptions['age-distribution'], mapOptions.general.theme);
+        const locationData = this.featureBuilder.buildAgeFeatures(geojson, dataset, wardCodeProp, mapOptions);
         
         this.layerManager.updateColoredLayers(locationData);
         this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
@@ -121,7 +121,7 @@ export class MapManager {
         mapOptions: MapOptions
     ): void {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        const locationData = this.featureBuilder.buildGenderFeatures(geojson, dataset, wardCodeProp, mapOptions['gender']);
+        const locationData = this.featureBuilder.buildGenderFeatures(geojson, dataset, wardCodeProp, mapOptions);
         
         this.layerManager.updateColoredLayers(locationData);
         this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
@@ -133,7 +133,7 @@ export class MapManager {
         mapOptions: MapOptions
     ): void {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        const locationData = this.featureBuilder.buildDensityFeatures(geojson, dataset, wardCodeProp, mapOptions['population-density'], mapOptions.general.theme);
+        const locationData = this.featureBuilder.buildDensityFeatures(geojson, dataset, wardCodeProp, mapOptions);
         
         this.layerManager.updateColoredLayers(locationData);
         this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
@@ -149,10 +149,10 @@ export class MapManager {
         mapOptions: MapOptions
     ): void {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        const locationData = this.featureBuilder.buildHousePriceFeatures(geojson, dataset, wardCodeProp, mapOptions['house-price'], mapOptions.general.theme);
+        const locationData = this.featureBuilder.buildHousePriceFeatures(geojson, dataset, wardCodeProp, mapOptions);
         
         this.layerManager.updateColoredLayers(locationData);
-        this.eventHandler.setupEventHandlers('house-price', dataset.wardData, wardCodeProp);
+        this.eventHandler.setupEventHandlers('housePrice', dataset.wardData, wardCodeProp);
     }
 
     // ============================================================================

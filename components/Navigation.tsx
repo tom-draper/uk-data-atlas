@@ -10,7 +10,7 @@ export default function Navigation() {
                         <a href="/" className="px-4 content-center cursor-pointer hover:underline">Home</a>
                         {/* <a href="/" className="px-4 content-center cursor-pointer hover:underline">Demo</a> */}
                         {/* <a href="/" className="px-4 content-center cursor-pointer hover:underline">Pricing</a> */}
-                        <a href="/" className="px-4 content-center cursor-pointer hover:underline">Sources</a>
+                        <a href="/sources" className="px-4 content-center cursor-pointer hover:underline">Sources</a>
                         <a href="/" className="px-4 content-center cursor-pointer hover:underline">About</a>
                     </div>
                     {/* <div className="text-right">

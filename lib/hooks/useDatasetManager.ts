@@ -15,29 +15,29 @@ export function useDatasetManager(
 ) {
     const activeDataset = useMemo(() => {
         switch (activeDatasetId) {
-            case "age-distribution-2020":
-            case "population-density-2020":
-            case "gender-2020":
-                return populationDatasets['population-2020']
-            case "age-distribution-2021":
-            case "population-density-2021":
-            case "gender-2021":
-                return populationDatasets['population-2021']
-            case "age-distribution-2022":
-            case "population-density-2022":
-            case "gender-2022":
-                return populationDatasets['population-2022']
-            case "general-election-2024":
-            case "general-election-2019":
-            case "general-election-2017":
-            case "general-election-2015":
+            case "ageDistribution2020":
+            case "populationDensity2020":
+            case "gender2020":
+                return populationDatasets['population2020']
+            case "ageDistribution2021":
+            case "populationDensity2021":
+            case "gender2021":
+                return populationDatasets['population2021']
+            case "ageDistribution2022":
+            case "populationDensity2022":
+            case "gender2022":
+                return populationDatasets['population2022']
+            case "generalElection2024":
+            case "generalElection2019":
+            case "generalElection2017":
+            case "generalElection2015":
                 return generalElectionDatasets[activeDatasetId]
-            case "local-election-2021":
-            case "local-election-2022":
-            case "local-election-2023":
-            case "local-election-2024":
+            case "localElection2021":
+            case "localElection2022":
+            case "localElection2023":
+            case "localElection2024":
                 return localElectionDatasets[activeDatasetId];
-            case "house-price-2023":
+            case "housePrice2023":
                 return housePriceDatasets[activeDatasetId];
         }
     }, [localElectionDatasets, generalElectionDatasets, populationDatasets, housePriceDatasets, activeDatasetId]);

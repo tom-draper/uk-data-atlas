@@ -1,75 +1,62 @@
-// types/mapOptions.ts
+// lib/types/mapOptions.ts
+// Map visualization options and defaults
 
-export type MapMode = 'winner' | 'party-percentage';
+import { ColorRange } from "./common";
 
-export interface ColorRange {
-    min: number;
-    max: number;
+// Base option types reused across visualizations
+interface ColorRangeOption {
+    colorRange?: ColorRange;
 }
 
-export interface GeneralElectionOptions {
+interface ElectionOption {
     mode: 'winner' | 'party-percentage';
     selectedParty?: string;
     partyPercentageRange?: ColorRange;
 }
 
-export interface LocalElectionOptions {
-    mode: 'winner' | 'party-percentage';
-    selectedParty?: string;
-    partyPercentageRange?: ColorRange;
-}
+export type GeneralElectionOptions = ElectionOption;
+export type LocalElectionOptions = ElectionOption;
+export type HousePriceOptions = ColorRangeOption;
+export type PopulationOptions = ColorRangeOption;
+export type DensityOptions = ColorRangeOption;
+export type GenderOptions = ColorRangeOption;
 
-export interface HousePriceOptions {
-    colorRange?: ColorRange;
-}
-
-export interface PopulationOptions {
-    colorRange?: ColorRange;
-}
-
-export interface DensityOptions {
-    colorRange?: ColorRange;
-}
-
-export interface GenderOptions {
-    colorRange?: ColorRange;
-}
+export type ColorTheme = 'viridis' | 'plasma' | 'inferno' | 'magma';
 
 export interface MapOptions {
-    'general-election': GeneralElectionOptions;
-    'local-election': LocalElectionOptions;
-    'age-distribution': PopulationOptions;
-    'population-density': DensityOptions;
-    'gender': GenderOptions;
-    'house-price': HousePriceOptions;
+    generalElection: GeneralElectionOptions;
+    localElection: LocalElectionOptions;
+    ageDistribution: PopulationOptions;
+    populationDensity: DensityOptions;
+    gender: GenderOptions;
+    housePrice: HousePriceOptions;
     general: {
-        theme: 'viridis' | 'plasma' | 'inferno' | 'magma';
-    }
+        theme: ColorTheme;
+    };
 }
 
-// Default values
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
-    'general-election': {
+    generalElection: {
         mode: 'winner',
         partyPercentageRange: { min: 0, max: 100 }
     },
-    'local-election': {
+    localElection: {
         mode: 'winner',
         partyPercentageRange: { min: 0, max: 100 }
     },
-    'age-distribution': {
+    ageDistribution: {
         colorRange: { min: 25, max: 55 }
     },
-    'population-density': {
+    populationDensity: {
         colorRange: { min: 0, max: 8000 }
     },
-    'gender': {
+    gender: {
         colorRange: { min: -0.1, max: 0.1 }
     },
-    'house-price': {
+    housePrice: {
         colorRange: { min: 80000, max: 500000 }
     },
-    'general': {
+    general: {
         theme: 'viridis'
     }
 };

@@ -7,17 +7,20 @@ import type {
 	PopulationDataset,
 	HousePriceDataset,
 	Dataset,
+	Datasets,
+	BoundaryType,
+	BoundaryGeojson,
 } from '@lib/types';
 import { BoundaryData } from './useBoundaryData';
 import { MapManager } from '../utils/mapManager';
 
 interface DatasetConfig<T extends Dataset> {
 	datasets: Record<string, T>;
-	boundaryType: 'ward' | 'constituency';
+	boundaryType: BoundaryType;
 	getGeojson: (dataset: T, boundaryData: BoundaryData) => any;
 	calculateStats: (
 		mapManager: MapManager,
-		geojson: any,
+		geojson: BoundaryGeojson,
 		dataset: T,
 		location: string | null,
 		datasetId: string
@@ -63,12 +66,7 @@ function aggregateDataset<T extends Dataset>(
 interface UseAggregatedDataParams {
 	mapManager: MapManager | null;
 	boundaryData: BoundaryData;
-	datasets: {
-		'local-election': Record<string, LocalElectionDataset>;
-		'general-election': Record<string, GeneralElectionDataset>;
-		'population': Record<string, PopulationDataset>;
-		'house-price': Record<string, HousePriceDataset>;
-	};
+	datasets: Datasets;
 	location: string | null;
 }
 
@@ -84,48 +82,56 @@ export function useAggregatedData({
 	// Define configuration for each dataset type
 	const configs = useMemo(() => ({
 		localElection: {
-			datasets: datasets['local-election'],
+			datasets: datasets.localElection,
 			boundaryType: 'ward' as const,
 			getGeojson: (dataset: LocalElectionDataset, bd: BoundaryData) => 
-				bd.ward?.[dataset.wardYear],
-			calculateStats: (mm: MapManager, geojson: any, dataset: LocalElectionDataset, loc: string | null, id: string) =>
+				bd.ward?.[dataset.boundaryYear],
+			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: LocalElectionDataset, loc: string | null, id: string) =>
 				mm.calculateLocalElectionStats(geojson, dataset.wardData!, loc, id),
 		},
 		generalElection: {
-			datasets: datasets['general-election'],
+			datasets: datasets.generalElection,
 			boundaryType: 'constituency' as const,
 			getGeojson: (dataset: GeneralElectionDataset, bd: BoundaryData) => 
-				bd.constituency?.[dataset.constituencyYear],
-			calculateStats: (mm: MapManager, geojson: any, dataset: GeneralElectionDataset, loc: string | null, id: string) =>
+				bd.constituency?.[dataset.boundaryYear],
+			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: GeneralElectionDataset, loc: string | null, id: string) =>
 				mm.calculateGeneralElectionStats(geojson, dataset.constituencyData!, loc, id),
 		},
 		population: {
-			datasets: datasets['population'],
+			datasets: datasets.population,
 			boundaryType: 'ward' as const,
 			getGeojson: (dataset: PopulationDataset, bd: BoundaryData) => 
-				bd.ward?.[dataset.wardYear],
-			calculateStats: (mm: MapManager, geojson: any, dataset: PopulationDataset, loc: string | null, id: string) =>
+				bd.ward?.[dataset.boundaryYear],
+			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: PopulationDataset, loc: string | null, id: string) =>
 				mm.calculatePopulationStats(geojson, dataset.populationData!, loc, id),
 		},
 		housePrice: {
-			datasets: datasets['house-price'],
+			datasets: datasets.housePrice,
 			boundaryType: 'ward' as const,
 			getGeojson: (dataset: HousePriceDataset, bd: BoundaryData) => 
-				bd.ward?.[dataset.wardYear],
-			calculateStats: (mm: MapManager, geojson: any, dataset: HousePriceDataset, loc: string | null, id: string) =>
+				bd.ward?.[dataset.boundaryYear],
+			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: HousePriceDataset, loc: string | null, id: string) =>
 				mm.calculateHousePriceStats(geojson, dataset.wardData!, loc, id),
 		},
-	}), [datasets['local-election'], datasets['general-election'], datasets['population'], datasets['house-price']]);
+		// crime: {
+		// 	datasets: datasets.housePrice,
+		// 	boundaryType: 'ward' as const,
+		// 	getGeojson: (dataset: HousePriceDataset, bd: BoundaryData) => 
+		// 		bd.ward?.[dataset.boundaryYear],
+		// 	calculateStats: (mm: MapManager, geojson: any, dataset: HousePriceDataset, loc: string | null, id: string) =>
+		// 		mm.calculateHousePriceStats(geojson, dataset.wardData!, loc, id),
+		// },
+	}), [datasets]);
 
 	// Aggregate all datasets using the same logic
 	const aggregatedData = useMemo(() => {
-		if (!mapManager) return {'local-election': null, 'general-election': null, 'population': null, 'house-price': null};
+		if (!mapManager) return {localElection: null, generalElection: null, population: null, housePrice: null};
 
 		return {
-			'local-election': aggregateDataset(configs.localElection, mapManager, boundaryData, location),
-			'general-election': aggregateDataset(configs.generalElection, mapManager, boundaryData, location),
-			'population': aggregateDataset(configs.population, mapManager, boundaryData, location),
-			'house-price': aggregateDataset(configs.housePrice, mapManager, boundaryData, location),
+			localElection: aggregateDataset(configs.localElection, mapManager, boundaryData, location),
+			generalElection: aggregateDataset(configs.generalElection, mapManager, boundaryData, location),
+			population: aggregateDataset(configs.population, mapManager, boundaryData, location),
+			housePrice: aggregateDataset(configs.housePrice, mapManager, boundaryData, location),
 		};
 	}, [mapManager, boundaryData, location, configs]);
 

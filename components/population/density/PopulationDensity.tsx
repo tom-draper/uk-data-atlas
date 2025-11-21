@@ -26,7 +26,7 @@ function PopulationDensity({
 	activeViz,
 	codeMapper
 }: PopulationDensityChartProps) {
-	const vizId = `population-density-${dataset.year}`
+	const vizId = `populationDensity${dataset.year}`
 	const isActive = activeViz.vizId === vizId;
 
 	return (

@@ -129,14 +129,14 @@ function PopulationDensityChart({
 			};
 		}
 
-		const geojson = boundaryData.ward[dataset.wardYear];
+		const geojson = boundaryData.ward[dataset.boundaryYear];
 		if (!wardCode || !geojson) {
 			return { density: null, areaSqKm: null, total: null };
 		}
 
 		const codesToTry = [
 			wardCode,
-			codeMapper.convertWardCode(wardCode, dataset.wardYear)
+			codeMapper.convertWardCode(wardCode, dataset.boundaryYear)
 		].filter((code): code is string => code !== null);
 
 		const wardCodeProp = detectPropertyKey(geojson);

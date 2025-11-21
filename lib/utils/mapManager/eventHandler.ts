@@ -42,7 +42,7 @@ export class EventHandler {
 
     private handleHover(mode: MapMode, code: string, locationData: any): void {
         switch (mode) {
-            case 'general-election':
+            case 'generalElection':
                 this.callbacks.onConstituencyHover?.(locationData || null);
                 break;
             case 'population':
@@ -54,7 +54,7 @@ export class EventHandler {
     }
 
     private handleMouseLeave(mode: MapMode): void {
-        if (mode === 'general-election') {
+        if (mode === 'generalElection') {
             this.callbacks.onConstituencyHover?.(null);
         } else {
             this.callbacks.onWardHover?.({ data: null, wardCode: '' });

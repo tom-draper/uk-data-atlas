@@ -1,7 +1,9 @@
 // lib/data/generalElectionConfig.ts
 
+import { ConstituencyYear } from "../../boundaries/boundaries";
+
 export type GeneralElectionSourceConfig = {
-    year: 2024 | 2019 | 2017 | 2015;
+    year: ConstituencyYear;
     url: string;
     // Flag to handle the unique header cleaning logic for the 2024 CSV file
     requiresHeaderCleaning: boolean; 

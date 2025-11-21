@@ -11,7 +11,6 @@ const parsePrice = (value: any): number | null => {
 };
 
 const parseHousePriceData = async (): Promise<Record<string, WardHousePriceData>> => {
-    console.log('Loading house price data...');
     const res = await fetch('/data/housing/HPSSA Dataset 37 - Median price paid by wardHPSSA Dataset 37 - Median price paid by ward.csv');
     const csvText = await res.text();
 
@@ -81,10 +80,10 @@ export const useHousePriceData = () => {
 
                 const loadedDatasets: Record<string, HousePriceDataset> = {
                     2023: {
-                        id: 'house-price-2023',
-                        type: 'house-price',
+                        id: 'housePrice2023',
+                        type: 'housePrice',
                         year: 2023,
-                        wardYear: 2021,
+                        boundaryYear: 2021,
                         boundaryType: 'ward',
                         wardData
                     }

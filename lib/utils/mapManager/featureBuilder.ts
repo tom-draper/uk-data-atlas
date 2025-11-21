@@ -1,6 +1,6 @@
 // lib/utils/mapManager/featureBuilder.ts
 import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset } from '@lib/types';
-import { PopulationOptions, GenderOptions, DensityOptions, HousePriceOptions } from '@lib/types/mapOptions';
+import { MapOptions } from '@lib/types/mapOptions';
 import { calculateMedianAge, calculateTotal, polygonAreaSqKm } from '../population';
 import { getColorForAge, getColorForGenderRatio, getColorForDensity, getColorForHousePrice } from '../colorScale';
 
@@ -54,8 +54,7 @@ export class FeatureBuilder {
         geojson: BoundaryGeojson,
         dataset: PopulationDataset,
         wardCodeProp: string,
-        mapOptions: PopulationOptions,
-        themeId: string = 'viridis'
+        mapOptions: MapOptions,
     ): BoundaryGeojson {
         return {
             type: 'FeatureCollection',
@@ -68,7 +67,7 @@ export class FeatureBuilder {
                 }
 
                 const medianAge = calculateMedianAge(wardPopulation);
-                const color = getColorForAge(medianAge, mapOptions, themeId);
+                const color = getColorForAge(medianAge, mapOptions.ageDistribution, mapOptions.general.theme);
 
                 return {
                     ...feature,
@@ -82,7 +81,7 @@ export class FeatureBuilder {
         geojson: BoundaryGeojson,
         dataset: PopulationDataset,
         wardCodeProp: string,
-        mapOptions: GenderOptions
+        mapOptions: MapOptions
     ): BoundaryGeojson {
         return {
             type: 'FeatureCollection',
@@ -97,7 +96,7 @@ export class FeatureBuilder {
                 const males = calculateTotal(wardPopulation.males);
                 const females = calculateTotal(wardPopulation.females);
                 const ratio = females > 0 ? (males - females) / females : 0;
-                const color = getColorForGenderRatio(ratio, mapOptions);
+                const color = getColorForGenderRatio(ratio, mapOptions.gender);
 
                 return {
                     ...feature,
@@ -111,8 +110,7 @@ export class FeatureBuilder {
         geojson: BoundaryGeojson,
         dataset: PopulationDataset,
         wardCodeProp: string,
-        mapOptions: DensityOptions,
-        themeId: string = 'viridis'
+        mapOptions: MapOptions,
     ): BoundaryGeojson {
         return {
             type: 'FeatureCollection',
@@ -127,7 +125,7 @@ export class FeatureBuilder {
                 const total = calculateTotal(wardPopulation.males) + calculateTotal(wardPopulation.females);
                 const areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
                 const density = areaSqKm > 0 ? total / areaSqKm : 0;
-                const color = getColorForDensity(density, mapOptions, themeId);
+                const color = getColorForDensity(density, mapOptions.populationDensity, mapOptions.general.theme);
 
                 return {
                     ...feature,
@@ -141,8 +139,7 @@ export class FeatureBuilder {
         geojson: BoundaryGeojson,
         dataset: HousePriceDataset,
         wardCodeProp: string,
-        mapOptions: HousePriceOptions,
-        themeId: string = 'viridis'
+        mapOptions: MapOptions,
     ): BoundaryGeojson {
         return {
             type: 'FeatureCollection',
@@ -154,7 +151,7 @@ export class FeatureBuilder {
                     return { ...feature, properties: { ...feature.properties, color: '#cccccc' } };
                 }
 
-                const color = getColorForHousePrice(ward.prices[2023], mapOptions, themeId);
+                const color = getColorForHousePrice(ward.prices[2023], mapOptions.housePrice, mapOptions.general.theme);
 
                 return {
                     ...feature,

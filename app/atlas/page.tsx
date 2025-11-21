@@ -12,8 +12,8 @@ import { ActiveViz } from '@/lib/types';
 
 export default function MapsPage() {
     const [activeViz, setActiveViz] = useState<ActiveViz>({ 
-        vizId: 'local-election-2024', 
-        datasetType: 'local-election',
+        vizId: 'localElection2024', 
+        datasetType: 'localElection',
         datasetYear: 2024 
     });
     const [selectedLocation, setSelectedLocation] = useState('Greater Manchester');

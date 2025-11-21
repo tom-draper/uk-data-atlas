@@ -172,7 +172,7 @@ export default memo(function LegendPanel({
     };
 
     const handlePartyClick = (partyCode: string) => {
-        const type = activeDataset?.type as 'general-election' | 'local-election';
+        const type = activeDataset?.type;
         if (!type) return;
 
         const currentMode = displayOptions[type].mode;
@@ -246,7 +246,7 @@ export default memo(function LegendPanel({
     };
 
     const renderElectionLegend = () => {
-        const type = activeDataset?.type as 'general-election' | 'local-election';
+        const type = activeDataset?.type;
         const options = displayOptions[type];
 
         return (
@@ -297,22 +297,22 @@ export default memo(function LegendPanel({
 
         switch (activeDataset.type) {
             case 'population':
-                if (activeViz.vizId.startsWith('age-distribution')) {
-                    return renderDynamicLegend('age-distribution', 18, 80, 25, 55);
+                if (activeViz.vizId.startsWith('ageDistribution')) {
+                    return renderDynamicLegend('ageDistribution', 18, 80, 25, 55);
                 }
-                if (activeViz.vizId.startsWith('population-density')) {
-                    return renderDynamicLegend('population-density', 0, 15000, 500, 8000);
+                if (activeViz.vizId.startsWith('populationDensity')) {
+                    return renderDynamicLegend('populationDensity', 0, 15000, 500, 8000);
                 }
                 if (activeViz.vizId.startsWith('gender')) {
                     return renderGenderLegend();
                 }
                 return null;
 
-            case 'house-price':
-                return renderDynamicLegend('house-price', 0, 2000000, 80000, 500000, formatCurrency);
+            case 'housePrice':
+                return renderDynamicLegend('housePrice', 0, 2000000, 80000, 500000, formatCurrency);
 
-            case 'general-election':
-            case 'local-election':
+            case 'generalElection':
+            case 'localElection':
                 return renderElectionLegend();
 
             default:
@@ -330,8 +330,8 @@ export default memo(function LegendPanel({
             </div>
 
             {/* Special secondary legend for Election Party Percentage Mode */}
-            {['general-election', 'local-election'].includes(activeDataset?.type || '') && 
-             displayOptions[activeDataset!.type as 'general-election' | 'local-election']?.mode === 'party-percentage' && (
+            {['generalElection', 'localElection'].includes(activeDataset?.type || '') && 
+             displayOptions[activeDataset!.type as 'generalElection' | 'localElection']?.mode === 'party-percentage' && (
                 <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
                      <div className="bg-white/20 p-1 overflow-hidden">
                         <RangeControl
@@ -347,21 +347,21 @@ export default memo(function LegendPanel({
                             }, #f5f5f5)`}
                             labels={[
                                 // Dynamic labels based on current range
-                                `${(displayOptions[activeDataset!.type as 'general-election'].partyPercentageRange?.max ?? 100).toFixed(0)}%`,
+                                `${(displayOptions[activeDataset!.type as 'generalElection'].partyPercentageRange?.max ?? 100).toFixed(0)}%`,
                                 // ... intermediate labels calculated in UI if needed, or simplified:
                                 '', '', '', 
-                                `${(displayOptions[activeDataset!.type as 'general-election'].partyPercentageRange?.min ?? 0).toFixed(0)}%`
+                                `${(displayOptions[activeDataset!.type as 'generalElection'].partyPercentageRange?.min ?? 0).toFixed(0)}%`
                             ]}
                             onRangeInput={(min, max) => {
                                 setLiveOptions(prev => {
                                     const base = prev || mapOptions;
-                                    const type = activeDataset!.type as 'general-election';
+                                    const type = activeDataset!.type as 'generalElection';
                                     return { ...base, [type]: { ...base[type], partyPercentageRange: { min, max } } };
                                 });
                             }}
                             onRangeChangeEnd={() => {
                                 if (!liveOptions) return;
-                                const type = activeDataset!.type as 'general-election';
+                                const type = activeDataset!.type as 'generalElection';
                                 // @ts-ignore
                                 onMapOptionsChange(type, { partyPercentageRange: liveOptions[type].partyPercentageRange });
                                 setLiveOptions(null);

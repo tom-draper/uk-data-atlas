@@ -71,7 +71,7 @@ function GenderBalanceByAgeChart({
 		// Try to find the ward data - population uses 2021 codes
 		const codesToTry = [
 			wardCode,
-			codeMapper.convertWardCode(wardCode, dataset.wardYear)
+			codeMapper.convertWardCode(wardCode, dataset.boundaryYear)
 		].filter((code): code is string => code !== null);
 
 		for (const code of codesToTry) {

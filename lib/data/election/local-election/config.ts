@@ -1,7 +1,9 @@
 // lib/data/electionConfig.ts
 
+import { WardYear } from "../../boundaries/boundaries";
+
 export interface ElectionSourceConfig {
-    year: number;
+    year: WardYear;
     url: string;
     // Map internal standard keys to CSV headers
     fields: {

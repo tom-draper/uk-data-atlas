@@ -1,7 +1,7 @@
 // components/ChartPanel.tsx
 'use client';
 import packageJson from '../package.json';
-import { Dataset, LocalElectionWardData, ConstituencyData, Datasets, ActiveViz } from '@lib/types';
+import { Dataset, LocalElectionWardData, ConstituencyData, Datasets, ActiveViz, AggregatedData } from '@lib/types';
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
@@ -19,7 +19,7 @@ interface ChartPanelProps {
 	datasets: Datasets;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	aggregatedData: any;
+	aggregatedData: AggregatedData;
 	codeMapper: CodeMapper
 }
 
@@ -74,8 +74,8 @@ export default memo(function ChartPanel({
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
 					<GeneralElectionResultChart
 						activeDataset={activeDataset}
-						availableDatasets={datasets['general-election']}
-						aggregatedData={aggregatedData['general-election']}
+						availableDatasets={datasets.generalElection}
+						aggregatedData={aggregatedData.generalElection}
 						setActiveViz={setActiveViz}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
@@ -84,8 +84,8 @@ export default memo(function ChartPanel({
 
 					<LocalElectionResultChart
 						activeDataset={activeDataset}
-						availableDatasets={datasets['local-election']}
-						aggregatedData={aggregatedData['local-election']}
+						availableDatasets={datasets.localElection}
+						aggregatedData={aggregatedData.localElection}
 						setActiveViz={setActiveViz}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
@@ -95,8 +95,8 @@ export default memo(function ChartPanel({
 					<PopulationChart
 					 	activeViz={activeViz}
 						setActiveViz={setActiveViz}
-						availableDatasets={datasets['population']}
-						aggregatedData={aggregatedData['population']}
+						availableDatasets={datasets.population}
+						aggregatedData={aggregatedData.population}
 						boundaryData={boundaryData}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
@@ -105,8 +105,8 @@ export default memo(function ChartPanel({
 
 					<HousePriceChart
 						activeDataset={activeDataset}
-						availableDatasets={datasets['house-price']}
-						aggregatedData={aggregatedData['house-price']}
+						availableDatasets={datasets.housePrice}
+						aggregatedData={aggregatedData.housePrice}
 						setActiveViz={setActiveViz}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
