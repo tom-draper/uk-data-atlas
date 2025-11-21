@@ -11,19 +11,21 @@ export interface WardHousePriceData {
     prices: Record<number, number>;
 }
 
+export type HousePriceYear = 2023
+
 export interface HousePriceDataset {
     id: string;
     type: 'housePrice';
-    year: number;
+    year: HousePriceYear;
     boundaryYear: WardYear;
     boundaryType: 'ward';
     wardData: Record<string, WardHousePriceData>;
 }
 
-export interface AggregatedHousePriceData {
-    2023: {
+export type AggregatedHousePriceData = {
+    [Y in HousePriceYear]: {
         averagePrice: number;
         averagePrices: Record<number, number>;
         wardCount: number;
     };
-}
+};
