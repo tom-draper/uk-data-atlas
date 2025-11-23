@@ -14,7 +14,7 @@ export default function TitlePane() {
                         filter: "contrast(0.2) grayscale(1) brightness(1.8)"
                     }}
                 />
-                <h1 className="font-semibold text-[15px]">UK Data Atlas</h1>
+                <h1 className="font-bold text-[15px]">UK Data Atlas</h1>
                 {/* <span className="text-xs text-gray-400/80 font-mono ml-auto mr-5 select-none mt-0.5">
                     v{version}
                 </span> */}

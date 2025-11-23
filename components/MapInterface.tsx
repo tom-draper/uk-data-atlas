@@ -65,9 +65,14 @@ export default function MapInterface({
 	// Get geojson for active dataset
 	const geojson = useMemo(() => {
 		if (!activeDataset) return null;
-		if (activeDataset.boundaryType === 'ward') return boundaryData.ward[activeDataset.boundaryYear];
-		if (activeDataset.boundaryType === 'constituency') return boundaryData.constituency[activeDataset.boundaryYear];
-		if (activeDataset.boundaryType === 'localAuthority') return boundaryData.localAuthority[activeDataset.boundaryYear];
+		switch (activeDataset.boundaryType) {
+			case 'ward':
+				return boundaryData.ward[activeDataset.boundaryYear];
+			case 'constituency':
+				return boundaryData.constituency[activeDataset.boundaryYear];
+			case 'localAuthority':
+				return boundaryData.localAuthority[activeDataset.boundaryYear];
+		}
 		return null;
 	}, [activeDataset, boundaryData]);
 

@@ -6,7 +6,7 @@ import { ConstituencyYear } from '@/lib/data/boundaries/boundaries';
 import { PARTIES } from '@/lib/data/election/parties';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { calculateTurnout } from '@/lib/utils/generalElection';
-import { ActiveViz, AggregateGeneralElectionData, Dataset, GENERAL_ELECTION_YEARS, GeneralElectionDataset, PartyVotes } from '@lib/types';
+import { ActiveViz, AggregatedGeneralElectionData, Dataset, GENERAL_ELECTION_YEARS, GeneralElectionDataset, PartyVotes } from '@lib/types';
 
 const YEAR_STYLES: Record<number, { bg: string; border: string }> = {
 	2024: { bg: 'bg-indigo-50/60', border: 'border-indigo-400' },
@@ -37,7 +37,7 @@ interface ProcessedYearData {
 
 const useElectionChartData = (
 	availableDatasets: Record<string, GeneralElectionDataset>,
-	aggregatedData: AggregateGeneralElectionData | null,
+	aggregatedData: AggregatedGeneralElectionData | null,
 	codeMapper: CodeMapper,
 	constituencyCode?: string,
 	wardCode?: string
@@ -202,6 +202,7 @@ const ElectionYearCard = memo(({
 	isActive: boolean;
 	setActiveViz: (val: ActiveViz) => void;
 }) => {
+	const vizId = `generalElection-${data.year}`;
 	const colors = YEAR_STYLES[data.year] || YEAR_STYLES[2024];
 
 	// Calculate height based on state
@@ -210,16 +211,6 @@ const ElectionYearCard = memo(({
 		? (data.isAggregated ? 'h-[205px]' : 'h-[95px]')
 		: 'h-[65px]';
 
-	const handleActivate = () => {
-		if (data.dataset) {
-			setActiveViz({
-				vizId: data.dataset.id,
-				datasetType: data.dataset.type,
-				datasetYear: data.dataset.year
-			});
-		}
-	};
-
 	return (
 		<div
 			className={`
@@ -227,7 +218,7 @@ const ElectionYearCard = memo(({
         ${heightClass}
         ${isActive ? `${colors.bg} ${colors.border}` : 'bg-white/60 border-gray-200/80 hover:border-indigo-300'}
       `}
-			onClick={handleActivate}
+			onClick={() => setActiveViz({ vizId: vizId, datasetType: data.dataset.type, datasetYear: data.year })}
 		>
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">{data.year} General Election</h3>
@@ -264,7 +255,7 @@ interface GeneralElectionResultChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 	wardCode?: string;
 	constituencyCode?: string;
-	aggregatedData: AggregateGeneralElectionData | null;
+	aggregatedData: AggregatedGeneralElectionData | null;
 	codeMapper: CodeMapper
 }
 
@@ -294,7 +285,7 @@ export default function GeneralElectionResultChart({
 				<ElectionYearCard
 					key={data.year}
 					data={data}
-					isActive={activeDataset?.id === `general-election-${data.year}`}
+					isActive={activeDataset?.id === `generalElection-${data.year}`}
 					setActiveViz={setActiveViz}
 				/>
 			))}

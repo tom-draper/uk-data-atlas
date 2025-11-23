@@ -81,8 +81,8 @@ export const fetchAndParseGeneralElectionData = async (config: GeneralElectionSo
                 }
 
                 resolve({
-                    id: `general-election-${config.year}`,
-                    type: 'general-election',
+                    id: `generalElection-${config.year}`,
+                    type: 'generalElection',
                     year: config.year,
                     boundaryYear: config.constituencyBoundaryYear, // Use configurable boundary year
                     boundaryType: 'constituency',
