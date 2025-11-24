@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { MapManager } from '@lib/utils/mapManager';
-import type { LocalElectionWardData } from '@lib/types';
+import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
 
 type UseMapManagerOptions = {
     mapRef: React.RefObject<mapboxgl.Map | null>;
     geojson: any | null;
     onWardHover?: (params: { data: LocalElectionWardData | null; wardCode: string }) => void;
-    onConstituencyHover?: (data: any | null) => void;
+    onConstituencyHover?: (params: ConstituencyData | null) => void;
     onLocationChange?: (location: string) => void;
 };
 
@@ -18,7 +18,7 @@ export function useMapManager(opts: UseMapManagerOptions) {
     // Update callbacks ref without triggering re-initialization
     useEffect(() => {
         callbacksRef.current = opts;
-    });
+    }, [opts]);
 
     // Initialize manager once when both map and geojson are ready
     useEffect(() => {
@@ -30,9 +30,9 @@ export function useMapManager(opts: UseMapManagerOptions) {
                     callbacksRef.current.onWardHover(params);
                 }
             },
-            onConstituencyHover: (data) => {
+            onConstituencyHover: (params) => {
                 if (callbacksRef.current.onConstituencyHover) {
-                    callbacksRef.current.onConstituencyHover(data);
+                    callbacksRef.current.onConstituencyHover(params);
                 }
             },
             onLocationChange: (location) => {

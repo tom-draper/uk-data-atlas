@@ -1,5 +1,5 @@
 // lib/utils/mapManager/mapManager.ts
-import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset } from '@lib/types';
 import { MapOptions } from '@lib/types/mapOptions';
 import { LayerManager } from './layerManager';
 import { EventHandler } from './eventHandler';
@@ -14,7 +14,7 @@ export interface MapManagerCallbacks {
     onLocationChange: (location: string) => void;
 }
 
-export type MapMode = 'localElection' | 'generalElection' | 'population' | 'housePrice';
+export type MapMode = 'localElection' | 'generalElection' | 'population' | 'housePrice' | 'crime';
 
 export class MapManager {
     private layerManager: LayerManager;
@@ -156,6 +156,22 @@ export class MapManager {
     }
 
     // ============================================================================
+    // Crime Methods
+    // ============================================================================
+
+    updateMapForCrimeRate(
+        geojson: BoundaryGeojson,
+        dataset: CrimeDataset,
+        mapOptions: MapOptions
+    ): void {
+        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson);
+        const locationData = this.featureBuilder.buildCrimeRateFeatures(geojson, dataset, ladCodeProp, mapOptions);
+        
+        this.layerManager.updateColoredLayers(locationData);
+        this.eventHandler.setupEventHandlers('crime', dataset.records, ladCodeProp);
+    }
+
+    // ============================================================================
     // Stats Calculation Methods
     // ============================================================================
 
@@ -188,10 +204,19 @@ export class MapManager {
 
     calculateHousePriceStats(
         geojson: BoundaryGeojson,
-        wardData: Record<string, any>,
+        wardData: HousePriceDataset['wardData'],
         location: string | null = null,
         datasetId: string | null = null
     ) {
         return this.statsCalculator.calculateHousePriceStats(geojson, wardData, location, datasetId);
+    }
+
+    calculateCrimeStats(
+        geojson: BoundaryGeojson,
+        wardData: CrimeDataset['records'],
+        location: string | null = null,
+        datasetId: string | null = null
+    ) {
+        return this.statsCalculator.calculateCrimeStats(geojson, wardData, location, datasetId);
     }
 }

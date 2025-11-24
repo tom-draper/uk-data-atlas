@@ -1,8 +1,8 @@
 // lib/utils/mapManager/featureBuilder.ts
-import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset } from '@lib/types';
 import { MapOptions } from '@lib/types/mapOptions';
 import { calculateMedianAge, calculateTotal, polygonAreaSqKm } from '../population';
-import { getColorForAge, getColorForGenderRatio, getColorForDensity, getColorForHousePrice } from '../colorScale';
+import { getColorForAge, getColorForGenderRatio, getColorForDensity, getColorForHousePrice, getColorForCrimeRate } from '../colorScale';
 
 export class FeatureBuilder {
     buildWinnerFeatures(
@@ -153,6 +153,30 @@ export class FeatureBuilder {
 
                 const color = getColorForHousePrice(ward.prices[2023], mapOptions.housePrice, mapOptions.general.theme);
 
+                return {
+                    ...feature,
+                    properties: { ...feature.properties, color }
+                };
+            })
+        };
+    }
+
+    buildCrimeRateFeatures(
+        geojson: BoundaryGeojson,
+        dataset: CrimeDataset,
+        ladCodeProp: string,
+        mapOptions: MapOptions,
+    ): BoundaryGeojson {
+        return {
+            type: 'FeatureCollection',
+            features: geojson.features.map(feature => {
+                const ladCode = feature.properties[ladCodeProp];
+                const area = dataset.records[ladCode];
+                if (!area) {
+                    return { ...feature, properties: { ...feature.properties, color: '#cccccc' } };
+                }
+
+                const color = getColorForCrimeRate(area.totalRecordedCrime, mapOptions.crime, mapOptions.general.theme);
                 return {
                     ...feature,
                     properties: { ...feature.properties, color }

@@ -1,8 +1,6 @@
 // lib/utils/mapManager/propertyDetector.ts
+import { CONSTITUENCY_CODE_KEYS, LAD_CODE_KEYS, WARD_CODE_KEYS } from '@/lib/data/boundaries/boundaries';
 import { BoundaryGeojson } from '@lib/types';
-
-const WARD_CODE_KEYS = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'];
-const CONSTITUENCY_CODE_KEYS = ['PCON24CD', 'PCON25CD', 'pcon19cd', 'PCON17CD', 'PCON15CD'];
 
 export class PropertyDetector {
     detectWardCode(geojson: BoundaryGeojson): string {
@@ -11,6 +9,10 @@ export class PropertyDetector {
 
     detectConstituencyCode(geojson: BoundaryGeojson): string {
         return this.detectPropertyKey(geojson, CONSTITUENCY_CODE_KEYS);
+    }
+
+    detectLocalAuthorityCode(geojson: BoundaryGeojson): string {
+        return this.detectPropertyKey(geojson, LAD_CODE_KEYS);
     }
 
     private detectPropertyKey(geojson: BoundaryGeojson, possibleKeys: string[]): string {

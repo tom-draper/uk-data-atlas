@@ -100,11 +100,6 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 		};
 	}, [wardCode, constituencyCode, dataset, aggregatedData, codeMapper]);
 
-	// Don't render if we're in constituency mode (house prices are ward-level only)
-	// if (constituencyCode) {
-	// 	return null;
-	// }
-
 	// Calculate SVG path for the line chart with straight lines
 	const { linePath, areaPath } = useMemo(() => {
 		if (priceData.length < 2) return { linePath: '', areaPath: '' };
@@ -132,7 +127,7 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 
 	const formattedPrice = currentPrice
 		? `£${Math.round(currentPrice).toLocaleString()}`
-		: 'No data';
+		: null;
 
 	return (
 		<div
@@ -180,11 +175,17 @@ const PriceChart = React.memo(({ dataset, wardCode, constituencyCode, isActive, 
 			)}
 
 			{/* Price display in bottom right */}
-			<div className="relative flex justify-end items-end mt-4 z-10">
-				<div className={`text-xl font-bold ${!currentPrice ? 'text-gray-400 text-sm' : ''}`}>
-					{formattedPrice}
+			{formattedPrice ? (
+				<div className="relative flex justify-end items-end mt-4 z-10 h-7">
+					<div className={`text-xl font-bold ${!currentPrice ? 'text-gray-400 text-sm' : ''}`}>
+						{formattedPrice}
+					</div>
 				</div>
-			</div>
+			) : (
+				<div className="h-7 mt-3 mb-1">
+					<div className="text-xs text-gray-400/80 pt-0.5 text-center">No data available</div>
+				</div>
+			)}
 		</div>
 	);
 });
@@ -201,14 +202,12 @@ export default function HousePriceChart({
 }: HousePriceChartProps) {
 	if (!availableDatasets) return null;
 
-	const vizId = `housePrice2023`;
 	const dataset = availableDatasets[2023];
-
 	if (!dataset) {
 		return null;
 	}
 
-	const isActive = activeDataset?.id === vizId;
+	const isActive = activeDataset?.id === 'housePrice2023';
 
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">

@@ -32,6 +32,9 @@ export function useMapUpdates({
                 case 'housePrice':
                     return mapManager.updateMapForHousePrices(geojson, activeDataset, mapOptions);
 
+                case 'crime':
+                    return mapManager.updateMapForCrimeRate(geojson, activeDataset, mapOptions);
+
                 case 'population':
                     // Handle population sub-categories
                     if (activeViz.vizId.startsWith('ageDistribution')) {
@@ -43,10 +46,6 @@ export function useMapUpdates({
                     if (activeViz.vizId.startsWith('gender')) {
                         return mapManager.updateMapForGender(geojson, activeDataset, mapOptions);
                     }
-                    break;
-
-                default:
-                    console.warn(`No map update strategy found for dataset type: ${activeDataset.type}`);
             }
         };
 

@@ -1,5 +1,5 @@
 // lib/utils/mapManager/statsCalculator.ts
-import { BoundaryGeojson, PartyVotes, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, WardStats, ConstituencyStats, AgeGroups, WardHousePriceData, AggregatedHousePriceData, PopulationStats } from '@lib/types';
+import { BoundaryGeojson, PartyVotes, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, WardStats, ConstituencyStats, AgeGroups, WardHousePriceData, AggregatedHousePriceData, PopulationStats, CrimeDataset } from '@lib/types';
 import { calculateTotal, polygonAreaSqKm } from '../population';
 import { getWinningParty } from '../generalElection';
 import { calculateAgeGroups } from '../ageDistribution';
@@ -168,6 +168,38 @@ export class StatsCalculator {
             wardCount,
             averagePrices
         };
+
+        this.cache.set(cacheKey, result);
+        return result;
+    }
+
+    calculateCrimeStats(
+        geojson: BoundaryGeojson,
+        crimeData: CrimeDataset['records'],
+        location: string | null,
+        datasetId: string | null
+    ) {
+        const cacheKey = `crime-${location}-${datasetId}`;
+        const cached = this.cache.get(cacheKey);
+        if (cached) return cached;
+
+        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson);
+        console.log(`calculateCrimeStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
+
+        const result = {
+            totalRecordedCrime: 0,
+            wardCount: 0
+        };
+
+        for (const feature of geojson.features) {
+            const area = crimeData[feature.properties[ladCodeProp]];
+            if (!area) continue;
+
+            if (area.totalRecordedCrime !== null && area.totalRecordedCrime !== undefined) {
+                result.totalRecordedCrime += area.totalRecordedCrime;
+                result.wardCount += 1;
+            }
+        }
 
         this.cache.set(cacheKey, result);
         return result;

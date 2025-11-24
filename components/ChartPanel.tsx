@@ -5,10 +5,11 @@ import { Dataset, LocalElectionWardData, ConstituencyData, Datasets, ActiveViz, 
 import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
+import HousePriceChart from './HousePriceChart';
+import CrimeChart from './CrimeChart';
 import { memo } from 'react';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
-import HousePriceChart from './HousePriceChart';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
@@ -107,6 +108,16 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={datasets.housePrice}
 						aggregatedData={aggregatedData.housePrice}
+						setActiveViz={setActiveViz}
+						wardCode={selectedWard?.wardCode?.toString()}
+						constituencyCode={selectedConstituency?.onsId}
+						codeMapper={codeMapper}
+					/>
+
+					<CrimeChart
+						activeDataset={activeDataset}
+						availableDatasets={datasets.crime}
+						aggregatedData={aggregatedData.crime}
 						setActiveViz={setActiveViz}
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}

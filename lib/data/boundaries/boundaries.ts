@@ -32,8 +32,8 @@ export type LocalAuthorityYear = keyof typeof GEOJSON_PATHS.localAuthority;
 // Property keys for each boundary type
 export const WARD_CODE_KEYS = ['WD24CD', 'WD23CD', 'WD22CD', 'WD21CD'] as const;
 export const WARD_NAME_KEYS = ['WD24NM', 'WD23NM', 'WD22NM', 'WD21NM'] as const;
-export const LAD_CODE_KEYS = ['LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'] as const;
-export const LAD_NAME_KEYS = ['LAD24NM', 'LAD23NM', 'LAD22NM', 'LAD21NM'] as const;
+export const LAD_CODE_KEYS = ['LAD25CD', 'LAD24CD', 'LAD23CD', 'LAD22CD', 'LAD21CD'] as const;
+export const LAD_NAME_KEYS = ['LAD25NM', 'LAD24NM', 'LAD23NM', 'LAD22NM', 'LAD21NM'] as const;
 export const CONSTITUENCY_CODE_KEYS = ['PCON24CD', 'pcon19cd', 'PCON17CD', 'PCON15CD'] as const;
 export const CONSTITUENCY_NAME_KEYS = ['PCON24NM', 'pcon19nm', 'PCON17NM', 'PCON15NM'] as const;
 
