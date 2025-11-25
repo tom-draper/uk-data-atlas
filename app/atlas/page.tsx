@@ -25,6 +25,7 @@ export default function MapsPage() {
 
     return (
         <ErrorBoundary>
+            {/* <MapLibreExample /> */}
             <MapInterface
                 datasets={datasets}
                 selectedLocation={selectedLocation}

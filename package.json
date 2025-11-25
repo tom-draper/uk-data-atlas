@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@maptiler/sdk": "^3.9.0",
     "lucide-react": "^0.554.0",
     "mapbox-gl": "^3.16.0",
     "maplibre-gl": "^5.13.0",

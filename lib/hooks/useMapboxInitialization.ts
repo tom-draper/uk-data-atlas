@@ -6,9 +6,10 @@ interface UseMapInitializationOptions {
 	style: string;
 	center: [number, number];
 	zoom: number;
+	maxBounds: [number, number, number, number]
 }
 
-export function useMapInitialization({ style, center, zoom }: UseMapInitializationOptions) {
+export function useMapboxInitialization({ style, center, zoom, maxBounds }: UseMapInitializationOptions) {
 	const mapRef = useRef<mapboxgl.Map | null>(null);
 
 	const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
@@ -28,6 +29,7 @@ export function useMapInitialization({ style, center, zoom }: UseMapInitializati
 				style,
 				center,
 				zoom,
+				maxBounds, 
 			});
 		} catch (err) {
 			console.error('Failed to initialize map:', err);
