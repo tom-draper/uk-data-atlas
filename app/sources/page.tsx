@@ -18,7 +18,7 @@ const datasets: Dataset[] = [
         year: '2010, 2015, 2017, 2019, 2024',
         licence: 'Open Parliament Licence',
         licenceUrl: 'https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/',
-        description: 'Aggregated local election results by ward/year for trend analysis.'
+        description: 'Aggregated general election results by UK parlimentary constituency for trend analysis.'
     },
     {
         name: 'Local Election Results',
@@ -27,7 +27,7 @@ const datasets: Dataset[] = [
         year: '2021, 2022, 2023, 2024',
         licence: 'Open Parliament Licence',
         licenceUrl: 'https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/',
-        description: 'Aggregated local election results by ward/year for trend analysis.'
+        description: 'Aggregated local election results by ward for trend analysis.'
     },
     {
         name: 'Population Estimates',
@@ -37,6 +37,15 @@ const datasets: Dataset[] = [
         licence: 'Open Government Licence v3.0',
         licenceUrl: 'http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/',
         description: 'Ward-level population data estimates including age and gender used for per-capita comparisons.'
+    },
+    {
+        name: 'Median House Price',
+        source: 'Office for National Statistics',
+        sourceUrl: 'https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/medianpricepaidbywardhpssadataset37',
+        year: '1995-2023',
+        licence: 'Open Government Licence v3.0',
+        licenceUrl: 'http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/',
+        description: 'Median house price paid by ward for England and Wales for trend analysis.'
     },
     {
         name: 'Westminster Parliamentary Wards (Boundaries)',
