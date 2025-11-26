@@ -127,14 +127,25 @@ export const filterFeatures = (
 ): BoundaryGeojson => {
     if (!location || location === 'United Kingdom') return geojson;
 
-    // 1. Filter by Country Prefix
+    // Filter by Country Prefix
     if (COUNTRY_PREFIXES[location]) {
         const prefix = COUNTRY_PREFIXES[location];
-        let keys: readonly string[];
 
-        if (type === 'ward') keys = PROPERTY_KEYS.wardCode;
-        else if (type === 'constituency') keys = PROPERTY_KEYS.constituencyCode;
-        else keys = PROPERTY_KEYS.ladCode;
+        let keys: readonly string[];
+        switch (type) {
+            case 'ward':
+                keys = PROPERTY_KEYS.wardCode;
+                break;
+            case 'constituency':
+                keys = PROPERTY_KEYS.constituencyCode;
+                break;
+            case 'localAuthority':
+                keys = PROPERTY_KEYS.ladCode;
+                break
+            default:
+                console.error('Boundary type is not valid.')
+                return geojson
+        }
 
         return {
             ...geojson,
@@ -148,7 +159,7 @@ export const filterFeatures = (
     const locData = LOCATIONS[location];
     if (!locData) return geojson;
 
-    // 2. Filter Wards by LAD Code
+    // Filter Wards by LAD Code
     if (type === 'ward' && locData.lad_codes?.length) {
         return {
             ...geojson,
@@ -160,7 +171,7 @@ export const filterFeatures = (
         };
     }
 
-    // 3. Filter Local Authorities by LAD Code
+    // Filter Local Authorities by LAD Code
     if (type === 'localAuthority' && locData.lad_codes?.length) {
         return {
             ...geojson,
@@ -171,7 +182,7 @@ export const filterFeatures = (
         };
     }
 
-    // 4. Filter Constituency by Bounds
+    // Filter Constituency by Bounds
     if (type === 'constituency' && locData.bounds) {
         return {
             ...geojson,
