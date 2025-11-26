@@ -4,7 +4,7 @@ export default function Navigation() {
     return (
         <nav>
             <div className="flex py-6 px-4 w-[65%] mx-auto">
-                <h1 className="text-xl w-[200px] font-bold">UK Data Atlas</h1>
+                <h1 className="text-xl w-[200px] font-semibold">UK Data Atlas</h1>
                 <div className="flex place-items-center grow text-[#4e4e4e]">
                     <div className="ml-auto grow text-right">
                         <a href="/" className="px-4 content-center cursor-pointer hover:underline">Home</a>

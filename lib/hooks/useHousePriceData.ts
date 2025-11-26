@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { HousePriceDataset, WardHousePriceData } from '../types';
+import { withCDN } from '../utils/cdn';
 
 // Utility to parse price values
 const parsePrice = (value: any): number | null => {
@@ -11,7 +12,7 @@ const parsePrice = (value: any): number | null => {
 };
 
 const parseHousePriceData = async (): Promise<Record<string, WardHousePriceData>> => {
-    const res = await fetch('/data/housing/HPSSA Dataset 37 - Median price paid by wardHPSSA Dataset 37 - Median price paid by ward.csv');
+    const res = await fetch(withCDN('/data/housing/HPSSA Dataset 37 - Median price paid by wardHPSSA Dataset 37 - Median price paid by ward.csv'));
     const csvText = await res.text();
 
     // Skip the first few rows that contain metadata

@@ -1,25 +1,26 @@
 import { BoundaryGeojson } from '@lib/types';
 import { LOCATIONS } from '@lib/data/locations';
+import { withCDN } from '@/lib/utils/cdn';
 
 export const GEOJSON_PATHS = {
     ward: {
-        2024: '/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson',
-        2023: '/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson',
-        2022: '/data/boundaries/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson',
-        2021: '/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson',
+        2024: withCDN('/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson'),
+        2023: withCDN('/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson'),
+        2022: withCDN('/data/boundaries/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson'),
+        2021: withCDN('/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson'),
     },
     constituency: {
-        2024: '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson',
-        2019: '/data/boundaries/constituencies/WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.geojson',
-        2017: '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.geojson',
-        2015: '/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.geojson',
+        2024: withCDN('/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson'),
+        2019: withCDN('/data/boundaries/constituencies/WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.geojson'),
+        2017: withCDN('/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.geojson'),
+        2015: withCDN('/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.geojson'),
     },
     localAuthority: {
-        2025: '/data/boundaries/lad/LAD_MAY_2025_UK_BGC_V2_1110015208521213948.geojson',
-        2024: '/data/boundaries/lad/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson',
-        2023: '/data/boundaries/lad/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson',
-        2022: '/data/boundaries/lad/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.geojson',
-        2021: '/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.geojson',
+        2025: withCDN('/data/boundaries/lad/LAD_MAY_2025_UK_BGC_V2_1110015208521213948.geojson'),
+        2024: withCDN('/data/boundaries/lad/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson'),
+        2023: withCDN('/data/boundaries/lad/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson'),
+        2022: withCDN('/data/boundaries/lad/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.geojson'),
+        2021: withCDN('/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.geojson'),
     }
 } as const;
 

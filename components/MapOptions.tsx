@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { themes } from '@/lib/utils/colorScale';
-import { MapOptions as MapOptionsType } from '@/lib/types/mapOptions';
+import { ColorTheme, MapOptions as MapOptionsType } from '@/lib/types/mapOptions';
 
 interface MapOptionsProps {
     onZoomIn: () => void;
@@ -14,7 +14,7 @@ export default function MapOptions({ onZoomIn, onZoomOut, handleMapOptionsChange
     const [selectedTheme, setSelectedTheme] = useState('viridis');
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const handleThemeChange = (themeId: string) => {
+    const handleThemeChange = (themeId: ColorTheme) => {
         setSelectedTheme(themeId);
         setIsOpen(false);
         handleMapOptionsChange('general', { theme: themeId });
@@ -64,7 +64,7 @@ export default function MapOptions({ onZoomIn, onZoomOut, handleMapOptionsChange
                                 className="w-3 h-3 rounded-sm"
                                 style={{ background: themes.find(t => t.id === selectedTheme)?.gradient }}
                             />
-                            Theme
+                            Heatmap
                             <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
                         </button>
 
@@ -90,7 +90,7 @@ export default function MapOptions({ onZoomIn, onZoomOut, handleMapOptionsChange
                         )}
                     </div>
 
-                    <button className="absolute right-2.5 bottom-2.5 border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 cursor-pointer">
+                    <button className="absolute right-2.5 bottom-2.5 border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500">
                         Export
                     </button>
                 </div>

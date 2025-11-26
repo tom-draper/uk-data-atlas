@@ -1,5 +1,5 @@
 // lib/utils/colorScale.ts
-import type { CrimeOptions, DensityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, LocalElectionOptions, PopulationOptions } from '@/lib/types/mapOptions';
+import type { ColorTheme, CrimeOptions, DensityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, LocalElectionOptions, PopulationOptions } from '@/lib/types/mapOptions';
 
 /**
  * Normalizes a value to a 0-1 range based on min/max bounds
@@ -48,22 +48,22 @@ export function interpolateColor(color1: string, color2: string, factor: number)
 // Define themes with specific color steps
 const themeDefinitions = [
     { 
-        id: 'viridis', 
+        id: 'viridis' as ColorTheme, 
         label: 'Viridis', 
         colors: ['#440154', '#31688e', '#35b779', '#fde724'] 
     },
     { 
-        id: 'plasma', 
+        id: 'plasma' as ColorTheme, 
         label: 'Plasma', 
         colors: ['#0d0887', '#7e03a8', '#cc4778', '#f89540', '#f0f921'] 
     },
     { 
-        id: 'inferno', 
+        id: 'inferno' as ColorTheme, 
         label: 'Inferno', 
         colors: ['#000004', '#420a68', '#932667', '#fca236', '#fcfdbf'] 
     },
     { 
-        id: 'magma', 
+        id: 'magma' as ColorTheme, 
         label: 'Magma', 
         colors: ['#000004', '#3b0f70', '#8c2981', '#fcfdbf'] 
     },

@@ -1,5 +1,6 @@
 // lib/data/generalElectionConfig.ts
 
+import { withCDN } from "@/lib/utils/cdn";
 import { ConstituencyYear } from "../../boundaries/boundaries";
 
 export type GeneralElectionSourceConfig = {
@@ -31,7 +32,7 @@ export const KNOWN_PARTIES_PRE_2024 = ['Con', 'Lab', 'LD', 'BRX', 'Green', 'SNP'
 export const GENERAL_ELECTION_SOURCES: Record<string, GeneralElectionSourceConfig> = {
     'general-election-2024': {
         year: 2024,
-        url: '/data/elections/general-elections/HoC-GE2024-results-by-constituency.csv',
+        url: withCDN('/data/elections/general-elections/HoC-GE2024-results-by-constituency.csv'),
         requiresHeaderCleaning: true, // Need to skip initial metadata rows
         constituencyBoundaryYear: 2024,
         fields: {
@@ -50,7 +51,7 @@ export const GENERAL_ELECTION_SOURCES: Record<string, GeneralElectionSourceConfi
     },
     'general-election-2019': {
         year: 2019,
-        url: '/data/elections/general-elections/HoC-GE2019-results-by-constituency.csv',
+        url: withCDN('/data/elections/general-elections/HoC-GE2019-results-by-constituency.csv'),
         requiresHeaderCleaning: false, 
         constituencyBoundaryYear: 2019,
         fields: {
@@ -69,7 +70,7 @@ export const GENERAL_ELECTION_SOURCES: Record<string, GeneralElectionSourceConfi
     },
     'general-election-2017': {
         year: 2017,
-        url: '/data/elections/general-elections/HoC-GE2017-results-by-constituency.csv',
+        url: withCDN('/data/elections/general-elections/HoC-GE2017-results-by-constituency.csv'),
         requiresHeaderCleaning: false,
         constituencyBoundaryYear: 2019, // Re-use 2019 boundaries for 2017/2015
         fields: {
@@ -88,7 +89,7 @@ export const GENERAL_ELECTION_SOURCES: Record<string, GeneralElectionSourceConfi
     },
     'general-election-2015': {
         year: 2015,
-        url: '/data/elections/general-elections/HoC-GE2015-results-by-constituency.csv',
+        url: withCDN('/data/elections/general-elections/HoC-GE2015-results-by-constituency.csv'),
         requiresHeaderCleaning: false,
         constituencyBoundaryYear: 2019, // Re-use 2019 boundaries for 2017/2015
         fields: {

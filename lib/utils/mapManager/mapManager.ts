@@ -24,7 +24,7 @@ export class MapManager {
     private propertyDetector: PropertyDetector;
     private cache: StatsCache;
 
-    constructor(map: mapboxgl.Map, callbacks: MapManagerCallbacks) {
+    constructor(map: mapboxgl.Map | maplibregl.Map, callbacks: MapManagerCallbacks) {
         this.layerManager = new LayerManager(map);
         this.eventHandler = new EventHandler(map, callbacks);
         this.propertyDetector = new PropertyDetector();

@@ -6,7 +6,6 @@ import LocalElectionResultChart from './LocalElectionResultChart';
 import PopulationChart from './PopulationChart';
 import GeneralElectionResultChart from './GeneralElectionResultChart';
 import HousePriceChart from './HousePriceChart';
-import CrimeChart from './CrimeChart';
 import { memo } from 'react';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
@@ -114,7 +113,7 @@ export default memo(function ChartPanel({
 						codeMapper={codeMapper}
 					/>
 
-					<CrimeChart
+					{/* <CrimeChart
 						activeDataset={activeDataset}
 						availableDatasets={datasets.crime}
 						aggregatedData={aggregatedData.crime}
@@ -122,17 +121,17 @@ export default memo(function ChartPanel({
 						wardCode={selectedWard?.wardCode?.toString()}
 						constituencyCode={selectedConstituency?.onsId}
 						codeMapper={codeMapper}
-					/>
+					/> */}
 				</div>
 
 				{/* Footer */}
 				<div className="text-[9px] px-2.5 pb-1.5 text-gray-400/80 bg-white/20 pt-2 mt-auto flex">
-					<div className="hover:underline cursor-pointer mr-auto">
+					<a className="hover:underline cursor-pointer mr-auto" href="https://github.com/tom-draper/uk-data-atlas">
 						UK Data Atlas v{version}
-					</div>
-					<div className="hover:underline cursor-pointer">
+					</a>
+					<a className="hover:underline cursor-pointer" href="/">
 						View Sources
-					</div>
+					</a>
 				</div>
 			</div>
 		</div>

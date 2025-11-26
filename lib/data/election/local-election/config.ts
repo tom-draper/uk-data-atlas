@@ -1,5 +1,6 @@
 // lib/data/electionConfig.ts
 
+import { withCDN } from "@/lib/utils/cdn";
 import { WardYear } from "../../boundaries/boundaries";
 
 export interface ElectionSourceConfig {
@@ -22,7 +23,7 @@ export interface ElectionSourceConfig {
 export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
     2024: {
         year: 2024,
-        url: '/data/elections/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv',
+        url: withCDN('/data/elections/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv'),
         isReference: true,
         fields: {
             code: 'Ward code',
@@ -36,12 +37,12 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
     },
     2023: {
         year: 2023,
-        url: '/data/elections/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv',
+        url: withCDN('/data/elections/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv'),
         isReference: false,
         fields: {
             code: '', // Missing in 2023
             name: 'WARDNAME',
-            laName: 'DISTRICTNAME', // Or COUNTYNAME, handled in parser logic
+            laName: 'DISTRICTNAME', // handled in parser logic
             turnout: 'TURNOUT',
             electorate: 'ELECT',
             totalVotes: 'Grand Total'
@@ -49,7 +50,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
     },
     2022: {
         year: 2022,
-        url: '/data/elections/local-elections/local-elections-2022/Wards-results-Table 1.csv',
+        url: withCDN('/data/elections/local-elections/local-elections-2022/Wards-results-Table 1.csv'),
         isReference: true,
         fields: {
             code: 'Ward code',
@@ -63,7 +64,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
     },
     2021: {
         year: 2021,
-        url: '/data/elections/local-elections/local_elections_2021_results-2/Wards-results-Table 1.csv',
+        url: withCDN('/data/elections/local-elections/local_elections_2021_results-2/Wards-results-Table 1.csv'),
         isReference: true,
         fields: {
             code: 'Ward/ED code',

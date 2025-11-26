@@ -9,7 +9,7 @@ const FILL_LAYER_ID = 'wards-fill';
 const LINE_LAYER_ID = 'wards-line';
 
 export class LayerManager {
-    constructor(private map: mapboxgl.Map) {}
+    constructor(private map: mapboxgl.Map | maplibregl.Map) {}
 
     updateElectionLayers(locationData: BoundaryGeojson, partyInfo: Party[]): void {
         this.removeExistingLayers();

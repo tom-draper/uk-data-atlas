@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
 import { AgeData, PopulationDataset } from '@lib/types';
+import { withCDN } from '../utils/cdn';
 
 interface CategoryPopulationWardData {
 	[wardCode: string]: {
@@ -39,7 +40,7 @@ export const usePopulationData = () => {
 				// Load 2021 and 2022 data (combined files)
 				console.log('Loading population 2021 and 2022 data...')
 				const [data2022Response] = await Promise.all([
-					fetch('/data/population/Mid-2022 Ward 2023.csv'),
+					fetch(withCDN('/data/population/Mid-2022 Ward 2023.csv')),
 				]);
 
 				const [data2022Text] = await Promise.all([

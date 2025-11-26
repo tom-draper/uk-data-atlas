@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { CrimeDataset, CrimeRecord } from '@lib/types';
+import { withCDN } from '../utils/cdn';
 
 const parseNumberStrict = (val: string): number => {
     if (!val || val.trim() === '') return 0;
@@ -36,7 +37,7 @@ export const useCrimeData = () => {
             try {
                 console.log('EXPENSIVE: Loading crime data...');
 
-                const response = await fetch('/data/crime/policeforceareatablesyejune25final.csv');
+                const response = await fetch(withCDN('/data/crime/policeforceareatablesyejune25final.csv'));
                 if (!response.ok) {
                     throw new Error(`Failed to fetch crime data: ${response.statusText}`);
                 }

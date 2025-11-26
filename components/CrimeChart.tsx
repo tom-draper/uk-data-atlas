@@ -2,7 +2,7 @@
 'use client';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { ActiveViz, AggregatedCrimeData, Dataset, CrimeDataset } from '@lib/types';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 interface CrimeChartProps {
 	activeDataset: Dataset | null;

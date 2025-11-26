@@ -9,7 +9,7 @@ export class EventHandler {
     private lastHoveredFeatureId: any = null;
 
     constructor(
-        private map: mapboxgl.Map,
+        private map: mapboxgl.Map | maplibregl.Map,
         private callbacks: MapManagerCallbacks
     ) {}
 

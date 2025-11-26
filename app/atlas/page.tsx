@@ -11,10 +11,10 @@ import { useDatasets } from '@/lib/hooks/useDatasets';
 import { ActiveViz } from '@/lib/types';
 
 export default function MapsPage() {
-    const [activeViz, setActiveViz] = useState<ActiveViz>({ 
-        vizId: 'localElection2024', 
+    const [activeViz, setActiveViz] = useState<ActiveViz>({
+        vizId: 'localElection2024',
         datasetType: 'localElection',
-        datasetYear: 2024 
+        datasetYear: 2024
     });
     const [selectedLocation, setSelectedLocation] = useState('Greater Manchester');
 
@@ -25,7 +25,6 @@ export default function MapsPage() {
 
     return (
         <ErrorBoundary>
-            {/* <MapLibreExample /> */}
             <MapInterface
                 datasets={datasets}
                 selectedLocation={selectedLocation}

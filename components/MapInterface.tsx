@@ -1,7 +1,6 @@
 // components/MapInterface.tsx
 'use client';
 import { useCallback, useMemo, useState } from 'react';
-import { useMapboxInitialization } from '@lib/hooks/useMapboxInitialization';
 import { useMapLibreInitialization } from '@/lib/hooks/useMapLibreInitialization';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';

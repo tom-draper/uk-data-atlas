@@ -3,7 +3,7 @@ import { MapManager } from '@lib/utils/mapManager';
 import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
 
 type UseMapManagerOptions = {
-    mapRef: React.RefObject<mapboxgl.Map | null>;
+    mapRef: React.RefObject<mapboxgl.Map | maplibregl.Map | null>;
     geojson: any | null;
     onWardHover?: (params: { data: LocalElectionWardData | null; wardCode: string }) => void;
     onConstituencyHover?: (params: ConstituencyData | null) => void;
