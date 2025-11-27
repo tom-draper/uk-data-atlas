@@ -9,7 +9,7 @@ import { MapOptions as MapOptionsType } from '@/lib/types/mapOptions';
 interface ControlPanelProps {
     selectedLocation: string | null;
     onLocationClick: (location: string, bounds: LocationBounds) => void;
-    population: PopulationDataset
+    populationDataset: PopulationDataset
     onZoomIn: () => void;
     onZoomOut: () => void;
 	handleMapOptionsChange: (type: keyof MapOptionsType, options: Partial<MapOptionsType[typeof type]>) => void;
@@ -18,7 +18,7 @@ interface ControlPanelProps {
 export default memo(function ControlPanel({ 
     selectedLocation, 
     onLocationClick, 
-    population, 
+    populationDataset, 
     onZoomIn, 
     onZoomOut,
     handleMapOptionsChange
@@ -32,7 +32,7 @@ export default memo(function ControlPanel({
 
             {/* Locations list */}
             <div className="pointer-events-auto p-2.5 pb-0 w-[320px] flex-1 min-h-0">
-                <LocationPane selectedLocation={selectedLocation} onLocationClick={onLocationClick} population={population} />
+                <LocationPane selectedLocation={selectedLocation} onLocationClick={onLocationClick} populationDataset={populationDataset} />
             </div>
 
             {/* Map Options */}

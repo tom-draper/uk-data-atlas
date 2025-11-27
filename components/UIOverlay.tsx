@@ -47,7 +47,7 @@ export default function UIOverlay({
 		<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
 			<div className="absolute left-0 flex h-full">
 				<ControlPanel
-					population={datasets['population'][2022]}
+					populationDataset={datasets['population'][2022]}
 					selectedLocation={selectedLocation}
 					onLocationClick={onLocationClick}
 					onZoomIn={onZoomIn}
