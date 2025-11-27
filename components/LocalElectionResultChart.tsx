@@ -255,7 +255,7 @@ export default function LocalElectionResultChart({
 				<ElectionYearCard
 					key={data.year}
 					data={data}
-					isActive={activeDataset?.id === `local-election-${data.year}`}
+					isActive={activeDataset?.id === `localElection${data.year}`}
 					setActiveViz={setActiveViz}
 				/>
 			))}

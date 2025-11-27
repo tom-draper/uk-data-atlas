@@ -18,10 +18,10 @@ const path = require("path");
 // Configuration
 const CONFIG = {
 	// Quantization (1000-10000 recommended, higher = more precision)
-	quantization: 5000,
+	quantization: 100000,
 
 	// Simplification (0.00001-0.001, lower = more aggressive)
-	simplification: 0.00001,
+	simplification: 0.0000001,
 
 	// Coordinate precision (5-6 decimal places for ~1m precision)
 	precision: 6,

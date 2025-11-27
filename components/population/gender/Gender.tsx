@@ -78,8 +78,8 @@ function Gender({
 		<div
 			className={`p-2 rounded transition-all cursor-pointer ${
 				isActive
-					? 'bg-emerald-50/60 border-2 border-emerald-300'
-					: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
+					? 'bg-violet-50/60 border-2 border-violet-300'
+					: 'bg-white/60 border-2 border-gray-200/80 hover:border-violet-300'
 			}`}
 			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetYear: dataset.year })}
 		>

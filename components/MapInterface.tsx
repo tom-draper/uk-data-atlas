@@ -24,27 +24,11 @@ interface MapInterfaceProps {
 	setSelectedLocation: (location: string) => void;
 }
 
-// const MAPBOX_CONFIG = {
-// 	style: 'mapbox://styles/mapbox/light-v11',
-// 	center: [-2.3, 53.5] as [number, number],
-// 	zoom: 10,
-// 	maxBounds: [-10.85, 49.86, 1.76, 58.74] as [number, number, number, number],
-// 	fitBoundsPadding: 40,
-// 	fitBoundsDuration: 1000,
-// } as const;
-
-// const MAPLIBRE_CONFIG = {
-// 	style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-// 	center: [-2.3, 53.5] as [number, number],
-// 	zoom: 10,
-// 	maxBounds: [-10.85, 49.86, 1.76, 58.74] as [number, number, number, number],
-// } as const;
 const MAPBOX_CONFIG = {
 	style: 'mapbox://styles/mapbox/light-v11',
 	center: [-2.3, 53.5] as [number, number],
 	zoom: 10,
-	// maxBounds: [-15, 47, 6, 62] as [number, number, number, number],
-	maxBounds: [-20, 45, 10, 65] as [number, number, number, number],
+	maxBounds: [-30, 35, 20, 70] as [number, number, number, number],
 	fitBoundsPadding: 40,
 	fitBoundsDuration: 1000,
 } as const;
@@ -53,8 +37,7 @@ const MAPLIBRE_CONFIG = {
 	style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
 	center: [-2.3, 53.5] as [number, number],
 	zoom: 10,
-	// maxBounds: [-15, 47, 6, 62] as [number, number, number, number],
-	maxBounds: [-20, 45, 10, 65] as [number, number, number, number],
+	maxBounds: [-30, 35, 20, 70] as [number, number, number, number],
 } as const;
 
 
