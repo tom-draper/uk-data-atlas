@@ -129,7 +129,7 @@ export default memo(function ChartPanel({
 					<a className="hover:underline cursor-pointer mr-auto" href="https://github.com/tom-draper/uk-data-atlas">
 						UK Data Atlas v{version}
 					</a>
-					<a className="hover:underline cursor-pointer" href="/">
+					<a className="hover:underline cursor-pointer" href="/sources">
 						View Sources
 					</a>
 				</div>
