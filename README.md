@@ -1,9 +1,7 @@
 
 <p align="center">
-  <img height="200" alt="01-UK-Outline (7)" src="https://github.com/user-attachments/assets/7c025860-bd3b-43c2-879d-ebdf36073715" />
+  <img height="200" alt="UK" src="https://github.com/user-attachments/assets/0e509ff7-cfc1-4571-ad75-566418292f70" />
 </p>
-
-
 
 <p align="center"><h4 align="center">UK Data Atlas</h4></p>
 
