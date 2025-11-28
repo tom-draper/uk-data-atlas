@@ -1,17 +1,16 @@
-import Image from "next/image";
 import Navigation from "../components/Navigation";
 
 export default function Home() {
 	return (
-		<div className="relative min-h-screen">
-			<Image
+		<div style={{ backgroundImage: 'url(/map-background.png)', backgroundSize: 'cover', minHeight: '100vh' }}>
+			{/* <Image
 				src="/map-background.png"
 				alt="Map background"
 				fill
 				priority
 				sizes="100vw"
 				className="object-cover"
-			/>
+			/> */}
 
 			<div className="relative z-10">
 				<Navigation />
