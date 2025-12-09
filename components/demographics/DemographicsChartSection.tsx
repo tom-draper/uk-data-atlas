@@ -7,7 +7,7 @@ import Gender from './population/gender/Gender';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 
-export interface PopulationChartProps {
+export interface DemographicsChartSectionProps {
 	availableDatasets: Record<string, PopulationDataset>;
 	aggregatedData: AggregatedPopulationData | null;
 	boundaryData: BoundaryData;
@@ -18,7 +18,7 @@ export interface PopulationChartProps {
 	codeMapper: CodeMapper
 }
 
-export default function PopulationChart({
+export default function DemographicsChartSection({
 	availableDatasets,
 	aggregatedData,
 	boundaryData,
@@ -27,7 +27,7 @@ export default function PopulationChart({
 	activeViz,
 	setActiveViz,
 	codeMapper
-}: PopulationChartProps) {
+}: DemographicsChartSectionProps) {
 	return (
 		<div className="pt-2.5 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold mb-2">Demographics</h3>

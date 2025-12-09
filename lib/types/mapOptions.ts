@@ -21,6 +21,7 @@ export type CrimeOptions = ColorRangeOption;
 export type PopulationOptions = ColorRangeOption;
 export type DensityOptions = ColorRangeOption;
 export type GenderOptions = ColorRangeOption;
+export type IncomeOptions = ColorRangeOption;
 
 export type ColorTheme = 'viridis' | 'plasma' | 'inferno' | 'magma';
 
@@ -31,7 +32,8 @@ export interface MapOptions {
     populationDensity: DensityOptions;
     gender: GenderOptions;
     housePrice: HousePriceOptions;
-    crime: ColorRangeOption;
+    crime: CrimeOptions;
+    income: IncomeOptions;
     general: {
         theme: ColorTheme;
     };
@@ -60,6 +62,9 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
     },
     crime: {
         colorRange: { min: 0, max: 1000 }
+    },
+    income: {
+        colorRange: { min: 20000, max: 40000 }
     },
     general: {
         theme: 'viridis'

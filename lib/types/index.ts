@@ -6,6 +6,7 @@ import { LocalElectionDataset, GeneralElectionDataset, AggregatedLocalElectionDa
 import { PopulationDataset, AggregatedPopulationData } from "./population";
 import { HousePriceDataset, AggregatedHousePriceData } from "./housePrice";
 import { CrimeDataset } from "./crime";
+import { IncomeDataset } from "./income";
 
 export * from "./common";
 export * from "./elections";
@@ -14,8 +15,9 @@ export * from "./housePrice";
 export * from "./crime";
 export * from "./geometry";
 export * from "./mapOptions";
+export * from "./income";
 
-export type Dataset = GeneralElectionDataset | PopulationDataset | LocalElectionDataset | HousePriceDataset | CrimeDataset;
+export type Dataset = GeneralElectionDataset | PopulationDataset | LocalElectionDataset | HousePriceDataset | CrimeDataset | IncomeDataset;
 
 export type Datasets = {
     localElection: Record<string, LocalElectionDataset>;
@@ -23,6 +25,7 @@ export type Datasets = {
     population: Record<string, PopulationDataset>;
     housePrice: Record<string, HousePriceDataset>;
     crime: Record<string, CrimeDataset>;
+    income: Record<string, IncomeDataset>;
 };
 
 export type AggregatedData = {
@@ -31,6 +34,7 @@ export type AggregatedData = {
     population: AggregatedPopulationData | null;
     housePrice: AggregatedHousePriceData | null;
     crime: null;
+    income: null;
 };
 
 export type ActiveViz = {

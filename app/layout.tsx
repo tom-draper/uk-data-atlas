@@ -12,18 +12,19 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
 	title: {
-		default: "UK Data Atlas | Visualising UK Public Data",
+		default: "UK Data Atlas",
 		template: "UK Data Atlas",
 	},
 	description: "A powerful platform for visualizing data that shapes the UK. Explore interactive maps, demographics, and public sector insights across the United Kingdom.",
 	keywords: [
-		"UK Data",
-		"Data Visualization",
-		"Public Sector Data",
-		"UK Map",
-		"Geospatial Data",
-		"UK Demographics",
-		"UK Economics",
+		"UK Data Map",
+		"UK Demographics Map",
+		"UK Population Density",
+		"Population Density",
+		"House Price Map",
+		"UK Crime Map",
+		"Population Heat Map",
+		"UK Census Data Map",
 	],
 	authors: [{ name: "Tom Draper", url: SITE_URL }],
 	creator: "Tom Draper",
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
 	},
 
 	openGraph: {
-		title: "UK Data Atlas | Visualising UK Public Data",
+		title: "UK Data Atlas",
 		description: "A powerful platform for visualizing data that shapes the UK. Explore interactive maps and insights.",
 		url: SITE_URL,
 		siteName: "UK Data Atlas",

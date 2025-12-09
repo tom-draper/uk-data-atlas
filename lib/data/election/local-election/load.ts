@@ -1,6 +1,6 @@
 // lib/utils/electionUtils.ts
 import Papa from 'papaparse';
-import { LocalElectionDataset, LocalElectionWardData } from '@lib/types/index';
+import { LocalElectionDataset, WardData } from '@lib/types/index';
 import { PARTY_INFO } from '@/lib/data/election/parties';
 import { ElectionSourceConfig } from './config';
 
@@ -40,7 +40,7 @@ export const fetchAndParseCsv = async (config: ElectionSourceConfig): Promise<Lo
             complete: (results) => {
                 const partyCols = detectPartyColumns(results.meta.fields || []);
                 const wardWinners: Record<string, string> = {};
-                const wardData: Record<string, LocalElectionWardData> = {};
+                const wardData: Record<string, WardData> = {};
                 const unmapped: any[] = [];
 
                 results.data.forEach(row => {
@@ -53,7 +53,7 @@ export const fetchAndParseCsv = async (config: ElectionSourceConfig): Promise<Lo
                     const wName = row[config.fields.name];
                     const wCode = row[config.fields.code]?.trim();
 
-                    const entry: LocalElectionWardData = {
+                    const entry: WardData = {
                         wardName: wName,
                         localAuthorityName: laName,
                         localAuthorityCode: row[config.fields.laCode || ''] || 'Unknown',

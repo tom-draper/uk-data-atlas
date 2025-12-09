@@ -8,6 +8,7 @@ interface HousePriceChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, HousePriceDataset>;
 	setActiveViz: (value: ActiveViz) => void;
+	year: number;
 	wardCode?: string;
 	constituencyCode?: string;
 	aggregatedData: AggregatedHousePriceData | null;
@@ -195,33 +196,27 @@ export default function HousePriceChart({
 	activeDataset,
 	availableDatasets,
 	setActiveViz,
+	year,
 	wardCode,
 	constituencyCode,
 	aggregatedData,
 	codeMapper,
 }: HousePriceChartProps) {
-	if (!availableDatasets) return null;
+	const dataset = availableDatasets?.[year];
+	if (!dataset) return null;
 
-	const dataset = availableDatasets[2023];
-	if (!dataset) {
-		return null;
-	}
-
-	const isActive = activeDataset?.id === 'housePrice2023';
+	const isActive = activeDataset?.id === `housePrice${year}`;
 
 	return (
-		<div className="space-y-2 border-t border-gray-200/80">
-			<h3 className="text-xs font-bold pt-2">Economics</h3>
-			<PriceChart
-				key={dataset.year}
-				dataset={dataset}
-				isActive={isActive}
-				wardCode={wardCode}
-				constituencyCode={constituencyCode}
-				aggregatedData={aggregatedData}
-				setActiveViz={setActiveViz}
-				codeMapper={codeMapper}
-			/>
-		</div>
+		<PriceChart
+			key={dataset.year}
+			dataset={dataset}
+			isActive={isActive}
+			wardCode={wardCode}
+			constituencyCode={constituencyCode}
+			aggregatedData={aggregatedData}
+			setActiveViz={setActiveViz}
+			codeMapper={codeMapper}
+		/>
 	);
 };

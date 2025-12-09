@@ -14,7 +14,7 @@ import UIOverlay from '@components/UIOverlay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
-import type { ActiveViz, ConstituencyData, Datasets, LocalElectionWardData } from '@lib/types';
+import type { ActiveViz, ConstituencyData, Datasets, WardData } from '@lib/types';
 
 interface MapInterfaceProps {
 	datasets: Datasets;
@@ -49,7 +49,7 @@ export default function MapInterface({
 	setSelectedLocation,
 }: MapInterfaceProps) {
 	// Local state
-	const [selectedWardData, setSelectedWard] = useState<LocalElectionWardData | null>(null);
+	const [selectedWardData, setSelectedWard] = useState<WardData | null>(null);
 	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
 
 	// Get boundary data
@@ -82,7 +82,6 @@ export default function MapInterface({
 			case 'localAuthority':
 				return boundaryData.localAuthority[activeDataset.boundaryYear];
 		}
-		return null;
 	}, [activeDataset, boundaryData]);
 
 	// Initialize map manager

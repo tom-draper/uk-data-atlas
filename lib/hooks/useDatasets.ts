@@ -8,6 +8,7 @@ import { usePopulationData } from '@lib/hooks/usePopulationData';
 import { useHousePriceData } from '@lib/hooks/useHousePriceData';
 import { useCrimeData } from './useCrimeData';
 import { Datasets } from '../types';
+import { useIncomeData } from './useIncomeData';
 
 export interface UseDatasetsResult {
 	datasets: Datasets;
@@ -22,6 +23,7 @@ export function useDatasets(): UseDatasetsResult {
 	const population = usePopulationData();
 	const housePrice = useHousePriceData();
 	const crime = useCrimeData();
+	const income = useIncomeData();
 
 	// Combine datasets
 	const datasets = useMemo(() => ({
@@ -30,10 +32,11 @@ export function useDatasets(): UseDatasetsResult {
 		population: population.datasets,
 		housePrice: housePrice.datasets,
 		crime: crime.datasets,
-	}), [localElection.datasets, generalElection.datasets, population.datasets, housePrice.datasets, crime.datasets]);
+		income: income.datasets,
+	}), [localElection.datasets, generalElection.datasets, population.datasets, housePrice.datasets, crime.datasets, income.datasets]);
 
 	// Combined loading state
-	const loading = localElection.loading || generalElection.loading || population.loading || housePrice.loading;
+	const loading = localElection.loading || generalElection.loading || population.loading || housePrice.loading || crime.loading || income.loading;
 
 	// Collect all errors
 	const errors = useMemo(() => {
@@ -43,6 +46,7 @@ export function useDatasets(): UseDatasetsResult {
 		if (population.error) errs.push(population.error);
 		if (housePrice.error) errs.push(housePrice.error);
 		if (crime.error) errs.push(crime.error);
+		if (income.error) errs.push(income.error);
 		return errs;
 	}, [
 		localElection.error,
@@ -50,6 +54,7 @@ export function useDatasets(): UseDatasetsResult {
 		population.error,
 		housePrice.error,
 		crime.error,
+		income.error,
 	]);
 
 	return { datasets, loading, errors };

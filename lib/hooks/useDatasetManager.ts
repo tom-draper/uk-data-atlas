@@ -1,6 +1,6 @@
 // lib/hooks/useDatasetManager.ts
 import { useMemo } from 'react';
-import { GeneralElectionDataset, HousePriceDataset, LocalElectionDataset, PopulationDataset } from '../types';
+import { CrimeDataset, GeneralElectionDataset, HousePriceDataset, LocalElectionDataset, PopulationDataset, IncomeDataset } from '../types';
 
 /**
  * Centralized dataset selection logic
@@ -12,6 +12,8 @@ export function useDatasetManager(
     generalElectionDatasets: Record<string, GeneralElectionDataset>,
     populationDatasets: Record<string, PopulationDataset>,
     housePriceDatasets: Record<string, HousePriceDataset>,
+    crimeDatasets: Record<string, CrimeDataset>,
+    incomeDatasets: Record<string, IncomeDataset>,
 ) {
     const activeDataset = useMemo(() => {
         switch (activeDatasetId) {
@@ -32,13 +34,17 @@ export function useDatasetManager(
             case "generalElection2017":
             case "generalElection2015":
                 return generalElectionDatasets[activeDatasetId]
-            case "localElection2021":
-            case "localElection2022":
-            case "localElection2023":
             case "localElection2024":
+            case "localElection2023":
+            case "localElection2022":
+            case "localElection2021":
                 return localElectionDatasets[activeDatasetId];
             case "housePrice2023":
                 return housePriceDatasets[activeDatasetId];
+            case "crime2025":
+                return crimeDatasets[activeDatasetId];
+            case "income2025":
+                return incomeDatasets[activeDatasetId];
         }
     }, [localElectionDatasets, generalElectionDatasets, populationDatasets, housePriceDatasets, activeDatasetId]);
 

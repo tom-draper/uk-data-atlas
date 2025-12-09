@@ -12,7 +12,7 @@ export class StatsCalculator {
     constructor(
         private propertyDetector: PropertyDetector,
         private cache: StatsCache
-    ) {}
+    ) { }
 
     calculateLocalElectionStats(
         geojson: BoundaryGeojson,

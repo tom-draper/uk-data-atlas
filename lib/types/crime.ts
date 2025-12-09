@@ -41,3 +41,9 @@ export interface CrimeDataset {
         notes: string[];
     };
 }
+
+export interface AggregatedCrimeData {
+    totalRecordedCrime: number;
+    wardCount: number;
+
+}

@@ -2,7 +2,6 @@
 import { LocationBounds } from '@lib/types/index';
 
 export const LOCATIONS: Record<string, LocationBounds> = {
-
     'England': {
         lad_codes: [],
         bounds: [-6.5, 49.9, 1.8, 55.8]

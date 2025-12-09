@@ -1,7 +1,7 @@
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
 import ChartPanel from '@components/ChartPanel';
-import type { ActiveViz, ConstituencyData, Dataset, Datasets, LocalElectionWardData } from '@lib/types';
+import type { ActiveViz, ConstituencyData, Dataset, Datasets, WardData } from '@lib/types';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 import { MapOptions } from '@/lib/types/mapOptions';
@@ -13,7 +13,7 @@ interface UIOverlayProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
-	selectedWardData: LocalElectionWardData | null;
+	selectedWardData: WardData | null;
 	selectedConstituencyData: ConstituencyData | null;
 	boundaryData: BoundaryData;
 	codeMapper: CodeMapper;

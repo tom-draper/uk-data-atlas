@@ -4,7 +4,7 @@
 import { ConstituencyYear, WardYear } from "../data/boundaries/boundaries";
 import { PartyVotes, Party } from "./common";
 
-export interface LocalElectionWardData {
+export interface WardData {
     localAuthorityCode: string;
     localAuthorityName: string;
     totalVotes: number;
@@ -35,7 +35,7 @@ export interface ConstituencyData {
     turnoutPercent: number;
 }
 
-export type ElectionData = LocalElectionWardData | ConstituencyData;
+export type ElectionData = WardData | ConstituencyData;
 
 export const LOCAL_ELECTION_YEARS = [2024, 2023, 2022, 2021] as const;
 export const GENERAL_ELECTION_YEARS = [2024, 2019, 2017, 2015] as const;
@@ -50,13 +50,13 @@ interface BaseElectionDataset<D extends ElectionData> {
     partyInfo: Party[];
 }
 
-export interface LocalElectionDataset extends BaseElectionDataset<LocalElectionWardData> {
+export interface LocalElectionDataset extends BaseElectionDataset<WardData> {
     type: 'localElection';
     year: LocalElectionYear;
     boundaryType: 'ward';
     boundaryYear: WardYear;
     wardResults: Record<string, string>;
-    wardData: Record<string, LocalElectionWardData>;
+    wardData: Record<string, WardData>;
 }
 
 export interface GeneralElectionDataset extends BaseElectionDataset<ConstituencyData> {

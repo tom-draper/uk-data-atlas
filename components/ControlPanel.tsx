@@ -25,17 +25,14 @@ export default memo(function ControlPanel({
 }: ControlPanelProps) {
     return (
         <div className="flex flex-col h-full max-h-screen">
-            {/* Title */}
             <div className="pointer-events-auto p-2.5 pb-0 w-[320px] shrink-0">
                 <TitlePane />
             </div>
 
-            {/* Locations list */}
             <div className="pointer-events-auto p-2.5 pb-0 w-[320px] flex-1 min-h-0">
                 <LocationPane selectedLocation={selectedLocation} onLocationClick={onLocationClick} populationDataset={populationDataset} />
             </div>
 
-            {/* Map Options */}
             <div className="pointer-events-auto p-2.5 w-[320px] shrink-0">
                 <MapOptions onZoomIn={onZoomIn} onZoomOut={onZoomOut} handleMapOptionsChange={handleMapOptionsChange} />
             </div>

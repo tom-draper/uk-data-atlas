@@ -119,23 +119,22 @@ export default memo(function LegendPanel({
     // Use liveOptions if dragging, otherwise fall back to mapOptions from props
     const displayOptions = liveOptions || mapOptions;
 
-    // --- Theme Logic ---
     const themeId = displayOptions.general?.theme || 'viridis';
     const activeTheme = useMemo(() => themes.find(t => t.id === themeId) || themes[0], [themeId]);
-    
+
     // Generated gradient based on theme colors
-    const verticalThemeGradient = useMemo(() => 
-        `linear-gradient(to bottom, ${activeTheme.colors.join(', ')})`, 
-    [activeTheme]);
+    const verticalThemeGradient = useMemo(() =>
+        `linear-gradient(to bottom, ${activeTheme.colors.join(', ')})`,
+        [activeTheme]);
 
     const parties = useMemo(() => {
         if (!activeDataset || !aggregatedData[activeDataset.type as keyof AggregatedData]) return [];
         const datasetData = aggregatedData[activeDataset.type as keyof AggregatedData];
         // @ts-ignore
-        const yearData = datasetData?.[activeDataset.year]; 
-        
+        const yearData = datasetData?.[activeDataset.year];
+
         if (!yearData?.partyVotes) return [];
-        
+
         return Object.entries(yearData.partyVotes)
             .filter(([_, votes]) => (votes as number) > 0)
             .sort((a, b) => (b[1] as number) - (a[1] as number))
@@ -146,16 +145,14 @@ export default memo(function LegendPanel({
             }));
     }, [aggregatedData, activeDataset]);
 
-    // --- Handlers ---
-
     const handleRangeInput = (datasetKey: keyof MapOptions, min: number, max: number) => {
         setLiveOptions(prev => {
             const base = prev || mapOptions;
             return {
                 ...base,
-                [datasetKey]: { 
-                    ...base[datasetKey], 
-                    colorRange: { min, max } 
+                [datasetKey]: {
+                    ...base[datasetKey],
+                    colorRange: { min, max }
                 }
             };
         });
@@ -253,25 +250,23 @@ export default memo(function LegendPanel({
             <div>
                 {parties.map((party) => {
                     const isSelected = options?.mode === 'party-percentage' && options.selectedParty === party.id;
-                    
+
                     // Restored exact original party button styling logic
                     return (
                         <button
                             key={party.id}
                             onClick={() => handlePartyClick(party.id)}
-                            className={`flex items-center gap-2 px-1 py-[3px] w-full text-left rounded-sm transition-all cursor-pointer ${
-                                isSelected ? 'ring-1' : 'hover:bg-gray-100/30'
-                            }`}
+                            className={`flex items-center gap-2 px-1 py-[3px] w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? 'ring-1' : 'hover:bg-gray-100/30'
+                                }`}
                             style={isSelected ? {
                                 backgroundColor: `${party.color}15`, // ~8% opacity
                                 '--tw-ring-color': `${party.color}80`
                             } as React.CSSProperties : {}}
                         >
                             <div
-                                className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${
-                                    isSelected ? 'opacity-100 ring-1' : 'opacity-100'
-                                }`}
-                                style={{ 
+                                className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? 'opacity-100 ring-1' : 'opacity-100'
+                                    }`}
+                                style={{
                                     backgroundColor: party.color,
                                     ...(isSelected ? { '--tw-ring-color': party.color } as React.CSSProperties : {})
                                 }}
@@ -330,46 +325,46 @@ export default memo(function LegendPanel({
             </div>
 
             {/* Special secondary legend for Election Party Percentage Mode */}
-            {['generalElection', 'localElection'].includes(activeDataset?.type || '') && 
-             displayOptions[activeDataset!.type as 'generalElection' | 'localElection']?.mode === 'party-percentage' && (
-                <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
-                     <div className="bg-white/20 p-1 overflow-hidden">
-                        <RangeControl
-                            min={0}
-                            max={100}
-                            // @ts-ignore
-                            currentMin={displayOptions[activeDataset.type].partyPercentageRange?.min ?? 0}
-                            // @ts-ignore
-                            currentMax={displayOptions[activeDataset.type].partyPercentageRange?.max ?? 100}
-                            gradient={`linear-gradient(to bottom, ${
+            {['generalElection', 'localElection'].includes(activeDataset?.type || '') &&
+                displayOptions[activeDataset!.type as 'generalElection' | 'localElection']?.mode === 'party-percentage' && (
+                    <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
+                        <div className="bg-white/20 p-1 overflow-hidden">
+                            <RangeControl
+                                min={0}
+                                max={100}
                                 // @ts-ignore
-                                PARTIES[displayOptions[activeDataset.type].selectedParty]?.color || '#999'
-                            }, #f5f5f5)`}
-                            labels={[
-                                // Dynamic labels based on current range
-                                `${(displayOptions[activeDataset!.type as 'generalElection'].partyPercentageRange?.max ?? 100).toFixed(0)}%`,
-                                // ... intermediate labels calculated in UI if needed, or simplified:
-                                '', '', '', 
-                                `${(displayOptions[activeDataset!.type as 'generalElection'].partyPercentageRange?.min ?? 0).toFixed(0)}%`
-                            ]}
-                            onRangeInput={(min, max) => {
-                                setLiveOptions(prev => {
-                                    const base = prev || mapOptions;
+                                currentMin={displayOptions[activeDataset.type].partyPercentageRange?.min ?? 0}
+                                // @ts-ignore
+                                currentMax={displayOptions[activeDataset.type].partyPercentageRange?.max ?? 100}
+                                gradient={`linear-gradient(to bottom, ${
+                                    // @ts-ignore
+                                    PARTIES[displayOptions[activeDataset.type].selectedParty]?.color || '#999'
+                                    }, #f5f5f5)`}
+                                labels={[
+                                    // Dynamic labels based on current range
+                                    `${(displayOptions[activeDataset!.type as 'generalElection'].partyPercentageRange?.max ?? 100).toFixed(0)}%`,
+                                    // ... intermediate labels calculated in UI if needed, or simplified:
+                                    '', '', '',
+                                    `${(displayOptions[activeDataset!.type as 'generalElection'].partyPercentageRange?.min ?? 0).toFixed(0)}%`
+                                ]}
+                                onRangeInput={(min, max) => {
+                                    setLiveOptions(prev => {
+                                        const base = prev || mapOptions;
+                                        const type = activeDataset!.type as 'generalElection';
+                                        return { ...base, [type]: { ...base[type], partyPercentageRange: { min, max } } };
+                                    });
+                                }}
+                                onRangeChangeEnd={() => {
+                                    if (!liveOptions) return;
                                     const type = activeDataset!.type as 'generalElection';
-                                    return { ...base, [type]: { ...base[type], partyPercentageRange: { min, max } } };
-                                });
-                            }}
-                            onRangeChangeEnd={() => {
-                                if (!liveOptions) return;
-                                const type = activeDataset!.type as 'generalElection';
-                                // @ts-ignore
-                                onMapOptionsChange(type, { partyPercentageRange: liveOptions[type].partyPercentageRange });
-                                setLiveOptions(null);
-                            }}
-                        />
+                                    // @ts-ignore
+                                    onMapOptionsChange(type, { partyPercentageRange: liveOptions[type].partyPercentageRange });
+                                    setLiveOptions(null);
+                                }}
+                            />
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
         </div>
     );
 });

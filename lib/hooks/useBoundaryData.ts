@@ -28,7 +28,7 @@ export function useBoundaryData(selectedLocation?: string | null) {
 				// Generate promises based on config object
 				const wYears = Object.keys(GEOJSON_PATHS.ward).map(Number);
 				const cYears = Object.keys(GEOJSON_PATHS.constituency).map(Number);
-				// const lYears = Object.keys(GEOJSON_PATHS.localAuthority).map(Number);
+				const lYears = Object.keys(GEOJSON_PATHS.localAuthority).map(Number);
 
 				// Helper to fetch a group
 				const fetchGroup = async (type: BoundaryType, years: number[]) => {
@@ -40,14 +40,14 @@ export function useBoundaryData(selectedLocation?: string | null) {
 					return results;
 				};
 
-				const [wards, constituencies] = await Promise.all([
+				const [wards, constituencies, localAuthorities] = await Promise.all([
 					fetchGroup('ward', wYears),
 					fetchGroup('constituency', cYears),
-					// fetchGroup('localAuthority', lYears)
+					fetchGroup('localAuthority', lYears),
 				]);
 
 				if (mounted) {
-					setRawData({ ward: wards, constituency: constituencies, localAuthority: {}});
+					setRawData({ ward: wards, constituency: constituencies, localAuthority: localAuthorities });
 				}
 			} catch (err) {
 				if (mounted) setError(err instanceof Error ? err : new Error('Unknown error'));
@@ -83,10 +83,9 @@ export function useBoundaryData(selectedLocation?: string | null) {
 		};
 
 		return {
-			ward: processGroup(rawData.ward as any, 'ward'),
-			constituency: processGroup(rawData.constituency as any, 'constituency'),
-			localAuthority: { 2025: null, 2024: null, 2023: null, 2022: null, 2021: null }
-			// localAuthority: processGroup(rawData.localAuthority as any, 'localAuthority')
+			ward: processGroup(rawData.ward, 'ward'),
+			constituency: processGroup(rawData.constituency, 'constituency'),
+			localAuthority: processGroup(rawData.localAuthority, 'localAuthority')
 		};
 	}, [rawData, selectedLocation, isLoading]);
 
