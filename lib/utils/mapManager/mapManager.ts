@@ -1,5 +1,5 @@
 // lib/utils/mapManager/mapManager.ts
-import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, BoundaryType } from '@lib/types';
 import { MapOptions } from '@lib/types/mapOptions';
 import { LayerManager } from './layerManager';
 import { EventHandler } from './eventHandler';
@@ -7,14 +7,20 @@ import { StatsCalculator } from './statsCalculator';
 import { FeatureBuilder } from './featureBuilder';
 import { PropertyDetector } from './propertyDetector';
 import { StatsCache } from './statsCache';
+import { IncomeDataset } from '@/lib/types/income';
+
+export interface LocationHoverData {
+    type: BoundaryType;
+    code: string;
+    data: any;
+}
 
 export interface MapManagerCallbacks {
-    onWardHover?: (params: { data: any; wardCode: string }) => void;
-    onConstituencyHover?: (data: any) => void;
+    onLocationHover?: (location: LocationHoverData | null) => void;
     onLocationChange: (location: string) => void;
 }
 
-export type MapMode = 'localElection' | 'generalElection' | 'population' | 'housePrice' | 'crime';
+export type MapMode = 'localElection' | 'generalElection' | 'population' | 'housePrice' | 'crime' | 'income';
 
 export class MapManager {
     private layerManager: LayerManager;
@@ -32,10 +38,6 @@ export class MapManager {
         this.cache = new StatsCache();
         this.statsCalculator = new StatsCalculator(this.propertyDetector, this.cache);
     }
-
-    // ============================================================================
-    // Election Methods
-    // ============================================================================
 
     updateMapForLocalElection(
         geojson: BoundaryGeojson,
@@ -60,9 +62,9 @@ export class MapManager {
             );
 
         if (mode === 'party-percentage' && mapOptions.localElection.selectedParty) {
-            this.layerManager.updatePartyPercentageLayers(locationData, mapOptions.localElection);
+            this.layerManager.updatePartyPercentageLayers({type: 'FeatureCollection', features: locationData.features}, mapOptions.localElection);
         } else {
-            this.layerManager.updateElectionLayers(locationData, dataset.partyInfo);
+            this.layerManager.updateElectionLayers({type: 'FeatureCollection', features: locationData.features} , dataset.partyInfo);
         }
 
         this.eventHandler.setupEventHandlers('localElection', dataset.wardData, wardCodeProp);
@@ -99,10 +101,6 @@ export class MapManager {
         this.eventHandler.setupEventHandlers('generalElection', dataset.constituencyData, constituencyCodeProp);
     }
 
-    // ============================================================================
-    // Population Methods
-    // ============================================================================
-
     updateMapForAgeDistribution(
         geojson: BoundaryGeojson,
         dataset: PopulationDataset,
@@ -110,7 +108,7 @@ export class MapManager {
     ): void {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
         const locationData = this.featureBuilder.buildAgeFeatures(geojson, dataset, wardCodeProp, mapOptions);
-        
+
         this.layerManager.updateColoredLayers(locationData);
         this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
     }
@@ -122,7 +120,7 @@ export class MapManager {
     ): void {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
         const locationData = this.featureBuilder.buildGenderFeatures(geojson, dataset, wardCodeProp, mapOptions);
-        
+
         this.layerManager.updateColoredLayers(locationData);
         this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
     }
@@ -134,14 +132,10 @@ export class MapManager {
     ): void {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
         const locationData = this.featureBuilder.buildDensityFeatures(geojson, dataset, wardCodeProp, mapOptions);
-        
+
         this.layerManager.updateColoredLayers(locationData);
         this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
     }
-
-    // ============================================================================
-    // House Price Methods
-    // ============================================================================
 
     updateMapForHousePrices(
         geojson: BoundaryGeojson,
@@ -150,14 +144,10 @@ export class MapManager {
     ): void {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
         const locationData = this.featureBuilder.buildHousePriceFeatures(geojson, dataset, wardCodeProp, mapOptions);
-        
+
         this.layerManager.updateColoredLayers(locationData);
         this.eventHandler.setupEventHandlers('housePrice', dataset.wardData, wardCodeProp);
     }
-
-    // ============================================================================
-    // Crime Methods
-    // ============================================================================
 
     updateMapForCrimeRate(
         geojson: BoundaryGeojson,
@@ -166,14 +156,22 @@ export class MapManager {
     ): void {
         const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson);
         const locationData = this.featureBuilder.buildCrimeRateFeatures(geojson, dataset, ladCodeProp, mapOptions);
-        
+
         this.layerManager.updateColoredLayers(locationData);
         this.eventHandler.setupEventHandlers('crime', dataset.records, ladCodeProp);
     }
 
-    // ============================================================================
-    // Stats Calculation Methods
-    // ============================================================================
+    updateMapForIncome(
+        geojson: BoundaryGeojson,
+        dataset: IncomeDataset,
+        mapOptions: MapOptions
+    ): void {
+        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson);
+        const locationData = this.featureBuilder.buildIncomeFeatures(geojson, dataset, ladCodeProp, mapOptions);
+
+        this.layerManager.updateColoredLayers(locationData);
+        this.eventHandler.setupEventHandlers('income', dataset.localAuthorityData, ladCodeProp);
+    }
 
     calculateLocalElectionStats(
         geojson: BoundaryGeojson,
@@ -218,5 +216,18 @@ export class MapManager {
         datasetId: string | null = null
     ) {
         return this.statsCalculator.calculateCrimeStats(geojson, wardData, location, datasetId);
+    }
+
+    calculateIncomeStats(
+        geojson: BoundaryGeojson,
+        localAuthorityData: IncomeDataset['localAuthorityData'],
+        location: string | null = null,
+        datasetId: string | null = null
+    ) {
+        return this.statsCalculator.calculateIncomeStats(geojson, localAuthorityData, location, datasetId);
+    }
+
+    destroy(): void {
+        this.eventHandler.destroy();
     }
 }

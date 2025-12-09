@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { ActiveViz, Dataset } from '@lib/types';
+import { ActiveViz, BoundaryGeojson, Dataset } from '@lib/types';
 import type { MapManager } from '../utils/mapManager';
 import { MapOptions } from '../types/mapOptions';
 
 interface UseMapUpdatesParams {
-    geojson: any;
+    geojson: BoundaryGeojson;
     activeViz: ActiveViz;
     activeDataset: Dataset | null;
     mapManager: MapManager | null;
@@ -34,6 +34,9 @@ export function useMapUpdates({
 
                 case 'crime':
                     return mapManager.updateMapForCrimeRate(geojson, activeDataset, mapOptions);
+
+                case 'income':
+                    return mapManager.updateMapForIncome(geojson, activeDataset, mapOptions);
 
                 case 'population':
                     // Handle population sub-categories

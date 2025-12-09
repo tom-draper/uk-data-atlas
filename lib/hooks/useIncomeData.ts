@@ -68,7 +68,7 @@ const parseAnnualIncomeData = async (): Promise<Record<string, AnnualIncomeData>
 };
 
 const parseHourlyIncomeData = async (): Promise<Record<string, HourlyIncomeData>> => {
-    const res = await fetch(withCDN('/data/income/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.csv'));
+    const res = await fetch(withCDN('/data/economics/income/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.csv'));
     const csvText = await res.text();
 
     const lines = csvText.split('\n');

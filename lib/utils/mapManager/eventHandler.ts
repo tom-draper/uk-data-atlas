@@ -1,105 +1,184 @@
-// lib/utils/mapManager/EventHandler.ts
-import { GeoJSONFeature } from 'mapbox-gl';
+import type { MapMouseEvent } from 'mapbox-gl';
+import type { MapMouseEvent as MapLibreMouseEvent } from 'maplibre-gl';
 import { MapManagerCallbacks, MapMode } from './mapManager';
 
 const SOURCE_ID = 'location-wards';
 const FILL_LAYER_ID = 'wards-fill';
 
+// Union type for events that works with both libraries
+type MapMouseEventType = MapMouseEvent | MapLibreMouseEvent;
+
 export class EventHandler {
-    private lastHoveredFeatureId: any = null;
+    private lastHoveredFeatureId: string | number | null = null;
+    private mouseMoveHandler: ((e: MapMouseEventType & { features?: any[] }) => void) | null = null;
+    private mouseLeaveHandler: (() => void) | null = null;
+    
+    // Pre-bound methods for maximum performance
+    private boundUpdateHover: ((code: string, data: any) => void) | null = null;
+    private boundClearHover: (() => void) | null = null;
+    
+    // Cache lookups
+    private currentData: Record<string, any> | null = null;
+    private currentCodeProp: string = '';
+    private canvas: HTMLCanvasElement;
 
     constructor(
         private map: mapboxgl.Map | maplibregl.Map,
         private callbacks: MapManagerCallbacks
-    ) {}
+    ) {
+        this.canvas = this.map.getCanvas();
+    }
 
     setupEventHandlers(mode: MapMode, data: any, codeProp: string): void {
-        // Remove existing handlers
-        this.map.off('mousemove', FILL_LAYER_ID);
-        this.map.off('mouseleave', FILL_LAYER_ID);
-
-        // Setup mousemove handler
-        this.map.on('mousemove', FILL_LAYER_ID, (e) => {
-            if (!e.features?.length) return;
-
-            this.map.getCanvas().style.cursor = 'pointer';
-            const feature = e.features[0];
-            this.updateHoverState(feature);
-
-            const code = feature.properties[codeProp];
-            const locationData = data[code];
-
-            this.handleHover(mode, code, locationData);
-        });
-
-        // Setup mouseleave handler
-        this.map.on('mouseleave', FILL_LAYER_ID, () => {
-            this.clearHoverState();
-            this.map.getCanvas().style.cursor = '';
-            this.handleMouseLeave(mode);
-        });
+        this.currentData = data;
+        this.currentCodeProp = codeProp;
+        
+        this.removeHandlers();
+        this.createHandlers(mode);
+        
+        this.map.on('mousemove', FILL_LAYER_ID, this.mouseMoveHandler!);
+        this.map.on('mouseleave', FILL_LAYER_ID, this.mouseLeaveHandler!);
     }
 
-    private handleHover(mode: MapMode, code: string, locationData: any): void {
+    private createHandlers(mode: MapMode): void {
+        // Pre-bind hover callbacks based on mode for fastest dispatch
         switch (mode) {
             case 'generalElection':
-                this.callbacks.onConstituencyHover?.(locationData || null);
+                this.boundUpdateHover = (code: string, data: any) => {
+                    this.callbacks.onLocationHover?.({
+                        type: 'constituency',
+                        code,
+                        data: data ?? null
+                    });
+                };
+                this.boundClearHover = () => {
+                    this.callbacks.onLocationHover?.(null);
+                };
                 break;
+                
+            case 'crime':
+            case 'income':
+                this.boundUpdateHover = (code: string, data: any) => {
+                    this.callbacks.onLocationHover?.({
+                        type: 'localAuthority',
+                        code,
+                        data: data ?? null
+                    });
+                };
+                this.boundClearHover = () => {
+                    this.callbacks.onLocationHover?.(null);
+                };
+                break;
+                
             case 'population':
-                this.handlePopulationHover(code, locationData);
+                this.boundUpdateHover = (code: string, data: any) => {
+                    this.callbacks.onLocationHover?.({
+                        type: 'ward',
+                        code,
+                        data: this.transformPopulationData(code, data)
+                    });
+                };
+                this.boundClearHover = () => {
+                    this.callbacks.onLocationHover?.(null);
+                };
                 break;
-            default:
-                this.callbacks.onWardHover?.({ data: locationData || null, wardCode: code });
+                
+            default: // localElection, housePrice
+                this.boundUpdateHover = (code: string, data: any) => {
+                    this.callbacks.onLocationHover?.({
+                        type: 'ward',
+                        code,
+                        data: data ?? null
+                    });
+                };
+                this.boundClearHover = () => {
+                    this.callbacks.onLocationHover?.(null);
+                };
+        }
+
+        // Inline mousemove for absolute maximum performance
+        this.mouseMoveHandler = (e: MapMouseEventType & { features?: any[] }) => {
+            const features = e.features;
+            if (!features?.length) return;
+
+            this.canvas.style.cursor = 'pointer';
+            
+            const feature = features[0];
+            const featureId = feature.id;
+            
+            // Fast hover state update
+            if (featureId !== undefined) {
+                if (this.lastHoveredFeatureId !== null && 
+                    this.lastHoveredFeatureId !== featureId) {
+                    this.map.setFeatureState(
+                        { source: SOURCE_ID, id: this.lastHoveredFeatureId },
+                        { hover: false }
+                    );
+                }
+                this.map.setFeatureState(
+                    { source: SOURCE_ID, id: featureId },
+                    { hover: true }
+                );
+                this.lastHoveredFeatureId = featureId;
+            }
+
+            // Fast data lookup and callback
+            const code = feature.properties?.[this.currentCodeProp];
+            if (code && this.currentData) {
+                this.boundUpdateHover!(code, this.currentData[code]);
+            }
+        };
+
+        this.mouseLeaveHandler = () => {
+            if (this.lastHoveredFeatureId !== null) {
+                this.map.setFeatureState(
+                    { source: SOURCE_ID, id: this.lastHoveredFeatureId },
+                    { hover: false }
+                );
+                this.lastHoveredFeatureId = null;
+            }
+            this.canvas.style.cursor = '';
+            this.boundClearHover!();
+        };
+    }
+
+    // Only used for population mode - keep separate to avoid overhead in other modes
+    private transformPopulationData(wardCode: string, wardPopData: any): any {
+        if (!wardPopData) return null;
+        
+        return {
+            wardCode,
+            wardName: wardPopData.wardName ?? '',
+            localAuthorityCode: wardPopData.laCode ?? '',
+            localAuthorityName: wardPopData.laName ?? '',
+            LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0
+        };
+    }
+
+    private removeHandlers(): void {
+        if (this.mouseMoveHandler) {
+            this.map.off('mousemove', FILL_LAYER_ID, this.mouseMoveHandler);
+        }
+        if (this.mouseLeaveHandler) {
+            this.map.off('mouseleave', FILL_LAYER_ID, this.mouseLeaveHandler);
         }
     }
 
-    private handleMouseLeave(mode: MapMode): void {
-        if (mode === 'generalElection') {
-            this.callbacks.onConstituencyHover?.(null);
-        } else {
-            this.callbacks.onWardHover?.({ data: null, wardCode: '' });
-        }
-    }
-
-    private handlePopulationHover(wardCode: string, wardPopData: any): void {
-        if (!this.callbacks.onWardHover) return;
-
-        if (wardPopData) {
-            const wardData: any = {
-                wardCode,
-                wardName: wardPopData.wardName || '',
-                localAuthorityCode: wardPopData.laCode || '',
-                localAuthorityName: wardPopData.laName || '',
-                LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0
-            };
-            this.callbacks.onWardHover({ data: wardData, wardCode });
-        } else {
-            this.callbacks.onWardHover({ data: null, wardCode });
-        }
-    }
-
-    private updateHoverState(feature: GeoJSONFeature): void {
-        if (this.lastHoveredFeatureId !== null && this.lastHoveredFeatureId !== feature.id) {
-            this.map.setFeatureState(
-                { source: SOURCE_ID, id: this.lastHoveredFeatureId },
-                { hover: false }
-            );
-        }
-
-        this.map.setFeatureState(
-            { source: SOURCE_ID, id: feature.id },
-            { hover: true }
-        );
-        this.lastHoveredFeatureId = feature.id;
-    }
-
-    private clearHoverState(): void {
+    destroy(): void {
+        this.removeHandlers();
         if (this.lastHoveredFeatureId !== null) {
-            this.map.setFeatureState(
-                { source: SOURCE_ID, id: this.lastHoveredFeatureId },
-                { hover: false }
-            );
+            try {
+                this.map.setFeatureState(
+                    { source: SOURCE_ID, id: this.lastHoveredFeatureId },
+                    { hover: false }
+                );
+            } catch {}
             this.lastHoveredFeatureId = null;
         }
+        this.mouseMoveHandler = null;
+        this.mouseLeaveHandler = null;
+        this.boundUpdateHover = null;
+        this.boundClearHover = null;
+        this.currentData = null;
     }
 }

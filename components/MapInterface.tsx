@@ -1,6 +1,5 @@
-// components/MapInterface.tsx
 'use client';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useMapLibreInitialization } from '@/lib/hooks/useMapLibreInitialization';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
@@ -40,7 +39,6 @@ const MAPLIBRE_CONFIG = {
 	maxBounds: [-30, 35, 20, 70] as [number, number, number, number],
 } as const;
 
-
 export default function MapInterface({
 	datasets,
 	activeViz,
@@ -51,6 +49,7 @@ export default function MapInterface({
 	// Local state
 	const [selectedWardData, setSelectedWard] = useState<WardData | null>(null);
 	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
+	const [selectedLocalAuthority, setSelectedLocalAuthority] = useState<any | null>(null);
 
 	// Get boundary data
 	const { boundaryData } = useBoundaryData(selectedLocation);
@@ -60,65 +59,65 @@ export default function MapInterface({
 	const { mapRef: map, handleMapContainer } = useMapLibreInitialization(MAPLIBRE_CONFIG);
 	const { mapOptions, setMapOptions: handleMapOptionsChange } = useMapOptions(DEFAULT_MAP_OPTIONS);
 
-	// Interaction handlers
-	const { onWardHover, onConstituencyHover, onLocationChange } = useInteractionHandlers({
+	// Stable interaction handlers - created once, never change identity
+	const interactionHandlers = useInteractionHandlers({
 		setSelectedWard,
 		setSelectedConstituency,
+		setSelectedLocalAuthority,
 		setSelectedLocation,
 	});
 
+	// Get active dataset
 	const activeDataset = useMemo(() => {
-		return datasets[activeViz.datasetType][activeViz.datasetYear]
-	}, [datasets, activeViz]);
+		return datasets[activeViz.datasetType]?.[activeViz.datasetYear];
+	}, [datasets, activeViz.datasetType, activeViz.datasetYear]);
 
 	// Get geojson for active dataset
 	const geojson = useMemo(() => {
 		if (!activeDataset) return null;
-		switch (activeDataset.boundaryType) {
-			case 'ward':
-				return boundaryData.ward[activeDataset.boundaryYear];
-			case 'constituency':
-				return boundaryData.constituency[activeDataset.boundaryYear];
-			case 'localAuthority':
-				return boundaryData.localAuthority[activeDataset.boundaryYear];
-		}
+		const { boundaryType, boundaryYear } = activeDataset;
+		return boundaryData[boundaryType]?.[boundaryYear] ?? null;
 	}, [activeDataset, boundaryData]);
 
-	// Initialize map manager
+	// Initialize map manager with stable callbacks
 	const mapManager = useMapManager({
 		mapRef: map,
 		geojson,
-		onWardHover: activeDataset?.boundaryType === 'ward' ? onWardHover : undefined,
-		onConstituencyHover: activeDataset?.boundaryType === 'constituency' ? onConstituencyHover : undefined,
-		onLocationChange,
+		onLocationHover: interactionHandlers.onLocationHover,
+		onLocationChange: interactionHandlers.onLocationChange,
 	});
 
-	// Location navigation
+	// Location navigation - memoize with proper dependencies
 	const handleLocationClick = useCallback((location: string) => {
 		const locationData = LOCATIONS[location];
-		if (!mapManager || !locationData) return;
+		if (!map.current || !locationData) return;
 
 		setSelectedLocation(location);
 
+		// Use requestAnimationFrame for smooth animation
 		requestAnimationFrame(() => {
 			map.current?.fitBounds(locationData.bounds, {
 				padding: MAPBOX_CONFIG.fitBoundsPadding,
 				duration: MAPBOX_CONFIG.fitBoundsDuration,
 			});
 		});
-	}, [map, mapManager, setSelectedLocation]);
+	}, [map, setSelectedLocation]);
 
-	const handleZoomIn = useCallback(() => {
-		if (map.current) {
-			map.current.zoomTo(map.current.getZoom() + 1);
+	// Zoom handlers - create once
+	const zoomHandlersRef = useRef({
+		handleZoomIn: () => {
+			const currentMap = map.current;
+			if (currentMap) {
+				currentMap.zoomTo(currentMap.getZoom() + 1);
+			}
+		},
+		handleZoomOut: () => {
+			const currentMap = map.current;
+			if (currentMap) {
+				currentMap.zoomTo(currentMap.getZoom() - 1);
+			}
 		}
-	}, []);
-
-	const handleZoomOut = useCallback(() => {
-		if (map.current) {
-			map.current.zoomTo(map.current.getZoom() - 1);
-		}
-	}, []);
+	});
 
 	const aggregatedData = useAggregatedData({
 		mapManager,
@@ -138,8 +137,8 @@ export default function MapInterface({
 				mapOptions={mapOptions}
 				onMapOptionsChange={handleMapOptionsChange}
 				onLocationClick={handleLocationClick}
-				onZoomIn={handleZoomIn}
-				onZoomOut={handleZoomOut}
+				onZoomIn={zoomHandlersRef.current.handleZoomIn}
+				onZoomOut={zoomHandlersRef.current.handleZoomOut}
 				activeDataset={activeDataset}
 				activeViz={activeViz}
 				setActiveViz={setActiveViz}
@@ -155,6 +154,6 @@ export default function MapInterface({
 				mapOptions={mapOptions}
 				handleMapContainer={handleMapContainer}
 			/>
-		</div >
+		</div>
 	);
 }

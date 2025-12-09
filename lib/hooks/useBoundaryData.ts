@@ -61,7 +61,7 @@ export function useBoundaryData(selectedLocation?: string | null) {
 		return () => { mounted = false; };
 	}, []);
 
-	const filteredData = useMemo(() => {
+	const filteredData: BoundaryData = useMemo(() => {
 		if (isLoading || !rawData.ward) {
 			return {
 				ward: { 2024: null, 2023: null, 2022: null, 2021: null },

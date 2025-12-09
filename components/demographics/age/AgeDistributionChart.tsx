@@ -1,8 +1,8 @@
 // components/population/age/AgeDistributionChart.tsx
 import { AgeGroups } from '@lib/types';
-import AgeGroupBar from '@/components/population/age/AgeGroupBar';
 import { getAgeColor } from '@/lib/utils/ageDistribution';
 import { useMemo, memo } from 'react';
+import AgeGroupBar from './AgeGroupBar';
 
 interface AgeDistributionChartProps {
 	ages: Array<{ age: number; count: number }>;

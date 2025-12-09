@@ -5,6 +5,7 @@ import { getWinningParty } from '../generalElection';
 import { calculateAgeGroups } from '../ageDistribution';
 import { PropertyDetector } from './propertyDetector';
 import { StatsCache } from './statsCache';
+import { IncomeDataset } from '@/lib/types/income';
 
 const PARTY_KEYS = ['LAB', 'CON', 'LD', 'GREEN', 'RUK', 'SNP', 'PC', 'DUP', 'SF', 'OTHER'];
 
@@ -200,6 +201,35 @@ export class StatsCalculator {
                 result.wardCount += 1;
             }
         }
+
+        this.cache.set(cacheKey, result);
+        return result;
+    }
+
+    calculateIncomeStats(
+        geojson: BoundaryGeojson,
+        incomeData: IncomeDataset['localAuthorityData'],
+        location: string | null,
+        datasetId: string | null
+    ) {
+        const cacheKey = `income-${location}-${datasetId}`;
+        const cached = this.cache.get(cacheKey);
+        if (cached) return cached;
+
+        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson);
+        console.log(`calculateIncomeStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
+
+        let totalMedianIncome = 0;
+        let localAuthorityCount = 0;
+        for (const feature of geojson.features) {
+            const locationIncome = incomeData[feature.properties[ladCodeProp]]
+            totalMedianIncome += locationIncome.annual?.median ?? 0;
+            localAuthorityCount += 1;
+        }
+
+        const result = {
+            averageIncome: totalMedianIncome / localAuthorityCount
+        };
 
         this.cache.set(cacheKey, result);
         return result;

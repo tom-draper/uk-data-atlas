@@ -15,6 +15,7 @@ import type {
 } from '@lib/types';
 import { BoundaryData } from './useBoundaryData';
 import { MapManager } from '../utils/mapManager';
+import { IncomeDataset } from '../types/income';
 
 interface DatasetConfig<T extends Dataset> {
 	datasets: Record<string, T>;
@@ -123,6 +124,14 @@ export function useAggregatedData({
 			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: CrimeDataset, loc: string | null, id: string) =>
 				mm.calculateCrimeStats(geojson, dataset.records, loc, id),
 		},
+		income: {
+			datasets: datasets.income,
+			boundaryType: 'localAuthority' as const,
+			getGeojson: (dataset: IncomeDataset, bd: BoundaryData) =>
+				bd.ward?.[dataset.boundaryYear],
+			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: IncomeDataset, loc: string | null, id: string) =>
+				mm.calculateIncomeStats(geojson, dataset.localAuthorityData, loc, id),
+		},
 	}), [datasets]);
 
 	// Aggregate all datasets using the same logic
@@ -134,8 +143,8 @@ export function useAggregatedData({
 			generalElection: aggregateDataset(configs.generalElection, mapManager, boundaryData, location),
 			population: aggregateDataset(configs.population, mapManager, boundaryData, location),
 			housePrice: aggregateDataset(configs.housePrice, mapManager, boundaryData, location),
-			crime: null,
-			income: null,
+			crime: aggregateDataset(configs.crime, mapManager, boundaryData, location),
+			income: aggregateDataset(configs.income, mapManager, boundaryData, location),
 		};
 	}, [mapManager, boundaryData, location, configs]);
 

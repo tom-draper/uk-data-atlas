@@ -1,11 +1,11 @@
 // components/PopulationChart.tsx
 'use client';
 import { ActiveViz, AggregatedPopulationData, PopulationDataset } from '@lib/types';
-import PopulationDensity from '@/components/population/density/PopulationDensity';
-import AgeChart from './population/age/AgeDistribution';
-import Gender from './population/gender/Gender';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
+import Gender from './gender/Gender';
+import AgeDistribution from './age/AgeDistribution';
+import PopulationDensity from './density/PopulationDensity';
 
 export interface DemographicsChartSectionProps {
 	availableDatasets: Record<string, PopulationDataset>;
@@ -42,7 +42,7 @@ export default function DemographicsChartSection({
 					constituencyCode={constituencyCode}
 					codeMapper={codeMapper}
 				/>
-				<AgeChart
+				<AgeDistribution
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
 					dataset={availableDatasets[2022]}

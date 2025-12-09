@@ -1,6 +1,8 @@
 // lib/types/geometry.ts
 // GeoJSON and boundary-related types
 
+import { ValueOf } from "next/dist/shared/lib/constants";
+
 // Year-specific properties for boundaries
 interface Properties2024 {
     FID: number;
@@ -54,6 +56,8 @@ interface Properties2021 {
     LAT: number;
     LONG: number;
 }
+
+export type Properties = ValueOf<YearToProperties>
 
 export type YearToProperties = {
     2021: Properties2021;

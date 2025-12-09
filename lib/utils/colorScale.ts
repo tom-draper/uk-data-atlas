@@ -1,5 +1,5 @@
 // lib/utils/colorScale.ts
-import type { ColorTheme, CrimeOptions, DensityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, LocalElectionOptions, PopulationOptions } from '@/lib/types/mapOptions';
+import type { ColorTheme, CrimeOptions, DensityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, IncomeOptions, LocalElectionOptions, PopulationOptions } from '@/lib/types/mapOptions';
 
 /**
  * Normalizes a value to a 0-1 range based on min/max bounds
@@ -131,6 +131,15 @@ export function getColorForHousePrice(price: number, options: HousePriceOptions,
 export function getColorForCrimeRate(rate: number, options: CrimeOptions, themeId: string = 'viridis') {
     const range = options.colorRange || { min: 0, max: 1000 };
     const normalized = normalizeValue(rate, Math.min(range.min, rate), Math.max(range.max, rate));
+    return getThemeColor(1 - normalized, themeId);
+}
+
+/**
+ * Gets color for crime rate data with dynamic range
+ */
+export function getColorForIncome(income: number, options: IncomeOptions, themeId: string = 'viridis') {
+    const range = options.colorRange || { min: 20000, max: 40000 };
+    const normalized = normalizeValue(income, Math.min(range.min, income), Math.max(range.max, income));
     return getThemeColor(1 - normalized, themeId);
 }
 

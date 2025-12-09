@@ -64,7 +64,7 @@ export function useCodeMapper(boundaryData: BoundaryData): CodeMapper {
 	const wardMapper = useMemo(() => {
 		// Map: ward name -> { year -> ward code }
 		const nameToCodesMap = new Map<string, Partial<Record<WardYear, string>>>();
-		
+
 		// Map: ward code -> ward name
 		const codeToNameMap = new Map<string, string>();
 
@@ -109,7 +109,7 @@ export function useCodeMapper(boundaryData: BoundaryData): CodeMapper {
 	const constituencyMapper = useMemo(() => {
 		// Map: constituency name -> { year -> constituency code }
 		const nameToCodesMap = new Map<string, Partial<Record<ConstituencyYear, string>>>();
-		
+
 		// Map: constituency code -> constituency name
 		const codeToNameMap = new Map<string, string>();
 
