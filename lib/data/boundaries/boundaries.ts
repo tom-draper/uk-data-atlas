@@ -7,7 +7,7 @@ import * as topojson from "topojson-client";
 export const GEOJSON_PATHS = {
     ward: {
         2024: withCDN('/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.topojson'),
-        2023: withCDN('/data/boundaries/wards/WD_MAY_2023_UK_BGC_932649178890735580.topojson'),
+        2023: withCDN('/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.topojson'),
         2022: withCDN('/data/boundaries/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.topojson'),
         2021: withCDN('/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.topojson'),
     },
@@ -205,8 +205,9 @@ export const filterFeatures = (
             ...geojson,
             features: geojson.features.filter((f) => {
                 const wardCode = getProp(f.properties, PROPERTY_KEYS.wardCode);
-                const ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode)
+                let ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode)
                 const mappedLadCode = (wardCode && getLadForWard ? getLadForWard(wardCode) : undefined);
+                ladCode = ladCode || mappedLadCode;
                 return ladCode && locData.lad_codes.includes(ladCode);
             }),
         };
