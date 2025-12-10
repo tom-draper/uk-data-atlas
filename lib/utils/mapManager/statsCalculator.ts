@@ -9,6 +9,14 @@ import { IncomeDataset } from '@/lib/types/income';
 
 const PARTY_KEYS = ['LAB', 'CON', 'LD', 'GREEN', 'RUK', 'SNP', 'PC', 'DUP', 'SF', 'OTHER'];
 
+// Pre-computed decay weights for age 90+ distribution
+const AGE_90_WEIGHTS = (() => {
+    const decayRate = 0.15;
+    const weights = Array.from({ length: 10 }, (_, i) => Math.exp(-decayRate * i));
+    const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+    return weights.map(w => w / totalWeight);
+})();
+
 export class StatsCalculator {
     constructor(
         private propertyDetector: PropertyDetector,
@@ -25,8 +33,9 @@ export class StatsCalculator {
         const cached = this.cache.get(cacheKey);
         if (cached) return cached;
 
-        const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        console.log(`calculateLocalElectionStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
+        const wardCodeProp = this.propertyDetector.detectWardCode(geojson.features);
+        const features = geojson.features;
+        const len = features.length;
 
         const stats: WardStats = {
             partyVotes: {
@@ -37,13 +46,25 @@ export class StatsCalculator {
             totalVotes: 0
         };
 
-        for (const feature of geojson.features) {
-            const ward = wardData[feature.properties[wardCodeProp]];
+        // Single pass aggregation with direct property access
+        for (let i = 0; i < len; i++) {
+            const ward = wardData[features[i].properties[wardCodeProp]];
             if (!ward) continue;
 
-            for (const party in stats.partyVotes) {
-                stats.partyVotes[party as keyof PartyVotes] += (ward.partyVotes[party as keyof PartyVotes] as number) || 0;
-            }
+            const partyVotes = ward.partyVotes;
+            stats.partyVotes.LAB += partyVotes.LAB || 0;
+            stats.partyVotes.CON += partyVotes.CON || 0;
+            stats.partyVotes.LD += partyVotes.LD || 0;
+            stats.partyVotes.GREEN += partyVotes.GREEN || 0;
+            stats.partyVotes.REF += partyVotes.REF || 0;
+            stats.partyVotes.IND += partyVotes.IND || 0;
+            stats.partyVotes.DUP += partyVotes.DUP || 0;
+            stats.partyVotes.PC += partyVotes.PC || 0;
+            stats.partyVotes.SNP += partyVotes.SNP || 0;
+            stats.partyVotes.SF += partyVotes.SF || 0;
+            stats.partyVotes.APNI += partyVotes.APNI || 0;
+            stats.partyVotes.SDLP += partyVotes.SDLP || 0;
+            
             stats.electorate += ward.electorate;
             stats.totalVotes += ward.totalVotes;
         }
@@ -62,8 +83,9 @@ export class StatsCalculator {
         const cached = this.cache.get(cacheKey);
         if (cached) return cached;
 
-        const constituencyCodeProp = this.propertyDetector.detectConstituencyCode(geojson);
-        console.log(`calculateGeneralElectionStats: [${cacheKey}] Processing ${geojson.features.length} constituencies`);
+        const constituencyCodeProp = this.propertyDetector.detectConstituencyCode(geojson.features);
+        const features = geojson.features;
+        const len = features.length;
 
         const stats: ConstituencyStats = {
             totalSeats: 0,
@@ -75,11 +97,11 @@ export class StatsCalculator {
             partyVotes: {},
         };
 
-        for (const feature of geojson.features) {
-            const constituency = constituencyData[feature.properties[constituencyCodeProp]];
+        for (let i = 0; i < len; i++) {
+            const constituency = constituencyData[features[i].properties[constituencyCodeProp]];
             if (!constituency) continue;
 
-            stats.totalSeats += 1;
+            stats.totalSeats++;
             stats.electorate += constituency.electorate;
             stats.validVotes += constituency.validVotes;
             stats.invalidVotes += constituency.invalidVotes;
@@ -89,8 +111,11 @@ export class StatsCalculator {
                 stats.partySeats[winningParty] = (stats.partySeats[winningParty] || 0) + 1;
             }
 
-            for (const party of PARTY_KEYS) {
-                const votes = constituency.partyVotes[party] || 0;
+            // Direct key access is faster than loop
+            const pv = constituency.partyVotes;
+            for (let j = 0; j < PARTY_KEYS.length; j++) {
+                const party = PARTY_KEYS[j];
+                const votes = pv[party] || 0;
                 if (votes > 0) {
                     stats.totalVotes += votes;
                     stats.partyVotes[party] = (stats.partyVotes[party] || 0) + votes;
@@ -112,9 +137,7 @@ export class StatsCalculator {
         const cached = this.cache.get(cacheKey);
         if (cached) return cached;
 
-        const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        console.log(`calculatePopulationStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
-
+        const wardCodeProp = this.propertyDetector.detectWardCode(geojson.features);
         const aggregated = this.aggregatePopulationData(geojson, populationData, wardCodeProp);
         const result = this.buildPopulationStatsResult(aggregated);
 
@@ -132,35 +155,43 @@ export class StatsCalculator {
         const cached = this.cache.get(cacheKey);
         if (cached) return cached;
 
-        const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        console.log(`calculateHousePriceStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
+        const wardCodeProp = this.propertyDetector.detectWardCode(geojson.features);
+        const features = geojson.features;
+        const len = features.length;
 
         const yearlyTotals: Record<number, number> = {};
         const yearlyCounts: Record<number, number> = {};
         let totalPrice = 0;
         let wardCount = 0;
 
-        for (const feature of geojson.features) {
-            const ward = wardData[feature.properties[wardCodeProp]];
+        for (let i = 0; i < len; i++) {
+            const ward = wardData[features[i].properties[wardCodeProp]];
             if (!ward) continue;
 
-            for (const [year, price] of Object.entries(ward.prices)) {
-                const yearNum = Number(year);
+            const prices = ward.prices;
+            const price2023 = prices[2023];
+            
+            if (price2023 !== null && price2023 !== undefined) {
+                totalPrice += price2023;
+                wardCount++;
+            }
+
+            // Use Object.keys for better performance with small objects
+            const years = Object.keys(prices);
+            for (let j = 0; j < years.length; j++) {
+                const yearNum = Number(years[j]);
+                const price = prices[yearNum];
                 if (price !== null && yearNum <= 2023) {
                     yearlyTotals[yearNum] = (yearlyTotals[yearNum] || 0) + price;
                     yearlyCounts[yearNum] = (yearlyCounts[yearNum] || 0) + 1;
                 }
             }
-
-            if (ward.prices[2023] !== null) {
-                totalPrice += ward.prices[2023] ?? 0;
-                wardCount += 1;
-            }
         }
 
         const averagePrices: Record<number, number> = {};
-        for (const year in yearlyTotals) {
-            const yearNum = Number(year);
+        const yearKeys = Object.keys(yearlyTotals);
+        for (let i = 0; i < yearKeys.length; i++) {
+            const yearNum = Number(yearKeys[i]);
             averagePrices[yearNum] = yearlyTotals[yearNum] / yearlyCounts[yearNum];
         }
 
@@ -184,24 +215,25 @@ export class StatsCalculator {
         const cached = this.cache.get(cacheKey);
         if (cached) return cached;
 
-        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson);
-        console.log(`calculateCrimeStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
+        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+        const features = geojson.features;
+        const len = features.length;
 
-        const result = {
-            totalRecordedCrime: 0,
-            wardCount: 0
-        };
+        let totalRecordedCrime = 0;
+        let wardCount = 0;
 
-        for (const feature of geojson.features) {
-            const area = crimeData[feature.properties[ladCodeProp]];
+        for (let i = 0; i < len; i++) {
+            const area = crimeData[features[i].properties[ladCodeProp]];
             if (!area) continue;
 
-            if (area.totalRecordedCrime !== null && area.totalRecordedCrime !== undefined) {
-                result.totalRecordedCrime += area.totalRecordedCrime;
-                result.wardCount += 1;
+            const crime = area.totalRecordedCrime;
+            if (crime !== null && crime !== undefined) {
+                totalRecordedCrime += crime;
+                wardCount++;
             }
         }
 
+        const result = { totalRecordedCrime, wardCount };
         this.cache.set(cacheKey, result);
         return result;
     }
@@ -216,19 +248,23 @@ export class StatsCalculator {
         const cached = this.cache.get(cacheKey);
         if (cached) return cached;
 
-        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson);
-        console.log(`calculateIncomeStats: [${cacheKey}] Processing ${geojson.features.length} wards`);
+        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+        const features = geojson.features;
+        const len = features.length;
 
         let totalMedianIncome = 0;
         let localAuthorityCount = 0;
-        for (const feature of geojson.features) {
-            const locationIncome = incomeData[feature.properties[ladCodeProp]]
-            totalMedianIncome += locationIncome.annual?.median ?? 0;
-            localAuthorityCount += 1;
+
+        for (let i = 0; i < len; i++) {
+            const locationIncome = incomeData[features[i].properties[ladCodeProp]];
+            if (locationIncome?.annual?.median) {
+                totalMedianIncome += locationIncome.annual.median;
+                localAuthorityCount++;
+            }
         }
 
         const result = {
-            averageIncome: totalMedianIncome / localAuthorityCount
+            averageIncome: localAuthorityCount > 0 ? totalMedianIncome / localAuthorityCount : 0
         };
 
         this.cache.set(cacheKey, result);
@@ -240,6 +276,14 @@ export class StatsCalculator {
         populationData: PopulationDataset['populationData'],
         wardCodeProp: string
     ) {
+        const features = geojson.features;
+        const len = features.length;
+
+        // Pre-allocate objects
+        const ageData: Record<string, number> = {};
+        const males: Record<string, number> = {};
+        const females: Record<string, number> = {};
+
         const aggregated = {
             totalPop: 0,
             malesPop: 0,
@@ -250,13 +294,13 @@ export class StatsCalculator {
                 males: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups,
                 females: { '0-17': 0, '18-29': 0, '30-44': 0, '45-64': 0, '65+': 0 } as AgeGroups
             },
-            ageData: {} as Record<string, number>,
-            males: {} as Record<string, number>,
-            females: {} as Record<string, number>
+            ageData,
+            males,
+            females
         };
 
-        for (const feature of geojson.features) {
-            const ward = populationData[feature.properties[wardCodeProp]];
+        for (let i = 0; i < len; i++) {
+            const ward = populationData[features[i].properties[wardCodeProp]];
             if (!ward) continue;
 
             aggregated.totalPop += calculateTotal(ward.total);
@@ -269,26 +313,45 @@ export class StatsCalculator {
                 females: calculateAgeGroups(ward.females)
             };
 
-            for (const ageGroup in aggregated.ageGroups.total) {
-                const key = ageGroup as keyof AgeGroups;
-                aggregated.ageGroups.total[key] += wardAgeGroups.total[key];
-                aggregated.ageGroups.males[key] += wardAgeGroups.males[key];
-                aggregated.ageGroups.females[key] += wardAgeGroups.females[key];
+            // Direct key access faster than loop
+            aggregated.ageGroups.total['0-17'] += wardAgeGroups.total['0-17'];
+            aggregated.ageGroups.total['18-29'] += wardAgeGroups.total['18-29'];
+            aggregated.ageGroups.total['30-44'] += wardAgeGroups.total['30-44'];
+            aggregated.ageGroups.total['45-64'] += wardAgeGroups.total['45-64'];
+            aggregated.ageGroups.total['65+'] += wardAgeGroups.total['65+'];
+
+            aggregated.ageGroups.males['0-17'] += wardAgeGroups.males['0-17'];
+            aggregated.ageGroups.males['18-29'] += wardAgeGroups.males['18-29'];
+            aggregated.ageGroups.males['30-44'] += wardAgeGroups.males['30-44'];
+            aggregated.ageGroups.males['45-64'] += wardAgeGroups.males['45-64'];
+            aggregated.ageGroups.males['65+'] += wardAgeGroups.males['65+'];
+
+            aggregated.ageGroups.females['0-17'] += wardAgeGroups.females['0-17'];
+            aggregated.ageGroups.females['18-29'] += wardAgeGroups.females['18-29'];
+            aggregated.ageGroups.females['30-44'] += wardAgeGroups.females['30-44'];
+            aggregated.ageGroups.females['45-64'] += wardAgeGroups.females['45-64'];
+            aggregated.ageGroups.females['65+'] += wardAgeGroups.females['65+'];
+
+            // Aggregate age data
+            const totalEntries = Object.entries(ward.total);
+            for (let j = 0; j < totalEntries.length; j++) {
+                const [age, count] = totalEntries[j];
+                ageData[age] = (ageData[age] || 0) + count;
             }
 
-            for (const [age, count] of Object.entries(ward.total)) {
-                aggregated.ageData[age] = (aggregated.ageData[age] || 0) + count;
+            const malesEntries = Object.entries(ward.males);
+            for (let j = 0; j < malesEntries.length; j++) {
+                const [age, count] = malesEntries[j];
+                males[age] = (males[age] || 0) + count;
             }
 
-            for (const [age, count] of Object.entries(ward.males)) {
-                aggregated.males[age] = (aggregated.males[age] || 0) + count;
+            const femalesEntries = Object.entries(ward.females);
+            for (let j = 0; j < femalesEntries.length; j++) {
+                const [age, count] = femalesEntries[j];
+                females[age] = (females[age] || 0) + count;
             }
 
-            for (const [age, count] of Object.entries(ward.females)) {
-                aggregated.females[age] = (aggregated.females[age] || 0) + count;
-            }
-
-            aggregated.totalArea += polygonAreaSqKm(feature.geometry.coordinates);
+            aggregated.totalArea += polygonAreaSqKm(features[i].geometry.coordinates);
         }
 
         return aggregated;
@@ -303,35 +366,43 @@ export class StatsCalculator {
             isWardSpecific: false
         };
 
-        const ages = Array.from({ length: 100 }, (_, i) => ({
-            age: i,
-            count: aggregated.ageData[i.toString()] || 0
-        }));
-
-        // Distribute 90+ age data
-        const age90Plus = ages[90].count;
-        const decayRate = 0.15;
-        const weights = Array.from({ length: 10 }, (_, i) => Math.exp(-decayRate * i));
-        const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-
-        for (let i = 90; i < 100; i++) {
-            ages[i] = { age: i, count: (age90Plus * weights[i - 90]) / totalWeight };
+        // Pre-allocate arrays
+        const ages = new Array(100);
+        for (let i = 0; i < 100; i++) {
+            ages[i] = {
+                age: i,
+                count: aggregated.ageData[i.toString()] || 0
+            };
         }
 
-        const genderAgeData = Array.from({ length: 91 }, (_, age) => ({
-            age,
-            males: aggregated.males[age.toString()] || 0,
-            females: aggregated.females[age.toString()] || 0
-        }));
+        // Distribute 90+ age data using pre-computed weights
+        const age90Plus = ages[90].count;
+        for (let i = 90; i < 100; i++) {
+            ages[i] = { 
+                age: i, 
+                count: age90Plus * AGE_90_WEIGHTS[i - 90]
+            };
+        }
 
+        // Pre-allocate gender age data
+        const genderAgeData = new Array(91);
+        for (let age = 0; age < 91; age++) {
+            genderAgeData[age] = {
+                age,
+                males: aggregated.males[age.toString()] || 0,
+                females: aggregated.females[age.toString()] || 0
+            };
+        }
+
+        // Calculate median age
         let medianAge = 0;
         if (aggregated.totalPop > 0) {
             const halfPop = aggregated.totalPop / 2;
             let cumulative = 0;
-            for (const { age, count } of ages) {
-                cumulative += count;
+            for (let i = 0; i < 100; i++) {
+                cumulative += ages[i].count;
                 if (cumulative >= halfPop) {
-                    medianAge = age;
+                    medianAge = ages[i].age;
                     break;
                 }
             }

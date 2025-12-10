@@ -1,22 +1,22 @@
 // lib/utils/mapManager/propertyDetector.ts
 import { CONSTITUENCY_CODE_KEYS, LAD_CODE_KEYS, WARD_CODE_KEYS } from '@/lib/data/boundaries/boundaries';
-import { BoundaryGeojson } from '@lib/types';
+import { BoundaryGeojson, PropertyKeys } from '@lib/types';
 
 export class PropertyDetector {
-    detectWardCode(geojson: BoundaryGeojson): string {
-        return this.detectPropertyKey(geojson, WARD_CODE_KEYS);
+    detectWardCode(features: BoundaryGeojson['features']) {
+        return this.detectPropertyKey(features, WARD_CODE_KEYS);
     }
 
-    detectConstituencyCode(geojson: BoundaryGeojson): string {
-        return this.detectPropertyKey(geojson, CONSTITUENCY_CODE_KEYS);
+    detectConstituencyCode(features: BoundaryGeojson['features']) {
+        return this.detectPropertyKey(features, CONSTITUENCY_CODE_KEYS);
     }
 
-    detectLocalAuthorityCode(geojson: BoundaryGeojson): string {
-        return this.detectPropertyKey(geojson, LAD_CODE_KEYS);
+    detectLocalAuthorityCode(features: BoundaryGeojson['features']) {
+        return this.detectPropertyKey(features, LAD_CODE_KEYS);
     }
 
-    private detectPropertyKey(geojson: BoundaryGeojson, possibleKeys: string[]): string {
-        const firstFeature = geojson.features[0];
+    private detectPropertyKey(features: BoundaryGeojson['features'], possibleKeys: readonly PropertyKeys[]) {
+        const firstFeature = features[0];
         if (!firstFeature) return possibleKeys[0];
         
         for (const key of possibleKeys) {

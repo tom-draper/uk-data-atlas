@@ -59,6 +59,10 @@ interface Properties2021 {
 
 export type Properties = ValueOf<YearToProperties>
 
+type KeysOfUnion<T> = T extends any ? keyof T : never;
+
+export type PropertyKeys = KeysOfUnion<Properties>
+
 export type YearToProperties = {
     2021: Properties2021;
     2022: Properties2022;

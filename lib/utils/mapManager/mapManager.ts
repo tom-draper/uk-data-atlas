@@ -22,6 +22,9 @@ export interface MapManagerCallbacks {
 
 export type MapMode = 'localElection' | 'generalElection' | 'population' | 'housePrice' | 'crime' | 'income';
 
+// Cache property detections to avoid repeated computation
+const propCache = new Map<string, string>();
+
 export class MapManager {
     private layerManager: LayerManager;
     private eventHandler: EventHandler;
@@ -39,195 +42,176 @@ export class MapManager {
         this.statsCalculator = new StatsCalculator(this.propertyDetector, this.cache);
     }
 
-    updateMapForLocalElection(
+    // Unified election update method
+    private updateElectionMap(
         geojson: BoundaryGeojson,
-        dataset: LocalElectionDataset,
-        mapOptions: MapOptions
+        dataset: LocalElectionDataset | GeneralElectionDataset,
+        mapOptions: MapOptions,
+        type: 'localElection' | 'generalElection'
     ): void {
-        const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        console.log('updateMapForLocalElection: Filtered wards', geojson.features.length);
-
-        const mode = mapOptions.localElection.mode || 'winner';
-        const locationData = mode === 'party-percentage' && mapOptions.localElection.selectedParty
-            ? this.featureBuilder.buildPartyPercentageFeatures(
-                geojson.features,
-                dataset.wardData,
-                mapOptions.localElection.selectedParty,
-                wardCodeProp
-            )
-            : this.featureBuilder.buildWinnerFeatures(
-                geojson.features,
-                wardCodeProp,
-                (code) => dataset.wardResults[code] || 'NONE'
-            );
-
-        if (mode === 'party-percentage' && mapOptions.localElection.selectedParty) {
-            this.layerManager.updatePartyPercentageLayers({type: 'FeatureCollection', features: locationData.features}, mapOptions.localElection);
-        } else {
-            this.layerManager.updateElectionLayers({type: 'FeatureCollection', features: locationData.features} , dataset.partyInfo);
+        const isLocal = type === 'localElection';
+        const options = isLocal ? mapOptions.localElection : mapOptions.generalElection;
+        
+        // Cache property detection
+        const cacheKey = `${type}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(',') : ''}`;
+        let codeProp = propCache.get(cacheKey);
+        
+        if (!codeProp) {
+            codeProp = isLocal 
+                ? this.propertyDetector.detectWardCode(geojson.features)
+                : this.propertyDetector.detectConstituencyCode(geojson.features);
+            propCache.set(cacheKey, codeProp);
         }
 
-        this.eventHandler.setupEventHandlers('localElection', dataset.wardData, wardCodeProp);
-    }
+        const mode = options.mode || 'winner';
+        const dataMap = isLocal 
+            ? (dataset as LocalElectionDataset).wardData 
+            : (dataset as GeneralElectionDataset).constituencyData;
+        const resultsMap = isLocal
+            ? (dataset as LocalElectionDataset).wardResults
+            : (dataset as GeneralElectionDataset).constituencyResults;
 
-    updateMapForGeneralElection(
-        geojson: BoundaryGeojson,
-        dataset: GeneralElectionDataset,
-        mapOptions: MapOptions
-    ): void {
-        const constituencyCodeProp = this.propertyDetector.detectConstituencyCode(geojson);
-        console.log('updateMapForGeneralElection: Filtered constituencies:', geojson.features.length);
+        // Build features once
+        const features = mode === 'party-percentage' && options.selectedParty
+            ? this.featureBuilder.buildPartyPercentageFeatures(geojson.features, dataMap, options.selectedParty, codeProp)
+            : this.featureBuilder.buildWinnerFeatures(geojson.features, codeProp, (code) => resultsMap[code] || 'NONE');
 
-        const mode = mapOptions.generalElection.mode || 'winner';
-        const locationData = mode === 'party-percentage' && mapOptions.generalElection.selectedParty
-            ? this.featureBuilder.buildPartyPercentageFeatures(
-                geojson.features,
-                dataset.constituencyData,
-                mapOptions.generalElection.selectedParty,
-                constituencyCodeProp
-            )
-            : this.featureBuilder.buildWinnerFeatures(
-                geojson.features,
-                constituencyCodeProp,
-                (code) => dataset.constituencyResults[code] || 'NONE'
-            );
+        const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
 
-        if (mode === 'party-percentage' && mapOptions.generalElection.selectedParty) {
-            this.layerManager.updatePartyPercentageLayers(locationData, mapOptions.generalElection);
+        // Update layers
+        if (mode === 'party-percentage' && options.selectedParty) {
+            this.layerManager.updatePartyPercentageLayers(transformedGeojson, options);
         } else {
-            this.layerManager.updateElectionLayers(locationData, dataset.partyInfo);
+            this.layerManager.updateElectionLayers(transformedGeojson, dataset.partyInfo);
         }
 
-        this.eventHandler.setupEventHandlers('generalElection', dataset.constituencyData, constituencyCodeProp);
+        this.eventHandler.setupEventHandlers(type, dataMap, codeProp);
     }
 
-    updateMapForAgeDistribution(
+    updateMapForLocalElection(geojson: BoundaryGeojson, dataset: LocalElectionDataset, mapOptions: MapOptions): void {
+        this.updateElectionMap(geojson, dataset, mapOptions, 'localElection');
+    }
+
+    updateMapForGeneralElection(geojson: BoundaryGeojson, dataset: GeneralElectionDataset, mapOptions: MapOptions): void {
+        this.updateElectionMap(geojson, dataset, mapOptions, 'generalElection');
+    }
+
+    // Unified population update method
+    private updatePopulationMap(
         geojson: BoundaryGeojson,
         dataset: PopulationDataset,
-        mapOptions: MapOptions
+        mapOptions: MapOptions,
+        buildFeatures: (features: any[], dataset: PopulationDataset, codeProp: string, options: MapOptions) => any[]
     ): void {
-        const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        const locationData = this.featureBuilder.buildAgeFeatures(geojson, dataset, wardCodeProp, mapOptions);
+        const cacheKey = `population-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(',') : ''}`;
+        let wardCodeProp = propCache.get(cacheKey);
+        
+        if (!wardCodeProp) {
+            wardCodeProp = this.propertyDetector.detectWardCode(geojson.features);
+            propCache.set(cacheKey, wardCodeProp);
+        }
 
-        this.layerManager.updateColoredLayers(locationData);
+        const features = buildFeatures(geojson.features, dataset, wardCodeProp, mapOptions);
+        const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
+
+        this.layerManager.updateColoredLayers(transformedGeojson);
         this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
     }
 
-    updateMapForGender(
-        geojson: BoundaryGeojson,
-        dataset: PopulationDataset,
-        mapOptions: MapOptions
-    ): void {
-        const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        const locationData = this.featureBuilder.buildGenderFeatures(geojson, dataset, wardCodeProp, mapOptions);
-
-        this.layerManager.updateColoredLayers(locationData);
-        this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
+    updateMapForAgeDistribution(geojson: BoundaryGeojson, dataset: PopulationDataset, mapOptions: MapOptions): void {
+        this.updatePopulationMap(geojson, dataset, mapOptions, this.featureBuilder.buildAgeFeatures.bind(this.featureBuilder));
     }
 
-    updateMapForPopulationDensity(
-        geojson: BoundaryGeojson,
-        dataset: PopulationDataset,
-        mapOptions: MapOptions
-    ): void {
-        const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        const locationData = this.featureBuilder.buildDensityFeatures(geojson, dataset, wardCodeProp, mapOptions);
-
-        this.layerManager.updateColoredLayers(locationData);
-        this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
+    updateMapForGender(geojson: BoundaryGeojson, dataset: PopulationDataset, mapOptions: MapOptions): void {
+        this.updatePopulationMap(geojson, dataset, mapOptions, this.featureBuilder.buildGenderFeatures.bind(this.featureBuilder));
     }
 
-    updateMapForHousePrices(
-        geojson: BoundaryGeojson,
-        dataset: HousePriceDataset,
-        mapOptions: MapOptions
-    ): void {
-        const wardCodeProp = this.propertyDetector.detectWardCode(geojson);
-        const locationData = this.featureBuilder.buildHousePriceFeatures(geojson, dataset, wardCodeProp, mapOptions);
-
-        this.layerManager.updateColoredLayers(locationData);
-        this.eventHandler.setupEventHandlers('housePrice', dataset.wardData, wardCodeProp);
+    updateMapForPopulationDensity(geojson: BoundaryGeojson, dataset: PopulationDataset, mapOptions: MapOptions): void {
+        this.updatePopulationMap(geojson, dataset, mapOptions, this.featureBuilder.buildDensityFeatures.bind(this.featureBuilder));
     }
 
-    updateMapForCrimeRate(
+    // Generic update method for simple datasets
+    private updateGenericMap(
         geojson: BoundaryGeojson,
-        dataset: CrimeDataset,
-        mapOptions: MapOptions
+        dataset: any,
+        mapOptions: MapOptions,
+        detectProperty: (features: any[]) => string,
+        buildFeatures: (features: any[], dataset: any, codeProp: string, options: MapOptions) => any[],
+        eventType: MapMode,
+        dataForEvents: any
     ): void {
-        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson);
-        const locationData = this.featureBuilder.buildCrimeRateFeatures(geojson, dataset, ladCodeProp, mapOptions);
+        const cacheKey = `${eventType}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(',') : ''}`;
+        let codeProp = propCache.get(cacheKey);
+        
+        if (!codeProp) {
+            codeProp = detectProperty(geojson.features);
+            propCache.set(cacheKey, codeProp);
+        }
 
-        this.layerManager.updateColoredLayers(locationData);
-        this.eventHandler.setupEventHandlers('crime', dataset.records, ladCodeProp);
+        const features = buildFeatures(geojson.features, dataset, codeProp, mapOptions);
+        const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
+
+        this.layerManager.updateColoredLayers(transformedGeojson);
+        this.eventHandler.setupEventHandlers(eventType, dataForEvents, codeProp);
     }
 
-    updateMapForIncome(
-        geojson: BoundaryGeojson,
-        dataset: IncomeDataset,
-        mapOptions: MapOptions
-    ): void {
-        const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson);
-        const locationData = this.featureBuilder.buildIncomeFeatures(geojson, dataset, ladCodeProp, mapOptions);
-
-        this.layerManager.updateColoredLayers(locationData);
-        this.eventHandler.setupEventHandlers('income', dataset.localAuthorityData, ladCodeProp);
+    updateMapForHousePrices(geojson: BoundaryGeojson, dataset: HousePriceDataset, mapOptions: MapOptions): void {
+        this.updateGenericMap(
+            geojson, dataset, mapOptions,
+            this.propertyDetector.detectWardCode.bind(this.propertyDetector),
+            this.featureBuilder.buildHousePriceFeatures.bind(this.featureBuilder),
+            'housePrice',
+            dataset.wardData
+        );
     }
 
-    calculateLocalElectionStats(
-        geojson: BoundaryGeojson,
-        wardData: LocalElectionDataset['wardData'],
-        location: string | null = null,
-        datasetId: string | null = null
-    ) {
+    updateMapForCrimeRate(geojson: BoundaryGeojson, dataset: CrimeDataset, mapOptions: MapOptions): void {
+        this.updateGenericMap(
+            geojson, dataset, mapOptions,
+            this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+            this.featureBuilder.buildCrimeRateFeatures.bind(this.featureBuilder),
+            'crime',
+            dataset.records
+        );
+    }
+
+    updateMapForIncome(geojson: BoundaryGeojson, dataset: IncomeDataset, mapOptions: MapOptions): void {
+        this.updateGenericMap(
+            geojson, dataset, mapOptions,
+            this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+            this.featureBuilder.buildIncomeFeatures.bind(this.featureBuilder),
+            'income',
+            dataset.localAuthorityData
+        );
+    }
+
+    // Simplified stats calculation methods
+    calculateLocalElectionStats(geojson: BoundaryGeojson, wardData: LocalElectionDataset['wardData'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateLocalElectionStats(geojson, wardData, location, datasetId);
     }
 
-    calculateGeneralElectionStats(
-        geojson: BoundaryGeojson,
-        constituencyData: GeneralElectionDataset['constituencyData'],
-        location: string | null = null,
-        datasetId: string | null = null
-    ) {
+    calculateGeneralElectionStats(geojson: BoundaryGeojson, constituencyData: GeneralElectionDataset['constituencyData'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateGeneralElectionStats(geojson, constituencyData, location, datasetId);
     }
 
-    calculatePopulationStats(
-        geojson: BoundaryGeojson,
-        populationData: PopulationDataset['populationData'],
-        location: string | null = null,
-        datasetId: string | null = null
-    ) {
+    calculatePopulationStats(geojson: BoundaryGeojson, populationData: PopulationDataset['populationData'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculatePopulationStats(geojson, populationData, location, datasetId);
     }
 
-    calculateHousePriceStats(
-        geojson: BoundaryGeojson,
-        wardData: HousePriceDataset['wardData'],
-        location: string | null = null,
-        datasetId: string | null = null
-    ) {
+    calculateHousePriceStats(geojson: BoundaryGeojson, wardData: HousePriceDataset['wardData'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateHousePriceStats(geojson, wardData, location, datasetId);
     }
 
-    calculateCrimeStats(
-        geojson: BoundaryGeojson,
-        wardData: CrimeDataset['records'],
-        location: string | null = null,
-        datasetId: string | null = null
-    ) {
+    calculateCrimeStats(geojson: BoundaryGeojson, wardData: CrimeDataset['records'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateCrimeStats(geojson, wardData, location, datasetId);
     }
 
-    calculateIncomeStats(
-        geojson: BoundaryGeojson,
-        localAuthorityData: IncomeDataset['localAuthorityData'],
-        location: string | null = null,
-        datasetId: string | null = null
-    ) {
+    calculateIncomeStats(geojson: BoundaryGeojson, localAuthorityData: IncomeDataset['localAuthorityData'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateIncomeStats(geojson, localAuthorityData, location, datasetId);
     }
 
     destroy(): void {
         this.eventHandler.destroy();
+        propCache.clear(); // Clean up cache on destroy
     }
 }

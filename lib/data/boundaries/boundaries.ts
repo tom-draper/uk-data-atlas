@@ -114,12 +114,12 @@ export const getProp = (
 /**
  * Build a lookup map from ward codes to LAD codes
  */
-const populateLadMap = (features: any[]): void => {
+const populateLadMap = (features: BoundaryGeojson['features']): void => {
     for (const feature of features) {
         const wCode = getProp(feature.properties, PROPERTY_KEYS.wardCode);
         const lCode = getProp(feature.properties, PROPERTY_KEYS.ladCode);
         if (wCode && lCode) {
-            WARD_TO_LAD_MAP[wCode] = lCode;
+            // WARD_TO_LAD_MAP[wCode] = lCode;
         }
     }
 };
@@ -270,8 +270,7 @@ export const filterFeatures = (
             ...geojson,
             features: geojson.features.filter((f) => {
                 const wCode = getProp(f.properties, PROPERTY_KEYS.wardCode);
-                const lCode = getProp(f.properties, PROPERTY_KEYS.ladCode) ||
-                    WARD_TO_LAD_MAP[wCode];
+                const lCode = getProp(f.properties, PROPERTY_KEYS.ladCode) || WARD_TO_LAD_MAP[wCode];
                 return lCode && locData.lad_codes.includes(lCode);
             }),
         };
