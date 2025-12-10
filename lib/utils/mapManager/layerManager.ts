@@ -11,9 +11,9 @@ const LINE_LAYER_ID = 'wards-line';
 export class LayerManager {
     constructor(private map: mapboxgl.Map | maplibregl.Map) {}
 
-    updateElectionLayers(locationData: BoundaryGeojson, partyInfo: Party[]): void {
+    updateElectionLayers(geojson: BoundaryGeojson, partyInfo: Party[]): void {
         this.removeExistingLayers();
-        this.addSource(locationData);
+        this.addSource(geojson);
 
         const colorExpression: any[] = ['match', ['get', 'winningParty']];
         for (const party of partyInfo) {
@@ -35,11 +35,11 @@ export class LayerManager {
     }
 
     updatePartyPercentageLayers(
-        locationData: BoundaryGeojson,
+        geojson: BoundaryGeojson,
         options: LocalElectionOptions | GeneralElectionOptions
     ): void {
         this.removeExistingLayers();
-        this.addSource(locationData);
+        this.addSource(geojson);
 
         const baseColor = PARTIES[options.selectedParty]?.color || '#999999';
         const fillColorExpression = getPartyPercentageColorExpression(baseColor, options);
@@ -57,9 +57,9 @@ export class LayerManager {
         this.addBorderLayer();
     }
 
-    updateColoredLayers(locationData: BoundaryGeojson): void {
+    updateColoredLayers(geojson: BoundaryGeojson): void {
         this.removeExistingLayers();
-        this.addSource(locationData);
+        this.addSource(geojson);
 
         this.map.addLayer({
             id: FILL_LAYER_ID,
@@ -96,10 +96,10 @@ export class LayerManager {
         }
     }
 
-    private addSource(locationData: BoundaryGeojson): void {
+    private addSource(geojson: BoundaryGeojson): void {
         this.map.addSource(SOURCE_ID, {
             type: 'geojson',
-            data: locationData
+            data: geojson
         });
     }
 }

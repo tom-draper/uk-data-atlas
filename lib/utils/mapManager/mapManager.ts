@@ -51,21 +51,21 @@ export class MapManager {
     ): void {
         const isLocal = type === 'localElection';
         const options = isLocal ? mapOptions.localElection : mapOptions.generalElection;
-        
+
         // Cache property detection
         const cacheKey = `${type}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(',') : ''}`;
         let codeProp = propCache.get(cacheKey);
-        
+
         if (!codeProp) {
-            codeProp = isLocal 
+            codeProp = isLocal
                 ? this.propertyDetector.detectWardCode(geojson.features)
                 : this.propertyDetector.detectConstituencyCode(geojson.features);
             propCache.set(cacheKey, codeProp);
         }
 
         const mode = options.mode || 'winner';
-        const dataMap = isLocal 
-            ? (dataset as LocalElectionDataset).wardData 
+        const dataMap = isLocal
+            ? (dataset as LocalElectionDataset).wardData
             : (dataset as GeneralElectionDataset).constituencyData;
         const resultsMap = isLocal
             ? (dataset as LocalElectionDataset).wardResults
@@ -77,6 +77,16 @@ export class MapManager {
             : this.featureBuilder.buildWinnerFeatures(geojson.features, codeProp, (code) => resultsMap[code] || 'NONE');
 
         const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
+
+        console.log('Code property:', codeProp);
+        console.log('Features built:', features.length);
+        console.log('Sample feature:', features[0]);
+        console.log('Sample result lookup:', features[0]?.properties?.[codeProp], resultsMap[features[0]?.properties?.[codeProp]]);
+        console.log('Transformed geojson:', transformedGeojson.features.length);
+
+        // console.log('wardCodeProp', codeProp);
+        // console.log('here:', transformedGeojson.features.length)
+        // console.log(transformedGeojson)
 
         // Update layers
         if (mode === 'party-percentage' && options.selectedParty) {
@@ -105,7 +115,7 @@ export class MapManager {
     ): void {
         const cacheKey = `population-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(',') : ''}`;
         let wardCodeProp = propCache.get(cacheKey);
-        
+
         if (!wardCodeProp) {
             wardCodeProp = this.propertyDetector.detectWardCode(geojson.features);
             propCache.set(cacheKey, wardCodeProp);
@@ -142,7 +152,7 @@ export class MapManager {
     ): void {
         const cacheKey = `${eventType}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(',') : ''}`;
         let codeProp = propCache.get(cacheKey);
-        
+
         if (!codeProp) {
             codeProp = detectProperty(geojson.features);
             propCache.set(cacheKey, codeProp);

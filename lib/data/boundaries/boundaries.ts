@@ -4,10 +4,6 @@ import { LOCATIONS } from "@lib/data/locations";
 import { withCDN } from "@/lib/utils/cdn";
 import * as topojson from "topojson-client";
 
-// ============================================
-// Configuration
-// ============================================
-
 export const GEOJSON_PATHS = {
     ward: {
         2024: withCDN('/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.topojson'),
@@ -66,15 +62,7 @@ const COUNTRY_PREFIXES: Record<string, string> = {
     "Northern Ireland": "N",
 };
 
-// ============================================
-// Cache
-// ============================================
-
 const BOUNDARY_CACHE: Record<string, BoundaryGeojson> = {};
-
-// ============================================
-// Utility Functions
-// ============================================
 
 /**
  * Find the first available property from a list of possible keys
@@ -137,10 +125,6 @@ const getPropertyKeys = (type: BoundaryType) => {
     };
     return keyMap[type];
 };
-
-// ============================================
-// Main Functions
-// ============================================
 
 /**
  * Fetch and cache boundary file (supports both GeoJSON and TopoJSON)
