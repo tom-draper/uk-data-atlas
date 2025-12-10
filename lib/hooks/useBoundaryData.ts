@@ -1,6 +1,14 @@
+// hooks/useBoundaryData.ts
 import { useEffect, useState, useMemo } from 'react';
 import { BoundaryGeojson } from '@lib/types';
-import { BoundaryType, fetchBoundaryFile, filterFeatures, GEOJSON_PATHS } from '../data/boundaries/boundaries';
+import {
+	BoundaryType,
+	fetchBoundaryFile,
+	filterFeatures,
+	GEOJSON_PATHS,
+	PROPERTY_KEYS
+} from '../data/boundaries/boundaries';
+import { extractWardLadMappings } from './useWardToLadMap';
 
 export type BoundaryData = {
 	ward: Record<number, BoundaryGeojson | null>;
@@ -8,86 +16,135 @@ export type BoundaryData = {
 	localAuthority: Record<number, BoundaryGeojson | null>;
 };
 
-export function useBoundaryData(selectedLocation?: string | null) {
-	const [rawData, setRawData] = useState<BoundaryData>({
-		ward: {},
-		constituency: {},
-		localAuthority: {}
-	});
+const EMPTY_BOUNDARY_DATA: BoundaryData = {
+	ward: { 2024: null, 2023: null, 2022: null, 2021: null },
+	constituency: { 2024: null, 2019: null, 2017: null, 2015: null },
+	localAuthority: { 2025: null, 2024: null, 2023: null, 2022: null, 2021: null }
+};
 
+/**
+ * Fetch all boundary files for a given type
+ */
+const fetchBoundaryGroup = async (
+	type: BoundaryType,
+	onMappingsExtracted?: (mappings: Record<string, string>) => void
+): Promise<Record<number, BoundaryGeojson>> => {
+	const paths = GEOJSON_PATHS[type];
+	const years = Object.keys(paths).map(Number);
+
+	const results = await Promise.all(
+		years.map(async (year) => {
+			const path = paths[year as keyof typeof paths];
+			const data = await fetchBoundaryFile(path);
+
+			// Extract ward-to-LAD mappings from ward data
+			if (type === 'ward' && data.features?.length && onMappingsExtracted) {
+				const mappings = extractWardLadMappings(
+					data.features,
+					PROPERTY_KEYS.wardCode,
+					PROPERTY_KEYS.ladCode
+				);
+				if (Object.keys(mappings).length > 0) {
+					onMappingsExtracted(mappings);
+				}
+			}
+
+			return [year, data] as const;
+		})
+	);
+
+	return Object.fromEntries(results);
+};
+
+/**
+ * Apply location filtering to a group of boundaries
+ */
+const filterBoundaryGroup = (
+	group: Record<number, BoundaryGeojson | null>,
+	type: BoundaryType,
+	location: string | null,
+	getLadForWard?: (wardCode: string) => string | undefined
+): Record<number, BoundaryGeojson | null> => {
+	const filtered: Record<number, BoundaryGeojson | null> = {};
+
+	for (const [year, data] of Object.entries(group)) {
+		filtered[Number(year)] = data
+			? filterFeatures(data, location, type, getLadForWard)
+			: null;
+	}
+
+	return filtered;
+};
+
+/**
+ * Hook to load and filter boundary data
+ * Pass getLadForWard and addWardLadMappings from useWardLadMap() to enable 2021 filtering
+ */
+export function useBoundaryData(
+	selectedLocation?: string,
+	getLadForWard?: (wardCode: string) => string | undefined,
+	addWardLadMappings?: (mappings: Record<string, string>) => void
+) {
+	const [rawData, setRawData] = useState<BoundaryData>(EMPTY_BOUNDARY_DATA);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
 
+	// Load all boundary files on mount
 	useEffect(() => {
 		let mounted = true;
 
-		const loadAll = async () => {
+		const loadBoundaries = async () => {
 			try {
 				setIsLoading(true);
-
-				// Generate promises based on config object
-				const wYears = Object.keys(GEOJSON_PATHS.ward).map(Number);
-				const cYears = Object.keys(GEOJSON_PATHS.constituency).map(Number);
-				const lYears = Object.keys(GEOJSON_PATHS.localAuthority).map(Number);
-
-				// Helper to fetch a group
-				const fetchGroup = async (type: BoundaryType, years: number[]) => {
-					const results: Record<number, BoundaryGeojson> = {};
-					await Promise.all(years.map(async (year) => {
-						const path = GEOJSON_PATHS[type][year as keyof typeof GEOJSON_PATHS[typeof type]];
-						results[year] = await fetchBoundaryFile(path);
-					}));
-					return results;
-				};
+				setError(null);
 
 				const [wards, constituencies, localAuthorities] = await Promise.all([
-					fetchGroup('ward', wYears),
-					fetchGroup('constituency', cYears),
-					fetchGroup('localAuthority', lYears),
+					fetchBoundaryGroup('ward', addWardLadMappings),
+					fetchBoundaryGroup('constituency'),
+					fetchBoundaryGroup('localAuthority'),
 				]);
 
 				if (mounted) {
-					setRawData({ ward: wards, constituency: constituencies, localAuthority: localAuthorities });
+					setRawData({
+						ward: wards,
+						constituency: constituencies,
+						localAuthority: localAuthorities
+					});
 				}
 			} catch (err) {
-				if (mounted) setError(err instanceof Error ? err : new Error('Unknown error'));
+				if (mounted) {
+					setError(err instanceof Error ? err : new Error('Failed to load boundaries'));
+				}
 			} finally {
-				if (mounted) setIsLoading(false);
+				if (mounted) {
+					setIsLoading(false);
+				}
 			}
 		};
 
-		loadAll();
+		loadBoundaries();
 
-		return () => { mounted = false; };
-	}, []);
+		return () => {
+			mounted = false;
+		};
+	}, [addWardLadMappings]);
 
-	const filteredData: BoundaryData = useMemo(() => {
-		if (isLoading || !rawData.ward) {
-			return {
-				ward: { 2024: null, 2023: null, 2022: null, 2021: null },
-				constituency: { 2024: null, 2019: null, 2017: null, 2015: null },
-				localAuthority: { 2025: null, 2024: null, 2023: null, 2022: null, 2021: null }
-			};
+	// Filter data based on selected location
+	const filteredData = useMemo(() => {
+		if (isLoading || !rawData.ward[2024]) {
+			return EMPTY_BOUNDARY_DATA;
 		}
 
-		const processGroup = (group: Record<string, BoundaryGeojson | null>, type: 'ward' | 'constituency' | 'localAuthority') => {
-			const result: any = {};
-			Object.entries(group).forEach(([year, data]) => {
-				if (data) {
-					result[year] = filterFeatures(data, selectedLocation || null, type);
-				} else {
-					result[year] = null;
-				}
-			});
-			return result;
-		};
-
 		return {
-			ward: processGroup(rawData.ward, 'ward'),
-			constituency: processGroup(rawData.constituency, 'constituency'),
-			localAuthority: processGroup(rawData.localAuthority, 'localAuthority')
+			ward: filterBoundaryGroup(rawData.ward, 'ward', selectedLocation || null, getLadForWard),
+			constituency: filterBoundaryGroup(rawData.constituency, 'constituency', selectedLocation || null),
+			localAuthority: filterBoundaryGroup(rawData.localAuthority, 'localAuthority', selectedLocation || null)
 		};
-	}, [rawData, selectedLocation, isLoading]);
+	}, [rawData, selectedLocation, isLoading, getLadForWard]);
 
-	return { boundaryData: filteredData, isLoading, error };
+	return {
+		boundaryData: filteredData,
+		isLoading,
+		error
+	};
 }

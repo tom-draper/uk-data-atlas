@@ -14,6 +14,7 @@ import UIOverlay from '@components/UIOverlay';
 import { LOCATIONS } from '@lib/data/locations';
 import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
 import type { ActiveViz, ConstituencyData, Datasets, WardData } from '@lib/types';
+import { useWardLadMap } from '@/lib/hooks/useWardToLadMap';
 
 interface MapInterfaceProps {
 	datasets: Datasets;
@@ -51,8 +52,10 @@ export default function MapInterface({
 	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
 	const [selectedLocalAuthority, setSelectedLocalAuthority] = useState<any | null>(null);
 
+	const wardLadMap = useWardLadMap();
+
 	// Get boundary data
-	const { boundaryData } = useBoundaryData(selectedLocation);
+	const { boundaryData } = useBoundaryData(selectedLocation, wardLadMap.getLadForWard, wardLadMap.addWardLadMappings);
 	const codeMapper = useCodeMapper(boundaryData);
 
 	// Map setup
