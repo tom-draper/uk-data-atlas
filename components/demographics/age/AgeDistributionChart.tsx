@@ -105,12 +105,10 @@ function AgeDistributionChart({ counts, maxCount, total, ageGroups, isActive }: 
 // Optimized equality check for props to prevent unnecessary renders
 export default memo(AgeDistributionChart, (prev, next) => {
 	// Fast path: if counts array reference is the same, nothing changed
-	if (prev.counts === next.counts && 
+	return (
+		prev.counts === next.counts && 
 		prev.maxCount === next.maxCount &&
 		prev.isActive === next.isActive &&
-		prev.total === next.total) {
-		return true;
-	}
-	
-	return false;
+		prev.total === next.total
+	) 
 });

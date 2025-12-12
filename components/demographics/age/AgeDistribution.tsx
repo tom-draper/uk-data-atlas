@@ -59,7 +59,7 @@ function AgeDistribution({
             "0-17": 0, "18-29": 0, "30-44": 0, "45-64": 0, "65+": 0
         };
 
-        // 1. Handle Aggregated Data Case
+        //  Handle Aggregated Data Case
         if (!wardCode && !constituencyCode && aggregatedData) {
             const data = aggregatedData[dataset.year];
             // Convert existing aggregated data shape to our fast Uint32Array
@@ -87,7 +87,7 @@ function AgeDistribution({
             };
         }
 
-        // 2. Handle Missing Data
+        // Handle Missing Data
         if (!wardCode || !dataset) {
             return { 
                 medianAge: 0, 
@@ -98,7 +98,7 @@ function AgeDistribution({
             };
         }
 
-        // 3. Handle Ward Data Calculation
+        // Handle Ward Data Calculation
         const codesToTry = [
             wardCode,
             codeMapper.convertWardCode(wardCode, dataset.boundaryYear),
