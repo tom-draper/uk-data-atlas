@@ -1,8 +1,7 @@
 // components/population/density/PopulationDensityChart.tsx
 import { WARD_CODE_KEYS } from "@/lib/data/boundaries/boundaries";
 import { BoundaryData } from "@/lib/hooks/useBoundaryData";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset } from "@/lib/types";
+import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset, SelectedArea } from "@/lib/types";
 import { calculateTotal, polygonAreaSqKm } from "@/lib/utils/population";
 import { useMemo, memo } from "react";
 
@@ -10,9 +9,7 @@ interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
 	aggregatedData: AggregatedPopulationData | null;
 	boundaryData: BoundaryData;
-	wardCode?: string;
-	constituencyCode?: string;
-	codeMapper: CodeMapper;
+	selectedArea: SelectedArea | null;
 }
 
 const getWardPopulationDensity = (feature: any, total: number) => {
@@ -115,13 +112,10 @@ function PopulationDensityChart({
 	dataset,
 	aggregatedData,
 	boundaryData,
-	wardCode,
-	constituencyCode,
-	codeMapper,
+	selectedArea,
 }: PopulationDensityChartProps) {
 	const { density, areaSqKm, total } = useMemo(() => {
-		// Early return for aggregated data case
-		if (!wardCode && !constituencyCode && aggregatedData) {
+		if (selectedArea === null && aggregatedData) {
 			return {
 				density: aggregatedData[dataset.year].density,
 				areaSqKm: aggregatedData[dataset.year].totalArea,
@@ -130,34 +124,28 @@ function PopulationDensityChart({
 		}
 
 		const geojson = boundaryData.ward[dataset.boundaryYear];
-		if (!wardCode || !geojson) {
+		if (selectedArea === null || selectedArea.type !== 'ward' || !geojson) {
 			return { density: null, areaSqKm: null, total: null };
 		}
 
-		const codesToTry = [
-			wardCode,
-			codeMapper.convertWardCode(wardCode, dataset.boundaryYear)
-		].filter((code): code is string => code !== null);
-
+		const wardCode = selectedArea.data.wardCode;
 		const wardCodeProp = detectPropertyKey(geojson);
 
-		for (const code of codesToTry) {
-			const populationData = dataset.populationData[code];
-			if (populationData) {
-				const wardFeature = geojson.features.find((f) => f.properties?.[wardCodeProp] === code);
+		const populationData = dataset.populationData[wardCode];
+		if (populationData) {
+			const wardFeature = geojson.features.find((f) => f.properties?.[wardCodeProp] === wardCode);
 
-				if (wardFeature) {
-					const total = calculateTotal(populationData.total);
-					return {
-						...getWardPopulationDensity(wardFeature, total),
-						total
-					};
-				}
+			if (wardFeature) {
+				const total = calculateTotal(populationData.total);
+				return {
+					...getWardPopulationDensity(wardFeature, total),
+					total
+				};
 			}
 		}
 
 		return { density: null, areaSqKm: null, total: null };
-	}, [wardCode, constituencyCode, boundaryData, dataset, aggregatedData, codeMapper]);
+	}, [dataset, aggregatedData, boundaryData, selectedArea]);
 
 	if (!total || density === null || areaSqKm === null) {
 		return (

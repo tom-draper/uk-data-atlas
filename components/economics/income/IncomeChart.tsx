@@ -1,21 +1,17 @@
 // components/IncomeChart.tsx
 'use client';
-import { CodeMapper } from '@/lib/hooks/useCodeMapper';
-import { ActiveViz, AggregatedIncomeData, Dataset, IncomeDataset } from '@lib/types';
+import { ActiveViz, AggregatedIncomeData, Dataset, IncomeDataset, SelectedArea } from '@lib/types';
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, IncomeDataset>;
+	aggregatedData: AggregatedIncomeData | null;
+	selectedArea: SelectedArea | null;
 	year: number;
 	setActiveViz: (value: ActiveViz) => void;
-	wardCode?: string;
-	constituencyCode?: string;
-	localAuthorityCode?: string;
-	aggregatedData: AggregatedIncomeData | null;
-	codeMapper: CodeMapper;
 }
 
-const COLORS = {
+const colors = {
 	bg: 'bg-emerald-50/60',
 	border: 'border-emerald-300',
 	inactive: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
@@ -24,23 +20,20 @@ const COLORS = {
 export default function IncomeChart({
 	activeDataset,
 	availableDatasets,
+	selectedArea,
 	year,
 	setActiveViz,
-	wardCode,
-	constituencyCode,
-	localAuthorityCode,
 }: IncomeChartProps) {
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
 	const isActive = activeDataset?.id === `income${dataset.year}`;
-	const areaCode = wardCode || constituencyCode || localAuthorityCode || '';
-	const hasData = dataset.localAuthorityData?.[areaCode] !== undefined;
+	const hasData = selectedArea && selectedArea.type === 'localAuthority' && dataset.localAuthorityData?.[selectedArea.data.localAuthorityCode] !== undefined;
 
 	return (
 		<div
 			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative ${
-				isActive ? `${COLORS.bg} border-2 ${COLORS.border}` : COLORS.inactive
+				isActive ? `${colors.bg} border-2 ${colors.border}` : colors.inactive
 			}`}
 			onClick={() => setActiveViz({ 
 				vizId: dataset.id, 

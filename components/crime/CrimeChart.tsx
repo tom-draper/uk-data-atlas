@@ -1,20 +1,17 @@
 // components/CrimeChart.tsx
 'use client';
-import { CodeMapper } from '@/lib/hooks/useCodeMapper';
-import { ActiveViz, AggregatedCrimeData, Dataset, CrimeDataset } from '@lib/types';
+import { ActiveViz, AggregatedCrimeData, Dataset, CrimeDataset, SelectedArea } from '@lib/types';
 
 interface CrimeChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, CrimeDataset>;
-	setActiveViz: (value: ActiveViz) => void;
-	year: number;
-	wardCode?: string;
-	constituencyCode?: string;
 	aggregatedData: AggregatedCrimeData | null;
-	codeMapper: CodeMapper;
+	selectedArea: SelectedArea | null;
+	year: number;
+	setActiveViz: (value: ActiveViz) => void;
 }
 
-const COLORS = {
+const colors = {
 	bg: 'bg-emerald-50/60',
 	border: 'border-emerald-300',
 	inactive: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
@@ -23,22 +20,20 @@ const COLORS = {
 export default function CrimeChart({
 	activeDataset,
 	availableDatasets,
+	selectedArea,
 	year,
 	setActiveViz,
-	wardCode,
-	constituencyCode,
 }: CrimeChartProps) {
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
 	const isActive = activeDataset?.id === `crime${dataset.year}`;
-	const areaCode = wardCode || constituencyCode || '';
-	const hasData = dataset.records?.[areaCode] !== undefined;
+	const hasData = selectedArea !== null && selectedArea.type === 'localAuthority' && dataset.records?.[selectedArea.data.localAuthorityCode] !== undefined;
 
 	return (
 		<div
 			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative ${
-				isActive ? `${COLORS.bg} border-2 ${COLORS.border}` : COLORS.inactive
+				isActive ? `${colors.bg} border-2 ${colors.border}` : colors.inactive
 			}`}
 			onClick={() => setActiveViz({ 
 				vizId: dataset.id, 

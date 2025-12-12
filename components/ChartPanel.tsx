@@ -1,11 +1,10 @@
 // components/ChartPanel.tsx
 'use client';
 import packageJson from '../package.json';
-import { Dataset, WardData, ConstituencyData, Datasets, ActiveViz, AggregatedData } from '@lib/types';
+import { Dataset, Datasets, ActiveViz, AggregatedData, SelectedArea } from '@lib/types';
 import LocalElectionResultChartSection from './local-election/LocalElectionResultChartSection';
 import DemographicsChartSection from './demographics/DemographicsChartSection';
 import { memo } from 'react';
-import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 import EconomicsSection from './economics/EconomicsSection';
 import GeneralElectionResultChartSection from './general-election/GeneralElectionResultChartSection';
@@ -13,27 +12,23 @@ import CrimeSection from './crime/CrimeSection';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
-	selectedWard: WardData | null;
-	selectedConstituency: ConstituencyData | null;
+	selectedArea: SelectedArea | null;
 	activeDataset: Dataset | null;
 	boundaryData: BoundaryData;
 	datasets: Datasets;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	aggregatedData: AggregatedData;
-	codeMapper: CodeMapper
 }
 
 const PanelHeader = ({
 	selectedLocation,
-	selectedWard,
-	selectedConstituency
+	selectedArea,
 }: {
 	selectedLocation: string | null;
-	selectedWard: WardData | null;
-	selectedConstituency: ConstituencyData | null;
+	selectedArea: SelectedArea | null;
 }) => {
-	const { title, subtitle, code } = useLocationHeader(selectedLocation, selectedWard, selectedConstituency);
+	const { title, subtitle, code } = panelHeaderDetails(selectedLocation, selectedArea);
 
 	return (
 		<div className="pb-2 pt-2.5 px-2.5 bg-white/20">
@@ -50,28 +45,35 @@ const PanelHeader = ({
 	);
 };
 
-function useLocationHeader(selectedLocation: string | null, selectedWard: WardData | null, selectedConstituency: ConstituencyData | null) {
-	if (selectedConstituency) {
+function panelHeaderDetails(selectedLocation: string | null, selectedArea: SelectedArea | null) {
+	if (selectedArea == null) {
 		return {
-			title: selectedConstituency.constituencyName,
-			subtitle: `${selectedConstituency.regionName}, ${selectedConstituency.countryName}`,
-			code: selectedConstituency.onsId
+			title: selectedLocation || 'Greater Manchester',
+			subtitle: 'North West, England',
+			code: ''
 		};
 	}
 
-	if (selectedWard) {
-		return {
-			title: selectedWard.wardName,
-			subtitle: selectedWard.localAuthorityName,
-			code: `${selectedWard.localAuthorityCode} ${selectedWard.wardCode}`
-		};
+	switch (selectedArea.type) {
+		case 'ward':
+			return {
+				title: selectedArea.data.wardName,
+				subtitle: selectedArea.data.localAuthorityName,
+				code: `${selectedArea.data.localAuthorityCode} ${selectedArea.data.wardCode}`
+			}
+		case 'constituency':
+			return {
+				title: selectedArea.data.constituencyName,
+				subtitle: `${selectedArea.data.regionName}, ${selectedArea.data.countryName}`,
+				code: selectedArea.data.onsId
+			};
+		case 'localAuthority':
+			return {
+				title: selectedArea.data.localAuthorityName,
+				subtitle: `${selectedArea.data.regionName}, ${selectedArea.data.countryName}`,
+				code: selectedArea.data.localAuthorityCode
+			};
 	}
-
-	return {
-		title: selectedLocation || 'Greater Manchester',
-		subtitle: 'North West, England',
-		code: ''
-	};
 }
 
 const PanelFooter = () => {
@@ -91,23 +93,20 @@ const PanelFooter = () => {
 
 export default memo(function ChartPanel({
 	selectedLocation,
-	selectedWard,
-	selectedConstituency,
+	selectedArea,
 	activeDataset,
 	boundaryData,
 	datasets,
 	activeViz,
 	setActiveViz,
 	aggregatedData,
-	codeMapper
 }: ChartPanelProps) {
 	return (
 		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
 			<div className="bg-[rgba(255,255,255,0.5)] rounded-md backdrop-blur-md shadow-lg h-full flex flex-col border border-white/30">
 				<PanelHeader
 					selectedLocation={selectedLocation}
-					selectedWard={selectedWard}
-					selectedConstituency={selectedConstituency}
+					selectedArea={selectedArea}
 				/>
 
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
@@ -115,29 +114,23 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={datasets.generalElection}
 						aggregatedData={aggregatedData.generalElection}
+						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
-						wardCode={selectedWard?.wardCode?.toString()}
-						constituencyCode={selectedConstituency?.onsId}
-						codeMapper={codeMapper}
 					/>
 					<LocalElectionResultChartSection
 						activeDataset={activeDataset}
 						availableDatasets={datasets.localElection}
 						aggregatedData={aggregatedData.localElection}
+						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
-						wardCode={selectedWard?.wardCode?.toString()}
-						constituencyCode={selectedConstituency?.onsId}
-						codeMapper={codeMapper}
 					/>
 					<DemographicsChartSection
-						activeViz={activeViz}
-						setActiveViz={setActiveViz}
 						availableDatasets={datasets.population}
 						aggregatedData={aggregatedData.population}
 						boundaryData={boundaryData}
-						wardCode={selectedWard?.wardCode?.toString()}
-						constituencyCode={selectedConstituency?.onsId}
-						codeMapper={codeMapper}
+						selectedArea={selectedArea}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
 					/>
 					<EconomicsSection
 						activeDataset={activeDataset}
@@ -145,19 +138,15 @@ export default memo(function ChartPanel({
 						aggregatedHousePriceData={aggregatedData.housePrice}
 						availableIncomeDatasets={datasets.income}
 						aggregatedIncomeData={aggregatedData.income}
+						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
-						wardCode={selectedWard?.wardCode?.toString()}
-						constituencyCode={selectedConstituency?.onsId}
-						codeMapper={codeMapper}
 					/>
 					<CrimeSection
 						activeDataset={activeDataset}
 						availableDatasets={datasets.crime}
 						aggregatedData={aggregatedData.crime}
+						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
-						wardCode={selectedWard?.wardCode?.toString()}
-						constituencyCode={selectedConstituency?.onsId}
-						codeMapper={codeMapper}
 					/>
 				</div>
 

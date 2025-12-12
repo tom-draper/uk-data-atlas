@@ -1,30 +1,25 @@
 // components/population/density/PopulationDensity.tsx
 import { memo } from "react";
-import { ActiveViz, AggregatedPopulationData, PopulationDataset } from "@/lib/types";
+import { ActiveViz, AggregatedPopulationData, PopulationDataset, SelectedArea } from "@/lib/types";
 import PopulationDensityChart from "./PopulationDensityChart";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
 	boundaryData: BoundaryData;
 	aggregatedData: AggregatedPopulationData | null;
-	wardCode?: string;
-	constituencyCode?: string;
+	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper: CodeMapper;
 }
 
 function PopulationDensity({
 	dataset,
 	aggregatedData,
 	boundaryData,
-	wardCode,
-	constituencyCode,
+	selectedArea,
 	setActiveViz,
 	activeViz,
-	codeMapper
 }: PopulationDensityChartProps) {
 	const vizId = `populationDensity${dataset.year}`
 	const isActive = activeViz.vizId === vizId;
@@ -44,9 +39,7 @@ function PopulationDensity({
 				dataset={dataset}
 				aggregatedData={aggregatedData}
 				boundaryData={boundaryData}
-				wardCode={wardCode}
-				constituencyCode={constituencyCode}
-				codeMapper={codeMapper}
+				selectedArea={selectedArea}
 			/>
 		</div>
 	);

@@ -1,7 +1,6 @@
 // components/HousePriceChart.tsx
 'use client';
-import { CodeMapper } from '@/lib/hooks/useCodeMapper';
-import { ActiveViz, AggregatedHousePriceData, AggregatedIncomeData, Dataset, HousePriceDataset, IncomeDataset } from '@lib/types';
+import { ActiveViz, AggregatedHousePriceData, AggregatedIncomeData, Dataset, HousePriceDataset, IncomeDataset, SelectedArea } from '@lib/types';
 import HousePriceChart from './house-price/HousePriceChart';
 import IncomeChart from './income/IncomeChart';
 
@@ -11,10 +10,8 @@ interface EconomicsSectionProps {
     aggregatedHousePriceData: AggregatedHousePriceData | null;
     availableIncomeDatasets: Record<string, IncomeDataset>;
     aggregatedIncomeData: AggregatedIncomeData | null;
+    selectedArea: SelectedArea | null;
     setActiveViz: (value: ActiveViz) => void;
-    wardCode?: string;
-    constituencyCode?: string;
-    codeMapper: CodeMapper
 }
 
 export default function EconomicsSection({
@@ -23,10 +20,8 @@ export default function EconomicsSection({
     aggregatedHousePriceData,
     availableIncomeDatasets,
     aggregatedIncomeData,
+    selectedArea,
     setActiveViz,
-    wardCode,
-    constituencyCode,
-    codeMapper,
 }: EconomicsSectionProps) {
     return (
         <div className="space-y-2 border-t border-gray-200/80">
@@ -36,20 +31,16 @@ export default function EconomicsSection({
                 availableDatasets={availableHousePriceDatasets}
                 aggregatedData={aggregatedHousePriceData}
                 year={2023}
+                selectedArea={selectedArea}
                 setActiveViz={setActiveViz}
-                wardCode={wardCode}
-                constituencyCode={constituencyCode}
-                codeMapper={codeMapper}
             />
             <IncomeChart
                 activeDataset={activeDataset}
                 availableDatasets={availableIncomeDatasets}
                 aggregatedData={aggregatedIncomeData}
                 year={2025}
+                selectedArea={selectedArea}
                 setActiveViz={setActiveViz}
-                wardCode={wardCode}
-                constituencyCode={constituencyCode}
-                codeMapper={codeMapper}
             />
         </div>
     );

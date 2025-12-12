@@ -1,27 +1,22 @@
 // components/population/gender/Gender.tsx
 import { useMemo, memo } from "react";
-import { ActiveViz, AggregatedPopulationData, PopulationDataset } from "@/lib/types";
+import { ActiveViz, AggregatedPopulationData, PopulationDataset, SelectedArea } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface GenderProps {
 	dataset: PopulationDataset;
 	aggregatedData: AggregatedPopulationData | null;
-	wardCode?: string;
-	constituencyCode?: string;
+	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper: CodeMapper;
 }
 
 function Gender({
 	dataset,
 	aggregatedData,
-	wardCode,
-	constituencyCode,
+	selectedArea,
 	activeViz,
 	setActiveViz,
-	codeMapper
 }: GenderProps) {
 	const vizId = `gender-${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
@@ -29,58 +24,50 @@ function Gender({
 	// Calculate total males and females
 	const { totalMales, totalFemales } = useMemo(() => {
 		// Early return for aggregated data case
-		if (!wardCode && !constituencyCode && aggregatedData) {
-			return { 
-				totalMales: aggregatedData[dataset.year].populationStats.males, 
-				totalFemales: aggregatedData[dataset.year].populationStats.females 
+		if (selectedArea === null && aggregatedData) {
+			return {
+				totalMales: aggregatedData[dataset.year].populationStats.males,
+				totalFemales: aggregatedData[dataset.year].populationStats.females
 			};
 		}
 
-		if (!wardCode || !dataset) {
+		if (selectedArea === null || selectedArea.type !== 'ward' || !dataset) {
 			return { totalMales: 0, totalFemales: 0 };
 		}
 
-		// Try to find the ward data - population uses 2021 codes
-		const codesToTry = [
-			wardCode,
-			codeMapper.convertWardCode(wardCode, dataset.boundaryYear)
-		].filter((code): code is string => code !== null);
+		const wardCode = selectedArea.data.wardCode;
+		const wardData = dataset.populationData[wardCode];
+		if (wardData) {
+			// Use faster iteration than Object.values().reduce()
+			let males = 0;
+			let females = 0;
 
-		for (const code of codesToTry) {
-			const wardData = dataset.populationData[code];
-			if (wardData) {
-				// Use faster iteration than Object.values().reduce()
-				let males = 0;
-				let females = 0;
-				
-				const maleKeys = Object.keys(wardData.males);
-				const femaleKeys = Object.keys(wardData.females);
-				
-				for (let i = 0; i < maleKeys.length; i++) {
-					males += wardData.males[maleKeys[i]];
-				}
-				
-				for (let i = 0; i < femaleKeys.length; i++) {
-					females += wardData.females[femaleKeys[i]];
-				}
-				
-				return { totalMales: males, totalFemales: females };
+			const maleKeys = Object.keys(wardData.males);
+			const femaleKeys = Object.keys(wardData.females);
+
+			for (let i = 0; i < maleKeys.length; i++) {
+				males += wardData.males[maleKeys[i]];
 			}
+
+			for (let i = 0; i < femaleKeys.length; i++) {
+				females += wardData.females[femaleKeys[i]];
+			}
+
+			return { totalMales: males, totalFemales: females };
 		}
 
 		return { totalMales: 0, totalFemales: 0 };
-	}, [dataset, wardCode, constituencyCode, aggregatedData, codeMapper]);
+	}, [dataset, aggregatedData, selectedArea]);
 
 	const total = totalMales + totalFemales;
 	const hasData = total > 0;
 
 	return (
 		<div
-			className={`p-2 rounded transition-all cursor-pointer ${
-				isActive
+			className={`p-2 rounded transition-all cursor-pointer ${isActive
 					? 'bg-violet-50/60 border-2 border-violet-300'
 					: 'bg-white/60 border-2 border-gray-200/80 hover:border-violet-300'
-			}`}
+				}`}
 			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<div className="flex items-center justify-between mb-0">
@@ -97,9 +84,7 @@ function Gender({
 			<GenderBalanceByAgeChart
 				dataset={dataset}
 				aggregatedData={aggregatedData}
-				wardCode={wardCode}
-				constituencyCode={constituencyCode}
-				codeMapper={codeMapper}
+				selectedArea={selectedArea}
 			/>
 		</div>
 	);

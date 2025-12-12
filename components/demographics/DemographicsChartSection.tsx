@@ -1,6 +1,6 @@
 // components/PopulationChart.tsx
 'use client';
-import { ActiveViz, AggregatedPopulationData, PopulationDataset } from '@lib/types';
+import { ActiveViz, AggregatedPopulationData, PopulationDataset, SelectedArea } from '@lib/types';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 import Gender from './gender/Gender';
@@ -11,54 +11,44 @@ export interface DemographicsChartSectionProps {
 	availableDatasets: Record<string, PopulationDataset>;
 	aggregatedData: AggregatedPopulationData | null;
 	boundaryData: BoundaryData;
-	wardCode?: string;
-	constituencyCode?: string;
+	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper: CodeMapper
 }
 
 export default function DemographicsChartSection({
 	availableDatasets,
 	aggregatedData,
 	boundaryData,
-	wardCode,
-	constituencyCode,
+	selectedArea,
 	activeViz,
 	setActiveViz,
-	codeMapper
 }: DemographicsChartSectionProps) {
 	return (
 		<div className="pt-2.5 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold mb-2">Demographics</h3>
 			<div className="space-y-3">
 				<PopulationDensity
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
 					dataset={availableDatasets[2022]}
 					aggregatedData={aggregatedData}
 					boundaryData={boundaryData}
-					wardCode={wardCode}
-					constituencyCode={constituencyCode}
-					codeMapper={codeMapper}
+					selectedArea={selectedArea}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
 				/>
 				<AgeDistribution
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
 					dataset={availableDatasets[2022]}
 					aggregatedData={aggregatedData}
-					wardCode={wardCode}
-					constituencyCode={constituencyCode}
-					codeMapper={codeMapper}
+					selectedArea={selectedArea}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
 				/>
 				<Gender
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
 					dataset={availableDatasets[2022]}
 					aggregatedData={aggregatedData}
-					wardCode={wardCode}
-					constituencyCode={constituencyCode}
-					codeMapper={codeMapper}
+					selectedArea={selectedArea}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
 				/>
 			</div>
 		</div>

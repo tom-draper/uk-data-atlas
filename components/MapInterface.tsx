@@ -3,7 +3,6 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useMapLibreInitialization } from '@/lib/hooks/useMapLibreInitialization';
 import { useMapManager } from '@lib/hooks/useMapManager';
 import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
-import { useCodeMapper } from '@/lib/hooks/useCodeMapper';
 import { useMapOptions } from '@/lib/hooks/useMapOptions';
 import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
 import { useAggregatedData } from '@/lib/hooks/useAggregatedData';
@@ -13,7 +12,7 @@ import UIOverlay from '@components/UIOverlay';
 
 import { LOCATIONS } from '@lib/data/locations';
 import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
-import type { ActiveViz, ConstituencyData, Datasets, WardData } from '@lib/types';
+import type { ActiveViz, Datasets, SelectedArea } from '@lib/types';
 import { useWardLadMap } from '@/lib/hooks/useWardToLadMap';
 
 interface MapInterfaceProps {
@@ -47,16 +46,10 @@ export default function MapInterface({
 	selectedLocation,
 	setSelectedLocation,
 }: MapInterfaceProps) {
-	// Local state
-	const [selectedWardData, setSelectedWard] = useState<WardData | null>(null);
-	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
-	const [selectedLocalAuthority, setSelectedLocalAuthority] = useState<any | null>(null);
+	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null)
 
 	const wardLadMap = useWardLadMap();
-
-	// Get boundary data
 	const { boundaryData } = useBoundaryData(selectedLocation, wardLadMap.getLadForWard, wardLadMap.addWardLadMappings);
-	const codeMapper = useCodeMapper(boundaryData);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } = useMapLibreInitialization(MAPLIBRE_CONFIG);
@@ -64,10 +57,8 @@ export default function MapInterface({
 
 	// Stable interaction handlers - created once, never change identity
 	const interactionHandlers = useInteractionHandlers({
-		setSelectedWard,
-		setSelectedConstituency,
-		setSelectedLocalAuthority,
 		setSelectedLocation,
+		setSelectedArea,
 	});
 
 	// Get active dataset
@@ -78,8 +69,7 @@ export default function MapInterface({
 	// Get geojson for active dataset
 	const geojson = useMemo(() => {
 		if (!activeDataset) return null;
-		const { boundaryType, boundaryYear } = activeDataset;
-		return boundaryData[boundaryType]?.[boundaryYear] ?? null;
+		return boundaryData[activeDataset.boundaryType]?.[activeDataset.boundaryYear] ?? null;
 	}, [activeDataset, boundaryData]);
 
 	// Initialize map manager with stable callbacks
@@ -133,10 +123,8 @@ export default function MapInterface({
 		<div style={{ width: '100%', height: '100vh', position: 'relative' }}>
 			<UIOverlay
 				selectedLocation={selectedLocation}
-				selectedWardData={selectedWardData}
-				selectedConstituencyData={selectedConstituencyData}
+				selectedArea={selectedArea}
 				boundaryData={boundaryData}
-				codeMapper={codeMapper}
 				mapOptions={mapOptions}
 				onMapOptionsChange={handleMapOptionsChange}
 				onLocationClick={handleLocationClick}

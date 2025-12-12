@@ -2,11 +2,11 @@
 // lib/types/index.ts
 // Main entry point - aggregates and re-exports all types
 
-import { LocalElectionDataset, GeneralElectionDataset, AggregatedLocalElectionData, AggregatedGeneralElectionData } from "./elections";
+import { LocalElectionDataset, GeneralElectionDataset, AggregatedLocalElectionData, AggregatedGeneralElectionData, WardData, ConstituencyData, LocalAuthorityData } from "./elections";
 import { PopulationDataset, AggregatedPopulationData } from "./population";
 import { HousePriceDataset, AggregatedHousePriceData } from "./housePrice";
-import { CrimeDataset } from "./crime";
-import { IncomeDataset } from "./income";
+import { AggregatedCrimeData, CrimeDataset } from "./crime";
+import { AggregatedIncomeData, IncomeDataset } from "./income";
 
 export * from "./common";
 export * from "./elections";
@@ -33,8 +33,8 @@ export type AggregatedData = {
     generalElection: AggregatedGeneralElectionData | null;
     population: AggregatedPopulationData | null;
     housePrice: AggregatedHousePriceData | null;
-    crime: null;
-    income: null;
+    crime: AggregatedCrimeData | null;
+    income: AggregatedIncomeData | null;
 };
 
 export type ActiveViz = {
@@ -42,3 +42,13 @@ export type ActiveViz = {
     datasetType: keyof Datasets;
     datasetYear: number;
 };
+
+type AreaMap = {
+  ward: WardData;
+  constituency: ConstituencyData;
+  localAuthority: LocalAuthorityData;
+};
+
+export type SelectedArea = {
+  [K in keyof AreaMap]: { type: K; data: AreaMap[K] }
+}[keyof AreaMap];

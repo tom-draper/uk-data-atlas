@@ -35,7 +35,14 @@ export interface ConstituencyData {
     turnoutPercent: number;
 }
 
-export type ElectionData = WardData | ConstituencyData;
+export interface LocalAuthorityData {
+    localAuthorityCode: string;
+    localAuthorityName: string;
+    regionName: string;
+    countryName: string;
+}
+
+export type ElectionData = WardData | ConstituencyData | LocalAuthorityData;
 
 export const LOCAL_ELECTION_YEARS = [2024, 2023, 2022, 2021] as const;
 export const GENERAL_ELECTION_YEARS = [2024, 2019, 2017, 2015] as const;

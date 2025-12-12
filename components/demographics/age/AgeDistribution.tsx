@@ -1,17 +1,14 @@
 // components/population/age/AgeDistribution.tsx
 import { useMemo, memo } from "react";
-import { AggregatedPopulationData, PopulationDataset, AgeGroups, ActiveViz } from "@/lib/types";
+import { AggregatedPopulationData, PopulationDataset, AgeGroups, ActiveViz, SelectedArea } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface AgeDistributionProps {
     dataset: PopulationDataset;
     aggregatedData: AggregatedPopulationData | null;
-    wardCode?: string;
-    constituencyCode?: string;
+    selectedArea: SelectedArea | null;
     activeViz: ActiveViz;
     setActiveViz: (value: ActiveViz) => void;
-    codeMapper: CodeMapper;
 }
 
 // Pre-calculate age group boundaries (constant)
@@ -45,11 +42,9 @@ const NORMALIZED_WEIGHTS = DECAY_WEIGHTS.map(w => w / totalWeight);
 function AgeDistribution({
     dataset,
     aggregatedData,
-    wardCode,
-    constituencyCode,
+    selectedArea,
     activeViz,
     setActiveViz,
-    codeMapper,
 }: AgeDistributionProps) {
     const vizId = `ageDistribution${dataset.year}`
     const isActive = activeViz.vizId === vizId;
@@ -60,21 +55,21 @@ function AgeDistribution({
         };
 
         //  Handle Aggregated Data Case
-        if (!wardCode && !constituencyCode && aggregatedData) {
+        if (selectedArea === null && aggregatedData) {
             const data = aggregatedData[dataset.year];
             // Convert existing aggregated data shape to our fast Uint32Array
             const counts = new Uint32Array(100);
             let max = 0;
-            
+
             // Assuming aggregatedData.ages is Array<{age: number, count: number}>
             // We map it to our flat array for consistency
             if (data.ages) {
-                for(let i = 0; i < data.ages.length; i++) {
-                   const item = data.ages[i];
-                   if (item.age < 100) {
-                       counts[item.age] = item.count;
-                       if (item.count > max) max = item.count;
-                   }
+                for (let i = 0; i < data.ages.length; i++) {
+                    const item = data.ages[i];
+                    if (item.age < 100) {
+                        counts[item.age] = item.count;
+                        if (item.count > max) max = item.count;
+                    }
                 }
             }
 
@@ -88,101 +83,95 @@ function AgeDistribution({
         }
 
         // Handle Missing Data
-        if (!wardCode || !dataset) {
-            return { 
-                medianAge: 0, 
-                ageGroups: emptyAgeGroups, 
-                total: 0, 
-                counts: new Uint32Array(100), 
-                maxCount: 0 
+        if (selectedArea === null || selectedArea.type !== 'ward' || !dataset) {
+            return {
+                medianAge: 0,
+                ageGroups: emptyAgeGroups,
+                total: 0,
+                counts: new Uint32Array(100),
+                maxCount: 0
             };
         }
 
-        // Handle Ward Data Calculation
-        const codesToTry = [
-            wardCode,
-            codeMapper.convertWardCode(wardCode, dataset.boundaryYear),
-        ].filter((code): code is string => code !== null);
+        const wardCode = selectedArea.data.wardCode;
 
-        for (const code of codesToTry) {
-            const wardData = dataset.populationData[code];
-            if (!wardData) continue;
+        const wardData = dataset.populationData[wardCode];
+        if (!wardData) {
+            return {
+                medianAge: 0,
+                ageGroups: emptyAgeGroups,
+                total: 0,
+                counts: new Uint32Array(100),
+                maxCount: 0
+            };
+        };
 
-            const agesCountTotal = wardData.total;
+        const agesCountTotal = wardData.total;
 
-            // OPTIMIZATION: Use Typed Array for speed
-            const counts = new Uint32Array(100);
-            let totalPopulation = 0;
-            let max = 0;
+        // OPTIMIZATION: Use Typed Array for speed
+        const counts = new Uint32Array(100);
+        let totalPopulation = 0;
+        let max = 0;
 
-            // Build ages 0-89
-            for (let i = 0; i < 90; i++) {
-                const count = agesCountTotal[i.toString()] || 0;
-                counts[i] = count;
-                totalPopulation += count;
-                if (count > max) max = count;
-            }
+        // Build ages 0-89
+        for (let i = 0; i < 90; i++) {
+            const count = agesCountTotal[i.toString()] || 0;
+            counts[i] = count;
+            totalPopulation += count;
+            if (count > max) max = count;
+        }
 
-            // Apply 90+ smoothing
-            const age90Plus = agesCountTotal["90"] || 0;
-            for (let i = 90; i < 100; i++) {
-                const count = Math.round(age90Plus * NORMALIZED_WEIGHTS[i - 90]);
-                counts[i] = count;
-                totalPopulation += count;
-                if (count > max) max = count;
-            }
+        // Apply 90+ smoothing
+        const age90Plus = agesCountTotal["90"] || 0;
+        for (let i = 90; i < 100; i++) {
+            const count = Math.round(age90Plus * NORMALIZED_WEIGHTS[i - 90]);
+            counts[i] = count;
+            totalPopulation += count;
+            if (count > max) max = count;
+        }
 
-            // Compute median age
-            let cumulative = 0;
-            const halfPopulation = totalPopulation / 2;
-            let median = 0;
-            
-            // Fill grouped buckets
-            const currentAgeGroups: AgeGroups = { ...emptyAgeGroups };
+        // Compute median age
+        let cumulative = 0;
+        const halfPopulation = totalPopulation / 2;
+        let median = 0;
 
-            let medianFound = false;
-            for (let i = 0; i < 100; i++) {
-                const count = counts[i];
-                
-                // Grouping logic
-                const key = getAgeGroupKey(i);
-                currentAgeGroups[key] += count;
+        // Fill grouped buckets
+        const currentAgeGroups: AgeGroups = { ...emptyAgeGroups };
 
-                // Median logic (integrated into single loop)
-                if (!medianFound) {
-                    cumulative += count;
-                    if (cumulative >= halfPopulation) {
-                        median = i;
-                        medianFound = true;
-                    }
+        let medianFound = false;
+        for (let i = 0; i < 100; i++) {
+            const count = counts[i];
+
+            // Grouping logic
+            const key = getAgeGroupKey(i);
+            currentAgeGroups[key] += count;
+
+            // Median logic (integrated into single loop)
+            if (!medianFound) {
+                cumulative += count;
+                if (cumulative >= halfPopulation) {
+                    median = i;
+                    medianFound = true;
                 }
             }
-
-            return {
-                medianAge: median,
-                ageGroups: currentAgeGroups,
-                total: totalPopulation,
-                counts: counts,
-                maxCount: max
-            };
         }
 
-        return { 
-            medianAge: 0, 
-            ageGroups: emptyAgeGroups, 
-            total: 0, 
-            counts: new Uint32Array(100), 
-            maxCount: 0 
+        return {
+            medianAge: median,
+            ageGroups: currentAgeGroups,
+            total: totalPopulation,
+            counts: counts,
+            maxCount: max
         };
-    }, [wardCode, constituencyCode, dataset, aggregatedData, codeMapper]);
+
+    }, [dataset, aggregatedData, selectedArea]);
 
     return (
         <div
-            className={`p-2 rounded transition-all cursor-pointer ${
-                isActive
-                    ? 'bg-cyan-50/60 border-2 border-cyan-300'
-                    : 'bg-white/60 border-2 border-gray-200/80 hover:border-cyan-300'
-            }`}
+            className={`p-2 rounded transition-all cursor-pointer ${isActive
+                ? 'bg-cyan-50/60 border-2 border-cyan-300'
+                : 'bg-white/60 border-2 border-gray-200/80 hover:border-cyan-300'
+                }`}
             onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetYear: dataset.year })}
         >
             <div className="flex items-center justify-between mb-2">
@@ -193,7 +182,7 @@ function AgeDistribution({
                     </span>
                 )}
             </div>
-            
+
             {/* Pass primitive props to ensure reference stability and speed */}
             <AgeDistributionChart
                 counts={counts}

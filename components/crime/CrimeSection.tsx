@@ -1,27 +1,22 @@
 // components/CrimeChart.tsx
 'use client';
-import { CodeMapper } from '@/lib/hooks/useCodeMapper';
-import { ActiveViz, AggregatedCrimeData, Dataset, CrimeDataset } from '@lib/types';
+import { ActiveViz, AggregatedCrimeData, Dataset, CrimeDataset, SelectedArea } from '@lib/types';
 import CrimeChart from './CrimeChart';
 
 interface CrimeChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, CrimeDataset>;
-	setActiveViz: (value: ActiveViz) => void;
-	wardCode?: string;
-	constituencyCode?: string;
 	aggregatedData: AggregatedCrimeData | null;
-	codeMapper: CodeMapper;
+	selectedArea: SelectedArea | null;
+	setActiveViz: (value: ActiveViz) => void;
 }
 
 export default function CrimeSection({
 	activeDataset,
 	availableDatasets,
-	setActiveViz,
-	wardCode,
-	constituencyCode,
 	aggregatedData,
-	codeMapper,
+	selectedArea,
+	setActiveViz,
 }: CrimeChartProps) {
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">
@@ -31,10 +26,8 @@ export default function CrimeSection({
 				availableDatasets={availableDatasets}
 				aggregatedData={aggregatedData}
 				year={2025}
+				selectedArea={selectedArea}
 				setActiveViz={setActiveViz}
-				wardCode={wardCode}
-				constituencyCode={constituencyCode}
-				codeMapper={codeMapper}
 			/>
 		</div>
 	);

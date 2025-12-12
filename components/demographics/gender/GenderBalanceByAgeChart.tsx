@@ -1,14 +1,11 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
 import { useMemo, memo } from 'react';
-import { AggregatedPopulationData, PopulationDataset } from '@/lib/types';
-import { CodeMapper } from '@/lib/hooks/useCodeMapper';
+import { AggregatedPopulationData, PopulationDataset, SelectedArea } from '@/lib/types';
 
 export interface GenderBalanceByAgeChartProps {
 	dataset: PopulationDataset;
 	aggregatedData: AggregatedPopulationData | null;
-	wardCode?: string;
-	constituencyCode?: string;
-	codeMapper: CodeMapper;
+	selectedArea: SelectedArea | null;
 }
 
 // Pre-create age indices array (constant)
@@ -17,61 +14,52 @@ const AGE_INDICES = Array.from({ length: 91 }, (_, i) => i);
 function GenderBalanceByAgeChart({
 	dataset,
 	aggregatedData,
-	wardCode,
-	constituencyCode,
-	codeMapper
+	selectedArea,
 }: GenderBalanceByAgeChartProps) {
 	// Memoize both data AND percentages to avoid recalculation on every render
 	const { ageData, percentages } = useMemo(() => {
 		// Early return for aggregated data case
-		if (!wardCode && !constituencyCode && aggregatedData) {
-			const data = aggregatedData[dataset.year].medianAge !== 0 
-				? aggregatedData[dataset.year].genderAgeData 
+		if (selectedArea === null && aggregatedData) {
+			const data = aggregatedData[dataset.year].medianAge !== 0
+				? aggregatedData[dataset.year].genderAgeData
 				: [];
-			
+
 			// Pre-calculate percentages
 			const pct = data.map(({ males, females }) => {
 				const total = males + females;
 				return total > 0 ? (males / total) * 100 : 50;
 			});
-			
+
 			return { ageData: data, percentages: pct };
 		}
 
-		if (!wardCode || !dataset) {
+		if (selectedArea === null || selectedArea.type !== 'ward' || !dataset) {
 			return { ageData: [], percentages: [] };
 		}
 
-		// Try to find the ward data
-		const codesToTry = [
-			wardCode,
-			codeMapper.convertWardCode(wardCode, dataset.boundaryYear)
-		].filter((code): code is string => code !== null);
+		const wardCode = selectedArea.data.wardCode;
+		const wardData = dataset.populationData[wardCode];
+		if (wardData) {
+			const { males, females } = wardData;
+			const data: Array<{ age: number; males: number; females: number }> = new Array(91);
+			const pct: number[] = new Array(91);
 
-		for (const code of codesToTry) {
-			const wardData = dataset.populationData[code];
-			if (wardData) {
-				const { males, females } = wardData;
-				const data: Array<{ age: number; males: number; females: number }> = new Array(91);
-				const pct: number[] = new Array(91);
+			// Single loop: build data AND calculate percentages
+			for (let age = 0; age < 91; age++) {
+				const ageStr = age.toString();
+				const m = males[ageStr] || 0;
+				const f = females[ageStr] || 0;
+				const total = m + f;
 
-				// Single loop: build data AND calculate percentages
-				for (let age = 0; age < 91; age++) {
-					const ageStr = age.toString();
-					const m = males[ageStr] || 0;
-					const f = females[ageStr] || 0;
-					const total = m + f;
-					
-					data[age] = { age, males: m, females: f };
-					pct[age] = total > 0 ? (m / total) * 100 : 50;
-				}
-				
-				return { ageData: data, percentages: pct };
+				data[age] = { age, males: m, females: f };
+				pct[age] = total > 0 ? (m / total) * 100 : 50;
 			}
+
+			return { ageData: data, percentages: pct };
 		}
 
 		return { ageData: [], percentages: [] };
-	}, [wardCode, constituencyCode, dataset, aggregatedData, codeMapper]);
+	}, [dataset, aggregatedData, selectedArea]);
 
 	if (ageData.length === 0) {
 		return (
@@ -90,7 +78,7 @@ function GenderBalanceByAgeChart({
 
 			<div className="relative rounded overflow-hidden">
 				{/* Center line - using transform for GPU */}
-				<div 
+				<div
 					className="absolute top-0 bottom-0 w-px bg-gray-300 z-10 translate-x-1/2 left-1/2"
 					style={{ marginLeft: '-1px' }}
 				/>
@@ -103,7 +91,7 @@ function GenderBalanceByAgeChart({
 
 						const { males, females } = data;
 						const total = males + females;
-						
+
 						if (total === 0) {
 							return <div key={age} className="h-px" />;
 						}
@@ -148,12 +136,4 @@ function GenderBalanceByAgeChart({
 	);
 }
 
-// Strict memo comparison - only re-render if these specific props change
-export default memo(GenderBalanceByAgeChart, (prev, next) => {
-	return (
-		prev.wardCode === next.wardCode &&
-		prev.constituencyCode === next.constituencyCode &&
-		prev.dataset.year === next.dataset.year &&
-		prev.dataset.type === next.dataset.type
-	);
-});
+export default memo(GenderBalanceByAgeChart);

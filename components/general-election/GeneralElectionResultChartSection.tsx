@@ -1,13 +1,19 @@
 // components/GeneralElectionResultChart.tsx
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { ConstituencyYear } from '@/lib/data/boundaries/boundaries';
-import { PARTIES } from '@/lib/data/election/parties';
-import { CodeMapper } from '@/lib/hooks/useCodeMapper';
-import { calculateTurnout } from '@/lib/utils/generalElection';
-import { ActiveViz, AggregatedGeneralElectionData, Dataset, GENERAL_ELECTION_YEARS, GeneralElectionDataset, PartyVotes } from '@lib/types';
-import GeneralElectionResultChart from './GeneralElectionResultChart';
+import { useMemo } from "react";
+import { PARTIES } from "@/lib/data/election/parties";
+import { calculateTurnout } from "@/lib/utils/generalElection";
+import {
+	ActiveViz,
+	AggregatedGeneralElectionData,
+	Dataset,
+	GENERAL_ELECTION_YEARS,
+	GeneralElectionDataset,
+	PartyVotes,
+	SelectedArea,
+} from "@lib/types";
+import GeneralElectionResultChart from "./GeneralElectionResultChart";
 
 interface ProcessedPartyData {
 	key: string;
@@ -32,19 +38,24 @@ interface ProcessedYearData {
 const useElectionChartData = (
 	availableDatasets: Record<string, GeneralElectionDataset>,
 	aggregatedData: AggregatedGeneralElectionData | null,
-	codeMapper: CodeMapper,
-	constituencyCode?: string,
-	wardCode?: string
+	selectedArea: SelectedArea | null,
 ) => {
 	return useMemo(() => {
-		const isConstituencyMode = !!constituencyCode;
-		const isAggregatedMode = !wardCode && !constituencyCode;
-
 		return GENERAL_ELECTION_YEARS.map((year): ProcessedYearData => {
 			const dataset = availableDatasets[year];
 
 			if (!dataset) {
-				return { year, dataset: null, partyData: [], totalVotes: 0, turnout: null, isAggregated: false, seatsSummary: null, totalSeats: null, hasData: false };
+				return {
+					year,
+					dataset: null,
+					partyData: [],
+					totalVotes: 0,
+					turnout: null,
+					isAggregated: false,
+					seatsSummary: null,
+					totalSeats: null,
+					hasData: false,
+				};
 			}
 
 			let rawPartyVotes: PartyVotes | null = null;
@@ -53,25 +64,26 @@ const useElectionChartData = (
 			let seatsSummary = null;
 			let totalSeats = null;
 
-			// Determine Data Source (Constituency vs Aggregated)
-			if (isConstituencyMode && constituencyCode) {
-				let data = dataset.constituencyData?.[constituencyCode];
-
-				// Fallback conversion logic
-				if (!data && dataset.constituencyData) {
-					const convertedCode = codeMapper.convertConstituencyCode(constituencyCode, year as ConstituencyYear);
-					if (convertedCode) data = dataset.constituencyData[convertedCode];
-				}
+			if (selectedArea && selectedArea.type === "constituency") {
+				const data = dataset.constituencyData?.[selectedArea.data.onsId];
 
 				if (data) {
 					rawPartyVotes = data.partyVotes;
-					turnout = calculateTurnout(data.validVotes, data.invalidVotes, data.electorate);
+					turnout = calculateTurnout(
+						data.validVotes,
+						data.invalidVotes,
+						data.electorate,
+					);
 				}
-			} else if (isAggregatedMode && aggregatedData?.[year]) {
+			} else if (selectedArea === null && aggregatedData?.[year]) {
 				const agg = aggregatedData[year];
 				if (agg.partyVotes) {
 					rawPartyVotes = agg.partyVotes as PartyVotes;
-					turnout = calculateTurnout(agg.validVotes, agg.invalidVotes, agg.electorate);
+					turnout = calculateTurnout(
+						agg.validVotes,
+						agg.invalidVotes,
+						agg.electorate,
+					);
 					isAggregated = true;
 					totalSeats = agg.totalSeats;
 
@@ -81,13 +93,23 @@ const useElectionChartData = (
 						.map(([key, count]) => ({
 							party: key,
 							count: count as number,
-							color: PARTIES[key]?.color || '#ccc'
+							color: PARTIES[key]?.color || "#ccc",
 						}));
 				}
 			}
 
 			if (!rawPartyVotes) {
-				return { year, dataset, partyData: [], totalVotes: 0, turnout: null, isAggregated: false, seatsSummary: null, totalSeats: null, hasData: false };
+				return {
+					year,
+					dataset,
+					partyData: [],
+					totalVotes: 0,
+					turnout: null,
+					isAggregated: false,
+					seatsSummary: null,
+					totalSeats: null,
+					hasData: false,
+				};
 			}
 
 			// Process Votes & Percentages
@@ -95,17 +117,19 @@ const useElectionChartData = (
 			const totalVotes = Object.values(rawPartyVotes).reduce((a, b) => (a || 0) + (b || 0), 0);
 
 			const partyData = dataset.partyInfo
-				.map(party => {
+				.map((party) => {
 					const votes = rawPartyVotes![party.key] || 0;
 					return {
 						key: party.key,
 						name: party.name,
-						color: PARTIES[party.key]?.color || '#999',
+						color: PARTIES[party.key]?.color || "#999",
 						votes,
-						percentage: totalVotes > 0 ? (votes / totalVotes) * 100 : 0
+						percentage: totalVotes > 0
+							? (votes / totalVotes) * 100
+							: 0,
 					};
 				})
-				.filter(p => p.percentage > 0)
+				.filter((p) => p.percentage > 0)
 				.sort((a, b) => b.votes - a.votes);
 
 			return {
@@ -117,37 +141,31 @@ const useElectionChartData = (
 				isAggregated,
 				seatsSummary,
 				totalSeats,
-				hasData: true
+				hasData: true,
 			};
 		});
-	}, [availableDatasets, aggregatedData, codeMapper, constituencyCode, wardCode]);
+	}, [availableDatasets, aggregatedData, selectedArea]);
 };
 
 interface GeneralElectionResultChartSectionProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, GeneralElectionDataset>;
-	setActiveViz: (value: ActiveViz) => void;
-	wardCode?: string;
-	constituencyCode?: string;
 	aggregatedData: AggregatedGeneralElectionData | null;
-	codeMapper: CodeMapper
+	selectedArea: SelectedArea | null;
+	setActiveViz: (value: ActiveViz) => void;
 }
 
 export default function GeneralElectionResultChartSection({
 	activeDataset,
 	availableDatasets,
-	setActiveViz,
-	wardCode,
-	constituencyCode,
 	aggregatedData,
-	codeMapper
+	selectedArea,
+	setActiveViz,
 }: GeneralElectionResultChartSectionProps) {
 	const yearData = useElectionChartData(
 		availableDatasets,
 		aggregatedData,
-		codeMapper,
-		constituencyCode,
-		wardCode
+		selectedArea,
 	);
 
 	return (

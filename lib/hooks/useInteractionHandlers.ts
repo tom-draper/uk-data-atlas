@@ -1,12 +1,10 @@
 import { useRef } from 'react';
-import type { ConstituencyData, WardData, LocalAuthorityData } from '@lib/types';
+import type { SelectedArea } from '@lib/types';
 import type { LocationHoverData } from '@lib/utils/mapManager/mapManager';
 
 interface UseInteractionHandlersParams {
-	setSelectedWard: (ward: WardData | null) => void;
-	setSelectedConstituency: (constituency: ConstituencyData | null) => void;
-	setSelectedLocalAuthority?: (localAuthority: LocalAuthorityData | null) => void;
 	setSelectedLocation: (location: string) => void;
+	setSelectedArea: (area: SelectedArea | null) => void;
 }
 
 /**
@@ -14,53 +12,29 @@ interface UseInteractionHandlersParams {
  * Callbacks are created once and reused to minimize overhead.
  */
 export function useInteractionHandlers({
-	setSelectedWard,
-	setSelectedConstituency,
-	setSelectedLocalAuthority,
 	setSelectedLocation,
+	setSelectedArea,
 }: UseInteractionHandlersParams) {
 	const lastHoveredCodeRef = useRef<string | null>(null);
 
 	// Create callbacks only once - these never change identity
 	const callbacksRef = useRef({
-		onLocationHover: (location: LocationHoverData | null) => {
-			if (!location) {
+		onLocationHover: (hoverData: LocationHoverData | null) => {
+			if (!hoverData) {
 				lastHoveredCodeRef.current = null;
-				setSelectedWard(null);
-				setSelectedConstituency(null);
-				setSelectedLocalAuthority?.(null);
+				setSelectedArea(null);
 				return;
 			}
 
 			// Skip if same location
-			if (location.code === lastHoveredCodeRef.current) return;
+			if (hoverData.code === lastHoveredCodeRef.current) return;
 
-			lastHoveredCodeRef.current = location.code;
+			lastHoveredCodeRef.current = hoverData.code;
 
-			switch (location.type) {
-				case 'ward':
-					setSelectedConstituency(null);
-					setSelectedLocalAuthority?.(null);
-					setSelectedWard(location.data ? { ...location.data, wardCode: location.code } : null);
-					break;
-
-				case 'constituency':
-					setSelectedWard(null);
-					setSelectedLocalAuthority?.(null);
-					setSelectedConstituency(location.data);
-					break;
-
-				case 'localAuthority':
-					setSelectedWard(null);
-					setSelectedConstituency(null);
-					setSelectedLocalAuthority?.(location.data);
-					break;
-			}
+			setSelectedArea({type: hoverData.type, data: hoverData.data})
 		},
 		onLocationChange: (location: string) => {
-			setSelectedWard(null);
-			setSelectedConstituency(null);
-			setSelectedLocalAuthority?.(null);
+			setSelectedArea(null);
 			setSelectedLocation(location);
 			lastHoveredCodeRef.current = null;
 		}

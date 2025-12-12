@@ -1,8 +1,7 @@
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
 import ChartPanel from '@components/ChartPanel';
-import type { ActiveViz, ConstituencyData, Dataset, Datasets, WardData } from '@lib/types';
-import { CodeMapper } from '@/lib/hooks/useCodeMapper';
+import type { ActiveViz, Dataset, Datasets, SelectedArea } from '@lib/types';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 import { MapOptions } from '@/lib/types/mapOptions';
 
@@ -13,10 +12,8 @@ interface UIOverlayProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
-	selectedWardData: WardData | null;
-	selectedConstituencyData: ConstituencyData | null;
+	selectedArea: SelectedArea | null;
 	boundaryData: BoundaryData;
-	codeMapper: CodeMapper;
 	mapOptions: any;
 	onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
 	onLocationClick: (location: string) => void;
@@ -32,10 +29,8 @@ export default function UIOverlay({
 	setActiveViz,
 	aggregatedData,
 	selectedLocation,
-	selectedWardData,
-	selectedConstituencyData,
+	selectedArea,
 	boundaryData,
-	codeMapper,
 	mapOptions,
 	onMapOptionsChange,
 	onLocationClick,
@@ -71,10 +66,8 @@ export default function UIOverlay({
 					activeDataset={activeDataset}
 					aggregatedData={aggregatedData}
 					selectedLocation={selectedLocation}
-					selectedWard={selectedWardData}
-					selectedConstituency={selectedConstituencyData}
+					selectedArea={selectedArea}
 					boundaryData={boundaryData}
-					codeMapper={codeMapper}
 				/>
 			</div>
 		</div>
