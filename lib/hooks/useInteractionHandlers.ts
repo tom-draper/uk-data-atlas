@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import type { SelectedArea } from '@lib/types';
-import type { LocationHoverData } from '@lib/utils/mapManager/mapManager';
 
 interface UseInteractionHandlersParams {
 	setSelectedLocation: (location: string) => void;
@@ -19,7 +18,7 @@ export function useInteractionHandlers({
 
 	// Create callbacks only once - these never change identity
 	const callbacksRef = useRef({
-		onLocationHover: (hoverData: LocationHoverData | null) => {
+		onAreaHover: (hoverData: SelectedArea | null) => {
 			if (!hoverData) {
 				lastHoveredCodeRef.current = null;
 				setSelectedArea(null);
@@ -31,7 +30,7 @@ export function useInteractionHandlers({
 
 			lastHoveredCodeRef.current = hoverData.code;
 
-			setSelectedArea({type: hoverData.type, data: hoverData.data})
+			setSelectedArea(hoverData)
 		},
 		onLocationChange: (location: string) => {
 			setSelectedArea(null);

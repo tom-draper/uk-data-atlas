@@ -39,6 +39,11 @@ const useElectionChartData = (
 	availableDatasets: Record<string, GeneralElectionDataset>,
 	aggregatedData: AggregatedGeneralElectionData | null,
 	selectedArea: SelectedArea | null,
+	getCodeForYear?: (
+		type: "constituency",
+		code: string,
+		targetYear: number
+	) => string | undefined
 ) => {
 	return useMemo(() => {
 		return GENERAL_ELECTION_YEARS.map((year): ProcessedYearData => {
@@ -65,14 +70,28 @@ const useElectionChartData = (
 			let totalSeats = null;
 
 			if (selectedArea && selectedArea.type === "constituency") {
-				const data = dataset.constituencyData?.[selectedArea.data.onsId];
+				// Try to find the constituency data for this year
+				const constituencyCode = selectedArea.code;
+				let data = dataset.constituencyData?.[constituencyCode];
+
+				// If no data found and we have a code mapper, try to find the equivalent code for this year
+				if (!data && getCodeForYear) {
+					const mappedCode = getCodeForYear(
+						"constituency",
+						constituencyCode,
+						year
+					);
+					if (mappedCode) {
+						data = dataset.constituencyData?.[mappedCode];
+					}
+				}
 
 				if (data) {
 					rawPartyVotes = data.partyVotes;
 					turnout = calculateTurnout(
 						data.validVotes,
 						data.invalidVotes,
-						data.electorate,
+						data.electorate
 					);
 				}
 			} else if (selectedArea === null && aggregatedData?.[year]) {
@@ -82,7 +101,7 @@ const useElectionChartData = (
 					turnout = calculateTurnout(
 						agg.validVotes,
 						agg.invalidVotes,
-						agg.electorate,
+						agg.electorate
 					);
 					isAggregated = true;
 					totalSeats = agg.totalSeats;
@@ -114,7 +133,10 @@ const useElectionChartData = (
 
 			// Process Votes & Percentages
 			// Sum manually to ensure we catch all specific party keys defined in this dataset
-			const totalVotes = Object.values(rawPartyVotes).reduce((a, b) => (a || 0) + (b || 0), 0);
+			const totalVotes = Object.values(rawPartyVotes).reduce(
+				(a, b) => (a || 0) + (b || 0),
+				0
+			);
 
 			const partyData = dataset.partyInfo
 				.map((party) => {
@@ -124,9 +146,7 @@ const useElectionChartData = (
 						name: party.name,
 						color: PARTIES[party.key]?.color || "#999",
 						votes,
-						percentage: totalVotes > 0
-							? (votes / totalVotes) * 100
-							: 0,
+						percentage: totalVotes > 0 ? (votes / totalVotes) * 100 : 0,
 					};
 				})
 				.filter((p) => p.percentage > 0)
@@ -144,7 +164,7 @@ const useElectionChartData = (
 				hasData: true,
 			};
 		});
-	}, [availableDatasets, aggregatedData, selectedArea]);
+	}, [availableDatasets, aggregatedData, selectedArea, getCodeForYear]);
 };
 
 interface GeneralElectionResultChartSectionProps {
@@ -153,6 +173,13 @@ interface GeneralElectionResultChartSectionProps {
 	aggregatedData: AggregatedGeneralElectionData | null;
 	selectedArea: SelectedArea | null;
 	setActiveViz: (value: ActiveViz) => void;
+	codeMapper?: {
+		getCodeForYear: (
+			type: "constituency",
+			code: string,
+			targetYear: number
+		) => string | undefined;
+	};
 }
 
 export default function GeneralElectionResultChartSection({
@@ -161,11 +188,13 @@ export default function GeneralElectionResultChartSection({
 	aggregatedData,
 	selectedArea,
 	setActiveViz,
+	codeMapper,
 }: GeneralElectionResultChartSectionProps) {
 	const yearData = useElectionChartData(
 		availableDatasets,
 		aggregatedData,
 		selectedArea,
+		codeMapper?.getCodeForYear
 	);
 
 	return (

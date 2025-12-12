@@ -1,208 +1,353 @@
-import { useMemo } from 'react';
-import { BoundaryData } from './useBoundaryData';
-import { CONSTITUENCY_CODE_KEYS, CONSTITUENCY_NAME_KEYS, ConstituencyCodeKey, ConstituencyNameKey, ConstituencyYear, WARD_CODE_KEYS, WARD_NAME_KEYS, WardCodeKey, WardNameKey, WardYear } from '../data/boundaries/boundaries';
+// lib/hooks/useCodeMapper.ts
+'use client';
 
-export interface CodeMapper {
-	/**
-	 * Convert a ward code from any year to the equivalent code in the target year
-	 * @param wardCode - Source ward code (from any year)
-	 * @param targetYear - Desired year for the output code
-	 * @returns Ward code for the target year, or null if not found
-	 */
-	convertWardCode: (wardCode: string, targetYear: WardYear) => string | null;
+import { useState, useCallback, useRef } from 'react';
+import { BoundaryGeojson } from '@lib/types';
+import { BoundaryType, PROPERTY_KEYS, getProp } from '../data/boundaries/boundaries';
 
-	/**
-	 * Convert a constituency code from any year to the equivalent code in the target year
-	 * @param constituencyCode - Source constituency code (from any year)
-	 * @param targetYear - Desired year for the output code
-	 * @returns Constituency code for the target year, or null if not found
-	 */
-	convertConstituencyCode: (constituencyCode: string, targetYear: ConstituencyYear) => string | null;
+export type CodeType = 'ward' | 'localAuthority' | 'constituency';
+export type YearCode = number;
 
-	/**
-	 * Get the ward name for a given ward code
-	 */
-	getWardName: (wardCode: string) => string | null;
+export interface CodeMapping {
+    [fromCode: string]: {
+        [toYear: number]: string;
+    };
+}
 
-	/**
-	 * Get the constituency name for a given constituency code
-	 */
-	getConstituencyName: (constituencyCode: string) => string | null;
-
-	/**
-	 * Get all ward codes for a given ward name across all years
-	 */
-	getWardCodesByName: (wardName: string) => Partial<Record<WardYear, string>>;
-
-	/**
-	 * Get all constituency codes for a given constituency name across all years
-	 */
-	getConstituencyCodesByName: (constituencyName: string) => Partial<Record<ConstituencyYear, string>>;
+interface WardLadMapping {
+    [wardCode: string]: string;
 }
 
 /**
- * Creates a bidirectional mapping between ward and constituency codes across different years.
- * 
- * Ward codes changed in 2023, and constituency boundaries changed in 2024.
- * This hook allows you to convert between old and new codes for both.
- * 
- * @param boundaryData - Boundary data from useBoundaryData
- * @returns Code mapper utility
- * 
- * @example
- * const mapper = useCodeMapper(boundaryData);
- * 
- * // Convert ward codes
- * const wardCode2024 = mapper.convertWardCode('E05000821', 2024);
- * const wardCode2022 = mapper.convertWardCode('E05015241', 2022);
- * 
- * // Convert constituency codes
- * const constCode2024 = mapper.convertConstituencyCode('E14000123', 2024);
- * const constCode2019 = mapper.convertConstituencyCode('E14000456', 2019);
+ * Master code mapper hook
  */
-export function useCodeMapper(boundaryData: BoundaryData): CodeMapper {
-	const wardMapper = useMemo(() => {
-		// Map: ward name -> { year -> ward code }
-		const nameToCodesMap = new Map<string, Partial<Record<WardYear, string>>>();
+export function useCodeMapper() {
+    const [wardToLadMap, setWardToLadMap] = useState<WardLadMapping>({});
+    const [codeMappings, setCodeMappings] = useState<{
+        ward: CodeMapping;
+        localAuthority: CodeMapping;
+        constituency: CodeMapping;
+    }>({
+        ward: {},
+        localAuthority: {},
+        constituency: {}
+    });
 
-		// Map: ward code -> ward name
-		const codeToNameMap = new Map<string, string>();
+    // Use refs to avoid recreating callbacks
+    const wardToLadMapRef = useRef(wardToLadMap);
+    const codeMappingsRef = useRef(codeMappings);
 
-		const years: WardYear[] = [2024, 2023, 2022, 2021];
+    // Keep refs in sync
+    wardToLadMapRef.current = wardToLadMap;
+    codeMappingsRef.current = codeMappings;
 
-		years.forEach(year => {
-			const geojson = boundaryData.ward[year];
-			if (!geojson) return;
+    // ==================== Ward-to-LAD Mappings ====================
 
-			const firstFeature = geojson.features[0];
-			if (!firstFeature) return;
+    const getLadForWard = useCallback((wardCode: string): string | undefined => {
+        return wardToLadMapRef.current[wardCode];
+    }, []); // Empty deps - uses ref
 
-			// Find the appropriate property keys for this year
-			const wardCodeKey = WARD_CODE_KEYS.find(key => key in firstFeature.properties) as WardCodeKey | undefined;
-			const wardNameKey = WARD_NAME_KEYS.find(key => key in firstFeature.properties) as WardNameKey | undefined;
+    const addWardLadMapping = useCallback((wardCode: string, localAuthorityCode: string) => {
+        if (wardCode && localAuthorityCode) {
+            setWardToLadMap(prev => ({
+                ...prev,
+                [wardCode]: localAuthorityCode
+            }));
+        }
+    }, []); // Empty deps - only uses setState
 
-			if (!wardCodeKey || !wardNameKey) return;
+    const addWardLadMappings = useCallback((mappings: WardLadMapping) => {
+        setWardToLadMap(prev => ({
+            ...prev,
+            ...mappings
+        }));
+    }, []); // Empty deps - only uses setState
 
-			geojson.features.forEach(feature => {
-				const wardCode = feature.properties[wardCodeKey];
-				const wardName = feature.properties[wardNameKey];
+    // ==================== Cross-Year Code Mappings ====================
 
-				if (!wardCode || !wardName) return;
+    const addCodeMapping = useCallback((
+        type: CodeType,
+        fromCode: string,
+        toYear: YearCode,
+        toCode: string
+    ) => {
+        if (!fromCode || !toYear || !toCode) return;
 
-				// Normalize ward name (trim, lowercase for consistency)
-				const normalizedName = wardName.trim().toLowerCase();
+        setCodeMappings(prev => ({
+            ...prev,
+            [type]: {
+                ...prev[type],
+                [fromCode]: {
+                    ...prev[type][fromCode],
+                    [toYear]: toCode
+                }
+            }
+        }));
+    }, []); // Empty deps - only uses setState
 
-				// Build name -> codes mapping
-				if (!nameToCodesMap.has(normalizedName)) {
-					nameToCodesMap.set(normalizedName, {});
-				}
-				nameToCodesMap.get(normalizedName)![year] = wardCode;
+    const addCodeMappings = useCallback((
+        type: CodeType,
+        mappings: CodeMapping
+    ) => {
+        setCodeMappings(prev => ({
+            ...prev,
+            [type]: {
+                ...prev[type],
+                ...mappings
+            }
+        }));
+    }, []);
 
-				// Build code -> name mapping
-				codeToNameMap.set(wardCode, wardName);
-			});
-		});
+    const getCodeForYear = useCallback((
+        type: CodeType,
+        code: string,
+        targetYear: YearCode
+    ): string | undefined => {
+        return codeMappingsRef.current[type][code]?.[targetYear];
+    }, []);
 
-		return { nameToCodesMap, codeToNameMap };
-	}, [boundaryData]);
+    const getAllEquivalentCodes = useCallback((
+        type: CodeType,
+        code: string
+    ): { year: YearCode; code: string }[] => {
+        const mappings = codeMappingsRef.current[type][code] || {};
+        const equivalents: { year: YearCode; code: string }[] = [];
 
-	const constituencyMapper = useMemo(() => {
-		// Map: constituency name -> { year -> constituency code }
-		const nameToCodesMap = new Map<string, Partial<Record<ConstituencyYear, string>>>();
+        for (const [year, mappedCode] of Object.entries(mappings)) {
+            equivalents.push({ year: parseInt(year), code: mappedCode });
+        }
 
-		// Map: constituency code -> constituency name
-		const codeToNameMap = new Map<string, string>();
+        return equivalents;
+    }, []);
 
-		const years: ConstituencyYear[] = [2024, 2019, 2017, 2015];
+    const findSourceCodes = useCallback((
+        type: CodeType,
+        targetCode: string,
+        targetYear: YearCode
+    ): string[] => {
+        const sourceCodes: string[] = [];
+        const typeMapping = codeMappingsRef.current[type];
 
-		years.forEach(year => {
-			const geojson = boundaryData.constituency[year];
-			if (!geojson) return;
+        for (const [sourceCode, yearMappings] of Object.entries(typeMapping)) {
+            if (yearMappings[targetYear] === targetCode) {
+                sourceCodes.push(sourceCode);
+            }
+        }
 
-			const firstFeature = geojson.features[0];
-			if (!firstFeature) return;
+        return sourceCodes;
+    }, []);
 
-			// Find the appropriate property keys for this year
-			const constituencyCodeKey = CONSTITUENCY_CODE_KEYS.find(key => key in firstFeature.properties) as ConstituencyCodeKey | undefined;
-			const constituencyNameKey = CONSTITUENCY_NAME_KEYS.find(key => key in firstFeature.properties) as ConstituencyNameKey | undefined;
+    /**
+     * Get all codes that should be highlighted when hovering over a code
+     */
+    const getHighlightCodes = useCallback((
+        type: CodeType,
+        code: string
+    ): Set<string> => {
+        const codes = new Set<string>([code]);
+        const typeMapping = codeMappingsRef.current[type];
 
-			if (!constituencyCodeKey || !constituencyNameKey) return;
+        // Add all codes this maps to
+        const directMappings = typeMapping[code] || {};
+        for (const mappedCode of Object.values(directMappings)) {
+            codes.add(mappedCode);
+        }
 
-			geojson.features.forEach(feature => {
-				const constituencyCode = feature.properties[constituencyCodeKey];
-				const constituencyName = feature.properties[constituencyNameKey];
+        // Add all codes that map to this code (reverse lookup)
+        for (const [sourceCode, yearMappings] of Object.entries(typeMapping)) {
+            if (Object.values(yearMappings).includes(code)) {
+                codes.add(sourceCode);
+                // Also add other codes from the same source
+                for (const mappedCode of Object.values(yearMappings)) {
+                    codes.add(mappedCode);
+                }
+            }
+        }
 
-				if (!constituencyCode || !constituencyName) return;
+        return codes;
+    }, []); // Empty deps - uses ref
 
-				// Normalize constituency name (trim, lowercase for consistency)
-				const normalizedName = constituencyName.trim().toLowerCase();
+    const clearAllMappings = useCallback(() => {
+        setWardToLadMap({});
+        setCodeMappings({
+            ward: {},
+            localAuthority: {},
+            constituency: {}
+        });
+    }, []);
 
-				// Build name -> codes mapping
-				if (!nameToCodesMap.has(normalizedName)) {
-					nameToCodesMap.set(normalizedName, {});
-				}
-				nameToCodesMap.get(normalizedName)![year] = constituencyCode;
+    const clearWardLadMap = useCallback(() => {
+        setWardToLadMap({});
+    }, []);
 
-				// Build code -> name mapping
-				codeToNameMap.set(constituencyCode, constituencyName);
-			});
-		});
+    const clearCodeMappings = useCallback((type?: CodeType) => {
+        if (type) {
+            setCodeMappings(prev => ({
+                ...prev,
+                [type]: {}
+            }));
+        } else {
+            setCodeMappings({
+                ward: {},
+                localAuthority: {},
+                constituency: {}
+            });
+        }
+    }, []);
 
-		return { nameToCodesMap, codeToNameMap };
-	}, [boundaryData]);
+    const getMappingCounts = useCallback(() => {
+        return {
+            wardToLad: Object.keys(wardToLadMapRef.current).length,
+            ward: Object.keys(codeMappingsRef.current.ward).length,
+            localAuthority: Object.keys(codeMappingsRef.current.localAuthority).length,
+            constituency: Object.keys(codeMappingsRef.current.constituency).length
+        };
+    }, []);
 
-	const convertWardCode = (wardCode: string, targetYear: WardYear): string | null => {
-		// Get the ward name from the source code
-		const wardName = wardMapper.codeToNameMap.get(wardCode);
-		if (!wardName) return null;
-
-		// Get all codes for this ward
-		const normalizedName = wardName.trim().toLowerCase();
-		const codes = wardMapper.nameToCodesMap.get(normalizedName);
-		if (!codes) return null;
-
-		// Return the code for the target year
-		return codes[targetYear] || null;
-	};
-
-	const convertConstituencyCode = (constituencyCode: string, targetYear: ConstituencyYear): string | null => {
-		// Get the constituency name from the source code
-		const constituencyName = constituencyMapper.codeToNameMap.get(constituencyCode);
-		if (!constituencyName) return null;
-
-		// Get all codes for this constituency
-		const normalizedName = constituencyName.trim().toLowerCase();
-		const codes = constituencyMapper.nameToCodesMap.get(normalizedName);
-		if (!codes) return null;
-
-		// Return the code for the target year
-		return codes[targetYear] || null;
-	};
-
-	const getWardName = (wardCode: string): string | null => {
-		return wardMapper.codeToNameMap.get(wardCode) || null;
-	};
-
-	const getConstituencyName = (constituencyCode: string): string | null => {
-		return constituencyMapper.codeToNameMap.get(constituencyCode) || null;
-	};
-
-	const getWardCodesByName = (wardName: string): Partial<Record<WardYear, string>> => {
-		const normalizedName = wardName.trim().toLowerCase();
-		return wardMapper.nameToCodesMap.get(normalizedName) || {};
-	};
-
-	const getConstituencyCodesByName = (constituencyName: string): Partial<Record<ConstituencyYear, string>> => {
-		const normalizedName = constituencyName.trim().toLowerCase();
-		return constituencyMapper.nameToCodesMap.get(normalizedName) || {};
-	};
-
-	return {
-		convertWardCode,
-		convertConstituencyCode,
-		getWardName,
-		getConstituencyName,
-		getWardCodesByName,
-		getConstituencyCodesByName
-	};
+    return {
+        getLadForWard,
+        addWardLadMapping,
+        addWardLadMappings,
+        addCodeMapping,
+        addCodeMappings,
+        getCodeForYear,
+        getAllEquivalentCodes,
+        findSourceCodes,
+        getHighlightCodes,
+        clearAllMappings,
+        clearWardLadMap,
+        clearCodeMappings,
+        getMappingCounts
+    };
 }
+
+/**
+ * Extract ward-to-LAD mappings from GeoJSON features
+ */
+export const extractWardLadMappings = (
+    features: any[],
+    wardCodeKeys: readonly string[],
+    localAuthorityCodeKeys: readonly string[]
+): WardLadMapping => {
+    const mappings: WardLadMapping = {};
+
+    for (const feature of features) {
+        const props = feature.properties;
+        if (!props) continue;
+
+        const wardCode = getProp(props, wardCodeKeys);
+        const localAuthorityCode = getProp(props, localAuthorityCodeKeys);
+
+        if (wardCode && localAuthorityCode) {
+            mappings[wardCode] = localAuthorityCode;
+        }
+    }
+
+    return mappings;
+};
+
+/**
+ * Build cross-year mappings from loaded GeoJSON data
+ * This automatically extracts codes from all years and creates bidirectional mappings
+ */
+export const buildCrossYearMappings = (
+    boundaryData: Record<number, BoundaryGeojson>,
+    type: BoundaryType,
+    years: number[]
+): CodeMapping => {
+    const mappings: CodeMapping = {};
+
+    // Get the appropriate property keys for this boundary type
+    const codeKeys =
+        type === 'ward' ? PROPERTY_KEYS.wardCode :
+            type === 'constituency' ? PROPERTY_KEYS.constituencyCode :
+                PROPERTY_KEYS.ladCode;
+
+    const nameKeys =
+        type === 'ward' ? PROPERTY_KEYS.wardName :
+            type === 'constituency' ? PROPERTY_KEYS.constituencyName :
+                PROPERTY_KEYS.ladName;
+
+    // Build a name-to-codes index for fuzzy matching
+    const nameIndex: Record<string, Set<{ code: string; year: number }>> = {};
+
+    for (const year of years) {
+        const geojson = boundaryData[year];
+        if (!geojson?.features) continue;
+
+        for (const feature of geojson.features) {
+            const props = feature.properties;
+            if (!props) continue;
+
+            const code = getProp(props, codeKeys);
+            const name = getProp(props, nameKeys);
+
+            if (code && name) {
+                // Normalize name for matching
+                const normalizedName = name.toLowerCase().trim();
+
+                if (!nameIndex[normalizedName]) {
+                    nameIndex[normalizedName] = new Set();
+                }
+                nameIndex[normalizedName].add({ code, year });
+            }
+        }
+    }
+
+    // Build mappings based on name matching
+    for (const [name, codeSet] of Object.entries(nameIndex)) {
+        const codes = Array.from(codeSet);
+
+        // For each code, map it to all other codes with the same name
+        for (const { code: fromCode, year: fromYear } of codes) {
+            if (!mappings[fromCode]) {
+                mappings[fromCode] = {};
+            }
+
+            for (const { code: toCode, year: toYear } of codes) {
+                if (fromYear !== toYear) {
+                    mappings[fromCode][toYear] = toCode;
+                }
+            }
+        }
+    }
+
+    return mappings;
+};
+
+/**
+ * Build mappings from a lookup table/CSV with explicit year columns
+ */
+export const buildCodeMappingsFromLookup = (
+    lookupData: any[],
+    codeFields: Record<YearCode, string>
+): CodeMapping => {
+    const mappings: CodeMapping = {};
+    const years = Object.keys(codeFields).map(Number);
+
+    for (const row of lookupData) {
+        for (const fromYear of years) {
+            const fromField = codeFields[fromYear];
+            const fromCode = row[fromField];
+
+            if (!fromCode) continue;
+
+            if (!mappings[fromCode]) {
+                mappings[fromCode] = {};
+            }
+
+            for (const toYear of years) {
+                if (toYear === fromYear) continue;
+
+                const toField = codeFields[toYear];
+                const toCode = row[toField];
+
+                if (toCode) {
+                    mappings[fromCode][toYear] = toCode;
+                }
+            }
+        }
+    }
+
+    return mappings;
+};

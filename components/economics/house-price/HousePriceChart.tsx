@@ -9,6 +9,9 @@ interface HousePriceChartProps {
 	aggregatedData: AggregatedHousePriceData | null;
 	year: number;
 	selectedArea: SelectedArea | null;
+	codeMapper?: {
+		getCodeForYear: (type: 'ward', code: string, targetYear: number) => string | undefined;
+	};
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -16,22 +19,23 @@ interface PriceChartProps {
 	dataset: HousePriceDataset;
 	aggregatedData: AggregatedHousePriceData | null;
 	selectedArea: SelectedArea | null;
+	getCodeForYear?: (type: 'ward', code: string, targetYear: number) => string | undefined;
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
 const colors = {
-	bg: 'bg-emerald-50/60', 
-	border: 'border-emerald-300', 
-	badge: 'bg-emerald-300 text-emerald-900', 
-	text: 'bg-emerald-200 text-emerald-800', 
+	bg: 'bg-emerald-50/60',
+	border: 'border-emerald-300',
+	badge: 'bg-emerald-300 text-emerald-900',
+	text: 'bg-emerald-200 text-emerald-800',
 	line: '#10b981'
 };
 
 // Cache for ward/constituency lookups
 const housePriceLookupCache = new Map<string, Map<number, any>>();
 
-const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, isActive, setActiveViz }: PriceChartProps) => {
+const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeForYear, isActive, setActiveViz }: PriceChartProps) => {
 	const { priceData, currentPrice } = useMemo(() => {
 		let prices: Record<number, number> = {};
 		let price2023: number | null = null;
@@ -41,7 +45,7 @@ const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, isActive
 			price2023 = aggregatedData[2023]?.averagePrice || null;
 		} else if (selectedArea && selectedArea.type === 'ward') {
 			// Check cache first
-			const wardCode = selectedArea.data.wardCode;
+			const wardCode = selectedArea.code;
 			const cacheKey = `ward-${wardCode}`;
 			if (!housePriceLookupCache.has(cacheKey)) {
 				housePriceLookupCache.set(cacheKey, new Map());
@@ -53,8 +57,14 @@ const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, isActive
 				prices = cached?.prices || {};
 				price2023 = prices[2023] || null;
 			} else {
-				// Try direct lookup first
-				const data = dataset.wardData?.[wardCode];
+				let data = dataset.wardData?.[wardCode];
+
+				if (!data && getCodeForYear) {
+					const mappedCode = getCodeForYear('ward', wardCode, 2023);
+					if (mappedCode) {
+						data = dataset.wardData[mappedCode];
+					}
+				}
 
 				if (data) {
 					prices = data.prices;
@@ -181,6 +191,7 @@ export default function HousePriceChart({
 	aggregatedData,
 	year,
 	selectedArea,
+	codeMapper,
 	setActiveViz,
 }: HousePriceChartProps) {
 	const dataset = availableDatasets?.[year];
@@ -194,6 +205,7 @@ export default function HousePriceChart({
 			dataset={dataset}
 			aggregatedData={aggregatedData}
 			selectedArea={selectedArea}
+			getCodeForYear={codeMapper?.getCodeForYear}
 			isActive={isActive}
 			setActiveViz={setActiveViz}
 		/>

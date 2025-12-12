@@ -8,6 +8,9 @@ interface IncomeChartProps {
 	aggregatedData: AggregatedIncomeData | null;
 	selectedArea: SelectedArea | null;
 	year: number;
+	codeMapper?: {
+		getCodeForYear: (type: 'localAuthority', code: string, targetYear: number) => string | undefined;
+	};
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -22,6 +25,7 @@ export default function IncomeChart({
 	availableDatasets,
 	selectedArea,
 	year,
+	codeMapper,
 	setActiveViz,
 }: IncomeChartProps) {
 	const dataset = availableDatasets?.[year];
@@ -32,13 +36,12 @@ export default function IncomeChart({
 
 	return (
 		<div
-			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative ${
-				isActive ? `${colors.bg} border-2 ${colors.border}` : colors.inactive
-			}`}
-			onClick={() => setActiveViz({ 
-				vizId: dataset.id, 
-				datasetType: dataset.type, 
-				datasetYear: dataset.year 
+			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative ${isActive ? `${colors.bg} border-2 ${colors.border}` : colors.inactive
+				}`}
+			onClick={() => setActiveViz({
+				vizId: dataset.id,
+				datasetType: dataset.type,
+				datasetYear: dataset.year
 			})}
 		>
 			<div className="flex items-center justify-between mb-1.5 relative z-10">

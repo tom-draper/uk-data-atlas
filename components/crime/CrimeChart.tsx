@@ -7,6 +7,9 @@ interface CrimeChartProps {
 	availableDatasets: Record<string, CrimeDataset>;
 	aggregatedData: AggregatedCrimeData | null;
 	selectedArea: SelectedArea | null;
+	codeMapper?: {
+		getCodeForYear: (type: 'localAuthority', code: string, targetYear: number) => string | undefined;
+	};
 	year: number;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -21,6 +24,7 @@ export default function CrimeChart({
 	activeDataset,
 	availableDatasets,
 	selectedArea,
+	codeMapper,
 	year,
 	setActiveViz,
 }: CrimeChartProps) {

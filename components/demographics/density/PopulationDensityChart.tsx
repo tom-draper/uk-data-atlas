@@ -1,7 +1,12 @@
 // components/population/density/PopulationDensityChart.tsx
 import { WARD_CODE_KEYS } from "@/lib/data/boundaries/boundaries";
 import { BoundaryData } from "@/lib/hooks/useBoundaryData";
-import { AggregatedPopulationData, BoundaryGeojson, PopulationDataset, SelectedArea } from "@/lib/types";
+import {
+	AggregatedPopulationData,
+	BoundaryGeojson,
+	PopulationDataset,
+	SelectedArea,
+} from "@/lib/types";
 import { calculateTotal, polygonAreaSqKm } from "@/lib/utils/population";
 import { useMemo, memo } from "react";
 
@@ -10,6 +15,13 @@ interface PopulationDensityChartProps {
 	aggregatedData: AggregatedPopulationData | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
+	codeMapper?: {
+		getCodeForYear: (
+			type: "ward",
+			code: string,
+			targetYear: number
+		) => string | undefined;
+	};
 }
 
 const getWardPopulationDensity = (feature: any, total: number) => {
@@ -31,7 +43,7 @@ const detectPropertyKey = (geojson: BoundaryGeojson) => {
 		if (WARD_CODE_KEYS[i] in props) return WARD_CODE_KEYS[i];
 	}
 	return WARD_CODE_KEYS[0];
-}
+};
 
 // Seeded random number generator (extracted to avoid recreating in useMemo)
 const createSeededRandom = (seed: number) => {
@@ -44,9 +56,27 @@ const createSeededRandom = (seed: number) => {
 
 // Pre-calculate density categories (constant)
 const DENSITY_CATEGORIES = [
-	{ threshold: 2000, label: 'Low', color: 'bg-green-500', count: 15, variations: ['bg-green-400', 'bg-green-500', 'bg-green-600'] },
-	{ threshold: 5000, label: 'Medium', color: 'bg-yellow-500', count: 30, variations: ['bg-yellow-400', 'bg-yellow-500', 'bg-yellow-600'] },
-	{ threshold: Infinity, label: 'High', color: 'bg-red-500', count: 50, variations: ['bg-red-400', 'bg-red-500', 'bg-red-600'] }
+	{
+		threshold: 2000,
+		label: "Low",
+		color: "bg-green-500",
+		count: 15,
+		variations: ["bg-green-400", "bg-green-500", "bg-green-600"],
+	},
+	{
+		threshold: 5000,
+		label: "Medium",
+		color: "bg-yellow-500",
+		count: 30,
+		variations: ["bg-yellow-400", "bg-yellow-500", "bg-yellow-600"],
+	},
+	{
+		threshold: Infinity,
+		label: "High",
+		color: "bg-red-500",
+		count: 50,
+		variations: ["bg-red-400", "bg-red-500", "bg-red-600"],
+	},
 ] as const;
 
 const getDensityCategory = (density: number) => {
@@ -81,10 +111,12 @@ const DensityGrid = memo(({ density }: { density: number }) => {
 		}
 
 		// Create color map
-		const colors = new Array(totalSquares).fill('bg-gray-200');
+		const colors = new Array(totalSquares).fill("bg-gray-200");
 		for (let i = 0; i < category.count; i++) {
 			const index = indices[i];
-			const colorIndex = Math.floor(seededRandom() * category.variations.length);
+			const colorIndex = Math.floor(
+				seededRandom() * category.variations.length
+			);
 			colors[index] = category.variations[colorIndex];
 		}
 
@@ -96,50 +128,56 @@ const DensityGrid = memo(({ density }: { density: number }) => {
 			className="absolute inset-0 grid gap-0.5 p-0 opacity-25"
 			style={{
 				gridTemplateColumns: `repeat(${gridWidth}, 1fr)`,
-				gridTemplateRows: `repeat(${gridHeight}, 1fr)`
+				gridTemplateRows: `repeat(${gridHeight}, 1fr)`,
 			}}
 		>
 			{squareClasses.map((className, i) => (
-				<div key={i} className={`rounded-xs transition-all duration-300 ${className}`} />
+				<div
+					key={i}
+					className={`rounded-xs transition-all duration-300 ${className}`}
+				/>
 			))}
 		</div>
 	);
 });
 
-DensityGrid.displayName = 'DensityGrid';
+DensityGrid.displayName = "DensityGrid";
 
 function PopulationDensityChart({
 	dataset,
 	aggregatedData,
 	boundaryData,
 	selectedArea,
+	codeMapper,
 }: PopulationDensityChartProps) {
 	const { density, areaSqKm, total } = useMemo(() => {
 		if (selectedArea === null && aggregatedData) {
 			return {
 				density: aggregatedData[dataset.year].density,
 				areaSqKm: aggregatedData[dataset.year].totalArea,
-				total: aggregatedData[dataset.year].populationStats.total
+				total: aggregatedData[dataset.year].populationStats.total,
 			};
 		}
 
 		const geojson = boundaryData.ward[dataset.boundaryYear];
-		if (selectedArea === null || selectedArea.type !== 'ward' || !geojson) {
+		if (selectedArea === null || selectedArea.type !== "ward" || !geojson) {
 			return { density: null, areaSqKm: null, total: null };
 		}
 
-		const wardCode = selectedArea.data.wardCode;
+		const wardCode = selectedArea.code;
 		const wardCodeProp = detectPropertyKey(geojson);
 
 		const populationData = dataset.populationData[wardCode];
 		if (populationData) {
-			const wardFeature = geojson.features.find((f) => f.properties?.[wardCodeProp] === wardCode);
+			const wardFeature = geojson.features.find(
+				(f) => f.properties?.[wardCodeProp] === wardCode
+			);
 
 			if (wardFeature) {
 				const total = calculateTotal(populationData.total);
 				return {
 					...getWardPopulationDensity(wardFeature, total),
-					total
+					total,
 				};
 			}
 		}
@@ -169,24 +207,18 @@ function PopulationDensityChart({
 					<div className="text-xl font-bold">
 						{roundedDensity.toLocaleString()}
 					</div>
-					<div className="text-sm">
-						people/km²
-					</div>
+					<div className="text-sm">people/km²</div>
 				</div>
 
 				{/* Right side - Supporting metrics */}
 				<div className="flex text-left text-xs pb-1">
 					<div className="flex pr-3">
 						<div className="mr-1">Population</div>
-						<div className="font-semibold">
-							{total.toLocaleString()}
-						</div>
+						<div className="font-semibold">{total.toLocaleString()}</div>
 					</div>
 					<div className="flex">
 						<div className="mr-1">Area</div>
-						<div className="font-semibold">
-							{formattedArea} km²
-						</div>
+						<div className="font-semibold">{formattedArea} km²</div>
 					</div>
 				</div>
 			</div>

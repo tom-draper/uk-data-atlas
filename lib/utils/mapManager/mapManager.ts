@@ -1,5 +1,5 @@
 // lib/utils/mapManager/mapManager.ts
-import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, BoundaryType } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, SelectedArea } from '@lib/types';
 import { MapOptions } from '@lib/types/mapOptions';
 import { LayerManager } from './layerManager';
 import { EventHandler } from './eventHandler';
@@ -9,14 +9,8 @@ import { PropertyDetector } from './propertyDetector';
 import { StatsCache } from './statsCache';
 import { IncomeDataset } from '@/lib/types/income';
 
-export interface LocationHoverData {
-    type: BoundaryType;
-    code: string;
-    data: any;
-}
-
 export interface MapManagerCallbacks {
-    onLocationHover?: (location: LocationHoverData | null) => void;
+    onAreaHover?: (location: SelectedArea | null) => void;
     onLocationChange: (location: string) => void;
 }
 
@@ -77,16 +71,6 @@ export class MapManager {
             : this.featureBuilder.buildWinnerFeatures(geojson.features, codeProp, (code) => resultsMap[code] || 'NONE');
 
         const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
-
-        console.log('Code property:', codeProp);
-        console.log('Features built:', features.length);
-        console.log('Sample feature:', features[0]);
-        console.log('Sample result lookup:', features[0]?.properties?.[codeProp], resultsMap[features[0]?.properties?.[codeProp]]);
-        console.log('Transformed geojson:', transformedGeojson.features.length);
-
-        // console.log('wardCodeProp', codeProp);
-        // console.log('here:', transformedGeojson.features.length)
-        // console.log(transformedGeojson)
 
         // Update layers
         if (mode === 'party-percentage' && options.selectedParty) {

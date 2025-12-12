@@ -8,7 +8,8 @@ import {
 	GEOJSON_PATHS,
 	PROPERTY_KEYS
 } from '../data/boundaries/boundaries';
-import { extractWardLadMappings } from './useWardToLadMap';
+import { extractWardLadMappings, buildCrossYearMappings } from './useCodeMapper';
+import type { CodeMapping, CodeType } from './useCodeMapper';
 
 export type BoundaryData = {
 	ward: Record<number, BoundaryGeojson | null>;
@@ -27,7 +28,8 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = {
  */
 const fetchBoundaryGroup = async (
 	type: BoundaryType,
-	onMappingsExtracted?: (mappings: Record<string, string>) => void
+	onMappingsExtracted?: (mappings: Record<string, string>) => void,
+	onCrossYearMappings?: (type: CodeType, mappings: CodeMapping) => void
 ): Promise<Record<number, BoundaryGeojson>> => {
 	const paths = GEOJSON_PATHS[type];
 	const years = Object.keys(paths).map(Number);
@@ -53,7 +55,22 @@ const fetchBoundaryGroup = async (
 		})
 	);
 
-	return Object.fromEntries(results);
+	const groupedData = Object.fromEntries(results);
+
+	// Build cross-year mappings after all data is loaded
+	if (onCrossYearMappings) {
+		const crossYearMappings = buildCrossYearMappings(
+			groupedData,
+			type,
+			years
+		);
+
+		if (Object.keys(crossYearMappings).length > 0) {
+			onCrossYearMappings(type, crossYearMappings);
+		}
+	}
+
+	return groupedData;
 };
 
 /**
@@ -78,16 +95,24 @@ const filterBoundaryGroup = (
 
 /**
  * Hook to load and filter boundary data
- * Pass getLadForWard and addWardLadMappings from useWardLadMap() to enable 2021 filtering
+ * Now accepts the full codeMapper from useCodeMapper()
  */
 export function useBoundaryData(
 	selectedLocation?: string,
-	getLadForWard?: (wardCode: string) => string | undefined,
-	addWardLadMappings?: (mappings: Record<string, string>) => void
+	codeMapper?: {
+		getLadForWard: (wardCode: string) => string | undefined;
+		addWardLadMappings: (mappings: Record<string, string>) => void;
+		addCodeMappings: (type: CodeType, mappings: CodeMapping) => void;
+	}
 ) {
 	const [rawData, setRawData] = useState<BoundaryData>(EMPTY_BOUNDARY_DATA);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
+
+	// Extract the individual functions to use as dependencies
+	const addWardLadMappings = codeMapper?.addWardLadMappings;
+	const addCodeMappings = codeMapper?.addCodeMappings;
+	const getLadForWard = codeMapper?.getLadForWard;
 
 	// Load all boundary files on mount
 	useEffect(() => {
@@ -99,9 +124,21 @@ export function useBoundaryData(
 				setError(null);
 
 				const [wards, constituencies, localAuthorities] = await Promise.all([
-					fetchBoundaryGroup('ward', addWardLadMappings),
-					fetchBoundaryGroup('constituency'),
-					fetchBoundaryGroup('localAuthority'),
+					fetchBoundaryGroup(
+						'ward',
+						addWardLadMappings,
+						addCodeMappings
+					),
+					fetchBoundaryGroup(
+						'constituency',
+						undefined,
+						addCodeMappings
+					),
+					fetchBoundaryGroup(
+						'localAuthority',
+						undefined,
+						addCodeMappings
+					),
 				]);
 
 				if (mounted) {
@@ -127,7 +164,7 @@ export function useBoundaryData(
 		return () => {
 			mounted = false;
 		};
-	}, [addWardLadMappings]);
+	}, [addWardLadMappings, addCodeMappings]); // Now uses stable function references
 
 	// Filter data based on selected location
 	const filteredData = useMemo(() => {
@@ -136,9 +173,22 @@ export function useBoundaryData(
 		}
 
 		return {
-			ward: filterBoundaryGroup(rawData.ward, 'ward', selectedLocation || null, getLadForWard),
-			constituency: filterBoundaryGroup(rawData.constituency, 'constituency', selectedLocation || null),
-			localAuthority: filterBoundaryGroup(rawData.localAuthority, 'localAuthority', selectedLocation || null)
+			ward: filterBoundaryGroup(
+				rawData.ward,
+				'ward',
+				selectedLocation || null,
+				getLadForWard
+			),
+			constituency: filterBoundaryGroup(
+				rawData.constituency,
+				'constituency',
+				selectedLocation || null
+			),
+			localAuthority: filterBoundaryGroup(
+				rawData.localAuthority,
+				'localAuthority',
+				selectedLocation || null
+			)
 		};
 	}, [rawData, selectedLocation, isLoading, getLadForWard]);
 

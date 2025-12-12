@@ -1,14 +1,14 @@
 // components/GeneralElectionResultChart.tsx
-'use client';
+"use client";
 
-import { memo } from 'react';
-import { ActiveViz, GeneralElectionDataset } from '@lib/types';
+import { memo } from "react";
+import { ActiveViz, GeneralElectionDataset } from "@lib/types";
 
 const YEAR_STYLES: Record<number, { bg: string; border: string }> = {
-	2024: { bg: 'bg-indigo-50/60', border: 'border-indigo-400' },
-	2019: { bg: 'bg-blue-50/60', border: 'border-blue-400' },
-	2017: { bg: 'bg-purple-50/60', border: 'border-purple-400' },
-	2015: { bg: 'bg-violet-50/60', border: 'border-violet-400' },
+	2024: { bg: "bg-indigo-50/60", border: "border-indigo-400" },
+	2019: { bg: "bg-blue-50/60", border: "border-blue-400" },
+	2017: { bg: "bg-purple-50/60", border: "border-purple-400" },
+	2015: { bg: "bg-violet-50/60", border: "border-violet-400" },
 };
 
 interface ProcessedPartyData {
@@ -37,7 +37,9 @@ const VoteBar = memo(({ data }: { data: ProcessedPartyData[] }) => (
 			<div
 				key={p.key}
 				style={{ width: `${p.percentage}%`, backgroundColor: p.color }}
-				title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(1)}%)`}
+				title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(
+					1
+				)}%)`}
 				className="group relative hover:opacity-80 transition-opacity"
 			>
 				{p.percentage > 12 && (
@@ -49,56 +51,64 @@ const VoteBar = memo(({ data }: { data: ProcessedPartyData[] }) => (
 		))}
 	</div>
 ));
-VoteBar.displayName = 'VoteBar';
+VoteBar.displayName = "VoteBar";
 
-const Legend = memo(({
-	partyData,
-	seatsSummary,
-	totalSeats
-}: {
-	partyData: ProcessedPartyData[],
-	seatsSummary: { party: string, count: number, color: string }[] | null,
-	totalSeats: number | null
-}) => (
-	<div className="animate-in fade-in duration-200 mt-2">
-		{/* Votes Legend */}
-		<div className="grid grid-cols-3 gap-0.5 text-[9px]">
-			{partyData.map((p) => (
-				<div key={p.key} className="flex items-center gap-1">
-					<div className="w-1.5 h-1.5 rounded-sm shrink-0" style={{ backgroundColor: p.color }} />
-					<span className="truncate font-medium">
-						{p.key}: {p.votes.toLocaleString()}
-					</span>
-				</div>
-			))}
-		</div>
-
-		{/* Seats Legend (Aggregated Only) */}
-		{seatsSummary && (
-			<div className="mt-2 pt-2 border-t border-gray-200">
-				<div className="text-[9px] font-medium text-gray-600 mb-1">
-					Seats won: {totalSeats}
-				</div>
-				<div className="grid grid-cols-3 gap-0.5 text-[9px]">
-					{seatsSummary.map((s) => (
-						<div key={s.party} className="flex items-center gap-1">
-							<div className="w-1.5 h-1.5 rounded-sm shrink-0" style={{ backgroundColor: s.color }} />
-							<span className="truncate font-medium">
-								{s.party}: {s.count}
-							</span>
-						</div>
-					))}
-				</div>
+const Legend = memo(
+	({
+		partyData,
+		seatsSummary,
+		totalSeats,
+	}: {
+		partyData: ProcessedPartyData[];
+		seatsSummary: { party: string; count: number; color: string }[] | null;
+		totalSeats: number | null;
+	}) => (
+		<div className="animate-in fade-in duration-200 mt-2">
+			{/* Votes Legend */}
+			<div className="grid grid-cols-3 gap-0.5 text-[9px]">
+				{partyData.map((p) => (
+					<div key={p.key} className="flex items-center gap-1">
+						<div
+							className="w-1.5 h-1.5 rounded-sm shrink-0"
+							style={{ backgroundColor: p.color }}
+						/>
+						<span className="truncate font-medium">
+							{p.key}: {p.votes.toLocaleString()}
+						</span>
+					</div>
+				))}
 			</div>
-		)}
-	</div>
-));
-Legend.displayName = 'Legend';
+
+			{/* Seats Legend (Aggregated Only) */}
+			{seatsSummary && (
+				<div className="mt-2 pt-2 border-t border-gray-200">
+					<div className="text-[9px] font-medium text-gray-600 mb-1">
+						Seats won: {totalSeats}
+					</div>
+					<div className="grid grid-cols-3 gap-0.5 text-[9px]">
+						{seatsSummary.map((s) => (
+							<div key={s.party} className="flex items-center gap-1">
+								<div
+									className="w-1.5 h-1.5 rounded-sm shrink-0"
+									style={{ backgroundColor: s.color }}
+								/>
+								<span className="truncate font-medium">
+									{s.party}: {s.count}
+								</span>
+							</div>
+						))}
+					</div>
+				</div>
+			)}
+		</div>
+	)
+);
+Legend.displayName = "Legend";
 
 export default memo(function GeneralElectionResultChart({
 	data,
 	isActive,
-	setActiveViz
+	setActiveViz,
 }: {
 	data: ProcessedYearData;
 	isActive: boolean;
@@ -110,17 +120,28 @@ export default memo(function GeneralElectionResultChart({
 	// Calculate height based on state
 	// Active & Aggregated = Large | Active & Single = Medium | Inactive = Small
 	const heightClass = isActive
-		? (data.isAggregated ? 'h-[205px]' : 'h-[95px]')
-		: 'h-[65px]';
+		? data.isAggregated
+			? "h-[205px]"
+			: "h-[95px]"
+		: "h-[65px]";
 
 	return (
 		<div
 			className={`
         p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden border-2 
         ${heightClass}
-        ${isActive ? `${colors.bg} ${colors.border}` : 'bg-white/60 border-gray-200/80 hover:border-indigo-300'}
+        ${isActive
+					? `${colors.bg} ${colors.border}`
+					: "bg-white/60 border-gray-200/80 hover:border-indigo-300"
+				}
       `}
-			onClick={() => setActiveViz({ vizId: vizId, datasetType: data.dataset.type, datasetYear: data.year })}
+			onClick={() =>
+				setActiveViz({
+					vizId: vizId,
+					datasetType: data.dataset.type,
+					datasetYear: data.year,
+				})
+			}
 		>
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">{data.year} General Election</h3>
@@ -133,7 +154,9 @@ export default memo(function GeneralElectionResultChart({
 
 			{/* Content Area */}
 			{!data.hasData ? (
-				<div className="text-xs text-gray-400/80 pt-0.5 text-center">No data available</div>
+				<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+					No data available
+				</div>
 			) : (
 				<div className="space-y-1">
 					<VoteBar data={data.partyData} />

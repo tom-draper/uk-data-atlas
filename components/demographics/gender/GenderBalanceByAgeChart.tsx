@@ -1,6 +1,10 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
-import { useMemo, memo } from 'react';
-import { AggregatedPopulationData, PopulationDataset, SelectedArea } from '@/lib/types';
+import { useMemo, memo } from "react";
+import {
+	AggregatedPopulationData,
+	PopulationDataset,
+	SelectedArea,
+} from "@/lib/types";
 
 export interface GenderBalanceByAgeChartProps {
 	dataset: PopulationDataset;
@@ -20,9 +24,10 @@ function GenderBalanceByAgeChart({
 	const { ageData, percentages } = useMemo(() => {
 		// Early return for aggregated data case
 		if (selectedArea === null && aggregatedData) {
-			const data = aggregatedData[dataset.year].medianAge !== 0
-				? aggregatedData[dataset.year].genderAgeData
-				: [];
+			const data =
+				aggregatedData[dataset.year].medianAge !== 0
+					? aggregatedData[dataset.year].genderAgeData
+					: [];
 
 			// Pre-calculate percentages
 			const pct = data.map(({ males, females }) => {
@@ -33,15 +38,16 @@ function GenderBalanceByAgeChart({
 			return { ageData: data, percentages: pct };
 		}
 
-		if (selectedArea === null || selectedArea.type !== 'ward' || !dataset) {
+		if (selectedArea === null || selectedArea.type !== "ward" || !dataset) {
 			return { ageData: [], percentages: [] };
 		}
 
-		const wardCode = selectedArea.data.wardCode;
+		const wardCode = selectedArea.code;
 		const wardData = dataset.populationData[wardCode];
 		if (wardData) {
 			const { males, females } = wardData;
-			const data: Array<{ age: number; males: number; females: number }> = new Array(91);
+			const data: Array<{ age: number; males: number; females: number }> =
+				new Array(91);
 			const pct: number[] = new Array(91);
 
 			// Single loop: build data AND calculate percentages
@@ -80,7 +86,7 @@ function GenderBalanceByAgeChart({
 				{/* Center line - using transform for GPU */}
 				<div
 					className="absolute top-0 bottom-0 w-px bg-gray-300 z-10 translate-x-1/2 left-1/2"
-					style={{ marginLeft: '-1px' }}
+					style={{ marginLeft: "-1px" }}
 				/>
 
 				{/* Stack of age rows - Minimal DOM, maximum performance */}
@@ -120,7 +126,9 @@ function GenderBalanceByAgeChart({
 
 								{/* Tooltip - only visible on hover, uses transform for GPU */}
 								<div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 bg-gray-800 text-white text-[8px] rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-20 transition-opacity">
-									Age {age}: {males.toLocaleString()}M / {females.toLocaleString()}F ({malePercentage.toFixed(1)}% male)
+									Age {age}: {males.toLocaleString()}M /{" "}
+									{females.toLocaleString()}F ({malePercentage.toFixed(1)}%
+									male)
 								</div>
 							</div>
 						);

@@ -9,6 +9,7 @@ import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 import EconomicsSection from './economics/EconomicsSection';
 import GeneralElectionResultChartSection from './general-election/GeneralElectionResultChartSection';
 import CrimeSection from './crime/CrimeSection';
+import { CodeType } from '@/lib/hooks/useCodeMapper';
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
@@ -19,6 +20,9 @@ interface ChartPanelProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	aggregatedData: AggregatedData;
+	codeMapper?: {
+		getCodeForYear: (type: CodeType, code: string, targetYear: number) => string | undefined;
+	};
 }
 
 const PanelHeader = ({
@@ -57,21 +61,21 @@ function panelHeaderDetails(selectedLocation: string | null, selectedArea: Selec
 	switch (selectedArea.type) {
 		case 'ward':
 			return {
-				title: selectedArea.data.wardName,
-				subtitle: selectedArea.data.localAuthorityName,
-				code: `${selectedArea.data.localAuthorityCode} ${selectedArea.data.wardCode}`
+				title: selectedArea.name ?? selectedArea.data ? selectedArea.data.wardName : '',
+				subtitle: selectedArea.data ? selectedArea.data.localAuthorityName : '',
+				code: `${selectedArea.data ? selectedArea.data.localAuthorityCode : ''} ${selectedArea.code}`
 			}
 		case 'constituency':
 			return {
 				title: selectedArea.data.constituencyName,
 				subtitle: `${selectedArea.data.regionName}, ${selectedArea.data.countryName}`,
-				code: selectedArea.data.onsId
+				code: selectedArea.code
 			};
 		case 'localAuthority':
 			return {
 				title: selectedArea.data.localAuthorityName,
 				subtitle: `${selectedArea.data.regionName}, ${selectedArea.data.countryName}`,
-				code: selectedArea.data.localAuthorityCode
+				code: selectedArea.code
 			};
 	}
 }
@@ -100,6 +104,7 @@ export default memo(function ChartPanel({
 	activeViz,
 	setActiveViz,
 	aggregatedData,
+	codeMapper,
 }: ChartPanelProps) {
 	return (
 		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
@@ -116,6 +121,7 @@ export default memo(function ChartPanel({
 						aggregatedData={aggregatedData.generalElection}
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
+						codeMapper={codeMapper}
 					/>
 					<LocalElectionResultChartSection
 						activeDataset={activeDataset}
@@ -123,6 +129,7 @@ export default memo(function ChartPanel({
 						aggregatedData={aggregatedData.localElection}
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
+						codeMapper={codeMapper}
 					/>
 					<DemographicsChartSection
 						availableDatasets={datasets.population}
@@ -131,6 +138,7 @@ export default memo(function ChartPanel({
 						selectedArea={selectedArea}
 						activeViz={activeViz}
 						setActiveViz={setActiveViz}
+						codeMapper={codeMapper}
 					/>
 					<EconomicsSection
 						activeDataset={activeDataset}
@@ -140,6 +148,7 @@ export default memo(function ChartPanel({
 						aggregatedIncomeData={aggregatedData.income}
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
+						codeMapper={codeMapper}
 					/>
 					<CrimeSection
 						activeDataset={activeDataset}
@@ -147,6 +156,7 @@ export default memo(function ChartPanel({
 						aggregatedData={aggregatedData.crime}
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
+						codeMapper={codeMapper}
 					/>
 				</div>
 

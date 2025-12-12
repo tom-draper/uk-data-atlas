@@ -50,5 +50,5 @@ type AreaMap = {
 };
 
 export type SelectedArea = {
-  [K in keyof AreaMap]: { type: K; data: AreaMap[K] }
+  [K in keyof AreaMap]: { type: K; code: string; name: string, data: AreaMap[K] }
 }[keyof AreaMap];

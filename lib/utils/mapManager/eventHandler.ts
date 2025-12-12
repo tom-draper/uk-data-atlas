@@ -14,7 +14,7 @@ export class EventHandler {
     private mouseLeaveHandler: (() => void) | null = null;
     
     // Pre-bound methods for maximum performance
-    private boundUpdateHover: ((code: string, data: any) => void) | null = null;
+    private boundUpdateHover: ((code: string, name: string, data: any) => void) | null = null;
     private boundClearHover: (() => void) | null = null;
     
     // Cache lookups
@@ -44,55 +44,59 @@ export class EventHandler {
         // Pre-bind hover callbacks based on mode for fastest dispatch
         switch (mode) {
             case 'generalElection':
-                this.boundUpdateHover = (code: string, data: any) => {
-                    this.callbacks.onLocationHover?.({
+                this.boundUpdateHover = (code: string, name: string, data: any) => {
+                    this.callbacks.onAreaHover?.({
                         type: 'constituency',
                         code,
+                        name,
                         data: data ?? null
                     });
                 };
                 this.boundClearHover = () => {
-                    this.callbacks.onLocationHover?.(null);
+                    this.callbacks.onAreaHover?.(null);
                 };
                 break;
                 
             case 'crime':
             case 'income':
-                this.boundUpdateHover = (code: string, data: any) => {
-                    this.callbacks.onLocationHover?.({
+                this.boundUpdateHover = (code: string, name: string, data: any) => {
+                    this.callbacks.onAreaHover?.({
                         type: 'localAuthority',
                         code,
+                        name,
                         data: data ?? null
                     });
                 };
                 this.boundClearHover = () => {
-                    this.callbacks.onLocationHover?.(null);
+                    this.callbacks.onAreaHover?.(null);
                 };
                 break;
                 
             case 'population':
-                this.boundUpdateHover = (code: string, data: any) => {
-                    this.callbacks.onLocationHover?.({
+                this.boundUpdateHover = (code: string, name: string, data: any) => {
+                    this.callbacks.onAreaHover?.({
                         type: 'ward',
                         code,
+                        name,
                         data: this.transformPopulationData(code, data)
                     });
                 };
                 this.boundClearHover = () => {
-                    this.callbacks.onLocationHover?.(null);
+                    this.callbacks.onAreaHover?.(null);
                 };
                 break;
                 
             default: // localElection, housePrice
-                this.boundUpdateHover = (code: string, data: any) => {
-                    this.callbacks.onLocationHover?.({
+                this.boundUpdateHover = (code: string, name: string, data: any) => {
+                    this.callbacks.onAreaHover?.({
                         type: 'ward',
                         code,
+                        name,
                         data: data ?? null
                     });
                 };
                 this.boundClearHover = () => {
-                    this.callbacks.onLocationHover?.(null);
+                    this.callbacks.onAreaHover?.(null);
                 };
         }
 
@@ -124,8 +128,9 @@ export class EventHandler {
 
             // Fast data lookup and callback
             const code = feature.properties?.[this.currentCodeProp];
+            const name = feature.properties?.[this.currentCodeProp.replace('CD', 'NM')];
             if (code && this.currentData) {
-                this.boundUpdateHover!(code, this.currentData[code]);
+                this.boundUpdateHover!(code, name, this.currentData[code]);
             }
         };
 

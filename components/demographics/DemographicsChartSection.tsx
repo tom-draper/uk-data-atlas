@@ -1,17 +1,28 @@
 // components/PopulationChart.tsx
-'use client';
-import { ActiveViz, AggregatedPopulationData, PopulationDataset, SelectedArea } from '@lib/types';
-import { CodeMapper } from '@/lib/hooks/useCodeMapper';
-import { BoundaryData } from '@/lib/hooks/useBoundaryData';
-import Gender from './gender/Gender';
-import AgeDistribution from './age/AgeDistribution';
-import PopulationDensity from './density/PopulationDensity';
+"use client";
+import {
+	ActiveViz,
+	AggregatedPopulationData,
+	PopulationDataset,
+	SelectedArea,
+} from "@lib/types";
+import { BoundaryData } from "@/lib/hooks/useBoundaryData";
+import Gender from "./gender/Gender";
+import AgeDistribution from "./age/AgeDistribution";
+import PopulationDensity from "./density/PopulationDensity";
 
 export interface DemographicsChartSectionProps {
 	availableDatasets: Record<string, PopulationDataset>;
 	aggregatedData: AggregatedPopulationData | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
+	codeMapper?: {
+		getCodeForYear: (
+			type: "ward",
+			code: string,
+			targetYear: number
+		) => string | undefined;
+	};
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -21,6 +32,7 @@ export default function DemographicsChartSection({
 	aggregatedData,
 	boundaryData,
 	selectedArea,
+	codeMapper,
 	activeViz,
 	setActiveViz,
 }: DemographicsChartSectionProps) {
@@ -33,6 +45,7 @@ export default function DemographicsChartSection({
 					aggregatedData={aggregatedData}
 					boundaryData={boundaryData}
 					selectedArea={selectedArea}
+					codeMapper={codeMapper}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
 				/>

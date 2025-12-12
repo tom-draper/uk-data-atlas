@@ -13,7 +13,7 @@ import UIOverlay from '@components/UIOverlay';
 import { LOCATIONS } from '@lib/data/locations';
 import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
 import type { ActiveViz, Datasets, SelectedArea } from '@lib/types';
-import { useWardLadMap } from '@/lib/hooks/useWardToLadMap';
+import { useCodeMapper } from '@/lib/hooks/useCodeMapper';
 
 interface MapInterfaceProps {
 	datasets: Datasets;
@@ -48,8 +48,8 @@ export default function MapInterface({
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null)
 
-	const wardLadMap = useWardLadMap();
-	const { boundaryData } = useBoundaryData(selectedLocation, wardLadMap.getLadForWard, wardLadMap.addWardLadMappings);
+	const codeMapper = useCodeMapper();
+	const { boundaryData } = useBoundaryData(selectedLocation, codeMapper);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } = useMapLibreInitialization(MAPLIBRE_CONFIG);
@@ -76,8 +76,7 @@ export default function MapInterface({
 	const mapManager = useMapManager({
 		mapRef: map,
 		geojson,
-		onLocationHover: interactionHandlers.onLocationHover,
-		onLocationChange: interactionHandlers.onLocationChange,
+		interactionHandlers
 	});
 
 	// Location navigation - memoize with proper dependencies
@@ -120,12 +119,13 @@ export default function MapInterface({
 	});
 
 	return (
-		<div style={{ width: '100%', height: '100vh', position: 'relative' }}>
+		<div className="relative w-full h-screen">
 			<UIOverlay
 				selectedLocation={selectedLocation}
 				selectedArea={selectedArea}
 				boundaryData={boundaryData}
 				mapOptions={mapOptions}
+				codeMapper={codeMapper}
 				onMapOptionsChange={handleMapOptionsChange}
 				onLocationClick={handleLocationClick}
 				onZoomIn={zoomHandlersRef.current.handleZoomIn}

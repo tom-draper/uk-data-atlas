@@ -8,6 +8,9 @@ interface CrimeChartProps {
 	availableDatasets: Record<string, CrimeDataset>;
 	aggregatedData: AggregatedCrimeData | null;
 	selectedArea: SelectedArea | null;
+	codeMapper?: {
+		getCodeForYear: (type: 'localAuthority', code: string, targetYear: number) => string | undefined;
+	};
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -16,6 +19,7 @@ export default function CrimeSection({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	codeMapper,
 	setActiveViz,
 }: CrimeChartProps) {
 	return (
@@ -27,6 +31,7 @@ export default function CrimeSection({
 				aggregatedData={aggregatedData}
 				year={2025}
 				selectedArea={selectedArea}
+				codeMapper={codeMapper}
 				setActiveViz={setActiveViz}
 			/>
 		</div>

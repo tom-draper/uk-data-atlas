@@ -93,8 +93,7 @@ function AgeDistribution({
             };
         }
 
-        const wardCode = selectedArea.data.wardCode;
-
+        const wardCode = selectedArea.code;
         const wardData = dataset.populationData[wardCode];
         if (!wardData) {
             return {

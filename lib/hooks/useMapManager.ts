@@ -1,26 +1,27 @@
 import { useEffect, useState } from 'react';
 import { MapManager } from '@lib/utils/mapManager';
-import type { LocationHoverData } from '@lib/utils/mapManager/mapManager';
-import { BoundaryGeojson } from '../types';
+import { BoundaryGeojson, SelectedArea } from '../types';
 
 type UseMapManagerOptions = {
     mapRef: React.RefObject<mapboxgl.Map | maplibregl.Map | null>;
     geojson: BoundaryGeojson | null;
-    onLocationHover: (location: LocationHoverData | null) => void;
-    onLocationChange: (location: string) => void;
+    interactionHandlers: {
+        onAreaHover: (area: SelectedArea | null) => void;
+        onLocationChange: (location: string) => void;
+    }
 };
 
-export function useMapManager(opts: UseMapManagerOptions) {
+export function useMapManager({mapRef, geojson, interactionHandlers}: UseMapManagerOptions) {
     const [mapManager, setMapManager] = useState<MapManager | null>(null);
 
     useEffect(() => {
-        if (!opts.mapRef?.current || !opts.geojson) return;
+        if (!mapRef?.current || !geojson) return;
 
         if (mapManager) return;
 
-        const manager = new MapManager(opts.mapRef.current, {
-            onLocationHover: (data) => opts.onLocationHover(data),
-            onLocationChange: (location) => opts.onLocationChange(location)
+        const manager = new MapManager(mapRef.current, {
+            onAreaHover: (data) => interactionHandlers.onAreaHover(data),
+            onLocationChange: (location) => interactionHandlers.onLocationChange(location)
         });
 
         setMapManager(manager);
@@ -29,7 +30,7 @@ export function useMapManager(opts: UseMapManagerOptions) {
             manager.destroy();
             setMapManager(null);
         };
-    }, [opts.mapRef, !!opts.geojson]);
+    }, [mapRef, !!geojson]);
 
     return mapManager;
 }

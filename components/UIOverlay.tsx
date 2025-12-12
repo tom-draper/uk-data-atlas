@@ -1,20 +1,24 @@
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
 import ChartPanel from '@components/ChartPanel';
-import type { ActiveViz, Dataset, Datasets, SelectedArea } from '@lib/types';
+import type { ActiveViz, AggregatedData, Dataset, Datasets, SelectedArea } from '@lib/types';
 import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 import { MapOptions } from '@/lib/types/mapOptions';
+import { CodeType } from '@/lib/hooks/useCodeMapper';
 
 interface UIOverlayProps {
 	datasets: Datasets;
 	activeDataset: Dataset | null;
-	aggregatedData: any;
+	aggregatedData: AggregatedData;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
 	selectedArea: SelectedArea | null;
 	boundaryData: BoundaryData;
-	mapOptions: any;
+	mapOptions: MapOptions;
+	codeMapper?: {
+		getCodeForYear: (type: CodeType, code: string, targetYear: number) => string | undefined;
+	};
 	onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
 	onLocationClick: (location: string) => void;
 	onZoomIn: () => void;
@@ -32,6 +36,7 @@ export default function UIOverlay({
 	selectedArea,
 	boundaryData,
 	mapOptions,
+	codeMapper,
 	onMapOptionsChange,
 	onLocationClick,
 	onZoomIn,
@@ -68,6 +73,7 @@ export default function UIOverlay({
 					selectedLocation={selectedLocation}
 					selectedArea={selectedArea}
 					boundaryData={boundaryData}
+					codeMapper={codeMapper}
 				/>
 			</div>
 		</div>

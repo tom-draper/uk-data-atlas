@@ -36,6 +36,11 @@ const useLocalElectionData = (
 	availableDatasets: Record<string, LocalElectionDataset>,
 	aggregatedData: AggregatedLocalElectionData | null,
 	selectedArea: SelectedArea | null,
+	getCodeForYear?: (
+		type: "ward",
+		code: string,
+		targetYear: number
+	) => string | undefined
 ) => {
 	return useMemo(() => {
 		return LOCAL_ELECTION_YEARS.map((year): ProcessedYearData => {
@@ -57,7 +62,17 @@ const useLocalElectionData = (
 
 			// Determine Data Source (Ward vs Aggregated)
 			if (selectedArea && selectedArea.type === "ward") {
-				const data = dataset.wardData[selectedArea.data.wardCode];
+				// Try to find the ward data for this year
+				const wardCode = selectedArea.code;
+				let data = dataset.wardData[wardCode];
+
+				// If no data found and we have a code mapper, try to find the equivalent code for this year
+				if (!data && getCodeForYear) {
+					const mappedCode = getCodeForYear("ward", wardCode, year);
+					if (mappedCode) {
+						data = dataset.wardData[mappedCode];
+					}
+				}
 
 				if (data) {
 					rawPartyVotes = data.partyVotes;
@@ -67,11 +82,7 @@ const useLocalElectionData = (
 				const agg = aggregatedData[year];
 				if (agg) {
 					rawPartyVotes = agg.partyVotes;
-					turnout = calculateTurnout(
-						agg.totalVotes,
-						0,
-						agg.electorate,
-					);
+					turnout = calculateTurnout(agg.totalVotes, 0, agg.electorate);
 				}
 			}
 
@@ -90,7 +101,7 @@ const useLocalElectionData = (
 			// Sum manually to ensure we catch all specific party keys
 			const totalVotes = Object.values(rawPartyVotes).reduce(
 				(a, b) => (a || 0) + (b || 0),
-				0,
+				0
 			);
 
 			if (totalVotes === 0) {
@@ -127,7 +138,7 @@ const useLocalElectionData = (
 				hasData: true,
 			};
 		});
-	}, [availableDatasets, aggregatedData, selectedArea]);
+	}, [availableDatasets, aggregatedData, selectedArea, getCodeForYear]);
 };
 
 interface LocalElectionResultChartSectionProps {
@@ -136,6 +147,13 @@ interface LocalElectionResultChartSectionProps {
 	aggregatedData: AggregatedLocalElectionData | null;
 	selectedArea: SelectedArea | null;
 	setActiveViz: (value: ActiveViz) => void;
+	codeMapper?: {
+		getCodeForYear: (
+			type: "ward",
+			code: string,
+			targetYear: number
+		) => string | undefined;
+	};
 }
 
 export default function LocalElectionResultChartSection({
@@ -144,11 +162,13 @@ export default function LocalElectionResultChartSection({
 	aggregatedData,
 	selectedArea,
 	setActiveViz,
+	codeMapper,
 }: LocalElectionResultChartSectionProps) {
 	const yearData = useLocalElectionData(
 		availableDatasets,
 		aggregatedData,
 		selectedArea,
+		codeMapper?.getCodeForYear
 	);
 
 	return (

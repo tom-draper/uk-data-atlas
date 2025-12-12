@@ -1,6 +1,11 @@
 // components/population/density/PopulationDensity.tsx
 import { memo } from "react";
-import { ActiveViz, AggregatedPopulationData, PopulationDataset, SelectedArea } from "@/lib/types";
+import {
+	ActiveViz,
+	AggregatedPopulationData,
+	PopulationDataset,
+	SelectedArea,
+} from "@/lib/types";
 import PopulationDensityChart from "./PopulationDensityChart";
 import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 
@@ -9,6 +14,13 @@ interface PopulationDensityChartProps {
 	boundaryData: BoundaryData;
 	aggregatedData: AggregatedPopulationData | null;
 	selectedArea: SelectedArea | null;
+	codeMapper?: {
+		getCodeForYear: (
+			type: "ward",
+			code: string,
+			targetYear: number
+		) => string | undefined;
+	};
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -18,28 +30,38 @@ function PopulationDensity({
 	aggregatedData,
 	boundaryData,
 	selectedArea,
+	codeMapper,
 	setActiveViz,
 	activeViz,
 }: PopulationDensityChartProps) {
-	const vizId = `populationDensity${dataset.year}`
+	const vizId = `populationDensity${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
 	return (
 		<div
 			className={`p-2 rounded transition-all cursor-pointer ${isActive
-				? 'bg-emerald-50/60 border-2 border-emerald-300'
-				: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
+					? "bg-emerald-50/60 border-2 border-emerald-300"
+					: "bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300"
 				}`}
-			onClick={() => setActiveViz({ vizId: vizId, datasetType: dataset.type, datasetYear: dataset.year })}
+			onClick={() =>
+				setActiveViz({
+					vizId: vizId,
+					datasetType: dataset.type,
+					datasetYear: dataset.year,
+				})
+			}
 		>
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">Population Density [{dataset.year}]</h3>
+				<h3 className="text-xs font-bold">
+					Population Density [{dataset.year}]
+				</h3>
 			</div>
 			<PopulationDensityChart
 				dataset={dataset}
 				aggregatedData={aggregatedData}
 				boundaryData={boundaryData}
 				selectedArea={selectedArea}
+				codeMapper={codeMapper}
 			/>
 		</div>
 	);
