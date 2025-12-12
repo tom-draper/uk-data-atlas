@@ -1,114 +1,91 @@
 // components/population/age/AgeDistributionChart.tsx
-import { AgeGroups } from '@lib/types';
+import { AgeGroups } from '@/lib/types';
 import { getAgeColor } from '@/lib/utils/ageDistribution';
-import { useMemo, memo } from 'react';
+import { memo } from 'react';
 import AgeGroupBar from './AgeGroupBar';
 
 interface AgeDistributionChartProps {
-	ages: Array<{ age: number; count: number }>;
+	counts: Uint32Array | number[]; // Simple array
+	maxCount: number;
 	total: number;
 	ageGroups: AgeGroups;
 	isActive: boolean;
 }
 
-// Pre-calculate age group order (constant)
 const AGE_GROUP_ORDER: Array<keyof AgeGroups> = ['0-17', '18-29', '30-44', '45-64', '65+'];
 
-// Memoized age bar component
-const AgeBar = memo(({ 
-	age, 
-	count, 
-	heightPercentage, 
-	color 
-}: { 
-	age: number; 
-	count: number; 
-	heightPercentage: number; 
-	color: string;
-}) => (
-	<div
-		className="flex-1 hover:opacity-80 transition-opacity relative group"
-		style={{
-			height: `${heightPercentage}%`,
-			backgroundColor: color,
-			minHeight: count > 0 ? '2px' : '0'
-		}}
-		title={`Age ${age}: ${count.toLocaleString()}`}
-	>
-		<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[8px] rounded-xs px-1 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-100">
-			{age}: {count.toLocaleString()}
-		</div>
-	</div>
-));
+// Helper to generate a dummy array for mapping (0-99)
+// Created once effectively acting as a static index
+const AGE_INDICES = Array.from({ length: 100 }, (_, i) => i);
 
-AgeBar.displayName = 'AgeBar';
-
-function AgeDistributionChart({ ages, total, ageGroups, isActive }: AgeDistributionChartProps) {
-	// Memoize max calculation and bar data
-	const { maxCount, barData } = useMemo(() => {
-		let max = 1;
-		for (let i = 0; i < ages.length; i++) {
-			if (ages[i].count > max) {
-				max = ages[i].count;
-			}
-		}
-
-		// Pre-calculate all bar properties
-		const bars = new Array(ages.length);
-		for (let i = 0; i < ages.length; i++) {
-			const { age, count } = ages[i];
-			bars[i] = {
-				age,
-				count,
-				heightPercentage: (count / max) * 100,
-				color: getAgeColor(age)
-			};
-		}
-
-		return { maxCount: max, barData: bars };
-	}, [ages]);
-
-	if (maxCount === 1) {
-		return <div className="text-xs h-25 text-gray-400/80 text-center grid place-items-center">
-			<div className="mb-4">
-				No data available
+function AgeDistributionChart({ counts, maxCount, total, ageGroups, isActive }: AgeDistributionChartProps) {
+	if (!total || maxCount === 0) {
+		return (
+			<div className="text-xs h-25 text-gray-400/80 text-center grid place-items-center">
+				<div className="mb-4">No data available</div>
 			</div>
-		</div>
+		);
 	}
 
 	return (
 		<div className="mx-1 -mt-4">
-			{/* Detailed Age Chart */}
+			{/* PERFORMANCE NOTES:
+                1. `items-end`: Aligns bars to bottom
+                2. `will-change-transform`: Hints browser to promote to GPU layer
+            */}
 			<div className="flex items-end h-26 overflow-x-hidden pt-4">
-				{barData.map(({ age, count, heightPercentage, color }) => (
-					<AgeBar 
-						key={age} 
-						age={age} 
-						count={count} 
-						heightPercentage={heightPercentage} 
-						color={color} 
-					/>
-				))}
+				{AGE_INDICES.map((age) => {
+					const count = counts[age] || 0;
+					const scale = maxCount > 0 ? count / maxCount : 0;
+
+					// 1. The structural container (defines width and full height)
+					return (
+						<div
+							key={age}
+							// className="relative w-0.5" // Remove bg-gray-200 from here
+							className="flex-1 hover:opacity-80 transition-opacity relative group"
+							title={`Age ${age}: ${count.toLocaleString()}`}
+							style={{
+								height: '100%',
+							}}
+						>
+							{/* 2. The Scaler element (applies color and vertical scaling) */}
+							<div
+								// className="w-full h-full origin-bottom will-change-transform"
+								// className="w-full h-full origin-bottom will-change-transform border-r border-r-transparent"
+								className="w-full h-full origin-bottom border-r border-r-transparent"
+
+								style={{
+									// Apply the background color here, to the element that is scaled
+									backgroundColor: getAgeColor(age),
+									// Apply the transform scale
+									transform: `scaleY(${scale})`,
+									// Add min height equivalent to '2px' to ensure visibility for small bars
+									minHeight: scale > 0 ? '2px' : '0'
+								}}
+							/>
+						</div>
+					);
+				})}
 			</div>
 
 			{/* Age axis labels */}
 			<div className="flex justify-between text-[8px] text-gray-500 mt-1 -mb-1">
-				<span>0</span>
-				<span>25</span>
-				<span>50</span>
-				<span>75</span>
-				<span>99</span>
+				<span>0</span><span>25</span><span>50</span><span>75</span><span>99</span>
 			</div>
 
-			{/* Age group bars */}
+			{/* Age group bars - Collapsible container */}
 			<div
-				className={`space-y-1.5 transition-all duration-300 ease-in-out cursor-pointer overflow-hidden ${isActive ? 'mt-3' : ''}`}
+				className={`space-y-1.5 overflow-hidden ${isActive ? 'mt-3' : ''}`}
 				style={{
 					maxHeight: isActive ? '104px' : '0px',
 					opacity: isActive ? 1 : 0
 				}}
 			>
-				{AGE_GROUP_ORDER.map(ageGroup => (
+				{/* Only render contents if active to save layout time on inactive charts 
+                   (Optional optimization, remove check if you want animation)
+                */}
+				{isActive && AGE_GROUP_ORDER.map(ageGroup => (
 					<AgeGroupBar
 						key={ageGroup}
 						label={ageGroup}
@@ -122,4 +99,12 @@ function AgeDistributionChart({ ages, total, ageGroups, isActive }: AgeDistribut
 	);
 }
 
-export default memo(AgeDistributionChart);
+// Simple equality check for props to prevent unnecessary renders
+export default memo(AgeDistributionChart, (prev, next) => {
+	return (
+		prev.maxCount === next.maxCount &&
+		prev.isActive === next.isActive &&
+		prev.total === next.total &&
+		prev.counts === next.counts // Works if parent maintains reference or we use primitive checks
+	);
+});
