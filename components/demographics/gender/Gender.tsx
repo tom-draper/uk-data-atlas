@@ -90,6 +90,7 @@ function Gender({
 						<span className="text-blue-600">{totalMales.toLocaleString()}</span>
 						{' '}<span className="text-gray-500">/</span>{' '}
 						<span className="text-pink-600">{totalFemales.toLocaleString()}</span>
+						<span className="ml-2 text-gray-500">{(totalMales / (totalMales + totalFemales)).toFixed(4)}</span>
 					</span>
 				)}
 			</div>

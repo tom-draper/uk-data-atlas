@@ -194,8 +194,7 @@ function AgeDistribution({
                 )}
             </div>
             
-            {/* Pass primitive props to ensure reference stability and speed 
-            */}
+            {/* Pass primitive props to ensure reference stability and speed */}
             <AgeDistributionChart
                 counts={counts}
                 maxCount={maxCount}
