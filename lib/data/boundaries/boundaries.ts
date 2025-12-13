@@ -153,7 +153,7 @@ export const fetchBoundaryFile = async (
         geojson = topojson.feature(
             json,
             json.objects[objectKey],
-        ) as BoundaryGeojson;
+        );
     } else {
         geojson = json;
     }

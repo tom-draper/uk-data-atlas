@@ -37,6 +37,10 @@ export interface MapOptions {
     general: {
         theme: ColorTheme;
     };
+    visibility: {
+        hideDataLayer: boolean;
+        hideBoundaries: boolean;
+    }
 }
 
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
@@ -68,5 +72,9 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
     },
     general: {
         theme: 'viridis'
+    },
+    visibility: {
+        hideDataLayer: false,
+        hideBoundaries: false
     }
 };

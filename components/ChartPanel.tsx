@@ -52,8 +52,8 @@ const PanelHeader = ({
 function panelHeaderDetails(selectedLocation: string | null, selectedArea: SelectedArea | null) {
 	if (selectedArea == null) {
 		return {
-			title: selectedLocation || 'Greater Manchester',
-			subtitle: 'North West, England',
+			title: selectedLocation || '',
+			subtitle: '',
 			code: ''
 		};
 	}
@@ -61,20 +61,20 @@ function panelHeaderDetails(selectedLocation: string | null, selectedArea: Selec
 	switch (selectedArea.type) {
 		case 'ward':
 			return {
-				title: selectedArea.name ?? selectedArea.data ? selectedArea.data.wardName : '',
+				title: selectedArea.name ?? (selectedArea.data ? selectedArea.data.wardName : ''),
 				subtitle: selectedArea.data ? selectedArea.data.localAuthorityName : '',
 				code: `${selectedArea.data ? selectedArea.data.localAuthorityCode : ''} ${selectedArea.code}`
 			}
 		case 'constituency':
 			return {
-				title: selectedArea.data.constituencyName,
-				subtitle: `${selectedArea.data.regionName}, ${selectedArea.data.countryName}`,
+				title: selectedArea.data ? (selectedArea.data.constituencyName ?? '') : '',
+				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? '') : ''}, ${selectedArea.data ? (selectedArea.data.countryName ?? '') : ''}`,
 				code: selectedArea.code
 			};
 		case 'localAuthority':
 			return {
-				title: selectedArea.data.localAuthorityName,
-				subtitle: `${selectedArea.data.regionName}, ${selectedArea.data.countryName}`,
+				title: selectedArea.data ? (selectedArea.data.localAuthorityName ?? '') : '',
+				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? '') : ''}, ${selectedArea.data ? (selectedArea.data.countryName ?? '') : ''}`,
 				code: selectedArea.code
 			};
 	}

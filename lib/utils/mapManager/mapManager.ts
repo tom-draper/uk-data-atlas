@@ -74,9 +74,9 @@ export class MapManager {
 
         // Update layers
         if (mode === 'party-percentage' && options.selectedParty) {
-            this.layerManager.updatePartyPercentageLayers(transformedGeojson, options);
+            this.layerManager.updatePartyPercentageLayers(transformedGeojson, options, mapOptions.visibility);
         } else {
-            this.layerManager.updateElectionLayers(transformedGeojson, dataset.partyInfo);
+            this.layerManager.updateElectionLayers(transformedGeojson, dataset.partyInfo, mapOptions.visibility);
         }
 
         this.eventHandler.setupEventHandlers(type, dataMap, codeProp);
