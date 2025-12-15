@@ -54,7 +54,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
         partyPercentageRange: { min: 0, max: 100 }
     },
     ageDistribution: {
-        colorRange: { min: 25, max: 55 }
+        colorRange: { min: 25, max: 65 }
     },
     populationDensity: {
         colorRange: { min: 0, max: 8000 }
