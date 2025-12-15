@@ -14,6 +14,7 @@ export default function MapOptions({ onZoomIn, onZoomOut, handleMapOptionsChange
     const [selectedTheme, setSelectedTheme] = useState('viridis');
     const [hideDataLayer, setHideDataLayer] = useState(false);
     const [hideBoundaries, setHideBoundaries] = useState(false);
+    const [hideOverlay, setHideOverlay] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handleThemeChange = (themeId: ColorTheme) => {
@@ -38,6 +39,12 @@ export default function MapOptions({ onZoomIn, onZoomOut, handleMapOptionsChange
         } else {
             handleMapOptionsChange('visibility', { hideBoundaries: newValue });
         }
+    };
+
+    const handleOverlayToggle = () => {
+        const newValue = !hideOverlay;
+        setHideOverlay(newValue);
+        handleMapOptionsChange('visibility', { hideOverlay: newValue });
     };
 
     useEffect(() => {
@@ -69,7 +76,7 @@ export default function MapOptions({ onZoomIn, onZoomOut, handleMapOptionsChange
                             disabled={hideBoundaries}
                             className="w-3.5 h-3.5 rounded border border-white/30 bg-white/10 checked:bg-blue-500/80 checked:border-blue-500/80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                         />
-                        <span className={`text-xs text-gray-600 group-hover:text-gray-800 transition-colors ${hideBoundaries ? 'opacity-50' : ''}`}>
+                        <span className={`text-xs text-gray-500 group-hover:text-gray-800 transition-colors ${hideBoundaries ? 'opacity-50' : ''}`}>
                             Hide data layer
                         </span>
                     </label>
@@ -80,8 +87,19 @@ export default function MapOptions({ onZoomIn, onZoomOut, handleMapOptionsChange
                             onChange={handleBoundariesToggle}
                             className="w-3.5 h-3.5 rounded border border-white/30 bg-white/10 checked:bg-blue-500/80 checked:border-blue-500/80 cursor-pointer transition-all duration-200"
                         />
-                        <span className="text-xs text-gray-600 group-hover:text-gray-800 transition-colors">
+                        <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
                             Hide boundaries
+                        </span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                        <input
+                            type="checkbox"
+                            checked={hideOverlay}
+                            onChange={handleOverlayToggle}
+                            className="w-3.5 h-3.5 rounded border border-white/30 bg-white/10 checked:bg-blue-500/80 checked:border-blue-500/80 cursor-pointer transition-all duration-200"
+                        />
+                        <span className="text-xs text-gray-500 group-hover:text-gray-800 transition-colors">
+                            Hide overlay
                         </span>
                     </label>
                 </div>

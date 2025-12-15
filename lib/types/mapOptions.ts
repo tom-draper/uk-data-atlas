@@ -40,6 +40,7 @@ export interface MapOptions {
     visibility: {
         hideDataLayer: boolean;
         hideBoundaries: boolean;
+        hideOverlay: boolean;
     }
 }
 
@@ -68,13 +69,14 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
         colorRange: { min: 0, max: 1000 }
     },
     income: {
-        colorRange: { min: 20000, max: 40000 }
+        colorRange: { min: 25000, max: 45000 }
     },
     general: {
         theme: 'viridis'
     },
     visibility: {
         hideDataLayer: false,
-        hideBoundaries: false
+        hideBoundaries: false,
+        hideOverlay: false,
     }
 };

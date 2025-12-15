@@ -55,5 +55,5 @@ export interface IncomeDataset {
 }
 
 export interface AggregatedIncomeData {
-
+    averageIncome: number;
 }

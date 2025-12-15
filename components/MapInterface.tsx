@@ -105,23 +105,25 @@ export default function MapInterface({
 
 	return (
 		<div className="relative w-full h-screen">
-			<UIOverlay
-				selectedLocation={selectedLocation}
-				selectedArea={selectedArea}
-				boundaryData={boundaryData}
-				mapOptions={mapOptions}
-				codeMapper={codeMapper}
-				onMapOptionsChange={handleMapOptionsChange}
-				onLocationClick={handleLocationClick}
-				onZoomIn={zoomHandlersRef.current.handleZoomIn}
-				onZoomOut={zoomHandlersRef.current.handleZoomOut}
-				activeDataset={activeDataset}
-				activeViz={activeViz}
-				setActiveViz={setActiveViz}
-				aggregatedData={aggregatedData}
-				datasets={datasets}
-				handleMapOptionsChange={handleMapOptionsChange}
-			/>
+			{!mapOptions.visibility.hideOverlay && (
+				<UIOverlay
+					selectedLocation={selectedLocation}
+					selectedArea={selectedArea}
+					boundaryData={boundaryData}
+					mapOptions={mapOptions}
+					codeMapper={codeMapper}
+					onMapOptionsChange={handleMapOptionsChange}
+					onLocationClick={handleLocationClick}
+					onZoomIn={zoomHandlersRef.current.handleZoomIn}
+					onZoomOut={zoomHandlersRef.current.handleZoomOut}
+					activeDataset={activeDataset}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+					aggregatedData={aggregatedData}
+					datasets={datasets}
+					handleMapOptionsChange={handleMapOptionsChange}
+				/>
+			)}
 			<MapView
 				activeDataset={activeDataset}
 				activeViz={activeViz}

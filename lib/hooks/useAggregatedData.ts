@@ -48,6 +48,7 @@ function aggregateDataset<T extends Dataset>(
 		const hasData =
 			(dataset as any).wardData ||
 			(dataset as any).constituencyData ||
+			(dataset as any).localAuthorityData ||
 			(dataset as any).populationData;
 
 		if (hasData && geojson) {
@@ -120,7 +121,7 @@ export function useAggregatedData({
 			datasets: datasets.crime,
 			boundaryType: 'localAuthority' as const,
 			getGeojson: (dataset: CrimeDataset, bd: BoundaryData) =>
-				bd.ward?.[dataset.boundaryYear],
+				bd.localAuthority?.[dataset.boundaryYear],
 			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: CrimeDataset, loc: string | null, id: string) =>
 				mm.calculateCrimeStats(geojson, dataset.records, loc, id),
 		},
@@ -128,7 +129,7 @@ export function useAggregatedData({
 			datasets: datasets.income,
 			boundaryType: 'localAuthority' as const,
 			getGeojson: (dataset: IncomeDataset, bd: BoundaryData) =>
-				bd.ward?.[dataset.boundaryYear],
+				bd.localAuthority?.[dataset.boundaryYear],
 			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: IncomeDataset, loc: string | null, id: string) =>
 				mm.calculateIncomeStats(geojson, dataset.localAuthorityData, loc, id),
 		},

@@ -32,7 +32,7 @@ export default function CrimeChart({
 	if (!dataset) return null;
 
 	const isActive = activeDataset?.id === `crime${dataset.year}`;
-	const hasData = selectedArea !== null && selectedArea.type === 'localAuthority' && dataset.records?.[selectedArea.data.localAuthorityCode] !== undefined;
+	const hasData = selectedArea !== null && selectedArea.type === 'localAuthority' && dataset.records?.[selectedArea.code] !== undefined;
 
 	return (
 		<div

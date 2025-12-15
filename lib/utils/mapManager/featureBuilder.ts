@@ -23,7 +23,7 @@ export class FeatureBuilder {
     ): BoundaryGeojson['features'] {
         // Pre-allocate array for better performance
         const result = new Array(features.length);
-        
+
         for (let i = 0; i < features.length; i++) {
             const feature = features[i];
             result[i] = {
@@ -34,7 +34,7 @@ export class FeatureBuilder {
                 }
             };
         }
-        
+
         return result;
     }
 
@@ -45,12 +45,12 @@ export class FeatureBuilder {
         codeProp: PropertyKeys
     ): BoundaryGeojson['features'] {
         const result = new Array(features.length);
-        
+
         for (let i = 0; i < features.length; i++) {
             const feature = features[i];
             const code = feature.properties[codeProp];
             const locationData = data[code];
-            
+
             let percentage = 0;
             if (locationData?.partyVotes) {
                 const partyVotes = locationData.partyVotes[partyCode] || 0;
@@ -67,7 +67,7 @@ export class FeatureBuilder {
                 }
             };
         }
-        
+
         return result;
     }
 
@@ -78,7 +78,7 @@ export class FeatureBuilder {
         getColor: (feature: BoundaryGeojson['features'][0]) => string
     ): BoundaryGeojson['features'] {
         const result = new Array(features.length);
-        
+
         for (let i = 0; i < features.length; i++) {
             const feature = features[i];
             result[i] = {
@@ -89,7 +89,7 @@ export class FeatureBuilder {
                 }
             };
         }
-        
+
         return result;
     }
 
@@ -173,7 +173,7 @@ export class FeatureBuilder {
         return this.buildColoredFeatures(features, ladCodeProp, (feature) => {
             const ladCode = feature.properties[ladCodeProp];
             const area = dataset.records[ladCode];
-            
+
             if (!area) return DEFAULT_COLOR;
 
             return getColorForCrimeRate(area.totalRecordedCrime, mapOptions.crime, mapOptions.general.theme);
@@ -189,10 +189,10 @@ export class FeatureBuilder {
         return this.buildColoredFeatures(features, ladCodeProp, (feature) => {
             const ladCode = feature.properties[ladCodeProp];
             const income = dataset.localAuthorityData[ladCode]?.annual?.median;
-            
+
             if (!income) return DEFAULT_COLOR;
 
-            return getColorForIncome(income, mapOptions.crime, mapOptions.general.theme);
+            return getColorForIncome(income, mapOptions.income, mapOptions.general.theme);
         });
     }
 }

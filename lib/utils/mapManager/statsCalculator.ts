@@ -1,5 +1,5 @@
 // lib/utils/mapManager/statsCalculator.ts
-import { BoundaryGeojson, PartyVotes, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, WardStats, ConstituencyStats, AgeGroups, WardHousePriceData, AggregatedHousePriceData, PopulationStats, CrimeDataset } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, WardStats, ConstituencyStats, AgeGroups, WardHousePriceData, AggregatedHousePriceData, PopulationStats, CrimeDataset } from '@lib/types';
 import { calculateTotal, polygonAreaSqKm } from '../population';
 import { getWinningParty } from '../generalElection';
 import { calculateAgeGroups } from '../ageDistribution';
@@ -35,7 +35,6 @@ export class StatsCalculator {
 
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson.features);
         const features = geojson.features;
-        const len = features.length;
 
         const stats: WardStats = {
             partyVotes: {
@@ -47,7 +46,7 @@ export class StatsCalculator {
         };
 
         // Single pass aggregation with direct property access
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < features.length; i++) {
             const ward = wardData[features[i].properties[wardCodeProp]];
             if (!ward) continue;
 
@@ -64,7 +63,7 @@ export class StatsCalculator {
             stats.partyVotes.SF += partyVotes.SF || 0;
             stats.partyVotes.APNI += partyVotes.APNI || 0;
             stats.partyVotes.SDLP += partyVotes.SDLP || 0;
-            
+
             stats.electorate += ward.electorate;
             stats.totalVotes += ward.totalVotes;
         }
@@ -85,7 +84,6 @@ export class StatsCalculator {
 
         const constituencyCodeProp = this.propertyDetector.detectConstituencyCode(geojson.features);
         const features = geojson.features;
-        const len = features.length;
 
         const stats: ConstituencyStats = {
             totalSeats: 0,
@@ -97,7 +95,7 @@ export class StatsCalculator {
             partyVotes: {},
         };
 
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < features.length; i++) {
             const constituency = constituencyData[features[i].properties[constituencyCodeProp]];
             if (!constituency) continue;
 
@@ -157,20 +155,19 @@ export class StatsCalculator {
 
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson.features);
         const features = geojson.features;
-        const len = features.length;
 
         const yearlyTotals: Record<number, number> = {};
         const yearlyCounts: Record<number, number> = {};
         let totalPrice = 0;
         let wardCount = 0;
 
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < features.length; i++) {
             const ward = wardData[features[i].properties[wardCodeProp]];
             if (!ward) continue;
 
             const prices = ward.prices;
             const price2023 = prices[2023];
-            
+
             if (price2023 !== null && price2023 !== undefined) {
                 totalPrice += price2023;
                 wardCount++;
@@ -217,12 +214,11 @@ export class StatsCalculator {
 
         const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
         const features = geojson.features;
-        const len = features.length;
 
         let totalRecordedCrime = 0;
         let wardCount = 0;
 
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < features.length; i++) {
             const area = crimeData[features[i].properties[ladCodeProp]];
             if (!area) continue;
 
@@ -250,12 +246,11 @@ export class StatsCalculator {
 
         const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
         const features = geojson.features;
-        const len = features.length;
 
         let totalMedianIncome = 0;
         let localAuthorityCount = 0;
 
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < features.length; i++) {
             const locationIncome = incomeData[features[i].properties[ladCodeProp]];
             if (locationIncome?.annual?.median) {
                 totalMedianIncome += locationIncome.annual.median;
@@ -277,7 +272,6 @@ export class StatsCalculator {
         wardCodeProp: string
     ) {
         const features = geojson.features;
-        const len = features.length;
 
         // Pre-allocate objects
         const ageData: Record<string, number> = {};
@@ -299,7 +293,7 @@ export class StatsCalculator {
             females
         };
 
-        for (let i = 0; i < len; i++) {
+        for (let i = 0; i < features.length; i++) {
             const ward = populationData[features[i].properties[wardCodeProp]];
             if (!ward) continue;
 
@@ -378,8 +372,8 @@ export class StatsCalculator {
         // Distribute 90+ age data using pre-computed weights
         const age90Plus = ages[90].count;
         for (let i = 90; i < 100; i++) {
-            ages[i] = { 
-                age: i, 
+            ages[i] = {
+                age: i,
                 count: age90Plus * AGE_90_WEIGHTS[i - 90]
             };
         }

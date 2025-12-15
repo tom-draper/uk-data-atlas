@@ -53,7 +53,7 @@ function panelHeaderDetails(selectedLocation: string | null, selectedArea: Selec
 	if (selectedArea == null) {
 		return {
 			title: selectedLocation || '',
-			subtitle: '',
+			subtitle: 'United Kingdom',
 			code: ''
 		};
 	}
