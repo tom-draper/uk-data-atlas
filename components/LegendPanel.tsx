@@ -306,6 +306,12 @@ export default memo(function LegendPanel({
             case 'housePrice':
                 return renderDynamicLegend('housePrice', 0, 2000000, 80000, 500000, formatCurrency);
 
+            case 'income':
+                return renderDynamicLegend('income', 0, 2000000, 80000, 500000, formatCurrency);
+            
+            case 'crime':
+                return renderDynamicLegend('crime', 0, 150000, 10000, 100000);
+
             case 'generalElection':
             case 'localElection':
                 return renderElectionLegend();
