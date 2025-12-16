@@ -108,7 +108,7 @@ export class MapManager {
         const features = buildFeatures(geojson.features, dataset, wardCodeProp, mapOptions);
         const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
 
-        this.layerManager.updateColoredLayers(transformedGeojson);
+        this.layerManager.updateColoredLayers(transformedGeojson, mapOptions.visibility);
         this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
     }
 
@@ -145,7 +145,7 @@ export class MapManager {
         const features = buildFeatures(geojson.features, dataset, codeProp, mapOptions);
         const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
 
-        this.layerManager.updateColoredLayers(transformedGeojson);
+        this.layerManager.updateColoredLayers(transformedGeojson, mapOptions.visibility);
         this.eventHandler.setupEventHandlers(eventType, dataForEvents, codeProp);
     }
 

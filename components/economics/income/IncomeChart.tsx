@@ -16,10 +16,9 @@ interface IncomeChartProps {
 }
 
 const colors = {
-	bg: 'bg-blue-50/60',
-	border: 'border-blue-300',
-	inactive: 'bg-white/60 border-2 border-gray-200/80 hover:border-blue-300',
-	bar: '#3b82f6'
+	bg: 'bg-emerald-50/60',
+	border: 'border-emerald-300',
+	inactive: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300',
 };
 
 // Green shades for the pound signs
@@ -124,7 +123,7 @@ export default function IncomeChart({
 			</div>
 
 			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className="text-xs font-bold text-gray-700">Income [{dataset.year}]</h3>
+				<h3 className="text-xs font-bold text-gray-700">Income (Median) [{dataset.year}]</h3>
 			</div>
 
 			{formattedMedian ? (

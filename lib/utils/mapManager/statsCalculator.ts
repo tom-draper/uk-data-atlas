@@ -216,7 +216,7 @@ export class StatsCalculator {
         const features = geojson.features;
 
         let totalRecordedCrime = 0;
-        let wardCount = 0;
+        let localAuthorityCount = 0;
 
         for (let i = 0; i < features.length; i++) {
             const area = crimeData[features[i].properties[ladCodeProp]];
@@ -225,11 +225,13 @@ export class StatsCalculator {
             const crime = area.totalRecordedCrime;
             if (crime !== null && crime !== undefined) {
                 totalRecordedCrime += crime;
-                wardCount++;
+                localAuthorityCount++;
             }
         }
 
-        const result = { totalRecordedCrime, wardCount };
+        const result = { 
+            averageRecordedCrime: localAuthorityCount > 0 ? (totalRecordedCrime / localAuthorityCount) : 0 
+        };
         this.cache.set(cacheKey, result);
         return result;
     }

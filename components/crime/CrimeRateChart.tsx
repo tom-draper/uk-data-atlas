@@ -1,8 +1,8 @@
-// components/CrimeChart.tsx
+// components/crime/CrimeRateChart.tsx
 'use client';
 import { ActiveViz, AggregatedCrimeData, Dataset, CrimeDataset, SelectedArea } from '@lib/types';
 
-interface CrimeChartProps {
+interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, CrimeDataset>;
 	aggregatedData: AggregatedCrimeData | null;
@@ -20,19 +20,40 @@ const colors = {
 	inactive: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
 };
 
-export default function CrimeChart({
+export default function CrimeRateChart({
 	activeDataset,
 	availableDatasets,
+	aggregatedData,
 	selectedArea,
 	codeMapper,
 	year,
 	setActiveViz,
-}: CrimeChartProps) {
+}: CrimeRateChartProps) {
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
+	// Get income data for selected area or aggregated data
+	let crimeRate: number | null = null;
+
+	// We calculate data first so we can use it for the particle effects
+	if (dataset) {
+		if (selectedArea === null && aggregatedData) {
+			crimeRate = aggregatedData[year]?.totalRecordedCrime || null;
+		} else if (selectedArea && selectedArea.type === 'localAuthority' && selectedArea.data) {
+			const laCode = selectedArea.code;
+			crimeRate = dataset.records?.[laCode]?.totalRecordedCrime || null;
+
+			// Try code mapping if not found
+			if (!crimeRate && codeMapper) {
+				const mappedCode = codeMapper.getCodeForYear('localAuthority', laCode, year);
+				if (mappedCode) {
+					crimeRate = dataset.records?.[mappedCode]?.totalRecordedCrime || null;
+				}
+			}
+		}
+	}
+
 	const isActive = activeDataset?.id === `crime${dataset.year}`;
-	const hasData = selectedArea !== null && selectedArea.type === 'localAuthority' && dataset.records?.[selectedArea.code] !== undefined;
 
 	return (
 		<div
@@ -46,12 +67,12 @@ export default function CrimeChart({
 			})}
 		>
 			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className="text-xs font-bold">Crime [{dataset.year}]</h3>
+				<h3 className="text-xs font-bold">Crime Rate [{dataset.year}]</h3>
 			</div>
 
 			<div className="relative flex justify-end items-end mt-4 z-10">
-				<div className={`text-xl font-bold ${!hasData ? 'text-gray-400 text-sm' : ''}`}>
-					{hasData}
+				<div className={`text-xl font-bold`}>
+					{crimeRate}
 				</div>
 			</div>
 		</div>

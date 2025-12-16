@@ -12,22 +12,22 @@
     "lucide-react": "^0.554.0",
     "mapbox-gl": "^3.17.0",
     "maplibre-gl": "^5.14.0",
-    "next": "^16.0.7",
+    "next": "^16.0.10",
     "papaparse": "^5.5.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.17",
-    "@types/node": "^24.10.1",
-    "@types/papaparse": "^5.5.1",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^24.10.4",
+    "@types/papaparse": "^5.5.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/topojson-client": "^3.1.5",
     "babel-plugin-react-compiler": "^1.0.0",
-    "baseline-browser-mapping": "^2.9.6",
-    "tailwindcss": "^4.1.17",
+    "baseline-browser-mapping": "^2.9.7",
+    "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3"
   },
   "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b"

@@ -1,7 +1,7 @@
-// components/CrimeChart.tsx
+// components/crime/CrimeChart.tsx
 'use client';
 import { ActiveViz, AggregatedCrimeData, Dataset, CrimeDataset, SelectedArea } from '@lib/types';
-import CrimeChart from './CrimeChart';
+import CrimeChart from './CrimeRateChart';
 
 interface CrimeChartProps {
 	activeDataset: Dataset | null;

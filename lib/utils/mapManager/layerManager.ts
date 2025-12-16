@@ -86,19 +86,32 @@ export class LayerManager {
         this.addBorderLayer();
     }
 
-    updateColoredLayers(geojson: BoundaryGeojson): void {
+    updateColoredLayers(geojson: BoundaryGeojson, visibility: MapOptions['visibility']) {
         this.removeExistingLayers();
         this.addSource(geojson);
 
-        this.map.addLayer({
-            id: FILL_LAYER_ID,
-            type: 'fill',
-            source: SOURCE_ID,
-            paint: {
-                'fill-color': ['get', 'color'],
-                'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
-            }
-        });
+        if (visibility.hideDataLayer || visibility.hideBoundaries) {
+            // Only show boundaries without data colors
+            this.map.addLayer({
+                id: FILL_LAYER_ID,
+                type: 'fill',
+                source: SOURCE_ID,
+                paint: {
+                    'fill-color': visibility.hideBoundaries ? 'transparent' : '#cccccc',
+                    'fill-opacity': visibility.hideBoundaries ? 0 : 0.6
+                }
+            });
+        } else {
+            this.map.addLayer({
+                id: FILL_LAYER_ID,
+                type: 'fill',
+                source: SOURCE_ID,
+                paint: {
+                    'fill-color': ['get', 'color'],
+                    'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
+                }
+            });
+        }
 
         this.addBorderLayer();
     }
