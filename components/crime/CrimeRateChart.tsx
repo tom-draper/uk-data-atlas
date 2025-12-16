@@ -15,9 +15,8 @@ interface CrimeRateChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-// Reverting to the original colors object for border styling
 const colors = {
-	bg: 'bg-emerald-50/60', // Note: We only use the base color for reference, the actual background is dynamic
+	bg: 'bg-emerald-50/60',
 	border: 'border-emerald-300',
 	inactive: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300'
 };
@@ -57,42 +56,48 @@ export default function CrimeRateChart({
 	const isActive = activeDataset?.id === `crime${dataset.year}`;
 	const formattedCrimeTotal = crimeRate ? Math.round(crimeRate).toLocaleString() : null;
 
-	// --- HEATMAP LOGIC: INTENSITY, MIN/MAX THRESHOLDS ---
-
+	// --- HEATMAP LOGIC ---
 	const rawValue = crimeRate || 0;
 	const maxThreshold = 100000;
 	const minThreshold = 5000;
 
-	// 1. Calculate Intensity (0 to 1) based on the min/max range
 	let intensity = 0;
 	const hasData = crimeRate !== null && crimeRate > 0;
 	if (hasData && rawValue > minThreshold) {
-		// Normalize the value within the range [minThreshold, maxThreshold]
 		intensity = Math.min(Math.max((rawValue - minThreshold) / (maxThreshold - minThreshold), 0), 1);
 	}
-	// If rawValue <= 5000, intensity remains 0.
 
-	// 2. Color Palettes (HSL) - Yellow to Orange to Red (better for crime data)
-	// Hue: 50 (Yellow) -> 0 (Red)
-	const baseHue = 50 - (intensity * 50); // Shifts from 50 (yellow) -> 0 (red)
+	// Yellow to Orange to Red
+	const baseHue = 50 - (intensity * 50);
 	const hotHue = 50 - (intensity * 50);
 
-	// Conditional container styles based on active state and original logic
+	// Organic contour paths - memoized for performance
+	const contourPaths = useMemo(() => [
+		// Layer 1: Outermost, widest contour
+		"M10,50 Q15,20 40,15 T70,15 Q85,20 90,50 T85,80 Q70,88 40,85 T15,80 Q10,65 10,50 Z",
+		// Layer 2: Mid-outer contour
+		"M20,50 Q23,28 42,23 T65,24 Q78,30 80,50 T76,72 Q65,80 42,78 T24,70 Q20,60 20,50 Z",
+		// Layer 3: Mid-inner contour
+		"M30,50 Q32,35 45,32 T60,33 Q70,38 72,50 T68,65 Q60,72 45,70 T32,63 Q30,57 30,50 Z",
+		// Layer 4: Inner contour
+		"M38,50 Q40,40 48,38 T58,39 Q64,42 66,50 T62,60 Q58,65 48,64 T40,58 Q38,54 38,50 Z",
+		// Layer 5: Core hotspot
+		"M43,50 Q44,44 50,43 T56,44 Q59,46 60,50 T58,56 Q56,59 50,58 T44,55 Q43,53 43,50 Z"
+	], []);
+
 	const containerClasses = `p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative group ${isActive
 			? `${colors.bg} border-2 ${colors.border}`
 			: colors.inactive
 		}`;
 
-	// Calculate background color dynamically based on intensity
-	// Only show color when we have actual data
 	const dynamicBgColor = hasData 
-		? `hsl(${baseHue}, ${40 + (intensity * 40)}%, ${95 - (intensity * 20)}%)` // Yellow->Orange->Red, Saturation 40%->80%, Lightness 95%->75%
-		: 'rgb(255, 255, 255)'; // Pure white when no data
+		? `hsl(${baseHue}, ${40 + (intensity * 40)}%, ${95 - (intensity * 20)}%)`
+		: 'rgb(255, 255, 255)';
 
 	return (
 		<div
 			className={containerClasses}
-			style={{ backgroundColor: dynamicBgColor }} // Base color for full coverage
+			style={{ backgroundColor: dynamicBgColor }}
 			onClick={() => setActiveViz({
 				vizId: dataset.id,
 				datasetType: dataset.type,
@@ -101,70 +106,70 @@ export default function CrimeRateChart({
 		>
 			{/* --- CONTOUR LAYERS --- */}
 			{hasData && intensity > 0 && (
-				<div className="absolute inset-0 z-0 overflow-hidden">
+				<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
 					<svg
 						viewBox="0 0 100 100"
 						preserveAspectRatio="none"
-						className="w-full h-full opacity-80 transition-opacity duration-500"
+						className="w-full h-full will-change-auto"
 					>
 						<defs>
-							<filter id="blurFilter">
-								<feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+							<filter id="softBlur">
+								<feGaussianBlur in="SourceGraphic" stdDeviation="2" />
 							</filter>
 						</defs>
 
-						{/* Layer 1: Outer/Base Layer - Widest, lightest */}
-						<ellipse
-							cx="50"
-							cy="50"
-							rx={45 + (intensity * 5)}
-							ry={45 + (intensity * 5)}
-							fill={`hsla(${hotHue + 20}, 60%, 70%, ${0.3 + (intensity * 0.2)})`}
-							filter="url(#blurFilter)"
+						{/* Layer 1: Outermost - Pale, widest */}
+						<path
+							d={contourPaths[0]}
+							fill={`hsla(${hotHue + 25}, 55%, 75%, ${0.25 + (intensity * 0.15)})`}
+							filter="url(#softBlur)"
+							style={{ transform: `scale(${1 + (intensity * 0.1)})`, transformOrigin: 'center' }}
 						/>
 
-						{/* Layer 2: Mid Layer */}
-						<ellipse
-							cx="50"
-							cy="50"
-							rx={35 + (intensity * 5)}
-							ry={35 + (intensity * 5)}
-							fill={`hsla(${hotHue + 10}, 75%, 60%, ${0.4 + (intensity * 0.2)})`}
-							filter="url(#blurFilter)"
+						{/* Layer 2: Mid-outer */}
+						<path
+							d={contourPaths[1]}
+							fill={`hsla(${hotHue + 18}, 65%, 68%, ${0.35 + (intensity * 0.15)})`}
+							filter="url(#softBlur)"
+							style={{ transform: `scale(${1 + (intensity * 0.08)})`, transformOrigin: 'center' }}
 						/>
 
-						{/* Layer 3: Inner Layer - More intense */}
-						<ellipse
-							cx="50"
-							cy="50"
-							rx={25 + (intensity * 5)}
-							ry={25 + (intensity * 5)}
-							fill={`hsla(${hotHue + 5}, 85%, 55%, ${0.5 + (intensity * 0.2)})`}
-							filter="url(#blurFilter)"
+						{/* Layer 3: Mid-inner */}
+						<path
+							d={contourPaths[2]}
+							fill={`hsla(${hotHue + 12}, 75%, 60%, ${0.45 + (intensity * 0.15)})`}
+							filter="url(#softBlur)"
+							style={{ transform: `scale(${1 + (intensity * 0.06)})`, transformOrigin: 'center' }}
 						/>
 
-						{/* Layer 4: Core - Most intense, smallest */}
-						<ellipse
-							cx="50"
-							cy="50"
-							rx={15 + (intensity * 5)}
-							ry={15 + (intensity * 5)}
-							fill={`hsla(${hotHue}, 95%, 50%, ${0.6 + (intensity * 0.3)})`}
-							filter="url(#blurFilter)"
+						{/* Layer 4: Inner */}
+						<path
+							d={contourPaths[3]}
+							fill={`hsla(${hotHue + 6}, 85%, 52%, ${0.55 + (intensity * 0.15)})`}
+							filter="url(#softBlur)"
+							style={{ transform: `scale(${1 + (intensity * 0.04)})`, transformOrigin: 'center' }}
+						/>
+
+						{/* Layer 5: Core hotspot */}
+						<path
+							d={contourPaths[4]}
+							fill={`hsla(${hotHue}, 95%, 45%, ${0.65 + (intensity * 0.2)})`}
+							filter="url(#softBlur)"
+							style={{ transform: `scale(${1 + (intensity * 0.02)})`, transformOrigin: 'center' }}
 						/>
 					</svg>
 				</div>
 			)}
 
-			{/* --- GLASS OVERLAY (Reduced blur for modern feel) --- */}
+			{/* --- GLASS OVERLAY --- */}
 			<div className={`
-                absolute inset-0 z-0 
-                backdrop-blur-[1px] bg-white/20 
+                absolute inset-0 z-0 pointer-events-none
+                backdrop-blur-[0.5px] bg-white/20 
                 transition-colors duration-300
                 ${isActive ? 'bg-white/10' : 'group-hover:bg-white/40'}
             `} />
 
-			{/* --- ORIGINAL CONTENT (Z-10) --- */}
+			{/* --- CONTENT --- */}
 			<div className="relative z-10">
 				<div className="flex items-center justify-between mb-1.5 relative">
 					<h3 className="text-xs font-bold text-gray-800/90 drop-shadow-sm">Recorded Crimes [{dataset.year}]</h3>
@@ -172,10 +177,9 @@ export default function CrimeRateChart({
 
 				{formattedCrimeTotal ? (
 					<div className="relative flex justify-center items-center mt-4 mb-2 z-10 h-5">
-						<div className="text-xl font-bold text-gray-800 bg-transparent px-2 rounded drop-shadow-sm transition-colors duration-500"
+						<div className="text-xl font-bold text-gray-800 bg-transparent px-2 rounded drop-shadow-sm transition-colors duration-300"
 							style={{
-								// Text color adjusts based on intensity for readability
-								color: intensity > 0.5 ? '#7f1d1d' : '#78350f' // Dark red for high intensity, dark orange otherwise
+								color: intensity > 0.5 ? '#7f1d1d' : '#78350f'
 							}}
 						>
 							{formattedCrimeTotal}
