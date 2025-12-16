@@ -66,7 +66,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
         colorRange: { min: 80000, max: 500000 }
     },
     crime: {
-        colorRange: { min: 0, max: 1000 }
+        colorRange: { min: 10000, max: 100000 }
     },
     income: {
         colorRange: { min: 25000, max: 45000 }

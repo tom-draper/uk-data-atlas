@@ -1,7 +1,10 @@
-
 export interface CrimeRecord {
-    areaCode: string;
-    areaName: string;
+    localAuthorityCode: string;
+    localAuthorityName: string;
+    policeForceAreaCode?: string;
+    policeForceAreaName?: string;
+    communitySafetyPartnershipCode?: string;
+    communitySafetyPartnershipName?: string;
     totalRecordedCrime: number;
     violenceAgainstPerson: number;
     homicide: number;
@@ -43,7 +46,5 @@ export interface CrimeDataset {
 }
 
 export interface AggregatedCrimeData {
-    totalRecordedCrime: number;
-    wardCount: number;
-
+    averageRecordedCrime: number;
 }

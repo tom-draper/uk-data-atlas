@@ -19,7 +19,8 @@ const extractYearFromTitle = (title: string): number => {
 const skipMetadataRows = (rows: string[][]): string[][] => {
     let startIdx = 0;
     for (let i = 0; i < rows.length; i++) {
-        if (rows[i][0]?.includes('Area Code') || rows[i][0]?.includes('area code')) {
+        const firstCell = rows[i][0]?.trim().toLowerCase() || '';
+        if (firstCell === 'police force area code') {
             startIdx = i + 1;
             break;
         }
@@ -53,7 +54,6 @@ export const useCrimeData = () => {
 
                             // Extract metadata
                             const titleRow = rows[0]?.[0] || '';
-                            // const sourceRow = rows.find(r => r[0]?.includes('Source:'))?.[0] || '';
                             const year = extractYearFromTitle(titleRow);
 
                             // Skip metadata rows and get data
@@ -65,37 +65,43 @@ export const useCrimeData = () => {
                             dataRows.forEach((row: string[]) => {
                                 if (!row[0] || row[0].trim() === '') return;
 
-                                const areaCode = row[0].trim();
-                                const areaName = row[1]?.trim() || '';
+                                // Use Local Authority code (column 4) as the primary key
+                                const areaCode = row[4]?.trim() || '';
+                                const areaName = row[5]?.trim() || '';
 
-                                if (areaCode === 'Area Code' || areaCode === 'area code') return;
+                                // Skip rows without a valid Local Authority code
+                                if (!areaCode || areaCode === 'Local Authority code') return;
 
                                 const record: CrimeRecord = {
-                                    areaCode,
-                                    areaName,
-                                    totalRecordedCrime: parseNumberStrict(row[2]),
-                                    violenceAgainstPerson: parseNumberStrict(row[3]),
-                                    homicide: parseNumberStrict(row[4]),
-                                    deathSeriesInjuryUnlawfulDriving: parseNumberStrict(row[5]),
-                                    violenceWithInjury: parseNumberStrict(row[6]),
-                                    violenceWithoutInjury: parseNumberStrict(row[7]),
-                                    stalkingHarassment: parseNumberStrict(row[8]),
-                                    sexualOffences: parseNumberStrict(row[9]),
-                                    robbery: parseNumberStrict(row[10]),
-                                    theftOffences: parseNumberStrict(row[11]),
-                                    burglary: parseNumberStrict(row[12]),
-                                    residentialBurglary: parseNumberStrict(row[13]),
-                                    nonResidentialBurglary: parseNumberStrict(row[14]),
-                                    vehicleOffences: parseNumberStrict(row[15]),
-                                    theftFromPerson: parseNumberStrict(row[16]),
-                                    bicycleTheft: parseNumberStrict(row[17]),
-                                    shoplifting: parseNumberStrict(row[18]),
-                                    otherTheftOffences: parseNumberStrict(row[19]),
-                                    criminalDamageArson: parseNumberStrict(row[20]),
-                                    drugOffences: parseNumberStrict(row[21]),
-                                    possessionWeapons: parseNumberStrict(row[22]),
-                                    publicOrderOffences: parseNumberStrict(row[23]),
-                                    miscellaneousCrimes: parseNumberStrict(row[24]),
+                                    localAuthorityCode: areaCode,
+                                    localAuthorityName: areaName,
+                                    policeForceAreaCode: row[0]?.trim() || '',
+                                    policeForceAreaName: row[1]?.trim() || '',
+                                    communitySafetyPartnershipCode: row[2]?.trim() || '',
+                                    communitySafetyPartnershipName: row[3]?.trim() || '',
+                                    totalRecordedCrime: parseNumberStrict(row[6]),
+                                    violenceAgainstPerson: parseNumberStrict(row[7]),
+                                    homicide: parseNumberStrict(row[8]),
+                                    deathSeriesInjuryUnlawfulDriving: parseNumberStrict(row[9]),
+                                    violenceWithInjury: parseNumberStrict(row[10]),
+                                    violenceWithoutInjury: parseNumberStrict(row[11]),
+                                    stalkingHarassment: parseNumberStrict(row[12]),
+                                    sexualOffences: parseNumberStrict(row[13]),
+                                    robbery: parseNumberStrict(row[14]),
+                                    theftOffences: parseNumberStrict(row[15]),
+                                    burglary: parseNumberStrict(row[16]),
+                                    residentialBurglary: parseNumberStrict(row[17]),
+                                    nonResidentialBurglary: parseNumberStrict(row[18]),
+                                    vehicleOffences: parseNumberStrict(row[19]),
+                                    theftFromPerson: parseNumberStrict(row[20]),
+                                    bicycleTheft: parseNumberStrict(row[21]),
+                                    shoplifting: parseNumberStrict(row[22]),
+                                    otherTheftOffences: parseNumberStrict(row[23]),
+                                    criminalDamageArson: parseNumberStrict(row[24]),
+                                    drugOffences: parseNumberStrict(row[25]),
+                                    possessionWeapons: parseNumberStrict(row[26]),
+                                    publicOrderOffences: parseNumberStrict(row[27]),
+                                    miscellaneousCrimes: parseNumberStrict(row[28]),
                                 };
 
                                 records[areaCode] = record;

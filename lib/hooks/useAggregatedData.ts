@@ -49,6 +49,7 @@ function aggregateDataset<T extends Dataset>(
 			(dataset as any).wardData ||
 			(dataset as any).constituencyData ||
 			(dataset as any).localAuthorityData ||
+			(dataset as any).records ||
 			(dataset as any).populationData;
 
 		if (hasData && geojson) {

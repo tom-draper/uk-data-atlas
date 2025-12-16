@@ -38,7 +38,7 @@ export default function CrimeRateChart({
 	// We calculate data first so we can use it for the particle effects
 	if (dataset) {
 		if (selectedArea === null && aggregatedData) {
-			crimeRate = aggregatedData[year]?.totalRecordedCrime || null;
+			crimeRate = aggregatedData[year]?.averageRecordedCrime || null;
 		} else if (selectedArea && selectedArea.type === 'localAuthority' && selectedArea.data) {
 			const laCode = selectedArea.code;
 			crimeRate = dataset.records?.[laCode]?.totalRecordedCrime || null;
@@ -55,6 +55,8 @@ export default function CrimeRateChart({
 
 	const isActive = activeDataset?.id === `crime${dataset.year}`;
 
+	const formattedCrimeTotal = crimeRate?.toLocaleString();
+
 	return (
 		<div
 			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative ${
@@ -67,14 +69,20 @@ export default function CrimeRateChart({
 			})}
 		>
 			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className="text-xs font-bold">Crime Rate [{dataset.year}]</h3>
+				<h3 className="text-xs font-bold">Recorded Crimes [{dataset.year}]</h3>
 			</div>
 
-			<div className="relative flex justify-end items-end mt-4 z-10">
-				<div className={`text-xl font-bold`}>
-					{crimeRate}
+			{formattedCrimeTotal ? (
+				<div className="relative flex justify-center items-center mt-4 mb-2 z-10 h-5">
+					<div className="text-xl font-bold text-gray-800 bg-transparent px-2 rounded">
+						{formattedCrimeTotal}
+					</div>
 				</div>
-			</div>
+			) : (
+				<div className="h-7 mt-2 mb-2 relative z-10">
+					<div className="text-xs text-gray-400/80 pt-0.5 text-center">No data available</div>
+				</div>
+			)}
 		</div>
 	);
 }
