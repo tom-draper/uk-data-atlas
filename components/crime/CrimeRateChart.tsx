@@ -65,28 +65,17 @@ export default function CrimeRateChart({
 
 	// 1. Calculate Intensity (0 to 1) based on the min/max range
 	let intensity = 0;
-	if (rawValue > minThreshold) {
+	const hasData = crimeRate !== null && crimeRate > 0;
+	if (hasData && rawValue > minThreshold) {
 		// Normalize the value within the range [minThreshold, maxThreshold]
 		intensity = Math.min(Math.max((rawValue - minThreshold) / (maxThreshold - minThreshold), 0), 1);
 	}
 	// If rawValue <= 5000, intensity remains 0.
 
-	// 2. Color Palettes (HSL) - INCREASED INTENSITY/VIVIDNESS
-	// Hue: 150 (Emerald) -> 0 (Red)
-	const baseHue = 150 - (intensity * 150); // Shifts from 150 -> 0
-	const hotHue = 150 - (intensity * 150);
-
-	// Dynamic rotation for organic shape
-	// Keep consistent for the duration of the component lifecycle
-	const rotationA = useMemo(() => Math.floor(Math.random() * 360), []);
-	const rotationB = useMemo(() => Math.floor(Math.random() * 360), []);
-
-	// Organic Blob Paths (Normalized 0-100 coordinates)
-	const blobPaths = [
-		"M45,-20 C65,-10, 85,5, 88,30 C91,55, 75,85, 50,88 C25,91, 5,75, -5,50 C-15,25, 10,-10, 45,-20 Z",
-		"M50,10 C70,15, 80,40, 75,60 C70,80, 50,95, 30,85 C10,75, 5,50, 20,30 C35,10, 40,8, 50,10 Z"
-	];
-
+	// 2. Color Palettes (HSL) - Yellow to Orange to Red (better for crime data)
+	// Hue: 50 (Yellow) -> 0 (Red)
+	const baseHue = 50 - (intensity * 50); // Shifts from 50 (yellow) -> 0 (red)
+	const hotHue = 50 - (intensity * 50);
 
 	// Conditional container styles based on active state and original logic
 	const containerClasses = `p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative group ${isActive
@@ -95,7 +84,10 @@ export default function CrimeRateChart({
 		}`;
 
 	// Calculate background color dynamically based on intensity
-	const dynamicBgColor = `hsl(${baseHue}, ${70 + (intensity * 30)}%, ${96 - (intensity * 15)}%)`; // Saturation 70%->100%, Lightness 96%->81%
+	// Only show color when we have actual data
+	const dynamicBgColor = hasData 
+		? `hsl(${baseHue}, ${40 + (intensity * 40)}%, ${95 - (intensity * 20)}%)` // Yellow->Orange->Red, Saturation 40%->80%, Lightness 95%->75%
+		: 'rgb(255, 255, 255)'; // Pure white when no data
 
 	return (
 		<div
@@ -108,48 +100,61 @@ export default function CrimeRateChart({
 			})}
 		>
 			{/* --- CONTOUR LAYERS --- */}
-			<div className="absolute inset-0 z-0 overflow-hidden">
-				<svg
-					viewBox="0 0 100 100"
-					preserveAspectRatio="none"
-					// Zoomed in SVG to ensure edges bleed off
-					className="w-[150%] h-[150%] -translate-x-1/4 -translate-y-1/4 opacity-90 transition-opacity duration-500"
-				>
-					<defs>
-						<filter id="blurFilter">
-							<feGaussianBlur in="SourceGraphic" stdDeviation="6" />
-						</filter>
-					</defs>
+			{hasData && intensity > 0 && (
+				<div className="absolute inset-0 z-0 overflow-hidden">
+					<svg
+						viewBox="0 0 100 100"
+						preserveAspectRatio="none"
+						className="w-full h-full opacity-80 transition-opacity duration-500"
+					>
+						<defs>
+							<filter id="blurFilter">
+								<feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+							</filter>
+						</defs>
 
-					{/* Layer 2: Mid-Heat Contour - Only visible above minThreshold */}
-					{intensity > 0 && (
-						<path
-							d={blobPaths[0]}
-							fill={`hsla(${hotHue + 10}, 95%, 65%, 0.7)`} // High saturation
+						{/* Layer 1: Outer/Base Layer - Widest, lightest */}
+						<ellipse
+							cx="50"
+							cy="50"
+							rx={45 + (intensity * 5)}
+							ry={45 + (intensity * 5)}
+							fill={`hsla(${hotHue + 20}, 60%, 70%, ${0.3 + (intensity * 0.2)})`}
 							filter="url(#blurFilter)"
-							transform={`rotate(${rotationA} 50 50)`}
-							style={{
-								transformOrigin: 'center',
-								scale: 0.8 + (intensity * 0.5)
-							}}
 						/>
-					)}
 
-					{/* Layer 3: Core Heat Contour (Center) - Only visible above minThreshold */}
-					{intensity > 0 && (
-						<path
-							d={blobPaths[1]}
-							fill={`hsla(${hotHue}, 100%, 55%, 0.8)`} // Full saturation, darker center
+						{/* Layer 2: Mid Layer */}
+						<ellipse
+							cx="50"
+							cy="50"
+							rx={35 + (intensity * 5)}
+							ry={35 + (intensity * 5)}
+							fill={`hsla(${hotHue + 10}, 75%, 60%, ${0.4 + (intensity * 0.2)})`}
 							filter="url(#blurFilter)"
-							transform={`rotate(${rotationB} 50 50)`}
-							style={{
-								transformOrigin: 'center',
-								scale: 0.5 + (intensity * 0.6)
-							}}
 						/>
-					)}
-				</svg>
-			</div>
+
+						{/* Layer 3: Inner Layer - More intense */}
+						<ellipse
+							cx="50"
+							cy="50"
+							rx={25 + (intensity * 5)}
+							ry={25 + (intensity * 5)}
+							fill={`hsla(${hotHue + 5}, 85%, 55%, ${0.5 + (intensity * 0.2)})`}
+							filter="url(#blurFilter)"
+						/>
+
+						{/* Layer 4: Core - Most intense, smallest */}
+						<ellipse
+							cx="50"
+							cy="50"
+							rx={15 + (intensity * 5)}
+							ry={15 + (intensity * 5)}
+							fill={`hsla(${hotHue}, 95%, 50%, ${0.6 + (intensity * 0.3)})`}
+							filter="url(#blurFilter)"
+						/>
+					</svg>
+				</div>
+			)}
 
 			{/* --- GLASS OVERLAY (Reduced blur for modern feel) --- */}
 			<div className={`
@@ -169,8 +174,8 @@ export default function CrimeRateChart({
 					<div className="relative flex justify-center items-center mt-4 mb-2 z-10 h-5">
 						<div className="text-xl font-bold text-gray-800 bg-transparent px-2 rounded drop-shadow-sm transition-colors duration-500"
 							style={{
-								// Text color gets darker/redder to contrast with the light heat glow
-								color: `hsl(${baseHue - 40}, 60%, 25%)`
+								// Text color adjusts based on intensity for readability
+								color: intensity > 0.5 ? '#7f1d1d' : '#78350f' // Dark red for high intensity, dark orange otherwise
 							}}
 						>
 							{formattedCrimeTotal}
