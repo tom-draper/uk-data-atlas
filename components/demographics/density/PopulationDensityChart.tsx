@@ -167,7 +167,7 @@ function PopulationDensityChart({
 		const wardCode = selectedArea.code;
 		const wardCodeProp = detectPropertyKey(geojson);
 
-		const populationData = dataset.populationData[wardCode];
+		const populationData = dataset.data[wardCode];
 		if (populationData) {
 			const wardFeature = geojson.features.find(
 				(f) => f.properties?.[wardCodeProp] === wardCode

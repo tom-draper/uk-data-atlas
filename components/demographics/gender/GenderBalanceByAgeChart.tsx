@@ -43,7 +43,7 @@ function GenderBalanceByAgeChart({
 		}
 
 		const wardCode = selectedArea.code;
-		const wardData = dataset.populationData[wardCode];
+		const wardData = dataset.data[wardCode];
 		if (wardData) {
 			const { males, females } = wardData;
 			const data: Array<{ age: number; males: number; females: number }> =
@@ -69,7 +69,7 @@ function GenderBalanceByAgeChart({
 
 	if (ageData.length === 0) {
 		return (
-			<div className="text-xs h-[111px] text-gray-400/80 text-center grid place-items-center">
+			<div className="text-xs h-27.75 text-gray-400/80 text-center grid place-items-center">
 				<div className="mb-4">No data available</div>
 			</div>
 		);

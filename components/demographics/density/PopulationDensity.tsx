@@ -3,11 +3,11 @@ import { memo } from "react";
 import {
 	ActiveViz,
 	AggregatedPopulationData,
+	BoundaryData,
 	PopulationDataset,
 	SelectedArea,
 } from "@/lib/types";
 import PopulationDensityChart from "./PopulationDensityChart";
-import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;

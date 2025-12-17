@@ -10,8 +10,8 @@ export interface ElectionSourceConfig {
     fields: {
         code: string; // Ward Code
         name: string; // Ward Name
-        laName: string;
-        laCode?: string; // Optional, 2023 might not have it
+        ladName: string;
+        ladCode?: string; // Optional, 2023 might not have it
         turnout: string;
         electorate: string;
         totalVotes?: string; // 2023 uses 'Grand Total'
@@ -28,8 +28,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
         fields: {
             code: 'Ward code',
             name: 'Ward name',
-            laName: 'Local authority name',
-            laCode: 'Local authority code',
+            ladName: 'Local authority name',
+            ladCode: 'Local authority code',
             turnout: 'Turnout (%)',
             electorate: 'Electorate',
             totalVotes: 'Total votes'
@@ -42,7 +42,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
         fields: {
             code: '', // Missing in 2023
             name: 'WARDNAME',
-            laName: 'DISTRICTNAME', // handled in parser logic
+            ladName: 'DISTRICTNAME', // handled in parser logic
             turnout: 'TURNOUT',
             electorate: 'ELECT',
             totalVotes: 'Grand Total'
@@ -55,8 +55,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
         fields: {
             code: 'Ward code',
             name: 'Ward name',
-            laName: 'Local authority name',
-            laCode: 'Local authority code',
+            ladName: 'Local authority name',
+            ladCode: 'Local authority code',
             turnout: 'Turnout (%)',
             electorate: 'Electorate',
             totalVotes: 'Total votes'
@@ -69,8 +69,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
         fields: {
             code: 'Ward/ED code',
             name: 'Ward/ED name',
-            laName: 'Local authority name',
-            laCode: 'Local authority code',
+            ladName: 'Local authority name',
+            ladCode: 'Local authority code',
             turnout: 'Turnout (%)',
             electorate: 'Electorate',
             totalVotes: 'Total votes'

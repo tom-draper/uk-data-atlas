@@ -59,11 +59,11 @@ export class MapManager {
 
         const mode = options.mode || 'winner';
         const dataMap = isLocal
-            ? (dataset as LocalElectionDataset).wardData
-            : (dataset as GeneralElectionDataset).constituencyData;
+            ? (dataset as LocalElectionDataset).data
+            : (dataset as GeneralElectionDataset).data;
         const resultsMap = isLocal
-            ? (dataset as LocalElectionDataset).wardResults
-            : (dataset as GeneralElectionDataset).constituencyResults;
+            ? (dataset as LocalElectionDataset).results
+            : (dataset as GeneralElectionDataset).results;
 
         // Build features once
         const features = mode === 'party-percentage' && options.selectedParty
@@ -109,7 +109,7 @@ export class MapManager {
         const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
 
         this.layerManager.updateColoredLayers(transformedGeojson, mapOptions.visibility);
-        this.eventHandler.setupEventHandlers('population', dataset.populationData, wardCodeProp);
+        this.eventHandler.setupEventHandlers('population', dataset.data, wardCodeProp);
     }
 
     updateMapForAgeDistribution(geojson: BoundaryGeojson, dataset: PopulationDataset, mapOptions: MapOptions): void {
@@ -155,7 +155,7 @@ export class MapManager {
             this.propertyDetector.detectWardCode.bind(this.propertyDetector),
             this.featureBuilder.buildHousePriceFeatures.bind(this.featureBuilder),
             'housePrice',
-            dataset.wardData
+            dataset.data
         );
     }
 
@@ -165,7 +165,7 @@ export class MapManager {
             this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
             this.featureBuilder.buildCrimeRateFeatures.bind(this.featureBuilder),
             'crime',
-            dataset.records
+            dataset.data
         );
     }
 
@@ -175,7 +175,7 @@ export class MapManager {
             this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
             this.featureBuilder.buildIncomeFeatures.bind(this.featureBuilder),
             'income',
-            dataset.localAuthorityData
+            dataset.data
         );
     }
 
@@ -185,36 +185,36 @@ export class MapManager {
             this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
             this.featureBuilder.buildEthnicityFeatures.bind(this.featureBuilder),
             'ethnicity',
-            dataset.localAuthorityData
+            dataset.data
         );
     }
 
     // Simplified stats calculation methods
-    calculateLocalElectionStats(geojson: BoundaryGeojson, wardData: LocalElectionDataset['wardData'], location: string | null = null, datasetId: string | null = null) {
+    calculateLocalElectionStats(geojson: BoundaryGeojson, wardData: LocalElectionDataset['data'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateLocalElectionStats(geojson, wardData, location, datasetId);
     }
 
-    calculateGeneralElectionStats(geojson: BoundaryGeojson, constituencyData: GeneralElectionDataset['constituencyData'], location: string | null = null, datasetId: string | null = null) {
+    calculateGeneralElectionStats(geojson: BoundaryGeojson, constituencyData: GeneralElectionDataset['data'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateGeneralElectionStats(geojson, constituencyData, location, datasetId);
     }
 
-    calculatePopulationStats(geojson: BoundaryGeojson, populationData: PopulationDataset['populationData'], location: string | null = null, datasetId: string | null = null) {
+    calculatePopulationStats(geojson: BoundaryGeojson, populationData: PopulationDataset['data'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculatePopulationStats(geojson, populationData, location, datasetId);
     }
 
-    calculateEthnicityStats(geojson: BoundaryGeojson, ethnicityData: EthnicityDataset['localAuthorityData'], location: string | null = null, datasetId: string | null = null) {
+    calculateEthnicityStats(geojson: BoundaryGeojson, ethnicityData: EthnicityDataset['data'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateEthnicityStats(geojson, ethnicityData, location, datasetId);
     }
 
-    calculateHousePriceStats(geojson: BoundaryGeojson, wardData: HousePriceDataset['wardData'], location: string | null = null, datasetId: string | null = null) {
+    calculateHousePriceStats(geojson: BoundaryGeojson, wardData: HousePriceDataset['data'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateHousePriceStats(geojson, wardData, location, datasetId);
     }
 
-    calculateCrimeStats(geojson: BoundaryGeojson, wardData: CrimeDataset['records'], location: string | null = null, datasetId: string | null = null) {
+    calculateCrimeStats(geojson: BoundaryGeojson, wardData: CrimeDataset['data'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateCrimeStats(geojson, wardData, location, datasetId);
     }
 
-    calculateIncomeStats(geojson: BoundaryGeojson, localAuthorityData: IncomeDataset['localAuthorityData'], location: string | null = null, datasetId: string | null = null) {
+    calculateIncomeStats(geojson: BoundaryGeojson, localAuthorityData: IncomeDataset['data'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateIncomeStats(geojson, localAuthorityData, location, datasetId);
     }
 

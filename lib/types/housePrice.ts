@@ -19,7 +19,7 @@ export interface HousePriceDataset {
     year: HousePriceYear;
     boundaryYear: WardYear;
     boundaryType: 'ward';
-    wardData: Record<string, WardHousePriceData>;
+    data: Record<string, WardHousePriceData>;
 }
 
 export type AggregatedHousePriceData = {

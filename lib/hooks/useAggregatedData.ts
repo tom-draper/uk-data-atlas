@@ -1,30 +1,22 @@
-
 // lib/hooks/useAggregatedData.ts
 import { useMemo } from 'react';
 import type {
-	GeneralElectionDataset,
-	LocalElectionDataset,
-	PopulationDataset,
-	HousePriceDataset,
 	Dataset,
 	Datasets,
 	BoundaryType,
 	BoundaryGeojson,
 	AggregatedData,
-	CrimeDataset,
+	BoundaryData,
 } from '@lib/types';
-import { BoundaryData } from './useBoundaryData';
 import { MapManager } from '../utils/mapManager';
-import { IncomeDataset } from '../types/income';
 
 interface DatasetConfig<T extends Dataset> {
 	datasets: Record<string, T>;
 	boundaryType: BoundaryType;
-	getGeojson: (dataset: T, boundaryData: BoundaryData) => any;
 	calculateStats: (
 		mapManager: MapManager,
 		geojson: BoundaryGeojson,
-		dataset: T,
+		data: any,
 		location: string | null,
 		datasetId: string
 	) => any;
@@ -44,19 +36,14 @@ function aggregateDataset<T extends Dataset>(
 	const result: Record<string, any> = {};
 
 	for (const [datasetId, dataset] of Object.entries(config.datasets)) {
-		const geojson = config.getGeojson(dataset, boundaryData);
-		const hasData =
-			(dataset as any).wardData ||
-			(dataset as any).constituencyData ||
-			(dataset as any).localAuthorityData ||
-			(dataset as any).records ||
-			(dataset as any).populationData;
+		// Get the appropriate boundary geojson
+		const geojson = boundaryData[config.boundaryType]?.[dataset.boundaryYear];
 
-		if (hasData && geojson) {
+		if (dataset.data && geojson) {
 			result[dataset.year] = config.calculateStats(
 				mapManager,
 				geojson,
-				dataset,
+				dataset.data,
 				location,
 				datasetId
 			);
@@ -83,71 +70,73 @@ export function useAggregatedData({
 	boundaryData,
 	datasets,
 	location,
-}: UseAggregatedDataParams) {
+}: UseAggregatedDataParams): AggregatedData {
 	// Define configuration for each dataset type
-	const configs = useMemo(() => ({
+	const configs: Record<keyof Datasets, DatasetConfig<any>> = useMemo(() => ({
 		localElection: {
 			datasets: datasets.localElection,
-			boundaryType: 'ward' as const,
-			getGeojson: (dataset: LocalElectionDataset, bd: BoundaryData) =>
-				bd.ward?.[dataset.boundaryYear],
-			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: LocalElectionDataset, loc: string | null, id: string) =>
-				mm.calculateLocalElectionStats(geojson, dataset.wardData!, loc, id),
+			boundaryType: 'ward',
+			calculateStats: (mm, geojson, data, loc, id) =>
+				mm.calculateLocalElectionStats(geojson, data, loc, id),
 		},
 		generalElection: {
 			datasets: datasets.generalElection,
-			boundaryType: 'constituency' as const,
-			getGeojson: (dataset: GeneralElectionDataset, bd: BoundaryData) =>
-				bd.constituency?.[dataset.boundaryYear],
-			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: GeneralElectionDataset, loc: string | null, id: string) =>
-				mm.calculateGeneralElectionStats(geojson, dataset.constituencyData!, loc, id),
+			boundaryType: 'constituency',
+			calculateStats: (mm, geojson, data, loc, id) =>
+				mm.calculateGeneralElectionStats(geojson, data, loc, id),
 		},
 		population: {
 			datasets: datasets.population,
-			boundaryType: 'ward' as const,
-			getGeojson: (dataset: PopulationDataset, bd: BoundaryData) =>
-				bd.ward?.[dataset.boundaryYear],
-			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: PopulationDataset, loc: string | null, id: string) =>
-				mm.calculatePopulationStats(geojson, dataset.populationData!, loc, id),
+			boundaryType: 'ward',
+			calculateStats: (mm, geojson, data, loc, id) =>
+				mm.calculatePopulationStats(geojson, data, loc, id),
+		},
+		ethnicity: {
+			datasets: datasets.ethnicity,
+			boundaryType: 'localAuthority',
+			calculateStats: (mm, geojson, data, loc, id) =>
+				mm.calculateEthnicityStats(geojson, data, loc, id),
 		},
 		housePrice: {
 			datasets: datasets.housePrice,
-			boundaryType: 'ward' as const,
-			getGeojson: (dataset: HousePriceDataset, bd: BoundaryData) =>
-				bd.ward?.[dataset.boundaryYear],
-			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: HousePriceDataset, loc: string | null, id: string) =>
-				mm.calculateHousePriceStats(geojson, dataset.wardData!, loc, id),
+			boundaryType: 'ward',
+			calculateStats: (mm, geojson, data, loc, id) =>
+				mm.calculateHousePriceStats(geojson, data, loc, id),
 		},
 		crime: {
 			datasets: datasets.crime,
-			boundaryType: 'localAuthority' as const,
-			getGeojson: (dataset: CrimeDataset, bd: BoundaryData) =>
-				bd.localAuthority?.[dataset.boundaryYear],
-			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: CrimeDataset, loc: string | null, id: string) =>
-				mm.calculateCrimeStats(geojson, dataset.records, loc, id),
+			boundaryType: 'localAuthority',
+			calculateStats: (mm, geojson, data, loc, id) =>
+				mm.calculateCrimeStats(geojson, data, loc, id),
 		},
 		income: {
 			datasets: datasets.income,
-			boundaryType: 'localAuthority' as const,
-			getGeojson: (dataset: IncomeDataset, bd: BoundaryData) =>
-				bd.localAuthority?.[dataset.boundaryYear],
-			calculateStats: (mm: MapManager, geojson: BoundaryGeojson, dataset: IncomeDataset, loc: string | null, id: string) =>
-				mm.calculateIncomeStats(geojson, dataset.localAuthorityData, loc, id),
+			boundaryType: 'localAuthority',
+			calculateStats: (mm, geojson, data, loc, id) =>
+				mm.calculateIncomeStats(geojson, data, loc, id),
 		},
 	}), [datasets]);
 
 	// Aggregate all datasets using the same logic
-	const aggregatedData: AggregatedData = useMemo(() => {
-		if (!mapManager) return { localElection: null, generalElection: null, population: null, housePrice: null, crime: null, income: null };
+	const aggregatedData = useMemo(() => {
+		if (!mapManager) {
+			return {
+				localElection: null,
+				generalElection: null,
+				population: null,
+				ethnicity: null,
+				housePrice: null,
+				crime: null,
+				income: null,
+			};
+		}
 
-		return {
-			localElection: aggregateDataset(configs.localElection, mapManager, boundaryData, location),
-			generalElection: aggregateDataset(configs.generalElection, mapManager, boundaryData, location),
-			population: aggregateDataset(configs.population, mapManager, boundaryData, location),
-			housePrice: aggregateDataset(configs.housePrice, mapManager, boundaryData, location),
-			crime: aggregateDataset(configs.crime, mapManager, boundaryData, location),
-			income: aggregateDataset(configs.income, mapManager, boundaryData, location),
-		};
+		return Object.fromEntries(
+			Object.entries(configs).map(([key, config]) => [
+				key,
+				aggregateDataset(config, mapManager, boundaryData, location)
+			])
+		) as AggregatedData;
 	}, [mapManager, boundaryData, location, configs]);
 
 	return aggregatedData;

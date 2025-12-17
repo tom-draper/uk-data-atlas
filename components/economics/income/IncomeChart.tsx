@@ -50,13 +50,13 @@ export default function IncomeChart({
 			medianIncome = aggregatedData[year]?.averageIncome || null;
 		} else if (selectedArea && selectedArea.type === 'localAuthority' && selectedArea.data) {
 			const laCode = selectedArea.code;
-			medianIncome = dataset.localAuthorityData?.[laCode]?.annual?.median || null;
+			medianIncome = dataset.data?.[laCode]?.annual?.median || null;
 
 			// Try code mapping if not found
 			if (!medianIncome && codeMapper) {
 				const mappedCode = codeMapper.getCodeForYear('localAuthority', laCode, year);
 				if (mappedCode) {
-					medianIncome = dataset.localAuthorityData?.[mappedCode]?.annual?.median || null;
+					medianIncome = dataset.data?.[mappedCode]?.annual?.median || null;
 				}
 			}
 		}

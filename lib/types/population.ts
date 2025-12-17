@@ -9,8 +9,8 @@ export interface PopulationWardData {
     males: AgeData;
     females: AgeData;
     wardName: string;
-    laCode: string;
-    laName: string;
+    ladCode: string;
+    ladName: string;
 }
 
 export interface PopulationDataset {
@@ -19,7 +19,7 @@ export interface PopulationDataset {
     year: number;
     boundaryYear: WardYear;
     boundaryType: 'ward';
-    populationData: Record<string, PopulationWardData>;
+    data: Record<string, PopulationWardData>;
 }
 
 export interface AgeGroups {

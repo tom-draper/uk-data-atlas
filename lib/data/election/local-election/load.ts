@@ -27,9 +27,9 @@ export const fetchAndParseCsv = async (config: ElectionSourceConfig): Promise<Lo
 
     // Heuristic: Skip metadata lines if they exist (detecting "Local authority name")
     // This replaces the hardcoded line splitting
-    if (!text.startsWith(config.fields.laName) && !text.startsWith('WD24')) {
+    if (!text.startsWith(config.fields.ladName) && !text.startsWith('WD24')) {
         const lines = text.split('\n');
-        const headerIndex = lines.findIndex(l => l.includes(config.fields.name) || l.includes(config.fields.laName));
+        const headerIndex = lines.findIndex(l => l.includes(config.fields.name) || l.includes(config.fields.ladName));
         if (headerIndex > -1) text = lines.slice(headerIndex).join('\n');
     }
 
@@ -49,14 +49,15 @@ export const fetchAndParseCsv = async (config: ElectionSourceConfig): Promise<Lo
                     partyCols.forEach(p => partyVotes[p] = parseNumber(row[p]));
 
                     // Normalize core data
-                    const laName = row[config.fields.laName] || row['COUNTYNAME'] || 'Unknown'; // Fallback for 2023
+                    const laName = row[config.fields.ladName] || row['COUNTYNAME'] || 'Unknown'; // Fallback for 2023
                     const wName = row[config.fields.name];
                     const wCode = row[config.fields.code]?.trim();
 
                     const entry: WardData = {
+                        wardCode: wCode,
                         wardName: wName,
                         localAuthorityName: laName,
-                        localAuthorityCode: row[config.fields.laCode || ''] || 'Unknown',
+                        localAuthorityCode: row[config.fields.ladCode || ''] || 'Unknown',
                         turnoutPercent: parseNumber(row[config.fields.turnout]),
                         electorate: parseNumber(row[config.fields.electorate]),
                         totalVotes: parseNumber(row[config.fields.totalVotes || '']),
@@ -79,8 +80,8 @@ export const fetchAndParseCsv = async (config: ElectionSourceConfig): Promise<Lo
                     year: config.year,
                     boundaryYear: config.year,
                     boundaryType: 'ward',
-                    wardResults: wardWinners,
-                    wardData,
+                    results: wardWinners,
+                    data: wardData,
                     partyInfo: PARTY_INFO,
                     // @ts-ignore - attaching temporary unmapped data
                     _unmapped: unmapped.length > 0 ? unmapped : undefined
@@ -101,7 +102,7 @@ export const reconcile2023Data = (
     // Build Lookup Map
     const lookup = new Map<string, string>();
     referenceSets.forEach(ds => {
-        Object.entries(ds.wardData).forEach(([code, data]) => {
+        Object.entries(ds.data).forEach(([code, data]) => {
             const key = `${data.localAuthorityName}|${data.wardName}`.toLowerCase();
             if (!lookup.has(key)) lookup.set(key, code);
         });
@@ -114,8 +115,8 @@ export const reconcile2023Data = (
         const code = lookup.get(key);
 
         if (code) {
-            dataset2023.wardResults[code] = item.winningParty;
-            dataset2023.wardData[code] = {
+            dataset2023.results[code] = item.winningParty;
+            dataset2023.data[code] = {
                 ...item,
                 localAuthorityCode: code.substring(0, 9) // Infer LA code from Ward Code
             };

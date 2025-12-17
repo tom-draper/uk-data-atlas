@@ -43,11 +43,11 @@ export default function CrimeRateChart({
 			rate = aggregatedData[year]?.averageRecordedCrime || null;
 		} else if (selectedArea && selectedArea.type === 'localAuthority' && selectedArea.data) {
 			const laCode = selectedArea.code;
-			rate = dataset.records?.[laCode]?.totalRecordedCrime || null;
+			rate = dataset.data?.[laCode]?.totalRecordedCrime || null;
 			if (!rate && codeMapper) {
 				const mappedCode = codeMapper.getCodeForYear('localAuthority', laCode, year);
 				if (mappedCode) {
-					rate = dataset.records?.[mappedCode]?.totalRecordedCrime || null;
+					rate = dataset.data?.[mappedCode]?.totalRecordedCrime || null;
 				}
 			}
 		}

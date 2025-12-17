@@ -56,12 +56,12 @@ const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeF
                 prices = cached?.prices || {};
                 price2023 = prices[2023] || null;
             } else {
-                let data = dataset.wardData?.[wardCode];
+                let data = dataset.data?.[wardCode];
 
                 if (!data && getCodeForYear) {
                     const mappedCode = getCodeForYear('ward', wardCode, 2023);
                     if (mappedCode) {
-                        data = dataset.wardData[mappedCode];
+                        data = dataset.data[mappedCode];
                     }
                 }
 

@@ -1,5 +1,5 @@
 // lib/utils/mapManager/featureBuilder.ts
-import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, PropertyKeys, EthnicityDataset } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, PropertyKeys, EthnicityDataset, Feature, Features } from '@lib/types';
 import { MapOptions } from '@lib/types/mapOptions';
 import { calculateMedianAge, calculateTotal, polygonAreaSqKm } from '../population';
 import { getColorForAge, getColorForGenderRatio, getColorForDensity, getColorForHousePrice, getColorForCrimeRate, getColorForIncome, getColorForEthnicity } from '../colorScale';
@@ -8,7 +8,7 @@ import { IncomeDataset } from '@/lib/types/income';
 const DEFAULT_COLOR = '#cccccc';
 
 export class FeatureBuilder {
-    formatBoundaryGeoJson(features: BoundaryGeojson['features']): BoundaryGeojson {
+    formatBoundaryGeoJson(features: Features): BoundaryGeojson {
         return {
             type: 'FeatureCollection',
             crs: { type: '', properties: { name: '' } },
@@ -16,40 +16,37 @@ export class FeatureBuilder {
         };
     }
 
+    private mapFeatures<T extends Record<string, any>>(
+        features: Features,
+        addProperties: (feature: Feature, index: number) => T
+    ): Features {
+        return features.map((feature, i) => ({
+            ...feature,
+            properties: {
+                ...feature.properties,
+                ...addProperties(feature, i)
+            }
+        }));
+    }
+
     buildWinnerFeatures(
-        features: BoundaryGeojson['features'],
+        features: Features,
         codeProp: string,
         getWinner: (code: string) => string
-    ): BoundaryGeojson['features'] {
-        // Pre-allocate array for better performance
-        const result = new Array(features.length);
-
-        for (let i = 0; i < features.length; i++) {
-            const feature = features[i];
-            result[i] = {
-                ...feature,
-                properties: {
-                    ...feature.properties,
-                    winningParty: getWinner(feature.properties[codeProp])
-                }
-            };
-        }
-
-        return result;
+    ): Features {
+        return this.mapFeatures(features, (feature) => ({
+            winningParty: getWinner(feature.properties[codeProp])
+        }));
     }
 
     buildPartyPercentageFeatures(
-        features: BoundaryGeojson['features'],
-        data: LocalElectionDataset['wardData'] | GeneralElectionDataset['constituencyData'],
+        features: Features,
+        data: LocalElectionDataset['data'] | GeneralElectionDataset['constituencyData'],
         partyCode: string,
         codeProp: PropertyKeys
-    ): BoundaryGeojson['features'] {
-        const result = new Array(features.length);
-
-        for (let i = 0; i < features.length; i++) {
-            const feature = features[i];
-            const code = feature.properties[codeProp];
-            const locationData = data[code];
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const locationData = data[feature.properties[codeProp]];
 
             let percentage = 0;
             if (locationData?.partyVotes) {
@@ -58,207 +55,149 @@ export class FeatureBuilder {
                 percentage = totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
             }
 
-            result[i] = {
-                ...feature,
-                properties: {
-                    ...feature.properties,
-                    percentage,
-                    partyCode
-                }
-            };
-        }
-
-        return result;
-    }
-
-    // Generic feature builder for colored maps
-    private buildColoredFeatures(
-        features: BoundaryGeojson['features'],
-        codeProp: PropertyKeys,
-        getColor: (feature: BoundaryGeojson['features'][0]) => string
-    ): BoundaryGeojson['features'] {
-        const result = new Array(features.length);
-
-        for (let i = 0; i < features.length; i++) {
-            const feature = features[i];
-            result[i] = {
-                ...feature,
-                properties: {
-                    ...feature.properties,
-                    color: getColor(feature)
-                }
-            };
-        }
-
-        return result;
+            return { percentage, partyCode };
+        });
     }
 
     buildAgeFeatures(
-        features: BoundaryGeojson['features'],
+        features: Features,
         dataset: PopulationDataset,
         wardCodeProp: PropertyKeys,
         mapOptions: MapOptions
-    ): BoundaryGeojson['features'] {
-        return this.buildColoredFeatures(features, wardCodeProp, (feature) => {
-            const wardCode = feature.properties[wardCodeProp];
-            const wardPopulation = dataset.populationData[wardCode];
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const wardPopulation = dataset.data[feature.properties[wardCodeProp]];
 
-            if (!wardPopulation) return DEFAULT_COLOR;
+            const color = wardPopulation
+                ? getColorForAge(calculateMedianAge(wardPopulation), mapOptions.ageDistribution, mapOptions.theme.id)
+                : DEFAULT_COLOR;
 
-            const medianAge = calculateMedianAge(wardPopulation);
-            return getColorForAge(medianAge, mapOptions.ageDistribution, mapOptions.general.theme);
+            return { color };
         });
     }
 
     buildGenderFeatures(
-        features: BoundaryGeojson['features'],
+        features: Features,
         dataset: PopulationDataset,
         wardCodeProp: PropertyKeys,
         mapOptions: MapOptions
-    ): BoundaryGeojson['features'] {
-        return this.buildColoredFeatures(features, wardCodeProp, (feature) => {
-            const wardCode = feature.properties[wardCodeProp];
-            const wardPopulation = dataset.populationData[wardCode];
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const wardPopulation = dataset.data[feature.properties[wardCodeProp]];
 
-            if (!wardPopulation) return DEFAULT_COLOR;
+            let color = DEFAULT_COLOR;
+            if (wardPopulation) {
+                const males = calculateTotal(wardPopulation.males);
+                const females = calculateTotal(wardPopulation.females);
+                const ratio = females > 0 ? (males - females) / females : 0;
+                color = getColorForGenderRatio(ratio, mapOptions.gender);
+            }
 
-            const males = calculateTotal(wardPopulation.males);
-            const females = calculateTotal(wardPopulation.females);
-            const ratio = females > 0 ? (males - females) / females : 0;
-            return getColorForGenderRatio(ratio, mapOptions.gender);
+            return { color };
         });
     }
 
     buildDensityFeatures(
-        features: BoundaryGeojson['features'],
+        features: Features,
         dataset: PopulationDataset,
         wardCodeProp: PropertyKeys,
         mapOptions: MapOptions
-    ): BoundaryGeojson['features'] {
-        return this.buildColoredFeatures(features, wardCodeProp, (feature) => {
-            const wardCode = feature.properties[wardCodeProp];
-            const wardPopulation = dataset.populationData[wardCode];
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const wardPopulation = dataset.data[feature.properties[wardCodeProp]];
 
-            if (!wardPopulation) return DEFAULT_COLOR;
+            let color = DEFAULT_COLOR;
+            if (wardPopulation) {
+                const total = calculateTotal(wardPopulation.males) + calculateTotal(wardPopulation.females);
+                const areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
+                const density = areaSqKm > 0 ? total / areaSqKm : 0;
+                color = getColorForDensity(density, mapOptions.populationDensity, mapOptions.theme.id);
+            }
 
-            const total = calculateTotal(wardPopulation.males) + calculateTotal(wardPopulation.females);
-            const areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
-            const density = areaSqKm > 0 ? total / areaSqKm : 0;
-            return getColorForDensity(density, mapOptions.populationDensity, mapOptions.general.theme);
+            return { color };
         });
     }
 
-    // buildEthnicityFeatures(
-    //     features: BoundaryGeojson['features'],
-    //     dataset: EthnicityDataset,
-    //     ladCodeProp: PropertyKeys,
-    //     mapOptions: MapOptions
-    // ): BoundaryGeojson['features'] {
-    //     return this.buildColoredFeatures(features, ladCodeProp, (feature) => {
-    //         const ladCode = feature.properties[ladCodeProp];
-    //         const ethnicityData = dataset.localAuthorityData[ladCode];
-
-    //         if (!ethnicityData) return DEFAULT_COLOR;
-
-    //         let majorityCategory = null;
-    //         let maxCount = 0;
-
-    //         // Iterate through parent categories
-    //         for (const [parentCategory, subcategories] of Object.entries(ethnicityData)) {
-    //             // Sum all populations in this parent category
-    //             const categoryTotal = Object.values(subcategories).reduce(
-    //                 (sum, ethnicity) => sum + ethnicity.population,
-    //                 0
-    //             );
-
-    //             if (categoryTotal > maxCount) {
-    //                 majorityCategory = parentCategory;
-    //                 maxCount = categoryTotal;
-    //             }
-    //         }
-
-    //         if (!majorityCategory) return DEFAULT_COLOR;
-
-    //         return getColorForEthnicity(majorityCategory, mapOptions.income);
-    //     });
-    // }
     buildEthnicityFeatures(
-    features: BoundaryGeojson['features'],
-    dataset: EthnicityDataset,
-    ladCodeProp: PropertyKeys,
-    mapOptions: MapOptions
-): BoundaryGeojson['features'] {
-    return this.buildColoredFeatures(features, ladCodeProp, (feature) => {
-        const ladCode = feature.properties[ladCodeProp];
-        const ethnicityData = dataset.localAuthorityData[ladCode];
+        features: Features,
+        dataset: EthnicityDataset,
+        ladCodeProp: PropertyKeys,
+        mapOptions: MapOptions
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const ethnicityData = dataset.data[feature.properties[ladCodeProp]];
 
-        if (!ethnicityData) return DEFAULT_COLOR;
+            let color = DEFAULT_COLOR;
+            if (ethnicityData) {
+                let majorityEthnicity = null;
+                let maxCount = 0;
 
-        let majorityEthnicity = null;
-        let maxCount = 0;
+                for (const subcategories of Object.values(ethnicityData)) {
+                    for (const ethnicity of Object.values(subcategories)) {
+                        if (ethnicity.population > maxCount) {
+                            majorityEthnicity = ethnicity.ethnicity;
+                            maxCount = ethnicity.population;
+                        }
+                    }
+                }
 
-        // Iterate through all subcategories to find the single largest one
-        for (const subcategories of Object.values(ethnicityData)) {
-            for (const ethnicity of Object.values(subcategories)) {
-                if (ethnicity.population > maxCount) {
-                    majorityEthnicity = ethnicity.ethnicity;
-                    maxCount = ethnicity.population;
+                if (majorityEthnicity) {
+                    color = getColorForEthnicity(majorityEthnicity, mapOptions.income);
                 }
             }
-        }
 
-        if (!majorityEthnicity) return DEFAULT_COLOR;
-
-        return getColorForEthnicity(majorityEthnicity, mapOptions.income);
-    });
-}
+            return { color };
+        });
+    }
 
     buildHousePriceFeatures(
-        features: BoundaryGeojson['features'],
+        features: Features,
         dataset: HousePriceDataset,
         wardCodeProp: PropertyKeys,
         mapOptions: MapOptions
-    ): BoundaryGeojson['features'] {
-        return this.buildColoredFeatures(features, wardCodeProp, (feature) => {
-            const wardCode = feature.properties[wardCodeProp];
-            const ward = dataset.wardData[wardCode];
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const ward = dataset.data[feature.properties[wardCodeProp]];
 
-            if (!ward?.prices[2023]) return DEFAULT_COLOR;
+            const color = ward?.prices[2023]
+                ? getColorForHousePrice(ward.prices[2023], mapOptions.housePrice, mapOptions.theme.id)
+                : DEFAULT_COLOR;
 
-            return getColorForHousePrice(ward.prices[2023], mapOptions.housePrice, mapOptions.general.theme);
+            return { color };
         });
     }
 
     buildCrimeRateFeatures(
-        features: BoundaryGeojson['features'],
+        features: Features,
         dataset: CrimeDataset,
         ladCodeProp: PropertyKeys,
         mapOptions: MapOptions
-    ): BoundaryGeojson['features'] {
-        return this.buildColoredFeatures(features, ladCodeProp, (feature) => {
-            const ladCode = feature.properties[ladCodeProp];
-            const area = dataset.records[ladCode];
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const area = dataset.data[feature.properties[ladCodeProp]];
 
-            if (!area) return DEFAULT_COLOR;
+            const color = area
+                ? getColorForCrimeRate(area.totalRecordedCrime, mapOptions.crime, mapOptions.theme.id)
+                : DEFAULT_COLOR;
 
-            return getColorForCrimeRate(area.totalRecordedCrime, mapOptions.crime, mapOptions.general.theme);
+            return { color };
         });
     }
 
     buildIncomeFeatures(
-        features: BoundaryGeojson['features'],
+        features: Features,
         dataset: IncomeDataset,
         ladCodeProp: PropertyKeys,
         mapOptions: MapOptions
-    ): BoundaryGeojson['features'] {
-        return this.buildColoredFeatures(features, ladCodeProp, (feature) => {
-            const ladCode = feature.properties[ladCodeProp];
-            const income = dataset.localAuthorityData[ladCode]?.annual?.median;
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const income = dataset.data[feature.properties[ladCodeProp]]?.annual?.median;
 
-            if (!income) return DEFAULT_COLOR;
+            const color = income
+                ? getColorForIncome(income, mapOptions.income, mapOptions.theme.id)
+                : DEFAULT_COLOR;
 
-            return getColorForIncome(income, mapOptions.income, mapOptions.general.theme);
+            return { color };
         });
     }
-
 }

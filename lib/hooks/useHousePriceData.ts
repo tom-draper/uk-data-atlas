@@ -86,7 +86,7 @@ export const useHousePriceData = () => {
                         year: 2023,
                         boundaryYear: 2021,
                         boundaryType: 'ward',
-                        wardData
+                        data: wardData
                     }
                 };
 

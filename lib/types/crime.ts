@@ -38,7 +38,7 @@ export interface CrimeDataset {
     boundaryYear: number;
     dataDate: string;
     jurisdiction: string; // 'England and Wales', 'England', 'Wales', etc.
-    records: Record<string, CrimeRecord>;
+    data: Record<string, CrimeRecord>;
     metadata: {
         source: string;
         notes: string[];

@@ -1,5 +1,5 @@
 // lib/utils/mapManager/statsCalculator.ts
-import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, WardStats, ConstituencyStats, AgeGroups, WardHousePriceData, AggregatedHousePriceData, PopulationStats, CrimeDataset, Ethnicity, AggregatedEthnicityData } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, WardStats, ConstituencyStats, AgeGroups, WardHousePriceData, AggregatedHousePriceData, PopulationStats, CrimeDataset, Ethnicity, AggregatedEthnicityData, EthnicityDataset, EthnicityCategory } from '@lib/types';
 import { calculateTotal, polygonAreaSqKm } from '../population';
 import { getWinningParty } from '../generalElection';
 import { calculateAgeGroups } from '../ageDistribution';
@@ -25,7 +25,7 @@ export class StatsCalculator {
 
     calculateLocalElectionStats(
         geojson: BoundaryGeojson,
-        wardData: LocalElectionDataset['wardData'],
+        wardData: LocalElectionDataset['data'],
         location: string | null,
         datasetId: string | null
     ) {
@@ -74,7 +74,7 @@ export class StatsCalculator {
 
     calculateGeneralElectionStats(
         geojson: BoundaryGeojson,
-        constituencyData: GeneralElectionDataset['constituencyData'],
+        constituencyData: GeneralElectionDataset['data'],
         location: string | null,
         datasetId: string | null
     ) {
@@ -127,7 +127,7 @@ export class StatsCalculator {
 
     calculatePopulationStats(
         geojson: BoundaryGeojson,
-        populationData: PopulationDataset['populationData'],
+        populationData: PopulationDataset['data'],
         location: string | null,
         datasetId: string | null
     ) {
@@ -145,7 +145,7 @@ export class StatsCalculator {
 
     calculateEthnicityStats(
         geojson: BoundaryGeojson,
-        localAuthorityData: Record<string, Record<string, Ethnicity>>,
+        localAuthorityData: EthnicityDataset['data'],
         location: string | null,
         datasetId: string | null
     ) {
@@ -156,9 +156,52 @@ export class StatsCalculator {
         const ladProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
         const features = geojson.features;
 
-        const result: AggregatedEthnicityData[2021] = {
+        // Aggregate all ethnicity data across all features
+        const aggregated: Record<string, Record<string, { population: number; code: string }>> = {};
+        let totalPopulation = 0;
 
-        };
+        for (let i = 0; i < features.length; i++) {
+            const localAuthority = localAuthorityData[features[i].properties[ladProp]];
+            if (!localAuthority) continue;
+
+            // Iterate through parent categories
+            for (const [parentCategory, subcategories] of Object.entries(localAuthority)) {
+                // Initialize parent category if not exists
+                if (!aggregated[parentCategory]) {
+                    aggregated[parentCategory] = {};
+                }
+
+                // Iterate through subcategories
+                for (const [subcategoryName, ethnicity] of Object.entries(subcategories)) {
+                    // Initialize subcategory if not exists
+                    if (!aggregated[parentCategory][subcategoryName]) {
+                        aggregated[parentCategory][subcategoryName] = {
+                            population: 0,
+                            code: ethnicity.code
+                        };
+                    }
+
+                    // Add population
+                    aggregated[parentCategory][subcategoryName].population += ethnicity.population;
+                    totalPopulation += ethnicity.population;
+                }
+            }
+        }
+
+        // Convert to the format with ethnicity property
+        const result: Record<string, EthnicityCategory> = {};
+
+        for (const [parentCategory, subcategories] of Object.entries(aggregated)) {
+            result[parentCategory] = {};
+
+            for (const [subcategoryName, data] of Object.entries(subcategories)) {
+                result[parentCategory][subcategoryName] = {
+                    ethnicity: subcategoryName,
+                    population: data.population,
+                    code: data.code
+                };
+            }
+        }
 
         this.cache.set(cacheKey, result);
         return result;
@@ -250,8 +293,8 @@ export class StatsCalculator {
             }
         }
 
-        const result = { 
-            averageRecordedCrime: localAuthorityCount > 0 ? (totalRecordedCrime / localAuthorityCount) : 0 
+        const result = {
+            averageRecordedCrime: localAuthorityCount > 0 ? (totalRecordedCrime / localAuthorityCount) : 0
         };
         this.cache.set(cacheKey, result);
         return result;
@@ -259,7 +302,7 @@ export class StatsCalculator {
 
     calculateIncomeStats(
         geojson: BoundaryGeojson,
-        incomeData: IncomeDataset['localAuthorityData'],
+        incomeData: IncomeDataset['data'],
         location: string | null,
         datasetId: string | null
     ) {
@@ -291,7 +334,7 @@ export class StatsCalculator {
 
     private aggregatePopulationData(
         geojson: BoundaryGeojson,
-        populationData: PopulationDataset['populationData'],
+        populationData: PopulationDataset['data'],
         wardCodeProp: string
     ) {
         const features = geojson.features;

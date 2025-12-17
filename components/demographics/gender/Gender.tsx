@@ -41,7 +41,7 @@ function Gender({
 		}
 
 		const wardCode = selectedArea.code;
-		const wardData = dataset.populationData[wardCode];
+		const wardData = dataset.data[wardCode];
 		if (wardData) {
 			// Use faster iteration than Object.values().reduce()
 			let males = 0;

@@ -72,7 +72,7 @@ const useElectionChartData = (
 			if (selectedArea && selectedArea.type === "constituency") {
 				// Try to find the constituency data for this year
 				const constituencyCode = selectedArea.code;
-				let data = dataset.constituencyData?.[constituencyCode];
+				let data = dataset.data?.[constituencyCode];
 
 				// If no data found and we have a code mapper, try to find the equivalent code for this year
 				if (!data && getCodeForYear) {
@@ -82,7 +82,7 @@ const useElectionChartData = (
 						year
 					);
 					if (mappedCode) {
-						data = dataset.constituencyData?.[mappedCode];
+						data = dataset.data?.[mappedCode];
 					}
 				}
 

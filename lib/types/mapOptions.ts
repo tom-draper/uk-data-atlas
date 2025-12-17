@@ -36,8 +36,8 @@ export interface MapOptions {
     housePrice: HousePriceOptions;
     crime: CrimeOptions;
     income: IncomeOptions;
-    general: {
-        theme: ColorTheme;
+    theme: {
+        id: ColorTheme;
     };
     visibility: {
         hideDataLayer: boolean;
@@ -76,8 +76,8 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
     income: {
         colorRange: { min: 25000, max: 45000 }
     },
-    general: {
-        theme: 'viridis'
+    theme: {
+        id: 'viridis'
     },
     visibility: {
         hideDataLayer: false,

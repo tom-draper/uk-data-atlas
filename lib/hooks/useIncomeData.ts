@@ -178,7 +178,7 @@ export const useIncomeData = () => {
                         year: 2025,
                         boundaryType: 'localAuthority',
                         boundaryYear: 2025,
-                        localAuthorityData
+                        data: localAuthorityData
                     }
                 };
 

@@ -1,5 +1,4 @@
 // lib/types/common.ts
-// Shared types and constants used across all modules
 
 export interface PartyVotes {
     LAB?: number;
@@ -27,7 +26,6 @@ export interface Party {
 }
 
 export type AgeData = Record<string, number>;
-export type BoundaryType = 'ward' | 'constituency' | 'localAuthority';
 
 export interface ColorRange {
     min: number;

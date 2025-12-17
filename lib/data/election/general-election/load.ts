@@ -86,8 +86,8 @@ export const fetchAndParseGeneralElectionData = async (config: GeneralElectionSo
                     year: config.year,
                     boundaryYear: config.constituencyBoundaryYear, // Use configurable boundary year
                     boundaryType: 'constituency',
-                    constituencyResults,
-                    constituencyData,
+                    results: constituencyResults,
+                    data: constituencyData,
                     partyInfo: PARTY_INFO
                 });
             },

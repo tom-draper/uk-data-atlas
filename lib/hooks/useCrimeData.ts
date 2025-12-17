@@ -115,7 +115,7 @@ export const useCrimeData = () => {
                                 boundaryYear: year,
                                 dataDate: `year ending June ${year}`,
                                 jurisdiction: 'England and Wales',
-                                records,
+                                data: records,
                                 metadata: {
                                     source: 'Police recorded crime from the Home Office',
                                     notes: ['Police recorded crime statistics are published as official statistics, not accredited official statistics'],

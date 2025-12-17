@@ -64,13 +64,13 @@ const useLocalElectionData = (
 			if (selectedArea && selectedArea.type === "ward") {
 				// Try to find the ward data for this year
 				const wardCode = selectedArea.code;
-				let data = dataset.wardData[wardCode];
+				let data = dataset.data[wardCode];
 
 				// If no data found and we have a code mapper, try to find the equivalent code for this year
 				if (!data && getCodeForYear) {
 					const mappedCode = getCodeForYear("ward", wardCode, year);
 					if (mappedCode) {
-						data = dataset.wardData[mappedCode];
+						data = dataset.data[mappedCode];
 					}
 				}
 

@@ -8,44 +8,25 @@ const SOURCE_ID = 'location-wards';
 const FILL_LAYER_ID = 'wards-fill';
 const LINE_LAYER_ID = 'wards-line';
 
+type FillPaintConfig = {
+    color: any;
+    opacity: number | any[];
+};
+
 export class LayerManager {
     constructor(private map: mapboxgl.Map | maplibregl.Map) { }
 
     updateElectionLayers(geojson: BoundaryGeojson, partyInfo: Party[], visibility: MapOptions['visibility']): void {
-        this.removeExistingLayers();
-        this.addSource(geojson);
+        const colorExpression: any[] = ['match', ['get', 'winningParty']];
+        partyInfo.forEach(party => {
+            colorExpression.push(party.key, PARTIES[party.key].color);
+        });
+        colorExpression.push('#cccccc');
 
-        if (visibility.hideDataLayer || visibility.hideBoundaries) {
-            // Only show boundaries without data colors
-            this.map.addLayer({
-                id: FILL_LAYER_ID,
-                type: 'fill',
-                source: SOURCE_ID,
-                paint: {
-                    'fill-color': visibility.hideBoundaries ? 'transparent' : '#cccccc',
-                    'fill-opacity': visibility.hideBoundaries ? 0 : 0.6
-                }
-            });
-        } else {
-            // Show data with colors
-            const colorExpression: any[] = ['match', ['get', 'winningParty']];
-            for (const party of partyInfo) {
-                colorExpression.push(party.key, PARTIES[party.key].color);
-            }
-            colorExpression.push('#cccccc');
-
-            this.map.addLayer({
-                id: FILL_LAYER_ID,
-                type: 'fill',
-                source: SOURCE_ID,
-                paint: {
-                    'fill-color': colorExpression,
-                    'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
-                }
-            });
-        }
-
-        this.addBorderLayer();
+        this.updateLayers(geojson, {
+            color: colorExpression,
+            opacity: ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
+        }, visibility);
     }
 
     updatePartyPercentageLayers(
@@ -53,65 +34,45 @@ export class LayerManager {
         options: LocalElectionOptions | GeneralElectionOptions,
         visibility: MapOptions['visibility']
     ): void {
-        this.removeExistingLayers();
-        this.addSource(geojson);
+        const baseColor = PARTIES[options.selectedParty]?.color || '#999999';
+        const fillColorExpression = getPartyPercentageColorExpression(baseColor, options);
 
-        if (visibility.hideDataLayer || visibility.hideBoundaries) {
-            // Only show boundaries without data colors
-            this.map.addLayer({
-                id: FILL_LAYER_ID,
-                type: 'fill',
-                source: SOURCE_ID,
-                paint: {
-                    'fill-color': visibility.hideBoundaries ? 'transparent' : '#cccccc',
-                    'fill-opacity': visibility.hideBoundaries ? 0 : 0.6
-                }
-            });
-        } else {
-            // Show data with colors
-            const baseColor = PARTIES[options.selectedParty]?.color || '#999999';
-            const fillColorExpression = getPartyPercentageColorExpression(baseColor, options);
-
-            this.map.addLayer({
-                id: FILL_LAYER_ID,
-                type: 'fill',
-                source: SOURCE_ID,
-                paint: {
-                    'fill-color': fillColorExpression,
-                    'fill-opacity': 0.7,
-                }
-            });
-        }
-
-        this.addBorderLayer();
+        this.updateLayers(geojson, {
+            color: fillColorExpression,
+            opacity: 0.7
+        }, visibility);
     }
 
-    updateColoredLayers(geojson: BoundaryGeojson, visibility: MapOptions['visibility']) {
+    updateColoredLayers(geojson: BoundaryGeojson, visibility: MapOptions['visibility']): void {
+        this.updateLayers(geojson, {
+            color: ['get', 'color'],
+            opacity: ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
+        }, visibility);
+    }
+
+    private updateLayers(
+        geojson: BoundaryGeojson,
+        paint: FillPaintConfig,
+        visibility: MapOptions['visibility']
+    ): void {
         this.removeExistingLayers();
         this.addSource(geojson);
 
-        if (visibility.hideDataLayer || visibility.hideBoundaries) {
-            // Only show boundaries without data colors
-            this.map.addLayer({
-                id: FILL_LAYER_ID,
-                type: 'fill',
-                source: SOURCE_ID,
-                paint: {
-                    'fill-color': visibility.hideBoundaries ? 'transparent' : '#cccccc',
-                    'fill-opacity': visibility.hideBoundaries ? 0 : 0.6
-                }
-            });
-        } else {
-            this.map.addLayer({
-                id: FILL_LAYER_ID,
-                type: 'fill',
-                source: SOURCE_ID,
-                paint: {
-                    'fill-color': ['get', 'color'],
-                    'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
-                }
-            });
-        }
+        const shouldHideData = visibility.hideDataLayer || visibility.hideBoundaries;
+
+        this.map.addLayer({
+            id: FILL_LAYER_ID,
+            type: 'fill',
+            source: SOURCE_ID,
+            paint: {
+                'fill-color': shouldHideData
+                    ? (visibility.hideBoundaries ? 'transparent' : '#cccccc')
+                    : paint.color,
+                'fill-opacity': shouldHideData
+                    ? (visibility.hideBoundaries ? 0 : 0.6)
+                    : paint.opacity
+            }
+        });
 
         this.addBorderLayer();
     }

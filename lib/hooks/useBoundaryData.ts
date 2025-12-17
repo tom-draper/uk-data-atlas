@@ -1,6 +1,6 @@
 // hooks/useBoundaryData.ts
 import { useEffect, useState, useMemo } from 'react';
-import { BoundaryGeojson } from '@lib/types';
+import { BoundaryData, BoundaryGeojson } from '@lib/types';
 import {
 	BoundaryType,
 	fetchBoundaryFile,
@@ -10,12 +10,6 @@ import {
 } from '../data/boundaries/boundaries';
 import { extractWardLadMappings, buildCrossYearMappings } from './useCodeMapper';
 import type { CodeMapping, CodeType } from './useCodeMapper';
-
-export type BoundaryData = {
-	ward: Record<number, BoundaryGeojson | null>;
-	constituency: Record<number, BoundaryGeojson | null>;
-	localAuthority: Record<number, BoundaryGeojson | null>;
-};
 
 const EMPTY_BOUNDARY_DATA: BoundaryData = {
 	ward: { 2024: null, 2023: null, 2022: null, 2021: null },

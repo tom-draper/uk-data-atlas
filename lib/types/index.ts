@@ -10,6 +10,7 @@ import { AggregatedIncomeData, IncomeDataset } from "./income";
 import { AggregatedEthnicityData, EthnicityDataset } from "./ethnicity";
 
 export * from "./common";
+export * from "./boundaries";
 export * from "./elections";
 export * from "./population";
 export * from "./housePrice";

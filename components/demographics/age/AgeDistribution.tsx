@@ -94,7 +94,7 @@ function AgeDistribution({
         }
 
         const wardCode = selectedArea.code;
-        const wardData = dataset.populationData[wardCode];
+        const wardData = dataset.data[wardCode];
         if (!wardData) {
             return {
                 medianAge: 0,

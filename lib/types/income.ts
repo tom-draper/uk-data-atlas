@@ -51,7 +51,7 @@ export interface IncomeDataset {
     year: number;
     boundaryType: 'localAuthority';
     boundaryYear: number;
-    localAuthorityData: Record<string, LocalAuthorityIncomeData>;
+    data: Record<string, LocalAuthorityIncomeData>;
 }
 
 export interface AggregatedIncomeData {

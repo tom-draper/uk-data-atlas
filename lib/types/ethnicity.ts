@@ -1,4 +1,4 @@
-import { BoundaryType } from "./common";
+import { BoundaryType } from "./boundaries";
 
 export interface Ethnicity {
     ethnicity: string;
@@ -16,7 +16,7 @@ export interface EthnicityDataset {
     year: number;
     boundaryType: BoundaryType;
     boundaryYear: number;
-    localAuthorityData: Record<string, Record<string, EthnicityCategory>>;
+    data: Record<string, Record<string, EthnicityCategory>>;
 }
 
 export interface AggregatedEthnicityData {

@@ -1,5 +1,5 @@
 import { LOCATIONS } from "@lib/data/locations";
-import { LocationBounds, BoundaryGeojson, PopulationDataset } from "@lib/types";
+import { LocationBounds, BoundaryGeojson, PopulationDataset, PopulationWardData } from "@lib/types";
 import { memo, useEffect, useMemo, useState, useTransition, useDeferredValue, useRef } from "react";
 import { fetchBoundaryFile, GEOJSON_PATHS, getProp, PROPERTY_KEYS } from "@lib/data/boundaries/boundaries";
 
@@ -86,11 +86,11 @@ export default memo(function LocationPanel({
 
     // Enrich population data with geographic bounds and pre-calculated totals
     const enrichedPopulation = useMemo(() => {
-        const enriched: Record<string, any> = {};
+        const enriched: Record<string, PopulationWardData & {bounds: [number, number, number, number], totalPopulation: number}> = {};
 
-        Object.entries(populationDataset.populationData).forEach(([wardCode, wardData]) => {
+        Object.entries(populationDataset.data).forEach(([wardCode, wardData]) => {
             const feature = geojsonFeatureMap[wardCode];
-            const bounds = feature ? calculateFeatureBounds(feature) : [-1, -1, -1, -1];
+            const bounds: [number, number, number, number] = feature ? calculateFeatureBounds(feature) : [-1, -1, -1, -1];
             const totalPopulation = calculateWardPopulation(wardData);
 
             enriched[wardCode] = {
@@ -111,9 +111,9 @@ export default memo(function LocationPanel({
         const countryPops: Record<string, number> = {
             'United Kingdom': 0,
             'England': 0,
-            'Scotland': 0,
+            'Scotland': 5479900,
             'Wales': 0,
-            'Northern Ireland': 0
+            'Northern Ireland': 1903175
         };
 
         // Single pass through all wards to calculate country totals
@@ -140,8 +140,8 @@ export default memo(function LocationPanel({
 
             if (bounds.lad_codes && bounds.lad_codes.length > 0) {
                 let total = 0;
-                Object.values(enrichedPopulation).forEach((wardData: any) => {
-                    if (bounds.lad_codes.includes(wardData.laCode)) {
+                Object.values(enrichedPopulation).forEach((wardData) => {
+                    if (bounds.lad_codes.includes(wardData.ladCode)) {
                         total += wardData.totalPopulation;
                     }
                 });
@@ -227,11 +227,11 @@ export default memo(function LocationPanel({
                         className="text-gray-400/80 mr-3 ml-2 hover:text-gray-600 transition-colors cursor-pointer"
                     >
                         {searchOpen ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-[18px]">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4.5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-[18px]">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-4.5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                             </svg>
                         )}

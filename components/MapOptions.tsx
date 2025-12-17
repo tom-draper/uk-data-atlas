@@ -20,7 +20,7 @@ export default function MapOptions({ onZoomIn, onZoomOut, handleMapOptionsChange
     const handleThemeChange = (themeId: ColorTheme) => {
         setSelectedTheme(themeId);
         setIsOpen(false);
-        handleMapOptionsChange('general', { theme: themeId });
+        handleMapOptionsChange('theme', { id: themeId });
     };
 
     const handleDataToggle = () => {

@@ -15,14 +15,14 @@ const parseObservation = (value: any): number | null => {
 const parseEthnicityName = (fullName: string): { parent: string; subcategory: string } => {
     // Handle names like "Asian, Asian British or Asian Welsh: Bangladeshi"
     const colonIndex = fullName.indexOf(':');
-    
+
     if (colonIndex !== -1) {
         return {
             parent: fullName.substring(0, colonIndex).trim(),
             subcategory: fullName.substring(colonIndex + 1).trim()
         };
     }
-    
+
     // If no colon, treat entire name as parent category
     return {
         parent: fullName.trim(),
@@ -100,8 +100,8 @@ export const useEthnicityData = () => {
                         type: 'ethnicity',
                         year: 2021,
                         boundaryType: 'localAuthority',
-                        boundaryYear: 2022,
-                        localAuthorityData: laData
+                        boundaryYear: 2025,
+                        data: laData
                     }
                 };
 

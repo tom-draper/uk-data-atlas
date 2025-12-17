@@ -62,8 +62,8 @@ export interface LocalElectionDataset extends BaseElectionDataset<WardData> {
     year: LocalElectionYear;
     boundaryType: 'ward';
     boundaryYear: WardYear;
-    wardResults: Record<string, string>;
-    wardData: Record<string, WardData>;
+    results: Record<string, string>;
+    data: Record<string, WardData>;
 }
 
 export interface GeneralElectionDataset extends BaseElectionDataset<ConstituencyData> {
@@ -71,8 +71,8 @@ export interface GeneralElectionDataset extends BaseElectionDataset<Constituency
     year: GeneralElectionYear;
     boundaryType: 'constituency';
     boundaryYear: ConstituencyYear;
-    constituencyResults: Record<string, string>;
-    constituencyData: Record<string, ConstituencyData>;
+    results: Record<string, string>;
+    data: Record<string, ConstituencyData>;
 }
 
 // Aggregated election data

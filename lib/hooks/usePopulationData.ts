@@ -273,7 +273,7 @@ export const usePopulationData = () => {
 
 				// Parse 2022 data
 				const parsed2022 = parsePopulationDataCombined(data2022Text);
-				const combinedData2022: PopulationDataset['populationData'] = {};
+				const combinedData2022: PopulationDataset['data'] = {};
 				const allWardCodes2022 = new Set([
 					...Object.keys(parsed2022.femalesData),
 					...Object.keys(parsed2022.malesData),
@@ -286,8 +286,8 @@ export const usePopulationData = () => {
 						males: parsed2022.malesData[wardCode]?.ageData || {},
 						females: parsed2022.femalesData[wardCode]?.ageData || {},
 						wardName: parsed2022.totalData[wardCode]?.wardName || '',
-						laCode: parsed2022.totalData[wardCode]?.laCode || '',
-						laName: parsed2022.totalData[wardCode]?.laName || '',
+						ladCode: parsed2022.totalData[wardCode]?.laCode || '',
+						ladName: parsed2022.totalData[wardCode]?.laName || '',
 					};
 				});
 
@@ -317,7 +317,7 @@ export const usePopulationData = () => {
 					year: 2022,
 					boundaryYear: 2023,
 					boundaryType: 'ward',
-					populationData: combinedData2022,
+					data: combinedData2022,
 				};
 
 				const loadedDatasets: Record<number, PopulationDataset> = {
