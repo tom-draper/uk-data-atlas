@@ -38,6 +38,9 @@ export function useMapUpdates({
                 case 'income':
                     return mapManager.updateMapForIncome(geojson, activeDataset, mapOptions);
 
+                case 'ethnicity':
+                    return mapManager.updateMapForEthnicity(geojson, activeDataset, mapOptions);
+
                 case 'population':
                     // Handle population sub-categories
                     if (activeViz.vizId.startsWith('ageDistribution')) {

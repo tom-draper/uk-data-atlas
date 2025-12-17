@@ -1,8 +1,8 @@
 // lib/utils/mapManager/featureBuilder.ts
-import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, PropertyKeys } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, PropertyKeys, EthnicityDataset } from '@lib/types';
 import { MapOptions } from '@lib/types/mapOptions';
 import { calculateMedianAge, calculateTotal, polygonAreaSqKm } from '../population';
-import { getColorForAge, getColorForGenderRatio, getColorForDensity, getColorForHousePrice, getColorForCrimeRate, getColorForIncome } from '../colorScale';
+import { getColorForAge, getColorForGenderRatio, getColorForDensity, getColorForHousePrice, getColorForCrimeRate, getColorForIncome, getColorForEthnicity } from '../colorScale';
 import { IncomeDataset } from '@/lib/types/income';
 
 const DEFAULT_COLOR = '#cccccc';
@@ -148,6 +148,71 @@ export class FeatureBuilder {
         });
     }
 
+    // buildEthnicityFeatures(
+    //     features: BoundaryGeojson['features'],
+    //     dataset: EthnicityDataset,
+    //     ladCodeProp: PropertyKeys,
+    //     mapOptions: MapOptions
+    // ): BoundaryGeojson['features'] {
+    //     return this.buildColoredFeatures(features, ladCodeProp, (feature) => {
+    //         const ladCode = feature.properties[ladCodeProp];
+    //         const ethnicityData = dataset.localAuthorityData[ladCode];
+
+    //         if (!ethnicityData) return DEFAULT_COLOR;
+
+    //         let majorityCategory = null;
+    //         let maxCount = 0;
+
+    //         // Iterate through parent categories
+    //         for (const [parentCategory, subcategories] of Object.entries(ethnicityData)) {
+    //             // Sum all populations in this parent category
+    //             const categoryTotal = Object.values(subcategories).reduce(
+    //                 (sum, ethnicity) => sum + ethnicity.population,
+    //                 0
+    //             );
+
+    //             if (categoryTotal > maxCount) {
+    //                 majorityCategory = parentCategory;
+    //                 maxCount = categoryTotal;
+    //             }
+    //         }
+
+    //         if (!majorityCategory) return DEFAULT_COLOR;
+
+    //         return getColorForEthnicity(majorityCategory, mapOptions.income);
+    //     });
+    // }
+    buildEthnicityFeatures(
+    features: BoundaryGeojson['features'],
+    dataset: EthnicityDataset,
+    ladCodeProp: PropertyKeys,
+    mapOptions: MapOptions
+): BoundaryGeojson['features'] {
+    return this.buildColoredFeatures(features, ladCodeProp, (feature) => {
+        const ladCode = feature.properties[ladCodeProp];
+        const ethnicityData = dataset.localAuthorityData[ladCode];
+
+        if (!ethnicityData) return DEFAULT_COLOR;
+
+        let majorityEthnicity = null;
+        let maxCount = 0;
+
+        // Iterate through all subcategories to find the single largest one
+        for (const subcategories of Object.values(ethnicityData)) {
+            for (const ethnicity of Object.values(subcategories)) {
+                if (ethnicity.population > maxCount) {
+                    majorityEthnicity = ethnicity.ethnicity;
+                    maxCount = ethnicity.population;
+                }
+            }
+        }
+
+        if (!majorityEthnicity) return DEFAULT_COLOR;
+
+        return getColorForEthnicity(majorityEthnicity, mapOptions.income);
+    });
+}
+
     buildHousePriceFeatures(
         features: BoundaryGeojson['features'],
         dataset: HousePriceDataset,
@@ -195,4 +260,5 @@ export class FeatureBuilder {
             return getColorForIncome(income, mapOptions.income, mapOptions.general.theme);
         });
     }
+
 }

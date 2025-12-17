@@ -1,5 +1,5 @@
 // lib/utils/mapManager/statsCalculator.ts
-import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, WardStats, ConstituencyStats, AgeGroups, WardHousePriceData, AggregatedHousePriceData, PopulationStats, CrimeDataset } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, WardStats, ConstituencyStats, AgeGroups, WardHousePriceData, AggregatedHousePriceData, PopulationStats, CrimeDataset, Ethnicity, AggregatedEthnicityData } from '@lib/types';
 import { calculateTotal, polygonAreaSqKm } from '../population';
 import { getWinningParty } from '../generalElection';
 import { calculateAgeGroups } from '../ageDistribution';
@@ -138,6 +138,27 @@ export class StatsCalculator {
         const wardCodeProp = this.propertyDetector.detectWardCode(geojson.features);
         const aggregated = this.aggregatePopulationData(geojson, populationData, wardCodeProp);
         const result = this.buildPopulationStatsResult(aggregated);
+
+        this.cache.set(cacheKey, result);
+        return result;
+    }
+
+    calculateEthnicityStats(
+        geojson: BoundaryGeojson,
+        localAuthorityData: Record<string, Record<string, Ethnicity>>,
+        location: string | null,
+        datasetId: string | null
+    ) {
+        const cacheKey = `ethnicity-${location}-${datasetId}`;
+        const cached = this.cache.get(cacheKey);
+        if (cached) return cached;
+
+        const ladProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+        const features = geojson.features;
+
+        const result: AggregatedEthnicityData[2021] = {
+
+        };
 
         this.cache.set(cacheKey, result);
         return result;

@@ -143,7 +143,7 @@ export default function CrimeRateChart({
 
 			<div className="absolute inset-0 z-0 backdrop-blur-[0.5px] bg-white/20" />
 			<div className="relative z-10">
-				<h3 className="text-xs font-bold text-gray-800/90">Crimes [{dataset.year}]</h3>
+				<h3 className="text-xs font-bold text-gray-800/90">Recorded Crime [{dataset.year}]</h3>
 				{crimeRate ? (
 					<div className="text-xl font-bold mt-2 text-center" style={{ color: intensity > 0.5 ? '#7f1d1d' : '#78350f' }}>
 						{Math.round(crimeRate).toLocaleString()}

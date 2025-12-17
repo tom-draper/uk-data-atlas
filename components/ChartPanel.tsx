@@ -132,8 +132,10 @@ export default memo(function ChartPanel({
 						codeMapper={codeMapper}
 					/>
 					<DemographicsChartSection
-						availableDatasets={datasets.population}
-						aggregatedData={aggregatedData.population}
+						availablePopulationDatasets={datasets.population}
+						aggregatedPopulationData={aggregatedData.population}
+						availableEthnicityDatasets={datasets.ethnicity}
+						aggregatedEthnicityData={aggregatedData.ethnicity}
 						boundaryData={boundaryData}
 						selectedArea={selectedArea}
 						activeViz={activeViz}

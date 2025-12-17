@@ -2,7 +2,9 @@
 "use client";
 import {
 	ActiveViz,
+	AggregatedEthnicityData,
 	AggregatedPopulationData,
+	EthnicityDataset,
 	PopulationDataset,
 	SelectedArea,
 } from "@lib/types";
@@ -10,10 +12,13 @@ import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 import Gender from "./gender/Gender";
 import AgeDistribution from "./age/AgeDistribution";
 import PopulationDensity from "./density/PopulationDensity";
+import EthnicityChart from "./ethnicity/EthnicityChart";
 
 export interface DemographicsChartSectionProps {
-	availableDatasets: Record<string, PopulationDataset>;
-	aggregatedData: AggregatedPopulationData | null;
+	availablePopulationDatasets: Record<string, PopulationDataset>;
+	aggregatedPopulationData: AggregatedPopulationData | null;
+	availableEthnicityDatasets: Record<string, EthnicityDataset>;
+	aggregatedEthnicityData: AggregatedEthnicityData | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
@@ -28,8 +33,10 @@ export interface DemographicsChartSectionProps {
 }
 
 export default function DemographicsChartSection({
-	availableDatasets,
-	aggregatedData,
+	availablePopulationDatasets,
+	aggregatedPopulationData,
+	availableEthnicityDatasets,
+	aggregatedEthnicityData,
 	boundaryData,
 	selectedArea,
 	codeMapper,
@@ -41,8 +48,8 @@ export default function DemographicsChartSection({
 			<h3 className="text-xs font-bold mb-2">Demographics</h3>
 			<div className="space-y-3">
 				<PopulationDensity
-					dataset={availableDatasets[2022]}
-					aggregatedData={aggregatedData}
+					dataset={availablePopulationDatasets[2022]}
+					aggregatedData={aggregatedPopulationData}
 					boundaryData={boundaryData}
 					selectedArea={selectedArea}
 					codeMapper={codeMapper}
@@ -50,15 +57,22 @@ export default function DemographicsChartSection({
 					setActiveViz={setActiveViz}
 				/>
 				<AgeDistribution
-					dataset={availableDatasets[2022]}
-					aggregatedData={aggregatedData}
+					dataset={availablePopulationDatasets[2022]}
+					aggregatedData={aggregatedPopulationData}
 					selectedArea={selectedArea}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
 				/>
 				<Gender
-					dataset={availableDatasets[2022]}
-					aggregatedData={aggregatedData}
+					dataset={availablePopulationDatasets[2022]}
+					aggregatedData={aggregatedPopulationData}
+					selectedArea={selectedArea}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+				<EthnicityChart
+					dataset={availableEthnicityDatasets[2021]}
+					aggregatedData={aggregatedEthnicityData}
 					selectedArea={selectedArea}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}

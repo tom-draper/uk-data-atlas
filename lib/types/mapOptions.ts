@@ -17,6 +17,7 @@ interface ElectionOption {
 export type GeneralElectionOptions = ElectionOption;
 export type LocalElectionOptions = ElectionOption;
 export type HousePriceOptions = ColorRangeOption;
+export type EthnicityOptions = ColorRangeOption;
 export type CrimeOptions = ColorRangeOption;
 export type PopulationOptions = ColorRangeOption;
 export type DensityOptions = ColorRangeOption;
@@ -31,6 +32,7 @@ export interface MapOptions {
     ageDistribution: PopulationOptions;
     populationDensity: DensityOptions;
     gender: GenderOptions;
+    ethnicity: EthnicityOptions;
     housePrice: HousePriceOptions;
     crime: CrimeOptions;
     income: IncomeOptions;
@@ -60,6 +62,9 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
         colorRange: { min: 0, max: 8000 }
     },
     gender: {
+        colorRange: { min: -0.1, max: 0.1 }
+    },
+    ethnicity: {
         colorRange: { min: -0.1, max: 0.1 }
     },
     housePrice: {

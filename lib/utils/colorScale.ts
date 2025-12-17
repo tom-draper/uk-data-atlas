@@ -1,5 +1,5 @@
 // lib/utils/colorScale.ts
-import type { ColorTheme, CrimeOptions, DensityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, IncomeOptions, LocalElectionOptions, PopulationOptions } from '@/lib/types/mapOptions';
+import type { ColorTheme, CrimeOptions, DensityOptions, EthnicityOptions, GenderOptions, GeneralElectionOptions, HousePriceOptions, IncomeOptions, LocalElectionOptions, PopulationOptions } from '@/lib/types/mapOptions';
 
 /**
  * Normalizes a value to a 0-1 range based on min/max bounds
@@ -47,25 +47,25 @@ export function interpolateColor(color1: string, color2: string, factor: number)
 
 // Define themes with specific color steps
 const themeDefinitions = [
-    { 
-        id: 'viridis' as ColorTheme, 
-        label: 'Viridis', 
-        colors: ['#440154', '#31688e', '#35b779', '#fde724'] 
+    {
+        id: 'viridis' as ColorTheme,
+        label: 'Viridis',
+        colors: ['#440154', '#31688e', '#35b779', '#fde724']
     },
-    { 
-        id: 'plasma' as ColorTheme, 
-        label: 'Plasma', 
-        colors: ['#0d0887', '#7e03a8', '#cc4778', '#f89540', '#f0f921'] 
+    {
+        id: 'plasma' as ColorTheme,
+        label: 'Plasma',
+        colors: ['#0d0887', '#7e03a8', '#cc4778', '#f89540', '#f0f921']
     },
-    { 
-        id: 'inferno' as ColorTheme, 
-        label: 'Inferno', 
-        colors: ['#000004', '#420a68', '#932667', '#fca236', '#fcfdbf'] 
+    {
+        id: 'inferno' as ColorTheme,
+        label: 'Inferno',
+        colors: ['#000004', '#420a68', '#932667', '#fca236', '#fcfdbf']
     },
-    { 
-        id: 'magma' as ColorTheme, 
-        label: 'Magma', 
-        colors: ['#000004', '#3b0f70', '#8c2981', '#fcfdbf'] 
+    {
+        id: 'magma' as ColorTheme,
+        label: 'Magma',
+        colors: ['#000004', '#3b0f70', '#8c2981', '#fcfdbf']
     },
 ];
 
@@ -90,10 +90,10 @@ export function getThemeColor(normalizedValue: number, themeId: string = 'viridi
     const factor = index - lower;
 
     if (lower === upper) return hexToRgbString(colors[lower]);
-    
+
     return interpolateColor(
-        hexToRgbString(colors[lower]), 
-        hexToRgbString(colors[upper]), 
+        hexToRgbString(colors[lower]),
+        hexToRgbString(colors[upper]),
         factor
     );
 }
@@ -114,6 +114,60 @@ export function getColorForDensity(density: number, mapOptions: DensityOptions, 
     const range = mapOptions.colorRange || { min: 500, max: 10000 };
     const normalized = normalizeValue(density, range.min, range.max);
     return getThemeColor(1 - normalized, themeId); // Invert so higher density is darker
+}
+
+// Ethnicity subcategory colors
+export const ETHNICITY_COLORS: Record<string, string> = {
+    'Asian, Asian British or Asian Welsh': '#0ea5e9', // Sky blue
+    'Black, Black British, Black Welsh, Caribbean or African': '#14b8a6', // Teal
+    'Mixed or Multiple ethnic groups': '#f97316', // Orange
+    'White': '#6366f1', // Indigo
+    'Other ethnic group': '#a855f7', // Purple
+
+    // Asian subcategories - Blues
+    'Bangladeshi': '#0ea5e9',      // Sky blue
+    'Chinese': '#3b82f6',          // Blue
+    'Indian': '#1d4ed8',           // Deep blue
+    'Pakistani': '#60a5fa',        // Light blue
+    'Other Asian': '#93c5fd',      // Lighter blue
+    
+    // Black subcategories - Greens/Teals
+    'African': '#14b8a6',          // Teal
+    'Caribbean': '#10b981',        // Emerald
+    'Other Black': '#34d399',      // Light green
+    
+    // Mixed subcategories - Oranges/Ambers
+    'White and Asian': '#f97316',           // Orange
+    'White and Black African': '#fb923c',   // Light orange
+    'White and Black Caribbean': '#fdba74', // Lighter orange
+    'Other Mixed or Multiple ethnic groups': '#fbbf24', // Amber
+    
+    // White subcategories - Purples
+    'English, Welsh, Scottish, Northern Irish or British': '#8b5cf6', // Violet
+    'Irish': '#a78bfa',                     // Light violet
+    'Gypsy or Irish Traveller': '#c4b5fd',  // Lighter violet
+    'Roma': '#ddd6fe',                      // Very light violet
+    'Other White': '#6366f1',               // Indigo
+    
+    // Other subcategories - Pinks/Roses
+    'Arab': '#ec4899',             // Pink
+    'Any other ethnic group': '#f472b6', // Light pink
+};
+
+export function getColorForEthnicity(
+    majorityEthnicity: string,
+    ethnicityOptions: EthnicityOptions,
+): string {
+    if (!majorityEthnicity) {
+        return '#cccccc';;
+    }
+
+    // Get the ethnicity category name
+    if (!majorityEthnicity || !ETHNICITY_COLORS[majorityEthnicity]) {
+        return '#cccccc';;
+    }
+
+    return ETHNICITY_COLORS[majorityEthnicity];
 }
 
 /**

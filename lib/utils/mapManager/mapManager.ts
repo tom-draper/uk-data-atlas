@@ -1,5 +1,5 @@
 // lib/utils/mapManager/mapManager.ts
-import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, SelectedArea } from '@lib/types';
+import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, SelectedArea, EthnicityDataset, PropertyKeys } from '@lib/types';
 import { MapOptions } from '@lib/types/mapOptions';
 import { LayerManager } from './layerManager';
 import { EventHandler } from './eventHandler';
@@ -14,10 +14,10 @@ export interface MapManagerCallbacks {
     onLocationChange: (location: string) => void;
 }
 
-export type MapMode = 'localElection' | 'generalElection' | 'population' | 'housePrice' | 'crime' | 'income';
+export type MapMode = 'localElection' | 'generalElection' | 'population' | 'ethnicity' | 'housePrice' | 'crime' | 'income';
 
 // Cache property detections to avoid repeated computation
-const propCache = new Map<string, string>();
+const propCache = new Map<string, PropertyKeys>();
 
 export class MapManager {
     private layerManager: LayerManager;
@@ -179,6 +179,16 @@ export class MapManager {
         );
     }
 
+    updateMapForEthnicity(geojson: BoundaryGeojson, dataset: EthnicityDataset, mapOptions: MapOptions): void {
+        this.updateGenericMap(
+            geojson, dataset, mapOptions,
+            this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+            this.featureBuilder.buildEthnicityFeatures.bind(this.featureBuilder),
+            'ethnicity',
+            dataset.localAuthorityData
+        );
+    }
+
     // Simplified stats calculation methods
     calculateLocalElectionStats(geojson: BoundaryGeojson, wardData: LocalElectionDataset['wardData'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculateLocalElectionStats(geojson, wardData, location, datasetId);
@@ -190,6 +200,10 @@ export class MapManager {
 
     calculatePopulationStats(geojson: BoundaryGeojson, populationData: PopulationDataset['populationData'], location: string | null = null, datasetId: string | null = null) {
         return this.statsCalculator.calculatePopulationStats(geojson, populationData, location, datasetId);
+    }
+
+    calculateEthnicityStats(geojson: BoundaryGeojson, ethnicityData: EthnicityDataset['localAuthorityData'], location: string | null = null, datasetId: string | null = null) {
+        return this.statsCalculator.calculateEthnicityStats(geojson, ethnicityData, location, datasetId);
     }
 
     calculateHousePriceStats(geojson: BoundaryGeojson, wardData: HousePriceDataset['wardData'], location: string | null = null, datasetId: string | null = null) {

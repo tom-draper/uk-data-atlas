@@ -132,7 +132,7 @@ const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeF
             onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
         >
             <div className="flex items-center justify-between mb-1.5 relative z-10">
-                <h3 className="text-xs font-bold">House Price (Median) [{dataset.year}]</h3>
+                <h3 className="text-xs font-bold">Median House Price [{dataset.year}]</h3>
             </div>
 
             {/* Line chart background */}

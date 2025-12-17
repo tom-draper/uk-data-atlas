@@ -28,11 +28,6 @@ function AgeDistributionChart({ counts, maxCount, total, ageGroups, isActive }: 
 
 	return (
 		<div className="mx-1 -mt-4">
-			{/* PERFORMANCE OPTIMIZATIONS:
-                1. `contain: layout style paint` - Isolates this component's layout/paint
-                2. `translateZ(0)` in bars - Forces GPU acceleration without will-change issues
-                3. Skip rendering empty bars
-            */}
 			<div 
 				className="flex items-end h-26 overflow-x-hidden pt-4"
 				style={{ 

@@ -123,7 +123,7 @@ export default function IncomeChart({
 			</div>
 
 			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className="text-xs font-bold text-gray-700">Income (Median) [{dataset.year}]</h3>
+				<h3 className="text-xs font-bold text-gray-700">Median Income [{dataset.year}]</h3>
 			</div>
 
 			{formattedMedian ? (
