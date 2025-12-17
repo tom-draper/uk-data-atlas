@@ -21,6 +21,7 @@ interface EconomicsSectionProps {
     selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (type: 'ward' | 'localAuthority', code: string, targetYear: number) => string | undefined;
+        getWardsForLad: (ladCode: string, year: number) => string[];
 	};
     setActiveViz: (value: ActiveViz) => void;
 }

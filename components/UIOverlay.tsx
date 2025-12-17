@@ -1,8 +1,7 @@
 import ControlPanel from '@components/ControlPanel';
 import LegendPanel from '@components/LegendPanel';
 import ChartPanel from '@components/ChartPanel';
-import type { ActiveViz, AggregatedData, Dataset, Datasets, SelectedArea } from '@lib/types';
-import { BoundaryData } from '@/lib/hooks/useBoundaryData';
+import type { ActiveViz, AggregatedData, BoundaryData, Dataset, Datasets, SelectedArea } from '@lib/types';
 import { MapOptions } from '@/lib/types/mapOptions';
 import { CodeType } from '@/lib/hooks/useCodeMapper';
 
@@ -18,6 +17,7 @@ interface UIOverlayProps {
 	mapOptions: MapOptions;
 	codeMapper?: {
 		getCodeForYear: (type: CodeType, code: string, targetYear: number) => string | undefined;
+        getWardsForLad: (ladCode: string, year: number) => string[];
 	};
 	onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
 	onLocationClick: (location: string) => void;

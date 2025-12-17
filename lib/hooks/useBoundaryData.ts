@@ -8,8 +8,12 @@ import {
 	GEOJSON_PATHS,
 	PROPERTY_KEYS
 } from '../data/boundaries/boundaries';
-import { extractWardLadMappings, buildCrossYearMappings } from './useCodeMapper';
-import type { CodeMapping, CodeType } from './useCodeMapper';
+import { 
+	extractWardLadMappings, 
+	extractLadWardMappings,
+	buildCrossYearMappings 
+} from './useCodeMapper';
+import type { CodeMapping, CodeType, YearCode } from './useCodeMapper';
 
 const EMPTY_BOUNDARY_DATA: BoundaryData = {
 	ward: { 2024: null, 2023: null, 2022: null, 2021: null },
@@ -23,6 +27,7 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = {
 const fetchBoundaryGroup = async (
 	type: BoundaryType,
 	onMappingsExtracted?: (mappings: Record<string, string>) => void,
+	onLadWardMappingsExtracted?: (year: YearCode, mappings: Record<string, string[]>) => void,
 	onCrossYearMappings?: (type: CodeType, mappings: CodeMapping) => void
 ): Promise<Record<number, BoundaryGeojson>> => {
 	const paths = GEOJSON_PATHS[type];
@@ -33,15 +38,30 @@ const fetchBoundaryGroup = async (
 			const path = paths[year as keyof typeof paths];
 			const data = await fetchBoundaryFile(path);
 
-			// Extract ward-to-LAD mappings from ward data
-			if (type === 'ward' && data.features?.length && onMappingsExtracted) {
-				const mappings = extractWardLadMappings(
-					data.features,
-					PROPERTY_KEYS.wardCode,
-					PROPERTY_KEYS.ladCode
-				);
-				if (Object.keys(mappings).length > 0) {
-					onMappingsExtracted(mappings);
+			// Extract ward-to-LAD and LAD-to-ward mappings from ward data
+			if (type === 'ward' && data.features?.length) {
+				// Ward-to-LAD mappings (for filtering)
+				if (onMappingsExtracted) {
+					const wardToLadMappings = extractWardLadMappings(
+						data.features,
+						PROPERTY_KEYS.wardCode,
+						PROPERTY_KEYS.ladCode
+					);
+					if (Object.keys(wardToLadMappings).length > 0) {
+						onMappingsExtracted(wardToLadMappings);
+					}
+				}
+
+				// LAD-to-wards mappings (for getting all wards in a LAD)
+				if (onLadWardMappingsExtracted) {
+					const ladToWardsMappings = extractLadWardMappings(
+						data.features,
+						PROPERTY_KEYS.wardCode,
+						PROPERTY_KEYS.ladCode
+					);
+					if (Object.keys(ladToWardsMappings).length > 0) {
+						onLadWardMappingsExtracted(year, ladToWardsMappings);
+					}
 				}
 			}
 
@@ -96,6 +116,7 @@ export function useBoundaryData(
 	codeMapper?: {
 		getLadForWard: (wardCode: string) => string | undefined;
 		addWardLadMappings: (mappings: Record<string, string>) => void;
+		addLadWardMappings: (year: YearCode, mappings: Record<string, string[]>) => void;
 		addCodeMappings: (type: CodeType, mappings: CodeMapping) => void;
 	}
 ) {
@@ -105,6 +126,7 @@ export function useBoundaryData(
 
 	// Extract the individual functions to use as dependencies
 	const addWardLadMappings = codeMapper?.addWardLadMappings;
+	const addLadWardMappings = codeMapper?.addLadWardMappings;
 	const addCodeMappings = codeMapper?.addCodeMappings;
 	const getLadForWard = codeMapper?.getLadForWard;
 
@@ -121,15 +143,18 @@ export function useBoundaryData(
 					fetchBoundaryGroup(
 						'ward',
 						addWardLadMappings,
+						addLadWardMappings,
 						addCodeMappings
 					),
 					fetchBoundaryGroup(
 						'constituency',
 						undefined,
+						undefined,
 						addCodeMappings
 					),
 					fetchBoundaryGroup(
 						'localAuthority',
+						undefined,
 						undefined,
 						addCodeMappings
 					),
@@ -158,7 +183,7 @@ export function useBoundaryData(
 		return () => {
 			mounted = false;
 		};
-	}, [addWardLadMappings, addCodeMappings]); // Now uses stable function references
+	}, [addWardLadMappings, addLadWardMappings, addCodeMappings]); // Added addLadWardMappings
 
 	// Filter data based on selected location
 	const filteredData = useMemo(() => {

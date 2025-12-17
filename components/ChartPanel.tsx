@@ -1,11 +1,10 @@
 // components/ChartPanel.tsx
 'use client';
 import packageJson from '../package.json';
-import { Dataset, Datasets, ActiveViz, AggregatedData, SelectedArea } from '@lib/types';
+import { Dataset, Datasets, ActiveViz, AggregatedData, SelectedArea, BoundaryData } from '@lib/types';
 import LocalElectionResultChartSection from './local-election/LocalElectionResultChartSection';
 import DemographicsChartSection from './demographics/DemographicsChartSection';
 import { memo } from 'react';
-import { BoundaryData } from '@/lib/hooks/useBoundaryData';
 import EconomicsSection from './economics/EconomicsSection';
 import GeneralElectionResultChartSection from './general-election/GeneralElectionResultChartSection';
 import CrimeSection from './crime/CrimeSection';
@@ -22,6 +21,7 @@ interface ChartPanelProps {
 	aggregatedData: AggregatedData;
 	codeMapper?: {
 		getCodeForYear: (type: CodeType, code: string, targetYear: number) => string | undefined;
+        getWardsForLad: (ladCode: string, year: number) => string[];
 	};
 }
 

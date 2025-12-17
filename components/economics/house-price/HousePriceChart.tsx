@@ -10,7 +10,8 @@ interface HousePriceChartProps {
     year: number;
     selectedArea: SelectedArea | null;
     codeMapper?: {
-        getCodeForYear: (type: 'ward', code: string, targetYear: number) => string | undefined;
+        getCodeForYear: (type: 'ward' | 'localAuthority', code: string, targetYear: number) => string | undefined;
+        getWardsForLad: (ladCode: string, year: number) => string[];
     };
     setActiveViz: (value: ActiveViz) => void;
 }
@@ -19,7 +20,8 @@ interface PriceChartProps {
     dataset: HousePriceDataset;
     aggregatedData: AggregatedHousePriceData | null;
     selectedArea: SelectedArea | null;
-    getCodeForYear?: (type: 'ward', code: string, targetYear: number) => string | undefined;
+    getCodeForYear?: (type: 'ward' | 'localAuthority', code: string, targetYear: number) => string | undefined;
+    getWardsForLad?: (ladCode: string, year: number) => string[];
     isActive: boolean;
     setActiveViz: (value: ActiveViz) => void;
 }
@@ -34,16 +36,17 @@ const colors = {
 
 const housePriceLookupCache = new Map<string, Map<number, any>>();
 
-const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeForYear, isActive, setActiveViz }: PriceChartProps) => {
+const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeForYear, getWardsForLad, isActive, setActiveViz }: PriceChartProps) => {
     const { priceData, currentPrice } = useMemo(() => {
         let prices: Record<number, number> = {};
         let price2023: number | null = null;
 
         if (selectedArea === null && aggregatedData) {
-            prices = aggregatedData[2023]?.averagePrices || {};
-            price2023 = aggregatedData[2023]?.averagePrice || null;
+            // No area selected - show aggregated data
+            prices = aggregatedData[dataset.year]?.averagePrices || {};
+            price2023 = aggregatedData[dataset.year]?.averagePrice || null;
         } else if (selectedArea && selectedArea.type === 'ward') {
-            // Check cache first
+            // Ward selected - lookup ward data
             const wardCode = selectedArea.code;
             const cacheKey = `ward-${wardCode}`;
             if (!housePriceLookupCache.has(cacheKey)) {
@@ -59,7 +62,7 @@ const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeF
                 let data = dataset.data?.[wardCode];
 
                 if (!data && getCodeForYear) {
-                    const mappedCode = getCodeForYear('ward', wardCode, 2023);
+                    const mappedCode = getCodeForYear('ward', wardCode, dataset.boundaryYear);
                     if (mappedCode) {
                         data = dataset.data[mappedCode];
                     }
@@ -67,14 +70,79 @@ const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeF
 
                 if (data) {
                     prices = data.prices;
-                    price2023 = prices[2023] || null;
+                    price2023 = prices[dataset.year] || null;
                 }
 
                 // Cache the result
                 yearCache.set(dataset.year, data || null);
             }
+        } else if (selectedArea && selectedArea.type === 'localAuthority' && getWardsForLad) {
+            // Local Authority selected - aggregate ward data
+            const ladCode = selectedArea.code;
+            const cacheKey = `lad-${ladCode}`;
+            
+            if (!housePriceLookupCache.has(cacheKey)) {
+                housePriceLookupCache.set(cacheKey, new Map());
+            }
+            const yearCache = housePriceLookupCache.get(cacheKey)!;
+
+            if (yearCache.has(dataset.year)) {
+                const cached = yearCache.get(dataset.year);
+                prices = cached?.prices || {};
+                price2023 = prices[2023] || null;
+            } else {
+                // Get all wards in this LAD
+                const wardCodes = getWardsForLad(ladCode, 2022);
+                
+                if (wardCodes.length > 0) {
+                    // Aggregate prices across all wards
+                    const yearlyPrices: Record<number, number[]> = {};
+                    
+                    for (const wardCode of wardCodes) {
+                        let wardData = dataset.data?.[wardCode];
+                        
+                        // Try to map to the dataset's year if ward code doesn't exist
+                        if (!wardData && getCodeForYear) {
+                            const mappedCode = getCodeForYear('ward', wardCode, 2022);
+                            if (mappedCode) {
+                                wardData = dataset.data[mappedCode];
+                            }
+                        }
+                        
+                        if (wardData?.prices) {
+                            // Collect prices by year
+                            for (const [year, price] of Object.entries(wardData.prices)) {
+                                if (price !== null && price !== undefined) {
+                                    const yearNum = Number(year);
+                                    if (!yearlyPrices[yearNum]) {
+                                        yearlyPrices[yearNum] = [];
+                                    }
+                                    yearlyPrices[yearNum].push(price as number);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Calculate median for each year
+                    for (const [year, priceArray] of Object.entries(yearlyPrices)) {
+                        if (priceArray.length > 0) {
+                            // Sort and find median
+                            const sorted = [...priceArray].sort((a, b) => a - b);
+                            const mid = Math.floor(sorted.length / 2);
+                            prices[Number(year)] = sorted.length % 2 === 0
+                                ? (sorted[mid - 1] + sorted[mid]) / 2
+                                : sorted[mid];
+                        }
+                    }
+                    
+                    price2023 = prices[2023] || null;
+                }
+
+                // Cache the result
+                yearCache.set(dataset.year, { prices });
+            }
         } else {
-            // House prices are ward-level data only, return empty
+            // Other area types or missing mapper
             return {
                 priceData: [],
                 currentPrice: null
@@ -91,7 +159,7 @@ const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeF
             priceData: sortedPrices,
             currentPrice: price2023
         };
-    }, [dataset, aggregatedData, selectedArea]);
+    }, [dataset, aggregatedData, selectedArea, getCodeForYear, getWardsForLad]);
 
     // Calculate SVG path for the line chart with straight lines
     const { linePath, areaPath } = useMemo(() => {
@@ -126,7 +194,6 @@ const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeF
         <div
             className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative ${isActive
                 ? `${colors.bg} border-2 ${colors.border}`
-                // UPDATED HOVER COLOR here as well
                 : 'bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300'
                 }`}
             onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
@@ -144,7 +211,6 @@ const PriceChart = React.memo(({ dataset, aggregatedData, selectedArea, getCodeF
                 >
                     <defs>
                         <linearGradient id={`gradient-${dataset.year}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                            {/* Opacity increased slightly from 0.08 to 0.1 for better visibility with indigo */}
                             <stop offset="0%" stopColor={colors.line} stopOpacity="0.1" />
                             <stop offset="100%" stopColor={colors.line} stopOpacity="0.05" />
                         </linearGradient>
@@ -207,6 +273,7 @@ export default function HousePriceChart({
             aggregatedData={aggregatedData}
             selectedArea={selectedArea}
             getCodeForYear={codeMapper?.getCodeForYear}
+            getWardsForLad={codeMapper?.getWardsForLad}
             isActive={isActive}
             setActiveViz={setActiveViz}
         />
