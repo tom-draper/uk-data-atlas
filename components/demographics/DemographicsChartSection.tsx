@@ -4,11 +4,11 @@ import {
 	ActiveViz,
 	AggregatedEthnicityData,
 	AggregatedPopulationData,
+	BoundaryData,
 	EthnicityDataset,
 	PopulationDataset,
 	SelectedArea,
 } from "@lib/types";
-import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 import Gender from "./gender/Gender";
 import AgeDistribution from "./age/AgeDistribution";
 import PopulationDensity from "./density/PopulationDensity";
@@ -27,6 +27,7 @@ export interface DemographicsChartSectionProps {
 			code: string,
 			targetYear: number
 		) => string | undefined;
+        getWardsForLad: (ladCode: string, year: number) => string[];
 	};
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;

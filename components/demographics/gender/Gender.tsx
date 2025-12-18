@@ -14,7 +14,18 @@ interface GenderProps {
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
+	codeMapper?: {
+		getCodeForYear: (
+			type: "ward" | "localAuthority",
+			code: string,
+			targetYear: number
+		) => string | undefined;
+		getWardsForLad: (ladCode: string, year: number) => string[];
+	};
 }
+
+// Cache for LAD gender aggregations
+const genderCache = new Map<string, Map<number, any>>();
 
 function Gender({
 	dataset,
@@ -22,13 +33,14 @@ function Gender({
 	selectedArea,
 	activeViz,
 	setActiveViz,
+	codeMapper,
 }: GenderProps) {
 	const vizId = `gender-${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
 	// Calculate total males and females
 	const { totalMales, totalFemales } = useMemo(() => {
-		// Early return for aggregated data case
+		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			return {
 				totalMales: aggregatedData[dataset.year].populationStats.males,
@@ -36,33 +48,107 @@ function Gender({
 			};
 		}
 
-		if (selectedArea === null || selectedArea.type !== "ward" || !dataset) {
+		// Handle Ward Selection
+		if (selectedArea && selectedArea.type === "ward") {
+			const wardCode = selectedArea.code;
+			let wardData = dataset.data[wardCode];
+
+			// Try to map ward code if not found
+			if (!wardData && codeMapper?.getCodeForYear) {
+				const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+				if (mappedCode) {
+					wardData = dataset.data[mappedCode];
+				}
+			}
+
+			if (wardData) {
+				// Use faster iteration than Object.values().reduce()
+				let males = 0;
+				let females = 0;
+
+				const maleKeys = Object.keys(wardData.males);
+				const femaleKeys = Object.keys(wardData.females);
+
+				for (let i = 0; i < maleKeys.length; i++) {
+					males += wardData.males[maleKeys[i]];
+				}
+
+				for (let i = 0; i < femaleKeys.length; i++) {
+					females += wardData.females[femaleKeys[i]];
+				}
+
+				return { totalMales: males, totalFemales: females };
+			}
+
 			return { totalMales: 0, totalFemales: 0 };
 		}
 
-		const wardCode = selectedArea.code;
-		const wardData = dataset.data[wardCode];
-		if (wardData) {
-			// Use faster iteration than Object.values().reduce()
-			let males = 0;
-			let females = 0;
+		// Handle Local Authority Selection
+		if (selectedArea && selectedArea.type === 'localAuthority' && codeMapper?.getWardsForLad) {
+			const ladCode = selectedArea.code;
+			const cacheKey = `lad-${ladCode}`;
+			
+			if (!genderCache.has(cacheKey)) {
+				genderCache.set(cacheKey, new Map());
+			}
+			const yearCache = genderCache.get(cacheKey)!;
 
-			const maleKeys = Object.keys(wardData.males);
-			const femaleKeys = Object.keys(wardData.females);
-
-			for (let i = 0; i < maleKeys.length; i++) {
-				males += wardData.males[maleKeys[i]];
+			if (yearCache.has(dataset.year)) {
+				return yearCache.get(dataset.year);
 			}
 
-			for (let i = 0; i < femaleKeys.length; i++) {
-				females += wardData.females[femaleKeys[i]];
+			// Get all wards in this LAD
+			const wardCodes = codeMapper.getWardsForLad(ladCode, 2022);
+			
+			if (wardCodes.length === 0) {
+				const emptyResult = { totalMales: 0, totalFemales: 0 };
+				yearCache.set(dataset.year, emptyResult);
+				return emptyResult;
 			}
 
-			return { totalMales: males, totalFemales: females };
+			let aggregatedMales = 0;
+			let aggregatedFemales = 0;
+
+			for (const wardCode of wardCodes) {
+				let wardData = dataset.data?.[wardCode];
+				
+				// Try to map to the dataset's year if ward code doesn't exist
+				if (!wardData && codeMapper?.getCodeForYear) {
+					const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+					if (mappedCode) {
+						wardData = dataset.data[mappedCode];
+					}
+				}
+				
+				if (wardData) {
+					// Sum males
+					const maleKeys = Object.keys(wardData.males);
+					for (let i = 0; i < maleKeys.length; i++) {
+						aggregatedMales += wardData.males[maleKeys[i]];
+					}
+
+					// Sum females
+					const femaleKeys = Object.keys(wardData.females);
+					for (let i = 0; i < femaleKeys.length; i++) {
+						aggregatedFemales += wardData.females[femaleKeys[i]];
+					}
+				}
+			}
+
+			const result = { 
+				totalMales: aggregatedMales, 
+				totalFemales: aggregatedFemales 
+			};
+
+			// Cache the result
+			yearCache.set(dataset.year, result);
+			return result;
 		}
 
+		// Unsupported area type or missing data
 		return { totalMales: 0, totalFemales: 0 };
-	}, [dataset, aggregatedData, selectedArea]);
+
+	}, [dataset, aggregatedData, selectedArea, codeMapper]);
 
 	const total = totalMales + totalFemales;
 	const hasData = total > 0;
@@ -100,6 +186,7 @@ function Gender({
 				dataset={dataset}
 				aggregatedData={aggregatedData}
 				selectedArea={selectedArea}
+				codeMapper={codeMapper}
 			/>
 		</div>
 	);

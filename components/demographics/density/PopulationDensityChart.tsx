@@ -1,8 +1,8 @@
 // components/population/density/PopulationDensityChart.tsx
 import { WARD_CODE_KEYS } from "@/lib/data/boundaries/boundaries";
-import { BoundaryData } from "@/lib/hooks/useBoundaryData";
 import {
 	AggregatedPopulationData,
+	BoundaryData,
 	BoundaryGeojson,
 	PopulationDataset,
 	SelectedArea,
@@ -17,10 +17,11 @@ interface PopulationDensityChartProps {
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (
-			type: "ward",
+			type: "ward" | "localAuthority",
 			code: string,
 			targetYear: number
 		) => string | undefined;
+		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
 }
 
@@ -143,6 +144,9 @@ const DensityGrid = memo(({ density }: { density: number }) => {
 
 DensityGrid.displayName = "DensityGrid";
 
+// Cache for LAD density calculations
+const densityCache = new Map<string, Map<number, any>>();
+
 function PopulationDensityChart({
 	dataset,
 	aggregatedData,
@@ -151,6 +155,7 @@ function PopulationDensityChart({
 	codeMapper,
 }: PopulationDensityChartProps) {
 	const { density, areaSqKm, total } = useMemo(() => {
+		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			return {
 				density: aggregatedData[dataset.year].density,
@@ -160,30 +165,114 @@ function PopulationDensityChart({
 		}
 
 		const geojson = boundaryData.ward[dataset.boundaryYear];
-		if (selectedArea === null || selectedArea.type !== "ward" || !geojson) {
+		if (!geojson) {
 			return { density: null, areaSqKm: null, total: null };
 		}
 
-		const wardCode = selectedArea.code;
-		const wardCodeProp = detectPropertyKey(geojson);
+		// Handle Ward Selection
+		if (selectedArea && selectedArea.type === "ward") {
+			const wardCode = selectedArea.code;
+			const wardCodeProp = detectPropertyKey(geojson);
 
-		const populationData = dataset.data[wardCode];
-		if (populationData) {
-			const wardFeature = geojson.features.find(
-				(f) => f.properties?.[wardCodeProp] === wardCode
-			);
+			let populationData = dataset.data[wardCode];
 
-			if (wardFeature) {
-				const total = calculateTotal(populationData.total);
-				return {
-					...getWardPopulationDensity(wardFeature, total),
-					total,
-				};
+			// Try to map ward code if not found
+			if (!populationData && codeMapper?.getCodeForYear) {
+				const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+				if (mappedCode) {
+					populationData = dataset.data[mappedCode];
+				}
 			}
+
+			if (populationData) {
+				const wardFeature = geojson.features.find(
+					(f) => f.properties?.[wardCodeProp] === wardCode
+				);
+
+				if (wardFeature) {
+					const total = calculateTotal(populationData.total);
+					return {
+						...getWardPopulationDensity(wardFeature, total),
+						total,
+					};
+				}
+			}
+
+			return { density: null, areaSqKm: null, total: null };
 		}
 
+		// Handle Local Authority Selection
+		if (selectedArea && selectedArea.type === 'localAuthority' && codeMapper?.getWardsForLad) {
+			const ladCode = selectedArea.code;
+			const cacheKey = `lad-${ladCode}`;
+			
+			if (!densityCache.has(cacheKey)) {
+				densityCache.set(cacheKey, new Map());
+			}
+			const yearCache = densityCache.get(cacheKey)!;
+
+			if (yearCache.has(dataset.year)) {
+				return yearCache.get(dataset.year);
+			}
+
+			// Get all wards in this LAD
+			const wardCodes = codeMapper.getWardsForLad(ladCode, 2022);
+			
+			if (wardCodes.length === 0) {
+				const emptyResult = { density: null, areaSqKm: null, total: null };
+				yearCache.set(dataset.year, emptyResult);
+				return emptyResult;
+			}
+
+			const wardCodeProp = detectPropertyKey(geojson);
+			let totalPopulation = 0;
+			let totalArea = 0;
+
+			for (const wardCode of wardCodes) {
+				let populationData = dataset.data?.[wardCode];
+				
+				// Try to map to the dataset's year if ward code doesn't exist
+				if (!populationData && codeMapper?.getCodeForYear) {
+					const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+					if (mappedCode) {
+						populationData = dataset.data[mappedCode];
+					}
+				}
+				
+				if (populationData) {
+					// Find the ward feature for area calculation
+					const wardFeature = geojson.features.find(
+						(f) => f.properties?.[wardCodeProp] === wardCode
+					);
+
+					if (wardFeature) {
+						const wardTotal = calculateTotal(populationData.total);
+						const coordinates = wardFeature.geometry.coordinates;
+						const wardArea = polygonAreaSqKm(coordinates);
+
+						totalPopulation += wardTotal;
+						totalArea += wardArea;
+					}
+				}
+			}
+
+			const result = totalArea > 0 
+				? {
+					density: totalPopulation / totalArea,
+					areaSqKm: totalArea,
+					total: totalPopulation,
+				}
+				: { density: null, areaSqKm: null, total: null };
+
+			// Cache the result
+			yearCache.set(dataset.year, result);
+			return result;
+		}
+
+		// Unsupported area type
 		return { density: null, areaSqKm: null, total: null };
-	}, [dataset, aggregatedData, boundaryData, selectedArea]);
+
+	}, [dataset, aggregatedData, boundaryData, selectedArea, codeMapper]);
 
 	if (!total || density === null || areaSqKm === null) {
 		return (

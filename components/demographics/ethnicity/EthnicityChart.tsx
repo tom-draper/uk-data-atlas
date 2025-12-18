@@ -39,12 +39,12 @@ EthnicityBar.displayName = 'EthnicityBar';
 
 const Legend = memo(({ ethnicityData }: { ethnicityData: ProcessedEthnicityData[] }) => (
     <div className="animate-in fade-in duration-200 mt-1">
-        <div className="grid grid-cols-3 gap-0.5 text-[9px] max-h-13 overflow-y-auto">
+        <div className="grid grid-cols-3 gap-0.5 text-[9px] overflow-y-auto">
             {ethnicityData.map((item, idx) => (
                 <div key={`${item.parentCategory}-${item.ethnicity}-${idx}`} className="flex items-center gap-1 min-w-0">
                     <div className="w-1.5 h-1.5 rounded-sm shrink-0" style={{ backgroundColor: item.color }} />
                     <span className="truncate font-medium" title={item.ethnicity}>
-                        {item.ethnicity}: {item.population.toLocaleString()}
+                        {item.population.toLocaleString()}: {item.ethnicity}
                     </span>
                 </div>
             ))}
@@ -122,7 +122,7 @@ export default memo(function EthnicityChart({
         return { hasData: true, ethnicityData, totalPopulation };
     }, [dataset, selectedArea, aggregatedData]);
 
-    const heightClass = isActive ? 'h-[95px]' : 'h-[65px]';
+    const heightClass = isActive ? 'h-[170px]' : 'h-[65px]';
 
     const handleActivate = () => {
         setActiveViz({
@@ -142,12 +142,7 @@ export default memo(function EthnicityChart({
             onClick={handleActivate}
         >
             <div className="flex items-center justify-between mb-1.5">
-                <h3 className="text-xs font-bold">{dataset.year} Ethnicity</h3>
-                {/* {processedData.hasData && (
-                    <span className="text-[9px] text-gray-500 font-medium">
-                        Pop: {processedData.totalPopulation.toLocaleString()}
-                    </span>
-                )} */}
+                <h3 className="text-xs font-bold">Ethnicity [{dataset.year}]</h3>
             </div>
 
             {!processedData.hasData ? (

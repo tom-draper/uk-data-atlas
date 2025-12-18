@@ -6,13 +6,13 @@ import { ColorRange } from "./common";
 
 // Base option types reused across visualizations
 interface ColorRangeOption {
-    colorRange?: ColorRange;
+    colorRange: ColorRange;
 }
 
 export interface CategoryOptions {
     mode: 'majority' | 'percentage';
     selected?: string;
-    percentageRange?: ColorRange;
+    percentageRange: ColorRange;
 }
 
 export type GeneralElectionOptions = CategoryOptions;

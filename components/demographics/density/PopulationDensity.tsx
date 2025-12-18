@@ -20,6 +20,7 @@ interface PopulationDensityChartProps {
 			code: string,
 			targetYear: number
 		) => string | undefined;
+		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;

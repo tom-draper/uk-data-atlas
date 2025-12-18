@@ -6,13 +6,10 @@ import type {
     DensityOptions,
     EthnicityOptions,
     GenderOptions,
-    GeneralElectionOptions,
     HousePriceOptions,
     IncomeOptions,
-    LocalElectionOptions,
     PopulationOptions,
 } from "@/lib/types/mapOptions";
-import { ColorRange } from "../types";
 
 /**
  * Normalizes a value to a 0-1 range based on min/max bounds
@@ -128,7 +125,7 @@ export function getColorForAge(
     mapOptions: PopulationOptions,
     themeId: string = "viridis"
 ) {
-    const range = mapOptions.colorRange || { min: 25, max: 55 };
+    const range = mapOptions.colorRange;
     const normalized = normalizeValue(medianAge, range.min, range.max);
     return getThemeColor(1 - normalized, themeId); // Invert so higher ages are darker (if using Viridis logic)
 }
@@ -141,7 +138,7 @@ export function getColorForDensity(
     mapOptions: DensityOptions,
     themeId: string = "viridis"
 ) {
-    const range = mapOptions.colorRange || { min: 500, max: 10000 };
+    const range = mapOptions.colorRange;
     const normalized = normalizeValue(density, range.min, range.max);
     return getThemeColor(1 - normalized, themeId); // Invert so higher density is darker
 }
@@ -184,22 +181,6 @@ export const ETHNICITY_COLORS: Record<string, string> = {
     "Any other ethnic group": "#f472b6", // Light pink
 };
 
-export function getColorForEthnicity(
-    majorityEthnicity: string,
-    ethnicityOptions: EthnicityOptions
-): string {
-    if (!majorityEthnicity) {
-        return "#cccccc";
-    }
-
-    // Get the ethnicity category name
-    if (!majorityEthnicity || !ETHNICITY_COLORS[majorityEthnicity]) {
-        return "#cccccc";
-    }
-
-    return ETHNICITY_COLORS[majorityEthnicity];
-}
-
 /**
  * Gets color for house price data with dynamic range
  */
@@ -208,7 +189,7 @@ export function getColorForHousePrice(
     options: HousePriceOptions,
     themeId: string = "viridis"
 ) {
-    const range = options.colorRange || { min: 80000, max: 500000 };
+    const range = options.colorRange;
     const normalized = normalizeValue(
         price,
         Math.min(range.min, price),
@@ -225,7 +206,7 @@ export function getColorForCrimeRate(
     options: CrimeOptions,
     themeId: string = "viridis"
 ) {
-    const range = options.colorRange || { min: 0, max: 1000 };
+    const range = options.colorRange;
     const normalized = normalizeValue(
         rate,
         Math.min(range.min, rate),
@@ -242,7 +223,7 @@ export function getColorForIncome(
     options: IncomeOptions,
     themeId: string = "viridis"
 ) {
-    const range = options.colorRange || { min: 20000, max: 40000 };
+    const range = options.colorRange;
     const normalized = normalizeValue(
         income,
         Math.min(range.min, income),
@@ -259,7 +240,7 @@ export function getColorForGenderRatio(
     ratio: number,
     mapOptions: GenderOptions
 ) {
-    const range = mapOptions.colorRange || { min: -0.1, max: 0.1 };
+    const range = mapOptions.colorRange;
 
     // Pink for female-skewed, blue for male-skewed, gray for balanced
     if (ratio < 0) {
@@ -288,7 +269,7 @@ export function getPercentageColorExpression(
     color: string,
     mapOptions: CategoryOptions
 ) {
-    const range = mapOptions.percentageRange || { min: 0, max: 100 };
+    const range = mapOptions.percentageRange;
 
     const partyRgb = hexToRgb(color);
     const lightRgb = { r: 245, g: 245, b: 245 };
