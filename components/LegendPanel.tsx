@@ -3,7 +3,7 @@
 
 import { memo, useMemo, useState, useRef, useEffect } from 'react';
 import { PARTIES } from '@/lib/data/election/parties';
-import { themes } from '@/lib/utils/colorScale';
+import { ETHNICITY_COLORS, themes } from '@/lib/helpers/colorScale';
 import type { MapOptions } from '@/lib/types/mapOptions';
 import { ActiveViz, AggregatedData, Dataset } from '@/lib/types';
 
@@ -119,7 +119,7 @@ export default memo(function LegendPanel({
     // Use liveOptions if dragging, otherwise fall back to mapOptions from props
     const displayOptions = liveOptions || mapOptions;
 
-    const themeId = displayOptions.general?.theme || 'viridis';
+    const themeId = displayOptions.theme.id;
     const activeTheme = useMemo(() => themes.find(t => t.id === themeId) || themes[0], [themeId]);
 
     // Generated gradient based on theme colors
@@ -130,7 +130,6 @@ export default memo(function LegendPanel({
     const parties = useMemo(() => {
         if (!activeDataset || !aggregatedData[activeDataset.type as keyof AggregatedData]) return [];
         const datasetData = aggregatedData[activeDataset.type as keyof AggregatedData];
-        // @ts-ignore
         const yearData = datasetData?.[activeDataset.year];
 
         if (!yearData?.partyVotes) return [];
@@ -142,6 +141,34 @@ export default memo(function LegendPanel({
                 id,
                 color: PARTIES[id]?.color || '#ccc',
                 name: PARTIES[id]?.name || id,
+            }));
+    }, [aggregatedData, activeDataset]);
+
+    const ethnicities = useMemo(() => {
+        if (!activeDataset || activeDataset.type !== 'ethnicity') return [];
+        const ethnicityData = aggregatedData.ethnicity;
+        const yearData = ethnicityData?.[activeDataset.year];
+
+        if (!yearData) return [];
+
+        // Aggregate populations across all wards
+        const ethnicityTotals = new Map<string, number>();
+
+        for (const localAuthorityData of Object.values(yearData)) {
+            for (const [ethnicity, data] of Object.entries(localAuthorityData)) {
+                const currentTotal = ethnicityTotals.get(ethnicity) || 0;
+                ethnicityTotals.set(ethnicity, currentTotal + data.population);
+            }
+        }
+
+        // Convert to sorted array
+        return Array.from(ethnicityTotals.entries())
+            .filter(([_, count]) => count > 0)
+            .sort((a, b) => b[1] - a[1])
+            .map(([id]) => ({
+                id,
+                color: ETHNICITY_COLORS[id] || '#ccc',
+                name: id,
             }));
     }, [aggregatedData, activeDataset]);
 
@@ -179,6 +206,20 @@ export default memo(function LegendPanel({
             onMapOptionsChange(type, { mode: 'winner', selectedParty: undefined });
         } else {
             onMapOptionsChange(type, { mode: 'party-percentage', selectedParty: partyCode });
+        }
+    };
+
+    const handleEthnicityClick = (ethnicityCode: string) => {
+        const type = activeDataset?.type;
+        if (type !== 'ethnicity') return;
+
+        const currentMode = displayOptions.ethnicity.mode;
+        const currentEthnicity = displayOptions.ethnicity.selected;
+
+        if (currentMode === 'percentage' && currentEthnicity === ethnicityCode) {
+            onMapOptionsChange('ethnicity', { mode: 'majority', selected: undefined });
+        } else {
+            onMapOptionsChange('ethnicity', { mode: 'percentage', selected: ethnicityCode });
         }
     };
 
@@ -256,7 +297,7 @@ export default memo(function LegendPanel({
                         <button
                             key={party.id}
                             onClick={() => handlePartyClick(party.id)}
-                            className={`flex items-center gap-2 px-1 py-[3px] w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? 'ring-1' : 'hover:bg-gray-100/30'
+                            className={`flex items-center gap-2 px-1 py-0.75 w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? 'ring-1' : 'hover:bg-gray-100/30'
                                 }`}
                             style={isSelected ? {
                                 backgroundColor: `${party.color}15`, // ~8% opacity
@@ -273,6 +314,43 @@ export default memo(function LegendPanel({
                             />
                             <span className={`text-xs ${isSelected ? 'text-gray-700' : 'text-gray-500'}`}>
                                 {party.name}
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    const renderEthnicityLegend = () => {
+        const options = displayOptions.ethnicity;
+
+        return (
+            <div>
+                {ethnicities.map((ethnicity) => {
+                    const isSelected = options?.mode === 'percentage' && options.selected === ethnicity.id;
+
+                    return (
+                        <button
+                            key={ethnicity.id}
+                            onClick={() => handleEthnicityClick(ethnicity.id)}
+                            className={`flex items-center gap-2 px-1 py-0.75 w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? 'ring-1' : 'hover:bg-gray-100/30'
+                                }`}
+                            style={isSelected ? {
+                                backgroundColor: `${ethnicity.color}15`, // ~8% opacity
+                                '--tw-ring-color': `${ethnicity.color}80`
+                            } as React.CSSProperties : {}}
+                        >
+                            <div
+                                className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? 'opacity-100 ring-1' : 'opacity-100'
+                                    }`}
+                                style={{
+                                    backgroundColor: ethnicity.color,
+                                    ...(isSelected ? { '--tw-ring-color': ethnicity.color } as React.CSSProperties : {})
+                                }}
+                            />
+                            <span className={`text-xs ${isSelected ? 'text-gray-700' : 'text-gray-500'}`}>
+                                {ethnicity.name}
                             </span>
                         </button>
                     );
@@ -308,9 +386,12 @@ export default memo(function LegendPanel({
 
             case 'income':
                 return renderDynamicLegend('income', 0, 2000000, 80000, 500000, formatCurrency);
-            
+
             case 'crime':
                 return renderDynamicLegend('crime', 0, 150000, 10000, 100000);
+
+            case 'ethnicity':
+                return renderEthnicityLegend();
 
             case 'generalElection':
             case 'localElection':
@@ -371,6 +452,39 @@ export default memo(function LegendPanel({
                         </div>
                     </div>
                 )}
+
+            {/* Special secondary legend for Ethnicity Percentage Mode */}
+            {activeDataset?.type === 'ethnicity' && displayOptions.ethnicity?.mode === 'percentage' && (
+                <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
+                    <div className="bg-white/20 p-1 overflow-hidden">
+                        <RangeControl
+                            min={0}
+                            max={100}
+                            currentMin={displayOptions.ethnicity.percentageRange?.min ?? 0}
+                            currentMax={displayOptions.ethnicity.percentageRange?.max ?? 100}
+                            gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[displayOptions.ethnicity.selected || ''] || '#999'
+                                }, #f5f5f5)`}
+                            labels={[
+                                `${(displayOptions.ethnicity.percentageRange?.max ?? 100).toFixed(0)}%`,
+                                '', '', '',
+                                `${(displayOptions.ethnicity.percentageRange?.min ?? 0).toFixed(0)}%`
+                            ]}
+                            onRangeInput={(min, max) => {
+                                setLiveOptions(prev => {
+                                    const base = prev || mapOptions;
+                                    return { ...base, ethnicity: { ...base.ethnicity, percentageRange: { min, max } } };
+                                });
+                            }}
+                            onRangeChangeEnd={() => {
+                                if (!liveOptions) return;
+                                // @ts-ignore
+                                onMapOptionsChange('ethnicity', { percentageRange: liveOptions.ethnicity.percentageRange });
+                                setLiveOptions(null);
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 });

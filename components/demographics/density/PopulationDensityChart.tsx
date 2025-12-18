@@ -7,7 +7,7 @@ import {
 	PopulationDataset,
 	SelectedArea,
 } from "@/lib/types";
-import { calculateTotal, polygonAreaSqKm } from "@/lib/utils/population";
+import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
 import { useMemo, memo } from "react";
 
 interface PopulationDensityChartProps {

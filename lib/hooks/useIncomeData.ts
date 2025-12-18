@@ -1,7 +1,7 @@
 // lib/hooks/useIncomeData.ts
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import { withCDN } from '../utils/cdn';
+import { withCDN } from '../helpers/cdn';
 import { AnnualIncomeData, HourlyIncomeData, IncomeDataset, LocalAuthorityIncomeData } from '../types/income';
 
 // Utility to parse numeric values

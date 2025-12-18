@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { ActiveViz, BoundaryGeojson, Dataset } from '@lib/types';
-import type { MapManager } from '../utils/mapManager';
+import type { MapManager } from '../helpers/mapManager';
 import { MapOptions } from '../types/mapOptions';
 
 interface UseMapUpdatesParams {

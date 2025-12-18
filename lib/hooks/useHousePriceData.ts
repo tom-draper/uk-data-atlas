@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { HousePriceDataset, WardHousePriceData } from '../types';
-import { withCDN } from '../utils/cdn';
+import { withCDN } from '../helpers/cdn';
 
 // Utility to parse price values
 const parsePrice = (value: any): number | null => {

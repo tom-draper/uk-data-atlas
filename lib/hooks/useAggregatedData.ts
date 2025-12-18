@@ -8,7 +8,7 @@ import type {
 	AggregatedData,
 	BoundaryData,
 } from '@lib/types';
-import { MapManager } from '../utils/mapManager';
+import { MapManager } from '../helpers/mapManager';
 
 interface DatasetConfig<T extends Dataset> {
 	datasets: Record<string, T>;

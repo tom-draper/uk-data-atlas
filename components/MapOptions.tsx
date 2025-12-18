@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { themes } from '@/lib/utils/colorScale';
+import { themes } from '@/lib/helpers/colorScale';
 import { ColorTheme, MapOptions as MapOptionsType } from '@/lib/types/mapOptions';
 
 interface MapOptionsProps {

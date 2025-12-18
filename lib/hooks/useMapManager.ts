@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MapManager } from '@lib/utils/mapManager';
+import { MapManager } from '@/lib/helpers/mapManager';
 import { BoundaryGeojson, SelectedArea } from '../types';
 
 type UseMapManagerOptions = {

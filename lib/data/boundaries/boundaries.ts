@@ -1,7 +1,7 @@
 // lib/data/boundaries.ts
 import { BoundaryGeojson } from "@lib/types";
 import { LOCATIONS } from "@lib/data/locations";
-import { withCDN } from "@/lib/utils/cdn";
+import { withCDN } from "@/lib/helpers/cdn";
 import * as topojson from "topojson-client";
 
 export const GEOJSON_PATHS = {

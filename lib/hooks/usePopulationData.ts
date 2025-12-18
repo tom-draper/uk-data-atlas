@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
 import { AgeData, PopulationDataset } from '@lib/types';
-import { withCDN } from '../utils/cdn';
+import { withCDN } from '../helpers/cdn';
 
 interface CategoryPopulationWardData {
 	[wardCode: string]: {

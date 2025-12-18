@@ -1,6 +1,6 @@
 // lib/data/generalElectionConfig.ts
 
-import { withCDN } from "@/lib/utils/cdn";
+import { withCDN } from "@/lib/helpers/cdn";
 import { ConstituencyYear } from "../../boundaries/boundaries";
 
 export type GeneralElectionSourceConfig = {

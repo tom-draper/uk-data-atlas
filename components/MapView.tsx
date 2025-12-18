@@ -1,4 +1,4 @@
-import { type MapManager } from '@/lib/utils/mapManager';
+import { type MapManager } from '@/lib/helpers/mapManager';
 import { useMapUpdates } from '@lib/hooks/useMapUpdates';
 import { ActiveViz, Dataset } from '@/lib/types';
 

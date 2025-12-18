@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { CrimeDataset, CrimeRecord } from '@lib/types';
-import { withCDN } from '../utils/cdn';
+import { withCDN } from '../helpers/cdn';
 
 const parseNumberStrict = (val: string): number => {
     if (!val || val.trim() === '') return 0;

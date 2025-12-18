@@ -1,6 +1,6 @@
 // components/population/age/AgeDistributionChart.tsx
 import { AgeGroups } from '@/lib/types';
-import { getAgeColor } from '@/lib/utils/ageDistribution';
+import { getAgeColor } from '@/lib/helpers/ageDistribution';
 import { memo } from 'react';
 import AgeGroupBar from './AgeGroupBar';
 

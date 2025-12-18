@@ -13,7 +13,7 @@ import UIOverlay from '@components/UIOverlay';
 
 import type { ActiveViz, Datasets, SelectedArea } from '@lib/types';
 import { MAP_CONFIG } from '@/lib/config/map';
-import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
+import { DEFAULT_MAP_OPTIONS } from '@/lib/config/mapOptions';
 import { LOCATIONS } from '@lib/data/locations';
 
 interface MapInterfaceProps {

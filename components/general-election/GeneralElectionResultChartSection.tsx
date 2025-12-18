@@ -3,7 +3,7 @@
 
 import { useMemo } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
-import { calculateTurnout } from "@/lib/utils/generalElection";
+import { calculateTurnout } from "@/lib/helpers/generalElection";
 import {
 	ActiveViz,
 	AggregatedGeneralElectionData,

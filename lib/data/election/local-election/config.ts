@@ -1,6 +1,6 @@
 // lib/data/electionConfig.ts
 
-import { withCDN } from "@/lib/utils/cdn";
+import { withCDN } from "@/lib/helpers/cdn";
 import { WardYear } from "../../boundaries/boundaries";
 
 export interface ElectionSourceConfig {

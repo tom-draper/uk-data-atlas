@@ -1,7 +1,7 @@
 'use client';
 
 import { ActiveViz, EthnicityDataset, SelectedArea, EthnicityCategory, AggregatedEthnicityData } from '@/lib/types';
-import { ETHNICITY_COLORS } from '@/lib/utils/colorScale';
+import { ETHNICITY_COLORS } from '@/lib/helpers/colorScale';
 import { useMemo, memo } from 'react';
 
 const YEAR_STYLES = {

@@ -15,10 +15,7 @@ const COUNTRY_LOCATIONS = new Set(['England', 'Scotland', 'Wales', 'Northern Ire
  * Calculate total population for a ward
  */
 const calculateWardPopulation = (wardData: any): number => {
-    return Object.values(wardData.total).reduce(
-        (sum: number, val: any) => sum + Number(val),
-        0
-    );
+    return Object.values(wardData.total).reduce((sum: number, val: any) => sum + Number(val), 0);
 };
 
 /**
@@ -47,10 +44,10 @@ const calculateFeatureBounds = (feature: any): [number, number, number, number] 
     return [minLng, minLat, maxLng, maxLat];
 };
 
-export default memo(function LocationPanel({ 
-    selectedLocation, 
-    onLocationClick, 
-    populationDataset 
+export default memo(function LocationPanel({
+    selectedLocation,
+    onLocationClick,
+    populationDataset
 }: LocationPanelProps) {
     const [geojson, setGeojson] = useState<BoundaryGeojson | null>(null);
     const [searchOpen, setSearchOpen] = useState(false);
@@ -86,7 +83,7 @@ export default memo(function LocationPanel({
 
     // Enrich population data with geographic bounds and pre-calculated totals
     const enrichedPopulation = useMemo(() => {
-        const enriched: Record<string, PopulationWardData & {bounds: [number, number, number, number], totalPopulation: number}> = {};
+        const enriched: Record<string, PopulationWardData & { bounds: [number, number, number, number], totalPopulation: number }> = {};
 
         Object.entries(populationDataset.data).forEach(([wardCode, wardData]) => {
             const feature = geojsonFeatureMap[wardCode];
@@ -217,9 +214,8 @@ export default memo(function LocationPanel({
                             onChange={handleSearchChange}
                             onKeyDown={handleKeyDown}
                             placeholder="Search locations..."
-                            className={`outline-none text-gray-500 text-xs px-1 py-1 mt-0.5 transition-all border-b! border-gray-200/20 duration-200 w-full ${
-                                searchOpen ? 'opacity-100' : 'opacity-0 px-0'
-                            }`}
+                            className={`outline-none text-gray-500 text-xs px-1 py-1 mt-0.5 transition-all border-b! border-gray-200/20 duration-200 w-full ${searchOpen ? 'opacity-100' : 'opacity-0 px-0'
+                                }`}
                         />
                     </div>
                     <button
@@ -245,11 +241,10 @@ export default memo(function LocationPanel({
                     <button
                         key={name}
                         onClick={() => onLocationClick(name, bounds)}
-                        className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${
-                            selectedLocation === name
-                                ? 'bg-white/60 text-gray-800'
-                                : 'hover:bg-white/40 text-gray-600 hover:text-gray-800'
-                        }`}
+                        className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${selectedLocation === name
+                            ? 'bg-white/60 text-gray-800'
+                            : 'hover:bg-white/40 text-gray-600 hover:text-gray-800'
+                            }`}
                     >
                         <span className="font-normal truncate mr-2">{name}</span>
                         <span className="text-gray-500 text-xs tabular-nums shrink-0">

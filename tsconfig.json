@@ -39,7 +39,7 @@
         "./lib/hooks/*"
       ],
       "@utils/*": [
-        "./lib/utils/*"
+        "lib/helpers/*"
       ],
       "@types/*": [
         "./lib/types/*"
