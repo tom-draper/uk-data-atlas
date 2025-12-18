@@ -1,8 +1,8 @@
 // lib/utils/mapManager/layerManager.ts
 import { BoundaryGeojson, Party } from '@lib/types';
-import { LocalElectionOptions, GeneralElectionOptions, MapOptions } from '@lib/types/mapOptions';
+import { LocalElectionOptions, GeneralElectionOptions, MapOptions, EthnicityOptions } from '@lib/types/mapOptions';
 import { PARTIES } from '@/lib/data/election/parties';
-import { getPartyPercentageColorExpression } from '../colorScale';
+import { ETHNICITY_COLORS, getPercentageColorExpression } from '../colorScale';
 
 const SOURCE_ID = 'location-wards';
 const FILL_LAYER_ID = 'wards-fill';
@@ -34,8 +34,42 @@ export class LayerManager {
         options: LocalElectionOptions | GeneralElectionOptions,
         visibility: MapOptions['visibility']
     ): void {
-        const baseColor = PARTIES[options.selectedParty]?.color || '#999999';
-        const fillColorExpression = getPartyPercentageColorExpression(baseColor, options);
+        const baseColor = PARTIES[options.selected]?.color || '#999999';
+        const fillColorExpression = getPercentageColorExpression(baseColor, options);
+
+        this.updateLayers(geojson, {
+            color: fillColorExpression,
+            opacity: 0.7
+        }, visibility);
+    }
+
+    updateEthnicityMajorityLayers(
+        geojson: BoundaryGeojson,
+        visibility: MapOptions['visibility']
+    ): void {
+        const colorExpression: any[] = ['match', ['get', 'majorityCategory']];
+
+        Object.entries(ETHNICITY_COLORS).forEach(([ethnicity, color]) => {
+            colorExpression.push(ethnicity, color);
+        });
+
+        // Fallback color for 'NONE' or missing data
+        colorExpression.push('#cccccc');
+
+        this.updateLayers(geojson, {
+            color: colorExpression,
+            opacity: ['case', ['boolean', ['feature-state', 'hover'], false], 0.35, 0.6]
+        }, visibility);
+    }
+
+    updateEthnicityCategoryPercentageLayers(
+        geojson: BoundaryGeojson,
+        options: EthnicityOptions,
+        visibility: MapOptions['visibility']
+    ): void {
+        const baseColor = ETHNICITY_COLORS[options.selected];
+
+        const fillColorExpression = getPercentageColorExpression(baseColor, options);
 
         this.updateLayers(geojson, {
             color: fillColorExpression,

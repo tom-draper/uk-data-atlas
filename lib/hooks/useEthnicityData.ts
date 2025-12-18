@@ -30,7 +30,34 @@ const parseEthnicityName = (fullName: string): { parent: string; subcategory: st
     };
 };
 
-const parseEthnicityData = async (): Promise<Record<string, Record<string, EthnicityCategory>>> => {
+// Calculate the subcategory with the largest population for each LA
+const calculateResults = (localAuthorityData: Record<string, Record<string, EthnicityCategory>>): Record<string, string> => {
+    const results: Record<string, string> = {};
+
+    for (const [localAuthorityCode, parentCategories] of Object.entries(localAuthorityData)) {
+        let maxPopulation = 0;
+        let majoritySubcategory = 'NONE';
+
+        // Iterate through all parent categories and their subcategories
+        for (const subcategories of Object.values(parentCategories)) {
+            for (const [subcategoryName, data] of Object.entries(subcategories)) {
+                if (data.population > maxPopulation) {
+                    maxPopulation = data.population;
+                    majoritySubcategory = subcategoryName;
+                }
+            }
+        }
+
+        results[localAuthorityCode] = majoritySubcategory;
+    }
+
+    return results;
+};
+
+const parseEthnicityData = async (): Promise<{
+    data: Record<string, Record<string, EthnicityCategory>>;
+    results: Record<string, string>;
+}> => {
     const res = await fetch(withCDN('/data/ethnicity/TS021-2021-2.csv'));
     const csvText = await res.text();
 
@@ -40,20 +67,20 @@ const parseEthnicityData = async (): Promise<Record<string, Record<string, Ethni
             skipEmptyLines: true,
             dynamicTyping: false,
             complete: (results) => {
-                const laData: Record<string, Record<string, any>> = {};
+                const localAuthorityData: Record<string, Record<string, any>> = {};
 
                 for (const row of results.data as any[]) {
-                    const laCode = row['Lower Tier Local Authorities Code']?.trim();
+                    const localAuthorityCode = row['Lower Tier Local Authorities Code']?.trim();
                     const ethnicGroupCode = row['Ethnic group (20 categories) Code']?.trim();
 
-                    if (!laCode || !ethnicGroupCode) continue;
+                    if (!localAuthorityCode || !ethnicGroupCode) continue;
 
                     // Skip "Does not apply" entries
                     if (ethnicGroupCode === '-8') continue;
 
                     // Initialize LA data if not exists
-                    if (!laData[laCode]) {
-                        laData[laCode] = {};
+                    if (!localAuthorityData[localAuthorityCode]) {
+                        localAuthorityData[localAuthorityCode] = {};
                     }
 
                     const fullName = row['Ethnic group (20 categories)']?.trim() || '';
@@ -62,12 +89,12 @@ const parseEthnicityData = async (): Promise<Record<string, Record<string, Ethni
 
                     if (observation !== null) {
                         // Initialize parent category if not exists
-                        if (!laData[laCode][parent]) {
-                            laData[laCode][parent] = {};
+                        if (!localAuthorityData[localAuthorityCode][parent]) {
+                            localAuthorityData[localAuthorityCode][parent] = {};
                         }
 
                         // Store under parent category
-                        laData[laCode][parent][subcategory] = {
+                        localAuthorityData[localAuthorityCode][parent][subcategory] = {
                             ethnicity: subcategory,
                             population: observation,
                             code: ethnicGroupCode
@@ -75,8 +102,16 @@ const parseEthnicityData = async (): Promise<Record<string, Record<string, Ethni
                     }
                 }
 
-                console.log(`Loaded ethnicity data for ${Object.keys(laData).length} local authorities`);
-                resolve(laData);
+                // Calculate results (majority subcategory per LA)
+                const ethnicityResults = calculateResults(localAuthorityData);
+
+                console.log(`Loaded ethnicity data for ${Object.keys(localAuthorityData).length} local authorities`);
+                console.log(`Calculated results for ${Object.keys(ethnicityResults).length} local authorities`);
+
+                resolve({
+                    data: localAuthorityData,
+                    results: ethnicityResults
+                });
             },
             error: reject
         });
@@ -92,7 +127,7 @@ export const useEthnicityData = () => {
         const loadData = async () => {
             try {
                 console.log('EXPENSIVE: Loading ethnicity data...');
-                const laData = await parseEthnicityData();
+                const { data, results } = await parseEthnicityData();
 
                 const loadedDatasets: Record<string, EthnicityDataset> = {
                     2021: {
@@ -101,7 +136,8 @@ export const useEthnicityData = () => {
                         year: 2021,
                         boundaryType: 'localAuthority',
                         boundaryYear: 2025,
-                        data: laData
+                        data,
+                        results
                     }
                 };
 

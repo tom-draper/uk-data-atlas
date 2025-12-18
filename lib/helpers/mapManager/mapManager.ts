@@ -1,6 +1,6 @@
 // lib/utils/mapManager/mapManager.ts
 import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, SelectedArea, EthnicityDataset, PropertyKeys } from '@lib/types';
-import { MapOptions } from '@lib/types/mapOptions';
+import { MapMode, MapOptions } from '@lib/types/mapOptions';
 import { LayerManager } from './layerManager';
 import { EventHandler } from './eventHandler';
 import { StatsCalculator } from './statsCalculator';
@@ -13,8 +13,6 @@ export interface MapManagerCallbacks {
     onAreaHover?: (location: SelectedArea | null) => void;
     onLocationChange: (location: string) => void;
 }
-
-export type MapMode = 'localElection' | 'generalElection' | 'population' | 'ethnicity' | 'housePrice' | 'crime' | 'income';
 
 // Cache property detections to avoid repeated computation
 const propCache = new Map<string, PropertyKeys>();
@@ -57,7 +55,7 @@ export class MapManager {
             propCache.set(cacheKey, codeProp);
         }
 
-        const mode = options.mode || 'winner';
+        const mode = options.mode || 'majority';
         const dataMap = isLocal
             ? (dataset as LocalElectionDataset).data
             : (dataset as GeneralElectionDataset).data;
@@ -66,14 +64,14 @@ export class MapManager {
             : (dataset as GeneralElectionDataset).results;
 
         // Build features once
-        const features = mode === 'party-percentage' && options.selectedParty
-            ? this.featureBuilder.buildPartyPercentageFeatures(geojson.features, dataMap, options.selectedParty, codeProp)
-            : this.featureBuilder.buildWinnerFeatures(geojson.features, codeProp, (code) => resultsMap[code] || 'NONE');
+        const features = mode === 'percentage' && options.selected
+            ? this.featureBuilder.buildElectionPercentageFeatures(geojson.features, dataMap, options.selected, codeProp)
+            : this.featureBuilder.buildElectionWinnerFeatures(geojson.features, codeProp, (code) => resultsMap[code] || 'NONE');
 
         const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
 
         // Update layers
-        if (mode === 'party-percentage' && options.selectedParty) {
+        if (mode === 'percentage' && options.selected) {
             this.layerManager.updatePartyPercentageLayers(transformedGeojson, options, mapOptions.visibility);
         } else {
             this.layerManager.updateElectionLayers(transformedGeojson, dataset.partyInfo, mapOptions.visibility);
@@ -88,6 +86,44 @@ export class MapManager {
 
     updateMapForGeneralElection(geojson: BoundaryGeojson, dataset: GeneralElectionDataset, mapOptions: MapOptions): void {
         this.updateElectionMap(geojson, dataset, mapOptions, 'generalElection');
+    }
+
+    updateMapForEthnicity(geojson: BoundaryGeojson, dataset: EthnicityDataset, mapOptions: MapOptions): void {
+        const cacheKey = `ethnicity-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(',') : ''}`;
+        let codeProp = propCache.get(cacheKey);
+
+        if (!codeProp) {
+            codeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+            propCache.set(cacheKey, codeProp);
+        }
+
+        const mode = mapOptions.ethnicity?.mode || 'majority';
+
+        // Build features based on mode
+        const features = this.featureBuilder.buildEthnicityFeatures(
+            geojson.features,
+            dataset,
+            codeProp,
+            mapOptions
+        );
+
+        const transformedGeojson = this.featureBuilder.formatBoundaryGeoJson(features);
+
+        // Update layers based on mode
+        if (mode === 'percentage' && mapOptions.ethnicity?.selected) {
+            this.layerManager.updateEthnicityCategoryPercentageLayers(
+                transformedGeojson,
+                mapOptions.ethnicity,
+                mapOptions.visibility
+            );
+        } else {
+            this.layerManager.updateEthnicityMajorityLayers(
+                transformedGeojson,
+                mapOptions.visibility
+            );
+        }
+
+        this.eventHandler.setupEventHandlers('ethnicity', dataset.data, codeProp);
     }
 
     // Unified population update method
@@ -175,16 +211,6 @@ export class MapManager {
             this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
             this.featureBuilder.buildIncomeFeatures.bind(this.featureBuilder),
             'income',
-            dataset.data
-        );
-    }
-
-    updateMapForEthnicity(geojson: BoundaryGeojson, dataset: EthnicityDataset, mapOptions: MapOptions): void {
-        this.updateGenericMap(
-            geojson, dataset, mapOptions,
-            this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-            this.featureBuilder.buildEthnicityFeatures.bind(this.featureBuilder),
-            'ethnicity',
             dataset.data
         );
     }

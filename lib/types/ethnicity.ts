@@ -17,6 +17,7 @@ export interface EthnicityDataset {
     boundaryType: BoundaryType;
     boundaryYear: number;
     data: Record<string, Record<string, EthnicityCategory>>;
+    results: Record<string, string>;
 }
 
 export interface AggregatedEthnicityData {

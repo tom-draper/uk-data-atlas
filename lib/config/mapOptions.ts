@@ -2,12 +2,12 @@ import { MapOptions } from "../types";
 
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
     generalElection: {
-        mode: 'winner',
-        partyPercentageRange: { min: 0, max: 100 }
+        mode: 'majority',
+        percentageRange: { min: 0, max: 100 }
     },
     localElection: {
-        mode: 'winner',
-        partyPercentageRange: { min: 0, max: 100 }
+        mode: 'majority',
+        percentageRange: { min: 0, max: 100 }
     },
     ageDistribution: {
         colorRange: { min: 25, max: 65 }

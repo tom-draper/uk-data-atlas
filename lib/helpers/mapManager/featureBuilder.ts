@@ -2,7 +2,7 @@
 import { BoundaryGeojson, LocalElectionDataset, GeneralElectionDataset, PopulationDataset, HousePriceDataset, CrimeDataset, PropertyKeys, EthnicityDataset, Feature, Features } from '@lib/types';
 import { MapOptions } from '@lib/types/mapOptions';
 import { calculateMedianAge, calculateTotal, polygonAreaSqKm } from '../population';
-import { getColorForAge, getColorForGenderRatio, getColorForDensity, getColorForHousePrice, getColorForCrimeRate, getColorForIncome, getColorForEthnicity } from '../colorScale';
+import { getColorForAge, getColorForGenderRatio, getColorForDensity, getColorForHousePrice, getColorForCrimeRate, getColorForIncome } from '../colorScale';
 import { IncomeDataset } from '@/lib/types/income';
 
 const DEFAULT_COLOR = '#cccccc';
@@ -29,7 +29,7 @@ export class FeatureBuilder {
         }));
     }
 
-    buildWinnerFeatures(
+    buildElectionWinnerFeatures(
         features: Features,
         codeProp: string,
         getWinner: (code: string) => string
@@ -39,9 +39,9 @@ export class FeatureBuilder {
         }));
     }
 
-    buildPartyPercentageFeatures(
+    buildElectionPercentageFeatures(
         features: Features,
-        data: LocalElectionDataset['data'] | GeneralElectionDataset['constituencyData'],
+        data: LocalElectionDataset['data'] | GeneralElectionDataset['data'],
         partyCode: string,
         codeProp: PropertyKeys
     ): Features {
@@ -56,6 +56,67 @@ export class FeatureBuilder {
             }
 
             return { percentage, partyCode };
+        });
+    }
+
+    buildEthnicityFeatures(
+        features: Features,
+        dataset: EthnicityDataset,
+        codeProp: string,
+        options: MapOptions
+    ): Features {
+        const mode = options.ethnicity?.mode || 'majority';
+
+        if (mode === 'percentage' && options.ethnicity?.selected) {
+            return this.buildEthnicityPercentageFeatures(
+                features,
+                dataset.data,
+                options.ethnicity.selected,
+                codeProp
+            );
+        }
+
+        // Default to majority mode
+        return this.buildEthnicityMajorityFeatures(features, codeProp, dataset.results);
+    }
+
+    buildEthnicityMajorityFeatures(
+        features: Features,
+        codeProp: string,
+        results: EthnicityDataset['results']
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const code = feature.properties[codeProp];
+            const majorityCategory = results[code] || 'NONE';
+
+            return { majorityCategory };
+        });
+    }
+
+    buildEthnicityPercentageFeatures(
+        features: Features,
+        data: EthnicityDataset['data'],
+        ethnicity: string,
+        codeProp: string
+    ): Features {
+        return this.mapFeatures(features, (feature) => {
+            const code = feature.properties[codeProp];
+            const locationData = data[code] || {};
+
+            let totalPopulation = 0;
+            let ethnicityPopulation = 0;
+            for (const category of Object.values(locationData)) {
+                for (const [eth, data] of Object.entries(category)) {
+                    if (eth === ethnicity) {
+                        ethnicityPopulation = data.population || 0;
+                    }
+                    totalPopulation += data.population || 0;
+                }
+            }
+
+            const percentage = totalPopulation > 0 ? (ethnicityPopulation / totalPopulation) * 100 : 0;
+
+            return { percentage, categoryCode: ethnicity };
         });
     }
 
@@ -112,38 +173,6 @@ export class FeatureBuilder {
                 const areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
                 const density = areaSqKm > 0 ? total / areaSqKm : 0;
                 color = getColorForDensity(density, mapOptions.populationDensity, mapOptions.theme.id);
-            }
-
-            return { color };
-        });
-    }
-
-    buildEthnicityFeatures(
-        features: Features,
-        dataset: EthnicityDataset,
-        ladCodeProp: PropertyKeys,
-        mapOptions: MapOptions
-    ): Features {
-        return this.mapFeatures(features, (feature) => {
-            const ethnicityData = dataset.data[feature.properties[ladCodeProp]];
-
-            let color = DEFAULT_COLOR;
-            if (ethnicityData) {
-                let majorityEthnicity = null;
-                let maxCount = 0;
-
-                for (const subcategories of Object.values(ethnicityData)) {
-                    for (const ethnicity of Object.values(subcategories)) {
-                        if (ethnicity.population > maxCount) {
-                            majorityEthnicity = ethnicity.ethnicity;
-                            maxCount = ethnicity.population;
-                        }
-                    }
-                }
-
-                if (majorityEthnicity) {
-                    color = getColorForEthnicity(majorityEthnicity, mapOptions.income);
-                }
             }
 
             return { color };

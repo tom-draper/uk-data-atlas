@@ -1,5 +1,6 @@
 // lib/utils/colorScale.ts
 import type {
+    CategoryOptions,
     ColorTheme,
     CrimeOptions,
     DensityOptions,
@@ -11,6 +12,7 @@ import type {
     LocalElectionOptions,
     PopulationOptions,
 } from "@/lib/types/mapOptions";
+import { ColorRange } from "../types";
 
 /**
  * Normalizes a value to a 0-1 range based on min/max bounds
@@ -282,13 +284,13 @@ export function getColorForGenderRatio(
 /**
  * Gets Mapbox color expression for party percentage with dynamic range
  */
-export function getPartyPercentageColorExpression(
-    partyColor: string,
-    mapOptions: LocalElectionOptions | GeneralElectionOptions
+export function getPercentageColorExpression(
+    color: string,
+    mapOptions: CategoryOptions
 ) {
-    const range = mapOptions.partyPercentageRange || { min: 0, max: 100 };
+    const range = mapOptions.percentageRange || { min: 0, max: 100 };
 
-    const partyRgb = hexToRgb(partyColor);
+    const partyRgb = hexToRgb(color);
     const lightRgb = { r: 245, g: 245, b: 245 };
 
     return [
@@ -306,3 +308,4 @@ export function getPartyPercentageColorExpression(
         ],
     ];
 }
+

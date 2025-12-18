@@ -200,12 +200,12 @@ export default memo(function LegendPanel({
         if (!type) return;
 
         const currentMode = displayOptions[type].mode;
-        const currentParty = displayOptions[type].selectedParty;
+        const currentParty = displayOptions[type].selected;
 
-        if (currentMode === 'party-percentage' && currentParty === partyCode) {
-            onMapOptionsChange(type, { mode: 'winner', selectedParty: undefined });
+        if (currentMode === 'percentage' && currentParty === partyCode) {
+            onMapOptionsChange(type, { mode: 'majority', selected: undefined });
         } else {
-            onMapOptionsChange(type, { mode: 'party-percentage', selectedParty: partyCode });
+            onMapOptionsChange(type, { mode: 'percentage', selected: partyCode });
         }
     };
 
@@ -290,7 +290,7 @@ export default memo(function LegendPanel({
         return (
             <div>
                 {parties.map((party) => {
-                    const isSelected = options?.mode === 'party-percentage' && options.selectedParty === party.id;
+                    const isSelected = options?.mode === 'percentage' && options.selected === party.id;
 
                     // Restored exact original party button styling logic
                     return (
@@ -413,39 +413,39 @@ export default memo(function LegendPanel({
 
             {/* Special secondary legend for Election Party Percentage Mode */}
             {['generalElection', 'localElection'].includes(activeDataset?.type || '') &&
-                displayOptions[activeDataset!.type as 'generalElection' | 'localElection']?.mode === 'party-percentage' && (
+                displayOptions[activeDataset!.type as 'generalElection' | 'localElection']?.mode === 'percentage' && (
                     <div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
                         <div className="bg-white/20 p-1 overflow-hidden">
                             <RangeControl
                                 min={0}
                                 max={100}
                                 // @ts-ignore
-                                currentMin={displayOptions[activeDataset.type].partyPercentageRange?.min ?? 0}
+                                currentMin={displayOptions[activeDataset.type].percentageRange?.min ?? 0}
                                 // @ts-ignore
-                                currentMax={displayOptions[activeDataset.type].partyPercentageRange?.max ?? 100}
+                                currentMax={displayOptions[activeDataset.type].percentageRange?.max ?? 100}
                                 gradient={`linear-gradient(to bottom, ${
                                     // @ts-ignore
-                                    PARTIES[displayOptions[activeDataset.type].selectedParty]?.color || '#999'
+                                    PARTIES[displayOptions[activeDataset.type].selected]?.color || '#999'
                                     }, #f5f5f5)`}
                                 labels={[
                                     // Dynamic labels based on current range
-                                    `${(displayOptions[activeDataset!.type as 'generalElection'].partyPercentageRange?.max ?? 100).toFixed(0)}%`,
+                                    `${(displayOptions[activeDataset!.type as 'generalElection'].percentageRange?.max ?? 100).toFixed(0)}%`,
                                     // ... intermediate labels calculated in UI if needed, or simplified:
                                     '', '', '',
-                                    `${(displayOptions[activeDataset!.type as 'generalElection'].partyPercentageRange?.min ?? 0).toFixed(0)}%`
+                                    `${(displayOptions[activeDataset!.type as 'generalElection'].percentageRange?.min ?? 0).toFixed(0)}%`
                                 ]}
                                 onRangeInput={(min, max) => {
                                     setLiveOptions(prev => {
                                         const base = prev || mapOptions;
                                         const type = activeDataset!.type as 'generalElection';
-                                        return { ...base, [type]: { ...base[type], partyPercentageRange: { min, max } } };
+                                        return { ...base, [type]: { ...base[type], percentageRange: { min, max } } };
                                     });
                                 }}
                                 onRangeChangeEnd={() => {
                                     if (!liveOptions) return;
                                     const type = activeDataset!.type as 'generalElection';
                                     // @ts-ignore
-                                    onMapOptionsChange(type, { partyPercentageRange: liveOptions[type].partyPercentageRange });
+                                    onMapOptionsChange(type, { percentageRange: liveOptions[type].percentageRange });
                                     setLiveOptions(null);
                                 }}
                             />
