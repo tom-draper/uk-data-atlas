@@ -17,9 +17,9 @@ interface PopulationDensityChartProps {
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (
-			type: "ward" | "localAuthority",
+			type: "ward",
 			code: string,
-			targetYear: number
+			targetYear: number,
 		) => string | undefined;
 		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
@@ -116,7 +116,7 @@ const DensityGrid = memo(({ density }: { density: number }) => {
 		for (let i = 0; i < category.count; i++) {
 			const index = indices[i];
 			const colorIndex = Math.floor(
-				seededRandom() * category.variations.length
+				seededRandom() * category.variations.length,
 			);
 			colors[index] = category.variations[colorIndex];
 		}
@@ -178,7 +178,11 @@ function PopulationDensityChart({
 
 			// Try to map ward code if not found
 			if (!populationData && codeMapper?.getCodeForYear) {
-				const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+				const mappedCode = codeMapper.getCodeForYear(
+					"ward",
+					wardCode,
+					dataset.boundaryYear,
+				);
 				if (mappedCode) {
 					populationData = dataset.data[mappedCode];
 				}
@@ -186,7 +190,7 @@ function PopulationDensityChart({
 
 			if (populationData) {
 				const wardFeature = geojson.features.find(
-					(f) => f.properties?.[wardCodeProp] === wardCode
+					(f) => f.properties?.[wardCodeProp] === wardCode,
 				);
 
 				if (wardFeature) {
@@ -202,10 +206,14 @@ function PopulationDensityChart({
 		}
 
 		// Handle Local Authority Selection
-		if (selectedArea && selectedArea.type === 'localAuthority' && codeMapper?.getWardsForLad) {
+		if (
+			selectedArea &&
+			selectedArea.type === "localAuthority" &&
+			codeMapper?.getWardsForLad
+		) {
 			const ladCode = selectedArea.code;
 			const cacheKey = `lad-${ladCode}`;
-			
+
 			if (!densityCache.has(cacheKey)) {
 				densityCache.set(cacheKey, new Map());
 			}
@@ -216,10 +224,14 @@ function PopulationDensityChart({
 			}
 
 			// Get all wards in this LAD
-			const wardCodes = codeMapper.getWardsForLad(ladCode, 2022);
-			
+			const wardCodes = codeMapper.getWardsForLad(ladCode, 2024);
+
 			if (wardCodes.length === 0) {
-				const emptyResult = { density: null, areaSqKm: null, total: null };
+				const emptyResult = {
+					density: null,
+					areaSqKm: null,
+					total: null,
+				};
 				yearCache.set(dataset.year, emptyResult);
 				return emptyResult;
 			}
@@ -230,19 +242,23 @@ function PopulationDensityChart({
 
 			for (const wardCode of wardCodes) {
 				let populationData = dataset.data?.[wardCode];
-				
+
 				// Try to map to the dataset's year if ward code doesn't exist
 				if (!populationData && codeMapper?.getCodeForYear) {
-					const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+					const mappedCode = codeMapper.getCodeForYear(
+						"ward",
+						wardCode,
+						dataset.boundaryYear,
+					);
 					if (mappedCode) {
 						populationData = dataset.data[mappedCode];
 					}
 				}
-				
+
 				if (populationData) {
 					// Find the ward feature for area calculation
 					const wardFeature = geojson.features.find(
-						(f) => f.properties?.[wardCodeProp] === wardCode
+						(f) => f.properties?.[wardCodeProp] === wardCode,
 					);
 
 					if (wardFeature) {
@@ -256,13 +272,14 @@ function PopulationDensityChart({
 				}
 			}
 
-			const result = totalArea > 0 
-				? {
-					density: totalPopulation / totalArea,
-					areaSqKm: totalArea,
-					total: totalPopulation,
-				}
-				: { density: null, areaSqKm: null, total: null };
+			const result =
+				totalArea > 0
+					? {
+						density: totalPopulation / totalArea,
+						areaSqKm: totalArea,
+						total: totalPopulation,
+					}
+					: { density: null, areaSqKm: null, total: null };
 
 			// Cache the result
 			yearCache.set(dataset.year, result);
@@ -271,7 +288,6 @@ function PopulationDensityChart({
 
 		// Unsupported area type
 		return { density: null, areaSqKm: null, total: null };
-
 	}, [dataset, aggregatedData, boundaryData, selectedArea, codeMapper]);
 
 	if (!total || density === null || areaSqKm === null) {
@@ -303,7 +319,9 @@ function PopulationDensityChart({
 				<div className="flex text-left text-xs pb-1">
 					<div className="flex pr-3">
 						<div className="mr-1">Population</div>
-						<div className="font-semibold">{total.toLocaleString()}</div>
+						<div className="font-semibold">
+							{total.toLocaleString()}
+						</div>
 					</div>
 					<div className="flex">
 						<div className="mr-1">Area</div>

@@ -23,11 +23,11 @@ export interface DemographicsChartSectionProps {
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (
-			type: "ward",
+			type: "ward" | "localAuthority",
 			code: string,
-			targetYear: number
+			targetYear: number,
 		) => string | undefined;
-        getWardsForLad: (ladCode: string, year: number) => string[];
+		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -61,6 +61,7 @@ export default function DemographicsChartSection({
 					dataset={availablePopulationDatasets[2022]}
 					aggregatedData={aggregatedPopulationData}
 					selectedArea={selectedArea}
+					codeMapper={codeMapper}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
 				/>
@@ -68,6 +69,7 @@ export default function DemographicsChartSection({
 					dataset={availablePopulationDatasets[2022]}
 					aggregatedData={aggregatedPopulationData}
 					selectedArea={selectedArea}
+					codeMapper={codeMapper}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
 				/>
@@ -75,6 +77,7 @@ export default function DemographicsChartSection({
 					dataset={availableEthnicityDatasets[2021]}
 					aggregatedData={aggregatedEthnicityData}
 					selectedArea={selectedArea}
+					codeMapper={codeMapper}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
 				/>

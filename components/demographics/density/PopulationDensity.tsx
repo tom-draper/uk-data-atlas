@@ -18,7 +18,7 @@ interface PopulationDensityChartProps {
 		getCodeForYear: (
 			type: "ward",
 			code: string,
-			targetYear: number
+			targetYear: number,
 		) => string | undefined;
 		getWardsForLad: (ladCode: string, year: number) => string[];
 	};

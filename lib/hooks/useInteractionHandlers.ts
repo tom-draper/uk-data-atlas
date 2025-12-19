@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import type { SelectedArea } from '@lib/types';
+import { useRef } from "react";
+import type { SelectedArea } from "@lib/types";
 
 interface UseInteractionHandlersParams {
 	setSelectedLocation: (location: string) => void;
@@ -30,13 +30,13 @@ export function useInteractionHandlers({
 
 			lastHoveredCodeRef.current = hoverData.code;
 
-			setSelectedArea(hoverData)
+			setSelectedArea(hoverData);
 		},
 		onLocationChange: (location: string) => {
 			setSelectedArea(null);
 			setSelectedLocation(location);
 			lastHoveredCodeRef.current = null;
-		}
+		},
 	});
 
 	return callbacksRef.current;

@@ -1,7 +1,13 @@
 // components/crime/CrimeChart.tsx
-'use client';
-import { ActiveViz, AggregatedCrimeData, Dataset, CrimeDataset, SelectedArea } from '@lib/types';
-import CrimeChart from './CrimeRateChart';
+"use client";
+import {
+	ActiveViz,
+	AggregatedCrimeData,
+	Dataset,
+	CrimeDataset,
+	SelectedArea,
+} from "@lib/types";
+import CrimeChart from "./CrimeRateChart";
 
 interface CrimeChartProps {
 	activeDataset: Dataset | null;
@@ -9,7 +15,11 @@ interface CrimeChartProps {
 	aggregatedData: AggregatedCrimeData | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
-		getCodeForYear: (type: 'localAuthority', code: string, targetYear: number) => string | undefined;
+		getCodeForYear: (
+			type: "localAuthority",
+			code: string,
+			targetYear: number,
+		) => string | undefined;
 	};
 	setActiveViz: (value: ActiveViz) => void;
 }

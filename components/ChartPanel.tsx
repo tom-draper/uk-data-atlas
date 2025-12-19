@@ -1,14 +1,21 @@
 // components/ChartPanel.tsx
-'use client';
-import packageJson from '../package.json';
-import { Dataset, Datasets, ActiveViz, AggregatedData, SelectedArea, BoundaryData } from '@lib/types';
-import LocalElectionResultChartSection from './local-election/LocalElectionResultChartSection';
-import DemographicsChartSection from './demographics/DemographicsChartSection';
-import { memo } from 'react';
-import EconomicsSection from './economics/EconomicsSection';
-import GeneralElectionResultChartSection from './general-election/GeneralElectionResultChartSection';
-import CrimeSection from './crime/CrimeSection';
-import { CodeType } from '@/lib/hooks/useCodeMapper';
+"use client";
+import packageJson from "../package.json";
+import {
+	Dataset,
+	Datasets,
+	ActiveViz,
+	AggregatedData,
+	SelectedArea,
+	BoundaryData,
+} from "@lib/types";
+import LocalElectionResultChartSection from "./local-election/LocalElectionResultChartSection";
+import DemographicsChartSection from "./demographics/DemographicsChartSection";
+import { memo } from "react";
+import EconomicsSection from "./economics/EconomicsSection";
+import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
+import CrimeSection from "./crime/CrimeSection";
+import { CodeType } from "@/lib/hooks/useCodeMapper";
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
@@ -20,8 +27,12 @@ interface ChartPanelProps {
 	setActiveViz: (value: ActiveViz) => void;
 	aggregatedData: AggregatedData;
 	codeMapper?: {
-		getCodeForYear: (type: CodeType, code: string, targetYear: number) => string | undefined;
-        getWardsForLad: (ladCode: string, year: number) => string[];
+		getCodeForYear: (
+			type: CodeType,
+			code: string,
+			targetYear: number,
+		) => string | undefined;
+		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
 }
 
@@ -32,7 +43,10 @@ const PanelHeader = ({
 	selectedLocation: string | null;
 	selectedArea: SelectedArea | null;
 }) => {
-	const { title, subtitle, code } = panelHeaderDetails(selectedLocation, selectedArea);
+	const { title, subtitle, code } = panelHeaderDetails(
+		selectedLocation,
+		selectedArea,
+	);
 
 	return (
 		<div className="pb-2 pt-2.5 px-2.5 bg-white/20">
@@ -43,39 +57,52 @@ const PanelHeader = ({
 						<span>{subtitle}</span>
 						<span>{code}</span>
 					</div>
-				) : subtitle}
+				) : (
+					subtitle
+				)}
 			</div>
 		</div>
 	);
 };
 
-function panelHeaderDetails(selectedLocation: string | null, selectedArea: SelectedArea | null) {
+function panelHeaderDetails(
+	selectedLocation: string | null,
+	selectedArea: SelectedArea | null,
+) {
 	if (selectedArea == null) {
 		return {
-			title: selectedLocation || '',
-			subtitle: 'United Kingdom',
-			code: ''
+			title: selectedLocation || "",
+			subtitle: "United Kingdom",
+			code: "",
 		};
 	}
 
 	switch (selectedArea.type) {
-		case 'ward':
+		case "ward":
 			return {
-				title: selectedArea.name ?? (selectedArea.data ? selectedArea.data.wardName : ''),
-				subtitle: selectedArea.data ? selectedArea.data.localAuthorityName : '',
-				code: `${selectedArea.data ? selectedArea.data.localAuthorityCode : ''} ${selectedArea.code}`
-			}
-		case 'constituency':
-			return {
-				title: selectedArea.data ? (selectedArea.data.constituencyName ?? '') : '',
-				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? '') : ''}, ${selectedArea.data ? (selectedArea.data.countryName ?? '') : ''}`,
-				code: selectedArea.code
+				title:
+					selectedArea.name ??
+					(selectedArea.data ? selectedArea.data.wardName : ""),
+				subtitle: selectedArea.data
+					? selectedArea.data.localAuthorityName
+					: "",
+				code: `${selectedArea.data ? selectedArea.data.localAuthorityCode : ""} ${selectedArea.code}`,
 			};
-		case 'localAuthority':
+		case "constituency":
 			return {
-				title: selectedArea.data ? (selectedArea.data.localAuthorityName ?? '') : '',
-				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? '') : ''}, ${selectedArea.data ? (selectedArea.data.countryName ?? '') : ''}`,
-				code: selectedArea.code
+				title: selectedArea.data
+					? (selectedArea.data.constituencyName ?? "")
+					: "",
+				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? "") : ""}, ${selectedArea.data ? (selectedArea.data.countryName ?? "") : ""}`,
+				code: selectedArea.code,
+			};
+		case "localAuthority":
+			return {
+				title: selectedArea.data
+					? (selectedArea.data.localAuthorityName ?? "")
+					: "",
+				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? "") : ""}, ${selectedArea.data ? (selectedArea.data.countryName ?? "") : ""}`,
+				code: selectedArea.code,
 			};
 	}
 }
@@ -85,7 +112,10 @@ const PanelFooter = () => {
 
 	return (
 		<div className="text-[9px] px-2.5 pb-1.5 text-gray-400/80 bg-white/20 pt-2 mt-auto flex">
-			<a className="hover:underline cursor-pointer mr-auto" href="https://github.com/tom-draper/uk-data-atlas">
+			<a
+				className="hover:underline cursor-pointer mr-auto"
+				href="https://github.com/tom-draper/uk-data-atlas"
+			>
 				UK Data Atlas v{version}
 			</a>
 			<a className="hover:underline cursor-pointer" href="/sources">

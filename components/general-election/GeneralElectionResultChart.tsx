@@ -38,7 +38,7 @@ const VoteBar = memo(({ data }: { data: ProcessedPartyData[] }) => (
 				key={p.key}
 				style={{ width: `${p.percentage}%`, backgroundColor: p.color }}
 				title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(
-					1
+					1,
 				)}%)`}
 				className="group relative hover:opacity-80 transition-opacity"
 			>
@@ -87,7 +87,10 @@ const Legend = memo(
 					</div>
 					<div className="grid grid-cols-3 gap-0.5 text-[9px]">
 						{seatsSummary.map((s) => (
-							<div key={s.party} className="flex items-center gap-1">
+							<div
+								key={s.party}
+								className="flex items-center gap-1"
+							>
 								<div
 									className="w-1.5 h-1.5 rounded-sm shrink-0"
 									style={{ backgroundColor: s.color }}
@@ -101,7 +104,7 @@ const Legend = memo(
 				</div>
 			)}
 		</div>
-	)
+	),
 );
 Legend.displayName = "Legend";
 
@@ -144,7 +147,9 @@ export default memo(function GeneralElectionResultChart({
 			}
 		>
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">{data.year} General Election</h3>
+				<h3 className="text-xs font-bold">
+					{data.year} General Election
+				</h3>
 				{data.turnout !== null && (
 					<span className="text-[9px] text-gray-500 font-medium">
 						{data.turnout.toFixed(1)}% turnout

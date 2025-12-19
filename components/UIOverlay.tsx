@@ -1,9 +1,16 @@
-import ControlPanel from '@components/ControlPanel';
-import LegendPanel from '@components/LegendPanel';
-import ChartPanel from '@components/ChartPanel';
-import type { ActiveViz, AggregatedData, BoundaryData, Dataset, Datasets, SelectedArea } from '@lib/types';
-import { MapOptions } from '@/lib/types/mapOptions';
-import { CodeType } from '@/lib/hooks/useCodeMapper';
+import ControlPanel from "@components/ControlPanel";
+import LegendPanel from "@components/LegendPanel";
+import ChartPanel from "@components/ChartPanel";
+import type {
+	ActiveViz,
+	AggregatedData,
+	BoundaryData,
+	Dataset,
+	Datasets,
+	SelectedArea,
+} from "@lib/types";
+import { MapOptions } from "@/lib/types/mapOptions";
+import { CodeType } from "@/lib/hooks/useCodeMapper";
 
 interface UIOverlayProps {
 	datasets: Datasets;
@@ -16,14 +23,24 @@ interface UIOverlayProps {
 	boundaryData: BoundaryData;
 	mapOptions: MapOptions;
 	codeMapper?: {
-		getCodeForYear: (type: CodeType, code: string, targetYear: number) => string | undefined;
-        getWardsForLad: (ladCode: string, year: number) => string[];
+		getCodeForYear: (
+			type: CodeType,
+			code: string,
+			targetYear: number,
+		) => string | undefined;
+		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
-	onMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
+	onMapOptionsChange: (
+		type: keyof MapOptions,
+		options: Partial<MapOptions[typeof type]>,
+	) => void;
 	onLocationClick: (location: string) => void;
 	onZoomIn: () => void;
 	onZoomOut: () => void;
-	handleMapOptionsChange: (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => void;
+	handleMapOptionsChange: (
+		type: keyof MapOptions,
+		options: Partial<MapOptions[typeof type]>,
+	) => void;
 }
 
 export default function UIOverlay({
@@ -41,13 +58,13 @@ export default function UIOverlay({
 	onLocationClick,
 	onZoomIn,
 	onZoomOut,
-	handleMapOptionsChange
+	handleMapOptionsChange,
 }: UIOverlayProps) {
 	return (
 		<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
 			<div className="absolute left-0 flex h-full">
 				<ControlPanel
-					populationDataset={datasets['population'][2022]}
+					populationDataset={datasets["population"][2022]}
 					selectedLocation={selectedLocation}
 					onLocationClick={onLocationClick}
 					onZoomIn={onZoomIn}

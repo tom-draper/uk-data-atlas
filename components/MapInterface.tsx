@@ -1,20 +1,20 @@
-'use client';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { useMapManager } from '@lib/hooks/useMapManager';
-import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
-import { useMapOptions } from '@/lib/hooks/useMapOptions';
-import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
-import { useAggregatedData } from '@/lib/hooks/useAggregatedData';
-import { useCodeMapper } from '@/lib/hooks/useCodeMapper';
-import { useMapInitialization } from '@/lib/hooks/useMapInitialization';
+"use client";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useMapManager } from "@lib/hooks/useMapManager";
+import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
+import { useMapOptions } from "@/lib/hooks/useMapOptions";
+import { useBoundaryData } from "@/lib/hooks/useBoundaryData";
+import { useAggregatedData } from "@/lib/hooks/useAggregatedData";
+import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
+import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 
-import MapView from '@components/MapView';
-import UIOverlay from '@components/UIOverlay';
+import MapView from "@components/MapView";
+import UIOverlay from "@components/UIOverlay";
 
-import type { ActiveViz, Datasets, SelectedArea } from '@lib/types';
-import { MAP_CONFIG } from '@/lib/config/map';
-import { DEFAULT_MAP_OPTIONS } from '@/lib/config/mapOptions';
-import { LOCATIONS } from '@lib/data/locations';
+import type { ActiveViz, Datasets, SelectedArea } from "@lib/types";
+import { MAP_CONFIG } from "@/lib/config/map";
+import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
+import { LOCATIONS } from "@lib/data/locations";
 
 interface MapInterfaceProps {
 	datasets: Datasets;
@@ -31,14 +31,16 @@ export default function MapInterface({
 	selectedLocation,
 	setSelectedLocation,
 }: MapInterfaceProps) {
-	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null)
+	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
 
 	const codeMapper = useCodeMapper();
 	const { boundaryData } = useBoundaryData(selectedLocation, codeMapper);
 
 	// Map setup
-	const { mapRef: map, handleMapContainer } = useMapInitialization(MAP_CONFIG);
-	const { mapOptions, setMapOptions: handleMapOptionsChange } = useMapOptions(DEFAULT_MAP_OPTIONS);
+	const { mapRef: map, handleMapContainer } =
+		useMapInitialization(MAP_CONFIG);
+	const { mapOptions, setMapOptions: handleMapOptionsChange } =
+		useMapOptions(DEFAULT_MAP_OPTIONS);
 
 	// Stable interaction handlers - created once, never change identity
 	const interactionHandlers = useInteractionHandlers({
@@ -54,31 +56,38 @@ export default function MapInterface({
 	// Get geojson for active dataset
 	const geojson = useMemo(() => {
 		if (!activeDataset) return null;
-		return boundaryData[activeDataset.boundaryType]?.[activeDataset.boundaryYear] ?? null;
+		return (
+			boundaryData[activeDataset.boundaryType]?.[
+			activeDataset.boundaryYear
+			] ?? null
+		);
 	}, [activeDataset, boundaryData]);
 
 	// Initialize map manager with stable callbacks
 	const mapManager = useMapManager({
 		mapRef: map,
 		geojson,
-		interactionHandlers
+		interactionHandlers,
 	});
 
 	// Location navigation - memoize with proper dependencies
-	const handleLocationClick = useCallback((location: string) => {
-		const locationData = LOCATIONS[location];
-		if (!map.current || !locationData) return;
+	const handleLocationClick = useCallback(
+		(location: string) => {
+			const locationData = LOCATIONS[location];
+			if (!map.current || !locationData) return;
 
-		setSelectedLocation(location);
+			setSelectedLocation(location);
 
-		// Use requestAnimationFrame for smooth animation
-		requestAnimationFrame(() => {
-			map.current?.fitBounds(locationData.bounds, {
-				padding: MAP_CONFIG.fitBoundsPadding,
-				duration: MAP_CONFIG.fitBoundsDuration,
+			// Use requestAnimationFrame for smooth animation
+			requestAnimationFrame(() => {
+				map.current?.fitBounds(locationData.bounds, {
+					padding: MAP_CONFIG.fitBoundsPadding,
+					duration: MAP_CONFIG.fitBoundsDuration,
+				});
 			});
-		});
-	}, [map, setSelectedLocation]);
+		},
+		[map, setSelectedLocation],
+	);
 
 	// Zoom handlers - create once
 	const zoomHandlersRef = useRef({
@@ -93,7 +102,7 @@ export default function MapInterface({
 			if (currentMap) {
 				currentMap.zoomTo(currentMap.getZoom() - 1);
 			}
-		}
+		},
 	});
 
 	const aggregatedData = useAggregatedData({

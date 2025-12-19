@@ -18,7 +18,7 @@ interface GenderProps {
 		getCodeForYear: (
 			type: "ward" | "localAuthority",
 			code: string,
-			targetYear: number
+			targetYear: number,
 		) => string | undefined;
 		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
@@ -44,7 +44,8 @@ function Gender({
 		if (selectedArea === null && aggregatedData) {
 			return {
 				totalMales: aggregatedData[dataset.year].populationStats.males,
-				totalFemales: aggregatedData[dataset.year].populationStats.females,
+				totalFemales:
+					aggregatedData[dataset.year].populationStats.females,
 			};
 		}
 
@@ -55,7 +56,11 @@ function Gender({
 
 			// Try to map ward code if not found
 			if (!wardData && codeMapper?.getCodeForYear) {
-				const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+				const mappedCode = codeMapper.getCodeForYear(
+					"ward",
+					wardCode,
+					dataset.boundaryYear,
+				);
 				if (mappedCode) {
 					wardData = dataset.data[mappedCode];
 				}
@@ -84,10 +89,14 @@ function Gender({
 		}
 
 		// Handle Local Authority Selection
-		if (selectedArea && selectedArea.type === 'localAuthority' && codeMapper?.getWardsForLad) {
+		if (
+			selectedArea &&
+			selectedArea.type === "localAuthority" &&
+			codeMapper?.getWardsForLad
+		) {
 			const ladCode = selectedArea.code;
 			const cacheKey = `lad-${ladCode}`;
-			
+
 			if (!genderCache.has(cacheKey)) {
 				genderCache.set(cacheKey, new Map());
 			}
@@ -98,8 +107,8 @@ function Gender({
 			}
 
 			// Get all wards in this LAD
-			const wardCodes = codeMapper.getWardsForLad(ladCode, 2022);
-			
+			const wardCodes = codeMapper.getWardsForLad(ladCode, 2024);
+
 			if (wardCodes.length === 0) {
 				const emptyResult = { totalMales: 0, totalFemales: 0 };
 				yearCache.set(dataset.year, emptyResult);
@@ -111,15 +120,19 @@ function Gender({
 
 			for (const wardCode of wardCodes) {
 				let wardData = dataset.data?.[wardCode];
-				
+
 				// Try to map to the dataset's year if ward code doesn't exist
 				if (!wardData && codeMapper?.getCodeForYear) {
-					const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+					const mappedCode = codeMapper.getCodeForYear(
+						"ward",
+						wardCode,
+						dataset.boundaryYear,
+					);
 					if (mappedCode) {
 						wardData = dataset.data[mappedCode];
 					}
 				}
-				
+
 				if (wardData) {
 					// Sum males
 					const maleKeys = Object.keys(wardData.males);
@@ -135,9 +148,9 @@ function Gender({
 				}
 			}
 
-			const result = { 
-				totalMales: aggregatedMales, 
-				totalFemales: aggregatedFemales 
+			const result = {
+				totalMales: aggregatedMales,
+				totalFemales: aggregatedFemales,
 			};
 
 			// Cache the result
@@ -147,7 +160,6 @@ function Gender({
 
 		// Unsupported area type or missing data
 		return { totalMales: 0, totalFemales: 0 };
-
 	}, [dataset, aggregatedData, selectedArea, codeMapper]);
 
 	const total = totalMales + totalFemales;
@@ -171,13 +183,17 @@ function Gender({
 				<h3 className="text-xs font-bold">Gender [{dataset.year}]</h3>
 				{hasData && (
 					<span className="text-[10px] text-gray-600 mr-1">
-						<span className="text-blue-600">{totalMales.toLocaleString()}</span>{" "}
+						<span className="text-blue-600">
+							{totalMales.toLocaleString()}
+						</span>{" "}
 						<span className="text-gray-500">/</span>{" "}
 						<span className="text-pink-600">
 							{totalFemales.toLocaleString()}
 						</span>
 						<span className="ml-2 text-gray-500">
-							{(totalMales / (totalMales + totalFemales)).toFixed(4)}
+							{(totalMales / (totalMales + totalFemales)).toFixed(
+								4,
+							)}
 						</span>
 					</span>
 				)}

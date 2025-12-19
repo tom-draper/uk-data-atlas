@@ -1,5 +1,5 @@
 // lib/population/utils.ts
-import { PopulationDataset, PopulationWardData } from '@lib/types';
+import { PopulationDataset, PopulationWardData } from "@lib/types";
 
 export const calculateTotal = (ageData: { [age: string]: number }) => {
 	return Object.values(ageData).reduce((sum, count) => sum + count, 0);
@@ -8,15 +8,17 @@ export const calculateTotal = (ageData: { [age: string]: number }) => {
 export const resolveWardCode = (
 	wardCode: string,
 	wardName: string,
-	population: PopulationDataset['populationData'],
-	wardCodeMap: { [name: string]: string }
+	population: PopulationDataset["populationData"],
+	wardCodeMap: { [name: string]: string },
 ): string => {
 	if (population[wardCode]) return wardCode;
 	const normalizedName = wardName?.toLowerCase().trim();
-	return wardCodeMap[normalizedName] || '';
+	return wardCodeMap[normalizedName] || "";
 };
 
-export const calculateMedianAge = (wardPopulation: PopulationWardData): number | null => {
+export const calculateMedianAge = (
+	wardPopulation: PopulationWardData,
+): number | null => {
 	if (!wardPopulation?.total) return null;
 
 	const ageData = wardPopulation.total;
@@ -35,7 +37,7 @@ export const calculateMedianAge = (wardPopulation: PopulationWardData): number |
 	}
 
 	return null;
-}
+};
 
 // Calculates polygon area in square kilometers (roughly accurate for small areas)
 export const polygonAreaSqKm = (coordinates: number[][][]): number => {
@@ -58,13 +60,13 @@ export const polygonAreaSqKm = (coordinates: number[][][]): number => {
 			area += deltaLonRad * (Math.sin(latStartRad) + Math.sin(latEndRad));
 		}
 
-		return area * R * R / 2;
+		return (area * R * R) / 2;
 	};
 
 	let totalArea = 0;
 
 	// Check if coordinates[0][0][0] is a number (simple) or array (multi-chunk)
-	const isSimplePolygon = typeof coordinates[0]?.[0]?.[0] === 'number';
+	const isSimplePolygon = typeof coordinates[0]?.[0]?.[0] === "number";
 
 	if (isSimplePolygon) {
 		// Simple case: coordinates[0] is the ring

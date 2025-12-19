@@ -1,24 +1,30 @@
 // hooks/useBoundaryData.ts
-import { useEffect, useState, useMemo } from 'react';
-import { BoundaryData, BoundaryGeojson } from '@lib/types';
+import { useEffect, useState, useMemo } from "react";
+import { BoundaryData, BoundaryGeojson } from "@lib/types";
 import {
 	BoundaryType,
 	fetchBoundaryFile,
 	filterFeatures,
 	GEOJSON_PATHS,
-	PROPERTY_KEYS
-} from '../data/boundaries/boundaries';
-import { 
-	extractWardLadMappings, 
+	PROPERTY_KEYS,
+} from "../data/boundaries/boundaries";
+import {
+	extractWardLadMappings,
 	extractLadWardMappings,
-	buildCrossYearMappings 
-} from './useCodeMapper';
-import type { CodeMapping, CodeType, YearCode } from './useCodeMapper';
+	buildCrossYearMappings,
+} from "./useCodeMapper";
+import type { CodeMapping, CodeType, YearCode } from "./useCodeMapper";
 
 const EMPTY_BOUNDARY_DATA: BoundaryData = {
 	ward: { 2024: null, 2023: null, 2022: null, 2021: null },
 	constituency: { 2024: null, 2019: null, 2017: null, 2015: null },
-	localAuthority: { 2025: null, 2024: null, 2023: null, 2022: null, 2021: null }
+	localAuthority: {
+		2025: null,
+		2024: null,
+		2023: null,
+		2022: null,
+		2021: null,
+	},
 };
 
 /**
@@ -27,8 +33,11 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = {
 const fetchBoundaryGroup = async (
 	type: BoundaryType,
 	onMappingsExtracted?: (mappings: Record<string, string>) => void,
-	onLadWardMappingsExtracted?: (year: YearCode, mappings: Record<string, string[]>) => void,
-	onCrossYearMappings?: (type: CodeType, mappings: CodeMapping) => void
+	onLadWardMappingsExtracted?: (
+		year: YearCode,
+		mappings: Record<string, string[]>,
+	) => void,
+	onCrossYearMappings?: (type: CodeType, mappings: CodeMapping) => void,
 ): Promise<Record<number, BoundaryGeojson>> => {
 	const paths = GEOJSON_PATHS[type];
 	const years = Object.keys(paths).map(Number);
@@ -39,13 +48,13 @@ const fetchBoundaryGroup = async (
 			const data = await fetchBoundaryFile(path);
 
 			// Extract ward-to-LAD and LAD-to-ward mappings from ward data
-			if (type === 'ward' && data.features?.length) {
+			if (type === "ward" && data.features?.length) {
 				// Ward-to-LAD mappings (for filtering)
 				if (onMappingsExtracted) {
 					const wardToLadMappings = extractWardLadMappings(
 						data.features,
 						PROPERTY_KEYS.wardCode,
-						PROPERTY_KEYS.ladCode
+						PROPERTY_KEYS.ladCode,
 					);
 					if (Object.keys(wardToLadMappings).length > 0) {
 						onMappingsExtracted(wardToLadMappings);
@@ -57,7 +66,7 @@ const fetchBoundaryGroup = async (
 					const ladToWardsMappings = extractLadWardMappings(
 						data.features,
 						PROPERTY_KEYS.wardCode,
-						PROPERTY_KEYS.ladCode
+						PROPERTY_KEYS.ladCode,
 					);
 					if (Object.keys(ladToWardsMappings).length > 0) {
 						onLadWardMappingsExtracted(year, ladToWardsMappings);
@@ -66,7 +75,7 @@ const fetchBoundaryGroup = async (
 			}
 
 			return [year, data] as const;
-		})
+		}),
 	);
 
 	const groupedData = Object.fromEntries(results);
@@ -76,7 +85,7 @@ const fetchBoundaryGroup = async (
 		const crossYearMappings = buildCrossYearMappings(
 			groupedData,
 			type,
-			years
+			years,
 		);
 
 		if (Object.keys(crossYearMappings).length > 0) {
@@ -94,7 +103,7 @@ const filterBoundaryGroup = (
 	group: Record<number, BoundaryGeojson | null>,
 	type: BoundaryType,
 	location: string | null,
-	getLadForWard?: (wardCode: string) => string | undefined
+	getLadForWard?: (wardCode: string) => string | undefined,
 ): Record<number, BoundaryGeojson | null> => {
 	const filtered: Record<number, BoundaryGeojson | null> = {};
 
@@ -116,9 +125,12 @@ export function useBoundaryData(
 	codeMapper?: {
 		getLadForWard: (wardCode: string) => string | undefined;
 		addWardLadMappings: (mappings: Record<string, string>) => void;
-		addLadWardMappings: (year: YearCode, mappings: Record<string, string[]>) => void;
+		addLadWardMappings: (
+			year: YearCode,
+			mappings: Record<string, string[]>,
+		) => void;
 		addCodeMappings: (type: CodeType, mappings: CodeMapping) => void;
-	}
+	},
 ) {
 	const [rawData, setRawData] = useState<BoundaryData>(EMPTY_BOUNDARY_DATA);
 	const [isLoading, setIsLoading] = useState(true);
@@ -139,37 +151,42 @@ export function useBoundaryData(
 				setIsLoading(true);
 				setError(null);
 
-				const [wards, constituencies, localAuthorities] = await Promise.all([
-					fetchBoundaryGroup(
-						'ward',
-						addWardLadMappings,
-						addLadWardMappings,
-						addCodeMappings
-					),
-					fetchBoundaryGroup(
-						'constituency',
-						undefined,
-						undefined,
-						addCodeMappings
-					),
-					fetchBoundaryGroup(
-						'localAuthority',
-						undefined,
-						undefined,
-						addCodeMappings
-					),
-				]);
+				const [wards, constituencies, localAuthorities] =
+					await Promise.all([
+						fetchBoundaryGroup(
+							"ward",
+							addWardLadMappings,
+							addLadWardMappings,
+							addCodeMappings,
+						),
+						fetchBoundaryGroup(
+							"constituency",
+							undefined,
+							undefined,
+							addCodeMappings,
+						),
+						fetchBoundaryGroup(
+							"localAuthority",
+							undefined,
+							undefined,
+							addCodeMappings,
+						),
+					]);
 
 				if (mounted) {
 					setRawData({
 						ward: wards,
 						constituency: constituencies,
-						localAuthority: localAuthorities
+						localAuthority: localAuthorities,
 					});
 				}
 			} catch (err) {
 				if (mounted) {
-					setError(err instanceof Error ? err : new Error('Failed to load boundaries'));
+					setError(
+						err instanceof Error
+							? err
+							: new Error("Failed to load boundaries"),
+					);
 				}
 			} finally {
 				if (mounted) {
@@ -194,26 +211,26 @@ export function useBoundaryData(
 		return {
 			ward: filterBoundaryGroup(
 				rawData.ward,
-				'ward',
+				"ward",
 				selectedLocation || null,
-				getLadForWard
+				getLadForWard,
 			),
 			constituency: filterBoundaryGroup(
 				rawData.constituency,
-				'constituency',
-				selectedLocation || null
+				"constituency",
+				selectedLocation || null,
 			),
 			localAuthority: filterBoundaryGroup(
 				rawData.localAuthority,
-				'localAuthority',
-				selectedLocation || null
-			)
+				"localAuthority",
+				selectedLocation || null,
+			),
 		};
 	}, [rawData, selectedLocation, isLoading, getLadForWard]);
 
 	return {
 		boundaryData: filteredData,
 		isLoading,
-		error
+		error,
 	};
 }

@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { useLocalElectionData } from '@lib/hooks/useLocalElectionData';
-import { useGeneralElectionData } from '@lib/hooks/useGeneralElectionData';
-import { usePopulationData } from '@lib/hooks/usePopulationData';
-import { useHousePriceData } from '@lib/hooks/useHousePriceData';
-import { useCrimeData } from './useCrimeData';
-import { Datasets } from '../types';
-import { useIncomeData } from './useIncomeData';
-import { useEthnicityData } from './useEthnicityData';
+import { useLocalElectionData } from "@lib/hooks/useLocalElectionData";
+import { useGeneralElectionData } from "@lib/hooks/useGeneralElectionData";
+import { usePopulationData } from "@lib/hooks/usePopulationData";
+import { useHousePriceData } from "@lib/hooks/useHousePriceData";
+import { useCrimeData } from "./useCrimeData";
+import { Datasets } from "../types";
+import { useIncomeData } from "./useIncomeData";
+import { useEthnicityData } from "./useEthnicityData";
 
 export interface UseDatasetsResult {
 	datasets: Datasets;
@@ -28,34 +28,36 @@ export function useDatasets(): UseDatasetsResult {
 	const income = useIncomeData();
 
 	// Combine datasets
-	const datasets = useMemo(() => ({
-		localElection: localElection.datasets,
-		generalElection: generalElection.datasets,
-		population: population.datasets,
-		ethnicity: ethnicity.datasets,
-		housePrice: housePrice.datasets,
-		crime: crime.datasets,
-		income: income.datasets,
-	}), [
-		localElection.datasets,
-		generalElection.datasets,
-		population.datasets,
-		ethnicity.datasets,
-		housePrice.datasets,
-		crime.datasets,
-		income.datasets
-	]);
+	const datasets = useMemo(
+		() => ({
+			localElection: localElection.datasets,
+			generalElection: generalElection.datasets,
+			population: population.datasets,
+			ethnicity: ethnicity.datasets,
+			housePrice: housePrice.datasets,
+			crime: crime.datasets,
+			income: income.datasets,
+		}),
+		[
+			localElection.datasets,
+			generalElection.datasets,
+			population.datasets,
+			ethnicity.datasets,
+			housePrice.datasets,
+			crime.datasets,
+			income.datasets,
+		],
+	);
 
 	// Combined loading state
-	const loading = (
+	const loading =
 		localElection.loading ||
 		generalElection.loading ||
 		population.loading ||
 		ethnicity.loading ||
 		housePrice.loading ||
 		crime.loading ||
-		income.loading
-	);
+		income.loading;
 
 	// Collect all errors
 	const errors = useMemo(() => {

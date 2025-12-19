@@ -39,8 +39,9 @@ const useLocalElectionData = (
 	getCodeForYear?: (
 		type: "ward",
 		code: string,
-		targetYear: number
-	) => string | undefined
+		targetYear: number,
+	) => string | undefined,
+	getWardsForLad?: (ladCode: string, year: number) => string[],
 ) => {
 	return useMemo(() => {
 		return LOCAL_ELECTION_YEARS.map((year): ProcessedYearData => {
@@ -60,9 +61,8 @@ const useLocalElectionData = (
 			let rawPartyVotes: PartyVotes | null = null;
 			let turnout: number | null = null;
 
-			// Determine Data Source (Ward vs Aggregated)
+			// Handle Ward Selection
 			if (selectedArea && selectedArea.type === "ward") {
-				// Try to find the ward data for this year
 				const wardCode = selectedArea.code;
 				let data = dataset.data[wardCode];
 
@@ -78,11 +78,60 @@ const useLocalElectionData = (
 					rawPartyVotes = data.partyVotes;
 					turnout = data.turnoutPercent;
 				}
+			} else if (selectedArea && selectedArea.type === "localAuthority" && getWardsForLad) {
+				const ladCode = selectedArea.code;
+				const wardCodes = getWardsForLad(ladCode, 2022);
+
+				if (wardCodes.length > 0) {
+					const aggregatedVotes: Record<string, number> = {};
+					let totalElectorate = 0;
+					let totalVotesAcrossWards = 0;
+
+					// Aggregate votes across all wards in the LAD
+					for (const wardCode of wardCodes) {
+						let wardData = dataset.data[wardCode];
+
+						// Try to map to the dataset's year if ward code doesn't exist
+						if (!wardData && getCodeForYear) {
+							const mappedCode = getCodeForYear("ward", wardCode, year);
+							if (mappedCode) {
+								wardData = dataset.data[mappedCode];
+							}
+						}
+
+						if (wardData?.partyVotes) {
+							// Aggregate party votes
+							for (const [partyKey, votes] of Object.entries(wardData.partyVotes)) {
+								aggregatedVotes[partyKey] = (aggregatedVotes[partyKey] || 0) + (votes || 0);
+							}
+
+							// Aggregate electorate for turnout calculation
+							if (wardData.electorate) {
+								totalElectorate += wardData.electorate;
+							}
+						}
+					}
+
+					// Calculate total votes from aggregated votes
+					totalVotesAcrossWards = Object.values(aggregatedVotes).reduce((sum, votes) => sum + (votes || 0), 0);
+
+					if (totalVotesAcrossWards > 0) {
+						rawPartyVotes = aggregatedVotes as PartyVotes;
+						// Calculate turnout from aggregated data
+						if (totalElectorate > 0) {
+							turnout = calculateTurnout(totalVotesAcrossWards, 0, totalElectorate);
+						}
+					}
+				}
 			} else if (selectedArea === null && aggregatedData?.[year]) {
 				const agg = aggregatedData[year];
 				if (agg) {
 					rawPartyVotes = agg.partyVotes;
-					turnout = calculateTurnout(agg.totalVotes, 0, agg.electorate);
+					turnout = calculateTurnout(
+						agg.totalVotes,
+						0,
+						agg.electorate,
+					);
 				}
 			}
 
@@ -98,11 +147,7 @@ const useLocalElectionData = (
 			}
 
 			// Process Votes & Percentages
-			// Sum manually to ensure we catch all specific party keys
-			const totalVotes = Object.values(rawPartyVotes).reduce(
-				(a, b) => (a || 0) + (b || 0),
-				0
-			);
+			const totalVotes = Object.values(rawPartyVotes).reduce((a, b) => (a || 0) + (b || 0), 0);
 
 			if (totalVotes === 0) {
 				return {
@@ -138,7 +183,7 @@ const useLocalElectionData = (
 				hasData: true,
 			};
 		});
-	}, [availableDatasets, aggregatedData, selectedArea, getCodeForYear]);
+	}, [availableDatasets, aggregatedData, selectedArea, getCodeForYear, getWardsForLad]);
 };
 
 interface LocalElectionResultChartSectionProps {
@@ -151,8 +196,9 @@ interface LocalElectionResultChartSectionProps {
 		getCodeForYear: (
 			type: "ward",
 			code: string,
-			targetYear: number
+			targetYear: number,
 		) => string | undefined;
+		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
 }
 
@@ -168,7 +214,8 @@ export default function LocalElectionResultChartSection({
 		availableDatasets,
 		aggregatedData,
 		selectedArea,
-		codeMapper?.getCodeForYear
+		codeMapper?.getCodeForYear,
+		codeMapper?.getWardsForLad,
 	);
 
 	return (

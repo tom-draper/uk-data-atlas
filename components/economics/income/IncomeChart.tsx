@@ -1,7 +1,13 @@
 // components/IncomeChart.tsx
-'use client';
-import { ActiveViz, AggregatedIncomeData, Dataset, IncomeDataset, SelectedArea } from '@lib/types';
-import { useMemo } from 'react';
+"use client";
+import {
+	ActiveViz,
+	AggregatedIncomeData,
+	Dataset,
+	IncomeDataset,
+	SelectedArea,
+} from "@lib/types";
+import { useMemo } from "react";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -10,24 +16,29 @@ interface IncomeChartProps {
 	selectedArea: SelectedArea | null;
 	year: number;
 	codeMapper?: {
-		getCodeForYear: (type: 'localAuthority', code: string, targetYear: number) => string | undefined;
+		getCodeForYear: (
+			type: "localAuthority",
+			code: string,
+			targetYear: number,
+		) => string | undefined;
 	};
 	setActiveViz: (value: ActiveViz) => void;
 }
 
 const colors = {
-	bg: 'bg-emerald-50/60',
-	border: 'border-emerald-300',
-	inactive: 'bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300',
+	bg: "bg-emerald-50/60",
+	border: "border-emerald-300",
+	inactive:
+		"bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300",
 };
 
 // Green shades for the pound signs
 const particleColors = [
-	'text-green-300',
-	'text-green-400',
-	'text-emerald-300',
-	'text-emerald-400',
-	'text-teal-300',
+	"text-green-300",
+	"text-green-400",
+	"text-emerald-300",
+	"text-emerald-400",
+	"text-teal-300",
 ];
 
 export default function IncomeChart({
@@ -48,15 +59,24 @@ export default function IncomeChart({
 	if (dataset) {
 		if (selectedArea === null && aggregatedData) {
 			medianIncome = aggregatedData[year]?.averageIncome || null;
-		} else if (selectedArea && selectedArea.type === 'localAuthority' && selectedArea.data) {
+		} else if (
+			selectedArea &&
+			selectedArea.type === "localAuthority" &&
+			selectedArea.data
+		) {
 			const laCode = selectedArea.code;
 			medianIncome = dataset.data?.[laCode]?.annual?.median || null;
 
 			// Try code mapping if not found
 			if (!medianIncome && codeMapper) {
-				const mappedCode = codeMapper.getCodeForYear('localAuthority', laCode, year);
+				const mappedCode = codeMapper.getCodeForYear(
+					"localAuthority",
+					laCode,
+					year,
+				);
 				if (mappedCode) {
-					medianIncome = dataset.data?.[mappedCode]?.annual?.median || null;
+					medianIncome =
+						dataset.data?.[mappedCode]?.annual?.median || null;
 				}
 			}
 		}
@@ -68,12 +88,18 @@ export default function IncomeChart({
 		// Clamp income between 25k and 45k for the visual calculation
 		const minIncome = 25000;
 		const maxIncome = 45000;
-		const clampedIncome = Math.max(minIncome, Math.min(medianIncome, maxIncome));
+		const clampedIncome = Math.max(
+			minIncome,
+			Math.min(medianIncome, maxIncome),
+		);
 
 		const minParticles = 4;
 		const maxParticles = 100;
-		const percentage = (clampedIncome - minIncome) / (maxIncome - minIncome);
-		const count = Math.round(minParticles + (percentage * (maxParticles - minParticles)));
+		const percentage =
+			(clampedIncome - minIncome) / (maxIncome - minIncome);
+		const count = Math.round(
+			minParticles + percentage * (maxParticles - minParticles),
+		);
 
 		// Generate static random properties for the particles
 		return Array.from({ length: count }).map((_, i) => ({
@@ -83,25 +109,37 @@ export default function IncomeChart({
 			rotation: Math.random() * 360,
 			size: Math.random() * 1.5 + 0.8, // rem
 			opacity: Math.random() * 0.3 + 0.05, // Very faint (0.05 to 0.35)
-			blur: Math.random() < 0.4 ? 'blur-[1px]' : Math.random() < 0.2 ? 'blur-[2px]' : 'blur-none', // Depth of field
-			color: particleColors[Math.floor(Math.random() * particleColors.length)],
+			blur:
+				Math.random() < 0.4
+					? "blur-[1px]"
+					: Math.random() < 0.2
+						? "blur-[2px]"
+						: "blur-none", // Depth of field
+			color: particleColors[
+				Math.floor(Math.random() * particleColors.length)
+			],
 		}));
 	}, [medianIncome]);
 
-
 	if (!dataset) return null;
 	const isActive = activeDataset?.id === `income${dataset.year}`;
-	const formattedMedian = medianIncome ? `£${Math.round(medianIncome).toLocaleString()}` : null;
+	const formattedMedian = medianIncome
+		? `£${Math.round(medianIncome).toLocaleString()}`
+		: null;
 
 	return (
 		<div
-			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative isolate ${isActive ? `${colors.bg} border-2 ${colors.border}` : colors.inactive
+			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative isolate ${isActive
+					? `${colors.bg} border-2 ${colors.border}`
+					: colors.inactive
 				}`}
-			onClick={() => setActiveViz({
-				vizId: dataset.id,
-				datasetType: dataset.type,
-				datasetYear: dataset.year
-			})}
+			onClick={() =>
+				setActiveViz({
+					vizId: dataset.id,
+					datasetType: dataset.type,
+					datasetYear: dataset.year,
+				})
+			}
 		>
 			{/* Background Particles Layer */}
 			<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
@@ -123,7 +161,9 @@ export default function IncomeChart({
 			</div>
 
 			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className="text-xs font-bold text-gray-700">Median Income [{dataset.year}]</h3>
+				<h3 className="text-xs font-bold text-gray-700">
+					Median Income [{dataset.year}]
+				</h3>
 			</div>
 
 			{formattedMedian ? (
@@ -134,7 +174,9 @@ export default function IncomeChart({
 				</div>
 			) : (
 				<div className="h-7 mt-2 mb-2 relative z-10">
-					<div className="text-xs text-gray-400/80 pt-0.5 text-center">No data available</div>
+					<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+						No data available
+					</div>
 				</div>
 			)}
 		</div>

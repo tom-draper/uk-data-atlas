@@ -42,8 +42,8 @@ const useElectionChartData = (
 	getCodeForYear?: (
 		type: "constituency",
 		code: string,
-		targetYear: number
-	) => string | undefined
+		targetYear: number,
+	) => string | undefined,
 ) => {
 	return useMemo(() => {
 		return GENERAL_ELECTION_YEARS.map((year): ProcessedYearData => {
@@ -79,7 +79,7 @@ const useElectionChartData = (
 					const mappedCode = getCodeForYear(
 						"constituency",
 						constituencyCode,
-						year
+						year,
 					);
 					if (mappedCode) {
 						data = dataset.data?.[mappedCode];
@@ -91,7 +91,7 @@ const useElectionChartData = (
 					turnout = calculateTurnout(
 						data.validVotes,
 						data.invalidVotes,
-						data.electorate
+						data.electorate,
 					);
 				}
 			} else if (selectedArea === null && aggregatedData?.[year]) {
@@ -101,7 +101,7 @@ const useElectionChartData = (
 					turnout = calculateTurnout(
 						agg.validVotes,
 						agg.invalidVotes,
-						agg.electorate
+						agg.electorate,
 					);
 					isAggregated = true;
 					totalSeats = agg.totalSeats;
@@ -135,7 +135,7 @@ const useElectionChartData = (
 			// Sum manually to ensure we catch all specific party keys defined in this dataset
 			const totalVotes = Object.values(rawPartyVotes).reduce(
 				(a, b) => (a || 0) + (b || 0),
-				0
+				0,
 			);
 
 			const partyData = dataset.partyInfo
@@ -146,7 +146,8 @@ const useElectionChartData = (
 						name: party.name,
 						color: PARTIES[party.key]?.color || "#999",
 						votes,
-						percentage: totalVotes > 0 ? (votes / totalVotes) * 100 : 0,
+						percentage:
+							totalVotes > 0 ? (votes / totalVotes) * 100 : 0,
 					};
 				})
 				.filter((p) => p.percentage > 0)
@@ -177,7 +178,7 @@ interface GeneralElectionResultChartSectionProps {
 		getCodeForYear: (
 			type: "constituency",
 			code: string,
-			targetYear: number
+			targetYear: number,
 		) => string | undefined;
 	};
 }
@@ -194,7 +195,7 @@ export default function GeneralElectionResultChartSection({
 		availableDatasets,
 		aggregatedData,
 		selectedArea,
-		codeMapper?.getCodeForYear
+		codeMapper?.getCodeForYear,
 	);
 
 	return (
@@ -204,7 +205,9 @@ export default function GeneralElectionResultChartSection({
 				<GeneralElectionResultChart
 					key={data.year}
 					data={data}
-					isActive={activeDataset?.id === `generalElection-${data.year}`}
+					isActive={
+						activeDataset?.id === `generalElection-${data.year}`
+					}
 					setActiveViz={setActiveViz}
 				/>
 			))}

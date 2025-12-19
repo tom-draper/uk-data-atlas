@@ -1,5 +1,5 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
-import { useMemo, memo } from "react";
+import { useMemo, memo, useRef, useCallback } from "react";
 import {
 	AggregatedPopulationData,
 	PopulationDataset,
@@ -14,7 +14,7 @@ export interface GenderBalanceByAgeChartProps {
 		getCodeForYear: (
 			type: "ward" | "localAuthority",
 			code: string,
-			targetYear: number
+			targetYear: number,
 		) => string | undefined;
 		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
@@ -32,6 +32,10 @@ function GenderBalanceByAgeChart({
 	selectedArea,
 	codeMapper,
 }: GenderBalanceByAgeChartProps) {
+	// Refs for direct DOM manipulation (avoids re-renders on hover)
+	const tooltipRef = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+
 	// Memoize both data AND percentages to avoid recalculation on every render
 	const { ageData, percentages } = useMemo(() => {
 		// Handle no area selected - use aggregated data
@@ -57,7 +61,11 @@ function GenderBalanceByAgeChart({
 
 			// Try to map ward code if not found
 			if (!wardData && codeMapper?.getCodeForYear) {
-				const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+				const mappedCode = codeMapper.getCodeForYear(
+					"ward",
+					wardCode,
+					dataset.boundaryYear,
+				);
 				if (mappedCode) {
 					wardData = dataset.data[mappedCode];
 				}
@@ -65,8 +73,11 @@ function GenderBalanceByAgeChart({
 
 			if (wardData) {
 				const { males, females } = wardData;
-				const data: Array<{ age: number; males: number; females: number }> =
-					new Array(91);
+				const data: Array<{
+					age: number;
+					males: number;
+					females: number;
+				}> = new Array(91);
 				const pct: number[] = new Array(91);
 
 				// Single loop: build data AND calculate percentages
@@ -87,10 +98,14 @@ function GenderBalanceByAgeChart({
 		}
 
 		// Handle Local Authority Selection
-		if (selectedArea && selectedArea.type === 'localAuthority' && codeMapper?.getWardsForLad) {
+		if (
+			selectedArea &&
+			selectedArea.type === "localAuthority" &&
+			codeMapper?.getWardsForLad
+		) {
 			const ladCode = selectedArea.code;
 			const cacheKey = `lad-${ladCode}`;
-			
+
 			if (!genderBalanceCache.has(cacheKey)) {
 				genderBalanceCache.set(cacheKey, new Map());
 			}
@@ -102,7 +117,7 @@ function GenderBalanceByAgeChart({
 
 			// Get all wards in this LAD
 			const wardCodes = codeMapper.getWardsForLad(ladCode, 2022);
-			
+
 			if (wardCodes.length === 0) {
 				const emptyResult = { ageData: [], percentages: [] };
 				yearCache.set(dataset.year, emptyResult);
@@ -115,15 +130,19 @@ function GenderBalanceByAgeChart({
 
 			for (const wardCode of wardCodes) {
 				let wardData = dataset.data?.[wardCode];
-				
+
 				// Try to map to the dataset's year if ward code doesn't exist
 				if (!wardData && codeMapper?.getCodeForYear) {
-					const mappedCode = codeMapper.getCodeForYear('ward', wardCode, dataset.boundaryYear);
+					const mappedCode = codeMapper.getCodeForYear(
+						"ward",
+						wardCode,
+						dataset.boundaryYear,
+					);
 					if (mappedCode) {
 						wardData = dataset.data[mappedCode];
 					}
 				}
-				
+
 				if (wardData) {
 					// Sum males and females by age
 					for (let age = 0; age < 91; age++) {
@@ -135,7 +154,8 @@ function GenderBalanceByAgeChart({
 			}
 
 			// Build data array and calculate percentages
-			const data: Array<{ age: number; males: number; females: number }> = new Array(91);
+			const data: Array<{ age: number; males: number; females: number }> =
+				new Array(91);
 			const pct: number[] = new Array(91);
 
 			for (let age = 0; age < 91; age++) {
@@ -156,8 +176,59 @@ function GenderBalanceByAgeChart({
 
 		// Unsupported area type or missing data
 		return { ageData: [], percentages: [] };
-
 	}, [dataset, aggregatedData, selectedArea, codeMapper]);
+
+	// Handle mouse move to update tooltip directly without triggering React render
+	const handleMouseMove = useCallback(
+		(e: React.MouseEvent<HTMLDivElement>) => {
+			const tooltip = tooltipRef.current;
+			if (!tooltip || !containerRef.current) return;
+
+			// Find which age row we are hovering over using event delegation
+			// (The target will be one of the bars, closest gets the row wrapper)
+			const row = (e.target as HTMLElement).closest("[data-age]");
+
+			if (row && row instanceof HTMLElement) {
+				const age = parseInt(row.dataset.age || "0", 10);
+				const data = ageData[age];
+
+				if (data) {
+					const { males, females } = data;
+					const malePct = percentages[age];
+
+					// Direct DOM update - extremely fast, no React overhead
+					tooltip.innerHTML = `
+            Age ${age}: ${males.toLocaleString()}M / ${females.toLocaleString()}F 
+            <span class="opacity-75">(${malePct.toFixed(1)}% male)</span>
+          `;
+
+					// Position the tooltip near the row
+					// We use fixed positioning or calculation based on container
+					const containerRect = containerRef.current.getBoundingClientRect();
+					const rowRect = row.getBoundingClientRect();
+
+					// Center tooltip horizontally relative to container
+					tooltip.style.left = "50%";
+					tooltip.style.transform = "translateX(-50%)";
+
+					// Position above the current row
+					const topOffset = rowRect.top - containerRect.top - 8; // 8px buffer
+					tooltip.style.top = `${topOffset}px`;
+
+					tooltip.style.opacity = "1";
+				}
+			} else {
+				tooltip.style.opacity = "0";
+			}
+		},
+		[ageData, percentages]
+	);
+
+	const handleMouseLeave = useCallback(() => {
+		if (tooltipRef.current) {
+			tooltipRef.current.style.opacity = "0";
+		}
+	}, []);
 
 	if (ageData.length === 0) {
 		return (
@@ -174,15 +245,26 @@ function GenderBalanceByAgeChart({
 				<span>0</span>
 			</div>
 
-			<div className="relative rounded overflow-hidden">
+			<div className="relative rounded" ref={containerRef}>
+				{/* Shared Tooltip - Rendered ONCE, updated via Ref */}
+				<div
+					ref={tooltipRef}
+					className="absolute pointer-events-none bg-gray-800 text-white text-[8px] rounded px-1.5 py-0.5 whitespace-nowrap z-20 transition-opacity duration-75"
+					style={{ opacity: 0, top: 0, left: 0 }}
+				/>
+
 				{/* Center line - using transform for GPU */}
 				<div
-					className="absolute top-0 bottom-0 w-px bg-gray-300 z-10 translate-x-1/2 left-1/2"
+					className="absolute top-0 bottom-0 w-px bg-gray-300 z-10 translate-x-1/2 left-1/2 pointer-events-none"
 					style={{ marginLeft: "-1px" }}
 				/>
 
-				{/* Stack of age rows - Minimal DOM, maximum performance */}
-				<div className="relative will-change-contents">
+				{/* Stack of age rows - Optimized Render Loop */}
+				<div
+					className="relative will-change-contents"
+					onMouseMove={handleMouseMove}
+					onMouseLeave={handleMouseLeave}
+				>
 					{AGE_INDICES.map((age) => {
 						const data = ageData[age];
 						if (!data) return null;
@@ -197,31 +279,23 @@ function GenderBalanceByAgeChart({
 						const malePercentage = percentages[age];
 						const femalePercentage = 100 - malePercentage;
 
-						// Use inline styles for dynamic values (faster than recalculating classes)
 						return (
 							<div
 								key={age}
-								className="flex h-px group relative"
-								title={`Age ${age}: ${males.toLocaleString()}M / ${females.toLocaleString()}F`}
+								data-age={age}
+								className="flex h-px relative hover:bg-gray-100/10" // Added faint hover effect
 							>
-								{/* Males (left) - minimal inline styles */}
+								{/* Males (left) */}
 								<div
-									className="bg-blue-400"
+									className="bg-blue-400 pointer-events-none" // prevent target interference
 									style={{ width: `${malePercentage}%` }}
 								/>
 
 								{/* Females (right) */}
 								<div
-									className="bg-pink-400"
+									className="bg-pink-400 pointer-events-none" // prevent target interference
 									style={{ width: `${femalePercentage}%` }}
 								/>
-
-								{/* Tooltip - only visible on hover, uses transform for GPU */}
-								<div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 bg-gray-800 text-white text-[8px] rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-20 transition-opacity">
-									Age {age}: {males.toLocaleString()}M /{" "}
-									{females.toLocaleString()}F ({malePercentage.toFixed(1)}%
-									male)
-								</div>
 							</div>
 						);
 					})}
