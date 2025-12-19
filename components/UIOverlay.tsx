@@ -41,6 +41,7 @@ interface UIOverlayProps {
 		type: keyof MapOptions,
 		options: Partial<MapOptions[typeof type]>,
 	) => void;
+	onExport: () => void;
 }
 
 export default function UIOverlay({
@@ -59,6 +60,7 @@ export default function UIOverlay({
 	onZoomIn,
 	onZoomOut,
 	handleMapOptionsChange,
+	onExport,
 }: UIOverlayProps) {
 	return (
 		<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
@@ -70,6 +72,7 @@ export default function UIOverlay({
 					onZoomIn={onZoomIn}
 					onZoomOut={onZoomOut}
 					handleMapOptionsChange={handleMapOptionsChange}
+					onExport={onExport}
 				/>
 			</div>
 

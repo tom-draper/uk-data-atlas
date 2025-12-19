@@ -13,12 +13,14 @@ interface MapOptionsProps {
 		type: keyof MapOptionsType,
 		options: Partial<MapOptionsType[typeof type]>,
 	) => void;
+	onExport: () => void;
 }
 
 export default function MapOptions({
 	onZoomIn,
 	onZoomOut,
 	handleMapOptionsChange,
+	onExport,
 }: MapOptionsProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedTheme, setSelectedTheme] = useState("viridis");
@@ -191,7 +193,10 @@ export default function MapOptions({
 						)}
 					</div>
 
-					<button className="absolute right-2.5 bottom-2.5 border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500">
+					<button
+						onClick={onExport}
+						className="cursor-pointer absolute right-2.5 bottom-2.5 border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500"
+					>
 						Export
 					</button>
 				</div>

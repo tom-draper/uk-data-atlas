@@ -16,6 +16,7 @@ interface ControlPanelProps {
 		type: keyof MapOptionsType,
 		options: Partial<MapOptionsType[typeof type]>,
 	) => void;
+	onExport: () => void;
 }
 
 export default memo(function ControlPanel({
@@ -25,6 +26,7 @@ export default memo(function ControlPanel({
 	onZoomIn,
 	onZoomOut,
 	handleMapOptionsChange,
+	onExport,
 }: ControlPanelProps) {
 	return (
 		<div className="flex flex-col h-full max-h-screen">
@@ -45,6 +47,7 @@ export default memo(function ControlPanel({
 					onZoomIn={onZoomIn}
 					onZoomOut={onZoomOut}
 					handleMapOptionsChange={handleMapOptionsChange}
+					onExport={onExport}
 				/>
 			</div>
 		</div>

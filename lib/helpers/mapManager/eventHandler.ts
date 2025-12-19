@@ -8,6 +8,21 @@ const FILL_LAYER_ID = "wards-fill";
 
 type MapMouseEventType = MapMouseEvent | MapLibreEvent;
 
+// Simple throttle function with lower delay
+function throttle<T extends (...args: any[]) => void>(
+	func: T,
+	limit: number
+): (...args: Parameters<T>) => void {
+	let inThrottle: boolean;
+	return function (this: any, ...args: Parameters<T>): void {
+		if (!inThrottle) {
+			func.apply(this, args);
+			inThrottle = true;
+			setTimeout(() => (inThrottle = false), limit);
+		}
+	};
+}
+
 // Map mode to area type
 const MODE_TO_BOUNDARY_TYPE: Record<MapMode, BoundaryType> = {
 	generalElection: "constituency",
@@ -27,6 +42,7 @@ export class EventHandler {
 	private mouseLeaveHandler: (() => void) | null = null;
 	private currentData: Record<string, any> | null = null;
 	private currentCodeProp: string = "";
+	private currentNameProp: string = "";
 	private currentBoundaryType: BoundaryType = "ward";
 	private canvas: HTMLCanvasElement;
 
@@ -40,6 +56,7 @@ export class EventHandler {
 	setupEventHandlers(mode: MapMode, data: any, codeProp: string): void {
 		this.currentData = data;
 		this.currentCodeProp = codeProp;
+		this.currentNameProp = codeProp.replace("CD", "NM");
 		this.currentBoundaryType = MODE_TO_BOUNDARY_TYPE[mode];
 
 		this.removeHandlers();
@@ -50,38 +67,23 @@ export class EventHandler {
 	}
 
 	private createHandlers(): void {
-		this.mouseMoveHandler = (e: MapMouseEventType & { features?: any[] }) => {
+		this.mouseMoveHandler = throttle((e: MapMouseEventType & { features?: any[] }) => {
 			const features = e.features;
 			if (!features?.length) return;
 
-			this.canvas.style.cursor = "pointer";
-
 			const feature = features[0];
 			const featureId = feature.id;
+			
+			// Early return if hovering same feature
+			if (featureId === undefined || featureId === this.lastHoveredFeatureId) return;
 
-			// Update hover state
-			if (featureId !== undefined) {
-				if (
-					this.lastHoveredFeatureId !== null &&
-					this.lastHoveredFeatureId !== featureId
-				) {
-					this.map.setFeatureState(
-						{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
-						{ hover: false }
-					);
-				}
-				this.map.setFeatureState(
-					{ source: SOURCE_ID, id: featureId },
-					{ hover: true }
-				);
-				this.lastHoveredFeatureId = featureId;
-			}
+			// Set cursor immediately for instant feedback
+			this.canvas.style.cursor = "pointer";
 
-			// Trigger callback
+			// Trigger callback immediately (perceived performance boost)
 			const code = feature.properties?.[this.currentCodeProp];
-			const name =
-				feature.properties?.[this.currentCodeProp.replace("CD", "NM")];
 			if (code && this.currentData) {
+				const name = feature.properties?.[this.currentNameProp];
 				this.callbacks.onAreaHover?.({
 					type: this.currentBoundaryType,
 					code,
@@ -89,7 +91,20 @@ export class EventHandler {
 					data: this.currentData[code] ?? null,
 				});
 			}
-		};
+
+			// Then update feature states
+			if (this.lastHoveredFeatureId !== null) {
+				this.map.setFeatureState(
+					{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
+					{ hover: false }
+				);
+			}
+			this.map.setFeatureState(
+				{ source: SOURCE_ID, id: featureId },
+				{ hover: true }
+			);
+			this.lastHoveredFeatureId = featureId;
+		}, 10);
 
 		this.mouseLeaveHandler = () => {
 			if (this.lastHoveredFeatureId !== null) {

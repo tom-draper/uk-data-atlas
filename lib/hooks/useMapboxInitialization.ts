@@ -35,6 +35,7 @@ export function useMapboxInitialization({
 					center,
 					zoom,
 					maxBounds,
+					preserveDrawingBuffer: true,
 				});
 			} catch (err) {
 				console.error("Failed to initialize map:", err);

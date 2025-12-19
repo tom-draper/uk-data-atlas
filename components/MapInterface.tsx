@@ -105,6 +105,25 @@ export default function MapInterface({
 		},
 	});
 
+	const handleExport = useCallback(() => {
+		const mapInstance = map.current;
+		if (!mapInstance) return;
+
+		mapInstance.once("render", () => {
+			const canvas = mapInstance.getCanvas();
+			const dataURL = canvas.toDataURL("image/png");
+
+			const link = document.createElement("a");
+			link.href = dataURL;
+			link.download = "map.png";
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		});
+
+		mapInstance.triggerRepaint();
+	}, [map]);
+
 	const aggregatedData = useAggregatedData({
 		mapManager,
 		boundaryData,
@@ -131,6 +150,7 @@ export default function MapInterface({
 					aggregatedData={aggregatedData}
 					datasets={datasets}
 					handleMapOptionsChange={handleMapOptionsChange}
+					onExport={handleExport}
 				/>
 			)}
 			<MapView

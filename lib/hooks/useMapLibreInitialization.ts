@@ -28,6 +28,7 @@ export function useMapLibreInitialization({
 					center,
 					zoom,
 					maxBounds,
+					preserveDrawingBuffer: true,
 				});
 			} catch (err) {
 				console.error("Failed to initialize MapLibre map:", err);
