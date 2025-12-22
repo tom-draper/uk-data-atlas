@@ -16,6 +16,7 @@ import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
 import CrimeSection from "./crime/CrimeSection";
 import { CodeType } from "@/lib/hooks/useCodeMapper";
+import CustomSection from "./custom/CustomSection";
 
 interface ChartPanelProps {
 	selectedLocation: string | null;
@@ -189,6 +190,15 @@ export default memo(function ChartPanel({
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
+					/>
+					<CustomSection
+						activeDataset={activeDataset}
+						availableDatasets={datasets.crime}
+						aggregatedData={aggregatedData.crime}
+						selectedArea={selectedArea}
+						setActiveViz={setActiveViz}
+						codeMapper={codeMapper}
+						boundaryData={boundaryData}
 					/>
 				</div>
 
