@@ -1,9 +1,9 @@
 // lib/hooks/usePopulationData.ts
-'use client';
-import { useEffect, useState } from 'react';
-import Papa from 'papaparse';
-import { AgeData, PopulationDataset } from '@lib/types';
-import { withCDN } from '../utils/cdn';
+"use client";
+import { useEffect, useState } from "react";
+import Papa from "papaparse";
+import { AgeData, PopulationDataset } from "@lib/types";
+import { withCDN } from "../helpers/cdn";
 
 interface CategoryPopulationWardData {
 	[wardCode: string]: {
@@ -11,16 +11,18 @@ interface CategoryPopulationWardData {
 		wardName: string;
 		laCode: string;
 		laName: string;
-	}
+	};
 }
 
 export const usePopulationData = () => {
-	const [datasets, setDatasets] = useState<Record<string, PopulationDataset>>({});
+	const [datasets, setDatasets] = useState<Record<string, PopulationDataset>>(
+		{},
+	);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string>('');
+	const [error, setError] = useState<string>("");
 
 	useEffect(() => {
-		console.log('EXPENSIVE: Loading population data...')
+		console.log("EXPENSIVE: Loading population data...");
 		const loadPopulationData = async () => {
 			try {
 				// Load 2020 data (separate files for males/females/persons)
@@ -38,9 +40,9 @@ export const usePopulationData = () => {
 				// ]);
 
 				// Load 2021 and 2022 data (combined files)
-				console.log('Loading population 2021 and 2022 data...')
+				console.log("Loading population 2021 and 2022 data...");
 				const [data2022Response] = await Promise.all([
-					fetch(withCDN('/data/population/Mid-2022 Ward 2023.csv')),
+					fetch(withCDN("/data/population/Mid-2022 Ward 2023.csv")),
 				]);
 
 				const [data2022Text] = await Promise.all([
@@ -63,19 +65,20 @@ export const usePopulationData = () => {
 							results.data.forEach((row: any, index: number) => {
 								if (index === 4) {
 									wardCodeIndex = row.findIndex((col: any) =>
-										col?.trim?.()?.includes('Ward Code')
+										col?.trim?.()?.includes("Ward Code"),
 									);
 									wardNameIndex = row.findIndex((col: any) =>
-										col?.trim?.()?.includes('Ward Name')
+										col?.trim?.()?.includes("Ward Name"),
 									);
 									laCodeIndex = row.findIndex((col: any) =>
-										col?.trim?.()?.includes('LA Code')
+										col?.trim?.()?.includes("LA Code"),
 									);
 									laNameIndex = row.findIndex((col: any) =>
-										col?.trim?.()?.includes('LA name')
+										col?.trim?.()?.includes("LA name"),
 									);
 									allAgesIndex = row.findIndex(
-										(col: any) => col?.trim?.() === 'All Ages'
+										(col: any) =>
+											col?.trim?.() === "All Ages",
 									);
 									ageColumnsStartIndex = allAgesIndex + 1;
 									return;
@@ -85,23 +88,36 @@ export const usePopulationData = () => {
 									return;
 								}
 
-								if (!Array.isArray(row) || row.length < ageColumnsStartIndex) {
+								if (
+									!Array.isArray(row) ||
+									row.length < ageColumnsStartIndex
+								) {
 									return;
 								}
 
 								const wardCode = row[wardCodeIndex]?.trim();
-								const wardName = row[wardNameIndex]?.trim() || '';
-								const laCode = row[laCodeIndex]?.trim() || '';
-								const laName = row[laNameIndex]?.trim() || '';
+								const wardName =
+									row[wardNameIndex]?.trim() || "";
+								const laCode = row[laCodeIndex]?.trim() || "";
+								const laName = row[laNameIndex]?.trim() || "";
 
-								if (wardCode && wardCode.startsWith('E05')) {
+								if (wardCode && wardCode.startsWith("E05")) {
 									const ageData: AgeData = {};
 
-									for (let i = ageColumnsStartIndex; i < row.length; i++) {
+									for (
+										let i = ageColumnsStartIndex;
+										i < row.length;
+										i++
+									) {
 										const ageValue = row[i]?.trim();
-										if (ageValue && ageValue !== '') {
-											const age = String(i - ageColumnsStartIndex);
-											const count = parseInt(ageValue.replace(/,/g, ''), 10);
+										if (ageValue && ageValue !== "") {
+											const age = String(
+												i - ageColumnsStartIndex,
+											);
+											const count = parseInt(
+												ageValue.replace(/,/g, ""),
+												10,
+											);
 											if (!isNaN(count)) {
 												ageData[age] = count;
 											}
@@ -113,7 +129,7 @@ export const usePopulationData = () => {
 											ageData,
 											wardName,
 											laCode,
-											laName
+											laName,
 										};
 									}
 								}
@@ -155,9 +171,9 @@ export const usePopulationData = () => {
 								}
 
 								const laCode = row[0]?.trim();
-								const laName = row[1]?.trim() || '';
+								const laName = row[1]?.trim() || "";
 								const wardCode = row[2]?.trim();
-								const wardName = row[3]?.trim() || '';
+								const wardName = row[3]?.trim() || "";
 								const total = row[4]?.trim();
 
 								const femaleAgeData: AgeData = {};
@@ -167,24 +183,37 @@ export const usePopulationData = () => {
 								// Parse female columns (F0-F90)
 								for (let i = 5; i < headerRow.length; i++) {
 									const colName = headerRow[i]?.trim();
-									if (colName && colName.startsWith('F')) {
+									if (colName && colName.startsWith("F")) {
 										const age = colName.substring(1);
 										const value = row[i]?.trim();
-										if (value && value !== '') {
-											const count = parseInt(value.replace(/,/g, ''), 10);
+										if (value && value !== "") {
+											const count = parseInt(
+												value.replace(/,/g, ""),
+												10,
+											);
 											if (!isNaN(count)) {
 												femaleAgeData[age] = count;
-												totalAgeData[age] = (totalAgeData[age] || 0) + count;
+												totalAgeData[age] =
+													(totalAgeData[age] || 0) +
+													count;
 											}
 										}
-									} else if (colName && colName.startsWith('M')) {
+									} else if (
+										colName &&
+										colName.startsWith("M")
+									) {
 										const age = colName.substring(1);
 										const value = row[i]?.trim();
-										if (value && value !== '') {
-											const count = parseInt(value.replace(/,/g, ''), 10);
+										if (value && value !== "") {
+											const count = parseInt(
+												value.replace(/,/g, ""),
+												10,
+											);
 											if (!isNaN(count)) {
 												maleAgeData[age] = count;
-												totalAgeData[age] = (totalAgeData[age] || 0) + count;
+												totalAgeData[age] =
+													(totalAgeData[age] || 0) +
+													count;
 											}
 										}
 									}
@@ -195,7 +224,7 @@ export const usePopulationData = () => {
 										ageData: femaleAgeData,
 										wardName,
 										laCode,
-										laName
+										laName,
 									};
 								}
 
@@ -204,7 +233,7 @@ export const usePopulationData = () => {
 										ageData: maleAgeData,
 										wardName,
 										laCode,
-										laName
+										laName,
 									};
 								}
 
@@ -213,7 +242,7 @@ export const usePopulationData = () => {
 										ageData: totalAgeData,
 										wardName,
 										laCode,
-										laName
+										laName,
 									};
 								}
 								// }
@@ -273,7 +302,7 @@ export const usePopulationData = () => {
 
 				// Parse 2022 data
 				const parsed2022 = parsePopulationDataCombined(data2022Text);
-				const combinedData2022: PopulationDataset['populationData'] = {};
+				const combinedData2022: PopulationDataset["data"] = {};
 				const allWardCodes2022 = new Set([
 					...Object.keys(parsed2022.femalesData),
 					...Object.keys(parsed2022.malesData),
@@ -284,10 +313,12 @@ export const usePopulationData = () => {
 					combinedData2022[wardCode] = {
 						total: parsed2022.totalData[wardCode]?.ageData || {},
 						males: parsed2022.malesData[wardCode]?.ageData || {},
-						females: parsed2022.femalesData[wardCode]?.ageData || {},
-						wardName: parsed2022.totalData[wardCode]?.wardName || '',
-						laCode: parsed2022.totalData[wardCode]?.laCode || '',
-						laName: parsed2022.totalData[wardCode]?.laName || '',
+						females:
+							parsed2022.femalesData[wardCode]?.ageData || {},
+						wardName:
+							parsed2022.totalData[wardCode]?.wardName || "",
+						ladCode: parsed2022.totalData[wardCode]?.laCode || "",
+						ladName: parsed2022.totalData[wardCode]?.laName || "",
 					};
 				});
 
@@ -312,12 +343,12 @@ export const usePopulationData = () => {
 				// };
 
 				const population2022: PopulationDataset = {
-					id: 'population2022',
-					type: 'population',
+					id: "population2022",
+					type: "population",
 					year: 2022,
 					boundaryYear: 2023,
-					boundaryType: 'ward',
-					populationData: combinedData2022,
+					boundaryType: "ward",
+					data: combinedData2022,
 				};
 
 				const loadedDatasets: Record<number, PopulationDataset> = {
@@ -325,13 +356,15 @@ export const usePopulationData = () => {
 					2022: population2022,
 				};
 
-				console.log('Storing population datasets:', loadedDatasets);
+				console.log("Storing population datasets:", loadedDatasets);
 				setDatasets(loadedDatasets);
 				setLoading(false);
 			} catch (err) {
-				console.error('Population data loading error:', err);
+				console.error("Population data loading error:", err);
 				setError(
-					err instanceof Error ? err.message : 'Failed to load population data'
+					err instanceof Error
+						? err.message
+						: "Failed to load population data",
 				);
 				setLoading(false);
 			}

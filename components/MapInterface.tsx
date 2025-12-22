@@ -1,20 +1,20 @@
-// components/MapInterface.tsx
-'use client';
-import { useCallback, useMemo, useState } from 'react';
-import { useMapLibreInitialization } from '@/lib/hooks/useMapLibreInitialization';
-import { useMapManager } from '@lib/hooks/useMapManager';
-import { useInteractionHandlers } from '@/lib/hooks/useInteractionHandlers';
-import { useCodeMapper } from '@/lib/hooks/useCodeMapper';
-import { useMapOptions } from '@/lib/hooks/useMapOptions';
-import { useBoundaryData } from '@/lib/hooks/useBoundaryData';
-import { useAggregatedData } from '@/lib/hooks/useAggregatedData';
+"use client";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useMapManager } from "@lib/hooks/useMapManager";
+import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
+import { useMapOptions } from "@/lib/hooks/useMapOptions";
+import { useBoundaryData } from "@/lib/hooks/useBoundaryData";
+import { useAggregatedData } from "@/lib/hooks/useAggregatedData";
+import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
+import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 
-import MapView from '@components/MapView';
-import UIOverlay from '@components/UIOverlay';
+import MapView from "@components/MapView";
+import UIOverlay from "@components/UIOverlay";
 
-import { LOCATIONS } from '@lib/data/locations';
-import { DEFAULT_MAP_OPTIONS } from '@lib/types/mapOptions';
-import type { ActiveViz, ConstituencyData, Datasets, LocalElectionWardData } from '@lib/types';
+import type { ActiveViz, Datasets, SelectedArea } from "@lib/types";
+import { MAP_CONFIG } from "@/lib/config/map";
+import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
+import { LOCATIONS } from "@lib/data/locations";
 
 interface MapInterfaceProps {
 	datasets: Datasets;
@@ -24,23 +24,6 @@ interface MapInterfaceProps {
 	setSelectedLocation: (location: string) => void;
 }
 
-const MAPBOX_CONFIG = {
-	style: 'mapbox://styles/mapbox/light-v11',
-	center: [-2.3, 53.5] as [number, number],
-	zoom: 10,
-	maxBounds: [-30, 35, 20, 70] as [number, number, number, number],
-	fitBoundsPadding: 40,
-	fitBoundsDuration: 1000,
-} as const;
-
-const MAPLIBRE_CONFIG = {
-	style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-	center: [-2.3, 53.5] as [number, number],
-	zoom: 10,
-	maxBounds: [-30, 35, 20, 70] as [number, number, number, number],
-} as const;
-
-
 export default function MapInterface({
 	datasets,
 	activeViz,
@@ -48,78 +31,98 @@ export default function MapInterface({
 	selectedLocation,
 	setSelectedLocation,
 }: MapInterfaceProps) {
-	// Local state
-	const [selectedWardData, setSelectedWard] = useState<LocalElectionWardData | null>(null);
-	const [selectedConstituencyData, setSelectedConstituency] = useState<ConstituencyData | null>(null);
+	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
 
-	// Get boundary data
-	const { boundaryData } = useBoundaryData(selectedLocation);
-	const codeMapper = useCodeMapper(boundaryData);
+	const codeMapper = useCodeMapper();
+	const { boundaryData } = useBoundaryData(selectedLocation, codeMapper);
 
 	// Map setup
-	const { mapRef: map, handleMapContainer } = useMapLibreInitialization(MAPLIBRE_CONFIG);
-	const { mapOptions, setMapOptions: handleMapOptionsChange } = useMapOptions(DEFAULT_MAP_OPTIONS);
+	const { mapRef: map, handleMapContainer } =
+		useMapInitialization(MAP_CONFIG);
+	const { mapOptions, setMapOptions: handleMapOptionsChange } =
+		useMapOptions(DEFAULT_MAP_OPTIONS);
 
-	// Interaction handlers
-	const { onWardHover, onConstituencyHover, onLocationChange } = useInteractionHandlers({
-		setSelectedWard,
-		setSelectedConstituency,
+	// Stable interaction handlers - created once, never change identity
+	const interactionHandlers = useInteractionHandlers({
 		setSelectedLocation,
+		setSelectedArea,
 	});
 
+	// Get active dataset
 	const activeDataset = useMemo(() => {
-		return datasets[activeViz.datasetType][activeViz.datasetYear]
-	}, [datasets, activeViz]);
+		return datasets[activeViz.datasetType]?.[activeViz.datasetYear];
+	}, [datasets, activeViz.datasetType, activeViz.datasetYear]);
 
 	// Get geojson for active dataset
 	const geojson = useMemo(() => {
 		if (!activeDataset) return null;
-		switch (activeDataset.boundaryType) {
-			case 'ward':
-				return boundaryData.ward[activeDataset.boundaryYear];
-			case 'constituency':
-				return boundaryData.constituency[activeDataset.boundaryYear];
-			case 'localAuthority':
-				return boundaryData.localAuthority[activeDataset.boundaryYear];
-		}
-		return null;
+		return (
+			boundaryData[activeDataset.boundaryType]?.[
+			activeDataset.boundaryYear
+			] ?? null
+		);
 	}, [activeDataset, boundaryData]);
 
-	// Initialize map manager
+	// Initialize map manager with stable callbacks
 	const mapManager = useMapManager({
 		mapRef: map,
 		geojson,
-		onWardHover: activeDataset?.boundaryType === 'ward' ? onWardHover : undefined,
-		onConstituencyHover: activeDataset?.boundaryType === 'constituency' ? onConstituencyHover : undefined,
-		onLocationChange,
+		interactionHandlers,
 	});
 
-	// Location navigation
-	const handleLocationClick = useCallback((location: string) => {
-		const locationData = LOCATIONS[location];
-		if (!mapManager || !locationData) return;
+	// Location navigation - memoize with proper dependencies
+	const handleLocationClick = useCallback(
+		(location: string) => {
+			const locationData = LOCATIONS[location];
+			if (!map.current || !locationData) return;
 
-		setSelectedLocation(location);
+			setSelectedLocation(location);
 
-		requestAnimationFrame(() => {
-			map.current?.fitBounds(locationData.bounds, {
-				padding: MAPBOX_CONFIG.fitBoundsPadding,
-				duration: MAPBOX_CONFIG.fitBoundsDuration,
+			// Use requestAnimationFrame for smooth animation
+			requestAnimationFrame(() => {
+				map.current?.fitBounds(locationData.bounds, {
+					padding: MAP_CONFIG.fitBoundsPadding,
+					duration: MAP_CONFIG.fitBoundsDuration,
+				});
 			});
+		},
+		[map, setSelectedLocation],
+	);
+
+	// Zoom handlers - create once
+	const zoomHandlersRef = useRef({
+		handleZoomIn: () => {
+			const currentMap = map.current;
+			if (currentMap) {
+				currentMap.zoomTo(currentMap.getZoom() + 1);
+			}
+		},
+		handleZoomOut: () => {
+			const currentMap = map.current;
+			if (currentMap) {
+				currentMap.zoomTo(currentMap.getZoom() - 1);
+			}
+		},
+	});
+
+	const handleExport = useCallback(() => {
+		const mapInstance = map.current;
+		if (!mapInstance) return;
+
+		mapInstance.once("render", () => {
+			const canvas = mapInstance.getCanvas();
+			const dataURL = canvas.toDataURL("image/png");
+
+			const link = document.createElement("a");
+			link.href = dataURL;
+			link.download = "map.png";
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
 		});
-	}, [map, mapManager, setSelectedLocation]);
 
-	const handleZoomIn = useCallback(() => {
-		if (map.current) {
-			map.current.zoomTo(map.current.getZoom() + 1);
-		}
-	}, []);
-
-	const handleZoomOut = useCallback(() => {
-		if (map.current) {
-			map.current.zoomTo(map.current.getZoom() - 1);
-		}
-	}, []);
+		mapInstance.triggerRepaint();
+	}, [map]);
 
 	const aggregatedData = useAggregatedData({
 		mapManager,
@@ -129,25 +132,27 @@ export default function MapInterface({
 	});
 
 	return (
-		<div style={{ width: '100%', height: '100vh', position: 'relative' }}>
-			<UIOverlay
-				selectedLocation={selectedLocation}
-				selectedWardData={selectedWardData}
-				selectedConstituencyData={selectedConstituencyData}
-				boundaryData={boundaryData}
-				codeMapper={codeMapper}
-				mapOptions={mapOptions}
-				onMapOptionsChange={handleMapOptionsChange}
-				onLocationClick={handleLocationClick}
-				onZoomIn={handleZoomIn}
-				onZoomOut={handleZoomOut}
-				activeDataset={activeDataset}
-				activeViz={activeViz}
-				setActiveViz={setActiveViz}
-				aggregatedData={aggregatedData}
-				datasets={datasets}
-				handleMapOptionsChange={handleMapOptionsChange}
-			/>
+		<div className="relative w-full h-screen">
+			{!mapOptions.visibility.hideOverlay && (
+				<UIOverlay
+					selectedLocation={selectedLocation}
+					selectedArea={selectedArea}
+					boundaryData={boundaryData}
+					mapOptions={mapOptions}
+					codeMapper={codeMapper}
+					onMapOptionsChange={handleMapOptionsChange}
+					onLocationClick={handleLocationClick}
+					onZoomIn={zoomHandlersRef.current.handleZoomIn}
+					onZoomOut={zoomHandlersRef.current.handleZoomOut}
+					activeDataset={activeDataset}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+					aggregatedData={aggregatedData}
+					datasets={datasets}
+					handleMapOptionsChange={handleMapOptionsChange}
+					onExport={handleExport}
+				/>
+			)}
 			<MapView
 				activeDataset={activeDataset}
 				activeViz={activeViz}
@@ -156,6 +161,6 @@ export default function MapInterface({
 				mapOptions={mapOptions}
 				handleMapContainer={handleMapContainer}
 			/>
-		</div >
+		</div>
 	);
 }

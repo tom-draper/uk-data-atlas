@@ -1,40 +1,48 @@
-import { useCallback, useEffect, useRef } from 'react';
-import mapboxgl from 'mapbox-gl';
-
+import { useCallback, useEffect, useRef } from "react";
+import mapboxgl from "mapbox-gl";
 
 interface UseMapInitializationOptions {
 	style: string;
 	center: [number, number];
 	zoom: number;
-	maxBounds: [number, number, number, number]
+	maxBounds: [number, number, number, number];
 }
 
-export function useMapboxInitialization({ style, center, zoom, maxBounds }: UseMapInitializationOptions) {
+export function useMapboxInitialization({
+	style,
+	center,
+	zoom,
+	maxBounds,
+}: UseMapInitializationOptions) {
 	const mapRef = useRef<mapboxgl.Map | null>(null);
 
-	const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
-		if (!el || mapRef.current) return;
+	const handleMapContainer = useCallback(
+		(el: HTMLDivElement | null) => {
+			if (!el || mapRef.current) return;
 
-		const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-		if (!token) {
-			console.error('Missing NEXT_PUBLIC_MAPBOX_TOKEN');
-			return;
-		}
+			const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+			if (!token) {
+				console.error("Missing NEXT_PUBLIC_MAPBOX_TOKEN");
+				return;
+			}
 
-		mapboxgl.accessToken = token;
+			mapboxgl.accessToken = token;
 
-		try {
-			mapRef.current = new mapboxgl.Map({
-				container: el,
-				style,
-				center,
-				zoom,
-				maxBounds, 
-			});
-		} catch (err) {
-			console.error('Failed to initialize map:', err);
-		}
-	}, [style, center, zoom]);
+			try {
+				mapRef.current = new mapboxgl.Map({
+					container: el,
+					style,
+					center,
+					zoom,
+					maxBounds,
+					preserveDrawingBuffer: true,
+				});
+			} catch (err) {
+				console.error("Failed to initialize map:", err);
+			}
+		},
+		[style, center, zoom],
+	);
 
 	useEffect(() => {
 		return () => {

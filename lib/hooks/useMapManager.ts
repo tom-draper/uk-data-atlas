@@ -1,58 +1,41 @@
-import { useEffect, useRef, useState } from 'react';
-import { MapManager } from '@lib/utils/mapManager';
-import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
+import { useEffect, useState } from "react";
+import { MapManager } from "@/lib/helpers/mapManager";
+import { BoundaryGeojson, SelectedArea } from "../types";
 
 type UseMapManagerOptions = {
-    mapRef: React.RefObject<mapboxgl.Map | maplibregl.Map | null>;
-    geojson: any | null;
-    onWardHover?: (params: { data: LocalElectionWardData | null; wardCode: string }) => void;
-    onConstituencyHover?: (params: ConstituencyData | null) => void;
-    onLocationChange?: (location: string) => void;
+	mapRef: React.RefObject<mapboxgl.Map | maplibregl.Map | null>;
+	geojson: BoundaryGeojson | null;
+	interactionHandlers: {
+		onAreaHover: (area: SelectedArea | null) => void;
+		onLocationChange: (location: string) => void;
+	};
 };
 
-export function useMapManager(opts: UseMapManagerOptions) {
-    const [mapManager, setMapManager] = useState<MapManager | null>(null);
-    const callbacksRef = useRef(opts);
-    const isInitialized = useRef(false);
+export function useMapManager({
+	mapRef,
+	geojson,
+	interactionHandlers,
+}: UseMapManagerOptions) {
+	const [mapManager, setMapManager] = useState<MapManager | null>(null);
 
-    // Update callbacks ref without triggering re-initialization
-    useEffect(() => {
-        callbacksRef.current = opts;
-    }, [opts]);
+	useEffect(() => {
+		if (!mapRef?.current || !geojson) return;
 
-    // Initialize manager once when both map and geojson are ready
-    useEffect(() => {
-        if (!opts.mapRef?.current || !opts.geojson || isInitialized.current) return;
-        
-        const manager = new MapManager(opts.mapRef.current, {
-            onWardHover: (params) => {
-                if (callbacksRef.current.onWardHover) {
-                    callbacksRef.current.onWardHover(params);
-                }
-            },
-            onConstituencyHover: (params) => {
-                if (callbacksRef.current.onConstituencyHover) {
-                    callbacksRef.current.onConstituencyHover(params);
-                }
-            },
-            onLocationChange: (location) => {
-                if (callbacksRef.current.onLocationChange) {
-                    callbacksRef.current.onLocationChange(location);
-                }
-            }
-        });
-        
-        setMapManager(manager);
-        isInitialized.current = true;
+		if (mapManager) return;
 
-        return () => {
-            // Only cleanup if the map itself is being destroyed
-            if (!opts.mapRef?.current) {
-                setMapManager(null);
-                isInitialized.current = false;
-            }
-        };
-    }, [opts.mapRef, opts.geojson]);
+		const manager = new MapManager(mapRef.current, {
+			onAreaHover: (data) => interactionHandlers.onAreaHover(data),
+			onLocationChange: (location) =>
+				interactionHandlers.onLocationChange(location),
+		});
 
-    return mapManager;
+		setMapManager(manager);
+
+		return () => {
+			manager.destroy();
+			setMapManager(null);
+		};
+	}, [mapRef, !!geojson]);
+
+	return mapManager;
 }

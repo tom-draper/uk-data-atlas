@@ -1,69 +1,43 @@
-import { useCallback, useRef } from 'react';
-import type { ConstituencyData, LocalElectionWardData } from '@lib/types';
+import { useRef } from "react";
+import type { SelectedArea } from "@lib/types";
 
 interface UseInteractionHandlersParams {
-	setSelectedWard: (ward: LocalElectionWardData | null) => void;
-	setSelectedConstituency: (constituency: ConstituencyData | null) => void;
 	setSelectedLocation: (location: string) => void;
+	setSelectedArea: (area: SelectedArea | null) => void;
 }
 
 /**
- * Provides stable callbacks for ward hover and location change interactions.
- * Optimized to prevent redundant updates when hovering within the same ward or constituency.
+ * Provides stable, high-performance callbacks for location interactions.
+ * Callbacks are created once and reused to minimize overhead.
  */
 export function useInteractionHandlers({
-	setSelectedWard,
-	setSelectedConstituency,
 	setSelectedLocation,
+	setSelectedArea,
 }: UseInteractionHandlersParams) {
-	const lastHoveredWardRef = useRef<string | null>(null);
-	const lastHoveredConstituencyRef = useRef<string | null>(null);
+	const lastHoveredCodeRef = useRef<string | null>(null);
 
-	const onWardHover = useCallback((params: { data: LocalElectionWardData | null; wardCode: string }) => {
-		const { data, wardCode } = params;
+	// Create callbacks only once - these never change identity
+	const callbacksRef = useRef({
+		onAreaHover: (hoverData: SelectedArea | null) => {
+			if (!hoverData) {
+				lastHoveredCodeRef.current = null;
+				setSelectedArea(null);
+				return;
+			}
 
-		// Skip if hovering over same ward
-		if (wardCode && wardCode === lastHoveredWardRef.current) {
-			return;
-		}
+			// Skip if same location
+			if (hoverData.code === lastHoveredCodeRef.current) return;
 
-		// Update last hovered ward
-		lastHoveredWardRef.current = wardCode || null;
+			lastHoveredCodeRef.current = hoverData.code;
 
-		if (!data) {
-			setSelectedWard(null);
-			return;
-		}
+			setSelectedArea(hoverData);
+		},
+		onLocationChange: (location: string) => {
+			setSelectedArea(null);
+			setSelectedLocation(location);
+			lastHoveredCodeRef.current = null;
+		},
+	});
 
-		setSelectedWard({ ...data, wardCode });
-	}, [setSelectedWard]);
-
-	const onConstituencyHover = useCallback((constituencyData: ConstituencyData | null) => {
-		const constituencyId = constituencyData?.onsId || null;
-
-		// Skip if hovering over same constituency
-		if (constituencyId && constituencyId === lastHoveredConstituencyRef.current) {
-			return;
-		}
-
-		// Update last hovered constituency
-		lastHoveredConstituencyRef.current = constituencyId;
-
-		setSelectedConstituency(constituencyData);
-	}, [setSelectedConstituency]);
-
-	const onLocationChange = useCallback((location: string) => {
-		setSelectedWard(null);
-		setSelectedLocation(location);
-
-		// Reset last hovered refs since location changed
-		lastHoveredWardRef.current = null;
-		lastHoveredConstituencyRef.current = null;
-	}, [setSelectedWard, setSelectedLocation]);
-
-	return {
-		onWardHover,
-		onConstituencyHover,
-		onLocationChange,
-	};
+	return callbacksRef.current;
 }

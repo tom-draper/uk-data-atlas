@@ -1,6 +1,6 @@
-import { type MapManager } from '@/lib/utils/mapManager';
-import { useMapUpdates } from '@lib/hooks/useMapUpdates';
-import { ActiveViz, Dataset } from '@/lib/types';
+import { type MapManager } from "@/lib/helpers/mapManager";
+import { useMapUpdates } from "@lib/hooks/useMapUpdates";
+import { ActiveViz, Dataset } from "@/lib/types";
 
 interface MapViewProps {
 	activeDataset: Dataset | null;
@@ -30,12 +30,12 @@ export default function MapView({
 	return (
 		<div
 			ref={handleMapContainer}
-			style={{ 
-				width: '100%', 
-				height: '100%', 
-				position: 'absolute', 
-				top: 0, 
-				left: 0 
+			style={{
+				width: "100%",
+				height: "100%",
+				position: "absolute",
+				top: 0,
+				left: 0,
 			}}
 		/>
 	);

@@ -1,7 +1,7 @@
 // components/ErrorBoundary.tsx
-'use client';
-import { Component, ReactNode } from 'react';
-import ErrorDisplay from '@/components/displays/ErrorDisplay';
+"use client";
+import { Component, ReactNode } from "react";
+import ErrorDisplay from "@/components/displays/ErrorDisplay";
 
 interface Props {
 	children: ReactNode;
@@ -24,15 +24,19 @@ export class ErrorBoundary extends Component<Props, State> {
 	}
 
 	componentDidCatch(error: Error, errorInfo: any) {
-		console.error('ErrorBoundary caught an error:', error, errorInfo);
+		console.error("ErrorBoundary caught an error:", error, errorInfo);
 	}
 
 	render() {
 		if (this.state.hasError) {
-			return this.props.fallback || (
-				<ErrorDisplay 
-					message={this.state.error?.message || 'Something went wrong'} 
-				/>
+			return (
+				this.props.fallback || (
+					<ErrorDisplay
+						message={
+							this.state.error?.message || "Something went wrong"
+						}
+					/>
+				)
 			);
 		}
 
