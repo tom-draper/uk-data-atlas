@@ -192,12 +192,6 @@ export default memo(function ChartPanel({
 						codeMapper={codeMapper}
 					/>
 					<CustomSection
-						activeDataset={activeDataset}
-						availableDatasets={datasets.crime}
-						aggregatedData={aggregatedData.crime}
-						selectedArea={selectedArea}
-						setActiveViz={setActiveViz}
-						codeMapper={codeMapper}
 						boundaryData={boundaryData}
 					/>
 				</div>
