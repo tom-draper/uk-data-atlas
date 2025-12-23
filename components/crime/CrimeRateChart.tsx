@@ -109,7 +109,7 @@ export default function CrimeRateChart({
 
 	const dynamicBgColor = hasData
 		? `hsl(${baseHue}, ${40 + intensity * 40}%, ${95 - intensity * 20}%)`
-		: "rgb(255, 255, 255)";
+		: "";
 
 	return (
 		<div
@@ -172,7 +172,7 @@ export default function CrimeRateChart({
 				</div>
 			)}
 
-			<div className="absolute inset-0 z-0 backdrop-blur-[0.5px] bg-white/20" />
+			<div className="absolute inset-0 z-0 bg-white/20" />
 			<div className="relative z-10">
 				<h3 className="text-xs font-bold text-gray-800/90">
 					Recorded Crime [{dataset.year}]
