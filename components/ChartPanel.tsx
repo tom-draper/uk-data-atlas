@@ -8,6 +8,7 @@ import {
 	AggregatedData,
 	SelectedArea,
 	BoundaryData,
+	BoundaryCodes,
 } from "@lib/types";
 import LocalElectionResultChartSection from "./local-election/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
@@ -23,6 +24,7 @@ interface ChartPanelProps {
 	selectedArea: SelectedArea | null;
 	activeDataset: Dataset | null;
 	boundaryData: BoundaryData;
+	boundaryCodes: BoundaryCodes;
 	datasets: Datasets;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -131,6 +133,7 @@ export default memo(function ChartPanel({
 	selectedArea,
 	activeDataset,
 	boundaryData,
+	boundaryCodes,
 	datasets,
 	activeViz,
 	setActiveViz,
@@ -193,6 +196,7 @@ export default memo(function ChartPanel({
 					/>
 					<CustomSection
 						boundaryData={boundaryData}
+						boundaryCodes={boundaryCodes}
 					/>
 				</div>
 

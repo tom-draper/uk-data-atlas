@@ -4,6 +4,7 @@ import ChartPanel from "@components/ChartPanel";
 import type {
 	ActiveViz,
 	AggregatedData,
+	BoundaryCodes,
 	BoundaryData,
 	Dataset,
 	Datasets,
@@ -21,6 +22,7 @@ interface UIOverlayProps {
 	selectedLocation: string;
 	selectedArea: SelectedArea | null;
 	boundaryData: BoundaryData;
+	boundaryCodes: BoundaryCodes;
 	mapOptions: MapOptions;
 	codeMapper?: {
 		getCodeForYear: (
@@ -53,6 +55,7 @@ export default function UIOverlay({
 	selectedLocation,
 	selectedArea,
 	boundaryData,
+	boundaryCodes,
 	mapOptions,
 	codeMapper,
 	onMapOptionsChange,
@@ -93,6 +96,7 @@ export default function UIOverlay({
 					selectedLocation={selectedLocation}
 					selectedArea={selectedArea}
 					boundaryData={boundaryData}
+					boundaryCodes={boundaryCodes}
 					codeMapper={codeMapper}
 				/>
 			</div>
