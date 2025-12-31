@@ -261,7 +261,7 @@ function GenderBalanceByAgeChart({
 
 				{/* Stack of age rows - Optimized Render Loop */}
 				<div
-					className="relative will-change-contents"
+					className="relative will-change-contents rounded-sm overflow-hidden"
 					onMouseMove={handleMouseMove}
 					onMouseLeave={handleMouseLeave}
 				>
