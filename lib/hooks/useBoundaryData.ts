@@ -1,6 +1,6 @@
 // hooks/useBoundaryData.ts
 import { useEffect, useState, useMemo } from "react";
-import { BoundaryData, BoundaryGeojson } from "@lib/types";
+import { BoundaryCodes, BoundaryData, BoundaryGeojson } from "@lib/types";
 import {
 	BoundaryType,
 	fetchBoundaryFile,
@@ -116,6 +116,67 @@ const filterBoundaryGroup = (
 	return filtered;
 };
 
+const extractCodeSets = (
+	boundaryData: BoundaryData,
+	isLoading: boolean
+): {
+	ward: Record<number, Set<string>>;
+	constituency: Record<number, Set<string>>;
+	localAuthority: Record<number, Set<string>>;
+} | null => {
+	if (isLoading) return null;
+
+	return {
+		ward: Object.entries(boundaryData.ward).reduce((acc, [year, data]) => {
+			if (data?.features) {
+				const codeProp = PROPERTY_KEYS.wardCode.find(
+					key => data.features[0]?.properties?.[key] !== undefined
+				);
+				if (codeProp) {
+					acc[Number(year)] = new Set(
+						data.features
+							.map(f => f.properties[codeProp])
+							.filter(Boolean)
+					);
+				}
+			}
+			return acc;
+		}, {} as Record<number, Set<string>>),
+
+		constituency: Object.entries(boundaryData.constituency).reduce((acc, [year, data]) => {
+			if (data?.features) {
+				const codeProp = PROPERTY_KEYS.constituencyCode.find(
+					key => data.features[0]?.properties?.[key] !== undefined
+				);
+				if (codeProp) {
+					acc[Number(year)] = new Set(
+						data.features
+							.map(f => f.properties[codeProp])
+							.filter(Boolean)
+					);
+				}
+			}
+			return acc;
+		}, {} as Record<number, Set<string>>),
+
+		localAuthority: Object.entries(boundaryData.localAuthority).reduce((acc, [year, data]) => {
+			if (data?.features) {
+				const codeProp = PROPERTY_KEYS.ladCode.find(
+					key => data.features[0]?.properties?.[key] !== undefined
+				);
+				if (codeProp) {
+					acc[Number(year)] = new Set(
+						data.features
+							.map(f => f.properties[codeProp])
+							.filter(Boolean)
+					);
+				}
+			}
+			return acc;
+		}, {} as Record<number, Set<string>>),
+	};
+};
+
 /**
  * Hook to load and filter boundary data
  * Now accepts the full codeMapper from useCodeMapper()
@@ -203,7 +264,7 @@ export function useBoundaryData(
 	}, [addWardLadMappings, addLadWardMappings, addCodeMappings]); // Added addLadWardMappings
 
 	// Filter data based on selected location
-	const filteredData = useMemo(() => {
+	const filteredData: BoundaryData = useMemo(() => {
 		if (isLoading || !rawData.ward[2024]) {
 			return EMPTY_BOUNDARY_DATA;
 		}
@@ -228,8 +289,13 @@ export function useBoundaryData(
 		};
 	}, [rawData, selectedLocation, isLoading, getLadForWard]);
 
+	const boundaryCodes: BoundaryCodes = useMemo(() => {
+		return extractCodeSets(rawData, isLoading);
+	}, [rawData, isLoading]);
+
 	return {
 		boundaryData: filteredData,
+		boundaryCodes,
 		isLoading,
 		error,
 	};

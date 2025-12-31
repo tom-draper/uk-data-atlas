@@ -34,7 +34,7 @@ export default function MapInterface({
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
 
 	const codeMapper = useCodeMapper();
-	const { boundaryData } = useBoundaryData(selectedLocation, codeMapper);
+	const { boundaryData, boundaryCodes } = useBoundaryData(selectedLocation, codeMapper);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } =
@@ -138,6 +138,7 @@ export default function MapInterface({
 					selectedLocation={selectedLocation}
 					selectedArea={selectedArea}
 					boundaryData={boundaryData}
+					boundaryCodes={boundaryCodes}
 					mapOptions={mapOptions}
 					codeMapper={codeMapper}
 					onMapOptionsChange={handleMapOptionsChange}

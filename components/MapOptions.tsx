@@ -195,7 +195,7 @@ export default function MapOptions({
 
 					<button
 						onClick={onExport}
-						className="cursor-pointer absolute right-2.5 bottom-2.5 border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500"
+						className="cursor-pointer absolute right-2.5 bottom-2.5 border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 hover:text-gray-600"
 					>
 						Export
 					</button>
