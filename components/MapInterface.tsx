@@ -56,7 +56,7 @@ export default function MapInterface({
 	const activeDataset = useMemo(() => {
 		if (activeViz.datasetType === "custom") return customDataset;
 		return datasets[activeViz.datasetType]?.[activeViz.datasetYear];
-	}, [datasets, activeViz.datasetType, activeViz.datasetYear]);
+	}, [datasets, activeViz.datasetType, activeViz.datasetYear, customDataset]);
 
 	// Get geojson for active dataset
 	const geojson = useMemo(() => {

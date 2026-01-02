@@ -1,14 +1,13 @@
 import type { MapMouseEvent } from "mapbox-gl";
 import type { MapLibreEvent } from "maplibre-gl";
 import { MapManagerCallbacks } from "./mapManager";
-import { BoundaryType, MapMode } from "@/lib/types";
+import { BoundaryType } from "@/lib/types";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
 
 type MapMouseEventType = MapMouseEvent | MapLibreEvent;
 
-// Simple throttle function with lower delay
 function throttle<T extends (...args: any[]) => void>(
 	func: T,
 	limit: number
@@ -22,17 +21,6 @@ function throttle<T extends (...args: any[]) => void>(
 		}
 	};
 }
-
-// Map mode to area type
-const MODE_TO_BOUNDARY_TYPE: Record<MapMode, BoundaryType> = {
-	generalElection: "constituency",
-	crime: "localAuthority",
-	income: "localAuthority",
-	ethnicity: "localAuthority",
-	population: "ward",
-	localElection: "ward",
-	housePrice: "ward",
-};
 
 export class EventHandler {
 	private lastHoveredFeatureId: string | number | null = null;
@@ -53,17 +41,28 @@ export class EventHandler {
 		this.canvas = this.map.getCanvas();
 	}
 
-	setupEventHandlers(mode: MapMode, data: any, codeProp: string): void {
+	setupEventHandlers(data: any, codeProp: string): void {
 		this.currentData = data;
 		this.currentCodeProp = codeProp;
-		this.currentNameProp = codeProp.replace("CD", "NM");
-		this.currentBoundaryType = MODE_TO_BOUNDARY_TYPE[mode];
+		this.currentNameProp = this.nameProp(codeProp);
+		this.currentBoundaryType = this.boundaryType(codeProp);
 
 		this.removeHandlers();
 		this.createHandlers();
 
 		this.map.on("mousemove", FILL_LAYER_ID, this.mouseMoveHandler!);
 		this.map.on("mouseleave", FILL_LAYER_ID, this.mouseLeaveHandler!);
+	}
+
+	nameProp(codeProp: string) {
+		return codeProp.replace("CD", "NM");
+	}
+
+	boundaryType(codeProp: string) {
+		if (codeProp.toUpperCase().startsWith('LAD')) return "localAuthority";
+		if (codeProp.toUpperCase().startsWith('WD')) return "ward";
+		if (codeProp.toUpperCase().startsWith('PCON')) return "constituency";
+		return "ward"; // default
 	}
 
 	private createHandlers(): void {
@@ -73,7 +72,7 @@ export class EventHandler {
 
 			const feature = features[0];
 			const featureId = feature.id;
-			
+
 			// Early return if hovering same feature
 			if (featureId === undefined || featureId === this.lastHoveredFeatureId) return;
 

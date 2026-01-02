@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Upload, AlertCircle } from 'lucide-react';
-import { ActiveViz, BoundaryData, BoundaryCodes } from '@/lib/types';
+import { BoundaryType } from '@/lib/types';
 
+// Types
 interface MatchResult {
     type: string;
     percentage: number;
@@ -15,14 +16,37 @@ interface UploadData {
     headerRow: number;
     selectedColumn: string;
     dataColumn: string;
-    codeType: string;
+    boundaryType: string;
+    boundaryYear: number | null;
     data: string[][];
 }
 
-const BOUNDARY_TYPE_LABELS = {
+interface CustomDataset {
+    id: string;
+    type: string;
+    name: string;
+    boundaryType: string;
+    boundaryYear: number | null;
+    dataColumn: string;
+    data: Record<string, number>;
+}
+
+interface SelectedArea {
+    code: string;
+    name: string;
+    type: BoundaryType;
+}
+
+interface ActiveViz {
+    vizId: string;
+    datasetType: string;
+    datasetYear: number | null;
+}
+
+const BOUNDARY_TYPE_LABELS: Record<string, string> = {
     ward: 'Ward Boundaries',
     constituency: 'Westminster Parliamentary Constituency Boundaries',
-    default: 'Local Authority Boundaries'
+    localAuthority: 'Local Authority Boundaries'
 };
 
 function parseCSV(text: string): string[][] {
@@ -67,7 +91,7 @@ function parseCSV(text: string): string[][] {
 }
 
 function getBoundaryLabel(type: string): string {
-    return BOUNDARY_TYPE_LABELS[type] || BOUNDARY_TYPE_LABELS.default;
+    return BOUNDARY_TYPE_LABELS[type] || BOUNDARY_TYPE_LABELS.localAuthority;
 }
 
 function getMatchColorClass(percentage: number): string {
@@ -92,8 +116,7 @@ function UploadModal({
     isOpen: boolean;
     onClose: () => void;
     onUpload: (data: UploadData) => void;
-    boundaryData: BoundaryData;
-    boundaryCodes: BoundaryCodes;
+    boundaryCodes: Record<string, Record<string, Set<string>>>;
 }) {
     const [file, setFile] = useState<File | null>(null);
     const [csvData, setCsvData] = useState<string[][]>([]);
@@ -195,12 +218,23 @@ function UploadModal({
             return;
         }
 
+        let boundaryType: string = 'localAuthority';
+        if (selectedCodeType.includes('Ward')) {
+            boundaryType = 'ward';
+        } else if (selectedCodeType.includes('Westminster')) {
+            boundaryType = 'constituency';
+        }
+
+        const match = selectedCodeType.match(/\[(\d{4})\]/);
+        const boundaryYear = match ? parseInt(match[1]) : null;
+
         onUpload({
             file: file.name,
             headerRow,
             selectedColumn,
             dataColumn,
-            codeType: selectedCodeType,
+            boundaryType,
+            boundaryYear,
             data: csvData
         });
 
@@ -220,24 +254,19 @@ function UploadModal({
     if (!isOpen) return null;
 
     return createPortal(
-        <div className="fixed inset-0 z-9999 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={handleClose} />
 
             <div className="relative bg-white/80 backdrop-blur-md border border-white/30 rounded-md shadow-xl w-full max-w-4xl flex flex-col max-h-[90vh]">
-                {/* Header */}
                 <div className="flex items-center justify-between px-4 pt-2.5 pb-2 shrink-0 bg-white/20">
                     <h2 className="text-sm font-semibold text-gray-900/80">
                         Upload Custom Dataset
                     </h2>
-                    <button
-                        onClick={handleClose}
-                        className="cursor-pointer text-gray-400 hover:text-gray-600 transition-colors"
-                    >
+                    <button onClick={handleClose} className="cursor-pointer text-gray-400 hover:text-gray-600 transition-colors">
                         <X size={18} />
                     </button>
                 </div>
 
-                {/* Content */}
                 <div className="flex-1 overflow-y-auto px-4 py-4">
                     {error && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2 text-red-700 text-sm">
@@ -247,7 +276,6 @@ function UploadModal({
                     )}
 
                     <div className="space-y-4">
-                        {/* File Upload */}
                         {!file && (
                             <div>
                                 <label className="block text-xs font-semibold text-gray-700 mb-2">
@@ -274,7 +302,6 @@ function UploadModal({
 
                         {csvData.length > 0 && (
                             <>
-                                {/* Header Row Selection */}
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-700 mb-2">
                                         Header Row
@@ -292,7 +319,6 @@ function UploadModal({
                                     </select>
                                 </div>
 
-                                {/* Column Selection */}
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-700 mb-2">
                                         Select Area Code Column
@@ -311,7 +337,6 @@ function UploadModal({
                                     </select>
                                 </div>
 
-                                {/* Matching Results */}
                                 {matches.length > 0 && (
                                     <div>
                                         <label className="block text-xs font-semibold text-gray-700 mb-2">
@@ -349,7 +374,6 @@ function UploadModal({
                                     </div>
                                 )}
 
-                                {/* Data Column Selection */}
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-700 mb-2">
                                         Select Data Column
@@ -368,7 +392,6 @@ function UploadModal({
                                     </select>
                                 </div>
 
-                                {/* Preview Table */}
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-700 mb-2">
                                         Data Preview
@@ -421,7 +444,6 @@ function UploadModal({
                     </div>
                 </div>
 
-                {/* Footer */}
                 <div className="flex items-center justify-end gap-2 px-3 py-2 pb-2.5 bg-white/20 shrink-0">
                     <button
                         onClick={handleClose}
@@ -442,63 +464,196 @@ function UploadModal({
     );
 }
 
+function CustomDatasetCard({
+    customDataset,
+    selectedArea,
+    isActive,
+    setActiveViz,
+    codeMapper,
+}: {
+    customDataset: CustomDataset;
+    selectedArea: SelectedArea | null;
+    isActive: boolean;
+    setActiveViz: (value: ActiveViz) => void;
+    codeMapper: {
+        getCodeForYear: (
+            type: BoundaryType,
+            code: string,
+            targetYear: number,
+        ) => string | undefined;
+        getWardsForLad: (ladCode: string, year: number) => string[];
+    }
+}) {
+    const displayValue = useMemo(() => {
+        if (!customDataset || !customDataset.data) return null;
+
+        if (selectedArea) {
+            const value = customDataset.data[selectedArea.code];
+
+            if (value !== undefined) {
+                return { value, count: 1 };
+            }
+
+            // Try to make the code to a different year
+            if (codeMapper && customDataset.boundaryYear) {
+                const mappedCode = codeMapper.getCodeForYear(
+                    selectedArea.type,
+                    selectedArea.code,
+                    customDataset.boundaryYear
+                );
+                if (mappedCode) {
+                    const mappedValue = customDataset.data[mappedCode];
+                    if (mappedValue !== undefined) {
+                        return { value: mappedValue, count: 1 };
+                    }
+                }
+            }
+
+            // Aggregate wards for local authority
+            if (selectedArea.type === 'localAuthority' && codeMapper && customDataset.boundaryYear) {
+                const wardCodes = codeMapper.getWardsForLad(selectedArea.code, customDataset.boundaryYear);
+
+                if (wardCodes.length > 0) {
+                    let sum = 0;
+                    let count = 0;
+
+                    for (const wardCode of wardCodes) {
+                        let value = customDataset.data[wardCode];
+
+                        // Try to map ward code to dataset year if not found
+                        if (value === undefined) {
+                            const mappedCode = codeMapper.getCodeForYear('ward', wardCode, customDataset.boundaryYear);
+                            if (mappedCode) {
+                                value = customDataset.data[mappedCode];
+                            }
+                        }
+
+                        if (value !== undefined) {
+                            sum += value;
+                            count++;
+                        }
+                    }
+
+                    if (count > 0) {
+                        return { value: sum, count };
+                    }
+                }
+            }
+        }
+
+        let average = 0;
+        for (const key in customDataset.data) {
+            average += customDataset.data[key];
+        }
+        average /= Object.keys(customDataset.data).length;
+
+        return { value: average, count: Object.keys(customDataset.data).length };
+    }, [customDataset, selectedArea, codeMapper]);
+
+    const handleClick = () => {
+        setActiveViz({
+            vizId: 'custom',
+            datasetType: 'custom',
+            datasetYear: customDataset.boundaryYear,
+        });
+    };
+
+    if (!customDataset) return null;
+
+    return (
+        <button
+            onClick={handleClick}
+            className={`w-full rounded-md transition-all border-2 duration-200 text-left border-gray-200 ${isActive
+                ? 'bg-white/90 border-indigo-300 cursor-pointer'
+                : 'bg-white/40 hover:bg-white/60 hover:border-indigo-300 cursor-pointer'
+                }`}
+        >
+            <div className="px-3 py-2">
+                <div className="flex items-center justify-between mb-1">
+                    <div className="text-xs font-bold text-gray-700">
+                        {customDataset.dataColumn} [{customDataset.boundaryYear}]
+                    </div>
+                </div>
+
+                {/* Fixed height container */}
+                <div className="h-6 flex items-center">
+                    {displayValue ? (
+                        <div className="text-sm font-semibold text-gray-900">
+                            {displayValue.value.toLocaleString('en-GB', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2
+                            })}
+                            {displayValue.count > 1 && (
+                                <span className="text-xs text-gray-500 ml-1">
+                                    (aggregated from {displayValue.count} wards)
+                                </span>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="text-xs text-gray-400">
+                            {selectedArea ? 'No data available' : 'Hover over an area'}
+                        </div>
+                    )}
+                </div>
+
+                <div className="text-xs text-gray-500 mt-1">
+                    {customDataset.name}
+                </div>
+            </div>
+        </button>
+    );
+}
+
 export default function CustomSection({
     customDataset,
     setCustomDataset,
-    boundaryData,
+    selectedArea,
     boundaryCodes,
+    activeViz,
     setActiveViz,
+    codeMapper,
 }: {
-    customDataset: any;
-    setCustomDataset: (dataset: any) => void;
-    boundaryData: BoundaryData;
-    boundaryCodes: BoundaryCodes;
+    customDataset: CustomDataset | null;
+    setCustomDataset: (dataset: CustomDataset | null) => void;
+    selectedArea: SelectedArea | null;
+    boundaryCodes: Record<string, Record<string, Set<string>>>;
+    activeViz: ActiveViz;
     setActiveViz: (value: ActiveViz) => void;
+    codeMapper?: {
+        getCodeForYear: (type: BoundaryType, code: string, targetYear: number) => string | undefined;
+        getWardsForLad: (ladCode: string, year: number) => string[];
+    };
 }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleCustomDatasetApply = (data: UploadData) => {
-        const match = data.codeType.match(/\[(\d{4})\]/);
-        const year = match ? parseInt(match[1]) : null;
-
-        // Determine boundary type from the label
-        let boundaryType = 'default';
-        if (data.codeType.includes('Ward')) boundaryType = 'ward';
-        else if (data.codeType.includes('Westminster')) boundaryType = 'constituency';
-
-        if (!year) {
-            // setError('Could not determine boundary year');
-            return;
-        }
-
-        // Extract the relevant data columns
         const columnIndex = data.data[data.headerRow].indexOf(data.selectedColumn);
         const dataIndex = data.data[data.headerRow].indexOf(data.dataColumn);
 
-        // Create the dataset structure matching your existing dataset format
-        const customDataset = {
-            name: `Custom: ${data.file}`,
-            boundaryType,
-            boundaryYear: year,
+        const newDataset: CustomDataset = {
+            id: 'custom',
+            type: 'custom',
+            name: data.file,
+            boundaryType: data.boundaryType,
+            boundaryYear: data.boundaryYear,
             dataColumn: data.dataColumn,
-            values: {},
+            data: {},
         };
 
-        // Populate values object with code -> value mapping
         data.data.slice(data.headerRow + 1).forEach(row => {
             const code = row[columnIndex]?.trim();
             const value = parseFloat(row[dataIndex]);
 
             if (code && !isNaN(value)) {
-                customDataset.values[code] = value;
+                newDataset.data[code] = value;
             }
         });
 
-        setCustomDataset(customDataset);
+        setCustomDataset(newDataset);
         setActiveViz({
             vizId: 'custom',
             datasetType: 'custom',
-            datasetYear: year,
+            datasetYear: data.boundaryYear,
         });
 
         setIsOpen(false);
@@ -507,32 +662,42 @@ export default function CustomSection({
     return (
         <>
             <div className="space-y-2 border-t border-gray-200 pt-4">
-                <h3 className="text-xs font-bold text-gray-700">Custom</h3>
-                <button
-                    onClick={() => setIsOpen(true)}
-                    className="w-full p-3 rounded-md transition-all duration-200 border-2 border-dashed border-gray-300/80 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-400/80 hover:text-indigo-600 group cursor-pointer"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2"
-                        stroke="currentColor"
-                        className="w-6 h-6 mx-auto mb-0.5"
+                <h3 className="text-xs font-bold text-gray-700">Custom Dataset</h3>
+
+                {customDataset ? (
+                    <CustomDatasetCard
+                        customDataset={customDataset}
+                        selectedArea={selectedArea}
+                        isActive={activeViz.datasetType === 'custom'}
+                        setActiveViz={setActiveViz}
+                        codeMapper={codeMapper}
+                    />
+                ) : (
+                    <button
+                        onClick={() => setIsOpen(true)}
+                        className="w-full p-3 rounded-md transition-all duration-200 border-2 border-dashed border-gray-300/80 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-400/80 hover:text-indigo-600 group cursor-pointer"
                     >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    <span className="text-xs font-medium">
-                        Upload Dataset
-                    </span>
-                </button>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="2"
+                            stroke="currentColor"
+                            className="w-6 h-6 mx-auto mb-0.5"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span className="text-xs font-medium">
+                            Upload Dataset
+                        </span>
+                    </button>
+                )}
             </div>
 
             <UploadModal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 onUpload={handleCustomDatasetApply}
-                boundaryData={boundaryData}
                 boundaryCodes={boundaryCodes}
             />
         </>
