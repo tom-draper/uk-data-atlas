@@ -184,6 +184,46 @@ export class MapManager {
 		);
 	}
 
+	updateMapForCustomDataset(
+		geojson: BoundaryGeojson,
+		dataset: any,
+		mapOptions: MapOptions,
+	): void {
+		const cacheKey = `custom-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
+		let codeProp = propCache.get(cacheKey);
+		
+		if (!codeProp) {
+			codeProp = this.propertyDetector.detectWardCode(
+				geojson.features,
+			) || this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			) || this.propertyDetector.detectConstituencyCode(
+				geojson.features,
+			);
+			propCache.set(cacheKey, codeProp);
+		}
+
+		const features = this.featureBuilder.buildCustomDatasetFeatures(
+			geojson.features,
+			dataset,
+			codeProp,
+			mapOptions,
+		);
+		const transformedGeojson =
+			this.featureBuilder.formatBoundaryGeoJson(features);
+
+		this.layerManager.updateColoredLayers(
+			transformedGeojson,
+			mapOptions.visibility,
+		);
+
+		this.eventHandler.setupEventHandlers(
+			"custom",
+			dataset.data,
+			codeProp,
+		);
+	}
+
 	// Unified population update method
 	private updatePopulationMap(
 		geojson: BoundaryGeojson,

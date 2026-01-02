@@ -1,17 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Upload, AlertCircle } from 'lucide-react';
-import { BoundaryCodes } from '@/lib/types';
-
-interface BoundaryData {
-    [key: string]: {
-        [year: string]: {
-            features: Array<{
-                properties: Record<string, any>;
-            }>;
-        };
-    };
-}
+import { ActiveViz, BoundaryData, BoundaryCodes } from '@/lib/types';
 
 interface MatchResult {
     type: string;
@@ -248,7 +238,7 @@ function UploadModal({
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto px-4 pb-2 py-4">
+                <div className="flex-1 overflow-y-auto px-4 py-4">
                     {error && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2 text-red-700 text-sm">
                             <AlertCircle size={16} />
@@ -321,25 +311,6 @@ function UploadModal({
                                     </select>
                                 </div>
 
-                                {/* Data Column Selection */}
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-2">
-                                        Select Data Column
-                                    </label>
-                                    <select
-                                        value={dataColumn}
-                                        onChange={(e) => setDataColumn(e.target.value)}
-                                        className="w-full backdrop-blur cursor-pointer rounded-md px-3 py-2 pr-8 text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    >
-                                        <option value="">Select column</option>
-                                        {headers.map((header, idx) => (
-                                            <option key={idx} value={header}>
-                                                {header || `Column ${idx + 1}`}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
                                 {/* Matching Results */}
                                 {matches.length > 0 && (
                                     <div>
@@ -378,6 +349,25 @@ function UploadModal({
                                     </div>
                                 )}
 
+                                {/* Data Column Selection */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-700 mb-2">
+                                        Select Data Column
+                                    </label>
+                                    <select
+                                        value={dataColumn}
+                                        onChange={(e) => setDataColumn(e.target.value)}
+                                        className="w-full backdrop-blur cursor-pointer rounded-md px-3 py-2 pr-8 text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    >
+                                        <option value="">Select column</option>
+                                        {headers.map((header, idx) => (
+                                            <option key={idx} value={header}>
+                                                {header || `Column ${idx + 1}`}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
                                 {/* Preview Table */}
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-700 mb-2">
@@ -386,12 +376,12 @@ function UploadModal({
                                     <div className="rounded-md overflow-hidden">
                                         <div className="overflow-x-auto max-h-64 overflow-y-auto">
                                             <table className="w-full text-xs">
-                                                <thead className="sticky top-0">
+                                                <thead className="sticky top-0 backdrop-blur">
                                                     <tr>
                                                         {headers.map((header, idx) => (
                                                             <th
                                                                 key={idx}
-                                                                className={`px-4 py-2 text-left font-medium whitespace-nowrap backdrop-blur ${header === selectedColumn
+                                                                className={`px-4 py-2 text-left font-medium whitespace-nowrap ${header === selectedColumn
                                                                     ? 'bg-indigo-100/70 text-indigo-900'
                                                                     : header === dataColumn
                                                                         ? 'bg-green-100/70 text-green-900'
@@ -452,11 +442,66 @@ function UploadModal({
     );
 }
 
-export default function CustomSection({ boundaryData, boundaryCodes }: { boundaryData: BoundaryData; boundaryCodes: BoundaryCodes }) {
+export default function CustomSection({
+    customDataset,
+    setCustomDataset,
+    boundaryData,
+    boundaryCodes,
+    setActiveViz,
+}: {
+    customDataset: any;
+    setCustomDataset: (dataset: any) => void;
+    boundaryData: BoundaryData;
+    boundaryCodes: BoundaryCodes;
+    setActiveViz: (value: ActiveViz) => void;
+}) {
     const [isOpen, setIsOpen] = useState(false);
 
-    const handleUpload = (data: UploadData) => {
-        console.log('Processing upload:', data);
+    const handleCustomDatasetApply = (data: UploadData) => {
+        const match = data.codeType.match(/\[(\d{4})\]/);
+        const year = match ? parseInt(match[1]) : null;
+
+        // Determine boundary type from the label
+        let boundaryType = 'default';
+        if (data.codeType.includes('Ward')) boundaryType = 'ward';
+        else if (data.codeType.includes('Westminster')) boundaryType = 'constituency';
+
+        if (!year) {
+            // setError('Could not determine boundary year');
+            return;
+        }
+
+        // Extract the relevant data columns
+        const columnIndex = data.data[data.headerRow].indexOf(data.selectedColumn);
+        const dataIndex = data.data[data.headerRow].indexOf(data.dataColumn);
+
+        // Create the dataset structure matching your existing dataset format
+        const customDataset = {
+            name: `Custom: ${data.file}`,
+            boundaryType,
+            boundaryYear: year,
+            dataColumn: data.dataColumn,
+            values: {},
+        };
+
+        // Populate values object with code -> value mapping
+        data.data.slice(data.headerRow + 1).forEach(row => {
+            const code = row[columnIndex]?.trim();
+            const value = parseFloat(row[dataIndex]);
+
+            if (code && !isNaN(value)) {
+                customDataset.values[code] = value;
+            }
+        });
+
+        setCustomDataset(customDataset);
+        setActiveViz({
+            vizId: 'custom',
+            datasetType: 'custom',
+            datasetYear: year,
+        });
+
+        setIsOpen(false);
     };
 
     return (
@@ -465,7 +510,7 @@ export default function CustomSection({ boundaryData, boundaryCodes }: { boundar
                 <h3 className="text-xs font-bold text-gray-700">Custom</h3>
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="w-full p-3 rounded-md transition-all duration-200 border-2 border-dashed border-gray-300 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-500 hover:text-indigo-600 group cursor-pointer"
+                    className="w-full p-3 rounded-md transition-all duration-200 border-2 border-dashed border-gray-300/80 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-400/80 hover:text-indigo-600 group cursor-pointer"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -486,7 +531,7 @@ export default function CustomSection({ boundaryData, boundaryCodes }: { boundar
             <UploadModal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
-                onUpload={handleUpload}
+                onUpload={handleCustomDatasetApply}
                 boundaryData={boundaryData}
                 boundaryCodes={boundaryCodes}
             />

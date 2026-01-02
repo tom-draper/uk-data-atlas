@@ -22,6 +22,8 @@ interface MapInterfaceProps {
 	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
 	setSelectedLocation: (location: string) => void;
+	customDataset: any;
+	setCustomDataset: (dataset: any) => void;
 }
 
 export default function MapInterface({
@@ -30,6 +32,8 @@ export default function MapInterface({
 	setActiveViz,
 	selectedLocation,
 	setSelectedLocation,
+	customDataset,
+	setCustomDataset,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
 
@@ -50,6 +54,7 @@ export default function MapInterface({
 
 	// Get active dataset
 	const activeDataset = useMemo(() => {
+		if (activeViz.datasetType === "custom") return customDataset;
 		return datasets[activeViz.datasetType]?.[activeViz.datasetYear];
 	}, [datasets, activeViz.datasetType, activeViz.datasetYear]);
 
@@ -150,6 +155,8 @@ export default function MapInterface({
 					setActiveViz={setActiveViz}
 					aggregatedData={aggregatedData}
 					datasets={datasets}
+					customDataset={customDataset}
+					setCustomDataset={setCustomDataset}
 					handleMapOptionsChange={handleMapOptionsChange}
 					onExport={handleExport}
 				/>

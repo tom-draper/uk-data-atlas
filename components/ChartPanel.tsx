@@ -26,6 +26,8 @@ interface ChartPanelProps {
 	boundaryData: BoundaryData;
 	boundaryCodes: BoundaryCodes;
 	datasets: Datasets;
+	customDataset: any;
+	setCustomDataset: (dataset: any) => void;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	aggregatedData: AggregatedData;
@@ -135,6 +137,8 @@ export default memo(function ChartPanel({
 	boundaryData,
 	boundaryCodes,
 	datasets,
+	customDataset,
+	setCustomDataset,
 	activeViz,
 	setActiveViz,
 	aggregatedData,
@@ -195,6 +199,9 @@ export default memo(function ChartPanel({
 						codeMapper={codeMapper}
 					/>
 					<CustomSection
+					 	customDataset={customDataset}
+						setCustomDataset={setCustomDataset}
+						setActiveViz={setActiveViz}
 						boundaryData={boundaryData}
 						boundaryCodes={boundaryCodes}
 					/>

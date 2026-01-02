@@ -56,7 +56,7 @@ export type AggregatedData = {
 
 export type ActiveViz = {
 	vizId: string;
-	datasetType: keyof Datasets;
+	datasetType: keyof Datasets | 'custom';
 	datasetYear: number;
 };
 

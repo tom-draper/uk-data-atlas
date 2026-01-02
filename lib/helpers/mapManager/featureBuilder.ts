@@ -24,6 +24,8 @@ import {
 	getColorForHousePrice,
 	getColorForCrimeRate,
 	getColorForIncome,
+	getColor,
+	normalizeValue,
 } from "../colorScale";
 import { IncomeDataset } from "@/lib/types/income";
 
@@ -149,6 +151,33 @@ export class FeatureBuilder {
 					: 0;
 
 			return { percentage, categoryCode: ethnicity };
+		});
+	}
+
+	buildCustomDatasetFeatures(
+		features: Features,
+		customDataset: any,
+		codeProp: PropertyKeys,
+		mapOptions: MapOptions
+	): Features {
+		const minValue = customDataset.metadata?.minValue || 0;
+		const maxValue = customDataset.metadata?.maxValue || 100;
+		return this.mapFeatures(features, (feature) => {
+			const code = feature.properties[codeProp];
+			const value = customDataset.data[code];
+
+			const normalised = normalizeValue(
+				value !== undefined ? value : minValue,
+				minValue,
+				maxValue
+			);
+
+			const color = getColor(
+				normalised,
+				mapOptions.theme.id
+			);
+
+			return { value, color };
 		});
 	}
 
