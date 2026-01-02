@@ -13,6 +13,7 @@ import { HousePriceDataset, AggregatedHousePriceData } from "./housePrice";
 import { AggregatedCrimeData, CrimeDataset } from "./crime";
 import { AggregatedIncomeData, IncomeDataset } from "./income";
 import { AggregatedEthnicityData, EthnicityDataset } from "./ethnicity";
+import { BoundaryType } from "./boundaries";
 
 export * from "./common";
 export * from "./boundaries";
@@ -28,7 +29,8 @@ export * from "./ethnicity";
 export interface CustomDataset {
     type: 'custom';
     name: string;
-    boundaryType: string;
+	year: number;
+    boundaryType: BoundaryType;
     boundaryYear: number;
     dataColumn: string;
     data: { [key: string]: number };

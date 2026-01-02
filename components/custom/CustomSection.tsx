@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Upload, AlertCircle } from 'lucide-react';
-import { BoundaryType } from '@/lib/types';
+import { AggregatedData, BoundaryType, CustomDataset } from '@/lib/types';
 
-// Types
 interface MatchResult {
     type: string;
     percentage: number;
@@ -18,17 +17,8 @@ interface UploadData {
     dataColumn: string;
     boundaryType: string;
     boundaryYear: number | null;
+    year: number | null;
     data: string[][];
-}
-
-interface CustomDataset {
-    id: string;
-    type: string;
-    name: string;
-    boundaryType: string;
-    boundaryYear: number | null;
-    dataColumn: string;
-    data: Record<string, number>;
 }
 
 interface SelectedArea {
@@ -233,6 +223,7 @@ function UploadModal({
             headerRow,
             selectedColumn,
             dataColumn,
+            year: boundaryYear,
             boundaryType,
             boundaryYear,
             data: csvData
@@ -466,12 +457,14 @@ function UploadModal({
 
 function CustomDatasetCard({
     customDataset,
+    aggregatedData,
     selectedArea,
     isActive,
     setActiveViz,
     codeMapper,
 }: {
     customDataset: CustomDataset;
+    aggregatedData: AggregatedData;
     selectedArea: SelectedArea | null;
     isActive: boolean;
     setActiveViz: (value: ActiveViz) => void;
@@ -541,13 +534,20 @@ function CustomDatasetCard({
             }
         }
 
-        let average = 0;
-        for (const key in customDataset.data) {
-            average += customDataset.data[key];
+        if (aggregatedData && aggregatedData[customDataset.id]) {
+            const average = aggregatedData[customDataset.id].average;
+            const count = aggregatedData[customDataset.id].count;
+            return { value: average, count };
         }
-        average /= Object.keys(customDataset.data).length;
 
-        return { value: average, count: Object.keys(customDataset.data).length };
+        // let average = 0;
+        // for (const key in customDataset.data) {
+        //     average += customDataset.data[key];
+        // }
+        // average /= Object.keys(customDataset.data).length;
+
+        return null;
+        // return { value: average, count: Object.keys(customDataset.data).length };
     }, [customDataset, selectedArea, codeMapper]);
 
     const handleClick = () => {
@@ -607,6 +607,7 @@ function CustomDatasetCard({
 export default function CustomSection({
     customDataset,
     setCustomDataset,
+    aggregatedData,
     selectedArea,
     boundaryCodes,
     activeViz,
@@ -615,6 +616,7 @@ export default function CustomSection({
 }: {
     customDataset: CustomDataset | null;
     setCustomDataset: (dataset: CustomDataset | null) => void;
+    aggregatedData: AggregatedData;
     selectedArea: SelectedArea | null;
     boundaryCodes: Record<string, Record<string, Set<string>>>;
     activeViz: ActiveViz;
@@ -667,6 +669,7 @@ export default function CustomSection({
                 {customDataset ? (
                     <CustomDatasetCard
                         customDataset={customDataset}
+                        aggregatedData={aggregatedData}
                         selectedArea={selectedArea}
                         isActive={activeViz.datasetType === 'custom'}
                         setActiveViz={setActiveViz}

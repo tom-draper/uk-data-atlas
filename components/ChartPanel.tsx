@@ -201,6 +201,7 @@ export default memo(function ChartPanel({
 					<CustomSection
 					 	customDataset={customDataset}
 						setCustomDataset={setCustomDataset}
+						aggregatedData={aggregatedData}
 						selectedArea={selectedArea}
 						activeViz={activeViz}
 						setActiveViz={setActiveViz}
