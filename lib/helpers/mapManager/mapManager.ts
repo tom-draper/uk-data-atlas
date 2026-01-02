@@ -70,8 +70,8 @@ export class MapManager {
 			codeProp = isLocal
 				? this.propertyDetector.detectWardCode(geojson.features)
 				: this.propertyDetector.detectConstituencyCode(
-						geojson.features,
-					);
+					geojson.features,
+				);
 			propCache.set(cacheKey, codeProp);
 		}
 
@@ -87,16 +87,16 @@ export class MapManager {
 		const features =
 			mode === "percentage" && options.selected
 				? this.featureBuilder.buildElectionPercentageFeatures(
-						geojson.features,
-						dataMap,
-						options.selected,
-						codeProp,
-					)
+					geojson.features,
+					dataMap,
+					options.selected,
+					codeProp,
+				)
 				: this.featureBuilder.buildElectionWinnerFeatures(
-						geojson.features,
-						codeProp,
-						(code) => resultsMap[code] || "NONE",
-					);
+					geojson.features,
+					codeProp,
+					(code) => resultsMap[code] || "NONE",
+				);
 
 		const transformedGeojson =
 			this.featureBuilder.formatBoundaryGeoJson(features);
@@ -116,7 +116,7 @@ export class MapManager {
 			);
 		}
 
-		this.eventHandler.setupEventHandlers(type, dataMap, codeProp);
+		this.eventHandler.setupEventHandlers(dataMap, codeProp);
 	}
 
 	updateMapForLocalElection(
@@ -178,7 +178,6 @@ export class MapManager {
 		}
 
 		this.eventHandler.setupEventHandlers(
-			"ethnicity",
 			dataset.data,
 			codeProp,
 		);
@@ -191,15 +190,9 @@ export class MapManager {
 	): void {
 		const cacheKey = `custom-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
 		let codeProp = propCache.get(cacheKey);
-		
+
 		if (!codeProp) {
-			codeProp = this.propertyDetector.detectWardCode(
-				geojson.features,
-			) || this.propertyDetector.detectLocalAuthorityCode(
-				geojson.features,
-			) || this.propertyDetector.detectConstituencyCode(
-				geojson.features,
-			);
+			codeProp = this.propertyDetector.detectCode(geojson.features);
 			propCache.set(cacheKey, codeProp);
 		}
 
@@ -218,7 +211,6 @@ export class MapManager {
 		);
 
 		this.eventHandler.setupEventHandlers(
-			"custom",
 			dataset.data,
 			codeProp,
 		);
@@ -260,7 +252,6 @@ export class MapManager {
 			mapOptions.visibility,
 		);
 		this.eventHandler.setupEventHandlers(
-			"population",
 			dataset.data,
 			wardCodeProp,
 		);
@@ -342,7 +333,6 @@ export class MapManager {
 			mapOptions.visibility,
 		);
 		this.eventHandler.setupEventHandlers(
-			eventType,
 			dataForEvents,
 			codeProp,
 		);

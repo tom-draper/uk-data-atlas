@@ -160,8 +160,22 @@ export class FeatureBuilder {
 		codeProp: PropertyKeys,
 		mapOptions: MapOptions
 	): Features {
-		const minValue = customDataset.metadata?.minValue || 0;
-		const maxValue = customDataset.metadata?.maxValue || 100;
+		let minValue: number = Infinity;
+		let maxValue: number = -Infinity;
+		for (const value of Object.values(customDataset.data)) {
+			if (typeof value === 'number') {
+				if (value < minValue) minValue = value;
+				if (value > maxValue) maxValue = value;
+			}
+		}
+
+		if (minValue === Infinity) {
+			return this.mapFeatures(features, () => ({
+				value: undefined,
+				color: DEFAULT_COLOR,
+			}));
+		}
+
 		return this.mapFeatures(features, (feature) => {
 			const code = feature.properties[codeProp];
 			const value = customDataset.data[code];

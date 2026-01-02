@@ -25,6 +25,15 @@ export * from "./mapOptions";
 export * from "./income";
 export * from "./ethnicity";
 
+export interface CustomDataset {
+    type: 'custom';
+    name: string;
+    boundaryType: string;
+    boundaryYear: number;
+    dataColumn: string;
+    data: { [key: string]: number };
+}
+
 export type Dataset =
 	| LocalElectionDataset
 	| GeneralElectionDataset
@@ -32,7 +41,8 @@ export type Dataset =
 	| EthnicityDataset
 	| HousePriceDataset
 	| CrimeDataset
-	| IncomeDataset;
+	| IncomeDataset
+	| CustomDataset;
 
 export type Datasets = {
 	localElection: Record<string, LocalElectionDataset>;

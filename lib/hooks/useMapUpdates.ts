@@ -6,7 +6,7 @@ import { MapOptions } from "../types/mapOptions";
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson;
 	activeViz: ActiveViz;
-	activeDataset: Dataset | {type: 'custom'} | null;
+	activeDataset: Dataset | null;
 	mapManager: MapManager | null;
 	mapOptions: MapOptions;
 }
