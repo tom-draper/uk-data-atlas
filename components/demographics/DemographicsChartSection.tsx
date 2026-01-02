@@ -16,9 +16,9 @@ import EthnicityChart from "./ethnicity/EthnicityChart";
 
 export interface DemographicsChartSectionProps {
 	availablePopulationDatasets: Record<string, PopulationDataset>;
-	aggregatedPopulationData: AggregatedPopulationData | null;
+	aggregatedPopulationData: Record<number, AggregatedPopulationData> | null;
 	availableEthnicityDatasets: Record<string, EthnicityDataset>;
-	aggregatedEthnicityData: AggregatedEthnicityData | null;
+	aggregatedEthnicityData: Record<number, AggregatedEthnicityData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {

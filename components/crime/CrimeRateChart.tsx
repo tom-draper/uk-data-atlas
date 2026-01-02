@@ -11,7 +11,7 @@ import { useMemo } from "react";
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, CrimeDataset>;
-	aggregatedData: AggregatedCrimeData | null;
+	aggregatedData: Record<number, AggregatedCrimeData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (
@@ -21,6 +21,7 @@ interface CrimeRateChartProps {
 		) => string | undefined;
 	};
 	year: number;
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -31,6 +32,7 @@ export default function CrimeRateChart({
 	selectedArea,
 	codeMapper,
 	year,
+	activeViz,
 	setActiveViz,
 }: CrimeRateChartProps) {
 	const dataset = availableDatasets?.[year];
@@ -52,8 +54,8 @@ export default function CrimeRateChart({
 	const crimeRate = useMemo(() => {
 		if (!dataset) return null;
 		let rate: number | null = null;
-		if (selectedArea === null && aggregatedData) {
-			rate = aggregatedData[year]?.averageRecordedCrime || null;
+		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+			rate = aggregatedData[dataset.year].averageRecordedCrime || null;
 		} else if (
 			selectedArea &&
 			selectedArea.type === "localAuthority" &&
@@ -78,7 +80,11 @@ export default function CrimeRateChart({
 
 	if (!dataset) return null;
 
-	const isActive = activeDataset?.id === `crime${dataset.year}`;
+	const isActive =
+		activeDataset &&
+		((activeDataset.type === "crime" &&
+			activeDataset.id === `crime${dataset.year}`) ||
+			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
 	const rawValue = crimeRate || 0;
 	const maxThreshold = 100000;
 	const minThreshold = 5000;

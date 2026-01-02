@@ -8,7 +8,7 @@ export const calculateTotal = (ageData: { [age: string]: number }) => {
 export const resolveWardCode = (
 	wardCode: string,
 	wardName: string,
-	population: PopulationDataset["populationData"],
+	population: PopulationDataset["data"],
 	wardCodeMap: { [name: string]: string },
 ): string => {
 	if (population[wardCode]) return wardCode;
@@ -40,7 +40,7 @@ export const calculateMedianAge = (
 };
 
 // Calculates polygon area in square kilometers (roughly accurate for small areas)
-export const polygonAreaSqKm = (coordinates: number[][][]): number => {
+export const polygonAreaSqKm = (coordinates: number[][][] | number[][][][]): number => {
 	const R = 6371;
 
 	const calculateRingArea = (ring: number[][]): number => {
@@ -65,19 +65,25 @@ export const polygonAreaSqKm = (coordinates: number[][][]): number => {
 
 	let totalArea = 0;
 
-	// Check if coordinates[0][0][0] is a number (simple) or array (multi-chunk)
-	const isSimplePolygon = typeof coordinates[0]?.[0]?.[0] === "number";
+	// Determine if it's a Polygon or MultiPolygon by checking array depth
+	// MultiPolygon: coordinates are an array of Polygons, so coordinates[0] is a Polygon
+	// Polygon: coordinates are an array of rings, so coordinates[0] is a ring
+	const isMultiPolygon =
+		coordinates.length > 0 && Array.isArray(coordinates[0][0][0]);
 
-	if (isSimplePolygon) {
-		// Simple case: coordinates[0] is the ring
-		totalArea = Math.abs(calculateRingArea(coordinates[0]));
-	} else {
-		// Multi-chunk case: each coordinates[i][0] is a ring
+	if (isMultiPolygon) {
+		// MultiPolygon case: coordinates is number[][][][]
 		for (let i = 0; i < coordinates.length; i++) {
-			const ring = coordinates[i][0];
-			const chunkArea = Math.abs(calculateRingArea(ring));
+			// Each element coordinates[i] is a Polygon (number[][][])
+			const outerRing = (coordinates[i] as number[][][])[0] as number[][];
+			const chunkArea = Math.abs(calculateRingArea(outerRing));
 			totalArea += chunkArea;
 		}
+	} else {
+		// Polygon case: coordinates is number[][][]
+		// The first ring of the polygon is coordinates[0] (number[][])
+		const outerRing = coordinates[0] as number[][];
+		totalArea = Math.abs(calculateRingArea(outerRing));
 	}
 
 	return totalArea;

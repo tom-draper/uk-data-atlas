@@ -12,7 +12,7 @@ import { useMemo } from "react";
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, IncomeDataset>;
-	aggregatedData: AggregatedIncomeData | null;
+	aggregatedData: Record<number, AggregatedIncomeData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
 	codeMapper?: {
@@ -22,6 +22,7 @@ interface IncomeChartProps {
 			targetYear: number,
 		) => string | undefined;
 	};
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -48,6 +49,7 @@ export default function IncomeChart({
 	selectedArea,
 	year,
 	codeMapper,
+	activeViz,
 	setActiveViz,
 }: IncomeChartProps) {
 	const dataset = availableDatasets?.[year];
@@ -57,8 +59,8 @@ export default function IncomeChart({
 
 	// We calculate data first so we can use it for the particle effects
 	if (dataset) {
-		if (selectedArea === null && aggregatedData) {
-			medianIncome = aggregatedData[year]?.averageIncome || null;
+		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+			medianIncome = aggregatedData[dataset.year].averageIncome || null;
 		} else if (
 			selectedArea &&
 			selectedArea.type === "localAuthority" &&
@@ -122,7 +124,11 @@ export default function IncomeChart({
 	}, [medianIncome]);
 
 	if (!dataset) return null;
-	const isActive = activeDataset?.id === `income${dataset.year}`;
+	const isActive =
+		activeDataset &&
+		((activeDataset.type === "income" &&
+			activeDataset.id === `income${dataset.year}`) ||
+			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
 	const formattedMedian = medianIncome
 		? `£${Math.round(medianIncome).toLocaleString()}`
 		: null;

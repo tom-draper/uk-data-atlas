@@ -3,6 +3,16 @@ import { BoundaryGeojson } from "@lib/types";
 import { LOCATIONS } from "@lib/data/locations";
 import { withCDN } from "@/lib/helpers/cdn";
 import * as topojson from "topojson-client";
+import { FeatureCollection, Geometry, GeoJsonProperties, Feature } from "geojson";
+
+interface GeoJsonFeatureCollection extends FeatureCollection<Geometry, GeoJsonProperties> {
+	crs?: {
+		type: string;
+		properties: {
+			name: string;
+		};
+	};
+}
 
 export const GEOJSON_PATHS = {
 	ward: {
@@ -198,18 +208,36 @@ export const fetchBoundaryFile = async (
 	const json = await res.json();
 
 	// Convert TopoJSON to GeoJSON if needed
-	let geojson: BoundaryGeojson;
+	let geojson: GeoJsonFeatureCollection;
 	if (json.type === "Topology") {
 		const objectKey = Object.keys(json.objects)[0];
-		geojson = topojson.feature(json, json.objects[objectKey]);
+		const topojsonFeatureResult: Feature<Geometry, GeoJsonProperties> | FeatureCollection<Geometry, GeoJsonProperties> = topojson.feature(json, json.objects[objectKey] as any);
+
+		if (topojsonFeatureResult.type === "Feature") {
+			geojson = {
+				type: "FeatureCollection",
+				features: [topojsonFeatureResult],
+			};
+		} else {
+			// Assume it's already a FeatureCollection
+			geojson = topojsonFeatureResult;
+		}
 	} else {
-		geojson = json;
+		geojson = json as GeoJsonFeatureCollection;
 	}
 
-	// Cache the result
-	BOUNDARY_CACHE[path] = geojson;
+	// Add CRS if missing (common in TopoJSON conversions)
+	if (!geojson.crs) {
+		geojson.crs = {
+			type: "name",
+			properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+		};
+	}
 
-	return geojson;
+	// Cache the result and return with the correct BoundaryGeojson type assertion
+	const typedGeojson = geojson as BoundaryGeojson<any>; // Cast to a more general type first
+	BOUNDARY_CACHE[path] = typedGeojson;
+	return typedGeojson;
 };
 
 /**

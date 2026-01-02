@@ -31,6 +31,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	income: {
 		colorRange: { min: 25000, max: 45000 },
 	},
+	custom: { colorRange: { min: 0, max: 100 } },
 	theme: {
 		id: "viridis",
 	},

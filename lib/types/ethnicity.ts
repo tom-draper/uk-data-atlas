@@ -20,6 +20,4 @@ export interface EthnicityDataset {
 	results: Record<string, string>;
 }
 
-export interface AggregatedEthnicityData {
-	2021: Record<string, EthnicityCategory>;
-}
+export type AggregatedEthnicityData = Record<string, EthnicityCategory>;

@@ -10,7 +10,7 @@ import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 
 interface GenderProps {
 	dataset: PopulationDataset;
-	aggregatedData: AggregatedPopulationData | null;
+	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -42,10 +42,10 @@ function Gender({
 	const { totalMales, totalFemales } = useMemo(() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
+			const data = aggregatedData[dataset.year];
 			return {
-				totalMales: aggregatedData[dataset.year].populationStats.males,
-				totalFemales:
-					aggregatedData[dataset.year].populationStats.females,
+				totalMales: data.populationStats.males,
+				totalFemales: data.populationStats.females,
 			};
 		}
 

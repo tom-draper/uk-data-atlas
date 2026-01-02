@@ -139,6 +139,7 @@ export default memo(function GeneralElectionResultChart({
 				}
       `}
 			onClick={() =>
+				data.dataset &&
 				setActiveViz({
 					vizId: vizId,
 					datasetType: data.dataset.type,

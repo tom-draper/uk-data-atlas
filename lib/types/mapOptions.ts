@@ -37,6 +37,7 @@ export interface MapOptions {
 	housePrice: HousePriceOptions;
 	crime: CrimeOptions;
 	income: IncomeOptions;
+	custom: ColorRangeOption;
 	theme: {
 		id: ColorTheme;
 	};

@@ -52,7 +52,7 @@ export const fetchAndParseCsv = async (
 				const wardData: Record<string, WardData> = {};
 				const unmapped: any[] = [];
 
-				results.data.forEach((row) => {
+				results.data.forEach((row: any) => {
 					// Extract party votes
 					const partyVotes: Record<string, number> = {};
 					partyCols.forEach(

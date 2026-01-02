@@ -11,9 +11,8 @@ import React, { useMemo } from "react";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
-	availableDatasets: Record<string, HousePriceDataset>;
-	aggregatedData: AggregatedHousePriceData | null;
-	year: number;
+	    availableDatasets: Record<string, HousePriceDataset>;
+	    aggregatedData: Record<number, AggregatedHousePriceData> | null;	year: number;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (
@@ -23,12 +22,13 @@ interface HousePriceChartProps {
 		) => string | undefined;
 		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
 interface PriceChartProps {
 	dataset: HousePriceDataset;
-	aggregatedData: AggregatedHousePriceData | null;
+	aggregatedData: Record<number, AggregatedHousePriceData> | null;
 	selectedArea: SelectedArea | null;
 	getCodeForYear?: (
 		type: "ward" | "localAuthority",
@@ -65,9 +65,12 @@ const PriceChart = React.memo(
 			let price2023: number | null = null;
 
 			if (selectedArea === null && aggregatedData) {
-				// No area selected - show aggregated data
-				prices = aggregatedData[dataset.year]?.averagePrices || {};
-				price2023 = aggregatedData[dataset.year]?.averagePrice || null;
+                const yearAggregatedData = aggregatedData[dataset.year];
+                if (yearAggregatedData) {
+                    // No area selected - show aggregated data
+                    prices = yearAggregatedData.averagePrices || {};
+                    price2023 = yearAggregatedData.averagePrice || null;
+                }
 			} else if (selectedArea && selectedArea.type === "ward") {
 				// Ward selected - lookup ward data
 				const wardCode = selectedArea.code;
@@ -342,12 +345,17 @@ export default function HousePriceChart({
 	year,
 	selectedArea,
 	codeMapper,
+	activeViz,
 	setActiveViz,
 }: HousePriceChartProps) {
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
-	const isActive = activeDataset?.id === `housePrice${year}`;
+	const isActive =
+		activeDataset &&
+		((activeDataset.type === "housePrice" &&
+			activeDataset.id === `housePrice${year}`) ||
+			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
 
 	return (
 		<PriceChart
@@ -357,7 +365,7 @@ export default function HousePriceChart({
 			selectedArea={selectedArea}
 			getCodeForYear={codeMapper?.getCodeForYear}
 			getWardsForLad={codeMapper?.getWardsForLad}
-			isActive={isActive}
+			isActive={isActive as boolean}
 			setActiveViz={setActiveViz}
 		/>
 	);

@@ -21,9 +21,7 @@ export interface HousePriceDataset {
 }
 
 export type AggregatedHousePriceData = {
-	[Y in HousePriceYear]: {
-		averagePrice: number;
-		averagePrices: Record<number, number>;
-		wardCount: number;
-	};
+	averagePrice: number;
+	averagePrices: Record<number, number>;
+	wardCount: number;
 };

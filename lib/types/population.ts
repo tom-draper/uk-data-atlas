@@ -40,14 +40,14 @@ export interface PopulationStats {
 	isWardSpecific: boolean;
 }
 
-export interface AggregatedPopulationData {
-	2020: {
-		populationStats: PopulationStats;
-		ageData: AgeData;
-		ages: Array<{ age: number; count: number }>;
-		genderAgeData: Array<{ age: number; males: number; females: number }>;
-		medianAge: number;
-		totalArea: number;
-		density: number;
-	};
+export interface PopulationYearlyData {
+	populationStats: PopulationStats;
+	ageData: AgeData;
+	ages: Array<{ age: number; count: number }>;
+	genderAgeData: Array<{ age: number; males: number; females: number }>;
+	medianAge: number;
+	totalArea: number;
+	density: number;
 }
+
+export type AggregatedPopulationData = PopulationYearlyData;

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Upload, AlertCircle } from 'lucide-react';
-import { ActiveViz, AggregatedData, BoundaryType, CustomDataset } from '@/lib/types';
+import { ActiveViz, BoundaryType, CustomDataset, AggregatedCustomData, BoundaryCodes } from '@/lib/types';
 
 interface MatchResult {
     type: string;
@@ -100,7 +100,7 @@ function UploadModal({
     isOpen: boolean;
     onClose: () => void;
     onUpload: (data: UploadData) => void;
-    boundaryCodes: Record<string, Record<string, Set<string>>>;
+    boundaryCodes: BoundaryCodes;
 }) {
     const [file, setFile] = useState<File | null>(null);
     const [csvData, setCsvData] = useState<string[][]>([]);
@@ -458,7 +458,7 @@ function CustomDatasetCard({
     codeMapper,
 }: {
     customDataset: CustomDataset;
-    aggregatedData: AggregatedCustomData | null;
+    aggregatedData: {[year: number]: AggregatedCustomData} | null;
     selectedArea: SelectedArea | null;
     isActive: boolean;
     setActiveViz: (value: ActiveViz) => void;
@@ -603,9 +603,9 @@ export default function CustomSection({
 }: {
     customDataset: CustomDataset | null;
     setCustomDataset: (dataset: CustomDataset | null) => void;
-    aggregatedData: AggregatedCustomData | null;
+    aggregatedData: Record<number, AggregatedCustomData> | null;
     selectedArea: SelectedArea | null;
-    boundaryCodes: Record<string, Record<string, Set<string>>>;
+    boundaryCodes: BoundaryCodes;
     activeViz: ActiveViz;
     setActiveViz: (value: ActiveViz) => void;
     codeMapper?: {
@@ -616,15 +616,18 @@ export default function CustomSection({
     const [isOpen, setIsOpen] = useState(false);
 
     const handleCustomDatasetApply = (data: UploadData) => {
+        if (data.boundaryYear === null || data.boundaryType === null) {
+            return;
+        }
+
         const columnIndex = data.data[data.headerRow].indexOf(data.selectedColumn);
         const dataIndex = data.data[data.headerRow].indexOf(data.dataColumn);
 
         const newDataset: CustomDataset = {
-            id: 'custom',
             type: 'custom',
             name: data.file,
             year: data.boundaryYear,
-            boundaryType: data.boundaryType,
+            boundaryType: data.boundaryType as BoundaryType,
             boundaryYear: data.boundaryYear,
             dataColumn: data.dataColumn,
             data: {},
@@ -654,7 +657,7 @@ export default function CustomSection({
             <div className="space-y-2 border-t border-gray-200 pt-4">
                 <h3 className="text-xs font-bold text-gray-700">Custom Dataset</h3>
 
-                {customDataset ? (
+                {customDataset && codeMapper ? (
                     <CustomDatasetCard
                         customDataset={customDataset}
                         aggregatedData={aggregatedData}
@@ -663,6 +666,8 @@ export default function CustomSection({
                         setActiveViz={setActiveViz}
                         codeMapper={codeMapper}
                     />
+                ) : customDataset ? (
+                    <div className="text-xs text-gray-500">Loading...</div>
                 ) : (
                     <button
                         onClick={() => setIsOpen(true)}

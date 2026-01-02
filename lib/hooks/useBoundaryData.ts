@@ -130,12 +130,12 @@ const extractCodeSets = (
 		ward: Object.entries(boundaryData.ward).reduce((acc, [year, data]) => {
 			if (data?.features) {
 				const codeProp = PROPERTY_KEYS.wardCode.find(
-					key => data.features[0]?.properties?.[key] !== undefined
+					key => (data.features[0]?.properties as any)?.[key] !== undefined
 				);
 				if (codeProp) {
 					acc[Number(year)] = new Set(
 						data.features
-							.map(f => f.properties[codeProp])
+							.map(f => (f.properties as any)[codeProp])
 							.filter(Boolean)
 					);
 				}
@@ -146,12 +146,12 @@ const extractCodeSets = (
 		constituency: Object.entries(boundaryData.constituency).reduce((acc, [year, data]) => {
 			if (data?.features) {
 				const codeProp = PROPERTY_KEYS.constituencyCode.find(
-					key => data.features[0]?.properties?.[key] !== undefined
+					key => (data.features[0]?.properties as any)?.[key] !== undefined
 				);
 				if (codeProp) {
 					acc[Number(year)] = new Set(
 						data.features
-							.map(f => f.properties[codeProp])
+							.map(f => (f.properties as any)[codeProp])
 							.filter(Boolean)
 					);
 				}
@@ -162,12 +162,12 @@ const extractCodeSets = (
 		localAuthority: Object.entries(boundaryData.localAuthority).reduce((acc, [year, data]) => {
 			if (data?.features) {
 				const codeProp = PROPERTY_KEYS.ladCode.find(
-					key => data.features[0]?.properties?.[key] !== undefined
+					key => (data.features[0]?.properties as any)?.[key] !== undefined
 				);
 				if (codeProp) {
 					acc[Number(year)] = new Set(
 						data.features
-							.map(f => f.properties[codeProp])
+							.map(f => (f.properties as any)[codeProp])
 							.filter(Boolean)
 					);
 				}

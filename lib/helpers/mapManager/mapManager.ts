@@ -225,7 +225,7 @@ export class MapManager {
 		buildFeatures: (
 			features: any[],
 			dataset: PopulationDataset,
-			codeProp: string,
+			codeProp: PropertyKeys,
 			options: MapOptions,
 		) => any[],
 	): void {
@@ -302,22 +302,27 @@ export class MapManager {
 		geojson: BoundaryGeojson,
 		dataset: any,
 		mapOptions: MapOptions,
-		detectProperty: (features: any[]) => string,
+		detectProperty: (features: any[]) => PropertyKeys, // Ensure detectProperty returns PropertyKeys
 		buildFeatures: (
 			features: any[],
 			dataset: any,
-			codeProp: string,
+			codeProp: PropertyKeys, // Changed to PropertyKeys
 			options: MapOptions,
 		) => any[],
 		eventType: MapMode,
 		dataForEvents: any,
 	): void {
 		const cacheKey = `${eventType}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let codeProp = propCache.get(cacheKey);
+		let codeProp: PropertyKeys | undefined = propCache.get(cacheKey); // Changed to PropertyKeys | undefined
 
 		if (!codeProp) {
 			codeProp = detectProperty(geojson.features);
 			propCache.set(cacheKey, codeProp);
+		}
+
+		if (!codeProp) {
+			console.warn("codeProp is undefined, skipping feature building.");
+			return;
 		}
 
 		const features = buildFeatures(
@@ -335,7 +340,7 @@ export class MapManager {
 		);
 		this.eventHandler.setupEventHandlers(
 			dataForEvents,
-			codeProp,
+			codeProp as string, // Cast to string for eventHandler
 		);
 	}
 
@@ -348,7 +353,7 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectWardCode.bind(this.propertyDetector),
+			this.propertyDetector.detectWardCode.bind(this.propertyDetector) as (features: any[]) => PropertyKeys,
 			this.featureBuilder.buildHousePriceFeatures.bind(
 				this.featureBuilder,
 			),
@@ -368,7 +373,7 @@ export class MapManager {
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(
 				this.propertyDetector,
-			),
+			) as (features: any[]) => PropertyKeys,
 			this.featureBuilder.buildCrimeRateFeatures.bind(
 				this.featureBuilder,
 			),
@@ -388,7 +393,7 @@ export class MapManager {
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(
 				this.propertyDetector,
-			),
+			) as (features: any[]) => PropertyKeys,
 			this.featureBuilder.buildIncomeFeatures.bind(this.featureBuilder),
 			"income",
 			dataset.data,
