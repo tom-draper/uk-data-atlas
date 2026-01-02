@@ -43,12 +43,12 @@ export const GEOJSON_PATHS = {
 		2023: withCDN(
 			"/data/boundaries/lad/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.topojson",
 		),
-		2022: withCDN(
-			"/data/boundaries/lad/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.topojson",
-		),
-		2021: withCDN(
-			"/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.topojson",
-		),
+		// 2022: withCDN(
+		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.topojson",
+		// ),
+		// 2021: withCDN(
+		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.topojson",
+		// ),
 	},
 } as const;
 

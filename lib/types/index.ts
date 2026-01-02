@@ -64,6 +64,7 @@ export type AggregatedData = {
 	housePrice: AggregatedHousePriceData | null;
 	crime: AggregatedCrimeData | null;
 	income: AggregatedIncomeData | null;
+	custom: AggregatedCustomData | null;
 };
 
 export type ActiveViz = {

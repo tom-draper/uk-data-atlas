@@ -201,12 +201,11 @@ export default memo(function ChartPanel({
 					<CustomSection
 					 	customDataset={customDataset}
 						setCustomDataset={setCustomDataset}
-						aggregatedData={aggregatedData}
+						aggregatedData={aggregatedData.custom}
 						selectedArea={selectedArea}
 						activeViz={activeViz}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
-						boundaryData={boundaryData}
 						boundaryCodes={boundaryCodes}
 					/>
 				</div>

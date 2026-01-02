@@ -37,11 +37,6 @@ function aggregateDataset<T extends Dataset>(
     const result: Record<string, any> = {};
 
     for (const [datasetId, dataset] of Object.entries(config.datasets)) {
-        if (!config.boundaryType || !dataset.boundaryYear) {
-            result[dataset.year] = null;
-            continue;
-        }
-
         // Get the appropriate boundary geojson
         const geojson =
             boundaryData[config.boundaryType]?.[dataset.boundaryYear];
@@ -126,13 +121,13 @@ export function useAggregatedData({
                     mapManager.calculateIncomeStats(geojson, data, location, id),
             },
             custom: {
-                datasets: [customDataset],
+                datasets: customDataset ? [customDataset] : [],
                 boundaryType: customDataset?.boundaryType || 'ward',
                 calculateStats: (mapManager, geojson, data, location, id) =>
                     mapManager.calculateCustomDatasetStats(geojson, data, location, id),
             }
         }),
-        [datasets],
+        [datasets, customDataset],
     );
 
     // Aggregate all datasets using the same logic
