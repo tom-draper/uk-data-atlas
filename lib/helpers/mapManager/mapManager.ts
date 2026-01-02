@@ -9,6 +9,7 @@ import {
 	SelectedArea,
 	EthnicityDataset,
 	PropertyKeys,
+	CustomDataset,
 } from "@lib/types";
 import { MapMode, MapOptions } from "@lib/types/mapOptions";
 import { LayerManager } from "./layerManager";
@@ -394,7 +395,6 @@ export class MapManager {
 		);
 	}
 
-	// Simplified stats calculation methods
 	calculateLocalElectionStats(
 		geojson: BoundaryGeojson,
 		wardData: LocalElectionDataset["data"],
@@ -488,6 +488,20 @@ export class MapManager {
 		return this.statsCalculator.calculateIncomeStats(
 			geojson,
 			localAuthorityData,
+			location,
+			datasetId,
+		);
+	}
+
+	calculateCustomDatasetStats(
+		geojson: BoundaryGeojson,
+		data: CustomDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateCustomDatasetStats(
+			geojson,
+			data,
 			location,
 			datasetId,
 		);

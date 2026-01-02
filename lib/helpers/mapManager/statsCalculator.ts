@@ -413,6 +413,41 @@ export class StatsCalculator {
 		return result;
 	}
 
+	calculateCustomDatasetStats(
+		geojson: BoundaryGeojson,
+		data: any,
+		location: string | null,
+		datasetId: string | null,
+	) {
+		const cacheKey = `custom-dataset-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey);
+		if (cached) return cached;
+
+		const codeProp = this.propertyDetector.detectCode(geojson.features);
+		
+		let sum = 0;
+		let total = 0;
+		for (let i = 0; i < geojson.features.length; i++) {
+			const featureCode = geojson.features[i].properties[codeProp];
+			const featureData = data[featureCode];
+
+			if (typeof featureData === "number") {
+				sum += featureData;
+				total++;
+			}
+		}
+
+		const average = total > 0 ? sum / total : 0;
+
+		const result = {
+			total,
+			average,
+		};
+
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
 	private aggregatePopulationData(
 		geojson: BoundaryGeojson,
 		populationData: PopulationDataset["data"],
