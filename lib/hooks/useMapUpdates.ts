@@ -6,7 +6,7 @@ import { MapOptions } from "../types/mapOptions";
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson;
 	activeViz: ActiveViz;
-	activeDataset: Dataset | null;
+	activeDataset: Dataset | {type: 'custom'} | null;
 	mapManager: MapManager | null;
 	mapOptions: MapOptions;
 }
@@ -60,6 +60,13 @@ export function useMapUpdates({
 
 				case "ethnicity":
 					return mapManager.updateMapForEthnicity(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "custom":
+					return mapManager.updateMapForCustomDataset(
 						geojson,
 						activeDataset,
 						mapOptions,

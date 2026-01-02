@@ -15,6 +15,8 @@ import { CodeType } from "@/lib/hooks/useCodeMapper";
 
 interface UIOverlayProps {
 	datasets: Datasets;
+	customDataset: any;
+	setCustomDataset: (dataset: any) => void;
 	activeDataset: Dataset | null;
 	aggregatedData: AggregatedData;
 	activeViz: ActiveViz;
@@ -48,6 +50,8 @@ interface UIOverlayProps {
 
 export default function UIOverlay({
 	datasets,
+	customDataset,
+	setCustomDataset,
 	activeDataset,
 	activeViz,
 	setActiveViz,
@@ -89,6 +93,8 @@ export default function UIOverlay({
 				/>
 				<ChartPanel
 					datasets={datasets}
+					customDataset={customDataset}
+					setCustomDataset={setCustomDataset}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
 					activeDataset={activeDataset}

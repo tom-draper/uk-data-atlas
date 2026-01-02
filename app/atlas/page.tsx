@@ -19,6 +19,7 @@ export default function MapsPage() {
 		useState("Greater Manchester");
 
 	const { datasets, loading, errors } = useDatasets();
+	const [customDataset, setCustomDataset] = useState(null);
 
 	if (loading) return <LoadingDisplay />;
 	if (errors.length > 0) return <ErrorDisplay message={errors[0]} />;
@@ -31,6 +32,8 @@ export default function MapsPage() {
 				setSelectedLocation={setSelectedLocation}
 				activeViz={activeViz}
 				setActiveViz={setActiveViz}
+				customDataset={customDataset}
+				setCustomDataset={setCustomDataset}
 			/>
 		</ErrorBoundary>
 	);

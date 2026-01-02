@@ -130,6 +130,10 @@ export function getColorForAge(
 	return getThemeColor(1 - normalized, themeId); // Invert so higher ages are darker (if using Viridis logic)
 }
 
+export function getColor(normalisedValue: number, themeId: string = "viridis") {
+	return getThemeColor(1 - normalisedValue, themeId);
+}
+
 /**
  * Gets color for density data with dynamic range
  */

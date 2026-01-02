@@ -19,6 +19,17 @@ export class PropertyDetector {
 		return this.detectPropertyKey(features, LAD_CODE_KEYS);
 	}
 
+	detectCode(features: BoundaryGeojson["features"]) {
+		return this.detectPropertyKey(
+			features,
+			[
+				...WARD_CODE_KEYS,
+				...CONSTITUENCY_CODE_KEYS,
+				...LAD_CODE_KEYS,
+			] as readonly PropertyKeys[],
+		);
+	}
+
 	private detectPropertyKey(
 		features: BoundaryGeojson["features"],
 		possibleKeys: readonly PropertyKeys[],

@@ -25,7 +25,7 @@ export type IncomeOptions = ColorRangeOption;
 
 export type ColorTheme = "viridis" | "plasma" | "inferno" | "magma";
 
-export type MapMode = keyof Datasets;
+export type MapMode = keyof Datasets | 'custom';
 
 export interface MapOptions {
 	generalElection: GeneralElectionOptions;
