@@ -133,6 +133,7 @@ export default function MapInterface({
 		mapManager,
 		boundaryData,
 		datasets,
+		customDataset,
 		location: selectedLocation,
 	});
 

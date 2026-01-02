@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Upload, AlertCircle } from 'lucide-react';
-import { AggregatedData, BoundaryType, CustomDataset } from '@/lib/types';
+import { ActiveViz, AggregatedData, BoundaryType, CustomDataset } from '@/lib/types';
 
 interface MatchResult {
     type: string;
@@ -25,12 +25,6 @@ interface SelectedArea {
     code: string;
     name: string;
     type: BoundaryType;
-}
-
-interface ActiveViz {
-    vizId: string;
-    datasetType: string;
-    datasetYear: number | null;
 }
 
 const BOUNDARY_TYPE_LABELS: Record<string, string> = {
@@ -464,7 +458,7 @@ function CustomDatasetCard({
     codeMapper,
 }: {
     customDataset: CustomDataset;
-    aggregatedData: AggregatedData;
+    aggregatedData: AggregatedCustomData | null;
     selectedArea: SelectedArea | null;
     isActive: boolean;
     setActiveViz: (value: ActiveViz) => void;
@@ -534,20 +528,13 @@ function CustomDatasetCard({
             }
         }
 
-        if (aggregatedData && aggregatedData[customDataset.id]) {
-            const average = aggregatedData[customDataset.id].average;
-            const count = aggregatedData[customDataset.id].count;
+        if (aggregatedData && aggregatedData[customDataset.year]) {
+            const average = aggregatedData[customDataset.year].average;
+            const count = aggregatedData[customDataset.year].count;
             return { value: average, count };
         }
 
-        // let average = 0;
-        // for (const key in customDataset.data) {
-        //     average += customDataset.data[key];
-        // }
-        // average /= Object.keys(customDataset.data).length;
-
         return null;
-        // return { value: average, count: Object.keys(customDataset.data).length };
     }, [customDataset, selectedArea, codeMapper]);
 
     const handleClick = () => {
@@ -616,7 +603,7 @@ export default function CustomSection({
 }: {
     customDataset: CustomDataset | null;
     setCustomDataset: (dataset: CustomDataset | null) => void;
-    aggregatedData: AggregatedData;
+    aggregatedData: AggregatedCustomData | null;
     selectedArea: SelectedArea | null;
     boundaryCodes: Record<string, Record<string, Set<string>>>;
     activeViz: ActiveViz;
@@ -636,6 +623,7 @@ export default function CustomSection({
             id: 'custom',
             type: 'custom',
             name: data.file,
+            year: data.boundaryYear,
             boundaryType: data.boundaryType,
             boundaryYear: data.boundaryYear,
             dataColumn: data.dataColumn,
