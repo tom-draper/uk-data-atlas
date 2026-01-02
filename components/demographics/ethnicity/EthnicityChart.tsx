@@ -75,7 +75,7 @@ Legend.displayName = "Legend";
 
 interface EthnicityChartProps {
 	dataset: EthnicityDataset;
-	aggregatedData: AggregatedEthnicityData | null;
+	aggregatedData: Record<number, AggregatedEthnicityData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (

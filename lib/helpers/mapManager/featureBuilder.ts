@@ -59,7 +59,7 @@ export class FeatureBuilder {
 		getWinner: (code: string) => string,
 	): Features {
 		return this.mapFeatures(features, (feature) => ({
-			winningParty: getWinner(feature.properties[codeProp]),
+			winningParty: getWinner((feature.properties as any)[codeProp]),
 		}));
 	}
 
@@ -70,11 +70,11 @@ export class FeatureBuilder {
 		codeProp: PropertyKeys,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const locationData = data[feature.properties[codeProp]];
+			const locationData = data[(feature.properties as any)[codeProp]];
 
 			let percentage = 0;
 			if (locationData?.partyVotes) {
-				const partyVotes = locationData.partyVotes[partyCode] || 0;
+				const partyVotes = (locationData.partyVotes as any)[partyCode] || 0;
 				const totalVotes = Object.values(
 					locationData.partyVotes,
 				).reduce((sum, v) => sum + v, 0);
@@ -117,7 +117,7 @@ export class FeatureBuilder {
 		results: EthnicityDataset["results"],
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const code = feature.properties[codeProp];
+			const code = (feature.properties as any)[codeProp];
 			const majorityCategory = results[code] || "NONE";
 
 			return { majorityCategory };
@@ -131,7 +131,7 @@ export class FeatureBuilder {
 		codeProp: string,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const code = feature.properties[codeProp];
+			const code = (feature.properties as any)[codeProp];
 			const locationData = data[code] || {};
 
 			let totalPopulation = 0;
@@ -177,7 +177,7 @@ export class FeatureBuilder {
 		}
 
 		return this.mapFeatures(features, (feature) => {
-			const code = feature.properties[codeProp];
+			const code = (feature.properties as any)[codeProp];
 			const value = customDataset.data[code];
 
 			const normalised = normalizeValue(
@@ -203,11 +203,11 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const wardPopulation =
-				dataset.data[feature.properties[wardCodeProp]];
+				dataset.data[(feature.properties as any)[wardCodeProp]];
 
 			const color = wardPopulation
 				? getColorForAge(
-						calculateMedianAge(wardPopulation),
+						calculateMedianAge(wardPopulation) ?? 0,
 						mapOptions.ageDistribution,
 						mapOptions.theme.id,
 					)
@@ -225,7 +225,7 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const wardPopulation =
-				dataset.data[feature.properties[wardCodeProp]];
+				dataset.data[(feature.properties as any)[wardCodeProp]];
 
 			let color = DEFAULT_COLOR;
 			if (wardPopulation) {
@@ -247,7 +247,7 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const wardPopulation =
-				dataset.data[feature.properties[wardCodeProp]];
+				dataset.data[(feature.properties as any)[wardCodeProp]];
 
 			let color = DEFAULT_COLOR;
 			if (wardPopulation) {
@@ -274,7 +274,7 @@ export class FeatureBuilder {
 		mapOptions: MapOptions,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const ward = dataset.data[feature.properties[wardCodeProp]];
+			const ward = dataset.data[(feature.properties as any)[wardCodeProp]];
 
 			const color = ward?.prices[2023]
 				? getColorForHousePrice(
@@ -295,7 +295,7 @@ export class FeatureBuilder {
 		mapOptions: MapOptions,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const area = dataset.data[feature.properties[ladCodeProp]];
+			const area = dataset.data[(feature.properties as any)[ladCodeProp]];
 
 			const color = area
 				? getColorForCrimeRate(
@@ -317,7 +317,7 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const income =
-				dataset.data[feature.properties[ladCodeProp]]?.annual?.median;
+				dataset.data[(feature.properties as any)[ladCodeProp]]?.annual?.median;
 
 			const color = income
 				? getColorForIncome(

@@ -12,7 +12,7 @@ import { useMemo, memo } from "react";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
-	aggregatedData: AggregatedPopulationData | null;
+	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
@@ -35,13 +35,19 @@ const getWardPopulationDensity = (feature: any, total: number) => {
 	return { density, areaSqKm };
 };
 
-const detectPropertyKey = (geojson: BoundaryGeojson) => {
+const detectPropertyKey = (geojson: BoundaryGeojson, year: number) => {
 	const firstFeature = geojson.features[0];
 	if (!firstFeature) return WARD_CODE_KEYS[0];
 
-	const props = firstFeature.properties;
+	const yearSuffix = year.toString().slice(-2);
+	const specificKey = WARD_CODE_KEYS.find((key) => key.endsWith(yearSuffix));
+
+	if (specificKey && specificKey in firstFeature.properties) {
+		return specificKey;
+	}
+
 	for (let i = 0; i < WARD_CODE_KEYS.length; i++) {
-		if (WARD_CODE_KEYS[i] in props) return WARD_CODE_KEYS[i];
+		if (WARD_CODE_KEYS[i] in firstFeature.properties) return WARD_CODE_KEYS[i];
 	}
 	return WARD_CODE_KEYS[0];
 };
@@ -157,10 +163,11 @@ function PopulationDensityChart({
 	const { density, areaSqKm, total } = useMemo(() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
+			const data = aggregatedData[dataset.year];
 			return {
-				density: aggregatedData[dataset.year].density,
-				areaSqKm: aggregatedData[dataset.year].totalArea,
-				total: aggregatedData[dataset.year].populationStats.total,
+				density: data.density,
+				areaSqKm: data.totalArea,
+				total: data.populationStats.total,
 			};
 		}
 
@@ -172,7 +179,7 @@ function PopulationDensityChart({
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
 			const wardCode = selectedArea.code;
-			const wardCodeProp = detectPropertyKey(geojson);
+			const wardCodeProp = detectPropertyKey(geojson, dataset.boundaryYear);
 
 			let populationData = dataset.data[wardCode];
 
@@ -190,7 +197,7 @@ function PopulationDensityChart({
 
 			if (populationData) {
 				const wardFeature = geojson.features.find(
-					(f) => f.properties?.[wardCodeProp] === wardCode,
+					(f) => f.properties?.[wardCodeProp as keyof typeof f.properties] === wardCode,
 				);
 
 				if (wardFeature) {
@@ -236,7 +243,7 @@ function PopulationDensityChart({
 				return emptyResult;
 			}
 
-			const wardCodeProp = detectPropertyKey(geojson);
+			const wardCodeProp = detectPropertyKey(geojson, dataset.boundaryYear);
 			let totalPopulation = 0;
 			let totalArea = 0;
 
@@ -258,7 +265,7 @@ function PopulationDensityChart({
 				if (populationData) {
 					// Find the ward feature for area calculation
 					const wardFeature = geojson.features.find(
-						(f) => f.properties?.[wardCodeProp] === wardCode,
+						(f) => f.properties?.[wardCodeProp as keyof typeof f.properties] === wardCode,
 					);
 
 					if (wardFeature) {

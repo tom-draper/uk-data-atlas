@@ -34,7 +34,7 @@ interface ProcessedYearData {
 
 const useLocalElectionData = (
 	availableDatasets: Record<string, LocalElectionDataset>,
-	aggregatedData: AggregatedLocalElectionData | null,
+	aggregatedData: Record<number, AggregatedLocalElectionData> | null,
 	selectedArea: SelectedArea | null,
 	getCodeForYear?: (
 		type: "ward",
@@ -189,8 +189,9 @@ const useLocalElectionData = (
 interface LocalElectionResultChartSectionProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, LocalElectionDataset>;
-	aggregatedData: AggregatedLocalElectionData | null;
+	aggregatedData: Record<number, AggregatedLocalElectionData> | null;
 	selectedArea: SelectedArea | null;
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper?: {
 		getCodeForYear: (
@@ -207,6 +208,7 @@ export default function LocalElectionResultChartSection({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	activeViz,
 	setActiveViz,
 	codeMapper,
 }: LocalElectionResultChartSectionProps) {
@@ -228,7 +230,12 @@ export default function LocalElectionResultChartSection({
 				<LocalElectionResultChart
 					key={data.year}
 					data={data}
-					isActive={activeDataset?.id === `localElection${data.year}`}
+					isActive={
+						(activeDataset &&
+							((activeDataset.type === "localElection" &&
+								activeDataset.id === `localElection${data.year}`) ||
+								(activeViz.datasetType === "custom" && activeViz.vizId === "custom"))) as boolean
+					}
 					setActiveViz={setActiveViz}
 				/>
 			))}

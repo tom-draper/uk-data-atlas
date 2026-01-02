@@ -12,7 +12,7 @@ import PopulationDensityChart from "./PopulationDensityChart";
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
 	boundaryData: BoundaryData;
-	aggregatedData: AggregatedPopulationData | null;
+	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (

@@ -92,12 +92,6 @@ export interface ConstituencyStats {
 	invalidVotes: number;
 }
 
-export interface AggregatedLocalElectionData extends Record<
-	LocalElectionYear,
-	WardStats
-> {}
+export interface AggregatedLocalElectionData extends WardStats {}
 
-export interface AggregatedGeneralElectionData extends Record<
-	GeneralElectionYear,
-	ConstituencyStats
-> {}
+export interface AggregatedGeneralElectionData extends ConstituencyStats {}

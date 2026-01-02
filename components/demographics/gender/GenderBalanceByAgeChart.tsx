@@ -8,7 +8,7 @@ import {
 
 export interface GenderBalanceByAgeChartProps {
 	dataset: PopulationDataset;
-	aggregatedData: AggregatedPopulationData | null;
+	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (
@@ -40,13 +40,12 @@ function GenderBalanceByAgeChart({
 	const { ageData, percentages } = useMemo(() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
+			const yearlyData = aggregatedData[dataset.year];
 			const data =
-				aggregatedData[dataset.year].medianAge !== 0
-					? aggregatedData[dataset.year].genderAgeData
-					: [];
+				yearlyData.medianAge !== 0 ? yearlyData.genderAgeData : [];
 
 			// Pre-calculate percentages
-			const pct = data.map(({ males, females }) => {
+			const pct = data.map(({ males, females }: { males: number; females: number }) => {
 				const total = males + females;
 				return total > 0 ? (males / total) * 100 : 50;
 			});

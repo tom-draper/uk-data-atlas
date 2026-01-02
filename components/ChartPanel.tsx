@@ -160,6 +160,7 @@ export default memo(function ChartPanel({
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
+						activeViz={activeViz}
 					/>
 					<LocalElectionResultChartSection
 						activeDataset={activeDataset}
@@ -168,6 +169,7 @@ export default memo(function ChartPanel({
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
+						activeViz={activeViz}
 					/>
 					<DemographicsChartSection
 						availablePopulationDatasets={datasets.population}
@@ -189,6 +191,7 @@ export default memo(function ChartPanel({
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
+						activeViz={activeViz}
 					/>
 					<CrimeSection
 						activeDataset={activeDataset}
@@ -197,6 +200,7 @@ export default memo(function ChartPanel({
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
+						activeViz={activeViz}
 					/>
 					<CustomSection
 					 	customDataset={customDataset}

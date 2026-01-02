@@ -11,10 +11,11 @@ import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import MapView from "@components/MapView";
 import UIOverlay from "@components/UIOverlay";
 
-import type { ActiveViz, Datasets, SelectedArea } from "@lib/types";
+import type { ActiveViz, Datasets, SelectedArea, BoundaryData } from "@lib/types";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { LOCATIONS } from "@lib/data/locations";
+import maplibregl from "maplibre-gl";
 
 interface MapInterfaceProps {
 	datasets: Datasets;
@@ -62,7 +63,7 @@ export default function MapInterface({
 	const geojson = useMemo(() => {
 		if (!activeDataset) return null;
 		return (
-			boundaryData[activeDataset.boundaryType]?.[
+			boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
 			activeDataset.boundaryYear
 			] ?? null
 		);
@@ -111,7 +112,11 @@ export default function MapInterface({
 	});
 
 	const handleExport = useCallback(() => {
-		const mapInstance = map.current;
+		type MapWithExport = maplibregl.Map & {
+			once(type: "render", listener: () => void): void;
+			triggerRepaint(): void;
+		};
+		const mapInstance = map.current as MapWithExport | null;
 		if (!mapInstance) return;
 
 		mapInstance.once("render", () => {

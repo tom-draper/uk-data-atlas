@@ -12,7 +12,7 @@ import CrimeChart from "./CrimeRateChart";
 interface CrimeChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, CrimeDataset>;
-	aggregatedData: AggregatedCrimeData | null;
+	aggregatedData: Record<number, AggregatedCrimeData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (
@@ -21,6 +21,7 @@ interface CrimeChartProps {
 			targetYear: number,
 		) => string | undefined;
 	};
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -30,6 +31,7 @@ export default function CrimeSection({
 	aggregatedData,
 	selectedArea,
 	codeMapper,
+	activeViz,
 	setActiveViz,
 }: CrimeChartProps) {
 	return (
@@ -42,6 +44,7 @@ export default function CrimeSection({
 				year={2025}
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
+				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 			/>
 		</div>

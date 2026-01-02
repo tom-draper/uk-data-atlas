@@ -15,9 +15,9 @@ import IncomeChart from "./income/IncomeChart";
 interface EconomicsSectionProps {
 	activeDataset: Dataset | null;
 	availableHousePriceDatasets: Record<string, HousePriceDataset>;
-	aggregatedHousePriceData: AggregatedHousePriceData | null;
+	aggregatedHousePriceData: Record<number, AggregatedHousePriceData> | null;
 	availableIncomeDatasets: Record<string, IncomeDataset>;
-	aggregatedIncomeData: AggregatedIncomeData | null;
+	aggregatedIncomeData: Record<number, AggregatedIncomeData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: {
 		getCodeForYear: (
@@ -27,6 +27,7 @@ interface EconomicsSectionProps {
 		) => string | undefined;
 		getWardsForLad: (ladCode: string, year: number) => string[];
 	};
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -38,6 +39,7 @@ export default function EconomicsSection({
 	aggregatedIncomeData,
 	selectedArea,
 	codeMapper,
+	activeViz,
 	setActiveViz,
 }: EconomicsSectionProps) {
 	return (
@@ -50,6 +52,7 @@ export default function EconomicsSection({
 				year={2023}
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
+				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 			/>
 			<IncomeChart
@@ -59,6 +62,7 @@ export default function EconomicsSection({
 				year={2025}
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
+				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 			/>
 		</div>

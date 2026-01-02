@@ -11,7 +11,7 @@ import AgeDistributionChart from "./AgeDistributionChart";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
-	aggregatedData: AggregatedPopulationData | null;
+	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -75,12 +75,12 @@ function AgeDistribution({
 			"45-64": 0,
 			"65+": 0,
 		};
+		let max = 0;
 
 		//  Handle Aggregated Data Case (no area selected)
 		if (selectedArea === null && aggregatedData) {
 			const data = aggregatedData[dataset.year];
 			const counts = new Uint32Array(100);
-			let max = 0;
 
 			if (data.ages) {
 				for (let i = 0; i < data.ages.length; i++) {
