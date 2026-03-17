@@ -154,6 +154,23 @@ DensityGrid.displayName = "DensityGrid";
 const MAX_LAD_CACHE_ENTRIES = 50;
 const densityCache = new Map<string, Map<number, any>>();
 
+// WeakMap-keyed feature index: automatically GC'd when the geojson object is freed.
+// Converts O(n) .find() per ward into O(1) Map lookup.
+const featureIndexCache = new WeakMap<object, Map<string, any>>();
+
+const getFeatureIndex = (geojson: any, wardCodeProp: string): Map<string, any> => {
+	let index = featureIndexCache.get(geojson);
+	if (!index) {
+		index = new Map();
+		for (const feature of geojson.features) {
+			const code = feature.properties?.[wardCodeProp];
+			if (code) index.set(String(code), feature);
+		}
+		featureIndexCache.set(geojson, index);
+	}
+	return index;
+};
+
 function PopulationDensityChart({
 	dataset,
 	aggregatedData,
@@ -197,9 +214,8 @@ function PopulationDensityChart({
 			}
 
 			if (populationData) {
-				const wardFeature = geojson.features.find(
-					(f) => f.properties?.[wardCodeProp as keyof typeof f.properties] === wardCode,
-				);
+				const featureIndex = getFeatureIndex(geojson, wardCodeProp);
+				const wardFeature = featureIndex.get(wardCode);
 
 				if (wardFeature) {
 					const total = calculateTotal(populationData.total);
@@ -248,6 +264,7 @@ function PopulationDensityChart({
 			}
 
 			const wardCodeProp = detectPropertyKey(geojson, dataset.boundaryYear);
+			const featureIndex = getFeatureIndex(geojson, wardCodeProp);
 			let totalPopulation = 0;
 			let totalArea = 0;
 
@@ -267,10 +284,7 @@ function PopulationDensityChart({
 				}
 
 				if (populationData) {
-					// Find the ward feature for area calculation
-					const wardFeature = geojson.features.find(
-						(f) => f.properties?.[wardCodeProp as keyof typeof f.properties] === wardCode,
-					);
+					const wardFeature = featureIndex.get(wardCode);
 
 					if (wardFeature) {
 						const wardTotal = calculateTotal(populationData.total);

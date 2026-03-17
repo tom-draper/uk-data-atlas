@@ -277,6 +277,7 @@ export const filterFeatures = (
 
 	// Filter wards by LAD code (uses getLadForWard for 2021 data without LAD properties)
 	if (type === "ward" && locData.lad_codes?.length) {
+		const ladCodeSet = new Set(locData.lad_codes);
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
@@ -287,18 +288,19 @@ export const filterFeatures = (
 						? getLadForWard(wardCode)
 						: undefined;
 				ladCode = ladCode || mappedLadCode;
-				return ladCode && locData.lad_codes.includes(ladCode);
+				return ladCode && ladCodeSet.has(ladCode);
 			}),
 		};
 	}
 
 	// Filter local authorities by LAD code
 	if (type === "localAuthority" && locData.lad_codes?.length) {
+		const ladCodeSet = new Set(locData.lad_codes);
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
 				const ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
-				return ladCode && locData.lad_codes.includes(ladCode);
+				return ladCode && ladCodeSet.has(ladCode);
 			}),
 		};
 	}
