@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { BoundaryGeojson } from "@lib/types";
+import { BoundaryGeojson, Features } from "@lib/types";
 import {
 	BoundaryType,
 	PROPERTY_KEYS,
@@ -315,7 +315,7 @@ export function useCodeMapper() {
  * Extract ward-to-LAD mappings from GeoJSON features
  */
 export const extractWardLadMappings = (
-	features: any[],
+	features: Features,
 	wardCodeKeys: readonly string[],
 	localAuthorityCodeKeys: readonly string[],
 ): WardLadMapping => {
@@ -340,7 +340,7 @@ export const extractWardLadMappings = (
  * Extract LAD-to-wards mappings from GeoJSON features (inverse of ward-to-LAD)
  */
 export const extractLadWardMappings = (
-	features: any[],
+	features: Features,
 	wardCodeKeys: readonly string[],
 	localAuthorityCodeKeys: readonly string[],
 ): Record<string, string[]> => {

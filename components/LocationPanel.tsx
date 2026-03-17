@@ -38,9 +38,9 @@ const COUNTRY_LOCATIONS = new Set([
 /**
  * Calculate total population for a ward
  */
-const calculateWardPopulation = (wardData: any): number => {
+const calculateWardPopulation = (wardData: PopulationWardData): number => {
 	return Object.values(wardData.total).reduce(
-		(sum: number, val: any) => sum + Number(val),
+		(sum: number, val: number) => sum + val,
 		0,
 	);
 };
@@ -49,7 +49,7 @@ const calculateWardPopulation = (wardData: any): number => {
  * Calculate bounds from a GeoJSON feature
  */
 const calculateFeatureBounds = (
-	feature: any,
+	feature: BoundaryGeojson["features"][0],
 ): [number, number, number, number] => {
 	if (!feature?.geometry) {
 		return [-1, -1, -1, -1];
@@ -60,15 +60,15 @@ const calculateFeatureBounds = (
 		maxLng = -Infinity,
 		maxLat = -Infinity;
 
-	const processCoords = (coords: any): void => {
+	const processCoords = (coords: number[] | number[][]): void => {
 		if (typeof coords[0] === "number") {
-			const [lng, lat] = coords;
+			const [lng, lat] = coords as number[];
 			minLng = Math.min(minLng, lng);
 			maxLng = Math.max(maxLng, lng);
 			minLat = Math.min(minLat, lat);
 			maxLat = Math.max(maxLat, lat);
 		} else {
-			coords.forEach(processCoords);
+			(coords as number[][]).forEach(processCoords);
 		}
 	};
 

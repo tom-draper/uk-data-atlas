@@ -91,23 +91,24 @@ export class StatsCalculator {
 		};
 
 		// Single pass aggregation with direct property access
+		const sv = stats.partyVotes as Record<string, number>;
 		for (let i = 0; i < features.length; i++) {
-			const ward = wardData[(features[i].properties as any)[wardCodeProp]];
+			const ward = wardData[(features[i].properties as Record<string, string>)[wardCodeProp]];
 			if (!ward) continue;
 
-			const partyVotes = ward.partyVotes;
-			(stats.partyVotes as any).LAB += partyVotes.LAB || 0;
-			(stats.partyVotes as any).CON += partyVotes.CON || 0;
-			(stats.partyVotes as any).LD += partyVotes.LD || 0;
-			(stats.partyVotes as any).GREEN += partyVotes.GREEN || 0;
-			(stats.partyVotes as any).REF += partyVotes.REF || 0;
-			(stats.partyVotes as any).IND += partyVotes.IND || 0;
-			(stats.partyVotes as any).DUP += partyVotes.DUP || 0;
-			(stats.partyVotes as any).PC += partyVotes.PC || 0;
-			(stats.partyVotes as any).SNP += partyVotes.SNP || 0;
-			(stats.partyVotes as any).SF += partyVotes.SF || 0;
-			(stats.partyVotes as any).APNI += partyVotes.APNI || 0;
-			(stats.partyVotes as any).SDLP += partyVotes.SDLP || 0;
+			const partyVotes = ward.partyVotes as Record<string, number>;
+			sv.LAB += partyVotes.LAB || 0;
+			sv.CON += partyVotes.CON || 0;
+			sv.LD += partyVotes.LD || 0;
+			sv.GREEN += partyVotes.GREEN || 0;
+			sv.REF += partyVotes.REF || 0;
+			sv.IND += partyVotes.IND || 0;
+			sv.DUP += partyVotes.DUP || 0;
+			sv.PC += partyVotes.PC || 0;
+			sv.SNP += partyVotes.SNP || 0;
+			sv.SF += partyVotes.SF || 0;
+			sv.APNI += partyVotes.APNI || 0;
+			sv.SDLP += partyVotes.SDLP || 0;
 
 			stats.electorate += ward.electorate;
 			stats.totalVotes += ward.totalVotes;
@@ -143,7 +144,7 @@ export class StatsCalculator {
 
 		for (let i = 0; i < features.length; i++) {
 			const constituency =
-				constituencyData[(features[i].properties as any)[constituencyCodeProp]];
+				constituencyData[(features[i].properties as Record<string, string>)[constituencyCodeProp]];
 			if (!constituency) continue;
 
 			stats.totalSeats++;
@@ -158,14 +159,14 @@ export class StatsCalculator {
 			}
 
 			// Direct key access is faster than loop
-			const pv = constituency.partyVotes;
+			const pv = constituency.partyVotes as Record<string, number>;
+			const spv = stats.partyVotes as Record<string, number>;
 			for (let j = 0; j < PARTY_KEYS.length; j++) {
-				const party = PARTY_KEYS[j] as PartyCode;
+				const party = PARTY_KEYS[j];
 				const votes = pv[party] || 0;
 				if (votes > 0) {
 					stats.totalVotes += votes;
-					(stats.partyVotes as any)[party] =
-						((stats.partyVotes as any)[party] || 0) + votes;
+					spv[party] = (spv[party] || 0) + votes;
 				}
 			}
 		}
@@ -222,7 +223,7 @@ export class StatsCalculator {
 
 		for (let i = 0; i < features.length; i++) {
 			const localAuthority =
-				localAuthorityData[(features[i].properties as any)[ladProp]];
+				localAuthorityData[(features[i].properties as Record<string, string>)[ladProp]];
 			if (!localAuthority) continue;
 
 			// Iterate through parent categories
@@ -298,7 +299,7 @@ export class StatsCalculator {
 		let wardCount = 0;
 
 		for (let i = 0; i < features.length; i++) {
-			const ward = wardData[(features[i].properties as any)[wardCodeProp]];
+			const ward = wardData[(features[i].properties as Record<string, string>)[wardCodeProp]];
 			if (!ward) continue;
 
 			const prices = ward.prices;
@@ -359,7 +360,7 @@ export class StatsCalculator {
 		let localAuthorityCount = 0;
 
 		for (let i = 0; i < features.length; i++) {
-			const area = crimeData[(features[i].properties as any)[ladCodeProp]];
+			const area = crimeData[(features[i].properties as Record<string, string>)[ladCodeProp]];
 			if (!area) continue;
 
 			const crime = area.totalRecordedCrime;
@@ -399,7 +400,7 @@ export class StatsCalculator {
 
 		for (let i = 0; i < features.length; i++) {
 			const locationIncome =
-				incomeData[(features[i].properties as any)[ladCodeProp]];
+				incomeData[(features[i].properties as Record<string, string>)[ladCodeProp]];
 			if (locationIncome?.annual?.median) {
 				totalMedianIncome += locationIncome.annual.median;
 				localAuthorityCount++;
@@ -419,7 +420,7 @@ export class StatsCalculator {
 
 	calculateCustomDatasetStats(
 		geojson: BoundaryGeojson,
-		data: any,
+		data: Record<string, number>,
 		location: string | null,
 		datasetId: string | null,
 	) {
@@ -428,11 +429,11 @@ export class StatsCalculator {
 		if (cached) return cached;
 
 		const codeProp = this.propertyDetector.detectCode(geojson.features);
-		
+
 		let sum = 0;
 		let count = 0;
 		for (let i = 0; i < geojson.features.length; i++) {
-			const featureCode = (geojson.features[i].properties as any)[codeProp];
+			const featureCode = (geojson.features[i].properties as Record<string, string>)[codeProp];
 			const featureData = data[featureCode];
 
 			if (typeof featureData === "number") {
@@ -498,7 +499,7 @@ export class StatsCalculator {
 		};
 
 		for (let i = 0; i < features.length; i++) {
-			const ward = populationData[(features[i].properties as any)[wardCodeProp]];
+			const ward = populationData[(features[i].properties as Record<string, string>)[wardCodeProp]];
 			if (!ward) continue;
 
 			aggregated.totalPop += calculateTotal(ward.total);

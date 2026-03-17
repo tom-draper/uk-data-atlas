@@ -3,13 +3,13 @@
 const MAX_STATS_CACHE_SIZE = 200;
 
 export class StatsCache {
-	private cache = new Map<string, any>();
+	private cache = new Map<string, unknown>();
 
-	get(key: string): any | null {
+	get(key: string): unknown {
 		return this.cache.get(key) ?? null;
 	}
 
-	set(key: string, value: any): void {
+	set(key: string, value: unknown): void {
 		if (this.cache.size >= MAX_STATS_CACHE_SIZE) {
 			this.cache.delete(this.cache.keys().next().value!);
 		}

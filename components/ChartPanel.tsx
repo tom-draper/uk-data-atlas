@@ -10,6 +10,7 @@ import {
 	BoundaryData,
 	BoundaryCodes,
 } from "@lib/types";
+import { CustomDataset } from "@/lib/types/custom";
 import LocalElectionResultChartSection from "./local-election/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
 import { memo } from "react";
@@ -26,8 +27,8 @@ interface ChartPanelProps {
 	boundaryData: BoundaryData;
 	boundaryCodes: BoundaryCodes;
 	datasets: Datasets;
-	customDataset: any;
-	setCustomDataset: (dataset: any) => void;
+	customDataset: CustomDataset | null;
+	setCustomDataset: (dataset: CustomDataset | null) => void;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	aggregatedData: AggregatedData;

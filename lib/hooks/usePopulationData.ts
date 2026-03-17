@@ -24,20 +24,6 @@ export const usePopulationData = () => {
 	useEffect(() => {
 		const loadPopulationData = async () => {
 			try {
-				// Load 2020 data (separate files for males/females/persons)
-				// console.log('Loading population 2020 data...')
-				// const [femalesResponse, malesResponse, personsResponse] = await Promise.all([
-				// 	fetch('/data/population/Mid-2020 Females-Table 1.csv'),
-				// 	fetch('/data/population/Mid-2020 Males-Table 1.csv'),
-				// 	fetch('/data/population/Mid-2020 Persons-Table 1.csv'),
-				// ]);
-
-				// const [femalesText, malesText, personsText] = await Promise.all([
-				// 	femalesResponse.text(),
-				// 	malesResponse.text(),
-				// 	personsResponse.text(),
-				// ]);
-
 				// Load 2021 and 2022 data (combined files)
 				const [data2022Response] = await Promise.all([
 					fetch(withCDN("/data/population/Mid-2022 Ward 2023.csv")),
@@ -46,100 +32,6 @@ export const usePopulationData = () => {
 				const [data2022Text] = await Promise.all([
 					data2022Response.text(),
 				]);
-
-				// Parse 2020 data (old format)
-				const parsePopulationData2020 = (csvText: string) => {
-					const data: CategoryPopulationWardData = {};
-					let wardCodeIndex = -1;
-					let wardNameIndex = -1;
-					let laCodeIndex = -1;
-					let laNameIndex = -1;
-					let allAgesIndex = -1;
-					let ageColumnsStartIndex = -1;
-
-					Papa.parse(csvText, {
-						skipEmptyLines: true,
-						complete: (results) => {
-							results.data.forEach((row: any, index: number) => {
-								if (index === 4) {
-									wardCodeIndex = row.findIndex((col: any) =>
-										col?.trim?.()?.includes("Ward Code"),
-									);
-									wardNameIndex = row.findIndex((col: any) =>
-										col?.trim?.()?.includes("Ward Name"),
-									);
-									laCodeIndex = row.findIndex((col: any) =>
-										col?.trim?.()?.includes("LA Code"),
-									);
-									laNameIndex = row.findIndex((col: any) =>
-										col?.trim?.()?.includes("LA name"),
-									);
-									allAgesIndex = row.findIndex(
-										(col: any) =>
-											col?.trim?.() === "All Ages",
-									);
-									ageColumnsStartIndex = allAgesIndex + 1;
-									return;
-								}
-
-								if (index <= 4) {
-									return;
-								}
-
-								if (
-									!Array.isArray(row) ||
-									row.length < ageColumnsStartIndex
-								) {
-									return;
-								}
-
-								const wardCode = row[wardCodeIndex]?.trim();
-								const wardName =
-									row[wardNameIndex]?.trim() || "";
-								const laCode = row[laCodeIndex]?.trim() || "";
-								const laName = row[laNameIndex]?.trim() || "";
-
-								if (wardCode && wardCode.startsWith("E05")) {
-									const ageData: AgeData = {};
-
-									for (
-										let i = ageColumnsStartIndex;
-										i < row.length;
-										i++
-									) {
-										const ageValue = row[i]?.trim();
-										if (ageValue && ageValue !== "") {
-											const age = String(
-												i - ageColumnsStartIndex,
-											);
-											const count = parseInt(
-												ageValue.replace(/,/g, ""),
-												10,
-											);
-											if (!isNaN(count)) {
-												ageData[age] = count;
-											}
-										}
-									}
-
-									if (Object.keys(ageData).length > 0) {
-										data[wardCode] = {
-											ageData,
-											wardName,
-											laCode,
-											laName,
-										};
-									}
-								}
-							});
-						},
-						error: (parseError: unknown) => {
-							throw new Error(`CSV parsing error: ${parseError}`);
-						},
-					});
-
-					return data;
-				};
 
 				// Parse 2021/2022 data (new format with F0-F90, M0-M90)
 				const parsePopulationDataCombined = (csvText: string) => {
@@ -253,52 +145,6 @@ export const usePopulationData = () => {
 
 					return { malesData, femalesData, totalData };
 				};
-
-				// Parse 2020 data
-				// const femalesAgeData = parsePopulationData2020(femalesText);
-				// const malesAgeData = parsePopulationData2020(malesText);
-				// const totalAgeData = parsePopulationData2020(personsText);
-
-				// // Combine 2020 data
-				// const combinedData2020: PopulationDataset['populationData'] = {};
-				// const allWardCodes2020 = new Set([
-				// 	...Object.keys(femalesAgeData),
-				// 	...Object.keys(malesAgeData),
-				// 	...Object.keys(totalAgeData),
-				// ]);
-
-				// allWardCodes2020.forEach((wardCode) => {
-				// 	combinedData2020[wardCode] = {
-				// 		total: totalAgeData[wardCode]?.ageData || {},
-				// 		males: malesAgeData[wardCode]?.ageData || {},
-				// 		females: femalesAgeData[wardCode]?.ageData || {},
-				// 		wardName: totalAgeData[wardCode]?.wardName || '',
-				// 		laCode: totalAgeData[wardCode]?.laCode || '',
-				// 		laName: totalAgeData[wardCode]?.laName || '',
-				// 	};
-				// });
-
-				// Parse 2021 data
-				// const parsed2021 = parsePopulationDataCombined(data2021Text);
-				// const combinedData2021: PopulationDataset['populationData'] = {};
-				// const allWardCodes2021 = new Set([
-				// 	...Object.keys(parsed2021.femalesData),
-				// 	...Object.keys(parsed2021.malesData),
-				// 	...Object.keys(parsed2021.totalData),
-				// ]);
-
-				// allWardCodes2021.forEach((wardCode) => {
-				// 	combinedData2021[wardCode] = {
-				// 		total: parsed2021.totalData[wardCode]?.ageData || {},
-				// 		males: parsed2021.malesData[wardCode]?.ageData || {},
-				// 		females: parsed2021.femalesData[wardCode]?.ageData || {},
-				// 		wardName: parsed2021.totalData[wardCode]?.wardName || '',
-				// 		laCode: parsed2021.totalData[wardCode]?.laCode || '',
-				// 		laName: parsed2021.totalData[wardCode]?.laName || '',
-				// 	};
-				// });
-
-				// Parse 2022 data
 				const parsed2022 = parsePopulationDataCombined(data2022Text);
 				const combinedData2022: PopulationDataset["data"] = {};
 				const allWardCodes2022 = new Set([

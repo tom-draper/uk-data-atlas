@@ -4,6 +4,7 @@ import {
 	AggregatedPopulationData,
 	BoundaryData,
 	BoundaryGeojson,
+	Feature,
 	PopulationDataset,
 	SelectedArea,
 } from "@/lib/types";
@@ -25,7 +26,7 @@ interface PopulationDensityChartProps {
 	};
 }
 
-const getWardPopulationDensity = (feature: any, total: number) => {
+const getWardPopulationDensity = (feature: Feature, total: number) => {
 	// Compute approximate area
 	const coordinates = feature.geometry.coordinates;
 	const areaSqKm = polygonAreaSqKm(coordinates);
@@ -156,9 +157,9 @@ const densityCache = new Map<string, Map<number, any>>();
 
 // WeakMap-keyed feature index: automatically GC'd when the geojson object is freed.
 // Converts O(n) .find() per ward into O(1) Map lookup.
-const featureIndexCache = new WeakMap<object, Map<string, any>>();
+const featureIndexCache = new WeakMap<object, Map<string, Feature>>();
 
-const getFeatureIndex = (geojson: any, wardCodeProp: string): Map<string, any> => {
+const getFeatureIndex = (geojson: BoundaryGeojson, wardCodeProp: string): Map<string, Feature> => {
 	let index = featureIndexCache.get(geojson);
 	if (!index) {
 		index = new Map();

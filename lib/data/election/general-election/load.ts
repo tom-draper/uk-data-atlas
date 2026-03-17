@@ -16,7 +16,6 @@ const parseVotes = (value: any): number => {
 export const fetchAndParseGeneralElectionData = async (
 	config: GeneralElectionSourceConfig,
 ): Promise<GeneralElectionDataset> => {
-	console.log(`Loading general election data for ${config.year}...`);
 	const res = await fetch(config.url);
 	let csvText = await res.text();
 

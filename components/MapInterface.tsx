@@ -12,6 +12,7 @@ import MapView from "@components/MapView";
 import UIOverlay from "@components/UIOverlay";
 
 import type { ActiveViz, Datasets, SelectedArea, BoundaryData } from "@lib/types";
+import type { CustomDataset } from "@/lib/types/custom";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { LOCATIONS } from "@lib/data/locations";
@@ -23,8 +24,8 @@ interface MapInterfaceProps {
 	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
 	setSelectedLocation: (location: string) => void;
-	customDataset: any;
-	setCustomDataset: (dataset: any) => void;
+	customDataset: CustomDataset | null;
+	setCustomDataset: (dataset: CustomDataset | null) => void;
 }
 
 export default function MapInterface({

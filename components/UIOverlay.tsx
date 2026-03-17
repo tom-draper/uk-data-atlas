@@ -11,13 +11,14 @@ import type {
 	Datasets,
 	SelectedArea,
 } from "@lib/types";
+import type { CustomDataset } from "@/lib/types/custom";
 import { MapOptions } from "@/lib/types/mapOptions";
 import { CodeType } from "@/lib/hooks/useCodeMapper";
 
 interface UIOverlayProps {
 	datasets: Datasets;
-	customDataset: any;
-	setCustomDataset: (dataset: any) => void;
+	customDataset: CustomDataset | null;
+	setCustomDataset: (dataset: CustomDataset | null) => void;
 	activeDataset: Dataset | null;
 	aggregatedData: AggregatedData;
 	activeViz: ActiveViz;

@@ -24,7 +24,7 @@ function throttle<T extends (...args: any[]) => void>(
 
 export class EventHandler {
 	private lastHoveredFeatureId: string | number | null = null;
-	private currentData: Record<string, any> | null = null;
+	private currentData: Record<string, unknown> | null = null;
 	private currentCodeProp: string = "";
 	private currentNameProp: string = "";
 	private currentBoundaryType: BoundaryType = "ward";
@@ -41,7 +41,7 @@ export class EventHandler {
 		this._mouseLeaveHandler = this.handleMouseLeave.bind(this);
 	}
 
-	setupEventHandlers(data: any, codeProp: string): void {
+	setupEventHandlers(data: Record<string, unknown>, codeProp: string): void {
 		this.currentData = data;
 		this.currentCodeProp = codeProp;
 		this.currentNameProp = this.nameProp(codeProp);
@@ -133,8 +133,8 @@ export class EventHandler {
 			this.lastHoveredFeatureId = null;
 		}
 		// Clear bound handlers
-		this._mouseMoveHandler = (() => { }) as any; // Assign empty function to avoid errors
-		this._mouseLeaveHandler = (() => { }) as any; // Assign empty function to avoid errors
+		this._mouseMoveHandler = () => {};
+		this._mouseLeaveHandler = () => {};
 		this.currentData = null;
 	}
 }

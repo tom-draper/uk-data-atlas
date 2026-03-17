@@ -10,6 +10,7 @@ import {
 	EthnicityDataset,
 	PropertyKeys,
 	CustomDataset,
+	Features,
 } from "@lib/types";
 import { MapMode, MapOptions } from "@lib/types/mapOptions";
 import { LayerManager } from "./layerManager";
@@ -186,7 +187,7 @@ export class MapManager {
 
 	updateMapForCustomDataset(
 		geojson: BoundaryGeojson,
-		dataset: any,
+		dataset: CustomDataset,
 		mapOptions: MapOptions,
 	): void {
 		const cacheKey = `custom-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
@@ -223,11 +224,11 @@ export class MapManager {
 		dataset: PopulationDataset,
 		mapOptions: MapOptions,
 		buildFeatures: (
-			features: any[],
+			features: Features,
 			dataset: PopulationDataset,
 			codeProp: PropertyKeys,
 			options: MapOptions,
-		) => any[],
+		) => Features,
 	): void {
 		const cacheKey = `population-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
 		let wardCodeProp = propCache.get(cacheKey);
@@ -300,20 +301,20 @@ export class MapManager {
 	// Generic update method for simple datasets
 	private updateGenericMap(
 		geojson: BoundaryGeojson,
-		dataset: any,
+		dataset: HousePriceDataset | CrimeDataset | IncomeDataset,
 		mapOptions: MapOptions,
-		detectProperty: (features: any[]) => PropertyKeys, // Ensure detectProperty returns PropertyKeys
+		detectProperty: (features: Features) => PropertyKeys,
 		buildFeatures: (
-			features: any[],
-			dataset: any,
-			codeProp: PropertyKeys, // Changed to PropertyKeys
+			features: Features,
+			dataset: HousePriceDataset | CrimeDataset | IncomeDataset,
+			codeProp: PropertyKeys,
 			options: MapOptions,
-		) => any[],
+		) => Features,
 		eventType: MapMode,
-		dataForEvents: any,
+		dataForEvents: Record<string, unknown>,
 	): void {
 		const cacheKey = `${eventType}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let codeProp: PropertyKeys | undefined = propCache.get(cacheKey); // Changed to PropertyKeys | undefined
+		let codeProp: PropertyKeys | undefined = propCache.get(cacheKey);
 
 		if (!codeProp) {
 			codeProp = detectProperty(geojson.features);
@@ -340,7 +341,7 @@ export class MapManager {
 		);
 		this.eventHandler.setupEventHandlers(
 			dataForEvents,
-			codeProp as string, // Cast to string for eventHandler
+			codeProp,
 		);
 	}
 
@@ -353,7 +354,7 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectWardCode.bind(this.propertyDetector) as (features: any[]) => PropertyKeys,
+			this.propertyDetector.detectWardCode.bind(this.propertyDetector) as (features: Features) => PropertyKeys,
 			this.featureBuilder.buildHousePriceFeatures.bind(
 				this.featureBuilder,
 			),
@@ -373,7 +374,7 @@ export class MapManager {
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(
 				this.propertyDetector,
-			) as (features: any[]) => PropertyKeys,
+			) as (features: Features) => PropertyKeys,
 			this.featureBuilder.buildCrimeRateFeatures.bind(
 				this.featureBuilder,
 			),
@@ -393,7 +394,7 @@ export class MapManager {
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(
 				this.propertyDetector,
-			) as (features: any[]) => PropertyKeys,
+			) as (features: Features) => PropertyKeys,
 			this.featureBuilder.buildIncomeFeatures.bind(this.featureBuilder),
 			"income",
 			dataset.data,

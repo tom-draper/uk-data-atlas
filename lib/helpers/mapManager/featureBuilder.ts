@@ -28,6 +28,7 @@ import {
 	normalizeValue,
 } from "../colorScale";
 import { IncomeDataset } from "@/lib/types/income";
+import { CustomDataset } from "@/lib/types/custom";
 
 const DEFAULT_COLOR = "#cccccc";
 
@@ -40,7 +41,7 @@ export class FeatureBuilder {
 		};
 	}
 
-	private mapFeatures<T extends Record<string, any>>(
+	private mapFeatures<T extends Record<string, unknown>>(
 		features: Features,
 		addProperties: (feature: Feature, index: number) => T,
 	): Features {
@@ -59,7 +60,7 @@ export class FeatureBuilder {
 		getWinner: (code: string) => string,
 	): Features {
 		return this.mapFeatures(features, (feature) => ({
-			winningParty: getWinner((feature.properties as any)[codeProp]),
+			winningParty: getWinner((feature.properties as Record<string, string>)[codeProp]),
 		}));
 	}
 
@@ -70,11 +71,11 @@ export class FeatureBuilder {
 		codeProp: PropertyKeys,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const locationData = data[(feature.properties as any)[codeProp]];
+			const locationData = data[(feature.properties as Record<string, string>)[codeProp]];
 
 			let percentage = 0;
 			if (locationData?.partyVotes) {
-				const partyVotes = (locationData.partyVotes as any)[partyCode] || 0;
+				const partyVotes = (locationData.partyVotes as Record<string, number>)[partyCode] || 0;
 				const totalVotes = Object.values(
 					locationData.partyVotes,
 				).reduce((sum, v) => sum + v, 0);
@@ -117,7 +118,7 @@ export class FeatureBuilder {
 		results: EthnicityDataset["results"],
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const code = (feature.properties as any)[codeProp];
+			const code = (feature.properties as Record<string, string>)[codeProp];
 			const majorityCategory = results[code] || "NONE";
 
 			return { majorityCategory };
@@ -131,7 +132,7 @@ export class FeatureBuilder {
 		codeProp: string,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const code = (feature.properties as any)[codeProp];
+			const code = (feature.properties as Record<string, string>)[codeProp];
 			const locationData = data[code] || {};
 
 			let totalPopulation = 0;
@@ -156,7 +157,7 @@ export class FeatureBuilder {
 
 	buildCustomDatasetFeatures(
 		features: Features,
-		customDataset: any,
+		customDataset: CustomDataset,
 		codeProp: PropertyKeys,
 		mapOptions: MapOptions
 	): Features {
@@ -177,7 +178,7 @@ export class FeatureBuilder {
 		}
 
 		return this.mapFeatures(features, (feature) => {
-			const code = (feature.properties as any)[codeProp];
+			const code = (feature.properties as Record<string, string>)[codeProp];
 			const value = customDataset.data[code];
 
 			const normalised = normalizeValue(

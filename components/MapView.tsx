@@ -1,13 +1,14 @@
 import { type MapManager } from "@/lib/helpers/mapManager";
 import { useMapUpdates } from "@lib/hooks/useMapUpdates";
-import { ActiveViz, Dataset } from "@/lib/types";
+import { ActiveViz, BoundaryGeojson, Dataset } from "@/lib/types";
+import { MapOptions } from "@/lib/types/mapOptions";
 
 interface MapViewProps {
 	activeDataset: Dataset | null;
 	activeViz: ActiveViz;
-	geojson: any;
+	geojson: BoundaryGeojson | null;
 	mapManager: MapManager | null;
-	mapOptions: any;
+	mapOptions: MapOptions;
 	handleMapContainer: (node: HTMLDivElement | null) => void;
 }
 
