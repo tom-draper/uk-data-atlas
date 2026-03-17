@@ -1,5 +1,6 @@
 // components/HousePriceChart.tsx
 "use client";
+import { memo } from "react";
 import {
 	ActiveViz,
 	AggregatedHousePriceData,
@@ -31,7 +32,7 @@ interface EconomicsSectionProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default function EconomicsSection({
+export default memo(function EconomicsSection({
 	activeDataset,
 	availableHousePriceDatasets,
 	aggregatedHousePriceData,
@@ -67,4 +68,4 @@ export default function EconomicsSection({
 			/>
 		</div>
 	);
-}
+});

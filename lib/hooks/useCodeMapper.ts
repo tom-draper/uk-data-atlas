@@ -1,7 +1,7 @@
 // lib/hooks/useCodeMapper.ts
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { BoundaryGeojson, Features } from "@lib/types";
 import {
 	BoundaryType,
@@ -290,7 +290,9 @@ export function useCodeMapper() {
 		};
 	}, []);
 
-	return {
+	// Stable object reference — all functions are useCallback([]), so this
+	// never changes identity and memo-wrapped consumers never see a "new" codeMapper
+	return useMemo(() => ({
 		getLadForWard,
 		addWardLadMapping,
 		addWardLadMappings,
@@ -308,7 +310,7 @@ export function useCodeMapper() {
 		clearLadWardMap,
 		clearCodeMappings,
 		getMappingCounts,
-	};
+	}), [getLadForWard, addWardLadMapping, addWardLadMappings, getWardsForLad, addLadWardMapping, addLadWardMappings, addCodeMapping, addCodeMappings, getCodeForYear, getAllEquivalentCodes, findSourceCodes, getHighlightCodes, clearAllMappings, clearWardLadMap, clearLadWardMap, clearCodeMappings, getMappingCounts]);
 }
 
 /**

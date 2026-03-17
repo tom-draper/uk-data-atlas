@@ -1,7 +1,7 @@
 // components/LocalElectionResultChart.tsx
 "use client";
 
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { calculateTurnout } from "@/lib/helpers/generalElection";
 import {
@@ -203,7 +203,7 @@ interface LocalElectionResultChartSectionProps {
 	};
 }
 
-export default function LocalElectionResultChartSection({
+export default memo(function LocalElectionResultChartSection({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -241,4 +241,4 @@ export default function LocalElectionResultChartSection({
 			))}
 		</div>
 	);
-}
+});

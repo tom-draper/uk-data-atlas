@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Upload, AlertCircle } from 'lucide-react';
 import { ActiveViz, BoundaryType, CustomDataset, AggregatedCustomData, BoundaryCodes } from '@/lib/types';
@@ -591,7 +591,7 @@ function CustomDatasetCard({
     );
 }
 
-export default function CustomSection({
+export default memo(function CustomSection({
     customDataset,
     setCustomDataset,
     aggregatedData,
@@ -698,4 +698,4 @@ export default function CustomSection({
             />
         </>
     );
-}
+});

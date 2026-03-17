@@ -1,7 +1,7 @@
 // components/GeneralElectionResultChart.tsx
 "use client";
 
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { calculateTurnout } from "@/lib/helpers/generalElection";
 import {
@@ -185,7 +185,7 @@ interface GeneralElectionResultChartSectionProps {
 	activeViz: ActiveViz;
 }
 
-export default function GeneralElectionResultChartSection({
+export default memo(function GeneralElectionResultChartSection({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -219,4 +219,4 @@ export default function GeneralElectionResultChartSection({
 			))}
 		</div>
 	);
-}
+});

@@ -1,5 +1,6 @@
 // components/PopulationChart.tsx
 "use client";
+import { memo } from "react";
 import {
 	ActiveViz,
 	AggregatedEthnicityData,
@@ -33,7 +34,7 @@ export interface DemographicsChartSectionProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default function DemographicsChartSection({
+export default memo(function DemographicsChartSection({
 	availablePopulationDatasets,
 	aggregatedPopulationData,
 	availableEthnicityDatasets,
@@ -84,4 +85,4 @@ export default function DemographicsChartSection({
 			</div>
 		</div>
 	);
-}
+});
