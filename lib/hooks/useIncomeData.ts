@@ -92,9 +92,6 @@ const parseAnnualIncomeData = async (): Promise<
 					};
 				}
 
-				console.log(
-					`Loaded annual income data for ${Object.keys(annualData).length} local authorities`,
-				);
 				resolve(annualData);
 			},
 			error: reject,
@@ -170,9 +167,6 @@ const parseHourlyIncomeData = async (): Promise<
 					};
 				}
 
-				console.log(
-					`Loaded hourly income data for ${Object.keys(hourlyData).length} local authorities`,
-				);
 				resolve(hourlyData);
 			},
 			error: reject,
@@ -224,7 +218,6 @@ export const useIncomeData = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-				console.log("EXPENSIVE: Loading income data...");
 
 				const [annualData, hourlyData] = await Promise.all([
 					parseAnnualIncomeData(),
@@ -247,7 +240,6 @@ export const useIncomeData = () => {
 					},
 				};
 
-				console.log("Storing income datasets:", loadedDatasets);
 				setDatasets(loadedDatasets);
 				setLoading(false);
 			} catch (err: any) {

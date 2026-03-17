@@ -22,7 +22,6 @@ export const usePopulationData = () => {
 	const [error, setError] = useState<string>("");
 
 	useEffect(() => {
-		console.log("EXPENSIVE: Loading population data...");
 		const loadPopulationData = async () => {
 			try {
 				// Load 2020 data (separate files for males/females/persons)
@@ -40,7 +39,6 @@ export const usePopulationData = () => {
 				// ]);
 
 				// Load 2021 and 2022 data (combined files)
-				console.log("Loading population 2021 and 2022 data...");
 				const [data2022Response] = await Promise.all([
 					fetch(withCDN("/data/population/Mid-2022 Ward 2023.csv")),
 				]);
@@ -356,7 +354,6 @@ export const usePopulationData = () => {
 					2022: population2022,
 				};
 
-				console.log("Storing population datasets:", loadedDatasets);
 				setDatasets(loadedDatasets);
 				setLoading(false);
 			} catch (err) {

@@ -92,9 +92,6 @@ export default memo(function LocationPanel({
 
 	// Load ward boundaries using the library
 	useEffect(() => {
-		console.log(
-			"EXPENSIVE: Loading 2023 ward boundaries for LocationPanel...",
-		);
 		fetchBoundaryFile(GEOJSON_PATHS.ward[2023])
 			.then((data) => setGeojson(data))
 			.catch((err) =>

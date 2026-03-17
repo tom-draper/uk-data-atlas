@@ -163,7 +163,6 @@ export default function MapInterface({
 					datasets={datasets}
 					customDataset={customDataset}
 					setCustomDataset={setCustomDataset}
-					handleMapOptionsChange={handleMapOptionsChange}
 					onExport={handleExport}
 				/>
 			)}

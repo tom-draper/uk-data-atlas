@@ -36,7 +36,6 @@ export const useCrimeData = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-				console.log("EXPENSIVE: Loading crime data...");
 
 				const response = await fetch(
 					withCDN(
@@ -161,7 +160,6 @@ export const useCrimeData = () => {
 								},
 							};
 
-							console.log("Storing crime dataset for year", year);
 							setDatasets({ [year]: dataset });
 							setLoading(false);
 						} catch (parseErr: any) {

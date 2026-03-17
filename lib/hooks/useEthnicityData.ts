@@ -122,12 +122,6 @@ const parseEthnicityData = async (): Promise<{
 				// Calculate results (majority subcategory per LA)
 				const ethnicityResults = calculateResults(localAuthorityData);
 
-				console.log(
-					`Loaded ethnicity data for ${Object.keys(localAuthorityData).length} local authorities`,
-				);
-				console.log(
-					`Calculated results for ${Object.keys(ethnicityResults).length} local authorities`,
-				);
 
 				resolve({
 					data: localAuthorityData,
@@ -149,7 +143,6 @@ export const useEthnicityData = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-				console.log("EXPENSIVE: Loading ethnicity data...");
 				const { data, results } = await parseEthnicityData();
 
 				const loadedDatasets: Record<string, EthnicityDataset> = {
@@ -164,7 +157,6 @@ export const useEthnicityData = () => {
 					},
 				};
 
-				console.log("Storing ethnicity datasets:", loadedDatasets);
 				setDatasets(loadedDatasets);
 				setLoading(false);
 			} catch (err: any) {

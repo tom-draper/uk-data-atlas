@@ -70,9 +70,6 @@ const parseHousePriceData = async (): Promise<
 					};
 				}
 
-				console.log(
-					`Loaded house price data for ${Object.keys(wardData).length} wards`,
-				);
 				resolve(wardData);
 			},
 			error: reject,
@@ -90,7 +87,6 @@ export const useHousePriceData = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-				console.log("EXPENSIVE: Loading house price data...");
 				const wardData = await parseHousePriceData();
 
 				const loadedDatasets: Record<string, HousePriceDataset> = {
@@ -104,7 +100,6 @@ export const useHousePriceData = () => {
 					},
 				};
 
-				console.log("Storing house price datasets:", loadedDatasets);
 				setDatasets(loadedDatasets);
 				setLoading(false);
 			} catch (err: any) {

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import ControlPanel from "@components/ControlPanel";
 import LegendPanel from "@components/LegendPanel";
 import ChartPanel from "@components/ChartPanel";
@@ -41,14 +42,10 @@ interface UIOverlayProps {
 	onLocationClick: (location: string) => void;
 	onZoomIn: () => void;
 	onZoomOut: () => void;
-	handleMapOptionsChange: (
-		type: keyof MapOptions,
-		options: Partial<MapOptions[typeof type]>,
-	) => void;
 	onExport: () => void;
 }
 
-export default function UIOverlay({
+export default memo(function UIOverlay({
 	datasets,
 	customDataset,
 	setCustomDataset,
@@ -66,7 +63,6 @@ export default function UIOverlay({
 	onLocationClick,
 	onZoomIn,
 	onZoomOut,
-	handleMapOptionsChange,
 	onExport,
 }: UIOverlayProps) {
 	return (
@@ -78,7 +74,7 @@ export default function UIOverlay({
 					onLocationClick={onLocationClick}
 					onZoomIn={onZoomIn}
 					onZoomOut={onZoomOut}
-					handleMapOptionsChange={handleMapOptionsChange}
+					handleMapOptionsChange={onMapOptionsChange}
 					onExport={onExport}
 				/>
 			</div>
@@ -108,4 +104,4 @@ export default function UIOverlay({
 			</div>
 		</div>
 	);
-}
+});
