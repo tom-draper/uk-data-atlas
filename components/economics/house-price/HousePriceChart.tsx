@@ -7,7 +7,7 @@ import {
 	HousePriceDataset,
 	SelectedArea,
 } from "@lib/types";
-import React, { useMemo } from "react";
+import React, { memo, useMemo } from "react";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
@@ -338,7 +338,7 @@ const PriceChart = React.memo(
 );
 PriceChart.displayName = "PriceChart";
 
-export default function HousePriceChart({
+export default memo(function HousePriceChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -369,4 +369,4 @@ export default function HousePriceChart({
 			setActiveViz={setActiveViz}
 		/>
 	);
-}
+});

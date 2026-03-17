@@ -7,7 +7,7 @@ import {
 	IncomeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -42,7 +42,7 @@ const particleColors = [
 	"text-teal-300",
 ];
 
-export default function IncomeChart({
+export default memo(function IncomeChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -187,4 +187,4 @@ export default function IncomeChart({
 			)}
 		</div>
 	);
-}
+});

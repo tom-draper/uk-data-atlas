@@ -6,7 +6,7 @@ import {
 	CrimeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
@@ -25,7 +25,16 @@ interface CrimeRateChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default function CrimeRateChart({
+// Simple concentric circles that the SVG filter will "warp" into contours
+const layers = [
+	{ r: 45, opacity: 0.3 },
+	{ r: 35, opacity: 0.4 },
+	{ r: 25, opacity: 0.5 },
+	{ r: 15, opacity: 0.6 },
+	{ r: 5, opacity: 0.8 },
+];
+
+export default memo(function CrimeRateChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -103,15 +112,6 @@ export default function CrimeRateChart({
 
 	const baseHue = 50 - intensity * 50;
 	const hotHue = 50 - intensity * 50;
-
-	// Simple concentric circles that the SVG filter will "warp" into contours
-	const layers = [
-		{ r: 45, opacity: 0.3 },
-		{ r: 35, opacity: 0.4 },
-		{ r: 25, opacity: 0.5 },
-		{ r: 15, opacity: 0.6 },
-		{ r: 5, opacity: 0.8 },
-	];
 
 	const dynamicBgColor = hasData
 		? `hsl(${baseHue}, ${40 + intensity * 40}%, ${95 - intensity * 20}%)`
@@ -202,4 +202,4 @@ export default function CrimeRateChart({
 			</div>
 		</div>
 	);
-}
+});
