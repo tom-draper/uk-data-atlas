@@ -150,7 +150,8 @@ const DensityGrid = memo(({ density }: { density: number }) => {
 
 DensityGrid.displayName = "DensityGrid";
 
-// Cache for LAD density calculations
+// Cache for LAD density calculations (bounded to prevent unbounded memory growth)
+const MAX_LAD_CACHE_ENTRIES = 50;
 const densityCache = new Map<string, Map<number, any>>();
 
 function PopulationDensityChart({
@@ -222,6 +223,9 @@ function PopulationDensityChart({
 			const cacheKey = `lad-${ladCode}`;
 
 			if (!densityCache.has(cacheKey)) {
+				if (densityCache.size >= MAX_LAD_CACHE_ENTRIES) {
+					densityCache.delete(densityCache.keys().next().value!);
+				}
 				densityCache.set(cacheKey, new Map());
 			}
 			const yearCache = densityCache.get(cacheKey)!;

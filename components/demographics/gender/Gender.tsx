@@ -24,7 +24,8 @@ interface GenderProps {
 	};
 }
 
-// Cache for LAD gender aggregations
+// Cache for LAD gender aggregations (bounded to prevent unbounded memory growth)
+const MAX_LAD_CACHE_ENTRIES = 50;
 const genderCache = new Map<string, Map<number, any>>();
 
 function Gender({
@@ -98,6 +99,9 @@ function Gender({
 			const cacheKey = `lad-${ladCode}`;
 
 			if (!genderCache.has(cacheKey)) {
+				if (genderCache.size >= MAX_LAD_CACHE_ENTRIES) {
+					genderCache.delete(genderCache.keys().next().value!);
+				}
 				genderCache.set(cacheKey, new Map());
 			}
 			const yearCache = genderCache.get(cacheKey)!;

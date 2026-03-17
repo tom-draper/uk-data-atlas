@@ -53,7 +53,8 @@ for (let i = 0; i < 10; i++) {
 }
 const NORMALIZED_WEIGHTS = DECAY_WEIGHTS.map((w) => w / totalWeight);
 
-// Cache for LAD aggregations
+// Cache for LAD aggregations (bounded to prevent unbounded memory growth)
+const MAX_LAD_CACHE_ENTRIES = 50;
 const ageDistributionCache = new Map<string, Map<number, any>>();
 
 function AgeDistribution({
@@ -200,6 +201,9 @@ function AgeDistribution({
 			const cacheKey = `lad-${ladCode}`;
 
 			if (!ageDistributionCache.has(cacheKey)) {
+				if (ageDistributionCache.size >= MAX_LAD_CACHE_ENTRIES) {
+					ageDistributionCache.delete(ageDistributionCache.keys().next().value!);
+				}
 				ageDistributionCache.set(cacheKey, new Map());
 			}
 			const yearCache = ageDistributionCache.get(cacheKey)!;

@@ -23,7 +23,8 @@ export interface GenderBalanceByAgeChartProps {
 // Pre-create age indices array (constant)
 const AGE_INDICES = Array.from({ length: 91 }, (_, i) => i);
 
-// Cache for LAD gender balance aggregations
+// Cache for LAD gender balance aggregations (bounded to prevent unbounded memory growth)
+const MAX_LAD_CACHE_ENTRIES = 50;
 const genderBalanceCache = new Map<string, Map<number, any>>();
 
 function GenderBalanceByAgeChart({
@@ -106,6 +107,9 @@ function GenderBalanceByAgeChart({
 			const cacheKey = `lad-${ladCode}`;
 
 			if (!genderBalanceCache.has(cacheKey)) {
+				if (genderBalanceCache.size >= MAX_LAD_CACHE_ENTRIES) {
+					genderBalanceCache.delete(genderBalanceCache.keys().next().value!);
+				}
 				genderBalanceCache.set(cacheKey, new Map());
 			}
 			const yearCache = genderBalanceCache.get(cacheKey)!;
