@@ -32,6 +32,10 @@ interface ProcessedYearData {
 	hasData: boolean;
 }
 
+// Cache LAD vote aggregations — keyed by ladCode, then election year
+const MAX_LAD_CACHE_ENTRIES = 50;
+const localElectionLadCache = new Map<string, Map<number, { partyVotes: Record<string, number>; electorate: number } | null>>();
+
 const useLocalElectionData = (
 	availableDatasets: Record<string, LocalElectionDataset>,
 	aggregatedData: Record<number, AggregatedLocalElectionData> | null,
@@ -80,18 +84,25 @@ const useLocalElectionData = (
 				}
 			} else if (selectedArea && selectedArea.type === "localAuthority" && getWardsForLad) {
 				const ladCode = selectedArea.code;
-				const wardCodes = getWardsForLad(ladCode, 2022);
 
-				if (wardCodes.length > 0) {
+				// Check cache first
+				if (!localElectionLadCache.has(ladCode)) {
+					if (localElectionLadCache.size >= MAX_LAD_CACHE_ENTRIES) {
+						localElectionLadCache.delete(localElectionLadCache.keys().next().value!);
+					}
+					localElectionLadCache.set(ladCode, new Map());
+				}
+				const yearCache = localElectionLadCache.get(ladCode)!;
+
+				let cached = yearCache.get(year);
+				if (!yearCache.has(year)) {
+					const wardCodes = getWardsForLad(ladCode, 2022);
 					const aggregatedVotes: Record<string, number> = {};
 					let totalElectorate = 0;
-					let totalVotesAcrossWards = 0;
 
-					// Aggregate votes across all wards in the LAD
 					for (const wardCode of wardCodes) {
 						let wardData = dataset.data[wardCode];
 
-						// Try to map to the dataset's year if ward code doesn't exist
 						if (!wardData && getCodeForYear) {
 							const mappedCode = getCodeForYear("ward", wardCode, year);
 							if (mappedCode) {
@@ -100,27 +111,25 @@ const useLocalElectionData = (
 						}
 
 						if (wardData?.partyVotes) {
-							// Aggregate party votes
 							for (const [partyKey, votes] of Object.entries(wardData.partyVotes)) {
 								aggregatedVotes[partyKey] = (aggregatedVotes[partyKey] || 0) + (votes || 0);
 							}
-
-							// Aggregate electorate for turnout calculation
 							if (wardData.electorate) {
 								totalElectorate += wardData.electorate;
 							}
 						}
 					}
 
-					// Calculate total votes from aggregated votes
-					totalVotesAcrossWards = Object.values(aggregatedVotes).reduce((sum, votes) => sum + (votes || 0), 0);
+					const totalVotes = Object.values(aggregatedVotes).reduce((sum, v) => sum + (v || 0), 0);
+					cached = totalVotes > 0 ? { partyVotes: aggregatedVotes, electorate: totalElectorate } : null;
+					yearCache.set(year, cached);
+				}
 
-					if (totalVotesAcrossWards > 0) {
-						rawPartyVotes = aggregatedVotes as PartyVotes;
-						// Calculate turnout from aggregated data
-						if (totalElectorate > 0) {
-							turnout = calculateTurnout(totalVotesAcrossWards, 0, totalElectorate);
-						}
+				if (cached) {
+					rawPartyVotes = cached.partyVotes as PartyVotes;
+					if (cached.electorate > 0) {
+						const totalVotes = Object.values(cached.partyVotes).reduce((s, v) => s + (v || 0), 0);
+						turnout = calculateTurnout(totalVotes, 0, cached.electorate);
 					}
 				}
 			} else if (selectedArea === null && aggregatedData?.[year]) {
