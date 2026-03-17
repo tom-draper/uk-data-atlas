@@ -57,6 +57,14 @@ const NORMALIZED_WEIGHTS = DECAY_WEIGHTS.map((w) => w / totalWeight);
 const MAX_LAD_CACHE_ENTRIES = 50;
 const ageDistributionCache = new Map<string, Map<number, any>>();
 
+const EMPTY_AGE_GROUPS: AgeGroups = {
+	"0-17": 0,
+	"18-29": 0,
+	"30-44": 0,
+	"45-64": 0,
+	"65+": 0,
+};
+
 function AgeDistribution({
 	dataset,
 	aggregatedData,
@@ -69,13 +77,6 @@ function AgeDistribution({
 	const isActive = activeViz.vizId === vizId;
 
 	const { medianAge, ageGroups, total, counts, maxCount } = useMemo(() => {
-		const emptyAgeGroups: AgeGroups = {
-			"0-17": 0,
-			"18-29": 0,
-			"30-44": 0,
-			"45-64": 0,
-			"65+": 0,
-		};
 		let max = 0;
 
 		//  Handle Aggregated Data Case (no area selected)
@@ -96,7 +97,7 @@ function AgeDistribution({
 			return {
 				medianAge: data.medianAge ?? 0,
 				ageGroups:
-					data.populationStats.ageGroups.total ?? emptyAgeGroups,
+					data.populationStats.ageGroups.total ?? EMPTY_AGE_GROUPS,
 				total: data.populationStats.total ?? 0,
 				counts: counts,
 				maxCount: max,
@@ -123,7 +124,7 @@ function AgeDistribution({
 			if (!wardData) {
 				return {
 					medianAge: 0,
-					ageGroups: emptyAgeGroups,
+					ageGroups: EMPTY_AGE_GROUPS,
 					total: 0,
 					counts: new Uint32Array(100),
 					maxCount: 0,
@@ -162,7 +163,7 @@ function AgeDistribution({
 			let median = 0;
 
 			// Fill grouped buckets
-			const currentAgeGroups: AgeGroups = { ...emptyAgeGroups };
+			const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
 
 			let medianFound = false;
 			for (let i = 0; i < 100; i++) {
@@ -218,7 +219,7 @@ function AgeDistribution({
 			if (wardCodes.length === 0) {
 				const emptyResult = {
 					medianAge: 0,
-					ageGroups: emptyAgeGroups,
+					ageGroups: EMPTY_AGE_GROUPS,
 					total: 0,
 					counts: new Uint32Array(100),
 					maxCount: 0,
@@ -279,7 +280,7 @@ function AgeDistribution({
 			let medianFound = false;
 
 			// Fill grouped buckets
-			const currentAgeGroups: AgeGroups = { ...emptyAgeGroups };
+			const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
 
 			for (let i = 0; i < 100; i++) {
 				const count = aggregatedCounts[i];
@@ -314,7 +315,7 @@ function AgeDistribution({
 		// Handle Missing Data or unsupported area types
 		return {
 			medianAge: 0,
-			ageGroups: emptyAgeGroups,
+			ageGroups: EMPTY_AGE_GROUPS,
 			total: 0,
 			counts: new Uint32Array(100),
 			maxCount: 0,
