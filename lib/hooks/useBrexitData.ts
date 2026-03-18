@@ -92,7 +92,7 @@ export const useBrexitData = () => {
 								results: resultMap,
 							};
 
-							setDatasets({ brexit2016: dataset });
+							setDatasets({ [dataset.year]: dataset });
 							setLoading(false);
 						} catch (parseErr: any) {
 							setError(

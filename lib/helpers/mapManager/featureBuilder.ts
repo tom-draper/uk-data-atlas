@@ -339,13 +339,14 @@ export class FeatureBuilder {
 		features: Features,
 		dataset: BrexitDataset,
 		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const area =
 				dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
 
 			const color = area
-				? getColorForBrexitLeave(area.pctLeave)
+				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexit)
 				: DEFAULT_COLOR;
 
 			return { color };

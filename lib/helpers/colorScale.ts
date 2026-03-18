@@ -1,5 +1,6 @@
 // lib/utils/colorScale.ts
 import type {
+	BrexitOptions,
 	CategoryOptions,
 	ColorTheme,
 	CrimeOptions,
@@ -217,17 +218,17 @@ export function getColorForCrimeRate(
 
 /**
  * Gets colour for Brexit Leave percentage.
- * 0% Leave (all Remain) → deep blue; 50% → white/neutral; 100% Leave → deep red.
+ * colorRange.min pctLeave → deep blue; 50% → white/neutral; colorRange.max pctLeave → deep red.
+ * Values outside the range are clamped to the extreme colours.
  */
-export function getColorForBrexitLeave(pctLeave: number): string {
+export function getColorForBrexitLeave(pctLeave: number, options: BrexitOptions): string {
 	const midpoint = 50;
+	const { min, max } = options.colorRange;
 	if (pctLeave <= midpoint) {
-		// Interpolate from deep blue (0%) to white (50%)
-		const factor = pctLeave / midpoint;
+		const factor = normalizeValue(pctLeave, min, midpoint);
 		return interpolateColor("rgb(30, 60, 180)", "rgb(240, 240, 240)", factor);
 	} else {
-		// Interpolate from white (50%) to deep red (100%)
-		const factor = (pctLeave - midpoint) / midpoint;
+		const factor = normalizeValue(pctLeave, midpoint, max);
 		return interpolateColor("rgb(240, 240, 240)", "rgb(180, 20, 20)", factor);
 	}
 }

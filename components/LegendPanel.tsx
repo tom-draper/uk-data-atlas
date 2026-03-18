@@ -16,6 +16,7 @@ type ColorRangeDatasetKey =
 	| "housePrice"
 	| "crime"
 	| "income"
+	| "brexit"
 	| "custom";
 
 interface LegendPanelProps {
@@ -558,23 +559,27 @@ export default memo(function LegendPanel({
 			case "localElection":
 				return renderElectionLegend();
 
-			case "brexit":
+			case "brexit": {
+				const currentMin = displayOptions.brexit.colorRange?.min ?? 30;
+				const currentMax = displayOptions.brexit.colorRange?.max ?? 70;
 				return (
-					<div className="p-1">
-						<div
-							className="h-40 w-6 rounded"
-							style={{
-								background:
-									"linear-gradient(to bottom, rgb(30, 60, 180), rgb(240, 240, 240), rgb(180, 20, 20))",
-							}}
-						/>
-						<div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8 pointer-events-none">
-							<span>100% Remain</span>
-							<span>50 / 50</span>
-							<span>100% Leave</span>
-						</div>
-					</div>
+					<RangeControl
+						min={0}
+						max={100}
+						currentMin={currentMin}
+						currentMax={currentMax}
+						gradient="linear-gradient(to top, rgb(30, 60, 180), rgb(240, 240, 240), rgb(180, 20, 20))"
+						labels={[
+							`${currentMax.toFixed(0)}% Leave`,
+							`${(100 - currentMin).toFixed(0)}% Remain`,
+						]}
+						onRangeInput={(min, max) =>
+							handleRangeInput("brexit", min, max)
+						}
+						onRangeChangeEnd={() => handleRangeChangeEnd("brexit")}
+					/>
 				);
+			}
 
 			case "custom":
 				// Custom datasets use a color range

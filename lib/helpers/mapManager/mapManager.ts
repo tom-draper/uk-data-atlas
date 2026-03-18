@@ -413,6 +413,7 @@ export class MapManager {
 			geojson.features,
 			dataset,
 			codeProp,
+			mapOptions,
 		);
 		const transformedGeojson =
 			this.featureBuilder.formatBoundaryGeoJson(features);

@@ -30,7 +30,7 @@ export default memo(function BrexitChart({
 	activeViz,
 	setActiveViz,
 }: BrexitChartProps) {
-	const dataset = availableDatasets?.[`brexit${year}`];
+	const dataset = availableDatasets?.[year];
 
 	const brexitStats = useMemo(() => {
 		if (!dataset) return null;
