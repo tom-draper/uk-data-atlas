@@ -84,18 +84,18 @@ function panelHeaderDetails(
 			};
 		case "constituency":
 			return {
-				title: selectedArea.data
-					? (selectedArea.data.constituencyName ?? "")
+				title: selectedArea.name || (selectedArea.data?.constituencyName ?? ""),
+				subtitle: selectedArea.data
+					? [selectedArea.data.regionName, selectedArea.data.countryName].filter(Boolean).join(", ")
 					: "",
-				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? "") : ""}, ${selectedArea.data ? (selectedArea.data.countryName ?? "") : ""}`,
 				code: selectedArea.code,
 			};
 		case "localAuthority":
 			return {
-				title: selectedArea.data
-					? (selectedArea.data.localAuthorityName ?? "")
+				title: selectedArea.name || (selectedArea.data?.localAuthorityName ?? ""),
+				subtitle: selectedArea.data
+					? [selectedArea.data.regionName, selectedArea.data.countryName].filter(Boolean).join(", ")
 					: "",
-				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? "") : ""}, ${selectedArea.data ? (selectedArea.data.countryName ?? "") : ""}`,
 				code: selectedArea.code,
 			};
 	}
