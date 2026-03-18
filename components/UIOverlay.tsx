@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useDeferredValue, useMemo } from "react";
 import ControlPanel from "@components/ControlPanel";
 import LegendPanel from "@components/LegendPanel";
 import ChartPanel from "@components/ChartPanel";
@@ -14,6 +14,7 @@ import type {
 import type { CustomDataset } from "@/lib/types/custom";
 import { MapOptions } from "@/lib/types/mapOptions";
 import { CodeType } from "@/lib/hooks/useCodeMapper";
+import { PanelContext } from "@/lib/context/PanelContext";
 
 interface UIOverlayProps {
 	datasets: Datasets;
@@ -66,43 +67,54 @@ export default memo(function UIOverlay({
 	onZoomOut,
 	onExport,
 }: UIOverlayProps) {
-	return (
-		<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
-			<div className="absolute left-0 flex h-full">
-				<ControlPanel
-					populationDataset={datasets["population"][2022]}
-					selectedLocation={selectedLocation}
-					onLocationClick={onLocationClick}
-					onZoomIn={onZoomIn}
-					onZoomOut={onZoomOut}
-					handleMapOptionsChange={onMapOptionsChange}
-					onExport={onExport}
-				/>
-			</div>
+	// Defer selectedArea to ChartPanel — PanelHeader reads immediate value via context
+	// so ChartPanel's memo bails during rapid hover (only UIOverlay + PanelHeader re-render)
+	const deferredSelectedArea = useDeferredValue(selectedArea);
 
-			<div className="absolute right-0 flex h-full">
-				<LegendPanel
-					activeDataset={activeDataset}
-					activeViz={activeViz}
-					aggregatedData={aggregatedData}
-					mapOptions={mapOptions}
-					onMapOptionsChange={onMapOptionsChange}
-				/>
-				<ChartPanel
-					datasets={datasets}
-					customDataset={customDataset}
-					setCustomDataset={setCustomDataset}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-					activeDataset={activeDataset}
-					aggregatedData={aggregatedData}
-					selectedLocation={selectedLocation}
-					selectedArea={selectedArea}
-					boundaryData={boundaryData}
-					boundaryCodes={boundaryCodes}
-					codeMapper={codeMapper}
-				/>
+	// Stable context value — only recreated when immediate selectedArea/selectedLocation changes
+	const panelContextValue = useMemo(
+		() => ({ selectedArea, selectedLocation }),
+		[selectedArea, selectedLocation],
+	);
+
+	return (
+		<PanelContext.Provider value={panelContextValue}>
+			<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
+				<div className="absolute left-0 flex h-full">
+					<ControlPanel
+						populationDataset={datasets["population"][2022]}
+						selectedLocation={selectedLocation}
+						onLocationClick={onLocationClick}
+						onZoomIn={onZoomIn}
+						onZoomOut={onZoomOut}
+						handleMapOptionsChange={onMapOptionsChange}
+						onExport={onExport}
+					/>
+				</div>
+
+				<div className="absolute right-0 flex h-full">
+					<LegendPanel
+						activeDataset={activeDataset}
+						activeViz={activeViz}
+						aggregatedData={aggregatedData}
+						mapOptions={mapOptions}
+						onMapOptionsChange={onMapOptionsChange}
+					/>
+					<ChartPanel
+						datasets={datasets}
+						customDataset={customDataset}
+						setCustomDataset={setCustomDataset}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+						activeDataset={activeDataset}
+						aggregatedData={aggregatedData}
+						selectedArea={deferredSelectedArea}
+						boundaryData={boundaryData}
+						boundaryCodes={boundaryCodes}
+						codeMapper={codeMapper}
+					/>
+				</div>
 			</div>
-		</div>
+		</PanelContext.Provider>
 	);
 });

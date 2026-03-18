@@ -13,15 +13,15 @@ import {
 import { CustomDataset } from "@/lib/types/custom";
 import LocalElectionResultChartSection from "./local-election/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
-import { memo, useDeferredValue } from "react";
+import { memo } from "react";
 import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
 import CrimeSection from "./crime/CrimeSection";
 import { CodeType } from "@/lib/hooks/useCodeMapper";
 import CustomSection from "./custom/CustomSection";
+import { usePanelContext } from "@/lib/context/PanelContext";
 
 interface ChartPanelProps {
-	selectedLocation: string | null;
 	selectedArea: SelectedArea | null;
 	activeDataset: Dataset | null;
 	boundaryData: BoundaryData;
@@ -42,13 +42,8 @@ interface ChartPanelProps {
 	};
 }
 
-const PanelHeader = memo(function PanelHeader({
-	selectedLocation,
-	selectedArea,
-}: {
-	selectedLocation: string | null;
-	selectedArea: SelectedArea | null;
-}) {
+const PanelHeader = memo(function PanelHeader() {
+	const { selectedArea, selectedLocation } = usePanelContext();
 	const { title, subtitle, code } = panelHeaderDetails(
 		selectedLocation,
 		selectedArea,
@@ -132,7 +127,6 @@ const PanelFooter = () => {
 };
 
 export default memo(function ChartPanel({
-	selectedLocation,
 	selectedArea,
 	activeDataset,
 	boundaryData,
@@ -145,24 +139,17 @@ export default memo(function ChartPanel({
 	aggregatedData,
 	codeMapper,
 }: ChartPanelProps) {
-	// Defer selectedArea updates to sections — PanelHeader updates instantly
-	// but chart sections defer until React has idle time, keeping hover smooth
-	const deferredSelectedArea = useDeferredValue(selectedArea);
-
 	return (
 		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
 			<div className="bg-[rgba(255,255,255,0.5)] rounded-md backdrop-blur-md shadow-lg h-full flex flex-col border border-white/30">
-				<PanelHeader
-					selectedLocation={selectedLocation}
-					selectedArea={selectedArea}
-				/>
+				<PanelHeader />
 
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
 					<GeneralElectionResultChartSection
 						activeDataset={activeDataset}
 						availableDatasets={datasets.generalElection}
 						aggregatedData={aggregatedData.generalElection}
-						selectedArea={deferredSelectedArea}
+						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
 						activeViz={activeViz}
@@ -171,7 +158,7 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={datasets.localElection}
 						aggregatedData={aggregatedData.localElection}
-						selectedArea={deferredSelectedArea}
+						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
 						activeViz={activeViz}
@@ -182,7 +169,7 @@ export default memo(function ChartPanel({
 						availableEthnicityDatasets={datasets.ethnicity}
 						aggregatedEthnicityData={aggregatedData.ethnicity}
 						boundaryData={boundaryData}
-						selectedArea={deferredSelectedArea}
+						selectedArea={selectedArea}
 						activeViz={activeViz}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
@@ -193,7 +180,7 @@ export default memo(function ChartPanel({
 						aggregatedHousePriceData={aggregatedData.housePrice}
 						availableIncomeDatasets={datasets.income}
 						aggregatedIncomeData={aggregatedData.income}
-						selectedArea={deferredSelectedArea}
+						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
 						activeViz={activeViz}
@@ -202,7 +189,7 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={datasets.crime}
 						aggregatedData={aggregatedData.crime}
-						selectedArea={deferredSelectedArea}
+						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
 						activeViz={activeViz}
@@ -211,7 +198,7 @@ export default memo(function ChartPanel({
 					 	customDataset={customDataset}
 						setCustomDataset={setCustomDataset}
 						aggregatedData={aggregatedData.custom}
-						selectedArea={deferredSelectedArea}
+						selectedArea={selectedArea}
 						activeViz={activeViz}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
