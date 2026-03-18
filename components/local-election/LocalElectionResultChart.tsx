@@ -94,7 +94,7 @@ export default memo(function LocalElectionResultChart({
 	return (
 		<div
 			className={`
-        p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden border-2 
+        p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2 
         ${heightClass}
         ${isActive ? `${colors.bg} ${colors.border}` : "bg-white/60 border-gray-200/80 hover:border-blue-300"}
       `}

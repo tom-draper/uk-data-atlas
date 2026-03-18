@@ -11,7 +11,7 @@ import { AggregatedCrimeData, CrimeDataset } from "./crime";
 import { AggregatedIncomeData, IncomeDataset } from "./income";
 import { AggregatedEthnicityData, EthnicityDataset } from "./ethnicity";
 import { AggregatedCustomData, CustomDataset } from "./custom";
-import { AggregatedBrexitData, BrexitDataset } from "./referendum";
+import { AggregatedBrexitData, BrexitConstituencyDataset, BrexitDataset } from "./referendum";
 
 export type Dataset =
     | LocalElectionDataset
@@ -22,6 +22,7 @@ export type Dataset =
     | CrimeDataset
     | IncomeDataset
     | BrexitDataset
+    | BrexitConstituencyDataset
     | CustomDataset;
 
 export type Datasets = {
@@ -33,6 +34,7 @@ export type Datasets = {
     crime: Record<string, CrimeDataset>;
     income: Record<string, IncomeDataset>;
     brexit: Record<string, BrexitDataset>;
+    brexitConstituency: Record<string, BrexitConstituencyDataset>;
 };
 
 export type AggregatedData = {
@@ -44,11 +46,12 @@ export type AggregatedData = {
     crime: Record<number, AggregatedCrimeData> | null;
     income: Record<number, AggregatedIncomeData> | null;
     brexit: Record<number, AggregatedBrexitData> | null;
+    brexitConstituency: Record<number, AggregatedBrexitData> | null;
     custom: Record<number, AggregatedCustomData> | null;
 };
 
 export type ActiveViz = {
     vizId: string;
-    datasetType: keyof Datasets | 'custom';
+    datasetType: keyof Datasets | 'custom' | 'brexitConstituency';
     datasetYear: number;
 };

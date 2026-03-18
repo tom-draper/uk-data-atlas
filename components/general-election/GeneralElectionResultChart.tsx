@@ -131,7 +131,7 @@ export default memo(function GeneralElectionResultChart({
 	return (
 		<div
 			className={`
-        p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden border-2 
+        p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2
         ${heightClass}
         ${isActive
 					? `${colors.bg} ${colors.border}`
@@ -175,6 +175,6 @@ export default memo(function GeneralElectionResultChart({
 					)}
 				</div>
 			)}
-		</div>
+			</div>
 	);
 });

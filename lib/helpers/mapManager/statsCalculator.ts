@@ -18,6 +18,7 @@ import {
 	EthnicityCategory,
 	getFeatureProp,
 	BrexitDataset,
+	BrexitConstituencyDataset,
 	AggregatedBrexitData,
 } from "@lib/types";
 import { calculateTotal, polygonAreaSqKm } from "../population";
@@ -454,6 +455,47 @@ export class StatsCalculator {
 			pctLeave: totalVotes > 0 ? (totalLeave / totalVotes) * 100 : 0,
 			pctRemain: totalVotes > 0 ? (totalRemain / totalVotes) * 100 : 0,
 			electorate: totalElectorate,
+		};
+
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateBrexitConstituencyStats(
+		geojson: BoundaryGeojson,
+		constituencyData: BrexitConstituencyDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	) {
+		const cacheKey = `brexitConstituency-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey);
+		if (cached) return cached;
+
+		const codeProp = this.propertyDetector.detectConstituencyCode(
+			geojson.features,
+		);
+		const features = geojson.features;
+
+		let totalLeave = 0;
+		let totalRemain = 0;
+		let count = 0;
+
+		for (let i = 0; i < features.length; i++) {
+			const area = constituencyData[getFeatureProp(features[i].properties, codeProp) ?? ""];
+			if (!area) continue;
+
+			totalLeave += area.pctLeave;
+			totalRemain += 100 - area.pctLeave;
+			count++;
+		}
+
+		const result: AggregatedBrexitData = {
+			totalLeave,
+			totalRemain,
+			totalVotes: count,
+			pctLeave: count > 0 ? totalLeave / count : 0,
+			pctRemain: count > 0 ? totalRemain / count : 0,
+			electorate: 0,
 		};
 
 		this.cache.set(cacheKey, result);

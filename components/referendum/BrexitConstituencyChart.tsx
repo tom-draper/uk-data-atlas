@@ -3,15 +3,15 @@ import {
 	ActiveViz,
 	AggregatedBrexitData,
 	Dataset,
-	BrexitDataset,
+	BrexitConstituencyDataset,
 	SelectedArea,
 } from "@lib/types";
 import { memo, useMemo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
-interface BrexitChartProps {
+interface BrexitConstituencyChartProps {
 	activeDataset: Dataset | null;
-	availableDatasets: Record<string, BrexitDataset>;
+	availableDatasets: Record<string, BrexitConstituencyDataset>;
 	aggregatedData: Record<number, AggregatedBrexitData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
@@ -20,16 +20,15 @@ interface BrexitChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default memo(function BrexitChart({
+export default memo(function BrexitConstituencyChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
-	codeMapper,
 	year,
 	activeViz,
 	setActiveViz,
-}: BrexitChartProps) {
+}: BrexitConstituencyChartProps) {
 	const dataset = availableDatasets?.[year];
 
 	const brexitStats = useMemo(() => {
@@ -40,54 +39,37 @@ export default memo(function BrexitChart({
 			return {
 				pctLeave: agg.pctLeave,
 				pctRemain: agg.pctRemain,
-				totalLeave: agg.totalLeave,
-				totalRemain: agg.totalRemain,
-				totalVotes: agg.totalVotes,
 			};
 		}
 
 		if (
 			selectedArea &&
-			selectedArea.type === "localAuthority" &&
+			selectedArea.type === "constituency" &&
 			selectedArea.data
 		) {
-			const laCode = selectedArea.code;
-			let area = dataset.data?.[laCode];
-			if (!area && codeMapper) {
-				const mappedCode = codeMapper.getCodeForYear(
-					"localAuthority",
-					laCode,
-					year,
-				);
-				if (mappedCode) {
-					area = dataset.data?.[mappedCode];
-				}
-			}
+			const code = selectedArea.code;
+			const area = dataset.data?.[code];
 			if (area) {
 				return {
 					pctLeave: area.pctLeave,
-					pctRemain: area.pctRemain,
-					totalLeave: area.leave,
-					totalRemain: area.remain,
-					totalVotes: area.validVotes,
+					pctRemain: 100 - area.pctLeave,
 				};
 			}
 		}
 
 		return null;
-	}, [dataset, aggregatedData, selectedArea, codeMapper, year]);
+	}, [dataset, aggregatedData, selectedArea, year]);
 
 	if (!dataset) return null;
 
 	const isActive =
-		activeDataset?.type === "brexit" &&
+		activeDataset?.type === "brexitConstituency" &&
 		activeDataset.id === dataset.id;
 
 	const pctLeave = brexitStats?.pctLeave ?? 0;
 	const pctRemain = brexitStats?.pctRemain ?? 0;
 	const hasData = brexitStats !== null;
 
-	// Determine result
 	const result = hasData ? (pctLeave > pctRemain ? "leave" : "remain") : null;
 
 	const leaveBgColor = "rgb(180, 20, 20)";
@@ -120,12 +102,11 @@ export default memo(function BrexitChart({
 		>
 			<div className="relative z-10">
 				<h3 className="text-xs font-bold text-gray-800/90">
-					Electoral Commission [{dataset.year}]
+					Hanretty Estimates [{dataset.year}]
 				</h3>
 
 				{hasData ? (
 					<div className="mt-2 space-y-1">
-						{/* Split bar */}
 						<div className="flex h-4 rounded overflow-hidden">
 							<div
 								style={{
@@ -141,7 +122,6 @@ export default memo(function BrexitChart({
 							/>
 						</div>
 
-						{/* Labels */}
 						<div className="flex justify-between text-xs font-semibold mt-1">
 							<span style={{ color: leaveBgColor }}>
 								Leave {pctLeave.toFixed(1)}%

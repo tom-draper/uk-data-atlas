@@ -17,6 +17,7 @@ type ColorRangeDatasetKey =
 	| "crime"
 	| "income"
 	| "brexit"
+	| "brexitConstituency"
 	| "custom";
 
 interface LegendPanelProps {
@@ -543,9 +544,9 @@ export default memo(function LegendPanel({
 				return renderDynamicLegend(
 					"income",
 					0,
-					2000000,
+					100000,
 					80000,
-					500000,
+					450000,
 					formatCurrency,
 				);
 
@@ -559,9 +560,11 @@ export default memo(function LegendPanel({
 			case "localElection":
 				return renderElectionLegend();
 
-			case "brexit": {
-				const currentMin = displayOptions.brexit.colorRange?.min ?? 30;
-				const currentMax = displayOptions.brexit.colorRange?.max ?? 70;
+			case "brexitConstituency":
+		case "brexit": {
+				const key = activeDataset.type as "brexit" | "brexitConstituency";
+				const currentMin = displayOptions[key].colorRange?.min ?? 30;
+				const currentMax = displayOptions[key].colorRange?.max ?? 70;
 				return (
 					<RangeControl
 						min={0}
@@ -574,9 +577,9 @@ export default memo(function LegendPanel({
 							`${(100 - currentMin).toFixed(0)}% Remain`,
 						]}
 						onRangeInput={(min, max) =>
-							handleRangeInput("brexit", min, max)
+							handleRangeInput(key, min, max)
 						}
-						onRangeChangeEnd={() => handleRangeChangeEnd("brexit")}
+						onRangeChangeEnd={() => handleRangeChangeEnd(key)}
 					/>
 				);
 			}

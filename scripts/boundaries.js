@@ -48,6 +48,8 @@ const CONFIG = {
 		"LAD22NM",
 		"LAD21CD",
 		"LAD21NM",
+		"LAD16CD",
+		"LAD16NM",
 		// Constituency properties
 		"PCON24CD",
 		"PCON24NM",
@@ -57,6 +59,8 @@ const CONFIG = {
 		"PCON17NM",
 		"PCON15CD",
 		"PCON15NM",
+		"pcon16cd",
+		"pcon16nm",
 	],
 };
 

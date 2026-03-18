@@ -32,6 +32,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 		colorRange: { min: 25000, max: 45000 },
 	},
 	brexit: { colorRange: { min: 30, max: 70 } },
+	brexitConstituency: { colorRange: { min: 30, max: 70 } },
 	custom: { colorRange: { min: 0, max: 100 } },
 	theme: {
 		id: "viridis",

@@ -34,7 +34,7 @@ function PopulationDensity({
 
 	return (
 		<div
-			className={`p-2 rounded transition-all cursor-pointer ${isActive
+			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
 					? "bg-emerald-50/60 border-2 border-emerald-300"
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300"
 				}`}
@@ -58,7 +58,7 @@ function PopulationDensity({
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
 			/>
-		</div>
+			</div>
 	);
 }
 

@@ -12,6 +12,7 @@ import {
 	Features,
 	getFeatureProp,
 	BrexitDataset,
+	BrexitConstituencyDataset,
 } from "@lib/types";
 import { MapOptions } from "@lib/types/mapOptions";
 import {
@@ -329,6 +330,24 @@ export class FeatureBuilder {
 						mapOptions.income,
 						mapOptions.theme.id,
 					)
+				: DEFAULT_COLOR;
+
+			return { color };
+		});
+	}
+
+	buildBrexitConstituencyFeatures(
+		features: Features,
+		dataset: BrexitConstituencyDataset,
+		constituencyCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const area =
+				dataset.data[getFeatureProp(feature.properties, constituencyCodeProp) ?? ""];
+
+			const color = area
+				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexitConstituency)
 				: DEFAULT_COLOR;
 
 			return { color };

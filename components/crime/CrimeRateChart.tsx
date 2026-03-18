@@ -114,7 +114,7 @@ export default memo(function CrimeRateChart({
 
 	return (
 		<div
-			className={`p-2 rounded cursor-pointer overflow-hidden relative group ${isActive
+			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 ${isActive
 				? "bg-orange-50/60 border-2 border-orange-300"
 				: "bg-white/60 border-2 border-gray-200/80 hover:border-orange-300"
 				}`}
@@ -195,6 +195,6 @@ export default memo(function CrimeRateChart({
 					</div>
 				)}
 			</div>
-		</div>
+			</div>
 	);
 });

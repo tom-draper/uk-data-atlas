@@ -31,3 +31,20 @@ export interface AggregatedBrexitData {
 	pctRemain: number;
 	electorate: number;
 }
+
+export interface BrexitConstituencyData {
+	constituencyCode: string;
+	constituencyName: string;
+	pctLeave: number;
+	isKnownResult: boolean;
+}
+
+export interface BrexitConstituencyDataset {
+	id: string;
+	year: number;
+	type: "brexitConstituency";
+	boundaryType: "constituency";
+	boundaryYear: number;
+	data: Record<string, BrexitConstituencyData>;
+	results: Record<string, "remain" | "leave">;
+}

@@ -544,7 +544,7 @@ function CustomDatasetCard({
     return (
         <button
             onClick={handleClick}
-            className={`w-full rounded-md transition-all border-2 duration-200 text-left border-gray-200 ${isActive
+            className={`w-full rounded-md transition-all border-2 duration-200 text-left border-gray-200 h-20 ${isActive
                 ? 'bg-white/90 border-indigo-300 cursor-pointer'
                 : 'bg-white/40 hover:bg-white/60 hover:border-indigo-300 cursor-pointer'
                 }`}

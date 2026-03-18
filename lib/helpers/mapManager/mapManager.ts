@@ -12,6 +12,7 @@ import {
 	CustomDataset,
 	Features,
 	BrexitDataset,
+	BrexitConstituencyDataset,
 } from "@lib/types";
 import { MapMode, MapOptions } from "@lib/types/mapOptions";
 import { LayerManager } from "./layerManager";
@@ -425,6 +426,54 @@ export class MapManager {
 		this.eventHandler.setupEventHandlers(
 			dataset.data,
 			codeProp,
+		);
+	}
+
+	updateMapForBrexitConstituency(
+		geojson: BoundaryGeojson,
+		dataset: BrexitConstituencyDataset,
+		mapOptions: MapOptions,
+	): void {
+		const cacheKey = `brexitConstituency-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
+		let codeProp = propCache.get(cacheKey);
+
+		if (!codeProp) {
+			codeProp = this.propertyDetector.detectConstituencyCode(
+				geojson.features,
+			);
+			propCache.set(cacheKey, codeProp);
+		}
+
+		const features = this.featureBuilder.buildBrexitConstituencyFeatures(
+			geojson.features,
+			dataset,
+			codeProp,
+			mapOptions,
+		);
+		const transformedGeojson =
+			this.featureBuilder.formatBoundaryGeoJson(features);
+
+		this.layerManager.updateColoredLayers(
+			transformedGeojson,
+			mapOptions.visibility,
+		);
+		this.eventHandler.setupEventHandlers(
+			dataset.data,
+			codeProp,
+		);
+	}
+
+	calculateBrexitConstituencyStats(
+		geojson: BoundaryGeojson,
+		constituencyData: BrexitConstituencyDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	) {
+		return this.statsCalculator.calculateBrexitConstituencyStats(
+			geojson,
+			constituencyData,
+			location,
+			datasetId,
 		);
 	}
 

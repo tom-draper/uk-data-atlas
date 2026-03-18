@@ -160,7 +160,9 @@ export default memo(function ChartPanel({
 					<BrexitSection
 						activeDataset={activeDataset}
 						availableDatasets={datasets.brexit}
+						availableConstituencyDatasets={datasets.brexitConstituency}
 						aggregatedData={aggregatedData.brexit}
+						aggregatedConstituencyData={aggregatedData.brexitConstituency}
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}

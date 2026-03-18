@@ -245,7 +245,7 @@ const PriceChart = React.memo(
 
 		return (
 			<div
-				className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative ${isActive
+				className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative h-20 ${isActive
 					? `${colors.bg} border-2 ${colors.border}`
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300"
 					}`}
@@ -312,7 +312,7 @@ const PriceChart = React.memo(
 
 				{/* Price display in bottom right */}
 				{formattedPrice ? (
-					<div className="relative flex justify-end items-end mt-4 z-10 h-7">
+					<div className="relative flex justify-end items-end mt-3 z-10 h-7">
 						<div
 							className={`text-xl font-bold ${!currentPrice ? "text-gray-400 text-sm" : ""}`}
 						>

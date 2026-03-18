@@ -318,7 +318,7 @@ function AgeDistribution({
 
 	return (
 		<div
-			className={`p-2 rounded transition-all cursor-pointer ${isActive
+			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
 					? "bg-cyan-50/60 border-2 border-cyan-300"
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-cyan-300"
 				}`}
@@ -349,7 +349,7 @@ function AgeDistribution({
 				ageGroups={ageGroups}
 				isActive={isActive}
 			/>
-		</div>
+			</div>
 	);
 }
 

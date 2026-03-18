@@ -130,7 +130,7 @@ export default memo(function IncomeChart({
 
 	return (
 		<div
-			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative isolate ${isActive
+			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative isolate h-20 ${isActive
 					? `${colors.bg} border-2 ${colors.border}`
 					: colors.inactive
 				}`}
@@ -168,7 +168,7 @@ export default memo(function IncomeChart({
 			</div>
 
 			{formattedMedian ? (
-				<div className="relative flex justify-center items-center mt-4 mb-2 z-10 h-5">
+				<div className="relative flex justify-center items-center mt-3 mb-1 z-10 h-5">
 					<div className="text-xl font-bold text-gray-800 bg-transparent px-2 rounded">
 						{formattedMedian}
 					</div>
@@ -180,6 +180,6 @@ export default memo(function IncomeChart({
 					</div>
 				</div>
 			)}
-		</div>
+			</div>
 	);
 });

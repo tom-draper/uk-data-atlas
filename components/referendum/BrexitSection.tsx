@@ -6,15 +6,19 @@ import {
 	AggregatedBrexitData,
 	Dataset,
 	BrexitDataset,
+	BrexitConstituencyDataset,
 	SelectedArea,
 } from "@lib/types";
 import BrexitChart from "./BrexitChart";
+import BrexitConstituencyChart from "./BrexitConstituencyChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface BrexitSectionProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, BrexitDataset>;
+	availableConstituencyDatasets: Record<string, BrexitConstituencyDataset>;
 	aggregatedData: Record<number, AggregatedBrexitData> | null;
+	aggregatedConstituencyData: Record<number, AggregatedBrexitData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -24,7 +28,9 @@ interface BrexitSectionProps {
 export default memo(function BrexitSection({
 	activeDataset,
 	availableDatasets,
+	availableConstituencyDatasets,
 	aggregatedData,
+	aggregatedConstituencyData,
 	selectedArea,
 	codeMapper,
 	activeViz,
@@ -37,6 +43,16 @@ export default memo(function BrexitSection({
 				activeDataset={activeDataset}
 				availableDatasets={availableDatasets}
 				aggregatedData={aggregatedData}
+				year={2016}
+				selectedArea={selectedArea}
+				codeMapper={codeMapper}
+				activeViz={activeViz}
+				setActiveViz={setActiveViz}
+			/>
+			<BrexitConstituencyChart
+				activeDataset={activeDataset}
+				availableDatasets={availableConstituencyDatasets}
+				aggregatedData={aggregatedConstituencyData}
 				year={2016}
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
