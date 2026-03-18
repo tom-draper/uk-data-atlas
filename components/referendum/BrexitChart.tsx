@@ -110,6 +110,7 @@ export default memo(function BrexitChart({
 						: "bg-blue-50/60 border-2 border-blue-400"
 					: `bg-white/60 border-2 border-gray-200/80 ${activeBorderClass}`
 			}`}
+			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,

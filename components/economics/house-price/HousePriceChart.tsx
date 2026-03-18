@@ -249,6 +249,7 @@ const PriceChart = React.memo(
 					? `${colors.bg} border-2 ${colors.border}`
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300"
 					}`}
+				title="Office for National Statistics. UK House Price Index (HPI): Mean and Median House Prices by Local Authority. ons.gov.uk"
 				onClick={() =>
 					setActiveViz({
 						vizId: dataset.id,

@@ -119,6 +119,7 @@ export default memo(function CrimeRateChart({
 				: "bg-white/60 border-2 border-gray-200/80 hover:border-orange-300"
 				}`}
 			style={{ backgroundColor: dynamicBgColor }}
+			title="Home Office. Police Recorded Crime Open Data Tables. data.police.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,

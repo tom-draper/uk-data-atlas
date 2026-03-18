@@ -169,6 +169,7 @@ function Gender({
 					? "bg-violet-50/60 border-2 border-violet-300"
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-violet-300"
 				}`}
+			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,

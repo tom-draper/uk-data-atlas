@@ -134,6 +134,7 @@ export default memo(function IncomeChart({
 					? `${colors.bg} border-2 ${colors.border}`
 					: colors.inactive
 				}`}
+			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,

@@ -138,6 +138,7 @@ export default memo(function GeneralElectionResultChart({
 					: "bg-white/60 border-gray-200/80 hover:border-indigo-300"
 				}
       `}
+			title="House of Commons Library, UK Parliament. UK General Election Results. commonslibrary.parliament.uk"
 			onClick={() =>
 				data.dataset &&
 				setActiveViz({

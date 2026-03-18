@@ -164,6 +164,7 @@ export default memo(function EthnicityChart({
                 ${heightClass}
                 ${isActive ? `${YEAR_STYLES.bg} ${YEAR_STYLES.border}` : "bg-white/60 border-gray-200/80 hover:border-indigo-300"}
             `}
+			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
 			onClick={handleActivate}
 		>
 			<div className="flex items-center justify-between mb-1.5">

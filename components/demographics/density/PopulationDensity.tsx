@@ -38,6 +38,7 @@ function PopulationDensity({
 					? "bg-emerald-50/60 border-2 border-emerald-300"
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300"
 				}`}
+			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,

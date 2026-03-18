@@ -98,6 +98,7 @@ export default memo(function LocalElectionResultChart({
         ${heightClass}
         ${isActive ? `${colors.bg} ${colors.border}` : "bg-white/60 border-gray-200/80 hover:border-blue-300"}
       `}
+			title="House of Commons Library, UK Parliament. Local Election Results. commonslibrary.parliament.uk"
 			onClick={handleActivate}
 		>
 			<div className="flex items-center justify-between mb-1.5">
