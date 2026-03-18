@@ -65,6 +65,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "brexit":
+					return mapManager.updateMapForBrexit(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "custom":
 					return mapManager.updateMapForCustomDataset(
 						geojson,

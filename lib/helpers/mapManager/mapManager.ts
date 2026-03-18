@@ -11,6 +11,7 @@ import {
 	PropertyKeys,
 	CustomDataset,
 	Features,
+	BrexitDataset,
 } from "@lib/types";
 import { MapMode, MapOptions } from "@lib/types/mapOptions";
 import { LayerManager } from "./layerManager";
@@ -393,6 +394,39 @@ export class MapManager {
 		);
 	}
 
+	updateMapForBrexit(
+		geojson: BoundaryGeojson,
+		dataset: BrexitDataset,
+		mapOptions: MapOptions,
+	): void {
+		const cacheKey = `brexit-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
+		let codeProp = propCache.get(cacheKey);
+
+		if (!codeProp) {
+			codeProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
+			propCache.set(cacheKey, codeProp);
+		}
+
+		const features = this.featureBuilder.buildBrexitFeatures(
+			geojson.features,
+			dataset,
+			codeProp,
+		);
+		const transformedGeojson =
+			this.featureBuilder.formatBoundaryGeoJson(features);
+
+		this.layerManager.updateColoredLayers(
+			transformedGeojson,
+			mapOptions.visibility,
+		);
+		this.eventHandler.setupEventHandlers(
+			dataset.data,
+			codeProp,
+		);
+	}
+
 	calculateLocalElectionStats(
 		geojson: BoundaryGeojson,
 		wardData: LocalElectionDataset["data"],
@@ -486,6 +520,20 @@ export class MapManager {
 		return this.statsCalculator.calculateIncomeStats(
 			geojson,
 			localAuthorityData,
+			location,
+			datasetId,
+		);
+	}
+
+	calculateBrexitStats(
+		geojson: BoundaryGeojson,
+		brexitData: BrexitDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateBrexitStats(
+			geojson,
+			brexitData,
 			location,
 			datasetId,
 		);

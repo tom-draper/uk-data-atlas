@@ -10,6 +10,7 @@ import { useCrimeData } from "./useCrimeData";
 import { Datasets } from "../types";
 import { useIncomeData } from "./useIncomeData";
 import { useEthnicityData } from "./useEthnicityData";
+import { useBrexitData } from "./useBrexitData";
 
 export interface UseDatasetsResult {
 	datasets: Datasets;
@@ -26,6 +27,7 @@ export function useDatasets(): UseDatasetsResult {
 	const housePrice = useHousePriceData();
 	const crime = useCrimeData();
 	const income = useIncomeData();
+	const brexit = useBrexitData();
 
 	// Combine datasets
 	const datasets = useMemo(
@@ -37,6 +39,7 @@ export function useDatasets(): UseDatasetsResult {
 			housePrice: housePrice.datasets,
 			crime: crime.datasets,
 			income: income.datasets,
+			brexit: brexit.datasets,
 		}),
 		[
 			localElection.datasets,
@@ -46,6 +49,7 @@ export function useDatasets(): UseDatasetsResult {
 			housePrice.datasets,
 			crime.datasets,
 			income.datasets,
+			brexit.datasets,
 		],
 	);
 
@@ -57,7 +61,8 @@ export function useDatasets(): UseDatasetsResult {
 		ethnicity.loading ||
 		housePrice.loading ||
 		crime.loading ||
-		income.loading;
+		income.loading ||
+		brexit.loading;
 
 	// Collect all errors
 	const errors = useMemo(() => {
@@ -69,6 +74,7 @@ export function useDatasets(): UseDatasetsResult {
 		if (housePrice.error) errs.push(housePrice.error);
 		if (crime.error) errs.push(crime.error);
 		if (income.error) errs.push(income.error);
+		if (brexit.error) errs.push(brexit.error);
 		return errs;
 	}, [
 		localElection.error,
@@ -78,6 +84,7 @@ export function useDatasets(): UseDatasetsResult {
 		housePrice.error,
 		crime.error,
 		income.error,
+		brexit.error,
 	]);
 
 	return { datasets, loading, errors };

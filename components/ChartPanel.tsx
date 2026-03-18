@@ -18,6 +18,7 @@ import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
 import CrimeSection from "./crime/CrimeSection";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import BrexitSection from "./referendum/BrexitSection";
 import CustomSection from "./custom/CustomSection";
 import { usePanelContext } from "@/lib/context/PanelContext";
 
@@ -151,6 +152,15 @@ export default memo(function ChartPanel({
 						activeDataset={activeDataset}
 						availableDatasets={datasets.localElection}
 						aggregatedData={aggregatedData.localElection}
+						selectedArea={selectedArea}
+						setActiveViz={setActiveViz}
+						codeMapper={codeMapper}
+						activeViz={activeViz}
+					/>
+					<BrexitSection
+						activeDataset={activeDataset}
+						availableDatasets={datasets.brexit}
+						aggregatedData={aggregatedData.brexit}
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}

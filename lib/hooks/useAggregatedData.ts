@@ -120,6 +120,12 @@ export function useAggregatedData({
                 calculateStats: (mapManager, geojson, data, location, id) =>
                     mapManager.calculateIncomeStats(geojson, data, location, id),
             },
+            brexit: {
+                datasets: datasets.brexit,
+                boundaryType: "localAuthority",
+                calculateStats: (mapManager, geojson, data, location, id) =>
+                    mapManager.calculateBrexitStats(geojson, data, location, id),
+            },
             custom: {
                 datasets: customDataset ? [customDataset] : [],
                 boundaryType: customDataset?.boundaryType || 'ward',
@@ -141,6 +147,7 @@ export function useAggregatedData({
                 housePrice: null,
                 crime: null,
                 income: null,
+                brexit: null,
                 custom: null,
             };
         }

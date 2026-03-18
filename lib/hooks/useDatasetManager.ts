@@ -7,6 +7,7 @@ import {
 	LocalElectionDataset,
 	PopulationDataset,
 	IncomeDataset,
+	BrexitDataset,
 } from "../types";
 
 /**
@@ -21,6 +22,7 @@ export function useDatasetManager(
 	housePriceDatasets: Record<string, HousePriceDataset>,
 	crimeDatasets: Record<string, CrimeDataset>,
 	incomeDatasets: Record<string, IncomeDataset>,
+	brexitDatasets: Record<string, BrexitDataset>,
 ) {
 	const activeDataset = useMemo(() => {
 		switch (activeDatasetId) {
@@ -53,12 +55,15 @@ export function useDatasetManager(
 				return crimeDatasets[activeDatasetId];
 			case "income2025":
 				return incomeDatasets[activeDatasetId];
+			case "brexit2016":
+				return brexitDatasets[activeDatasetId];
 		}
 	}, [
 		localElectionDatasets,
 		generalElectionDatasets,
 		populationDatasets,
 		housePriceDatasets,
+		brexitDatasets,
 		activeDatasetId,
 	]);
 

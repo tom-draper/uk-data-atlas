@@ -22,6 +22,7 @@ export type PopulationOptions = ColorRangeOption;
 export type DensityOptions = ColorRangeOption;
 export type GenderOptions = ColorRangeOption;
 export type IncomeOptions = ColorRangeOption;
+export type BrexitOptions = Record<string, never>;
 
 export type ColorTheme = "viridis" | "plasma" | "inferno" | "magma";
 
@@ -37,6 +38,7 @@ export interface MapOptions {
 	housePrice: HousePriceOptions;
 	crime: CrimeOptions;
 	income: IncomeOptions;
+	brexit: BrexitOptions;
 	custom: ColorRangeOption;
 	theme: {
 		id: ColorTheme;

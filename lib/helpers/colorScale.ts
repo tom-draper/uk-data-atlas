@@ -215,6 +215,23 @@ export function getColorForCrimeRate(
 	return colorFromRange(rate, options, themeId, true);
 }
 
+/**
+ * Gets colour for Brexit Leave percentage.
+ * 0% Leave (all Remain) → deep blue; 50% → white/neutral; 100% Leave → deep red.
+ */
+export function getColorForBrexitLeave(pctLeave: number): string {
+	const midpoint = 50;
+	if (pctLeave <= midpoint) {
+		// Interpolate from deep blue (0%) to white (50%)
+		const factor = pctLeave / midpoint;
+		return interpolateColor("rgb(30, 60, 180)", "rgb(240, 240, 240)", factor);
+	} else {
+		// Interpolate from white (50%) to deep red (100%)
+		const factor = (pctLeave - midpoint) / midpoint;
+		return interpolateColor("rgb(240, 240, 240)", "rgb(180, 20, 20)", factor);
+	}
+}
+
 /** Gets colour for income data; range expands to include outlier values. */
 export function getColorForIncome(
 	income: number,

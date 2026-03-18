@@ -11,6 +11,7 @@ import {
 	Feature,
 	Features,
 	getFeatureProp,
+	BrexitDataset,
 } from "@lib/types";
 import { MapOptions } from "@lib/types/mapOptions";
 import {
@@ -25,6 +26,7 @@ import {
 	getColorForHousePrice,
 	getColorForCrimeRate,
 	getColorForIncome,
+	getColorForBrexitLeave,
 	getColor,
 	normalizeValue,
 } from "../colorScale";
@@ -327,6 +329,23 @@ export class FeatureBuilder {
 						mapOptions.income,
 						mapOptions.theme.id,
 					)
+				: DEFAULT_COLOR;
+
+			return { color };
+		});
+	}
+
+	buildBrexitFeatures(
+		features: Features,
+		dataset: BrexitDataset,
+		ladCodeProp: PropertyKeys,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const area =
+				dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+
+			const color = area
+				? getColorForBrexitLeave(area.pctLeave)
 				: DEFAULT_COLOR;
 
 			return { color };

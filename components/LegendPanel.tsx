@@ -558,6 +558,24 @@ export default memo(function LegendPanel({
 			case "localElection":
 				return renderElectionLegend();
 
+			case "brexit":
+				return (
+					<div className="p-1">
+						<div
+							className="h-40 w-6 rounded"
+							style={{
+								background:
+									"linear-gradient(to bottom, rgb(30, 60, 180), rgb(240, 240, 240), rgb(180, 20, 20))",
+							}}
+						/>
+						<div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8 pointer-events-none">
+							<span>100% Remain</span>
+							<span>50 / 50</span>
+							<span>100% Leave</span>
+						</div>
+					</div>
+				);
+
 			case "custom":
 				// Custom datasets use a color range
 				return renderDynamicLegend(
