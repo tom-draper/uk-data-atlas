@@ -535,7 +535,7 @@ function CustomDatasetCard({
         }
 
         return null;
-    }, [customDataset, selectedArea, codeMapper]);
+    }, [customDataset, selectedArea, codeMapper, aggregatedData]);
 
     const handleClick = () => {
         setActiveViz({

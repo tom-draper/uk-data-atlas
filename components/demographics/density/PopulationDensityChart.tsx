@@ -26,12 +26,15 @@ interface PopulationDensityChartProps {
 	};
 }
 
-const getWardPopulationDensity = (feature: Feature, total: number) => {
-	// Compute approximate area
-	const coordinates = feature.geometry.coordinates;
-	const areaSqKm = polygonAreaSqKm(coordinates);
+// Cache computed area per feature object — avoids re-traversing polygon vertices on every hover
+const featureAreaCache = new WeakMap<Feature, number>();
 
-	// Compute density
+const getWardPopulationDensity = (feature: Feature, total: number) => {
+	let areaSqKm = featureAreaCache.get(feature);
+	if (areaSqKm === undefined) {
+		areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
+		featureAreaCache.set(feature, areaSqKm);
+	}
 	const density = areaSqKm > 0 ? total / areaSqKm : 0;
 	return { density, areaSqKm };
 };
@@ -289,9 +292,11 @@ function PopulationDensityChart({
 
 					if (wardFeature) {
 						const wardTotal = calculateTotal(populationData.total);
-						const coordinates = wardFeature.geometry.coordinates;
-						const wardArea = polygonAreaSqKm(coordinates);
-
+						let wardArea = featureAreaCache.get(wardFeature);
+						if (wardArea === undefined) {
+							wardArea = polygonAreaSqKm(wardFeature.geometry.coordinates);
+							featureAreaCache.set(wardFeature, wardArea);
+						}
 						totalPopulation += wardTotal;
 						totalArea += wardArea;
 					}

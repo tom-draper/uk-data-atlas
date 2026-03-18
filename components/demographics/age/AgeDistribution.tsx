@@ -34,14 +34,14 @@ const AGE_BOUNDARIES = [
 	{ max: Infinity, key: "65+" as keyof AgeGroups },
 ];
 
-const getAgeGroupKey = (age: number): keyof AgeGroups => {
-	for (let i = 0; i < AGE_BOUNDARIES.length; i++) {
-		if (age <= AGE_BOUNDARIES[i].max) {
-			return AGE_BOUNDARIES[i].key;
-		}
+// Precomputed lookup tables — avoids i.toString() and boundary search in hot loops
+const AGE_STRING_KEYS: string[] = Array.from({ length: 100 }, (_, i) => String(i));
+const AGE_GROUP_KEYS: (keyof AgeGroups)[] = Array.from({ length: 100 }, (_, i) => {
+	for (let b = 0; b < AGE_BOUNDARIES.length; b++) {
+		if (i <= AGE_BOUNDARIES[b].max) return AGE_BOUNDARIES[b].key;
 	}
 	return "65+";
-};
+});
 
 // Pre-calculate decay weights (constant)
 const DECAY_RATE = 0.15;
@@ -140,7 +140,7 @@ function AgeDistribution({
 
 			// Build ages 0-89
 			for (let i = 0; i < 90; i++) {
-				const count = agesCountTotal[i.toString()] || 0;
+				const count = agesCountTotal[AGE_STRING_KEYS[i]] || 0;
 				counts[i] = count;
 				totalPopulation += count;
 				if (count > max) max = count;
@@ -170,7 +170,7 @@ function AgeDistribution({
 				const count = counts[i];
 
 				// Grouping logic
-				const key = getAgeGroupKey(i);
+				const key = AGE_GROUP_KEYS[i];
 				currentAgeGroups[key] += count;
 
 				// Median logic (integrated into single loop)
@@ -249,7 +249,7 @@ function AgeDistribution({
 				if (wardData?.total) {
 					// Add ages 0-89
 					for (let i = 0; i < 90; i++) {
-						const count = wardData.total[i.toString()] || 0;
+						const count = wardData.total[AGE_STRING_KEYS[i]] || 0;
 						aggregatedCounts[i] += count;
 					}
 
@@ -286,7 +286,7 @@ function AgeDistribution({
 				const count = aggregatedCounts[i];
 
 				// Grouping logic
-				const key = getAgeGroupKey(i);
+				const key = AGE_GROUP_KEYS[i];
 				currentAgeGroups[key] += count;
 
 				// Median logic

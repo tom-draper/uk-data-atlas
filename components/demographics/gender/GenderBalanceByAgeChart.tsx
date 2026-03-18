@@ -20,8 +20,9 @@ export interface GenderBalanceByAgeChartProps {
 	};
 }
 
-// Pre-create age indices array (constant)
+// Pre-create age indices and string keys (constants)
 const AGE_INDICES = Array.from({ length: 91 }, (_, i) => i);
+const AGE_STRING_KEYS = Array.from({ length: 91 }, (_, i) => String(i));
 
 // Cache for LAD gender balance aggregations (bounded to prevent unbounded memory growth)
 const MAX_LAD_CACHE_ENTRIES = 50;
@@ -82,7 +83,7 @@ function GenderBalanceByAgeChart({
 
 				// Single loop: build data AND calculate percentages
 				for (let age = 0; age < 91; age++) {
-					const ageStr = age.toString();
+					const ageStr = AGE_STRING_KEYS[age];
 					const m = males[ageStr] || 0;
 					const f = females[ageStr] || 0;
 					const total = m + f;
@@ -149,7 +150,7 @@ function GenderBalanceByAgeChart({
 				if (wardData) {
 					// Sum males and females by age
 					for (let age = 0; age < 91; age++) {
-						const ageStr = age.toString();
+						const ageStr = AGE_STRING_KEYS[age];
 						aggregatedMales[age] += wardData.males[ageStr] || 0;
 						aggregatedFemales[age] += wardData.females[ageStr] || 0;
 					}
