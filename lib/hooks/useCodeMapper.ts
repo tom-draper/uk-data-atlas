@@ -12,6 +12,16 @@ import {
 export type CodeType = "ward" | "localAuthority" | "constituency";
 export type YearCode = number;
 
+/** Shared type for the codeMapper prop passed to chart sections and sub-components. */
+export interface CodeMapper {
+	getCodeForYear: (
+		type: CodeType,
+		code: string,
+		targetYear: number,
+	) => string | undefined;
+	getWardsForLad: (ladCode: string, year: number) => string[];
+}
+
 export interface CodeMapping {
 	[fromCode: string]: {
 		[toYear: number]: string;

@@ -9,6 +9,7 @@ import {
 } from "@/lib/types";
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
 import { useMemo, memo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 const YEAR_STYLES = {
 	bg: "bg-indigo-50/60",
@@ -77,14 +78,7 @@ interface EthnicityChartProps {
 	dataset: EthnicityDataset;
 	aggregatedData: Record<number, AggregatedEthnicityData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

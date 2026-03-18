@@ -15,6 +15,7 @@ import {
 	PartyCode,
 } from "@lib/types";
 import GeneralElectionResultChart from "./GeneralElectionResultChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface ProcessedPartyData {
 	key: string;
@@ -175,13 +176,7 @@ interface GeneralElectionResultChartSectionProps {
 	aggregatedData: Record<number, AggregatedGeneralElectionData> | null;
 	selectedArea: SelectedArea | null;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "constituency",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 }
 

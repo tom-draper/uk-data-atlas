@@ -1,5 +1,6 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
 import { useMemo, memo, useRef, useCallback } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	AggregatedPopulationData,
 	PopulationDataset,
@@ -10,14 +11,7 @@ export interface GenderBalanceByAgeChartProps {
 	dataset: PopulationDataset;
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward" | "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
 // Pre-create age indices and string keys (constants)

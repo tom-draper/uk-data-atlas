@@ -11,20 +11,14 @@ import {
 } from "@/lib/types";
 import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
 import { useMemo, memo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
 // Cache computed area per feature object — avoids re-traversing polygon vertices on every hover

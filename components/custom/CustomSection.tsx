@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useMemo, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Upload, AlertCircle } from 'lucide-react';
 import { ActiveViz, BoundaryType, CustomDataset, AggregatedCustomData, BoundaryCodes } from '@/lib/types';
+import { CodeMapper } from '@/lib/hooks/useCodeMapper';
 
 interface MatchResult {
     type: string;
@@ -462,14 +463,7 @@ function CustomDatasetCard({
     selectedArea: SelectedArea | null;
     isActive: boolean;
     setActiveViz: (value: ActiveViz) => void;
-    codeMapper: {
-        getCodeForYear: (
-            type: BoundaryType,
-            code: string,
-            targetYear: number,
-        ) => string | undefined;
-        getWardsForLad: (ladCode: string, year: number) => string[];
-    }
+    codeMapper: CodeMapper
 }) {
     const displayValue = useMemo(() => {
         if (!customDataset || !customDataset.data) return null;
@@ -608,10 +602,7 @@ export default memo(function CustomSection({
     boundaryCodes: BoundaryCodes;
     activeViz: ActiveViz;
     setActiveViz: (value: ActiveViz) => void;
-    codeMapper?: {
-        getCodeForYear: (type: BoundaryType, code: string, targetYear: number) => string | undefined;
-        getWardsForLad: (ladCode: string, year: number) => string[];
-    };
+    codeMapper?: CodeMapper;
 }) {
     const [isOpen, setIsOpen] = useState(false);
 

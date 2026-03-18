@@ -9,19 +9,14 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import CrimeChart from "./CrimeRateChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface CrimeChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, CrimeDataset>;
 	aggregatedData: Record<number, AggregatedCrimeData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

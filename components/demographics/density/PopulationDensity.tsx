@@ -8,20 +8,14 @@ import {
 	SelectedArea,
 } from "@/lib/types";
 import PopulationDensityChart from "./PopulationDensityChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
 	boundaryData: BoundaryData;
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

@@ -7,6 +7,7 @@ import {
 	SelectedArea,
 } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface GenderProps {
 	dataset: PopulationDataset;
@@ -14,14 +15,7 @@ interface GenderProps {
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward" | "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
 // Cache for LAD gender aggregations (bounded to prevent unbounded memory growth)

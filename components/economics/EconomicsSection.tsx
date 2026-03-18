@@ -12,6 +12,7 @@ import {
 } from "@lib/types";
 import HousePriceChart from "./house-price/HousePriceChart";
 import IncomeChart from "./income/IncomeChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface EconomicsSectionProps {
 	activeDataset: Dataset | null;
@@ -20,14 +21,7 @@ interface EconomicsSectionProps {
 	availableIncomeDatasets: Record<string, IncomeDataset>;
 	aggregatedIncomeData: Record<number, AggregatedIncomeData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward" | "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

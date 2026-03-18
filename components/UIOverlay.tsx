@@ -13,7 +13,7 @@ import type {
 } from "@lib/types";
 import type { CustomDataset } from "@/lib/types/custom";
 import { MapOptions } from "@/lib/types/mapOptions";
-import { CodeType } from "@/lib/hooks/useCodeMapper";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { PanelContext } from "@/lib/context/PanelContext";
 
 interface UIOverlayProps {
@@ -29,14 +29,7 @@ interface UIOverlayProps {
 	boundaryData: BoundaryData;
 	boundaryCodes: BoundaryCodes;
 	mapOptions: MapOptions;
-	codeMapper?: {
-		getCodeForYear: (
-			type: CodeType,
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 	onMapOptionsChange: (
 		type: keyof MapOptions,
 		options: Partial<MapOptions[typeof type]>,

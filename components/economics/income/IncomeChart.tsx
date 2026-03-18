@@ -8,6 +8,7 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import { memo, useMemo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -15,13 +16,7 @@ interface IncomeChartProps {
 	aggregatedData: Record<number, AggregatedIncomeData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

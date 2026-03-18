@@ -8,20 +8,14 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import React, { memo, useMemo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
 	    availableDatasets: Record<string, HousePriceDataset>;
 	    aggregatedData: Record<number, AggregatedHousePriceData> | null;	year: number;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward" | "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

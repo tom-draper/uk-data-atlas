@@ -118,33 +118,45 @@ export function getThemeColor(
 }
 
 /**
- * Gets color for population/age data with dynamic range
+ * Shared implementation: normalise `value` within options.colorRange and return
+ * an inverted theme colour. When `expandRange` is true the range expands to
+ * always include the value (used for datasets where outliers exist).
  */
+function colorFromRange(
+	value: number,
+	options: { colorRange: { min: number; max: number } },
+	themeId: string,
+	expandRange: boolean,
+): string {
+	const { min, max } = options.colorRange;
+	const normalized = normalizeValue(
+		value,
+		expandRange ? Math.min(min, value) : min,
+		expandRange ? Math.max(max, value) : max,
+	);
+	return getThemeColor(1 - normalized, themeId);
+}
+
+/** Gets colour for population/age data. */
 export function getColorForAge(
 	medianAge: number,
 	mapOptions: PopulationOptions,
 	themeId: string = "viridis",
 ) {
-	const range = mapOptions.colorRange;
-	const normalized = normalizeValue(medianAge, range.min, range.max);
-	return getThemeColor(1 - normalized, themeId); // Invert so higher ages are darker (if using Viridis logic)
+	return colorFromRange(medianAge, mapOptions, themeId, false);
 }
 
 export function getColor(normalisedValue: number, themeId: string = "viridis") {
 	return getThemeColor(1 - normalisedValue, themeId);
 }
 
-/**
- * Gets color for density data with dynamic range
- */
+/** Gets colour for population density data. */
 export function getColorForDensity(
 	density: number,
 	mapOptions: DensityOptions,
 	themeId: string = "viridis",
 ) {
-	const range = mapOptions.colorRange;
-	const normalized = normalizeValue(density, range.min, range.max);
-	return getThemeColor(1 - normalized, themeId); // Invert so higher density is darker
+	return colorFromRange(density, mapOptions, themeId, false);
 }
 
 // Ethnicity subcategory colors
@@ -185,55 +197,31 @@ export const ETHNICITY_COLORS: Record<string, string> = {
 	"Any other ethnic group": "#f472b6", // Light pink
 };
 
-/**
- * Gets color for house price data with dynamic range
- */
+/** Gets colour for house price data; range expands to include outlier values. */
 export function getColorForHousePrice(
 	price: number,
 	options: HousePriceOptions,
 	themeId: string = "viridis",
 ) {
-	const range = options.colorRange;
-	const normalized = normalizeValue(
-		price,
-		Math.min(range.min, price),
-		Math.max(range.max, price),
-	);
-	return getThemeColor(1 - normalized, themeId);
+	return colorFromRange(price, options, themeId, true);
 }
 
-/**
- * Gets color for crime rate data with dynamic range
- */
+/** Gets colour for crime rate data; range expands to include outlier values. */
 export function getColorForCrimeRate(
 	rate: number,
 	options: CrimeOptions,
 	themeId: string = "viridis",
 ) {
-	const range = options.colorRange;
-	const normalized = normalizeValue(
-		rate,
-		Math.min(range.min, rate),
-		Math.max(range.max, rate),
-	);
-	return getThemeColor(1 - normalized, themeId);
+	return colorFromRange(rate, options, themeId, true);
 }
 
-/**
- * Gets color for crime rate data with dynamic range
- */
+/** Gets colour for income data; range expands to include outlier values. */
 export function getColorForIncome(
 	income: number,
 	options: IncomeOptions,
 	themeId: string = "viridis",
 ) {
-	const range = options.colorRange;
-	const normalized = normalizeValue(
-		income,
-		Math.min(range.min, income),
-		Math.max(range.max, income),
-	);
-	return getThemeColor(1 - normalized, themeId);
+	return colorFromRange(income, options, themeId, true);
 }
 
 /**

@@ -17,7 +17,7 @@ import { memo } from "react";
 import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
 import CrimeSection from "./crime/CrimeSection";
-import { CodeType } from "@/lib/hooks/useCodeMapper";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import CustomSection from "./custom/CustomSection";
 import { usePanelContext } from "@/lib/context/PanelContext";
 
@@ -32,14 +32,7 @@ interface ChartPanelProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	aggregatedData: AggregatedData;
-	codeMapper?: {
-		getCodeForYear: (
-			type: CodeType,
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
 const PanelHeader = memo(function PanelHeader() {

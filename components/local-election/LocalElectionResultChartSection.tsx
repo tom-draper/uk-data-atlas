@@ -14,6 +14,7 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import LocalElectionResultChart from "./LocalElectionResultChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface ProcessedPartyData {
 	key: string;
@@ -202,14 +203,7 @@ interface LocalElectionResultChartSectionProps {
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
 export default memo(function LocalElectionResultChartSection({

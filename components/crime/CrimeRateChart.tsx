@@ -7,19 +7,14 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import { memo, useMemo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, CrimeDataset>;
 	aggregatedData: Record<number, AggregatedCrimeData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-	};
+	codeMapper?: CodeMapper;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;

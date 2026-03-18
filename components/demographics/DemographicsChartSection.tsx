@@ -14,6 +14,7 @@ import Gender from "./gender/Gender";
 import AgeDistribution from "./age/AgeDistribution";
 import PopulationDensity from "./density/PopulationDensity";
 import EthnicityChart from "./ethnicity/EthnicityChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 export interface DemographicsChartSectionProps {
 	availablePopulationDatasets: Record<string, PopulationDataset>;
@@ -22,14 +23,7 @@ export interface DemographicsChartSectionProps {
 	aggregatedEthnicityData: Record<number, AggregatedEthnicityData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward" | "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
