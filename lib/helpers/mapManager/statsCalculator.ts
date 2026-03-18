@@ -27,6 +27,7 @@ import { calculateAgeGroups } from "../ageDistribution";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
+import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -535,6 +536,40 @@ export class StatsCalculator {
 
 		this.cache.set(cacheKey, result);
 		return result;
+	}
+
+	calculateIMDStats(
+		geojson: BoundaryGeojson,
+		imdData: IMDDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedIMDData {
+		const cacheKey = `imd-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey);
+		if (cached) return cached;
+
+		const lsoaCodeProp = this.propertyDetector.detectLSOACode(geojson.features);
+		let totalScore = 0;
+		let totalDecile = 0;
+		let count = 0;
+
+		for (const feature of geojson.features) {
+			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
+			const record = imdData[code];
+			if (record) {
+				totalScore += record.imdScore;
+				totalDecile += record.imdDecile;
+				count++;
+			}
+		}
+
+		const stats: AggregatedIMDData = {
+			averageIMDScore: count > 0 ? totalScore / count : 0,
+			averageIMDDecile: count > 0 ? totalDecile / count : 0,
+		};
+
+		this.cache.set(cacheKey, stats);
+		return stats;
 	}
 
 	private aggregatePopulationData(

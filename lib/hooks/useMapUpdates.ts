@@ -86,6 +86,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "imd":
+					return mapManager.updateMapForIMD(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "population":
 					// Handle population sub-categories
 					if (activeViz.vizId.startsWith("ageDistribution")) {

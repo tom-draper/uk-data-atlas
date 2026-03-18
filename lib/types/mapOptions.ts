@@ -24,6 +24,7 @@ export type GenderOptions = ColorRangeOption;
 export type IncomeOptions = ColorRangeOption;
 export type BrexitOptions = ColorRangeOption;
 export type BrexitConstituencyOptions = ColorRangeOption;
+export type IMDOptions = ColorRangeOption;
 
 export type ColorTheme = "viridis" | "plasma" | "inferno" | "magma";
 
@@ -42,6 +43,7 @@ export interface MapOptions {
 	brexit: BrexitOptions;
 	brexitConstituency: BrexitConstituencyOptions;
 	custom: ColorRangeOption;
+	imd: IMDOptions;
 	theme: {
 		id: ColorTheme;
 	};

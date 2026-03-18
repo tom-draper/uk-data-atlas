@@ -1,0 +1,130 @@
+"use client";
+import {
+	ActiveViz,
+	AggregatedIMDData,
+	Dataset,
+	IMDDataset,
+	SelectedArea,
+} from "@lib/types";
+import { memo, useMemo } from "react";
+
+interface IMDChartProps {
+	activeDataset: Dataset | null;
+	availableDatasets: Record<string, IMDDataset>;
+	aggregatedData: Record<number, AggregatedIMDData> | null;
+	selectedArea: SelectedArea | null;
+	year: number;
+	activeViz: ActiveViz;
+	setActiveViz: (value: ActiveViz) => void;
+}
+
+const DECILE_COLORS = [
+	"#67000d", // 1 - most deprived
+	"#a50026",
+	"#d73027",
+	"#f46d43",
+	"#fdae61",
+	"#fee090",
+	"#e0f3f8",
+	"#abd9e9",
+	"#74add1",
+	"#313695", // 10 - least deprived
+];
+
+export default memo(function IMDChart({
+	activeDataset,
+	availableDatasets,
+	aggregatedData,
+	selectedArea,
+	year,
+	activeViz,
+	setActiveViz,
+}: IMDChartProps) {
+	const dataset = availableDatasets?.[year];
+
+	const imdStats = useMemo(() => {
+		if (!dataset) return null;
+
+		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+			return aggregatedData[dataset.year];
+		}
+
+		if (selectedArea && selectedArea.type === "localAuthority" && selectedArea.data) {
+			const ladCode = selectedArea.code;
+			const lsoasInLad = Object.values(dataset.data).filter(
+				(r) => r.ladCode === ladCode,
+			);
+			if (lsoasInLad.length === 0) return null;
+			const avgScore = lsoasInLad.reduce((sum, r) => sum + r.imdScore, 0) / lsoasInLad.length;
+			const avgDecile = lsoasInLad.reduce((sum, r) => sum + r.imdDecile, 0) / lsoasInLad.length;
+			return { averageIMDScore: avgScore, averageIMDDecile: avgDecile };
+		}
+
+		return null;
+	}, [dataset, aggregatedData, selectedArea]);
+
+	if (!dataset) return null;
+
+	const isActive =
+		activeDataset?.type === "imd" && activeDataset.id === dataset.id;
+
+	const decile = imdStats ? Math.round(imdStats.averageIMDDecile) : null;
+	const decileColor = decile ? DECILE_COLORS[decile - 1] : "#9ca3af";
+	const hasData = imdStats !== null;
+
+	return (
+		<div
+			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 ${
+				isActive
+					? "border-2 border-amber-400 bg-amber-50/60"
+					: "bg-white/60 border-2 border-gray-200/80 hover:border-amber-400"
+			}`}
+			title="Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019. gov.uk"
+			onClick={() =>
+				setActiveViz({
+					vizId: dataset.id,
+					datasetType: dataset.type,
+					datasetYear: dataset.year,
+				})
+			}
+		>
+			<div className="relative z-10">
+				<h3 className="text-xs font-bold text-gray-800/90">
+					Deprivation (IMD) [{dataset.year}]
+				</h3>
+				{hasData && imdStats ? (
+					<div className="mt-1.5 flex items-center gap-2">
+						<div className="flex gap-0.5 flex-1">
+							{DECILE_COLORS.map((color, i) => (
+								<div
+									key={i}
+									className="flex-1 h-3 rounded-sm"
+									style={{
+										backgroundColor: color,
+										opacity: decile === i + 1 ? 1 : 0.25,
+									}}
+								/>
+							))}
+						</div>
+					</div>
+				) : (
+					<div className="h-5 mt-2 mb-2">
+						<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+							No data available
+						</div>
+					</div>
+				)}
+				{hasData && imdStats && (
+					<div className="mt-1 flex justify-between items-baseline">
+						<span className="text-xs font-semibold" style={{ color: decileColor }}>
+							{decile !== null ? `Decile ${decile}` : ""}
+						</span>
+						<span className="text-[10px] text-gray-500">
+							Score {imdStats.averageIMDScore.toFixed(1)}
+						</span>
+					</div>
+				)}
+			</div>
+		</div>
+	);
+});

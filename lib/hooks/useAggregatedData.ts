@@ -132,6 +132,12 @@ export function useAggregatedData({
                 calculateStats: (mapManager, geojson, data, location, id) =>
                     mapManager.calculateBrexitConstituencyStats(geojson, data, location, id),
             },
+            imd: {
+                datasets: datasets.imd,
+                boundaryType: "lsoa",
+                calculateStats: (mapManager, geojson, data, location, id) =>
+                    mapManager.calculateIMDStats(geojson, data, location, id),
+            },
             custom: {
                 datasets: customDataset ? [customDataset] : [],
                 boundaryType: customDataset?.boundaryType || 'ward',
@@ -156,6 +162,7 @@ export function useAggregatedData({
                 brexit: null,
                 brexitConstituency: null,
                 custom: null,
+                imd: null,
             };
         }
 

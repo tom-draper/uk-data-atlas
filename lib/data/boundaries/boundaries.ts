@@ -63,6 +63,11 @@ export const GEOJSON_PATHS = {
 		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.topojson",
 		// ),
 	},
+	lsoa: {
+		2011: withCDN(
+			"/data/boundaries/lsoa/LSOA_Dec_2011_Boundaries_Super_Generalised_Clipped_BGC_EW_V3.topojson",
+		),
+	},
 } as const;
 
 export type BoundaryType = keyof typeof GEOJSON_PATHS;
@@ -100,6 +105,11 @@ export const CONSTITUENCY_NAME_KEYS = [
 	"PCON15NM",
 ] as const;
 
+export const LSOA_CODE_KEYS = ["LSOA11CD", "LSOA21CD"] as const;
+export const LSOA_NAME_KEYS = ["LSOA11NM", "LSOA21NM"] as const;
+export type LSOACodeKey = (typeof LSOA_CODE_KEYS)[number];
+export type LSOANameKey = (typeof LSOA_NAME_KEYS)[number];
+
 export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
 export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
 export type LADCodeKey = (typeof LAD_CODE_KEYS)[number];
@@ -114,6 +124,8 @@ export const PROPERTY_KEYS = {
 	ladName: LAD_NAME_KEYS,
 	constituencyCode: CONSTITUENCY_CODE_KEYS,
 	constituencyName: CONSTITUENCY_NAME_KEYS,
+	lsoaCode: LSOA_CODE_KEYS,
+	lsoaName: LSOA_NAME_KEYS,
 } as const;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
@@ -185,6 +197,10 @@ const getPropertyKeys = (type: BoundaryType) => {
 		localAuthority: {
 			code: PROPERTY_KEYS.ladCode,
 			name: PROPERTY_KEYS.ladName,
+		},
+		lsoa: {
+			code: PROPERTY_KEYS.lsoaCode,
+			name: PROPERTY_KEYS.lsoaName,
 		},
 	};
 	return keyMap[type];
@@ -303,6 +319,18 @@ export const filterFeatures = (
 			...geojson,
 			features: geojson.features.filter((f) => {
 				const ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
+				return ladCode && ladCodeSet.has(ladCode);
+			}),
+		};
+	}
+
+	// Filter LSOAs by LAD code
+	if (type === "lsoa" && locData.lad_codes?.length) {
+		const ladCodeSet = new Set(locData.lad_codes);
+		return {
+			...geojson,
+			features: geojson.features.filter((f) => {
+				const ladCode = getProp(f.properties, ["LAD11CD", "LAD21CD"] as any);
 				return ladCode && ladCodeSet.has(ladCode);
 			}),
 		};

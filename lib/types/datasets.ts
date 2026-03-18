@@ -12,6 +12,7 @@ import { AggregatedIncomeData, IncomeDataset } from "./income";
 import { AggregatedEthnicityData, EthnicityDataset } from "./ethnicity";
 import { AggregatedCustomData, CustomDataset } from "./custom";
 import { AggregatedBrexitData, BrexitConstituencyDataset, BrexitDataset } from "./referendum";
+import { AggregatedIMDData, IMDDataset } from "./imd";
 
 export type Dataset =
     | LocalElectionDataset
@@ -23,7 +24,8 @@ export type Dataset =
     | IncomeDataset
     | BrexitDataset
     | BrexitConstituencyDataset
-    | CustomDataset;
+    | CustomDataset
+    | IMDDataset;
 
 export type Datasets = {
     localElection: Record<string, LocalElectionDataset>;
@@ -35,6 +37,7 @@ export type Datasets = {
     income: Record<string, IncomeDataset>;
     brexit: Record<string, BrexitDataset>;
     brexitConstituency: Record<string, BrexitConstituencyDataset>;
+    imd: Record<string, IMDDataset>;
 };
 
 export type AggregatedData = {
@@ -48,6 +51,7 @@ export type AggregatedData = {
     brexit: Record<number, AggregatedBrexitData> | null;
     brexitConstituency: Record<number, AggregatedBrexitData> | null;
     custom: Record<number, AggregatedCustomData> | null;
+    imd: Record<number, AggregatedIMDData> | null;
 };
 
 export type ActiveViz = {

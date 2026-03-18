@@ -28,11 +28,13 @@ import {
 	getColorForCrimeRate,
 	getColorForIncome,
 	getColorForBrexitLeave,
+	getColorForIMD,
 	getColor,
 	normalizeValue,
 } from "../colorScale";
 import { IncomeDataset } from "@/lib/types/income";
 import { CustomDataset } from "@/lib/types/custom";
+import { IMDDataset } from "@/lib/types/imd";
 
 const DEFAULT_COLOR = "#cccccc";
 
@@ -368,6 +370,22 @@ export class FeatureBuilder {
 				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexit)
 				: DEFAULT_COLOR;
 
+			return { color };
+		});
+	}
+
+	buildIMDFeatures(
+		features: Features,
+		dataset: IMDDataset,
+		lsoaCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
+			const area = dataset.data[code];
+			const color = area
+				? getColorForIMD(area.imdScore, mapOptions.imd, mapOptions.theme.id)
+				: DEFAULT_COLOR;
 			return { color };
 		});
 	}

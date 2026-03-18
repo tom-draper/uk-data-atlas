@@ -13,3 +13,4 @@ export * from "./custom";
 export * from "./referendum";
 export * from "./datasets";
 export * from "./areas";
+export * from "./imd";

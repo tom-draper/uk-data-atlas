@@ -8,6 +8,7 @@ import type {
 	EthnicityOptions,
 	GenderOptions,
 	HousePriceOptions,
+	IMDOptions,
 	IncomeOptions,
 	PopulationOptions,
 } from "@/lib/types/mapOptions";
@@ -231,6 +232,15 @@ export function getColorForBrexitLeave(pctLeave: number, options: BrexitOptions)
 		const factor = normalizeValue(pctLeave, midpoint, max);
 		return interpolateColor("rgb(240, 240, 240)", "rgb(180, 20, 20)", factor);
 	}
+}
+
+/** Gets colour for IMD score data; higher score = more deprived, range expands to include outlier values. */
+export function getColorForIMD(
+	score: number,
+	options: IMDOptions,
+	themeId: string = "viridis",
+) {
+	return colorFromRange(score, options, themeId, true);
 }
 
 /** Gets colour for income data; range expands to include outlier values. */

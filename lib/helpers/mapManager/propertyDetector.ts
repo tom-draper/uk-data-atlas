@@ -2,10 +2,12 @@
 import {
 	CONSTITUENCY_CODE_KEYS,
 	LAD_CODE_KEYS,
+	LSOA_CODE_KEYS,
 	WARD_CODE_KEYS,
 	BoundaryType,
 	WardCodeKey,
 	LADCodeKey,
+	LSOACodeKey,
 	ConstituencyCodeKey,
 } from "@/lib/data/boundaries/boundaries";
 import { BoundaryGeojson, PropertyKeys } from "@lib/types";
@@ -23,6 +25,10 @@ export class PropertyDetector {
 		return this.detectPropertyKey(features, LAD_CODE_KEYS);
 	}
 
+	detectLSOACode(features: BoundaryGeojson["features"]) {
+		return this.detectPropertyKey(features, LSOA_CODE_KEYS);
+	}
+
 	detectCode(features: BoundaryGeojson["features"]) {
 		return this.detectPropertyKey(
 			features,
@@ -30,6 +36,7 @@ export class PropertyDetector {
 				...WARD_CODE_KEYS,
 				...CONSTITUENCY_CODE_KEYS,
 				...LAD_CODE_KEYS,
+				...LSOA_CODE_KEYS,
 			] as readonly PropertyKeys[],
 		);
 	}
@@ -53,7 +60,7 @@ export class PropertyDetector {
 	getYearSpecificCodeKey(
 		type: BoundaryType,
 		year: number,
-	): WardCodeKey | LADCodeKey | ConstituencyCodeKey | undefined {
+	): WardCodeKey | LADCodeKey | ConstituencyCodeKey | LSOACodeKey | undefined {
 		// Construct the expected key based on year
 		// e.g., for year 2024, expect keys like WD24CD, LAD24CD, PCON24CD
 		const yearSuffix = year.toString().slice(-2);
@@ -67,6 +74,8 @@ export class PropertyDetector {
 				// Constituency keys can be a mix of years and prefixes
 				// This might need more refined logic if there are complex naming conventions
 				return CONSTITUENCY_CODE_KEYS.find((key) => key.endsWith(yearSuffix));
+			case "lsoa":
+				return LSOA_CODE_KEYS.find((key) => key.endsWith(yearSuffix));
 			default:
 				return undefined;
 		}

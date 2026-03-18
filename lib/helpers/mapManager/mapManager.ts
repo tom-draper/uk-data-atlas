@@ -22,6 +22,7 @@ import { FeatureBuilder } from "./featureBuilder";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
+import { IMDDataset } from "@/lib/types/imd";
 
 export interface MapManagerCallbacks {
 	onAreaHover?: (location: SelectedArea | null) => void;
@@ -301,7 +302,7 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset>(
+	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
@@ -596,6 +597,36 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateCustomDatasetStats(
+			geojson,
+			data,
+			location,
+			datasetId,
+		);
+	}
+
+	updateMapForIMD(
+		geojson: BoundaryGeojson,
+		dataset: IMDDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLSOACode.bind(this.propertyDetector),
+			this.featureBuilder.buildIMDFeatures.bind(this.featureBuilder),
+			"imd",
+			dataset.data,
+		);
+	}
+
+	calculateIMDStats(
+		geojson: BoundaryGeojson,
+		data: IMDDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateIMDStats(
 			geojson,
 			data,
 			location,
