@@ -41,6 +41,7 @@ export function useDatasetManager(
 			case "generalElection2017":
 			case "generalElection2015":
 				return generalElectionDatasets[activeDatasetId];
+			case "localElection2025":
 			case "localElection2024":
 			case "localElection2023":
 			case "localElection2022":

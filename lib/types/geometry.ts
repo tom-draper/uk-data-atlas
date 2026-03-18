@@ -2,6 +2,13 @@
 import { ValueOf } from "next/dist/shared/lib/constants";
 
 // Ward properties by year
+interface WardProperties2025 {
+	LAD25CD: string;
+	LAD25NM: string;
+	WD25CD: string;
+	WD25NM: string;
+}
+
 interface WardProperties2024 {
 	LAD24CD: string;
 	LAD24NM: string;
@@ -80,6 +87,7 @@ export type YearToProperties = {
 	ward_2022: WardProperties2022;
 	ward_2023: WardProperties2023;
 	ward_2024: WardProperties2024;
+	ward_2025: WardProperties2025;
 	// Local Authorities
 	lad_2021: LocalAuthorityProperties2021;
 	lad_2022: LocalAuthorityProperties2022;

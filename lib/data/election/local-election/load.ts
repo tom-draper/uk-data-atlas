@@ -1,6 +1,7 @@
 // lib/utils/electionUtils.ts
 import Papa from "papaparse";
-import { LocalElectionDataset, WardData } from "@lib/types/index";
+import { LocalElectionDataset, WardData, LocalElectionYear } from "@lib/types/index";
+import { WardYear } from "@/lib/data/boundaries/boundaries";
 import { PARTY_INFO } from "@/lib/data/election/parties";
 import { ElectionSourceConfig } from "./config";
 
@@ -46,13 +47,14 @@ export const fetchAndParseCsv = async (
 		Papa.parse(text, {
 			header: true,
 			skipEmptyLines: true,
+			transformHeader: (h) => h.trim(),
 			complete: (results) => {
 				const partyCols = detectPartyColumns(results.meta.fields || []);
 				const wardWinners: Record<string, string> = {};
 				const wardData: Record<string, WardData> = {};
 				const unmapped: any[] = [];
 
-				results.data.forEach((row: any) => {
+					results.data.forEach((row: any) => {
 					// Extract party votes
 					const partyVotes: Record<string, number> = {};
 					partyCols.forEach(
@@ -94,11 +96,11 @@ export const fetchAndParseCsv = async (
 					}
 				});
 
-				resolve({
+					resolve({
 					id: `localElection${config.year}`,
 					type: "localElection",
-					year: config.year,
-					boundaryYear: config.year,
+					year: config.year as LocalElectionYear,
+					boundaryYear: (config.boundaryYear ?? config.year) as WardYear,
 					boundaryType: "ward",
 					results: wardWinners,
 					data: wardData,
