@@ -138,3 +138,17 @@ export interface LocationBounds {
 	lad_codes: string[];
 	bounds: [number, number, number, number];
 }
+
+/**
+ * Safely read a dynamic string property from a GeoJSON feature.
+ * The property union (WardProperties*, LADProperties*, etc.) has no index
+ * signature, so direct bracket access is a type error. Centralising the cast
+ * here keeps all unsafe access in one auditable place.
+ */
+export function getFeatureProp(
+	properties: Properties,
+	key: string,
+): string | undefined {
+	// Double cast needed: no index signature on the property interfaces
+	return (properties as unknown as Record<string, string | undefined>)[key];
+}

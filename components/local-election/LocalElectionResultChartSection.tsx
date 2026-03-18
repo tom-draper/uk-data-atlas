@@ -156,7 +156,7 @@ const useLocalElectionData = (
 			}
 
 			// Process Votes & Percentages
-			const totalVotes = Object.values(rawPartyVotes).reduce((a, b) => (a || 0) + (b || 0), 0);
+			const totalVotes = Object.values(rawPartyVotes).reduce<number>((a, b) => a + (b ?? 0), 0);
 
 			if (totalVotes === 0) {
 				return {

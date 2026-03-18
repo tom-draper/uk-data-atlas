@@ -12,6 +12,6 @@ export type SelectedArea = {
         type: K;
         code: string;
         name: string;
-        data: AreaMap[K];
+        data: AreaMap[K] | null;
     };
 }[keyof AreaMap];

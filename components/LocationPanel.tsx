@@ -60,15 +60,17 @@ const calculateFeatureBounds = (
 		maxLng = -Infinity,
 		maxLat = -Infinity;
 
-	const processCoords = (coords: number[] | number[][]): void => {
+	type Coords = number[] | number[][] | number[][][];
+
+	const processCoords = (coords: Coords): void => {
 		if (typeof coords[0] === "number") {
-			const [lng, lat] = coords as number[];
+			const [lng, lat] = coords as [number, number];
 			minLng = Math.min(minLng, lng);
 			maxLng = Math.max(maxLng, lng);
 			minLat = Math.min(minLat, lat);
 			maxLat = Math.max(maxLat, lat);
 		} else {
-			(coords as number[][]).forEach(processCoords);
+			(coords as number[][] | number[][][]).forEach((c) => processCoords(c as Coords));
 		}
 	};
 
@@ -103,7 +105,7 @@ export default memo(function LocationPanel({
 	const geojsonFeatureMap = useMemo(() => {
 		if (!geojson) return {};
 
-		const map: Record<string, any> = {};
+		const map: Record<string, BoundaryGeojson["features"][0]> = {};
 		geojson.features.forEach((feature) => {
 			const wardCode = getProp(
 				feature.properties,
@@ -161,7 +163,7 @@ export default memo(function LocationPanel({
 
 		// Single pass through all wards to calculate country totals
 		Object.entries(enrichedPopulation).forEach(
-			([wardCode, wardData]: [string, any]) => {
+			([wardCode, wardData]) => {
 				const population = wardData.totalPopulation;
 
 				countryPops["United Kingdom"] += population;

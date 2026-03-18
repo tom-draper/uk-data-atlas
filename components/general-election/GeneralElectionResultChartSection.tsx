@@ -134,8 +134,8 @@ const useElectionChartData = (
 
 			// Process Votes & Percentages
 			// Sum manually to ensure we catch all specific party keys defined in this dataset
-			const totalVotes = Object.values(rawPartyVotes).reduce(
-				(a, b) => (a || 0) + (b || 0),
+			const totalVotes = Object.values(rawPartyVotes).reduce<number>(
+				(a, b) => a + (b ?? 0),
 				0,
 			);
 

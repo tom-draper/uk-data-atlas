@@ -7,6 +7,7 @@ import {
 	Feature,
 	PopulationDataset,
 	SelectedArea,
+	getFeatureProp,
 } from "@/lib/types";
 import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
 import { useMemo, memo } from "react";
@@ -167,7 +168,7 @@ const getFeatureIndex = (geojson: BoundaryGeojson, wardCodeProp: string): Map<st
 	if (!index) {
 		index = new Map();
 		for (const feature of geojson.features) {
-			const code = feature.properties?.[wardCodeProp];
+			const code = feature.properties ? getFeatureProp(feature.properties, wardCodeProp) : undefined;
 			if (code) index.set(String(code), feature);
 		}
 		featureIndexCache.set(geojson, index);

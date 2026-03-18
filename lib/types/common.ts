@@ -4,6 +4,7 @@ export type PartyCode = keyof typeof import("../data/election/parties").PARTIES;
 export type EthnicityCode = keyof typeof import("../helpers/colorScale").ETHNICITY_COLORS;
 
 export interface PartyVotes {
+	[party: string]: number | undefined;
 	LAB?: number;
 	CON?: number;
 	LD?: number;

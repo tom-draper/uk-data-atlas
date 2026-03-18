@@ -1,21 +1,26 @@
 import type { MapMouseEvent } from "mapbox-gl";
 import type { MapLibreEvent } from "maplibre-gl";
 import { MapManagerCallbacks } from "./mapManager";
-import { BoundaryType } from "@/lib/types";
+import { BoundaryType, ElectionData } from "@/lib/types";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
 
 type MapMouseEventType = MapMouseEvent | MapLibreEvent;
 
-function throttle<T extends (...args: any[]) => void>(
+type MapFeature = {
+	id?: string | number;
+	properties?: Record<string, string | undefined>;
+};
+
+function throttle<T extends (...args: Parameters<T>) => void>(
 	func: T,
-	limit: number
+	limit: number,
 ): (...args: Parameters<T>) => void {
-	let inThrottle: boolean;
-	return function (this: any, ...args: Parameters<T>): void {
+	let inThrottle = false;
+	return function (...args: Parameters<T>): void {
 		if (!inThrottle) {
-			func.apply(this, args);
+			func(...args);
 			inThrottle = true;
 			setTimeout(() => (inThrottle = false), limit);
 		}
@@ -29,7 +34,7 @@ export class EventHandler {
 	private currentNameProp: string = "";
 	private currentBoundaryType: BoundaryType = "ward";
 	private canvas: HTMLCanvasElement;
-	private _mouseMoveHandler: (e: MapMouseEventType & { features?: any[] }) => void;
+	private _mouseMoveHandler: (e: MapMouseEventType & { features?: MapFeature[] }) => void;
 	private _mouseLeaveHandler: () => void;
 
 	constructor(
@@ -49,8 +54,10 @@ export class EventHandler {
 
 		this.removeHandlers();
 
-		(this.map as any).on("mousemove", FILL_LAYER_ID, this._mouseMoveHandler);
-		(this.map as any).on("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
+		// Cast needed: mapboxgl.Map and maplibregl.Map have incompatible .on() overloads
+		// for layer-specific mouse events despite both supporting this API.
+		(this.map as mapboxgl.Map).on("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as Parameters<mapboxgl.Map["on"]>[2]);
+		(this.map as mapboxgl.Map).on("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
 	}
 
 	nameProp(codeProp: string) {
@@ -64,7 +71,7 @@ export class EventHandler {
 		return "ward"; // default
 	}
 
-	private handleMouseMove(e: MapMouseEventType & { features?: any[] }): void {
+	private handleMouseMove(e: MapMouseEventType & { features?: MapFeature[] }): void {
 		const features = e.features;
 		if (!features?.length) return;
 
@@ -81,12 +88,14 @@ export class EventHandler {
 		const code = feature.properties?.[this.currentCodeProp];
 		if (code && this.currentData) {
 			const name = feature.properties?.[this.currentNameProp];
+			// Type assertion needed: TypeScript can't narrow the discriminated
+			// SelectedArea union from a string variable at runtime
 			this.callbacks.onAreaHover?.({
 				type: this.currentBoundaryType,
 				code,
 				name,
-				data: this.currentData[code] ?? null,
-			});
+				data: (this.currentData[code] ?? null) as ElectionData | null,
+			} as Parameters<NonNullable<MapManagerCallbacks["onAreaHover"]>>[0]);
 		}
 
 		// Then update feature states
@@ -117,8 +126,8 @@ export class EventHandler {
 
 	private removeHandlers(): void {
 		// Use the bound handlers for off
-		(this.map as any).off("mousemove", FILL_LAYER_ID, this._mouseMoveHandler);
-		(this.map as any).off("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
+		(this.map as mapboxgl.Map).off("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as Parameters<mapboxgl.Map["on"]>[2]);
+		(this.map as mapboxgl.Map).off("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
 	}
 
 	destroy(): void {

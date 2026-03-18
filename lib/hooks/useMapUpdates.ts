@@ -4,7 +4,7 @@ import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 
 interface UseMapUpdatesParams {
-	geojson: BoundaryGeojson;
+	geojson: BoundaryGeojson | null;
 	activeViz: ActiveViz;
 	activeDataset: Dataset | null;
 	mapManager: MapManager | null;

@@ -299,14 +299,14 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap(
+	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset>(
 		geojson: BoundaryGeojson,
-		dataset: HousePriceDataset | CrimeDataset | IncomeDataset,
+		dataset: T,
 		mapOptions: MapOptions,
 		detectProperty: (features: Features) => PropertyKeys,
 		buildFeatures: (
 			features: Features,
-			dataset: HousePriceDataset | CrimeDataset | IncomeDataset,
+			dataset: T,
 			codeProp: PropertyKeys,
 			options: MapOptions,
 		) => Features,
@@ -354,10 +354,8 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectWardCode.bind(this.propertyDetector) as (features: Features) => PropertyKeys,
-			this.featureBuilder.buildHousePriceFeatures.bind(
-				this.featureBuilder,
-			),
+			this.propertyDetector.detectWardCode.bind(this.propertyDetector),
+			this.featureBuilder.buildHousePriceFeatures.bind(this.featureBuilder),
 			"housePrice",
 			dataset.data,
 		);
@@ -372,12 +370,8 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(
-				this.propertyDetector,
-			) as (features: Features) => PropertyKeys,
-			this.featureBuilder.buildCrimeRateFeatures.bind(
-				this.featureBuilder,
-			),
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildCrimeRateFeatures.bind(this.featureBuilder),
 			"crime",
 			dataset.data,
 		);
@@ -392,9 +386,7 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(
-				this.propertyDetector,
-			) as (features: Features) => PropertyKeys,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
 			this.featureBuilder.buildIncomeFeatures.bind(this.featureBuilder),
 			"income",
 			dataset.data,

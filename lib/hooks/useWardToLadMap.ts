@@ -70,14 +70,14 @@ export const extractWardLadMappings = (
 	const mappings: Record<string, string> = {};
 
 	for (const feature of features) {
-		const props = feature.properties;
-		if (!props) continue;
+		const props = feature.properties as unknown as Record<string, string | undefined>;
 
 		// Find ward code
 		let wardCode: string | undefined;
 		for (const key of wardCodeKeys) {
-			if (key in props && props[key]) {
-				wardCode = props[key];
+			const val = props[key];
+			if (val) {
+				wardCode = val;
 				break;
 			}
 		}
@@ -85,8 +85,9 @@ export const extractWardLadMappings = (
 		// Find LAD code
 		let ladCode: string | undefined;
 		for (const key of ladCodeKeys) {
-			if (key in props && props[key]) {
-				ladCode = props[key];
+			const val = props[key];
+			if (val) {
+				ladCode = val;
 				break;
 			}
 		}
