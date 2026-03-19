@@ -28,6 +28,7 @@ import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
+import { LifeExpectancyDataset, AggregatedLifeExpectancyData } from "@/lib/types/lifeExpectancy";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -536,6 +537,40 @@ export class StatsCalculator {
 
 		this.cache.set(cacheKey, result);
 		return result;
+	}
+
+	calculateLifeExpectancyStats(
+		geojson: BoundaryGeojson,
+		leData: LifeExpectancyDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedLifeExpectancyData {
+		const cacheKey = `lifeExpectancy-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedLifeExpectancyData | null;
+		if (cached) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		let totalMale = 0;
+		let totalFemale = 0;
+		let count = 0;
+
+		for (const feature of geojson.features) {
+			const code = getFeatureProp(feature.properties, ladCodeProp) ?? "";
+			const record = leData[code];
+			if (record) {
+				totalMale += record.maleBirthLE;
+				totalFemale += record.femaleBirthLE;
+				count++;
+			}
+		}
+
+		const stats: AggregatedLifeExpectancyData = {
+			averageMaleLE: count > 0 ? totalMale / count : 0,
+			averageFemaleLE: count > 0 ? totalFemale / count : 0,
+		};
+
+		this.cache.set(cacheKey, stats);
+		return stats;
 	}
 
 	calculateIMDStats(

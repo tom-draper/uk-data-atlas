@@ -35,6 +35,8 @@ import {
 import { IncomeDataset } from "@/lib/types/income";
 import { CustomDataset } from "@/lib/types/custom";
 import { IMDDataset } from "@/lib/types/imd";
+import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
+import { getColorForLifeExpectancy } from "../colorScale";
 
 const DEFAULT_COLOR = "#cccccc";
 
@@ -370,6 +372,27 @@ export class FeatureBuilder {
 				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexit)
 				: DEFAULT_COLOR;
 
+			return { color };
+		});
+	}
+
+	buildLifeExpectancyFeatures(
+		features: Features,
+		dataset: LifeExpectancyDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		const avgs = Object.values(dataset.data).map(
+			(r) => (r.maleBirthLE + r.femaleBirthLE) / 2,
+		);
+		const min = Math.min(...avgs);
+		const max = Math.max(...avgs);
+		return this.mapFeatures(features, (feature) => {
+			const area = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+			const avgLE = area ? (area.maleBirthLE + area.femaleBirthLE) / 2 : null;
+			const color = avgLE !== null
+				? getColorForLifeExpectancy(avgLE, min, max, mapOptions.theme.id)
+				: DEFAULT_COLOR;
 			return { color };
 		});
 	}

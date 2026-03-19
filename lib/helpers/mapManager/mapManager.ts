@@ -23,6 +23,7 @@ import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset } from "@/lib/types/imd";
+import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 
 export interface MapManagerCallbacks {
 	onAreaHover?: (location: SelectedArea | null) => void;
@@ -302,7 +303,7 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset>(
+	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | LifeExpectancyDataset>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
@@ -627,6 +628,36 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateIMDStats(
+			geojson,
+			data,
+			location,
+			datasetId,
+		);
+	}
+
+	updateMapForLifeExpectancy(
+		geojson: BoundaryGeojson,
+		dataset: LifeExpectancyDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildLifeExpectancyFeatures.bind(this.featureBuilder),
+			"lifeExpectancy",
+			dataset.data,
+		);
+	}
+
+	calculateLifeExpectancyStats(
+		geojson: BoundaryGeojson,
+		data: LifeExpectancyDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateLifeExpectancyStats(
 			geojson,
 			data,
 			location,

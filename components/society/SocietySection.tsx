@@ -5,13 +5,16 @@ import {
 	ActiveViz,
 	AggregatedCrimeData,
 	AggregatedIMDData,
+	AggregatedLifeExpectancyData,
 	Dataset,
 	CrimeDataset,
 	IMDDataset,
+	LifeExpectancyDataset,
 	SelectedArea,
 } from "@lib/types";
 import CrimeRateChart from "../crime/CrimeRateChart";
 import IMDChart from "../imd/IMDChart";
+import LifeExpectancyChart from "./LifeExpectancyChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface SocietySectionProps {
@@ -20,6 +23,8 @@ interface SocietySectionProps {
 	aggregatedCrimeData: Record<number, AggregatedCrimeData> | null;
 	availableIMDDatasets: Record<string, IMDDataset>;
 	aggregatedIMDData: Record<number, AggregatedIMDData> | null;
+	availableLifeExpectancyDatasets: Record<string, LifeExpectancyDataset>;
+	aggregatedLifeExpectancyData: Record<number, AggregatedLifeExpectancyData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -32,12 +37,15 @@ export default memo(function SocietySection({
 	aggregatedCrimeData,
 	availableIMDDatasets,
 	aggregatedIMDData,
+	availableLifeExpectancyDatasets,
+	aggregatedLifeExpectancyData,
 	selectedArea,
 	codeMapper,
 	activeViz,
 	setActiveViz,
 }: SocietySectionProps) {
 	const imdYears = Object.keys(availableIMDDatasets).map(Number).sort((a, b) => b - a);
+	const leIds = Object.keys(availableLifeExpectancyDatasets).sort();
 
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">
@@ -64,6 +72,18 @@ export default memo(function SocietySection({
 					setActiveViz={setActiveViz}
 				/>
 			))}
+		{leIds.map((id) => (
+			<LifeExpectancyChart
+				key={id}
+				activeDataset={activeDataset}
+				availableDatasets={availableLifeExpectancyDatasets}
+				aggregatedData={aggregatedLifeExpectancyData}
+				selectedArea={selectedArea}
+				datasetId={id}
+				activeViz={activeViz}
+				setActiveViz={setActiveViz}
+			/>
+		))}
 		</div>
 	);
 });

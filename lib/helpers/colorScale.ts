@@ -10,6 +10,7 @@ import type {
 	HousePriceOptions,
 	IMDOptions,
 	IncomeOptions,
+	LifeExpectancyOptions,
 	PopulationOptions,
 } from "@/lib/types/mapOptions";
 
@@ -241,6 +242,17 @@ export function getColorForIMD(
 	themeId: string = "viridis",
 ) {
 	return colorFromRange(score, options, themeId, true);
+}
+
+/** Gets colour for life expectancy; higher = longer life = brighter colour (not inverted). */
+export function getColorForLifeExpectancy(
+	years: number,
+	min: number,
+	max: number,
+	themeId: string = "viridis",
+) {
+	const normalized = normalizeValue(years, min, max);
+	return getThemeColor(normalized, themeId);
 }
 
 /** Gets colour for income data; range expands to include outlier values. */

@@ -93,6 +93,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "lifeExpectancy":
+					return mapManager.updateMapForLifeExpectancy(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "population":
 					// Handle population sub-categories
 					if (activeViz.vizId.startsWith("ageDistribution")) {

@@ -13,6 +13,7 @@ import { useEthnicityData } from "./useEthnicityData";
 import { useBrexitData } from "./useBrexitData";
 import { useBrexitConstituencyData } from "./useBrexitConstituencyData";
 import { useIMDData } from "./useIMDData";
+import { useLifeExpectancyData } from "./useLifeExpectancyData";
 
 export interface UseDatasetsResult {
 	datasets: Datasets;
@@ -32,6 +33,7 @@ export function useDatasets(): UseDatasetsResult {
 	const brexit = useBrexitData();
 	const brexitConstituency = useBrexitConstituencyData();
 	const imd = useIMDData();
+	const lifeExpectancy = useLifeExpectancyData();
 
 	// Combine datasets
 	const datasets = useMemo(
@@ -46,6 +48,7 @@ export function useDatasets(): UseDatasetsResult {
 			brexit: brexit.datasets,
 			brexitConstituency: brexitConstituency.datasets,
 			imd: imd.datasets,
+			lifeExpectancy: lifeExpectancy.datasets,
 		}),
 		[
 			localElection.datasets,
@@ -58,6 +61,7 @@ export function useDatasets(): UseDatasetsResult {
 			brexit.datasets,
 			brexitConstituency.datasets,
 			imd.datasets,
+			lifeExpectancy.datasets,
 		],
 	);
 
@@ -72,7 +76,8 @@ export function useDatasets(): UseDatasetsResult {
 		income.loading ||
 		brexit.loading ||
 		brexitConstituency.loading ||
-		imd.loading;
+		imd.loading ||
+		lifeExpectancy.loading;
 
 	// Collect all errors
 	const errors = useMemo(() => {
@@ -87,6 +92,7 @@ export function useDatasets(): UseDatasetsResult {
 		if (brexit.error) errs.push(brexit.error);
 		if (brexitConstituency.error) errs.push(brexitConstituency.error);
 		if (imd.error) errs.push(imd.error);
+		if (lifeExpectancy.error) errs.push(lifeExpectancy.error);
 		return errs;
 	}, [
 		localElection.error,
@@ -99,6 +105,7 @@ export function useDatasets(): UseDatasetsResult {
 		brexit.error,
 		brexitConstituency.error,
 		imd.error,
+		lifeExpectancy.error,
 	]);
 
 	return { datasets, loading, errors };

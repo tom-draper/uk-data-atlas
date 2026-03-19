@@ -14,6 +14,7 @@ import { MapManager } from "../helpers/mapManager";
 interface DatasetConfig<T extends Dataset> {
     datasets: Record<string, T>;
     boundaryType: BoundaryType;
+    keyBy?: "year" | "id";
     calculateStats: (
         mapManager: MapManager,
         geojson: BoundaryGeojson,
@@ -41,8 +42,9 @@ function aggregateDataset<T extends Dataset>(
         const geojson =
             boundaryData[config.boundaryType]?.[dataset.boundaryYear];
 
+        const key = config.keyBy === "id" ? datasetId : dataset.year;
         if (dataset.data && geojson) {
-            result[dataset.year] = config.calculateStats(
+            result[key] = config.calculateStats(
                 mapManager,
                 geojson,
                 dataset.data,
@@ -50,7 +52,7 @@ function aggregateDataset<T extends Dataset>(
                 datasetId,
             );
         } else {
-            result[dataset.year] = null;
+            result[key] = null;
         }
     }
 
@@ -138,6 +140,13 @@ export function useAggregatedData({
                 calculateStats: (mapManager, geojson, data, location, id) =>
                     mapManager.calculateIMDStats(geojson, data, location, id),
             },
+            lifeExpectancy: {
+                datasets: datasets.lifeExpectancy,
+                boundaryType: "localAuthority",
+                keyBy: "id",
+                calculateStats: (mapManager, geojson, data, location, id) =>
+                    mapManager.calculateLifeExpectancyStats(geojson, data, location, id),
+            },
             custom: {
                 datasets: customDataset ? [customDataset] : [],
                 boundaryType: customDataset?.boundaryType || 'ward',
@@ -163,6 +172,7 @@ export function useAggregatedData({
                 brexitConstituency: null,
                 custom: null,
                 imd: null,
+                lifeExpectancy: null,
             };
         }
 

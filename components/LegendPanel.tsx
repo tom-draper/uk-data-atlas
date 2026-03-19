@@ -19,6 +19,7 @@ type ColorRangeDatasetKey =
 	| "brexit"
 	| "brexitConstituency"
 	| "imd"
+	| "lifeExpectancy"
 	| "custom";
 
 interface LegendPanelProps {
@@ -587,6 +588,15 @@ export default memo(function LegendPanel({
 
 			case "imd":
 				return renderDynamicLegend("imd", 0, 80, 1, 70);
+
+			case "lifeExpectancy": {
+				const leData = activeDataset?.type === "lifeExpectancy"
+					? Object.values(activeDataset.data).map((r: any) => (r.maleBirthLE + r.femaleBirthLE) / 2)
+					: [];
+				const leMin = leData.length ? Math.min(...leData) : 55;
+				const leMax = leData.length ? Math.max(...leData) : 85;
+				return renderDynamicLegend("lifeExpectancy", leMin, leMax, leMin, leMax, (v) => `${v.toFixed(1)}y`);
+			}
 
 			case "custom":
 				// Custom datasets use a color range
