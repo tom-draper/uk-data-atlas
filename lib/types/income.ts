@@ -1,4 +1,5 @@
 export interface AnnualIncomeData {
+	name: string;
 	numberOfJobs: number | null;
 	median: number | null;
 	medianPercentageChange: number | null;
@@ -19,6 +20,7 @@ export interface AnnualIncomeData {
 }
 
 export interface HourlyIncomeData {
+	name: string;
 	numberOfJobs: number | null;
 	median: number | null;
 	medianPercentageChange: number | null;
