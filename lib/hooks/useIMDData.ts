@@ -25,7 +25,7 @@ export const useIMDData = () => {
 		const loadData = async () => {
 			try {
 				const response = await fetch(
-					withCDN("/data/imd/File_7_-_All_IoD2019_Scores__Ranks__Deciles_and_Population_Denominators.csv"),
+					withCDN("/data/imd/File_7_-_All_IoD2019_Scores__Ranks__Deciles_and_Population_Denominators_3.csv"),
 				);
 				if (!response.ok) {
 					throw new Error(`Failed to fetch IMD data: ${response.statusText}`);

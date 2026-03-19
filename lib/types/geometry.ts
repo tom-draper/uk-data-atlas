@@ -80,8 +80,22 @@ interface ConstituencyProperties2015 {
 	PCON15NM: string;
 }
 
+// LSOA properties by year
+interface LSOAProperties2011 {
+	LSOA11CD: string;
+	LSOA11NM: string;
+}
+
+interface LSOAProperties2021 {
+	LSOA21CD: string;
+	LSOA21NM: string;
+}
+
 // Unified mapping of all boundary types by year
 export type YearToProperties = {
+	// LSOAs
+	lsoa_2011: LSOAProperties2011;
+	lsoa_2021: LSOAProperties2021;
 	// Wards
 	ward_2021: WardProperties2021;
 	ward_2022: WardProperties2022;

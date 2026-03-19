@@ -13,14 +13,14 @@
     "lucide-react": "^0.554.0",
     "mapbox-gl": "^3.20.0",
     "maplibre-gl": "^5.20.2",
-    "next": "^16.1.7",
+    "next": "^16.2.0",
     "papaparse": "^5.5.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.2.1",
+    "@tailwindcss/postcss": "^4.2.2",
     "@types/geojson": "^7946.0.16",
     "@types/node": "^24.12.0",
     "@types/papaparse": "^5.5.2",
@@ -30,7 +30,7 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "baseline-browser-mapping": "^2.10.8",
     "prettier": "^3.8.1",
-    "tailwindcss": "^4.2.1",
+    "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3"
   },
   "packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa"

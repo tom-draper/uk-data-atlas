@@ -9,7 +9,7 @@ import {
 	getProp,
 } from "../data/boundaries/boundaries";
 
-export type CodeType = "ward" | "localAuthority" | "constituency";
+export type CodeType = "ward" | "localAuthority" | "constituency" | "lsoa";
 export type YearCode = number;
 
 /** Shared type for the codeMapper prop passed to chart sections and sub-components. */
@@ -48,10 +48,12 @@ export function useCodeMapper() {
 		ward: CodeMapping;
 		localAuthority: CodeMapping;
 		constituency: CodeMapping;
+		lsoa: CodeMapping;
 	}>({
 		ward: {},
 		localAuthority: {},
 		constituency: {},
+		lsoa: {},
 	});
 
 	// Use refs to avoid recreating callbacks
@@ -255,6 +257,7 @@ export function useCodeMapper() {
 			ward: {},
 			localAuthority: {},
 			constituency: {},
+			lsoa: {},
 		});
 	}, []);
 
@@ -277,6 +280,7 @@ export function useCodeMapper() {
 				ward: {},
 				localAuthority: {},
 				constituency: {},
+				lsoa: {},
 			});
 		}
 	}, []);

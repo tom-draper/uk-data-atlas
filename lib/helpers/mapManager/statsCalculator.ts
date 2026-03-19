@@ -545,7 +545,7 @@ export class StatsCalculator {
 		datasetId: string | null,
 	): AggregatedIMDData {
 		const cacheKey = `imd-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
+		const cached = this.cache.get(cacheKey) as AggregatedIMDData | null;
 		if (cached) return cached;
 
 		const lsoaCodeProp = this.propertyDetector.detectLSOACode(geojson.features);

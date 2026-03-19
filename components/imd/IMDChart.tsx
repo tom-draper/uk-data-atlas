@@ -45,21 +45,41 @@ export default memo(function IMDChart({
 	const imdStats = useMemo(() => {
 		if (!dataset) return null;
 
-		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
-			return aggregatedData[dataset.year];
+		const avgFromRecords = (records: typeof dataset.data[string][]) => {
+			if (records.length === 0) return null;
+			return {
+				averageIMDScore: records.reduce((s, r) => s + r.imdScore, 0) / records.length,
+				averageIMDDecile: records.reduce((s, r) => s + r.imdDecile, 0) / records.length,
+			};
+		};
+
+		// Global view — prefer boundary-aggregated data, fall back to averaging all records
+		if (selectedArea === null) {
+			if (aggregatedData && aggregatedData[dataset.year]) {
+				return aggregatedData[dataset.year];
+			}
+			return avgFromRecords(Object.values(dataset.data));
 		}
 
-		if (selectedArea && selectedArea.type === "localAuthority" && selectedArea.data) {
+		// Local authority selected
+		if (selectedArea.type === "localAuthority") {
 			const ladCode = selectedArea.code;
-			const lsoasInLad = Object.values(dataset.data).filter(
-				(r) => r.ladCode === ladCode,
-			);
-			if (lsoasInLad.length === 0) return null;
-			const avgScore = lsoasInLad.reduce((sum, r) => sum + r.imdScore, 0) / lsoasInLad.length;
-			const avgDecile = lsoasInLad.reduce((sum, r) => sum + r.imdDecile, 0) / lsoasInLad.length;
-			return { averageIMDScore: avgScore, averageIMDDecile: avgDecile };
+			return avgFromRecords(Object.values(dataset.data).filter((r) => r.ladCode === ladCode));
 		}
 
+		// Ward selected — look up via parent LAD code stored on the ward data
+		if (selectedArea.type === "ward" && selectedArea.data) {
+			const ladCode = selectedArea.data.localAuthorityCode;
+			return avgFromRecords(Object.values(dataset.data).filter((r) => r.ladCode === ladCode));
+		}
+
+		// LSOA selected — direct lookup by code
+		if (selectedArea.type === "lsoa") {
+			const record = dataset.data[selectedArea.code];
+			return record ? { averageIMDScore: record.imdScore, averageIMDDecile: record.imdDecile } : null;
+		}
+
+		// Constituency — no direct mapping
 		return null;
 	}, [dataset, aggregatedData, selectedArea]);
 

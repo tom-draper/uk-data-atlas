@@ -16,7 +16,7 @@ import DemographicsChartSection from "./demographics/DemographicsChartSection";
 import { memo } from "react";
 import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
-import CrimeSection from "./crime/CrimeSection";
+import SocietySection from "./society/SocietySection";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import BrexitSection from "./referendum/BrexitSection";
 import CustomSection from "./custom/CustomSection";
@@ -97,6 +97,12 @@ function panelHeaderDetails(
 				subtitle: selectedArea.data
 					? [selectedArea.data.regionName, selectedArea.data.countryName].filter(Boolean).join(", ")
 					: "",
+				code: selectedArea.code,
+			};
+		case "lsoa":
+			return {
+				title: selectedArea.name || selectedArea.code,
+				subtitle: "LSOA",
 				code: selectedArea.code,
 			};
 	}
@@ -190,10 +196,12 @@ export default memo(function ChartPanel({
 						codeMapper={codeMapper}
 						activeViz={activeViz}
 					/>
-					<CrimeSection
+					<SocietySection
 						activeDataset={activeDataset}
-						availableDatasets={datasets.crime}
-						aggregatedData={aggregatedData.crime}
+						availableCrimeDatasets={datasets.crime}
+						aggregatedCrimeData={aggregatedData.crime}
+						availableIMDDatasets={datasets.imd}
+						aggregatedIMDData={aggregatedData.imd}
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}

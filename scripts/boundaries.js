@@ -61,6 +61,11 @@ const CONFIG = {
 		"PCON15NM",
 		"pcon16cd",
 		"pcon16nm",
+		// LSOA properties
+		"LSOA11CD",
+		"LSOA11NM",
+		"LSOA21CD",
+		"LSOA21NM",
 	],
 };
 

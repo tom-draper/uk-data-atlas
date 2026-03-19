@@ -65,7 +65,7 @@ export const GEOJSON_PATHS = {
 	},
 	lsoa: {
 		2011: withCDN(
-			"/data/boundaries/lsoa/LSOA_Dec_2011_Boundaries_Super_Generalised_Clipped_BGC_EW_V3.topojson",
+			"/data/boundaries/lsoa/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.topojson",
 		),
 	},
 } as const;
@@ -324,15 +324,13 @@ export const filterFeatures = (
 		};
 	}
 
-	// Filter LSOAs by LAD code
-	if (type === "lsoa" && locData.lad_codes?.length) {
-		const ladCodeSet = new Set(locData.lad_codes);
+	// Filter LSOAs by bounding box (no LAD code in simplified topojson)
+	if (type === "lsoa" && locData.bounds) {
 		return {
 			...geojson,
-			features: geojson.features.filter((f) => {
-				const ladCode = getProp(f.properties, ["LAD11CD", "LAD21CD"] as any);
-				return ladCode && ladCodeSet.has(ladCode);
-			}),
+			features: geojson.features.filter((f) =>
+				isFeatureInBounds(f, locData.bounds!),
+			),
 		};
 	}
 

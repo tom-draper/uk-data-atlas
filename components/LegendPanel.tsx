@@ -18,6 +18,7 @@ type ColorRangeDatasetKey =
 	| "income"
 	| "brexit"
 	| "brexitConstituency"
+	| "imd"
 	| "custom";
 
 interface LegendPanelProps {
@@ -583,6 +584,9 @@ export default memo(function LegendPanel({
 					/>
 				);
 			}
+
+			case "imd":
+				return renderDynamicLegend("imd", 0, 80, 1, 70);
 
 			case "custom":
 				// Custom datasets use a color range

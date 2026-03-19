@@ -68,6 +68,7 @@ export class EventHandler {
 		if (codeProp.toUpperCase().startsWith('LAD')) return "localAuthority";
 		if (codeProp.toUpperCase().startsWith('WD')) return "ward";
 		if (codeProp.toUpperCase().startsWith('PCON')) return "constituency";
+		if (codeProp.toUpperCase().startsWith('LSOA')) return "lsoa";
 		return "ward"; // default
 	}
 

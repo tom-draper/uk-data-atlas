@@ -5,6 +5,7 @@ type AreaMap = {
     ward: WardData;
     constituency: ConstituencyData;
     localAuthority: LocalAuthorityData;
+    lsoa: null;
 };
 
 export type SelectedArea = {

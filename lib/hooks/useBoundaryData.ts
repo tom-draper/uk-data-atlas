@@ -25,6 +25,7 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = {
 		2022: null,
 		2021: null,
 	},
+	lsoa: { 2011: null },
 };
 
 /**
@@ -123,57 +124,30 @@ const extractCodeSets = (
 	ward: Record<number, Set<string>>;
 	constituency: Record<number, Set<string>>;
 	localAuthority: Record<number, Set<string>>;
+	lsoa: Record<number, Set<string>>;
 } | null => {
 	if (isLoading) return null;
 
+	const extractFromGroup = (group: Record<number, BoundaryGeojson | null>, codeKeys: readonly string[]) =>
+		Object.entries(group).reduce((acc, [year, data]) => {
+			if (data?.features) {
+				const codeProp = codeKeys.find(
+					key => (data.features[0]?.properties as any)?.[key] !== undefined
+				);
+				if (codeProp) {
+					acc[Number(year)] = new Set(
+						data.features.map(f => (f.properties as any)[codeProp]).filter(Boolean)
+					);
+				}
+			}
+			return acc;
+		}, {} as Record<number, Set<string>>);
+
 	return {
-		ward: Object.entries(boundaryData.ward).reduce((acc, [year, data]) => {
-			if (data?.features) {
-				const codeProp = PROPERTY_KEYS.wardCode.find(
-					key => (data.features[0]?.properties as any)?.[key] !== undefined
-				);
-				if (codeProp) {
-					acc[Number(year)] = new Set(
-						data.features
-							.map(f => (f.properties as any)[codeProp])
-							.filter(Boolean)
-					);
-				}
-			}
-			return acc;
-		}, {} as Record<number, Set<string>>),
-
-		constituency: Object.entries(boundaryData.constituency).reduce((acc, [year, data]) => {
-			if (data?.features) {
-				const codeProp = PROPERTY_KEYS.constituencyCode.find(
-					key => (data.features[0]?.properties as any)?.[key] !== undefined
-				);
-				if (codeProp) {
-					acc[Number(year)] = new Set(
-						data.features
-							.map(f => (f.properties as any)[codeProp])
-							.filter(Boolean)
-					);
-				}
-			}
-			return acc;
-		}, {} as Record<number, Set<string>>),
-
-		localAuthority: Object.entries(boundaryData.localAuthority).reduce((acc, [year, data]) => {
-			if (data?.features) {
-				const codeProp = PROPERTY_KEYS.ladCode.find(
-					key => (data.features[0]?.properties as any)?.[key] !== undefined
-				);
-				if (codeProp) {
-					acc[Number(year)] = new Set(
-						data.features
-							.map(f => (f.properties as any)[codeProp])
-							.filter(Boolean)
-					);
-				}
-			}
-			return acc;
-		}, {} as Record<number, Set<string>>),
+		ward: extractFromGroup(boundaryData.ward, PROPERTY_KEYS.wardCode),
+		constituency: extractFromGroup(boundaryData.constituency, PROPERTY_KEYS.constituencyCode),
+		localAuthority: extractFromGroup(boundaryData.localAuthority, PROPERTY_KEYS.ladCode),
+		lsoa: extractFromGroup(boundaryData.lsoa, PROPERTY_KEYS.lsoaCode),
 	};
 };
 
@@ -212,7 +186,7 @@ export function useBoundaryData(
 				setIsLoading(true);
 				setError(null);
 
-				const [wards, constituencies, localAuthorities] =
+				const [wards, constituencies, localAuthorities, lsoas] =
 					await Promise.all([
 						fetchBoundaryGroup(
 							"ward",
@@ -232,6 +206,9 @@ export function useBoundaryData(
 							undefined,
 							addCodeMappings,
 						),
+						fetchBoundaryGroup("lsoa").catch(
+							() => ({} as Record<number, BoundaryGeojson>),
+						),
 					]);
 
 				if (mounted) {
@@ -239,6 +216,7 @@ export function useBoundaryData(
 						ward: wards,
 						constituency: constituencies,
 						localAuthority: localAuthorities,
+						lsoa: lsoas,
 					});
 				}
 			} catch (err) {
@@ -284,6 +262,11 @@ export function useBoundaryData(
 			localAuthority: filterBoundaryGroup(
 				rawData.localAuthority,
 				"localAuthority",
+				selectedLocation || null,
+			),
+			lsoa: filterBoundaryGroup(
+				rawData.lsoa,
+				"lsoa",
 				selectedLocation || null,
 			),
 		};
