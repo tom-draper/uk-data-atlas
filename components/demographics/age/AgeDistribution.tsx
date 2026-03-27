@@ -8,21 +8,15 @@ import {
 	SelectedArea,
 } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
-	aggregatedData: AggregatedPopulationData | null;
+	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
 // Pre-calculate age group boundaries (constant)
@@ -34,14 +28,14 @@ const AGE_BOUNDARIES = [
 	{ max: Infinity, key: "65+" as keyof AgeGroups },
 ];
 
-const getAgeGroupKey = (age: number): keyof AgeGroups => {
-	for (let i = 0; i < AGE_BOUNDARIES.length; i++) {
-		if (age <= AGE_BOUNDARIES[i].max) {
-			return AGE_BOUNDARIES[i].key;
-		}
+// Precomputed lookup tables — avoids i.toString() and boundary search in hot loops
+const AGE_STRING_KEYS: string[] = Array.from({ length: 100 }, (_, i) => String(i));
+const AGE_GROUP_KEYS: (keyof AgeGroups)[] = Array.from({ length: 100 }, (_, i) => {
+	for (let b = 0; b < AGE_BOUNDARIES.length; b++) {
+		if (i <= AGE_BOUNDARIES[b].max) return AGE_BOUNDARIES[b].key;
 	}
 	return "65+";
-};
+});
 
 // Pre-calculate decay weights (constant)
 const DECAY_RATE = 0.15;
@@ -53,8 +47,17 @@ for (let i = 0; i < 10; i++) {
 }
 const NORMALIZED_WEIGHTS = DECAY_WEIGHTS.map((w) => w / totalWeight);
 
-// Cache for LAD aggregations
+// Cache for LAD aggregations (bounded to prevent unbounded memory growth)
+const MAX_LAD_CACHE_ENTRIES = 50;
 const ageDistributionCache = new Map<string, Map<number, any>>();
+
+const EMPTY_AGE_GROUPS: AgeGroups = {
+	"0-17": 0,
+	"18-29": 0,
+	"30-44": 0,
+	"45-64": 0,
+	"65+": 0,
+};
 
 function AgeDistribution({
 	dataset,
@@ -68,19 +71,12 @@ function AgeDistribution({
 	const isActive = activeViz.vizId === vizId;
 
 	const { medianAge, ageGroups, total, counts, maxCount } = useMemo(() => {
-		const emptyAgeGroups: AgeGroups = {
-			"0-17": 0,
-			"18-29": 0,
-			"30-44": 0,
-			"45-64": 0,
-			"65+": 0,
-		};
+		let max = 0;
 
 		//  Handle Aggregated Data Case (no area selected)
 		if (selectedArea === null && aggregatedData) {
 			const data = aggregatedData[dataset.year];
 			const counts = new Uint32Array(100);
-			let max = 0;
 
 			if (data.ages) {
 				for (let i = 0; i < data.ages.length; i++) {
@@ -95,7 +91,7 @@ function AgeDistribution({
 			return {
 				medianAge: data.medianAge ?? 0,
 				ageGroups:
-					data.populationStats.ageGroups.total ?? emptyAgeGroups,
+					data.populationStats.ageGroups.total ?? EMPTY_AGE_GROUPS,
 				total: data.populationStats.total ?? 0,
 				counts: counts,
 				maxCount: max,
@@ -122,7 +118,7 @@ function AgeDistribution({
 			if (!wardData) {
 				return {
 					medianAge: 0,
-					ageGroups: emptyAgeGroups,
+					ageGroups: EMPTY_AGE_GROUPS,
 					total: 0,
 					counts: new Uint32Array(100),
 					maxCount: 0,
@@ -138,7 +134,7 @@ function AgeDistribution({
 
 			// Build ages 0-89
 			for (let i = 0; i < 90; i++) {
-				const count = agesCountTotal[i.toString()] || 0;
+				const count = agesCountTotal[AGE_STRING_KEYS[i]] || 0;
 				counts[i] = count;
 				totalPopulation += count;
 				if (count > max) max = count;
@@ -161,14 +157,14 @@ function AgeDistribution({
 			let median = 0;
 
 			// Fill grouped buckets
-			const currentAgeGroups: AgeGroups = { ...emptyAgeGroups };
+			const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
 
 			let medianFound = false;
 			for (let i = 0; i < 100; i++) {
 				const count = counts[i];
 
 				// Grouping logic
-				const key = getAgeGroupKey(i);
+				const key = AGE_GROUP_KEYS[i];
 				currentAgeGroups[key] += count;
 
 				// Median logic (integrated into single loop)
@@ -200,6 +196,9 @@ function AgeDistribution({
 			const cacheKey = `lad-${ladCode}`;
 
 			if (!ageDistributionCache.has(cacheKey)) {
+				if (ageDistributionCache.size >= MAX_LAD_CACHE_ENTRIES) {
+					ageDistributionCache.delete(ageDistributionCache.keys().next().value!);
+				}
 				ageDistributionCache.set(cacheKey, new Map());
 			}
 			const yearCache = ageDistributionCache.get(cacheKey)!;
@@ -214,7 +213,7 @@ function AgeDistribution({
 			if (wardCodes.length === 0) {
 				const emptyResult = {
 					medianAge: 0,
-					ageGroups: emptyAgeGroups,
+					ageGroups: EMPTY_AGE_GROUPS,
 					total: 0,
 					counts: new Uint32Array(100),
 					maxCount: 0,
@@ -244,7 +243,7 @@ function AgeDistribution({
 				if (wardData?.total) {
 					// Add ages 0-89
 					for (let i = 0; i < 90; i++) {
-						const count = wardData.total[i.toString()] || 0;
+						const count = wardData.total[AGE_STRING_KEYS[i]] || 0;
 						aggregatedCounts[i] += count;
 					}
 
@@ -275,13 +274,13 @@ function AgeDistribution({
 			let medianFound = false;
 
 			// Fill grouped buckets
-			const currentAgeGroups: AgeGroups = { ...emptyAgeGroups };
+			const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
 
 			for (let i = 0; i < 100; i++) {
 				const count = aggregatedCounts[i];
 
 				// Grouping logic
-				const key = getAgeGroupKey(i);
+				const key = AGE_GROUP_KEYS[i];
 				currentAgeGroups[key] += count;
 
 				// Median logic
@@ -310,7 +309,7 @@ function AgeDistribution({
 		// Handle Missing Data or unsupported area types
 		return {
 			medianAge: 0,
-			ageGroups: emptyAgeGroups,
+			ageGroups: EMPTY_AGE_GROUPS,
 			total: 0,
 			counts: new Uint32Array(100),
 			maxCount: 0,
@@ -319,10 +318,11 @@ function AgeDistribution({
 
 	return (
 		<div
-			className={`p-2 rounded transition-all cursor-pointer ${isActive
+			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
 					? "bg-cyan-50/60 border-2 border-cyan-300"
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-cyan-300"
 				}`}
+			title="Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,
@@ -350,7 +350,7 @@ function AgeDistribution({
 				ageGroups={ageGroups}
 				isActive={isActive}
 			/>
-		</div>
+			</div>
 	);
 }
 

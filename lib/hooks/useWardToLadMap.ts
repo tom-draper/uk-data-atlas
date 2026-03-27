@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { Features } from "@lib/types";
 
 /**
  * Hook to manage ward-to-LAD mappings
@@ -62,21 +63,21 @@ export function useWardLadMap() {
  * Utility to extract ward-to-LAD mappings from GeoJSON features
  */
 export const extractWardLadMappings = (
-	features: any[],
+	features: Features,
 	wardCodeKeys: readonly string[],
 	ladCodeKeys: readonly string[],
 ): Record<string, string> => {
 	const mappings: Record<string, string> = {};
 
 	for (const feature of features) {
-		const props = feature.properties;
-		if (!props) continue;
+		const props = feature.properties as unknown as Record<string, string | undefined>;
 
 		// Find ward code
 		let wardCode: string | undefined;
 		for (const key of wardCodeKeys) {
-			if (key in props && props[key]) {
-				wardCode = props[key];
+			const val = props[key];
+			if (val) {
+				wardCode = val;
 				break;
 			}
 		}
@@ -84,8 +85,9 @@ export const extractWardLadMappings = (
 		// Find LAD code
 		let ladCode: string | undefined;
 		for (const key of ladCodeKeys) {
-			if (key in props && props[key]) {
-				ladCode = props[key];
+			const val = props[key];
+			if (val) {
+				ladCode = val;
 				break;
 			}
 		}

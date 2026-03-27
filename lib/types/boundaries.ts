@@ -3,7 +3,15 @@ import { BoundaryGeojson } from "./geometry";
 export type BoundaryType = keyof BoundaryData;
 
 export type BoundaryData = {
-	ward: Record<number, BoundaryGeojson | null>;
-	constituency: Record<number, BoundaryGeojson | null>;
-	localAuthority: Record<number, BoundaryGeojson | null>;
+	ward: {[year: number]: BoundaryGeojson | null};
+	constituency: {[year: number]: BoundaryGeojson | null};
+	localAuthority: {[year: number]: BoundaryGeojson | null};
+	lsoa: {[year: number]: BoundaryGeojson | null};
 };
+
+export type BoundaryCodes = {
+	ward: Record<number, Set<string>>;
+	constituency: Record<number, Set<string>>;
+	localAuthority: Record<number, Set<string>>;
+	lsoa: Record<number, Set<string>>;
+} | null

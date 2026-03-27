@@ -8,20 +8,14 @@ import {
 	SelectedArea,
 } from "@/lib/types";
 import PopulationDensityChart from "./PopulationDensityChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
 	boundaryData: BoundaryData;
-	aggregatedData: AggregatedPopulationData | null;
+	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -40,10 +34,11 @@ function PopulationDensity({
 
 	return (
 		<div
-			className={`p-2 rounded transition-all cursor-pointer ${isActive
+			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
 					? "bg-emerald-50/60 border-2 border-emerald-300"
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300"
 				}`}
+			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,
@@ -64,7 +59,7 @@ function PopulationDensity({
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
 			/>
-		</div>
+			</div>
 	);
 }
 

@@ -7,21 +7,17 @@ import {
 	IncomeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, IncomeDataset>;
-	aggregatedData: AggregatedIncomeData | null;
+	aggregatedData: Record<number, AggregatedIncomeData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-	};
+	codeMapper?: CodeMapper;
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -41,13 +37,14 @@ const particleColors = [
 	"text-teal-300",
 ];
 
-export default function IncomeChart({
+export default memo(function IncomeChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
 	year,
 	codeMapper,
+	activeViz,
 	setActiveViz,
 }: IncomeChartProps) {
 	const dataset = availableDatasets?.[year];
@@ -57,8 +54,8 @@ export default function IncomeChart({
 
 	// We calculate data first so we can use it for the particle effects
 	if (dataset) {
-		if (selectedArea === null && aggregatedData) {
-			medianIncome = aggregatedData[year]?.averageIncome || null;
+		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+			medianIncome = aggregatedData[dataset.year].averageIncome || null;
 		} else if (
 			selectedArea &&
 			selectedArea.type === "localAuthority" &&
@@ -122,17 +119,22 @@ export default function IncomeChart({
 	}, [medianIncome]);
 
 	if (!dataset) return null;
-	const isActive = activeDataset?.id === `income${dataset.year}`;
+	const isActive =
+		activeDataset &&
+		((activeDataset.type === "income" &&
+			activeDataset.id === `income${dataset.year}`) ||
+			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
 	const formattedMedian = medianIncome
 		? `£${Math.round(medianIncome).toLocaleString()}`
 		: null;
 
 	return (
 		<div
-			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative isolate ${isActive
+			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative isolate h-20 ${isActive
 					? `${colors.bg} border-2 ${colors.border}`
 					: colors.inactive
 				}`}
+			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -167,7 +169,7 @@ export default function IncomeChart({
 			</div>
 
 			{formattedMedian ? (
-				<div className="relative flex justify-center items-center mt-4 mb-2 z-10 h-5">
+				<div className="relative flex justify-center items-center mt-3 mb-1 z-10 h-5">
 					<div className="text-xl font-bold text-gray-800 bg-transparent px-2 rounded">
 						{formattedMedian}
 					</div>
@@ -179,6 +181,6 @@ export default function IncomeChart({
 					</div>
 				</div>
 			)}
-		</div>
+			</div>
 	);
-}
+});

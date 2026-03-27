@@ -17,7 +17,6 @@ export const useLocalElectionData = () => {
 		const loadData = async () => {
 			try {
 				setLoading(true);
-				console.log("Loading election data...");
 
 				// Fetch all Reference Datasets (Has Ward Codes)
 				const refs = await Promise.all(

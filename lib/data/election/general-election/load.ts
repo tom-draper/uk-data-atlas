@@ -3,6 +3,7 @@ import Papa from "papaparse";
 import { ConstituencyData, GeneralElectionDataset } from "@lib/types";
 import { GeneralElectionSourceConfig } from "./config";
 import { PARTY_INFO } from "@/lib/data/election/parties";
+import { calculateTurnout } from "@/lib/helpers/generalElection";
 
 // Utility to parse vote counts efficiently
 const parseVotes = (value: any): number => {
@@ -15,7 +16,6 @@ const parseVotes = (value: any): number => {
 export const fetchAndParseGeneralElectionData = async (
 	config: GeneralElectionSourceConfig,
 ): Promise<GeneralElectionDataset> => {
-	console.log(`Loading general election data for ${config.year}...`);
 	const res = await fetch(config.url);
 	let csvText = await res.text();
 
@@ -73,6 +73,12 @@ export const fetchAndParseGeneralElectionData = async (
 						row[config.fields.invalidVotes],
 					);
 
+					const turnoutPercent = calculateTurnout(
+						validVotes,
+						invalidVotes,
+						electorate,
+					) ?? 0;
+
 					constituencyResults[onsId] = winningParty;
 					constituencyData[onsId] = {
 						constituencyName:
@@ -93,6 +99,7 @@ export const fetchAndParseGeneralElectionData = async (
 						invalidVotes,
 						majority: parseVotes(row[config.fields.majority]),
 						partyVotes,
+						turnoutPercent,
 					};
 				}
 

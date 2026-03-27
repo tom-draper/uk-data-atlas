@@ -6,31 +6,37 @@ import {
 	CrimeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, CrimeDataset>;
-	aggregatedData: AggregatedCrimeData | null;
+	aggregatedData: Record<number, AggregatedCrimeData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-	};
+	codeMapper?: CodeMapper;
 	year: number;
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default function CrimeRateChart({
+// Simple concentric circles that the SVG filter will "warp" into contours
+const layers = [
+	{ r: 45, opacity: 0.3 },
+	{ r: 35, opacity: 0.4 },
+	{ r: 25, opacity: 0.5 },
+	{ r: 15, opacity: 0.6 },
+	{ r: 5, opacity: 0.8 },
+];
+
+export default memo(function CrimeRateChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
 	codeMapper,
 	year,
+	activeViz,
 	setActiveViz,
 }: CrimeRateChartProps) {
 	const dataset = availableDatasets?.[year];
@@ -52,8 +58,8 @@ export default function CrimeRateChart({
 	const crimeRate = useMemo(() => {
 		if (!dataset) return null;
 		let rate: number | null = null;
-		if (selectedArea === null && aggregatedData) {
-			rate = aggregatedData[year]?.averageRecordedCrime || null;
+		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+			rate = aggregatedData[dataset.year].averageRecordedCrime || null;
 		} else if (
 			selectedArea &&
 			selectedArea.type === "localAuthority" &&
@@ -78,7 +84,11 @@ export default function CrimeRateChart({
 
 	if (!dataset) return null;
 
-	const isActive = activeDataset?.id === `crime${dataset.year}`;
+	const isActive =
+		activeDataset &&
+		((activeDataset.type === "crime" &&
+			activeDataset.id === `crime${dataset.year}`) ||
+			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
 	const rawValue = crimeRate || 0;
 	const maxThreshold = 100000;
 	const minThreshold = 5000;
@@ -98,26 +108,18 @@ export default function CrimeRateChart({
 	const baseHue = 50 - intensity * 50;
 	const hotHue = 50 - intensity * 50;
 
-	// Simple concentric circles that the SVG filter will "warp" into contours
-	const layers = [
-		{ r: 45, opacity: 0.3 },
-		{ r: 35, opacity: 0.4 },
-		{ r: 25, opacity: 0.5 },
-		{ r: 15, opacity: 0.6 },
-		{ r: 5, opacity: 0.8 },
-	];
-
 	const dynamicBgColor = hasData
 		? `hsl(${baseHue}, ${40 + intensity * 40}%, ${95 - intensity * 20}%)`
-		: "rgb(255, 255, 255)";
+		: "";
 
 	return (
 		<div
-			className={`p-2 rounded cursor-pointer overflow-hidden relative group ${isActive
+			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 ${isActive
 				? "bg-orange-50/60 border-2 border-orange-300"
 				: "bg-white/60 border-2 border-gray-200/80 hover:border-orange-300"
 				}`}
 			style={{ backgroundColor: dynamicBgColor }}
+			title="Home Office. Police Recorded Crime Open Data Tables. data.police.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -172,7 +174,7 @@ export default function CrimeRateChart({
 				</div>
 			)}
 
-			<div className="absolute inset-0 z-0 backdrop-blur-[0.5px] bg-white/20" />
+			<div className="absolute inset-0 z-0 bg-white/20" />
 			<div className="relative z-10">
 				<h3 className="text-xs font-bold text-gray-800/90">
 					Recorded Crime [{dataset.year}]
@@ -194,6 +196,6 @@ export default function CrimeRateChart({
 					</div>
 				)}
 			</div>
-		</div>
+			</div>
 	);
-}
+});

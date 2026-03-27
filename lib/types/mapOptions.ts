@@ -22,10 +22,14 @@ export type PopulationOptions = ColorRangeOption;
 export type DensityOptions = ColorRangeOption;
 export type GenderOptions = ColorRangeOption;
 export type IncomeOptions = ColorRangeOption;
+export type BrexitOptions = ColorRangeOption;
+export type BrexitConstituencyOptions = ColorRangeOption;
+export type IMDOptions = ColorRangeOption;
+export type LifeExpectancyOptions = ColorRangeOption;
 
 export type ColorTheme = "viridis" | "plasma" | "inferno" | "magma";
 
-export type MapMode = keyof Datasets;
+export type MapMode = keyof Datasets | 'custom';
 
 export interface MapOptions {
 	generalElection: GeneralElectionOptions;
@@ -37,6 +41,11 @@ export interface MapOptions {
 	housePrice: HousePriceOptions;
 	crime: CrimeOptions;
 	income: IncomeOptions;
+	brexit: BrexitOptions;
+	brexitConstituency: BrexitConstituencyOptions;
+	custom: ColorRangeOption;
+	imd: IMDOptions;
+	lifeExpectancy: LifeExpectancyOptions;
 	theme: {
 		id: ColorTheme;
 	};

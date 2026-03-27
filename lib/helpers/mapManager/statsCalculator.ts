@@ -11,10 +11,15 @@ import {
 	AggregatedHousePriceData,
 	PopulationStats,
 	CrimeDataset,
-	Ethnicity,
-	AggregatedEthnicityData,
+	AggregatedCrimeData,
+	AggregatedIncomeData,
+	AggregatedCustomData,
 	EthnicityDataset,
 	EthnicityCategory,
+	getFeatureProp,
+	BrexitDataset,
+	BrexitConstituencyDataset,
+	AggregatedBrexitData,
 } from "@lib/types";
 import { calculateTotal, polygonAreaSqKm } from "../population";
 import { getWinningParty } from "../generalElection";
@@ -22,6 +27,8 @@ import { calculateAgeGroups } from "../ageDistribution";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
+import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
+import { LifeExpectancyDataset, AggregatedLifeExpectancyData } from "@/lib/types/lifeExpectancy";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -87,23 +94,24 @@ export class StatsCalculator {
 		};
 
 		// Single pass aggregation with direct property access
+		const sv = stats.partyVotes;
 		for (let i = 0; i < features.length; i++) {
-			const ward = wardData[features[i].properties[wardCodeProp]];
+			const ward = wardData[getFeatureProp(features[i].properties, wardCodeProp) ?? ""];
 			if (!ward) continue;
 
-			const partyVotes = ward.partyVotes;
-			stats.partyVotes.LAB += partyVotes.LAB || 0;
-			stats.partyVotes.CON += partyVotes.CON || 0;
-			stats.partyVotes.LD += partyVotes.LD || 0;
-			stats.partyVotes.GREEN += partyVotes.GREEN || 0;
-			stats.partyVotes.REF += partyVotes.REF || 0;
-			stats.partyVotes.IND += partyVotes.IND || 0;
-			stats.partyVotes.DUP += partyVotes.DUP || 0;
-			stats.partyVotes.PC += partyVotes.PC || 0;
-			stats.partyVotes.SNP += partyVotes.SNP || 0;
-			stats.partyVotes.SF += partyVotes.SF || 0;
-			stats.partyVotes.APNI += partyVotes.APNI || 0;
-			stats.partyVotes.SDLP += partyVotes.SDLP || 0;
+			const pv = ward.partyVotes;
+			sv.LAB = (sv.LAB ?? 0) + (pv.LAB ?? 0);
+			sv.CON = (sv.CON ?? 0) + (pv.CON ?? 0);
+			sv.LD = (sv.LD ?? 0) + (pv.LD ?? 0);
+			sv.GREEN = (sv.GREEN ?? 0) + (pv.GREEN ?? 0);
+			sv.REF = (sv.REF ?? 0) + (pv.REF ?? 0);
+			sv.IND = (sv.IND ?? 0) + (pv.IND ?? 0);
+			sv.DUP = (sv.DUP ?? 0) + (pv.DUP ?? 0);
+			sv.PC = (sv.PC ?? 0) + (pv.PC ?? 0);
+			sv.SNP = (sv.SNP ?? 0) + (pv.SNP ?? 0);
+			sv.SF = (sv.SF ?? 0) + (pv.SF ?? 0);
+			sv.APNI = (sv.APNI ?? 0) + (pv.APNI ?? 0);
+			sv.SDLP = (sv.SDLP ?? 0) + (pv.SDLP ?? 0);
 
 			stats.electorate += ward.electorate;
 			stats.totalVotes += ward.totalVotes;
@@ -139,7 +147,7 @@ export class StatsCalculator {
 
 		for (let i = 0; i < features.length; i++) {
 			const constituency =
-				constituencyData[features[i].properties[constituencyCodeProp]];
+				constituencyData[getFeatureProp(features[i].properties, constituencyCodeProp) ?? ""];
 			if (!constituency) continue;
 
 			stats.totalSeats++;
@@ -153,15 +161,14 @@ export class StatsCalculator {
 					(stats.partySeats[winningParty] || 0) + 1;
 			}
 
-			// Direct key access is faster than loop
 			const pv = constituency.partyVotes;
+			const spv = stats.partyVotes;
 			for (let j = 0; j < PARTY_KEYS.length; j++) {
 				const party = PARTY_KEYS[j];
-				const votes = pv[party] || 0;
+				const votes = pv[party] ?? 0;
 				if (votes > 0) {
 					stats.totalVotes += votes;
-					stats.partyVotes[party] =
-						(stats.partyVotes[party] || 0) + votes;
+					spv[party] = (spv[party] ?? 0) + votes;
 				}
 			}
 		}
@@ -218,7 +225,7 @@ export class StatsCalculator {
 
 		for (let i = 0; i < features.length; i++) {
 			const localAuthority =
-				localAuthorityData[features[i].properties[ladProp]];
+				localAuthorityData[getFeatureProp(features[i].properties, ladProp) ?? ""];
 			if (!localAuthority) continue;
 
 			// Iterate through parent categories
@@ -294,7 +301,7 @@ export class StatsCalculator {
 		let wardCount = 0;
 
 		for (let i = 0; i < features.length; i++) {
-			const ward = wardData[features[i].properties[wardCodeProp]];
+			const ward = wardData[getFeatureProp(features[i].properties, wardCodeProp) ?? ""];
 			if (!ward) continue;
 
 			const prices = ward.prices;
@@ -326,7 +333,7 @@ export class StatsCalculator {
 				yearlyTotals[yearNum] / yearlyCounts[yearNum];
 		}
 
-		const result: AggregatedHousePriceData[2023] = {
+		const result: AggregatedHousePriceData = {
 			averagePrice: wardCount > 0 ? totalPrice / wardCount : 0,
 			wardCount,
 			averagePrices,
@@ -338,7 +345,7 @@ export class StatsCalculator {
 
 	calculateCrimeStats(
 		geojson: BoundaryGeojson,
-		crimeData: CrimeDataset["records"],
+		crimeData: CrimeDataset["data"],
 		location: string | null,
 		datasetId: string | null,
 	) {
@@ -355,7 +362,7 @@ export class StatsCalculator {
 		let localAuthorityCount = 0;
 
 		for (let i = 0; i < features.length; i++) {
-			const area = crimeData[features[i].properties[ladCodeProp]];
+			const area = crimeData[getFeatureProp(features[i].properties, ladCodeProp) ?? ""];
 			if (!area) continue;
 
 			const crime = area.totalRecordedCrime;
@@ -365,7 +372,7 @@ export class StatsCalculator {
 			}
 		}
 
-		const result = {
+		const result: AggregatedCrimeData = {
 			averageRecordedCrime:
 				localAuthorityCount > 0
 					? totalRecordedCrime / localAuthorityCount
@@ -395,14 +402,14 @@ export class StatsCalculator {
 
 		for (let i = 0; i < features.length; i++) {
 			const locationIncome =
-				incomeData[features[i].properties[ladCodeProp]];
+				incomeData[getFeatureProp(features[i].properties, ladCodeProp) ?? ""];
 			if (locationIncome?.annual?.median) {
 				totalMedianIncome += locationIncome.annual.median;
 				localAuthorityCount++;
 			}
 		}
 
-		const result = {
+		const result: AggregatedIncomeData = {
 			averageIncome:
 				localAuthorityCount > 0
 					? totalMedianIncome / localAuthorityCount
@@ -411,6 +418,193 @@ export class StatsCalculator {
 
 		this.cache.set(cacheKey, result);
 		return result;
+	}
+
+	calculateBrexitStats(
+		geojson: BoundaryGeojson,
+		brexitData: BrexitDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	) {
+		const cacheKey = `brexit-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey);
+		if (cached) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			geojson.features,
+		);
+		const features = geojson.features;
+
+		let totalLeave = 0;
+		let totalRemain = 0;
+		let totalVotes = 0;
+		let totalElectorate = 0;
+
+		for (let i = 0; i < features.length; i++) {
+			const area = brexitData[getFeatureProp(features[i].properties, ladCodeProp) ?? ""];
+			if (!area) continue;
+
+			totalLeave += area.leave;
+			totalRemain += area.remain;
+			totalVotes += area.validVotes;
+			totalElectorate += area.electorate;
+		}
+
+		const result: AggregatedBrexitData = {
+			totalLeave,
+			totalRemain,
+			totalVotes,
+			pctLeave: totalVotes > 0 ? (totalLeave / totalVotes) * 100 : 0,
+			pctRemain: totalVotes > 0 ? (totalRemain / totalVotes) * 100 : 0,
+			electorate: totalElectorate,
+		};
+
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateBrexitConstituencyStats(
+		geojson: BoundaryGeojson,
+		constituencyData: BrexitConstituencyDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	) {
+		const cacheKey = `brexitConstituency-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey);
+		if (cached) return cached;
+
+		const codeProp = this.propertyDetector.detectConstituencyCode(
+			geojson.features,
+		);
+		const features = geojson.features;
+
+		let totalLeave = 0;
+		let totalRemain = 0;
+		let count = 0;
+
+		for (let i = 0; i < features.length; i++) {
+			const area = constituencyData[getFeatureProp(features[i].properties, codeProp) ?? ""];
+			if (!area) continue;
+
+			totalLeave += area.pctLeave;
+			totalRemain += 100 - area.pctLeave;
+			count++;
+		}
+
+		const result: AggregatedBrexitData = {
+			totalLeave,
+			totalRemain,
+			totalVotes: count,
+			pctLeave: count > 0 ? totalLeave / count : 0,
+			pctRemain: count > 0 ? totalRemain / count : 0,
+			electorate: 0,
+		};
+
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateCustomDatasetStats(
+		geojson: BoundaryGeojson,
+		data: Record<string, number>,
+		location: string | null,
+		datasetId: string | null,
+	) {
+		const cacheKey = `custom-dataset-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey);
+		if (cached) return cached;
+
+		const codeProp = this.propertyDetector.detectCode(geojson.features);
+
+		let sum = 0;
+		let count = 0;
+		for (let i = 0; i < geojson.features.length; i++) {
+			const featureCode = getFeatureProp(geojson.features[i].properties, codeProp) ?? "";
+			const featureData = data[featureCode];
+
+			if (typeof featureData === "number") {
+				sum += featureData;
+				count++;
+			}
+		}
+
+		const average = count > 0 ? sum / count : 0;
+
+		const result: AggregatedCustomData = {
+			count,
+			average,
+		};
+
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateLifeExpectancyStats(
+		geojson: BoundaryGeojson,
+		leData: LifeExpectancyDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedLifeExpectancyData {
+		const cacheKey = `lifeExpectancy-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedLifeExpectancyData | null;
+		if (cached) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		let totalMale = 0;
+		let totalFemale = 0;
+		let count = 0;
+
+		for (const feature of geojson.features) {
+			const code = getFeatureProp(feature.properties, ladCodeProp) ?? "";
+			const record = leData[code];
+			if (record) {
+				totalMale += record.maleBirthLE;
+				totalFemale += record.femaleBirthLE;
+				count++;
+			}
+		}
+
+		const stats: AggregatedLifeExpectancyData = {
+			averageMaleLE: count > 0 ? totalMale / count : 0,
+			averageFemaleLE: count > 0 ? totalFemale / count : 0,
+		};
+
+		this.cache.set(cacheKey, stats);
+		return stats;
+	}
+
+	calculateIMDStats(
+		geojson: BoundaryGeojson,
+		imdData: IMDDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedIMDData {
+		const cacheKey = `imd-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedIMDData | null;
+		if (cached) return cached;
+
+		const lsoaCodeProp = this.propertyDetector.detectLSOACode(geojson.features);
+		let totalScore = 0;
+		let totalDecile = 0;
+		let count = 0;
+
+		for (const feature of geojson.features) {
+			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
+			const record = imdData[code];
+			if (record) {
+				totalScore += record.imdScore;
+				totalDecile += record.imdDecile;
+				count++;
+			}
+		}
+
+		const stats: AggregatedIMDData = {
+			averageIMDScore: count > 0 ? totalScore / count : 0,
+			averageIMDDecile: count > 0 ? totalDecile / count : 0,
+		};
+
+		this.cache.set(cacheKey, stats);
+		return stats;
 	}
 
 	private aggregatePopulationData(
@@ -459,7 +653,7 @@ export class StatsCalculator {
 		};
 
 		for (let i = 0; i < features.length; i++) {
-			const ward = populationData[features[i].properties[wardCodeProp]];
+			const ward = populationData[getFeatureProp(features[i].properties, wardCodeProp) ?? ""];
 			if (!ward) continue;
 
 			aggregated.totalPop += calculateTotal(ward.total);
@@ -522,7 +716,7 @@ export class StatsCalculator {
 		return aggregated;
 	}
 
-	private buildPopulationStatsResult(aggregated: any) {
+	private buildPopulationStatsResult(aggregated: ReturnType<StatsCalculator["aggregatePopulationData"]>) {
 		const populationStats: PopulationStats = {
 			total: aggregated.totalPop,
 			males: aggregated.malesPop,

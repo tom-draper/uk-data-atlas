@@ -38,9 +38,9 @@ const COUNTRY_LOCATIONS = new Set([
 /**
  * Calculate total population for a ward
  */
-const calculateWardPopulation = (wardData: any): number => {
+const calculateWardPopulation = (wardData: PopulationWardData): number => {
 	return Object.values(wardData.total).reduce(
-		(sum: number, val: any) => sum + Number(val),
+		(sum: number, val: number) => sum + val,
 		0,
 	);
 };
@@ -49,7 +49,7 @@ const calculateWardPopulation = (wardData: any): number => {
  * Calculate bounds from a GeoJSON feature
  */
 const calculateFeatureBounds = (
-	feature: any,
+	feature: BoundaryGeojson["features"][0],
 ): [number, number, number, number] => {
 	if (!feature?.geometry) {
 		return [-1, -1, -1, -1];
@@ -60,15 +60,17 @@ const calculateFeatureBounds = (
 		maxLng = -Infinity,
 		maxLat = -Infinity;
 
-	const processCoords = (coords: any): void => {
+	type Coords = number[] | number[][] | number[][][];
+
+	const processCoords = (coords: Coords): void => {
 		if (typeof coords[0] === "number") {
-			const [lng, lat] = coords;
+			const [lng, lat] = coords as [number, number];
 			minLng = Math.min(minLng, lng);
 			maxLng = Math.max(maxLng, lng);
 			minLat = Math.min(minLat, lat);
 			maxLat = Math.max(maxLat, lat);
 		} else {
-			coords.forEach(processCoords);
+			(coords as number[][] | number[][][]).forEach((c) => processCoords(c as Coords));
 		}
 	};
 
@@ -92,9 +94,6 @@ export default memo(function LocationPanel({
 
 	// Load ward boundaries using the library
 	useEffect(() => {
-		console.log(
-			"EXPENSIVE: Loading 2023 ward boundaries for LocationPanel...",
-		);
 		fetchBoundaryFile(GEOJSON_PATHS.ward[2023])
 			.then((data) => setGeojson(data))
 			.catch((err) =>
@@ -106,7 +105,7 @@ export default memo(function LocationPanel({
 	const geojsonFeatureMap = useMemo(() => {
 		if (!geojson) return {};
 
-		const map: Record<string, any> = {};
+		const map: Record<string, BoundaryGeojson["features"][0]> = {};
 		geojson.features.forEach((feature) => {
 			const wardCode = getProp(
 				feature.properties,
@@ -164,7 +163,7 @@ export default memo(function LocationPanel({
 
 		// Single pass through all wards to calculate country totals
 		Object.entries(enrichedPopulation).forEach(
-			([wardCode, wardData]: [string, any]) => {
+			([wardCode, wardData]) => {
 				const population = wardData.totalPopulation;
 
 				countryPops["United Kingdom"] += population;

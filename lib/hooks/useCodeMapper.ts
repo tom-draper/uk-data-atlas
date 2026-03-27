@@ -1,16 +1,26 @@
 // lib/hooks/useCodeMapper.ts
 "use client";
 
-import { useState, useCallback, useRef } from "react";
-import { BoundaryGeojson } from "@lib/types";
+import { useState, useCallback, useMemo, useRef } from "react";
+import { BoundaryGeojson, Features } from "@lib/types";
 import {
 	BoundaryType,
 	PROPERTY_KEYS,
 	getProp,
 } from "../data/boundaries/boundaries";
 
-export type CodeType = "ward" | "localAuthority" | "constituency";
+export type CodeType = "ward" | "localAuthority" | "constituency" | "lsoa";
 export type YearCode = number;
+
+/** Shared type for the codeMapper prop passed to chart sections and sub-components. */
+export interface CodeMapper {
+	getCodeForYear: (
+		type: CodeType,
+		code: string,
+		targetYear: number,
+	) => string | undefined;
+	getWardsForLad: (ladCode: string, year: number) => string[];
+}
 
 export interface CodeMapping {
 	[fromCode: string]: {
@@ -38,10 +48,12 @@ export function useCodeMapper() {
 		ward: CodeMapping;
 		localAuthority: CodeMapping;
 		constituency: CodeMapping;
+		lsoa: CodeMapping;
 	}>({
 		ward: {},
 		localAuthority: {},
 		constituency: {},
+		lsoa: {},
 	});
 
 	// Use refs to avoid recreating callbacks
@@ -245,6 +257,7 @@ export function useCodeMapper() {
 			ward: {},
 			localAuthority: {},
 			constituency: {},
+			lsoa: {},
 		});
 	}, []);
 
@@ -267,6 +280,7 @@ export function useCodeMapper() {
 				ward: {},
 				localAuthority: {},
 				constituency: {},
+				lsoa: {},
 			});
 		}
 	}, []);
@@ -290,7 +304,9 @@ export function useCodeMapper() {
 		};
 	}, []);
 
-	return {
+	// Stable object reference — all functions are useCallback([]), so this
+	// never changes identity and memo-wrapped consumers never see a "new" codeMapper
+	return useMemo(() => ({
 		getLadForWard,
 		addWardLadMapping,
 		addWardLadMappings,
@@ -308,14 +324,14 @@ export function useCodeMapper() {
 		clearLadWardMap,
 		clearCodeMappings,
 		getMappingCounts,
-	};
+	}), [getLadForWard, addWardLadMapping, addWardLadMappings, getWardsForLad, addLadWardMapping, addLadWardMappings, addCodeMapping, addCodeMappings, getCodeForYear, getAllEquivalentCodes, findSourceCodes, getHighlightCodes, clearAllMappings, clearWardLadMap, clearLadWardMap, clearCodeMappings, getMappingCounts]);
 }
 
 /**
  * Extract ward-to-LAD mappings from GeoJSON features
  */
 export const extractWardLadMappings = (
-	features: any[],
+	features: Features,
 	wardCodeKeys: readonly string[],
 	localAuthorityCodeKeys: readonly string[],
 ): WardLadMapping => {
@@ -340,7 +356,7 @@ export const extractWardLadMappings = (
  * Extract LAD-to-wards mappings from GeoJSON features (inverse of ward-to-LAD)
  */
 export const extractLadWardMappings = (
-	features: any[],
+	features: Features,
 	wardCodeKeys: readonly string[],
 	localAuthorityCodeKeys: readonly string[],
 ): Record<string, string[]> => {

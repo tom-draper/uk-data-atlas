@@ -11,10 +11,12 @@ import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import MapView from "@components/MapView";
 import UIOverlay from "@components/UIOverlay";
 
-import type { ActiveViz, Datasets, SelectedArea } from "@lib/types";
+import type { ActiveViz, Datasets, SelectedArea, BoundaryData } from "@lib/types";
+import type { CustomDataset } from "@/lib/types/custom";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { LOCATIONS } from "@lib/data/locations";
+import maplibregl from "maplibre-gl";
 
 interface MapInterfaceProps {
 	datasets: Datasets;
@@ -22,6 +24,8 @@ interface MapInterfaceProps {
 	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
 	setSelectedLocation: (location: string) => void;
+	customDataset: CustomDataset | null;
+	setCustomDataset: (dataset: CustomDataset | null) => void;
 }
 
 export default function MapInterface({
@@ -30,11 +34,13 @@ export default function MapInterface({
 	setActiveViz,
 	selectedLocation,
 	setSelectedLocation,
+	customDataset,
+	setCustomDataset,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
 
 	const codeMapper = useCodeMapper();
-	const { boundaryData } = useBoundaryData(selectedLocation, codeMapper);
+	const { boundaryData, boundaryCodes } = useBoundaryData(selectedLocation, codeMapper);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } =
@@ -50,14 +56,16 @@ export default function MapInterface({
 
 	// Get active dataset
 	const activeDataset = useMemo(() => {
-		return datasets[activeViz.datasetType]?.[activeViz.datasetYear];
-	}, [datasets, activeViz.datasetType, activeViz.datasetYear]);
+		if (activeViz.datasetType === "custom") return customDataset;
+		const group = datasets[activeViz.datasetType] as Record<string, any> | undefined;
+		return group?.[activeViz.vizId] ?? group?.[activeViz.datasetYear] ?? null;
+	}, [datasets, activeViz, customDataset]);
 
 	// Get geojson for active dataset
 	const geojson = useMemo(() => {
 		if (!activeDataset) return null;
 		return (
-			boundaryData[activeDataset.boundaryType]?.[
+			boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
 			activeDataset.boundaryYear
 			] ?? null
 		);
@@ -106,7 +114,11 @@ export default function MapInterface({
 	});
 
 	const handleExport = useCallback(() => {
-		const mapInstance = map.current;
+		type MapWithExport = maplibregl.Map & {
+			once(type: "render", listener: () => void): void;
+			triggerRepaint(): void;
+		};
+		const mapInstance = map.current as MapWithExport | null;
 		if (!mapInstance) return;
 
 		mapInstance.once("render", () => {
@@ -128,6 +140,7 @@ export default function MapInterface({
 		mapManager,
 		boundaryData,
 		datasets,
+		customDataset,
 		location: selectedLocation,
 	});
 
@@ -138,6 +151,7 @@ export default function MapInterface({
 					selectedLocation={selectedLocation}
 					selectedArea={selectedArea}
 					boundaryData={boundaryData}
+					boundaryCodes={boundaryCodes}
 					mapOptions={mapOptions}
 					codeMapper={codeMapper}
 					onMapOptionsChange={handleMapOptionsChange}
@@ -149,7 +163,8 @@ export default function MapInterface({
 					setActiveViz={setActiveViz}
 					aggregatedData={aggregatedData}
 					datasets={datasets}
-					handleMapOptionsChange={handleMapOptionsChange}
+					customDataset={customDataset}
+					setCustomDataset={setCustomDataset}
 					onExport={handleExport}
 				/>
 			)}

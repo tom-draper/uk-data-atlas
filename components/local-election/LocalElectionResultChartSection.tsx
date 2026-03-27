@@ -1,7 +1,7 @@
 // components/LocalElectionResultChart.tsx
 "use client";
 
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { calculateTurnout } from "@/lib/helpers/generalElection";
 import {
@@ -14,6 +14,7 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import LocalElectionResultChart from "./LocalElectionResultChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface ProcessedPartyData {
 	key: string;
@@ -32,9 +33,13 @@ interface ProcessedYearData {
 	hasData: boolean;
 }
 
+// Cache LAD vote aggregations — keyed by ladCode, then election year
+const MAX_LAD_CACHE_ENTRIES = 50;
+const localElectionLadCache = new Map<string, Map<number, { partyVotes: Record<string, number>; electorate: number } | null>>();
+
 const useLocalElectionData = (
 	availableDatasets: Record<string, LocalElectionDataset>,
-	aggregatedData: AggregatedLocalElectionData | null,
+	aggregatedData: Record<number, AggregatedLocalElectionData> | null,
 	selectedArea: SelectedArea | null,
 	getCodeForYear?: (
 		type: "ward",
@@ -80,18 +85,25 @@ const useLocalElectionData = (
 				}
 			} else if (selectedArea && selectedArea.type === "localAuthority" && getWardsForLad) {
 				const ladCode = selectedArea.code;
-				const wardCodes = getWardsForLad(ladCode, 2022);
 
-				if (wardCodes.length > 0) {
+				// Check cache first
+				if (!localElectionLadCache.has(ladCode)) {
+					if (localElectionLadCache.size >= MAX_LAD_CACHE_ENTRIES) {
+						localElectionLadCache.delete(localElectionLadCache.keys().next().value!);
+					}
+					localElectionLadCache.set(ladCode, new Map());
+				}
+				const yearCache = localElectionLadCache.get(ladCode)!;
+
+				let cached = yearCache.get(year);
+				if (!yearCache.has(year)) {
+					const wardCodes = getWardsForLad(ladCode, 2022);
 					const aggregatedVotes: Record<string, number> = {};
 					let totalElectorate = 0;
-					let totalVotesAcrossWards = 0;
 
-					// Aggregate votes across all wards in the LAD
 					for (const wardCode of wardCodes) {
 						let wardData = dataset.data[wardCode];
 
-						// Try to map to the dataset's year if ward code doesn't exist
 						if (!wardData && getCodeForYear) {
 							const mappedCode = getCodeForYear("ward", wardCode, year);
 							if (mappedCode) {
@@ -100,27 +112,25 @@ const useLocalElectionData = (
 						}
 
 						if (wardData?.partyVotes) {
-							// Aggregate party votes
 							for (const [partyKey, votes] of Object.entries(wardData.partyVotes)) {
 								aggregatedVotes[partyKey] = (aggregatedVotes[partyKey] || 0) + (votes || 0);
 							}
-
-							// Aggregate electorate for turnout calculation
 							if (wardData.electorate) {
 								totalElectorate += wardData.electorate;
 							}
 						}
 					}
 
-					// Calculate total votes from aggregated votes
-					totalVotesAcrossWards = Object.values(aggregatedVotes).reduce((sum, votes) => sum + (votes || 0), 0);
+					const totalVotes = Object.values(aggregatedVotes).reduce((sum, v) => sum + (v || 0), 0);
+					cached = totalVotes > 0 ? { partyVotes: aggregatedVotes, electorate: totalElectorate } : null;
+					yearCache.set(year, cached);
+				}
 
-					if (totalVotesAcrossWards > 0) {
-						rawPartyVotes = aggregatedVotes as PartyVotes;
-						// Calculate turnout from aggregated data
-						if (totalElectorate > 0) {
-							turnout = calculateTurnout(totalVotesAcrossWards, 0, totalElectorate);
-						}
+				if (cached) {
+					rawPartyVotes = cached.partyVotes as PartyVotes;
+					if (cached.electorate > 0) {
+						const totalVotes = Object.values(cached.partyVotes).reduce((s, v) => s + (v || 0), 0);
+						turnout = calculateTurnout(totalVotes, 0, cached.electorate);
 					}
 				}
 			} else if (selectedArea === null && aggregatedData?.[year]) {
@@ -147,7 +157,7 @@ const useLocalElectionData = (
 			}
 
 			// Process Votes & Percentages
-			const totalVotes = Object.values(rawPartyVotes).reduce((a, b) => (a || 0) + (b || 0), 0);
+			const totalVotes = Object.values(rawPartyVotes).reduce<number>((a, b) => a + (b ?? 0), 0);
 
 			if (totalVotes === 0) {
 				return {
@@ -189,24 +199,19 @@ const useLocalElectionData = (
 interface LocalElectionResultChartSectionProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, LocalElectionDataset>;
-	aggregatedData: AggregatedLocalElectionData | null;
+	aggregatedData: Record<number, AggregatedLocalElectionData> | null;
 	selectedArea: SelectedArea | null;
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
-export default function LocalElectionResultChartSection({
+export default memo(function LocalElectionResultChartSection({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	activeViz,
 	setActiveViz,
 	codeMapper,
 }: LocalElectionResultChartSectionProps) {
@@ -228,10 +233,15 @@ export default function LocalElectionResultChartSection({
 				<LocalElectionResultChart
 					key={data.year}
 					data={data}
-					isActive={activeDataset?.id === `localElection${data.year}`}
+					isActive={
+						(activeDataset &&
+							((activeDataset.type === "localElection" &&
+								activeDataset.id === `localElection${data.year}`) ||
+								(activeViz.datasetType === "custom" && activeViz.vizId === "custom"))) as boolean
+					}
 					setActiveViz={setActiveViz}
 				/>
 			))}
 		</div>
 	);
-}
+});

@@ -7,28 +7,22 @@ import {
 	HousePriceDataset,
 	SelectedArea,
 } from "@lib/types";
-import React, { useMemo } from "react";
+import React, { memo, useMemo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
-	availableDatasets: Record<string, HousePriceDataset>;
-	aggregatedData: AggregatedHousePriceData | null;
-	year: number;
+	    availableDatasets: Record<string, HousePriceDataset>;
+	    aggregatedData: Record<number, AggregatedHousePriceData> | null;	year: number;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward" | "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
 interface PriceChartProps {
 	dataset: HousePriceDataset;
-	aggregatedData: AggregatedHousePriceData | null;
+	aggregatedData: Record<number, AggregatedHousePriceData> | null;
 	selectedArea: SelectedArea | null;
 	getCodeForYear?: (
 		type: "ward" | "localAuthority",
@@ -65,9 +59,12 @@ const PriceChart = React.memo(
 			let price2023: number | null = null;
 
 			if (selectedArea === null && aggregatedData) {
-				// No area selected - show aggregated data
-				prices = aggregatedData[dataset.year]?.averagePrices || {};
-				price2023 = aggregatedData[dataset.year]?.averagePrice || null;
+                const yearAggregatedData = aggregatedData[dataset.year];
+                if (yearAggregatedData) {
+                    // No area selected - show aggregated data
+                    prices = yearAggregatedData.averagePrices || {};
+                    price2023 = yearAggregatedData.averagePrice || null;
+                }
 			} else if (selectedArea && selectedArea.type === "ward") {
 				// Ward selected - lookup ward data
 				const wardCode = selectedArea.code;
@@ -248,10 +245,11 @@ const PriceChart = React.memo(
 
 		return (
 			<div
-				className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative ${isActive
+				className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative h-20 ${isActive
 					? `${colors.bg} border-2 ${colors.border}`
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300"
 					}`}
+				title="Office for National Statistics. UK House Price Index (HPI): Mean and Median House Prices by Local Authority. ons.gov.uk"
 				onClick={() =>
 					setActiveViz({
 						vizId: dataset.id,
@@ -315,7 +313,7 @@ const PriceChart = React.memo(
 
 				{/* Price display in bottom right */}
 				{formattedPrice ? (
-					<div className="relative flex justify-end items-end mt-4 z-10 h-7">
+					<div className="relative flex justify-end items-end mt-3 z-10 h-7">
 						<div
 							className={`text-xl font-bold ${!currentPrice ? "text-gray-400 text-sm" : ""}`}
 						>
@@ -335,19 +333,24 @@ const PriceChart = React.memo(
 );
 PriceChart.displayName = "PriceChart";
 
-export default function HousePriceChart({
+export default memo(function HousePriceChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
 	year,
 	selectedArea,
 	codeMapper,
+	activeViz,
 	setActiveViz,
 }: HousePriceChartProps) {
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
-	const isActive = activeDataset?.id === `housePrice${year}`;
+	const isActive =
+		activeDataset &&
+		((activeDataset.type === "housePrice" &&
+			activeDataset.id === `housePrice${year}`) ||
+			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
 
 	return (
 		<PriceChart
@@ -357,8 +360,8 @@ export default function HousePriceChart({
 			selectedArea={selectedArea}
 			getCodeForYear={codeMapper?.getCodeForYear}
 			getWardsForLad={codeMapper?.getWardsForLad}
-			isActive={isActive}
+			isActive={isActive as boolean}
 			setActiveViz={setActiveViz}
 		/>
 	);
-}
+});

@@ -1,7 +1,7 @@
 // lib/hooks/useIncomeData.ts
 import { useState, useEffect } from "react";
-import Papa from "papaparse";
 import { withCDN } from "../helpers/cdn";
+import { parseCsv, findHeaderLine } from "../helpers/parseCsv";
 import {
 	AnnualIncomeData,
 	HourlyIncomeData,
@@ -9,175 +9,99 @@ import {
 	LocalAuthorityIncomeData,
 } from "../types/income";
 
-// Utility to parse numeric values
 const parseNumber = (value: any): number | null => {
-	if (
-		!value ||
-		value === "" ||
-		value === "x" ||
-		value === ".." ||
-		value === ":" ||
-		value === "-"
-	)
+	if (!value || value === "" || value === "x" || value === ".." || value === ":" || value === "-")
 		return null;
 	const parsed = parseFloat(String(value).replace(/,/g, "").trim());
 	return isNaN(parsed) ? null : parsed;
 };
 
-const parseAnnualIncomeData = async (): Promise<
-	Record<string, AnnualIncomeData>
-> => {
+const parseAnnualIncomeData = async (): Promise<Record<string, AnnualIncomeData>> => {
 	const res = await fetch(
-		withCDN(
-			"/data/economics/income/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.csv",
-		),
+		withCDN("/data/economics/income/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.csv"),
 	);
+	if (!res.ok) throw new Error(`Failed to fetch annual income data: ${res.statusText}`);
+
 	const csvText = await res.text();
+	const skipLines = findHeaderLine(csvText, "Description");
+	const { data } = await parseCsv(csvText, { header: true, skipLines });
 
-	const lines = csvText.split("\n");
-	const dataStart = lines.findIndex(
-		(line) => line.includes("Description") && line.includes("Code"),
-	);
-	const cleanedCsv = lines.slice(dataStart).join("\n");
+	const annualData: Record<string, AnnualIncomeData> = {};
+	for (const row of data as any[]) {
+		const code = row["Code"]?.trim();
+		const description = row["Description"]?.trim();
+		if (!code || !description || code === "Code" || !code.startsWith("E")) continue;
 
-	return new Promise((resolve, reject) => {
-		Papa.parse(cleanedCsv, {
-			header: true,
-			skipEmptyLines: true,
-			dynamicTyping: false,
-			complete: (results) => {
-				const annualData: Record<string, AnnualIncomeData> = {};
+		const median = parseNumber(row["Median"]);
+		const mean = parseNumber(row["Mean"]);
+		if (median === null && mean === null) continue;
 
-				for (const row of results.data as any[]) {
-					const code = row["Code"]?.trim();
-					const description = row["Description"]?.trim();
-
-					if (
-						!code ||
-						!description ||
-						code === "Code" ||
-						!code.startsWith("E")
-					)
-						continue;
-
-					const median = parseNumber(row["Median"]);
-					const mean = parseNumber(row["Mean"]);
-
-					if (median === null && mean === null) continue;
-
-					annualData[code] = {
-						numberOfJobs: parseNumber(
-							row["Number\nof jobsb\n(thousand)"],
-						),
-						median,
-						medianPercentageChange: parseNumber(
-							row["Annual\npercentage\nchange"],
-						),
-						mean,
-						meanPercentageChange: parseNumber(
-							row["Annual\npercentage\nchange.1"],
-						),
-						percentiles: {
-							p10: parseNumber(row["10"]),
-							p20: parseNumber(row["20"]),
-							p25: parseNumber(row["25"]),
-							p30: parseNumber(row["30"]),
-							p40: parseNumber(row["40"]),
-							p60: parseNumber(row["60"]),
-							p70: parseNumber(row["70"]),
-							p75: parseNumber(row["75"]),
-							p80: parseNumber(row["80"]),
-							p90: parseNumber(row["90"]),
-						},
-					};
-				}
-
-				console.log(
-					`Loaded annual income data for ${Object.keys(annualData).length} local authorities`,
-				);
-				resolve(annualData);
+		annualData[code] = {
+			name: description,
+			numberOfJobs: parseNumber(row["Number\nof jobsb\n(thousand)"]),
+			median,
+			medianPercentageChange: parseNumber(row["Annual\npercentage\nchange"]),
+			mean,
+			meanPercentageChange: parseNumber(row["Annual\npercentage\nchange.1"]),
+			percentiles: {
+				p10: parseNumber(row["10"]),
+				p20: parseNumber(row["20"]),
+				p25: parseNumber(row["25"]),
+				p30: parseNumber(row["30"]),
+				p40: parseNumber(row["40"]),
+				p60: parseNumber(row["60"]),
+				p70: parseNumber(row["70"]),
+				p75: parseNumber(row["75"]),
+				p80: parseNumber(row["80"]),
+				p90: parseNumber(row["90"]),
 			},
-			error: reject,
-		});
-	});
+		};
+	}
+	return annualData;
 };
 
-const parseHourlyIncomeData = async (): Promise<
-	Record<string, HourlyIncomeData>
-> => {
+const parseHourlyIncomeData = async (): Promise<Record<string, HourlyIncomeData>> => {
 	const res = await fetch(
-		withCDN(
-			"/data/economics/income/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.csv",
-		),
+		withCDN("/data/economics/income/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.csv"),
 	);
+	if (!res.ok) throw new Error(`Failed to fetch hourly income data: ${res.statusText}`);
+
 	const csvText = await res.text();
+	const skipLines = findHeaderLine(csvText, "Description");
+	const { data } = await parseCsv(csvText, { header: true, skipLines });
 
-	const lines = csvText.split("\n");
-	const dataStart = lines.findIndex(
-		(line) => line.includes("Description") && line.includes("Code"),
-	);
-	const cleanedCsv = lines.slice(dataStart).join("\n");
+	const hourlyData: Record<string, HourlyIncomeData> = {};
+	for (const row of data as any[]) {
+		const code = row["Code"]?.trim();
+		const description = row["Description"]?.trim();
+		if (!code || !description || code === "Code" || !code.startsWith("E")) continue;
 
-	return new Promise((resolve, reject) => {
-		Papa.parse(cleanedCsv, {
-			header: true,
-			skipEmptyLines: true,
-			dynamicTyping: false,
-			complete: (results) => {
-				const hourlyData: Record<string, HourlyIncomeData> = {};
+		const median = parseNumber(row["Median"]);
+		const mean = parseNumber(row["Mean"]);
+		if (median === null && mean === null) continue;
 
-				for (const row of results.data as any[]) {
-					const code = row["Code"]?.trim();
-					const description = row["Description"]?.trim();
-
-					if (
-						!code ||
-						!description ||
-						code === "Code" ||
-						!code.startsWith("E")
-					)
-						continue;
-
-					const median = parseNumber(row["Median"]);
-					const mean = parseNumber(row["Mean"]);
-
-					if (median === null && mean === null) continue;
-
-					hourlyData[code] = {
-						numberOfJobs: parseNumber(
-							row["Number\nof jobsb\n(thousand)"],
-						),
-						median,
-						medianPercentageChange: parseNumber(
-							row["Annual\npercentage\nchange"],
-						),
-						mean,
-						meanPercentageChange: parseNumber(
-							row["Annual\npercentage\nchange.1"],
-						),
-						percentiles: {
-							p10: parseNumber(row["10"]),
-							p20: parseNumber(row["20"]),
-							p25: parseNumber(row["25"]),
-							p30: parseNumber(row["30"]),
-							p40: parseNumber(row["40"]),
-							p60: parseNumber(row["60"]),
-							p70: parseNumber(row["70"]),
-							p75: parseNumber(row["75"]),
-							p80: parseNumber(row["80"]),
-							p90: parseNumber(row["90"]),
-						},
-					};
-				}
-
-				console.log(
-					`Loaded hourly income data for ${Object.keys(hourlyData).length} local authorities`,
-				);
-				resolve(hourlyData);
+		hourlyData[code] = {
+			name: description,
+			numberOfJobs: parseNumber(row["Number\nof jobsb\n(thousand)"]),
+			median,
+			medianPercentageChange: parseNumber(row["Annual\npercentage\nchange"]),
+			mean,
+			meanPercentageChange: parseNumber(row["Annual\npercentage\nchange.1"]),
+			percentiles: {
+				p10: parseNumber(row["10"]),
+				p20: parseNumber(row["20"]),
+				p25: parseNumber(row["25"]),
+				p30: parseNumber(row["30"]),
+				p40: parseNumber(row["40"]),
+				p60: parseNumber(row["60"]),
+				p70: parseNumber(row["70"]),
+				p75: parseNumber(row["75"]),
+				p80: parseNumber(row["80"]),
+				p90: parseNumber(row["90"]),
 			},
-			error: reject,
-		});
-	});
+		};
+	}
+	return hourlyData;
 };
 
 const mergeIncomeData = (
@@ -185,34 +109,19 @@ const mergeIncomeData = (
 	hourlyData: Record<string, HourlyIncomeData>,
 ): Record<string, LocalAuthorityIncomeData> => {
 	const merged: Record<string, LocalAuthorityIncomeData> = {};
-
-	// Get all unique codes from both datasets
-	const allCodes = new Set([
-		...Object.keys(annualData),
-		...Object.keys(hourlyData),
-	]);
-
-	allCodes.forEach((code) => {
-		const annual = annualData[code];
-		const hourly = hourlyData[code];
-
-		// We need at least one dataset to have a name
-		// Priority: use annual data name if available, otherwise hourly
+	const allCodes = new Set([...Object.keys(annualData), ...Object.keys(hourlyData)]);
+	for (const code of allCodes) {
+		const annual = annualData[code] ?? null;
+		const hourly = hourlyData[code] ?? null;
 		if (annual || hourly) {
-			const name = annual
-				? annualData[code]?.numberOfJobs !== null
-					? Object.keys(annualData).find((k) => k === code)
-					: ""
-				: Object.keys(hourlyData).find((k) => k === code);
 			merged[code] = {
 				code,
-				name: name || "",
-				annual: annual || null,
-				hourly: hourly || null,
+				name: annual?.name ?? hourly?.name ?? "",
+				annual,
+				hourly,
 			};
 		}
-	});
-
+	}
 	return merged;
 };
 
@@ -224,34 +133,23 @@ export const useIncomeData = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-				console.log("EXPENSIVE: Loading income data...");
-
 				const [annualData, hourlyData] = await Promise.all([
 					parseAnnualIncomeData(),
 					parseHourlyIncomeData(),
 				]);
 
-				const localAuthorityData = mergeIncomeData(
-					annualData,
-					hourlyData,
-				);
-
-				const loadedDatasets: Record<string, IncomeDataset> = {
+				setDatasets({
 					2025: {
 						id: "income2025",
 						type: "income",
 						year: 2025,
 						boundaryType: "localAuthority",
 						boundaryYear: 2025,
-						data: localAuthorityData,
+						data: mergeIncomeData(annualData, hourlyData),
 					},
-				};
-
-				console.log("Storing income datasets:", loadedDatasets);
-				setDatasets(loadedDatasets);
+				});
 				setLoading(false);
 			} catch (err: any) {
-				console.error("Income data load failed:", err);
 				setError(err.message || "Error loading income data");
 				setLoading(false);
 			}

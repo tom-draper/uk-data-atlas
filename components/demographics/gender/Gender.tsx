@@ -7,24 +7,19 @@ import {
 	SelectedArea,
 } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface GenderProps {
 	dataset: PopulationDataset;
-	aggregatedData: AggregatedPopulationData | null;
+	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward" | "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
-// Cache for LAD gender aggregations
+// Cache for LAD gender aggregations (bounded to prevent unbounded memory growth)
+const MAX_LAD_CACHE_ENTRIES = 50;
 const genderCache = new Map<string, Map<number, any>>();
 
 function Gender({
@@ -42,10 +37,10 @@ function Gender({
 	const { totalMales, totalFemales } = useMemo(() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
+			const data = aggregatedData[dataset.year];
 			return {
-				totalMales: aggregatedData[dataset.year].populationStats.males,
-				totalFemales:
-					aggregatedData[dataset.year].populationStats.females,
+				totalMales: data.populationStats.males,
+				totalFemales: data.populationStats.females,
 			};
 		}
 
@@ -98,6 +93,9 @@ function Gender({
 			const cacheKey = `lad-${ladCode}`;
 
 			if (!genderCache.has(cacheKey)) {
+				if (genderCache.size >= MAX_LAD_CACHE_ENTRIES) {
+					genderCache.delete(genderCache.keys().next().value!);
+				}
 				genderCache.set(cacheKey, new Map());
 			}
 			const yearCache = genderCache.get(cacheKey)!;
@@ -167,10 +165,11 @@ function Gender({
 
 	return (
 		<div
-			className={`p-2 rounded transition-all cursor-pointer ${isActive
+			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
 					? "bg-violet-50/60 border-2 border-violet-300"
 					: "bg-white/60 border-2 border-gray-200/80 hover:border-violet-300"
 				}`}
+			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,
@@ -204,7 +203,7 @@ function Gender({
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
 			/>
-		</div>
+			</div>
 	);
 }
 

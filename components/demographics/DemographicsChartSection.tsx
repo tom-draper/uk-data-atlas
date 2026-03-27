@@ -1,5 +1,6 @@
 // components/PopulationChart.tsx
 "use client";
+import { memo } from "react";
 import {
 	ActiveViz,
 	AggregatedEthnicityData,
@@ -13,27 +14,21 @@ import Gender from "./gender/Gender";
 import AgeDistribution from "./age/AgeDistribution";
 import PopulationDensity from "./density/PopulationDensity";
 import EthnicityChart from "./ethnicity/EthnicityChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 export interface DemographicsChartSectionProps {
 	availablePopulationDatasets: Record<string, PopulationDataset>;
-	aggregatedPopulationData: AggregatedPopulationData | null;
+	aggregatedPopulationData: Record<number, AggregatedPopulationData> | null;
 	availableEthnicityDatasets: Record<string, EthnicityDataset>;
-	aggregatedEthnicityData: AggregatedEthnicityData | null;
+	aggregatedEthnicityData: Record<number, AggregatedEthnicityData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward" | "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default function DemographicsChartSection({
+export default memo(function DemographicsChartSection({
 	availablePopulationDatasets,
 	aggregatedPopulationData,
 	availableEthnicityDatasets,
@@ -84,4 +79,4 @@ export default function DemographicsChartSection({
 			</div>
 		</div>
 	);
-}
+});

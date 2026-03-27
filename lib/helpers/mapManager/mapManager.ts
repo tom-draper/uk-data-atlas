@@ -9,6 +9,10 @@ import {
 	SelectedArea,
 	EthnicityDataset,
 	PropertyKeys,
+	CustomDataset,
+	Features,
+	BrexitDataset,
+	BrexitConstituencyDataset,
 } from "@lib/types";
 import { MapMode, MapOptions } from "@lib/types/mapOptions";
 import { LayerManager } from "./layerManager";
@@ -18,6 +22,8 @@ import { FeatureBuilder } from "./featureBuilder";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
+import { IMDDataset } from "@/lib/types/imd";
+import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 
 export interface MapManagerCallbacks {
 	onAreaHover?: (location: SelectedArea | null) => void;
@@ -70,8 +76,8 @@ export class MapManager {
 			codeProp = isLocal
 				? this.propertyDetector.detectWardCode(geojson.features)
 				: this.propertyDetector.detectConstituencyCode(
-						geojson.features,
-					);
+					geojson.features,
+				);
 			propCache.set(cacheKey, codeProp);
 		}
 
@@ -87,16 +93,16 @@ export class MapManager {
 		const features =
 			mode === "percentage" && options.selected
 				? this.featureBuilder.buildElectionPercentageFeatures(
-						geojson.features,
-						dataMap,
-						options.selected,
-						codeProp,
-					)
+					geojson.features,
+					dataMap,
+					options.selected,
+					codeProp,
+				)
 				: this.featureBuilder.buildElectionWinnerFeatures(
-						geojson.features,
-						codeProp,
-						(code) => resultsMap[code] || "NONE",
-					);
+					geojson.features,
+					codeProp,
+					(code) => resultsMap[code] || "NONE",
+				);
 
 		const transformedGeojson =
 			this.featureBuilder.formatBoundaryGeoJson(features);
@@ -116,7 +122,7 @@ export class MapManager {
 			);
 		}
 
-		this.eventHandler.setupEventHandlers(type, dataMap, codeProp);
+		this.eventHandler.setupEventHandlers(dataMap, codeProp);
 	}
 
 	updateMapForLocalElection(
@@ -178,7 +184,39 @@ export class MapManager {
 		}
 
 		this.eventHandler.setupEventHandlers(
-			"ethnicity",
+			dataset.data,
+			codeProp,
+		);
+	}
+
+	updateMapForCustomDataset(
+		geojson: BoundaryGeojson,
+		dataset: CustomDataset,
+		mapOptions: MapOptions,
+	): void {
+		const cacheKey = `custom-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
+		let codeProp = propCache.get(cacheKey);
+
+		if (!codeProp) {
+			codeProp = this.propertyDetector.detectCode(geojson.features);
+			propCache.set(cacheKey, codeProp);
+		}
+
+		const features = this.featureBuilder.buildCustomDatasetFeatures(
+			geojson.features,
+			dataset,
+			codeProp,
+			mapOptions,
+		);
+		const transformedGeojson =
+			this.featureBuilder.formatBoundaryGeoJson(features);
+
+		this.layerManager.updateColoredLayers(
+			transformedGeojson,
+			mapOptions.visibility,
+		);
+
+		this.eventHandler.setupEventHandlers(
 			dataset.data,
 			codeProp,
 		);
@@ -190,11 +228,11 @@ export class MapManager {
 		dataset: PopulationDataset,
 		mapOptions: MapOptions,
 		buildFeatures: (
-			features: any[],
+			features: Features,
 			dataset: PopulationDataset,
-			codeProp: string,
+			codeProp: PropertyKeys,
 			options: MapOptions,
-		) => any[],
+		) => Features,
 	): void {
 		const cacheKey = `population-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
 		let wardCodeProp = propCache.get(cacheKey);
@@ -220,7 +258,6 @@ export class MapManager {
 			mapOptions.visibility,
 		);
 		this.eventHandler.setupEventHandlers(
-			"population",
 			dataset.data,
 			wardCodeProp,
 		);
@@ -266,26 +303,31 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap(
+	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | LifeExpectancyDataset>(
 		geojson: BoundaryGeojson,
-		dataset: any,
+		dataset: T,
 		mapOptions: MapOptions,
-		detectProperty: (features: any[]) => string,
+		detectProperty: (features: Features) => PropertyKeys,
 		buildFeatures: (
-			features: any[],
-			dataset: any,
-			codeProp: string,
+			features: Features,
+			dataset: T,
+			codeProp: PropertyKeys,
 			options: MapOptions,
-		) => any[],
+		) => Features,
 		eventType: MapMode,
-		dataForEvents: any,
+		dataForEvents: Record<string, unknown>,
 	): void {
 		const cacheKey = `${eventType}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let codeProp = propCache.get(cacheKey);
+		let codeProp: PropertyKeys | undefined = propCache.get(cacheKey);
 
 		if (!codeProp) {
 			codeProp = detectProperty(geojson.features);
 			propCache.set(cacheKey, codeProp);
+		}
+
+		if (!codeProp) {
+			console.warn("codeProp is undefined, skipping feature building.");
+			return;
 		}
 
 		const features = buildFeatures(
@@ -302,7 +344,6 @@ export class MapManager {
 			mapOptions.visibility,
 		);
 		this.eventHandler.setupEventHandlers(
-			eventType,
 			dataForEvents,
 			codeProp,
 		);
@@ -318,9 +359,7 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectWardCode.bind(this.propertyDetector),
-			this.featureBuilder.buildHousePriceFeatures.bind(
-				this.featureBuilder,
-			),
+			this.featureBuilder.buildHousePriceFeatures.bind(this.featureBuilder),
 			"housePrice",
 			dataset.data,
 		);
@@ -335,12 +374,8 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(
-				this.propertyDetector,
-			),
-			this.featureBuilder.buildCrimeRateFeatures.bind(
-				this.featureBuilder,
-			),
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildCrimeRateFeatures.bind(this.featureBuilder),
 			"crime",
 			dataset.data,
 		);
@@ -355,16 +390,95 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(
-				this.propertyDetector,
-			),
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
 			this.featureBuilder.buildIncomeFeatures.bind(this.featureBuilder),
 			"income",
 			dataset.data,
 		);
 	}
 
-	// Simplified stats calculation methods
+	updateMapForBrexit(
+		geojson: BoundaryGeojson,
+		dataset: BrexitDataset,
+		mapOptions: MapOptions,
+	): void {
+		const cacheKey = `brexit-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
+		let codeProp = propCache.get(cacheKey);
+
+		if (!codeProp) {
+			codeProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
+			propCache.set(cacheKey, codeProp);
+		}
+
+		const features = this.featureBuilder.buildBrexitFeatures(
+			geojson.features,
+			dataset,
+			codeProp,
+			mapOptions,
+		);
+		const transformedGeojson =
+			this.featureBuilder.formatBoundaryGeoJson(features);
+
+		this.layerManager.updateColoredLayers(
+			transformedGeojson,
+			mapOptions.visibility,
+		);
+		this.eventHandler.setupEventHandlers(
+			dataset.data,
+			codeProp,
+		);
+	}
+
+	updateMapForBrexitConstituency(
+		geojson: BoundaryGeojson,
+		dataset: BrexitConstituencyDataset,
+		mapOptions: MapOptions,
+	): void {
+		const cacheKey = `brexitConstituency-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
+		let codeProp = propCache.get(cacheKey);
+
+		if (!codeProp) {
+			codeProp = this.propertyDetector.detectConstituencyCode(
+				geojson.features,
+			);
+			propCache.set(cacheKey, codeProp);
+		}
+
+		const features = this.featureBuilder.buildBrexitConstituencyFeatures(
+			geojson.features,
+			dataset,
+			codeProp,
+			mapOptions,
+		);
+		const transformedGeojson =
+			this.featureBuilder.formatBoundaryGeoJson(features);
+
+		this.layerManager.updateColoredLayers(
+			transformedGeojson,
+			mapOptions.visibility,
+		);
+		this.eventHandler.setupEventHandlers(
+			dataset.data,
+			codeProp,
+		);
+	}
+
+	calculateBrexitConstituencyStats(
+		geojson: BoundaryGeojson,
+		constituencyData: BrexitConstituencyDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	) {
+		return this.statsCalculator.calculateBrexitConstituencyStats(
+			geojson,
+			constituencyData,
+			location,
+			datasetId,
+		);
+	}
+
 	calculateLocalElectionStats(
 		geojson: BoundaryGeojson,
 		wardData: LocalElectionDataset["data"],
@@ -458,6 +572,94 @@ export class MapManager {
 		return this.statsCalculator.calculateIncomeStats(
 			geojson,
 			localAuthorityData,
+			location,
+			datasetId,
+		);
+	}
+
+	calculateBrexitStats(
+		geojson: BoundaryGeojson,
+		brexitData: BrexitDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateBrexitStats(
+			geojson,
+			brexitData,
+			location,
+			datasetId,
+		);
+	}
+
+	calculateCustomDatasetStats(
+		geojson: BoundaryGeojson,
+		data: CustomDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateCustomDatasetStats(
+			geojson,
+			data,
+			location,
+			datasetId,
+		);
+	}
+
+	updateMapForIMD(
+		geojson: BoundaryGeojson,
+		dataset: IMDDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLSOACode.bind(this.propertyDetector),
+			this.featureBuilder.buildIMDFeatures.bind(this.featureBuilder),
+			"imd",
+			dataset.data,
+		);
+	}
+
+	calculateIMDStats(
+		geojson: BoundaryGeojson,
+		data: IMDDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateIMDStats(
+			geojson,
+			data,
+			location,
+			datasetId,
+		);
+	}
+
+	updateMapForLifeExpectancy(
+		geojson: BoundaryGeojson,
+		dataset: LifeExpectancyDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildLifeExpectancyFeatures.bind(this.featureBuilder),
+			"lifeExpectancy",
+			dataset.data,
+		);
+	}
+
+	calculateLifeExpectancyStats(
+		geojson: BoundaryGeojson,
+		data: LifeExpectancyDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateLifeExpectancyStats(
+			geojson,
+			data,
 			location,
 			datasetId,
 		);

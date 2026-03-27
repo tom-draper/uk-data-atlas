@@ -2,6 +2,13 @@
 import { ValueOf } from "next/dist/shared/lib/constants";
 
 // Ward properties by year
+interface WardProperties2025 {
+	LAD25CD: string;
+	LAD25NM: string;
+	WD25CD: string;
+	WD25NM: string;
+}
+
 interface WardProperties2024 {
 	LAD24CD: string;
 	LAD24NM: string;
@@ -73,13 +80,28 @@ interface ConstituencyProperties2015 {
 	PCON15NM: string;
 }
 
+// LSOA properties by year
+interface LSOAProperties2011 {
+	LSOA11CD: string;
+	LSOA11NM: string;
+}
+
+interface LSOAProperties2021 {
+	LSOA21CD: string;
+	LSOA21NM: string;
+}
+
 // Unified mapping of all boundary types by year
 export type YearToProperties = {
+	// LSOAs
+	lsoa_2011: LSOAProperties2011;
+	lsoa_2021: LSOAProperties2021;
 	// Wards
 	ward_2021: WardProperties2021;
 	ward_2022: WardProperties2022;
 	ward_2023: WardProperties2023;
 	ward_2024: WardProperties2024;
+	ward_2025: WardProperties2025;
 	// Local Authorities
 	lad_2021: LocalAuthorityProperties2021;
 	lad_2022: LocalAuthorityProperties2022;
@@ -137,4 +159,18 @@ export interface BoundaryGeojson<
 export interface LocationBounds {
 	lad_codes: string[];
 	bounds: [number, number, number, number];
+}
+
+/**
+ * Safely read a dynamic string property from a GeoJSON feature.
+ * The property union (WardProperties*, LADProperties*, etc.) has no index
+ * signature, so direct bracket access is a type error. Centralising the cast
+ * here keeps all unsafe access in one auditable place.
+ */
+export function getFeatureProp(
+	properties: Properties,
+	key: string,
+): string | undefined {
+	// Double cast needed: no index signature on the property interfaces
+	return (properties as unknown as Record<string, string | undefined>)[key];
 }

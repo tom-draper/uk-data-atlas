@@ -1,131 +1,134 @@
 import type { MapMouseEvent } from "mapbox-gl";
 import type { MapLibreEvent } from "maplibre-gl";
 import { MapManagerCallbacks } from "./mapManager";
-import { BoundaryType, MapMode } from "@/lib/types";
+import { BoundaryType, ElectionData } from "@/lib/types";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
 
 type MapMouseEventType = MapMouseEvent | MapLibreEvent;
 
-// Simple throttle function with lower delay
-function throttle<T extends (...args: any[]) => void>(
+type MapFeature = {
+	id?: string | number;
+	properties?: Record<string, string | undefined>;
+};
+
+function throttle<T extends (...args: Parameters<T>) => void>(
 	func: T,
-	limit: number
+	limit: number,
 ): (...args: Parameters<T>) => void {
-	let inThrottle: boolean;
-	return function (this: any, ...args: Parameters<T>): void {
+	let inThrottle = false;
+	return function (...args: Parameters<T>): void {
 		if (!inThrottle) {
-			func.apply(this, args);
+			func(...args);
 			inThrottle = true;
 			setTimeout(() => (inThrottle = false), limit);
 		}
 	};
 }
 
-// Map mode to area type
-const MODE_TO_BOUNDARY_TYPE: Record<MapMode, BoundaryType> = {
-	generalElection: "constituency",
-	crime: "localAuthority",
-	income: "localAuthority",
-	ethnicity: "localAuthority",
-	population: "ward",
-	localElection: "ward",
-	housePrice: "ward",
-};
-
 export class EventHandler {
 	private lastHoveredFeatureId: string | number | null = null;
-	private mouseMoveHandler:
-		| ((e: MapMouseEventType & { features?: any[] }) => void)
-		| null = null;
-	private mouseLeaveHandler: (() => void) | null = null;
-	private currentData: Record<string, any> | null = null;
+	private currentData: Record<string, unknown> | null = null;
 	private currentCodeProp: string = "";
 	private currentNameProp: string = "";
 	private currentBoundaryType: BoundaryType = "ward";
 	private canvas: HTMLCanvasElement;
+	private _mouseMoveHandler: (e: MapMouseEventType & { features?: MapFeature[] }) => void;
+	private _mouseLeaveHandler: () => void;
 
 	constructor(
 		private map: mapboxgl.Map | maplibregl.Map,
 		private callbacks: MapManagerCallbacks
 	) {
 		this.canvas = this.map.getCanvas();
+		this._mouseMoveHandler = throttle(this.handleMouseMove.bind(this), 10);
+		this._mouseLeaveHandler = this.handleMouseLeave.bind(this);
 	}
 
-	setupEventHandlers(mode: MapMode, data: any, codeProp: string): void {
+	setupEventHandlers(data: Record<string, unknown>, codeProp: string): void {
 		this.currentData = data;
 		this.currentCodeProp = codeProp;
-		this.currentNameProp = codeProp.replace("CD", "NM");
-		this.currentBoundaryType = MODE_TO_BOUNDARY_TYPE[mode];
+		this.currentNameProp = this.nameProp(codeProp);
+		this.currentBoundaryType = this.boundaryType(codeProp);
 
 		this.removeHandlers();
-		this.createHandlers();
 
-		this.map.on("mousemove", FILL_LAYER_ID, this.mouseMoveHandler!);
-		this.map.on("mouseleave", FILL_LAYER_ID, this.mouseLeaveHandler!);
+		// Cast needed: mapboxgl.Map and maplibregl.Map have incompatible .on() overloads
+		// for layer-specific mouse events despite both supporting this API.
+		(this.map as mapboxgl.Map).on("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as Parameters<mapboxgl.Map["on"]>[2]);
+		(this.map as mapboxgl.Map).on("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
 	}
 
-	private createHandlers(): void {
-		this.mouseMoveHandler = throttle((e: MapMouseEventType & { features?: any[] }) => {
-			const features = e.features;
-			if (!features?.length) return;
+	nameProp(codeProp: string) {
+		return codeProp.replace("CD", "NM");
+	}
 
-			const feature = features[0];
-			const featureId = feature.id;
-			
-			// Early return if hovering same feature
-			if (featureId === undefined || featureId === this.lastHoveredFeatureId) return;
+	boundaryType(codeProp: string) {
+		if (codeProp.toUpperCase().startsWith('LAD')) return "localAuthority";
+		if (codeProp.toUpperCase().startsWith('WD')) return "ward";
+		if (codeProp.toUpperCase().startsWith('PCON')) return "constituency";
+		if (codeProp.toUpperCase().startsWith('LSOA')) return "lsoa";
+		return "ward"; // default
+	}
 
-			// Set cursor immediately for instant feedback
-			this.canvas.style.cursor = "pointer";
+	private handleMouseMove(e: MapMouseEventType & { features?: MapFeature[] }): void {
+		const features = e.features;
+		if (!features?.length) return;
 
-			// Trigger callback immediately (perceived performance boost)
-			const code = feature.properties?.[this.currentCodeProp];
-			if (code && this.currentData) {
-				const name = feature.properties?.[this.currentNameProp];
-				this.callbacks.onAreaHover?.({
-					type: this.currentBoundaryType,
-					code,
-					name,
-					data: this.currentData[code] ?? null,
-				});
-			}
+		const feature = features[0];
+		const featureId = feature.id;
 
-			// Then update feature states
-			if (this.lastHoveredFeatureId !== null) {
-				this.map.setFeatureState(
-					{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
-					{ hover: false }
-				);
-			}
+		// Early return if hovering same feature
+		if (featureId === undefined || featureId === this.lastHoveredFeatureId) return;
+
+		// Set cursor immediately for instant feedback
+		this.canvas.style.cursor = "pointer";
+
+		// Trigger callback immediately (perceived performance boost)
+		const code = feature.properties?.[this.currentCodeProp];
+		if (code && this.currentData) {
+			const name = feature.properties?.[this.currentNameProp];
+			// Type assertion needed: TypeScript can't narrow the discriminated
+			// SelectedArea union from a string variable at runtime
+			this.callbacks.onAreaHover?.({
+				type: this.currentBoundaryType,
+				code,
+				name,
+				data: (this.currentData[code] ?? null) as ElectionData | null,
+			} as Parameters<NonNullable<MapManagerCallbacks["onAreaHover"]>>[0]);
+		}
+
+		// Then update feature states
+		if (this.lastHoveredFeatureId !== null) {
 			this.map.setFeatureState(
-				{ source: SOURCE_ID, id: featureId },
-				{ hover: true }
+				{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
+				{ hover: false }
 			);
-			this.lastHoveredFeatureId = featureId;
-		}, 10);
+		}
+		this.map.setFeatureState(
+			{ source: SOURCE_ID, id: featureId },
+			{ hover: true }
+		);
+		this.lastHoveredFeatureId = featureId;
+	}
 
-		this.mouseLeaveHandler = () => {
-			if (this.lastHoveredFeatureId !== null) {
-				this.map.setFeatureState(
-					{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
-					{ hover: false }
-				);
-				this.lastHoveredFeatureId = null;
-			}
-			this.canvas.style.cursor = "";
-			this.callbacks.onAreaHover?.(null);
-		};
+	private handleMouseLeave(): void {
+		if (this.lastHoveredFeatureId !== null) {
+			this.map.setFeatureState(
+				{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
+				{ hover: false }
+			);
+			this.lastHoveredFeatureId = null;
+		}
+		this.canvas.style.cursor = "";
+		this.callbacks.onAreaHover?.(null);
 	}
 
 	private removeHandlers(): void {
-		if (this.mouseMoveHandler) {
-			this.map.off("mousemove", FILL_LAYER_ID, this.mouseMoveHandler);
-		}
-		if (this.mouseLeaveHandler) {
-			this.map.off("mouseleave", FILL_LAYER_ID, this.mouseLeaveHandler);
-		}
+		// Use the bound handlers for off
+		(this.map as mapboxgl.Map).off("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as Parameters<mapboxgl.Map["on"]>[2]);
+		(this.map as mapboxgl.Map).off("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
 	}
 
 	destroy(): void {
@@ -139,8 +142,9 @@ export class EventHandler {
 			} catch { }
 			this.lastHoveredFeatureId = null;
 		}
-		this.mouseMoveHandler = null;
-		this.mouseLeaveHandler = null;
+		// Clear bound handlers
+		this._mouseMoveHandler = () => {};
+		this._mouseLeaveHandler = () => {};
 		this.currentData = null;
 	}
 }

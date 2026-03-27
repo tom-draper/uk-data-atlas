@@ -10,6 +10,10 @@ import { useCrimeData } from "./useCrimeData";
 import { Datasets } from "../types";
 import { useIncomeData } from "./useIncomeData";
 import { useEthnicityData } from "./useEthnicityData";
+import { useBrexitData } from "./useBrexitData";
+import { useBrexitConstituencyData } from "./useBrexitConstituencyData";
+import { useIMDData } from "./useIMDData";
+import { useLifeExpectancyData } from "./useLifeExpectancyData";
 
 export interface UseDatasetsResult {
 	datasets: Datasets;
@@ -26,6 +30,10 @@ export function useDatasets(): UseDatasetsResult {
 	const housePrice = useHousePriceData();
 	const crime = useCrimeData();
 	const income = useIncomeData();
+	const brexit = useBrexitData();
+	const brexitConstituency = useBrexitConstituencyData();
+	const imd = useIMDData();
+	const lifeExpectancy = useLifeExpectancyData();
 
 	// Combine datasets
 	const datasets = useMemo(
@@ -37,6 +45,10 @@ export function useDatasets(): UseDatasetsResult {
 			housePrice: housePrice.datasets,
 			crime: crime.datasets,
 			income: income.datasets,
+			brexit: brexit.datasets,
+			brexitConstituency: brexitConstituency.datasets,
+			imd: imd.datasets,
+			lifeExpectancy: lifeExpectancy.datasets,
 		}),
 		[
 			localElection.datasets,
@@ -46,6 +58,10 @@ export function useDatasets(): UseDatasetsResult {
 			housePrice.datasets,
 			crime.datasets,
 			income.datasets,
+			brexit.datasets,
+			brexitConstituency.datasets,
+			imd.datasets,
+			lifeExpectancy.datasets,
 		],
 	);
 
@@ -57,7 +73,11 @@ export function useDatasets(): UseDatasetsResult {
 		ethnicity.loading ||
 		housePrice.loading ||
 		crime.loading ||
-		income.loading;
+		income.loading ||
+		brexit.loading ||
+		brexitConstituency.loading ||
+		imd.loading ||
+		lifeExpectancy.loading;
 
 	// Collect all errors
 	const errors = useMemo(() => {
@@ -69,6 +89,10 @@ export function useDatasets(): UseDatasetsResult {
 		if (housePrice.error) errs.push(housePrice.error);
 		if (crime.error) errs.push(crime.error);
 		if (income.error) errs.push(income.error);
+		if (brexit.error) errs.push(brexit.error);
+		if (brexitConstituency.error) errs.push(brexitConstituency.error);
+		if (imd.error) errs.push(imd.error);
+		if (lifeExpectancy.error) errs.push(lifeExpectancy.error);
 		return errs;
 	}, [
 		localElection.error,
@@ -78,6 +102,10 @@ export function useDatasets(): UseDatasetsResult {
 		housePrice.error,
 		crime.error,
 		income.error,
+		brexit.error,
+		brexitConstituency.error,
+		imd.error,
+		lifeExpectancy.error,
 	]);
 
 	return { datasets, loading, errors };
