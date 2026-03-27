@@ -4,7 +4,7 @@ import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 
 interface UseMapUpdatesParams {
-	geojson: BoundaryGeojson;
+	geojson: BoundaryGeojson | null;
 	activeViz: ActiveViz;
 	activeDataset: Dataset | null;
 	mapManager: MapManager | null;
@@ -60,6 +60,41 @@ export function useMapUpdates({
 
 				case "ethnicity":
 					return mapManager.updateMapForEthnicity(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "brexit":
+					return mapManager.updateMapForBrexit(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "brexitConstituency":
+					return mapManager.updateMapForBrexitConstituency(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "custom":
+					return mapManager.updateMapForCustomDataset(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "imd":
+					return mapManager.updateMapForIMD(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "lifeExpectancy":
+					return mapManager.updateMapForLifeExpectancy(
 						geojson,
 						activeDataset,
 						mapOptions,

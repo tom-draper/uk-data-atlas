@@ -14,7 +14,6 @@ export const useGeneralElectionData = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-				console.log("EXPENSIVE: Loading general election data...");
 
 				const dataPromises = Object.values(
 					GENERAL_ELECTION_SOURCES,
@@ -39,10 +38,6 @@ export const useGeneralElectionData = () => {
 					}
 				});
 
-				console.log(
-					"Storing general election datasets:",
-					loadedDatasets,
-				);
 				setDatasets(loadedDatasets);
 				setLoading(false);
 			} catch (err: any) {

@@ -5,7 +5,7 @@ export const getWinningParty = (data: ConstituencyData): string => {
 	let maxVotes = 0;
 
 	for (const [party, votes] of Object.entries(data.partyVotes)) {
-		if (votes > maxVotes) {
+		if (votes !== undefined && votes > maxVotes) {
 			maxVotes = votes;
 			winningParty = party;
 		}

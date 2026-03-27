@@ -9,6 +9,7 @@ import {
 } from "@/lib/types";
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
 import { useMemo, memo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 const YEAR_STYLES = {
 	bg: "bg-indigo-50/60",
@@ -75,16 +76,9 @@ Legend.displayName = "Legend";
 
 interface EthnicityChartProps {
 	dataset: EthnicityDataset;
-	aggregatedData: AggregatedEthnicityData | null;
+	aggregatedData: Record<number, AggregatedEthnicityData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -166,10 +160,11 @@ export default memo(function EthnicityChart({
 	return (
 		<div
 			className={`
-                p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden border-2 
+                p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2 
                 ${heightClass}
                 ${isActive ? `${YEAR_STYLES.bg} ${YEAR_STYLES.border}` : "bg-white/60 border-gray-200/80 hover:border-indigo-300"}
             `}
+			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
 			onClick={handleActivate}
 		>
 			<div className="flex items-center justify-between mb-1.5">

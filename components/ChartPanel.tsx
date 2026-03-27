@@ -8,41 +8,36 @@ import {
 	AggregatedData,
 	SelectedArea,
 	BoundaryData,
+	BoundaryCodes,
 } from "@lib/types";
+import { CustomDataset } from "@/lib/types/custom";
 import LocalElectionResultChartSection from "./local-election/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
 import { memo } from "react";
 import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
-import CrimeSection from "./crime/CrimeSection";
-import { CodeType } from "@/lib/hooks/useCodeMapper";
+import SocietySection from "./society/SocietySection";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import BrexitSection from "./referendum/BrexitSection";
+import CustomSection from "./custom/CustomSection";
+import { usePanelContext } from "@/lib/context/PanelContext";
 
 interface ChartPanelProps {
-	selectedLocation: string | null;
 	selectedArea: SelectedArea | null;
 	activeDataset: Dataset | null;
 	boundaryData: BoundaryData;
+	boundaryCodes: BoundaryCodes;
 	datasets: Datasets;
+	customDataset: CustomDataset | null;
+	setCustomDataset: (dataset: CustomDataset | null) => void;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	aggregatedData: AggregatedData;
-	codeMapper?: {
-		getCodeForYear: (
-			type: CodeType,
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
-const PanelHeader = ({
-	selectedLocation,
-	selectedArea,
-}: {
-	selectedLocation: string | null;
-	selectedArea: SelectedArea | null;
-}) => {
+const PanelHeader = memo(function PanelHeader() {
+	const { selectedArea, selectedLocation } = usePanelContext();
 	const { title, subtitle, code } = panelHeaderDetails(
 		selectedLocation,
 		selectedArea,
@@ -63,7 +58,7 @@ const PanelHeader = ({
 			</div>
 		</div>
 	);
-};
+});
 
 function panelHeaderDetails(
 	selectedLocation: string | null,
@@ -90,18 +85,24 @@ function panelHeaderDetails(
 			};
 		case "constituency":
 			return {
-				title: selectedArea.data
-					? (selectedArea.data.constituencyName ?? "")
+				title: selectedArea.name || (selectedArea.data?.constituencyName ?? ""),
+				subtitle: selectedArea.data
+					? [selectedArea.data.regionName, selectedArea.data.countryName].filter(Boolean).join(", ")
 					: "",
-				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? "") : ""}, ${selectedArea.data ? (selectedArea.data.countryName ?? "") : ""}`,
 				code: selectedArea.code,
 			};
 		case "localAuthority":
 			return {
-				title: selectedArea.data
-					? (selectedArea.data.localAuthorityName ?? "")
+				title: selectedArea.name || (selectedArea.data?.localAuthorityName ?? ""),
+				subtitle: selectedArea.data
+					? [selectedArea.data.regionName, selectedArea.data.countryName].filter(Boolean).join(", ")
 					: "",
-				subtitle: `${selectedArea.data ? (selectedArea.data.regionName ?? "") : ""}, ${selectedArea.data ? (selectedArea.data.countryName ?? "") : ""}`,
+				code: selectedArea.code,
+			};
+		case "lsoa":
+			return {
+				title: selectedArea.name || selectedArea.code,
+				subtitle: "LSOA",
 				code: selectedArea.code,
 			};
 	}
@@ -126,11 +127,13 @@ const PanelFooter = () => {
 };
 
 export default memo(function ChartPanel({
-	selectedLocation,
 	selectedArea,
 	activeDataset,
 	boundaryData,
+	boundaryCodes,
 	datasets,
+	customDataset,
+	setCustomDataset,
 	activeViz,
 	setActiveViz,
 	aggregatedData,
@@ -139,10 +142,7 @@ export default memo(function ChartPanel({
 	return (
 		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
 			<div className="bg-[rgba(255,255,255,0.5)] rounded-md backdrop-blur-md shadow-lg h-full flex flex-col border border-white/30">
-				<PanelHeader
-					selectedLocation={selectedLocation}
-					selectedArea={selectedArea}
-				/>
+				<PanelHeader />
 
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
 					<GeneralElectionResultChartSection
@@ -152,6 +152,7 @@ export default memo(function ChartPanel({
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
+						activeViz={activeViz}
 					/>
 					<LocalElectionResultChartSection
 						activeDataset={activeDataset}
@@ -160,6 +161,18 @@ export default memo(function ChartPanel({
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
+						activeViz={activeViz}
+					/>
+					<BrexitSection
+						activeDataset={activeDataset}
+						availableDatasets={datasets.brexit}
+						availableConstituencyDatasets={datasets.brexitConstituency}
+						aggregatedData={aggregatedData.brexit}
+						aggregatedConstituencyData={aggregatedData.brexitConstituency}
+						selectedArea={selectedArea}
+						setActiveViz={setActiveViz}
+						codeMapper={codeMapper}
+						activeViz={activeViz}
 					/>
 					<DemographicsChartSection
 						availablePopulationDatasets={datasets.population}
@@ -181,14 +194,30 @@ export default memo(function ChartPanel({
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
+						activeViz={activeViz}
 					/>
-					<CrimeSection
+					<SocietySection
 						activeDataset={activeDataset}
-						availableDatasets={datasets.crime}
-						aggregatedData={aggregatedData.crime}
+						availableCrimeDatasets={datasets.crime}
+						aggregatedCrimeData={aggregatedData.crime}
+						availableIMDDatasets={datasets.imd}
+						aggregatedIMDData={aggregatedData.imd}
+						availableLifeExpectancyDatasets={datasets.lifeExpectancy}
+						aggregatedLifeExpectancyData={aggregatedData.lifeExpectancy}
 						selectedArea={selectedArea}
 						setActiveViz={setActiveViz}
 						codeMapper={codeMapper}
+						activeViz={activeViz}
+					/>
+					<CustomSection
+					 	customDataset={customDataset}
+						setCustomDataset={setCustomDataset}
+						aggregatedData={aggregatedData.custom}
+						selectedArea={selectedArea}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+						codeMapper={codeMapper}
+						boundaryCodes={boundaryCodes}
 					/>
 				</div>
 

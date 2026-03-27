@@ -1,5 +1,5 @@
 // lib/utils/mapManager/layerManager.ts
-import { BoundaryGeojson, Party } from "@lib/types";
+import { BoundaryGeojson, Party, PartyCode } from "@lib/types";
 import {
 	LocalElectionOptions,
 	GeneralElectionOptions,
@@ -52,7 +52,8 @@ export class LayerManager {
 		options: LocalElectionOptions | GeneralElectionOptions,
 		visibility: MapOptions["visibility"],
 	): void {
-		const baseColor = PARTIES[options.selected]?.color || "#999999";
+		if (!options.selected) return;
+		const baseColor = PARTIES[options.selected as PartyCode]?.color || "#999999";
 		const fillColorExpression = getPercentageColorExpression(
 			baseColor,
 			options,
@@ -101,6 +102,7 @@ export class LayerManager {
 		options: EthnicityOptions,
 		visibility: MapOptions["visibility"],
 	): void {
+		if (!options.selected) return;
 		const baseColor = ETHNICITY_COLORS[options.selected];
 
 		const fillColorExpression = getPercentageColorExpression(
@@ -153,16 +155,8 @@ export class LayerManager {
 			type: "fill",
 			source: SOURCE_ID,
 			paint: {
-				"fill-color": shouldHideData
-					? visibility.hideBoundaries
-						? "transparent"
-						: "#cccccc"
-					: paint.color,
-				"fill-opacity": shouldHideData
-					? visibility.hideBoundaries
-						? 0
-						: 0.6
-					: paint.opacity,
+				"fill-color": shouldHideData ? "transparent" : paint.color,
+				"fill-opacity": shouldHideData ? 0 : paint.opacity as any,
 			},
 		});
 
@@ -183,7 +177,7 @@ export class LayerManager {
 	}
 
 	private removeExistingLayers(): void {
-		const source = this.map.getSource(SOURCE_ID);
+		const source = (this.map as any).getSource(SOURCE_ID);
 		if (source) {
 			if (this.map.getLayer(FILL_LAYER_ID))
 				this.map.removeLayer(FILL_LAYER_ID);

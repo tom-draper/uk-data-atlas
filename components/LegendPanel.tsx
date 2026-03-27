@@ -4,13 +4,28 @@
 import { memo, useMemo, useState, useRef, useEffect } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
-import type { MapOptions } from "@/lib/types/mapOptions";
-import { ActiveViz, AggregatedData, Dataset } from "@/lib/types";
+import type { MapOptions, CategoryOptions } from "@/lib/types/mapOptions";
+import { ActiveViz, AggregatedData, Dataset, PartyCode, EthnicityCode, Ethnicity, EthnicityCategory, WardStats, ConstituencyStats } from "@/lib/types";
+
+type PartyDisplayData = { id: PartyCode; color: string; name: string };
+
+type ColorRangeDatasetKey =
+	| "ageDistribution"
+	| "populationDensity"
+	| "gender"
+	| "housePrice"
+	| "crime"
+	| "income"
+	| "brexit"
+	| "brexitConstituency"
+	| "imd"
+	| "lifeExpectancy"
+	| "custom";
 
 interface LegendPanelProps {
 	activeDataset: Dataset | null;
 	activeViz: ActiveViz;
-	aggregatedData: AggregatedData;
+	aggregatedData: AggregatedData | null;
 	mapOptions: MapOptions;
 	onMapOptionsChange: (
 		type: keyof MapOptions,
@@ -175,30 +190,38 @@ export default memo(function LegendPanel({
 	);
 
 	const parties = useMemo(() => {
-		if (
-			!activeDataset ||
-			!aggregatedData[activeDataset.type as keyof AggregatedData]
-		)
-			return [];
-		const datasetData =
-			aggregatedData[activeDataset.type as keyof AggregatedData];
-		const yearData = datasetData?.[activeDataset.year];
+		if (!activeDataset) return [];
+
+		let datasetData:
+			| Record<number, WardStats>
+			| Record<number, ConstituencyStats>
+			| undefined;
+
+		if (activeDataset.type === "localElection") {
+			datasetData = aggregatedData?.localElection ?? undefined;
+		} else if (activeDataset.type === "generalElection") {
+			datasetData = aggregatedData?.generalElection ?? undefined;
+		}
+
+		if (!datasetData) return [];
+
+		const yearData = datasetData[activeDataset.year];
 
 		if (!yearData?.partyVotes) return [];
 
-		return Object.entries(yearData.partyVotes)
-			.filter(([_, votes]) => (votes as number) > 0)
-			.sort((a, b) => (b[1] as number) - (a[1] as number))
-			.map(([id]) => ({
-				id,
-				color: PARTIES[id]?.color || "#ccc",
-				name: PARTIES[id]?.name || id,
+		return Object.entries(yearData.partyVotes as Record<PartyCode, number>)
+			.filter(([_, votes]) => votes > 0)
+			.sort((a, b) => b[1] - a[1])
+			.map(([id, _]) => ({
+				id: id as PartyCode,
+				color: PARTIES[id as PartyCode]?.color || "#ccc",
+				name: PARTIES[id as PartyCode]?.name || id,
 			}));
 	}, [aggregatedData, activeDataset]);
 
 	const ethnicities = useMemo(() => {
 		if (!activeDataset || activeDataset.type !== "ethnicity") return [];
-		const ethnicityData = aggregatedData.ethnicity;
+		const ethnicityData = aggregatedData?.ethnicity;
 		const yearData = ethnicityData?.[activeDataset.year];
 
 		if (!yearData) return [];
@@ -206,12 +229,15 @@ export default memo(function LegendPanel({
 		// Aggregate populations across all wards
 		const ethnicityTotals = new Map<string, number>();
 
-		for (const localAuthorityData of Object.values(yearData)) {
+		for (const localAuthorityData of Object.values(yearData) as EthnicityCategory[]) {
 			for (const [ethnicity, data] of Object.entries(
 				localAuthorityData,
-			)) {
+			) as [string, Ethnicity][]) {
 				const currentTotal = ethnicityTotals.get(ethnicity) || 0;
-				ethnicityTotals.set(ethnicity, currentTotal + data.population);
+				// Ensure data.population is a number before adding
+				if (typeof data.population === 'number') {
+					ethnicityTotals.set(ethnicity, currentTotal + data.population);
+				}
 			}
 		}
 
@@ -219,7 +245,7 @@ export default memo(function LegendPanel({
 		return Array.from(ethnicityTotals.entries())
 			.filter(([_, count]) => count > 0)
 			.sort((a, b) => b[1] - a[1])
-			.map(([id]) => ({
+			.map(([id]: [EthnicityCode, number]) => ({
 				id,
 				color: ETHNICITY_COLORS[id] || "#ccc",
 				name: id,
@@ -227,7 +253,7 @@ export default memo(function LegendPanel({
 	}, [aggregatedData, activeDataset]);
 
 	const handleRangeInput = (
-		datasetKey: keyof MapOptions,
+		datasetKey: ColorRangeDatasetKey,
 		min: number,
 		max: number,
 	) => {
@@ -243,9 +269,8 @@ export default memo(function LegendPanel({
 		});
 	};
 
-	const handleRangeChangeEnd = (datasetKey: keyof MapOptions) => {
+	const handleRangeChangeEnd = (datasetKey: ColorRangeDatasetKey) => {
 		if (!liveOptions) return;
-		// @ts-ignore
 		const range = liveOptions[datasetKey]?.colorRange;
 		if (range) {
 			onMapOptionsChange(datasetKey, { colorRange: range });
@@ -253,24 +278,30 @@ export default memo(function LegendPanel({
 		setLiveOptions(null);
 	};
 
-	const handlePartyClick = (partyCode: string) => {
-		const type = activeDataset?.type;
-		if (!type) return;
+	const handlePartyClick = (partyCode: PartyCode) => {
+		const datasetType = activeDataset?.type;
+		if (
+			!datasetType ||
+			(datasetType !== "generalElection" && datasetType !== "localElection")
+		)
+			return;
 
-		const currentMode = displayOptions[type].mode;
-		const currentParty = displayOptions[type].selected;
+		const options = displayOptions[datasetType];
+
+		const currentMode = options.mode;
+		const currentParty = options.selected;
 
 		if (currentMode === "percentage" && currentParty === partyCode) {
-			onMapOptionsChange(type, { mode: "majority", selected: undefined });
+			onMapOptionsChange(datasetType, { mode: "majority", selected: undefined });
 		} else {
-			onMapOptionsChange(type, {
+			onMapOptionsChange(datasetType, {
 				mode: "percentage",
 				selected: partyCode,
 			});
 		}
 	};
 
-	const handleEthnicityClick = (ethnicityCode: string) => {
+	const handleEthnicityClick = (ethnicityCode: EthnicityCode) => {
 		const type = activeDataset?.type;
 		if (type !== "ethnicity") return;
 
@@ -296,19 +327,17 @@ export default memo(function LegendPanel({
 	// --- Renderers ---
 
 	const renderDynamicLegend = (
-		datasetKey: keyof MapOptions,
+		datasetKey: ColorRangeDatasetKey,
 		absMin: number,
 		absMax: number,
 		defaultMin: number,
 		defaultMax: number,
 		formatLabel: (v: number) => string = (v) => v.toFixed(0),
 	) => {
-		// @ts-ignore
 		const currentMin =
-			displayOptions[datasetKey]?.colorRange?.min ?? defaultMin;
-		// @ts-ignore
+			displayOptions[datasetKey].colorRange?.min ?? defaultMin;
 		const currentMax =
-			displayOptions[datasetKey]?.colorRange?.max ?? defaultMax;
+			displayOptions[datasetKey].colorRange?.max ?? defaultMax;
 
 		// Labels derived directly from currentMin/Max ensures they update during drag
 		const labels = [
@@ -360,12 +389,17 @@ export default memo(function LegendPanel({
 	};
 
 	const renderElectionLegend = () => {
-		const type = activeDataset?.type;
+		const type = activeDataset?.type as
+			| "generalElection"
+			| "localElection"
+			| undefined;
+		if (!type) return null;
+
 		const options = displayOptions[type];
 
 		return (
 			<div>
-				{parties.map((party) => {
+				{parties.map((party: PartyDisplayData) => {
 					const isSelected =
 						options?.mode === "percentage" &&
 						options.selected === party.id;
@@ -512,9 +546,9 @@ export default memo(function LegendPanel({
 				return renderDynamicLegend(
 					"income",
 					0,
-					2000000,
+					100000,
 					80000,
-					500000,
+					450000,
 					formatCurrency,
 				);
 
@@ -528,6 +562,51 @@ export default memo(function LegendPanel({
 			case "localElection":
 				return renderElectionLegend();
 
+			case "brexitConstituency":
+		case "brexit": {
+				const key = activeDataset.type as "brexit" | "brexitConstituency";
+				const currentMin = displayOptions[key].colorRange?.min ?? 30;
+				const currentMax = displayOptions[key].colorRange?.max ?? 70;
+				return (
+					<RangeControl
+						min={0}
+						max={100}
+						currentMin={currentMin}
+						currentMax={currentMax}
+						gradient="linear-gradient(to top, rgb(30, 60, 180), rgb(240, 240, 240), rgb(180, 20, 20))"
+						labels={[
+							`${currentMax.toFixed(0)}% Leave`,
+							`${(100 - currentMin).toFixed(0)}% Remain`,
+						]}
+						onRangeInput={(min, max) =>
+							handleRangeInput(key, min, max)
+						}
+						onRangeChangeEnd={() => handleRangeChangeEnd(key)}
+					/>
+				);
+			}
+
+			case "imd":
+				return renderDynamicLegend("imd", 0, 80, 1, 70);
+
+			case "lifeExpectancy": {
+				const leData = activeDataset?.type === "lifeExpectancy"
+					? Object.values(activeDataset.data).map((r: any) => (r.maleBirthLE + r.femaleBirthLE) / 2)
+					: [];
+				const leMin = leData.length ? Math.min(...leData) : 55;
+				const leMax = leData.length ? Math.max(...leData) : 85;
+				return renderDynamicLegend("lifeExpectancy", leMin, leMax, leMin, leMax, (v) => `${v.toFixed(1)}y`);
+			}
+
+			case "custom":
+				// Custom datasets use a color range
+				return renderDynamicLegend(
+					"custom",
+					0, // Replace with actual min/max from custom data
+					100, // Replace with actual min/max from custom data
+					0,
+					100,
+				);
 			default:
 				return null;
 		}
@@ -546,49 +625,67 @@ export default memo(function LegendPanel({
 			{["generalElection", "localElection"].includes(
 				activeDataset?.type || "",
 			) &&
-				displayOptions[
-					activeDataset!.type as "generalElection" | "localElection"
-				]?.mode === "percentage" && (
+				(
+					displayOptions[
+						activeDataset!.type as "generalElection" | "localElection"
+					]
+				)?.mode === "percentage" && (
 					<div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
 						<div className="bg-white/20 p-1 overflow-hidden">
 							<RangeControl
 								min={0}
 								max={100}
-								// @ts-ignore
 								currentMin={
-									displayOptions[activeDataset.type]
-										.percentageRange?.min ?? 0
+									(
+										displayOptions[
+										activeDataset!.type as "generalElection" | "localElection"
+										]
+									)?.percentageRange?.min ?? 0
 								}
-								// @ts-ignore
 								currentMax={
-									displayOptions[activeDataset.type]
-										.percentageRange?.max ?? 100
+									(
+										displayOptions[
+										activeDataset!.type as "generalElection" | "localElection"
+										] as CategoryOptions
+									)?.percentageRange?.max ?? 100
 								}
-								gradient={`linear-gradient(to bottom, ${
-									// @ts-ignore
-									PARTIES[
-										displayOptions[activeDataset.type]
-											.selected
-									]?.color || "#999"
+								gradient={`linear-gradient(to bottom, ${PARTIES[
+									(
+										displayOptions[
+										activeDataset!.type as "generalElection" | "localElection"
+										]
+									)?.selected as PartyCode
+								]
+									?.color || "#999"
 									}, #f5f5f5)`}
 								labels={[
-									// Dynamic labels based on current range
-									`${(displayOptions[activeDataset!.type as "generalElection"].percentageRange?.max ?? 100).toFixed(0)}%`,
-									// ... intermediate labels calculated in UI if needed, or simplified:
+									`${(
+										(
+											displayOptions[
+											activeDataset!.type as "generalElection" | "localElection"
+											]
+										)?.percentageRange?.max ?? 100
+									).toFixed(0)}%`,
 									"",
 									"",
 									"",
-									`${(displayOptions[activeDataset!.type as "generalElection"].percentageRange?.min ?? 0).toFixed(0)}%`,
+									`${(
+										(
+											displayOptions[
+											activeDataset!.type as "generalElection" | "localElection"
+											]
+										)?.percentageRange?.min ?? 0
+									).toFixed(0)}%`,
 								]}
 								onRangeInput={(min, max) => {
 									setLiveOptions((prev) => {
 										const base = prev || mapOptions;
 										const type = activeDataset!
-											.type as "generalElection";
+											.type as "generalElection" | "localElection";
 										return {
 											...base,
 											[type]: {
-												...base[type],
+												...(base[type]),
 												percentageRange: { min, max },
 											},
 										};
@@ -597,12 +694,11 @@ export default memo(function LegendPanel({
 								onRangeChangeEnd={() => {
 									if (!liveOptions) return;
 									const type = activeDataset!
-										.type as "generalElection";
-									// @ts-ignore
-									onMapOptionsChange(type, {
-										percentageRange:
-											liveOptions[type].percentageRange,
-									});
+										.type as "generalElection" | "localElection";
+																		onMapOptionsChange(type, {
+																			percentageRange:
+																				liveOptions[type].percentageRange,
+																		});
 									setLiveOptions(null);
 								}}
 							/>
@@ -623,11 +719,11 @@ export default memo(function LegendPanel({
 										?.min ?? 0
 								}
 								currentMax={
-									displayOptions.ethnicity.percentageRange
-										?.max ?? 100
+									(displayOptions.ethnicity as CategoryOptions)
+										.percentageRange?.max ?? 100
 								}
 								gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[
-									displayOptions.ethnicity.selected || ""
+									displayOptions.ethnicity.selected as EthnicityCode
 								] || "#999"
 									}, #f5f5f5)`}
 								labels={[
@@ -643,7 +739,7 @@ export default memo(function LegendPanel({
 										return {
 											...base,
 											ethnicity: {
-												...base.ethnicity,
+												...(base.ethnicity),
 												percentageRange: { min, max },
 											},
 										};
@@ -651,12 +747,11 @@ export default memo(function LegendPanel({
 								}}
 								onRangeChangeEnd={() => {
 									if (!liveOptions) return;
-									// @ts-ignore
-									onMapOptionsChange("ethnicity", {
-										percentageRange:
-											liveOptions.ethnicity
-												.percentageRange,
-									});
+																		onMapOptionsChange("ethnicity", {
+																			percentageRange:
+																				liveOptions.ethnicity
+																					.percentageRange,
+																		});
 									setLiveOptions(null);
 								}}
 							/>

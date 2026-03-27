@@ -4,44 +4,49 @@ import {
 	AggregatedPopulationData,
 	BoundaryData,
 	BoundaryGeojson,
+	Feature,
 	PopulationDataset,
 	SelectedArea,
+	getFeatureProp,
 } from "@/lib/types";
 import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
 import { useMemo, memo } from "react";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
-	aggregatedData: AggregatedPopulationData | null;
+	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "ward",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-		getWardsForLad: (ladCode: string, year: number) => string[];
-	};
+	codeMapper?: CodeMapper;
 }
 
-const getWardPopulationDensity = (feature: any, total: number) => {
-	// Compute approximate area
-	const coordinates = feature.geometry.coordinates;
-	const areaSqKm = polygonAreaSqKm(coordinates);
+// Cache computed area per feature object — avoids re-traversing polygon vertices on every hover
+const featureAreaCache = new WeakMap<Feature, number>();
 
-	// Compute density
+const getWardPopulationDensity = (feature: Feature, total: number) => {
+	let areaSqKm = featureAreaCache.get(feature);
+	if (areaSqKm === undefined) {
+		areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
+		featureAreaCache.set(feature, areaSqKm);
+	}
 	const density = areaSqKm > 0 ? total / areaSqKm : 0;
 	return { density, areaSqKm };
 };
 
-const detectPropertyKey = (geojson: BoundaryGeojson) => {
+const detectPropertyKey = (geojson: BoundaryGeojson, year: number) => {
 	const firstFeature = geojson.features[0];
 	if (!firstFeature) return WARD_CODE_KEYS[0];
 
-	const props = firstFeature.properties;
+	const yearSuffix = year.toString().slice(-2);
+	const specificKey = WARD_CODE_KEYS.find((key) => key.endsWith(yearSuffix));
+
+	if (specificKey && specificKey in firstFeature.properties) {
+		return specificKey;
+	}
+
 	for (let i = 0; i < WARD_CODE_KEYS.length; i++) {
-		if (WARD_CODE_KEYS[i] in props) return WARD_CODE_KEYS[i];
+		if (WARD_CODE_KEYS[i] in firstFeature.properties) return WARD_CODE_KEYS[i];
 	}
 	return WARD_CODE_KEYS[0];
 };
@@ -144,8 +149,26 @@ const DensityGrid = memo(({ density }: { density: number }) => {
 
 DensityGrid.displayName = "DensityGrid";
 
-// Cache for LAD density calculations
+// Cache for LAD density calculations (bounded to prevent unbounded memory growth)
+const MAX_LAD_CACHE_ENTRIES = 50;
 const densityCache = new Map<string, Map<number, any>>();
+
+// WeakMap-keyed feature index: automatically GC'd when the geojson object is freed.
+// Converts O(n) .find() per ward into O(1) Map lookup.
+const featureIndexCache = new WeakMap<object, Map<string, Feature>>();
+
+const getFeatureIndex = (geojson: BoundaryGeojson, wardCodeProp: string): Map<string, Feature> => {
+	let index = featureIndexCache.get(geojson);
+	if (!index) {
+		index = new Map();
+		for (const feature of geojson.features) {
+			const code = feature.properties ? getFeatureProp(feature.properties, wardCodeProp) : undefined;
+			if (code) index.set(String(code), feature);
+		}
+		featureIndexCache.set(geojson, index);
+	}
+	return index;
+};
 
 function PopulationDensityChart({
 	dataset,
@@ -157,10 +180,11 @@ function PopulationDensityChart({
 	const { density, areaSqKm, total } = useMemo(() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
+			const data = aggregatedData[dataset.year];
 			return {
-				density: aggregatedData[dataset.year].density,
-				areaSqKm: aggregatedData[dataset.year].totalArea,
-				total: aggregatedData[dataset.year].populationStats.total,
+				density: data.density,
+				areaSqKm: data.totalArea,
+				total: data.populationStats.total,
 			};
 		}
 
@@ -172,7 +196,7 @@ function PopulationDensityChart({
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
 			const wardCode = selectedArea.code;
-			const wardCodeProp = detectPropertyKey(geojson);
+			const wardCodeProp = detectPropertyKey(geojson, dataset.boundaryYear);
 
 			let populationData = dataset.data[wardCode];
 
@@ -189,9 +213,8 @@ function PopulationDensityChart({
 			}
 
 			if (populationData) {
-				const wardFeature = geojson.features.find(
-					(f) => f.properties?.[wardCodeProp] === wardCode,
-				);
+				const featureIndex = getFeatureIndex(geojson, wardCodeProp);
+				const wardFeature = featureIndex.get(wardCode);
 
 				if (wardFeature) {
 					const total = calculateTotal(populationData.total);
@@ -215,6 +238,9 @@ function PopulationDensityChart({
 			const cacheKey = `lad-${ladCode}`;
 
 			if (!densityCache.has(cacheKey)) {
+				if (densityCache.size >= MAX_LAD_CACHE_ENTRIES) {
+					densityCache.delete(densityCache.keys().next().value!);
+				}
 				densityCache.set(cacheKey, new Map());
 			}
 			const yearCache = densityCache.get(cacheKey)!;
@@ -236,7 +262,8 @@ function PopulationDensityChart({
 				return emptyResult;
 			}
 
-			const wardCodeProp = detectPropertyKey(geojson);
+			const wardCodeProp = detectPropertyKey(geojson, dataset.boundaryYear);
+			const featureIndex = getFeatureIndex(geojson, wardCodeProp);
 			let totalPopulation = 0;
 			let totalArea = 0;
 
@@ -256,16 +283,15 @@ function PopulationDensityChart({
 				}
 
 				if (populationData) {
-					// Find the ward feature for area calculation
-					const wardFeature = geojson.features.find(
-						(f) => f.properties?.[wardCodeProp] === wardCode,
-					);
+					const wardFeature = featureIndex.get(wardCode);
 
 					if (wardFeature) {
 						const wardTotal = calculateTotal(populationData.total);
-						const coordinates = wardFeature.geometry.coordinates;
-						const wardArea = polygonAreaSqKm(coordinates);
-
+						let wardArea = featureAreaCache.get(wardFeature);
+						if (wardArea === undefined) {
+							wardArea = polygonAreaSqKm(wardFeature.geometry.coordinates);
+							featureAreaCache.set(wardFeature, wardArea);
+						}
 						totalPopulation += wardTotal;
 						totalArea += wardArea;
 					}

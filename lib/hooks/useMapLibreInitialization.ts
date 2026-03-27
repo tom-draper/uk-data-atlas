@@ -29,7 +29,7 @@ export function useMapLibreInitialization({
 					zoom,
 					maxBounds,
 					preserveDrawingBuffer: true,
-				});
+				} as any);
 			} catch (err) {
 				console.error("Failed to initialize MapLibre map:", err);
 			}

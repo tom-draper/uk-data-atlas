@@ -131,14 +131,16 @@ export default memo(function GeneralElectionResultChart({
 	return (
 		<div
 			className={`
-        p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden border-2 
+        p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2
         ${heightClass}
         ${isActive
 					? `${colors.bg} ${colors.border}`
 					: "bg-white/60 border-gray-200/80 hover:border-indigo-300"
 				}
       `}
+			title="House of Commons Library, UK Parliament. UK General Election Results. commonslibrary.parliament.uk"
 			onClick={() =>
+				data.dataset &&
 				setActiveViz({
 					vizId: vizId,
 					datasetType: data.dataset.type,
@@ -174,6 +176,6 @@ export default memo(function GeneralElectionResultChart({
 					)}
 				</div>
 			)}
-		</div>
+			</div>
 	);
 });

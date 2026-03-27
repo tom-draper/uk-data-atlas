@@ -10,6 +10,9 @@ import {
 	EthnicityDataset,
 	Feature,
 	Features,
+	getFeatureProp,
+	BrexitDataset,
+	BrexitConstituencyDataset,
 } from "@lib/types";
 import { MapOptions } from "@lib/types/mapOptions";
 import {
@@ -24,8 +27,16 @@ import {
 	getColorForHousePrice,
 	getColorForCrimeRate,
 	getColorForIncome,
+	getColorForBrexitLeave,
+	getColorForIMD,
+	getColor,
+	normalizeValue,
 } from "../colorScale";
 import { IncomeDataset } from "@/lib/types/income";
+import { CustomDataset } from "@/lib/types/custom";
+import { IMDDataset } from "@/lib/types/imd";
+import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
+import { getColorForLifeExpectancy } from "../colorScale";
 
 const DEFAULT_COLOR = "#cccccc";
 
@@ -38,7 +49,7 @@ export class FeatureBuilder {
 		};
 	}
 
-	private mapFeatures<T extends Record<string, any>>(
+	private mapFeatures<T extends Record<string, unknown>>(
 		features: Features,
 		addProperties: (feature: Feature, index: number) => T,
 	): Features {
@@ -57,7 +68,7 @@ export class FeatureBuilder {
 		getWinner: (code: string) => string,
 	): Features {
 		return this.mapFeatures(features, (feature) => ({
-			winningParty: getWinner(feature.properties[codeProp]),
+			winningParty: getWinner(getFeatureProp(feature.properties, codeProp) ?? ""),
 		}));
 	}
 
@@ -68,16 +79,16 @@ export class FeatureBuilder {
 		codeProp: PropertyKeys,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const locationData = data[feature.properties[codeProp]];
+			const locationData = data[getFeatureProp(feature.properties, codeProp) ?? ""];
 
 			let percentage = 0;
 			if (locationData?.partyVotes) {
-				const partyVotes = locationData.partyVotes[partyCode] || 0;
-				const totalVotes = Object.values(
-					locationData.partyVotes,
-				).reduce((sum, v) => sum + v, 0);
-				percentage =
-					totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
+				const partyVotes = locationData.partyVotes[partyCode] ?? 0;
+				const totalVotes = Object.values(locationData.partyVotes).reduce<number>(
+					(sum, v) => sum + (v ?? 0),
+					0,
+				);
+				percentage = totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
 			}
 
 			return { percentage, partyCode };
@@ -115,7 +126,7 @@ export class FeatureBuilder {
 		results: EthnicityDataset["results"],
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const code = feature.properties[codeProp];
+			const code = getFeatureProp(feature.properties, codeProp) ?? "";
 			const majorityCategory = results[code] || "NONE";
 
 			return { majorityCategory };
@@ -129,7 +140,7 @@ export class FeatureBuilder {
 		codeProp: string,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const code = feature.properties[codeProp];
+			const code = getFeatureProp(feature.properties, codeProp) ?? "";
 			const locationData = data[code] || {};
 
 			let totalPopulation = 0;
@@ -152,6 +163,47 @@ export class FeatureBuilder {
 		});
 	}
 
+	buildCustomDatasetFeatures(
+		features: Features,
+		customDataset: CustomDataset,
+		codeProp: PropertyKeys,
+		mapOptions: MapOptions
+	): Features {
+		let minValue: number = Infinity;
+		let maxValue: number = -Infinity;
+		for (const value of Object.values(customDataset.data)) {
+			if (typeof value === 'number') {
+				if (value < minValue) minValue = value;
+				if (value > maxValue) maxValue = value;
+			}
+		}
+
+		if (minValue === Infinity) {
+			return this.mapFeatures(features, () => ({
+				value: undefined,
+				color: DEFAULT_COLOR,
+			}));
+		}
+
+		return this.mapFeatures(features, (feature) => {
+			const code = getFeatureProp(feature.properties, codeProp) ?? "";
+			const value = customDataset.data[code];
+
+			const normalised = normalizeValue(
+				value !== undefined ? value : minValue,
+				minValue,
+				maxValue
+			);
+
+			const color = getColor(
+				normalised,
+				mapOptions.theme.id
+			);
+
+			return { value, color };
+		});
+	}
+
 	buildAgeFeatures(
 		features: Features,
 		dataset: PopulationDataset,
@@ -160,11 +212,11 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const wardPopulation =
-				dataset.data[feature.properties[wardCodeProp]];
+				dataset.data[getFeatureProp(feature.properties, wardCodeProp) ?? ""];
 
 			const color = wardPopulation
 				? getColorForAge(
-						calculateMedianAge(wardPopulation),
+						calculateMedianAge(wardPopulation) ?? 0,
 						mapOptions.ageDistribution,
 						mapOptions.theme.id,
 					)
@@ -182,7 +234,7 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const wardPopulation =
-				dataset.data[feature.properties[wardCodeProp]];
+				dataset.data[getFeatureProp(feature.properties, wardCodeProp) ?? ""];
 
 			let color = DEFAULT_COLOR;
 			if (wardPopulation) {
@@ -204,7 +256,7 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const wardPopulation =
-				dataset.data[feature.properties[wardCodeProp]];
+				dataset.data[getFeatureProp(feature.properties, wardCodeProp) ?? ""];
 
 			let color = DEFAULT_COLOR;
 			if (wardPopulation) {
@@ -231,7 +283,7 @@ export class FeatureBuilder {
 		mapOptions: MapOptions,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const ward = dataset.data[feature.properties[wardCodeProp]];
+			const ward = dataset.data[getFeatureProp(feature.properties, wardCodeProp) ?? ""];
 
 			const color = ward?.prices[2023]
 				? getColorForHousePrice(
@@ -252,7 +304,7 @@ export class FeatureBuilder {
 		mapOptions: MapOptions,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const area = dataset.data[feature.properties[ladCodeProp]];
+			const area = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
 
 			const color = area
 				? getColorForCrimeRate(
@@ -274,7 +326,7 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const income =
-				dataset.data[feature.properties[ladCodeProp]]?.annual?.median;
+				dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""]?.annual?.median;
 
 			const color = income
 				? getColorForIncome(
@@ -284,6 +336,79 @@ export class FeatureBuilder {
 					)
 				: DEFAULT_COLOR;
 
+			return { color };
+		});
+	}
+
+	buildBrexitConstituencyFeatures(
+		features: Features,
+		dataset: BrexitConstituencyDataset,
+		constituencyCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const area =
+				dataset.data[getFeatureProp(feature.properties, constituencyCodeProp) ?? ""];
+
+			const color = area
+				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexitConstituency)
+				: DEFAULT_COLOR;
+
+			return { color };
+		});
+	}
+
+	buildBrexitFeatures(
+		features: Features,
+		dataset: BrexitDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const area =
+				dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+
+			const color = area
+				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexit)
+				: DEFAULT_COLOR;
+
+			return { color };
+		});
+	}
+
+	buildLifeExpectancyFeatures(
+		features: Features,
+		dataset: LifeExpectancyDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		const avgs = Object.values(dataset.data).map(
+			(r) => (r.maleBirthLE + r.femaleBirthLE) / 2,
+		);
+		const min = Math.min(...avgs);
+		const max = Math.max(...avgs);
+		return this.mapFeatures(features, (feature) => {
+			const area = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+			const avgLE = area ? (area.maleBirthLE + area.femaleBirthLE) / 2 : null;
+			const color = avgLE !== null
+				? getColorForLifeExpectancy(avgLE, min, max, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildIMDFeatures(
+		features: Features,
+		dataset: IMDDataset,
+		lsoaCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
+			const area = dataset.data[code];
+			const color = area
+				? getColorForIMD(area.imdScore, mapOptions.imd, mapOptions.theme.id)
+				: DEFAULT_COLOR;
 			return { color };
 		});
 	}

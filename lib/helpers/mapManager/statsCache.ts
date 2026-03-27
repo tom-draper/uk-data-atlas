@@ -1,17 +1,18 @@
 // lib/utils/mapManager/statsCache.ts
 
-export class StatsCache {
-	private cache = new Map<string, any>();
+const MAX_STATS_CACHE_SIZE = 200;
 
-	get(key: string): any | null {
-		const cached = this.cache.get(key);
-		if (cached) {
-			console.log(`CACHE HIT: ${key}`);
-		}
-		return cached || null;
+export class StatsCache {
+	private cache = new Map<string, unknown>();
+
+	get(key: string): unknown {
+		return this.cache.get(key) ?? null;
 	}
 
-	set(key: string, value: any): void {
+	set(key: string, value: unknown): void {
+		if (this.cache.size >= MAX_STATS_CACHE_SIZE) {
+			this.cache.delete(this.cache.keys().next().value!);
+		}
 		this.cache.set(key, value);
 	}
 

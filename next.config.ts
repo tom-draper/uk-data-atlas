@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
 	typescript: {
 		ignoreBuildErrors: true,
 	},
-	productionBrowserSourceMaps: true,
 	reactCompiler: true,
 };
 

@@ -4,7 +4,8 @@ import { withCDN } from "@/lib/helpers/cdn";
 import { WardYear } from "../../boundaries/boundaries";
 
 export interface ElectionSourceConfig {
-	year: WardYear;
+	year: number;
+	boundaryYear?: WardYear; // Defaults to year; set when election year has no ward boundary
 	url: string;
 	// Map internal standard keys to CSV headers
 	fields: {
@@ -21,6 +22,22 @@ export interface ElectionSourceConfig {
 }
 
 export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
+	2025: {
+		year: 2025,
+		url: withCDN(
+			"/data/elections/local-elections/LEH-2025-results-HoC/LEH-2025-results-HoC.csv",
+		),
+		isReference: true,
+		skipRows: 1,
+		fields: {
+			code: "ONS ward code",
+			name: "Ward/ County Electoral District name",
+			ladName: "Lower tier authority",
+			turnout: "Valid vote turnout (HoC method)",
+			electorate: "Electorate",
+			totalVotes: "Ballots",
+		},
+	},
 	2024: {
 		year: 2024,
 		url: withCDN(

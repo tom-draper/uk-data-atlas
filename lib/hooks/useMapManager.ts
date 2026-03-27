@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MapManager } from "@/lib/helpers/mapManager";
 import { BoundaryGeojson, SelectedArea } from "../types";
 
@@ -17,6 +17,8 @@ export function useMapManager({
 	interactionHandlers,
 }: UseMapManagerOptions) {
 	const [mapManager, setMapManager] = useState<MapManager | null>(null);
+	const handlersRef = useRef(interactionHandlers);
+	handlersRef.current = interactionHandlers;
 
 	useEffect(() => {
 		if (!mapRef?.current || !geojson) return;
@@ -24,9 +26,9 @@ export function useMapManager({
 		if (mapManager) return;
 
 		const manager = new MapManager(mapRef.current, {
-			onAreaHover: (data) => interactionHandlers.onAreaHover(data),
+			onAreaHover: (data) => handlersRef.current.onAreaHover(data),
 			onLocationChange: (location) =>
-				interactionHandlers.onLocationChange(location),
+				handlersRef.current.onLocationChange(location),
 		});
 
 		setMapManager(manager);

@@ -3,6 +3,16 @@ import { BoundaryGeojson } from "@lib/types";
 import { LOCATIONS } from "@lib/data/locations";
 import { withCDN } from "@/lib/helpers/cdn";
 import * as topojson from "topojson-client";
+import { FeatureCollection, Geometry, GeoJsonProperties, Feature } from "geojson";
+
+interface GeoJsonFeatureCollection extends FeatureCollection<Geometry, GeoJsonProperties> {
+	crs?: {
+		type: string;
+		properties: {
+			name: string;
+		};
+	};
+}
 
 export const GEOJSON_PATHS = {
 	ward: {
@@ -46,11 +56,16 @@ export const GEOJSON_PATHS = {
 		2023: withCDN(
 			"/data/boundaries/lad/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.topojson",
 		),
-		2022: withCDN(
-			"/data/boundaries/lad/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.topojson",
-		),
-		2021: withCDN(
-			"/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.topojson",
+		// 2022: withCDN(
+		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.topojson",
+		// ),
+		// 2021: withCDN(
+		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.topojson",
+		// ),
+	},
+	lsoa: {
+		2011: withCDN(
+			"/data/boundaries/lsoa/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.topojson",
 		),
 	},
 } as const;
@@ -90,6 +105,11 @@ export const CONSTITUENCY_NAME_KEYS = [
 	"PCON15NM",
 ] as const;
 
+export const LSOA_CODE_KEYS = ["LSOA11CD", "LSOA21CD"] as const;
+export const LSOA_NAME_KEYS = ["LSOA11NM", "LSOA21NM"] as const;
+export type LSOACodeKey = (typeof LSOA_CODE_KEYS)[number];
+export type LSOANameKey = (typeof LSOA_NAME_KEYS)[number];
+
 export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
 export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
 export type LADCodeKey = (typeof LAD_CODE_KEYS)[number];
@@ -104,6 +124,8 @@ export const PROPERTY_KEYS = {
 	ladName: LAD_NAME_KEYS,
 	constituencyCode: CONSTITUENCY_CODE_KEYS,
 	constituencyName: CONSTITUENCY_NAME_KEYS,
+	lsoaCode: LSOA_CODE_KEYS,
+	lsoaName: LSOA_NAME_KEYS,
 } as const;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
@@ -176,6 +198,10 @@ const getPropertyKeys = (type: BoundaryType) => {
 			code: PROPERTY_KEYS.ladCode,
 			name: PROPERTY_KEYS.ladName,
 		},
+		lsoa: {
+			code: PROPERTY_KEYS.lsoaCode,
+			name: PROPERTY_KEYS.lsoaName,
+		},
 	};
 	return keyMap[type];
 };
@@ -201,18 +227,36 @@ export const fetchBoundaryFile = async (
 	const json = await res.json();
 
 	// Convert TopoJSON to GeoJSON if needed
-	let geojson: BoundaryGeojson;
+	let geojson: GeoJsonFeatureCollection;
 	if (json.type === "Topology") {
 		const objectKey = Object.keys(json.objects)[0];
-		geojson = topojson.feature(json, json.objects[objectKey]);
+		const topojsonFeatureResult: Feature<Geometry, GeoJsonProperties> | FeatureCollection<Geometry, GeoJsonProperties> = topojson.feature(json, json.objects[objectKey] as any);
+
+		if (topojsonFeatureResult.type === "Feature") {
+			geojson = {
+				type: "FeatureCollection",
+				features: [topojsonFeatureResult],
+			};
+		} else {
+			// Assume it's already a FeatureCollection
+			geojson = topojsonFeatureResult;
+		}
 	} else {
-		geojson = json;
+		geojson = json as GeoJsonFeatureCollection;
 	}
 
-	// Cache the result
-	BOUNDARY_CACHE[path] = geojson;
+	// Add CRS if missing (common in TopoJSON conversions)
+	if (!geojson.crs) {
+		geojson.crs = {
+			type: "name",
+			properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+		};
+	}
 
-	return geojson;
+	// Cache the result and return with the correct BoundaryGeojson type assertion
+	const typedGeojson = geojson as BoundaryGeojson<any>; // Cast to a more general type first
+	BOUNDARY_CACHE[path] = typedGeojson;
+	return typedGeojson;
 };
 
 /**
@@ -252,6 +296,7 @@ export const filterFeatures = (
 
 	// Filter wards by LAD code (uses getLadForWard for 2021 data without LAD properties)
 	if (type === "ward" && locData.lad_codes?.length) {
+		const ladCodeSet = new Set(locData.lad_codes);
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
@@ -262,19 +307,30 @@ export const filterFeatures = (
 						? getLadForWard(wardCode)
 						: undefined;
 				ladCode = ladCode || mappedLadCode;
-				return ladCode && locData.lad_codes.includes(ladCode);
+				return ladCode && ladCodeSet.has(ladCode);
 			}),
 		};
 	}
 
 	// Filter local authorities by LAD code
 	if (type === "localAuthority" && locData.lad_codes?.length) {
+		const ladCodeSet = new Set(locData.lad_codes);
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
 				const ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
-				return ladCode && locData.lad_codes.includes(ladCode);
+				return ladCode && ladCodeSet.has(ladCode);
 			}),
+		};
+	}
+
+	// Filter LSOAs by bounding box (no LAD code in simplified topojson)
+	if (type === "lsoa" && locData.bounds) {
+		return {
+			...geojson,
+			features: geojson.features.filter((f) =>
+				isFeatureInBounds(f, locData.bounds!),
+			),
 		};
 	}
 

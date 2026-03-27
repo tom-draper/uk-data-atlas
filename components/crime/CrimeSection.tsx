@@ -1,5 +1,6 @@
 // components/crime/CrimeChart.tsx
 "use client";
+import { memo } from "react";
 import {
 	ActiveViz,
 	AggregatedCrimeData,
@@ -8,28 +9,25 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import CrimeChart from "./CrimeRateChart";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface CrimeChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, CrimeDataset>;
-	aggregatedData: AggregatedCrimeData | null;
+	aggregatedData: Record<number, AggregatedCrimeData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: {
-		getCodeForYear: (
-			type: "localAuthority",
-			code: string,
-			targetYear: number,
-		) => string | undefined;
-	};
+	codeMapper?: CodeMapper;
+	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default function CrimeSection({
+export default memo(function CrimeSection({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
 	codeMapper,
+	activeViz,
 	setActiveViz,
 }: CrimeChartProps) {
 	return (
@@ -42,8 +40,9 @@ export default function CrimeSection({
 				year={2025}
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
+				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 			/>
 		</div>
 	);
-}
+});
