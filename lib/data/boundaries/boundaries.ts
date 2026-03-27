@@ -17,7 +17,7 @@ interface GeoJsonFeatureCollection extends FeatureCollection<Geometry, GeoJsonPr
 export const GEOJSON_PATHS = {
 	ward: {
 		2025: withCDN(
-			"/data/boundaries/wards/WD_MAY_2025_UK_BGC_V2_-8581021362622909866.geojson",
+			"/data/boundaries/wards/WD_MAY_2025_UK_BGC_V2_-8581021362622909866.topojson",
 		),
 		2024: withCDN(
 			"/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.topojson",

@@ -29,6 +29,8 @@ const CONFIG = {
 	// Properties to keep (add your essential properties here)
 	keepProperties: [
 		// Ward properties
+		"WD25CD",
+		"WD25NM",
 		"WD24CD",
 		"WD24NM",
 		"WD23CD",
