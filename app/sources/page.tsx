@@ -38,12 +38,23 @@ const datasets: Dataset[] = [
 		source: "Office for National Statistics",
 		sourceUrl:
 			"https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates",
-		year: "2020",
+		year: "2020, 2021, 2022",
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
 			"Ward-level population data estimates including age and gender used for per-capita comparisons.",
+	},
+	{
+		name: "Ethnicity",
+		source: "Office for National Statistics",
+		sourceUrl: "https://www.ons.gov.uk/datasets/TS021/editions/2021/versions/3",
+		year: "2021",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Ethnic group population classification for England and Wales by local authority district.",
 	},
 	{
 		name: "Median House Price",
@@ -69,6 +80,54 @@ const datasets: Dataset[] = [
 			"EU referendum results by local authority counting area.",
 	},
 	{
+		name: "Income",
+		source: "Office for National Statistics",
+		sourceUrl:
+			"https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/placeofworkbylocalauthorityashetable7",
+		year: "2025",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Annual estimates of paid hours worked and earnings for employees in England and Wales.",
+	},
+	{
+		name: "Crime",
+		source: "Office for National Statistics",
+		sourceUrl:
+			"https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/datasets/policeforceareadatatables",
+		year: "2025",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Police recorded crime figures by local authority district.",
+	},
+	{
+		name: "Indices of Multiple Deprivation",
+		source: "Ministry of Housing, Communities & Local Government",
+		sourceUrl:
+			"https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019",
+		year: "2019",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Relative deprivation scores, ranks and deciles for small areas (LSOAs) in England.",
+	},
+	{
+		name: "Life Expectancy",
+		source: "Office for National Statistics",
+		sourceUrl:
+			"https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthandlifeexpectancies/bulletins/lifeexpectancyforlocalareasonenglandandwales/2020to2022",
+		year: "2020-2022",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Life expectancy and healthy life expectancy estimates for local areas across the UK.",
+	},
+	{
 		name: "Westminster Parliamentary Wards (Boundaries)",
 		source: "ONS Open Geography Portal",
 		sourceUrl: "https://geoportal.statistics.gov.uk/",
@@ -80,15 +139,26 @@ const datasets: Dataset[] = [
 			"UK electoral ward boundaries used for map visualisation layers.",
 	},
 	{
-		name: "Westminster Parliamentary Constituencies (Boundaries)",
+		name: "Local Authority Districts (Boundaries)",
 		source: "ONS Open Geography Portal",
 		sourceUrl: "https://geoportal.statistics.gov.uk/",
-		year: "July 2024",
+		year: "December 2021, 2022, 2023, 2024, May 2025",
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"UK parliamentary constituencies used to match constituency-level election data to spatial boundaries.",
+			"UK local authority district boundaries used for map visualisation layers.",
+	},
+	{
+		name: "Westminster Parliamentary Constituencies (Boundaries)",
+		source: "ONS Open Geography Portal",
+		sourceUrl: "https://geoportal.statistics.gov.uk/",
+		year: "2015, 2017, 2019, July 2024",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"UK parliamentary constituency boundaries used to match constituency-level election data to spatial boundaries.",
 	},
 ];
 
