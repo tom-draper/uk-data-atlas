@@ -106,39 +106,39 @@ export default memo(function BrexitConstituencyChart({
 					Hanretty Estimates [{dataset.year}]
 				</h3>
 
-				{hasData ? (
-					<div className="mt-2 space-y-1">
-						<div className="flex h-4 rounded overflow-hidden">
-							<div
-								style={{
-									width: `${pctLeave.toFixed(1)}%`,
-									backgroundColor: leaveBgColor,
-								}}
-							/>
-							<div
-								style={{
-									width: `${pctRemain.toFixed(1)}%`,
-									backgroundColor: remainBgColor,
-								}}
-							/>
-						</div>
+				<div className="mt-2 h-9">
+					{hasData ? (
+						<div className="space-y-1">
+							<div className="flex h-4 rounded overflow-hidden">
+								<div
+									style={{
+										width: `${pctLeave.toFixed(1)}%`,
+										backgroundColor: leaveBgColor,
+									}}
+								/>
+								<div
+									style={{
+										width: `${pctRemain.toFixed(1)}%`,
+										backgroundColor: remainBgColor,
+									}}
+								/>
+							</div>
 
-						<div className="flex justify-between text-xs font-semibold mt-1">
-							<span style={{ color: leaveBgColor }}>
-								Leave {pctLeave.toFixed(1)}%
-							</span>
-							<span style={{ color: remainBgColor }}>
-								Remain {pctRemain.toFixed(1)}%
-							</span>
+							<div className="flex justify-between text-xs font-semibold">
+								<span style={{ color: leaveBgColor }}>
+									Leave {pctLeave.toFixed(1)}%
+								</span>
+								<span style={{ color: remainBgColor }}>
+									Remain {pctRemain.toFixed(1)}%
+								</span>
+							</div>
 						</div>
-					</div>
-				) : (
-					<div className="h-5 mt-2 mb-2">
-						<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+					) : (
+						<div className="flex h-full items-center justify-center text-xs text-gray-400/80">
 							No data available
 						</div>
-					</div>
-				)}
+					)}
+				</div>
 			</div>
 			</div>
 	);
