@@ -9,6 +9,11 @@ import {
 } from "@lib/types";
 import React, { memo, useMemo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import {
+	ChartLoadingBackground,
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
@@ -54,6 +59,7 @@ const PriceChart = React.memo(
 		isActive,
 		setActiveViz,
 	}: PriceChartProps) => {
+		const chartsLoading = useChartsLoading();
 		const { priceData, currentPrice } = useMemo(() => {
 			let prices: Record<number, number> = {};
 			let price2023: number | null = null;
@@ -258,6 +264,7 @@ const PriceChart = React.memo(
 					})
 				}
 			>
+				<ChartLoadingBackground />
 				<div className="flex items-center justify-between mb-1.5 relative z-10">
 					<h3 className="text-xs font-bold">
 						Median House Price [{dataset.year}]
@@ -322,9 +329,13 @@ const PriceChart = React.memo(
 					</div>
 				) : (
 					<div className="h-7 mt-3 mb-1">
-						<div className="text-xs text-gray-400/80 pt-0.5 text-center">
-							No data available
-						</div>
+						{chartsLoading ? (
+							<ChartContentPlaceholder className="h-full" />
+						) : (
+							<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+								No data available
+							</div>
+						)}
 					</div>
 				)}
 			</div>

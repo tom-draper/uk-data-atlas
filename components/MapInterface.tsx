@@ -40,7 +40,11 @@ export default function MapInterface({
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
 
 	const codeMapper = useCodeMapper();
-	const { boundaryData, boundaryCodes } = useBoundaryData(selectedLocation, codeMapper);
+	const {
+		boundaryData,
+		boundaryCodes,
+		isLoading: boundariesLoading,
+	} = useBoundaryData(selectedLocation, codeMapper);
 
 	// Map setup
 	const { mapRef: map, handleMapContainer } =
@@ -143,6 +147,7 @@ export default function MapInterface({
 		customDataset,
 		location: selectedLocation,
 	});
+	const chartsLoading = boundariesLoading || !mapManager;
 
 	return (
 		<div className="relative w-full h-screen">
@@ -162,6 +167,7 @@ export default function MapInterface({
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
 					aggregatedData={aggregatedData}
+					chartsLoading={chartsLoading}
 					datasets={datasets}
 					customDataset={customDataset}
 					setCustomDataset={setCustomDataset}

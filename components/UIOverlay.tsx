@@ -22,6 +22,7 @@ interface UIOverlayProps {
 	setCustomDataset: (dataset: CustomDataset | null) => void;
 	activeDataset: Dataset | null;
 	aggregatedData: AggregatedData;
+	chartsLoading: boolean;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
@@ -48,6 +49,7 @@ export default memo(function UIOverlay({
 	activeViz,
 	setActiveViz,
 	aggregatedData,
+	chartsLoading,
 	selectedLocation,
 	selectedArea,
 	boundaryData,
@@ -101,6 +103,7 @@ export default memo(function UIOverlay({
 						setActiveViz={setActiveViz}
 						activeDataset={activeDataset}
 						aggregatedData={aggregatedData}
+						chartsLoading={chartsLoading}
 						selectedArea={deferredSelectedArea}
 						boundaryData={boundaryData}
 						boundaryCodes={boundaryCodes}

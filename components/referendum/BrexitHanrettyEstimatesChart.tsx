@@ -8,6 +8,11 @@ import {
 } from "@lib/types";
 import { memo, useMemo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import {
+	ChartLoadingBackground,
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 interface BrexitChartProps {
 	activeDataset: Dataset | null;
@@ -20,7 +25,7 @@ interface BrexitChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default memo(function BrexitChart({
+export default memo(function BrexitHanrettyEstimatesChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -30,6 +35,7 @@ export default memo(function BrexitChart({
 	activeViz,
 	setActiveViz,
 }: BrexitChartProps) {
+	const chartsLoading = useChartsLoading();
 	const dataset = availableDatasets?.[year];
 
 	const brexitStats = useMemo(() => {
@@ -103,7 +109,7 @@ export default memo(function BrexitChart({
 
 	return (
 		<div
-			className={`p-2 rounded cursor-pointer overflow-hidden relative ${
+			className={`p-2 rounded cursor-pointer overflow-hidden relative h-[65px] ${
 				isActive
 					? result === "leave"
 						? "bg-red-50/60 border-2 border-red-400"
@@ -119,43 +125,35 @@ export default memo(function BrexitChart({
 				})
 			}
 		>
+			<ChartLoadingBackground />
 			<div className="relative z-10">
 				<h3 className="text-xs font-bold text-gray-800/90">
 					Electoral Commission [{dataset.year}]
 				</h3>
 
-				{hasData ? (
-					<div className="mt-2 space-y-1">
-						{/* Split bar */}
-						<div className="flex h-4 rounded overflow-hidden">
-							<div
-								style={{
-									width: `${pctLeave.toFixed(1)}%`,
-									backgroundColor: leaveBgColor,
-								}}
-							/>
-							<div
-								style={{
-									width: `${pctRemain.toFixed(1)}%`,
-									backgroundColor: remainBgColor,
-								}}
-							/>
-						</div>
-
-						{/* Labels */}
-						<div className="flex justify-between text-xs font-semibold mt-1">
-							<span style={{ color: leaveBgColor }}>
-								Leave {pctLeave.toFixed(1)}%
-							</span>
-							<span style={{ color: remainBgColor }}>
-								Remain {pctRemain.toFixed(1)}%
-							</span>
-						</div>
-					</div>
-				) : (
-					<div className="h-5 mt-2 mb-2">
-						<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+				{!hasData ? (
+					chartsLoading ? (
+						<ChartContentPlaceholder className="h-5 mt-2" />
+					) : (
+						<div className="mt-2 h-5 flex items-center justify-center text-xs text-gray-400/80">
 							No data available
+						</div>
+					)
+				) : (
+					<div className="mt-2 flex h-5 rounded overflow-hidden">
+						<div style={{ width: `${pctLeave.toFixed(1)}%`, backgroundColor: leaveBgColor }}>
+							{pctLeave > 20 && (
+								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
+									Leave {pctLeave.toFixed(1)}%
+								</span>
+							)}
+						</div>
+						<div style={{ width: `${pctRemain.toFixed(1)}%`, backgroundColor: remainBgColor }}>
+							{pctRemain > 20 && (
+								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
+									Remain {pctRemain.toFixed(1)}%
+								</span>
+							)}
 						</div>
 					</div>
 				)}

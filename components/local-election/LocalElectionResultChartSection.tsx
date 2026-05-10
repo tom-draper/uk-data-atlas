@@ -15,6 +15,7 @@ import {
 } from "@lib/types";
 import LocalElectionResultChart from "./LocalElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { useChartVisibility, ChartKey } from "@/lib/context/ChartVisibilityContext";
 
 interface ProcessedPartyData {
 	key: string;
@@ -215,6 +216,7 @@ export default memo(function LocalElectionResultChartSection({
 	setActiveViz,
 	codeMapper,
 }: LocalElectionResultChartSectionProps) {
+	const { visibility } = useChartVisibility();
 	const yearData = useLocalElectionData(
 		availableDatasets,
 		aggregatedData,
@@ -223,13 +225,19 @@ export default memo(function LocalElectionResultChartSection({
 		codeMapper?.getWardsForLad,
 	);
 
+	const visibleYearData = yearData.filter(
+		(d) => visibility[`localElection-${d.year}` as ChartKey],
+	);
+
+	if (visibleYearData.length === 0) return null;
+
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold text-gray-700 pt-2">
 				Local Election Results
 			</h3>
 
-			{yearData.map((data) => (
+			{visibleYearData.map((data) => (
 				<LocalElectionResultChart
 					key={data.year}
 					data={data}

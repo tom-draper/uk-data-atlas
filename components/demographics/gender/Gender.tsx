@@ -8,6 +8,7 @@ import {
 } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 
 interface GenderProps {
 	dataset: PopulationDataset;
@@ -178,6 +179,7 @@ function Gender({
 				})
 			}
 		>
+			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-0">
 				<h3 className="text-xs font-bold">Gender [{dataset.year}]</h3>
 				{hasData && (

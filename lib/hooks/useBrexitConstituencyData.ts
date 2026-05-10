@@ -11,12 +11,13 @@ const parsePct = (val: string): number => {
 	return isNaN(parsed) ? 0 : parsed;
 };
 
-export const useBrexitConstituencyData = () => {
+export const useBrexitConstituencyData = (enabled = true) => {
 	const [datasets, setDatasets] = useState<Record<string, BrexitConstituencyDataset>>({});
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(enabled);
 	const [error, setError] = useState<string>("");
 
 	useEffect(() => {
+		if (!enabled) return;
 		const loadData = async () => {
 			try {
 				const response = await fetch(

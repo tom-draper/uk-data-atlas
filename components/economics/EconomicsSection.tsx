@@ -1,6 +1,7 @@
 // components/HousePriceChart.tsx
 "use client";
 import { memo } from "react";
+import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import {
 	ActiveViz,
 	AggregatedHousePriceData,
@@ -37,29 +38,39 @@ export default memo(function EconomicsSection({
 	activeViz,
 	setActiveViz,
 }: EconomicsSectionProps) {
+	const { visibility } = useChartVisibility();
+	const showHousePrice = visibility["economics-housePrice"];
+	const showIncome = visibility["economics-income"];
+
+	if (!showHousePrice && !showIncome) return null;
+
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold pt-2">Economics</h3>
-			<HousePriceChart
-				activeDataset={activeDataset}
-				availableDatasets={availableHousePriceDatasets}
-				aggregatedData={aggregatedHousePriceData}
-				year={2023}
-				selectedArea={selectedArea}
-				codeMapper={codeMapper}
-				activeViz={activeViz}
-				setActiveViz={setActiveViz}
-			/>
-			<IncomeChart
-				activeDataset={activeDataset}
-				availableDatasets={availableIncomeDatasets}
-				aggregatedData={aggregatedIncomeData}
-				year={2025}
-				selectedArea={selectedArea}
-				codeMapper={codeMapper}
-				activeViz={activeViz}
-				setActiveViz={setActiveViz}
-			/>
+			{showHousePrice && (
+				<HousePriceChart
+					activeDataset={activeDataset}
+					availableDatasets={availableHousePriceDatasets}
+					aggregatedData={aggregatedHousePriceData}
+					year={2023}
+					selectedArea={selectedArea}
+					codeMapper={codeMapper}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+			)}
+			{showIncome && (
+				<IncomeChart
+					activeDataset={activeDataset}
+					availableDatasets={availableIncomeDatasets}
+					aggregatedData={aggregatedIncomeData}
+					year={2025}
+					selectedArea={selectedArea}
+					codeMapper={codeMapper}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+			)}
 		</div>
 	);
 });

@@ -1,6 +1,7 @@
 // components/PopulationChart.tsx
 "use client";
 import { memo } from "react";
+import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import {
 	ActiveViz,
 	AggregatedEthnicityData,
@@ -39,43 +40,59 @@ export default memo(function DemographicsChartSection({
 	activeViz,
 	setActiveViz,
 }: DemographicsChartSectionProps) {
+	const { visibility } = useChartVisibility();
+	const showDensity = visibility["demographics-populationDensity"];
+	const showAge = visibility["demographics-age"];
+	const showGender = visibility["demographics-gender"];
+	const showEthnicity = visibility["demographics-ethnicity"];
+
+	if (!showDensity && !showAge && !showGender && !showEthnicity) return null;
+
 	return (
 		<div className="pt-2.5 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold mb-2">Demographics</h3>
 			<div className="space-y-3">
-				<PopulationDensity
-					dataset={availablePopulationDatasets[2022]}
-					aggregatedData={aggregatedPopulationData}
-					boundaryData={boundaryData}
-					selectedArea={selectedArea}
-					codeMapper={codeMapper}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-				<AgeDistribution
-					dataset={availablePopulationDatasets[2022]}
-					aggregatedData={aggregatedPopulationData}
-					selectedArea={selectedArea}
-					codeMapper={codeMapper}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-				<Gender
-					dataset={availablePopulationDatasets[2022]}
-					aggregatedData={aggregatedPopulationData}
-					selectedArea={selectedArea}
-					codeMapper={codeMapper}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-				<EthnicityChart
-					dataset={availableEthnicityDatasets[2021]}
-					aggregatedData={aggregatedEthnicityData}
-					selectedArea={selectedArea}
-					codeMapper={codeMapper}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
+				{showDensity && (
+					<PopulationDensity
+						dataset={availablePopulationDatasets[2022]}
+						aggregatedData={aggregatedPopulationData}
+						boundaryData={boundaryData}
+						selectedArea={selectedArea}
+						codeMapper={codeMapper}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+					/>
+				)}
+				{showAge && (
+					<AgeDistribution
+						dataset={availablePopulationDatasets[2022]}
+						aggregatedData={aggregatedPopulationData}
+						selectedArea={selectedArea}
+						codeMapper={codeMapper}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+					/>
+				)}
+				{showGender && (
+					<Gender
+						dataset={availablePopulationDatasets[2022]}
+						aggregatedData={aggregatedPopulationData}
+						selectedArea={selectedArea}
+						codeMapper={codeMapper}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+					/>
+				)}
+				{showEthnicity && (
+					<EthnicityChart
+						dataset={availableEthnicityDatasets[2021]}
+						aggregatedData={aggregatedEthnicityData}
+						selectedArea={selectedArea}
+						codeMapper={codeMapper}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+					/>
+				)}
 			</div>
 		</div>
 	);

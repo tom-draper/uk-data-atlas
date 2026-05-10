@@ -12,6 +12,10 @@ import {
 import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
 import { useMemo, memo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import {
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
@@ -177,6 +181,7 @@ function PopulationDensityChart({
 	selectedArea,
 	codeMapper,
 }: PopulationDensityChartProps) {
+	const chartsLoading = useChartsLoading();
 	const { density, areaSqKm, total } = useMemo(() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
@@ -319,7 +324,11 @@ function PopulationDensityChart({
 	if (!total || density === null || areaSqKm === null) {
 		return (
 			<div className="text-xs h-13 text-gray-400/80 text-center grid place-items-center mb-1">
-				<div>No data available</div>
+				{chartsLoading ? (
+					<ChartContentPlaceholder className="h-10 w-full" />
+				) : (
+					<div>No data available</div>
+				)}
 			</div>
 		);
 	}

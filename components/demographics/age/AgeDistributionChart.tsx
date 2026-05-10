@@ -3,6 +3,10 @@ import { AgeGroups } from "@/lib/types";
 import { getAgeColor } from "@/lib/helpers/ageDistribution";
 import { memo } from "react";
 import AgeGroupBar from "./AgeGroupBar";
+import {
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 interface AgeDistributionChartProps {
 	counts: Uint32Array | number[];
@@ -30,10 +34,16 @@ function AgeDistributionChart({
 	ageGroups,
 	isActive,
 }: AgeDistributionChartProps) {
+	const chartsLoading = useChartsLoading();
+
 	if (!total || maxCount === 0) {
 		return (
 			<div className="text-xs h-25 text-gray-400/80 text-center grid place-items-center">
-				<div className="mb-4">No data available</div>
+				{chartsLoading ? (
+					<ChartContentPlaceholder className="h-18 w-full mb-4" />
+				) : (
+					<div className="mb-4">No data available</div>
+				)}
 			</div>
 		);
 	}

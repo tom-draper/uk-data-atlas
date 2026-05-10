@@ -1,6 +1,22 @@
 "use client";
 
 import { useMemo } from "react";
+import { DEFAULT_VISIBILITY, ChartKey } from "@/lib/context/ChartVisibilityContext";
+
+const STORAGE_KEY = "uk-data-atlas-chart-visibility";
+
+function isEnabled(key: ChartKey): boolean {
+	try {
+		const stored = localStorage.getItem(STORAGE_KEY);
+		if (stored) {
+			const parsed = JSON.parse(stored) as Partial<Record<ChartKey, boolean>>;
+			if (key in parsed) return parsed[key]!;
+		}
+	} catch {
+		// ignore
+	}
+	return DEFAULT_VISIBILITY[key];
+}
 
 import { useLocalElectionData } from "@lib/hooks/useLocalElectionData";
 import { useGeneralElectionData } from "@lib/hooks/useGeneralElectionData";
@@ -31,9 +47,9 @@ export function useDatasets(): UseDatasetsResult {
 	const crime = useCrimeData();
 	const income = useIncomeData();
 	const brexit = useBrexitData();
-	const brexitConstituency = useBrexitConstituencyData();
+	const brexitConstituency = useBrexitConstituencyData(isEnabled("brexit-hanretty"));
 	const imd = useIMDData();
-	const lifeExpectancy = useLifeExpectancyData();
+	const lifeExpectancy = useLifeExpectancyData(isEnabled("society-healthyLifeExpectancy"));
 
 	// Combine datasets
 	const datasets = useMemo(

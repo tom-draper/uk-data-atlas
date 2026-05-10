@@ -9,6 +9,11 @@ import {
 } from "@lib/types";
 import { memo, useMemo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import {
+	ChartLoadingBackground,
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -47,6 +52,7 @@ export default memo(function IncomeChart({
 	activeViz,
 	setActiveViz,
 }: IncomeChartProps) {
+	const chartsLoading = useChartsLoading();
 	const dataset = availableDatasets?.[year];
 
 	// Get income data for selected area or aggregated data
@@ -143,6 +149,7 @@ export default memo(function IncomeChart({
 				})
 			}
 		>
+			<ChartLoadingBackground />
 			{/* Background Particles Layer */}
 			<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
 				{particles.map((p) => (
@@ -176,9 +183,13 @@ export default memo(function IncomeChart({
 				</div>
 			) : (
 				<div className="h-7 mt-2 mb-2 relative z-10">
-					<div className="text-xs text-gray-400/80 pt-0.5 text-center">
-						No data available
-					</div>
+					{chartsLoading ? (
+						<ChartContentPlaceholder className="h-full" />
+					) : (
+						<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+							No data available
+						</div>
+					)}
 				</div>
 			)}
 			</div>

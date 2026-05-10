@@ -9,6 +9,7 @@ import {
 } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
@@ -331,6 +332,7 @@ function AgeDistribution({
 				})
 			}
 		>
+			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-2">
 				<h3 className="text-xs font-bold">
 					Age Distribution [{dataset.year}]

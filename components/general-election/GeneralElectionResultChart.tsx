@@ -3,6 +3,11 @@
 
 import { memo } from "react";
 import { ActiveViz, GeneralElectionDataset } from "@lib/types";
+import {
+	ChartLoadingBackground,
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 const YEAR_STYLES: Record<number, { bg: string; border: string }> = {
 	2024: { bg: "bg-indigo-50/60", border: "border-indigo-400" },
@@ -117,6 +122,7 @@ export default memo(function GeneralElectionResultChart({
 	isActive: boolean;
 	setActiveViz: (val: ActiveViz) => void;
 }) {
+	const chartsLoading = useChartsLoading();
 	const vizId = `generalElection-${data.year}`;
 	const colors = YEAR_STYLES[data.year] || YEAR_STYLES[2024];
 
@@ -148,34 +154,40 @@ export default memo(function GeneralElectionResultChart({
 				})
 			}
 		>
-			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">
-					{data.year} General Election
-				</h3>
-				{data.turnout !== null && (
-					<span className="text-[9px] text-gray-500 font-medium">
-						{data.turnout.toFixed(1)}% turnout
-					</span>
-				)}
-			</div>
-
-			{/* Content Area */}
-			{!data.hasData ? (
-				<div className="text-xs text-gray-400/80 pt-0.5 text-center">
-					No data available
-				</div>
-			) : (
-				<div className="space-y-1">
-					<VoteBar data={data.partyData} />
-					{isActive && (
-						<Legend
-							partyData={data.partyData}
-							seatsSummary={data.seatsSummary}
-							totalSeats={data.totalSeats}
-						/>
+			<ChartLoadingBackground />
+			<div className="relative z-[1]">
+				<div className="flex items-center justify-between mb-1.5">
+					<h3 className="text-xs font-bold">
+						{data.year} General Election
+					</h3>
+					{data.turnout !== null && (
+						<span className="text-[9px] text-gray-500 font-medium">
+							{data.turnout.toFixed(1)}% turnout
+						</span>
 					)}
 				</div>
-			)}
+
+				{!data.hasData ? (
+					chartsLoading ? (
+						<ChartContentPlaceholder className="h-5 mt-1" />
+					) : (
+						<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+							No data available
+						</div>
+					)
+				) : (
+					<div className="space-y-1">
+						<VoteBar data={data.partyData} />
+						{isActive && (
+							<Legend
+								partyData={data.partyData}
+								seatsSummary={data.seatsSummary}
+								totalSeats={data.totalSeats}
+							/>
+						)}
+					</div>
+				)}
+			</div>
 			</div>
 	);
 });
