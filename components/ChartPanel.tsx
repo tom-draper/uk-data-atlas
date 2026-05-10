@@ -13,7 +13,7 @@ import {
 import { CustomDataset } from "@/lib/types/custom";
 import LocalElectionResultChartSection from "./local-election/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
-import { memo } from "react";
+import { memo, useState } from "react";
 import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
 import SocietySection from "./society/SocietySection";
@@ -21,6 +21,9 @@ import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import BrexitSection from "./referendum/BrexitSection";
 import CustomSection from "./custom/CustomSection";
 import { usePanelContext } from "@/lib/context/PanelContext";
+import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
+import { ChartVisibilityProvider } from "@/lib/context/ChartVisibilityContext";
+import ChartSettings from "./ChartSettings";
 
 interface ChartPanelProps {
 	selectedArea: SelectedArea | null;
@@ -33,10 +36,26 @@ interface ChartPanelProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	aggregatedData: AggregatedData;
+	chartsLoading: boolean;
 	codeMapper?: CodeMapper;
 }
 
-const PanelHeader = memo(function PanelHeader() {
+function CogIcon({ className }: { className?: string }) {
+	return (
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+			<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+			<circle cx="12" cy="12" r="3" />
+		</svg>
+	);
+}
+
+const PanelHeader = memo(function PanelHeader({
+	settingsOpen,
+	onToggleSettings,
+}: {
+	settingsOpen: boolean;
+	onToggleSettings: () => void;
+}) {
 	const { selectedArea, selectedLocation } = usePanelContext();
 	const { title, subtitle, code } = panelHeaderDetails(
 		selectedLocation,
@@ -45,7 +64,16 @@ const PanelHeader = memo(function PanelHeader() {
 
 	return (
 		<div className="pb-2 pt-2.5 px-2.5 bg-white/20">
-			<h2 className="font-semibold text-sm">{title}</h2>
+			<div className="flex items-center justify-between">
+				<h2 className="font-semibold text-sm">{title}</h2>
+				<button
+					onClick={onToggleSettings}
+					className={`p-0.5 rounded transition-colors cursor-pointer ${settingsOpen ? "text-indigo-500" : "text-gray-400 hover:text-gray-600"}`}
+					title="Chart settings"
+				>
+					<CogIcon className="w-3.5 h-3.5" />
+				</button>
+			</div>
 			<div className="text-gray-400/80 text-xs">
 				{code ? (
 					<div className="flex justify-between">
@@ -137,92 +165,124 @@ export default memo(function ChartPanel({
 	activeViz,
 	setActiveViz,
 	aggregatedData,
+	chartsLoading,
 	codeMapper,
 }: ChartPanelProps) {
+	const [settingsOpen, setSettingsOpen] = useState(false);
+
 	return (
+		<ChartVisibilityProvider>
 		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
 			<div className="bg-[rgba(255,255,255,0.5)] rounded-md backdrop-blur-md shadow-lg h-full flex flex-col border border-white/30">
-				<PanelHeader />
+				<PanelHeader
+					settingsOpen={settingsOpen}
+					onToggleSettings={() => setSettingsOpen((o) => !o)}
+				/>
 
+				{settingsOpen ? (
+					<ChartSettings />
+				) : (
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
-					<GeneralElectionResultChartSection
-						activeDataset={activeDataset}
-						availableDatasets={datasets.generalElection}
-						aggregatedData={aggregatedData.generalElection}
-						selectedArea={selectedArea}
-						setActiveViz={setActiveViz}
-						codeMapper={codeMapper}
-						activeViz={activeViz}
-					/>
-					<LocalElectionResultChartSection
-						activeDataset={activeDataset}
-						availableDatasets={datasets.localElection}
-						aggregatedData={aggregatedData.localElection}
-						selectedArea={selectedArea}
-						setActiveViz={setActiveViz}
-						codeMapper={codeMapper}
-						activeViz={activeViz}
-					/>
-					<BrexitSection
-						activeDataset={activeDataset}
-						availableDatasets={datasets.brexit}
-						availableConstituencyDatasets={datasets.brexitConstituency}
-						aggregatedData={aggregatedData.brexit}
-						aggregatedConstituencyData={aggregatedData.brexitConstituency}
-						selectedArea={selectedArea}
-						setActiveViz={setActiveViz}
-						codeMapper={codeMapper}
-						activeViz={activeViz}
-					/>
-					<DemographicsChartSection
-						availablePopulationDatasets={datasets.population}
-						aggregatedPopulationData={aggregatedData.population}
-						availableEthnicityDatasets={datasets.ethnicity}
-						aggregatedEthnicityData={aggregatedData.ethnicity}
-						boundaryData={boundaryData}
-						selectedArea={selectedArea}
-						activeViz={activeViz}
-						setActiveViz={setActiveViz}
-						codeMapper={codeMapper}
-					/>
-					<EconomicsSection
-						activeDataset={activeDataset}
-						availableHousePriceDatasets={datasets.housePrice}
-						aggregatedHousePriceData={aggregatedData.housePrice}
-						availableIncomeDatasets={datasets.income}
-						aggregatedIncomeData={aggregatedData.income}
-						selectedArea={selectedArea}
-						setActiveViz={setActiveViz}
-						codeMapper={codeMapper}
-						activeViz={activeViz}
-					/>
-					<SocietySection
-						activeDataset={activeDataset}
-						availableCrimeDatasets={datasets.crime}
-						aggregatedCrimeData={aggregatedData.crime}
-						availableIMDDatasets={datasets.imd}
-						aggregatedIMDData={aggregatedData.imd}
-						availableLifeExpectancyDatasets={datasets.lifeExpectancy}
-						aggregatedLifeExpectancyData={aggregatedData.lifeExpectancy}
-						selectedArea={selectedArea}
-						setActiveViz={setActiveViz}
-						codeMapper={codeMapper}
-						activeViz={activeViz}
-					/>
-					<CustomSection
-					 	customDataset={customDataset}
-						setCustomDataset={setCustomDataset}
-						aggregatedData={aggregatedData.custom}
-						selectedArea={selectedArea}
-						activeViz={activeViz}
-						setActiveViz={setActiveViz}
-						codeMapper={codeMapper}
-						boundaryCodes={boundaryCodes}
-					/>
+					<ChartLoadingProvider loading={chartsLoading}>
+							<GeneralElectionResultChartSection
+								activeDataset={activeDataset}
+								availableDatasets={datasets.generalElection}
+								aggregatedData={aggregatedData.generalElection}
+								selectedArea={selectedArea}
+								setActiveViz={setActiveViz}
+								codeMapper={codeMapper}
+								activeViz={activeViz}
+							/>
+							<LocalElectionResultChartSection
+								activeDataset={activeDataset}
+								availableDatasets={datasets.localElection}
+								aggregatedData={aggregatedData.localElection}
+								selectedArea={selectedArea}
+								setActiveViz={setActiveViz}
+								codeMapper={codeMapper}
+								activeViz={activeViz}
+							/>
+							<BrexitSection
+								activeDataset={activeDataset}
+								availableDatasets={datasets.brexit}
+								availableConstituencyDatasets={
+									datasets.brexitConstituency
+								}
+								aggregatedData={aggregatedData.brexit}
+								aggregatedConstituencyData={
+									aggregatedData.brexitConstituency
+								}
+								selectedArea={selectedArea}
+								setActiveViz={setActiveViz}
+								codeMapper={codeMapper}
+								activeViz={activeViz}
+							/>
+							<DemographicsChartSection
+								availablePopulationDatasets={
+									datasets.population
+								}
+								aggregatedPopulationData={
+									aggregatedData.population
+								}
+								availableEthnicityDatasets={datasets.ethnicity}
+								aggregatedEthnicityData={
+									aggregatedData.ethnicity
+								}
+								boundaryData={boundaryData}
+								selectedArea={selectedArea}
+								activeViz={activeViz}
+								setActiveViz={setActiveViz}
+								codeMapper={codeMapper}
+							/>
+							<EconomicsSection
+								activeDataset={activeDataset}
+								availableHousePriceDatasets={
+									datasets.housePrice
+								}
+								aggregatedHousePriceData={
+									aggregatedData.housePrice
+								}
+								availableIncomeDatasets={datasets.income}
+								aggregatedIncomeData={aggregatedData.income}
+								selectedArea={selectedArea}
+								setActiveViz={setActiveViz}
+								codeMapper={codeMapper}
+								activeViz={activeViz}
+							/>
+							<SocietySection
+								activeDataset={activeDataset}
+								availableCrimeDatasets={datasets.crime}
+								aggregatedCrimeData={aggregatedData.crime}
+								availableIMDDatasets={datasets.imd}
+								aggregatedIMDData={aggregatedData.imd}
+								availableLifeExpectancyDatasets={
+									datasets.lifeExpectancy
+								}
+								aggregatedLifeExpectancyData={
+									aggregatedData.lifeExpectancy
+								}
+								selectedArea={selectedArea}
+								setActiveViz={setActiveViz}
+								codeMapper={codeMapper}
+								activeViz={activeViz}
+							/>
+							<CustomSection
+								customDataset={customDataset}
+								setCustomDataset={setCustomDataset}
+								aggregatedData={aggregatedData.custom}
+								selectedArea={selectedArea}
+								activeViz={activeViz}
+								setActiveViz={setActiveViz}
+								codeMapper={codeMapper}
+								boundaryCodes={boundaryCodes}
+							/>
+					</ChartLoadingProvider>
 				</div>
+				)}
 
 				<PanelFooter />
 			</div>
 		</div>
+		</ChartVisibilityProvider>
 	);
 });

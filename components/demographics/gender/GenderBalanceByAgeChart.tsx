@@ -6,6 +6,10 @@ import {
 	PopulationDataset,
 	SelectedArea,
 } from "@/lib/types";
+import {
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 export interface GenderBalanceByAgeChartProps {
 	dataset: PopulationDataset;
@@ -28,6 +32,7 @@ function GenderBalanceByAgeChart({
 	selectedArea,
 	codeMapper,
 }: GenderBalanceByAgeChartProps) {
+	const chartsLoading = useChartsLoading();
 	// Refs for direct DOM manipulation (avoids re-renders on hover)
 	const tooltipRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -231,7 +236,11 @@ function GenderBalanceByAgeChart({
 	if (ageData.length === 0) {
 		return (
 			<div className="text-xs h-27.75 text-gray-400/80 text-center grid place-items-center">
-				<div className="mb-4">No data available</div>
+				{chartsLoading ? (
+					<ChartContentPlaceholder className="h-20 w-full mb-4" />
+				) : (
+					<div className="mb-4">No data available</div>
+				)}
 			</div>
 		);
 	}

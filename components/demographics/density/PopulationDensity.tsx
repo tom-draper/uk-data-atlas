@@ -9,6 +9,7 @@ import {
 } from "@/lib/types";
 import PopulationDensityChart from "./PopulationDensityChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
@@ -47,6 +48,7 @@ function PopulationDensity({
 				})
 			}
 		>
+			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">
 					Population Density [{dataset.year}]

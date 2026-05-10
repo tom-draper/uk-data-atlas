@@ -10,6 +10,11 @@ import {
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
 import { useMemo, memo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import {
+	ChartLoadingBackground,
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 const YEAR_STYLES = {
 	bg: "bg-indigo-50/60",
@@ -111,6 +116,7 @@ export default memo(function EthnicityChart({
 	activeViz,
 	setActiveViz,
 }: EthnicityChartProps) {
+	const chartsLoading = useChartsLoading();
 	const vizId = dataset.id;
 	const isActive = activeViz.vizId === vizId;
 
@@ -167,6 +173,7 @@ export default memo(function EthnicityChart({
 			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
 			onClick={handleActivate}
 		>
+			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-1.5">
 				<h3 className="text-xs font-bold">
 					Ethnicity [{dataset.year}]
@@ -174,9 +181,13 @@ export default memo(function EthnicityChart({
 			</div>
 
 			{!processedData.hasData ? (
-				<div className="text-xs text-gray-400/80 pt-0.5 text-center">
-					No data available
-				</div>
+				chartsLoading ? (
+					<ChartContentPlaceholder className="h-5 mt-1" />
+				) : (
+					<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+						No data available
+					</div>
+				)
 			) : (
 				<div className="space-y-1">
 					<EthnicityBar data={processedData.ethnicityData} />

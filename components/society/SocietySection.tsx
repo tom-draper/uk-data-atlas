@@ -1,6 +1,7 @@
 // components/society/SocietySection.tsx
 "use client";
 import { memo } from "react";
+import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import {
 	ActiveViz,
 	AggregatedCrimeData,
@@ -44,23 +45,33 @@ export default memo(function SocietySection({
 	activeViz,
 	setActiveViz,
 }: SocietySectionProps) {
+	const { visibility } = useChartVisibility();
+	const showCrime = visibility["society-crime"];
+	const showIMD = visibility["society-imd"];
+	const showLE = visibility["society-lifeExpectancy"];
+	const showHLE = visibility["society-healthyLifeExpectancy"];
+
 	const imdYears = Object.keys(availableIMDDatasets).map(Number).sort((a, b) => b - a);
 	const leIds = Object.keys(availableLifeExpectancyDatasets).sort();
+
+	if (!showCrime && !showIMD && !showLE && !showHLE) return null;
 
 	return (
 		<div className="space-y-2 border-t border-gray-200/80">
 			<h3 className="text-xs font-bold pt-2">Society</h3>
-			<CrimeRateChart
-				activeDataset={activeDataset}
-				availableDatasets={availableCrimeDatasets}
-				aggregatedData={aggregatedCrimeData}
-				year={2025}
-				selectedArea={selectedArea}
-				codeMapper={codeMapper}
-				activeViz={activeViz}
-				setActiveViz={setActiveViz}
-			/>
-			{imdYears.map((year) => (
+			{showCrime && (
+				<CrimeRateChart
+					activeDataset={activeDataset}
+					availableDatasets={availableCrimeDatasets}
+					aggregatedData={aggregatedCrimeData}
+					year={2025}
+					selectedArea={selectedArea}
+					codeMapper={codeMapper}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+			)}
+			{showIMD && imdYears.map((year) => (
 				<IMDChart
 					key={year}
 					activeDataset={activeDataset}
@@ -72,18 +83,18 @@ export default memo(function SocietySection({
 					setActiveViz={setActiveViz}
 				/>
 			))}
-		{leIds.map((id) => (
-			<LifeExpectancyChart
-				key={id}
-				activeDataset={activeDataset}
-				availableDatasets={availableLifeExpectancyDatasets}
-				aggregatedData={aggregatedLifeExpectancyData}
-				selectedArea={selectedArea}
-				datasetId={id}
-				activeViz={activeViz}
-				setActiveViz={setActiveViz}
-			/>
-		))}
+			{leIds.filter((id) => id === "le" ? showLE : id === "hle" ? showHLE : true).map((id) => (
+				<LifeExpectancyChart
+					key={id}
+					activeDataset={activeDataset}
+					availableDatasets={availableLifeExpectancyDatasets}
+					aggregatedData={aggregatedLifeExpectancyData}
+					selectedArea={selectedArea}
+					datasetId={id}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+			))}
 		</div>
 	);
 });

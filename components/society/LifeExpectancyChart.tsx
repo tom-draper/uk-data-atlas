@@ -7,6 +7,11 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import { memo, useMemo } from "react";
+import {
+	ChartLoadingBackground,
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 interface LifeExpectancyChartProps {
 	activeDataset: Dataset | null;
@@ -45,19 +50,15 @@ export default memo(function LifeExpectancyChart({
 	activeViz,
 	setActiveViz,
 }: LifeExpectancyChartProps) {
+	const chartsLoading = useChartsLoading();
 	const dataset = availableDatasets?.[datasetId];
 
 	const leStats = useMemo(() => {
-		if (!dataset) return null;
+		if (!dataset || chartsLoading) return null;
 
 		if (selectedArea === null) {
 			if (aggregatedData?.[datasetId]) return aggregatedData[datasetId];
-			const records = Object.values(dataset.data);
-			if (records.length === 0) return null;
-			return {
-				averageMaleLE: records.reduce((s, r) => s + r.maleBirthLE, 0) / records.length,
-				averageFemaleLE: records.reduce((s, r) => s + r.femaleBirthLE, 0) / records.length,
-			};
+			return null;
 		}
 
 		if (selectedArea.type === "localAuthority") {
@@ -75,13 +76,13 @@ export default memo(function LifeExpectancyChart({
 		}
 
 		return null;
-	}, [dataset, aggregatedData, datasetId, selectedArea]);
+	}, [dataset, aggregatedData, datasetId, selectedArea, chartsLoading]);
 
 	const barRange = useMemo(() => {
-		if (!dataset) return { min: 55, max: 85 };
+		if (!dataset || chartsLoading) return { min: 55, max: 85 };
 		const vals = Object.values(dataset.data).flatMap((r) => [r.maleBirthLE, r.femaleBirthLE]);
 		return { min: Math.min(...vals), max: Math.max(...vals) };
-	}, [dataset]);
+	}, [dataset, chartsLoading]);
 
 	if (!dataset) return null;
 
@@ -104,6 +105,7 @@ export default memo(function LifeExpectancyChart({
 				})
 			}
 		>
+			<ChartLoadingBackground />
 			<div className="relative z-10">
 				<h3 className="text-xs font-bold text-gray-800/90">
 					{dataset.label} [{dataset.dataPeriod}]
@@ -115,9 +117,13 @@ export default memo(function LifeExpectancyChart({
 					</div>
 				) : (
 					<div className="h-5 mt-2 mb-2">
-						<div className="text-xs text-gray-400/80 pt-0.5 text-center">
-							No data available
-						</div>
+						{chartsLoading ? (
+							<ChartContentPlaceholder className="h-full" />
+						) : (
+							<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+								No data available
+							</div>
+						)}
 					</div>
 				)}
 			</div>

@@ -16,6 +16,7 @@ import {
 } from "@lib/types";
 import GeneralElectionResultChart from "./GeneralElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { useChartVisibility, ChartKey } from "@/lib/context/ChartVisibilityContext";
 
 interface ProcessedPartyData {
 	key: string;
@@ -189,6 +190,7 @@ export default memo(function GeneralElectionResultChartSection({
 	setActiveViz,
 	codeMapper,
 }: GeneralElectionResultChartSectionProps) {
+	const { visibility } = useChartVisibility();
 	const yearData = useElectionChartData(
 		availableDatasets,
 		aggregatedData,
@@ -196,10 +198,16 @@ export default memo(function GeneralElectionResultChartSection({
 		codeMapper?.getCodeForYear,
 	);
 
+	const visibleYearData = yearData.filter(
+		(d) => visibility[`generalElection-${d.year}` as ChartKey],
+	);
+
+	if (visibleYearData.length === 0) return null;
+
 	return (
 		<div className="space-y-2">
 			<h3 className="text-xs font-bold pt-2">General Election Results</h3>
-			{yearData.map((data) => (
+			{visibleYearData.map((data) => (
 				<GeneralElectionResultChart
 					key={data.year}
 					data={data}

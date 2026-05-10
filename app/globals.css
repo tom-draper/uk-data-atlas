@@ -93,3 +93,29 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.4) rgba(255, 255, 255, 0.1);
 }
+
+@keyframes chart-placeholder-pulse {
+  0%, 100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.chart-shimmer {
+  background: rgba(148, 163, 184, 0.18);
+  border-radius: 2px;
+  animation: chart-placeholder-pulse 2.2s ease-in-out infinite;
+}
+
+.chart-card-shimmer {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-shimmer {
+    animation: none;
+  }
+}

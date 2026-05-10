@@ -3,6 +3,11 @@ import { createPortal } from 'react-dom';
 import { X, Upload, AlertCircle } from 'lucide-react';
 import { ActiveViz, BoundaryType, CustomDataset, AggregatedCustomData, BoundaryCodes } from '@/lib/types';
 import { CodeMapper } from '@/lib/hooks/useCodeMapper';
+import {
+    ChartLoadingBackground,
+    ChartContentPlaceholder,
+    useChartsLoading,
+} from '@/components/ChartLoadingPlaceholder';
 
 interface MatchResult {
     type: string;
@@ -465,6 +470,7 @@ function CustomDatasetCard({
     setActiveViz: (value: ActiveViz) => void;
     codeMapper: CodeMapper
 }) {
+    const chartsLoading = useChartsLoading();
     const displayValue = useMemo(() => {
         if (!customDataset || !customDataset.data) return null;
 
@@ -544,11 +550,12 @@ function CustomDatasetCard({
     return (
         <button
             onClick={handleClick}
-            className={`w-full rounded-md transition-all border-2 duration-200 text-left border-gray-200 h-20 ${isActive
+            className={`w-full rounded-md transition-all border-2 duration-200 text-left border-gray-200 h-20 relative overflow-hidden ${isActive
                 ? 'bg-white/90 border-indigo-300 cursor-pointer'
                 : 'bg-white/40 hover:bg-white/60 hover:border-indigo-300 cursor-pointer'
                 }`}
         >
+            <ChartLoadingBackground />
             <div className="px-3 py-2">
                 <div className="flex items-center justify-between mb-1">
                     <div className="text-xs font-bold text-gray-700">
@@ -571,9 +578,13 @@ function CustomDatasetCard({
                             )}
                         </div>
                     ) : (
-                        <div className="text-xs text-gray-400">
-                            {selectedArea ? 'No data available' : 'Hover over an area'}
-                        </div>
+                        chartsLoading ? (
+                            <ChartContentPlaceholder className="h-full w-full" />
+                        ) : (
+                            <div className="text-xs text-gray-400">
+                                {selectedArea ? 'No data available' : 'Hover over an area'}
+                            </div>
+                        )
                     )}
                 </div>
 
