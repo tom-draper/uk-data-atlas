@@ -1,14 +1,8 @@
-// lib/hooks/useEthnicityData.ts
-import { useState, useEffect } from "react";
 import { EthnicityCategory, EthnicityDataset } from "../types";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
-
-const parseObservation = (value: any): number | null => {
-	if (!value || value === "") return null;
-	const parsed = parseInt(String(value).replace(/,/g, "").trim());
-	return isNaN(parsed) ? null : parsed;
-};
+import { parseNullableInt } from "../helpers/parseNumber";
+import { useDataLoader } from "./useDataLoader";
 
 const parseEthnicityName = (fullName: string): { parent: string; subcategory: string } => {
 	const colonIndex = fullName.indexOf(":");
@@ -42,68 +36,52 @@ const calculateResults = (
 };
 
 export const useEthnicityData = () => {
-	const [datasets, setDatasets] = useState<Record<string, EthnicityDataset>>({});
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string>("");
+	return useDataLoader<EthnicityDataset>(async () => {
+		const res = await fetch(withCDN("/data/ethnicity/TS021-2021-2.csv"));
+		if (!res.ok) throw new Error(`Failed to fetch ethnicity data: ${res.statusText}`);
 
-	useEffect(() => {
-		const loadData = async () => {
-			try {
-				const res = await fetch(withCDN("/data/ethnicity/TS021-2021-2.csv"));
-				if (!res.ok) throw new Error(`Failed to fetch ethnicity data: ${res.statusText}`);
+		const { data } = await parseCsv(await res.text(), { header: true });
 
-				const { data } = await parseCsv(await res.text(), { header: true });
+		const localAuthorityData: Record<string, Record<string, any>> = {};
 
-				const localAuthorityData: Record<string, Record<string, any>> = {};
+		for (const row of data as any[]) {
+			const localAuthorityCode = row["Lower Tier Local Authorities Code"]?.trim();
+			const ethnicGroupCode = row["Ethnic group (20 categories) Code"]?.trim();
+			if (!localAuthorityCode || !ethnicGroupCode) continue;
+			if (ethnicGroupCode === "-8") continue;
 
-				for (const row of data as any[]) {
-					const localAuthorityCode = row["Lower Tier Local Authorities Code"]?.trim();
-					const ethnicGroupCode = row["Ethnic group (20 categories) Code"]?.trim();
-					if (!localAuthorityCode || !ethnicGroupCode) continue;
-					if (ethnicGroupCode === "-8") continue;
-
-					if (!localAuthorityData[localAuthorityCode]) {
-						localAuthorityData[localAuthorityCode] = {};
-					}
-
-					const fullName = row["Ethnic group (20 categories)"]?.trim() || "";
-					const { parent, subcategory } = parseEthnicityName(fullName);
-					const observation = parseObservation(row["Observation"]);
-
-					if (observation !== null) {
-						if (!localAuthorityData[localAuthorityCode][parent]) {
-							localAuthorityData[localAuthorityCode][parent] = {};
-						}
-						localAuthorityData[localAuthorityCode][parent][subcategory] = {
-							ethnicity: subcategory,
-							population: observation,
-							code: ethnicGroupCode,
-						};
-					}
-				}
-
-				const results = calculateResults(localAuthorityData);
-
-				setDatasets({
-					2021: {
-						id: "ethnicity2021",
-						type: "ethnicity",
-						year: 2021,
-						boundaryType: "localAuthority",
-						boundaryYear: 2025,
-						data: localAuthorityData,
-						results,
-					},
-				});
-				setLoading(false);
-			} catch (err: any) {
-				setError(err.message || "Error loading ethnicity data");
-				setLoading(false);
+			if (!localAuthorityData[localAuthorityCode]) {
+				localAuthorityData[localAuthorityCode] = {};
 			}
+
+			const fullName = row["Ethnic group (20 categories)"]?.trim() || "";
+			const { parent, subcategory } = parseEthnicityName(fullName);
+			const observation = parseNullableInt(row["Observation"]);
+
+			if (observation !== null) {
+				if (!localAuthorityData[localAuthorityCode][parent]) {
+					localAuthorityData[localAuthorityCode][parent] = {};
+				}
+				localAuthorityData[localAuthorityCode][parent][subcategory] = {
+					ethnicity: subcategory,
+					population: observation,
+					code: ethnicGroupCode,
+				};
+			}
+		}
+
+		const results = calculateResults(localAuthorityData);
+
+		return {
+			2021: {
+				id: "ethnicity2021",
+				type: "ethnicity",
+				year: 2021,
+				boundaryType: "localAuthority",
+				boundaryYear: 2025,
+				data: localAuthorityData,
+				results,
+			},
 		};
-
-		loadData();
-	}, []);
-
-	return { datasets, loading, error };
+	});
 };

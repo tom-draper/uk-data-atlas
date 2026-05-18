@@ -1,5 +1,3 @@
-// lib/hooks/useIncomeData.ts
-import { useState, useEffect } from "react";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv, findHeaderLine } from "../helpers/parseCsv";
 import {
@@ -8,7 +6,9 @@ import {
 	IncomeDataset,
 	LocalAuthorityIncomeData,
 } from "../types/income";
+import { useDataLoader } from "./useDataLoader";
 
+// Income CSVs use special sentinel values for suppressed/unavailable data
 const parseNumber = (value: any): number | null => {
 	if (!value || value === "" || value === "x" || value === ".." || value === ":" || value === "-")
 		return null;
@@ -126,37 +126,21 @@ const mergeIncomeData = (
 };
 
 export const useIncomeData = () => {
-	const [datasets, setDatasets] = useState<Record<string, IncomeDataset>>({});
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string>("");
+	return useDataLoader<IncomeDataset>(async () => {
+		const [annualData, hourlyData] = await Promise.all([
+			parseAnnualIncomeData(),
+			parseHourlyIncomeData(),
+		]);
 
-	useEffect(() => {
-		const loadData = async () => {
-			try {
-				const [annualData, hourlyData] = await Promise.all([
-					parseAnnualIncomeData(),
-					parseHourlyIncomeData(),
-				]);
-
-				setDatasets({
-					2025: {
-						id: "income2025",
-						type: "income",
-						year: 2025,
-						boundaryType: "localAuthority",
-						boundaryYear: 2025,
-						data: mergeIncomeData(annualData, hourlyData),
-					},
-				});
-				setLoading(false);
-			} catch (err: any) {
-				setError(err.message || "Error loading income data");
-				setLoading(false);
-			}
+		return {
+			2025: {
+				id: "income2025",
+				type: "income",
+				year: 2025,
+				boundaryType: "localAuthority",
+				boundaryYear: 2025,
+				data: mergeIncomeData(annualData, hourlyData),
+			},
 		};
-
-		loadData();
-	}, []);
-
-	return { datasets, loading, error };
+	});
 };
