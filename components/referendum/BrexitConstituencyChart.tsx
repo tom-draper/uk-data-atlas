@@ -40,7 +40,11 @@ export default memo(function BrexitConstituencyChart({
 	const brexitStats = useMemo(() => {
 		if (!dataset) return null;
 
-		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+		if (
+			selectedArea === null &&
+			aggregatedData &&
+			aggregatedData[dataset.year]
+		) {
 			const agg = aggregatedData[dataset.year];
 			return {
 				pctLeave: agg.pctLeave,
@@ -86,8 +90,8 @@ export default memo(function BrexitConstituencyChart({
 			? "border-red-400"
 			: "border-blue-400"
 		: result === "leave"
-		? "hover:border-red-400"
-		: "hover:border-blue-400";
+			? "hover:border-red-400"
+			: "hover:border-blue-400";
 
 	return (
 		<div

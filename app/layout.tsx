@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import "mapbox-gl/dist/mapbox-gl.css";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ukdataatlas.com";

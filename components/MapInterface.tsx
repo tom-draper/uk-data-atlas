@@ -7,11 +7,17 @@ import { useBoundaryData } from "@/lib/hooks/useBoundaryData";
 import { useAggregatedData } from "@/lib/hooks/useAggregatedData";
 import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
+import { getActiveDataset } from "@/lib/helpers/activeDataset";
 
 import MapView from "@components/MapView";
 import UIOverlay from "@components/UIOverlay";
 
-import type { ActiveViz, Datasets, SelectedArea, BoundaryData } from "@lib/types";
+import type {
+	ActiveViz,
+	Datasets,
+	SelectedArea,
+	BoundaryData,
+} from "@lib/types";
 import type { CustomDataset } from "@/lib/types/custom";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
@@ -60,9 +66,7 @@ export default function MapInterface({
 
 	// Get active dataset
 	const activeDataset = useMemo(() => {
-		if (activeViz.datasetType === "custom") return customDataset;
-		const group = datasets[activeViz.datasetType] as Record<string, any> | undefined;
-		return group?.[activeViz.vizId] ?? group?.[activeViz.datasetYear] ?? null;
+		return getActiveDataset(datasets, activeViz, customDataset);
 	}, [datasets, activeViz, customDataset]);
 
 	// Get geojson for active dataset
@@ -70,7 +74,7 @@ export default function MapInterface({
 		if (!activeDataset) return null;
 		return (
 			boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
-			activeDataset.boundaryYear
+				activeDataset.boundaryYear
 			] ?? null
 		);
 	}, [activeDataset, boundaryData]);

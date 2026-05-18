@@ -41,7 +41,11 @@ export default memo(function BrexitHanrettyEstimatesChart({
 	const brexitStats = useMemo(() => {
 		if (!dataset) return null;
 
-		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+		if (
+			selectedArea === null &&
+			aggregatedData &&
+			aggregatedData[dataset.year]
+		) {
 			const agg = aggregatedData[dataset.year];
 			return {
 				pctLeave: agg.pctLeave,
@@ -86,8 +90,7 @@ export default memo(function BrexitHanrettyEstimatesChart({
 	if (!dataset) return null;
 
 	const isActive =
-		activeDataset?.type === "brexit" &&
-		activeDataset.id === dataset.id;
+		activeDataset?.type === "brexit" && activeDataset.id === dataset.id;
 
 	const pctLeave = brexitStats?.pctLeave ?? 0;
 	const pctRemain = brexitStats?.pctRemain ?? 0;
@@ -104,8 +107,8 @@ export default memo(function BrexitHanrettyEstimatesChart({
 			? "border-red-400"
 			: "border-blue-400"
 		: result === "leave"
-		? "hover:border-red-400"
-		: "hover:border-blue-400";
+			? "hover:border-red-400"
+			: "hover:border-blue-400";
 
 	return (
 		<div
@@ -158,6 +161,6 @@ export default memo(function BrexitHanrettyEstimatesChart({
 					</div>
 				)}
 			</div>
-			</div>
+		</div>
 	);
 });
