@@ -47,21 +47,25 @@ export default function MapInterface({
 
 	const codeMapper = useCodeMapper();
 
-	// Register ward→LAD mappings from election CSVs (which have explicit LAD codes)
-	// to cover wards whose names changed between boundary years (e.g. 2021 Bury/Rochdale)
+	// Supplement the code mapper with ward→LAD mappings from election data.
+	// Boundary files older than 2022 lack LAD properties, so wards that were
+	// reorganised between 2021 and 2022 (e.g. Bury and Rochdale) can't be
+	// resolved from boundary metadata alone. The election CSVs carry ladCode
+	// per row so we can fill the gap here.
 	useEffect(() => {
+		if (!codeMapper) return;
 		const mappings: Record<string, string> = {};
 		for (const dataset of Object.values(datasets.localElection)) {
-			for (const [wardCode, ward] of Object.entries(dataset.data)) {
-				if (wardCode && ward.localAuthorityCode && ward.localAuthorityCode !== "Unknown") {
-					mappings[wardCode] = ward.localAuthorityCode;
+			for (const ward of Object.values(dataset.data)) {
+				if (ward.wardCode && ward.ladCode && ward.ladCode !== "Unknown") {
+					mappings[ward.wardCode] = ward.ladCode;
 				}
 			}
 		}
 		if (Object.keys(mappings).length > 0) {
 			codeMapper.addWardLadMappings(mappings);
 		}
-	}, [datasets.localElection, codeMapper.addWardLadMappings]);
+	}, [datasets.localElection, codeMapper]);
 
 	const {
 		boundaryData,
