@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import ControlPanel from "@components/ControlPanel";
 import LegendPanel from "@components/LegendPanel";
 import ChartPanel from "@components/ChartPanel";
@@ -15,8 +15,6 @@ import type { CustomDataset } from "@/lib/types/custom";
 import { MapOptions } from "@/lib/types/mapOptions";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { PanelContext } from "@/lib/context/PanelContext";
-
-const CHART_HOVER_UPDATE_DELAY_MS = 120;
 
 interface UIOverlayProps {
 	datasets: Datasets;
@@ -43,26 +41,6 @@ interface UIOverlayProps {
 	onExport: () => void;
 }
 
-function useChartSelectedArea(selectedArea: SelectedArea | null) {
-	const [chartSelectedArea, setChartSelectedArea] =
-		useState<SelectedArea | null>(selectedArea);
-
-	useEffect(() => {
-		if (selectedArea === null) {
-			setChartSelectedArea(null);
-			return;
-		}
-
-		const timeoutId = window.setTimeout(() => {
-			setChartSelectedArea(selectedArea);
-		}, CHART_HOVER_UPDATE_DELAY_MS);
-
-		return () => window.clearTimeout(timeoutId);
-	}, [selectedArea]);
-
-	return chartSelectedArea;
-}
-
 export default memo(function UIOverlay({
 	datasets,
 	customDataset,
@@ -84,11 +62,6 @@ export default memo(function UIOverlay({
 	onZoomOut,
 	onExport,
 }: UIOverlayProps) {
-	// Keep header hover feedback instant, but avoid recalculating every chart
-	// while the pointer is moving rapidly across ward boundaries.
-	const chartSelectedArea = useChartSelectedArea(selectedArea);
-
-	// Stable context value — only recreated when immediate selectedArea/selectedLocation changes
 	const panelContextValue = useMemo(
 		() => ({ selectedArea, selectedLocation }),
 		[selectedArea, selectedLocation],
@@ -126,7 +99,7 @@ export default memo(function UIOverlay({
 						activeDataset={activeDataset}
 						aggregatedData={aggregatedData}
 						chartsLoading={chartsLoading}
-						selectedArea={chartSelectedArea}
+						selectedArea={selectedArea}
 						boundaryData={boundaryData}
 						boundaryCodes={boundaryCodes}
 						codeMapper={codeMapper}

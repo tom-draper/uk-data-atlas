@@ -22,7 +22,7 @@ import BrexitSection from "./referendum/BrexitSection";
 import CustomSection from "./custom/CustomSection";
 import { usePanelContext } from "@/lib/context/PanelContext";
 import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
-import { ChartVisibilityProvider } from "@/lib/context/ChartVisibilityContext";
+import { ChartVisibilityProvider, CHART_CONFIG, useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import ChartSettings from "./ChartSettings";
 
 interface ChartPanelProps {
@@ -154,6 +154,15 @@ const PanelFooter = () => {
 	);
 };
 
+function useSectionVisibility() {
+	const { visibility } = useChartVisibility();
+	const byGroup: Record<string, boolean> = {};
+	for (const { group, key } of CHART_CONFIG) {
+		if (visibility[key]) byGroup[group] = true;
+	}
+	return byGroup;
+}
+
 export default memo(function ChartPanel({
 	selectedArea,
 	activeDataset,
@@ -169,6 +178,7 @@ export default memo(function ChartPanel({
 	codeMapper,
 }: ChartPanelProps) {
 	const [settingsOpen, setSettingsOpen] = useState(false);
+	const sectionVisible = useSectionVisibility();
 
 	return (
 		<ChartVisibilityProvider>
@@ -184,88 +194,100 @@ export default memo(function ChartPanel({
 				) : (
 				<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
 					<ChartLoadingProvider loading={chartsLoading}>
-							<GeneralElectionResultChartSection
-								activeDataset={activeDataset}
-								availableDatasets={datasets.generalElection}
-								aggregatedData={aggregatedData.generalElection}
-								selectedArea={selectedArea}
-								setActiveViz={setActiveViz}
-								codeMapper={codeMapper}
-								activeViz={activeViz}
-							/>
-							<LocalElectionResultChartSection
-								activeDataset={activeDataset}
-								availableDatasets={datasets.localElection}
-								aggregatedData={aggregatedData.localElection}
-								selectedArea={selectedArea}
-								setActiveViz={setActiveViz}
-								codeMapper={codeMapper}
-								activeViz={activeViz}
-							/>
-							<BrexitSection
-								activeDataset={activeDataset}
-								availableDatasets={datasets.brexit}
-								availableConstituencyDatasets={
-									datasets.brexitConstituency
-								}
-								aggregatedData={aggregatedData.brexit}
-								aggregatedConstituencyData={
-									aggregatedData.brexitConstituency
-								}
-								selectedArea={selectedArea}
-								setActiveViz={setActiveViz}
-								codeMapper={codeMapper}
-								activeViz={activeViz}
-							/>
-							<DemographicsChartSection
-								availablePopulationDatasets={
-									datasets.population
-								}
-								aggregatedPopulationData={
-									aggregatedData.population
-								}
-								availableEthnicityDatasets={datasets.ethnicity}
-								aggregatedEthnicityData={
-									aggregatedData.ethnicity
-								}
-								boundaryData={boundaryData}
-								selectedArea={selectedArea}
-								activeViz={activeViz}
-								setActiveViz={setActiveViz}
-								codeMapper={codeMapper}
-							/>
-							<EconomicsSection
-								activeDataset={activeDataset}
-								availableHousePriceDatasets={
-									datasets.housePrice
-								}
-								aggregatedHousePriceData={
-									aggregatedData.housePrice
-								}
-								availableIncomeDatasets={datasets.income}
-								aggregatedIncomeData={aggregatedData.income}
-								selectedArea={selectedArea}
-								setActiveViz={setActiveViz}
-								codeMapper={codeMapper}
-								activeViz={activeViz}
-							/>
-							<SocietySection
-								activeDataset={activeDataset}
-								availableCrimeDatasets={datasets.crime}
-								aggregatedCrimeData={aggregatedData.crime}
-								availableIMDDatasets={datasets.imd}
-								aggregatedIMDData={aggregatedData.imd}
-								availableLifeExpectancyDatasets={
-									datasets.lifeExpectancy
-								}
-								aggregatedLifeExpectancyData={
-									aggregatedData.lifeExpectancy
-								}
-								selectedArea={selectedArea}
-								setActiveViz={setActiveViz}
-								codeMapper={codeMapper}
-								activeViz={activeViz}
-							/>
+							{sectionVisible["General Election"] && (
+								<GeneralElectionResultChartSection
+									activeDataset={activeDataset}
+									availableDatasets={datasets.generalElection}
+									aggregatedData={aggregatedData.generalElection}
+									selectedArea={selectedArea}
+									setActiveViz={setActiveViz}
+									codeMapper={codeMapper}
+									activeViz={activeViz}
+								/>
+							)}
+							{sectionVisible["Local Election"] && (
+								<LocalElectionResultChartSection
+									activeDataset={activeDataset}
+									availableDatasets={datasets.localElection}
+									aggregatedData={aggregatedData.localElection}
+									selectedArea={selectedArea}
+									setActiveViz={setActiveViz}
+									codeMapper={codeMapper}
+									activeViz={activeViz}
+								/>
+							)}
+							{sectionVisible["Brexit"] && (
+								<BrexitSection
+									activeDataset={activeDataset}
+									availableDatasets={datasets.brexit}
+									availableConstituencyDatasets={
+										datasets.brexitConstituency
+									}
+									aggregatedData={aggregatedData.brexit}
+									aggregatedConstituencyData={
+										aggregatedData.brexitConstituency
+									}
+									selectedArea={selectedArea}
+									setActiveViz={setActiveViz}
+									codeMapper={codeMapper}
+									activeViz={activeViz}
+								/>
+							)}
+							{sectionVisible["Demographics"] && (
+								<DemographicsChartSection
+									availablePopulationDatasets={
+										datasets.population
+									}
+									aggregatedPopulationData={
+										aggregatedData.population
+									}
+									availableEthnicityDatasets={datasets.ethnicity}
+									aggregatedEthnicityData={
+										aggregatedData.ethnicity
+									}
+									boundaryData={boundaryData}
+									selectedArea={selectedArea}
+									activeViz={activeViz}
+									setActiveViz={setActiveViz}
+									codeMapper={codeMapper}
+								/>
+							)}
+							{sectionVisible["Economics"] && (
+								<EconomicsSection
+									activeDataset={activeDataset}
+									availableHousePriceDatasets={
+										datasets.housePrice
+									}
+									aggregatedHousePriceData={
+										aggregatedData.housePrice
+									}
+									availableIncomeDatasets={datasets.income}
+									aggregatedIncomeData={aggregatedData.income}
+									selectedArea={selectedArea}
+									setActiveViz={setActiveViz}
+									codeMapper={codeMapper}
+									activeViz={activeViz}
+								/>
+							)}
+							{sectionVisible["Society"] && (
+								<SocietySection
+									activeDataset={activeDataset}
+									availableCrimeDatasets={datasets.crime}
+									aggregatedCrimeData={aggregatedData.crime}
+									availableIMDDatasets={datasets.imd}
+									aggregatedIMDData={aggregatedData.imd}
+									availableLifeExpectancyDatasets={
+										datasets.lifeExpectancy
+									}
+									aggregatedLifeExpectancyData={
+										aggregatedData.lifeExpectancy
+									}
+									selectedArea={selectedArea}
+									setActiveViz={setActiveViz}
+									codeMapper={codeMapper}
+									activeViz={activeViz}
+								/>
+							)}
 							<CustomSection
 								customDataset={customDataset}
 								setCustomDataset={setCustomDataset}
