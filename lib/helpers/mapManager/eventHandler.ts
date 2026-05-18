@@ -1,12 +1,13 @@
-import type { MapMouseEvent } from "mapbox-gl";
-import type { MapLibreEvent } from "maplibre-gl";
+import type { MapGeoJSONFeature, MapMouseEvent } from "maplibre-gl";
+
+type MapLayerMouseHandler = (ev: MapMouseEvent & { features?: MapGeoJSONFeature[] }) => void;
 import { MapManagerCallbacks } from "./mapManager";
 import { BoundaryType, ElectionData } from "@/lib/types";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
 
-type MapMouseEventType = MapMouseEvent | MapLibreEvent;
+type MapMouseEventType = MapMouseEvent;
 
 type MapFeature = {
 	id?: string | number;
@@ -38,7 +39,7 @@ export class EventHandler {
 	private _mouseLeaveHandler: () => void;
 
 	constructor(
-		private map: mapboxgl.Map | maplibregl.Map,
+		private map: maplibregl.Map,
 		private callbacks: MapManagerCallbacks
 	) {
 		this.canvas = this.map.getCanvas();
@@ -54,10 +55,8 @@ export class EventHandler {
 
 		this.removeHandlers();
 
-		// Cast needed: mapboxgl.Map and maplibregl.Map have incompatible .on() overloads
-		// for layer-specific mouse events despite both supporting this API.
-		(this.map as mapboxgl.Map).on("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as Parameters<mapboxgl.Map["on"]>[2]);
-		(this.map as mapboxgl.Map).on("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
+		this.map.on("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as MapLayerMouseHandler);
+		this.map.on("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
 	}
 
 	nameProp(codeProp: string) {
@@ -127,8 +126,8 @@ export class EventHandler {
 
 	private removeHandlers(): void {
 		// Use the bound handlers for off
-		(this.map as mapboxgl.Map).off("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as Parameters<mapboxgl.Map["on"]>[2]);
-		(this.map as mapboxgl.Map).off("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
+		this.map.off("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as MapLayerMouseHandler);
+		this.map.off("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
 	}
 
 	destroy(): void {

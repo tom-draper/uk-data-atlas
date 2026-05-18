@@ -1,5 +1,7 @@
+// Mapbox GL support — disabled by default (mapbox-gl not installed).
+// To re-enable: npm install mapbox-gl, then set NEXT_PUBLIC_MAP_TYPE=mapbox.
 import { useCallback, useEffect, useRef } from "react";
-import mapboxgl from "mapbox-gl";
+import type maplibregl from "maplibre-gl";
 
 interface UseMapInitializationOptions {
 	style: string;
@@ -14,7 +16,7 @@ export function useMapboxInitialization({
 	zoom,
 	maxBounds,
 }: UseMapInitializationOptions) {
-	const mapRef = useRef<mapboxgl.Map | null>(null);
+	const mapRef = useRef<maplibregl.Map | null>(null);
 
 	const handleMapContainer = useCallback(
 		(el: HTMLDivElement | null) => {
@@ -26,6 +28,8 @@ export function useMapboxInitialization({
 				return;
 			}
 
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
+			const mapboxgl = require("mapbox-gl");
 			mapboxgl.accessToken = token;
 
 			try {
@@ -38,7 +42,7 @@ export function useMapboxInitialization({
 					preserveDrawingBuffer: true,
 				});
 			} catch (err) {
-				console.error("Failed to initialize map:", err);
+				console.error("Failed to initialize Mapbox map:", err);
 			}
 		},
 		[style, center, zoom],

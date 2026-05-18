@@ -3,7 +3,7 @@ import { MapManager } from "@/lib/helpers/mapManager";
 import { BoundaryGeojson, SelectedArea } from "../types";
 
 type UseMapManagerOptions = {
-	mapRef: React.RefObject<mapboxgl.Map | maplibregl.Map | null>;
+	mapRef: React.RefObject<maplibregl.Map | null>;
 	geojson: BoundaryGeojson | null;
 	interactionHandlers: {
 		onAreaHover: (area: SelectedArea | null) => void;
