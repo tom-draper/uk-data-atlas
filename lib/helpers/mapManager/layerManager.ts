@@ -19,7 +19,7 @@ type FillPaintConfig = {
 };
 
 export class LayerManager {
-	constructor(private map: mapboxgl.Map | maplibregl.Map) {}
+	constructor(private map: maplibregl.Map) {}
 
 	updateElectionLayers(
 		geojson: BoundaryGeojson,

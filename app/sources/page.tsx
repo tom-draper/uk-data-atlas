@@ -164,9 +164,15 @@ const datasets: Dataset[] = [
 
 export default function DatasetsPage() {
 	return (
-		<div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-8">
+		<div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-8"
+			style={{
+				backgroundImage: "url(/map-background.png)",
+				backgroundSize: "cover",
+				minHeight: "100vh",
+			}}
+		>
 			<div className="max-w-5xl mx-auto">
-				<h1 className="text-3xl font-bold text-gray-900 mb-8">
+				<h1 className="text-5xl font-bold text-white/40 text-shadow ml-4 mt-[12vh] mb-8">
 					Datasets
 				</h1>
 
@@ -196,7 +202,9 @@ export default function DatasetsPage() {
 								{datasets.map((dataset, idx) => (
 									<tr
 										key={idx}
-										className="border-b border-white/20 hover:bg-white/30 transition-colors duration-150 last:border-b-0"
+										className={`border-b border-white/20 hover:bg-white/30 transition-colors duration-150 last:border-b-0 ${
+  idx % 2 === 0 ? 'bg-white/10' : 'bg-white/30'
+}`}
 									>
 										<td className="px-6 py-4 text-sm font-medium text-gray-900">
 											{dataset.name}

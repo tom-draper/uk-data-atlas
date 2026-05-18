@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import MapInterface from "@components/MapInterface";
-import ErrorDisplay from "@/components/displays/ErrorDisplay";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useDatasets } from "@/lib/hooks/useDatasets";
@@ -17,20 +17,87 @@ const DEFAULT_ACTIVE_VIZ: ActiveViz = {
 
 const DEFAULT_LOCATION = "Greater Manchester";
 
-export default function AtlasClient() {
-	const [activeViz, setActiveViz] = useState<ActiveViz>(DEFAULT_ACTIVE_VIZ);
-	const [selectedLocation, setSelectedLocation] = useState(DEFAULT_LOCATION);
-	const [customDataset, setCustomDataset] = useState<CustomDataset | null>(
-		null,
+function parseActiveVizFromParams(params: URLSearchParams): ActiveViz | null {
+	const vizId = params.get("viz");
+	const datasetType = params.get("type");
+	const datasetYear = params.get("year");
+	if (!vizId || !datasetType || !datasetYear) return null;
+	const year = parseInt(datasetYear, 10);
+	if (isNaN(year)) return null;
+	return { vizId, datasetType: datasetType as ActiveViz["datasetType"], datasetYear: year };
+}
+
+function ErrorBanner({ errors, onDismiss }: { errors: string[]; onDismiss: () => void }) {
+	if (errors.length === 0) return null;
+	return (
+		<div className="fixed top-3 left-1/2 -translate-x-1/2 z-[60] max-w-md w-full mx-3 pointer-events-auto">
+			<div className="bg-red-50 border border-red-200 rounded-lg shadow-md px-4 py-3 flex items-start gap-3">
+				<span className="text-red-500 mt-0.5 shrink-0">⚠</span>
+				<div className="flex-1 min-w-0">
+					<p className="text-sm font-medium text-red-800">Some data failed to load</p>
+					<p className="text-xs text-red-600 mt-0.5 truncate">{errors[0]}</p>
+				</div>
+				<button
+					onClick={onDismiss}
+					className="text-red-400 hover:text-red-600 shrink-0 text-lg leading-none"
+					aria-label="Dismiss"
+				>
+					×
+				</button>
+			</div>
+		</div>
 	);
+}
+
+export default function AtlasClient() {
+	const router = useRouter();
+	const searchParams = useSearchParams();
+
+	const [activeViz, setActiveVizState] = useState<ActiveViz>(() => {
+		return parseActiveVizFromParams(searchParams) ?? DEFAULT_ACTIVE_VIZ;
+	});
+	const [selectedLocation, setSelectedLocationState] = useState(() => {
+		return searchParams.get("location") ?? DEFAULT_LOCATION;
+	});
+	const [customDataset, setCustomDataset] = useState<CustomDataset | null>(null);
+	const [errorsDismissed, setErrorsDismissed] = useState(false);
 
 	const { datasets, loading, errors } = useDatasets();
 
+	const updateParams = useCallback((location: string, viz: ActiveViz) => {
+		const params = new URLSearchParams();
+		params.set("location", location);
+		params.set("viz", viz.vizId);
+		params.set("type", viz.datasetType);
+		params.set("year", String(viz.datasetYear));
+		router.replace(`?${params.toString()}`, { scroll: false });
+	}, [router]);
+
+	const setActiveViz = useCallback((viz: ActiveViz) => {
+		setActiveVizState(viz);
+		updateParams(selectedLocation, viz);
+	}, [selectedLocation, updateParams]);
+
+	const setSelectedLocation = useCallback((location: string) => {
+		setSelectedLocationState(location);
+		updateParams(location, activeViz);
+	}, [activeViz, updateParams]);
+
+	useEffect(() => {
+		if (!searchParams.get("location")) {
+			updateParams(selectedLocation, activeViz);
+		}
+	// Only run on mount
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	if (loading) return <LoadingDisplay />;
-	if (errors.length > 0) return <ErrorDisplay message={errors[0]} />;
 
 	return (
 		<ErrorBoundary>
+			{!errorsDismissed && (
+				<ErrorBanner errors={errors} onDismiss={() => setErrorsDismissed(true)} />
+			)}
 			<MapInterface
 				datasets={datasets}
 				selectedLocation={selectedLocation}

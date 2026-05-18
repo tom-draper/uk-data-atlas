@@ -42,7 +42,7 @@ export class MapManager {
 	private cache: StatsCache;
 
 	constructor(
-		map: mapboxgl.Map | maplibregl.Map,
+		map: maplibregl.Map,
 		callbacks: MapManagerCallbacks,
 	) {
 		this.layerManager = new LayerManager(map);
