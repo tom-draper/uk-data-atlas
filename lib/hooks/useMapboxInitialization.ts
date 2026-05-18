@@ -1,7 +1,12 @@
-// Mapbox GL support — disabled by default (mapbox-gl not installed).
-// To re-enable: npm install mapbox-gl, then set NEXT_PUBLIC_MAP_TYPE=mapbox.
+// Mapbox GL support. Inactive by default — webpack aliases mapbox-gl to a stub
+// unless NEXT_PUBLIC_MAP_TYPE=mapbox.
+//
+// To enable:
+//   1. npm install mapbox-gl
+//   2. Set NEXT_PUBLIC_MAP_TYPE=mapbox and NEXT_PUBLIC_MAPBOX_TOKEN=<your token>
 import { useCallback, useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";
+//import mapboxgl from "mapbox-gl";
 
 interface UseMapInitializationOptions {
 	style: string;
@@ -28,11 +33,12 @@ export function useMapboxInitialization({
 				return;
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-require-imports
-			const mapboxgl = require("mapbox-gl");
 			mapboxgl.accessToken = token;
 
 			try {
+				// Cast needed: mapboxgl.Map and maplibregl.Map share the same API but have
+				// different type declarations. The stub Map type is used when mapbox-gl is
+				// not installed; the real mapboxgl.Map is used when it is.
 				mapRef.current = new mapboxgl.Map({
 					container: el,
 					style,
@@ -40,7 +46,7 @@ export function useMapboxInitialization({
 					zoom,
 					maxBounds,
 					preserveDrawingBuffer: true,
-				});
+				}) as unknown as maplibregl.Map;
 			} catch (err) {
 				console.error("Failed to initialize Mapbox map:", err);
 			}
