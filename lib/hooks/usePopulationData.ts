@@ -1,9 +1,8 @@
-// lib/hooks/usePopulationData.ts
 "use client";
-import { useEffect, useState } from "react";
 import { AgeData, PopulationDataset } from "@lib/types";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
+import { useDataLoader } from "./useDataLoader";
 
 interface CategoryPopulationWardData {
 	[wardCode: string]: {
@@ -83,57 +82,41 @@ const parsePopulationDataCombined = async (csvText: string) => {
 };
 
 export const usePopulationData = () => {
-	const [datasets, setDatasets] = useState<Record<string, PopulationDataset>>({});
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string>("");
+	return useDataLoader<PopulationDataset>(async () => {
+		const response = await fetch(withCDN("/data/population/Mid-2022 Ward 2023.csv"));
+		if (!response.ok)
+			throw new Error(`Failed to fetch population data: ${response.statusText}`);
 
-	useEffect(() => {
-		const loadPopulationData = async () => {
-			try {
-				const response = await fetch(withCDN("/data/population/Mid-2022 Ward 2023.csv"));
-				if (!response.ok)
-					throw new Error(`Failed to fetch population data: ${response.statusText}`);
+		const { malesData, femalesData, totalData } =
+			await parsePopulationDataCombined(await response.text());
 
-				const { malesData, femalesData, totalData } =
-					await parsePopulationDataCombined(await response.text());
+		const allWardCodes = new Set([
+			...Object.keys(femalesData),
+			...Object.keys(malesData),
+			...Object.keys(totalData),
+		]);
 
-				const allWardCodes = new Set([
-					...Object.keys(femalesData),
-					...Object.keys(malesData),
-					...Object.keys(totalData),
-				]);
+		const combinedData: PopulationDataset["data"] = {};
+		for (const wardCode of allWardCodes) {
+			combinedData[wardCode] = {
+				total: totalData[wardCode]?.ageData || {},
+				males: malesData[wardCode]?.ageData || {},
+				females: femalesData[wardCode]?.ageData || {},
+				wardName: totalData[wardCode]?.wardName || "",
+				ladCode: totalData[wardCode]?.laCode || "",
+				ladName: totalData[wardCode]?.laName || "",
+			};
+		}
 
-				const combinedData: PopulationDataset["data"] = {};
-				for (const wardCode of allWardCodes) {
-					combinedData[wardCode] = {
-						total: totalData[wardCode]?.ageData || {},
-						males: malesData[wardCode]?.ageData || {},
-						females: femalesData[wardCode]?.ageData || {},
-						wardName: totalData[wardCode]?.wardName || "",
-						ladCode: totalData[wardCode]?.laCode || "",
-						ladName: totalData[wardCode]?.laName || "",
-					};
-				}
-
-				setDatasets({
-					2022: {
-						id: "population2022",
-						type: "population",
-						year: 2022,
-						boundaryYear: 2023,
-						boundaryType: "ward",
-						data: combinedData,
-					},
-				});
-				setLoading(false);
-			} catch (err) {
-				setError(err instanceof Error ? err.message : "Failed to load population data");
-				setLoading(false);
-			}
+		return {
+			2022: {
+				id: "population2022",
+				type: "population",
+				year: 2022,
+				boundaryYear: 2023,
+				boundaryType: "ward",
+				data: combinedData,
+			},
 		};
-
-		loadPopulationData();
-	}, []);
-
-	return { datasets, loading, error };
+	});
 };

@@ -95,3 +95,11 @@ export interface ConstituencyStats {
 export interface AggregatedLocalElectionData extends WardStats {}
 
 export interface AggregatedGeneralElectionData extends ConstituencyStats {}
+
+export interface ProcessedPartyData {
+	key: string;
+	name: string;
+	color: string;
+	votes: number;
+	percentage: number;
+}

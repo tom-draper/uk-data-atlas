@@ -2,8 +2,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { PARTIES } from "@/lib/data/election/parties";
-import { calculateTurnout } from "@/lib/helpers/generalElection";
+import { calculateTurnout, processPartyVotes } from "@/lib/helpers/generalElection";
 import {
 	ActiveViz,
 	AggregatedLocalElectionData,
@@ -12,18 +11,11 @@ import {
 	LocalElectionDataset,
 	PartyVotes,
 	SelectedArea,
+	ProcessedPartyData,
 } from "@lib/types";
 import LocalElectionResultChart from "./LocalElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useChartVisibility, ChartKey } from "@/lib/context/ChartVisibilityContext";
-
-interface ProcessedPartyData {
-	key: string;
-	name: string;
-	color: string;
-	votes: number;
-	percentage: number;
-}
 
 interface ProcessedYearData {
 	year: number;
@@ -72,7 +64,6 @@ const useLocalElectionData = (
 				const wardCode = selectedArea.code;
 				let data = dataset.data[wardCode];
 
-				// If no data found and we have a code mapper, try to find the equivalent code for this year
 				if (!data && getCodeForYear) {
 					const mappedCode = getCodeForYear("ward", wardCode, year);
 					if (mappedCode) {
@@ -138,11 +129,7 @@ const useLocalElectionData = (
 				const agg = aggregatedData[year];
 				if (agg) {
 					rawPartyVotes = agg.partyVotes;
-					turnout = calculateTurnout(
-						agg.totalVotes,
-						0,
-						agg.electorate,
-					);
+					turnout = calculateTurnout(agg.totalVotes, 0, agg.electorate);
 				}
 			}
 
@@ -157,33 +144,8 @@ const useLocalElectionData = (
 				};
 			}
 
-			// Process Votes & Percentages
-			const totalVotes = Object.values(rawPartyVotes).reduce<number>((a, b) => a + (b ?? 0), 0);
-
-			if (totalVotes === 0) {
-				return {
-					year,
-					dataset,
-					partyData: [],
-					totalVotes: 0,
-					turnout,
-					hasData: false,
-				};
-			}
-
-			const partyData = dataset.partyInfo
-				.map((party) => {
-					const votes = rawPartyVotes![party.key] || 0;
-					return {
-						key: party.key,
-						name: party.name,
-						color: PARTIES[party.key]?.color || "#999",
-						votes,
-						percentage: (votes / totalVotes) * 100,
-					};
-				})
-				.filter((p) => p.percentage > 0)
-				.sort((a, b) => b.votes - a.votes);
+			const partyData = processPartyVotes(rawPartyVotes, dataset.partyInfo);
+			const totalVotes = partyData.reduce((a, p) => a + p.votes, 0);
 
 			return {
 				year,
@@ -191,7 +153,7 @@ const useLocalElectionData = (
 				partyData,
 				totalVotes,
 				turnout,
-				hasData: true,
+				hasData: partyData.length > 0,
 			};
 		});
 	}, [availableDatasets, aggregatedData, selectedArea, getCodeForYear, getWardsForLad]);

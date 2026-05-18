@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
 import { LifeExpectancyDataset, LifeExpectancyRecord } from "@lib/types";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
+import { useDataLoader } from "./useDataLoader";
 
 function parsePairedRows(
 	rows: Record<string, string>[],
@@ -38,88 +38,71 @@ function parsePairedRows(
 }
 
 export const useLifeExpectancyData = (enableHLE = true) => {
-	const [datasets, setDatasets] = useState<Record<string, LifeExpectancyDataset>>({});
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string>("");
-	const enableHLERef = useRef(enableHLE);
+	return useDataLoader<LifeExpectancyDataset>(async () => {
+		const fetches: Promise<Response>[] = [
+			fetch(withCDN("/data/life-expectancy/lifeexpectancylocalareas.csv")),
+		];
+		if (enableHLE) {
+			fetches.push(fetch(withCDN("/data/life-expectancy/healthylifeexpectancyuk.csv")));
+		}
 
-	useEffect(() => {
-		const includeHLE = enableHLERef.current;
-		const loadData = async () => {
-			try {
-				const fetches: Promise<Response>[] = [
-					fetch(withCDN("/data/life-expectancy/lifeexpectancylocalareas.csv")),
-				];
-				if (includeHLE) {
-					fetches.push(fetch(withCDN("/data/life-expectancy/healthylifeexpectancyuk.csv")));
-				}
+		const [leRes, hleRes] = await Promise.all(fetches);
 
-				const [leRes, hleRes] = await Promise.all(fetches);
+		if (!leRes.ok) throw new Error(`Failed to fetch LE data: ${leRes.statusText}`);
+		if (enableHLE && hleRes && !hleRes.ok)
+			throw new Error(`Failed to fetch HLE data: ${hleRes.statusText}`);
 
-				if (!leRes.ok) throw new Error(`Failed to fetch LE data: ${leRes.statusText}`);
-				if (includeHLE && hleRes && !hleRes.ok) throw new Error(`Failed to fetch HLE data: ${hleRes.statusText}`);
+		const leText = await leRes.text();
+		const { data: leData } = await parseCsv(leText, { header: true });
 
-				const leText = await leRes.text();
-				const { data: leData } = await parseCsv(leText, { header: true });
+		const leRecords = parsePairedRows(
+			leData as Record<string, string>[],
+			"Area code", "Area name", "Sex", "Life expectancy",
+		);
 
-				const leRecords = parsePairedRows(
-					leData as Record<string, string>[],
-					"Area code", "Area name", "Sex", "Life expectancy",
-				);
-
-				const result: Record<string, LifeExpectancyDataset> = {
-					le: {
-						id: "le",
-						year: 2022,
-						type: "lifeExpectancy",
-						boundaryType: "localAuthority",
-						boundaryYear: 2023,
-						dataPeriod: "2020–2022",
-						label: "Life Expectancy",
-						data: leRecords,
-						metadata: {
-							source: "Office for National Statistics. Life expectancy for local areas in England, Northern Ireland and Wales: 2020 to 2022.",
-							notes: ["Life expectancy at birth. England, Wales and Northern Ireland only."],
-						},
-					},
-				};
-
-				if (includeHLE && hleRes) {
-					const hleText = await hleRes.text();
-					const { data: hleDataAll } = await parseCsv(hleText, { header: true, skipLines: 6 });
-					const hleData = (hleDataAll as Record<string, string>[]).filter(
-						(r) =>
-							r["Period"]?.trim() === "2020 to 2022" &&
-							r["Age group"]?.trim() === "<1" &&
-							r["Area type"]?.trim() === "Local Areas",
-					);
-					const hleRecords = parsePairedRows(hleData, "Area code", "Area name", "Sex", "HLE");
-					result.hle = {
-						id: "hle",
-						year: 2022,
-						type: "lifeExpectancy",
-						boundaryType: "localAuthority",
-						boundaryYear: 2023,
-						dataPeriod: "2020–2022",
-						label: "Healthy Life Expectancy",
-						data: hleRecords,
-						metadata: {
-							source: "Office for National Statistics. Health state life expectancies, UK: 2020 to 2022.",
-							notes: ["Healthy life expectancy at birth. UK local authorities."],
-						},
-					};
-				}
-
-				setDatasets(result);
-				setLoading(false);
-			} catch (err: any) {
-				setError(err.message || "Error loading life expectancy data");
-				setLoading(false);
-			}
+		const result: Record<string, LifeExpectancyDataset> = {
+			le: {
+				id: "le",
+				year: 2022,
+				type: "lifeExpectancy",
+				boundaryType: "localAuthority",
+				boundaryYear: 2023,
+				dataPeriod: "2020–2022",
+				label: "Life Expectancy",
+				data: leRecords,
+				metadata: {
+					source: "Office for National Statistics. Life expectancy for local areas in England, Northern Ireland and Wales: 2020 to 2022.",
+					notes: ["Life expectancy at birth. England, Wales and Northern Ireland only."],
+				},
+			},
 		};
 
-		loadData();
-	}, []);
+		if (enableHLE && hleRes) {
+			const hleText = await hleRes.text();
+			const { data: hleDataAll } = await parseCsv(hleText, { header: true, skipLines: 6 });
+			const hleData = (hleDataAll as Record<string, string>[]).filter(
+				(r) =>
+					r["Period"]?.trim() === "2020 to 2022" &&
+					r["Age group"]?.trim() === "<1" &&
+					r["Area type"]?.trim() === "Local Areas",
+			);
+			const hleRecords = parsePairedRows(hleData, "Area code", "Area name", "Sex", "HLE");
+			result.hle = {
+				id: "hle",
+				year: 2022,
+				type: "lifeExpectancy",
+				boundaryType: "localAuthority",
+				boundaryYear: 2023,
+				dataPeriod: "2020–2022",
+				label: "Healthy Life Expectancy",
+				data: hleRecords,
+				metadata: {
+					source: "Office for National Statistics. Health state life expectancies, UK: 2020 to 2022.",
+					notes: ["Healthy life expectancy at birth. UK local authorities."],
+				},
+			};
+		}
 
-	return { datasets, loading, error };
+		return result;
+	});
 };
