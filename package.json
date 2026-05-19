@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "format": "prettier --write \"**/*.{ts,tsx}\" --use-tabs --tab-width 4"
+    "format": "prettier --write \"**/*.{ts,tsx}\" --use-tabs --tab-width 4",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@maptiler/sdk": "^3.11.2",
@@ -30,7 +32,9 @@
     "baseline-browser-mapping": "^2.10.30",
     "prettier": "^3.8.3",
     "tailwindcss": "^4.3.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.6"
   },
   "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499"
 }
