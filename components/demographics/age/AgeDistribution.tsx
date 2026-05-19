@@ -76,6 +76,7 @@ function AgeDistribution({
 		//  Handle Aggregated Data Case (no area selected)
 		if (selectedArea === null && aggregatedData) {
 			const data = aggregatedData[dataset.year];
+			if (!data) return { medianAge: null, ageGroups: [], total: 0, counts: new Uint32Array(100), maxCount: 0 };
 			const counts = new Uint32Array(100);
 
 			if (data.ages) {

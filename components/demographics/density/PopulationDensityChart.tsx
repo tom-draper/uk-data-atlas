@@ -168,6 +168,7 @@ function PopulationDensityChart({
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			const data = aggregatedData[dataset.year];
+			if (!data) return { density: null, areaSqKm: null, total: null };
 			return {
 				density: data.density,
 				areaSqKm: data.totalArea,
