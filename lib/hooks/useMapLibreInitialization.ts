@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -16,6 +16,7 @@ export function useMapLibreInitialization({
 	maxBounds,
 }: UseMapLibreInitializationOptions) {
 	const mapRef = useRef<maplibregl.Map | null>(null);
+	const [mapReady, setMapReady] = useState(false);
 
 	const handleMapContainer = useCallback(
 		(el: HTMLDivElement | null) => {
@@ -30,6 +31,7 @@ export function useMapLibreInitialization({
 					maxBounds,
 					preserveDrawingBuffer: true,
 				} as any);
+				setMapReady(true);
 			} catch (err) {
 				console.error("Failed to initialize MapLibre map:", err);
 			}
@@ -37,15 +39,15 @@ export function useMapLibreInitialization({
 		[style, center, zoom],
 	);
 
-	// Cleanup on unmount
 	useEffect(() => {
 		return () => {
 			if (mapRef.current) {
 				mapRef.current.remove();
 				mapRef.current = null;
+				setMapReady(false);
 			}
 		};
 	}, []);
 
-	return { mapRef, handleMapContainer };
+	return { mapRef, handleMapContainer, mapReady };
 }

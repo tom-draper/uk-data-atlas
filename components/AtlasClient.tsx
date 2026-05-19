@@ -61,8 +61,17 @@ export default function AtlasClient() {
 	});
 	const [customDataset, setCustomDataset] = useState<CustomDataset | null>(null);
 	const [errorsDismissed, setErrorsDismissed] = useState(false);
+	const [boundaryErrors, setBoundaryErrors] = useState<string[]>([]);
 
 	const { datasets, loading, errors } = useDatasets();
+
+	const handleBoundaryError = useCallback((error: Error) => {
+		setBoundaryErrors((prev) =>
+			prev.includes(error.message) ? prev : [...prev, error.message],
+		);
+	}, []);
+
+	const allErrors = [...errors, ...boundaryErrors];
 
 	const updateParams = useCallback((location: string, viz: ActiveViz) => {
 		const params = new URLSearchParams();
@@ -91,12 +100,18 @@ export default function AtlasClient() {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		document.title = selectedLocation
+			? `${selectedLocation} - UK Data Atlas`
+			: "UK Data Atlas";
+	}, [selectedLocation]);
+
 	if (loading) return <LoadingDisplay />;
 
 	return (
 		<ErrorBoundary>
 			{!errorsDismissed && (
-				<ErrorBanner errors={errors} onDismiss={() => setErrorsDismissed(true)} />
+				<ErrorBanner errors={allErrors} onDismiss={() => setErrorsDismissed(true)} />
 			)}
 			<MapInterface
 				datasets={datasets}
@@ -106,6 +121,7 @@ export default function AtlasClient() {
 				setActiveViz={setActiveViz}
 				customDataset={customDataset}
 				setCustomDataset={setCustomDataset}
+				onError={handleBoundaryError}
 			/>
 		</ErrorBoundary>
 	);
