@@ -19,16 +19,16 @@ describe("calculateMedianAge", () => {
 		expect(calculateMedianAge({ total: null } as any)).toBeNull();
 	});
 	it("returns 0 when all population is age 0", () => {
-		const ward = { total: { "0": 1000 } } as PopulationWardData;
+		const ward = { total: { "0": 1000 } } as unknown as PopulationWardData;
 		expect(calculateMedianAge(ward)).toBe(0);
 	});
 	it("returns correct median for uniform distribution", () => {
 		// Equal counts at age 20 and 40 → median should be 20 (first age hitting 50%)
-		const ward = { total: { "20": 100, "40": 100 } } as PopulationWardData;
+		const ward = { total: { "20": 100, "40": 100 } } as unknown as PopulationWardData;
 		expect(calculateMedianAge(ward)).toBe(20);
 	});
 	it("returns 90 when all population is at age 90+", () => {
-		const ward = { total: { "90": 1000 } } as PopulationWardData;
+		const ward = { total: { "90": 1000 } } as unknown as PopulationWardData;
 		expect(calculateMedianAge(ward)).toBe(90);
 	});
 });

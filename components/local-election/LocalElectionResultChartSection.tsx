@@ -89,7 +89,7 @@ const useLocalElectionData = (
 
 				let cached = yearCache.get(year);
 				if (!yearCache.has(year)) {
-					const wardCodes = getWardsForLad(ladCode, 2022);
+					const wardCodes = getWardsForLad(ladCode, year);
 					const aggregatedVotes: Record<string, number> = {};
 					let totalElectorate = 0;
 

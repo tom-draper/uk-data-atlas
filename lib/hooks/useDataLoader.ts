@@ -20,7 +20,7 @@ export function useDataLoader<T>(
 				setError(err?.message || "Error loading data");
 				setLoading(false);
 			});
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [enabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return { datasets, loading, error };
 }
