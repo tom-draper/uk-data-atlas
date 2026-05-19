@@ -32,10 +32,6 @@ export function getColorForAge(medianAge: number, mapOptions: PopulationOptions,
 	return colorFromRange(medianAge, mapOptions, themeId, false);
 }
 
-export function getColor(normalisedValue: number, themeId = "viridis") {
-	return getThemeColor(1 - normalisedValue, themeId);
-}
-
 export function getColorForDensity(density: number, mapOptions: DensityOptions, themeId = "viridis") {
 	return colorFromRange(density, mapOptions, themeId, false);
 }

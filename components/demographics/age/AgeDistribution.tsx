@@ -177,7 +177,7 @@ function AgeDistribution({
 		// Handle Local Authority Selection
 		if (selectedArea && selectedArea.type === "localAuthority" && codeMapper?.getWardsForLad) {
 			return getLadCachedValue(ageDistributionCache, selectedArea.code, dataset.year, () => {
-				const wardCodes = codeMapper.getWardsForLad!(selectedArea.code, 2024);
+				const wardCodes = codeMapper.getWardsForLad!(selectedArea.code, dataset.boundaryYear);
 
 				if (wardCodes.length === 0) {
 					return { medianAge: 0, ageGroups: EMPTY_AGE_GROUPS, total: 0, counts: new Uint32Array(100), maxCount: 0 };

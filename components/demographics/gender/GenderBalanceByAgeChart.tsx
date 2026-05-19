@@ -87,7 +87,7 @@ function GenderBalanceByAgeChart({
 		// Handle Local Authority Selection
 		if (selectedArea && selectedArea.type === "localAuthority" && codeMapper?.getWardsForLad) {
 			return getLadCachedValue(genderBalanceCache, selectedArea.code, dataset.year, () => {
-				const wardCodes = codeMapper.getWardsForLad!(selectedArea.code, 2022);
+				const wardCodes = codeMapper.getWardsForLad!(selectedArea.code, dataset.boundaryYear);
 
 				if (wardCodes.length === 0) return { ageData: [], percentages: [] };
 

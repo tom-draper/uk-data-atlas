@@ -206,7 +206,7 @@ function PopulationDensityChart({
 		// Handle Local Authority Selection
 		if (selectedArea && selectedArea.type === "localAuthority" && codeMapper?.getWardsForLad) {
 			return getLadCachedValue(densityCache, selectedArea.code, dataset.year, () => {
-				const wardCodes = codeMapper.getWardsForLad!(selectedArea.code, 2024);
+				const wardCodes = codeMapper.getWardsForLad!(selectedArea.code, dataset.boundaryYear);
 
 				if (wardCodes.length === 0) return { density: null, areaSqKm: null, total: null };
 
