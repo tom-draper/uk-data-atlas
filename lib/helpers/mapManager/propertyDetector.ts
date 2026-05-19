@@ -22,7 +22,7 @@ export function detectWardCodeForYear(
 	if (!firstFeature) return WARD_CODE_KEYS[0];
 
 	const yearSuffix = year.toString().slice(-2);
-	const specificKey = WARD_CODE_KEYS.find((key) => key.endsWith(yearSuffix));
+	const specificKey = WARD_CODE_KEYS.find((key) => key === `WD${yearSuffix}CD`);
 	if (specificKey && specificKey in firstFeature.properties) return specificKey;
 
 	for (const key of WARD_CODE_KEYS) {
