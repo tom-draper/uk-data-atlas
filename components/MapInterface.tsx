@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
@@ -46,6 +46,23 @@ export default function MapInterface({
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
 
 	const codeMapper = useCodeMapper();
+
+	// Register ward→LAD mappings from election CSVs (which have explicit LAD codes)
+	// to cover wards whose names changed between boundary years (e.g. 2021 Bury/Rochdale)
+	useEffect(() => {
+		const mappings: Record<string, string> = {};
+		for (const dataset of Object.values(datasets.localElection)) {
+			for (const [wardCode, ward] of Object.entries(dataset.data)) {
+				if (wardCode && ward.localAuthorityCode && ward.localAuthorityCode !== "Unknown") {
+					mappings[wardCode] = ward.localAuthorityCode;
+				}
+			}
+		}
+		if (Object.keys(mappings).length > 0) {
+			codeMapper.addWardLadMappings(mappings);
+		}
+	}, [datasets.localElection, codeMapper.addWardLadMappings]);
+
 	const {
 		boundaryData,
 		boundaryCodes,
