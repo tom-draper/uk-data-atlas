@@ -10,6 +10,7 @@ import {
 import AgeDistributionChart from "./AgeDistributionChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
+import { resolveWardData, getLadCachedValue } from "@/lib/helpers/demographicData";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
@@ -48,8 +49,6 @@ for (let i = 0; i < 10; i++) {
 }
 const NORMALIZED_WEIGHTS = DECAY_WEIGHTS.map((w) => w / totalWeight);
 
-// Cache for LAD aggregations (bounded to prevent unbounded memory growth)
-const MAX_LAD_CACHE_ENTRIES = 50;
 const ageDistributionCache = new Map<string, Map<number, any>>();
 
 const EMPTY_AGE_GROUPS: AgeGroups = {
@@ -101,20 +100,7 @@ function AgeDistribution({
 
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
-			const wardCode = selectedArea.code;
-			let wardData = dataset.data[wardCode];
-
-			// Try to map ward code if not found
-			if (!wardData && codeMapper?.getCodeForYear) {
-				const mappedCode = codeMapper.getCodeForYear(
-					"ward",
-					wardCode,
-					dataset.boundaryYear,
-				);
-				if (mappedCode) {
-					wardData = dataset.data[mappedCode];
-				}
-			}
+			const wardData = resolveWardData(dataset, selectedArea.code, codeMapper);
 
 			if (!wardData) {
 				return {
@@ -188,123 +174,52 @@ function AgeDistribution({
 		}
 
 		// Handle Local Authority Selection
-		if (
-			selectedArea &&
-			selectedArea.type === "localAuthority" &&
-			codeMapper?.getWardsForLad
-		) {
-			const ladCode = selectedArea.code;
-			const cacheKey = `lad-${ladCode}`;
+		if (selectedArea && selectedArea.type === "localAuthority" && codeMapper?.getWardsForLad) {
+			return getLadCachedValue(ageDistributionCache, selectedArea.code, dataset.year, () => {
+				const wardCodes = codeMapper.getWardsForLad!(selectedArea.code, 2024);
 
-			if (!ageDistributionCache.has(cacheKey)) {
-				if (ageDistributionCache.size >= MAX_LAD_CACHE_ENTRIES) {
-					ageDistributionCache.delete(ageDistributionCache.keys().next().value!);
+				if (wardCodes.length === 0) {
+					return { medianAge: 0, ageGroups: EMPTY_AGE_GROUPS, total: 0, counts: new Uint32Array(100), maxCount: 0 };
 				}
-				ageDistributionCache.set(cacheKey, new Map());
-			}
-			const yearCache = ageDistributionCache.get(cacheKey)!;
 
-			if (yearCache.has(dataset.year)) {
-				return yearCache.get(dataset.year);
-			}
-
-			// Get all wards in this LAD
-			const wardCodes = codeMapper.getWardsForLad(ladCode, 2024);
-
-			if (wardCodes.length === 0) {
-				const emptyResult = {
-					medianAge: 0,
-					ageGroups: EMPTY_AGE_GROUPS,
-					total: 0,
-					counts: new Uint32Array(100),
-					maxCount: 0,
-				};
-				yearCache.set(dataset.year, emptyResult);
-				return emptyResult;
-			}
-
-			// Aggregate age counts across all wards
-			const aggregatedCounts = new Uint32Array(100);
-
-			for (const wardCode of wardCodes) {
-				let wardData = dataset.data?.[wardCode];
-
-				// Try to map to the dataset's year if ward code doesn't exist
-				if (!wardData && codeMapper?.getCodeForYear) {
-					const mappedCode = codeMapper.getCodeForYear(
-						"ward",
-						wardCode,
-						dataset.boundaryYear,
-					);
-					if (mappedCode) {
-						wardData = dataset.data[mappedCode];
+				// Aggregate age counts across all wards
+				const aggregatedCounts = new Uint32Array(100);
+				for (const wardCode of wardCodes) {
+					const wardData = resolveWardData(dataset, wardCode, codeMapper);
+					if (wardData?.total) {
+						for (let i = 0; i < 90; i++) {
+							aggregatedCounts[i] += wardData.total[AGE_STRING_KEYS[i]] || 0;
+						}
+						const age90Plus = wardData.total["90"] || 0;
+						for (let i = 90; i < 100; i++) {
+							aggregatedCounts[i] += Math.round(age90Plus * NORMALIZED_WEIGHTS[i - 90]);
+						}
 					}
 				}
 
-				if (wardData?.total) {
-					// Add ages 0-89
-					for (let i = 0; i < 90; i++) {
-						const count = wardData.total[AGE_STRING_KEYS[i]] || 0;
-						aggregatedCounts[i] += count;
-					}
+				let totalPopulation = 0;
+				let max = 0;
+				for (let i = 0; i < 100; i++) {
+					totalPopulation += aggregatedCounts[i];
+					if (aggregatedCounts[i] > max) max = aggregatedCounts[i];
+				}
 
-					// Apply 90+ smoothing for this ward and add to aggregate
-					const age90Plus = wardData.total["90"] || 0;
-					for (let i = 90; i < 100; i++) {
-						const count = Math.round(
-							age90Plus * NORMALIZED_WEIGHTS[i - 90],
-						);
-						aggregatedCounts[i] += count;
+				let cumulative = 0;
+				const halfPopulation = totalPopulation / 2;
+				let median = 0;
+				let medianFound = false;
+				const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
+				for (let i = 0; i < 100; i++) {
+					const count = aggregatedCounts[i];
+					currentAgeGroups[AGE_GROUP_KEYS[i]] += count;
+					if (!medianFound) {
+						cumulative += count;
+						if (cumulative >= halfPopulation) { median = i; medianFound = true; }
 					}
 				}
-			}
 
-			// Calculate statistics from aggregated counts
-			let totalPopulation = 0;
-			let max = 0;
-
-			for (let i = 0; i < 100; i++) {
-				totalPopulation += aggregatedCounts[i];
-				if (aggregatedCounts[i] > max) max = aggregatedCounts[i];
-			}
-
-			// Compute median age
-			let cumulative = 0;
-			const halfPopulation = totalPopulation / 2;
-			let median = 0;
-			let medianFound = false;
-
-			// Fill grouped buckets
-			const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
-
-			for (let i = 0; i < 100; i++) {
-				const count = aggregatedCounts[i];
-
-				// Grouping logic
-				const key = AGE_GROUP_KEYS[i];
-				currentAgeGroups[key] += count;
-
-				// Median logic
-				if (!medianFound) {
-					cumulative += count;
-					if (cumulative >= halfPopulation) {
-						median = i;
-						medianFound = true;
-					}
-				}
-			}
-
-			const result = {
-				medianAge: median,
-				ageGroups: currentAgeGroups,
-				total: totalPopulation,
-				counts: aggregatedCounts,
-				maxCount: max,
-			};
-
-			// Cache the result
-			yearCache.set(dataset.year, result);
-			return result;
+				return { medianAge: median, ageGroups: currentAgeGroups, total: totalPopulation, counts: aggregatedCounts, maxCount: max };
+			});
 		}
 
 		// Handle Missing Data or unsupported area types

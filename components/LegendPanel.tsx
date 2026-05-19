@@ -1,11 +1,12 @@
 // components/LegendPanel.tsx
 "use client";
 
-import { memo, useMemo, useState, useRef, useEffect } from "react";
+import { memo, useMemo, useState } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions, CategoryOptions } from "@/lib/types/mapOptions";
 import { ActiveViz, AggregatedData, Dataset, PartyCode, EthnicityCode, Ethnicity, EthnicityCategory, WardStats, ConstituencyStats } from "@/lib/types";
+import { RangeControl } from "./controls/RangeControl";
 
 type PartyDisplayData = { id: PartyCode; color: string; name: string };
 
@@ -33,137 +34,65 @@ interface LegendPanelProps {
 	) => void;
 }
 
-interface RangeControlProps {
-	min: number;
-	max: number;
-	currentMin: number;
-	currentMax: number;
-	gradient: string;
-	labels: string[];
-	onRangeInput: (min: number, max: number) => void;
-	onRangeChangeEnd: () => void;
-}
+// Renders a scrollable list of selectable colour-coded categories (parties or ethnicities)
+const renderCategoryLegend = (
+	items: { id: string; color: string; name: string }[],
+	isPercentageMode: boolean,
+	selectedId: string | undefined,
+	onItemClick: (id: string) => void,
+) => (
+	<div>
+		{items.map((item) => {
+			const isSelected = isPercentageMode && selectedId === item.id;
+			return (
+				<button
+					key={item.id}
+					onClick={() => onItemClick(item.id)}
+					className={`flex items-center gap-2 px-1 py-0.75 w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? "ring-1" : "hover:bg-gray-100/30"}`}
+					style={isSelected ? ({ backgroundColor: `${item.color}15`, "--tw-ring-color": `${item.color}80` } as React.CSSProperties) : {}}
+				>
+					<div
+						className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? "opacity-100 ring-1" : "opacity-100"}`}
+						style={{ backgroundColor: item.color, ...(isSelected ? ({ "--tw-ring-color": item.color } as React.CSSProperties) : {}) }}
+					/>
+					<span className={`text-xs ${isSelected ? "text-gray-700" : "text-gray-500"}`}>
+						{item.name}
+					</span>
+				</button>
+			);
+		})}
+	</div>
+);
 
-function RangeControl({
-	min,
-	max,
-	currentMin,
-	currentMax,
+// Secondary panel for the percentage-range slider shown when a party/ethnicity is selected
+const PercentageRangePanel = memo(function PercentageRangePanel({
+	range,
 	gradient,
-	labels,
 	onRangeInput,
 	onRangeChangeEnd,
-}: RangeControlProps) {
-	const [isDraggingMin, setIsDraggingMin] = useState(false);
-	const [isDraggingMax, setIsDraggingMax] = useState(false);
-	const containerRef = useRef<HTMLDivElement>(null);
-
-	const getValueFromPosition = (clientY: number) => {
-		if (!containerRef.current) return currentMax;
-		const rect = containerRef.current.getBoundingClientRect();
-		const relativeY = clientY - rect.top;
-		const percentage = Math.max(0, Math.min(1, relativeY / rect.height));
-		return max - percentage * (max - min);
-	};
-
-	useEffect(() => {
-		const handleMouseMove = (e: MouseEvent) => {
-			if (isDraggingMin) {
-				const newMin = Math.min(
-					getValueFromPosition(e.clientY),
-					currentMax - (max - min) * 0.05,
-				);
-				onRangeInput(Math.max(newMin, min), currentMax);
-			} else if (isDraggingMax) {
-				const newMax = Math.max(
-					getValueFromPosition(e.clientY),
-					currentMin + (max - min) * 0.05,
-				);
-				onRangeInput(currentMin, Math.min(newMax, max));
-			}
-		};
-
-		const handleMouseUp = () => {
-			if (isDraggingMin || isDraggingMax) {
-				setIsDraggingMin(false);
-				setIsDraggingMax(false);
-				onRangeChangeEnd();
-			}
-		};
-
-		if (isDraggingMin || isDraggingMax) {
-			document.addEventListener("mousemove", handleMouseMove);
-			document.addEventListener("mouseup", handleMouseUp);
-			return () => {
-				document.removeEventListener("mousemove", handleMouseMove);
-				document.removeEventListener("mouseup", handleMouseUp);
-			};
-		}
-	}, [
-		isDraggingMin,
-		isDraggingMax,
-		currentMin,
-		currentMax,
-		min,
-		max,
-		onRangeInput,
-		onRangeChangeEnd,
-	]);
-
-	const maxPosition = ((max - currentMax) / (max - min)) * 100;
-	const minPosition = ((max - currentMin) / (max - min)) * 100;
-
+}: {
+	range: { min: number; max: number };
+	gradient: string;
+	onRangeInput: (min: number, max: number) => void;
+	onRangeChangeEnd: () => void;
+}) {
 	return (
-		<div className="p-1 relative select-none">
-			<div
-				ref={containerRef}
-				className="h-40 w-6 rounded relative"
-				style={{ background: gradient }}
-			>
-				{/* Max handle (top) */}
-				<div
-					className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
-					style={{
-						top: `${maxPosition}%`,
-						transform: "translateY(-50%)",
-					}}
-					onMouseDown={(e) => {
-						e.preventDefault();
-						setIsDraggingMax(true);
-					}}
-				>
-					<div className="absolute -left-1 -top-1.5 w-8 h-4 flex items-center justify-center">
-						<div className="w-2 h-2 bg-white rounded-full shadow-md border border-gray-300 group-hover:scale-125 transition-transform" />
-					</div>
-				</div>
-
-				{/* Min handle (bottom) */}
-				<div
-					className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
-					style={{
-						top: `${minPosition}%`,
-						transform: "translateY(-50%)",
-					}}
-					onMouseDown={(e) => {
-						e.preventDefault();
-						setIsDraggingMin(true);
-					}}
-				>
-					<div className="absolute -left-1 -top-1.5 w-8 h-4 flex items-center justify-center">
-						<div className="w-2 h-2 bg-white rounded-full shadow-md border border-gray-300 group-hover:scale-125 transition-transform" />
-					</div>
-				</div>
-			</div>
-
-			{/* Labels - Restored original styling */}
-			<div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8 pointer-events-none">
-				{labels.map((label, i) => (
-					<span key={i}>{label}</span>
-				))}
+		<div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
+			<div className="bg-white/20 p-1 overflow-hidden">
+				<RangeControl
+					min={0}
+					max={100}
+					currentMin={range.min}
+					currentMax={range.max}
+					gradient={gradient}
+					labels={[`${range.max.toFixed(0)}%`, "", "", "", `${range.min.toFixed(0)}%`]}
+					onRangeInput={onRangeInput}
+					onRangeChangeEnd={onRangeChangeEnd}
+				/>
 			</div>
 		</div>
 	);
-}
+});
 
 export default memo(function LegendPanel({
 	activeDataset,
@@ -183,7 +112,6 @@ export default memo(function LegendPanel({
 		[themeId],
 	);
 
-	// Generated gradient based on theme colors
 	const verticalThemeGradient = useMemo(
 		() => `linear-gradient(to bottom, ${activeTheme.colors.join(", ")})`,
 		[activeTheme],
@@ -206,7 +134,6 @@ export default memo(function LegendPanel({
 		if (!datasetData) return [];
 
 		const yearData = datasetData[activeDataset.year];
-
 		if (!yearData?.partyVotes) return [];
 
 		return Object.entries(yearData.partyVotes as Record<PartyCode, number>)
@@ -221,27 +148,19 @@ export default memo(function LegendPanel({
 
 	const ethnicities = useMemo(() => {
 		if (!activeDataset || activeDataset.type !== "ethnicity") return [];
-		const ethnicityData = aggregatedData?.ethnicity;
-		const yearData = ethnicityData?.[activeDataset.year];
-
+		const yearData = aggregatedData?.ethnicity?.[activeDataset.year];
 		if (!yearData) return [];
 
-		// Aggregate populations across all wards
 		const ethnicityTotals = new Map<string, number>();
-
 		for (const localAuthorityData of Object.values(yearData) as EthnicityCategory[]) {
-			for (const [ethnicity, data] of Object.entries(
-				localAuthorityData,
-			) as [string, Ethnicity][]) {
+			for (const [ethnicity, data] of Object.entries(localAuthorityData) as [string, Ethnicity][]) {
 				const currentTotal = ethnicityTotals.get(ethnicity) || 0;
-				// Ensure data.population is a number before adding
-				if (typeof data.population === 'number') {
+				if (typeof data.population === "number") {
 					ethnicityTotals.set(ethnicity, currentTotal + data.population);
 				}
 			}
 		}
 
-		// Convert to sorted array
 		return Array.from(ethnicityTotals.entries())
 			.filter(([_, count]) => count > 0)
 			.sort((a, b) => b[1] - a[1])
@@ -252,79 +171,41 @@ export default memo(function LegendPanel({
 			}));
 	}, [aggregatedData, activeDataset]);
 
-	const handleRangeInput = (
-		datasetKey: ColorRangeDatasetKey,
-		min: number,
-		max: number,
-	) => {
+	const handleRangeInput = (datasetKey: ColorRangeDatasetKey, min: number, max: number) => {
 		setLiveOptions((prev) => {
 			const base = prev || mapOptions;
-			return {
-				...base,
-				[datasetKey]: {
-					...base[datasetKey],
-					colorRange: { min, max },
-				},
-			};
+			return { ...base, [datasetKey]: { ...base[datasetKey], colorRange: { min, max } } };
 		});
 	};
 
 	const handleRangeChangeEnd = (datasetKey: ColorRangeDatasetKey) => {
 		if (!liveOptions) return;
 		const range = liveOptions[datasetKey]?.colorRange;
-		if (range) {
-			onMapOptionsChange(datasetKey, { colorRange: range });
-		}
+		if (range) onMapOptionsChange(datasetKey, { colorRange: range });
 		setLiveOptions(null);
 	};
 
 	const handlePartyClick = (partyCode: PartyCode) => {
 		const datasetType = activeDataset?.type;
-		if (
-			!datasetType ||
-			(datasetType !== "generalElection" && datasetType !== "localElection")
-		)
-			return;
+		if (!datasetType || (datasetType !== "generalElection" && datasetType !== "localElection")) return;
 
 		const options = displayOptions[datasetType];
-
-		const currentMode = options.mode;
-		const currentParty = options.selected;
-
-		if (currentMode === "percentage" && currentParty === partyCode) {
+		if (options.mode === "percentage" && options.selected === partyCode) {
 			onMapOptionsChange(datasetType, { mode: "majority", selected: undefined });
 		} else {
-			onMapOptionsChange(datasetType, {
-				mode: "percentage",
-				selected: partyCode,
-			});
+			onMapOptionsChange(datasetType, { mode: "percentage", selected: partyCode });
 		}
 	};
 
 	const handleEthnicityClick = (ethnicityCode: EthnicityCode) => {
-		const type = activeDataset?.type;
-		if (type !== "ethnicity") return;
-
-		const currentMode = displayOptions.ethnicity.mode;
-		const currentEthnicity = displayOptions.ethnicity.selected;
-
-		if (
-			currentMode === "percentage" &&
-			currentEthnicity === ethnicityCode
-		) {
-			onMapOptionsChange("ethnicity", {
-				mode: "majority",
-				selected: undefined,
-			});
+		if (activeDataset?.type !== "ethnicity") return;
+		const { mode, selected } = displayOptions.ethnicity;
+		if (mode === "percentage" && selected === ethnicityCode) {
+			onMapOptionsChange("ethnicity", { mode: "majority", selected: undefined });
 		} else {
-			onMapOptionsChange("ethnicity", {
-				mode: "percentage",
-				selected: ethnicityCode,
-			});
+			onMapOptionsChange("ethnicity", { mode: "percentage", selected: ethnicityCode });
 		}
 	};
-
-	// --- Renderers ---
 
 	const renderDynamicLegend = (
 		datasetKey: ColorRangeDatasetKey,
@@ -334,12 +215,9 @@ export default memo(function LegendPanel({
 		defaultMax: number,
 		formatLabel: (v: number) => string = (v) => v.toFixed(0),
 	) => {
-		const currentMin =
-			displayOptions[datasetKey].colorRange?.min ?? defaultMin;
-		const currentMax =
-			displayOptions[datasetKey].colorRange?.max ?? defaultMax;
+		const currentMin = displayOptions[datasetKey].colorRange?.min ?? defaultMin;
+		const currentMax = displayOptions[datasetKey].colorRange?.max ?? defaultMax;
 
-		// Labels derived directly from currentMin/Max ensures they update during drag
 		const labels = [
 			formatLabel(currentMax),
 			formatLabel((currentMax - currentMin) * 0.75 + currentMin),
@@ -356,145 +234,9 @@ export default memo(function LegendPanel({
 				currentMax={currentMax}
 				gradient={verticalThemeGradient}
 				labels={labels}
-				onRangeInput={(min, max) =>
-					handleRangeInput(datasetKey, min, max)
-				}
+				onRangeInput={(min, max) => handleRangeInput(datasetKey, min, max)}
 				onRangeChangeEnd={() => handleRangeChangeEnd(datasetKey)}
 			/>
-		);
-	};
-
-	const renderGenderLegend = () => {
-		const currentMin = displayOptions.gender?.colorRange?.min ?? -0.1;
-		const currentMax = displayOptions.gender?.colorRange?.max ?? 0.1;
-
-		return (
-			<RangeControl
-				min={-0.5}
-				max={0.5}
-				currentMin={currentMin}
-				currentMax={currentMax}
-				gradient="linear-gradient(to top, rgba(255,105,180,0.8), rgba(240,240,240,0.8), rgba(70,130,180,0.8))"
-				labels={[
-					`M ${(currentMax * 100).toFixed(0)}%`,
-					"0%",
-					`F ${(Math.abs(currentMin) * 100).toFixed(0)}%`,
-				]}
-				onRangeInput={(min, max) =>
-					handleRangeInput("gender", min, max)
-				}
-				onRangeChangeEnd={() => handleRangeChangeEnd("gender")}
-			/>
-		);
-	};
-
-	const renderElectionLegend = () => {
-		const type = activeDataset?.type as
-			| "generalElection"
-			| "localElection"
-			| undefined;
-		if (!type) return null;
-
-		const options = displayOptions[type];
-
-		return (
-			<div>
-				{parties.map((party: PartyDisplayData) => {
-					const isSelected =
-						options?.mode === "percentage" &&
-						options.selected === party.id;
-
-					// Restored exact original party button styling logic
-					return (
-						<button
-							key={party.id}
-							onClick={() => handlePartyClick(party.id)}
-							className={`flex items-center gap-2 px-1 py-0.75 w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? "ring-1" : "hover:bg-gray-100/30"
-								}`}
-							style={
-								isSelected
-									? ({
-										backgroundColor: `${party.color}15`, // ~8% opacity
-										"--tw-ring-color": `${party.color}80`,
-									} as React.CSSProperties)
-									: {}
-							}
-						>
-							<div
-								className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected
-									? "opacity-100 ring-1"
-									: "opacity-100"
-									}`}
-								style={{
-									backgroundColor: party.color,
-									...(isSelected
-										? ({
-											"--tw-ring-color": party.color,
-										} as React.CSSProperties)
-										: {}),
-								}}
-							/>
-							<span
-								className={`text-xs ${isSelected ? "text-gray-700" : "text-gray-500"}`}
-							>
-								{party.name}
-							</span>
-						</button>
-					);
-				})}
-			</div>
-		);
-	};
-
-	const renderEthnicityLegend = () => {
-		const options = displayOptions.ethnicity;
-
-		return (
-			<div>
-				{ethnicities.map((ethnicity) => {
-					const isSelected =
-						options?.mode === "percentage" &&
-						options.selected === ethnicity.id;
-
-					return (
-						<button
-							key={ethnicity.id}
-							onClick={() => handleEthnicityClick(ethnicity.id)}
-							className={`flex items-center gap-2 px-1 py-0.75 w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? "ring-1" : "hover:bg-gray-100/30"
-								}`}
-							style={
-								isSelected
-									? ({
-										backgroundColor: `${ethnicity.color}15`, // ~8% opacity
-										"--tw-ring-color": `${ethnicity.color}80`,
-									} as React.CSSProperties)
-									: {}
-							}
-						>
-							<div
-								className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected
-									? "opacity-100 ring-1"
-									: "opacity-100"
-									}`}
-								style={{
-									backgroundColor: ethnicity.color,
-									...(isSelected
-										? ({
-											"--tw-ring-color":
-												ethnicity.color,
-										} as React.CSSProperties)
-										: {}),
-								}}
-							/>
-							<span
-								className={`text-xs ${isSelected ? "text-gray-700" : "text-gray-500"}`}
-							>
-								{ethnicity.name}
-							</span>
-						</button>
-					);
-				})}
-			</div>
 		);
 	};
 
@@ -510,60 +252,69 @@ export default memo(function LegendPanel({
 		switch (activeDataset.type) {
 			case "population":
 				if (activeViz.vizId.startsWith("ageDistribution")) {
-					return renderDynamicLegend(
-						"ageDistribution",
-						18,
-						80,
-						25,
-						55,
-					);
+					return renderDynamicLegend("ageDistribution", 18, 80, 25, 55);
 				}
 				if (activeViz.vizId.startsWith("populationDensity")) {
-					return renderDynamicLegend(
-						"populationDensity",
-						0,
-						15000,
-						500,
-						8000,
-					);
+					return renderDynamicLegend("populationDensity", 0, 15000, 500, 8000);
 				}
 				if (activeViz.vizId.startsWith("gender")) {
-					return renderGenderLegend();
+					const currentMin = displayOptions.gender?.colorRange?.min ?? -0.1;
+					const currentMax = displayOptions.gender?.colorRange?.max ?? 0.1;
+					return (
+						<RangeControl
+							min={-0.5}
+							max={0.5}
+							currentMin={currentMin}
+							currentMax={currentMax}
+							gradient="linear-gradient(to top, rgba(255,105,180,0.8), rgba(240,240,240,0.8), rgba(70,130,180,0.8))"
+							labels={[
+								`M ${(currentMax * 100).toFixed(0)}%`,
+								"0%",
+								`F ${(Math.abs(currentMin) * 100).toFixed(0)}%`,
+							]}
+							onRangeInput={(min, max) => handleRangeInput("gender", min, max)}
+							onRangeChangeEnd={() => handleRangeChangeEnd("gender")}
+						/>
+					);
 				}
 				return null;
 
 			case "housePrice":
-				return renderDynamicLegend(
-					"housePrice",
-					0,
-					2000000,
-					80000,
-					500000,
-					formatCurrency,
-				);
+				return renderDynamicLegend("housePrice", 0, 2000000, 80000, 500000, formatCurrency);
 
 			case "income":
-				return renderDynamicLegend(
-					"income",
-					0,
-					100000,
-					80000,
-					450000,
-					formatCurrency,
-				);
+				return renderDynamicLegend("income", 0, 100000, 80000, 450000, formatCurrency);
 
 			case "crime":
 				return renderDynamicLegend("crime", 0, 150000, 10000, 100000);
 
-			case "ethnicity":
-				return renderEthnicityLegend();
+			case "imd":
+				return renderDynamicLegend("imd", 0, 80, 1, 70);
+
+			case "ethnicity": {
+				const opts = displayOptions.ethnicity;
+				return renderCategoryLegend(
+					ethnicities,
+					opts?.mode === "percentage",
+					opts?.selected,
+					(id) => handleEthnicityClick(id as EthnicityCode),
+				);
+			}
 
 			case "generalElection":
-			case "localElection":
-				return renderElectionLegend();
+			case "localElection": {
+				const type = activeDataset.type;
+				const opts = displayOptions[type];
+				return renderCategoryLegend(
+					parties,
+					opts?.mode === "percentage",
+					opts?.selected,
+					(id) => handlePartyClick(id as PartyCode),
+				);
+			}
 
 			case "brexitConstituency":
-		case "brexit": {
+			case "brexit": {
 				const key = activeDataset.type as "brexit" | "brexitConstituency";
 				const currentMin = displayOptions[key].colorRange?.min ?? 30;
 				const currentMax = displayOptions[key].colorRange?.max ?? 70;
@@ -578,41 +329,38 @@ export default memo(function LegendPanel({
 							`${currentMax.toFixed(0)}% Leave`,
 							`${(100 - currentMin).toFixed(0)}% Remain`,
 						]}
-						onRangeInput={(min, max) =>
-							handleRangeInput(key, min, max)
-						}
+						onRangeInput={(min, max) => handleRangeInput(key, min, max)}
 						onRangeChangeEnd={() => handleRangeChangeEnd(key)}
 					/>
 				);
 			}
 
-			case "imd":
-				return renderDynamicLegend("imd", 0, 80, 1, 70);
-
 			case "lifeExpectancy": {
-				const leData = activeDataset?.type === "lifeExpectancy"
-					? Object.values(activeDataset.data).map((r: any) => (r.maleBirthLE + r.femaleBirthLE) / 2)
-					: [];
+				const leData = Object.values(activeDataset.data).map((r: any) => (r.maleBirthLE + r.femaleBirthLE) / 2);
 				const leMin = leData.length ? Math.min(...leData) : 55;
 				const leMax = leData.length ? Math.max(...leData) : 85;
 				return renderDynamicLegend("lifeExpectancy", leMin, leMax, leMin, leMax, (v) => `${v.toFixed(1)}y`);
 			}
 
 			case "custom":
-				// Custom datasets use a color range
-				return renderDynamicLegend(
-					"custom",
-					0, // Replace with actual min/max from custom data
-					100, // Replace with actual min/max from custom data
-					0,
-					100,
-				);
+				return renderDynamicLegend("custom", 0, 100, 0, 100);
+
 			default:
 				return null;
 		}
 	};
 
-	// Restored container classes exactly
+	// Derive election percentage range panel state
+	const electionType = (["generalElection", "localElection"].includes(activeDataset?.type || "")
+		? activeDataset!.type as "generalElection" | "localElection"
+		: null);
+	const electionOpts = electionType ? displayOptions[electionType] : null;
+	const showElectionPct = electionOpts?.mode === "percentage";
+
+	// Derive ethnicity percentage range panel state
+	const ethnicityOpts = displayOptions.ethnicity;
+	const showEthnicityPct = activeDataset?.type === "ethnicity" && ethnicityOpts?.mode === "percentage";
+
 	return (
 		<div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full gap-2.5">
 			<div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30">
@@ -621,143 +369,47 @@ export default memo(function LegendPanel({
 				</div>
 			</div>
 
-			{/* Special secondary legend for Election Party Percentage Mode */}
-			{["generalElection", "localElection"].includes(
-				activeDataset?.type || "",
-			) &&
-				(
-					displayOptions[
-						activeDataset!.type as "generalElection" | "localElection"
-					]
-				)?.mode === "percentage" && (
-					<div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
-						<div className="bg-white/20 p-1 overflow-hidden">
-							<RangeControl
-								min={0}
-								max={100}
-								currentMin={
-									(
-										displayOptions[
-										activeDataset!.type as "generalElection" | "localElection"
-										]
-									)?.percentageRange?.min ?? 0
-								}
-								currentMax={
-									(
-										displayOptions[
-										activeDataset!.type as "generalElection" | "localElection"
-										] as CategoryOptions
-									)?.percentageRange?.max ?? 100
-								}
-								gradient={`linear-gradient(to bottom, ${PARTIES[
-									(
-										displayOptions[
-										activeDataset!.type as "generalElection" | "localElection"
-										]
-									)?.selected as PartyCode
-								]
-									?.color || "#999"
-									}, #f5f5f5)`}
-								labels={[
-									`${(
-										(
-											displayOptions[
-											activeDataset!.type as "generalElection" | "localElection"
-											]
-										)?.percentageRange?.max ?? 100
-									).toFixed(0)}%`,
-									"",
-									"",
-									"",
-									`${(
-										(
-											displayOptions[
-											activeDataset!.type as "generalElection" | "localElection"
-											]
-										)?.percentageRange?.min ?? 0
-									).toFixed(0)}%`,
-								]}
-								onRangeInput={(min, max) => {
-									setLiveOptions((prev) => {
-										const base = prev || mapOptions;
-										const type = activeDataset!
-											.type as "generalElection" | "localElection";
-										return {
-											...base,
-											[type]: {
-												...(base[type]),
-												percentageRange: { min, max },
-											},
-										};
-									});
-								}}
-								onRangeChangeEnd={() => {
-									if (!liveOptions) return;
-									const type = activeDataset!
-										.type as "generalElection" | "localElection";
-																		onMapOptionsChange(type, {
-																			percentageRange:
-																				liveOptions[type].percentageRange,
-																		});
-									setLiveOptions(null);
-								}}
-							/>
-						</div>
-					</div>
-				)}
+			{showElectionPct && electionType && electionOpts && (
+				<PercentageRangePanel
+					range={{
+						min: electionOpts.percentageRange?.min ?? 0,
+						max: (electionOpts as CategoryOptions).percentageRange?.max ?? 100,
+					}}
+					gradient={`linear-gradient(to bottom, ${PARTIES[electionOpts.selected as PartyCode]?.color || "#999"}, #f5f5f5)`}
+					onRangeInput={(min, max) => {
+						setLiveOptions((prev) => {
+							const base = prev || mapOptions;
+							return { ...base, [electionType]: { ...base[electionType], percentageRange: { min, max } } };
+						});
+					}}
+					onRangeChangeEnd={() => {
+						if (!liveOptions) return;
+						onMapOptionsChange(electionType, { percentageRange: liveOptions[electionType].percentageRange });
+						setLiveOptions(null);
+					}}
+				/>
+			)}
 
-			{/* Special secondary legend for Ethnicity Percentage Mode */}
-			{activeDataset?.type === "ethnicity" &&
-				displayOptions.ethnicity?.mode === "percentage" && (
-					<div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
-						<div className="bg-white/20 p-1 overflow-hidden">
-							<RangeControl
-								min={0}
-								max={100}
-								currentMin={
-									displayOptions.ethnicity.percentageRange
-										?.min ?? 0
-								}
-								currentMax={
-									(displayOptions.ethnicity as CategoryOptions)
-										.percentageRange?.max ?? 100
-								}
-								gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[
-									displayOptions.ethnicity.selected as EthnicityCode
-								] || "#999"
-									}, #f5f5f5)`}
-								labels={[
-									`${(displayOptions.ethnicity.percentageRange?.max ?? 100).toFixed(0)}%`,
-									"",
-									"",
-									"",
-									`${(displayOptions.ethnicity.percentageRange?.min ?? 0).toFixed(0)}%`,
-								]}
-								onRangeInput={(min, max) => {
-									setLiveOptions((prev) => {
-										const base = prev || mapOptions;
-										return {
-											...base,
-											ethnicity: {
-												...(base.ethnicity),
-												percentageRange: { min, max },
-											},
-										};
-									});
-								}}
-								onRangeChangeEnd={() => {
-									if (!liveOptions) return;
-																		onMapOptionsChange("ethnicity", {
-																			percentageRange:
-																				liveOptions.ethnicity
-																					.percentageRange,
-																		});
-									setLiveOptions(null);
-								}}
-							/>
-						</div>
-					</div>
-				)}
+			{showEthnicityPct && (
+				<PercentageRangePanel
+					range={{
+						min: ethnicityOpts.percentageRange?.min ?? 0,
+						max: (ethnicityOpts as CategoryOptions).percentageRange?.max ?? 100,
+					}}
+					gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[ethnicityOpts.selected as EthnicityCode] || "#999"}, #f5f5f5)`}
+					onRangeInput={(min, max) => {
+						setLiveOptions((prev) => {
+							const base = prev || mapOptions;
+							return { ...base, ethnicity: { ...base.ethnicity, percentageRange: { min, max } } };
+						});
+					}}
+					onRangeChangeEnd={() => {
+						if (!liveOptions) return;
+						onMapOptionsChange("ethnicity", { percentageRange: liveOptions.ethnicity.percentageRange });
+						setLiveOptions(null);
+					}}
+				/>
+			)}
 		</div>
 	);
 });

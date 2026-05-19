@@ -12,6 +12,25 @@ import {
 } from "@/lib/data/boundaries/boundaries";
 import { BoundaryGeojson, PropertyKeys } from "@lib/types";
 
+// Detects which ward code property key is present in a GeoJSON, preferring the
+// key that matches the dataset boundary year before falling back to any available key.
+export function detectWardCodeForYear(
+	features: BoundaryGeojson["features"],
+	year: number,
+): WardCodeKey {
+	const firstFeature = features[0];
+	if (!firstFeature) return WARD_CODE_KEYS[0];
+
+	const yearSuffix = year.toString().slice(-2);
+	const specificKey = WARD_CODE_KEYS.find((key) => key.endsWith(yearSuffix));
+	if (specificKey && specificKey in firstFeature.properties) return specificKey;
+
+	for (const key of WARD_CODE_KEYS) {
+		if (key in firstFeature.properties) return key;
+	}
+	return WARD_CODE_KEYS[0];
+}
+
 export class PropertyDetector {
 	detectWardCode(features: BoundaryGeojson["features"]) {
 		return this.detectPropertyKey(features, WARD_CODE_KEYS);

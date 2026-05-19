@@ -6,6 +6,7 @@ import {
 	PopulationDataset,
 	SelectedArea,
 } from "@/lib/types";
+import { resolveWardData, getLadCachedValue } from "@/lib/helpers/demographicData";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -22,8 +23,6 @@ export interface GenderBalanceByAgeChartProps {
 const AGE_INDICES = Array.from({ length: 91 }, (_, i) => i);
 const AGE_STRING_KEYS = Array.from({ length: 91 }, (_, i) => String(i));
 
-// Cache for LAD gender balance aggregations (bounded to prevent unbounded memory growth)
-const MAX_LAD_CACHE_ENTRIES = 50;
 const genderBalanceCache = new Map<string, Map<number, any>>();
 
 function GenderBalanceByAgeChart({
@@ -56,20 +55,7 @@ function GenderBalanceByAgeChart({
 
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
-			const wardCode = selectedArea.code;
-			let wardData = dataset.data[wardCode];
-
-			// Try to map ward code if not found
-			if (!wardData && codeMapper?.getCodeForYear) {
-				const mappedCode = codeMapper.getCodeForYear(
-					"ward",
-					wardCode,
-					dataset.boundaryYear,
-				);
-				if (mappedCode) {
-					wardData = dataset.data[mappedCode];
-				}
-			}
+			const wardData = resolveWardData(dataset, selectedArea.code, codeMapper);
 
 			if (wardData) {
 				const { males, females } = wardData;
@@ -98,83 +84,37 @@ function GenderBalanceByAgeChart({
 		}
 
 		// Handle Local Authority Selection
-		if (
-			selectedArea &&
-			selectedArea.type === "localAuthority" &&
-			codeMapper?.getWardsForLad
-		) {
-			const ladCode = selectedArea.code;
-			const cacheKey = `lad-${ladCode}`;
+		if (selectedArea && selectedArea.type === "localAuthority" && codeMapper?.getWardsForLad) {
+			return getLadCachedValue(genderBalanceCache, selectedArea.code, dataset.year, () => {
+				const wardCodes = codeMapper.getWardsForLad!(selectedArea.code, 2022);
 
-			if (!genderBalanceCache.has(cacheKey)) {
-				if (genderBalanceCache.size >= MAX_LAD_CACHE_ENTRIES) {
-					genderBalanceCache.delete(genderBalanceCache.keys().next().value!);
-				}
-				genderBalanceCache.set(cacheKey, new Map());
-			}
-			const yearCache = genderBalanceCache.get(cacheKey)!;
+				if (wardCodes.length === 0) return { ageData: [], percentages: [] };
 
-			if (yearCache.has(dataset.year)) {
-				return yearCache.get(dataset.year);
-			}
+				const aggregatedMales = new Array(91).fill(0);
+				const aggregatedFemales = new Array(91).fill(0);
 
-			// Get all wards in this LAD
-			const wardCodes = codeMapper.getWardsForLad(ladCode, 2022);
-
-			if (wardCodes.length === 0) {
-				const emptyResult = { ageData: [], percentages: [] };
-				yearCache.set(dataset.year, emptyResult);
-				return emptyResult;
-			}
-
-			// Aggregate gender counts by age across all wards
-			const aggregatedMales = new Array(91).fill(0);
-			const aggregatedFemales = new Array(91).fill(0);
-
-			for (const wardCode of wardCodes) {
-				let wardData = dataset.data?.[wardCode];
-
-				// Try to map to the dataset's year if ward code doesn't exist
-				if (!wardData && codeMapper?.getCodeForYear) {
-					const mappedCode = codeMapper.getCodeForYear(
-						"ward",
-						wardCode,
-						dataset.boundaryYear,
-					);
-					if (mappedCode) {
-						wardData = dataset.data[mappedCode];
+				for (const wardCode of wardCodes) {
+					const wardData = resolveWardData(dataset, wardCode, codeMapper);
+					if (wardData) {
+						for (let age = 0; age < 91; age++) {
+							const ageStr = AGE_STRING_KEYS[age];
+							aggregatedMales[age] += wardData.males[ageStr] || 0;
+							aggregatedFemales[age] += wardData.females[ageStr] || 0;
+						}
 					}
 				}
 
-				if (wardData) {
-					// Sum males and females by age
-					for (let age = 0; age < 91; age++) {
-						const ageStr = AGE_STRING_KEYS[age];
-						aggregatedMales[age] += wardData.males[ageStr] || 0;
-						aggregatedFemales[age] += wardData.females[ageStr] || 0;
-					}
+				const data: Array<{ age: number; males: number; females: number }> = new Array(91);
+				const pct: number[] = new Array(91);
+				for (let age = 0; age < 91; age++) {
+					const m = aggregatedMales[age];
+					const f = aggregatedFemales[age];
+					data[age] = { age, males: m, females: f };
+					pct[age] = (m + f) > 0 ? (m / (m + f)) * 100 : 50;
 				}
-			}
 
-			// Build data array and calculate percentages
-			const data: Array<{ age: number; males: number; females: number }> =
-				new Array(91);
-			const pct: number[] = new Array(91);
-
-			for (let age = 0; age < 91; age++) {
-				const m = aggregatedMales[age];
-				const f = aggregatedFemales[age];
-				const total = m + f;
-
-				data[age] = { age, males: m, females: f };
-				pct[age] = total > 0 ? (m / total) * 100 : 50;
-			}
-
-			const result = { ageData: data, percentages: pct };
-
-			// Cache the result
-			yearCache.set(dataset.year, result);
-			return result;
+				return { ageData: data, percentages: pct };
+			});
 		}
 
 		// Unsupported area type or missing data
