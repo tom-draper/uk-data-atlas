@@ -4,7 +4,7 @@
 // To enable:
 //   1. npm install mapbox-gl
 //   2. Set NEXT_PUBLIC_MAP_TYPE=mapbox and NEXT_PUBLIC_MAPBOX_TOKEN=<your token>
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type maplibregl from "maplibre-gl";
 //import mapboxgl from "mapbox-gl";
 
@@ -22,6 +22,7 @@ export function useMapboxInitialization({
 	maxBounds,
 }: UseMapInitializationOptions) {
 	const mapRef = useRef<maplibregl.Map | null>(null);
+	const [mapReady, setMapReady] = useState(false);
 
 	const handleMapContainer = useCallback(
 		(el: HTMLDivElement | null) => {
@@ -47,6 +48,7 @@ export function useMapboxInitialization({
 					maxBounds,
 					preserveDrawingBuffer: true,
 				}) as unknown as maplibregl.Map;
+				setMapReady(true);
 			} catch (err) {
 				console.error("Failed to initialize Mapbox map:", err);
 			}
@@ -59,9 +61,10 @@ export function useMapboxInitialization({
 			if (mapRef.current) {
 				mapRef.current.remove();
 				mapRef.current = null;
+				setMapReady(false);
 			}
 		};
 	}, []);
 
-	return { mapRef, handleMapContainer };
+	return { mapRef, handleMapContainer, mapReady };
 }

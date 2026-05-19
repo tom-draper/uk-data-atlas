@@ -43,26 +43,24 @@ const fetchBoundaryGroup = async (
 	const paths = GEOJSON_PATHS[type];
 	const years = Object.keys(paths).map(Number);
 
+	const allWardLadMappings: Record<string, string> = {};
+	const allLadWardMappings: Record<YearCode, Record<string, string[]>> = {};
+
 	const results = await Promise.all(
 		years.map(async (year) => {
 			const path = paths[year as keyof typeof paths];
 			const data = await fetchBoundaryFile(path);
 
-			// Extract ward-to-LAD and LAD-to-ward mappings from ward data
 			if (type === "ward" && data.features?.length) {
-				// Ward-to-LAD mappings (for filtering)
 				if (onMappingsExtracted) {
 					const wardToLadMappings = extractWardLadMappings(
 						data.features,
 						PROPERTY_KEYS.wardCode,
 						PROPERTY_KEYS.ladCode,
 					);
-					if (Object.keys(wardToLadMappings).length > 0) {
-						onMappingsExtracted(wardToLadMappings);
-					}
+					Object.assign(allWardLadMappings, wardToLadMappings);
 				}
 
-				// LAD-to-wards mappings (for getting all wards in a LAD)
 				if (onLadWardMappingsExtracted) {
 					const ladToWardsMappings = extractLadWardMappings(
 						data.features,
@@ -70,7 +68,7 @@ const fetchBoundaryGroup = async (
 						PROPERTY_KEYS.ladCode,
 					);
 					if (Object.keys(ladToWardsMappings).length > 0) {
-						onLadWardMappingsExtracted(year, ladToWardsMappings);
+						allLadWardMappings[year] = ladToWardsMappings;
 					}
 				}
 			}
@@ -78,6 +76,14 @@ const fetchBoundaryGroup = async (
 			return [year, data] as const;
 		}),
 	);
+
+	// Dispatch all ward-LAD mappings in a single call to avoid multiple state updates
+	if (onMappingsExtracted && Object.keys(allWardLadMappings).length > 0) {
+		onMappingsExtracted(allWardLadMappings);
+	}
+	for (const [year, mappings] of Object.entries(allLadWardMappings)) {
+		onLadWardMappingsExtracted?.(Number(year), mappings);
+	}
 
 	const groupedData = Object.fromEntries(results);
 

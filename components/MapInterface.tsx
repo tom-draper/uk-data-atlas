@@ -32,6 +32,7 @@ interface MapInterfaceProps {
 	setSelectedLocation: (location: string) => void;
 	customDataset: CustomDataset | null;
 	setCustomDataset: (dataset: CustomDataset | null) => void;
+	onError?: (error: Error) => void;
 }
 
 export default function MapInterface({
@@ -42,6 +43,7 @@ export default function MapInterface({
 	setSelectedLocation,
 	customDataset,
 	setCustomDataset,
+	onError,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
 
@@ -71,10 +73,15 @@ export default function MapInterface({
 		boundaryData,
 		boundaryCodes,
 		isLoading: boundariesLoading,
+		error: boundaryError,
 	} = useBoundaryData(selectedLocation, codeMapper);
 
+	useEffect(() => {
+		if (boundaryError) onError?.(boundaryError);
+	}, [boundaryError, onError]);
+
 	// Map setup
-	const { mapRef: map, handleMapContainer } =
+	const { mapRef: map, handleMapContainer, mapReady } =
 		useMapInitialization(MAP_CONFIG);
 	const { mapOptions, setMapOptions: handleMapOptionsChange } =
 		useMapOptions(DEFAULT_MAP_OPTIONS);
@@ -103,7 +110,7 @@ export default function MapInterface({
 	// Initialize map manager with stable callbacks
 	const mapManager = useMapManager({
 		mapRef: map,
-		geojson,
+		mapReady,
 		interactionHandlers,
 	});
 

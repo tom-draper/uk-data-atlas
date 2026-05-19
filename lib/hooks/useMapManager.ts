@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { MapManager } from "@/lib/helpers/mapManager";
-import { BoundaryGeojson, SelectedArea } from "../types";
+import { SelectedArea } from "../types";
 
 type UseMapManagerOptions = {
 	mapRef: React.RefObject<maplibregl.Map | null>;
-	geojson: BoundaryGeojson | null;
+	mapReady: boolean;
 	interactionHandlers: {
 		onAreaHover: (area: SelectedArea | null) => void;
 		onLocationChange: (location: string) => void;
@@ -13,7 +13,7 @@ type UseMapManagerOptions = {
 
 export function useMapManager({
 	mapRef,
-	geojson,
+	mapReady,
 	interactionHandlers,
 }: UseMapManagerOptions) {
 	const [mapManager, setMapManager] = useState<MapManager | null>(null);
@@ -21,9 +21,7 @@ export function useMapManager({
 	handlersRef.current = interactionHandlers;
 
 	useEffect(() => {
-		if (!mapRef?.current || !geojson) return;
-
-		if (mapManager) return;
+		if (!mapReady || !mapRef?.current) return;
 
 		const manager = new MapManager(mapRef.current, {
 			onAreaHover: (data) => handlersRef.current.onAreaHover(data),
@@ -37,7 +35,7 @@ export function useMapManager({
 			manager.destroy();
 			setMapManager(null);
 		};
-	}, [mapRef, !!geojson]);
+	}, [mapReady, mapRef]);
 
 	return mapManager;
 }
