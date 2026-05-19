@@ -41,6 +41,7 @@ function GenderBalanceByAgeChart({
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			const yearlyData = aggregatedData[dataset.year];
+			if (!yearlyData) return { ageData: [], percentages: [] };
 			const data =
 				yearlyData.medianAge !== 0 ? yearlyData.genderAgeData : [];
 

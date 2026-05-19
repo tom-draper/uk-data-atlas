@@ -39,6 +39,7 @@ function Gender({
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			const data = aggregatedData[dataset.year];
+			if (!data) return { totalMales: null, totalFemales: null };
 			return {
 				totalMales: data.populationStats.males,
 				totalFemales: data.populationStats.females,
