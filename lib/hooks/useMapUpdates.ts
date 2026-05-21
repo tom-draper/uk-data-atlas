@@ -9,7 +9,7 @@ interface UseMapUpdatesParams {
 	activeDataset: Dataset | null;
 	mapManager: MapManager | null;
 	mapOptions: MapOptions;
-	styleVersion: number;
+	styleReady: boolean;
 }
 
 export function useMapUpdates({
@@ -18,7 +18,7 @@ export function useMapUpdates({
 	activeDataset,
 	mapManager,
 	mapOptions,
-	styleVersion,
+	styleReady,
 }: UseMapUpdatesParams) {
 	useEffect(() => {
 		if (!geojson || !activeDataset || !mapManager) return;
@@ -129,5 +129,5 @@ export function useMapUpdates({
 		};
 
 		performUpdate();
-	}, [geojson, activeDataset, activeViz, mapManager, mapOptions, styleVersion]);
+	}, [geojson, activeDataset, activeViz, mapManager, mapOptions, styleReady]);
 }

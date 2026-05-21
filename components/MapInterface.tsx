@@ -48,7 +48,7 @@ export default function MapInterface({
 	onError,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
-	const [styleVersion, setStyleVersion] = useState(0);
+	const [styleReady, setStyleReady] = useState(false);
 
 	const codeMapper = useCodeMapper();
 
@@ -89,18 +89,50 @@ export default function MapInterface({
 	const { mapOptions, setMapOptions: handleMapOptionsChange } =
 		useMapOptions(DEFAULT_MAP_OPTIONS);
 
-	// Switch base map style and re-render data layers after the new style loads
+	// Track whether the initial style has been applied (style is loaded in useMapLibreInitialization).
+	const initialStyleApplied = useRef(false);
+
+	// Switch base map style and re-render data layers after the new style loads.
+	// On the initial mapReady=true, the style is already loaded, so skip setStyle()
+	// and just bump the version counter so useMapUpdates fires immediately.
 	useEffect(() => {
 		const mapInstance = map.current;
 		if (!mapInstance || !mapReady) return;
 
+		setStyleReady(false);
+
+		const handleStyleReady = () => {
+			// Wait until style + sources + sprite state settle
+			if (mapInstance.isStyleLoaded()) {
+				setStyleReady(true);
+			}
+		};
+
+		mapInstance.on("idle", handleStyleReady);
+
 		const styleUrl = BASE_MAP_STYLES.find(
 			(s) => s.id === mapOptions.baseStyle.id,
 		)?.url;
-		if (!styleUrl) return;
 
-		mapInstance.setStyle(styleUrl);
-		mapInstance.once("style.load", () => setStyleVersion((v) => v + 1));
+		// Initial load
+		if (!initialStyleApplied.current) {
+			initialStyleApplied.current = true;
+
+			handleStyleReady();
+
+			return () => {
+				mapInstance.off("idle", handleStyleReady);
+			};
+		}
+
+		// Style switch
+		if (styleUrl) {
+			mapInstance.setStyle(styleUrl);
+		}
+
+		return () => {
+			mapInstance.off("idle", handleStyleReady);
+		};
 	}, [mapOptions.baseStyle.id, mapReady]);
 
 	// Stable interaction handlers - created once, never change identity
@@ -248,7 +280,7 @@ export default function MapInterface({
 				mapManager={mapManager}
 				mapOptions={mapOptions}
 				handleMapContainer={handleMapContainer}
-				styleVersion={styleVersion}
+				styleReady={styleReady}
 			/>
 		</div>
 	);
