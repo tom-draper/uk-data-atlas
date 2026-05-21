@@ -20,7 +20,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
 		description:
-			"Aggregated general election results by UK parlimentary constituency for trend analysis.",
+			"General election results by parliamentary constituency.",
 	},
 	{
 		name: "Local Election Results",
@@ -31,7 +31,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
 		description:
-			"Aggregated local election results by ward for trend analysis.",
+			"Local election results by electoral ward for England and Wales.",
 	},
 	{
 		name: "Population Estimates",
@@ -43,7 +43,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Ward-level population data estimates including age and gender used for per-capita comparisons.",
+			"Population estimates by ward including age and sex breakdown for England and Wales.",
 	},
 	{
 		name: "Ethnicity",
@@ -54,10 +54,10 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Ethnic group population classification for England and Wales by local authority district.",
+			"Ethnic group breakdown by local authority district for England and Wales.",
 	},
 	{
-		name: "Median House Price",
+		name: "House Price",
 		source: "Office for National Statistics",
 		sourceUrl:
 			"https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/medianpricepaidbywardhpssadataset37",
@@ -66,7 +66,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Median house price paid by ward for England and Wales for trend analysis.",
+			"Median house price paid by ward for England and Wales.",
 	},
 	{
 		name: "EU Referendum Results",
@@ -89,7 +89,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Annual estimates of paid hours worked and earnings for employees in England and Wales.",
+			"Earnings estimates by local authority for England and Wales.",
 	},
 	{
 		name: "Crime",
@@ -101,7 +101,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Police recorded crime figures by local authority district.",
+			"Police recorded crime by local authority district for England and Wales.",
 	},
 	{
 		name: "Indices of Multiple Deprivation",
@@ -113,7 +113,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Relative deprivation scores, ranks and deciles for small areas (LSOAs) in England.",
+			"Deprivation scores, ranks and deciles by small area (LSOA) for England.",
 	},
 	{
 		name: "Life Expectancy",
@@ -125,7 +125,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Life expectancy and healthy life expectancy estimates for local areas across the UK.",
+			"Life expectancy and healthy life expectancy estimates by local area for England and Wales.",
 	},
 	{
 		name: "Westminster Parliamentary Wards (Boundaries)",
@@ -136,7 +136,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"UK electoral ward boundaries used for map visualisation layers.",
+			"Electoral ward boundaries.",
 	},
 	{
 		name: "Local Authority Districts (Boundaries)",
@@ -147,7 +147,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"UK local authority district boundaries used for map visualisation layers.",
+			"Local authority district boundaries.",
 	},
 	{
 		name: "Westminster Parliamentary Constituencies (Boundaries)",
@@ -158,7 +158,7 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"UK parliamentary constituency boundaries used to match constituency-level election data to spatial boundaries.",
+			"Parliamentary constituency boundaries.",
 	},
 ];
 
