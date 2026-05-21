@@ -1,5 +1,5 @@
 // components/population/age/AgeDistribution.tsx
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import {
 	ActiveViz,
 	AgeGroups,
@@ -12,6 +12,8 @@ import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { resolveWardData, getLadCachedValue } from "@/lib/helpers/demographicData";
+import { getAgeColor } from "@/lib/helpers/ageDistribution";
+import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
@@ -69,6 +71,7 @@ function AgeDistribution({
 	codeMapper,
 }: AgeDistributionProps) {
 	const isDark = useIsDark();
+	const [hovered, setHovered] = useState(false);
 	const vizId = `ageDistribution${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
@@ -282,13 +285,37 @@ function AgeDistribution({
 		};
 	}, [dataset, aggregatedData, selectedArea, codeMapper]);
 
+	// Largest age group → its chart color → lightened for border
+	const accentColor = useMemo(() => {
+		if (!total || Array.isArray(ageGroups)) return null;
+		const entries = Object.entries(ageGroups) as [string, number][];
+		if (entries.length === 0) return null;
+		const largestKey = entries.reduce((a, b) => b[1] > a[1] ? b : a)[0];
+		return getAgeColor(parseInt(largestKey.split("-")[0]));
+	}, [ageGroups, total]);
+
+	const dynamicStyle: React.CSSProperties = (() => {
+		if (!accentColor || (!isActive && !hovered)) return {};
+		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
+		if (isActive) {
+			const rgb = hexToRgb(accentColor);
+			style.backgroundColor = isDark
+				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
+				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
+		}
+		return style;
+	})();
+
 	return (
 		<div
-			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
-					? `border-2 border-cyan-300 ${isDark ? "bg-white/10" : "bg-cyan-50/60"}`
-					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-cyan-300" : "bg-white/60 border-2 border-gray-200/80 hover:border-cyan-300"
+			style={dynamicStyle}
+			className={`p-2 rounded cursor-pointer overflow-hidden relative border-2 ${isActive
+					? isDark ? "bg-white/10" : "bg-white/60"
+					: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
 				}`}
 			title="Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,

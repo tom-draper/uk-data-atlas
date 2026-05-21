@@ -8,7 +8,7 @@ import {
 	AggregatedEthnicityData,
 } from "@/lib/types";
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
-import { useMemo, memo } from "react";
+import { useMemo, memo, useState } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -16,11 +16,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-
-const YEAR_STYLES = {
-	bg: "bg-indigo-50/60",
-	border: "border-indigo-300",
-};
+import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
 
 interface ProcessedEthnicityData {
 	ethnicity: string;
@@ -89,7 +85,6 @@ interface EthnicityChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-// Helper function to flatten ethnicity data structure
 function flattenEthnicityData(
 	areaData: Record<string, EthnicityCategory>,
 ): ProcessedEthnicityData[] {
@@ -119,11 +114,11 @@ export default memo(function EthnicityChart({
 }: EthnicityChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+	const [hovered, setHovered] = useState(false);
 	const vizId = dataset.id;
 	const isActive = activeViz.vizId === vizId;
 
 	const processedData = useMemo(() => {
-		// Determine which data to use
 		const areaData = selectedArea?.code
 			? dataset.data[selectedArea.code]
 			: aggregatedData?.[2021];
@@ -132,7 +127,6 @@ export default memo(function EthnicityChart({
 			return { hasData: false, ethnicityData: [], totalPopulation: 0 };
 		}
 
-		// Flatten the nested structure
 		const allEthnicities = flattenEthnicityData(areaData);
 
 		const totalPopulation = allEthnicities.reduce(
@@ -144,7 +138,6 @@ export default memo(function EthnicityChart({
 			return { hasData: false, ethnicityData: [], totalPopulation: 0 };
 		}
 
-		// Calculate percentages and sort by population (descending)
 		const ethnicityData = allEthnicities
 			.map((item) => ({
 				...item,
@@ -157,23 +150,41 @@ export default memo(function EthnicityChart({
 
 	const heightClass = isActive ? "h-[170px]" : "h-[65px]";
 
-	const handleActivate = () => {
-		setActiveViz({
-			vizId: dataset.id,
-			datasetType: dataset.type,
-			datasetYear: dataset.year,
-		});
-	};
+	const accentColor = processedData.ethnicityData[0]?.color ?? null;
+
+	const dynamicStyle: React.CSSProperties = (() => {
+		if (!accentColor || (!isActive && !hovered)) return {};
+		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
+		if (isActive) {
+			const rgb = hexToRgb(accentColor);
+			style.backgroundColor = isDark
+				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
+				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
+		}
+		return style;
+	})();
 
 	return (
 		<div
+			style={dynamicStyle}
 			className={`
-                p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2 
+                p-2 rounded transition-[height] duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2
                 ${heightClass}
-                ${isActive ? `${isDark ? "bg-white/10" : YEAR_STYLES.bg} ${YEAR_STYLES.border}` : isDark ? "bg-white/5 border-white/10 hover:border-indigo-300" : "bg-white/60 border-gray-200/80 hover:border-indigo-300"}
+                ${isActive
+					? isDark ? "bg-white/10" : "bg-white/60"
+					: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
+				}
             `}
 			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
-			onClick={handleActivate}
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
+			onClick={() =>
+				setActiveViz({
+					vizId: dataset.id,
+					datasetType: dataset.type,
+					datasetYear: dataset.year,
+				})
+			}
 		>
 			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-1.5">
