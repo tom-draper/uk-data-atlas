@@ -7,6 +7,8 @@ import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions, CategoryOptions } from "@/lib/types/mapOptions";
 import { ActiveViz, AggregatedData, Dataset, PartyCode, EthnicityCode, Ethnicity, EthnicityCategory, WardStats, ConstituencyStats } from "@/lib/types";
 import { RangeControl } from "./controls/RangeControl";
+import { useIsDark } from "@/lib/context/ThemeContext";
+import { panelTheme } from "@/lib/helpers/panelTheme";
 
 type PartyDisplayData = { id: PartyCode; color: string; name: string };
 
@@ -41,6 +43,7 @@ const renderCategoryLegend = (
 	selectedId: string | undefined,
 	onItemClick: (id: string) => void,
 	swatchOpacity: number = 1,
+	isDark: boolean = false,
 ) => (
 	<div>
 		{items.map((item) => {
@@ -49,14 +52,14 @@ const renderCategoryLegend = (
 				<button
 					key={item.id}
 					onClick={() => onItemClick(item.id)}
-					className={`flex items-center gap-2 px-1 py-0.75 w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? "ring-1" : "hover:bg-gray-100/30"}`}
+					className={`flex items-center gap-2 px-1 py-0.75 w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? "ring-1" : isDark ? "hover:bg-white/10" : "hover:bg-gray-100/30"}`}
 					style={isSelected ? ({ backgroundColor: `${item.color}15`, "--tw-ring-color": `${item.color}80` } as React.CSSProperties) : {}}
 				>
 					<div
 						className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? "ring-1" : ""}`}
 						style={{ backgroundColor: item.color, opacity: swatchOpacity, ...(isSelected ? ({ "--tw-ring-color": item.color } as React.CSSProperties) : {}) }}
 					/>
-					<span className={`text-xs ${isSelected ? "text-gray-700" : "text-gray-500"}`}>
+					<span className={`text-xs ${isSelected ? (isDark ? "text-gray-100" : "text-gray-700") : (isDark ? "text-gray-400" : "text-gray-500")}`}>
 						{item.name}
 					</span>
 				</button>
@@ -79,9 +82,11 @@ const PercentageRangePanel = memo(function PercentageRangePanel({
 	onRangeInput: (min: number, max: number) => void;
 	onRangeChangeEnd: () => void;
 }) {
+	const isDark = useIsDark();
+	const t = panelTheme(isDark);
 	return (
-		<div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30 w-fit ml-auto">
-			<div className="bg-white/20 p-1 overflow-hidden">
+		<div className={`pointer-events-auto rounded-md backdrop-blur-md shadow-lg border w-fit ml-auto ${t.panel}`}>
+			<div className={`${t.section} p-1 overflow-hidden`}>
 				<RangeControl
 					min={0}
 					max={100}
@@ -307,6 +312,7 @@ export default memo(function LegendPanel({
 					opts?.selected,
 					(id) => handleEthnicityClick(id as EthnicityCode),
 					overlayOpacity,
+					isDark,
 				);
 			}
 
@@ -320,6 +326,7 @@ export default memo(function LegendPanel({
 					opts?.selected,
 					(id) => handlePartyClick(id as PartyCode),
 					overlayOpacity,
+					isDark,
 				);
 			}
 
@@ -372,10 +379,13 @@ export default memo(function LegendPanel({
 	const ethnicityOpts = displayOptions.ethnicity;
 	const showEthnicityPct = activeDataset?.type === "ethnicity" && ethnicityOpts?.mode === "percentage";
 
+	const isDark = useIsDark();
+	const t = panelTheme(isDark);
+
 	return (
 		<div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full gap-2.5">
-			<div className="bg-[rgba(255,255,255,0.5)] pointer-events-auto rounded-md backdrop-blur-md shadow-lg border border-white/30">
-				<div className="bg-white/20 p-1 overflow-hidden">
+			<div className={`pointer-events-auto rounded-md backdrop-blur-md shadow-lg border ${t.panel}`}>
+				<div className={`${t.section} p-1 overflow-hidden`}>
 					{renderLegendContent()}
 				</div>
 			</div>

@@ -1,11 +1,14 @@
-// import packageJson from '../package.json';
+"use client";
+import { useIsDark } from "@/lib/context/ThemeContext";
+import { panelTheme } from "@/lib/helpers/panelTheme";
 
 export default function TitlePane() {
-	// const version = packageJson.version;
+	const isDark = useIsDark();
+	const t = panelTheme(isDark);
 
 	return (
-		<div className="bg-[rgba(255,255,255,0.5)] text-sm rounded-md backdrop-blur-md shadow-lg border border-white/30 relative">
-			<div className="flex items-center bg-white/20 rounded-t-md">
+		<div className={`text-sm rounded-md backdrop-blur-md shadow-lg border relative ${t.panel}`}>
+			<div className={`flex items-center ${t.section} rounded-t-md`}>
 				<img
 					src="/union-jack.png"
 					alt="UK Data Atlas Logo"
@@ -14,10 +17,7 @@ export default function TitlePane() {
 						filter: "contrast(0.2) grayscale(1) brightness(1.8)",
 					}}
 				/>
-				<h1 className="font-semibold text-[15px]">UK Data Atlas</h1>
-				{/* <span className="text-xs text-gray-400/80 font-mono ml-auto mr-5 select-none mt-0.5">
-                    v{version}
-                </span> */}
+				<h1 className={`font-semibold text-[15px] ${t.heading}`}>UK Data Atlas</h1>
 			</div>
 		</div>
 	);

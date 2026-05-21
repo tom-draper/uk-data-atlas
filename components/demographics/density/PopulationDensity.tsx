@@ -10,6 +10,7 @@ import {
 import PopulationDensityChart from "./PopulationDensityChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
@@ -30,14 +31,15 @@ function PopulationDensity({
 	setActiveViz,
 	activeViz,
 }: PopulationDensityChartProps) {
+	const isDark = useIsDark();
 	const vizId = `populationDensity${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
 	return (
 		<div
 			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
-					? "bg-emerald-50/60 border-2 border-emerald-300"
-					: "bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300"
+					? `border-2 border-emerald-300 ${isDark ? "bg-white/10" : "bg-emerald-50/60"}`
+					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-emerald-300" : "bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300"
 				}`}
 			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
 			onClick={() =>

@@ -13,6 +13,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface BrexitChartProps {
 	activeDataset: Dataset | null;
@@ -36,6 +37,7 @@ export default memo(function BrexitHanrettyEstimatesChart({
 	setActiveViz,
 }: BrexitChartProps) {
 	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
 	const brexitStats = useMemo(() => {
@@ -115,9 +117,9 @@ export default memo(function BrexitHanrettyEstimatesChart({
 			className={`p-2 rounded cursor-pointer overflow-hidden relative h-[65px] ${
 				isActive
 					? result === "leave"
-						? "bg-red-50/60 border-2 border-red-400"
-						: "bg-blue-50/60 border-2 border-blue-400"
-					: `bg-white/60 border-2 border-gray-200/80 ${activeBorderClass}`
+						? `${isDark ? "bg-white/10" : "bg-red-50/60"} border-2 border-red-400`
+						: `${isDark ? "bg-white/10" : "bg-blue-50/60"} border-2 border-blue-400`
+					: isDark ? `bg-white/5 border-2 border-white/10 ${activeBorderClass}` : `bg-white/60 border-2 border-gray-200/80 ${activeBorderClass}`
 			}`}
 			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
 			onClick={() =>

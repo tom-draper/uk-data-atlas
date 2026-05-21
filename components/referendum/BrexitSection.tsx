@@ -2,6 +2,7 @@
 "use client";
 import { memo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
+import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	ActiveViz,
 	AggregatedBrexitData,
@@ -38,14 +39,15 @@ export default memo(function BrexitSection({
 	setActiveViz,
 }: BrexitSectionProps) {
 	const { visibility } = useChartVisibility();
+	const isDark = useIsDark();
 	const showHanretty = visibility["brexit-hanretty"];
 	const showConstituency = visibility["brexit-constituency"];
 
 	if (!showHanretty && !showConstituency) return null;
 
 	return (
-		<div className="space-y-2 border-t border-gray-200/80">
-			<h3 className="text-xs font-bold pt-2">Brexit</h3>
+		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
+			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>Brexit</h3>
 			{showConstituency && (
 				<BrexitChart
 					activeDataset={activeDataset}

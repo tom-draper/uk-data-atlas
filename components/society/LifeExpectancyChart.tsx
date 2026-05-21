@@ -12,6 +12,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface LifeExpectancyChartProps {
 	activeDataset: Dataset | null;
@@ -51,6 +52,7 @@ export default memo(function LifeExpectancyChart({
 	setActiveViz,
 }: LifeExpectancyChartProps) {
 	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
 	const dataset = availableDatasets?.[datasetId];
 
 	const leStats = useMemo(() => {
@@ -93,8 +95,8 @@ export default memo(function LifeExpectancyChart({
 		<div
 			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 ${
 				isActive
-					? "border-2 border-amber-400 bg-amber-50/60"
-					: "bg-white/60 border-2 border-gray-200/80 hover:border-amber-400"
+					? `border-2 border-amber-400 ${isDark ? "bg-white/10" : "bg-amber-50/60"}`
+					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-amber-400" : "bg-white/60 border-2 border-gray-200/80 hover:border-amber-400"
 			}`}
 			title={dataset.metadata.source}
 			onClick={() =>

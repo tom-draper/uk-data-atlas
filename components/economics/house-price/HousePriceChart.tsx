@@ -14,6 +14,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
@@ -60,6 +61,7 @@ const PriceChart = React.memo(
 		setActiveViz,
 	}: PriceChartProps) => {
 		const chartsLoading = useChartsLoading();
+		const isDark = useIsDark();
 		const { priceData, currentPrice } = useMemo(() => {
 			let prices: Record<number, number> = {};
 			let price2023: number | null = null;
@@ -252,8 +254,8 @@ const PriceChart = React.memo(
 		return (
 			<div
 				className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative h-20 ${isActive
-					? `${colors.bg} border-2 ${colors.border}`
-					: "bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300"
+					? `${isDark ? "bg-white/10" : colors.bg} border-2 ${colors.border}`
+					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-indigo-300" : "bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300"
 					}`}
 				title="Office for National Statistics. UK House Price Index (HPI): Mean and Median House Prices by Local Authority. ons.gov.uk"
 				onClick={() =>

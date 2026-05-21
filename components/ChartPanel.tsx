@@ -21,6 +21,8 @@ import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import BrexitSection from "./referendum/BrexitSection";
 import CustomSection from "./custom/CustomSection";
 import { usePanelContext } from "@/lib/context/PanelContext";
+import { useIsDark } from "@/lib/context/ThemeContext";
+import { panelTheme } from "@/lib/helpers/panelTheme";
 import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
 import { ChartVisibilityProvider, CHART_CONFIG, useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import ChartSettings from "./ChartSettings";
@@ -57,24 +59,26 @@ const PanelHeader = memo(function PanelHeader({
 	onToggleSettings: () => void;
 }) {
 	const { selectedArea, selectedLocation } = usePanelContext();
+	const isDark = useIsDark();
+	const t = panelTheme(isDark);
 	const { title, subtitle, code } = panelHeaderDetails(
 		selectedLocation,
 		selectedArea,
 	);
 
 	return (
-		<div className="pb-2 pt-2.5 px-2.5 bg-white/20">
+		<div className={`pb-2 pt-2.5 px-2.5 ${t.section}`}>
 			<div className="flex items-center justify-between">
-				<h2 className="font-semibold text-sm">{title}</h2>
+				<h2 className={`font-semibold text-sm ${t.heading}`}>{title}</h2>
 				<button
 					onClick={onToggleSettings}
-					className={`p-0.5 rounded transition-colors cursor-pointer ${settingsOpen ? "text-indigo-500" : "text-gray-400 hover:text-gray-600"}`}
+					className={`p-0.5 rounded transition-colors cursor-pointer ${settingsOpen ? "text-indigo-400" : `${t.textMuted} hover:${isDark ? "text-gray-200" : "text-gray-600"}`}`}
 					title="Chart settings"
 				>
 					<CogIcon className="w-3.5 h-3.5" />
 				</button>
 			</div>
-			<div className="text-gray-400/80 text-xs">
+			<div className={`${t.textMuted} text-xs`}>
 				{code ? (
 					<div className="flex justify-between">
 						<span>{subtitle}</span>
@@ -138,9 +142,11 @@ function panelHeaderDetails(
 
 const PanelFooter = () => {
 	const version = packageJson.version;
+	const isDark = useIsDark();
+	const t = panelTheme(isDark);
 
 	return (
-		<div className="text-[9px] px-2.5 pb-1.5 text-gray-400/80 bg-white/20 pt-2 mt-auto flex">
+		<div className={`text-[9px] px-2.5 pb-1.5 ${t.textMuted} ${t.section} pt-2 mt-auto flex`}>
 			<a
 				className="hover:underline cursor-pointer mr-auto"
 				href="https://github.com/tom-draper/uk-data-atlas"
@@ -177,13 +183,15 @@ export default memo(function ChartPanel({
 	chartsLoading,
 	codeMapper,
 }: ChartPanelProps) {
+	const isDark = useIsDark();
+	const t = panelTheme(isDark);
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const sectionVisible = useSectionVisibility();
 
 	return (
 		<ChartVisibilityProvider>
 		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
-			<div className="bg-[rgba(255,255,255,0.5)] rounded-md backdrop-blur-md shadow-lg h-full flex flex-col border border-white/30">
+			<div className={`rounded-md backdrop-blur-md shadow-lg h-full flex flex-col border ${t.panel}`}>
 				<PanelHeader
 					settingsOpen={settingsOpen}
 					onToggleSettings={() => setSettingsOpen((o) => !o)}

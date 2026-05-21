@@ -8,6 +8,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 const YEAR_STYLES: Record<string, { bg: string; border: string }> = {
 	"2024": { bg: "bg-blue-50/60", border: "border-blue-300" },
@@ -82,6 +83,7 @@ export default memo(function LocalElectionResultChart({
 	setActiveViz: (val: ActiveViz) => void;
 }) {
 	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
 	const colors = YEAR_STYLES[data.year] || YEAR_STYLES["2024"];
 
 	// Active = Medium Height | Inactive = Small Height
@@ -102,7 +104,7 @@ export default memo(function LocalElectionResultChart({
 			className={`
         p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2 
         ${heightClass}
-        ${isActive ? `${colors.bg} ${colors.border}` : "bg-white/60 border-gray-200/80 hover:border-blue-300"}
+        ${isActive ? `${isDark ? "bg-white/10" : colors.bg} ${colors.border}` : isDark ? "bg-white/5 border-white/10 hover:border-blue-300" : "bg-white/60 border-gray-200/80 hover:border-blue-300"}
       `}
 			title="House of Commons Library, UK Parliament. Local Election Results. commonslibrary.parliament.uk"
 			onClick={handleActivate}

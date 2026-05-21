@@ -2,6 +2,7 @@
 "use client";
 import { memo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
+import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	ActiveViz,
 	AggregatedHousePriceData,
@@ -39,14 +40,15 @@ export default memo(function EconomicsSection({
 	setActiveViz,
 }: EconomicsSectionProps) {
 	const { visibility } = useChartVisibility();
+	const isDark = useIsDark();
 	const showHousePrice = visibility["economics-housePrice"];
 	const showIncome = visibility["economics-income"];
 
 	if (!showHousePrice && !showIncome) return null;
 
 	return (
-		<div className="space-y-2 border-t border-gray-200/80">
-			<h3 className="text-xs font-bold pt-2">Economics</h3>
+		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
+			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>Economics</h3>
 			{showHousePrice && (
 				<HousePriceChart
 					activeDataset={activeDataset}

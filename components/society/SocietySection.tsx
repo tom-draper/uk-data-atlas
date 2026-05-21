@@ -2,6 +2,7 @@
 "use client";
 import { memo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
+import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	ActiveViz,
 	AggregatedCrimeData,
@@ -46,6 +47,7 @@ export default memo(function SocietySection({
 	setActiveViz,
 }: SocietySectionProps) {
 	const { visibility } = useChartVisibility();
+	const isDark = useIsDark();
 	const showCrime = visibility["society-crime"];
 	const showIMD = visibility["society-imd"];
 	const showLE = visibility["society-lifeExpectancy"];
@@ -57,8 +59,8 @@ export default memo(function SocietySection({
 	if (!showCrime && !showIMD && !showLE && !showHLE) return null;
 
 	return (
-		<div className="space-y-2 border-t border-gray-200/80">
-			<h3 className="text-xs font-bold pt-2">Society</h3>
+		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
+			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>Society</h3>
 			{showCrime && (
 				<CrimeRateChart
 					activeDataset={activeDataset}
