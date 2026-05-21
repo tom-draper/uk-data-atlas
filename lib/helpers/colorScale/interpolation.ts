@@ -15,6 +15,12 @@ export function hexToRgbString(hex: string) {
 	return `rgb(${r}, ${g}, ${b})`;
 }
 
+// Mixes a hex color toward white. factor=0 returns original, factor=1 returns white.
+export function lightenHex(hex: string, factor: number): string {
+	const { r, g, b } = hexToRgb(hex);
+	return `rgb(${Math.round(r + (255 - r) * factor)}, ${Math.round(g + (255 - g) * factor)}, ${Math.round(b + (255 - b) * factor)})`;
+}
+
 export function interpolateColor(color1: string, color2: string, factor: number) {
 	const c1 = color1.match(/\d+/g)?.map(Number) || [0, 0, 0];
 	const c2 = color2.match(/\d+/g)?.map(Number) || [255, 255, 255];

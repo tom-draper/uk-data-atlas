@@ -9,7 +9,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { hexToRgb } from "@/lib/helpers/colorScale/interpolation";
+import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
 
 interface ProcessedPartyData {
 	key: string;
@@ -135,7 +135,7 @@ export default memo(function GeneralElectionResultChart({
 	const showAccent = isActive || hovered;
 	const dynamicStyle: React.CSSProperties = showAccent
 		? {
-			borderColor: accentColor,
+			borderColor: lightenHex(accentColor, 0.45),
 			...(isActive && (() => {
 				const rgb = hexToRgb(accentColor);
 				return {
