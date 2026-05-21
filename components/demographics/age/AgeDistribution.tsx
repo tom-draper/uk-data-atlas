@@ -1,5 +1,5 @@
 // components/population/age/AgeDistribution.tsx
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import {
 	ActiveViz,
 	AgeGroups,
@@ -13,7 +13,7 @@ import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { resolveWardData, getLadCachedValue } from "@/lib/helpers/demographicData";
 import { getAgeColor } from "@/lib/helpers/ageDistribution";
-import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
@@ -71,7 +71,6 @@ function AgeDistribution({
 	codeMapper,
 }: AgeDistributionProps) {
 	const isDark = useIsDark();
-	const [hovered, setHovered] = useState(false);
 	const vizId = `ageDistribution${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
@@ -294,28 +293,15 @@ function AgeDistribution({
 		return getAgeColor(parseInt(largestKey.split("-")[0]));
 	}, [ageGroups, total]);
 
-	const dynamicStyle: React.CSSProperties = (() => {
-		if (!accentColor || (!isActive && !hovered)) return {};
-		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
-		if (isActive) {
-			const rgb = hexToRgb(accentColor);
-			style.backgroundColor = isDark
-				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
-				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
-		}
-		return style;
-	})();
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
 
 	return (
 		<div
-			style={dynamicStyle}
-			className={`p-2 rounded cursor-pointer overflow-hidden relative border-2 ${isActive
-					? isDark ? "bg-white/10" : "bg-white/60"
-					: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
-				}`}
+			style={style}
+			className={cardClass(isActive, isDark)}
 			title="Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,
@@ -326,7 +312,7 @@ function AgeDistribution({
 		>
 			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-2">
-				<h3 className="text-xs font-bold">
+				<h3 className={chartHeadingClass(isDark)}>
 					Age Distribution [{dataset.year}]
 				</h3>
 				{medianAge > 0 && (

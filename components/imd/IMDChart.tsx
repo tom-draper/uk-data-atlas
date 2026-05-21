@@ -13,6 +13,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface IMDChartProps {
 	activeDataset: Dataset | null;
@@ -100,14 +101,15 @@ export default memo(function IMDChart({
 	const decileColor = decile ? DECILE_COLORS[decile - 1] : "#9ca3af";
 	const hasData = imdStats !== null;
 
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(hasData ? decileColor : null, isActive, isDark);
+
 	return (
 		<div
-			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 ${
-				isActive
-					? `border-2 border-amber-400 ${isDark ? "bg-white/10" : "bg-amber-50/60"}`
-					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-amber-400" : "bg-white/60 border-2 border-gray-200/80 hover:border-amber-400"
-			}`}
+			style={style}
+			className={cardClass(isActive, isDark, "h-20")}
 			title="Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019. gov.uk"
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -118,7 +120,7 @@ export default memo(function IMDChart({
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10">
-				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
+				<h3 className={chartHeadingClass(isDark)}>
 					Deprivation (IMD) [{dataset.year}]
 				</h3>
 				{hasData && imdStats ? (

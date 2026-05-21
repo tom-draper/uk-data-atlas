@@ -15,6 +15,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -26,13 +27,6 @@ interface IncomeChartProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
-
-const colors = {
-	bg: "bg-emerald-50/60",
-	border: "border-emerald-300",
-	inactive:
-		"bg-white/60 border-2 border-gray-200/80 hover:border-emerald-300",
-};
 
 // Green shades for the pound signs
 const particleColors = [
@@ -136,13 +130,15 @@ export default memo(function IncomeChart({
 		? `£${Math.round(medianIncome).toLocaleString()}`
 		: null;
 
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent("#10b981", !!isActive, isDark);
+
 	return (
 		<div
-			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative isolate h-20 ${isActive
-					? `${isDark ? "bg-white/10" : colors.bg} border-2 ${colors.border}`
-					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-emerald-300" : colors.inactive
-				}`}
+			style={style}
+			className={cardClass(!!isActive, isDark, "isolate h-20")}
 			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -172,7 +168,7 @@ export default memo(function IncomeChart({
 			</div>
 
 			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-700"}`}>
+				<h3 className={chartHeadingClass(isDark)}>
 					Median Income [{dataset.year}]
 				</h3>
 			</div>

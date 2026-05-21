@@ -15,6 +15,10 @@ export function hexToRgbString(hex: string) {
 	return `rgb(${r}, ${g}, ${b})`;
 }
 
+export function rgbToHex(r: number, g: number, b: number): string {
+	return "#" + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, "0")).join("");
+}
+
 // Mixes a hex color toward white. factor=0 returns original, factor=1 returns white.
 export function lightenHex(hex: string, factor: number): string {
 	const { r, g, b } = hexToRgb(hex);

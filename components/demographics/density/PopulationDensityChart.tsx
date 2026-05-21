@@ -11,7 +11,7 @@ import {
 	getFeatureProp,
 } from "@/lib/types";
 import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
-import { useMemo, memo, useState } from "react";
+import { useMemo, memo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -20,7 +20,7 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { resolveWardData, getLadCachedValue } from "@/lib/helpers/demographicData";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
@@ -171,7 +171,6 @@ function PopulationDensityChart({
 }: PopulationDensityChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const [hovered, setHovered] = useState(false);
 	const vizId = `populationDensity${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
@@ -288,29 +287,15 @@ function PopulationDensityChart({
 	}, [dataset, aggregatedData, boundaryData, selectedArea, codeMapper]);
 
 	const accentColor = density !== null ? getDensityCategory(density).hex : null;
-
-	const dynamicStyle: React.CSSProperties = (() => {
-		if (!accentColor || (!isActive && !hovered)) return {};
-		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
-		if (isActive) {
-			const rgb = hexToRgb(accentColor);
-			style.backgroundColor = isDark
-				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
-				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
-		}
-		return style;
-	})();
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
 
 	return (
 		<div
-			style={dynamicStyle}
-			className={`p-2 rounded cursor-pointer overflow-hidden relative border-2 ${isActive
-				? isDark ? "bg-white/10" : "bg-white/60"
-				: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
-			}`}
+			style={style}
+			className={cardClass(isActive, isDark)}
 			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,
@@ -321,17 +306,17 @@ function PopulationDensityChart({
 		>
 			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
+				<h3 className={chartHeadingClass(isDark)}>
 					Population Density [{dataset.year}]
 				</h3>
 			</div>
 
 			{!total || density === null || areaSqKm === null ? (
-				<div className="text-xs h-13 text-gray-400/80 text-center grid place-items-center mb-1">
+				<div className="h-13 mt-2 mb-2">
 					{chartsLoading ? (
-						<ChartContentPlaceholder className="h-10 w-full" />
+						<ChartContentPlaceholder className="h-full" />
 					) : (
-						<div>No data available</div>
+						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>No data available</div>
 					)}
 				</div>
 			) : (

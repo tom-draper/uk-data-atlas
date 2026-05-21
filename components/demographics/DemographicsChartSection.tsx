@@ -14,7 +14,7 @@ import {
 } from "@lib/types";
 import Gender from "./gender/Gender";
 import AgeDistribution from "./age/AgeDistribution";
-import PopulationDensity from "./density/PopulationDensity";
+import PopulationDensityChart from "./density/PopulationDensityChart";
 import EthnicityChart from "./ethnicity/EthnicityChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
@@ -55,7 +55,7 @@ export default memo(function DemographicsChartSection({
 			<h3 className={`text-xs font-bold mb-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>Demographics</h3>
 			<div className="space-y-3">
 				{showDensity && (
-					<PopulationDensity
+					<PopulationDensityChart
 						dataset={availablePopulationDatasets[2022]}
 						aggregatedData={aggregatedPopulationData}
 						boundaryData={boundaryData}
