@@ -40,6 +40,19 @@ import { getColorForLifeExpectancy } from "../colorScale";
 
 export const DEFAULT_COLOR = "#cccccc";
 
+// Cache computed area per feature geometry — avoids re-traversing polygon vertices across dataset switches
+const featureAreaCache = new WeakMap<object, number>();
+
+function getCachedArea(feature: Feature): number {
+	const geom = feature.geometry.coordinates as object;
+	let area = featureAreaCache.get(geom);
+	if (area === undefined) {
+		area = polygonAreaSqKm(feature.geometry.coordinates);
+		featureAreaCache.set(geom, area);
+	}
+	return area;
+}
+
 export class FeatureBuilder {
 	formatBoundaryGeoJson(features: Features): BoundaryGeojson {
 		return {
@@ -263,7 +276,7 @@ export class FeatureBuilder {
 				const total =
 					calculateTotal(wardPopulation.males) +
 					calculateTotal(wardPopulation.females);
-				const areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
+				const areaSqKm = getCachedArea(feature);
 				const density = areaSqKm > 0 ? total / areaSqKm : 0;
 				color = getColorForDensity(
 					density,
