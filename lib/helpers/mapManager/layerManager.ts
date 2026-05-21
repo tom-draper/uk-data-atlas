@@ -148,6 +148,7 @@ export class LayerManager {
 		paint: FillPaintConfig,
 		visibility: MapOptions["visibility"],
 	): void {
+		if (!this.map.isStyleLoaded()) return;
 		this.removeExistingLayers();
 		this.addSource(geojson);
 

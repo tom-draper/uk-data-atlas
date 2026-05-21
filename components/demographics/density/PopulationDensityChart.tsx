@@ -238,6 +238,40 @@ function PopulationDensityChart({
 			});
 		}
 
+		// Handle Constituency Selection (no cache — stale cache risks hiding data if computed
+		// before constituency-ward mappings finish loading asynchronously)
+		if (selectedArea && selectedArea.type === "constituency" && codeMapper?.getWardsForConstituency) {
+			const wardCodes = codeMapper.getWardsForConstituency(selectedArea.code, dataset.boundaryYear);
+
+			if (wardCodes.length === 0) return { density: null, areaSqKm: null, total: null };
+
+			const wardCodeProp = detectWardCodeForYear(geojson.features, dataset.boundaryYear);
+			const featureIndex = getFeatureIndex(geojson, wardCodeProp);
+			let totalPopulation = 0;
+			let totalArea = 0;
+
+			for (const wardCode of wardCodes) {
+				const populationData = resolveWardData(dataset, wardCode, codeMapper);
+				if (populationData) {
+					const wardFeature = featureIndex.get(wardCode);
+					if (wardFeature) {
+						const wardTotal = calculateTotal(populationData.total);
+						let wardArea = featureAreaCache.get(wardFeature);
+						if (wardArea === undefined) {
+							wardArea = polygonAreaSqKm(wardFeature.geometry.coordinates);
+							featureAreaCache.set(wardFeature, wardArea);
+						}
+						totalPopulation += wardTotal;
+						totalArea += wardArea;
+					}
+				}
+			}
+
+			return totalArea > 0
+				? { density: totalPopulation / totalArea, areaSqKm: totalArea, total: totalPopulation }
+				: { density: null, areaSqKm: null, total: null };
+		}
+
 		// Unsupported area type
 		return { density: null, areaSqKm: null, total: null };
 	}, [dataset, aggregatedData, boundaryData, selectedArea, codeMapper]);

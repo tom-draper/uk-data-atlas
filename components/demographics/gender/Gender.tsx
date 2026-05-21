@@ -159,6 +159,28 @@ function Gender({
 			return result;
 		}
 
+		// Handle Constituency Selection
+		if (selectedArea && selectedArea.type === "constituency" && codeMapper?.getWardsForConstituency) {
+			const wardCodes = codeMapper.getWardsForConstituency(selectedArea.code, dataset.boundaryYear);
+
+			let aggregatedMales = 0;
+			let aggregatedFemales = 0;
+
+			for (const wardCode of wardCodes) {
+				let wardData = dataset.data?.[wardCode];
+				if (!wardData && codeMapper?.getCodeForYear) {
+					const mapped = codeMapper.getCodeForYear("ward", wardCode, dataset.boundaryYear);
+					if (mapped) wardData = dataset.data[mapped];
+				}
+				if (wardData) {
+					for (const v of Object.values(wardData.males)) aggregatedMales += v;
+					for (const v of Object.values(wardData.females)) aggregatedFemales += v;
+				}
+			}
+
+			return { totalMales: aggregatedMales, totalFemales: aggregatedFemales };
+		}
+
 		// Unsupported area type or missing data
 		return { totalMales: 0, totalFemales: 0 };
 	}, [dataset, aggregatedData, selectedArea, codeMapper]);

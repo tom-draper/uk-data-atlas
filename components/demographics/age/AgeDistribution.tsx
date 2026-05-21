@@ -225,6 +225,53 @@ function AgeDistribution({
 			});
 		}
 
+		// Handle Constituency Selection (no cache — stale cache risks hiding data if computed
+		// before constituency-ward mappings finish loading asynchronously)
+		if (selectedArea && selectedArea.type === "constituency" && codeMapper?.getWardsForConstituency) {
+			const wardCodes = codeMapper.getWardsForConstituency(selectedArea.code, dataset.boundaryYear);
+
+			if (wardCodes.length === 0) {
+				return { medianAge: 0, ageGroups: EMPTY_AGE_GROUPS, total: 0, counts: new Uint32Array(100), maxCount: 0 };
+			}
+
+			const aggregatedCounts = new Uint32Array(100);
+			for (const wardCode of wardCodes) {
+				const wardData = resolveWardData(dataset, wardCode, codeMapper);
+				if (wardData?.total) {
+					for (let i = 0; i < 90; i++) {
+						aggregatedCounts[i] += wardData.total[AGE_STRING_KEYS[i]] || 0;
+					}
+					const age90Plus = wardData.total["90"] || 0;
+					for (let i = 90; i < 100; i++) {
+						aggregatedCounts[i] += Math.round(age90Plus * NORMALIZED_WEIGHTS[i - 90]);
+					}
+				}
+			}
+
+			let totalPopulation = 0;
+			let max = 0;
+			for (let i = 0; i < 100; i++) {
+				totalPopulation += aggregatedCounts[i];
+				if (aggregatedCounts[i] > max) max = aggregatedCounts[i];
+			}
+
+			let cumulative = 0;
+			const halfPopulation = totalPopulation / 2;
+			let median = 0;
+			let medianFound = false;
+			const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
+			for (let i = 0; i < 100; i++) {
+				const count = aggregatedCounts[i];
+				currentAgeGroups[AGE_GROUP_KEYS[i]] += count;
+				if (!medianFound) {
+					cumulative += count;
+					if (cumulative >= halfPopulation) { median = i; medianFound = true; }
+				}
+			}
+
+			return { medianAge: median, ageGroups: currentAgeGroups, total: totalPopulation, counts: aggregatedCounts, maxCount: max };
+		}
+
 		// Handle Missing Data or unsupported area types
 		return {
 			medianAge: 0,

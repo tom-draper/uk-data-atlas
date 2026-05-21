@@ -8,6 +8,7 @@ import { useAggregatedData } from "@/lib/hooks/useAggregatedData";
 import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
+import { normalizeElectionDatasetCodes } from "@/lib/data/election/local-election/load";
 
 import MapView from "@components/MapView";
 import UIOverlay from "@components/UIOverlay";
@@ -188,10 +189,28 @@ export default function MapInterface({
 		mapInstance.triggerRepaint();
 	}, [map]);
 
+	// Normalize ward codes in local election datasets against boundaryCodes.
+	// The HoC source occasionally carries post-boundary-review codes for elections
+	// that predate those reviews. If a code is missing from the expected boundary
+	// year's valid set, getCodeForYear resolves it to the correct equivalent code.
+	const normalizedDatasets = useMemo(() => {
+		if (!boundaryCodes?.ward) return datasets;
+
+		const normalizedLocalElection = Object.fromEntries(
+			Object.entries(datasets.localElection).map(([year, dataset]) => {
+				const validCodes = boundaryCodes.ward[dataset.boundaryYear];
+				if (!validCodes) return [year, dataset];
+				return [year, normalizeElectionDatasetCodes(dataset, validCodes, codeMapper.getCodeForYear)];
+			}),
+		) as typeof datasets.localElection;
+
+		return { ...datasets, localElection: normalizedLocalElection };
+	}, [datasets, boundaryCodes, codeMapper]);
+
 	const aggregatedData = useAggregatedData({
 		mapManager,
 		boundaryData,
-		datasets,
+		datasets: normalizedDatasets,
 		customDataset,
 		location: selectedLocation,
 	});
@@ -216,7 +235,7 @@ export default function MapInterface({
 					setActiveViz={setActiveViz}
 					aggregatedData={aggregatedData}
 					chartsLoading={chartsLoading}
-					datasets={datasets}
+					datasets={normalizedDatasets}
 					customDataset={customDataset}
 					setCustomDataset={setCustomDataset}
 					onExport={handleExport}

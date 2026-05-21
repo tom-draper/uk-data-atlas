@@ -36,6 +36,7 @@ interface PriceChartProps {
 		targetYear: number,
 	) => string | undefined;
 	getWardsForLad?: (ladCode: string, year: number) => string[];
+	getWardsForConstituency?: (constituencyCode: string, wardYear: number) => string[];
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -57,6 +58,7 @@ const PriceChart = React.memo(
 		selectedArea,
 		getCodeForYear,
 		getWardsForLad,
+		getWardsForConstituency,
 		isActive,
 		setActiveViz,
 	}: PriceChartProps) => {
@@ -190,6 +192,40 @@ const PriceChart = React.memo(
 					// Cache the result
 					yearCache.set(dataset.year, { prices });
 				}
+			} else if (selectedArea && selectedArea.type === "constituency" && getWardsForConstituency) {
+				// No cache — stale cache risks hiding data if computed before constituency-ward
+				// mappings finish loading asynchronously
+				const constituencyCode = selectedArea.code;
+				const wardCodes = getWardsForConstituency(constituencyCode, dataset.boundaryYear);
+				if (wardCodes.length > 0) {
+					const yearlyPrices: Record<number, number[]> = {};
+					for (const wardCode of wardCodes) {
+						let wardData = dataset.data?.[wardCode];
+						if (!wardData && getCodeForYear) {
+							const mapped = getCodeForYear("ward", wardCode, dataset.boundaryYear);
+							if (mapped) wardData = dataset.data[mapped];
+						}
+						if (wardData?.prices) {
+							for (const [year, price] of Object.entries(wardData.prices)) {
+								if (price !== null && price !== undefined) {
+									const yearNum = Number(year);
+									if (!yearlyPrices[yearNum]) yearlyPrices[yearNum] = [];
+									yearlyPrices[yearNum].push(price as number);
+								}
+							}
+						}
+					}
+					for (const [year, priceArray] of Object.entries(yearlyPrices)) {
+						if (priceArray.length > 0) {
+							const sorted = [...priceArray].sort((a, b) => a - b);
+							const mid = Math.floor(sorted.length / 2);
+							prices[Number(year)] = sorted.length % 2 === 0
+								? (sorted[mid - 1] + sorted[mid]) / 2
+								: sorted[mid];
+						}
+					}
+					price2023 = prices[2023] || null;
+				}
 			} else {
 				// Other area types or missing mapper
 				return {
@@ -217,6 +253,7 @@ const PriceChart = React.memo(
 			selectedArea,
 			getCodeForYear,
 			getWardsForLad,
+			getWardsForConstituency,
 		]);
 
 		// Calculate SVG path for the line chart with straight lines
@@ -373,6 +410,7 @@ export default memo(function HousePriceChart({
 			selectedArea={selectedArea}
 			getCodeForYear={codeMapper?.getCodeForYear}
 			getWardsForLad={codeMapper?.getWardsForLad}
+			getWardsForConstituency={codeMapper?.getWardsForConstituency}
 			isActive={isActive as boolean}
 			setActiveViz={setActiveViz}
 		/>

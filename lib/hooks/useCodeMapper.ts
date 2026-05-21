@@ -20,6 +20,7 @@ export interface CodeMapper {
 		targetYear: number,
 	) => string | undefined;
 	getWardsForLad: (ladCode: string, year: number) => string[];
+	getWardsForConstituency: (constituencyCode: string, wardYear: number) => string[];
 }
 
 export interface CodeMapping {
@@ -44,6 +45,9 @@ interface LadWardMapping {
 export function useCodeMapper() {
 	const [wardToLadMap, setWardToLadMap] = useState<WardLadMapping>({});
 	const [ladToWardsMap, setLadToWardsMap] = useState<LadWardMapping>({});
+	const [constituencyToWardsMap, setConstituencyToWardsMap] = useState<
+		Record<number, Record<string, string[]>>
+	>({});
 	const [codeMappings, setCodeMappings] = useState<{
 		ward: CodeMapping;
 		localAuthority: CodeMapping;
@@ -59,11 +63,13 @@ export function useCodeMapper() {
 	// Use refs to avoid recreating callbacks
 	const wardToLadMapRef = useRef(wardToLadMap);
 	const ladToWardsMapRef = useRef(ladToWardsMap);
+	const constituencyToWardsMapRef = useRef(constituencyToWardsMap);
 	const codeMappingsRef = useRef(codeMappings);
 
 	// Keep refs in sync
 	wardToLadMapRef.current = wardToLadMap;
 	ladToWardsMapRef.current = ladToWardsMap;
+	constituencyToWardsMapRef.current = constituencyToWardsMap;
 	codeMappingsRef.current = codeMappings;
 
 	// ==================== Ward-to-LAD Mappings ====================
@@ -110,7 +116,17 @@ export function useCodeMapper() {
 
 	const getWardsForLad = useCallback(
 		(ladCode: string, year: YearCode): string[] => {
-			return ladToWardsMapRef.current[year]?.[ladCode] || [];
+			const direct = ladToWardsMapRef.current[year]?.[ladCode];
+			if (direct?.length) return direct;
+			// Some ward GeoJSON years don't embed LAD codes (e.g. 2023 has no LAD23CD).
+			// Fall back through available years to find a mapping for this LAD.
+			const map = ladToWardsMapRef.current;
+			const fallbackYears = [2024, 2022, 2021, 2023].filter((y) => y !== year);
+			for (const fy of fallbackYears) {
+				const result = map[fy]?.[ladCode];
+				if (result?.length) return result;
+			}
+			return [];
 		},
 		[],
 	);
@@ -141,6 +157,36 @@ export function useCodeMapper() {
 					...mappings,
 				},
 			}));
+		},
+		[],
+	);
+
+	// ==================== Constituency-to-Wards Mappings ====================
+
+	const addConstituencyWardMappings = useCallback(
+		(year: YearCode, mappings: Record<string, string[]>) => {
+			if (!year) return;
+			setConstituencyToWardsMap((prev) => ({
+				...prev,
+				[year]: { ...prev[year], ...mappings },
+			}));
+		},
+		[],
+	);
+
+	const getWardsForConstituency = useCallback(
+		(constituencyCode: string, wardYear: YearCode): string[] => {
+			// Direct lookup for this ward year
+			const direct = constituencyToWardsMapRef.current[wardYear]?.[constituencyCode];
+			if (direct?.length) return direct;
+
+			// If not found, try mapping the constituency code to 2024 (the reference year
+			// used when building the constituency->wards index) via cross-year mapping
+			const pcon2024 = codeMappingsRef.current.constituency[constituencyCode]?.[2024];
+			if (pcon2024) {
+				return constituencyToWardsMapRef.current[wardYear]?.[pcon2024] || [];
+			}
+			return [];
 		},
 		[],
 	);
@@ -325,6 +371,8 @@ export function useCodeMapper() {
 		getWardsForLad,
 		addLadWardMapping,
 		addLadWardMappings,
+		addConstituencyWardMappings,
+		getWardsForConstituency,
 		addCodeMapping,
 		addCodeMappings,
 		getCodeForYear,
@@ -336,7 +384,7 @@ export function useCodeMapper() {
 		clearLadWardMap,
 		clearCodeMappings,
 		getMappingCounts,
-	}), [getLadForWard, addWardLadMapping, addWardLadMappings, getWardsForLad, addLadWardMapping, addLadWardMappings, addCodeMapping, addCodeMappings, getCodeForYear, getAllEquivalentCodes, findSourceCodes, getHighlightCodes, clearAllMappings, clearWardLadMap, clearLadWardMap, clearCodeMappings, getMappingCounts]);
+	}), [getLadForWard, addWardLadMapping, addWardLadMappings, getWardsForLad, addLadWardMapping, addLadWardMappings, addConstituencyWardMappings, getWardsForConstituency, addCodeMapping, addCodeMappings, getCodeForYear, getAllEquivalentCodes, findSourceCodes, getHighlightCodes, clearAllMappings, clearWardLadMap, clearLadWardMap, clearCodeMappings, getMappingCounts]);
 }
 
 /**
@@ -497,6 +545,93 @@ export const buildCodeMappingsFromLookup = (
 				if (toCode) {
 					mappings[fromCode][toYear] = toCode;
 				}
+			}
+		}
+	}
+
+	return mappings;
+};
+
+function pointInPolygon(px: number, py: number, ring: number[][]): boolean {
+	let inside = false;
+	for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+		const xi = ring[i][0], yi = ring[i][1];
+		const xj = ring[j][0], yj = ring[j][1];
+		if (yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
+			inside = !inside;
+		}
+	}
+	return inside;
+}
+
+/**
+ * Build constituency->wards mappings by testing ward polygon centroids against
+ * constituency polygons. Uses 2024 constituency boundaries as the reference so
+ * that any PCON24CD code encountered at hover time maps directly.
+ * Runs once after both boundary groups are loaded.
+ */
+export const buildConstituencyWardMappings = (
+	wardGeoJSON: BoundaryGeojson,
+	constituencyGeoJSON: BoundaryGeojson,
+): Record<string, string[]> => {
+	interface ConEntry {
+		code: string;
+		minX: number; minY: number; maxX: number; maxY: number;
+		rings: number[][][];
+	}
+
+	const constituencies: ConEntry[] = [];
+	for (const feature of constituencyGeoJSON.features) {
+		const code = getProp(feature.properties, PROPERTY_KEYS.constituencyCode);
+		if (!code) continue;
+
+		const geom = feature.geometry as any;
+		const outerRings: number[][][] =
+			geom.type === "MultiPolygon"
+				? (geom.coordinates as number[][][][]).map((p: number[][][]) => p[0])
+				: [geom.coordinates[0] as number[][]];
+
+		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+		for (const ring of outerRings) {
+			for (const [x, y] of ring) {
+				if (x < minX) minX = x;
+				if (x > maxX) maxX = x;
+				if (y < minY) minY = y;
+				if (y > maxY) maxY = y;
+			}
+		}
+		constituencies.push({ code, minX, minY, maxX, maxY, rings: outerRings });
+	}
+
+	const mappings: Record<string, string[]> = {};
+
+	for (const feature of wardGeoJSON.features) {
+		const wardCode = getProp(feature.properties, PROPERTY_KEYS.wardCode);
+		if (!wardCode) continue;
+
+		const geom = feature.geometry as any;
+		const outerRing: number[][] =
+			geom.type === "MultiPolygon"
+				? (geom.coordinates as number[][][][])[0][0]
+				: geom.coordinates[0];
+
+		let cx = 0, cy = 0;
+		for (const [x, y] of outerRing) { cx += x; cy += y; }
+		cx /= outerRing.length;
+		cy /= outerRing.length;
+
+		for (const con of constituencies) {
+			if (cx < con.minX || cx > con.maxX || cy < con.minY || cy > con.maxY) continue;
+
+			let matched = false;
+			for (const ring of con.rings) {
+				if (pointInPolygon(cx, cy, ring)) { matched = true; break; }
+			}
+
+			if (matched) {
+				if (!mappings[con.code]) mappings[con.code] = [];
+				mappings[con.code].push(wardCode);
+				break;
 			}
 		}
 	}

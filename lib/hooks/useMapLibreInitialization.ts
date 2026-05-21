@@ -23,7 +23,7 @@ export function useMapLibreInitialization({
 			if (!el || mapRef.current) return;
 
 			try {
-				mapRef.current = new maplibregl.Map({
+				const map = new maplibregl.Map({
 					container: el,
 					style,
 					center,
@@ -31,7 +31,8 @@ export function useMapLibreInitialization({
 					maxBounds,
 					preserveDrawingBuffer: true,
 				} as any);
-				setMapReady(true);
+				mapRef.current = map;
+				map.once("style.load", () => setMapReady(true));
 			} catch (err) {
 				console.error("Failed to initialize MapLibre map:", err);
 			}
