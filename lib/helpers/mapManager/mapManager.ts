@@ -62,6 +62,7 @@ export class MapManager {
 		dataset: LocalElectionDataset | GeneralElectionDataset,
 		mapOptions: MapOptions,
 		type: "localElection" | "generalElection",
+		isDark = false,
 	): void {
 		const isLocal = type === "localElection";
 		const options = isLocal
@@ -113,6 +114,7 @@ export class MapManager {
 				transformedGeojson,
 				options,
 				mapOptions.visibility,
+				isDark,
 			);
 		} else {
 			this.layerManager.updateElectionLayers(
@@ -129,22 +131,25 @@ export class MapManager {
 		geojson: BoundaryGeojson,
 		dataset: LocalElectionDataset,
 		mapOptions: MapOptions,
+		isDark = false,
 	): void {
-		this.updateElectionMap(geojson, dataset, mapOptions, "localElection");
+		this.updateElectionMap(geojson, dataset, mapOptions, "localElection", isDark);
 	}
 
 	updateMapForGeneralElection(
 		geojson: BoundaryGeojson,
 		dataset: GeneralElectionDataset,
 		mapOptions: MapOptions,
+		isDark = false,
 	): void {
-		this.updateElectionMap(geojson, dataset, mapOptions, "generalElection");
+		this.updateElectionMap(geojson, dataset, mapOptions, "generalElection", isDark);
 	}
 
 	updateMapForEthnicity(
 		geojson: BoundaryGeojson,
 		dataset: EthnicityDataset,
 		mapOptions: MapOptions,
+		isDark = false,
 	): void {
 		const cacheKey = `ethnicity-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
 		let codeProp = propCache.get(cacheKey);
@@ -175,6 +180,7 @@ export class MapManager {
 				transformedGeojson,
 				mapOptions.ethnicity,
 				mapOptions.visibility,
+				isDark,
 			);
 		} else {
 			this.layerManager.updateEthnicityMajorityLayers(

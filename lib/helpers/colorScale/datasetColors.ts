@@ -75,20 +75,21 @@ export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions)
 	}
 }
 
-export function getPercentageColorExpression(color: string, mapOptions: CategoryOptions) {
+export function getPercentageColorExpression(color: string, mapOptions: CategoryOptions, isDark = false) {
 	const range = mapOptions.percentageRange;
 	const partyRgb = hexToRgb(color);
-	const lightRgb = { r: 245, g: 245, b: 245 };
+	const neutralColor = isDark ? "#1f2937" : "#f5f5f5";
+	const neutralRgb = hexToRgb(neutralColor);
 	return [
 		"case",
 		["==", ["get", "percentage"], null],
-		"#f5f5f5",
+		neutralColor,
 		[
 			"interpolate",
 			["linear"],
 			["get", "percentage"],
 			range.min,
-			`rgb(${lightRgb.r}, ${lightRgb.g}, ${lightRgb.b})`,
+			`rgb(${neutralRgb.r}, ${neutralRgb.g}, ${neutralRgb.b})`,
 			range.max,
 			`rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`,
 		],

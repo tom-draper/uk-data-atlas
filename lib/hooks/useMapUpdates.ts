@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { ActiveViz, BoundaryGeojson, Dataset } from "@lib/types";
 import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
+import { useIsDark } from "../context/ThemeContext";
 
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson | null;
@@ -20,6 +21,7 @@ export function useMapUpdates({
 	mapOptions,
 	styleReady,
 }: UseMapUpdatesParams) {
+	const isDark = useIsDark();
 	useEffect(() => {
 		if (!geojson || !activeDataset || !mapManager) return;
 
@@ -30,6 +32,7 @@ export function useMapUpdates({
 						geojson,
 						activeDataset,
 						mapOptions,
+						isDark,
 					);
 
 				case "localElection":
@@ -37,6 +40,7 @@ export function useMapUpdates({
 						geojson,
 						activeDataset,
 						mapOptions,
+						isDark,
 					);
 
 				case "housePrice":
@@ -65,6 +69,7 @@ export function useMapUpdates({
 						geojson,
 						activeDataset,
 						mapOptions,
+						isDark,
 					);
 
 				case "brexit":
@@ -129,5 +134,5 @@ export function useMapUpdates({
 		};
 
 		performUpdate();
-	}, [geojson, activeDataset, activeViz, mapManager, mapOptions, styleReady]);
+	}, [geojson, activeDataset, activeViz, mapManager, mapOptions, styleReady, isDark]);
 }
