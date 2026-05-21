@@ -1,7 +1,7 @@
 // components/LocalElectionResultChart.tsx
 "use client";
 
-import { memo } from "react";
+import { memo, useState } from "react";
 import { LocalElectionDataset, ActiveViz } from "@lib/types";
 import {
 	ChartLoadingBackground,
@@ -9,13 +9,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-
-const YEAR_STYLES: Record<string, { bg: string; border: string }> = {
-	"2024": { bg: "bg-blue-50/60", border: "border-blue-300" },
-	"2023": { bg: "bg-amber-50/60", border: "border-amber-300" },
-	"2022": { bg: "bg-purple-50/60", border: "border-purple-300" },
-	"2021": { bg: "bg-emerald-50/60", border: "border-emerald-300" },
-};
+import { hexToRgb } from "@/lib/helpers/colorScale/interpolation";
 
 interface ProcessedPartyData {
 	key: string;
@@ -84,10 +78,26 @@ export default memo(function LocalElectionResultChart({
 }) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const colors = YEAR_STYLES[data.year] || YEAR_STYLES["2024"];
+	const [hovered, setHovered] = useState(false);
+	const winnerColor = data.partyData[0]?.color;
 
-	// Active = Medium Height | Inactive = Small Height
 	const heightClass = isActive ? "h-[95px]" : "h-[65px]";
+
+	const accentColor = winnerColor ?? "#6366f1";
+	const showAccent = isActive || hovered;
+	const dynamicStyle: React.CSSProperties = showAccent
+		? {
+			borderColor: accentColor,
+			...(isActive && (() => {
+				const rgb = hexToRgb(accentColor);
+				return {
+					backgroundColor: isDark
+						? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
+						: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`,
+				};
+			})()),
+		}
+		: {};
 
 	const handleActivate = () => {
 		if (data.dataset) {
@@ -101,12 +111,18 @@ export default memo(function LocalElectionResultChart({
 
 	return (
 		<div
+			style={dynamicStyle}
 			className={`
-        p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2 
+        p-2 rounded transition-[height] duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2
         ${heightClass}
-        ${isActive ? `${isDark ? "bg-white/10" : colors.bg} ${colors.border}` : isDark ? "bg-white/5 border-white/10 hover:border-blue-300" : "bg-white/60 border-gray-200/80 hover:border-blue-300"}
+        ${isActive
+				? isDark ? "bg-white/10" : "bg-white/60"
+				: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
+			}
       `}
 			title="House of Commons Library, UK Parliament. Local Election Results. commonslibrary.parliament.uk"
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
 			onClick={handleActivate}
 		>
 			<ChartLoadingBackground />
