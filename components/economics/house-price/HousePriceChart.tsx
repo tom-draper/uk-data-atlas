@@ -15,6 +15,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
@@ -41,13 +42,7 @@ interface PriceChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const colors = {
-	bg: "bg-indigo-50/60",
-	border: "border-indigo-300",
-	badge: "bg-indigo-300 text-indigo-900",
-	text: "bg-indigo-200 text-indigo-800",
-	line: "#6366f1", // Tailwind indigo-500 hex
-};
+const LINE_COLOR = "#6366f1"; // indigo-500
 
 const housePriceLookupCache = new Map<string, Map<number, any>>();
 
@@ -288,13 +283,15 @@ const PriceChart = React.memo(
 			? `£${Math.round(currentPrice).toLocaleString()}`
 			: null;
 
+		const { style, onMouseEnter, onMouseLeave } = useCardAccent(LINE_COLOR, isActive, isDark);
+
 		return (
 			<div
-				className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative h-20 ${isActive
-					? `${isDark ? "bg-white/10" : colors.bg} border-2 ${colors.border}`
-					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-indigo-300" : "bg-white/60 border-2 border-gray-200/80 hover:border-indigo-300"
-					}`}
+				style={style}
+				className={cardClass(isActive, isDark, "h-20")}
 				title="Office for National Statistics. UK House Price Index (HPI): Mean and Median House Prices by Local Authority. ons.gov.uk"
+				onMouseEnter={onMouseEnter}
+				onMouseLeave={onMouseLeave}
 				onClick={() =>
 					setActiveViz({
 						vizId: dataset.id,
@@ -305,7 +302,7 @@ const PriceChart = React.memo(
 			>
 				<ChartLoadingBackground />
 				<div className="flex items-center justify-between mb-1.5 relative z-10">
-					<h3 className="text-xs font-bold">
+					<h3 className={chartHeadingClass(isDark)}>
 						Median House Price [{dataset.year}]
 					</h3>
 				</div>
@@ -327,12 +324,12 @@ const PriceChart = React.memo(
 							>
 								<stop
 									offset="0%"
-									stopColor={colors.line}
+									stopColor={LINE_COLOR}
 									stopOpacity="0.1"
 								/>
 								<stop
 									offset="100%"
-									stopColor={colors.line}
+									stopColor={LINE_COLOR}
 									stopOpacity="0.05"
 								/>
 							</linearGradient>
@@ -348,7 +345,7 @@ const PriceChart = React.memo(
 						<path
 							d={linePath}
 							fill="none"
-							stroke={colors.line}
+							stroke={LINE_COLOR}
 							strokeWidth="2.5"
 							strokeLinecap="round"
 							strokeLinejoin="round"
@@ -371,7 +368,7 @@ const PriceChart = React.memo(
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (
-							<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+							<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 								No data available
 							</div>
 						)}

@@ -8,7 +8,7 @@ import {
 	AggregatedEthnicityData,
 } from "@/lib/types";
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
-import { useMemo, memo, useState } from "react";
+import { useMemo, memo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -16,7 +16,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface ProcessedEthnicityData {
 	ethnicity: string;
@@ -114,7 +114,6 @@ export default memo(function EthnicityChart({
 }: EthnicityChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const [hovered, setHovered] = useState(false);
 	const vizId = dataset.id;
 	const isActive = activeViz.vizId === vizId;
 
@@ -151,33 +150,15 @@ export default memo(function EthnicityChart({
 	const heightClass = isActive ? "h-[170px]" : "h-[65px]";
 
 	const accentColor = processedData.ethnicityData[0]?.color ?? null;
-
-	const dynamicStyle: React.CSSProperties = (() => {
-		if (!accentColor || (!isActive && !hovered)) return {};
-		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
-		if (isActive) {
-			const rgb = hexToRgb(accentColor);
-			style.backgroundColor = isDark
-				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
-				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
-		}
-		return style;
-	})();
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
 
 	return (
 		<div
-			style={dynamicStyle}
-			className={`
-                p-2 rounded transition-[height] duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2
-                ${heightClass}
-                ${isActive
-					? isDark ? "bg-white/10" : "bg-white/60"
-					: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
-				}
-            `}
+			style={style}
+			className={cardClass(isActive, isDark, `transition-[height] duration-300 ease-in-out ${heightClass}`)}
 			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -188,7 +169,7 @@ export default memo(function EthnicityChart({
 		>
 			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-1.5">
-				<h3 className="text-xs font-bold">
+				<h3 className={chartHeadingClass(isDark)}>
 					Ethnicity [{dataset.year}]
 				</h3>
 			</div>
@@ -197,7 +178,7 @@ export default memo(function EthnicityChart({
 				chartsLoading ? (
 					<ChartContentPlaceholder className="h-5 mt-1" />
 				) : (
-					<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+					<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 						No data available
 					</div>
 				)

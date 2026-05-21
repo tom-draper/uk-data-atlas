@@ -1,5 +1,5 @@
 // components/population/gender/Gender.tsx
-import { useMemo, memo, useState } from "react";
+import { useMemo, memo } from "react";
 import {
 	ActiveViz,
 	AggregatedPopulationData,
@@ -10,7 +10,7 @@ import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 const MALE_COLOR = "#60a5fa";   // blue-400, matches chart bars
 const FEMALE_COLOR = "#f472b6"; // pink-400, matches chart bars
@@ -190,33 +190,19 @@ function Gender({
 	}, [dataset, aggregatedData, selectedArea, codeMapper]);
 
 	const isDark = useIsDark();
-	const [hovered, setHovered] = useState(false);
 	const total = (totalMales ?? 0) + (totalFemales ?? 0);
 	const hasData = total > 0;
 
 	const accentColor = !hasData ? null : (totalMales ?? 0) >= (totalFemales ?? 0) ? MALE_COLOR : FEMALE_COLOR;
-	const dynamicStyle: React.CSSProperties = (() => {
-		if (!accentColor || (!isActive && !hovered)) return {};
-		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
-		if (isActive) {
-			const rgb = hexToRgb(accentColor);
-			style.backgroundColor = isDark
-				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
-				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
-		}
-		return style;
-	})();
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
 
 	return (
 		<div
-			style={dynamicStyle}
-			className={`p-2 rounded cursor-pointer overflow-hidden relative border-2 ${isActive
-					? isDark ? "bg-white/10" : "bg-white/60"
-					: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
-				}`}
+			style={style}
+			className={cardClass(isActive, isDark)}
 			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,
@@ -227,7 +213,7 @@ function Gender({
 		>
 			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-0">
-				<h3 className="text-xs font-bold">Gender [{dataset.year}]</h3>
+				<h3 className={chartHeadingClass(isDark)}>Gender [{dataset.year}]</h3>
 				{hasData && (
 					<span className="text-[10px] text-gray-600 mr-1">
 						<span className="text-blue-600">
