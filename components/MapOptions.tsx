@@ -112,9 +112,9 @@ export default function MapOptions({
 							checked={hideDataLayer}
 							onChange={handleDataToggle}
 							disabled={hideBoundaries}
-							className={`w-3.5 h-3.5 rounded border checked:bg-blue-500/80 checked:border-blue-500/80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${t.input}`}
+							className="w-3.5 h-3.5 accent-indigo-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 						/>
-						<span className={`text-xs transition-colors ${t.text} ${hideBoundaries ? "opacity-50" : ""}`}>
+						<span className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"} ${hideBoundaries ? "opacity-50" : ""}`}>
 							Hide data layer
 						</span>
 					</label>
@@ -123,9 +123,9 @@ export default function MapOptions({
 							type="checkbox"
 							checked={hideBoundaries}
 							onChange={handleBoundariesToggle}
-							className={`w-3.5 h-3.5 rounded border checked:bg-blue-500/80 checked:border-blue-500/80 cursor-pointer transition-all duration-200 ${t.input}`}
+							className="w-3.5 h-3.5 accent-indigo-500 cursor-pointer"
 						/>
-						<span className={`text-xs transition-colors ${t.text}`}>
+						<span className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}>
 							Hide boundaries
 						</span>
 					</label>
@@ -134,14 +134,14 @@ export default function MapOptions({
 							type="checkbox"
 							checked={hideOverlay}
 							onChange={handleOverlayToggle}
-							className={`w-3.5 h-3.5 rounded border checked:bg-blue-500/80 checked:border-blue-500/80 cursor-pointer transition-all duration-200 ${t.input}`}
+							className="w-3.5 h-3.5 accent-indigo-500 cursor-pointer"
 						/>
-						<span className={`text-xs transition-colors ${t.text}`}>
+						<span className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}>
 							Hide overlay
 						</span>
 					</label>
-					<div className="flex items-center gap-2 pt-0.5">
-						<span className={`text-xs shrink-0 ${t.text}`}>Opacity</span>
+					<div className="flex items-stretch gap-2 pt-0.5">
+						<span className={`text-xs shrink-0 self-center ${t.text}`}>Opacity</span>
 						<div className={`flex items-center border rounded-sm overflow-hidden ${t.input}`}>
 							<input
 								type="number"
@@ -158,7 +158,7 @@ export default function MapOptions({
 								<button
 									key={style.id}
 									onClick={() => handleBaseStyleChange(style.id)}
-									className={`px-2 py-0.5 text-xs transition-all duration-200 cursor-pointer border-r last:border-r-0 ${t.border} ${
+									className={`px-2 text-xs transition-all duration-200 cursor-pointer border-r last:border-r-0 ${t.border} ${
 										selectedBaseStyle === style.id
 											? `${isDark ? "bg-white/15 text-gray-100" : "bg-white/30 text-gray-700"}`
 											: `${t.text} ${t.hover}`
