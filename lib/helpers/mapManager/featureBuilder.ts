@@ -11,7 +11,7 @@ import {
 	Feature,
 	Features,
 	getFeatureProp,
-	BrexitDataset,
+	BrexitLADDataset,
 	BrexitConstituencyDataset,
 } from "@lib/types";
 import { MapOptions } from "@lib/types/mapOptions";
@@ -360,7 +360,7 @@ export class FeatureBuilder {
 
 	buildBrexitFeatures(
 		features: Features,
-		dataset: BrexitDataset,
+		dataset: BrexitLADDataset,
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {

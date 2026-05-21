@@ -7,7 +7,7 @@ import {
 	LocalElectionDataset,
 	PopulationDataset,
 	IncomeDataset,
-	BrexitDataset,
+	BrexitLADDataset,
 	BrexitConstituencyDataset,
 } from "../types";
 
@@ -23,7 +23,7 @@ export function useDatasetManager(
 	housePriceDatasets: Record<string, HousePriceDataset>,
 	crimeDatasets: Record<string, CrimeDataset>,
 	incomeDatasets: Record<string, IncomeDataset>,
-	brexitDatasets: Record<string, BrexitDataset>,
+	brexitDatasets: Record<string, BrexitLADDataset>,
 	brexitConstituencyDatasets: Record<string, BrexitConstituencyDataset>,
 ) {
 	const activeDataset = useMemo(() => {

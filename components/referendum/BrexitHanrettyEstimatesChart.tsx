@@ -3,7 +3,7 @@ import {
 	ActiveViz,
 	AggregatedBrexitData,
 	Dataset,
-	BrexitDataset,
+	BrexitConstituencyDataset,
 	SelectedArea,
 } from "@lib/types";
 import { memo, useMemo } from "react";
@@ -15,9 +15,9 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
 
-interface BrexitChartProps {
+interface BrexitHanrettyEstimatesChartProps {
 	activeDataset: Dataset | null;
-	availableDatasets: Record<string, BrexitDataset>;
+	availableDatasets: Record<string, BrexitConstituencyDataset>;
 	aggregatedData: Record<number, AggregatedBrexitData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
@@ -31,11 +31,10 @@ export default memo(function BrexitHanrettyEstimatesChart({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
-	codeMapper,
 	year,
 	activeViz,
 	setActiveViz,
-}: BrexitChartProps) {
+}: BrexitHanrettyEstimatesChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
@@ -52,53 +51,37 @@ export default memo(function BrexitHanrettyEstimatesChart({
 			return {
 				pctLeave: agg.pctLeave,
 				pctRemain: agg.pctRemain,
-				totalLeave: agg.totalLeave,
-				totalRemain: agg.totalRemain,
-				totalVotes: agg.totalVotes,
 			};
 		}
 
 		if (
 			selectedArea &&
-			selectedArea.type === "localAuthority" &&
+			selectedArea.type === "constituency" &&
 			selectedArea.data
 		) {
-			const laCode = selectedArea.code;
-			let area = dataset.data?.[laCode];
-			if (!area && codeMapper) {
-				const mappedCode = codeMapper.getCodeForYear(
-					"localAuthority",
-					laCode,
-					year,
-				);
-				if (mappedCode) {
-					area = dataset.data?.[mappedCode];
-				}
-			}
+			const code = selectedArea.code;
+			const area = dataset.data?.[code];
 			if (area) {
 				return {
 					pctLeave: area.pctLeave,
-					pctRemain: area.pctRemain,
-					totalLeave: area.leave,
-					totalRemain: area.remain,
-					totalVotes: area.validVotes,
+					pctRemain: 100 - area.pctLeave,
 				};
 			}
 		}
 
 		return null;
-	}, [dataset, aggregatedData, selectedArea, codeMapper, year]);
+	}, [dataset, aggregatedData, selectedArea, year]);
 
 	if (!dataset) return null;
 
 	const isActive =
-		activeDataset?.type === "brexit" && activeDataset.id === dataset.id;
+		activeDataset?.type === "brexitConstituency" &&
+		activeDataset.id === dataset.id;
 
 	const pctLeave = brexitStats?.pctLeave ?? 0;
 	const pctRemain = brexitStats?.pctRemain ?? 0;
 	const hasData = brexitStats !== null;
 
-	// Determine result
 	const result = hasData ? (pctLeave > pctRemain ? "leave" : "remain") : null;
 
 	const leaveBgColor = "rgb(180, 20, 20)";
@@ -121,7 +104,7 @@ export default memo(function BrexitHanrettyEstimatesChart({
 						: `${isDark ? "bg-white/10" : "bg-blue-50/60"} border-2 border-blue-400`
 					: isDark ? `bg-white/5 border-2 border-white/10 ${activeBorderClass}` : `bg-white/60 border-2 border-gray-200/80 ${activeBorderClass}`
 			}`}
-			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
+			title="Hanretty, C. (2017). Areal interpolation and the UK's referendum on EU membership. Journal of Elections, Public Opinion and Parties, 27(4), 466–483. Published via House of Commons Library."
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -133,19 +116,19 @@ export default memo(function BrexitHanrettyEstimatesChart({
 			<ChartLoadingBackground />
 			<div className="relative z-10">
 				<h3 className="text-xs font-bold text-gray-800/90">
-					Electoral Commission [{dataset.year}]
+					Hanretty Estimates [{dataset.year}]
 				</h3>
 
 				{!hasData ? (
 					chartsLoading ? (
 						<ChartContentPlaceholder className="h-5 mt-2" />
 					) : (
-						<div className="mt-2 h-5 flex items-center justify-center text-xs text-gray-400/80">
+						<div className="mt-1.5 h-5 flex items-center justify-center text-xs text-gray-400/80">
 							No data available
 						</div>
 					)
 				) : (
-					<div className="mt-2 flex h-5 rounded overflow-hidden">
+					<div className="mt-1.5 flex h-5 rounded overflow-hidden">
 						<div style={{ width: `${pctLeave.toFixed(1)}%`, backgroundColor: leaveBgColor }}>
 							{pctLeave > 20 && (
 								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">

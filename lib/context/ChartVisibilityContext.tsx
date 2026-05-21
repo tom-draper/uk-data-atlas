@@ -11,8 +11,8 @@ export type ChartKey =
 	| "localElection-2023"
 	| "localElection-2022"
 	| "localElection-2021"
+	| "brexit-electoral"
 	| "brexit-hanretty"
-	| "brexit-constituency"
 	| "demographics-populationDensity"
 	| "demographics-age"
 	| "demographics-gender"
@@ -40,7 +40,7 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 	{ group: "Local Election", key: "localElection-2023", label: "2023 Local Elections" },
 	{ group: "Local Election", key: "localElection-2022", label: "2022 Local Elections" },
 	{ group: "Local Election", key: "localElection-2021", label: "2021 Local Elections" },
-	{ group: "Brexit", key: "brexit-constituency", label: "Commission [2016]" },
+	{ group: "Brexit", key: "brexit-electoral", label: "Elecotral Commission [2016]" },
 	{ group: "Brexit", key: "brexit-hanretty", label: "Hanretty Estimates [2016]" },
 	{ group: "Demographics", key: "demographics-populationDensity", label: "Population Density [2022]" },
 	{ group: "Demographics", key: "demographics-age", label: "Age Distribution [2022]" },
@@ -65,7 +65,7 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"localElection-2022": true,
 	"localElection-2021": true,
 	"brexit-hanretty": false,
-	"brexit-constituency": true,
+	"brexit-electoral": true,
 	"demographics-populationDensity": true,
 	"demographics-age": true,
 	"demographics-gender": true,

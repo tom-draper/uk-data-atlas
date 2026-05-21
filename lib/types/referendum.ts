@@ -13,7 +13,7 @@ export interface BrexitAreaData {
 	pctTurnout: number;
 }
 
-export interface BrexitDataset {
+export interface BrexitLADDataset {
 	id: string;
 	year: number;
 	type: "brexit";
