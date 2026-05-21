@@ -27,6 +27,7 @@ export default function MapOptions({
 	const [hideDataLayer, setHideDataLayer] = useState(false);
 	const [hideBoundaries, setHideBoundaries] = useState(false);
 	const [hideOverlay, setHideOverlay] = useState(false);
+	const [overlayOpacity, setOverlayOpacity] = useState(0.6);
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const handleThemeChange = (themeId: ColorTheme) => {
@@ -62,6 +63,13 @@ export default function MapOptions({
 		handleMapOptionsChange("visibility", { hideOverlay: newValue });
 	};
 
+	const handleOpacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const pct = Math.min(100, Math.max(0, parseInt(e.target.value, 10) || 0));
+		const value = pct / 100;
+		setOverlayOpacity(value);
+		handleMapOptionsChange("visibility", { overlayOpacity: value });
+	};
+
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
@@ -85,7 +93,7 @@ export default function MapOptions({
 			<div className="p-2.5 relative">
 				<h2 className="font-semibold mb-2">Map Options</h2>
 
-				<div className="flex flex-col gap-1.5 pb-2 pt-2 pl-1 border-b border-white/20">
+				<div className="flex flex-col gap-1.5 pb-2 pt-2 pl-1">
 					<label className="flex items-center gap-2 cursor-pointer group">
 						<input
 							type="checkbox"
@@ -122,6 +130,20 @@ export default function MapOptions({
 							Hide overlay
 						</span>
 					</label>
+					<div className="flex items-center gap-2 pt-0.5">
+						<span className="text-xs text-gray-500 shrink-0">Opacity</span>
+						<div className="flex items-center border border-white/30 rounded-sm bg-white/10 overflow-hidden">
+							<input
+								type="number"
+								min="0"
+								max="100"
+								value={Math.round(overlayOpacity * 100)}
+								onChange={handleOpacityChange}
+								className="w-8 text-xs text-gray-500 bg-transparent text-right px-1 py-0.5 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+							/>
+							<span className="text-xs text-gray-400 pr-1">%</span>
+						</div>
+					</div>
 				</div>
 
 				<div className="flex items-end justify-between gap-2">
@@ -143,7 +165,7 @@ export default function MapOptions({
 					<div className="relative">
 						<button
 							onClick={() => setIsOpen(!isOpen)}
-							className="border border-white/20 rounded-sm px-2 py-1.5 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 cursor-pointer flex items-center gap-1.5"
+							className="border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 cursor-pointer flex items-center gap-1.5"
 						>
 							<div
 								className="w-3 h-3 rounded-sm"

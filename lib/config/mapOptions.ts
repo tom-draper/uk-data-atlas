@@ -43,5 +43,6 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 		hideDataLayer: false,
 		hideBoundaries: false,
 		hideOverlay: false,
+		overlayOpacity: 0.6,
 	},
 };

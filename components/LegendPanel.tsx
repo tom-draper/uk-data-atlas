@@ -40,6 +40,7 @@ const renderCategoryLegend = (
 	isPercentageMode: boolean,
 	selectedId: string | undefined,
 	onItemClick: (id: string) => void,
+	swatchOpacity: number = 1,
 ) => (
 	<div>
 		{items.map((item) => {
@@ -52,8 +53,8 @@ const renderCategoryLegend = (
 					style={isSelected ? ({ backgroundColor: `${item.color}15`, "--tw-ring-color": `${item.color}80` } as React.CSSProperties) : {}}
 				>
 					<div
-						className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? "opacity-100 ring-1" : "opacity-100"}`}
-						style={{ backgroundColor: item.color, ...(isSelected ? ({ "--tw-ring-color": item.color } as React.CSSProperties) : {}) }}
+						className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? "ring-1" : ""}`}
+						style={{ backgroundColor: item.color, opacity: swatchOpacity, ...(isSelected ? ({ "--tw-ring-color": item.color } as React.CSSProperties) : {}) }}
 					/>
 					<span className={`text-xs ${isSelected ? "text-gray-700" : "text-gray-500"}`}>
 						{item.name}
@@ -68,11 +69,13 @@ const renderCategoryLegend = (
 const PercentageRangePanel = memo(function PercentageRangePanel({
 	range,
 	gradient,
+	opacity,
 	onRangeInput,
 	onRangeChangeEnd,
 }: {
 	range: { min: number; max: number };
 	gradient: string;
+	opacity: number;
 	onRangeInput: (min: number, max: number) => void;
 	onRangeChangeEnd: () => void;
 }) {
@@ -86,6 +89,7 @@ const PercentageRangePanel = memo(function PercentageRangePanel({
 					currentMax={range.max}
 					gradient={gradient}
 					labels={[`${range.max.toFixed(0)}%`, "", "", "", `${range.min.toFixed(0)}%`]}
+					opacity={opacity}
 					onRangeInput={onRangeInput}
 					onRangeChangeEnd={onRangeChangeEnd}
 				/>
@@ -207,6 +211,8 @@ export default memo(function LegendPanel({
 		}
 	};
 
+	const overlayOpacity = Math.min(1, (displayOptions.visibility.overlayOpacity ?? 1) + 0.2);
+
 	const renderDynamicLegend = (
 		datasetKey: ColorRangeDatasetKey,
 		absMin: number,
@@ -234,6 +240,7 @@ export default memo(function LegendPanel({
 				currentMax={currentMax}
 				gradient={verticalThemeGradient}
 				labels={labels}
+				opacity={overlayOpacity}
 				onRangeInput={(min, max) => handleRangeInput(datasetKey, min, max)}
 				onRangeChangeEnd={() => handleRangeChangeEnd(datasetKey)}
 			/>
@@ -272,6 +279,7 @@ export default memo(function LegendPanel({
 								"0%",
 								`F ${(Math.abs(currentMin) * 100).toFixed(0)}%`,
 							]}
+							opacity={overlayOpacity}
 							onRangeInput={(min, max) => handleRangeInput("gender", min, max)}
 							onRangeChangeEnd={() => handleRangeChangeEnd("gender")}
 						/>
@@ -298,6 +306,7 @@ export default memo(function LegendPanel({
 					opts?.mode === "percentage",
 					opts?.selected,
 					(id) => handleEthnicityClick(id as EthnicityCode),
+					overlayOpacity,
 				);
 			}
 
@@ -310,6 +319,7 @@ export default memo(function LegendPanel({
 					opts?.mode === "percentage",
 					opts?.selected,
 					(id) => handlePartyClick(id as PartyCode),
+					overlayOpacity,
 				);
 			}
 
@@ -329,6 +339,7 @@ export default memo(function LegendPanel({
 							`${currentMax.toFixed(0)}% Leave`,
 							`${(100 - currentMin).toFixed(0)}% Remain`,
 						]}
+						opacity={overlayOpacity}
 						onRangeInput={(min, max) => handleRangeInput(key, min, max)}
 						onRangeChangeEnd={() => handleRangeChangeEnd(key)}
 					/>
@@ -376,6 +387,7 @@ export default memo(function LegendPanel({
 						max: (electionOpts as CategoryOptions).percentageRange?.max ?? 100,
 					}}
 					gradient={`linear-gradient(to bottom, ${PARTIES[electionOpts.selected as PartyCode]?.color || "#999"}, #f5f5f5)`}
+					opacity={overlayOpacity}
 					onRangeInput={(min, max) => {
 						setLiveOptions((prev) => {
 							const base = prev || mapOptions;
@@ -397,6 +409,7 @@ export default memo(function LegendPanel({
 						max: (ethnicityOpts as CategoryOptions).percentageRange?.max ?? 100,
 					}}
 					gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[ethnicityOpts.selected as EthnicityCode] || "#999"}, #f5f5f5)`}
+					opacity={overlayOpacity}
 					onRangeInput={(min, max) => {
 						setLiveOptions((prev) => {
 							const base = prev || mapOptions;

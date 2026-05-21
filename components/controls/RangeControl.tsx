@@ -9,6 +9,7 @@ export interface RangeControlProps {
 	currentMax: number;
 	gradient: string;
 	labels: string[];
+	opacity?: number;
 	onRangeInput: (min: number, max: number) => void;
 	onRangeChangeEnd: () => void;
 }
@@ -20,6 +21,7 @@ export function RangeControl({
 	currentMax,
 	gradient,
 	labels,
+	opacity = 1,
 	onRangeInput,
 	onRangeChangeEnd,
 }: RangeControlProps) {
@@ -87,8 +89,8 @@ export function RangeControl({
 			<div
 				ref={containerRef}
 				className="h-40 w-6 rounded relative"
-				style={{ background: gradient }}
 			>
+				<div className="absolute inset-0 rounded" style={{ background: gradient, opacity }} />
 				{/* Max handle (top) */}
 				<div
 					className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
