@@ -107,9 +107,9 @@ function panelHeaderDetails(
 					selectedArea.name ??
 					(selectedArea.data ? selectedArea.data.wardName : ""),
 				subtitle: selectedArea.data
-					? selectedArea.data.localAuthorityName
+					? (selectedArea.data.localAuthorityName ?? selectedArea.data.ladName ?? "")
 					: "",
-				code: `${selectedArea.data ? selectedArea.data.localAuthorityCode : ""} ${selectedArea.code}`,
+				code: `${selectedArea.data ? (selectedArea.data.localAuthorityCode ?? selectedArea.data.ladCode ?? "") : ""} ${selectedArea.code}`,
 			};
 		case "constituency":
 			return {
