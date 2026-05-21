@@ -172,14 +172,14 @@ export default memo(function IncomeChart({
 			</div>
 
 			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className="text-xs font-bold text-gray-700">
+				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-700"}`}>
 					Median Income [{dataset.year}]
 				</h3>
 			</div>
 
 			{formattedMedian ? (
 				<div className="relative flex justify-center items-center mt-3 mb-1 z-10 h-5">
-					<div className="text-xl font-bold text-gray-800 bg-transparent px-2 rounded">
+					<div className={`text-xl font-bold bg-transparent px-2 rounded ${isDark ? "text-gray-100" : "text-gray-800"}`}>
 						{formattedMedian}
 					</div>
 				</div>
@@ -188,7 +188,7 @@ export default memo(function IncomeChart({
 					{chartsLoading ? (
 						<ChartContentPlaceholder className="h-full" />
 					) : (
-						<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 							No data available
 						</div>
 					)}

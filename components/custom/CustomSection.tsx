@@ -9,6 +9,7 @@ import {
     ChartContentPlaceholder,
     useChartsLoading,
 } from '@/components/ChartLoadingPlaceholder';
+import { useIsDark } from '@/lib/context/ThemeContext';
 
 interface MatchResult {
     type: string;
@@ -59,10 +60,10 @@ function getMatchColorClass(percentage: number): string {
     return 'text-gray-500/80';
 }
 
-function getMatchButtonClass(isSelected: boolean, hasMatches: boolean): string {
-    if (isSelected) return 'bg-white backdrop-blur text-gray-700 cursor-pointer';
-    if (hasMatches) return 'border-gray-200 opacity-80 backdrop-blur-xs hover:bg-white cursor-pointer';
-    return 'border-gray-100 bg-white/20 backdrop-blur opacity-50 cursor-not-allowed';
+function getMatchButtonClass(isSelected: boolean, hasMatches: boolean, isDark: boolean): string {
+    if (isSelected) return isDark ? 'bg-white/10 text-gray-200 cursor-pointer' : 'bg-white backdrop-blur text-gray-700 cursor-pointer';
+    if (hasMatches) return isDark ? 'border border-white/10 hover:bg-white/10 text-gray-400 cursor-pointer' : 'border-gray-200 opacity-80 backdrop-blur-xs hover:bg-white cursor-pointer';
+    return isDark ? 'border border-white/5 bg-white/5 text-gray-600 opacity-50 cursor-not-allowed' : 'border-gray-100 bg-white/20 backdrop-blur opacity-50 cursor-not-allowed';
 }
 
 function UploadModal({
@@ -85,6 +86,7 @@ function UploadModal({
     const [selectedCodeType, setSelectedCodeType] = useState('');
     const [error, setError] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const isDark = useIsDark();
 
     const headers = csvData[headerRow] || [];
     const previewRows = csvData.slice(0, Math.min(headerRow + 21, csvData.length));
@@ -216,19 +218,19 @@ function UploadModal({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={handleClose} />
 
-            <div className="relative bg-white/80 backdrop-blur-md border border-white/30 rounded-md shadow-xl w-full max-w-4xl flex flex-col max-h-[90vh]">
-                <div className="flex items-center justify-between px-4 pt-2.5 pb-2 shrink-0 bg-white/20">
-                    <h2 className="text-sm font-semibold text-gray-900/80">
+            <div className={`relative backdrop-blur-md border rounded-md shadow-xl w-full max-w-4xl flex flex-col max-h-[90vh] ${isDark ? 'bg-gray-900/95 border-white/10' : 'bg-white/80 border-white/30'}`}>
+                <div className={`flex items-center justify-between px-4 pt-2.5 pb-2 shrink-0 ${isDark ? 'bg-white/5' : 'bg-white/20'}`}>
+                    <h2 className={`text-sm font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900/80'}`}>
                         Upload Custom Dataset
                     </h2>
-                    <button onClick={handleClose} className="cursor-pointer text-gray-400 hover:text-gray-600 transition-colors">
+                    <button onClick={handleClose} className={`cursor-pointer transition-colors ${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}`}>
                         <X size={18} />
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto px-4 py-4">
                     {error && (
-                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-center gap-2 text-red-700 text-sm">
+                        <div className={`mb-4 p-3 border rounded-md flex items-center gap-2 text-sm ${isDark ? 'bg-red-900/20 border-red-800/40 text-red-400' : 'bg-red-50 border-red-200 text-red-700'}`}>
                             <AlertCircle size={16} />
                             {error}
                         </div>
@@ -237,7 +239,7 @@ function UploadModal({
                     <div className="space-y-4">
                         {!file && (
                             <div>
-                                <label className="block text-xs font-semibold text-gray-700 mb-2">
+                                <label className={`block text-xs font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                     Select CSV File
                                 </label>
                                 <input
@@ -249,10 +251,10 @@ function UploadModal({
                                 />
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="w-full border-2 border-dashed cursor-pointer border-gray-300 rounded-md p-8 hover:border-indigo-400 hover:bg-indigo-50/50 transition-all flex flex-col items-center gap-2"
+                                    className={`w-full border-2 border-dashed cursor-pointer rounded-md p-8 transition-colors flex flex-col items-center gap-2 ${isDark ? 'border-white/20 hover:border-gray-400 text-gray-500' : 'border-gray-300 hover:border-gray-400 text-gray-400'}`}
                                 >
-                                    <Upload size={28} className="text-gray-400" />
-                                    <span className="text-xs text-gray-500 font-medium">
+                                    <Upload size={28} />
+                                    <span className="text-xs font-medium">
                                         Click to select CSV file
                                     </span>
                                 </button>
@@ -262,13 +264,13 @@ function UploadModal({
                         {csvData.length > 0 && (
                             <>
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-2">
+                                    <label className={`block text-xs font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                         Header Row
                                     </label>
                                     <select
                                         value={headerRow}
                                         onChange={(e) => setHeaderRow(Number(e.target.value))}
-                                        className="w-full backdrop-blur cursor-pointer rounded-md px-3 py-2 pr-8 text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className={`w-full cursor-pointer rounded-md px-3 py-2 pr-8 text-xs border ${isDark ? 'bg-gray-800 border-white/10 text-gray-200' : 'bg-white/60 backdrop-blur border-gray-200 text-gray-700'}`}
                                     >
                                         {csvData.slice(0, 10).map((row, idx) => (
                                             <option key={idx} value={idx}>
@@ -279,13 +281,13 @@ function UploadModal({
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-2">
+                                    <label className={`block text-xs font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                         Select Area Code Column
                                     </label>
                                     <select
                                         value={selectedColumn}
                                         onChange={(e) => setSelectedColumn(e.target.value)}
-                                        className="w-full backdrop-blur cursor-pointer rounded-md px-3 py-2 pr-8 text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className={`w-full cursor-pointer rounded-md px-3 py-2 pr-8 text-xs border ${isDark ? 'bg-gray-800 border-white/10 text-gray-200' : 'bg-white/60 backdrop-blur border-gray-200 text-gray-700'}`}
                                     >
                                         <option value="">Select column</option>
                                         {headers.map((header, idx) => (
@@ -298,12 +300,12 @@ function UploadModal({
 
                                 {matches.length > 0 && (
                                     <div>
-                                        <label className="block text-xs font-semibold text-gray-700 mb-2">
+                                        <label className={`block text-xs font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                             Available Boundaries
                                         </label>
                                         {validMatches.length === 0 ? (
-                                            <div className="px-3 py-2 rounded-md bg-gray-50 text-center">
-                                                <p className="text-xs text-gray-400">No boundaries matched</p>
+                                            <div className={`px-3 py-2 rounded-md text-center ${isDark ? 'bg-white/5' : 'bg-gray-50'}`}>
+                                                <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>No boundaries matched</p>
                                             </div>
                                         ) : (
                                             <div className="space-y-1 max-h-64 overflow-y-auto">
@@ -313,7 +315,8 @@ function UploadModal({
                                                         onClick={() => setSelectedCodeType(match.type)}
                                                         className={`w-full px-4 py-2 rounded-md transition-all text-left ${getMatchButtonClass(
                                                             selectedCodeType === match.type,
-                                                            match.percentage > 0
+                                                            match.percentage > 0,
+                                                            isDark,
                                                         )}`}
                                                     >
                                                         <div className="flex items-center justify-between gap-1">
@@ -321,7 +324,7 @@ function UploadModal({
                                                                 {match.percentage.toFixed(0)}%
                                                             </div>
                                                             <div className="flex-1">
-                                                                <div className="text-xs text-gray-700">
+                                                                <div className={`text-xs ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                                                     {match.type}
                                                                 </div>
                                                             </div>
@@ -334,13 +337,13 @@ function UploadModal({
                                 )}
 
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-2">
+                                    <label className={`block text-xs font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                         Select Data Column
                                     </label>
                                     <select
                                         value={dataColumn}
                                         onChange={(e) => setDataColumn(e.target.value)}
-                                        className="w-full backdrop-blur cursor-pointer rounded-md px-3 py-2 pr-8 text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className={`w-full cursor-pointer rounded-md px-3 py-2 pr-8 text-xs border ${isDark ? 'bg-gray-800 border-white/10 text-gray-200' : 'bg-white/60 backdrop-blur border-gray-200 text-gray-700'}`}
                                     >
                                         <option value="">Select column</option>
                                         {headers.map((header, idx) => (
@@ -352,23 +355,24 @@ function UploadModal({
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-2">
+                                    <label className={`block text-xs font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                                         Data Preview
                                     </label>
                                     <div className="rounded-md overflow-hidden">
                                         <div className="overflow-x-auto max-h-64 overflow-y-auto">
-                                            <table className="w-full text-xs">
-                                                <thead className="sticky top-0 backdrop-blur">
+                                            <table className={`w-full text-xs ${isDark ? 'text-gray-300' : ''}`}>
+                                                <thead className={`sticky top-0 ${isDark ? 'bg-gray-800' : 'backdrop-blur'}`}>
                                                     <tr>
                                                         {headers.map((header, idx) => (
                                                             <th
                                                                 key={idx}
-                                                                className={`px-4 py-2 text-left font-medium whitespace-nowrap ${header === selectedColumn
-                                                                    ? 'bg-indigo-100/70 text-indigo-900'
-                                                                    : header === dataColumn
-                                                                        ? 'bg-green-100/70 text-green-900'
-                                                                        : 'text-gray-700'
-                                                                    }`}
+                                                                className={`px-4 py-2 text-left font-medium whitespace-nowrap ${
+                                                                    header === selectedColumn
+                                                                        ? isDark ? 'bg-indigo-900/40 text-indigo-300' : 'bg-indigo-100/70 text-indigo-900'
+                                                                        : header === dataColumn
+                                                                            ? isDark ? 'bg-green-900/40 text-green-300' : 'bg-green-100/70 text-green-900'
+                                                                            : isDark ? 'text-gray-400' : 'text-gray-700'
+                                                                }`}
                                                             >
                                                                 {header || `Col ${idx + 1}`}
                                                             </th>
@@ -377,16 +381,17 @@ function UploadModal({
                                                 </thead>
                                                 <tbody>
                                                     {previewRows.slice(headerRow + 1).map((row, rowIdx) => (
-                                                        <tr key={rowIdx} className={`hover:bg-white/40 ${rowIdx % 2 === 1 ? 'bg-white/20' : ''}`}>
+                                                        <tr key={rowIdx} className={`${isDark ? 'hover:bg-white/5' : 'hover:bg-white/40'} ${rowIdx % 2 === 1 ? isDark ? 'bg-white/5' : 'bg-white/20' : ''}`}>
                                                             {row.map((cell, cellIdx) => (
                                                                 <td
                                                                     key={cellIdx}
-                                                                    className={`px-4 py-2 whitespace-nowrap ${headers[cellIdx] === selectedColumn
-                                                                        ? 'bg-indigo-50'
-                                                                        : headers[cellIdx] === dataColumn
-                                                                            ? 'bg-green-50'
-                                                                            : ''
-                                                                        }`}
+                                                                    className={`px-4 py-2 whitespace-nowrap ${
+                                                                        headers[cellIdx] === selectedColumn
+                                                                            ? isDark ? 'bg-indigo-900/20' : 'bg-indigo-50'
+                                                                            : headers[cellIdx] === dataColumn
+                                                                                ? isDark ? 'bg-green-900/20' : 'bg-green-50'
+                                                                                : ''
+                                                                    }`}
                                                                 >
                                                                     {cell}
                                                                 </td>
@@ -403,16 +408,16 @@ function UploadModal({
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 px-3 py-2 pb-2.5 bg-white/20 shrink-0">
+                <div className={`flex items-center justify-end gap-2 px-3 py-2 pb-2.5 shrink-0 ${isDark ? 'bg-white/5' : 'bg-white/20'}`}>
                     <button
                         onClick={handleClose}
-                        className="cursor-pointer rounded-sm px-3 py-1 text-xs hover:bg-white/20 transition-all duration-200 text-gray-500 hover:text-gray-600"
+                        className={`cursor-pointer rounded-sm px-3 py-1 text-xs transition-colors duration-150 ${isDark ? 'text-gray-400 hover:text-gray-200 hover:bg-white/10' : 'text-gray-500 hover:text-gray-600 hover:bg-white/20'}`}
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleUpload}
-                        className="cursor-pointer border border-white/20 rounded-sm px-3 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 hover:text-gray-600"
+                        className={`cursor-pointer border rounded-sm px-3 py-1 text-xs transition-colors duration-150 shadow-sm ${isDark ? 'border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-gray-100' : 'border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20 text-gray-500 hover:text-gray-600'}`}
                     >
                         Apply
                     </button>
@@ -439,6 +444,7 @@ function CustomDatasetCard({
     codeMapper: CodeMapper
 }) {
     const chartsLoading = useChartsLoading();
+    const isDark = useIsDark();
     const displayValue = useMemo(() => {
         if (!customDataset || !customDataset.data) return null;
 
@@ -518,15 +524,16 @@ function CustomDatasetCard({
     return (
         <button
             onClick={handleClick}
-            className={`w-full rounded-md transition-all border-2 duration-200 text-left border-gray-200 h-20 relative overflow-hidden ${isActive
-                ? 'bg-white/90 border-indigo-300 cursor-pointer'
-                : 'bg-white/40 hover:bg-white/60 hover:border-indigo-300 cursor-pointer'
+            className={`w-full rounded-md transition-all border-2 duration-200 text-left h-20 relative overflow-hidden cursor-pointer ${
+                isActive
+                    ? isDark ? 'bg-white/10 border-gray-400' : 'bg-white/90 border-gray-400'
+                    : isDark ? 'bg-white/5 border-white/10 hover:border-gray-400' : 'bg-white/60 border-gray-200/80 hover:border-gray-400'
                 }`}
         >
             <ChartLoadingBackground />
             <div className="px-3 py-2">
                 <div className="flex items-center justify-between mb-1">
-                    <div className="text-xs font-bold text-gray-700">
+                    <div className={`text-xs font-bold ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
                         {customDataset.dataColumn} [{customDataset.boundaryYear}]
                     </div>
                 </div>
@@ -534,13 +541,13 @@ function CustomDatasetCard({
                 {/* Fixed height container */}
                 <div className="h-6 flex items-center">
                     {displayValue ? (
-                        <div className="text-sm font-semibold text-gray-900">
+                        <div className={`text-sm font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
                             {displayValue.value.toLocaleString('en-GB', {
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 2
                             })}
                             {displayValue.count > 1 && (
-                                <span className="text-xs text-gray-500 ml-1">
+                                <span className={`text-xs ml-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                                     (aggregated from {displayValue.count} wards)
                                 </span>
                             )}
@@ -549,14 +556,14 @@ function CustomDatasetCard({
                         chartsLoading ? (
                             <ChartContentPlaceholder className="h-full w-full" />
                         ) : (
-                            <div className="text-xs text-gray-400">
+                            <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-400'}`}>
                                 {selectedArea ? 'No data available' : 'Hover over an area'}
                             </div>
                         )
                     )}
                 </div>
 
-                <div className="text-xs text-gray-500 mt-1">
+                <div className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                     {customDataset.name}
                 </div>
             </div>
@@ -584,6 +591,7 @@ export default memo(function CustomSection({
     codeMapper?: CodeMapper;
 }) {
     const [isOpen, setIsOpen] = useState(false);
+    const isDark = useIsDark();
 
     const handleCustomDatasetApply = (data: UploadData) => {
         if (data.boundaryYear === null || data.boundaryType === null) {
@@ -624,8 +632,8 @@ export default memo(function CustomSection({
 
     return (
         <>
-            <div className="space-y-2 border-t border-gray-200 pt-4">
-                <h3 className="text-xs font-bold text-gray-700">Custom Dataset</h3>
+            <div className={`space-y-2 border-t pt-4 pb-2 ${isDark ? 'border-white/10' : 'border-gray-200'}`}>
+                <h3 className={`text-xs font-bold ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Custom Dataset</h3>
 
                 {customDataset && codeMapper ? (
                     <CustomDatasetCard
@@ -637,11 +645,15 @@ export default memo(function CustomSection({
                         codeMapper={codeMapper}
                     />
                 ) : customDataset ? (
-                    <div className="text-xs text-gray-500">Loading...</div>
+                    <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Loading...</div>
                 ) : (
                     <button
                         onClick={() => setIsOpen(true)}
-                        className="w-full h-20 p-3 rounded-md transition-all duration-200 border-2 border-dashed border-gray-300/80 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-400/80 hover:text-indigo-600 group cursor-pointer"
+                        className={`w-full h-20 p-3 rounded-md transition-colors duration-150 border-2 border-dashed cursor-pointer ${
+                            isDark
+                                ? 'border-white/20 hover:border-gray-400 text-gray-500'
+                                : 'border-gray-300/80 hover:border-gray-400 text-gray-400/80'
+                        }`}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
