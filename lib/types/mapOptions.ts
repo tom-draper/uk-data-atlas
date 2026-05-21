@@ -27,7 +27,7 @@ export type BrexitConstituencyOptions = ColorRangeOption;
 export type IMDOptions = ColorRangeOption;
 export type LifeExpectancyOptions = ColorRangeOption;
 
-export type ColorTheme = "viridis" | "plasma" | "inferno" | "magma";
+export type ColorTheme = "viridis" | "plasma" | "redblue" | "ryg";
 
 export type MapMode = keyof Datasets | 'custom';
 

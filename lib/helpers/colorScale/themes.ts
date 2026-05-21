@@ -4,8 +4,8 @@ import { hexToRgbString, interpolateColor } from "./interpolation";
 const themeDefinitions = [
 	{ id: "viridis" as ColorTheme, label: "Viridis", colors: ["#440154", "#31688e", "#35b779", "#fde724"] },
 	{ id: "plasma" as ColorTheme, label: "Plasma", colors: ["#0d0887", "#7e03a8", "#cc4778", "#f89540", "#f0f921"] },
-	{ id: "inferno" as ColorTheme, label: "Inferno", colors: ["#000004", "#420a68", "#932667", "#fca236", "#fcfdbf"] },
-	{ id: "magma" as ColorTheme, label: "Magma", colors: ["#000004", "#3b0f70", "#8c2981", "#fcfdbf"] },
+	{ id: "redblue" as ColorTheme, label: "Red-Blue", colors: ["#d73027", "#4575b4"] },
+	{ id: "ryg" as ColorTheme, label: "Red-Yellow-Green", colors: ["#d73027", "#fee08b", "#1a9850"] },
 ];
 
 export const themes = themeDefinitions.map((t) => ({
