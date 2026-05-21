@@ -165,7 +165,7 @@ export class LayerManager {
 			lineOpacity = 0;
 		} else if (visibility.hideDataLayer) {
 			fillColor = DEFAULT_COLOR;
-			fillOpacity = 0.5 * overlayOpacity;
+			fillOpacity = overlayOpacity;
 			lineColor = DEFAULT_COLOR;
 			lineOpacity = 0.6 * overlayOpacity;
 		} else {
