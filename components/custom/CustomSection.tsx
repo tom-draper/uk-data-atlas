@@ -641,7 +641,7 @@ export default memo(function CustomSection({
                 ) : (
                     <button
                         onClick={() => setIsOpen(true)}
-                        className="w-full p-3 rounded-md transition-all duration-200 border-2 border-dashed border-gray-300/80 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-400/80 hover:text-indigo-600 group cursor-pointer"
+                        className="w-full h-20 p-3 rounded-md transition-all duration-200 border-2 border-dashed border-gray-300/80 hover:border-indigo-400 hover:bg-indigo-50/50 text-gray-400/80 hover:text-indigo-600 group cursor-pointer"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

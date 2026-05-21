@@ -39,6 +39,9 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	theme: {
 		id: "viridis",
 	},
+	baseStyle: {
+		id: "positron",
+	},
 	visibility: {
 		hideDataLayer: false,
 		hideBoundaries: false,

@@ -11,6 +11,7 @@ interface MapViewProps {
 	mapManager: MapManager | null;
 	mapOptions: MapOptions;
 	handleMapContainer: (node: HTMLDivElement | null) => void;
+	styleVersion: number;
 }
 
 export default memo(function MapView({
@@ -20,6 +21,7 @@ export default memo(function MapView({
 	mapManager,
 	mapOptions,
 	handleMapContainer,
+	styleVersion,
 }: MapViewProps) {
 	useMapUpdates({
 		geojson,
@@ -27,6 +29,7 @@ export default memo(function MapView({
 		activeDataset,
 		mapManager,
 		mapOptions,
+		styleVersion,
 	});
 
 	return (

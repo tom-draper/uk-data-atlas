@@ -1,6 +1,7 @@
 // lib/types/mapOptions.ts
 import { Datasets } from ".";
 import { ColorRange } from "./common";
+import type { BaseMapStyle } from "../config/baseMapStyles";
 
 // Base option types reused across visualizations
 interface ColorRangeOption {
@@ -48,6 +49,9 @@ export interface MapOptions {
 	lifeExpectancy: LifeExpectancyOptions;
 	theme: {
 		id: ColorTheme;
+	};
+	baseStyle: {
+		id: BaseMapStyle["id"];
 	};
 	visibility: {
 		hideDataLayer: boolean;
