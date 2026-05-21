@@ -5,6 +5,7 @@ import {
 	ColorTheme,
 	MapOptions as MapOptionsType,
 } from "@/lib/types/mapOptions";
+import { BASE_MAP_STYLES, type BaseMapStyle } from "@/lib/config/baseMapStyles";
 
 interface MapOptionsProps {
 	onZoomIn: () => void;
@@ -24,6 +25,7 @@ export default function MapOptions({
 }: MapOptionsProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedTheme, setSelectedTheme] = useState("viridis");
+	const [selectedBaseStyle, setSelectedBaseStyle] = useState<BaseMapStyle["id"]>("positron");
 	const [hideDataLayer, setHideDataLayer] = useState(false);
 	const [hideBoundaries, setHideBoundaries] = useState(false);
 	const [hideOverlay, setHideOverlay] = useState(false);
@@ -34,6 +36,11 @@ export default function MapOptions({
 		setSelectedTheme(themeId);
 		setIsOpen(false);
 		handleMapOptionsChange("theme", { id: themeId });
+	};
+
+	const handleBaseStyleChange = (styleId: BaseMapStyle["id"]) => {
+		setSelectedBaseStyle(styleId);
+		handleMapOptionsChange("baseStyle", { id: styleId });
 	};
 
 	const handleDataToggle = () => {
@@ -143,10 +150,25 @@ export default function MapOptions({
 							/>
 							<span className="text-xs text-gray-400 pr-1">%</span>
 						</div>
+						<div className="flex border border-white/20 rounded-sm overflow-hidden bg-white/10 ml-auto">
+							{BASE_MAP_STYLES.map((style) => (
+								<button
+									key={style.id}
+									onClick={() => handleBaseStyleChange(style.id)}
+									className={`px-2 py-0.5 text-xs transition-all duration-200 cursor-pointer border-r border-white/20 last:border-r-0 ${
+										selectedBaseStyle === style.id
+											? "bg-white/30 text-gray-700"
+											: "text-gray-500 hover:bg-white/20"
+									}`}
+								>
+									{style.label}
+								</button>
+							))}
+						</div>
 					</div>
 				</div>
 
-				<div className="flex items-end justify-between gap-2">
+				<div className="flex items-center justify-between gap-2 pt-1">
 					<div className="absolute flex flex-col top-2.5 right-2.5 border border-white/20 rounded-sm overflow-hidden bg-white/10 backdrop-blur-md shadow-sm">
 						<button
 							onClick={onZoomIn}
@@ -217,7 +239,7 @@ export default function MapOptions({
 
 					<button
 						onClick={onExport}
-						className="cursor-pointer absolute right-2.5 bottom-2.5 border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 hover:text-gray-600"
+						className="cursor-pointer border border-white/20 rounded-sm px-2 py-1 text-xs bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-200 shadow-sm text-gray-500 hover:text-gray-600"
 					>
 						Export
 					</button>

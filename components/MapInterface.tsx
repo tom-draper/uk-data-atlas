@@ -21,6 +21,7 @@ import type {
 import type { CustomDataset } from "@/lib/types/custom";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
+import { BASE_MAP_STYLES } from "@/lib/config/baseMapStyles";
 import { LOCATIONS } from "@lib/data/locations";
 import maplibregl from "maplibre-gl";
 
@@ -46,6 +47,7 @@ export default function MapInterface({
 	onError,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
+	const [styleVersion, setStyleVersion] = useState(0);
 
 	const codeMapper = useCodeMapper();
 
@@ -85,6 +87,20 @@ export default function MapInterface({
 		useMapInitialization(MAP_CONFIG);
 	const { mapOptions, setMapOptions: handleMapOptionsChange } =
 		useMapOptions(DEFAULT_MAP_OPTIONS);
+
+	// Switch base map style and re-render data layers after the new style loads
+	useEffect(() => {
+		const mapInstance = map.current;
+		if (!mapInstance || !mapReady) return;
+
+		const styleUrl = BASE_MAP_STYLES.find(
+			(s) => s.id === mapOptions.baseStyle.id,
+		)?.url;
+		if (!styleUrl) return;
+
+		mapInstance.setStyle(styleUrl);
+		mapInstance.once("style.load", () => setStyleVersion((v) => v + 1));
+	}, [mapOptions.baseStyle.id, mapReady]);
 
 	// Stable interaction handlers - created once, never change identity
 	const interactionHandlers = useInteractionHandlers({
@@ -213,6 +229,7 @@ export default function MapInterface({
 				mapManager={mapManager}
 				mapOptions={mapOptions}
 				handleMapContainer={handleMapContainer}
+				styleVersion={styleVersion}
 			/>
 		</div>
 	);
