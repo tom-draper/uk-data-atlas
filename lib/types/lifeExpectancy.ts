@@ -1,4 +1,4 @@
-export interface LifeExpectancyRecord {
+export interface LifeExpectancyLADData {
 	ladCode: string;
 	ladName: string;
 	maleBirthLE: number;
@@ -13,7 +13,7 @@ export interface LifeExpectancyDataset {
 	boundaryYear: number;
 	dataPeriod: string;
 	label: string;
-	data: Record<string, LifeExpectancyRecord>;
+	data: Record<string, LifeExpectancyLADData>;
 	metadata: {
 		source: string;
 		notes: string[];

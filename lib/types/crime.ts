@@ -1,6 +1,6 @@
-export interface CrimeRecord {
-	localAuthorityCode: string;
-	localAuthorityName: string;
+export interface CrimeLADData {
+	ladCode: string;
+	ladName: string;
 	policeForceAreaCode?: string;
 	policeForceAreaName?: string;
 	communitySafetyPartnershipCode?: string;
@@ -37,8 +37,8 @@ export interface CrimeDataset {
 	boundaryType: "localAuthority";
 	boundaryYear: number;
 	dataDate: string;
-	jurisdiction: string; // 'England and Wales', 'England', 'Wales', etc.
-	data: Record<string, CrimeRecord>;
+	jurisdiction: string;
+	data: Record<string, CrimeLADData>;
 	metadata: {
 		source: string;
 		notes: string[];

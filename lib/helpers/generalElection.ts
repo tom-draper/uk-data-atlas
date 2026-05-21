@@ -1,8 +1,8 @@
-import { ConstituencyData, PartyVotes, PartyCode, ProcessedPartyData } from "../types";
+import { GeneralElectionConstituencyData, PartyVotes, PartyCode, ProcessedPartyData } from "../types";
 import { Party } from "../types/common";
 import { PARTIES } from "../data/election/parties";
 
-export const getWinningParty = (data: ConstituencyData): string => {
+export const getWinningParty = (data: GeneralElectionConstituencyData): string => {
 	let winningParty = "";
 	let maxVotes = 0;
 

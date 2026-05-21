@@ -1,9 +1,9 @@
 // lib/types/housePrice.ts
 import { WardYear } from "../data/boundaries/boundaries";
 
-export interface WardHousePriceData {
-	localAuthorityCode: string;
-	localAuthorityName: string;
+export interface HousePriceWardData {
+	ladCode: string;
+	ladName: string;
 	wardCode: string;
 	wardName: string;
 	prices: Record<number, number>;
@@ -17,7 +17,7 @@ export interface HousePriceDataset {
 	year: HousePriceYear;
 	boundaryYear: WardYear;
 	boundaryType: "ward";
-	data: Record<string, WardHousePriceData>;
+	data: Record<string, HousePriceWardData>;
 }
 
 export type AggregatedHousePriceData = {

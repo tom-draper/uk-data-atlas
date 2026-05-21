@@ -71,7 +71,7 @@ export default memo(function LifeExpectancyChart({
 		}
 
 		if (selectedArea.type === "ward" && selectedArea.data) {
-			const record = dataset.data[selectedArea.data.localAuthorityCode];
+			const record = dataset.data[selectedArea.data.ladCode];
 			return record
 				? { averageMaleLE: record.maleBirthLE, averageFemaleLE: record.femaleBirthLE }
 				: null;

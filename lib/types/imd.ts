@@ -1,4 +1,4 @@
-export interface LSOAIMDRecord {
+export interface IMDLSOAData {
 	lsoaCode: string;
 	lsoaName: string;
 	ladCode: string;
@@ -21,7 +21,7 @@ export interface IMDDataset {
 	type: "imd";
 	boundaryType: "lsoa";
 	boundaryYear: number;
-	data: Record<string, LSOAIMDRecord>;
+	data: Record<string, IMDLSOAData>;
 	metadata: {
 		source: string;
 		notes: string[];

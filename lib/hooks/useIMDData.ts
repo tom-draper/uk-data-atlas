@@ -1,4 +1,4 @@
-import { IMDDataset, LSOAIMDRecord } from "@/lib/types/imd";
+import { IMDDataset, IMDLSOAData } from "@/lib/types/imd";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
 import { parseNum, parseNumInt } from "../helpers/parseNumber";
@@ -14,7 +14,7 @@ export const useIMDData = () => {
 
 		const { data } = await parseCsv(await response.text(), { header: true });
 
-		const records: Record<string, LSOAIMDRecord> = {};
+		const records: Record<string, IMDLSOAData> = {};
 		for (const row of data as any[]) {
 			const lsoaCode = row["LSOA code (2011)"]?.trim();
 			if (!lsoaCode || !lsoaCode.startsWith("E")) continue;

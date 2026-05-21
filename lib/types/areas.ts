@@ -1,9 +1,9 @@
 // lib/types/areas.ts
-import { WardData, ConstituencyData, LocalAuthorityData } from "./elections";
+import { LocalElectionWardData, GeneralElectionConstituencyData, LocalAuthorityData } from "./elections";
 
 type AreaMap = {
-    ward: WardData;
-    constituency: ConstituencyData;
+    ward: LocalElectionWardData;
+    constituency: GeneralElectionConstituencyData;
     localAuthority: LocalAuthorityData;
     lsoa: null;
 };

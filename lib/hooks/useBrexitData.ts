@@ -1,4 +1,4 @@
-import { BrexitLADDataset, BrexitAreaData } from "@lib/types";
+import { BrexitLADDataset, BrexitLADData } from "@lib/types";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
 import { parseNum } from "../helpers/parseNumber";
@@ -15,7 +15,7 @@ export const useBrexitData = () => {
 		const { data } = await parseCsv(await response.text(), { header: true });
 		const rows = data as Record<string, string>[];
 
-		const records: Record<string, BrexitAreaData> = {};
+		const records: Record<string, BrexitLADData> = {};
 		const resultMap: Record<string, "remain" | "leave"> = {};
 
 		for (const row of rows) {
@@ -26,9 +26,9 @@ export const useBrexitData = () => {
 			const pctRemain = parseNum(row["Pct_Remain"]);
 
 			records[areaCode] = {
-				areaCode,
-				areaName: row["Area"]?.trim() || "",
-				region: row["Region"]?.trim() || "",
+				ladCode: areaCode,
+				ladName: row["Area"]?.trim() || "",
+				regionName: row["Region"]?.trim() || "",
 				regionCode: row["Region_Code"]?.trim() || "",
 				electorate: parseNum(row["Electorate"]),
 				validVotes: parseNum(row["Valid_Votes"]),

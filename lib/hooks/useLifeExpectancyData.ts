@@ -1,4 +1,4 @@
-import { LifeExpectancyDataset, LifeExpectancyRecord } from "@lib/types";
+import { LifeExpectancyDataset, LifeExpectancyLADData } from "@lib/types";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
 import { useDataLoader } from "./useDataLoader";
@@ -9,7 +9,7 @@ function parsePairedRows(
 	nameCol: string,
 	sexCol: string,
 	valueCol: string,
-): Record<string, LifeExpectancyRecord> {
+): Record<string, LifeExpectancyLADData> {
 	const male: Record<string, { name: string; value: number }> = {};
 	const female: Record<string, { name: string; value: number }> = {};
 
@@ -24,7 +24,7 @@ function parsePairedRows(
 		else if (sex === "Female") female[ladCode] = { name, value };
 	}
 
-	const records: Record<string, LifeExpectancyRecord> = {};
+	const records: Record<string, LifeExpectancyLADData> = {};
 	for (const ladCode of Object.keys(male)) {
 		if (!female[ladCode]) continue;
 		records[ladCode] = {

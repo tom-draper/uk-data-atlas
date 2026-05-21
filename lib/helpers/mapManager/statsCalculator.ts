@@ -7,7 +7,7 @@ import {
 	WardStats,
 	ConstituencyStats,
 	AgeGroups,
-	WardHousePriceData,
+	HousePriceWardData,
 	AggregatedHousePriceData,
 	PopulationStats,
 	CrimeDataset,
@@ -282,7 +282,7 @@ export class StatsCalculator {
 
 	calculateHousePriceStats(
 		geojson: BoundaryGeojson,
-		wardData: Record<string, WardHousePriceData>,
+		wardData: Record<string, HousePriceWardData>,
 		location: string | null,
 		datasetId: string | null,
 	) {

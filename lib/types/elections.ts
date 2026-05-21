@@ -1,12 +1,10 @@
 // lib/types/elections.ts
-// Election-related types for both local and general elections
-
 import { ConstituencyYear, WardYear } from "../data/boundaries/boundaries";
 import { PartyVotes, Party } from "./common";
 
-export interface WardData {
-	localAuthorityCode: string;
-	localAuthorityName: string;
+export interface LocalElectionWardData {
+	ladCode: string;
+	ladName: string;
 	totalVotes: number;
 	turnoutPercent: number;
 	wardName: string;
@@ -15,7 +13,7 @@ export interface WardData {
 	partyVotes: PartyVotes;
 }
 
-export interface ConstituencyData {
+export interface GeneralElectionConstituencyData {
 	constituencyName: string;
 	onsId: string;
 	regionName: string;
@@ -36,13 +34,13 @@ export interface ConstituencyData {
 }
 
 export interface LocalAuthorityData {
-	localAuthorityCode: string;
-	localAuthorityName: string;
+	ladCode: string;
+	ladName: string;
 	regionName: string;
 	countryName: string;
 }
 
-export type ElectionData = WardData | ConstituencyData | LocalAuthorityData;
+export type ElectionData = LocalElectionWardData | GeneralElectionConstituencyData | LocalAuthorityData;
 
 export const LOCAL_ELECTION_YEARS = [2025, 2024, 2023, 2022, 2021] as const;
 export const GENERAL_ELECTION_YEARS = [2024, 2019, 2017, 2015] as const;
@@ -50,32 +48,30 @@ export const GENERAL_ELECTION_YEARS = [2024, 2019, 2017, 2015] as const;
 export type LocalElectionYear = (typeof LOCAL_ELECTION_YEARS)[number];
 export type GeneralElectionYear = (typeof GENERAL_ELECTION_YEARS)[number];
 
-// Base election dataset with common properties
 interface BaseElectionDataset<D extends ElectionData> {
 	id: string;
 	year: number;
 	partyInfo: Party[];
 }
 
-export interface LocalElectionDataset extends BaseElectionDataset<WardData> {
+export interface LocalElectionDataset extends BaseElectionDataset<LocalElectionWardData> {
 	type: "localElection";
 	year: LocalElectionYear;
 	boundaryType: "ward";
 	boundaryYear: WardYear;
 	results: Record<string, string>;
-	data: Record<string, WardData>;
+	data: Record<string, LocalElectionWardData>;
 }
 
-export interface GeneralElectionDataset extends BaseElectionDataset<ConstituencyData> {
+export interface GeneralElectionDataset extends BaseElectionDataset<GeneralElectionConstituencyData> {
 	type: "generalElection";
 	year: GeneralElectionYear;
 	boundaryType: "constituency";
 	boundaryYear: ConstituencyYear;
 	results: Record<string, string>;
-	data: Record<string, ConstituencyData>;
+	data: Record<string, GeneralElectionConstituencyData>;
 }
 
-// Aggregated election data
 export interface WardStats {
 	partyVotes: PartyVotes;
 	electorate: number;
