@@ -70,21 +70,21 @@ export function useCodeMapper() {
 
 	const getLadForWard = useCallback(
 		(wardCode: string): string | undefined => {
-			const direct = wardToLadMap[wardCode];
+			const direct = wardToLadMapRef.current[wardCode];
 			if (direct) return direct;
 
 			// Fall back to cross-year equivalents (e.g. 2021 ward codes not in LAD map)
 			const yearMappings = codeMappingsRef.current.ward[wardCode];
 			if (yearMappings) {
 				for (const equivalentCode of Object.values(yearMappings)) {
-					const lad = wardToLadMap[equivalentCode as string];
+					const lad = wardToLadMapRef.current[equivalentCode as string];
 					if (lad) return lad;
 				}
 			}
 
 			return undefined;
 		},
-		[wardToLadMap],
+		[],
 	);
 
 	const addWardLadMapping = useCallback(
