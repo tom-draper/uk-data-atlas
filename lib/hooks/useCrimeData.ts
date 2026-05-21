@@ -1,4 +1,4 @@
-import { CrimeDataset, CrimeRecord } from "@lib/types";
+import { CrimeDataset, CrimeLADData } from "@lib/types";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv, findHeaderLine } from "../helpers/parseCsv";
 import { parseNum } from "../helpers/parseNumber";
@@ -27,7 +27,7 @@ export const useCrimeData = () => {
 			skipLines: headerLine + 1,
 		});
 
-		const records: Record<string, CrimeRecord> = {};
+		const records: Record<string, CrimeLADData> = {};
 		for (const row of data as string[][]) {
 			if (!row[0] || row[0].trim() === "") continue;
 
@@ -36,8 +36,8 @@ export const useCrimeData = () => {
 			if (!areaCode || areaCode === "Local Authority code") continue;
 
 			records[areaCode] = {
-				localAuthorityCode: areaCode,
-				localAuthorityName: areaName,
+				ladCode: areaCode,
+				ladName: areaName,
 				policeForceAreaCode: row[0]?.trim() || "",
 				policeForceAreaName: row[1]?.trim() || "",
 				communitySafetyPartnershipCode: row[2]?.trim() || "",

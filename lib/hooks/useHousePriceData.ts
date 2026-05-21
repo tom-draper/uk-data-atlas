@@ -1,4 +1,4 @@
-import { HousePriceDataset, WardHousePriceData } from "../types";
+import { HousePriceDataset, HousePriceWardData } from "../types";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv, findHeaderLine } from "../helpers/parseCsv";
 import { parseNullableInt } from "../helpers/parseNumber";
@@ -22,7 +22,7 @@ export const useHousePriceData = () => {
 		});
 
 		const timePeriodHeaders = fields.slice(4);
-		const wardData: Record<string, WardHousePriceData> = {};
+		const wardData: Record<string, HousePriceWardData> = {};
 
 		for (const row of data as any[]) {
 			const wardCode = row["Ward code"]?.trim();
@@ -38,8 +38,8 @@ export const useHousePriceData = () => {
 			}
 
 			wardData[wardCode] = {
-				localAuthorityCode: row["Local authority code"]?.trim() || "",
-				localAuthorityName: row["Local authority name"]?.trim() || "",
+				ladCode: row["Local authority code"]?.trim() || "",
+				ladName: row["Local authority name"]?.trim() || "",
 				wardCode,
 				wardName: row["Ward name"]?.trim() || "",
 				prices,

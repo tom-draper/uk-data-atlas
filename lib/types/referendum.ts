@@ -1,7 +1,7 @@
-export interface BrexitAreaData {
-	areaCode: string;
-	areaName: string;
-	region: string;
+export interface BrexitLADData {
+	ladCode: string;
+	ladName: string;
+	regionName: string;
 	regionCode: string;
 	electorate: number;
 	validVotes: number;
@@ -19,7 +19,7 @@ export interface BrexitLADDataset {
 	type: "brexit";
 	boundaryType: "localAuthority";
 	boundaryYear: number;
-	data: Record<string, BrexitAreaData>;
+	data: Record<string, BrexitLADData>;
 	results: Record<string, "remain" | "leave">;
 }
 

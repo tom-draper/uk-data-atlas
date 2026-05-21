@@ -1,6 +1,6 @@
 // lib/utils/generalElectionUtils.ts
 import Papa from "papaparse";
-import { ConstituencyData, GeneralElectionDataset } from "@lib/types";
+import { GeneralElectionConstituencyData, GeneralElectionDataset } from "@lib/types";
 import { GeneralElectionSourceConfig } from "./config";
 import { PARTY_INFO } from "@/lib/data/election/parties";
 import { calculateTurnout } from "@/lib/helpers/generalElection";
@@ -36,7 +36,7 @@ export const fetchAndParseGeneralElectionData = async (
 			dynamicTyping: false,
 			complete: (results) => {
 				const constituencyResults: Record<string, string> = {};
-				const constituencyData: Record<string, ConstituencyData> = {};
+				const constituencyData: Record<string, GeneralElectionConstituencyData> = {};
 
 				for (const row of results.data as any[]) {
 					const onsId = row[config.fields.onsId]?.trim();

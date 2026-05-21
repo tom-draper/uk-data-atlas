@@ -111,9 +111,9 @@ function panelHeaderDetails(
 					selectedArea.name ??
 					(selectedArea.data ? selectedArea.data.wardName : ""),
 				subtitle: selectedArea.data
-					? (selectedArea.data.localAuthorityName ?? "")
+					? (selectedArea.data.ladName ?? "")
 					: "",
-				code: `${selectedArea.data ? (selectedArea.data.localAuthorityCode ?? "") : ""} ${selectedArea.code}`,
+				code: `${selectedArea.data ? (selectedArea.data.ladCode ?? "") : ""} ${selectedArea.code}`,
 			};
 		case "constituency":
 			return {
@@ -125,7 +125,7 @@ function panelHeaderDetails(
 			};
 		case "localAuthority":
 			return {
-				title: selectedArea.name || (selectedArea.data?.localAuthorityName ?? ""),
+				title: selectedArea.name || (selectedArea.data?.ladName ?? ""),
 				subtitle: selectedArea.data
 					? [selectedArea.data.regionName, selectedArea.data.countryName].filter(Boolean).join(", ")
 					: "",

@@ -77,7 +77,7 @@ export default memo(function IMDChart({
 
 		// Ward selected — look up via parent LAD code stored on the ward data
 		if (selectedArea.type === "ward" && selectedArea.data) {
-			const ladCode = selectedArea.data.localAuthorityCode;
+			const ladCode = selectedArea.data.ladCode;
 			return avgFromRecords(Object.values(dataset.data).filter((r) => r.ladCode === ladCode));
 		}
 

@@ -1,6 +1,6 @@
 // lib/utils/electionUtils.ts
 import Papa from "papaparse";
-import { LocalElectionDataset, WardData, LocalElectionYear } from "@lib/types/index";
+import { LocalElectionDataset, LocalElectionWardData, LocalElectionYear } from "@lib/types/index";
 import { WardYear } from "@/lib/data/boundaries/boundaries";
 import { PARTY_INFO } from "@/lib/data/election/parties";
 import { ElectionSourceConfig } from "./config";
@@ -51,7 +51,7 @@ export const fetchAndParseCsv = async (
 			complete: (results) => {
 				const partyCols = detectPartyColumns(results.meta.fields || []);
 				const wardWinners: Record<string, string> = {};
-				const wardData: Record<string, WardData> = {};
+				const wardData: Record<string, LocalElectionWardData> = {};
 				const unmapped: any[] = [];
 
 					results.data.forEach((row: any) => {
@@ -70,11 +70,11 @@ export const fetchAndParseCsv = async (
 					const rawCode = row[config.fields.code]?.trim();
 					const wCode = rawCode && config.wardCodeMap?.[rawCode] ? config.wardCodeMap[rawCode] : rawCode;
 
-					const entry: WardData = {
+					const entry: LocalElectionWardData = {
 						wardCode: wCode,
 						wardName: wName,
-						localAuthorityName: laName,
-						localAuthorityCode:
+						ladName: laName,
+						ladCode:
 							row[config.fields.ladCode || ""] || "Unknown",
 						turnoutPercent: parseNumber(row[config.fields.turnout]),
 						electorate: parseNumber(row[config.fields.electorate]),
@@ -169,7 +169,7 @@ export const reconcile2023Data = (
 	referenceSets.forEach((ds) => {
 		Object.entries(ds.data).forEach(([code, data]) => {
 			const key =
-				`${data.localAuthorityName}|${data.wardName}`.toLowerCase();
+				`${data.ladName}|${data.wardName}`.toLowerCase();
 			if (!lookup.has(key)) lookup.set(key, code);
 		});
 	});
@@ -177,14 +177,14 @@ export const reconcile2023Data = (
 	// Apply lookup
 	// @ts-ignore
 	dataset2023._unmapped.forEach((item: any) => {
-		const key = `${item.localAuthorityName}|${item.wardName}`.toLowerCase();
+		const key = `${item.ladName}|${item.wardName}`.toLowerCase();
 		const code = lookup.get(key);
 
 		if (code) {
 			dataset2023.results[code] = item.winningParty;
 			dataset2023.data[code] = {
 				...item,
-				localAuthorityCode: code.substring(0, 9), // Infer LA code from Ward Code
+				ladCode: code.substring(0, 9), // Infer LA code from Ward Code
 			};
 		}
 	});

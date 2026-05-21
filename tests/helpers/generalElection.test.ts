@@ -1,10 +1,10 @@
 import { calculateTurnout, getWinningParty, processPartyVotes } from "@/lib/helpers/generalElection";
-import type { ConstituencyData } from "@/lib/types";
+import type { GeneralElectionConstituencyData } from "@/lib/types";
 import type { PartyCode } from "@/lib/types";
 
 // Minimal fixture — only fields used by the functions under test
-const makeConstituency = (partyVotes: Record<string, number>): ConstituencyData =>
-	({ partyVotes } as ConstituencyData);
+const makeConstituency = (partyVotes: Record<string, number>): GeneralElectionConstituencyData =>
+	({ partyVotes } as GeneralElectionConstituencyData);
 
 describe("calculateTurnout", () => {
 	it("calculates turnout as a percentage", () => {

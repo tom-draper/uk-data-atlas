@@ -4,7 +4,7 @@ import {
 	AnnualIncomeData,
 	HourlyIncomeData,
 	IncomeDataset,
-	LocalAuthorityIncomeData,
+	IncomeLADData,
 } from "../types/income";
 import { useDataLoader } from "./useDataLoader";
 
@@ -16,7 +16,7 @@ const parseNumber = (value: any): number | null => {
 	return isNaN(parsed) ? null : parsed;
 };
 
-const parseAnnualIncomeData = async (): Promise<Record<string, AnnualIncomeData>> => {
+const parseAnnualIncomeData = async (): Promise<{ data: Record<string, AnnualIncomeData>, names: Record<string, string> }> => {
 	const res = await fetch(
 		withCDN("/data/economics/income/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.csv"),
 	);
@@ -27,6 +27,7 @@ const parseAnnualIncomeData = async (): Promise<Record<string, AnnualIncomeData>
 	const { data } = await parseCsv(csvText, { header: true, skipLines });
 
 	const annualData: Record<string, AnnualIncomeData> = {};
+	const names: Record<string, string> = {};
 	for (const row of data as any[]) {
 		const code = row["Code"]?.trim();
 		const description = row["Description"]?.trim();
@@ -36,8 +37,8 @@ const parseAnnualIncomeData = async (): Promise<Record<string, AnnualIncomeData>
 		const mean = parseNumber(row["Mean"]);
 		if (median === null && mean === null) continue;
 
+		names[code] = description;
 		annualData[code] = {
-			name: description,
 			numberOfJobs: parseNumber(row["Number\nof jobsb\n(thousand)"]),
 			median,
 			medianPercentageChange: parseNumber(row["Annual\npercentage\nchange"]),
@@ -57,10 +58,10 @@ const parseAnnualIncomeData = async (): Promise<Record<string, AnnualIncomeData>
 			},
 		};
 	}
-	return annualData;
+	return { data: annualData, names };
 };
 
-const parseHourlyIncomeData = async (): Promise<Record<string, HourlyIncomeData>> => {
+const parseHourlyIncomeData = async (): Promise<{ data: Record<string, HourlyIncomeData>, names: Record<string, string> }> => {
 	const res = await fetch(
 		withCDN("/data/economics/income/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.csv"),
 	);
@@ -71,6 +72,7 @@ const parseHourlyIncomeData = async (): Promise<Record<string, HourlyIncomeData>
 	const { data } = await parseCsv(csvText, { header: true, skipLines });
 
 	const hourlyData: Record<string, HourlyIncomeData> = {};
+	const names: Record<string, string> = {};
 	for (const row of data as any[]) {
 		const code = row["Code"]?.trim();
 		const description = row["Description"]?.trim();
@@ -80,8 +82,8 @@ const parseHourlyIncomeData = async (): Promise<Record<string, HourlyIncomeData>
 		const mean = parseNumber(row["Mean"]);
 		if (median === null && mean === null) continue;
 
+		names[code] = description;
 		hourlyData[code] = {
-			name: description,
 			numberOfJobs: parseNumber(row["Number\nof jobsb\n(thousand)"]),
 			median,
 			medianPercentageChange: parseNumber(row["Annual\npercentage\nchange"]),
@@ -101,22 +103,24 @@ const parseHourlyIncomeData = async (): Promise<Record<string, HourlyIncomeData>
 			},
 		};
 	}
-	return hourlyData;
+	return { data: hourlyData, names };
 };
 
 const mergeIncomeData = (
-	annualData: Record<string, AnnualIncomeData>,
-	hourlyData: Record<string, HourlyIncomeData>,
-): Record<string, LocalAuthorityIncomeData> => {
-	const merged: Record<string, LocalAuthorityIncomeData> = {};
+	annualResult: { data: Record<string, AnnualIncomeData>, names: Record<string, string> },
+	hourlyResult: { data: Record<string, HourlyIncomeData>, names: Record<string, string> },
+): Record<string, IncomeLADData> => {
+	const { data: annualData, names: annualNames } = annualResult;
+	const { data: hourlyData, names: hourlyNames } = hourlyResult;
+	const merged: Record<string, IncomeLADData> = {};
 	const allCodes = new Set([...Object.keys(annualData), ...Object.keys(hourlyData)]);
 	for (const code of allCodes) {
 		const annual = annualData[code] ?? null;
 		const hourly = hourlyData[code] ?? null;
 		if (annual || hourly) {
 			merged[code] = {
-				code,
-				name: annual?.name ?? hourly?.name ?? "",
+				ladCode: code,
+				ladName: annualNames[code] ?? hourlyNames[code] ?? "",
 				annual,
 				hourly,
 			};
@@ -127,7 +131,7 @@ const mergeIncomeData = (
 
 export const useIncomeData = () => {
 	return useDataLoader<IncomeDataset>(async () => {
-		const [annualData, hourlyData] = await Promise.all([
+		const [annualResult, hourlyResult] = await Promise.all([
 			parseAnnualIncomeData(),
 			parseHourlyIncomeData(),
 		]);
@@ -139,7 +143,7 @@ export const useIncomeData = () => {
 				year: 2025,
 				boundaryType: "localAuthority",
 				boundaryYear: 2025,
-				data: mergeIncomeData(annualData, hourlyData),
+				data: mergeIncomeData(annualResult, hourlyResult),
 			},
 		};
 	});

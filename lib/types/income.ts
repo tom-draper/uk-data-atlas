@@ -1,5 +1,4 @@
 export interface AnnualIncomeData {
-	name: string;
 	numberOfJobs: number | null;
 	median: number | null;
 	medianPercentageChange: number | null;
@@ -20,7 +19,6 @@ export interface AnnualIncomeData {
 }
 
 export interface HourlyIncomeData {
-	name: string;
 	numberOfJobs: number | null;
 	median: number | null;
 	medianPercentageChange: number | null;
@@ -40,9 +38,9 @@ export interface HourlyIncomeData {
 	};
 }
 
-export interface LocalAuthorityIncomeData {
-	code: string;
-	name: string;
+export interface IncomeLADData {
+	ladCode: string;
+	ladName: string;
 	annual: AnnualIncomeData | null;
 	hourly: HourlyIncomeData | null;
 }
@@ -53,7 +51,7 @@ export interface IncomeDataset {
 	year: number;
 	boundaryType: "localAuthority";
 	boundaryYear: number;
-	data: Record<string, LocalAuthorityIncomeData>;
+	data: Record<string, IncomeLADData>;
 }
 
 export interface AggregatedIncomeData {
