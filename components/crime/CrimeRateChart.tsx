@@ -117,7 +117,9 @@ export default memo(function CrimeRateChart({
 	const hotHue = 50 - intensity * 50;
 
 	const dynamicBgColor = hasData
-		? `hsl(${baseHue}, ${40 + intensity * 40}%, ${95 - intensity * 20}%)`
+		? isDark
+			? `hsl(${baseHue}, ${20 + intensity * 30}%, ${8 + intensity * 8}%)`
+			: `hsl(${baseHue}, ${40 + intensity * 40}%, ${95 - intensity * 20}%)`
 		: "";
 
 	return (
@@ -183,16 +185,18 @@ export default memo(function CrimeRateChart({
 				</div>
 			)}
 
-			<div className="absolute inset-0 z-0 bg-white/20" />
+			<div className={`absolute inset-0 z-0 ${isDark ? "bg-black/20" : "bg-white/20"}`} />
 			<div className="relative z-10">
-				<h3 className="text-xs font-bold text-gray-800/90">
+				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
 					Recorded Crime [{dataset.year}]
 				</h3>
 				{crimeRate ? (
 					<div
 						className="text-xl font-bold mt-2 text-center"
 						style={{
-							color: intensity > 0.5 ? "#7f1d1d" : "#78350f",
+							color: isDark
+								? intensity > 0.5 ? "#fca5a5" : "#fdba74"
+								: intensity > 0.5 ? "#7f1d1d" : "#78350f",
 						}}
 					>
 						{Math.round(crimeRate).toLocaleString()}
@@ -202,7 +206,7 @@ export default memo(function CrimeRateChart({
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (
-							<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+							<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 								No data available
 							</div>
 						)}

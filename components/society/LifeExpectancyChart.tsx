@@ -24,18 +24,18 @@ interface LifeExpectancyChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-function leBar(years: number, label: string, min: number, max: number) {
+function leBar(years: number, label: string, min: number, max: number, isDark: boolean) {
 	const pct = Math.max(0, Math.min(100, ((years - min) / (max - min)) * 100));
 	return (
 		<div className="flex items-center gap-1.5">
-			<span className="text-[10px] text-gray-400/80 w-3">{label}</span>
-			<div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+			<span className={`text-[10px] w-3 ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>{label}</span>
+			<div className={`flex-1 h-2 rounded-full overflow-hidden ${isDark ? "bg-white/10" : "bg-gray-100"}`}>
 				<div
 					className="h-full rounded-full bg-teal-500/70"
 					style={{ width: `${pct}%` }}
 				/>
 			</div>
-			<span className="text-[10px] font-semibold text-gray-600 w-8 text-right">
+			<span className={`text-[10px] font-semibold w-8 text-right ${isDark ? "text-gray-300" : "text-gray-600"}`}>
 				{years.toFixed(1)}
 			</span>
 		</div>
@@ -109,20 +109,20 @@ export default memo(function LifeExpectancyChart({
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10">
-				<h3 className="text-xs font-bold text-gray-800/90">
+				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
 					{dataset.label} [{dataset.dataPeriod}]
 				</h3>
 				{leStats ? (
 					<div className="mt-1.5 space-y-1">
-						{leBar(leStats.averageMaleLE, "M", barRange.min, barRange.max)}
-						{leBar(leStats.averageFemaleLE, "F", barRange.min, barRange.max)}
+						{leBar(leStats.averageMaleLE, "M", barRange.min, barRange.max, isDark)}
+						{leBar(leStats.averageFemaleLE, "F", barRange.min, barRange.max, isDark)}
 					</div>
 				) : (
 					<div className="h-5 mt-2 mb-2">
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (
-							<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+							<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 								No data available
 							</div>
 						)}

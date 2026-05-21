@@ -118,7 +118,7 @@ export default memo(function IMDChart({
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10">
-				<h3 className="text-xs font-bold text-gray-800/90">
+				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
 					Deprivation (IMD) [{dataset.year}]
 				</h3>
 				{hasData && imdStats ? (
@@ -141,7 +141,7 @@ export default memo(function IMDChart({
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (
-							<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+							<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 								No data available
 							</div>
 						)}
@@ -152,7 +152,7 @@ export default memo(function IMDChart({
 						<span className="text-xs font-semibold" style={{ color: decileColor }}>
 							{decile !== null ? `Decile ${decile}` : ""}
 						</span>
-						<span className="text-[10px] text-gray-500">
+						<span className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>
 							Score {imdStats.averageIMDScore.toFixed(1)}
 						</span>
 					</div>

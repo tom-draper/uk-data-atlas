@@ -115,7 +115,7 @@ export default memo(function BrexitHanrettyEstimatesChart({
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10">
-				<h3 className="text-xs font-bold text-gray-800/90">
+				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
 					Hanretty Estimates [{dataset.year}]
 				</h3>
 
@@ -123,7 +123,7 @@ export default memo(function BrexitHanrettyEstimatesChart({
 					chartsLoading ? (
 						<ChartContentPlaceholder className="h-5 mt-2" />
 					) : (
-						<div className="mt-1.5 h-5 flex items-center justify-center text-xs text-gray-400/80">
+						<div className={`mt-1.5 h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 							No data available
 						</div>
 					)
