@@ -14,6 +14,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { chartHeadingClass, cardClass, useCardAccent } from "@/lib/hooks/useCardAccent";
 
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
@@ -195,7 +196,7 @@ export default memo(function CrimeRateChart({
 
 			<div className={`absolute inset-0 z-0 ${isDark ? "bg-black/20" : "bg-white/20"}`} />
 			<div className="relative z-10">
-				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
+				<h3 className={chartHeadingClass(isDark)}>
 					Recorded Crime [{dataset.year}]
 				</h3>
 				{crimeRate ? (

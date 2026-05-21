@@ -6,14 +6,15 @@ import {
 	LifeExpectancyDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { hexToRgb } from "@/lib/helpers/colorScale/interpolation";
+import { hexToRgb, rgbToHex } from "@/lib/helpers/colorScale/interpolation";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface LifeExpectancyChartProps {
 	activeDataset: Dataset | null;
@@ -38,9 +39,6 @@ function leColorRgb(pct: number) {
 	};
 }
 
-function lightenRgb({ r, g, b }: { r: number; g: number; b: number }, factor: number) {
-	return `rgb(${Math.round(r + (255 - r) * factor)}, ${Math.round(g + (255 - g) * factor)}, ${Math.round(b + (255 - b) * factor)})`;
-}
 
 function leBar(years: number, label: string, min: number, max: number, isDark: boolean) {
 	const pct = Math.max(0, Math.min(100, ((years - min) / (max - min)) * 100));
@@ -72,7 +70,6 @@ export default memo(function LifeExpectancyChart({
 }: LifeExpectancyChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const [hovered, setHovered] = useState(false);
 	const dataset = availableDatasets?.[datasetId];
 
 	const leStats = useMemo(() => {
@@ -111,38 +108,24 @@ export default memo(function LifeExpectancyChart({
 	const isActive =
 		activeDataset?.type === "lifeExpectancy" && activeDataset.id === dataset.id;
 
-	// Average of male + female bar pct → border color
-	const accentRgb = leStats
+	// Average of male + female bar pct → accent hex for border
+	const accentColor = leStats
 		? (() => {
 			const malePct = Math.max(0, Math.min(100, ((leStats.averageMaleLE - barRange.min) / (barRange.max - barRange.min)) * 100));
 			const femalePct = Math.max(0, Math.min(100, ((leStats.averageFemaleLE - barRange.min) / (barRange.max - barRange.min)) * 100));
-			return leColorRgb((malePct + femalePct) / 2);
+			const { r, g, b } = leColorRgb((malePct + femalePct) / 2);
+			return rgbToHex(r, g, b);
 		})()
 		: null;
-
-	const dynamicStyle: React.CSSProperties = (() => {
-		if (!accentRgb || (!isActive && !hovered)) return {};
-		const style: React.CSSProperties = { borderColor: lightenRgb(accentRgb, 0.45) };
-		if (isActive) {
-			const { r, g, b } = accentRgb;
-			style.backgroundColor = isDark
-				? `rgba(${r}, ${g}, ${b}, 0.12)`
-				: `rgba(${r}, ${g}, ${b}, 0.06)`;
-		}
-		return style;
-	})();
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
 
 	return (
 		<div
-			style={dynamicStyle}
-			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 border-2 ${
-				isActive
-					? isDark ? "bg-white/10" : "bg-white/60"
-					: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
-			}`}
+			style={style}
+			className={cardClass(isActive, isDark, "h-20")}
 			title={dataset.metadata.source}
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -153,7 +136,7 @@ export default memo(function LifeExpectancyChart({
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10">
-				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
+				<h3 className={chartHeadingClass(isDark)}>
 					{dataset.label} [{dataset.dataPeriod}]
 				</h3>
 				{leStats ? (

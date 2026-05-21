@@ -1,7 +1,7 @@
 // components/LocalElectionResultChart.tsx
 "use client";
 
-import { memo, useState } from "react";
+import { memo } from "react";
 import { LocalElectionDataset, ActiveViz } from "@lib/types";
 import {
 	ChartLoadingBackground,
@@ -9,7 +9,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface ProcessedPartyData {
 	key: string;
@@ -78,26 +78,12 @@ export default memo(function LocalElectionResultChart({
 }) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const [hovered, setHovered] = useState(false);
 	const winnerColor = data.partyData[0]?.color;
 
 	const heightClass = isActive ? "h-[95px]" : "h-[65px]";
 
 	const accentColor = winnerColor ?? "#6366f1";
-	const showAccent = isActive || hovered;
-	const dynamicStyle: React.CSSProperties = showAccent
-		? {
-			borderColor: lightenHex(accentColor, 0.45),
-			...(isActive && (() => {
-				const rgb = hexToRgb(accentColor);
-				return {
-					backgroundColor: isDark
-						? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
-						: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`,
-				};
-			})()),
-		}
-		: {};
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
 
 	const handleActivate = () => {
 		if (data.dataset) {
@@ -111,24 +97,17 @@ export default memo(function LocalElectionResultChart({
 
 	return (
 		<div
-			style={dynamicStyle}
-			className={`
-        p-2 rounded transition-[height] duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2
-        ${heightClass}
-        ${isActive
-				? isDark ? "bg-white/10" : "bg-white/60"
-				: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
-			}
-      `}
+			style={style}
+			className={cardClass(isActive, isDark, `transition-[height] duration-300 ease-in-out ${heightClass}`)}
 			title="House of Commons Library, UK Parliament. Local Election Results. commonslibrary.parliament.uk"
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onClick={handleActivate}
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-[1]">
 				<div className="flex items-center justify-between mb-1.5">
-					<h3 className="text-xs font-bold">
+					<h3 className={chartHeadingClass(isDark)}>
 						{data.year} Local Elections
 					</h3>
 					{data.turnout && (
@@ -142,7 +121,7 @@ export default memo(function LocalElectionResultChart({
 					chartsLoading ? (
 						<ChartContentPlaceholder className="h-5 mt-1" />
 					) : (
-						<div className="text-xs text-gray-400/80 pt-0.5 text-center">
+						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 							No data available
 						</div>
 					)

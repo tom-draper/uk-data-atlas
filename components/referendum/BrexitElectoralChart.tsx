@@ -6,7 +6,7 @@ import {
 	BrexitLADDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -14,7 +14,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface BrexitChartProps {
 	activeDataset: Dataset | null;
@@ -42,7 +42,6 @@ export default memo(function BrexitElectoralChart({
 }: BrexitChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const [hovered, setHovered] = useState(false);
 	const dataset = availableDatasets?.[year];
 
 	const brexitStats = useMemo(() => {
@@ -105,30 +104,15 @@ export default memo(function BrexitElectoralChart({
 
 	const result = hasData ? (pctLeave > pctRemain ? "leave" : "remain") : null;
 	const accentColor = result === "leave" ? LEAVE_COLOR : result === "remain" ? REMAIN_COLOR : null;
-
-	const dynamicStyle: React.CSSProperties = (() => {
-		if (!accentColor || (!isActive && !hovered)) return {};
-		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
-		if (isActive) {
-			const rgb = hexToRgb(accentColor);
-			style.backgroundColor = isDark
-				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
-				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
-		}
-		return style;
-	})();
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
 
 	return (
 		<div
-			style={dynamicStyle}
-			className={`p-2 rounded cursor-pointer overflow-hidden relative h-[65px] border-2 ${
-				isActive
-					? isDark ? "bg-white/10" : "bg-white/60"
-					: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
-			}`}
+			style={style}
+			className={cardClass(isActive, isDark, "h-[65px]")}
 			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -139,7 +123,7 @@ export default memo(function BrexitElectoralChart({
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10">
-				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
+				<h3 className={chartHeadingClass(isDark)}>
 					Electoral Commission [{dataset.year}]
 				</h3>
 
