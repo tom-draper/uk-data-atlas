@@ -53,5 +53,6 @@ export interface MapOptions {
 		hideDataLayer: boolean;
 		hideBoundaries: boolean;
 		hideOverlay: boolean;
+		overlayOpacity: number;
 	};
 }

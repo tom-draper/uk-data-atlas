@@ -32,6 +32,7 @@ export class LayerManager {
 		});
 		colorExpression.push("#cccccc");
 
+		const o = visibility.overlayOpacity ?? 0.6;
 		this.updateLayers(
 			geojson,
 			{
@@ -39,8 +40,8 @@ export class LayerManager {
 				opacity: [
 					"case",
 					["boolean", ["feature-state", "hover"], false],
-					0.35,
-					0.6,
+					o * 0.58,
+					o,
 				],
 			},
 			visibility,
@@ -63,7 +64,7 @@ export class LayerManager {
 			geojson,
 			{
 				color: fillColorExpression,
-				opacity: 0.7,
+				opacity: visibility.overlayOpacity ?? 0.6,
 			},
 			visibility,
 		);
@@ -82,6 +83,7 @@ export class LayerManager {
 		// Fallback color for 'NONE' or missing data
 		colorExpression.push("#cccccc");
 
+		const o = visibility.overlayOpacity ?? 0.6;
 		this.updateLayers(
 			geojson,
 			{
@@ -89,8 +91,8 @@ export class LayerManager {
 				opacity: [
 					"case",
 					["boolean", ["feature-state", "hover"], false],
-					0.35,
-					0.6,
+					o * 0.58,
+					o,
 				],
 			},
 			visibility,
@@ -114,7 +116,7 @@ export class LayerManager {
 			geojson,
 			{
 				color: fillColorExpression,
-				opacity: 0.7,
+				opacity: visibility.overlayOpacity ?? 0.6,
 			},
 			visibility,
 		);
@@ -124,6 +126,7 @@ export class LayerManager {
 		geojson: BoundaryGeojson,
 		visibility: MapOptions["visibility"],
 	): void {
+		const o = visibility.overlayOpacity ?? 0.6;
 		this.updateLayers(
 			geojson,
 			{
@@ -131,8 +134,8 @@ export class LayerManager {
 				opacity: [
 					"case",
 					["boolean", ["feature-state", "hover"], false],
-					0.35,
-					0.6,
+					o * 0.58,
+					o,
 				],
 			},
 			visibility,
