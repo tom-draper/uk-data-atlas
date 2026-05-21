@@ -15,6 +15,7 @@ import type { CustomDataset } from "@/lib/types/custom";
 import { MapOptions } from "@/lib/types/mapOptions";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { PanelContext } from "@/lib/context/PanelContext";
+import { ThemeProvider } from "@/lib/context/ThemeContext";
 
 interface UIOverlayProps {
 	datasets: Datasets;
@@ -130,7 +131,10 @@ export default memo(function UIOverlay({
 		/>
 	);
 
+	const isDark = mapOptions.baseStyle.id === "darkMatter";
+
 	return (
+		<ThemeProvider value={isDark}>
 		<PanelContext.Provider value={panelContextValue}>
 			<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
 
@@ -208,5 +212,6 @@ export default memo(function UIOverlay({
 				</div>
 			</div>
 		</PanelContext.Provider>
+		</ThemeProvider>
 	);
 });

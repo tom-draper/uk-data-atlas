@@ -2,6 +2,7 @@
 "use client";
 import { memo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
+import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	ActiveViz,
 	AggregatedEthnicityData,
@@ -41,6 +42,7 @@ export default memo(function DemographicsChartSection({
 	setActiveViz,
 }: DemographicsChartSectionProps) {
 	const { visibility } = useChartVisibility();
+	const isDark = useIsDark();
 	const showDensity = visibility["demographics-populationDensity"];
 	const showAge = visibility["demographics-age"];
 	const showGender = visibility["demographics-gender"];
@@ -49,8 +51,8 @@ export default memo(function DemographicsChartSection({
 	if (!showDensity && !showAge && !showGender && !showEthnicity) return null;
 
 	return (
-		<div className="pt-2.5 border-t border-gray-200/80">
-			<h3 className="text-xs font-bold mb-2">Demographics</h3>
+		<div className={`pt-2.5 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
+			<h3 className={`text-xs font-bold mb-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>Demographics</h3>
 			<div className="space-y-3">
 				{showDensity && (
 					<PopulationDensity

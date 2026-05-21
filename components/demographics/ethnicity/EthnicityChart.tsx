@@ -15,6 +15,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 const YEAR_STYLES = {
 	bg: "bg-indigo-50/60",
@@ -117,6 +118,7 @@ export default memo(function EthnicityChart({
 	setActiveViz,
 }: EthnicityChartProps) {
 	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
 	const vizId = dataset.id;
 	const isActive = activeViz.vizId === vizId;
 
@@ -168,7 +170,7 @@ export default memo(function EthnicityChart({
 			className={`
                 p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2 
                 ${heightClass}
-                ${isActive ? `${YEAR_STYLES.bg} ${YEAR_STYLES.border}` : "bg-white/60 border-gray-200/80 hover:border-indigo-300"}
+                ${isActive ? `${isDark ? "bg-white/10" : YEAR_STYLES.bg} ${YEAR_STYLES.border}` : isDark ? "bg-white/5 border-white/10 hover:border-indigo-300" : "bg-white/60 border-gray-200/80 hover:border-indigo-300"}
             `}
 			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
 			onClick={handleActivate}

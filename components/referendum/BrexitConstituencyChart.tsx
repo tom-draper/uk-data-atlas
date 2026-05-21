@@ -13,6 +13,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface BrexitConstituencyChartProps {
 	activeDataset: Dataset | null;
@@ -35,6 +36,7 @@ export default memo(function BrexitConstituencyChart({
 	setActiveViz,
 }: BrexitConstituencyChartProps) {
 	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
 	const brexitStats = useMemo(() => {
@@ -98,9 +100,9 @@ export default memo(function BrexitConstituencyChart({
 			className={`p-2 rounded cursor-pointer overflow-hidden relative h-[65px] ${
 				isActive
 					? result === "leave"
-						? "bg-red-50/60 border-2 border-red-400"
-						: "bg-blue-50/60 border-2 border-blue-400"
-					: `bg-white/60 border-2 border-gray-200/80 ${activeBorderClass}`
+						? `${isDark ? "bg-white/10" : "bg-red-50/60"} border-2 border-red-400`
+						: `${isDark ? "bg-white/10" : "bg-blue-50/60"} border-2 border-blue-400`
+					: isDark ? `bg-white/5 border-2 border-white/10 ${activeBorderClass}` : `bg-white/60 border-2 border-gray-200/80 ${activeBorderClass}`
 			}`}
 			title="Hanretty, C. (2017). Areal interpolation and the UK's referendum on EU membership. Journal of Elections, Public Opinion and Parties, 27(4), 466–483. Published via House of Commons Library."
 			onClick={() =>

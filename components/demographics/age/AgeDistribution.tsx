@@ -10,6 +10,7 @@ import {
 import AgeDistributionChart from "./AgeDistributionChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 import { resolveWardData, getLadCachedValue } from "@/lib/helpers/demographicData";
 
 interface AgeDistributionProps {
@@ -67,6 +68,7 @@ function AgeDistribution({
 	setActiveViz,
 	codeMapper,
 }: AgeDistributionProps) {
+	const isDark = useIsDark();
 	const vizId = `ageDistribution${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
@@ -236,8 +238,8 @@ function AgeDistribution({
 	return (
 		<div
 			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
-					? "bg-cyan-50/60 border-2 border-cyan-300"
-					: "bg-white/60 border-2 border-gray-200/80 hover:border-cyan-300"
+					? `border-2 border-cyan-300 ${isDark ? "bg-white/10" : "bg-cyan-50/60"}`
+					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-cyan-300" : "bg-white/60 border-2 border-gray-200/80 hover:border-cyan-300"
 				}`}
 			title="Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
 			onClick={() =>

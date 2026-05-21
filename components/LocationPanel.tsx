@@ -1,3 +1,5 @@
+import { useIsDark } from "@/lib/context/ThemeContext";
+import { panelTheme } from "@/lib/helpers/panelTheme";
 import { LOCATIONS } from "@lib/data/locations";
 import {
 	LocationBounds,
@@ -252,11 +254,14 @@ export default memo(function LocationPanel({
 		}
 	};
 
+	const isDark = useIsDark();
+	const t = panelTheme(isDark);
+
 	return (
-		<div className="bg-[rgba(255,255,255,0.5)] rounded-md backdrop-blur-md shadow-lg border border-white/30 flex flex-col h-full">
+		<div className={`rounded-md backdrop-blur-md shadow-lg border flex flex-col h-full ${t.panel}`}>
 			{/* Header with search */}
-			<div className="shrink-0 bg-white/20 flex items-center overflow-hidden">
-				<h2 className="px-2.5 pb-2 pt-2.5 text-sm font-semibold grow">
+			<div className={`shrink-0 ${t.section} flex items-center overflow-hidden`}>
+				<h2 className={`px-2.5 pb-2 pt-2.5 text-sm font-semibold grow ${t.heading}`}>
 					Locations
 				</h2>
 				<div className="flex items-center transition-all duration-200">
@@ -268,13 +273,12 @@ export default memo(function LocationPanel({
 							onChange={handleSearchChange}
 							onKeyDown={handleKeyDown}
 							placeholder="Search locations..."
-							className={`outline-none text-gray-500 text-xs px-1 py-1 mt-0.5 transition-all border-b! border-gray-200/20 duration-200 w-full ${searchOpen ? "opacity-100" : "opacity-0 px-0"
-								}`}
+							className={`outline-none text-xs px-1 py-1 mt-0.5 transition-all border-b! border-white/20 duration-200 w-full bg-transparent ${t.text} ${searchOpen ? "opacity-100" : "opacity-0 px-0"}`}
 						/>
 					</div>
 					<button
 						onClick={handleSearchToggle}
-						className="text-gray-400/80 mr-3 ml-2 hover:text-gray-600 transition-colors cursor-pointer"
+						className={`mr-3 ml-2 transition-colors cursor-pointer ${t.textMuted} hover:${isDark ? "text-gray-200" : "text-gray-600"}`}
 					>
 						{searchOpen ? (
 							<svg
@@ -318,14 +322,14 @@ export default memo(function LocationPanel({
 						key={name}
 						onClick={() => onLocationClick(name, bounds)}
 						className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${selectedLocation === name
-								? "bg-white/60 text-gray-800"
-								: "hover:bg-white/40 text-gray-600 hover:text-gray-800"
+								? isDark ? "bg-white/15 text-gray-100" : "bg-white/60 text-gray-800"
+								: isDark ? "hover:bg-white/10 text-gray-400 hover:text-gray-200" : "hover:bg-white/40 text-gray-600 hover:text-gray-800"
 							}`}
 					>
 						<span className="font-normal truncate mr-2">
 							{name}
 						</span>
-						<span className="text-gray-500 text-xs tabular-nums shrink-0">
+						<span className={`text-xs tabular-nums shrink-0 ${t.textMuted}`}>
 							{totalPopulation.toLocaleString()}
 						</span>
 					</button>

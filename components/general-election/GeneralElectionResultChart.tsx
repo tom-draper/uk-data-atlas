@@ -8,6 +8,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 const YEAR_STYLES: Record<number, { bg: string; border: string }> = {
 	2024: { bg: "bg-indigo-50/60", border: "border-indigo-400" },
@@ -67,7 +68,9 @@ const Legend = memo(
 		partyData: ProcessedPartyData[];
 		seatsSummary: { party: string; count: number; color: string }[] | null;
 		totalSeats: number | null;
-	}) => (
+	}) => {
+		const isDark = useIsDark();
+		return (
 		<div className="animate-in fade-in duration-200 mt-2">
 			{/* Votes Legend */}
 			<div className="grid grid-cols-3 gap-0.5 text-[9px]">
@@ -86,7 +89,7 @@ const Legend = memo(
 
 			{/* Seats Legend (Aggregated Only) */}
 			{seatsSummary && (
-				<div className="mt-2 pt-2 border-t border-gray-200">
+				<div className={`mt-2 pt-2 border-t ${isDark ? "border-white/10" : "border-gray-200"}`}>
 					<div className="text-[9px] font-medium text-gray-600 mb-1">
 						Seats won: {totalSeats}
 					</div>
@@ -109,7 +112,7 @@ const Legend = memo(
 				</div>
 			)}
 		</div>
-	),
+	);},
 );
 Legend.displayName = "Legend";
 
@@ -123,6 +126,7 @@ export default memo(function GeneralElectionResultChart({
 	setActiveViz: (val: ActiveViz) => void;
 }) {
 	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
 	const vizId = `generalElection-${data.year}`;
 	const colors = YEAR_STYLES[data.year] || YEAR_STYLES[2024];
 
@@ -140,8 +144,8 @@ export default memo(function GeneralElectionResultChart({
         p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative border-2
         ${heightClass}
         ${isActive
-					? `${colors.bg} ${colors.border}`
-					: "bg-white/60 border-gray-200/80 hover:border-indigo-300"
+					? `${isDark ? "bg-white/10" : colors.bg} ${colors.border}`
+					: isDark ? "bg-white/5 border-white/10 hover:border-indigo-300" : "bg-white/60 border-gray-200/80 hover:border-indigo-300"
 				}
       `}
 			title="House of Commons Library, UK Parliament. UK General Election Results. commonslibrary.parliament.uk"

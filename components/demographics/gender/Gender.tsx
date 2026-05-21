@@ -9,6 +9,7 @@ import {
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface GenderProps {
 	dataset: PopulationDataset;
@@ -162,14 +163,15 @@ function Gender({
 		return { totalMales: 0, totalFemales: 0 };
 	}, [dataset, aggregatedData, selectedArea, codeMapper]);
 
+	const isDark = useIsDark();
 	const total = totalMales + totalFemales;
 	const hasData = total > 0;
 
 	return (
 		<div
 			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
-					? "bg-violet-50/60 border-2 border-violet-300"
-					: "bg-white/60 border-2 border-gray-200/80 hover:border-violet-300"
+					? `border-2 border-violet-300 ${isDark ? "bg-white/10" : "bg-violet-50/60"}`
+					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-violet-300" : "bg-white/60 border-2 border-gray-200/80 hover:border-violet-300"
 				}`}
 			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
 			onClick={() =>

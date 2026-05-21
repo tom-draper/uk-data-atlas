@@ -10,6 +10,7 @@ import {
 } from "@lib/types";
 import CrimeChart from "./CrimeRateChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface CrimeChartProps {
 	activeDataset: Dataset | null;
@@ -30,9 +31,10 @@ export default memo(function CrimeSection({
 	activeViz,
 	setActiveViz,
 }: CrimeChartProps) {
+	const isDark = useIsDark();
 	return (
-		<div className="space-y-2 border-t border-gray-200/80">
-			<h3 className="text-xs font-bold pt-2">Crime</h3>
+		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
+			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>Crime</h3>
 			<CrimeChart
 				activeDataset={activeDataset}
 				availableDatasets={availableDatasets}

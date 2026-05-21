@@ -14,6 +14,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -53,6 +54,7 @@ export default memo(function IncomeChart({
 	setActiveViz,
 }: IncomeChartProps) {
 	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
 	// Get income data for selected area or aggregated data
@@ -137,8 +139,8 @@ export default memo(function IncomeChart({
 	return (
 		<div
 			className={`p-2 rounded transition-all duration-300 ease-in-out cursor-pointer overflow-hidden relative isolate h-20 ${isActive
-					? `${colors.bg} border-2 ${colors.border}`
-					: colors.inactive
+					? `${isDark ? "bg-white/10" : colors.bg} border-2 ${colors.border}`
+					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-emerald-300" : colors.inactive
 				}`}
 			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
 			onClick={() =>

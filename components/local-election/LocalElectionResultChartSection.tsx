@@ -16,6 +16,7 @@ import {
 import LocalElectionResultChart from "./LocalElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useChartVisibility, ChartKey } from "@/lib/context/ChartVisibilityContext";
+import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface ProcessedYearData {
 	year: number;
@@ -179,6 +180,7 @@ export default memo(function LocalElectionResultChartSection({
 	codeMapper,
 }: LocalElectionResultChartSectionProps) {
 	const { visibility } = useChartVisibility();
+	const isDark = useIsDark();
 	const yearData = useLocalElectionData(
 		availableDatasets,
 		aggregatedData,
@@ -194,8 +196,8 @@ export default memo(function LocalElectionResultChartSection({
 	if (visibleYearData.length === 0) return null;
 
 	return (
-		<div className="space-y-2 border-t border-gray-200/80">
-			<h3 className="text-xs font-bold text-gray-700 pt-2">
+		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
+			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-700"}`}>
 				Local Election Results
 			</h3>
 
