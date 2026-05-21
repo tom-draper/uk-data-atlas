@@ -6,7 +6,7 @@ import {
 	BrexitConstituencyDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -14,6 +14,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
 
 interface BrexitHanrettyEstimatesChartProps {
 	activeDataset: Dataset | null;
@@ -26,6 +27,9 @@ interface BrexitHanrettyEstimatesChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
+const LEAVE_COLOR = "#b41414"; // rgb(180, 20, 20) — matches bar fill
+const REMAIN_COLOR = "#1e3cb4"; // rgb(30, 60, 180) — matches bar fill
+
 export default memo(function BrexitHanrettyEstimatesChart({
 	activeDataset,
 	availableDatasets,
@@ -37,6 +41,7 @@ export default memo(function BrexitHanrettyEstimatesChart({
 }: BrexitHanrettyEstimatesChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+	const [hovered, setHovered] = useState(false);
 	const dataset = availableDatasets?.[year];
 
 	const brexitStats = useMemo(() => {
@@ -83,28 +88,31 @@ export default memo(function BrexitHanrettyEstimatesChart({
 	const hasData = brexitStats !== null;
 
 	const result = hasData ? (pctLeave > pctRemain ? "leave" : "remain") : null;
+	const accentColor = result === "leave" ? LEAVE_COLOR : result === "remain" ? REMAIN_COLOR : null;
 
-	const leaveBgColor = "rgb(180, 20, 20)";
-	const remainBgColor = "rgb(30, 60, 180)";
-
-	const activeBorderClass = isActive
-		? result === "leave"
-			? "border-red-400"
-			: "border-blue-400"
-		: result === "leave"
-			? "hover:border-red-400"
-			: "hover:border-blue-400";
+	const dynamicStyle: React.CSSProperties = (() => {
+		if (!accentColor || (!isActive && !hovered)) return {};
+		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
+		if (isActive) {
+			const rgb = hexToRgb(accentColor);
+			style.backgroundColor = isDark
+				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
+				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
+		}
+		return style;
+	})();
 
 	return (
 		<div
-			className={`p-2 rounded cursor-pointer overflow-hidden relative h-[65px] ${
+			style={dynamicStyle}
+			className={`p-2 rounded cursor-pointer overflow-hidden relative h-[65px] border-2 ${
 				isActive
-					? result === "leave"
-						? `${isDark ? "bg-white/10" : "bg-red-50/60"} border-2 border-red-400`
-						: `${isDark ? "bg-white/10" : "bg-blue-50/60"} border-2 border-blue-400`
-					: isDark ? `bg-white/5 border-2 border-white/10 ${activeBorderClass}` : `bg-white/60 border-2 border-gray-200/80 ${activeBorderClass}`
+					? isDark ? "bg-white/10" : "bg-white/60"
+					: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
 			}`}
 			title="Hanretty, C. (2017). Areal interpolation and the UK's referendum on EU membership. Journal of Elections, Public Opinion and Parties, 27(4), 466–483. Published via House of Commons Library."
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -129,14 +137,14 @@ export default memo(function BrexitHanrettyEstimatesChart({
 					)
 				) : (
 					<div className="mt-1.5 flex h-5 rounded overflow-hidden">
-						<div style={{ width: `${pctLeave.toFixed(1)}%`, backgroundColor: leaveBgColor }}>
+						<div style={{ width: `${pctLeave.toFixed(1)}%`, backgroundColor: `rgb(180, 20, 20)` }}>
 							{pctLeave > 20 && (
 								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
 									Leave {pctLeave.toFixed(1)}%
 								</span>
 							)}
 						</div>
-						<div style={{ width: `${pctRemain.toFixed(1)}%`, backgroundColor: remainBgColor }}>
+						<div style={{ width: `${pctRemain.toFixed(1)}%`, backgroundColor: `rgb(30, 60, 180)` }}>
 							{pctRemain > 20 && (
 								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
 									Remain {pctRemain.toFixed(1)}%
