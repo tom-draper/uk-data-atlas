@@ -28,14 +28,14 @@ export default function ChartSettings() {
 					</h4>
 					<div className="space-y-1.5">
 						{items.map(({ key, label }) => (
-							<label key={key} className="flex items-center gap-2 cursor-pointer">
+							<label key={key} className="flex items-center gap-2 cursor-pointer group">
 								<input
 									type="checkbox"
 									checked={visibility[key]}
 									onChange={() => toggle(key)}
 									className="w-3 h-3 accent-indigo-500 cursor-pointer"
 								/>
-								<span className={`text-xs ${isDark ? "text-gray-400" : "text-gray-600"}`}>{label}</span>
+								<span className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}>{label}</span>
 							</label>
 						))}
 					</div>
