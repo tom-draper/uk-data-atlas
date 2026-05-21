@@ -86,9 +86,14 @@ export function RangeControl({
 
 	return (
 		<div className="p-1 relative select-none">
+			<div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 pointer-events-none text-right mr-8">
+				{labels.map((label, i) => (
+					<span key={i}>{label}</span>
+				))}
+			</div>
 			<div
 				ref={containerRef}
-				className="h-40 w-6 rounded relative"
+				className="h-40 w-6 rounded relative -mt-40 ml-auto"
 			>
 				<div className="absolute inset-0 rounded" style={{ background: gradient, opacity }} />
 				{/* Max handle (top) */}
@@ -112,12 +117,6 @@ export function RangeControl({
 						<div className="w-2 h-2 bg-white rounded-full shadow-md border border-gray-300 group-hover:scale-125 transition-transform" />
 					</div>
 				</div>
-			</div>
-
-			<div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 -mt-40 ml-8 pointer-events-none">
-				{labels.map((label, i) => (
-					<span key={i}>{label}</span>
-				))}
 			</div>
 		</div>
 	);
