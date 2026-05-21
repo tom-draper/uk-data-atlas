@@ -41,6 +41,7 @@ const useLocalElectionData = (
 		targetYear: number,
 	) => string | undefined,
 	getWardsForLad?: (ladCode: string, year: number) => string[],
+	getWardsForConstituency?: (constituencyCode: string, wardYear: number) => string[],
 ) => {
 	return useMemo(() => {
 		return LOCAL_ELECTION_YEARS.map((year): ProcessedYearData => {
@@ -126,6 +127,33 @@ const useLocalElectionData = (
 						turnout = calculateTurnout(totalVotes, 0, cached.electorate);
 					}
 				}
+			} else if (selectedArea && selectedArea.type === "constituency" && getWardsForConstituency) {
+				const constituencyCode = selectedArea.code;
+				const wardCodes = getWardsForConstituency(constituencyCode, dataset.boundaryYear);
+				const aggregatedVotes: Record<string, number> = {};
+				let totalElectorate = 0;
+
+				for (const wardCode of wardCodes) {
+					let wardData = dataset.data[wardCode];
+					if (!wardData && getCodeForYear) {
+						const mapped = getCodeForYear("ward", wardCode, year);
+						if (mapped) wardData = dataset.data[mapped];
+					}
+					if (wardData?.partyVotes) {
+						for (const [party, votes] of Object.entries(wardData.partyVotes)) {
+							aggregatedVotes[party] = (aggregatedVotes[party] || 0) + (votes || 0);
+						}
+						if (wardData.electorate) totalElectorate += wardData.electorate;
+					}
+				}
+
+				const totalVotes = Object.values(aggregatedVotes).reduce((s, v) => s + (v || 0), 0);
+				if (totalVotes > 0) {
+					rawPartyVotes = aggregatedVotes as PartyVotes;
+					if (totalElectorate > 0) {
+						turnout = calculateTurnout(totalVotes, 0, totalElectorate);
+					}
+				}
 			} else if (selectedArea === null && aggregatedData?.[year]) {
 				const agg = aggregatedData[year];
 				if (agg) {
@@ -157,7 +185,7 @@ const useLocalElectionData = (
 				hasData: partyData.length > 0,
 			};
 		});
-	}, [availableDatasets, aggregatedData, selectedArea, getCodeForYear, getWardsForLad]);
+	}, [availableDatasets, aggregatedData, selectedArea, getCodeForYear, getWardsForLad, getWardsForConstituency]);
 };
 
 interface LocalElectionResultChartSectionProps {
@@ -187,6 +215,7 @@ export default memo(function LocalElectionResultChartSection({
 		selectedArea,
 		codeMapper?.getCodeForYear,
 		codeMapper?.getWardsForLad,
+		codeMapper?.getWardsForConstituency,
 	);
 
 	const visibleYearData = yearData.filter(

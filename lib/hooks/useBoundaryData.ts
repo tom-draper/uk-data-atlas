@@ -12,6 +12,7 @@ import {
 	extractWardLadMappings,
 	extractLadWardMappings,
 	buildCrossYearMappings,
+	buildConstituencyWardMappings,
 } from "./useCodeMapper";
 import type { CodeMapping, CodeType, YearCode } from "./useCodeMapper";
 
@@ -171,6 +172,7 @@ export function useBoundaryData(
 			mappings: Record<string, string[]>,
 		) => void;
 		addCodeMappings: (type: CodeType, mappings: CodeMapping) => void;
+		addConstituencyWardMappings: (year: YearCode, mappings: Record<string, string[]>) => void;
 	},
 ) {
 	const [rawData, setRawData] = useState<BoundaryData>(EMPTY_BOUNDARY_DATA);
@@ -182,6 +184,7 @@ export function useBoundaryData(
 	const addLadWardMappings = codeMapper?.addLadWardMappings;
 	const addCodeMappings = codeMapper?.addCodeMappings;
 	const getLadForWard = codeMapper?.getLadForWard;
+	const addConstituencyWardMappings = codeMapper?.addConstituencyWardMappings;
 
 	// Load all boundary files on mount
 	useEffect(() => {
@@ -224,6 +227,29 @@ export function useBoundaryData(
 						localAuthority: localAuthorities,
 						lsoa: lsoas,
 					});
+
+					// Build constituency->wards mappings for each (ward year, constituency year) pair.
+					// Building for ALL available constituency boundary years ensures that hovering
+					// on constituencies from any GE (2019, 2024, etc.) resolves directly without
+					// needing a cross-year constituency code lookup. Constituencies that were
+					// renamed or redrawn in 2024 have no PCON19CD→PCON24CD name mapping, so
+					// they'd return [] if we only indexed by PCON24CD.
+					if (addConstituencyWardMappings) {
+						const constitencyEntries = Object.entries(constituencies).filter(
+							([, conData]) => conData?.features,
+						);
+						for (const [yearStr, wardData] of Object.entries(wards)) {
+							if (!wardData?.features) continue;
+							const mergedMappings: Record<string, string[]> = {};
+							for (const [, conData] of constitencyEntries) {
+								const mappings = buildConstituencyWardMappings(wardData, conData!);
+								Object.assign(mergedMappings, mappings);
+							}
+							if (Object.keys(mergedMappings).length > 0) {
+								addConstituencyWardMappings(Number(yearStr), mergedMappings);
+							}
+						}
+					}
 				}
 			} catch (err) {
 				if (mounted) {
@@ -245,7 +271,7 @@ export function useBoundaryData(
 		return () => {
 			mounted = false;
 		};
-	}, [addWardLadMappings, addLadWardMappings, addCodeMappings]); // Added addLadWardMappings
+	}, [addWardLadMappings, addLadWardMappings, addCodeMappings, addConstituencyWardMappings]);
 
 	// Filter data based on selected location
 	const filteredData: BoundaryData = useMemo(() => {
