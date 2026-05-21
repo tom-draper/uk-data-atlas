@@ -1,6 +1,7 @@
 // components/population/density/PopulationDensityChart.tsx
 import { detectWardCodeForYear } from "@/lib/helpers/mapManager/propertyDetector";
 import {
+	ActiveViz,
 	AggregatedPopulationData,
 	BoundaryData,
 	BoundaryGeojson,
@@ -10,13 +11,16 @@ import {
 	getFeatureProp,
 } from "@/lib/types";
 import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
-import { useMemo, memo } from "react";
+import { useMemo, memo, useState } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
+	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { resolveWardData, getLadCachedValue } from "@/lib/helpers/demographicData";
+import { useIsDark } from "@/lib/context/ThemeContext";
+import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
@@ -24,6 +28,8 @@ interface PopulationDensityChartProps {
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
+	activeViz: ActiveViz;
+	setActiveViz: (value: ActiveViz) => void;
 }
 
 // Cache computed area per feature object — avoids re-traversing polygon vertices on every hover
@@ -53,6 +59,7 @@ const DENSITY_CATEGORIES = [
 	{
 		threshold: 2000,
 		label: "Low",
+		hex: "#22c55e", // green-500
 		color: "bg-green-500",
 		count: 15,
 		variations: ["bg-green-400", "bg-green-500", "bg-green-600"],
@@ -60,6 +67,7 @@ const DENSITY_CATEGORIES = [
 	{
 		threshold: 5000,
 		label: "Medium",
+		hex: "#eab308", // yellow-500
 		color: "bg-yellow-500",
 		count: 30,
 		variations: ["bg-yellow-400", "bg-yellow-500", "bg-yellow-600"],
@@ -67,6 +75,7 @@ const DENSITY_CATEGORIES = [
 	{
 		threshold: Infinity,
 		label: "High",
+		hex: "#ef4444", // red-500
 		color: "bg-red-500",
 		count: 50,
 		variations: ["bg-red-400", "bg-red-500", "bg-red-600"],
@@ -92,19 +101,16 @@ const DensityGrid = memo(({ density }: { density: number }) => {
 		const category = getDensityCategory(density);
 		const seededRandom = createSeededRandom(Math.floor(density));
 
-		// Create shuffled indices
 		const indices = new Array(totalSquares);
 		for (let i = 0; i < totalSquares; i++) {
 			indices[i] = i;
 		}
 
-		// Shuffle using seeded random
 		for (let i = indices.length - 1; i > 0; i--) {
 			const j = Math.floor(seededRandom() * (i + 1));
 			[indices[i], indices[j]] = [indices[j], indices[i]];
 		}
 
-		// Create color map
 		const colors = new Array(totalSquares).fill("bg-gray-200");
 		for (let i = 0; i < category.count; i++) {
 			const index = indices[i];
@@ -139,8 +145,6 @@ DensityGrid.displayName = "DensityGrid";
 
 const densityCache = new Map<string, Map<number, any>>();
 
-// WeakMap-keyed feature index: automatically GC'd when the geojson object is freed.
-// Converts O(n) .find() per ward into O(1) Map lookup.
 const featureIndexCache = new WeakMap<object, Map<string, Feature>>();
 
 const getFeatureIndex = (geojson: BoundaryGeojson, wardCodeProp: string): Map<string, Feature> => {
@@ -162,8 +166,15 @@ function PopulationDensityChart({
 	boundaryData,
 	selectedArea,
 	codeMapper,
+	activeViz,
+	setActiveViz,
 }: PopulationDensityChartProps) {
 	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
+	const [hovered, setHovered] = useState(false);
+	const vizId = `populationDensity${dataset.year}`;
+	const isActive = activeViz.vizId === vizId;
+
 	const { density, areaSqKm, total } = useMemo(() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
@@ -276,49 +287,78 @@ function PopulationDensityChart({
 		return { density: null, areaSqKm: null, total: null };
 	}, [dataset, aggregatedData, boundaryData, selectedArea, codeMapper]);
 
-	if (!total || density === null || areaSqKm === null) {
-		return (
-			<div className="text-xs h-13 text-gray-400/80 text-center grid place-items-center mb-1">
-				{chartsLoading ? (
-					<ChartContentPlaceholder className="h-10 w-full" />
-				) : (
-					<div>No data available</div>
-				)}
-			</div>
-		);
-	}
+	const accentColor = density !== null ? getDensityCategory(density).hex : null;
 
-	const roundedDensity = Math.round(density);
-	const formattedArea = areaSqKm.toFixed(1);
+	const dynamicStyle: React.CSSProperties = (() => {
+		if (!accentColor || (!isActive && !hovered)) return {};
+		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
+		if (isActive) {
+			const rgb = hexToRgb(accentColor);
+			style.backgroundColor = isDark
+				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
+				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
+		}
+		return style;
+	})();
 
 	return (
-		<div className="relative h-14 overflow-hidden">
-			<DensityGrid density={density} />
+		<div
+			style={dynamicStyle}
+			className={`p-2 rounded cursor-pointer overflow-hidden relative border-2 ${isActive
+				? isDark ? "bg-white/10" : "bg-white/60"
+				: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
+			}`}
+			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
+			onClick={() =>
+				setActiveViz({
+					vizId: vizId,
+					datasetType: dataset.type,
+					datasetYear: dataset.year,
+				})
+			}
+		>
+			<ChartLoadingBackground />
+			<div className="flex items-center justify-between mb-1.5">
+				<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800/90"}`}>
+					Population Density [{dataset.year}]
+				</h3>
+			</div>
 
-			{/* Content overlay */}
-			<div className="relative py-1 h-full flex flex-col justify-between pl-4">
-				{/* Left side - Main metric */}
-				<div className="flex items-baseline gap-2">
-					<div className="text-xl font-bold">
-						{roundedDensity.toLocaleString()}
-					</div>
-					<div className="text-sm">people/km²</div>
+			{!total || density === null || areaSqKm === null ? (
+				<div className="text-xs h-13 text-gray-400/80 text-center grid place-items-center mb-1">
+					{chartsLoading ? (
+						<ChartContentPlaceholder className="h-10 w-full" />
+					) : (
+						<div>No data available</div>
+					)}
 				</div>
-
-				{/* Right side - Supporting metrics */}
-				<div className="flex text-left text-xs pb-1">
-					<div className="flex pr-3">
-						<div className="mr-1">Population</div>
-						<div className="font-semibold">
-							{total.toLocaleString()}
+			) : (
+				<div className="relative h-14 overflow-hidden">
+					<DensityGrid density={density} />
+					<div className="relative py-1 h-full flex flex-col justify-between pl-4">
+						<div className="flex items-baseline gap-2">
+							<div className="text-xl font-bold">
+								{Math.round(density).toLocaleString()}
+							</div>
+							<div className="text-sm">people/km²</div>
+						</div>
+						<div className="flex text-left text-xs pb-1">
+							<div className="flex pr-3">
+								<div className="mr-1">Population</div>
+								<div className="font-semibold">
+									{total.toLocaleString()}
+								</div>
+							</div>
+							<div className="flex">
+								<div className="mr-1">Area</div>
+								<div className="font-semibold">{areaSqKm.toFixed(1)} km²</div>
+							</div>
 						</div>
 					</div>
-					<div className="flex">
-						<div className="mr-1">Area</div>
-						<div className="font-semibold">{formattedArea} km²</div>
-					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 }
