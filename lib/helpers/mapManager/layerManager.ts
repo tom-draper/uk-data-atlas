@@ -53,12 +53,14 @@ export class LayerManager {
 		geojson: BoundaryGeojson,
 		options: LocalElectionOptions | GeneralElectionOptions,
 		visibility: MapOptions["visibility"],
+		isDark = false,
 	): void {
 		if (!options.selected) return;
 		const baseColor = PARTIES[options.selected as PartyCode]?.color || "#999999";
 		const fillColorExpression = getPercentageColorExpression(
 			baseColor,
 			options,
+			isDark,
 		);
 
 		this.updateLayers(
@@ -104,6 +106,7 @@ export class LayerManager {
 		geojson: BoundaryGeojson,
 		options: EthnicityOptions,
 		visibility: MapOptions["visibility"],
+		isDark = false,
 	): void {
 		if (!options.selected) return;
 		const baseColor = ETHNICITY_COLORS[options.selected];
@@ -111,6 +114,7 @@ export class LayerManager {
 		const fillColorExpression = getPercentageColorExpression(
 			baseColor,
 			options,
+			isDark,
 		);
 
 		this.updateLayers(

@@ -396,7 +396,7 @@ export default memo(function LegendPanel({
 						min: electionOpts.percentageRange?.min ?? 0,
 						max: (electionOpts as CategoryOptions).percentageRange?.max ?? 100,
 					}}
-					gradient={`linear-gradient(to bottom, ${PARTIES[electionOpts.selected as PartyCode]?.color || "#999"}, #f5f5f5)`}
+					gradient={`linear-gradient(to bottom, ${PARTIES[electionOpts.selected as PartyCode]?.color || "#999"}, ${isDark ? "#1f2937" : "#f5f5f5"})`}
 					opacity={overlayOpacity}
 					onRangeInput={(min, max) => {
 						setLiveOptions((prev) => {
@@ -418,7 +418,7 @@ export default memo(function LegendPanel({
 						min: ethnicityOpts.percentageRange?.min ?? 0,
 						max: (ethnicityOpts as CategoryOptions).percentageRange?.max ?? 100,
 					}}
-					gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[ethnicityOpts.selected as EthnicityCode] || "#999"}, #f5f5f5)`}
+					gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[ethnicityOpts.selected as EthnicityCode] || "#999"}, ${isDark ? "#1f2937" : "#f5f5f5"})`}
 					opacity={overlayOpacity}
 					onRangeInput={(min, max) => {
 						setLiveOptions((prev) => {
