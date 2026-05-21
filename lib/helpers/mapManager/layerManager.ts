@@ -8,6 +8,7 @@ import {
 } from "@lib/types/mapOptions";
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS, getPercentageColorExpression } from "../colorScale";
+import { DEFAULT_COLOR } from "./featureBuilder";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
@@ -150,31 +151,48 @@ export class LayerManager {
 		this.removeExistingLayers();
 		this.addSource(geojson);
 
-		const shouldHideData =
-			visibility.hideDataLayer || visibility.hideBoundaries;
+		const overlayOpacity = visibility.overlayOpacity ?? 0.6;
+
+		let fillColor: any;
+		let fillOpacity: any;
+		let lineColor: string;
+		let lineOpacity: number;
+
+		if (visibility.hideBoundaries) {
+			fillColor = "transparent";
+			fillOpacity = 0;
+			lineColor = "#000";
+			lineOpacity = 0;
+		} else if (visibility.hideDataLayer) {
+			fillColor = DEFAULT_COLOR;
+			fillOpacity = 0.5 * overlayOpacity;
+			lineColor = DEFAULT_COLOR;
+			lineOpacity = 0.6 * overlayOpacity;
+		} else {
+			fillColor = paint.color;
+			fillOpacity = paint.opacity;
+			lineColor = "#000";
+			lineOpacity = 0.05;
+		}
 
 		this.map.addLayer({
 			id: FILL_LAYER_ID,
 			type: "fill",
 			source: SOURCE_ID,
 			paint: {
-				"fill-color": shouldHideData ? "transparent" : paint.color,
-				"fill-opacity": shouldHideData ? 0 : paint.opacity as any,
+				"fill-color": fillColor,
+				"fill-opacity": fillOpacity,
 			},
 		});
 
-		this.addBorderLayer();
-	}
-
-	private addBorderLayer(): void {
 		this.map.addLayer({
 			id: LINE_LAYER_ID,
 			type: "line",
 			source: SOURCE_ID,
 			paint: {
-				"line-color": "#000",
+				"line-color": lineColor,
 				"line-width": 1,
-				"line-opacity": 0.05,
+				"line-opacity": lineOpacity as any,
 			},
 		});
 	}

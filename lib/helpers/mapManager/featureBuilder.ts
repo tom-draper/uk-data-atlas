@@ -38,7 +38,7 @@ import { IMDDataset } from "@/lib/types/imd";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { getColorForLifeExpectancy } from "../colorScale";
 
-const DEFAULT_COLOR = "#cccccc";
+export const DEFAULT_COLOR = "#cccccc";
 
 export class FeatureBuilder {
 	formatBoundaryGeoJson(features: Features): BoundaryGeojson {
