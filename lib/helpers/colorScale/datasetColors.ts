@@ -10,7 +10,7 @@ import type {
 	LifeExpectancyOptions,
 	PopulationOptions,
 } from "@/lib/types/mapOptions";
-import { normalizeValue, hexToRgb, interpolateColor } from "./interpolation";
+import { normalizeValue, hexToRgb } from "./interpolation";
 import { getThemeColor } from "./themes";
 
 function colorFromRange(
@@ -44,13 +44,24 @@ export function getColorForCrimeRate(rate: number, options: CrimeOptions, themeI
 	return colorFromRange(rate, options, themeId, true);
 }
 
+// Pre-parsed color tuples — avoids regex on every feature
+const REMAIN_RGB = [30, 60, 180] as const;
+const NEUTRAL_RGB = [240, 240, 240] as const;
+const LEAVE_RGB = [180, 20, 20] as const;
+
+function lerpRgb(r1: number, g1: number, b1: number, r2: number, g2: number, b2: number, t: number) {
+	return `rgb(${Math.round(r1 + t * (r2 - r1))}, ${Math.round(g1 + t * (g2 - g1))}, ${Math.round(b1 + t * (b2 - b1))})`;
+}
+
 export function getColorForBrexitLeave(pctLeave: number, options: BrexitOptions): string {
 	const midpoint = 50;
 	const { min, max } = options.colorRange;
 	if (pctLeave <= midpoint) {
-		return interpolateColor("rgb(30, 60, 180)", "rgb(240, 240, 240)", normalizeValue(pctLeave, min, midpoint));
+		const t = normalizeValue(pctLeave, min, midpoint);
+		return lerpRgb(REMAIN_RGB[0], REMAIN_RGB[1], REMAIN_RGB[2], NEUTRAL_RGB[0], NEUTRAL_RGB[1], NEUTRAL_RGB[2], t);
 	} else {
-		return interpolateColor("rgb(240, 240, 240)", "rgb(180, 20, 20)", normalizeValue(pctLeave, midpoint, max));
+		const t = normalizeValue(pctLeave, midpoint, max);
+		return lerpRgb(NEUTRAL_RGB[0], NEUTRAL_RGB[1], NEUTRAL_RGB[2], LEAVE_RGB[0], LEAVE_RGB[1], LEAVE_RGB[2], t);
 	}
 }
 
@@ -66,12 +77,17 @@ export function getColorForIncome(income: number, options: IncomeOptions, themeI
 	return colorFromRange(income, options, themeId, true);
 }
 
+const FEMALE_RGB = [255, 105, 180] as const;
+const MALE_RGB = [70, 130, 180] as const;
+
 export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions) {
 	const range = mapOptions.colorRange;
 	if (ratio < 0) {
-		return interpolateColor("rgba(255,105,180,0.8)", "rgba(240,240,240,0.8)", normalizeValue(ratio, range.min, 0));
+		const t = normalizeValue(ratio, range.min, 0);
+		return `rgba(${Math.round(FEMALE_RGB[0] + t * (NEUTRAL_RGB[0] - FEMALE_RGB[0]))}, ${Math.round(FEMALE_RGB[1] + t * (NEUTRAL_RGB[1] - FEMALE_RGB[1]))}, ${Math.round(FEMALE_RGB[2] + t * (NEUTRAL_RGB[2] - FEMALE_RGB[2]))}, 0.8)`;
 	} else {
-		return interpolateColor("rgba(240,240,240,0.8)", "rgba(70,130,180,0.8)", normalizeValue(ratio, 0, range.max));
+		const t = normalizeValue(ratio, 0, range.max);
+		return `rgba(${Math.round(NEUTRAL_RGB[0] + t * (MALE_RGB[0] - NEUTRAL_RGB[0]))}, ${Math.round(NEUTRAL_RGB[1] + t * (MALE_RGB[1] - NEUTRAL_RGB[1]))}, ${Math.round(NEUTRAL_RGB[2] + t * (MALE_RGB[2] - NEUTRAL_RGB[2]))}, 0.8)`;
 	}
 }
 

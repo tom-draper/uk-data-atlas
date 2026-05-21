@@ -1,8 +1,10 @@
 // lib/population/utils.ts
 import { PopulationDataset, PopulationWardData } from "@lib/types";
 
-export const calculateTotal = (ageData: { [age: string]: number }) => {
-	return Object.values(ageData).reduce((sum, count) => sum + count, 0);
+export const calculateTotal = (ageData: { [age: string]: number }): number => {
+	let sum = 0;
+	for (const key in ageData) sum += ageData[key];
+	return sum;
 };
 
 export const resolveWardCode = (
@@ -22,11 +24,8 @@ export const calculateMedianAge = (
 	if (!wardPopulation?.total) return null;
 
 	const ageData = wardPopulation.total;
-	let totalPop = 0;
-
-	for (let age = 0; age <= 90; age++) {
-		totalPop += ageData[age] || 0;
-	}
+	const totalPop = calculateTotal(ageData);
+	if (totalPop === 0) return null;
 
 	const halfPop = totalPop / 2;
 	let cumulativeSum = 0;

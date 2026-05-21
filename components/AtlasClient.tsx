@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MapInterface from "@components/MapInterface";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
@@ -73,6 +73,11 @@ export default function AtlasClient() {
 
 	const allErrors = [...errors, ...boundaryErrors];
 
+	const activeVizRef = useRef(activeViz);
+	activeVizRef.current = activeViz;
+	const selectedLocationRef = useRef(selectedLocation);
+	selectedLocationRef.current = selectedLocation;
+
 	const updateParams = useCallback((location: string, viz: ActiveViz) => {
 		const params = new URLSearchParams();
 		params.set("location", location);
@@ -84,13 +89,13 @@ export default function AtlasClient() {
 
 	const setActiveViz = useCallback((viz: ActiveViz) => {
 		setActiveVizState(viz);
-		updateParams(selectedLocation, viz);
-	}, [selectedLocation, updateParams]);
+		updateParams(selectedLocationRef.current, viz);
+	}, [updateParams]);
 
 	const setSelectedLocation = useCallback((location: string) => {
 		setSelectedLocationState(location);
-		updateParams(location, activeViz);
-	}, [activeViz, updateParams]);
+		updateParams(location, activeVizRef.current);
+	}, [updateParams]);
 
 	useEffect(() => {
 		if (!searchParams.get("location")) {
