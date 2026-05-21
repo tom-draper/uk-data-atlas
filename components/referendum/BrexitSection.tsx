@@ -7,17 +7,17 @@ import {
 	ActiveViz,
 	AggregatedBrexitData,
 	Dataset,
-	BrexitDataset,
+	BrexitLADDataset,
 	BrexitConstituencyDataset,
 	SelectedArea,
 } from "@lib/types";
-import BrexitChart from "./BrexitHanrettyEstimatesChart";
-import BrexitConstituencyChart from "./BrexitConstituencyChart";
+import BrexitHanrettyEstimatesChart from "./BrexitHanrettyEstimatesChart";
+import BrexitElectoralChart from "./BrexitElectoralChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface BrexitSectionProps {
 	activeDataset: Dataset | null;
-	availableDatasets: Record<string, BrexitDataset>;
+	availableDatasets: Record<string, BrexitLADDataset>;
 	availableConstituencyDatasets: Record<string, BrexitConstituencyDataset>;
 	aggregatedData: Record<number, AggregatedBrexitData> | null;
 	aggregatedConstituencyData: Record<number, AggregatedBrexitData> | null;
@@ -41,15 +41,15 @@ export default memo(function BrexitSection({
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
 	const showHanretty = visibility["brexit-hanretty"];
-	const showConstituency = visibility["brexit-constituency"];
+	const showElectoral = visibility["brexit-electoral"];
 
-	if (!showHanretty && !showConstituency) return null;
+	if (!showHanretty && !showElectoral) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
 			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>Brexit</h3>
-			{showConstituency && (
-				<BrexitChart
+			{showElectoral && (
+				<BrexitElectoralChart
 					activeDataset={activeDataset}
 					availableDatasets={availableDatasets}
 					aggregatedData={aggregatedData}
@@ -61,7 +61,7 @@ export default memo(function BrexitSection({
 				/>
 			)}
 			{showHanretty && (
-				<BrexitConstituencyChart
+				<BrexitHanrettyEstimatesChart
 					activeDataset={activeDataset}
 					availableDatasets={availableConstituencyDatasets}
 					aggregatedData={aggregatedConstituencyData}

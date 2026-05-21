@@ -11,7 +11,7 @@ import {
 	PropertyKeys,
 	CustomDataset,
 	Features,
-	BrexitDataset,
+	BrexitLADDataset,
 	BrexitConstituencyDataset,
 } from "@lib/types";
 import { MapMode, MapOptions } from "@lib/types/mapOptions";
@@ -399,7 +399,7 @@ export class MapManager {
 
 	updateMapForBrexit(
 		geojson: BoundaryGeojson,
-		dataset: BrexitDataset,
+		dataset: BrexitLADDataset,
 		mapOptions: MapOptions,
 	): void {
 		const cacheKey = `brexit-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
@@ -579,7 +579,7 @@ export class MapManager {
 
 	calculateBrexitStats(
 		geojson: BoundaryGeojson,
-		brexitData: BrexitDataset["data"],
+		brexitData: BrexitLADDataset["data"],
 		location: string | null = null,
 		datasetId: string | null = null,
 	) {

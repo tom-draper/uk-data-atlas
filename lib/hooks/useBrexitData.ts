@@ -1,11 +1,11 @@
-import { BrexitDataset, BrexitAreaData } from "@lib/types";
+import { BrexitLADDataset, BrexitAreaData } from "@lib/types";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
 import { parseNum } from "../helpers/parseNumber";
 import { useDataLoader } from "./useDataLoader";
 
 export const useBrexitData = () => {
-	return useDataLoader<BrexitDataset>(async () => {
+	return useDataLoader<BrexitLADDataset>(async () => {
 		const response = await fetch(
 			withCDN("/data/referendum/EU-referendum-result-data.csv"),
 		);
@@ -42,7 +42,7 @@ export const useBrexitData = () => {
 			resultMap[areaCode] = pctLeave > 50 ? "leave" : "remain";
 		}
 
-		const dataset: BrexitDataset = {
+		const dataset: BrexitLADDataset = {
 			id: "brexit2016",
 			year: 2016,
 			type: "brexit",

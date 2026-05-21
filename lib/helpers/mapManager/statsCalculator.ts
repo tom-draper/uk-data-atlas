@@ -17,7 +17,7 @@ import {
 	EthnicityDataset,
 	EthnicityCategory,
 	getFeatureProp,
-	BrexitDataset,
+	BrexitLADDataset,
 	BrexitConstituencyDataset,
 	AggregatedBrexitData,
 } from "@lib/types";
@@ -422,7 +422,7 @@ export class StatsCalculator {
 
 	calculateBrexitStats(
 		geojson: BoundaryGeojson,
-		brexitData: BrexitDataset["data"],
+		brexitData: BrexitLADDataset["data"],
 		location: string | null,
 		datasetId: string | null,
 	) {
