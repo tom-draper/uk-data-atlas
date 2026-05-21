@@ -11,14 +11,15 @@ export const calculateAgeGroups = (ageData: {
 		"65+": 0,
 	};
 
-	Object.entries(ageData).forEach(([age, count]) => {
-		const ageNum = parseInt(age);
+	for (const age in ageData) {
+		const ageNum = parseInt(age, 10);
+		const count = ageData[age];
 		if (ageNum <= 17) groups["0-17"] += count;
 		else if (ageNum <= 29) groups["18-29"] += count;
 		else if (ageNum <= 44) groups["30-44"] += count;
 		else if (ageNum <= 64) groups["45-64"] += count;
 		else groups["65+"] += count;
-	});
+	}
 
 	return groups;
 };

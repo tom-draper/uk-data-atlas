@@ -1,4 +1,5 @@
-// components/population/age/AgeGroupBar.tsx
+import { memo } from "react";
+
 interface AgeGroupBarProps {
 	label: string;
 	value: number;
@@ -6,7 +7,7 @@ interface AgeGroupBarProps {
 	color: string;
 }
 
-export default function AgeGroupBar({
+export default memo(function AgeGroupBar({
 	label,
 	value,
 	total,
@@ -35,4 +36,4 @@ export default function AgeGroupBar({
 			</div>
 		</div>
 	);
-}
+});

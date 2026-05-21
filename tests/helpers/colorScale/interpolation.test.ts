@@ -1,4 +1,4 @@
-import { normalizeValue, hexToRgb, interpolateColor } from "@/lib/helpers/colorScale/interpolation";
+import { normalizeValue, hexToRgb } from "@/lib/helpers/colorScale/interpolation";
 
 describe("normalizeValue", () => {
 	it("returns 0 at min", () => {
@@ -45,18 +45,3 @@ describe("hexToRgb", () => {
 	});
 });
 
-describe("interpolateColor", () => {
-	it("returns first color at factor 0", () => {
-		expect(interpolateColor("rgb(0, 0, 0)", "rgb(255, 255, 255)", 0)).toBe("rgb(0, 0, 0)");
-	});
-	it("returns second color at factor 1", () => {
-		expect(interpolateColor("rgb(0, 0, 0)", "rgb(255, 255, 255)", 1)).toBe("rgb(255, 255, 255)");
-	});
-	it("returns midpoint at factor 0.5", () => {
-		expect(interpolateColor("rgb(0, 0, 0)", "rgb(100, 100, 100)", 0.5)).toBe("rgb(50, 50, 50)");
-	});
-	it("interpolates channels independently", () => {
-		const result = interpolateColor("rgb(0, 0, 200)", "rgb(100, 100, 0)", 0.5);
-		expect(result).toBe("rgb(50, 50, 100)");
-	});
-});

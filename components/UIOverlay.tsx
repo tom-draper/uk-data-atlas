@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import ControlPanel from "@components/ControlPanel";
 import LegendPanel from "@components/LegendPanel";
 import ChartPanel from "@components/ChartPanel";
@@ -99,14 +99,16 @@ export default memo(function UIOverlay({
 		[selectedArea, selectedLocation],
 	);
 
+	const handleLocationClick = useCallback((loc: string) => {
+		onLocationClick(loc);
+		setMobilePanel("none");
+	}, [onLocationClick]);
+
 	const controlPanel = (
 		<ControlPanel
 			populationDataset={datasets["population"][2022]}
 			selectedLocation={selectedLocation}
-			onLocationClick={(loc) => {
-				onLocationClick(loc);
-				setMobilePanel("none");
-			}}
+			onLocationClick={handleLocationClick}
 			onZoomIn={onZoomIn}
 			onZoomOut={onZoomOut}
 			handleMapOptionsChange={onMapOptionsChange}

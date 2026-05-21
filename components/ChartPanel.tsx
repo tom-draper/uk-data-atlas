@@ -13,7 +13,7 @@ import {
 import { CustomDataset } from "@/lib/types/custom";
 import LocalElectionResultChartSection from "./local-election/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
-import { memo, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
 import SocietySection from "./society/SocietySection";
@@ -187,6 +187,7 @@ export default memo(function ChartPanel({
 	const t = panelTheme(isDark);
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const sectionVisible = useSectionVisibility();
+	const toggleSettings = useCallback(() => setSettingsOpen((o) => !o), []);
 
 	return (
 		<ChartVisibilityProvider>
@@ -194,7 +195,7 @@ export default memo(function ChartPanel({
 			<div className={`rounded-md backdrop-blur-md shadow-lg h-full flex flex-col border ${t.panel}`}>
 				<PanelHeader
 					settingsOpen={settingsOpen}
-					onToggleSettings={() => setSettingsOpen((o) => !o)}
+					onToggleSettings={toggleSettings}
 				/>
 
 				{settingsOpen ? (
