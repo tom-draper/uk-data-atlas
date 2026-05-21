@@ -6,7 +6,7 @@ import {
 	CrimeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -26,7 +26,6 @@ interface CrimeRateChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-// Simple concentric circles that the SVG filter will "warp" into contours
 const layers = [
 	{ r: 45, opacity: 0.3 },
 	{ r: 35, opacity: 0.4 },
@@ -47,13 +46,11 @@ export default memo(function CrimeRateChart({
 }: CrimeRateChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+	const [hovered, setHovered] = useState(false);
 	const dataset = availableDatasets?.[year];
 
-	// Unique ID for the filter to avoid collisions if multiple charts exist
 	const filterId = useMemo(() => `contour-filter-${year}`, [year]);
 
-	// Generate a unique "seed" based on the selected area code to make
-	// each ward's contour look different
 	const distortionSeed = useMemo(() => {
 		if (!selectedArea) return 0;
 		const code = selectedArea.code || "";
@@ -82,8 +79,7 @@ export default memo(function CrimeRateChart({
 					year,
 				);
 				if (mappedCode) {
-					rate =
-						dataset.data?.[mappedCode]?.totalRecordedCrime || null;
+					rate = dataset.data?.[mappedCode]?.totalRecordedCrime || null;
 				}
 			}
 		}
@@ -97,6 +93,7 @@ export default memo(function CrimeRateChart({
 		((activeDataset.type === "crime" &&
 			activeDataset.id === `crime${dataset.year}`) ||
 			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
+
 	const rawValue = crimeRate || 0;
 	const maxThreshold = 100000;
 	const minThreshold = 5000;
@@ -122,14 +119,26 @@ export default memo(function CrimeRateChart({
 			: `hsl(${baseHue}, ${40 + intensity * 40}%, ${95 - intensity * 20}%)`
 		: "";
 
+	// Same hue as the background, at a mid-brightness level visible in both modes
+	const borderColor = hasData
+		? `hsl(${baseHue}, ${50 + intensity * 40}%, 60%)`
+		: null;
+
+	const combinedStyle: React.CSSProperties = {
+		...(dynamicBgColor ? { backgroundColor: dynamicBgColor } : {}),
+		...((isActive || hovered) && borderColor ? { borderColor } : {}),
+	};
+
 	return (
 		<div
-			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 ${isActive
-				? `${isDark ? "bg-white/10" : "bg-orange-50/60"} border-2 border-orange-300`
-				: isDark ? "bg-white/5 border-2 border-white/10 hover:border-orange-300" : "bg-white/60 border-2 border-gray-200/80 hover:border-orange-300"
-				}`}
-			style={{ backgroundColor: dynamicBgColor }}
+			style={combinedStyle}
+			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 border-2 ${isActive
+				? isDark ? "bg-white/10" : "bg-white/60"
+				: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
+			}`}
 			title="Home Office. Police Recorded Crime Open Data Tables. data.police.uk"
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -176,8 +185,7 @@ export default memo(function CrimeRateChart({
 									cx="50"
 									cy="50"
 									r={layer.r * 2.5}
-									fill={`hsla(${hotHue + (20 - i * 5)}, 80%, ${60 - i * 5}%, ${layer.opacity + intensity * 0.2
-										})`}
+									fill={`hsla(${hotHue + (20 - i * 5)}, 80%, ${60 - i * 5}%, ${layer.opacity + intensity * 0.2})`}
 								/>
 							))}
 						</g>
@@ -213,6 +221,6 @@ export default memo(function CrimeRateChart({
 					</div>
 				)}
 			</div>
-			</div>
+		</div>
 	);
 });

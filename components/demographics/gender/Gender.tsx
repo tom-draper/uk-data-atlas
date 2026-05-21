@@ -1,5 +1,5 @@
 // components/population/gender/Gender.tsx
-import { useMemo, memo } from "react";
+import { useMemo, memo, useState } from "react";
 import {
 	ActiveViz,
 	AggregatedPopulationData,
@@ -10,6 +10,10 @@ import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
+
+const MALE_COLOR = "#60a5fa";   // blue-400, matches chart bars
+const FEMALE_COLOR = "#f472b6"; // pink-400, matches chart bars
 
 interface GenderProps {
 	dataset: PopulationDataset;
@@ -186,16 +190,33 @@ function Gender({
 	}, [dataset, aggregatedData, selectedArea, codeMapper]);
 
 	const isDark = useIsDark();
-	const total = totalMales + totalFemales;
+	const [hovered, setHovered] = useState(false);
+	const total = (totalMales ?? 0) + (totalFemales ?? 0);
 	const hasData = total > 0;
+
+	const accentColor = !hasData ? null : (totalMales ?? 0) >= (totalFemales ?? 0) ? MALE_COLOR : FEMALE_COLOR;
+	const dynamicStyle: React.CSSProperties = (() => {
+		if (!accentColor || (!isActive && !hovered)) return {};
+		const style: React.CSSProperties = { borderColor: lightenHex(accentColor, 0.45) };
+		if (isActive) {
+			const rgb = hexToRgb(accentColor);
+			style.backgroundColor = isDark
+				? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`
+				: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06)`;
+		}
+		return style;
+	})();
 
 	return (
 		<div
-			className={`p-2 rounded transition-all cursor-pointer overflow-hidden relative ${isActive
-					? `border-2 border-violet-300 ${isDark ? "bg-white/10" : "bg-violet-50/60"}`
-					: isDark ? "bg-white/5 border-2 border-white/10 hover:border-violet-300" : "bg-white/60 border-2 border-gray-200/80 hover:border-violet-300"
+			style={dynamicStyle}
+			className={`p-2 rounded cursor-pointer overflow-hidden relative border-2 ${isActive
+					? isDark ? "bg-white/10" : "bg-white/60"
+					: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
 				}`}
 			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
+			onMouseEnter={() => setHovered(true)}
+			onMouseLeave={() => setHovered(false)}
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,
