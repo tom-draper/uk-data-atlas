@@ -26,16 +26,16 @@ interface IMDChartProps {
 }
 
 const DECILE_COLORS = [
-	"#67000d", // 1 - most deprived
-	"#a50026",
-	"#d73027",
-	"#f46d43",
-	"#fdae61",
-	"#fee090",
-	"#e0f3f8",
-	"#abd9e9",
-	"#74add1",
-	"#313695", // 10 - least deprived
+	"#dc2626", // 1 - most deprived
+	"#ef4444", // 2
+	"#f97316", // 3
+	"#f59e0b", // 4
+	"#eab308", // 5
+	"#a3e635", // 6
+	"#4ade80", // 7
+	"#22c55e", // 8
+	"#16a34a", // 9
+	"#15803d", // 10 - least deprived
 ];
 
 export default memo(function IMDChart({
@@ -124,39 +124,37 @@ export default memo(function IMDChart({
 					Deprivation (IMD) [{dataset.year}]
 				</h3>
 				{hasData && imdStats ? (
-					<div className="mt-1.5 flex items-center gap-2">
-						<div className="flex gap-0.5 flex-1">
-							{DECILE_COLORS.map((color, i) => (
-								<div
-									key={i}
-									className="flex-1 h-3 rounded-sm"
-									style={{
-										backgroundColor: color,
-										opacity: decile === i + 1 ? 1 : 0.25,
-									}}
-								/>
-							))}
+					<div className="mt-0 flex items-start gap-2.5">
+						<div className="shrink-0 w-7 text-right leading-none pt-0.5">
+							<span className="text-2xl font-bold" style={{ color: decileColor }}>{decile}</span>
+						</div>
+						<div className="flex-1 flex flex-col gap-1 pt-2">
+							<div className="flex gap-[2px]">
+								{DECILE_COLORS.map((color, i) => (
+									<div
+										key={i}
+										className="flex-1 h-5 rounded-[2px]"
+										style={{
+											backgroundColor: decile === i + 1 ? color : isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
+										}}
+									/>
+								))}
+							</div>
+							<div className="flex justify-between">
+								<span className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>most deprived</span>
+								<span className={`text-[9px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>Score {imdStats.averageIMDScore.toFixed(1)}</span>
+							</div>
 						</div>
 					</div>
 				) : (
-					<div className="h-5 mt-2 mb-2">
+					<div className="h-12 flex items-center justify-center">
 						{chartsLoading ? (
-							<ChartContentPlaceholder className="h-full" />
+							<ChartContentPlaceholder className="h-full w-full" />
 						) : (
-							<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+							<div className={`text-xs pb-2 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 								No data available
 							</div>
 						)}
-					</div>
-				)}
-				{hasData && imdStats && (
-					<div className="mt-1 flex justify-between items-baseline">
-						<span className="text-xs font-semibold" style={{ color: decileColor }}>
-							{decile !== null ? `Decile ${decile}` : ""}
-						</span>
-						<span className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-							Score {imdStats.averageIMDScore.toFixed(1)}
-						</span>
 					</div>
 				)}
 			</div>
