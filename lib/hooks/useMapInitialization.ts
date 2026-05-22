@@ -1,6 +1,6 @@
 import { MAP_TYPE } from "../config/map";
-import { useMapboxInitialization } from "./useMapboxInitialization";
 import { useMapLibreInitialization } from "./useMapLibreInitialization";
+import type { useMapboxInitialization as UseMapboxInitialization } from "./useMapboxInitialization";
 
 interface UseMapInitializationOptions {
 	style: string;
@@ -10,11 +10,12 @@ interface UseMapInitializationOptions {
 }
 
 export function useMapInitialization(options: UseMapInitializationOptions) {
-	switch (MAP_TYPE) {
-		case "maplibre":
-			return useMapLibreInitialization(options);
-		case "mapbox":
-			return useMapboxInitialization(options);
+	if (MAP_TYPE === "mapbox") {
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		const { useMapboxInitialization } = require(/* webpackIgnore: true */ "./useMapboxInitialization") as {
+			useMapboxInitialization: typeof UseMapboxInitialization;
+		};
+		return useMapboxInitialization(options);
 	}
 
 	return useMapLibreInitialization(options);
