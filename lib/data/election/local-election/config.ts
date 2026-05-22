@@ -26,7 +26,7 @@ export interface ElectionSourceConfig {
 export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	2025: {
 		year: 2025,
-		boundaryYear: 2024, // 2025 HoC data uses December 2024 ward codes (WD24CD); no WD25CD boundary exists
+		boundaryYear: 2025, // 2025 HoC data uses WD25CD codes from the May 2025 ward boundary
 		url: withCDN(
 			"/data/elections/local-elections/LEH-2025-results-HoC/LEH-2025-results-HoC.csv",
 		),

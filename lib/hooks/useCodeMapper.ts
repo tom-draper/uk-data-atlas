@@ -483,8 +483,12 @@ export const buildCrossYearMappings = (
 			const name = getProp(props, nameKeys);
 
 			if (code && name) {
-				// Normalize name for matching
-				const normalizedName = name.toLowerCase().trim();
+				// For ward boundaries, scope name matching within LAD to prevent
+				// cross-authority collisions (e.g. two areas both having a "Pemberton" ward).
+				const ladCode = type === "ward" ? getProp(props, PROPERTY_KEYS.ladCode) : null;
+				const normalizedName = ladCode
+					? `${name.toLowerCase().trim()}|${ladCode}`
+					: name.toLowerCase().trim();
 
 				if (!nameIndex[normalizedName]) {
 					nameIndex[normalizedName] = new Set();
