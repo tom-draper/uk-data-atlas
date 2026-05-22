@@ -187,7 +187,7 @@ export default function MapOptions({
 						</button>
 					</div>
 
-					<div className="relative">
+					<div className="relative" ref={containerRef}>
 						<button
 							onClick={() => setIsOpen(!isOpen)}
 							className={`border rounded-sm px-2 py-1 text-xs backdrop-blur-md transition-all duration-200 shadow-sm cursor-pointer flex items-center gap-1.5 ${t.border} ${t.text} ${t.hover} ${isDark ? "bg-white/5" : "bg-white/10"}`}
@@ -209,8 +209,7 @@ export default function MapOptions({
 
 						{isOpen && (
 							<div
-								ref={containerRef}
-								className={`absolute bottom-full mb-2 left-0 backdrop-blur-xl border rounded-sm shadow-lg z-10 ${t.border} ${isDark ? "bg-[rgba(20,20,30,0.95)]" : "bg-[#f9f9fa]/90"}`}
+								className={`absolute bottom-full mb-2 left-0 min-w-[160px] backdrop-blur-xl border rounded-sm shadow-lg z-10 ${t.border} ${isDark ? "bg-[rgba(20,20,30,0.95)]" : "bg-[#f9f9fa]/90"}`}
 							>
 								{themes.map((theme) => (
 									<button
