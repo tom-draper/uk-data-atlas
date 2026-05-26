@@ -26,6 +26,7 @@ type ColorRangeDatasetKey =
 	| "wimd"
 	| "nimdm"
 	| "lifeExpectancy"
+	| "qualification"
 	| "custom";
 
 interface LegendPanelProps {
@@ -374,6 +375,9 @@ export default memo(function LegendPanel({
 				const leMax = leData.length ? Math.max(...leData) : 85;
 				return renderDynamicLegend("lifeExpectancy", leMin, leMax, leMin, leMax, (v) => `${v.toFixed(1)}y`);
 			}
+
+			case "qualification":
+				return renderDynamicLegend("qualification", 0, 100, 15, 65, (v) => `${v.toFixed(0)}% Level 4+`);
 
 			case "custom":
 				return renderDynamicLegend("custom", 0, 100, 0, 100);

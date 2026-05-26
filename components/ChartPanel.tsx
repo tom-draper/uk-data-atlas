@@ -20,6 +20,7 @@ import SocietySection from "./society/SocietySection";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import BrexitSection from "./referendum/BrexitSection";
 import CustomSection from "./custom/CustomSection";
+import EducationSection from "./education/EducationSection";
 import { usePanelContext } from "@/lib/context/PanelContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme } from "@/lib/helpers/panelTheme";
@@ -297,6 +298,17 @@ export default memo(function ChartPanel({
 									aggregatedLifeExpectancyData={
 										aggregatedData.lifeExpectancy
 									}
+									selectedArea={selectedArea}
+									setActiveViz={setActiveViz}
+									codeMapper={codeMapper}
+									activeViz={activeViz}
+								/>
+							)}
+							{sectionVisible["Education"] && (
+								<EducationSection
+									activeDataset={activeDataset}
+									availableQualificationDatasets={datasets.qualification}
+									aggregatedQualificationData={aggregatedData.qualification}
 									selectedArea={selectedArea}
 									setActiveViz={setActiveViz}
 									codeMapper={codeMapper}

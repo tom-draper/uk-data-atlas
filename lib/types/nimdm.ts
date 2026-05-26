@@ -3,7 +3,6 @@ export interface NIMDMLSOAData {
 	soaName: string;
 	lgdCode: string;
 	lgdName: string;
-	nimdmScore: number;
 	nimdmRank: number;
 	nimdmDecile: number;
 }
@@ -22,6 +21,5 @@ export interface NIMDMDataset {
 }
 
 export interface AggregatedNIMDMData {
-	averageNIMDMScore: number;
 	averageNIMDMDecile: number;
 }

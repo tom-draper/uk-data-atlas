@@ -25,7 +25,8 @@ export type ChartKey =
 	| "society-wimd"
 	| "society-nimdm"
 	| "society-lifeExpectancy"
-	| "society-healthyLifeExpectancy";
+	| "society-healthyLifeExpectancy"
+	| "education-qualifications";
 
 export interface ChartConfigEntry {
 	group: string;
@@ -58,6 +59,7 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 	{ group: "Society", key: "society-nimdm", label: "Deprivation (NIMDM) [2017]" },
 	{ group: "Society", key: "society-lifeExpectancy", label: "Life Expectancy [2020-2022]" },
 	{ group: "Society", key: "society-healthyLifeExpectancy", label: "Healthy Life Expectancy [2020-2022]" },
+	{ group: "Education", key: "education-qualifications", label: "Qualifications [2021]" },
 ];
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
@@ -85,6 +87,7 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"society-nimdm": true,
 	"society-lifeExpectancy": true,
 	"society-healthyLifeExpectancy": false,
+	"education-qualifications": true,
 };
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";

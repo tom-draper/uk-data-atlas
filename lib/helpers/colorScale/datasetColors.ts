@@ -12,6 +12,7 @@ import type {
 	IncomeOptions,
 	LifeExpectancyOptions,
 	PopulationOptions,
+	QualificationOptions,
 } from "@/lib/types/mapOptions";
 import { normalizeValue, hexToRgb } from "./interpolation";
 import { getThemeColor } from "./themes";
@@ -86,6 +87,10 @@ export function getColorForNIMDM(rank: number, options: NIMDMOptions, themeId = 
 
 export function getColorForLifeExpectancy(years: number, min: number, max: number, themeId = "viridis") {
 	return getThemeColor(normalizeValue(years, min, max), themeId);
+}
+
+export function getColorForQualification(pctLevel4Plus: number, options: QualificationOptions, themeId = "viridis") {
+	return colorFromRange(pctLevel4Plus, options, themeId, true);
 }
 
 export function getColorForIncome(income: number, options: IncomeOptions, themeId = "viridis") {

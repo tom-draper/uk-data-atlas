@@ -56,7 +56,6 @@ export default memo(function NIMDMChart({
 		const avgFromRecords = (records: typeof dataset.data[string][]) => {
 			if (records.length === 0) return null;
 			return {
-				averageNIMDMScore: records.reduce((s, r) => s + r.nimdmScore, 0) / records.length,
 				averageNIMDMDecile: records.reduce((s, r) => s + r.nimdmDecile, 0) / records.length,
 			};
 		};

@@ -30,6 +30,7 @@ export type SIMDOptions = ColorRangeOption;
 export type WIMDOptions = ColorRangeOption;
 export type NIMDMOptions = ColorRangeOption;
 export type LifeExpectancyOptions = ColorRangeOption;
+export type QualificationOptions = ColorRangeOption;
 
 export type ColorTheme =
 	| "viridis"
@@ -66,6 +67,7 @@ export interface MapOptions {
 	wimd: WIMDOptions;
 	nimdm: NIMDMOptions;
 	lifeExpectancy: LifeExpectancyOptions;
+	qualification: QualificationOptions;
 	theme: {
 		id: ColorTheme;
 	};
