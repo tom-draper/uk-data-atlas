@@ -28,6 +28,7 @@ import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
+import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
 import { LifeExpectancyDataset, AggregatedLifeExpectancyData } from "@/lib/types/lifeExpectancy";
 
 const PARTY_KEYS = [
@@ -567,6 +568,40 @@ export class StatsCalculator {
 		const stats: AggregatedLifeExpectancyData = {
 			averageMaleLE: count > 0 ? totalMale / count : 0,
 			averageFemaleLE: count > 0 ? totalFemale / count : 0,
+		};
+
+		this.cache.set(cacheKey, stats);
+		return stats;
+	}
+
+	calculateSIMDStats(
+		geojson: BoundaryGeojson,
+		simdData: SIMDDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedSIMDData {
+		const cacheKey = `simd-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedSIMDData | null;
+		if (cached) return cached;
+
+		const dzCodeProp = this.propertyDetector.detectDataZoneCode(geojson.features);
+		let totalRank = 0;
+		let totalQuintile = 0;
+		let count = 0;
+
+		for (const feature of geojson.features) {
+			const code = getFeatureProp(feature.properties, dzCodeProp) ?? "";
+			const record = simdData[code];
+			if (record) {
+				totalRank += record.simdRank;
+				totalQuintile += record.simdQuintile;
+				count++;
+			}
+		}
+
+		const stats: AggregatedSIMDData = {
+			averageSIMDRank: count > 0 ? totalRank / count : 0,
+			averageSIMDQuintile: count > 0 ? totalQuintile / count : 0,
 		};
 
 		this.cache.set(cacheKey, stats);

@@ -23,6 +23,7 @@ import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset } from "@/lib/types/imd";
+import { SIMDDataset } from "@/lib/types/simd";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 
 export interface MapManagerCallbacks {
@@ -309,7 +310,7 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | LifeExpectancyDataset>(
+	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | SIMDDataset | LifeExpectancyDataset>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
@@ -634,6 +635,36 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateIMDStats(
+			geojson,
+			data,
+			location,
+			datasetId,
+		);
+	}
+
+	updateMapForSIMD(
+		geojson: BoundaryGeojson,
+		dataset: SIMDDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectDataZoneCode.bind(this.propertyDetector),
+			this.featureBuilder.buildSIMDFeatures.bind(this.featureBuilder),
+			"simd",
+			dataset.data,
+		);
+	}
+
+	calculateSIMDStats(
+		geojson: BoundaryGeojson,
+		data: SIMDDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateSIMDStats(
 			geojson,
 			data,
 			location,

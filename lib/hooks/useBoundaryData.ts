@@ -27,6 +27,7 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = {
 		2021: null,
 	},
 	lsoa: { 2011: null },
+	dataZone: { 2011: null },
 };
 
 /**
@@ -132,6 +133,7 @@ const extractCodeSets = (
 	constituency: Record<number, Set<string>>;
 	localAuthority: Record<number, Set<string>>;
 	lsoa: Record<number, Set<string>>;
+	dataZone: Record<number, Set<string>>;
 } | null => {
 	if (isLoading) return null;
 
@@ -155,6 +157,7 @@ const extractCodeSets = (
 		constituency: extractFromGroup(boundaryData.constituency, PROPERTY_KEYS.constituencyCode),
 		localAuthority: extractFromGroup(boundaryData.localAuthority, PROPERTY_KEYS.ladCode),
 		lsoa: extractFromGroup(boundaryData.lsoa, PROPERTY_KEYS.lsoaCode),
+		dataZone: extractFromGroup(boundaryData.dataZone, PROPERTY_KEYS.dataZoneCode),
 	};
 };
 
@@ -195,7 +198,7 @@ export function useBoundaryData(
 				setIsLoading(true);
 				setError(null);
 
-				const [wards, constituencies, localAuthorities, lsoas] =
+				const [wards, constituencies, localAuthorities, lsoas, dataZones] =
 					await Promise.all([
 						fetchBoundaryGroup(
 							"ward",
@@ -218,6 +221,9 @@ export function useBoundaryData(
 						fetchBoundaryGroup("lsoa").catch(
 							() => ({} as Record<number, BoundaryGeojson>),
 						),
+						fetchBoundaryGroup("dataZone").catch(
+							() => ({} as Record<number, BoundaryGeojson>),
+						),
 					]);
 
 				if (mounted) {
@@ -226,6 +232,7 @@ export function useBoundaryData(
 						constituency: constituencies,
 						localAuthority: localAuthorities,
 						lsoa: lsoas,
+						dataZone: dataZones,
 					});
 
 					// Build constituency->wards mappings for each (ward year, constituency year) pair.
@@ -299,6 +306,11 @@ export function useBoundaryData(
 			lsoa: filterBoundaryGroup(
 				rawData.lsoa,
 				"lsoa",
+				selectedLocation || null,
+			),
+			dataZone: filterBoundaryGroup(
+				rawData.dataZone,
+				"dataZone",
 				selectedLocation || null,
 			),
 		};

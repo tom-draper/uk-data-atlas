@@ -1,0 +1,147 @@
+"use client";
+import {
+	ActiveViz,
+	AggregatedSIMDData,
+	Dataset,
+	SIMDDataset,
+	SelectedArea,
+} from "@lib/types";
+import { memo, useMemo } from "react";
+import {
+	ChartLoadingBackground,
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
+import { useIsDark } from "@/lib/context/ThemeContext";
+import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+
+interface SIMDChartProps {
+	activeDataset: Dataset | null;
+	availableDatasets: Record<string, SIMDDataset>;
+	aggregatedData: Record<number, AggregatedSIMDData> | null;
+	selectedArea: SelectedArea | null;
+	year: number;
+	activeViz: ActiveViz;
+	setActiveViz: (value: ActiveViz) => void;
+}
+
+const QUINTILE_COLORS = [
+	"#dc2626", // 1 - most deprived
+	"#f97316", // 2
+	"#eab308", // 3
+	"#4ade80", // 4
+	"#15803d", // 5 - least deprived
+];
+
+export default memo(function SIMDChart({
+	activeDataset,
+	availableDatasets,
+	aggregatedData,
+	selectedArea,
+	year,
+	setActiveViz,
+}: SIMDChartProps) {
+	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
+	const dataset = availableDatasets?.[year];
+
+	const simdStats = useMemo(() => {
+		if (!dataset || chartsLoading) return null;
+
+		const avgFromRecords = (records: typeof dataset.data[string][]) => {
+			if (records.length === 0) return null;
+			return {
+				averageSIMDRank: records.reduce((s, r) => s + r.simdRank, 0) / records.length,
+				averageSIMDQuintile: records.reduce((s, r) => s + r.simdQuintile, 0) / records.length,
+			};
+		};
+
+		if (selectedArea === null) {
+			if (aggregatedData && aggregatedData[dataset.year]) {
+				return aggregatedData[dataset.year];
+			}
+			return null;
+		}
+
+		if (selectedArea.type === "localAuthority") {
+			const ladCode = selectedArea.code;
+			return avgFromRecords(Object.values(dataset.data).filter((r) => r.councilAreaCode === ladCode));
+		}
+
+		if (selectedArea.type === "ward" && selectedArea.data) {
+			const ladCode = selectedArea.data.ladCode;
+			return avgFromRecords(Object.values(dataset.data).filter((r) => r.councilAreaCode === ladCode));
+		}
+
+		return null;
+	}, [dataset, aggregatedData, selectedArea, chartsLoading]);
+
+	if (!dataset) return null;
+
+	const isActive =
+		activeDataset?.type === "simd" && activeDataset.id === dataset.id;
+
+	const quintile = simdStats ? Math.round(simdStats.averageSIMDQuintile) : null;
+	const quintileColor = quintile ? QUINTILE_COLORS[quintile - 1] : "#9ca3af";
+	const hasData = simdStats !== null;
+
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(hasData ? quintileColor : null, isActive, isDark);
+
+	return (
+		<div
+			style={style}
+			className={cardClass(isActive, isDark, "h-20")}
+			title="Scottish Government. Scottish Index of Multiple Deprivation 2020v2. gov.scot"
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+			onClick={() =>
+				setActiveViz({
+					vizId: dataset.id,
+					datasetType: dataset.type,
+					datasetYear: dataset.year,
+				})
+			}
+		>
+			<ChartLoadingBackground />
+			<div className="relative z-10">
+				<h3 className={chartHeadingClass(isDark)}>
+					Deprivation (SIMD) [{dataset.year}]
+				</h3>
+				{hasData && simdStats ? (
+					<div className="mt-0 flex items-start gap-2.5">
+						<div className="shrink-0 w-7 text-right leading-none pt-0.5">
+							<span className="text-2xl font-bold" style={{ color: quintileColor }}>{quintile}</span>
+						</div>
+						<div className="flex-1 flex flex-col gap-1 pt-2">
+							<div className="flex gap-[2px]">
+								{QUINTILE_COLORS.map((color, i) => (
+									<div
+										key={i}
+										className="flex-1 h-5 rounded-[2px]"
+										style={{
+											backgroundColor: quintile === i + 1 ? color : isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
+										}}
+									/>
+								))}
+							</div>
+							<div className="flex justify-between">
+								<span className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>most deprived</span>
+								<span className={`text-[9px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>Scotland only</span>
+							</div>
+						</div>
+					</div>
+				) : (
+					<div className="h-12 flex items-center justify-center">
+						{chartsLoading ? (
+							<ChartContentPlaceholder className="h-full w-full" />
+						) : (
+							<div className={`text-xs pb-2 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+								No data available
+							</div>
+						)}
+					</div>
+				)}
+			</div>
+		</div>
+	);
+});

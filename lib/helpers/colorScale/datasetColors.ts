@@ -6,6 +6,7 @@ import type {
 	GenderOptions,
 	HousePriceOptions,
 	IMDOptions,
+	SIMDOptions,
 	IncomeOptions,
 	LifeExpectancyOptions,
 	PopulationOptions,
@@ -67,6 +68,10 @@ export function getColorForBrexitLeave(pctLeave: number, options: BrexitOptions)
 
 export function getColorForIMD(score: number, options: IMDOptions, themeId = "viridis") {
 	return colorFromRange(score, options, themeId, true);
+}
+
+export function getColorForSIMD(rank: number, options: SIMDOptions, themeId = "viridis") {
+	return colorFromRange(rank, options, themeId, false);
 }
 
 export function getColorForLifeExpectancy(years: number, min: number, max: number, themeId = "viridis") {

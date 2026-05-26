@@ -100,6 +100,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "simd":
+					return mapManager.updateMapForSIMD(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "lifeExpectancy":
 					return mapManager.updateMapForLifeExpectancy(
 						geojson,

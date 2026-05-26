@@ -140,6 +140,12 @@ export function useAggregatedData({
                 calculateStats: (mapManager, geojson, data, location, id) =>
                     mapManager.calculateIMDStats(geojson, data, location, id),
             },
+            simd: {
+                datasets: datasets.simd,
+                boundaryType: "dataZone",
+                calculateStats: (mapManager, geojson, data, location, id) =>
+                    mapManager.calculateSIMDStats(geojson, data, location, id),
+            },
             lifeExpectancy: {
                 datasets: datasets.lifeExpectancy,
                 boundaryType: "localAuthority",
@@ -172,6 +178,7 @@ export function useAggregatedData({
                 brexitConstituency: null,
                 custom: null,
                 imd: null,
+                simd: null,
                 lifeExpectancy: null,
             };
         }
