@@ -15,6 +15,7 @@ import { AggregatedBrexitData, BrexitConstituencyDataset, BrexitLADDataset } fro
 import { AggregatedIMDData, IMDDataset } from "./imd";
 import { AggregatedSIMDData, SIMDDataset } from "./simd";
 import { AggregatedWIMDData, WIMDDataset } from "./wimd";
+import { AggregatedNIMDMData, NIMDMDataset } from "./nimdm";
 import { AggregatedLifeExpectancyData, LifeExpectancyDataset } from "./lifeExpectancy";
 
 export type Dataset =
@@ -31,6 +32,7 @@ export type Dataset =
     | IMDDataset
     | SIMDDataset
     | WIMDDataset
+    | NIMDMDataset
     | LifeExpectancyDataset;
 
 export type Datasets = {
@@ -46,6 +48,7 @@ export type Datasets = {
     imd: Record<string, IMDDataset>;
     simd: Record<string, SIMDDataset>;
     wimd: Record<string, WIMDDataset>;
+    nimdm: Record<string, NIMDMDataset>;
     lifeExpectancy: Record<string, LifeExpectancyDataset>;
 };
 
@@ -63,6 +66,7 @@ export type AggregatedData = {
     imd: Record<number, AggregatedIMDData> | null;
     simd: Record<number, AggregatedSIMDData> | null;
     wimd: Record<number, AggregatedWIMDData> | null;
+    nimdm: Record<number, AggregatedNIMDMData> | null;
     lifeExpectancy: Record<string, AggregatedLifeExpectancyData> | null;
 };
 

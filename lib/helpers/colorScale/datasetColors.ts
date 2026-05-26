@@ -8,6 +8,7 @@ import type {
 	IMDOptions,
 	SIMDOptions,
 	WIMDOptions,
+	NIMDMOptions,
 	IncomeOptions,
 	LifeExpectancyOptions,
 	PopulationOptions,
@@ -76,6 +77,10 @@ export function getColorForSIMD(rank: number, options: SIMDOptions, themeId = "v
 }
 
 export function getColorForWIMD(rank: number, options: WIMDOptions, themeId = "viridis") {
+	return colorFromRange(rank, options, themeId, false);
+}
+
+export function getColorForNIMDM(rank: number, options: NIMDMOptions, themeId = "viridis") {
 	return colorFromRange(rank, options, themeId, false);
 }
 

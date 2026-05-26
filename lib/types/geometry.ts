@@ -97,6 +97,14 @@ interface DataZoneProperties2011 {
 	Name: string;
 }
 
+// NI Super Output Area properties
+interface SuperOutputAreaProperties2011 {
+	SOA_CODE: string;
+	SOA_LABEL: string;
+	SOA2011: string;
+	SOA: string;
+}
+
 // Unified mapping of all boundary types by year
 export type YearToProperties = {
 	// LSOAs
@@ -104,6 +112,8 @@ export type YearToProperties = {
 	lsoa_2021: LSOAProperties2021;
 	// Scottish Data Zones
 	dataZone_2011: DataZoneProperties2011;
+	// NI Super Output Areas
+	superOutputArea_2011: SuperOutputAreaProperties2011;
 	// Wards
 	ward_2021: WardProperties2021;
 	ward_2022: WardProperties2022;

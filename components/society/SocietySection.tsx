@@ -9,12 +9,14 @@ import {
 	AggregatedIMDData,
 	AggregatedSIMDData,
 	AggregatedWIMDData,
+	AggregatedNIMDMData,
 	AggregatedLifeExpectancyData,
 	Dataset,
 	CrimeDataset,
 	IMDDataset,
 	SIMDDataset,
 	WIMDDataset,
+	NIMDMDataset,
 	LifeExpectancyDataset,
 	SelectedArea,
 } from "@lib/types";
@@ -22,6 +24,7 @@ import CrimeRateChart from "../crime/CrimeRateChart";
 import IMDChart from "../imd/IMDChart";
 import SIMDChart from "../simd/SIMDChart";
 import WIMDChart from "../wimd/WIMDChart";
+import NIMDMChart from "../nimdm/NIMDMChart";
 import LifeExpectancyChart from "./LifeExpectancyChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
@@ -35,6 +38,8 @@ interface SocietySectionProps {
 	aggregatedSIMDData: Record<number, AggregatedSIMDData> | null;
 	availableWIMDDatasets: Record<string, WIMDDataset>;
 	aggregatedWIMDData: Record<number, AggregatedWIMDData> | null;
+	availableNIMDMDatasets: Record<string, NIMDMDataset>;
+	aggregatedNIMDMData: Record<number, AggregatedNIMDMData> | null;
 	availableLifeExpectancyDatasets: Record<string, LifeExpectancyDataset>;
 	aggregatedLifeExpectancyData: Record<number, AggregatedLifeExpectancyData> | null;
 	selectedArea: SelectedArea | null;
@@ -53,6 +58,8 @@ export default memo(function SocietySection({
 	aggregatedSIMDData,
 	availableWIMDDatasets,
 	aggregatedWIMDData,
+	availableNIMDMDatasets,
+	aggregatedNIMDMData,
 	availableLifeExpectancyDatasets,
 	aggregatedLifeExpectancyData,
 	selectedArea,
@@ -66,15 +73,17 @@ export default memo(function SocietySection({
 	const showIMD = visibility["society-imd"];
 	const showSIMD = visibility["society-simd"];
 	const showWIMD = visibility["society-wimd"];
+	const showNIMDM = visibility["society-nimdm"];
 	const showLE = visibility["society-lifeExpectancy"];
 	const showHLE = visibility["society-healthyLifeExpectancy"];
 
 	const imdYears = Object.keys(availableIMDDatasets).map(Number).sort((a, b) => b - a);
 	const simdYears = Object.keys(availableSIMDDatasets).map(Number).sort((a, b) => b - a);
 	const wimdYears = Object.keys(availableWIMDDatasets).map(Number).sort((a, b) => b - a);
+	const nimdmYears = Object.keys(availableNIMDMDatasets).map(Number).sort((a, b) => b - a);
 	const leIds = Object.keys(availableLifeExpectancyDatasets).sort();
 
-	if (!showCrime && !showIMD && !showSIMD && !showWIMD && !showLE && !showHLE) return null;
+	if (!showCrime && !showIMD && !showSIMD && !showWIMD && !showNIMDM && !showLE && !showHLE) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
@@ -121,6 +130,18 @@ export default memo(function SocietySection({
 					activeDataset={activeDataset}
 					availableDatasets={availableWIMDDatasets}
 					aggregatedData={aggregatedWIMDData}
+					selectedArea={selectedArea}
+					year={year}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+			))}
+			{showNIMDM && nimdmYears.map((year) => (
+				<NIMDMChart
+					key={year}
+					activeDataset={activeDataset}
+					availableDatasets={availableNIMDMDatasets}
+					aggregatedData={aggregatedNIMDMData}
 					selectedArea={selectedArea}
 					year={year}
 					activeViz={activeViz}

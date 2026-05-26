@@ -30,6 +30,7 @@ import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
 import { WIMDDataset, AggregatedWIMDData } from "@/lib/types/wimd";
+import { NIMDMDataset, AggregatedNIMDMData } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset, AggregatedLifeExpectancyData } from "@/lib/types/lifeExpectancy";
 
 const PARTY_KEYS = [
@@ -637,6 +638,40 @@ export class StatsCalculator {
 		const stats: AggregatedWIMDData = {
 			averageWIMDScore: count > 0 ? totalScore / count : 0,
 			averageWIMDDecile: count > 0 ? totalDecile / count : 0,
+		};
+
+		this.cache.set(cacheKey, stats);
+		return stats;
+	}
+
+	calculateNIMDMStats(
+		geojson: BoundaryGeojson,
+		nimdmData: NIMDMDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedNIMDMData {
+		const cacheKey = `nimdm-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedNIMDMData | null;
+		if (cached) return cached;
+
+		const soaCodeProp = this.propertyDetector.detectSOACode(geojson.features);
+		let totalScore = 0;
+		let totalDecile = 0;
+		let count = 0;
+
+		for (const feature of geojson.features) {
+			const code = getFeatureProp(feature.properties, soaCodeProp) ?? "";
+			const record = nimdmData[code];
+			if (record) {
+				totalScore += record.nimdmScore;
+				totalDecile += record.nimdmDecile;
+				count++;
+			}
+		}
+
+		const stats: AggregatedNIMDMData = {
+			averageNIMDMScore: count > 0 ? totalScore / count : 0,
+			averageNIMDMDecile: count > 0 ? totalDecile / count : 0,
 		};
 
 		this.cache.set(cacheKey, stats);

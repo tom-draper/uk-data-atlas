@@ -28,6 +28,7 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = {
 	},
 	lsoa: { 2011: null },
 	dataZone: { 2011: null },
+	superOutputArea: { 2011: null },
 };
 
 /**
@@ -134,6 +135,7 @@ const extractCodeSets = (
 	localAuthority: Record<number, Set<string>>;
 	lsoa: Record<number, Set<string>>;
 	dataZone: Record<number, Set<string>>;
+	superOutputArea: Record<number, Set<string>>;
 } | null => {
 	if (isLoading) return null;
 
@@ -158,6 +160,7 @@ const extractCodeSets = (
 		localAuthority: extractFromGroup(boundaryData.localAuthority, PROPERTY_KEYS.ladCode),
 		lsoa: extractFromGroup(boundaryData.lsoa, PROPERTY_KEYS.lsoaCode),
 		dataZone: extractFromGroup(boundaryData.dataZone, PROPERTY_KEYS.dataZoneCode),
+		superOutputArea: extractFromGroup(boundaryData.superOutputArea, PROPERTY_KEYS.soaCode),
 	};
 };
 
@@ -198,7 +201,7 @@ export function useBoundaryData(
 				setIsLoading(true);
 				setError(null);
 
-				const [wards, constituencies, localAuthorities, lsoas, dataZones] =
+				const [wards, constituencies, localAuthorities, lsoas, dataZones, superOutputAreas] =
 					await Promise.all([
 						fetchBoundaryGroup(
 							"ward",
@@ -224,6 +227,9 @@ export function useBoundaryData(
 						fetchBoundaryGroup("dataZone").catch(
 							() => ({} as Record<number, BoundaryGeojson>),
 						),
+						fetchBoundaryGroup("superOutputArea").catch(
+							() => ({} as Record<number, BoundaryGeojson>),
+						),
 					]);
 
 				if (mounted) {
@@ -233,6 +239,7 @@ export function useBoundaryData(
 						localAuthority: localAuthorities,
 						lsoa: lsoas,
 						dataZone: dataZones,
+						superOutputArea: superOutputAreas,
 					});
 
 					// Build constituency->wards mappings for each (ward year, constituency year) pair.
@@ -311,6 +318,11 @@ export function useBoundaryData(
 			dataZone: filterBoundaryGroup(
 				rawData.dataZone,
 				"dataZone",
+				selectedLocation || null,
+			),
+			superOutputArea: filterBoundaryGroup(
+				rawData.superOutputArea,
+				"superOutputArea",
 				selectedLocation || null,
 			),
 		};

@@ -5,11 +5,13 @@ import {
 	LAD_CODE_KEYS,
 	LSOA_CODE_KEYS,
 	WARD_CODE_KEYS,
+	SOA_CODE_KEYS,
 	BoundaryType,
 	WardCodeKey,
 	LADCodeKey,
 	LSOACodeKey,
 	DataZoneCodeKey,
+	SOACodeKey,
 	ConstituencyCodeKey,
 } from "@/lib/data/boundaries/boundaries";
 import { BoundaryGeojson, PropertyKeys } from "@lib/types";
@@ -54,6 +56,10 @@ export class PropertyDetector {
 		return this.detectPropertyKey(features, DATA_ZONE_CODE_KEYS);
 	}
 
+	detectSOACode(features: BoundaryGeojson["features"]) {
+		return this.detectPropertyKey(features, SOA_CODE_KEYS);
+	}
+
 	detectCode(features: BoundaryGeojson["features"]) {
 		return this.detectPropertyKey(
 			features,
@@ -63,6 +69,7 @@ export class PropertyDetector {
 				...LAD_CODE_KEYS,
 				...LSOA_CODE_KEYS,
 				...DATA_ZONE_CODE_KEYS,
+				...SOA_CODE_KEYS,
 			] as readonly PropertyKeys[],
 		);
 	}
@@ -86,7 +93,7 @@ export class PropertyDetector {
 	getYearSpecificCodeKey(
 		type: BoundaryType,
 		year: number,
-	): WardCodeKey | LADCodeKey | ConstituencyCodeKey | LSOACodeKey | DataZoneCodeKey | undefined {
+	): WardCodeKey | LADCodeKey | ConstituencyCodeKey | LSOACodeKey | DataZoneCodeKey | SOACodeKey | undefined {
 		// Construct the expected key based on year
 		// e.g., for year 2024, expect keys like WD24CD, LAD24CD, PCON24CD
 		const yearSuffix = year.toString().slice(-2);
@@ -104,6 +111,8 @@ export class PropertyDetector {
 				return LSOA_CODE_KEYS.find((key) => key.endsWith(yearSuffix));
 			case "dataZone":
 				return DATA_ZONE_CODE_KEYS[0];
+			case "superOutputArea":
+				return SOA_CODE_KEYS[0];
 			default:
 				return undefined;
 		}
