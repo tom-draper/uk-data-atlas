@@ -107,6 +107,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "wimd":
+					return mapManager.updateMapForWIMD(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "lifeExpectancy":
 					return mapManager.updateMapForLifeExpectancy(
 						geojson,

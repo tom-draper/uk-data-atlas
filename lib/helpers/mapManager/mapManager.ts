@@ -24,6 +24,7 @@ import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset } from "@/lib/types/imd";
 import { SIMDDataset } from "@/lib/types/simd";
+import { WIMDDataset } from "@/lib/types/wimd";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 
 export interface MapManagerCallbacks {
@@ -310,7 +311,7 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | SIMDDataset | LifeExpectancyDataset>(
+	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | SIMDDataset | WIMDDataset | LifeExpectancyDataset>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
@@ -665,6 +666,36 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateSIMDStats(
+			geojson,
+			data,
+			location,
+			datasetId,
+		);
+	}
+
+	updateMapForWIMD(
+		geojson: BoundaryGeojson,
+		dataset: WIMDDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLSOACode.bind(this.propertyDetector),
+			this.featureBuilder.buildWIMDFeatures.bind(this.featureBuilder),
+			"wimd",
+			dataset.data,
+		);
+	}
+
+	calculateWIMDStats(
+		geojson: BoundaryGeojson,
+		data: WIMDDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateWIMDStats(
 			geojson,
 			data,
 			location,

@@ -7,6 +7,7 @@ import type {
 	HousePriceOptions,
 	IMDOptions,
 	SIMDOptions,
+	WIMDOptions,
 	IncomeOptions,
 	LifeExpectancyOptions,
 	PopulationOptions,
@@ -71,6 +72,10 @@ export function getColorForIMD(score: number, options: IMDOptions, themeId = "vi
 }
 
 export function getColorForSIMD(rank: number, options: SIMDOptions, themeId = "viridis") {
+	return colorFromRange(rank, options, themeId, false);
+}
+
+export function getColorForWIMD(rank: number, options: WIMDOptions, themeId = "viridis") {
 	return colorFromRange(rank, options, themeId, false);
 }
 

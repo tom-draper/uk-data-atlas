@@ -29,6 +29,7 @@ import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
+import { WIMDDataset, AggregatedWIMDData } from "@/lib/types/wimd";
 import { LifeExpectancyDataset, AggregatedLifeExpectancyData } from "@/lib/types/lifeExpectancy";
 
 const PARTY_KEYS = [
@@ -602,6 +603,40 @@ export class StatsCalculator {
 		const stats: AggregatedSIMDData = {
 			averageSIMDRank: count > 0 ? totalRank / count : 0,
 			averageSIMDQuintile: count > 0 ? totalQuintile / count : 0,
+		};
+
+		this.cache.set(cacheKey, stats);
+		return stats;
+	}
+
+	calculateWIMDStats(
+		geojson: BoundaryGeojson,
+		wimdData: WIMDDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedWIMDData {
+		const cacheKey = `wimd-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedWIMDData | null;
+		if (cached) return cached;
+
+		const lsoaCodeProp = this.propertyDetector.detectLSOACode(geojson.features);
+		let totalScore = 0;
+		let totalDecile = 0;
+		let count = 0;
+
+		for (const feature of geojson.features) {
+			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
+			const record = wimdData[code];
+			if (record) {
+				totalScore += record.wimdScore;
+				totalDecile += record.wimdDecile;
+				count++;
+			}
+		}
+
+		const stats: AggregatedWIMDData = {
+			averageWIMDScore: count > 0 ? totalScore / count : 0,
+			averageWIMDDecile: count > 0 ? totalDecile / count : 0,
 		};
 
 		this.cache.set(cacheKey, stats);
