@@ -7,6 +7,7 @@ export type BoundaryData = {
 	constituency: {[year: number]: BoundaryGeojson | null};
 	localAuthority: {[year: number]: BoundaryGeojson | null};
 	lsoa: {[year: number]: BoundaryGeojson | null};
+	dataZone: {[year: number]: BoundaryGeojson | null};
 };
 
 export type BoundaryCodes = {
@@ -14,4 +15,5 @@ export type BoundaryCodes = {
 	constituency: Record<number, Set<string>>;
 	localAuthority: Record<number, Set<string>>;
 	lsoa: Record<number, Set<string>>;
+	dataZone: Record<number, Set<string>>;
 } | null

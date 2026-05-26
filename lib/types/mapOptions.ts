@@ -26,6 +26,7 @@ export type IncomeOptions = ColorRangeOption;
 export type BrexitOptions = ColorRangeOption;
 export type BrexitConstituencyOptions = ColorRangeOption;
 export type IMDOptions = ColorRangeOption;
+export type SIMDOptions = ColorRangeOption;
 export type LifeExpectancyOptions = ColorRangeOption;
 
 export type ColorTheme =
@@ -59,6 +60,7 @@ export interface MapOptions {
 	brexitConstituency: BrexitConstituencyOptions;
 	custom: ColorRangeOption;
 	imd: IMDOptions;
+	simd: SIMDOptions;
 	lifeExpectancy: LifeExpectancyOptions;
 	theme: {
 		id: ColorTheme;

@@ -41,3 +41,12 @@ yarn-error.log*
 next-env.d.ts
 
 .vscode
+# Shapefile source files (GeoJSON/TopoJSON are committed instead)
+*.shp
+*.dbf
+*.shx
+*.prj
+*.sbn
+*.sbx
+*.cpg
+*.shp.xml

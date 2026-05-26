@@ -285,6 +285,8 @@ export default memo(function ChartPanel({
 									aggregatedCrimeData={aggregatedData.crime}
 									availableIMDDatasets={datasets.imd}
 									aggregatedIMDData={aggregatedData.imd}
+									availableSIMDDatasets={datasets.simd}
+									aggregatedSIMDData={aggregatedData.simd}
 									availableLifeExpectancyDatasets={
 										datasets.lifeExpectancy
 									}

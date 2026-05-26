@@ -29,12 +29,14 @@ import {
 	getColorForIncome,
 	getColorForBrexitLeave,
 	getColorForIMD,
+	getColorForSIMD,
 	getColor,
 	normalizeValue,
 } from "../colorScale";
 import { IncomeDataset } from "@/lib/types/income";
 import { CustomDataset } from "@/lib/types/custom";
 import { IMDDataset } from "@/lib/types/imd";
+import { SIMDDataset } from "@/lib/types/simd";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { getColorForLifeExpectancy } from "../colorScale";
 
@@ -421,6 +423,22 @@ export class FeatureBuilder {
 			const area = dataset.data[code];
 			const color = area
 				? getColorForIMD(area.imdScore, mapOptions.imd, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildSIMDFeatures(
+		features: Features,
+		dataset: SIMDDataset,
+		dzCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const code = getFeatureProp(feature.properties, dzCodeProp) ?? "";
+			const area = dataset.data[code];
+			const color = area
+				? getColorForSIMD(area.simdRank, mapOptions.simd, mapOptions.theme.id)
 				: DEFAULT_COLOR;
 			return { color };
 		});

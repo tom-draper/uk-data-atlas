@@ -68,6 +68,11 @@ export const GEOJSON_PATHS = {
 			"/data/boundaries/lsoa/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.topojson",
 		),
 	},
+	dataZone: {
+		2011: withCDN(
+			"/data/boundaries/datazone/SG_DataZone_Bdry_2011.topojson",
+		),
+	},
 } as const;
 
 export type BoundaryType = keyof typeof GEOJSON_PATHS;
@@ -110,6 +115,11 @@ export const LSOA_NAME_KEYS = ["LSOA11NM", "LSOA21NM"] as const;
 export type LSOACodeKey = (typeof LSOA_CODE_KEYS)[number];
 export type LSOANameKey = (typeof LSOA_NAME_KEYS)[number];
 
+export const DATA_ZONE_CODE_KEYS = ["DataZone"] as const;
+export const DATA_ZONE_NAME_KEYS = ["Name"] as const;
+export type DataZoneCodeKey = (typeof DATA_ZONE_CODE_KEYS)[number];
+export type DataZoneNameKey = (typeof DATA_ZONE_NAME_KEYS)[number];
+
 export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
 export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
 export type LADCodeKey = (typeof LAD_CODE_KEYS)[number];
@@ -126,6 +136,8 @@ export const PROPERTY_KEYS = {
 	constituencyName: CONSTITUENCY_NAME_KEYS,
 	lsoaCode: LSOA_CODE_KEYS,
 	lsoaName: LSOA_NAME_KEYS,
+	dataZoneCode: DATA_ZONE_CODE_KEYS,
+	dataZoneName: DATA_ZONE_NAME_KEYS,
 } as const;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
@@ -201,6 +213,10 @@ const getPropertyKeys = (type: BoundaryType) => {
 		lsoa: {
 			code: PROPERTY_KEYS.lsoaCode,
 			name: PROPERTY_KEYS.lsoaName,
+		},
+		dataZone: {
+			code: PROPERTY_KEYS.dataZoneCode,
+			name: PROPERTY_KEYS.dataZoneName,
 		},
 	};
 	return keyMap[type];
@@ -326,6 +342,16 @@ export const filterFeatures = (
 
 	// Filter LSOAs by bounding box (no LAD code in simplified topojson)
 	if (type === "lsoa" && locData.bounds) {
+		return {
+			...geojson,
+			features: geojson.features.filter((f) =>
+				isFeatureInBounds(f, locData.bounds!),
+			),
+		};
+	}
+
+	// Filter Data Zones by bounding box
+	if (type === "dataZone" && locData.bounds) {
 		return {
 			...geojson,
 			features: geojson.features.filter((f) =>

@@ -7,15 +7,18 @@ import {
 	ActiveViz,
 	AggregatedCrimeData,
 	AggregatedIMDData,
+	AggregatedSIMDData,
 	AggregatedLifeExpectancyData,
 	Dataset,
 	CrimeDataset,
 	IMDDataset,
+	SIMDDataset,
 	LifeExpectancyDataset,
 	SelectedArea,
 } from "@lib/types";
 import CrimeRateChart from "../crime/CrimeRateChart";
 import IMDChart from "../imd/IMDChart";
+import SIMDChart from "../simd/SIMDChart";
 import LifeExpectancyChart from "./LifeExpectancyChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
@@ -25,6 +28,8 @@ interface SocietySectionProps {
 	aggregatedCrimeData: Record<number, AggregatedCrimeData> | null;
 	availableIMDDatasets: Record<string, IMDDataset>;
 	aggregatedIMDData: Record<number, AggregatedIMDData> | null;
+	availableSIMDDatasets: Record<string, SIMDDataset>;
+	aggregatedSIMDData: Record<number, AggregatedSIMDData> | null;
 	availableLifeExpectancyDatasets: Record<string, LifeExpectancyDataset>;
 	aggregatedLifeExpectancyData: Record<number, AggregatedLifeExpectancyData> | null;
 	selectedArea: SelectedArea | null;
@@ -39,6 +44,8 @@ export default memo(function SocietySection({
 	aggregatedCrimeData,
 	availableIMDDatasets,
 	aggregatedIMDData,
+	availableSIMDDatasets,
+	aggregatedSIMDData,
 	availableLifeExpectancyDatasets,
 	aggregatedLifeExpectancyData,
 	selectedArea,
@@ -50,13 +57,15 @@ export default memo(function SocietySection({
 	const isDark = useIsDark();
 	const showCrime = visibility["society-crime"];
 	const showIMD = visibility["society-imd"];
+	const showSIMD = visibility["society-simd"];
 	const showLE = visibility["society-lifeExpectancy"];
 	const showHLE = visibility["society-healthyLifeExpectancy"];
 
 	const imdYears = Object.keys(availableIMDDatasets).map(Number).sort((a, b) => b - a);
+	const simdYears = Object.keys(availableSIMDDatasets).map(Number).sort((a, b) => b - a);
 	const leIds = Object.keys(availableLifeExpectancyDatasets).sort();
 
-	if (!showCrime && !showIMD && !showLE && !showHLE) return null;
+	if (!showCrime && !showIMD && !showSIMD && !showLE && !showHLE) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
@@ -79,6 +88,18 @@ export default memo(function SocietySection({
 					activeDataset={activeDataset}
 					availableDatasets={availableIMDDatasets}
 					aggregatedData={aggregatedIMDData}
+					selectedArea={selectedArea}
+					year={year}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+			))}
+			{showSIMD && simdYears.map((year) => (
+				<SIMDChart
+					key={year}
+					activeDataset={activeDataset}
+					availableDatasets={availableSIMDDatasets}
+					aggregatedData={aggregatedSIMDData}
 					selectedArea={selectedArea}
 					year={year}
 					activeViz={activeViz}
