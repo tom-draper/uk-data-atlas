@@ -170,6 +170,12 @@ export function useAggregatedData({
                 boundaryType: customDataset?.boundaryType || 'ward',
                 calculateStats: (mapManager, geojson, data, location, id) =>
                     mapManager.calculateCustomDatasetStats(geojson, data, location, id),
+            },
+            qualification: {
+                datasets: datasets.qualification,
+                boundaryType: "localAuthority",
+                calculateStats: (mapManager, geojson, data, location, id) =>
+                    mapManager.calculateQualificationStats(geojson, data, location, id),
             }
         }),
         [datasets, customDataset],
@@ -194,6 +200,7 @@ export function useAggregatedData({
                 wimd: null,
                 nimdm: null,
                 lifeExpectancy: null,
+                qualification: null,
             };
         }
 

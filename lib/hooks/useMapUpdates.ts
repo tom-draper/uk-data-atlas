@@ -121,6 +121,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "qualification":
+					return mapManager.updateMapForQualification(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "lifeExpectancy":
 					return mapManager.updateMapForLifeExpectancy(
 						geojson,

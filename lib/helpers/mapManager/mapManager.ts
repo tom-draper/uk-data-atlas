@@ -27,6 +27,7 @@ import { SIMDDataset } from "@/lib/types/simd";
 import { WIMDDataset } from "@/lib/types/wimd";
 import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
+import { QualificationDataset } from "@/lib/types/qualification";
 
 export interface MapManagerCallbacks {
 	onAreaHover?: (location: SelectedArea | null) => void;
@@ -312,7 +313,7 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | SIMDDataset | WIMDDataset | NIMDMDataset | LifeExpectancyDataset>(
+	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | SIMDDataset | WIMDDataset | NIMDMDataset | LifeExpectancyDataset | QualificationDataset>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
@@ -757,6 +758,36 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateLifeExpectancyStats(
+			geojson,
+			data,
+			location,
+			datasetId,
+		);
+	}
+
+	updateMapForQualification(
+		geojson: BoundaryGeojson,
+		dataset: QualificationDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildQualificationFeatures.bind(this.featureBuilder),
+			"qualification",
+			dataset.data,
+		);
+	}
+
+	calculateQualificationStats(
+		geojson: BoundaryGeojson,
+		data: QualificationDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateQualificationStats(
 			geojson,
 			data,
 			location,

@@ -42,7 +42,8 @@ import { SIMDDataset } from "@/lib/types/simd";
 import { WIMDDataset } from "@/lib/types/wimd";
 import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
-import { getColorForLifeExpectancy } from "../colorScale";
+import { QualificationDataset } from "@/lib/types/qualification";
+import { getColorForLifeExpectancy, getColorForQualification } from "../colorScale";
 
 export const DEFAULT_COLOR = "#cccccc";
 
@@ -475,6 +476,24 @@ export class FeatureBuilder {
 			const area = dataset.data[code];
 			const color = area
 				? getColorForNIMDM(area.nimdmRank, mapOptions.nimdm, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildQualificationFeatures(
+		features: Features,
+		dataset: QualificationDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const area = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+			const pct = area && area.breakdown.total > 0
+				? (area.breakdown.level4Plus / area.breakdown.total) * 100
+				: null;
+			const color = pct !== null
+				? getColorForQualification(pct, mapOptions.qualification, mapOptions.theme.id)
 				: DEFAULT_COLOR;
 			return { color };
 		});

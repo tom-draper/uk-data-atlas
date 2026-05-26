@@ -1,7 +1,7 @@
 import { NIMDMDataset, NIMDMLSOAData } from "@/lib/types/nimdm";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
-import { parseNum, parseNumInt } from "../helpers/parseNumber";
+import { parseNumInt } from "../helpers/parseNumber";
 import { useDataLoader } from "./useDataLoader";
 
 const LGD_CODES: Record<string, string> = {
@@ -18,6 +18,8 @@ const LGD_CODES: Record<string, string> = {
 	"Ards and North Down": "N09000011",
 };
 
+const TOTAL_SOAS = 890;
+
 function pick(row: Record<string, any>, ...keys: string[]): string {
 	for (const k of keys) {
 		const v = row[k];
@@ -26,10 +28,20 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 	return "";
 }
 
+// Find a column whose key contains the given substring (handles newlines in headers)
+function pickBySubstring(row: Record<string, any>, substring: string): string {
+	for (const [k, v] of Object.entries(row)) {
+		if (k.replace(/\s+/g, " ").includes(substring) && v !== undefined && v !== null && v !== "") {
+			return String(v).trim();
+		}
+	}
+	return "";
+}
+
 export const useNIMDMData = () => {
 	return useDataLoader<NIMDMDataset>(async () => {
 		const response = await fetch(
-			withCDN("/data/nimdm/nimdm2017.csv"),
+			withCDN("/data/nimdm/NIMDM17_SOAresults.csv"),
 		);
 		if (!response.ok)
 			throw new Error(`Failed to fetch NIMDM data: ${response.statusText}`);
@@ -38,24 +50,24 @@ export const useNIMDMData = () => {
 
 		const records: Record<string, NIMDMLSOAData> = {};
 		for (const row of data as any[]) {
-			const soaCode = pick(row, "SOA2011", "SOA Code", "SOA_Code", "soa_code", "SOA", "SuperOutputArea");
+			const soaCode = pick(row, "SOA2001", "SOA2011", "SOA_Code", "SOA");
 			if (!soaCode) continue;
 
-			const lgdName = pick(row, "LGD2014", "LGD", "Local Government District", "lgd_name", "LGD_Name", "Council");
-			const lgdCode = pick(row, "LGD2014_Code", "LGD Code", "lgd_code")
-				|| LGD_CODES[lgdName]
-				|| "";
+			const lgdName = pick(row, "LGD2014NAME", "LGD2014", "LGD", "Council");
+			const lgdCode = LGD_CODES[lgdName] ?? "";
 
-			const nimdmRank = parseNumInt(pick(row, "MDM Rank", "NIMDM Rank", "Rank", "Overall MDM Rank", "MDM_Rank", "nimdm_rank"));
-			const nimdmScore = parseNum(pick(row, "MDM Score", "NIMDM Score", "Score", "Overall MDM Score", "MDM_Score", "nimdm_score"));
-			const nimdmDecile = parseNumInt(pick(row, "MDM Decile", "NIMDM Decile", "Decile", "MDM_Decile", "nimdm_decile"));
+			const nimdmRank = parseNumInt(
+				pickBySubstring(row, "Multiple Deprivation Measure Rank"),
+			);
+			if (!nimdmRank) continue;
+
+			const nimdmDecile = Math.ceil((nimdmRank / TOTAL_SOAS) * 10);
 
 			records[soaCode] = {
 				soaCode,
-				soaName: pick(row, "SOA2011 Name", "SOA Name", "SOA_Name", "soa_name", "Name"),
+				soaName: pick(row, "SOA2001_name", "SOA2011_name", "SOA Name"),
 				lgdCode,
 				lgdName,
-				nimdmScore,
 				nimdmRank,
 				nimdmDecile,
 			};

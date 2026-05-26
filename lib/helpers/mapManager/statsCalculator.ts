@@ -32,6 +32,7 @@ import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
 import { WIMDDataset, AggregatedWIMDData } from "@/lib/types/wimd";
 import { NIMDMDataset, AggregatedNIMDMData } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset, AggregatedLifeExpectancyData } from "@/lib/types/lifeExpectancy";
+import { QualificationDataset, AggregatedQualificationData, QualificationBreakdown } from "@/lib/types/qualification";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -655,7 +656,6 @@ export class StatsCalculator {
 		if (cached) return cached;
 
 		const soaCodeProp = this.propertyDetector.detectSOACode(geojson.features);
-		let totalScore = 0;
 		let totalDecile = 0;
 		let count = 0;
 
@@ -663,14 +663,12 @@ export class StatsCalculator {
 			const code = getFeatureProp(feature.properties, soaCodeProp) ?? "";
 			const record = nimdmData[code];
 			if (record) {
-				totalScore += record.nimdmScore;
 				totalDecile += record.nimdmDecile;
 				count++;
 			}
 		}
 
 		const stats: AggregatedNIMDMData = {
-			averageNIMDMScore: count > 0 ? totalScore / count : 0,
 			averageNIMDMDecile: count > 0 ? totalDecile / count : 0,
 		};
 
@@ -886,5 +884,50 @@ export class StatsCalculator {
 			totalArea: aggregated.totalArea,
 			density,
 		};
+	}
+
+	calculateQualificationStats(
+		geojson: BoundaryGeojson,
+		qualData: QualificationDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedQualificationData {
+		const cacheKey = `qualification-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedQualificationData | null;
+		if (cached) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		const seen = new Set<string>();
+		const total: QualificationBreakdown = {
+			noQualifications: 0,
+			level1: 0,
+			level2: 0,
+			apprenticeship: 0,
+			level3: 0,
+			level4Plus: 0,
+			other: 0,
+			total: 0,
+		};
+
+		for (const feature of geojson.features) {
+			const code = getFeatureProp(feature.properties, ladCodeProp) ?? "";
+			if (seen.has(code)) continue;
+			seen.add(code);
+			const record = qualData[code];
+			if (!record) continue;
+			const b = record.breakdown;
+			total.noQualifications += b.noQualifications;
+			total.level1 += b.level1;
+			total.level2 += b.level2;
+			total.apprenticeship += b.apprenticeship;
+			total.level3 += b.level3;
+			total.level4Plus += b.level4Plus;
+			total.other += b.other;
+			total.total += b.total;
+		}
+
+		const result: AggregatedQualificationData = { breakdown: total };
+		this.cache.set(cacheKey, result);
+		return result;
 	}
 }

@@ -33,6 +33,7 @@ import { useSIMDData } from "./useSIMDData";
 import { useWIMDData } from "./useWIMDData";
 import { useNIMDMData } from "./useNIMDMData";
 import { useLifeExpectancyData } from "./useLifeExpectancyData";
+import { useQualificationData } from "./useQualificationData";
 
 export interface UseDatasetsResult {
 	datasets: Datasets;
@@ -56,6 +57,7 @@ export function useDatasets(): UseDatasetsResult {
 	const wimd = useWIMDData();
 	const nimdm = useNIMDMData();
 	const lifeExpectancy = useLifeExpectancyData(isEnabled("society-healthyLifeExpectancy"));
+	const qualification = useQualificationData();
 
 	// Combine datasets
 	const datasets = useMemo(
@@ -74,6 +76,7 @@ export function useDatasets(): UseDatasetsResult {
 			wimd: wimd.datasets,
 			nimdm: nimdm.datasets,
 			lifeExpectancy: lifeExpectancy.datasets,
+			qualification: qualification.datasets,
 		}),
 		[
 			localElection.datasets,
@@ -90,6 +93,7 @@ export function useDatasets(): UseDatasetsResult {
 			wimd.datasets,
 			nimdm.datasets,
 			lifeExpectancy.datasets,
+			qualification.datasets,
 		],
 	);
 
@@ -108,7 +112,8 @@ export function useDatasets(): UseDatasetsResult {
 		simd.loading ||
 		wimd.loading ||
 		nimdm.loading ||
-		lifeExpectancy.loading;
+		lifeExpectancy.loading ||
+		qualification.loading;
 
 	// Collect all errors
 	const errors = useMemo(() => {
@@ -127,6 +132,7 @@ export function useDatasets(): UseDatasetsResult {
 		if (wimd.error) errs.push(wimd.error);
 		if (nimdm.error) errs.push(nimdm.error);
 		if (lifeExpectancy.error) errs.push(lifeExpectancy.error);
+		if (qualification.error) errs.push(qualification.error);
 		return errs;
 	}, [
 		localElection.error,
@@ -143,6 +149,7 @@ export function useDatasets(): UseDatasetsResult {
 		wimd.error,
 		nimdm.error,
 		lifeExpectancy.error,
+		qualification.error,
 	]);
 
 	return { datasets, loading, errors };

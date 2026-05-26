@@ -17,6 +17,7 @@ import { AggregatedSIMDData, SIMDDataset } from "./simd";
 import { AggregatedWIMDData, WIMDDataset } from "./wimd";
 import { AggregatedNIMDMData, NIMDMDataset } from "./nimdm";
 import { AggregatedLifeExpectancyData, LifeExpectancyDataset } from "./lifeExpectancy";
+import { AggregatedQualificationData, QualificationDataset } from "./qualification";
 
 export type Dataset =
     | LocalElectionDataset
@@ -33,7 +34,8 @@ export type Dataset =
     | SIMDDataset
     | WIMDDataset
     | NIMDMDataset
-    | LifeExpectancyDataset;
+    | LifeExpectancyDataset
+    | QualificationDataset;
 
 export type Datasets = {
     localElection: Record<string, LocalElectionDataset>;
@@ -50,6 +52,7 @@ export type Datasets = {
     wimd: Record<string, WIMDDataset>;
     nimdm: Record<string, NIMDMDataset>;
     lifeExpectancy: Record<string, LifeExpectancyDataset>;
+    qualification: Record<string, QualificationDataset>;
 };
 
 export type AggregatedData = {
@@ -68,6 +71,7 @@ export type AggregatedData = {
     wimd: Record<number, AggregatedWIMDData> | null;
     nimdm: Record<number, AggregatedNIMDMData> | null;
     lifeExpectancy: Record<string, AggregatedLifeExpectancyData> | null;
+    qualification: Record<number, AggregatedQualificationData> | null;
 };
 
 export type ActiveViz = {
