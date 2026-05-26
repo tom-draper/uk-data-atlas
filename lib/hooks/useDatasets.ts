@@ -30,6 +30,7 @@ import { useBrexitData } from "./useBrexitData";
 import { useBrexitConstituencyData } from "./useBrexitConstituencyData";
 import { useIMDData } from "./useIMDData";
 import { useSIMDData } from "./useSIMDData";
+import { useWIMDData } from "./useWIMDData";
 import { useLifeExpectancyData } from "./useLifeExpectancyData";
 
 export interface UseDatasetsResult {
@@ -51,6 +52,7 @@ export function useDatasets(): UseDatasetsResult {
 	const brexitConstituency = useBrexitConstituencyData(isEnabled("brexit-hanretty"));
 	const imd = useIMDData();
 	const simd = useSIMDData();
+	const wimd = useWIMDData();
 	const lifeExpectancy = useLifeExpectancyData(isEnabled("society-healthyLifeExpectancy"));
 
 	// Combine datasets
@@ -67,6 +69,7 @@ export function useDatasets(): UseDatasetsResult {
 			brexitConstituency: brexitConstituency.datasets,
 			imd: imd.datasets,
 			simd: simd.datasets,
+			wimd: wimd.datasets,
 			lifeExpectancy: lifeExpectancy.datasets,
 		}),
 		[
@@ -81,6 +84,7 @@ export function useDatasets(): UseDatasetsResult {
 			brexitConstituency.datasets,
 			imd.datasets,
 			simd.datasets,
+			wimd.datasets,
 			lifeExpectancy.datasets,
 		],
 	);
@@ -98,6 +102,7 @@ export function useDatasets(): UseDatasetsResult {
 		brexitConstituency.loading ||
 		imd.loading ||
 		simd.loading ||
+		wimd.loading ||
 		lifeExpectancy.loading;
 
 	// Collect all errors
@@ -114,6 +119,7 @@ export function useDatasets(): UseDatasetsResult {
 		if (brexitConstituency.error) errs.push(brexitConstituency.error);
 		if (imd.error) errs.push(imd.error);
 		if (simd.error) errs.push(simd.error);
+		if (wimd.error) errs.push(wimd.error);
 		if (lifeExpectancy.error) errs.push(lifeExpectancy.error);
 		return errs;
 	}, [
@@ -128,6 +134,7 @@ export function useDatasets(): UseDatasetsResult {
 		brexitConstituency.error,
 		imd.error,
 		simd.error,
+		wimd.error,
 		lifeExpectancy.error,
 	]);
 

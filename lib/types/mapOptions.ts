@@ -27,6 +27,7 @@ export type BrexitOptions = ColorRangeOption;
 export type BrexitConstituencyOptions = ColorRangeOption;
 export type IMDOptions = ColorRangeOption;
 export type SIMDOptions = ColorRangeOption;
+export type WIMDOptions = ColorRangeOption;
 export type LifeExpectancyOptions = ColorRangeOption;
 
 export type ColorTheme =
@@ -61,6 +62,7 @@ export interface MapOptions {
 	custom: ColorRangeOption;
 	imd: IMDOptions;
 	simd: SIMDOptions;
+	wimd: WIMDOptions;
 	lifeExpectancy: LifeExpectancyOptions;
 	theme: {
 		id: ColorTheme;

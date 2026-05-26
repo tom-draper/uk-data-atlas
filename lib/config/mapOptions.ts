@@ -36,6 +36,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	custom: { colorRange: { min: 0, max: 100 } },
 	imd: { colorRange: { min: 1, max: 70 } },
 	simd: { colorRange: { min: 1, max: 6976 } },
+	wimd: { colorRange: { min: 1, max: 1909 } },
 	lifeExpectancy: { colorRange: { min: 72, max: 84 } },
 	theme: {
 		id: "viridis",

@@ -22,6 +22,7 @@ export type ChartKey =
 	| "society-crime"
 	| "society-imd"
 	| "society-simd"
+	| "society-wimd"
 	| "society-lifeExpectancy"
 	| "society-healthyLifeExpectancy";
 
@@ -52,6 +53,7 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 	{ group: "Society", key: "society-crime", label: "Crime Rate [2025]" },
 	{ group: "Society", key: "society-imd", label: "Deprivation (IMD) [2019]" },
 	{ group: "Society", key: "society-simd", label: "Deprivation (SIMD) [2020]" },
+	{ group: "Society", key: "society-wimd", label: "Deprivation (WIMD) [2019]" },
 	{ group: "Society", key: "society-lifeExpectancy", label: "Life Expectancy [2020-2022]" },
 	{ group: "Society", key: "society-healthyLifeExpectancy", label: "Healthy Life Expectancy [2020-2022]" },
 ];
@@ -77,6 +79,7 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"society-crime": true,
 	"society-imd": true,
 	"society-simd": true,
+	"society-wimd": true,
 	"society-lifeExpectancy": true,
 	"society-healthyLifeExpectancy": false,
 };

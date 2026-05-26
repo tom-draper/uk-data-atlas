@@ -14,6 +14,7 @@ import { AggregatedCustomData, CustomDataset } from "./custom";
 import { AggregatedBrexitData, BrexitConstituencyDataset, BrexitLADDataset } from "./referendum";
 import { AggregatedIMDData, IMDDataset } from "./imd";
 import { AggregatedSIMDData, SIMDDataset } from "./simd";
+import { AggregatedWIMDData, WIMDDataset } from "./wimd";
 import { AggregatedLifeExpectancyData, LifeExpectancyDataset } from "./lifeExpectancy";
 
 export type Dataset =
@@ -29,6 +30,7 @@ export type Dataset =
     | CustomDataset
     | IMDDataset
     | SIMDDataset
+    | WIMDDataset
     | LifeExpectancyDataset;
 
 export type Datasets = {
@@ -43,6 +45,7 @@ export type Datasets = {
     brexitConstituency: Record<string, BrexitConstituencyDataset>;
     imd: Record<string, IMDDataset>;
     simd: Record<string, SIMDDataset>;
+    wimd: Record<string, WIMDDataset>;
     lifeExpectancy: Record<string, LifeExpectancyDataset>;
 };
 
@@ -59,6 +62,7 @@ export type AggregatedData = {
     custom: Record<number, AggregatedCustomData> | null;
     imd: Record<number, AggregatedIMDData> | null;
     simd: Record<number, AggregatedSIMDData> | null;
+    wimd: Record<number, AggregatedWIMDData> | null;
     lifeExpectancy: Record<string, AggregatedLifeExpectancyData> | null;
 };
 
