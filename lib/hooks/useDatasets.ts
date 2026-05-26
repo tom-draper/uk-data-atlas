@@ -31,6 +31,7 @@ import { useBrexitConstituencyData } from "./useBrexitConstituencyData";
 import { useIMDData } from "./useIMDData";
 import { useSIMDData } from "./useSIMDData";
 import { useWIMDData } from "./useWIMDData";
+import { useNIMDMData } from "./useNIMDMData";
 import { useLifeExpectancyData } from "./useLifeExpectancyData";
 
 export interface UseDatasetsResult {
@@ -53,6 +54,7 @@ export function useDatasets(): UseDatasetsResult {
 	const imd = useIMDData();
 	const simd = useSIMDData();
 	const wimd = useWIMDData();
+	const nimdm = useNIMDMData();
 	const lifeExpectancy = useLifeExpectancyData(isEnabled("society-healthyLifeExpectancy"));
 
 	// Combine datasets
@@ -70,6 +72,7 @@ export function useDatasets(): UseDatasetsResult {
 			imd: imd.datasets,
 			simd: simd.datasets,
 			wimd: wimd.datasets,
+			nimdm: nimdm.datasets,
 			lifeExpectancy: lifeExpectancy.datasets,
 		}),
 		[
@@ -85,6 +88,7 @@ export function useDatasets(): UseDatasetsResult {
 			imd.datasets,
 			simd.datasets,
 			wimd.datasets,
+			nimdm.datasets,
 			lifeExpectancy.datasets,
 		],
 	);
@@ -103,6 +107,7 @@ export function useDatasets(): UseDatasetsResult {
 		imd.loading ||
 		simd.loading ||
 		wimd.loading ||
+		nimdm.loading ||
 		lifeExpectancy.loading;
 
 	// Collect all errors
@@ -120,6 +125,7 @@ export function useDatasets(): UseDatasetsResult {
 		if (imd.error) errs.push(imd.error);
 		if (simd.error) errs.push(simd.error);
 		if (wimd.error) errs.push(wimd.error);
+		if (nimdm.error) errs.push(nimdm.error);
 		if (lifeExpectancy.error) errs.push(lifeExpectancy.error);
 		return errs;
 	}, [
@@ -135,6 +141,7 @@ export function useDatasets(): UseDatasetsResult {
 		imd.error,
 		simd.error,
 		wimd.error,
+		nimdm.error,
 		lifeExpectancy.error,
 	]);
 

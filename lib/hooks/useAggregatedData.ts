@@ -152,6 +152,12 @@ export function useAggregatedData({
                 calculateStats: (mapManager, geojson, data, location, id) =>
                     mapManager.calculateWIMDStats(geojson, data, location, id),
             },
+            nimdm: {
+                datasets: datasets.nimdm,
+                boundaryType: "superOutputArea",
+                calculateStats: (mapManager, geojson, data, location, id) =>
+                    mapManager.calculateNIMDMStats(geojson, data, location, id),
+            },
             lifeExpectancy: {
                 datasets: datasets.lifeExpectancy,
                 boundaryType: "localAuthority",
@@ -186,6 +192,7 @@ export function useAggregatedData({
                 imd: null,
                 simd: null,
                 wimd: null,
+                nimdm: null,
                 lifeExpectancy: null,
             };
         }

@@ -289,6 +289,8 @@ export default memo(function ChartPanel({
 									aggregatedSIMDData={aggregatedData.simd}
 									availableWIMDDatasets={datasets.wimd}
 									aggregatedWIMDData={aggregatedData.wimd}
+									availableNIMDMDatasets={datasets.nimdm}
+									aggregatedNIMDMData={aggregatedData.nimdm}
 									availableLifeExpectancyDatasets={
 										datasets.lifeExpectancy
 									}

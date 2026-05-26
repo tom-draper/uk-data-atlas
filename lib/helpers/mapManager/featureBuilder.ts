@@ -31,6 +31,7 @@ import {
 	getColorForIMD,
 	getColorForSIMD,
 	getColorForWIMD,
+	getColorForNIMDM,
 	getColor,
 	normalizeValue,
 } from "../colorScale";
@@ -39,6 +40,7 @@ import { CustomDataset } from "@/lib/types/custom";
 import { IMDDataset } from "@/lib/types/imd";
 import { SIMDDataset } from "@/lib/types/simd";
 import { WIMDDataset } from "@/lib/types/wimd";
+import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { getColorForLifeExpectancy } from "../colorScale";
 
@@ -457,6 +459,22 @@ export class FeatureBuilder {
 			const area = dataset.data[code];
 			const color = area
 				? getColorForWIMD(area.wimdRank, mapOptions.wimd, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildNIMDMFeatures(
+		features: Features,
+		dataset: NIMDMDataset,
+		soaCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const code = getFeatureProp(feature.properties, soaCodeProp) ?? "";
+			const area = dataset.data[code];
+			const color = area
+				? getColorForNIMDM(area.nimdmRank, mapOptions.nimdm, mapOptions.theme.id)
 				: DEFAULT_COLOR;
 			return { color };
 		});

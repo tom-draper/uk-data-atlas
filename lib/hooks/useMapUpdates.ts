@@ -114,6 +114,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "nimdm":
+					return mapManager.updateMapForNIMDM(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "lifeExpectancy":
 					return mapManager.updateMapForLifeExpectancy(
 						geojson,

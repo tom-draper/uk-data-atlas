@@ -25,6 +25,7 @@ import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset } from "@/lib/types/imd";
 import { SIMDDataset } from "@/lib/types/simd";
 import { WIMDDataset } from "@/lib/types/wimd";
+import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 
 export interface MapManagerCallbacks {
@@ -311,7 +312,7 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | SIMDDataset | WIMDDataset | LifeExpectancyDataset>(
+	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | SIMDDataset | WIMDDataset | NIMDMDataset | LifeExpectancyDataset>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
@@ -696,6 +697,36 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateWIMDStats(
+			geojson,
+			data,
+			location,
+			datasetId,
+		);
+	}
+
+	updateMapForNIMDM(
+		geojson: BoundaryGeojson,
+		dataset: NIMDMDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectSOACode.bind(this.propertyDetector),
+			this.featureBuilder.buildNIMDMFeatures.bind(this.featureBuilder),
+			"nimdm",
+			dataset.data,
+		);
+	}
+
+	calculateNIMDMStats(
+		geojson: BoundaryGeojson,
+		data: NIMDMDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateNIMDMStats(
 			geojson,
 			data,
 			location,

@@ -16,4 +16,5 @@ export * from "./areas";
 export * from "./imd";
 export * from "./simd";
 export * from "./wimd";
+export * from "./nimdm";
 export * from "./lifeExpectancy";

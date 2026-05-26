@@ -73,6 +73,11 @@ export const GEOJSON_PATHS = {
 			"/data/boundaries/datazone/SG_DataZone_Bdry_2011.topojson",
 		),
 	},
+	superOutputArea: {
+		2011: withCDN(
+			"/data/boundaries/superOutputArea/NI_SOA_2011.topojson",
+		),
+	},
 } as const;
 
 export type BoundaryType = keyof typeof GEOJSON_PATHS;
@@ -120,6 +125,11 @@ export const DATA_ZONE_NAME_KEYS = ["Name"] as const;
 export type DataZoneCodeKey = (typeof DATA_ZONE_CODE_KEYS)[number];
 export type DataZoneNameKey = (typeof DATA_ZONE_NAME_KEYS)[number];
 
+export const SOA_CODE_KEYS = ["SOA_CODE", "SOA2011", "SOA"] as const;
+export const SOA_NAME_KEYS = ["SOA_LABEL", "SOA2011 Name", "SOA Name"] as const;
+export type SOACodeKey = (typeof SOA_CODE_KEYS)[number];
+export type SOANameKey = (typeof SOA_NAME_KEYS)[number];
+
 export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
 export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
 export type LADCodeKey = (typeof LAD_CODE_KEYS)[number];
@@ -138,6 +148,8 @@ export const PROPERTY_KEYS = {
 	lsoaName: LSOA_NAME_KEYS,
 	dataZoneCode: DATA_ZONE_CODE_KEYS,
 	dataZoneName: DATA_ZONE_NAME_KEYS,
+	soaCode: SOA_CODE_KEYS,
+	soaName: SOA_NAME_KEYS,
 } as const;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
@@ -217,6 +229,10 @@ const getPropertyKeys = (type: BoundaryType) => {
 		dataZone: {
 			code: PROPERTY_KEYS.dataZoneCode,
 			name: PROPERTY_KEYS.dataZoneName,
+		},
+		superOutputArea: {
+			code: PROPERTY_KEYS.soaCode,
+			name: PROPERTY_KEYS.soaName,
 		},
 	};
 	return keyMap[type];
@@ -352,6 +368,16 @@ export const filterFeatures = (
 
 	// Filter Data Zones by bounding box
 	if (type === "dataZone" && locData.bounds) {
+		return {
+			...geojson,
+			features: geojson.features.filter((f) =>
+				isFeatureInBounds(f, locData.bounds!),
+			),
+		};
+	}
+
+	// Filter NI Super Output Areas by bounding box
+	if (type === "superOutputArea" && locData.bounds) {
 		return {
 			...geojson,
 			features: geojson.features.filter((f) =>

@@ -22,6 +22,9 @@ type ColorRangeDatasetKey =
 	| "brexit"
 	| "brexitConstituency"
 	| "imd"
+	| "simd"
+	| "wimd"
+	| "nimdm"
 	| "lifeExpectancy"
 	| "custom";
 
@@ -303,6 +306,18 @@ export default memo(function LegendPanel({
 
 			case "imd":
 				return renderDynamicLegend("imd", 0, 80, 1, 70);
+
+			case "simd":
+				return renderDynamicLegend("simd", 1, 6976, 1, 6976,
+					(v) => v <= 1 ? "Most deprived" : v >= 6975 ? "Least deprived" : `Rank ${Math.round(v).toLocaleString()}`);
+
+			case "wimd":
+				return renderDynamicLegend("wimd", 1, 1909, 1, 1909,
+					(v) => v <= 1 ? "Most deprived" : v >= 1908 ? "Least deprived" : `Rank ${Math.round(v).toLocaleString()}`);
+
+			case "nimdm":
+				return renderDynamicLegend("nimdm", 1, 890, 1, 890,
+					(v) => v <= 1 ? "Most deprived" : v >= 889 ? "Least deprived" : `Rank ${Math.round(v).toLocaleString()}`);
 
 			case "ethnicity": {
 				const opts = displayOptions.ethnicity;
