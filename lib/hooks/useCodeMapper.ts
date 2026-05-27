@@ -9,7 +9,13 @@ import {
 	getProp,
 } from "../data/boundaries/boundaries";
 
-export type CodeType = "ward" | "localAuthority" | "constituency" | "lsoa" | "dataZone" | "superOutputArea";
+export type CodeType =
+	| "ward"
+	| "localAuthority"
+	| "constituency"
+	| "lsoa"
+	| "dataZone"
+	| "superOutputArea";
 export type YearCode = number;
 
 /** Shared type for the codeMapper prop passed to chart sections and sub-components. */
@@ -20,7 +26,10 @@ export interface CodeMapper {
 		targetYear: number,
 	) => string | undefined;
 	getWardsForLad: (ladCode: string, year: number) => string[];
-	getWardsForConstituency: (constituencyCode: string, wardYear: number) => string[];
+	getWardsForConstituency: (
+		constituencyCode: string,
+		wardYear: number,
+	) => string[];
 }
 
 export interface CodeMapping {
@@ -87,7 +96,8 @@ export function useCodeMapper() {
 			const yearMappings = codeMappingsRef.current.ward[wardCode];
 			if (yearMappings) {
 				for (const equivalentCode of Object.values(yearMappings)) {
-					const lad = wardToLadMapRef.current[equivalentCode as string];
+					const lad =
+						wardToLadMapRef.current[equivalentCode as string];
 					if (lad) return lad;
 				}
 			}
@@ -125,7 +135,9 @@ export function useCodeMapper() {
 			// Some ward GeoJSON years don't embed LAD codes (e.g. 2023 has no LAD23CD).
 			// Fall back through available years to find a mapping for this LAD.
 			const map = ladToWardsMapRef.current;
-			const fallbackYears = [2024, 2022, 2021, 2023].filter((y) => y !== year);
+			const fallbackYears = [2024, 2022, 2021, 2023].filter(
+				(y) => y !== year,
+			);
 			for (const fy of fallbackYears) {
 				const result = map[fy]?.[ladCode];
 				if (result?.length) return result;
@@ -181,14 +193,19 @@ export function useCodeMapper() {
 	const getWardsForConstituency = useCallback(
 		(constituencyCode: string, wardYear: YearCode): string[] => {
 			// Direct lookup for this ward year
-			const direct = constituencyToWardsMapRef.current[wardYear]?.[constituencyCode];
+			const direct =
+				constituencyToWardsMapRef.current[wardYear]?.[constituencyCode];
 			if (direct?.length) return direct;
 
 			// If not found, try mapping the constituency code to 2024 (the reference year
 			// used when building the constituency->wards index) via cross-year mapping
-			const pcon2024 = codeMappingsRef.current.constituency[constituencyCode]?.[2024];
+			const pcon2024 =
+				codeMappingsRef.current.constituency[constituencyCode]?.[2024];
 			if (pcon2024) {
-				return constituencyToWardsMapRef.current[wardYear]?.[pcon2024] || [];
+				return (
+					constituencyToWardsMapRef.current[wardYear]?.[pcon2024] ||
+					[]
+				);
 			}
 			return [];
 		},
@@ -372,27 +389,50 @@ export function useCodeMapper() {
 
 	// Stable object reference — all functions are useCallback([]), so this
 	// never changes identity and memo-wrapped consumers never see a "new" codeMapper
-	return useMemo(() => ({
-		getLadForWard,
-		addWardLadMapping,
-		addWardLadMappings,
-		getWardsForLad,
-		addLadWardMapping,
-		addLadWardMappings,
-		addConstituencyWardMappings,
-		getWardsForConstituency,
-		addCodeMapping,
-		addCodeMappings,
-		getCodeForYear,
-		getAllEquivalentCodes,
-		findSourceCodes,
-		getHighlightCodes,
-		clearAllMappings,
-		clearWardLadMap,
-		clearLadWardMap,
-		clearCodeMappings,
-		getMappingCounts,
-	}), [getLadForWard, addWardLadMapping, addWardLadMappings, getWardsForLad, addLadWardMapping, addLadWardMappings, addConstituencyWardMappings, getWardsForConstituency, addCodeMapping, addCodeMappings, getCodeForYear, getAllEquivalentCodes, findSourceCodes, getHighlightCodes, clearAllMappings, clearWardLadMap, clearLadWardMap, clearCodeMappings, getMappingCounts]);
+	return useMemo(
+		() => ({
+			getLadForWard,
+			addWardLadMapping,
+			addWardLadMappings,
+			getWardsForLad,
+			addLadWardMapping,
+			addLadWardMappings,
+			addConstituencyWardMappings,
+			getWardsForConstituency,
+			addCodeMapping,
+			addCodeMappings,
+			getCodeForYear,
+			getAllEquivalentCodes,
+			findSourceCodes,
+			getHighlightCodes,
+			clearAllMappings,
+			clearWardLadMap,
+			clearLadWardMap,
+			clearCodeMappings,
+			getMappingCounts,
+		}),
+		[
+			getLadForWard,
+			addWardLadMapping,
+			addWardLadMappings,
+			getWardsForLad,
+			addLadWardMapping,
+			addLadWardMappings,
+			addConstituencyWardMappings,
+			getWardsForConstituency,
+			addCodeMapping,
+			addCodeMappings,
+			getCodeForYear,
+			getAllEquivalentCodes,
+			findSourceCodes,
+			getHighlightCodes,
+			clearAllMappings,
+			clearWardLadMap,
+			clearLadWardMap,
+			clearCodeMappings,
+			getMappingCounts,
+		],
+	);
 }
 
 /**
@@ -493,7 +533,10 @@ export const buildCrossYearMappings = (
 			if (code && name) {
 				// For ward boundaries, scope name matching within LAD to prevent
 				// cross-authority collisions (e.g. two areas both having a "Pemberton" ward).
-				const ladCode = type === "ward" ? getProp(props, PROPERTY_KEYS.ladCode) : null;
+				const ladCode =
+					type === "ward"
+						? getProp(props, PROPERTY_KEYS.ladCode)
+						: null;
 				const normalizedName = ladCode
 					? `${name.toLowerCase().trim()}|${ladCode}`
 					: name.toLowerCase().trim();
@@ -567,9 +610,14 @@ export const buildCodeMappingsFromLookup = (
 function pointInPolygon(px: number, py: number, ring: number[][]): boolean {
 	let inside = false;
 	for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-		const xi = ring[i][0], yi = ring[i][1];
-		const xj = ring[j][0], yj = ring[j][1];
-		if (yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
+		const xi = ring[i][0],
+			yi = ring[i][1];
+		const xj = ring[j][0],
+			yj = ring[j][1];
+		if (
+			yi > py !== yj > py &&
+			px < ((xj - xi) * (py - yi)) / (yj - yi) + xi
+		) {
 			inside = !inside;
 		}
 	}
@@ -588,22 +636,33 @@ export const buildConstituencyWardMappings = (
 ): Record<string, string[]> => {
 	interface ConEntry {
 		code: string;
-		minX: number; minY: number; maxX: number; maxY: number;
+		minX: number;
+		minY: number;
+		maxX: number;
+		maxY: number;
 		rings: number[][][];
 	}
 
 	const constituencies: ConEntry[] = [];
 	for (const feature of constituencyGeoJSON.features) {
-		const code = getProp(feature.properties, PROPERTY_KEYS.constituencyCode);
+		const code = getProp(
+			feature.properties,
+			PROPERTY_KEYS.constituencyCode,
+		);
 		if (!code) continue;
 
 		const geom = feature.geometry as any;
 		const outerRings: number[][][] =
 			geom.type === "MultiPolygon"
-				? (geom.coordinates as number[][][][]).map((p: number[][][]) => p[0])
+				? (geom.coordinates as number[][][][]).map(
+						(p: number[][][]) => p[0],
+					)
 				: [geom.coordinates[0] as number[][]];
 
-		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+		let minX = Infinity,
+			minY = Infinity,
+			maxX = -Infinity,
+			maxY = -Infinity;
 		for (const ring of outerRings) {
 			for (const [x, y] of ring) {
 				if (x < minX) minX = x;
@@ -612,7 +671,14 @@ export const buildConstituencyWardMappings = (
 				if (y > maxY) maxY = y;
 			}
 		}
-		constituencies.push({ code, minX, minY, maxX, maxY, rings: outerRings });
+		constituencies.push({
+			code,
+			minX,
+			minY,
+			maxX,
+			maxY,
+			rings: outerRings,
+		});
 	}
 
 	const mappings: Record<string, string[]> = {};
@@ -627,17 +693,30 @@ export const buildConstituencyWardMappings = (
 				? (geom.coordinates as number[][][][])[0][0]
 				: geom.coordinates[0];
 
-		let cx = 0, cy = 0;
-		for (const [x, y] of outerRing) { cx += x; cy += y; }
+		let cx = 0,
+			cy = 0;
+		for (const [x, y] of outerRing) {
+			cx += x;
+			cy += y;
+		}
 		cx /= outerRing.length;
 		cy /= outerRing.length;
 
 		for (const con of constituencies) {
-			if (cx < con.minX || cx > con.maxX || cy < con.minY || cy > con.maxY) continue;
+			if (
+				cx < con.minX ||
+				cx > con.maxX ||
+				cy < con.minY ||
+				cy > con.maxY
+			)
+				continue;
 
 			let matched = false;
 			for (const ring of con.rings) {
-				if (pointInPolygon(cx, cy, ring)) { matched = true; break; }
+				if (pointInPolygon(cx, cy, ring)) {
+					matched = true;
+					break;
+				}
 			}
 
 			if (matched) {

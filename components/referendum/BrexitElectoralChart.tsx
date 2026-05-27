@@ -14,7 +14,11 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
 interface BrexitChartProps {
 	activeDataset: Dataset | null;
@@ -103,8 +107,17 @@ export default memo(function BrexitElectoralChart({
 	const hasData = brexitStats !== null;
 
 	const result = hasData ? (pctLeave > pctRemain ? "leave" : "remain") : null;
-	const accentColor = result === "leave" ? LEAVE_COLOR : result === "remain" ? REMAIN_COLOR : null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
+	const accentColor =
+		result === "leave"
+			? LEAVE_COLOR
+			: result === "remain"
+				? REMAIN_COLOR
+				: null;
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+		accentColor,
+		isActive,
+		isDark,
+	);
 
 	return (
 		<div
@@ -131,20 +144,32 @@ export default memo(function BrexitElectoralChart({
 					chartsLoading ? (
 						<ChartContentPlaceholder className="h-5 mt-2" />
 					) : (
-						<div className={`mt-2 h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+						<div
+							className={`mt-2 h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+						>
 							No data available
 						</div>
 					)
 				) : (
 					<div className="mt-2 flex h-5 rounded overflow-hidden">
-						<div style={{ width: `${pctLeave.toFixed(1)}%`, backgroundColor: `rgb(180, 20, 20)` }}>
+						<div
+							style={{
+								width: `${pctLeave.toFixed(1)}%`,
+								backgroundColor: `rgb(180, 20, 20)`,
+							}}
+						>
 							{pctLeave > 20 && (
 								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
 									Leave {pctLeave.toFixed(1)}%
 								</span>
 							)}
 						</div>
-						<div style={{ width: `${pctRemain.toFixed(1)}%`, backgroundColor: `rgb(30, 60, 180)` }}>
+						<div
+							style={{
+								width: `${pctRemain.toFixed(1)}%`,
+								backgroundColor: `rgb(30, 60, 180)`,
+							}}
+						>
 							{pctRemain > 20 && (
 								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
 									Remain {pctRemain.toFixed(1)}%

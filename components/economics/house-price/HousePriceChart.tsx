@@ -15,12 +15,17 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
-	    availableDatasets: Record<string, HousePriceDataset>;
-	    aggregatedData: Record<number, AggregatedHousePriceData> | null;	year: number;
+	availableDatasets: Record<string, HousePriceDataset>;
+	aggregatedData: Record<number, AggregatedHousePriceData> | null;
+	year: number;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -37,7 +42,10 @@ interface PriceChartProps {
 		targetYear: number,
 	) => string | undefined;
 	getWardsForLad?: (ladCode: string, year: number) => string[];
-	getWardsForConstituency?: (constituencyCode: string, wardYear: number) => string[];
+	getWardsForConstituency?: (
+		constituencyCode: string,
+		wardYear: number,
+	) => string[];
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -64,12 +72,12 @@ const PriceChart = React.memo(
 			let price2023: number | null = null;
 
 			if (selectedArea === null && aggregatedData) {
-                const yearAggregatedData = aggregatedData[dataset.year];
-                if (yearAggregatedData) {
-                    // No area selected - show aggregated data
-                    prices = yearAggregatedData.averagePrices || {};
-                    price2023 = yearAggregatedData.averagePrice || null;
-                }
+				const yearAggregatedData = aggregatedData[dataset.year];
+				if (yearAggregatedData) {
+					// No area selected - show aggregated data
+					prices = yearAggregatedData.averagePrices || {};
+					price2023 = yearAggregatedData.averagePrice || null;
+				}
 			} else if (selectedArea && selectedArea.type === "ward") {
 				// Ward selected - lookup ward data
 				const wardCode = selectedArea.code;
@@ -187,36 +195,55 @@ const PriceChart = React.memo(
 					// Cache the result
 					yearCache.set(dataset.year, { prices });
 				}
-			} else if (selectedArea && selectedArea.type === "constituency" && getWardsForConstituency) {
+			} else if (
+				selectedArea &&
+				selectedArea.type === "constituency" &&
+				getWardsForConstituency
+			) {
 				// No cache — stale cache risks hiding data if computed before constituency-ward
 				// mappings finish loading asynchronously
 				const constituencyCode = selectedArea.code;
-				const wardCodes = getWardsForConstituency(constituencyCode, dataset.boundaryYear);
+				const wardCodes = getWardsForConstituency(
+					constituencyCode,
+					dataset.boundaryYear,
+				);
 				if (wardCodes.length > 0) {
 					const yearlyPrices: Record<number, number[]> = {};
 					for (const wardCode of wardCodes) {
 						let wardData = dataset.data?.[wardCode];
 						if (!wardData && getCodeForYear) {
-							const mapped = getCodeForYear("ward", wardCode, dataset.boundaryYear);
+							const mapped = getCodeForYear(
+								"ward",
+								wardCode,
+								dataset.boundaryYear,
+							);
 							if (mapped) wardData = dataset.data[mapped];
 						}
 						if (wardData?.prices) {
-							for (const [year, price] of Object.entries(wardData.prices)) {
+							for (const [year, price] of Object.entries(
+								wardData.prices,
+							)) {
 								if (price !== null && price !== undefined) {
 									const yearNum = Number(year);
-									if (!yearlyPrices[yearNum]) yearlyPrices[yearNum] = [];
+									if (!yearlyPrices[yearNum])
+										yearlyPrices[yearNum] = [];
 									yearlyPrices[yearNum].push(price as number);
 								}
 							}
 						}
 					}
-					for (const [year, priceArray] of Object.entries(yearlyPrices)) {
+					for (const [year, priceArray] of Object.entries(
+						yearlyPrices,
+					)) {
 						if (priceArray.length > 0) {
-							const sorted = [...priceArray].sort((a, b) => a - b);
+							const sorted = [...priceArray].sort(
+								(a, b) => a - b,
+							);
 							const mid = Math.floor(sorted.length / 2);
-							prices[Number(year)] = sorted.length % 2 === 0
-								? (sorted[mid - 1] + sorted[mid]) / 2
-								: sorted[mid];
+							prices[Number(year)] =
+								sorted.length % 2 === 0
+									? (sorted[mid - 1] + sorted[mid]) / 2
+									: sorted[mid];
 						}
 					}
 					price2023 = prices[2023] || null;
@@ -266,7 +293,7 @@ const PriceChart = React.memo(
 				const y =
 					height -
 					((normalizedPrice - minPrice) / (maxPrice - minPrice)) *
-					height;
+						height;
 				return { x, y };
 			});
 
@@ -283,7 +310,11 @@ const PriceChart = React.memo(
 			? `£${Math.round(currentPrice).toLocaleString()}`
 			: null;
 
-		const { style, onMouseEnter, onMouseLeave } = useCardAccent(LINE_COLOR, isActive, isDark);
+		const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+			LINE_COLOR,
+			isActive,
+			isDark,
+		);
 
 		return (
 			<div
@@ -368,7 +399,9 @@ const PriceChart = React.memo(
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (
-							<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+							<div
+								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+							>
 								No data available
 							</div>
 						)}
@@ -397,7 +430,8 @@ export default memo(function HousePriceChart({
 		activeDataset &&
 		((activeDataset.type === "housePrice" &&
 			activeDataset.id === `housePrice${year}`) ||
-			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
+			(activeViz.datasetType === "custom" &&
+				activeViz.vizId === "custom"));
 
 	return (
 		<PriceChart

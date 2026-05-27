@@ -10,9 +10,13 @@ import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
-const MALE_COLOR = "#60a5fa";   // blue-400, matches chart bars
+const MALE_COLOR = "#60a5fa"; // blue-400, matches chart bars
 const FEMALE_COLOR = "#f472b6"; // pink-400, matches chart bars
 
 interface GenderProps {
@@ -164,8 +168,15 @@ function Gender({
 		}
 
 		// Handle Constituency Selection
-		if (selectedArea && selectedArea.type === "constituency" && codeMapper?.getWardsForConstituency) {
-			const wardCodes = codeMapper.getWardsForConstituency(selectedArea.code, dataset.boundaryYear);
+		if (
+			selectedArea &&
+			selectedArea.type === "constituency" &&
+			codeMapper?.getWardsForConstituency
+		) {
+			const wardCodes = codeMapper.getWardsForConstituency(
+				selectedArea.code,
+				dataset.boundaryYear,
+			);
 
 			let aggregatedMales = 0;
 			let aggregatedFemales = 0;
@@ -173,16 +184,25 @@ function Gender({
 			for (const wardCode of wardCodes) {
 				let wardData = dataset.data?.[wardCode];
 				if (!wardData && codeMapper?.getCodeForYear) {
-					const mapped = codeMapper.getCodeForYear("ward", wardCode, dataset.boundaryYear);
+					const mapped = codeMapper.getCodeForYear(
+						"ward",
+						wardCode,
+						dataset.boundaryYear,
+					);
 					if (mapped) wardData = dataset.data[mapped];
 				}
 				if (wardData) {
-					for (const v of Object.values(wardData.males)) aggregatedMales += v;
-					for (const v of Object.values(wardData.females)) aggregatedFemales += v;
+					for (const v of Object.values(wardData.males))
+						aggregatedMales += v;
+					for (const v of Object.values(wardData.females))
+						aggregatedFemales += v;
 				}
 			}
 
-			return { totalMales: aggregatedMales, totalFemales: aggregatedFemales };
+			return {
+				totalMales: aggregatedMales,
+				totalFemales: aggregatedFemales,
+			};
 		}
 
 		// Unsupported area type or missing data
@@ -193,8 +213,16 @@ function Gender({
 	const total = (totalMales ?? 0) + (totalFemales ?? 0);
 	const hasData = total > 0;
 
-	const accentColor = !hasData ? null : (totalMales ?? 0) >= (totalFemales ?? 0) ? MALE_COLOR : FEMALE_COLOR;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
+	const accentColor = !hasData
+		? null
+		: (totalMales ?? 0) >= (totalFemales ?? 0)
+			? MALE_COLOR
+			: FEMALE_COLOR;
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+		accentColor,
+		isActive,
+		isDark,
+	);
 
 	return (
 		<div
@@ -213,7 +241,9 @@ function Gender({
 		>
 			<ChartLoadingBackground />
 			<div className="flex items-center justify-between mb-0">
-				<h3 className={chartHeadingClass(isDark)}>Gender [{dataset.year}]</h3>
+				<h3 className={chartHeadingClass(isDark)}>
+					Gender [{dataset.year}]
+				</h3>
 				{hasData && (
 					<span className="text-[10px] text-gray-600 mr-1">
 						<span className="text-blue-600">
@@ -237,7 +267,7 @@ function Gender({
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
 			/>
-			</div>
+		</div>
 	);
 }
 

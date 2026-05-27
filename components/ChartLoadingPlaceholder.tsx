@@ -40,7 +40,5 @@ export function ChartContentPlaceholder({
 }: {
 	className?: string;
 }) {
-	return (
-		<div className={`chart-shimmer ${className}`} aria-hidden="true" />
-	);
+	return <div className={`chart-shimmer ${className}`} aria-hidden="true" />;
 }

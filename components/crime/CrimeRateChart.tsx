@@ -14,7 +14,11 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { chartHeadingClass, cardClass, useCardAccent } from "@/lib/hooks/useCardAccent";
+import {
+	chartHeadingClass,
+	cardClass,
+	useCardAccent,
+} from "@/lib/hooks/useCardAccent";
 
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
@@ -64,7 +68,11 @@ export default memo(function CrimeRateChart({
 	const crimeRate = useMemo(() => {
 		if (!dataset) return null;
 		let rate: number | null = null;
-		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+		if (
+			selectedArea === null &&
+			aggregatedData &&
+			aggregatedData[dataset.year]
+		) {
 			rate = aggregatedData[dataset.year].averageRecordedCrime || null;
 		} else if (
 			selectedArea &&
@@ -80,7 +88,8 @@ export default memo(function CrimeRateChart({
 					year,
 				);
 				if (mappedCode) {
-					rate = dataset.data?.[mappedCode]?.totalRecordedCrime || null;
+					rate =
+						dataset.data?.[mappedCode]?.totalRecordedCrime || null;
 				}
 			}
 		}
@@ -93,7 +102,8 @@ export default memo(function CrimeRateChart({
 		activeDataset &&
 		((activeDataset.type === "crime" &&
 			activeDataset.id === `crime${dataset.year}`) ||
-			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
+			(activeViz.datasetType === "custom" &&
+				activeViz.vizId === "custom"));
 
 	const rawValue = crimeRate || 0;
 	const maxThreshold = 100000;
@@ -133,9 +143,14 @@ export default memo(function CrimeRateChart({
 	return (
 		<div
 			style={combinedStyle}
-			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 border-2 ${isActive
-				? isDark ? "bg-white/10" : "bg-white/60"
-				: isDark ? "bg-white/5 border-white/10" : "bg-white/60 border-gray-200/80"
+			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 border-2 ${
+				isActive
+					? isDark
+						? "bg-white/10"
+						: "bg-white/60"
+					: isDark
+						? "bg-white/5 border-white/10"
+						: "bg-white/60 border-gray-200/80"
 			}`}
 			title="Home Office. Police Recorded Crime Open Data Tables. data.police.uk"
 			onMouseEnter={() => setHovered(true)}
@@ -194,7 +209,9 @@ export default memo(function CrimeRateChart({
 				</div>
 			)}
 
-			<div className={`absolute inset-0 z-0 ${isDark ? "bg-black/20" : "bg-white/20"}`} />
+			<div
+				className={`absolute inset-0 z-0 ${isDark ? "bg-black/20" : "bg-white/20"}`}
+			/>
 			<div className="relative z-10">
 				<h3 className={chartHeadingClass(isDark)}>
 					Recorded Crime [{dataset.year}]
@@ -204,8 +221,12 @@ export default memo(function CrimeRateChart({
 						className="text-xl font-bold mt-2 text-center"
 						style={{
 							color: isDark
-								? intensity > 0.5 ? "#fca5a5" : "#fdba74"
-								: intensity > 0.5 ? "#7f1d1d" : "#78350f",
+								? intensity > 0.5
+									? "#fca5a5"
+									: "#fdba74"
+								: intensity > 0.5
+									? "#7f1d1d"
+									: "#78350f",
 						}}
 					>
 						{Math.round(crimeRate).toLocaleString()}
@@ -215,7 +236,9 @@ export default memo(function CrimeRateChart({
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (
-							<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+							<div
+								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+							>
 								No data available
 							</div>
 						)}

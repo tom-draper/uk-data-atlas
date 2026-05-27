@@ -12,7 +12,9 @@ interface UseMapInitializationOptions {
 export function useMapInitialization(options: UseMapInitializationOptions) {
 	if (MAP_TYPE === "mapbox") {
 		// eslint-disable-next-line @typescript-eslint/no-require-imports
-		const { useMapboxInitialization } = require(/* webpackIgnore: true */ "./useMapboxInitialization") as {
+		const { useMapboxInitialization } = require(
+			/* webpackIgnore: true */ "./useMapboxInitialization",
+		) as {
 			useMapboxInitialization: typeof UseMapboxInitialization;
 		};
 		return useMapboxInitialization(options);

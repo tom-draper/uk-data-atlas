@@ -162,5 +162,13 @@ export function useMapUpdates({
 		};
 
 		performUpdate();
-	}, [geojson, activeDataset, activeViz, mapManager, mapOptions, styleReady, isDark]);
+	}, [
+		geojson,
+		activeDataset,
+		activeViz,
+		mapManager,
+		mapOptions,
+		styleReady,
+		isDark,
+	]);
 }

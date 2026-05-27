@@ -3,9 +3,17 @@ import { BoundaryGeojson } from "@lib/types";
 import { LOCATIONS } from "@lib/data/locations";
 import { withCDN } from "@/lib/helpers/cdn";
 import * as topojson from "topojson-client";
-import { FeatureCollection, Geometry, GeoJsonProperties, Feature } from "geojson";
+import {
+	FeatureCollection,
+	Geometry,
+	GeoJsonProperties,
+	Feature,
+} from "geojson";
 
-interface GeoJsonFeatureCollection extends FeatureCollection<Geometry, GeoJsonProperties> {
+interface GeoJsonFeatureCollection extends FeatureCollection<
+	Geometry,
+	GeoJsonProperties
+> {
 	crs?: {
 		type: string;
 		properties: {
@@ -74,9 +82,7 @@ export const GEOJSON_PATHS = {
 		),
 	},
 	superOutputArea: {
-		2011: withCDN(
-			"/data/boundaries/superOutputArea/NI_SOA_2011.topojson",
-		),
+		2011: withCDN("/data/boundaries/superOutputArea/NI_SOA_2011.topojson"),
 	},
 } as const;
 
@@ -86,8 +92,20 @@ export type ConstituencyYear = keyof typeof GEOJSON_PATHS.constituency;
 export type LocalAuthorityYear = keyof typeof GEOJSON_PATHS.localAuthority;
 
 // Property keys for each boundary type (prioritized by year)
-export const WARD_CODE_KEYS = ["WD25CD", "WD24CD", "WD23CD", "WD22CD", "WD21CD"] as const;
-export const WARD_NAME_KEYS = ["WD25NM", "WD24NM", "WD23NM", "WD22NM", "WD21NM"] as const;
+export const WARD_CODE_KEYS = [
+	"WD25CD",
+	"WD24CD",
+	"WD23CD",
+	"WD22CD",
+	"WD21CD",
+] as const;
+export const WARD_NAME_KEYS = [
+	"WD25NM",
+	"WD24NM",
+	"WD23NM",
+	"WD22NM",
+	"WD21NM",
+] as const;
 export const LAD_CODE_KEYS = [
 	"LAD25CD",
 	"LAD24CD",
@@ -262,7 +280,12 @@ export const fetchBoundaryFile = async (
 	let geojson: GeoJsonFeatureCollection;
 	if (json.type === "Topology") {
 		const objectKey = Object.keys(json.objects)[0];
-		const topojsonFeatureResult: Feature<Geometry, GeoJsonProperties> | FeatureCollection<Geometry, GeoJsonProperties> = topojson.feature(json, json.objects[objectKey] as any);
+		const topojsonFeatureResult:
+			| Feature<Geometry, GeoJsonProperties>
+			| FeatureCollection<Geometry, GeoJsonProperties> = topojson.feature(
+			json,
+			json.objects[objectKey] as any,
+		);
 
 		if (topojsonFeatureResult.type === "Feature") {
 			geojson = {

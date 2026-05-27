@@ -27,7 +27,9 @@ export default memo(function IMDSection({
 	activeViz,
 	setActiveViz,
 }: IMDSectionProps) {
-	const years = Object.keys(availableDatasets).map(Number).sort((a, b) => b - a);
+	const years = Object.keys(availableDatasets)
+		.map(Number)
+		.sort((a, b) => b - a);
 
 	if (years.length === 0) return null;
 

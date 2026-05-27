@@ -10,9 +10,13 @@ export const useBrexitData = () => {
 			withCDN("/data/referendum/EU-referendum-result-data.csv"),
 		);
 		if (!response.ok)
-			throw new Error(`Failed to fetch Brexit data: ${response.statusText}`);
+			throw new Error(
+				`Failed to fetch Brexit data: ${response.statusText}`,
+			);
 
-		const { data } = await parseCsv(await response.text(), { header: true });
+		const { data } = await parseCsv(await response.text(), {
+			header: true,
+		});
 		const rows = data as Record<string, string>[];
 
 		const records: Record<string, BrexitLADData> = {};

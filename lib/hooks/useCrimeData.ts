@@ -15,7 +15,9 @@ export const useCrimeData = () => {
 			withCDN("/data/crime/policeforceareatablesyejune25final.csv"),
 		);
 		if (!response.ok)
-			throw new Error(`Failed to fetch crime data: ${response.statusText}`);
+			throw new Error(
+				`Failed to fetch crime data: ${response.statusText}`,
+			);
 
 		const csvText = await response.text();
 		const year = extractYearFromTitle(csvText.split("\n")[0] ?? "");

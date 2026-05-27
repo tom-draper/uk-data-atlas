@@ -15,7 +15,11 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -56,7 +60,11 @@ export default memo(function IncomeChart({
 
 	// We calculate data first so we can use it for the particle effects
 	if (dataset) {
-		if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+		if (
+			selectedArea === null &&
+			aggregatedData &&
+			aggregatedData[dataset.year]
+		) {
 			medianIncome = aggregatedData[dataset.year].averageIncome || null;
 		} else if (
 			selectedArea &&
@@ -125,12 +133,17 @@ export default memo(function IncomeChart({
 		activeDataset &&
 		((activeDataset.type === "income" &&
 			activeDataset.id === `income${dataset.year}`) ||
-			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"));
+			(activeViz.datasetType === "custom" &&
+				activeViz.vizId === "custom"));
 	const formattedMedian = medianIncome
 		? `£${Math.round(medianIncome).toLocaleString()}`
 		: null;
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent("#10b981", !!isActive, isDark);
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+		"#10b981",
+		!!isActive,
+		isDark,
+	);
 
 	return (
 		<div
@@ -175,7 +188,9 @@ export default memo(function IncomeChart({
 
 			{formattedMedian ? (
 				<div className="relative flex justify-center items-center mt-3 mb-1 z-10 h-5">
-					<div className={`text-xl font-bold bg-transparent px-2 rounded ${isDark ? "text-gray-100" : "text-gray-800"}`}>
+					<div
+						className={`text-xl font-bold bg-transparent px-2 rounded ${isDark ? "text-gray-100" : "text-gray-800"}`}
+					>
 						{formattedMedian}
 					</div>
 				</div>
@@ -184,12 +199,14 @@ export default memo(function IncomeChart({
 					{chartsLoading ? (
 						<ChartContentPlaceholder className="h-full" />
 					) : (
-						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+						<div
+							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+						>
 							No data available
 						</div>
 					)}
 				</div>
 			)}
-			</div>
+		</div>
 	);
 });

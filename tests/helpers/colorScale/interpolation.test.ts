@@ -1,4 +1,7 @@
-import { normalizeValue, hexToRgb } from "@/lib/helpers/colorScale/interpolation";
+import {
+	normalizeValue,
+	hexToRgb,
+} from "@/lib/helpers/colorScale/interpolation";
 
 describe("normalizeValue", () => {
 	it("returns 0 at min", () => {
@@ -44,4 +47,3 @@ describe("hexToRgb", () => {
 		expect(hexToRgb("not-a-color")).toEqual({ r: 0, g: 0, b: 0 });
 	});
 });
-

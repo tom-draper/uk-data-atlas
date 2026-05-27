@@ -1,6 +1,8 @@
 import type { MapGeoJSONFeature, MapMouseEvent } from "maplibre-gl";
 
-type MapLayerMouseHandler = (ev: MapMouseEvent & { features?: MapGeoJSONFeature[] }) => void;
+type MapLayerMouseHandler = (
+	ev: MapMouseEvent & { features?: MapGeoJSONFeature[] },
+) => void;
 import { MapManagerCallbacks } from "./mapManager";
 import { BoundaryType, ElectionData } from "@/lib/types";
 
@@ -35,12 +37,14 @@ export class EventHandler {
 	private currentNameProp: string = "";
 	private currentBoundaryType: BoundaryType = "ward";
 	private canvas: HTMLCanvasElement;
-	private _mouseMoveHandler: (e: MapMouseEventType & { features?: MapFeature[] }) => void;
+	private _mouseMoveHandler: (
+		e: MapMouseEventType & { features?: MapFeature[] },
+	) => void;
 	private _mouseLeaveHandler: () => void;
 
 	constructor(
 		private map: maplibregl.Map,
-		private callbacks: MapManagerCallbacks
+		private callbacks: MapManagerCallbacks,
 	) {
 		this.canvas = this.map.getCanvas();
 		this._mouseMoveHandler = throttle(this.handleMouseMove.bind(this), 10);
@@ -55,7 +59,11 @@ export class EventHandler {
 
 		this.removeHandlers();
 
-		this.map.on("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as MapLayerMouseHandler);
+		this.map.on(
+			"mousemove",
+			FILL_LAYER_ID,
+			this._mouseMoveHandler as MapLayerMouseHandler,
+		);
 		this.map.on("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
 	}
 
@@ -64,14 +72,16 @@ export class EventHandler {
 	}
 
 	boundaryType(codeProp: string) {
-		if (codeProp.toUpperCase().startsWith('LAD')) return "localAuthority";
-		if (codeProp.toUpperCase().startsWith('WD')) return "ward";
-		if (codeProp.toUpperCase().startsWith('PCON')) return "constituency";
-		if (codeProp.toUpperCase().startsWith('LSOA')) return "lsoa";
+		if (codeProp.toUpperCase().startsWith("LAD")) return "localAuthority";
+		if (codeProp.toUpperCase().startsWith("WD")) return "ward";
+		if (codeProp.toUpperCase().startsWith("PCON")) return "constituency";
+		if (codeProp.toUpperCase().startsWith("LSOA")) return "lsoa";
 		return "ward"; // default
 	}
 
-	private handleMouseMove(e: MapMouseEventType & { features?: MapFeature[] }): void {
+	private handleMouseMove(
+		e: MapMouseEventType & { features?: MapFeature[] },
+	): void {
 		const features = e.features;
 		if (!features?.length) return;
 
@@ -79,7 +89,8 @@ export class EventHandler {
 		const featureId = feature.id;
 
 		// Early return if hovering same feature
-		if (featureId === undefined || featureId === this.lastHoveredFeatureId) return;
+		if (featureId === undefined || featureId === this.lastHoveredFeatureId)
+			return;
 
 		// Set cursor immediately for instant feedback
 		this.canvas.style.cursor = "pointer";
@@ -95,19 +106,21 @@ export class EventHandler {
 				code,
 				name,
 				data: (this.currentData[code] ?? null) as ElectionData | null,
-			} as Parameters<NonNullable<MapManagerCallbacks["onAreaHover"]>>[0]);
+			} as Parameters<
+				NonNullable<MapManagerCallbacks["onAreaHover"]>
+			>[0]);
 		}
 
 		// Then update feature states
 		if (this.lastHoveredFeatureId !== null) {
 			this.map.setFeatureState(
 				{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
-				{ hover: false }
+				{ hover: false },
 			);
 		}
 		this.map.setFeatureState(
 			{ source: SOURCE_ID, id: featureId },
-			{ hover: true }
+			{ hover: true },
 		);
 		this.lastHoveredFeatureId = featureId;
 	}
@@ -116,7 +129,7 @@ export class EventHandler {
 		if (this.lastHoveredFeatureId !== null) {
 			this.map.setFeatureState(
 				{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
-				{ hover: false }
+				{ hover: false },
 			);
 			this.lastHoveredFeatureId = null;
 		}
@@ -126,7 +139,11 @@ export class EventHandler {
 
 	private removeHandlers(): void {
 		// Use the bound handlers for off
-		this.map.off("mousemove", FILL_LAYER_ID, this._mouseMoveHandler as MapLayerMouseHandler);
+		this.map.off(
+			"mousemove",
+			FILL_LAYER_ID,
+			this._mouseMoveHandler as MapLayerMouseHandler,
+		);
 		this.map.off("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
 	}
 
@@ -136,9 +153,9 @@ export class EventHandler {
 			try {
 				this.map.setFeatureState(
 					{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
-					{ hover: false }
+					{ hover: false },
 				);
-			} catch { }
+			} catch {}
 			this.lastHoveredFeatureId = null;
 		}
 		// Clear bound handlers

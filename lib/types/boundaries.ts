@@ -3,12 +3,12 @@ import { BoundaryGeojson } from "./geometry";
 export type BoundaryType = keyof BoundaryData;
 
 export type BoundaryData = {
-	ward: {[year: number]: BoundaryGeojson | null};
-	constituency: {[year: number]: BoundaryGeojson | null};
-	localAuthority: {[year: number]: BoundaryGeojson | null};
-	lsoa: {[year: number]: BoundaryGeojson | null};
-	dataZone: {[year: number]: BoundaryGeojson | null};
-	superOutputArea: {[year: number]: BoundaryGeojson | null};
+	ward: { [year: number]: BoundaryGeojson | null };
+	constituency: { [year: number]: BoundaryGeojson | null };
+	localAuthority: { [year: number]: BoundaryGeojson | null };
+	lsoa: { [year: number]: BoundaryGeojson | null };
+	dataZone: { [year: number]: BoundaryGeojson | null };
+	superOutputArea: { [year: number]: BoundaryGeojson | null };
 };
 
 export type BoundaryCodes = {
@@ -18,4 +18,4 @@ export type BoundaryCodes = {
 	lsoa: Record<number, Set<string>>;
 	dataZone: Record<number, Set<string>>;
 	superOutputArea: Record<number, Set<string>>;
-} | null
+} | null;

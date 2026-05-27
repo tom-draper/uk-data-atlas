@@ -36,7 +36,9 @@ describe("getThemeColor", () => {
 	});
 
 	it("falls back to viridis for an unknown theme id", () => {
-		expect(getThemeColor(0, "nonexistent")).toBe(getThemeColor(0, "viridis"));
+		expect(getThemeColor(0, "nonexistent")).toBe(
+			getThemeColor(0, "viridis"),
+		);
 	});
 
 	it("channels stay in valid 0–255 range at all values", () => {

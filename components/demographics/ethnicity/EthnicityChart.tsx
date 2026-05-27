@@ -16,7 +16,11 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
 interface ProcessedEthnicityData {
 	ethnicity: string;
@@ -150,12 +154,20 @@ export default memo(function EthnicityChart({
 	const heightClass = isActive ? "h-[170px]" : "h-[65px]";
 
 	const accentColor = processedData.ethnicityData[0]?.color ?? null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+		accentColor,
+		isActive,
+		isDark,
+	);
 
 	return (
 		<div
 			style={style}
-			className={cardClass(isActive, isDark, `transition-[height] duration-300 ease-in-out ${heightClass}`)}
+			className={cardClass(
+				isActive,
+				isDark,
+				`transition-[height] duration-300 ease-in-out ${heightClass}`,
+			)}
 			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
@@ -178,7 +190,9 @@ export default memo(function EthnicityChart({
 				chartsLoading ? (
 					<ChartContentPlaceholder className="h-5 mt-1" />
 				) : (
-					<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+					<div
+						className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+					>
 						No data available
 					</div>
 				)

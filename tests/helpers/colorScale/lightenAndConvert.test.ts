@@ -1,4 +1,8 @@
-import { lightenHex, rgbToHex, hexToRgb } from "@/lib/helpers/colorScale/interpolation";
+import {
+	lightenHex,
+	rgbToHex,
+	hexToRgb,
+} from "@/lib/helpers/colorScale/interpolation";
 
 describe("lightenHex", () => {
 	it("factor 0 returns the original colour as rgb()", () => {

@@ -10,7 +10,9 @@ export const useBrexitConstituencyData = (enabled = true) => {
 			withCDN("/data/referendum/eureferendum_constitunecy.csv"),
 		);
 		if (!response.ok)
-			throw new Error(`Failed to fetch Brexit constituency data: ${response.statusText}`);
+			throw new Error(
+				`Failed to fetch Brexit constituency data: ${response.statusText}`,
+			);
 
 		const { data } = await parseCsv<string[]>(await response.text(), {
 			header: false,

@@ -11,9 +11,16 @@ import AgeDistributionChart from "./AgeDistributionChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { resolveWardData, getLadCachedValue } from "@/lib/helpers/demographicData";
+import {
+	resolveWardData,
+	getLadCachedValue,
+} from "@/lib/helpers/demographicData";
 import { getAgeColor } from "@/lib/helpers/ageDistribution";
-import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
@@ -34,13 +41,18 @@ const AGE_BOUNDARIES = [
 ];
 
 // Precomputed lookup tables — avoids i.toString() and boundary search in hot loops
-const AGE_STRING_KEYS: string[] = Array.from({ length: 100 }, (_, i) => String(i));
-const AGE_GROUP_KEYS: (keyof AgeGroups)[] = Array.from({ length: 100 }, (_, i) => {
-	for (let b = 0; b < AGE_BOUNDARIES.length; b++) {
-		if (i <= AGE_BOUNDARIES[b].max) return AGE_BOUNDARIES[b].key;
-	}
-	return "65+";
-});
+const AGE_STRING_KEYS: string[] = Array.from({ length: 100 }, (_, i) =>
+	String(i),
+);
+const AGE_GROUP_KEYS: (keyof AgeGroups)[] = Array.from(
+	{ length: 100 },
+	(_, i) => {
+		for (let b = 0; b < AGE_BOUNDARIES.length; b++) {
+			if (i <= AGE_BOUNDARIES[b].max) return AGE_BOUNDARIES[b].key;
+		}
+		return "65+";
+	},
+);
 
 // Pre-calculate decay weights (constant)
 const DECAY_RATE = 0.15;
@@ -80,7 +92,14 @@ function AgeDistribution({
 		//  Handle Aggregated Data Case (no area selected)
 		if (selectedArea === null && aggregatedData) {
 			const data = aggregatedData[dataset.year];
-			if (!data) return { medianAge: null, ageGroups: [], total: 0, counts: new Uint32Array(100), maxCount: 0 };
+			if (!data)
+				return {
+					medianAge: null,
+					ageGroups: [],
+					total: 0,
+					counts: new Uint32Array(100),
+					maxCount: 0,
+				};
 			const counts = new Uint32Array(100);
 
 			if (data.ages) {
@@ -105,7 +124,11 @@ function AgeDistribution({
 
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
-			const wardData = resolveWardData(dataset, selectedArea.code, codeMapper);
+			const wardData = resolveWardData(
+				dataset,
+				selectedArea.code,
+				codeMapper,
+			);
 
 			if (!wardData) {
 				return {
@@ -179,61 +202,109 @@ function AgeDistribution({
 		}
 
 		// Handle Local Authority Selection
-		if (selectedArea && selectedArea.type === "localAuthority" && codeMapper?.getWardsForLad) {
-			return getLadCachedValue(ageDistributionCache, selectedArea.code, dataset.year, () => {
-				const wardCodes = codeMapper.getWardsForLad!(selectedArea.code, dataset.boundaryYear);
+		if (
+			selectedArea &&
+			selectedArea.type === "localAuthority" &&
+			codeMapper?.getWardsForLad
+		) {
+			return getLadCachedValue(
+				ageDistributionCache,
+				selectedArea.code,
+				dataset.year,
+				() => {
+					const wardCodes = codeMapper.getWardsForLad!(
+						selectedArea.code,
+						dataset.boundaryYear,
+					);
 
-				if (wardCodes.length === 0) {
-					return { medianAge: 0, ageGroups: EMPTY_AGE_GROUPS, total: 0, counts: new Uint32Array(100), maxCount: 0 };
-				}
+					if (wardCodes.length === 0) {
+						return {
+							medianAge: 0,
+							ageGroups: EMPTY_AGE_GROUPS,
+							total: 0,
+							counts: new Uint32Array(100),
+							maxCount: 0,
+						};
+					}
 
-				// Aggregate age counts across all wards
-				const aggregatedCounts = new Uint32Array(100);
-				for (const wardCode of wardCodes) {
-					const wardData = resolveWardData(dataset, wardCode, codeMapper);
-					if (wardData?.total) {
-						for (let i = 0; i < 90; i++) {
-							aggregatedCounts[i] += wardData.total[AGE_STRING_KEYS[i]] || 0;
-						}
-						const age90Plus = wardData.total["90"] || 0;
-						for (let i = 90; i < 100; i++) {
-							aggregatedCounts[i] += Math.round(age90Plus * NORMALIZED_WEIGHTS[i - 90]);
+					// Aggregate age counts across all wards
+					const aggregatedCounts = new Uint32Array(100);
+					for (const wardCode of wardCodes) {
+						const wardData = resolveWardData(
+							dataset,
+							wardCode,
+							codeMapper,
+						);
+						if (wardData?.total) {
+							for (let i = 0; i < 90; i++) {
+								aggregatedCounts[i] +=
+									wardData.total[AGE_STRING_KEYS[i]] || 0;
+							}
+							const age90Plus = wardData.total["90"] || 0;
+							for (let i = 90; i < 100; i++) {
+								aggregatedCounts[i] += Math.round(
+									age90Plus * NORMALIZED_WEIGHTS[i - 90],
+								);
+							}
 						}
 					}
-				}
 
-				let totalPopulation = 0;
-				let max = 0;
-				for (let i = 0; i < 100; i++) {
-					totalPopulation += aggregatedCounts[i];
-					if (aggregatedCounts[i] > max) max = aggregatedCounts[i];
-				}
-
-				let cumulative = 0;
-				const halfPopulation = totalPopulation / 2;
-				let median = 0;
-				let medianFound = false;
-				const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
-				for (let i = 0; i < 100; i++) {
-					const count = aggregatedCounts[i];
-					currentAgeGroups[AGE_GROUP_KEYS[i]] += count;
-					if (!medianFound) {
-						cumulative += count;
-						if (cumulative >= halfPopulation) { median = i; medianFound = true; }
+					let totalPopulation = 0;
+					let max = 0;
+					for (let i = 0; i < 100; i++) {
+						totalPopulation += aggregatedCounts[i];
+						if (aggregatedCounts[i] > max)
+							max = aggregatedCounts[i];
 					}
-				}
 
-				return { medianAge: median, ageGroups: currentAgeGroups, total: totalPopulation, counts: aggregatedCounts, maxCount: max };
-			});
+					let cumulative = 0;
+					const halfPopulation = totalPopulation / 2;
+					let median = 0;
+					let medianFound = false;
+					const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
+					for (let i = 0; i < 100; i++) {
+						const count = aggregatedCounts[i];
+						currentAgeGroups[AGE_GROUP_KEYS[i]] += count;
+						if (!medianFound) {
+							cumulative += count;
+							if (cumulative >= halfPopulation) {
+								median = i;
+								medianFound = true;
+							}
+						}
+					}
+
+					return {
+						medianAge: median,
+						ageGroups: currentAgeGroups,
+						total: totalPopulation,
+						counts: aggregatedCounts,
+						maxCount: max,
+					};
+				},
+			);
 		}
 
 		// Handle Constituency Selection (no cache — stale cache risks hiding data if computed
 		// before constituency-ward mappings finish loading asynchronously)
-		if (selectedArea && selectedArea.type === "constituency" && codeMapper?.getWardsForConstituency) {
-			const wardCodes = codeMapper.getWardsForConstituency(selectedArea.code, dataset.boundaryYear);
+		if (
+			selectedArea &&
+			selectedArea.type === "constituency" &&
+			codeMapper?.getWardsForConstituency
+		) {
+			const wardCodes = codeMapper.getWardsForConstituency(
+				selectedArea.code,
+				dataset.boundaryYear,
+			);
 
 			if (wardCodes.length === 0) {
-				return { medianAge: 0, ageGroups: EMPTY_AGE_GROUPS, total: 0, counts: new Uint32Array(100), maxCount: 0 };
+				return {
+					medianAge: 0,
+					ageGroups: EMPTY_AGE_GROUPS,
+					total: 0,
+					counts: new Uint32Array(100),
+					maxCount: 0,
+				};
 			}
 
 			const aggregatedCounts = new Uint32Array(100);
@@ -241,11 +312,14 @@ function AgeDistribution({
 				const wardData = resolveWardData(dataset, wardCode, codeMapper);
 				if (wardData?.total) {
 					for (let i = 0; i < 90; i++) {
-						aggregatedCounts[i] += wardData.total[AGE_STRING_KEYS[i]] || 0;
+						aggregatedCounts[i] +=
+							wardData.total[AGE_STRING_KEYS[i]] || 0;
 					}
 					const age90Plus = wardData.total["90"] || 0;
 					for (let i = 90; i < 100; i++) {
-						aggregatedCounts[i] += Math.round(age90Plus * NORMALIZED_WEIGHTS[i - 90]);
+						aggregatedCounts[i] += Math.round(
+							age90Plus * NORMALIZED_WEIGHTS[i - 90],
+						);
 					}
 				}
 			}
@@ -267,11 +341,20 @@ function AgeDistribution({
 				currentAgeGroups[AGE_GROUP_KEYS[i]] += count;
 				if (!medianFound) {
 					cumulative += count;
-					if (cumulative >= halfPopulation) { median = i; medianFound = true; }
+					if (cumulative >= halfPopulation) {
+						median = i;
+						medianFound = true;
+					}
 				}
 			}
 
-			return { medianAge: median, ageGroups: currentAgeGroups, total: totalPopulation, counts: aggregatedCounts, maxCount: max };
+			return {
+				medianAge: median,
+				ageGroups: currentAgeGroups,
+				total: totalPopulation,
+				counts: aggregatedCounts,
+				maxCount: max,
+			};
 		}
 
 		// Handle Missing Data or unsupported area types
@@ -289,11 +372,15 @@ function AgeDistribution({
 		if (!total || Array.isArray(ageGroups)) return null;
 		const entries = Object.entries(ageGroups) as [string, number][];
 		if (entries.length === 0) return null;
-		const largestKey = entries.reduce((a, b) => b[1] > a[1] ? b : a)[0];
+		const largestKey = entries.reduce((a, b) => (b[1] > a[1] ? b : a))[0];
 		return getAgeColor(parseInt(largestKey.split("-")[0]));
 	}, [ageGroups, total]);
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+		accentColor,
+		isActive,
+		isDark,
+	);
 
 	return (
 		<div
@@ -330,7 +417,7 @@ function AgeDistribution({
 				ageGroups={ageGroups}
 				isActive={isActive}
 			/>
-			</div>
+		</div>
 	);
 }
 

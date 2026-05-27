@@ -62,7 +62,11 @@ export default function MapInterface({
 		const mappings: Record<string, string> = {};
 		for (const dataset of Object.values(datasets.localElection)) {
 			for (const ward of Object.values(dataset.data)) {
-				if (ward.wardCode && ward.ladCode && ward.ladCode !== "Unknown") {
+				if (
+					ward.wardCode &&
+					ward.ladCode &&
+					ward.ladCode !== "Unknown"
+				) {
 					mappings[ward.wardCode] = ward.ladCode;
 				}
 			}
@@ -84,8 +88,11 @@ export default function MapInterface({
 	}, [boundaryError, onError]);
 
 	// Map setup
-	const { mapRef: map, handleMapContainer, mapReady } =
-		useMapInitialization(MAP_CONFIG);
+	const {
+		mapRef: map,
+		handleMapContainer,
+		mapReady,
+	} = useMapInitialization(MAP_CONFIG);
 	const { mapOptions, setMapOptions: handleMapOptionsChange } =
 		useMapOptions(DEFAULT_MAP_OPTIONS);
 
@@ -232,7 +239,14 @@ export default function MapInterface({
 			Object.entries(datasets.localElection).map(([year, dataset]) => {
 				const validCodes = boundaryCodes.ward[dataset.boundaryYear];
 				if (!validCodes) return [year, dataset];
-				return [year, normalizeElectionDatasetCodes(dataset, validCodes, codeMapper.getCodeForYear)];
+				return [
+					year,
+					normalizeElectionDatasetCodes(
+						dataset,
+						validCodes,
+						codeMapper.getCodeForYear,
+					),
+				];
 			}),
 		) as typeof datasets.localElection;
 

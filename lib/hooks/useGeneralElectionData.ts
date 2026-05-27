@@ -14,7 +14,6 @@ export const useGeneralElectionData = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-
 				const dataPromises = Object.values(
 					GENERAL_ELECTION_SOURCES,
 				).map((config) =>

@@ -95,12 +95,21 @@ export function RangeControl({
 				ref={containerRef}
 				className="h-40 w-6 rounded relative -mt-40 ml-auto"
 			>
-				<div className="absolute inset-0 rounded" style={{ background: gradient, opacity }} />
+				<div
+					className="absolute inset-0 rounded"
+					style={{ background: gradient, opacity }}
+				/>
 				{/* Max handle (top) */}
 				<div
 					className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
-					style={{ top: `${maxPosition}%`, transform: "translateY(-50%)" }}
-					onMouseDown={(e) => { e.preventDefault(); setIsDraggingMax(true); }}
+					style={{
+						top: `${maxPosition}%`,
+						transform: "translateY(-50%)",
+					}}
+					onMouseDown={(e) => {
+						e.preventDefault();
+						setIsDraggingMax(true);
+					}}
 				>
 					<div className="absolute -left-1 -top-1.5 w-8 h-4 flex items-center justify-center">
 						<div className="w-2 h-2 bg-white rounded-full shadow-md border border-gray-300 group-hover:scale-125 transition-transform" />
@@ -110,8 +119,14 @@ export function RangeControl({
 				{/* Min handle (bottom) */}
 				<div
 					className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
-					style={{ top: `${minPosition}%`, transform: "translateY(-50%)" }}
-					onMouseDown={(e) => { e.preventDefault(); setIsDraggingMin(true); }}
+					style={{
+						top: `${minPosition}%`,
+						transform: "translateY(-50%)",
+					}}
+					onMouseDown={(e) => {
+						e.preventDefault();
+						setIsDraggingMin(true);
+					}}
 				>
 					<div className="absolute -left-1 -top-1.5 w-8 h-4 flex items-center justify-center">
 						<div className="w-2 h-2 bg-white rounded-full shadow-md border border-gray-300 group-hover:scale-125 transition-transform" />

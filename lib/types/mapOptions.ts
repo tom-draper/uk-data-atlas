@@ -47,7 +47,7 @@ export type ColorTheme =
 	| "spectral"
 	| "ylgnbu";
 
-export type MapMode = keyof Datasets | 'custom';
+export type MapMode = keyof Datasets | "custom";
 
 export interface MapOptions {
 	generalElection: GeneralElectionOptions;

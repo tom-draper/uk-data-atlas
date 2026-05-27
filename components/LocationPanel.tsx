@@ -72,7 +72,9 @@ const calculateFeatureBounds = (
 			minLat = Math.min(minLat, lat);
 			maxLat = Math.max(maxLat, lat);
 		} else {
-			(coords as number[][] | number[][][]).forEach((c) => processCoords(c as Coords));
+			(coords as number[][] | number[][][]).forEach((c) =>
+				processCoords(c as Coords),
+			);
 		}
 	};
 
@@ -164,23 +166,20 @@ export default memo(function LocationPanel({
 		};
 
 		// Single pass through all wards to calculate country totals
-		Object.entries(enrichedPopulation).forEach(
-			([wardCode, wardData]) => {
-				const population = wardData.totalPopulation;
+		Object.entries(enrichedPopulation).forEach(([wardCode, wardData]) => {
+			const population = wardData.totalPopulation;
 
-				countryPops["United Kingdom"] += population;
+			countryPops["United Kingdom"] += population;
 
-				// Assign to country based on ward code prefix
-				if (wardCode.startsWith("E"))
-					countryPops["England"] += population;
-				else if (wardCode.startsWith("S"))
-					countryPops["Scotland"] += population;
-				else if (wardCode.startsWith("W"))
-					countryPops["Wales"] += population;
-				else if (wardCode.startsWith("N"))
-					countryPops["Northern Ireland"] += population;
-			},
-		);
+			// Assign to country based on ward code prefix
+			if (wardCode.startsWith("E")) countryPops["England"] += population;
+			else if (wardCode.startsWith("S"))
+				countryPops["Scotland"] += population;
+			else if (wardCode.startsWith("W"))
+				countryPops["Wales"] += population;
+			else if (wardCode.startsWith("N"))
+				countryPops["Northern Ireland"] += population;
+		});
 
 		// Store country populations
 		Object.entries(countryPops).forEach(([country, pop]) => {
@@ -258,10 +257,16 @@ export default memo(function LocationPanel({
 	const t = panelTheme(isDark);
 
 	return (
-		<div className={`rounded-md backdrop-blur-md shadow-lg border flex flex-col h-full ${t.panel}`}>
+		<div
+			className={`rounded-md backdrop-blur-md shadow-lg border flex flex-col h-full ${t.panel}`}
+		>
 			{/* Header with search */}
-			<div className={`shrink-0 ${t.section} flex items-center overflow-hidden`}>
-				<h2 className={`px-2.5 pb-2 pt-2.5 text-sm font-semibold grow ${t.heading}`}>
+			<div
+				className={`shrink-0 ${t.section} flex items-center overflow-hidden`}
+			>
+				<h2
+					className={`px-2.5 pb-2 pt-2.5 text-sm font-semibold grow ${t.heading}`}
+				>
 					Locations
 				</h2>
 				<div className="flex items-center transition-all duration-200">
@@ -321,15 +326,22 @@ export default memo(function LocationPanel({
 					<button
 						key={name}
 						onClick={() => onLocationClick(name, bounds)}
-						className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${selectedLocation === name
-								? isDark ? "bg-white/15 text-gray-100" : "bg-white/60 text-gray-800"
-								: isDark ? "hover:bg-white/10 text-gray-400 hover:text-gray-200" : "hover:bg-white/40 text-gray-600 hover:text-gray-800"
-							}`}
+						className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${
+							selectedLocation === name
+								? isDark
+									? "bg-white/15 text-gray-100"
+									: "bg-white/60 text-gray-800"
+								: isDark
+									? "hover:bg-white/10 text-gray-400 hover:text-gray-200"
+									: "hover:bg-white/40 text-gray-600 hover:text-gray-800"
+						}`}
 					>
 						<span className="font-normal truncate mr-2">
 							{name}
 						</span>
-						<span className={`text-xs tabular-nums shrink-0 ${t.textMuted}`}>
+						<span
+							className={`text-xs tabular-nums shrink-0 ${t.textMuted}`}
+						>
 							{totalPopulation.toLocaleString()}
 						</span>
 					</button>

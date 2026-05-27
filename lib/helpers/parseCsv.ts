@@ -5,8 +5,10 @@ export interface ParseCsvResult<T> {
 	fields: string[];
 }
 
-export interface ParseCsvConfig<T>
-	extends Omit<ParseConfig<T>, "complete" | "error"> {
+export interface ParseCsvConfig<T> extends Omit<
+	ParseConfig<T>,
+	"complete" | "error"
+> {
 	/**
 	 * Number of leading lines to discard before parsing.
 	 * Use `findHeaderLine` to compute this dynamically when the metadata
@@ -47,7 +49,10 @@ export async function parseCsv<T = Record<string, string>>(
 			dynamicTyping: false,
 			...papaConfig,
 			complete(results) {
-				resolve({ data: results.data, fields: results.meta.fields ?? [] });
+				resolve({
+					data: results.data,
+					fields: results.meta.fields ?? [],
+				});
 			},
 			error(err: Error) {
 				reject(new Error(`CSV parse error: ${err.message}`));

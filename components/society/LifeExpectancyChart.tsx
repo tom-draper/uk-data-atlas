@@ -14,7 +14,11 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { hexToRgb, rgbToHex } from "@/lib/helpers/colorScale/interpolation";
-import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
 interface LifeExpectancyChartProps {
 	activeDataset: Dataset | null;
@@ -27,7 +31,7 @@ interface LifeExpectancyChartProps {
 }
 
 // Amber (low LE) → green (high LE)
-const LE_LOW_RGB = hexToRgb("#fbbf24");  // amber-400
+const LE_LOW_RGB = hexToRgb("#fbbf24"); // amber-400
 const LE_HIGH_RGB = hexToRgb("#16a34a"); // green-600
 
 function leColorRgb(pct: number) {
@@ -39,20 +43,36 @@ function leColorRgb(pct: number) {
 	};
 }
 
-
-function leBar(years: number, label: string, min: number, max: number, isDark: boolean) {
+function leBar(
+	years: number,
+	label: string,
+	min: number,
+	max: number,
+	isDark: boolean,
+) {
 	const pct = Math.max(0, Math.min(100, ((years - min) / (max - min)) * 100));
 	const { r, g, b } = leColorRgb(pct);
 	return (
 		<div className="flex items-center gap-1.5">
-			<span className={`text-[10px] w-3 ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>{label}</span>
-			<div className={`flex-1 h-2 rounded-full overflow-hidden ${isDark ? "bg-white/10" : "bg-gray-100"}`}>
+			<span
+				className={`text-[10px] w-3 ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+			>
+				{label}
+			</span>
+			<div
+				className={`flex-1 h-2 rounded-full overflow-hidden ${isDark ? "bg-white/10" : "bg-gray-100"}`}
+			>
 				<div
 					className="h-full rounded-full"
-					style={{ width: `${pct}%`, backgroundColor: `rgba(${r}, ${g}, ${b}, 0.85)` }}
+					style={{
+						width: `${pct}%`,
+						backgroundColor: `rgba(${r}, ${g}, ${b}, 0.85)`,
+					}}
 				/>
 			</div>
-			<span className={`text-[10px] font-semibold w-8 text-right ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+			<span
+				className={`text-[10px] font-semibold w-8 text-right ${isDark ? "text-gray-300" : "text-gray-600"}`}
+			>
 				{years.toFixed(1)}
 			</span>
 		</div>
@@ -83,14 +103,20 @@ export default memo(function LifeExpectancyChart({
 		if (selectedArea.type === "localAuthority") {
 			const record = dataset.data[selectedArea.code];
 			return record
-				? { averageMaleLE: record.maleBirthLE, averageFemaleLE: record.femaleBirthLE }
+				? {
+						averageMaleLE: record.maleBirthLE,
+						averageFemaleLE: record.femaleBirthLE,
+					}
 				: null;
 		}
 
 		if (selectedArea.type === "ward" && selectedArea.data) {
 			const record = dataset.data[selectedArea.data.ladCode];
 			return record
-				? { averageMaleLE: record.maleBirthLE, averageFemaleLE: record.femaleBirthLE }
+				? {
+						averageMaleLE: record.maleBirthLE,
+						averageFemaleLE: record.femaleBirthLE,
+					}
 				: null;
 		}
 
@@ -99,25 +125,49 @@ export default memo(function LifeExpectancyChart({
 
 	const barRange = useMemo(() => {
 		if (!dataset || chartsLoading) return { min: 55, max: 85 };
-		const vals = Object.values(dataset.data).flatMap((r) => [r.maleBirthLE, r.femaleBirthLE]);
+		const vals = Object.values(dataset.data).flatMap((r) => [
+			r.maleBirthLE,
+			r.femaleBirthLE,
+		]);
 		return { min: Math.min(...vals), max: Math.max(...vals) };
 	}, [dataset, chartsLoading]);
 
 	if (!dataset) return null;
 
 	const isActive =
-		activeDataset?.type === "lifeExpectancy" && activeDataset.id === dataset.id;
+		activeDataset?.type === "lifeExpectancy" &&
+		activeDataset.id === dataset.id;
 
 	// Average of male + female bar pct → accent hex for border
 	const accentColor = leStats
 		? (() => {
-			const malePct = Math.max(0, Math.min(100, ((leStats.averageMaleLE - barRange.min) / (barRange.max - barRange.min)) * 100));
-			const femalePct = Math.max(0, Math.min(100, ((leStats.averageFemaleLE - barRange.min) / (barRange.max - barRange.min)) * 100));
-			const { r, g, b } = leColorRgb((malePct + femalePct) / 2);
-			return rgbToHex(r, g, b);
-		})()
+				const malePct = Math.max(
+					0,
+					Math.min(
+						100,
+						((leStats.averageMaleLE - barRange.min) /
+							(barRange.max - barRange.min)) *
+							100,
+					),
+				);
+				const femalePct = Math.max(
+					0,
+					Math.min(
+						100,
+						((leStats.averageFemaleLE - barRange.min) /
+							(barRange.max - barRange.min)) *
+							100,
+					),
+				);
+				const { r, g, b } = leColorRgb((malePct + femalePct) / 2);
+				return rgbToHex(r, g, b);
+			})()
 		: null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+		accentColor,
+		isActive,
+		isDark,
+	);
 
 	return (
 		<div
@@ -141,15 +191,29 @@ export default memo(function LifeExpectancyChart({
 				</h3>
 				{leStats ? (
 					<div className="mt-1.5 space-y-1">
-						{leBar(leStats.averageMaleLE, "M", barRange.min, barRange.max, isDark)}
-						{leBar(leStats.averageFemaleLE, "F", barRange.min, barRange.max, isDark)}
+						{leBar(
+							leStats.averageMaleLE,
+							"M",
+							barRange.min,
+							barRange.max,
+							isDark,
+						)}
+						{leBar(
+							leStats.averageFemaleLE,
+							"F",
+							barRange.min,
+							barRange.max,
+							isDark,
+						)}
 					</div>
 				) : (
 					<div className="h-5 mt-2 mb-2">
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (
-							<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+							<div
+								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+							>
 								No data available
 							</div>
 						)}

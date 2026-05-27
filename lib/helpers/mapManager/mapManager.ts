@@ -45,10 +45,7 @@ export class MapManager {
 	private propertyDetector: PropertyDetector;
 	private cache: StatsCache;
 
-	constructor(
-		map: maplibregl.Map,
-		callbacks: MapManagerCallbacks,
-	) {
+	constructor(map: maplibregl.Map, callbacks: MapManagerCallbacks) {
 		this.layerManager = new LayerManager(map);
 		this.eventHandler = new EventHandler(map, callbacks);
 		this.propertyDetector = new PropertyDetector();
@@ -81,8 +78,8 @@ export class MapManager {
 			codeProp = isLocal
 				? this.propertyDetector.detectWardCode(geojson.features)
 				: this.propertyDetector.detectConstituencyCode(
-					geojson.features,
-				);
+						geojson.features,
+					);
 			propCache.set(cacheKey, codeProp);
 		}
 
@@ -98,16 +95,16 @@ export class MapManager {
 		const features =
 			mode === "percentage" && options.selected
 				? this.featureBuilder.buildElectionPercentageFeatures(
-					geojson.features,
-					dataMap,
-					options.selected,
-					codeProp,
-				)
+						geojson.features,
+						dataMap,
+						options.selected,
+						codeProp,
+					)
 				: this.featureBuilder.buildElectionWinnerFeatures(
-					geojson.features,
-					codeProp,
-					(code) => resultsMap[code] || "NONE",
-				);
+						geojson.features,
+						codeProp,
+						(code) => resultsMap[code] || "NONE",
+					);
 
 		const transformedGeojson =
 			this.featureBuilder.formatBoundaryGeoJson(features);
@@ -137,7 +134,13 @@ export class MapManager {
 		mapOptions: MapOptions,
 		isDark = false,
 	): void {
-		this.updateElectionMap(geojson, dataset, mapOptions, "localElection", isDark);
+		this.updateElectionMap(
+			geojson,
+			dataset,
+			mapOptions,
+			"localElection",
+			isDark,
+		);
 	}
 
 	updateMapForGeneralElection(
@@ -146,7 +149,13 @@ export class MapManager {
 		mapOptions: MapOptions,
 		isDark = false,
 	): void {
-		this.updateElectionMap(geojson, dataset, mapOptions, "generalElection", isDark);
+		this.updateElectionMap(
+			geojson,
+			dataset,
+			mapOptions,
+			"generalElection",
+			isDark,
+		);
 	}
 
 	updateMapForEthnicity(
@@ -193,10 +202,7 @@ export class MapManager {
 			);
 		}
 
-		this.eventHandler.setupEventHandlers(
-			dataset.data,
-			codeProp,
-		);
+		this.eventHandler.setupEventHandlers(dataset.data, codeProp);
 	}
 
 	updateMapForCustomDataset(
@@ -226,10 +232,7 @@ export class MapManager {
 			mapOptions.visibility,
 		);
 
-		this.eventHandler.setupEventHandlers(
-			dataset.data,
-			codeProp,
-		);
+		this.eventHandler.setupEventHandlers(dataset.data, codeProp);
 	}
 
 	// Unified population update method
@@ -267,10 +270,7 @@ export class MapManager {
 			transformedGeojson,
 			mapOptions.visibility,
 		);
-		this.eventHandler.setupEventHandlers(
-			dataset.data,
-			wardCodeProp,
-		);
+		this.eventHandler.setupEventHandlers(dataset.data, wardCodeProp);
 	}
 
 	updateMapForAgeDistribution(
@@ -313,7 +313,18 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap<T extends HousePriceDataset | CrimeDataset | IncomeDataset | IMDDataset | SIMDDataset | WIMDDataset | NIMDMDataset | LifeExpectancyDataset | QualificationDataset>(
+	private updateGenericMap<
+		T extends
+			| HousePriceDataset
+			| CrimeDataset
+			| IncomeDataset
+			| IMDDataset
+			| SIMDDataset
+			| WIMDDataset
+			| NIMDMDataset
+			| LifeExpectancyDataset
+			| QualificationDataset,
+	>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
@@ -353,10 +364,7 @@ export class MapManager {
 			transformedGeojson,
 			mapOptions.visibility,
 		);
-		this.eventHandler.setupEventHandlers(
-			dataForEvents,
-			codeProp,
-		);
+		this.eventHandler.setupEventHandlers(dataForEvents, codeProp);
 	}
 
 	updateMapForHousePrices(
@@ -369,7 +377,9 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectWardCode.bind(this.propertyDetector),
-			this.featureBuilder.buildHousePriceFeatures.bind(this.featureBuilder),
+			this.featureBuilder.buildHousePriceFeatures.bind(
+				this.featureBuilder,
+			),
 			"housePrice",
 			dataset.data,
 		);
@@ -384,8 +394,12 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildCrimeRateFeatures.bind(this.featureBuilder),
+			this.propertyDetector.detectLocalAuthorityCode.bind(
+				this.propertyDetector,
+			),
+			this.featureBuilder.buildCrimeRateFeatures.bind(
+				this.featureBuilder,
+			),
 			"crime",
 			dataset.data,
 		);
@@ -400,7 +414,9 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.propertyDetector.detectLocalAuthorityCode.bind(
+				this.propertyDetector,
+			),
 			this.featureBuilder.buildIncomeFeatures.bind(this.featureBuilder),
 			"income",
 			dataset.data,
@@ -435,10 +451,7 @@ export class MapManager {
 			transformedGeojson,
 			mapOptions.visibility,
 		);
-		this.eventHandler.setupEventHandlers(
-			dataset.data,
-			codeProp,
-		);
+		this.eventHandler.setupEventHandlers(dataset.data, codeProp);
 	}
 
 	updateMapForBrexitConstituency(
@@ -469,10 +482,7 @@ export class MapManager {
 			transformedGeojson,
 			mapOptions.visibility,
 		);
-		this.eventHandler.setupEventHandlers(
-			dataset.data,
-			codeProp,
-		);
+		this.eventHandler.setupEventHandlers(dataset.data, codeProp);
 	}
 
 	calculateBrexitConstituencyStats(
@@ -654,7 +664,9 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectDataZoneCode.bind(this.propertyDetector),
+			this.propertyDetector.detectDataZoneCode.bind(
+				this.propertyDetector,
+			),
 			this.featureBuilder.buildSIMDFeatures.bind(this.featureBuilder),
 			"simd",
 			dataset.data,
@@ -744,8 +756,12 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildLifeExpectancyFeatures.bind(this.featureBuilder),
+			this.propertyDetector.detectLocalAuthorityCode.bind(
+				this.propertyDetector,
+			),
+			this.featureBuilder.buildLifeExpectancyFeatures.bind(
+				this.featureBuilder,
+			),
 			"lifeExpectancy",
 			dataset.data,
 		);
@@ -774,8 +790,12 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildQualificationFeatures.bind(this.featureBuilder),
+			this.propertyDetector.detectLocalAuthorityCode.bind(
+				this.propertyDetector,
+			),
+			this.featureBuilder.buildQualificationFeatures.bind(
+				this.featureBuilder,
+			),
 			"qualification",
 			dataset.data,
 		);

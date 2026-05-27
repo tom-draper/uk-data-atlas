@@ -128,7 +128,7 @@ const filterBoundaryGroup = (
 
 const extractCodeSets = (
 	boundaryData: BoundaryData,
-	isLoading: boolean
+	isLoading: boolean,
 ): {
 	ward: Record<number, Set<string>>;
 	constituency: Record<number, Set<string>>;
@@ -139,28 +139,50 @@ const extractCodeSets = (
 } | null => {
 	if (isLoading) return null;
 
-	const extractFromGroup = (group: Record<number, BoundaryGeojson | null>, codeKeys: readonly string[]) =>
-		Object.entries(group).reduce((acc, [year, data]) => {
-			if (data?.features) {
-				const codeProp = codeKeys.find(
-					key => (data.features[0]?.properties as any)?.[key] !== undefined
-				);
-				if (codeProp) {
-					acc[Number(year)] = new Set(
-						data.features.map(f => (f.properties as any)[codeProp]).filter(Boolean)
+	const extractFromGroup = (
+		group: Record<number, BoundaryGeojson | null>,
+		codeKeys: readonly string[],
+	) =>
+		Object.entries(group).reduce(
+			(acc, [year, data]) => {
+				if (data?.features) {
+					const codeProp = codeKeys.find(
+						(key) =>
+							(data.features[0]?.properties as any)?.[key] !==
+							undefined,
 					);
+					if (codeProp) {
+						acc[Number(year)] = new Set(
+							data.features
+								.map((f) => (f.properties as any)[codeProp])
+								.filter(Boolean),
+						);
+					}
 				}
-			}
-			return acc;
-		}, {} as Record<number, Set<string>>);
+				return acc;
+			},
+			{} as Record<number, Set<string>>,
+		);
 
 	return {
 		ward: extractFromGroup(boundaryData.ward, PROPERTY_KEYS.wardCode),
-		constituency: extractFromGroup(boundaryData.constituency, PROPERTY_KEYS.constituencyCode),
-		localAuthority: extractFromGroup(boundaryData.localAuthority, PROPERTY_KEYS.ladCode),
+		constituency: extractFromGroup(
+			boundaryData.constituency,
+			PROPERTY_KEYS.constituencyCode,
+		),
+		localAuthority: extractFromGroup(
+			boundaryData.localAuthority,
+			PROPERTY_KEYS.ladCode,
+		),
 		lsoa: extractFromGroup(boundaryData.lsoa, PROPERTY_KEYS.lsoaCode),
-		dataZone: extractFromGroup(boundaryData.dataZone, PROPERTY_KEYS.dataZoneCode),
-		superOutputArea: extractFromGroup(boundaryData.superOutputArea, PROPERTY_KEYS.soaCode),
+		dataZone: extractFromGroup(
+			boundaryData.dataZone,
+			PROPERTY_KEYS.dataZoneCode,
+		),
+		superOutputArea: extractFromGroup(
+			boundaryData.superOutputArea,
+			PROPERTY_KEYS.soaCode,
+		),
 	};
 };
 
@@ -178,7 +200,10 @@ export function useBoundaryData(
 			mappings: Record<string, string[]>,
 		) => void;
 		addCodeMappings: (type: CodeType, mappings: CodeMapping) => void;
-		addConstituencyWardMappings: (year: YearCode, mappings: Record<string, string[]>) => void;
+		addConstituencyWardMappings: (
+			year: YearCode,
+			mappings: Record<string, string[]>,
+		) => void;
 	},
 ) {
 	const [rawData, setRawData] = useState<BoundaryData>(EMPTY_BOUNDARY_DATA);
@@ -201,36 +226,42 @@ export function useBoundaryData(
 				setIsLoading(true);
 				setError(null);
 
-				const [wards, constituencies, localAuthorities, lsoas, dataZones, superOutputAreas] =
-					await Promise.all([
-						fetchBoundaryGroup(
-							"ward",
-							addWardLadMappings,
-							addLadWardMappings,
-							addCodeMappings,
-						),
-						fetchBoundaryGroup(
-							"constituency",
-							undefined,
-							undefined,
-							addCodeMappings,
-						),
-						fetchBoundaryGroup(
-							"localAuthority",
-							undefined,
-							undefined,
-							addCodeMappings,
-						),
-						fetchBoundaryGroup("lsoa").catch(
-							() => ({} as Record<number, BoundaryGeojson>),
-						),
-						fetchBoundaryGroup("dataZone").catch(
-							() => ({} as Record<number, BoundaryGeojson>),
-						),
-						fetchBoundaryGroup("superOutputArea").catch(
-							() => ({} as Record<number, BoundaryGeojson>),
-						),
-					]);
+				const [
+					wards,
+					constituencies,
+					localAuthorities,
+					lsoas,
+					dataZones,
+					superOutputAreas,
+				] = await Promise.all([
+					fetchBoundaryGroup(
+						"ward",
+						addWardLadMappings,
+						addLadWardMappings,
+						addCodeMappings,
+					),
+					fetchBoundaryGroup(
+						"constituency",
+						undefined,
+						undefined,
+						addCodeMappings,
+					),
+					fetchBoundaryGroup(
+						"localAuthority",
+						undefined,
+						undefined,
+						addCodeMappings,
+					),
+					fetchBoundaryGroup("lsoa").catch(
+						() => ({}) as Record<number, BoundaryGeojson>,
+					),
+					fetchBoundaryGroup("dataZone").catch(
+						() => ({}) as Record<number, BoundaryGeojson>,
+					),
+					fetchBoundaryGroup("superOutputArea").catch(
+						() => ({}) as Record<number, BoundaryGeojson>,
+					),
+				]);
 
 				if (mounted) {
 					setRawData({
@@ -249,18 +280,26 @@ export function useBoundaryData(
 					// renamed or redrawn in 2024 have no PCON19CD→PCON24CD name mapping, so
 					// they'd return [] if we only indexed by PCON24CD.
 					if (addConstituencyWardMappings) {
-						const constitencyEntries = Object.entries(constituencies).filter(
-							([, conData]) => conData?.features,
-						);
-						for (const [yearStr, wardData] of Object.entries(wards)) {
+						const constitencyEntries = Object.entries(
+							constituencies,
+						).filter(([, conData]) => conData?.features);
+						for (const [yearStr, wardData] of Object.entries(
+							wards,
+						)) {
 							if (!wardData?.features) continue;
 							const mergedMappings: Record<string, string[]> = {};
 							for (const [, conData] of constitencyEntries) {
-								const mappings = buildConstituencyWardMappings(wardData, conData!);
+								const mappings = buildConstituencyWardMappings(
+									wardData,
+									conData!,
+								);
 								Object.assign(mergedMappings, mappings);
 							}
 							if (Object.keys(mergedMappings).length > 0) {
-								addConstituencyWardMappings(Number(yearStr), mergedMappings);
+								addConstituencyWardMappings(
+									Number(yearStr),
+									mergedMappings,
+								);
 							}
 						}
 					}
@@ -285,7 +324,12 @@ export function useBoundaryData(
 		return () => {
 			mounted = false;
 		};
-	}, [addWardLadMappings, addLadWardMappings, addCodeMappings, addConstituencyWardMappings]);
+	}, [
+		addWardLadMappings,
+		addLadWardMappings,
+		addCodeMappings,
+		addConstituencyWardMappings,
+	]);
 
 	// Filter data based on selected location
 	const filteredData: BoundaryData = useMemo(() => {

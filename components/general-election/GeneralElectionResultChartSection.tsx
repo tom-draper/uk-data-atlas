@@ -3,7 +3,10 @@
 
 import { memo, useMemo } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
-import { calculateTurnout, processPartyVotes } from "@/lib/helpers/generalElection";
+import {
+	calculateTurnout,
+	processPartyVotes,
+} from "@/lib/helpers/generalElection";
 import {
 	ActiveViz,
 	AggregatedGeneralElectionData,
@@ -17,7 +20,10 @@ import {
 } from "@lib/types";
 import GeneralElectionResultChart from "./GeneralElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import { useChartVisibility, ChartKey } from "@/lib/context/ChartVisibilityContext";
+import {
+	useChartVisibility,
+	ChartKey,
+} from "@/lib/context/ChartVisibilityContext";
 
 interface ProcessedYearData {
 	year: number;
@@ -70,7 +76,11 @@ const useElectionChartData = (
 				let data = dataset.data?.[constituencyCode];
 
 				if (!data && getCodeForYear) {
-					const mappedCode = getCodeForYear("constituency", constituencyCode, year);
+					const mappedCode = getCodeForYear(
+						"constituency",
+						constituencyCode,
+						year,
+					);
 					if (mappedCode) {
 						data = dataset.data?.[mappedCode];
 					}
@@ -78,13 +88,21 @@ const useElectionChartData = (
 
 				if (data) {
 					rawPartyVotes = data.partyVotes;
-					turnout = calculateTurnout(data.validVotes, data.invalidVotes, data.electorate);
+					turnout = calculateTurnout(
+						data.validVotes,
+						data.invalidVotes,
+						data.electorate,
+					);
 				}
 			} else if (selectedArea === null && aggregatedData?.[year]) {
 				const agg = aggregatedData[year];
 				if (agg.partyVotes) {
 					rawPartyVotes = agg.partyVotes as PartyVotes;
-					turnout = calculateTurnout(agg.validVotes, agg.invalidVotes, agg.electorate);
+					turnout = calculateTurnout(
+						agg.validVotes,
+						agg.invalidVotes,
+						agg.electorate,
+					);
 					isAggregated = true;
 					totalSeats = agg.totalSeats;
 
@@ -112,7 +130,10 @@ const useElectionChartData = (
 				};
 			}
 
-			const partyData = processPartyVotes(rawPartyVotes, dataset.partyInfo);
+			const partyData = processPartyVotes(
+				rawPartyVotes,
+				dataset.partyInfo,
+			);
 			const totalVotes = partyData.reduce((a, p) => a + p.votes, 0);
 
 			return {
@@ -173,8 +194,10 @@ export default memo(function GeneralElectionResultChartSection({
 					isActive={
 						(activeDataset &&
 							((activeDataset.type === "generalElection" &&
-								activeDataset.id === `generalElection-${data.year}`) ||
-								(activeViz.datasetType === "custom" && activeViz.vizId === "custom"))) as boolean
+								activeDataset.id ===
+									`generalElection-${data.year}`) ||
+								(activeViz.datasetType === "custom" &&
+									activeViz.vizId === "custom"))) as boolean
 					}
 					setActiveViz={setActiveViz}
 				/>

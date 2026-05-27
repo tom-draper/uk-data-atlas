@@ -9,26 +9,26 @@ import { useDataLoader } from "./useDataLoader";
 // used by this CSV. Map each old code to its closest geographic equivalent so Salford
 // wards display house price data on the map.
 const SALFORD_WARD_CODE_REMAP: Record<string, string> = {
-	"E05000759": "E05013018", // Barton → Barton & Winton
-	"E05000760": "E05013020", // Boothstown and Ellenbrook → Boothstown & Ellenbrook
-	"E05000761": "E05013021", // Broughton → Broughton
-	"E05000762": "E05013022", // Cadishead → Cadishead & Lower Irlam
-	"E05000763": "E05013023", // Claremont → Claremont
-	"E05000764": "E05013024", // Eccles → Eccles
-	"E05000765": "E05013025", // Irlam → Higher Irlam & Peel Green
-	"E05000766": "E05013019", // Irwell Riverside → Blackfriars & Trinity
-	"E05000767": "E05013026", // Kersal → Kersal & Broughton Park
-	"E05000768": "E05013030", // Langworthy → Pendleton & Charlestown
-	"E05000769": "E05013027", // Little Hulton → Little Hulton
-	"E05000770": "E05013028", // Ordsall → Ordsall
-	"E05000771": "E05013029", // Pendlebury → Pendlebury & Clifton
-	"E05000772": "E05013032", // Swinton North → Swinton & Wardley
-	"E05000773": "E05013033", // Swinton South → Swinton Park
-	"E05000774": "E05013034", // Walkden North → Walkden North
-	"E05000775": "E05013035", // Walkden South → Walkden South
-	"E05000776": "E05013036", // Weaste and Seedley → Weaste & Seedley
-	"E05000777": "E05013031", // Winton → Quays (Barton & Winton receives Barton's data above)
-	"E05000778": "E05013037", // Worsley → Worsley & Westwood Park
+	E05000759: "E05013018", // Barton → Barton & Winton
+	E05000760: "E05013020", // Boothstown and Ellenbrook → Boothstown & Ellenbrook
+	E05000761: "E05013021", // Broughton → Broughton
+	E05000762: "E05013022", // Cadishead → Cadishead & Lower Irlam
+	E05000763: "E05013023", // Claremont → Claremont
+	E05000764: "E05013024", // Eccles → Eccles
+	E05000765: "E05013025", // Irlam → Higher Irlam & Peel Green
+	E05000766: "E05013019", // Irwell Riverside → Blackfriars & Trinity
+	E05000767: "E05013026", // Kersal → Kersal & Broughton Park
+	E05000768: "E05013030", // Langworthy → Pendleton & Charlestown
+	E05000769: "E05013027", // Little Hulton → Little Hulton
+	E05000770: "E05013028", // Ordsall → Ordsall
+	E05000771: "E05013029", // Pendlebury → Pendlebury & Clifton
+	E05000772: "E05013032", // Swinton North → Swinton & Wardley
+	E05000773: "E05013033", // Swinton South → Swinton Park
+	E05000774: "E05013034", // Walkden North → Walkden North
+	E05000775: "E05013035", // Walkden South → Walkden South
+	E05000776: "E05013036", // Weaste and Seedley → Weaste & Seedley
+	E05000777: "E05013031", // Winton → Quays (Barton & Winton receives Barton's data above)
+	E05000778: "E05013037", // Worsley → Worsley & Westwood Park
 };
 
 export const useHousePriceData = () => {
@@ -39,7 +39,9 @@ export const useHousePriceData = () => {
 			),
 		);
 		if (!res.ok)
-			throw new Error(`Failed to fetch house price data: ${res.statusText}`);
+			throw new Error(
+				`Failed to fetch house price data: ${res.statusText}`,
+			);
 
 		const csvText = await res.text();
 		const skipLines = findHeaderLine(csvText, "local authority code");

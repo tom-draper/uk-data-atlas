@@ -1,10 +1,16 @@
-import { calculateTurnout, getWinningParty, processPartyVotes } from "@/lib/helpers/generalElection";
+import {
+	calculateTurnout,
+	getWinningParty,
+	processPartyVotes,
+} from "@/lib/helpers/generalElection";
 import type { GeneralElectionConstituencyData } from "@/lib/types";
 import type { PartyCode } from "@/lib/types";
 
 // Minimal fixture — only fields used by the functions under test
-const makeConstituency = (partyVotes: Record<string, number>): GeneralElectionConstituencyData =>
-	({ partyVotes } as GeneralElectionConstituencyData);
+const makeConstituency = (
+	partyVotes: Record<string, number>,
+): GeneralElectionConstituencyData =>
+	({ partyVotes }) as GeneralElectionConstituencyData;
 
 describe("calculateTurnout", () => {
 	it("calculates turnout as a percentage", () => {
@@ -29,7 +35,12 @@ describe("getWinningParty", () => {
 		expect(getWinningParty(data)).toBe("LAB");
 	});
 	it("returns the correct winner when trailing parties have more entries", () => {
-		const data = makeConstituency({ CON: 1000, LAB: 5000, LD: 3000, GREEN: 500 });
+		const data = makeConstituency({
+			CON: 1000,
+			LAB: 5000,
+			LD: 3000,
+			GREEN: 500,
+		});
 		expect(getWinningParty(data)).toBe("LAB");
 	});
 	it("returns empty string for empty partyVotes", () => {
@@ -50,17 +61,26 @@ describe("processPartyVotes", () => {
 	];
 
 	it("returns results sorted by votes descending", () => {
-		const result = processPartyVotes({ LAB: 500, CON: 300, LD: 200 }, partyInfo);
+		const result = processPartyVotes(
+			{ LAB: 500, CON: 300, LD: 200 },
+			partyInfo,
+		);
 		expect(result.map((p) => p.key)).toEqual(["LAB", "CON", "LD"]);
 	});
 	it("calculates percentages correctly", () => {
-		const result = processPartyVotes({ LAB: 500, CON: 300, LD: 200 }, partyInfo);
+		const result = processPartyVotes(
+			{ LAB: 500, CON: 300, LD: 200 },
+			partyInfo,
+		);
 		expect(result[0].percentage).toBeCloseTo(50);
 		expect(result[1].percentage).toBeCloseTo(30);
 		expect(result[2].percentage).toBeCloseTo(20);
 	});
 	it("filters out parties with 0 votes", () => {
-		const result = processPartyVotes({ LAB: 500, CON: 0, LD: 500 }, partyInfo);
+		const result = processPartyVotes(
+			{ LAB: 500, CON: 0, LD: 500 },
+			partyInfo,
+		);
 		expect(result.find((p) => p.key === "CON")).toBeUndefined();
 	});
 	it("returns empty array when total votes is 0", () => {

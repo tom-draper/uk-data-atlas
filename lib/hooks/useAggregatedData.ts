@@ -1,216 +1,274 @@
 // lib/hooks/useAggregatedData.ts
 import { useMemo } from "react";
 import type {
-    Dataset,
-    Datasets,
-    BoundaryType,
-    BoundaryGeojson,
-    AggregatedData,
-    BoundaryData,
-    CustomDataset,
+	Dataset,
+	Datasets,
+	BoundaryType,
+	BoundaryGeojson,
+	AggregatedData,
+	BoundaryData,
+	CustomDataset,
 } from "@lib/types";
 import { MapManager } from "../helpers/mapManager";
 
 interface DatasetConfig<T extends Dataset> {
-    datasets: Record<string, T>;
-    boundaryType: BoundaryType;
-    keyBy?: "year" | "id";
-    calculateStats: (
-        mapManager: MapManager,
-        geojson: BoundaryGeojson,
-        data: any,
-        location: string | null,
-        datasetId: string,
-    ) => any;
+	datasets: Record<string, T>;
+	boundaryType: BoundaryType;
+	keyBy?: "year" | "id";
+	calculateStats: (
+		mapManager: MapManager,
+		geojson: BoundaryGeojson,
+		data: any,
+		location: string | null,
+		datasetId: string,
+	) => any;
 }
 
 /**
  * Generic aggregation function - works for ANY dataset type
  */
 function aggregateDataset<T extends Dataset>(
-    config: DatasetConfig<T>,
-    mapManager: MapManager | null,
-    boundaryData: BoundaryData,
-    location: string | null,
+	config: DatasetConfig<T>,
+	mapManager: MapManager | null,
+	boundaryData: BoundaryData,
+	location: string | null,
 ) {
-    if (!mapManager) return null;
+	if (!mapManager) return null;
 
-    const result: Record<string, any> = {};
+	const result: Record<string, any> = {};
 
-    for (const [datasetId, dataset] of Object.entries(config.datasets)) {
-        // Get the appropriate boundary geojson
-        const geojson =
-            boundaryData[config.boundaryType]?.[dataset.boundaryYear];
+	for (const [datasetId, dataset] of Object.entries(config.datasets)) {
+		// Get the appropriate boundary geojson
+		const geojson =
+			boundaryData[config.boundaryType]?.[dataset.boundaryYear];
 
-        const key = config.keyBy === "id" ? datasetId : dataset.year;
-        if (dataset.data && geojson) {
-            result[key] = config.calculateStats(
-                mapManager,
-                geojson,
-                dataset.data,
-                location,
-                datasetId,
-            );
-        } else {
-            result[key] = null;
-        }
-    }
+		const key = config.keyBy === "id" ? datasetId : dataset.year;
+		if (dataset.data && geojson) {
+			result[key] = config.calculateStats(
+				mapManager,
+				geojson,
+				dataset.data,
+				location,
+				datasetId,
+			);
+		} else {
+			result[key] = null;
+		}
+	}
 
-    return result;
+	return result;
 }
 
 interface UseAggregatedDataParams {
-    mapManager: MapManager | null;
-    boundaryData: BoundaryData;
-    datasets: Datasets;
-    customDataset: CustomDataset | null;
-    location: string | null;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	datasets: Datasets;
+	customDataset: CustomDataset | null;
+	location: string | null;
 }
 
 /**
  * Unified hook that aggregates ALL dataset types
  */
 export function useAggregatedData({
-    mapManager,
-    boundaryData,
-    datasets,
-    customDataset,
-    location,
+	mapManager,
+	boundaryData,
+	datasets,
+	customDataset,
+	location,
 }: UseAggregatedDataParams): AggregatedData {
-    // Define configuration for each dataset type
-    const configs: Record<keyof Datasets | 'custom', DatasetConfig<any>> = useMemo(
-        () => ({
-            localElection: {
-                datasets: datasets.localElection,
-                boundaryType: "ward",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateLocalElectionStats(geojson, data, location, id),
-            },
-            generalElection: {
-                datasets: datasets.generalElection,
-                boundaryType: "constituency",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateGeneralElectionStats(geojson, data, location, id),
-            },
-            population: {
-                datasets: datasets.population,
-                boundaryType: "ward",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculatePopulationStats(geojson, data, location, id),
-            },
-            ethnicity: {
-                datasets: datasets.ethnicity,
-                boundaryType: "localAuthority",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateEthnicityStats(geojson, data, location, id),
-            },
-            housePrice: {
-                datasets: datasets.housePrice,
-                boundaryType: "ward",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateHousePriceStats(geojson, data, location, id),
-            },
-            crime: {
-                datasets: datasets.crime,
-                boundaryType: "localAuthority",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateCrimeStats(geojson, data, location, id),
-            },
-            income: {
-                datasets: datasets.income,
-                boundaryType: "localAuthority",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateIncomeStats(geojson, data, location, id),
-            },
-            brexit: {
-                datasets: datasets.brexit,
-                boundaryType: "localAuthority",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateBrexitStats(geojson, data, location, id),
-            },
-            brexitConstituency: {
-                datasets: datasets.brexitConstituency,
-                boundaryType: "constituency",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateBrexitConstituencyStats(geojson, data, location, id),
-            },
-            imd: {
-                datasets: datasets.imd,
-                boundaryType: "lsoa",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateIMDStats(geojson, data, location, id),
-            },
-            simd: {
-                datasets: datasets.simd,
-                boundaryType: "dataZone",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateSIMDStats(geojson, data, location, id),
-            },
-            wimd: {
-                datasets: datasets.wimd,
-                boundaryType: "lsoa",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateWIMDStats(geojson, data, location, id),
-            },
-            nimdm: {
-                datasets: datasets.nimdm,
-                boundaryType: "superOutputArea",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateNIMDMStats(geojson, data, location, id),
-            },
-            lifeExpectancy: {
-                datasets: datasets.lifeExpectancy,
-                boundaryType: "localAuthority",
-                keyBy: "id",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateLifeExpectancyStats(geojson, data, location, id),
-            },
-            custom: {
-                datasets: customDataset ? [customDataset] : [],
-                boundaryType: customDataset?.boundaryType || 'ward',
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateCustomDatasetStats(geojson, data, location, id),
-            },
-            qualification: {
-                datasets: datasets.qualification,
-                boundaryType: "localAuthority",
-                calculateStats: (mapManager, geojson, data, location, id) =>
-                    mapManager.calculateQualificationStats(geojson, data, location, id),
-            }
-        }),
-        [datasets, customDataset],
-    );
+	// Define configuration for each dataset type
+	const configs: Record<
+		keyof Datasets | "custom",
+		DatasetConfig<any>
+	> = useMemo(
+		() => ({
+			localElection: {
+				datasets: datasets.localElection,
+				boundaryType: "ward",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateLocalElectionStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			generalElection: {
+				datasets: datasets.generalElection,
+				boundaryType: "constituency",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateGeneralElectionStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			population: {
+				datasets: datasets.population,
+				boundaryType: "ward",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculatePopulationStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			ethnicity: {
+				datasets: datasets.ethnicity,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateEthnicityStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			housePrice: {
+				datasets: datasets.housePrice,
+				boundaryType: "ward",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateHousePriceStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			crime: {
+				datasets: datasets.crime,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateCrimeStats(geojson, data, location, id),
+			},
+			income: {
+				datasets: datasets.income,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateIncomeStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			brexit: {
+				datasets: datasets.brexit,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateBrexitStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			brexitConstituency: {
+				datasets: datasets.brexitConstituency,
+				boundaryType: "constituency",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateBrexitConstituencyStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			imd: {
+				datasets: datasets.imd,
+				boundaryType: "lsoa",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateIMDStats(geojson, data, location, id),
+			},
+			simd: {
+				datasets: datasets.simd,
+				boundaryType: "dataZone",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateSIMDStats(geojson, data, location, id),
+			},
+			wimd: {
+				datasets: datasets.wimd,
+				boundaryType: "lsoa",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateWIMDStats(geojson, data, location, id),
+			},
+			nimdm: {
+				datasets: datasets.nimdm,
+				boundaryType: "superOutputArea",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateNIMDMStats(geojson, data, location, id),
+			},
+			lifeExpectancy: {
+				datasets: datasets.lifeExpectancy,
+				boundaryType: "localAuthority",
+				keyBy: "id",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateLifeExpectancyStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			custom: {
+				datasets: customDataset ? [customDataset] : [],
+				boundaryType: customDataset?.boundaryType || "ward",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateCustomDatasetStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+			qualification: {
+				datasets: datasets.qualification,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateQualificationStats(
+						geojson,
+						data,
+						location,
+						id,
+					),
+			},
+		}),
+		[datasets, customDataset],
+	);
 
-    // Aggregate all datasets using the same logic
-    const aggregatedData = useMemo(() => {
-        if (!mapManager) {
-            return {
-                localElection: null,
-                generalElection: null,
-                population: null,
-                ethnicity: null,
-                housePrice: null,
-                crime: null,
-                income: null,
-                brexit: null,
-                brexitConstituency: null,
-                custom: null,
-                imd: null,
-                simd: null,
-                wimd: null,
-                nimdm: null,
-                lifeExpectancy: null,
-                qualification: null,
-            };
-        }
+	// Aggregate all datasets using the same logic
+	const aggregatedData = useMemo(() => {
+		if (!mapManager) {
+			return {
+				localElection: null,
+				generalElection: null,
+				population: null,
+				ethnicity: null,
+				housePrice: null,
+				crime: null,
+				income: null,
+				brexit: null,
+				brexitConstituency: null,
+				custom: null,
+				imd: null,
+				simd: null,
+				wimd: null,
+				nimdm: null,
+				lifeExpectancy: null,
+				qualification: null,
+			};
+		}
 
-        return Object.fromEntries(
-            Object.entries(configs).map(([key, config]) => [
-                key,
-                aggregateDataset(config, mapManager, boundaryData, location),
-            ]),
-        ) as AggregatedData;
-    }, [mapManager, boundaryData, location, configs]);
+		return Object.fromEntries(
+			Object.entries(configs).map(([key, config]) => [
+				key,
+				aggregateDataset(config, mapManager, boundaryData, location),
+			]),
+		) as AggregatedData;
+	}, [mapManager, boundaryData, location, configs]);
 
-    return aggregatedData;
+	return aggregatedData;
 }

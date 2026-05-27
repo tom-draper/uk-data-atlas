@@ -26,8 +26,11 @@ export function detectWardCodeForYear(
 	if (!firstFeature) return WARD_CODE_KEYS[0];
 
 	const yearSuffix = year.toString().slice(-2);
-	const specificKey = WARD_CODE_KEYS.find((key) => key === `WD${yearSuffix}CD`);
-	if (specificKey && specificKey in firstFeature.properties) return specificKey;
+	const specificKey = WARD_CODE_KEYS.find(
+		(key) => key === `WD${yearSuffix}CD`,
+	);
+	if (specificKey && specificKey in firstFeature.properties)
+		return specificKey;
 
 	for (const key of WARD_CODE_KEYS) {
 		if (key in firstFeature.properties) return key;
@@ -61,17 +64,14 @@ export class PropertyDetector {
 	}
 
 	detectCode(features: BoundaryGeojson["features"]) {
-		return this.detectPropertyKey(
-			features,
-			[
-				...WARD_CODE_KEYS,
-				...CONSTITUENCY_CODE_KEYS,
-				...LAD_CODE_KEYS,
-				...LSOA_CODE_KEYS,
-				...DATA_ZONE_CODE_KEYS,
-				...SOA_CODE_KEYS,
-			] as readonly PropertyKeys[],
-		);
+		return this.detectPropertyKey(features, [
+			...WARD_CODE_KEYS,
+			...CONSTITUENCY_CODE_KEYS,
+			...LAD_CODE_KEYS,
+			...LSOA_CODE_KEYS,
+			...DATA_ZONE_CODE_KEYS,
+			...SOA_CODE_KEYS,
+		] as readonly PropertyKeys[]);
 	}
 
 	private detectPropertyKey(
@@ -93,7 +93,14 @@ export class PropertyDetector {
 	getYearSpecificCodeKey(
 		type: BoundaryType,
 		year: number,
-	): WardCodeKey | LADCodeKey | ConstituencyCodeKey | LSOACodeKey | DataZoneCodeKey | SOACodeKey | undefined {
+	):
+		| WardCodeKey
+		| LADCodeKey
+		| ConstituencyCodeKey
+		| LSOACodeKey
+		| DataZoneCodeKey
+		| SOACodeKey
+		| undefined {
 		// Construct the expected key based on year
 		// e.g., for year 2024, expect keys like WD24CD, LAD24CD, PCON24CD
 		const yearSuffix = year.toString().slice(-2);
@@ -106,7 +113,9 @@ export class PropertyDetector {
 			case "constituency":
 				// Constituency keys can be a mix of years and prefixes
 				// This might need more refined logic if there are complex naming conventions
-				return CONSTITUENCY_CODE_KEYS.find((key) => key.endsWith(yearSuffix));
+				return CONSTITUENCY_CODE_KEYS.find((key) =>
+					key.endsWith(yearSuffix),
+				);
 			case "lsoa":
 				return LSOA_CODE_KEYS.find((key) => key.endsWith(yearSuffix));
 			case "dataZone":

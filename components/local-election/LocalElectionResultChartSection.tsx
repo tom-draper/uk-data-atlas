@@ -2,7 +2,10 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { calculateTurnout, processPartyVotes } from "@/lib/helpers/generalElection";
+import {
+	calculateTurnout,
+	processPartyVotes,
+} from "@/lib/helpers/generalElection";
 import {
 	ActiveViz,
 	AggregatedLocalElectionData,
@@ -15,7 +18,10 @@ import {
 } from "@lib/types";
 import LocalElectionResultChart from "./LocalElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import { useChartVisibility, ChartKey } from "@/lib/context/ChartVisibilityContext";
+import {
+	useChartVisibility,
+	ChartKey,
+} from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface ProcessedYearData {
@@ -29,7 +35,13 @@ interface ProcessedYearData {
 
 // Cache LAD vote aggregations — keyed by ladCode, then election year
 const MAX_LAD_CACHE_ENTRIES = 50;
-const localElectionLadCache = new Map<string, Map<number, { partyVotes: Record<string, number>; electorate: number } | null>>();
+const localElectionLadCache = new Map<
+	string,
+	Map<
+		number,
+		{ partyVotes: Record<string, number>; electorate: number } | null
+	>
+>();
 
 const useLocalElectionData = (
 	availableDatasets: Record<string, LocalElectionDataset>,
@@ -41,7 +53,10 @@ const useLocalElectionData = (
 		targetYear: number,
 	) => string | undefined,
 	getWardsForLad?: (ladCode: string, year: number) => string[],
-	getWardsForConstituency?: (constituencyCode: string, wardYear: number) => string[],
+	getWardsForConstituency?: (
+		constituencyCode: string,
+		wardYear: number,
+	) => string[],
 ) => {
 	return useMemo(() => {
 		return LOCAL_ELECTION_YEARS.map((year): ProcessedYearData => {
@@ -77,13 +92,19 @@ const useLocalElectionData = (
 					rawPartyVotes = data.partyVotes;
 					turnout = data.turnoutPercent;
 				}
-			} else if (selectedArea && selectedArea.type === "localAuthority" && getWardsForLad) {
+			} else if (
+				selectedArea &&
+				selectedArea.type === "localAuthority" &&
+				getWardsForLad
+			) {
 				const ladCode = selectedArea.code;
 
 				// Check cache first
 				if (!localElectionLadCache.has(ladCode)) {
 					if (localElectionLadCache.size >= MAX_LAD_CACHE_ENTRIES) {
-						localElectionLadCache.delete(localElectionLadCache.keys().next().value!);
+						localElectionLadCache.delete(
+							localElectionLadCache.keys().next().value!,
+						);
 					}
 					localElectionLadCache.set(ladCode, new Map());
 				}
@@ -99,15 +120,23 @@ const useLocalElectionData = (
 						let wardData = dataset.data[wardCode];
 
 						if (!wardData && getCodeForYear) {
-							const mappedCode = getCodeForYear("ward", wardCode, year);
+							const mappedCode = getCodeForYear(
+								"ward",
+								wardCode,
+								year,
+							);
 							if (mappedCode) {
 								wardData = dataset.data[mappedCode];
 							}
 						}
 
 						if (wardData?.partyVotes) {
-							for (const [partyKey, votes] of Object.entries(wardData.partyVotes)) {
-								aggregatedVotes[partyKey] = (aggregatedVotes[partyKey] || 0) + (votes || 0);
+							for (const [partyKey, votes] of Object.entries(
+								wardData.partyVotes,
+							)) {
+								aggregatedVotes[partyKey] =
+									(aggregatedVotes[partyKey] || 0) +
+									(votes || 0);
 							}
 							if (wardData.electorate) {
 								totalElectorate += wardData.electorate;
@@ -115,21 +144,43 @@ const useLocalElectionData = (
 						}
 					}
 
-					const totalVotes = Object.values(aggregatedVotes).reduce((sum, v) => sum + (v || 0), 0);
-					cached = totalVotes > 0 ? { partyVotes: aggregatedVotes, electorate: totalElectorate } : null;
+					const totalVotes = Object.values(aggregatedVotes).reduce(
+						(sum, v) => sum + (v || 0),
+						0,
+					);
+					cached =
+						totalVotes > 0
+							? {
+									partyVotes: aggregatedVotes,
+									electorate: totalElectorate,
+								}
+							: null;
 					yearCache.set(year, cached);
 				}
 
 				if (cached) {
 					rawPartyVotes = cached.partyVotes as PartyVotes;
 					if (cached.electorate > 0) {
-						const totalVotes = Object.values(cached.partyVotes).reduce((s, v) => s + (v || 0), 0);
-						turnout = calculateTurnout(totalVotes, 0, cached.electorate);
+						const totalVotes = Object.values(
+							cached.partyVotes,
+						).reduce((s, v) => s + (v || 0), 0);
+						turnout = calculateTurnout(
+							totalVotes,
+							0,
+							cached.electorate,
+						);
 					}
 				}
-			} else if (selectedArea && selectedArea.type === "constituency" && getWardsForConstituency) {
+			} else if (
+				selectedArea &&
+				selectedArea.type === "constituency" &&
+				getWardsForConstituency
+			) {
 				const constituencyCode = selectedArea.code;
-				const wardCodes = getWardsForConstituency(constituencyCode, dataset.boundaryYear);
+				const wardCodes = getWardsForConstituency(
+					constituencyCode,
+					dataset.boundaryYear,
+				);
 				const aggregatedVotes: Record<string, number> = {};
 				let totalElectorate = 0;
 
@@ -140,25 +191,40 @@ const useLocalElectionData = (
 						if (mapped) wardData = dataset.data[mapped];
 					}
 					if (wardData?.partyVotes) {
-						for (const [party, votes] of Object.entries(wardData.partyVotes)) {
-							aggregatedVotes[party] = (aggregatedVotes[party] || 0) + (votes || 0);
+						for (const [party, votes] of Object.entries(
+							wardData.partyVotes,
+						)) {
+							aggregatedVotes[party] =
+								(aggregatedVotes[party] || 0) + (votes || 0);
 						}
-						if (wardData.electorate) totalElectorate += wardData.electorate;
+						if (wardData.electorate)
+							totalElectorate += wardData.electorate;
 					}
 				}
 
-				const totalVotes = Object.values(aggregatedVotes).reduce((s, v) => s + (v || 0), 0);
+				const totalVotes = Object.values(aggregatedVotes).reduce(
+					(s, v) => s + (v || 0),
+					0,
+				);
 				if (totalVotes > 0) {
 					rawPartyVotes = aggregatedVotes as PartyVotes;
 					if (totalElectorate > 0) {
-						turnout = calculateTurnout(totalVotes, 0, totalElectorate);
+						turnout = calculateTurnout(
+							totalVotes,
+							0,
+							totalElectorate,
+						);
 					}
 				}
 			} else if (selectedArea === null && aggregatedData?.[year]) {
 				const agg = aggregatedData[year];
 				if (agg) {
 					rawPartyVotes = agg.partyVotes;
-					turnout = calculateTurnout(agg.totalVotes, 0, agg.electorate);
+					turnout = calculateTurnout(
+						agg.totalVotes,
+						0,
+						agg.electorate,
+					);
 				}
 			}
 
@@ -173,7 +239,10 @@ const useLocalElectionData = (
 				};
 			}
 
-			const partyData = processPartyVotes(rawPartyVotes, dataset.partyInfo);
+			const partyData = processPartyVotes(
+				rawPartyVotes,
+				dataset.partyInfo,
+			);
 			const totalVotes = partyData.reduce((a, p) => a + p.votes, 0);
 
 			return {
@@ -185,7 +254,14 @@ const useLocalElectionData = (
 				hasData: partyData.length > 0,
 			};
 		});
-	}, [availableDatasets, aggregatedData, selectedArea, getCodeForYear, getWardsForLad, getWardsForConstituency]);
+	}, [
+		availableDatasets,
+		aggregatedData,
+		selectedArea,
+		getCodeForYear,
+		getWardsForLad,
+		getWardsForConstituency,
+	]);
 };
 
 interface LocalElectionResultChartSectionProps {
@@ -225,8 +301,12 @@ export default memo(function LocalElectionResultChartSection({
 	if (visibleYearData.length === 0) return null;
 
 	return (
-		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
-			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-700"}`}>
+		<div
+			className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}
+		>
+			<h3
+				className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-700"}`}
+			>
 				Local Election Results
 			</h3>
 
@@ -237,8 +317,10 @@ export default memo(function LocalElectionResultChartSection({
 					isActive={
 						(activeDataset &&
 							((activeDataset.type === "localElection" &&
-								activeDataset.id === `localElection${data.year}`) ||
-								(activeViz.datasetType === "custom" && activeViz.vizId === "custom"))) as boolean
+								activeDataset.id ===
+									`localElection${data.year}`) ||
+								(activeViz.datasetType === "custom" &&
+									activeViz.vizId === "custom"))) as boolean
 					}
 					setActiveViz={setActiveViz}
 				/>
