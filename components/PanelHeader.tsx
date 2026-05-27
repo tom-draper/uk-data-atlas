@@ -1,6 +1,4 @@
 "use client";
-
-
 import { SelectedArea } from "@lib/types";
 import { usePanelContext } from "@/lib/context/PanelContext";
 import { useIsDark } from "@/lib/context/ThemeContext";

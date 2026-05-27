@@ -6,8 +6,6 @@ import {
 	NIMDMDataset,
 	SelectedArea,
 } from "@lib/types";
-
-
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
@@ -43,6 +41,41 @@ const DECILE_COLORS = [
 	"#15803d", // 10 - least deprived
 ];
 
+function computeNimdmStats(
+	dataset: NIMDMDataset,
+	aggregatedData: Record<number, AggregatedNIMDMData> | null,
+	selectedArea: SelectedArea | null,
+	chartsLoading: boolean,
+) {
+	if (chartsLoading) return null;
+
+	const avg = (records: (typeof dataset.data)[string][]) => {
+		if (records.length === 0) return null;
+		return {
+			averageNIMDMDecile:
+				records.reduce((s, r) => s + r.nimdmDecile, 0) / records.length,
+		};
+	};
+
+	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
+
+	if (selectedArea.type === "localAuthority")
+		return avg(
+			Object.values(dataset.data).filter(
+				(r) => r.lgdCode === selectedArea.code,
+			),
+		);
+
+	if (selectedArea.type === "ward" && selectedArea.data)
+		return avg(
+			Object.values(dataset.data).filter(
+				(r) => r.lgdCode === selectedArea.data!.ladCode,
+			),
+		);
+
+	return null;
+}
+
 export default function NIMDMChart({
 	activeDataset,
 	availableDatasets,
@@ -55,45 +88,9 @@ export default function NIMDMChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const nimdmStats = (() => {
-		if (!dataset || chartsLoading) return null;
-
-		const avgFromRecords = (records: (typeof dataset.data)[string][]) => {
-			if (records.length === 0) return null;
-			return {
-				averageNIMDMDecile:
-					records.reduce((s, r) => s + r.nimdmDecile, 0) /
-					records.length,
-			};
-		};
-
-		if (selectedArea === null) {
-			if (aggregatedData && aggregatedData[dataset.year]) {
-				return aggregatedData[dataset.year];
-			}
-			return null;
-		}
-
-		if (selectedArea.type === "localAuthority") {
-			const ladCode = selectedArea.code;
-			return avgFromRecords(
-				Object.values(dataset.data).filter(
-					(r) => r.lgdCode === ladCode,
-				),
-			);
-		}
-
-		if (selectedArea.type === "ward" && selectedArea.data) {
-			const ladCode = selectedArea.data.ladCode;
-			return avgFromRecords(
-				Object.values(dataset.data).filter(
-					(r) => r.lgdCode === ladCode,
-				),
-			);
-		}
-
-		return null;
-	})();
+	const nimdmStats = dataset
+		? computeNimdmStats(dataset, aggregatedData, selectedArea, chartsLoading)
+		: null;
 
 	const isActive =
 		activeDataset?.type === "nimdm" && activeDataset.id === dataset?.id;

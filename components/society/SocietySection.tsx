@@ -1,7 +1,5 @@
 // components/society/SocietySection.tsx
 "use client";
-
-
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
