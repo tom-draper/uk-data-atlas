@@ -10,7 +10,11 @@ export function resolveWardData(
 ): PopulationWardData | undefined {
 	let wardData = dataset.data[wardCode];
 	if (!wardData && codeMapper?.getCodeForYear) {
-		const mappedCode = codeMapper.getCodeForYear("ward", wardCode, dataset.boundaryYear);
+		const mappedCode = codeMapper.getCodeForYear(
+			"ward",
+			wardCode,
+			dataset.boundaryYear,
+		);
 		if (mappedCode) wardData = dataset.data[mappedCode];
 	}
 	return wardData;

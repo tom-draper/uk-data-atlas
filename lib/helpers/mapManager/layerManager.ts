@@ -56,7 +56,8 @@ export class LayerManager {
 		isDark = false,
 	): void {
 		if (!options.selected) return;
-		const baseColor = PARTIES[options.selected as PartyCode]?.color || "#999999";
+		const baseColor =
+			PARTIES[options.selected as PartyCode]?.color || "#999999";
 		const fillColorExpression = getPercentageColorExpression(
 			baseColor,
 			options,

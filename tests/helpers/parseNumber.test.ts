@@ -1,4 +1,9 @@
-import { parseNum, parseNumInt, parsePct, parseNullableInt } from "@/lib/helpers/parseNumber";
+import {
+	parseNum,
+	parseNumInt,
+	parsePct,
+	parseNullableInt,
+} from "@/lib/helpers/parseNumber";
 
 describe("parseNum", () => {
 	it("parses integers", () => {

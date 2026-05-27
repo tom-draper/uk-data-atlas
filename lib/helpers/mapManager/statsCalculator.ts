@@ -31,8 +31,15 @@ import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
 import { WIMDDataset, AggregatedWIMDData } from "@/lib/types/wimd";
 import { NIMDMDataset, AggregatedNIMDMData } from "@/lib/types/nimdm";
-import { LifeExpectancyDataset, AggregatedLifeExpectancyData } from "@/lib/types/lifeExpectancy";
-import { QualificationDataset, AggregatedQualificationData, QualificationBreakdown } from "@/lib/types/qualification";
+import {
+	LifeExpectancyDataset,
+	AggregatedLifeExpectancyData,
+} from "@/lib/types/lifeExpectancy";
+import {
+	QualificationDataset,
+	AggregatedQualificationData,
+	QualificationBreakdown,
+} from "@/lib/types/qualification";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -100,7 +107,10 @@ export class StatsCalculator {
 		// Single pass aggregation with direct property access
 		const sv = stats.partyVotes;
 		for (let i = 0; i < features.length; i++) {
-			const ward = wardData[getFeatureProp(features[i].properties, wardCodeProp) ?? ""];
+			const ward =
+				wardData[
+					getFeatureProp(features[i].properties, wardCodeProp) ?? ""
+				];
 			if (!ward) continue;
 
 			const pv = ward.partyVotes;
@@ -151,7 +161,12 @@ export class StatsCalculator {
 
 		for (let i = 0; i < features.length; i++) {
 			const constituency =
-				constituencyData[getFeatureProp(features[i].properties, constituencyCodeProp) ?? ""];
+				constituencyData[
+					getFeatureProp(
+						features[i].properties,
+						constituencyCodeProp,
+					) ?? ""
+				];
 			if (!constituency) continue;
 
 			stats.totalSeats++;
@@ -229,7 +244,9 @@ export class StatsCalculator {
 
 		for (let i = 0; i < features.length; i++) {
 			const localAuthority =
-				localAuthorityData[getFeatureProp(features[i].properties, ladProp) ?? ""];
+				localAuthorityData[
+					getFeatureProp(features[i].properties, ladProp) ?? ""
+				];
 			if (!localAuthority) continue;
 
 			// Iterate through parent categories
@@ -305,7 +322,10 @@ export class StatsCalculator {
 		let wardCount = 0;
 
 		for (let i = 0; i < features.length; i++) {
-			const ward = wardData[getFeatureProp(features[i].properties, wardCodeProp) ?? ""];
+			const ward =
+				wardData[
+					getFeatureProp(features[i].properties, wardCodeProp) ?? ""
+				];
 			if (!ward) continue;
 
 			const prices = ward.prices;
@@ -366,7 +386,10 @@ export class StatsCalculator {
 		let localAuthorityCount = 0;
 
 		for (let i = 0; i < features.length; i++) {
-			const area = crimeData[getFeatureProp(features[i].properties, ladCodeProp) ?? ""];
+			const area =
+				crimeData[
+					getFeatureProp(features[i].properties, ladCodeProp) ?? ""
+				];
 			if (!area) continue;
 
 			const crime = area.totalRecordedCrime;
@@ -406,7 +429,9 @@ export class StatsCalculator {
 
 		for (let i = 0; i < features.length; i++) {
 			const locationIncome =
-				incomeData[getFeatureProp(features[i].properties, ladCodeProp) ?? ""];
+				incomeData[
+					getFeatureProp(features[i].properties, ladCodeProp) ?? ""
+				];
 			if (locationIncome?.annual?.median) {
 				totalMedianIncome += locationIncome.annual.median;
 				localAuthorityCount++;
@@ -445,7 +470,10 @@ export class StatsCalculator {
 		let totalElectorate = 0;
 
 		for (let i = 0; i < features.length; i++) {
-			const area = brexitData[getFeatureProp(features[i].properties, ladCodeProp) ?? ""];
+			const area =
+				brexitData[
+					getFeatureProp(features[i].properties, ladCodeProp) ?? ""
+				];
 			if (!area) continue;
 
 			totalLeave += area.leave;
@@ -487,7 +515,10 @@ export class StatsCalculator {
 		let count = 0;
 
 		for (let i = 0; i < features.length; i++) {
-			const area = constituencyData[getFeatureProp(features[i].properties, codeProp) ?? ""];
+			const area =
+				constituencyData[
+					getFeatureProp(features[i].properties, codeProp) ?? ""
+				];
 			if (!area) continue;
 
 			totalLeave += area.pctLeave;
@@ -523,7 +554,8 @@ export class StatsCalculator {
 		let sum = 0;
 		let count = 0;
 		for (let i = 0; i < geojson.features.length; i++) {
-			const featureCode = getFeatureProp(geojson.features[i].properties, codeProp) ?? "";
+			const featureCode =
+				getFeatureProp(geojson.features[i].properties, codeProp) ?? "";
 			const featureData = data[featureCode];
 
 			if (typeof featureData === "number") {
@@ -550,10 +582,14 @@ export class StatsCalculator {
 		datasetId: string | null,
 	): AggregatedLifeExpectancyData {
 		const cacheKey = `lifeExpectancy-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedLifeExpectancyData | null;
+		const cached = this.cache.get(
+			cacheKey,
+		) as AggregatedLifeExpectancyData | null;
 		if (cached) return cached;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			geojson.features,
+		);
 		let totalMale = 0;
 		let totalFemale = 0;
 		let count = 0;
@@ -587,7 +623,9 @@ export class StatsCalculator {
 		const cached = this.cache.get(cacheKey) as AggregatedSIMDData | null;
 		if (cached) return cached;
 
-		const dzCodeProp = this.propertyDetector.detectDataZoneCode(geojson.features);
+		const dzCodeProp = this.propertyDetector.detectDataZoneCode(
+			geojson.features,
+		);
 		let totalRank = 0;
 		let totalQuintile = 0;
 		let count = 0;
@@ -621,7 +659,9 @@ export class StatsCalculator {
 		const cached = this.cache.get(cacheKey) as AggregatedWIMDData | null;
 		if (cached) return cached;
 
-		const lsoaCodeProp = this.propertyDetector.detectLSOACode(geojson.features);
+		const lsoaCodeProp = this.propertyDetector.detectLSOACode(
+			geojson.features,
+		);
 		let totalScore = 0;
 		let totalDecile = 0;
 		let count = 0;
@@ -655,7 +695,9 @@ export class StatsCalculator {
 		const cached = this.cache.get(cacheKey) as AggregatedNIMDMData | null;
 		if (cached) return cached;
 
-		const soaCodeProp = this.propertyDetector.detectSOACode(geojson.features);
+		const soaCodeProp = this.propertyDetector.detectSOACode(
+			geojson.features,
+		);
 		let totalDecile = 0;
 		let count = 0;
 
@@ -686,7 +728,9 @@ export class StatsCalculator {
 		const cached = this.cache.get(cacheKey) as AggregatedIMDData | null;
 		if (cached) return cached;
 
-		const lsoaCodeProp = this.propertyDetector.detectLSOACode(geojson.features);
+		const lsoaCodeProp = this.propertyDetector.detectLSOACode(
+			geojson.features,
+		);
 		let totalScore = 0;
 		let totalDecile = 0;
 		let count = 0;
@@ -756,7 +800,10 @@ export class StatsCalculator {
 		};
 
 		for (let i = 0; i < features.length; i++) {
-			const ward = populationData[getFeatureProp(features[i].properties, wardCodeProp) ?? ""];
+			const ward =
+				populationData[
+					getFeatureProp(features[i].properties, wardCodeProp) ?? ""
+				];
 			if (!ward) continue;
 
 			aggregated.totalPop += calculateTotal(ward.total);
@@ -819,7 +866,9 @@ export class StatsCalculator {
 		return aggregated;
 	}
 
-	private buildPopulationStatsResult(aggregated: ReturnType<StatsCalculator["aggregatePopulationData"]>) {
+	private buildPopulationStatsResult(
+		aggregated: ReturnType<StatsCalculator["aggregatePopulationData"]>,
+	) {
 		const populationStats: PopulationStats = {
 			total: aggregated.totalPop,
 			males: aggregated.malesPop,
@@ -893,10 +942,14 @@ export class StatsCalculator {
 		datasetId: string | null,
 	): AggregatedQualificationData {
 		const cacheKey = `qualification-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedQualificationData | null;
+		const cached = this.cache.get(
+			cacheKey,
+		) as AggregatedQualificationData | null;
 		if (cached) return cached;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			geojson.features,
+		);
 		const seen = new Set<string>();
 		const total: QualificationBreakdown = {
 			noQualifications: 0,

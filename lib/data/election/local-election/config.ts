@@ -106,17 +106,17 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		// The HoC dataset uses post-2022 ward codes for some areas that had boundary
 		// reviews. Remap to their Dec 2021 boundary equivalents so they match the map.
 		wardCodeMap: {
-			"E05013874": "E05002328", // Park (Reading)
-			"E05013955": "E05004793", // Harpenden West
-			"E05013963": "E05004802", // Sopwell
-			"E05014120": "E05000916", // Billinge & Seneley Green
-			"E05014136": "E05001150", // West Park
-			"E05014147": "E05004541", // Lee East
-			"E05014148": "E05004542", // Lee West
-			"E05014152": "E05000670", // Besses (Bury)
-			"E05014156": "E05000674", // Holyrood (Bury)
-			"E05014159": "E05000677", // Pilkington Park (Bury)
-			"E05014163": "E05000681", // Ramsbottom (Bury)
+			E05013874: "E05002328", // Park (Reading)
+			E05013955: "E05004793", // Harpenden West
+			E05013963: "E05004802", // Sopwell
+			E05014120: "E05000916", // Billinge & Seneley Green
+			E05014136: "E05001150", // West Park
+			E05014147: "E05004541", // Lee East
+			E05014148: "E05004542", // Lee West
+			E05014152: "E05000670", // Besses (Bury)
+			E05014156: "E05000674", // Holyrood (Bury)
+			E05014159: "E05000677", // Pilkington Park (Bury)
+			E05014163: "E05000681", // Ramsbottom (Bury)
 		},
 	},
 };

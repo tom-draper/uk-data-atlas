@@ -1,7 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { DEFAULT_VISIBILITY, ChartKey } from "@/lib/context/ChartVisibilityContext";
+import {
+	DEFAULT_VISIBILITY,
+	ChartKey,
+} from "@/lib/context/ChartVisibilityContext";
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";
 
@@ -9,7 +12,9 @@ function isEnabled(key: ChartKey): boolean {
 	try {
 		const stored = localStorage.getItem(STORAGE_KEY);
 		if (stored) {
-			const parsed = JSON.parse(stored) as Partial<Record<ChartKey, boolean>>;
+			const parsed = JSON.parse(stored) as Partial<
+				Record<ChartKey, boolean>
+			>;
 			if (key in parsed) return parsed[key]!;
 		}
 	} catch {
@@ -51,12 +56,16 @@ export function useDatasets(): UseDatasetsResult {
 	const crime = useCrimeData();
 	const income = useIncomeData();
 	const brexit = useBrexitData();
-	const brexitConstituency = useBrexitConstituencyData(isEnabled("brexit-hanretty"));
+	const brexitConstituency = useBrexitConstituencyData(
+		isEnabled("brexit-hanretty"),
+	);
 	const imd = useIMDData();
 	const simd = useSIMDData();
 	const wimd = useWIMDData();
 	const nimdm = useNIMDMData();
-	const lifeExpectancy = useLifeExpectancyData(isEnabled("society-healthyLifeExpectancy"));
+	const lifeExpectancy = useLifeExpectancyData(
+		isEnabled("society-healthyLifeExpectancy"),
+	);
 	const qualification = useQualificationData();
 
 	// Combine datasets

@@ -30,7 +30,11 @@ const parsePopulationDataCombined = async (csvText: string) => {
 	const headerRow = rows[0];
 
 	// Pre-compute column indices once from the header row
-	interface ColMeta { index: number; age: string; sex: "F" | "M" }
+	interface ColMeta {
+		index: number;
+		age: string;
+		sex: "F" | "M";
+	}
 	const ageCols: ColMeta[] = [];
 	for (let i = 5; i < headerRow.length; i++) {
 		const colName = headerRow[i]?.trim() ?? "";
@@ -71,11 +75,26 @@ const parsePopulationDataCombined = async (csvText: string) => {
 		}
 
 		if (Object.keys(femaleAgeData).length > 0)
-			femalesData[wardCode] = { ageData: femaleAgeData, wardName, laCode, laName };
+			femalesData[wardCode] = {
+				ageData: femaleAgeData,
+				wardName,
+				laCode,
+				laName,
+			};
 		if (Object.keys(maleAgeData).length > 0)
-			malesData[wardCode] = { ageData: maleAgeData, wardName, laCode, laName };
+			malesData[wardCode] = {
+				ageData: maleAgeData,
+				wardName,
+				laCode,
+				laName,
+			};
 		if (Object.keys(totalAgeData).length > 0)
-			totalData[wardCode] = { ageData: totalAgeData, wardName, laCode, laName };
+			totalData[wardCode] = {
+				ageData: totalAgeData,
+				wardName,
+				laCode,
+				laName,
+			};
 	}
 
 	return { malesData, femalesData, totalData };
@@ -83,9 +102,13 @@ const parsePopulationDataCombined = async (csvText: string) => {
 
 export const usePopulationData = () => {
 	return useDataLoader<PopulationDataset>(async () => {
-		const response = await fetch(withCDN("/data/population/Mid-2022 Ward 2023.csv"));
+		const response = await fetch(
+			withCDN("/data/population/Mid-2022 Ward 2023.csv"),
+		);
 		if (!response.ok)
-			throw new Error(`Failed to fetch population data: ${response.statusText}`);
+			throw new Error(
+				`Failed to fetch population data: ${response.statusText}`,
+			);
 
 		const { malesData, femalesData, totalData } =
 			await parsePopulationDataCombined(await response.text());

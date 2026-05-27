@@ -11,7 +11,8 @@ export function useDataLoader<T>(
 
 	useEffect(() => {
 		if (!enabled) return;
-		loaderRef.current()
+		loaderRef
+			.current()
 			.then((result) => {
 				setDatasets(result);
 				setLoading(false);

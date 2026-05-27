@@ -5,35 +5,35 @@ import { useDataLoader } from "./useDataLoader";
 
 const COUNCIL_AREA_CODES: Record<string, string> = {
 	"Aberdeen City": "S12000033",
-	"Aberdeenshire": "S12000034",
-	"Angus": "S12000041",
+	Aberdeenshire: "S12000034",
+	Angus: "S12000041",
 	"Argyll and Bute": "S12000035",
 	"City of Edinburgh": "S12000036",
-	"Clackmannanshire": "S12000005",
+	Clackmannanshire: "S12000005",
 	"Dumfries and Galloway": "S12000006",
 	"Dundee City": "S12000042",
 	"East Ayrshire": "S12000008",
 	"East Dunbartonshire": "S12000045",
 	"East Lothian": "S12000010",
 	"East Renfrewshire": "S12000011",
-	"Falkirk": "S12000014",
-	"Fife": "S12000015",
+	Falkirk: "S12000014",
+	Fife: "S12000015",
 	"Glasgow City": "S12000046",
-	"Highland": "S12000017",
-	"Inverclyde": "S12000018",
-	"Midlothian": "S12000019",
-	"Moray": "S12000020",
+	Highland: "S12000017",
+	Inverclyde: "S12000018",
+	Midlothian: "S12000019",
+	Moray: "S12000020",
 	"Na h-Eileanan Siar": "S12000013",
 	"North Ayrshire": "S12000021",
 	"North Lanarkshire": "S12000044",
 	"Orkney Islands": "S12000023",
 	"Perth and Kinross": "S12000024",
-	"Renfrewshire": "S12000038",
+	Renfrewshire: "S12000038",
 	"Scottish Borders": "S12000026",
 	"Shetland Islands": "S12000027",
 	"South Ayrshire": "S12000028",
 	"South Lanarkshire": "S12000029",
-	"Stirling": "S12000030",
+	Stirling: "S12000030",
 	"West Dunbartonshire": "S12000039",
 	"West Lothian": "S12000040",
 };
@@ -55,16 +55,22 @@ export const useSIMDData = () => {
 			withCDN("/data/simd/SIMD+2020v2+-+indicators.csv"),
 		);
 		if (!response.ok)
-			throw new Error(`Failed to fetch SIMD data: ${response.statusText}`);
+			throw new Error(
+				`Failed to fetch SIMD data: ${response.statusText}`,
+			);
 
-		const { data } = await parseCsv(await response.text(), { header: true });
+		const { data } = await parseCsv(await response.text(), {
+			header: true,
+		});
 
 		// If this is the indicators file (no rank/quintile columns), compute
 		// a composite deprivation score from income + employment domain rates
 		// (the two largest SIMD domains, 28% each) and derive ranks/quintiles.
 		const rows = data as any[];
-		const hasRanks = rows[0] &&
-			(rows[0]["SIMD2020v2_Rank"] !== undefined || rows[0]["SIMD2020_Rank"] !== undefined);
+		const hasRanks =
+			rows[0] &&
+			(rows[0]["SIMD2020v2_Rank"] !== undefined ||
+				rows[0]["SIMD2020_Rank"] !== undefined);
 
 		type Intermediate = {
 			dzCode: string;
@@ -83,7 +89,10 @@ export const useSIMDData = () => {
 			const dzCode = row["Data_Zone"]?.trim();
 			if (!dzCode || !dzCode.startsWith("S")) continue;
 
-			const councilAreaName = row["Council_area"]?.trim() || row["Council_Area"]?.trim() || "";
+			const councilAreaName =
+				row["Council_area"]?.trim() ||
+				row["Council_Area"]?.trim() ||
+				"";
 			const councilAreaCode = COUNCIL_AREA_CODES[councilAreaName] || "";
 
 			let simdRank = 0;
@@ -92,9 +101,17 @@ export const useSIMDData = () => {
 			let score = 0;
 
 			if (hasRanks) {
-				simdRank = parseInt(row["SIMD2020v2_Rank"] ?? row["SIMD2020_Rank"]) || 0;
-				simdQuintile = parseInt(row["SIMD2020v2_Quintile"] ?? row["SIMD2020_Quintile"]) || 0;
-				simdDecile = parseInt(row["SIMD2020v2_Decile"] ?? row["SIMD2020_Decile"]) || 0;
+				simdRank =
+					parseInt(row["SIMD2020v2_Rank"] ?? row["SIMD2020_Rank"]) ||
+					0;
+				simdQuintile =
+					parseInt(
+						row["SIMD2020v2_Quintile"] ?? row["SIMD2020_Quintile"],
+					) || 0;
+				simdDecile =
+					parseInt(
+						row["SIMD2020v2_Decile"] ?? row["SIMD2020_Decile"],
+					) || 0;
 			} else {
 				// Composite from income (28%) + employment (28%) + health proxy (14%) +
 				// housing proxy (2%) + crime proxy (5%) - dominant indicators only.
@@ -103,8 +120,15 @@ export const useSIMDData = () => {
 				const employment = parsePct(row["Employment_rate"]);
 				const health = parseNum(row["CIF"]);
 				const crime = parseNum(row["crime_rate"]);
-				const housing = parsePct(row["overcrowded_rate"]) + parsePct(row["nocentralheat_rate"]);
-				score = income * 0.28 + employment * 0.28 + health * 0.14 + crime * 0.005 + housing * 0.02;
+				const housing =
+					parsePct(row["overcrowded_rate"]) +
+					parsePct(row["nocentralheat_rate"]);
+				score =
+					income * 0.28 +
+					employment * 0.28 +
+					health * 0.14 +
+					crime * 0.005 +
+					housing * 0.02;
 			}
 
 			intermediates.push({
@@ -154,7 +178,9 @@ export const useSIMDData = () => {
 				data: records,
 				metadata: {
 					source: "Scottish Government. Scottish Index of Multiple Deprivation 2020v2.",
-					notes: ["Scotland only. Quintile 1 = most deprived 20% of data zones."],
+					notes: [
+						"Scotland only. Quintile 1 = most deprived 20% of data zones.",
+					],
 				},
 			},
 		};

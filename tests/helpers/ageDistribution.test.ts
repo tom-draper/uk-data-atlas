@@ -3,11 +3,11 @@ import { calculateAgeGroups } from "@/lib/helpers/ageDistribution";
 describe("calculateAgeGroups", () => {
 	it("bins ages correctly into groups", () => {
 		const result = calculateAgeGroups({
-			"10": 100,  // 0-17
-			"20": 200,  // 18-29
-			"35": 300,  // 30-44
-			"50": 400,  // 45-64
-			"70": 500,  // 65+
+			"10": 100, // 0-17
+			"20": 200, // 18-29
+			"35": 300, // 30-44
+			"50": 400, // 45-64
+			"70": 500, // 65+
 		});
 		expect(result["0-17"]).toBe(100);
 		expect(result["18-29"]).toBe(200);
@@ -24,9 +24,16 @@ describe("calculateAgeGroups", () => {
 		expect(result["0-17"]).toBe(150);
 	});
 	it("places boundary ages in the correct group", () => {
-		const result = calculateAgeGroups({ "17": 1, "18": 1, "29": 1, "30": 1, "64": 1, "65": 1 });
+		const result = calculateAgeGroups({
+			"17": 1,
+			"18": 1,
+			"29": 1,
+			"30": 1,
+			"64": 1,
+			"65": 1,
+		});
 		expect(result["0-17"]).toBe(1);
-		expect(result["18-29"]).toBe(2);  // 18 and 29
+		expect(result["18-29"]).toBe(2); // 18 and 29
 		expect(result["30-44"]).toBe(1);
 		expect(result["45-64"]).toBe(1);
 		expect(result["65+"]).toBe(1);

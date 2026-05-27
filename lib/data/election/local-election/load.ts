@@ -1,6 +1,10 @@
 // lib/utils/electionUtils.ts
 import Papa from "papaparse";
-import { LocalElectionDataset, LocalElectionWardData, LocalElectionYear } from "@lib/types/index";
+import {
+	LocalElectionDataset,
+	LocalElectionWardData,
+	LocalElectionYear,
+} from "@lib/types/index";
 import { WardYear } from "@/lib/data/boundaries/boundaries";
 import { PARTY_INFO } from "@/lib/data/election/parties";
 import { ElectionSourceConfig } from "./config";
@@ -54,7 +58,7 @@ export const fetchAndParseCsv = async (
 				const wardData: Record<string, LocalElectionWardData> = {};
 				const unmapped: any[] = [];
 
-					results.data.forEach((row: any) => {
+				results.data.forEach((row: any) => {
 					// Extract party votes
 					const partyVotes: Record<string, number> = {};
 					partyCols.forEach(
@@ -68,14 +72,16 @@ export const fetchAndParseCsv = async (
 						"Unknown"; // Fallback for 2023
 					const wName = row[config.fields.name];
 					const rawCode = row[config.fields.code]?.trim();
-					const wCode = rawCode && config.wardCodeMap?.[rawCode] ? config.wardCodeMap[rawCode] : rawCode;
+					const wCode =
+						rawCode && config.wardCodeMap?.[rawCode]
+							? config.wardCodeMap[rawCode]
+							: rawCode;
 
 					const entry: LocalElectionWardData = {
 						wardCode: wCode,
 						wardName: wName,
 						ladName: laName,
-						ladCode:
-							row[config.fields.ladCode || ""] || "Unknown",
+						ladCode: row[config.fields.ladCode || ""] || "Unknown",
 						turnoutPercent: parseNumber(row[config.fields.turnout]),
 						electorate: parseNumber(row[config.fields.electorate]),
 						totalVotes: parseNumber(
@@ -97,11 +103,12 @@ export const fetchAndParseCsv = async (
 					}
 				});
 
-					resolve({
+				resolve({
 					id: `localElection${config.year}`,
 					type: "localElection",
 					year: config.year as LocalElectionYear,
-					boundaryYear: (config.boundaryYear ?? config.year) as WardYear,
+					boundaryYear: (config.boundaryYear ??
+						config.year) as WardYear,
 					boundaryType: "ward",
 					results: wardWinners,
 					data: wardData,
@@ -124,7 +131,11 @@ export const fetchAndParseCsv = async (
 export const normalizeElectionDatasetCodes = (
 	dataset: LocalElectionDataset,
 	validWardCodes: Set<string>,
-	getCodeForYear: (type: "ward", code: string, targetYear: number) => string | undefined,
+	getCodeForYear: (
+		type: "ward",
+		code: string,
+		targetYear: number,
+	) => string | undefined,
 ): LocalElectionDataset => {
 	const { boundaryYear } = dataset;
 	const remapped: Record<string, string> = {};
@@ -168,8 +179,7 @@ export const reconcile2023Data = (
 	const lookup = new Map<string, string>();
 	referenceSets.forEach((ds) => {
 		Object.entries(ds.data).forEach(([code, data]) => {
-			const key =
-				`${data.ladName}|${data.wardName}`.toLowerCase();
+			const key = `${data.ladName}|${data.wardName}`.toLowerCase();
 			if (!lookup.has(key)) lookup.set(key, code);
 		});
 	});

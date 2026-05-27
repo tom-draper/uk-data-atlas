@@ -70,7 +70,10 @@ export const extractWardLadMappings = (
 	const mappings: Record<string, string> = {};
 
 	for (const feature of features) {
-		const props = feature.properties as unknown as Record<string, string | undefined>;
+		const props = feature.properties as unknown as Record<
+			string,
+			string | undefined
+		>;
 
 		// Find ward code
 		let wardCode: string | undefined;

@@ -7,7 +7,9 @@ export default function TitlePane() {
 	const t = panelTheme(isDark);
 
 	return (
-		<div className={`text-sm rounded-md backdrop-blur-md shadow-lg border relative ${t.panel}`}>
+		<div
+			className={`text-sm rounded-md backdrop-blur-md shadow-lg border relative ${t.panel}`}
+		>
 			<div className={`flex items-center ${t.section} rounded-t-md`}>
 				<img
 					src="/union-jack.png"
@@ -17,7 +19,9 @@ export default function TitlePane() {
 						filter: "contrast(0.2) grayscale(1) brightness(1.8)",
 					}}
 				/>
-				<h1 className={`font-semibold text-[15px] ${t.heading}`}>UK Data Atlas</h1>
+				<h1 className={`font-semibold text-[15px] ${t.heading}`}>
+					UK Data Atlas
+				</h1>
 			</div>
 		</div>
 	);

@@ -27,7 +27,8 @@ export default function MapOptions({
 }: MapOptionsProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedTheme, setSelectedTheme] = useState("viridis");
-	const [selectedBaseStyle, setSelectedBaseStyle] = useState<BaseMapStyle["id"]>("positron");
+	const [selectedBaseStyle, setSelectedBaseStyle] =
+		useState<BaseMapStyle["id"]>("positron");
 	const [hideDataLayer, setHideDataLayer] = useState(false);
 	const [hideBoundaries, setHideBoundaries] = useState(false);
 	const [hideOverlay, setHideOverlay] = useState(false);
@@ -73,7 +74,10 @@ export default function MapOptions({
 	};
 
 	const handleOpacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const pct = Math.min(100, Math.max(0, parseInt(e.target.value, 10) || 0));
+		const pct = Math.min(
+			100,
+			Math.max(0, parseInt(e.target.value, 10) || 0),
+		);
 		const value = pct / 100;
 		setOverlayOpacity(value);
 		handleMapOptionsChange("visibility", { overlayOpacity: value });
@@ -101,9 +105,13 @@ export default function MapOptions({
 	const t = panelTheme(isDark);
 
 	return (
-		<div className={`text-sm rounded-md backdrop-blur-md shadow-lg border ${t.panel}`}>
+		<div
+			className={`text-sm rounded-md backdrop-blur-md shadow-lg border ${t.panel}`}
+		>
 			<div className="p-2.5 relative">
-				<h2 className={`font-semibold mb-2 ${t.heading}`}>Map Options</h2>
+				<h2 className={`font-semibold mb-2 ${t.heading}`}>
+					Map Options
+				</h2>
 
 				<div className="flex flex-col gap-1.5 pb-2 pt-2 pl-1">
 					<label className="flex items-center gap-2 cursor-pointer group">
@@ -114,7 +122,9 @@ export default function MapOptions({
 							disabled={hideBoundaries}
 							className="w-3.5 h-3.5 accent-indigo-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 						/>
-						<span className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"} ${hideBoundaries ? "opacity-50" : ""}`}>
+						<span
+							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"} ${hideBoundaries ? "opacity-50" : ""}`}
+						>
 							Hide data layer
 						</span>
 					</label>
@@ -125,7 +135,9 @@ export default function MapOptions({
 							onChange={handleBoundariesToggle}
 							className="w-3.5 h-3.5 accent-indigo-500 cursor-pointer"
 						/>
-						<span className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}>
+						<span
+							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}
+						>
 							Hide boundaries
 						</span>
 					</label>
@@ -136,13 +148,21 @@ export default function MapOptions({
 							onChange={handleOverlayToggle}
 							className="w-3.5 h-3.5 accent-indigo-500 cursor-pointer"
 						/>
-						<span className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}>
+						<span
+							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}
+						>
 							Hide overlay
 						</span>
 					</label>
 					<div className="flex items-stretch gap-2 pt-0.5">
-						<span className={`text-xs shrink-0 self-center ${t.text}`}>Opacity</span>
-						<div className={`flex items-center border rounded-sm overflow-hidden ${t.input}`}>
+						<span
+							className={`text-xs shrink-0 self-center ${t.text}`}
+						>
+							Opacity
+						</span>
+						<div
+							className={`flex items-center border rounded-sm overflow-hidden ${t.input}`}
+						>
 							<input
 								type="number"
 								min="0"
@@ -151,13 +171,19 @@ export default function MapOptions({
 								onChange={handleOpacityChange}
 								className="w-8 text-xs bg-transparent text-right px-1 py-0.5 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 							/>
-							<span className={`text-xs pr-1 ${t.textMuted}`}>%</span>
+							<span className={`text-xs pr-1 ${t.textMuted}`}>
+								%
+							</span>
 						</div>
-						<div className={`flex border rounded-sm overflow-hidden ml-auto ${t.border} ${isDark ? "bg-white/5" : "bg-white/10"}`}>
+						<div
+							className={`flex border rounded-sm overflow-hidden ml-auto ${t.border} ${isDark ? "bg-white/5" : "bg-white/10"}`}
+						>
 							{BASE_MAP_STYLES.map((style) => (
 								<button
 									key={style.id}
-									onClick={() => handleBaseStyleChange(style.id)}
+									onClick={() =>
+										handleBaseStyleChange(style.id)
+									}
 									className={`px-2 text-xs transition-all duration-200 cursor-pointer border-r last:border-r-0 ${t.border} ${
 										selectedBaseStyle === style.id
 											? `${isDark ? "bg-white/15 text-gray-100" : "bg-white/30 text-gray-700"}`
@@ -172,7 +198,9 @@ export default function MapOptions({
 				</div>
 
 				<div className="flex items-center justify-between gap-2 pt-1">
-					<div className={`absolute flex flex-col top-2.5 right-2.5 border rounded-sm overflow-hidden backdrop-blur-md shadow-sm ${t.border} ${isDark ? "bg-white/5" : "bg-white/10"}`}>
+					<div
+						className={`absolute flex flex-col top-2.5 right-2.5 border rounded-sm overflow-hidden backdrop-blur-md shadow-sm ${t.border} ${isDark ? "bg-white/5" : "bg-white/10"}`}
+					>
 						<button
 							onClick={onZoomIn}
 							className={`px-2 py-1 text-sm transition-all duration-200 font-semibold leading-none border-b cursor-pointer ${t.border} ${t.text} ${t.hover}`}
@@ -229,7 +257,9 @@ export default function MapOptions({
 											{theme.label}
 										</span>
 										{selectedTheme === theme.id && (
-											<span className={`ml-auto ${t.textMuted}`}>
+											<span
+												className={`ml-auto ${t.textMuted}`}
+											>
 												✓
 											</span>
 										)}

@@ -1,4 +1,7 @@
-import { QualificationDataset, QualificationBreakdown } from "@/lib/types/qualification";
+import {
+	QualificationDataset,
+	QualificationBreakdown,
+} from "@/lib/types/qualification";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
 import { parseNullableInt } from "../helpers/parseNumber";
@@ -26,7 +29,10 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 export const useQualificationData = () => {
 	return useDataLoader<QualificationDataset>(async () => {
 		const res = await fetch(withCDN("/data/education/TS067-2021-1.csv"));
-		if (!res.ok) throw new Error(`Failed to fetch qualification data: ${res.statusText}`);
+		if (!res.ok)
+			throw new Error(
+				`Failed to fetch qualification data: ${res.statusText}`,
+			);
 
 		const { data } = await parseCsv(await res.text(), { header: true });
 
@@ -92,7 +98,9 @@ export const useQualificationData = () => {
 				data: records,
 				metadata: {
 					source: "Office for National Statistics. Census 2021: Highest Level of Qualification, England and Wales. TS067.",
-					notes: ["England and Wales only. Excludes those not applicable (full-time students)."],
+					notes: [
+						"England and Wales only. Excludes those not applicable (full-time students).",
+					],
 				},
 			},
 		};

@@ -24,18 +24,32 @@ function parseActiveVizFromParams(params: URLSearchParams): ActiveViz | null {
 	if (!vizId || !datasetType || !datasetYear) return null;
 	const year = parseInt(datasetYear, 10);
 	if (isNaN(year)) return null;
-	return { vizId, datasetType: datasetType as ActiveViz["datasetType"], datasetYear: year };
+	return {
+		vizId,
+		datasetType: datasetType as ActiveViz["datasetType"],
+		datasetYear: year,
+	};
 }
 
-function ErrorBanner({ errors, onDismiss }: { errors: string[]; onDismiss: () => void }) {
+function ErrorBanner({
+	errors,
+	onDismiss,
+}: {
+	errors: string[];
+	onDismiss: () => void;
+}) {
 	if (errors.length === 0) return null;
 	return (
 		<div className="fixed top-3 left-1/2 -translate-x-1/2 z-[60] max-w-md w-full mx-3 pointer-events-auto">
 			<div className="bg-red-50 border border-red-200 rounded-lg shadow-md px-4 py-3 flex items-start gap-3">
 				<span className="text-red-500 mt-0.5 shrink-0">⚠</span>
 				<div className="flex-1 min-w-0">
-					<p className="text-sm font-medium text-red-800">Some data failed to load</p>
-					<p className="text-xs text-red-600 mt-0.5 truncate">{errors[0]}</p>
+					<p className="text-sm font-medium text-red-800">
+						Some data failed to load
+					</p>
+					<p className="text-xs text-red-600 mt-0.5 truncate">
+						{errors[0]}
+					</p>
 				</div>
 				<button
 					onClick={onDismiss}
@@ -59,7 +73,9 @@ export default function AtlasClient() {
 	const [selectedLocation, setSelectedLocationState] = useState(() => {
 		return searchParams.get("location") ?? DEFAULT_LOCATION;
 	});
-	const [customDataset, setCustomDataset] = useState<CustomDataset | null>(null);
+	const [customDataset, setCustomDataset] = useState<CustomDataset | null>(
+		null,
+	);
 	const [errorsDismissed, setErrorsDismissed] = useState(false);
 	const [boundaryErrors, setBoundaryErrors] = useState<string[]>([]);
 
@@ -78,31 +94,40 @@ export default function AtlasClient() {
 	const selectedLocationRef = useRef(selectedLocation);
 	selectedLocationRef.current = selectedLocation;
 
-	const updateParams = useCallback((location: string, viz: ActiveViz) => {
-		const params = new URLSearchParams();
-		params.set("location", location);
-		params.set("viz", viz.vizId);
-		params.set("type", viz.datasetType);
-		params.set("year", String(viz.datasetYear));
-		router.replace(`?${params.toString()}`, { scroll: false });
-	}, [router]);
+	const updateParams = useCallback(
+		(location: string, viz: ActiveViz) => {
+			const params = new URLSearchParams();
+			params.set("location", location);
+			params.set("viz", viz.vizId);
+			params.set("type", viz.datasetType);
+			params.set("year", String(viz.datasetYear));
+			router.replace(`?${params.toString()}`, { scroll: false });
+		},
+		[router],
+	);
 
-	const setActiveViz = useCallback((viz: ActiveViz) => {
-		setActiveVizState(viz);
-		updateParams(selectedLocationRef.current, viz);
-	}, [updateParams]);
+	const setActiveViz = useCallback(
+		(viz: ActiveViz) => {
+			setActiveVizState(viz);
+			updateParams(selectedLocationRef.current, viz);
+		},
+		[updateParams],
+	);
 
-	const setSelectedLocation = useCallback((location: string) => {
-		setSelectedLocationState(location);
-		updateParams(location, activeVizRef.current);
-	}, [updateParams]);
+	const setSelectedLocation = useCallback(
+		(location: string) => {
+			setSelectedLocationState(location);
+			updateParams(location, activeVizRef.current);
+		},
+		[updateParams],
+	);
 
 	useEffect(() => {
 		if (!searchParams.get("location")) {
 			updateParams(selectedLocation, activeViz);
 		}
-	// Only run on mount
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// Only run on mount
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -116,7 +141,10 @@ export default function AtlasClient() {
 	return (
 		<ErrorBoundary>
 			{!errorsDismissed && (
-				<ErrorBanner errors={allErrors} onDismiss={() => setErrorsDismissed(true)} />
+				<ErrorBanner
+					errors={allErrors}
+					onDismiss={() => setErrorsDismissed(true)}
+				/>
 			)}
 			<MapInterface
 				datasets={datasets}

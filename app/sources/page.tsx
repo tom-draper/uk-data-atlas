@@ -19,13 +19,13 @@ const datasets: Dataset[] = [
 		licence: "Open Parliament Licence",
 		licenceUrl:
 			"https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
-		description:
-			"General election results by parliamentary constituency.",
+		description: "General election results by parliamentary constituency.",
 	},
 	{
 		name: "Local Election Results",
 		source: "House of Commons Library",
-		sourceUrl: "https://commonslibrary.parliament.uk/2025-local-elections-handbook-and-dataset/",
+		sourceUrl:
+			"https://commonslibrary.parliament.uk/2025-local-elections-handbook-and-dataset/",
 		year: "2021, 2022, 2023, 2024, 2025",
 		licence: "Open Parliament Licence",
 		licenceUrl:
@@ -48,7 +48,8 @@ const datasets: Dataset[] = [
 	{
 		name: "Ethnicity",
 		source: "Office for National Statistics",
-		sourceUrl: "https://www.ons.gov.uk/datasets/TS021/editions/2021/versions/3",
+		sourceUrl:
+			"https://www.ons.gov.uk/datasets/TS021/editions/2021/versions/3",
 		year: "2021",
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
@@ -65,19 +66,18 @@ const datasets: Dataset[] = [
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Median house price paid by ward for England and Wales.",
+		description: "Median house price paid by ward for England and Wales.",
 	},
 	{
 		name: "EU Referendum Results",
 		source: "Electoral Commission",
-		sourceUrl: "https://www.electoralcommission.org.uk/research-reports-and-data/our-reports-and-data-past-elections-and-referendums/results-and-turnout-eu-referendum",
+		sourceUrl:
+			"https://www.electoralcommission.org.uk/research-reports-and-data/our-reports-and-data-past-elections-and-referendums/results-and-turnout-eu-referendum",
 		year: "2016",
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"EU referendum results by local authority counting area.",
+		description: "EU referendum results by local authority counting area.",
 	},
 	{
 		name: "Income",
@@ -135,8 +135,7 @@ const datasets: Dataset[] = [
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Electoral ward boundaries.",
+		description: "Electoral ward boundaries.",
 	},
 	{
 		name: "Local Authority Districts (Boundaries)",
@@ -146,8 +145,7 @@ const datasets: Dataset[] = [
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Local authority district boundaries.",
+		description: "Local authority district boundaries.",
 	},
 	{
 		name: "Westminster Parliamentary Constituencies (Boundaries)",
@@ -157,14 +155,14 @@ const datasets: Dataset[] = [
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Parliamentary constituency boundaries.",
+		description: "Parliamentary constituency boundaries.",
 	},
 ];
 
 export default function DatasetsPage() {
 	return (
-		<div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-8"
+		<div
+			className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-8"
 			style={{
 				backgroundImage: "url(/map-background.png)",
 				backgroundSize: "cover",
@@ -203,8 +201,10 @@ export default function DatasetsPage() {
 									<tr
 										key={idx}
 										className={`border-b border-white/20 hover:bg-white/30 transition-colors duration-150 last:border-b-0 ${
-  idx % 2 === 0 ? 'bg-white/10' : 'bg-white/30'
-}`}
+											idx % 2 === 0
+												? "bg-white/10"
+												: "bg-white/30"
+										}`}
 									>
 										<td className="px-6 py-4 text-sm font-medium text-gray-900">
 											{dataset.name}

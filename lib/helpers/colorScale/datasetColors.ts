@@ -32,19 +32,35 @@ function colorFromRange(
 	return getThemeColor(1 - normalized, themeId);
 }
 
-export function getColorForAge(medianAge: number, mapOptions: PopulationOptions, themeId = "viridis") {
+export function getColorForAge(
+	medianAge: number,
+	mapOptions: PopulationOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(medianAge, mapOptions, themeId, false);
 }
 
-export function getColorForDensity(density: number, mapOptions: DensityOptions, themeId = "viridis") {
+export function getColorForDensity(
+	density: number,
+	mapOptions: DensityOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(density, mapOptions, themeId, false);
 }
 
-export function getColorForHousePrice(price: number, options: HousePriceOptions, themeId = "viridis") {
+export function getColorForHousePrice(
+	price: number,
+	options: HousePriceOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(price, options, themeId, true);
 }
 
-export function getColorForCrimeRate(rate: number, options: CrimeOptions, themeId = "viridis") {
+export function getColorForCrimeRate(
+	rate: number,
+	options: CrimeOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(rate, options, themeId, true);
 }
 
@@ -53,54 +69,113 @@ const REMAIN_RGB = [30, 60, 180] as const;
 const NEUTRAL_RGB = [240, 240, 240] as const;
 const LEAVE_RGB = [180, 20, 20] as const;
 
-function lerpRgb(r1: number, g1: number, b1: number, r2: number, g2: number, b2: number, t: number) {
+function lerpRgb(
+	r1: number,
+	g1: number,
+	b1: number,
+	r2: number,
+	g2: number,
+	b2: number,
+	t: number,
+) {
 	return `rgb(${Math.round(r1 + t * (r2 - r1))}, ${Math.round(g1 + t * (g2 - g1))}, ${Math.round(b1 + t * (b2 - b1))})`;
 }
 
-export function getColorForBrexitLeave(pctLeave: number, options: BrexitOptions): string {
+export function getColorForBrexitLeave(
+	pctLeave: number,
+	options: BrexitOptions,
+): string {
 	const midpoint = 50;
 	const { min, max } = options.colorRange;
 	if (pctLeave <= midpoint) {
 		const t = normalizeValue(pctLeave, min, midpoint);
-		return lerpRgb(REMAIN_RGB[0], REMAIN_RGB[1], REMAIN_RGB[2], NEUTRAL_RGB[0], NEUTRAL_RGB[1], NEUTRAL_RGB[2], t);
+		return lerpRgb(
+			REMAIN_RGB[0],
+			REMAIN_RGB[1],
+			REMAIN_RGB[2],
+			NEUTRAL_RGB[0],
+			NEUTRAL_RGB[1],
+			NEUTRAL_RGB[2],
+			t,
+		);
 	} else {
 		const t = normalizeValue(pctLeave, midpoint, max);
-		return lerpRgb(NEUTRAL_RGB[0], NEUTRAL_RGB[1], NEUTRAL_RGB[2], LEAVE_RGB[0], LEAVE_RGB[1], LEAVE_RGB[2], t);
+		return lerpRgb(
+			NEUTRAL_RGB[0],
+			NEUTRAL_RGB[1],
+			NEUTRAL_RGB[2],
+			LEAVE_RGB[0],
+			LEAVE_RGB[1],
+			LEAVE_RGB[2],
+			t,
+		);
 	}
 }
 
-export function getColorForIMD(score: number, options: IMDOptions, themeId = "viridis") {
+export function getColorForIMD(
+	score: number,
+	options: IMDOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(score, options, themeId, true);
 }
 
-export function getColorForSIMD(rank: number, options: SIMDOptions, themeId = "viridis") {
+export function getColorForSIMD(
+	rank: number,
+	options: SIMDOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(rank, options, themeId, false);
 }
 
-export function getColorForWIMD(rank: number, options: WIMDOptions, themeId = "viridis") {
+export function getColorForWIMD(
+	rank: number,
+	options: WIMDOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(rank, options, themeId, false);
 }
 
-export function getColorForNIMDM(rank: number, options: NIMDMOptions, themeId = "viridis") {
+export function getColorForNIMDM(
+	rank: number,
+	options: NIMDMOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(rank, options, themeId, false);
 }
 
-export function getColorForLifeExpectancy(years: number, min: number, max: number, themeId = "viridis") {
+export function getColorForLifeExpectancy(
+	years: number,
+	min: number,
+	max: number,
+	themeId = "viridis",
+) {
 	return getThemeColor(normalizeValue(years, min, max), themeId);
 }
 
-export function getColorForQualification(pctLevel4Plus: number, options: QualificationOptions, themeId = "viridis") {
+export function getColorForQualification(
+	pctLevel4Plus: number,
+	options: QualificationOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(pctLevel4Plus, options, themeId, true);
 }
 
-export function getColorForIncome(income: number, options: IncomeOptions, themeId = "viridis") {
+export function getColorForIncome(
+	income: number,
+	options: IncomeOptions,
+	themeId = "viridis",
+) {
 	return colorFromRange(income, options, themeId, true);
 }
 
 const FEMALE_RGB = [255, 105, 180] as const;
 const MALE_RGB = [70, 130, 180] as const;
 
-export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions) {
+export function getColorForGenderRatio(
+	ratio: number,
+	mapOptions: GenderOptions,
+) {
 	const range = mapOptions.colorRange;
 	if (ratio < 0) {
 		const t = normalizeValue(ratio, range.min, 0);
@@ -111,7 +186,11 @@ export function getColorForGenderRatio(ratio: number, mapOptions: GenderOptions)
 	}
 }
 
-export function getPercentageColorExpression(color: string, mapOptions: CategoryOptions, isDark = false) {
+export function getPercentageColorExpression(
+	color: string,
+	mapOptions: CategoryOptions,
+	isDark = false,
+) {
 	const range = mapOptions.percentageRange;
 	const partyRgb = hexToRgb(color);
 	const neutralColor = isDark ? "#1f2937" : "#f5f5f5";

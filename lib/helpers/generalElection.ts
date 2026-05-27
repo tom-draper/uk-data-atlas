@@ -1,8 +1,15 @@
-import { GeneralElectionConstituencyData, PartyVotes, PartyCode, ProcessedPartyData } from "../types";
+import {
+	GeneralElectionConstituencyData,
+	PartyVotes,
+	PartyCode,
+	ProcessedPartyData,
+} from "../types";
 import { Party } from "../types/common";
 import { PARTIES } from "../data/election/parties";
 
-export const getWinningParty = (data: GeneralElectionConstituencyData): string => {
+export const getWinningParty = (
+	data: GeneralElectionConstituencyData,
+): string => {
 	let winningParty = "";
 	let maxVotes = 0;
 
@@ -33,7 +40,10 @@ export const processPartyVotes = (
 	rawPartyVotes: PartyVotes,
 	partyInfo: Party[],
 ): ProcessedPartyData[] => {
-	const totalVotes = Object.values(rawPartyVotes).reduce<number>((a, b) => a + (b ?? 0), 0);
+	const totalVotes = Object.values(rawPartyVotes).reduce<number>(
+		(a, b) => a + (b ?? 0),
+		0,
+	);
 	if (totalVotes === 0) return [];
 
 	return partyInfo

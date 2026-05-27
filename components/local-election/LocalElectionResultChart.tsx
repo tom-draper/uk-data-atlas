@@ -9,7 +9,11 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
 interface ProcessedPartyData {
 	key: string;
@@ -83,7 +87,11 @@ export default memo(function LocalElectionResultChart({
 	const heightClass = isActive ? "h-[95px]" : "h-[65px]";
 
 	const accentColor = winnerColor ?? "#6366f1";
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(accentColor, isActive, isDark);
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+		accentColor,
+		isActive,
+		isDark,
+	);
 
 	const handleActivate = () => {
 		if (data.dataset) {
@@ -98,7 +106,11 @@ export default memo(function LocalElectionResultChart({
 	return (
 		<div
 			style={style}
-			className={cardClass(isActive, isDark, `transition-[height] duration-300 ease-in-out ${heightClass}`)}
+			className={cardClass(
+				isActive,
+				isDark,
+				`transition-[height] duration-300 ease-in-out ${heightClass}`,
+			)}
 			title="House of Commons Library, UK Parliament. Local Election Results. commonslibrary.parliament.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
@@ -121,7 +133,9 @@ export default memo(function LocalElectionResultChart({
 					chartsLoading ? (
 						<ChartContentPlaceholder className="h-5 mt-1" />
 					) : (
-						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+						<div
+							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+						>
 							No data available
 						</div>
 					)

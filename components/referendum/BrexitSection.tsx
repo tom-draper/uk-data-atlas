@@ -46,8 +46,14 @@ export default memo(function BrexitSection({
 	if (!showHanretty && !showElectoral) return null;
 
 	return (
-		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
-			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>Brexit</h3>
+		<div
+			className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}
+		>
+			<h3
+				className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}
+			>
+				Brexit
+			</h3>
 			{showElectoral && (
 				<BrexitElectoralChart
 					activeDataset={activeDataset}

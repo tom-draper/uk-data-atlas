@@ -8,7 +8,8 @@
     "start": "next start",
     "format": "prettier --write \"**/*.{ts,tsx}\" --use-tabs --tab-width 4",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
     "@maptiler/sdk": "^3.11.2",
@@ -31,6 +32,7 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "baseline-browser-mapping": "^2.10.31",
     "prettier": "^3.8.3",
+    "react-doctor": "^0.2.6",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.7"

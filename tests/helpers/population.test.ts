@@ -1,4 +1,8 @@
-import { calculateTotal, calculateMedianAge, polygonAreaSqKm } from "@/lib/helpers/population";
+import {
+	calculateTotal,
+	calculateMedianAge,
+	polygonAreaSqKm,
+} from "@/lib/helpers/population";
 import type { PopulationWardData } from "@/lib/types";
 
 describe("calculateTotal", () => {
@@ -24,7 +28,9 @@ describe("calculateMedianAge", () => {
 	});
 	it("returns correct median for uniform distribution", () => {
 		// Equal counts at age 20 and 40 → median should be 20 (first age hitting 50%)
-		const ward = { total: { "20": 100, "40": 100 } } as unknown as PopulationWardData;
+		const ward = {
+			total: { "20": 100, "40": 100 },
+		} as unknown as PopulationWardData;
 		expect(calculateMedianAge(ward)).toBe(20);
 	});
 	it("returns 90 when all population is at age 90+", () => {
@@ -49,7 +55,13 @@ describe("polygonAreaSqKm", () => {
 		expect(area).toBeGreaterThan(0);
 	});
 	it("returns 0 for a degenerate ring with fewer than 4 points", () => {
-		const area = polygonAreaSqKm([[[0, 0], [1, 0], [0, 0]]]);
+		const area = polygonAreaSqKm([
+			[
+				[0, 0],
+				[1, 0],
+				[0, 0],
+			],
+		]);
 		expect(area).toBe(0);
 	});
 	it("handles MultiPolygon by summing constituent areas", () => {

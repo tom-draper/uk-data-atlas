@@ -39,7 +39,9 @@ export const calculateMedianAge = (
 };
 
 // Calculates polygon area in square kilometers (roughly accurate for small areas)
-export const polygonAreaSqKm = (coordinates: number[][][] | number[][][][]): number => {
+export const polygonAreaSqKm = (
+	coordinates: number[][][] | number[][][][],
+): number => {
 	const R = 6371;
 
 	const calculateRingArea = (ring: number[][]): number => {

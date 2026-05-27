@@ -43,7 +43,10 @@ import { WIMDDataset } from "@/lib/types/wimd";
 import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { QualificationDataset } from "@/lib/types/qualification";
-import { getColorForLifeExpectancy, getColorForQualification } from "../colorScale";
+import {
+	getColorForLifeExpectancy,
+	getColorForQualification,
+} from "../colorScale";
 
 export const DEFAULT_COLOR = "#cccccc";
 
@@ -88,7 +91,9 @@ export class FeatureBuilder {
 		getWinner: (code: string) => string,
 	): Features {
 		return this.mapFeatures(features, (feature) => ({
-			winningParty: getWinner(getFeatureProp(feature.properties, codeProp) ?? ""),
+			winningParty: getWinner(
+				getFeatureProp(feature.properties, codeProp) ?? "",
+			),
 		}));
 	}
 
@@ -99,16 +104,17 @@ export class FeatureBuilder {
 		codeProp: PropertyKeys,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const locationData = data[getFeatureProp(feature.properties, codeProp) ?? ""];
+			const locationData =
+				data[getFeatureProp(feature.properties, codeProp) ?? ""];
 
 			let percentage = 0;
 			if (locationData?.partyVotes) {
 				const partyVotes = locationData.partyVotes[partyCode] ?? 0;
-				const totalVotes = Object.values(locationData.partyVotes).reduce<number>(
-					(sum, v) => sum + (v ?? 0),
-					0,
-				);
-				percentage = totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
+				const totalVotes = Object.values(
+					locationData.partyVotes,
+				).reduce<number>((sum, v) => sum + (v ?? 0), 0);
+				percentage =
+					totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
 			}
 
 			return { percentage, partyCode };
@@ -187,12 +193,12 @@ export class FeatureBuilder {
 		features: Features,
 		customDataset: CustomDataset,
 		codeProp: PropertyKeys,
-		mapOptions: MapOptions
+		mapOptions: MapOptions,
 	): Features {
 		let minValue: number = Infinity;
 		let maxValue: number = -Infinity;
 		for (const value of Object.values(customDataset.data)) {
-			if (typeof value === 'number') {
+			if (typeof value === "number") {
 				if (value < minValue) minValue = value;
 				if (value > maxValue) maxValue = value;
 			}
@@ -212,13 +218,10 @@ export class FeatureBuilder {
 			const normalised = normalizeValue(
 				value !== undefined ? value : minValue,
 				minValue,
-				maxValue
+				maxValue,
 			);
 
-			const color = getColor(
-				normalised,
-				mapOptions.theme.id
-			);
+			const color = getColor(normalised, mapOptions.theme.id);
 
 			return { value, color };
 		});
@@ -232,7 +235,9 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const wardPopulation =
-				dataset.data[getFeatureProp(feature.properties, wardCodeProp) ?? ""];
+				dataset.data[
+					getFeatureProp(feature.properties, wardCodeProp) ?? ""
+				];
 
 			const color = wardPopulation
 				? getColorForAge(
@@ -254,7 +259,9 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const wardPopulation =
-				dataset.data[getFeatureProp(feature.properties, wardCodeProp) ?? ""];
+				dataset.data[
+					getFeatureProp(feature.properties, wardCodeProp) ?? ""
+				];
 
 			let color = DEFAULT_COLOR;
 			if (wardPopulation) {
@@ -276,7 +283,9 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const wardPopulation =
-				dataset.data[getFeatureProp(feature.properties, wardCodeProp) ?? ""];
+				dataset.data[
+					getFeatureProp(feature.properties, wardCodeProp) ?? ""
+				];
 
 			let color = DEFAULT_COLOR;
 			if (wardPopulation) {
@@ -303,7 +312,10 @@ export class FeatureBuilder {
 		mapOptions: MapOptions,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const ward = dataset.data[getFeatureProp(feature.properties, wardCodeProp) ?? ""];
+			const ward =
+				dataset.data[
+					getFeatureProp(feature.properties, wardCodeProp) ?? ""
+				];
 
 			const color = ward?.prices[2023]
 				? getColorForHousePrice(
@@ -324,7 +336,10 @@ export class FeatureBuilder {
 		mapOptions: MapOptions,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const area = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+			const area =
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				];
 
 			const color = area
 				? getColorForCrimeRate(
@@ -346,7 +361,9 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const income =
-				dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""]?.annual?.median;
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				]?.annual?.median;
 
 			const color = income
 				? getColorForIncome(
@@ -368,10 +385,16 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const area =
-				dataset.data[getFeatureProp(feature.properties, constituencyCodeProp) ?? ""];
+				dataset.data[
+					getFeatureProp(feature.properties, constituencyCodeProp) ??
+						""
+				];
 
 			const color = area
-				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexitConstituency)
+				? getColorForBrexitLeave(
+						area.pctLeave,
+						mapOptions.brexitConstituency,
+					)
 				: DEFAULT_COLOR;
 
 			return { color };
@@ -386,7 +409,9 @@ export class FeatureBuilder {
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const area =
-				dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				];
 
 			const color = area
 				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexit)
@@ -408,11 +433,22 @@ export class FeatureBuilder {
 		const min = Math.min(...avgs);
 		const max = Math.max(...avgs);
 		return this.mapFeatures(features, (feature) => {
-			const area = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-			const avgLE = area ? (area.maleBirthLE + area.femaleBirthLE) / 2 : null;
-			const color = avgLE !== null
-				? getColorForLifeExpectancy(avgLE, min, max, mapOptions.theme.id)
-				: DEFAULT_COLOR;
+			const area =
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				];
+			const avgLE = area
+				? (area.maleBirthLE + area.femaleBirthLE) / 2
+				: null;
+			const color =
+				avgLE !== null
+					? getColorForLifeExpectancy(
+							avgLE,
+							min,
+							max,
+							mapOptions.theme.id,
+						)
+					: DEFAULT_COLOR;
 			return { color };
 		});
 	}
@@ -427,7 +463,11 @@ export class FeatureBuilder {
 			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
 			const area = dataset.data[code];
 			const color = area
-				? getColorForIMD(area.imdScore, mapOptions.imd, mapOptions.theme.id)
+				? getColorForIMD(
+						area.imdScore,
+						mapOptions.imd,
+						mapOptions.theme.id,
+					)
 				: DEFAULT_COLOR;
 			return { color };
 		});
@@ -443,7 +483,11 @@ export class FeatureBuilder {
 			const code = getFeatureProp(feature.properties, dzCodeProp) ?? "";
 			const area = dataset.data[code];
 			const color = area
-				? getColorForSIMD(area.simdRank, mapOptions.simd, mapOptions.theme.id)
+				? getColorForSIMD(
+						area.simdRank,
+						mapOptions.simd,
+						mapOptions.theme.id,
+					)
 				: DEFAULT_COLOR;
 			return { color };
 		});
@@ -459,7 +503,11 @@ export class FeatureBuilder {
 			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
 			const area = dataset.data[code];
 			const color = area
-				? getColorForWIMD(area.wimdRank, mapOptions.wimd, mapOptions.theme.id)
+				? getColorForWIMD(
+						area.wimdRank,
+						mapOptions.wimd,
+						mapOptions.theme.id,
+					)
 				: DEFAULT_COLOR;
 			return { color };
 		});
@@ -475,7 +523,11 @@ export class FeatureBuilder {
 			const code = getFeatureProp(feature.properties, soaCodeProp) ?? "";
 			const area = dataset.data[code];
 			const color = area
-				? getColorForNIMDM(area.nimdmRank, mapOptions.nimdm, mapOptions.theme.id)
+				? getColorForNIMDM(
+						area.nimdmRank,
+						mapOptions.nimdm,
+						mapOptions.theme.id,
+					)
 				: DEFAULT_COLOR;
 			return { color };
 		});
@@ -488,13 +540,22 @@ export class FeatureBuilder {
 		mapOptions: MapOptions,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const area = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-			const pct = area && area.breakdown.total > 0
-				? (area.breakdown.level4Plus / area.breakdown.total) * 100
-				: null;
-			const color = pct !== null
-				? getColorForQualification(pct, mapOptions.qualification, mapOptions.theme.id)
-				: DEFAULT_COLOR;
+			const area =
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				];
+			const pct =
+				area && area.breakdown.total > 0
+					? (area.breakdown.level4Plus / area.breakdown.total) * 100
+					: null;
+			const color =
+				pct !== null
+					? getColorForQualification(
+							pct,
+							mapOptions.qualification,
+							mapOptions.theme.id,
+						)
+					: DEFAULT_COLOR;
 			return { color };
 		});
 	}

@@ -13,7 +13,11 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { useCardAccent, cardClass, chartHeadingClass } from "@/lib/hooks/useCardAccent";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
 interface NIMDMChartProps {
 	activeDataset: Dataset | null;
@@ -53,10 +57,12 @@ export default memo(function NIMDMChart({
 	const nimdmStats = useMemo(() => {
 		if (!dataset || chartsLoading) return null;
 
-		const avgFromRecords = (records: typeof dataset.data[string][]) => {
+		const avgFromRecords = (records: (typeof dataset.data)[string][]) => {
 			if (records.length === 0) return null;
 			return {
-				averageNIMDMDecile: records.reduce((s, r) => s + r.nimdmDecile, 0) / records.length,
+				averageNIMDMDecile:
+					records.reduce((s, r) => s + r.nimdmDecile, 0) /
+					records.length,
 			};
 		};
 
@@ -69,32 +75,47 @@ export default memo(function NIMDMChart({
 
 		if (selectedArea.type === "localAuthority") {
 			const ladCode = selectedArea.code;
-			return avgFromRecords(Object.values(dataset.data).filter((r) => r.lgdCode === ladCode));
+			return avgFromRecords(
+				Object.values(dataset.data).filter(
+					(r) => r.lgdCode === ladCode,
+				),
+			);
 		}
 
 		if (selectedArea.type === "ward" && selectedArea.data) {
 			const ladCode = selectedArea.data.ladCode;
-			return avgFromRecords(Object.values(dataset.data).filter((r) => r.lgdCode === ladCode));
+			return avgFromRecords(
+				Object.values(dataset.data).filter(
+					(r) => r.lgdCode === ladCode,
+				),
+			);
 		}
 
 		return null;
 	}, [dataset, aggregatedData, selectedArea, chartsLoading]);
 
-	if (!dataset) return null;
-
 	const isActive =
-		activeDataset?.type === "nimdm" && activeDataset.id === dataset.id;
+		activeDataset?.type === "nimdm" && activeDataset.id === dataset?.id;
 
-	const decile = nimdmStats ? Math.round(nimdmStats.averageNIMDMDecile) : null;
+	const decile = nimdmStats
+		? Math.round(nimdmStats.averageNIMDMDecile)
+		: null;
 	const decileColor = decile ? DECILE_COLORS[decile - 1] : "#9ca3af";
 	const hasData = nimdmStats !== null;
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(hasData ? decileColor : null, isActive, isDark);
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+		hasData ? decileColor : null,
+		isActive,
+		isDark,
+	);
+
+	if (!dataset) return null;
 
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "h-20 block w-full text-left")}
 			title="NISRA. Northern Ireland Multiple Deprivation Measure 2017. nisra.gov.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
@@ -114,7 +135,12 @@ export default memo(function NIMDMChart({
 				{hasData && nimdmStats ? (
 					<div className="mt-0 flex items-start gap-2.5">
 						<div className="shrink-0 w-7 text-right leading-none pt-0.5">
-							<span className="text-2xl font-bold" style={{ color: decileColor }}>{decile}</span>
+							<span
+								className="text-2xl font-bold"
+								style={{ color: decileColor }}
+							>
+								{decile}
+							</span>
 						</div>
 						<div className="flex-1 flex flex-col gap-1 pt-2">
 							<div className="flex gap-[2px]">
@@ -123,14 +149,27 @@ export default memo(function NIMDMChart({
 										key={i}
 										className="flex-1 h-5 rounded-[2px]"
 										style={{
-											backgroundColor: decile === i + 1 ? color : isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
+											backgroundColor:
+												decile === i + 1
+													? color
+													: isDark
+														? "rgba(255,255,255,0.1)"
+														: "rgba(0,0,0,0.08)",
 										}}
 									/>
 								))}
 							</div>
 							<div className="flex justify-between">
-								<span className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>most deprived</span>
-								<span className={`text-[9px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>N. Ireland only</span>
+								<span
+									className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
+								>
+									most deprived
+								</span>
+								<span
+									className={`text-[9px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
+								>
+									N. Ireland only
+								</span>
 							</div>
 						</div>
 					</div>
@@ -139,13 +178,15 @@ export default memo(function NIMDMChart({
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full w-full" />
 						) : (
-							<div className={`text-xs pb-2 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+							<div
+								className={`text-xs pb-2 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+							>
 								No data available
 							</div>
 						)}
 					</div>
 				)}
 			</div>
-		</div>
+		</button>
 	);
 });

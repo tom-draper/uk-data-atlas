@@ -41,7 +41,10 @@ interface SocietySectionProps {
 	availableNIMDMDatasets: Record<string, NIMDMDataset>;
 	aggregatedNIMDMData: Record<number, AggregatedNIMDMData> | null;
 	availableLifeExpectancyDatasets: Record<string, LifeExpectancyDataset>;
-	aggregatedLifeExpectancyData: Record<number, AggregatedLifeExpectancyData> | null;
+	aggregatedLifeExpectancyData: Record<
+		number,
+		AggregatedLifeExpectancyData
+	> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -77,17 +80,40 @@ export default memo(function SocietySection({
 	const showLE = visibility["society-lifeExpectancy"];
 	const showHLE = visibility["society-healthyLifeExpectancy"];
 
-	const imdYears = Object.keys(availableIMDDatasets).map(Number).sort((a, b) => b - a);
-	const simdYears = Object.keys(availableSIMDDatasets).map(Number).sort((a, b) => b - a);
-	const wimdYears = Object.keys(availableWIMDDatasets).map(Number).sort((a, b) => b - a);
-	const nimdmYears = Object.keys(availableNIMDMDatasets).map(Number).sort((a, b) => b - a);
+	const imdYears = Object.keys(availableIMDDatasets)
+		.map(Number)
+		.sort((a, b) => b - a);
+	const simdYears = Object.keys(availableSIMDDatasets)
+		.map(Number)
+		.sort((a, b) => b - a);
+	const wimdYears = Object.keys(availableWIMDDatasets)
+		.map(Number)
+		.sort((a, b) => b - a);
+	const nimdmYears = Object.keys(availableNIMDMDatasets)
+		.map(Number)
+		.sort((a, b) => b - a);
 	const leIds = Object.keys(availableLifeExpectancyDatasets).sort();
 
-	if (!showCrime && !showIMD && !showSIMD && !showWIMD && !showNIMDM && !showLE && !showHLE) return null;
+	if (
+		!showCrime &&
+		!showIMD &&
+		!showSIMD &&
+		!showWIMD &&
+		!showNIMDM &&
+		!showLE &&
+		!showHLE
+	)
+		return null;
 
 	return (
-		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
-			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>Society</h3>
+		<div
+			className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}
+		>
+			<h3
+				className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}
+			>
+				Society
+			</h3>
 			{showCrime && (
 				<CrimeRateChart
 					activeDataset={activeDataset}
@@ -100,66 +126,76 @@ export default memo(function SocietySection({
 					setActiveViz={setActiveViz}
 				/>
 			)}
-			{showIMD && imdYears.map((year) => (
-				<IMDChart
-					key={year}
-					activeDataset={activeDataset}
-					availableDatasets={availableIMDDatasets}
-					aggregatedData={aggregatedIMDData}
-					selectedArea={selectedArea}
-					year={year}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-			))}
-			{showSIMD && simdYears.map((year) => (
-				<SIMDChart
-					key={year}
-					activeDataset={activeDataset}
-					availableDatasets={availableSIMDDatasets}
-					aggregatedData={aggregatedSIMDData}
-					selectedArea={selectedArea}
-					year={year}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-			))}
-			{showWIMD && wimdYears.map((year) => (
-				<WIMDChart
-					key={year}
-					activeDataset={activeDataset}
-					availableDatasets={availableWIMDDatasets}
-					aggregatedData={aggregatedWIMDData}
-					selectedArea={selectedArea}
-					year={year}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-			))}
-			{showNIMDM && nimdmYears.map((year) => (
-				<NIMDMChart
-					key={year}
-					activeDataset={activeDataset}
-					availableDatasets={availableNIMDMDatasets}
-					aggregatedData={aggregatedNIMDMData}
-					selectedArea={selectedArea}
-					year={year}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-			))}
-			{leIds.filter((id) => id === "le" ? showLE : id === "hle" ? showHLE : true).map((id) => (
-				<LifeExpectancyChart
-					key={id}
-					activeDataset={activeDataset}
-					availableDatasets={availableLifeExpectancyDatasets}
-					aggregatedData={aggregatedLifeExpectancyData}
-					selectedArea={selectedArea}
-					datasetId={id}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-			))}
+			{showIMD &&
+				imdYears.map((year) => (
+					<IMDChart
+						key={year}
+						activeDataset={activeDataset}
+						availableDatasets={availableIMDDatasets}
+						aggregatedData={aggregatedIMDData}
+						selectedArea={selectedArea}
+						year={year}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+					/>
+				))}
+			{showSIMD &&
+				simdYears.map((year) => (
+					<SIMDChart
+						key={year}
+						activeDataset={activeDataset}
+						availableDatasets={availableSIMDDatasets}
+						aggregatedData={aggregatedSIMDData}
+						selectedArea={selectedArea}
+						year={year}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+					/>
+				))}
+			{showWIMD &&
+				wimdYears.map((year) => (
+					<WIMDChart
+						key={year}
+						activeDataset={activeDataset}
+						availableDatasets={availableWIMDDatasets}
+						aggregatedData={aggregatedWIMDData}
+						selectedArea={selectedArea}
+						year={year}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+					/>
+				))}
+			{showNIMDM &&
+				nimdmYears.map((year) => (
+					<NIMDMChart
+						key={year}
+						activeDataset={activeDataset}
+						availableDatasets={availableNIMDMDatasets}
+						aggregatedData={aggregatedNIMDMData}
+						selectedArea={selectedArea}
+						year={year}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+					/>
+				))}
+			{leIds.flatMap((id) =>
+				(id === "le" ? showLE : id === "hle" ? showHLE : true)
+					? [
+							<LifeExpectancyChart
+								key={id}
+								activeDataset={activeDataset}
+								availableDatasets={
+									availableLifeExpectancyDatasets
+								}
+								aggregatedData={aggregatedLifeExpectancyData}
+								selectedArea={selectedArea}
+								datasetId={id}
+								activeViz={activeViz}
+								setActiveViz={setActiveViz}
+							/>,
+						]
+					: [],
+			)}
 		</div>
 	);
 });
