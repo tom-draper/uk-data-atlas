@@ -6,8 +6,6 @@ import {
 	WIMDDataset,
 	SelectedArea,
 } from "@lib/types";
-
-
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
@@ -43,6 +41,50 @@ const DECILE_COLORS = [
 	"#15803d", // 10 - least deprived
 ];
 
+function computeWimdStats(
+	dataset: WIMDDataset,
+	aggregatedData: Record<number, AggregatedWIMDData> | null,
+	selectedArea: SelectedArea | null,
+	chartsLoading: boolean,
+) {
+	if (chartsLoading) return null;
+
+	const avg = (records: (typeof dataset.data)[string][]) => {
+		if (records.length === 0) return null;
+		return {
+			averageWIMDScore:
+				records.reduce((s, r) => s + r.wimdScore, 0) / records.length,
+			averageWIMDDecile:
+				records.reduce((s, r) => s + r.wimdDecile, 0) / records.length,
+		};
+	};
+
+	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
+
+	if (selectedArea.type === "localAuthority")
+		return avg(
+			Object.values(dataset.data).filter(
+				(r) => r.ladCode === selectedArea.code,
+			),
+		);
+
+	if (selectedArea.type === "ward" && selectedArea.data)
+		return avg(
+			Object.values(dataset.data).filter(
+				(r) => r.ladCode === selectedArea.data!.ladCode,
+			),
+		);
+
+	if (selectedArea.type === "lsoa") {
+		const record = dataset.data[selectedArea.code];
+		return record
+			? { averageWIMDScore: record.wimdScore, averageWIMDDecile: record.wimdDecile }
+			: null;
+	}
+
+	return null;
+}
+
 export default function WIMDChart({
 	activeDataset,
 	availableDatasets,
@@ -55,58 +97,9 @@ export default function WIMDChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const wimdStats = (() => {
-		if (!dataset || chartsLoading) return null;
-
-		const avgFromRecords = (records: (typeof dataset.data)[string][]) => {
-			if (records.length === 0) return null;
-			return {
-				averageWIMDScore:
-					records.reduce((s, r) => s + r.wimdScore, 0) /
-					records.length,
-				averageWIMDDecile:
-					records.reduce((s, r) => s + r.wimdDecile, 0) /
-					records.length,
-			};
-		};
-
-		if (selectedArea === null) {
-			if (aggregatedData && aggregatedData[dataset.year]) {
-				return aggregatedData[dataset.year];
-			}
-			return null;
-		}
-
-		if (selectedArea.type === "localAuthority") {
-			const ladCode = selectedArea.code;
-			return avgFromRecords(
-				Object.values(dataset.data).filter(
-					(r) => r.ladCode === ladCode,
-				),
-			);
-		}
-
-		if (selectedArea.type === "ward" && selectedArea.data) {
-			const ladCode = selectedArea.data.ladCode;
-			return avgFromRecords(
-				Object.values(dataset.data).filter(
-					(r) => r.ladCode === ladCode,
-				),
-			);
-		}
-
-		if (selectedArea.type === "lsoa") {
-			const record = dataset.data[selectedArea.code];
-			return record
-				? {
-						averageWIMDScore: record.wimdScore,
-						averageWIMDDecile: record.wimdDecile,
-					}
-				: null;
-		}
-
-		return null;
-	})();
+	const wimdStats = dataset
+		? computeWimdStats(dataset, aggregatedData, selectedArea, chartsLoading)
+		: null;
 
 	const isActive =
 		activeDataset?.type === "wimd" && activeDataset.id === dataset?.id;

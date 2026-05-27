@@ -11,8 +11,6 @@ import {
 	QUALIFICATION_COLORS,
 	QUALIFICATION_LEVELS,
 } from "@/lib/types/qualification";
-
-
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
@@ -34,6 +32,26 @@ interface QualificationChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
+function computeBreakdown(
+	dataset: QualificationDataset,
+	aggregatedData: Record<number, AggregatedQualificationData> | null,
+	selectedArea: SelectedArea | null,
+	year: number,
+	chartsLoading: boolean,
+) {
+	if (chartsLoading) return null;
+
+	if (selectedArea === null) return aggregatedData?.[year]?.breakdown ?? null;
+
+	if (selectedArea.type === "localAuthority")
+		return dataset.data[selectedArea.code]?.breakdown ?? null;
+
+	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
+		return dataset.data[selectedArea.data.ladCode]?.breakdown ?? null;
+
+	return null;
+}
+
 export default function QualificationChart({
 	activeDataset,
 	availableDatasets,
@@ -49,23 +67,9 @@ export default function QualificationChart({
 		activeDataset?.type === "qualification" &&
 		activeDataset.id === dataset?.id;
 
-	const breakdown = (() => {
-		if (!dataset || chartsLoading) return null;
-
-		if (selectedArea === null) {
-			return aggregatedData?.[year]?.breakdown ?? null;
-		}
-
-		if (selectedArea.type === "localAuthority") {
-			return dataset.data[selectedArea.code]?.breakdown ?? null;
-		}
-
-		if (selectedArea.type === "ward" && selectedArea.data?.ladCode) {
-			return dataset.data[selectedArea.data.ladCode]?.breakdown ?? null;
-		}
-
-		return null;
-	})();
+	const breakdown = dataset
+		? computeBreakdown(dataset, aggregatedData, selectedArea, year, chartsLoading)
+		: null;
 
 	const hasData = breakdown !== null && breakdown.total > 0;
 	const accentColor = QUALIFICATION_COLORS.level4Plus;

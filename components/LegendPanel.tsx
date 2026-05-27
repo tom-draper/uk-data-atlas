@@ -51,55 +51,69 @@ interface LegendPanelProps {
 	) => void;
 }
 
-// Renders a scrollable list of selectable colour-coded categories (parties or ethnicities)
-const renderCategoryLegend = (
-	items: { id: string; color: string; name: string }[],
-	isPercentageMode: boolean,
-	selectedId: string | undefined,
-	onItemClick: (id: string) => void,
-	swatchOpacity: number = 1,
-	isDark: boolean = false,
-) => (
-	<div>
-		{items.map((item) => {
-			const isSelected = isPercentageMode && selectedId === item.id;
-			return (
-				<button
-					type="button"
-					key={item.id}
-					onClick={() => onItemClick(item.id)}
-					className={`flex items-center gap-2 px-1 py-0.75 w-full text-left rounded-sm transition-all cursor-pointer ${isSelected ? "ring-1" : isDark ? "hover:bg-white/10" : "hover:bg-gray-100/30"}`}
-					style={
-						isSelected
-							? ({
-									backgroundColor: `${item.color}15`,
-									"--tw-ring-color": `${item.color}80`,
-								} as React.CSSProperties)
-							: {}
-					}
-				>
-					<div
-						className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? "ring-1" : ""}`}
-						style={{
-							backgroundColor: item.color,
-							opacity: swatchOpacity,
-							...(isSelected
-								? ({
-										"--tw-ring-color": item.color,
-									} as React.CSSProperties)
-								: {}),
-						}}
-					/>
-					<span
-						className={`text-xs ${isSelected ? (isDark ? "text-gray-100" : "text-gray-700") : isDark ? "text-gray-400" : "text-gray-500"}`}
-					>
-						{item.name}
-					</span>
-				</button>
-			);
-		})}
-	</div>
-);
+function computeParties(
+	activeDataset: Dataset | null,
+	aggregatedData: AggregatedData | null,
+): PartyDisplayData[] {
+	if (!activeDataset) return [];
+
+	let datasetData:
+		| Record<number, WardStats>
+		| Record<number, ConstituencyStats>
+		| undefined;
+
+	if (activeDataset.type === "localElection") {
+		datasetData = aggregatedData?.localElection ?? undefined;
+	} else if (activeDataset.type === "generalElection") {
+		datasetData = aggregatedData?.generalElection ?? undefined;
+	}
+
+	if (!datasetData) return [];
+
+	const yearData = datasetData[activeDataset.year];
+	if (!yearData?.partyVotes) return [];
+
+	return Object.entries(yearData.partyVotes as Record<PartyCode, number>)
+		.filter(([_, votes]) => votes > 0)
+		.sort((a, b) => b[1] - a[1])
+		.map(([id, _]) => ({
+			id: id as PartyCode,
+			color: PARTIES[id as PartyCode]?.color || "#ccc",
+			name: PARTIES[id as PartyCode]?.name || id,
+		}));
+}
+
+function computeEthnicities(
+	activeDataset: Dataset | null,
+	aggregatedData: AggregatedData | null,
+): { id: EthnicityCode; color: string; name: string }[] {
+	if (!activeDataset || activeDataset.type !== "ethnicity") return [];
+	const yearData = aggregatedData?.ethnicity?.[activeDataset.year];
+	if (!yearData) return [];
+
+	const ethnicityTotals = new Map<string, number>();
+	for (const localAuthorityData of Object.values(
+		yearData,
+	) as EthnicityCategory[]) {
+		for (const [ethnicity, data] of Object.entries(
+			localAuthorityData,
+		) as [string, Ethnicity][]) {
+			const currentTotal = ethnicityTotals.get(ethnicity) || 0;
+			if (typeof data.population === "number") {
+				ethnicityTotals.set(ethnicity, currentTotal + data.population);
+			}
+		}
+	}
+
+	return Array.from(ethnicityTotals.entries())
+		.filter(([_, count]) => count > 0)
+		.sort((a, b) => b[1] - a[1])
+		.map(([id]: [EthnicityCode, number]) => ({
+			id,
+			color: ETHNICITY_COLORS[id] || "#ccc",
+			name: id,
+		}));
+}
 
 // Secondary panel for the percentage-range slider shown when a party/ethnicity is selected
 function PercentageRangePanel({
@@ -161,66 +175,8 @@ export default function LegendPanel({
 
 	const verticalThemeGradient = `linear-gradient(to bottom, ${activeTheme.colors.join(", ")})`;
 
-	const parties = (() => {
-		if (!activeDataset) return [];
-
-		let datasetData:
-			| Record<number, WardStats>
-			| Record<number, ConstituencyStats>
-			| undefined;
-
-		if (activeDataset.type === "localElection") {
-			datasetData = aggregatedData?.localElection ?? undefined;
-		} else if (activeDataset.type === "generalElection") {
-			datasetData = aggregatedData?.generalElection ?? undefined;
-		}
-
-		if (!datasetData) return [];
-
-		const yearData = datasetData[activeDataset.year];
-		if (!yearData?.partyVotes) return [];
-
-		return Object.entries(yearData.partyVotes as Record<PartyCode, number>)
-			.filter(([_, votes]) => votes > 0)
-			.sort((a, b) => b[1] - a[1])
-			.map(([id, _]) => ({
-				id: id as PartyCode,
-				color: PARTIES[id as PartyCode]?.color || "#ccc",
-				name: PARTIES[id as PartyCode]?.name || id,
-			}));
-	})();
-
-	const ethnicities = (() => {
-		if (!activeDataset || activeDataset.type !== "ethnicity") return [];
-		const yearData = aggregatedData?.ethnicity?.[activeDataset.year];
-		if (!yearData) return [];
-
-		const ethnicityTotals = new Map<string, number>();
-		for (const localAuthorityData of Object.values(
-			yearData,
-		) as EthnicityCategory[]) {
-			for (const [ethnicity, data] of Object.entries(
-				localAuthorityData,
-			) as [string, Ethnicity][]) {
-				const currentTotal = ethnicityTotals.get(ethnicity) || 0;
-				if (typeof data.population === "number") {
-					ethnicityTotals.set(
-						ethnicity,
-						currentTotal + data.population,
-					);
-				}
-			}
-		}
-
-		return Array.from(ethnicityTotals.entries())
-			.filter(([_, count]) => count > 0)
-			.sort((a, b) => b[1] - a[1])
-			.map(([id]: [EthnicityCode, number]) => ({
-				id,
-				color: ETHNICITY_COLORS[id] || "#ccc",
-				name: id,
-			}));
-	})();
+	const parties = computeParties(activeDataset, aggregatedData);
+	const ethnicities = computeEthnicities(activeDataset, aggregatedData);
 
 	const handleRangeInput = (
 		datasetKey: ColorRangeDatasetKey,
