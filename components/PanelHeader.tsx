@@ -1,5 +1,6 @@
 "use client";
-import { memo } from "react";
+
+
 import { SelectedArea } from "@lib/types";
 import { usePanelContext } from "@/lib/context/PanelContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
@@ -83,7 +84,7 @@ function panelHeaderDetails(
 	}
 }
 
-export default memo(function PanelHeader({
+export default function PanelHeader({
 	settingsOpen,
 	onToggleSettings,
 }: {
@@ -125,4 +126,4 @@ export default memo(function PanelHeader({
 			</div>
 		</div>
 	);
-});
+}

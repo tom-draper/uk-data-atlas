@@ -12,7 +12,7 @@ import {
 import { CustomDataset } from "@/lib/types/custom";
 import LocalElectionResultChartSection from "./local-election/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
-import { memo, useCallback, useState } from "react";
+import { useState } from "react";
 import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
 import SocietySection from "./society/SocietySection";
@@ -56,7 +56,7 @@ function useSectionVisibility() {
 	return byGroup;
 }
 
-export default memo(function ChartPanel({
+export default function ChartPanel({
 	selectedArea,
 	activeDataset,
 	boundaryData,
@@ -74,7 +74,7 @@ export default memo(function ChartPanel({
 	const t = panelTheme(isDark);
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const sectionVisible = useSectionVisibility();
-	const toggleSettings = useCallback(() => setSettingsOpen((o) => !o), []);
+	const toggleSettings = () => setSettingsOpen((o) => !o);
 
 	return (
 		<ChartVisibilityProvider>
@@ -244,4 +244,4 @@ export default memo(function ChartPanel({
 			</div>
 		</ChartVisibilityProvider>
 	);
-});
+}

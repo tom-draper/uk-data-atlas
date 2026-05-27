@@ -1,7 +1,7 @@
 // components/LegendPanel.tsx
 "use client";
 
-import { memo, useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions, CategoryOptions } from "@/lib/types/mapOptions";
@@ -102,7 +102,7 @@ const renderCategoryLegend = (
 );
 
 // Secondary panel for the percentage-range slider shown when a party/ethnicity is selected
-const PercentageRangePanel = memo(function PercentageRangePanel({
+function PercentageRangePanel({
 	range,
 	gradient,
 	opacity,
@@ -142,9 +142,9 @@ const PercentageRangePanel = memo(function PercentageRangePanel({
 			</div>
 		</div>
 	);
-});
+}
 
-export default memo(function LegendPanel({
+export default function LegendPanel({
 	activeDataset,
 	activeViz,
 	aggregatedData,
@@ -157,14 +157,11 @@ export default memo(function LegendPanel({
 	const displayOptions = liveOptions || mapOptions;
 
 	const themeId = displayOptions.theme.id;
-	const activeTheme = useMemo(
-		() => themes.find((t) => t.id === themeId) || themes[0],
-		[themeId],
-	);
+	const activeTheme = themes.find((t) => t.id === themeId) || themes[0];
 
 	const verticalThemeGradient = `linear-gradient(to bottom, ${activeTheme.colors.join(", ")})`;
 
-	const parties = useMemo(() => {
+	const parties = (() => {
 		if (!activeDataset) return [];
 
 		let datasetData:
@@ -191,9 +188,9 @@ export default memo(function LegendPanel({
 				color: PARTIES[id as PartyCode]?.color || "#ccc",
 				name: PARTIES[id as PartyCode]?.name || id,
 			}));
-	}, [aggregatedData, activeDataset]);
+	})();
 
-	const ethnicities = useMemo(() => {
+	const ethnicities = (() => {
 		if (!activeDataset || activeDataset.type !== "ethnicity") return [];
 		const yearData = aggregatedData?.ethnicity?.[activeDataset.year];
 		if (!yearData) return [];
@@ -223,7 +220,7 @@ export default memo(function LegendPanel({
 				color: ETHNICITY_COLORS[id] || "#ccc",
 				name: id,
 			}));
-	}, [aggregatedData, activeDataset]);
+	})();
 
 	const handleRangeInput = (
 		datasetKey: ColorRangeDatasetKey,
@@ -308,69 +305,55 @@ export default memo(function LegendPanel({
 	const isDark = useIsDark();
 	const t = panelTheme(isDark);
 
-	const electionRange = useMemo(
-		() => ({
-			min: electionOpts?.percentageRange?.min ?? 0,
-			max:
-				(electionOpts as CategoryOptions | null)?.percentageRange
-					?.max ?? 100,
-		}),
-		[electionOpts],
-	);
-	const handleElectionRangeInput = useCallback(
-		(min: number, max: number) => {
-			if (!electionType) return;
-			setLiveOptions((prev) => {
-				const base = prev || mapOptions;
-				return {
-					...base,
-					[electionType]: {
-						...base[electionType],
-						percentageRange: { min, max },
-					},
-				};
-			});
-		},
-		[electionType, mapOptions],
-	);
-	const handleElectionRangeChangeEnd = useCallback(() => {
+	const electionRange = {
+		min: electionOpts?.percentageRange?.min ?? 0,
+		max:
+			(electionOpts as CategoryOptions | null)?.percentageRange?.max ?? 100,
+	};
+	const handleElectionRangeInput = (min: number, max: number) => {
+		if (!electionType) return;
+		setLiveOptions((prev) => {
+			const base = prev || mapOptions;
+			return {
+				...base,
+				[electionType]: {
+					...base[electionType],
+					percentageRange: { min, max },
+				},
+			};
+		});
+	};
+	const handleElectionRangeChangeEnd = () => {
 		if (!liveOptions || !electionType) return;
 		onMapOptionsChange(electionType, {
 			percentageRange: liveOptions[electionType].percentageRange,
 		});
 		setLiveOptions(null);
-	}, [liveOptions, electionType, onMapOptionsChange]);
+	};
 
-	const ethnicityRange = useMemo(
-		() => ({
-			min: ethnicityOpts?.percentageRange?.min ?? 0,
-			max:
-				(ethnicityOpts as CategoryOptions)?.percentageRange?.max ?? 100,
-		}),
-		[ethnicityOpts],
-	);
-	const handleEthnicityRangeInput = useCallback(
-		(min: number, max: number) => {
-			setLiveOptions((prev) => {
-				const base = prev || mapOptions;
-				return {
-					...base,
-					ethnicity: {
-						...base.ethnicity,
-						percentageRange: { min, max },
-					},
-				};
-			});
-		},
-		[mapOptions],
-	);
-	const handleEthnicityRangeChangeEnd = useCallback(() => {
+	const ethnicityRange = {
+		min: ethnicityOpts?.percentageRange?.min ?? 0,
+		max: (ethnicityOpts as CategoryOptions)?.percentageRange?.max ?? 100,
+	};
+	const handleEthnicityRangeInput = (min: number, max: number) => {
+		setLiveOptions((prev) => {
+			const base = prev || mapOptions;
+			return {
+				...base,
+				ethnicity: {
+					...base.ethnicity,
+					percentageRange: { min, max },
+				},
+			};
+		});
+	};
+	const handleEthnicityRangeChangeEnd = () => {
 		if (!liveOptions) return;
 		onMapOptionsChange("ethnicity", {
 			percentageRange: liveOptions.ethnicity.percentageRange,
 		});
 		setLiveOptions(null);
-	}, [liveOptions, onMapOptionsChange]);
+	};
 
 	return (
 		<div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full gap-2.5">
@@ -418,4 +401,4 @@ export default memo(function LegendPanel({
 			)}
 		</div>
 	);
-});
+}

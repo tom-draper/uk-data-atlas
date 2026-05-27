@@ -6,7 +6,8 @@ import {
 	NIMDMDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
+
+
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
@@ -42,7 +43,7 @@ const DECILE_COLORS = [
 	"#15803d", // 10 - least deprived
 ];
 
-export default memo(function NIMDMChart({
+export default function NIMDMChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -54,7 +55,7 @@ export default memo(function NIMDMChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const nimdmStats = useMemo(() => {
+	const nimdmStats = (() => {
 		if (!dataset || chartsLoading) return null;
 
 		const avgFromRecords = (records: (typeof dataset.data)[string][]) => {
@@ -92,7 +93,7 @@ export default memo(function NIMDMChart({
 		}
 
 		return null;
-	}, [dataset, aggregatedData, selectedArea, chartsLoading]);
+	})();
 
 	const isActive =
 		activeDataset?.type === "nimdm" && activeDataset.id === dataset?.id;
@@ -189,4 +190,4 @@ export default memo(function NIMDMChart({
 			</div>
 		</button>
 	);
-});
+}
