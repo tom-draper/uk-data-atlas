@@ -6,7 +6,6 @@ import {
 	IMDDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
@@ -42,76 +41,75 @@ const DECILE_COLORS = [
 	"#15803d", // 10 - least deprived
 ];
 
-export default memo(function IMDChart({
+type IMDRecord = IMDDataset["data"][string];
+const imdByLAD = new WeakMap<IMDDataset, Map<string, IMDRecord[]>>();
+function getIMDIndex(dataset: IMDDataset): Map<string, IMDRecord[]> {
+	let index = imdByLAD.get(dataset);
+	if (!index) {
+		index = new Map();
+		for (const record of Object.values(dataset.data)) {
+			const arr = index.get(record.ladCode);
+			if (arr) arr.push(record);
+			else index.set(record.ladCode, [record]);
+		}
+		imdByLAD.set(dataset, index);
+	}
+	return index;
+}
+
+function computeImdStats(
+	dataset: IMDDataset,
+	aggregatedData: Record<number, AggregatedIMDData> | null,
+	selectedArea: SelectedArea | null,
+	chartsLoading: boolean,
+) {
+	if (chartsLoading) return null;
+
+	const avg = (records: IMDRecord[]) => {
+		if (records.length === 0) return null;
+		return {
+			averageIMDScore:
+				records.reduce((s, r) => s + r.imdScore, 0) / records.length,
+			averageIMDDecile:
+				records.reduce((s, r) => s + r.imdDecile, 0) / records.length,
+		};
+	};
+
+	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
+
+	if (selectedArea.type === "lsoa") {
+		const record = dataset.data[selectedArea.code];
+		return record
+			? { averageIMDScore: record.imdScore, averageIMDDecile: record.imdDecile }
+			: null;
+	}
+
+	const index = getIMDIndex(dataset);
+
+	if (selectedArea.type === "localAuthority")
+		return avg(index.get(selectedArea.code) ?? []);
+
+	if (selectedArea.type === "ward" && selectedArea.data)
+		return avg(index.get(selectedArea.data.ladCode) ?? []);
+
+	return null;
+}
+
+export default function IMDChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
 	year,
-	activeViz,
 	setActiveViz,
 }: IMDChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const imdStats = useMemo(() => {
-		if (!dataset || chartsLoading) return null;
-
-		const avgFromRecords = (records: (typeof dataset.data)[string][]) => {
-			if (records.length === 0) return null;
-			return {
-				averageIMDScore:
-					records.reduce((s, r) => s + r.imdScore, 0) /
-					records.length,
-				averageIMDDecile:
-					records.reduce((s, r) => s + r.imdDecile, 0) /
-					records.length,
-			};
-		};
-
-		// Global view — wait for boundary-aggregated data instead of averaging all records during load.
-		if (selectedArea === null) {
-			if (aggregatedData && aggregatedData[dataset.year]) {
-				return aggregatedData[dataset.year];
-			}
-			return null;
-		}
-
-		// Local authority selected
-		if (selectedArea.type === "localAuthority") {
-			const ladCode = selectedArea.code;
-			return avgFromRecords(
-				Object.values(dataset.data).filter(
-					(r) => r.ladCode === ladCode,
-				),
-			);
-		}
-
-		// Ward selected — look up via parent LAD code stored on the ward data
-		if (selectedArea.type === "ward" && selectedArea.data) {
-			const ladCode = selectedArea.data.ladCode;
-			return avgFromRecords(
-				Object.values(dataset.data).filter(
-					(r) => r.ladCode === ladCode,
-				),
-			);
-		}
-
-		// LSOA selected — direct lookup by code
-		if (selectedArea.type === "lsoa") {
-			const record = dataset.data[selectedArea.code];
-			return record
-				? {
-						averageIMDScore: record.imdScore,
-						averageIMDDecile: record.imdDecile,
-					}
-				: null;
-		}
-
-		// Constituency — no direct mapping
-		return null;
-	}, [dataset, aggregatedData, selectedArea, chartsLoading]);
+	const imdStats = dataset
+		? computeImdStats(dataset, aggregatedData, selectedArea, chartsLoading)
+		: null;
 
 	if (!dataset) return null;
 
@@ -205,4 +203,4 @@ export default memo(function IMDChart({
 			</div>
 		</div>
 	);
-});
+}

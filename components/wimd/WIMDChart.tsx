@@ -41,6 +41,22 @@ const DECILE_COLORS = [
 	"#15803d", // 10 - least deprived
 ];
 
+type WIMDRecord = WIMDDataset["data"][string];
+const wimdByLAD = new WeakMap<WIMDDataset, Map<string, WIMDRecord[]>>();
+function getWIMDIndex(dataset: WIMDDataset): Map<string, WIMDRecord[]> {
+	let index = wimdByLAD.get(dataset);
+	if (!index) {
+		index = new Map();
+		for (const record of Object.values(dataset.data)) {
+			const arr = index.get(record.ladCode);
+			if (arr) arr.push(record);
+			else index.set(record.ladCode, [record]);
+		}
+		wimdByLAD.set(dataset, index);
+	}
+	return index;
+}
+
 function computeWimdStats(
 	dataset: WIMDDataset,
 	aggregatedData: Record<number, AggregatedWIMDData> | null,
@@ -49,7 +65,7 @@ function computeWimdStats(
 ) {
 	if (chartsLoading) return null;
 
-	const avg = (records: (typeof dataset.data)[string][]) => {
+	const avg = (records: WIMDRecord[]) => {
 		if (records.length === 0) return null;
 		return {
 			averageWIMDScore:
@@ -61,26 +77,20 @@ function computeWimdStats(
 
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
-	if (selectedArea.type === "localAuthority")
-		return avg(
-			Object.values(dataset.data).filter(
-				(r) => r.ladCode === selectedArea.code,
-			),
-		);
-
-	if (selectedArea.type === "ward" && selectedArea.data)
-		return avg(
-			Object.values(dataset.data).filter(
-				(r) => r.ladCode === selectedArea.data!.ladCode,
-			),
-		);
-
 	if (selectedArea.type === "lsoa") {
 		const record = dataset.data[selectedArea.code];
 		return record
 			? { averageWIMDScore: record.wimdScore, averageWIMDDecile: record.wimdDecile }
 			: null;
 	}
+
+	const index = getWIMDIndex(dataset);
+
+	if (selectedArea.type === "localAuthority")
+		return avg(index.get(selectedArea.code) ?? []);
+
+	if (selectedArea.type === "ward" && selectedArea.data)
+		return avg(index.get(selectedArea.data.ladCode) ?? []);
 
 	return null;
 }
