@@ -1,11 +1,5 @@
 "use client";
-import {
-	createContext,
-	use,
-	useCallback,
-	useMemo,
-	useSyncExternalStore,
-} from "react";
+import { createContext, use, useSyncExternalStore } from "react";
 
 export type ChartKey =
 	| "generalElection-2024"
@@ -234,20 +228,16 @@ export function ChartVisibilityProvider({
 		() => DEFAULT_VISIBILITY,
 	);
 
-	const toggle = useCallback((key: ChartKey) => {
+	const toggle = (key: ChartKey) => {
 		const current = getSnapshot();
 		const next = { ...current, [key]: !current[key] };
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 		} catch {}
 		window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
-	}, []);
+	};
 
-	const ctxValue = useMemo(
-		() => ({ visibility, toggle }),
-		[visibility, toggle],
-	);
-
+	const ctxValue = { visibility, toggle };
 	return (
 		<ChartVisibilityContext.Provider value={ctxValue}>
 			{children}

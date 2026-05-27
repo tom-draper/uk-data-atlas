@@ -6,7 +6,8 @@ import {
 	WIMDDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
+
+
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
@@ -42,7 +43,7 @@ const DECILE_COLORS = [
 	"#15803d", // 10 - least deprived
 ];
 
-export default memo(function WIMDChart({
+export default function WIMDChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -54,7 +55,7 @@ export default memo(function WIMDChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const wimdStats = useMemo(() => {
+	const wimdStats = (() => {
 		if (!dataset || chartsLoading) return null;
 
 		const avgFromRecords = (records: (typeof dataset.data)[string][]) => {
@@ -105,7 +106,7 @@ export default memo(function WIMDChart({
 		}
 
 		return null;
-	}, [dataset, aggregatedData, selectedArea, chartsLoading]);
+	})();
 
 	const isActive =
 		activeDataset?.type === "wimd" && activeDataset.id === dataset?.id;
@@ -200,4 +201,4 @@ export default memo(function WIMDChart({
 			</div>
 		</button>
 	);
-});
+}

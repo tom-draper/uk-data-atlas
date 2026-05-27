@@ -22,6 +22,8 @@ interface LegendContentProps {
 	onEthnicityClick: (id: string) => void;
 }
 
+const defaultFormatLabel = (v: number) => v.toFixed(0);
+
 export default function LegendContent({
 	activeDataset,
 	activeViz,
@@ -50,7 +52,7 @@ export default function LegendContent({
 		absMax: number,
 		defaultMin: number,
 		defaultMax: number,
-		formatLabel: (v: number) => string = (v) => v.toFixed(0),
+		formatLabel: (v: number) => string = defaultFormatLabel,
 	) => {
 		const currentMin =
 			displayOptions[datasetKey].colorRange?.min ?? defaultMin;

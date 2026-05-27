@@ -6,7 +6,8 @@ import {
 	SIMDDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
+
+
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
@@ -37,7 +38,7 @@ const QUINTILE_COLORS = [
 	"#15803d", // 5 - least deprived
 ];
 
-export default memo(function SIMDChart({
+export default function SIMDChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -49,7 +50,7 @@ export default memo(function SIMDChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const simdStats = useMemo(() => {
+	const simdStats = (() => {
 		if (!dataset || chartsLoading) return null;
 
 		const avgFromRecords = (records: (typeof dataset.data)[string][]) => {
@@ -90,7 +91,7 @@ export default memo(function SIMDChart({
 		}
 
 		return null;
-	}, [dataset, aggregatedData, selectedArea, chartsLoading]);
+	})();
 
 	const isActive =
 		activeDataset?.type === "simd" && activeDataset.id === dataset?.id;
@@ -187,4 +188,4 @@ export default memo(function SIMDChart({
 			</div>
 		</button>
 	);
-});
+}

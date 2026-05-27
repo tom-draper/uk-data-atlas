@@ -11,7 +11,8 @@ import {
 	QUALIFICATION_COLORS,
 	QUALIFICATION_LEVELS,
 } from "@/lib/types/qualification";
-import { memo, useMemo } from "react";
+
+
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
@@ -33,7 +34,7 @@ interface QualificationChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default memo(function QualificationChart({
+export default function QualificationChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -48,7 +49,7 @@ export default memo(function QualificationChart({
 		activeDataset?.type === "qualification" &&
 		activeDataset.id === dataset?.id;
 
-	const breakdown = useMemo(() => {
+	const breakdown = (() => {
 		if (!dataset || chartsLoading) return null;
 
 		if (selectedArea === null) {
@@ -64,7 +65,7 @@ export default memo(function QualificationChart({
 		}
 
 		return null;
-	}, [dataset, aggregatedData, selectedArea, year, chartsLoading]);
+	})();
 
 	const hasData = breakdown !== null && breakdown.total > 0;
 	const accentColor = QUALIFICATION_COLORS.level4Plus;
@@ -180,4 +181,4 @@ export default memo(function QualificationChart({
 			)}
 		</button>
 	);
-});
+}
