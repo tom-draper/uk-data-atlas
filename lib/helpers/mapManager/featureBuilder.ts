@@ -103,20 +103,24 @@ export class FeatureBuilder {
 		partyCode: string,
 		codeProp: PropertyKeys,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const locationData =
-				data[getFeatureProp(feature.properties, codeProp) ?? ""];
+		const totalVotesMap = new Map<string, number>();
+		for (const [code, loc] of Object.entries(data)) {
+			if (loc?.partyVotes) {
+				let total = 0;
+				for (const v of Object.values(loc.partyVotes)) total += (v as number) ?? 0;
+				totalVotesMap.set(code, total);
+			}
+		}
 
+		return this.mapFeatures(features, (feature) => {
+			const code = getFeatureProp(feature.properties, codeProp) ?? "";
+			const locationData = data[code];
 			let percentage = 0;
 			if (locationData?.partyVotes) {
 				const partyVotes = locationData.partyVotes[partyCode] ?? 0;
-				const totalVotes = Object.values(
-					locationData.partyVotes,
-				).reduce<number>((sum, v) => sum + (v ?? 0), 0);
-				percentage =
-					totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
+				const totalVotes = totalVotesMap.get(code) ?? 0;
+				percentage = totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
 			}
-
 			return { percentage, partyCode };
 		});
 	}
@@ -165,26 +169,23 @@ export class FeatureBuilder {
 		ethnicity: string,
 		codeProp: string,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const code = getFeatureProp(feature.properties, codeProp) ?? "";
-			const locationData = data[code] || {};
-
-			let totalPopulation = 0;
-			let ethnicityPopulation = 0;
+		const totals = new Map<string, { total: number; count: number }>();
+		for (const [code, locationData] of Object.entries(data)) {
+			let total = 0;
+			let count = 0;
 			for (const category of Object.values(locationData)) {
-				for (const [eth, data] of Object.entries(category)) {
-					if (eth === ethnicity) {
-						ethnicityPopulation = data.population || 0;
-					}
-					totalPopulation += data.population || 0;
+				for (const [eth, d] of Object.entries(category)) {
+					total += d.population || 0;
+					if (eth === ethnicity) count = d.population || 0;
 				}
 			}
+			totals.set(code, { total, count });
+		}
 
-			const percentage =
-				totalPopulation > 0
-					? (ethnicityPopulation / totalPopulation) * 100
-					: 0;
-
+		return this.mapFeatures(features, (feature) => {
+			const code = getFeatureProp(feature.properties, codeProp) ?? "";
+			const { total = 0, count = 0 } = totals.get(code) ?? {};
+			const percentage = total > 0 ? (count / total) * 100 : 0;
 			return { percentage, categoryCode: ethnicity };
 		});
 	}
@@ -427,11 +428,13 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		const avgs = Object.values(dataset.data).map(
-			(r) => (r.maleBirthLE + r.femaleBirthLE) / 2,
-		);
-		const min = Math.min(...avgs);
-		const max = Math.max(...avgs);
+		let min = Infinity;
+		let max = -Infinity;
+		for (const r of Object.values(dataset.data)) {
+			const avg = (r.maleBirthLE + r.femaleBirthLE) / 2;
+			if (avg < min) min = avg;
+			if (avg > max) max = avg;
+		}
 		return this.mapFeatures(features, (feature) => {
 			const area =
 				dataset.data[
