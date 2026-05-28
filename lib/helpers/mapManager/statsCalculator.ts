@@ -47,10 +47,15 @@ const PARTY_KEYS = [
 	"LD",
 	"GREEN",
 	"RUK",
+	"UKIP",
+	"BRX",
 	"SNP",
 	"PC",
 	"DUP",
 	"SF",
+	"SDLP",
+	"UUP",
+	"APNI",
 	"OTHER",
 ];
 
