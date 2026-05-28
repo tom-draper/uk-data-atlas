@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface UseMapInitializationOptions {
 	style: string;
@@ -16,37 +16,34 @@ export function useMapboxInitialization({
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const [mapReady, setMapReady] = useState(false);
 
-	const handleMapContainer = useCallback(
-		async (el: HTMLDivElement | null) => {
-			if (!el || mapRef.current) return;
+	const handleMapContainer = async (el: HTMLDivElement | null) => {
+		if (!el || mapRef.current) return;
 
-			const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-			if (!token) {
-				console.error("Missing NEXT_PUBLIC_MAPBOX_TOKEN");
-				return;
-			}
+		const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+		if (!token) {
+			console.error("Missing NEXT_PUBLIC_MAPBOX_TOKEN");
+			return;
+		}
 
-			try {
-				const mapboxgl = (await import("mapbox-gl")).default;
+		try {
+			const mapboxgl = (await import("mapbox-gl")).default;
 
-				mapboxgl.accessToken = token;
+			mapboxgl.accessToken = token;
 
-				mapRef.current = new mapboxgl.Map({
-					container: el,
-					style,
-					center,
-					zoom,
-					maxBounds,
-					preserveDrawingBuffer: true,
-				}) as unknown as maplibregl.Map;
+			mapRef.current = new mapboxgl.Map({
+				container: el,
+				style,
+				center,
+				zoom,
+				maxBounds,
+				preserveDrawingBuffer: true,
+			}) as unknown as maplibregl.Map;
 
-				setMapReady(true);
-			} catch (err) {
-				console.error("Failed to initialize Mapbox map:", err);
-			}
-		},
-		[style, center, zoom, maxBounds],
-	);
+			setMapReady(true);
+		} catch (err) {
+			console.error("Failed to initialize Mapbox map:", err);
+		}
+	};
 
 	useEffect(() => {
 		return () => {

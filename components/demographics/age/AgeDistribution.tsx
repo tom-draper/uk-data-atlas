@@ -1,5 +1,4 @@
 // components/population/age/AgeDistribution.tsx
-import { memo, useMemo } from "react";
 import {
 	ActiveViz,
 	AgeGroups,
@@ -86,7 +85,7 @@ function AgeDistribution({
 	const vizId = `ageDistribution${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
-	const { medianAge, ageGroups, total, counts, maxCount } = useMemo(() => {
+	const { medianAge, ageGroups, total, counts, maxCount } = (() => {
 		let max = 0;
 
 		//  Handle Aggregated Data Case (no area selected)
@@ -365,16 +364,15 @@ function AgeDistribution({
 			counts: new Uint32Array(100),
 			maxCount: 0,
 		};
-	}, [dataset, aggregatedData, selectedArea, codeMapper]);
+	})();
 
-	// Largest age group → its chart color → lightened for border
-	const accentColor = useMemo(() => {
+	const accentColor = (() => {
 		if (!total || Array.isArray(ageGroups)) return null;
 		const entries = Object.entries(ageGroups) as [string, number][];
 		if (entries.length === 0) return null;
 		const largestKey = entries.reduce((a, b) => (b[1] > a[1] ? b : a))[0];
 		return getAgeColor(parseInt(largestKey.split("-")[0]));
-	}, [ageGroups, total]);
+	})();
 
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
 		accentColor,
@@ -421,4 +419,4 @@ function AgeDistribution({
 	);
 }
 
-export default memo(AgeDistribution);
+export default AgeDistribution;

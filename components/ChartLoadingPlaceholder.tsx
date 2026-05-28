@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, use } from "react";
 
 const ChartLoadingContext = createContext(false);
 
@@ -19,7 +19,7 @@ export function ChartLoadingProvider({
 }
 
 export function useChartsLoading() {
-	return useContext(ChartLoadingContext);
+	return use(ChartLoadingContext);
 }
 
 export function ChartLoadingBackground() {

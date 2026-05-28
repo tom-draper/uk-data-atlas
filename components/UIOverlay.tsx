@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import ControlPanel from "@components/ControlPanel";
 import LegendPanel from "@components/LegendPanel";
 import ChartPanel from "@components/ChartPanel";
@@ -98,7 +98,7 @@ function XIcon() {
 	);
 }
 
-export default memo(function UIOverlay({
+export default function UIOverlay({
 	datasets,
 	customDataset,
 	setCustomDataset,
@@ -123,18 +123,12 @@ export default memo(function UIOverlay({
 		"none" | "control" | "chart"
 	>("none");
 
-	const panelContextValue = useMemo(
-		() => ({ selectedArea, selectedLocation }),
-		[selectedArea, selectedLocation],
-	);
+	const panelContextValue = { selectedArea, selectedLocation };
 
-	const handleLocationClick = useCallback(
-		(loc: string) => {
-			onLocationClick(loc);
-			setMobilePanel("none");
-		},
-		[onLocationClick],
-	);
+	const handleLocationClick = (loc: string) => {
+		onLocationClick(loc);
+		setMobilePanel("none");
+	};
 
 	const controlPanel = (
 		<ControlPanel
@@ -209,6 +203,7 @@ export default memo(function UIOverlay({
 										: "Data"}
 								</span>
 								<button
+									type="button"
 									onClick={() => setMobilePanel("none")}
 									className="p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100"
 								>
@@ -225,6 +220,7 @@ export default memo(function UIOverlay({
 					{/* Mobile: floating toggle buttons */}
 					<div className="md:hidden fixed bottom-6 left-0 right-0 flex justify-between px-4 pointer-events-auto z-30">
 						<button
+							type="button"
 							onClick={() =>
 								setMobilePanel(
 									mobilePanel === "control"
@@ -242,6 +238,7 @@ export default memo(function UIOverlay({
 							<span>Explore</span>
 						</button>
 						<button
+							type="button"
 							onClick={() =>
 								setMobilePanel(
 									mobilePanel === "chart" ? "none" : "chart",
@@ -261,4 +258,4 @@ export default memo(function UIOverlay({
 			</PanelContext.Provider>
 		</ThemeProvider>
 	);
-});
+}

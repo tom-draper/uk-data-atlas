@@ -1,7 +1,6 @@
 // components/population/age/AgeDistributionChart.tsx
 import { AgeGroups } from "@/lib/types";
 import { getAgeColor } from "@/lib/helpers/ageDistribution";
-import { memo } from "react";
 import AgeGroupBar from "./AgeGroupBar";
 import {
 	ChartContentPlaceholder,
@@ -126,13 +125,4 @@ function AgeDistributionChart({
 	);
 }
 
-// Optimized equality check for props to prevent unnecessary renders
-export default memo(AgeDistributionChart, (prev, next) => {
-	return (
-		prev.counts === next.counts &&
-		prev.ageGroups === next.ageGroups &&
-		prev.maxCount === next.maxCount &&
-		prev.isActive === next.isActive &&
-		prev.total === next.total
-	);
-});
+export default AgeDistributionChart;

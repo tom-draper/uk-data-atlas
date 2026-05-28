@@ -1,6 +1,6 @@
 // components/imd/IMDSection.tsx
 "use client";
-import { memo } from "react";
+
 import {
 	ActiveViz,
 	AggregatedIMDData,
@@ -19,7 +19,7 @@ interface IMDSectionProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default memo(function IMDSection({
+export default function IMDSection({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -49,4 +49,4 @@ export default memo(function IMDSection({
 			))}
 		</div>
 	);
-});
+}

@@ -1,5 +1,4 @@
 // lib/hooks/useAggregatedData.ts
-import { useMemo } from "react";
 import type {
 	Dataset,
 	Datasets,
@@ -78,12 +77,8 @@ export function useAggregatedData({
 	location,
 }: UseAggregatedDataParams): AggregatedData {
 	// Define configuration for each dataset type
-	const configs: Record<
-		keyof Datasets | "custom",
-		DatasetConfig<any>
-	> = useMemo(
-		() => ({
-			localElection: {
+	const configs: Record<keyof Datasets | "custom", DatasetConfig<any>> = {
+		localElection: {
 				datasets: datasets.localElection,
 				boundaryType: "ward",
 				calculateStats: (mapManager, geojson, data, location, id) =>
@@ -234,13 +229,11 @@ export function useAggregatedData({
 						location,
 						id,
 					),
-			},
-		}),
-		[datasets, customDataset],
-	);
+		},
+	};
 
 	// Aggregate all datasets using the same logic
-	const aggregatedData = useMemo(() => {
+	const aggregatedData = (() => {
 		if (!mapManager) {
 			return {
 				localElection: null,
@@ -268,7 +261,7 @@ export function useAggregatedData({
 				aggregateDataset(config, mapManager, boundaryData, location),
 			]),
 		) as AggregatedData;
-	}, [mapManager, boundaryData, location, configs]);
+	})();
 
 	return aggregatedData;
 }

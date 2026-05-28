@@ -1,7 +1,6 @@
 // components/GeneralElectionResultChart.tsx
 "use client";
 
-import { memo, useMemo } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import {
 	calculateTurnout,
@@ -47,8 +46,7 @@ const useElectionChartData = (
 		targetYear: number,
 	) => string | undefined,
 ) => {
-	return useMemo(() => {
-		return GENERAL_ELECTION_YEARS.map((year): ProcessedYearData => {
+	return GENERAL_ELECTION_YEARS.map((year): ProcessedYearData => {
 			const dataset = availableDatasets[year];
 
 			if (!dataset) {
@@ -147,8 +145,7 @@ const useElectionChartData = (
 				totalSeats,
 				hasData: partyData.length > 0,
 			};
-		});
-	}, [availableDatasets, aggregatedData, selectedArea, getCodeForYear]);
+	});
 };
 
 interface GeneralElectionResultChartSectionProps {
@@ -161,7 +158,7 @@ interface GeneralElectionResultChartSectionProps {
 	activeViz: ActiveViz;
 }
 
-export default memo(function GeneralElectionResultChartSection({
+export default function GeneralElectionResultChartSection({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -204,4 +201,4 @@ export default memo(function GeneralElectionResultChartSection({
 			))}
 		</div>
 	);
-});
+}

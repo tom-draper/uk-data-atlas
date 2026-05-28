@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import MapInterface from "@components/MapInterface";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
@@ -52,6 +52,7 @@ function ErrorBanner({
 					</p>
 				</div>
 				<button
+					type="button"
 					onClick={onDismiss}
 					className="text-red-400 hover:text-red-600 shrink-0 text-lg leading-none"
 					aria-label="Dismiss"
@@ -64,14 +65,15 @@ function ErrorBanner({
 }
 
 export default function AtlasClient() {
-	const router = useRouter();
+	const { replace } = useRouter();
 	const searchParams = useSearchParams();
+	const { get: getSearchParam } = searchParams;
 
 	const [activeViz, setActiveVizState] = useState<ActiveViz>(() => {
 		return parseActiveVizFromParams(searchParams) ?? DEFAULT_ACTIVE_VIZ;
 	});
 	const [selectedLocation, setSelectedLocationState] = useState(() => {
-		return searchParams.get("location") ?? DEFAULT_LOCATION;
+		return getSearchParam("location") ?? DEFAULT_LOCATION;
 	});
 	const [customDataset, setCustomDataset] = useState<CustomDataset | null>(
 		null,
@@ -81,11 +83,11 @@ export default function AtlasClient() {
 
 	const { datasets, loading, errors } = useDatasets();
 
-	const handleBoundaryError = useCallback((error: Error) => {
+	const handleBoundaryError = (error: Error) => {
 		setBoundaryErrors((prev) =>
 			prev.includes(error.message) ? prev : [...prev, error.message],
 		);
-	}, []);
+	};
 
 	const allErrors = [...errors, ...boundaryErrors];
 
@@ -94,36 +96,27 @@ export default function AtlasClient() {
 	const selectedLocationRef = useRef(selectedLocation);
 	selectedLocationRef.current = selectedLocation;
 
-	const updateParams = useCallback(
-		(location: string, viz: ActiveViz) => {
-			const params = new URLSearchParams();
-			params.set("location", location);
-			params.set("viz", viz.vizId);
-			params.set("type", viz.datasetType);
-			params.set("year", String(viz.datasetYear));
-			router.replace(`?${params.toString()}`, { scroll: false });
-		},
-		[router],
-	);
+	const updateParams = (location: string, viz: ActiveViz) => {
+		const params = new URLSearchParams();
+		params.set("location", location);
+		params.set("viz", viz.vizId);
+		params.set("type", viz.datasetType);
+		params.set("year", String(viz.datasetYear));
+		replace(`?${params.toString()}`, { scroll: false });
+	};
 
-	const setActiveViz = useCallback(
-		(viz: ActiveViz) => {
-			setActiveVizState(viz);
-			updateParams(selectedLocationRef.current, viz);
-		},
-		[updateParams],
-	);
+	const setActiveViz = (viz: ActiveViz) => {
+		setActiveVizState(viz);
+		updateParams(selectedLocationRef.current, viz);
+	};
 
-	const setSelectedLocation = useCallback(
-		(location: string) => {
-			setSelectedLocationState(location);
-			updateParams(location, activeVizRef.current);
-		},
-		[updateParams],
-	);
+	const setSelectedLocation = (location: string) => {
+		setSelectedLocationState(location);
+		updateParams(location, activeVizRef.current);
+	};
 
 	useEffect(() => {
-		if (!searchParams.get("location")) {
+		if (!getSearchParam("location")) {
 			updateParams(selectedLocation, activeViz);
 		}
 		// Only run on mount

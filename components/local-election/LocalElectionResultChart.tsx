@@ -1,7 +1,7 @@
 // components/LocalElectionResultChart.tsx
 "use client";
 
-import { memo } from "react";
+
 import { LocalElectionDataset, ActiveViz } from "@lib/types";
 import {
 	ChartLoadingBackground,
@@ -32,46 +32,48 @@ interface ProcessedYearData {
 	hasData: boolean;
 }
 
-const VoteBar = memo(({ data }: { data: ProcessedPartyData[] }) => (
-	<div className="flex h-5 rounded overflow-hidden bg-gray-200 gap-0 w-full">
-		{data.map((p) => (
-			<div
-				key={p.key}
-				style={{ width: `${p.percentage}%`, backgroundColor: p.color }}
-				title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(1)}%)`}
-				className="group relative hover:opacity-80 transition-opacity"
-			>
-				{p.percentage > 12 && (
-					<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
-						{p.key}
-					</span>
-				)}
-			</div>
-		))}
-	</div>
-));
-VoteBar.displayName = "VoteBar";
-
-const Legend = memo(({ partyData }: { partyData: ProcessedPartyData[] }) => (
-	<div className="animate-in fade-in duration-200 mt-1">
-		<div className="grid grid-cols-3 gap-0.5 text-[9px]">
-			{partyData.map((p) => (
-				<div key={p.key} className="flex items-center gap-1">
-					<div
-						className="w-1.5 h-1.5 rounded-sm shrink-0"
-						style={{ backgroundColor: p.color }}
-					/>
-					<span className="truncate font-medium">
-						{p.key}: {p.votes.toLocaleString()}
-					</span>
+function VoteBar({ data }: { data: ProcessedPartyData[] }) {
+	return (
+		<div className="flex h-5 rounded overflow-hidden bg-gray-200 gap-0 w-full">
+			{data.map((p) => (
+				<div
+					key={p.key}
+					style={{ width: `${p.percentage}%`, backgroundColor: p.color }}
+					title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(1)}%)`}
+					className="group relative hover:opacity-80 transition-opacity"
+				>
+					{p.percentage > 12 && (
+						<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
+							{p.key}
+						</span>
+					)}
 				</div>
 			))}
 		</div>
-	</div>
-));
-Legend.displayName = "Legend";
+	);
+}
 
-export default memo(function LocalElectionResultChart({
+function Legend({ partyData }: { partyData: ProcessedPartyData[] }) {
+	return (
+		<div className="animate-in fade-in duration-200 mt-1">
+			<div className="grid grid-cols-3 gap-0.5 text-[9px]">
+				{partyData.map((p) => (
+					<div key={p.key} className="flex items-center gap-1">
+						<div
+							className="w-1.5 h-1.5 rounded-sm shrink-0"
+							style={{ backgroundColor: p.color }}
+						/>
+						<span className="truncate font-medium">
+							{p.key}: {p.votes.toLocaleString()}
+						</span>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+export default function LocalElectionResultChart({
 	data,
 	isActive,
 	setActiveViz,
@@ -148,4 +150,4 @@ export default memo(function LocalElectionResultChart({
 			</div>
 		</div>
 	);
-});
+}

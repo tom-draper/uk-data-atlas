@@ -6,7 +6,6 @@ import {
 	BrexitLADDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -34,7 +33,48 @@ interface BrexitChartProps {
 const LEAVE_COLOR = "#b41414"; // rgb(180, 20, 20) — matches bar fill
 const REMAIN_COLOR = "#1e3cb4"; // rgb(30, 60, 180) — matches bar fill
 
-export default memo(function BrexitElectoralChart({
+function computeBrexitElectoralStats(
+	dataset: BrexitLADDataset,
+	aggregatedData: Record<number, AggregatedBrexitData> | null,
+	selectedArea: SelectedArea | null,
+	codeMapper: CodeMapper | undefined,
+	year: number,
+) {
+	if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+		const agg = aggregatedData[dataset.year];
+		return {
+			pctLeave: agg.pctLeave,
+			pctRemain: agg.pctRemain,
+			totalLeave: agg.totalLeave,
+			totalRemain: agg.totalRemain,
+			totalVotes: agg.totalVotes,
+		};
+	}
+
+	if (selectedArea && selectedArea.type === "localAuthority" && selectedArea.data) {
+		const laCode = selectedArea.code;
+		let area = dataset.data?.[laCode];
+		if (!area && codeMapper) {
+			const mappedCode = codeMapper.getCodeForYear("localAuthority", laCode, year);
+			if (mappedCode) {
+				area = dataset.data?.[mappedCode];
+			}
+		}
+		if (area) {
+			return {
+				pctLeave: area.pctLeave,
+				pctRemain: area.pctRemain,
+				totalLeave: area.leave,
+				totalRemain: area.remain,
+				totalVotes: area.validVotes,
+			};
+		}
+	}
+
+	return null;
+}
+
+export default function BrexitElectoralChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -48,54 +88,7 @@ export default memo(function BrexitElectoralChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const brexitStats = useMemo(() => {
-		if (!dataset) return null;
-
-		if (
-			selectedArea === null &&
-			aggregatedData &&
-			aggregatedData[dataset.year]
-		) {
-			const agg = aggregatedData[dataset.year];
-			return {
-				pctLeave: agg.pctLeave,
-				pctRemain: agg.pctRemain,
-				totalLeave: agg.totalLeave,
-				totalRemain: agg.totalRemain,
-				totalVotes: agg.totalVotes,
-			};
-		}
-
-		if (
-			selectedArea &&
-			selectedArea.type === "localAuthority" &&
-			selectedArea.data
-		) {
-			const laCode = selectedArea.code;
-			let area = dataset.data?.[laCode];
-			if (!area && codeMapper) {
-				const mappedCode = codeMapper.getCodeForYear(
-					"localAuthority",
-					laCode,
-					year,
-				);
-				if (mappedCode) {
-					area = dataset.data?.[mappedCode];
-				}
-			}
-			if (area) {
-				return {
-					pctLeave: area.pctLeave,
-					pctRemain: area.pctRemain,
-					totalLeave: area.leave,
-					totalRemain: area.remain,
-					totalVotes: area.validVotes,
-				};
-			}
-		}
-
-		return null;
-	}, [dataset, aggregatedData, selectedArea, codeMapper, year]);
+	const brexitStats = dataset ? computeBrexitElectoralStats(dataset, aggregatedData, selectedArea, codeMapper, year) : null;
 
 	if (!dataset) return null;
 
@@ -181,4 +174,4 @@ export default memo(function BrexitElectoralChart({
 			</div>
 		</div>
 	);
-});
+}

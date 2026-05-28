@@ -1,5 +1,5 @@
 // hooks/useBoundaryData.ts
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { BoundaryCodes, BoundaryData, BoundaryGeojson } from "@lib/types";
 import {
 	BoundaryType,
@@ -153,9 +153,10 @@ const extractCodeSets = (
 					);
 					if (codeProp) {
 						acc[Number(year)] = new Set(
-							data.features
-								.map((f) => (f.properties as any)[codeProp])
-								.filter(Boolean),
+							data.features.flatMap((f) => {
+								const v = (f.properties as any)[codeProp];
+								return v ? [v] : [];
+							}),
 						);
 					}
 				}
@@ -332,49 +333,43 @@ export function useBoundaryData(
 	]);
 
 	// Filter data based on selected location
-	const filteredData: BoundaryData = useMemo(() => {
-		if (isLoading || !rawData.ward[2024]) {
-			return EMPTY_BOUNDARY_DATA;
-		}
+	const filteredData: BoundaryData = isLoading || !rawData.ward[2024]
+		? EMPTY_BOUNDARY_DATA
+		: {
+				ward: filterBoundaryGroup(
+					rawData.ward,
+					"ward",
+					selectedLocation || null,
+					getLadForWard,
+				),
+				constituency: filterBoundaryGroup(
+					rawData.constituency,
+					"constituency",
+					selectedLocation || null,
+				),
+				localAuthority: filterBoundaryGroup(
+					rawData.localAuthority,
+					"localAuthority",
+					selectedLocation || null,
+				),
+				lsoa: filterBoundaryGroup(
+					rawData.lsoa,
+					"lsoa",
+					selectedLocation || null,
+				),
+				dataZone: filterBoundaryGroup(
+					rawData.dataZone,
+					"dataZone",
+					selectedLocation || null,
+				),
+				superOutputArea: filterBoundaryGroup(
+					rawData.superOutputArea,
+					"superOutputArea",
+					selectedLocation || null,
+				),
+			};
 
-		return {
-			ward: filterBoundaryGroup(
-				rawData.ward,
-				"ward",
-				selectedLocation || null,
-				getLadForWard,
-			),
-			constituency: filterBoundaryGroup(
-				rawData.constituency,
-				"constituency",
-				selectedLocation || null,
-			),
-			localAuthority: filterBoundaryGroup(
-				rawData.localAuthority,
-				"localAuthority",
-				selectedLocation || null,
-			),
-			lsoa: filterBoundaryGroup(
-				rawData.lsoa,
-				"lsoa",
-				selectedLocation || null,
-			),
-			dataZone: filterBoundaryGroup(
-				rawData.dataZone,
-				"dataZone",
-				selectedLocation || null,
-			),
-			superOutputArea: filterBoundaryGroup(
-				rawData.superOutputArea,
-				"superOutputArea",
-				selectedLocation || null,
-			),
-		};
-	}, [rawData, selectedLocation, isLoading, getLadForWard]);
-
-	const boundaryCodes: BoundaryCodes = useMemo(() => {
-		return extractCodeSets(rawData, isLoading);
-	}, [rawData, isLoading]);
+	const boundaryCodes: BoundaryCodes = extractCodeSets(rawData, isLoading);
 
 	return {
 		boundaryData: filteredData,

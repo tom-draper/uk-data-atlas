@@ -1,5 +1,5 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
-import { useMemo, memo, useRef, useCallback } from "react";
+import { useRef } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	AggregatedPopulationData,
@@ -39,8 +39,7 @@ function GenderBalanceByAgeChart({
 	const tooltipRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 
-	// Memoize both data AND percentages to avoid recalculation on every render
-	const { ageData, percentages } = useMemo(() => {
+	const { ageData, percentages } = (() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			const yearlyData = aggregatedData[dataset.year];
@@ -193,11 +192,9 @@ function GenderBalanceByAgeChart({
 
 		// Unsupported area type or missing data
 		return { ageData: [], percentages: [] };
-	}, [dataset, aggregatedData, selectedArea, codeMapper]);
+	})();
 
-	// Handle mouse move to update tooltip directly without triggering React render
-	const handleMouseMove = useCallback(
-		(e: React.MouseEvent<HTMLDivElement>) => {
+	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
 			const tooltip = tooltipRef.current;
 			if (!tooltip || !containerRef.current) return;
 
@@ -238,15 +235,13 @@ function GenderBalanceByAgeChart({
 			} else {
 				tooltip.style.opacity = "0";
 			}
-		},
-		[ageData, percentages],
-	);
+	};
 
-	const handleMouseLeave = useCallback(() => {
+	const handleMouseLeave = () => {
 		if (tooltipRef.current) {
 			tooltipRef.current.style.opacity = "0";
 		}
-	}, []);
+	};
 
 	if (ageData.length === 0) {
 		return (
@@ -332,4 +327,4 @@ function GenderBalanceByAgeChart({
 	);
 }
 
-export default memo(GenderBalanceByAgeChart);
+export default GenderBalanceByAgeChart;

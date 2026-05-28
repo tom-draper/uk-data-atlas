@@ -1,7 +1,7 @@
 // lib/hooks/useWardLadMap.ts
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { Features } from "@lib/types";
 
 /**
@@ -13,42 +13,33 @@ export function useWardLadMap() {
 		{},
 	);
 
-	const getLadForWard = useCallback(
-		(wardCode: string) => {
-			return wardToLadMap[wardCode];
-		},
-		[wardToLadMap],
-	);
+	const getLadForWard = (wardCode: string) => {
+		return wardToLadMap[wardCode];
+	};
 
-	const addWardLadMapping = useCallback(
-		(wardCode: string, ladCode: string) => {
-			if (wardCode && ladCode) {
-				setWardToLadMap((prev) => ({
-					...prev,
-					[wardCode]: ladCode,
-				}));
-			}
-		},
-		[],
-	);
-
-	const addWardLadMappings = useCallback(
-		(mappings: Record<string, string>) => {
+	const addWardLadMapping = (wardCode: string, ladCode: string) => {
+		if (wardCode && ladCode) {
 			setWardToLadMap((prev) => ({
 				...prev,
-				...mappings,
+				[wardCode]: ladCode,
 			}));
-		},
-		[],
-	);
+		}
+	};
 
-	const clearWardLadMap = useCallback(() => {
+	const addWardLadMappings = (mappings: Record<string, string>) => {
+		setWardToLadMap((prev) => ({
+			...prev,
+			...mappings,
+		}));
+	};
+
+	const clearWardLadMap = () => {
 		setWardToLadMap({});
-	}, []);
+	};
 
-	const getMappingCount = useCallback(() => {
+	const getMappingCount = () => {
 		return Object.keys(wardToLadMap).length;
-	}, [wardToLadMap]);
+	};
 
 	return {
 		getLadForWard,

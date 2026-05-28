@@ -38,9 +38,9 @@ export const useGeneralElectionData = () => {
 				});
 
 				setDatasets(loadedDatasets);
-				setLoading(false);
 			} catch (err: any) {
 				setError(err.message || "Error loading general election data");
+			} finally {
 				setLoading(false);
 			}
 		};

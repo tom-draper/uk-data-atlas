@@ -7,7 +7,7 @@ import {
 	HousePriceDataset,
 	SelectedArea,
 } from "@lib/types";
-import React, { memo, useMemo } from "react";
+import React from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -54,20 +54,19 @@ const LINE_COLOR = "#6366f1"; // indigo-500
 
 const housePriceLookupCache = new Map<string, Map<number, any>>();
 
-const PriceChart = React.memo(
-	({
-		dataset,
-		aggregatedData,
-		selectedArea,
-		getCodeForYear,
-		getWardsForLad,
-		getWardsForConstituency,
-		isActive,
-		setActiveViz,
-	}: PriceChartProps) => {
-		const chartsLoading = useChartsLoading();
-		const isDark = useIsDark();
-		const { priceData, currentPrice } = useMemo(() => {
+function PriceChart({
+	dataset,
+	aggregatedData,
+	selectedArea,
+	getCodeForYear,
+	getWardsForLad,
+	getWardsForConstituency,
+	isActive,
+	setActiveViz,
+}: PriceChartProps) {
+	const chartsLoading = useChartsLoading();
+	const isDark = useIsDark();
+	const { priceData, currentPrice } = (() => {
 			let prices: Record<number, number> = {};
 			let price2023: number | null = null;
 
@@ -178,7 +177,7 @@ const PriceChart = React.memo(
 						)) {
 							if (priceArray.length > 0) {
 								// Sort and find median
-								const sorted = [...priceArray].sort(
+								const sorted = priceArray.toSorted(
 									(a, b) => a - b,
 								);
 								const mid = Math.floor(sorted.length / 2);
@@ -236,7 +235,7 @@ const PriceChart = React.memo(
 						yearlyPrices,
 					)) {
 						if (priceArray.length > 0) {
-							const sorted = [...priceArray].sort(
+							const sorted = priceArray.toSorted(
 								(a, b) => a - b,
 							);
 							const mid = Math.floor(sorted.length / 2);
@@ -269,17 +268,10 @@ const PriceChart = React.memo(
 				priceData: sortedPrices,
 				currentPrice: price2023,
 			};
-		}, [
-			dataset,
-			aggregatedData,
-			selectedArea,
-			getCodeForYear,
-			getWardsForLad,
-			getWardsForConstituency,
-		]);
+	})();
 
-		// Calculate SVG path for the line chart with straight lines
-		const { linePath, areaPath } = useMemo(() => {
+	// Calculate SVG path for the line chart with straight lines
+	const { linePath, areaPath } = (() => {
 			if (priceData.length < 2) return { linePath: "", areaPath: "" };
 
 			const width = 100;
@@ -303,8 +295,8 @@ const PriceChart = React.memo(
 			// Create area path extending to bottom
 			const area = `${line} L ${width},${height} L 0,${height} Z`;
 
-			return { linePath: line, areaPath: area };
-		}, [priceData]);
+		return { linePath: line, areaPath: area };
+	})();
 
 		const formattedPrice = currentPrice
 			? `£${Math.round(currentPrice).toLocaleString()}`
@@ -408,12 +400,10 @@ const PriceChart = React.memo(
 					</div>
 				)}
 			</div>
-		);
-	},
-);
-PriceChart.displayName = "PriceChart";
+	);
+}
 
-export default memo(function HousePriceChart({
+export default function HousePriceChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -446,4 +436,4 @@ export default memo(function HousePriceChart({
 			setActiveViz={setActiveViz}
 		/>
 	);
-});
+}

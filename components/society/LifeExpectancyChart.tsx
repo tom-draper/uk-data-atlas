@@ -6,7 +6,6 @@ import {
 	LifeExpectancyDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
 import {
 	ChartLoadingBackground,
 	ChartContentPlaceholder,
@@ -41,6 +40,49 @@ function leColorRgb(pct: number) {
 		g: Math.round(LE_LOW_RGB.g + (LE_HIGH_RGB.g - LE_LOW_RGB.g) * t),
 		b: Math.round(LE_LOW_RGB.b + (LE_HIGH_RGB.b - LE_LOW_RGB.b) * t),
 	};
+}
+
+function computeLeStats(
+	dataset: LifeExpectancyDataset,
+	aggregatedData: Record<string, AggregatedLifeExpectancyData> | null,
+	selectedArea: SelectedArea | null,
+	datasetId: string,
+	chartsLoading: boolean,
+) {
+	if (chartsLoading) return null;
+
+	if (selectedArea === null) {
+		if (aggregatedData?.[datasetId]) return aggregatedData[datasetId];
+		return null;
+	}
+
+	if (selectedArea.type === "localAuthority") {
+		const record = dataset.data[selectedArea.code];
+		return record
+			? {
+					averageMaleLE: record.maleBirthLE,
+					averageFemaleLE: record.femaleBirthLE,
+				}
+			: null;
+	}
+
+	if (selectedArea.type === "ward" && selectedArea.data) {
+		const record = dataset.data[selectedArea.data.ladCode];
+		return record
+			? {
+					averageMaleLE: record.maleBirthLE,
+					averageFemaleLE: record.femaleBirthLE,
+				}
+			: null;
+	}
+
+	return null;
+}
+
+function computeBarRange(dataset: LifeExpectancyDataset, chartsLoading: boolean) {
+	if (chartsLoading) return { min: 55, max: 85 };
+	const vals = Object.values(dataset.data).flatMap((r) => [r.maleBirthLE, r.femaleBirthLE]);
+	return { min: Math.min(...vals), max: Math.max(...vals) };
 }
 
 function leBar(
@@ -79,7 +121,7 @@ function leBar(
 	);
 }
 
-export default memo(function LifeExpectancyChart({
+export default function LifeExpectancyChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -92,45 +134,8 @@ export default memo(function LifeExpectancyChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[datasetId];
 
-	const leStats = useMemo(() => {
-		if (!dataset || chartsLoading) return null;
-
-		if (selectedArea === null) {
-			if (aggregatedData?.[datasetId]) return aggregatedData[datasetId];
-			return null;
-		}
-
-		if (selectedArea.type === "localAuthority") {
-			const record = dataset.data[selectedArea.code];
-			return record
-				? {
-						averageMaleLE: record.maleBirthLE,
-						averageFemaleLE: record.femaleBirthLE,
-					}
-				: null;
-		}
-
-		if (selectedArea.type === "ward" && selectedArea.data) {
-			const record = dataset.data[selectedArea.data.ladCode];
-			return record
-				? {
-						averageMaleLE: record.maleBirthLE,
-						averageFemaleLE: record.femaleBirthLE,
-					}
-				: null;
-		}
-
-		return null;
-	}, [dataset, aggregatedData, datasetId, selectedArea, chartsLoading]);
-
-	const barRange = useMemo(() => {
-		if (!dataset || chartsLoading) return { min: 55, max: 85 };
-		const vals = Object.values(dataset.data).flatMap((r) => [
-			r.maleBirthLE,
-			r.femaleBirthLE,
-		]);
-		return { min: Math.min(...vals), max: Math.max(...vals) };
-	}, [dataset, chartsLoading]);
+	const leStats = dataset ? computeLeStats(dataset, aggregatedData, selectedArea, datasetId, chartsLoading) : null;
+	const barRange = dataset ? computeBarRange(dataset, chartsLoading) : { min: 55, max: 85 };
 
 	if (!dataset) return null;
 
@@ -222,4 +227,4 @@ export default memo(function LifeExpectancyChart({
 			</div>
 		</div>
 	);
-});
+}

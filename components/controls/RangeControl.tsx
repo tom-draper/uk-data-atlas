@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
 
 export interface RangeControlProps {
 	min: number;
@@ -25,61 +25,62 @@ export function RangeControl({
 	onRangeInput,
 	onRangeChangeEnd,
 }: RangeControlProps) {
-	const [isDraggingMin, setIsDraggingMin] = useState(false);
-	const [isDraggingMax, setIsDraggingMax] = useState(false);
+	const isDraggingMinRef = useRef(false);
+	const isDraggingMaxRef = useRef(false);
 	const containerRef = useRef<HTMLDivElement>(null);
+	const currentMinRef = useRef(currentMin);
+	const currentMaxRef = useRef(currentMax);
+	const minRef = useRef(min);
+	const maxRef = useRef(max);
+	const onRangeInputRef = useRef(onRangeInput);
+	const onRangeChangeEndRef = useRef(onRangeChangeEnd);
+
+	currentMinRef.current = currentMin;
+	currentMaxRef.current = currentMax;
+	minRef.current = min;
+	maxRef.current = max;
+	onRangeInputRef.current = onRangeInput;
+	onRangeChangeEndRef.current = onRangeChangeEnd;
 
 	const getValueFromPosition = (clientY: number) => {
-		if (!containerRef.current) return currentMax;
+		if (!containerRef.current) return currentMaxRef.current;
 		const rect = containerRef.current.getBoundingClientRect();
 		const relativeY = clientY - rect.top;
 		const percentage = Math.max(0, Math.min(1, relativeY / rect.height));
-		return max - percentage * (max - min);
+		return maxRef.current - percentage * (maxRef.current - minRef.current);
 	};
 
-	useEffect(() => {
+	const startDrag = (handle: "min" | "max") => {
+		isDraggingMinRef.current = handle === "min";
+		isDraggingMaxRef.current = handle === "max";
+
 		const handleMouseMove = (e: MouseEvent) => {
-			if (isDraggingMin) {
+			if (isDraggingMinRef.current) {
 				const newMin = Math.min(
 					getValueFromPosition(e.clientY),
-					currentMax - (max - min) * 0.05,
+					currentMaxRef.current - (maxRef.current - minRef.current) * 0.05,
 				);
-				onRangeInput(Math.max(newMin, min), currentMax);
-			} else if (isDraggingMax) {
+				onRangeInputRef.current(Math.max(newMin, minRef.current), currentMaxRef.current);
+			} else if (isDraggingMaxRef.current) {
 				const newMax = Math.max(
 					getValueFromPosition(e.clientY),
-					currentMin + (max - min) * 0.05,
+					currentMinRef.current + (maxRef.current - minRef.current) * 0.05,
 				);
-				onRangeInput(currentMin, Math.min(newMax, max));
+				onRangeInputRef.current(currentMinRef.current, Math.min(newMax, maxRef.current));
 			}
 		};
 
 		const handleMouseUp = () => {
-			if (isDraggingMin || isDraggingMax) {
-				setIsDraggingMin(false);
-				setIsDraggingMax(false);
-				onRangeChangeEnd();
-			}
+			isDraggingMinRef.current = false;
+			isDraggingMaxRef.current = false;
+			onRangeChangeEndRef.current();
+			document.removeEventListener("mousemove", handleMouseMove);
+			document.removeEventListener("mouseup", handleMouseUp);
 		};
 
-		if (isDraggingMin || isDraggingMax) {
-			document.addEventListener("mousemove", handleMouseMove);
-			document.addEventListener("mouseup", handleMouseUp);
-			return () => {
-				document.removeEventListener("mousemove", handleMouseMove);
-				document.removeEventListener("mouseup", handleMouseUp);
-			};
-		}
-	}, [
-		isDraggingMin,
-		isDraggingMax,
-		currentMin,
-		currentMax,
-		min,
-		max,
-		onRangeInput,
-		onRangeChangeEnd,
-	]);
+		document.addEventListener("mousemove", handleMouseMove);
+		document.addEventListener("mouseup", handleMouseUp);
+	};
 
 	const maxPosition = ((max - currentMax) / (max - min)) * 100;
 	const minPosition = ((max - currentMin) / (max - min)) * 100;
@@ -108,7 +109,7 @@ export function RangeControl({
 					}}
 					onMouseDown={(e) => {
 						e.preventDefault();
-						setIsDraggingMax(true);
+						startDrag("max");
 					}}
 				>
 					<div className="absolute -left-1 -top-1.5 w-8 h-4 flex items-center justify-center">
@@ -125,7 +126,7 @@ export function RangeControl({
 					}}
 					onMouseDown={(e) => {
 						e.preventDefault();
-						setIsDraggingMin(true);
+						startDrag("min");
 					}}
 				>
 					<div className="absolute -left-1 -top-1.5 w-8 h-4 flex items-center justify-center">
