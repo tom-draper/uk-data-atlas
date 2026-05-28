@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @source not "../public";
+@source not "../data";
 
 :root {
   --background: #ffffff;
