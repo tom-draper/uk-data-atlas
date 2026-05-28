@@ -38,7 +38,7 @@ export function cardClass(isActive: boolean, isDark: boolean, extra?: string) {
 			? "bg-white/5 border-white/10"
 			: "bg-white/60 border-gray-200/80";
 	return [
-		"p-2 rounded cursor-pointer overflow-hidden relative border-2",
+		"p-2 rounded cursor-pointer overflow-hidden relative border-2 w-full flex flex-col text-left",
 		state,
 		extra,
 	]

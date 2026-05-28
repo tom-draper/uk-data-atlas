@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -18,7 +18,7 @@ export function useMapLibreInitialization({
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const [mapReady, setMapReady] = useState(false);
 
-	const handleMapContainer = (el: HTMLDivElement | null) => {
+	const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
 		if (!el || mapRef.current) return;
 
 		try {
@@ -35,7 +35,7 @@ export function useMapLibreInitialization({
 		} catch (err) {
 			console.error("Failed to initialize MapLibre map:", err);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		return () => {

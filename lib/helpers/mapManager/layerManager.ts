@@ -156,8 +156,6 @@ export class LayerManager {
 		visibility: MapOptions["visibility"],
 	): void {
 		if (!this.map.isStyleLoaded()) return;
-		this.removeExistingLayers();
-		this.addSource(geojson);
 
 		const overlayOpacity = visibility.overlayOpacity ?? 0.6;
 
@@ -182,6 +180,24 @@ export class LayerManager {
 			lineColor = "#000";
 			lineOpacity = 0.05;
 		}
+
+		const sourceExists = !!this.map.getSource(SOURCE_ID);
+		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
+		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
+
+		if (sourceExists && fillLayerExists && lineLayerExists) {
+			// Update source data in-place to avoid remove/add flash
+			(this.map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource).setData(geojson as any);
+			this.map.setPaintProperty(FILL_LAYER_ID, "fill-color", fillColor);
+			this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity);
+			this.map.setPaintProperty(LINE_LAYER_ID, "line-color", lineColor);
+			this.map.setPaintProperty(LINE_LAYER_ID, "line-opacity", lineOpacity);
+			return;
+		}
+
+		// First render: remove any partial state then build from scratch
+		this.removeExistingLayers();
+		this.addSource(geojson);
 
 		this.map.addLayer({
 			id: FILL_LAYER_ID,

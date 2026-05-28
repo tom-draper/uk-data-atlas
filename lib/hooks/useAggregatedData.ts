@@ -1,4 +1,5 @@
 // lib/hooks/useAggregatedData.ts
+import { useMemo } from "react";
 import type { Dataset, Datasets, AggregatedData } from "@lib/types/datasets";
 import type { BoundaryType, BoundaryData } from "@lib/types/boundaries";
 import type { BoundaryGeojson } from "@lib/types/geometry";
@@ -228,7 +229,7 @@ export function useAggregatedData({
 	};
 
 	// Aggregate all datasets using the same logic
-	const aggregatedData = (() => {
+	const aggregatedData = useMemo(() => {
 		if (!mapManager) {
 			return {
 				localElection: null,
@@ -256,7 +257,8 @@ export function useAggregatedData({
 				aggregateDataset(config, mapManager, boundaryData, location),
 			]),
 		) as AggregatedData;
-	})();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [mapManager, boundaryData, datasets, customDataset, location]);
 
 	return aggregatedData;
 }
