@@ -5,6 +5,9 @@ const useMapbox = process.env.NEXT_PUBLIC_MAP_TYPE === "mapbox";
 
 const nextConfig: NextConfig = {
 	reactCompiler: true,
+	watchOptions: {
+		ignored: ["**/data/**", "**/node_modules/**"],
+	},
 	webpack: (config) => {
 		if (!useMapbox) {
 			config.resolve.alias["mapbox-gl"] = path.resolve(
