@@ -3,7 +3,7 @@
   "version": "0.1.5",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "NODE_OPTIONS='--max-old-space-size=8192' next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
     "format": "prettier --write \"**/*.{ts,tsx}\" --use-tabs --tab-width 4",
