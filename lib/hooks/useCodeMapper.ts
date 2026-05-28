@@ -1,7 +1,7 @@
 // lib/hooks/useCodeMapper.ts
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { BoundaryGeojson, Features } from "@lib/types";
 import {
 	BoundaryType,
@@ -79,11 +79,13 @@ export function useCodeMapper() {
 	const constituencyToWardsMapRef = useRef(constituencyToWardsMap);
 	const codeMappingsRef = useRef(codeMappings);
 
-	// Keep refs in sync
-	wardToLadMapRef.current = wardToLadMap;
-	ladToWardsMapRef.current = ladToWardsMap;
-	constituencyToWardsMapRef.current = constituencyToWardsMap;
-	codeMappingsRef.current = codeMappings;
+	// Keep refs in sync (via effect to avoid writing refs during render)
+	useEffect(() => {
+		wardToLadMapRef.current = wardToLadMap;
+		ladToWardsMapRef.current = ladToWardsMap;
+		constituencyToWardsMapRef.current = constituencyToWardsMap;
+		codeMappingsRef.current = codeMappings;
+	});
 
 	// ==================== Ward-to-LAD Mappings ====================
 
