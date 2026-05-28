@@ -222,49 +222,42 @@ export function useBoundaryData(
 	useEffect(() => {
 		let mounted = true;
 
-		const loadBoundaries = async () => {
-			try {
-				setIsLoading(true);
-				setError(null);
+		const loadBoundaries = () => {
+			setIsLoading(true);
+			setError(null);
 
-				const [
-					wards,
-					constituencies,
-					localAuthorities,
-					lsoas,
-					dataZones,
-					superOutputAreas,
-				] = await Promise.all([
-					fetchBoundaryGroup(
-						"ward",
-						addWardLadMappings,
-						addLadWardMappings,
-						addCodeMappings,
-					),
-					fetchBoundaryGroup(
-						"constituency",
-						undefined,
-						undefined,
-						addCodeMappings,
-					),
-					fetchBoundaryGroup(
-						"localAuthority",
-						undefined,
-						undefined,
-						addCodeMappings,
-					),
-					fetchBoundaryGroup("lsoa").catch(
-						() => ({}) as Record<number, BoundaryGeojson>,
-					),
-					fetchBoundaryGroup("dataZone").catch(
-						() => ({}) as Record<number, BoundaryGeojson>,
-					),
-					fetchBoundaryGroup("superOutputArea").catch(
-						() => ({}) as Record<number, BoundaryGeojson>,
-					),
-				]);
+			Promise.all([
+				fetchBoundaryGroup(
+					"ward",
+					addWardLadMappings,
+					addLadWardMappings,
+					addCodeMappings,
+				),
+				fetchBoundaryGroup(
+					"constituency",
+					undefined,
+					undefined,
+					addCodeMappings,
+				),
+				fetchBoundaryGroup(
+					"localAuthority",
+					undefined,
+					undefined,
+					addCodeMappings,
+				),
+				fetchBoundaryGroup("lsoa").catch(
+					() => ({}) as Record<number, BoundaryGeojson>,
+				),
+				fetchBoundaryGroup("dataZone").catch(
+					() => ({}) as Record<number, BoundaryGeojson>,
+				),
+				fetchBoundaryGroup("superOutputArea").catch(
+					() => ({}) as Record<number, BoundaryGeojson>,
+				),
+			])
+				.then(([wards, constituencies, localAuthorities, lsoas, dataZones, superOutputAreas]) => {
+					if (!mounted) return;
 
-				if (mounted) {
 					setRawData({
 						ward: wards,
 						constituency: constituencies,
@@ -281,43 +274,33 @@ export function useBoundaryData(
 					// renamed or redrawn in 2024 have no PCON19CD→PCON24CD name mapping, so
 					// they'd return [] if we only indexed by PCON24CD.
 					if (addConstituencyWardMappings) {
-						const constitencyEntries = Object.entries(
-							constituencies,
-						).filter(([, conData]) => conData?.features);
-						for (const [yearStr, wardData] of Object.entries(
-							wards,
-						)) {
+						const constituencyEntries = Object.entries(constituencies)
+							.filter(([, conData]) => conData?.features);
+						for (const [yearStr, wardData] of Object.entries(wards)) {
 							if (!wardData?.features) continue;
 							const mergedMappings: Record<string, string[]> = {};
-							for (const [, conData] of constitencyEntries) {
-								const mappings = buildConstituencyWardMappings(
-									wardData,
-									conData!,
-								);
+							for (const [, conData] of constituencyEntries) {
+								const mappings = buildConstituencyWardMappings(wardData, conData!);
 								Object.assign(mergedMappings, mappings);
 							}
 							if (Object.keys(mergedMappings).length > 0) {
-								addConstituencyWardMappings(
-									Number(yearStr),
-									mergedMappings,
-								);
+								addConstituencyWardMappings(Number(yearStr), mergedMappings);
 							}
 						}
 					}
-				}
-			} catch (err) {
-				if (mounted) {
-					setError(
-						err instanceof Error
-							? err
-							: new Error("Failed to load boundaries"),
-					);
-				}
-			} finally {
-				if (mounted) {
-					setIsLoading(false);
-				}
-			}
+				})
+				.catch((err) => {
+					if (mounted) {
+						setError(
+							err instanceof Error
+								? err
+								: new Error("Failed to load boundaries"),
+						);
+					}
+				})
+				.finally(() => {
+					if (mounted) setIsLoading(false);
+				});
 		};
 
 		loadBoundaries();
