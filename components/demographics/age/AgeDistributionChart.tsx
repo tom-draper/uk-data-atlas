@@ -74,7 +74,7 @@ function AgeDistributionChart({
 							}}
 						>
 							<div
-								className="w-full h-full origin-bottom"
+								className="size-full origin-bottom"
 								style={{
 									backgroundColor: getAgeColor(age),
 									// translateZ(0) forces GPU layer without will-change issues

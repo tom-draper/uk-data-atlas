@@ -26,7 +26,7 @@ export type GeneralElectionSourceConfig = {
 	};
 };
 
-export const KNOWN_PARTIES_2024 = [
+const KNOWN_PARTIES_2024 = [
 	"Con",
 	"Lab",
 	"LD",
@@ -40,7 +40,7 @@ export const KNOWN_PARTIES_2024 = [
 	"UUP",
 	"APNI",
 ];
-export const KNOWN_PARTIES_PRE_2024 = [
+const KNOWN_PARTIES_PRE_2024 = [
 	"Con",
 	"Lab",
 	"LD",

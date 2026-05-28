@@ -99,7 +99,7 @@ export const WARD_CODE_KEYS = [
 	"WD22CD",
 	"WD21CD",
 ] as const;
-export const WARD_NAME_KEYS = [
+const WARD_NAME_KEYS = [
 	"WD25NM",
 	"WD24NM",
 	"WD23NM",
@@ -113,7 +113,7 @@ export const LAD_CODE_KEYS = [
 	"LAD22CD",
 	"LAD21CD",
 ] as const;
-export const LAD_NAME_KEYS = [
+const LAD_NAME_KEYS = [
 	"LAD25NM",
 	"LAD24NM",
 	"LAD23NM",
@@ -126,7 +126,7 @@ export const CONSTITUENCY_CODE_KEYS = [
 	"PCON17CD",
 	"PCON15CD",
 ] as const;
-export const CONSTITUENCY_NAME_KEYS = [
+const CONSTITUENCY_NAME_KEYS = [
 	"PCON24NM",
 	"pcon19nm",
 	"PCON17NM",
@@ -134,17 +134,17 @@ export const CONSTITUENCY_NAME_KEYS = [
 ] as const;
 
 export const LSOA_CODE_KEYS = ["LSOA11CD", "LSOA21CD"] as const;
-export const LSOA_NAME_KEYS = ["LSOA11NM", "LSOA21NM"] as const;
+const LSOA_NAME_KEYS = ["LSOA11NM", "LSOA21NM"] as const;
 export type LSOACodeKey = (typeof LSOA_CODE_KEYS)[number];
 export type LSOANameKey = (typeof LSOA_NAME_KEYS)[number];
 
 export const DATA_ZONE_CODE_KEYS = ["DataZone"] as const;
-export const DATA_ZONE_NAME_KEYS = ["Name"] as const;
+const DATA_ZONE_NAME_KEYS = ["Name"] as const;
 export type DataZoneCodeKey = (typeof DATA_ZONE_CODE_KEYS)[number];
 export type DataZoneNameKey = (typeof DATA_ZONE_NAME_KEYS)[number];
 
 export const SOA_CODE_KEYS = ["SOA_CODE", "SOA2011", "SOA"] as const;
-export const SOA_NAME_KEYS = ["SOA_LABEL", "SOA2011 Name", "SOA Name"] as const;
+const SOA_NAME_KEYS = ["SOA_LABEL", "SOA2011 Name", "SOA Name"] as const;
 export type SOACodeKey = (typeof SOA_CODE_KEYS)[number];
 export type SOANameKey = (typeof SOA_NAME_KEYS)[number];
 
@@ -425,14 +425,14 @@ export const filterFeatures = (
 /**
  * Clear the cache (useful for testing or memory management)
  */
-export const clearCache = (): void => {
+const clearCache = (): void => {
 	Object.keys(BOUNDARY_CACHE).forEach((key) => delete BOUNDARY_CACHE[key]);
 };
 
 /**
  * Get cache statistics
  */
-export const getCacheStats = () => ({
+const getCacheStats = () => ({
 	cachedFiles: Object.keys(BOUNDARY_CACHE).length,
 	estimatedMemory: JSON.stringify(BOUNDARY_CACHE).length,
 });

@@ -333,7 +333,7 @@ function PriceChart({
 				{/* Line chart background */}
 				{priceData.length >= 2 && linePath && (
 					<svg
-						className="absolute inset-0 w-full h-full"
+						className="absolute inset-0 size-full"
 						viewBox="0 0 100 100"
 						preserveAspectRatio="none"
 					>

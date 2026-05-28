@@ -63,7 +63,7 @@ function Legend({ ethnicityData }: { ethnicityData: ProcessedEthnicityData[] }) 
 						className="flex items-center gap-1 min-w-0"
 					>
 						<div
-							className="w-1.5 h-1.5 rounded-sm shrink-0"
+							className="size-1.5 rounded-sm shrink-0"
 							style={{ backgroundColor: item.color }}
 						/>
 						<span

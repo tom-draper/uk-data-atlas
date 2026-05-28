@@ -7,7 +7,7 @@ export const calculateTotal = (ageData: { [age: string]: number }): number => {
 	return sum;
 };
 
-export const resolveWardCode = (
+const resolveWardCode = (
 	wardCode: string,
 	wardName: string,
 	population: PopulationDataset["data"],

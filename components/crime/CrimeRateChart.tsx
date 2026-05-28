@@ -158,7 +158,7 @@ export default function CrimeRateChart({
 					<svg
 						viewBox="-100 -100 300 300"
 						preserveAspectRatio="xMidYMid slice"
-						className="w-full h-full"
+						className="size-full"
 					>
 						<defs>
 							<filter

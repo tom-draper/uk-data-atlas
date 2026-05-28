@@ -75,7 +75,7 @@ function Legend({
 				{partyData.map((p) => (
 					<div key={p.key} className="flex items-center gap-1">
 						<div
-							className="w-1.5 h-1.5 rounded-sm shrink-0"
+							className="size-1.5 rounded-sm shrink-0"
 							style={{ backgroundColor: p.color }}
 						/>
 						<span className="truncate font-medium">
@@ -100,7 +100,7 @@ function Legend({
 								className="flex items-center gap-1"
 							>
 								<div
-									className="w-1.5 h-1.5 rounded-sm shrink-0"
+									className="size-1.5 rounded-sm shrink-0"
 									style={{ backgroundColor: s.color }}
 								/>
 								<span className="truncate font-medium">

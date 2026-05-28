@@ -67,7 +67,7 @@ function ErrorBanner({
 export default function AtlasClient() {
 	const { replace } = useRouter();
 	const searchParams = useSearchParams();
-	const { get: getSearchParam } = searchParams;
+	const getSearchParam = (key: string) => searchParams.get(key);
 
 	const [activeViz, setActiveVizState] = useState<ActiveViz>(() => {
 		return parseActiveVizFromParams(searchParams) ?? DEFAULT_ACTIVE_VIZ;

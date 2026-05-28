@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import Navigation from "../components/Navigation";
+
+export const metadata: Metadata = {
+	title: "UK Data Atlas",
+	description:
+		"A powerful mapping platform for visualizing data that shapes the United Kingdom.",
+};
 
 export default function Home() {
 	return (
