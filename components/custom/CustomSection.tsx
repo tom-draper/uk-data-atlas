@@ -185,8 +185,10 @@ function UploadModal({
 			if (columnIndex !== -1) {
 				const columnData = csvData
 					.slice(headerRow + 1)
-					.map((row) => row[columnIndex])
-					.filter((val) => val?.trim());
+					.flatMap((row) => {
+						const val = row[columnIndex];
+						return val?.trim() ? [val] : [];
+					});
 
 				const matchResults = calculateMatches(columnData);
 				setMatches(matchResults);
@@ -328,7 +330,7 @@ function UploadModal({
 										{csvData
 											.slice(0, 10)
 											.map((row, idx) => (
-												<option key={idx} value={idx}>
+												<option key={`row-${idx}`} value={idx}>
 													Row {idx + 1}:{" "}
 													{row
 														.join(", ")
@@ -354,7 +356,7 @@ function UploadModal({
 									>
 										<option value="">Select column</option>
 										{headers.map((header, idx) => (
-											<option key={idx} value={header}>
+											<option key={`${header}-${idx}`} value={header}>
 												{header || `Column ${idx + 1}`}
 											</option>
 										))}
@@ -436,7 +438,7 @@ function UploadModal({
 									>
 										<option value="">Select column</option>
 										{headers.map((header, idx) => (
-											<option key={idx} value={header}>
+											<option key={`${header}-${idx}`} value={header}>
 												{header || `Column ${idx + 1}`}
 											</option>
 										))}
@@ -490,7 +492,7 @@ function UploadModal({
 														.slice(headerRow + 1)
 														.map((row, rowIdx) => (
 															<tr
-																key={rowIdx}
+																key={`row-${rowIdx}`}
 																className={`${isDark ? "hover:bg-white/5" : "hover:bg-white/40"} ${rowIdx % 2 === 1 ? (isDark ? "bg-white/5" : "bg-white/20") : ""}`}
 															>
 																{row.map(
@@ -499,9 +501,7 @@ function UploadModal({
 																		cellIdx,
 																	) => (
 																		<td
-																			key={
-																				cellIdx
-																			}
+																			key={`cell-${cellIdx}`}
 																			className={`px-4 py-2 whitespace-nowrap ${
 																				headers[
 																					cellIdx
@@ -710,7 +710,7 @@ function CustomDatasetCard({
 							)}
 						</div>
 					) : chartsLoading ? (
-						<ChartContentPlaceholder className="h-full w-full" />
+						<ChartContentPlaceholder className="size-full" />
 					) : (
 						<div
 							className={`text-xs ${isDark ? "text-gray-400" : "text-gray-400"}`}
@@ -835,7 +835,7 @@ export default function CustomSection({
 							viewBox="0 0 24 24"
 							strokeWidth="2"
 							stroke="currentColor"
-							className="w-6 h-6 mx-auto mb-0.5"
+							className="size-6 mx-auto mb-0.5"
 						>
 							<path
 								strokeLinecap="round"

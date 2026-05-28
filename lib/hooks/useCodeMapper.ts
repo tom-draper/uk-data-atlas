@@ -510,7 +510,7 @@ export const buildCrossYearMappings = (
 /**
  * Build mappings from a lookup table/CSV with explicit year columns
  */
-export const buildCodeMappingsFromLookup = (
+const buildCodeMappingsFromLookup = (
 	lookupData: any[],
 	codeFields: Record<YearCode, string>,
 ): CodeMapping => {

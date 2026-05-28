@@ -1,4 +1,9 @@
-"use client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "About - UK Data Atlas",
+	description: "About the UK Data Atlas project.",
+};
 
 export default function AboutPage() {
 	return (

@@ -384,7 +384,7 @@ function PopulationDensityChart({
 			{!total || density === null || areaSqKm === null ? (
 				<div className="h-14 flex items-center justify-center">
 					{chartsLoading ? (
-						<ChartContentPlaceholder className="h-full w-full" />
+						<ChartContentPlaceholder className="size-full" />
 					) : (
 						<div
 							className={`text-xs text-center pb-2 ${isDark ? "text-gray-400" : "text-gray-400/80"}`}

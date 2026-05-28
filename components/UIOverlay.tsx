@@ -52,7 +52,7 @@ function MapIcon() {
 			strokeWidth="2"
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			className="w-5 h-5"
+			className="size-5"
 		>
 			<polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
 			<line x1="9" y1="3" x2="9" y2="18" />
@@ -71,7 +71,7 @@ function BarChartIcon() {
 			strokeWidth="2"
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			className="w-5 h-5"
+			className="size-5"
 		>
 			<line x1="18" y1="20" x2="18" y2="10" />
 			<line x1="12" y1="20" x2="12" y2="4" />
@@ -90,7 +90,7 @@ function XIcon() {
 			strokeWidth="2"
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			className="w-5 h-5"
+			className="size-5"
 		>
 			<line x1="18" y1="6" x2="6" y2="18" />
 			<line x1="6" y1="6" x2="18" y2="18" />
@@ -164,7 +164,7 @@ export default function UIOverlay({
 	return (
 		<ThemeProvider value={isDark}>
 			<PanelContext.Provider value={panelContextValue}>
-				<div className="fixed inset-0 z-50 h-full w-full pointer-events-none">
+				<div className="fixed inset-0 z-50 size-full pointer-events-none">
 					{/* Desktop layout */}
 					<div className="hidden md:flex absolute left-0 h-full">
 						{controlPanel}

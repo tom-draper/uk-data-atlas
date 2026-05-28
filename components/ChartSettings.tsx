@@ -37,7 +37,7 @@ export default function ChartSettings() {
 									type="checkbox"
 									checked={visibility[key]}
 									onChange={() => toggle(key)}
-									className="w-3 h-3 accent-indigo-500 cursor-pointer"
+									className="size-3 accent-indigo-500 cursor-pointer"
 								/>
 								<span
 									className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}

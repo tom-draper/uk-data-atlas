@@ -20,8 +20,7 @@ export const useLocalElectionData = () => {
 				// Fetch all Reference Datasets (Has Ward Codes)
 				const refs = await Promise.all(
 					Object.values(ELECTION_SOURCES)
-						.filter((cfg) => cfg.isReference)
-						.map((cfg) => fetchAndParseCsv(cfg)),
+						.flatMap((cfg) => cfg.isReference ? [fetchAndParseCsv(cfg)] : []),
 				);
 
 				// Fetch Dataset needing reconciliation (2023)

@@ -28,7 +28,7 @@ export function renderCategoryLegend(
 						}
 					>
 						<div
-							className={`w-3 h-3 rounded-xs shrink-0 transition-opacity ${isSelected ? "ring-1" : ""}`}
+							className={`size-3 rounded-xs shrink-0 transition-opacity ${isSelected ? "ring-1" : ""}`}
 							style={{
 								backgroundColor: item.color,
 								opacity: swatchOpacity,

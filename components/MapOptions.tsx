@@ -120,7 +120,7 @@ export default function MapOptions({
 							checked={hideDataLayer}
 							onChange={handleDataToggle}
 							disabled={hideBoundaries}
-							className="w-3.5 h-3.5 accent-indigo-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+							className="size-3.5 accent-indigo-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 						/>
 						<span
 							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"} ${hideBoundaries ? "opacity-50" : ""}`}
@@ -133,7 +133,7 @@ export default function MapOptions({
 							type="checkbox"
 							checked={hideBoundaries}
 							onChange={handleBoundariesToggle}
-							className="w-3.5 h-3.5 accent-indigo-500 cursor-pointer"
+							className="size-3.5 accent-indigo-500 cursor-pointer"
 						/>
 						<span
 							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}
@@ -146,7 +146,7 @@ export default function MapOptions({
 							type="checkbox"
 							checked={hideOverlay}
 							onChange={handleOverlayToggle}
-							className="w-3.5 h-3.5 accent-indigo-500 cursor-pointer"
+							className="size-3.5 accent-indigo-500 cursor-pointer"
 						/>
 						<span
 							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}
@@ -225,7 +225,7 @@ export default function MapOptions({
 							className={`border rounded-sm px-2 py-1 text-xs backdrop-blur-md transition-all duration-200 shadow-sm cursor-pointer flex items-center gap-1.5 ${t.border} ${t.text} ${t.hover} ${isDark ? "bg-white/5" : "bg-white/10"}`}
 						>
 							<div
-								className="w-3 h-3 rounded-sm"
+								className="size-3 rounded-sm"
 								style={{
 									background: themes.find(
 										(theme) => theme.id === selectedTheme,
@@ -253,7 +253,7 @@ export default function MapOptions({
 										className={`w-full px-2.5 py-1.5 text-xs text-left transition-colors duration-150 border-b last:border-b-0 flex items-center gap-2 cursor-pointer ${t.border} ${t.hover} ${t.text}`}
 									>
 										<div
-											className="w-4 h-4 rounded-sm shrink-0"
+											className="size-4 rounded-sm shrink-0"
 											style={{
 												background: theme.gradient,
 											}}

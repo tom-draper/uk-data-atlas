@@ -193,16 +193,13 @@ export default function LocationPanel({
 	})();
 
 	const allLocations = (() => {
-		const locations = Object.entries(LOCATIONS)
-			.map(([location, bounds]) => ({
-				name: location,
-				totalPopulation: locationPopulations.get(location) || 0,
-				bounds,
-			}))
-			.filter(({ totalPopulation }) => totalPopulation > 0)
+		return Object.entries(LOCATIONS)
+			.flatMap(([location, bounds]) => {
+				const totalPopulation = locationPopulations.get(location) || 0;
+				if (totalPopulation <= 0) return [];
+				return [{ name: location, totalPopulation, bounds }];
+			})
 			.sort((a, b) => b.totalPopulation - a.totalPopulation);
-
-		return locations;
 	})();
 
 	const filteredLocations = (() => {

@@ -47,16 +47,17 @@ export const processPartyVotes = (
 	if (totalVotes === 0) return [];
 
 	return partyInfo
-		.map((party) => {
+		.flatMap((party) => {
 			const votes = rawPartyVotes[party.key as PartyCode] || 0;
-			return {
+			const percentage = (votes / totalVotes) * 100;
+			if (percentage <= 0) return [];
+			return [{
 				key: party.key,
 				name: party.name,
 				color: PARTIES[party.key as PartyCode]?.color || "#999",
 				votes,
-				percentage: (votes / totalVotes) * 100,
-			};
+				percentage,
+			}];
 		})
-		.filter((p) => p.percentage > 0)
 		.sort((a, b) => b.votes - a.votes);
 };

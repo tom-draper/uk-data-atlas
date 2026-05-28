@@ -1,4 +1,9 @@
-"use client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Data Sources - UK Data Atlas",
+	description: "Data sources and licensing information for the UK Data Atlas.",
+};
 
 interface Dataset {
 	name: string;
@@ -199,7 +204,7 @@ export default function DatasetsPage() {
 							<tbody>
 								{datasets.map((dataset, idx) => (
 									<tr
-										key={idx}
+										key={dataset.name}
 										className={`border-b border-white/20 hover:bg-white/30 transition-colors duration-150 last:border-b-0 ${
 											idx % 2 === 0
 												? "bg-white/10"
