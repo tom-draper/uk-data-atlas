@@ -59,7 +59,7 @@ export default function DemographicsChartSection({
 			>
 				Demographics
 			</h3>
-			<div className="space-y-3">
+			<div className="space-y-2">
 				{showDensity && (
 					<PopulationDensityChart
 						dataset={availablePopulationDatasets[2022]}
