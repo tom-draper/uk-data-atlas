@@ -12,11 +12,9 @@ export const useGeneralElectionData = () => {
 	const [error, setError] = useState<string>("");
 
 	useEffect(() => {
-		const loadData = async () => {
-			try {
-				const dataPromises = Object.values(
-					GENERAL_ELECTION_SOURCES,
-				).map((config) =>
+		const loadData = () => {
+			Promise.all(
+				Object.values(GENERAL_ELECTION_SOURCES).map((config) =>
 					fetchAndParseGeneralElectionData(config).catch((err) => {
 						console.error(
 							`Failed to load general election data for ${config.year}:`,
@@ -24,25 +22,21 @@ export const useGeneralElectionData = () => {
 						);
 						return null;
 					}),
-				);
-
-				const results = await Promise.all(dataPromises);
-
-				const loadedDatasets: Record<number, GeneralElectionDataset> =
-					{};
-
-				results.forEach((dataset) => {
-					if (dataset) {
-						loadedDatasets[dataset.year] = dataset;
-					}
+				),
+			)
+				.then((results) => {
+					const loadedDatasets: Record<number, GeneralElectionDataset> = {};
+					results.forEach((dataset) => {
+						if (dataset) loadedDatasets[dataset.year] = dataset;
+					});
+					setDatasets(loadedDatasets);
+				})
+				.catch((err: any) => {
+					setError(err.message || "Error loading general election data");
+				})
+				.finally(() => {
+					setLoading(false);
 				});
-
-				setDatasets(loadedDatasets);
-			} catch (err: any) {
-				setError(err.message || "Error loading general election data");
-			} finally {
-				setLoading(false);
-			}
 		};
 
 		loadData();
