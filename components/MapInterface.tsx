@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
@@ -51,6 +51,7 @@ export default function MapInterface({
 	const [loadedStyleId, setLoadedStyleId] = useState<string | null>(null);
 
 	const codeMapper = useCodeMapper();
+	const { addWardLadMappings } = codeMapper;
 
 	// Supplement the code mapper with ward→LAD mappings from election data.
 	// Boundary files older than 2022 lack LAD properties, so wards that were
@@ -58,7 +59,6 @@ export default function MapInterface({
 	// resolved from boundary metadata alone. The election CSVs carry ladCode
 	// per row so we can fill the gap here.
 	useEffect(() => {
-		if (!codeMapper) return;
 		const mappings: Record<string, string> = {};
 		for (const dataset of Object.values(datasets.localElection)) {
 			for (const ward of Object.values(dataset.data)) {
@@ -72,9 +72,9 @@ export default function MapInterface({
 			}
 		}
 		if (Object.keys(mappings).length > 0) {
-			codeMapper.addWardLadMappings(mappings);
+			addWardLadMappings(mappings);
 		}
-	}, [datasets.localElection, codeMapper]);
+	}, [datasets.localElection, addWardLadMappings]);
 
 	const {
 		boundaryData,
@@ -211,7 +211,8 @@ export default function MapInterface({
 		mapInstance.triggerRepaint();
 	};
 
-	const normalizedDatasets = (() => {
+	const { getCodeForYear } = codeMapper;
+	const normalizedDatasets = useMemo(() => {
 		if (!boundaryCodes?.ward) return datasets;
 
 		const normalizedLocalElection = Object.fromEntries(
@@ -223,14 +224,14 @@ export default function MapInterface({
 					normalizeElectionDatasetCodes(
 						dataset,
 						validCodes,
-						codeMapper.getCodeForYear,
+						getCodeForYear,
 					),
 				];
 			}),
 		) as typeof datasets.localElection;
 
 		return { ...datasets, localElection: normalizedLocalElection };
-	})();
+	}, [boundaryCodes?.ward, datasets, getCodeForYear]);
 
 	const aggregatedData = useAggregatedData({
 		mapManager,

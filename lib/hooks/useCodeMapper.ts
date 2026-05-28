@@ -1,7 +1,7 @@
 // lib/hooks/useCodeMapper.ts
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { BoundaryGeojson, Features } from "@lib/types";
 import {
 	BoundaryType,
@@ -113,12 +113,12 @@ export function useCodeMapper() {
 		}
 	};
 
-	const addWardLadMappings = (mappings: WardLadMapping) => {
+	const addWardLadMappings = useCallback((mappings: WardLadMapping) => {
 		setWardToLadMap((prev) => ({
 			...prev,
 			...mappings,
 		}));
-	};
+	}, []);
 
 	// ==================== LAD-to-Wards Mappings ====================
 
@@ -150,7 +150,7 @@ export function useCodeMapper() {
 		}));
 	};
 
-	const addLadWardMappings = (year: YearCode, mappings: Record<string, string[]>) => {
+	const addLadWardMappings = useCallback((year: YearCode, mappings: Record<string, string[]>) => {
 		if (!year) return;
 
 		setLadToWardsMap((prev) => ({
@@ -160,17 +160,17 @@ export function useCodeMapper() {
 				...mappings,
 			},
 		}));
-	};
+	}, []);
 
 	// ==================== Constituency-to-Wards Mappings ====================
 
-	const addConstituencyWardMappings = (year: YearCode, mappings: Record<string, string[]>) => {
+	const addConstituencyWardMappings = useCallback((year: YearCode, mappings: Record<string, string[]>) => {
 		if (!year) return;
 		setConstituencyToWardsMap((prev) => ({
 			...prev,
 			[year]: { ...prev[year], ...mappings },
 		}));
-	};
+	}, []);
 
 	const getWardsForConstituency = (constituencyCode: string, wardYear: YearCode): string[] => {
 		// Direct lookup for this ward year
@@ -213,7 +213,7 @@ export function useCodeMapper() {
 		}));
 	};
 
-	const addCodeMappings = (type: CodeType, mappings: CodeMapping) => {
+	const addCodeMappings = useCallback((type: CodeType, mappings: CodeMapping) => {
 		setCodeMappings((prev) => ({
 			...prev,
 			[type]: {
@@ -221,15 +221,15 @@ export function useCodeMapper() {
 				...mappings,
 			},
 		}));
-	};
+	}, []);
 
-	const getCodeForYear = (
+	const getCodeForYear = useCallback((
 		type: CodeType,
 		code: string,
 		targetYear: YearCode,
 	): string | undefined => {
 		return codeMappingsRef.current[type][code]?.[targetYear];
-	};
+	}, []);
 
 	const getAllEquivalentCodes = (type: CodeType, code: string): { year: YearCode; code: string }[] => {
 		const mappings = codeMappingsRef.current[type][code] || {};

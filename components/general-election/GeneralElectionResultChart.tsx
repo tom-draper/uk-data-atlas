@@ -164,7 +164,7 @@ export default function GeneralElectionResultChart({
 			}
 		>
 			<ChartLoadingBackground />
-			<div className="relative z-[1]">
+			<div className="relative z-[1] flex-1 flex flex-col">
 				<div className="flex items-center justify-between mb-1.5">
 					<h3 className={chartHeadingClass(isDark)}>
 						{data.year} General Election
@@ -178,7 +178,7 @@ export default function GeneralElectionResultChart({
 
 				{!data.hasData ? (
 					chartsLoading ? (
-						<ChartContentPlaceholder className="h-5 mt-1" />
+						<ChartContentPlaceholder className="flex-1 mt-1" />
 					) : (
 						<div
 							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
