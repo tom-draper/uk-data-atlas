@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
@@ -212,7 +212,7 @@ export default function MapInterface({
 	};
 
 	const { getCodeForYear } = codeMapper;
-	const normalizedDatasets = useMemo(() => {
+	const normalizedDatasets = (() => {
 		if (!boundaryCodes?.ward) return datasets;
 
 		const normalizedLocalElection = Object.fromEntries(
@@ -231,7 +231,7 @@ export default function MapInterface({
 		) as typeof datasets.localElection;
 
 		return { ...datasets, localElection: normalizedLocalElection };
-	}, [boundaryCodes?.ward, datasets, getCodeForYear]);
+	})();
 
 	const aggregatedData = useAggregatedData({
 		mapManager,

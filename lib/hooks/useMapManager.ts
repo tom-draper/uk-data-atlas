@@ -18,7 +18,9 @@ export function useMapManager({
 }: UseMapManagerOptions) {
 	const [mapManager, setMapManager] = useState<MapManager | null>(null);
 	const handlersRef = useRef(interactionHandlers);
-	handlersRef.current = interactionHandlers;
+	useEffect(() => {
+		handlersRef.current = interactionHandlers;
+	});
 
 	useEffect(() => {
 		if (!mapReady || !mapRef?.current) return;
