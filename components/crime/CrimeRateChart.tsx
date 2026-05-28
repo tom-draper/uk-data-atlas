@@ -133,7 +133,7 @@ export default function CrimeRateChart({
 		<button
 			type="button"
 			style={combinedStyle}
-			className={`p-2 rounded overflow-hidden relative h-20 border-2 ${
+			className={`w-full p-2 rounded overflow-hidden relative h-20 border-2 ${
 				isActive
 					? isDark
 						? "bg-white/10"
