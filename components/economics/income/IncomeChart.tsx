@@ -40,10 +40,17 @@ const particleColors = [
 	"text-teal-300",
 ];
 
+function seededRandom(seed: number) {
+	let s = seed;
+	return () => {
+		s = (s * 9301 + 49297) % 233280;
+		return s / 233280;
+	};
+}
+
 function computeParticles(medianIncome: number | null) {
 	if (!medianIncome) return [];
 
-	// Clamp income between 25k and 45k for the visual calculation
 	const minIncome = 25000;
 	const maxIncome = 45000;
 	const clampedIncome = Math.max(minIncome, Math.min(medianIncome, maxIncome));
@@ -53,21 +60,22 @@ function computeParticles(medianIncome: number | null) {
 	const percentage = (clampedIncome - minIncome) / (maxIncome - minIncome);
 	const count = Math.round(minParticles + percentage * (maxParticles - minParticles));
 
-	// Generate static random properties for the particles
+	const rand = seededRandom(Math.round(medianIncome));
+
 	return Array.from({ length: count }).map((_, i) => ({
 		id: i,
-		top: `${Math.random() * 100}%`,
-		left: `${Math.random() * 100}%`,
-		rotation: Math.random() * 360,
-		size: Math.random() * 1.5 + 0.8, // rem
-		opacity: Math.random() * 0.3 + 0.05, // Very faint (0.05 to 0.35)
+		top: `${rand() * 100}%`,
+		left: `${rand() * 100}%`,
+		rotation: rand() * 360,
+		size: rand() * 1.5 + 0.8,
+		opacity: rand() * 0.3 + 0.05,
 		blur:
-			Math.random() < 0.4
+			rand() < 0.4
 				? "blur-[1px]"
-				: Math.random() < 0.2
+				: rand() < 0.2
 					? "blur-[2px]"
-					: "blur-none", // Depth of field
-		color: particleColors[Math.floor(Math.random() * particleColors.length)],
+					: "blur-none",
+		color: particleColors[Math.floor(rand() * particleColors.length)],
 	}));
 }
 
