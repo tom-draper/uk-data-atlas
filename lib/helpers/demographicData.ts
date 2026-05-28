@@ -1,4 +1,4 @@
-import { PopulationDataset, PopulationWardData } from "../types";
+import { PopulationDataset, PopulationWardData } from "../types/population";
 import { CodeMapper } from "../hooks/useCodeMapper";
 
 const MAX_LAD_CACHE_ENTRIES = 50;

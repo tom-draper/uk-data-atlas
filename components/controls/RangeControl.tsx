@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export interface RangeControlProps {
 	min: number;
@@ -35,12 +35,14 @@ export function RangeControl({
 	const onRangeInputRef = useRef(onRangeInput);
 	const onRangeChangeEndRef = useRef(onRangeChangeEnd);
 
-	currentMinRef.current = currentMin;
-	currentMaxRef.current = currentMax;
-	minRef.current = min;
-	maxRef.current = max;
-	onRangeInputRef.current = onRangeInput;
-	onRangeChangeEndRef.current = onRangeChangeEnd;
+	useEffect(() => {
+		currentMinRef.current = currentMin;
+		currentMaxRef.current = currentMax;
+		minRef.current = min;
+		maxRef.current = max;
+		onRangeInputRef.current = onRangeInput;
+		onRangeChangeEndRef.current = onRangeChangeEnd;
+	});
 
 	const getValueFromPosition = (clientY: number) => {
 		if (!containerRef.current) return currentMaxRef.current;
@@ -102,6 +104,12 @@ export function RangeControl({
 				/>
 				{/* Max handle (top) */}
 				<div
+					role="slider"
+					aria-label="Maximum value"
+					aria-valuemin={min}
+					aria-valuemax={max}
+					aria-valuenow={currentMax}
+					tabIndex={0}
 					className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
 					style={{
 						top: `${maxPosition}%`,
@@ -119,6 +127,12 @@ export function RangeControl({
 
 				{/* Min handle (bottom) */}
 				<div
+					role="slider"
+					aria-label="Minimum value"
+					aria-valuemin={min}
+					aria-valuemax={max}
+					aria-valuenow={currentMin}
+					tabIndex={0}
 					className="absolute left-0 w-full h-0.5 bg-white shadow-md cursor-ns-resize group z-10"
 					style={{
 						top: `${minPosition}%`,

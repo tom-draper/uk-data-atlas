@@ -165,6 +165,7 @@ export default function MapOptions({
 						>
 							<input
 								type="number"
+								aria-label="Opacity"
 								min="0"
 								max="100"
 								value={Math.round(overlayOpacity * 100)}

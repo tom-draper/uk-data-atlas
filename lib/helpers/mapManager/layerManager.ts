@@ -1,5 +1,6 @@
 // lib/utils/mapManager/layerManager.ts
-import { BoundaryGeojson, Party, PartyCode } from "@lib/types";
+import { BoundaryGeojson } from "@lib/types/geometry";
+import { Party, PartyCode } from "@lib/types/common";
 import {
 	LocalElectionOptions,
 	GeneralElectionOptions,
@@ -7,7 +8,8 @@ import {
 	EthnicityOptions,
 } from "@lib/types/mapOptions";
 import { PARTIES } from "@/lib/data/election/parties";
-import { ETHNICITY_COLORS, getPercentageColorExpression } from "../colorScale";
+import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";
+import { getPercentageColorExpression } from "../colorScale/datasetColors";
 import { DEFAULT_COLOR } from "./featureBuilder";
 
 const SOURCE_ID = "location-wards";

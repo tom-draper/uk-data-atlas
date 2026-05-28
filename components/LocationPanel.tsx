@@ -257,6 +257,7 @@ export default function LocationPanel({
 						<input
 							ref={inputRef}
 							type="text"
+							aria-label="Search locations"
 							value={searchQuery}
 							onChange={handleSearchChange}
 							onKeyDown={handleKeyDown}
@@ -305,7 +306,7 @@ export default function LocationPanel({
 			</div>
 
 			{/* Scrollable location list */}
-			<div className="overflow-y-auto scroll-container flex-1 px-1 py-1 pt-0.5">
+			<div className="overflow-y-auto scroll-container flex-1 p-1 pt-0.5">
 				{filteredLocations.map(({ name, totalPopulation, bounds }: { name: string; totalPopulation: number; bounds: LocationBounds }) => (
 					<button
 						type="button"

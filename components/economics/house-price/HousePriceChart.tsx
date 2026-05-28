@@ -309,7 +309,8 @@ function PriceChart({
 		);
 
 		return (
-			<div
+			<button
+				type="button"
 				style={style}
 				className={cardClass(isActive, isDark, "h-20")}
 				title="Office for National Statistics. UK House Price Index (HPI): Mean and Median House Prices by Local Authority. ons.gov.uk"
@@ -399,7 +400,7 @@ function PriceChart({
 						)}
 					</div>
 				)}
-			</div>
+			</button>
 	);
 }
 

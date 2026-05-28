@@ -1,10 +1,8 @@
+import { PartyVotes, PartyCode, Party } from "../types/common";
 import {
 	GeneralElectionConstituencyData,
-	PartyVotes,
-	PartyCode,
 	ProcessedPartyData,
-} from "../types";
-import { Party } from "../types/common";
+} from "../types/elections";
 import { PARTIES } from "../data/election/parties";
 
 export const getWinningParty = (

@@ -111,23 +111,23 @@ export default function IMDChart({
 		? computeImdStats(dataset, aggregatedData, selectedArea, chartsLoading)
 		: null;
 
-	if (!dataset) return null;
-
-	const isActive =
-		activeDataset?.type === "imd" && activeDataset.id === dataset.id;
+	const isActive = !!(dataset && activeDataset?.type === "imd" && activeDataset.id === dataset.id);
 
 	const decile = imdStats ? Math.round(imdStats.averageIMDDecile) : null;
 	const decileColor = decile ? DECILE_COLORS[decile - 1] : "#9ca3af";
 	const hasData = imdStats !== null;
 
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		hasData ? decileColor : null,
+		hasData && dataset ? decileColor : null,
 		isActive,
 		isDark,
 	);
 
+	if (!dataset) return null;
+
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(isActive, isDark, "h-20")}
 			title="Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019. gov.uk"
@@ -201,6 +201,6 @@ export default function IMDChart({
 					</div>
 				)}
 			</div>
-		</div>
+		</button>
 	);
 }

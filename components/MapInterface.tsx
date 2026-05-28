@@ -48,7 +48,7 @@ export default function MapInterface({
 	onError,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
-	const [styleReady, setStyleReady] = useState(false);
+	const [loadedStyleId, setLoadedStyleId] = useState<string | null>(null);
 
 	const codeMapper = useCodeMapper();
 
@@ -95,6 +95,7 @@ export default function MapInterface({
 	} = useMapInitialization(MAP_CONFIG);
 	const { mapOptions, setMapOptions: handleMapOptionsChange } =
 		useMapOptions(DEFAULT_MAP_OPTIONS);
+	const styleReady = loadedStyleId === mapOptions.baseStyle.id;
 
 	// Track whether the initial style has been applied (style is loaded in useMapLibreInitialization).
 	const initialStyleApplied = useRef(false);
@@ -106,19 +107,19 @@ export default function MapInterface({
 		const mapInstance = map.current;
 		if (!mapInstance || !mapReady) return;
 
-		setStyleReady(false);
+		const currentStyleId = mapOptions.baseStyle.id;
 
 		const handleStyleReady = () => {
 			// Wait until style + sources + sprite state settle
 			if (mapInstance.isStyleLoaded()) {
-				setStyleReady(true);
+				setLoadedStyleId(currentStyleId);
 			}
 		};
 
 		mapInstance.on("idle", handleStyleReady);
 
 		const styleUrl = BASE_MAP_STYLES.find(
-			(s) => s.id === mapOptions.baseStyle.id,
+			(s) => s.id === currentStyleId,
 		)?.url;
 
 		// Initial load
@@ -177,21 +178,15 @@ export default function MapInterface({
 		});
 	};
 
-	// Zoom handlers - create once
-	const zoomHandlersRef = useRef({
-		handleZoomIn: () => {
-			const currentMap = map.current;
-			if (currentMap) {
-				currentMap.zoomTo(currentMap.getZoom() + 1);
-			}
-		},
-		handleZoomOut: () => {
-			const currentMap = map.current;
-			if (currentMap) {
-				currentMap.zoomTo(currentMap.getZoom() - 1);
-			}
-		},
-	});
+	const handleZoomIn = () => {
+		const currentMap = map.current;
+		if (currentMap) currentMap.zoomTo(currentMap.getZoom() + 1);
+	};
+
+	const handleZoomOut = () => {
+		const currentMap = map.current;
+		if (currentMap) currentMap.zoomTo(currentMap.getZoom() - 1);
+	};
 
 	const handleExport = () => {
 		type MapWithExport = maplibregl.Map & {
@@ -258,8 +253,8 @@ export default function MapInterface({
 					codeMapper={codeMapper}
 					onMapOptionsChange={handleMapOptionsChange}
 					onLocationClick={handleLocationClick}
-					onZoomIn={zoomHandlersRef.current.handleZoomIn}
-					onZoomOut={zoomHandlersRef.current.handleZoomOut}
+					onZoomIn={handleZoomIn}
+					onZoomOut={handleZoomOut}
 					activeDataset={activeDataset}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}

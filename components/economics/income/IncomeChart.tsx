@@ -121,25 +121,29 @@ export default function IncomeChart({
 
 	const particles = computeParticles(medianIncome);
 
-	if (!dataset) return null;
-	const isActive =
+	const isActive = !!(
+		dataset &&
 		activeDataset &&
 		((activeDataset.type === "income" &&
 			activeDataset.id === `income${dataset.year}`) ||
 			(activeViz.datasetType === "custom" &&
-				activeViz.vizId === "custom"));
+				activeViz.vizId === "custom"))
+	);
 	const formattedMedian = medianIncome
 		? `£${Math.round(medianIncome).toLocaleString()}`
 		: null;
 
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		"#10b981",
-		!!isActive,
+		dataset ? "#10b981" : null,
+		isActive,
 		isDark,
 	);
 
+	if (!dataset) return null;
+
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(!!isActive, isDark, "isolate h-20")}
 			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
@@ -200,6 +204,6 @@ export default function IncomeChart({
 					)}
 				</div>
 			)}
-		</div>
+		</button>
 	);
 }

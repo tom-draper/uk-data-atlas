@@ -1,4 +1,4 @@
-import { AgeGroups } from "../types";
+import { AgeGroups } from "../types/population";
 
 export const calculateAgeGroups = (ageData: {
 	[age: string]: number;

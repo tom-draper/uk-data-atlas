@@ -3,7 +3,7 @@ import type { MapGeoJSONFeature, MapMouseEvent } from "maplibre-gl";
 type MapLayerMouseHandler = (
 	ev: MapMouseEvent & { features?: MapGeoJSONFeature[] },
 ) => void;
-import { MapManagerCallbacks } from "./mapManager";
+import { MapManagerCallbacks } from "./callbacks";
 import { BoundaryType, ElectionData } from "@/lib/types";
 
 const SOURCE_ID = "location-wards";

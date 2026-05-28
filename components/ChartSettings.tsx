@@ -19,7 +19,7 @@ export default function ChartSettings() {
 	const isDark = useIsDark();
 
 	return (
-		<div className="flex-1 px-2.5 overflow-y-auto scroll-container py-2.5 space-y-4">
+		<div className="flex-1 p-2.5 overflow-y-auto scroll-container space-y-4">
 			{Object.entries(groups).map(([group, items]) => (
 				<div key={group}>
 					<h4

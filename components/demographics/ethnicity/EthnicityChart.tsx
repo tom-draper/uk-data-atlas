@@ -160,7 +160,8 @@ export default function EthnicityChart({
 	);
 
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(
 				isActive,
@@ -203,6 +204,6 @@ export default function EthnicityChart({
 					)}
 				</div>
 			)}
-		</div>
+		</button>
 	);
 }

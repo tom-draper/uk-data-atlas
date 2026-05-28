@@ -360,7 +360,8 @@ function PopulationDensityChart({
 	);
 
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(isActive, isDark)}
 			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
@@ -420,7 +421,7 @@ function PopulationDensityChart({
 					</div>
 				</div>
 			)}
-		</div>
+		</button>
 	);
 }
 

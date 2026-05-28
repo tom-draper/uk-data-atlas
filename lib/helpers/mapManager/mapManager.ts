@@ -29,10 +29,8 @@ import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { QualificationDataset } from "@/lib/types/qualification";
 
-export interface MapManagerCallbacks {
-	onAreaHover?: (location: SelectedArea | null) => void;
-	onLocationChange: (location: string) => void;
-}
+import type { MapManagerCallbacks } from "./callbacks";
+export type { MapManagerCallbacks } from "./callbacks";
 
 // Cache property detections to avoid repeated computation
 const propCache = new Map<string, PropertyKeys>();

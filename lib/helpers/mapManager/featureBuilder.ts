@@ -1,19 +1,17 @@
 // lib/utils/mapManager/featureBuilder.ts
 import {
 	BoundaryGeojson,
-	LocalElectionDataset,
-	GeneralElectionDataset,
-	PopulationDataset,
-	HousePriceDataset,
-	CrimeDataset,
 	PropertyKeys,
-	EthnicityDataset,
 	Feature,
 	Features,
 	getFeatureProp,
-	BrexitLADDataset,
-	BrexitConstituencyDataset,
-} from "@lib/types";
+} from "@lib/types/geometry";
+import { LocalElectionDataset, GeneralElectionDataset } from "@lib/types/elections";
+import { PopulationDataset } from "@lib/types/population";
+import { HousePriceDataset } from "@lib/types/housePrice";
+import { CrimeDataset } from "@lib/types/crime";
+import { EthnicityDataset } from "@lib/types/ethnicity";
+import { BrexitLADDataset, BrexitConstituencyDataset } from "@lib/types/referendum";
 import { MapOptions } from "@lib/types/mapOptions";
 import {
 	calculateMedianAge,
@@ -32,9 +30,9 @@ import {
 	getColorForSIMD,
 	getColorForWIMD,
 	getColorForNIMDM,
-	getColor,
-	normalizeValue,
-} from "../colorScale";
+} from "../colorScale/datasetColors";
+import { getColor } from "../colorScale/themes";
+import { normalizeValue } from "../colorScale/interpolation";
 import { IncomeDataset } from "@/lib/types/income";
 import { CustomDataset } from "@/lib/types/custom";
 import { IMDDataset } from "@/lib/types/imd";
@@ -46,7 +44,7 @@ import { QualificationDataset } from "@/lib/types/qualification";
 import {
 	getColorForLifeExpectancy,
 	getColorForQualification,
-} from "../colorScale";
+} from "../colorScale/datasetColors";
 
 export const DEFAULT_COLOR = "#cccccc";
 
