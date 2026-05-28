@@ -121,6 +121,15 @@ export const useWIMDData = () => {
 			};
 		}
 
+		// Derive ranks from scores (rank 1 = most deprived = highest score)
+		const sorted = Object.values(records).sort(
+			(a, b) => b.wimdScore - a.wimdScore,
+		);
+		sorted.forEach((record, i) => {
+			record.wimdRank = i + 1;
+			record.wimdDecile = Math.ceil(((i + 1) / sorted.length) * 10);
+		});
+
 		return {
 			2019: {
 				id: "wimd2019",
