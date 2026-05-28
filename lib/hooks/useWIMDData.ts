@@ -1,6 +1,6 @@
 import { WIMDDataset, WIMDLSOAData } from "@/lib/types/wimd";
 import { withCDN } from "../helpers/cdn";
-import { parseCsv } from "../helpers/parseCsv";
+import { findHeaderLine, parseCsv } from "../helpers/parseCsv";
 import { parseNum, parseNumInt } from "../helpers/parseNumber";
 import { useDataLoader } from "./useDataLoader";
 
@@ -45,14 +45,17 @@ export const useWIMDData = () => {
 				`Failed to fetch WIMD data: ${response.statusText}`,
 			);
 
-		const { data } = await parseCsv(await response.text(), {
+		const text = await response.text();
+		const { data } = await parseCsv(text, {
 			header: true,
+			skipLines: findHeaderLine(text, "LSOA code"),
 		});
 
 		const records: Record<string, WIMDLSOAData> = {};
 		for (const row of data as any[]) {
 			const lsoaCode = pick(
 				row,
+				"LSOA code",
 				"LSOA Code",
 				"lsoa_code",
 				"LSOA_Code",
@@ -62,42 +65,32 @@ export const useWIMDData = () => {
 
 			const ladName = pick(
 				row,
+				"Local Authority name",
 				"Local Authority Name",
 				"Local Authority",
 				"la_name",
 				"LA_Name",
-				"Local_Authority_Name",
 			);
-			const ladCode =
-				pick(
-					row,
-					"Local Authority Code",
-					"la_code",
-					"LA_Code",
-					"Local_Authority_Code",
-				) ||
-				LOCAL_AUTHORITY_CODES[ladName] ||
-				"";
+			const ladCode = LOCAL_AUTHORITY_CODES[ladName] || "";
 
 			const wimdScore = parseNum(
 				pick(
 					row,
+					"WIMD 2019",
 					"WIMD 2019 Score",
 					"WIMD Score",
 					"wimd_score",
 					"Score",
-					"WIMD2019Score",
 				),
 			);
 			const wimdRank = parseNumInt(
 				pick(
 					row,
-					"WIMD 2019",
+					"WIMD 2019 Rank",
+					"Overall WIMD 2019 Rank",
 					"WIMD Rank",
 					"wimd_rank",
 					"Rank",
-					"WIMD2019",
-					"Overall WIMD 2019 Rank",
 				),
 			);
 			const wimdDecile = parseNumInt(
@@ -107,7 +100,6 @@ export const useWIMDData = () => {
 					"WIMD Decile",
 					"wimd_decile",
 					"Decile",
-					"WIMD2019Decile",
 				),
 			);
 
@@ -115,6 +107,7 @@ export const useWIMDData = () => {
 				lsoaCode,
 				lsoaName: pick(
 					row,
+					"LSOA name",
 					"LSOA Name",
 					"lsoa_name",
 					"LSOA_Name",
