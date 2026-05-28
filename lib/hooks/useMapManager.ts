@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MapManager } from "@/lib/helpers/mapManager";
-import { SelectedArea } from "../types";
+import { SelectedArea } from "../types/areas";
 
 type UseMapManagerOptions = {
 	mapRef: React.RefObject<maplibregl.Map | null>;

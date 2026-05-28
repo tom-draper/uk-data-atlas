@@ -1,4 +1,4 @@
-import { EthnicityCategory, EthnicityDataset } from "../types";
+import { EthnicityCategory, EthnicityDataset } from "../types/ethnicity";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv } from "../helpers/parseCsv";
 import { parseNullableInt } from "../helpers/parseNumber";

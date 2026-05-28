@@ -92,9 +92,11 @@ export default function AtlasClient() {
 	const allErrors = [...errors, ...boundaryErrors];
 
 	const activeVizRef = useRef(activeViz);
-	activeVizRef.current = activeViz;
 	const selectedLocationRef = useRef(selectedLocation);
-	selectedLocationRef.current = selectedLocation;
+	useEffect(() => {
+		activeVizRef.current = activeViz;
+		selectedLocationRef.current = selectedLocation;
+	});
 
 	const updateParams = (location: string, viz: ActiveViz) => {
 		const params = new URLSearchParams();

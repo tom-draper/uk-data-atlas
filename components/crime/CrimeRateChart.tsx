@@ -130,9 +130,10 @@ export default function CrimeRateChart({
 	};
 
 	return (
-		<div
+		<button
+			type="button"
 			style={combinedStyle}
-			className={`p-2 rounded cursor-pointer overflow-hidden relative h-20 border-2 ${
+			className={`p-2 rounded overflow-hidden relative h-20 border-2 ${
 				isActive
 					? isDark
 						? "bg-white/10"
@@ -234,6 +235,6 @@ export default function CrimeRateChart({
 					</div>
 				)}
 			</div>
-		</div>
+		</button>
 	);
 }

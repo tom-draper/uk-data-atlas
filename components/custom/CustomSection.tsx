@@ -59,6 +59,29 @@ function getBoundaryLabel(type: string): string {
 	return BOUNDARY_TYPE_LABELS[type] || BOUNDARY_TYPE_LABELS.localAuthority;
 }
 
+function calculateMatches(
+	columnData: string[],
+	boundaryCodes: BoundaryCodes,
+): MatchResult[] {
+	if (!boundaryCodes || columnData.length === 0) return [];
+	const uniqueCodes = new Set(columnData.filter((code) => code?.trim()));
+	const results: MatchResult[] = [];
+	for (const [type, yearData] of Object.entries(boundaryCodes)) {
+		for (const [year, codeSet] of Object.entries(yearData)) {
+			const matchCount = [...uniqueCodes].filter((code) =>
+				codeSet.has(code),
+			).length;
+			results.push({
+				type: `${getBoundaryLabel(type)} [${year}]`,
+				percentage: (matchCount / uniqueCodes.size) * 100,
+				matchCount,
+				totalCodes: uniqueCodes.size,
+			});
+		}
+	}
+	return results.sort((a, b) => b.percentage - a.percentage);
+}
+
 function getMatchColorClass(percentage: number): string {
 	if (percentage >= 80) return "text-green-600";
 	if (percentage >= 50) return "text-yellow-600";
@@ -100,7 +123,6 @@ function UploadModal({
 	const [headerRow, setHeaderRow] = useState(0);
 	const [selectedColumn, setSelectedColumn] = useState("");
 	const [dataColumn, setDataColumn] = useState("");
-	const [matches, setMatches] = useState<MatchResult[]>([]);
 	const [selectedCodeType, setSelectedCodeType] = useState("");
 	const [error, setError] = useState("");
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -111,7 +133,22 @@ function UploadModal({
 		0,
 		Math.min(headerRow + 21, csvData.length),
 	);
+	const matches = (() => {
+		if (!csvData.length || !selectedColumn) return [];
+		const columnIndex = headers.indexOf(selectedColumn);
+		if (columnIndex === -1) return [];
+		const columnData = csvData
+			.slice(headerRow + 1)
+			.flatMap((row) => {
+				const val = row[columnIndex];
+				return val?.trim() ? [val] : [];
+			});
+		return calculateMatches(columnData, boundaryCodes);
+	})();
 	const validMatches = matches.filter((match) => match.percentage > 0);
+	const effectiveCodeType = selectedCodeType && matches.some((m) => m.type === selectedCodeType)
+		? selectedCodeType
+		: (matches[0]?.percentage > 0 ? matches[0].type : "");
 
 	const resetForm = () => {
 		setFile(null);
@@ -119,7 +156,6 @@ function UploadModal({
 		setHeaderRow(0);
 		setSelectedColumn("");
 		setDataColumn("");
-		setMatches([]);
 		setSelectedCodeType("");
 		setError("");
 		if (fileInputRef.current) fileInputRef.current.value = "";
@@ -154,53 +190,9 @@ function UploadModal({
 		reader.readAsText(selectedFile);
 	};
 
-	const calculateMatches = (columnData: string[]): MatchResult[] => {
-		if (!boundaryCodes || columnData.length === 0) return [];
-
-		const uniqueCodes = new Set(columnData.filter((code) => code?.trim()));
-		const results: MatchResult[] = [];
-
-		for (const [type, yearData] of Object.entries(boundaryCodes)) {
-			for (const [year, codeSet] of Object.entries(yearData)) {
-				const matchCount = [...uniqueCodes].filter((code) =>
-					codeSet.has(code),
-				).length;
-
-				results.push({
-					type: `${getBoundaryLabel(type)} [${year}]`,
-					percentage: (matchCount / uniqueCodes.size) * 100,
-					matchCount,
-					totalCodes: uniqueCodes.size,
-				});
-			}
-		}
-
-		return results.sort((a, b) => b.percentage - a.percentage);
-	};
-
-	useEffect(() => {
-		if (csvData.length > headerRow && selectedColumn) {
-			const columnIndex = headers.indexOf(selectedColumn);
-
-			if (columnIndex !== -1) {
-				const columnData = csvData
-					.slice(headerRow + 1)
-					.flatMap((row) => {
-						const val = row[columnIndex];
-						return val?.trim() ? [val] : [];
-					});
-
-				const matchResults = calculateMatches(columnData);
-				setMatches(matchResults);
-				setSelectedCodeType(
-					matchResults[0]?.percentage > 0 ? matchResults[0].type : "",
-				);
-			}
-		}
-	}, [csvData, headerRow, selectedColumn]);
 
 	const handleUpload = () => {
-		if (!file || !selectedColumn || !dataColumn || !selectedCodeType) {
+		if (!file || !selectedColumn || !dataColumn || !effectiveCodeType) {
 			setError(
 				"Please select a file, area code column, data column, and matching area type",
 			);
@@ -208,13 +200,13 @@ function UploadModal({
 		}
 
 		let boundaryType: string = "localAuthority";
-		if (selectedCodeType.includes("Ward")) {
+		if (effectiveCodeType.includes("Ward")) {
 			boundaryType = "ward";
-		} else if (selectedCodeType.includes("Westminster")) {
+		} else if (effectiveCodeType.includes("Westminster")) {
 			boundaryType = "constituency";
 		}
 
-		const match = selectedCodeType.match(/\[(\d{4})\]/);
+		const match = effectiveCodeType.match(/\[(\d{4})\]/);
 		const boundaryYear = match ? parseInt(match[1]) : null;
 
 		onUpload({
@@ -247,8 +239,10 @@ function UploadModal({
 
 	return createPortal(
 		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-			<div
+			<button
+				type="button"
 				className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+				aria-label="Close"
 				onClick={handleClose}
 			/>
 
@@ -272,7 +266,7 @@ function UploadModal({
 					</button>
 				</div>
 
-				<div className="flex-1 overflow-y-auto px-4 py-4">
+				<div className="flex-1 overflow-y-auto p-4">
 					{error && (
 						<div
 							className={`mb-4 p-3 border rounded-md flex items-center gap-2 text-sm ${isDark ? "bg-red-900/20 border-red-800/40 text-red-400" : "bg-red-50 border-red-200 text-red-700"}`}
@@ -286,12 +280,14 @@ function UploadModal({
 						{!file && (
 							<div>
 								<label
+									htmlFor="csv-file-input"
 									className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
 								>
 									Select CSV File
 								</label>
 								<input
 									ref={fileInputRef}
+									id="csv-file-input"
 									type="file"
 									accept=".csv"
 									onChange={handleFileSelect}
@@ -316,11 +312,13 @@ function UploadModal({
 							<>
 								<div>
 									<label
+										htmlFor="csv-header-row"
 										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
 									>
 										Header Row
 									</label>
 									<select
+										id="csv-header-row"
 										value={headerRow}
 										onChange={(e) =>
 											setHeaderRow(Number(e.target.value))
@@ -330,7 +328,7 @@ function UploadModal({
 										{csvData
 											.slice(0, 10)
 											.map((row, idx) => (
-												<option key={`row-${idx}`} value={idx}>
+												<option key={row.join("").slice(0, 40) || String(idx)} value={idx}>
 													Row {idx + 1}:{" "}
 													{row
 														.join(", ")
@@ -343,11 +341,13 @@ function UploadModal({
 
 								<div>
 									<label
+										htmlFor="csv-code-col"
 										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
 									>
 										Select Area Code Column
 									</label>
 									<select
+										id="csv-code-col"
 										value={selectedColumn}
 										onChange={(e) =>
 											setSelectedColumn(e.target.value)
@@ -365,11 +365,11 @@ function UploadModal({
 
 								{matches.length > 0 && (
 									<div>
-										<label
+										<p
 											className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
 										>
 											Available Boundaries
-										</label>
+										</p>
 										{validMatches.length === 0 ? (
 											<div
 												className={`px-3 py-2 rounded-md text-center ${isDark ? "bg-white/5" : "bg-gray-50"}`}
@@ -392,7 +392,7 @@ function UploadModal({
 															)
 														}
 														className={`w-full px-4 py-2 rounded-md transition-all text-left ${getMatchButtonClass(
-															selectedCodeType ===
+															effectiveCodeType ===
 																match.type,
 															match.percentage >
 																0,
@@ -425,11 +425,13 @@ function UploadModal({
 
 								<div>
 									<label
+										htmlFor="csv-data-col"
 										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
 									>
 										Select Data Column
 									</label>
 									<select
+										id="csv-data-col"
 										value={dataColumn}
 										onChange={(e) =>
 											setDataColumn(e.target.value)
@@ -446,11 +448,11 @@ function UploadModal({
 								</div>
 
 								<div>
-									<label
+									<p
 										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
 									>
 										Data Preview
-									</label>
+									</p>
 									<div className="rounded-md overflow-hidden">
 										<div className="overflow-x-auto max-h-64 overflow-y-auto">
 											<table
@@ -463,7 +465,7 @@ function UploadModal({
 														{headers.map(
 															(header, idx) => (
 																<th
-																	key={idx}
+																	key={`${header}-${idx}`}
 																	className={`px-4 py-2 text-left font-medium whitespace-nowrap ${
 																		header ===
 																		selectedColumn
@@ -492,7 +494,7 @@ function UploadModal({
 														.slice(headerRow + 1)
 														.map((row, rowIdx) => (
 															<tr
-																key={`row-${rowIdx}`}
+																key={`${row[0] ?? rowIdx}-${rowIdx}`}
 																className={`${isDark ? "hover:bg-white/5" : "hover:bg-white/40"} ${rowIdx % 2 === 1 ? (isDark ? "bg-white/5" : "bg-white/20") : ""}`}
 															>
 																{row.map(
@@ -501,7 +503,7 @@ function UploadModal({
 																		cellIdx,
 																	) => (
 																		<td
-																			key={`cell-${cellIdx}`}
+																			key={headers[cellIdx] ?? `col-${cellIdx}`}
 																			className={`px-4 py-2 whitespace-nowrap ${
 																				headers[
 																					cellIdx

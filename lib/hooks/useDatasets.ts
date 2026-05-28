@@ -27,7 +27,7 @@ import { useGeneralElectionData } from "@lib/hooks/useGeneralElectionData";
 import { usePopulationData } from "@lib/hooks/usePopulationData";
 import { useHousePriceData } from "@lib/hooks/useHousePriceData";
 import { useCrimeData } from "./useCrimeData";
-import { Datasets } from "../types";
+import { Datasets } from "../types/datasets";
 import { useIncomeData } from "./useIncomeData";
 import { useEthnicityData } from "./useEthnicityData";
 import { useBrexitData } from "./useBrexitData";

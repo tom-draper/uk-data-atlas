@@ -90,10 +90,7 @@ export default function BrexitElectoralChart({
 
 	const brexitStats = dataset ? computeBrexitElectoralStats(dataset, aggregatedData, selectedArea, codeMapper, year) : null;
 
-	if (!dataset) return null;
-
-	const isActive =
-		activeDataset?.type === "brexit" && activeDataset.id === dataset.id;
+	const isActive = !!(dataset && activeDataset?.type === "brexit" && activeDataset.id === dataset.id);
 
 	const pctLeave = brexitStats?.pctLeave ?? 0;
 	const pctRemain = brexitStats?.pctRemain ?? 0;
@@ -112,8 +109,11 @@ export default function BrexitElectoralChart({
 		isDark,
 	);
 
+	if (!dataset) return null;
+
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(isActive, isDark, "h-[65px]")}
 			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
@@ -172,6 +172,6 @@ export default function BrexitElectoralChart({
 					</div>
 				)}
 			</div>
-		</div>
+		</button>
 	);
 }

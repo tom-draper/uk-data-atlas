@@ -1,4 +1,4 @@
-import { HousePriceDataset, HousePriceWardData } from "../types";
+import { HousePriceDataset, HousePriceWardData } from "../types/housePrice";
 import { withCDN } from "../helpers/cdn";
 import { parseCsv, findHeaderLine } from "../helpers/parseCsv";
 import { parseNullableInt } from "../helpers/parseNumber";

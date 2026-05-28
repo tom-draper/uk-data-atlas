@@ -1,4 +1,4 @@
-import { MapOptions } from "../types";
+import { MapOptions } from "../types/mapOptions";
 
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	generalElection: {

@@ -1,5 +1,5 @@
 // lib/types/mapOptions.ts
-import { Datasets } from ".";
+import { Datasets } from "./datasets";
 import { ColorRange } from "./common";
 import type { BaseMapStyle } from "../config/baseMapStyles";
 

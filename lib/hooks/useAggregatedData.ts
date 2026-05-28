@@ -1,14 +1,9 @@
 // lib/hooks/useAggregatedData.ts
-import type {
-	Dataset,
-	Datasets,
-	BoundaryType,
-	BoundaryGeojson,
-	AggregatedData,
-	BoundaryData,
-	CustomDataset,
-} from "@lib/types";
-import { MapManager } from "../helpers/mapManager";
+import type { Dataset, Datasets, AggregatedData } from "@lib/types/datasets";
+import type { BoundaryType, BoundaryData } from "@lib/types/boundaries";
+import type { BoundaryGeojson } from "@lib/types/geometry";
+import type { CustomDataset } from "@lib/types/custom";
+import { MapManager } from "../helpers/mapManager/mapManager";
 
 interface DatasetConfig<T extends Dataset> {
 	datasets: Record<string, T>;

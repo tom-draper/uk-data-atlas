@@ -143,7 +143,8 @@ export default function GeneralElectionResultChart({
 	);
 
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(
 				isActive,
@@ -198,6 +199,6 @@ export default function GeneralElectionResultChart({
 					</div>
 				)}
 			</div>
-		</div>
+		</button>
 	);
 }

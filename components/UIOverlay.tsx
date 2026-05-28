@@ -182,8 +182,10 @@ export default function UIOverlay({
 
 					{/* Mobile: bottom sheet overlay */}
 					{mobilePanel !== "none" && (
-						<div
+						<button
+							type="button"
 							className="md:hidden fixed inset-0 bg-black/30 pointer-events-auto z-10"
+							aria-label="Close panel"
 							onClick={() => setMobilePanel("none")}
 						/>
 					)}

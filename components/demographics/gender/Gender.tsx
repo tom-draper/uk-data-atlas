@@ -223,7 +223,8 @@ function Gender({
 	);
 
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(isActive, isDark)}
 			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
@@ -265,7 +266,7 @@ function Gender({
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
 			/>
-		</div>
+		</button>
 	);
 }
 

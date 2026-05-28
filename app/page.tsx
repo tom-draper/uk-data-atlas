@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Navigation from "../components/Navigation";
 
 export const metadata: Metadata = {
@@ -29,12 +30,12 @@ export default function Home() {
 						</div>
 
 						<div className="pt-12 flex">
-							<a
+							<Link
 								className="bg-gray-950 text-white px-6 py-3 rounded-md hover:opacity-80 cursor-pointer"
 								href="/atlas"
 							>
 								Get Started
-							</a>
+							</Link>
 							{/* <a className="text-[#4e4e4e] pt-0 my-auto pl-8 hover:underline cursor-pointer" href="/atlas?demo=true">
 							Or try the demo
 						</a> */}

@@ -381,7 +381,8 @@ function AgeDistribution({
 	);
 
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(isActive, isDark)}
 			title="Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
@@ -415,7 +416,7 @@ function AgeDistribution({
 				ageGroups={ageGroups}
 				isActive={isActive}
 			/>
-		</div>
+		</button>
 	);
 }
 

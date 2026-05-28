@@ -106,7 +106,8 @@ export default function LocalElectionResultChart({
 	};
 
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(
 				isActive,
@@ -148,6 +149,6 @@ export default function LocalElectionResultChart({
 					</div>
 				)}
 			</div>
-		</div>
+		</button>
 	);
 }

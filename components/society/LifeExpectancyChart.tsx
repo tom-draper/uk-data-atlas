@@ -137,11 +137,11 @@ export default function LifeExpectancyChart({
 	const leStats = dataset ? computeLeStats(dataset, aggregatedData, selectedArea, datasetId, chartsLoading) : null;
 	const barRange = dataset ? computeBarRange(dataset, chartsLoading) : { min: 55, max: 85 };
 
-	if (!dataset) return null;
-
-	const isActive =
+	const isActive = !!(
+		dataset &&
 		activeDataset?.type === "lifeExpectancy" &&
-		activeDataset.id === dataset.id;
+		activeDataset.id === dataset.id
+	);
 
 	// Average of male + female bar pct → accent hex for border
 	const accentColor = leStats
@@ -174,8 +174,11 @@ export default function LifeExpectancyChart({
 		isDark,
 	);
 
+	if (!dataset) return null;
+
 	return (
-		<div
+		<button
+			type="button"
 			style={style}
 			className={cardClass(isActive, isDark, "h-20")}
 			title={dataset.metadata.source}
@@ -225,6 +228,6 @@ export default function LifeExpectancyChart({
 					</div>
 				)}
 			</div>
-		</div>
+		</button>
 	);
 }
