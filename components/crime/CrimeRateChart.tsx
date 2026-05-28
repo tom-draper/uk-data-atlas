@@ -133,7 +133,7 @@ export default function CrimeRateChart({
 		<button
 			type="button"
 			style={combinedStyle}
-			className={`w-full p-2 rounded overflow-hidden relative h-20 border-2 ${
+			className={`w-full text-left flex flex-col p-2 rounded overflow-hidden relative h-20 border-2 ${
 				isActive
 					? isDark
 						? "bg-white/10"
@@ -202,38 +202,40 @@ export default function CrimeRateChart({
 			<div
 				className={`absolute inset-0 z-0 ${isDark ? "bg-black/20" : "bg-white/20"}`}
 			/>
-			<div className="relative z-10">
+			<div className="relative z-10 flex flex-col flex-1">
 				<h3 className={chartHeadingClass(isDark)}>
 					Recorded Crime [{dataset.year}]
 				</h3>
-				{crimeRate ? (
-					<div
-						className="text-xl font-bold mt-2 text-center"
-						style={{
-							color: isDark
-								? intensity > 0.5
-									? "#fca5a5"
-									: "#fdba74"
-								: intensity > 0.5
-									? "#7f1d1d"
-									: "#78350f",
-						}}
-					>
-						{Math.round(crimeRate).toLocaleString()}
-					</div>
-				) : (
-					<div className="h-5 mt-2 mb-2">
-						{chartsLoading ? (
-							<ChartContentPlaceholder className="h-full" />
-						) : (
-							<div
-								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-							>
-								No data available
-							</div>
-						)}
-					</div>
-				)}
+				<div className="flex-1 flex items-center justify-center">
+					{crimeRate ? (
+						<div
+							className="text-xl font-bold"
+							style={{
+								color: isDark
+									? intensity > 0.5
+										? "#fca5a5"
+										: "#fdba74"
+									: intensity > 0.5
+										? "#7f1d1d"
+										: "#78350f",
+							}}
+						>
+							{Math.round(crimeRate).toLocaleString()}
+						</div>
+					) : (
+						<div className="h-5">
+							{chartsLoading ? (
+								<ChartContentPlaceholder className="h-full" />
+							) : (
+								<div
+									className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+								>
+									No data available
+								</div>
+							)}
+						</div>
+					)}
+				</div>
 			</div>
 		</button>
 	);
