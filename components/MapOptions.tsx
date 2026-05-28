@@ -180,6 +180,7 @@ export default function MapOptions({
 						>
 							{BASE_MAP_STYLES.map((style) => (
 								<button
+									type="button"
 									key={style.id}
 									onClick={() =>
 										handleBaseStyleChange(style.id)
@@ -202,12 +203,14 @@ export default function MapOptions({
 						className={`absolute flex flex-col top-2.5 right-2.5 border rounded-sm overflow-hidden backdrop-blur-md shadow-sm ${t.border} ${isDark ? "bg-white/5" : "bg-white/10"}`}
 					>
 						<button
+							type="button"
 							onClick={onZoomIn}
 							className={`px-2 py-1 text-sm transition-all duration-200 font-semibold leading-none border-b cursor-pointer ${t.border} ${t.text} ${t.hover}`}
 						>
 							+
 						</button>
 						<button
+							type="button"
 							onClick={onZoomOut}
 							className={`px-2 py-1 text-sm transition-all duration-200 font-semibold leading-none cursor-pointer ${t.text} ${t.hover}`}
 						>
@@ -217,6 +220,7 @@ export default function MapOptions({
 
 					<div className="relative" ref={containerRef}>
 						<button
+							type="button"
 							onClick={() => setIsOpen(!isOpen)}
 							className={`border rounded-sm px-2 py-1 text-xs backdrop-blur-md transition-all duration-200 shadow-sm cursor-pointer flex items-center gap-1.5 ${t.border} ${t.text} ${t.hover} ${isDark ? "bg-white/5" : "bg-white/10"}`}
 						>
@@ -241,6 +245,7 @@ export default function MapOptions({
 							>
 								{themes.map((theme) => (
 									<button
+										type="button"
 										key={theme.id}
 										onClick={() =>
 											handleThemeChange(theme.id)
@@ -270,6 +275,7 @@ export default function MapOptions({
 					</div>
 
 					<button
+						type="button"
 						onClick={onExport}
 						className={`cursor-pointer border rounded-sm px-2 py-1 text-xs backdrop-blur-md transition-all duration-200 shadow-sm ${t.border} ${t.text} ${t.hover} ${isDark ? "bg-white/5" : "bg-white/10"}`}
 					>

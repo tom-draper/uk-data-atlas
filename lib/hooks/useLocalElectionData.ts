@@ -16,7 +16,6 @@ export const useLocalElectionData = () => {
 	useEffect(() => {
 		const loadData = async () => {
 			try {
-				setLoading(true);
 
 				// Fetch all Reference Datasets (Has Ward Codes)
 				const refs = await Promise.all(

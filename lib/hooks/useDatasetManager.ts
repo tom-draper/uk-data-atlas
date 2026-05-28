@@ -1,5 +1,4 @@
 // lib/hooks/useDatasetManager.ts
-import { useMemo } from "react";
 import {
 	CrimeDataset,
 	GeneralElectionDataset,
@@ -26,7 +25,7 @@ export function useDatasetManager(
 	brexitDatasets: Record<string, BrexitLADDataset>,
 	brexitConstituencyDatasets: Record<string, BrexitConstituencyDataset>,
 ) {
-	const activeDataset = useMemo(() => {
+	const activeDataset = (() => {
 		switch (activeDatasetId) {
 			case "ageDistribution2020":
 			case "populationDensity2020":
@@ -62,15 +61,7 @@ export function useDatasetManager(
 			case "brexitConstituency2016":
 				return brexitConstituencyDatasets[activeDatasetId];
 		}
-	}, [
-		localElectionDatasets,
-		generalElectionDatasets,
-		populationDatasets,
-		housePriceDatasets,
-		brexitDatasets,
-		brexitConstituencyDatasets,
-		activeDatasetId,
-	]);
+	})();
 
 	return activeDataset;
 }

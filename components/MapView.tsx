@@ -1,4 +1,4 @@
-import { memo } from "react";
+
 import { type MapManager } from "@/lib/helpers/mapManager";
 import { useMapUpdates } from "@lib/hooks/useMapUpdates";
 import { ActiveViz, BoundaryGeojson, Dataset } from "@/lib/types";
@@ -14,7 +14,7 @@ interface MapViewProps {
 	styleReady: boolean;
 }
 
-export default memo(function MapView({
+export default function MapView({
 	activeDataset,
 	activeViz,
 	geojson,
@@ -44,4 +44,4 @@ export default memo(function MapView({
 			}}
 		/>
 	);
-});
+}

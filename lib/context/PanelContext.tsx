@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, use } from "react";
 import type { SelectedArea } from "@lib/types";
 
 interface PanelContextValue {
@@ -11,4 +11,4 @@ export const PanelContext = createContext<PanelContextValue>({
 	selectedLocation: null,
 });
 
-export const usePanelContext = () => useContext(PanelContext);
+export const usePanelContext = () => use(PanelContext);

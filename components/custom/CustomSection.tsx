@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo, memo } from "react";
+import { useState, useRef, useEffect } from "react";
 import Papa from "papaparse";
 import { createPortal } from "react-dom";
 import { X, Upload, AlertCircle } from "lucide-react";
@@ -262,6 +262,7 @@ function UploadModal({
 						Upload Custom Dataset
 					</h2>
 					<button
+						type="button"
 						onClick={handleClose}
 						className={`cursor-pointer transition-colors ${isDark ? "text-gray-400 hover:text-gray-200" : "text-gray-400 hover:text-gray-600"}`}
 					>
@@ -295,6 +296,7 @@ function UploadModal({
 									className="hidden"
 								/>
 								<button
+									type="button"
 									onClick={() =>
 										fileInputRef.current?.click()
 									}
@@ -380,6 +382,7 @@ function UploadModal({
 											<div className="space-y-1 max-h-64 overflow-y-auto">
 												{validMatches.map((match) => (
 													<button
+														type="button"
 														key={match.type}
 														onClick={() =>
 															setSelectedCodeType(
@@ -539,12 +542,14 @@ function UploadModal({
 					className={`flex items-center justify-end gap-2 px-3 py-2 pb-2.5 shrink-0 ${isDark ? "bg-white/5" : "bg-white/20"}`}
 				>
 					<button
+						type="button"
 						onClick={handleClose}
 						className={`cursor-pointer rounded-sm px-3 py-1 text-xs transition-colors duration-150 ${isDark ? "text-gray-400 hover:text-gray-200 hover:bg-white/10" : "text-gray-500 hover:text-gray-600 hover:bg-white/20"}`}
 					>
 						Cancel
 					</button>
 					<button
+						type="button"
 						onClick={handleUpload}
 						className={`cursor-pointer border rounded-sm px-3 py-1 text-xs transition-colors duration-150 shadow-sm ${isDark ? "border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-gray-100" : "border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20 text-gray-500 hover:text-gray-600"}`}
 					>
@@ -574,7 +579,7 @@ function CustomDatasetCard({
 }) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const displayValue = useMemo(() => {
+	const displayValue = (() => {
 		if (!customDataset || !customDataset.data) return null;
 
 		if (selectedArea) {
@@ -649,9 +654,9 @@ function CustomDatasetCard({
 		}
 
 		return null;
-	}, [customDataset, selectedArea, codeMapper, aggregatedData]);
+	})();
 
-	const handleClick = () => {
+	const handleActivate = () => {
 		setActiveViz({
 			vizId: "custom",
 			datasetType: "custom",
@@ -663,7 +668,8 @@ function CustomDatasetCard({
 
 	return (
 		<button
-			onClick={handleClick}
+			type="button"
+			onClick={handleActivate}
 			className={`w-full rounded-md transition-all border-2 duration-200 text-left h-20 relative overflow-hidden cursor-pointer ${
 				isActive
 					? isDark
@@ -726,7 +732,7 @@ function CustomDatasetCard({
 	);
 }
 
-export default memo(function CustomSection({
+export default function CustomSection({
 	customDataset,
 	setCustomDataset,
 	aggregatedData,
@@ -811,10 +817,11 @@ export default memo(function CustomSection({
 					<div
 						className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}
 					>
-						Loading...
+						Loading…
 					</div>
 				) : (
 					<button
+						type="button"
 						onClick={() => setIsOpen(true)}
 						className={`w-full h-20 p-3 rounded-md transition-colors duration-150 border-2 border-dashed cursor-pointer ${
 							isDark
@@ -851,4 +858,4 @@ export default memo(function CustomSection({
 			/>
 		</>
 	);
-});
+}

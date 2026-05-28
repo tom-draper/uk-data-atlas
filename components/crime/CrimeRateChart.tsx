@@ -6,7 +6,7 @@ import {
 	CrimeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo, useState } from "react";
+import { useState } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -39,7 +39,30 @@ const layers = [
 	{ r: 5, opacity: 0.8 },
 ];
 
-export default memo(function CrimeRateChart({
+function computeCrimeRate(
+	dataset: CrimeDataset,
+	aggregatedData: Record<number, AggregatedCrimeData> | null,
+	selectedArea: SelectedArea | null,
+	codeMapper: CodeMapper | undefined,
+	year: number,
+): number | null {
+	let rate: number | null = null;
+	if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+		rate = aggregatedData[dataset.year].averageRecordedCrime || null;
+	} else if (selectedArea && selectedArea.type === "localAuthority" && selectedArea.data) {
+		const laCode = selectedArea.code;
+		rate = dataset.data?.[laCode]?.totalRecordedCrime || null;
+		if (!rate && codeMapper) {
+			const mappedCode = codeMapper.getCodeForYear("localAuthority", laCode, year);
+			if (mappedCode) {
+				rate = dataset.data?.[mappedCode]?.totalRecordedCrime || null;
+			}
+		}
+	}
+	return rate;
+}
+
+export default function CrimeRateChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -54,47 +77,13 @@ export default memo(function CrimeRateChart({
 	const [hovered, setHovered] = useState(false);
 	const dataset = availableDatasets?.[year];
 
-	const filterId = useMemo(() => `contour-filter-${year}`, [year]);
+	const filterId = `contour-filter-${year}`;
 
-	const distortionSeed = useMemo(() => {
-		if (!selectedArea) return 0;
-		const code = selectedArea.code || "";
-		return (
-			code.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
-			100
-		);
-	}, [selectedArea]);
+	const distortionSeed = selectedArea
+		? (selectedArea.code || "").split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) % 100
+		: 0;
 
-	const crimeRate = useMemo(() => {
-		if (!dataset) return null;
-		let rate: number | null = null;
-		if (
-			selectedArea === null &&
-			aggregatedData &&
-			aggregatedData[dataset.year]
-		) {
-			rate = aggregatedData[dataset.year].averageRecordedCrime || null;
-		} else if (
-			selectedArea &&
-			selectedArea.type === "localAuthority" &&
-			selectedArea.data
-		) {
-			const laCode = selectedArea.code;
-			rate = dataset.data?.[laCode]?.totalRecordedCrime || null;
-			if (!rate && codeMapper) {
-				const mappedCode = codeMapper.getCodeForYear(
-					"localAuthority",
-					laCode,
-					year,
-				);
-				if (mappedCode) {
-					rate =
-						dataset.data?.[mappedCode]?.totalRecordedCrime || null;
-				}
-			}
-		}
-		return rate;
-	}, [dataset, aggregatedData, selectedArea, codeMapper, year]);
+	const crimeRate = dataset ? computeCrimeRate(dataset, aggregatedData, selectedArea, codeMapper, year) : null;
 
 	if (!dataset) return null;
 
@@ -247,4 +236,4 @@ export default memo(function CrimeRateChart({
 			</div>
 		</div>
 	);
-});
+}

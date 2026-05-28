@@ -1,5 +1,4 @@
 // components/population/gender/Gender.tsx
-import { useMemo, memo } from "react";
 import {
 	ActiveViz,
 	AggregatedPopulationData,
@@ -43,8 +42,7 @@ function Gender({
 	const vizId = `gender-${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
-	// Calculate total males and females
-	const { totalMales, totalFemales } = useMemo(() => {
+	const { totalMales, totalFemales } = (() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			const data = aggregatedData[dataset.year];
@@ -207,7 +205,7 @@ function Gender({
 
 		// Unsupported area type or missing data
 		return { totalMales: 0, totalFemales: 0 };
-	}, [dataset, aggregatedData, selectedArea, codeMapper]);
+	})();
 
 	const isDark = useIsDark();
 	const total = (totalMales ?? 0) + (totalFemales ?? 0);
@@ -271,4 +269,4 @@ function Gender({
 	);
 }
 
-export default memo(Gender);
+export default Gender;

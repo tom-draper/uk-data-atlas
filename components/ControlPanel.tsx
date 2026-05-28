@@ -3,7 +3,7 @@ import { LocationBounds, PopulationDataset } from "@lib/types";
 import TitlePane from "./TitlePane";
 import LocationPane from "./LocationPanel";
 import MapOptions from "./MapOptions";
-import { memo } from "react";
+
 import { MapOptions as MapOptionsType } from "@/lib/types/mapOptions";
 
 interface ControlPanelProps {
@@ -19,7 +19,7 @@ interface ControlPanelProps {
 	onExport: () => void;
 }
 
-export default memo(function ControlPanel({
+export default function ControlPanel({
 	selectedLocation,
 	onLocationClick,
 	populationDataset,
@@ -52,4 +52,4 @@ export default memo(function ControlPanel({
 			</div>
 		</div>
 	);
-});
+}

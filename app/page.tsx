@@ -23,7 +23,7 @@ export default function Home() {
 
 						<div className="pt-12 flex">
 							<a
-								className="bg-black text-white px-6 py-3 rounded-md hover:opacity-80 cursor-pointer"
+								className="bg-gray-950 text-white px-6 py-3 rounded-md hover:opacity-80 cursor-pointer"
 								href="/atlas"
 							>
 								Get Started

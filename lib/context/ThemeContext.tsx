@@ -1,10 +1,10 @@
 "use client";
-import { createContext, useContext } from "react";
+import { createContext, use } from "react";
 
 const ThemeContext = createContext(false);
 
 export const ThemeProvider = ThemeContext.Provider;
 
 export function useIsDark() {
-	return useContext(ThemeContext);
+	return use(ThemeContext);
 }

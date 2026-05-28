@@ -11,7 +11,6 @@ import {
 	getFeatureProp,
 } from "@/lib/types";
 import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
-import { useMemo, memo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -98,13 +97,12 @@ const getDensityCategory = (density: number) => {
 	return DENSITY_CATEGORIES[DENSITY_CATEGORIES.length - 1];
 };
 
-// Memoized grid component
-const DensityGrid = memo(({ density }: { density: number }) => {
+function DensityGrid({ density }: { density: number }) {
 	const gridWidth = 18;
 	const gridHeight = 4;
 	const totalSquares = gridWidth * gridHeight;
 
-	const squareClasses = useMemo(() => {
+	const squareClasses = (() => {
 		const category = getDensityCategory(density);
 		const seededRandom = createSeededRandom(Math.floor(density));
 
@@ -128,7 +126,7 @@ const DensityGrid = memo(({ density }: { density: number }) => {
 		}
 
 		return colors;
-	}, [density, totalSquares]);
+	})();
 
 	return (
 		<div
@@ -146,9 +144,7 @@ const DensityGrid = memo(({ density }: { density: number }) => {
 			))}
 		</div>
 	);
-});
-
-DensityGrid.displayName = "DensityGrid";
+}
 
 const densityCache = new Map<string, Map<number, any>>();
 
@@ -186,7 +182,7 @@ function PopulationDensityChart({
 	const vizId = `populationDensity${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
-	const { density, areaSqKm, total } = useMemo(() => {
+	const { density, areaSqKm, total } = (() => {
 		// Handle no area selected - use aggregated data
 		if (selectedArea === null && aggregatedData) {
 			const data = aggregatedData[dataset.year];
@@ -353,7 +349,7 @@ function PopulationDensityChart({
 
 		// Unsupported area type
 		return { density: null, areaSqKm: null, total: null };
-	}, [dataset, aggregatedData, boundaryData, selectedArea, codeMapper]);
+	})();
 
 	const accentColor =
 		density !== null ? getDensityCategory(density).hex : null;
@@ -428,4 +424,4 @@ function PopulationDensityChart({
 	);
 }
 
-export default memo(PopulationDensityChart);
+export default PopulationDensityChart;

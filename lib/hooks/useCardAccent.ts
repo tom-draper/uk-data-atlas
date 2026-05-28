@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { hexToRgb, lightenHex } from "@/lib/helpers/colorScale/interpolation";
 
 export function useCardAccent(
@@ -8,22 +8,19 @@ export function useCardAccent(
 ) {
 	const [hovered, setHovered] = useState(false);
 
-	const style = useMemo<React.CSSProperties>(() => {
-		if (!accentColor || (!isActive && !hovered)) return {};
-		const s: React.CSSProperties = {
-			borderColor: lightenHex(accentColor, 0.45),
-		};
+	let style: React.CSSProperties = {};
+	if (accentColor && (isActive || hovered)) {
+		style = { borderColor: lightenHex(accentColor, 0.45) };
 		if (isActive) {
 			const { r, g, b } = hexToRgb(accentColor);
-			s.backgroundColor = isDark
+			style.backgroundColor = isDark
 				? `rgba(${r}, ${g}, ${b}, 0.12)`
 				: `rgba(${r}, ${g}, ${b}, 0.06)`;
 		}
-		return s;
-	}, [accentColor, isActive, hovered, isDark]);
+	}
 
-	const onMouseEnter = useCallback(() => setHovered(true), []);
-	const onMouseLeave = useCallback(() => setHovered(false), []);
+	const onMouseEnter = () => setHovered(true);
+	const onMouseLeave = () => setHovered(false);
 
 	return { style, onMouseEnter, onMouseLeave };
 }

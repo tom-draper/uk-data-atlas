@@ -1,5 +1,5 @@
 "use client";
-import { memo } from "react";
+
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
@@ -25,7 +25,7 @@ interface EducationSectionProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default memo(function EducationSection({
+export default function EducationSection({
 	activeDataset,
 	availableQualificationDatasets,
 	aggregatedQualificationData,
@@ -65,4 +65,4 @@ export default memo(function EducationSection({
 				))}
 		</div>
 	);
-});
+}

@@ -1,7 +1,6 @@
 // components/LocalElectionResultChart.tsx
 "use client";
 
-import { memo, useMemo } from "react";
 import {
 	calculateTurnout,
 	processPartyVotes,
@@ -58,8 +57,7 @@ const useLocalElectionData = (
 		wardYear: number,
 	) => string[],
 ) => {
-	return useMemo(() => {
-		return LOCAL_ELECTION_YEARS.map((year): ProcessedYearData => {
+	return LOCAL_ELECTION_YEARS.map((year): ProcessedYearData => {
 			const dataset = availableDatasets[year];
 
 			if (!dataset) {
@@ -253,15 +251,7 @@ const useLocalElectionData = (
 				turnout,
 				hasData: partyData.length > 0,
 			};
-		});
-	}, [
-		availableDatasets,
-		aggregatedData,
-		selectedArea,
-		getCodeForYear,
-		getWardsForLad,
-		getWardsForConstituency,
-	]);
+	});
 };
 
 interface LocalElectionResultChartSectionProps {
@@ -274,7 +264,7 @@ interface LocalElectionResultChartSectionProps {
 	codeMapper?: CodeMapper;
 }
 
-export default memo(function LocalElectionResultChartSection({
+export default function LocalElectionResultChartSection({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -327,4 +317,4 @@ export default memo(function LocalElectionResultChartSection({
 			))}
 		</div>
 	);
-});
+}

@@ -1,4 +1,4 @@
-import { memo } from "react";
+
 
 interface AgeGroupBarProps {
 	label: string;
@@ -7,7 +7,7 @@ interface AgeGroupBarProps {
 	color: string;
 }
 
-export default memo(function AgeGroupBar({
+export default function AgeGroupBar({
 	label,
 	value,
 	total,
@@ -36,4 +36,4 @@ export default memo(function AgeGroupBar({
 			</div>
 		</div>
 	);
-});
+}

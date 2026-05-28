@@ -8,9 +8,7 @@ import {
 	PopulationWardData,
 } from "@lib/types";
 import {
-	memo,
 	useEffect,
-	useMemo,
 	useState,
 	useTransition,
 	useDeferredValue,
@@ -82,7 +80,7 @@ const calculateFeatureBounds = (
 	return [minLng, minLat, maxLng, maxLat];
 };
 
-export default memo(function LocationPanel({
+export default function LocationPanel({
 	selectedLocation,
 	onLocationClick,
 	populationDataset,
@@ -93,10 +91,8 @@ export default memo(function LocationPanel({
 	const [isPending, startTransition] = useTransition();
 	const inputRef = useRef<HTMLInputElement>(null);
 
-	// Defer search query for non-blocking updates
 	const deferredSearchQuery = useDeferredValue(searchQuery);
 
-	// Load ward boundaries using the library
 	useEffect(() => {
 		fetchBoundaryFile(GEOJSON_PATHS.ward[2023])
 			.then((data) => setGeojson(data))
@@ -105,9 +101,8 @@ export default memo(function LocationPanel({
 			);
 	}, []);
 
-	// Build a map of ward code -> feature for quick lookups
-	const geojsonFeatureMap = useMemo(() => {
-		if (!geojson) return {};
+	const geojsonFeatureMap = (() => {
+		if (!geojson) return {} as Record<string, BoundaryGeojson["features"][0]>;
 
 		const map: Record<string, BoundaryGeojson["features"][0]> = {};
 		geojson.features.forEach((feature) => {
@@ -121,10 +116,9 @@ export default memo(function LocationPanel({
 		});
 
 		return map;
-	}, [geojson]);
+	})();
 
-	// Enrich population data with geographic bounds and pre-calculated totals
-	const enrichedPopulation = useMemo(() => {
+	const enrichedPopulation = (() => {
 		const enriched: Record<
 			string,
 			PopulationWardData & {
@@ -134,7 +128,7 @@ export default memo(function LocationPanel({
 		> = {};
 
 		Object.entries(populationDataset.data).forEach(
-			([wardCode, wardData]) => {
+			([wardCode, wardData]: [string, PopulationWardData]) => {
 				const feature = geojsonFeatureMap[wardCode];
 				const bounds: [number, number, number, number] = feature
 					? calculateFeatureBounds(feature)
@@ -150,13 +144,11 @@ export default memo(function LocationPanel({
 		);
 
 		return enriched;
-	}, [populationDataset, geojsonFeatureMap]);
+	})();
 
-	// Calculate population totals for each location
-	const locationPopulations = useMemo(() => {
+	const locationPopulations = (() => {
 		const populations = new Map<string, number>();
 
-		// Initialize country populations
 		const countryPops: Record<string, number> = {
 			"United Kingdom": 0,
 			England: 0,
@@ -165,13 +157,11 @@ export default memo(function LocationPanel({
 			"Northern Ireland": 1903175,
 		};
 
-		// Single pass through all wards to calculate country totals
 		Object.entries(enrichedPopulation).forEach(([wardCode, wardData]) => {
 			const population = wardData.totalPopulation;
 
 			countryPops["United Kingdom"] += population;
 
-			// Assign to country based on ward code prefix
 			if (wardCode.startsWith("E")) countryPops["England"] += population;
 			else if (wardCode.startsWith("S"))
 				countryPops["Scotland"] += population;
@@ -181,14 +171,12 @@ export default memo(function LocationPanel({
 				countryPops["Northern Ireland"] += population;
 		});
 
-		// Store country populations
 		Object.entries(countryPops).forEach(([country, pop]) => {
 			populations.set(country, pop);
 		});
 
-		// Calculate LAD-based location populations
 		Object.entries(LOCATIONS).forEach(([location, bounds]) => {
-			if (COUNTRY_LOCATIONS.has(location)) return; // Already calculated
+			if (COUNTRY_LOCATIONS.has(location)) return;
 
 			if (bounds.lad_codes && bounds.lad_codes.length > 0) {
 				let total = 0;
@@ -202,10 +190,9 @@ export default memo(function LocationPanel({
 		});
 
 		return populations;
-	}, [enrichedPopulation]);
+	})();
 
-	// Build the complete list of locations with populations
-	const allLocations = useMemo(() => {
+	const allLocations = (() => {
 		const locations = Object.entries(LOCATIONS)
 			.map(([location, bounds]) => ({
 				name: location,
@@ -216,17 +203,16 @@ export default memo(function LocationPanel({
 			.sort((a, b) => b.totalPopulation - a.totalPopulation);
 
 		return locations;
-	}, [locationPopulations]);
+	})();
 
-	// Filter locations based on search query
-	const filteredLocations = useMemo(() => {
+	const filteredLocations = (() => {
 		if (!deferredSearchQuery.trim()) return allLocations;
 
 		const query = deferredSearchQuery.toLowerCase();
-		return allLocations.filter(({ name }) =>
+		return allLocations.filter(({ name }: { name: string }) =>
 			name.toLowerCase().includes(query),
 		);
-	}, [allLocations, deferredSearchQuery]);
+	})();
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchQuery(e.target.value);
@@ -282,6 +268,7 @@ export default memo(function LocationPanel({
 						/>
 					</div>
 					<button
+						type="button"
 						onClick={handleSearchToggle}
 						className={`mr-3 ml-2 transition-colors cursor-pointer ${t.textMuted} hover:${isDark ? "text-gray-200" : "text-gray-600"}`}
 					>
@@ -322,8 +309,9 @@ export default memo(function LocationPanel({
 
 			{/* Scrollable location list */}
 			<div className="overflow-y-auto scroll-container flex-1 px-1 py-1 pt-0.5">
-				{filteredLocations.map(({ name, totalPopulation, bounds }) => (
+				{filteredLocations.map(({ name, totalPopulation, bounds }: { name: string; totalPopulation: number; bounds: LocationBounds }) => (
 					<button
+						type="button"
 						key={name}
 						onClick={() => onLocationClick(name, bounds)}
 						className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${
@@ -349,4 +337,4 @@ export default memo(function LocationPanel({
 			</div>
 		</div>
 	);
-});
+}

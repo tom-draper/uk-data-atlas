@@ -1,6 +1,6 @@
 // components/HousePriceChart.tsx
 "use client";
-import { memo } from "react";
+
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
@@ -28,7 +28,7 @@ interface EconomicsSectionProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default memo(function EconomicsSection({
+export default function EconomicsSection({
 	activeDataset,
 	availableHousePriceDatasets,
 	aggregatedHousePriceData,
@@ -81,4 +81,4 @@ export default memo(function EconomicsSection({
 			)}
 		</div>
 	);
-});
+}

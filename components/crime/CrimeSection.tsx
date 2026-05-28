@@ -1,6 +1,6 @@
 // components/crime/CrimeChart.tsx
 "use client";
-import { memo } from "react";
+
 import {
 	ActiveViz,
 	AggregatedCrimeData,
@@ -22,7 +22,7 @@ interface CrimeChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default memo(function CrimeSection({
+export default function CrimeSection({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -53,4 +53,4 @@ export default memo(function CrimeSection({
 			/>
 		</div>
 	);
-});
+}

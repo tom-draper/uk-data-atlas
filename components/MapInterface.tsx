@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
@@ -148,20 +148,13 @@ export default function MapInterface({
 		setSelectedArea,
 	});
 
-	// Get active dataset
-	const activeDataset = useMemo(() => {
-		return getActiveDataset(datasets, activeViz, customDataset);
-	}, [datasets, activeViz, customDataset]);
+	const activeDataset = getActiveDataset(datasets, activeViz, customDataset);
 
-	// Get geojson for active dataset
-	const geojson = useMemo(() => {
-		if (!activeDataset) return null;
-		return (
-			boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
+	const geojson = !activeDataset
+		? null
+		: (boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
 				activeDataset.boundaryYear
-			] ?? null
-		);
-	}, [activeDataset, boundaryData]);
+			] ?? null);
 
 	// Initialize map manager with stable callbacks
 	const mapManager = useMapManager({
@@ -170,24 +163,19 @@ export default function MapInterface({
 		interactionHandlers,
 	});
 
-	// Location navigation - memoize with proper dependencies
-	const handleLocationClick = useCallback(
-		(location: string) => {
-			const locationData = LOCATIONS[location];
-			if (!map.current || !locationData) return;
+	const handleLocationClick = (location: string) => {
+		const locationData = LOCATIONS[location];
+		if (!map.current || !locationData) return;
 
-			setSelectedLocation(location);
+		setSelectedLocation(location);
 
-			// Use requestAnimationFrame for smooth animation
-			requestAnimationFrame(() => {
-				map.current?.fitBounds(locationData.bounds, {
-					padding: MAP_CONFIG.fitBoundsPadding,
-					duration: MAP_CONFIG.fitBoundsDuration,
-				});
+		requestAnimationFrame(() => {
+			map.current?.fitBounds(locationData.bounds, {
+				padding: MAP_CONFIG.fitBoundsPadding,
+				duration: MAP_CONFIG.fitBoundsDuration,
 			});
-		},
-		[map, setSelectedLocation],
-	);
+		});
+	};
 
 	// Zoom handlers - create once
 	const zoomHandlersRef = useRef({
@@ -205,7 +193,7 @@ export default function MapInterface({
 		},
 	});
 
-	const handleExport = useCallback(() => {
+	const handleExport = () => {
 		type MapWithExport = maplibregl.Map & {
 			once(type: "render", listener: () => void): void;
 			triggerRepaint(): void;
@@ -226,13 +214,9 @@ export default function MapInterface({
 		});
 
 		mapInstance.triggerRepaint();
-	}, [map]);
+	};
 
-	// Normalize ward codes in local election datasets against boundaryCodes.
-	// The HoC source occasionally carries post-boundary-review codes for elections
-	// that predate those reviews. If a code is missing from the expected boundary
-	// year's valid set, getCodeForYear resolves it to the correct equivalent code.
-	const normalizedDatasets = useMemo(() => {
+	const normalizedDatasets = (() => {
 		if (!boundaryCodes?.ward) return datasets;
 
 		const normalizedLocalElection = Object.fromEntries(
@@ -251,7 +235,7 @@ export default function MapInterface({
 		) as typeof datasets.localElection;
 
 		return { ...datasets, localElection: normalizedLocalElection };
-	}, [datasets, boundaryCodes, codeMapper]);
+	})();
 
 	const aggregatedData = useAggregatedData({
 		mapManager,

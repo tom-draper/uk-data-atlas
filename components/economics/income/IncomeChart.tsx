@@ -7,7 +7,6 @@ import {
 	IncomeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -41,7 +40,38 @@ const particleColors = [
 	"text-teal-300",
 ];
 
-export default memo(function IncomeChart({
+function computeParticles(medianIncome: number | null) {
+	if (!medianIncome) return [];
+
+	// Clamp income between 25k and 45k for the visual calculation
+	const minIncome = 25000;
+	const maxIncome = 45000;
+	const clampedIncome = Math.max(minIncome, Math.min(medianIncome, maxIncome));
+
+	const minParticles = 4;
+	const maxParticles = 100;
+	const percentage = (clampedIncome - minIncome) / (maxIncome - minIncome);
+	const count = Math.round(minParticles + percentage * (maxParticles - minParticles));
+
+	// Generate static random properties for the particles
+	return Array.from({ length: count }).map((_, i) => ({
+		id: i,
+		top: `${Math.random() * 100}%`,
+		left: `${Math.random() * 100}%`,
+		rotation: Math.random() * 360,
+		size: Math.random() * 1.5 + 0.8, // rem
+		opacity: Math.random() * 0.3 + 0.05, // Very faint (0.05 to 0.35)
+		blur:
+			Math.random() < 0.4
+				? "blur-[1px]"
+				: Math.random() < 0.2
+					? "blur-[2px]"
+					: "blur-none", // Depth of field
+		color: particleColors[Math.floor(Math.random() * particleColors.length)],
+	}));
+}
+
+export default function IncomeChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -89,44 +119,7 @@ export default memo(function IncomeChart({
 		}
 	}
 
-	const particles = useMemo(() => {
-		if (!medianIncome) return [];
-
-		// Clamp income between 25k and 45k for the visual calculation
-		const minIncome = 25000;
-		const maxIncome = 45000;
-		const clampedIncome = Math.max(
-			minIncome,
-			Math.min(medianIncome, maxIncome),
-		);
-
-		const minParticles = 4;
-		const maxParticles = 100;
-		const percentage =
-			(clampedIncome - minIncome) / (maxIncome - minIncome);
-		const count = Math.round(
-			minParticles + percentage * (maxParticles - minParticles),
-		);
-
-		// Generate static random properties for the particles
-		return Array.from({ length: count }).map((_, i) => ({
-			id: i,
-			top: `${Math.random() * 100}%`,
-			left: `${Math.random() * 100}%`,
-			rotation: Math.random() * 360,
-			size: Math.random() * 1.5 + 0.8, // rem
-			opacity: Math.random() * 0.3 + 0.05, // Very faint (0.05 to 0.35)
-			blur:
-				Math.random() < 0.4
-					? "blur-[1px]"
-					: Math.random() < 0.2
-						? "blur-[2px]"
-						: "blur-none", // Depth of field
-			color: particleColors[
-				Math.floor(Math.random() * particleColors.length)
-			],
-		}));
-	}, [medianIncome]);
+	const particles = computeParticles(medianIncome);
 
 	if (!dataset) return null;
 	const isActive =
@@ -209,4 +202,4 @@ export default memo(function IncomeChart({
 			)}
 		</div>
 	);
-});
+}

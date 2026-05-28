@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import {
 	DEFAULT_VISIBILITY,
 	ChartKey,
@@ -68,43 +67,23 @@ export function useDatasets(): UseDatasetsResult {
 	);
 	const qualification = useQualificationData();
 
-	// Combine datasets
-	const datasets = useMemo(
-		() => ({
-			localElection: localElection.datasets,
-			generalElection: generalElection.datasets,
-			population: population.datasets,
-			ethnicity: ethnicity.datasets,
-			housePrice: housePrice.datasets,
-			crime: crime.datasets,
-			income: income.datasets,
-			brexit: brexit.datasets,
-			brexitConstituency: brexitConstituency.datasets,
-			imd: imd.datasets,
-			simd: simd.datasets,
-			wimd: wimd.datasets,
-			nimdm: nimdm.datasets,
-			lifeExpectancy: lifeExpectancy.datasets,
-			qualification: qualification.datasets,
-		}),
-		[
-			localElection.datasets,
-			generalElection.datasets,
-			population.datasets,
-			ethnicity.datasets,
-			housePrice.datasets,
-			crime.datasets,
-			income.datasets,
-			brexit.datasets,
-			brexitConstituency.datasets,
-			imd.datasets,
-			simd.datasets,
-			wimd.datasets,
-			nimdm.datasets,
-			lifeExpectancy.datasets,
-			qualification.datasets,
-		],
-	);
+	const datasets = {
+		localElection: localElection.datasets,
+		generalElection: generalElection.datasets,
+		population: population.datasets,
+		ethnicity: ethnicity.datasets,
+		housePrice: housePrice.datasets,
+		crime: crime.datasets,
+		income: income.datasets,
+		brexit: brexit.datasets,
+		brexitConstituency: brexitConstituency.datasets,
+		imd: imd.datasets,
+		simd: simd.datasets,
+		wimd: wimd.datasets,
+		nimdm: nimdm.datasets,
+		lifeExpectancy: lifeExpectancy.datasets,
+		qualification: qualification.datasets,
+	};
 
 	// Combined loading state
 	const loading =
@@ -125,41 +104,22 @@ export function useDatasets(): UseDatasetsResult {
 		qualification.loading;
 
 	// Collect all errors
-	const errors = useMemo(() => {
-		const errs: string[] = [];
-		if (localElection.error) errs.push(localElection.error);
-		if (generalElection.error) errs.push(generalElection.error);
-		if (population.error) errs.push(population.error);
-		if (ethnicity.error) errs.push(ethnicity.error);
-		if (housePrice.error) errs.push(housePrice.error);
-		if (crime.error) errs.push(crime.error);
-		if (income.error) errs.push(income.error);
-		if (brexit.error) errs.push(brexit.error);
-		if (brexitConstituency.error) errs.push(brexitConstituency.error);
-		if (imd.error) errs.push(imd.error);
-		if (simd.error) errs.push(simd.error);
-		if (wimd.error) errs.push(wimd.error);
-		if (nimdm.error) errs.push(nimdm.error);
-		if (lifeExpectancy.error) errs.push(lifeExpectancy.error);
-		if (qualification.error) errs.push(qualification.error);
-		return errs;
-	}, [
-		localElection.error,
-		generalElection.error,
-		population.error,
-		ethnicity.error,
-		housePrice.error,
-		crime.error,
-		income.error,
-		brexit.error,
-		brexitConstituency.error,
-		imd.error,
-		simd.error,
-		wimd.error,
-		nimdm.error,
-		lifeExpectancy.error,
-		qualification.error,
-	]);
+	const errors: string[] = [];
+	if (localElection.error) errors.push(localElection.error);
+	if (generalElection.error) errors.push(generalElection.error);
+	if (population.error) errors.push(population.error);
+	if (ethnicity.error) errors.push(ethnicity.error);
+	if (housePrice.error) errors.push(housePrice.error);
+	if (crime.error) errors.push(crime.error);
+	if (income.error) errors.push(income.error);
+	if (brexit.error) errors.push(brexit.error);
+	if (brexitConstituency.error) errors.push(brexitConstituency.error);
+	if (imd.error) errors.push(imd.error);
+	if (simd.error) errors.push(simd.error);
+	if (wimd.error) errors.push(wimd.error);
+	if (nimdm.error) errors.push(nimdm.error);
+	if (lifeExpectancy.error) errors.push(lifeExpectancy.error);
+	if (qualification.error) errors.push(qualification.error);
 
 	return { datasets, loading, errors };
 }

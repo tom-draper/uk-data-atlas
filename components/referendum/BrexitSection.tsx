@@ -1,6 +1,6 @@
 // components/referendum/BrexitSection.tsx
 "use client";
-import { memo } from "react";
+
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
@@ -27,7 +27,7 @@ interface BrexitSectionProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-export default memo(function BrexitSection({
+export default function BrexitSection({
 	activeDataset,
 	availableDatasets,
 	availableConstituencyDatasets,
@@ -80,4 +80,4 @@ export default memo(function BrexitSection({
 			)}
 		</div>
 	);
-});
+}

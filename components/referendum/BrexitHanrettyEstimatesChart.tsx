@@ -6,7 +6,7 @@ import {
 	BrexitConstituencyDataset,
 	SelectedArea,
 } from "@lib/types";
-import { memo, useMemo } from "react";
+
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -34,7 +34,23 @@ interface BrexitHanrettyEstimatesChartProps {
 const LEAVE_COLOR = "#b41414"; // rgb(180, 20, 20) — matches bar fill
 const REMAIN_COLOR = "#1e3cb4"; // rgb(30, 60, 180) — matches bar fill
 
-export default memo(function BrexitHanrettyEstimatesChart({
+function computeBrexitHanrettyStats(
+	dataset: BrexitConstituencyDataset,
+	aggregatedData: Record<number, AggregatedBrexitData> | null,
+	selectedArea: SelectedArea | null,
+) {
+	if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+		const agg = aggregatedData[dataset.year];
+		return { pctLeave: agg.pctLeave, pctRemain: agg.pctRemain };
+	}
+	if (selectedArea && selectedArea.type === "constituency" && selectedArea.data) {
+		const area = dataset.data?.[selectedArea.code];
+		if (area) return { pctLeave: area.pctLeave, pctRemain: 100 - area.pctLeave };
+	}
+	return null;
+}
+
+export default function BrexitHanrettyEstimatesChart({
 	activeDataset,
 	availableDatasets,
 	aggregatedData,
@@ -47,38 +63,7 @@ export default memo(function BrexitHanrettyEstimatesChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const brexitStats = useMemo(() => {
-		if (!dataset) return null;
-
-		if (
-			selectedArea === null &&
-			aggregatedData &&
-			aggregatedData[dataset.year]
-		) {
-			const agg = aggregatedData[dataset.year];
-			return {
-				pctLeave: agg.pctLeave,
-				pctRemain: agg.pctRemain,
-			};
-		}
-
-		if (
-			selectedArea &&
-			selectedArea.type === "constituency" &&
-			selectedArea.data
-		) {
-			const code = selectedArea.code;
-			const area = dataset.data?.[code];
-			if (area) {
-				return {
-					pctLeave: area.pctLeave,
-					pctRemain: 100 - area.pctLeave,
-				};
-			}
-		}
-
-		return null;
-	}, [dataset, aggregatedData, selectedArea, year]);
+	const brexitStats = dataset ? computeBrexitHanrettyStats(dataset, aggregatedData, selectedArea) : null;
 
 	if (!dataset) return null;
 
@@ -165,4 +150,4 @@ export default memo(function BrexitHanrettyEstimatesChart({
 			</div>
 		</div>
 	);
-});
+}

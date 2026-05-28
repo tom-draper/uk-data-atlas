@@ -8,7 +8,6 @@ import {
 	AggregatedEthnicityData,
 } from "@/lib/types";
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
-import { useMemo, memo } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -30,31 +29,32 @@ interface ProcessedEthnicityData {
 	parentCategory: string;
 }
 
-const EthnicityBar = memo(({ data }: { data: ProcessedEthnicityData[] }) => (
-	<div className="flex h-5 rounded overflow-hidden bg-gray-200 gap-0 w-full">
-		{data.map((item, idx) => (
-			<div
-				key={`${item.parentCategory}-${item.ethnicity}-${idx}`}
-				style={{
-					width: `${item.percentage}%`,
-					backgroundColor: item.color,
-				}}
-				title={`${item.ethnicity}: ${item.population.toLocaleString()} (${item.percentage.toFixed(1)}%)`}
-				className="group relative hover:opacity-80 transition-opacity"
-			>
-				{item.percentage > 5 && (
-					<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
-						{item.percentage.toFixed(0)}%
-					</span>
-				)}
-			</div>
-		))}
-	</div>
-));
-EthnicityBar.displayName = "EthnicityBar";
+function EthnicityBar({ data }: { data: ProcessedEthnicityData[] }) {
+	return (
+		<div className="flex h-5 rounded overflow-hidden bg-gray-200 gap-0 w-full">
+			{data.map((item, idx) => (
+				<div
+					key={`${item.parentCategory}-${item.ethnicity}-${idx}`}
+					style={{
+						width: `${item.percentage}%`,
+						backgroundColor: item.color,
+					}}
+					title={`${item.ethnicity}: ${item.population.toLocaleString()} (${item.percentage.toFixed(1)}%)`}
+					className="group relative hover:opacity-80 transition-opacity"
+				>
+					{item.percentage > 5 && (
+						<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
+							{item.percentage.toFixed(0)}%
+						</span>
+					)}
+				</div>
+			))}
+		</div>
+	);
+}
 
-const Legend = memo(
-	({ ethnicityData }: { ethnicityData: ProcessedEthnicityData[] }) => (
+function Legend({ ethnicityData }: { ethnicityData: ProcessedEthnicityData[] }) {
+	return (
 		<div className="animate-in fade-in duration-200 mt-1">
 			<div className="grid grid-cols-3 gap-0.5 text-[9px] overflow-y-auto">
 				{ethnicityData.map((item, idx) => (
@@ -76,9 +76,8 @@ const Legend = memo(
 				))}
 			</div>
 		</div>
-	),
-);
-Legend.displayName = "Legend";
+	);
+}
 
 interface EthnicityChartProps {
 	dataset: EthnicityDataset;
@@ -109,7 +108,7 @@ function flattenEthnicityData(
 	return allEthnicities;
 }
 
-export default memo(function EthnicityChart({
+export default function EthnicityChart({
 	dataset,
 	aggregatedData,
 	selectedArea,
@@ -121,7 +120,7 @@ export default memo(function EthnicityChart({
 	const vizId = dataset.id;
 	const isActive = activeViz.vizId === vizId;
 
-	const processedData = useMemo(() => {
+	const processedData = (() => {
 		const areaData = selectedArea?.code
 			? dataset.data[selectedArea.code]
 			: aggregatedData?.[2021];
@@ -149,7 +148,7 @@ export default memo(function EthnicityChart({
 			.sort((a, b) => b.population - a.population);
 
 		return { hasData: true, ethnicityData, totalPopulation };
-	}, [dataset, selectedArea, aggregatedData]);
+	})();
 
 	const heightClass = isActive ? "h-[170px]" : "h-[65px]";
 
@@ -206,4 +205,4 @@ export default memo(function EthnicityChart({
 			)}
 		</div>
 	);
-});
+}
