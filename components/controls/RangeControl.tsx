@@ -90,8 +90,8 @@ export function RangeControl({
 	return (
 		<div className="p-1 relative select-none">
 			<div className="flex flex-col justify-between h-40 text-[10px] text-gray-400/80 pointer-events-none text-right mr-8">
-				{labels.map((label) => (
-					<span key={label}>{label}</span>
+				{labels.map((label, i) => (
+					<span key={i}>{label}</span>
 				))}
 			</div>
 			<div
