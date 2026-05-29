@@ -10,16 +10,18 @@ import {
 	BoundaryCodes,
 } from "@lib/types";
 import { CustomDataset } from "@/lib/types/custom";
-import LocalElectionResultChartSection from "./local-election/LocalElectionResultChartSection";
+import LocalElectionResultChartSection from "./elections/local/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
 import { useState } from "react";
 import EconomicsSection from "./economics/EconomicsSection";
-import GeneralElectionResultChartSection from "./general-election/GeneralElectionResultChartSection";
-import SocietySection from "./society/SocietySection";
+import GeneralElectionResultChartSection from "./elections/general/GeneralElectionResultChartSection";
+import DeprivationSection from "./deprivation/DeprivationSection";
+import HealthSection from "./health/HealthSection";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import BrexitSection from "./referendum/BrexitSection";
+import BrexitSection from "./elections/referendum/BrexitSection";
 import CustomSection from "./custom/CustomSection";
 import EducationSection from "./education/EducationSection";
+import TelecomsSection from "./telecoms/TelecomsSection";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme } from "@/lib/helpers/panelTheme";
 import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
@@ -163,31 +165,21 @@ export default function ChartPanel({
 								{sectionVisible["Economics"] && (
 									<EconomicsSection
 										activeDataset={activeDataset}
-										availableHousePriceDatasets={
-											datasets.housePrice
-										}
-										aggregatedHousePriceData={
-											aggregatedData.housePrice
-										}
-										availableIncomeDatasets={
-											datasets.income
-										}
-										aggregatedIncomeData={
-											aggregatedData.income
-										}
+										availableHousePriceDatasets={datasets.housePrice}
+										aggregatedHousePriceData={aggregatedData.housePrice}
+										availableIncomeDatasets={datasets.income}
+										aggregatedIncomeData={aggregatedData.income}
+										availableCrimeDatasets={datasets.crime}
+										aggregatedCrimeData={aggregatedData.crime}
 										selectedArea={selectedArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
 									/>
 								)}
-								{sectionVisible["Society"] && (
-									<SocietySection
+								{sectionVisible["Deprivation"] && (
+									<DeprivationSection
 										activeDataset={activeDataset}
-										availableCrimeDatasets={datasets.crime}
-										aggregatedCrimeData={
-											aggregatedData.crime
-										}
 										availableIMDDatasets={datasets.imd}
 										aggregatedIMDData={aggregatedData.imd}
 										availableSIMDDatasets={datasets.simd}
@@ -195,18 +187,19 @@ export default function ChartPanel({
 										availableWIMDDatasets={datasets.wimd}
 										aggregatedWIMDData={aggregatedData.wimd}
 										availableNIMDMDatasets={datasets.nimdm}
-										aggregatedNIMDMData={
-											aggregatedData.nimdm
-										}
-										availableLifeExpectancyDatasets={
-											datasets.lifeExpectancy
-										}
-										aggregatedLifeExpectancyData={
-											aggregatedData.lifeExpectancy
-										}
+										aggregatedNIMDMData={aggregatedData.nimdm}
 										selectedArea={selectedArea}
 										setActiveViz={setActiveViz}
-										codeMapper={codeMapper}
+										activeViz={activeViz}
+									/>
+								)}
+								{sectionVisible["Health"] && (
+									<HealthSection
+										activeDataset={activeDataset}
+										availableLifeExpectancyDatasets={datasets.lifeExpectancy}
+										aggregatedLifeExpectancyData={aggregatedData.lifeExpectancy}
+										selectedArea={selectedArea}
+										setActiveViz={setActiveViz}
 										activeViz={activeViz}
 									/>
 								)}
@@ -225,7 +218,18 @@ export default function ChartPanel({
 										activeViz={activeViz}
 									/>
 								)}
-								<CustomSection
+								{sectionVisible["Telecoms"] && (
+									<TelecomsSection
+										activeDataset={activeDataset}
+										availableBroadbandDatasets={datasets.broadband}
+										aggregatedBroadbandData={aggregatedData.broadband}
+										selectedArea={selectedArea}
+										setActiveViz={setActiveViz}
+										codeMapper={codeMapper}
+										activeViz={activeViz}
+									/>
+								)}
+									<CustomSection
 									customDataset={customDataset}
 									setCustomDataset={setCustomDataset}
 									aggregatedData={aggregatedData.custom}

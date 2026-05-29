@@ -28,6 +28,7 @@ import { WIMDDataset } from "@/lib/types/wimd";
 import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { QualificationDataset } from "@/lib/types/qualification";
+import { BroadbandDataset } from "@/lib/types/broadband";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
@@ -321,7 +322,8 @@ export class MapManager {
 			| WIMDDataset
 			| NIMDMDataset
 			| LifeExpectancyDataset
-			| QualificationDataset,
+			| QualificationDataset
+			| BroadbandDataset,
 	>(
 		geojson: BoundaryGeojson,
 		dataset: T,
@@ -811,6 +813,31 @@ export class MapManager {
 			location,
 			datasetId,
 		);
+	}
+
+	updateMapForBroadband(
+		geojson: BoundaryGeojson,
+		dataset: BroadbandDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildBroadbandFeatures.bind(this.featureBuilder),
+			"broadband",
+			dataset.data,
+		);
+	}
+
+	calculateBroadbandStats(
+		geojson: BoundaryGeojson,
+		data: BroadbandDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateBroadbandStats(geojson, data, location, datasetId);
 	}
 
 	destroy(): void {

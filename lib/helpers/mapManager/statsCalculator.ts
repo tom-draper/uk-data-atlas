@@ -40,6 +40,7 @@ import {
 	AggregatedQualificationData,
 	QualificationBreakdown,
 } from "@/lib/types/qualification";
+import { BroadbandDataset, AggregatedBroadbandData } from "@/lib/types/broadband";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -989,6 +990,41 @@ export class StatsCalculator {
 		}
 
 		const result: AggregatedQualificationData = { breakdown: total };
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateBroadbandStats(
+		geojson: BoundaryGeojson,
+		broadbandData: BroadbandDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedBroadbandData | null {
+		const cacheKey = `broadband-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedBroadbandData | null;
+		if (cached) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		let totalSuperfast = 0, totalUltrafast = 0, totalFullFibre = 0, totalGigabit = 0, count = 0;
+
+		for (const feature of geojson.features) {
+			const record = broadbandData[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+			if (!record || record.pctFullFibre == null) continue;
+			totalSuperfast += record.pctSuperfast ?? 0;
+			totalUltrafast += record.pctUltrafast ?? 0;
+			totalFullFibre += record.pctFullFibre;
+			totalGigabit += record.pctGigabit ?? 0;
+			count++;
+		}
+
+		if (count === 0) return null;
+
+		const result: AggregatedBroadbandData = {
+			pctSuperfast: totalSuperfast / count,
+			pctUltrafast: totalUltrafast / count,
+			pctFullFibre: totalFullFibre / count,
+			pctGigabit: totalGigabit / count,
+		};
 		this.cache.set(cacheKey, result);
 		return result;
 	}

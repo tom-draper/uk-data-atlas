@@ -219,13 +219,14 @@ export function useAggregatedData({
 				datasets: datasets.qualification,
 				boundaryType: "localAuthority",
 				calculateStats: (mapManager, geojson, data, location, id) =>
-					mapManager.calculateQualificationStats(
-						geojson,
-						data,
-						location,
-						id,
-					),
-		},
+					mapManager.calculateQualificationStats(geojson, data, location, id),
+			},
+			broadband: {
+				datasets: datasets.broadband,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateBroadbandStats(geojson, data, location, id),
+			},
 	};
 
 	// Aggregate all datasets using the same logic
@@ -248,6 +249,7 @@ export function useAggregatedData({
 				nimdm: null,
 				lifeExpectancy: null,
 				qualification: null,
+			broadband: null,
 			};
 		}
 

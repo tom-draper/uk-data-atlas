@@ -7,7 +7,7 @@ import { useDataLoader } from "./useDataLoader";
 export const useBrexitConstituencyData = (enabled = true) => {
 	return useDataLoader<BrexitConstituencyDataset>(async () => {
 		const response = await fetch(
-			withCDN("/data/referendum/eureferendum_constitunecy.csv"),
+			withCDN("/data/elections/referendum/eureferendum_constitunecy.csv"),
 		);
 		if (!response.ok)
 			throw new Error(

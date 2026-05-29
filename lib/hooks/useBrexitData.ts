@@ -7,7 +7,7 @@ import { useDataLoader } from "./useDataLoader";
 export const useBrexitData = () => {
 	return useDataLoader<BrexitLADDataset>(async () => {
 		const response = await fetch(
-			withCDN("/data/referendum/EU-referendum-result-data.csv"),
+			withCDN("/data/elections/referendum/EU-referendum-result-data.csv"),
 		);
 		if (!response.ok)
 			throw new Error(

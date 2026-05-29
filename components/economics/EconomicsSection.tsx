@@ -7,13 +7,16 @@ import {
 	ActiveViz,
 	AggregatedHousePriceData,
 	AggregatedIncomeData,
+	AggregatedCrimeData,
 	Dataset,
 	HousePriceDataset,
 	IncomeDataset,
+	CrimeDataset,
 	SelectedArea,
 } from "@lib/types";
 import HousePriceChart from "./house-price/HousePriceChart";
 import IncomeChart from "./income/IncomeChart";
+import CrimeRateChart from "./crime/CrimeRateChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface EconomicsSectionProps {
@@ -22,6 +25,8 @@ interface EconomicsSectionProps {
 	aggregatedHousePriceData: Record<number, AggregatedHousePriceData> | null;
 	availableIncomeDatasets: Record<string, IncomeDataset>;
 	aggregatedIncomeData: Record<number, AggregatedIncomeData> | null;
+	availableCrimeDatasets: Record<string, CrimeDataset>;
+	aggregatedCrimeData: Record<number, AggregatedCrimeData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -34,6 +39,8 @@ export default function EconomicsSection({
 	aggregatedHousePriceData,
 	availableIncomeDatasets,
 	aggregatedIncomeData,
+	availableCrimeDatasets,
+	aggregatedCrimeData,
 	selectedArea,
 	codeMapper,
 	activeViz,
@@ -43,8 +50,9 @@ export default function EconomicsSection({
 	const isDark = useIsDark();
 	const showHousePrice = visibility["economics-housePrice"];
 	const showIncome = visibility["economics-income"];
+	const showCrime = visibility["economics-crime"];
 
-	if (!showHousePrice && !showIncome) return null;
+	if (!showHousePrice && !showIncome && !showCrime) return null;
 
 	return (
 		<div
@@ -72,6 +80,18 @@ export default function EconomicsSection({
 					activeDataset={activeDataset}
 					availableDatasets={availableIncomeDatasets}
 					aggregatedData={aggregatedIncomeData}
+					year={2025}
+					selectedArea={selectedArea}
+					codeMapper={codeMapper}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+			)}
+			{showCrime && (
+				<CrimeRateChart
+					activeDataset={activeDataset}
+					availableDatasets={availableCrimeDatasets}
+					aggregatedData={aggregatedCrimeData}
 					year={2025}
 					selectedArea={selectedArea}
 					codeMapper={codeMapper}

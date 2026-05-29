@@ -18,6 +18,7 @@ import { useWIMDData } from "./useWIMDData";
 import { useNIMDMData } from "./useNIMDMData";
 import { useLifeExpectancyData } from "./useLifeExpectancyData";
 import { useQualificationData } from "./useQualificationData";
+import { useBroadbandData } from "./useBroadbandData";
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";
 
@@ -65,11 +66,12 @@ export function useDatasets(): UseDatasetsResult {
 	const brexit = useBrexitData();
 	const brexitConstituency = useBrexitConstituencyData(isEnabled("brexit-hanretty"));
 	const imd = useIMDData();
-	const simd = useSIMDData(isEnabled("society-simd"));
-	const wimd = useWIMDData(isEnabled("society-wimd"));
-	const nimdm = useNIMDMData(isEnabled("society-nimdm"));
-	const lifeExpectancy = useLifeExpectancyData(isEnabled("society-healthyLifeExpectancy"));
+	const simd = useSIMDData(isEnabled("deprivation-simd"));
+	const wimd = useWIMDData(isEnabled("deprivation-wimd"));
+	const nimdm = useNIMDMData(isEnabled("deprivation-nimdm"));
+	const lifeExpectancy = useLifeExpectancyData(isEnabled("health-healthyLifeExpectancy"));
 	const qualification = useQualificationData();
+	const broadband = useBroadbandData(isEnabled("telecoms-broadband"));
 
 	const datasets = {
 		localElection: localElection.datasets,
@@ -87,6 +89,7 @@ export function useDatasets(): UseDatasetsResult {
 		nimdm: nimdm.datasets,
 		lifeExpectancy: lifeExpectancy.datasets,
 		qualification: qualification.datasets,
+		broadband: broadband.datasets,
 	};
 
 	// Combined loading state
@@ -105,7 +108,8 @@ export function useDatasets(): UseDatasetsResult {
 		wimd.loading ||
 		nimdm.loading ||
 		lifeExpectancy.loading ||
-		qualification.loading;
+		qualification.loading ||
+		broadband.loading;
 
 	// Collect all errors
 	const errors: string[] = [];
@@ -124,6 +128,7 @@ export function useDatasets(): UseDatasetsResult {
 	if (nimdm.error) errors.push(nimdm.error);
 	if (lifeExpectancy.error) errors.push(lifeExpectancy.error);
 	if (qualification.error) errors.push(qualification.error);
+	if (broadband.error) errors.push(broadband.error);
 
 	return { datasets, loading, errors };
 }

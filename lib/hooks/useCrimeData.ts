@@ -12,7 +12,7 @@ const extractYearFromTitle = (title: string): number => {
 export const useCrimeData = () => {
 	return useDataLoader<CrimeDataset>(async () => {
 		const response = await fetch(
-			withCDN("/data/crime/policeforceareatablesyejune25final.csv"),
+			withCDN("/data/economics/crime/policeforceareatablesyejune25final.csv"),
 		);
 		if (!response.ok)
 			throw new Error(

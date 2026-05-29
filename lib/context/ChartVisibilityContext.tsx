@@ -19,14 +19,15 @@ export type ChartKey =
 	| "demographics-ethnicity"
 	| "economics-housePrice"
 	| "economics-income"
-	| "society-crime"
-	| "society-imd"
-	| "society-simd"
-	| "society-wimd"
-	| "society-nimdm"
-	| "society-lifeExpectancy"
-	| "society-healthyLifeExpectancy"
-	| "education-qualifications";
+	| "economics-crime"
+	| "deprivation-imd"
+	| "deprivation-simd"
+	| "deprivation-wimd"
+	| "deprivation-nimdm"
+	| "health-lifeExpectancy"
+	| "health-healthyLifeExpectancy"
+	| "education-qualifications"
+	| "telecoms-broadband";
 
 export interface ChartConfigEntry {
 	group: string;
@@ -116,38 +117,15 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 		label: "House Prices [2023]",
 	},
 	{ group: "Economics", key: "economics-income", label: "Income [2025]" },
-	{ group: "Society", key: "society-crime", label: "Crime Rate [2025]" },
-	{ group: "Society", key: "society-imd", label: "Deprivation (IMD) [2019]" },
-	{
-		group: "Society",
-		key: "society-simd",
-		label: "Deprivation (SIMD) [2020]",
-	},
-	{
-		group: "Society",
-		key: "society-wimd",
-		label: "Deprivation (WIMD) [2019]",
-	},
-	{
-		group: "Society",
-		key: "society-nimdm",
-		label: "Deprivation (NIMDM) [2017]",
-	},
-	{
-		group: "Society",
-		key: "society-lifeExpectancy",
-		label: "Life Expectancy [2020-2022]",
-	},
-	{
-		group: "Society",
-		key: "society-healthyLifeExpectancy",
-		label: "Healthy Life Expectancy [2020-2022]",
-	},
-	{
-		group: "Education",
-		key: "education-qualifications",
-		label: "Qualifications [2021]",
-	},
+	{ group: "Economics", key: "economics-crime", label: "Crime Rate [2025]" },
+	{ group: "Deprivation", key: "deprivation-imd", label: "Deprivation (IMD) [2019]" },
+	{ group: "Deprivation", key: "deprivation-simd", label: "Deprivation (SIMD) [2020]" },
+	{ group: "Deprivation", key: "deprivation-wimd", label: "Deprivation (WIMD) [2019]" },
+	{ group: "Deprivation", key: "deprivation-nimdm", label: "Deprivation (NIMDM) [2017]" },
+	{ group: "Health", key: "health-lifeExpectancy", label: "Life Expectancy [2020-2022]" },
+	{ group: "Health", key: "health-healthyLifeExpectancy", label: "Healthy Life Expectancy [2020-2022]" },
+	{ group: "Education", key: "education-qualifications", label: "Qualifications [2021]" },
+	{ group: "Telecoms", key: "telecoms-broadband", label: "Fixed Broadband Coverage [2025]" },
 ];
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
@@ -168,14 +146,15 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"demographics-ethnicity": true,
 	"economics-housePrice": true,
 	"economics-income": true,
-	"society-crime": true,
-	"society-imd": true,
-	"society-simd": false,
-	"society-wimd": false,
-	"society-nimdm": false,
-	"society-lifeExpectancy": true,
-	"society-healthyLifeExpectancy": false,
+	"economics-crime": true,
+	"deprivation-imd": true,
+	"deprivation-simd": false,
+	"deprivation-wimd": false,
+	"deprivation-nimdm": false,
+	"health-lifeExpectancy": true,
+	"health-healthyLifeExpectancy": false,
 	"education-qualifications": true,
+	"telecoms-broadband": true,
 };
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";

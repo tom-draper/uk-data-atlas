@@ -30,6 +30,7 @@ import {
 	getColorForSIMD,
 	getColorForWIMD,
 	getColorForNIMDM,
+	getColorForBroadband,
 } from "../colorScale/datasetColors";
 import { getColor } from "../colorScale/themes";
 import { normalizeValue } from "../colorScale/interpolation";
@@ -41,6 +42,7 @@ import { WIMDDataset } from "@/lib/types/wimd";
 import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { QualificationDataset } from "@/lib/types/qualification";
+import { BroadbandDataset } from "@/lib/types/broadband";
 import {
 	getColorForLifeExpectancy,
 	getColorForQualification,
@@ -557,6 +559,24 @@ export class FeatureBuilder {
 							mapOptions.theme.id,
 						)
 					: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildBroadbandFeatures(
+		features: Features,
+		dataset: BroadbandDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const pct =
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				]?.pctFullFibre;
+			const color = pct != null
+				? getColorForBroadband(pct, mapOptions.broadband, mapOptions.theme.id)
+				: DEFAULT_COLOR;
 			return { color };
 		});
 	}

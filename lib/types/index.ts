@@ -19,3 +19,4 @@ export * from "./wimd";
 export * from "./nimdm";
 export * from "./lifeExpectancy";
 export * from "./qualification";
+export * from "./broadband";

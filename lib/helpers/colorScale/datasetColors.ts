@@ -13,6 +13,7 @@ import type {
 	LifeExpectancyOptions,
 	PopulationOptions,
 	QualificationOptions,
+	BroadbandOptions,
 } from "@/lib/types/mapOptions";
 import { normalizeValue, hexToRgb } from "./interpolation";
 import { getThemeColor } from "./themes";
@@ -169,6 +170,14 @@ export function getColorForIncome(
 	return colorFromRange(income, options, themeId, true);
 }
 
+export function getColorForBroadband(
+	speedMbps: number,
+	options: BroadbandOptions,
+	themeId = "viridis",
+) {
+	return colorFromRange(speedMbps, options, themeId, true);
+}
+
 const FEMALE_RGB = [255, 105, 180] as const;
 const MALE_RGB = [70, 130, 180] as const;
 
@@ -210,3 +219,4 @@ export function getPercentageColorExpression(
 		],
 	];
 }
+

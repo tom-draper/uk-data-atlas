@@ -40,6 +40,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	nimdm: { colorRange: { min: 1, max: 890 } },
 	lifeExpectancy: { colorRange: { min: 72, max: 84 } },
 	qualification: { colorRange: { min: 0, max: 60 } },
+	broadband: { colorRange: { min: 0, max: 100 } },
 	theme: {
 		id: "viridis",
 	},

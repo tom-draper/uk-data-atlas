@@ -41,7 +41,7 @@ const calculateResults = (
 
 export const useEthnicityData = () => {
 	return useDataLoader<EthnicityDataset>(async () => {
-		const res = await fetch(withCDN("/data/ethnicity/TS021-2021-2.csv"));
+		const res = await fetch(withCDN("/data/demographics/ethnicity/TS021-2021-2.csv"));
 		if (!res.ok)
 			throw new Error(
 				`Failed to fetch ethnicity data: ${res.statusText}`,
