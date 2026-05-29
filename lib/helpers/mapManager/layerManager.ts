@@ -164,21 +164,16 @@ export class LayerManager {
 		let lineColor: string;
 		let lineOpacity: number;
 
-		if (visibility.hideBoundaries) {
-			fillColor = "transparent";
-			fillOpacity = 0;
-			lineColor = "#000";
-			lineOpacity = 0;
-		} else if (visibility.hideDataLayer) {
+		if (visibility.hideDataLayer) {
 			fillColor = DEFAULT_COLOR;
 			fillOpacity = overlayOpacity;
 			lineColor = DEFAULT_COLOR;
-			lineOpacity = 0.6 * overlayOpacity;
+			lineOpacity = visibility.showBorders ? 0.6 * overlayOpacity : 0;
 		} else {
 			fillColor = paint.color;
 			fillOpacity = paint.opacity;
 			lineColor = "#000";
-			lineOpacity = 0.05;
+			lineOpacity = visibility.showBorders ? 0.05 : 0;
 		}
 
 		const sourceExists = !!this.map.getSource(SOURCE_ID);

@@ -30,7 +30,7 @@ export default function MapOptions({
 	const [selectedBaseStyle, setSelectedBaseStyle] =
 		useState<BaseMapStyle["id"]>("positron");
 	const [hideDataLayer, setHideDataLayer] = useState(false);
-	const [hideBoundaries, setHideBoundaries] = useState(false);
+	const [showBorders, setShowBorders] = useState(true);
 	const [hideOverlay, setHideOverlay] = useState(false);
 	const [overlayOpacity, setOverlayOpacity] = useState(0.6);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -52,19 +52,10 @@ export default function MapOptions({
 		handleMapOptionsChange("visibility", { hideDataLayer: newValue });
 	};
 
-	const handleBoundariesToggle = () => {
-		const newValue = !hideBoundaries;
-		setHideBoundaries(newValue);
-		// If hiding boundaries, also hide data since data is applied over boundaries
-		if (!newValue) {
-			setHideDataLayer(false);
-			handleMapOptionsChange("visibility", {
-				hideBoundaries: newValue,
-				hideDataLayer: false,
-			});
-		} else {
-			handleMapOptionsChange("visibility", { hideBoundaries: newValue });
-		}
+	const handleBordersToggle = () => {
+		const newValue = !showBorders;
+		setShowBorders(newValue);
+		handleMapOptionsChange("visibility", { showBorders: newValue });
 	};
 
 	const handleOverlayToggle = () => {
@@ -119,11 +110,10 @@ export default function MapOptions({
 							type="checkbox"
 							checked={hideDataLayer}
 							onChange={handleDataToggle}
-							disabled={hideBoundaries}
-							className="size-3.5 accent-indigo-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+							className="size-3.5 accent-indigo-500 cursor-pointer"
 						/>
 						<span
-							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"} ${hideBoundaries ? "opacity-50" : ""}`}
+							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}
 						>
 							Hide data layer
 						</span>
@@ -131,14 +121,14 @@ export default function MapOptions({
 					<label className="flex items-center gap-2 cursor-pointer group">
 						<input
 							type="checkbox"
-							checked={hideBoundaries}
-							onChange={handleBoundariesToggle}
+							checked={showBorders}
+							onChange={handleBordersToggle}
 							className="size-3.5 accent-indigo-500 cursor-pointer"
 						/>
 						<span
 							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}
 						>
-							Hide boundaries
+							Show borders
 						</span>
 					</label>
 					<label className="flex items-center gap-2 cursor-pointer group">
