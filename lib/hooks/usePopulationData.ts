@@ -100,7 +100,7 @@ const parsePopulationDataCombined = async (csvText: string) => {
 	return { malesData, femalesData, totalData };
 };
 
-export const usePopulationData = () => {
+export const usePopulationData = (enabled = true) => {
 	return useDataLoader<PopulationDataset>(async () => {
 		const response = await fetch(
 			withCDN("/data/demographics/population/Mid-2022 Ward 2023.csv"),
@@ -141,5 +141,5 @@ export const usePopulationData = () => {
 				data: combinedData,
 			},
 		};
-	});
+	}, enabled);
 };

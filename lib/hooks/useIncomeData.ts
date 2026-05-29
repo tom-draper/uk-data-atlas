@@ -171,7 +171,7 @@ const mergeIncomeData = (
 	return merged;
 };
 
-export const useIncomeData = () => {
+export const useIncomeData = (enabled = true) => {
 	return useDataLoader<IncomeDataset>(async () => {
 		const [annualResult, hourlyResult] = await Promise.all([
 			parseAnnualIncomeData(),
@@ -188,5 +188,5 @@ export const useIncomeData = () => {
 				data: mergeIncomeData(annualResult, hourlyResult),
 			},
 		};
-	});
+	}, enabled);
 };

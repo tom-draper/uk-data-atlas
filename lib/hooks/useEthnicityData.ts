@@ -39,7 +39,7 @@ const calculateResults = (
 	return results;
 };
 
-export const useEthnicityData = () => {
+export const useEthnicityData = (enabled = true) => {
 	return useDataLoader<EthnicityDataset>(async () => {
 		const res = await fetch(withCDN("/data/demographics/ethnicity/TS021-2021-2.csv"));
 		if (!res.ok)
@@ -92,5 +92,5 @@ export const useEthnicityData = () => {
 				results,
 			},
 		};
-	});
+	}, enabled);
 };

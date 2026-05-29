@@ -9,7 +9,7 @@ const extractYearFromTitle = (title: string): number => {
 	return match ? parseInt(match[1]) : new Date().getFullYear();
 };
 
-export const useCrimeData = () => {
+export const useCrimeData = (enabled = true) => {
 	return useDataLoader<CrimeDataset>(async () => {
 		const response = await fetch(
 			withCDN("/data/economics/crime/policeforceareatablesyejune25final.csv"),
@@ -88,5 +88,5 @@ export const useCrimeData = () => {
 				},
 			},
 		};
-	});
+	}, enabled);
 };

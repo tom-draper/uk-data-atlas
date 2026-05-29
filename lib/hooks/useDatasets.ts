@@ -55,22 +55,30 @@ export interface UseDatasetsResult {
 export function useDatasets(): UseDatasetsResult {
 	const visibility = useSyncExternalStore(subscribeVisibility, getVisibilitySnapshot, getServerSnapshot);
 	const isEnabled = (key: ChartKey) => visibility[key] ?? DEFAULT_VISIBILITY[key];
-	// Load all dataset groups
-	const localElection = useLocalElectionData();
-	const generalElection = useGeneralElectionData();
+	const anyEnabled = (...keys: ChartKey[]) => keys.some(k => isEnabled(k));
+
+	const localElection = useLocalElectionData(
+		anyEnabled("localElection-2021", "localElection-2022", "localElection-2023", "localElection-2024", "localElection-2025"),
+	);
+	const generalElection = useGeneralElectionData(
+		anyEnabled("generalElection-2015", "generalElection-2017", "generalElection-2019", "generalElection-2024"),
+	);
 	const population = usePopulationData();
-	const ethnicity = useEthnicityData();
-	const housePrice = useHousePriceData();
-	const crime = useCrimeData();
-	const income = useIncomeData();
-	const brexit = useBrexitData();
+	const ethnicity = useEthnicityData(isEnabled("demographics-ethnicity"));
+	const housePrice = useHousePriceData(isEnabled("economics-housePrice"));
+	const crime = useCrimeData(isEnabled("economics-crime"));
+	const income = useIncomeData(isEnabled("economics-income"));
+	const brexit = useBrexitData(isEnabled("brexit-electoral"));
 	const brexitConstituency = useBrexitConstituencyData(isEnabled("brexit-hanretty"));
-	const imd = useIMDData();
+	const imd = useIMDData(isEnabled("deprivation-imd"));
 	const simd = useSIMDData(isEnabled("deprivation-simd"));
 	const wimd = useWIMDData(isEnabled("deprivation-wimd"));
 	const nimdm = useNIMDMData(isEnabled("deprivation-nimdm"));
-	const lifeExpectancy = useLifeExpectancyData(isEnabled("health-healthyLifeExpectancy"));
-	const qualification = useQualificationData();
+	const lifeExpectancy = useLifeExpectancyData(
+		anyEnabled("health-lifeExpectancy", "health-healthyLifeExpectancy"),
+		isEnabled("health-healthyLifeExpectancy"),
+	);
+	const qualification = useQualificationData(isEnabled("education-qualifications"));
 	const broadband = useBroadbandData(isEnabled("telecoms-broadband"));
 
 	const datasets = {
