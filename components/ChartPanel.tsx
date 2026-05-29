@@ -92,7 +92,7 @@ export default function ChartPanel({
 					{settingsOpen ? (
 						<ChartSettings />
 					) : (
-						<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container">
+						<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container [&>*:first-child]:border-t-0">
 							<ChartLoadingProvider loading={chartsLoading}>
 								{sectionVisible["General Election"] && (
 									<GeneralElectionResultChartSection

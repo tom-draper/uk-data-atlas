@@ -164,6 +164,18 @@ export default function MapInterface({
 		interactionHandlers,
 	});
 
+	// Fit to initial location from URL params once the map is ready
+	useEffect(() => {
+		if (!styleReady || !map.current) return;
+		const locationData = LOCATIONS[selectedLocation];
+		if (!locationData) return;
+		map.current.fitBounds(locationData.bounds, {
+			padding: MAP_CONFIG.fitBoundsPadding,
+			duration: 0,
+		});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [styleReady]); // intentionally only runs when map becomes ready
+
 	const handleLocationClick = (location: string) => {
 		const locationData = LOCATIONS[location];
 		if (!map.current || !locationData) return;
