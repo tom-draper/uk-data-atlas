@@ -43,7 +43,7 @@ function pickBySubstring(row: Record<string, any>, substring: string): string {
 	return "";
 }
 
-export const useNIMDMData = () => {
+export const useNIMDMData = (enabled = true) => {
 	return useDataLoader<NIMDMDataset>(async () => {
 		const response = await fetch(
 			withCDN("/data/nimdm/NIMDM17_SOAresults.csv"),
@@ -104,5 +104,5 @@ export const useNIMDMData = () => {
 				},
 			},
 		};
-	});
+	}, enabled);
 };

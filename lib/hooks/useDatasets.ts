@@ -1,5 +1,7 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
+import { DEFAULT_VISIBILITY, ChartKey } from "@/lib/context/ChartVisibilityContext";
 import { useLocalElectionData } from "@lib/hooks/useLocalElectionData";
 import { useGeneralElectionData } from "@lib/hooks/useGeneralElectionData";
 import { usePopulationData } from "@lib/hooks/usePopulationData";
@@ -17,6 +19,32 @@ import { useNIMDMData } from "./useNIMDMData";
 import { useLifeExpectancyData } from "./useLifeExpectancyData";
 import { useQualificationData } from "./useQualificationData";
 
+const STORAGE_KEY = "uk-data-atlas-chart-visibility";
+
+let _snap: Record<ChartKey, boolean> | null = null;
+let _snapRaw: string | null | undefined = undefined;
+
+function getVisibilitySnapshot(): Record<ChartKey, boolean> {
+	const raw = localStorage.getItem(STORAGE_KEY);
+	if (raw === _snapRaw && _snap) return _snap;
+	_snapRaw = raw;
+	try {
+		_snap = raw ? { ...DEFAULT_VISIBILITY, ...JSON.parse(raw) } : DEFAULT_VISIBILITY;
+	} catch {
+		_snap = DEFAULT_VISIBILITY;
+	}
+	return _snap!;
+}
+
+function getServerSnapshot(): Record<ChartKey, boolean> {
+	return DEFAULT_VISIBILITY;
+}
+
+function subscribeVisibility(cb: () => void) {
+	window.addEventListener("storage", cb);
+	return () => window.removeEventListener("storage", cb);
+}
+
 export interface UseDatasetsResult {
 	datasets: Datasets;
 	loading: boolean;
@@ -24,6 +52,8 @@ export interface UseDatasetsResult {
 }
 
 export function useDatasets(): UseDatasetsResult {
+	const visibility = useSyncExternalStore(subscribeVisibility, getVisibilitySnapshot, getServerSnapshot);
+	const isEnabled = (key: ChartKey) => visibility[key] ?? DEFAULT_VISIBILITY[key];
 	// Load all dataset groups
 	const localElection = useLocalElectionData();
 	const generalElection = useGeneralElectionData();
@@ -33,12 +63,12 @@ export function useDatasets(): UseDatasetsResult {
 	const crime = useCrimeData();
 	const income = useIncomeData();
 	const brexit = useBrexitData();
-	const brexitConstituency = useBrexitConstituencyData();
+	const brexitConstituency = useBrexitConstituencyData(isEnabled("brexit-hanretty"));
 	const imd = useIMDData();
-	const simd = useSIMDData();
-	const wimd = useWIMDData();
-	const nimdm = useNIMDMData();
-	const lifeExpectancy = useLifeExpectancyData();
+	const simd = useSIMDData(isEnabled("society-simd"));
+	const wimd = useWIMDData(isEnabled("society-wimd"));
+	const nimdm = useNIMDMData(isEnabled("society-nimdm"));
+	const lifeExpectancy = useLifeExpectancyData(isEnabled("society-healthyLifeExpectancy"));
 	const qualification = useQualificationData();
 
 	const datasets = {

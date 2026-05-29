@@ -49,7 +49,7 @@ function parseNum(val: any): number {
 	return parseFloat(String(val).trim()) || 0;
 }
 
-export const useSIMDData = () => {
+export const useSIMDData = (enabled = true) => {
 	return useDataLoader<SIMDDataset>(async () => {
 		const response = await fetch(
 			withCDN("/data/simd/SIMD+2020v2+-+indicators.csv"),
@@ -184,5 +184,5 @@ export const useSIMDData = () => {
 				},
 			},
 		};
-	});
+	}, enabled);
 };

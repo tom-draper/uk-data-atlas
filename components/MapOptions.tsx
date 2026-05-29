@@ -30,7 +30,8 @@ export default function MapOptions({
 	const [selectedBaseStyle, setSelectedBaseStyle] =
 		useState<BaseMapStyle["id"]>("positron");
 	const [hideDataLayer, setHideDataLayer] = useState(false);
-	const [showBorders, setShowBorders] = useState(true);
+	const [hideBorders, setHideBorders] = useState(false);
+	const [hideBoundaryLayer, setHideBoundaryLayer] = useState(false);
 	const [hideOverlay, setHideOverlay] = useState(false);
 	const [overlayOpacity, setOverlayOpacity] = useState(0.6);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -53,9 +54,15 @@ export default function MapOptions({
 	};
 
 	const handleBordersToggle = () => {
-		const newValue = !showBorders;
-		setShowBorders(newValue);
-		handleMapOptionsChange("visibility", { showBorders: newValue });
+		const newValue = !hideBorders;
+		setHideBorders(newValue);
+		handleMapOptionsChange("visibility", { hideBorders: newValue });
+	};
+
+	const handleBoundaryLayerToggle = () => {
+		const newValue = !hideBoundaryLayer;
+		setHideBoundaryLayer(newValue);
+		handleMapOptionsChange("visibility", { hideBoundaryLayer: newValue });
 	};
 
 	const handleOverlayToggle = () => {
@@ -105,45 +112,26 @@ export default function MapOptions({
 				</h2>
 
 				<div className="flex flex-col gap-1.5 pb-2 pt-2 pl-1">
-					<label className="flex items-center gap-2 cursor-pointer group">
-						<input
-							type="checkbox"
-							checked={hideDataLayer}
-							onChange={handleDataToggle}
-							className="size-3.5 accent-indigo-500 cursor-pointer"
-						/>
-						<span
-							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}
-						>
-							Hide data layer
-						</span>
-					</label>
-					<label className="flex items-center gap-2 cursor-pointer group">
-						<input
-							type="checkbox"
-							checked={showBorders}
-							onChange={handleBordersToggle}
-							className="size-3.5 accent-indigo-500 cursor-pointer"
-						/>
-						<span
-							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}
-						>
-							Show borders
-						</span>
-					</label>
-					<label className="flex items-center gap-2 cursor-pointer group">
-						<input
-							type="checkbox"
-							checked={hideOverlay}
-							onChange={handleOverlayToggle}
-							className="size-3.5 accent-indigo-500 cursor-pointer"
-						/>
-						<span
-							className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}
-						>
-							Hide overlay
-						</span>
-					</label>
+					{(
+						[
+							{ label: "Hide data layer",     checked: hideDataLayer,     onChange: handleDataToggle },
+							{ label: "Hide borders",        checked: hideBorders,        onChange: handleBordersToggle },
+							{ label: "Hide boundary layer", checked: hideBoundaryLayer,  onChange: handleBoundaryLayerToggle },
+							{ label: "Hide overlay",        checked: hideOverlay,        onChange: handleOverlayToggle },
+						] as const
+					).map(({ label, checked, onChange }) => (
+						<label key={label} className="flex items-center gap-2 cursor-pointer group">
+							<input
+								type="checkbox"
+								checked={checked}
+								onChange={onChange}
+								className="size-3.5 accent-indigo-500 cursor-pointer"
+							/>
+							<span className={`text-xs transition-colors ${isDark ? "text-gray-400 group-hover:text-gray-200" : "text-gray-600 group-hover:text-gray-800"}`}>
+								{label}
+							</span>
+						</label>
+					))}
 					<div className="flex items-stretch gap-2 pt-0.5">
 						<span
 							className={`text-xs shrink-0 self-center ${t.text}`}
