@@ -239,10 +239,52 @@ export default function LocationPanel({
 	const isDark = useIsDark();
 	const t = panelTheme(isDark);
 
+	const glassStyle: import("react").CSSProperties = isDark
+		? {
+				background:
+					"linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 40%, rgba(10,10,20,0.55) 100%)",
+				backdropFilter: "blur(28px) saturate(180%) brightness(1.08)",
+				WebkitBackdropFilter: "blur(28px) saturate(180%) brightness(1.08)",
+				boxShadow:
+					"inset 0 1px 0 rgba(255,255,255,0.22), inset 1px 0 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.25), 0 8px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)",
+				border: "1px solid rgba(255,255,255,0.13)",
+			}
+		: {
+				background:
+					"linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 40%, rgba(200,210,230,0.2) 100%)",
+				backdropFilter: "blur(28px) saturate(160%) brightness(1.1)",
+				WebkitBackdropFilter: "blur(28px) saturate(160%) brightness(1.1)",
+				boxShadow:
+					"inset 0 1px 0 rgba(255,255,255,0.8), inset 1px 0 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.06), 0 8px 40px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1)",
+				border: "1px solid rgba(255,255,255,0.45)",
+			};
+
 	return (
 		<div
-			className={`rounded-md backdrop-blur-md shadow-lg border flex flex-col h-full ${t.panel}`}
+			className={`rounded-md flex flex-col h-full relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
+			style={glassStyle}
 		>
+			{/* Specular highlight overlay */}
+			<div
+				className="absolute inset-0 pointer-events-none rounded-md"
+				style={{
+					background: isDark
+						? "radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 40%, transparent 70%)"
+						: "radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)",
+					zIndex: 0,
+				}}
+			/>
+			{/* SVG distortion filter definition */}
+			<svg className="absolute w-0 h-0" aria-hidden="true">
+				<defs>
+					<filter id="lp-glass-distortion" x="-10%" y="-10%" width="120%" height="120%">
+						<feTurbulence type="fractalNoise" baseFrequency="0.018 0.025" numOctaves="2" seed="5" result="noise" />
+						<feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" />
+					</filter>
+				</defs>
+			</svg>
+			{/* Content sits above overlays */}
+			<div className="relative flex flex-col h-full" style={{ zIndex: 1 }}>
 			{/* Header with search */}
 			<div
 				className={`shrink-0 ${t.section} flex items-center overflow-hidden`}
@@ -332,6 +374,7 @@ export default function LocationPanel({
 						</span>
 					</button>
 				))}
+			</div>
 			</div>
 		</div>
 	);
