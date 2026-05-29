@@ -1,0 +1,496 @@
+Location,Premise type,Rurality,Speed,% Premises,Premises,Date
+UK,All,Total,Premise Base,100,32369839,Jul-25
+UK,All,Total,Unclassified,0.3,81339,Jul-25
+UK,All,Total,<2 Mbit/s,0.2,53771,Jul-25
+UK,All,Total,<10 Mbit/s DL or <1 Mbit/s UL,1.1,340159,Jul-25
+UK,All,Total,>=10 Mbit/s,99,32049406,Jul-25
+UK,All,Total,>=24 Mbit/s,97.8,31670904,Jul-25
+UK,All,Total,>=30 Mbit/s,97.5,31568870,Jul-25
+UK,All,Total,>=100 Mbit/s,86.9,28114032,Jul-25
+UK,All,Total,>=300 Mbit/s,86.4,27952254,Jul-25
+UK,All,Total,Full Fibre,77.5,25092339,Jul-25
+UK,All,Total,Gigabit capable,85.9,27814286,Jul-25
+UK,All,Urban,Premise Base,100,27735458,Jul-25
+UK,All,Urban,Unclassified,0.2,64325,Jul-25
+UK,All,Urban,<2 Mbit/s,0,3490,Jul-25
+UK,All,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.4,124305,Jul-25
+UK,All,Urban,>=10 Mbit/s,99.6,27622189,Jul-25
+UK,All,Urban,>=24 Mbit/s,98.9,27424738,Jul-25
+UK,All,Urban,>=30 Mbit/s,98.8,27396550,Jul-25
+UK,All,Urban,>=100 Mbit/s,91.2,25303147,Jul-25
+UK,All,Urban,>=300 Mbit/s,90.7,25156478,Jul-25
+UK,All,Urban,Full Fibre,80.6,22348580,Jul-25
+UK,All,Urban,Gigabit capable,90.2,25026073,Jul-25
+UK,All,Rural,Premise Base,100,4634381,Jul-25
+UK,All,Rural,Unclassified,0.4,17014,Jul-25
+UK,All,Rural,<2 Mbit/s,1.1,50281,Jul-25
+UK,All,Rural,<10 Mbit/s DL or <1 Mbit/s UL,4.7,215854,Jul-25
+UK,All,Rural,>=10 Mbit/s,95.5,4427217,Jul-25
+UK,All,Rural,>=24 Mbit/s,91.6,4246166,Jul-25
+UK,All,Rural,>=30 Mbit/s,90,4172320,Jul-25
+UK,All,Rural,>=100 Mbit/s,60.7,2810885,Jul-25
+UK,All,Rural,>=300 Mbit/s,60.3,2795776,Jul-25
+UK,All,Rural,Full Fibre,59.2,2743759,Jul-25
+UK,All,Rural,Gigabit capable,60.2,2788213,Jul-25
+UK,Residential,Total,Premise Base,100,30341756,Jul-25
+UK,Residential,Total,Unclassified,0.2,56348,Jul-25
+UK,Residential,Total,<2 Mbit/s,0.1,43807,Jul-25
+UK,Residential,Total,<10 Mbit/s DL or <1 Mbit/s UL,0.8,255131,Jul-25
+UK,Residential,Total,>=10 Mbit/s,99.2,30101146,Jul-25
+UK,Residential,Total,>=24 Mbit/s,98.3,29811384,Jul-25
+UK,Residential,Total,>=30 Mbit/s,98,29723677,Jul-25
+UK,Residential,Total,>=100 Mbit/s,88,26697319,Jul-25
+UK,Residential,Total,>=300 Mbit/s,87.5,26552061,Jul-25
+UK,Residential,Total,Full Fibre,78.2,23740951,Jul-25
+UK,Residential,Total,Gigabit capable,87.1,26435442,Jul-25
+UK,Residential,Urban,Premise Base,100,26058929,Jul-25
+UK,Residential,Urban,Unclassified,0.2,44363,Jul-25
+UK,Residential,Urban,<2 Mbit/s,0,1781,Jul-25
+UK,Residential,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.3,80316,Jul-25
+UK,Residential,Urban,>=10 Mbit/s,99.7,25986269,Jul-25
+UK,Residential,Urban,>=24 Mbit/s,99.2,25846614,Jul-25
+UK,Residential,Urban,>=30 Mbit/s,99.1,25823152,Jul-25
+UK,Residential,Urban,>=100 Mbit/s,92.2,24036080,Jul-25
+UK,Residential,Urban,>=300 Mbit/s,91.7,23904977,Jul-25
+UK,Residential,Urban,Full Fibre,81.1,21144737,Jul-25
+UK,Residential,Urban,Gigabit capable,91.3,23795385,Jul-25
+UK,Residential,Rural,Premise Base,100,4282827,Jul-25
+UK,Residential,Rural,Unclassified,0.3,11985,Jul-25
+UK,Residential,Rural,<2 Mbit/s,1,42026,Jul-25
+UK,Residential,Rural,<10 Mbit/s DL or <1 Mbit/s UL,4.1,174815,Jul-25
+UK,Residential,Rural,>=10 Mbit/s,96.1,4114877,Jul-25
+UK,Residential,Rural,>=24 Mbit/s,92.6,3964770,Jul-25
+UK,Residential,Rural,>=30 Mbit/s,91.1,3900525,Jul-25
+UK,Residential,Rural,>=100 Mbit/s,62.1,2661239,Jul-25
+UK,Residential,Rural,>=300 Mbit/s,61.8,2647084,Jul-25
+UK,Residential,Rural,Full Fibre,60.6,2596214,Jul-25
+UK,Residential,Rural,Gigabit capable,61.6,2640057,Jul-25
+UK,Commercial,Total,Premise Base,100,2028083,Jul-25
+UK,Commercial,Total,Unclassified,1.2,24991,Jul-25
+UK,Commercial,Total,<2 Mbit/s,0.5,9964,Jul-25
+UK,Commercial,Total,<10 Mbit/s DL or <1 Mbit/s UL,4.2,85028,Jul-25
+UK,Commercial,Total,>=10 Mbit/s,96.1,1948260,Jul-25
+UK,Commercial,Total,>=24 Mbit/s,91.7,1859520,Jul-25
+UK,Commercial,Total,>=30 Mbit/s,91,1845193,Jul-25
+UK,Commercial,Total,>=100 Mbit/s,69.9,1416713,Jul-25
+UK,Commercial,Total,>=300 Mbit/s,69,1400193,Jul-25
+UK,Commercial,Total,Full Fibre,66.6,1351388,Jul-25
+UK,Commercial,Total,Gigabit capable,68,1378844,Jul-25
+UK,Commercial,Urban,Premise Base,100,1676529,Jul-25
+UK,Commercial,Urban,Unclassified,1.2,19962,Jul-25
+UK,Commercial,Urban,<2 Mbit/s,0.1,1709,Jul-25
+UK,Commercial,Urban,<10 Mbit/s DL or <1 Mbit/s UL,2.6,43989,Jul-25
+UK,Commercial,Urban,>=10 Mbit/s,97.6,1635920,Jul-25
+UK,Commercial,Urban,>=24 Mbit/s,94.1,1578124,Jul-25
+UK,Commercial,Urban,>=30 Mbit/s,93.8,1573398,Jul-25
+UK,Commercial,Urban,>=100 Mbit/s,75.6,1267067,Jul-25
+UK,Commercial,Urban,>=300 Mbit/s,74.6,1251501,Jul-25
+UK,Commercial,Urban,Full Fibre,71.8,1203843,Jul-25
+UK,Commercial,Urban,Gigabit capable,73.4,1230688,Jul-25
+UK,Commercial,Rural,Premise Base,100,351554,Jul-25
+UK,Commercial,Rural,Unclassified,1.4,5029,Jul-25
+UK,Commercial,Rural,<2 Mbit/s,2.3,8255,Jul-25
+UK,Commercial,Rural,<10 Mbit/s DL or <1 Mbit/s UL,11.7,41039,Jul-25
+UK,Commercial,Rural,>=10 Mbit/s,88.8,312340,Jul-25
+UK,Commercial,Rural,>=24 Mbit/s,80,281396,Jul-25
+UK,Commercial,Rural,>=30 Mbit/s,77.3,271795,Jul-25
+UK,Commercial,Rural,>=100 Mbit/s,42.6,149646,Jul-25
+UK,Commercial,Rural,>=300 Mbit/s,42.3,148692,Jul-25
+UK,Commercial,Rural,Full Fibre,42,147545,Jul-25
+UK,Commercial,Rural,Gigabit capable,42.1,148156,Jul-25
+England,All,Total,Premise Base,100,26986731,Jul-25
+England,All,Total,Unclassified,0.2,65107,Jul-25
+England,All,Total,<2 Mbit/s,0.1,33225,Jul-25
+England,All,Total,<10 Mbit/s DL or <1 Mbit/s UL,0.9,245367,Jul-25
+England,All,Total,>=10 Mbit/s,99.1,26756260,Jul-25
+England,All,Total,>=24 Mbit/s,98,26445390,Jul-25
+England,All,Total,>=30 Mbit/s,97.7,26363033,Jul-25
+England,All,Total,>=100 Mbit/s,87.7,23673502,Jul-25
+England,All,Total,>=300 Mbit/s,87.2,23528147,Jul-25
+England,All,Total,Full Fibre,77.9,21020569,Jul-25
+England,All,Total,Gigabit capable,86.7,23404863,Jul-25
+England,All,Urban,Premise Base,100,23568135,Jul-25
+England,All,Urban,Unclassified,0.2,56585,Jul-25
+England,All,Urban,<2 Mbit/s,0,2850,Jul-25
+England,All,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.5,108460,Jul-25
+England,All,Urban,>=10 Mbit/s,99.6,23469028,Jul-25
+England,All,Urban,>=24 Mbit/s,98.8,23294720,Jul-25
+England,All,Urban,>=30 Mbit/s,98.7,23271165,Jul-25
+England,All,Urban,>=100 Mbit/s,91.7,21605699,Jul-25
+England,All,Urban,>=300 Mbit/s,91.1,21474276,Jul-25
+England,All,Urban,Full Fibre,80.7,19012573,Jul-25
+England,All,Urban,Gigabit capable,90.6,21357852,Jul-25
+England,All,Rural,Premise Base,100,3418596,Jul-25
+England,All,Rural,Unclassified,0.2,8522,Jul-25
+England,All,Rural,<2 Mbit/s,0.9,30375,Jul-25
+England,All,Rural,<10 Mbit/s DL or <1 Mbit/s UL,4,136907,Jul-25
+England,All,Rural,>=10 Mbit/s,96.2,3287232,Jul-25
+England,All,Rural,>=24 Mbit/s,92.2,3150670,Jul-25
+England,All,Rural,>=30 Mbit/s,90.4,3091868,Jul-25
+England,All,Rural,>=100 Mbit/s,60.5,2067803,Jul-25
+England,All,Rural,>=300 Mbit/s,60.1,2053871,Jul-25
+England,All,Rural,Full Fibre,58.7,2007996,Jul-25
+England,All,Rural,Gigabit capable,59.9,2047011,Jul-25
+England,Residential,Total,Premise Base,100,25308060,Jul-25
+England,Residential,Total,Unclassified,0.2,44230,Jul-25
+England,Residential,Total,<2 Mbit/s,0.1,26101,Jul-25
+England,Residential,Total,<10 Mbit/s DL or <1 Mbit/s UL,0.7,178946,Jul-25
+England,Residential,Total,>=10 Mbit/s,99.3,25139938,Jul-25
+England,Residential,Total,>=24 Mbit/s,98.4,24902225,Jul-25
+England,Residential,Total,>=30 Mbit/s,98.1,24831504,Jul-25
+England,Residential,Total,>=100 Mbit/s,88.8,22467179,Jul-25
+England,Residential,Total,>=300 Mbit/s,88.3,22336231,Jul-25
+England,Residential,Total,Full Fibre,78.5,19870848,Jul-25
+England,Residential,Total,Gigabit capable,87.8,22231693,Jul-25
+England,Residential,Urban,Premise Base,100,22150650,Jul-25
+England,Residential,Urban,Unclassified,0.2,38908,Jul-25
+England,Residential,Urban,<2 Mbit/s,0,1459,Jul-25
+England,Residential,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.3,71310,Jul-25
+England,Residential,Urban,>=10 Mbit/s,99.7,22085943,Jul-25
+England,Residential,Urban,>=24 Mbit/s,99.1,21960152,Jul-25
+England,Residential,Urban,>=30 Mbit/s,99.1,21940370,Jul-25
+England,Residential,Urban,>=100 Mbit/s,92.6,20509750,Jul-25
+England,Residential,Urban,>=300 Mbit/s,92.1,20391934,Jul-25
+England,Residential,Urban,Full Fibre,81.1,17971455,Jul-25
+England,Residential,Urban,Gigabit capable,91.6,20293831,Jul-25
+England,Residential,Rural,Premise Base,100,3157410,Jul-25
+England,Residential,Rural,Unclassified,0.2,5322,Jul-25
+England,Residential,Rural,<2 Mbit/s,0.8,24642,Jul-25
+England,Residential,Rural,<10 Mbit/s DL or <1 Mbit/s UL,3.4,107636,Jul-25
+England,Residential,Rural,>=10 Mbit/s,96.7,3053995,Jul-25
+England,Residential,Rural,>=24 Mbit/s,93.2,2942073,Jul-25
+England,Residential,Rural,>=30 Mbit/s,91.6,2891134,Jul-25
+England,Residential,Rural,>=100 Mbit/s,62,1957429,Jul-25
+England,Residential,Rural,>=300 Mbit/s,61.6,1944297,Jul-25
+England,Residential,Rural,Full Fibre,60.2,1899393,Jul-25
+England,Residential,Rural,Gigabit capable,61.4,1937862,Jul-25
+England,Commercial,Total,Premise Base,100,1678671,Jul-25
+England,Commercial,Total,Unclassified,1.2,20877,Jul-25
+England,Commercial,Total,<2 Mbit/s,0.4,7124,Jul-25
+England,Commercial,Total,<10 Mbit/s DL or <1 Mbit/s UL,4,66421,Jul-25
+England,Commercial,Total,>=10 Mbit/s,96.3,1616322,Jul-25
+England,Commercial,Total,>=24 Mbit/s,91.9,1543165,Jul-25
+England,Commercial,Total,>=30 Mbit/s,91.2,1531529,Jul-25
+England,Commercial,Total,>=100 Mbit/s,71.9,1206323,Jul-25
+England,Commercial,Total,>=300 Mbit/s,71,1191916,Jul-25
+England,Commercial,Total,Full Fibre,68.5,1149721,Jul-25
+England,Commercial,Total,Gigabit capable,69.9,1173170,Jul-25
+England,Commercial,Urban,Premise Base,100,1417485,Jul-25
+England,Commercial,Urban,Unclassified,1.2,17677,Jul-25
+England,Commercial,Urban,<2 Mbit/s,0.1,1391,Jul-25
+England,Commercial,Urban,<10 Mbit/s DL or <1 Mbit/s UL,2.6,37150,Jul-25
+England,Commercial,Urban,>=10 Mbit/s,97.6,1383085,Jul-25
+England,Commercial,Urban,>=24 Mbit/s,94.2,1334568,Jul-25
+England,Commercial,Urban,>=30 Mbit/s,93.9,1330795,Jul-25
+England,Commercial,Urban,>=100 Mbit/s,77.3,1095949,Jul-25
+England,Commercial,Urban,>=300 Mbit/s,76.4,1082342,Jul-25
+England,Commercial,Urban,Full Fibre,73.4,1041118,Jul-25
+England,Commercial,Urban,Gigabit capable,75.1,1064021,Jul-25
+England,Commercial,Rural,Premise Base,100,261186,Jul-25
+England,Commercial,Rural,Unclassified,1.2,3200,Jul-25
+England,Commercial,Rural,<2 Mbit/s,2.2,5733,Jul-25
+England,Commercial,Rural,<10 Mbit/s DL or <1 Mbit/s UL,11.2,29271,Jul-25
+England,Commercial,Rural,>=10 Mbit/s,89.3,233237,Jul-25
+England,Commercial,Rural,>=24 Mbit/s,79.9,208597,Jul-25
+England,Commercial,Rural,>=30 Mbit/s,76.9,200734,Jul-25
+England,Commercial,Rural,>=100 Mbit/s,42.3,110374,Jul-25
+England,Commercial,Rural,>=300 Mbit/s,42,109574,Jul-25
+England,Commercial,Rural,Full Fibre,41.6,108603,Jul-25
+England,Commercial,Rural,Gigabit capable,41.8,109149,Jul-25
+Northern Ireland,All,Total,Premise Base,100,888530,Jul-25
+Northern Ireland,All,Total,Unclassified,0.2,1989,Jul-25
+Northern Ireland,All,Total,<2 Mbit/s,0.3,2477,Jul-25
+Northern Ireland,All,Total,<10 Mbit/s DL or <1 Mbit/s UL,0.9,7607,Jul-25
+Northern Ireland,All,Total,>=10 Mbit/s,99.2,881090,Jul-25
+Northern Ireland,All,Total,>=24 Mbit/s,98.6,876442,Jul-25
+Northern Ireland,All,Total,>=30 Mbit/s,98.5,874801,Jul-25
+Northern Ireland,All,Total,>=100 Mbit/s,94.2,837361,Jul-25
+Northern Ireland,All,Total,>=300 Mbit/s,94.2,837341,Jul-25
+Northern Ireland,All,Total,Full Fibre,93.3,829190,Jul-25
+Northern Ireland,All,Total,Gigabit capable,94.2,837339,Jul-25
+Northern Ireland,All,Urban,Premise Base,100,618179,Jul-25
+Northern Ireland,All,Urban,Unclassified,0.2,994,Jul-25
+Northern Ireland,All,Urban,<2 Mbit/s,0,145,Jul-25
+Northern Ireland,All,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.3,1898,Jul-25
+Northern Ireland,All,Urban,>=10 Mbit/s,99.7,616386,Jul-25
+Northern Ireland,All,Urban,>=24 Mbit/s,99.4,614568,Jul-25
+Northern Ireland,All,Urban,>=30 Mbit/s,99.4,614336,Jul-25
+Northern Ireland,All,Urban,>=100 Mbit/s,96,593687,Jul-25
+Northern Ireland,All,Urban,>=300 Mbit/s,96,593668,Jul-25
+Northern Ireland,All,Urban,Full Fibre,94.7,585552,Jul-25
+Northern Ireland,All,Urban,Gigabit capable,96,593666,Jul-25
+Northern Ireland,All,Rural,Premise Base,100,270351,Jul-25
+Northern Ireland,All,Rural,Unclassified,0.4,995,Jul-25
+Northern Ireland,All,Rural,<2 Mbit/s,0.9,2332,Jul-25
+Northern Ireland,All,Rural,<10 Mbit/s DL or <1 Mbit/s UL,2.1,5709,Jul-25
+Northern Ireland,All,Rural,>=10 Mbit/s,97.9,264704,Jul-25
+Northern Ireland,All,Rural,>=24 Mbit/s,96.9,261874,Jul-25
+Northern Ireland,All,Rural,>=30 Mbit/s,96.3,260465,Jul-25
+Northern Ireland,All,Rural,>=100 Mbit/s,90.1,243674,Jul-25
+Northern Ireland,All,Rural,>=300 Mbit/s,90.1,243673,Jul-25
+Northern Ireland,All,Rural,Full Fibre,90.1,243638,Jul-25
+Northern Ireland,All,Rural,Gigabit capable,90.1,243673,Jul-25
+Northern Ireland,Residential,Total,Premise Base,100,826883,Jul-25
+Northern Ireland,Residential,Total,Unclassified,0.2,1346,Jul-25
+Northern Ireland,Residential,Total,<2 Mbit/s,0.3,2299,Jul-25
+Northern Ireland,Residential,Total,<10 Mbit/s DL or <1 Mbit/s UL,0.7,6144,Jul-25
+Northern Ireland,Residential,Total,>=10 Mbit/s,99.3,820808,Jul-25
+Northern Ireland,Residential,Total,>=24 Mbit/s,98.9,817722,Jul-25
+Northern Ireland,Residential,Total,>=30 Mbit/s,98.7,816327,Jul-25
+Northern Ireland,Residential,Total,>=100 Mbit/s,95.8,792048,Jul-25
+Northern Ireland,Residential,Total,>=300 Mbit/s,95.8,792046,Jul-25
+Northern Ireland,Residential,Total,Full Fibre,94.9,784922,Jul-25
+Northern Ireland,Residential,Total,Gigabit capable,95.8,792042,Jul-25
+Northern Ireland,Residential,Urban,Premise Base,100,572311,Jul-25
+Northern Ireland,Residential,Urban,Unclassified,0.1,554,Jul-25
+Northern Ireland,Residential,Urban,<2 Mbit/s,0,98,Jul-25
+Northern Ireland,Residential,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.2,978,Jul-25
+Northern Ireland,Residential,Urban,>=10 Mbit/s,99.8,571346,Jul-25
+Northern Ireland,Residential,Urban,>=24 Mbit/s,99.7,570828,Jul-25
+Northern Ireland,Residential,Urban,>=30 Mbit/s,99.7,570703,Jul-25
+Northern Ireland,Residential,Urban,>=100 Mbit/s,98,560752,Jul-25
+Northern Ireland,Residential,Urban,>=300 Mbit/s,98,560750,Jul-25
+Northern Ireland,Residential,Urban,Full Fibre,96.7,553661,Jul-25
+Northern Ireland,Residential,Urban,Gigabit capable,98,560746,Jul-25
+Northern Ireland,Residential,Rural,Premise Base,100,254572,Jul-25
+Northern Ireland,Residential,Rural,Unclassified,0.3,792,Jul-25
+Northern Ireland,Residential,Rural,<2 Mbit/s,0.9,2201,Jul-25
+Northern Ireland,Residential,Rural,<10 Mbit/s DL or <1 Mbit/s UL,2,5166,Jul-25
+Northern Ireland,Residential,Rural,>=10 Mbit/s,98,249462,Jul-25
+Northern Ireland,Residential,Rural,>=24 Mbit/s,97,246894,Jul-25
+Northern Ireland,Residential,Rural,>=30 Mbit/s,96.5,245624,Jul-25
+Northern Ireland,Residential,Rural,>=100 Mbit/s,90.9,231296,Jul-25
+Northern Ireland,Residential,Rural,>=300 Mbit/s,90.9,231296,Jul-25
+Northern Ireland,Residential,Rural,Full Fibre,90.8,231261,Jul-25
+Northern Ireland,Residential,Rural,Gigabit capable,90.9,231296,Jul-25
+Northern Ireland,Commercial,Total,Premise Base,100,61647,Jul-25
+Northern Ireland,Commercial,Total,Unclassified,1,643,Jul-25
+Northern Ireland,Commercial,Total,<2 Mbit/s,0.3,178,Jul-25
+Northern Ireland,Commercial,Total,<10 Mbit/s DL or <1 Mbit/s UL,2.4,1463,Jul-25
+Northern Ireland,Commercial,Total,>=10 Mbit/s,97.8,60282,Jul-25
+Northern Ireland,Commercial,Total,>=24 Mbit/s,95.3,58720,Jul-25
+Northern Ireland,Commercial,Total,>=30 Mbit/s,94.9,58474,Jul-25
+Northern Ireland,Commercial,Total,>=100 Mbit/s,73.5,45313,Jul-25
+Northern Ireland,Commercial,Total,>=300 Mbit/s,73.5,45295,Jul-25
+Northern Ireland,Commercial,Total,Full Fibre,71.8,44268,Jul-25
+Northern Ireland,Commercial,Total,Gigabit capable,73.5,45297,Jul-25
+Northern Ireland,Commercial,Urban,Premise Base,100,45868,Jul-25
+Northern Ireland,Commercial,Urban,Unclassified,1,440,Jul-25
+Northern Ireland,Commercial,Urban,<2 Mbit/s,0.1,47,Jul-25
+Northern Ireland,Commercial,Urban,<10 Mbit/s DL or <1 Mbit/s UL,2,920,Jul-25
+Northern Ireland,Commercial,Urban,>=10 Mbit/s,98.2,45040,Jul-25
+Northern Ireland,Commercial,Urban,>=24 Mbit/s,95.4,43740,Jul-25
+Northern Ireland,Commercial,Urban,>=30 Mbit/s,95.1,43633,Jul-25
+Northern Ireland,Commercial,Urban,>=100 Mbit/s,71.8,32935,Jul-25
+Northern Ireland,Commercial,Urban,>=300 Mbit/s,71.8,32918,Jul-25
+Northern Ireland,Commercial,Urban,Full Fibre,69.5,31891,Jul-25
+Northern Ireland,Commercial,Urban,Gigabit capable,71.8,32920,Jul-25
+Northern Ireland,Commercial,Rural,Premise Base,100,15779,Jul-25
+Northern Ireland,Commercial,Rural,Unclassified,1.3,203,Jul-25
+Northern Ireland,Commercial,Rural,<2 Mbit/s,0.8,131,Jul-25
+Northern Ireland,Commercial,Rural,<10 Mbit/s DL or <1 Mbit/s UL,3.4,543,Jul-25
+Northern Ireland,Commercial,Rural,>=10 Mbit/s,96.6,15242,Jul-25
+Northern Ireland,Commercial,Rural,>=24 Mbit/s,94.9,14980,Jul-25
+Northern Ireland,Commercial,Rural,>=30 Mbit/s,94.1,14841,Jul-25
+Northern Ireland,Commercial,Rural,>=100 Mbit/s,78.4,12378,Jul-25
+Northern Ireland,Commercial,Rural,>=300 Mbit/s,78.4,12377,Jul-25
+Northern Ireland,Commercial,Rural,Full Fibre,78.4,12377,Jul-25
+Northern Ireland,Commercial,Rural,Gigabit capable,78.4,12377,Jul-25
+Scotland,All,Total,Premise Base,100,2925198,Jul-25
+Scotland,All,Total,Unclassified,0.3,8614,Jul-25
+Scotland,All,Total,<2 Mbit/s,0.4,11661,Jul-25
+Scotland,All,Total,<10 Mbit/s DL or <1 Mbit/s UL,1.9,55165,Jul-25
+Scotland,All,Total,>=10 Mbit/s,98.2,2873126,Jul-25
+Scotland,All,Total,>=24 Mbit/s,96.8,2831575,Jul-25
+Scotland,All,Total,>=30 Mbit/s,96.4,2819696,Jul-25
+Scotland,All,Total,>=100 Mbit/s,80.3,2348507,Jul-25
+Scotland,All,Total,>=300 Mbit/s,80,2338942,Jul-25
+Scotland,All,Total,Full Fibre,70,2047228,Jul-25
+Scotland,All,Total,Gigabit capable,79.7,2329970,Jul-25
+Scotland,All,Urban,Premise Base,100,2339137,Jul-25
+Scotland,All,Urban,Unclassified,0.1,3297,Jul-25
+Scotland,All,Urban,<2 Mbit/s,0,141,Jul-25
+Scotland,All,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.3,7377,Jul-25
+Scotland,All,Urban,>=10 Mbit/s,99.7,2332992,Jul-25
+Scotland,All,Urban,>=24 Mbit/s,99.1,2318599,Jul-25
+Scotland,All,Urban,>=30 Mbit/s,99,2315877,Jul-25
+Scotland,All,Urban,>=100 Mbit/s,88,2057853,Jul-25
+Scotland,All,Urban,>=300 Mbit/s,87.6,2048883,Jul-25
+Scotland,All,Urban,Full Fibre,75.4,1762723,Jul-25
+Scotland,All,Urban,Gigabit capable,87.2,2040253,Jul-25
+Scotland,All,Rural,Premise Base,100,586061,Jul-25
+Scotland,All,Rural,Unclassified,0.9,5317,Jul-25
+Scotland,All,Rural,<2 Mbit/s,2,11520,Jul-25
+Scotland,All,Rural,<10 Mbit/s DL or <1 Mbit/s UL,8.2,47788,Jul-25
+Scotland,All,Rural,>=10 Mbit/s,92.2,540134,Jul-25
+Scotland,All,Rural,>=24 Mbit/s,87.5,512976,Jul-25
+Scotland,All,Rural,>=30 Mbit/s,86,503819,Jul-25
+Scotland,All,Rural,>=100 Mbit/s,49.6,290654,Jul-25
+Scotland,All,Rural,>=300 Mbit/s,49.5,290059,Jul-25
+Scotland,All,Rural,Full Fibre,48.5,284505,Jul-25
+Scotland,All,Rural,Gigabit capable,49.4,289717,Jul-25
+Scotland,Residential,Total,Premise Base,100,2745277,Jul-25
+Scotland,Residential,Total,Unclassified,0.2,6701,Jul-25
+Scotland,Residential,Total,<2 Mbit/s,0.4,9906,Jul-25
+Scotland,Residential,Total,<10 Mbit/s DL or <1 Mbit/s UL,1.6,45062,Jul-25
+Scotland,Residential,Total,>=10 Mbit/s,98.5,2702743,Jul-25
+Scotland,Residential,Total,>=24 Mbit/s,97.3,2670044,Jul-25
+Scotland,Residential,Total,>=30 Mbit/s,96.9,2659789,Jul-25
+Scotland,Residential,Total,>=100 Mbit/s,81.7,2243906,Jul-25
+Scotland,Residential,Total,>=300 Mbit/s,81.4,2235475,Jul-25
+Scotland,Residential,Total,Full Fibre,70.9,1947087,Jul-25
+Scotland,Residential,Total,Gigabit capable,81.2,2228017,Jul-25
+Scotland,Residential,Urban,Premise Base,100,2205527,Jul-25
+Scotland,Residential,Urban,Unclassified,0.1,2579,Jul-25
+Scotland,Residential,Urban,<2 Mbit/s,0,84,Jul-25
+Scotland,Residential,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.2,4707,Jul-25
+Scotland,Residential,Urban,>=10 Mbit/s,99.8,2201762,Jul-25
+Scotland,Residential,Urban,>=24 Mbit/s,99.4,2192087,Jul-25
+Scotland,Residential,Urban,>=30 Mbit/s,99.3,2189851,Jul-25
+Scotland,Residential,Urban,>=100 Mbit/s,89.2,1967965,Jul-25
+Scotland,Residential,Urban,>=300 Mbit/s,88.9,1960004,Jul-25
+Scotland,Residential,Urban,Full Fibre,76,1677020,Jul-25
+Scotland,Residential,Urban,Gigabit capable,88.5,1952802,Jul-25
+Scotland,Residential,Rural,Premise Base,100,539750,Jul-25
+Scotland,Residential,Rural,Unclassified,0.8,4122,Jul-25
+Scotland,Residential,Rural,<2 Mbit/s,1.8,9822,Jul-25
+Scotland,Residential,Rural,<10 Mbit/s DL or <1 Mbit/s UL,7.5,40355,Jul-25
+Scotland,Residential,Rural,>=10 Mbit/s,92.8,500981,Jul-25
+Scotland,Residential,Rural,>=24 Mbit/s,88.6,477957,Jul-25
+Scotland,Residential,Rural,>=30 Mbit/s,87.1,469938,Jul-25
+Scotland,Residential,Rural,>=100 Mbit/s,51.1,275941,Jul-25
+Scotland,Residential,Rural,>=300 Mbit/s,51,275471,Jul-25
+Scotland,Residential,Rural,Full Fibre,50,270067,Jul-25
+Scotland,Residential,Rural,Gigabit capable,51,275215,Jul-25
+Scotland,Commercial,Total,Premise Base,100,179921,Jul-25
+Scotland,Commercial,Total,Unclassified,1.1,1913,Jul-25
+Scotland,Commercial,Total,<2 Mbit/s,1,1755,Jul-25
+Scotland,Commercial,Total,<10 Mbit/s DL or <1 Mbit/s UL,5.6,10103,Jul-25
+Scotland,Commercial,Total,>=10 Mbit/s,94.7,170383,Jul-25
+Scotland,Commercial,Total,>=24 Mbit/s,89.8,161531,Jul-25
+Scotland,Commercial,Total,>=30 Mbit/s,88.9,159907,Jul-25
+Scotland,Commercial,Total,>=100 Mbit/s,58.1,104601,Jul-25
+Scotland,Commercial,Total,>=300 Mbit/s,57.5,103467,Jul-25
+Scotland,Commercial,Total,Full Fibre,55.7,100141,Jul-25
+Scotland,Commercial,Total,Gigabit capable,56.7,101953,Jul-25
+Scotland,Commercial,Urban,Premise Base,100,133610,Jul-25
+Scotland,Commercial,Urban,Unclassified,0.5,718,Jul-25
+Scotland,Commercial,Urban,<2 Mbit/s,0,57,Jul-25
+Scotland,Commercial,Urban,<10 Mbit/s DL or <1 Mbit/s UL,2,2670,Jul-25
+Scotland,Commercial,Urban,>=10 Mbit/s,98.2,131230,Jul-25
+Scotland,Commercial,Urban,>=24 Mbit/s,94.7,126512,Jul-25
+Scotland,Commercial,Urban,>=30 Mbit/s,94.3,126026,Jul-25
+Scotland,Commercial,Urban,>=100 Mbit/s,67.3,89888,Jul-25
+Scotland,Commercial,Urban,>=300 Mbit/s,66.5,88879,Jul-25
+Scotland,Commercial,Urban,Full Fibre,64.1,85703,Jul-25
+Scotland,Commercial,Urban,Gigabit capable,65.5,87451,Jul-25
+Scotland,Commercial,Rural,Premise Base,100,46311,Jul-25
+Scotland,Commercial,Rural,Unclassified,2.6,1195,Jul-25
+Scotland,Commercial,Rural,<2 Mbit/s,3.7,1698,Jul-25
+Scotland,Commercial,Rural,<10 Mbit/s DL or <1 Mbit/s UL,16.1,7433,Jul-25
+Scotland,Commercial,Rural,>=10 Mbit/s,84.5,39153,Jul-25
+Scotland,Commercial,Rural,>=24 Mbit/s,75.6,35019,Jul-25
+Scotland,Commercial,Rural,>=30 Mbit/s,73.2,33881,Jul-25
+Scotland,Commercial,Rural,>=100 Mbit/s,31.8,14713,Jul-25
+Scotland,Commercial,Rural,>=300 Mbit/s,31.5,14588,Jul-25
+Scotland,Commercial,Rural,Full Fibre,31.2,14438,Jul-25
+Scotland,Commercial,Rural,Gigabit capable,31.3,14502,Jul-25
+Wales,All,Total,Premise Base,100,1569380,Jul-25
+Wales,All,Total,Unclassified,0.4,5629,Jul-25
+Wales,All,Total,<2 Mbit/s,0.4,6408,Jul-25
+Wales,All,Total,<10 Mbit/s DL or <1 Mbit/s UL,2,32020,Jul-25
+Wales,All,Total,>=10 Mbit/s,98.1,1538930,Jul-25
+Wales,All,Total,>=24 Mbit/s,96.7,1517497,Jul-25
+Wales,All,Total,>=30 Mbit/s,96.3,1511340,Jul-25
+Wales,All,Total,>=100 Mbit/s,79.9,1254662,Jul-25
+Wales,All,Total,>=300 Mbit/s,79.5,1247824,Jul-25
+Wales,All,Total,Full Fibre,76.2,1195352,Jul-25
+Wales,All,Total,Gigabit capable,79.1,1242114,Jul-25
+Wales,All,Urban,Premise Base,100,1210007,Jul-25
+Wales,All,Urban,Unclassified,0.3,3449,Jul-25
+Wales,All,Urban,<2 Mbit/s,0,354,Jul-25
+Wales,All,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.5,6570,Jul-25
+Wales,All,Urban,>=10 Mbit/s,99.5,1203783,Jul-25
+Wales,All,Urban,>=24 Mbit/s,98.9,1196851,Jul-25
+Wales,All,Urban,>=30 Mbit/s,98.8,1195172,Jul-25
+Wales,All,Urban,>=100 Mbit/s,86.4,1045908,Jul-25
+Wales,All,Urban,>=300 Mbit/s,85.9,1039651,Jul-25
+Wales,All,Urban,Full Fibre,81.6,987732,Jul-25
+Wales,All,Urban,Gigabit capable,85.5,1034302,Jul-25
+Wales,All,Rural,Premise Base,100,359373,Jul-25
+Wales,All,Rural,Unclassified,0.6,2180,Jul-25
+Wales,All,Rural,<2 Mbit/s,1.7,6054,Jul-25
+Wales,All,Rural,<10 Mbit/s DL or <1 Mbit/s UL,7.1,25450,Jul-25
+Wales,All,Rural,>=10 Mbit/s,93.3,335147,Jul-25
+Wales,All,Rural,>=24 Mbit/s,89.2,320646,Jul-25
+Wales,All,Rural,>=30 Mbit/s,88,316168,Jul-25
+Wales,All,Rural,>=100 Mbit/s,58.1,208754,Jul-25
+Wales,All,Rural,>=300 Mbit/s,57.9,208173,Jul-25
+Wales,All,Rural,Full Fibre,57.8,207620,Jul-25
+Wales,All,Rural,Gigabit capable,57.8,207812,Jul-25
+Wales,Residential,Total,Premise Base,100,1461536,Jul-25
+Wales,Residential,Total,Unclassified,0.3,4071,Jul-25
+Wales,Residential,Total,<2 Mbit/s,0.4,5501,Jul-25
+Wales,Residential,Total,<10 Mbit/s DL or <1 Mbit/s UL,1.7,24979,Jul-25
+Wales,Residential,Total,>=10 Mbit/s,98.4,1437657,Jul-25
+Wales,Residential,Total,>=24 Mbit/s,97.3,1421393,Jul-25
+Wales,Residential,Total,>=30 Mbit/s,96.9,1416057,Jul-25
+Wales,Residential,Total,>=100 Mbit/s,81.7,1194186,Jul-25
+Wales,Residential,Total,>=300 Mbit/s,81.3,1188309,Jul-25
+Wales,Residential,Total,Full Fibre,77.9,1138094,Jul-25
+Wales,Residential,Total,Gigabit capable,81,1183690,Jul-25
+Wales,Residential,Urban,Premise Base,100,1130441,Jul-25
+Wales,Residential,Urban,Unclassified,0.2,2322,Jul-25
+Wales,Residential,Urban,<2 Mbit/s,0,140,Jul-25
+Wales,Residential,Urban,<10 Mbit/s DL or <1 Mbit/s UL,0.3,3321,Jul-25
+Wales,Residential,Urban,>=10 Mbit/s,99.7,1127218,Jul-25
+Wales,Residential,Urban,>=24 Mbit/s,99.4,1123547,Jul-25
+Wales,Residential,Urban,>=30 Mbit/s,99.3,1122228,Jul-25
+Wales,Residential,Urban,>=100 Mbit/s,88.2,997613,Jul-25
+Wales,Residential,Urban,>=300 Mbit/s,87.8,992289,Jul-25
+Wales,Residential,Urban,Full Fibre,83.4,942601,Jul-25
+Wales,Residential,Urban,Gigabit capable,87.4,988006,Jul-25
+Wales,Residential,Rural,Premise Base,100,331095,Jul-25
+Wales,Residential,Rural,Unclassified,0.5,1749,Jul-25
+Wales,Residential,Rural,<2 Mbit/s,1.6,5361,Jul-25
+Wales,Residential,Rural,<10 Mbit/s DL or <1 Mbit/s UL,6.5,21658,Jul-25
+Wales,Residential,Rural,>=10 Mbit/s,93.8,310439,Jul-25
+Wales,Residential,Rural,>=24 Mbit/s,90,297846,Jul-25
+Wales,Residential,Rural,>=30 Mbit/s,88.7,293829,Jul-25
+Wales,Residential,Rural,>=100 Mbit/s,59.4,196573,Jul-25
+Wales,Residential,Rural,>=300 Mbit/s,59.2,196020,Jul-25
+Wales,Residential,Rural,Full Fibre,59,195493,Jul-25
+Wales,Residential,Rural,Gigabit capable,59.1,195684,Jul-25
+Wales,Commercial,Total,Premise Base,100,107844,Jul-25
+Wales,Commercial,Total,Unclassified,1.4,1558,Jul-25
+Wales,Commercial,Total,<2 Mbit/s,0.8,907,Jul-25
+Wales,Commercial,Total,<10 Mbit/s DL or <1 Mbit/s UL,6.5,7041,Jul-25
+Wales,Commercial,Total,>=10 Mbit/s,93.9,101273,Jul-25
+Wales,Commercial,Total,>=24 Mbit/s,89.1,96104,Jul-25
+Wales,Commercial,Total,>=30 Mbit/s,88.4,95283,Jul-25
+Wales,Commercial,Total,>=100 Mbit/s,56.1,60476,Jul-25
+Wales,Commercial,Total,>=300 Mbit/s,55.2,59515,Jul-25
+Wales,Commercial,Total,Full Fibre,53.1,57258,Jul-25
+Wales,Commercial,Total,Gigabit capable,54.2,58424,Jul-25
+Wales,Commercial,Urban,Premise Base,100,79566,Jul-25
+Wales,Commercial,Urban,Unclassified,1.4,1127,Jul-25
+Wales,Commercial,Urban,<2 Mbit/s,0.3,214,Jul-25
+Wales,Commercial,Urban,<10 Mbit/s DL or <1 Mbit/s UL,4.1,3249,Jul-25
+Wales,Commercial,Urban,>=10 Mbit/s,96.2,76565,Jul-25
+Wales,Commercial,Urban,>=24 Mbit/s,92.1,73304,Jul-25
+Wales,Commercial,Urban,>=30 Mbit/s,91.7,72944,Jul-25
+Wales,Commercial,Urban,>=100 Mbit/s,60.7,48295,Jul-25
+Wales,Commercial,Urban,>=300 Mbit/s,59.5,47362,Jul-25
+Wales,Commercial,Urban,Full Fibre,56.7,45131,Jul-25
+Wales,Commercial,Urban,Gigabit capable,58.2,46296,Jul-25
+Wales,Commercial,Rural,Premise Base,100,28278,Jul-25
+Wales,Commercial,Rural,Unclassified,1.5,431,Jul-25
+Wales,Commercial,Rural,<2 Mbit/s,2.5,693,Jul-25
+Wales,Commercial,Rural,<10 Mbit/s DL or <1 Mbit/s UL,13.4,3792,Jul-25
+Wales,Commercial,Rural,>=10 Mbit/s,87.4,24708,Jul-25
+Wales,Commercial,Rural,>=24 Mbit/s,80.6,22800,Jul-25
+Wales,Commercial,Rural,>=30 Mbit/s,79,22339,Jul-25
+Wales,Commercial,Rural,>=100 Mbit/s,43.1,12181,Jul-25
+Wales,Commercial,Rural,>=300 Mbit/s,43,12153,Jul-25
+Wales,Commercial,Rural,Full Fibre,42.9,12127,Jul-25
+Wales,Commercial,Rural,Gigabit capable,42.9,12128,Jul-25

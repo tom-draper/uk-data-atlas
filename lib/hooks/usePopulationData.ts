@@ -103,7 +103,7 @@ const parsePopulationDataCombined = async (csvText: string) => {
 export const usePopulationData = () => {
 	return useDataLoader<PopulationDataset>(async () => {
 		const response = await fetch(
-			withCDN("/data/population/Mid-2022 Ward 2023.csv"),
+			withCDN("/data/demographics/population/Mid-2022 Ward 2023.csv"),
 		);
 		if (!response.ok)
 			throw new Error(

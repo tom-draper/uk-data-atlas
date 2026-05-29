@@ -46,7 +46,7 @@ function pickBySubstring(row: Record<string, any>, substring: string): string {
 export const useNIMDMData = (enabled = true) => {
 	return useDataLoader<NIMDMDataset>(async () => {
 		const response = await fetch(
-			withCDN("/data/nimdm/NIMDM17_SOAresults.csv"),
+			withCDN("/data/deprivation/nimdm/NIMDM17_SOAresults.csv"),
 		);
 		if (!response.ok)
 			throw new Error(

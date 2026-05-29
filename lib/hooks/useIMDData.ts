@@ -8,7 +8,7 @@ export const useIMDData = () => {
 	return useDataLoader<IMDDataset>(async () => {
 		const response = await fetch(
 			withCDN(
-				"/data/imd/File_7_-_All_IoD2019_Scores__Ranks__Deciles_and_Population_Denominators_3.csv",
+				"/data/deprivation/imd/File_7_-_All_IoD2019_Scores__Ranks__Deciles_and_Population_Denominators_3.csv",
 			),
 		);
 		if (!response.ok)

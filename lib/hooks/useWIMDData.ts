@@ -39,7 +39,7 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 
 export const useWIMDData = (enabled = true) => {
 	return useDataLoader<WIMDDataset>(async () => {
-		const response = await fetch(withCDN("/data/wimd/wimd2019.csv"));
+		const response = await fetch(withCDN("/data/deprivation/wimd/wimd2019.csv"));
 		if (!response.ok)
 			throw new Error(
 				`Failed to fetch WIMD data: ${response.statusText}`,

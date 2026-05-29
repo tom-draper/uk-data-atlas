@@ -41,14 +41,14 @@ export const useLifeExpectancyData = (enableHLE = true) => {
 	return useDataLoader<LifeExpectancyDataset>(async () => {
 		const fetches: Promise<Response>[] = [
 			fetch(
-				withCDN("/data/life-expectancy/lifeexpectancylocalareas.csv"),
+				withCDN("/data/health/life-expectancy/lifeexpectancylocalareas.csv"),
 			),
 		];
 		if (enableHLE) {
 			fetches.push(
 				fetch(
 					withCDN(
-						"/data/life-expectancy/healthylifeexpectancyuk.csv",
+						"/data/health/life-expectancy/healthylifeexpectancyuk.csv",
 					),
 				),
 			);

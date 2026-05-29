@@ -52,7 +52,7 @@ function parseNum(val: any): number {
 export const useSIMDData = (enabled = true) => {
 	return useDataLoader<SIMDDataset>(async () => {
 		const response = await fetch(
-			withCDN("/data/simd/SIMD+2020v2+-+indicators.csv"),
+			withCDN("/data/deprivation/simd/SIMD+2020v2+-+indicators.csv"),
 		);
 		if (!response.ok)
 			throw new Error(
