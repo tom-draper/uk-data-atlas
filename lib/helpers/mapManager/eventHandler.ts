@@ -112,6 +112,7 @@ export class EventHandler {
 		}
 
 		// Then update feature states
+		if (!this.map.getSource(SOURCE_ID)) return;
 		if (this.lastHoveredFeatureId !== null) {
 			this.map.setFeatureState(
 				{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
@@ -127,10 +128,12 @@ export class EventHandler {
 
 	private handleMouseLeave(): void {
 		if (this.lastHoveredFeatureId !== null) {
-			this.map.setFeatureState(
-				{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
-				{ hover: false },
-			);
+			if (this.map.getSource(SOURCE_ID)) {
+				this.map.setFeatureState(
+					{ source: SOURCE_ID, id: this.lastHoveredFeatureId },
+					{ hover: false },
+				);
+			}
 			this.lastHoveredFeatureId = null;
 		}
 		this.canvas.style.cursor = "";
