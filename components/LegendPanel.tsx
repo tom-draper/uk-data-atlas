@@ -19,7 +19,7 @@ import {
 import { RangeControl } from "./controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import LegendContent from "./LegendContent";
-import { panelTheme } from "@/lib/helpers/panelTheme";
+import { panelTheme, glassStyle, glassSpecular } from "@/lib/helpers/panelTheme";
 
 export type PartyDisplayData = { id: PartyCode; color: string; name: string };
 
@@ -133,9 +133,11 @@ function PercentageRangePanel({
 	const t = panelTheme(isDark);
 	return (
 		<div
-			className={`pointer-events-auto rounded-md backdrop-blur-md shadow-lg border w-fit ml-auto ${t.panel}`}
+			className={`pointer-events-auto rounded-md w-fit ml-auto relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
+			style={glassStyle(isDark)}
 		>
-			<div className={`${t.section} p-1 overflow-hidden`}>
+			<div style={glassSpecular(isDark)} />
+			<div className={`relative ${t.section} p-1 overflow-hidden`} style={{ zIndex: 1 }}>
 				<RangeControl
 					min={0}
 					max={100}
@@ -314,9 +316,11 @@ export default function LegendPanel({
 	return (
 		<div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full gap-2.5">
 			<div
-				className={`pointer-events-auto rounded-md backdrop-blur-md shadow-lg border ${t.panel}`}
+				className={`pointer-events-auto rounded-md relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
+				style={glassStyle(isDark)}
 			>
-				<div className={`${t.section} p-1 overflow-hidden`}>
+				<div style={glassSpecular(isDark)} />
+				<div className={`relative ${t.section} p-1 overflow-hidden`} style={{ zIndex: 1 }}>
 					<LegendContent
 						activeDataset={activeDataset}
 						activeViz={activeViz}
