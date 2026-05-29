@@ -23,7 +23,7 @@ import CustomSection from "./custom/CustomSection";
 import EducationSection from "./education/EducationSection";
 import TelecomsSection from "./telecoms/TelecomsSection";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { panelTheme } from "@/lib/helpers/panelTheme";
+import { glassStyle, glassSpecular } from "@/lib/helpers/panelTheme";
 import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
 import {
 	ChartVisibilityProvider,
@@ -73,7 +73,6 @@ export default function ChartPanel({
 	codeMapper,
 }: ChartPanelProps) {
 	const isDark = useIsDark();
-	const t = panelTheme(isDark);
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const sectionVisible = useSectionVisibility();
 	const toggleSettings = () => setSettingsOpen((o) => !o);
@@ -82,8 +81,11 @@ export default function ChartPanel({
 		<ChartVisibilityProvider>
 			<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
 				<div
-					className={`rounded-md backdrop-blur-md shadow-lg h-full flex flex-col border ${t.panel}`}
+					className={`rounded-md h-full flex flex-col relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
+					style={glassStyle(isDark)}
 				>
+					<div style={glassSpecular(isDark)} />
+					<div className="relative flex flex-col h-full" style={{ zIndex: 1 }}>
 					<PanelHeader
 						settingsOpen={settingsOpen}
 						onToggleSettings={toggleSettings}
@@ -244,6 +246,7 @@ export default function ChartPanel({
 					)}
 
 					<PanelFooter />
+					</div>
 				</div>
 			</div>
 		</ChartVisibilityProvider>
