@@ -1,5 +1,5 @@
 // hooks/useBoundaryData.ts
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BoundaryCodes, BoundaryData, BoundaryGeojson } from "@lib/types";
 import {
 	BoundaryType,
@@ -320,44 +320,25 @@ export function useBoundaryData(
 		addConstituencyWardMappings,
 	]);
 
-	// Filter data based on selected location
-	const filteredData: BoundaryData = isLoading || !rawData.ward[2024]
-		? EMPTY_BOUNDARY_DATA
-		: {
-				ward: filterBoundaryGroup(
-					rawData.ward,
-					"ward",
-					selectedLocation || null,
-					getLadForWard,
-				),
-				constituency: filterBoundaryGroup(
-					rawData.constituency,
-					"constituency",
-					selectedLocation || null,
-				),
-				localAuthority: filterBoundaryGroup(
-					rawData.localAuthority,
-					"localAuthority",
-					selectedLocation || null,
-				),
-				lsoa: filterBoundaryGroup(
-					rawData.lsoa,
-					"lsoa",
-					selectedLocation || null,
-				),
-				dataZone: filterBoundaryGroup(
-					rawData.dataZone,
-					"dataZone",
-					selectedLocation || null,
-				),
-				superOutputArea: filterBoundaryGroup(
-					rawData.superOutputArea,
-					"superOutputArea",
-					selectedLocation || null,
-				),
-			};
+	const loc = selectedLocation || null;
 
-	const boundaryCodes: BoundaryCodes = extractCodeSets(rawData, isLoading);
+	const filteredData = useMemo<BoundaryData>(() => {
+		if (isLoading || !rawData.ward[2024]) return EMPTY_BOUNDARY_DATA;
+		return {
+			ward: filterBoundaryGroup(rawData.ward, "ward", loc, getLadForWard),
+			constituency: filterBoundaryGroup(rawData.constituency, "constituency", loc),
+			localAuthority: filterBoundaryGroup(rawData.localAuthority, "localAuthority", loc),
+			lsoa: filterBoundaryGroup(rawData.lsoa, "lsoa", loc),
+			dataZone: filterBoundaryGroup(rawData.dataZone, "dataZone", loc),
+			superOutputArea: filterBoundaryGroup(rawData.superOutputArea, "superOutputArea", loc),
+		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [rawData, loc]);
+
+	const boundaryCodes = useMemo(
+		() => extractCodeSets(rawData, isLoading),
+		[rawData, isLoading],
+	);
 
 	return {
 		boundaryData: filteredData,
