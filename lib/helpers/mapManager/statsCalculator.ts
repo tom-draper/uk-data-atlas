@@ -623,7 +623,7 @@ export class StatsCalculator {
 		simdData: SIMDDataset["data"],
 		location: string | null,
 		datasetId: string | null,
-	): AggregatedSIMDData {
+	): AggregatedSIMDData | null {
 		const cacheKey = `simd-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey) as AggregatedSIMDData | null;
 		if (cached) return cached;
@@ -645,9 +645,11 @@ export class StatsCalculator {
 			}
 		}
 
+		if (count === 0) return null;
+
 		const stats: AggregatedSIMDData = {
-			averageSIMDRank: count > 0 ? totalRank / count : 0,
-			averageSIMDQuintile: count > 0 ? totalQuintile / count : 0,
+			averageSIMDRank: totalRank / count,
+			averageSIMDQuintile: totalQuintile / count,
 		};
 
 		this.cache.set(cacheKey, stats);
@@ -659,7 +661,7 @@ export class StatsCalculator {
 		wimdData: WIMDDataset["data"],
 		location: string | null,
 		datasetId: string | null,
-	): AggregatedWIMDData {
+	): AggregatedWIMDData | null {
 		const cacheKey = `wimd-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey) as AggregatedWIMDData | null;
 		if (cached) return cached;
@@ -681,9 +683,11 @@ export class StatsCalculator {
 			}
 		}
 
+		if (count === 0) return null;
+
 		const stats: AggregatedWIMDData = {
-			averageWIMDScore: count > 0 ? totalScore / count : 0,
-			averageWIMDDecile: count > 0 ? totalDecile / count : 0,
+			averageWIMDScore: totalScore / count,
+			averageWIMDDecile: totalDecile / count,
 		};
 
 		this.cache.set(cacheKey, stats);

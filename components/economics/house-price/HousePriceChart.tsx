@@ -380,7 +380,7 @@ function PriceChart({
 
 				{/* Price display in bottom right */}
 				{formattedPrice ? (
-					<div className="relative flex justify-end items-end mt-3 z-10 h-7">
+					<div className="relative flex justify-end items-end flex-1 z-10">
 						<div
 							className={`text-xl font-bold ${!currentPrice ? "text-gray-400 text-sm" : ""}`}
 						>
@@ -388,7 +388,7 @@ function PriceChart({
 						</div>
 					</div>
 				) : (
-					<div className="h-7 mt-3 mb-1">
+					<div className="flex-1 mt-1">
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (

@@ -192,7 +192,7 @@ export default function IncomeChart({
 			</div>
 
 			{formattedMedian ? (
-				<div className="relative flex justify-center items-center mt-3 mb-1 z-10 h-5">
+				<div className="relative flex justify-center items-center flex-1 z-10">
 					<div
 						className={`text-xl font-bold bg-transparent px-2 rounded ${isDark ? "text-gray-100" : "text-gray-800"}`}
 					>
@@ -200,7 +200,7 @@ export default function IncomeChart({
 					</div>
 				</div>
 			) : (
-				<div className="h-7 mt-2 mb-2 relative z-10">
+				<div className="flex-1 mt-1 relative z-10">
 					{chartsLoading ? (
 						<ChartContentPlaceholder className="h-full" />
 					) : (
