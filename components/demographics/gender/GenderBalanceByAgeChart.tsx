@@ -245,11 +245,11 @@ function GenderBalanceByAgeChart({
 
 	if (ageData.length === 0) {
 		return (
-			<div className="text-xs h-27.75 text-gray-400/80 text-center grid place-items-center">
+			<div className="text-xs h-25 text-gray-400/80 text-center relative">
 				{chartsLoading ? (
-					<ChartContentPlaceholder className="h-20 w-full mb-4" />
+					<ChartContentPlaceholder className="size-full" />
 				) : (
-					<div className="mb-4">No data available</div>
+					<div className="h-full flex items-center justify-center">No data available</div>
 				)}
 			</div>
 		);

@@ -76,7 +76,7 @@ export interface MapOptions {
 	};
 	visibility: {
 		hideDataLayer: boolean;
-		hideBoundaries: boolean;
+		showBorders: boolean;
 		hideOverlay: boolean;
 		overlayOpacity: number;
 	};
