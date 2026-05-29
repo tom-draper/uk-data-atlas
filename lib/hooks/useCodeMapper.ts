@@ -1,7 +1,7 @@
 // lib/hooks/useCodeMapper.ts
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback } from "react";
 import { BoundaryGeojson, Features } from "@lib/types";
 import {
 	BoundaryType,
@@ -52,12 +52,10 @@ interface LadWardMapping {
  * Master code mapper hook
  */
 export function useCodeMapper() {
-	const [wardToLadMap, setWardToLadMap] = useState<WardLadMapping>({});
-	const [ladToWardsMap, setLadToWardsMap] = useState<LadWardMapping>({});
-	const [constituencyToWardsMap, setConstituencyToWardsMap] = useState<
-		Record<number, Record<string, string[]>>
-	>({});
-	const [codeMappings, setCodeMappings] = useState<{
+	const wardToLadMapRef = useRef<WardLadMapping>({});
+	const ladToWardsMapRef = useRef<LadWardMapping>({});
+	const constituencyToWardsMapRef = useRef<Record<number, Record<string, string[]>>>({});
+	const codeMappingsRef = useRef<{
 		ward: CodeMapping;
 		localAuthority: CodeMapping;
 		constituency: CodeMapping;
@@ -71,20 +69,6 @@ export function useCodeMapper() {
 		lsoa: {},
 		dataZone: {},
 		superOutputArea: {},
-	});
-
-	// Use refs to avoid recreating callbacks
-	const wardToLadMapRef = useRef(wardToLadMap);
-	const ladToWardsMapRef = useRef(ladToWardsMap);
-	const constituencyToWardsMapRef = useRef(constituencyToWardsMap);
-	const codeMappingsRef = useRef(codeMappings);
-
-	// Keep refs in sync (via effect to avoid writing refs during render)
-	useEffect(() => {
-		wardToLadMapRef.current = wardToLadMap;
-		ladToWardsMapRef.current = ladToWardsMap;
-		constituencyToWardsMapRef.current = constituencyToWardsMap;
-		codeMappingsRef.current = codeMappings;
 	});
 
 	// ==================== Ward-to-LAD Mappings ====================
@@ -106,20 +90,14 @@ export function useCodeMapper() {
 		return undefined;
 	};
 
-	const addWardLadMapping = (wardCode: string, localAuthorityCode: string) => {
+	const addWardLadMapping = useCallback((wardCode: string, localAuthorityCode: string) => {
 		if (wardCode && localAuthorityCode) {
-			setWardToLadMap((prev) => ({
-				...prev,
-				[wardCode]: localAuthorityCode,
-			}));
+			wardToLadMapRef.current[wardCode] = localAuthorityCode;
 		}
-	};
+	}, []);
 
 	const addWardLadMappings = useCallback((mappings: WardLadMapping) => {
-		setWardToLadMap((prev) => ({
-			...prev,
-			...mappings,
-		}));
+		Object.assign(wardToLadMapRef.current, mappings);
 	}, []);
 
 	// ==================== LAD-to-Wards Mappings ====================
@@ -140,38 +118,24 @@ export function useCodeMapper() {
 		return [];
 	};
 
-	const addLadWardMapping = (year: YearCode, ladCode: string, wardCodes: string[]) => {
+	const addLadWardMapping = useCallback((year: YearCode, ladCode: string, wardCodes: string[]) => {
 		if (!year || !ladCode || !wardCodes.length) return;
-
-		setLadToWardsMap((prev) => ({
-			...prev,
-			[year]: {
-				...prev[year],
-				[ladCode]: wardCodes,
-			},
-		}));
-	};
+		if (!ladToWardsMapRef.current[year]) ladToWardsMapRef.current[year] = {};
+		ladToWardsMapRef.current[year][ladCode] = wardCodes;
+	}, []);
 
 	const addLadWardMappings = useCallback((year: YearCode, mappings: Record<string, string[]>) => {
 		if (!year) return;
-
-		setLadToWardsMap((prev) => ({
-			...prev,
-			[year]: {
-				...prev[year],
-				...mappings,
-			},
-		}));
+		if (!ladToWardsMapRef.current[year]) ladToWardsMapRef.current[year] = {};
+		Object.assign(ladToWardsMapRef.current[year], mappings);
 	}, []);
 
 	// ==================== Constituency-to-Wards Mappings ====================
 
 	const addConstituencyWardMappings = useCallback((year: YearCode, mappings: Record<string, string[]>) => {
 		if (!year) return;
-		setConstituencyToWardsMap((prev) => ({
-			...prev,
-			[year]: { ...prev[year], ...mappings },
-		}));
+		if (!constituencyToWardsMapRef.current[year]) constituencyToWardsMapRef.current[year] = {};
+		Object.assign(constituencyToWardsMapRef.current[year], mappings);
 	}, []);
 
 	const getWardsForConstituency = (constituencyCode: string, wardYear: YearCode): string[] => {
@@ -195,34 +159,19 @@ export function useCodeMapper() {
 
 	// ==================== Cross-Year Code Mappings ====================
 
-	const addCodeMapping = (
+	const addCodeMapping = useCallback((
 		type: CodeType,
 		fromCode: string,
 		toYear: YearCode,
 		toCode: string,
 	) => {
 		if (!fromCode || !toYear || !toCode) return;
-
-		setCodeMappings((prev) => ({
-			...prev,
-			[type]: {
-				...prev[type],
-				[fromCode]: {
-					...prev[type][fromCode],
-					[toYear]: toCode,
-				},
-			},
-		}));
-	};
+		if (!codeMappingsRef.current[type][fromCode]) codeMappingsRef.current[type][fromCode] = {};
+		codeMappingsRef.current[type][fromCode][toYear] = toCode;
+	}, []);
 
 	const addCodeMappings = useCallback((type: CodeType, mappings: CodeMapping) => {
-		setCodeMappings((prev) => ({
-			...prev,
-			[type]: {
-				...prev[type],
-				...mappings,
-			},
-		}));
+		Object.assign(codeMappingsRef.current[type], mappings);
 	}, []);
 
 	const getCodeForYear = useCallback((
@@ -293,44 +242,28 @@ export function useCodeMapper() {
 		return codes;
 	};
 
-	const clearAllMappings = () => {
-		setWardToLadMap({});
-		setLadToWardsMap({});
-		setCodeMappings({
-			ward: {},
-			localAuthority: {},
-			constituency: {},
-			lsoa: {},
-			dataZone: {},
-			superOutputArea: {},
-		});
-	};
+	const clearAllMappings = useCallback(() => {
+		wardToLadMapRef.current = {};
+		ladToWardsMapRef.current = {};
+		constituencyToWardsMapRef.current = {};
+		codeMappingsRef.current = { ward: {}, localAuthority: {}, constituency: {}, lsoa: {}, dataZone: {}, superOutputArea: {} };
+	}, []);
 
-	const clearWardLadMap = () => {
-		setWardToLadMap({});
-	};
+	const clearWardLadMap = useCallback(() => {
+		wardToLadMapRef.current = {};
+	}, []);
 
-	const clearLadWardMap = () => {
-		setLadToWardsMap({});
-	};
+	const clearLadWardMap = useCallback(() => {
+		ladToWardsMapRef.current = {};
+	}, []);
 
-	const clearCodeMappings = (type?: CodeType) => {
+	const clearCodeMappings = useCallback((type?: CodeType) => {
 		if (type) {
-			setCodeMappings((prev) => ({
-				...prev,
-				[type]: {},
-			}));
+			codeMappingsRef.current[type] = {};
 		} else {
-			setCodeMappings({
-				ward: {},
-				localAuthority: {},
-				constituency: {},
-				lsoa: {},
-				dataZone: {},
-				superOutputArea: {},
-			});
+			codeMappingsRef.current = { ward: {}, localAuthority: {}, constituency: {}, lsoa: {}, dataZone: {}, superOutputArea: {} };
 		}
-	};
+	}, []);
 
 	const getMappingCounts = () => {
 		const ladWardCounts: Record<number, number> = {};
@@ -489,7 +422,7 @@ export const buildCrossYearMappings = (
 	}
 
 	// Build mappings based on name matching
-	for (const [name, codeSet] of Object.entries(nameIndex)) {
+	for (const [, codeSet] of Object.entries(nameIndex)) {
 		const codes = Array.from(codeSet);
 
 		// For each code, map it to all other codes with the same name
@@ -509,42 +442,6 @@ export const buildCrossYearMappings = (
 	return mappings;
 };
 
-/**
- * Build mappings from a lookup table/CSV with explicit year columns
- */
-const buildCodeMappingsFromLookup = (
-	lookupData: any[],
-	codeFields: Record<YearCode, string>,
-): CodeMapping => {
-	const mappings: CodeMapping = {};
-	const years = Object.keys(codeFields).map(Number);
-
-	for (const row of lookupData) {
-		for (const fromYear of years) {
-			const fromField = codeFields[fromYear];
-			const fromCode = row[fromField];
-
-			if (!fromCode) continue;
-
-			if (!mappings[fromCode]) {
-				mappings[fromCode] = {};
-			}
-
-			for (const toYear of years) {
-				if (toYear === fromYear) continue;
-
-				const toField = codeFields[toYear];
-				const toCode = row[toField];
-
-				if (toCode) {
-					mappings[fromCode][toYear] = toCode;
-				}
-			}
-		}
-	}
-
-	return mappings;
-};
 
 function pointInPolygon(px: number, py: number, ring: number[][]): boolean {
 	let inside = false;

@@ -276,15 +276,20 @@ export function useBoundaryData(
 					if (addConstituencyWardMappings) {
 						const constituencyEntries = Object.entries(constituencies)
 							.filter(([, conData]) => conData?.features);
-						for (const [yearStr, wardData] of Object.entries(wards)) {
-							if (!wardData?.features) continue;
+						// Only build for the latest ward year — ward highlighting always
+						// uses current boundaries, so historical ward years are not needed.
+						const latestWardYear = Math.max(
+							...Object.keys(wards).map(Number).filter(y => wards[y]?.features),
+						);
+						const latestWardData = wards[latestWardYear];
+						if (latestWardData?.features) {
 							const mergedMappings: Record<string, string[]> = {};
 							for (const [, conData] of constituencyEntries) {
-								const mappings = buildConstituencyWardMappings(wardData, conData!);
+								const mappings = buildConstituencyWardMappings(latestWardData, conData!);
 								Object.assign(mergedMappings, mappings);
 							}
 							if (Object.keys(mergedMappings).length > 0) {
-								addConstituencyWardMappings(Number(yearStr), mergedMappings);
+								addConstituencyWardMappings(latestWardYear, mergedMappings);
 							}
 						}
 					}

@@ -29,6 +29,7 @@ function aggregateDataset<T extends Dataset>(
 	location: string | null,
 ) {
 	if (!mapManager) return null;
+	if (Object.keys(config.datasets).length === 0) return null;
 
 	const result: Record<string, any> = {};
 
@@ -72,6 +73,8 @@ export function useAggregatedData({
 	customDataset,
 	location,
 }: UseAggregatedDataParams): AggregatedData {
+	// Aggregate all datasets using the same logic
+	const aggregatedData = useMemo(() => {
 	// Define configuration for each dataset type
 	const configs: Record<keyof Datasets | "custom", DatasetConfig<any>> = {
 		localElection: {
@@ -228,9 +231,6 @@ export function useAggregatedData({
 					mapManager.calculateBroadbandStats(geojson, data, location, id),
 			},
 	};
-
-	// Aggregate all datasets using the same logic
-	const aggregatedData = useMemo(() => {
 		if (!mapManager) {
 			return {
 				localElection: null,
