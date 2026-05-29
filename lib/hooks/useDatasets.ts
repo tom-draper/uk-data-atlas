@@ -1,27 +1,5 @@
 "use client";
 
-import {
-	DEFAULT_VISIBILITY,
-	ChartKey,
-} from "@/lib/context/ChartVisibilityContext";
-
-const STORAGE_KEY = "uk-data-atlas-chart-visibility";
-
-function isEnabled(key: ChartKey): boolean {
-	try {
-		const stored = localStorage.getItem(STORAGE_KEY);
-		if (stored) {
-			const parsed = JSON.parse(stored) as Partial<
-				Record<ChartKey, boolean>
-			>;
-			if (key in parsed) return parsed[key]!;
-		}
-	} catch {
-		// ignore
-	}
-	return DEFAULT_VISIBILITY[key];
-}
-
 import { useLocalElectionData } from "@lib/hooks/useLocalElectionData";
 import { useGeneralElectionData } from "@lib/hooks/useGeneralElectionData";
 import { usePopulationData } from "@lib/hooks/usePopulationData";
@@ -55,16 +33,12 @@ export function useDatasets(): UseDatasetsResult {
 	const crime = useCrimeData();
 	const income = useIncomeData();
 	const brexit = useBrexitData();
-	const brexitConstituency = useBrexitConstituencyData(
-		isEnabled("brexit-hanretty"),
-	);
+	const brexitConstituency = useBrexitConstituencyData();
 	const imd = useIMDData();
 	const simd = useSIMDData();
 	const wimd = useWIMDData();
 	const nimdm = useNIMDMData();
-	const lifeExpectancy = useLifeExpectancyData(
-		isEnabled("society-healthyLifeExpectancy"),
-	);
+	const lifeExpectancy = useLifeExpectancyData();
 	const qualification = useQualificationData();
 
 	const datasets = {

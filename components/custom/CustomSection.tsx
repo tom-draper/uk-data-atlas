@@ -107,6 +107,70 @@ function getMatchButtonClass(
 		: "border-gray-100 bg-white/20 backdrop-blur opacity-50 cursor-not-allowed";
 }
 
+function detectHeaderRow(rows: string[][]): number {
+	if (rows.length === 0) return 0;
+
+	const isNumeric = (v: string) => v.trim() !== "" && !isNaN(Number(v.trim()));
+
+	// Max number of non-empty cells across the first 20 rows
+	const maxCols = Math.max(...rows.slice(0, 20).map(
+		(r) => r.filter((c) => c.trim() !== "").length,
+	));
+
+	for (let i = 0; i < Math.min(rows.length, 20); i++) {
+		const row = rows[i];
+		const nonEmpty = row.filter((c) => c.trim() !== "");
+		if (nonEmpty.length < maxCols) continue; // row doesn't span full width
+		const numericCount = nonEmpty.filter(isNumeric).length;
+		const textRatio = (nonEmpty.length - numericCount) / nonEmpty.length;
+		if (textRatio >= 0.5) return i; // majority text cells → likely a header
+	}
+
+	return 0;
+}
+
+function OptionList<T extends string | number>({
+	options,
+	value,
+	onChange,
+	renderLabel,
+	isDark,
+	maxHeight = "max-h-32",
+}: {
+	options: T[];
+	value: T | "";
+	onChange: (v: T) => void;
+	renderLabel: (v: T, i: number) => string;
+	isDark: boolean;
+	maxHeight?: string;
+}) {
+	return (
+		<div className={`rounded-md overflow-y-auto border ${maxHeight} ${isDark ? "border-white/10 bg-gray-800/60" : "border-gray-200 bg-white/40"}`}>
+			{options.map((opt, i) => {
+				const selected = opt === value;
+				return (
+					<button
+						key={i}
+						type="button"
+						onClick={() => onChange(opt)}
+						className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${
+							selected
+								? isDark
+									? "bg-indigo-600/40 text-indigo-200"
+									: "bg-indigo-100 text-indigo-800"
+								: isDark
+									? "text-gray-300 hover:bg-white/5"
+									: "text-gray-700 hover:bg-gray-100/60"
+						}`}
+					>
+						{renderLabel(opt, i)}
+					</button>
+				);
+			})}
+		</div>
+	);
+}
+
 function UploadModal({
 	isOpen,
 	onClose,
@@ -178,14 +242,15 @@ function UploadModal({
 			const text = event.target?.result as string;
 			const rows = parseCSV(text);
 			setCsvData(rows);
-			setHeaderRow(0);
 
-			if (rows.length > 0) {
-				const codeColumn = rows[0].find((h) =>
-					/code|area|ward|constituency|authority/i.test(h),
-				);
-				if (codeColumn) setSelectedColumn(codeColumn);
-			}
+			const detectedHeader = detectHeaderRow(rows);
+			setHeaderRow(detectedHeader);
+
+			const headerCells = rows[detectedHeader] ?? [];
+			const codeColumn = headerCells.find((h) =>
+				/code|area|ward|constituency|authority/i.test(h),
+			);
+			if (codeColumn) setSelectedColumn(codeColumn);
 		};
 		reader.readAsText(selectedFile);
 	};
@@ -247,7 +312,11 @@ function UploadModal({
 			/>
 
 			<div
-				className={`relative backdrop-blur-md border rounded-md shadow-xl w-full max-w-4xl flex flex-col max-h-[90vh] ${isDark ? "bg-gray-900/95 border-white/10" : "bg-white/80 border-white/30"}`}
+				style={{
+					maxWidth: csvData.length > 0 ? "80vw" : "360px",
+					transition: "max-width 0.35s ease",
+				}}
+				className={`relative backdrop-blur-md border rounded-md shadow-xl w-full flex flex-col max-h-[90vh] ${isDark ? "bg-gray-900/95 border-white/10" : "bg-white/80 border-white/30"}`}
 			>
 				<div
 					className={`flex items-center justify-between px-4 pt-2.5 pb-2 shrink-0 ${isDark ? "bg-white/5" : "bg-white/20"}`}
@@ -277,39 +346,47 @@ function UploadModal({
 					)}
 
 					<div className="space-y-4">
-						{!file && (
-							<div>
-								<label
-									htmlFor="csv-file-input"
-									className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-								>
-									Select CSV File
-								</label>
-								<input
-									ref={fileInputRef}
-									id="csv-file-input"
-									type="file"
-									accept=".csv"
-									onChange={handleFileSelect}
-									className="hidden"
-								/>
+						<div>
+							<input
+								ref={fileInputRef}
+								id="csv-file-input"
+								type="file"
+								accept=".csv"
+								onChange={handleFileSelect}
+								className="hidden"
+							/>
+							{file ? (
 								<button
 									type="button"
-									onClick={() =>
-										fileInputRef.current?.click()
-									}
-									className={`w-full border-2 border-dashed cursor-pointer rounded-md p-8 transition-colors flex flex-col items-center gap-2 ${isDark ? "border-white/20 hover:border-gray-400 text-gray-500" : "border-gray-300 hover:border-gray-400 text-gray-400"}`}
+									onClick={() => fileInputRef.current?.click()}
+									className={`w-full flex items-center gap-2 px-3 py-2 rounded-md border text-xs transition-colors ${isDark ? "border-white/10 bg-white/5 text-gray-300 hover:bg-white/10" : "border-gray-200 bg-white/60 text-gray-700 hover:bg-white/80"}`}
 								>
-									<Upload size={28} />
-									<span className="text-xs font-medium">
-										Click to select CSV file
-									</span>
+									<Upload size={13} className="shrink-0" />
+									<span className="truncate font-medium">{file.name}</span>
+									<span className={`ml-auto shrink-0 ${isDark ? "text-gray-500" : "text-gray-400"}`}>change</span>
 								</button>
-							</div>
-						)}
+							) : (
+								<>
+									<label
+										htmlFor="csv-file-input"
+										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
+									>
+										Select CSV File
+									</label>
+									<button
+										type="button"
+										onClick={() => fileInputRef.current?.click()}
+										className={`w-full border-2 border-dashed cursor-pointer rounded-md p-8 transition-colors flex flex-col items-center gap-2 ${isDark ? "border-white/20 hover:border-gray-400 text-gray-500" : "border-gray-300 hover:border-gray-400 text-gray-400"}`}
+									>
+										<Upload size={28} />
+										<span className="text-xs font-medium">Click to select CSV file</span>
+									</button>
+								</>
+							)}
+						</div>
 
 						{csvData.length > 0 && (
-							<>
+							<div className="animate-in fade-in duration-300 space-y-4 contents">
 								<div>
 									<label
 										htmlFor="csv-header-row"
@@ -317,26 +394,15 @@ function UploadModal({
 									>
 										Header Row
 									</label>
-									<select
-										id="csv-header-row"
+									<OptionList
+										options={csvData.slice(0, 10).map((_, idx) => idx)}
 										value={headerRow}
-										onChange={(e) =>
-											setHeaderRow(Number(e.target.value))
+										onChange={setHeaderRow}
+										renderLabel={(idx) =>
+											`Row ${idx + 1}: ${(csvData[idx] ?? []).join(", ").slice(0, 60)}…`
 										}
-										className={`w-full cursor-pointer rounded-md px-3 py-2 pr-8 text-xs border ${isDark ? "bg-gray-800 border-white/10 text-gray-200" : "bg-white/60 backdrop-blur border-gray-200 text-gray-700"}`}
-									>
-										{csvData
-											.slice(0, 10)
-											.map((row, idx) => (
-												<option key={row.join("").slice(0, 40) || String(idx)} value={idx}>
-													Row {idx + 1}:{" "}
-													{row
-														.join(", ")
-														.slice(0, 100)}
-													...
-												</option>
-											))}
-									</select>
+										isDark={isDark}
+									/>
 								</div>
 
 								<div>
@@ -346,21 +412,13 @@ function UploadModal({
 									>
 										Select Area Code Column
 									</label>
-									<select
-										id="csv-code-col"
+									<OptionList
+										options={headers}
 										value={selectedColumn}
-										onChange={(e) =>
-											setSelectedColumn(e.target.value)
-										}
-										className={`w-full cursor-pointer rounded-md px-3 py-2 pr-8 text-xs border ${isDark ? "bg-gray-800 border-white/10 text-gray-200" : "bg-white/60 backdrop-blur border-gray-200 text-gray-700"}`}
-									>
-										<option value="">Select column</option>
-										{headers.map((header, idx) => (
-											<option key={`${header}-${idx}`} value={header}>
-												{header || `Column ${idx + 1}`}
-											</option>
-										))}
-									</select>
+										onChange={setSelectedColumn}
+										renderLabel={(h, i) => h || `Column ${i + 1}`}
+										isDark={isDark}
+									/>
 								</div>
 
 								{matches.length > 0 && (
@@ -430,21 +488,13 @@ function UploadModal({
 									>
 										Select Data Column
 									</label>
-									<select
-										id="csv-data-col"
+									<OptionList
+										options={headers}
 										value={dataColumn}
-										onChange={(e) =>
-											setDataColumn(e.target.value)
-										}
-										className={`w-full cursor-pointer rounded-md px-3 py-2 pr-8 text-xs border ${isDark ? "bg-gray-800 border-white/10 text-gray-200" : "bg-white/60 backdrop-blur border-gray-200 text-gray-700"}`}
-									>
-										<option value="">Select column</option>
-										{headers.map((header, idx) => (
-											<option key={`${header}-${idx}`} value={header}>
-												{header || `Column ${idx + 1}`}
-											</option>
-										))}
-									</select>
+										onChange={setDataColumn}
+										renderLabel={(h, i) => h || `Column ${i + 1}`}
+										isDark={isDark}
+									/>
 								</div>
 
 								<div>
@@ -503,7 +553,7 @@ function UploadModal({
 																		cellIdx,
 																	) => (
 																		<td
-																			key={headers[cellIdx] ?? `col-${cellIdx}`}
+																			key={cellIdx}
 																			className={`px-4 py-2 whitespace-nowrap ${
 																				headers[
 																					cellIdx
@@ -535,7 +585,7 @@ function UploadModal({
 										</div>
 									</div>
 								</div>
-							</>
+						</div>
 						)}
 					</div>
 				</div>
