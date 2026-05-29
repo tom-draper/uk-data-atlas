@@ -37,7 +37,7 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 	return "";
 }
 
-export const useWIMDData = () => {
+export const useWIMDData = (enabled = true) => {
 	return useDataLoader<WIMDDataset>(async () => {
 		const response = await fetch(withCDN("/data/wimd/wimd2019.csv"));
 		if (!response.ok)
@@ -146,5 +146,5 @@ export const useWIMDData = () => {
 				},
 			},
 		};
-	});
+	}, enabled);
 };
