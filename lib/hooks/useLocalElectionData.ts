@@ -6,14 +6,15 @@ import {
 	reconcile2023Data,
 } from "../data/election/local-election/load";
 
-export const useLocalElectionData = () => {
+export const useLocalElectionData = (enabled = true) => {
 	const [datasets, setDatasets] = useState<
 		Record<string, LocalElectionDataset>
 	>({});
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(enabled);
 	const [error, setError] = useState<string>("");
 
 	useEffect(() => {
+		if (!enabled) return;
 		const loadData = () => {
 			Promise.all(
 				Object.values(ELECTION_SOURCES)
@@ -42,7 +43,7 @@ export const useLocalElectionData = () => {
 		};
 
 		loadData();
-	}, []);
+	}, [enabled]);
 
 	return { datasets, loading, error };
 };

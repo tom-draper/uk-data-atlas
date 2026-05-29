@@ -4,7 +4,7 @@ import { parseCsv } from "../helpers/parseCsv";
 import { parseNum, parseNumInt } from "../helpers/parseNumber";
 import { useDataLoader } from "./useDataLoader";
 
-export const useIMDData = () => {
+export const useIMDData = (enabled = true) => {
 	return useDataLoader<IMDDataset>(async () => {
 		const response = await fetch(
 			withCDN(
@@ -77,5 +77,5 @@ export const useIMDData = () => {
 				},
 			},
 		};
-	});
+	}, enabled);
 };

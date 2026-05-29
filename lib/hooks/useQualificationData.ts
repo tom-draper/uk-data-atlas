@@ -26,7 +26,7 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 	return "";
 }
 
-export const useQualificationData = () => {
+export const useQualificationData = (enabled = true) => {
 	return useDataLoader<QualificationDataset>(async () => {
 		const res = await fetch(withCDN("/data/education/TS067-2021-1.csv"));
 		if (!res.ok)
@@ -104,5 +104,5 @@ export const useQualificationData = () => {
 				},
 			},
 		};
-	});
+	}, enabled);
 };

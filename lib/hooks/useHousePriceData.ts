@@ -31,7 +31,7 @@ const SALFORD_WARD_CODE_REMAP: Record<string, string> = {
 	E05000778: "E05013037", // Worsley → Worsley & Westwood Park
 };
 
-export const useHousePriceData = () => {
+export const useHousePriceData = (enabled = true) => {
 	return useDataLoader<HousePriceDataset>(async () => {
 		const res = await fetch(
 			withCDN(
@@ -86,5 +86,5 @@ export const useHousePriceData = () => {
 				data: wardData,
 			},
 		};
-	});
+	}, enabled);
 };

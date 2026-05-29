@@ -4,7 +4,7 @@ import { parseCsv } from "../helpers/parseCsv";
 import { parseNum } from "../helpers/parseNumber";
 import { useDataLoader } from "./useDataLoader";
 
-export const useBrexitData = () => {
+export const useBrexitData = (enabled = true) => {
 	return useDataLoader<BrexitLADDataset>(async () => {
 		const response = await fetch(
 			withCDN("/data/elections/referendum/EU-referendum-result-data.csv"),
@@ -57,5 +57,5 @@ export const useBrexitData = () => {
 		};
 
 		return { [dataset.year]: dataset };
-	});
+	}, enabled);
 };

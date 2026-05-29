@@ -37,7 +37,7 @@ function parsePairedRows(
 	return records;
 }
 
-export const useLifeExpectancyData = (enableHLE = true) => {
+export const useLifeExpectancyData = (enabled = true, enableHLE = true) => {
 	return useDataLoader<LifeExpectancyDataset>(async () => {
 		const fetches: Promise<Response>[] = [
 			fetch(
@@ -129,5 +129,5 @@ export const useLifeExpectancyData = (enableHLE = true) => {
 		}
 
 		return result;
-	});
+	}, enabled);
 };
