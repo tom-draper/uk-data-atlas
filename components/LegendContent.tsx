@@ -251,6 +251,16 @@ export default function LegendContent({
 				(v) => `${v.toFixed(0)}% Level 4+`,
 			);
 
+		case "broadband":
+			return renderDynamicLegend(
+				"broadband",
+				0,
+				100,
+				50,
+				100,
+				(v) => `${v.toFixed(0)}% full fibre`,
+			);
+
 		case "custom":
 			return renderDynamicLegend("custom", 0, 100, 0, 100);
 

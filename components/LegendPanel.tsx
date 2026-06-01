@@ -39,6 +39,7 @@ export type ColorRangeDatasetKey =
 	| "nimdm"
 	| "lifeExpectancy"
 	| "qualification"
+	| "broadband"
 	| "custom";
 
 interface LegendPanelProps {
