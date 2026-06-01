@@ -64,12 +64,13 @@ export const GEOJSON_PATHS = {
 		2023: withCDN(
 			"/data/boundaries/lad/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.topojson",
 		),
-		// 2022: withCDN(
-		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.topojson",
-		// ),
+		// 2021: broken topojson - commented out intentionally
 		// 2021: withCDN(
 		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.topojson",
 		// ),
+		2016: withCDN(
+			"/data/boundaries/lad/LAD_Dec_2016_GB_BGC_2022_699407162867034067.topojson",
+		),
 	},
 	lsoa: {
 		2011: withCDN(
@@ -112,6 +113,7 @@ export const LAD_CODE_KEYS = [
 	"LAD23CD",
 	"LAD22CD",
 	"LAD21CD",
+	"LAD16CD",
 ] as const;
 const LAD_NAME_KEYS = [
 	"LAD25NM",
@@ -119,6 +121,7 @@ const LAD_NAME_KEYS = [
 	"LAD23NM",
 	"LAD22NM",
 	"LAD21NM",
+	"LAD16NM",
 ] as const;
 export const CONSTITUENCY_CODE_KEYS = [
 	"PCON24CD",

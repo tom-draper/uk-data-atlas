@@ -87,7 +87,7 @@ export const useEthnicityData = (enabled = true) => {
 				type: "ethnicity",
 				year: 2021,
 				boundaryType: "localAuthority",
-				boundaryYear: 2025,
+				boundaryYear: 2024,
 				data: localAuthorityData,
 				results,
 			},

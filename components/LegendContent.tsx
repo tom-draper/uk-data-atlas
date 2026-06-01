@@ -246,8 +246,8 @@ export default function LegendContent({
 				"qualification",
 				0,
 				100,
-				15,
-				65,
+				25,
+				60,
 				(v) => `${v.toFixed(0)}% Level 4+`,
 			);
 
