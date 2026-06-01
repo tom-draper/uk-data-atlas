@@ -40,6 +40,7 @@ export type ColorRangeDatasetKey =
 	| "lifeExpectancy"
 	| "qualification"
 	| "broadband"
+	| "airQuality"
 	| "custom";
 
 interface LegendPanelProps {

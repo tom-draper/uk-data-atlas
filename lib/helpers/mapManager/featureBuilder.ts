@@ -31,6 +31,7 @@ import {
 	getColorForWIMD,
 	getColorForNIMDM,
 	getColorForBroadband,
+	getColorForAirQuality,
 } from "../colorScale/datasetColors";
 import { getColor } from "../colorScale/themes";
 import { normalizeValue } from "../colorScale/interpolation";
@@ -43,6 +44,7 @@ import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { QualificationDataset } from "@/lib/types/qualification";
 import { BroadbandDataset } from "@/lib/types/broadband";
+import { AirQualityDataset } from "@/lib/types/airQuality";
 import {
 	getColorForLifeExpectancy,
 	getColorForQualification,
@@ -576,6 +578,24 @@ export class FeatureBuilder {
 				]?.pctFullFibre;
 			const color = pct != null
 				? getColorForBroadband(pct, mapOptions.broadband, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildAirQualityFeatures(
+		features: Features,
+		dataset: AirQualityDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const no2 =
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				]?.no2Mean;
+			const color = no2 != null
+				? getColorForAirQuality(no2, mapOptions.airQuality, mapOptions.theme.id)
 				: DEFAULT_COLOR;
 			return { color };
 		});

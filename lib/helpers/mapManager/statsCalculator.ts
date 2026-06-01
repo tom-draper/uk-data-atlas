@@ -41,6 +41,7 @@ import {
 	QualificationBreakdown,
 } from "@/lib/types/qualification";
 import { BroadbandDataset, AggregatedBroadbandData } from "@/lib/types/broadband";
+import { AirQualityDataset, AggregatedAirQualityData } from "@/lib/types/airQuality";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -1024,6 +1025,39 @@ export class StatsCalculator {
 			pctUltrafast: totalUltrafast / count,
 			pctFullFibre: totalFullFibre / count,
 			pctGigabit: totalGigabit / count,
+		};
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateAirQualityStats(
+		geojson: BoundaryGeojson,
+		airQualityData: AirQualityDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedAirQualityData | null {
+		const cacheKey = `airQuality-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedAirQualityData | null;
+		if (cached) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		let totalNo2 = 0, totalPm25 = 0, totalPm10 = 0, count = 0, pm25Count = 0, pm10Count = 0;
+
+		for (const feature of geojson.features) {
+			const record = airQualityData[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+			if (!record || record.no2Mean == null) continue;
+			totalNo2 += record.no2Mean;
+			if (record.pm25Mean != null) { totalPm25 += record.pm25Mean; pm25Count++; }
+			if (record.pm10Mean != null) { totalPm10 += record.pm10Mean; pm10Count++; }
+			count++;
+		}
+
+		if (count === 0) return null;
+
+		const result: AggregatedAirQualityData = {
+			no2Mean: totalNo2 / count,
+			pm25Mean: pm25Count > 0 ? totalPm25 / pm25Count : null,
+			pm10Mean: pm10Count > 0 ? totalPm10 / pm10Count : null,
 		};
 		this.cache.set(cacheKey, result);
 		return result;

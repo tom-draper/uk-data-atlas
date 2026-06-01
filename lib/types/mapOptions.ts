@@ -32,6 +32,7 @@ export type NIMDMOptions = ColorRangeOption;
 export type LifeExpectancyOptions = ColorRangeOption;
 export type QualificationOptions = ColorRangeOption;
 export type BroadbandOptions = ColorRangeOption;
+export type AirQualityOptions = ColorRangeOption;
 
 export type ColorTheme =
 	| "viridis"
@@ -71,6 +72,7 @@ export interface MapOptions {
 	lifeExpectancy: LifeExpectancyOptions;
 	qualification: QualificationOptions;
 	broadband: BroadbandOptions;
+	airQuality: AirQualityOptions;
 	theme: {
 		id: ColorTheme;
 	};

@@ -41,6 +41,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	lifeExpectancy: { colorRange: { min: 72, max: 84 } },
 	qualification: { colorRange: { min: 25, max: 60 } },
 	broadband: { colorRange: { min: 50, max: 100 } },
+	airQuality: { colorRange: { min: 5, max: 35 } },
 	theme: {
 		id: "viridis",
 	},

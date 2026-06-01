@@ -148,6 +148,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "airQuality":
+					return mapManager.updateMapForAirQuality(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "population":
 					// Handle population sub-categories
 					if (activeViz.vizId.startsWith("ageDistribution")) {

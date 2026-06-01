@@ -29,6 +29,7 @@ import {
 	QualificationDataset,
 } from "./qualification";
 import { AggregatedBroadbandData, BroadbandDataset } from "./broadband";
+import { AggregatedAirQualityData, AirQualityDataset } from "./airQuality";
 
 export type Dataset =
 	| LocalElectionDataset
@@ -47,7 +48,8 @@ export type Dataset =
 	| NIMDMDataset
 	| LifeExpectancyDataset
 	| QualificationDataset
-	| BroadbandDataset;
+	| BroadbandDataset
+	| AirQualityDataset;
 
 export type Datasets = {
 	localElection: Record<string, LocalElectionDataset>;
@@ -66,6 +68,7 @@ export type Datasets = {
 	lifeExpectancy: Record<string, LifeExpectancyDataset>;
 	qualification: Record<string, QualificationDataset>;
 	broadband: Record<string, BroadbandDataset>;
+	airQuality: Record<string, AirQualityDataset>;
 };
 
 export type AggregatedData = {
@@ -86,6 +89,7 @@ export type AggregatedData = {
 	lifeExpectancy: Record<string, AggregatedLifeExpectancyData> | null;
 	qualification: Record<number, AggregatedQualificationData> | null;
 	broadband: Record<number, AggregatedBroadbandData> | null;
+	airQuality: Record<number, AggregatedAirQualityData> | null;
 };
 
 export type ActiveViz = {

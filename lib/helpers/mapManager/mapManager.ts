@@ -29,6 +29,7 @@ import { NIMDMDataset } from "@/lib/types/nimdm";
 import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { QualificationDataset } from "@/lib/types/qualification";
 import { BroadbandDataset } from "@/lib/types/broadband";
+import { AirQualityDataset } from "@/lib/types/airQuality";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
@@ -323,7 +324,8 @@ export class MapManager {
 			| NIMDMDataset
 			| LifeExpectancyDataset
 			| QualificationDataset
-			| BroadbandDataset,
+			| BroadbandDataset
+			| AirQualityDataset,
 	>(
 		geojson: BoundaryGeojson,
 		dataset: T,
@@ -838,6 +840,31 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateBroadbandStats(geojson, data, location, datasetId);
+	}
+
+	updateMapForAirQuality(
+		geojson: BoundaryGeojson,
+		dataset: AirQualityDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildAirQualityFeatures.bind(this.featureBuilder),
+			"airQuality",
+			dataset.data,
+		);
+	}
+
+	calculateAirQualityStats(
+		geojson: BoundaryGeojson,
+		data: AirQualityDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateAirQualityStats(geojson, data, location, datasetId);
 	}
 
 	setBorderVisibility(hidden: boolean): void {
