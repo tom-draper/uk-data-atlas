@@ -230,6 +230,12 @@ export function useAggregatedData({
 				calculateStats: (mapManager, geojson, data, location, id) =>
 					mapManager.calculateBroadbandStats(geojson, data, location, id),
 			},
+			airQuality: {
+				datasets: datasets.airQuality,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateAirQualityStats(geojson, data, location, id),
+			},
 	};
 		if (!mapManager) {
 			return {
@@ -250,6 +256,7 @@ export function useAggregatedData({
 				lifeExpectancy: null,
 				qualification: null,
 			broadband: null,
+			airQuality: null,
 			};
 		}
 

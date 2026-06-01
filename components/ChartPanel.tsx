@@ -22,6 +22,7 @@ import BrexitSection from "./elections/referendum/BrexitSection";
 import CustomSection from "./custom/CustomSection";
 import EducationSection from "./education/EducationSection";
 import TelecomsSection from "./telecoms/TelecomsSection";
+import EnvironmentSection from "./environment/EnvironmentSection";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
@@ -230,6 +231,16 @@ export default function ChartPanel({
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
+									/>
+								)}
+								{sectionVisible["Environment"] && (
+									<EnvironmentSection
+										activeDataset={activeDataset}
+										availableAirQualityDatasets={datasets.airQuality}
+										aggregatedAirQualityData={aggregatedData.airQuality}
+										selectedArea={selectedArea}
+										activeViz={activeViz}
+										setActiveViz={setActiveViz}
 									/>
 								)}
 									<CustomSection

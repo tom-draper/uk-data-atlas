@@ -19,6 +19,7 @@ import { useNIMDMData } from "./useNIMDMData";
 import { useLifeExpectancyData } from "./useLifeExpectancyData";
 import { useQualificationData } from "./useQualificationData";
 import { useBroadbandData } from "./useBroadbandData";
+import { useAirQualityData } from "./useAirQualityData";
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";
 
@@ -80,6 +81,7 @@ export function useDatasets(): UseDatasetsResult {
 	);
 	const qualification = useQualificationData(isEnabled("education-qualifications"));
 	const broadband = useBroadbandData(isEnabled("telecoms-broadband"));
+	const airQuality = useAirQualityData(isEnabled("environment-airQuality"));
 
 	const datasets = {
 		localElection: localElection.datasets,
@@ -98,6 +100,7 @@ export function useDatasets(): UseDatasetsResult {
 		lifeExpectancy: lifeExpectancy.datasets,
 		qualification: qualification.datasets,
 		broadband: broadband.datasets,
+		airQuality: airQuality.datasets,
 	};
 
 	// Combined loading state
@@ -117,7 +120,8 @@ export function useDatasets(): UseDatasetsResult {
 		nimdm.loading ||
 		lifeExpectancy.loading ||
 		qualification.loading ||
-		broadband.loading;
+		broadband.loading ||
+		airQuality.loading;
 
 	// Collect all errors
 	const errors: string[] = [];
@@ -137,6 +141,7 @@ export function useDatasets(): UseDatasetsResult {
 	if (lifeExpectancy.error) errors.push(lifeExpectancy.error);
 	if (qualification.error) errors.push(qualification.error);
 	if (broadband.error) errors.push(broadband.error);
+	if (airQuality.error) errors.push(airQuality.error);
 
 	return { datasets, loading, errors };
 }

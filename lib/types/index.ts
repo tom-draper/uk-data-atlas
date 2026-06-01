@@ -20,3 +20,4 @@ export * from "./nimdm";
 export * from "./lifeExpectancy";
 export * from "./qualification";
 export * from "./broadband";
+export * from "./airQuality";

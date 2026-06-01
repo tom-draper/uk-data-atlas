@@ -27,7 +27,8 @@ export type ChartKey =
 	| "health-lifeExpectancy"
 	| "health-healthyLifeExpectancy"
 	| "education-qualifications"
-	| "telecoms-broadband";
+	| "telecoms-broadband"
+	| "environment-airQuality";
 
 export interface ChartConfigEntry {
 	group: string;
@@ -126,6 +127,7 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 	{ group: "Health", key: "health-healthyLifeExpectancy", label: "Healthy Life Expectancy [2020-2022]" },
 	{ group: "Education", key: "education-qualifications", label: "Qualifications [2021]" },
 	{ group: "Telecoms", key: "telecoms-broadband", label: "Fixed Broadband Coverage [2025]" },
+	{ group: "Environment", key: "environment-airQuality", label: "Air Quality - NO2 [2022]" },
 ];
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
@@ -155,6 +157,7 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"health-healthyLifeExpectancy": false,
 	"education-qualifications": true,
 	"telecoms-broadband": true,
+	"environment-airQuality": true,
 };
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";

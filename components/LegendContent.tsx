@@ -261,6 +261,16 @@ export default function LegendContent({
 				(v) => `${v.toFixed(0)}% full fibre`,
 			);
 
+		case "airQuality":
+			return renderDynamicLegend(
+				"airQuality",
+				0,
+				60,
+				5,
+				35,
+				(v) => `${v.toFixed(0)} µg/m³ NO₂`,
+			);
+
 		case "custom":
 			return renderDynamicLegend("custom", 0, 100, 0, 100);
 
