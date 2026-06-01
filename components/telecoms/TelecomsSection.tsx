@@ -46,7 +46,7 @@ export default function TelecomsSection({
 					activeDataset={activeDataset}
 					availableDatasets={availableBroadbandDatasets}
 					aggregatedData={aggregatedBroadbandData}
-					year={2023}
+					year={2025}
 					selectedArea={selectedArea}
 					codeMapper={codeMapper}
 					activeViz={activeViz}

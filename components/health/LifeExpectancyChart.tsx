@@ -30,8 +30,8 @@ interface LifeExpectancyChartProps {
 }
 
 // Amber (low LE) → green (high LE)
-const LE_LOW_RGB = hexToRgb("#fbbf24"); // amber-400
-const LE_HIGH_RGB = hexToRgb("#16a34a"); // green-600
+const LE_LOW_RGB = hexToRgb("#dcfce7"); // green-100 (pale)
+const LE_HIGH_RGB = hexToRgb("#15803d"); // green-700 (deep)
 
 function leColorRgb(pct: number) {
 	const t = pct / 100;
