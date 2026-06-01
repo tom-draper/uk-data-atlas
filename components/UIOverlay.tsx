@@ -197,9 +197,9 @@ export default function UIOverlay({
 						}`}
 						style={{ maxHeight: "80vh" }}
 					>
-						<div className="bg-white/95 backdrop-blur-md rounded-t-2xl shadow-2xl border-t border-white/30 overflow-y-auto h-full">
-							<div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur-md">
-								<span className="text-sm font-semibold text-gray-700">
+						<div className={`backdrop-blur-md rounded-t-2xl shadow-2xl border-t overflow-y-auto h-full ${isDark ? "bg-[rgba(12,12,24,0.92)] border-white/10" : "bg-white/95 border-white/30"}`}>
+							<div className={`flex items-center justify-between px-4 py-3 border-b sticky top-0 backdrop-blur-md ${isDark ? "bg-[rgba(12,12,24,0.92)] border-white/10" : "bg-white/95 border-gray-100"}`}>
+								<span className={`text-sm font-semibold ${isDark ? "text-gray-100" : "text-gray-700"}`}>
 									{mobilePanel === "control"
 										? "Navigation"
 										: "Data"}
@@ -207,7 +207,7 @@ export default function UIOverlay({
 								<button
 									type="button"
 									onClick={() => setMobilePanel("none")}
-									className="p-1 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+									className={`p-1 rounded-full ${isDark ? "text-gray-400 hover:text-gray-200 hover:bg-white/10" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"}`}
 								>
 									<XIcon />
 								</button>
@@ -233,7 +233,7 @@ export default function UIOverlay({
 							className={`flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors ${
 								mobilePanel === "control"
 									? "bg-indigo-600 text-white"
-									: "bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white"
+									: isDark ? "bg-white/10 backdrop-blur-sm text-gray-200 hover:bg-white/15" : "bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white"
 							}`}
 						>
 							<MapIcon />
@@ -249,7 +249,7 @@ export default function UIOverlay({
 							className={`flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors ${
 								mobilePanel === "chart"
 									? "bg-indigo-600 text-white"
-									: "bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white"
+									: isDark ? "bg-white/10 backdrop-blur-sm text-gray-200 hover:bg-white/15" : "bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white"
 							}`}
 						>
 							<BarChartIcon />

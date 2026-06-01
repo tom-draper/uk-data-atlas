@@ -840,6 +840,10 @@ export class MapManager {
 		return this.statsCalculator.calculateBroadbandStats(geojson, data, location, datasetId);
 	}
 
+	setBorderVisibility(hidden: boolean): void {
+		this.layerManager.setBorderVisibility(hidden);
+	}
+
 	destroy(): void {
 		this.eventHandler.destroy();
 		propCache.clear(); // Clean up cache on destroy

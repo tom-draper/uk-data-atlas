@@ -21,24 +21,24 @@ export function panelTheme(isDark: boolean) {
 export function glassStyle(isDark: boolean): CSSProperties {
 	return isDark
 		? {
-				// More transparent so the map reads through the pane like real glass
+				// Dark smoked glass: barely-there tint, no brightening of the dark map
 				background:
-					"linear-gradient(145deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 30%, rgba(8,8,20,0.30) 100%)",
+					"linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 30%, rgba(4,4,12,0.55) 100%)",
 				backdropFilter:
-					"blur(20px) saturate(190%) brightness(1.12) contrast(1.06)",
+					"blur(20px) saturate(160%) brightness(0.88) contrast(1.08)",
 				WebkitBackdropFilter:
-					"blur(20px) saturate(190%) brightness(1.12) contrast(1.06)",
+					"blur(20px) saturate(160%) brightness(0.88) contrast(1.08)",
 				boxShadow: [
-					// bright top + left edges catch the light, dark bottom for thickness
-					"inset 0 1px 0 rgba(255,255,255,0.30)",
-					"inset 1px 0 0 rgba(255,255,255,0.18)",
-					"inset -1px 0 0 rgba(0,0,0,0.12)",
-					"inset 0 -1px 0 rgba(0,0,0,0.25)",
-					"0 20px 60px rgba(0,0,0,0.55)",
-					"0 4px 16px rgba(0,0,0,0.35)",
-					"0 0 0 0.5px rgba(255,255,255,0.14)",
+					// subtle white edge highlights — glass always catches a little light
+					"inset 0 1px 0 rgba(255,255,255,0.18)",
+					"inset 1px 0 0 rgba(255,255,255,0.10)",
+					"inset -1px 0 0 rgba(0,0,0,0.20)",
+					"inset 0 -1px 0 rgba(0,0,0,0.30)",
+					"0 20px 60px rgba(0,0,0,0.65)",
+					"0 4px 16px rgba(0,0,0,0.45)",
+					"0 0 0 0.5px rgba(255,255,255,0.10)",
 				].join(", "),
-				border: "1px solid rgba(255,255,255,0.20)",
+				border: "1px solid rgba(255,255,255,0.12)",
 			}
 		: {
 				// Lighter, more see-through tint while keeping text legible
@@ -64,7 +64,7 @@ export function glassStyle(isDark: boolean): CSSProperties {
 export function glassSpecular(isDark: boolean): CSSProperties {
 	return {
 		background: isDark
-			? "radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 40%, transparent 70%)"
+			? "radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 40%, transparent 70%)"
 			: "radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 40%, transparent 70%)",
 		position: "absolute",
 		inset: 0,

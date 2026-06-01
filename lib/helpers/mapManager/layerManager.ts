@@ -177,9 +177,8 @@ export class LayerManager {
 		} else {
 			fillColor = paint.color;
 			fillOpacity = paint.opacity;
-			// hideBorders: draw line same colour as fill so it blends away
-			lineColor = visibility.hideBorders ? paint.color : "#000";
-			lineOpacity = visibility.hideBorders ? paint.opacity : 0.05;
+			lineColor = "#000";
+			lineOpacity = visibility.hideBorders ? 0 : 0.05;
 		}
 
 		const sourceExists = !!this.map.getSource(SOURCE_ID);
@@ -220,6 +219,26 @@ export class LayerManager {
 				"line-opacity": lineOpacity as any,
 			},
 		});
+	}
+
+	private static readonly BASE_BOUNDARY_LAYERS = [
+		"boundary_county",
+		"boundary_state",
+		"boundary_country_outline",
+		"boundary_country_inner",
+	];
+
+	setBorderVisibility(hidden: boolean): void {
+		if (!this.map.isStyleLoaded()) return;
+		const opacity = hidden ? 0 : 1;
+		if (this.map.getLayer(LINE_LAYER_ID)) {
+			this.map.setPaintProperty(LINE_LAYER_ID, "line-opacity", hidden ? 0 : 0.05);
+		}
+		for (const layerId of LayerManager.BASE_BOUNDARY_LAYERS) {
+			if (this.map.getLayer(layerId)) {
+				this.map.setPaintProperty(layerId, "line-opacity", opacity);
+			}
+		}
 	}
 
 	private removeExistingLayers(): void {
