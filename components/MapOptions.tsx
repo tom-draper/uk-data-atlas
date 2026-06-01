@@ -7,7 +7,8 @@ import {
 } from "@/lib/types/mapOptions";
 import { BASE_MAP_STYLES, type BaseMapStyle } from "@/lib/config/baseMapStyles";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { panelTheme, glassStyle, glassSpecular } from "@/lib/helpers/panelTheme";
+import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
+import GlassOverlays from "./GlassOverlays";
 
 interface MapOptionsProps {
 	onZoomIn: () => void;
@@ -107,7 +108,7 @@ export default function MapOptions({
 			className={`text-sm rounded-md relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
 			style={glassStyle(isDark)}
 		>
-			<div style={glassSpecular(isDark)} />
+			<GlassOverlays isDark={isDark} />
 			<div className="p-2.5 relative" style={{ zIndex: 1 }}>
 				<h2 className={`font-semibold mb-2 ${t.heading}`}>
 					Map Options

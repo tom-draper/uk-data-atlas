@@ -23,7 +23,8 @@ import CustomSection from "./custom/CustomSection";
 import EducationSection from "./education/EducationSection";
 import TelecomsSection from "./telecoms/TelecomsSection";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { glassStyle, glassSpecular } from "@/lib/helpers/panelTheme";
+import { glassStyle } from "@/lib/helpers/panelTheme";
+import GlassOverlays from "./GlassOverlays";
 import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
 import {
 	ChartVisibilityProvider,
@@ -84,7 +85,7 @@ export default function ChartPanel({
 					className={`rounded-md h-full flex flex-col relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
 					style={glassStyle(isDark)}
 				>
-					<div style={glassSpecular(isDark)} />
+					<GlassOverlays isDark={isDark} />
 					<div className="relative flex flex-col h-full" style={{ zIndex: 1 }}>
 					<PanelHeader
 						settingsOpen={settingsOpen}
