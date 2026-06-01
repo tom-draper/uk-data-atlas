@@ -16,18 +16,26 @@ export default function TitlePane() {
 		>
 			<GlassOverlays isDark={isDark} />
 			<div className={`relative flex items-center ${t.section} rounded-t-md`} style={{ zIndex: 1 }}>
-				<Image
-					src="/union-jack.png"
-					alt="UK Data Atlas Logo"
-					width={72}
-					height={36}
-					className="h-9 opacity-60 -m-px mr-3 rounded-r-md transform scale-x-[-1] cursor-pointer"
-					style={{
-						filter: "contrast(0.2) grayscale(1) brightness(1.8)",
-					}}
-				/>
+				<a
+					href="https://github.com/tom-draper/uk-data-atlas"
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label="View on GitHub"
+				>
+					<Image
+						src="/union-jack.png"
+						alt="UK Data Atlas Logo"
+						width={72}
+						height={36}
+						className="h-9 opacity-60 -m-px mr-3 rounded-r-md transform scale-x-[-1]"
+						style={{
+							filter: "contrast(0.2) grayscale(1) brightness(1.8)",
+						}}
+					/>
+				</a>
 				<h1 className={`font-semibold text-[15px] ${t.heading}`}>
 					UK Data Atlas
+					<span className={`ml-2 text-[10px] font-normal align-middle ${t.textMuted}`}>v0.1.5</span>
 				</h1>
 			</div>
 		</div>
