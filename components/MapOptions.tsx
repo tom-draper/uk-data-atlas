@@ -35,6 +35,7 @@ export default function MapOptions({
 	const [hideBoundaryLayer, setHideBoundaryLayer] = useState(false);
 	const [hideOverlay, setHideOverlay] = useState(false);
 	const [overlayOpacity, setOverlayOpacity] = useState(0.6);
+	const [opacityInput, setOpacityInput] = useState("60");
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const handleThemeChange = (themeId: ColorTheme) => {
@@ -73,10 +74,18 @@ export default function MapOptions({
 	};
 
 	const handleOpacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const pct = Math.min(
-			100,
-			Math.max(0, parseInt(e.target.value, 10) || 0),
-		);
+		setOpacityInput(e.target.value);
+		const parsed = parseInt(e.target.value, 10);
+		if (!isNaN(parsed)) {
+			const value = Math.min(100, Math.max(0, parsed)) / 100;
+			setOverlayOpacity(value);
+			handleMapOptionsChange("visibility", { overlayOpacity: value });
+		}
+	};
+
+	const handleOpacityBlur = () => {
+		const pct = Math.min(100, Math.max(0, parseInt(opacityInput, 10) || 60));
+		setOpacityInput(String(pct));
 		const value = pct / 100;
 		setOverlayOpacity(value);
 		handleMapOptionsChange("visibility", { overlayOpacity: value });
@@ -149,8 +158,9 @@ export default function MapOptions({
 								aria-label="Opacity"
 								min="0"
 								max="100"
-								value={Math.round(overlayOpacity * 100)}
+								value={opacityInput}
 								onChange={handleOpacityChange}
+								onBlur={handleOpacityBlur}
 								className="w-8 text-xs bg-transparent text-right px-1 py-0.5 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 							/>
 							<span className={`text-xs pr-1 ${t.textMuted}`}>
