@@ -23,8 +23,7 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = {
 		2025: null,
 		2024: null,
 		2023: null,
-		2022: null,
-		2021: null,
+		2016: null,
 	},
 	lsoa: { 2011: null },
 	dataZone: { 2011: null },
@@ -49,7 +48,7 @@ const fetchBoundaryGroup = async (
 	const allWardLadMappings: Record<string, string> = {};
 	const allLadWardMappings: Record<YearCode, Record<string, string[]>> = {};
 
-	const results = await Promise.all(
+	const settled = await Promise.allSettled(
 		years.map(async (year) => {
 			const path = paths[year as keyof typeof paths];
 			const data = await fetchBoundaryFile(path);
@@ -79,6 +78,10 @@ const fetchBoundaryGroup = async (
 			return [year, data] as const;
 		}),
 	);
+
+	const results = settled
+		.filter((r): r is PromiseFulfilledResult<readonly [number, BoundaryGeojson]> => r.status === "fulfilled")
+		.map((r) => r.value);
 
 	// Dispatch all ward-LAD mappings in a single call to avoid multiple state updates
 	if (onMappingsExtracted && Object.keys(allWardLadMappings).length > 0) {

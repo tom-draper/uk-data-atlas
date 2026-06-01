@@ -112,6 +112,20 @@ const themeDefinitions = [
 			"#0c2c84",
 		],
 	},
+	{
+		id: "ylgn" as ColorTheme,
+		label: "Yellow-Green",
+		colors: [
+			"#ffffe5",
+			"#f7fcb9",
+			"#d9f0a3",
+			"#addd8e",
+			"#78c679",
+			"#41ab5d",
+			"#238443",
+			"#005a32",
+		],
+	},
 ];
 
 type RGB = [number, number, number];

@@ -10,7 +10,6 @@ import type {
 	WIMDOptions,
 	NIMDMOptions,
 	IncomeOptions,
-	LifeExpectancyOptions,
 	PopulationOptions,
 	QualificationOptions,
 	BroadbandOptions,

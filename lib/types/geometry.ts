@@ -59,6 +59,11 @@ interface LocalAuthorityProperties2021 {
 	LAD21NM: string;
 }
 
+interface LocalAuthorityProperties2016 {
+	LAD16CD: string;
+	LAD16NM: string;
+}
+
 // Constituency properties by year
 interface ConstituencyProperties2024 {
 	PCON24CD: string;
@@ -121,6 +126,7 @@ export type YearToProperties = {
 	ward_2024: WardProperties2024;
 	ward_2025: WardProperties2025;
 	// Local Authorities
+	lad_2016: LocalAuthorityProperties2016;
 	lad_2021: LocalAuthorityProperties2021;
 	lad_2022: LocalAuthorityProperties2022;
 	lad_2023: LocalAuthorityProperties2023;

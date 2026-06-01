@@ -46,7 +46,8 @@ export type ColorTheme =
 	| "turbo"
 	| "coolwarm"
 	| "spectral"
-	| "ylgnbu";
+	| "ylgnbu"
+	| "ylgn";
 
 export type MapMode = keyof Datasets | "custom";
 
