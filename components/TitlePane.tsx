@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { panelTheme, glassStyle, glassSpecular } from "@/lib/helpers/panelTheme";
+import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
+import GlassOverlays from "./GlassOverlays";
 
 
 export default function TitlePane() {
@@ -13,7 +14,7 @@ export default function TitlePane() {
 			className={`text-sm rounded-md relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
 			style={glassStyle(isDark)}
 		>
-			<div style={glassSpecular(isDark)} />
+			<GlassOverlays isDark={isDark} />
 			<div className={`relative flex items-center ${t.section} rounded-t-md`} style={{ zIndex: 1 }}>
 				<Image
 					src="/union-jack.png"

@@ -21,22 +21,43 @@ export function panelTheme(isDark: boolean) {
 export function glassStyle(isDark: boolean): CSSProperties {
 	return isDark
 		? {
+				// More transparent so the map reads through the pane like real glass
 				background:
-					"linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 40%, rgba(10,10,20,0.55) 100%)",
-				backdropFilter: "blur(28px) saturate(180%) brightness(1.08)",
-				WebkitBackdropFilter: "blur(28px) saturate(180%) brightness(1.08)",
-				boxShadow:
-					"inset 0 1px 0 rgba(255,255,255,0.22), inset 1px 0 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.25), 0 8px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)",
-				border: "1px solid rgba(255,255,255,0.13)",
+					"linear-gradient(145deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 30%, rgba(8,8,20,0.30) 100%)",
+				backdropFilter:
+					"blur(20px) saturate(190%) brightness(1.12) contrast(1.06)",
+				WebkitBackdropFilter:
+					"blur(20px) saturate(190%) brightness(1.12) contrast(1.06)",
+				boxShadow: [
+					// bright top + left edges catch the light, dark bottom for thickness
+					"inset 0 1px 0 rgba(255,255,255,0.30)",
+					"inset 1px 0 0 rgba(255,255,255,0.18)",
+					"inset -1px 0 0 rgba(0,0,0,0.12)",
+					"inset 0 -1px 0 rgba(0,0,0,0.25)",
+					"0 20px 60px rgba(0,0,0,0.55)",
+					"0 4px 16px rgba(0,0,0,0.35)",
+					"0 0 0 0.5px rgba(255,255,255,0.14)",
+				].join(", "),
+				border: "1px solid rgba(255,255,255,0.20)",
 			}
 		: {
+				// Lighter, more see-through tint while keeping text legible
 				background:
-					"linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 40%, rgba(200,210,230,0.2) 100%)",
-				backdropFilter: "blur(28px) saturate(160%) brightness(1.1)",
-				WebkitBackdropFilter: "blur(28px) saturate(160%) brightness(1.1)",
-				boxShadow:
-					"inset 0 1px 0 rgba(255,255,255,0.8), inset 1px 0 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.06), 0 8px 40px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1)",
-				border: "1px solid rgba(255,255,255,0.45)",
+					"linear-gradient(145deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.28) 35%, rgba(190,205,230,0.18) 100%)",
+				backdropFilter:
+					"blur(20px) saturate(170%) brightness(1.12) contrast(1.03)",
+				WebkitBackdropFilter:
+					"blur(20px) saturate(170%) brightness(1.12) contrast(1.03)",
+				boxShadow: [
+					"inset 0 1px 0 rgba(255,255,255,0.85)",
+					"inset 1px 0 0 rgba(255,255,255,0.6)",
+					"inset -1px 0 0 rgba(0,0,0,0.04)",
+					"inset 0 -1px 0 rgba(0,0,0,0.06)",
+					"0 20px 60px rgba(0,0,0,0.16)",
+					"0 4px 16px rgba(0,0,0,0.10)",
+					"0 0 0 0.5px rgba(255,255,255,0.65)",
+				].join(", "),
+				border: "1px solid rgba(255,255,255,0.50)",
 			};
 }
 

@@ -1,5 +1,6 @@
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { panelTheme, glassSpecular } from "@/lib/helpers/panelTheme";
+import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
+import GlassOverlays from "./GlassOverlays";
 import { LOCATIONS } from "@lib/data/locations";
 import {
 	LocationBounds,
@@ -88,7 +89,7 @@ export default function LocationPanel({
 	const [geojson, setGeojson] = useState<BoundaryGeojson | null>(null);
 	const [searchOpen, setSearchOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
-	const [isPending, startTransition] = useTransition();
+	const [, startTransition] = useTransition();
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const deferredSearchQuery = useDeferredValue(searchQuery);
@@ -239,58 +240,12 @@ export default function LocationPanel({
 	const isDark = useIsDark();
 	const t = panelTheme(isDark);
 
-	const enhancedGlassStyle: import("react").CSSProperties = isDark
-		? {
-				background:
-					"linear-gradient(145deg, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.04) 35%, rgba(8,8,20,0.52) 100%)",
-				backdropFilter:
-					"blur(28px) saturate(180%) brightness(1.08) contrast(1.05)",
-				WebkitBackdropFilter:
-					"blur(28px) saturate(180%) brightness(1.08) contrast(1.05)",
-				boxShadow: [
-					"inset 1px 0 0 rgba(255,255,255,0.18)",
-					"inset -1px 0 0 rgba(0,0,0,0.12)",
-					"inset 0 -1px 0 rgba(0,0,0,0.25)",
-					"0 20px 60px rgba(0,0,0,0.6)",
-					"0 4px 16px rgba(0,0,0,0.4)",
-					"0 0 0 0.5px rgba(255,255,255,0.12)",
-				].join(", "),
-				border: "1px solid rgba(255,255,255,0.22)",
-			}
-		: {
-				background:
-					"linear-gradient(145deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.4) 35%, rgba(190,205,230,0.25) 100%)",
-				backdropFilter:
-					"blur(28px) saturate(160%) brightness(1.1) contrast(1.02)",
-				WebkitBackdropFilter:
-					"blur(28px) saturate(160%) brightness(1.1) contrast(1.02)",
-				boxShadow: [
-					"inset 1px 0 0 rgba(255,255,255,0.6)",
-					"inset -1px 0 0 rgba(0,0,0,0.04)",
-					"inset 0 -1px 0 rgba(0,0,0,0.06)",
-					"0 20px 60px rgba(0,0,0,0.18)",
-					"0 4px 16px rgba(0,0,0,0.12)",
-					"0 0 0 0.5px rgba(255,255,255,0.6)",
-				].join(", "),
-				border: "1px solid rgba(255,255,255,0.55)",
-			};
-
 	return (
 		<div
 			className={`rounded-md flex flex-col h-full relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
-			style={enhancedGlassStyle}
+			style={glassStyle(isDark)}
 		>
-			{/* Soft radial glow at top-left */}
-			<div style={glassSpecular(isDark)} />
-			{/* SVG distortion filter definition */}
-			<svg className="absolute w-0 h-0" aria-hidden="true">
-				<defs>
-					<filter id="lp-glass-distortion" x="-10%" y="-10%" width="120%" height="120%">
-						<feTurbulence type="fractalNoise" baseFrequency="0.018 0.025" numOctaves="2" seed="5" result="noise" />
-						<feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" />
-					</filter>
-				</defs>
-			</svg>
+			<GlassOverlays isDark={isDark} />
 			{/* Content sits above overlays */}
 			<div className="relative flex flex-col h-full" style={{ zIndex: 1 }}>
 			{/* Header with search */}
