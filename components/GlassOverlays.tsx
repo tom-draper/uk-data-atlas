@@ -44,7 +44,7 @@ export default function GlassOverlays({ isDark }: { isDark: boolean }) {
 					pointerEvents: "none",
 					zIndex: 0,
 					background: isDark
-						? "linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 30%, transparent 100%)"
+						? "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 30%, transparent 100%)"
 						: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 35%, transparent 100%)",
 				}}
 			/>

@@ -22,6 +22,12 @@ export function useMapUpdates({
 	styleReady,
 }: UseMapUpdatesParams) {
 	const isDark = useIsDark();
+
+	useEffect(() => {
+		if (!mapManager || !styleReady) return;
+		mapManager.setBorderVisibility(mapOptions.visibility.hideBorders);
+	}, [mapManager, styleReady, mapOptions.visibility.hideBorders]);
+
 	useEffect(() => {
 		if (!geojson || !activeDataset || !mapManager) return;
 
