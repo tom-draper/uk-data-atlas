@@ -14,11 +14,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	chartHeadingClass,
-	cardClass,
-	useCardAccent,
-} from "@/lib/hooks/useCardAccent";
+import { chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
@@ -206,8 +202,8 @@ export default function CrimeRateChart({
 				<h3 className={chartHeadingClass(isDark)}>
 					Recorded Crime [{dataset.year}]
 				</h3>
-				<div className="flex-1 flex items-center justify-center">
-					{crimeRate ? (
+				{crimeRate ? (
+					<div className="flex-1 mt-1 flex items-center justify-center">
 						<div
 							className="text-xl font-bold"
 							style={{
@@ -222,20 +218,20 @@ export default function CrimeRateChart({
 						>
 							{Math.round(crimeRate).toLocaleString()}
 						</div>
-					) : (
-						<div className="h-5">
-							{chartsLoading ? (
-								<ChartContentPlaceholder className="h-full" />
-							) : (
-								<div
-									className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-								>
-									No data available
-								</div>
-							)}
-						</div>
-					)}
-				</div>
+					</div>
+				) : (
+					<div className="flex-1 mt-1">
+						{chartsLoading ? (
+							<ChartContentPlaceholder className="h-full" />
+						) : (
+							<div
+								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+							>
+								No data available
+							</div>
+						)}
+					</div>
+				)}
 			</div>
 		</button>
 	);

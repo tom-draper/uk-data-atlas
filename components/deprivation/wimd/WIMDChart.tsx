@@ -143,7 +143,7 @@ export default function WIMDChart({
 			}
 		>
 			<ChartLoadingBackground />
-			<div className="relative z-10">
+			<div className="relative z-10 flex flex-col flex-1">
 				<h3 className={chartHeadingClass(isDark)}>
 					Deprivation (WIMD) [{dataset.year}]
 				</h3>
@@ -189,12 +189,12 @@ export default function WIMDChart({
 						</div>
 					</div>
 				) : (
-					<div className="h-12 flex items-center justify-center">
+					<div className="flex-1 mt-1">
 						{chartsLoading ? (
-							<ChartContentPlaceholder className="size-full" />
+							<ChartContentPlaceholder className="h-full" />
 						) : (
 							<div
-								className={`text-xs pb-2 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
 							>
 								No data available
 							</div>
