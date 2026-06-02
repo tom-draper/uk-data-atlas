@@ -85,7 +85,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `local-election-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const wardCodeProp = this.propertyDetector.detectWardCode(
 			geojson.features,
@@ -150,7 +150,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `general-election-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const constituencyCodeProp =
 			this.propertyDetector.detectConstituencyCode(geojson.features);
@@ -211,7 +211,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `population-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const wardCodeProp = this.propertyDetector.detectWardCode(
 			geojson.features,
@@ -235,7 +235,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `ethnicity-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const ladProp = this.propertyDetector.detectLocalAuthorityCode(
 			geojson.features,
@@ -316,7 +316,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `house-price-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const wardCodeProp = this.propertyDetector.detectWardCode(
 			geojson.features,
@@ -382,7 +382,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `crime-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 			geojson.features,
@@ -424,7 +424,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `income-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 			geojson.features,
@@ -439,7 +439,7 @@ export class StatsCalculator {
 				incomeData[
 					getFeatureProp(features[i].properties, ladCodeProp) ?? ""
 				];
-			if (locationIncome?.annual?.median) {
+			if (locationIncome?.annual?.median != null) {
 				totalMedianIncome += locationIncome.annual.median;
 				localAuthorityCount++;
 			}
@@ -464,7 +464,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `brexit-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 			geojson.features,
@@ -510,7 +510,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `brexitConstituency-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const codeProp = this.propertyDetector.detectConstituencyCode(
 			geojson.features,
@@ -554,7 +554,7 @@ export class StatsCalculator {
 	) {
 		const cacheKey = `custom-dataset-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey);
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const codeProp = this.propertyDetector.detectCode(geojson.features);
 
@@ -591,8 +591,8 @@ export class StatsCalculator {
 		const cacheKey = `lifeExpectancy-${location}-${datasetId}`;
 		const cached = this.cache.get(
 			cacheKey,
-		) as AggregatedLifeExpectancyData | null;
-		if (cached) return cached;
+		) as AggregatedLifeExpectancyData | undefined;
+		if (cached !== undefined) return cached;
 
 		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 			geojson.features,
@@ -628,7 +628,7 @@ export class StatsCalculator {
 	): AggregatedSIMDData | null {
 		const cacheKey = `simd-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey) as AggregatedSIMDData | null;
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const dzCodeProp = this.propertyDetector.detectDataZoneCode(
 			geojson.features,
@@ -647,7 +647,10 @@ export class StatsCalculator {
 			}
 		}
 
-		if (count === 0) return null;
+		if (count === 0) {
+			this.cache.set(cacheKey, null);
+			return null;
+		}
 
 		const stats: AggregatedSIMDData = {
 			averageSIMDRank: totalRank / count,
@@ -666,7 +669,7 @@ export class StatsCalculator {
 	): AggregatedWIMDData | null {
 		const cacheKey = `wimd-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey) as AggregatedWIMDData | null;
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const lsoaCodeProp = this.propertyDetector.detectLSOACode(
 			geojson.features,
@@ -685,7 +688,10 @@ export class StatsCalculator {
 			}
 		}
 
-		if (count === 0) return null;
+		if (count === 0) {
+			this.cache.set(cacheKey, null);
+			return null;
+		}
 
 		const stats: AggregatedWIMDData = {
 			averageWIMDScore: totalScore / count,
@@ -701,10 +707,10 @@ export class StatsCalculator {
 		nimdmData: NIMDMDataset["data"],
 		location: string | null,
 		datasetId: string | null,
-	): AggregatedNIMDMData {
+	): AggregatedNIMDMData | null {
 		const cacheKey = `nimdm-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedNIMDMData | null;
-		if (cached) return cached;
+		const cached = this.cache.get(cacheKey) as AggregatedNIMDMData | null | undefined;
+		if (cached !== undefined) return cached;
 
 		const soaCodeProp = this.propertyDetector.detectSOACode(
 			geojson.features,
@@ -721,8 +727,13 @@ export class StatsCalculator {
 			}
 		}
 
+		if (count === 0) {
+			this.cache.set(cacheKey, null);
+			return null;
+		}
+
 		const stats: AggregatedNIMDMData = {
-			averageNIMDMDecile: count > 0 ? totalDecile / count : 0,
+			averageNIMDMDecile: totalDecile / count,
 		};
 
 		this.cache.set(cacheKey, stats);
@@ -736,8 +747,8 @@ export class StatsCalculator {
 		datasetId: string | null,
 	): AggregatedIMDData {
 		const cacheKey = `imd-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedIMDData | null;
-		if (cached) return cached;
+		const cached = this.cache.get(cacheKey) as AggregatedIMDData | undefined;
+		if (cached !== undefined) return cached;
 
 		const lsoaCodeProp = this.propertyDetector.detectLSOACode(
 			geojson.features,
@@ -955,8 +966,8 @@ export class StatsCalculator {
 		const cacheKey = `qualification-${location}-${datasetId}`;
 		const cached = this.cache.get(
 			cacheKey,
-		) as AggregatedQualificationData | null;
-		if (cached) return cached;
+		) as AggregatedQualificationData | undefined;
+		if (cached !== undefined) return cached;
 
 		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 			geojson.features,
@@ -1003,7 +1014,7 @@ export class StatsCalculator {
 	): AggregatedBroadbandData | null {
 		const cacheKey = `broadband-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey) as AggregatedBroadbandData | null;
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
 		let totalSuperfast = 0, totalUltrafast = 0, totalFullFibre = 0, totalGigabit = 0, count = 0;
@@ -1038,7 +1049,7 @@ export class StatsCalculator {
 	): AggregatedAirQualityData | null {
 		const cacheKey = `airQuality-${location}-${datasetId}`;
 		const cached = this.cache.get(cacheKey) as AggregatedAirQualityData | null;
-		if (cached) return cached;
+		if (cached !== undefined) return cached;
 
 		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
 		let totalNo2 = 0, totalPm25 = 0, totalPm10 = 0, count = 0, pm25Count = 0, pm10Count = 0;

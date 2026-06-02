@@ -6,11 +6,10 @@ export class StatsCache {
 	private cache = new Map<string, unknown>();
 
 	get(key: string): unknown {
-		const value = this.cache.get(key) ?? null;
-		if (value !== null) {
-			this.cache.delete(key);
-			this.cache.set(key, value);
-		}
+		if (!this.cache.has(key)) return undefined;
+		const value = this.cache.get(key);
+		this.cache.delete(key);
+		this.cache.set(key, value);
 		return value;
 	}
 

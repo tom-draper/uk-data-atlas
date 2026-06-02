@@ -17,13 +17,13 @@ export const parsePct = (val: string): number => {
 };
 
 export const parseNullableInt = (val: any): number | null => {
-	if (!val || val === "") return null;
+	if (val === null || val === undefined || val === "") return null;
 	const parsed = parseInt(String(val).replace(/,/g, "").trim(), 10);
 	return isNaN(parsed) ? null : parsed;
 };
 
 export const parseNullableNum = (val: any): number | null => {
-	if (!val || val === "") return null;
+	if (val === null || val === undefined || val === "") return null;
 	const parsed = Number(String(val).replace(/,/g, "").trim());
 	return isNaN(parsed) ? null : parsed;
 };

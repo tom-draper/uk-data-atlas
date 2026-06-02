@@ -1,0 +1,71 @@
+/**
+ * Pre-compiles all CSV datasets into compact JSON files served to the browser.
+ * Eliminates PapaParse from the client bundle and removes main-thread CSV parsing.
+ *
+ * Run via: pnpm precompile
+ * Also runs automatically before pnpm dev and pnpm build.
+ */
+import { readFile, mkdir, writeFile } from "fs/promises";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+import { loadIMD } from "../lib/data/imd/loader";
+import { loadWIMD } from "../lib/data/wimd/loader";
+import { loadSIMD } from "../lib/data/simd/loader";
+import { loadNIMDM } from "../lib/data/nimdm/loader";
+import { loadPopulation } from "../lib/data/population/loader";
+import { loadHousePrice } from "../lib/data/house-price/loader";
+import { loadCrime } from "../lib/data/crime/loader";
+import { loadIncome } from "../lib/data/income/loader";
+import { loadLE } from "../lib/data/life-expectancy/loader";
+import { loadBroadband } from "../lib/data/broadband/loader";
+import { loadAirQuality } from "../lib/data/air-quality/loader";
+import { loadQualification } from "../lib/data/qualification/loader";
+import { loadBrexit } from "../lib/data/brexit/loader";
+import { loadBrexitConstituency } from "../lib/data/brexit-constituency/loader";
+
+const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+const PUBLIC_DATA = join(ROOT, "public", "data");
+const OUT_DIR = join(PUBLIC_DATA, "precompiled");
+
+// Reads a file relative to public/data/ (where sync-public-data.mjs places everything)
+const read = (path: string) => readFile(join(PUBLIC_DATA, path), "utf8");
+
+const out = async (name: string, data: unknown) => {
+	const json = JSON.stringify(data);
+	await writeFile(join(OUT_DIR, `${name}.json`), json);
+	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
+	console.log(`  precompiled: ${name}.json (${kb} KB)`);
+};
+
+async function main() {
+	console.log("Pre-compiling datasets...");
+	await mkdir(OUT_DIR, { recursive: true });
+
+	const results = await Promise.allSettled([
+		loadIMD(read).then((d) => out("imd", d)),
+		loadWIMD(read).then((d) => out("wimd", d)),
+		loadSIMD(read).then((d) => out("simd", d)),
+		loadNIMDM(read).then((d) => out("nimdm", d)),
+		loadPopulation(read).then((d) => out("population", d)),
+		loadHousePrice(read).then((d) => out("house-price", d)),
+		loadCrime(read).then((d) => out("crime", d)),
+		loadIncome(read).then((d) => out("income", d)),
+		loadLE(read, true).then((d) => out("life-expectancy", d)),
+		loadBroadband(read).then((d) => out("broadband", d)),
+		loadAirQuality(read).then((d) => out("air-quality", d)),
+		loadQualification(read).then((d) => out("qualification", d)),
+		loadBrexit(read).then((d) => out("brexit", d)),
+		loadBrexitConstituency(read).then((d) => out("brexit-constituency", d)),
+	]);
+
+	const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+	if (failures.length > 0) {
+		for (const f of failures) console.error("  ERROR:", f.reason);
+		process.exit(1);
+	}
+
+	console.log("Done.");
+}
+
+main();

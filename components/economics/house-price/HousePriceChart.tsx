@@ -106,7 +106,7 @@ function PriceChart({
 
 					if (data) {
 						prices = data.prices;
-						price2023 = prices[dataset.year] || null;
+						price2023 = prices[2023] || null;
 					}
 
 					// Cache the result
