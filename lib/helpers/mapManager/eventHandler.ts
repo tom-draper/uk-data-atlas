@@ -20,22 +20,28 @@ function rafThrottle<T extends unknown[]>(
 	func: (...args: T) => void,
 ): { handler: (...args: T) => void; cancel: () => void } {
 	let rafId: number | null = null;
-	let lastArgs: T | null = null;
+	let trailingArgs: T | null = null;
 
 	const handler = (...args: T): void => {
-		lastArgs = args;
 		if (rafId === null) {
+			// Leading: fire immediately, then open a window for trailing calls
+			func(...args);
 			rafId = requestAnimationFrame(() => {
 				rafId = null;
-				if (lastArgs) func(...lastArgs);
-				lastArgs = null;
+				if (trailingArgs) {
+					func(...trailingArgs);
+					trailingArgs = null;
+				}
 			});
+		} else {
+			// Within the RAF window: keep only the latest args for the trailing call
+			trailingArgs = args;
 		}
 	};
 
 	const cancel = () => {
 		if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
-		lastArgs = null;
+		trailingArgs = null;
 	};
 
 	return { handler, cancel };
