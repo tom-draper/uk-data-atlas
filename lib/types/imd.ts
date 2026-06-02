@@ -22,6 +22,7 @@ export interface IMDDataset {
 	boundaryType: "lsoa";
 	boundaryYear: number;
 	data: Record<string, IMDLSOAData>;
+	ladStats: Record<string, AggregatedIMDData>;
 	metadata: {
 		source: string;
 		notes: string[];

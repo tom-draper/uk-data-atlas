@@ -14,6 +14,7 @@ export interface NIMDMDataset {
 	boundaryType: "superOutputArea";
 	boundaryYear: number;
 	data: Record<string, NIMDMLSOAData>;
+	lgdStats: Record<string, AggregatedNIMDMData>;
 	metadata: {
 		source: string;
 		notes: string[];

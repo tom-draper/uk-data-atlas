@@ -110,6 +110,18 @@ export async function loadSIMD(
 		};
 	}
 
+	const councilGroups: Record<string, typeof records[string][]> = {};
+	for (const r of Object.values(records)) {
+		(councilGroups[r.councilAreaCode] ??= []).push(r);
+	}
+	const councilStats: SIMDDataset["councilStats"] = {};
+	for (const [code, dzs] of Object.entries(councilGroups)) {
+		councilStats[code] = {
+			averageSIMDRank: dzs.reduce((s, r) => s + r.simdRank, 0) / dzs.length,
+			averageSIMDQuintile: dzs.reduce((s, r) => s + r.simdQuintile, 0) / dzs.length,
+		};
+	}
+
 	return {
 		2020: {
 			id: "simd2020",
@@ -118,6 +130,7 @@ export async function loadSIMD(
 			boundaryType: "dataZone",
 			boundaryYear: 2011,
 			data: records,
+			councilStats,
 			metadata: {
 				source: "Scottish Government. Scottish Index of Multiple Deprivation 2020v2.",
 				notes: ["Scotland only. Quintile 1 = most deprived 20% of data zones."],

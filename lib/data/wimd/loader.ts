@@ -73,6 +73,18 @@ export async function loadWIMD(
 		record.wimdDecile = Math.ceil(((i + 1) / sorted.length) * 10);
 	});
 
+	const ladGroups: Record<string, typeof records[string][]> = {};
+	for (const r of Object.values(records)) {
+		(ladGroups[r.ladCode] ??= []).push(r);
+	}
+	const ladStats: WIMDDataset["ladStats"] = {};
+	for (const [lad, lsoas] of Object.entries(ladGroups)) {
+		ladStats[lad] = {
+			averageWIMDScore: lsoas.reduce((s, r) => s + r.wimdScore, 0) / lsoas.length,
+			averageWIMDDecile: lsoas.reduce((s, r) => s + r.wimdDecile, 0) / lsoas.length,
+		};
+	}
+
 	return {
 		2019: {
 			id: "wimd2019",
@@ -81,6 +93,7 @@ export async function loadWIMD(
 			boundaryType: "lsoa",
 			boundaryYear: 2011,
 			data: records,
+			ladStats,
 			metadata: {
 				source: "Welsh Government. Welsh Index of Multiple Deprivation 2019.",
 				notes: ["Wales only. Decile 1 = most deprived 10% of LSOAs."],

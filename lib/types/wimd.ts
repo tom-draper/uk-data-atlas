@@ -15,6 +15,7 @@ export interface WIMDDataset {
 	boundaryType: "lsoa";
 	boundaryYear: number;
 	data: Record<string, WIMDLSOAData>;
+	ladStats: Record<string, AggregatedWIMDData>;
 	metadata: {
 		source: string;
 		notes: string[];

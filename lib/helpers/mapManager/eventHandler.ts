@@ -16,18 +16,29 @@ type MapFeature = {
 	properties?: Record<string, string | undefined>;
 };
 
-function throttle<T extends (...args: Parameters<T>) => void>(
-	func: T,
-	limit: number,
-): (...args: Parameters<T>) => void {
-	let inThrottle = false;
-	return function (...args: Parameters<T>): void {
-		if (!inThrottle) {
-			func(...args);
-			inThrottle = true;
-			setTimeout(() => (inThrottle = false), limit);
+function rafThrottle<T extends unknown[]>(
+	func: (...args: T) => void,
+): { handler: (...args: T) => void; cancel: () => void } {
+	let rafId: number | null = null;
+	let lastArgs: T | null = null;
+
+	const handler = (...args: T): void => {
+		lastArgs = args;
+		if (rafId === null) {
+			rafId = requestAnimationFrame(() => {
+				rafId = null;
+				if (lastArgs) func(...lastArgs);
+				lastArgs = null;
+			});
 		}
 	};
+
+	const cancel = () => {
+		if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+		lastArgs = null;
+	};
+
+	return { handler, cancel };
 }
 
 export class EventHandler {
@@ -40,6 +51,7 @@ export class EventHandler {
 	private _mouseMoveHandler: (
 		e: MapMouseEventType & { features?: MapFeature[] },
 	) => void;
+	private _cancelMouseMove: () => void;
 	private _mouseLeaveHandler: () => void;
 
 	constructor(
@@ -47,7 +59,9 @@ export class EventHandler {
 		private callbacks: MapManagerCallbacks,
 	) {
 		this.canvas = this.map.getCanvas();
-		this._mouseMoveHandler = throttle(this.handleMouseMove.bind(this), 10);
+		const { handler, cancel } = rafThrottle(this.handleMouseMove.bind(this));
+		this._mouseMoveHandler = handler;
+		this._cancelMouseMove = cancel;
 		this._mouseLeaveHandler = this.handleMouseLeave.bind(this);
 	}
 
@@ -151,6 +165,7 @@ export class EventHandler {
 	}
 
 	destroy(): void {
+		this._cancelMouseMove();
 		this.removeHandlers();
 		if (this.lastHoveredFeatureId !== null) {
 			try {
@@ -161,7 +176,6 @@ export class EventHandler {
 			} catch {}
 			this.lastHoveredFeatureId = null;
 		}
-		// Clear bound handlers
 		this._mouseMoveHandler = () => {};
 		this._mouseLeaveHandler = () => {};
 		this.currentData = null;

@@ -36,22 +36,6 @@ const QUINTILE_COLORS = [
 	"#15803d", // 5 - least deprived
 ];
 
-type SIMDRecord = SIMDDataset["data"][string];
-const simdByCouncilArea = new WeakMap<SIMDDataset, Map<string, SIMDRecord[]>>();
-function getSIMDIndex(dataset: SIMDDataset): Map<string, SIMDRecord[]> {
-	let index = simdByCouncilArea.get(dataset);
-	if (!index) {
-		index = new Map();
-		for (const record of Object.values(dataset.data)) {
-			const arr = index.get(record.councilAreaCode);
-			if (arr) arr.push(record);
-			else index.set(record.councilAreaCode, [record]);
-		}
-		simdByCouncilArea.set(dataset, index);
-	}
-	return index;
-}
-
 function computeSimdStats(
 	dataset: SIMDDataset,
 	aggregatedData: Record<number, AggregatedSIMDData> | null,
@@ -59,26 +43,13 @@ function computeSimdStats(
 	chartsLoading: boolean,
 ) {
 	if (chartsLoading) return null;
-
-	const avg = (records: SIMDRecord[]) => {
-		if (records.length === 0) return null;
-		return {
-			averageSIMDRank:
-				records.reduce((s, r) => s + r.simdRank, 0) / records.length,
-			averageSIMDQuintile:
-				records.reduce((s, r) => s + r.simdQuintile, 0) / records.length,
-		};
-	};
-
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
-	const index = getSIMDIndex(dataset);
-
 	if (selectedArea.type === "localAuthority")
-		return avg(index.get(selectedArea.code) ?? []);
+		return dataset.councilStats[selectedArea.code] ?? null;
 
 	if (selectedArea.type === "ward" && selectedArea.data)
-		return avg(index.get(selectedArea.data.ladCode) ?? []);
+		return dataset.councilStats[selectedArea.data.ladCode] ?? null;
 
 	return null;
 }
