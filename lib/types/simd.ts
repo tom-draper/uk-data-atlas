@@ -15,6 +15,7 @@ export interface SIMDDataset {
 	boundaryType: "dataZone";
 	boundaryYear: number;
 	data: Record<string, SIMDDataZoneData>;
+	councilStats: Record<string, AggregatedSIMDData>;
 	metadata: {
 		source: string;
 		notes: string[];

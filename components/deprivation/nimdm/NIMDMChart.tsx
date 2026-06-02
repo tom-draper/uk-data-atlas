@@ -41,22 +41,6 @@ const DECILE_COLORS = [
 	"#15803d", // 10 - least deprived
 ];
 
-type NIMDMRecord = NIMDMDataset["data"][string];
-const nimdmByLGD = new WeakMap<NIMDMDataset, Map<string, NIMDMRecord[]>>();
-function getNIMDMIndex(dataset: NIMDMDataset): Map<string, NIMDMRecord[]> {
-	let index = nimdmByLGD.get(dataset);
-	if (!index) {
-		index = new Map();
-		for (const record of Object.values(dataset.data)) {
-			const arr = index.get(record.lgdCode);
-			if (arr) arr.push(record);
-			else index.set(record.lgdCode, [record]);
-		}
-		nimdmByLGD.set(dataset, index);
-	}
-	return index;
-}
-
 function computeNimdmStats(
 	dataset: NIMDMDataset,
 	aggregatedData: Record<number, AggregatedNIMDMData> | null,
@@ -64,24 +48,13 @@ function computeNimdmStats(
 	chartsLoading: boolean,
 ) {
 	if (chartsLoading) return null;
-
-	const avg = (records: NIMDMRecord[]) => {
-		if (records.length === 0) return null;
-		return {
-			averageNIMDMDecile:
-				records.reduce((s, r) => s + r.nimdmDecile, 0) / records.length,
-		};
-	};
-
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
-	const index = getNIMDMIndex(dataset);
-
 	if (selectedArea.type === "localAuthority")
-		return avg(index.get(selectedArea.code) ?? []);
+		return dataset.lgdStats[selectedArea.code] ?? null;
 
 	if (selectedArea.type === "ward" && selectedArea.data)
-		return avg(index.get(selectedArea.data.ladCode) ?? []);
+		return dataset.lgdStats[selectedArea.data.ladCode] ?? null;
 
 	return null;
 }

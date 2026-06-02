@@ -37,6 +37,18 @@ export async function loadIMD(
 		};
 	}
 
+	const ladGroups: Record<string, typeof records[string][]> = {};
+	for (const r of Object.values(records)) {
+		(ladGroups[r.ladCode] ??= []).push(r);
+	}
+	const ladStats: IMDDataset["ladStats"] = {};
+	for (const [lad, lsoas] of Object.entries(ladGroups)) {
+		ladStats[lad] = {
+			averageIMDScore: lsoas.reduce((s, r) => s + r.imdScore, 0) / lsoas.length,
+			averageIMDDecile: lsoas.reduce((s, r) => s + r.imdDecile, 0) / lsoas.length,
+		};
+	}
+
 	return {
 		2019: {
 			id: "imd2019",
@@ -45,6 +57,7 @@ export async function loadIMD(
 			boundaryType: "lsoa",
 			boundaryYear: 2011,
 			data: records,
+			ladStats,
 			metadata: {
 				source: "Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019.",
 				notes: ["England only. Decile 1 = most deprived 10% of LSOAs."],

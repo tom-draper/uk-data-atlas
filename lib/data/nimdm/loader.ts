@@ -66,6 +66,17 @@ export async function loadNIMDM(
 		};
 	}
 
+	const lgdGroups: Record<string, typeof records[string][]> = {};
+	for (const r of Object.values(records)) {
+		(lgdGroups[r.lgdCode] ??= []).push(r);
+	}
+	const lgdStats: NIMDMDataset["lgdStats"] = {};
+	for (const [lgd, soas] of Object.entries(lgdGroups)) {
+		lgdStats[lgd] = {
+			averageNIMDMDecile: soas.reduce((s, r) => s + r.nimdmDecile, 0) / soas.length,
+		};
+	}
+
 	return {
 		2017: {
 			id: "nimdm2017",
@@ -74,6 +85,7 @@ export async function loadNIMDM(
 			boundaryType: "superOutputArea",
 			boundaryYear: 2011,
 			data: records,
+			lgdStats,
 			metadata: {
 				source: "Northern Ireland Statistics and Research Agency. Northern Ireland Multiple Deprivation Measure 2017.",
 				notes: ["Northern Ireland only. Decile 1 = most deprived 10% of Super Output Areas."],

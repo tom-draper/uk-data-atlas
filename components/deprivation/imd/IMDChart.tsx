@@ -41,22 +41,6 @@ const DECILE_COLORS = [
 	"#15803d", // 10 - least deprived
 ];
 
-type IMDRecord = IMDDataset["data"][string];
-const imdByLAD = new WeakMap<IMDDataset, Map<string, IMDRecord[]>>();
-function getIMDIndex(dataset: IMDDataset): Map<string, IMDRecord[]> {
-	let index = imdByLAD.get(dataset);
-	if (!index) {
-		index = new Map();
-		for (const record of Object.values(dataset.data)) {
-			const arr = index.get(record.ladCode);
-			if (arr) arr.push(record);
-			else index.set(record.ladCode, [record]);
-		}
-		imdByLAD.set(dataset, index);
-	}
-	return index;
-}
-
 function computeImdStats(
 	dataset: IMDDataset,
 	aggregatedData: Record<number, AggregatedIMDData> | null,
@@ -64,17 +48,6 @@ function computeImdStats(
 	chartsLoading: boolean,
 ) {
 	if (chartsLoading) return null;
-
-	const avg = (records: IMDRecord[]) => {
-		if (records.length === 0) return null;
-		return {
-			averageIMDScore:
-				records.reduce((s, r) => s + r.imdScore, 0) / records.length,
-			averageIMDDecile:
-				records.reduce((s, r) => s + r.imdDecile, 0) / records.length,
-		};
-	};
-
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
 	if (selectedArea.type === "lsoa") {
@@ -84,13 +57,11 @@ function computeImdStats(
 			: null;
 	}
 
-	const index = getIMDIndex(dataset);
-
 	if (selectedArea.type === "localAuthority")
-		return avg(index.get(selectedArea.code) ?? []);
+		return dataset.ladStats[selectedArea.code] ?? null;
 
 	if (selectedArea.type === "ward" && selectedArea.data)
-		return avg(index.get(selectedArea.data.ladCode) ?? []);
+		return dataset.ladStats[selectedArea.data.ladCode] ?? null;
 
 	return null;
 }
