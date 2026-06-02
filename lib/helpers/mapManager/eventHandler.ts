@@ -68,7 +68,7 @@ export class EventHandler {
 	}
 
 	nameProp(codeProp: string) {
-		return codeProp.replace("CD", "NM");
+		return codeProp.replace(/cd$/i, "NM");
 	}
 
 	boundaryType(codeProp: string) {
