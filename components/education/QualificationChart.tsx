@@ -125,12 +125,12 @@ export default function QualificationChart({
 			</div>
 
 			{!hasData ? (
-				<div className="h-10 flex items-center justify-center">
+				<div className="flex-1">
 					{chartsLoading ? (
-						<ChartContentPlaceholder className="size-full" />
+						<ChartContentPlaceholder className="h-full" />
 					) : (
 						<div
-							className={`text-xs pb-2 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
 						>
 							No data available
 						</div>

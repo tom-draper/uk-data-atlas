@@ -37,12 +37,6 @@ function no2Color(no2: number): string {
 	return "#ef4444";
 }
 
-function no2Label(no2: number): string {
-	if (no2 < 10) return "Good";
-	if (no2 < 20) return "Moderate";
-	if (no2 < 30) return "Poor";
-	return "Very Poor";
-}
 
 function StatPill({
 	label,
@@ -90,7 +84,6 @@ export default function AirQualityChart({
 	aggregatedData,
 	selectedArea,
 	year,
-	activeViz,
 	setActiveViz,
 }: AirQualityChartProps) {
 	const chartsLoading = useChartsLoading();
@@ -155,11 +148,6 @@ export default function AirQualityChart({
 						<span className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>
 							µg/m³
 						</span>
-						{no2 != null && (
-							<span className="text-[10px] font-semibold ml-0.5" style={{ color: color ?? undefined }}>
-								{no2Label(no2)}
-							</span>
-						)}
 					</div>
 					<div className="flex gap-1 shrink-0">
 						<StatPill label="PM2.5" value={stats.pm25Mean} unit="µg/m³" isDark={isDark} />

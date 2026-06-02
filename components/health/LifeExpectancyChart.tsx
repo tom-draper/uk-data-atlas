@@ -127,7 +127,6 @@ export default function LifeExpectancyChart({
 	aggregatedData,
 	selectedArea,
 	datasetId,
-	activeViz,
 	setActiveViz,
 }: LifeExpectancyChartProps) {
 	const chartsLoading = useChartsLoading();
@@ -193,7 +192,7 @@ export default function LifeExpectancyChart({
 			}
 		>
 			<ChartLoadingBackground />
-			<div className="relative z-10">
+			<div className="relative z-10 flex flex-col flex-1">
 				<h3 className={chartHeadingClass(isDark)}>
 					{dataset.label} [{dataset.dataPeriod}]
 				</h3>
@@ -215,7 +214,7 @@ export default function LifeExpectancyChart({
 						)}
 					</div>
 				) : (
-					<div className="h-5 mt-2 mb-2">
+					<div className="flex-1 mt-1">
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (
