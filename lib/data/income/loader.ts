@@ -1,12 +1,6 @@
 import { AnnualIncomeData, HourlyIncomeData, IncomeDataset, IncomeLADData } from "@/lib/types/income";
 import { parseCsv, findHeaderLine } from "@/lib/helpers/parseCsv";
-
-const parseNumber = (value: any): number | null => {
-	if (!value || value === "" || value === "x" || value === ".." || value === ":" || value === "-")
-		return null;
-	const parsed = parseFloat(String(value).replace(/,/g, "").trim());
-	return isNaN(parsed) ? null : parsed;
-};
+import { parseNullableNum as parseNumber } from "@/lib/helpers/parseNumber";
 
 async function parseAnnualData(text: string): Promise<{ data: Record<string, AnnualIncomeData>; names: Record<string, string> }> {
 	const skipLines = findHeaderLine(text, "Description");

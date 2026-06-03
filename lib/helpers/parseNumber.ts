@@ -24,6 +24,9 @@ export const parseNullableInt = (val: any): number | null => {
 
 export const parseNullableNum = (val: any): number | null => {
 	if (val === null || val === undefined || val === "") return null;
-	const parsed = Number(String(val).replace(/,/g, "").trim());
+	const s = String(val).trim();
+	// Statistical suppression markers used in ONS/govt datasets
+	if (s === "x" || s === ".." || s === ":" || s === "-") return null;
+	const parsed = Number(s.replace(/,/g, ""));
 	return isNaN(parsed) ? null : parsed;
 };

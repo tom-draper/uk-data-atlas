@@ -23,6 +23,7 @@ import { loadAirQuality } from "../lib/data/air-quality/loader";
 import { loadQualification } from "../lib/data/qualification/loader";
 import { loadBrexit } from "../lib/data/brexit/loader";
 import { loadBrexitConstituency } from "../lib/data/brexit-constituency/loader";
+import { loadEthnicity } from "../lib/data/ethnicity/loader";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -57,6 +58,7 @@ async function main() {
 		loadQualification(read).then((d) => out("qualification", d)),
 		loadBrexit(read).then((d) => out("brexit", d)),
 		loadBrexitConstituency(read).then((d) => out("brexit-constituency", d)),
+		loadEthnicity(read).then((d) => out("ethnicity", d)),
 	]);
 
 	const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
