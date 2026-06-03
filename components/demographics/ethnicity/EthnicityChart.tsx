@@ -80,7 +80,7 @@ function Legend({ ethnicityData }: { ethnicityData: ProcessedEthnicityData[] }) 
 }
 
 interface EthnicityChartProps {
-	dataset: EthnicityDataset;
+	dataset: EthnicityDataset | undefined;
 	aggregatedData: Record<number, AggregatedEthnicityData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
@@ -117,6 +117,9 @@ export default function EthnicityChart({
 }: EthnicityChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+
+	if (!dataset) return null;
+
 	const vizId = dataset.id;
 	const isActive = activeViz.vizId === vizId;
 
