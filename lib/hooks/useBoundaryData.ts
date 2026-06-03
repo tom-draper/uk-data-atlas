@@ -10,7 +10,6 @@ import {
 } from "../data/boundaries/boundaries";
 import {
 	extractWardLadMappings,
-	extractLadWardMappings,
 	buildCrossYearMappings,
 	buildConstituencyWardMappings,
 } from "./useCodeMapper";
@@ -54,24 +53,14 @@ const fetchBoundaryGroup = async (
 			const data = await fetchBoundaryFile(path);
 
 			if (type === "ward" && data.features?.length) {
-				if (onMappingsExtracted) {
-					const wardToLadMappings = extractWardLadMappings(
-						data.features,
-						PROPERTY_KEYS.wardCode,
-						PROPERTY_KEYS.ladCode,
-					);
-					Object.assign(allWardLadMappings, wardToLadMappings);
-				}
-
-				if (onLadWardMappingsExtracted) {
-					const ladToWardsMappings = extractLadWardMappings(
-						data.features,
-						PROPERTY_KEYS.wardCode,
-						PROPERTY_KEYS.ladCode,
-					);
-					if (Object.keys(ladToWardsMappings).length > 0) {
-						allLadWardMappings[year] = ladToWardsMappings;
-					}
+				const { wardToLad, ladToWards } = extractWardLadMappings(
+					data.features,
+					PROPERTY_KEYS.wardCode,
+					PROPERTY_KEYS.ladCode,
+				);
+				Object.assign(allWardLadMappings, wardToLad);
+				if (Object.keys(ladToWards).length > 0) {
+					allLadWardMappings[year] = ladToWards;
 				}
 			}
 

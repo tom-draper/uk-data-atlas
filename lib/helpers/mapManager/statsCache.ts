@@ -1,6 +1,6 @@
 // lib/utils/mapManager/statsCache.ts
 
-const MAX_STATS_CACHE_SIZE = 200;
+const MAX_STATS_CACHE_SIZE = 1000;
 
 export class StatsCache {
 	private cache = new Map<string, unknown>();

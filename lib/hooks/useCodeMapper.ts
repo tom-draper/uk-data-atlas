@@ -71,6 +71,17 @@ export function useCodeMapper() {
 		superOutputArea: {},
 	});
 
+	// Reverse index: type → targetCode → set of source codes that map to it.
+	// Built alongside codeMappingsRef so getHighlightCodes is O(1) instead of O(n).
+	const reverseCodeMappingsRef = useRef<Record<CodeType, Record<string, Set<string>>>>({
+		ward: {},
+		localAuthority: {},
+		constituency: {},
+		lsoa: {},
+		dataZone: {},
+		superOutputArea: {},
+	});
+
 	// ==================== Ward-to-LAD Mappings ====================
 
 	const getLadForWard = (wardCode: string): string | undefined => {
@@ -168,10 +179,20 @@ export function useCodeMapper() {
 		if (!fromCode || !toYear || !toCode) return;
 		if (!codeMappingsRef.current[type][fromCode]) codeMappingsRef.current[type][fromCode] = {};
 		codeMappingsRef.current[type][fromCode][toYear] = toCode;
+		const rev = reverseCodeMappingsRef.current[type];
+		if (!rev[toCode]) rev[toCode] = new Set();
+		rev[toCode].add(fromCode);
 	}, []);
 
 	const addCodeMappings = useCallback((type: CodeType, mappings: CodeMapping) => {
 		Object.assign(codeMappingsRef.current[type], mappings);
+		const rev = reverseCodeMappingsRef.current[type];
+		for (const [fromCode, yearMap] of Object.entries(mappings)) {
+			for (const toCode of Object.values(yearMap)) {
+				if (!rev[toCode]) rev[toCode] = new Set();
+				rev[toCode].add(fromCode);
+			}
+		}
 	}, []);
 
 	const getCodeForYear = useCallback((
@@ -198,43 +219,34 @@ export function useCodeMapper() {
 		targetCode: string,
 		targetYear: YearCode,
 	): string[] => {
-		const sourceCodes: string[] = [];
-		const typeMapping = codeMappingsRef.current[type];
-
-		for (const [sourceCode, yearMappings] of Object.entries(
-			typeMapping,
-		)) {
-			if (yearMappings[targetYear] === targetCode) {
-				sourceCodes.push(sourceCode);
-			}
-		}
-
-		return sourceCodes;
+		const sources = reverseCodeMappingsRef.current[type][targetCode];
+		if (!sources) return [];
+		return [...sources].filter(
+			(src) => codeMappingsRef.current[type][src]?.[targetYear] === targetCode,
+		);
 	};
 
 	/**
-	 * Get all codes that should be highlighted when hovering over a code
+	 * Get all codes that should be highlighted when hovering over a code.
+	 * O(1) via pre-built reverse index instead of O(n) linear scan.
 	 */
 	const getHighlightCodes = (type: CodeType, code: string): Set<string> => {
 		const codes = new Set<string>([code]);
-		const typeMapping = codeMappingsRef.current[type];
 
-		// Add all codes this maps to
-		const directMappings = typeMapping[code] || {};
-		for (const mappedCode of Object.values(directMappings)) {
-			codes.add(mappedCode);
+		// Forward: all years this code maps to
+		const forward = codeMappingsRef.current[type][code];
+		if (forward) {
+			for (const mappedCode of Object.values(forward)) codes.add(mappedCode);
 		}
 
-		// Add all codes that map to this code (reverse lookup)
-		for (const [sourceCode, yearMappings] of Object.entries(
-			typeMapping,
-		)) {
-			const mappedValues = new Set(Object.values(yearMappings));
-			if (mappedValues.has(code)) {
+		// Reverse: all source codes that map to this code, plus their other targets
+		const sources = reverseCodeMappingsRef.current[type][code];
+		if (sources) {
+			for (const sourceCode of sources) {
 				codes.add(sourceCode);
-				// Also add other codes from the same source
-				for (const mappedCode of Object.values(yearMappings)) {
-					codes.add(mappedCode);
+				const sourceMappings = codeMappingsRef.current[type][sourceCode];
+				if (sourceMappings) {
+					for (const mappedCode of Object.values(sourceMappings)) codes.add(mappedCode);
 				}
 			}
 		}
@@ -242,11 +254,14 @@ export function useCodeMapper() {
 		return codes;
 	};
 
+	const emptyCodeMappings = () => ({ ward: {}, localAuthority: {}, constituency: {}, lsoa: {}, dataZone: {}, superOutputArea: {} });
+
 	const clearAllMappings = useCallback(() => {
 		wardToLadMapRef.current = {};
 		ladToWardsMapRef.current = {};
 		constituencyToWardsMapRef.current = {};
-		codeMappingsRef.current = { ward: {}, localAuthority: {}, constituency: {}, lsoa: {}, dataZone: {}, superOutputArea: {} };
+		codeMappingsRef.current = emptyCodeMappings();
+		reverseCodeMappingsRef.current = emptyCodeMappings();
 	}, []);
 
 	const clearWardLadMap = useCallback(() => {
@@ -260,8 +275,10 @@ export function useCodeMapper() {
 	const clearCodeMappings = useCallback((type?: CodeType) => {
 		if (type) {
 			codeMappingsRef.current[type] = {};
+			reverseCodeMappingsRef.current[type] = {};
 		} else {
-			codeMappingsRef.current = { ward: {}, localAuthority: {}, constituency: {}, lsoa: {}, dataZone: {}, superOutputArea: {} };
+			codeMappingsRef.current = emptyCodeMappings();
+			reverseCodeMappingsRef.current = emptyCodeMappings();
 		}
 	}, []);
 
@@ -308,14 +325,15 @@ export function useCodeMapper() {
 }
 
 /**
- * Extract ward-to-LAD mappings from GeoJSON features
+ * Extract both ward-to-LAD and LAD-to-wards mappings in a single pass.
  */
 export const extractWardLadMappings = (
 	features: Features,
 	wardCodeKeys: readonly string[],
 	localAuthorityCodeKeys: readonly string[],
-): WardLadMapping => {
-	const mappings: WardLadMapping = {};
+): { wardToLad: WardLadMapping; ladToWards: Record<string, string[]> } => {
+	const wardToLad: WardLadMapping = {};
+	const ladToWardSets: Record<string, Set<string>> = {};
 
 	for (const feature of features) {
 		const props = feature.properties;
@@ -325,41 +343,19 @@ export const extractWardLadMappings = (
 		const localAuthorityCode = getProp(props, localAuthorityCodeKeys);
 
 		if (wardCode && localAuthorityCode) {
-			mappings[wardCode] = localAuthorityCode;
-		}
-	}
-
-	return mappings;
-};
-
-/**
- * Extract LAD-to-wards mappings from GeoJSON features (inverse of ward-to-LAD)
- */
-export const extractLadWardMappings = (
-	features: Features,
-	wardCodeKeys: readonly string[],
-	localAuthorityCodeKeys: readonly string[],
-): Record<string, string[]> => {
-	const mappingsSets: Record<string, Set<string>> = {};
-
-	for (const feature of features) {
-		const props = feature.properties;
-		if (!props) continue;
-
-		const wardCode = getProp(props, wardCodeKeys);
-		const localAuthorityCode = getProp(props, localAuthorityCodeKeys);
-
-		if (wardCode && localAuthorityCode) {
-			if (!mappingsSets[localAuthorityCode]) {
-				mappingsSets[localAuthorityCode] = new Set();
+			wardToLad[wardCode] = localAuthorityCode;
+			if (!ladToWardSets[localAuthorityCode]) {
+				ladToWardSets[localAuthorityCode] = new Set();
 			}
-			mappingsSets[localAuthorityCode].add(wardCode);
+			ladToWardSets[localAuthorityCode].add(wardCode);
 		}
 	}
 
-	return Object.fromEntries(
-		Object.entries(mappingsSets).map(([k, v]) => [k, [...v]]),
+	const ladToWards = Object.fromEntries(
+		Object.entries(ladToWardSets).map(([k, v]) => [k, [...v]]),
 	);
+
+	return { wardToLad, ladToWards };
 };
 
 /**
