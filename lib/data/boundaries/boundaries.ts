@@ -181,6 +181,7 @@ const COUNTRY_PREFIXES: Record<string, string> = {
 };
 
 const BOUNDARY_CACHE: Record<string, BoundaryGeojson> = {};
+const BOUNDARY_PENDING: Partial<Record<string, Promise<BoundaryGeojson>>> = {};
 
 /**
  * Find the first available property from a list of possible keys
@@ -262,24 +263,14 @@ const getPropertyKeys = (type: BoundaryType) => {
 /**
  * Fetch and cache boundary file (supports both GeoJSON and TopoJSON)
  */
-export const fetchBoundaryFile = async (
-	path: string,
-): Promise<BoundaryGeojson> => {
-	// Return cached version if available
-	if (BOUNDARY_CACHE[path]) {
-		return BOUNDARY_CACHE[path];
-	}
-
+async function doFetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
 	const res = await fetch(path);
 	if (!res.ok) {
-		throw new Error(
-			`Failed to fetch ${path}: ${res.status} ${res.statusText}`,
-		);
+		throw new Error(`Failed to fetch ${path}: ${res.status} ${res.statusText}`);
 	}
 
 	const json = await res.json();
 
-	// Convert TopoJSON to GeoJSON if needed
 	let geojson: GeoJsonFeatureCollection;
 	if (json.type === "Topology") {
 		const objectKey = Object.keys(json.objects)[0];
@@ -291,19 +282,14 @@ export const fetchBoundaryFile = async (
 		);
 
 		if (topojsonFeatureResult.type === "Feature") {
-			geojson = {
-				type: "FeatureCollection",
-				features: [topojsonFeatureResult],
-			};
+			geojson = { type: "FeatureCollection", features: [topojsonFeatureResult] };
 		} else {
-			// Assume it's already a FeatureCollection
 			geojson = topojsonFeatureResult;
 		}
 	} else {
 		geojson = json as GeoJsonFeatureCollection;
 	}
 
-	// Add CRS if missing (common in TopoJSON conversions)
 	if (!geojson.crs) {
 		geojson.crs = {
 			type: "name",
@@ -311,11 +297,21 @@ export const fetchBoundaryFile = async (
 		};
 	}
 
-	// Cache the result and return with the correct BoundaryGeojson type assertion
-	const typedGeojson = geojson as BoundaryGeojson<any>; // Cast to a more general type first
+	const typedGeojson = geojson as BoundaryGeojson<any>;
 	BOUNDARY_CACHE[path] = typedGeojson;
+	delete BOUNDARY_PENDING[path];
 	return typedGeojson;
-};
+}
+
+export function fetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
+	if (BOUNDARY_CACHE[path]) return Promise.resolve(BOUNDARY_CACHE[path]);
+	if (BOUNDARY_PENDING[path]) return BOUNDARY_PENDING[path]!;
+
+	const promise = doFetchBoundaryFile(path);
+	BOUNDARY_PENDING[path] = promise;
+	promise.catch(() => { delete BOUNDARY_PENDING[path]; });
+	return promise;
+}
 
 /**
  * Filter features by location

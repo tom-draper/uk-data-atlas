@@ -1,6 +1,6 @@
 minimumReleaseAge: 10080
 trustPolicy: no-downgrade
 allowBuilds:
-  esbuild: set this to true or false
+  esbuild: true
   msgpackr-extract: set this to true or false
   sharp: true
