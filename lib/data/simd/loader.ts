@@ -1,5 +1,6 @@
 import { SIMDDataset, SIMDDataZoneData } from "@/lib/types/simd";
 import { parseCsv } from "@/lib/helpers/parseCsv";
+import { parseNum, parsePct } from "@/lib/helpers/parseNumber";
 
 const COUNCIL_AREA_CODES: Record<string, string> = {
 	"Aberdeen City": "S12000033",
@@ -35,16 +36,6 @@ const COUNCIL_AREA_CODES: Record<string, string> = {
 	"West Dunbartonshire": "S12000039",
 	"West Lothian": "S12000040",
 };
-
-function parsePct(val: any): number {
-	if (val === null || val === undefined || val === "") return 0;
-	return parseFloat(String(val).replace("%", "").trim()) || 0;
-}
-
-function parseNum(val: any): number {
-	if (val === null || val === undefined || val === "") return 0;
-	return parseFloat(String(val).trim()) || 0;
-}
 
 export async function loadSIMD(
 	read: (path: string) => Promise<string>,
