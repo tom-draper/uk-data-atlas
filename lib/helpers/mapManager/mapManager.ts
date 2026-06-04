@@ -30,6 +30,9 @@ import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { QualificationDataset } from "@/lib/types/qualification";
 import { BroadbandDataset } from "@/lib/types/broadband";
 import { AirQualityDataset } from "@/lib/types/airQuality";
+import { ClaimantCountDataset } from "@/lib/types/claimantCount";
+import { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
+import { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
@@ -865,6 +868,33 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateAirQualityStats(geojson, data, location, datasetId);
+	}
+
+	calculateClaimantCountStats(
+		geojson: BoundaryGeojson,
+		data: ClaimantCountDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateClaimantCountStats(geojson, data, location, datasetId);
+	}
+
+	calculateSchoolPerformanceStats(
+		geojson: BoundaryGeojson,
+		data: SchoolPerformanceDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateSchoolPerformanceStats(geojson, data, location, datasetId);
+	}
+
+	calculateNHSWaitingStats(
+		geojson: BoundaryGeojson,
+		dataset: NHSWaitingDataset,
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateNHSWaitingStats(geojson, dataset, location, datasetId);
 	}
 
 	setBorderVisibility(hidden: boolean): void {

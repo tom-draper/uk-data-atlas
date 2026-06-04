@@ -175,6 +175,8 @@ export default function ChartPanel({
 										aggregatedIncomeData={aggregatedData.income}
 										availableCrimeDatasets={datasets.crime}
 										aggregatedCrimeData={aggregatedData.crime}
+										availableClaimantCountDatasets={datasets.claimantCount}
+										aggregatedClaimantCountData={aggregatedData.claimantCount}
 										selectedArea={selectedArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
@@ -202,6 +204,8 @@ export default function ChartPanel({
 										activeDataset={activeDataset}
 										availableLifeExpectancyDatasets={datasets.lifeExpectancy}
 										aggregatedLifeExpectancyData={aggregatedData.lifeExpectancy}
+										availableNHSWaitingDatasets={datasets.nhsWaiting}
+										aggregatedNHSWaitingData={aggregatedData.nhsWaiting}
 										selectedArea={selectedArea}
 										setActiveViz={setActiveViz}
 										activeViz={activeViz}
@@ -210,12 +214,10 @@ export default function ChartPanel({
 								{sectionVisible["Education"] && (
 									<EducationSection
 										activeDataset={activeDataset}
-										availableQualificationDatasets={
-											datasets.qualification
-										}
-										aggregatedQualificationData={
-											aggregatedData.qualification
-										}
+										availableQualificationDatasets={datasets.qualification}
+										aggregatedQualificationData={aggregatedData.qualification}
+										availableSchoolPerformanceDatasets={datasets.schoolPerformance}
+										aggregatedSchoolPerformanceData={aggregatedData.schoolPerformance}
 										selectedArea={selectedArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}

@@ -42,6 +42,9 @@ import {
 } from "@/lib/types/qualification";
 import { BroadbandDataset, AggregatedBroadbandData } from "@/lib/types/broadband";
 import { AirQualityDataset, AggregatedAirQualityData } from "@/lib/types/airQuality";
+import { ClaimantCountDataset, AggregatedClaimantCountData } from "@/lib/types/claimantCount";
+import { SchoolPerformanceDataset, AggregatedSchoolPerformanceData } from "@/lib/types/schoolPerformance";
+import { NHSWaitingDataset, AggregatedNHSWaitingData } from "@/lib/types/nhsWaiting";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -1069,6 +1072,112 @@ export class StatsCalculator {
 			no2Mean: totalNo2 / count,
 			pm25Mean: pm25Count > 0 ? totalPm25 / pm25Count : null,
 			pm10Mean: pm10Count > 0 ? totalPm10 / pm10Count : null,
+		};
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateClaimantCountStats(
+		geojson: BoundaryGeojson,
+		data: ClaimantCountDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedClaimantCountData | null {
+		const cacheKey = `claimantCount-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedClaimantCountData | null;
+		if (cached !== undefined) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		let totalCount = 0, totalRate = 0, youthCount = 0, youthRate = 0, count = 0;
+
+		for (const feature of geojson.features) {
+			const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+			if (!record) continue;
+			totalCount += record.totalCount;
+			totalRate += record.totalRate;
+			youthCount += record.youthCount;
+			youthRate += record.youthRate;
+			count++;
+		}
+
+		if (count === 0) { this.cache.set(cacheKey, null); return null; }
+
+		const result: AggregatedClaimantCountData = {
+			totalCount,
+			totalRate: totalRate / count,
+			youthCount,
+			youthRate: youthRate / count,
+		};
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateSchoolPerformanceStats(
+		geojson: BoundaryGeojson,
+		data: SchoolPerformanceDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedSchoolPerformanceData | null {
+		const cacheKey = `schoolPerformance-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedSchoolPerformanceData | null;
+		if (cached !== undefined) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		let pt94 = 0, pt95 = 0, att8 = 0, p8 = 0, count = 0;
+
+		for (const feature of geojson.features) {
+			const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+			if (!record || record.ptL2basics94 == null) continue;
+			pt94 += record.ptL2basics94;
+			pt95 += record.ptL2basics95 ?? 0;
+			att8 += record.avgAtt8 ?? 0;
+			p8 += record.avgP8score ?? 0;
+			count++;
+		}
+
+		if (count === 0) { this.cache.set(cacheKey, null); return null; }
+
+		const result: AggregatedSchoolPerformanceData = {
+			ptL2basics94: pt94 / count,
+			ptL2basics95: pt95 / count,
+			avgAtt8: att8 / count,
+			avgP8score: p8 / count,
+		};
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateNHSWaitingStats(
+		geojson: BoundaryGeojson,
+		dataset: NHSWaitingDataset,
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedNHSWaitingData | null {
+		const cacheKey = `nhsWaiting-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedNHSWaitingData | null;
+		if (cached !== undefined) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		const seenIcbs = new Set<string>();
+		let total = 0, over18 = 0;
+
+		for (const feature of geojson.features) {
+			const ladCode = getFeatureProp(feature.properties, ladCodeProp) ?? "";
+			const icbCode = dataset.ladToIcb[ladCode];
+			if (!icbCode || seenIcbs.has(icbCode)) continue;
+			const record = dataset.data[icbCode];
+			if (!record) continue;
+			seenIcbs.add(icbCode);
+			total += record.total;
+			over18 += record.over18Weeks;
+		}
+
+		if (total === 0) { this.cache.set(cacheKey, null); return null; }
+
+		const result: AggregatedNHSWaitingData = {
+			total,
+			over18Weeks: over18,
+			pctOver18Weeks: (over18 / total) * 100,
 		};
 		this.cache.set(cacheKey, result);
 		return result;

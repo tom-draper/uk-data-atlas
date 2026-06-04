@@ -8,6 +8,7 @@
 import { readFile, mkdir, writeFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { execSync } from "child_process";
 
 import { loadIMD } from "../lib/data/imd/loader";
 import { loadWIMD } from "../lib/data/wimd/loader";
@@ -24,13 +25,25 @@ import { loadQualification } from "../lib/data/qualification/loader";
 import { loadBrexit } from "../lib/data/brexit/loader";
 import { loadBrexitConstituency } from "../lib/data/brexit-constituency/loader";
 import { loadEthnicity } from "../lib/data/ethnicity/loader";
+import { loadClaimantCount } from "../lib/data/claimant-count/loader";
+import { loadSchoolPerformance } from "../lib/data/school-performance/loader";
+import { loadNHSWaiting } from "../lib/data/nhs-waiting/loader";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
+const SOURCE_DATA = join(ROOT, "data");
 const OUT_DIR = join(PUBLIC_DATA, "precompiled");
 
 // Reads a file relative to public/data/ (where sync-public-data.mjs places everything)
 const read = (path: string) => readFile(join(PUBLIC_DATA, path), "utf8");
+
+// Extracts and reads the first CSV from a ZIP in data/ (never synced to public/)
+const readZip = (path: string): Promise<string> => {
+	const fullPath = join(SOURCE_DATA, path);
+	return Promise.resolve(
+		execSync(`unzip -p "${fullPath}" "*.csv"`, { maxBuffer: 100 * 1024 * 1024 }).toString("utf8"),
+	);
+};
 
 const out = async (name: string, data: unknown) => {
 	const json = JSON.stringify(data);
@@ -59,6 +72,9 @@ async function main() {
 		loadBrexit(read).then((d) => out("brexit", d)),
 		loadBrexitConstituency(read).then((d) => out("brexit-constituency", d)),
 		loadEthnicity(read).then((d) => out("ethnicity", d)),
+		loadClaimantCount(read).then((d) => out("claimant-count", d)),
+		loadSchoolPerformance(read).then((d) => out("school-performance", d)),
+		loadNHSWaiting(readZip).then((d) => out("nhs-waiting", d)),
 	]);
 
 	const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");

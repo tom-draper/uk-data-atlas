@@ -30,6 +30,9 @@ import {
 } from "./qualification";
 import { AggregatedBroadbandData, BroadbandDataset } from "./broadband";
 import { AggregatedAirQualityData, AirQualityDataset } from "./airQuality";
+import { AggregatedClaimantCountData, ClaimantCountDataset } from "./claimantCount";
+import { AggregatedSchoolPerformanceData, SchoolPerformanceDataset } from "./schoolPerformance";
+import { AggregatedNHSWaitingData, NHSWaitingDataset } from "./nhsWaiting";
 
 export type Dataset =
 	| LocalElectionDataset
@@ -49,7 +52,10 @@ export type Dataset =
 	| LifeExpectancyDataset
 	| QualificationDataset
 	| BroadbandDataset
-	| AirQualityDataset;
+	| AirQualityDataset
+	| ClaimantCountDataset
+	| SchoolPerformanceDataset
+	| NHSWaitingDataset;
 
 export type Datasets = {
 	localElection: Record<string, LocalElectionDataset>;
@@ -69,6 +75,9 @@ export type Datasets = {
 	qualification: Record<string, QualificationDataset>;
 	broadband: Record<string, BroadbandDataset>;
 	airQuality: Record<string, AirQualityDataset>;
+	claimantCount: Record<string, ClaimantCountDataset>;
+	schoolPerformance: Record<string, SchoolPerformanceDataset>;
+	nhsWaiting: Record<string, NHSWaitingDataset>;
 };
 
 export type AggregatedData = {
@@ -90,6 +99,9 @@ export type AggregatedData = {
 	qualification: Record<number, AggregatedQualificationData> | null;
 	broadband: Record<number, AggregatedBroadbandData> | null;
 	airQuality: Record<number, AggregatedAirQualityData> | null;
+	claimantCount: Record<number, AggregatedClaimantCountData> | null;
+	schoolPerformance: Record<number, AggregatedSchoolPerformanceData> | null;
+	nhsWaiting: Record<number, AggregatedNHSWaitingData> | null;
 };
 
 export type ActiveViz = {

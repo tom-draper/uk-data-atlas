@@ -8,15 +8,18 @@ import {
 	AggregatedHousePriceData,
 	AggregatedIncomeData,
 	AggregatedCrimeData,
+	AggregatedClaimantCountData,
 	Dataset,
 	HousePriceDataset,
 	IncomeDataset,
 	CrimeDataset,
+	ClaimantCountDataset,
 	SelectedArea,
 } from "@lib/types";
 import HousePriceChart from "./house-price/HousePriceChart";
 import IncomeChart from "./income/IncomeChart";
 import CrimeRateChart from "./crime/CrimeRateChart";
+import ClaimantCountChart from "./claimant-count/ClaimantCountChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface EconomicsSectionProps {
@@ -27,6 +30,8 @@ interface EconomicsSectionProps {
 	aggregatedIncomeData: Record<number, AggregatedIncomeData> | null;
 	availableCrimeDatasets: Record<string, CrimeDataset>;
 	aggregatedCrimeData: Record<number, AggregatedCrimeData> | null;
+	availableClaimantCountDatasets: Record<string, ClaimantCountDataset>;
+	aggregatedClaimantCountData: Record<number, AggregatedClaimantCountData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -41,6 +46,8 @@ export default function EconomicsSection({
 	aggregatedIncomeData,
 	availableCrimeDatasets,
 	aggregatedCrimeData,
+	availableClaimantCountDatasets,
+	aggregatedClaimantCountData,
 	selectedArea,
 	codeMapper,
 	activeViz,
@@ -51,8 +58,9 @@ export default function EconomicsSection({
 	const showHousePrice = visibility["economics-housePrice"];
 	const showIncome = visibility["economics-income"];
 	const showCrime = visibility["economics-crime"];
+	const showClaimantCount = visibility["economics-claimantCount"];
 
-	if (!showHousePrice && !showIncome && !showCrime) return null;
+	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount) return null;
 
 	return (
 		<div
@@ -93,6 +101,18 @@ export default function EconomicsSection({
 					availableDatasets={availableCrimeDatasets}
 					aggregatedData={aggregatedCrimeData}
 					year={2025}
+					selectedArea={selectedArea}
+					codeMapper={codeMapper}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+			)}
+			{showClaimantCount && (
+				<ClaimantCountChart
+					activeDataset={activeDataset}
+					availableDatasets={availableClaimantCountDatasets}
+					aggregatedData={aggregatedClaimantCountData}
+					year={2026}
 					selectedArea={selectedArea}
 					codeMapper={codeMapper}
 					activeViz={activeViz}

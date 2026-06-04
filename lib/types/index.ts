@@ -21,3 +21,6 @@ export * from "./lifeExpectancy";
 export * from "./qualification";
 export * from "./broadband";
 export * from "./airQuality";
+export * from "./claimantCount";
+export * from "./schoolPerformance";
+export * from "./nhsWaiting";
