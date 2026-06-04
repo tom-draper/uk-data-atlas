@@ -20,6 +20,9 @@ import { useLifeExpectancyData } from "./useLifeExpectancyData";
 import { useQualificationData } from "./useQualificationData";
 import { useBroadbandData } from "./useBroadbandData";
 import { useAirQualityData } from "./useAirQualityData";
+import { useClaimantCountData } from "./useClaimantCountData";
+import { useSchoolPerformanceData } from "./useSchoolPerformanceData";
+import { useNHSWaitingData } from "./useNHSWaitingData";
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";
 
@@ -82,6 +85,9 @@ export function useDatasets(): UseDatasetsResult {
 	const qualification = useQualificationData(isEnabled("education-qualifications"));
 	const broadband = useBroadbandData(isEnabled("telecoms-broadband"));
 	const airQuality = useAirQualityData(isEnabled("environment-airQuality"));
+	const claimantCount = useClaimantCountData(isEnabled("economics-claimantCount"));
+	const schoolPerformance = useSchoolPerformanceData(isEnabled("education-schoolPerformance"));
+	const nhsWaiting = useNHSWaitingData(isEnabled("health-nhsWaiting"));
 
 	const datasets = {
 		localElection: localElection.datasets,
@@ -101,6 +107,9 @@ export function useDatasets(): UseDatasetsResult {
 		qualification: qualification.datasets,
 		broadband: broadband.datasets,
 		airQuality: airQuality.datasets,
+		claimantCount: claimantCount.datasets,
+		schoolPerformance: schoolPerformance.datasets,
+		nhsWaiting: nhsWaiting.datasets,
 	};
 
 	// Combined loading state
@@ -121,7 +130,10 @@ export function useDatasets(): UseDatasetsResult {
 		lifeExpectancy.loading ||
 		qualification.loading ||
 		broadband.loading ||
-		airQuality.loading;
+		airQuality.loading ||
+		claimantCount.loading ||
+		schoolPerformance.loading ||
+		nhsWaiting.loading;
 
 	// Collect all errors
 	const errors: string[] = [];
@@ -142,6 +154,9 @@ export function useDatasets(): UseDatasetsResult {
 	if (qualification.error) errors.push(qualification.error);
 	if (broadband.error) errors.push(broadband.error);
 	if (airQuality.error) errors.push(airQuality.error);
+	if (claimantCount.error) errors.push(claimantCount.error);
+	if (schoolPerformance.error) errors.push(schoolPerformance.error);
+	if (nhsWaiting.error) errors.push(nhsWaiting.error);
 
 	return { datasets, loading, errors };
 }

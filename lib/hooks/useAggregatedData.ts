@@ -236,6 +236,26 @@ export function useAggregatedData({
 				calculateStats: (mapManager, geojson, data, location, id) =>
 					mapManager.calculateAirQualityStats(geojson, data, location, id),
 			},
+			claimantCount: {
+				datasets: datasets.claimantCount,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateClaimantCountStats(geojson, data, location, id),
+			},
+			schoolPerformance: {
+				datasets: datasets.schoolPerformance,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, data, location, id) =>
+					mapManager.calculateSchoolPerformanceStats(geojson, data, location, id),
+			},
+			nhsWaiting: {
+				datasets: datasets.nhsWaiting,
+				boundaryType: "localAuthority",
+				calculateStats: (mapManager, geojson, _data, location, id) => {
+					const dataset = datasets.nhsWaiting[id];
+					return dataset ? mapManager.calculateNHSWaitingStats(geojson, dataset, location, id) : null;
+				},
+			},
 	};
 		if (!mapManager) {
 			return {
@@ -257,6 +277,9 @@ export function useAggregatedData({
 				qualification: null,
 			broadband: null,
 			airQuality: null,
+			claimantCount: null,
+			schoolPerformance: null,
+			nhsWaiting: null,
 			};
 		}
 

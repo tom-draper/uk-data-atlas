@@ -4,16 +4,21 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	ActiveViz,
 	AggregatedLifeExpectancyData,
+	AggregatedNHSWaitingData,
 	Dataset,
 	LifeExpectancyDataset,
+	NHSWaitingDataset,
 	SelectedArea,
 } from "@lib/types";
 import LifeExpectancyChart from "./LifeExpectancyChart";
+import NHSWaitingChart from "./NHSWaitingChart";
 
 interface HealthSectionProps {
 	activeDataset: Dataset | null;
 	availableLifeExpectancyDatasets: Record<string, LifeExpectancyDataset>;
 	aggregatedLifeExpectancyData: Record<number, AggregatedLifeExpectancyData> | null;
+	availableNHSWaitingDatasets: Record<string, NHSWaitingDataset>;
+	aggregatedNHSWaitingData: Record<number, AggregatedNHSWaitingData> | null;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -23,6 +28,8 @@ export default function HealthSection({
 	activeDataset,
 	availableLifeExpectancyDatasets,
 	aggregatedLifeExpectancyData,
+	availableNHSWaitingDatasets,
+	aggregatedNHSWaitingData,
 	selectedArea,
 	activeViz,
 	setActiveViz,
@@ -31,8 +38,9 @@ export default function HealthSection({
 	const isDark = useIsDark();
 	const showLE = visibility["health-lifeExpectancy"];
 	const showHLE = visibility["health-healthyLifeExpectancy"];
+	const showNHS = visibility["health-nhsWaiting"];
 
-	if (!showLE && !showHLE) return null;
+	if (!showLE && !showHLE && !showNHS) return null;
 
 	const leIds = Object.keys(availableLifeExpectancyDatasets).sort();
 
@@ -56,6 +64,17 @@ export default function HealthSection({
 							/>,
 						]
 					: [],
+			)}
+			{showNHS && (
+				<NHSWaitingChart
+					activeDataset={activeDataset}
+					availableDatasets={availableNHSWaitingDatasets}
+					aggregatedData={aggregatedNHSWaitingData}
+					selectedArea={selectedArea}
+					year={2026}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
 			)}
 		</div>
 	);
