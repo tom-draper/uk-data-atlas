@@ -9,17 +9,20 @@ import {
 	AggregatedIncomeData,
 	AggregatedCrimeData,
 	AggregatedClaimantCountData,
+	AggregatedUnemploymentData,
 	Dataset,
 	HousePriceDataset,
 	IncomeDataset,
 	CrimeDataset,
 	ClaimantCountDataset,
+	UnemploymentDataset,
 	SelectedArea,
 } from "@lib/types";
 import HousePriceChart from "./house-price/HousePriceChart";
 import IncomeChart from "./income/IncomeChart";
 import CrimeRateChart from "./crime/CrimeRateChart";
 import ClaimantCountChart from "./claimant-count/ClaimantCountChart";
+import UnemploymentChart from "./unemployment/UnemploymentChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface EconomicsSectionProps {
@@ -32,6 +35,8 @@ interface EconomicsSectionProps {
 	aggregatedCrimeData: Record<number, AggregatedCrimeData> | null;
 	availableClaimantCountDatasets: Record<string, ClaimantCountDataset>;
 	aggregatedClaimantCountData: Record<number, AggregatedClaimantCountData> | null;
+	availableUnemploymentDatasets: Record<string, UnemploymentDataset>;
+	aggregatedUnemploymentData: Record<number, AggregatedUnemploymentData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -48,6 +53,8 @@ export default function EconomicsSection({
 	aggregatedCrimeData,
 	availableClaimantCountDatasets,
 	aggregatedClaimantCountData,
+	availableUnemploymentDatasets,
+	aggregatedUnemploymentData,
 	selectedArea,
 	codeMapper,
 	activeViz,
@@ -59,8 +66,9 @@ export default function EconomicsSection({
 	const showIncome = visibility["economics-income"];
 	const showCrime = visibility["economics-crime"];
 	const showClaimantCount = visibility["economics-claimantCount"];
+	const showUnemployment = visibility["economics-unemployment"];
 
-	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount) return null;
+	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment) return null;
 
 	return (
 		<div
@@ -113,6 +121,18 @@ export default function EconomicsSection({
 					availableDatasets={availableClaimantCountDatasets}
 					aggregatedData={aggregatedClaimantCountData}
 					year={2026}
+					selectedArea={selectedArea}
+					codeMapper={codeMapper}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+				/>
+			)}
+			{showUnemployment && (
+				<UnemploymentChart
+					activeDataset={activeDataset}
+					availableDatasets={availableUnemploymentDatasets}
+					aggregatedData={aggregatedUnemploymentData}
+					year={2021}
 					selectedArea={selectedArea}
 					codeMapper={codeMapper}
 					activeViz={activeViz}

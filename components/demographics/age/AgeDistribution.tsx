@@ -397,7 +397,7 @@ function AgeDistribution({
 			}
 		>
 			<ChartLoadingBackground />
-			<div className="flex items-center justify-between mb-2">
+			<div className="flex items-center justify-between mb-1.5">
 				<h3 className={chartHeadingClass(isDark)}>
 					Age Distribution [{dataset.year}]
 				</h3>

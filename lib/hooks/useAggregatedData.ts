@@ -256,6 +256,15 @@ export function useAggregatedData({
 					return dataset ? mapManager.calculateNHSWaitingStats(geojson, dataset, location, id) : null;
 				},
 			},
+			unemployment: {
+				datasets: datasets.unemployment,
+				boundaryType: "localAuthority",
+				keyBy: "id" as const,
+				calculateStats: (mapManager, geojson, _data, location, id) => {
+					const dataset = datasets.unemployment[id];
+					return dataset ? mapManager.calculateUnemploymentStats(geojson, dataset, location, id) : null;
+				},
+			},
 	};
 		if (!mapManager) {
 			return {
@@ -280,6 +289,7 @@ export function useAggregatedData({
 			claimantCount: null,
 			schoolPerformance: null,
 			nhsWaiting: null,
+			unemployment: null,
 			};
 		}
 

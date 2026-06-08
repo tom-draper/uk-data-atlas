@@ -107,9 +107,9 @@ export default function NHSWaitingChart({
 			}
 		>
 			<ChartLoadingBackground />
-			<div className="relative z-10 flex items-start justify-between mb-1 shrink-0">
+			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
 				<h3 className={chartHeadingClass(isDark)}>NHS Waiting Times [{dataset.month}]</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England only</span>
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
 			</div>
 
 			{!hasData ? (
@@ -117,19 +117,19 @@ export default function NHSWaitingChart({
 					{chartsLoading ? (
 						<ChartContentPlaceholder className="h-full" />
 					) : (
-						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+						<div className={`text-xs pt-1 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
 							No data available
 						</div>
 					)}
 				</div>
 			) : (
-				<div className="flex-1 flex flex-col justify-end gap-1">
+				<div className="flex-1 flex flex-col gap-1">
 					<div className="flex items-baseline justify-between">
 						<div className="leading-none">
-							<span className="text-2xl font-bold" style={{ color }}>
+							<span className="text-2xl font-bold leading-none" style={{ color }}>
 								{pct.toFixed(1)}
 							</span>
-							<span className={`text-[10px] font-normal ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+							<span className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
 								% over 18 wks
 							</span>
 						</div>
@@ -137,9 +137,9 @@ export default function NHSWaitingChart({
 							target &lt;{TARGET_PCT}%
 						</span>
 					</div>
-					<div className={`h-1.5 rounded-full overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
+					<div className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
 						<div
-							className="h-full rounded-full transition-all duration-300"
+							className="h-full rounded-xs transition-all duration-300"
 							style={{ width: `${barWidth}%`, backgroundColor: color }}
 						/>
 					</div>

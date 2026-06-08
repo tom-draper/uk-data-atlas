@@ -189,6 +189,7 @@ export default function IncomeChart({
 				<h3 className={chartHeadingClass(isDark)}>
 					Median Income [{dataset.year}]
 				</h3>
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
 			</div>
 
 			{formattedMedian ? (

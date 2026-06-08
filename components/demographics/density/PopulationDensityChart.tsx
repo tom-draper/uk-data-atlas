@@ -380,6 +380,7 @@ function PopulationDensityChart({
 				<h3 className={chartHeadingClass(isDark)}>
 					Population Density [{dataset.year}]
 				</h3>
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England &amp; Wales</span>
 			</div>
 
 			{!total || density === null || areaSqKm === null ? (

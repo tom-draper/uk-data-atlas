@@ -239,7 +239,7 @@ function Gender({
 			}
 		>
 			<ChartLoadingBackground />
-			<div className="flex items-center justify-between mb-0">
+			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
 				<h3 className={chartHeadingClass(isDark)}>
 					Gender [{dataset.year}]
 				</h3>

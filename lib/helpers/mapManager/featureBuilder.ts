@@ -45,9 +45,17 @@ import { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import { QualificationDataset } from "@/lib/types/qualification";
 import { BroadbandDataset } from "@/lib/types/broadband";
 import { AirQualityDataset } from "@/lib/types/airQuality";
+import { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
+import { ClaimantCountDataset } from "@/lib/types/claimantCount";
+import { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
+import { UnemploymentDataset } from "@/lib/types/unemployment";
 import {
 	getColorForLifeExpectancy,
 	getColorForQualification,
+	getColorForSchoolPerformance,
+	getColorForClaimantCount,
+	getColorForNHSWaiting,
+	getColorForUnemployment,
 } from "../colorScale/datasetColors";
 
 export const DEFAULT_COLOR = "#cccccc";
@@ -596,6 +604,77 @@ export class FeatureBuilder {
 				]?.no2Mean;
 			const color = no2 != null
 				? getColorForAirQuality(no2, mapOptions.airQuality, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildSchoolPerformanceFeatures(
+		features: Features,
+		dataset: SchoolPerformanceDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const pct =
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				]?.ptL2basics94;
+			const color = pct != null
+				? getColorForSchoolPerformance(pct, mapOptions.schoolPerformance, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildClaimantCountFeatures(
+		features: Features,
+		dataset: ClaimantCountDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const rate =
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				]?.totalRate;
+			const color = rate != null
+				? getColorForClaimantCount(rate, mapOptions.claimantCount, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildUnemploymentFeatures(
+		features: Features,
+		dataset: UnemploymentDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const rate =
+				dataset.data[
+					getFeatureProp(feature.properties, ladCodeProp) ?? ""
+				]?.rates[dataset.latestYear];
+			const color = rate != null
+				? getColorForUnemployment(rate, mapOptions.unemployment, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+			return { color };
+		});
+	}
+
+	buildNHSWaitingFeatures(
+		features: Features,
+		dataset: NHSWaitingDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const ladCode = getFeatureProp(feature.properties, ladCodeProp) ?? "";
+			const icbCode = dataset.ladToIcb[ladCode];
+			const pct = icbCode ? dataset.data[icbCode]?.pctOver18Weeks : undefined;
+			const color = pct != null
+				? getColorForNHSWaiting(pct, mapOptions.nhsWaiting, mapOptions.theme.id)
 				: DEFAULT_COLOR;
 			return { color };
 		});

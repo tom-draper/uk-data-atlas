@@ -24,3 +24,4 @@ export * from "./airQuality";
 export * from "./claimantCount";
 export * from "./schoolPerformance";
 export * from "./nhsWaiting";
+export * from "./unemployment";

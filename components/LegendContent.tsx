@@ -271,6 +271,46 @@ export default function LegendContent({
 				(v) => `${v.toFixed(0)} µg/m³ NO₂`,
 			);
 
+		case "schoolPerformance":
+			return renderDynamicLegend(
+				"schoolPerformance",
+				0,
+				100,
+				50,
+				80,
+				(v) => `${v.toFixed(0)}% grade 4+`,
+			);
+
+		case "claimantCount":
+			return renderDynamicLegend(
+				"claimantCount",
+				0,
+				20,
+				1,
+				8,
+				(v) => `${v.toFixed(1)}% rate`,
+			);
+
+		case "nhsWaiting":
+			return renderDynamicLegend(
+				"nhsWaiting",
+				0,
+				100,
+				0,
+				40,
+				(v) => `${v.toFixed(0)}% >18wks`,
+			);
+
+		case "unemployment":
+			return renderDynamicLegend(
+				"unemployment",
+				0,
+				20,
+				2,
+				8,
+				(v) => `${v.toFixed(1)}%`,
+			);
+
 		case "custom":
 			return renderDynamicLegend("custom", 0, 100, 0, 100);
 
