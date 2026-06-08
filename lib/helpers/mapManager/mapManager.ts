@@ -33,6 +33,7 @@ import { AirQualityDataset } from "@/lib/types/airQuality";
 import { ClaimantCountDataset } from "@/lib/types/claimantCount";
 import { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
 import { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
+import { UnemploymentDataset } from "@/lib/types/unemployment";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
@@ -328,7 +329,11 @@ export class MapManager {
 			| LifeExpectancyDataset
 			| QualificationDataset
 			| BroadbandDataset
-			| AirQualityDataset,
+			| AirQualityDataset
+			| SchoolPerformanceDataset
+			| ClaimantCountDataset
+			| NHSWaitingDataset
+			| UnemploymentDataset,
 	>(
 		geojson: BoundaryGeojson,
 		dataset: T,
@@ -870,6 +875,22 @@ export class MapManager {
 		return this.statsCalculator.calculateAirQualityStats(geojson, data, location, datasetId);
 	}
 
+	updateMapForClaimantCount(
+		geojson: BoundaryGeojson,
+		dataset: ClaimantCountDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildClaimantCountFeatures.bind(this.featureBuilder),
+			"claimantCount",
+			dataset.data,
+		);
+	}
+
 	calculateClaimantCountStats(
 		geojson: BoundaryGeojson,
 		data: ClaimantCountDataset["data"],
@@ -877,6 +898,38 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateClaimantCountStats(geojson, data, location, datasetId);
+	}
+
+	updateMapForSchoolPerformance(
+		geojson: BoundaryGeojson,
+		dataset: SchoolPerformanceDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildSchoolPerformanceFeatures.bind(this.featureBuilder),
+			"schoolPerformance",
+			dataset.data,
+		);
+	}
+
+	updateMapForNHSWaiting(
+		geojson: BoundaryGeojson,
+		dataset: NHSWaitingDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildNHSWaitingFeatures.bind(this.featureBuilder),
+			"nhsWaiting",
+			dataset.data,
+		);
 	}
 
 	calculateSchoolPerformanceStats(
@@ -895,6 +948,31 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateNHSWaitingStats(geojson, dataset, location, datasetId);
+	}
+
+	updateMapForUnemployment(
+		geojson: BoundaryGeojson,
+		dataset: UnemploymentDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildUnemploymentFeatures.bind(this.featureBuilder),
+			"unemployment",
+			dataset.data,
+		);
+	}
+
+	calculateUnemploymentStats(
+		geojson: BoundaryGeojson,
+		dataset: UnemploymentDataset,
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateUnemploymentStats(geojson, dataset, location, datasetId);
 	}
 
 	setBorderVisibility(hidden: boolean): void {

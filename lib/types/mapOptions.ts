@@ -33,6 +33,10 @@ export type LifeExpectancyOptions = ColorRangeOption;
 export type QualificationOptions = ColorRangeOption;
 export type BroadbandOptions = ColorRangeOption;
 export type AirQualityOptions = ColorRangeOption;
+export type SchoolPerformanceOptions = ColorRangeOption;
+export type ClaimantCountOptions = ColorRangeOption;
+export type NHSWaitingOptions = ColorRangeOption;
+export type UnemploymentOptions = ColorRangeOption;
 
 export type ColorTheme =
 	| "viridis"
@@ -73,6 +77,10 @@ export interface MapOptions {
 	qualification: QualificationOptions;
 	broadband: BroadbandOptions;
 	airQuality: AirQualityOptions;
+	schoolPerformance: SchoolPerformanceOptions;
+	claimantCount: ClaimantCountOptions;
+	nhsWaiting: NHSWaitingOptions;
+	unemployment: UnemploymentOptions;
 	theme: {
 		id: ColorTheme;
 	};

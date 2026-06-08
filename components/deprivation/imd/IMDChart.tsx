@@ -100,7 +100,7 @@ export default function IMDChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "h-[65px]")}
 			title="Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019. gov.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
@@ -114,25 +114,28 @@ export default function IMDChart({
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10 flex flex-col flex-1">
-				<h3 className={chartHeadingClass(isDark)}>
-					Deprivation (IMD) [{dataset.year}]
-				</h3>
+				<div className="flex items-start justify-between mb-1.5 shrink-0">
+					<h3 className={chartHeadingClass(isDark)}>
+						Deprivation (IMD) [{dataset.year}]
+					</h3>
+					<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
+				</div>
 				{hasData && imdStats ? (
-					<div className="mt-0 flex items-start gap-2.5">
-						<div className="shrink-0 w-7 text-right leading-none pt-0.5">
+					<div className="flex items-start gap-2.5">
+						<div className="shrink-0 w-7 text-right leading-none mt-[-2px]">
 							<span
-								className="text-2xl font-bold"
+								className="text-2xl font-bold leading-none"
 								style={{ color: decileColor }}
 							>
 								{decile}
 							</span>
 						</div>
-						<div className="flex-1 flex flex-col gap-1 pt-2">
+						<div className="flex-1 flex flex-col gap-0.5">
 							<div className="flex gap-[2px]">
 								{DECILE_COLORS.map((color, i) => (
 									<div
 										key={i}
-										className="flex-1 h-5 rounded-[2px]"
+										className="flex-1 h-3 rounded-[2px]"
 										style={{
 											backgroundColor:
 												decile === i + 1
@@ -145,21 +148,13 @@ export default function IMDChart({
 								))}
 							</div>
 							<div className="flex justify-between">
-								<span
-									className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
-								>
-									most deprived
-								</span>
-								<span
-									className={`text-[9px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
-								>
-									Score {imdStats.averageIMDScore.toFixed(1)}
-								</span>
+								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>most deprived</span>
+								<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>Score {imdStats.averageIMDScore.toFixed(1)}</span>
 							</div>
 						</div>
 					</div>
 				) : (
-					<div className="flex-1 mt-1">
+					<div className="flex-1">
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (

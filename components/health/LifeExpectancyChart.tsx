@@ -102,10 +102,10 @@ function leBar(
 				{label}
 			</span>
 			<div
-				className={`flex-1 h-2 rounded-full overflow-hidden ${isDark ? "bg-white/10" : "bg-gray-100"}`}
+				className={`flex-1 h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-gray-100"}`}
 			>
 				<div
-					className="h-full rounded-full"
+					className="h-full rounded-xs"
 					style={{
 						width: `${pct}%`,
 						backgroundColor: `rgba(${r}, ${g}, ${b}, 0.85)`,
@@ -179,7 +179,7 @@ export default function LifeExpectancyChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "h-[65px]")}
 			title={dataset.metadata.source}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
@@ -197,7 +197,7 @@ export default function LifeExpectancyChart({
 					{dataset.label} [{dataset.dataPeriod}]
 				</h3>
 				{leStats ? (
-					<div className="mt-1.5 space-y-1">
+					<div className="mt-1 -space-y-0.5">
 						{leBar(
 							leStats.averageMaleLE,
 							"M",

@@ -187,6 +187,7 @@ export default function EthnicityChart({
 				<h3 className={chartHeadingClass(isDark)}>
 					Ethnicity [{dataset.year}]
 				</h3>
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England &amp; Wales</span>
 			</div>
 
 			{!processedData.hasData ? (

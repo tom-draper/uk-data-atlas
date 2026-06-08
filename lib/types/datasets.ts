@@ -33,6 +33,7 @@ import { AggregatedAirQualityData, AirQualityDataset } from "./airQuality";
 import { AggregatedClaimantCountData, ClaimantCountDataset } from "./claimantCount";
 import { AggregatedSchoolPerformanceData, SchoolPerformanceDataset } from "./schoolPerformance";
 import { AggregatedNHSWaitingData, NHSWaitingDataset } from "./nhsWaiting";
+import { AggregatedUnemploymentData, UnemploymentDataset } from "./unemployment";
 
 export type Dataset =
 	| LocalElectionDataset
@@ -55,7 +56,8 @@ export type Dataset =
 	| AirQualityDataset
 	| ClaimantCountDataset
 	| SchoolPerformanceDataset
-	| NHSWaitingDataset;
+	| NHSWaitingDataset
+	| UnemploymentDataset;
 
 export type Datasets = {
 	localElection: Record<string, LocalElectionDataset>;
@@ -78,6 +80,7 @@ export type Datasets = {
 	claimantCount: Record<string, ClaimantCountDataset>;
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
 	nhsWaiting: Record<string, NHSWaitingDataset>;
+	unemployment: Record<string, UnemploymentDataset>;
 };
 
 export type AggregatedData = {
@@ -102,6 +105,7 @@ export type AggregatedData = {
 	claimantCount: Record<number, AggregatedClaimantCountData> | null;
 	schoolPerformance: Record<number, AggregatedSchoolPerformanceData> | null;
 	nhsWaiting: Record<number, AggregatedNHSWaitingData> | null;
+	unemployment: Record<number, AggregatedUnemploymentData> | null;
 };
 
 export type ActiveViz = {

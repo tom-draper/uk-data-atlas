@@ -177,6 +177,8 @@ export default function ChartPanel({
 										aggregatedCrimeData={aggregatedData.crime}
 										availableClaimantCountDatasets={datasets.claimantCount}
 										aggregatedClaimantCountData={aggregatedData.claimantCount}
+										availableUnemploymentDatasets={datasets.unemployment}
+										aggregatedUnemploymentData={aggregatedData.unemployment}
 										selectedArea={selectedArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}

@@ -135,16 +135,16 @@ export default function BrexitElectoralChart({
 
 				{!hasData ? (
 					chartsLoading ? (
-						<ChartContentPlaceholder className="h-5 mt-2" />
+						<ChartContentPlaceholder className="h-5 mt-1.5" />
 					) : (
 						<div
-							className={`mt-2 h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+							className={`mt-1.5 h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
 						>
 							No data available
 						</div>
 					)
 				) : (
-					<div className="mt-2 flex h-5 rounded overflow-hidden">
+					<div className="mt-1.5 flex h-5 rounded overflow-hidden">
 						<div
 							style={{
 								width: `${pctLeave.toFixed(1)}%`,

@@ -199,11 +199,14 @@ export default function CrimeRateChart({
 				className={`absolute inset-0 z-0 ${isDark ? "bg-black/20" : "bg-white/20"}`}
 			/>
 			<div className="relative z-10 flex flex-col flex-1">
-				<h3 className={chartHeadingClass(isDark)}>
-					Recorded Crime [{dataset.year}]
-				</h3>
+				<div className="flex items-start justify-between mb-1.5 shrink-0">
+					<h3 className={chartHeadingClass(isDark)}>
+						Recorded Crime [{dataset.year}]
+					</h3>
+					<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England &amp; Wales</span>
+				</div>
 				{crimeRate ? (
-					<div className="flex-1 mt-1 flex items-center justify-center">
+					<div className="flex-1 mt-1.5 flex items-center justify-center">
 						<div
 							className="text-xl font-bold"
 							style={{
@@ -220,7 +223,7 @@ export default function CrimeRateChart({
 						</div>
 					</div>
 				) : (
-					<div className="flex-1 mt-1">
+					<div className="flex-1 mt-1.5">
 						{chartsLoading ? (
 							<ChartContentPlaceholder className="h-full" />
 						) : (

@@ -41,6 +41,10 @@ export type ColorRangeDatasetKey =
 	| "qualification"
 	| "broadband"
 	| "airQuality"
+	| "schoolPerformance"
+	| "claimantCount"
+	| "nhsWaiting"
+	| "unemployment"
 	| "custom";
 
 interface LegendPanelProps {

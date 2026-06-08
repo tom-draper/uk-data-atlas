@@ -106,7 +106,7 @@ export default function SchoolPerformanceChart({
 			<ChartLoadingBackground />
 			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
 				<h3 className={chartHeadingClass(isDark)}>GCSE Performance [2023/24]</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England only</span>
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
 			</div>
 
 			{!hasData ? (

@@ -14,6 +14,10 @@ import type {
 	QualificationOptions,
 	BroadbandOptions,
 	AirQualityOptions,
+	SchoolPerformanceOptions,
+	ClaimantCountOptions,
+	NHSWaitingOptions,
+	UnemploymentOptions,
 } from "@/lib/types/mapOptions";
 import { normalizeValue, hexToRgb } from "./interpolation";
 import { getThemeColor } from "./themes";
@@ -23,6 +27,7 @@ function colorFromRange(
 	options: { colorRange: { min: number; max: number } },
 	themeId: string,
 	expandRange: boolean,
+	invertColor = true,
 ): string {
 	const { min, max } = options.colorRange;
 	const normalized = normalizeValue(
@@ -30,7 +35,7 @@ function colorFromRange(
 		expandRange ? Math.min(min, value) : min,
 		expandRange ? Math.max(max, value) : max,
 	);
-	return getThemeColor(1 - normalized, themeId);
+	return getThemeColor(invertColor ? 1 - normalized : normalized, themeId);
 }
 
 export function getColorForAge(
@@ -126,7 +131,7 @@ export function getColorForSIMD(
 	options: SIMDOptions,
 	themeId = "viridis",
 ) {
-	return colorFromRange(rank, options, themeId, false);
+	return colorFromRange(rank, options, themeId, false, false);
 }
 
 export function getColorForWIMD(
@@ -134,7 +139,7 @@ export function getColorForWIMD(
 	options: WIMDOptions,
 	themeId = "viridis",
 ) {
-	return colorFromRange(rank, options, themeId, false);
+	return colorFromRange(rank, options, themeId, false, false);
 }
 
 export function getColorForNIMDM(
@@ -142,7 +147,7 @@ export function getColorForNIMDM(
 	options: NIMDMOptions,
 	themeId = "viridis",
 ) {
-	return colorFromRange(rank, options, themeId, false);
+	return colorFromRange(rank, options, themeId, false, false);
 }
 
 export function getColorForLifeExpectancy(
@@ -184,6 +189,38 @@ export function getColorForAirQuality(
 	themeId = "viridis",
 ) {
 	return colorFromRange(no2Mean, options, themeId, true);
+}
+
+export function getColorForSchoolPerformance(
+	pct: number,
+	options: SchoolPerformanceOptions,
+	themeId = "viridis",
+) {
+	return colorFromRange(pct, options, themeId, true);
+}
+
+export function getColorForClaimantCount(
+	rate: number,
+	options: ClaimantCountOptions,
+	themeId = "viridis",
+) {
+	return colorFromRange(rate, options, themeId, true);
+}
+
+export function getColorForUnemployment(
+	rate: number,
+	options: UnemploymentOptions,
+	themeId = "viridis",
+) {
+	return colorFromRange(rate, options, themeId, true);
+}
+
+export function getColorForNHSWaiting(
+	pct: number,
+	options: NHSWaitingOptions,
+	themeId = "viridis",
+) {
+	return colorFromRange(pct, options, themeId, true);
 }
 
 const FEMALE_RGB = [255, 105, 180] as const;

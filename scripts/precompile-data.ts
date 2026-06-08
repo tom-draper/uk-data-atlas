@@ -28,6 +28,7 @@ import { loadEthnicity } from "../lib/data/ethnicity/loader";
 import { loadClaimantCount } from "../lib/data/claimant-count/loader";
 import { loadSchoolPerformance } from "../lib/data/school-performance/loader";
 import { loadNHSWaiting } from "../lib/data/nhs-waiting/loader";
+import { loadUnemployment } from "../lib/data/unemployment/loader";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -36,6 +37,9 @@ const OUT_DIR = join(PUBLIC_DATA, "precompiled");
 
 // Reads a file relative to public/data/ (where sync-public-data.mjs places everything)
 const read = (path: string) => readFile(join(PUBLIC_DATA, path), "utf8");
+
+// Reads a file relative to data/ (raw source data, not synced to public)
+const readSource = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
 
 // Extracts and reads the first CSV from a ZIP in data/ (never synced to public/)
 const readZip = (path: string): Promise<string> => {
@@ -75,6 +79,7 @@ async function main() {
 		loadClaimantCount(read).then((d) => out("claimant-count", d)),
 		loadSchoolPerformance(read).then((d) => out("school-performance", d)),
 		loadNHSWaiting(readZip).then((d) => out("nhs-waiting", d)),
+		loadUnemployment(readSource).then((d) => out("unemployment", d)),
 	]);
 
 	const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");

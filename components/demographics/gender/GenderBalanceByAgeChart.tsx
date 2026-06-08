@@ -256,12 +256,7 @@ function GenderBalanceByAgeChart({
 	}
 
 	return (
-		<div className="px-0.5 pt-0 -my-1">
-			{/* Age labels */}
-			<div className="flex justify-center text-[8px] text-gray-500 mt-0 mx-auto">
-				<span>0</span>
-			</div>
-
+		<div className="h-25 px-0.5 overflow-hidden relative z-10">
 			<div className="relative rounded" ref={containerRef}>
 				{/* Shared Tooltip - Rendered ONCE, updated via Ref */}
 				<div
@@ -319,8 +314,7 @@ function GenderBalanceByAgeChart({
 				</div>
 			</div>
 
-			{/* Age labels */}
-			<div className="flex justify-center text-[8px] text-gray-500 mt-1 -mb-1">
+			<div className="flex justify-center text-[8px] leading-none text-gray-500 mt-[1px]">
 				<span>90</span>
 			</div>
 		</div>

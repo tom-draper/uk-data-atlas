@@ -23,6 +23,7 @@ import { useAirQualityData } from "./useAirQualityData";
 import { useClaimantCountData } from "./useClaimantCountData";
 import { useSchoolPerformanceData } from "./useSchoolPerformanceData";
 import { useNHSWaitingData } from "./useNHSWaitingData";
+import { useUnemploymentData } from "./useUnemploymentData";
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";
 
@@ -88,6 +89,7 @@ export function useDatasets(): UseDatasetsResult {
 	const claimantCount = useClaimantCountData(isEnabled("economics-claimantCount"));
 	const schoolPerformance = useSchoolPerformanceData(isEnabled("education-schoolPerformance"));
 	const nhsWaiting = useNHSWaitingData(isEnabled("health-nhsWaiting"));
+	const unemployment = useUnemploymentData(isEnabled("economics-unemployment"));
 
 	const datasets = {
 		localElection: localElection.datasets,
@@ -110,6 +112,7 @@ export function useDatasets(): UseDatasetsResult {
 		claimantCount: claimantCount.datasets,
 		schoolPerformance: schoolPerformance.datasets,
 		nhsWaiting: nhsWaiting.datasets,
+		unemployment: unemployment.datasets,
 	};
 
 	// Combined loading state
@@ -133,7 +136,8 @@ export function useDatasets(): UseDatasetsResult {
 		airQuality.loading ||
 		claimantCount.loading ||
 		schoolPerformance.loading ||
-		nhsWaiting.loading;
+		nhsWaiting.loading ||
+		unemployment.loading;
 
 	// Collect all errors
 	const errors: string[] = [];
@@ -157,6 +161,7 @@ export function useDatasets(): UseDatasetsResult {
 	if (claimantCount.error) errors.push(claimantCount.error);
 	if (schoolPerformance.error) errors.push(schoolPerformance.error);
 	if (nhsWaiting.error) errors.push(nhsWaiting.error);
+	if (unemployment.error) errors.push(unemployment.error);
 
 	return { datasets, loading, errors };
 }

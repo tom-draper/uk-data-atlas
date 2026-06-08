@@ -114,7 +114,7 @@ export default function BrexitHanrettyEstimatesChart({
 
 				{!hasData ? (
 					chartsLoading ? (
-						<ChartContentPlaceholder className="h-5 mt-2" />
+						<ChartContentPlaceholder className="h-5 mt-1.5" />
 					) : (
 						<div
 							className={`mt-1.5 h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}

@@ -42,6 +42,10 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	qualification: { colorRange: { min: 25, max: 60 } },
 	broadband: { colorRange: { min: 50, max: 100 } },
 	airQuality: { colorRange: { min: 5, max: 35 } },
+	schoolPerformance: { colorRange: { min: 50, max: 80 } },
+	claimantCount: { colorRange: { min: 1, max: 8 } },
+	nhsWaiting: { colorRange: { min: 25, max: 40 } },
+	unemployment: { colorRange: { min: 2, max: 8 } },
 	theme: {
 		id: "viridis",
 	},

@@ -36,7 +36,7 @@ export async function loadNHSWaiting(
 		const icbName = (row["Provider Parent Name"] ?? "").trim();
 		if (!icbCode || !icbName) continue;
 
-		const total = toNum(row["Total"]);
+		const total = toNum(row["Total All"]);
 		const over18 = over18Cols.reduce((sum, col) => sum + toNum(row[col]), 0);
 
 		if (!icbTotals[icbCode]) icbTotals[icbCode] = { icbName, total: 0, over18: 0 };

@@ -45,6 +45,7 @@ import { AirQualityDataset, AggregatedAirQualityData } from "@/lib/types/airQual
 import { ClaimantCountDataset, AggregatedClaimantCountData } from "@/lib/types/claimantCount";
 import { SchoolPerformanceDataset, AggregatedSchoolPerformanceData } from "@/lib/types/schoolPerformance";
 import { NHSWaitingDataset, AggregatedNHSWaitingData } from "@/lib/types/nhsWaiting";
+import { UnemploymentDataset, AggregatedUnemploymentData } from "@/lib/types/unemployment";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -1178,6 +1179,47 @@ export class StatsCalculator {
 			total,
 			over18Weeks: over18,
 			pctOver18Weeks: (over18 / total) * 100,
+		};
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
+	calculateUnemploymentStats(
+		geojson: BoundaryGeojson,
+		dataset: UnemploymentDataset,
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedUnemploymentData | null {
+		const cacheKey = `unemployment-${location}-${datasetId}`;
+		const cached = this.cache.get(cacheKey) as AggregatedUnemploymentData | null;
+		if (cached !== undefined) return cached;
+
+		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		const sums: Record<number, number> = {};
+		const counts: Record<number, number> = {};
+		for (const yr of dataset.years) { sums[yr] = 0; counts[yr] = 0; }
+
+		for (const feature of geojson.features) {
+			const record = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+			if (!record) continue;
+			for (const yr of dataset.years) {
+				const v = record.rates[yr];
+				if (v != null) { sums[yr] += v; counts[yr]++; }
+			}
+		}
+
+		const rates: Record<number, number> = {};
+		let hasAny = false;
+		for (const yr of dataset.years) {
+			if (counts[yr] > 0) { rates[yr] = sums[yr] / counts[yr]; hasAny = true; }
+		}
+
+		if (!hasAny) { this.cache.set(cacheKey, null); return null; }
+
+		const result: AggregatedUnemploymentData = {
+			years: dataset.years,
+			latestYear: dataset.latestYear,
+			rates,
 		};
 		this.cache.set(cacheKey, result);
 		return result;

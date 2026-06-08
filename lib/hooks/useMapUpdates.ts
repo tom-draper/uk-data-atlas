@@ -155,6 +155,34 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "schoolPerformance":
+					return mapManager.updateMapForSchoolPerformance(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "claimantCount":
+					return mapManager.updateMapForClaimantCount(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "nhsWaiting":
+					return mapManager.updateMapForNHSWaiting(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "unemployment":
+					return mapManager.updateMapForUnemployment(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "population":
 					// Handle population sub-categories
 					if (activeViz.vizId.startsWith("ageDistribution")) {
