@@ -6,7 +6,6 @@ import {
 	PopulationDataset,
 	HousePriceDataset,
 	CrimeDataset,
-	SelectedArea,
 	EthnicityDataset,
 	PropertyKeys,
 	CustomDataset,

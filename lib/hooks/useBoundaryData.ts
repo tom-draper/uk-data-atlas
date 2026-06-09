@@ -68,6 +68,12 @@ const fetchBoundaryGroup = async (
 		}),
 	);
 
+	settled.forEach((r, i) => {
+		if (r.status === "rejected") {
+			console.error(`[boundaries] Failed to load ${type} year ${years[i]}:`, r.reason);
+		}
+	});
+
 	const results = settled
 		.filter((r): r is PromiseFulfilledResult<readonly [number, BoundaryGeojson]> => r.status === "fulfilled")
 		.map((r) => r.value);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import MapInterface from "@components/MapInterface";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -65,7 +65,6 @@ function ErrorBanner({
 }
 
 export default function AtlasClient() {
-	const { replace } = useRouter();
 	const searchParams = useSearchParams();
 	const getSearchParam = (key: string) => searchParams.get(key);
 
@@ -104,7 +103,7 @@ export default function AtlasClient() {
 		params.set("viz", viz.vizId);
 		params.set("type", viz.datasetType);
 		params.set("year", String(viz.datasetYear));
-		replace(`?${params.toString()}`, { scroll: false });
+		window.history.replaceState(null, "", `?${params.toString()}`);
 	};
 
 	const setActiveViz = (viz: ActiveViz) => {
