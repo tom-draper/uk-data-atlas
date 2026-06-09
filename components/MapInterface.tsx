@@ -4,7 +4,6 @@ import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
 import { useBoundaryData } from "@/lib/hooks/useBoundaryData";
-import { useAggregatedData } from "@/lib/hooks/useAggregatedData";
 import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
@@ -252,13 +251,6 @@ export default function MapInterface({
 		return { ...datasets, localElection: normalizedLocalElection };
 	}, [datasets, boundaryCodes?.ward, getCodeForYear]);
 
-	const aggregatedData = useAggregatedData({
-		mapManager,
-		boundaryData,
-		datasets: normalizedDatasets,
-		customDataset,
-		location: selectedLocation,
-	});
 	const chartsLoading = boundariesLoading || !mapManager;
 
 	return (
@@ -278,7 +270,7 @@ export default function MapInterface({
 					activeDataset={activeDataset}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
-					aggregatedData={aggregatedData}
+					mapManager={mapManager}
 					chartsLoading={chartsLoading}
 					datasets={normalizedDatasets}
 					customDataset={customDataset}

@@ -9,6 +9,9 @@ import {
 	AggregatedCustomData,
 	BoundaryCodes,
 } from "@/lib/types";
+import { BoundaryData } from "@lib/types/boundaries";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -799,24 +802,41 @@ function CustomDatasetCard({
 export default function CustomSection({
 	customDataset,
 	setCustomDataset,
-	aggregatedData,
 	selectedArea,
 	boundaryCodes,
 	activeViz,
 	setActiveViz,
 	codeMapper,
+	mapManager,
+	boundaryData,
+	location,
 }: {
 	customDataset: CustomDataset | null;
 	setCustomDataset: (dataset: CustomDataset | null) => void;
-	aggregatedData: Record<number, AggregatedCustomData> | null;
 	selectedArea: SelectedArea | null;
 	boundaryCodes: BoundaryCodes;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper?: CodeMapper;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
 }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const isDark = useIsDark();
+
+	const aggregatedData = customDataset
+		? aggregateDataset(
+				{
+					datasets: { [customDataset.year]: customDataset },
+					boundaryType: customDataset.boundaryType,
+					calculateStats: (mm, g, d, loc, id) => mm.calculateCustomDatasetStats(g, d, loc, id),
+				},
+				mapManager,
+				boundaryData,
+				location,
+		  )
+		: null;
 
 	const handleCustomDatasetApply = (data: UploadData) => {
 		if (data.boundaryYear === null || data.boundaryType === null) {

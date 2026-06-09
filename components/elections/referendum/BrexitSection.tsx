@@ -3,14 +3,10 @@
 
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	ActiveViz,
-	AggregatedBrexitData,
-	Dataset,
-	BrexitLADDataset,
-	BrexitConstituencyDataset,
-	SelectedArea,
-} from "@lib/types";
+import { ActiveViz, BrexitConstituencyDataset, BrexitLADDataset, Dataset, SelectedArea } from "@lib/types";
+import { BoundaryData } from "@lib/types/boundaries";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import BrexitHanrettyEstimatesChart from "./BrexitHanrettyEstimatesChart";
 import BrexitElectoralChart from "./BrexitElectoralChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
@@ -19,24 +15,26 @@ interface BrexitSectionProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, BrexitLADDataset>;
 	availableConstituencyDatasets: Record<string, BrexitConstituencyDataset>;
-	aggregatedData: Record<number, AggregatedBrexitData> | null;
-	aggregatedConstituencyData: Record<number, AggregatedBrexitData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
 }
 
 export default function BrexitSection({
 	activeDataset,
 	availableDatasets,
 	availableConstituencyDatasets,
-	aggregatedData,
-	aggregatedConstituencyData,
 	selectedArea,
 	codeMapper,
 	activeViz,
 	setActiveViz,
+	mapManager,
+	boundaryData,
+	location,
 }: BrexitSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
@@ -45,13 +43,18 @@ export default function BrexitSection({
 
 	if (!showHanretty && !showElectoral) return null;
 
+	const aggregatedData = aggregateDataset(
+		{ datasets: availableDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateBrexitStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+	const aggregatedConstituencyData = aggregateDataset(
+		{ datasets: availableConstituencyDatasets, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateBrexitConstituencyStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+
 	return (
-		<div
-			className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}
-		>
-			<h3
-				className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}
-			>
+		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
+			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>
 				Brexit
 			</h3>
 			{showElectoral && (

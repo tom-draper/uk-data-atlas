@@ -1,38 +1,35 @@
 "use client";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	ActiveViz,
-	AggregatedLifeExpectancyData,
-	AggregatedNHSWaitingData,
-	Dataset,
-	LifeExpectancyDataset,
-	NHSWaitingDataset,
-	SelectedArea,
-} from "@lib/types";
+import { ActiveViz, Dataset, LifeExpectancyDataset, NHSWaitingDataset, SelectedArea } from "@lib/types";
+import { BoundaryData } from "@lib/types/boundaries";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import LifeExpectancyChart from "./LifeExpectancyChart";
 import NHSWaitingChart from "./NHSWaitingChart";
 
 interface HealthSectionProps {
 	activeDataset: Dataset | null;
 	availableLifeExpectancyDatasets: Record<string, LifeExpectancyDataset>;
-	aggregatedLifeExpectancyData: Record<number, AggregatedLifeExpectancyData> | null;
 	availableNHSWaitingDatasets: Record<string, NHSWaitingDataset>;
-	aggregatedNHSWaitingData: Record<number, AggregatedNHSWaitingData> | null;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
 }
 
 export default function HealthSection({
 	activeDataset,
 	availableLifeExpectancyDatasets,
-	aggregatedLifeExpectancyData,
 	availableNHSWaitingDatasets,
-	aggregatedNHSWaitingData,
 	selectedArea,
 	activeViz,
 	setActiveViz,
+	mapManager,
+	boundaryData,
+	location,
 }: HealthSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
@@ -41,6 +38,32 @@ export default function HealthSection({
 	const showNHS = visibility["health-nhsWaiting"];
 
 	if (!showLE && !showHLE && !showNHS) return null;
+
+	const aggregatedLifeExpectancyData = aggregateDataset(
+		{
+			datasets: availableLifeExpectancyDatasets,
+			boundaryType: "localAuthority",
+			keyBy: "id",
+			calculateStats: (mm, g, d, loc, id) => mm.calculateLifeExpectancyStats(g, d, loc, id),
+		},
+		mapManager,
+		boundaryData,
+		location,
+	);
+
+	const aggregatedNHSWaitingData = aggregateDataset(
+		{
+			datasets: availableNHSWaitingDatasets,
+			boundaryType: "localAuthority",
+			calculateStats: (mm, g, _d, loc, id) => {
+				const ds = availableNHSWaitingDatasets[id];
+				return ds ? mm.calculateNHSWaitingStats(g, ds, loc, id) : null;
+			},
+		},
+		mapManager,
+		boundaryData,
+		location,
+	);
 
 	const leIds = Object.keys(availableLifeExpectancyDatasets).sort();
 

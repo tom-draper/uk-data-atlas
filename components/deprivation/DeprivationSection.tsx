@@ -1,19 +1,10 @@
 "use client";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	ActiveViz,
-	AggregatedIMDData,
-	AggregatedSIMDData,
-	AggregatedWIMDData,
-	AggregatedNIMDMData,
-	Dataset,
-	IMDDataset,
-	SIMDDataset,
-	WIMDDataset,
-	NIMDMDataset,
-	SelectedArea,
-} from "@lib/types";
+import { ActiveViz, Dataset, IMDDataset, NIMDMDataset, SIMDDataset, SelectedArea, WIMDDataset } from "@lib/types";
+import { BoundaryData } from "@lib/types/boundaries";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import IMDChart from "./imd/IMDChart";
 import SIMDChart from "./simd/SIMDChart";
 import WIMDChart from "./wimd/WIMDChart";
@@ -22,31 +13,29 @@ import NIMDMChart from "./nimdm/NIMDMChart";
 interface DeprivationSectionProps {
 	activeDataset: Dataset | null;
 	availableIMDDatasets: Record<string, IMDDataset>;
-	aggregatedIMDData: Record<number, AggregatedIMDData> | null;
 	availableSIMDDatasets: Record<string, SIMDDataset>;
-	aggregatedSIMDData: Record<number, AggregatedSIMDData> | null;
 	availableWIMDDatasets: Record<string, WIMDDataset>;
-	aggregatedWIMDData: Record<number, AggregatedWIMDData> | null;
 	availableNIMDMDatasets: Record<string, NIMDMDataset>;
-	aggregatedNIMDMData: Record<number, AggregatedNIMDMData> | null;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
 }
 
 export default function DeprivationSection({
 	activeDataset,
 	availableIMDDatasets,
-	aggregatedIMDData,
 	availableSIMDDatasets,
-	aggregatedSIMDData,
 	availableWIMDDatasets,
-	aggregatedWIMDData,
 	availableNIMDMDatasets,
-	aggregatedNIMDMData,
 	selectedArea,
 	activeViz,
 	setActiveViz,
+	mapManager,
+	boundaryData,
+	location,
 }: DeprivationSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
@@ -56,6 +45,23 @@ export default function DeprivationSection({
 	const showNIMDM = visibility["deprivation-nimdm"];
 
 	if (!showIMD && !showSIMD && !showWIMD && !showNIMDM) return null;
+
+	const aggregatedIMDData = aggregateDataset(
+		{ datasets: availableIMDDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateIMDStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+	const aggregatedSIMDData = aggregateDataset(
+		{ datasets: availableSIMDDatasets, boundaryType: "dataZone", calculateStats: (mm, g, d, loc, id) => mm.calculateSIMDStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+	const aggregatedWIMDData = aggregateDataset(
+		{ datasets: availableWIMDDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateWIMDStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+	const aggregatedNIMDMData = aggregateDataset(
+		{ datasets: availableNIMDMDatasets, boundaryType: "superOutputArea", calculateStats: (mm, g, d, loc, id) => mm.calculateNIMDMStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
 
 	const imdYears = Object.keys(availableIMDDatasets).map(Number).sort((a, b) => b - a);
 	const simdYears = Object.keys(availableSIMDDatasets).map(Number).sort((a, b) => b - a);

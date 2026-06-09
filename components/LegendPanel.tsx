@@ -7,8 +7,10 @@ import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions, CategoryOptions } from "@/lib/types/mapOptions";
 import {
 	ActiveViz,
-	AggregatedData,
 	Dataset,
+	EthnicityDataset,
+	GeneralElectionDataset,
+	LocalElectionDataset,
 	PartyCode,
 	EthnicityCode,
 	Ethnicity,
@@ -16,6 +18,9 @@ import {
 	WardStats,
 	ConstituencyStats,
 } from "@/lib/types";
+import { BoundaryData } from "@lib/types/boundaries";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import { RangeControl } from "./controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import LegendContent from "./LegendContent";
@@ -50,17 +55,25 @@ export type ColorRangeDatasetKey =
 interface LegendPanelProps {
 	activeDataset: Dataset | null;
 	activeViz: ActiveViz;
-	aggregatedData: AggregatedData | null;
 	mapOptions: MapOptions;
 	onMapOptionsChange: (
 		type: keyof MapOptions,
 		options: Partial<MapOptions[typeof type]>,
 	) => void;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
+	datasets: {
+		localElection: Record<string, LocalElectionDataset>;
+		generalElection: Record<string, GeneralElectionDataset>;
+		ethnicity: Record<string, EthnicityDataset>;
+	};
 }
 
 function computeParties(
 	activeDataset: Dataset | null,
-	aggregatedData: AggregatedData | null,
+	localElectionAgg: Record<string, any> | null,
+	generalElectionAgg: Record<string, any> | null,
 ): PartyDisplayData[] {
 	if (!activeDataset) return [];
 
@@ -70,9 +83,9 @@ function computeParties(
 		| undefined;
 
 	if (activeDataset.type === "localElection") {
-		datasetData = aggregatedData?.localElection ?? undefined;
+		datasetData = localElectionAgg ?? undefined;
 	} else if (activeDataset.type === "generalElection") {
-		datasetData = aggregatedData?.generalElection ?? undefined;
+		datasetData = generalElectionAgg ?? undefined;
 	}
 
 	if (!datasetData) return [];
@@ -92,10 +105,10 @@ function computeParties(
 
 function computeEthnicities(
 	activeDataset: Dataset | null,
-	aggregatedData: AggregatedData | null,
+	ethnicityAgg: Record<string, any> | null,
 ): { id: EthnicityCode; color: string; name: string }[] {
 	if (!activeDataset || activeDataset.type !== "ethnicity") return [];
-	const yearData = aggregatedData?.ethnicity?.[activeDataset.year];
+	const yearData = ethnicityAgg?.[activeDataset.year];
 	if (!yearData) return [];
 
 	const ethnicityTotals = new Map<string, number>();
@@ -170,9 +183,12 @@ function PercentageRangePanel({
 export default function LegendPanel({
 	activeDataset,
 	activeViz,
-	aggregatedData,
 	mapOptions,
 	onMapOptionsChange,
+	mapManager,
+	boundaryData,
+	location,
+	datasets,
 }: LegendPanelProps) {
 	const [liveOptions, setLiveOptions] = useState<MapOptions | null>(null);
 
@@ -184,8 +200,21 @@ export default function LegendPanel({
 
 	const verticalThemeGradient = `linear-gradient(to bottom, ${activeTheme.colors.join(", ")})`;
 
-	const parties = computeParties(activeDataset, aggregatedData);
-	const ethnicities = computeEthnicities(activeDataset, aggregatedData);
+	const localElectionAgg = aggregateDataset(
+		{ datasets: datasets.localElection, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateLocalElectionStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+	const generalElectionAgg = aggregateDataset(
+		{ datasets: datasets.generalElection, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateGeneralElectionStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+	const ethnicityAgg = aggregateDataset(
+		{ datasets: datasets.ethnicity, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateEthnicityStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+
+	const parties = computeParties(activeDataset, localElectionAgg, generalElectionAgg);
+	const ethnicities = computeEthnicities(activeDataset, ethnicityAgg);
 
 	const handleRangeInput = (
 		datasetKey: ColorRangeDatasetKey,

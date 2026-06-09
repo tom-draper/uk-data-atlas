@@ -1,15 +1,9 @@
 // components/ChartPanel.tsx
 "use client";
-import {
-	Dataset,
-	Datasets,
-	ActiveViz,
-	AggregatedData,
-	SelectedArea,
-	BoundaryData,
-	BoundaryCodes,
-} from "@lib/types";
+import { Dataset, Datasets, ActiveViz, SelectedArea, BoundaryData, BoundaryCodes } from "@lib/types";
+import { BoundaryData as BoundaryDataBoundaries } from "@lib/types/boundaries";
 import { CustomDataset } from "@/lib/types/custom";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import LocalElectionResultChartSection from "./elections/local/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
 import { useState, useDeferredValue } from "react";
@@ -46,9 +40,10 @@ interface ChartPanelProps {
 	setCustomDataset: (dataset: CustomDataset | null) => void;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	aggregatedData: AggregatedData;
 	chartsLoading: boolean;
 	codeMapper?: CodeMapper;
+	mapManager: MapManager | null;
+	location: string;
 }
 
 function useSectionVisibility() {
@@ -70,15 +65,19 @@ export default function ChartPanel({
 	setCustomDataset,
 	activeViz,
 	setActiveViz,
-	aggregatedData,
 	chartsLoading,
 	codeMapper,
+	mapManager,
+	location,
 }: ChartPanelProps) {
 	const isDark = useIsDark();
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const sectionVisible = useSectionVisibility();
 	const deferredArea = useDeferredValue(selectedArea);
 	const toggleSettings = () => setSettingsOpen((o) => !o);
+
+	// BoundaryData from @lib/types is the same shape as @lib/types/boundaries
+	const bd = boundaryData as unknown as BoundaryDataBoundaries;
 
 	return (
 		<ChartVisibilityProvider>
@@ -102,161 +101,151 @@ export default function ChartPanel({
 								{sectionVisible["General Election"] && (
 									<GeneralElectionResultChartSection
 										activeDataset={activeDataset}
-										availableDatasets={
-											datasets.generalElection
-										}
-										aggregatedData={
-											aggregatedData.generalElection
-										}
+										availableDatasets={datasets.generalElection}
 										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
+										mapManager={mapManager}
+										boundaryData={bd}
+										location={location}
 									/>
 								)}
 								{sectionVisible["Local Election"] && (
 									<LocalElectionResultChartSection
 										activeDataset={activeDataset}
-										availableDatasets={
-											datasets.localElection
-										}
-										aggregatedData={
-											aggregatedData.localElection
-										}
+										availableDatasets={datasets.localElection}
 										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
+										mapManager={mapManager}
+										boundaryData={bd}
+										location={location}
 									/>
 								)}
 								{sectionVisible["Brexit"] && (
 									<BrexitSection
 										activeDataset={activeDataset}
 										availableDatasets={datasets.brexit}
-										availableConstituencyDatasets={
-											datasets.brexitConstituency
-										}
-										aggregatedData={aggregatedData.brexit}
-										aggregatedConstituencyData={
-											aggregatedData.brexitConstituency
-										}
+										availableConstituencyDatasets={datasets.brexitConstituency}
 										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
+										mapManager={mapManager}
+										boundaryData={bd}
+										location={location}
 									/>
 								)}
 								{sectionVisible["Demographics"] && (
 									<DemographicsChartSection
-										availablePopulationDatasets={
-											datasets.population
-										}
-										aggregatedPopulationData={
-											aggregatedData.population
-										}
-										availableEthnicityDatasets={
-											datasets.ethnicity
-										}
-										aggregatedEthnicityData={
-											aggregatedData.ethnicity
-										}
+										availablePopulationDatasets={datasets.population}
+										availableEthnicityDatasets={datasets.ethnicity}
 										boundaryData={boundaryData}
 										selectedArea={deferredArea}
 										activeViz={activeViz}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
+										mapManager={mapManager}
+										location={location}
 									/>
 								)}
 								{sectionVisible["Economics"] && (
 									<EconomicsSection
 										activeDataset={activeDataset}
 										availableHousePriceDatasets={datasets.housePrice}
-										aggregatedHousePriceData={aggregatedData.housePrice}
 										availableIncomeDatasets={datasets.income}
-										aggregatedIncomeData={aggregatedData.income}
 										availableCrimeDatasets={datasets.crime}
-										aggregatedCrimeData={aggregatedData.crime}
 										availableClaimantCountDatasets={datasets.claimantCount}
-										aggregatedClaimantCountData={aggregatedData.claimantCount}
 										availableUnemploymentDatasets={datasets.unemployment}
-										aggregatedUnemploymentData={aggregatedData.unemployment}
 										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
+										mapManager={mapManager}
+										boundaryData={bd}
+										location={location}
 									/>
 								)}
 								{sectionVisible["Deprivation"] && (
 									<DeprivationSection
 										activeDataset={activeDataset}
 										availableIMDDatasets={datasets.imd}
-										aggregatedIMDData={aggregatedData.imd}
 										availableSIMDDatasets={datasets.simd}
-										aggregatedSIMDData={aggregatedData.simd}
 										availableWIMDDatasets={datasets.wimd}
-										aggregatedWIMDData={aggregatedData.wimd}
 										availableNIMDMDatasets={datasets.nimdm}
-										aggregatedNIMDMData={aggregatedData.nimdm}
 										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										activeViz={activeViz}
+										mapManager={mapManager}
+										boundaryData={bd}
+										location={location}
 									/>
 								)}
 								{sectionVisible["Health"] && (
 									<HealthSection
 										activeDataset={activeDataset}
 										availableLifeExpectancyDatasets={datasets.lifeExpectancy}
-										aggregatedLifeExpectancyData={aggregatedData.lifeExpectancy}
 										availableNHSWaitingDatasets={datasets.nhsWaiting}
-										aggregatedNHSWaitingData={aggregatedData.nhsWaiting}
 										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										activeViz={activeViz}
+										mapManager={mapManager}
+										boundaryData={bd}
+										location={location}
 									/>
 								)}
 								{sectionVisible["Education"] && (
 									<EducationSection
 										activeDataset={activeDataset}
 										availableQualificationDatasets={datasets.qualification}
-										aggregatedQualificationData={aggregatedData.qualification}
 										availableSchoolPerformanceDatasets={datasets.schoolPerformance}
-										aggregatedSchoolPerformanceData={aggregatedData.schoolPerformance}
 										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
+										mapManager={mapManager}
+										boundaryData={bd}
+										location={location}
 									/>
 								)}
 								{sectionVisible["Telecoms"] && (
 									<TelecomsSection
 										activeDataset={activeDataset}
 										availableBroadbandDatasets={datasets.broadband}
-										aggregatedBroadbandData={aggregatedData.broadband}
 										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
+										mapManager={mapManager}
+										boundaryData={bd}
+										location={location}
 									/>
 								)}
 								{sectionVisible["Environment"] && (
 									<EnvironmentSection
 										activeDataset={activeDataset}
 										availableAirQualityDatasets={datasets.airQuality}
-										aggregatedAirQualityData={aggregatedData.airQuality}
 										selectedArea={deferredArea}
 										activeViz={activeViz}
 										setActiveViz={setActiveViz}
+										mapManager={mapManager}
+										boundaryData={bd}
+										location={location}
 									/>
 								)}
-									<CustomSection
+								<CustomSection
 									customDataset={customDataset}
 									setCustomDataset={setCustomDataset}
-									aggregatedData={aggregatedData.custom}
 									selectedArea={deferredArea}
 									activeViz={activeViz}
 									setActiveViz={setActiveViz}
 									codeMapper={codeMapper}
 									boundaryCodes={boundaryCodes}
+									mapManager={mapManager}
+									boundaryData={bd}
+									location={location}
 								/>
 							</ChartLoadingProvider>
 						</div>
