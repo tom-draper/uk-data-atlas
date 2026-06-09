@@ -12,7 +12,7 @@ import {
 import { CustomDataset } from "@/lib/types/custom";
 import LocalElectionResultChartSection from "./elections/local/LocalElectionResultChartSection";
 import DemographicsChartSection from "./demographics/DemographicsChartSection";
-import { useState } from "react";
+import { useState, useDeferredValue } from "react";
 import EconomicsSection from "./economics/EconomicsSection";
 import GeneralElectionResultChartSection from "./elections/general/GeneralElectionResultChartSection";
 import DeprivationSection from "./deprivation/DeprivationSection";
@@ -77,6 +77,7 @@ export default function ChartPanel({
 	const isDark = useIsDark();
 	const [settingsOpen, setSettingsOpen] = useState(false);
 	const sectionVisible = useSectionVisibility();
+	const deferredArea = useDeferredValue(selectedArea);
 	const toggleSettings = () => setSettingsOpen((o) => !o);
 
 	return (
@@ -107,7 +108,7 @@ export default function ChartPanel({
 										aggregatedData={
 											aggregatedData.generalElection
 										}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
@@ -122,7 +123,7 @@ export default function ChartPanel({
 										aggregatedData={
 											aggregatedData.localElection
 										}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
@@ -139,7 +140,7 @@ export default function ChartPanel({
 										aggregatedConstituencyData={
 											aggregatedData.brexitConstituency
 										}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
@@ -160,7 +161,7 @@ export default function ChartPanel({
 											aggregatedData.ethnicity
 										}
 										boundaryData={boundaryData}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										activeViz={activeViz}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
@@ -179,7 +180,7 @@ export default function ChartPanel({
 										aggregatedClaimantCountData={aggregatedData.claimantCount}
 										availableUnemploymentDatasets={datasets.unemployment}
 										aggregatedUnemploymentData={aggregatedData.unemployment}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
@@ -196,7 +197,7 @@ export default function ChartPanel({
 										aggregatedWIMDData={aggregatedData.wimd}
 										availableNIMDMDatasets={datasets.nimdm}
 										aggregatedNIMDMData={aggregatedData.nimdm}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										activeViz={activeViz}
 									/>
@@ -208,7 +209,7 @@ export default function ChartPanel({
 										aggregatedLifeExpectancyData={aggregatedData.lifeExpectancy}
 										availableNHSWaitingDatasets={datasets.nhsWaiting}
 										aggregatedNHSWaitingData={aggregatedData.nhsWaiting}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										activeViz={activeViz}
 									/>
@@ -220,7 +221,7 @@ export default function ChartPanel({
 										aggregatedQualificationData={aggregatedData.qualification}
 										availableSchoolPerformanceDatasets={datasets.schoolPerformance}
 										aggregatedSchoolPerformanceData={aggregatedData.schoolPerformance}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
@@ -231,7 +232,7 @@ export default function ChartPanel({
 										activeDataset={activeDataset}
 										availableBroadbandDatasets={datasets.broadband}
 										aggregatedBroadbandData={aggregatedData.broadband}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										setActiveViz={setActiveViz}
 										codeMapper={codeMapper}
 										activeViz={activeViz}
@@ -242,7 +243,7 @@ export default function ChartPanel({
 										activeDataset={activeDataset}
 										availableAirQualityDatasets={datasets.airQuality}
 										aggregatedAirQualityData={aggregatedData.airQuality}
-										selectedArea={selectedArea}
+										selectedArea={deferredArea}
 										activeViz={activeViz}
 										setActiveViz={setActiveViz}
 									/>
@@ -251,7 +252,7 @@ export default function ChartPanel({
 									customDataset={customDataset}
 									setCustomDataset={setCustomDataset}
 									aggregatedData={aggregatedData.custom}
-									selectedArea={selectedArea}
+									selectedArea={deferredArea}
 									activeViz={activeViz}
 									setActiveViz={setActiveViz}
 									codeMapper={codeMapper}
