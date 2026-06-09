@@ -29,6 +29,7 @@ export function useMapUpdates({
 	}, [mapManager, styleReady, mapOptions.visibility.hideBorders]);
 
 	useEffect(() => {
+		console.log("[mapUpdates]", activeDataset?.type, { geojson: !!geojson, styleReady });
 		if (!geojson || !activeDataset || !mapManager) return;
 
 		const performUpdate = () => {
