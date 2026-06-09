@@ -61,7 +61,7 @@ function computeStats(
 	return null;
 }
 
-function buildSparkline(stats: AggregatedUnemploymentData): { linePath: string; areaPath: string } | null {
+function buildSparkline(stats: AggregatedUnemploymentData): { linePath: string; areaPath: string; lastPt: { x: number; y: number } } | null {
 	const points = stats.years
 		.map(yr => ({ yr, v: stats.rates[yr] }))
 		.filter((p): p is { yr: number; v: number } => p.v != null);
@@ -69,18 +69,26 @@ function buildSparkline(stats: AggregatedUnemploymentData): { linePath: string; 
 	if (points.length < 2) return null;
 
 	const W = 100, H = 100;
+	const PAD_Y = 12; // keep line away from top/bottom edges
+
 	const values = points.map(p => p.v);
-	const min = Math.max(0, Math.min(...values) - 0.5);
-	const max = Math.max(...values) + 0.5;
+	const min = Math.max(0, Math.min(...values) - 0.3);
+	const max = Math.max(...values) + 0.3;
 
 	const pts = points.map((p, i) => ({
 		x: (i / (points.length - 1)) * W,
-		y: H - ((p.v - min) / (max - min)) * H,
+		y: PAD_Y + (1 - (p.v - min) / (max - min)) * (H - PAD_Y * 2),
 	}));
 
-	const linePath = `M ${pts.map(p => `${p.x},${p.y}`).join(" L ")}`;
+	// Smooth cubic bezier: midpoint x as control point
+	let linePath = `M ${pts[0].x},${pts[0].y}`;
+	for (let i = 1; i < pts.length; i++) {
+		const cx = (pts[i - 1].x + pts[i].x) / 2;
+		linePath += ` C ${cx},${pts[i - 1].y} ${cx},${pts[i].y} ${pts[i].x},${pts[i].y}`;
+	}
+
 	const areaPath = `${linePath} L ${W},${H} L 0,${H} Z`;
-	return { linePath, areaPath };
+	return { linePath, areaPath, lastPt: pts[pts.length - 1] };
 }
 
 export default function UnemploymentChart({
@@ -140,12 +148,13 @@ export default function UnemploymentChart({
 				>
 					<defs>
 						<linearGradient id="unemployment-area-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-							<stop offset="0%" stopColor={LINE_COLOR} stopOpacity={isDark ? 0.25 : 0.18} />
-							<stop offset="100%" stopColor={LINE_COLOR} stopOpacity={0} />
+							<stop offset="0%" stopColor={LINE_COLOR} stopOpacity={isDark ? 0.2 : 0.12} />
+							<stop offset="80%" stopColor={LINE_COLOR} stopOpacity={0} />
 						</linearGradient>
 					</defs>
 					<path d={sparkline.areaPath} fill="url(#unemployment-area-gradient)" />
-					<path d={sparkline.linePath} fill="none" stroke={LINE_COLOR} strokeWidth="3" strokeLinejoin="round" />
+					<path d={sparkline.linePath} fill="none" stroke={LINE_COLOR} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+					<circle cx={sparkline.lastPt.x} cy={sparkline.lastPt.y} r="2" fill={LINE_COLOR} vectorEffect="non-scaling-stroke" />
 				</svg>
 			)}
 
@@ -166,7 +175,7 @@ export default function UnemploymentChart({
 					)}
 				</div>
 			) : (
-				<div className="flex items-end justify-between gap-1.5 flex-1">
+				<div className="relative z-10 flex items-end justify-between gap-1.5 flex-1">
 					<div className={`text-2xl font-bold leading-none ${isDark ? "text-gray-100" : "text-gray-800"}`}>
 						{latestRate != null ? latestRate.toFixed(1) : "—"}
 						<span className={`text-[10px] font-normal ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>

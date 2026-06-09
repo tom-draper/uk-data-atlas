@@ -65,7 +65,7 @@ export async function loadUnemployment(
 		type: "unemployment",
 		year: latestYear,
 		boundaryType: "localAuthority",
-		boundaryYear: 2022,
+		boundaryYear: 2024,
 		years,
 		latestYear,
 		data: records,
