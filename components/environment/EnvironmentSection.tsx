@@ -2,25 +2,32 @@
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { panelTheme } from "@/lib/helpers/panelTheme";
-import { ActiveViz, AggregatedAirQualityData, AirQualityDataset, Dataset, SelectedArea } from "@lib/types";
+import { ActiveViz, AirQualityDataset, Dataset, SelectedArea } from "@lib/types";
+import { BoundaryData } from "@lib/types/boundaries";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import AirQualityChart from "./air-quality/AirQualityChart";
 
 interface EnvironmentSectionProps {
 	activeDataset: Dataset | null;
 	availableAirQualityDatasets: Record<string, AirQualityDataset>;
-	aggregatedAirQualityData: Record<number, AggregatedAirQualityData> | null;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
 }
 
 export default function EnvironmentSection({
 	activeDataset,
 	availableAirQualityDatasets,
-	aggregatedAirQualityData,
 	selectedArea,
 	activeViz,
 	setActiveViz,
+	mapManager,
+	boundaryData,
+	location,
 }: EnvironmentSectionProps) {
 	const isDark = useIsDark();
 	const t = panelTheme(isDark);
@@ -30,6 +37,17 @@ export default function EnvironmentSection({
 	const airQualityIds = Object.keys(availableAirQualityDatasets).sort();
 
 	if (!showAirQuality || airQualityIds.length === 0) return null;
+
+	const aggregatedAirQualityData = aggregateDataset(
+		{
+			datasets: availableAirQualityDatasets,
+			boundaryType: "localAuthority",
+			calculateStats: (mm, g, d, loc, id) => mm.calculateAirQualityStats(g, d, loc, id),
+		},
+		mapManager,
+		boundaryData,
+		location,
+	);
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>

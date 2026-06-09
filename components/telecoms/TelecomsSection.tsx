@@ -1,40 +1,52 @@
 "use client";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	ActiveViz,
-	AggregatedBroadbandData,
-	BroadbandDataset,
-	Dataset,
-	SelectedArea,
-} from "@lib/types";
+import { ActiveViz, BroadbandDataset, Dataset, SelectedArea } from "@lib/types";
+import { BoundaryData } from "@lib/types/boundaries";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import BroadbandChart from "./broadband/BroadbandChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface TelecomsSectionProps {
 	activeDataset: Dataset | null;
 	availableBroadbandDatasets: Record<string, BroadbandDataset>;
-	aggregatedBroadbandData: Record<number, AggregatedBroadbandData> | null;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
 }
 
 export default function TelecomsSection({
 	activeDataset,
 	availableBroadbandDatasets,
-	aggregatedBroadbandData,
 	selectedArea,
 	codeMapper,
 	activeViz,
 	setActiveViz,
+	mapManager,
+	boundaryData,
+	location,
 }: TelecomsSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
 	const showBroadband = visibility["telecoms-broadband"];
 
 	if (!showBroadband) return null;
+
+	const aggregatedBroadbandData = aggregateDataset(
+		{
+			datasets: availableBroadbandDatasets,
+			boundaryType: "localAuthority",
+			calculateStats: (mm, g, d, loc, id) => mm.calculateBroadbandStats(g, d, loc, id),
+		},
+		mapManager,
+		boundaryData,
+		location,
+	);
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>

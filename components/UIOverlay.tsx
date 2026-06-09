@@ -4,16 +4,17 @@ import LegendPanel from "@components/LegendPanel";
 import ChartPanel from "@components/ChartPanel";
 import type {
 	ActiveViz,
-	AggregatedData,
 	BoundaryCodes,
 	BoundaryData,
 	Dataset,
 	Datasets,
 	SelectedArea,
 } from "@lib/types";
+import { BoundaryData as BoundaryDataBoundaries } from "@lib/types/boundaries";
 import type { CustomDataset } from "@/lib/types/custom";
 import { MapOptions } from "@/lib/types/mapOptions";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { PanelContext } from "@/lib/context/PanelContext";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
 
@@ -22,7 +23,6 @@ interface UIOverlayProps {
 	customDataset: CustomDataset | null;
 	setCustomDataset: (dataset: CustomDataset | null) => void;
 	activeDataset: Dataset | null;
-	aggregatedData: AggregatedData;
 	chartsLoading: boolean;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -32,6 +32,7 @@ interface UIOverlayProps {
 	boundaryCodes: BoundaryCodes;
 	mapOptions: MapOptions;
 	codeMapper?: CodeMapper;
+	mapManager: MapManager | null;
 	onMapOptionsChange: (
 		type: keyof MapOptions,
 		options: Partial<MapOptions[typeof type]>,
@@ -105,7 +106,6 @@ export default function UIOverlay({
 	activeDataset,
 	activeViz,
 	setActiveViz,
-	aggregatedData,
 	chartsLoading,
 	selectedLocation,
 	selectedArea,
@@ -113,6 +113,7 @@ export default function UIOverlay({
 	boundaryCodes,
 	mapOptions,
 	codeMapper,
+	mapManager,
 	onMapOptionsChange,
 	onLocationClick,
 	onZoomIn,
@@ -142,6 +143,8 @@ export default function UIOverlay({
 		/>
 	);
 
+	const bd = boundaryData as unknown as BoundaryDataBoundaries;
+
 	const chartPanel = (
 		<ChartPanel
 			datasets={datasets}
@@ -150,12 +153,13 @@ export default function UIOverlay({
 			activeViz={activeViz}
 			setActiveViz={setActiveViz}
 			activeDataset={activeDataset}
-			aggregatedData={aggregatedData}
 			chartsLoading={chartsLoading}
 			selectedArea={selectedArea}
 			boundaryData={boundaryData}
 			boundaryCodes={boundaryCodes}
 			codeMapper={codeMapper}
+			mapManager={mapManager}
+			location={selectedLocation}
 		/>
 	);
 
@@ -173,9 +177,16 @@ export default function UIOverlay({
 						<LegendPanel
 							activeDataset={activeDataset}
 							activeViz={activeViz}
-							aggregatedData={aggregatedData}
 							mapOptions={mapOptions}
 							onMapOptionsChange={onMapOptionsChange}
+							mapManager={mapManager}
+							boundaryData={bd}
+							location={selectedLocation}
+							datasets={{
+								localElection: datasets.localElection,
+								generalElection: datasets.generalElection,
+								ethnicity: datasets.ethnicity,
+							}}
 						/>
 						{chartPanel}
 					</div>

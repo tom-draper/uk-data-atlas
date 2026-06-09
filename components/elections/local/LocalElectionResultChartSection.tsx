@@ -15,6 +15,9 @@ import {
 	SelectedArea,
 	ProcessedPartyData,
 } from "@lib/types";
+import { BoundaryData } from "@lib/types/boundaries";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import LocalElectionResultChart from "./LocalElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
@@ -257,24 +260,32 @@ const useLocalElectionData = (
 interface LocalElectionResultChartSectionProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, LocalElectionDataset>;
-	aggregatedData: Record<number, AggregatedLocalElectionData> | null;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper?: CodeMapper;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
 }
 
 export default function LocalElectionResultChartSection({
 	activeDataset,
 	availableDatasets,
-	aggregatedData,
 	selectedArea,
 	activeViz,
 	setActiveViz,
 	codeMapper,
+	mapManager,
+	boundaryData,
+	location,
 }: LocalElectionResultChartSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
+	const aggregatedData = aggregateDataset(
+		{ datasets: availableDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateLocalElectionStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	) as Record<number, AggregatedLocalElectionData> | null;
 	const yearData = useLocalElectionData(
 		availableDatasets,
 		aggregatedData,

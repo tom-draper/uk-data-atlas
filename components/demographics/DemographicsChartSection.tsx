@@ -3,15 +3,9 @@
 
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	ActiveViz,
-	AggregatedEthnicityData,
-	AggregatedPopulationData,
-	BoundaryData,
-	EthnicityDataset,
-	PopulationDataset,
-	SelectedArea,
-} from "@lib/types";
+import { ActiveViz, BoundaryData, EthnicityDataset, PopulationDataset, SelectedArea } from "@lib/types";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import Gender from "./gender/Gender";
 import AgeDistribution from "./age/AgeDistribution";
 import PopulationDensityChart from "./density/PopulationDensityChart";
@@ -20,26 +14,26 @@ import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 export interface DemographicsChartSectionProps {
 	availablePopulationDatasets: Record<string, PopulationDataset>;
-	aggregatedPopulationData: Record<number, AggregatedPopulationData> | null;
 	availableEthnicityDatasets: Record<string, EthnicityDataset>;
-	aggregatedEthnicityData: Record<number, AggregatedEthnicityData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
+	mapManager: MapManager | null;
+	location: string | null;
 }
 
 export default function DemographicsChartSection({
 	availablePopulationDatasets,
-	aggregatedPopulationData,
 	availableEthnicityDatasets,
-	aggregatedEthnicityData,
 	boundaryData,
 	selectedArea,
 	codeMapper,
 	activeViz,
 	setActiveViz,
+	mapManager,
+	location,
 }: DemographicsChartSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
@@ -50,13 +44,18 @@ export default function DemographicsChartSection({
 
 	if (!showDensity && !showAge && !showGender && !showEthnicity) return null;
 
+	const aggregatedPopulationData = aggregateDataset(
+		{ datasets: availablePopulationDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculatePopulationStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+	const aggregatedEthnicityData = aggregateDataset(
+		{ datasets: availableEthnicityDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateEthnicityStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	);
+
 	return (
-		<div
-			className={`pt-2.5 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}
-		>
-			<h3
-				className={`text-xs font-bold mb-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}
-			>
+		<div className={`pt-2.5 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
+			<h3 className={`text-xs font-bold mb-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>
 				Demographics
 			</h3>
 			<div className="space-y-2">

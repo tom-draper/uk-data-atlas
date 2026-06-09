@@ -83,30 +83,6 @@ export type Datasets = {
 	unemployment: Record<string, UnemploymentDataset>;
 };
 
-export type AggregatedData = {
-	localElection: Record<number, AggregatedLocalElectionData> | null;
-	generalElection: Record<number, AggregatedGeneralElectionData> | null;
-	population: Record<number, AggregatedPopulationData> | null;
-	ethnicity: Record<number, AggregatedEthnicityData> | null;
-	housePrice: Record<number, AggregatedHousePriceData> | null;
-	crime: Record<number, AggregatedCrimeData> | null;
-	income: Record<number, AggregatedIncomeData> | null;
-	brexit: Record<number, AggregatedBrexitData> | null;
-	brexitConstituency: Record<number, AggregatedBrexitData> | null;
-	custom: Record<number, AggregatedCustomData> | null;
-	imd: Record<number, AggregatedIMDData> | null;
-	simd: Record<number, AggregatedSIMDData> | null;
-	wimd: Record<number, AggregatedWIMDData> | null;
-	nimdm: Record<number, AggregatedNIMDMData> | null;
-	lifeExpectancy: Record<string, AggregatedLifeExpectancyData> | null;
-	qualification: Record<number, AggregatedQualificationData> | null;
-	broadband: Record<number, AggregatedBroadbandData> | null;
-	airQuality: Record<number, AggregatedAirQualityData> | null;
-	claimantCount: Record<number, AggregatedClaimantCountData> | null;
-	schoolPerformance: Record<number, AggregatedSchoolPerformanceData> | null;
-	nhsWaiting: Record<number, AggregatedNHSWaitingData> | null;
-	unemployment: Record<number, AggregatedUnemploymentData> | null;
-};
 
 export type ActiveViz = {
 	vizId: string;

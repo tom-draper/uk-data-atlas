@@ -17,6 +17,9 @@ import {
 	PartyCode,
 	ProcessedPartyData,
 } from "@lib/types";
+import { BoundaryData } from "@lib/types/boundaries";
+import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import GeneralElectionResultChart from "./GeneralElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
@@ -151,23 +154,31 @@ const useElectionChartData = (
 interface GeneralElectionResultChartSectionProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, GeneralElectionDataset>;
-	aggregatedData: Record<number, AggregatedGeneralElectionData> | null;
 	selectedArea: SelectedArea | null;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
 }
 
 export default function GeneralElectionResultChartSection({
 	activeDataset,
 	availableDatasets,
-	aggregatedData,
 	selectedArea,
 	activeViz,
 	setActiveViz,
 	codeMapper,
+	mapManager,
+	boundaryData,
+	location,
 }: GeneralElectionResultChartSectionProps) {
 	const { visibility } = useChartVisibility();
+	const aggregatedData = aggregateDataset(
+		{ datasets: availableDatasets, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateGeneralElectionStats(g, d, loc, id) },
+		mapManager, boundaryData, location,
+	) as Record<number, AggregatedGeneralElectionData> | null;
 	const yearData = useElectionChartData(
 		availableDatasets,
 		aggregatedData,
