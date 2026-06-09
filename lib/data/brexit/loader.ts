@@ -42,7 +42,7 @@ export async function loadBrexit(
 		year: 2016,
 		type: "brexit",
 		boundaryType: "localAuthority",
-		boundaryYear: 2023,
+		boundaryYear: 2016,
 		data: records,
 		results: resultMap,
 	};

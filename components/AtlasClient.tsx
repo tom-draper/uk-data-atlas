@@ -107,7 +107,6 @@ export default function AtlasClient() {
 	};
 
 	const setActiveViz = (viz: ActiveViz) => {
-		console.log("[setActiveViz]", viz.datasetType, viz.vizId);
 		setActiveVizState(viz);
 		updateParams(selectedLocationRef.current, viz);
 	};
