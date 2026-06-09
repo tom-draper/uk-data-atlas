@@ -7,6 +7,8 @@ interface UseMapLibreInitializationOptions {
 	center: [number, number];
 	zoom: number;
 	maxBounds: [number, number, number, number];
+	initialBounds?: [number, number, number, number];
+	fitBoundsPadding?: number;
 }
 
 export function useMapLibreInitialization({
@@ -14,6 +16,8 @@ export function useMapLibreInitialization({
 	center,
 	zoom,
 	maxBounds,
+	initialBounds,
+	fitBoundsPadding = 40,
 }: UseMapLibreInitializationOptions) {
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const [mapReady, setMapReady] = useState(false);
@@ -25,8 +29,9 @@ export function useMapLibreInitialization({
 			const map = new maplibregl.Map({
 				container: el,
 				style,
-				center,
-				zoom,
+				...(initialBounds
+					? { bounds: initialBounds, fitBoundsOptions: { padding: fitBoundsPadding } }
+					: { center, zoom }),
 				maxBounds,
 				preserveDrawingBuffer: true,
 			} as any);

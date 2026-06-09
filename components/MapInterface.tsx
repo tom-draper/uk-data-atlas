@@ -92,7 +92,11 @@ export default function MapInterface({
 		mapRef: map,
 		handleMapContainer,
 		mapReady,
-	} = useMapInitialization(MAP_CONFIG);
+	} = useMapInitialization({
+		...MAP_CONFIG,
+		initialBounds: LOCATIONS[selectedLocation]?.bounds,
+		fitBoundsPadding: MAP_CONFIG.fitBoundsPadding,
+	});
 	const { mapOptions, setMapOptions: handleMapOptionsChange } =
 		useMapOptions(DEFAULT_MAP_OPTIONS);
 	const styleReady = loadedStyleId === mapOptions.baseStyle.id;

@@ -119,7 +119,12 @@ export default function AtlasClient() {
 
 	useEffect(() => {
 		if (!getSearchParam("location")) {
-			updateParams(selectedLocation, activeViz);
+			const params = new URLSearchParams();
+			params.set("location", selectedLocation);
+			params.set("viz", activeViz.vizId);
+			params.set("type", activeViz.datasetType);
+			params.set("year", String(activeViz.datasetYear));
+			window.history.replaceState(null, "", `?${params.toString()}`);
 		}
 		// Only run on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps

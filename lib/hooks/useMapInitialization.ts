@@ -7,6 +7,8 @@ interface UseMapInitializationOptions {
 	center: [number, number];
 	zoom: number;
 	maxBounds: [number, number, number, number];
+	initialBounds?: [number, number, number, number];
+	fitBoundsPadding?: number;
 }
 
 export function useMapInitialization(options: UseMapInitializationOptions) {
