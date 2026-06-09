@@ -91,7 +91,7 @@ export default function SIMDChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-[65px] block w-full text-left")}
+			className={cardClass(isActive, isDark, "h-[72px] block w-full text-left")}
 			title="Scottish Government. Scottish Index of Multiple Deprivation 2020v2. gov.scot"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
@@ -113,15 +113,15 @@ export default function SIMDChart({
 				</div>
 				{hasData && simdStats ? (
 					<div className="flex items-start gap-2.5">
-						<div className="shrink-0 w-7 text-right leading-none mt-[-2px]">
+						<div className="shrink-0 w-8 text-right leading-none mt-[-2px]">
 							<span
-								className="text-2xl font-bold leading-none"
+								className="text-3xl font-bold leading-none"
 								style={{ color: quintileColor }}
 							>
 								{quintile}
 							</span>
 						</div>
-						<div className="flex-1 flex flex-col gap-0.5">
+						<div className="flex-1 flex flex-col gap-1.5">
 							<div className="flex gap-[2px]">
 								{QUINTILE_COLORS.map((color, i) => (
 									<div

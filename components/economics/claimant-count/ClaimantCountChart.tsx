@@ -30,7 +30,12 @@ interface ClaimantCountChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const ACCENT = "#f59e0b";
+function rateColor(rate: number): string {
+	if (rate <= 2.5) return "#16a34a";
+	if (rate <= 4) return "#eab308";
+	if (rate <= 6) return "#f97316";
+	return "#dc2626";
+}
 
 function computeStats(
 	dataset: ClaimantCountDataset,
@@ -70,14 +75,19 @@ export default function ClaimantCountChart({
 
 	const isActive = activeDataset?.type === "claimantCount" && activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
+	const color = rateColor(stats?.totalRate ?? 0);
 
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		hasData ? ACCENT : null,
+		hasData ? color : null,
 		isActive,
 		isDark,
 	);
 
 	if (!dataset) return null;
+
+	const rate = stats?.totalRate ?? 0;
+	// Bar capped at 10% = full width
+	const barWidth = Math.min(rate / 10 * 100, 100);
 
 	return (
 		<button
@@ -111,18 +121,25 @@ export default function ClaimantCountChart({
 					)}
 				</div>
 			) : (
-				<div className="flex items-end justify-between gap-1.5 flex-1">
-					<div className={`text-2xl font-bold leading-none ${isDark ? "text-gray-100" : "text-gray-800"}`}>
-						{stats!.totalRate.toFixed(1)}
-						<span className={`text-[10px] font-normal ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-							% of 16-64
+				<div className="flex-1 flex flex-col gap-1">
+					<div className="flex items-baseline justify-between">
+						<div className="leading-none">
+							<span className="text-2xl font-bold leading-none" style={{ color }}>
+								{rate.toFixed(1)}
+							</span>
+							<span className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+								% of 16-64
+							</span>
+						</div>
+						<span className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+							{stats!.youthRate.toFixed(1)}% youth
 						</span>
 					</div>
-					<div className={`flex flex-col items-end text-right ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-						<span className="text-[10px]">youth rate</span>
-						<span className={`text-sm font-semibold ${isDark ? "text-gray-200" : "text-gray-700"}`}>
-							{stats!.youthRate.toFixed(1)}%
-						</span>
+					<div className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
+						<div
+							className="h-full rounded-xs transition-all duration-300"
+							style={{ width: `${barWidth}%`, backgroundColor: color }}
+						/>
 					</div>
 				</div>
 			)}

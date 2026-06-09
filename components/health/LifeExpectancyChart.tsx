@@ -179,7 +179,7 @@ export default function LifeExpectancyChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-[65px]")}
+			className={cardClass(isActive, isDark, "h-[72px]")}
 			title={dataset.metadata.source}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
@@ -197,7 +197,7 @@ export default function LifeExpectancyChart({
 					{dataset.label} [{dataset.dataPeriod}]
 				</h3>
 				{leStats ? (
-					<div className="mt-1 -space-y-0.5">
+					<div className="mt-1 space-y-0">
 						{leBar(
 							leStats.averageMaleLE,
 							"M",

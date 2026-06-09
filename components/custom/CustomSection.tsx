@@ -16,6 +16,11 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import {
+	useCardAccent,
+	cardClass,
+	chartHeadingClass,
+} from "@/lib/hooks/useCardAccent";
 
 interface MatchResult {
 	type: string;
@@ -718,68 +723,75 @@ function CustomDatasetCard({
 
 	if (!customDataset) return null;
 
+	const allValues = Object.values(customDataset.data);
+	const dataMin = allValues.length ? Math.min(...allValues) : 0;
+	const dataMax = allValues.length ? Math.max(...allValues) : 100;
+	const range = dataMax - dataMin || 1;
+
+	const ACCENT = "#6366f1";
+	const barWidth = displayValue
+		? Math.min(((displayValue.value - dataMin) / range) * 100, 100)
+		: 0;
+
+	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+		displayValue ? ACCENT : null,
+		isActive,
+		isDark,
+	);
+
+	const hasData = displayValue !== null;
+
 	return (
 		<button
 			type="button"
 			onClick={handleActivate}
-			className={`w-full rounded-md transition-all border-2 duration-200 text-left h-20 relative overflow-hidden cursor-pointer ${
-				isActive
-					? isDark
-						? "bg-white/10 border-gray-400"
-						: "bg-white/90 border-gray-400"
-					: isDark
-						? "bg-white/5 border-white/10 hover:border-gray-400"
-						: "bg-white/60 border-gray-200/80 hover:border-gray-400"
-			}`}
+			style={style}
+			className={cardClass(isActive, isDark, "h-20")}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 		>
 			<ChartLoadingBackground />
-			<div className="px-3 py-2">
-				<div className="flex items-center justify-between mb-1">
-					<div
-						className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-700"}`}
-					>
-						{customDataset.dataColumn} [{customDataset.boundaryYear}
-						]
-					</div>
-				</div>
+			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
+				<h3 className={chartHeadingClass(isDark)}>
+					{customDataset.dataColumn} [{customDataset.boundaryYear}]
+				</h3>
+			</div>
 
-				{/* Fixed height container */}
-				<div className="h-6 flex items-center">
-					{displayValue ? (
-						<div
-							className={`text-sm font-semibold ${isDark ? "text-gray-100" : "text-gray-900"}`}
-						>
-							{displayValue.value.toLocaleString("en-GB", {
-								minimumFractionDigits: 0,
-								maximumFractionDigits: 2,
-							})}
-							{displayValue.count > 1 && (
-								<span
-									className={`text-xs ml-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}
-								>
-									(aggregated from {displayValue.count} wards)
-								</span>
-							)}
-						</div>
-					) : chartsLoading ? (
-						<ChartContentPlaceholder className="size-full" />
+			{!hasData ? (
+				<div className="flex-1 mt-1">
+					{chartsLoading ? (
+						<ChartContentPlaceholder className="h-full" />
 					) : (
-						<div
-							className={`text-xs ${isDark ? "text-gray-400" : "text-gray-400"}`}
-						>
-							{selectedArea
-								? "No data available"
-								: "Hover over an area"}
+						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+							No data available
 						</div>
 					)}
 				</div>
-
-				<div
-					className={`text-xs mt-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}
-				>
-					{customDataset.name}
+			) : (
+				<div className="flex-1 flex flex-col gap-1">
+					<div className="flex items-baseline justify-between">
+						<div className="leading-none">
+							<span className="text-2xl font-bold leading-none" style={{ color: ACCENT }}>
+								{displayValue!.value.toLocaleString("en-GB", {
+									minimumFractionDigits: 0,
+									maximumFractionDigits: 2,
+								})}
+							</span>
+						</div>
+						{displayValue!.count > 1 && (
+							<span className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+								{displayValue!.count} wards avg
+							</span>
+						)}
+					</div>
+					<div className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
+						<div
+							className="h-full rounded-xs transition-all duration-300"
+							style={{ width: `${barWidth}%`, backgroundColor: ACCENT }}
+						/>
+					</div>
 				</div>
-			</div>
+			)}
 		</button>
 	);
 }

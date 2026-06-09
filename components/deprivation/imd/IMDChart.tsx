@@ -100,7 +100,7 @@ export default function IMDChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-[65px]")}
+			className={cardClass(isActive, isDark, "h-[72px]")}
 			title="Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019. gov.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
@@ -122,15 +122,15 @@ export default function IMDChart({
 				</div>
 				{hasData && imdStats ? (
 					<div className="flex items-start gap-2.5">
-						<div className="shrink-0 w-7 text-right leading-none mt-[-2px]">
+						<div className="shrink-0 w-8 text-right leading-none mt-[-2px]">
 							<span
-								className="text-2xl font-bold leading-none"
+								className="text-3xl font-bold leading-none"
 								style={{ color: decileColor }}
 							>
 								{decile}
 							</span>
 						</div>
-						<div className="flex-1 flex flex-col gap-0.5">
+						<div className="flex-1 flex flex-col gap-1.5">
 							<div className="flex gap-[2px]">
 								{DECILE_COLORS.map((color, i) => (
 									<div

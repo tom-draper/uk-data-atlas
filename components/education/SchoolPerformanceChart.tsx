@@ -87,6 +87,9 @@ export default function SchoolPerformanceChart({
 
 	if (!dataset) return null;
 
+	const pct = stats?.ptL2basics94 ?? 0;
+	const barWidth = Math.min(pct, 100);
+
 	return (
 		<button
 			type="button"
@@ -120,20 +123,25 @@ export default function SchoolPerformanceChart({
 					)}
 				</div>
 			) : (
-				<div className="flex items-end justify-between gap-1.5 flex-1">
-					<div className="leading-none">
-						<span className="text-2xl font-bold" style={{ color }}>
-							{stats!.ptL2basics94!.toFixed(1)}
-						</span>
-						<span className={`text-[10px] font-normal ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-							% grade 4+
+				<div className="flex-1 flex flex-col gap-1">
+					<div className="flex items-baseline justify-between">
+						<div className="leading-none">
+							<span className="text-2xl font-bold leading-none" style={{ color }}>
+								{pct.toFixed(1)}
+							</span>
+							<span className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+								% grade 4+
+							</span>
+						</div>
+						<span className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+							{stats!.ptL2basics95 != null ? `${stats!.ptL2basics95.toFixed(1)}% grade 5+` : ""}
 						</span>
 					</div>
-					<div className={`flex flex-col items-end text-right ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-						<span className="text-[10px]">grade 5+</span>
-						<span className={`text-sm font-semibold ${isDark ? "text-gray-200" : "text-gray-700"}`}>
-							{stats!.ptL2basics95 != null ? `${stats!.ptL2basics95.toFixed(1)}%` : "—"}
-						</span>
+					<div className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
+						<div
+							className="h-full rounded-xs transition-all duration-300"
+							style={{ width: `${barWidth}%`, backgroundColor: color }}
+						/>
 					</div>
 				</div>
 			)}
