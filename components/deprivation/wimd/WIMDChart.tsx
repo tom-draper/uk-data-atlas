@@ -29,16 +29,16 @@ interface WIMDChartProps {
 }
 
 const DECILE_COLORS = [
-	"#dc2626", // 1 - most deprived
-	"#ef4444", // 2
-	"#f97316", // 3
-	"#f59e0b", // 4
-	"#eab308", // 5
-	"#a3e635", // 6
-	"#4ade80", // 7
-	"#22c55e", // 8
-	"#16a34a", // 9
-	"#15803d", // 10 - least deprived
+	"#15803d", // 1 - least deprived
+	"#16a34a", // 2
+	"#22c55e", // 3
+	"#4ade80", // 4
+	"#a3e635", // 5
+	"#eab308", // 6
+	"#f59e0b", // 7
+	"#f97316", // 8
+	"#ef4444", // 9
+	"#dc2626", // 10 - most deprived
 ];
 
 function computeWimdStats(
@@ -86,7 +86,8 @@ export default function WIMDChart({
 		activeDataset?.type === "wimd" && activeDataset.id === dataset?.id;
 
 	const decile = wimdStats ? Math.round(wimdStats.averageWIMDDecile) : null;
-	const decileColor = decile ? DECILE_COLORS[decile - 1] : "#9ca3af";
+	const displayDecile = decile ? 11 - decile : null;
+	const decileColor = displayDecile ? DECILE_COLORS[displayDecile - 1] : "#9ca3af";
 	const hasData = wimdStats !== null;
 
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
@@ -128,7 +129,7 @@ export default function WIMDChart({
 								className="text-3xl font-bold leading-none"
 								style={{ color: decileColor }}
 							>
-								{decile}
+								{displayDecile}
 							</span>
 						</div>
 						<div className="flex-1 flex flex-col gap-1.5">
@@ -139,7 +140,7 @@ export default function WIMDChart({
 										className="flex-1 h-3 rounded-[2px]"
 										style={{
 											backgroundColor:
-												decile === i + 1
+												displayDecile === i + 1
 													? color
 													: isDark
 														? "rgba(255,255,255,0.1)"
@@ -149,8 +150,8 @@ export default function WIMDChart({
 								))}
 							</div>
 							<div className="flex justify-between">
-								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>most deprived</span>
-								<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>least deprived</span>
+								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>least deprived</span>
+								<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>most deprived</span>
 							</div>
 						</div>
 					</div>

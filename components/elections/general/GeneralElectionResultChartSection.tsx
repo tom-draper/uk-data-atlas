@@ -26,6 +26,7 @@ import {
 	useChartVisibility,
 	ChartKey,
 } from "@/lib/context/ChartVisibilityContext";
+import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 
 interface ProcessedYearData {
 	year: number;
@@ -48,6 +49,7 @@ const useElectionChartData = (
 		code: string,
 		targetYear: number,
 	) => string | undefined,
+	excluded?: Set<string>,
 ) => {
 	return GENERAL_ELECTION_YEARS.map((year): ProcessedYearData => {
 			const dataset = availableDatasets[year];
@@ -131,8 +133,11 @@ const useElectionChartData = (
 				};
 			}
 
+			const filteredVotes = excluded?.size
+				? Object.fromEntries(Object.entries(rawPartyVotes).filter(([k]) => !excluded.has(k)))
+				: rawPartyVotes;
 			const partyData = processPartyVotes(
-				rawPartyVotes,
+				filteredVotes,
 				dataset.partyInfo,
 			);
 			const totalVotes = partyData.reduce((a, p) => a + p.votes, 0);
@@ -175,6 +180,7 @@ export default function GeneralElectionResultChartSection({
 	location,
 }: GeneralElectionResultChartSectionProps) {
 	const { visibility } = useChartVisibility();
+	const { excludedGeneralParties } = useExcludedCategories();
 	const aggregatedData = aggregateDataset(
 		{ datasets: availableDatasets, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateGeneralElectionStats(g, d, loc, id) },
 		mapManager, boundaryData, location,
@@ -184,6 +190,7 @@ export default function GeneralElectionResultChartSection({
 		aggregatedData,
 		selectedArea,
 		codeMapper?.getCodeForYear,
+		excludedGeneralParties,
 	);
 
 	const visibleYearData = yearData.filter(

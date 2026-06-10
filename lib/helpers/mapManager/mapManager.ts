@@ -94,6 +94,23 @@ export class MapManager {
 			? (dataset as LocalElectionDataset).results
 			: (dataset as GeneralElectionDataset).results;
 
+		const excluded = new Set(options.excluded ?? []);
+		const getWinner = excluded.size > 0
+			? (code: string) => {
+				const votes = dataMap[code]?.partyVotes;
+				if (!votes) return "NONE";
+				let best = "NONE";
+				let bestVotes = -1;
+				for (const [party, v] of Object.entries(votes)) {
+					if (!excluded.has(party) && (v as number) > bestVotes) {
+						bestVotes = v as number;
+						best = party;
+					}
+				}
+				return best;
+			}
+			: (code: string) => resultsMap[code] || "NONE";
+
 		// Build features once
 		const features =
 			mode === "percentage" && options.selected
@@ -106,7 +123,7 @@ export class MapManager {
 				: this.featureBuilder.buildElectionWinnerFeatures(
 						geojson.features,
 						codeProp,
-						(code) => resultsMap[code] || "NONE",
+						getWinner,
 					);
 
 		const transformedGeojson =

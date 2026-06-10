@@ -29,11 +29,11 @@ interface SIMDChartProps {
 }
 
 const QUINTILE_COLORS = [
-	"#dc2626", // 1 - most deprived
-	"#f97316", // 2
+	"#15803d", // 1 - least deprived
+	"#4ade80", // 2
 	"#eab308", // 3
-	"#4ade80", // 4
-	"#15803d", // 5 - least deprived
+	"#f97316", // 4
+	"#dc2626", // 5 - most deprived
 ];
 
 function computeSimdStats(
@@ -76,7 +76,8 @@ export default function SIMDChart({
 	const quintile = simdStats
 		? Math.round(simdStats.averageSIMDQuintile)
 		: null;
-	const quintileColor = quintile ? QUINTILE_COLORS[quintile - 1] : "#9ca3af";
+	const displayQuintile = quintile ? 6 - quintile : null;
+	const quintileColor = displayQuintile ? QUINTILE_COLORS[displayQuintile - 1] : "#9ca3af";
 	const hasData = simdStats !== null;
 
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
@@ -118,7 +119,7 @@ export default function SIMDChart({
 								className="text-3xl font-bold leading-none"
 								style={{ color: quintileColor }}
 							>
-								{quintile}
+								{displayQuintile}
 							</span>
 						</div>
 						<div className="flex-1 flex flex-col gap-1.5">
@@ -129,7 +130,7 @@ export default function SIMDChart({
 										className="flex-1 h-3 rounded-[2px]"
 										style={{
 											backgroundColor:
-												quintile === i + 1
+												displayQuintile === i + 1
 													? color
 													: isDark
 														? "rgba(255,255,255,0.1)"
@@ -139,8 +140,8 @@ export default function SIMDChart({
 								))}
 							</div>
 							<div className="flex justify-between">
-								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>most deprived</span>
-								<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>least deprived</span>
+								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>least deprived</span>
+								<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>most deprived</span>
 							</div>
 						</div>
 					</div>

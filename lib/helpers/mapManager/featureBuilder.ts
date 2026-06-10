@@ -142,6 +142,7 @@ export class FeatureBuilder {
 		options: MapOptions,
 	): Features {
 		const mode = options.ethnicity?.mode || "majority";
+		const excluded = new Set(options.ethnicity?.excluded ?? []);
 
 		if (mode === "percentage" && options.ethnicity?.selected) {
 			return this.buildEthnicityPercentageFeatures(
@@ -152,11 +153,12 @@ export class FeatureBuilder {
 			);
 		}
 
-		// Default to majority mode
 		return this.buildEthnicityMajorityFeatures(
 			features,
 			codeProp,
 			dataset.results,
+			excluded.size > 0 ? dataset.data : undefined,
+			excluded.size > 0 ? excluded : undefined,
 		);
 	}
 
@@ -164,12 +166,30 @@ export class FeatureBuilder {
 		features: Features,
 		codeProp: string,
 		results: EthnicityDataset["results"],
+		data?: EthnicityDataset["data"],
+		excluded?: Set<string>,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
 			const code = getFeatureProp(feature.properties, codeProp) ?? "";
-			const majorityCategory = results[code] || "NONE";
 
-			return { majorityCategory };
+			if (excluded && excluded.size > 0 && data) {
+				const parentCategories = data[code];
+				if (parentCategories) {
+					let maxPopulation = 0;
+					let majorityCategory = "NONE";
+					for (const subcategories of Object.values(parentCategories)) {
+						for (const [name, d] of Object.entries(subcategories)) {
+							if (!excluded.has(name) && d.population > maxPopulation) {
+								maxPopulation = d.population;
+								majorityCategory = name;
+							}
+						}
+					}
+					return { majorityCategory };
+				}
+			}
+
+			return { majorityCategory: results[code] || "NONE" };
 		});
 	}
 

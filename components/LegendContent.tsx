@@ -1,9 +1,7 @@
 "use client";
-import type { ActiveViz, Dataset, PartyCode, EthnicityCode } from "@lib/types";
-import type { MapOptions, CategoryOptions } from "@/lib/types/mapOptions";
+import type { ActiveViz, Dataset, EthnicityCode } from "@lib/types";
+import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ColorRangeDatasetKey, PartyDisplayData } from "./LegendPanel";
-import { PARTIES } from "@/lib/data/election/parties";
-import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
 import { RangeControl } from "./controls/RangeControl";
 import { renderCategoryLegend } from "./legendUtils";
 
@@ -19,7 +17,9 @@ interface LegendContentProps {
 	onRangeInput: (key: ColorRangeDatasetKey, min: number, max: number) => void;
 	onRangeChangeEnd: (key: ColorRangeDatasetKey) => void;
 	onPartyClick: (id: string) => void;
+	onPartyRightClick: (id: string) => void;
 	onEthnicityClick: (id: string) => void;
+	onEthnicityRightClick: (id: string) => void;
 }
 
 const defaultFormatLabel = (v: number) => v.toFixed(0);
@@ -36,7 +36,9 @@ export default function LegendContent({
 	onRangeInput,
 	onRangeChangeEnd,
 	onPartyClick,
+	onPartyRightClick,
 	onEthnicityClick,
+	onEthnicityRightClick,
 }: LegendContentProps) {
 	if (!activeDataset) return null;
 
@@ -185,6 +187,8 @@ export default function LegendContent({
 				onEthnicityClick,
 				overlayOpacity,
 				isDark,
+				new Set(opts?.excluded ?? []),
+				onEthnicityRightClick,
 			);
 		}
 
@@ -199,6 +203,8 @@ export default function LegendContent({
 				onPartyClick,
 				overlayOpacity,
 				isDark,
+				new Set(opts?.excluded ?? []),
+				onPartyRightClick,
 			);
 		}
 

@@ -276,6 +276,30 @@ export default function LegendPanel({
 		}
 	};
 
+	const handlePartyRightClick = (partyCode: PartyCode) => {
+		const datasetType = activeDataset?.type;
+		if (
+			!datasetType ||
+			(datasetType !== "generalElection" &&
+				datasetType !== "localElection")
+		)
+			return;
+		const current = displayOptions[datasetType].excluded ?? [];
+		const next = current.includes(partyCode)
+			? current.filter((p) => p !== partyCode)
+			: [...current, partyCode];
+		onMapOptionsChange(datasetType, { excluded: next });
+	};
+
+	const handleEthnicityRightClick = (ethnicityCode: EthnicityCode) => {
+		if (activeDataset?.type !== "ethnicity") return;
+		const current = displayOptions.ethnicity.excluded ?? [];
+		const next = current.includes(ethnicityCode)
+			? current.filter((e) => e !== ethnicityCode)
+			: [...current, ethnicityCode];
+		onMapOptionsChange("ethnicity", { excluded: next });
+	};
+
 	const overlayOpacity = Math.min(
 		1,
 		(displayOptions.visibility.overlayOpacity ?? 1) + 0.2,
@@ -369,8 +393,14 @@ export default function LegendPanel({
 						onRangeInput={handleRangeInput}
 						onRangeChangeEnd={handleRangeChangeEnd}
 						onPartyClick={(id) => handlePartyClick(id as PartyCode)}
+						onPartyRightClick={(id) =>
+							handlePartyRightClick(id as PartyCode)
+						}
 						onEthnicityClick={(id) =>
 							handleEthnicityClick(id as EthnicityCode)
+						}
+						onEthnicityRightClick={(id) =>
+							handleEthnicityRightClick(id as EthnicityCode)
 						}
 					/>
 				</div>

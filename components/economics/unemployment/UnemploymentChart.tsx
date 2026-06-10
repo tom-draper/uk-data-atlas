@@ -30,8 +30,8 @@ interface UnemploymentChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const ACCENT = "#6366f1";
-const LINE_COLOR = "#818cf8";
+const ACCENT = "#1e40af";
+const LINE_COLOR = "#3b82f6";
 
 function computeStats(
 	dataset: UnemploymentDataset,
@@ -80,11 +80,9 @@ function buildSparkline(stats: AggregatedUnemploymentData): { linePath: string; 
 		y: PAD_Y + (1 - (p.v - min) / (max - min)) * (H - PAD_Y * 2),
 	}));
 
-	// Smooth cubic bezier: midpoint x as control point
 	let linePath = `M ${pts[0].x},${pts[0].y}`;
 	for (let i = 1; i < pts.length; i++) {
-		const cx = (pts[i - 1].x + pts[i].x) / 2;
-		linePath += ` C ${cx},${pts[i - 1].y} ${cx},${pts[i].y} ${pts[i].x},${pts[i].y}`;
+		linePath += ` L ${pts[i].x},${pts[i].y}`;
 	}
 
 	const areaPath = `${linePath} L ${W},${H} L 0,${H} Z`;
