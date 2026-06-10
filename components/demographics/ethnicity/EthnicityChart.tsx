@@ -20,6 +20,7 @@ import {
 	cardClass,
 	chartHeadingClass,
 } from "@/lib/hooks/useCardAccent";
+import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 
 interface ProcessedEthnicityData {
 	ethnicity: string;
@@ -117,6 +118,7 @@ export default function EthnicityChart({
 }: EthnicityChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+	const { excludedEthnicities } = useExcludedCategories();
 
 	if (!dataset) return null;
 
@@ -132,7 +134,9 @@ export default function EthnicityChart({
 			return { hasData: false, ethnicityData: [], totalPopulation: 0 };
 		}
 
-		const allEthnicities = flattenEthnicityData(areaData);
+		const allEthnicities = flattenEthnicityData(areaData).filter(
+			(item) => !excludedEthnicities.has(item.ethnicity),
+		);
 
 		const totalPopulation = allEthnicities.reduce(
 			(sum, item) => sum + item.population,

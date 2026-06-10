@@ -25,6 +25,7 @@ import {
 	ChartKey,
 } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 
 interface ProcessedYearData {
 	year: number;
@@ -59,6 +60,7 @@ const useLocalElectionData = (
 		constituencyCode: string,
 		wardYear: number,
 	) => string[],
+	excluded?: Set<string>,
 ) => {
 	return LOCAL_ELECTION_YEARS.map((year): ProcessedYearData => {
 			const dataset = availableDatasets[year];
@@ -240,8 +242,11 @@ const useLocalElectionData = (
 				};
 			}
 
+			const filteredVotes = excluded?.size
+				? Object.fromEntries(Object.entries(rawPartyVotes).filter(([k]) => !excluded.has(k)))
+				: rawPartyVotes;
 			const partyData = processPartyVotes(
-				rawPartyVotes,
+				filteredVotes,
 				dataset.partyInfo,
 			);
 			const totalVotes = partyData.reduce((a, p) => a + p.votes, 0);
@@ -282,6 +287,7 @@ export default function LocalElectionResultChartSection({
 }: LocalElectionResultChartSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
+	const { excludedLocalParties } = useExcludedCategories();
 	const aggregatedData = aggregateDataset(
 		{ datasets: availableDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateLocalElectionStats(g, d, loc, id) },
 		mapManager, boundaryData, location,
@@ -293,6 +299,7 @@ export default function LocalElectionResultChartSection({
 		codeMapper?.getCodeForYear,
 		codeMapper?.getWardsForLad,
 		codeMapper?.getWardsForConstituency,
+		excludedLocalParties,
 	);
 
 	const visibleYearData = yearData.filter(

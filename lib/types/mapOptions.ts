@@ -11,6 +11,7 @@ interface ColorRangeOption {
 export interface CategoryOptions {
 	mode: "majority" | "percentage";
 	selected?: string;
+	excluded?: string[];
 	percentageRange: ColorRange;
 }
 

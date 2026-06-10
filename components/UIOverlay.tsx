@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ControlPanel from "@components/ControlPanel";
 import LegendPanel from "@components/LegendPanel";
 import ChartPanel from "@components/ChartPanel";
@@ -17,6 +17,7 @@ import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { PanelContext } from "@/lib/context/PanelContext";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
+import { ExcludedCategoriesContext } from "@/lib/context/ExcludedCategoriesContext";
 
 interface UIOverlayProps {
 	datasets: Datasets;
@@ -126,6 +127,12 @@ export default function UIOverlay({
 
 	const panelContextValue = { selectedArea, selectedLocation };
 
+	const excludedCategories = useMemo(() => ({
+		excludedGeneralParties: new Set(mapOptions.generalElection.excluded ?? []),
+		excludedLocalParties: new Set(mapOptions.localElection.excluded ?? []),
+		excludedEthnicities: new Set(mapOptions.ethnicity.excluded ?? []),
+	}), [mapOptions.generalElection.excluded, mapOptions.localElection.excluded, mapOptions.ethnicity.excluded]);
+
 	const handleLocationClick = (loc: string) => {
 		onLocationClick(loc);
 		setMobilePanel("none");
@@ -146,21 +153,23 @@ export default function UIOverlay({
 	const bd = boundaryData as unknown as BoundaryDataBoundaries;
 
 	const chartPanel = (
-		<ChartPanel
-			datasets={datasets}
-			customDataset={customDataset}
-			setCustomDataset={setCustomDataset}
-			activeViz={activeViz}
-			setActiveViz={setActiveViz}
-			activeDataset={activeDataset}
-			chartsLoading={chartsLoading}
-			selectedArea={selectedArea}
-			boundaryData={boundaryData}
-			boundaryCodes={boundaryCodes}
-			codeMapper={codeMapper}
-			mapManager={mapManager}
-			location={selectedLocation}
-		/>
+		<ExcludedCategoriesContext.Provider value={excludedCategories}>
+			<ChartPanel
+				datasets={datasets}
+				customDataset={customDataset}
+				setCustomDataset={setCustomDataset}
+				activeViz={activeViz}
+				setActiveViz={setActiveViz}
+				activeDataset={activeDataset}
+				chartsLoading={chartsLoading}
+				selectedArea={selectedArea}
+				boundaryData={boundaryData}
+				boundaryCodes={boundaryCodes}
+				codeMapper={codeMapper}
+				mapManager={mapManager}
+				location={selectedLocation}
+			/>
+		</ExcludedCategoriesContext.Provider>
 	);
 
 	const isDark = mapOptions.baseStyle.id === "darkMatter";
