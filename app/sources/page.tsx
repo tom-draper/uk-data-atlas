@@ -19,7 +19,7 @@ const datasets: Dataset[] = [
 	{
 		name: "General Election Results",
 		source: "House of Commons Library",
-		sourceUrl: "https://www.electoralcommission.org.uk/",
+		sourceUrl: "https://commonslibrary.parliament.uk/",
 		year: "2010, 2015, 2017, 2019, 2024",
 		licence: "Open Parliament Licence",
 		licenceUrl:
@@ -37,6 +37,17 @@ const datasets: Dataset[] = [
 			"https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
 		description:
 			"Local election results by electoral ward for England and Wales.",
+	},
+	{
+		name: "EU Referendum Results",
+		source: "Electoral Commission",
+		sourceUrl:
+			"https://www.electoralcommission.org.uk/research-reports-and-data/our-reports-and-data-past-elections-and-referendums/results-and-turnout-eu-referendum",
+		year: "2016",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description: "EU referendum results by local authority counting area.",
 	},
 	{
 		name: "Population Estimates",
@@ -63,6 +74,18 @@ const datasets: Dataset[] = [
 			"Ethnic group breakdown by local authority district for England and Wales.",
 	},
 	{
+		name: "Qualifications",
+		source: "Office for National Statistics",
+		sourceUrl:
+			"https://www.ons.gov.uk/datasets/TS067/editions/2021/versions/3",
+		year: "2021",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Highest level of qualification breakdown by local authority district for England and Wales (Census 2021).",
+	},
+	{
 		name: "House Price",
 		source: "Office for National Statistics",
 		sourceUrl:
@@ -72,17 +95,6 @@ const datasets: Dataset[] = [
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description: "Median house price paid by ward for England and Wales.",
-	},
-	{
-		name: "EU Referendum Results",
-		source: "Electoral Commission",
-		sourceUrl:
-			"https://www.electoralcommission.org.uk/research-reports-and-data/our-reports-and-data-past-elections-and-referendums/results-and-turnout-eu-referendum",
-		year: "2016",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description: "EU referendum results by local authority counting area.",
 	},
 	{
 		name: "Income",
@@ -95,6 +107,29 @@ const datasets: Dataset[] = [
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
 			"Earnings estimates by local authority for England and Wales.",
+	},
+	{
+		name: "Unemployment",
+		source: "Office for National Statistics",
+		sourceUrl:
+			"https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/modelledunemploymentforlocalandunitaryauthoritiesm01/current",
+		year: "2021",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Model-based unemployment rate estimates by local authority for Great Britain.",
+	},
+	{
+		name: "Claimant Count",
+		source: "Office for National Statistics",
+		sourceUrl: "https://www.nomisweb.co.uk/datasets/ucjsa",
+		year: "2026",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Claimants of Universal Credit and Jobseeker's Allowance by local authority district for Great Britain.",
 	},
 	{
 		name: "Crime",
@@ -121,6 +156,41 @@ const datasets: Dataset[] = [
 			"Deprivation scores, ranks and deciles by small area (LSOA) for England.",
 	},
 	{
+		name: "Scottish Index of Multiple Deprivation",
+		source: "Scottish Government",
+		sourceUrl:
+			"https://www.gov.scot/collections/scottish-index-of-multiple-deprivation-2020/",
+		year: "2020",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Deprivation scores, ranks and quintiles by data zone for Scotland.",
+	},
+	{
+		name: "Welsh Index of Multiple Deprivation",
+		source: "Welsh Government",
+		sourceUrl: "https://www.gov.wales/welsh-index-multiple-deprivation",
+		year: "2019",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Deprivation scores, ranks and deciles by lower super output area for Wales.",
+	},
+	{
+		name: "Northern Ireland Multiple Deprivation Measure",
+		source: "Northern Ireland Statistics and Research Agency",
+		sourceUrl:
+			"https://www.nisra.gov.uk/statistics/deprivation/northern-ireland-multiple-deprivation-measure-2017-nimdm2017",
+		year: "2017",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Deprivation scores, ranks and deciles by super output area for Northern Ireland.",
+	},
+	{
 		name: "Life Expectancy",
 		source: "Office for National Statistics",
 		sourceUrl:
@@ -131,6 +201,54 @@ const datasets: Dataset[] = [
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
 			"Life expectancy and healthy life expectancy estimates by local area for England and Wales.",
+	},
+	{
+		name: "NHS Waiting Times",
+		source: "NHS England",
+		sourceUrl:
+			"https://www.england.nhs.uk/statistics/statistical-work-areas/rtt-waiting-times/",
+		year: "2026",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Referral to treatment waiting times by Integrated Care Board for England.",
+	},
+	{
+		name: "School Performance (KS4)",
+		source: "Department for Education",
+		sourceUrl:
+			"https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance",
+		year: "2024",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Key Stage 4 performance measures (GCSE results) by local authority district for England.",
+	},
+	{
+		name: "Air Quality",
+		source: "Department for Environment, Food and Rural Affairs",
+		sourceUrl:
+			"https://www.gov.uk/government/statistics/air-quality-statistics",
+		year: "2022",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Annual mean concentrations of nitrogen dioxide (NO2) by local authority district.",
+	},
+	{
+		name: "Broadband Coverage",
+		source: "Ofcom",
+		sourceUrl:
+			"https://www.ofcom.org.uk/research-and-data/telecoms-research/connected-nations",
+		year: "2025",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Fixed broadband coverage by local authority district across the UK.",
 	},
 	{
 		name: "Westminster Parliamentary Wards (Boundaries)",
