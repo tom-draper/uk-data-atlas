@@ -25,4 +25,5 @@ export interface SIMDDataset {
 export interface AggregatedSIMDData {
 	averageSIMDRank: number;
 	averageSIMDQuintile: number;
+	averageSIMDDecile: number;
 }

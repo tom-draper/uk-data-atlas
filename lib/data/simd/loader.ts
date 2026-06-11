@@ -110,6 +110,7 @@ export async function loadSIMD(
 		councilStats[code] = {
 			averageSIMDRank: dzs.reduce((s, r) => s + r.simdRank, 0) / dzs.length,
 			averageSIMDQuintile: dzs.reduce((s, r) => s + r.simdQuintile, 0) / dzs.length,
+			averageSIMDDecile: dzs.reduce((s, r) => s + r.simdDecile, 0) / dzs.length,
 		};
 	}
 
