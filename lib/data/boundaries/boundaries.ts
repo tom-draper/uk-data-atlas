@@ -69,7 +69,7 @@ export const GEOJSON_PATHS = {
 		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.topojson",
 		// ),
 		2016: withCDN(
-			"/data/boundaries/lad/LAD_Dec_2016_GB_BGC_2022_699407162867034067.topojson",
+			"/data/boundaries/lad/LAD_Dec_2016_GB_BGC_WGS84.topojson",
 		),
 	},
 	lsoa: {

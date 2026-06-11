@@ -155,7 +155,11 @@ export class LayerManager {
 		paint: FillPaintConfig,
 		visibility: MapOptions["visibility"],
 	): void {
-		if (!this.map.isStyleLoaded()) return;
+		const styleLoaded = this.map.isStyleLoaded();
+		const sourceExists = !!this.map.getSource(SOURCE_ID);
+		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
+		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
+		if (!styleLoaded) return;
 
 		const overlayOpacity = visibility.overlayOpacity ?? 0.6;
 
@@ -181,13 +185,10 @@ export class LayerManager {
 			lineOpacity = visibility.hideBorders ? 0 : 0.05;
 		}
 
-		const sourceExists = !!this.map.getSource(SOURCE_ID);
-		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
-		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
-
 		if (sourceExists && fillLayerExists && lineLayerExists) {
 			// Update source data in-place to avoid remove/add flash
-			(this.map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource).setData(geojson as any);
+			const src = this.map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource;
+			src.setData(geojson as any);
 			this.map.setPaintProperty(FILL_LAYER_ID, "fill-color", fillColor);
 			this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity);
 			this.map.setPaintProperty(LINE_LAYER_ID, "line-color", lineColor);
