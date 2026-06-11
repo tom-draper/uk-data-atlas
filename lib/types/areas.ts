@@ -10,6 +10,8 @@ type AreaMap = {
 	constituency: GeneralElectionConstituencyData;
 	localAuthority: LocalAuthorityData;
 	lsoa: null;
+	dataZone: null;
+	superOutputArea: null;
 };
 
 export type SelectedArea = {

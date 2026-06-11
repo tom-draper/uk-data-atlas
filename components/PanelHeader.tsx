@@ -79,6 +79,18 @@ function panelHeaderDetails(
 				subtitle: "LSOA",
 				code: selectedArea.code,
 			};
+		case "dataZone":
+			return {
+				title: selectedArea.name || selectedArea.code,
+				subtitle: "Data Zone",
+				code: selectedArea.code,
+			};
+		case "superOutputArea":
+			return {
+				title: selectedArea.name || selectedArea.code,
+				subtitle: "Super Output Area",
+				code: selectedArea.code,
+			};
 	}
 }
 
