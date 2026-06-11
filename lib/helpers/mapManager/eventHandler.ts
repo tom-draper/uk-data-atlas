@@ -88,6 +88,8 @@ export class EventHandler {
 	}
 
 	nameProp(codeProp: string) {
+		if (codeProp === "SOA_CODE") return "SOA_LABEL";
+		if (codeProp === "DataZone") return "Name";
 		return codeProp.replace(/cd$/i, "NM");
 	}
 
@@ -96,7 +98,9 @@ export class EventHandler {
 		if (codeProp.toUpperCase().startsWith("WD")) return "ward";
 		if (codeProp.toUpperCase().startsWith("PCON")) return "constituency";
 		if (codeProp.toUpperCase().startsWith("LSOA")) return "lsoa";
-		return "ward"; // default
+		if (codeProp === "SOA_CODE" || codeProp === "SOA2011" || codeProp === "SOA") return "superOutputArea";
+		if (codeProp === "DataZone") return "dataZone";
+		return "ward";
 	}
 
 	private handleMouseMove(
