@@ -28,12 +28,17 @@ interface SIMDChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const QUINTILE_COLORS = [
+const DECILE_COLORS = [
 	"#15803d", // 1 - least deprived
-	"#4ade80", // 2
-	"#eab308", // 3
-	"#f97316", // 4
-	"#dc2626", // 5 - most deprived
+	"#16a34a", // 2
+	"#22c55e", // 3
+	"#4ade80", // 4
+	"#a3e635", // 5
+	"#eab308", // 6
+	"#f59e0b", // 7
+	"#f97316", // 8
+	"#ef4444", // 9
+	"#dc2626", // 10 - most deprived
 ];
 
 function computeSimdStats(
@@ -73,15 +78,15 @@ export default function SIMDChart({
 	const isActive =
 		activeDataset?.type === "simd" && activeDataset.id === dataset?.id;
 
-	const quintile = simdStats
-		? Math.round(simdStats.averageSIMDQuintile)
+	const decile = simdStats
+		? Math.round(simdStats.averageSIMDDecile)
 		: null;
-	const displayQuintile = quintile ? 6 - quintile : null;
-	const quintileColor = displayQuintile ? QUINTILE_COLORS[displayQuintile - 1] : "#9ca3af";
+	const displayDecile = decile ? 11 - decile : null;
+	const decileColor = displayDecile ? DECILE_COLORS[displayDecile - 1] : "#9ca3af";
 	const hasData = simdStats !== null;
 
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		hasData ? quintileColor : null,
+		hasData ? decileColor : null,
 		isActive,
 		isDark,
 	);
@@ -117,20 +122,20 @@ export default function SIMDChart({
 						<div className="shrink-0 w-8 text-right leading-none mt-[-2px]">
 							<span
 								className="text-3xl font-bold leading-none"
-								style={{ color: quintileColor }}
+								style={{ color: decileColor }}
 							>
-								{displayQuintile}
+								{displayDecile}
 							</span>
 						</div>
 						<div className="flex-1 flex flex-col gap-1.5">
 							<div className="flex gap-[2px]">
-								{QUINTILE_COLORS.map((color, i) => (
+								{DECILE_COLORS.map((color, i) => (
 									<div
 										key={i}
 										className="flex-1 h-3 rounded-[2px]"
 										style={{
 											backgroundColor:
-												displayQuintile === i + 1
+												displayDecile === i + 1
 													? color
 													: isDark
 														? "rgba(255,255,255,0.1)"

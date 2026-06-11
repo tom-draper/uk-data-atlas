@@ -639,6 +639,7 @@ export class StatsCalculator {
 		);
 		let totalRank = 0;
 		let totalQuintile = 0;
+		let totalDecile = 0;
 		let count = 0;
 
 		for (const feature of geojson.features) {
@@ -647,6 +648,7 @@ export class StatsCalculator {
 			if (record) {
 				totalRank += record.simdRank;
 				totalQuintile += record.simdQuintile;
+				totalDecile += record.simdDecile;
 				count++;
 			}
 		}
@@ -659,6 +661,7 @@ export class StatsCalculator {
 		const stats: AggregatedSIMDData = {
 			averageSIMDRank: totalRank / count,
 			averageSIMDQuintile: totalQuintile / count,
+			averageSIMDDecile: totalDecile / count,
 		};
 
 		this.cache.set(cacheKey, stats);
