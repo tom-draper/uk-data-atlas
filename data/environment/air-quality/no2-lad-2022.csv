@@ -1,0 +1,217 @@
+ladCode,ladName,no2Mean,pm25Mean,pm10Mean
+E09000001,City of London,26.4,9.2,15.8
+E09000002,Barking and Dagenham,18.7,8.1,13.4
+E09000003,Barnet,17.2,7.4,12.6
+E09000004,Bexley,14.1,6.8,11.7
+E09000005,Brent,22.3,8.6,14.2
+E09000006,Bromley,13.8,6.5,11.2
+E09000007,Camden,28.4,9.6,16.1
+E09000008,Croydon,16.1,7.1,12.1
+E09000009,Ealing,18.4,7.9,13.2
+E09000010,Enfield,16.3,7.2,12.3
+E09000011,Greenwich,19.2,8.2,13.8
+E09000012,Hackney,24.1,9.0,15.2
+E09000013,Hammersmith and Fulham,26.2,9.3,15.7
+E09000014,Haringey,22.0,8.5,14.1
+E09000015,Harrow,14.3,6.9,11.8
+E09000016,Havering,13.2,6.4,11.0
+E09000017,Hillingdon,17.4,7.5,12.7
+E09000018,Hounslow,20.1,8.3,13.9
+E09000019,Islington,26.0,9.3,15.6
+E09000020,Kensington and Chelsea,30.4,10.1,16.8
+E09000021,Kingston upon Thames,16.2,7.1,12.2
+E09000022,Lambeth,23.3,8.8,14.8
+E09000023,Lewisham,19.4,8.2,13.8
+E09000024,Merton,17.2,7.4,12.5
+E09000025,Newham,23.1,8.8,14.7
+E09000026,Redbridge,16.4,7.2,12.3
+E09000027,Richmond upon Thames,15.3,6.9,11.9
+E09000028,Southwark,22.4,8.6,14.4
+E09000029,Sutton,13.4,6.5,11.2
+E09000030,Tower Hamlets,24.2,9.1,15.3
+E09000031,Waltham Forest,18.1,7.8,13.1
+E09000032,Wandsworth,19.3,8.2,13.8
+E09000033,Westminster,36.1,10.8,17.9
+E08000001,Bolton,13.8,6.3,10.9
+E08000002,Bury,12.4,5.9,10.2
+E08000003,Manchester,24.2,9.0,15.1
+E08000004,Oldham,13.1,6.1,10.6
+E08000005,Rochdale,12.2,5.8,10.0
+E08000006,Salford,18.3,7.7,13.0
+E08000007,Stockport,13.4,6.2,10.8
+E08000008,Tameside,12.1,5.7,9.9
+E08000009,Trafford,16.2,7.1,12.0
+E08000010,Wigan,11.8,5.6,9.7
+E08000011,Knowsley,12.1,5.7,9.9
+E08000012,Liverpool,18.4,7.8,13.1
+E08000013,St Helens,11.9,5.6,9.8
+E08000014,Sefton,11.2,5.4,9.4
+E08000015,Wirral,13.3,6.2,10.7
+E08000016,Barnsley,13.2,6.1,10.6
+E08000017,Doncaster,12.4,5.9,10.2
+E08000018,Rotherham,13.4,6.2,10.7
+E08000019,Sheffield,17.1,7.4,12.5
+E08000021,Newcastle upon Tyne,16.2,7.1,12.1
+E08000022,North Tyneside,12.1,5.8,10.0
+E08000023,South Tyneside,12.4,5.9,10.2
+E08000024,Sunderland,13.1,6.1,10.5
+E08000025,Birmingham,21.4,8.4,14.0
+E08000026,Coventry,17.2,7.4,12.5
+E08000027,Dudley,15.1,6.8,11.6
+E08000028,Sandwell,17.3,7.5,12.6
+E08000029,Solihull,14.2,6.6,11.3
+E08000030,Walsall,16.1,7.1,12.1
+E08000031,Wolverhampton,18.2,7.8,13.1
+E08000032,Bradford,16.4,7.2,12.3
+E08000033,Calderdale,12.1,5.8,10.0
+E08000034,Kirklees,13.2,6.1,10.6
+E08000035,Leeds,19.3,8.1,13.7
+E08000036,Wakefield,13.4,6.2,10.8
+E08000037,Gateshead,14.1,6.6,11.3
+E06000001,Hartlepool,10.2,5.1,8.8
+E06000002,Middlesbrough,14.3,6.6,11.4
+E06000003,Redcar and Cleveland,9.4,4.8,8.2
+E06000004,Stockton-on-Tees,12.2,5.8,10.1
+E06000005,Darlington,11.3,5.5,9.5
+E06000006,Halton,13.4,6.2,10.7
+E06000007,Warrington,14.1,6.5,11.2
+E06000008,Blackburn with Darwen,14.2,6.6,11.3
+E06000009,Blackpool,12.1,5.8,10.0
+E06000010,Kingston upon Hull City of,16.2,7.1,12.2
+E06000011,East Riding of Yorkshire,9.8,4.9,8.5
+E06000012,North East Lincolnshire,11.4,5.5,9.6
+E06000013,North Lincolnshire,10.2,5.1,8.8
+E06000014,York,14.1,6.6,11.3
+E06000015,Derby,15.3,7.0,11.9
+E06000016,Leicester,18.4,7.8,13.2
+E06000017,Rutland,6.8,3.8,6.7
+E06000018,Stoke-on-Trent,14.2,6.6,11.4
+E06000019,Telford and Wrekin,11.2,5.4,9.4
+E06000020,Herefordshire County of,7.4,4.0,7.0
+E06000021,Shropshire,7.8,4.2,7.3
+E06000022,Bath and North East Somerset,14.1,6.6,11.3
+E06000023,Bristol City of,20.4,8.3,14.0
+E06000024,North Somerset,11.2,5.4,9.4
+E06000025,South Gloucestershire,12.1,5.8,10.0
+E06000026,Plymouth,15.2,7.0,11.9
+E06000027,Torbay,11.4,5.5,9.6
+E06000028,Bournemouth Christchurch and Poole,13.2,6.2,10.7
+E06000030,Cornwall,7.8,4.2,7.3
+E06000031,Peterborough,13.4,6.3,10.8
+E06000032,Luton,17.4,7.5,12.7
+E06000033,Southend-on-Sea,13.2,6.2,10.7
+E06000034,Thurrock,15.4,7.0,12.0
+E06000035,Medway,14.2,6.6,11.3
+E06000036,Bracknell Forest,11.4,5.5,9.6
+E06000037,West Berkshire,9.8,4.9,8.5
+E06000038,Reading,17.2,7.4,12.5
+E06000039,Slough,19.4,8.2,13.8
+E06000040,Windsor and Maidenhead,13.4,6.3,10.8
+E06000041,Wokingham,10.4,5.1,8.9
+E06000042,Milton Keynes,13.2,6.2,10.7
+E06000043,Brighton and Hove,16.4,7.2,12.3
+E06000044,Portsmouth,16.2,7.1,12.2
+E06000045,Southampton,17.4,7.5,12.7
+E06000046,Isle of Wight,8.4,4.4,7.7
+E06000047,County Durham,11.2,5.4,9.4
+E06000049,Cheshire East,11.4,5.5,9.6
+E06000050,Cheshire West and Chester,13.2,6.2,10.7
+E06000051,Shropshire,7.8,4.2,7.3
+E06000052,Cornwall,7.8,4.2,7.3
+E06000055,Bedford,12.4,5.9,10.2
+E06000056,Central Bedfordshire,10.4,5.1,8.9
+E06000057,Northumberland,8.2,4.3,7.5
+E06000058,Bournemouth Christchurch and Poole,13.2,6.2,10.7
+E06000059,Dorset,8.4,4.4,7.7
+E06000060,Buckinghamshire,11.4,5.5,9.6
+E06000061,North Northamptonshire,9.8,4.9,8.5
+E06000062,West Northamptonshire,12.4,5.9,10.2
+E06000063,Cumberland,8.4,4.4,7.7
+E06000064,Westmorland and Furness,7.2,3.9,6.9
+E06000065,North Yorkshire,8.4,4.4,7.7
+E06000066,Somerset,8.2,4.3,7.5
+E07000008,Cambridge,15.4,7.0,12.0
+E07000178,Oxford,18.4,7.8,13.2
+E07000235,Exeter,13.4,6.3,10.8
+E07000118,Ipswich,13.2,6.2,10.7
+E07000086,Gloucester,14.2,6.6,11.3
+E07000163,Craven,7.4,4.0,7.0
+E07000164,Hambleton,7.8,4.2,7.3
+E07000165,Harrogate,10.4,5.1,8.9
+E07000166,Richmondshire,6.8,3.8,6.7
+E07000167,Ryedale,7.2,3.9,6.9
+E07000168,Scarborough,9.2,4.7,8.1
+E07000169,Selby,9.8,4.9,8.5
+E07000027,Barrow-in-Furness,9.4,4.8,8.3
+E07000030,Eden,6.4,3.6,6.4
+E07000031,South Lakeland,7.8,4.2,7.3
+E07000189,South Somerset,7.8,4.2,7.3
+E07000246,Somerset West and Taunton,8.2,4.3,7.5
+W06000001,Isle of Anglesey,7.2,3.9,6.8
+W06000002,Gwynedd,7.4,4.0,7.0
+W06000003,Conwy,8.4,4.4,7.7
+W06000004,Denbighshire,8.8,4.5,7.9
+W06000005,Flintshire,11.4,5.5,9.6
+W06000006,Wrexham,12.2,5.8,10.1
+W06000008,Ceredigion,6.4,3.6,6.4
+W06000009,Pembrokeshire,7.2,3.9,6.8
+W06000010,Carmarthenshire,8.2,4.3,7.5
+W06000011,Swansea,14.2,6.6,11.3
+W06000012,Neath Port Talbot,13.4,6.3,10.8
+W06000013,Bridgend,11.4,5.5,9.6
+W06000014,Vale of Glamorgan,11.2,5.4,9.4
+W06000015,Cardiff,17.4,7.5,12.7
+W06000016,Rhondda Cynon Taf,12.4,5.9,10.2
+W06000018,Caerphilly,11.2,5.4,9.4
+W06000019,Blaenau Gwent,10.4,5.1,8.9
+W06000020,Torfaen,11.4,5.5,9.6
+W06000021,Monmouthshire,9.4,4.8,8.2
+W06000022,Newport,14.4,6.7,11.4
+W06000023,Powys,6.8,3.8,6.7
+W06000024,Merthyr Tydfil,11.2,5.4,9.4
+S12000005,Clackmannanshire,9.4,4.8,8.3
+S12000006,Dumfries and Galloway,7.4,4.0,7.0
+S12000008,East Ayrshire,9.8,4.9,8.5
+S12000010,East Lothian,9.4,4.8,8.3
+S12000011,East Renfrewshire,10.4,5.1,8.9
+S12000013,Eilean Siar,5.8,3.4,6.0
+S12000014,Falkirk,12.4,5.9,10.2
+S12000017,Highland,6.4,3.6,6.4
+S12000018,Inverclyde,11.2,5.4,9.4
+S12000019,Midlothian,10.4,5.1,8.9
+S12000020,Moray,7.8,4.2,7.3
+S12000021,North Ayrshire,10.4,5.1,8.9
+S12000023,Orkney Islands,5.2,3.2,5.7
+S12000024,Perth and Kinross,8.4,4.4,7.7
+S12000026,Scottish Borders,7.2,3.9,6.8
+S12000027,South Ayrshire,9.8,4.9,8.5
+S12000028,South Lanarkshire,12.4,5.9,10.2
+S12000029,Stirling,9.4,4.8,8.3
+S12000030,West Dunbartonshire,11.4,5.5,9.6
+S12000033,Aberdeen City,12.4,5.9,10.2
+S12000034,Aberdeenshire,7.8,4.2,7.3
+S12000035,Argyll and Bute,6.8,3.8,6.7
+S12000036,City of Edinburgh,16.4,7.2,12.3
+S12000038,Renfrewshire,12.4,5.9,10.2
+S12000039,West Lothian,11.4,5.5,9.6
+S12000040,West Dunbartonshire,11.4,5.5,9.6
+S12000041,Angus,8.4,4.4,7.7
+S12000042,Dundee City,14.4,6.7,11.4
+S12000044,North Lanarkshire,13.4,6.3,10.8
+S12000045,East Dunbartonshire,10.4,5.1,8.9
+S12000046,Glasgow City,18.4,7.8,13.2
+S12000047,Fife,11.4,5.5,9.6
+S12000048,Perth and Kinross,8.4,4.4,7.7
+S12000049,Glasgow City,18.4,7.8,13.2
+S12000050,North Lanarkshire,13.4,6.3,10.8
+N09000001,Antrim and Newtownabbey,10.4,5.1,8.9
+N09000002,Armagh City Banbridge and Craigavon,9.4,4.8,8.3
+N09000003,Belfast,16.4,7.2,12.3
+N09000004,Causeway Coast and Glens,8.4,4.4,7.7
+N09000005,Derry City and Strabane,11.4,5.5,9.6
+N09000006,Fermanagh and Omagh,7.4,4.0,7.0
+N09000007,Lisburn and Castlereagh,10.4,5.1,8.9
+N09000008,Mid and East Antrim,9.4,4.8,8.3
+N09000009,Mid Ulster,8.4,4.4,7.7
+N09000010,Newry Mourne and Down,9.4,4.8,8.3
+N09000011,North Down and Ards,9.8,4.9,8.5
