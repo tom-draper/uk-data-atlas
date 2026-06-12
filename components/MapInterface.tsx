@@ -153,7 +153,10 @@ export default function MapInterface({
 		setSelectedArea,
 	});
 
-	const activeDataset = getActiveDataset(datasets, activeViz, customDataset);
+	const activeDataset = useMemo(
+		() => getActiveDataset(datasets, activeViz, customDataset),
+		[datasets, activeViz, customDataset],
+	);
 
 	const rawGeojson = !activeDataset
 		? null

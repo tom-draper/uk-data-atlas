@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import Papa from "papaparse";
 import { createPortal } from "react-dom";
 import { X, Upload, AlertCircle } from "lucide-react";
@@ -825,18 +825,21 @@ export default function CustomSection({
 	const [isOpen, setIsOpen] = useState(false);
 	const isDark = useIsDark();
 
-	const aggregatedData = customDataset
-		? aggregateDataset(
-				{
-					datasets: { [customDataset.year]: customDataset },
-					boundaryType: customDataset.boundaryType,
-					calculateStats: (mm, g, d, loc, id) => mm.calculateCustomDatasetStats(g, d, loc, id),
-				},
-				mapManager,
-				boundaryData,
-				location,
-		  )
-		: null;
+	const aggregatedData = useMemo(
+		() => customDataset
+			? aggregateDataset(
+					{
+						datasets: { [customDataset.year]: customDataset },
+						boundaryType: customDataset.boundaryType,
+						calculateStats: (mm, g, d, loc, id) => mm.calculateCustomDatasetStats(g, d, loc, id),
+					},
+					mapManager,
+					boundaryData,
+					location,
+			  )
+			: null,
+		[customDataset, mapManager, boundaryData, location],
+	);
 
 	const handleCustomDatasetApply = (data: UploadData) => {
 		if (data.boundaryYear === null || data.boundaryType === null) {

@@ -20,6 +20,7 @@ import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import LocalElectionResultChart from "./LocalElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { useMemo } from "react";
 import {
 	useChartVisibility,
 	ChartKey,
@@ -288,9 +289,9 @@ export default function LocalElectionResultChartSection({
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
 	const { excludedLocalParties } = useExcludedCategories();
-	const aggregatedData = aggregateDataset(
-		{ datasets: availableDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateLocalElectionStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
+	const aggregatedData = useMemo(
+		() => aggregateDataset({ datasets: availableDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateLocalElectionStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableDatasets, mapManager, boundaryData, location],
 	) as Record<number, AggregatedLocalElectionData> | null;
 	const yearData = useLocalElectionData(
 		availableDatasets,

@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz, Dataset, LifeExpectancyDataset, NHSWaitingDataset, SelectedArea } from "@lib/types";
@@ -37,33 +38,29 @@ export default function HealthSection({
 	const showHLE = visibility["health-healthyLifeExpectancy"];
 	const showNHS = visibility["health-nhsWaiting"];
 
-	if (!showLE && !showHLE && !showNHS) return null;
-
-	const aggregatedLifeExpectancyData = aggregateDataset(
-		{
-			datasets: availableLifeExpectancyDatasets,
-			boundaryType: "localAuthority",
-			keyBy: "id",
-			calculateStats: (mm, g, d, loc, id) => mm.calculateLifeExpectancyStats(g, d, loc, id),
-		},
-		mapManager,
-		boundaryData,
-		location,
+	const aggregatedLifeExpectancyData = useMemo(
+		() => aggregateDataset(
+			{ datasets: availableLifeExpectancyDatasets, boundaryType: "localAuthority", keyBy: "id", calculateStats: (mm, g, d, loc, id) => mm.calculateLifeExpectancyStats(g, d, loc, id) },
+			mapManager, boundaryData, location,
+		),
+		[availableLifeExpectancyDatasets, mapManager, boundaryData, location],
 	);
-
-	const aggregatedNHSWaitingData = aggregateDataset(
-		{
-			datasets: availableNHSWaitingDatasets,
-			boundaryType: "localAuthority",
-			calculateStats: (mm, g, _d, loc, id) => {
-				const ds = availableNHSWaitingDatasets[id];
-				return ds ? mm.calculateNHSWaitingStats(g, ds, loc, id) : null;
+	const aggregatedNHSWaitingData = useMemo(
+		() => aggregateDataset(
+			{
+				datasets: availableNHSWaitingDatasets,
+				boundaryType: "localAuthority",
+				calculateStats: (mm, g, _d, loc, id) => {
+					const ds = availableNHSWaitingDatasets[id];
+					return ds ? mm.calculateNHSWaitingStats(g, ds, loc, id) : null;
+				},
 			},
-		},
-		mapManager,
-		boundaryData,
-		location,
+			mapManager, boundaryData, location,
+		),
+		[availableNHSWaitingDatasets, mapManager, boundaryData, location],
 	);
+
+	if (!showLE && !showHLE && !showNHS) return null;
 
 	const leIds = Object.keys(availableLifeExpectancyDatasets).sort();
 

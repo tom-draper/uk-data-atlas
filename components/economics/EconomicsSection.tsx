@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz, ClaimantCountDataset, CrimeDataset, Dataset, HousePriceDataset, IncomeDataset, SelectedArea, UnemploymentDataset } from "@lib/types";
@@ -51,36 +52,39 @@ export default function EconomicsSection({
 	const showClaimantCount = visibility["economics-claimantCount"];
 	const showUnemployment = visibility["economics-unemployment"];
 
-	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment) return null;
-
-	const aggregatedHousePriceData = aggregateDataset(
-		{ datasets: availableHousePriceDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateHousePriceStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
+	const aggregatedHousePriceData = useMemo(
+		() => aggregateDataset({ datasets: availableHousePriceDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateHousePriceStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableHousePriceDatasets, mapManager, boundaryData, location],
 	);
-	const aggregatedIncomeData = aggregateDataset(
-		{ datasets: availableIncomeDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateIncomeStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
+	const aggregatedIncomeData = useMemo(
+		() => aggregateDataset({ datasets: availableIncomeDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateIncomeStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableIncomeDatasets, mapManager, boundaryData, location],
 	);
-	const aggregatedCrimeData = aggregateDataset(
-		{ datasets: availableCrimeDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateCrimeStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
+	const aggregatedCrimeData = useMemo(
+		() => aggregateDataset({ datasets: availableCrimeDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateCrimeStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableCrimeDatasets, mapManager, boundaryData, location],
 	);
-	const aggregatedClaimantCountData = aggregateDataset(
-		{ datasets: availableClaimantCountDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateClaimantCountStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
+	const aggregatedClaimantCountData = useMemo(
+		() => aggregateDataset({ datasets: availableClaimantCountDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateClaimantCountStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableClaimantCountDatasets, mapManager, boundaryData, location],
 	);
-	const aggregatedUnemploymentData = aggregateDataset(
-		{
-			datasets: availableUnemploymentDatasets,
-			boundaryType: "localAuthority",
-			keyBy: "id",
-			calculateStats: (mm, g, _d, loc, id) => {
-				const ds = availableUnemploymentDatasets[id];
-				return ds ? mm.calculateUnemploymentStats(g, ds, loc, id) : null;
+	const aggregatedUnemploymentData = useMemo(
+		() => aggregateDataset(
+			{
+				datasets: availableUnemploymentDatasets,
+				boundaryType: "localAuthority",
+				keyBy: "id",
+				calculateStats: (mm, g, _d, loc, id) => {
+					const ds = availableUnemploymentDatasets[id];
+					return ds ? mm.calculateUnemploymentStats(g, ds, loc, id) : null;
+				},
 			},
-		},
-		mapManager, boundaryData, location,
+			mapManager, boundaryData, location,
+		),
+		[availableUnemploymentDatasets, mapManager, boundaryData, location],
 	);
+
+	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>

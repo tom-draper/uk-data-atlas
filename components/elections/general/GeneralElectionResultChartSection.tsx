@@ -22,6 +22,7 @@ import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import GeneralElectionResultChart from "./GeneralElectionResultChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { useMemo } from "react";
 import {
 	useChartVisibility,
 	ChartKey,
@@ -181,9 +182,9 @@ export default function GeneralElectionResultChartSection({
 }: GeneralElectionResultChartSectionProps) {
 	const { visibility } = useChartVisibility();
 	const { excludedGeneralParties } = useExcludedCategories();
-	const aggregatedData = aggregateDataset(
-		{ datasets: availableDatasets, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateGeneralElectionStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
+	const aggregatedData = useMemo(
+		() => aggregateDataset({ datasets: availableDatasets, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateGeneralElectionStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableDatasets, mapManager, boundaryData, location],
 	) as Record<number, AggregatedGeneralElectionData> | null;
 	const yearData = useElectionChartData(
 		availableDatasets,

@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz, BroadbandDataset, Dataset, SelectedArea } from "@lib/types";
@@ -35,18 +36,12 @@ export default function TelecomsSection({
 	const isDark = useIsDark();
 	const showBroadband = visibility["telecoms-broadband"];
 
-	if (!showBroadband) return null;
-
-	const aggregatedBroadbandData = aggregateDataset(
-		{
-			datasets: availableBroadbandDatasets,
-			boundaryType: "localAuthority",
-			calculateStats: (mm, g, d, loc, id) => mm.calculateBroadbandStats(g, d, loc, id),
-		},
-		mapManager,
-		boundaryData,
-		location,
+	const aggregatedBroadbandData = useMemo(
+		() => aggregateDataset({ datasets: availableBroadbandDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateBroadbandStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableBroadbandDatasets, mapManager, boundaryData, location],
 	);
+
+	if (!showBroadband) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>

@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { panelTheme } from "@/lib/helpers/panelTheme";
@@ -36,18 +37,12 @@ export default function EnvironmentSection({
 	const showAirQuality = visibility["environment-airQuality"];
 	const airQualityIds = Object.keys(availableAirQualityDatasets).sort();
 
-	if (!showAirQuality || airQualityIds.length === 0) return null;
-
-	const aggregatedAirQualityData = aggregateDataset(
-		{
-			datasets: availableAirQualityDatasets,
-			boundaryType: "localAuthority",
-			calculateStats: (mm, g, d, loc, id) => mm.calculateAirQualityStats(g, d, loc, id),
-		},
-		mapManager,
-		boundaryData,
-		location,
+	const aggregatedAirQualityData = useMemo(
+		() => aggregateDataset({ datasets: availableAirQualityDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateAirQualityStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableAirQualityDatasets, mapManager, boundaryData, location],
 	);
+
+	if (!showAirQuality || airQualityIds.length === 0) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>

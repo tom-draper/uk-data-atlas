@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz, Dataset, IMDDataset, NIMDMDataset, SIMDDataset, SelectedArea, WIMDDataset } from "@lib/types";
@@ -44,24 +45,24 @@ export default function DeprivationSection({
 	const showWIMD = visibility["deprivation-wimd"];
 	const showNIMDM = visibility["deprivation-nimdm"];
 
-	if (!showIMD && !showSIMD && !showWIMD && !showNIMDM) return null;
+	const aggregatedIMDData = useMemo(
+		() => aggregateDataset({ datasets: availableIMDDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateIMDStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableIMDDatasets, mapManager, boundaryData, location],
+	);
+	const aggregatedSIMDData = useMemo(
+		() => aggregateDataset({ datasets: availableSIMDDatasets, boundaryType: "dataZone", calculateStats: (mm, g, d, loc, id) => mm.calculateSIMDStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableSIMDDatasets, mapManager, boundaryData, location],
+	);
+	const aggregatedWIMDData = useMemo(
+		() => aggregateDataset({ datasets: availableWIMDDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateWIMDStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableWIMDDatasets, mapManager, boundaryData, location],
+	);
+	const aggregatedNIMDMData = useMemo(
+		() => aggregateDataset({ datasets: availableNIMDMDatasets, boundaryType: "superOutputArea", calculateStats: (mm, g, d, loc, id) => mm.calculateNIMDMStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableNIMDMDatasets, mapManager, boundaryData, location],
+	);
 
-	const aggregatedIMDData = aggregateDataset(
-		{ datasets: availableIMDDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateIMDStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
-	);
-	const aggregatedSIMDData = aggregateDataset(
-		{ datasets: availableSIMDDatasets, boundaryType: "dataZone", calculateStats: (mm, g, d, loc, id) => mm.calculateSIMDStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
-	);
-	const aggregatedWIMDData = aggregateDataset(
-		{ datasets: availableWIMDDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateWIMDStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
-	);
-	const aggregatedNIMDMData = aggregateDataset(
-		{ datasets: availableNIMDMDatasets, boundaryType: "superOutputArea", calculateStats: (mm, g, d, loc, id) => mm.calculateNIMDMStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
-	);
+	if (!showIMD && !showSIMD && !showWIMD && !showNIMDM) return null;
 
 	const imdYears = Object.keys(availableIMDDatasets).map(Number).sort((a, b) => b - a);
 	const simdYears = Object.keys(availableSIMDDatasets).map(Number).sort((a, b) => b - a);
