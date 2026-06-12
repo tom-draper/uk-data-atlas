@@ -151,7 +151,7 @@ export default function WIMDChart({
 							</div>
 							<div className="flex justify-between">
 								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>least deprived</span>
-								{Number.isFinite(wimdStats.averageWIMDRank) && (
+								{selectedArea && Number.isFinite(wimdStats.averageWIMDRank) && (
 									<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>Rank {Math.round(wimdStats.averageWIMDRank).toLocaleString()}</span>
 								)}
 							</div>

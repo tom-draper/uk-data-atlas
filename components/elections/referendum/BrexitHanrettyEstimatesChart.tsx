@@ -108,9 +108,12 @@ export default function BrexitHanrettyEstimatesChart({
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10">
-				<h3 className={chartHeadingClass(isDark)}>
-					Hanretty Estimates [{dataset.year}]
-				</h3>
+				<div className="flex items-start justify-between mb-1.5 shrink-0">
+					<h3 className={chartHeadingClass(isDark)}>
+						Hanretty Estimates [{dataset.year}]
+					</h3>
+					<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
+				</div>
 
 				{!hasData ? (
 					chartsLoading ? (
