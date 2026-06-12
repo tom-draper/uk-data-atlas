@@ -152,31 +152,22 @@ export default function LegendContent({
 			return renderDynamicLegend("imd", 0, 80, 1, 70);
 
 		case "simd":
-			return renderDynamicLegend("simd", 1, 6976, 1, 6976, (v) =>
-				v <= 1
-					? "Most deprived"
-					: v >= 6975
-						? "Least deprived"
-						: `Rank ${Math.round(v).toLocaleString()}`,
-			);
+			return renderDynamicLegend("simd", 1, 6976, 1, 6976, (v) => {
+				const r = 6977 - v;
+				return r <= 1 ? "Most deprived" : r >= 6976 ? "Least deprived" : `Rank ${Math.round(r).toLocaleString()}`;
+			});
 
 		case "wimd":
-			return renderDynamicLegend("wimd", 1, 1909, 1, 1909, (v) =>
-				v <= 1
-					? "Most deprived"
-					: v >= 1908
-						? "Least deprived"
-						: `Rank ${Math.round(v).toLocaleString()}`,
-			);
+			return renderDynamicLegend("wimd", 1, 1909, 1, 1909, (v) => {
+				const r = 1910 - v;
+				return r <= 1 ? "Most deprived" : r >= 1909 ? "Least deprived" : `Rank ${Math.round(r).toLocaleString()}`;
+			});
 
 		case "nimdm":
-			return renderDynamicLegend("nimdm", 1, 890, 1, 890, (v) =>
-				v <= 1
-					? "Most deprived"
-					: v >= 889
-						? "Least deprived"
-						: `Rank ${Math.round(v).toLocaleString()}`,
-			);
+			return renderDynamicLegend("nimdm", 1, 890, 1, 890, (v) => {
+				const r = 891 - v;
+				return r <= 1 ? "Most deprived" : r >= 890 ? "Least deprived" : `Rank ${Math.round(r).toLocaleString()}`;
+			});
 
 		case "ethnicity": {
 			const opts = displayOptions.ethnicity;
