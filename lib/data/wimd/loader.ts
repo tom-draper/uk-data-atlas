@@ -45,7 +45,9 @@ export async function loadWIMD(
 	});
 
 	const records: Record<string, WIMDLSOAData> = {};
-	for (const row of data as any[]) {
+	for (const rawRow of data as any[]) {
+		const row: Record<string, any> = {};
+		for (const k of Object.keys(rawRow)) row[k.trim()] = rawRow[k];
 		const lsoaCode = pick(row, "LSOA code", "LSOA Code", "lsoa_code", "LSOA_Code", "lsoaCode");
 		if (!lsoaCode || !lsoaCode.startsWith("W")) continue;
 

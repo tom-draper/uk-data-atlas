@@ -18,6 +18,7 @@ import type {
 	SelectedArea,
 	BoundaryData,
 } from "@lib/types";
+import { LSOA_CODE_KEYS, DATA_ZONE_CODE_KEYS, SOA_CODE_KEYS } from "@/lib/data/boundaries/boundaries";
 import type { CustomDataset } from "@/lib/types/custom";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
@@ -154,11 +155,30 @@ export default function MapInterface({
 
 	const activeDataset = getActiveDataset(datasets, activeViz, customDataset);
 
-	const geojson = !activeDataset
+	const rawGeojson = !activeDataset
 		? null
 		: (boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
 				activeDataset.boundaryYear
 			] ?? null);
+
+	const geojson = useMemo(() => {
+		if (!rawGeojson || !activeDataset || !("data" in activeDataset)) return rawGeojson;
+		const dataKeys = new Set(Object.keys(activeDataset.data as Record<string, unknown>));
+		if (dataKeys.size === 0) return rawGeojson;
+		const codeKeys: readonly string[] =
+			activeDataset.boundaryType === "lsoa" ? LSOA_CODE_KEYS :
+			activeDataset.boundaryType === "dataZone" ? DATA_ZONE_CODE_KEYS :
+			activeDataset.boundaryType === "superOutputArea" ? SOA_CODE_KEYS :
+			[];
+		if (codeKeys.length === 0) return rawGeojson;
+		const firstProps = rawGeojson.features[0]?.properties as unknown as Record<string, unknown> | undefined;
+		if (!firstProps) return rawGeojson;
+		const codeKey = codeKeys.find(k => k in firstProps);
+		if (!codeKey) return rawGeojson;
+		const filtered = rawGeojson.features.filter(f => f.properties && dataKeys.has((f.properties as unknown as Record<string, unknown>)[codeKey] as string));
+		if (filtered.length === rawGeojson.features.length) return rawGeojson;
+		return { ...rawGeojson, features: filtered };
+	}, [rawGeojson, activeDataset]);
 
 	// Initialize map manager with stable callbacks
 	const mapManager = useMapManager({
