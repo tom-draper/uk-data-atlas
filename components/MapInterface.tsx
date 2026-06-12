@@ -32,8 +32,8 @@ interface MapInterfaceProps {
 	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
 	setSelectedLocation: (location: string) => void;
-	customDataset: CustomDataset | null;
-	setCustomDataset: (dataset: CustomDataset | null) => void;
+	customDatasets: CustomDataset[];
+	addCustomDataset: (dataset: CustomDataset) => void;
 	onError?: (error: Error) => void;
 }
 
@@ -43,8 +43,8 @@ export default function MapInterface({
 	setActiveViz,
 	selectedLocation,
 	setSelectedLocation,
-	customDataset,
-	setCustomDataset,
+	customDatasets,
+	addCustomDataset,
 	onError,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
@@ -79,6 +79,7 @@ export default function MapInterface({
 	const {
 		boundaryData,
 		boundaryCodes,
+		areaBank,
 		isLoading: boundariesLoading,
 		error: boundaryError,
 	} = useBoundaryData(selectedLocation, codeMapper);
@@ -154,8 +155,8 @@ export default function MapInterface({
 	});
 
 	const activeDataset = useMemo(
-		() => getActiveDataset(datasets, activeViz, customDataset),
-		[datasets, activeViz, customDataset],
+		() => getActiveDataset(datasets, activeViz, customDatasets),
+		[datasets, activeViz, customDatasets],
 	);
 
 	const rawGeojson = !activeDataset
@@ -284,6 +285,7 @@ export default function MapInterface({
 					selectedArea={selectedArea}
 					boundaryData={boundaryData}
 					boundaryCodes={boundaryCodes}
+					areaBank={areaBank}
 					mapOptions={mapOptions}
 					codeMapper={codeMapper}
 					onMapOptionsChange={handleMapOptionsChange}
@@ -296,8 +298,8 @@ export default function MapInterface({
 					mapManager={mapManager}
 					chartsLoading={chartsLoading}
 					datasets={normalizedDatasets}
-					customDataset={customDataset}
-					setCustomDataset={setCustomDataset}
+					customDatasets={customDatasets}
+					addCustomDataset={addCustomDataset}
 					onExport={handleExport}
 				/>
 			)}

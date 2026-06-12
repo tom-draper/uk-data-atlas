@@ -1,6 +1,7 @@
 import { BoundaryType } from "./boundaries";
 
 export interface CustomDataset {
+	id: string;
 	type: "custom";
 	name: string;
 	year: number;

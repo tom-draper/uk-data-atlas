@@ -1,14 +1,14 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import Papa from "papaparse";
 import { createPortal } from "react-dom";
-import { X, Upload, AlertCircle } from "lucide-react";
+import { X, Upload, AlertCircle, ChevronDown } from "lucide-react";
 import {
 	ActiveViz,
 	BoundaryType,
 	CustomDataset,
-	AggregatedCustomData,
 	BoundaryCodes,
 } from "@/lib/types";
+import { matchColumnAgainstBank, AreaEntry, AreaBank } from "@lib/data/areaBank";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
@@ -25,13 +25,6 @@ import {
 	chartHeadingClass,
 } from "@/lib/hooks/useCardAccent";
 
-interface MatchResult {
-	type: string;
-	percentage: number;
-	matchCount: number;
-	totalCodes: number;
-}
-
 interface UploadData {
 	file: string;
 	headerRow: number;
@@ -40,6 +33,7 @@ interface UploadData {
 	boundaryType: string;
 	boundaryYear: number | null;
 	year: number | null;
+	selectedEntry?: AreaEntry;
 	data: string[][];
 }
 
@@ -49,45 +43,12 @@ interface SelectedArea {
 	type: BoundaryType;
 }
 
-const BOUNDARY_TYPE_LABELS: Record<string, string> = {
-	ward: "Ward Boundaries",
-	constituency: "Westminster Parliamentary Constituency Boundaries",
-	localAuthority: "Local Authority Boundaries",
-};
-
 function parseCSV(text: string): string[][] {
 	const result = Papa.parse<string[]>(text, {
 		skipEmptyLines: true,
 		transform: (val) => val.trim(),
 	});
 	return result.data;
-}
-
-function getBoundaryLabel(type: string): string {
-	return BOUNDARY_TYPE_LABELS[type] || BOUNDARY_TYPE_LABELS.localAuthority;
-}
-
-function calculateMatches(
-	columnData: string[],
-	boundaryCodes: BoundaryCodes,
-): MatchResult[] {
-	if (!boundaryCodes || columnData.length === 0) return [];
-	const uniqueCodes = new Set(columnData.filter((code) => code?.trim()));
-	const results: MatchResult[] = [];
-	for (const [type, yearData] of Object.entries(boundaryCodes)) {
-		for (const [year, codeSet] of Object.entries(yearData)) {
-			const matchCount = [...uniqueCodes].filter((code) =>
-				codeSet.has(code),
-			).length;
-			results.push({
-				type: `${getBoundaryLabel(type)} [${year}]`,
-				percentage: (matchCount / uniqueCodes.size) * 100,
-				matchCount,
-				totalCodes: uniqueCodes.size,
-			});
-		}
-	}
-	return results.sort((a, b) => b.percentage - a.percentage);
 }
 
 function getMatchColorClass(percentage: number): string {
@@ -97,23 +58,6 @@ function getMatchColorClass(percentage: number): string {
 	return "text-gray-500/80";
 }
 
-function getMatchButtonClass(
-	isSelected: boolean,
-	hasMatches: boolean,
-	isDark: boolean,
-): string {
-	if (isSelected)
-		return isDark
-			? "bg-white/10 text-gray-200 cursor-pointer"
-			: "bg-white backdrop-blur text-gray-700 cursor-pointer";
-	if (hasMatches)
-		return isDark
-			? "border border-white/10 hover:bg-white/10 text-gray-400 cursor-pointer"
-			: "border-gray-200 opacity-80 backdrop-blur-xs hover:bg-white cursor-pointer";
-	return isDark
-		? "border border-white/5 bg-white/5 text-gray-600 opacity-50 cursor-not-allowed"
-		: "border-gray-100 bg-white/20 backdrop-blur opacity-50 cursor-not-allowed";
-}
 
 function detectHeaderRow(rows: string[][]): number {
 	if (rows.length === 0) return 0;
@@ -137,45 +81,177 @@ function detectHeaderRow(rows: string[][]): number {
 	return 0;
 }
 
-function OptionList<T extends string | number>({
-	options,
+function ColumnDropdown({
+	columns,
 	value,
 	onChange,
-	renderLabel,
+	placeholder,
 	isDark,
-	maxHeight = "max-h-32",
 }: {
-	options: T[];
-	value: T | "";
-	onChange: (v: T) => void;
-	renderLabel: (v: T, i: number) => string;
+	columns: { name: string; preview: string; index: number }[];
+	value: string;
+	onChange: (name: string) => void;
+	placeholder: string;
 	isDark: boolean;
-	maxHeight?: string;
 }) {
+	const [open, setOpen] = useState(false);
+	const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
+	const triggerRef = useRef<HTMLButtonElement>(null);
+
+	const openDropdown = () => {
+		const rect = triggerRef.current?.getBoundingClientRect();
+		if (rect) setPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+		setOpen(true);
+	};
+
 	return (
-		<div className={`rounded-md overflow-y-auto border ${maxHeight} ${isDark ? "border-white/10 bg-gray-800/60" : "border-gray-200 bg-white/40"}`}>
-			{options.map((opt, i) => {
-				const selected = opt === value;
-				return (
-					<button
-						key={i}
-						type="button"
-						onClick={() => onChange(opt)}
-						className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${
-							selected
-								? isDark
-									? "bg-indigo-600/40 text-indigo-200"
-									: "bg-indigo-100 text-indigo-800"
-								: isDark
-									? "text-gray-300 hover:bg-white/5"
-									: "text-gray-700 hover:bg-gray-100/60"
-						}`}
-					>
-						{renderLabel(opt, i)}
-					</button>
-				);
-			})}
-		</div>
+		<>
+			<button
+				ref={triggerRef}
+				type="button"
+				onClick={() => (open ? setOpen(false) : openDropdown())}
+				className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md border text-xs transition-colors ${
+					isDark
+						? `border-white/10 ${open ? "bg-white/10 border-white/20" : "bg-white/5 hover:bg-white/10"}`
+						: `border-gray-200 ${open ? "bg-white border-gray-300 shadow-sm" : "bg-white/60 hover:bg-white"}`
+				}`}
+			>
+				<span
+					className={`truncate font-medium ${
+						value
+							? isDark ? "text-gray-200" : "text-gray-700"
+							: isDark ? "text-gray-500" : "text-gray-400"
+					}`}
+				>
+					{value || placeholder}
+				</span>
+				<ChevronDown
+					size={12}
+					className={`shrink-0 transition-transform duration-150 ${isDark ? "text-gray-500" : "text-gray-400"} ${open ? "rotate-180" : ""}`}
+				/>
+			</button>
+
+			{open &&
+				createPortal(
+					<>
+						<div className="fixed inset-0 z-[70]" onClick={() => setOpen(false)} />
+						<div
+							className={`fixed z-[71] rounded-md border shadow-xl overflow-y-auto ${
+								isDark ? "bg-gray-900 border-white/15" : "bg-white border-gray-200"
+							}`}
+							style={{ top: pos.top, left: pos.left, width: pos.width, maxHeight: 240 }}
+						>
+							{columns.map((col) => (
+								<button
+									key={col.index}
+									type="button"
+									onClick={() => { onChange(col.name); setOpen(false); }}
+									className={`w-full flex items-center justify-between gap-3 px-3 py-2 text-left text-xs transition-colors ${
+										col.name === value
+											? isDark
+												? "bg-indigo-600/25 text-indigo-200"
+												: "bg-indigo-50 text-indigo-700"
+											: isDark
+												? "text-gray-300 hover:bg-white/5"
+												: "text-gray-700 hover:bg-gray-50"
+									}`}
+								>
+									<span className="font-medium truncate min-w-0">
+										{col.name || `Column ${col.index + 1}`}
+									</span>
+									{col.preview && (
+										<span
+											className={`shrink-0 tabular-nums truncate ${isDark ? "text-gray-600" : "text-gray-400"}`}
+											style={{ maxWidth: "45%" }}
+										>
+											{col.preview}
+										</span>
+									)}
+								</button>
+							))}
+						</div>
+					</>,
+					document.body,
+				)}
+		</>
+	);
+}
+
+function RowBadge({
+	headerRow,
+	csvData,
+	onChange,
+	isDark,
+}: {
+	headerRow: number;
+	csvData: string[][];
+	onChange: (row: number) => void;
+	isDark: boolean;
+}) {
+	const [open, setOpen] = useState(false);
+	const [pos, setPos] = useState({ top: 0, right: 0 });
+	const triggerRef = useRef<HTMLButtonElement>(null);
+
+	const openPicker = () => {
+		const rect = triggerRef.current?.getBoundingClientRect();
+		if (rect) setPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+		setOpen(true);
+	};
+
+	return (
+		<>
+			<button
+				ref={triggerRef}
+				type="button"
+				onClick={() => (open ? setOpen(false) : openPicker())}
+				className={`flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded transition-colors ${
+					isDark
+						? "text-gray-500 hover:text-gray-400 hover:bg-white/5"
+						: "text-gray-400 hover:text-gray-500 hover:bg-black/5"
+				}`}
+			>
+				Row {headerRow + 1}
+				<ChevronDown size={9} />
+			</button>
+
+			{open &&
+				createPortal(
+					<>
+						<div className="fixed inset-0 z-[70]" onClick={() => setOpen(false)} />
+						<div
+							className={`fixed z-[71] rounded-md border shadow-lg overflow-hidden min-w-52 ${
+								isDark ? "bg-gray-900 border-white/15" : "bg-white border-gray-200"
+							}`}
+							style={{ top: pos.top, right: pos.right }}
+						>
+							{csvData.slice(0, Math.min(6, csvData.length)).map((row, i) => (
+								<button
+									key={i}
+									type="button"
+									onClick={() => { onChange(i); setOpen(false); }}
+									className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs transition-colors ${
+										i === headerRow
+											? isDark
+												? "bg-indigo-600/25 text-indigo-200"
+												: "bg-indigo-50 text-indigo-700"
+											: isDark
+												? "text-gray-400 hover:bg-white/5"
+												: "text-gray-600 hover:bg-gray-50"
+									}`}
+								>
+									<span className={`shrink-0 w-5 text-right text-[10px] ${isDark ? "text-gray-600" : "text-gray-400"}`}>
+										{i + 1}
+									</span>
+									<span className="truncate">
+										{row.filter(Boolean).slice(0, 5).join(", ")}
+									</span>
+								</button>
+							))}
+						</div>
+					</>,
+					document.body,
+				)}
+		</>
 	);
 }
 
@@ -183,28 +259,32 @@ function UploadModal({
 	isOpen,
 	onClose,
 	onUpload,
-	boundaryCodes,
+	areaBank,
 }: {
 	isOpen: boolean;
 	onClose: () => void;
 	onUpload: (data: UploadData) => void;
-	boundaryCodes: BoundaryCodes;
+	areaBank: AreaBank;
 }) {
 	const [file, setFile] = useState<File | null>(null);
 	const [csvData, setCsvData] = useState<string[][]>([]);
 	const [headerRow, setHeaderRow] = useState(0);
 	const [selectedColumn, setSelectedColumn] = useState("");
 	const [dataColumn, setDataColumn] = useState("");
-	const [selectedCodeType, setSelectedCodeType] = useState("");
+	const [overrideLabel, setOverrideLabel] = useState("");
+	const [showBoundaryOptions, setShowBoundaryOptions] = useState(false);
 	const [error, setError] = useState("");
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const isDark = useIsDark();
 
-	const headers = csvData[headerRow] || [];
-	const previewRows = csvData.slice(
-		0,
-		Math.min(headerRow + 21, csvData.length),
-	);
+	const headers = csvData[headerRow] ?? [];
+	const firstDataRow = csvData[headerRow + 1] ?? [];
+	const columns = headers.map((name, index) => ({
+		name,
+		preview: (firstDataRow[index] ?? "").slice(0, 25),
+		index,
+	}));
+
 	const matches = (() => {
 		if (!csvData.length || !selectedColumn) return [];
 		const columnIndex = headers.indexOf(selectedColumn);
@@ -215,12 +295,19 @@ function UploadModal({
 				const val = row[columnIndex];
 				return val?.trim() ? [val] : [];
 			});
-		return calculateMatches(columnData, boundaryCodes);
+		return matchColumnAgainstBank(columnData, areaBank);
 	})();
-	const validMatches = matches.filter((match) => match.percentage > 0);
-	const effectiveCodeType = selectedCodeType && matches.some((m) => m.type === selectedCodeType)
-		? selectedCodeType
-		: (matches[0]?.percentage > 0 ? matches[0].type : "");
+
+	const effectiveMatch =
+		(overrideLabel && matches.find(m => m.entry.label === overrideLabel)) ||
+		matches[0] ||
+		null;
+
+	const canVisualise =
+		effectiveMatch !== null &&
+		effectiveMatch.entry.matchType !== "postcode-full" &&
+		effectiveMatch.entry.matchType !== "postcode-district" &&
+		effectiveMatch.entry.matchType !== "coordinate";
 
 	const resetForm = () => {
 		setFile(null);
@@ -228,7 +315,8 @@ function UploadModal({
 		setHeaderRow(0);
 		setSelectedColumn("");
 		setDataColumn("");
-		setSelectedCodeType("");
+		setOverrideLabel("");
+		setShowBoundaryOptions(false);
 		setError("");
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
@@ -263,33 +351,38 @@ function UploadModal({
 		reader.readAsText(selectedFile);
 	};
 
+	const handleHeaderRowChange = (row: number) => {
+		setHeaderRow(row);
+		setSelectedColumn("");
+		setDataColumn("");
+		setOverrideLabel("");
+		setShowBoundaryOptions(false);
+	};
 
 	const handleUpload = () => {
-		if (!file || !selectedColumn || !dataColumn || !effectiveCodeType) {
+		if (!file || !selectedColumn || !dataColumn || !effectiveMatch) {
 			setError(
 				"Please select a file, area code column, data column, and matching area type",
 			);
 			return;
 		}
 
-		let boundaryType: string = "localAuthority";
-		if (effectiveCodeType.includes("Ward")) {
-			boundaryType = "ward";
-		} else if (effectiveCodeType.includes("Westminster")) {
-			boundaryType = "constituency";
+		if (!canVisualise) {
+			setError("Postcode and coordinate visualisation is coming soon.");
+			return;
 		}
 
-		const match = effectiveCodeType.match(/\[(\d{4})\]/);
-		const boundaryYear = match ? parseInt(match[1]) : null;
+		const entry = effectiveMatch.entry;
 
 		onUpload({
 			file: file.name,
 			headerRow,
 			selectedColumn,
 			dataColumn,
-			year: boundaryYear,
-			boundaryType,
-			boundaryYear,
+			year: entry.year || null,
+			boundaryType: entry.boundaryType,
+			boundaryYear: entry.year || null,
+			selectedEntry: entry,
 			data: csvData,
 		});
 
@@ -310,6 +403,11 @@ function UploadModal({
 
 	if (!isOpen) return null;
 
+	const isSpecialType = (matchType: string) =>
+		matchType === "postcode-full" ||
+		matchType === "postcode-district" ||
+		matchType === "coordinate";
+
 	return createPortal(
 		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
 			<button
@@ -321,7 +419,7 @@ function UploadModal({
 
 			<div
 				style={{
-					maxWidth: csvData.length > 0 ? "80vw" : "360px",
+					maxWidth: csvData.length > 0 ? "480px" : "360px",
 					transition: "max-width 0.35s ease",
 				}}
 				className={`relative backdrop-blur-md border rounded-md shadow-xl w-full flex flex-col max-h-[90vh] ${isDark ? "bg-gray-900/95 border-white/10" : "bg-white/80 border-white/30"}`}
@@ -332,7 +430,7 @@ function UploadModal({
 					<h2
 						className={`text-sm font-semibold ${isDark ? "text-gray-100" : "text-gray-900/80"}`}
 					>
-						Upload Custom Dataset
+						Upload Dataset
 					</h2>
 					<button
 						type="button"
@@ -343,259 +441,177 @@ function UploadModal({
 					</button>
 				</div>
 
-				<div className="flex-1 overflow-y-auto p-4">
+				<div className="flex-1 overflow-y-auto p-4 space-y-4">
 					{error && (
 						<div
-							className={`mb-4 p-3 border rounded-md flex items-center gap-2 text-sm ${isDark ? "bg-red-900/20 border-red-800/40 text-red-400" : "bg-red-50 border-red-200 text-red-700"}`}
+							className={`p-3 border rounded-md flex items-center gap-2 text-xs ${
+								isDark
+									? "bg-red-900/20 border-red-800/40 text-red-400"
+									: "bg-red-50 border-red-200 text-red-700"
+							}`}
 						>
-							<AlertCircle size={16} />
+							<AlertCircle size={14} />
 							{error}
 						</div>
 					)}
 
-					<div className="space-y-4">
-						<div>
-							<input
-								ref={fileInputRef}
-								id="csv-file-input"
-								type="file"
-								accept=".csv"
-								onChange={handleFileSelect}
-								className="hidden"
-							/>
-							{file ? (
-								<button
-									type="button"
-									onClick={() => fileInputRef.current?.click()}
-									className={`w-full flex items-center gap-2 px-3 py-2 rounded-md border text-xs transition-colors ${isDark ? "border-white/10 bg-white/5 text-gray-300 hover:bg-white/10" : "border-gray-200 bg-white/60 text-gray-700 hover:bg-white/80"}`}
-								>
-									<Upload size={13} className="shrink-0" />
-									<span className="truncate font-medium">{file.name}</span>
-									<span className={`ml-auto shrink-0 ${isDark ? "text-gray-500" : "text-gray-400"}`}>change</span>
-								</button>
-							) : (
-								<>
-									<label
-										htmlFor="csv-file-input"
-										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-									>
-										Select CSV File
-									</label>
-									<button
-										type="button"
-										onClick={() => fileInputRef.current?.click()}
-										className={`w-full border-2 border-dashed cursor-pointer rounded-md p-8 transition-colors flex flex-col items-center gap-2 ${isDark ? "border-white/20 hover:border-gray-400 text-gray-500" : "border-gray-300 hover:border-gray-400 text-gray-400"}`}
-									>
-										<Upload size={28} />
-										<span className="text-xs font-medium">Click to select CSV file</span>
-									</button>
-								</>
-							)}
-						</div>
+					<input
+						ref={fileInputRef}
+						type="file"
+						accept=".csv"
+						onChange={handleFileSelect}
+						className="hidden"
+					/>
+					{file ? (
+						<button
+							type="button"
+							onClick={() => fileInputRef.current?.click()}
+							className={`w-full flex items-center gap-2 px-3 py-2 rounded-md border text-xs transition-colors ${isDark ? "border-white/10 bg-white/5 text-gray-300 hover:bg-white/10" : "border-gray-200 bg-white/60 text-gray-700 hover:bg-white/80"}`}
+						>
+							<Upload size={13} className="shrink-0" />
+							<span className="truncate font-medium">{file.name}</span>
+							<span className={`ml-auto shrink-0 ${isDark ? "text-gray-500" : "text-gray-400"}`}>Change</span>
+						</button>
+					) : (
+						<>
+							<label
+								className={`block text-xs font-semibold ${isDark ? "text-gray-300" : "text-gray-700"}`}
+							>
+								Select CSV File
+							</label>
+							<button
+								type="button"
+								onClick={() => fileInputRef.current?.click()}
+								className={`w-full border-2 border-dashed cursor-pointer rounded-md p-8 transition-colors flex flex-col items-center gap-2 ${isDark ? "border-white/20 hover:border-gray-400 text-gray-500" : "border-gray-300 hover:border-gray-400 text-gray-400"}`}
+							>
+								<Upload size={28} />
+								<span className="text-xs font-medium">Click to select CSV file</span>
+							</button>
+						</>
+					)}
 
-						{csvData.length > 0 && (
-							<div className="animate-in fade-in duration-300 space-y-4 contents">
-								<div>
+					{csvData.length > 0 && (
+						<div className="animate-in fade-in duration-300 space-y-4">
+							<div>
+								<div className="flex items-center justify-between mb-1.5">
 									<label
-										htmlFor="csv-header-row"
-										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
+										className={`text-xs font-semibold ${isDark ? "text-gray-300" : "text-gray-700"}`}
 									>
-										Header Row
+										Area codes
 									</label>
-									<OptionList
-										options={csvData.slice(0, 10).map((_, idx) => idx)}
-										value={headerRow}
-										onChange={setHeaderRow}
-										renderLabel={(idx) =>
-											`Row ${idx + 1}: ${(csvData[idx] ?? []).join(", ").slice(0, 60)}…`
-										}
+									<RowBadge
+										headerRow={headerRow}
+										csvData={csvData}
+										onChange={handleHeaderRowChange}
 										isDark={isDark}
 									/>
 								</div>
+								<ColumnDropdown
+									columns={columns}
+									value={selectedColumn}
+									onChange={(v) => {
+										setSelectedColumn(v);
+										setOverrideLabel("");
+										setShowBoundaryOptions(false);
+									}}
+									placeholder="Select area code column..."
+									isDark={isDark}
+								/>
 
-								<div>
-									<label
-										htmlFor="csv-code-col"
-										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-									>
-										Select Area Code Column
-									</label>
-									<OptionList
-										options={headers}
-										value={selectedColumn}
-										onChange={setSelectedColumn}
-										renderLabel={(h, i) => h || `Column ${i + 1}`}
-										isDark={isDark}
-									/>
-								</div>
-
-								{matches.length > 0 && (
-									<div>
-										<p
-											className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-										>
-											Available Boundaries
-										</p>
-										{validMatches.length === 0 ? (
-											<div
-												className={`px-3 py-2 rounded-md text-center ${isDark ? "bg-white/5" : "bg-gray-50"}`}
-											>
-												<p
-													className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}
-												>
-													No boundaries matched
-												</p>
-											</div>
+								{selectedColumn && (
+									<div className="mt-2">
+										{matches.length === 0 ? (
+											<p className={`text-[10px] ${isDark ? "text-orange-400" : "text-orange-500"}`}>
+												No boundary type matched. Try a different column.
+											</p>
 										) : (
-											<div className="space-y-1 max-h-64 overflow-y-auto">
-												{validMatches.map((match) => (
-													<button
-														type="button"
-														key={match.type}
-														onClick={() =>
-															setSelectedCodeType(
-																match.type,
-															)
-														}
-														className={`w-full px-4 py-2 rounded-md transition-all text-left ${getMatchButtonClass(
-															effectiveCodeType ===
-																match.type,
-															match.percentage >
-																0,
-															isDark,
-														)}`}
+											<div>
+												<div className={`flex items-center gap-2 text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+													<span className={`font-semibold ${getMatchColorClass(effectiveMatch!.percentage)}`}>
+														{effectiveMatch!.percentage.toFixed(0)}%
+													</span>
+													<span className={`truncate ${isSpecialType(effectiveMatch!.entry.matchType) ? "italic" : ""}`}>
+														{effectiveMatch!.entry.label}
+													</span>
+													{isSpecialType(effectiveMatch!.entry.matchType) && (
+														<span className={`text-[9px] shrink-0 ${isDark ? "text-gray-600" : "text-gray-400"}`}>
+															coming soon
+														</span>
+													)}
+													{matches.length > 1 && (
+														<button
+															type="button"
+															onClick={() => setShowBoundaryOptions(!showBoundaryOptions)}
+															className={`ml-auto shrink-0 underline underline-offset-2 transition-colors ${
+																isDark
+																	? "text-gray-600 hover:text-gray-400"
+																	: "text-gray-400 hover:text-gray-600"
+															}`}
+														>
+															{showBoundaryOptions ? "Less" : "Change"}
+														</button>
+													)}
+												</div>
+
+												{showBoundaryOptions && (
+													<div
+														className={`mt-1.5 rounded-md border overflow-hidden ${isDark ? "border-white/10" : "border-gray-200"}`}
 													>
-														<div className="flex items-center justify-between gap-1">
-															<div
-																className={`text-xs min-w-12.5 ${getMatchColorClass(match.percentage)}`}
-															>
-																{match.percentage.toFixed(
-																	0,
-																)}
-																%
-															</div>
-															<div className="flex-1">
-																<div
-																	className={`text-xs ${isDark ? "text-gray-300" : "text-gray-700"}`}
+														{matches.map((m) => {
+															const special = isSpecialType(m.entry.matchType);
+															return (
+																<button
+																	key={m.entry.label}
+																	type="button"
+																	disabled={special}
+																	onClick={() => {
+																		setOverrideLabel(m.entry.label);
+																		setShowBoundaryOptions(false);
+																	}}
+																	className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-left text-xs transition-colors ${
+																		special
+																			? isDark ? "opacity-40 cursor-default text-gray-500" : "opacity-40 cursor-default text-gray-400"
+																			: effectiveMatch?.entry.label === m.entry.label
+																				? isDark ? "bg-indigo-600/25 text-indigo-200" : "bg-indigo-50 text-indigo-700"
+																				: isDark ? "text-gray-400 hover:bg-white/5" : "text-gray-600 hover:bg-gray-50"
+																	}`}
 																>
-																	{match.type}
-																</div>
-															</div>
-														</div>
-													</button>
-												))}
+																	<span className={`text-[10px] w-8 text-right font-semibold ${getMatchColorClass(m.percentage)}`}>
+																		{m.percentage.toFixed(0)}%
+																	</span>
+																	<span className="truncate">{m.entry.label}</span>
+																	{special && (
+																		<span className={`ml-auto text-[9px] shrink-0 ${isDark ? "text-gray-600" : "text-gray-400"}`}>
+																			coming soon
+																		</span>
+																	)}
+																</button>
+															);
+														})}
+													</div>
+												)}
 											</div>
 										)}
 									</div>
 								)}
+							</div>
 
-								<div>
-									<label
-										htmlFor="csv-data-col"
-										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-									>
-										Select Data Column
-									</label>
-									<OptionList
-										options={headers}
-										value={dataColumn}
-										onChange={setDataColumn}
-										renderLabel={(h, i) => h || `Column ${i + 1}`}
-										isDark={isDark}
-									/>
-								</div>
-
-								<div>
-									<p
-										className={`block text-xs font-semibold mb-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-									>
-										Data Preview
-									</p>
-									<div className="rounded-md overflow-hidden">
-										<div className="overflow-x-auto max-h-64 overflow-y-auto">
-											<table
-												className={`w-full text-xs ${isDark ? "text-gray-300" : ""}`}
-											>
-												<thead
-													className={`sticky top-0 ${isDark ? "bg-gray-800" : "backdrop-blur"}`}
-												>
-													<tr>
-														{headers.map(
-															(header, idx) => (
-																<th
-																	key={`${header}-${idx}`}
-																	className={`px-4 py-2 text-left font-medium whitespace-nowrap ${
-																		header ===
-																		selectedColumn
-																			? isDark
-																				? "bg-indigo-900/40 text-indigo-300"
-																				: "bg-indigo-100/70 text-indigo-900"
-																			: header ===
-																				  dataColumn
-																				? isDark
-																					? "bg-green-900/40 text-green-300"
-																					: "bg-green-100/70 text-green-900"
-																				: isDark
-																					? "text-gray-400"
-																					: "text-gray-700"
-																	}`}
-																>
-																	{header ||
-																		`Col ${idx + 1}`}
-																</th>
-															),
-														)}
-													</tr>
-												</thead>
-												<tbody>
-													{previewRows
-														.slice(headerRow + 1)
-														.map((row, rowIdx) => (
-															<tr
-																key={`${row[0] ?? rowIdx}-${rowIdx}`}
-																className={`${isDark ? "hover:bg-white/5" : "hover:bg-white/40"} ${rowIdx % 2 === 1 ? (isDark ? "bg-white/5" : "bg-white/20") : ""}`}
-															>
-																{row.map(
-																	(
-																		cell,
-																		cellIdx,
-																	) => (
-																		<td
-																			key={cellIdx}
-																			className={`px-4 py-2 whitespace-nowrap ${
-																				headers[
-																					cellIdx
-																				] ===
-																				selectedColumn
-																					? isDark
-																						? "bg-indigo-900/20"
-																						: "bg-indigo-50"
-																					: headers[
-																								cellIdx
-																						  ] ===
-																						  dataColumn
-																						? isDark
-																							? "bg-green-900/20"
-																							: "bg-green-50"
-																						: ""
-																			}`}
-																		>
-																			{
-																				cell
-																			}
-																		</td>
-																	),
-																)}
-															</tr>
-														))}
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
+							<div>
+								<label
+									className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}
+								>
+									Values
+								</label>
+								<ColumnDropdown
+									columns={columns}
+									value={dataColumn}
+									onChange={setDataColumn}
+									placeholder="Select data column..."
+									isDark={isDark}
+								/>
+							</div>
 						</div>
-						)}
-					</div>
+					)}
 				</div>
 
 				<div
@@ -611,9 +627,10 @@ function UploadModal({
 					<button
 						type="button"
 						onClick={handleUpload}
-						className={`cursor-pointer border rounded-sm px-3 py-1 text-xs transition-colors duration-150 shadow-sm ${isDark ? "border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-gray-100" : "border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20 text-gray-500 hover:text-gray-600"}`}
+						disabled={!canVisualise && effectiveMatch !== null}
+						className={`cursor-pointer border rounded-sm px-3 py-1 text-xs transition-colors duration-150 shadow-sm ${isDark ? "border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-gray-100" : "border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20 text-gray-500 hover:text-gray-600"} ${!canVisualise && effectiveMatch !== null ? "opacity-40 cursor-not-allowed" : ""}`}
 					>
-						Apply
+						Visualise
 					</button>
 				</div>
 			</div>
@@ -624,21 +641,41 @@ function UploadModal({
 
 function CustomDatasetCard({
 	customDataset,
-	aggregatedData,
 	selectedArea,
 	isActive,
 	setActiveViz,
 	codeMapper,
+	mapManager,
+	boundaryData,
+	location,
 }: {
 	customDataset: CustomDataset;
-	aggregatedData: { [year: number]: AggregatedCustomData } | null;
 	selectedArea: SelectedArea | null;
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper: CodeMapper;
+	mapManager: MapManager | null;
+	boundaryData: BoundaryData;
+	location: string | null;
 }) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+
+	const aggregatedData = useMemo(
+		() =>
+			aggregateDataset(
+				{
+					datasets: { [customDataset.year]: customDataset },
+					boundaryType: customDataset.boundaryType,
+					calculateStats: (mm, g, d, loc, id) =>
+						mm.calculateCustomDatasetStats(g, d, loc, id),
+				},
+				mapManager,
+				boundaryData,
+				location,
+			),
+		[customDataset, mapManager, boundaryData, location],
+	);
 	const displayValue = (() => {
 		if (!customDataset || !customDataset.data) return null;
 
@@ -718,7 +755,7 @@ function CustomDatasetCard({
 
 	const handleActivate = () => {
 		setActiveViz({
-			vizId: "custom",
+			vizId: customDataset.id,
 			datasetType: "custom",
 			datasetYear: customDataset.boundaryYear,
 		});
@@ -781,11 +818,9 @@ function CustomDatasetCard({
 								})}
 							</span>
 						</div>
-						{displayValue!.count > 1 && (
-							<span className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-								{displayValue!.count} wards avg
-							</span>
-						)}
+						<span className={`text-[9px] ${displayValue!.count > 1 ? "" : "invisible"} ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+							{displayValue!.count} wards avg
+						</span>
 					</div>
 					<div className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
 						<div
@@ -800,10 +835,11 @@ function CustomDatasetCard({
 }
 
 export default function CustomSection({
-	customDataset,
-	setCustomDataset,
+	customDatasets,
+	addCustomDataset,
 	selectedArea,
-	boundaryCodes,
+	boundaryCodes: _boundaryCodes,
+	areaBank,
 	activeViz,
 	setActiveViz,
 	codeMapper,
@@ -811,10 +847,11 @@ export default function CustomSection({
 	boundaryData,
 	location,
 }: {
-	customDataset: CustomDataset | null;
-	setCustomDataset: (dataset: CustomDataset | null) => void;
+	customDatasets: CustomDataset[];
+	addCustomDataset: (dataset: CustomDataset) => void;
 	selectedArea: SelectedArea | null;
 	boundaryCodes: BoundaryCodes;
+	areaBank: AreaBank;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper?: CodeMapper;
@@ -825,33 +862,18 @@ export default function CustomSection({
 	const [isOpen, setIsOpen] = useState(false);
 	const isDark = useIsDark();
 
-	const aggregatedData = useMemo(
-		() => customDataset
-			? aggregateDataset(
-					{
-						datasets: { [customDataset.year]: customDataset },
-						boundaryType: customDataset.boundaryType,
-						calculateStats: (mm, g, d, loc, id) => mm.calculateCustomDatasetStats(g, d, loc, id),
-					},
-					mapManager,
-					boundaryData,
-					location,
-			  )
-			: null,
-		[customDataset, mapManager, boundaryData, location],
-	);
-
 	const handleCustomDatasetApply = (data: UploadData) => {
 		if (data.boundaryYear === null || data.boundaryType === null) {
 			return;
 		}
 
-		const columnIndex = data.data[data.headerRow].indexOf(
-			data.selectedColumn,
-		);
+		const columnIndex = data.data[data.headerRow].indexOf(data.selectedColumn);
 		const dataIndex = data.data[data.headerRow].indexOf(data.dataColumn);
 
+		const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+
 		const newDataset: CustomDataset = {
+			id,
 			type: "custom",
 			name: data.file,
 			year: data.boundaryYear,
@@ -861,18 +883,27 @@ export default function CustomSection({
 			data: {},
 		};
 
+		const nameToCode =
+			data.selectedEntry?.matchType === "name"
+				? data.selectedEntry.nameToCode
+				: null;
+
 		data.data.slice(data.headerRow + 1).forEach((row) => {
-			const code = row[columnIndex]?.trim();
+			let code = row[columnIndex]?.trim();
 			const value = parseFloat(row[dataIndex]);
+
+			if (nameToCode && code) {
+				code = nameToCode.get(code.toLowerCase()) ?? code;
+			}
 
 			if (code && !isNaN(value)) {
 				newDataset.data[code] = value;
 			}
 		});
 
-		setCustomDataset(newDataset);
+		addCustomDataset(newDataset);
 		setActiveViz({
-			vizId: "custom",
+			vizId: id,
 			datasetType: "custom",
 			datasetYear: data.boundaryYear,
 		});
@@ -891,57 +922,61 @@ export default function CustomSection({
 					Custom Dataset
 				</h3>
 
-				{customDataset && codeMapper ? (
-					<CustomDatasetCard
-						customDataset={customDataset}
-						aggregatedData={aggregatedData}
-						selectedArea={selectedArea}
-						isActive={activeViz.datasetType === "custom"}
-						setActiveViz={setActiveViz}
-						codeMapper={codeMapper}
-					/>
-				) : customDataset ? (
-					<div
-						className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}
-					>
-						Loading…
-					</div>
-				) : (
-					<button
-						type="button"
-						onClick={() => setIsOpen(true)}
-						className={`w-full h-20 p-3 rounded-md transition-colors duration-150 border-2 border-dashed cursor-pointer ${
-							isDark
-								? "border-white/20 hover:border-gray-400 text-gray-500"
-								: "border-gray-300/80 hover:border-gray-400 text-gray-400/80"
-						}`}
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							strokeWidth="2"
-							stroke="currentColor"
-							className="size-6 mx-auto mb-0.5"
+				{customDatasets.map((ds) =>
+					codeMapper ? (
+						<CustomDatasetCard
+							key={ds.id}
+							customDataset={ds}
+							selectedArea={selectedArea}
+							isActive={activeViz.datasetType === "custom" && activeViz.vizId === ds.id}
+							setActiveViz={setActiveViz}
+							codeMapper={codeMapper}
+							mapManager={mapManager}
+							boundaryData={boundaryData}
+							location={location}
+						/>
+					) : (
+						<div
+							key={ds.id}
+							className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M12 4.5v15m7.5-7.5h-15"
-							/>
-						</svg>
-						<span className="text-xs font-medium">
-							Upload Dataset
-						</span>
-					</button>
+							Loading…
+						</div>
+					),
 				)}
+
+				<button
+					type="button"
+					onClick={() => setIsOpen(true)}
+					className={`w-full h-20 p-3 rounded-md transition-colors duration-150 border-2 border-dashed cursor-pointer ${
+						isDark
+							? "border-white/20 hover:border-gray-400 text-gray-500"
+							: "border-gray-300/80 hover:border-gray-400 text-gray-400/80"
+					}`}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						strokeWidth="2"
+						stroke="currentColor"
+						className="size-6 mx-auto mb-0.5"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							d="M12 4.5v15m7.5-7.5h-15"
+						/>
+					</svg>
+					<span className="text-xs font-medium">Upload Dataset</span>
+				</button>
 			</div>
 
 			<UploadModal
 				isOpen={isOpen}
 				onClose={() => setIsOpen(false)}
 				onUpload={handleCustomDatasetApply}
-				boundaryCodes={boundaryCodes}
+				areaBank={areaBank}
 			/>
 		</>
 	);
