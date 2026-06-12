@@ -12,6 +12,7 @@ import { matchColumnAgainstBank, AreaEntry, AreaBank } from "@lib/data/areaBank"
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
+import { getColor } from "@/lib/helpers/colorScale/themes";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -768,13 +769,13 @@ function CustomDatasetCard({
 	const dataMax = allValues.length ? Math.max(...allValues) : 100;
 	const range = dataMax - dataMin || 1;
 
-	const ACCENT = "#6366f1";
 	const barWidth = displayValue
-		? Math.min(((displayValue.value - dataMin) / range) * 100, 100)
+		? Math.max(0, Math.min(((displayValue.value - dataMin) / range) * 100, 100))
 		: 0;
+	const valueColor = displayValue ? getColor(barWidth / 100) : "#6366f1";
 
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		displayValue ? ACCENT : null,
+		displayValue ? valueColor : null,
 		isActive,
 		isDark,
 	);
@@ -811,7 +812,7 @@ function CustomDatasetCard({
 				<div className="flex-1 flex flex-col gap-1">
 					<div className="flex items-baseline justify-between">
 						<div className="leading-none">
-							<span className="text-2xl font-bold leading-none" style={{ color: ACCENT }}>
+							<span className="text-2xl font-bold leading-none" style={{ color: valueColor }}>
 								{displayValue!.value.toLocaleString("en-GB", {
 									minimumFractionDigits: 0,
 									maximumFractionDigits: 2,
@@ -825,7 +826,7 @@ function CustomDatasetCard({
 					<div className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
 						<div
 							className="h-full rounded-xs transition-all duration-300"
-							style={{ width: `${barWidth}%`, backgroundColor: ACCENT }}
+							style={{ width: `${barWidth}%`, backgroundColor: valueColor }}
 						/>
 					</div>
 				</div>

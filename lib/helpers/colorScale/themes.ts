@@ -150,7 +150,8 @@ export function getThemeColor(
 ) {
 	const theme = themeRgb.find((t) => t.id === themeId) ?? themeRgb[0];
 	const colors = theme.rgbColors;
-	const index = normalizedValue * (colors.length - 1);
+	const clamped = isNaN(normalizedValue) ? 0 : Math.max(0, Math.min(1, normalizedValue));
+	const index = clamped * (colors.length - 1);
 	const lower = Math.floor(index);
 	const upper = Math.ceil(index);
 	if (lower === upper) {
