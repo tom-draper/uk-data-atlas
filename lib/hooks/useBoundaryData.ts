@@ -1,5 +1,5 @@
 // hooks/useBoundaryData.ts
-import { useEffect, useMemo, useState } from "react";
+import { startTransition, useEffect, useMemo, useState } from "react";
 import { BoundaryCodes, BoundaryData, BoundaryGeojson } from "@lib/types";
 import {
 	BoundaryType,
@@ -256,13 +256,15 @@ export function useBoundaryData(
 				.then(([wards, constituencies, localAuthorities, lsoas, dataZones, superOutputAreas]) => {
 					if (!mounted) return;
 
-					setRawData({
-						ward: wards,
-						constituency: constituencies,
-						localAuthority: localAuthorities,
-						lsoa: lsoas,
-						dataZone: dataZones,
-						superOutputArea: superOutputAreas,
+					startTransition(() => {
+						setRawData({
+							ward: wards,
+							constituency: constituencies,
+							localAuthority: localAuthorities,
+							lsoa: lsoas,
+							dataZone: dataZones,
+							superOutputArea: superOutputAreas,
+						});
 					});
 
 					// Build constituency->wards mappings for each (ward year, constituency year) pair.

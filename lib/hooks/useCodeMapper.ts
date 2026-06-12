@@ -1,7 +1,7 @@
 // lib/hooks/useCodeMapper.ts
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useMemo } from "react";
 import { BoundaryGeojson, Features } from "@lib/types";
 import {
 	BoundaryType,
@@ -84,7 +84,7 @@ export function useCodeMapper() {
 
 	// ==================== Ward-to-LAD Mappings ====================
 
-	const getLadForWard = (wardCode: string): string | undefined => {
+	const getLadForWard = useCallback((wardCode: string): string | undefined => {
 		const direct = wardToLadMapRef.current[wardCode];
 		if (direct) return direct;
 
@@ -99,7 +99,7 @@ export function useCodeMapper() {
 		}
 
 		return undefined;
-	};
+	}, []);
 
 	const addWardLadMapping = useCallback((wardCode: string, localAuthorityCode: string) => {
 		if (wardCode && localAuthorityCode) {
@@ -113,7 +113,7 @@ export function useCodeMapper() {
 
 	// ==================== LAD-to-Wards Mappings ====================
 
-	const getWardsForLad = (ladCode: string, year: YearCode): string[] => {
+	const getWardsForLad = useCallback((ladCode: string, year: YearCode): string[] => {
 		const direct = ladToWardsMapRef.current[year]?.[ladCode];
 		if (direct?.length) return direct;
 		// Some ward GeoJSON years don't embed LAD codes (e.g. 2023 has no LAD23CD).
@@ -127,7 +127,7 @@ export function useCodeMapper() {
 			if (result?.length) return result;
 		}
 		return [];
-	};
+	}, []);
 
 	const addLadWardMapping = useCallback((year: YearCode, ladCode: string, wardCodes: string[]) => {
 		if (!year || !ladCode || !wardCodes.length) return;
@@ -149,7 +149,7 @@ export function useCodeMapper() {
 		Object.assign(constituencyToWardsMapRef.current[year], mappings);
 	}, []);
 
-	const getWardsForConstituency = (constituencyCode: string, wardYear: YearCode): string[] => {
+	const getWardsForConstituency = useCallback((constituencyCode: string, wardYear: YearCode): string[] => {
 		// Direct lookup for this ward year
 		const direct =
 			constituencyToWardsMapRef.current[wardYear]?.[constituencyCode];
@@ -166,7 +166,7 @@ export function useCodeMapper() {
 			);
 		}
 		return [];
-	};
+	}, []);
 
 	// ==================== Cross-Year Code Mappings ====================
 
@@ -203,7 +203,7 @@ export function useCodeMapper() {
 		return codeMappingsRef.current[type][code]?.[targetYear];
 	}, []);
 
-	const getAllEquivalentCodes = (type: CodeType, code: string): { year: YearCode; code: string }[] => {
+	const getAllEquivalentCodes = useCallback((type: CodeType, code: string): { year: YearCode; code: string }[] => {
 		const mappings = codeMappingsRef.current[type][code] || {};
 		const equivalents: { year: YearCode; code: string }[] = [];
 
@@ -212,9 +212,9 @@ export function useCodeMapper() {
 		}
 
 		return equivalents;
-	};
+	}, []);
 
-	const findSourceCodes = (
+	const findSourceCodes = useCallback((
 		type: CodeType,
 		targetCode: string,
 		targetYear: YearCode,
@@ -224,13 +224,13 @@ export function useCodeMapper() {
 		return [...sources].filter(
 			(src) => codeMappingsRef.current[type][src]?.[targetYear] === targetCode,
 		);
-	};
+	}, []);
 
 	/**
 	 * Get all codes that should be highlighted when hovering over a code.
 	 * O(1) via pre-built reverse index instead of O(n) linear scan.
 	 */
-	const getHighlightCodes = (type: CodeType, code: string): Set<string> => {
+	const getHighlightCodes = useCallback((type: CodeType, code: string): Set<string> => {
 		const codes = new Set<string>([code]);
 
 		// Forward: all years this code maps to
@@ -252,7 +252,7 @@ export function useCodeMapper() {
 		}
 
 		return codes;
-	};
+	}, []);
 
 	const emptyCodeMappings = () => ({ ward: {}, localAuthority: {}, constituency: {}, lsoa: {}, dataZone: {}, superOutputArea: {} });
 
@@ -282,7 +282,7 @@ export function useCodeMapper() {
 		}
 	}, []);
 
-	const getMappingCounts = () => {
+	const getMappingCounts = useCallback(() => {
 		const ladWardCounts: Record<number, number> = {};
 		for (const [year, yearMap] of Object.entries(
 			ladToWardsMapRef.current,
@@ -299,9 +299,9 @@ export function useCodeMapper() {
 			constituency: Object.keys(codeMappingsRef.current.constituency)
 				.length,
 		};
-	};
+	}, []);
 
-	return {
+	return useMemo(() => ({
 		getLadForWard,
 		addWardLadMapping,
 		addWardLadMappings,
@@ -321,7 +321,14 @@ export function useCodeMapper() {
 		clearLadWardMap,
 		clearCodeMappings,
 		getMappingCounts,
-	};
+	}), [
+		getLadForWard, addWardLadMapping, addWardLadMappings, getWardsForLad,
+		addLadWardMapping, addLadWardMappings, addConstituencyWardMappings,
+		getWardsForConstituency, addCodeMapping, addCodeMappings, getCodeForYear,
+		getAllEquivalentCodes, findSourceCodes, getHighlightCodes,
+		clearAllMappings, clearWardLadMap, clearLadWardMap, clearCodeMappings,
+		getMappingCounts,
+	]);
 }
 
 /**
