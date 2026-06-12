@@ -126,7 +126,7 @@ export default function AirQualityChart({
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10 flex items-center justify-between mb-1.5 shrink-0">
-				<h3 className={chartHeadingClass(isDark)}>Air Quality — NO₂ [{dataset.year}]</h3>
+				<h3 className={chartHeadingClass(isDark)}>Air Quality, NO₂ [{dataset.year}]</h3>
 			</div>
 
 			{!stats ? (

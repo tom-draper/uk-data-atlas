@@ -56,6 +56,16 @@ function computeSimdStats(
 	if (selectedArea.type === "ward" && selectedArea.data)
 		return dataset.councilStats[selectedArea.data.ladCode] ?? null;
 
+	if (selectedArea.type === "dataZone") {
+		const dz = dataset.data[selectedArea.code];
+		if (!dz) return null;
+		return {
+			averageSIMDRank: dz.simdRank,
+			averageSIMDQuintile: dz.simdQuintile,
+			averageSIMDDecile: dz.simdDecile,
+		};
+	}
+
 	return null;
 }
 
@@ -146,7 +156,7 @@ export default function SIMDChart({
 							</div>
 							<div className="flex justify-between">
 								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>least deprived</span>
-								<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>most deprived</span>
+								<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>Rank {Math.round(simdStats.averageSIMDRank).toLocaleString()}</span>
 							</div>
 						</div>
 					</div>
