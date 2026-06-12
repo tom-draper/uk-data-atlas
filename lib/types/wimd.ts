@@ -24,5 +24,6 @@ export interface WIMDDataset {
 
 export interface AggregatedWIMDData {
 	averageWIMDScore: number;
+	averageWIMDRank: number;
 	averageWIMDDecile: number;
 }

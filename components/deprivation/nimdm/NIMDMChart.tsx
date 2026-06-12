@@ -56,6 +56,12 @@ function computeNimdmStats(
 	if (selectedArea.type === "ward" && selectedArea.data)
 		return dataset.lgdStats[selectedArea.data.ladCode] ?? null;
 
+	if (selectedArea.type === "superOutputArea") {
+		const soa = dataset.data[selectedArea.code];
+		if (!soa) return null;
+		return { averageNIMDMRank: soa.nimdmRank, averageNIMDMDecile: soa.nimdmDecile };
+	}
+
 	return null;
 }
 
@@ -146,7 +152,9 @@ export default function NIMDMChart({
 							</div>
 							<div className="flex justify-between">
 								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>least deprived</span>
-								<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>most deprived</span>
+								{selectedArea && Number.isFinite(nimdmStats.averageNIMDMRank) && (
+									<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>Rank {Math.round(nimdmStats.averageNIMDMRank).toLocaleString()}</span>
+								)}
 							</div>
 						</div>
 					</div>
