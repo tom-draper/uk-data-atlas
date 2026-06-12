@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz, Dataset, QualificationDataset, SchoolPerformanceDataset, SelectedArea } from "@lib/types";
@@ -39,29 +40,16 @@ export default function EducationSection({
 	const showQualifications = visibility["education-qualifications"];
 	const showSchoolPerformance = visibility["education-schoolPerformance"];
 
+	const aggregatedQualificationData = useMemo(
+		() => aggregateDataset({ datasets: availableQualificationDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateQualificationStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableQualificationDatasets, mapManager, boundaryData, location],
+	);
+	const aggregatedSchoolPerformanceData = useMemo(
+		() => aggregateDataset({ datasets: availableSchoolPerformanceDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateSchoolPerformanceStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableSchoolPerformanceDatasets, mapManager, boundaryData, location],
+	);
+
 	if (!showQualifications && !showSchoolPerformance) return null;
-
-	const aggregatedQualificationData = aggregateDataset(
-		{
-			datasets: availableQualificationDatasets,
-			boundaryType: "localAuthority",
-			calculateStats: (mm, g, d, loc, id) => mm.calculateQualificationStats(g, d, loc, id),
-		},
-		mapManager,
-		boundaryData,
-		location,
-	);
-
-	const aggregatedSchoolPerformanceData = aggregateDataset(
-		{
-			datasets: availableSchoolPerformanceDatasets,
-			boundaryType: "localAuthority",
-			calculateStats: (mm, g, d, loc, id) => mm.calculateSchoolPerformanceStats(g, d, loc, id),
-		},
-		mapManager,
-		boundaryData,
-		location,
-	);
 
 	const qualYears = Object.keys(availableQualificationDatasets).map(Number).sort((a, b) => b - a);
 

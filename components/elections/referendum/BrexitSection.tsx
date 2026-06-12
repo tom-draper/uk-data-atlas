@@ -1,6 +1,7 @@
 // components/referendum/BrexitSection.tsx
 "use client";
 
+import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz, BrexitConstituencyDataset, BrexitLADDataset, Dataset, SelectedArea } from "@lib/types";
@@ -41,16 +42,16 @@ export default function BrexitSection({
 	const showHanretty = visibility["brexit-hanretty"];
 	const showElectoral = visibility["brexit-electoral"];
 
-	if (!showHanretty && !showElectoral) return null;
+	const aggregatedData = useMemo(
+		() => aggregateDataset({ datasets: availableDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateBrexitStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableDatasets, mapManager, boundaryData, location],
+	);
+	const aggregatedConstituencyData = useMemo(
+		() => aggregateDataset({ datasets: availableConstituencyDatasets, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateBrexitConstituencyStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableConstituencyDatasets, mapManager, boundaryData, location],
+	);
 
-	const aggregatedData = aggregateDataset(
-		{ datasets: availableDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateBrexitStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
-	);
-	const aggregatedConstituencyData = aggregateDataset(
-		{ datasets: availableConstituencyDatasets, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateBrexitConstituencyStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
-	);
+	if (!showHanretty && !showElectoral) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>

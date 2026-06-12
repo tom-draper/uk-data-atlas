@@ -1,6 +1,7 @@
 // components/PopulationChart.tsx
 "use client";
 
+import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz, BoundaryData, EthnicityDataset, PopulationDataset, SelectedArea } from "@lib/types";
@@ -42,16 +43,16 @@ export default function DemographicsChartSection({
 	const showGender = visibility["demographics-gender"];
 	const showEthnicity = visibility["demographics-ethnicity"];
 
-	if (!showDensity && !showAge && !showGender && !showEthnicity) return null;
+	const aggregatedPopulationData = useMemo(
+		() => aggregateDataset({ datasets: availablePopulationDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculatePopulationStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availablePopulationDatasets, mapManager, boundaryData, location],
+	);
+	const aggregatedEthnicityData = useMemo(
+		() => aggregateDataset({ datasets: availableEthnicityDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateEthnicityStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableEthnicityDatasets, mapManager, boundaryData, location],
+	);
 
-	const aggregatedPopulationData = aggregateDataset(
-		{ datasets: availablePopulationDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculatePopulationStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
-	);
-	const aggregatedEthnicityData = aggregateDataset(
-		{ datasets: availableEthnicityDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateEthnicityStats(g, d, loc, id) },
-		mapManager, boundaryData, location,
-	);
+	if (!showDensity && !showAge && !showGender && !showEthnicity) return null;
 
 	return (
 		<div className={`pt-2.5 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
