@@ -682,6 +682,7 @@ export class StatsCalculator {
 			geojson.features,
 		);
 		let totalScore = 0;
+		let totalRank = 0;
 		let totalDecile = 0;
 		let count = 0;
 
@@ -690,6 +691,7 @@ export class StatsCalculator {
 			const record = wimdData[code];
 			if (record) {
 				totalScore += record.wimdScore;
+				totalRank += record.wimdRank;
 				totalDecile += record.wimdDecile;
 				count++;
 			}
@@ -702,6 +704,7 @@ export class StatsCalculator {
 
 		const stats: AggregatedWIMDData = {
 			averageWIMDScore: totalScore / count,
+			averageWIMDRank: totalRank / count,
 			averageWIMDDecile: totalDecile / count,
 		};
 
@@ -722,6 +725,7 @@ export class StatsCalculator {
 		const soaCodeProp = this.propertyDetector.detectSOACode(
 			geojson.features,
 		);
+		let totalRank = 0;
 		let totalDecile = 0;
 		let count = 0;
 
@@ -729,6 +733,7 @@ export class StatsCalculator {
 			const code = getFeatureProp(feature.properties, soaCodeProp) ?? "";
 			const record = nimdmData[code];
 			if (record) {
+				totalRank += record.nimdmRank;
 				totalDecile += record.nimdmDecile;
 				count++;
 			}
@@ -740,6 +745,7 @@ export class StatsCalculator {
 		}
 
 		const stats: AggregatedNIMDMData = {
+			averageNIMDMRank: totalRank / count,
 			averageNIMDMDecile: totalDecile / count,
 		};
 

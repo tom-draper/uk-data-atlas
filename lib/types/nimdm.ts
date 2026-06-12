@@ -22,5 +22,6 @@ export interface NIMDMDataset {
 }
 
 export interface AggregatedNIMDMData {
+	averageNIMDMRank: number;
 	averageNIMDMDecile: number;
 }

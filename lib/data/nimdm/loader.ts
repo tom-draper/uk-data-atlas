@@ -73,6 +73,7 @@ export async function loadNIMDM(
 	const lgdStats: NIMDMDataset["lgdStats"] = {};
 	for (const [lgd, soas] of Object.entries(lgdGroups)) {
 		lgdStats[lgd] = {
+			averageNIMDMRank: soas.reduce((s, r) => s + r.nimdmRank, 0) / soas.length,
 			averageNIMDMDecile: soas.reduce((s, r) => s + r.nimdmDecile, 0) / soas.length,
 		};
 	}

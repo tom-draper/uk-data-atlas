@@ -81,6 +81,7 @@ export async function loadWIMD(
 	for (const [lad, lsoas] of Object.entries(ladGroups)) {
 		ladStats[lad] = {
 			averageWIMDScore: lsoas.reduce((s, r) => s + r.wimdScore, 0) / lsoas.length,
+			averageWIMDRank: lsoas.reduce((s, r) => s + r.wimdRank, 0) / lsoas.length,
 			averageWIMDDecile: lsoas.reduce((s, r) => s + r.wimdDecile, 0) / lsoas.length,
 		};
 	}
