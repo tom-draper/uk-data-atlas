@@ -15,14 +15,15 @@ import type { CustomDataset } from "@/lib/types/custom";
 import { MapOptions } from "@/lib/types/mapOptions";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import { AreaBank } from "@lib/data/areaBank";
 import { PanelContext } from "@/lib/context/PanelContext";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
 import { ExcludedCategoriesContext } from "@/lib/context/ExcludedCategoriesContext";
 
 interface UIOverlayProps {
 	datasets: Datasets;
-	customDataset: CustomDataset | null;
-	setCustomDataset: (dataset: CustomDataset | null) => void;
+	customDatasets: CustomDataset[];
+	addCustomDataset: (dataset: CustomDataset) => void;
 	activeDataset: Dataset | null;
 	chartsLoading: boolean;
 	activeViz: ActiveViz;
@@ -31,6 +32,7 @@ interface UIOverlayProps {
 	selectedArea: SelectedArea | null;
 	boundaryData: BoundaryData;
 	boundaryCodes: BoundaryCodes;
+	areaBank: AreaBank;
 	mapOptions: MapOptions;
 	codeMapper?: CodeMapper;
 	mapManager: MapManager | null;
@@ -102,8 +104,8 @@ function XIcon() {
 
 export default function UIOverlay({
 	datasets,
-	customDataset,
-	setCustomDataset,
+	customDatasets,
+	addCustomDataset,
 	activeDataset,
 	activeViz,
 	setActiveViz,
@@ -112,6 +114,7 @@ export default function UIOverlay({
 	selectedArea,
 	boundaryData,
 	boundaryCodes,
+	areaBank,
 	mapOptions,
 	codeMapper,
 	mapManager,
@@ -156,8 +159,8 @@ export default function UIOverlay({
 		<ExcludedCategoriesContext.Provider value={excludedCategories}>
 			<ChartPanel
 				datasets={datasets}
-				customDataset={customDataset}
-				setCustomDataset={setCustomDataset}
+				customDatasets={customDatasets}
+				addCustomDataset={addCustomDataset}
 				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 				activeDataset={activeDataset}
@@ -165,6 +168,7 @@ export default function UIOverlay({
 				selectedArea={selectedArea}
 				boundaryData={boundaryData}
 				boundaryCodes={boundaryCodes}
+				areaBank={areaBank}
 				codeMapper={codeMapper}
 				mapManager={mapManager}
 				location={selectedLocation}

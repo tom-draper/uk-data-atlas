@@ -74,9 +74,7 @@ export default function AtlasClient() {
 	const [selectedLocation, setSelectedLocationState] = useState(() => {
 		return getSearchParam("location") ?? DEFAULT_LOCATION;
 	});
-	const [customDataset, setCustomDataset] = useState<CustomDataset | null>(
-		null,
-	);
+	const [customDatasets, setCustomDatasets] = useState<CustomDataset[]>([]);
 	const [errorsDismissed, setErrorsDismissed] = useState(false);
 	const [boundaryErrors, setBoundaryErrors] = useState<string[]>([]);
 
@@ -151,8 +149,8 @@ export default function AtlasClient() {
 				setSelectedLocation={setSelectedLocation}
 				activeViz={activeViz}
 				setActiveViz={setActiveViz}
-				customDataset={customDataset}
-				setCustomDataset={setCustomDataset}
+				customDatasets={customDatasets}
+				addCustomDataset={(dataset) => setCustomDatasets((prev) => [...prev, dataset])}
 				onError={handleBoundaryError}
 			/>
 		</ErrorBoundary>

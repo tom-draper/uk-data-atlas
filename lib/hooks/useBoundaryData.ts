@@ -1,6 +1,7 @@
 // hooks/useBoundaryData.ts
 import { startTransition, useEffect, useMemo, useState } from "react";
 import { BoundaryCodes, BoundaryData, BoundaryGeojson } from "@lib/types";
+import { buildAreaBank, AreaBank } from "@lib/data/areaBank";
 import {
 	BoundaryType,
 	fetchBoundaryFile,
@@ -340,9 +341,15 @@ export function useBoundaryData(
 		[rawData, isLoading],
 	);
 
+	const areaBank = useMemo<AreaBank>(
+		() => buildAreaBank(rawData),
+		[rawData],
+	);
+
 	return {
 		boundaryData: filteredData,
 		boundaryCodes,
+		areaBank,
 		isLoading,
 		error,
 	};

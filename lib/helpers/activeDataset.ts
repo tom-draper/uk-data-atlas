@@ -4,10 +4,10 @@ import type { CustomDataset } from "@lib/types/custom";
 export function getActiveDataset(
 	datasets: Datasets,
 	activeViz: ActiveViz,
-	customDataset: CustomDataset | null,
+	customDatasets: CustomDataset[],
 ): Dataset | null {
 	if (activeViz.datasetType === "custom") {
-		return customDataset;
+		return customDatasets.find((d) => d.id === activeViz.vizId) ?? null;
 	}
 
 	const datasetGroup = datasets[activeViz.datasetType] as
