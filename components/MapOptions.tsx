@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
 import { themes } from "@/lib/helpers/colorScale";
 import {
@@ -36,7 +37,9 @@ export default function MapOptions({
 	const [hideOverlay, setHideOverlay] = useState(false);
 	const [overlayOpacity, setOverlayOpacity] = useState(0.6);
 	const [opacityInput, setOpacityInput] = useState("60");
+	const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
 	const containerRef = useRef<HTMLDivElement>(null);
+	const triggerRef = useRef<HTMLButtonElement>(null);
 
 	const handleThemeChange = (themeId: ColorTheme) => {
 		setSelectedTheme(themeId);
@@ -92,21 +95,14 @@ export default function MapOptions({
 	};
 
 	useEffect(() => {
+		if (!isOpen) return;
 		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				containerRef.current &&
-				!containerRef.current.contains(event.target as Node)
-			) {
+			if (triggerRef.current && !triggerRef.current.contains(event.target as Node)) {
 				setIsOpen(false);
 			}
 		};
-
-		if (isOpen) {
-			document.addEventListener("mousedown", handleClickOutside);
-			return () => {
-				document.removeEventListener("mousedown", handleClickOutside);
-			};
-		}
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, [isOpen]);
 
 	const isDark = useIsDark();
@@ -210,10 +206,19 @@ export default function MapOptions({
 						</button>
 					</div>
 
-					<div className="relative" ref={containerRef}>
+					<div ref={containerRef}>
 						<button
+							ref={triggerRef}
 							type="button"
-							onClick={() => setIsOpen(!isOpen)}
+							onClick={() => {
+								if (isOpen) {
+									setIsOpen(false);
+								} else {
+									const rect = triggerRef.current?.getBoundingClientRect();
+									if (rect) setDropdownPos({ top: rect.top, left: rect.left });
+									setIsOpen(true);
+								}
+							}}
 							className={`border rounded-sm px-2 py-1 text-xs backdrop-blur-md transition-all duration-200 shadow-sm cursor-pointer flex items-center gap-1.5 ${t.border} ${t.text} ${t.hover} ${isDark ? "bg-white/5" : "bg-white/10"}`}
 						>
 							<div
@@ -231,38 +236,30 @@ export default function MapOptions({
 							/>
 						</button>
 
-						{isOpen && (
+						{isOpen && createPortal(
 							<div
-								className={`absolute bottom-full mb-2 left-0 min-w-[160px] backdrop-blur-xl border rounded-sm shadow-lg z-10 ${t.border} ${isDark ? "bg-[rgba(20,20,30,0.95)]" : "bg-[#f9f9fa]/90"}`}
+								className={`fixed z-[200] min-w-[160px] backdrop-blur-xl border rounded-sm shadow-lg ${t.border} ${isDark ? "bg-[rgba(20,20,30,0.95)]" : "bg-[#f9f9fa]/90"}`}
+								style={{ bottom: window.innerHeight - dropdownPos.top + 8, left: dropdownPos.left }}
 							>
 								{themes.map((theme) => (
 									<button
 										type="button"
 										key={theme.id}
-										onClick={() =>
-											handleThemeChange(theme.id)
-										}
+										onClick={() => handleThemeChange(theme.id)}
 										className={`w-full px-2.5 py-1.5 text-xs text-left transition-colors duration-150 border-b last:border-b-0 flex items-center gap-2 cursor-pointer ${t.border} ${t.hover} ${t.text}`}
 									>
 										<div
 											className="size-4 rounded-sm shrink-0"
-											style={{
-												background: theme.gradient,
-											}}
+											style={{ background: theme.gradient }}
 										/>
-										<span className="font-medium">
-											{theme.label}
-										</span>
+										<span className="font-medium">{theme.label}</span>
 										{selectedTheme === theme.id && (
-											<span
-												className={`ml-auto ${t.textMuted}`}
-											>
-												✓
-											</span>
+											<span className={`ml-auto ${t.textMuted}`}>✓</span>
 										)}
 									</button>
 								))}
-							</div>
+							</div>,
+							document.body,
 						)}
 					</div>
 
