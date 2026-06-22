@@ -177,7 +177,7 @@ const STORAGE_KEY = "uk-data-atlas-chart-visibility";
 let _cachedStorageKey: string | null | undefined = undefined;
 let _cachedVisibility: Record<ChartKey, boolean> = DEFAULT_VISIBILITY;
 
-function getSnapshot(): Record<ChartKey, boolean> {
+export function getVisibilitySnapshot(): Record<ChartKey, boolean> {
 	const raw = localStorage.getItem(STORAGE_KEY);
 	if (raw === _cachedStorageKey) return _cachedVisibility;
 	_cachedStorageKey = raw;
@@ -196,7 +196,7 @@ function getSnapshot(): Record<ChartKey, boolean> {
 	return _cachedVisibility;
 }
 
-function subscribe(callback: () => void): () => void {
+export function subscribeVisibility(callback: () => void): () => void {
 	window.addEventListener("storage", callback);
 	return () => window.removeEventListener("storage", callback);
 }
@@ -217,13 +217,13 @@ export function ChartVisibilityProvider({
 	children: React.ReactNode;
 }) {
 	const visibility = useSyncExternalStore(
-		subscribe,
-		getSnapshot,
+		subscribeVisibility,
+		getVisibilitySnapshot,
 		() => DEFAULT_VISIBILITY,
 	);
 
 	const toggle = (key: ChartKey) => {
-		const current = getSnapshot();
+		const current = getVisibilitySnapshot();
 		const next = { ...current, [key]: !current[key] };
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(next));

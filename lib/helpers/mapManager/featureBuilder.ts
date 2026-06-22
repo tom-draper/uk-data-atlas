@@ -95,6 +95,22 @@ export class FeatureBuilder {
 		}));
 	}
 
+	// Adds a `color` property to each feature, derived from the area code (and
+	// optionally the feature itself). `colorFor` returns DEFAULT_COLOR for areas
+	// with no data.
+	private buildColorFeatures(
+		features: Features,
+		codeProp: PropertyKeys,
+		colorFor: (code: string, feature: Feature) => string,
+	): Features {
+		return this.mapFeatures(features, (feature) => ({
+			color: colorFor(
+				getFeatureProp(feature.properties, codeProp) ?? "",
+				feature,
+			),
+		}));
+	}
+
 	buildElectionWinnerFeatures(
 		features: Features,
 		codeProp: string,
@@ -263,21 +279,15 @@ export class FeatureBuilder {
 		wardCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const wardPopulation =
-				dataset.data[
-					getFeatureProp(feature.properties, wardCodeProp) ?? ""
-				];
-
-			const color = wardPopulation
+		return this.buildColorFeatures(features, wardCodeProp, (code) => {
+			const wardPopulation = dataset.data[code];
+			return wardPopulation
 				? getColorForAge(
 						calculateMedianAge(wardPopulation) ?? 0,
 						mapOptions.ageDistribution,
 						mapOptions.theme.id,
 					)
 				: DEFAULT_COLOR;
-
-			return { color };
 		});
 	}
 
@@ -287,21 +297,13 @@ export class FeatureBuilder {
 		wardCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const wardPopulation =
-				dataset.data[
-					getFeatureProp(feature.properties, wardCodeProp) ?? ""
-				];
-
-			let color = DEFAULT_COLOR;
-			if (wardPopulation) {
-				const males = calculateTotal(wardPopulation.males);
-				const females = calculateTotal(wardPopulation.females);
-				const ratio = females > 0 ? (males - females) / females : 0;
-				color = getColorForGenderRatio(ratio, mapOptions.gender);
-			}
-
-			return { color };
+		return this.buildColorFeatures(features, wardCodeProp, (code) => {
+			const wardPopulation = dataset.data[code];
+			if (!wardPopulation) return DEFAULT_COLOR;
+			const males = calculateTotal(wardPopulation.males);
+			const females = calculateTotal(wardPopulation.females);
+			const ratio = females > 0 ? (males - females) / females : 0;
+			return getColorForGenderRatio(ratio, mapOptions.gender);
 		});
 	}
 
@@ -311,27 +313,19 @@ export class FeatureBuilder {
 		wardCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const wardPopulation =
-				dataset.data[
-					getFeatureProp(feature.properties, wardCodeProp) ?? ""
-				];
-
-			let color = DEFAULT_COLOR;
-			if (wardPopulation) {
-				const total =
-					calculateTotal(wardPopulation.males) +
-					calculateTotal(wardPopulation.females);
-				const areaSqKm = getCachedArea(feature);
-				const density = areaSqKm > 0 ? total / areaSqKm : 0;
-				color = getColorForDensity(
-					density,
-					mapOptions.populationDensity,
-					mapOptions.theme.id,
-				);
-			}
-
-			return { color };
+		return this.buildColorFeatures(features, wardCodeProp, (code, feature) => {
+			const wardPopulation = dataset.data[code];
+			if (!wardPopulation) return DEFAULT_COLOR;
+			const total =
+				calculateTotal(wardPopulation.males) +
+				calculateTotal(wardPopulation.females);
+			const areaSqKm = getCachedArea(feature);
+			const density = areaSqKm > 0 ? total / areaSqKm : 0;
+			return getColorForDensity(
+				density,
+				mapOptions.populationDensity,
+				mapOptions.theme.id,
+			);
 		});
 	}
 
@@ -341,21 +335,15 @@ export class FeatureBuilder {
 		wardCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const ward =
-				dataset.data[
-					getFeatureProp(feature.properties, wardCodeProp) ?? ""
-				];
-
-			const color = ward?.prices[2023]
+		return this.buildColorFeatures(features, wardCodeProp, (code) => {
+			const ward = dataset.data[code];
+			return ward?.prices[2023]
 				? getColorForHousePrice(
 						ward.prices[2023],
 						mapOptions.housePrice,
 						mapOptions.theme.id,
 					)
 				: DEFAULT_COLOR;
-
-			return { color };
 		});
 	}
 
@@ -365,21 +353,15 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const area =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				];
-
-			const color = area
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const area = dataset.data[code];
+			return area
 				? getColorForCrimeRate(
 						area.totalRecordedCrime,
 						mapOptions.crime,
 						mapOptions.theme.id,
 					)
 				: DEFAULT_COLOR;
-
-			return { color };
 		});
 	}
 
@@ -389,21 +371,15 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const income =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				]?.annual?.median;
-
-			const color = income
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const income = dataset.data[code]?.annual?.median;
+			return income
 				? getColorForIncome(
 						income,
 						mapOptions.income,
 						mapOptions.theme.id,
 					)
 				: DEFAULT_COLOR;
-
-			return { color };
 		});
 	}
 
@@ -413,21 +389,11 @@ export class FeatureBuilder {
 		constituencyCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const area =
-				dataset.data[
-					getFeatureProp(feature.properties, constituencyCodeProp) ??
-						""
-				];
-
-			const color = area
-				? getColorForBrexitLeave(
-						area.pctLeave,
-						mapOptions.brexitConstituency,
-					)
+		return this.buildColorFeatures(features, constituencyCodeProp, (code) => {
+			const area = dataset.data[code];
+			return area
+				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexitConstituency)
 				: DEFAULT_COLOR;
-
-			return { color };
 		});
 	}
 
@@ -437,17 +403,11 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const area =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				];
-
-			const color = area
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const area = dataset.data[code];
+			return area
 				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexit)
 				: DEFAULT_COLOR;
-
-			return { color };
 		});
 	}
 
@@ -464,24 +424,11 @@ export class FeatureBuilder {
 			if (avg < min) min = avg;
 			if (avg > max) max = avg;
 		}
-		return this.mapFeatures(features, (feature) => {
-			const area =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				];
-			const avgLE = area
-				? (area.maleBirthLE + area.femaleBirthLE) / 2
-				: null;
-			const color =
-				avgLE !== null
-					? getColorForLifeExpectancy(
-							avgLE,
-							min,
-							max,
-							mapOptions.theme.id,
-						)
-					: DEFAULT_COLOR;
-			return { color };
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const area = dataset.data[code];
+			if (!area) return DEFAULT_COLOR;
+			const avgLE = (area.maleBirthLE + area.femaleBirthLE) / 2;
+			return getColorForLifeExpectancy(avgLE, min, max, mapOptions.theme.id);
 		});
 	}
 
@@ -491,17 +438,15 @@ export class FeatureBuilder {
 		lsoaCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
+		return this.buildColorFeatures(features, lsoaCodeProp, (code) => {
 			const area = dataset.data[code];
-			const color = area
+			return area
 				? getColorForIMD(
 						area.imdScore,
 						mapOptions.imd,
 						mapOptions.theme.id,
 					)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 
@@ -511,17 +456,15 @@ export class FeatureBuilder {
 		dzCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const code = getFeatureProp(feature.properties, dzCodeProp) ?? "";
+		return this.buildColorFeatures(features, dzCodeProp, (code) => {
 			const area = dataset.data[code];
-			const color = area
+			return area
 				? getColorForSIMD(
 						area.simdRank,
 						mapOptions.simd,
 						mapOptions.theme.id,
 					)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 
@@ -531,17 +474,15 @@ export class FeatureBuilder {
 		lsoaCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
+		return this.buildColorFeatures(features, lsoaCodeProp, (code) => {
 			const area = dataset.data[code];
-			const color = area
+			return area
 				? getColorForWIMD(
 						area.wimdRank,
 						mapOptions.wimd,
 						mapOptions.theme.id,
 					)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 
@@ -551,17 +492,15 @@ export class FeatureBuilder {
 		soaCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const code = getFeatureProp(feature.properties, soaCodeProp) ?? "";
+		return this.buildColorFeatures(features, soaCodeProp, (code) => {
 			const area = dataset.data[code];
-			const color = area
+			return area
 				? getColorForNIMDM(
 						area.nimdmRank,
 						mapOptions.nimdm,
 						mapOptions.theme.id,
 					)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 
@@ -571,24 +510,19 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const area =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				];
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const area = dataset.data[code];
 			const pct =
 				area && area.breakdown.total > 0
 					? (area.breakdown.level4Plus / area.breakdown.total) * 100
 					: null;
-			const color =
-				pct !== null
-					? getColorForQualification(
-							pct,
-							mapOptions.qualification,
-							mapOptions.theme.id,
-						)
-					: DEFAULT_COLOR;
-			return { color };
+			return pct !== null
+				? getColorForQualification(
+						pct,
+						mapOptions.qualification,
+						mapOptions.theme.id,
+					)
+				: DEFAULT_COLOR;
 		});
 	}
 
@@ -598,15 +532,11 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const pct =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				]?.pctFullFibre;
-			const color = pct != null
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const pct = dataset.data[code]?.pctFullFibre;
+			return pct != null
 				? getColorForBroadband(pct, mapOptions.broadband, mapOptions.theme.id)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 
@@ -616,15 +546,11 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const no2 =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				]?.no2Mean;
-			const color = no2 != null
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const no2 = dataset.data[code]?.no2Mean;
+			return no2 != null
 				? getColorForAirQuality(no2, mapOptions.airQuality, mapOptions.theme.id)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 
@@ -634,15 +560,11 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const pct =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				]?.ptL2basics94;
-			const color = pct != null
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const pct = dataset.data[code]?.ptL2basics94;
+			return pct != null
 				? getColorForSchoolPerformance(pct, mapOptions.schoolPerformance, mapOptions.theme.id)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 
@@ -652,15 +574,11 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const rate =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				]?.totalRate;
-			const color = rate != null
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const rate = dataset.data[code]?.totalRate;
+			return rate != null
 				? getColorForClaimantCount(rate, mapOptions.claimantCount, mapOptions.theme.id)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 
@@ -670,15 +588,11 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const rate =
-				dataset.data[
-					getFeatureProp(feature.properties, ladCodeProp) ?? ""
-				]?.rates[dataset.latestYear];
-			const color = rate != null
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const rate = dataset.data[code]?.rates[dataset.latestYear];
+			return rate != null
 				? getColorForUnemployment(rate, mapOptions.unemployment, mapOptions.theme.id)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 
@@ -688,14 +602,12 @@ export class FeatureBuilder {
 		ladCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.mapFeatures(features, (feature) => {
-			const ladCode = getFeatureProp(feature.properties, ladCodeProp) ?? "";
-			const icbCode = dataset.ladToIcb[ladCode];
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const icbCode = dataset.ladToIcb[code];
 			const pct = icbCode ? dataset.data[icbCode]?.pctOver18Weeks : undefined;
-			const color = pct != null
+			return pct != null
 				? getColorForNHSWaiting(pct, mapOptions.nhsWaiting, mapOptions.theme.id)
 				: DEFAULT_COLOR;
-			return { color };
 		});
 	}
 }
