@@ -35,7 +35,10 @@ import { loadLocalElection } from "../lib/data/election/local-election/load";
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
 const SOURCE_DATA = join(ROOT, "data");
-const OUT_DIR = join(PUBLIC_DATA, "precompiled");
+// Committed output (served via jsdelivr in production). public/ mirror below is
+// gitignored and only used by the local dev/build server.
+const OUT_DIR = join(SOURCE_DATA, "precompiled");
+const PUBLIC_OUT_DIR = join(PUBLIC_DATA, "precompiled");
 
 // Reads a file relative to public/data/ (where sync-public-data.mjs places everything)
 const read = (path: string) => readFile(join(PUBLIC_DATA, path), "utf8");
@@ -53,7 +56,10 @@ const readZip = (path: string): Promise<string> => {
 
 const out = async (name: string, data: unknown) => {
 	const json = JSON.stringify(data);
+	// Committed source of truth (pushed to the CDN repo) + gitignored copy the
+	// local dev/build server serves from public/.
 	await writeFile(join(OUT_DIR, `${name}.json`), json);
+	await writeFile(join(PUBLIC_OUT_DIR, `${name}.json`), json);
 	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
 	console.log(`  precompiled: ${name}.json (${kb} KB)`);
 };
@@ -61,6 +67,7 @@ const out = async (name: string, data: unknown) => {
 async function main() {
 	console.log("Pre-compiling datasets...");
 	await mkdir(OUT_DIR, { recursive: true });
+	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
 
 	const results = await Promise.allSettled([
 		loadIMD(read).then((d) => out("imd", d)),
