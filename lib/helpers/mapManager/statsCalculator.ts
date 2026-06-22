@@ -1042,7 +1042,7 @@ export class StatsCalculator {
 			count++;
 		}
 
-		if (count === 0) return null;
+		if (count === 0) { this.cache.set(cacheKey, null); return null; }
 
 		const result: AggregatedBroadbandData = {
 			pctSuperfast: totalSuperfast / count,
@@ -1076,7 +1076,7 @@ export class StatsCalculator {
 			count++;
 		}
 
-		if (count === 0) return null;
+		if (count === 0) { this.cache.set(cacheKey, null); return null; }
 
 		const result: AggregatedAirQualityData = {
 			no2Mean: totalNo2 / count,

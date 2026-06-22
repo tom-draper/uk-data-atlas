@@ -89,7 +89,7 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 	{
 		group: "Brexit",
 		key: "brexit-electoral",
-		label: "Elecotral Commission [2016]",
+		label: "Electoral Commission [2016]",
 	},
 	{
 		group: "Brexit",
