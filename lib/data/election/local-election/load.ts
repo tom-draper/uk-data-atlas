@@ -1,4 +1,4 @@
-// lib/utils/electionUtils.ts
+// lib/data/election/local-election/load.ts
 import Papa from "papaparse";
 import {
 	LocalElectionDataset,
@@ -7,7 +7,7 @@ import {
 } from "@lib/types/index";
 import { WardYear } from "@/lib/data/boundaries/boundaries";
 import { PARTY_INFO } from "@/lib/data/election/parties";
-import { ElectionSourceConfig } from "./config";
+import { ElectionSourceConfig, ELECTION_SOURCES } from "./config";
 
 const KNOWN_PARTIES = ["LAB", "CON", "LD", "GREEN", "REF", "IND"];
 
@@ -29,12 +29,12 @@ const findWinner = (votes: Record<string, number>): string => {
 	);
 };
 
-export const fetchAndParseCsv = async (
+// Parses a single local election CSV into a dataset. Runs at precompile time
+// (Node) so PapaParse stays out of the client bundle.
+export const parseLocalElectionCsv = (
+	text: string,
 	config: ElectionSourceConfig,
-): Promise<LocalElectionDataset> => {
-	const res = await fetch(config.url);
-	let text = await res.text();
-
+): LocalElectionDataset => {
 	// Heuristic: Skip metadata lines if they exist (detecting "Local authority name")
 	// This replaces the hardcoded line splitting
 	if (!text.startsWith(config.fields.ladName) && !text.startsWith("WD24")) {
@@ -47,125 +47,94 @@ export const fetchAndParseCsv = async (
 		if (headerIndex > -1) text = lines.slice(headerIndex).join("\n");
 	}
 
-	return new Promise((resolve, reject) => {
-		Papa.parse(text, {
-			header: true,
-			skipEmptyLines: true,
-			transformHeader: (h) => h.trim(),
-			complete: (results) => {
-				const partyCols = detectPartyColumns(results.meta.fields || []);
-				const wardWinners: Record<string, string> = {};
-				const wardData: Record<string, LocalElectionWardData> = {};
-				const unmapped: any[] = [];
-
-				results.data.forEach((row: any) => {
-					// Extract party votes
-					const partyVotes: Record<string, number> = {};
-					partyCols.forEach(
-						(p) => (partyVotes[p] = parseNumber(row[p])),
-					);
-
-					// Normalize core data
-					const laName =
-						row[config.fields.ladName] ||
-						row["COUNTYNAME"] ||
-						"Unknown"; // Fallback for 2023
-					const wName = row[config.fields.name];
-					const rawCode = row[config.fields.code]?.trim();
-					const wCode =
-						rawCode && config.wardCodeMap?.[rawCode]
-							? config.wardCodeMap[rawCode]
-							: rawCode;
-
-					const entry: LocalElectionWardData = {
-						wardCode: wCode,
-						wardName: wName,
-						ladName: laName,
-						ladCode: row[config.fields.ladCode || ""] || "Unknown",
-						turnoutPercent: parseNumber(row[config.fields.turnout]),
-						electorate: parseNumber(row[config.fields.electorate]),
-						totalVotes: parseNumber(
-							row[config.fields.totalVotes || ""],
-						),
-						partyVotes,
-					};
-
-					// Handle mapped vs unmapped (2023 case)
-					if (wCode) {
-						wardWinners[wCode] = findWinner(partyVotes);
-						wardData[wCode] = entry;
-					} else {
-						// Store raw unmapped data for post-processing
-						unmapped.push({
-							...entry,
-							winningParty: findWinner(partyVotes),
-						});
-					}
-				});
-
-				resolve({
-					id: `localElection${config.year}`,
-					type: "localElection",
-					year: config.year as LocalElectionYear,
-					boundaryYear: (config.boundaryYear ??
-						config.year) as WardYear,
-					boundaryType: "ward",
-					results: wardWinners,
-					data: wardData,
-					partyInfo: PARTY_INFO,
-					// @ts-ignore - attaching temporary unmapped data
-					_unmapped: unmapped.length > 0 ? unmapped : undefined,
-				});
-			},
-			error: reject,
-		});
+	const results = Papa.parse<Record<string, string>>(text, {
+		header: true,
+		skipEmptyLines: true,
+		transformHeader: (h) => h.trim(),
 	});
+
+	const partyCols = detectPartyColumns(results.meta.fields || []);
+	const wardWinners: Record<string, string> = {};
+	const wardData: Record<string, LocalElectionWardData> = {};
+	const unmapped: any[] = [];
+
+	results.data.forEach((row: any) => {
+		// Extract party votes
+		const partyVotes: Record<string, number> = {};
+		partyCols.forEach((p) => (partyVotes[p] = parseNumber(row[p])));
+
+		// Normalize core data
+		const laName =
+			row[config.fields.ladName] || row["COUNTYNAME"] || "Unknown"; // Fallback for 2023
+		const wName = row[config.fields.name];
+		const rawCode = row[config.fields.code]?.trim();
+		const wCode =
+			rawCode && config.wardCodeMap?.[rawCode]
+				? config.wardCodeMap[rawCode]
+				: rawCode;
+
+		const entry: LocalElectionWardData = {
+			wardCode: wCode,
+			wardName: wName,
+			ladName: laName,
+			ladCode: row[config.fields.ladCode || ""] || "Unknown",
+			turnoutPercent: parseNumber(row[config.fields.turnout]),
+			electorate: parseNumber(row[config.fields.electorate]),
+			totalVotes: parseNumber(row[config.fields.totalVotes || ""]),
+			partyVotes,
+		};
+
+		// Handle mapped vs unmapped (2023 case)
+		if (wCode) {
+			wardWinners[wCode] = findWinner(partyVotes);
+			wardData[wCode] = entry;
+		} else {
+			// Store raw unmapped data for post-processing
+			unmapped.push({
+				...entry,
+				winningParty: findWinner(partyVotes),
+			});
+		}
+	});
+
+	return {
+		id: `localElection${config.year}`,
+		type: "localElection",
+		year: config.year as LocalElectionYear,
+		boundaryYear: (config.boundaryYear ?? config.year) as WardYear,
+		boundaryType: "ward",
+		results: wardWinners,
+		data: wardData,
+		partyInfo: PARTY_INFO,
+		// @ts-ignore - attaching temporary unmapped data
+		_unmapped: unmapped.length > 0 ? unmapped : undefined,
+	};
 };
 
-/**
- * Remap any ward codes in a dataset that don't exist in the expected boundary
- * year's code set. Uses the cross-year code mapper as an automatic fallback,
- * covering cases where the source data carries codes from a different boundary
- * revision than the GeoJSON the dataset is paired with.
- */
-export const normalizeElectionDatasetCodes = (
-	dataset: LocalElectionDataset,
-	validWardCodes: Set<string>,
-	getCodeForYear: (
-		type: "ward",
-		code: string,
-		targetYear: number,
-	) => string | undefined,
-): LocalElectionDataset => {
-	const { boundaryYear } = dataset;
-	const remapped: Record<string, string> = {};
+// Loads and parses every configured local election CSV via the provided reader
+// (used by the precompile script), keyed by year. Reference datasets are parsed
+// first so the 2023 dataset (which lacks ward codes) can be reconciled against
+// them.
+export const loadLocalElection = async (
+	read: (path: string) => Promise<string>,
+): Promise<Record<string, LocalElectionDataset>> => {
+	const refs: LocalElectionDataset[] = [];
+	let raw2023: LocalElectionDataset | null = null;
 
-	for (const code of Object.keys(dataset.results)) {
-		if (!validWardCodes.has(code)) {
-			const mapped = getCodeForYear("ward", code, boundaryYear);
-			if (mapped && validWardCodes.has(mapped)) {
-				remapped[code] = mapped;
-			}
-		}
+	for (const config of Object.values(ELECTION_SOURCES)) {
+		const text = await read(config.path);
+		const dataset = parseLocalElectionCsv(text, config);
+		if (config.isReference) refs.push(dataset);
+		else raw2023 = dataset;
 	}
 
-	if (Object.keys(remapped).length === 0) return dataset;
-
-	const newResults = { ...dataset.results };
-	const newData = { ...dataset.data };
-
-	for (const [oldCode, newCode] of Object.entries(remapped)) {
-		if (newResults[oldCode] !== undefined) {
-			newResults[newCode] = newResults[oldCode];
-			delete newResults[oldCode];
-		}
-		if (newData[oldCode] !== undefined) {
-			newData[newCode] = { ...newData[oldCode], wardCode: newCode };
-			delete newData[oldCode];
-		}
+	const datasets: Record<string, LocalElectionDataset> = {};
+	refs.forEach((d) => (datasets[d.year] = d));
+	if (raw2023) {
+		const reconciled = reconcile2023Data(raw2023, refs);
+		datasets[reconciled.year] = reconciled;
 	}
-
-	return { ...dataset, results: newResults, data: newData };
+	return datasets;
 };
 
 export const reconcile2023Data = (

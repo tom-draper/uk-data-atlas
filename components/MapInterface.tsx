@@ -7,7 +7,7 @@ import { useBoundaryData } from "@/lib/hooks/useBoundaryData";
 import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
-import { normalizeElectionDatasetCodes } from "@/lib/data/election/local-election/load";
+import { normalizeElectionDatasetCodes } from "@/lib/data/election/local-election/normalize";
 
 import MapView from "@components/MapView";
 import UIOverlay from "@components/UIOverlay";

@@ -29,6 +29,8 @@ import { loadClaimantCount } from "../lib/data/claimant-count/loader";
 import { loadSchoolPerformance } from "../lib/data/school-performance/loader";
 import { loadNHSWaiting } from "../lib/data/nhs-waiting/loader";
 import { loadUnemployment } from "../lib/data/unemployment/loader";
+import { loadGeneralElection } from "../lib/data/election/general-election/load";
+import { loadLocalElection } from "../lib/data/election/local-election/load";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -80,6 +82,8 @@ async function main() {
 		loadSchoolPerformance(read).then((d) => out("school-performance", d)),
 		loadNHSWaiting(readZip).then((d) => out("nhs-waiting", d)),
 		loadUnemployment(readSource).then((d) => out("unemployment", d)),
+		loadGeneralElection(read).then((d) => out("general-election", d)),
+		loadLocalElection(read).then((d) => out("local-election", d)),
 	]);
 
 	const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");

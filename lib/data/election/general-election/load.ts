@@ -4,7 +4,10 @@ import {
 	GeneralElectionConstituencyData,
 	GeneralElectionDataset,
 } from "@lib/types";
-import { GeneralElectionSourceConfig } from "./config";
+import {
+	GeneralElectionSourceConfig,
+	GENERAL_ELECTION_SOURCES,
+} from "./config";
 import { PARTY_INFO } from "@/lib/data/election/parties";
 import { calculateTurnout } from "@/lib/helpers/generalElection";
 
@@ -15,13 +18,12 @@ const parseVotes = (value: any): number => {
 	return isNaN(parsed) ? 0 : parsed;
 };
 
-// Unified function to fetch and parse data based on configuration
-export const fetchAndParseGeneralElectionData = async (
+// Parses a single general election CSV into a dataset. Runs at precompile time
+// (Node) so PapaParse stays out of the client bundle.
+export const parseGeneralElectionCsv = (
+	csvText: string,
 	config: GeneralElectionSourceConfig,
-): Promise<GeneralElectionDataset> => {
-	const res = await fetch(config.url);
-	let csvText = await res.text();
-
+): GeneralElectionDataset => {
 	// Conditional Header Cleaning (Specific to the 2024 dataset)
 	if (config.requiresHeaderCleaning) {
 		const lines = csvText.split("\n");
@@ -32,19 +34,19 @@ export const fetchAndParseGeneralElectionData = async (
 		csvText = lines.slice(dataStart).join("\n");
 	}
 
-	return new Promise((resolve, reject) => {
-		Papa.parse(csvText, {
-			header: true,
-			skipEmptyLines: true,
-			dynamicTyping: false,
-			complete: (results) => {
-				const constituencyResults: Record<string, string> = {};
-				const constituencyData: Record<
-					string,
-					GeneralElectionConstituencyData
-				> = {};
+	const results = Papa.parse<Record<string, string>>(csvText, {
+		header: true,
+		skipEmptyLines: true,
+		dynamicTyping: false,
+	});
 
-				for (const row of results.data as any[]) {
+	const constituencyResults: Record<string, string> = {};
+	const constituencyData: Record<
+		string,
+		GeneralElectionConstituencyData
+	> = {};
+
+	for (const row of results.data as any[]) {
 					const onsId = row[config.fields.onsId]?.trim();
 					if (!onsId) continue;
 
@@ -107,21 +109,31 @@ export const fetchAndParseGeneralElectionData = async (
 						majority: parseVotes(row[config.fields.majority]),
 						partyVotes,
 						turnoutPercent,
-					};
-				}
+		};
+	}
 
-				resolve({
-					id: `generalElection-${config.year}`,
-					type: "generalElection",
-					year: config.year,
-					boundaryYear: config.constituencyBoundaryYear, // Use configurable boundary year
-					boundaryType: "constituency",
-					results: constituencyResults,
-					data: constituencyData,
-					partyInfo: PARTY_INFO,
-				});
-			},
-			error: reject,
-		});
-	});
+	return {
+		id: `generalElection-${config.year}`,
+		type: "generalElection",
+		year: config.year,
+		boundaryYear: config.constituencyBoundaryYear, // Use configurable boundary year
+		boundaryType: "constituency",
+		results: constituencyResults,
+		data: constituencyData,
+		partyInfo: PARTY_INFO,
+	};
+};
+
+// Loads and parses every configured general election CSV via the provided
+// reader (used by the precompile script), keyed by year.
+export const loadGeneralElection = async (
+	read: (path: string) => Promise<string>,
+): Promise<Record<string, GeneralElectionDataset>> => {
+	const datasets: Record<string, GeneralElectionDataset> = {};
+	for (const config of Object.values(GENERAL_ELECTION_SOURCES)) {
+		const csvText = await read(config.path);
+		const dataset = parseGeneralElectionCsv(csvText, config);
+		datasets[dataset.year] = dataset;
+	}
+	return datasets;
 };

@@ -1,12 +1,12 @@
 // lib/data/electionConfig.ts
 
-import { withCDN } from "@/lib/helpers/cdn";
 import { WardYear } from "../../boundaries/boundaries";
 
 export interface ElectionSourceConfig {
 	year: number;
 	boundaryYear?: WardYear; // Defaults to year; set when election year has no ward boundary
-	url: string;
+	// Path relative to public/data/, read at precompile time
+	path: string;
 	// Map internal standard keys to CSV headers
 	fields: {
 		code: string; // Ward Code
@@ -27,9 +27,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	2025: {
 		year: 2025,
 		boundaryYear: 2025, // 2025 HoC data uses WD25CD codes from the May 2025 ward boundary
-		url: withCDN(
-			"/data/elections/local-elections/LEH-2025-results-HoC/LEH-2025-results-HoC.csv",
-		),
+		path: "elections/local-elections/LEH-2025-results-HoC/LEH-2025-results-HoC.csv",
 		isReference: true,
 		skipRows: 1,
 		fields: {
@@ -43,9 +41,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2024: {
 		year: 2024,
-		url: withCDN(
-			"/data/elections/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv",
-		),
+		path: "elections/local-elections/LEH-2024-results-HoC-version/Wards results-Table 1.csv",
 		isReference: true,
 		fields: {
 			code: "Ward code",
@@ -59,9 +55,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2023: {
 		year: 2023,
-		url: withCDN(
-			"/data/elections/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv",
-		),
+		path: "elections/local-elections/LEH-Candidates-2023/Ward_Level-Table 1.csv",
 		isReference: false,
 		fields: {
 			code: "", // Missing in 2023
@@ -74,9 +68,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2022: {
 		year: 2022,
-		url: withCDN(
-			"/data/elections/local-elections/local-elections-2022/Wards-results-Table 1.csv",
-		),
+		path: "elections/local-elections/local-elections-2022/Wards-results-Table 1.csv",
 		isReference: true,
 		fields: {
 			code: "Ward code",
@@ -90,9 +82,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2021: {
 		year: 2021,
-		url: withCDN(
-			"/data/elections/local-elections/local_elections_2021_results-2/Wards-results-Table 1.csv",
-		),
+		path: "elections/local-elections/local_elections_2021_results-2/Wards-results-Table 1.csv",
 		isReference: true,
 		fields: {
 			code: "Ward/ED code",
