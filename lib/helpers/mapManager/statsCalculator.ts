@@ -81,69 +81,76 @@ export class StatsCalculator {
 		private cache: StatsCache,
 	) {}
 
+	// Wraps a computation in the shared stats cache. Caching the computed value
+	// (including null) means empty-coverage results aren't recomputed each update.
+	private cached<R>(cacheKey: string, compute: () => R): R {
+		const cached = this.cache.get(cacheKey);
+		if (cached !== undefined) return cached as R;
+		const result = compute();
+		this.cache.set(cacheKey, result);
+		return result;
+	}
+
 	calculateLocalElectionStats(
 		geojson: BoundaryGeojson,
 		wardData: LocalElectionDataset["data"],
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `local-election-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
+		return this.cached(`local-election-${location}-${datasetId}`, () => {
+			const wardCodeProp = this.propertyDetector.detectWardCode(
+				geojson.features,
+			);
+			const features = geojson.features;
 
-		const wardCodeProp = this.propertyDetector.detectWardCode(
-			geojson.features,
-		);
-		const features = geojson.features;
+			const stats: WardStats = {
+				partyVotes: {
+					LAB: 0,
+					CON: 0,
+					LD: 0,
+					GREEN: 0,
+					REF: 0,
+					IND: 0,
+					DUP: 0,
+					PC: 0,
+					SNP: 0,
+					SF: 0,
+					APNI: 0,
+					SDLP: 0,
+				},
+				electorate: 0,
+				totalVotes: 0,
+			};
 
-		const stats: WardStats = {
-			partyVotes: {
-				LAB: 0,
-				CON: 0,
-				LD: 0,
-				GREEN: 0,
-				REF: 0,
-				IND: 0,
-				DUP: 0,
-				PC: 0,
-				SNP: 0,
-				SF: 0,
-				APNI: 0,
-				SDLP: 0,
-			},
-			electorate: 0,
-			totalVotes: 0,
-		};
+			// Single pass aggregation with direct property access
+			const sv = stats.partyVotes;
+			for (let i = 0; i < features.length; i++) {
+				const ward =
+					wardData[
+						getFeatureProp(features[i].properties, wardCodeProp) ?? ""
+					];
+				if (!ward) continue;
 
-		// Single pass aggregation with direct property access
-		const sv = stats.partyVotes;
-		for (let i = 0; i < features.length; i++) {
-			const ward =
-				wardData[
-					getFeatureProp(features[i].properties, wardCodeProp) ?? ""
-				];
-			if (!ward) continue;
+				const pv = ward.partyVotes;
+				sv.LAB = (sv.LAB ?? 0) + (pv.LAB ?? 0);
+				sv.CON = (sv.CON ?? 0) + (pv.CON ?? 0);
+				sv.LD = (sv.LD ?? 0) + (pv.LD ?? 0);
+				sv.GREEN = (sv.GREEN ?? 0) + (pv.GREEN ?? 0);
+				sv.REF = (sv.REF ?? 0) + (pv.REF ?? 0);
+				sv.IND = (sv.IND ?? 0) + (pv.IND ?? 0);
+				sv.DUP = (sv.DUP ?? 0) + (pv.DUP ?? 0);
+				sv.PC = (sv.PC ?? 0) + (pv.PC ?? 0);
+				sv.SNP = (sv.SNP ?? 0) + (pv.SNP ?? 0);
+				sv.SF = (sv.SF ?? 0) + (pv.SF ?? 0);
+				sv.APNI = (sv.APNI ?? 0) + (pv.APNI ?? 0);
+				sv.SDLP = (sv.SDLP ?? 0) + (pv.SDLP ?? 0);
 
-			const pv = ward.partyVotes;
-			sv.LAB = (sv.LAB ?? 0) + (pv.LAB ?? 0);
-			sv.CON = (sv.CON ?? 0) + (pv.CON ?? 0);
-			sv.LD = (sv.LD ?? 0) + (pv.LD ?? 0);
-			sv.GREEN = (sv.GREEN ?? 0) + (pv.GREEN ?? 0);
-			sv.REF = (sv.REF ?? 0) + (pv.REF ?? 0);
-			sv.IND = (sv.IND ?? 0) + (pv.IND ?? 0);
-			sv.DUP = (sv.DUP ?? 0) + (pv.DUP ?? 0);
-			sv.PC = (sv.PC ?? 0) + (pv.PC ?? 0);
-			sv.SNP = (sv.SNP ?? 0) + (pv.SNP ?? 0);
-			sv.SF = (sv.SF ?? 0) + (pv.SF ?? 0);
-			sv.APNI = (sv.APNI ?? 0) + (pv.APNI ?? 0);
-			sv.SDLP = (sv.SDLP ?? 0) + (pv.SDLP ?? 0);
+				stats.electorate += ward.electorate;
+				stats.totalVotes += ward.totalVotes;
+			}
 
-			stats.electorate += ward.electorate;
-			stats.totalVotes += ward.totalVotes;
-		}
-
-		this.cache.set(cacheKey, stats);
-		return stats;
+			return stats;
+		});
 	}
 
 	calculateGeneralElectionStats(
@@ -152,59 +159,56 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `general-election-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
+		return this.cached(`general-election-${location}-${datasetId}`, () => {
+			const constituencyCodeProp =
+				this.propertyDetector.detectConstituencyCode(geojson.features);
+			const features = geojson.features;
 
-		const constituencyCodeProp =
-			this.propertyDetector.detectConstituencyCode(geojson.features);
-		const features = geojson.features;
+			const stats: ConstituencyStats = {
+				totalSeats: 0,
+				electorate: 0,
+				validVotes: 0,
+				invalidVotes: 0,
+				partySeats: {},
+				totalVotes: 0,
+				partyVotes: {},
+			};
 
-		const stats: ConstituencyStats = {
-			totalSeats: 0,
-			electorate: 0,
-			validVotes: 0,
-			invalidVotes: 0,
-			partySeats: {},
-			totalVotes: 0,
-			partyVotes: {},
-		};
+			for (let i = 0; i < features.length; i++) {
+				const constituency =
+					constituencyData[
+						getFeatureProp(
+							features[i].properties,
+							constituencyCodeProp,
+						) ?? ""
+					];
+				if (!constituency) continue;
 
-		for (let i = 0; i < features.length; i++) {
-			const constituency =
-				constituencyData[
-					getFeatureProp(
-						features[i].properties,
-						constituencyCodeProp,
-					) ?? ""
-				];
-			if (!constituency) continue;
+				stats.totalSeats++;
+				stats.electorate += constituency.electorate;
+				stats.validVotes += constituency.validVotes;
+				stats.invalidVotes += constituency.invalidVotes;
 
-			stats.totalSeats++;
-			stats.electorate += constituency.electorate;
-			stats.validVotes += constituency.validVotes;
-			stats.invalidVotes += constituency.invalidVotes;
+				const winningParty = getWinningParty(constituency);
+				if (winningParty) {
+					stats.partySeats[winningParty] =
+						(stats.partySeats[winningParty] || 0) + 1;
+				}
 
-			const winningParty = getWinningParty(constituency);
-			if (winningParty) {
-				stats.partySeats[winningParty] =
-					(stats.partySeats[winningParty] || 0) + 1;
-			}
-
-			const pv = constituency.partyVotes;
-			const spv = stats.partyVotes;
-			for (let j = 0; j < PARTY_KEYS.length; j++) {
-				const party = PARTY_KEYS[j];
-				const votes = pv[party] ?? 0;
-				if (votes > 0) {
-					stats.totalVotes += votes;
-					spv[party] = (spv[party] ?? 0) + votes;
+				const pv = constituency.partyVotes;
+				const spv = stats.partyVotes;
+				for (let j = 0; j < PARTY_KEYS.length; j++) {
+					const party = PARTY_KEYS[j];
+					const votes = pv[party] ?? 0;
+					if (votes > 0) {
+						stats.totalVotes += votes;
+						spv[party] = (spv[party] ?? 0) + votes;
+					}
 				}
 			}
-		}
 
-		this.cache.set(cacheKey, stats);
-		return stats;
+			return stats;
+		});
 	}
 
 	calculatePopulationStats(
@@ -213,22 +217,17 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `population-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
-
-		const wardCodeProp = this.propertyDetector.detectWardCode(
-			geojson.features,
-		);
-		const aggregated = this.aggregatePopulationData(
-			geojson,
-			populationData,
-			wardCodeProp,
-		);
-		const result = this.buildPopulationStatsResult(aggregated);
-
-		this.cache.set(cacheKey, result);
-		return result;
+		return this.cached(`population-${location}-${datasetId}`, () => {
+			const wardCodeProp = this.propertyDetector.detectWardCode(
+				geojson.features,
+			);
+			const aggregated = this.aggregatePopulationData(
+				geojson,
+				populationData,
+				wardCodeProp,
+			);
+			return this.buildPopulationStatsResult(aggregated);
+		});
 	}
 
 	calculateEthnicityStats(
@@ -237,79 +236,74 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `ethnicity-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
+		return this.cached(`ethnicity-${location}-${datasetId}`, () => {
+			const ladProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
+			const features = geojson.features;
 
-		const ladProp = this.propertyDetector.detectLocalAuthorityCode(
-			geojson.features,
-		);
-		const features = geojson.features;
+			// Aggregate all ethnicity data across all features
+			const aggregated: Record<
+				string,
+				Record<string, { population: number; code: string }>
+			> = {};
 
-		// Aggregate all ethnicity data across all features
-		const aggregated: Record<
-			string,
-			Record<string, { population: number; code: string }>
-		> = {};
-		let totalPopulation = 0;
+			for (let i = 0; i < features.length; i++) {
+				const localAuthority =
+					localAuthorityData[
+						getFeatureProp(features[i].properties, ladProp) ?? ""
+					];
+				if (!localAuthority) continue;
 
-		for (let i = 0; i < features.length; i++) {
-			const localAuthority =
-				localAuthorityData[
-					getFeatureProp(features[i].properties, ladProp) ?? ""
-				];
-			if (!localAuthority) continue;
-
-			// Iterate through parent categories
-			for (const [parentCategory, subcategories] of Object.entries(
-				localAuthority,
-			)) {
-				// Initialize parent category if not exists
-				if (!aggregated[parentCategory]) {
-					aggregated[parentCategory] = {};
-				}
-
-				// Iterate through subcategories
-				for (const [subcategoryName, ethnicity] of Object.entries(
-					subcategories,
+				// Iterate through parent categories
+				for (const [parentCategory, subcategories] of Object.entries(
+					localAuthority,
 				)) {
-					// Initialize subcategory if not exists
-					if (!aggregated[parentCategory][subcategoryName]) {
-						aggregated[parentCategory][subcategoryName] = {
-							population: 0,
-							code: ethnicity.code,
-						};
+					// Initialize parent category if not exists
+					if (!aggregated[parentCategory]) {
+						aggregated[parentCategory] = {};
 					}
 
-					// Add population
-					aggregated[parentCategory][subcategoryName].population +=
-						ethnicity.population;
-					totalPopulation += ethnicity.population;
+					// Iterate through subcategories
+					for (const [subcategoryName, ethnicity] of Object.entries(
+						subcategories,
+					)) {
+						// Initialize subcategory if not exists
+						if (!aggregated[parentCategory][subcategoryName]) {
+							aggregated[parentCategory][subcategoryName] = {
+								population: 0,
+								code: ethnicity.code,
+							};
+						}
+
+						// Add population
+						aggregated[parentCategory][subcategoryName].population +=
+							ethnicity.population;
+					}
 				}
 			}
-		}
 
-		// Convert to the format with ethnicity property
-		const result: Record<string, EthnicityCategory> = {};
+			// Convert to the format with ethnicity property
+			const result: Record<string, EthnicityCategory> = {};
 
-		for (const [parentCategory, subcategories] of Object.entries(
-			aggregated,
-		)) {
-			result[parentCategory] = {};
-
-			for (const [subcategoryName, data] of Object.entries(
-				subcategories,
+			for (const [parentCategory, subcategories] of Object.entries(
+				aggregated,
 			)) {
-				result[parentCategory][subcategoryName] = {
-					ethnicity: subcategoryName,
-					population: data.population,
-					code: data.code,
-				};
-			}
-		}
+				result[parentCategory] = {};
 
-		this.cache.set(cacheKey, result);
-		return result;
+				for (const [subcategoryName, data] of Object.entries(
+					subcategories,
+				)) {
+					result[parentCategory][subcategoryName] = {
+						ethnicity: subcategoryName,
+						population: data.population,
+						code: data.code,
+					};
+				}
+			}
+
+			return result;
+		});
 	}
 
 	calculateHousePriceStats(
@@ -318,64 +312,60 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `house-price-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
+		return this.cached(`house-price-${location}-${datasetId}`, () => {
+			const wardCodeProp = this.propertyDetector.detectWardCode(
+				geojson.features,
+			);
+			const features = geojson.features;
 
-		const wardCodeProp = this.propertyDetector.detectWardCode(
-			geojson.features,
-		);
-		const features = geojson.features;
+			const yearlyTotals: Record<number, number> = {};
+			const yearlyCounts: Record<number, number> = {};
+			let totalPrice = 0;
+			let wardCount = 0;
 
-		const yearlyTotals: Record<number, number> = {};
-		const yearlyCounts: Record<number, number> = {};
-		let totalPrice = 0;
-		let wardCount = 0;
+			for (let i = 0; i < features.length; i++) {
+				const ward =
+					wardData[
+						getFeatureProp(features[i].properties, wardCodeProp) ?? ""
+					];
+				if (!ward) continue;
 
-		for (let i = 0; i < features.length; i++) {
-			const ward =
-				wardData[
-					getFeatureProp(features[i].properties, wardCodeProp) ?? ""
-				];
-			if (!ward) continue;
+				const prices = ward.prices;
+				const price2023 = prices[2023];
 
-			const prices = ward.prices;
-			const price2023 = prices[2023];
+				if (price2023 !== null && price2023 !== undefined) {
+					totalPrice += price2023;
+					wardCount++;
+				}
 
-			if (price2023 !== null && price2023 !== undefined) {
-				totalPrice += price2023;
-				wardCount++;
-			}
-
-			// Use Object.keys for better performance with small objects
-			const years = Object.keys(prices);
-			for (let j = 0; j < years.length; j++) {
-				const yearNum = Number(years[j]);
-				const price = prices[yearNum];
-				if (price !== null && yearNum <= 2023) {
-					yearlyTotals[yearNum] =
-						(yearlyTotals[yearNum] || 0) + price;
-					yearlyCounts[yearNum] = (yearlyCounts[yearNum] || 0) + 1;
+				// Use Object.keys for better performance with small objects
+				const years = Object.keys(prices);
+				for (let j = 0; j < years.length; j++) {
+					const yearNum = Number(years[j]);
+					const price = prices[yearNum];
+					if (price !== null && yearNum <= 2023) {
+						yearlyTotals[yearNum] =
+							(yearlyTotals[yearNum] || 0) + price;
+						yearlyCounts[yearNum] = (yearlyCounts[yearNum] || 0) + 1;
+					}
 				}
 			}
-		}
 
-		const averagePrices: Record<number, number> = {};
-		const yearKeys = Object.keys(yearlyTotals);
-		for (let i = 0; i < yearKeys.length; i++) {
-			const yearNum = Number(yearKeys[i]);
-			averagePrices[yearNum] =
-				yearlyTotals[yearNum] / yearlyCounts[yearNum];
-		}
+			const averagePrices: Record<number, number> = {};
+			const yearKeys = Object.keys(yearlyTotals);
+			for (let i = 0; i < yearKeys.length; i++) {
+				const yearNum = Number(yearKeys[i]);
+				averagePrices[yearNum] =
+					yearlyTotals[yearNum] / yearlyCounts[yearNum];
+			}
 
-		const result: AggregatedHousePriceData = {
-			averagePrice: wardCount > 0 ? totalPrice / wardCount : 0,
-			wardCount,
-			averagePrices,
-		};
-
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedHousePriceData = {
+				averagePrice: wardCount > 0 ? totalPrice / wardCount : 0,
+				wardCount,
+				averagePrices,
+			};
+			return result;
+		});
 	}
 
 	calculateCrimeStats(
@@ -384,40 +374,37 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `crime-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
+		return this.cached(`crime-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
+			const features = geojson.features;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
-			geojson.features,
-		);
-		const features = geojson.features;
+			let totalRecordedCrime = 0;
+			let localAuthorityCount = 0;
 
-		let totalRecordedCrime = 0;
-		let localAuthorityCount = 0;
+			for (let i = 0; i < features.length; i++) {
+				const area =
+					crimeData[
+						getFeatureProp(features[i].properties, ladCodeProp) ?? ""
+					];
+				if (!area) continue;
 
-		for (let i = 0; i < features.length; i++) {
-			const area =
-				crimeData[
-					getFeatureProp(features[i].properties, ladCodeProp) ?? ""
-				];
-			if (!area) continue;
-
-			const crime = area.totalRecordedCrime;
-			if (crime !== null && crime !== undefined) {
-				totalRecordedCrime += crime;
-				localAuthorityCount++;
+				const crime = area.totalRecordedCrime;
+				if (crime !== null && crime !== undefined) {
+					totalRecordedCrime += crime;
+					localAuthorityCount++;
+				}
 			}
-		}
 
-		const result: AggregatedCrimeData = {
-			averageRecordedCrime:
-				localAuthorityCount > 0
-					? totalRecordedCrime / localAuthorityCount
-					: 0,
-		};
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedCrimeData = {
+				averageRecordedCrime:
+					localAuthorityCount > 0
+						? totalRecordedCrime / localAuthorityCount
+						: 0,
+			};
+			return result;
+		});
 	}
 
 	calculateIncomeStats(
@@ -426,38 +413,34 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `income-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
+		return this.cached(`income-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
+			const features = geojson.features;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
-			geojson.features,
-		);
-		const features = geojson.features;
+			let totalMedianIncome = 0;
+			let localAuthorityCount = 0;
 
-		let totalMedianIncome = 0;
-		let localAuthorityCount = 0;
-
-		for (let i = 0; i < features.length; i++) {
-			const locationIncome =
-				incomeData[
-					getFeatureProp(features[i].properties, ladCodeProp) ?? ""
-				];
-			if (locationIncome?.annual?.median != null) {
-				totalMedianIncome += locationIncome.annual.median;
-				localAuthorityCount++;
+			for (let i = 0; i < features.length; i++) {
+				const locationIncome =
+					incomeData[
+						getFeatureProp(features[i].properties, ladCodeProp) ?? ""
+					];
+				if (locationIncome?.annual?.median != null) {
+					totalMedianIncome += locationIncome.annual.median;
+					localAuthorityCount++;
+				}
 			}
-		}
 
-		const result: AggregatedIncomeData = {
-			averageIncome:
-				localAuthorityCount > 0
-					? totalMedianIncome / localAuthorityCount
-					: 0,
-		};
-
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedIncomeData = {
+				averageIncome:
+					localAuthorityCount > 0
+						? totalMedianIncome / localAuthorityCount
+						: 0,
+			};
+			return result;
+		});
 	}
 
 	calculateBrexitStats(
@@ -466,44 +449,40 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `brexit-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
+		return this.cached(`brexit-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
+			const features = geojson.features;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
-			geojson.features,
-		);
-		const features = geojson.features;
+			let totalLeave = 0;
+			let totalRemain = 0;
+			let totalVotes = 0;
+			let totalElectorate = 0;
 
-		let totalLeave = 0;
-		let totalRemain = 0;
-		let totalVotes = 0;
-		let totalElectorate = 0;
+			for (let i = 0; i < features.length; i++) {
+				const area =
+					brexitData[
+						getFeatureProp(features[i].properties, ladCodeProp) ?? ""
+					];
+				if (!area) continue;
 
-		for (let i = 0; i < features.length; i++) {
-			const area =
-				brexitData[
-					getFeatureProp(features[i].properties, ladCodeProp) ?? ""
-				];
-			if (!area) continue;
+				totalLeave += area.leave;
+				totalRemain += area.remain;
+				totalVotes += area.validVotes;
+				totalElectorate += area.electorate;
+			}
 
-			totalLeave += area.leave;
-			totalRemain += area.remain;
-			totalVotes += area.validVotes;
-			totalElectorate += area.electorate;
-		}
-
-		const result: AggregatedBrexitData = {
-			totalLeave,
-			totalRemain,
-			totalVotes,
-			pctLeave: totalVotes > 0 ? (totalLeave / totalVotes) * 100 : 0,
-			pctRemain: totalVotes > 0 ? (totalRemain / totalVotes) * 100 : 0,
-			electorate: totalElectorate,
-		};
-
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedBrexitData = {
+				totalLeave,
+				totalRemain,
+				totalVotes,
+				pctLeave: totalVotes > 0 ? (totalLeave / totalVotes) * 100 : 0,
+				pctRemain: totalVotes > 0 ? (totalRemain / totalVotes) * 100 : 0,
+				electorate: totalElectorate,
+			};
+			return result;
+		});
 	}
 
 	calculateBrexitConstituencyStats(
@@ -512,42 +491,38 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `brexitConstituency-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
+		return this.cached(`brexitConstituency-${location}-${datasetId}`, () => {
+			const codeProp = this.propertyDetector.detectConstituencyCode(
+				geojson.features,
+			);
+			const features = geojson.features;
 
-		const codeProp = this.propertyDetector.detectConstituencyCode(
-			geojson.features,
-		);
-		const features = geojson.features;
+			let totalLeave = 0;
+			let totalRemain = 0;
+			let count = 0;
 
-		let totalLeave = 0;
-		let totalRemain = 0;
-		let count = 0;
+			for (let i = 0; i < features.length; i++) {
+				const area =
+					constituencyData[
+						getFeatureProp(features[i].properties, codeProp) ?? ""
+					];
+				if (!area) continue;
 
-		for (let i = 0; i < features.length; i++) {
-			const area =
-				constituencyData[
-					getFeatureProp(features[i].properties, codeProp) ?? ""
-				];
-			if (!area) continue;
+				totalLeave += area.pctLeave;
+				totalRemain += 100 - area.pctLeave;
+				count++;
+			}
 
-			totalLeave += area.pctLeave;
-			totalRemain += 100 - area.pctLeave;
-			count++;
-		}
-
-		const result: AggregatedBrexitData = {
-			totalLeave,
-			totalRemain,
-			totalVotes: count,
-			pctLeave: count > 0 ? totalLeave / count : 0,
-			pctRemain: count > 0 ? totalRemain / count : 0,
-			electorate: 0,
-		};
-
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedBrexitData = {
+				totalLeave,
+				totalRemain,
+				totalVotes: count,
+				pctLeave: count > 0 ? totalLeave / count : 0,
+				pctRemain: count > 0 ? totalRemain / count : 0,
+				electorate: 0,
+			};
+			return result;
+		});
 	}
 
 	calculateCustomDatasetStats(
@@ -556,34 +531,30 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		const cacheKey = `custom-dataset-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached;
+		return this.cached(`custom-dataset-${location}-${datasetId}`, () => {
+			const codeProp = this.propertyDetector.detectCode(geojson.features);
 
-		const codeProp = this.propertyDetector.detectCode(geojson.features);
+			let sum = 0;
+			let count = 0;
+			for (let i = 0; i < geojson.features.length; i++) {
+				const featureCode =
+					getFeatureProp(geojson.features[i].properties, codeProp) ?? "";
+				const featureData = data[featureCode];
 
-		let sum = 0;
-		let count = 0;
-		for (let i = 0; i < geojson.features.length; i++) {
-			const featureCode =
-				getFeatureProp(geojson.features[i].properties, codeProp) ?? "";
-			const featureData = data[featureCode];
-
-			if (typeof featureData === "number") {
-				sum += featureData;
-				count++;
+				if (typeof featureData === "number") {
+					sum += featureData;
+					count++;
+				}
 			}
-		}
 
-		const average = count > 0 ? sum / count : 0;
+			const average = count > 0 ? sum / count : 0;
 
-		const result: AggregatedCustomData = {
-			count,
-			average,
-		};
-
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedCustomData = {
+				count,
+				average,
+			};
+			return result;
+		});
 	}
 
 	calculateLifeExpectancyStats(
@@ -592,36 +563,30 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedLifeExpectancyData {
-		const cacheKey = `lifeExpectancy-${location}-${datasetId}`;
-		const cached = this.cache.get(
-			cacheKey,
-		) as AggregatedLifeExpectancyData | undefined;
-		if (cached !== undefined) return cached;
+		return this.cached(`lifeExpectancy-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
+			let totalMale = 0;
+			let totalFemale = 0;
+			let count = 0;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
-			geojson.features,
-		);
-		let totalMale = 0;
-		let totalFemale = 0;
-		let count = 0;
-
-		for (const feature of geojson.features) {
-			const code = getFeatureProp(feature.properties, ladCodeProp) ?? "";
-			const record = leData[code];
-			if (record) {
-				totalMale += record.maleBirthLE;
-				totalFemale += record.femaleBirthLE;
-				count++;
+			for (const feature of geojson.features) {
+				const code = getFeatureProp(feature.properties, ladCodeProp) ?? "";
+				const record = leData[code];
+				if (record) {
+					totalMale += record.maleBirthLE;
+					totalFemale += record.femaleBirthLE;
+					count++;
+				}
 			}
-		}
 
-		const stats: AggregatedLifeExpectancyData = {
-			averageMaleLE: count > 0 ? totalMale / count : 0,
-			averageFemaleLE: count > 0 ? totalFemale / count : 0,
-		};
-
-		this.cache.set(cacheKey, stats);
-		return stats;
+			const stats: AggregatedLifeExpectancyData = {
+				averageMaleLE: count > 0 ? totalMale / count : 0,
+				averageFemaleLE: count > 0 ? totalFemale / count : 0,
+			};
+			return stats;
+		});
 	}
 
 	calculateSIMDStats(
@@ -630,42 +595,35 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedSIMDData | null {
-		const cacheKey = `simd-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedSIMDData | null;
-		if (cached !== undefined) return cached;
+		return this.cached(`simd-${location}-${datasetId}`, () => {
+			const dzCodeProp = this.propertyDetector.detectDataZoneCode(
+				geojson.features,
+			);
+			let totalRank = 0;
+			let totalQuintile = 0;
+			let totalDecile = 0;
+			let count = 0;
 
-		const dzCodeProp = this.propertyDetector.detectDataZoneCode(
-			geojson.features,
-		);
-		let totalRank = 0;
-		let totalQuintile = 0;
-		let totalDecile = 0;
-		let count = 0;
-
-		for (const feature of geojson.features) {
-			const code = getFeatureProp(feature.properties, dzCodeProp) ?? "";
-			const record = simdData[code];
-			if (record) {
-				totalRank += record.simdRank;
-				totalQuintile += record.simdQuintile;
-				totalDecile += record.simdDecile;
-				count++;
+			for (const feature of geojson.features) {
+				const code = getFeatureProp(feature.properties, dzCodeProp) ?? "";
+				const record = simdData[code];
+				if (record) {
+					totalRank += record.simdRank;
+					totalQuintile += record.simdQuintile;
+					totalDecile += record.simdDecile;
+					count++;
+				}
 			}
-		}
 
-		if (count === 0) {
-			this.cache.set(cacheKey, null);
-			return null;
-		}
+			if (count === 0) return null;
 
-		const stats: AggregatedSIMDData = {
-			averageSIMDRank: totalRank / count,
-			averageSIMDQuintile: totalQuintile / count,
-			averageSIMDDecile: totalDecile / count,
-		};
-
-		this.cache.set(cacheKey, stats);
-		return stats;
+			const stats: AggregatedSIMDData = {
+				averageSIMDRank: totalRank / count,
+				averageSIMDQuintile: totalQuintile / count,
+				averageSIMDDecile: totalDecile / count,
+			};
+			return stats;
+		});
 	}
 
 	calculateWIMDStats(
@@ -674,42 +632,35 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedWIMDData | null {
-		const cacheKey = `wimd-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedWIMDData | null;
-		if (cached !== undefined) return cached;
+		return this.cached(`wimd-${location}-${datasetId}`, () => {
+			const lsoaCodeProp = this.propertyDetector.detectLSOACode(
+				geojson.features,
+			);
+			let totalScore = 0;
+			let totalRank = 0;
+			let totalDecile = 0;
+			let count = 0;
 
-		const lsoaCodeProp = this.propertyDetector.detectLSOACode(
-			geojson.features,
-		);
-		let totalScore = 0;
-		let totalRank = 0;
-		let totalDecile = 0;
-		let count = 0;
-
-		for (const feature of geojson.features) {
-			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
-			const record = wimdData[code];
-			if (record) {
-				totalScore += record.wimdScore;
-				totalRank += record.wimdRank;
-				totalDecile += record.wimdDecile;
-				count++;
+			for (const feature of geojson.features) {
+				const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
+				const record = wimdData[code];
+				if (record) {
+					totalScore += record.wimdScore;
+					totalRank += record.wimdRank;
+					totalDecile += record.wimdDecile;
+					count++;
+				}
 			}
-		}
 
-		if (count === 0) {
-			this.cache.set(cacheKey, null);
-			return null;
-		}
+			if (count === 0) return null;
 
-		const stats: AggregatedWIMDData = {
-			averageWIMDScore: totalScore / count,
-			averageWIMDRank: totalRank / count,
-			averageWIMDDecile: totalDecile / count,
-		};
-
-		this.cache.set(cacheKey, stats);
-		return stats;
+			const stats: AggregatedWIMDData = {
+				averageWIMDScore: totalScore / count,
+				averageWIMDRank: totalRank / count,
+				averageWIMDDecile: totalDecile / count,
+			};
+			return stats;
+		});
 	}
 
 	calculateNIMDMStats(
@@ -718,39 +669,32 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedNIMDMData | null {
-		const cacheKey = `nimdm-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedNIMDMData | null | undefined;
-		if (cached !== undefined) return cached;
+		return this.cached(`nimdm-${location}-${datasetId}`, () => {
+			const soaCodeProp = this.propertyDetector.detectSOACode(
+				geojson.features,
+			);
+			let totalRank = 0;
+			let totalDecile = 0;
+			let count = 0;
 
-		const soaCodeProp = this.propertyDetector.detectSOACode(
-			geojson.features,
-		);
-		let totalRank = 0;
-		let totalDecile = 0;
-		let count = 0;
-
-		for (const feature of geojson.features) {
-			const code = getFeatureProp(feature.properties, soaCodeProp) ?? "";
-			const record = nimdmData[code];
-			if (record) {
-				totalRank += record.nimdmRank;
-				totalDecile += record.nimdmDecile;
-				count++;
+			for (const feature of geojson.features) {
+				const code = getFeatureProp(feature.properties, soaCodeProp) ?? "";
+				const record = nimdmData[code];
+				if (record) {
+					totalRank += record.nimdmRank;
+					totalDecile += record.nimdmDecile;
+					count++;
+				}
 			}
-		}
 
-		if (count === 0) {
-			this.cache.set(cacheKey, null);
-			return null;
-		}
+			if (count === 0) return null;
 
-		const stats: AggregatedNIMDMData = {
-			averageNIMDMRank: totalRank / count,
-			averageNIMDMDecile: totalDecile / count,
-		};
-
-		this.cache.set(cacheKey, stats);
-		return stats;
+			const stats: AggregatedNIMDMData = {
+				averageNIMDMRank: totalRank / count,
+				averageNIMDMDecile: totalDecile / count,
+			};
+			return stats;
+		});
 	}
 
 	calculateIMDStats(
@@ -759,34 +703,30 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedIMDData {
-		const cacheKey = `imd-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedIMDData | undefined;
-		if (cached !== undefined) return cached;
+		return this.cached(`imd-${location}-${datasetId}`, () => {
+			const lsoaCodeProp = this.propertyDetector.detectLSOACode(
+				geojson.features,
+			);
+			let totalScore = 0;
+			let totalDecile = 0;
+			let count = 0;
 
-		const lsoaCodeProp = this.propertyDetector.detectLSOACode(
-			geojson.features,
-		);
-		let totalScore = 0;
-		let totalDecile = 0;
-		let count = 0;
-
-		for (const feature of geojson.features) {
-			const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
-			const record = imdData[code];
-			if (record) {
-				totalScore += record.imdScore;
-				totalDecile += record.imdDecile;
-				count++;
+			for (const feature of geojson.features) {
+				const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
+				const record = imdData[code];
+				if (record) {
+					totalScore += record.imdScore;
+					totalDecile += record.imdDecile;
+					count++;
+				}
 			}
-		}
 
-		const stats: AggregatedIMDData = {
-			averageIMDScore: count > 0 ? totalScore / count : 0,
-			averageIMDDecile: count > 0 ? totalDecile / count : 0,
-		};
-
-		this.cache.set(cacheKey, stats);
-		return stats;
+			const stats: AggregatedIMDData = {
+				averageIMDScore: count > 0 ? totalScore / count : 0,
+				averageIMDDecile: count > 0 ? totalDecile / count : 0,
+			};
+			return stats;
+		});
 	}
 
 	private aggregatePopulationData(
@@ -976,47 +916,42 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedQualificationData {
-		const cacheKey = `qualification-${location}-${datasetId}`;
-		const cached = this.cache.get(
-			cacheKey,
-		) as AggregatedQualificationData | undefined;
-		if (cached !== undefined) return cached;
+		return this.cached(`qualification-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
+			const seen = new Set<string>();
+			const total: QualificationBreakdown = {
+				noQualifications: 0,
+				level1: 0,
+				level2: 0,
+				apprenticeship: 0,
+				level3: 0,
+				level4Plus: 0,
+				other: 0,
+				total: 0,
+			};
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
-			geojson.features,
-		);
-		const seen = new Set<string>();
-		const total: QualificationBreakdown = {
-			noQualifications: 0,
-			level1: 0,
-			level2: 0,
-			apprenticeship: 0,
-			level3: 0,
-			level4Plus: 0,
-			other: 0,
-			total: 0,
-		};
+			for (const feature of geojson.features) {
+				const code = getFeatureProp(feature.properties, ladCodeProp) ?? "";
+				if (seen.has(code)) continue;
+				seen.add(code);
+				const record = qualData[code];
+				if (!record) continue;
+				const b = record.breakdown;
+				total.noQualifications += b.noQualifications;
+				total.level1 += b.level1;
+				total.level2 += b.level2;
+				total.apprenticeship += b.apprenticeship;
+				total.level3 += b.level3;
+				total.level4Plus += b.level4Plus;
+				total.other += b.other;
+				total.total += b.total;
+			}
 
-		for (const feature of geojson.features) {
-			const code = getFeatureProp(feature.properties, ladCodeProp) ?? "";
-			if (seen.has(code)) continue;
-			seen.add(code);
-			const record = qualData[code];
-			if (!record) continue;
-			const b = record.breakdown;
-			total.noQualifications += b.noQualifications;
-			total.level1 += b.level1;
-			total.level2 += b.level2;
-			total.apprenticeship += b.apprenticeship;
-			total.level3 += b.level3;
-			total.level4Plus += b.level4Plus;
-			total.other += b.other;
-			total.total += b.total;
-		}
-
-		const result: AggregatedQualificationData = { breakdown: total };
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedQualificationData = { breakdown: total };
+			return result;
+		});
 	}
 
 	calculateBroadbandStats(
@@ -1025,33 +960,30 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedBroadbandData | null {
-		const cacheKey = `broadband-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedBroadbandData | null;
-		if (cached !== undefined) return cached;
+		return this.cached(`broadband-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			let totalSuperfast = 0, totalUltrafast = 0, totalFullFibre = 0, totalGigabit = 0, count = 0;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-		let totalSuperfast = 0, totalUltrafast = 0, totalFullFibre = 0, totalGigabit = 0, count = 0;
+			for (const feature of geojson.features) {
+				const record = broadbandData[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+				if (!record || record.pctFullFibre == null) continue;
+				totalSuperfast += record.pctSuperfast ?? 0;
+				totalUltrafast += record.pctUltrafast ?? 0;
+				totalFullFibre += record.pctFullFibre;
+				totalGigabit += record.pctGigabit ?? 0;
+				count++;
+			}
 
-		for (const feature of geojson.features) {
-			const record = broadbandData[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-			if (!record || record.pctFullFibre == null) continue;
-			totalSuperfast += record.pctSuperfast ?? 0;
-			totalUltrafast += record.pctUltrafast ?? 0;
-			totalFullFibre += record.pctFullFibre;
-			totalGigabit += record.pctGigabit ?? 0;
-			count++;
-		}
+			if (count === 0) return null;
 
-		if (count === 0) { this.cache.set(cacheKey, null); return null; }
-
-		const result: AggregatedBroadbandData = {
-			pctSuperfast: totalSuperfast / count,
-			pctUltrafast: totalUltrafast / count,
-			pctFullFibre: totalFullFibre / count,
-			pctGigabit: totalGigabit / count,
-		};
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedBroadbandData = {
+				pctSuperfast: totalSuperfast / count,
+				pctUltrafast: totalUltrafast / count,
+				pctFullFibre: totalFullFibre / count,
+				pctGigabit: totalGigabit / count,
+			};
+			return result;
+		});
 	}
 
 	calculateAirQualityStats(
@@ -1060,31 +992,28 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedAirQualityData | null {
-		const cacheKey = `airQuality-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedAirQualityData | null;
-		if (cached !== undefined) return cached;
+		return this.cached(`airQuality-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			let totalNo2 = 0, totalPm25 = 0, totalPm10 = 0, count = 0, pm25Count = 0, pm10Count = 0;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-		let totalNo2 = 0, totalPm25 = 0, totalPm10 = 0, count = 0, pm25Count = 0, pm10Count = 0;
+			for (const feature of geojson.features) {
+				const record = airQualityData[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+				if (!record || record.no2Mean == null) continue;
+				totalNo2 += record.no2Mean;
+				if (record.pm25Mean != null) { totalPm25 += record.pm25Mean; pm25Count++; }
+				if (record.pm10Mean != null) { totalPm10 += record.pm10Mean; pm10Count++; }
+				count++;
+			}
 
-		for (const feature of geojson.features) {
-			const record = airQualityData[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-			if (!record || record.no2Mean == null) continue;
-			totalNo2 += record.no2Mean;
-			if (record.pm25Mean != null) { totalPm25 += record.pm25Mean; pm25Count++; }
-			if (record.pm10Mean != null) { totalPm10 += record.pm10Mean; pm10Count++; }
-			count++;
-		}
+			if (count === 0) return null;
 
-		if (count === 0) { this.cache.set(cacheKey, null); return null; }
-
-		const result: AggregatedAirQualityData = {
-			no2Mean: totalNo2 / count,
-			pm25Mean: pm25Count > 0 ? totalPm25 / pm25Count : null,
-			pm10Mean: pm10Count > 0 ? totalPm10 / pm10Count : null,
-		};
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedAirQualityData = {
+				no2Mean: totalNo2 / count,
+				pm25Mean: pm25Count > 0 ? totalPm25 / pm25Count : null,
+				pm10Mean: pm10Count > 0 ? totalPm10 / pm10Count : null,
+			};
+			return result;
+		});
 	}
 
 	calculateClaimantCountStats(
@@ -1093,33 +1022,30 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedClaimantCountData | null {
-		const cacheKey = `claimantCount-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedClaimantCountData | null;
-		if (cached !== undefined) return cached;
+		return this.cached(`claimantCount-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			let totalCount = 0, totalRate = 0, youthCount = 0, youthRate = 0, count = 0;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-		let totalCount = 0, totalRate = 0, youthCount = 0, youthRate = 0, count = 0;
+			for (const feature of geojson.features) {
+				const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+				if (!record) continue;
+				totalCount += record.totalCount;
+				totalRate += record.totalRate;
+				youthCount += record.youthCount;
+				youthRate += record.youthRate;
+				count++;
+			}
 
-		for (const feature of geojson.features) {
-			const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-			if (!record) continue;
-			totalCount += record.totalCount;
-			totalRate += record.totalRate;
-			youthCount += record.youthCount;
-			youthRate += record.youthRate;
-			count++;
-		}
+			if (count === 0) return null;
 
-		if (count === 0) { this.cache.set(cacheKey, null); return null; }
-
-		const result: AggregatedClaimantCountData = {
-			totalCount,
-			totalRate: totalRate / count,
-			youthCount,
-			youthRate: youthRate / count,
-		};
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedClaimantCountData = {
+				totalCount,
+				totalRate: totalRate / count,
+				youthCount,
+				youthRate: youthRate / count,
+			};
+			return result;
+		});
 	}
 
 	calculateSchoolPerformanceStats(
@@ -1128,33 +1054,30 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedSchoolPerformanceData | null {
-		const cacheKey = `schoolPerformance-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedSchoolPerformanceData | null;
-		if (cached !== undefined) return cached;
+		return this.cached(`schoolPerformance-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			let pt94 = 0, pt95 = 0, att8 = 0, p8 = 0, count = 0;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-		let pt94 = 0, pt95 = 0, att8 = 0, p8 = 0, count = 0;
+			for (const feature of geojson.features) {
+				const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+				if (!record || record.ptL2basics94 == null) continue;
+				pt94 += record.ptL2basics94;
+				pt95 += record.ptL2basics95 ?? 0;
+				att8 += record.avgAtt8 ?? 0;
+				p8 += record.avgP8score ?? 0;
+				count++;
+			}
 
-		for (const feature of geojson.features) {
-			const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-			if (!record || record.ptL2basics94 == null) continue;
-			pt94 += record.ptL2basics94;
-			pt95 += record.ptL2basics95 ?? 0;
-			att8 += record.avgAtt8 ?? 0;
-			p8 += record.avgP8score ?? 0;
-			count++;
-		}
+			if (count === 0) return null;
 
-		if (count === 0) { this.cache.set(cacheKey, null); return null; }
-
-		const result: AggregatedSchoolPerformanceData = {
-			ptL2basics94: pt94 / count,
-			ptL2basics95: pt95 / count,
-			avgAtt8: att8 / count,
-			avgP8score: p8 / count,
-		};
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedSchoolPerformanceData = {
+				ptL2basics94: pt94 / count,
+				ptL2basics95: pt95 / count,
+				avgAtt8: att8 / count,
+				avgP8score: p8 / count,
+			};
+			return result;
+		});
 	}
 
 	calculateNHSWaitingStats(
@@ -1163,34 +1086,31 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedNHSWaitingData | null {
-		const cacheKey = `nhsWaiting-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedNHSWaitingData | null;
-		if (cached !== undefined) return cached;
+		return this.cached(`nhsWaiting-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			const seenIcbs = new Set<string>();
+			let total = 0, over18 = 0;
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-		const seenIcbs = new Set<string>();
-		let total = 0, over18 = 0;
+			for (const feature of geojson.features) {
+				const ladCode = getFeatureProp(feature.properties, ladCodeProp) ?? "";
+				const icbCode = dataset.ladToIcb[ladCode];
+				if (!icbCode || seenIcbs.has(icbCode)) continue;
+				const record = dataset.data[icbCode];
+				if (!record) continue;
+				seenIcbs.add(icbCode);
+				total += record.total;
+				over18 += record.over18Weeks;
+			}
 
-		for (const feature of geojson.features) {
-			const ladCode = getFeatureProp(feature.properties, ladCodeProp) ?? "";
-			const icbCode = dataset.ladToIcb[ladCode];
-			if (!icbCode || seenIcbs.has(icbCode)) continue;
-			const record = dataset.data[icbCode];
-			if (!record) continue;
-			seenIcbs.add(icbCode);
-			total += record.total;
-			over18 += record.over18Weeks;
-		}
+			if (total === 0) return null;
 
-		if (total === 0) { this.cache.set(cacheKey, null); return null; }
-
-		const result: AggregatedNHSWaitingData = {
-			total,
-			over18Weeks: over18,
-			pctOver18Weeks: (over18 / total) * 100,
-		};
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedNHSWaitingData = {
+				total,
+				over18Weeks: over18,
+				pctOver18Weeks: (over18 / total) * 100,
+			};
+			return result;
+		});
 	}
 
 	calculateUnemploymentStats(
@@ -1199,38 +1119,35 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedUnemploymentData | null {
-		const cacheKey = `unemployment-${location}-${datasetId}`;
-		const cached = this.cache.get(cacheKey) as AggregatedUnemploymentData | null;
-		if (cached !== undefined) return cached;
+		return this.cached(`unemployment-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			const sums: Record<number, number> = {};
+			const counts: Record<number, number> = {};
+			for (const yr of dataset.years) { sums[yr] = 0; counts[yr] = 0; }
 
-		const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-		const sums: Record<number, number> = {};
-		const counts: Record<number, number> = {};
-		for (const yr of dataset.years) { sums[yr] = 0; counts[yr] = 0; }
-
-		for (const feature of geojson.features) {
-			const record = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-			if (!record) continue;
-			for (const yr of dataset.years) {
-				const v = record.rates[yr];
-				if (v != null) { sums[yr] += v; counts[yr]++; }
+			for (const feature of geojson.features) {
+				const record = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+				if (!record) continue;
+				for (const yr of dataset.years) {
+					const v = record.rates[yr];
+					if (v != null) { sums[yr] += v; counts[yr]++; }
+				}
 			}
-		}
 
-		const rates: Record<number, number> = {};
-		let hasAny = false;
-		for (const yr of dataset.years) {
-			if (counts[yr] > 0) { rates[yr] = sums[yr] / counts[yr]; hasAny = true; }
-		}
+			const rates: Record<number, number> = {};
+			let hasAny = false;
+			for (const yr of dataset.years) {
+				if (counts[yr] > 0) { rates[yr] = sums[yr] / counts[yr]; hasAny = true; }
+			}
 
-		if (!hasAny) { this.cache.set(cacheKey, null); return null; }
+			if (!hasAny) return null;
 
-		const result: AggregatedUnemploymentData = {
-			years: dataset.years,
-			latestYear: dataset.latestYear,
-			rates,
-		};
-		this.cache.set(cacheKey, result);
-		return result;
+			const result: AggregatedUnemploymentData = {
+				years: dataset.years,
+				latestYear: dataset.latestYear,
+				rates,
+			};
+			return result;
+		});
 	}
 }

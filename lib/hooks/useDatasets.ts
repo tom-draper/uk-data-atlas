@@ -1,7 +1,12 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { DEFAULT_VISIBILITY, ChartKey } from "@/lib/context/ChartVisibilityContext";
+import {
+	DEFAULT_VISIBILITY,
+	ChartKey,
+	getVisibilitySnapshot,
+	subscribeVisibility,
+} from "@/lib/context/ChartVisibilityContext";
 import { useLocalElectionData } from "@lib/hooks/useLocalElectionData";
 import { useGeneralElectionData } from "@lib/hooks/useGeneralElectionData";
 import { usePopulationData } from "@lib/hooks/usePopulationData";
@@ -25,30 +30,8 @@ import { useSchoolPerformanceData } from "./useSchoolPerformanceData";
 import { useNHSWaitingData } from "./useNHSWaitingData";
 import { useUnemploymentData } from "./useUnemploymentData";
 
-const STORAGE_KEY = "uk-data-atlas-chart-visibility";
-
-let _snap: Record<ChartKey, boolean> | null = null;
-let _snapRaw: string | null | undefined = undefined;
-
-function getVisibilitySnapshot(): Record<ChartKey, boolean> {
-	const raw = localStorage.getItem(STORAGE_KEY);
-	if (raw === _snapRaw && _snap) return _snap;
-	_snapRaw = raw;
-	try {
-		_snap = raw ? { ...DEFAULT_VISIBILITY, ...JSON.parse(raw) } : DEFAULT_VISIBILITY;
-	} catch {
-		_snap = DEFAULT_VISIBILITY;
-	}
-	return _snap!;
-}
-
 function getServerSnapshot(): Record<ChartKey, boolean> {
 	return DEFAULT_VISIBILITY;
-}
-
-function subscribeVisibility(cb: () => void) {
-	window.addEventListener("storage", cb);
-	return () => window.removeEventListener("storage", cb);
 }
 
 export interface UseDatasetsResult {
@@ -115,53 +98,32 @@ export function useDatasets(): UseDatasetsResult {
 		unemployment: unemployment.datasets,
 	};
 
-	// Combined loading state
-	const loading =
-		localElection.loading ||
-		generalElection.loading ||
-		population.loading ||
-		ethnicity.loading ||
-		housePrice.loading ||
-		crime.loading ||
-		income.loading ||
-		brexit.loading ||
-		brexitConstituency.loading ||
-		imd.loading ||
-		simd.loading ||
-		wimd.loading ||
-		nimdm.loading ||
-		lifeExpectancy.loading ||
-		qualification.loading ||
-		broadband.loading ||
-		airQuality.loading ||
-		claimantCount.loading ||
-		schoolPerformance.loading ||
-		nhsWaiting.loading ||
-		unemployment.loading;
+	const results = [
+		localElection,
+		generalElection,
+		population,
+		ethnicity,
+		housePrice,
+		crime,
+		income,
+		brexit,
+		brexitConstituency,
+		imd,
+		simd,
+		wimd,
+		nimdm,
+		lifeExpectancy,
+		qualification,
+		broadband,
+		airQuality,
+		claimantCount,
+		schoolPerformance,
+		nhsWaiting,
+		unemployment,
+	];
 
-	// Collect all errors
-	const errors: string[] = [];
-	if (localElection.error) errors.push(localElection.error);
-	if (generalElection.error) errors.push(generalElection.error);
-	if (population.error) errors.push(population.error);
-	if (ethnicity.error) errors.push(ethnicity.error);
-	if (housePrice.error) errors.push(housePrice.error);
-	if (crime.error) errors.push(crime.error);
-	if (income.error) errors.push(income.error);
-	if (brexit.error) errors.push(brexit.error);
-	if (brexitConstituency.error) errors.push(brexitConstituency.error);
-	if (imd.error) errors.push(imd.error);
-	if (simd.error) errors.push(simd.error);
-	if (wimd.error) errors.push(wimd.error);
-	if (nimdm.error) errors.push(nimdm.error);
-	if (lifeExpectancy.error) errors.push(lifeExpectancy.error);
-	if (qualification.error) errors.push(qualification.error);
-	if (broadband.error) errors.push(broadband.error);
-	if (airQuality.error) errors.push(airQuality.error);
-	if (claimantCount.error) errors.push(claimantCount.error);
-	if (schoolPerformance.error) errors.push(schoolPerformance.error);
-	if (nhsWaiting.error) errors.push(nhsWaiting.error);
-	if (unemployment.error) errors.push(unemployment.error);
+	const loading = results.some((r) => r.loading);
+	const errors = results.flatMap((r) => (r.error ? [r.error] : []));
 
 	return { datasets, loading, errors };
 }
