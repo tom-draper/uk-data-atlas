@@ -54,6 +54,7 @@ export function useJsonDataLoader<T>(url: string, enabled = true) {
 		if (!enabled) return;
 		if (loadedUrl.current === url) return;
 		loadedUrl.current = url;
+		setError("");
 		setLoading(true);
 
 		fetchViaWorker(url)
@@ -62,6 +63,8 @@ export function useJsonDataLoader<T>(url: string, enabled = true) {
 				setLoading(false);
 			})
 			.catch((err: Error) => {
+				// Allow a future effect run to retry this URL
+				if (loadedUrl.current === url) loadedUrl.current = null;
 				setError(err.message);
 				setLoading(false);
 			});

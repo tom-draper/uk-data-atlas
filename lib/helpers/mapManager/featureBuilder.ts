@@ -246,12 +246,11 @@ export class FeatureBuilder {
 			const code = getFeatureProp(feature.properties, codeProp) ?? "";
 			const value = customDataset.data[code];
 
-			const normalised = normalizeValue(
-				value !== undefined ? value : minValue,
-				minValue,
-				maxValue,
-			);
+			if (value === undefined) {
+				return { value: undefined, color: DEFAULT_COLOR };
+			}
 
+			const normalised = normalizeValue(value, minValue, maxValue);
 			const color = getColor(normalised, mapOptions.theme.id);
 
 			return { value, color };
