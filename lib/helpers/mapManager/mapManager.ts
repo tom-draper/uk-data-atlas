@@ -255,6 +255,44 @@ export class MapManager {
 		this.eventHandler.setupEventHandlers(dataset.data, codeProp);
 	}
 
+	// Renders a custom point dataset (coordinates / postcodes) as coloured
+	// markers, independent of any boundary geometry.
+	updateMapForCustomPoints(
+		dataset: CustomDataset,
+		mapOptions: MapOptions,
+	): void {
+		const points = dataset.points ?? [];
+		if (points.length === 0) {
+			this.layerManager.clearPointLayers();
+			return;
+		}
+
+		let min = dataset.valueMin;
+		let max = dataset.valueMax;
+		if (min === undefined || max === undefined) {
+			min = Infinity;
+			max = -Infinity;
+			for (const p of points) {
+				if (p.value < min) min = p.value;
+				if (p.value > max) max = p.value;
+			}
+		}
+
+		const collection = this.featureBuilder.buildPointCollection(
+			points,
+			min,
+			max,
+			mapOptions.theme.id,
+		);
+		// Blank the choropleth beneath so a previously active dataset doesn't show.
+		this.layerManager.clearBoundaryData();
+		this.layerManager.updatePointLayers(collection, mapOptions.visibility);
+	}
+
+	clearCustomPoints(): void {
+		this.layerManager.clearPointLayers();
+	}
+
 	// Unified population update method
 	private updatePopulationMap(
 		geojson: BoundaryGeojson,

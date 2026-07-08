@@ -8,7 +8,13 @@ import {
 	CustomDataset,
 	BoundaryCodes,
 } from "@/lib/types";
-import { matchColumnAgainstBank, AreaEntry, AreaBank } from "@lib/data/areaBank";
+import { CustomPoint } from "@/lib/types/custom";
+import {
+	matchColumnAgainstBank,
+	detectCoordinateColumns,
+	AreaEntry,
+	AreaBank,
+} from "@lib/data/areaBank";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
@@ -29,13 +35,18 @@ import {
 interface UploadData {
 	file: string;
 	headerRow: number;
-	selectedColumn: string;
-	dataColumn: string;
-	boundaryType: string;
-	boundaryYear: number | null;
-	year: number | null;
-	selectedEntry?: AreaEntry;
 	data: string[][];
+	mode: "choropleth" | "points";
+	dataColumn: string;
+	// choropleth
+	selectedColumn?: string;
+	boundaryType?: string;
+	boundaryYear?: number | null;
+	year?: number | null;
+	selectedEntry?: AreaEntry;
+	// points
+	latColumn?: string;
+	lngColumn?: string;
 }
 
 interface SelectedArea {
@@ -272,6 +283,8 @@ function UploadModal({
 	const [headerRow, setHeaderRow] = useState(0);
 	const [selectedColumn, setSelectedColumn] = useState("");
 	const [dataColumn, setDataColumn] = useState("");
+	const [latColumn, setLatColumn] = useState("");
+	const [lngColumn, setLngColumn] = useState("");
 	const [overrideLabel, setOverrideLabel] = useState("");
 	const [showBoundaryOptions, setShowBoundaryOptions] = useState(false);
 	const [error, setError] = useState("");
@@ -310,12 +323,43 @@ function UploadModal({
 		effectiveMatch.entry.matchType !== "postcode-district" &&
 		effectiveMatch.entry.matchType !== "coordinate";
 
+	// Route CSVs that carry lat/lng (and don't strongly match a boundary set) to
+	// the point-plotting flow.
+	const coord = useMemo(
+		() => detectCoordinateColumns(csvData, headerRow),
+		[csvData, headerRow],
+	);
+	const bestBoundaryPct =
+		matches.find(
+			(m) => m.entry.matchType === "code" || m.entry.matchType === "name",
+		)?.percentage ?? 0;
+	const isPointMode = coord !== null && bestBoundaryPct < 60;
+
+	// Prefill the lat/lng/value pickers from detection when entering point mode.
+	useEffect(() => {
+		if (!coord || csvData.length === 0) return;
+		const hdrs = csvData[headerRow] ?? [];
+		const firstRow = csvData[headerRow + 1] ?? [];
+		setLatColumn(hdrs[coord.latIdx] ?? "");
+		setLngColumn(hdrs[coord.lngIdx] ?? "");
+		const valIdx = hdrs.findIndex(
+			(_, i) =>
+				i !== coord.latIdx &&
+				i !== coord.lngIdx &&
+				firstRow[i]?.trim() &&
+				!isNaN(Number(firstRow[i])),
+		);
+		if (valIdx >= 0) setDataColumn(hdrs[valIdx]);
+	}, [coord, csvData, headerRow]);
+
 	const resetForm = () => {
 		setFile(null);
 		setCsvData([]);
 		setHeaderRow(0);
 		setSelectedColumn("");
 		setDataColumn("");
+		setLatColumn("");
+		setLngColumn("");
 		setOverrideLabel("");
 		setShowBoundaryOptions(false);
 		setError("");
@@ -361,6 +405,26 @@ function UploadModal({
 	};
 
 	const handleUpload = () => {
+		if (isPointMode) {
+			if (!file || !latColumn || !lngColumn || !dataColumn) {
+				setError(
+					"Please select latitude, longitude, and value columns",
+				);
+				return;
+			}
+			onUpload({
+				file: file.name,
+				headerRow,
+				data: csvData,
+				mode: "points",
+				latColumn,
+				lngColumn,
+				dataColumn,
+			});
+			handleClose();
+			return;
+		}
+
 		if (!file || !selectedColumn || !dataColumn || !effectiveMatch) {
 			setError(
 				"Please select a file, area code column, data column, and matching area type",
@@ -369,7 +433,7 @@ function UploadModal({
 		}
 
 		if (!canVisualise) {
-			setError("Postcode and coordinate visualisation is coming soon.");
+			setError("Postcode visualisation is coming soon.");
 			return;
 		}
 
@@ -378,6 +442,7 @@ function UploadModal({
 		onUpload({
 			file: file.name,
 			headerRow,
+			mode: "choropleth",
 			selectedColumn,
 			dataColumn,
 			year: entry.year || null,
@@ -491,7 +556,67 @@ function UploadModal({
 						</>
 					)}
 
-					{csvData.length > 0 && (
+					{csvData.length > 0 && isPointMode && (
+						<div className="animate-in fade-in duration-300 space-y-4">
+							<div className="flex items-center justify-between">
+								<span
+									className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
+								>
+									Detected coordinates — plotting as points
+								</span>
+								<RowBadge
+									headerRow={headerRow}
+									csvData={csvData}
+									onChange={handleHeaderRowChange}
+									isDark={isDark}
+								/>
+							</div>
+							<div>
+								<label
+									className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}
+								>
+									Latitude
+								</label>
+								<ColumnDropdown
+									columns={columns}
+									value={latColumn}
+									onChange={setLatColumn}
+									placeholder="Latitude column..."
+									isDark={isDark}
+								/>
+							</div>
+							<div>
+								<label
+									className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}
+								>
+									Longitude
+								</label>
+								<ColumnDropdown
+									columns={columns}
+									value={lngColumn}
+									onChange={setLngColumn}
+									placeholder="Longitude column..."
+									isDark={isDark}
+								/>
+							</div>
+							<div>
+								<label
+									className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}
+								>
+									Value
+								</label>
+								<ColumnDropdown
+									columns={columns}
+									value={dataColumn}
+									onChange={setDataColumn}
+									placeholder="Value column..."
+									isDark={isDark}
+								/>
+							</div>
+						</div>
+					)}
+
+					{csvData.length > 0 && !isPointMode && (
 						<div className="animate-in fade-in duration-300 space-y-4">
 							<div>
 								<div className="flex items-center justify-between mb-1.5">
@@ -628,8 +753,12 @@ function UploadModal({
 					<button
 						type="button"
 						onClick={handleUpload}
-						disabled={!canVisualise && effectiveMatch !== null}
-						className={`cursor-pointer border rounded-sm px-3 py-1 text-xs transition-colors duration-150 shadow-sm ${isDark ? "border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-gray-100" : "border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20 text-gray-500 hover:text-gray-600"} ${!canVisualise && effectiveMatch !== null ? "opacity-40 cursor-not-allowed" : ""}`}
+						disabled={
+							isPointMode
+								? !(latColumn && lngColumn && dataColumn)
+								: !canVisualise && effectiveMatch !== null
+						}
+						className={`cursor-pointer border rounded-sm px-3 py-1 text-xs transition-colors duration-150 shadow-sm ${isDark ? "border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-gray-100" : "border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20 text-gray-500 hover:text-gray-600"} ${(isPointMode ? !(latColumn && lngColumn && dataColumn) : !canVisualise && effectiveMatch !== null) ? "opacity-40 cursor-not-allowed" : ""}`}
 					>
 						Visualise
 					</button>
@@ -782,6 +911,50 @@ function CustomDatasetCard({
 
 	const hasData = displayValue !== null;
 
+	if (customDataset.kind === "points") {
+		const pts = customDataset.points ?? [];
+		return (
+			<button
+				type="button"
+				onClick={handleActivate}
+				style={style}
+				className={cardClass(isActive, isDark, "h-20")}
+				onMouseEnter={onMouseEnter}
+				onMouseLeave={onMouseLeave}
+			>
+				<ChartLoadingBackground />
+				<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
+					<h3 className={chartHeadingClass(isDark)}>
+						{customDataset.dataColumn}
+					</h3>
+				</div>
+				<div className="flex-1 flex flex-col gap-1">
+					<div className="flex items-baseline gap-2">
+						<span
+							className="text-2xl font-bold leading-none"
+							style={{ color: "#6366f1" }}
+						>
+							{pts.length.toLocaleString("en-GB")}
+						</span>
+						<span
+							className={`text-[10px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
+						>
+							points
+						</span>
+					</div>
+					{pts.length > 0 && (
+						<span
+							className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
+						>
+							{customDataset.valueMin?.toLocaleString("en-GB")} –{" "}
+							{customDataset.valueMax?.toLocaleString("en-GB")}
+						</span>
+					)}
+				</div>
+			</button>
+		);
+	}
+
 	return (
 		<button
 			type="button"
@@ -864,18 +1037,65 @@ export default function CustomSection({
 	const isDark = useIsDark();
 
 	const handleCustomDatasetApply = (data: UploadData) => {
-		if (data.boundaryYear === null || data.boundaryType === null) {
+		const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+		const headers = data.data[data.headerRow] ?? [];
+
+		if (data.mode === "points") {
+			const latIdx = headers.indexOf(data.latColumn ?? "");
+			const lngIdx = headers.indexOf(data.lngColumn ?? "");
+			const valIdx = headers.indexOf(data.dataColumn);
+			if (latIdx === -1 || lngIdx === -1 || valIdx === -1) return;
+
+			const points: CustomPoint[] = [];
+			let min = Infinity;
+			let max = -Infinity;
+			data.data.slice(data.headerRow + 1).forEach((row) => {
+				const lat = parseFloat(row[latIdx]);
+				const lng = parseFloat(row[lngIdx]);
+				const value = parseFloat(row[valIdx]);
+				if (isNaN(lat) || isNaN(lng) || isNaN(value)) return;
+				points.push({ lat, lng, value });
+				if (value < min) min = value;
+				if (value > max) max = value;
+			});
+
+			const pointDataset: CustomDataset = {
+				id,
+				type: "custom",
+				kind: "points",
+				name: data.file,
+				year: 0,
+				boundaryType: "ward",
+				boundaryYear: 0,
+				dataColumn: data.dataColumn,
+				data: {},
+				points,
+				valueMin: points.length ? min : 0,
+				valueMax: points.length ? max : 0,
+			};
+
+			addCustomDataset(pointDataset);
+			setActiveViz({ vizId: id, datasetType: "custom", datasetYear: 0 });
+			setIsOpen(false);
 			return;
 		}
 
-		const columnIndex = data.data[data.headerRow].indexOf(data.selectedColumn);
-		const dataIndex = data.data[data.headerRow].indexOf(data.dataColumn);
+		if (
+			data.boundaryYear === null ||
+			data.boundaryYear === undefined ||
+			!data.boundaryType ||
+			!data.selectedColumn
+		) {
+			return;
+		}
 
-		const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+		const columnIndex = headers.indexOf(data.selectedColumn);
+		const dataIndex = headers.indexOf(data.dataColumn);
 
 		const newDataset: CustomDataset = {
 			id,
 			type: "custom",
+			kind: "choropleth",
 			name: data.file,
 			year: data.boundaryYear,
 			boundaryType: data.boundaryType as BoundaryType,

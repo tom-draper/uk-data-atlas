@@ -15,6 +15,10 @@ import { DEFAULT_COLOR } from "./featureBuilder";
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
 const LINE_LAYER_ID = "wards-line";
+const POINT_SOURCE_ID = "custom-points";
+const POINT_LAYER_ID = "custom-points-circle";
+
+const EMPTY_FC = { type: "FeatureCollection", features: [] } as const;
 
 type FillPaintConfig = {
 	color: any;
@@ -220,6 +224,69 @@ export class LayerManager {
 				"line-opacity": lineOpacity as any,
 			},
 		});
+	}
+
+	// --- Custom point datasets (coordinates / postcodes) ---
+
+	updatePointLayers(
+		collection: GeoJSON.FeatureCollection,
+		visibility: MapOptions["visibility"],
+	): void {
+		if (!this.map.isStyleLoaded()) return;
+
+		const existing = this.map.getSource(POINT_SOURCE_ID) as
+			| maplibregl.GeoJSONSource
+			| undefined;
+		if (existing) {
+			existing.setData(collection as any);
+		} else {
+			this.map.addSource(POINT_SOURCE_ID, {
+				type: "geojson",
+				data: collection as any,
+			});
+			this.map.addLayer({
+				id: POINT_LAYER_ID,
+				type: "circle",
+				source: POINT_SOURCE_ID,
+				paint: {
+					"circle-radius": [
+						"interpolate",
+						["linear"],
+						["zoom"],
+						4,
+						3,
+						10,
+						7,
+					],
+					"circle-color": ["get", "color"],
+					"circle-stroke-color": "#ffffff",
+					"circle-stroke-width": 1,
+				},
+			});
+		}
+
+		const o = visibility.overlayOpacity ?? 0.6;
+		this.map.setPaintProperty(
+			POINT_LAYER_ID,
+			"circle-opacity",
+			visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3),
+		);
+	}
+
+	clearPointLayers(): void {
+		if (this.map.getLayer(POINT_LAYER_ID))
+			this.map.removeLayer(POINT_LAYER_ID);
+		if (this.map.getSource(POINT_SOURCE_ID))
+			this.map.removeSource(POINT_SOURCE_ID);
+	}
+
+	// Blanks the choropleth fill/line without tearing the source down — used when
+	// switching to a point dataset so stale boundary data doesn't linger beneath.
+	clearBoundaryData(): void {
+		const src = this.map.getSource(SOURCE_ID) as
+			| maplibregl.GeoJSONSource
+			| undefined;
+		if (src) src.setData(EMPTY_FC as any);
 	}
 
 	private static readonly BASE_BOUNDARY_LAYERS = [

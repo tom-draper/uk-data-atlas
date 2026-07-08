@@ -36,7 +36,7 @@ import {
 import { getColor } from "../colorScale/themes";
 import { normalizeValue } from "../colorScale/interpolation";
 import { IncomeDataset } from "@/lib/types/income";
-import { CustomDataset } from "@/lib/types/custom";
+import { CustomDataset, CustomPoint } from "@/lib/types/custom";
 import { IMDDataset } from "@/lib/types/imd";
 import { SIMDDataset } from "@/lib/types/simd";
 import { WIMDDataset } from "@/lib/types/wimd";
@@ -234,6 +234,29 @@ export class FeatureBuilder {
 			const percentage = total > 0 ? (count / total) * 100 : 0;
 			return { percentage, categoryCode: ethnicity };
 		});
+	}
+
+	// Builds a GeoJSON FeatureCollection of points, each coloured by its value
+	// against the dataset's value range. Used by the custom point render path.
+	buildPointCollection(
+		points: CustomPoint[],
+		valueMin: number,
+		valueMax: number,
+		themeId: string,
+	): GeoJSON.FeatureCollection {
+		const range = valueMax - valueMin || 1;
+		return {
+			type: "FeatureCollection",
+			features: points.map((p) => ({
+				type: "Feature",
+				geometry: { type: "Point", coordinates: [p.lng, p.lat] },
+				properties: {
+					value: p.value,
+					color: getColor((p.value - valueMin) / range, themeId),
+					label: p.label ?? "",
+				},
+			})),
+		};
 	}
 
 	buildCustomDatasetFeatures(
