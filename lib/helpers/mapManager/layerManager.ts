@@ -17,6 +17,12 @@ const FILL_LAYER_ID = "wards-fill";
 const LINE_LAYER_ID = "wards-line";
 const POINT_SOURCE_ID = "custom-points";
 const POINT_LAYER_ID = "custom-points-circle";
+const HEAT_LAYER_ID = "custom-points-heat";
+
+// Cross-fade between the heatmap (zoomed out, where individual points overlap
+// into noise) and discrete circles (zoomed in, where each point is meaningful).
+const FADE_MIN_ZOOM = 7;
+const FADE_MAX_ZOOM = 10;
 
 const EMPTY_FC = { type: "FeatureCollection", features: [] } as const;
 
@@ -244,6 +250,59 @@ export class LayerManager {
 				type: "geojson",
 				data: collection as any,
 			});
+			// Heatmap sits underneath so circles draw on top through the fade.
+			this.map.addLayer({
+				id: HEAT_LAYER_ID,
+				type: "heatmap",
+				source: POINT_SOURCE_ID,
+				paint: {
+					// Weight each point by its value (e.g. collision severity).
+					"heatmap-weight": [
+						"interpolate",
+						["linear"],
+						["get", "value"],
+						1,
+						0.4,
+						3,
+						1,
+					],
+					"heatmap-intensity": [
+						"interpolate",
+						["linear"],
+						["zoom"],
+						4,
+						0.6,
+						FADE_MAX_ZOOM,
+						1.2,
+					],
+					"heatmap-radius": [
+						"interpolate",
+						["linear"],
+						["zoom"],
+						4,
+						6,
+						FADE_MAX_ZOOM,
+						18,
+					],
+					"heatmap-color": [
+						"interpolate",
+						["linear"],
+						["heatmap-density"],
+						0,
+						"rgba(33,102,172,0)",
+						0.2,
+						"rgba(103,169,207,0.6)",
+						0.4,
+						"rgb(209,229,240)",
+						0.6,
+						"rgb(253,219,199)",
+						0.8,
+						"rgb(239,138,98)",
+						1,
+						"rgb(178,24,43)",
+					],
+				},
+			});
 			this.map.addLayer({
 				id: POINT_LAYER_ID,
 				type: "circle",
@@ -266,16 +325,45 @@ export class LayerManager {
 		}
 
 		const o = visibility.overlayOpacity ?? 0.6;
-		this.map.setPaintProperty(
-			POINT_LAYER_ID,
-			"circle-opacity",
-			visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3),
-		);
+		const circleMax = visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3);
+		const heatMax = visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3);
+
+		// Circles fade in as we zoom past FADE_MIN_ZOOM; the heatmap fades out
+		// over the same range, so exactly one representation dominates at a time.
+		this.map.setPaintProperty(POINT_LAYER_ID, "circle-opacity", [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			FADE_MIN_ZOOM,
+			0,
+			FADE_MAX_ZOOM,
+			circleMax,
+		]);
+		this.map.setPaintProperty(POINT_LAYER_ID, "circle-stroke-opacity", [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			FADE_MIN_ZOOM,
+			0,
+			FADE_MAX_ZOOM,
+			circleMax,
+		]);
+		this.map.setPaintProperty(HEAT_LAYER_ID, "heatmap-opacity", [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			FADE_MIN_ZOOM,
+			heatMax,
+			FADE_MAX_ZOOM,
+			0,
+		]);
 	}
 
 	clearPointLayers(): void {
 		if (this.map.getLayer(POINT_LAYER_ID))
 			this.map.removeLayer(POINT_LAYER_ID);
+		if (this.map.getLayer(HEAT_LAYER_ID))
+			this.map.removeLayer(HEAT_LAYER_ID);
 		if (this.map.getSource(POINT_SOURCE_ID))
 			this.map.removeSource(POINT_SOURCE_ID);
 	}
