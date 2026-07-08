@@ -34,6 +34,7 @@ interface MapInterfaceProps {
 	setSelectedLocation: (location: string) => void;
 	customDatasets: CustomDataset[];
 	addCustomDataset: (dataset: CustomDataset) => void;
+	roadSafetyDatasets: CustomDataset[];
 	onError?: (error: Error) => void;
 }
 
@@ -45,6 +46,7 @@ export default function MapInterface({
 	setSelectedLocation,
 	customDatasets,
 	addCustomDataset,
+	roadSafetyDatasets,
 	onError,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
@@ -155,8 +157,12 @@ export default function MapInterface({
 	});
 
 	const activeDataset = useMemo(
-		() => getActiveDataset(datasets, activeViz, customDatasets),
-		[datasets, activeViz, customDatasets],
+		() =>
+			getActiveDataset(datasets, activeViz, [
+				...customDatasets,
+				...roadSafetyDatasets,
+			]),
+		[datasets, activeViz, customDatasets, roadSafetyDatasets],
 	);
 
 	const rawGeojson = !activeDataset
@@ -300,6 +306,7 @@ export default function MapInterface({
 					datasets={normalizedDatasets}
 					customDatasets={customDatasets}
 					addCustomDataset={addCustomDataset}
+					roadSafetyDatasets={roadSafetyDatasets}
 					onExport={handleExport}
 				/>
 			)}

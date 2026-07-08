@@ -24,6 +24,7 @@ interface UIOverlayProps {
 	datasets: Datasets;
 	customDatasets: CustomDataset[];
 	addCustomDataset: (dataset: CustomDataset) => void;
+	roadSafetyDatasets: CustomDataset[];
 	activeDataset: Dataset | null;
 	chartsLoading: boolean;
 	activeViz: ActiveViz;
@@ -106,6 +107,7 @@ export default function UIOverlay({
 	datasets,
 	customDatasets,
 	addCustomDataset,
+	roadSafetyDatasets,
 	activeDataset,
 	activeViz,
 	setActiveViz,
@@ -161,6 +163,7 @@ export default function UIOverlay({
 				datasets={datasets}
 				customDatasets={customDatasets}
 				addCustomDataset={addCustomDataset}
+				roadSafetyDatasets={roadSafetyDatasets}
 				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 				activeDataset={activeDataset}

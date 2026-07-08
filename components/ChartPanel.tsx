@@ -17,6 +17,7 @@ import HealthSection from "./health/HealthSection";
 import EducationSection from "./education/EducationSection";
 import TelecomsSection from "./telecoms/TelecomsSection";
 import EnvironmentSection from "./environment/EnvironmentSection";
+import TransportSection from "./transport/TransportSection";
 import CustomSection from "./custom/CustomSection";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle } from "@/lib/helpers/panelTheme";
@@ -40,6 +41,7 @@ interface ChartPanelProps {
 	datasets: Datasets;
 	customDatasets: CustomDataset[];
 	addCustomDataset: (dataset: CustomDataset) => void;
+	roadSafetyDatasets: CustomDataset[];
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	chartsLoading: boolean;
@@ -66,6 +68,7 @@ export default function ChartPanel({
 	datasets,
 	customDatasets,
 	addCustomDataset,
+	roadSafetyDatasets,
 	activeViz,
 	setActiveViz,
 	chartsLoading,
@@ -238,6 +241,11 @@ export default function ChartPanel({
 										location={location}
 									/>
 								)}
+								<TransportSection
+									roadSafetyDatasets={roadSafetyDatasets}
+									activeViz={activeViz}
+									setActiveViz={setActiveViz}
+								/>
 								<CustomSection
 									customDatasets={customDatasets}
 									addCustomDataset={addCustomDataset}

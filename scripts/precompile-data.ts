@@ -31,6 +31,7 @@ import { loadNHSWaiting } from "../lib/data/nhs-waiting/loader";
 import { loadUnemployment } from "../lib/data/unemployment/loader";
 import { loadGeneralElection } from "../lib/data/election/general-election/load";
 import { loadLocalElection } from "../lib/data/election/local-election/load";
+import { loadRoadSafety } from "../lib/data/road-safety/loader";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -91,6 +92,7 @@ async function main() {
 		loadUnemployment(readSource).then((d) => out("unemployment", d)),
 		loadGeneralElection(read).then((d) => out("general-election", d)),
 		loadLocalElection(read).then((d) => out("local-election", d)),
+		loadRoadSafety(read).then((d) => out("road-safety", d)),
 	]);
 
 	const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
