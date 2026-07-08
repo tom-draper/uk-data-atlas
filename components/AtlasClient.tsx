@@ -6,6 +6,7 @@ import MapInterface from "@components/MapInterface";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useDatasets } from "@/lib/hooks/useDatasets";
+import { useRoadSafetyData } from "@/lib/hooks/useRoadSafetyData";
 import type { ActiveViz } from "@/lib/types";
 import type { CustomDataset } from "@/lib/types/custom";
 
@@ -79,6 +80,8 @@ export default function AtlasClient() {
 	const [boundaryErrors, setBoundaryErrors] = useState<string[]>([]);
 
 	const { datasets, loading, errors } = useDatasets();
+	const roadSafety = useRoadSafetyData();
+	const roadSafetyDatasets = Object.values(roadSafety.datasets);
 
 	const handleBoundaryError = (error: Error) => {
 		setBoundaryErrors((prev) =>
@@ -151,6 +154,7 @@ export default function AtlasClient() {
 				setActiveViz={setActiveViz}
 				customDatasets={customDatasets}
 				addCustomDataset={(dataset) => setCustomDatasets((prev) => [...prev, dataset])}
+				roadSafetyDatasets={roadSafetyDatasets}
 				onError={handleBoundaryError}
 			/>
 		</ErrorBoundary>
