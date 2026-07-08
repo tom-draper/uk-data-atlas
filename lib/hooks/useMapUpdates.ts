@@ -28,6 +28,21 @@ export function useMapUpdates({
 		mapManager.setBorderVisibility(mapOptions.visibility.hideBorders);
 	}, [mapManager, styleReady, mapOptions.visibility.hideBorders]);
 
+	// Custom point datasets (coordinates / postcodes) render on their own
+	// source/layer and don't need a boundary geojson, so they live in a
+	// separate effect. Clear the point layer whenever a non-point viz is active.
+	useEffect(() => {
+		if (!mapManager || !styleReady) return;
+		if (
+			activeDataset?.type === "custom" &&
+			activeDataset.kind === "points"
+		) {
+			mapManager.updateMapForCustomPoints(activeDataset, mapOptions);
+		} else {
+			mapManager.clearCustomPoints();
+		}
+	}, [activeDataset, mapManager, mapOptions, styleReady]);
+
 	useEffect(() => {
 		if (!geojson || !activeDataset || !mapManager) return;
 

@@ -77,6 +77,107 @@ export function buildAreaBank(boundaryData: BoundaryData): AreaBank {
 	return bank;
 }
 
+export interface CoordinateColumns {
+	latIdx: number;
+	lngIdx: number;
+}
+
+interface NumericColumn {
+	idx: number;
+	min: number;
+	max: number;
+	ratio: number;
+	hasDecimal: boolean;
+	header: string;
+}
+
+// Scans a parsed table for a latitude/longitude column pair to plot as points.
+// Returns a best-guess pairing (the upload UI lets the user override). Header
+// names take priority; otherwise falls back to coordinate ranges and CSV order.
+export function detectCoordinateColumns(
+	table: string[][],
+	headerRow: number,
+): CoordinateColumns | null {
+	const headers = table[headerRow] ?? [];
+	const body = table.slice(headerRow + 1);
+	if (body.length === 0) return null;
+
+	const ncols = Math.max(
+		headers.length,
+		...body.slice(0, 50).map((r) => r.length),
+	);
+	const cols: NumericColumn[] = [];
+
+	for (let c = 0; c < ncols; c++) {
+		let numeric = 0;
+		let total = 0;
+		let min = Infinity;
+		let max = -Infinity;
+		let hasDecimal = false;
+		for (const row of body.slice(0, 500)) {
+			const raw = (row[c] ?? "").trim();
+			if (raw === "") continue;
+			total++;
+			const n = Number(raw);
+			if (!isNaN(n)) {
+				numeric++;
+				if (n < min) min = n;
+				if (n > max) max = n;
+				if (raw.includes(".")) hasDecimal = true;
+			}
+		}
+		if (total === 0) continue;
+		cols.push({
+			idx: c,
+			min,
+			max,
+			ratio: numeric / total,
+			hasDecimal,
+			header: (headers[c] ?? "").toLowerCase(),
+		});
+	}
+
+	const valid = cols.filter(
+		(c) =>
+			c.ratio >= 0.8 &&
+			c.hasDecimal &&
+			isFinite(c.min) &&
+			isFinite(c.max) &&
+			c.min >= -180 &&
+			c.max <= 180,
+	);
+	if (valid.length < 2) return null;
+
+	const latByHeader = valid.find((c) => /lat/.test(c.header));
+	const lngByHeader = valid.find((c) => /lon|lng/.test(c.header));
+	if (latByHeader && lngByHeader && latByHeader.idx !== lngByHeader.idx) {
+		return { latIdx: latByHeader.idx, lngIdx: lngByHeader.idx };
+	}
+
+	const latCandidates = valid.filter((c) => c.min >= -90 && c.max <= 90);
+	if (latByHeader) {
+		const lng = valid.find((c) => c.idx !== latByHeader.idx);
+		if (lng) return { latIdx: latByHeader.idx, lngIdx: lng.idx };
+	}
+	if (lngByHeader) {
+		const lat = latCandidates.find((c) => c.idx !== lngByHeader.idx);
+		if (lat) return { latIdx: lat.idx, lngIdx: lngByHeader.idx };
+	}
+
+	// No header hints: a longitude column whose range exceeds ±90 is unambiguous.
+	const lngWide = valid.find((c) => c.min < -90 || c.max > 90);
+	if (lngWide) {
+		const lat = latCandidates.find((c) => c.idx !== lngWide.idx);
+		if (lat) return { latIdx: lat.idx, lngIdx: lngWide.idx };
+	}
+
+	// Fallback: assume conventional CSV order of latitude then longitude.
+	if (latCandidates.length >= 2) {
+		return { latIdx: latCandidates[0].idx, lngIdx: latCandidates[1].idx };
+	}
+	return null;
+}
+
 export function matchColumnAgainstBank(columnData: string[], areaBank: AreaBank): AreaMatch[] {
 	if (columnData.length === 0 || areaBank.length === 0) return [];
 
