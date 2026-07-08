@@ -92,7 +92,7 @@ async function main() {
 		loadUnemployment(readSource).then((d) => out("unemployment", d)),
 		loadGeneralElection(read).then((d) => out("general-election", d)),
 		loadLocalElection(read).then((d) => out("local-election", d)),
-		loadRoadSafety(read).then((d) => out("road-safety", d)),
+		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
 	]);
 
 	const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");

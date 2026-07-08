@@ -7,7 +7,7 @@
  */
 
 import { promises as fs } from "fs";
-import { join, dirname, extname } from "path";
+import { join, dirname, extname, relative, sep } from "path";
 import { fileURLToPath } from "url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -22,7 +22,16 @@ const SERVE_EXTENSIONS = new Set([
 	".ods",
 ]);
 
+// Source-only directories (relative to data/) whose raw files are read directly
+// by the precompile step and never fetched by the client. Skipping them keeps
+// large source files (e.g. the ~9 MB road safety CSV) out of public/data/.
+const EXCLUDE_DIRS = new Set(["transport/road-safety"]);
+
+const relPath = (src) => relative(SRC, src).split(sep).join("/");
+
 async function sync(src, dest) {
+	if (EXCLUDE_DIRS.has(relPath(src))) return;
+
 	let entries;
 	try {
 		entries = await fs.readdir(src, { withFileTypes: true });
