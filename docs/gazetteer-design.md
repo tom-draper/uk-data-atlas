@@ -512,6 +512,13 @@ modules once their call sites are gone.
 2. Add `lib/data/gazetteer.ts` + hook (with the load lifecycle from §11);
    validate against current `LOCATIONS` / `areaBank` / `codeMapper` outputs (they
    must agree, this is 6.1's regression guard).
+   **Done:** `lib/data/gazetteer/gazetteer.ts` (`Gazetteer` class: get / resolveName
+   / membersOf / boundsOf / areaM2 / overlaps / apportion / ancestors) +
+   `lib/hooks/useGazetteer.ts` (eager core, lazy crosswalk). `tests/data/gazetteer.test.ts`
+   asserts `membersOf`/`boundsOf` equal `LOCATIONS` for all 154 named locations
+   and that crosswalk weights sum to 1 / apportion preserves totals (7 tests
+   green). `areaBank`/`codeMapper` parity is validated during their Phase 3/4/5
+   swaps rather than up front (they are derived from geometry at runtime).
 3. Migrate `LOCATIONS` consumers to `membersOf`/`boundsOf`.
 4. Migrate `areaBank` (custom upload matching) to `matchColumn`.
 5. Migrate `codeMapper` consumers to `ancestors`/`descendants`/`mapToVintage`.
