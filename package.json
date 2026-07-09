@@ -10,6 +10,7 @@
     "format": "prettier --write \"**/*.{ts,tsx}\" --use-tabs --tab-width 4",
     "test": "vitest",
     "test:run": "vitest run",
+    "profile:atlas": "node scripts/profile-atlas-memory.mjs",
     "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
