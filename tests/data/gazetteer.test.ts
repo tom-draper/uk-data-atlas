@@ -51,6 +51,22 @@ describe("Gazetteer entries and attributes", () => {
 	});
 });
 
+describe("Gazetteer hierarchy (LAD -> region)", () => {
+	it("ancestors: a LAD rolls up to its region", () => {
+		const anc = g.ancestors("E08000003").map((e) => e.code); // Manchester
+		expect(anc).toContain("E12000002"); // North West
+	});
+
+	it("descendants: a region contains its member LADs", () => {
+		const lads = g.descendants("E12000002", "localAuthority").map((e) => e.code);
+		expect(lads).toContain("E08000003");
+	});
+
+	it("resolveName finds a region by name", () => {
+		expect(g.resolveName("North West", "region").map((e) => e.code)).toContain("E12000002");
+	});
+});
+
 describe("Gazetteer conversions (crosswalk 4.4)", () => {
 	it("overlaps: a constituency maps to weighted LADs summing to 1", () => {
 		const cons = Object.keys(crosswalk);

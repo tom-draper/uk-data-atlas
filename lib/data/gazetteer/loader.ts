@@ -4,11 +4,26 @@
 import { feature } from "topojson-client";
 import { GEOJSON_PATHS, PROPERTY_KEYS } from "../boundaries/boundaries";
 import { LOCATIONS } from "../locations";
-import { buildCore, type LevelSource } from "./build";
+import { buildCore, linkRegions, type LevelSource } from "./build";
 import { validateCore } from "./validate";
 import type { GazetteerCore } from "./types";
 
 export const GAZETTEER_VERSION = 1;
+
+// The 9 English regions (ONS E12 codes) mapped to their LOCATIONS key. Members
+// come from LOCATIONS; entries are synthesised in linkRegions. Nations
+// (Scotland/Wales/NI) are a follow-up.
+const REGIONS: Array<{ code: string; locationName: string }> = [
+	{ code: "E12000001", locationName: "North East" },
+	{ code: "E12000002", locationName: "North West" },
+	{ code: "E12000003", locationName: "Yorkshire" },
+	{ code: "E12000004", locationName: "East Midlands" },
+	{ code: "E12000005", locationName: "West Midlands" },
+	{ code: "E12000006", locationName: "East of England" },
+	{ code: "E12000007", locationName: "London" },
+	{ code: "E12000008", locationName: "South East" },
+	{ code: "E12000009", locationName: "South West" },
+];
 
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
 
@@ -57,6 +72,15 @@ export async function loadGazetteerCore(
 	];
 
 	const core = buildCore(sources, LOCATIONS, GAZETTEER_VERSION);
+
+	// Backfill LAD -> region hierarchy from LOCATIONS region membership.
+	linkRegions(
+		core,
+		REGIONS.flatMap((r) => {
+			const loc = LOCATIONS[r.locationName];
+			return loc ? [{ code: r.code, name: r.locationName, memberCodes: loc.lad_codes }] : [];
+		}),
+	);
 
 	const { errors, warnings } = validateCore(core, LOCATIONS);
 	if (warnings.length > 0)
