@@ -2,7 +2,6 @@
 import { useMemo } from "react";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
-import { panelTheme } from "@/lib/helpers/panelTheme";
 import { ActiveViz, AirQualityDataset, Dataset, SelectedArea } from "@lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
@@ -31,7 +30,6 @@ export default function EnvironmentSection({
 	location,
 }: EnvironmentSectionProps) {
 	const isDark = useIsDark();
-	const t = panelTheme(isDark);
 	const { visibility } = useChartVisibility();
 
 	const showAirQuality = visibility["environment-airQuality"];
@@ -46,9 +44,9 @@ export default function EnvironmentSection({
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
-			<p className={`text-[11px] font-semibold pt-2 px-0.5 uppercase tracking-wide ${t.textMuted}`}>
+			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>
 				Environment
-			</p>
+			</h3>
 			<div className="space-y-2">
 				{showAirQuality && airQualityIds.map((id) => (
 					<AirQualityChart
