@@ -81,6 +81,8 @@ interface GazetteerEntry {
   children?: string[];       // optional; can be inverted from parents at load
   aliases?: string[];        // lowercased name variants for matching
   bbox: [number, number, number, number]; // [minLng, minLat, maxLng, maxLat]
+  areaM2: number;            // intrinsic geometry, per vintage (see 4.5)
+  refPopulation?: number;    // canonical baseline for crosswalk weighting (4.5)
   // Geometry is referenced, never embedded:
   geometryRef?: { level: Level; year: number }; // where to lazy-load the polygon
   // 1:1 vintage recodes only (an area recoded but geographically unchanged).
@@ -164,6 +166,39 @@ Today the app approximates the constituency->ward case at runtime with
 `buildConstituencyWardMappings` (ward-centroid-in-polygon); precomputing OA
 membership replaces that with an exact, build-time crosswalk.
 
+### 4.5 Attributes and derived metrics
+
+Area, population, and density look similar but have three different natures, and
+conflating them is the trap. They map onto the same "separate by size and
+volatility" principle as the three layers in section 3.
+
+| Value | Nature | Where it lives |
+|-------|--------|----------------|
+| Area m² | intrinsic geometry, per vintage | **in** the gazetteer (`areaM2`) |
+| Population | volatile dataset, per year | stays a dataset, **referenced** via API |
+| Density | derived | **computed** `pop / area`, stored nowhere |
+
+- **Area** is a property of the boundary itself, changing only with vintage, so
+  it belongs on the entry as `areaM2`. Today it is recomputed client-side from
+  polygon rings (`polygonAreaSqKm` in `statsCalculator`); precomputing it at
+  build time retires that path and supplies the denominator for area-weighted
+  crosswalks (4.4).
+- **Population** is dataset-sourced and time-varying; the population dataset stays
+  its source of truth. The gazetteer *references* it (`population(code, year)`),
+  and embeds only a single `refPopulation` baseline used as the weighting
+  denominator for best-fit crosswalks. Composite locations ("Greater Manchester")
+  derive their population by summing members (`membersOf`), never storing a
+  per-composite figure.
+- **Density is never stored.** It is `population / area`, and storing it invites
+  drift from its inputs. Expose it as `density(code, popYear)`.
+
+**Intensive-quantity rule (same as 4.4).** Density is intensive: for composites
+and cross-vintage conversion, sum the numerator and denominator separately, then
+divide, e.g. `GM density = sum(member populations) / sum(member areaM2)`, never
+the mean of member densities. Population and area must share a vintage (or be
+apportioned through a crosswalk) or the ratio is wrong; vintage-keying gives us
+that for free.
+
 ## 5. Source data
 
 The registry is not invented, it is compiled from ONS lookup tables (the
@@ -208,6 +243,12 @@ interface Gazetteer {
   membersOf(named: string): string[];         // "Greater Manchester" -> codes
   boundsOf(named: string): [number, number, number, number];
   matchColumn(values: string[]): AreaMatch[];  // subsumes areaBank matching
+
+  // Attributes / derived metrics (see 4.5).
+  areaM2(code: string): number;                // intrinsic, from the entry
+  population(code: string, year: number): number | undefined; // joins the dataset
+  density(code: string, popYear: number): number | undefined; // pop / area, derived
+  // Composite/aggregate variants sum numerator and denominator separately.
 
   // Conversions (see 4.4). Work across both non-nesting relations and vintages.
   mapToVintage(code: string, targetYear: number): string | undefined; // 1:1 only
@@ -277,6 +318,9 @@ modules once their call sites are gone.
 - "LADs within a constituency" and "2025 constituency -> 2020 equivalent" become
   one-line calls (`overlaps` / `apportion`, see 4.4) instead of runtime
   point-in-polygon or bespoke per-case code.
+- Population density stops recomputing polygon area in the browser
+  (`polygonAreaSqKm`): `areaM2` is precomputed and `density()` derives from it,
+  correct for composites via the intensive-quantity rule (4.5).
 
 ## 11. Open questions
 
@@ -302,7 +346,8 @@ modules once their call sites are gone.
 
 ## 12. Phased rollout
 
-1. Compile `gazetteer.json` from ONS lookups + computed bboxes; ship it, unused.
+1. Compile `gazetteer.json` from ONS lookups + bboxes and `areaM2` computed from
+   geometry in the same build pass; ship it, unused.
 2. Add `lib/data/gazetteer.ts` + hook; validate against current `LOCATIONS` /
    `areaBank` / `codeMapper` outputs (they must agree).
 3. Migrate `LOCATIONS` consumers to `membersOf`/`boundsOf`.
