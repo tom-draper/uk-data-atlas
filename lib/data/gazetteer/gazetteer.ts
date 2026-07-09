@@ -53,6 +53,10 @@ export class Gazetteer {
 	namedLocations(): string[] {
 		return Object.keys(this.core.namedLocations);
 	}
+	// Whole record for a named location (mirrors the old LOCATIONS[name]).
+	namedLocation(named: string) {
+		return this.core.namedLocations[named];
+	}
 
 	// --- clean-nesting hierarchy (empty until parents are populated) ---
 	ancestors(code: string): GazetteerEntry[] {

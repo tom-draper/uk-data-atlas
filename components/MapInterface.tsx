@@ -23,7 +23,7 @@ import type { CustomDataset } from "@/lib/types/custom";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { BASE_MAP_STYLES } from "@/lib/config/baseMapStyles";
-import { LOCATIONS } from "@lib/data/locations";
+import { gazetteer } from "@lib/data/gazetteer/static";
 import maplibregl from "maplibre-gl";
 
 interface MapInterfaceProps {
@@ -97,7 +97,7 @@ export default function MapInterface({
 		mapReady,
 	} = useMapInitialization({
 		...MAP_CONFIG,
-		initialBounds: LOCATIONS[selectedLocation]?.bounds,
+		initialBounds: gazetteer.boundsOf(selectedLocation),
 		fitBoundsPadding: MAP_CONFIG.fitBoundsPadding,
 	});
 	const { mapOptions, setMapOptions: handleMapOptionsChange } =
@@ -202,10 +202,10 @@ export default function MapInterface({
 	// Fit to initial location from URL params once on first style ready
 	useEffect(() => {
 		if (!styleReady || !map.current || initialFitDone.current) return;
-		const locationData = LOCATIONS[selectedLocation];
-		if (!locationData) return;
+		const bounds = gazetteer.boundsOf(selectedLocation);
+		if (!bounds) return;
 		initialFitDone.current = true;
-		map.current.fitBounds(locationData.bounds, {
+		map.current.fitBounds(bounds, {
 			padding: MAP_CONFIG.fitBoundsPadding,
 			duration: 0,
 		});
@@ -213,13 +213,13 @@ export default function MapInterface({
 	}, [styleReady]);
 
 	const handleLocationClick = (location: string) => {
-		const locationData = LOCATIONS[location];
-		if (!map.current || !locationData) return;
+		const bounds = gazetteer.boundsOf(location);
+		if (!map.current || !bounds) return;
 
 		setSelectedLocation(location);
 
 		requestAnimationFrame(() => {
-			map.current?.fitBounds(locationData.bounds, {
+			map.current?.fitBounds(bounds, {
 				padding: MAP_CONFIG.fitBoundsPadding,
 				duration: MAP_CONFIG.fitBoundsDuration,
 			});
