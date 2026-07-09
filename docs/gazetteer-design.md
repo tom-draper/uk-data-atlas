@@ -74,13 +74,18 @@ interface GazetteerEntry {
   name: string;              // canonical name, e.g. "Manchester"
   level: Level;
   vintage: number;           // boundary year this code belongs to, e.g. 2023
-  parents: string[];         // codes one level up (LAD -> county, region)
-  children?: string[];       // optional; can be derived from parents instead
+  // parents/children ONLY encode clean nesting (ward -> LAD -> county -> region;
+  // LSOA -> LAD). Non-nesting relations (constituency <-> LAD) and boundary
+  // reviews are many-to-many and live in weighted crosswalks instead (see 4.4).
+  parents: string[];         // codes one level up in a nesting relation
+  children?: string[];       // optional; can be inverted from parents at load
   aliases?: string[];        // lowercased name variants for matching
   bbox: [number, number, number, number]; // [minLng, minLat, maxLng, maxLat]
   // Geometry is referenced, never embedded:
   geometryRef?: { level: Level; year: number }; // where to lazy-load the polygon
-  successors?: Record<number, string>; // vintage -> code, for cross-year mapping
+  // 1:1 vintage recodes only (an area recoded but geographically unchanged).
+  // Boundary reviews that split/merge areas are crosswalks, not this (see 4.4).
+  successors?: Record<number, string>; // vintage -> code, when 1:1
 }
 ```
 
@@ -102,6 +107,62 @@ Not in the in-memory gazetteer. Options, in preference order:
 The current `areaBank` already distinguishes `postcode-full` /
 `postcode-district` match types and marks them "coming soon"; this is where that
 resolves.
+
+### 4.4 Conversions and crosswalks
+
+Conversions are the highest-value thing the gazetteer unlocks, and they are
+where the naive "clean hierarchy" model breaks. "Conversion" hides two very
+different questions:
+
+| | Question | What it needs |
+|---|----------|---------------|
+| **Membership** | which LADs does this constituency overlap? | overlap > 0 |
+| **Apportionment** | this 2024 constituency's figure in 2019 boundaries? | area- or population-**weighted** split/merge |
+
+`parents`/`successors` are scalars and can only answer membership for clean
+nesting. Two situations need more:
+
+- **Non-nesting relations.** Constituencies and LADs do not nest: a constituency
+  spans several LADs, an LAD holds parts of several constituencies. This is a
+  many-to-many overlap, not a hierarchy.
+- **Boundary reviews.** The 2024 Westminster review redrew constituencies; a 2024
+  constituency is stitched from pieces of several 2019 ones, so there is no
+  single "2020 equivalent" code. Many-to-many again.
+
+Both are modelled with a weighted crosswalk:
+
+```ts
+type Crosswalk = Record<
+  string,                                  // source code
+  Array<{ code: string; weight: number }>  // targets + share of source in each
+>;
+// weight = fraction of the source area's population (best-fit) or land area
+// (exact-fit) that falls within each target.
+```
+
+From a crosswalk:
+
+- **Membership** = targets with `weight > 0` (e.g. constituency -> overlapping
+  LADs).
+- **Apportionment** = `sum(source_value * weight)` accumulated into each target
+  (e.g. re-express 2024 constituency values on 2019 boundaries). Only valid for
+  *extensive* quantities (counts, populations); *intensive* ones (rates, medians)
+  must apportion a numerator and denominator separately, never the ratio.
+
+ONS publishes these as best-fit (population-weighted) and exact-fit
+(area-weighted) lookups. The 2010->2024 constituency lookup already sits in
+`data/boundaries/constituencies/`, which is exactly the 2025->2020 case.
+
+**The general form.** Every conversion collapses to one mechanism if the
+gazetteer records each area's membership in a universal building block. Output
+Areas (OAs) are the atom that all standard geographies are best-fit aggregated
+from. With OA-level membership, any query becomes: decompose the source to OAs,
+re-aggregate up to the target level/vintage, weighting by OA population.
+Constituency->LAD, 2025->2020, ward->region are then the same operation. Cost:
+shipping an OA-level lookup (small as codes; OA geometry stays out per 4.2).
+Today the app approximates the constituency->ward case at runtime with
+`buildConstituencyWardMappings` (ward-centroid-in-polygon); precomputing OA
+membership replaces that with an exact, build-time crosswalk.
 
 ## 5. Source data
 
@@ -142,17 +203,29 @@ precompiled datasets) supersedes `LOCATIONS`, `areaBank`, and `codeMapper`:
 interface Gazetteer {
   get(code: string): GazetteerEntry | undefined;
   resolveName(name: string, level?: Level): GazetteerEntry[]; // alias-aware
-  ancestors(code: string): GazetteerEntry[];  // up the hierarchy
+  ancestors(code: string): GazetteerEntry[];  // up the nesting hierarchy
   descendants(code: string, level: Level): GazetteerEntry[]; // e.g. LAD -> wards
-  mapToVintage(code: string, targetYear: number): string | undefined;
   membersOf(named: string): string[];         // "Greater Manchester" -> codes
   boundsOf(named: string): [number, number, number, number];
   matchColumn(values: string[]): AreaMatch[];  // subsumes areaBank matching
+
+  // Conversions (see 4.4). Work across both non-nesting relations and vintages.
+  mapToVintage(code: string, targetYear: number): string | undefined; // 1:1 only
+  overlaps(code: string, targetLevel: Level, targetVintage?: number):
+    Array<{ code: string; weight: number }>;   // membership + weights
+  apportion(
+    values: Record<string, number>,            // source code -> extensive value
+    targetLevel: Level,
+    targetVintage: number,
+  ): Record<string, number>;                    // weighted re-aggregation
 }
 ```
 
-Method-by-method, this is a strict superset of what the three current modules
-expose, so migration is mechanical (see 9).
+`overlaps` answers "LADs within a constituency" (`overlaps(pcon, "localAuthority")`
+-> weighted list). `apportion` answers "2024 constituency values on 2019
+boundaries". `mapToVintage` stays for the easy 1:1 recode case. Method-by-method
+this is a strict superset of the three current modules, so migration is
+mechanical (see 9).
 
 ## 8. Dataset manifest
 
@@ -185,7 +258,8 @@ it does not abolish bespoke geographies.
 |-------|-----------|
 | `LOCATIONS` (named -> lad_codes + bounds) | `namedLocations` + `membersOf` / `boundsOf` |
 | `areaBank` (code sets, name->code, matching) | `nameIndex` + `matchColumn` |
-| `codeMapper` (ward↔LAD↔constituency, cross-year) | `parents`/`children` + `ancestors`/`descendants` + `successors`/`mapToVintage` |
+| `codeMapper` nesting (ward↔LAD) + cross-year 1:1 | `parents`/`children` + `ancestors`/`descendants` + `mapToVintage` |
+| `codeMapper` constituency↔ward (`buildConstituencyWardMappings`, point-in-polygon) | precomputed crosswalk + `overlaps` (see 4.4) |
 
 Do it incrementally: build the gazetteer artifact first, wrap the new API around
 it, then migrate call sites one module at a time behind the existing interfaces
@@ -200,6 +274,9 @@ modules once their call sites are gone.
   rectangle.
 - Adding the next choropleth on a standard geography becomes: drop the CSV,
   write a manifest, done. No new location wrangling.
+- "LADs within a constituency" and "2025 constituency -> 2020 equivalent" become
+  one-line calls (`overlaps` / `apportion`, see 4.4) instead of runtime
+  point-in-polygon or bespoke per-case code.
 
 ## 11. Open questions
 
@@ -210,6 +287,16 @@ modules once their call sites are gone.
   `children` too? Inverting is smaller on disk; measure.
 - **Nation coverage.** England/Wales use LSOA, Scotland data zones, NI SOAs. The
   `Level` union already reflects this; the lookups differ per nation.
+- **Best-fit vs exact-fit crosswalks.** Population-weighted best-fit is smaller
+  and fine for most choropleths; area-weighted exact-fit is more accurate but
+  heavier. Start best-fit; allow exact-fit per relation where it matters.
+- **OA lookup budget.** The universal-building-block approach (4.4) needs an
+  OA-to-everything membership table. Codes only, but there are ~230k OAs; confirm
+  the compressed size is acceptable before committing to it, else fall back to
+  per-relation crosswalks (constituency->LAD, vintage->vintage) computed at build.
+- **Intensive quantities.** `apportion` is only valid for extensive values.
+  Datasets carrying rates/medians must declare a numerator + denominator so we
+  apportion those, not the ratio. Reflect this in `DatasetManifest`.
 - **Artifact size budget.** Target: gazetteer JSON materially smaller than the
   sum of geometry we currently parse client-side to derive the same facts.
 
