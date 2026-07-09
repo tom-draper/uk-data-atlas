@@ -61,11 +61,17 @@ export function buildCore(
 
 // Synthesises region-level entries and sets each member LAD's parent to its
 // region. Regions have no geometry file here, so areaM2 is summed from member
-// LADs and bbox is their union. Derived from LOCATIONS region membership, which
-// the app already trusts.
+// LADs and bbox is their union. Derived from LOCATIONS region membership.
+//
+// LOCATIONS lists members across multiple LAD vintages on purpose (so region
+// aggregation works whichever ward vintage a dataset uses, e.g. pre-2023 wards
+// carry old Cumbria district codes, 2023+ wards carry the new unitaries). We
+// must therefore roll up area over the CURRENT vintage only, or reorganised
+// areas (Cumbria, North Yorkshire) get counted twice.
 export function linkRegions(
 	core: GazetteerCore,
 	regions: Array<{ code: string; name: string; memberCodes: string[] }>,
+	currentCodes: Set<string>,
 ): void {
 	for (const r of regions) {
 		let areaM2 = 0;
@@ -73,7 +79,8 @@ export function linkRegions(
 		const present: string[] = [];
 		for (const lad of r.memberCodes) {
 			const e = core.byCode[lad];
-			if (!e) continue; // skip pre-2016 stale codes (LOCATIONS debt)
+			if (!e) continue; // pre-2016 stale codes (LOCATIONS debt)
+			if (!currentCodes.has(lad)) continue; // superseded vintage, avoid double-count
 			present.push(lad);
 			e.parents = [r.code];
 			areaM2 += e.areaM2;

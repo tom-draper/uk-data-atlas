@@ -490,14 +490,20 @@ modules once their call sites are gone.
 - **Display vs. match names.** Preferred display label vs. the alias set used for
   matching, plus bilingual (Welsh) names. `name` + `aliases` covers matching;
   decide whether a separate `displayName` (and locale) is needed.
-- **LOCATIONS double-counts reorganised areas (real bug, found by the backfill).**
-  `LOCATIONS["North West"]` lists both the 6 abolished Cumbria districts
-  (`E07000026-31`) and the 2 unitaries that replaced them (`E06000063/64`), so
-  Cumbria's ~6,800 km2 and its population are counted twice (region area 20,911 vs
-  ~14,100 km2 actual). This affects the live app's region totals today, not just
-  the gazetteer. Fix belongs in `LOCATIONS` (drop superseded codes); until then
-  region `areaM2` inherits the inflation. A validation check that flags a named
-  location containing both a code and its successor would catch this class.
+- **Multi-vintage member lists (resolved; NOT a LOCATIONS bug).** `LOCATIONS`
+  lists region members across several LAD vintages *on purpose*:
+  `"North West"` carries both the 6 abolished Cumbria districts (`E07000026-31`)
+  and the 2 unitaries that replaced them (`E06000063/64`). This is intentional
+  because pre-2023 ward boundaries carry the old district LAD codes and 2023+
+  wards carry the new unitary codes, and the app filters wards by
+  `lad_codes.includes(ward.ladCode)`; listing both makes region aggregation work
+  for *either* ward vintage. The live app never double-counts, since only one ward
+  vintage is active per dataset. The bug was in the gazetteer: `linkRegions`
+  summed LAD-entry areas across all vintages (region 20,911 vs ~14,100 km2).
+  Fixed by rolling area up over the current vintage only (union of LAD >= 2023,
+  robust to gaps like the 2025 file missing Barnsley/Sheffield). Superseded
+  district entries survive but carry no region parent. Lesson: the dual codes
+  looked like debt but were load-bearing; verify before "fixing" source data.
 
 ## 12. Phased rollout
 
@@ -518,9 +524,11 @@ modules once their call sites are gone.
    **Backfill (done):** LAD -> region hierarchy is populated for the 9 English
    regions (E12 codes) by inverting LOCATIONS membership; region entries carry
    summed `areaM2` + union bbox. `ancestors`/`descendants` now work
-   (`tests/data/gazetteer.test.ts`, 10 green). This surfaced a real LOCATIONS bug
-   (see 11). Still to do: nations (Scotland/Wales/NI) as regions, ward/LSOA
-   shards, county tier, and population-weighted (not area-weighted) crosswalks.
+   (`tests/data/gazetteer.test.ts`, 10 green). Region area is rolled up over the
+   current LAD vintage only, so multi-vintage LOCATIONS member lists don't
+   double-count reorganised areas like Cumbria / North Yorkshire (see 11). Still
+   to do: nations (Scotland/Wales/NI) as regions, ward/LSOA shards, county tier,
+   and population-weighted (not area-weighted) crosswalks.
 2. Add `lib/data/gazetteer.ts` + hook (with the load lifecycle from §11);
    validate against current `LOCATIONS` / `areaBank` / `codeMapper` outputs (they
    must agree, this is 6.1's regression guard).
