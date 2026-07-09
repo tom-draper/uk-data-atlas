@@ -81,7 +81,6 @@ export default function MapInterface({
 	const {
 		boundaryData,
 		boundaryCodes,
-		areaBank,
 		isLoading: boundariesLoading,
 		error: boundaryError,
 	} = useBoundaryData(selectedLocation, codeMapper);
@@ -291,7 +290,6 @@ export default function MapInterface({
 					selectedArea={selectedArea}
 					boundaryData={boundaryData}
 					boundaryCodes={boundaryCodes}
-					areaBank={areaBank}
 					mapOptions={mapOptions}
 					codeMapper={codeMapper}
 					onMapOptionsChange={handleMapOptionsChange}

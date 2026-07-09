@@ -30,6 +30,57 @@ const BOUNDARY_META = [
 	{ key: "superOutputArea" as const, label: "Super Output Area", codeKeys: PROPERTY_KEYS.soaCode, nameKeys: PROPERTY_KEYS.soaName },
 ];
 
+// Precomputed match index (scripts/gazetteer-matchindex.ts): per boundary
+// level+vintage, codes and a lowercased name->code map.
+export type MatchIndex = Record<
+	string,
+	Record<number, { codes: string[]; names: Record<string, string> }>
+>;
+
+const LEVEL_LABELS: Record<string, string> = {
+	ward: "Ward",
+	constituency: "Constituency",
+	localAuthority: "Local Authority",
+	lsoa: "LSOA",
+	dataZone: "Data Zone",
+	superOutputArea: "Super Output Area",
+};
+
+// Builds the same AreaBank buildAreaBank derives from geometry, but from the
+// precomputed match index. Lets upload matching run against every geography
+// without loading boundary geometry at runtime.
+export function buildAreaBankFromIndex(index: MatchIndex): AreaBank {
+	const bank: AreaBank = [];
+	for (const [boundaryType, byYear] of Object.entries(index)) {
+		const label = LEVEL_LABELS[boundaryType] ?? boundaryType;
+		for (const [yearStr, { codes, names }] of Object.entries(byYear)) {
+			const year = Number(yearStr);
+			if (codes.length > 0) {
+				bank.push({
+					label: `${label} [${year}]`,
+					boundaryType,
+					year,
+					matchType: "code",
+					codes: new Set(codes),
+					nameToCode: new Map(),
+				});
+			}
+			const nameEntries = Object.entries(names);
+			if (nameEntries.length > 0) {
+				bank.push({
+					label: `${label} Name [${year}]`,
+					boundaryType,
+					year,
+					matchType: "name",
+					codes: new Set(),
+					nameToCode: new Map(nameEntries),
+				});
+			}
+		}
+	}
+	return bank;
+}
+
 export function buildAreaBank(boundaryData: BoundaryData): AreaBank {
 	const bank: AreaBank = [];
 

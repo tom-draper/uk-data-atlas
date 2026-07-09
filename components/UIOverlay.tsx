@@ -15,7 +15,6 @@ import type { CustomDataset } from "@/lib/types/custom";
 import { MapOptions } from "@/lib/types/mapOptions";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import { AreaBank } from "@lib/data/areaBank";
 import { PanelContext } from "@/lib/context/PanelContext";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
 import { ExcludedCategoriesContext } from "@/lib/context/ExcludedCategoriesContext";
@@ -33,7 +32,6 @@ interface UIOverlayProps {
 	selectedArea: SelectedArea | null;
 	boundaryData: BoundaryData;
 	boundaryCodes: BoundaryCodes;
-	areaBank: AreaBank;
 	mapOptions: MapOptions;
 	codeMapper?: CodeMapper;
 	mapManager: MapManager | null;
@@ -116,7 +114,6 @@ export default function UIOverlay({
 	selectedArea,
 	boundaryData,
 	boundaryCodes,
-	areaBank,
 	mapOptions,
 	codeMapper,
 	mapManager,
@@ -171,7 +168,6 @@ export default function UIOverlay({
 				selectedArea={selectedArea}
 				boundaryData={boundaryData}
 				boundaryCodes={boundaryCodes}
-				areaBank={areaBank}
 				codeMapper={codeMapper}
 				mapManager={mapManager}
 				location={selectedLocation}
