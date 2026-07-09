@@ -83,6 +83,36 @@ Pinning this budget is a prerequisite for Phase 1; the efficiency argument is
 only true if the sharded core is materially smaller than the geometry we parse
 client-side today to derive the same facts.
 
+### 3.2 Phase 0 measurements (decisive)
+
+Measured from real UK boundaries (`scripts/gazetteer-phase0.ts`), gzipped since
+that is what ships:
+
+| Artifact | Ships? | Size |
+|----------|--------|------|
+| Eager core: 361 LADs + 650 constituencies, with `areaM2` + bbox | yes | **37 KB** |
+| Constituency->LAD crosswalk (area-weighted via LSOA) | yes | **5 KB** |
+| LSOA building-block table (34,753 rows) | no, build input | 446 KB, extrapolates to **~2.9 MB** at OA (~230k) |
+
+Findings:
+
+- **Shipped artifacts are trivial.** The eager core is tens of KB; a per-relation
+  crosswalk is single-digit KB. Adding wards keeps the core comfortably under a
+  few hundred KB.
+- **Only the building-block table is large, and it never ships.** At OA scale it
+  is ~2.9 MB, too heavy to send to the browser, but it is only needed at *build*
+  time to derive weights (4.4). So the resolution is decided: **precompute
+  per-relation weighted crosswalks at build; keep the OA/LSOA + population table
+  build-time-only.** The "universal OA table at runtime" idea in 4.4 is dropped;
+  the per-relation approach is the default, not a fallback.
+- **The pipeline is validated.** 227 of 574 constituencies span more than one LAD
+  (the many-to-many case is real, not theoretical), every crosswalk's weights sum
+  to 1.0 within tolerance (0 violations, the 6.1 invariant holds), and 34,738 of
+  34,753 LSOAs assigned cleanly.
+
+Net: the size budget is met with margin and the weight derivation works on real
+data, so Phase 1 is unblocked.
+
 ## 4. Data model
 
 ### 4.1 Gazetteer entry
@@ -194,16 +224,17 @@ to membership-only (overlap > 0, no fractions) and we drop the apportionment
 accuracy claim. The design does not get weighted conversion "for free" from
 published lookups.
 
-**The general form.** Every conversion collapses to one mechanism if the
-gazetteer records each area's membership in a universal building block. Output
-Areas (OAs) are the atom that all standard geographies are best-fit aggregated
-from. With OA-level membership, any query becomes: decompose the source to OAs,
-re-aggregate up to the target level/vintage, weighting by OA population.
-Constituency->LAD, 2025->2020, ward->region are then the same operation. Cost:
-shipping an OA-level lookup (small as codes; OA geometry stays out per 4.2).
-Today the app approximates the constituency->ward case at runtime with
-`buildConstituencyWardMappings` (ward-centroid-in-polygon); precomputing OA
-membership replaces that with an exact, build-time crosswalk.
+**The general form (build-time, not runtime).** Conceptually every conversion is
+the same operation over a universal building block: decompose the source to
+Output Areas (the atom all standard geographies are best-fit aggregated from),
+re-aggregate up to the target level/vintage, weighting by OA population. But
+Phase 0 (3.2) measured the OA building-block table at ~2.9 MB gz, too heavy to
+ship. So this decomposition happens **at build time only**: we run it once per
+needed relation and emit a small per-relation crosswalk (5 KB gz for
+constituency->LAD), which is what the browser loads. The OA/LSOA table and its
+populations stay build inputs and never ship. This also replaces the runtime
+`buildConstituencyWardMappings` (ward-centroid-in-polygon) with an exact,
+precomputed crosswalk.
 
 ### 4.5 Attributes and derived metrics
 
@@ -462,10 +493,11 @@ modules once their call sites are gone.
 
 ## 12. Phased rollout
 
-0. **Prerequisites (before any code).** Pin the shard size budget (3.1) by
-   measuring a prototype OA crosswalk, and confirm the weight-derivation step and
-   OA-population dependency (4.4). If OA crosswalks blow the budget, commit to the
-   per-relation fallback now.
+0. **Prerequisites (DONE, see 3.2).** Measured real artifact sizes and validated
+   weight derivation via `scripts/gazetteer-phase0.ts`. Outcome: eager core 37 KB
+   gz, per-relation crosswalks single-digit KB, building-block table stays
+   build-time-only (~2.9 MB at OA). Decision locked in: precompute per-relation
+   crosswalks; do not ship the OA table. Budget met, pipeline validated.
 1. Compile the **sharded** artifact (core + level/vintage + crosswalk shards)
    from ONS lookups, with bboxes and `areaM2` computed from geometry in the same
    pass; run the 6.1 validation suite; ship it, unused.
