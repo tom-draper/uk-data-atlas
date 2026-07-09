@@ -2,7 +2,7 @@
 // scripts/precompile-data.ts. Crosswalk shards are built separately
 // (scripts/gazetteer-crosswalks.ts) since they are expensive and change rarely.
 import { feature } from "topojson-client";
-import { GEOJSON_PATHS, PROPERTY_KEYS } from "../boundaries/boundaries";
+import { GEOJSON_PATHS, PROPERTY_KEYS, getProp } from "../boundaries/boundaries";
 import { LOCATIONS } from "../locations";
 import { buildCore, linkRegions, type LevelSource } from "./build";
 import { validateCore } from "./validate";
@@ -73,6 +73,20 @@ export async function loadGazetteerCore(
 
 	const core = buildCore(sources, LOCATIONS, GAZETTEER_VERSION);
 
+	// Current LAD codes = union of post-reorganisation vintages (>= 2023). Region
+	// area is rolled up over these only, so multi-vintage member lists don't
+	// double-count areas reorganised by April 2023 (Cumbria, North Yorkshire).
+	// Using a union (not a single file) is robust to gaps in any one vintage's
+	// boundary file (e.g. the 2025 file is missing Barnsley/Sheffield).
+	const currentCodes = new Set<string>();
+	LAD_VINTAGES.forEach((v, i) => {
+		if (v < 2023) return;
+		for (const f of ladByVintage[i]) {
+			const c = getProp(f.properties, PROPERTY_KEYS.ladCode);
+			if (c) currentCodes.add(c);
+		}
+	});
+
 	// Backfill LAD -> region hierarchy from LOCATIONS region membership.
 	linkRegions(
 		core,
@@ -80,6 +94,7 @@ export async function loadGazetteerCore(
 			const loc = LOCATIONS[r.locationName];
 			return loc ? [{ code: r.code, name: r.locationName, memberCodes: loc.lad_codes }] : [];
 		}),
+		currentCodes,
 	);
 
 	const { errors, warnings } = validateCore(core, LOCATIONS);
