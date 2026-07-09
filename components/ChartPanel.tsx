@@ -1,7 +1,6 @@
 // components/ChartPanel.tsx
 "use client";
 import { Dataset, Datasets, ActiveViz, SelectedArea, BoundaryData, BoundaryCodes } from "@lib/types";
-import { AreaBank } from "@lib/data/areaBank";
 import { BoundaryData as BoundaryDataBoundaries } from "@lib/types/boundaries";
 import { CustomDataset } from "@/lib/types/custom";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
@@ -37,7 +36,6 @@ interface ChartPanelProps {
 	activeDataset: Dataset | null;
 	boundaryData: BoundaryData;
 	boundaryCodes: BoundaryCodes;
-	areaBank: AreaBank;
 	datasets: Datasets;
 	customDatasets: CustomDataset[];
 	addCustomDataset: (dataset: CustomDataset) => void;
@@ -64,7 +62,6 @@ export default function ChartPanel({
 	activeDataset,
 	boundaryData,
 	boundaryCodes,
-	areaBank,
 	datasets,
 	customDatasets,
 	addCustomDataset,
@@ -254,7 +251,6 @@ export default function ChartPanel({
 									setActiveViz={setActiveViz}
 									codeMapper={codeMapper}
 									boundaryCodes={boundaryCodes}
-									areaBank={areaBank}
 									mapManager={mapManager}
 									boundaryData={bd}
 									location={location}

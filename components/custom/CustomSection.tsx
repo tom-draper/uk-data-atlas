@@ -15,6 +15,7 @@ import {
 	AreaEntry,
 	AreaBank,
 } from "@lib/data/areaBank";
+import { useMatchIndex } from "@/lib/hooks/useMatchIndex";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
@@ -1013,7 +1014,6 @@ export default function CustomSection({
 	addCustomDataset,
 	selectedArea,
 	boundaryCodes: _boundaryCodes,
-	areaBank,
 	activeViz,
 	setActiveViz,
 	codeMapper,
@@ -1025,7 +1025,6 @@ export default function CustomSection({
 	addCustomDataset: (dataset: CustomDataset) => void;
 	selectedArea: SelectedArea | null;
 	boundaryCodes: BoundaryCodes;
-	areaBank: AreaBank;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper?: CodeMapper;
@@ -1034,6 +1033,8 @@ export default function CustomSection({
 	location: string | null;
 }) {
 	const [isOpen, setIsOpen] = useState(false);
+	// Match index loads lazily only while the upload modal is open.
+	const { areaBank } = useMatchIndex(isOpen);
 	const isDark = useIsDark();
 
 	const handleCustomDatasetApply = (data: UploadData) => {
