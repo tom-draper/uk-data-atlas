@@ -501,6 +501,14 @@ modules once their call sites are gone.
 1. Compile the **sharded** artifact (core + level/vintage + crosswalk shards)
    from ONS lookups, with bboxes and `areaM2` computed from geometry in the same
    pass; run the 6.1 validation suite; ship it, unused.
+   **In progress:** `lib/data/gazetteer/` builds `gazetteer.core.json` (LAD across
+   4 vintages + constituency, 51 KB gz) in `precompile-data.ts`, and
+   `scripts/gazetteer-crosswalks.ts` builds `crosswalk.constituency-localAuthority.json`
+   (5 KB gz) separately. Validation runs and already surfaced real debt: 9
+   `LOCATIONS` members predate our boundary vintages (recoded pre-2016), reported
+   as warnings. Still to do: ward/LSOA shards, county/region hierarchy from ONS
+   lookups (entries currently have empty `parents`), and population-weighted (not
+   area-weighted) crosswalks.
 2. Add `lib/data/gazetteer.ts` + hook (with the load lifecycle from §11);
    validate against current `LOCATIONS` / `areaBank` / `codeMapper` outputs (they
    must agree, this is 6.1's regression guard).

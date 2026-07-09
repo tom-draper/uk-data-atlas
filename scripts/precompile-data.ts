@@ -32,6 +32,7 @@ import { loadUnemployment } from "../lib/data/unemployment/loader";
 import { loadGeneralElection } from "../lib/data/election/general-election/load";
 import { loadLocalElection } from "../lib/data/election/local-election/load";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
+import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -93,6 +94,7 @@ async function main() {
 		loadGeneralElection(read).then((d) => out("general-election", d)),
 		loadLocalElection(read).then((d) => out("local-election", d)),
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
+		loadGazetteerCore(read).then((d) => out("gazetteer.core", d)),
 	]);
 
 	const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
