@@ -1,6 +1,6 @@
 // lib/data/boundaries.ts
 import { BoundaryGeojson } from "@lib/types";
-import { LOCATIONS } from "@lib/data/locations";
+import { gazetteer } from "@lib/data/gazetteer/static";
 import { withCDN } from "@/lib/helpers/cdn";
 import * as topojson from "topojson-client";
 import {
@@ -342,15 +342,15 @@ export const filterFeatures = (
 		};
 	}
 
-	const locData = LOCATIONS[location];
-	if (!locData) {
+	const loc = gazetteer.namedLocation(location);
+	if (!loc) {
 		console.warn(`Location data not found for: ${location}`);
 		return geojson;
 	}
 
 	// Filter wards by LAD code (uses getLadForWard for 2021 data without LAD properties)
-	if (type === "ward" && locData.lad_codes?.length) {
-		const ladCodeSet = new Set(locData.lad_codes);
+	if (type === "ward" && loc.memberCodes?.length) {
+		const ladCodeSet = new Set(loc.memberCodes);
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
@@ -367,8 +367,8 @@ export const filterFeatures = (
 	}
 
 	// Filter local authorities by LAD code
-	if (type === "localAuthority" && locData.lad_codes?.length) {
-		const ladCodeSet = new Set(locData.lad_codes);
+	if (type === "localAuthority" && loc.memberCodes?.length) {
+		const ladCodeSet = new Set(loc.memberCodes);
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
@@ -379,41 +379,41 @@ export const filterFeatures = (
 	}
 
 	// Filter LSOAs by bounding box (no LAD code in simplified topojson)
-	if (type === "lsoa" && locData.bounds) {
+	if (type === "lsoa" && loc.bbox) {
 		return {
 			...geojson,
 			features: geojson.features.filter((f) =>
-				isFeatureInBounds(f, locData.bounds!),
+				isFeatureInBounds(f, loc.bbox!),
 			),
 		};
 	}
 
 	// Filter Data Zones by bounding box
-	if (type === "dataZone" && locData.bounds) {
+	if (type === "dataZone" && loc.bbox) {
 		return {
 			...geojson,
 			features: geojson.features.filter((f) =>
-				isFeatureInBounds(f, locData.bounds!),
+				isFeatureInBounds(f, loc.bbox!),
 			),
 		};
 	}
 
 	// Filter NI Super Output Areas by bounding box
-	if (type === "superOutputArea" && locData.bounds) {
+	if (type === "superOutputArea" && loc.bbox) {
 		return {
 			...geojson,
 			features: geojson.features.filter((f) =>
-				isFeatureInBounds(f, locData.bounds!),
+				isFeatureInBounds(f, loc.bbox!),
 			),
 		};
 	}
 
 	// Filter constituencies by bounding box
-	if (type === "constituency" && locData.bounds) {
+	if (type === "constituency" && loc.bbox) {
 		return {
 			...geojson,
 			features: geojson.features.filter((f) =>
-				isFeatureInBounds(f, locData.bounds!),
+				isFeatureInBounds(f, loc.bbox!),
 			),
 		};
 	}

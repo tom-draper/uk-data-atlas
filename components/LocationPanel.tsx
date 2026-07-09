@@ -1,13 +1,22 @@
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
-import { LOCATIONS } from "@lib/data/locations";
+import { gazetteer } from "@lib/data/gazetteer/static";
 import {
 	LocationBounds,
 	BoundaryGeojson,
 	PopulationDataset,
 	PopulationWardData,
 } from "@lib/types";
+
+// Named locations sourced from the gazetteer (built once). Shaped as the old
+// LocationBounds record so downstream list/handlers are unchanged.
+const NAMED_LOCATIONS: Record<string, LocationBounds> = Object.fromEntries(
+	gazetteer.namedLocations().map((name) => {
+		const nl = gazetteer.namedLocation(name)!;
+		return [name, { lad_codes: nl.memberCodes, bounds: nl.bbox }];
+	}),
+);
 import {
 	useEffect,
 	useState,
@@ -176,7 +185,7 @@ export default function LocationPanel({
 			populations.set(country, pop);
 		});
 
-		Object.entries(LOCATIONS).forEach(([location, bounds]) => {
+		Object.entries(NAMED_LOCATIONS).forEach(([location, bounds]) => {
 			if (COUNTRY_LOCATIONS.has(location)) return;
 
 			if (bounds.lad_codes && bounds.lad_codes.length > 0) {
@@ -194,7 +203,7 @@ export default function LocationPanel({
 	})();
 
 	const allLocations = (() => {
-		return Object.entries(LOCATIONS)
+		return Object.entries(NAMED_LOCATIONS)
 			.flatMap(([location, bounds]) => {
 				const totalPopulation = locationPopulations.get(location) || 0;
 				if (totalPopulation <= 0) return [];

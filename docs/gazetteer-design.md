@@ -72,6 +72,8 @@ So the gazetteer is **sharded and lazy-loaded, not one blob**:
 
 - **Eager core:** region / county / localAuthority / constituency entries plus
   named composites. Small, needed for the location list and most datasets.
+  (Phase 3 update: the core is **statically bundled**, not fetched, because it is
+  read synchronously at map mount and in non-React modules; shards stay fetched.)
 - **On-demand shards:** ward / LSOA / dataZone / SOA / OA entries and their
   crosswalks, fetched by `(level, vintage)` exactly like geometry, only when a
   dataset or query at that level is active.
@@ -540,6 +542,15 @@ modules once their call sites are gone.
    green). `areaBank`/`codeMapper` parity is validated during their Phase 3/4/5
    swaps rather than up front (they are derived from geometry at runtime).
 3. Migrate `LOCATIONS` consumers to `membersOf`/`boundsOf`.
+   **Done:** `boundaries.ts`, `useMapUpdates`, `MapInterface`, and `LocationPanel`
+   now read named-location bounds/members from the gazetteer, not `LOCATIONS`. No
+   runtime code imports `LOCATIONS` any more; it remains only as the build-time
+   curated source for the loader. Enabled by `lib/data/gazetteer/static.ts`, a
+   statically bundled singleton (the eager core is needed *synchronously* at map
+   mount and in the non-React `boundaries.ts`, so it is imported, not fetched;
+   this refines 3.1 for the core, shards stay fetched). Verified end-to-end: the
+   location list renders identical populations (UK 60,238,038, London 8,866,180),
+   111 tests green.
 4. Migrate `areaBank` (custom upload matching) to `matchColumn`.
 5. Migrate `codeMapper` consumers to `ancestors`/`descendants`/`mapToVintage`.
 6. Introduce `DatasetManifest`; convert one existing dataset as the reference.

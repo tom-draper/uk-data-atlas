@@ -3,7 +3,7 @@ import { ActiveViz, BoundaryGeojson, Dataset } from "@lib/types";
 import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
-import { LOCATIONS } from "../data/locations";
+import { gazetteer } from "../data/gazetteer/static";
 
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson | null;
@@ -43,7 +43,7 @@ export function useMapUpdates({
 			mapManager.updateMapForCustomPoints(
 				activeDataset,
 				mapOptions,
-				LOCATIONS[selectedLocation]?.bounds ?? null,
+				gazetteer.boundsOf(selectedLocation) ?? null,
 			);
 		} else {
 			mapManager.clearCustomPoints();
