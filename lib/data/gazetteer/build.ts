@@ -59,6 +59,45 @@ export function buildCore(
 	return { version, byCode, nameIndex, namedLocations };
 }
 
+// Synthesises region-level entries and sets each member LAD's parent to its
+// region. Regions have no geometry file here, so areaM2 is summed from member
+// LADs and bbox is their union. Derived from LOCATIONS region membership, which
+// the app already trusts.
+export function linkRegions(
+	core: GazetteerCore,
+	regions: Array<{ code: string; name: string; memberCodes: string[] }>,
+): void {
+	for (const r of regions) {
+		let areaM2 = 0;
+		let minX = 180, minY = 90, maxX = -180, maxY = -90;
+		const present: string[] = [];
+		for (const lad of r.memberCodes) {
+			const e = core.byCode[lad];
+			if (!e) continue; // skip pre-2016 stale codes (LOCATIONS debt)
+			present.push(lad);
+			e.parents = [r.code];
+			areaM2 += e.areaM2;
+			minX = Math.min(minX, e.bbox[0]);
+			minY = Math.min(minY, e.bbox[1]);
+			maxX = Math.max(maxX, e.bbox[2]);
+			maxY = Math.max(maxY, e.bbox[3]);
+		}
+		if (present.length === 0) continue;
+		core.byCode[r.code] = {
+			code: r.code,
+			name: r.name,
+			level: "region",
+			vintage: 0,
+			areaM2,
+			bbox: [minX, minY, maxX, maxY],
+			parents: [],
+		};
+		const nk = r.name.toLowerCase();
+		const list = (core.nameIndex[nk] ??= []);
+		if (!list.includes(r.code)) list.push(r.code);
+	}
+}
+
 // Weighted crosswalk from source areas to target areas, via a finer building
 // block (e.g. LSOA / ward). weight = share of source's building-block measure
 // (area here; swap for population for best-fit) that falls in each target.

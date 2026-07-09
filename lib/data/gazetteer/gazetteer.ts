@@ -9,11 +9,16 @@ export class Gazetteer {
 	readonly version: number;
 	private core: GazetteerCore;
 	private crosswalks: Record<string, Crosswalk>;
+	private childrenByParent: Record<string, string[]> = {};
 
 	constructor(core: GazetteerCore, crosswalks: Record<string, Crosswalk> = {}) {
 		this.core = core;
 		this.crosswalks = crosswalks;
 		this.version = core.version;
+		// Invert parents once so descendants() is cheap.
+		for (const e of Object.values(core.byCode))
+			for (const p of e.parents)
+				(this.childrenByParent[p] ??= []).push(e.code);
 	}
 
 	registerCrosswalk(from: Level, to: Level, cw: Crosswalk): void {
@@ -68,6 +73,14 @@ export class Gazetteer {
 			frontier = next;
 		}
 		return out;
+	}
+
+	// Direct children, optionally filtered to a level (e.g. region -> its LADs).
+	descendants(code: string, level?: Level): GazetteerEntry[] {
+		const kids = (this.childrenByParent[code] ?? [])
+			.map((c) => this.core.byCode[c])
+			.filter(Boolean) as GazetteerEntry[];
+		return level ? kids.filter((e) => e.level === level) : kids;
 	}
 
 	// --- conversions (see 4.4) ---

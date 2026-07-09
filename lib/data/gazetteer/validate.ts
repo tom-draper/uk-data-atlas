@@ -26,6 +26,17 @@ export function validateCore(
 		for (const c of cs)
 			if (!codes.has(c)) errors.push(`nameIndex[${name}] -> unknown code ${c}`);
 
+	// areaM2 rolls up: a region's area equals the sum of its child LAD areas.
+	const childArea: Record<string, number> = {};
+	for (const e of Object.values(core.byCode))
+		for (const p of e.parents) childArea[p] = (childArea[p] ?? 0) + e.areaM2;
+	for (const e of Object.values(core.byCode)) {
+		if (e.level !== "region") continue;
+		const summed = childArea[e.code] ?? 0;
+		if (summed > 0 && Math.abs(e.areaM2 - summed) / e.areaM2 > 0.001)
+			errors.push(`region ${e.code} areaM2 ${e.areaM2} != child sum ${summed}`);
+	}
+
 	// namedLocations reproduce LOCATIONS exactly (regression guard).
 	for (const [name, loc] of Object.entries(locations)) {
 		const got = core.namedLocations[name];

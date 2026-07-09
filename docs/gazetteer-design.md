@@ -490,6 +490,14 @@ modules once their call sites are gone.
 - **Display vs. match names.** Preferred display label vs. the alias set used for
   matching, plus bilingual (Welsh) names. `name` + `aliases` covers matching;
   decide whether a separate `displayName` (and locale) is needed.
+- **LOCATIONS double-counts reorganised areas (real bug, found by the backfill).**
+  `LOCATIONS["North West"]` lists both the 6 abolished Cumbria districts
+  (`E07000026-31`) and the 2 unitaries that replaced them (`E06000063/64`), so
+  Cumbria's ~6,800 km2 and its population are counted twice (region area 20,911 vs
+  ~14,100 km2 actual). This affects the live app's region totals today, not just
+  the gazetteer. Fix belongs in `LOCATIONS` (drop superseded codes); until then
+  region `areaM2` inherits the inflation. A validation check that flags a named
+  location containing both a code and its successor would catch this class.
 
 ## 12. Phased rollout
 
@@ -506,9 +514,13 @@ modules once their call sites are gone.
    `scripts/gazetteer-crosswalks.ts` builds `crosswalk.constituency-localAuthority.json`
    (5 KB gz) separately. Validation runs and already surfaced real debt: 9
    `LOCATIONS` members predate our boundary vintages (recoded pre-2016), reported
-   as warnings. Still to do: ward/LSOA shards, county/region hierarchy from ONS
-   lookups (entries currently have empty `parents`), and population-weighted (not
-   area-weighted) crosswalks.
+   as warnings.
+   **Backfill (done):** LAD -> region hierarchy is populated for the 9 English
+   regions (E12 codes) by inverting LOCATIONS membership; region entries carry
+   summed `areaM2` + union bbox. `ancestors`/`descendants` now work
+   (`tests/data/gazetteer.test.ts`, 10 green). This surfaced a real LOCATIONS bug
+   (see 11). Still to do: nations (Scotland/Wales/NI) as regions, ward/LSOA
+   shards, county tier, and population-weighted (not area-weighted) crosswalks.
 2. Add `lib/data/gazetteer.ts` + hook (with the load lifecycle from §11);
    validate against current `LOCATIONS` / `areaBank` / `codeMapper` outputs (they
    must agree, this is 6.1's regression guard).
