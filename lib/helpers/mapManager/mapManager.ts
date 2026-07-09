@@ -260,8 +260,20 @@ export class MapManager {
 	updateMapForCustomPoints(
 		dataset: CustomDataset,
 		mapOptions: MapOptions,
+		bounds: [number, number, number, number] | null = null,
 	): void {
-		const points = dataset.points ?? [];
+		const allPoints = dataset.points ?? [];
+		// Scope points to the selected location's bounding box (national views
+		// like "United Kingdom" cover everything, so nothing is filtered out).
+		const points = bounds
+			? allPoints.filter(
+					(p) =>
+						p.lng >= bounds[0] &&
+						p.lng <= bounds[2] &&
+						p.lat >= bounds[1] &&
+						p.lat <= bounds[3],
+				)
+			: allPoints;
 		if (points.length === 0) {
 			this.layerManager.clearPointLayers();
 			return;
@@ -286,7 +298,11 @@ export class MapManager {
 		);
 		// Blank the choropleth beneath so a previously active dataset doesn't show.
 		this.layerManager.clearBoundaryData();
-		this.layerManager.updatePointLayers(collection, mapOptions.visibility);
+		this.layerManager.updatePointLayers(
+			collection,
+			mapOptions.visibility,
+			mapOptions.theme.id,
+		);
 	}
 
 	clearCustomPoints(): void {

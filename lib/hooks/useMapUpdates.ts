@@ -3,6 +3,7 @@ import { ActiveViz, BoundaryGeojson, Dataset } from "@lib/types";
 import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
+import { LOCATIONS } from "../data/locations";
 
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson | null;
@@ -11,6 +12,7 @@ interface UseMapUpdatesParams {
 	mapManager: MapManager | null;
 	mapOptions: MapOptions;
 	styleReady: boolean;
+	selectedLocation: string;
 }
 
 export function useMapUpdates({
@@ -20,6 +22,7 @@ export function useMapUpdates({
 	mapManager,
 	mapOptions,
 	styleReady,
+	selectedLocation,
 }: UseMapUpdatesParams) {
 	const isDark = useIsDark();
 
@@ -37,11 +40,15 @@ export function useMapUpdates({
 			activeDataset?.type === "custom" &&
 			activeDataset.kind === "points"
 		) {
-			mapManager.updateMapForCustomPoints(activeDataset, mapOptions);
+			mapManager.updateMapForCustomPoints(
+				activeDataset,
+				mapOptions,
+				LOCATIONS[selectedLocation]?.bounds ?? null,
+			);
 		} else {
 			mapManager.clearCustomPoints();
 		}
-	}, [activeDataset, mapManager, mapOptions, styleReady]);
+	}, [activeDataset, mapManager, mapOptions, styleReady, selectedLocation]);
 
 	useEffect(() => {
 		if (!geojson || !activeDataset || !mapManager) return;

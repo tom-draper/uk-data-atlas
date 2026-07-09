@@ -12,6 +12,7 @@ interface MapViewProps {
 	mapOptions: MapOptions;
 	handleMapContainer: (node: HTMLDivElement | null) => void;
 	styleReady: boolean;
+	selectedLocation: string;
 }
 
 export default function MapView({
@@ -22,6 +23,7 @@ export default function MapView({
 	mapOptions,
 	handleMapContainer,
 	styleReady,
+	selectedLocation,
 }: MapViewProps) {
 	useMapUpdates({
 		geojson,
@@ -30,6 +32,7 @@ export default function MapView({
 		mapManager,
 		mapOptions,
 		styleReady,
+		selectedLocation,
 	});
 
 	return (

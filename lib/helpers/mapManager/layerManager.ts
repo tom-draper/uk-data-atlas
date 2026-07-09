@@ -10,6 +10,7 @@ import {
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";
 import { getPercentageColorExpression } from "../colorScale/datasetColors";
+import { buildHeatmapColorRamp } from "../colorScale/themes";
 import { DEFAULT_COLOR } from "./featureBuilder";
 
 const SOURCE_ID = "location-wards";
@@ -21,8 +22,8 @@ const HEAT_LAYER_ID = "custom-points-heat";
 
 // Cross-fade between the heatmap (zoomed out, where individual points overlap
 // into noise) and discrete circles (zoomed in, where each point is meaningful).
-const FADE_MIN_ZOOM = 7;
-const FADE_MAX_ZOOM = 10;
+const FADE_MIN_ZOOM = 6;
+const FADE_MAX_ZOOM = 9;
 
 const EMPTY_FC = { type: "FeatureCollection", features: [] } as const;
 
@@ -237,6 +238,7 @@ export class LayerManager {
 	updatePointLayers(
 		collection: GeoJSON.FeatureCollection,
 		visibility: MapOptions["visibility"],
+		themeId: string,
 	): void {
 		if (!this.map.isStyleLoaded()) return;
 
@@ -271,35 +273,18 @@ export class LayerManager {
 						["linear"],
 						["zoom"],
 						4,
-						0.6,
+						1,
 						FADE_MAX_ZOOM,
-						1.2,
+						2.5,
 					],
 					"heatmap-radius": [
 						"interpolate",
 						["linear"],
 						["zoom"],
 						4,
-						6,
+						15,
 						FADE_MAX_ZOOM,
-						18,
-					],
-					"heatmap-color": [
-						"interpolate",
-						["linear"],
-						["heatmap-density"],
-						0,
-						"rgba(33,102,172,0)",
-						0.2,
-						"rgba(103,169,207,0.6)",
-						0.4,
-						"rgb(209,229,240)",
-						0.6,
-						"rgb(253,219,199)",
-						0.8,
-						"rgb(239,138,98)",
-						1,
-						"rgb(178,24,43)",
+						35,
 					],
 				},
 			});
@@ -318,8 +303,6 @@ export class LayerManager {
 						7,
 					],
 					"circle-color": ["get", "color"],
-					"circle-stroke-color": "#ffffff",
-					"circle-stroke-width": 1,
 				},
 			});
 		}
@@ -339,15 +322,6 @@ export class LayerManager {
 			FADE_MAX_ZOOM,
 			circleMax,
 		]);
-		this.map.setPaintProperty(POINT_LAYER_ID, "circle-stroke-opacity", [
-			"interpolate",
-			["linear"],
-			["zoom"],
-			FADE_MIN_ZOOM,
-			0,
-			FADE_MAX_ZOOM,
-			circleMax,
-		]);
 		this.map.setPaintProperty(HEAT_LAYER_ID, "heatmap-opacity", [
 			"interpolate",
 			["linear"],
@@ -357,6 +331,12 @@ export class LayerManager {
 			FADE_MAX_ZOOM,
 			0,
 		]);
+		// Set each call so palette changes propagate to the heatmap ramp.
+		this.map.setPaintProperty(
+			HEAT_LAYER_ID,
+			"heatmap-color",
+			buildHeatmapColorRamp(themeId) as any,
+		);
 	}
 
 	clearPointLayers(): void {

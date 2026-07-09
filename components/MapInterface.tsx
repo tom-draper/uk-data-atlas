@@ -318,6 +318,7 @@ export default function MapInterface({
 				mapOptions={mapOptions}
 				handleMapContainer={handleMapContainer}
 				styleReady={styleReady}
+				selectedLocation={selectedLocation}
 			/>
 		</div>
 	);
