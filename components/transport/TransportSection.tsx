@@ -1,6 +1,5 @@
 "use client";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { panelTheme } from "@/lib/helpers/panelTheme";
 import { ActiveViz } from "@lib/types";
 import { CustomDataset } from "@/lib/types/custom";
 import { getColor } from "@/lib/helpers/colorScale/themes";
@@ -82,19 +81,18 @@ export default function TransportSection({
 	setActiveViz: (value: ActiveViz) => void;
 }) {
 	const isDark = useIsDark();
-	const t = panelTheme(isDark);
 
 	if (roadSafetyDatasets.length === 0) return null;
 
 	return (
 		<div
-			className={`space-y-2 border-t pt-2 ${isDark ? "border-white/10" : "border-gray-200/80"}`}
+			className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}
 		>
-			<p
-				className={`text-[11px] font-semibold pt-2 px-0.5 uppercase tracking-wide ${t.textMuted}`}
+			<h3
+				className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}
 			>
 				Transport
-			</p>
+			</h3>
 			<div className="space-y-2">
 				{roadSafetyDatasets.map((ds) => (
 					<RoadSafetyCard
