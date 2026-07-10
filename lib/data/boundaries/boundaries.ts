@@ -204,16 +204,13 @@ export const getProp = (
 	return undefined;
 };
 
-/**
- * Fast AABB (Axis-Aligned Bounding Box) intersection check
- */
-const isFeatureInBounds = (
+// Axis-aligned bounding box of a feature's geometry, [minX, minY, maxX, maxY], or
+// null if it has no coordinates. Shared by the runtime map filter and the load-time
+// index build so both locate features identically.
+export const featureBbox = (
 	feature: any,
-	bounds: [number, number, number, number],
-): boolean => {
-	const [west, south, east, north] = bounds;
-
-	if (!feature.geometry?.coordinates) return false;
+): [number, number, number, number] | null => {
+	if (!feature.geometry?.coordinates) return null;
 
 	const flatCoords =
 		feature.geometry.type === "MultiPolygon"
@@ -232,7 +229,27 @@ const isFeatureInBounds = (
 		maxY = Math.max(maxY, y);
 	}
 
+	return [minX, minY, maxX, maxY];
+};
+
+const bboxIntersectsBounds = (
+	bbox: [number, number, number, number],
+	bounds: [number, number, number, number],
+): boolean => {
+	const [west, south, east, north] = bounds;
+	const [minX, minY, maxX, maxY] = bbox;
 	return minX <= east && maxX >= west && minY <= north && maxY >= south;
+};
+
+/**
+ * Fast AABB (Axis-Aligned Bounding Box) intersection check
+ */
+const isFeatureInBounds = (
+	feature: any,
+	bounds: [number, number, number, number],
+): boolean => {
+	const bbox = featureBbox(feature);
+	return bbox ? bboxIntersectsBounds(bbox, bounds) : false;
 };
 
 /**
@@ -460,9 +477,88 @@ export const filterFeatures = (
 	return geojson;
 };
 
+// A geometry-free feature: properties for chart aggregation + a bbox so bbox-based
+// types (LSOA / constituency / DataZone / SOA) can be located without coordinates.
+export interface IndexFeature {
+	properties: Record<string, unknown>;
+	bbox: [number, number, number, number];
+}
+
+/**
+ * Location-filter a geometry-free index, mirroring filterFeatures exactly but on
+ * {properties, bbox} instead of full geometry, and returning null-geometry features.
+ * The chart panel reads only properties, so it can run off this with no decode and
+ * no per-navigation geometry work.
+ */
+export const filterIndexToLocation = (
+	index: IndexFeature[],
+	location: string | null,
+	type: BoundaryType,
+	getLadForWard?: (wardCode: string) => string | undefined,
+): BoundaryGeojson => {
+	const toFC = (feats: IndexFeature[]): BoundaryGeojson =>
+		({
+			type: "FeatureCollection",
+			features: feats.map((f) => ({
+				type: "Feature",
+				geometry: null,
+				properties: f.properties,
+			})),
+		}) as unknown as BoundaryGeojson;
+
+	if (!location || location === "United Kingdom") return toFC(index);
+
+	const { code: codeKeys } = getPropertyKeys(type);
+
+	if (COUNTRY_PREFIXES[location]) {
+		const prefix = COUNTRY_PREFIXES[location];
+		return toFC(
+			index.filter((f) => getProp(f.properties, codeKeys)?.startsWith(prefix)),
+		);
+	}
+
+	const loc = gazetteer.namedLocation(location);
+	if (!loc) return toFC(index);
+
+	if (type === "ward" && loc.memberCodes?.length) {
+		const ladCodeSet = new Set(loc.memberCodes);
+		return toFC(
+			index.filter((f) => {
+				const wardCode = getProp(f.properties, PROPERTY_KEYS.wardCode);
+				let ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
+				const mappedLadCode =
+					wardCode && getLadForWard ? getLadForWard(wardCode) : undefined;
+				ladCode = ladCode || mappedLadCode;
+				return !!ladCode && ladCodeSet.has(ladCode);
+			}),
+		);
+	}
+
+	if (type === "localAuthority" && loc.memberCodes?.length) {
+		const ladCodeSet = new Set(loc.memberCodes);
+		return toFC(
+			index.filter((f) => {
+				const ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
+				return !!ladCode && ladCodeSet.has(ladCode);
+			}),
+		);
+	}
+
+	if (loc.bbox) {
+		const bounds = loc.bbox;
+		return toFC(index.filter((f) => bboxIntersectsBounds(f.bbox, bounds)));
+	}
+
+	return toFC(index);
+};
+
 /**
  * Clear the raw boundary cache (useful for testing or memory management)
  */
 export const clearBoundaryCache = (): void => {
 	Object.keys(RAW_CACHE).forEach((key) => delete RAW_CACHE[key]);
 };
+
+// Read the cached raw text for a path without fetching (undefined if not cached).
+export const peekBoundaryText = (path: string): string | undefined =>
+	RAW_CACHE[path];

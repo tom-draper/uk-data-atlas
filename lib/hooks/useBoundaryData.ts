@@ -3,11 +3,16 @@ import { startTransition, useEffect, useRef, useState } from "react";
 import { BoundaryData, BoundaryCodes, BoundaryGeojson } from "@lib/types";
 import {
 	BoundaryType,
+	clearBoundaryCache,
 	decodeBoundary,
+	featureBbox,
 	fetchRawBoundary,
 	fetchRawBoundaryText,
 	filterFeatures,
+	filterIndexToLocation,
 	GEOJSON_PATHS,
+	IndexFeature,
+	peekBoundaryText,
 	PROPERTY_KEYS,
 } from "../data/boundaries/boundaries";
 import {
@@ -108,7 +113,7 @@ const isTypeEnabled = (
 ): boolean => !GATED_TYPES.has(type) || enabled?.[type] === true;
 
 // Stable primitive key describing which gated types are currently enabled, so the
-// re-filter effect can react to a section being toggled on/off without depending on
+// reconcile effect can react to a section being toggled on/off without depending on
 // a freshly-allocated object each render.
 const gatedEnabledKey = (
 	enabled: Partial<Record<BoundaryType, boolean>> | undefined,
@@ -118,15 +123,74 @@ const gatedEnabledKey = (
 		.sort()
 		.join("|");
 
+// The geometry-free per-feature index the chart panel runs on: {type: {year: [...]}}.
+type BoundaryIndex = Partial<Record<BoundaryType, Record<number, IndexFeature[]>>>;
+
+const buildIndexFeatures = (
+	features: BoundaryGeojson["features"],
+): IndexFeature[] =>
+	features.map((f) => ({
+		properties: f.properties as unknown as Record<string, unknown>,
+		bbox: featureBbox(f) ?? [Infinity, Infinity, -Infinity, -Infinity],
+	}));
+
+type DecodedActive = { path: string; geojson: BoundaryGeojson } | null;
+
+/**
+ * Assemble boundaryData for a location without decoding anything: the map's active
+ * layer comes from the one cached decoded file (real geometry), every other entry
+ * comes from the geometry-free index (properties + bbox). Both are cheap array
+ * filters, so a location change does no geometry expansion at all.
+ */
+const assembleBoundaryData = (
+	index: BoundaryIndex,
+	decodedActive: DecodedActive,
+	atLoc: string | null,
+	activeBoundary: { type: BoundaryType; year: number } | undefined,
+	enabledBoundaryTypes: Partial<Record<BoundaryType, boolean>> | undefined,
+	getLadForWard: ((wardCode: string) => string | undefined) | undefined,
+): BoundaryData => {
+	const next = emptyBoundaryData();
+	for (const entry of BOUNDARY_ENTRIES) {
+		if (!isTypeEnabled(entry.type, enabledBoundaryTypes)) continue;
+		const isActive =
+			!!activeBoundary &&
+			entry.type === activeBoundary.type &&
+			entry.year === activeBoundary.year;
+		if (isActive && decodedActive && decodedActive.path === entry.path) {
+			next[entry.type][entry.year] = filterFeatures(
+				decodedActive.geojson,
+				atLoc,
+				entry.type,
+				getLadForWard,
+			);
+		} else {
+			const idx = index[entry.type]?.[entry.year];
+			if (idx) {
+				next[entry.type][entry.year] = filterIndexToLocation(
+					idx,
+					atLoc,
+					entry.type,
+					getLadForWard,
+				);
+			}
+		}
+	}
+	return next;
+};
+
 /**
  * Hook to load and filter boundary data.
  *
- * Memory model: the compact raw TopoJSON *text* for every vintage is cached, but
- * the parsed and decoded (coordinate-expanded) GeoJSON are only ever held
- * transiently — one file at a time — long enough to extract code sets, cross-year
- * mappings, and the geometry filtered to the selected location. Only the filtered
- * slice is retained. Changing location re-decodes from the cached text without
- * re-fetching. Gated types (see GATED_TYPES) are skipped until enabled.
+ * Memory / work model: each vintage is decoded exactly once, at load, into a
+ * geometry-free {properties, bbox} index (~15 MB for everything). The chart panel
+ * reads only properties, so it runs off that index — a location change re-filters
+ * the index with no decode. The map needs real geometry, but only for its single
+ * active layer, so we retain just that one file's compact raw text (~7 MB) and
+ * parse + decode it on demand (one map decode per location change); switching the
+ * active view fetches the one new file's text. All other raw text is dropped once
+ * the index is built. Gated types (see GATED_TYPES) are indexed lazily when their
+ * section or view is enabled.
  */
 export function useBoundaryData(
 	selectedLocation?: string,
@@ -146,9 +210,8 @@ export function useBoundaryData(
 	// Which gated boundary types are currently needed (section visible or active
 	// viz). Types not listed in GATED_TYPES always load regardless of this value.
 	enabledBoundaryTypes?: Partial<Record<BoundaryType, boolean>>,
-	// The boundary the map is currently drawing. On a location change it is
-	// re-filtered and committed before the other (chart-only) topologies so the map
-	// updates promptly instead of waiting for every vintage to decode.
+	// The boundary the map is currently drawing. Its parsed topology is retained and
+	// decoded on demand per location change; changing it parses the one new file.
 	activeBoundary?: { type: BoundaryType; year: number },
 ) {
 	const [boundaryData, setBoundaryData] = useState<BoundaryData>(
@@ -167,26 +230,35 @@ export function useBoundaryData(
 
 	const loc = selectedLocation || null;
 	const gatedKey = gatedEnabledKey(enabledBoundaryTypes);
+	const activeKey = activeBoundary
+		? `${activeBoundary.type}:${activeBoundary.year}`
+		: "";
 
-	// The location the currently-committed filteredData corresponds to. Lets the
-	// location-change effect skip redundant re-filters (including the initial one
-	// the load effect already performed).
+	// Geometry-free index (all vintages) + the single active layer's raw text
+	// (parsed + decoded transiently per location change). Refs, so they persist across
+	// renders and aren't part of React state churn.
+	const indexRef = useRef<BoundaryIndex>({});
+	const activeTextRef = useRef<{ path: string; text: string } | null>(null);
+
+	// What the currently-committed boundaryData reflects, so the reconcile effect can
+	// skip redundant work.
 	const lastFilteredLoc = useRef<string | null | undefined>(undefined);
-	// The gated-types selection the committed filteredData reflects, so toggling a
-	// gated section on/off re-filters even when the location is unchanged.
 	const lastGatedKey = useRef<string>("");
+	const lastActiveKey = useRef<string>("");
 
-	// Initial load: fetch every raw topology (in parallel), then decode them one at
-	// a time to extract codes + mappings + the current location's filtered slice.
+	// Initial load: fetch every enabled topology, decode each once to build the index
+	// + code sets + cross-year mappings, retain the active layer's geometry, then drop
+	// the raw text.
 	useEffect(() => {
 		let mounted = true;
-		const filterLoc = loc; // location at mount; the effect below reconciles changes
-		// Gated types disabled at mount are skipped entirely (no fetch, parse, or
-		// decode); the re-filter effect loads them if their section is later shown.
+		const filterLoc = loc; // location at mount; the reconcile effect handles changes
 		const activeEntries = BOUNDARY_ENTRIES.filter((entry) =>
 			isTypeEnabled(entry.type, enabledBoundaryTypes),
 		);
 		const loadGatedKey = gatedEnabledKey(enabledBoundaryTypes);
+		const loadActiveKey = activeBoundary
+			? `${activeBoundary.type}:${activeBoundary.year}`
+			: "";
 
 		const load = async () => {
 			setIsLoading(true);
@@ -202,7 +274,6 @@ export function useBoundaryData(
 			);
 			if (!mounted) return;
 
-			const filtered = emptyBoundaryData();
 			const codes = emptyBoundaryCodes();
 			const wardToLad: Record<string, string> = {};
 			const ladToWardsByYear: Record<number, Record<string, string[]>> = {};
@@ -216,6 +287,10 @@ export function useBoundaryData(
 			);
 			let latestWardGeojson: BoundaryGeojson | null = null;
 			const constituencyGeojson: Record<number, BoundaryGeojson> = {};
+
+			// The active layer decoded once here for the initial assemble; only its raw
+			// text is retained (in activeTextRef) for later re-slices.
+			let activeDecodedForInit: DecodedActive = null;
 
 			let firstError: Error | null = null;
 
@@ -258,13 +333,24 @@ export function useBoundaryData(
 					constituencyGeojson[entry.year] = decoded;
 				}
 
-				filtered[entry.type][entry.year] = filterFeatures(
-					decoded,
-					filterLoc,
-					entry.type,
-					getLadForWard,
-				);
-				// `decoded` drops out of scope here unless retained above for mappings.
+				// Geometry-free index for the chart panel.
+				(indexRef.current[entry.type] ??= {})[entry.year] =
+					buildIndexFeatures(features);
+
+				// Retain the map's active layer as compact raw text; keep this decode
+				// for the initial assemble only.
+				if (
+					activeBoundary &&
+					entry.type === activeBoundary.type &&
+					entry.year === activeBoundary.year
+				) {
+					const text = peekBoundaryText(entry.path);
+					if (text !== undefined) {
+						activeTextRef.current = { path: entry.path, text };
+					}
+					activeDecodedForInit = { path: entry.path, geojson: decoded };
+				}
+				// `decoded` otherwise drops out of scope (unless held above for mappings).
 			}
 
 			// Dispatch ward<->LAD mappings (single call to avoid extra state churn).
@@ -310,10 +396,25 @@ export function useBoundaryData(
 			}
 
 			if (!mounted) return;
+
+			// The index is built and the active layer's parsed topology retained; the
+			// raw text is no longer needed. Location changes decode only the active
+			// layer; a view change re-parses just the new active file.
+			clearBoundaryCache();
+
 			lastFilteredLoc.current = filterLoc;
 			lastGatedKey.current = loadGatedKey;
+			lastActiveKey.current = loadActiveKey;
+			const assembled = assembleBoundaryData(
+				indexRef.current,
+				activeDecodedForInit,
+				filterLoc,
+				activeBoundary,
+				enabledBoundaryTypes,
+				getLadForWard,
+			);
 			startTransition(() => {
-				setBoundaryData(filtered);
+				setBoundaryData(assembled);
 				setBoundaryCodes(codes);
 			});
 			if (firstError) setError(firstError);
@@ -333,6 +434,9 @@ export function useBoundaryData(
 		return () => {
 			mounted = false;
 		};
+		// enabledBoundaryTypes / activeBoundary are read at mount; later changes are
+		// handled by the reconcile effect below.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		addWardLadMappings,
 		addLadWardMappings,
@@ -341,35 +445,35 @@ export function useBoundaryData(
 		getLadForWard,
 	]);
 
-	// Location changes (and gated-section toggles): re-filter from the cached raw
-	// topologies without refetching or rebuilding mappings. Skips the initial
-	// location (already filtered above). A newly-enabled gated type is fetched here
-	// on demand; a newly-disabled one is dropped, freeing its filtered slice.
+	// Reconcile on location change, gated-section toggle, or active-view change.
+	// A pure location change decodes nothing (index + active geometry are resident);
+	// enabling a gated type indexes that one file; changing the active view decodes
+	// that one file. Then boundaryData is re-assembled cheaply.
 	useEffect(() => {
 		if (!initialized) return;
-		if (lastFilteredLoc.current === loc && lastGatedKey.current === gatedKey) {
+		if (
+			lastFilteredLoc.current === loc &&
+			lastGatedKey.current === gatedKey &&
+			lastActiveKey.current === activeKey
+		) {
 			return;
 		}
 
 		let cancelled = false;
-		const activeEntries = BOUNDARY_ENTRIES.filter((entry) =>
-			isTypeEnabled(entry.type, enabledBoundaryTypes),
-		);
-		// Re-filter the map's active boundary first so the map updates promptly;
-		// decoding every vintage up front froze the main thread for seconds and left
-		// the map showing the previous location until the whole batch finished.
-		if (activeBoundary) {
-			const i = activeEntries.findIndex(
-				(e) => e.type === activeBoundary.type && e.year === activeBoundary.year,
-			);
-			if (i > 0) activeEntries.unshift(activeEntries.splice(i, 1)[0]);
-		}
+		const activeEntry = activeBoundary
+			? BOUNDARY_ENTRIES.find(
+					(e) =>
+						e.type === activeBoundary.type && e.year === activeBoundary.year,
+				)
+			: undefined;
 
-		const refilter = async () => {
-			const next = emptyBoundaryData();
-			let committedActive = false;
-			for (let idx = 0; idx < activeEntries.length; idx++) {
-				const entry = activeEntries[idx];
+		const reconcile = async () => {
+			let fetched = false;
+
+			// 1. Index any newly-enabled gated types that aren't indexed yet.
+			for (const entry of BOUNDARY_ENTRIES) {
+				if (!isTypeEnabled(entry.type, enabledBoundaryTypes)) continue;
+				if (indexRef.current[entry.type]?.[entry.year]) continue;
 				let raw: unknown;
 				try {
 					raw = await fetchRawBoundary(entry.path);
@@ -377,65 +481,77 @@ export function useBoundaryData(
 					continue;
 				}
 				if (cancelled) return;
-
-				let slice: BoundaryGeojson;
-				try {
-					slice = filterFeatures(
-						decodeBoundary(raw),
-						loc,
-						entry.type,
-						getLadForWard,
-					);
-				} catch (err) {
-					if (!cancelled) {
-						setError(
-							err instanceof Error
-								? err
-								: new Error(`Failed to filter ${entry.type} ${entry.year}`),
-						);
+				fetched = true;
+				(indexRef.current[entry.type] ??= {})[entry.year] = buildIndexFeatures(
+					decodeBoundary(raw).features ?? [],
+				);
+				if (activeEntry && entry.path === activeEntry.path) {
+					const text = peekBoundaryText(entry.path);
+					if (text !== undefined) {
+						activeTextRef.current = { path: entry.path, text };
 					}
-					continue;
-				}
-				next[entry.type][entry.year] = slice;
-
-				// Commit the map's active boundary as soon as it is ready (merged onto
-				// the previous slices, which the chart panel keeps reading until the
-				// full batch below replaces them).
-				if (
-					!committedActive &&
-					activeBoundary &&
-					entry.type === activeBoundary.type &&
-					entry.year === activeBoundary.year
-				) {
-					committedActive = true;
-					startTransition(() =>
-						setBoundaryData((prev) => ({
-							...prev,
-							[entry.type]: { ...prev[entry.type], [entry.year]: slice },
-						})),
-					);
-				}
-
-				// Yield between heavy decodes so the browser can repaint (the map is
-				// already correct after the active boundary commits above).
-				if (idx < activeEntries.length - 1) {
-					await new Promise((resolve) => setTimeout(resolve));
-					if (cancelled) return;
 				}
 			}
+
+			// 2. Fetch the active layer's text if the view switched to a new file.
+			if (activeEntry && activeTextRef.current?.path !== activeEntry.path) {
+				let text: string | null = null;
+				try {
+					text = await fetchRawBoundaryText(activeEntry.path);
+				} catch {
+					text = null;
+				}
+				if (cancelled) return;
+				if (text !== null) {
+					activeTextRef.current = { path: activeEntry.path, text };
+					fetched = true;
+				}
+			}
+
+			// Fetching re-populated the raw text cache; drop it — we keep only the
+			// active layer's text (held in activeTextRef) plus the index.
+			if (fetched) clearBoundaryCache();
 			if (cancelled) return;
+
+			// Parse + expand the active layer's geometry for this assemble only — the
+			// single map decode per location/view change; everything else is index
+			// filtering.
+			const decodedActive =
+				activeEntry && activeTextRef.current?.path === activeEntry.path
+					? {
+							path: activeTextRef.current.path,
+							geojson: decodeBoundary(JSON.parse(activeTextRef.current.text)),
+						}
+					: null;
+
 			lastFilteredLoc.current = loc;
 			lastGatedKey.current = gatedKey;
-			startTransition(() => setBoundaryData(next));
+			lastActiveKey.current = activeKey;
+			const assembled = assembleBoundaryData(
+				indexRef.current,
+				decodedActive,
+				loc,
+				activeBoundary,
+				enabledBoundaryTypes,
+				getLadForWard,
+			);
+			startTransition(() => setBoundaryData(assembled));
 		};
 
-		refilter();
+		reconcile().catch((err) => {
+			if (!cancelled) {
+				setError(
+					err instanceof Error ? err : new Error("Failed to update boundaries"),
+				);
+			}
+		});
 		return () => {
 			cancelled = true;
 		};
-		// enabledBoundaryTypes is captured via the stable gatedKey primitive.
+		// enabledBoundaryTypes / activeBoundary are captured via the stable gatedKey /
+		// activeKey primitives.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loc, gatedKey, initialized, getLadForWard]);
+	}, [loc, gatedKey, activeKey, initialized, getLadForWard]);
 
 	return {
 		boundaryData,
