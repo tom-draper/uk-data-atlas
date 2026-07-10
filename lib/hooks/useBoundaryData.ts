@@ -146,6 +146,10 @@ export function useBoundaryData(
 	// Which gated boundary types are currently needed (section visible or active
 	// viz). Types not listed in GATED_TYPES always load regardless of this value.
 	enabledBoundaryTypes?: Partial<Record<BoundaryType, boolean>>,
+	// The boundary the map is currently drawing. On a location change it is
+	// re-filtered and committed before the other (chart-only) topologies so the map
+	// updates promptly instead of waiting for every vintage to decode.
+	activeBoundary?: { type: BoundaryType; year: number },
 ) {
 	const [boundaryData, setBoundaryData] = useState<BoundaryData>(
 		emptyBoundaryData,
@@ -351,9 +355,21 @@ export function useBoundaryData(
 		const activeEntries = BOUNDARY_ENTRIES.filter((entry) =>
 			isTypeEnabled(entry.type, enabledBoundaryTypes),
 		);
+		// Re-filter the map's active boundary first so the map updates promptly;
+		// decoding every vintage up front froze the main thread for seconds and left
+		// the map showing the previous location until the whole batch finished.
+		if (activeBoundary) {
+			const i = activeEntries.findIndex(
+				(e) => e.type === activeBoundary.type && e.year === activeBoundary.year,
+			);
+			if (i > 0) activeEntries.unshift(activeEntries.splice(i, 1)[0]);
+		}
+
 		const refilter = async () => {
 			const next = emptyBoundaryData();
-			for (const entry of activeEntries) {
+			let committedActive = false;
+			for (let idx = 0; idx < activeEntries.length; idx++) {
+				const entry = activeEntries[idx];
 				let raw: unknown;
 				try {
 					raw = await fetchRawBoundary(entry.path);
@@ -361,12 +377,51 @@ export function useBoundaryData(
 					continue;
 				}
 				if (cancelled) return;
-				next[entry.type][entry.year] = filterFeatures(
-					decodeBoundary(raw),
-					loc,
-					entry.type,
-					getLadForWard,
-				);
+
+				let slice: BoundaryGeojson;
+				try {
+					slice = filterFeatures(
+						decodeBoundary(raw),
+						loc,
+						entry.type,
+						getLadForWard,
+					);
+				} catch (err) {
+					if (!cancelled) {
+						setError(
+							err instanceof Error
+								? err
+								: new Error(`Failed to filter ${entry.type} ${entry.year}`),
+						);
+					}
+					continue;
+				}
+				next[entry.type][entry.year] = slice;
+
+				// Commit the map's active boundary as soon as it is ready (merged onto
+				// the previous slices, which the chart panel keeps reading until the
+				// full batch below replaces them).
+				if (
+					!committedActive &&
+					activeBoundary &&
+					entry.type === activeBoundary.type &&
+					entry.year === activeBoundary.year
+				) {
+					committedActive = true;
+					startTransition(() =>
+						setBoundaryData((prev) => ({
+							...prev,
+							[entry.type]: { ...prev[entry.type], [entry.year]: slice },
+						})),
+					);
+				}
+
+				// Yield between heavy decodes so the browser can repaint (the map is
+				// already correct after the active boundary commits above).
+				if (idx < activeEntries.length - 1) {
+					await new Promise((resolve) => setTimeout(resolve));
+					if (cancelled) return;
+				}
 			}
 			if (cancelled) return;
 			lastFilteredLoc.current = loc;

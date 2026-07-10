@@ -102,12 +102,40 @@ export default function MapInterface({
 		[visibility, activeViz.datasetType],
 	);
 
+	const activeDataset = useMemo(
+		() =>
+			getActiveDataset(datasets, activeViz, [
+				...customDatasets,
+				...roadSafetyDatasets,
+			]),
+		[datasets, activeViz, customDatasets, roadSafetyDatasets],
+	);
+
+	// The boundary the map is currently drawing. useBoundaryData re-filters this one
+	// first on a location change so the map updates without waiting for the other
+	// (chart-only) topologies to decode.
+	const activeBoundary = useMemo(
+		() =>
+			activeDataset?.boundaryType
+				? {
+						type: activeDataset.boundaryType as BoundaryType,
+						year: activeDataset.boundaryYear,
+					}
+				: undefined,
+		[activeDataset?.boundaryType, activeDataset?.boundaryYear],
+	);
+
 	const {
 		boundaryData,
 		boundaryCodes,
 		isLoading: boundariesLoading,
 		error: boundaryError,
-	} = useBoundaryData(selectedLocation, codeMapper, enabledBoundaryTypes);
+	} = useBoundaryData(
+		selectedLocation,
+		codeMapper,
+		enabledBoundaryTypes,
+		activeBoundary,
+	);
 
 	useEffect(() => {
 		if (boundaryError) onError?.(boundaryError);
@@ -178,15 +206,6 @@ export default function MapInterface({
 		setSelectedLocation,
 		setSelectedArea,
 	});
-
-	const activeDataset = useMemo(
-		() =>
-			getActiveDataset(datasets, activeViz, [
-				...customDatasets,
-				...roadSafetyDatasets,
-			]),
-		[datasets, activeViz, customDatasets, roadSafetyDatasets],
-	);
 
 	const rawGeojson = !activeDataset
 		? null
