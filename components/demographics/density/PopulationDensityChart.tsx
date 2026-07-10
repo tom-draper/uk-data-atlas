@@ -10,7 +10,8 @@ import {
 	SelectedArea,
 	getFeatureProp,
 } from "@/lib/types";
-import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
+import { calculateTotal } from "@/lib/helpers/population";
+import { wardAreaSqKm } from "@/lib/data/wardAreas/static";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartLoadingBackground,
@@ -38,15 +39,8 @@ interface PopulationDensityChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-// Cache computed area per feature object — avoids re-traversing polygon vertices on every hover
-const featureAreaCache = new WeakMap<Feature, number>();
-
-const getWardPopulationDensity = (feature: Feature, total: number) => {
-	let areaSqKm = featureAreaCache.get(feature);
-	if (areaSqKm === undefined) {
-		areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
-		featureAreaCache.set(feature, areaSqKm);
-	}
+const getWardPopulationDensity = (wardCode: string, total: number) => {
+	const areaSqKm = wardAreaSqKm(wardCode);
 	const density = areaSqKm > 0 ? total / areaSqKm : 0;
 	return { density, areaSqKm };
 };
@@ -219,7 +213,7 @@ function PopulationDensityChart({
 				if (wardFeature) {
 					const total = calculateTotal(populationData.total);
 					return {
-						...getWardPopulationDensity(wardFeature, total),
+						...getWardPopulationDensity(wardCode, total),
 						total,
 					};
 				}
@@ -267,16 +261,8 @@ function PopulationDensityChart({
 								const wardTotal = calculateTotal(
 									populationData.total,
 								);
-								let wardArea =
-									featureAreaCache.get(wardFeature);
-								if (wardArea === undefined) {
-									wardArea = polygonAreaSqKm(
-										wardFeature.geometry.coordinates,
-									);
-									featureAreaCache.set(wardFeature, wardArea);
-								}
 								totalPopulation += wardTotal;
-								totalArea += wardArea;
+								totalArea += wardAreaSqKm(wardCode);
 							}
 						}
 					}
@@ -325,15 +311,8 @@ function PopulationDensityChart({
 					const wardFeature = featureIndex.get(wardCode);
 					if (wardFeature) {
 						const wardTotal = calculateTotal(populationData.total);
-						let wardArea = featureAreaCache.get(wardFeature);
-						if (wardArea === undefined) {
-							wardArea = polygonAreaSqKm(
-								wardFeature.geometry.coordinates,
-							);
-							featureAreaCache.set(wardFeature, wardArea);
-						}
 						totalPopulation += wardTotal;
-						totalArea += wardArea;
+						totalArea += wardAreaSqKm(wardCode);
 					}
 				}
 			}

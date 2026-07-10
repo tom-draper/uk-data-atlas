@@ -21,7 +21,8 @@ import {
 	BrexitConstituencyDataset,
 	AggregatedBrexitData,
 } from "@lib/types";
-import { calculateTotal, polygonAreaSqKm } from "../population";
+import { calculateTotal } from "../population";
+import { wardAreaSqKm } from "../../data/wardAreas/static";
 import { getWinningParty } from "../generalElection";
 import { calculateAgeGroups } from "../ageDistribution";
 import { PropertyDetector } from "./propertyDetector";
@@ -775,10 +776,9 @@ export class StatsCalculator {
 		};
 
 		for (let i = 0; i < features.length; i++) {
-			const ward =
-				populationData[
-					getFeatureProp(features[i].properties, wardCodeProp) ?? ""
-				];
+			const wardCode =
+				getFeatureProp(features[i].properties, wardCodeProp) ?? "";
+			const ward = populationData[wardCode];
 			if (!ward) continue;
 
 			aggregated.totalPop += calculateTotal(ward.total);
@@ -833,9 +833,7 @@ export class StatsCalculator {
 				females[age] = (females[age] || 0) + count;
 			}
 
-			aggregated.totalArea += polygonAreaSqKm(
-				features[i].geometry.coordinates,
-			);
+			aggregated.totalArea += wardAreaSqKm(wardCode);
 		}
 
 		return aggregated;
