@@ -1,9 +1,10 @@
 // hooks/useBoundaryData.ts
-import { startTransition, useEffect, useMemo, useState } from "react";
-import { BoundaryData, BoundaryGeojson } from "@lib/types";
+import { startTransition, useEffect, useRef, useState } from "react";
+import { BoundaryData, BoundaryCodes, BoundaryGeojson } from "@lib/types";
 import {
 	BoundaryType,
-	fetchBoundaryFile,
+	decodeBoundary,
+	fetchRawBoundary,
 	filterFeatures,
 	GEOJSON_PATHS,
 	PROPERTY_KEYS,
@@ -15,179 +16,89 @@ import {
 } from "./useCodeMapper";
 import type { CodeMapping, CodeType, YearCode } from "./useCodeMapper";
 
-const EMPTY_BOUNDARY_DATA: BoundaryData = {
-	ward: { 2024: null, 2023: null, 2022: null, 2021: null },
-	constituency: { 2024: null, 2019: null, 2017: null, 2015: null },
-	localAuthority: {
-		2025: null,
-		2024: null,
-		2023: null,
-		2016: null,
-	},
-	lsoa: { 2011: null },
-	dataZone: { 2011: null },
-	superOutputArea: { 2011: null },
+const emptyBoundaryData = (): BoundaryData => ({
+	ward: {},
+	constituency: {},
+	localAuthority: {},
+	lsoa: {},
+	dataZone: {},
+	superOutputArea: {},
+});
+
+const emptyBoundaryCodes = (): NonNullable<BoundaryCodes> => ({
+	ward: {},
+	constituency: {},
+	localAuthority: {},
+	lsoa: {},
+	dataZone: {},
+	superOutputArea: {},
+});
+
+// Flattened list of every boundary file we can load: { type, year, path }.
+interface BoundaryEntry {
+	type: BoundaryType;
+	year: number;
+	path: string;
+}
+const BOUNDARY_ENTRIES: BoundaryEntry[] = (
+	Object.keys(GEOJSON_PATHS) as BoundaryType[]
+).flatMap((type) =>
+	Object.entries(GEOJSON_PATHS[type]).map(([year, path]) => ({
+		type,
+		year: Number(year),
+		path: path as string,
+	})),
+);
+
+const CODE_KEYS_BY_TYPE: Record<BoundaryType, readonly string[]> = {
+	ward: PROPERTY_KEYS.wardCode,
+	constituency: PROPERTY_KEYS.constituencyCode,
+	localAuthority: PROPERTY_KEYS.ladCode,
+	lsoa: PROPERTY_KEYS.lsoaCode,
+	dataZone: PROPERTY_KEYS.dataZoneCode,
+	superOutputArea: PROPERTY_KEYS.soaCode,
 };
 
-/**
- * Fetch all boundary files for a given type
- */
-const fetchBoundaryGroup = async (
+// Build the set of all area codes in a decoded file (from feature properties only).
+const extractCodeSet = (
 	type: BoundaryType,
-	onMappingsExtracted?: (mappings: Record<string, string>) => void,
-	onLadWardMappingsExtracted?: (
-		year: YearCode,
-		mappings: Record<string, string[]>,
-	) => void,
-	onCrossYearMappings?: (type: CodeType, mappings: CodeMapping) => void,
-): Promise<Record<number, BoundaryGeojson>> => {
-	const paths = GEOJSON_PATHS[type];
-	const years = Object.keys(paths).map(Number);
-
-	const allWardLadMappings: Record<string, string> = {};
-	const allLadWardMappings: Record<YearCode, Record<string, string[]>> = {};
-
-	const settled = await Promise.allSettled(
-		years.map(async (year) => {
-			const path = paths[year as keyof typeof paths];
-			const data = await fetchBoundaryFile(path);
-
-			if (type === "ward" && data.features?.length) {
-				const { wardToLad, ladToWards } = extractWardLadMappings(
-					data.features,
-					PROPERTY_KEYS.wardCode,
-					PROPERTY_KEYS.ladCode,
-				);
-				Object.assign(allWardLadMappings, wardToLad);
-				if (Object.keys(ladToWards).length > 0) {
-					allLadWardMappings[year] = ladToWards;
-				}
-			}
-
-			return [year, data] as const;
+	features: BoundaryGeojson["features"],
+): Set<string> => {
+	const keys = CODE_KEYS_BY_TYPE[type];
+	const codeProp = keys.find(
+		(key) => (features[0]?.properties as any)?.[key] !== undefined,
+	);
+	if (!codeProp) return new Set<string>();
+	return new Set(
+		features.flatMap((f) => {
+			const v = (f.properties as any)[codeProp];
+			return v ? [v] : [];
 		}),
 	);
-
-	settled.forEach((r, i) => {
-		if (r.status === "rejected") {
-			console.error(`[boundaries] Failed to load ${type} year ${years[i]}:`, r.reason);
-		}
-	});
-
-	const results = settled
-		.filter((r): r is PromiseFulfilledResult<readonly [number, BoundaryGeojson]> => r.status === "fulfilled")
-		.map((r) => r.value);
-
-	// Dispatch all ward-LAD mappings in a single call to avoid multiple state updates
-	if (onMappingsExtracted && Object.keys(allWardLadMappings).length > 0) {
-		onMappingsExtracted(allWardLadMappings);
-	}
-	for (const [year, mappings] of Object.entries(allLadWardMappings)) {
-		onLadWardMappingsExtracted?.(Number(year), mappings);
-	}
-
-	const groupedData = Object.fromEntries(results);
-
-	// Build cross-year mappings after all data is loaded
-	if (onCrossYearMappings) {
-		const crossYearMappings = buildCrossYearMappings(
-			groupedData,
-			type,
-			years,
-		);
-
-		if (Object.keys(crossYearMappings).length > 0) {
-			onCrossYearMappings(type, crossYearMappings);
-		}
-	}
-
-	return groupedData;
 };
+
+// A lightweight, geometry-free copy of features. Cross-year mappings only read
+// properties (codes + names), so we keep these instead of full geometry.
+type PropsOnly = { features: { properties: any }[] };
+const propsOnly = (features: BoundaryGeojson["features"]): PropsOnly => ({
+	features: features.map((f) => ({ properties: f.properties })),
+});
+
+// Cross-year mappings are built for code-based boundary types only.
+const CROSS_YEAR_TYPES: readonly BoundaryType[] = [
+	"ward",
+	"constituency",
+	"localAuthority",
+];
 
 /**
- * Apply location filtering to a group of boundaries
- */
-const filterBoundaryGroup = (
-	group: Record<number, BoundaryGeojson | null>,
-	type: BoundaryType,
-	location: string | null,
-	getLadForWard?: (wardCode: string) => string | undefined,
-): Record<number, BoundaryGeojson | null> => {
-	const filtered: Record<number, BoundaryGeojson | null> = {};
-
-	for (const [year, data] of Object.entries(group)) {
-		filtered[Number(year)] = data
-			? filterFeatures(data, location, type, getLadForWard)
-			: null;
-	}
-
-	return filtered;
-};
-
-const extractCodeSets = (
-	boundaryData: BoundaryData,
-	isLoading: boolean,
-): {
-	ward: Record<number, Set<string>>;
-	constituency: Record<number, Set<string>>;
-	localAuthority: Record<number, Set<string>>;
-	lsoa: Record<number, Set<string>>;
-	dataZone: Record<number, Set<string>>;
-	superOutputArea: Record<number, Set<string>>;
-} | null => {
-	if (isLoading) return null;
-
-	const extractFromGroup = (
-		group: Record<number, BoundaryGeojson | null>,
-		codeKeys: readonly string[],
-	) =>
-		Object.entries(group).reduce(
-			(acc, [year, data]) => {
-				if (data?.features) {
-					const codeProp = codeKeys.find(
-						(key) =>
-							(data.features[0]?.properties as any)?.[key] !==
-							undefined,
-					);
-					if (codeProp) {
-						acc[Number(year)] = new Set(
-							data.features.flatMap((f) => {
-								const v = (f.properties as any)[codeProp];
-								return v ? [v] : [];
-							}),
-						);
-					}
-				}
-				return acc;
-			},
-			{} as Record<number, Set<string>>,
-		);
-
-	return {
-		ward: extractFromGroup(boundaryData.ward, PROPERTY_KEYS.wardCode),
-		constituency: extractFromGroup(
-			boundaryData.constituency,
-			PROPERTY_KEYS.constituencyCode,
-		),
-		localAuthority: extractFromGroup(
-			boundaryData.localAuthority,
-			PROPERTY_KEYS.ladCode,
-		),
-		lsoa: extractFromGroup(boundaryData.lsoa, PROPERTY_KEYS.lsoaCode),
-		dataZone: extractFromGroup(
-			boundaryData.dataZone,
-			PROPERTY_KEYS.dataZoneCode,
-		),
-		superOutputArea: extractFromGroup(
-			boundaryData.superOutputArea,
-			PROPERTY_KEYS.soaCode,
-		),
-	};
-};
-
-/**
- * Hook to load and filter boundary data
- * Now accepts the full codeMapper from useCodeMapper()
+ * Hook to load and filter boundary data.
+ *
+ * Memory model: the compact raw TopoJSON for every vintage is cached, but the
+ * decoded (coordinate-expanded) GeoJSON is only ever held transiently — one file
+ * at a time — long enough to extract code sets, cross-year mappings, and the
+ * geometry filtered to the selected location. Only the filtered slice is retained.
+ * Changing location re-decodes from the cached TopoJSON without re-fetching.
  */
 export function useBoundaryData(
 	selectedLocation?: string,
@@ -205,110 +116,171 @@ export function useBoundaryData(
 		) => void;
 	},
 ) {
-	const [rawData, setRawData] = useState<BoundaryData>(EMPTY_BOUNDARY_DATA);
+	const [boundaryData, setBoundaryData] = useState<BoundaryData>(
+		emptyBoundaryData,
+	);
+	const [boundaryCodes, setBoundaryCodes] = useState<BoundaryCodes>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [initialized, setInitialized] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 
-	// Extract the individual functions to use as dependencies
 	const addWardLadMappings = codeMapper?.addWardLadMappings;
 	const addLadWardMappings = codeMapper?.addLadWardMappings;
 	const addCodeMappings = codeMapper?.addCodeMappings;
 	const getLadForWard = codeMapper?.getLadForWard;
 	const addConstituencyWardMappings = codeMapper?.addConstituencyWardMappings;
 
-	// Load all boundary files on mount
+	const loc = selectedLocation || null;
+
+	// The location the currently-committed filteredData corresponds to. Lets the
+	// location-change effect skip redundant re-filters (including the initial one
+	// the load effect already performed).
+	const lastFilteredLoc = useRef<string | null | undefined>(undefined);
+
+	// Initial load: fetch every raw topology (in parallel), then decode them one at
+	// a time to extract codes + mappings + the current location's filtered slice.
 	useEffect(() => {
 		let mounted = true;
+		const filterLoc = loc; // location at mount; the effect below reconciles changes
 
-		const loadBoundaries = () => {
+		const load = async () => {
 			setIsLoading(true);
 			setError(null);
 
-			Promise.all([
-				fetchBoundaryGroup(
-					"ward",
-					addWardLadMappings,
-					addLadWardMappings,
-					addCodeMappings,
+			// Kick off all fetches together (network parallelism); decode is serial.
+			await Promise.all(
+				BOUNDARY_ENTRIES.map((entry) =>
+					fetchRawBoundary(entry.path).catch(() => null),
 				),
-				fetchBoundaryGroup(
-					"constituency",
-					undefined,
-					undefined,
-					addCodeMappings,
-				),
-				fetchBoundaryGroup(
-					"localAuthority",
-					undefined,
-					undefined,
-					addCodeMappings,
-				),
-				fetchBoundaryGroup("lsoa").catch(
-					() => ({}) as Record<number, BoundaryGeojson>,
-				),
-				fetchBoundaryGroup("dataZone").catch(
-					() => ({}) as Record<number, BoundaryGeojson>,
-				),
-				fetchBoundaryGroup("superOutputArea").catch(
-					() => ({}) as Record<number, BoundaryGeojson>,
-				),
-			])
-				.then(([wards, constituencies, localAuthorities, lsoas, dataZones, superOutputAreas]) => {
-					if (!mounted) return;
+			);
+			if (!mounted) return;
 
-					startTransition(() => {
-						setRawData({
-							ward: wards,
-							constituency: constituencies,
-							localAuthority: localAuthorities,
-							lsoa: lsoas,
-							dataZone: dataZones,
-							superOutputArea: superOutputAreas,
-						});
-					});
+			const filtered = emptyBoundaryData();
+			const codes = emptyBoundaryCodes();
+			const wardToLad: Record<string, string> = {};
+			const ladToWardsByYear: Record<number, Record<string, string[]>> = {};
+			const propsByType: Partial<
+				Record<BoundaryType, Record<number, PropsOnly>>
+			> = {};
 
-					// Build constituency->wards mappings for each (ward year, constituency year) pair.
-					// Building for ALL available constituency boundary years ensures that hovering
-					// on constituencies from any GE (2019, 2024, etc.) resolves directly without
-					// needing a cross-year constituency code lookup. Constituencies that were
-					// renamed or redrawn in 2024 have no PCON19CD→PCON24CD name mapping, so
-					// they'd return [] if we only indexed by PCON24CD.
-					if (addConstituencyWardMappings) {
-						const constituencyEntries = Object.entries(constituencies)
-							.filter(([, conData]) => conData?.features);
-						// Only build for the latest ward year — ward highlighting always
-						// uses current boundaries, so historical ward years are not needed.
-						const latestWardYear = Math.max(
-							...Object.keys(wards).map(Number).filter(y => wards[y]?.features),
-						);
-						const latestWardData = wards[latestWardYear];
-						if (latestWardData?.features) {
-							const mergedMappings: Record<string, string[]> = {};
-							for (const [, conData] of constituencyEntries) {
-								const mappings = buildConstituencyWardMappings(latestWardData, conData!);
-								Object.assign(mergedMappings, mappings);
-							}
-							if (Object.keys(mergedMappings).length > 0) {
-								addConstituencyWardMappings(latestWardYear, mergedMappings);
-							}
-						}
+			// Geometry retained only long enough to build constituency->ward mappings.
+			const latestWardYear = Math.max(
+				...Object.keys(GEOJSON_PATHS.ward).map(Number),
+			);
+			let latestWardGeojson: BoundaryGeojson | null = null;
+			const constituencyGeojson: Record<number, BoundaryGeojson> = {};
+
+			let firstError: Error | null = null;
+
+			for (const entry of BOUNDARY_ENTRIES) {
+				let raw: unknown;
+				try {
+					raw = await fetchRawBoundary(entry.path);
+				} catch (err) {
+					firstError =
+						firstError ??
+						(err instanceof Error
+							? err
+							: new Error(`Failed to load ${entry.type} ${entry.year}`));
+					continue;
+				}
+				if (!mounted) return;
+
+				const decoded = decodeBoundary(raw);
+				const features = decoded.features ?? [];
+
+				codes[entry.type][entry.year] = extractCodeSet(entry.type, features);
+
+				if (CROSS_YEAR_TYPES.includes(entry.type) && features.length) {
+					(propsByType[entry.type] ??= {})[entry.year] = propsOnly(features);
+				}
+
+				if (entry.type === "ward" && features.length) {
+					const { wardToLad: w2l, ladToWards } = extractWardLadMappings(
+						features,
+						PROPERTY_KEYS.wardCode,
+						PROPERTY_KEYS.ladCode,
+					);
+					Object.assign(wardToLad, w2l);
+					if (Object.keys(ladToWards).length > 0) {
+						ladToWardsByYear[entry.year] = ladToWards;
 					}
-				})
-				.catch((err) => {
-					if (mounted) {
-						setError(
-							err instanceof Error
-								? err
-								: new Error("Failed to load boundaries"),
+					if (entry.year === latestWardYear) latestWardGeojson = decoded;
+				}
+				if (entry.type === "constituency") {
+					constituencyGeojson[entry.year] = decoded;
+				}
+
+				filtered[entry.type][entry.year] = filterFeatures(
+					decoded,
+					filterLoc,
+					entry.type,
+					getLadForWard,
+				);
+				// `decoded` drops out of scope here unless retained above for mappings.
+			}
+
+			// Dispatch ward<->LAD mappings (single call to avoid extra state churn).
+			if (addWardLadMappings && Object.keys(wardToLad).length > 0) {
+				addWardLadMappings(wardToLad);
+			}
+			for (const [year, mappings] of Object.entries(ladToWardsByYear)) {
+				addLadWardMappings?.(Number(year), mappings);
+			}
+
+			// Cross-year code mappings (name-based) per code boundary type.
+			if (addCodeMappings) {
+				for (const type of CROSS_YEAR_TYPES) {
+					const group = propsByType[type];
+					if (!group) continue;
+					const years = Object.keys(group).map(Number);
+					const crossYear = buildCrossYearMappings(
+						group as unknown as Record<number, BoundaryGeojson>,
+						type,
+						years,
+					);
+					if (Object.keys(crossYear).length > 0) {
+						addCodeMappings(type, crossYear);
+					}
+				}
+			}
+
+			// Constituency->ward mappings via centroid tests (needs real geometry).
+			// Built against the latest ward year only; see original rationale.
+			if (addConstituencyWardMappings && latestWardGeojson?.features) {
+				const merged: Record<string, string[]> = {};
+				for (const conData of Object.values(constituencyGeojson)) {
+					if (conData?.features) {
+						Object.assign(
+							merged,
+							buildConstituencyWardMappings(latestWardGeojson, conData),
 						);
 					}
-				})
-				.finally(() => {
-					if (mounted) setIsLoading(false);
-				});
+				}
+				if (Object.keys(merged).length > 0) {
+					addConstituencyWardMappings(latestWardYear, merged);
+				}
+			}
+
+			if (!mounted) return;
+			lastFilteredLoc.current = filterLoc;
+			startTransition(() => {
+				setBoundaryData(filtered);
+				setBoundaryCodes(codes);
+			});
+			if (firstError) setError(firstError);
+			setIsLoading(false);
+			setInitialized(true);
 		};
 
-		loadBoundaries();
+		load().catch((err) => {
+			if (mounted) {
+				setError(
+					err instanceof Error ? err : new Error("Failed to load boundaries"),
+				);
+				setIsLoading(false);
+			}
+		});
 
 		return () => {
 			mounted = false;
@@ -318,30 +290,46 @@ export function useBoundaryData(
 		addLadWardMappings,
 		addCodeMappings,
 		addConstituencyWardMappings,
+		getLadForWard,
 	]);
 
-	const loc = selectedLocation || null;
+	// Location changes: re-filter from the cached raw topologies without refetching
+	// or rebuilding mappings. Skips the initial location (already filtered above).
+	useEffect(() => {
+		if (!initialized) return;
+		if (lastFilteredLoc.current === loc) return;
 
-	const filteredData = useMemo<BoundaryData>(() => {
-		if (isLoading || !rawData.ward[2024]) return EMPTY_BOUNDARY_DATA;
-		return {
-			ward: filterBoundaryGroup(rawData.ward, "ward", loc, getLadForWard),
-			constituency: filterBoundaryGroup(rawData.constituency, "constituency", loc),
-			localAuthority: filterBoundaryGroup(rawData.localAuthority, "localAuthority", loc),
-			lsoa: filterBoundaryGroup(rawData.lsoa, "lsoa", loc),
-			dataZone: filterBoundaryGroup(rawData.dataZone, "dataZone", loc),
-			superOutputArea: filterBoundaryGroup(rawData.superOutputArea, "superOutputArea", loc),
+		let cancelled = false;
+		const refilter = async () => {
+			const next = emptyBoundaryData();
+			for (const entry of BOUNDARY_ENTRIES) {
+				let raw: unknown;
+				try {
+					raw = await fetchRawBoundary(entry.path);
+				} catch {
+					continue;
+				}
+				if (cancelled) return;
+				next[entry.type][entry.year] = filterFeatures(
+					decodeBoundary(raw),
+					loc,
+					entry.type,
+					getLadForWard,
+				);
+			}
+			if (cancelled) return;
+			lastFilteredLoc.current = loc;
+			startTransition(() => setBoundaryData(next));
 		};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [rawData, loc]);
 
-	const boundaryCodes = useMemo(
-		() => extractCodeSets(rawData, isLoading),
-		[rawData, isLoading],
-	);
+		refilter();
+		return () => {
+			cancelled = true;
+		};
+	}, [loc, initialized, getLadForWard]);
 
 	return {
-		boundaryData: filteredData,
+		boundaryData,
 		boundaryCodes,
 		isLoading,
 		error,

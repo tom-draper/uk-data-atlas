@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { createWriteStream, existsSync } from "node:fs";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -6,7 +7,25 @@ import { spawn } from "node:child_process";
 
 const DEFAULT_URL = "http://localhost:3000/atlas";
 const DEFAULT_OUT_DIR = ".profiles/atlas-memory";
-const DEFAULT_CHROME = "/usr/bin/google-chrome";
+
+// Chrome/Chromium binaries vary by distro and OS. Probe common locations so
+// the profiler works without requiring CHROME_PATH or --chrome to be set.
+const CHROME_CANDIDATES = [
+	"/usr/bin/google-chrome",
+	"/usr/bin/google-chrome-stable",
+	"/usr/bin/chromium",
+	"/usr/bin/chromium-browser",
+	"/opt/google/chrome/chrome",
+	"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+	"/Applications/Chromium.app/Contents/MacOS/Chromium",
+];
+
+function detectChrome() {
+	if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
+	return CHROME_CANDIDATES.find((path) => existsSync(path)) ?? CHROME_CANDIDATES[0];
+}
+
+const DEFAULT_CHROME = detectChrome();
 
 function parseArgs(argv) {
 	const args = {
@@ -14,7 +33,7 @@ function parseArgs(argv) {
 		outDir: DEFAULT_OUT_DIR,
 		chrome: process.env.CHROME_PATH || DEFAULT_CHROME,
 		waitMs: 8000,
-		heapSnapshot: true,
+		heapSnapshot: false,
 		headless: true,
 	};
 
@@ -25,6 +44,7 @@ function parseArgs(argv) {
 		else if (arg === "--out-dir") args.outDir = argv[++i];
 		else if (arg === "--chrome") args.chrome = argv[++i];
 		else if (arg === "--wait-ms") args.waitMs = Number(argv[++i]);
+		else if (arg === "--heap-snapshot") args.heapSnapshot = true;
 		else if (arg === "--no-heap-snapshot") args.heapSnapshot = false;
 		else if (arg === "--headed") args.headless = false;
 		else if (arg === "--help") {
@@ -35,6 +55,7 @@ Options:
   --out-dir <dir>         Output directory. Default: ${DEFAULT_OUT_DIR}
   --chrome <path>         Chrome/Chromium executable. Default: ${DEFAULT_CHROME}
   --wait-ms <ms>          Extra wait after network idle. Default: 8000
+  --heap-snapshot         Also write a full .heapsnapshot (memory-heavy; off by default)
   --no-heap-snapshot      Skip writing the .heapsnapshot file
   --headed                Run Chrome with a visible window`);
 			process.exit(0);
@@ -273,6 +294,11 @@ async function main() {
 	const args = parseArgs(process.argv.slice(2));
 	const outDir = resolve(args.outDir);
 	const debugPort = 9222 + Math.floor(Math.random() * 1000);
+	if (!existsSync(args.chrome)) {
+		throw new Error(
+			`Chrome/Chromium not found at "${args.chrome}". Pass --chrome <path> or set CHROME_PATH.`,
+		);
+	}
 	const userDataDir = await mkdtemp(join(tmpdir(), "atlas-memory-profile-"));
 	const chromeArgs = [
 		`--remote-debugging-port=${debugPort}`,
@@ -369,10 +395,15 @@ async function main() {
 
 		if (args.heapSnapshot) {
 			heapSnapshotPath = join(outDir, `atlas-memory-${stamp}.heapsnapshot`);
-			const chunks = [];
-			cdp.on("HeapProfiler.addHeapSnapshotChunk", ({ chunk }) => chunks.push(chunk));
+			// Stream chunks straight to disk. A full snapshot of a heavy heap can be
+			// hundreds of MB; buffering it in an array would roughly double the
+			// profiler's own footprint and risks an OOM on a memory-constrained box.
+			const snapshotStream = createWriteStream(heapSnapshotPath);
+			cdp.on("HeapProfiler.addHeapSnapshotChunk", ({ chunk }) => snapshotStream.write(chunk));
 			await cdp.send("HeapProfiler.takeHeapSnapshot", { reportProgress: false });
-			await writeFile(heapSnapshotPath, chunks.join(""));
+			await new Promise((resolveSnap, rejectSnap) => {
+				snapshotStream.end((error) => (error ? rejectSnap(error) : resolveSnap()));
+			});
 		}
 
 		const responses = [...networkState.responses.values()]
@@ -440,8 +471,13 @@ async function main() {
 		if (stderr) console.error(stderr);
 		throw error;
 	} finally {
+		// Wait for Chrome to fully exit before removing its user-data-dir, otherwise
+		// it may still be flushing files and rmdir races with ENOTEMPTY. retryMaxRetries
+		// covers any straggling writes.
+		const chromeExit = new Promise((resolveExit) => chrome.once("exit", resolveExit));
 		chrome.kill("SIGTERM");
-		await rm(userDataDir, { recursive: true, force: true });
+		await Promise.race([chromeExit, delay(5000)]);
+		await rm(userDataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 	}
 }
 

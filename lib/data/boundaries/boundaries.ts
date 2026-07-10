@@ -180,8 +180,12 @@ const COUNTRY_PREFIXES: Record<string, string> = {
 	"Northern Ireland": "N",
 };
 
-const BOUNDARY_CACHE: Record<string, BoundaryGeojson> = {};
-const BOUNDARY_PENDING: Partial<Record<string, Promise<BoundaryGeojson>>> = {};
+// We retain only the raw TopoJSON/GeoJSON (compact — arcs are shared and
+// coordinates quantized). Decoded GeoJSON FeatureCollections, whose expanded
+// coordinate arrays are ~6x larger, are produced on demand and never cached, so
+// the full-UK geometry for every vintage is never held in memory at once.
+const RAW_CACHE: Record<string, unknown> = {};
+const RAW_PENDING: Partial<Record<string, Promise<unknown>>> = {};
 
 /**
  * Find the first available property from a list of possible keys
@@ -261,15 +265,36 @@ const getPropertyKeys = (type: BoundaryType) => {
 };
 
 /**
- * Fetch and cache boundary file (supports both GeoJSON and TopoJSON)
+ * Fetch and cache the raw TopoJSON/GeoJSON for a path (no decoding).
  */
-async function doFetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
+async function doFetchRawBoundary(path: string): Promise<unknown> {
 	const res = await fetch(path);
 	if (!res.ok) {
 		throw new Error(`Failed to fetch ${path}: ${res.status} ${res.statusText}`);
 	}
-
 	const json = await res.json();
+	RAW_CACHE[path] = json;
+	delete RAW_PENDING[path];
+	return json;
+}
+
+export function fetchRawBoundary(path: string): Promise<unknown> {
+	if (RAW_CACHE[path]) return Promise.resolve(RAW_CACHE[path]);
+	if (RAW_PENDING[path]) return RAW_PENDING[path]!;
+
+	const promise = doFetchRawBoundary(path);
+	RAW_PENDING[path] = promise;
+	promise.catch(() => { delete RAW_PENDING[path]; });
+	return promise;
+}
+
+/**
+ * Decode raw TopoJSON/GeoJSON into a fresh GeoJSON FeatureCollection.
+ * Intentionally NOT cached: callers should extract what they need (codes,
+ * location-filtered features) and let the decoded geometry be garbage-collected.
+ */
+export function decodeBoundary(raw: unknown): BoundaryGeojson {
+	const json = raw as any;
 
 	let geojson: GeoJsonFeatureCollection;
 	if (json.type === "Topology") {
@@ -297,20 +322,15 @@ async function doFetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
 		};
 	}
 
-	const typedGeojson = geojson as BoundaryGeojson<any>;
-	BOUNDARY_CACHE[path] = typedGeojson;
-	delete BOUNDARY_PENDING[path];
-	return typedGeojson;
+	return geojson as BoundaryGeojson<any>;
 }
 
+/**
+ * Fetch a boundary file and return decoded GeoJSON.
+ * Convenience wrapper for one-off consumers; decodes from the cached raw data.
+ */
 export function fetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
-	if (BOUNDARY_CACHE[path]) return Promise.resolve(BOUNDARY_CACHE[path]);
-	if (BOUNDARY_PENDING[path]) return BOUNDARY_PENDING[path]!;
-
-	const promise = doFetchBoundaryFile(path);
-	BOUNDARY_PENDING[path] = promise;
-	promise.catch(() => { delete BOUNDARY_PENDING[path]; });
-	return promise;
+	return fetchRawBoundary(path).then(decodeBoundary);
 }
 
 /**
@@ -422,16 +442,8 @@ export const filterFeatures = (
 };
 
 /**
- * Clear the cache (useful for testing or memory management)
+ * Clear the raw boundary cache (useful for testing or memory management)
  */
-const clearCache = (): void => {
-	Object.keys(BOUNDARY_CACHE).forEach((key) => delete BOUNDARY_CACHE[key]);
+export const clearBoundaryCache = (): void => {
+	Object.keys(RAW_CACHE).forEach((key) => delete RAW_CACHE[key]);
 };
-
-/**
- * Get cache statistics
- */
-const getCacheStats = () => ({
-	cachedFiles: Object.keys(BOUNDARY_CACHE).length,
-	estimatedMemory: JSON.stringify(BOUNDARY_CACHE).length,
-});
