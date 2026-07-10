@@ -2,7 +2,7 @@ minimumReleaseAge: 10080
 trustPolicy: no-downgrade
 overrides:
   postcss: ^8.5.16
-  vite: ^8.0.16
+  vite: ^8.1.3
 allowBuilds:
   esbuild: true
   msgpackr-extract: set this to true or false
