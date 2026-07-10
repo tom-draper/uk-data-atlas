@@ -5,6 +5,7 @@ import {
 	BoundaryType,
 	decodeBoundary,
 	fetchRawBoundary,
+	fetchRawBoundaryText,
 	filterFeatures,
 	GEOJSON_PATHS,
 	PROPERTY_KEYS,
@@ -91,14 +92,41 @@ const CROSS_YEAR_TYPES: readonly BoundaryType[] = [
 	"localAuthority",
 ];
 
+// Boundary types that back Scotland-/NI-only deprivation views (SIMD → dataZone,
+// NIMDM → superOutputArea). Both chart sections are hidden by default, so we defer
+// fetching and decoding their (large) topologies until the section is shown or the
+// view becomes the active map dataset. Every other type loads eagerly because the
+// chart panel aggregates it for the current location on first render.
+const GATED_TYPES: ReadonlySet<BoundaryType> = new Set([
+	"dataZone",
+	"superOutputArea",
+]);
+
+const isTypeEnabled = (
+	type: BoundaryType,
+	enabled: Partial<Record<BoundaryType, boolean>> | undefined,
+): boolean => !GATED_TYPES.has(type) || enabled?.[type] === true;
+
+// Stable primitive key describing which gated types are currently enabled, so the
+// re-filter effect can react to a section being toggled on/off without depending on
+// a freshly-allocated object each render.
+const gatedEnabledKey = (
+	enabled: Partial<Record<BoundaryType, boolean>> | undefined,
+): string =>
+	[...GATED_TYPES]
+		.filter((type) => enabled?.[type])
+		.sort()
+		.join("|");
+
 /**
  * Hook to load and filter boundary data.
  *
- * Memory model: the compact raw TopoJSON for every vintage is cached, but the
- * decoded (coordinate-expanded) GeoJSON is only ever held transiently — one file
- * at a time — long enough to extract code sets, cross-year mappings, and the
- * geometry filtered to the selected location. Only the filtered slice is retained.
- * Changing location re-decodes from the cached TopoJSON without re-fetching.
+ * Memory model: the compact raw TopoJSON *text* for every vintage is cached, but
+ * the parsed and decoded (coordinate-expanded) GeoJSON are only ever held
+ * transiently — one file at a time — long enough to extract code sets, cross-year
+ * mappings, and the geometry filtered to the selected location. Only the filtered
+ * slice is retained. Changing location re-decodes from the cached text without
+ * re-fetching. Gated types (see GATED_TYPES) are skipped until enabled.
  */
 export function useBoundaryData(
 	selectedLocation?: string,
@@ -115,6 +143,9 @@ export function useBoundaryData(
 			mappings: Record<string, string[]>,
 		) => void;
 	},
+	// Which gated boundary types are currently needed (section visible or active
+	// viz). Types not listed in GATED_TYPES always load regardless of this value.
+	enabledBoundaryTypes?: Partial<Record<BoundaryType, boolean>>,
 ) {
 	const [boundaryData, setBoundaryData] = useState<BoundaryData>(
 		emptyBoundaryData,
@@ -131,26 +162,38 @@ export function useBoundaryData(
 	const addConstituencyWardMappings = codeMapper?.addConstituencyWardMappings;
 
 	const loc = selectedLocation || null;
+	const gatedKey = gatedEnabledKey(enabledBoundaryTypes);
 
 	// The location the currently-committed filteredData corresponds to. Lets the
 	// location-change effect skip redundant re-filters (including the initial one
 	// the load effect already performed).
 	const lastFilteredLoc = useRef<string | null | undefined>(undefined);
+	// The gated-types selection the committed filteredData reflects, so toggling a
+	// gated section on/off re-filters even when the location is unchanged.
+	const lastGatedKey = useRef<string>("");
 
 	// Initial load: fetch every raw topology (in parallel), then decode them one at
 	// a time to extract codes + mappings + the current location's filtered slice.
 	useEffect(() => {
 		let mounted = true;
 		const filterLoc = loc; // location at mount; the effect below reconciles changes
+		// Gated types disabled at mount are skipped entirely (no fetch, parse, or
+		// decode); the re-filter effect loads them if their section is later shown.
+		const activeEntries = BOUNDARY_ENTRIES.filter((entry) =>
+			isTypeEnabled(entry.type, enabledBoundaryTypes),
+		);
+		const loadGatedKey = gatedEnabledKey(enabledBoundaryTypes);
 
 		const load = async () => {
 			setIsLoading(true);
 			setError(null);
 
-			// Kick off all fetches together (network parallelism); decode is serial.
+			// Kick off all fetches together (network parallelism); parse + decode is
+			// serial below. Warm the cache with text only — parsing here then again in
+			// the loop would parse every vintage twice.
 			await Promise.all(
-				BOUNDARY_ENTRIES.map((entry) =>
-					fetchRawBoundary(entry.path).catch(() => null),
+				activeEntries.map((entry) =>
+					fetchRawBoundaryText(entry.path).catch(() => null),
 				),
 			);
 			if (!mounted) return;
@@ -172,7 +215,7 @@ export function useBoundaryData(
 
 			let firstError: Error | null = null;
 
-			for (const entry of BOUNDARY_ENTRIES) {
+			for (const entry of activeEntries) {
 				let raw: unknown;
 				try {
 					raw = await fetchRawBoundary(entry.path);
@@ -264,6 +307,7 @@ export function useBoundaryData(
 
 			if (!mounted) return;
 			lastFilteredLoc.current = filterLoc;
+			lastGatedKey.current = loadGatedKey;
 			startTransition(() => {
 				setBoundaryData(filtered);
 				setBoundaryCodes(codes);
@@ -293,16 +337,23 @@ export function useBoundaryData(
 		getLadForWard,
 	]);
 
-	// Location changes: re-filter from the cached raw topologies without refetching
-	// or rebuilding mappings. Skips the initial location (already filtered above).
+	// Location changes (and gated-section toggles): re-filter from the cached raw
+	// topologies without refetching or rebuilding mappings. Skips the initial
+	// location (already filtered above). A newly-enabled gated type is fetched here
+	// on demand; a newly-disabled one is dropped, freeing its filtered slice.
 	useEffect(() => {
 		if (!initialized) return;
-		if (lastFilteredLoc.current === loc) return;
+		if (lastFilteredLoc.current === loc && lastGatedKey.current === gatedKey) {
+			return;
+		}
 
 		let cancelled = false;
+		const activeEntries = BOUNDARY_ENTRIES.filter((entry) =>
+			isTypeEnabled(entry.type, enabledBoundaryTypes),
+		);
 		const refilter = async () => {
 			const next = emptyBoundaryData();
-			for (const entry of BOUNDARY_ENTRIES) {
+			for (const entry of activeEntries) {
 				let raw: unknown;
 				try {
 					raw = await fetchRawBoundary(entry.path);
@@ -319,6 +370,7 @@ export function useBoundaryData(
 			}
 			if (cancelled) return;
 			lastFilteredLoc.current = loc;
+			lastGatedKey.current = gatedKey;
 			startTransition(() => setBoundaryData(next));
 		};
 
@@ -326,7 +378,9 @@ export function useBoundaryData(
 		return () => {
 			cancelled = true;
 		};
-	}, [loc, initialized, getLadForWard]);
+		// enabledBoundaryTypes is captured via the stable gatedKey primitive.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loc, gatedKey, initialized, getLadForWard]);
 
 	return {
 		boundaryData,

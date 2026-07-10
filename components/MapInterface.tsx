@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
@@ -19,6 +19,12 @@ import type {
 	BoundaryData,
 } from "@lib/types";
 import { LSOA_CODE_KEYS, DATA_ZONE_CODE_KEYS, SOA_CODE_KEYS } from "@/lib/data/boundaries/boundaries";
+import type { BoundaryType } from "@/lib/data/boundaries/boundaries";
+import {
+	DEFAULT_VISIBILITY,
+	getVisibilitySnapshot,
+	subscribeVisibility,
+} from "@/lib/context/ChartVisibilityContext";
 import type { CustomDataset } from "@/lib/types/custom";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
@@ -78,12 +84,30 @@ export default function MapInterface({
 		}
 	}, [datasets.localElection, addWardLadMappings]);
 
+	// dataZone (SIMD) and superOutputArea (NIMDM) boundaries are large and back
+	// chart sections that are hidden by default, so we only load them once the
+	// relevant section is visible or its view is the active map dataset.
+	const visibility = useSyncExternalStore(
+		subscribeVisibility,
+		getVisibilitySnapshot,
+		() => DEFAULT_VISIBILITY,
+	);
+	const enabledBoundaryTypes = useMemo<Partial<Record<BoundaryType, boolean>>>(
+		() => ({
+			dataZone:
+				visibility["deprivation-simd"] || activeViz.datasetType === "simd",
+			superOutputArea:
+				visibility["deprivation-nimdm"] || activeViz.datasetType === "nimdm",
+		}),
+		[visibility, activeViz.datasetType],
+	);
+
 	const {
 		boundaryData,
 		boundaryCodes,
 		isLoading: boundariesLoading,
 		error: boundaryError,
-	} = useBoundaryData(selectedLocation, codeMapper);
+	} = useBoundaryData(selectedLocation, codeMapper, enabledBoundaryTypes);
 
 	useEffect(() => {
 		if (boundaryError) onError?.(boundaryError);

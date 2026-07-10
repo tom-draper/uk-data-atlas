@@ -376,8 +376,13 @@ async function main() {
 
 		await cdp.send("Page.navigate", { url: args.url });
 		await new Promise((resolveLoad) => cdp.on("Page.loadEventFired", resolveLoad));
+		// The client fetches boundary topologies (~85 MB) from a React effect that
+		// fires *after* the initial JS/data load goes quiet, so a single quiet-wait
+		// misses them entirely. Wait for quiet, hold for waitMs, then wait for quiet
+		// again to capture that second wave before measuring.
 		await waitForNetworkQuiet(networkState, 2000, 60000);
 		await delay(args.waitMs);
+		await waitForNetworkQuiet(networkState, 2000, 60000);
 
 		const afterLoad = await cdp.send("Runtime.getHeapUsage");
 		const sampling = await cdp.send("HeapProfiler.stopSampling");

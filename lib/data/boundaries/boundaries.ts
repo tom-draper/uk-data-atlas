@@ -180,12 +180,16 @@ const COUNTRY_PREFIXES: Record<string, string> = {
 	"Northern Ireland": "N",
 };
 
-// We retain only the raw TopoJSON/GeoJSON (compact — arcs are shared and
-// coordinates quantized). Decoded GeoJSON FeatureCollections, whose expanded
-// coordinate arrays are ~6x larger, are produced on demand and never cached, so
-// the full-UK geometry for every vintage is never held in memory at once.
-const RAW_CACHE: Record<string, unknown> = {};
-const RAW_PENDING: Partial<Record<string, Promise<unknown>>> = {};
+// We retain only the raw *serialized* TopoJSON/GeoJSON text for each vintage.
+// Parsing it into JS objects inflates it ~8x (TopoJSON arcs become millions of
+// tiny [x,y] arrays), and decoding into coordinate-expanded GeoJSON is larger
+// still. Both the parsed and decoded forms are produced on demand from the cached
+// text and left to be garbage-collected, so the full-UK geometry for every vintage
+// is never held in memory at once. Caching text (~97MB for all vintages) rather
+// than parsed objects (~645MB) keeps location changes instant — no refetch — at a
+// fraction of the resident footprint.
+const RAW_CACHE: Record<string, string> = {};
+const RAW_PENDING: Partial<Record<string, Promise<string>>> = {};
 
 /**
  * Find the first available property from a list of possible keys
@@ -265,27 +269,42 @@ const getPropertyKeys = (type: BoundaryType) => {
 };
 
 /**
- * Fetch and cache the raw TopoJSON/GeoJSON for a path (no decoding).
+ * Fetch and cache the raw TopoJSON/GeoJSON *text* for a path (no parsing).
  */
-async function doFetchRawBoundary(path: string): Promise<unknown> {
+async function doFetchRawBoundaryText(path: string): Promise<string> {
 	const res = await fetch(path);
 	if (!res.ok) {
 		throw new Error(`Failed to fetch ${path}: ${res.status} ${res.statusText}`);
 	}
-	const json = await res.json();
-	RAW_CACHE[path] = json;
+	const text = await res.text();
+	RAW_CACHE[path] = text;
 	delete RAW_PENDING[path];
-	return json;
+	return text;
 }
 
-export function fetchRawBoundary(path: string): Promise<unknown> {
-	if (RAW_CACHE[path]) return Promise.resolve(RAW_CACHE[path]);
+/**
+ * Fetch the compact source text for a boundary path, caching the text (not the
+ * parsed object). Use this to warm the cache when the parsed form isn't needed yet.
+ */
+export function fetchRawBoundaryText(path: string): Promise<string> {
+	const cached = RAW_CACHE[path];
+	if (cached !== undefined) return Promise.resolve(cached);
 	if (RAW_PENDING[path]) return RAW_PENDING[path]!;
 
-	const promise = doFetchRawBoundary(path);
+	const promise = doFetchRawBoundaryText(path);
 	RAW_PENDING[path] = promise;
 	promise.catch(() => { delete RAW_PENDING[path]; });
 	return promise;
+}
+
+/**
+ * Fetch a boundary path and return the parsed (but not yet decoded) TopoJSON/GeoJSON.
+ * The parse result is intentionally transient: only the compact source text is
+ * cached, so callers should decode + extract what they need and let both the parsed
+ * and decoded objects be garbage-collected.
+ */
+export function fetchRawBoundary(path: string): Promise<unknown> {
+	return fetchRawBoundaryText(path).then((text) => JSON.parse(text));
 }
 
 /**
