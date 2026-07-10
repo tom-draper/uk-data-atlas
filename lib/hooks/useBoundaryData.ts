@@ -1,5 +1,5 @@
 // hooks/useBoundaryData.ts
-import { startTransition, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BoundaryData, BoundaryCodes, BoundaryGeojson } from "@lib/types";
 import {
 	BoundaryType,
@@ -413,10 +413,8 @@ export function useBoundaryData(
 				enabledBoundaryTypes,
 				getLadForWard,
 			);
-			startTransition(() => {
-				setBoundaryData(assembled);
-				setBoundaryCodes(codes);
-			});
+			setBoundaryData(assembled);
+			setBoundaryCodes(codes);
 			if (firstError) setError(firstError);
 			setIsLoading(false);
 			setInitialized(true);
@@ -535,7 +533,10 @@ export function useBoundaryData(
 				enabledBoundaryTypes,
 				getLadForWard,
 			);
-			startTransition(() => setBoundaryData(assembled));
+			// Commit urgently (not in a transition): during rapid navigation, transition
+			// updates get starved by the map's urgent renders/animations, leaving the
+			// map layer stuck on the previous location until interaction settles.
+			setBoundaryData(assembled);
 		};
 
 		reconcile().catch((err) => {

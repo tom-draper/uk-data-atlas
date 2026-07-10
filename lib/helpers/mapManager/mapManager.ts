@@ -129,6 +129,10 @@ export class MapManager {
 		const transformedGeojson =
 			this.featureBuilder.formatBoundaryGeoJson(features);
 
+		console.log(
+			`[map] updateElectionMap ${type} features=${transformedGeojson.features.length}`,
+		);
+
 		// Update layers
 		if (mode === "percentage" && options.selected) {
 			this.layerManager.updatePartyPercentageLayers(
