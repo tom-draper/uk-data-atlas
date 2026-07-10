@@ -71,17 +71,6 @@ export function useCodeMapper() {
 		superOutputArea: {},
 	});
 
-	// Reverse index: type → targetCode → set of source codes that map to it.
-	// Built alongside codeMappingsRef so getHighlightCodes is O(1) instead of O(n).
-	const reverseCodeMappingsRef = useRef<Record<CodeType, Record<string, Set<string>>>>({
-		ward: {},
-		localAuthority: {},
-		constituency: {},
-		lsoa: {},
-		dataZone: {},
-		superOutputArea: {},
-	});
-
 	// ==================== Ward-to-LAD Mappings ====================
 
 	const getLadForWard = useCallback((wardCode: string): string | undefined => {
@@ -179,20 +168,10 @@ export function useCodeMapper() {
 		if (!fromCode || !toYear || !toCode) return;
 		if (!codeMappingsRef.current[type][fromCode]) codeMappingsRef.current[type][fromCode] = {};
 		codeMappingsRef.current[type][fromCode][toYear] = toCode;
-		const rev = reverseCodeMappingsRef.current[type];
-		if (!rev[toCode]) rev[toCode] = new Set();
-		rev[toCode].add(fromCode);
 	}, []);
 
 	const addCodeMappings = useCallback((type: CodeType, mappings: CodeMapping) => {
 		Object.assign(codeMappingsRef.current[type], mappings);
-		const rev = reverseCodeMappingsRef.current[type];
-		for (const [fromCode, yearMap] of Object.entries(mappings)) {
-			for (const toCode of Object.values(yearMap)) {
-				if (!rev[toCode]) rev[toCode] = new Set();
-				rev[toCode].add(fromCode);
-			}
-		}
 	}, []);
 
 	const getCodeForYear = useCallback((
@@ -203,57 +182,6 @@ export function useCodeMapper() {
 		return codeMappingsRef.current[type][code]?.[targetYear];
 	}, []);
 
-	const getAllEquivalentCodes = useCallback((type: CodeType, code: string): { year: YearCode; code: string }[] => {
-		const mappings = codeMappingsRef.current[type][code] || {};
-		const equivalents: { year: YearCode; code: string }[] = [];
-
-		for (const [year, mappedCode] of Object.entries(mappings)) {
-			equivalents.push({ year: parseInt(year), code: mappedCode });
-		}
-
-		return equivalents;
-	}, []);
-
-	const findSourceCodes = useCallback((
-		type: CodeType,
-		targetCode: string,
-		targetYear: YearCode,
-	): string[] => {
-		const sources = reverseCodeMappingsRef.current[type][targetCode];
-		if (!sources) return [];
-		return [...sources].filter(
-			(src) => codeMappingsRef.current[type][src]?.[targetYear] === targetCode,
-		);
-	}, []);
-
-	/**
-	 * Get all codes that should be highlighted when hovering over a code.
-	 * O(1) via pre-built reverse index instead of O(n) linear scan.
-	 */
-	const getHighlightCodes = useCallback((type: CodeType, code: string): Set<string> => {
-		const codes = new Set<string>([code]);
-
-		// Forward: all years this code maps to
-		const forward = codeMappingsRef.current[type][code];
-		if (forward) {
-			for (const mappedCode of Object.values(forward)) codes.add(mappedCode);
-		}
-
-		// Reverse: all source codes that map to this code, plus their other targets
-		const sources = reverseCodeMappingsRef.current[type][code];
-		if (sources) {
-			for (const sourceCode of sources) {
-				codes.add(sourceCode);
-				const sourceMappings = codeMappingsRef.current[type][sourceCode];
-				if (sourceMappings) {
-					for (const mappedCode of Object.values(sourceMappings)) codes.add(mappedCode);
-				}
-			}
-		}
-
-		return codes;
-	}, []);
-
 	const emptyCodeMappings = () => ({ ward: {}, localAuthority: {}, constituency: {}, lsoa: {}, dataZone: {}, superOutputArea: {} });
 
 	const clearAllMappings = useCallback(() => {
@@ -261,7 +189,6 @@ export function useCodeMapper() {
 		ladToWardsMapRef.current = {};
 		constituencyToWardsMapRef.current = {};
 		codeMappingsRef.current = emptyCodeMappings();
-		reverseCodeMappingsRef.current = emptyCodeMappings();
 	}, []);
 
 	const clearWardLadMap = useCallback(() => {
@@ -275,10 +202,8 @@ export function useCodeMapper() {
 	const clearCodeMappings = useCallback((type?: CodeType) => {
 		if (type) {
 			codeMappingsRef.current[type] = {};
-			reverseCodeMappingsRef.current[type] = {};
 		} else {
 			codeMappingsRef.current = emptyCodeMappings();
-			reverseCodeMappingsRef.current = emptyCodeMappings();
 		}
 	}, []);
 
@@ -313,9 +238,6 @@ export function useCodeMapper() {
 		addCodeMapping,
 		addCodeMappings,
 		getCodeForYear,
-		getAllEquivalentCodes,
-		findSourceCodes,
-		getHighlightCodes,
 		clearAllMappings,
 		clearWardLadMap,
 		clearLadWardMap,
@@ -325,7 +247,6 @@ export function useCodeMapper() {
 		getLadForWard, addWardLadMapping, addWardLadMappings, getWardsForLad,
 		addLadWardMapping, addLadWardMappings, addConstituencyWardMappings,
 		getWardsForConstituency, addCodeMapping, addCodeMappings, getCodeForYear,
-		getAllEquivalentCodes, findSourceCodes, getHighlightCodes,
 		clearAllMappings, clearWardLadMap, clearLadWardMap, clearCodeMappings,
 		getMappingCounts,
 	]);
