@@ -36,7 +36,7 @@ export async function loadRoadSafety(
 		type: "custom",
 		kind: "points",
 		name: `Road Safety Collisions ${YEAR}`,
-		dataColumn: `Road collisions ${YEAR}`,
+		dataColumn: `Road Safety Collisions [${YEAR}]`,
 		year: YEAR,
 		boundaryType: "ward",
 		boundaryYear: 0,
