@@ -296,13 +296,19 @@ export class MapManager {
 			max,
 			mapOptions.theme.id,
 		);
-		// Blank the choropleth beneath so a previously active dataset doesn't show.
-		this.layerManager.clearBoundaryData();
+		// Add the point layers first, then blank the choropleth beneath. Doing it
+		// in this order matters: clearBoundaryData() calls setData() on the boundary
+		// source, which flips map.isStyleLoaded() to false until the worker re-parses.
+		// updatePointLayers() bails early when the style isn't loaded, so blanking
+		// first would drop the points entirely when switching from a boundary dataset
+		// (the map would just clear). Refreshing straight into a point dataset hid the
+		// bug because no boundary source existed yet.
 		this.layerManager.updatePointLayers(
 			collection,
 			mapOptions.visibility,
 			mapOptions.theme.id,
 		);
+		this.layerManager.clearBoundaryData();
 	}
 
 	clearCustomPoints(): void {
