@@ -52,6 +52,14 @@ export function useMapUpdates({
 
 	useEffect(() => {
 		if (!geojson || !activeDataset || !mapManager) return;
+		// Point datasets are drawn by the effect above and carry no per-boundary
+		// values (`data` is empty), so the choropleth path below would repaint
+		// every boundary in the default colour — undoing the clearBoundaryData()
+		// that updateMapForCustomPoints() just did — and rebind the hover
+		// handlers to an empty record. Effects run in declaration order, so this
+		// one always wins; skip it instead.
+		if (activeDataset.type === "custom" && activeDataset.kind === "points")
+			return;
 
 		const performUpdate = () => {
 			switch (activeDataset.type) {

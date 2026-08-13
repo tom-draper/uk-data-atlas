@@ -421,17 +421,3 @@ export const filterFeatures = (
 	return geojson;
 };
 
-/**
- * Clear the cache (useful for testing or memory management)
- */
-const clearCache = (): void => {
-	Object.keys(BOUNDARY_CACHE).forEach((key) => delete BOUNDARY_CACHE[key]);
-};
-
-/**
- * Get cache statistics
- */
-const getCacheStats = () => ({
-	cachedFiles: Object.keys(BOUNDARY_CACHE).length,
-	estimatedMemory: JSON.stringify(BOUNDARY_CACHE).length,
-});
