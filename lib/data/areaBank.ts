@@ -1,6 +1,3 @@
-import type { BoundaryData } from "@lib/types/boundaries";
-import { PROPERTY_KEYS, getProp } from "@lib/data/boundaries/boundaries";
-
 export interface AreaEntry {
 	label: string;
 	boundaryType: string;
@@ -20,15 +17,6 @@ export type AreaBank = AreaEntry[];
 
 const FULL_POSTCODE_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s*[0-9][A-Z]{2}$/i;
 const DISTRICT_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?$/i;
-
-const BOUNDARY_META = [
-	{ key: "ward" as const, label: "Ward", codeKeys: PROPERTY_KEYS.wardCode, nameKeys: PROPERTY_KEYS.wardName },
-	{ key: "constituency" as const, label: "Constituency", codeKeys: PROPERTY_KEYS.constituencyCode, nameKeys: PROPERTY_KEYS.constituencyName },
-	{ key: "localAuthority" as const, label: "Local Authority", codeKeys: PROPERTY_KEYS.ladCode, nameKeys: PROPERTY_KEYS.ladName },
-	{ key: "lsoa" as const, label: "LSOA", codeKeys: PROPERTY_KEYS.lsoaCode, nameKeys: PROPERTY_KEYS.lsoaName },
-	{ key: "dataZone" as const, label: "Data Zone", codeKeys: PROPERTY_KEYS.dataZoneCode, nameKeys: PROPERTY_KEYS.dataZoneName },
-	{ key: "superOutputArea" as const, label: "Super Output Area", codeKeys: PROPERTY_KEYS.soaCode, nameKeys: PROPERTY_KEYS.soaName },
-];
 
 // Precomputed match index (scripts/gazetteer-matchindex.ts): per boundary
 // level+vintage, codes and a lowercased name->code map.
@@ -78,53 +66,6 @@ export function buildAreaBankFromIndex(index: MatchIndex): AreaBank {
 			}
 		}
 	}
-	return bank;
-}
-
-export function buildAreaBank(boundaryData: BoundaryData): AreaBank {
-	const bank: AreaBank = [];
-
-	for (const meta of BOUNDARY_META) {
-		const typeData = boundaryData[meta.key];
-		for (const [yearStr, geojson] of Object.entries(typeData)) {
-			if (!geojson?.features?.length) continue;
-			const year = Number(yearStr);
-
-			const codes = new Set<string>();
-			const nameToCode = new Map<string, string>();
-
-			for (const feature of geojson.features) {
-				const props = feature.properties;
-				if (!props) continue;
-				const code = getProp(props, meta.codeKeys);
-				const name = getProp(props, meta.nameKeys);
-				if (code) codes.add(code);
-				if (name && code) nameToCode.set(name.toLowerCase(), code);
-			}
-
-			if (codes.size > 0) {
-				bank.push({
-					label: `${meta.label} [${year}]`,
-					boundaryType: meta.key,
-					year,
-					matchType: "code",
-					codes,
-					nameToCode: new Map(),
-				});
-			}
-			if (nameToCode.size > 0) {
-				bank.push({
-					label: `${meta.label} Name [${year}]`,
-					boundaryType: meta.key,
-					year,
-					matchType: "name",
-					codes: new Set(),
-					nameToCode,
-				});
-			}
-		}
-	}
-
 	return bank;
 }
 
