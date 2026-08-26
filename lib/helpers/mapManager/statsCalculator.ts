@@ -46,6 +46,7 @@ import { ClaimantCountDataset, AggregatedClaimantCountData } from "@/lib/types/c
 import { SchoolPerformanceDataset, AggregatedSchoolPerformanceData } from "@/lib/types/schoolPerformance";
 import { NHSWaitingDataset, AggregatedNHSWaitingData } from "@/lib/types/nhsWaiting";
 import { UnemploymentDataset, AggregatedUnemploymentData } from "@/lib/types/unemployment";
+import { ChildPovertyDataset, AggregatedChildPovertyData } from "@/lib/types/childPoverty";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -1045,6 +1046,29 @@ export class StatsCalculator {
 				youthRate: youthRate / count,
 			};
 			return result;
+		});
+	}
+
+	calculateChildPovertyStats(
+		geojson: BoundaryGeojson,
+		data: ChildPovertyDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedChildPovertyData | null {
+		return this.cached(`childPoverty-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			let childCount = 0, childrenPopulation = 0, count = 0;
+
+			for (const feature of geojson.features) {
+				const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+				if (!record) continue;
+				childCount += record.childCount;
+				childrenPopulation += record.childrenPopulation;
+				count++;
+			}
+
+			if (count === 0 || childrenPopulation === 0) return null;
+			return { childCount, childPovertyRate: childCount / childrenPopulation * 100 };
 		});
 	}
 

@@ -34,6 +34,7 @@ import { AggregatedClaimantCountData, ClaimantCountDataset } from "./claimantCou
 import { AggregatedSchoolPerformanceData, SchoolPerformanceDataset } from "./schoolPerformance";
 import { AggregatedNHSWaitingData, NHSWaitingDataset } from "./nhsWaiting";
 import { AggregatedUnemploymentData, UnemploymentDataset } from "./unemployment";
+import { AggregatedChildPovertyData, ChildPovertyDataset } from "./childPoverty";
 
 export type Dataset =
 	| LocalElectionDataset
@@ -57,7 +58,8 @@ export type Dataset =
 	| ClaimantCountDataset
 	| SchoolPerformanceDataset
 	| NHSWaitingDataset
-	| UnemploymentDataset;
+	| UnemploymentDataset
+	| ChildPovertyDataset;
 
 export type Datasets = {
 	localElection: Record<string, LocalElectionDataset>;
@@ -81,6 +83,7 @@ export type Datasets = {
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
 	nhsWaiting: Record<string, NHSWaitingDataset>;
 	unemployment: Record<string, UnemploymentDataset>;
+	childPoverty: Record<string, ChildPovertyDataset>;
 };
 
 

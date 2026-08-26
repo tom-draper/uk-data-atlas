@@ -43,6 +43,7 @@ export type SchoolPerformanceOptions = ColorRangeOption;
 export type ClaimantCountOptions = ColorRangeOption;
 export type NHSWaitingOptions = ColorRangeOption;
 export type UnemploymentOptions = ColorRangeOption;
+export type ChildPovertyOptions = ColorRangeOption;
 
 export type ColorTheme =
 	| "viridis"
@@ -87,6 +88,7 @@ export interface MapOptions {
 	claimantCount: ClaimantCountOptions;
 	nhsWaiting: NHSWaitingOptions;
 	unemployment: UnemploymentOptions;
+	childPoverty: ChildPovertyOptions;
 	theme: {
 		id: ColorTheme;
 	};

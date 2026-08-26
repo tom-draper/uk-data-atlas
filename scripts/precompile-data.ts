@@ -29,6 +29,7 @@ import { loadClaimantCount } from "../lib/data/claimant-count/loader";
 import { loadSchoolPerformance } from "../lib/data/school-performance/loader";
 import { loadNHSWaiting } from "../lib/data/nhs-waiting/loader";
 import { loadUnemployment } from "../lib/data/unemployment/loader";
+import { loadChildPoverty } from "../lib/data/child-poverty/loader";
 import { loadGeneralElection } from "../lib/data/election/general-election/load";
 import { loadLocalElection } from "../lib/data/election/local-election/load";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
@@ -55,6 +56,17 @@ const readZip = (path: string): Promise<string> => {
 	const fullPath = join(SOURCE_DATA, path);
 	return Promise.resolve(
 		execSync(`unzip -p "${fullPath}" "*.csv"`, {
+			maxBuffer: 100 * 1024 * 1024,
+		}).toString("utf8"),
+	);
+};
+
+// ODS source files are never exposed by the application. The child-poverty
+// loader only needs its worksheet XML, which is then reduced to compact JSON.
+const readOdsContent = (path: string): Promise<string> => {
+	const fullPath = join(SOURCE_DATA, path);
+	return Promise.resolve(
+		execSync(`unzip -p "${fullPath}" content.xml`, {
 			maxBuffer: 100 * 1024 * 1024,
 		}).toString("utf8"),
 	);
@@ -101,6 +113,11 @@ async function main() {
 		loadSchoolPerformance(read).then((d) => out("school-performance", d)),
 		loadNHSWaiting(readZip).then((d) => out("nhs-waiting", d)),
 		loadUnemployment(readSource).then((d) => out("unemployment", d)),
+		readOdsContent(
+			"economics/child-poverty/children-in-low-income-families-2022-2025.ods",
+		)
+			.then(loadChildPoverty)
+			.then((d) => out("child-poverty", d)),
 		loadGeneralElection(read).then((d) => out("general-election", d)),
 		loadLocalElection(read).then((d) => out("local-election", d)),
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
