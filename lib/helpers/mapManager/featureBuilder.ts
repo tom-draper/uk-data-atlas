@@ -243,6 +243,7 @@ export class FeatureBuilder {
 		valueMin: number,
 		valueMax: number,
 		themeId: string,
+		colorByValue?: Record<number, string>,
 	): GeoJSON.FeatureCollection {
 		const range = valueMax - valueMin || 1;
 		return {
@@ -252,7 +253,9 @@ export class FeatureBuilder {
 				geometry: { type: "Point", coordinates: [p.lng, p.lat] },
 				properties: {
 					value: p.value,
-					color: getColor((p.value - valueMin) / range, themeId),
+					color:
+						colorByValue?.[p.value] ??
+						getColor((p.value - valueMin) / range, themeId),
 					label: p.label ?? "",
 				},
 			})),

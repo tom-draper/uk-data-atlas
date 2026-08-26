@@ -250,6 +250,7 @@ export class LayerManager {
 		collection: GeoJSON.FeatureCollection,
 		visibility: MapOptions["visibility"],
 		themeId: string,
+		radius: { min: number; max: number } = { min: 3, max: 7 },
 	): void {
 		if (!this.map.isStyleLoaded()) return;
 
@@ -304,19 +305,21 @@ export class LayerManager {
 				type: "circle",
 				source: POINT_SOURCE_ID,
 				paint: {
-					"circle-radius": [
-						"interpolate",
-						["linear"],
-						["zoom"],
-						4,
-						3,
-						10,
-						7,
-					],
+					"circle-radius": radius.min,
 					"circle-color": ["get", "color"],
 				},
 			});
 		}
+
+		this.map.setPaintProperty(POINT_LAYER_ID, "circle-radius", [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			FADE_MIN_ZOOM,
+			radius.min,
+			10,
+			radius.max,
+		]);
 
 		const o = visibility.overlayOpacity ?? 0.6;
 		const circleMax = visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3);

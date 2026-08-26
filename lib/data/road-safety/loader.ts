@@ -10,6 +10,18 @@ const SOURCE =
 // point "value" so the most severe collisions map to the top of the colour scale.
 const SEVERITY_WEIGHT: Record<string, number> = { "1": 3, "2": 2, "3": 1 };
 
+// These are categories rather than a continuous measure, so keep their visual
+// treatment consistent regardless of the selected choropleth colour theme.
+const SEVERITY_STYLE = {
+	colorByValue: { 1: "#facc15", 2: "#f97316", 3: "#991b1b" },
+	legend: [
+		{ value: 3, label: "Fatal" },
+		{ value: 2, label: "Serious" },
+		{ value: 1, label: "Slight" },
+	],
+	radius: { min: 1.5, max: 3.5 },
+};
+
 // Coordinates are rounded to 5 dp (~1 m) to keep the precompiled payload compact.
 const round5 = (n: number) => Math.round(n * 1e5) / 1e5;
 
@@ -44,6 +56,7 @@ export async function loadRoadSafety(
 		points,
 		valueMin: 1,
 		valueMax: 3,
+		pointStyle: SEVERITY_STYLE,
 	};
 
 	return { [ID]: dataset };
