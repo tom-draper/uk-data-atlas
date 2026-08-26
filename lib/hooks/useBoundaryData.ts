@@ -75,7 +75,6 @@ const fetchPrecompiledBoundaryMappings = (): Promise<PrecompiledBoundaryMappings
 
 type BoundaryGroupLoad = {
 	data: Record<number, BoundaryGeojson>;
-	failedYears: number[];
 };
 
 /** Fetch all boundary files for a given type. */
@@ -96,12 +95,17 @@ const fetchBoundaryGroup = async (
 	const results = settled
 		.filter((r): r is PromiseFulfilledResult<readonly [number, BoundaryGeojson]> => r.status === "fulfilled")
 		.map((r) => r.value);
+	settled.forEach((result, index) => {
+		if (result.status === "rejected") {
+			console.error(
+				`[boundaries] Failed to load ${type} year ${years[index]}:`,
+				result.reason,
+			);
+		}
+	});
 
 	return {
 		data: Object.fromEntries(results),
-		failedYears: settled.flatMap((result, index) =>
-			result.status === "rejected" ? [years[index]] : [],
-		),
 	};
 };
 
@@ -284,17 +288,6 @@ export function useBoundaryData(
 			])
 				.then(([mappings, wards, constituencies, localAuthorities, lsoas, dataZones, superOutputAreas]) => {
 					if (!mounted) return;
-					const groups = [
-						["ward", wards],
-						["constituency", constituencies],
-						["local authority", localAuthorities],
-						["LSOA", lsoas],
-						["data zone", dataZones],
-						["super output area", superOutputAreas],
-					] as const;
-					const failedFiles = groups.flatMap(([type, group]) =>
-						group.failedYears.map((year) => `${type} ${year}`),
-					);
 
 					startTransition(() => {
 						setRawData({
@@ -306,13 +299,6 @@ export function useBoundaryData(
 							superOutputArea: superOutputAreas.data,
 						});
 					});
-					if (failedFiles.length > 0) {
-						setError(
-							new Error(
-								`Some boundary files could not be loaded: ${failedFiles.join(", ")}`,
-							),
-						);
-					}
 
 					if (mappings) {
 						addWardLadMappings?.(mappings.wardToLad);
