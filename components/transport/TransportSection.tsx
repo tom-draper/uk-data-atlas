@@ -8,7 +8,11 @@ import {
 	cardClass,
 	chartHeadingClass,
 } from "@/lib/hooks/useCardAccent";
-import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
+import {
+	ChartLoadingBackground,
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 
 function RoadSafetyCard({
 	dataset,
@@ -19,8 +23,14 @@ function RoadSafetyCard({
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 }) {
+	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const points = dataset.points ?? [];
+	const hasData = points.length > 0;
+	const averageSeverity = hasData
+		? points.reduce((total, point) => total + point.value, 0) / points.length
+		: 0;
+	const severityBarWidth = (averageSeverity / 3) * 100;
 	const accent = getColor(1);
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
 		accent,
@@ -40,33 +50,67 @@ function RoadSafetyCard({
 			}
 			style={style}
 			className={cardClass(isActive, isDark, "h-20")}
+			title="Department for Transport. Provisional road collision statistics for Great Britain, 2025."
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 		>
 			<ChartLoadingBackground />
 			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
 				<h3 className={chartHeadingClass(isDark)}>{dataset.dataColumn}</h3>
-			</div>
-			<div className="flex-1 flex flex-col gap-1">
-				<div className="flex items-baseline gap-2">
-					<span
-						className="text-2xl font-bold leading-none"
-						style={{ color: accent }}
-					>
-						{points.length.toLocaleString("en-GB")}
-					</span>
-					<span
-						className={`text-[10px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
-					>
-						collisions
-					</span>
-				</div>
 				<span
-					className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
 				>
-					coloured by severity
+					Great Britain
 				</span>
 			</div>
+
+			{!hasData ? (
+				<div className="flex-1 mt-1">
+					{chartsLoading ? (
+						<ChartContentPlaceholder className="h-full" />
+					) : (
+						<div
+							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+						>
+							No data available
+						</div>
+					)}
+				</div>
+			) : (
+				<div className="flex-1 flex flex-col gap-1">
+					<div className="flex items-baseline justify-between">
+						<div className="leading-none">
+							<span
+								className="text-2xl font-bold leading-none"
+								style={{ color: accent }}
+							>
+								{points.length.toLocaleString("en-GB")}
+							</span>
+							<span
+								className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}
+							>
+								collisions
+							</span>
+						</div>
+						<span
+							className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
+						>
+							severity {averageSeverity.toFixed(1)} / 3
+						</span>
+					</div>
+					<div
+						className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}
+					>
+						<div
+							className="h-full rounded-xs transition-all duration-300"
+							style={{
+								width: `${severityBarWidth}%`,
+								backgroundColor: accent,
+							}}
+						/>
+					</div>
+				</div>
+			)}
 		</button>
 	);
 }
