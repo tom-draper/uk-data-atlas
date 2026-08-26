@@ -2,25 +2,8 @@
 import { BoundaryGeojson } from "@lib/types";
 import { gazetteer } from "@lib/data/gazetteer/static";
 import { withCDN } from "@/lib/helpers/cdn";
-import * as topojson from "topojson-client";
-import {
-	FeatureCollection,
-	Geometry,
-	GeoJsonProperties,
-	Feature,
-} from "geojson";
-
-interface GeoJsonFeatureCollection extends FeatureCollection<
-	Geometry,
-	GeoJsonProperties
-> {
-	crs?: {
-		type: string;
-		properties: {
-			name: string;
-		};
-	};
-}
+import { decodeBoundaryData } from "./decode";
+import { fetchBoundaryInWorker } from "./worker";
 
 export const GEOJSON_PATHS = {
 	ward: {
@@ -269,35 +252,7 @@ async function doFetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
 		throw new Error(`Failed to fetch ${path}: ${res.status} ${res.statusText}`);
 	}
 
-	const json = await res.json();
-
-	let geojson: GeoJsonFeatureCollection;
-	if (json.type === "Topology") {
-		const objectKey = Object.keys(json.objects)[0];
-		const topojsonFeatureResult:
-			| Feature<Geometry, GeoJsonProperties>
-			| FeatureCollection<Geometry, GeoJsonProperties> = topojson.feature(
-			json,
-			json.objects[objectKey] as any,
-		);
-
-		if (topojsonFeatureResult.type === "Feature") {
-			geojson = { type: "FeatureCollection", features: [topojsonFeatureResult] };
-		} else {
-			geojson = topojsonFeatureResult;
-		}
-	} else {
-		geojson = json as GeoJsonFeatureCollection;
-	}
-
-	if (!geojson.crs) {
-		geojson.crs = {
-			type: "name",
-			properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
-		};
-	}
-
-	const typedGeojson = geojson as BoundaryGeojson<any>;
+	const typedGeojson = decodeBoundaryData(await res.json());
 	BOUNDARY_CACHE[path] = typedGeojson;
 	delete BOUNDARY_PENDING[path];
 	return typedGeojson;
@@ -307,7 +262,15 @@ export function fetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
 	if (BOUNDARY_CACHE[path]) return Promise.resolve(BOUNDARY_CACHE[path]);
 	if (BOUNDARY_PENDING[path]) return BOUNDARY_PENDING[path]!;
 
-	const promise = doFetchBoundaryFile(path);
+	const workerFetch = fetchBoundaryInWorker(path);
+	const promise = (workerFetch
+		? workerFetch.catch(() => doFetchBoundaryFile(path))
+		: doFetchBoundaryFile(path)
+	).then((data) => {
+		BOUNDARY_CACHE[path] = data;
+		delete BOUNDARY_PENDING[path];
+		return data;
+	});
 	BOUNDARY_PENDING[path] = promise;
 	promise.catch(() => { delete BOUNDARY_PENDING[path]; });
 	return promise;
@@ -420,4 +383,3 @@ export const filterFeatures = (
 
 	return geojson;
 };
-
