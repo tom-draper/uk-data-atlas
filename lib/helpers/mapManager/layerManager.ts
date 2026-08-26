@@ -11,7 +11,6 @@ import {
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";
 import { getPercentageColorExpression } from "../colorScale/datasetColors";
-import { buildHeatmapColorRamp } from "../colorScale/themes";
 import { DEFAULT_COLOR } from "./featureBuilder";
 import type { PointTooltip } from "@/lib/types/custom";
 
@@ -20,10 +19,9 @@ const FILL_LAYER_ID = "wards-fill";
 const LINE_LAYER_ID = "wards-line";
 const POINT_SOURCE_ID = "custom-points";
 const POINT_LAYER_ID = "custom-points-circle";
-const HEAT_LAYER_ID = "custom-points-heat";
+const LEGACY_HEAT_LAYER_ID = "custom-points-heat";
 
-// Cross-fade between the heatmap (zoomed out, where individual points overlap
-// into noise) and discrete circles (zoomed in, where each point is meaningful).
+// Individual points appear only once they are distinct enough to be useful.
 const FADE_MIN_ZOOM = 6;
 const FADE_MAX_ZOOM = 9;
 
@@ -255,12 +253,17 @@ export class LayerManager {
 	updatePointLayers(
 		collection: GeoJSON.FeatureCollection,
 		visibility: MapOptions["visibility"],
-		themeId: string,
+		_themeId: string,
 		radius: { min: number; max: number } = { min: 3, max: 7 },
 		tooltip?: PointTooltip,
 		isDark = false,
 	): void {
 		if (!this.map.isStyleLoaded()) return;
+		// Remove the old aggregate layer during hot reloads or after switching
+		// from an earlier version of the point renderer.
+		if (this.map.getLayer(LEGACY_HEAT_LAYER_ID)) {
+			this.map.removeLayer(LEGACY_HEAT_LAYER_ID);
+		}
 
 		const existing = this.map.getSource(POINT_SOURCE_ID) as
 			| maplibregl.GeoJSONSource
@@ -271,42 +274,6 @@ export class LayerManager {
 			this.map.addSource(POINT_SOURCE_ID, {
 				type: "geojson",
 				data: collection as any,
-			});
-			// Heatmap sits underneath so circles draw on top through the fade.
-			this.map.addLayer({
-				id: HEAT_LAYER_ID,
-				type: "heatmap",
-				source: POINT_SOURCE_ID,
-				paint: {
-					// Weight each point by its value (e.g. collision severity).
-					"heatmap-weight": [
-						"interpolate",
-						["linear"],
-						["get", "value"],
-						1,
-						0.4,
-						3,
-						1,
-					],
-					"heatmap-intensity": [
-						"interpolate",
-						["linear"],
-						["zoom"],
-						4,
-						1,
-						FADE_MAX_ZOOM,
-						2.5,
-					],
-					"heatmap-radius": [
-						"interpolate",
-						["linear"],
-						["zoom"],
-						4,
-						15,
-						FADE_MAX_ZOOM,
-						35,
-					],
-				},
 			});
 			this.map.addLayer({
 				id: POINT_LAYER_ID,
@@ -340,10 +307,7 @@ export class LayerManager {
 
 		const o = visibility.overlayOpacity ?? 0.6;
 		const circleMax = visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3);
-		const heatMax = visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3);
-
-		// Circles fade in as we zoom past FADE_MIN_ZOOM; the heatmap fades out
-		// over the same range, so exactly one representation dominates at a time.
+		// Circles fade in as we zoom past FADE_MIN_ZOOM.
 		this.map.setPaintProperty(POINT_LAYER_ID, "circle-opacity", [
 			"interpolate",
 			["linear"],
@@ -353,29 +317,14 @@ export class LayerManager {
 			FADE_MAX_ZOOM,
 			circleMax,
 		]);
-		this.map.setPaintProperty(HEAT_LAYER_ID, "heatmap-opacity", [
-			"interpolate",
-			["linear"],
-			["zoom"],
-			FADE_MIN_ZOOM,
-			heatMax,
-			FADE_MAX_ZOOM,
-			0,
-		]);
-		// Set each call so palette changes propagate to the heatmap ramp.
-		this.map.setPaintProperty(
-			HEAT_LAYER_ID,
-			"heatmap-color",
-			buildHeatmapColorRamp(themeId) as any,
-		);
 	}
 
 	clearPointLayers(): void {
 		this.removePointTooltipHandlers();
 		if (this.map.getLayer(POINT_LAYER_ID))
 			this.map.removeLayer(POINT_LAYER_ID);
-		if (this.map.getLayer(HEAT_LAYER_ID))
-			this.map.removeLayer(HEAT_LAYER_ID);
+		if (this.map.getLayer(LEGACY_HEAT_LAYER_ID))
+			this.map.removeLayer(LEGACY_HEAT_LAYER_ID);
 		if (this.map.getSource(POINT_SOURCE_ID))
 			this.map.removeSource(POINT_SOURCE_ID);
 	}
