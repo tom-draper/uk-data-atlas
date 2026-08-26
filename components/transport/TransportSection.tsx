@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz } from "@lib/types";
 import { CustomDataset } from "@/lib/types/custom";
-import { getColor } from "@/lib/helpers/colorScale/themes";
 import { gazetteer } from "@/lib/data/gazetteer/static";
+import { rgbToHex } from "@/lib/helpers/colorScale/interpolation";
 import {
 	useCardAccent,
 	cardClass,
@@ -15,6 +15,25 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+
+const SEVERITY_COLORS = [
+	[250, 204, 21], // Slight
+	[249, 115, 22], // Serious
+	[153, 27, 27], // Fatal
+] as const;
+
+function severityColor(averageSeverity: number): string {
+	const position = Math.max(0, Math.min(1, (averageSeverity - 1) / 2));
+	const segment = position <= 0.5 ? 0 : 1;
+	const localPosition = (position - segment * 0.5) * 2;
+	const from = SEVERITY_COLORS[segment];
+	const to = SEVERITY_COLORS[segment + 1];
+	return rgbToHex(
+		from[0] + (to[0] - from[0]) * localPosition,
+		from[1] + (to[1] - from[1]) * localPosition,
+		from[2] + (to[2] - from[2]) * localPosition,
+	);
+}
 
 function RoadSafetyCard({
 	dataset,
@@ -47,7 +66,7 @@ function RoadSafetyCard({
 		? points.reduce((total, point) => total + point.value, 0) / points.length
 		: 0;
 	const severityBarWidth = (averageSeverity / 3) * 100;
-	const accent = getColor(1);
+	const accent = hasData ? severityColor(averageSeverity) : null;
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
 		accent,
 		isActive,
@@ -98,7 +117,7 @@ function RoadSafetyCard({
 						<div className="leading-none">
 							<span
 								className="text-2xl font-bold leading-none"
-								style={{ color: accent }}
+								style={{ color: accent ?? undefined }}
 							>
 								{points.length.toLocaleString("en-GB")}
 							</span>
@@ -121,7 +140,7 @@ function RoadSafetyCard({
 							className="h-full rounded-xs transition-all duration-300"
 							style={{
 								width: `${severityBarWidth}%`,
-								backgroundColor: accent,
+								backgroundColor: accent ?? undefined,
 							}}
 						/>
 					</div>
