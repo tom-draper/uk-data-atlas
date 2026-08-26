@@ -8,9 +8,16 @@ let nextId = 0;
 const pending = new Map<number, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
 
 function getWorker(): Worker | null {
-	if (typeof window === "undefined") return null;
+	if (typeof window === "undefined" || typeof Worker === "undefined")
+		return null;
 	if (!worker) {
-		worker = new Worker(new URL("../workers/data-worker.ts", import.meta.url));
+		try {
+			worker = new Worker(
+				new URL("../workers/data-worker.ts", import.meta.url),
+			);
+		} catch {
+			return null;
+		}
 		worker.onmessage = (e: MessageEvent<WorkerRes>) => {
 			const { id, data, error } = e.data;
 			const callbacks = pending.get(id);
@@ -30,17 +37,29 @@ function getWorker(): Worker | null {
 	return worker;
 }
 
+async function fetchJson(url: string): Promise<unknown> {
+	const response = await fetch(url);
+	if (!response.ok) {
+		throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+	}
+	return response.json();
+}
+
 function fetchViaWorker(url: string): Promise<unknown> {
 	return new Promise((resolve, reject) => {
 		const w = getWorker();
 		if (!w) {
-			// SSR fallback — should not be reached in practice
-			fetch(url).then((r) => r.json()).then(resolve).catch(reject);
+			fetchJson(url).then(resolve).catch(reject);
 			return;
 		}
 		const id = nextId++;
 		pending.set(id, { resolve, reject });
-		w.postMessage({ id, url });
+		try {
+			w.postMessage({ id, url });
+		} catch (error) {
+			pending.delete(id);
+			reject(error instanceof Error ? error : new Error(String(error)));
+		}
 	});
 }
 
@@ -51,7 +70,13 @@ export function useJsonDataLoader<T>(url: string, enabled = true) {
 	const loadedUrl = useRef<string | null>(null);
 
 	useEffect(() => {
-		if (!enabled) return;
+		let active = true;
+		if (!enabled) {
+			setLoading(false);
+			return () => {
+				active = false;
+			};
+		}
 		if (loadedUrl.current === url) return;
 		loadedUrl.current = url;
 		setError("");
@@ -59,15 +84,21 @@ export function useJsonDataLoader<T>(url: string, enabled = true) {
 
 		fetchViaWorker(url)
 			.then((data) => {
+				if (!active || loadedUrl.current !== url) return;
 				setDatasets(data as Record<string, T>);
 				setLoading(false);
 			})
 			.catch((err: Error) => {
+				if (!active || loadedUrl.current !== url) return;
 				// Allow a future effect run to retry this URL
 				if (loadedUrl.current === url) loadedUrl.current = null;
 				setError(err.message);
 				setLoading(false);
 			});
+
+		return () => {
+			active = false;
+		};
 	}, [enabled, url]);
 
 	return { datasets, loading, error };
