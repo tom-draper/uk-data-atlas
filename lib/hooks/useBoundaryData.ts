@@ -73,10 +73,15 @@ const fetchPrecompiledBoundaryMappings = (): Promise<PrecompiledBoundaryMappings
 	return boundaryMappingsPending;
 };
 
+type BoundaryGroupLoad = {
+	data: Record<number, BoundaryGeojson>;
+	failedYears: number[];
+};
+
 /** Fetch all boundary files for a given type. */
 const fetchBoundaryGroup = async (
 	type: BoundaryType,
-): Promise<Record<number, BoundaryGeojson>> => {
+): Promise<BoundaryGroupLoad> => {
 	const paths = GEOJSON_PATHS[type];
 	const years = Object.keys(paths).map(Number);
 
@@ -88,17 +93,16 @@ const fetchBoundaryGroup = async (
 		}),
 	);
 
-	settled.forEach((r, i) => {
-		if (r.status === "rejected") {
-			console.error(`[boundaries] Failed to load ${type} year ${years[i]}:`, r.reason);
-		}
-	});
-
 	const results = settled
 		.filter((r): r is PromiseFulfilledResult<readonly [number, BoundaryGeojson]> => r.status === "fulfilled")
 		.map((r) => r.value);
 
-	return Object.fromEntries(results);
+	return {
+		data: Object.fromEntries(results),
+		failedYears: settled.flatMap((result, index) =>
+			result.status === "rejected" ? [years[index]] : [],
+		),
+	};
 };
 
 /**
@@ -274,29 +278,41 @@ export function useBoundaryData(
 				fetchBoundaryGroup("ward"),
 				fetchBoundaryGroup("constituency"),
 				fetchBoundaryGroup("localAuthority"),
-				fetchBoundaryGroup("lsoa").catch(
-					() => ({}) as Record<number, BoundaryGeojson>,
-				),
-				fetchBoundaryGroup("dataZone").catch(
-					() => ({}) as Record<number, BoundaryGeojson>,
-				),
-				fetchBoundaryGroup("superOutputArea").catch(
-					() => ({}) as Record<number, BoundaryGeojson>,
-				),
+				fetchBoundaryGroup("lsoa"),
+				fetchBoundaryGroup("dataZone"),
+				fetchBoundaryGroup("superOutputArea"),
 			])
 				.then(([mappings, wards, constituencies, localAuthorities, lsoas, dataZones, superOutputAreas]) => {
 					if (!mounted) return;
+					const groups = [
+						["ward", wards],
+						["constituency", constituencies],
+						["local authority", localAuthorities],
+						["LSOA", lsoas],
+						["data zone", dataZones],
+						["super output area", superOutputAreas],
+					] as const;
+					const failedFiles = groups.flatMap(([type, group]) =>
+						group.failedYears.map((year) => `${type} ${year}`),
+					);
 
 					startTransition(() => {
 						setRawData({
-							ward: wards,
-							constituency: constituencies,
-							localAuthority: localAuthorities,
-							lsoa: lsoas,
-							dataZone: dataZones,
-							superOutputArea: superOutputAreas,
+							ward: wards.data,
+							constituency: constituencies.data,
+							localAuthority: localAuthorities.data,
+							lsoa: lsoas.data,
+							dataZone: dataZones.data,
+							superOutputArea: superOutputAreas.data,
 						});
 					});
+					if (failedFiles.length > 0) {
+						setError(
+							new Error(
+								`Some boundary files could not be loaded: ${failedFiles.join(", ")}`,
+							),
+						);
+					}
 
 					if (mappings) {
 						addWardLadMappings?.(mappings.wardToLad);
@@ -326,7 +342,7 @@ export function useBoundaryData(
 						// Preserve the existing behaviour if an older CDN revision does not
 						// yet contain the generated lookup file.
 						const wardToLad: Record<string, string> = {};
-						for (const [year, boundary] of Object.entries(wards)) {
+						for (const [year, boundary] of Object.entries(wards.data)) {
 							const wardMappings = extractWardLadMappings(
 								boundary.features,
 								PROPERTY_KEYS.wardCode,
@@ -339,36 +355,36 @@ export function useBoundaryData(
 						addCodeMappings?.(
 							"ward",
 							buildCrossYearMappings(
-								wards,
+								wards.data,
 								"ward",
-								Object.keys(wards).map(Number),
+								Object.keys(wards.data).map(Number),
 							),
 						);
 						addCodeMappings?.(
 							"constituency",
 							buildCrossYearMappings(
-								constituencies,
+								constituencies.data,
 								"constituency",
-								Object.keys(constituencies).map(Number),
+								Object.keys(constituencies.data).map(Number),
 							),
 						);
 						addCodeMappings?.(
 							"localAuthority",
 							buildCrossYearMappings(
-								localAuthorities,
+								localAuthorities.data,
 								"localAuthority",
-								Object.keys(localAuthorities).map(Number),
+								Object.keys(localAuthorities.data).map(Number),
 							),
 						);
 
-						const constituencyEntries = Object.entries(constituencies)
+						const constituencyEntries = Object.entries(constituencies.data)
 							.filter(([, conData]) => conData?.features);
 						// Only build for the latest ward year — ward highlighting always
 						// uses current boundaries, so historical ward years are not needed.
 						const latestWardYear = Math.max(
-							...Object.keys(wards).map(Number).filter(y => wards[y]?.features),
+							...Object.keys(wards.data).map(Number).filter(y => wards.data[y]?.features),
 						);
-						const latestWardData = wards[latestWardYear];
+						const latestWardData = wards.data[latestWardYear];
 						if (latestWardData?.features) {
 							const mergedMappings: Record<string, string[]> = {};
 							for (const [, conData] of constituencyEntries) {
