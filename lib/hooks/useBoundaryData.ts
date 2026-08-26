@@ -31,6 +31,16 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = {
 	superOutputArea: { 2011: null },
 };
 
+// Filtered feature arrays retain references to the loaded geometry, but can still
+// add up when every visited location is kept indefinitely. Keep the most recent
+// locations only, and scope each cache to its raw boundary payload so a reload
+// cannot return stale data.
+const LOCATION_BOUNDARY_CACHE_LIMIT = 20;
+const filteredBoundaryDataCache = new WeakMap<
+	BoundaryData,
+	Map<string, BoundaryData>
+>();
+
 const BOUNDARY_MAPPINGS_URL = withCDN(
 	"/data/precompiled/boundary-mappings.json",
 );
@@ -109,6 +119,44 @@ const filterBoundaryGroup = (
 	}
 
 	return filtered;
+};
+
+export const getCachedFilteredBoundaryData = (
+	rawData: BoundaryData,
+	location: string | null,
+	getLadForWard?: (wardCode: string) => string | undefined,
+): BoundaryData => {
+	let cache = filteredBoundaryDataCache.get(rawData);
+	if (!cache) {
+		cache = new Map();
+		filteredBoundaryDataCache.set(rawData, cache);
+	}
+
+	const cacheKey = location ?? "";
+	const cached = cache.get(cacheKey);
+	if (cached) {
+		// Refresh the entry so the map acts as a least-recently-used cache.
+		cache.delete(cacheKey);
+		cache.set(cacheKey, cached);
+		return cached;
+	}
+
+	const filteredData: BoundaryData = {
+		ward: filterBoundaryGroup(rawData.ward, "ward", location, getLadForWard),
+		constituency: filterBoundaryGroup(rawData.constituency, "constituency", location),
+		localAuthority: filterBoundaryGroup(rawData.localAuthority, "localAuthority", location),
+		lsoa: filterBoundaryGroup(rawData.lsoa, "lsoa", location),
+		dataZone: filterBoundaryGroup(rawData.dataZone, "dataZone", location),
+		superOutputArea: filterBoundaryGroup(rawData.superOutputArea, "superOutputArea", location),
+	};
+
+	if (cache.size >= LOCATION_BOUNDARY_CACHE_LIMIT) {
+		const oldestKey = cache.keys().next().value;
+		if (oldestKey !== undefined) cache.delete(oldestKey);
+	}
+	cache.set(cacheKey, filteredData);
+
+	return filteredData;
 };
 
 const extractCodeSets = (
@@ -366,14 +414,7 @@ export function useBoundaryData(
 
 	const filteredData = useMemo<BoundaryData>(() => {
 		if (isLoading || !rawData.ward[2024]) return EMPTY_BOUNDARY_DATA;
-		return {
-			ward: filterBoundaryGroup(rawData.ward, "ward", loc, getLadForWard),
-			constituency: filterBoundaryGroup(rawData.constituency, "constituency", loc),
-			localAuthority: filterBoundaryGroup(rawData.localAuthority, "localAuthority", loc),
-			lsoa: filterBoundaryGroup(rawData.lsoa, "lsoa", loc),
-			dataZone: filterBoundaryGroup(rawData.dataZone, "dataZone", loc),
-			superOutputArea: filterBoundaryGroup(rawData.superOutputArea, "superOutputArea", loc),
-		};
+		return getCachedFilteredBoundaryData(rawData, loc, getLadForWard);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rawData, loc]);
 
