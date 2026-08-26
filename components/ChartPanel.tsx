@@ -250,6 +250,7 @@ function ChartPanelContent({
                   roadSafetyDatasets={roadSafetyDatasets}
                   activeViz={activeViz}
                   setActiveViz={setActiveViz}
+                  location={location}
                 />
                 <CustomSection
                   customDatasets={customDatasets}
