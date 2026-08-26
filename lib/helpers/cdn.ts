@@ -1,4 +1,4 @@
-const CDN_REPOSITORY = "tom-draper/uk-data-explorer";
+const CDN_REPOSITORY = "tom-draper/uk-data-atlas";
 
 export const withCDN = (path: string) => {
 	if (process.env.NODE_ENV === "production") {
