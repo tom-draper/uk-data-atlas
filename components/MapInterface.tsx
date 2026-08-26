@@ -215,14 +215,17 @@ export default function MapInterface({
 		const bounds = gazetteer.boundsOf(location);
 		if (!map.current || !bounds) return;
 
-		setSelectedLocation(location);
-
-		requestAnimationFrame(() => {
-			map.current?.fitBounds(bounds, {
-				padding: MAP_CONFIG.fitBoundsPadding,
-				duration: MAP_CONFIG.fitBoundsDuration,
-			});
+		// Start the camera transition before the location change re-renders the
+		// panel and refreshes point data; otherwise that work can delay the first
+		// animation frame and make the move appear instantaneous.
+		map.current.fitBounds(bounds, {
+			padding: MAP_CONFIG.fitBoundsPadding,
+			duration: MAP_CONFIG.fitBoundsDuration,
+			// A deliberate location selection should retain its spatial context even
+			// when the browser has a reduced-motion preference.
+			essential: true,
 		});
+		setSelectedLocation(location);
 	};
 
 	const handleZoomIn = () => {
