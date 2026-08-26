@@ -33,6 +33,7 @@ import { loadGeneralElection } from "../lib/data/election/general-election/load"
 import { loadLocalElection } from "../lib/data/election/local-election/load";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
+import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -98,6 +99,7 @@ async function main() {
 		loadLocalElection(read).then((d) => out("local-election", d)),
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
 		loadGazetteerCore(read).then((d) => out("gazetteer.core", d)),
+		loadBoundaryMappings(read).then((d) => out("boundary-mappings", d)),
 	]);
 
 	const failures = results.filter(
