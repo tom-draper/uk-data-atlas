@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
-
+import packageJson from "../package.json";
 
 export default function TitlePane() {
 	const isDark = useIsDark();
@@ -35,7 +35,9 @@ export default function TitlePane() {
 				</a>
 				<h1 className={`font-semibold text-[15px] ${t.heading}`}>
 					UK Data Atlas
-					<span className={`ml-2 text-[10px] font-normal align-middle ${t.textMuted}`}>v0.1.5</span>
+					<span className={`ml-2 text-[10px] font-normal align-middle ${t.textMuted}`}>
+						v{packageJson.version}
+					</span>
 				</h1>
 			</div>
 		</div>
