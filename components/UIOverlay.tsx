@@ -16,7 +16,6 @@ import { MapOptions } from "@/lib/types/mapOptions";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { PanelContext } from "@/lib/context/PanelContext";
-import { ThemeProvider } from "@/lib/context/ThemeContext";
 import { ExcludedCategoriesContext } from "@/lib/context/ExcludedCategoriesContext";
 
 interface UIOverlayProps {
@@ -204,8 +203,7 @@ export default function UIOverlay({
 	const isDark = mapOptions.baseStyle.id === "darkMatter";
 
 	return (
-		<ThemeProvider value={isDark}>
-			<PanelContext.Provider value={panelContextValue}>
+		<PanelContext.Provider value={panelContextValue}>
 				<div className="fixed inset-0 z-50 size-full pointer-events-none">
 					{/* Desktop layout */}
 					<div className="hidden md:flex absolute left-0 h-full">
@@ -306,7 +304,6 @@ export default function UIOverlay({
 						</button>
 					</div>
 				</div>
-			</PanelContext.Provider>
-		</ThemeProvider>
+		</PanelContext.Provider>
 	);
 }

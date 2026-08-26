@@ -262,6 +262,7 @@ export class MapManager {
 		dataset: CustomDataset,
 		mapOptions: MapOptions,
 		bounds: [number, number, number, number] | null = null,
+		isDark = false,
 	): void {
 		const excludedValues = new Set(
 			mapOptions.custom.excludedPointValues ?? [],
@@ -309,7 +310,7 @@ export class MapManager {
 			mapOptions.theme.id,
 			dataset.pointStyle?.radius,
 			dataset.pointStyle?.tooltip,
-			mapOptions.baseStyle.id === "darkMatter",
+			isDark,
 		);
 		this.layerManager.clearBoundaryData();
 	}

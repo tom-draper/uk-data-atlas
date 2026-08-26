@@ -111,6 +111,7 @@ export function useMapUpdates({
 				activeDataset,
 				mapOptions,
 				gazetteer.boundsOf(selectedLocation) ?? null,
+				isDark,
 			);
 		} else {
 			mapManager.clearCustomPoints();
@@ -121,6 +122,7 @@ export function useMapUpdates({
 		mapOptions.custom,
 		mapOptions.theme.id,
 		mapOptions.visibility,
+		isDark,
 		styleReady,
 		selectedLocation,
 	]);
