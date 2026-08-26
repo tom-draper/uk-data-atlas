@@ -4,6 +4,7 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz } from "@lib/types";
 import { CustomDataset } from "@/lib/types/custom";
 import { gazetteer } from "@/lib/data/gazetteer/static";
+import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 import { rgbToHex } from "@/lib/helpers/colorScale/interpolation";
 import {
 	useCardAccent,
@@ -49,16 +50,7 @@ function RoadSafetyCard({
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const points = useMemo(() => {
-		const allPoints = dataset.points ?? [];
-		const bounds = gazetteer.boundsOf(location);
-		if (!bounds) return allPoints;
-		return allPoints.filter(
-			(point) =>
-				point.lng >= bounds[0] &&
-				point.lng <= bounds[2] &&
-				point.lat >= bounds[1] &&
-				point.lat <= bounds[3],
-		);
+		return getPointsInBounds(dataset.points ?? [], gazetteer.boundsOf(location));
 	}, [dataset.points, location]);
 	const hasData = points.length > 0;
 	const locationLabel = location === "United Kingdom" ? "Great Britain" : location;
