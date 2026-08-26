@@ -21,7 +21,7 @@ describe("withCDN", () => {
 		const { withCDN } = await import("@/lib/helpers/cdn");
 
 		expect(withCDN("/data/precompiled/population.json")).toBe(
-			"https://cdn.jsdelivr.net/gh/tom-draper/uk-data-explorer@v0.1.6/data/precompiled/population.json",
+			"https://cdn.jsdelivr.net/gh/tom-draper/uk-data-atlas@v0.1.6/data/precompiled/population.json",
 		);
 	});
 });
