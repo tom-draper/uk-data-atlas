@@ -24,6 +24,7 @@ import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { BASE_MAP_STYLES } from "@/lib/config/baseMapStyles";
 import { gazetteer } from "@lib/data/gazetteer/static";
+import { ThemeProvider } from "@/lib/context/ThemeContext";
 import maplibregl from "maplibre-gl";
 
 interface MapInterfaceProps {
@@ -286,41 +287,43 @@ export default function MapInterface({
 	const chartsLoading = boundariesLoading || !mapManager;
 
 	return (
-		<div className="relative w-full h-screen">
-			{!mapOptions.visibility.hideOverlay && (
-				<UIOverlay
-					selectedLocation={selectedLocation}
-					selectedArea={selectedArea}
-					boundaryData={boundaryData}
-					boundaryCodes={boundaryCodes}
-					mapOptions={mapOptions}
-					codeMapper={codeMapper}
-					onMapOptionsChange={handleMapOptionsChange}
-					onLocationClick={handleLocationClick}
-					onZoomIn={handleZoomIn}
-					onZoomOut={handleZoomOut}
+		<ThemeProvider value={mapOptions.baseStyle.id === "darkMatter"}>
+			<div className="relative w-full h-screen">
+				{!mapOptions.visibility.hideOverlay && (
+					<UIOverlay
+						selectedLocation={selectedLocation}
+						selectedArea={selectedArea}
+						boundaryData={boundaryData}
+						boundaryCodes={boundaryCodes}
+						mapOptions={mapOptions}
+						codeMapper={codeMapper}
+						onMapOptionsChange={handleMapOptionsChange}
+						onLocationClick={handleLocationClick}
+						onZoomIn={handleZoomIn}
+						onZoomOut={handleZoomOut}
+						activeDataset={activeDataset}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+						mapManager={mapManager}
+						chartsLoading={chartsLoading}
+						datasets={normalizedDatasets}
+						customDatasets={customDatasets}
+						addCustomDataset={addCustomDataset}
+						roadSafetyDatasets={roadSafetyDatasets}
+						onExport={handleExport}
+					/>
+				)}
+				<MapView
 					activeDataset={activeDataset}
 					activeViz={activeViz}
-					setActiveViz={setActiveViz}
+					geojson={geojson}
 					mapManager={mapManager}
-					chartsLoading={chartsLoading}
-					datasets={normalizedDatasets}
-					customDatasets={customDatasets}
-					addCustomDataset={addCustomDataset}
-					roadSafetyDatasets={roadSafetyDatasets}
-					onExport={handleExport}
+					mapOptions={mapOptions}
+					handleMapContainer={handleMapContainer}
+					styleReady={styleReady}
+					selectedLocation={selectedLocation}
 				/>
-			)}
-			<MapView
-				activeDataset={activeDataset}
-				activeViz={activeViz}
-				geojson={geojson}
-				mapManager={mapManager}
-				mapOptions={mapOptions}
-				handleMapContainer={handleMapContainer}
-				styleReady={styleReady}
-				selectedLocation={selectedLocation}
-			/>
-		</div>
+			</div>
+		</ThemeProvider>
 	);
 }
