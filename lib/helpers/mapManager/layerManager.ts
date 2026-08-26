@@ -1,4 +1,5 @@
 // lib/utils/mapManager/layerManager.ts
+import maplibregl from "maplibre-gl";
 import { BoundaryGeojson } from "@lib/types/geometry";
 import { Party, PartyCode } from "@lib/types/common";
 import {
@@ -12,6 +13,7 @@ import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";
 import { getPercentageColorExpression } from "../colorScale/datasetColors";
 import { buildHeatmapColorRamp } from "../colorScale/themes";
 import { DEFAULT_COLOR } from "./featureBuilder";
+import type { PointTooltip } from "@/lib/types/custom";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
@@ -34,6 +36,10 @@ type FillPaintConfig = {
 
 export class LayerManager {
 	private lastFillPaint: FillPaintConfig | null = null;
+	private pointTooltip: PointTooltip | undefined;
+	private pointTooltipDark = false;
+	private pointTooltipHandlersAttached = false;
+	private pointPopup: maplibregl.Popup | null = null;
 
 	constructor(private map: maplibregl.Map) {}
 
@@ -251,6 +257,8 @@ export class LayerManager {
 		visibility: MapOptions["visibility"],
 		themeId: string,
 		radius: { min: number; max: number } = { min: 3, max: 7 },
+		tooltip?: PointTooltip,
+		isDark = false,
 	): void {
 		if (!this.map.isStyleLoaded()) return;
 
@@ -320,6 +328,15 @@ export class LayerManager {
 			10,
 			radius.max,
 		]);
+		this.pointTooltip = tooltip;
+		this.pointTooltipDark = isDark;
+		this.pointPopup?.removeClassName("atlas-point-popup--dark");
+		if (isDark) this.pointPopup?.addClassName("atlas-point-popup--dark");
+		if (tooltip?.fields.length) {
+			this.addPointTooltipHandlers();
+		} else {
+			this.removePointTooltipHandlers();
+		}
 
 		const o = visibility.overlayOpacity ?? 0.6;
 		const circleMax = visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3);
@@ -354,6 +371,7 @@ export class LayerManager {
 	}
 
 	clearPointLayers(): void {
+		this.removePointTooltipHandlers();
 		if (this.map.getLayer(POINT_LAYER_ID))
 			this.map.removeLayer(POINT_LAYER_ID);
 		if (this.map.getLayer(HEAT_LAYER_ID))
@@ -361,6 +379,71 @@ export class LayerManager {
 		if (this.map.getSource(POINT_SOURCE_ID))
 			this.map.removeSource(POINT_SOURCE_ID);
 	}
+
+	private addPointTooltipHandlers(): void {
+		if (this.pointTooltipHandlersAttached) return;
+		this.map.on("mouseenter", POINT_LAYER_ID, this.handlePointMouseEnter as any);
+		this.map.on("mouseleave", POINT_LAYER_ID, this.handlePointMouseLeave as any);
+		this.pointTooltipHandlersAttached = true;
+	}
+
+	private removePointTooltipHandlers(): void {
+		if (!this.pointTooltipHandlersAttached) return;
+		this.map.off("mouseenter", POINT_LAYER_ID, this.handlePointMouseEnter as any);
+		this.map.off("mouseleave", POINT_LAYER_ID, this.handlePointMouseLeave as any);
+		this.pointTooltipHandlersAttached = false;
+		this.pointTooltip = undefined;
+		this.pointTooltipDark = false;
+		this.pointPopup?.remove();
+	}
+
+	private handlePointMouseEnter = (event: any): void => {
+		if (this.map.getZoom() < FADE_MAX_ZOOM || !this.pointTooltip) return;
+		const properties = event.features?.[0]?.properties as
+			| Record<string, string | number>
+			| undefined;
+		if (!properties) return;
+
+		this.map.getCanvas().style.cursor = "pointer";
+		const content = document.createElement("div");
+		content.className = "atlas-point-popup__body";
+		const heading = document.createElement("p");
+		heading.className = "atlas-point-popup__heading";
+		heading.textContent = this.pointTooltip.title;
+		content.appendChild(heading);
+
+		this.pointTooltip.fields.forEach((field, index) => {
+			const value = properties[`detail${index}`];
+			if (value === undefined || value === "") return;
+			const row = document.createElement("div");
+			row.className = "atlas-point-popup__row";
+			const label = document.createElement("span");
+			label.className = "atlas-point-popup__label";
+			label.textContent = field;
+			const detail = document.createElement("span");
+			detail.className = "atlas-point-popup__value";
+			detail.textContent = String(value);
+			row.append(label, detail);
+			content.appendChild(row);
+		});
+
+		if (!this.pointPopup) {
+			this.pointPopup = new maplibregl.Popup({
+				closeButton: false,
+				closeOnClick: false,
+				offset: 8,
+			}).addClassName("atlas-point-popup");
+			if (this.pointTooltipDark) {
+				this.pointPopup.addClassName("atlas-point-popup--dark");
+			}
+		}
+		this.pointPopup.setLngLat(event.lngLat).setDOMContent(content).addTo(this.map);
+	};
+
+	private handlePointMouseLeave = (): void => {
+		this.map.getCanvas().style.cursor = "";
+		this.pointPopup?.remove();
+	};
 
 	// Blanks the choropleth fill/line without tearing the source down — used when
 	// switching to a point dataset so stale boundary data doesn't linger beneath.

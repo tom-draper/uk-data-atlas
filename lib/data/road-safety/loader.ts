@@ -9,6 +9,25 @@ const SOURCE =
 // DfT collision severity: 1 = Fatal, 2 = Serious, 3 = Slight. We invert it into a
 // point "value" so the most severe collisions map to the top of the colour scale.
 const SEVERITY_WEIGHT: Record<string, number> = { "1": 3, "2": 2, "3": 1 };
+const SEVERITY_LABEL: Record<string, string> = {
+	"1": "Fatal",
+	"2": "Serious",
+	"3": "Slight",
+};
+const ROAD_TYPE: Record<string, string> = {
+	"1": "Roundabout",
+	"2": "One-way street",
+	"3": "Dual carriageway",
+	"6": "Single carriageway",
+	"7": "Slip road",
+	"9": "Unknown",
+	"12": "One-way street / slip road",
+};
+const AREA_TYPE: Record<string, string> = {
+	"1": "Urban",
+	"2": "Rural",
+	"3": "Unallocated",
+};
 
 // These are categories rather than a continuous measure, so keep their visual
 // treatment consistent regardless of the selected choropleth colour theme.
@@ -19,6 +38,18 @@ const SEVERITY_STYLE = {
 		{ value: 2, label: "Serious" },
 		{ value: 1, label: "Slight" },
 	],
+	tooltip: {
+		title: "Road collision",
+		fields: [
+			"Severity",
+			"When",
+			"Casualties",
+			"Vehicles",
+			"Speed limit",
+			"Road type",
+			"Area",
+		],
+	},
 	radius: { min: 1.5, max: 3.5 },
 };
 
@@ -39,8 +70,25 @@ export async function loadRoadSafety(
 		const lat = parseFloat(row["latitude"]);
 		if (!Number.isFinite(lng) || !Number.isFinite(lat)) continue;
 
-		const value = SEVERITY_WEIGHT[row["collision_severity"]?.trim()] ?? 1;
-		points.push({ lng: round5(lng), lat: round5(lat), value });
+		const severityCode = row["collision_severity"]?.trim() ?? "3";
+		const value = SEVERITY_WEIGHT[severityCode] ?? 1;
+		const speedLimit = row["speed_limit"]?.trim();
+		points.push({
+			lng: round5(lng),
+			lat: round5(lat),
+			value,
+			details: [
+				SEVERITY_LABEL[severityCode] ?? "Slight",
+				`${row.date?.trim() || "Not recorded"} at ${row.time?.trim() || "unknown time"}`,
+				row["number_of_casualties"]?.trim() || "Not recorded",
+				row["number_of_vehicles"]?.trim() || "Not recorded",
+				speedLimit && speedLimit !== "-1"
+					? `${speedLimit} mph`
+					: "Not recorded",
+				ROAD_TYPE[row["road_type"]?.trim()] ?? "Not recorded",
+				AREA_TYPE[row["urban_or_rural_area"]?.trim()] ?? "Not recorded",
+			],
+		});
 	}
 
 	const dataset: CustomDataset = {
