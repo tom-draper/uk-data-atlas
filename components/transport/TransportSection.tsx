@@ -1,8 +1,10 @@
 "use client";
+import { useMemo } from "react";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { ActiveViz } from "@lib/types";
 import { CustomDataset } from "@/lib/types/custom";
 import { getColor } from "@/lib/helpers/colorScale/themes";
+import { gazetteer } from "@/lib/data/gazetteer/static";
 import {
 	useCardAccent,
 	cardClass,
@@ -18,15 +20,29 @@ function RoadSafetyCard({
 	dataset,
 	isActive,
 	setActiveViz,
+	location,
 }: {
 	dataset: CustomDataset;
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
+	location: string;
 }) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const points = dataset.points ?? [];
+	const points = useMemo(() => {
+		const allPoints = dataset.points ?? [];
+		const bounds = gazetteer.boundsOf(location);
+		if (!bounds) return allPoints;
+		return allPoints.filter(
+			(point) =>
+				point.lng >= bounds[0] &&
+				point.lng <= bounds[2] &&
+				point.lat >= bounds[1] &&
+				point.lat <= bounds[3],
+		);
+	}, [dataset.points, location]);
 	const hasData = points.length > 0;
+	const locationLabel = location === "United Kingdom" ? "Great Britain" : location;
 	const averageSeverity = hasData
 		? points.reduce((total, point) => total + point.value, 0) / points.length
 		: 0;
@@ -60,7 +76,7 @@ function RoadSafetyCard({
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
 				>
-					Great Britain
+					{locationLabel}
 				</span>
 			</div>
 
@@ -119,10 +135,12 @@ export default function TransportSection({
 	roadSafetyDatasets,
 	activeViz,
 	setActiveViz,
+	location,
 }: {
 	roadSafetyDatasets: CustomDataset[];
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
+	location: string;
 }) {
 	const isDark = useIsDark();
 
@@ -147,6 +165,7 @@ export default function TransportSection({
 							activeViz.vizId === ds.id
 						}
 						setActiveViz={setActiveViz}
+						location={location}
 					/>
 				))}
 			</div>
