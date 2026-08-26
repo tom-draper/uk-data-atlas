@@ -5,7 +5,7 @@
  * Run via: pnpm precompile
  * Also runs automatically before pnpm dev and pnpm build.
  */
-import { readFile, mkdir, writeFile } from "fs/promises";
+import { readFile, mkdir, rename, writeFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
@@ -60,12 +60,18 @@ const readZip = (path: string): Promise<string> => {
 	);
 };
 
+const writeAtomically = async (path: string, contents: string) => {
+	const temporaryPath = `${path}.${process.pid}.tmp`;
+	await writeFile(temporaryPath, contents);
+	await rename(temporaryPath, path);
+};
+
 const out = async (name: string, data: unknown) => {
 	const json = JSON.stringify(data);
 	// Committed source of truth (pushed to the CDN repo) + gitignored copy the
 	// local dev/build server serves from public/.
-	await writeFile(join(OUT_DIR, `${name}.json`), json);
-	await writeFile(join(PUBLIC_OUT_DIR, `${name}.json`), json);
+	await writeAtomically(join(OUT_DIR, `${name}.json`), json);
+	await writeAtomically(join(PUBLIC_OUT_DIR, `${name}.json`), json);
 	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
 	console.log(`  precompiled: ${name}.json (${kb} KB)`);
 };
