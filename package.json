@@ -10,6 +10,7 @@
     "format": "prettier --write \"**/*.{ts,tsx}\" --use-tabs --tab-width 4",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:e2e": "playwright test",
     "profile:atlas": "node scripts/profile-atlas-memory.mjs",
     "doctor": "npx react-doctor@latest"
   },
@@ -23,6 +24,7 @@
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/geojson": "^7946.0.16",
     "@types/node": "^26.2.0",

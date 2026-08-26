@@ -19,6 +19,7 @@ export function renderCategoryLegend(
 					<button
 						type="button"
 						key={item.id}
+						data-testid={`category-legend-${item.id}`}
 						onClick={() => onItemClick(item.id)}
 						onContextMenu={(e) => {
 							e.preventDefault();
