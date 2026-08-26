@@ -1056,6 +1056,10 @@ export class MapManager {
 		this.layerManager.setBorderVisibility(hidden);
 	}
 
+	updateVisibility(visibility: MapOptions["visibility"]): void {
+		this.layerManager.updateVisibility(visibility);
+	}
+
 	destroy(): void {
 		this.eventHandler.destroy();
 		propCache.clear(); // Clean up cache on destroy

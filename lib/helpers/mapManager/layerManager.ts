@@ -29,10 +29,12 @@ const EMPTY_FC = { type: "FeatureCollection", features: [] } as const;
 
 type FillPaintConfig = {
 	color: any;
-	opacity: number | any[];
+	opacity: (overlayOpacity: number) => number | any[];
 };
 
 export class LayerManager {
+	private lastFillPaint: FillPaintConfig | null = null;
+
 	constructor(private map: maplibregl.Map) {}
 
 	updateElectionLayers(
@@ -46,16 +48,15 @@ export class LayerManager {
 		});
 		colorExpression.push("#cccccc");
 
-		const o = visibility.overlayOpacity ?? 0.6;
 		this.updateLayers(
 			geojson,
 			{
 				color: colorExpression,
-				opacity: [
+				opacity: (opacity) => [
 					"case",
 					["boolean", ["feature-state", "hover"], false],
-					o * 0.58,
-					o,
+					opacity * 0.58,
+					opacity,
 				],
 			},
 			visibility,
@@ -81,7 +82,7 @@ export class LayerManager {
 			geojson,
 			{
 				color: fillColorExpression,
-				opacity: visibility.overlayOpacity ?? 0.6,
+				opacity: (opacity) => opacity,
 			},
 			visibility,
 		);
@@ -100,16 +101,15 @@ export class LayerManager {
 		// Fallback color for 'NONE' or missing data
 		colorExpression.push("#cccccc");
 
-		const o = visibility.overlayOpacity ?? 0.6;
 		this.updateLayers(
 			geojson,
 			{
 				color: colorExpression,
-				opacity: [
+				opacity: (opacity) => [
 					"case",
 					["boolean", ["feature-state", "hover"], false],
-					o * 0.58,
-					o,
+					opacity * 0.58,
+					opacity,
 				],
 			},
 			visibility,
@@ -135,7 +135,7 @@ export class LayerManager {
 			geojson,
 			{
 				color: fillColorExpression,
-				opacity: visibility.overlayOpacity ?? 0.6,
+				opacity: (opacity) => opacity,
 			},
 			visibility,
 		);
@@ -145,16 +145,15 @@ export class LayerManager {
 		geojson: BoundaryGeojson,
 		visibility: MapOptions["visibility"],
 	): void {
-		const o = visibility.overlayOpacity ?? 0.6;
 		this.updateLayers(
 			geojson,
 			{
 				color: ["get", "color"],
-				opacity: [
+				opacity: (opacity) => [
 					"case",
 					["boolean", ["feature-state", "hover"], false],
-					o * 0.58,
-					o,
+					opacity * 0.58,
+					opacity,
 				],
 			},
 			visibility,
@@ -166,44 +165,18 @@ export class LayerManager {
 		paint: FillPaintConfig,
 		visibility: MapOptions["visibility"],
 	): void {
+		this.lastFillPaint = paint;
 		const styleLoaded = this.map.isStyleLoaded();
 		const sourceExists = !!this.map.getSource(SOURCE_ID);
 		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
 		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
 		if (!styleLoaded) return;
 
-		const overlayOpacity = visibility.overlayOpacity ?? 0.6;
-
-		let fillColor: any;
-		let fillOpacity: any;
-		let lineColor: string;
-		let lineOpacity: any;
-
-		if (visibility.hideBoundaryLayer) {
-			fillColor = "transparent";
-			fillOpacity = 0;
-			lineColor = "transparent";
-			lineOpacity = 0;
-		} else if (visibility.hideDataLayer) {
-			fillColor = DEFAULT_COLOR;
-			fillOpacity = overlayOpacity;
-			lineColor = "#000";
-			lineOpacity = visibility.hideBorders ? 0 : 0.05;
-		} else {
-			fillColor = paint.color;
-			fillOpacity = paint.opacity;
-			lineColor = "#000";
-			lineOpacity = visibility.hideBorders ? 0 : 0.05;
-		}
-
 		if (sourceExists && fillLayerExists && lineLayerExists) {
 			// Update source data in-place to avoid remove/add flash
 			const src = this.map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource;
 			src.setData(geojson as any);
-			this.map.setPaintProperty(FILL_LAYER_ID, "fill-color", fillColor);
-			this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity);
-			this.map.setPaintProperty(LINE_LAYER_ID, "line-color", lineColor);
-			this.map.setPaintProperty(LINE_LAYER_ID, "line-opacity", lineOpacity);
+			this.applyVisibility(visibility);
 			return;
 		}
 
@@ -216,8 +189,8 @@ export class LayerManager {
 			type: "fill",
 			source: SOURCE_ID,
 			paint: {
-				"fill-color": fillColor,
-				"fill-opacity": fillOpacity,
+				"fill-color": DEFAULT_COLOR,
+				"fill-opacity": 0,
 			},
 		});
 
@@ -226,11 +199,49 @@ export class LayerManager {
 			type: "line",
 			source: SOURCE_ID,
 			paint: {
-				"line-color": lineColor,
+				"line-color": "#000",
 				"line-width": 1,
-				"line-opacity": lineOpacity as any,
+				"line-opacity": 0,
 			},
 		});
+		this.applyVisibility(visibility);
+	}
+
+	updateVisibility(visibility: MapOptions["visibility"]): void {
+		if (!this.map.isStyleLoaded() || !this.lastFillPaint) return;
+		this.applyVisibility(visibility);
+	}
+
+	private applyVisibility(visibility: MapOptions["visibility"]): void {
+		if (!this.lastFillPaint) return;
+		if (!this.map.getLayer(FILL_LAYER_ID) || !this.map.getLayer(LINE_LAYER_ID))
+			return;
+
+		const overlayOpacity = visibility.overlayOpacity ?? 0.6;
+		const hidden = visibility.hideBoundaryLayer;
+		const fillColor = hidden
+			? "transparent"
+			: visibility.hideDataLayer
+				? DEFAULT_COLOR
+				: this.lastFillPaint.color;
+		const fillOpacity = hidden
+			? 0
+			: visibility.hideDataLayer
+				? overlayOpacity
+				: this.lastFillPaint.opacity(overlayOpacity);
+
+		this.map.setPaintProperty(FILL_LAYER_ID, "fill-color", fillColor);
+		this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity);
+		this.map.setPaintProperty(
+			LINE_LAYER_ID,
+			"line-color",
+			hidden ? "transparent" : "#000",
+		);
+		this.map.setPaintProperty(
+			LINE_LAYER_ID,
+			"line-opacity",
+			hidden || visibility.hideBorders ? 0 : 0.05,
+		);
 	}
 
 	// --- Custom point datasets (coordinates / postcodes) ---
