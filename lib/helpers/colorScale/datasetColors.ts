@@ -18,6 +18,7 @@ import type {
 	ClaimantCountOptions,
 	NHSWaitingOptions,
 	UnemploymentOptions,
+	ChildPovertyOptions,
 } from "@/lib/types/mapOptions";
 import { normalizeValue, hexToRgb } from "./interpolation";
 import { getThemeColor } from "./themes";
@@ -215,6 +216,14 @@ export function getColorForUnemployment(
 	return colorFromRange(rate, options, themeId, true);
 }
 
+export function getColorForChildPoverty(
+	rate: number,
+	options: ChildPovertyOptions,
+	themeId = "viridis",
+) {
+	return colorFromRange(rate, options, themeId, true);
+}
+
 export function getColorForNHSWaiting(
 	pct: number,
 	options: NHSWaitingOptions,
@@ -264,4 +273,3 @@ export function getPercentageColorExpression(
 		],
 	];
 }
-

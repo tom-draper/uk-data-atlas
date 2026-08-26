@@ -312,6 +312,16 @@ export default function LegendContent({
 				(v) => `${v.toFixed(1)}%`,
 			);
 
+		case "childPoverty":
+			return renderDynamicLegend(
+				"childPoverty",
+				0,
+				60,
+				10,
+				35,
+				(v) => `${v.toFixed(0)}% children`,
+			);
+
 		case "custom":
 			if (
 				activeDataset.kind === "points" &&

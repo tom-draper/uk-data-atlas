@@ -49,6 +49,7 @@ import { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
 import { ClaimantCountDataset } from "@/lib/types/claimantCount";
 import { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
 import { UnemploymentDataset } from "@/lib/types/unemployment";
+import { ChildPovertyDataset } from "@/lib/types/childPoverty";
 import {
 	getColorForLifeExpectancy,
 	getColorForQualification,
@@ -56,6 +57,7 @@ import {
 	getColorForClaimantCount,
 	getColorForNHSWaiting,
 	getColorForUnemployment,
+	getColorForChildPoverty,
 } from "../colorScale/datasetColors";
 
 export const DEFAULT_COLOR = "#cccccc";
@@ -624,6 +626,20 @@ export class FeatureBuilder {
 			const rate = dataset.data[code]?.rates[dataset.latestYear];
 			return rate != null
 				? getColorForUnemployment(rate, mapOptions.unemployment, mapOptions.theme.id)
+				: DEFAULT_COLOR;
+		});
+	}
+
+	buildChildPovertyFeatures(
+		features: Features,
+		dataset: ChildPovertyDataset,
+		ladCodeProp: PropertyKeys,
+		mapOptions: MapOptions,
+	): Features {
+		return this.buildColorFeatures(features, ladCodeProp, (code) => {
+			const rate = dataset.data[code]?.childPovertyRate;
+			return rate != null
+				? getColorForChildPoverty(rate, mapOptions.childPoverty, mapOptions.theme.id)
 				: DEFAULT_COLOR;
 		});
 	}

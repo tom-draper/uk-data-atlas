@@ -276,6 +276,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "childPoverty":
+					return mapManager.updateMapForChildPoverty(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "nhsWaiting":
 					return mapManager.updateMapForNHSWaiting(
 						geojson,
