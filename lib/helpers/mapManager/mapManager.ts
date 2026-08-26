@@ -33,6 +33,7 @@ import { ClaimantCountDataset } from "@/lib/types/claimantCount";
 import { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
 import { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
 import { UnemploymentDataset } from "@/lib/types/unemployment";
+import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
@@ -266,22 +267,12 @@ export class MapManager {
 			mapOptions.custom.excludedPointValues ?? [],
 		);
 		const selectedValue = mapOptions.custom.selectedPointValue;
-		const allPoints = (dataset.points ?? []).filter(
+		const locationPoints = getPointsInBounds(dataset.points ?? [], bounds);
+		const points = locationPoints.filter(
 			(point) =>
 				!excludedValues.has(point.value) &&
 				(selectedValue === undefined || point.value === selectedValue),
 		);
-		// Scope points to the selected location's bounding box (national views
-		// like "United Kingdom" cover everything, so nothing is filtered out).
-		const points = bounds
-			? allPoints.filter(
-					(p) =>
-						p.lng >= bounds[0] &&
-						p.lng <= bounds[2] &&
-						p.lat >= bounds[1] &&
-						p.lat <= bounds[3],
-				)
-			: allPoints;
 		if (points.length === 0) {
 			this.layerManager.clearPointLayers();
 			return;
