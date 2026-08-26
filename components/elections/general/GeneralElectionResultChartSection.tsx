@@ -51,6 +51,7 @@ const useElectionChartData = (
 		targetYear: number,
 	) => string | undefined,
 	excluded?: Set<string>,
+	selectedParty?: string,
 ) => {
 	return GENERAL_ELECTION_YEARS.map((year): ProcessedYearData => {
 			const dataset = availableDatasets[year];
@@ -134,8 +135,14 @@ const useElectionChartData = (
 				};
 			}
 
-			const filteredVotes = excluded?.size
-				? Object.fromEntries(Object.entries(rawPartyVotes).filter(([k]) => !excluded.has(k)))
+			const filteredVotes = excluded?.size || selectedParty
+				? Object.fromEntries(
+						Object.entries(rawPartyVotes).filter(
+							([party]) =>
+								!excluded?.has(party) &&
+								(!selectedParty || party === selectedParty),
+						),
+					)
 				: rawPartyVotes;
 			const partyData = processPartyVotes(
 				filteredVotes,
@@ -181,7 +188,7 @@ export default function GeneralElectionResultChartSection({
 	location,
 }: GeneralElectionResultChartSectionProps) {
 	const { visibility } = useChartVisibility();
-	const { excludedGeneralParties } = useExcludedCategories();
+	const { excludedGeneralParties, selectedGeneralParty } = useExcludedCategories();
 	const aggregatedData = useMemo(
 		() => aggregateDataset({ datasets: availableDatasets, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateGeneralElectionStats(g, d, loc, id) }, mapManager, boundaryData, location),
 		[availableDatasets, mapManager, boundaryData, location],
@@ -192,6 +199,7 @@ export default function GeneralElectionResultChartSection({
 		selectedArea,
 		codeMapper?.getCodeForYear,
 		excludedGeneralParties,
+		selectedGeneralParty,
 	);
 
 	const visibleYearData = yearData.filter(

@@ -1,6 +1,7 @@
 "use client";
 import { useMemo } from "react";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { ActiveViz } from "@lib/types";
 import { CustomDataset } from "@/lib/types/custom";
 import { gazetteer } from "@/lib/data/gazetteer/static";
@@ -49,9 +50,25 @@ function RoadSafetyCard({
 }) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+	const { excludedPointValues, selectedPointValue } = useExcludedCategories();
 	const points = useMemo(() => {
-		return getPointsInBounds(dataset.points ?? [], gazetteer.boundsOf(location));
-	}, [dataset.points, location]);
+		const locationPoints = getPointsInBounds(
+			dataset.points ?? [],
+			gazetteer.boundsOf(location),
+		);
+		if (!isActive) return locationPoints;
+		return locationPoints.filter(
+			(point) =>
+				!excludedPointValues.has(point.value) &&
+				(selectedPointValue === undefined || point.value === selectedPointValue),
+		);
+	}, [
+		dataset.points,
+		location,
+		isActive,
+		excludedPointValues,
+		selectedPointValue,
+	]);
 	const hasData = points.length > 0;
 	const locationLabel = location === "United Kingdom" ? "Great Britain" : location;
 	const averageSeverity = hasData
