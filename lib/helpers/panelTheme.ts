@@ -43,7 +43,7 @@ export function glassStyle(isDark: boolean): CSSProperties {
 		: {
 				// Lighter, more see-through tint while keeping text legible
 				background:
-					"linear-gradient(145deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.28) 35%, rgba(190,205,230,0.18) 100%)",
+					"linear-gradient(145deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.20) 35%, rgba(190,205,230,0.15) 100%)",
 				backdropFilter:
 					"blur(20px) saturate(170%) brightness(1.12) contrast(1.03)",
 				WebkitBackdropFilter:

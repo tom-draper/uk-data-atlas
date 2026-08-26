@@ -57,7 +57,7 @@ body {
   position: relative;
   isolation: isolate;
   min-width: 158px;
-  padding: 5px 7px;
+  padding: 3px 5px;
   font: 11px/1.35 ui-sans-serif, system-ui, sans-serif;
   color: #4b5563;
 }
@@ -73,7 +73,7 @@ body {
 }
 
 .atlas-point-popup__heading {
-  margin: 0 0 3px;
+  margin: 0 0 2px;
   font-size: 12px;
   font-weight: 600;
   color: #1f2937;
