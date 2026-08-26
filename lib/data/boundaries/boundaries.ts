@@ -165,6 +165,10 @@ const COUNTRY_PREFIXES: Record<string, string> = {
 
 const BOUNDARY_CACHE: Record<string, BoundaryGeojson> = {};
 const BOUNDARY_PENDING: Partial<Record<string, Promise<BoundaryGeojson>>> = {};
+const featureBoundsCache = new WeakMap<
+	object,
+	[number, number, number, number] | null
+>();
 
 /**
  * Find the first available property from a list of possible keys
@@ -187,27 +191,39 @@ const isFeatureInBounds = (
 	bounds: [number, number, number, number],
 ): boolean => {
 	const [west, south, east, north] = bounds;
+	let featureBounds = featureBoundsCache.get(feature);
+	if (featureBounds === undefined) {
+		if (!feature.geometry?.coordinates) {
+			featureBounds = null;
+		} else {
+			const flatCoords =
+				feature.geometry.type === "MultiPolygon"
+					? feature.geometry.coordinates.flat(2)
+					: feature.geometry.coordinates.flat(1);
 
-	if (!feature.geometry?.coordinates) return false;
+			let minX = Infinity,
+				minY = Infinity;
+			let maxX = -Infinity,
+				maxY = -Infinity;
 
-	const flatCoords =
-		feature.geometry.type === "MultiPolygon"
-			? feature.geometry.coordinates.flat(2)
-			: feature.geometry.coordinates.flat(1);
-
-	let minX = Infinity,
-		minY = Infinity;
-	let maxX = -Infinity,
-		maxY = -Infinity;
-
-	for (const [x, y] of flatCoords) {
-		minX = Math.min(minX, x);
-		maxX = Math.max(maxX, x);
-		minY = Math.min(minY, y);
-		maxY = Math.max(maxY, y);
+			for (const [x, y] of flatCoords) {
+				minX = Math.min(minX, x);
+				maxX = Math.max(maxX, x);
+				minY = Math.min(minY, y);
+				maxY = Math.max(maxY, y);
+			}
+			featureBounds = [minX, minY, maxX, maxY];
+		}
+		featureBoundsCache.set(feature, featureBounds);
 	}
 
-	return minX <= east && maxX >= west && minY <= north && maxY >= south;
+	return (
+		featureBounds !== null &&
+		featureBounds[0] <= east &&
+		featureBounds[2] >= west &&
+		featureBounds[1] <= north &&
+		featureBounds[3] >= south
+	);
 };
 
 /**
