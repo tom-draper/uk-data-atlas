@@ -29,9 +29,8 @@ export default function GlassOverlays({ isDark }: { isDark: boolean }) {
 					filter: `url(#${filterId})`,
 				}}
 			/>
-			{/* Soft radial glow at top-left */}
+			{/* Pane highlights disabled for now:
 			<div style={glassSpecular(isDark)} />
-			{/* Bright specular streak across the top edge, like light on a glass lip */}
 			<div
 				aria-hidden="true"
 				style={{
@@ -48,6 +47,7 @@ export default function GlassOverlays({ isDark }: { isDark: boolean }) {
 						: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 35%, transparent 100%)",
 				}}
 			/>
+			*/}
 			{/* SVG distortion filter definition */}
 			<svg className="absolute w-0 h-0" aria-hidden="true">
 				<defs>
