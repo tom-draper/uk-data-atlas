@@ -14,6 +14,8 @@ import {
 	buildConstituencyWardMappings,
 } from "./useCodeMapper";
 import type { CodeMapping, CodeType, YearCode } from "./useCodeMapper";
+import type { PrecompiledBoundaryMappings } from "../data/boundaries/mappings";
+import { withCDN } from "../helpers/cdn";
 
 const EMPTY_BOUNDARY_DATA: BoundaryData = {
 	ward: { 2024: null, 2023: null, 2022: null, 2021: null },
@@ -29,41 +31,49 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = {
 	superOutputArea: { 2011: null },
 };
 
-/**
- * Fetch all boundary files for a given type
- */
+const BOUNDARY_MAPPINGS_URL = withCDN(
+	"/data/precompiled/boundary-mappings.json",
+);
+let boundaryMappingsCache: PrecompiledBoundaryMappings | null = null;
+let boundaryMappingsPending: Promise<PrecompiledBoundaryMappings> | null = null;
+
+const fetchPrecompiledBoundaryMappings = (): Promise<PrecompiledBoundaryMappings> => {
+	if (boundaryMappingsCache) return Promise.resolve(boundaryMappingsCache);
+	if (boundaryMappingsPending) return boundaryMappingsPending;
+
+	boundaryMappingsPending = fetch(BOUNDARY_MAPPINGS_URL)
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(
+					`Failed to fetch boundary mappings: ${response.status} ${response.statusText}`,
+				);
+			}
+			return response.json() as Promise<PrecompiledBoundaryMappings>;
+		})
+		.then((mappings) => {
+			boundaryMappingsCache = mappings;
+			boundaryMappingsPending = null;
+			return mappings;
+		})
+		.catch((error) => {
+			boundaryMappingsPending = null;
+			throw error;
+		});
+
+	return boundaryMappingsPending;
+};
+
+/** Fetch all boundary files for a given type. */
 const fetchBoundaryGroup = async (
 	type: BoundaryType,
-	onMappingsExtracted?: (mappings: Record<string, string>) => void,
-	onLadWardMappingsExtracted?: (
-		year: YearCode,
-		mappings: Record<string, string[]>,
-	) => void,
-	onCrossYearMappings?: (type: CodeType, mappings: CodeMapping) => void,
 ): Promise<Record<number, BoundaryGeojson>> => {
 	const paths = GEOJSON_PATHS[type];
 	const years = Object.keys(paths).map(Number);
-
-	const allWardLadMappings: Record<string, string> = {};
-	const allLadWardMappings: Record<YearCode, Record<string, string[]>> = {};
 
 	const settled = await Promise.allSettled(
 		years.map(async (year) => {
 			const path = paths[year as keyof typeof paths];
 			const data = await fetchBoundaryFile(path);
-
-			if (type === "ward" && data.features?.length) {
-				const { wardToLad, ladToWards } = extractWardLadMappings(
-					data.features,
-					PROPERTY_KEYS.wardCode,
-					PROPERTY_KEYS.ladCode,
-				);
-				Object.assign(allWardLadMappings, wardToLad);
-				if (Object.keys(ladToWards).length > 0) {
-					allLadWardMappings[year] = ladToWards;
-				}
-			}
-
 			return [year, data] as const;
 		}),
 	);
@@ -78,30 +88,7 @@ const fetchBoundaryGroup = async (
 		.filter((r): r is PromiseFulfilledResult<readonly [number, BoundaryGeojson]> => r.status === "fulfilled")
 		.map((r) => r.value);
 
-	// Dispatch all ward-LAD mappings in a single call to avoid multiple state updates
-	if (onMappingsExtracted && Object.keys(allWardLadMappings).length > 0) {
-		onMappingsExtracted(allWardLadMappings);
-	}
-	for (const [year, mappings] of Object.entries(allLadWardMappings)) {
-		onLadWardMappingsExtracted?.(Number(year), mappings);
-	}
-
-	const groupedData = Object.fromEntries(results);
-
-	// Build cross-year mappings after all data is loaded
-	if (onCrossYearMappings) {
-		const crossYearMappings = buildCrossYearMappings(
-			groupedData,
-			type,
-			years,
-		);
-
-		if (Object.keys(crossYearMappings).length > 0) {
-			onCrossYearMappings(type, crossYearMappings);
-		}
-	}
-
-	return groupedData;
+	return Object.fromEntries(results);
 };
 
 /**
@@ -224,25 +211,21 @@ export function useBoundaryData(
 			setIsLoading(true);
 			setError(null);
 
+			const precompiledMappings = fetchPrecompiledBoundaryMappings().catch(
+				(error) => {
+					console.warn(
+						"[boundaries] Falling back to in-browser mapping generation:",
+						error,
+					);
+					return null;
+				},
+			);
+
 			Promise.all([
-				fetchBoundaryGroup(
-					"ward",
-					addWardLadMappings,
-					addLadWardMappings,
-					addCodeMappings,
-				),
-				fetchBoundaryGroup(
-					"constituency",
-					undefined,
-					undefined,
-					addCodeMappings,
-				),
-				fetchBoundaryGroup(
-					"localAuthority",
-					undefined,
-					undefined,
-					addCodeMappings,
-				),
+				precompiledMappings,
+				fetchBoundaryGroup("ward"),
+				fetchBoundaryGroup("constituency"),
+				fetchBoundaryGroup("localAuthority"),
 				fetchBoundaryGroup("lsoa").catch(
 					() => ({}) as Record<number, BoundaryGeojson>,
 				),
@@ -253,7 +236,7 @@ export function useBoundaryData(
 					() => ({}) as Record<number, BoundaryGeojson>,
 				),
 			])
-				.then(([wards, constituencies, localAuthorities, lsoas, dataZones, superOutputAreas]) => {
+				.then(([mappings, wards, constituencies, localAuthorities, lsoas, dataZones, superOutputAreas]) => {
 					if (!mounted) return;
 
 					startTransition(() => {
@@ -267,13 +250,69 @@ export function useBoundaryData(
 						});
 					});
 
-					// Build constituency->wards mappings for each (ward year, constituency year) pair.
-					// Building for ALL available constituency boundary years ensures that hovering
-					// on constituencies from any GE (2019, 2024, etc.) resolves directly without
-					// needing a cross-year constituency code lookup. Constituencies that were
-					// renamed or redrawn in 2024 have no PCON19CD→PCON24CD name mapping, so
-					// they'd return [] if we only indexed by PCON24CD.
-					if (addConstituencyWardMappings) {
+					if (mappings) {
+						addWardLadMappings?.(mappings.wardToLad);
+						for (const [year, ladMappings] of Object.entries(
+							mappings.ladToWards,
+						)) {
+							addLadWardMappings?.(Number(year), ladMappings);
+						}
+						addCodeMappings?.("ward", mappings.codeMappings.ward);
+						addCodeMappings?.(
+							"constituency",
+							mappings.codeMappings.constituency,
+						);
+						addCodeMappings?.(
+							"localAuthority",
+							mappings.codeMappings.localAuthority,
+						);
+						for (const [year, constituencyMappings] of Object.entries(
+							mappings.constituencyToWards,
+						)) {
+							addConstituencyWardMappings?.(
+								Number(year),
+								constituencyMappings,
+							);
+						}
+					} else {
+						// Preserve the existing behaviour if an older CDN revision does not
+						// yet contain the generated lookup file.
+						const wardToLad: Record<string, string> = {};
+						for (const [year, boundary] of Object.entries(wards)) {
+							const wardMappings = extractWardLadMappings(
+								boundary.features,
+								PROPERTY_KEYS.wardCode,
+								PROPERTY_KEYS.ladCode,
+							);
+							Object.assign(wardToLad, wardMappings.wardToLad);
+							addLadWardMappings?.(Number(year), wardMappings.ladToWards);
+						}
+						addWardLadMappings?.(wardToLad);
+						addCodeMappings?.(
+							"ward",
+							buildCrossYearMappings(
+								wards,
+								"ward",
+								Object.keys(wards).map(Number),
+							),
+						);
+						addCodeMappings?.(
+							"constituency",
+							buildCrossYearMappings(
+								constituencies,
+								"constituency",
+								Object.keys(constituencies).map(Number),
+							),
+						);
+						addCodeMappings?.(
+							"localAuthority",
+							buildCrossYearMappings(
+								localAuthorities,
+								"localAuthority",
+								Object.keys(localAuthorities).map(Number),
+							),
+						);
+
 						const constituencyEntries = Object.entries(constituencies)
 							.filter(([, conData]) => conData?.features);
 						// Only build for the latest ward year — ward highlighting always
@@ -289,7 +328,10 @@ export function useBoundaryData(
 								Object.assign(mergedMappings, mappings);
 							}
 							if (Object.keys(mergedMappings).length > 0) {
-								addConstituencyWardMappings(latestWardYear, mergedMappings);
+								addConstituencyWardMappings?.(
+									latestWardYear,
+									mergedMappings,
+								);
 							}
 						}
 					}
