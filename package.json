@@ -14,29 +14,29 @@
     "doctor": "npx react-doctor@latest"
   },
   "dependencies": {
-    "lucide-react": "^1.24.0",
+    "lucide-react": "^1.32.0",
     "maplibre-gl": "^5.24.0",
-    "next": "^16.2.11",
-    "papaparse": "^5.5.4",
+    "next": "^16.3.1",
+    "papaparse": "^5.6.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.2",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/geojson": "^7946.0.16",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.2.0",
     "@types/papaparse": "^5.5.2",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
     "@types/topojson-client": "^3.1.5",
     "babel-plugin-react-compiler": "^1.0.0",
-    "prettier": "^3.9.5",
-    "tailwindcss": "^4.3.2",
-    "tsx": "^4.23.0",
+    "prettier": "^3.9.6",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.12",
     "typescript": "^6.0.3",
-    "vite": "^8.1.4",
-    "vitest": "^4.1.10"
+    "vite": "^8.2.1",
+    "vitest": "^4.1.11"
   },
   "packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1"
 }
