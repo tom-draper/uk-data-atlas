@@ -19,6 +19,31 @@ function createMap() {
 }
 
 describe("LayerManager visibility updates", () => {
+	it("uses the configured marker size for a point dataset", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		const visibility = {
+			hideDataLayer: false,
+			hideBorders: false,
+			hideBoundaryLayer: false,
+			hideOverlay: false,
+			overlayOpacity: 0.6,
+		};
+
+		manager.updatePointLayers(
+			{ type: "FeatureCollection", features: [] },
+			visibility,
+			"viridis",
+			{ min: 1.5, max: 3.5 },
+		);
+
+		expect(map.setPaintProperty).toHaveBeenCalledWith(
+			"custom-points-circle",
+			"circle-radius",
+			["interpolate", ["linear"], ["zoom"], 6, 1.5, 10, 3.5],
+		);
+	});
+
 	it("does not re-upload boundary GeoJSON when only visibility changes", () => {
 		const map = createMap();
 		const manager = new LayerManager(map as any);

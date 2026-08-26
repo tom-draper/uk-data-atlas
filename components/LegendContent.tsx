@@ -20,6 +20,8 @@ interface LegendContentProps {
 	onPartyRightClick: (id: string) => void;
 	onEthnicityClick: (id: string) => void;
 	onEthnicityRightClick: (id: string) => void;
+	onPointLegendClick: (value: string) => void;
+	onPointLegendRightClick: (value: string) => void;
 }
 
 const defaultFormatLabel = (v: number) => v.toFixed(0);
@@ -39,6 +41,8 @@ export default function LegendContent({
 	onPartyRightClick,
 	onEthnicityClick,
 	onEthnicityRightClick,
+	onPointLegendClick,
+	onPointLegendRightClick,
 }: LegendContentProps) {
 	if (!activeDataset) return null;
 
@@ -309,6 +313,28 @@ export default function LegendContent({
 			);
 
 		case "custom":
+			if (
+				activeDataset.kind === "points" &&
+				activeDataset.pointStyle?.legend
+			) {
+				const { colorByValue, legend } = activeDataset.pointStyle;
+				return renderCategoryLegend(
+					legend.map(({ value, label }) => ({
+						id: String(value),
+						color: colorByValue?.[value] ?? "#999",
+						name: label,
+					})),
+					displayOptions.custom.selectedPointValue !== undefined,
+					String(displayOptions.custom.selectedPointValue),
+					onPointLegendClick,
+					overlayOpacity,
+					isDark,
+					new Set(
+						(displayOptions.custom.excludedPointValues ?? []).map(String),
+					),
+					onPointLegendRightClick,
+				);
+			}
 			return renderDynamicLegend("custom", 0, 100, 0, 100);
 
 		default:

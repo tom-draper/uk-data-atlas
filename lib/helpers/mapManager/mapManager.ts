@@ -262,7 +262,15 @@ export class MapManager {
 		mapOptions: MapOptions,
 		bounds: [number, number, number, number] | null = null,
 	): void {
-		const allPoints = dataset.points ?? [];
+		const excludedValues = new Set(
+			mapOptions.custom.excludedPointValues ?? [],
+		);
+		const selectedValue = mapOptions.custom.selectedPointValue;
+		const allPoints = (dataset.points ?? []).filter(
+			(point) =>
+				!excludedValues.has(point.value) &&
+				(selectedValue === undefined || point.value === selectedValue),
+		);
 		// Scope points to the selected location's bounding box (national views
 		// like "United Kingdom" cover everything, so nothing is filtered out).
 		const points = bounds
@@ -295,6 +303,7 @@ export class MapManager {
 			min,
 			max,
 			mapOptions.theme.id,
+			dataset.pointStyle?.colorByValue,
 		);
 		// Add the point layers first, then blank the choropleth beneath. Doing it
 		// in this order matters: clearBoundaryData() calls setData() on the boundary
@@ -307,6 +316,7 @@ export class MapManager {
 			collection,
 			mapOptions.visibility,
 			mapOptions.theme.id,
+			dataset.pointStyle?.radius,
 		);
 		this.layerManager.clearBoundaryData();
 	}

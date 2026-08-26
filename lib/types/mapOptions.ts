@@ -8,6 +8,11 @@ interface ColorRangeOption {
 	colorRange: ColorRange;
 }
 
+export interface CustomOptions extends ColorRangeOption {
+	selectedPointValue?: number;
+	excludedPointValues?: number[];
+}
+
 export interface CategoryOptions {
 	mode: "majority" | "percentage";
 	selected?: string;
@@ -69,7 +74,7 @@ export interface MapOptions {
 	income: IncomeOptions;
 	brexit: BrexitOptions;
 	brexitConstituency: BrexitConstituencyOptions;
-	custom: ColorRangeOption;
+	custom: CustomOptions;
 	imd: IMDOptions;
 	simd: SIMDOptions;
 	wimd: WIMDOptions;

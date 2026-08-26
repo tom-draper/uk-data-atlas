@@ -118,6 +118,7 @@ export function useMapUpdates({
 	}, [
 		activeDataset,
 		mapManager,
+		mapOptions.custom,
 		mapOptions.theme.id,
 		mapOptions.visibility,
 		styleReady,

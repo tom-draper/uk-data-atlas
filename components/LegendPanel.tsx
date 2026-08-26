@@ -300,6 +300,35 @@ export default function LegendPanel({
 		onMapOptionsChange("ethnicity", { excluded: next });
 	};
 
+	const handlePointLegendClick = (value: string) => {
+		if (activeDataset?.type !== "custom" || activeDataset.kind !== "points")
+			return;
+		const numericValue = Number(value);
+		if (!Number.isFinite(numericValue)) return;
+		const selected = displayOptions.custom.selectedPointValue;
+		onMapOptionsChange("custom", {
+			selectedPointValue:
+				selected === numericValue ? undefined : numericValue,
+		});
+	};
+
+	const handlePointLegendRightClick = (value: string) => {
+		if (activeDataset?.type !== "custom" || activeDataset.kind !== "points")
+			return;
+		const numericValue = Number(value);
+		if (!Number.isFinite(numericValue)) return;
+		const excluded = displayOptions.custom.excludedPointValues ?? [];
+		onMapOptionsChange("custom", {
+			excludedPointValues: excluded.includes(numericValue)
+				? excluded.filter((item) => item !== numericValue)
+				: [...excluded, numericValue],
+			selectedPointValue:
+				displayOptions.custom.selectedPointValue === numericValue
+					? undefined
+					: displayOptions.custom.selectedPointValue,
+		});
+	};
+
 	const overlayOpacity = Math.min(
 		1,
 		(displayOptions.visibility.overlayOpacity ?? 1) + 0.2,
@@ -401,7 +430,9 @@ export default function LegendPanel({
 						}
 						onEthnicityRightClick={(id) =>
 							handleEthnicityRightClick(id as EthnicityCode)
-						}
+							}
+						onPointLegendClick={handlePointLegendClick}
+						onPointLegendRightClick={handlePointLegendRightClick}
 					/>
 				</div>
 			</div>
