@@ -15,6 +15,67 @@ interface UseMapUpdatesParams {
 	selectedLocation: string;
 }
 
+function getActiveDataOptions(
+	activeDataset: Dataset | null,
+	activeViz: ActiveViz,
+	mapOptions: MapOptions,
+): object | null {
+	if (!activeDataset) return null;
+
+	switch (activeDataset.type) {
+		case "generalElection":
+			return mapOptions.generalElection;
+		case "localElection":
+			return mapOptions.localElection;
+		case "housePrice":
+			return mapOptions.housePrice;
+		case "crime":
+			return mapOptions.crime;
+		case "income":
+			return mapOptions.income;
+		case "ethnicity":
+			return mapOptions.ethnicity;
+		case "brexit":
+			return mapOptions.brexit;
+		case "brexitConstituency":
+			return mapOptions.brexitConstituency;
+		case "custom":
+			return mapOptions.custom;
+		case "imd":
+			return mapOptions.imd;
+		case "simd":
+			return mapOptions.simd;
+		case "wimd":
+			return mapOptions.wimd;
+		case "nimdm":
+			return mapOptions.nimdm;
+		case "lifeExpectancy":
+			return mapOptions.lifeExpectancy;
+		case "qualification":
+			return mapOptions.qualification;
+		case "broadband":
+			return mapOptions.broadband;
+		case "airQuality":
+			return mapOptions.airQuality;
+		case "schoolPerformance":
+			return mapOptions.schoolPerformance;
+		case "claimantCount":
+			return mapOptions.claimantCount;
+		case "nhsWaiting":
+			return mapOptions.nhsWaiting;
+		case "unemployment":
+			return mapOptions.unemployment;
+		case "population":
+			if (activeViz.vizId.startsWith("ageDistribution")) {
+				return mapOptions.ageDistribution;
+			}
+			if (activeViz.vizId.startsWith("populationDensity")) {
+				return mapOptions.populationDensity;
+			}
+			return mapOptions.gender;
+	}
+}
+
 export function useMapUpdates({
 	geojson,
 	activeViz,
@@ -25,11 +86,17 @@ export function useMapUpdates({
 	selectedLocation,
 }: UseMapUpdatesParams) {
 	const isDark = useIsDark();
+	const activeDataOptions = getActiveDataOptions(
+		activeDataset,
+		activeViz,
+		mapOptions,
+	);
 
 	useEffect(() => {
 		if (!mapManager || !styleReady) return;
+		mapManager.updateVisibility(mapOptions.visibility);
 		mapManager.setBorderVisibility(mapOptions.visibility.hideBorders);
-	}, [mapManager, styleReady, mapOptions.visibility.hideBorders]);
+	}, [mapManager, styleReady, mapOptions.visibility]);
 
 	// Custom point datasets (coordinates / postcodes) render on their own
 	// source/layer and don't need a boundary geojson, so they live in a
@@ -48,7 +115,14 @@ export function useMapUpdates({
 		} else {
 			mapManager.clearCustomPoints();
 		}
-	}, [activeDataset, mapManager, mapOptions, styleReady, selectedLocation]);
+	}, [
+		activeDataset,
+		mapManager,
+		mapOptions.theme.id,
+		mapOptions.visibility,
+		styleReady,
+		selectedLocation,
+	]);
 
 	useEffect(() => {
 		if (!geojson || !activeDataset || !mapManager) return;
@@ -245,7 +319,8 @@ export function useMapUpdates({
 		activeDataset,
 		activeViz,
 		mapManager,
-		mapOptions,
+		activeDataOptions,
+		mapOptions.theme.id,
 		styleReady,
 		isDark,
 	]);
