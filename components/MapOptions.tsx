@@ -38,8 +38,8 @@ export default function MapOptions({
 	const [overlayOpacity, setOverlayOpacity] = useState(0.6);
 	const [opacityInput, setOpacityInput] = useState("60");
 	const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
-	const containerRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
+	const dropdownRef = useRef<HTMLDivElement>(null);
 
 	const handleThemeChange = (themeId: ColorTheme) => {
 		setSelectedTheme(themeId);
@@ -97,7 +97,11 @@ export default function MapOptions({
 	useEffect(() => {
 		if (!isOpen) return;
 		const handleClickOutside = (event: MouseEvent) => {
-			if (triggerRef.current && !triggerRef.current.contains(event.target as Node)) {
+			const target = event.target as Node;
+			if (
+				!triggerRef.current?.contains(target) &&
+				!dropdownRef.current?.contains(target)
+			) {
 				setIsOpen(false);
 			}
 		};
@@ -206,7 +210,7 @@ export default function MapOptions({
 						</button>
 					</div>
 
-					<div ref={containerRef}>
+					<div>
 						<button
 							ref={triggerRef}
 							type="button"
@@ -238,6 +242,7 @@ export default function MapOptions({
 
 						{isOpen && createPortal(
 							<div
+								ref={dropdownRef}
 								className={`fixed z-[200] min-w-[160px] backdrop-blur-xl border rounded-sm shadow-lg ${t.border} ${isDark ? "bg-[rgba(20,20,30,0.95)]" : "bg-[#f9f9fa]/90"}`}
 								style={{ bottom: window.innerHeight - dropdownPos.top + 8, left: dropdownPos.left }}
 							>
