@@ -42,8 +42,9 @@ const SOURCE_DATA = join(ROOT, "data");
 const OUT_DIR = join(SOURCE_DATA, "precompiled");
 const PUBLIC_OUT_DIR = join(PUBLIC_DATA, "precompiled");
 
-// Reads a file relative to public/data/ (where sync-public-data.mjs places everything)
-const read = (path: string) => readFile(join(PUBLIC_DATA, path), "utf8");
+// Read source datasets directly. public/data only contains files that must be
+// served to the browser during local development.
+const read = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
 
 // Reads a file relative to data/ (raw source data, not synced to public)
 const readSource = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
@@ -52,7 +53,9 @@ const readSource = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
 const readZip = (path: string): Promise<string> => {
 	const fullPath = join(SOURCE_DATA, path);
 	return Promise.resolve(
-		execSync(`unzip -p "${fullPath}" "*.csv"`, { maxBuffer: 100 * 1024 * 1024 }).toString("utf8"),
+		execSync(`unzip -p "${fullPath}" "*.csv"`, {
+			maxBuffer: 100 * 1024 * 1024,
+		}).toString("utf8"),
 	);
 };
 
@@ -97,7 +100,9 @@ async function main() {
 		loadGazetteerCore(read).then((d) => out("gazetteer.core", d)),
 	]);
 
-	const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+	const failures = results.filter(
+		(r): r is PromiseRejectedResult => r.status === "rejected",
+	);
 	if (failures.length > 0) {
 		for (const f of failures) console.error("  ERROR:", f.reason);
 		process.exit(1);
