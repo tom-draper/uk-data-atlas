@@ -131,9 +131,35 @@ export default function UIOverlay({
 
 	const excludedCategories = useMemo(() => ({
 		excludedGeneralParties: new Set(mapOptions.generalElection.excluded ?? []),
+		selectedGeneralParty:
+			mapOptions.generalElection.mode === "percentage"
+				? mapOptions.generalElection.selected
+				: undefined,
 		excludedLocalParties: new Set(mapOptions.localElection.excluded ?? []),
+		selectedLocalParty:
+			mapOptions.localElection.mode === "percentage"
+				? mapOptions.localElection.selected
+				: undefined,
 		excludedEthnicities: new Set(mapOptions.ethnicity.excluded ?? []),
-	}), [mapOptions.generalElection.excluded, mapOptions.localElection.excluded, mapOptions.ethnicity.excluded]);
+		selectedEthnicity:
+			mapOptions.ethnicity.mode === "percentage"
+				? mapOptions.ethnicity.selected
+				: undefined,
+		excludedPointValues: new Set(mapOptions.custom.excludedPointValues ?? []),
+		selectedPointValue: mapOptions.custom.selectedPointValue,
+	}), [
+		mapOptions.generalElection.excluded,
+		mapOptions.generalElection.mode,
+		mapOptions.generalElection.selected,
+		mapOptions.localElection.excluded,
+		mapOptions.localElection.mode,
+		mapOptions.localElection.selected,
+		mapOptions.ethnicity.excluded,
+		mapOptions.ethnicity.mode,
+		mapOptions.ethnicity.selected,
+		mapOptions.custom.excludedPointValues,
+		mapOptions.custom.selectedPointValue,
+	]);
 
 	const handleLocationClick = (loc: string) => {
 		onLocationClick(loc);

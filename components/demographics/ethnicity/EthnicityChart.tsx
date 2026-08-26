@@ -118,7 +118,7 @@ export default function EthnicityChart({
 }: EthnicityChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const { excludedEthnicities } = useExcludedCategories();
+	const { excludedEthnicities, selectedEthnicity } = useExcludedCategories();
 
 	if (!dataset) return null;
 
@@ -135,7 +135,9 @@ export default function EthnicityChart({
 		}
 
 		const allEthnicities = flattenEthnicityData(areaData).filter(
-			(item) => !excludedEthnicities.has(item.ethnicity),
+			(item) =>
+				!excludedEthnicities.has(item.ethnicity) &&
+				(!selectedEthnicity || item.ethnicity === selectedEthnicity),
 		);
 
 		const totalPopulation = allEthnicities.reduce(
