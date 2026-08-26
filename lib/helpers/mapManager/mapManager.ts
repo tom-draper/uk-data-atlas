@@ -317,6 +317,8 @@ export class MapManager {
 			mapOptions.visibility,
 			mapOptions.theme.id,
 			dataset.pointStyle?.radius,
+			dataset.pointStyle?.tooltip,
+			mapOptions.baseStyle.id === "darkMatter",
 		);
 		this.layerManager.clearBoundaryData();
 	}

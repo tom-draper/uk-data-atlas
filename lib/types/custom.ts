@@ -5,6 +5,13 @@ export interface CustomPoint {
 	lat: number;
 	value: number;
 	label?: string;
+	// Compact values rendered into the point tooltip according to pointStyle.
+	details?: string[];
+}
+
+export interface PointTooltip {
+	title: string;
+	fields: string[];
 }
 
 export interface PointStyle {
@@ -12,6 +19,7 @@ export interface PointStyle {
 	colorByValue?: Record<number, string>;
 	// A key displayed instead of the generic continuous range control.
 	legend?: { value: number; label: string }[];
+	tooltip?: PointTooltip;
 	// Circle radii at the point layer's minimum and maximum zoom levels.
 	radius?: { min: number; max: number };
 }

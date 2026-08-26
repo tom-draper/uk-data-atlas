@@ -257,6 +257,12 @@ export class FeatureBuilder {
 						colorByValue?.[p.value] ??
 						getColor((p.value - valueMin) / range, themeId),
 					label: p.label ?? "",
+					...Object.fromEntries(
+						(p.details ?? []).map((detail, index) => [
+							`detail${index}`,
+							detail,
+						]),
+					),
 				},
 			})),
 		};
