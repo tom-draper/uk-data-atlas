@@ -3,6 +3,7 @@
 // (scripts/gazetteer-crosswalks.ts) since they are expensive and change rarely.
 import { feature } from "topojson-client";
 import { GEOJSON_PATHS, PROPERTY_KEYS, getProp } from "../boundaries/boundaries";
+import { localDataPath } from "../boundaries/dataPath";
 import { LOCATIONS } from "../locations";
 import { buildCore, linkRegions, type LevelSource } from "./build";
 import { validateCore } from "./validate";
@@ -27,12 +28,8 @@ const REGIONS: Array<{ code: string; locationName: string }> = [
 
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
 
-// GEOJSON_PATHS values look like "/data/boundaries/..."; strip to the path
-// relative to public/data that the precompile `read` expects.
-const relPath = (p: string) => p.slice(p.indexOf("/data/") + "/data/".length);
-
 async function loadFeatures(read: (path: string) => Promise<string>, path: string): Promise<Feat[]> {
-	const topo = JSON.parse(await read(relPath(path))) as { objects: Record<string, unknown> };
+	const topo = JSON.parse(await read(localDataPath(path))) as { objects: Record<string, unknown> };
 	const name = Object.keys(topo.objects)[0];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const fc = feature(topo as any, topo.objects[name] as any) as unknown as GeoJSON.FeatureCollection;

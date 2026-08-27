@@ -1,6 +1,7 @@
 import { feature } from "topojson-client";
 import type { BoundaryGeojson } from "@lib/types";
 import { GEOJSON_PATHS, type BoundaryType, PROPERTY_KEYS } from "./boundaries";
+import { localDataPath } from "./dataPath";
 import {
 	buildConstituencyWardMappings,
 	buildCrossYearMappings,
@@ -10,14 +11,11 @@ import {
 
 type BoundaryGroup = Record<number, BoundaryGeojson>;
 
-const relPath = (path: string) =>
-	path.slice(path.indexOf("/data/") + "/data/".length);
-
 async function loadBoundaryFile(
 	read: (path: string) => Promise<string>,
 	path: string,
 ): Promise<BoundaryGeojson> {
-	const topology = JSON.parse(await read(relPath(path))) as {
+	const topology = JSON.parse(await read(localDataPath(path))) as {
 		objects: Record<string, unknown>;
 	};
 	const objectName = Object.keys(topology.objects)[0];
