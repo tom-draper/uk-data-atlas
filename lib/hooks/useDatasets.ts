@@ -31,6 +31,7 @@ import { useNHSWaitingData } from "./useNHSWaitingData";
 import { useUnemploymentData } from "./useUnemploymentData";
 import { useChildPovertyData } from "./useChildPovertyData";
 import { useHomelessnessData } from "./useHomelessnessData";
+import { useFuelPovertyData } from "./useFuelPovertyData";
 
 function getServerSnapshot(): Record<ChartKey, boolean> {
 	return DEFAULT_VISIBILITY;
@@ -77,6 +78,7 @@ export function useDatasets(): UseDatasetsResult {
 	const unemployment = useUnemploymentData(isEnabled("economics-unemployment"));
 	const childPoverty = useChildPovertyData(isEnabled("economics-childPoverty"));
 	const homelessness = useHomelessnessData(isEnabled("economics-homelessness"));
+	const fuelPoverty = useFuelPovertyData(false);
 
 	const datasets = {
 		localElection: localElection.datasets,
@@ -102,6 +104,7 @@ export function useDatasets(): UseDatasetsResult {
 		unemployment: unemployment.datasets,
 		childPoverty: childPoverty.datasets,
 		homelessness: homelessness.datasets,
+		fuelPoverty: fuelPoverty.datasets,
 	};
 
 	const results = [
@@ -128,6 +131,7 @@ export function useDatasets(): UseDatasetsResult {
 		unemployment,
 		childPoverty,
 		homelessness,
+		fuelPoverty,
 	];
 
 	const loading = results.some((r) => r.loading);
