@@ -309,7 +309,17 @@ export default function LegendContent({
 				20,
 				2,
 				8,
-				(v) => `${v.toFixed(1)}%`,
+				(v) => `${v.toFixed(1)}% rate`,
+			);
+
+		case "homelessness":
+			return renderDynamicLegend(
+				"homelessness",
+				0,
+				20,
+				1,
+				12,
+				(v) => `${v.toFixed(1)} per 1k households`,
 			);
 
 		case "childPoverty":

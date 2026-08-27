@@ -47,6 +47,7 @@ import { SchoolPerformanceDataset, AggregatedSchoolPerformanceData } from "@/lib
 import { NHSWaitingDataset, AggregatedNHSWaitingData } from "@/lib/types/nhsWaiting";
 import { UnemploymentDataset, AggregatedUnemploymentData } from "@/lib/types/unemployment";
 import { ChildPovertyDataset, AggregatedChildPovertyData } from "@/lib/types/childPoverty";
+import { HomelessnessDataset, AggregatedHomelessnessData } from "@/lib/types/homelessness";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -1069,6 +1070,40 @@ export class StatsCalculator {
 
 			if (count === 0 || childrenPopulation === 0) return null;
 			return { childCount, childPovertyRate: childCount / childrenPopulation * 100 };
+		});
+	}
+
+	calculateHomelessnessStats(
+		geojson: BoundaryGeojson,
+		data: HomelessnessDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedHomelessnessData | null {
+		return this.cached(`homelessness-${location}-${datasetId}`, () => {
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			let householdsInTemporaryAccommodation = 0;
+			let householdsPerThousand = 0;
+			let householdsWithChildren = 0;
+			let childrenInTemporaryAccommodation = 0;
+			let count = 0;
+
+			for (const feature of geojson.features) {
+				const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
+				if (!record) continue;
+				householdsInTemporaryAccommodation += record.householdsInTemporaryAccommodation;
+				householdsPerThousand += record.householdsPerThousand;
+				householdsWithChildren += record.householdsWithChildren;
+				childrenInTemporaryAccommodation += record.childrenInTemporaryAccommodation;
+				count++;
+			}
+
+			if (count === 0) return null;
+			return {
+				householdsInTemporaryAccommodation,
+				householdsPerThousand: householdsPerThousand / count,
+				householdsWithChildren,
+				childrenInTemporaryAccommodation,
+			};
 		});
 	}
 

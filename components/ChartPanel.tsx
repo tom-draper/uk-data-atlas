@@ -169,6 +169,7 @@ function ChartPanelContent({
                     availableClaimantCountDatasets={datasets.claimantCount}
                     availableUnemploymentDatasets={datasets.unemployment}
                     availableChildPovertyDatasets={datasets.childPoverty}
+                    availableHomelessnessDatasets={datasets.homelessness}
                     selectedArea={deferredArea}
                     setActiveViz={setActiveViz}
                     codeMapper={codeMapper}
