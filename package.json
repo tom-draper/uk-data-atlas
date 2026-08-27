@@ -3,9 +3,9 @@
   "version": "0.1.7",
   "private": true,
   "scripts": {
-    "precompile": "npx tsx scripts/precompile-data.ts",
-    "dev": "node scripts/sync-public-data.mjs && npx tsx scripts/precompile-data.ts && next dev --turbopack",
-    "build": "node scripts/sync-public-data.mjs && npx tsx scripts/precompile-data.ts && next build --turbopack",
+		"precompile": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/precompile-data.ts",
+		"dev": "node scripts/sync-public-data.mjs && pnpm precompile && next dev --turbopack",
+		"build": "node scripts/sync-public-data.mjs && pnpm precompile && next build --turbopack",
     "start": "next start",
     "format": "prettier --write \"**/*.{ts,tsx}\" --use-tabs --tab-width 4",
     "test": "vitest",
