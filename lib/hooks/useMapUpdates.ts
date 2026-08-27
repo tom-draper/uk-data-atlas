@@ -35,6 +35,8 @@ function getActiveDataOptions(
 			return mapOptions.income;
 		case "childPoverty":
 			return mapOptions.childPoverty;
+		case "homelessness":
+			return mapOptions.homelessness;
 		case "ethnicity":
 			return mapOptions.ethnicity;
 		case "brexit":
@@ -67,6 +69,8 @@ function getActiveDataOptions(
 			return mapOptions.nhsWaiting;
 		case "unemployment":
 			return mapOptions.unemployment;
+		case "homelessness":
+			return mapOptions.homelessness;
 		case "population":
 			if (activeViz.vizId.startsWith("ageDistribution")) {
 				return mapOptions.ageDistribution;
@@ -285,6 +289,13 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
+				case "homelessness":
+					return mapManager.updateMapForHomelessness(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
 				case "nhsWaiting":
 					return mapManager.updateMapForNHSWaiting(
 						geojson,
@@ -294,6 +305,13 @@ export function useMapUpdates({
 
 				case "unemployment":
 					return mapManager.updateMapForUnemployment(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+
+				case "homelessness":
+					return mapManager.updateMapForHomelessness(
 						geojson,
 						activeDataset,
 						mapOptions,

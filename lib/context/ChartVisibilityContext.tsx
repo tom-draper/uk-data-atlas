@@ -33,7 +33,8 @@ export type ChartKey =
 	| "education-schoolPerformance"
 	| "health-nhsWaiting"
 	| "economics-unemployment"
-	| "economics-childPoverty";
+	| "economics-childPoverty"
+	| "economics-homelessness";
 
 export interface ChartConfigEntry {
 	group: string;
@@ -138,6 +139,7 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 	{ group: "Health", key: "health-nhsWaiting", label: "NHS Waiting Times [Mar 2026]" },
 	{ group: "Economics", key: "economics-unemployment", label: "Unemployment Rate [2024]" },
 	{ group: "Economics", key: "economics-childPoverty", label: "Child Poverty [2025]" },
+	{ group: "Economics", key: "economics-homelessness", label: "Homelessness [2026]" },
 ];
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
@@ -173,6 +175,7 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"health-nhsWaiting": true,
 	"economics-unemployment": true,
 	"economics-childPoverty": true,
+	"economics-homelessness": true,
 };
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";

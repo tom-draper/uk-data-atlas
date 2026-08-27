@@ -30,6 +30,7 @@ import { loadSchoolPerformance } from "../lib/data/school-performance/loader";
 import { loadNHSWaiting } from "../lib/data/nhs-waiting/loader";
 import { loadUnemployment } from "../lib/data/unemployment/loader";
 import { loadChildPoverty } from "../lib/data/child-poverty/loader";
+import { loadHomelessness } from "../lib/data/homelessness/loader";
 import { loadGeneralElection } from "../lib/data/election/general-election/load";
 import { loadLocalElection } from "../lib/data/election/local-election/load";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
@@ -118,6 +119,8 @@ async function main() {
 		)
 			.then(loadChildPoverty)
 			.then((d) => out("child-poverty", d)),
+		readOdsContent("economics/homelessness/homelessness-2026-q1.ods")
+			.then((content) => out("homelessness", loadHomelessness(content))),
 		loadGeneralElection(read).then((d) => out("general-election", d)),
 		loadLocalElection(read).then((d) => out("local-election", d)),
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),

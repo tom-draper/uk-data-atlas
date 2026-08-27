@@ -26,3 +26,4 @@ export * from "./childPoverty";
 export * from "./schoolPerformance";
 export * from "./nhsWaiting";
 export * from "./unemployment";
+export * from "./homelessness";

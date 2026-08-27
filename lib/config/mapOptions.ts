@@ -47,6 +47,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	nhsWaiting: { colorRange: { min: 25, max: 40 } },
 	unemployment: { colorRange: { min: 2, max: 8 } },
 	childPoverty: { colorRange: { min: 10, max: 35 } },
+	homelessness: { colorRange: { min: 1, max: 12 } },
 	theme: {
 		id: "viridis",
 	},

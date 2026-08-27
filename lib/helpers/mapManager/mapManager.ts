@@ -34,6 +34,7 @@ import { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
 import { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
 import { UnemploymentDataset } from "@/lib/types/unemployment";
 import { ChildPovertyDataset } from "@/lib/types/childPoverty";
+import { HomelessnessDataset } from "@/lib/types/homelessness";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 
 import type { MapManagerCallbacks } from "./callbacks";
@@ -415,7 +416,8 @@ export class MapManager {
 			| ClaimantCountDataset
 			| NHSWaitingDataset
 			| UnemploymentDataset
-			| ChildPovertyDataset,
+			| ChildPovertyDataset
+			| HomelessnessDataset,
 	>(
 		geojson: BoundaryGeojson,
 		dataset: T,
@@ -1086,6 +1088,31 @@ export class MapManager {
 			location,
 			datasetId,
 		);
+	}
+
+	updateMapForHomelessness(
+		geojson: BoundaryGeojson,
+		dataset: HomelessnessDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
+			this.featureBuilder.buildHomelessnessFeatures.bind(this.featureBuilder),
+			"homelessness",
+			dataset.data,
+		);
+	}
+
+	calculateHomelessnessStats(
+		geojson: BoundaryGeojson,
+		data: HomelessnessDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateHomelessnessStats(geojson, data, location, datasetId);
 	}
 
 	setBorderVisibility(hidden: boolean): void {

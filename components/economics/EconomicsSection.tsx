@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { ActiveViz, ChildPovertyDataset, ClaimantCountDataset, CrimeDataset, Dataset, HousePriceDataset, IncomeDataset, SelectedArea, UnemploymentDataset } from "@lib/types";
+import { ActiveViz, ChildPovertyDataset, ClaimantCountDataset, CrimeDataset, Dataset, HomelessnessDataset, HousePriceDataset, IncomeDataset, SelectedArea, UnemploymentDataset } from "@lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
@@ -12,6 +12,7 @@ import CrimeRateChart from "./crime/CrimeRateChart";
 import ClaimantCountChart from "./claimant-count/ClaimantCountChart";
 import UnemploymentChart from "./unemployment/UnemploymentChart";
 import ChildPovertyChart from "./child-poverty/ChildPovertyChart";
+import HomelessnessChart from "./homelessness/HomelessnessChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface EconomicsSectionProps {
@@ -22,6 +23,7 @@ interface EconomicsSectionProps {
 	availableClaimantCountDatasets: Record<string, ClaimantCountDataset>;
 	availableUnemploymentDatasets: Record<string, UnemploymentDataset>;
 	availableChildPovertyDatasets: Record<string, ChildPovertyDataset>;
+	availableHomelessnessDatasets: Record<string, HomelessnessDataset>;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -39,6 +41,7 @@ export default function EconomicsSection({
 	availableClaimantCountDatasets,
 	availableUnemploymentDatasets,
 	availableChildPovertyDatasets,
+	availableHomelessnessDatasets,
 	selectedArea,
 	codeMapper,
 	activeViz,
@@ -55,6 +58,7 @@ export default function EconomicsSection({
 	const showClaimantCount = visibility["economics-claimantCount"];
 	const showUnemployment = visibility["economics-unemployment"];
 	const showChildPoverty = visibility["economics-childPoverty"];
+	const showHomelessness = visibility["economics-homelessness"];
 
 	const aggregatedHousePriceData = useMemo(
 		() => aggregateDataset({ datasets: availableHousePriceDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateHousePriceStats(g, d, loc, id) }, mapManager, boundaryData, location),
@@ -91,8 +95,12 @@ export default function EconomicsSection({
 		() => aggregateDataset({ datasets: availableChildPovertyDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateChildPovertyStats(g, d, loc, id) }, mapManager, boundaryData, location),
 		[availableChildPovertyDatasets, mapManager, boundaryData, location],
 	);
+	const aggregatedHomelessnessData = useMemo(
+		() => aggregateDataset({ datasets: availableHomelessnessDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateHomelessnessStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableHomelessnessDatasets, mapManager, boundaryData, location],
+	);
 
-	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment && !showChildPoverty) return null;
+	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment && !showChildPoverty && !showHomelessness) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
@@ -127,6 +135,11 @@ export default function EconomicsSection({
 			{showChildPoverty && (
 				<ChildPovertyChart activeDataset={activeDataset} availableDatasets={availableChildPovertyDatasets}
 					aggregatedData={aggregatedChildPovertyData} year={2025} selectedArea={selectedArea}
+					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
+			)}
+			{showHomelessness && (
+				<HomelessnessChart activeDataset={activeDataset} availableDatasets={availableHomelessnessDatasets}
+					aggregatedData={aggregatedHomelessnessData} year={2026} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 		</div>
