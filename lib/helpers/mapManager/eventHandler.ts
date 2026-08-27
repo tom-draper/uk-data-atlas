@@ -59,6 +59,7 @@ export class EventHandler {
 	) => void;
 	private _cancelMouseMove: () => void;
 	private _mouseLeaveHandler: () => void;
+	private handlersAttached = false;
 
 	constructor(
 		private map: maplibregl.Map,
@@ -72,10 +73,15 @@ export class EventHandler {
 	}
 
 	setupEventHandlers(data: Record<string, unknown>, codeProp: string): void {
+		const handlersAreCurrent =
+			this.handlersAttached &&
+			this.currentData === data &&
+			this.currentCodeProp === codeProp;
 		this.currentData = data;
 		this.currentCodeProp = codeProp;
 		this.currentNameProp = this.nameProp(codeProp);
 		this.currentBoundaryType = this.boundaryType(codeProp);
+		if (handlersAreCurrent) return;
 
 		this.removeHandlers();
 
@@ -85,6 +91,7 @@ export class EventHandler {
 			this._mouseMoveHandler as MapLayerMouseHandler,
 		);
 		this.map.on("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
+		this.handlersAttached = true;
 	}
 
 	nameProp(codeProp: string) {
@@ -172,6 +179,7 @@ export class EventHandler {
 			this._mouseMoveHandler as MapLayerMouseHandler,
 		);
 		this.map.off("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
+		this.handlersAttached = false;
 	}
 
 	destroy(): void {

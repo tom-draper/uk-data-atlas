@@ -1,7 +1,10 @@
 import {
 	getColorForBrexitLeave,
 	getColorForGenderRatio,
+	getGenderColorExpression,
+	getSequentialColorExpression,
 } from "@/lib/helpers/colorScale/datasetColors";
+import { themes } from "@/lib/helpers/colorScale/themes";
 
 const brexitOpts = { colorRange: { min: 0, max: 100 } };
 const genderOpts = { colorRange: { min: -1, max: 1 } };
@@ -79,5 +82,68 @@ describe("getColorForGenderRatio", () => {
 		expect(getColorForGenderRatio(0.5, genderOpts)).toMatch(
 			/^rgba\(\d+, \d+, \d+, 0\.8\)$/,
 		);
+	});
+});
+
+describe("getSequentialColorExpression", () => {
+	it("maps missing values to the neutral colour and reverses inverted themes", () => {
+		const viridis = themes.find((theme) => theme.id === "viridis")!;
+		const expression = getSequentialColorExpression(
+			{ min: 10, max: 20 },
+			"viridis",
+		);
+		const interpolate = expression[3] as unknown[];
+
+		expect(expression.slice(0, 3)).toEqual([
+			"case",
+			["==", ["get", "value"], null],
+			"#cccccc",
+		]);
+		expect(interpolate.slice(0, 5)).toEqual([
+			"interpolate",
+			["linear"],
+			["get", "value"],
+			10,
+			viridis.colors.at(-1),
+		]);
+		expect(interpolate.slice(-2)).toEqual([20, viridis.colors[0]]);
+	});
+
+	it("uses a stable midpoint colour for a zero-width range", () => {
+		expect(getSequentialColorExpression({ min: 5, max: 5 }, "viridis")).toEqual([
+			"case",
+			["==", ["get", "value"], null],
+			"#cccccc",
+			expect.stringMatching(/^rgb\(/),
+		]);
+	});
+});
+
+describe("getGenderColorExpression", () => {
+	it("keeps the existing diverging female, neutral and male scale", () => {
+		expect(getGenderColorExpression({ min: -1, max: 1 })).toEqual([
+			"case",
+			["==", ["get", "value"], null],
+			"#cccccc",
+			["<", ["get", "value"], 0],
+			[
+				"interpolate",
+				["linear"],
+				["get", "value"],
+				-1,
+				"rgba(255, 105, 180, 0.8)",
+				0,
+				"rgba(240, 240, 240, 0.8)",
+			],
+			[
+				"interpolate",
+				["linear"],
+				["get", "value"],
+				0,
+				"rgba(240, 240, 240, 0.8)",
+				1,
+				"rgba(70, 130, 180, 0.8)",
+			],
+		]);
 	});
 });

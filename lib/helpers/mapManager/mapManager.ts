@@ -37,6 +37,12 @@ import { ChildPovertyDataset } from "@/lib/types/childPoverty";
 import { HomelessnessDataset } from "@/lib/types/homelessness";
 import { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
+import {
+	getGenderColorExpression,
+	getSequentialColorExpression,
+} from "@/lib/helpers/colorScale/datasetColors";
+import type { ColorRange } from "@/lib/types/common";
+import { calculateMedianAge, calculateTotal } from "@/lib/helpers/population";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
@@ -51,6 +57,15 @@ export class MapManager {
 	private featureBuilder: FeatureBuilder;
 	private propertyDetector: PropertyDetector;
 	private cache: StatsCache;
+	private activeValueGeojson:
+		| {
+				boundary: BoundaryGeojson;
+				dataset: object;
+				mode: string;
+				geojson: BoundaryGeojson;
+			  }
+		| undefined;
+	private customRangeCache = new WeakMap<CustomDataset, ColorRange>();
 
 	constructor(map: maplibregl.Map, callbacks: MapManagerCallbacks) {
 		this.layerManager = new LayerManager(map);
@@ -242,21 +257,40 @@ export class MapManager {
 			propCache.set(cacheKey, codeProp);
 		}
 
-		const features = this.featureBuilder.buildCustomDatasetFeatures(
-			geojson.features,
+		const transformedGeojson = this.getValueGeojson(
+			geojson,
 			dataset,
+			"custom-choropleth",
 			codeProp,
-			mapOptions,
+			(code) => dataset.data[code] ?? null,
 		);
-		const transformedGeojson =
-			this.featureBuilder.formatBoundaryGeoJson(features);
-
-		this.layerManager.updateColoredLayers(
+		const range = this.getCustomRange(dataset);
+		this.layerManager.updateValueLayers(
 			transformedGeojson,
+			range
+				? getSequentialColorExpression(range, mapOptions.theme.id)
+				: ["case", ["==", ["get", "value"], null], "#cccccc", "#cccccc"],
 			mapOptions.visibility,
 		);
 
 		this.eventHandler.setupEventHandlers(dataset.data, codeProp);
+	}
+
+	private getCustomRange(dataset: CustomDataset): ColorRange | null {
+		const cached = this.customRangeCache.get(dataset);
+		if (cached) return cached;
+
+		let min = Infinity;
+		let max = -Infinity;
+		for (const value of Object.values(dataset.data)) {
+			if (value < min) min = value;
+			if (value > max) max = value;
+		}
+		if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
+
+		const range = { min, max };
+		this.customRangeCache.set(dataset, range);
+		return range;
 	}
 
 	// Renders a custom point dataset (coordinates / postcodes) as coloured
@@ -327,12 +361,9 @@ export class MapManager {
 		geojson: BoundaryGeojson,
 		dataset: PopulationDataset,
 		mapOptions: MapOptions,
-		buildFeatures: (
-			features: Features,
-			dataset: PopulationDataset,
-			codeProp: PropertyKeys,
-			options: MapOptions,
-		) => Features,
+		mode: "population-age" | "population-gender" | "population-density",
+		valueFor: (code: string, feature: Features[number]) => number | null,
+		colorExpression: (options: MapOptions) => unknown[],
 	): void {
 		const cacheKey = `population-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
 		let wardCodeProp = propCache.get(cacheKey);
@@ -344,17 +375,16 @@ export class MapManager {
 			propCache.set(cacheKey, wardCodeProp);
 		}
 
-		const features = buildFeatures(
-			geojson.features,
+		const transformedGeojson = this.getValueGeojson(
+			geojson,
 			dataset,
+			mode,
 			wardCodeProp,
-			mapOptions,
+			valueFor,
 		);
-		const transformedGeojson =
-			this.featureBuilder.formatBoundaryGeoJson(features);
-
-		this.layerManager.updateColoredLayers(
+		this.layerManager.updateValueLayers(
 			transformedGeojson,
+			colorExpression(mapOptions),
 			mapOptions.visibility,
 		);
 		this.eventHandler.setupEventHandlers(dataset.data, wardCodeProp);
@@ -369,7 +399,16 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.featureBuilder.buildAgeFeatures.bind(this.featureBuilder),
+			"population-age",
+			(code) => {
+				const ward = dataset.data[code];
+				return ward ? calculateMedianAge(ward) ?? 0 : null;
+			},
+			(options) =>
+				getSequentialColorExpression(
+					options.ageDistribution.colorRange,
+					options.theme.id,
+				),
 		);
 	}
 
@@ -382,7 +421,15 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.featureBuilder.buildGenderFeatures.bind(this.featureBuilder),
+			"population-gender",
+			(code) => {
+				const ward = dataset.data[code];
+				if (!ward) return null;
+				const males = calculateTotal(ward.males);
+				const females = calculateTotal(ward.females);
+				return females > 0 ? (males - females) / females : 0;
+			},
+			(options) => getGenderColorExpression(options.gender.colorRange),
 		);
 	}
 
@@ -395,7 +442,19 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			this.featureBuilder.buildDensityFeatures.bind(this.featureBuilder),
+			"population-density",
+			(code, feature) => {
+				const ward = dataset.data[code];
+				if (!ward) return null;
+				const total = calculateTotal(ward.males) + calculateTotal(ward.females);
+				const area = this.featureBuilder.getFeatureAreaSqKm(feature);
+				return area > 0 ? total / area : 0;
+			},
+			(options) =>
+				getSequentialColorExpression(
+					options.populationDensity.colorRange,
+					options.theme.id,
+				),
 		);
 	}
 
@@ -425,14 +484,11 @@ export class MapManager {
 		dataset: T,
 		mapOptions: MapOptions,
 		detectProperty: (features: Features) => PropertyKeys,
-		buildFeatures: (
-			features: Features,
-			dataset: T,
-			codeProp: PropertyKeys,
-			options: MapOptions,
-		) => Features,
 		eventType: MapMode,
 		dataForEvents: Record<string, unknown>,
+		valueFor: (dataset: T, code: string) => number | null | undefined,
+		getColorRange: (dataset: T, options: MapOptions) => ColorRange,
+		invertColor = true,
 	): void {
 		const cacheKey = `${eventType}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
 		let codeProp: PropertyKeys | undefined = propCache.get(cacheKey);
@@ -447,20 +503,55 @@ export class MapManager {
 			return;
 		}
 
-		const features = buildFeatures(
-			geojson.features,
+		const transformedGeojson = this.getValueGeojson(
+			geojson,
 			dataset,
+			eventType,
 			codeProp,
-			mapOptions,
+			(code) => valueFor(dataset, code),
 		);
-		const transformedGeojson =
-			this.featureBuilder.formatBoundaryGeoJson(features);
-
-		this.layerManager.updateColoredLayers(
+		this.layerManager.updateValueLayers(
 			transformedGeojson,
+			getSequentialColorExpression(
+				getColorRange(dataset, mapOptions),
+				mapOptions.theme.id,
+				invertColor,
+			),
 			mapOptions.visibility,
 		);
 		this.eventHandler.setupEventHandlers(dataForEvents, codeProp);
+	}
+
+	private getValueGeojson<T extends object>(
+		geojson: BoundaryGeojson,
+		dataset: T,
+		mode: string,
+		codeProp: PropertyKeys,
+		valueFor: (code: string, feature: Features[number]) => number | null | undefined,
+	): BoundaryGeojson {
+		const cached = this.activeValueGeojson;
+		if (
+			cached?.boundary === geojson &&
+			cached.dataset === dataset &&
+			cached.mode === mode
+		) {
+			return cached.geojson;
+		}
+
+		const transformed = this.featureBuilder.formatBoundaryGeoJson(
+			this.featureBuilder.buildValueFeatures(
+				geojson.features,
+				codeProp,
+				valueFor,
+			),
+		);
+		this.activeValueGeojson = {
+			boundary: geojson,
+			dataset,
+			mode,
+			geojson: transformed,
+		};
+		return transformed;
 	}
 
 	updateMapForHousePrices(
@@ -473,11 +564,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectWardCode.bind(this.propertyDetector),
-			this.featureBuilder.buildHousePriceFeatures.bind(
-				this.featureBuilder,
-			),
 			"housePrice",
 			dataset.data,
+			(data, code) => data.data[code]?.prices[2023] || null,
+			(_, options) => options.housePrice.colorRange,
 		);
 	}
 
@@ -493,11 +583,10 @@ export class MapManager {
 			this.propertyDetector.detectLocalAuthorityCode.bind(
 				this.propertyDetector,
 			),
-			this.featureBuilder.buildCrimeRateFeatures.bind(
-				this.featureBuilder,
-			),
 			"crime",
 			dataset.data,
+			(data, code) => data.data[code]?.totalRecordedCrime ?? null,
+			(_, options) => options.crime.colorRange,
 		);
 	}
 
@@ -513,9 +602,10 @@ export class MapManager {
 			this.propertyDetector.detectLocalAuthorityCode.bind(
 				this.propertyDetector,
 			),
-			this.featureBuilder.buildIncomeFeatures.bind(this.featureBuilder),
 			"income",
 			dataset.data,
+			(data, code) => data.data[code]?.annual?.median || null,
+			(_, options) => options.income.colorRange,
 		);
 	}
 
@@ -732,9 +822,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLSOACode.bind(this.propertyDetector),
-			this.featureBuilder.buildIMDFeatures.bind(this.featureBuilder),
 			"imd",
 			dataset.data,
+			(data, code) => data.data[code]?.imdScore ?? null,
+			(_, options) => options.imd.colorRange,
 		);
 	}
 
@@ -764,9 +855,11 @@ export class MapManager {
 			this.propertyDetector.detectDataZoneCode.bind(
 				this.propertyDetector,
 			),
-			this.featureBuilder.buildSIMDFeatures.bind(this.featureBuilder),
 			"simd",
 			dataset.data,
+			(data, code) => data.data[code]?.simdRank ?? null,
+			(_, options) => options.simd.colorRange,
+			false,
 		);
 	}
 
@@ -794,9 +887,11 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLSOACode.bind(this.propertyDetector),
-			this.featureBuilder.buildWIMDFeatures.bind(this.featureBuilder),
 			"wimd",
 			dataset.data,
+			(data, code) => data.data[code]?.wimdRank ?? null,
+			(_, options) => options.wimd.colorRange,
+			false,
 		);
 	}
 
@@ -824,9 +919,11 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectSOACode.bind(this.propertyDetector),
-			this.featureBuilder.buildNIMDMFeatures.bind(this.featureBuilder),
 			"nimdm",
 			dataset.data,
+			(data, code) => data.data[code]?.nimdmRank ?? null,
+			(_, options) => options.nimdm.colorRange,
+			false,
 		);
 	}
 
@@ -856,11 +953,23 @@ export class MapManager {
 			this.propertyDetector.detectLocalAuthorityCode.bind(
 				this.propertyDetector,
 			),
-			this.featureBuilder.buildLifeExpectancyFeatures.bind(
-				this.featureBuilder,
-			),
 			"lifeExpectancy",
 			dataset.data,
+			(data, code) => {
+				const area = data.data[code];
+				return area ? (area.maleBirthLE + area.femaleBirthLE) / 2 : null;
+			},
+			(data) => {
+				let min = Infinity;
+				let max = -Infinity;
+				for (const area of Object.values(data.data)) {
+					const value = (area.maleBirthLE + area.femaleBirthLE) / 2;
+					min = Math.min(min, value);
+					max = Math.max(max, value);
+				}
+				return { min, max };
+			},
+			false,
 		);
 	}
 
@@ -890,11 +999,15 @@ export class MapManager {
 			this.propertyDetector.detectLocalAuthorityCode.bind(
 				this.propertyDetector,
 			),
-			this.featureBuilder.buildQualificationFeatures.bind(
-				this.featureBuilder,
-			),
 			"qualification",
 			dataset.data,
+			(data, code) => {
+				const area = data.data[code];
+				return area && area.breakdown.total > 0
+					? (area.breakdown.level4Plus / area.breakdown.total) * 100
+					: null;
+			},
+			(_, options) => options.qualification.colorRange,
 		);
 	}
 
@@ -922,9 +1035,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildBroadbandFeatures.bind(this.featureBuilder),
 			"broadband",
 			dataset.data,
+			(data, code) => data.data[code]?.pctFullFibre ?? null,
+			(_, options) => options.broadband.colorRange,
 		);
 	}
 
@@ -947,9 +1061,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildAirQualityFeatures.bind(this.featureBuilder),
 			"airQuality",
 			dataset.data,
+			(data, code) => data.data[code]?.no2Mean ?? null,
+			(_, options) => options.airQuality.colorRange,
 		);
 	}
 
@@ -972,9 +1087,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildClaimantCountFeatures.bind(this.featureBuilder),
 			"claimantCount",
 			dataset.data,
+			(data, code) => data.data[code]?.totalRate ?? null,
+			(_, options) => options.claimantCount.colorRange,
 		);
 	}
 
@@ -997,9 +1113,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildSchoolPerformanceFeatures.bind(this.featureBuilder),
 			"schoolPerformance",
 			dataset.data,
+			(data, code) => data.data[code]?.ptL2basics94 ?? null,
+			(_, options) => options.schoolPerformance.colorRange,
 		);
 	}
 
@@ -1013,9 +1130,13 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildNHSWaitingFeatures.bind(this.featureBuilder),
 			"nhsWaiting",
 			dataset.data,
+			(data, code) => {
+				const icbCode = data.ladToIcb[code];
+				return icbCode ? data.data[icbCode]?.pctOver18Weeks ?? null : null;
+			},
+			(_, options) => options.nhsWaiting.colorRange,
 		);
 	}
 
@@ -1047,9 +1168,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildUnemploymentFeatures.bind(this.featureBuilder),
 			"unemployment",
 			dataset.data,
+			(data, code) => data.data[code]?.rates[data.latestYear] ?? null,
+			(_, options) => options.unemployment.colorRange,
 		);
 	}
 
@@ -1072,9 +1194,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildChildPovertyFeatures.bind(this.featureBuilder),
 			"childPoverty",
 			dataset.data,
+			(data, code) => data.data[code]?.childPovertyRate ?? null,
+			(_, options) => options.childPoverty.colorRange,
 		);
 	}
 
@@ -1102,9 +1225,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			this.featureBuilder.buildHomelessnessFeatures.bind(this.featureBuilder),
 			"homelessness",
 			dataset.data,
+			(data, code) => data.data[code]?.householdsPerThousand ?? null,
+			(_, options) => options.homelessness.colorRange,
 		);
 	}
 
@@ -1127,9 +1251,10 @@ export class MapManager {
 			dataset,
 			mapOptions,
 			this.propertyDetector.detectLSOACode.bind(this.propertyDetector),
-			this.featureBuilder.buildFuelPovertyFeatures.bind(this.featureBuilder),
 			"fuelPoverty",
 			dataset.data,
+			(data, code) => data.data[code]?.fuelPovertyRate ?? null,
+			(_, options) => options.fuelPoverty.colorRange,
 		);
 	}
 
@@ -1153,5 +1278,7 @@ export class MapManager {
 	destroy(): void {
 		this.eventHandler.destroy();
 		propCache.clear(); // Clean up cache on destroy
+		this.activeValueGeojson = undefined;
+		this.customRangeCache = new WeakMap<CustomDataset, ColorRange>();
 	}
 }
