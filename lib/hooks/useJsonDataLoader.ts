@@ -78,18 +78,18 @@ export function useJsonDataLoader<T>(url: string, enabled = true) {
 			};
 		}
 		if (loadedUrl.current === url) return;
-		loadedUrl.current = url;
 		setError("");
 		setLoading(true);
 
 		fetchViaWorker(url)
 			.then((data) => {
-				if (!active || loadedUrl.current !== url) return;
+				if (!active) return;
+				loadedUrl.current = url;
 				setDatasets(data as Record<string, T>);
 				setLoading(false);
 			})
 			.catch((err: Error) => {
-				if (!active || loadedUrl.current !== url) return;
+				if (!active) return;
 				// Allow a future effect run to retry this URL
 				if (loadedUrl.current === url) loadedUrl.current = null;
 				setError(err.message);
