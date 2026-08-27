@@ -36,6 +36,7 @@ import { AggregatedNHSWaitingData, NHSWaitingDataset } from "./nhsWaiting";
 import { AggregatedUnemploymentData, UnemploymentDataset } from "./unemployment";
 import { AggregatedChildPovertyData, ChildPovertyDataset } from "./childPoverty";
 import { AggregatedHomelessnessData, HomelessnessDataset } from "./homelessness";
+import { AggregatedFuelPovertyData, FuelPovertyDataset } from "./fuelPoverty";
 
 export type Dataset =
 	| LocalElectionDataset
@@ -61,7 +62,8 @@ export type Dataset =
 	| NHSWaitingDataset
 	| UnemploymentDataset
 	| ChildPovertyDataset
-	| HomelessnessDataset;
+	| HomelessnessDataset
+	| FuelPovertyDataset;
 
 export type Datasets = {
 	localElection: Record<string, LocalElectionDataset>;
@@ -87,6 +89,7 @@ export type Datasets = {
 	unemployment: Record<string, UnemploymentDataset>;
 	childPoverty: Record<string, ChildPovertyDataset>;
 	homelessness: Record<string, HomelessnessDataset>;
+	fuelPoverty: Record<string, FuelPovertyDataset>;
 };
 
 
