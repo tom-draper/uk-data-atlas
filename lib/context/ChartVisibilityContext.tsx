@@ -1,7 +1,10 @@
 "use client";
 import { createContext, use, useSyncExternalStore } from "react";
+import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
 
-export type ChartKey =
+export type ChartKey = string;
+
+type LegacyChartKey =
 	| "generalElection-2024"
 	| "generalElection-2019"
 	| "generalElection-2017"
@@ -32,14 +35,11 @@ export type ChartKey =
 	| "economics-claimantCount"
 	| "education-schoolPerformance"
 	| "health-nhsWaiting"
-	| "economics-unemployment"
-	| "economics-childPoverty"
-	| "economics-homelessness"
-	| "economics-fuelPoverty";
+	| "economics-unemployment";
 
 export interface ChartConfigEntry {
 	group: string;
-	key: ChartKey;
+	key: LegacyChartKey | ChartKey;
 	label: string;
 }
 
@@ -139,9 +139,7 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 	{ group: "Education", key: "education-schoolPerformance", label: "School Performance [2024]" },
 	{ group: "Health", key: "health-nhsWaiting", label: "NHS Waiting Times [Mar 2026]" },
 	{ group: "Economics", key: "economics-unemployment", label: "Unemployment Rate [2024]" },
-	{ group: "Economics", key: "economics-childPoverty", label: "Child Poverty [2025]" },
-	{ group: "Economics", key: "economics-homelessness", label: "Homelessness [2026]" },
-	{ group: "Economics", key: "economics-fuelPoverty", label: "Fuel Poverty [2024]" },
+	...SCALAR_DATASET_DEFINITIONS.map((definition) => definition.chart),
 ];
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
@@ -176,9 +174,12 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"education-schoolPerformance": true,
 	"health-nhsWaiting": true,
 	"economics-unemployment": true,
-	"economics-childPoverty": true,
-	"economics-homelessness": true,
-	"economics-fuelPoverty": true,
+	...Object.fromEntries(
+		SCALAR_DATASET_DEFINITIONS.map((definition) => [
+			definition.chart.key,
+			definition.chart.defaultVisible,
+		]),
+	),
 };
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";
@@ -196,7 +197,11 @@ export function getVisibilitySnapshot(): Record<ChartKey, boolean> {
 	}
 	try {
 		const parsed = JSON.parse(raw) as Partial<Record<ChartKey, boolean>>;
-		_cachedVisibility = { ...DEFAULT_VISIBILITY, ...parsed };
+		const persisted: Record<ChartKey, boolean> = {};
+		for (const [key, value] of Object.entries(parsed)) {
+			if (typeof value === "boolean") persisted[key] = value;
+		}
+		_cachedVisibility = { ...DEFAULT_VISIBILITY, ...persisted };
 	} catch {
 		localStorage.removeItem(STORAGE_KEY);
 		_cachedStorageKey = null;
