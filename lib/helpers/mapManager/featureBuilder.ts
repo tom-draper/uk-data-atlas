@@ -34,9 +34,8 @@ import {
 	getColorForAirQuality,
 } from "../colorScale/datasetColors";
 import { getColor } from "../colorScale/themes";
-import { normalizeValue } from "../colorScale/interpolation";
 import { IncomeDataset } from "@/lib/types/income";
-import { CustomDataset, CustomPoint } from "@/lib/types/custom";
+import { CustomPoint } from "@/lib/types/custom";
 import { IMDDataset } from "@/lib/types/imd";
 import { SIMDDataset } from "@/lib/types/simd";
 import { WIMDDataset } from "@/lib/types/wimd";
@@ -115,6 +114,24 @@ export class FeatureBuilder {
 				feature,
 			),
 		}));
+	}
+
+	// Scalar map datasets keep a stable raw value in the source. Their colour is
+	// then calculated by a MapLibre paint expression, avoiding a fresh feature
+	// collection whenever a range slider or theme changes.
+	buildValueFeatures(
+		features: Features,
+		codeProp: PropertyKeys,
+		valueFor: (code: string, feature: Feature) => number | null | undefined,
+	): Features {
+		return this.mapFeatures(features, (feature) => {
+			const value = valueFor(getFeatureProp(feature.properties, codeProp) ?? "", feature);
+			return { value: Number.isFinite(value) ? value : null };
+		});
+	}
+
+	getFeatureAreaSqKm(feature: Feature): number {
+		return getCachedArea(feature);
 	}
 
 	buildElectionWinnerFeatures(
@@ -272,43 +289,6 @@ export class FeatureBuilder {
 				},
 			})),
 		};
-	}
-
-	buildCustomDatasetFeatures(
-		features: Features,
-		customDataset: CustomDataset,
-		codeProp: PropertyKeys,
-		mapOptions: MapOptions,
-	): Features {
-		let minValue: number = Infinity;
-		let maxValue: number = -Infinity;
-		for (const value of Object.values(customDataset.data)) {
-			if (typeof value === "number") {
-				if (value < minValue) minValue = value;
-				if (value > maxValue) maxValue = value;
-			}
-		}
-
-		if (minValue === Infinity) {
-			return this.mapFeatures(features, () => ({
-				value: undefined,
-				color: DEFAULT_COLOR,
-			}));
-		}
-
-		return this.mapFeatures(features, (feature) => {
-			const code = getFeatureProp(feature.properties, codeProp) ?? "";
-			const value = customDataset.data[code];
-
-			if (value === undefined) {
-				return { value: undefined, color: DEFAULT_COLOR };
-			}
-
-			const normalised = normalizeValue(value, minValue, maxValue);
-			const color = getColor(normalised, mapOptions.theme.id);
-
-			return { value, color };
-		});
 	}
 
 	buildAgeFeatures(

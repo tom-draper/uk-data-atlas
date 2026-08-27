@@ -98,4 +98,37 @@ describe("LayerManager visibility updates", () => {
 			0,
 		);
 	});
+
+	it("does not re-upload scalar GeoJSON when only the colour expression changes", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		const geojson = {
+			type: "FeatureCollection",
+			crs: { type: "name", properties: { name: "CRS84" } },
+			features: [],
+		} as any;
+		const visibility = {
+			hideDataLayer: false,
+			hideBorders: false,
+			hideBoundaryLayer: false,
+			hideOverlay: false,
+			overlayOpacity: 0.6,
+		};
+
+		manager.updateValueLayers(geojson, ["get", "value"], visibility);
+		const setData = map.sources.get("location-wards")!.setData;
+
+		manager.updateValueLayers(
+			geojson,
+			["interpolate", ["linear"], ["get", "value"], 0, "#000", 1, "#fff"],
+			visibility,
+		);
+
+		expect(setData).not.toHaveBeenCalled();
+		expect(map.setPaintProperty).toHaveBeenCalledWith(
+			"wards-fill",
+			"fill-color",
+			["interpolate", ["linear"], ["get", "value"], 0, "#000", 1, "#fff"],
+		);
+	});
 });
