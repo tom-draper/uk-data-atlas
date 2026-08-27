@@ -102,9 +102,9 @@ export default function HomelessnessChart({
 			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
 				<h3
 					className={`${chartHeadingClass(isDark)} min-w-0 truncate`}
-					title="Homelessness: temporary accommodation [Mar 2026]"
+					title="Homelessness: temporary accommodation [2026]"
 				>
-					Homelessness [Mar 2026]
+					Homelessness [2026]
 				</h3>
 				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
 			</div>
