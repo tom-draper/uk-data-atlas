@@ -15,12 +15,12 @@ describe("withCDN", () => {
 		);
 	});
 
-	it("pins production data to the release version", async () => {
+	it("versions production data with the deployment version", async () => {
 		vi.stubEnv("NODE_ENV", "production");
 		const { withCDN } = await import("@/lib/helpers/cdn");
 
 		expect(withCDN("/data/precompiled/population.json")).toBe(
-			"https://cdn.jsdelivr.net/gh/tom-draper/uk-data-atlas@v0.1.7/data/precompiled/population.json",
+			"/data/precompiled/population.json?v=v0.1.7",
 		);
 	});
 
@@ -30,7 +30,17 @@ describe("withCDN", () => {
 		const { withCDN } = await import("@/lib/helpers/cdn");
 
 		expect(withCDN("/data/precompiled/population.json")).toBe(
-			"https://cdn.jsdelivr.net/gh/tom-draper/uk-data-atlas@v0.1.8/data/precompiled/population.json",
+			"/data/precompiled/population.json?v=v0.1.8",
+		);
+	});
+
+	it("preserves an existing query string", async () => {
+		vi.stubEnv("NODE_ENV", "production");
+		vi.stubEnv("NEXT_PUBLIC_DATA_VERSION", "abc123");
+		const { withCDN } = await import("@/lib/helpers/cdn");
+
+		expect(withCDN("/data/boundaries.json?level=ward")).toBe(
+			"/data/boundaries.json?level=ward&v=abc123",
 		);
 	});
 });

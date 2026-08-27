@@ -38,7 +38,7 @@ import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
 const SOURCE_DATA = join(ROOT, "data");
-// Committed output (served via jsdelivr in production). public/ mirror below is
+// Committed output. The public mirror below is
 // gitignored and only used by the local dev/build server.
 const OUT_DIR = join(SOURCE_DATA, "precompiled");
 const PUBLIC_OUT_DIR = join(PUBLIC_DATA, "precompiled");
