@@ -78,7 +78,7 @@ export function useDatasets(): UseDatasetsResult {
 	const unemployment = useUnemploymentData(isEnabled("economics-unemployment"));
 	const childPoverty = useChildPovertyData(isEnabled("economics-childPoverty"));
 	const homelessness = useHomelessnessData(isEnabled("economics-homelessness"));
-	const fuelPoverty = useFuelPovertyData(false);
+	const fuelPoverty = useFuelPovertyData(isEnabled("economics-fuelPoverty"));
 
 	const datasets = {
 		localElection: localElection.datasets,
