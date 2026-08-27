@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { ActiveViz, ChildPovertyDataset, ClaimantCountDataset, CrimeDataset, Dataset, HomelessnessDataset, HousePriceDataset, IncomeDataset, SelectedArea, UnemploymentDataset } from "@lib/types";
+import { ActiveViz, ChildPovertyDataset, ClaimantCountDataset, CrimeDataset, Dataset, FuelPovertyDataset, HomelessnessDataset, HousePriceDataset, IncomeDataset, SelectedArea, UnemploymentDataset } from "@lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
@@ -13,6 +13,7 @@ import ClaimantCountChart from "./claimant-count/ClaimantCountChart";
 import UnemploymentChart from "./unemployment/UnemploymentChart";
 import ChildPovertyChart from "./child-poverty/ChildPovertyChart";
 import HomelessnessChart from "./homelessness/HomelessnessChart";
+import FuelPovertyChart from "./fuel-poverty/FuelPovertyChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface EconomicsSectionProps {
@@ -24,6 +25,7 @@ interface EconomicsSectionProps {
 	availableUnemploymentDatasets: Record<string, UnemploymentDataset>;
 	availableChildPovertyDatasets: Record<string, ChildPovertyDataset>;
 	availableHomelessnessDatasets: Record<string, HomelessnessDataset>;
+	availableFuelPovertyDatasets: Record<string, FuelPovertyDataset>;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -42,6 +44,7 @@ export default function EconomicsSection({
 	availableUnemploymentDatasets,
 	availableChildPovertyDatasets,
 	availableHomelessnessDatasets,
+	availableFuelPovertyDatasets,
 	selectedArea,
 	codeMapper,
 	activeViz,
@@ -59,6 +62,7 @@ export default function EconomicsSection({
 	const showUnemployment = visibility["economics-unemployment"];
 	const showChildPoverty = visibility["economics-childPoverty"];
 	const showHomelessness = visibility["economics-homelessness"];
+	const showFuelPoverty = visibility["economics-fuelPoverty"];
 
 	const aggregatedHousePriceData = useMemo(
 		() => aggregateDataset({ datasets: availableHousePriceDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateHousePriceStats(g, d, loc, id) }, mapManager, boundaryData, location),
@@ -99,8 +103,12 @@ export default function EconomicsSection({
 		() => aggregateDataset({ datasets: availableHomelessnessDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateHomelessnessStats(g, d, loc, id) }, mapManager, boundaryData, location),
 		[availableHomelessnessDatasets, mapManager, boundaryData, location],
 	);
+	const aggregatedFuelPovertyData = useMemo(
+		() => aggregateDataset({ datasets: availableFuelPovertyDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateFuelPovertyStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableFuelPovertyDatasets, mapManager, boundaryData, location],
+	);
 
-	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment && !showChildPoverty && !showHomelessness) return null;
+	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment && !showChildPoverty && !showHomelessness && !showFuelPoverty) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
@@ -141,6 +149,11 @@ export default function EconomicsSection({
 				<HomelessnessChart activeDataset={activeDataset} availableDatasets={availableHomelessnessDatasets}
 					aggregatedData={aggregatedHomelessnessData} year={2026} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
+			)}
+			{showFuelPoverty && (
+				<FuelPovertyChart activeDataset={activeDataset} availableDatasets={availableFuelPovertyDatasets}
+					aggregatedData={aggregatedFuelPovertyData} selectedArea={selectedArea}
+					activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 		</div>
 	);
