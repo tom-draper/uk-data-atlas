@@ -92,13 +92,19 @@ export default function ChildPovertyChart({
 	const active =
 		activeDataset?.type === "childPoverty" &&
 		activeDataset.id === dataset?.id;
-	const accent = stats ? accentForRate(stats.childPovertyRate) : null;
+	const hasData = stats !== null;
+	const rate = stats?.childPovertyRate ?? 0;
+	const accent = hasData ? accentForRate(rate) : null;
+	const color = accent ?? undefined;
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
 		accent,
 		active,
 		isDark,
 	);
 	if (!dataset) return null;
+
+	// Rates above 40% are uncommon; cap the bar there to retain contrast.
+	const barWidth = Math.min((rate / 40) * 100, 100);
 
 	return (
 		<button
@@ -121,8 +127,13 @@ export default function ChildPovertyChart({
 				<h3 className={chartHeadingClass(isDark)}>
 					Child Poverty [FYE {dataset.year}]
 				</h3>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
+					England
+				</span>
 			</div>
-			{!stats ? (
+			{!hasData ? (
 				<div className="flex-1 mt-1">
 					{chartsLoading ? (
 						<ChartContentPlaceholder className="h-full" />
@@ -140,26 +151,29 @@ export default function ChildPovertyChart({
 						<div className="leading-none">
 							<span
 								className="text-2xl font-bold leading-none"
-								style={{ color: accent! }}
+								style={{ color }}
 							>
-								{stats.childPovertyRate.toFixed(1)}
+								{rate.toFixed(1)}
 							</span>
 							<span
-								className={`text-[10px] ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}
+								className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}
 							>
-								%
+								% children
 							</span>
 						</div>
 						<span
 							className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
 						>
-							{formatCount(stats.childCount)} children
+							{formatCount(stats!.childCount)} affected
 						</span>
 					</div>
 					<div
-						className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}
+						className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}
 					>
-						Relative low income, before housing costs
+						<div
+							className="h-full rounded-xs transition-all duration-300"
+							style={{ width: `${barWidth}%`, backgroundColor: color }}
+						/>
 					</div>
 				</div>
 			)}
