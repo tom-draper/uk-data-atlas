@@ -13,6 +13,7 @@ import {
 	CrimeDataset,
 	AggregatedCrimeData,
 	AggregatedIncomeData,
+	AggregatedHousingAffordabilityData,
 	AggregatedCustomData,
 	EthnicityDataset,
 	EthnicityCategory,
@@ -27,6 +28,7 @@ import { calculateAgeGroups } from "../ageDistribution";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
+import { HousingAffordabilityDataset } from "@/lib/types/housingAffordability";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
 import { WIMDDataset, AggregatedWIMDData } from "@/lib/types/wimd";
@@ -444,6 +446,37 @@ export class StatsCalculator {
 			};
 			return result;
 		});
+	}
+
+	calculateHousingAffordabilityStats(
+		geojson: BoundaryGeojson,
+		data: HousingAffordabilityDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	) {
+		return this.cached(
+			`housing-affordability-${location}-${datasetId}`,
+			() => {
+				const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+					geojson.features,
+				);
+				let total = 0;
+				let count = 0;
+				for (const feature of geojson.features) {
+					const record = data[
+						getFeatureProp(feature.properties, ladCodeProp) ?? ""
+					];
+					if (record) {
+						total += record.ratio;
+						count++;
+					}
+				}
+				const result: AggregatedHousingAffordabilityData = {
+					averageRatio: count > 0 ? total / count : 0,
+				};
+				return result;
+			},
+		);
 	}
 
 	calculateBrexitStats(

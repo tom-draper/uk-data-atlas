@@ -109,6 +109,18 @@ const datasets: Dataset[] = [
 			"Earnings estimates by local authority for England and Wales.",
 	},
 	{
+		name: "Housing Affordability",
+		source: "Office for National Statistics",
+		sourceUrl:
+			"https://www.ons.gov.uk/explore-local-statistics/indicators/housing-affordability-ratio",
+		year: "2025",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Median house price divided by gross annual residence-based earnings, by local authority in England and Wales.",
+	},
+	{
 		name: "Unemployment",
 		source: "Office for National Statistics",
 		sourceUrl:

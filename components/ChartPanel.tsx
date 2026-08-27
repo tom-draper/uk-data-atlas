@@ -165,6 +165,7 @@ function ChartPanelContent({
                     activeDataset={activeDataset}
                     availableHousePriceDatasets={datasets.housePrice}
                     availableIncomeDatasets={datasets.income}
+                    availableHousingAffordabilityDatasets={datasets.housingAffordability}
                     availableCrimeDatasets={datasets.crime}
                     availableClaimantCountDatasets={datasets.claimantCount}
                     availableUnemploymentDatasets={datasets.unemployment}

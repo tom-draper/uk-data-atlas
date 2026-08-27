@@ -21,6 +21,7 @@ import { FeatureBuilder } from "./featureBuilder";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import { IncomeDataset } from "@/lib/types/income";
+import { HousingAffordabilityDataset } from "@/lib/types/housingAffordability";
 import { IMDDataset } from "@/lib/types/imd";
 import { SIMDDataset } from "@/lib/types/simd";
 import { WIMDDataset } from "@/lib/types/wimd";
@@ -472,6 +473,7 @@ export class MapManager {
 			| HousePriceDataset
 			| CrimeDataset
 			| IncomeDataset
+			| HousingAffordabilityDataset
 			| IMDDataset
 			| SIMDDataset
 			| WIMDDataset
@@ -629,6 +631,25 @@ export class MapManager {
 			dataset.data,
 			(data, code) => data.data[code]?.annual?.median || null,
 			(_, options) => options.income.colorRange,
+		);
+	}
+
+	updateMapForHousingAffordability(
+		geojson: BoundaryGeojson,
+		dataset: HousingAffordabilityDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLocalAuthorityCode.bind(
+				this.propertyDetector,
+			),
+			"housingAffordability",
+			dataset.data,
+			(data, code) => data.data[code]?.ratio ?? null,
+			(_, options) => options.housingAffordability.colorRange,
 		);
 	}
 
@@ -802,6 +823,20 @@ export class MapManager {
 		return this.statsCalculator.calculateIncomeStats(
 			geojson,
 			localAuthorityData,
+			location,
+			datasetId,
+		);
+	}
+
+	calculateHousingAffordabilityStats(
+		geojson: BoundaryGeojson,
+		data: HousingAffordabilityDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	) {
+		return this.statsCalculator.calculateHousingAffordabilityStats(
+			geojson,
+			data,
 			location,
 			datasetId,
 		);

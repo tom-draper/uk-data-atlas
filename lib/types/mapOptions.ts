@@ -29,6 +29,7 @@ export type PopulationOptions = ColorRangeOption;
 export type DensityOptions = ColorRangeOption;
 export type GenderOptions = ColorRangeOption;
 export type IncomeOptions = ColorRangeOption;
+export type HousingAffordabilityOptions = ColorRangeOption;
 export type BrexitOptions = ColorRangeOption;
 export type BrexitConstituencyOptions = ColorRangeOption;
 export type IMDOptions = ColorRangeOption;
@@ -75,6 +76,7 @@ export interface MapOptions {
 	housePrice: HousePriceOptions;
 	crime: CrimeOptions;
 	income: IncomeOptions;
+	housingAffordability: HousingAffordabilityOptions;
 	brexit: BrexitOptions;
 	brexitConstituency: BrexitConstituencyOptions;
 	custom: CustomOptions;

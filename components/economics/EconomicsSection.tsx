@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { ActiveViz, ChildPovertyDataset, ClaimantCountDataset, CrimeDataset, Dataset, FuelPovertyDataset, HomelessnessDataset, HousePriceDataset, IncomeDataset, SelectedArea, UnemploymentDataset } from "@lib/types";
+import { ActiveViz, ChildPovertyDataset, ClaimantCountDataset, CrimeDataset, Dataset, FuelPovertyDataset, HomelessnessDataset, HousePriceDataset, HousingAffordabilityDataset, IncomeDataset, SelectedArea, UnemploymentDataset } from "@lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
@@ -14,12 +14,14 @@ import UnemploymentChart from "./unemployment/UnemploymentChart";
 import ChildPovertyChart from "./child-poverty/ChildPovertyChart";
 import HomelessnessChart from "./homelessness/HomelessnessChart";
 import FuelPovertyChart from "./fuel-poverty/FuelPovertyChart";
+import HousingAffordabilityChart from "./housing-affordability/HousingAffordabilityChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface EconomicsSectionProps {
 	activeDataset: Dataset | null;
 	availableHousePriceDatasets: Record<string, HousePriceDataset>;
 	availableIncomeDatasets: Record<string, IncomeDataset>;
+	availableHousingAffordabilityDatasets: Record<string, HousingAffordabilityDataset>;
 	availableCrimeDatasets: Record<string, CrimeDataset>;
 	availableClaimantCountDatasets: Record<string, ClaimantCountDataset>;
 	availableUnemploymentDatasets: Record<string, UnemploymentDataset>;
@@ -39,6 +41,7 @@ export default function EconomicsSection({
 	activeDataset,
 	availableHousePriceDatasets,
 	availableIncomeDatasets,
+	availableHousingAffordabilityDatasets,
 	availableCrimeDatasets,
 	availableClaimantCountDatasets,
 	availableUnemploymentDatasets,
@@ -57,6 +60,7 @@ export default function EconomicsSection({
 	const isDark = useIsDark();
 	const showHousePrice = visibility["economics-housePrice"];
 	const showIncome = visibility["economics-income"];
+	const showHousingAffordability = visibility["economics-housingAffordability"];
 	const showCrime = visibility["economics-crime"];
 	const showClaimantCount = visibility["economics-claimantCount"];
 	const showUnemployment = visibility["economics-unemployment"];
@@ -71,6 +75,10 @@ export default function EconomicsSection({
 	const aggregatedIncomeData = useMemo(
 		() => aggregateDataset({ datasets: availableIncomeDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateIncomeStats(g, d, loc, id) }, mapManager, boundaryData, location),
 		[availableIncomeDatasets, mapManager, boundaryData, location],
+	);
+	const aggregatedHousingAffordabilityData = useMemo(
+		() => aggregateDataset({ datasets: availableHousingAffordabilityDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateHousingAffordabilityStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[availableHousingAffordabilityDatasets, mapManager, boundaryData, location],
 	);
 	const aggregatedCrimeData = useMemo(
 		() => aggregateDataset({ datasets: availableCrimeDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateCrimeStats(g, d, loc, id) }, mapManager, boundaryData, location),
@@ -108,7 +116,7 @@ export default function EconomicsSection({
 		[availableFuelPovertyDatasets, mapManager, boundaryData, location],
 	);
 
-	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment && !showChildPoverty && !showHomelessness && !showFuelPoverty) return null;
+	if (!showHousePrice && !showIncome && !showHousingAffordability && !showCrime && !showClaimantCount && !showUnemployment && !showChildPoverty && !showHomelessness && !showFuelPoverty) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
@@ -123,6 +131,11 @@ export default function EconomicsSection({
 			{showIncome && (
 				<IncomeChart activeDataset={activeDataset} availableDatasets={availableIncomeDatasets}
 					aggregatedData={aggregatedIncomeData} year={2025} selectedArea={selectedArea}
+					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
+			)}
+			{showHousingAffordability && (
+				<HousingAffordabilityChart activeDataset={activeDataset} availableDatasets={availableHousingAffordabilityDatasets}
+					aggregatedData={aggregatedHousingAffordabilityData} year={2025} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 			{showCrime && (

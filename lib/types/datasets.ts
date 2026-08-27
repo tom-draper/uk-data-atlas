@@ -9,6 +9,10 @@ import { PopulationDataset, AggregatedPopulationData } from "./population";
 import { HousePriceDataset, AggregatedHousePriceData } from "./housePrice";
 import { AggregatedCrimeData, CrimeDataset } from "./crime";
 import { AggregatedIncomeData, IncomeDataset } from "./income";
+import {
+	AggregatedHousingAffordabilityData,
+	HousingAffordabilityDataset,
+} from "./housingAffordability";
 import { AggregatedEthnicityData, EthnicityDataset } from "./ethnicity";
 import { AggregatedCustomData, CustomDataset } from "./custom";
 import {
@@ -46,6 +50,7 @@ export type Dataset =
 	| HousePriceDataset
 	| CrimeDataset
 	| IncomeDataset
+	| HousingAffordabilityDataset
 	| BrexitLADDataset
 	| BrexitConstituencyDataset
 	| CustomDataset
@@ -73,6 +78,7 @@ export type Datasets = {
 	housePrice: Record<string, HousePriceDataset>;
 	crime: Record<string, CrimeDataset>;
 	income: Record<string, IncomeDataset>;
+	housingAffordability: Record<string, HousingAffordabilityDataset>;
 	brexit: Record<string, BrexitLADDataset>;
 	brexitConstituency: Record<string, BrexitConstituencyDataset>;
 	imd: Record<string, IMDDataset>;

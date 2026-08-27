@@ -6,6 +6,7 @@ export const childPovertyDefinition: ScalarDatasetDefinition<ChildPovertyDataset
 	type: "childPoverty",
 	precompiledFile: "child-poverty",
 	sourcePath: "economics/child-poverty/children-in-low-income-families-2022-2025.ods",
+	sourceFormat: "ods",
 	chart: {
 		group: "Economics",
 		key: "economics-childPoverty",

@@ -6,6 +6,7 @@ export const fuelPovertyDefinition: ScalarDatasetDefinition<FuelPovertyDataset> 
 	type: "fuelPoverty",
 	precompiledFile: "fuel-poverty",
 	sourcePath: "economics/fuel-poverty/fuel-poverty-2024.ods",
+	sourceFormat: "ods",
 	chart: {
 		group: "Economics",
 		key: "economics-fuelPoverty",

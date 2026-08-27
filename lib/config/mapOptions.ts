@@ -31,6 +31,9 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	income: {
 		colorRange: { min: 25000, max: 45000 },
 	},
+	housingAffordability: {
+		colorRange: { min: 4, max: 12 },
+	},
 	brexit: { colorRange: { min: 30, max: 70 } },
 	brexitConstituency: { colorRange: { min: 30, max: 70 } },
 	custom: { colorRange: { min: 0, max: 100 } },

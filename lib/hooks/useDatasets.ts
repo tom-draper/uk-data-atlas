@@ -32,7 +32,7 @@ import { useUnemploymentData } from "./useUnemploymentData";
 import { useJsonDatasetLoaders } from "./useJsonDataLoader";
 import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { withCDN } from "@/lib/helpers/cdn";
-import type { ChildPovertyDataset, FuelPovertyDataset, HomelessnessDataset } from "@/lib/types";
+import type { ChildPovertyDataset, FuelPovertyDataset, HomelessnessDataset, HousingAffordabilityDataset } from "@/lib/types";
 
 function getServerSnapshot(): Record<ChartKey, boolean> {
 	return DEFAULT_VISIBILITY;
@@ -93,6 +93,7 @@ export function useDatasets(): UseDatasetsResult {
 		housePrice: housePrice.datasets,
 		crime: crime.datasets,
 		income: income.datasets,
+		housingAffordability: (scalarDatasets.datasets.housingAffordability ?? {}) as Record<string, HousingAffordabilityDataset>,
 		brexit: brexit.datasets,
 		brexitConstituency: brexitConstituency.datasets,
 		imd: imd.datasets,

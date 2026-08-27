@@ -115,7 +115,9 @@ async function main() {
 		loadNHSWaiting(readZip).then((d) => out("nhs-waiting", d)),
 		loadUnemployment(readSource).then((d) => out("unemployment", d)),
 		...SCALAR_DATASET_DEFINITIONS.map((definition) =>
-			readOdsContent(definition.sourcePath)
+			(definition.sourceFormat === "ods"
+				? readOdsContent(definition.sourcePath)
+				: readSource(definition.sourcePath))
 				.then(definition.load)
 				.then((data) => out(definition.precompiledFile, data)),
 		),

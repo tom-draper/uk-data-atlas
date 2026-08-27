@@ -3,9 +3,11 @@ import type { ScalarDatasetDefinition } from "./types";
 import { childPovertyDefinition } from "./childPoverty";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { homelessnessDefinition } from "./homelessness";
+import { housingAffordabilityDefinition } from "./housingAffordability";
 
 export const SCALAR_DATASET_DEFINITIONS: readonly ScalarDatasetDefinition[] = [
 	childPovertyDefinition,
 	fuelPovertyDefinition,
 	homelessnessDefinition,
+	housingAffordabilityDefinition,
 ];

@@ -35,7 +35,7 @@ import {
 } from "../colorScale/datasetColors";
 import { getColor } from "../colorScale/themes";
 import { IncomeDataset } from "@/lib/types/income";
-import { CustomPoint } from "@/lib/types/custom";
+import { CustomDataset, CustomPoint } from "@/lib/types/custom";
 import { IMDDataset } from "@/lib/types/imd";
 import { SIMDDataset } from "@/lib/types/simd";
 import { WIMDDataset } from "@/lib/types/wimd";

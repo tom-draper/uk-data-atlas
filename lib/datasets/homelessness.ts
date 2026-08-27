@@ -6,6 +6,7 @@ export const homelessnessDefinition: ScalarDatasetDefinition<HomelessnessDataset
 	type: "homelessness",
 	precompiledFile: "homelessness",
 	sourcePath: "economics/homelessness/homelessness-2026-q1.ods",
+	sourceFormat: "ods",
 	chart: {
 		group: "Economics",
 		key: "economics-homelessness",
