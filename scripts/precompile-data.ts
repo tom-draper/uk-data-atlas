@@ -29,9 +29,7 @@ import { loadClaimantCount } from "../lib/data/claimant-count/loader";
 import { loadSchoolPerformance } from "../lib/data/school-performance/loader";
 import { loadNHSWaiting } from "../lib/data/nhs-waiting/loader";
 import { loadUnemployment } from "../lib/data/unemployment/loader";
-import { loadChildPoverty } from "../lib/data/child-poverty/loader";
-import { loadHomelessness } from "../lib/data/homelessness/loader";
-import { loadFuelPoverty } from "../lib/data/fuel-poverty/loader";
+import { SCALAR_DATASET_DEFINITIONS } from "../lib/datasets";
 import { loadGeneralElection } from "../lib/data/election/general-election/load";
 import { loadLocalElection } from "../lib/data/election/local-election/load";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
@@ -115,16 +113,11 @@ async function main() {
 		loadSchoolPerformance(read).then((d) => out("school-performance", d)),
 		loadNHSWaiting(readZip).then((d) => out("nhs-waiting", d)),
 		loadUnemployment(readSource).then((d) => out("unemployment", d)),
-		readOdsContent(
-			"economics/child-poverty/children-in-low-income-families-2022-2025.ods",
-		)
-			.then(loadChildPoverty)
-			.then((d) => out("child-poverty", d)),
-		readOdsContent("economics/homelessness/homelessness-2026-q1.ods")
-			.then((content) => out("homelessness", loadHomelessness(content))),
-		readOdsContent("economics/fuel-poverty/fuel-poverty-2024.ods")
-			.then(loadFuelPoverty)
-			.then((d) => out("fuel-poverty", d)),
+		...SCALAR_DATASET_DEFINITIONS.map((definition) =>
+			readOdsContent(definition.sourcePath)
+				.then(definition.load)
+				.then((data) => out(definition.precompiledFile, data)),
+		),
 		loadGeneralElection(read).then((d) => out("general-election", d)),
 		loadLocalElection(read).then((d) => out("local-election", d)),
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
