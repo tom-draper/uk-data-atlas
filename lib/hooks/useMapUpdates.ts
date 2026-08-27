@@ -33,6 +33,8 @@ function getActiveDataOptions(
 			return mapOptions.crime;
 		case "income":
 			return mapOptions.income;
+		case "childPoverty":
+			return mapOptions.childPoverty;
 		case "ethnicity":
 			return mapOptions.ethnicity;
 		case "brexit":
