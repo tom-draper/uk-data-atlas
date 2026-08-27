@@ -2,6 +2,34 @@ import { describe, expect, it, vi } from "vitest";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 
 describe("aggregateDataset", () => {
+	it("uses the complete precompiled aggregate without requiring a map manager", () => {
+		const datasets = {
+			"2022": {
+				id: "population2022",
+				type: "population",
+				year: 2022,
+				boundaryYear: 2023,
+				boundaryType: "ward",
+				data: {},
+			},
+		} as any;
+
+		const aggregate = aggregateDataset(
+			{
+				datasets,
+				boundaryType: "ward",
+				calculateStats: vi.fn(),
+			},
+			null,
+			{} as any,
+			"Greater Manchester",
+		);
+
+		expect(aggregate?.["2022"]).toMatchObject({
+			populationStats: { total: expect.any(Number) },
+		});
+	});
+
 	it("shares an aggregate requested by multiple consumers", () => {
 		const mapManager = {} as any;
 		const boundaryData = {

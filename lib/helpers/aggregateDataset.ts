@@ -2,6 +2,8 @@ import type { Dataset } from "@lib/types/datasets";
 import type { BoundaryType, BoundaryData } from "@lib/types/boundaries";
 import type { BoundaryGeojson } from "@lib/types/geometry";
 import { MapManager } from "./mapManager/mapManager";
+import { getChartSummary } from "@/lib/data/chart-summary/static";
+import type { ChartAggregateKey } from "@/lib/data/chart-summary/types";
 
 export interface DatasetConfig<T extends Dataset> {
 	datasets: Record<string, T>;
@@ -60,8 +62,18 @@ export function aggregateDataset<T extends Dataset>(
 	boundaryData: BoundaryData,
 	location: string | null,
 ): Record<string, any> | null {
-	if (!mapManager) return null;
 	if (Object.keys(config.datasets).length === 0) return null;
+
+	const firstDataset = Object.values(config.datasets)[0];
+	const keyBy = (config.keyBy ?? "year") as ChartAggregateKey;
+	const summary = getChartSummary(location, firstDataset?.type, keyBy);
+	const summaryIncludesEveryDataset = summary && Object.entries(config.datasets).every(
+		([datasetId, dataset]) =>
+			Object.hasOwn(summary, keyBy === "id" ? datasetId : String(dataset.year)),
+	);
+	if (summaryIncludesEveryDataset) return summary;
+
+	if (!mapManager) return null;
 
 	const cacheKey = `${config.boundaryType}:${config.keyBy ?? "year"}:${location ?? ""}`;
 	return cachedAggregate(
