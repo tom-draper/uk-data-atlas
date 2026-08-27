@@ -34,7 +34,7 @@ type FillPaintConfig = {
 
 export class LayerManager {
 	private lastFillPaint: FillPaintConfig | null = null;
-	private valueGeojson: BoundaryGeojson | null = null;
+	private sourceGeojson: BoundaryGeojson | null = null;
 	private pointTooltip: PointTooltip | undefined;
 	private pointTooltipDark = false;
 	private pointTooltipHandlersAttached = false;
@@ -150,7 +150,6 @@ export class LayerManager {
 		geojson: BoundaryGeojson,
 		visibility: MapOptions["visibility"],
 	): void {
-		this.valueGeojson = null;
 		this.updateLayers(
 			geojson,
 			{
@@ -171,56 +170,19 @@ export class LayerManager {
 		colorExpression: unknown[],
 		visibility: MapOptions["visibility"],
 	): void {
-		this.lastFillPaint = {
-			color: colorExpression,
-			opacity: (opacity) => [
-				"case",
-				["boolean", ["feature-state", "hover"], false],
-				opacity * 0.58,
-				opacity,
-			],
-		};
-
-		if (!this.map.isStyleLoaded()) return;
-
-		const sourceExists = !!this.map.getSource(SOURCE_ID);
-		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
-		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
-		if (sourceExists && fillLayerExists && lineLayerExists) {
-			if (this.valueGeojson !== geojson) {
-				const source = this.map.getSource(
-					SOURCE_ID,
-				) as maplibregl.GeoJSONSource;
-				source.setData(geojson as any);
-				this.valueGeojson = geojson;
-			}
-			this.applyVisibility(visibility);
-			return;
-		}
-
-		this.removeExistingLayers();
-		this.addSource(geojson);
-		this.valueGeojson = geojson;
-		this.map.addLayer({
-			id: FILL_LAYER_ID,
-			type: "fill",
-			source: SOURCE_ID,
-			paint: {
-				"fill-color": DEFAULT_COLOR,
-				"fill-opacity": 0,
+		this.updateLayers(
+			geojson,
+			{
+				color: colorExpression,
+				opacity: (opacity) => [
+					"case",
+					["boolean", ["feature-state", "hover"], false],
+					opacity * 0.58,
+					opacity,
+				],
 			},
-		});
-		this.map.addLayer({
-			id: LINE_LAYER_ID,
-			type: "line",
-			source: SOURCE_ID,
-			paint: {
-				"line-color": "#000",
-				"line-width": 1,
-				"line-opacity": 0,
-			},
-		});
-		this.applyVisibility(visibility);
+			visibility,
+		);
 	}
 
 	private updateLayers(
@@ -228,7 +190,6 @@ export class LayerManager {
 		paint: FillPaintConfig,
 		visibility: MapOptions["visibility"],
 	): void {
-		this.valueGeojson = null;
 		this.lastFillPaint = paint;
 		const styleLoaded = this.map.isStyleLoaded();
 		const sourceExists = !!this.map.getSource(SOURCE_ID);
@@ -237,9 +198,12 @@ export class LayerManager {
 		if (!styleLoaded) return;
 
 		if (sourceExists && fillLayerExists && lineLayerExists) {
-			// Update source data in-place to avoid remove/add flash
-			const src = this.map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource;
-			src.setData(geojson as any);
+			if (this.sourceGeojson !== geojson) {
+				// Update source data in-place to avoid remove/add flash.
+				const src = this.map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource;
+				src.setData(geojson as any);
+				this.sourceGeojson = geojson;
+			}
 			this.applyVisibility(visibility);
 			return;
 		}
@@ -247,6 +211,7 @@ export class LayerManager {
 		// First render: remove any partial state then build from scratch
 		this.removeExistingLayers();
 		this.addSource(geojson);
+		this.sourceGeojson = geojson;
 
 		this.map.addLayer({
 			id: FILL_LAYER_ID,
@@ -457,7 +422,7 @@ export class LayerManager {
 	// Blanks the choropleth fill/line without tearing the source down — used when
 	// switching to a point dataset so stale boundary data doesn't linger beneath.
 	clearBoundaryData(): void {
-		this.valueGeojson = null;
+		this.sourceGeojson = null;
 		const src = this.map.getSource(SOURCE_ID) as
 			| maplibregl.GeoJSONSource
 			| undefined;
@@ -485,7 +450,7 @@ export class LayerManager {
 	}
 
 	private removeExistingLayers(): void {
-		this.valueGeojson = null;
+		this.sourceGeojson = null;
 		const source = (this.map as any).getSource(SOURCE_ID);
 		if (source) {
 			if (this.map.getLayer(FILL_LAYER_ID))

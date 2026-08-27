@@ -57,7 +57,7 @@ export class MapManager {
 	private featureBuilder: FeatureBuilder;
 	private propertyDetector: PropertyDetector;
 	private cache: StatsCache;
-	private activeValueGeojson:
+	private activeTransformedGeojson:
 		| {
 				boundary: BoundaryGeojson;
 				dataset: object;
@@ -130,23 +130,31 @@ export class MapManager {
 			}
 			: (code: string) => resultsMap[code] || "NONE";
 
-		// Build features once
-		const features =
+		const sourceMode =
 			mode === "percentage" && options.selected
-				? this.featureBuilder.buildElectionPercentageFeatures(
-						geojson.features,
-						dataMap,
-						options.selected,
-						codeProp,
-					)
-				: this.featureBuilder.buildElectionWinnerFeatures(
-						geojson.features,
-						codeProp,
-						getWinner,
-					);
-
-		const transformedGeojson =
-			this.featureBuilder.formatBoundaryGeoJson(features);
+				? `${type}:percentage:${options.selected}`
+				: `${type}:majority:${[...excluded].sort().join(",")}`;
+		const transformedGeojson = this.getActiveTransformedGeojson(
+			geojson,
+			dataset,
+			sourceMode,
+			() => {
+				const features =
+					mode === "percentage" && options.selected
+						? this.featureBuilder.buildElectionPercentageFeatures(
+								geojson.features,
+								dataMap,
+								options.selected,
+								codeProp,
+							)
+						: this.featureBuilder.buildElectionWinnerFeatures(
+								geojson.features,
+								codeProp,
+								getWinner,
+							);
+				return this.featureBuilder.formatBoundaryGeoJson(features);
+			},
+		);
 
 		// Update layers
 		if (mode === "percentage" && options.selected) {
@@ -529,24 +537,39 @@ export class MapManager {
 		codeProp: PropertyKeys,
 		valueFor: (code: string, feature: Features[number]) => number | null | undefined,
 	): BoundaryGeojson {
-		const cached = this.activeValueGeojson;
+		return this.getActiveTransformedGeojson(
+			geojson,
+			dataset,
+			mode,
+			() =>
+				this.featureBuilder.formatBoundaryGeoJson(
+					this.featureBuilder.buildValueFeatures(
+						geojson.features,
+						codeProp,
+						valueFor,
+					),
+				),
+		);
+	}
+
+	private getActiveTransformedGeojson<T extends object>(
+		boundary: BoundaryGeojson,
+		dataset: T,
+		mode: string,
+		build: () => BoundaryGeojson,
+	): BoundaryGeojson {
+		const cached = this.activeTransformedGeojson;
 		if (
-			cached?.boundary === geojson &&
+			cached?.boundary === boundary &&
 			cached.dataset === dataset &&
 			cached.mode === mode
 		) {
 			return cached.geojson;
 		}
 
-		const transformed = this.featureBuilder.formatBoundaryGeoJson(
-			this.featureBuilder.buildValueFeatures(
-				geojson.features,
-				codeProp,
-				valueFor,
-			),
-		);
-		this.activeValueGeojson = {
-			boundary: geojson,
+		const transformed = build();
+		this.activeTransformedGeojson = {
+			boundary,
 			dataset,
 			mode,
 			geojson: transformed,
@@ -1278,7 +1301,7 @@ export class MapManager {
 	destroy(): void {
 		this.eventHandler.destroy();
 		propCache.clear(); // Clean up cache on destroy
-		this.activeValueGeojson = undefined;
+		this.activeTransformedGeojson = undefined;
 		this.customRangeCache = new WeakMap<CustomDataset, ColorRange>();
 	}
 }
