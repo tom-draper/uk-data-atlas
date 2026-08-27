@@ -37,6 +37,7 @@ import { loadLocalElection } from "../lib/data/election/local-election/load";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
+import { buildChartSummaryIndex } from "../lib/data/chart-summary/build";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -139,6 +140,15 @@ async function main() {
 		for (const f of failures) console.error("  ERROR:", f.reason);
 		process.exit(1);
 	}
+
+	const readPrecompiled = async (name: string) =>
+		JSON.parse(await readFile(join(OUT_DIR, `${name}.json`), "utf8"));
+	const boundaryMappings = await readPrecompiled("boundary-mappings");
+	console.log("Pre-compiling chart summaries...");
+	await out(
+		"chart-summaries",
+		await buildChartSummaryIndex(read, readPrecompiled, boundaryMappings.wardToLad),
+	);
 
 	console.log("Done.");
 }
