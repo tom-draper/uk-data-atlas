@@ -52,6 +52,7 @@ export type ColorRangeDatasetKey =
 	| "unemployment"
 	| "childPoverty"
 	| "homelessness"
+	| "fuelPoverty"
 	| "custom";
 
 interface LegendPanelProps {

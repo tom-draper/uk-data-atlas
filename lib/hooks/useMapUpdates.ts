@@ -37,6 +37,8 @@ function getActiveDataOptions(
 			return mapOptions.childPoverty;
 		case "homelessness":
 			return mapOptions.homelessness;
+		case "fuelPoverty":
+			return mapOptions.fuelPoverty;
 		case "ethnicity":
 			return mapOptions.ethnicity;
 		case "brexit":
@@ -295,6 +297,9 @@ export function useMapUpdates({
 						activeDataset,
 						mapOptions,
 					);
+
+				case "fuelPoverty":
+					return mapManager.updateMapForFuelPoverty(geojson, activeDataset, mapOptions);
 
 				case "nhsWaiting":
 					return mapManager.updateMapForNHSWaiting(

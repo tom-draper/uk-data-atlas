@@ -332,6 +332,9 @@ export default function LegendContent({
 				(v) => `${v.toFixed(0)}% children`,
 			);
 
+		case "fuelPoverty":
+			return renderDynamicLegend("fuelPoverty", 0, 30, 5, 15, (v) => `${v.toFixed(0)}% households`);
+
 		case "custom":
 			if (
 				activeDataset.kind === "points" &&

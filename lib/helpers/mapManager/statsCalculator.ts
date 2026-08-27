@@ -48,6 +48,7 @@ import { NHSWaitingDataset, AggregatedNHSWaitingData } from "@/lib/types/nhsWait
 import { UnemploymentDataset, AggregatedUnemploymentData } from "@/lib/types/unemployment";
 import { ChildPovertyDataset, AggregatedChildPovertyData } from "@/lib/types/childPoverty";
 import { HomelessnessDataset, AggregatedHomelessnessData } from "@/lib/types/homelessness";
+import { FuelPovertyDataset, AggregatedFuelPovertyData } from "@/lib/types/fuelPoverty";
 
 const PARTY_KEYS = [
 	"LAB",
@@ -1103,6 +1104,31 @@ export class StatsCalculator {
 				householdsPerThousand: householdsPerThousand / count,
 				householdsWithChildren,
 				childrenInTemporaryAccommodation,
+			};
+		});
+	}
+
+	calculateFuelPovertyStats(
+		geojson: BoundaryGeojson,
+		data: FuelPovertyDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedFuelPovertyData | null {
+		return this.cached(`fuelPoverty-${location}-${datasetId}`, () => {
+			const lsoaCodeProp = this.propertyDetector.detectLSOACode(geojson.features);
+			let householdCount = 0;
+			let fuelPoorHouseholdCount = 0;
+			for (const feature of geojson.features) {
+				const record = data[getFeatureProp(feature.properties, lsoaCodeProp) ?? ""];
+				if (!record) continue;
+				householdCount += record.householdCount;
+				fuelPoorHouseholdCount += record.fuelPoorHouseholdCount;
+			}
+			if (householdCount === 0) return null;
+			return {
+				householdCount,
+				fuelPoorHouseholdCount,
+				fuelPovertyRate: fuelPoorHouseholdCount / householdCount * 100,
 			};
 		});
 	}

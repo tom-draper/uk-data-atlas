@@ -35,6 +35,7 @@ import { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
 import { UnemploymentDataset } from "@/lib/types/unemployment";
 import { ChildPovertyDataset } from "@/lib/types/childPoverty";
 import { HomelessnessDataset } from "@/lib/types/homelessness";
+import { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 
 import type { MapManagerCallbacks } from "./callbacks";
@@ -417,7 +418,8 @@ export class MapManager {
 			| NHSWaitingDataset
 			| UnemploymentDataset
 			| ChildPovertyDataset
-			| HomelessnessDataset,
+			| HomelessnessDataset
+			| FuelPovertyDataset,
 	>(
 		geojson: BoundaryGeojson,
 		dataset: T,
@@ -1113,6 +1115,31 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateHomelessnessStats(geojson, data, location, datasetId);
+	}
+
+	updateMapForFuelPoverty(
+		geojson: BoundaryGeojson,
+		dataset: FuelPovertyDataset,
+		mapOptions: MapOptions,
+	): void {
+		this.updateGenericMap(
+			geojson,
+			dataset,
+			mapOptions,
+			this.propertyDetector.detectLSOACode.bind(this.propertyDetector),
+			this.featureBuilder.buildFuelPovertyFeatures.bind(this.featureBuilder),
+			"fuelPoverty",
+			dataset.data,
+		);
+	}
+
+	calculateFuelPovertyStats(
+		geojson: BoundaryGeojson,
+		data: FuelPovertyDataset["data"],
+		location: string | null = null,
+		datasetId: string | null = null,
+	) {
+		return this.statsCalculator.calculateFuelPovertyStats(geojson, data, location, datasetId);
 	}
 
 	setBorderVisibility(hidden: boolean): void {
