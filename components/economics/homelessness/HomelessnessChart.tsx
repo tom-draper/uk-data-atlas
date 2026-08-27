@@ -27,13 +27,17 @@ interface HomelessnessChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const TARGET_RATE = 2.5;
-
 function rateColor(rate: number): string {
-	if (rate <= TARGET_RATE) return "#16a34a";
+	if (rate <= 2.5) return "#16a34a";
 	if (rate <= 5) return "#eab308";
 	if (rate <= 8) return "#f97316";
 	return "#dc2626";
+}
+
+function formatCount(value: number): string {
+	if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}m`;
+	if (value >= 1_000) return `${Math.round(value / 1_000)}k`;
+	return value.toLocaleString();
 }
 
 function computeStats(
@@ -114,7 +118,7 @@ export default function HomelessnessChart({
 							<span className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>per 1k households</span>
 						</div>
 						<span className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-							target &lt;{TARGET_RATE} per 1k
+							{formatCount(stats!.householdsInTemporaryAccommodation)} in TA
 						</span>
 					</div>
 					<div className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
