@@ -7,15 +7,17 @@ import {
 	CustomDataset,
 	BoundaryCodes,
 } from "@/lib/types";
-import { CustomPoint } from "@/lib/types/custom";
 import {
 	matchColumnAgainstBank,
 	detectCoordinateColumns,
-	AreaEntry,
 	AreaBank,
 } from "@lib/data/areaBank";
 import { useMatchIndex } from "@/lib/hooks/useMatchIndex";
 import { detectHeaderRow, parseCustomCsv } from "@/lib/data/custom/csv";
+import {
+	createCustomDataset,
+	type CustomDatasetUpload,
+} from "@/lib/data/custom/dataset";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useAggregatedDataset } from "@/lib/hooks/useAggregatedDataset";
@@ -32,23 +34,6 @@ import {
 	cardClass,
 	chartHeadingClass,
 } from "@/lib/hooks/useCardAccent";
-
-interface UploadData {
-	file: string;
-	headerRow: number;
-	data: string[][];
-	mode: "choropleth" | "points";
-	dataColumn: string;
-	// choropleth
-	selectedColumn?: string;
-	boundaryType?: string;
-	boundaryYear?: number | null;
-	year?: number | null;
-	selectedEntry?: AreaEntry;
-	// points
-	latColumn?: string;
-	lngColumn?: string;
-}
 
 interface SelectedArea {
 	code: string;
@@ -246,7 +231,7 @@ function UploadModal({
 }: {
 	isOpen: boolean;
 	onClose: () => void;
-	onUpload: (data: UploadData) => void;
+	onUpload: (data: CustomDatasetUpload) => void;
 	areaBank: AreaBank;
 }) {
 	const [file, setFile] = useState<File | null>(null);
@@ -416,7 +401,6 @@ function UploadModal({
 			mode: "choropleth",
 			selectedColumn,
 			dataColumn,
-			year: entry.year || null,
 			boundaryType: entry.boundaryType,
 			boundaryYear: entry.year || null,
 			selectedEntry: entry,
@@ -1007,97 +991,16 @@ export default function CustomSection({
 	const { areaBank } = useMatchIndex(isOpen);
 	const isDark = useIsDark();
 
-	const handleCustomDatasetApply = (data: UploadData) => {
+	const handleCustomDatasetApply = (data: CustomDatasetUpload) => {
 		const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
-		const headers = data.data[data.headerRow] ?? [];
+		const dataset = createCustomDataset(id, data);
+		if (!dataset) return;
 
-		if (data.mode === "points") {
-			const latIdx = headers.indexOf(data.latColumn ?? "");
-			const lngIdx = headers.indexOf(data.lngColumn ?? "");
-			const valIdx = headers.indexOf(data.dataColumn);
-			if (latIdx === -1 || lngIdx === -1 || valIdx === -1) return;
-
-			const points: CustomPoint[] = [];
-			let min = Infinity;
-			let max = -Infinity;
-			data.data.slice(data.headerRow + 1).forEach((row) => {
-				const lat = parseFloat(row[latIdx]);
-				const lng = parseFloat(row[lngIdx]);
-				const value = parseFloat(row[valIdx]);
-				if (isNaN(lat) || isNaN(lng) || isNaN(value)) return;
-				points.push({ lat, lng, value });
-				if (value < min) min = value;
-				if (value > max) max = value;
-			});
-
-			const pointDataset: CustomDataset = {
-				id,
-				type: "custom",
-				kind: "points",
-				name: data.file,
-				year: 0,
-				boundaryType: "ward",
-				boundaryYear: 0,
-				dataColumn: data.dataColumn,
-				data: {},
-				points,
-				valueMin: points.length ? min : 0,
-				valueMax: points.length ? max : 0,
-			};
-
-			addCustomDataset(pointDataset);
-			setActiveViz({ vizId: id, datasetType: "custom", datasetYear: 0 });
-			setIsOpen(false);
-			return;
-		}
-
-		if (
-			data.boundaryYear === null ||
-			data.boundaryYear === undefined ||
-			!data.boundaryType ||
-			!data.selectedColumn
-		) {
-			return;
-		}
-
-		const columnIndex = headers.indexOf(data.selectedColumn);
-		const dataIndex = headers.indexOf(data.dataColumn);
-
-		const newDataset: CustomDataset = {
-			id,
-			type: "custom",
-			kind: "choropleth",
-			name: data.file,
-			year: data.boundaryYear,
-			boundaryType: data.boundaryType as BoundaryType,
-			boundaryYear: data.boundaryYear,
-			dataColumn: data.dataColumn,
-			data: {},
-		};
-
-		const nameToCode =
-			data.selectedEntry?.matchType === "name"
-				? data.selectedEntry.nameToCode
-				: null;
-
-		data.data.slice(data.headerRow + 1).forEach((row) => {
-			let code = row[columnIndex]?.trim();
-			const value = parseFloat(row[dataIndex]);
-
-			if (nameToCode && code) {
-				code = nameToCode.get(code.toLowerCase()) ?? code;
-			}
-
-			if (code && !isNaN(value)) {
-				newDataset.data[code] = value;
-			}
-		});
-
-		addCustomDataset(newDataset);
+		addCustomDataset(dataset);
 		setActiveViz({
 			vizId: id,
 			datasetType: "custom",
-			datasetYear: data.boundaryYear,
+			datasetYear: dataset.boundaryYear,
 		});
 
 		setIsOpen(false);
