@@ -10,16 +10,11 @@ import {
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 
 interface ProcessedEthnicityData {
@@ -162,24 +157,18 @@ export default function EthnicityChart({
 	const heightClass = isActive ? "min-h-[170px]" : "min-h-[65px]";
 
 	const accentColor = processedData.ethnicityData[0]?.color ?? null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(
-				isActive,
-				isDark,
-				`transition-[min-height] duration-300 ease-in-out ${heightClass}`,
-			)}
+		<ChartCard
+			heading={`Ethnicity [${dataset.year}]`}
+			headerEnd={
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+					England &amp; Wales
+				</span>
+			}
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName={`transition-[min-height] duration-300 ease-in-out ${heightClass}`}
 			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -188,14 +177,6 @@ export default function EthnicityChart({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="flex items-center justify-between mb-1.5">
-				<h3 className={chartHeadingClass(isDark)}>
-					Ethnicity [{dataset.year}]
-				</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England &amp; Wales</span>
-			</div>
-
 			{!processedData.hasData ? (
 				chartsLoading ? (
 					<ChartContentPlaceholder className="h-5 mt-1" />
@@ -214,6 +195,6 @@ export default function EthnicityChart({
 					)}
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }

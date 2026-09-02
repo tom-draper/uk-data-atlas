@@ -13,20 +13,15 @@ import {
 import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import {
 	resolveWardData,
 	getLadCachedValue,
 } from "@/lib/helpers/demographicData";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
@@ -353,20 +348,17 @@ function PopulationDensityChart({
 
 	const accentColor =
 		density !== null ? getDensityCategory(density).hex : null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark)}
+		<ChartCard
+			heading={`Population Density [${dataset.year}]`}
+			headerEnd={
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+					England &amp; Wales
+				</span>
+			}
+			accent={accentColor}
+			isActive={isActive}
 			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,
@@ -375,14 +367,6 @@ function PopulationDensityChart({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="flex items-center justify-between mb-1.5">
-				<h3 className={chartHeadingClass(isDark)}>
-					Population Density [{dataset.year}]
-				</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England &amp; Wales</span>
-			</div>
-
 			{!total || density === null || areaSqKm === null ? (
 				<div className="h-14 flex items-center justify-center">
 					{chartsLoading ? (
@@ -422,7 +406,7 @@ function PopulationDensityChart({
 					</div>
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }
 

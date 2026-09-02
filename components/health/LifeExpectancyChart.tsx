@@ -7,17 +7,12 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { hexToRgb, rgbToHex } from "@/lib/helpers/colorScale/interpolation";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface LifeExpectancyChartProps {
 	activeDataset: Dataset | null;
@@ -167,22 +162,16 @@ export default function LifeExpectancyChart({
 				return rgbToHex(r, g, b);
 			})()
 		: null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "min-h-[72px]")}
+		<ChartCard
+			heading={`${dataset.label} [${dataset.dataPeriod}]`}
+			headerClassName="mb-0"
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName="min-h-[72px]"
 			title={dataset.metadata.source}
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -191,12 +180,7 @@ export default function LifeExpectancyChart({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex flex-col flex-1">
-				<h3 className={chartHeadingClass(isDark)}>
-					{dataset.label} [{dataset.dataPeriod}]
-				</h3>
-				{leStats ? (
+			{leStats ? (
 					<div className="mt-1 space-y-0">
 						{leBar(
 							leStats.averageMaleLE,
@@ -225,8 +209,7 @@ export default function LifeExpectancyChart({
 							</div>
 						)}
 					</div>
-				)}
-			</div>
-		</button>
+			)}
+		</ChartCard>
 	);
 }

@@ -13,6 +13,7 @@ interface ChartCardProps {
 	heading: ReactNode;
 	headingClassName?: string;
 	headingTitle?: string;
+	headerClassName?: string;
 	headerEnd?: ReactNode;
 	accent: string | null;
 	isActive: boolean;
@@ -27,6 +28,7 @@ export function ChartCard({
 	heading,
 	headingClassName,
 	headingTitle,
+	headerClassName,
 	headerEnd,
 	accent,
 	isActive,
@@ -56,7 +58,14 @@ export function ChartCard({
 			<ChartLoadingBackground />
 			{background}
 			<div className="relative z-10 flex flex-col flex-1">
-				<div className="flex items-start justify-between mb-1.5 shrink-0">
+				<div
+					className={[
+						"flex items-start justify-between shrink-0",
+						headerClassName ?? "mb-1.5",
+					]
+						.filter(Boolean)
+						.join(" ")}
+				>
 					<h3
 						className={[chartHeadingClass(isDark), headingClassName]
 							.filter(Boolean)
