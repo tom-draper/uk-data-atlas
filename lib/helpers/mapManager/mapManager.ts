@@ -36,6 +36,9 @@ import { UnemploymentDataset } from "@/lib/types/unemployment";
 import { ChildPovertyDataset } from "@/lib/types/childPoverty";
 import { HomelessnessDataset } from "@/lib/types/homelessness";
 import { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
+import type { BoundaryType } from "@/lib/types/boundaries";
+import type { ScalarDataset } from "@/lib/datasets/generated";
+import { getScalarDatasetDefinition } from "@/lib/datasets";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 import {
 	getGenderColorExpression,
@@ -43,7 +46,6 @@ import {
 } from "@/lib/helpers/colorScale/datasetColors";
 import type { ColorRange } from "@/lib/types/common";
 import { calculateMedianAge, calculateTotal } from "@/lib/helpers/population";
-import type { ScalarMapDefinition } from "@/lib/datasets/types";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
@@ -468,7 +470,21 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private updateGenericMap<T extends object>(
+	private detectBoundaryProperty(
+		features: Features,
+		boundaryType: BoundaryType,
+	): PropertyKeys {
+		switch (boundaryType) {
+			case "ward": return this.propertyDetector.detectWardCode(features);
+			case "constituency": return this.propertyDetector.detectConstituencyCode(features);
+			case "localAuthority": return this.propertyDetector.detectLocalAuthorityCode(features);
+			case "lsoa": return this.propertyDetector.detectLSOACode(features);
+			case "dataZone": return this.propertyDetector.detectDataZoneCode(features);
+			case "superOutputArea": return this.propertyDetector.detectSOACode(features);
+		}
+	}
+
+	private updateGenericMap<T extends { data: Record<string, unknown> }>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
@@ -513,30 +529,28 @@ export class MapManager {
 
 	updateMapForScalarDataset(
 		geojson: BoundaryGeojson,
-		dataset: { type: MapMode; data: Record<string, unknown> },
+		dataset: ScalarDataset,
 		mapOptions: MapOptions,
-		definition: ScalarMapDefinition,
 	): void {
-		const detectProperty = definition.codeLevel === "lsoa"
-			? this.propertyDetector.detectLSOACode.bind(this.propertyDetector)
-			: this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector);
+		const definition = getScalarDatasetDefinition(dataset.type);
+		if (!definition) return;
 
 		this.updateGenericMap(
 			geojson,
 			dataset,
 			mapOptions,
-			detectProperty,
+			(features) => this.detectBoundaryProperty(features, dataset.boundaryType),
 			dataset.type,
 			dataset.data,
 			(data, code) => {
-				const value = (data.data[code] as Record<string, unknown> | undefined)?.[
-					definition.valueKey
-				];
-				return typeof value === "number" && Number.isFinite(value)
-					? value
+				const mappedValue = definition.map.valueFor?.(data, code);
+				if (mappedValue !== undefined) return mappedValue;
+				const value = definition.map.valueKey
+					? (data.data[code] as unknown as Record<string, unknown> | undefined)?.[definition.map.valueKey]
 					: null;
+				return typeof value === "number" && Number.isFinite(value) ? value : null;
 			},
-			(_, options) => options[definition.mapOptionsKey].colorRange,
+			(_, options) => options[dataset.type].colorRange,
 		);
 	}
 
@@ -1223,12 +1237,7 @@ export class MapManager {
 		location: string | null = null,
 		datasetId: string | null = null,
 	) {
-		return this.statsCalculator.calculateChildPovertyStats(
-			geojson,
-			data,
-			location,
-			datasetId,
-		);
+		return this.statsCalculator.calculateChildPovertyStats(geojson, data, location, datasetId);
 	}
 
 	calculateHomelessnessStats(

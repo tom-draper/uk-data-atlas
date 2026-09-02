@@ -12,8 +12,9 @@ export interface DatasetSource {
 	description: string;
 }
 
-export interface ScalarDatasetMap {
-	valueKey: string;
+export interface ScalarDatasetMap<T = unknown> {
+	valueKey?: string;
+	valueFor?(dataset: T, code: string): number | null;
 	colorRange: { min: number; max: number };
 	legend: {
 		min: number;
@@ -22,10 +23,15 @@ export interface ScalarDatasetMap {
 	};
 }
 
+export interface ScalarDatasetReader {
+	text: (path: string) => Promise<string>;
+	odsContent: (path: string) => Promise<string>;
+	zipCsv: (path: string) => Promise<string>;
+}
+
 export interface ScalarDatasetDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
 	type: T["type"];
 	precompiledFile: string;
-	sourcePath: string;
 	chart: {
 		group: string;
 		key: string;
@@ -39,10 +45,11 @@ export interface ScalarDatasetDefinition<T extends { type: string; data: unknown
 			data: T["data"],
 			location: string | null,
 			datasetId: string,
+			dataset?: T,
 		): unknown | null;
 		year: number;
 	};
 	source: DatasetSource;
-	map: ScalarDatasetMap;
-	load: (content: string) => Record<string, T>;
+	map: ScalarDatasetMap<T>;
+	precompile: (reader: ScalarDatasetReader) => Promise<Record<string, T>>;
 }

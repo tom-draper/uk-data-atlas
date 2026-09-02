@@ -13,6 +13,7 @@ export interface DatasetConfig<T extends Dataset> {
 		data: any,
 		location: string | null,
 		datasetId: string,
+		dataset?: T,
 	) => any;
 }
 
@@ -83,6 +84,7 @@ export function aggregateDataset<T extends Dataset>(
 						dataset.data,
 						location,
 						datasetId,
+						dataset,
 					);
 				} else {
 					result[key] = null;
