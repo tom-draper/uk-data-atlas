@@ -45,6 +45,10 @@ export interface ScalarChartDefinition<T extends { type: string; data: unknown }
 		dataset?: T,
 	): unknown | null;
 	year: number;
+	// Set when a dataset's records are keyed by an id (e.g. "le" / "hle")
+	// rather than by year, such as one dataset backing several fixed charts.
+	datasetId?: string;
+	keyBy?: "year" | "id";
 }
 
 export interface ScalarDatasetDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {

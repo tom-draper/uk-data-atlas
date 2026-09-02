@@ -1,6 +1,7 @@
 "use client";
 import { createContext, use, useSyncExternalStore } from "react";
 import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { getChartDefinitions } from "@/lib/datasets/types";
 
 export type ChartKey = string;
 
@@ -15,20 +16,7 @@ type LegacyChartKey =
 	| "localElection-2022"
 	| "localElection-2021"
 	| "brexit-electoral"
-	| "brexit-hanretty"
-	| "demographics-populationDensity"
-	| "demographics-age"
-	| "demographics-gender"
-	| "demographics-ethnicity"
-	| "economics-housePrice"
-	| "deprivation-imd"
-	| "deprivation-simd"
-	| "deprivation-wimd"
-	| "deprivation-nimdm"
-	| "health-lifeExpectancy"
-	| "health-healthyLifeExpectancy"
-	| "education-qualifications"
-	| "economics-unemployment";
+	| "brexit-hanretty";
 
 export interface ChartConfigEntry {
 	group: string;
@@ -92,40 +80,7 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 		key: "brexit-hanretty",
 		label: "Hanretty Estimates [2016]",
 	},
-	{
-		group: "Demographics",
-		key: "demographics-populationDensity",
-		label: "Population Density [2022]",
-	},
-	{
-		group: "Demographics",
-		key: "demographics-age",
-		label: "Age Distribution [2022]",
-	},
-	{
-		group: "Demographics",
-		key: "demographics-gender",
-		label: "Gender Balance [2022]",
-	},
-	{
-		group: "Demographics",
-		key: "demographics-ethnicity",
-		label: "Ethnicity [2022]",
-	},
-	{
-		group: "Economics",
-		key: "economics-housePrice",
-		label: "House Prices [2023]",
-	},
-	{ group: "Deprivation", key: "deprivation-imd", label: "Deprivation (IMD) [2019]" },
-	{ group: "Deprivation", key: "deprivation-simd", label: "Deprivation (SIMD) [2020]" },
-	{ group: "Deprivation", key: "deprivation-wimd", label: "Deprivation (WIMD) [2019]" },
-	{ group: "Deprivation", key: "deprivation-nimdm", label: "Deprivation (NIMDM) [2017]" },
-	{ group: "Health", key: "health-lifeExpectancy", label: "Life Expectancy [2020-2022]" },
-	{ group: "Health", key: "health-healthyLifeExpectancy", label: "Healthy Life Expectancy [2020-2022]" },
-	{ group: "Education", key: "education-qualifications", label: "Qualifications [2021]" },
-	{ group: "Economics", key: "economics-unemployment", label: "Unemployment Rate [2024]" },
-	...SCALAR_DATASET_DEFINITIONS.map((definition) => definition.chart),
+	...SCALAR_DATASET_DEFINITIONS.flatMap(getChartDefinitions),
 ];
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
@@ -140,24 +95,8 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"localElection-2021": true,
 	"brexit-hanretty": false,
 	"brexit-electoral": true,
-	"demographics-populationDensity": true,
-	"demographics-age": true,
-	"demographics-gender": true,
-	"demographics-ethnicity": true,
-	"economics-housePrice": true,
-	"deprivation-imd": true,
-	"deprivation-simd": false,
-	"deprivation-wimd": false,
-	"deprivation-nimdm": false,
-	"health-lifeExpectancy": true,
-	"health-healthyLifeExpectancy": false,
-	"education-qualifications": true,
-	"economics-unemployment": true,
 	...Object.fromEntries(
-		SCALAR_DATASET_DEFINITIONS.map((definition) => [
-			definition.chart.key,
-			definition.chart.defaultVisible,
-		]),
+		SCALAR_DATASET_DEFINITIONS.flatMap((definition) => getChartDefinitions(definition).map((chart) => [chart.key, chart.defaultVisible])),
 	),
 };
 

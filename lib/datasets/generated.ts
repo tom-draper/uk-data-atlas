@@ -5,41 +5,65 @@ import type { BroadbandDataset } from "@/lib/types/broadband";
 import type { ChildPovertyDataset } from "@/lib/types/childPoverty";
 import type { ClaimantCountDataset } from "@/lib/types/claimantCount";
 import type { CrimeDataset } from "@/lib/types/crime";
+import type { EthnicityDataset } from "@/lib/types/ethnicity";
 import type { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
 import type { HomelessnessDataset } from "@/lib/types/homelessness";
 import type { HousePriceDataset } from "@/lib/types/housePrice";
+import type { IMDDataset } from "@/lib/types/imd";
 import type { IncomeDataset } from "@/lib/types/income";
+import type { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import type { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
+import type { NIMDMDataset } from "@/lib/types/nimdm";
+import type { PopulationDataset } from "@/lib/types/population";
+import type { QualificationDataset } from "@/lib/types/qualification";
 import type { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
+import type { SIMDDataset } from "@/lib/types/simd";
 import type { UnemploymentDataset } from "@/lib/types/unemployment";
+import type { WIMDDataset } from "@/lib/types/wimd";
 import { airQualityDefinition } from "./airQuality";
 import { broadbandDefinition } from "./broadband";
 import { childPovertyDefinition } from "./childPoverty";
 import { claimantCountDefinition } from "./claimantCount";
 import { crimeDefinition } from "./crime";
+import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { homelessnessDefinition } from "./homelessness";
 import { housePriceDefinition } from "./housePrice";
+import { imdDefinition } from "./imd";
 import { incomeDefinition } from "./income";
+import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { nhsWaitingDefinition } from "./nhsWaiting";
+import { nimdmDefinition } from "./nimdm";
+import { populationDefinition } from "./population";
+import { qualificationDefinition } from "./qualification";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
+import { simdDefinition } from "./simd";
 import { unemploymentDefinition } from "./unemployment";
+import { wimdDefinition } from "./wimd";
 
-export type ScalarDatasetType = "airQuality" | "broadband" | "childPoverty" | "claimantCount" | "crime" | "fuelPoverty" | "homelessness" | "housePrice" | "income" | "nhsWaiting" | "schoolPerformance" | "unemployment";
-export type ScalarDataset = AirQualityDataset | BroadbandDataset | ChildPovertyDataset | ClaimantCountDataset | CrimeDataset | FuelPovertyDataset | HomelessnessDataset | HousePriceDataset | IncomeDataset | NHSWaitingDataset | SchoolPerformanceDataset | UnemploymentDataset;
+export type ScalarDatasetType = "airQuality" | "broadband" | "childPoverty" | "claimantCount" | "crime" | "ethnicity" | "fuelPoverty" | "homelessness" | "housePrice" | "imd" | "income" | "lifeExpectancy" | "nhsWaiting" | "nimdm" | "population" | "qualification" | "schoolPerformance" | "simd" | "unemployment" | "wimd";
+export type ScalarDataset = AirQualityDataset | BroadbandDataset | ChildPovertyDataset | ClaimantCountDataset | CrimeDataset | EthnicityDataset | FuelPovertyDataset | HomelessnessDataset | HousePriceDataset | IMDDataset | IncomeDataset | LifeExpectancyDataset | NHSWaitingDataset | NIMDMDataset | PopulationDataset | QualificationDataset | SchoolPerformanceDataset | SIMDDataset | UnemploymentDataset | WIMDDataset;
 export type ScalarDatasetRecords = {
 	airQuality: Record<string, AirQualityDataset>;
 	broadband: Record<string, BroadbandDataset>;
 	childPoverty: Record<string, ChildPovertyDataset>;
 	claimantCount: Record<string, ClaimantCountDataset>;
 	crime: Record<string, CrimeDataset>;
+	ethnicity: Record<string, EthnicityDataset>;
 	fuelPoverty: Record<string, FuelPovertyDataset>;
 	homelessness: Record<string, HomelessnessDataset>;
 	housePrice: Record<string, HousePriceDataset>;
+	imd: Record<string, IMDDataset>;
 	income: Record<string, IncomeDataset>;
+	lifeExpectancy: Record<string, LifeExpectancyDataset>;
 	nhsWaiting: Record<string, NHSWaitingDataset>;
+	nimdm: Record<string, NIMDMDataset>;
+	population: Record<string, PopulationDataset>;
+	qualification: Record<string, QualificationDataset>;
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
+	simd: Record<string, SIMDDataset>;
 	unemployment: Record<string, UnemploymentDataset>;
+	wimd: Record<string, WIMDDataset>;
 };
 
 export const SCALAR_DATASET_DEFINITIONS: readonly ScalarDatasetDefinition<ScalarDataset>[] = [
@@ -48,11 +72,19 @@ export const SCALAR_DATASET_DEFINITIONS: readonly ScalarDatasetDefinition<Scalar
 	childPovertyDefinition,
 	claimantCountDefinition,
 	crimeDefinition,
+	ethnicityDefinition,
 	fuelPovertyDefinition,
 	homelessnessDefinition,
 	housePriceDefinition,
+	imdDefinition,
 	incomeDefinition,
+	lifeExpectancyDefinition,
 	nhsWaitingDefinition,
+	nimdmDefinition,
+	populationDefinition,
+	qualificationDefinition,
 	schoolPerformanceDefinition,
+	simdDefinition,
 	unemploymentDefinition,
+	wimdDefinition,
 ];

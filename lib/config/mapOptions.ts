@@ -30,6 +30,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	ethnicity: {
 		mode: "majority",
 		percentageRange: { min: 0, max: 100 },
+		colorRange: { min: 0, max: 1 },
 	},
 	housePrice: {
 		colorRange: { min: 80000, max: 500000 },

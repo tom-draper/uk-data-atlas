@@ -149,14 +149,14 @@ function ChartPanelContent({
                 )}
                 {sectionVisible["Demographics"] && (
                   <DemographicsChartSection
-                    availablePopulationDatasets={datasets.population}
-                    availableEthnicityDatasets={datasets.ethnicity}
-                    boundaryData={boundaryData}
+                    activeDataset={activeDataset}
+                    datasets={datasets}
                     selectedArea={deferredArea}
                     activeViz={activeViz}
                     setActiveViz={setActiveViz}
                     codeMapper={codeMapper}
                     mapManager={mapManager}
+                    boundaryData={bd}
                     location={location}
                   />
                 )}
@@ -176,10 +176,7 @@ function ChartPanelContent({
                 {sectionVisible["Deprivation"] && (
                   <DeprivationSection
                     activeDataset={activeDataset}
-                    availableIMDDatasets={datasets.imd}
-                    availableSIMDDatasets={datasets.simd}
-                    availableWIMDDatasets={datasets.wimd}
-                    availableNIMDMDatasets={datasets.nimdm}
+                    datasets={datasets}
                     selectedArea={deferredArea}
                     setActiveViz={setActiveViz}
                     activeViz={activeViz}

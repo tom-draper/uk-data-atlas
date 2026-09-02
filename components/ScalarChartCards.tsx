@@ -35,13 +35,13 @@ export function hasVisibleScalarChart(
 export default function ScalarChartCards({ group, visibility, activeDataset, datasets, selectedArea, codeMapper, activeViz, setActiveViz, mapManager, boundaryData, location }: ScalarChartCardsProps) {
 	const definitions = SCALAR_DATASET_DEFINITIONS.flatMap((definition) => getChartDefinitions(definition).filter((chart) => chart.group === group).map((chart) => ({ definition, chart })));
 	const aggregatedData = useMemo(
-		() => Object.fromEntries(definitions.map(({ definition, chart }) => [definition.type + chart.key, aggregateDataset<any>({ datasets: datasets[definition.type], boundaryType: chart.boundaryType, calculateStats: chart.calculateStats }, mapManager, boundaryData, location)])),
+		() => Object.fromEntries(definitions.map(({ definition, chart }) => [definition.type + chart.key, aggregateDataset<any>({ datasets: datasets[definition.type], boundaryType: chart.boundaryType, keyBy: chart.keyBy, calculateStats: chart.calculateStats }, mapManager, boundaryData, location)])),
 		[mapManager, boundaryData, location, ...definitions.map(({ definition }) => datasets[definition.type])],
 	);
 
 	return definitions.map(({ definition, chart }) => {
 		if (!visibility[chart.key]) return null;
-		const Chart = SCALAR_CHART_COMPONENTS[definition.type];
-		return <Chart key={chart.key} activeDataset={activeDataset} availableDatasets={datasets[definition.type]} aggregatedData={aggregatedData[definition.type + chart.key]} year={chart.year} selectedArea={selectedArea} codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />;
+		const Chart = SCALAR_CHART_COMPONENTS[chart.key];
+		return <Chart key={chart.key} activeDataset={activeDataset} availableDatasets={datasets[definition.type]} aggregatedData={aggregatedData[definition.type + chart.key]} year={chart.year} datasetId={chart.datasetId} selectedArea={selectedArea} codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} boundaryData={boundaryData} />;
 	});
 }

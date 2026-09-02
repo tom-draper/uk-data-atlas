@@ -24,7 +24,7 @@ export interface CategoryOptions {
 export type GeneralElectionOptions = CategoryOptions;
 export type LocalElectionOptions = CategoryOptions;
 export type HousePriceOptions = ColorRangeOption;
-export type EthnicityOptions = CategoryOptions;
+export type EthnicityOptions = CategoryOptions & ColorRangeOption;
 export type CrimeOptions = ColorRangeOption;
 export type PopulationOptions = ColorRangeOption;
 export type DensityOptions = ColorRangeOption;

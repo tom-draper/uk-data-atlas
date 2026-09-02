@@ -1,22 +1,14 @@
 "use client";
-import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { ActiveViz, Dataset, IMDDataset, NIMDMDataset, SIMDDataset, SelectedArea, WIMDDataset } from "@lib/types";
-import { BoundaryData } from "@lib/types/boundaries";
-import { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
-import IMDChart from "./imd/IMDChart";
-import SIMDChart from "./simd/SIMDChart";
-import WIMDChart from "./wimd/WIMDChart";
-import NIMDMChart from "./nimdm/NIMDMChart";
+import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@lib/types";
+import type { BoundaryData } from "@lib/types/boundaries";
+import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import ScalarChartCards, { hasVisibleScalarChart } from "@/components/ScalarChartCards";
 
 interface DeprivationSectionProps {
 	activeDataset: Dataset | null;
-	availableIMDDatasets: Record<string, IMDDataset>;
-	availableSIMDDatasets: Record<string, SIMDDataset>;
-	availableWIMDDatasets: Record<string, WIMDDataset>;
-	availableNIMDMDatasets: Record<string, NIMDMDataset>;
+	datasets: Datasets;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -25,75 +17,16 @@ interface DeprivationSectionProps {
 	location: string | null;
 }
 
-export default function DeprivationSection({
-	activeDataset,
-	availableIMDDatasets,
-	availableSIMDDatasets,
-	availableWIMDDatasets,
-	availableNIMDMDatasets,
-	selectedArea,
-	activeViz,
-	setActiveViz,
-	mapManager,
-	boundaryData,
-	location,
-}: DeprivationSectionProps) {
+export default function DeprivationSection(props: DeprivationSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
-	const showIMD = visibility["deprivation-imd"];
-	const showSIMD = visibility["deprivation-simd"];
-	const showWIMD = visibility["deprivation-wimd"];
-	const showNIMDM = visibility["deprivation-nimdm"];
-
-	const aggregatedIMDData = useMemo(
-		() => aggregateDataset({ datasets: availableIMDDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateIMDStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableIMDDatasets, mapManager, boundaryData, location],
-	);
-	const aggregatedSIMDData = useMemo(
-		() => aggregateDataset({ datasets: availableSIMDDatasets, boundaryType: "dataZone", calculateStats: (mm, g, d, loc, id) => mm.calculateSIMDStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableSIMDDatasets, mapManager, boundaryData, location],
-	);
-	const aggregatedWIMDData = useMemo(
-		() => aggregateDataset({ datasets: availableWIMDDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateWIMDStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableWIMDDatasets, mapManager, boundaryData, location],
-	);
-	const aggregatedNIMDMData = useMemo(
-		() => aggregateDataset({ datasets: availableNIMDMDatasets, boundaryType: "superOutputArea", calculateStats: (mm, g, d, loc, id) => mm.calculateNIMDMStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableNIMDMDatasets, mapManager, boundaryData, location],
-	);
-
-	if (!showIMD && !showSIMD && !showWIMD && !showNIMDM) return null;
-
-	const imdYears = Object.keys(availableIMDDatasets).map(Number).sort((a, b) => b - a);
-	const simdYears = Object.keys(availableSIMDDatasets).map(Number).sort((a, b) => b - a);
-	const wimdYears = Object.keys(availableWIMDDatasets).map(Number).sort((a, b) => b - a);
-	const nimdmYears = Object.keys(availableNIMDMDatasets).map(Number).sort((a, b) => b - a);
-
+	if (!hasVisibleScalarChart("Deprivation", visibility)) return null;
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
 			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>
 				Deprivation
 			</h3>
-			{showIMD && imdYears.map((year) => (
-				<IMDChart key={year} activeDataset={activeDataset} availableDatasets={availableIMDDatasets}
-					aggregatedData={aggregatedIMDData} selectedArea={selectedArea} year={year}
-					activeViz={activeViz} setActiveViz={setActiveViz} />
-			))}
-			{showSIMD && simdYears.map((year) => (
-				<SIMDChart key={year} activeDataset={activeDataset} availableDatasets={availableSIMDDatasets}
-					aggregatedData={aggregatedSIMDData} selectedArea={selectedArea} year={year}
-					activeViz={activeViz} setActiveViz={setActiveViz} />
-			))}
-			{showWIMD && wimdYears.map((year) => (
-				<WIMDChart key={year} activeDataset={activeDataset} availableDatasets={availableWIMDDatasets}
-					aggregatedData={aggregatedWIMDData} selectedArea={selectedArea} year={year}
-					activeViz={activeViz} setActiveViz={setActiveViz} />
-			))}
-			{showNIMDM && nimdmYears.map((year) => (
-				<NIMDMChart key={year} activeDataset={activeDataset} availableDatasets={availableNIMDMDatasets}
-					aggregatedData={aggregatedNIMDMData} selectedArea={selectedArea} year={year}
-					activeViz={activeViz} setActiveViz={setActiveViz} />
-			))}
+			<ScalarChartCards group="Deprivation" visibility={visibility} {...props} />
 		</div>
 	);
 }
