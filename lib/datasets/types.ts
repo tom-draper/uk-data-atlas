@@ -29,27 +29,36 @@ export interface ScalarDatasetReader {
 	zipCsv: (path: string) => Promise<string>;
 }
 
+export interface ScalarChartDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
+	group: string;
+	key: string;
+	label: string;
+	defaultVisible: boolean;
+	componentPath: string;
+	boundaryType: BoundaryType;
+	calculateStats(
+		mapManager: MapManager,
+		geojson: BoundaryGeojson,
+		data: T["data"],
+		location: string | null,
+		datasetId: string,
+		dataset?: T,
+	): unknown | null;
+	year: number;
+}
+
 export interface ScalarDatasetDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
 	type: T["type"];
 	precompiledFile: string;
-	chart: {
-		group: string;
-		key: string;
-		label: string;
-		defaultVisible: boolean;
-		componentPath: string;
-		boundaryType: BoundaryType;
-		calculateStats(
-			mapManager: MapManager,
-			geojson: BoundaryGeojson,
-			data: T["data"],
-			location: string | null,
-			datasetId: string,
-			dataset?: T,
-		): unknown | null;
-		year: number;
-	};
+	chart: ScalarChartDefinition<T>;
+	charts?: readonly ScalarChartDefinition<T>[];
 	source: DatasetSource;
 	map: ScalarDatasetMap<T>;
 	precompile: (reader: ScalarDatasetReader) => Promise<Record<string, T>>;
+}
+
+export function getChartDefinitions<T extends { type: string; data: unknown }>(
+	definition: ScalarDatasetDefinition<T>,
+): readonly ScalarChartDefinition<T>[] {
+	return definition.charts ?? [definition.chart];
 }
