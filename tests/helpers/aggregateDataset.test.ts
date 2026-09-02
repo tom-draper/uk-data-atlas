@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 
 describe("aggregateDataset", () => {
-	it("uses the complete precompiled aggregate without requiring a map manager", () => {
+	it("waits for a map manager before calculating an aggregate", () => {
 		const datasets = {
 			"2022": {
 				id: "population2022",
@@ -25,9 +25,7 @@ describe("aggregateDataset", () => {
 			"Greater Manchester",
 		);
 
-		expect(aggregate?.["2022"]).toMatchObject({
-			populationStats: { total: expect.any(Number) },
-		});
+		expect(aggregate).toBeNull();
 	});
 
 	it("shares an aggregate requested by multiple consumers", () => {
