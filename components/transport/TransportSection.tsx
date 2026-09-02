@@ -61,7 +61,6 @@ function RoadSafetyCard({
 		selectedPointValue,
 	]);
 	const hasData = points.length > 0;
-	const locationLabel = location === "United Kingdom" ? "Great Britain" : location;
 	const averageSeverity = hasData
 		? points.reduce((total, point) => total + point.value, 0) / points.length
 		: 0;
@@ -74,7 +73,7 @@ function RoadSafetyCard({
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
 				>
-					{locationLabel}
+					Great Britain
 				</span>
 			}
 			accent={accent}
