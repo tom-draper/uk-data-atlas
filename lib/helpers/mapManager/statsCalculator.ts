@@ -987,13 +987,12 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedBroadbandData | null {
-		return this.cached(`broadband-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		return this.calculateScalarStats(
+			"broadband", geojson, broadbandData, location, datasetId, "localAuthority", (records) => {
 			let totalSuperfast = 0, totalUltrafast = 0, totalFullFibre = 0, totalGigabit = 0, count = 0;
 
-			for (const feature of geojson.features) {
-				const record = broadbandData[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-				if (!record || record.pctFullFibre == null) continue;
+			for (const record of records) {
+				if (record.pctFullFibre == null) continue;
 				totalSuperfast += record.pctSuperfast ?? 0;
 				totalUltrafast += record.pctUltrafast ?? 0;
 				totalFullFibre += record.pctFullFibre;
@@ -1010,7 +1009,8 @@ export class StatsCalculator {
 				pctGigabit: totalGigabit / count,
 			};
 			return result;
-		});
+			},
+		);
 	}
 
 	calculateAirQualityStats(
@@ -1019,13 +1019,12 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedAirQualityData | null {
-		return this.cached(`airQuality-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		return this.calculateScalarStats(
+			"airQuality", geojson, airQualityData, location, datasetId, "localAuthority", (records) => {
 			let totalNo2 = 0, totalPm25 = 0, totalPm10 = 0, count = 0, pm25Count = 0, pm10Count = 0;
 
-			for (const feature of geojson.features) {
-				const record = airQualityData[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-				if (!record || record.no2Mean == null) continue;
+			for (const record of records) {
+				if (record.no2Mean == null) continue;
 				totalNo2 += record.no2Mean;
 				if (record.pm25Mean != null) { totalPm25 += record.pm25Mean; pm25Count++; }
 				if (record.pm10Mean != null) { totalPm10 += record.pm10Mean; pm10Count++; }
@@ -1040,7 +1039,8 @@ export class StatsCalculator {
 				pm10Mean: pm10Count > 0 ? totalPm10 / pm10Count : null,
 			};
 			return result;
-		});
+			},
+		);
 	}
 
 	calculateClaimantCountStats(
@@ -1049,13 +1049,11 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedClaimantCountData | null {
-		return this.cached(`claimantCount-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		return this.calculateScalarStats(
+			"claimantCount", geojson, data, location, datasetId, "localAuthority", (records) => {
 			let totalCount = 0, totalRate = 0, youthCount = 0, youthRate = 0, count = 0;
 
-			for (const feature of geojson.features) {
-				const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-				if (!record) continue;
+			for (const record of records) {
 				totalCount += record.totalCount;
 				totalRate += record.totalRate;
 				youthCount += record.youthCount;
@@ -1072,7 +1070,8 @@ export class StatsCalculator {
 				youthRate: youthRate / count,
 			};
 			return result;
-		});
+			},
+		);
 	}
 
 	calculateChildPovertyStats(
@@ -1178,13 +1177,12 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedSchoolPerformanceData | null {
-		return this.cached(`schoolPerformance-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		return this.calculateScalarStats(
+			"schoolPerformance", geojson, data, location, datasetId, "localAuthority", (records) => {
 			let pt94 = 0, pt95 = 0, att8 = 0, p8 = 0, count = 0;
 
-			for (const feature of geojson.features) {
-				const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-				if (!record || record.ptL2basics94 == null) continue;
+			for (const record of records) {
+				if (record.ptL2basics94 == null) continue;
 				pt94 += record.ptL2basics94;
 				pt95 += record.ptL2basics95 ?? 0;
 				att8 += record.avgAtt8 ?? 0;
@@ -1201,7 +1199,8 @@ export class StatsCalculator {
 				avgP8score: p8 / count,
 			};
 			return result;
-		});
+			},
+		);
 	}
 
 	calculateNHSWaitingStats(
