@@ -3,16 +3,16 @@
   "version": "0.1.7",
   "private": true,
   "scripts": {
-		"precompile": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/precompile-data.ts",
-		"dev": "node scripts/sync-public-data.mjs && pnpm precompile && next dev --turbopack",
-		"build": "node scripts/sync-public-data.mjs && pnpm precompile && next build --turbopack",
+    "precompile": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/precompile-data.ts",
+    "dev": "node scripts/sync-public-data.mjs && pnpm precompile && next dev --turbopack",
+    "build": "node scripts/sync-public-data.mjs && pnpm precompile && next build --turbopack",
     "start": "next start",
     "format": "prettier --write \"**/*.{ts,tsx}\" --use-tabs --tab-width 4",
     "test": "vitest",
     "test:run": "vitest run",
     "test:e2e": "playwright test",
-		"typecheck": "tsc --noEmit",
-		"check": "pnpm typecheck && pnpm test:run",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm typecheck && pnpm test:run",
     "profile:atlas": "node scripts/profile-atlas-memory.mjs",
     "doctor": "npx react-doctor@latest"
   },
@@ -42,5 +42,5 @@
     "vite": "^8.2.1",
     "vitest": "^4.1.11"
   },
-  "packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1"
+  "packageManager": "pnpm@11.25.0"
 }
