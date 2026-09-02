@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { getChartDefinitions } from "@/lib/datasets/types";
 import { SCALAR_CHART_COMPONENTS } from "@/lib/datasets/generatedCharts";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import type { CodeMapper } from "@/lib/hooks/useCodeMapper";
@@ -28,21 +29,19 @@ export function hasVisibleScalarChart(
 	group: string,
 	visibility: Record<ChartKey, boolean>,
 ) {
-	return SCALAR_DATASET_DEFINITIONS.some(
-		(definition) => definition.chart.group === group && visibility[definition.chart.key],
-	);
+	return SCALAR_DATASET_DEFINITIONS.some((definition) => getChartDefinitions(definition).some((chart) => chart.group === group && visibility[chart.key]));
 }
 
 export default function ScalarChartCards({ group, visibility, activeDataset, datasets, selectedArea, codeMapper, activeViz, setActiveViz, mapManager, boundaryData, location }: ScalarChartCardsProps) {
-	const definitions = SCALAR_DATASET_DEFINITIONS.filter((definition) => definition.chart.group === group);
+	const definitions = SCALAR_DATASET_DEFINITIONS.flatMap((definition) => getChartDefinitions(definition).filter((chart) => chart.group === group).map((chart) => ({ definition, chart })));
 	const aggregatedData = useMemo(
-		() => Object.fromEntries(definitions.map((definition) => [definition.type, aggregateDataset<any>({ datasets: datasets[definition.type], boundaryType: definition.chart.boundaryType, calculateStats: definition.chart.calculateStats }, mapManager, boundaryData, location)])),
-		[mapManager, boundaryData, location, ...definitions.map((definition) => datasets[definition.type])],
+		() => Object.fromEntries(definitions.map(({ definition, chart }) => [definition.type + chart.key, aggregateDataset<any>({ datasets: datasets[definition.type], boundaryType: chart.boundaryType, calculateStats: chart.calculateStats }, mapManager, boundaryData, location)])),
+		[mapManager, boundaryData, location, ...definitions.map(({ definition }) => datasets[definition.type])],
 	);
 
-	return definitions.map((definition) => {
-		if (!visibility[definition.chart.key]) return null;
+	return definitions.map(({ definition, chart }) => {
+		if (!visibility[chart.key]) return null;
 		const Chart = SCALAR_CHART_COMPONENTS[definition.type];
-		return <Chart key={definition.type} activeDataset={activeDataset} availableDatasets={datasets[definition.type]} aggregatedData={aggregatedData[definition.type]} year={definition.chart.year} selectedArea={selectedArea} codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />;
+		return <Chart key={chart.key} activeDataset={activeDataset} availableDatasets={datasets[definition.type]} aggregatedData={aggregatedData[definition.type + chart.key]} year={chart.year} selectedArea={selectedArea} codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />;
 	});
 }
