@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, use } from "react";
-import { useIsDark } from "@/lib/context/ThemeContext";
 
 const ChartLoadingContext = createContext(false);
 
@@ -25,21 +24,14 @@ export function useChartsLoading() {
 
 export function ChartLoadingBackground() {
 	const loading = useChartsLoading();
-	const isDark = useIsDark();
 
 	if (!loading) return null;
 
 	return (
 		<div
-			className={`pointer-events-none absolute inset-0 z-20 flex flex-col justify-center gap-2 p-3 ${
-				isDark ? "bg-slate-950/90" : "bg-slate-100/90"
-			}`}
+			className="pointer-events-none absolute inset-0 z-0 chart-card-shimmer"
 			aria-hidden="true"
-		>
-			<div className="chart-shimmer h-2.5 w-3/5" />
-			<div className="chart-shimmer h-6 w-4/5" />
-			<div className="chart-shimmer h-1.5 w-full" />
-		</div>
+		/>
 	);
 }
 
