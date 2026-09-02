@@ -65,7 +65,7 @@ export default function DecileChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, `h-[72px]${extraClassName ? ` ${extraClassName}` : ""}`)}
+			className={cardClass(isActive, isDark, `min-h-[72px]${extraClassName ? ` ${extraClassName}` : ""}`)}
 			title={title}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

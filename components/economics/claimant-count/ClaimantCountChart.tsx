@@ -93,7 +93,7 @@ export default function ClaimantCountChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "min-h-20")}
 			title="ONS/Nomis. Claimant Count (UC + JSA). nomisweb.co.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

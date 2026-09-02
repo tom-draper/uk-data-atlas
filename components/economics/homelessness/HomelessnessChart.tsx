@@ -92,7 +92,7 @@ export default function HomelessnessChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "min-h-20")}
 			title="Ministry of Housing, Communities and Local Government. Statutory homelessness statistics. gov.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

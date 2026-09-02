@@ -86,7 +86,7 @@ export default function LocalElectionResultChart({
 	const isDark = useIsDark();
 	const winnerColor = data.partyData[0]?.color;
 
-	const heightClass = isActive ? "h-[95px]" : "h-[65px]";
+	const heightClass = isActive ? "min-h-[95px]" : "min-h-[65px]";
 
 	const accentColor = winnerColor ?? "#6366f1";
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
@@ -112,7 +112,7 @@ export default function LocalElectionResultChart({
 			className={cardClass(
 				isActive,
 				isDark,
-				`transition-[height] duration-300 ease-in-out ${heightClass}`,
+				`transition-[min-height] duration-300 ease-in-out ${heightClass}`,
 			)}
 			title="House of Commons Library, UK Parliament. Local Election Results. commonslibrary.parliament.uk"
 			onMouseEnter={onMouseEnter}

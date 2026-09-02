@@ -94,7 +94,7 @@ export default function NHSWaitingChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "min-h-20")}
 			title="NHS England. Referral to Treatment waiting times. england.nhs.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

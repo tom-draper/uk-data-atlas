@@ -81,7 +81,7 @@ export default function FuelPovertyChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(active, isDark, "h-20")}
+			className={cardClass(active, isDark, "min-h-20")}
 			title="DESNZ. Fuel poverty (LILEE), England, 2024."
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

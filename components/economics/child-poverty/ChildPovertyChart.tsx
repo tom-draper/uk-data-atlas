@@ -110,7 +110,7 @@ export default function ChildPovertyChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(active, isDark, "h-20")}
+			className={cardClass(active, isDark, "min-h-20")}
 			title="DWP. Children in relative low-income families, before housing costs."
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

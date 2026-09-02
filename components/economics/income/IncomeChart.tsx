@@ -153,7 +153,7 @@ export default function IncomeChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(!!isActive, isDark, "isolate h-20")}
+			className={cardClass(!!isActive, isDark, "isolate min-h-20")}
 			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
