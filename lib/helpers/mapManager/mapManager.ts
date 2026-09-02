@@ -551,7 +551,7 @@ export class MapManager {
 					: null;
 				return typeof value === "number" && Number.isFinite(value) ? value : null;
 			},
-			(_, options) => options[dataset.type].colorRange,
+			(data, options) => map.getColorRange?.(data) ?? options[dataset.type].colorRange,
 			map.invertColor,
 		);
 	}
@@ -917,38 +917,6 @@ export class MapManager {
 		);
 	}
 
-	updateMapForLifeExpectancy(
-		geojson: BoundaryGeojson,
-		dataset: LifeExpectancyDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(
-				this.propertyDetector,
-			),
-			"lifeExpectancy",
-			dataset.data,
-			(data, code) => {
-				const area = data.data[code];
-				return area ? (area.maleBirthLE + area.femaleBirthLE) / 2 : null;
-			},
-			(data) => {
-				let min = Infinity;
-				let max = -Infinity;
-				for (const area of Object.values(data.data)) {
-					const value = (area.maleBirthLE + area.femaleBirthLE) / 2;
-					min = Math.min(min, value);
-					max = Math.max(max, value);
-				}
-				return { min, max };
-			},
-			false,
-		);
-	}
-
 	calculateLifeExpectancyStats(
 		geojson: BoundaryGeojson,
 		data: LifeExpectancyDataset["data"],
@@ -963,29 +931,6 @@ export class MapManager {
 		);
 	}
 
-	updateMapForQualification(
-		geojson: BoundaryGeojson,
-		dataset: QualificationDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(
-				this.propertyDetector,
-			),
-			"qualification",
-			dataset.data,
-			(data, code) => {
-				const area = data.data[code];
-				return area && area.breakdown.total > 0
-					? (area.breakdown.level4Plus / area.breakdown.total) * 100
-					: null;
-			},
-			(_, options) => options.qualification.colorRange,
-		);
-	}
 
 	calculateQualificationStats(
 		geojson: BoundaryGeojson,

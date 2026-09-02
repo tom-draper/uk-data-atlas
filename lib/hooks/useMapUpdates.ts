@@ -26,8 +26,6 @@ function getActiveDataOptions(
 		isChartDataset(activeDataset) &&
 		activeDataset.type !== "population" &&
 		activeDataset.type !== "ethnicity" &&
-		activeDataset.type !== "lifeExpectancy" &&
-		activeDataset.type !== "qualification" &&
 		activeDataset.type !== "brexit" &&
 		activeDataset.type !== "brexitConstituency" &&
 		activeDataset.type !== "generalElection" &&
@@ -49,10 +47,6 @@ function getActiveDataOptions(
 			return mapOptions.brexitConstituency;
 		case "custom":
 			return mapOptions.custom;
-		case "lifeExpectancy":
-			return mapOptions.lifeExpectancy;
-		case "qualification":
-			return mapOptions.qualification;
 		case "population":
 			if (activeViz.vizId.startsWith("ageDistribution")) {
 				return mapOptions.ageDistribution;
@@ -131,8 +125,6 @@ export function useMapUpdates({
 				isChartDataset(activeDataset) &&
 				activeDataset.type !== "population" &&
 				activeDataset.type !== "ethnicity" &&
-				activeDataset.type !== "lifeExpectancy" &&
-				activeDataset.type !== "qualification" &&
 				activeDataset.type !== "brexit" &&
 				activeDataset.type !== "brexitConstituency" &&
 				activeDataset.type !== "generalElection" &&
@@ -186,20 +178,6 @@ export function useMapUpdates({
 
 				case "custom":
 					return mapManager.updateMapForCustomDataset(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "qualification":
-					return mapManager.updateMapForQualification(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "lifeExpectancy":
-					return mapManager.updateMapForLifeExpectancy(
 						geojson,
 						activeDataset,
 						mapOptions,
