@@ -89,19 +89,6 @@ export default function LegendContent({
 		);
 	};
 
-	const chartDefinition = getChartDatasetDefinition(activeDataset.type);
-	if (chartDefinition?.map) {
-		const { colorRange, legend } = chartDefinition.map;
-		return renderDynamicLegend(
-			activeDataset.type as ColorRangeDatasetKey,
-			legend.min,
-			legend.max,
-			colorRange.min,
-			colorRange.max,
-			legend.format,
-		);
-	}
-
 	switch (activeDataset.type) {
 		case "population":
 			if (activeViz.vizId.startsWith("ageDistribution")) {
@@ -351,7 +338,21 @@ export default function LegendContent({
 			}
 			return renderDynamicLegend("custom", 0, 100, 0, 100);
 
-		default:
-			return null;
+		default: {
+			// Datasets with a registry entry but no dedicated case above
+			// (e.g. childPoverty, fuelPoverty, homelessness) fall back to a
+			// generic colour-range legend built from their registry metadata.
+			const chartDefinition = getChartDatasetDefinition(activeDataset.type);
+			if (!chartDefinition?.map) return null;
+			const { colorRange, legend } = chartDefinition.map;
+			return renderDynamicLegend(
+				activeDataset.type as ColorRangeDatasetKey,
+				legend.min,
+				legend.max,
+				colorRange.min,
+				colorRange.max,
+				legend.format,
+			);
+		}
 	}
 }
