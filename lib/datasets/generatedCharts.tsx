@@ -9,9 +9,11 @@ import ClaimantCountChart from "@/components/economics/claimant-count/ClaimantCo
 import CrimeChart from "@/components/economics/crime/CrimeRateChart";
 import FuelPovertyChart from "@/components/economics/fuel-poverty/FuelPovertyChart";
 import HomelessnessChart from "@/components/economics/homelessness/HomelessnessChart";
+import HousePriceChart from "@/components/economics/house-price/HousePriceChart";
 import IncomeChart from "@/components/economics/income/IncomeChart";
 import NhsWaitingChart from "@/components/health/NHSWaitingChart";
 import SchoolPerformanceChart from "@/components/education/SchoolPerformanceChart";
+import UnemploymentChart from "@/components/economics/unemployment/UnemploymentChart";
 
 export const SCALAR_CHART_COMPONENTS: Record<ScalarDatasetType, ComponentType<any>> = {
 	airQuality: AirQualityChart,
@@ -21,7 +23,9 @@ export const SCALAR_CHART_COMPONENTS: Record<ScalarDatasetType, ComponentType<an
 	crime: CrimeChart,
 	fuelPoverty: FuelPovertyChart,
 	homelessness: HomelessnessChart,
+	housePrice: HousePriceChart,
 	income: IncomeChart,
 	nhsWaiting: NhsWaitingChart,
 	schoolPerformance: SchoolPerformanceChart,
+	unemployment: UnemploymentChart,
 };

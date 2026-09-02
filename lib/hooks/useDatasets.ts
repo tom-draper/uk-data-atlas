@@ -10,7 +10,6 @@ import {
 import { useLocalElectionData } from "@lib/hooks/useLocalElectionData";
 import { useGeneralElectionData } from "@lib/hooks/useGeneralElectionData";
 import { usePopulationData } from "@lib/hooks/usePopulationData";
-import { useHousePriceData } from "@lib/hooks/useHousePriceData";
 import { Datasets } from "../types/datasets";
 import { useEthnicityData } from "./useEthnicityData";
 import { useBrexitData } from "./useBrexitData";
@@ -21,7 +20,6 @@ import { useWIMDData } from "./useWIMDData";
 import { useNIMDMData } from "./useNIMDMData";
 import { useLifeExpectancyData } from "./useLifeExpectancyData";
 import { useQualificationData } from "./useQualificationData";
-import { useUnemploymentData } from "./useUnemploymentData";
 import { useJsonDatasetLoaders } from "./useJsonDataLoader";
 import { SCALAR_DATASET_DEFINITIONS, type ScalarDatasetType } from "@/lib/datasets";
 import { withCDN } from "@/lib/helpers/cdn";
@@ -49,7 +47,6 @@ export function useDatasets(): UseDatasetsResult {
 	);
 	const population = usePopulationData();
 	const ethnicity = useEthnicityData(isEnabled("demographics-ethnicity"));
-	const housePrice = useHousePriceData(isEnabled("economics-housePrice"));
 	const brexit = useBrexitData(isEnabled("brexit-electoral"));
 	const brexitConstituency = useBrexitConstituencyData(isEnabled("brexit-hanretty"));
 	const imd = useIMDData(isEnabled("deprivation-imd"));
@@ -61,7 +58,6 @@ export function useDatasets(): UseDatasetsResult {
 		isEnabled("health-healthyLifeExpectancy"),
 	);
 	const qualification = useQualificationData(isEnabled("education-qualifications"));
-	const unemployment = useUnemploymentData(isEnabled("economics-unemployment"));
 	const scalarDatasets = useJsonDatasetLoaders(
 		SCALAR_DATASET_DEFINITIONS.map((definition) => ({
 			key: definition.type,
@@ -81,7 +77,6 @@ export function useDatasets(): UseDatasetsResult {
 		generalElection: generalElection.datasets,
 		population: population.datasets,
 		ethnicity: ethnicity.datasets,
-		housePrice: housePrice.datasets,
 		brexit: brexit.datasets,
 		brexitConstituency: brexitConstituency.datasets,
 		imd: imd.datasets,
@@ -90,7 +85,6 @@ export function useDatasets(): UseDatasetsResult {
 		nimdm: nimdm.datasets,
 		lifeExpectancy: lifeExpectancy.datasets,
 		qualification: qualification.datasets,
-		unemployment: unemployment.datasets,
 		...scalarDatasetRecords,
 	};
 
@@ -99,7 +93,6 @@ export function useDatasets(): UseDatasetsResult {
 		generalElection,
 		population,
 		ethnicity,
-		housePrice,
 		brexit,
 		brexitConstituency,
 		imd,
@@ -108,7 +101,6 @@ export function useDatasets(): UseDatasetsResult {
 		nimdm,
 		lifeExpectancy,
 		qualification,
-		unemployment,
 		scalarDatasets,
 	];
 

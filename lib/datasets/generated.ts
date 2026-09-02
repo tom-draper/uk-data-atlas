@@ -7,9 +7,11 @@ import type { ClaimantCountDataset } from "@/lib/types/claimantCount";
 import type { CrimeDataset } from "@/lib/types/crime";
 import type { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
 import type { HomelessnessDataset } from "@/lib/types/homelessness";
+import type { HousePriceDataset } from "@/lib/types/housePrice";
 import type { IncomeDataset } from "@/lib/types/income";
 import type { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
 import type { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
+import type { UnemploymentDataset } from "@/lib/types/unemployment";
 import { airQualityDefinition } from "./airQuality";
 import { broadbandDefinition } from "./broadband";
 import { childPovertyDefinition } from "./childPoverty";
@@ -17,12 +19,14 @@ import { claimantCountDefinition } from "./claimantCount";
 import { crimeDefinition } from "./crime";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { homelessnessDefinition } from "./homelessness";
+import { housePriceDefinition } from "./housePrice";
 import { incomeDefinition } from "./income";
 import { nhsWaitingDefinition } from "./nhsWaiting";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
+import { unemploymentDefinition } from "./unemployment";
 
-export type ScalarDatasetType = "airQuality" | "broadband" | "childPoverty" | "claimantCount" | "crime" | "fuelPoverty" | "homelessness" | "income" | "nhsWaiting" | "schoolPerformance";
-export type ScalarDataset = AirQualityDataset | BroadbandDataset | ChildPovertyDataset | ClaimantCountDataset | CrimeDataset | FuelPovertyDataset | HomelessnessDataset | IncomeDataset | NHSWaitingDataset | SchoolPerformanceDataset;
+export type ScalarDatasetType = "airQuality" | "broadband" | "childPoverty" | "claimantCount" | "crime" | "fuelPoverty" | "homelessness" | "housePrice" | "income" | "nhsWaiting" | "schoolPerformance" | "unemployment";
+export type ScalarDataset = AirQualityDataset | BroadbandDataset | ChildPovertyDataset | ClaimantCountDataset | CrimeDataset | FuelPovertyDataset | HomelessnessDataset | HousePriceDataset | IncomeDataset | NHSWaitingDataset | SchoolPerformanceDataset | UnemploymentDataset;
 export type ScalarDatasetRecords = {
 	airQuality: Record<string, AirQualityDataset>;
 	broadband: Record<string, BroadbandDataset>;
@@ -31,9 +35,11 @@ export type ScalarDatasetRecords = {
 	crime: Record<string, CrimeDataset>;
 	fuelPoverty: Record<string, FuelPovertyDataset>;
 	homelessness: Record<string, HomelessnessDataset>;
+	housePrice: Record<string, HousePriceDataset>;
 	income: Record<string, IncomeDataset>;
 	nhsWaiting: Record<string, NHSWaitingDataset>;
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
+	unemployment: Record<string, UnemploymentDataset>;
 };
 
 export const SCALAR_DATASET_DEFINITIONS: readonly ScalarDatasetDefinition<ScalarDataset>[] = [
@@ -44,7 +50,9 @@ export const SCALAR_DATASET_DEFINITIONS: readonly ScalarDatasetDefinition<Scalar
 	crimeDefinition,
 	fuelPovertyDefinition,
 	homelessnessDefinition,
+	housePriceDefinition,
 	incomeDefinition,
 	nhsWaitingDefinition,
 	schoolPerformanceDefinition,
+	unemploymentDefinition,
 ];
