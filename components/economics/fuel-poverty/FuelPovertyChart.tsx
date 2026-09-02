@@ -6,6 +6,7 @@ import {
 	FuelPovertyDataset,
 	SelectedArea,
 } from "@lib/types";
+import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartContentPlaceholder,
 	ChartLoadingBackground,
@@ -23,6 +24,8 @@ interface Props {
 	availableDatasets: Record<string, FuelPovertyDataset>;
 	aggregatedData: Record<number, AggregatedFuelPovertyData> | null;
 	selectedArea: SelectedArea | null;
+	year: number;
+	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -45,9 +48,10 @@ export default function FuelPovertyChart({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	year,
 	setActiveViz,
 }: Props) {
-	const dataset = availableDatasets[2024];
+	const dataset = availableDatasets[year];
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const record =
