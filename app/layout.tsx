@@ -5,7 +5,7 @@ import "./globals.css";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ukdataatlas.com";
 
 export const viewport: Viewport = {
-	themeColor: "#000000",
+	themeColor: "#ffffff",
 	width: "device-width",
 	initialScale: 1,
 };
