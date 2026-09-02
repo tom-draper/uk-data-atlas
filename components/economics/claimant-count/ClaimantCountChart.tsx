@@ -74,7 +74,7 @@ export default function ClaimantCountChart({
 
 	return (
 		<ChartCard
-			heading={`Claimant Count [${dataset.month}]`}
+			heading={`Claimant Count [${year}]`}
 			accent={hasData ? color : null}
 			isActive={isActive}
 			title="ONS/Nomis. Claimant Count (UC + JSA). nomisweb.co.uk"
