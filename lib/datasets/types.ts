@@ -1,18 +1,6 @@
-export type ScalarMapOptionsKey =
-	| "childPoverty"
-	| "homelessness"
-	| "fuelPoverty";
-
-/**
- * The common map contract for scalar datasets. Keep this deliberately small:
- * datasets with category, point, or derived-value rendering use their own
- * dedicated paths.
- */
-export interface ScalarMapDefinition {
-	codeLevel: "localAuthority" | "lsoa";
-	valueKey: string;
-	mapOptionsKey: ScalarMapOptionsKey;
-}
+import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import type { BoundaryType } from "@/lib/types/boundaries";
+import type { BoundaryGeojson } from "@/lib/types/geometry";
 
 export interface DatasetSource {
 	name: string;
@@ -34,7 +22,7 @@ export interface ScalarDatasetMap {
 	};
 }
 
-export interface ScalarDatasetDefinition<T extends { type: string } = { type: string }> {
+export interface ScalarDatasetDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
 	type: T["type"];
 	precompiledFile: string;
 	sourcePath: string;
@@ -43,9 +31,18 @@ export interface ScalarDatasetDefinition<T extends { type: string } = { type: st
 		key: string;
 		label: string;
 		defaultVisible: boolean;
+		componentPath: string;
+		boundaryType: BoundaryType;
+		calculateStats(
+			mapManager: MapManager,
+			geojson: BoundaryGeojson,
+			data: T["data"],
+			location: string | null,
+			datasetId: string,
+		): unknown | null;
+		year: number;
 	};
 	source: DatasetSource;
 	map: ScalarDatasetMap;
 	load: (content: string) => Record<string, T>;
-	map: ScalarMapDefinition;
 }

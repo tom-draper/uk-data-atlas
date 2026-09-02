@@ -11,6 +11,11 @@ export const homelessnessDefinition: ScalarDatasetDefinition<HomelessnessDataset
 		key: "economics-homelessness",
 		label: "Homelessness [2026]",
 		defaultVisible: true,
+		componentPath: "@/components/economics/homelessness/HomelessnessChart",
+		boundaryType: "localAuthority",
+		calculateStats: (mapManager, geojson, data, location, datasetId) =>
+			mapManager.calculateHomelessnessStats(geojson, data, location, datasetId),
+		year: 2026,
 	},
 	source: {
 		name: "Temporary Accommodation",

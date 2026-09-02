@@ -11,10 +11,13 @@ import IncomeChart from "./income/IncomeChart";
 import CrimeRateChart from "./crime/CrimeRateChart";
 import ClaimantCountChart from "./claimant-count/ClaimantCountChart";
 import UnemploymentChart from "./unemployment/UnemploymentChart";
-import ChildPovertyChart from "./child-poverty/ChildPovertyChart";
-import HomelessnessChart from "./homelessness/HomelessnessChart";
-import FuelPovertyChart from "./fuel-poverty/FuelPovertyChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { SCALAR_CHART_COMPONENTS } from "@/lib/datasets/generatedCharts";
+
+const ECONOMICS_SCALAR_DEFINITIONS = SCALAR_DATASET_DEFINITIONS.filter(
+	(definition) => definition.chart.group === "Economics",
+);
 
 interface EconomicsSectionProps {
 	activeDataset: Dataset | null;
@@ -46,9 +49,6 @@ export default function EconomicsSection({
 	const showCrime = visibility["economics-crime"];
 	const showClaimantCount = visibility["economics-claimantCount"];
 	const showUnemployment = visibility["economics-unemployment"];
-	const showChildPoverty = visibility["economics-childPoverty"];
-	const showHomelessness = visibility["economics-homelessness"];
-	const showFuelPoverty = visibility["economics-fuelPoverty"];
 
 	const aggregatedHousePriceData = useMemo(
 		() => aggregateDataset({ datasets: datasets.housePrice, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateHousePriceStats(g, d, loc, id) }, mapManager, boundaryData, location),
@@ -81,20 +81,34 @@ export default function EconomicsSection({
 		),
 		[datasets.unemployment, mapManager, boundaryData, location],
 	);
-	const aggregatedChildPovertyData = useMemo(
-		() => aggregateDataset({ datasets: datasets.childPoverty, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateChildPovertyStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[datasets.childPoverty, mapManager, boundaryData, location],
+	const aggregatedScalarData = useMemo(
+		() => Object.fromEntries(
+			ECONOMICS_SCALAR_DEFINITIONS.map((definition) => [
+				definition.type,
+				aggregateDataset<any>(
+					{
+						datasets: datasets[definition.type],
+						boundaryType: definition.chart.boundaryType,
+						calculateStats: definition.chart.calculateStats,
+					},
+					mapManager,
+					boundaryData,
+					location,
+				),
+			]),
+		),
+		[
+			mapManager,
+			boundaryData,
+			location,
+			...ECONOMICS_SCALAR_DEFINITIONS.map((definition) => datasets[definition.type]),
+		],
 	);
-	const aggregatedHomelessnessData = useMemo(
-		() => aggregateDataset({ datasets: datasets.homelessness, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateHomelessnessStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[datasets.homelessness, mapManager, boundaryData, location],
-	);
-	const aggregatedFuelPovertyData = useMemo(
-		() => aggregateDataset({ datasets: datasets.fuelPoverty, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateFuelPovertyStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[datasets.fuelPoverty, mapManager, boundaryData, location],
+	const hasVisibleScalarChart = ECONOMICS_SCALAR_DEFINITIONS.some(
+		(definition) => visibility[definition.chart.key],
 	);
 
-	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment && !showChildPoverty && !showHomelessness && !showFuelPoverty) return null;
+	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment && !hasVisibleScalarChart) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
@@ -126,21 +140,23 @@ export default function EconomicsSection({
 					aggregatedData={aggregatedUnemploymentData} year={2021} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
-			{showChildPoverty && (
-				<ChildPovertyChart activeDataset={activeDataset} availableDatasets={datasets.childPoverty}
-					aggregatedData={aggregatedChildPovertyData} year={2025} selectedArea={selectedArea}
-					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
-			)}
-			{showHomelessness && (
-				<HomelessnessChart activeDataset={activeDataset} availableDatasets={datasets.homelessness}
-					aggregatedData={aggregatedHomelessnessData} year={2026} selectedArea={selectedArea}
-					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
-			)}
-			{showFuelPoverty && (
-				<FuelPovertyChart activeDataset={activeDataset} availableDatasets={datasets.fuelPoverty}
-					aggregatedData={aggregatedFuelPovertyData} selectedArea={selectedArea}
-					activeViz={activeViz} setActiveViz={setActiveViz} />
-			)}
+			{ECONOMICS_SCALAR_DEFINITIONS.map((definition) => {
+				if (!visibility[definition.chart.key]) return null;
+				const Chart = SCALAR_CHART_COMPONENTS[definition.type];
+				return (
+					<Chart
+						key={definition.type}
+						activeDataset={activeDataset}
+						availableDatasets={datasets[definition.type]}
+						aggregatedData={aggregatedScalarData[definition.type]}
+						year={definition.chart.year}
+						selectedArea={selectedArea}
+						codeMapper={codeMapper}
+						activeViz={activeViz}
+						setActiveViz={setActiveViz}
+					/>
+				);
+			})}
 		</div>
 	);
 }

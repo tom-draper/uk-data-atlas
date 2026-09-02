@@ -11,6 +11,11 @@ export const childPovertyDefinition: ScalarDatasetDefinition<ChildPovertyDataset
 		key: "economics-childPoverty",
 		label: "Child Poverty [2025]",
 		defaultVisible: true,
+		componentPath: "@/components/economics/child-poverty/ChildPovertyChart",
+		boundaryType: "localAuthority",
+		calculateStats: (mapManager, geojson, data, location, datasetId) =>
+			mapManager.calculateChildPovertyStats(geojson, data, location, datasetId),
+		year: 2025,
 	},
 	source: {
 		name: "Child Poverty",
