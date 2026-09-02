@@ -12,16 +12,11 @@ import {
 	QUALIFICATION_LEVELS,
 } from "@/lib/types/qualification";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface QualificationChartProps {
 	activeDataset: Dataset | null;
@@ -73,11 +68,6 @@ export default function QualificationChart({
 
 	const hasData = breakdown !== null && breakdown.total > 0;
 	const accentColor = QUALIFICATION_COLORS.level4Plus;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		hasData ? accentColor : null,
-		isActive,
-		isDark,
-	);
 	const heightClass = isActive ? "min-h-[150px]" : "min-h-[65px]";
 
 	if (!dataset) return null;
@@ -93,17 +83,17 @@ export default function QualificationChart({
 		: [];
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(
-				isActive,
-				isDark,
-				`transition-[min-height] duration-300 ease-in-out ${heightClass} block w-full text-left`,
-			)}
+		<ChartCard
+			heading={`Qualifications [${dataset.year}]`}
+			headerEnd={
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+					England &amp; Wales
+				</span>
+			}
+			accent={hasData ? accentColor : null}
+			isActive={isActive}
+			minHeightClassName={`transition-[min-height] duration-300 ease-in-out ${heightClass} block w-full text-left`}
 			title="Office for National Statistics. Census 2021: Highest Level of Qualification, England and Wales. TS067."
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -112,14 +102,6 @@ export default function QualificationChart({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="flex items-center justify-between mb-1.5">
-				<h3 className={chartHeadingClass(isDark)}>
-					Qualifications [{dataset.year}]
-				</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England &amp; Wales</span>
-			</div>
-
 			{!hasData ? (
 				<div className="flex-1">
 					{chartsLoading ? (
@@ -179,6 +161,6 @@ export default function QualificationChart({
 					)}
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }

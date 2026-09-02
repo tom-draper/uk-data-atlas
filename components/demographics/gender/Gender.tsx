@@ -7,13 +7,7 @@ import {
 } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
-import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
+import { ChartCard } from "@/components/ChartCard";
 
 const MALE_COLOR = "#60a5fa"; // blue-400, matches chart bars
 const FEMALE_COLOR = "#f472b6"; // pink-400, matches chart bars
@@ -207,7 +201,6 @@ function Gender({
 		return { totalMales: 0, totalFemales: 0 };
 	})();
 
-	const isDark = useIsDark();
 	const total = (totalMales ?? 0) + (totalFemales ?? 0);
 	const hasData = total > 0;
 
@@ -216,34 +209,11 @@ function Gender({
 		: (totalMales ?? 0) >= (totalFemales ?? 0)
 			? MALE_COLOR
 			: FEMALE_COLOR;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark)}
-			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
-			onClick={() =>
-				setActiveViz({
-					vizId: vizId,
-					datasetType: dataset.type,
-					datasetYear: dataset.year,
-				})
-			}
-		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
-				<h3 className={chartHeadingClass(isDark)}>
-					Gender [{dataset.year}]
-				</h3>
-				{hasData && (
+		<ChartCard
+			heading={`Gender [${dataset.year}]`}
+			headerEnd={
+				hasData && (
 					<span className="text-[10px] text-gray-600 mr-1">
 						<span className="text-blue-600">
 							{totalMales.toLocaleString()}
@@ -253,20 +223,29 @@ function Gender({
 							{totalFemales.toLocaleString()}
 						</span>
 						<span className="ml-2 text-gray-500">
-							{(totalMales / (totalMales + totalFemales)).toFixed(
-								4,
-							)}
+							{(totalMales / (totalMales + totalFemales)).toFixed(4)}
 						</span>
 					</span>
-				)}
-			</div>
+				)
+			}
+			accent={accentColor}
+			isActive={isActive}
+			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
+			onClick={() =>
+				setActiveViz({
+					vizId: vizId,
+					datasetType: dataset.type,
+					datasetYear: dataset.year,
+				})
+			}
+		>
 			<GenderBalanceByAgeChart
 				dataset={dataset}
 				aggregatedData={aggregatedData}
 				selectedArea={selectedArea}
 				codeMapper={codeMapper}
 			/>
-		</button>
+		</ChartCard>
 	);
 }
 

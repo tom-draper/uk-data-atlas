@@ -8,18 +8,12 @@ import {
 } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
-import { useIsDark } from "@/lib/context/ThemeContext";
+import { ChartCard } from "@/components/ChartCard";
 import {
 	resolveWardData,
 	getLadCachedValue,
 } from "@/lib/helpers/demographicData";
 import { getAgeColor } from "@/lib/helpers/ageDistribution";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
@@ -81,7 +75,6 @@ function AgeDistribution({
 	setActiveViz,
 	codeMapper,
 }: AgeDistributionProps) {
-	const isDark = useIsDark();
 	const vizId = `ageDistribution${dataset.year}`;
 	const isActive = activeViz.vizId === vizId;
 
@@ -374,20 +367,19 @@ function AgeDistribution({
 		return getAgeColor(parseInt(largestKey.split("-")[0]));
 	})();
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark)}
+		<ChartCard
+			heading={`Age Distribution [${dataset.year}]`}
+			headerEnd={
+				medianAge > 0 && (
+					<span className="text-[10px] text-gray-500 mr-1">
+						Median: {medianAge}
+					</span>
+				)
+			}
+			accent={accentColor}
+			isActive={isActive}
 			title="Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: vizId,
@@ -396,18 +388,6 @@ function AgeDistribution({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="flex items-center justify-between mb-1.5">
-				<h3 className={chartHeadingClass(isDark)}>
-					Age Distribution [{dataset.year}]
-				</h3>
-				{medianAge > 0 && (
-					<span className="text-[10px] text-gray-500 mr-1">
-						Median: {medianAge}
-					</span>
-				)}
-			</div>
-
 			{/* Pass primitive props to ensure reference stability and speed */}
 			<AgeDistributionChart
 				counts={counts}
@@ -416,7 +396,7 @@ function AgeDistribution({
 				ageGroups={ageGroups}
 				isActive={isActive}
 			/>
-		</button>
+		</ChartCard>
 	);
 }
 
