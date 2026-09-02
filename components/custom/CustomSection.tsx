@@ -18,6 +18,7 @@ import {
 	createCustomDataset,
 	type CustomDatasetUpload,
 } from "@/lib/data/custom/dataset";
+import { getCustomDatasetDisplayValue } from "@/lib/data/custom/displayValue";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useAggregatedDataset } from "@/lib/hooks/useAggregatedDataset";
@@ -761,82 +762,12 @@ function CustomDatasetCard({
 		boundaryData,
 		location,
 	);
-	const displayValue = (() => {
-		if (!customDataset || !customDataset.data) return null;
-
-		if (selectedArea) {
-			const value = customDataset.data[selectedArea.code];
-
-			if (value !== undefined) {
-				return { value, count: 1 };
-			}
-
-			// Try to make the code to a different year
-			if (codeMapper && customDataset.boundaryYear) {
-				const mappedCode = codeMapper.getCodeForYear(
-					selectedArea.type,
-					selectedArea.code,
-					customDataset.boundaryYear,
-				);
-				if (mappedCode) {
-					const mappedValue = customDataset.data[mappedCode];
-					if (mappedValue !== undefined) {
-						return { value: mappedValue, count: 1 };
-					}
-				}
-			}
-
-			// Aggregate wards for local authority
-			if (
-				selectedArea.type === "localAuthority" &&
-				codeMapper &&
-				customDataset.boundaryYear
-			) {
-				const wardCodes = codeMapper.getWardsForLad(
-					selectedArea.code,
-					customDataset.boundaryYear,
-				);
-
-				if (wardCodes.length > 0) {
-					let sum = 0;
-					let count = 0;
-
-					for (const wardCode of wardCodes) {
-						let value = customDataset.data[wardCode];
-
-						// Try to map ward code to dataset year if not found
-						if (value === undefined) {
-							const mappedCode = codeMapper.getCodeForYear(
-								"ward",
-								wardCode,
-								customDataset.boundaryYear,
-							);
-							if (mappedCode) {
-								value = customDataset.data[mappedCode];
-							}
-						}
-
-						if (value !== undefined) {
-							sum += value;
-							count++;
-						}
-					}
-
-					if (count > 0) {
-						return { value: sum, count };
-					}
-				}
-			}
-		}
-
-		if (aggregatedData && aggregatedData[customDataset.year]) {
-			const average = aggregatedData[customDataset.year].average;
-			const count = aggregatedData[customDataset.year].count;
-			return { value: average, count };
-		}
-
-		return null;
-	})();
+	const displayValue = getCustomDatasetDisplayValue(
+		customDataset,
+		selectedArea,
+		codeMapper,
+		aggregatedData,
+	);
 
 	const handleActivate = () => {
 		setActiveViz({
