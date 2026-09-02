@@ -78,10 +78,16 @@ export default function AtlasClient() {
 	const [customDatasets, setCustomDatasets] = useState<CustomDataset[]>([]);
 	const [errorsDismissed, setErrorsDismissed] = useState(false);
 	const [boundaryErrors, setBoundaryErrors] = useState<string[]>([]);
+	const [initialDatasetLoadComplete, setInitialDatasetLoadComplete] =
+		useState(false);
 
-	const { datasets, loading, errors } = useDatasets();
+	const { datasets, loading: datasetsLoading, errors } = useDatasets();
 	const roadSafety = useRoadSafetyData();
 	const roadSafetyDatasets = Object.values(roadSafety.datasets);
+
+	useEffect(() => {
+		if (!datasetsLoading) setInitialDatasetLoadComplete(true);
+	}, [datasetsLoading]);
 
 	const handleBoundaryError = (error: Error) => {
 		setBoundaryErrors((prev) =>
@@ -136,7 +142,8 @@ export default function AtlasClient() {
 			: "UK Data Atlas";
 	}, [selectedLocation]);
 
-	if (loading) return <LoadingDisplay />;
+	if (datasetsLoading && !initialDatasetLoadComplete)
+		return <LoadingDisplay />;
 
 	return (
 		<ErrorBoundary>
