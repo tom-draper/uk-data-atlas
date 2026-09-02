@@ -26,6 +26,7 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import LegendContent from "./LegendContent";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
+import type { ScalarDatasetType } from "@/lib/datasets/generated";
 
 export type PartyDisplayData = { id: PartyCode; color: string; name: string };
 
@@ -50,9 +51,7 @@ export type ColorRangeDatasetKey =
 	| "claimantCount"
 	| "nhsWaiting"
 	| "unemployment"
-	| "childPoverty"
-	| "homelessness"
-	| "fuelPoverty"
+	| ScalarDatasetType
 	| "custom";
 
 interface LegendPanelProps {

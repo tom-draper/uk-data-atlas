@@ -24,6 +24,16 @@ export interface DatasetSource {
 	description: string;
 }
 
+export interface ScalarDatasetMap {
+	valueKey: string;
+	colorRange: { min: number; max: number };
+	legend: {
+		min: number;
+		max: number;
+		format: (value: number) => string;
+	};
+}
+
 export interface ScalarDatasetDefinition<T extends { type: string } = { type: string }> {
 	type: T["type"];
 	precompiledFile: string;
@@ -35,6 +45,7 @@ export interface ScalarDatasetDefinition<T extends { type: string } = { type: st
 		defaultVisible: boolean;
 	};
 	source: DatasetSource;
+	map: ScalarDatasetMap;
 	load: (content: string) => Record<string, T>;
 	map: ScalarMapDefinition;
 }

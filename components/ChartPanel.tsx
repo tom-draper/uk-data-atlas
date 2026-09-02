@@ -163,14 +163,7 @@ function ChartPanelContent({
                 {sectionVisible["Economics"] && (
                   <EconomicsSection
                     activeDataset={activeDataset}
-                    availableHousePriceDatasets={datasets.housePrice}
-                    availableIncomeDatasets={datasets.income}
-                    availableCrimeDatasets={datasets.crime}
-                    availableClaimantCountDatasets={datasets.claimantCount}
-                    availableUnemploymentDatasets={datasets.unemployment}
-                    availableChildPovertyDatasets={datasets.childPoverty}
-                    availableHomelessnessDatasets={datasets.homelessness}
-                    availableFuelPovertyDatasets={datasets.fuelPoverty}
+					datasets={datasets}
                     selectedArea={deferredArea}
                     setActiveViz={setActiveViz}
                     codeMapper={codeMapper}

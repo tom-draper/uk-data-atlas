@@ -2,6 +2,7 @@
 import { Datasets } from "./datasets";
 import { ColorRange } from "./common";
 import type { BaseMapStyle } from "../config/baseMapStyles";
+import type { ScalarDatasetType } from "@/lib/datasets/generated";
 
 // Base option types reused across visualizations
 interface ColorRangeOption {
@@ -43,9 +44,7 @@ export type SchoolPerformanceOptions = ColorRangeOption;
 export type ClaimantCountOptions = ColorRangeOption;
 export type NHSWaitingOptions = ColorRangeOption;
 export type UnemploymentOptions = ColorRangeOption;
-export type ChildPovertyOptions = ColorRangeOption;
-export type HomelessnessOptions = ColorRangeOption;
-export type FuelPovertyOptions = ColorRangeOption;
+export type ScalarMapOptions = Record<ScalarDatasetType, ColorRangeOption>;
 
 export type ColorTheme =
 	| "viridis"
@@ -65,7 +64,7 @@ export type ColorTheme =
 
 export type MapMode = keyof Datasets | "custom";
 
-export interface MapOptions {
+export type MapOptions = ScalarMapOptions & {
 	generalElection: GeneralElectionOptions;
 	localElection: LocalElectionOptions;
 	ageDistribution: PopulationOptions;
@@ -90,9 +89,6 @@ export interface MapOptions {
 	claimantCount: ClaimantCountOptions;
 	nhsWaiting: NHSWaitingOptions;
 	unemployment: UnemploymentOptions;
-	childPoverty: ChildPovertyOptions;
-	homelessness: HomelessnessOptions;
-	fuelPoverty: FuelPovertyOptions;
 	theme: {
 		id: ColorTheme;
 	};
@@ -106,4 +102,4 @@ export interface MapOptions {
 		hideOverlay: boolean;
 		overlayOpacity: number;
 	};
-}
+};

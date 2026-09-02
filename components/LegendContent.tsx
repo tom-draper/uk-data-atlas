@@ -4,6 +4,7 @@ import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ColorRangeDatasetKey, PartyDisplayData } from "./LegendPanel";
 import { RangeControl } from "./controls/RangeControl";
 import { renderCategoryLegend } from "./legendUtils";
+import { getScalarDatasetDefinition } from "@/lib/datasets";
 
 interface LegendContentProps {
 	activeDataset: Dataset | null;
@@ -87,6 +88,19 @@ export default function LegendContent({
 			/>
 		);
 	};
+
+	const scalarDefinition = getScalarDatasetDefinition(activeDataset.type);
+	if (scalarDefinition) {
+		const { colorRange, legend } = scalarDefinition.map;
+		return renderDynamicLegend(
+			activeDataset.type as ColorRangeDatasetKey,
+			legend.min,
+			legend.max,
+			colorRange.min,
+			colorRange.max,
+			legend.format,
+		);
+	}
 
 	switch (activeDataset.type) {
 		case "population":
@@ -311,29 +325,6 @@ export default function LegendContent({
 				8,
 				(v) => `${v.toFixed(1)}% rate`,
 			);
-
-		case "homelessness":
-			return renderDynamicLegend(
-				"homelessness",
-				0,
-				20,
-				1,
-				12,
-				(v) => `${v.toFixed(1)} per 1k households`,
-			);
-
-		case "childPoverty":
-			return renderDynamicLegend(
-				"childPoverty",
-				0,
-				60,
-				10,
-				35,
-				(v) => `${v.toFixed(0)}% children`,
-			);
-
-		case "fuelPoverty":
-			return renderDynamicLegend("fuelPoverty", 0, 30, 5, 15, (v) => `${v.toFixed(0)}% households`);
 
 		case "custom":
 			if (

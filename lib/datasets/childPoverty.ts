@@ -21,6 +21,11 @@ export const childPovertyDefinition: ScalarDatasetDefinition<ChildPovertyDataset
 		licenceUrl: "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description: "Children aged under 16 living in relative low-income families, before housing costs, by local authority across the United Kingdom.",
 	},
+	map: {
+		valueKey: "childPovertyRate",
+		colorRange: { min: 10, max: 35 },
+		legend: { min: 0, max: 60, format: (value) => `${value.toFixed(0)}% children` },
+	},
 	load: loadChildPoverty,
 	map: {
 		codeLevel: "localAuthority",

@@ -21,6 +21,11 @@ export const fuelPovertyDefinition: ScalarDatasetDefinition<FuelPovertyDataset> 
 		licenceUrl: "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description: "Fuel poverty estimates by Lower-layer Super Output Area in England.",
 	},
+	map: {
+		valueKey: "fuelPovertyRate",
+		colorRange: { min: 5, max: 15 },
+		legend: { min: 0, max: 30, format: (value) => `${value.toFixed(0)}% households` },
+	},
 	load: loadFuelPoverty,
 	map: {
 		codeLevel: "lsoa",
