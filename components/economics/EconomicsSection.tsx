@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { ActiveViz, ChildPovertyDataset, ClaimantCountDataset, CrimeDataset, Dataset, FuelPovertyDataset, HomelessnessDataset, HousePriceDataset, IncomeDataset, SelectedArea, UnemploymentDataset } from "@lib/types";
+import { ActiveViz, Dataset, Datasets, SelectedArea } from "@lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
@@ -18,14 +18,7 @@ import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface EconomicsSectionProps {
 	activeDataset: Dataset | null;
-	availableHousePriceDatasets: Record<string, HousePriceDataset>;
-	availableIncomeDatasets: Record<string, IncomeDataset>;
-	availableCrimeDatasets: Record<string, CrimeDataset>;
-	availableClaimantCountDatasets: Record<string, ClaimantCountDataset>;
-	availableUnemploymentDatasets: Record<string, UnemploymentDataset>;
-	availableChildPovertyDatasets: Record<string, ChildPovertyDataset>;
-	availableHomelessnessDatasets: Record<string, HomelessnessDataset>;
-	availableFuelPovertyDatasets: Record<string, FuelPovertyDataset>;
+	datasets: Datasets;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -37,14 +30,7 @@ interface EconomicsSectionProps {
 
 export default function EconomicsSection({
 	activeDataset,
-	availableHousePriceDatasets,
-	availableIncomeDatasets,
-	availableCrimeDatasets,
-	availableClaimantCountDatasets,
-	availableUnemploymentDatasets,
-	availableChildPovertyDatasets,
-	availableHomelessnessDatasets,
-	availableFuelPovertyDatasets,
+	datasets,
 	selectedArea,
 	codeMapper,
 	activeViz,
@@ -65,47 +51,47 @@ export default function EconomicsSection({
 	const showFuelPoverty = visibility["economics-fuelPoverty"];
 
 	const aggregatedHousePriceData = useMemo(
-		() => aggregateDataset({ datasets: availableHousePriceDatasets, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateHousePriceStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableHousePriceDatasets, mapManager, boundaryData, location],
+		() => aggregateDataset({ datasets: datasets.housePrice, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateHousePriceStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[datasets.housePrice, mapManager, boundaryData, location],
 	);
 	const aggregatedIncomeData = useMemo(
-		() => aggregateDataset({ datasets: availableIncomeDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateIncomeStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableIncomeDatasets, mapManager, boundaryData, location],
+		() => aggregateDataset({ datasets: datasets.income, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateIncomeStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[datasets.income, mapManager, boundaryData, location],
 	);
 	const aggregatedCrimeData = useMemo(
-		() => aggregateDataset({ datasets: availableCrimeDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateCrimeStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableCrimeDatasets, mapManager, boundaryData, location],
+		() => aggregateDataset({ datasets: datasets.crime, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateCrimeStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[datasets.crime, mapManager, boundaryData, location],
 	);
 	const aggregatedClaimantCountData = useMemo(
-		() => aggregateDataset({ datasets: availableClaimantCountDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateClaimantCountStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableClaimantCountDatasets, mapManager, boundaryData, location],
+		() => aggregateDataset({ datasets: datasets.claimantCount, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateClaimantCountStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[datasets.claimantCount, mapManager, boundaryData, location],
 	);
 	const aggregatedUnemploymentData = useMemo(
 		() => aggregateDataset(
 			{
-				datasets: availableUnemploymentDatasets,
+				datasets: datasets.unemployment,
 				boundaryType: "localAuthority",
 				keyBy: "id",
 				calculateStats: (mm, g, _d, loc, id) => {
-					const ds = availableUnemploymentDatasets[id];
+					const ds = datasets.unemployment[id];
 					return ds ? mm.calculateUnemploymentStats(g, ds, loc, id) : null;
 				},
 			},
 			mapManager, boundaryData, location,
 		),
-		[availableUnemploymentDatasets, mapManager, boundaryData, location],
+		[datasets.unemployment, mapManager, boundaryData, location],
 	);
 	const aggregatedChildPovertyData = useMemo(
-		() => aggregateDataset({ datasets: availableChildPovertyDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateChildPovertyStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableChildPovertyDatasets, mapManager, boundaryData, location],
+		() => aggregateDataset({ datasets: datasets.childPoverty, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateChildPovertyStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[datasets.childPoverty, mapManager, boundaryData, location],
 	);
 	const aggregatedHomelessnessData = useMemo(
-		() => aggregateDataset({ datasets: availableHomelessnessDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateHomelessnessStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableHomelessnessDatasets, mapManager, boundaryData, location],
+		() => aggregateDataset({ datasets: datasets.homelessness, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateHomelessnessStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[datasets.homelessness, mapManager, boundaryData, location],
 	);
 	const aggregatedFuelPovertyData = useMemo(
-		() => aggregateDataset({ datasets: availableFuelPovertyDatasets, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateFuelPovertyStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableFuelPovertyDatasets, mapManager, boundaryData, location],
+		() => aggregateDataset({ datasets: datasets.fuelPoverty, boundaryType: "lsoa", calculateStats: (mm, g, d, loc, id) => mm.calculateFuelPovertyStats(g, d, loc, id) }, mapManager, boundaryData, location),
+		[datasets.fuelPoverty, mapManager, boundaryData, location],
 	);
 
 	if (!showHousePrice && !showIncome && !showCrime && !showClaimantCount && !showUnemployment && !showChildPoverty && !showHomelessness && !showFuelPoverty) return null;
@@ -116,42 +102,42 @@ export default function EconomicsSection({
 				Economics
 			</h3>
 			{showHousePrice && (
-				<HousePriceChart activeDataset={activeDataset} availableDatasets={availableHousePriceDatasets}
+				<HousePriceChart activeDataset={activeDataset} availableDatasets={datasets.housePrice}
 					aggregatedData={aggregatedHousePriceData} year={2023} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 			{showIncome && (
-				<IncomeChart activeDataset={activeDataset} availableDatasets={availableIncomeDatasets}
+				<IncomeChart activeDataset={activeDataset} availableDatasets={datasets.income}
 					aggregatedData={aggregatedIncomeData} year={2025} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 			{showCrime && (
-				<CrimeRateChart activeDataset={activeDataset} availableDatasets={availableCrimeDatasets}
+				<CrimeRateChart activeDataset={activeDataset} availableDatasets={datasets.crime}
 					aggregatedData={aggregatedCrimeData} year={2025} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 			{showClaimantCount && (
-				<ClaimantCountChart activeDataset={activeDataset} availableDatasets={availableClaimantCountDatasets}
+				<ClaimantCountChart activeDataset={activeDataset} availableDatasets={datasets.claimantCount}
 					aggregatedData={aggregatedClaimantCountData} year={2026} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 			{showUnemployment && (
-				<UnemploymentChart activeDataset={activeDataset} availableDatasets={availableUnemploymentDatasets}
+				<UnemploymentChart activeDataset={activeDataset} availableDatasets={datasets.unemployment}
 					aggregatedData={aggregatedUnemploymentData} year={2021} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 			{showChildPoverty && (
-				<ChildPovertyChart activeDataset={activeDataset} availableDatasets={availableChildPovertyDatasets}
+				<ChildPovertyChart activeDataset={activeDataset} availableDatasets={datasets.childPoverty}
 					aggregatedData={aggregatedChildPovertyData} year={2025} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 			{showHomelessness && (
-				<HomelessnessChart activeDataset={activeDataset} availableDatasets={availableHomelessnessDatasets}
+				<HomelessnessChart activeDataset={activeDataset} availableDatasets={datasets.homelessness}
 					aggregatedData={aggregatedHomelessnessData} year={2026} selectedArea={selectedArea}
 					codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}
 			{showFuelPoverty && (
-				<FuelPovertyChart activeDataset={activeDataset} availableDatasets={availableFuelPovertyDatasets}
+				<FuelPovertyChart activeDataset={activeDataset} availableDatasets={datasets.fuelPoverty}
 					aggregatedData={aggregatedFuelPovertyData} selectedArea={selectedArea}
 					activeViz={activeViz} setActiveViz={setActiveViz} />
 			)}

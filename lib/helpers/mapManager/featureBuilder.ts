@@ -48,9 +48,6 @@ import { SchoolPerformanceDataset } from "@/lib/types/schoolPerformance";
 import { ClaimantCountDataset } from "@/lib/types/claimantCount";
 import { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
 import { UnemploymentDataset } from "@/lib/types/unemployment";
-import { ChildPovertyDataset } from "@/lib/types/childPoverty";
-import { HomelessnessDataset } from "@/lib/types/homelessness";
-import { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
 import {
 	getColorForLifeExpectancy,
 	getColorForQualification,
@@ -58,9 +55,6 @@ import {
 	getColorForClaimantCount,
 	getColorForNHSWaiting,
 	getColorForUnemployment,
-	getColorForChildPoverty,
-	getColorForHomelessness,
-	getColorForFuelPoverty,
 } from "../colorScale/datasetColors";
 
 export const DEFAULT_COLOR = "#cccccc";
@@ -610,48 +604,6 @@ export class FeatureBuilder {
 			const rate = dataset.data[code]?.rates[dataset.latestYear];
 			return rate != null
 				? getColorForUnemployment(rate, mapOptions.unemployment, mapOptions.theme.id)
-				: DEFAULT_COLOR;
-		});
-	}
-
-	buildChildPovertyFeatures(
-		features: Features,
-		dataset: ChildPovertyDataset,
-		ladCodeProp: PropertyKeys,
-		mapOptions: MapOptions,
-	): Features {
-		return this.buildColorFeatures(features, ladCodeProp, (code) => {
-			const rate = dataset.data[code]?.childPovertyRate;
-			return rate != null
-				? getColorForChildPoverty(rate, mapOptions.childPoverty, mapOptions.theme.id)
-				: DEFAULT_COLOR;
-		});
-	}
-
-	buildHomelessnessFeatures(
-		features: Features,
-		dataset: HomelessnessDataset,
-		ladCodeProp: PropertyKeys,
-		mapOptions: MapOptions,
-	): Features {
-		return this.buildColorFeatures(features, ladCodeProp, (code) => {
-			const rate = dataset.data[code]?.householdsPerThousand;
-			return rate != null
-				? getColorForHomelessness(rate, mapOptions.homelessness, mapOptions.theme.id)
-				: DEFAULT_COLOR;
-		});
-	}
-
-	buildFuelPovertyFeatures(
-		features: Features,
-		dataset: FuelPovertyDataset,
-		lsoaCodeProp: PropertyKeys,
-		mapOptions: MapOptions,
-	): Features {
-		return this.buildColorFeatures(features, lsoaCodeProp, (code) => {
-			const rate = dataset.data[code]?.fuelPovertyRate;
-			return rate != null
-				? getColorForFuelPoverty(rate, mapOptions.fuelPoverty, mapOptions.theme.id)
 				: DEFAULT_COLOR;
 		});
 	}

@@ -1,6 +1,15 @@
-import { MapOptions } from "../types/mapOptions";
+import { SCALAR_DATASET_DEFINITIONS } from "../datasets";
+import { MapOptions, ScalarMapOptions } from "../types/mapOptions";
+
+const scalarMapOptions: ScalarMapOptions = Object.fromEntries(
+	SCALAR_DATASET_DEFINITIONS.map((definition) => [
+		definition.type,
+		{ colorRange: definition.map.colorRange },
+	]),
+) as ScalarMapOptions;
 
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
+	...scalarMapOptions,
 	generalElection: {
 		mode: "majority",
 		percentageRange: { min: 0, max: 100 },
@@ -46,9 +55,6 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	claimantCount: { colorRange: { min: 1, max: 8 } },
 	nhsWaiting: { colorRange: { min: 25, max: 40 } },
 	unemployment: { colorRange: { min: 2, max: 8 } },
-	childPoverty: { colorRange: { min: 10, max: 35 } },
-	homelessness: { colorRange: { min: 1, max: 12 } },
-	fuelPoverty: { colorRange: { min: 5, max: 15 } },
 	theme: {
 		id: "viridis",
 	},
