@@ -1,21 +1,12 @@
 import type { Metadata } from "next";
+import { SCALAR_DATASET_DEFINITIONS, type DatasetSource } from "@/lib/datasets";
 
 export const metadata: Metadata = {
 	title: "Data Sources - UK Data Atlas",
 	description: "Data sources and licensing information for the UK Data Atlas.",
 };
 
-interface Dataset {
-	name: string;
-	source: string;
-	sourceUrl: string;
-	year: string;
-	licence: string;
-	licenceUrl: string;
-	description: string;
-}
-
-const datasets: Dataset[] = [
+const legacyDatasets: DatasetSource[] = [
 	{
 		name: "General Election Results",
 		source: "House of Commons Library",
@@ -130,30 +121,6 @@ const datasets: Dataset[] = [
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
 			"Claimants of Universal Credit and Jobseeker's Allowance by local authority district for Great Britain.",
-	},
-	{
-		name: "Child Poverty",
-		source: "Department for Work and Pensions",
-		sourceUrl:
-			"https://www.gov.uk/government/statistics/children-in-low-income-families-local-area-statistics-2022-to-2025",
-		year: "2022 to 2025",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Children aged under 16 living in relative low-income families, before housing costs, by local authority across the United Kingdom.",
-	},
-	{
-		name: "Temporary Accommodation",
-		source: "Ministry of Housing, Communities and Local Government",
-		sourceUrl:
-			"https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness",
-		year: "January-March 2026",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Households in temporary accommodation by English local authority, including households with children.",
 	},
 	{
 		name: "Crime",
@@ -304,6 +271,11 @@ const datasets: Dataset[] = [
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description: "Parliamentary constituency boundaries.",
 	},
+];
+
+const datasets: DatasetSource[] = [
+	...legacyDatasets,
+	...SCALAR_DATASET_DEFINITIONS.map((definition) => definition.source),
 ];
 
 export default function DatasetsPage() {

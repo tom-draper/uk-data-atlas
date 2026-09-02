@@ -16,6 +16,16 @@ export interface ScalarMapDefinition {
 	mapOptionsKey: ScalarMapOptionsKey;
 }
 
+export interface DatasetSource {
+	name: string;
+	source: string;
+	sourceUrl: string;
+	year: string;
+	licence: string;
+	licenceUrl: string;
+	description: string;
+}
+
 export interface ScalarDatasetDefinition<T extends Dataset = Dataset> {
 	type: T["type"];
 	precompiledFile: string;
@@ -26,6 +36,7 @@ export interface ScalarDatasetDefinition<T extends Dataset = Dataset> {
 		label: string;
 		defaultVisible: boolean;
 	};
+	source: DatasetSource;
 	load: (content: string) => Record<string, T>;
 	map: ScalarMapDefinition;
 }
