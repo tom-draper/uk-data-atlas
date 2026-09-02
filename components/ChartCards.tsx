@@ -29,18 +29,31 @@ export function hasVisibleChart(
 	group: string,
 	visibility: Record<ChartKey, boolean>,
 ) {
-	return CHART_DATASET_DEFINITIONS.some((definition) => getChartDefinitions(definition).some((chart) => chart.group === group && visibility[chart.key]));
+	return getVisibleChartDefinitions(group, visibility).length > 0;
+}
+
+export function getVisibleChartDefinitions(
+	group: string,
+	visibility: Record<ChartKey, boolean>,
+) {
+	return CHART_DATASET_DEFINITIONS.flatMap((definition) =>
+		getChartDefinitions(definition)
+			.filter((chart) => chart.group === group && visibility[chart.key])
+			.map((chart) => ({ definition, chart })),
+	);
 }
 
 export default function ChartCards({ group, visibility, activeDataset, datasets, selectedArea, codeMapper, activeViz, setActiveViz, mapManager, boundaryData, location }: ChartCardsProps) {
-	const definitions = CHART_DATASET_DEFINITIONS.flatMap((definition) => getChartDefinitions(definition).filter((chart) => chart.group === group).map((chart) => ({ definition, chart })));
+	const definitions = useMemo(
+		() => getVisibleChartDefinitions(group, visibility),
+		[group, visibility],
+	);
 	const aggregatedData = useMemo(
 		() => Object.fromEntries(definitions.map(({ definition, chart }) => [definition.type + chart.key, aggregateDataset<any>({ datasets: datasets[definition.type], boundaryType: chart.boundaryType, keyBy: chart.keyBy, calculateStats: chart.calculateStats }, mapManager, boundaryData, location)])),
-		[mapManager, boundaryData, location, ...definitions.map(({ definition }) => datasets[definition.type])],
+		[definitions, mapManager, boundaryData, location, ...definitions.map(({ definition }) => datasets[definition.type])],
 	);
 
 	return definitions.map(({ definition, chart }) => {
-		if (!visibility[chart.key]) return null;
 		const Chart = CHART_COMPONENTS[chart.key];
 		return <Chart key={chart.key} activeDataset={activeDataset} availableDatasets={datasets[definition.type]} aggregatedData={aggregatedData[definition.type + chart.key]} year={chart.year} datasetId={chart.datasetId} selectedArea={selectedArea} codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} boundaryData={boundaryData} />;
 	});
