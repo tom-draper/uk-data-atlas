@@ -94,7 +94,7 @@ export default function ChildPovertyChart({
 
 	return (
 		<ChartCard
-			heading={`Child Poverty [FYE ${dataset.year}]`}
+			heading={`Child Poverty [${year}]`}
 			headerEnd={
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
