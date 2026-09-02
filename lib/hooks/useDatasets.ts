@@ -30,9 +30,8 @@ import { useSchoolPerformanceData } from "./useSchoolPerformanceData";
 import { useNHSWaitingData } from "./useNHSWaitingData";
 import { useUnemploymentData } from "./useUnemploymentData";
 import { useJsonDatasetLoaders } from "./useJsonDataLoader";
-import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { SCALAR_DATASET_DEFINITIONS, type ScalarDatasetType } from "@/lib/datasets";
 import { withCDN } from "@/lib/helpers/cdn";
-import type { ChildPovertyDataset, FuelPovertyDataset, HomelessnessDataset } from "@/lib/types";
 
 function getServerSnapshot(): Record<ChartKey, boolean> {
 	return DEFAULT_VISIBILITY;
@@ -84,6 +83,12 @@ export function useDatasets(): UseDatasetsResult {
 			enabled: isEnabled(definition.chart.key),
 		})),
 	);
+	const scalarDatasetRecords = Object.fromEntries(
+		SCALAR_DATASET_DEFINITIONS.map((definition) => [
+			definition.type,
+			scalarDatasets.datasets[definition.type] ?? {},
+		]),
+	) as Pick<Datasets, ScalarDatasetType>;
 
 	const datasets = {
 		localElection: localElection.datasets,
@@ -107,9 +112,7 @@ export function useDatasets(): UseDatasetsResult {
 		schoolPerformance: schoolPerformance.datasets,
 		nhsWaiting: nhsWaiting.datasets,
 		unemployment: unemployment.datasets,
-		childPoverty: (scalarDatasets.datasets.childPoverty ?? {}) as Record<string, ChildPovertyDataset>,
-		homelessness: (scalarDatasets.datasets.homelessness ?? {}) as Record<string, HomelessnessDataset>,
-		fuelPoverty: (scalarDatasets.datasets.fuelPoverty ?? {}) as Record<string, FuelPovertyDataset>,
+		...scalarDatasetRecords,
 	};
 
 	const results = [
