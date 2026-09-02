@@ -6,17 +6,8 @@ import {
 	IMDDataset,
 	SelectedArea,
 } from "@lib/types";
-import {
-	ChartLoadingBackground,
-	ChartContentPlaceholder,
-	useChartsLoading,
-} from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
+import DecileChart from "../DecileChart";
 
 interface IMDChartProps {
 	activeDataset: Dataset | null;
@@ -28,26 +19,11 @@ interface IMDChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const DECILE_COLORS = [
-	"#15803d", // 1 - least deprived
-	"#16a34a", // 2
-	"#22c55e", // 3
-	"#4ade80", // 4
-	"#a3e635", // 5
-	"#eab308", // 6
-	"#f59e0b", // 7
-	"#f97316", // 8
-	"#ef4444", // 9
-	"#dc2626", // 10 - most deprived
-];
-
 function computeImdStats(
 	dataset: IMDDataset,
 	aggregatedData: Record<number, AggregatedIMDData> | null,
 	selectedArea: SelectedArea | null,
-	chartsLoading: boolean,
 ) {
-	if (chartsLoading) return null;
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
 	if (selectedArea.type === "lsoa") {
@@ -74,37 +50,28 @@ export default function IMDChart({
 	year,
 	setActiveViz,
 }: IMDChartProps) {
-	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
-
-	const imdStats = dataset
-		? computeImdStats(dataset, aggregatedData, selectedArea, chartsLoading)
-		: null;
-
-	const isActive = !!(dataset && activeDataset?.type === "imd" && activeDataset.id === dataset.id);
-
-	const decile = imdStats ? Math.round(imdStats.averageIMDDecile) : null;
-	const displayDecile = decile ? 11 - decile : null;
-	const decileColor = displayDecile ? DECILE_COLORS[displayDecile - 1] : "#9ca3af";
-	const hasData = imdStats !== null;
-
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		hasData && dataset ? decileColor : null,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
+	const imdStats = computeImdStats(dataset, aggregatedData, selectedArea);
+	const isActive = !!(activeDataset?.type === "imd" && activeDataset.id === dataset.id);
+
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "h-[72px]")}
+		<DecileChart
 			title="Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019. gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
+			heading={`Deprivation (IMD) [${dataset.year}]`}
+			region="England"
+			decile={imdStats ? Math.round(imdStats.averageIMDDecile) : null}
+			hasData={imdStats !== null}
+			footer={
+				imdStats && (
+					<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+						Score {imdStats.averageIMDScore.toFixed(1)}
+					</span>
+				)
+			}
+			isActive={isActive}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -112,62 +79,6 @@ export default function IMDChart({
 					datasetYear: dataset.year,
 				})
 			}
-		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex flex-col flex-1">
-				<div className="flex items-start justify-between mb-1.5 shrink-0">
-					<h3 className={chartHeadingClass(isDark)}>
-						Deprivation (IMD) [{dataset.year}]
-					</h3>
-					<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
-				</div>
-				{hasData && imdStats ? (
-					<div className="flex items-start gap-2.5">
-						<div className="shrink-0 w-8 text-right leading-none mt-[-2px]">
-							<span
-								className="text-3xl font-bold leading-none"
-								style={{ color: decileColor }}
-							>
-								{displayDecile}
-							</span>
-						</div>
-						<div className="flex-1 flex flex-col gap-1.5">
-							<div className="flex gap-[2px]">
-								{DECILE_COLORS.map((color, i) => (
-									<div
-										key={i}
-										className="flex-1 h-3 rounded-[2px]"
-										style={{
-											backgroundColor:
-												displayDecile === i + 1
-													? color
-													: isDark
-														? "rgba(255,255,255,0.1)"
-														: "rgba(0,0,0,0.08)",
-										}}
-									/>
-								))}
-							</div>
-							<div className="flex justify-between">
-								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>least deprived</span>
-								<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>Score {imdStats.averageIMDScore.toFixed(1)}</span>
-							</div>
-						</div>
-					</div>
-				) : (
-					<div className="flex-1">
-						{chartsLoading ? (
-							<ChartContentPlaceholder className="h-full" />
-						) : (
-							<div
-								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-							>
-								No data available
-							</div>
-						)}
-					</div>
-				)}
-			</div>
-		</button>
+		/>
 	);
 }
