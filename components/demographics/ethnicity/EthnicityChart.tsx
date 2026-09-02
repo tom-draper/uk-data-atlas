@@ -159,7 +159,7 @@ export default function EthnicityChart({
 		return { hasData: true, ethnicityData, totalPopulation };
 	})();
 
-	const heightClass = isActive ? "h-[170px]" : "h-[65px]";
+	const heightClass = isActive ? "min-h-[170px]" : "min-h-[65px]";
 
 	const accentColor = processedData.ethnicityData[0]?.color ?? null;
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
@@ -175,7 +175,7 @@ export default function EthnicityChart({
 			className={cardClass(
 				isActive,
 				isDark,
-				`transition-[height] duration-300 ease-in-out ${heightClass}`,
+				`transition-[min-height] duration-300 ease-in-out ${heightClass}`,
 			)}
 			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
 			onMouseEnter={onMouseEnter}

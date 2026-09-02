@@ -131,9 +131,9 @@ export default function GeneralElectionResultChart({
 
 	const heightClass = isActive
 		? data.isAggregated
-			? "h-[205px]"
-			: "h-[95px]"
-		: "h-[65px]";
+			? "min-h-[205px]"
+			: "min-h-[95px]"
+		: "min-h-[65px]";
 
 	const accentColor = winnerColor ?? "#6366f1";
 	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
@@ -149,7 +149,7 @@ export default function GeneralElectionResultChart({
 			className={cardClass(
 				isActive,
 				isDark,
-				`transition-[height] duration-300 ease-in-out ${heightClass}`,
+				`transition-[min-height] duration-300 ease-in-out ${heightClass}`,
 			)}
 			title="House of Commons Library, UK Parliament. UK General Election Results. commonslibrary.parliament.uk"
 			onMouseEnter={onMouseEnter}

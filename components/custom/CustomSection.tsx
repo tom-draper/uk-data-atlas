@@ -792,7 +792,7 @@ function CustomDatasetCard({
 				type="button"
 				onClick={handleActivate}
 				style={style}
-				className={cardClass(isActive, isDark, "h-20")}
+				className={cardClass(isActive, isDark, "min-h-20")}
 				onMouseEnter={onMouseEnter}
 				onMouseLeave={onMouseLeave}
 			>
@@ -834,7 +834,7 @@ function CustomDatasetCard({
 			type="button"
 			onClick={handleActivate}
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "min-h-20")}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 		>

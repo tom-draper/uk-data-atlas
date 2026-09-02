@@ -115,7 +115,7 @@ export default function BrexitElectoralChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-[65px]")}
+			className={cardClass(isActive, isDark, "min-h-[65px]")}
 			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

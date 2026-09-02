@@ -112,7 +112,7 @@ export default function AirQualityChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "min-h-20")}
 			title="DEFRA. Air Quality Statistics in the UK. uk-air.defra.gov.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

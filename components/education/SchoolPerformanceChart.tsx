@@ -94,7 +94,7 @@ export default function SchoolPerformanceChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "min-h-20")}
 			title="Department for Education. Key Stage 4 Performance 2023/24. explore-education-statistics.service.gov.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

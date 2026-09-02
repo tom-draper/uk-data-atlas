@@ -78,7 +78,7 @@ export default function QualificationChart({
 		isActive,
 		isDark,
 	);
-	const heightClass = isActive ? "h-[150px]" : "h-[65px]";
+	const heightClass = isActive ? "min-h-[150px]" : "min-h-[65px]";
 
 	if (!dataset) return null;
 
@@ -99,7 +99,7 @@ export default function QualificationChart({
 			className={cardClass(
 				isActive,
 				isDark,
-				`transition-[height] duration-300 ease-in-out ${heightClass} block w-full text-left`,
+				`transition-[min-height] duration-300 ease-in-out ${heightClass} block w-full text-left`,
 			)}
 			title="Office for National Statistics. Census 2021: Highest Level of Qualification, England and Wales. TS067."
 			onMouseEnter={onMouseEnter}

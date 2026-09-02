@@ -179,7 +179,7 @@ export default function LifeExpectancyChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-[72px]")}
+			className={cardClass(isActive, isDark, "min-h-[72px]")}
 			title={dataset.metadata.source}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

@@ -124,7 +124,7 @@ export default function UnemploymentChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "min-h-20")}
 			title="ONS. Model-based estimates of unemployment for local and unitary authorities. ons.gov.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
