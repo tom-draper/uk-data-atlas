@@ -24,6 +24,10 @@ export interface ChartDatasetMap<T = unknown> {
 		max: number;
 		format: (value: number) => string;
 	};
+	// Most datasets colour low->high as high->low on the theme gradient
+	// (matches updateGenericMap's default). Rank-based datasets, where a
+	// low rank means "most deprived", set this false to flip that.
+	invertColor?: boolean;
 }
 
 export interface DatasetReader {

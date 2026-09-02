@@ -26,10 +26,6 @@ function getActiveDataOptions(
 		isChartDataset(activeDataset) &&
 		activeDataset.type !== "population" &&
 		activeDataset.type !== "ethnicity" &&
-		activeDataset.type !== "imd" &&
-		activeDataset.type !== "simd" &&
-		activeDataset.type !== "wimd" &&
-		activeDataset.type !== "nimdm" &&
 		activeDataset.type !== "lifeExpectancy" &&
 		activeDataset.type !== "qualification" &&
 		activeDataset.type !== "brexit" &&
@@ -53,14 +49,6 @@ function getActiveDataOptions(
 			return mapOptions.brexitConstituency;
 		case "custom":
 			return mapOptions.custom;
-		case "imd":
-			return mapOptions.imd;
-		case "simd":
-			return mapOptions.simd;
-		case "wimd":
-			return mapOptions.wimd;
-		case "nimdm":
-			return mapOptions.nimdm;
 		case "lifeExpectancy":
 			return mapOptions.lifeExpectancy;
 		case "qualification":
@@ -140,20 +128,16 @@ export function useMapUpdates({
 
 		const performUpdate = () => {
 			if (
-		isChartDataset(activeDataset) &&
-		activeDataset.type !== "population" &&
-		activeDataset.type !== "ethnicity" &&
-		activeDataset.type !== "imd" &&
-		activeDataset.type !== "simd" &&
-		activeDataset.type !== "wimd" &&
-		activeDataset.type !== "nimdm" &&
-		activeDataset.type !== "lifeExpectancy" &&
-		activeDataset.type !== "qualification" &&
-		activeDataset.type !== "brexit" &&
-		activeDataset.type !== "brexitConstituency" &&
-		activeDataset.type !== "generalElection" &&
-		activeDataset.type !== "localElection"
-	) {
+				isChartDataset(activeDataset) &&
+				activeDataset.type !== "population" &&
+				activeDataset.type !== "ethnicity" &&
+				activeDataset.type !== "lifeExpectancy" &&
+				activeDataset.type !== "qualification" &&
+				activeDataset.type !== "brexit" &&
+				activeDataset.type !== "brexitConstituency" &&
+				activeDataset.type !== "generalElection" &&
+				activeDataset.type !== "localElection"
+			) {
 				return mapManager.updateMapForScalarDataset(
 					geojson,
 					activeDataset,
@@ -202,34 +186,6 @@ export function useMapUpdates({
 
 				case "custom":
 					return mapManager.updateMapForCustomDataset(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "imd":
-					return mapManager.updateMapForIMD(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "simd":
-					return mapManager.updateMapForSIMD(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "wimd":
-					return mapManager.updateMapForWIMD(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "nimdm":
-					return mapManager.updateMapForNIMDM(
 						geojson,
 						activeDataset,
 						mapOptions,

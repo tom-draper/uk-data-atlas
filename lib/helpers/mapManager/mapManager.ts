@@ -552,6 +552,7 @@ export class MapManager {
 				return typeof value === "number" && Number.isFinite(value) ? value : null;
 			},
 			(_, options) => options[dataset.type].colorRange,
+			map.invertColor,
 		);
 	}
 
@@ -860,23 +861,6 @@ export class MapManager {
 		);
 	}
 
-	updateMapForIMD(
-		geojson: BoundaryGeojson,
-		dataset: IMDDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLSOACode.bind(this.propertyDetector),
-			"imd",
-			dataset.data,
-			(data, code) => data.data[code]?.imdScore ?? null,
-			(_, options) => options.imd.colorRange,
-		);
-	}
-
 	calculateIMDStats(
 		geojson: BoundaryGeojson,
 		data: IMDDataset["data"],
@@ -888,26 +872,6 @@ export class MapManager {
 			data,
 			location,
 			datasetId,
-		);
-	}
-
-	updateMapForSIMD(
-		geojson: BoundaryGeojson,
-		dataset: SIMDDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectDataZoneCode.bind(
-				this.propertyDetector,
-			),
-			"simd",
-			dataset.data,
-			(data, code) => data.data[code]?.simdRank ?? null,
-			(_, options) => options.simd.colorRange,
-			false,
 		);
 	}
 
@@ -925,24 +889,6 @@ export class MapManager {
 		);
 	}
 
-	updateMapForWIMD(
-		geojson: BoundaryGeojson,
-		dataset: WIMDDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLSOACode.bind(this.propertyDetector),
-			"wimd",
-			dataset.data,
-			(data, code) => data.data[code]?.wimdRank ?? null,
-			(_, options) => options.wimd.colorRange,
-			false,
-		);
-	}
-
 	calculateWIMDStats(
 		geojson: BoundaryGeojson,
 		data: WIMDDataset["data"],
@@ -954,24 +900,6 @@ export class MapManager {
 			data,
 			location,
 			datasetId,
-		);
-	}
-
-	updateMapForNIMDM(
-		geojson: BoundaryGeojson,
-		dataset: NIMDMDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectSOACode.bind(this.propertyDetector),
-			"nimdm",
-			dataset.data,
-			(data, code) => data.data[code]?.nimdmRank ?? null,
-			(_, options) => options.nimdm.colorRange,
-			false,
 		);
 	}
 
