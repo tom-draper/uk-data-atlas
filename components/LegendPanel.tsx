@@ -1,7 +1,7 @@
 // components/LegendPanel.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions, CategoryOptions } from "@/lib/types/mapOptions";
@@ -20,7 +20,7 @@ import {
 } from "@/lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
+import { useAggregatedDataset } from "@/lib/hooks/useAggregatedDataset";
 import { RangeControl } from "./controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import LegendContent from "./LegendContent";
@@ -202,18 +202,9 @@ export default function LegendPanel({
 
 	const verticalThemeGradient = `linear-gradient(to bottom, ${activeTheme.colors.join(", ")})`;
 
-	const localElectionAgg = useMemo(
-		() => aggregateDataset({ datasets: datasets.localElection, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateLocalElectionStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[datasets.localElection, mapManager, boundaryData, location],
-	);
-	const generalElectionAgg = useMemo(
-		() => aggregateDataset({ datasets: datasets.generalElection, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateGeneralElectionStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[datasets.generalElection, mapManager, boundaryData, location],
-	);
-	const ethnicityAgg = useMemo(
-		() => aggregateDataset({ datasets: datasets.ethnicity, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateEthnicityStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[datasets.ethnicity, mapManager, boundaryData, location],
-	);
+	const localElectionAgg = useAggregatedDataset({ datasets: datasets.localElection, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateLocalElectionStats(g, d, loc, id) }, mapManager, boundaryData, location);
+	const generalElectionAgg = useAggregatedDataset({ datasets: datasets.generalElection, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateGeneralElectionStats(g, d, loc, id) }, mapManager, boundaryData, location);
+	const ethnicityAgg = useAggregatedDataset({ datasets: datasets.ethnicity, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateEthnicityStats(g, d, loc, id) }, mapManager, boundaryData, location);
 
 	const parties = computeParties(activeDataset, localElectionAgg, generalElectionAgg);
 	const ethnicities = computeEthnicities(activeDataset, ethnicityAgg);
