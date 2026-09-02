@@ -7,16 +7,11 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface BroadbandChartProps {
@@ -85,22 +80,14 @@ export default function BroadbandChart({
 
 	const hasData = stats !== null;
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		hasData ? ACCENT : null,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "min-h-20")}
+		<ChartCard
+			heading={`Fixed Broadband Coverage [${dataset.year}]`}
+			accent={hasData ? ACCENT : null}
+			isActive={isActive}
 			title="Ofcom. Connected Nations Report 2025. ofcom.org.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -109,11 +96,6 @@ export default function BroadbandChart({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex items-center justify-between mb-1.5 shrink-0">
-				<h3 className={chartHeadingClass(isDark)}>Fixed Broadband Coverage [{dataset.year}]</h3>
-			</div>
-
 			{!hasData ? (
 				<div className="flex-1 mt-1">
 					{chartsLoading ? (
@@ -139,6 +121,6 @@ export default function BroadbandChart({
 					</div>
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }
