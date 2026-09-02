@@ -8,10 +8,7 @@ import { gazetteer } from "@/lib/data/gazetteer/static";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 import { rgbToHex } from "@/lib/helpers/colorScale/interpolation";
 import { ChartCard } from "@/components/ChartCard";
-import {
-	ChartContentPlaceholder,
-	useChartsLoading,
-} from "@/components/ChartLoadingPlaceholder";
+import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 
 const SEVERITY_COLORS = [
 	[250, 204, 21], // Slight
@@ -43,7 +40,6 @@ function RoadSafetyCard({
 	setActiveViz: (value: ActiveViz) => void;
 	location: string;
 }) {
-	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const { excludedPointValues, selectedPointValue } = useExcludedCategories();
 	const points = useMemo(() => {
@@ -92,53 +88,14 @@ function RoadSafetyCard({
 			}
 			title="Department for Transport. Provisional road collision statistics for Great Britain, 2025."
 		>
-			{!hasData ? (
-				<div className="flex-1 mt-1">
-					{chartsLoading ? (
-						<ChartContentPlaceholder className="h-full" />
-					) : (
-						<div
-							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-						>
-							No data available
-						</div>
-					)}
-				</div>
-			) : (
-				<div className="flex-1 flex flex-col gap-1">
-					<div className="flex items-baseline justify-between">
-						<div className="leading-none">
-							<span
-								className="text-2xl font-bold leading-none"
-								style={{ color: accent ?? undefined }}
-							>
-								{points.length.toLocaleString("en-GB")}
-							</span>
-							<span
-								className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}
-							>
-								collisions
-							</span>
-						</div>
-						<span
-							className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
-						>
-							severity {averageSeverity.toFixed(1)} / 3
-						</span>
-					</div>
-					<div
-						className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}
-					>
-						<div
-							className="h-full rounded-xs transition-all duration-300"
-							style={{
-								width: `${severityBarWidth}%`,
-								backgroundColor: accent ?? undefined,
-							}}
-						/>
-					</div>
-				</div>
-			)}
+			<ChartCardValueBar
+				hasData={hasData}
+				value={points.length.toLocaleString("en-GB")}
+				unit="collisions"
+				secondary={`severity ${averageSeverity.toFixed(1)} / 3`}
+				barWidth={severityBarWidth}
+				barColor={accent ?? undefined}
+			/>
 		</ChartCard>
 	);
 }

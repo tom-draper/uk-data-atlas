@@ -6,17 +6,9 @@ import {
 	Dataset,
 	SelectedArea,
 } from "@lib/types";
-import {
-	ChartLoadingBackground,
-	ChartContentPlaceholder,
-	useChartsLoading,
-} from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
+import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface SchoolPerformanceChartProps {
@@ -67,7 +59,6 @@ export default function SchoolPerformanceChart({
 	codeMapper,
 	setActiveViz,
 }: SchoolPerformanceChartProps) {
-	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
@@ -79,25 +70,22 @@ export default function SchoolPerformanceChart({
 	const hasData = stats !== null && stats.ptL2basics94 != null;
 	const color = gradeColor(stats?.ptL2basics94 ?? null);
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		hasData ? color : null,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
 	const pct = stats?.ptL2basics94 ?? 0;
 	const barWidth = Math.min(pct, 100);
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "min-h-20")}
+		<ChartCard
+			heading="GCSE Performance [2023/24]"
+			headerEnd={
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+					England
+				</span>
+			}
+			accent={hasData ? color : null}
+			isActive={isActive}
 			title="Department for Education. Key Stage 4 Performance 2023/24. explore-education-statistics.service.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -106,45 +94,18 @@ export default function SchoolPerformanceChart({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
-				<h3 className={chartHeadingClass(isDark)}>GCSE Performance [2023/24]</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
-			</div>
-
-			{!hasData ? (
-				<div className="flex-1 mt-1">
-					{chartsLoading ? (
-						<ChartContentPlaceholder className="h-full" />
-					) : (
-						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
-							No data available
-						</div>
-					)}
-				</div>
-			) : (
-				<div className="flex-1 flex flex-col gap-1">
-					<div className="flex items-baseline justify-between">
-						<div className="leading-none">
-							<span className="text-2xl font-bold leading-none" style={{ color }}>
-								{pct.toFixed(1)}
-							</span>
-							<span className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-								% grade 4+
-							</span>
-						</div>
-						<span className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-							{stats!.ptL2basics95 != null ? `${stats!.ptL2basics95.toFixed(1)}% grade 5+` : ""}
-						</span>
-					</div>
-					<div className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
-						<div
-							className="h-full rounded-xs transition-all duration-300"
-							style={{ width: `${barWidth}%`, backgroundColor: color }}
-						/>
-					</div>
-				</div>
-			)}
-		</button>
+			<ChartCardValueBar
+				hasData={hasData}
+				value={pct.toFixed(1)}
+				unit="% grade 4+"
+				secondary={
+					stats?.ptL2basics95 != null
+						? `${stats.ptL2basics95.toFixed(1)}% grade 5+`
+						: undefined
+				}
+				barWidth={barWidth}
+				barColor={color}
+			/>
+		</ChartCard>
 	);
 }
