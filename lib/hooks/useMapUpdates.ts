@@ -4,7 +4,7 @@ import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
 import { gazetteer } from "../data/gazetteer/static";
-import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { isScalarDataset } from "../datasets";
 
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson | null;
@@ -22,10 +22,19 @@ function getActiveDataOptions(
 	mapOptions: MapOptions,
 ): object | null {
 	if (!activeDataset) return null;
-	const scalarDefinition = SCALAR_DATASET_DEFINITIONS.find(
-		(definition) => definition.type === activeDataset.type,
-	);
-	if (scalarDefinition) return mapOptions[scalarDefinition.map.mapOptionsKey];
+	if (
+		isScalarDataset(activeDataset) &&
+		activeDataset.type !== "population" &&
+		activeDataset.type !== "ethnicity" &&
+		activeDataset.type !== "imd" &&
+		activeDataset.type !== "simd" &&
+		activeDataset.type !== "wimd" &&
+		activeDataset.type !== "nimdm" &&
+		activeDataset.type !== "lifeExpectancy" &&
+		activeDataset.type !== "qualification"
+	) {
+		return mapOptions[activeDataset.type];
+	}
 
 	switch (activeDataset.type) {
 		case "generalElection":
@@ -61,8 +70,6 @@ function getActiveDataOptions(
 			}
 			return mapOptions.gender;
 	}
-
-	return null;
 }
 
 export function useMapUpdates({
@@ -128,15 +135,21 @@ export function useMapUpdates({
 			return;
 
 		const performUpdate = () => {
-			const scalarDefinition = SCALAR_DATASET_DEFINITIONS.find(
-				(definition) => definition.type === activeDataset.type,
-			);
-			if (scalarDefinition) {
+			if (
+		isScalarDataset(activeDataset) &&
+		activeDataset.type !== "population" &&
+		activeDataset.type !== "ethnicity" &&
+		activeDataset.type !== "imd" &&
+		activeDataset.type !== "simd" &&
+		activeDataset.type !== "wimd" &&
+		activeDataset.type !== "nimdm" &&
+		activeDataset.type !== "lifeExpectancy" &&
+		activeDataset.type !== "qualification"
+	) {
 				return mapManager.updateMapForScalarDataset(
 					geojson,
 					activeDataset,
 					mapOptions,
-					scalarDefinition.map,
 				);
 			}
 

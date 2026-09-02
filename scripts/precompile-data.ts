@@ -10,18 +10,8 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
 
-import { loadIMD } from "../lib/data/imd/loader";
-import { loadWIMD } from "../lib/data/wimd/loader";
-import { loadSIMD } from "../lib/data/simd/loader";
-import { loadNIMDM } from "../lib/data/nimdm/loader";
-import { loadPopulation } from "../lib/data/population/loader";
-import { loadHousePrice } from "../lib/data/house-price/loader";
-import { loadLE } from "../lib/data/life-expectancy/loader";
-import { loadQualification } from "../lib/data/qualification/loader";
 import { loadBrexit } from "../lib/data/brexit/loader";
 import { loadBrexitConstituency } from "../lib/data/brexit-constituency/loader";
-import { loadEthnicity } from "../lib/data/ethnicity/loader";
-import { loadUnemployment } from "../lib/data/unemployment/loader";
 import { SCALAR_DATASET_DEFINITIONS } from "../lib/datasets";
 import { loadGeneralElection } from "../lib/data/election/general-election/load";
 import { loadLocalElection } from "../lib/data/election/local-election/load";
@@ -87,18 +77,8 @@ async function main() {
 	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
 
 	const results = await Promise.allSettled([
-		loadIMD(read).then((d) => out("imd", d)),
-		loadWIMD(read).then((d) => out("wimd", d)),
-		loadSIMD(read).then((d) => out("simd", d)),
-		loadNIMDM(read).then((d) => out("nimdm", d)),
-		loadPopulation(read).then((d) => out("population", d)),
-		loadHousePrice(read).then((d) => out("house-price", d)),
-		loadLE(read, true).then((d) => out("life-expectancy", d)),
-		loadQualification(read).then((d) => out("qualification", d)),
 		loadBrexit(read).then((d) => out("brexit", d)),
 		loadBrexitConstituency(read).then((d) => out("brexit-constituency", d)),
-		loadEthnicity(read).then((d) => out("ethnicity", d)),
-		loadUnemployment(readSource).then((d) => out("unemployment", d)),
 		...SCALAR_DATASET_DEFINITIONS.map((definition) =>
 			definition.precompile({ text: read, odsContent: readOdsContent, zipCsv: readZip })
 				.then((data) => out(definition.precompiledFile, data)),
