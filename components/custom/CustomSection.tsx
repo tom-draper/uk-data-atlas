@@ -27,16 +27,11 @@ import { useAggregatedDataset } from "@/lib/hooks/useAggregatedDataset";
 import { getColor } from "@/lib/helpers/colorScale/themes";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 function ColumnDropdown({
 	columns,
@@ -777,31 +772,17 @@ function CustomDatasetCard({
 		: 0;
 	const valueColor = displayValue ? getColor(barWidth / 100) : "#6366f1";
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		displayValue ? valueColor : null,
-		isActive,
-		isDark,
-	);
-
 	const hasData = displayValue !== null;
 
 	if (customDataset.kind === "points") {
 		const pts = customDataset.points ?? [];
 		return (
-			<button
-				type="button"
+			<ChartCard
+				heading={customDataset.dataColumn}
+				accent={displayValue ? valueColor : null}
+				isActive={isActive}
 				onClick={handleActivate}
-				style={style}
-				className={cardClass(isActive, isDark, "min-h-20")}
-				onMouseEnter={onMouseEnter}
-				onMouseLeave={onMouseLeave}
 			>
-				<ChartLoadingBackground />
-				<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
-					<h3 className={chartHeadingClass(isDark)}>
-						{customDataset.dataColumn}
-					</h3>
-				</div>
 				<div className="flex-1 flex flex-col gap-1">
 					<div className="flex items-baseline gap-2">
 						<span
@@ -825,26 +806,17 @@ function CustomDatasetCard({
 						</span>
 					)}
 				</div>
-			</button>
+			</ChartCard>
 		);
 	}
 
 	return (
-		<button
-			type="button"
+		<ChartCard
+			heading={`${customDataset.dataColumn} [${customDataset.boundaryYear}]`}
+			accent={displayValue ? valueColor : null}
+			isActive={isActive}
 			onClick={handleActivate}
-			style={style}
-			className={cardClass(isActive, isDark, "min-h-20")}
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
-				<h3 className={chartHeadingClass(isDark)}>
-					{customDataset.dataColumn} [{customDataset.boundaryYear}]
-				</h3>
-			</div>
-
 			{!hasData ? (
 				<div className="flex-1 mt-1">
 					{chartsLoading ? (
@@ -878,7 +850,7 @@ function CustomDatasetCard({
 					</div>
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }
 

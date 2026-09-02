@@ -4,16 +4,11 @@
 
 import { LocalElectionDataset, ActiveViz } from "@lib/types";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface ProcessedPartyData {
 	key: string;
@@ -89,12 +84,6 @@ export default function LocalElectionResultChart({
 	const heightClass = isActive ? "min-h-[95px]" : "min-h-[65px]";
 
 	const accentColor = winnerColor ?? "#6366f1";
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	const handleActivate = () => {
 		if (data.dataset) {
 			setActiveViz({
@@ -106,32 +95,22 @@ export default function LocalElectionResultChart({
 	};
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(
-				isActive,
-				isDark,
-				`transition-[min-height] duration-300 ease-in-out ${heightClass}`,
-			)}
+		<ChartCard
+			heading={`${data.year} Local Elections`}
+			headerEnd={
+				data.turnout && (
+					<span className="text-[9px] text-gray-500 font-medium">
+						{data.turnout.toFixed(1)}% turnout
+					</span>
+				)
+			}
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName={`transition-[min-height] duration-300 ease-in-out ${heightClass}`}
 			title="House of Commons Library, UK Parliament. Local Election Results. commonslibrary.parliament.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={handleActivate}
 		>
-			<ChartLoadingBackground />
 			<div className="relative z-[1] flex-1 flex flex-col">
-				<div className="flex items-center justify-between mb-1.5">
-					<h3 className={chartHeadingClass(isDark)}>
-						{data.year} Local Elections
-					</h3>
-					{data.turnout && (
-						<span className="text-[9px] text-gray-500 font-medium">
-							{data.turnout.toFixed(1)}% turnout
-						</span>
-					)}
-				</div>
-
 				{!data.hasData ? (
 					chartsLoading ? (
 						<ChartContentPlaceholder className="flex-1 mt-1" />
@@ -149,6 +128,6 @@ export default function LocalElectionResultChart({
 					</div>
 				)}
 			</div>
-		</button>
+		</ChartCard>
 	);
 }

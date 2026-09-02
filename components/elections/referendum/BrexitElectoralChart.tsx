@@ -8,16 +8,11 @@ import {
 } from "@lib/types";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface BrexitChartProps {
 	activeDataset: Dataset | null;
@@ -103,22 +98,15 @@ export default function BrexitElectoralChart({
 			: result === "remain"
 				? REMAIN_COLOR
 				: null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "min-h-[65px]")}
+		<ChartCard
+			heading={`Electoral Commission [${dataset.year}]`}
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName="min-h-[65px]"
 			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -127,24 +115,18 @@ export default function BrexitElectoralChart({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10">
-				<h3 className={chartHeadingClass(isDark)}>
-					Electoral Commission [{dataset.year}]
-				</h3>
-
 				{!hasData ? (
 					chartsLoading ? (
-						<ChartContentPlaceholder className="h-5 mt-1.5" />
+						<ChartContentPlaceholder className="h-5" />
 					) : (
 						<div
-							className={`mt-1.5 h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+							className={`h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
 						>
 							No data available
 						</div>
 					)
 				) : (
-					<div className="mt-1.5 flex h-5 rounded overflow-hidden">
+					<div className="flex h-5 rounded overflow-hidden">
 						<div
 							style={{
 								width: `${pctLeave.toFixed(1)}%`,
@@ -171,7 +153,6 @@ export default function BrexitElectoralChart({
 						</div>
 					</div>
 				)}
-			</div>
-		</button>
+		</ChartCard>
 	);
 }

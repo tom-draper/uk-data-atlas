@@ -9,16 +9,11 @@ import {
 
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface BrexitHanrettyEstimatesChartProps {
 	activeDataset: Dataset | null;
@@ -82,22 +77,20 @@ export default function BrexitHanrettyEstimatesChart({
 			: result === "remain"
 				? REMAIN_COLOR
 				: null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "min-h-[65px]")}
+		<ChartCard
+			heading={`Hanretty Estimates [${dataset.year}]`}
+			headerEnd={
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+					England
+				</span>
+			}
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName="min-h-[65px]"
 			title="Hanretty, C. (2017). Areal interpolation and the UK's referendum on EU membership. Journal of Elections, Public Opinion and Parties, 27(4), 466–483. Published via House of Commons Library."
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -106,15 +99,6 @@ export default function BrexitHanrettyEstimatesChart({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10">
-				<div className="flex items-start justify-between mb-1.5 shrink-0">
-					<h3 className={chartHeadingClass(isDark)}>
-						Hanretty Estimates [{dataset.year}]
-					</h3>
-					<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
-				</div>
-
 				{!hasData ? (
 					chartsLoading ? (
 						<ChartContentPlaceholder className="h-5 mt-1.5" />
@@ -153,7 +137,6 @@ export default function BrexitHanrettyEstimatesChart({
 						</div>
 					</div>
 				)}
-			</div>
-		</button>
+		</ChartCard>
 	);
 }
