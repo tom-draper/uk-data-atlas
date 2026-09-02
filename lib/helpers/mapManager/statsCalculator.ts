@@ -94,6 +94,30 @@ export class StatsCalculator {
 		return result;
 	}
 
+	private calculateScalarStats<T, R>(
+		cachePrefix: string,
+		geojson: BoundaryGeojson,
+		data: Record<string, T>,
+		location: string | null,
+		datasetId: string | null,
+		codeLevel: "localAuthority" | "lsoa",
+		aggregate: (records: T[]) => R | null,
+	): R | null {
+		return this.cached(`${cachePrefix}-${location}-${datasetId}`, () => {
+			const codeProp = codeLevel === "lsoa"
+				? this.propertyDetector.detectLSOACode(geojson.features)
+				: this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			const records: T[] = [];
+
+			for (const feature of geojson.features) {
+				const record = data[getFeatureProp(feature.properties, codeProp) ?? ""];
+				if (record) records.push(record);
+			}
+
+			return aggregate(records);
+		});
+	}
+
 	calculateLocalElectionStats(
 		geojson: BoundaryGeojson,
 		wardData: LocalElectionDataset["data"],
@@ -1057,13 +1081,17 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedChildPovertyData | null {
-		return this.cached(`childPoverty-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		return this.calculateScalarStats(
+			"childPoverty",
+			geojson,
+			data,
+			location,
+			datasetId,
+			"localAuthority",
+			(records) => {
 			let childCount = 0, childrenPopulation = 0, count = 0;
 
-			for (const feature of geojson.features) {
-				const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-				if (!record) continue;
+			for (const record of records) {
 				childCount += record.childCount;
 				childrenPopulation += record.childrenPopulation;
 				count++;
@@ -1071,7 +1099,8 @@ export class StatsCalculator {
 
 			if (count === 0 || childrenPopulation === 0) return null;
 			return { childCount, childPovertyRate: childCount / childrenPopulation * 100 };
-		});
+			},
+		);
 	}
 
 	calculateHomelessnessStats(
@@ -1080,17 +1109,21 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedHomelessnessData | null {
-		return this.cached(`homelessness-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+		return this.calculateScalarStats(
+			"homelessness",
+			geojson,
+			data,
+			location,
+			datasetId,
+			"localAuthority",
+			(records) => {
 			let householdsInTemporaryAccommodation = 0;
 			let householdsPerThousand = 0;
 			let householdsWithChildren = 0;
 			let childrenInTemporaryAccommodation = 0;
 			let count = 0;
 
-			for (const feature of geojson.features) {
-				const record = data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-				if (!record) continue;
+			for (const record of records) {
 				householdsInTemporaryAccommodation += record.householdsInTemporaryAccommodation;
 				householdsPerThousand += record.householdsPerThousand;
 				householdsWithChildren += record.householdsWithChildren;
@@ -1105,7 +1138,8 @@ export class StatsCalculator {
 				householdsWithChildren,
 				childrenInTemporaryAccommodation,
 			};
-		});
+			},
+		);
 	}
 
 	calculateFuelPovertyStats(
@@ -1114,13 +1148,17 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedFuelPovertyData | null {
-		return this.cached(`fuelPoverty-${location}-${datasetId}`, () => {
-			const lsoaCodeProp = this.propertyDetector.detectLSOACode(geojson.features);
+		return this.calculateScalarStats(
+			"fuelPoverty",
+			geojson,
+			data,
+			location,
+			datasetId,
+			"lsoa",
+			(records) => {
 			let householdCount = 0;
 			let fuelPoorHouseholdCount = 0;
-			for (const feature of geojson.features) {
-				const record = data[getFeatureProp(feature.properties, lsoaCodeProp) ?? ""];
-				if (!record) continue;
+			for (const record of records) {
 				householdCount += record.householdCount;
 				fuelPoorHouseholdCount += record.fuelPoorHouseholdCount;
 			}
@@ -1130,7 +1168,8 @@ export class StatsCalculator {
 				fuelPoorHouseholdCount,
 				fuelPovertyRate: fuelPoorHouseholdCount / householdCount * 100,
 			};
-		});
+			},
+		);
 	}
 
 	calculateSchoolPerformanceStats(

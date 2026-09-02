@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
+import { childPovertyDefinition } from "@/lib/datasets/childPoverty";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 
 function createMap() {
@@ -84,5 +85,70 @@ describe("MapManager election updates", () => {
 
 		expect(buildPercentage).toHaveBeenCalledTimes(1);
 		expect(map.sources.get("location-wards")!.setData).not.toHaveBeenCalled();
+	});
+
+	it("renders registry-backed scalar datasets through the shared value path", () => {
+		const map = createMap();
+		const manager = new MapManager(map as any, { onLocationChange: () => {} });
+		const dataset = {
+			id: "child-poverty-2025",
+			type: "childPoverty" as const,
+			year: 2025,
+			boundaryType: "localAuthority" as const,
+			boundaryYear: 2025,
+			data: {
+				E06000001: {
+					ladCode: "E06000001",
+					ladName: "Test authority",
+					childCount: 25,
+					childrenPopulation: 100,
+					childPovertyRate: 25,
+				},
+			},
+		};
+		const geojson = {
+			type: "FeatureCollection",
+			crs: { type: "name", properties: { name: "CRS84" } },
+			features: [
+				{
+					type: "Feature",
+					id: 1,
+					properties: { LAD25CD: "E06000001", LAD25NM: "Test authority" },
+					geometry: {
+						type: "Polygon",
+						coordinates: [
+							[
+								[0, 0],
+								[1, 0],
+								[0, 1],
+								[0, 0],
+							],
+						],
+					},
+				},
+			],
+		} as any;
+		const builder = (manager as any).featureBuilder;
+		const buildValue = vi.spyOn(builder, "buildValueFeatures");
+
+		manager.updateMapForScalarDataset(
+			geojson,
+			dataset,
+			DEFAULT_MAP_OPTIONS,
+			childPovertyDefinition.map,
+		);
+		manager.updateMapForScalarDataset(
+			geojson,
+			dataset,
+			{
+				...DEFAULT_MAP_OPTIONS,
+				childPoverty: { colorRange: { min: 10, max: 30 } },
+			},
+			childPovertyDefinition.map,
+		);
+
+		expect(buildValue).toHaveBeenCalledTimes(1);
+		const valueFor = buildValue.mock.calls[0][2] as (code: string) => number | null;
+		expect(valueFor("E06000001")).toBe(25);
 	});
 });

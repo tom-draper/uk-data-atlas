@@ -13,4 +13,9 @@ export const childPovertyDefinition: ScalarDatasetDefinition<ChildPovertyDataset
 		defaultVisible: true,
 	},
 	load: loadChildPoverty,
+	map: {
+		codeLevel: "localAuthority",
+		valueKey: "childPovertyRate",
+		mapOptionsKey: "childPoverty",
+	},
 };

@@ -13,4 +13,9 @@ export const fuelPovertyDefinition: ScalarDatasetDefinition<FuelPovertyDataset> 
 		defaultVisible: true,
 	},
 	load: loadFuelPoverty,
+	map: {
+		codeLevel: "lsoa",
+		valueKey: "fuelPovertyRate",
+		mapOptionsKey: "fuelPoverty",
+	},
 };

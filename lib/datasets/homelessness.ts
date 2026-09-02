@@ -13,4 +13,9 @@ export const homelessnessDefinition: ScalarDatasetDefinition<HomelessnessDataset
 		defaultVisible: true,
 	},
 	load: loadHomelessness,
+	map: {
+		codeLevel: "localAuthority",
+		valueKey: "householdsPerThousand",
+		mapOptionsKey: "homelessness",
+	},
 };

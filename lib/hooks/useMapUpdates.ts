@@ -4,6 +4,7 @@ import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
 import { gazetteer } from "../data/gazetteer/static";
+import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
 
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson | null;
@@ -21,6 +22,10 @@ function getActiveDataOptions(
 	mapOptions: MapOptions,
 ): object | null {
 	if (!activeDataset) return null;
+	const scalarDefinition = SCALAR_DATASET_DEFINITIONS.find(
+		(definition) => definition.type === activeDataset.type,
+	);
+	if (scalarDefinition) return mapOptions[scalarDefinition.map.mapOptionsKey];
 
 	switch (activeDataset.type) {
 		case "generalElection":
@@ -33,12 +38,6 @@ function getActiveDataOptions(
 			return mapOptions.crime;
 		case "income":
 			return mapOptions.income;
-		case "childPoverty":
-			return mapOptions.childPoverty;
-		case "homelessness":
-			return mapOptions.homelessness;
-		case "fuelPoverty":
-			return mapOptions.fuelPoverty;
 		case "ethnicity":
 			return mapOptions.ethnicity;
 		case "brexit":
@@ -80,6 +79,8 @@ function getActiveDataOptions(
 			}
 			return mapOptions.gender;
 	}
+
+	return null;
 }
 
 export function useMapUpdates({
@@ -145,6 +146,18 @@ export function useMapUpdates({
 			return;
 
 		const performUpdate = () => {
+			const scalarDefinition = SCALAR_DATASET_DEFINITIONS.find(
+				(definition) => definition.type === activeDataset.type,
+			);
+			if (scalarDefinition) {
+				return mapManager.updateMapForScalarDataset(
+					geojson,
+					activeDataset,
+					mapOptions,
+					scalarDefinition.map,
+				);
+			}
+
 			switch (activeDataset.type) {
 				case "generalElection":
 					return mapManager.updateMapForGeneralElection(
@@ -281,23 +294,6 @@ export function useMapUpdates({
 						activeDataset,
 						mapOptions,
 					);
-
-				case "childPoverty":
-					return mapManager.updateMapForChildPoverty(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "homelessness":
-					return mapManager.updateMapForHomelessness(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "fuelPoverty":
-					return mapManager.updateMapForFuelPoverty(geojson, activeDataset, mapOptions);
 
 				case "nhsWaiting":
 					return mapManager.updateMapForNHSWaiting(
