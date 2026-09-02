@@ -12,9 +12,13 @@ import {
 	extractWardLadMappings,
 	buildCrossYearMappings,
 	buildConstituencyWardMappings,
-} from "./useCodeMapper";
-import type { CodeMapping, CodeType, YearCode } from "./useCodeMapper";
-import type { PrecompiledBoundaryMappings } from "../data/boundaries/mappings";
+} from "../data/boundaries/mappings";
+import type {
+	CodeMapping,
+	CodeType,
+	PrecompiledBoundaryMappings,
+	YearCode,
+} from "../data/boundaries/mappings";
 import { withCDN } from "../helpers/cdn";
 
 const EMPTY_BOUNDARY_DATA: BoundaryData = {
