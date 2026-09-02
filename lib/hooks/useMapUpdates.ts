@@ -32,8 +32,6 @@ function getActiveDataOptions(
 			return mapOptions.generalElection;
 		case "localElection":
 			return mapOptions.localElection;
-		case "housePrice":
-			return mapOptions.housePrice;
 		case "ethnicity":
 			return mapOptions.ethnicity;
 		case "brexit":
@@ -54,8 +52,6 @@ function getActiveDataOptions(
 			return mapOptions.lifeExpectancy;
 		case "qualification":
 			return mapOptions.qualification;
-		case "unemployment":
-			return mapOptions.unemployment;
 		case "population":
 			if (activeViz.vizId.startsWith("ageDistribution")) {
 				return mapOptions.ageDistribution;
@@ -161,13 +157,6 @@ export function useMapUpdates({
 						isDark,
 					);
 
-				case "housePrice":
-					return mapManager.updateMapForHousePrices(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
 				case "ethnicity":
 					return mapManager.updateMapForEthnicity(
 						geojson,
@@ -234,13 +223,6 @@ export function useMapUpdates({
 
 				case "lifeExpectancy":
 					return mapManager.updateMapForLifeExpectancy(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "unemployment":
-					return mapManager.updateMapForUnemployment(
 						geojson,
 						activeDataset,
 						mapOptions,
