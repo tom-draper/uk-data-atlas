@@ -20,6 +20,7 @@ import {
 } from "@/lib/data/custom/dataset";
 import { getCustomDatasetDisplayValue } from "@/lib/data/custom/displayValue";
 import { getMatchColorClass } from "./uploadStyles";
+import type { SelectedCustomArea } from "./types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useAggregatedDataset } from "@/lib/hooks/useAggregatedDataset";
@@ -36,12 +37,6 @@ import {
 	cardClass,
 	chartHeadingClass,
 } from "@/lib/hooks/useCardAccent";
-
-interface SelectedArea {
-	code: string;
-	name: string;
-	type: BoundaryType;
-}
 
 function ColumnDropdown({
 	columns,
@@ -729,7 +724,7 @@ function CustomDatasetCard({
 	location,
 }: {
 	customDataset: CustomDataset;
-	selectedArea: SelectedArea | null;
+	selectedArea: SelectedCustomArea | null;
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper: CodeMapper;
@@ -901,7 +896,7 @@ export default function CustomSection({
 }: {
 	customDatasets: CustomDataset[];
 	addCustomDataset: (dataset: CustomDataset) => void;
-	selectedArea: SelectedArea | null;
+	selectedArea: SelectedCustomArea | null;
 	boundaryCodes: BoundaryCodes;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
