@@ -9,6 +9,7 @@ import {
 import AgeDistributionChart from "./AgeDistributionChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartCard } from "@/components/ChartCard";
+import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	resolveWardData,
 	getLadCachedValue,
@@ -366,13 +367,16 @@ function AgeDistribution({
 		const largestKey = entries.reduce((a, b) => (b[1] > a[1] ? b : a))[0];
 		return getAgeColor(parseInt(largestKey.split("-")[0]));
 	})();
+	const isDark = useIsDark();
 
 	return (
 		<ChartCard
 			heading={`Age Distribution [${dataset.year}]`}
 			headerEnd={
 				medianAge > 0 && (
-					<span className="text-[10px] text-gray-500 mr-1">
+					<span
+						className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+					>
 						Median: {medianAge}
 					</span>
 				)
