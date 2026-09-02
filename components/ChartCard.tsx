@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
@@ -20,6 +20,8 @@ interface ChartCardProps {
 	onClick: () => void;
 	children: ReactNode;
 	background?: ReactNode;
+	style?: CSSProperties;
+	activeStyle?: CSSProperties;
 	title?: string;
 	minHeightClassName?: string;
 }
@@ -35,11 +37,13 @@ export function ChartCard({
 	onClick,
 	children,
 	background,
+	style: customStyle,
+	activeStyle,
 	title,
 	minHeightClassName = "min-h-20",
 }: ChartCardProps) {
 	const isDark = useIsDark();
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
+	const { style, onMouseEnter, onMouseLeave, isHovered } = useCardAccent(
 		accent,
 		isActive,
 		isDark,
@@ -49,7 +53,11 @@ export function ChartCard({
 		<button
 			type="button"
 			onClick={onClick}
-			style={style}
+			style={{
+				...style,
+				...customStyle,
+				...(isActive || isHovered ? activeStyle : {}),
+			}}
 			className={cardClass(isActive, isDark, minHeightClassName)}
 			title={title}
 			onMouseEnter={onMouseEnter}

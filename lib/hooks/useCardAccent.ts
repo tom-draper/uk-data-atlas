@@ -22,7 +22,7 @@ export function useCardAccent(
 	const onMouseEnter = () => setHovered(true);
 	const onMouseLeave = () => setHovered(false);
 
-	return { style, onMouseEnter, onMouseLeave };
+	return { style, onMouseEnter, onMouseLeave, isHovered: hovered };
 }
 
 export function chartHeadingClass(isDark: boolean) {

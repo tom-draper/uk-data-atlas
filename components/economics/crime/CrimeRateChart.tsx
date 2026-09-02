@@ -6,15 +6,13 @@ import {
 	CrimeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { useState } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { chartHeadingClass } from "@/lib/hooks/useCardAccent";
 
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
@@ -43,13 +41,25 @@ function computeCrimeRate(
 	year: number,
 ): number | null {
 	let rate: number | null = null;
-	if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+	if (
+		selectedArea === null &&
+		aggregatedData &&
+		aggregatedData[dataset.year]
+	) {
 		rate = aggregatedData[dataset.year].averageRecordedCrime || null;
-	} else if (selectedArea && selectedArea.type === "localAuthority" && selectedArea.data) {
+	} else if (
+		selectedArea &&
+		selectedArea.type === "localAuthority" &&
+		selectedArea.data
+	) {
 		const laCode = selectedArea.code;
 		rate = dataset.data?.[laCode]?.totalRecordedCrime || null;
 		if (!rate && codeMapper) {
-			const mappedCode = codeMapper.getCodeForYear("localAuthority", laCode, year);
+			const mappedCode = codeMapper.getCodeForYear(
+				"localAuthority",
+				laCode,
+				year,
+			);
 			if (mappedCode) {
 				rate = dataset.data?.[mappedCode]?.totalRecordedCrime || null;
 			}
@@ -70,25 +80,35 @@ export default function CrimeRateChart({
 }: CrimeRateChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const [hovered, setHovered] = useState(false);
 	const dataset = availableDatasets?.[year];
 
 	const filterId = `contour-filter-${year}`;
 
 	const distortionSeed = selectedArea
-		? (selectedArea.code || "").split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) % 100
+		? (selectedArea.code || "")
+				.split("")
+				.reduce((acc, char) => acc + char.charCodeAt(0), 0) % 100
 		: 0;
 
-	const crimeRate = dataset ? computeCrimeRate(dataset, aggregatedData, selectedArea, codeMapper, year) : null;
+	const crimeRate = dataset
+		? computeCrimeRate(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				codeMapper,
+				year,
+			)
+		: null;
 
 	if (!dataset) return null;
 
-	const isActive =
+	const isActive = !!(
 		activeDataset &&
 		((activeDataset.type === "crime" &&
 			activeDataset.id === `crime${dataset.year}`) ||
 			(activeViz.datasetType === "custom" &&
-				activeViz.vizId === "custom"));
+				activeViz.vizId === "custom"))
+	);
 
 	const rawValue = crimeRate || 0;
 	const maxThreshold = 100000;
@@ -120,27 +140,23 @@ export default function CrimeRateChart({
 		? `hsl(${baseHue}, ${50 + intensity * 40}%, 60%)`
 		: null;
 
-	const combinedStyle: React.CSSProperties = {
-		...(dynamicBgColor ? { backgroundColor: dynamicBgColor } : {}),
-		...((isActive || hovered) && borderColor ? { borderColor } : {}),
-	};
-
 	return (
-		<button
-			type="button"
-			style={combinedStyle}
-			className={`cursor-pointer w-full text-left flex flex-col p-2 rounded overflow-hidden relative min-h-20 border-2 ${
-				isActive
-					? isDark
-						? "bg-white/10"
-						: "bg-white/60"
-					: isDark
-						? "bg-white/5 border-white/10"
-						: "bg-white/60 border-gray-200/80"
-			}`}
+		<ChartCard
+			heading={`Recorded Crime [${dataset.year}]`}
+			headerEnd={
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
+					England &amp; Wales
+				</span>
+			}
+			accent={null}
+			isActive={isActive}
+			style={
+				dynamicBgColor ? { backgroundColor: dynamicBgColor } : undefined
+			}
+			activeStyle={borderColor ? { borderColor } : undefined}
 			title="Home Office. Police Recorded Crime Open Data Tables. data.police.uk"
-			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -148,94 +164,88 @@ export default function CrimeRateChart({
 					datasetYear: dataset.year,
 				})
 			}
-		>
-			<ChartLoadingBackground />
-			{hasData && intensity > 0 && (
-				<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-					<svg
-						viewBox="-100 -100 300 300"
-						preserveAspectRatio="xMidYMid slice"
-						className="size-full"
-					>
-						<defs>
-							<filter
-								id={filterId}
-								x="-50%"
-								y="-50%"
-								width="200%"
-								height="200%"
+			background={
+				<>
+					{hasData && intensity > 0 && (
+						<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+							<svg
+								viewBox="-100 -100 300 300"
+								preserveAspectRatio="xMidYMid slice"
+								className="size-full"
 							>
-								<feTurbulence
-									type="fractalNoise"
-									baseFrequency="0.04"
-									numOctaves="3"
-									seed={distortionSeed}
-									result="noise"
-								/>
-								<feDisplacementMap
-									in="SourceGraphic"
-									in2="noise"
-									scale={20 + intensity * 20}
-								/>
-							</filter>
-						</defs>
+								<defs>
+									<filter
+										id={filterId}
+										x="-50%"
+										y="-50%"
+										width="200%"
+										height="200%"
+									>
+										<feTurbulence
+											type="fractalNoise"
+											baseFrequency="0.04"
+											numOctaves="3"
+											seed={distortionSeed}
+											result="noise"
+										/>
+										<feDisplacementMap
+											in="SourceGraphic"
+											in2="noise"
+											scale={20 + intensity * 20}
+										/>
+									</filter>
+								</defs>
 
-						<g filter={`url(#${filterId})`}>
-							{layers.map((layer, i) => (
-								<circle
-									key={i}
-									cx="50"
-									cy="50"
-									r={layer.r * 2.5}
-									fill={`hsla(${hotHue + (20 - i * 5)}, 80%, ${60 - i * 5}%, ${layer.opacity + intensity * 0.2})`}
-								/>
-							))}
-						</g>
-					</svg>
+								<g filter={`url(#${filterId})`}>
+									{layers.map((layer, i) => (
+										<circle
+											key={i}
+											cx="50"
+											cy="50"
+											r={layer.r * 2.5}
+											fill={`hsla(${hotHue + (20 - i * 5)}, 80%, ${60 - i * 5}%, ${layer.opacity + intensity * 0.2})`}
+										/>
+									))}
+								</g>
+							</svg>
+						</div>
+					)}
+					<div
+						className={`absolute inset-0 z-0 ${isDark ? "bg-black/20" : "bg-white/20"}`}
+					/>
+				</>
+			}
+		>
+			{crimeRate ? (
+				<div className="flex-1 mt-1.5 flex items-center justify-center">
+					<div
+						className="text-xl font-bold"
+						style={{
+							color: isDark
+								? intensity > 0.5
+									? "#fca5a5"
+									: "#fdba74"
+								: intensity > 0.5
+									? "#7f1d1d"
+									: "#78350f",
+						}}
+					>
+						{Math.round(crimeRate).toLocaleString()}
+					</div>
+				</div>
+			) : (
+				<div className="flex-1 mt-1.5">
+					{chartsLoading ? (
+						<ChartContentPlaceholder className="h-full" />
+					) : (
+						<div
+							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+						>
+							No data available
+						</div>
+					)}
 				</div>
 			)}
-
-			<div
-				className={`absolute inset-0 z-0 ${isDark ? "bg-black/20" : "bg-white/20"}`}
-			/>
-			<div className="relative z-10 flex flex-col flex-1">
-				<div className="flex items-start justify-between mb-1.5 shrink-0">
-					<h3 className={chartHeadingClass(isDark)}>
-						Recorded Crime [{dataset.year}]
-					</h3>
-					<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England &amp; Wales</span>
-				</div>
-				{crimeRate ? (
-					<div className="flex-1 mt-1.5 flex items-center justify-center">
-						<div
-							className="text-xl font-bold"
-							style={{
-								color: isDark
-									? intensity > 0.5
-										? "#fca5a5"
-										: "#fdba74"
-									: intensity > 0.5
-										? "#7f1d1d"
-										: "#78350f",
-							}}
-						>
-							{Math.round(crimeRate).toLocaleString()}
-						</div>
-					</div>
-				) : (
-					<div className="flex-1 mt-1.5">
-						{chartsLoading ? (
-							<ChartContentPlaceholder className="h-full" />
-						) : (
-							<div
-								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-							>
-								No data available
-							</div>
-						)}
-					</div>
-				)}
-			</div>
-		</button>
+		</ChartCard>
 	);
 }
