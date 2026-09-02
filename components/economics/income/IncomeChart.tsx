@@ -9,16 +9,11 @@ import {
 } from "@lib/types";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -141,22 +136,20 @@ export default function IncomeChart({
 		? `£${Math.round(medianIncome).toLocaleString()}`
 		: null;
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		dataset ? "#10b981" : null,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(!!isActive, isDark, "isolate min-h-20")}
+		<ChartCard
+			heading={`Median Income [${dataset.year}]`}
+			headerEnd={
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+					England
+				</span>
+			}
+			accent="#10b981"
+			isActive={isActive}
+			minHeightClassName="isolate min-h-20"
 			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -164,10 +157,8 @@ export default function IncomeChart({
 					datasetYear: dataset.year,
 				})
 			}
-		>
-			<ChartLoadingBackground />
-			{/* Background Particles Layer */}
-			<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+			background={
+				<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
 				{particles.map((p) => (
 					<span
 						key={p.id}
@@ -183,15 +174,9 @@ export default function IncomeChart({
 						£
 					</span>
 				))}
-			</div>
-
-			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className={chartHeadingClass(isDark)}>
-					Median Income [{dataset.year}]
-				</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
-			</div>
-
+				</div>
+			}
+		>
 			{formattedMedian ? (
 				<div className="relative flex justify-center items-center flex-1 z-10">
 					<div
@@ -213,6 +198,6 @@ export default function IncomeChart({
 					)}
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }

@@ -10,16 +10,11 @@ import {
 import React from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
@@ -302,20 +297,12 @@ function PriceChart({
 			? `£${Math.round(currentPrice).toLocaleString()}`
 			: null;
 
-		const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-			LINE_COLOR,
-			isActive,
-			isDark,
-		);
-
 		return (
-			<button
-				type="button"
-				style={style}
-				className={cardClass(isActive, isDark, "min-h-20")}
+			<ChartCard
+				heading={`Median House Price [${dataset.year}]`}
+				accent={LINE_COLOR}
+				isActive={isActive}
 				title="Office for National Statistics. UK House Price Index (HPI): Mean and Median House Prices by Local Authority. ons.gov.uk"
-				onMouseEnter={onMouseEnter}
-				onMouseLeave={onMouseLeave}
 				onClick={() =>
 					setActiveViz({
 						vizId: dataset.id,
@@ -323,16 +310,7 @@ function PriceChart({
 						datasetYear: dataset.year,
 					})
 				}
-			>
-				<ChartLoadingBackground />
-				<div className="flex items-center justify-between mb-1.5 relative z-10">
-					<h3 className={chartHeadingClass(isDark)}>
-						Median House Price [{dataset.year}]
-					</h3>
-				</div>
-
-				{/* Line chart background */}
-				{priceData.length >= 2 && linePath && (
+				background={priceData.length >= 2 && linePath && (
 					<svg
 						className="absolute inset-0 size-full"
 						viewBox="0 0 100 100"
@@ -359,13 +337,11 @@ function PriceChart({
 							</linearGradient>
 						</defs>
 
-						{/* Solid faint area under the line */}
 						<path
 							d={areaPath}
 							fill={`url(#gradient-${dataset.year})`}
 						/>
 
-						{/* Main smooth line */}
 						<path
 							d={linePath}
 							fill="none"
@@ -377,8 +353,7 @@ function PriceChart({
 						/>
 					</svg>
 				)}
-
-				{/* Price display in bottom right */}
+			>
 				{formattedPrice ? (
 					<div className="relative flex justify-end items-end flex-1 z-10">
 						<div
@@ -400,8 +375,8 @@ function PriceChart({
 						)}
 					</div>
 				)}
-			</button>
-	);
+			</ChartCard>
+		);
 }
 
 export default function HousePriceChart({

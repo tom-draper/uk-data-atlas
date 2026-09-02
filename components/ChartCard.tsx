@@ -18,6 +18,7 @@ interface ChartCardProps {
 	isActive: boolean;
 	onClick: () => void;
 	children: ReactNode;
+	background?: ReactNode;
 	title?: string;
 	minHeightClassName?: string;
 }
@@ -31,6 +32,7 @@ export function ChartCard({
 	isActive,
 	onClick,
 	children,
+	background,
 	title,
 	minHeightClassName = "min-h-20",
 }: ChartCardProps) {
@@ -52,6 +54,7 @@ export function ChartCard({
 			onMouseLeave={onMouseLeave}
 		>
 			<ChartLoadingBackground />
+			{background}
 			<div className="relative z-10 flex flex-col flex-1">
 				<div className="flex items-start justify-between mb-1.5 shrink-0">
 					<h3
