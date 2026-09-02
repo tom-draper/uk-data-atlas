@@ -37,8 +37,8 @@ import { ChildPovertyDataset } from "@/lib/types/childPoverty";
 import { HomelessnessDataset } from "@/lib/types/homelessness";
 import { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
 import type { BoundaryType } from "@/lib/types/boundaries";
-import type { ScalarDataset } from "@/lib/datasets/generated";
-import { getScalarDatasetDefinition } from "@/lib/datasets";
+import type { ChartDataset } from "@/lib/datasets/generated";
+import { getChartDatasetDefinition } from "@/lib/datasets";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 import {
 	getGenderColorExpression,
@@ -529,11 +529,12 @@ export class MapManager {
 
 	updateMapForScalarDataset(
 		geojson: BoundaryGeojson,
-		dataset: ScalarDataset,
+		dataset: ChartDataset,
 		mapOptions: MapOptions,
 	): void {
-		const definition = getScalarDatasetDefinition(dataset.type);
-		if (!definition) return;
+		const definition = getChartDatasetDefinition(dataset.type);
+		if (!definition?.map) return;
+		const map = definition.map;
 
 		this.updateGenericMap(
 			geojson,
@@ -543,10 +544,10 @@ export class MapManager {
 			dataset.type,
 			dataset.data,
 			(data, code) => {
-				const mappedValue = definition.map.valueFor?.(data, code);
+				const mappedValue = map.valueFor?.(data, code);
 				if (mappedValue !== undefined) return mappedValue;
-				const value = definition.map.valueKey
-					? (data.data[code] as unknown as Record<string, unknown> | undefined)?.[definition.map.valueKey]
+				const value = map.valueKey
+					? (data.data[code] as unknown as Record<string, unknown> | undefined)?.[map.valueKey]
 					: null;
 				return typeof value === "number" && Number.isFinite(value) ? value : null;
 			},

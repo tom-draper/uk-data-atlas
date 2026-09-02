@@ -1,8 +1,8 @@
 import { loadHomelessness } from "@/lib/data/homelessness/loader";
 import type { HomelessnessDataset } from "@/lib/types/homelessness";
-import type { ScalarDatasetDefinition } from "./types";
+import type { ChartDatasetDefinition } from "./types";
 
-export const homelessnessDefinition: ScalarDatasetDefinition<HomelessnessDataset> = {
+export const homelessnessDefinition: ChartDatasetDefinition<HomelessnessDataset> = {
 	type: "homelessness",
 	precompiledFile: "homelessness",
 	chart: {

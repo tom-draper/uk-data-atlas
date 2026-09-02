@@ -12,7 +12,10 @@ export interface DatasetSource {
 	description: string;
 }
 
-export interface ScalarDatasetMap<T = unknown> {
+// Only meaningful for datasets rendered as a colour-range choropleth on the
+// map. Categorical datasets (party winner, majority ethnicity, ...) render
+// through their own bespoke map path and leave this unset.
+export interface ChartDatasetMap<T = unknown> {
 	valueKey?: string;
 	valueFor?(dataset: T, code: string): number | null;
 	colorRange: { min: number; max: number };
@@ -23,13 +26,13 @@ export interface ScalarDatasetMap<T = unknown> {
 	};
 }
 
-export interface ScalarDatasetReader {
+export interface DatasetReader {
 	text: (path: string) => Promise<string>;
 	odsContent: (path: string) => Promise<string>;
 	zipCsv: (path: string) => Promise<string>;
 }
 
-export interface ScalarChartDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
+export interface ChartDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
 	group: string;
 	key: string;
 	label: string;
@@ -51,18 +54,18 @@ export interface ScalarChartDefinition<T extends { type: string; data: unknown }
 	keyBy?: "year" | "id";
 }
 
-export interface ScalarDatasetDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
+export interface ChartDatasetDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
 	type: T["type"];
 	precompiledFile: string;
-	chart: ScalarChartDefinition<T>;
-	charts?: readonly ScalarChartDefinition<T>[];
+	chart: ChartDefinition<T>;
+	charts?: readonly ChartDefinition<T>[];
 	source: DatasetSource;
-	map: ScalarDatasetMap<T>;
-	precompile: (reader: ScalarDatasetReader) => Promise<Record<string, T>>;
+	map?: ChartDatasetMap<T>;
+	precompile: (reader: DatasetReader) => Promise<Record<string, T>>;
 }
 
 export function getChartDefinitions<T extends { type: string; data: unknown }>(
-	definition: ScalarDatasetDefinition<T>,
-): readonly ScalarChartDefinition<T>[] {
+	definition: ChartDatasetDefinition<T>,
+): readonly ChartDefinition<T>[] {
 	return definition.charts ?? [definition.chart];
 }

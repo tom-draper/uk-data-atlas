@@ -110,7 +110,7 @@ function ChartPanelContent({
                 {sectionVisible["General Election"] && (
                   <GeneralElectionResultChartSection
                     activeDataset={activeDataset}
-                    availableDatasets={datasets.generalElection}
+                    datasets={datasets}
                     selectedArea={deferredArea}
                     setActiveViz={setActiveViz}
                     codeMapper={codeMapper}
@@ -123,7 +123,7 @@ function ChartPanelContent({
                 {sectionVisible["Local Election"] && (
                   <LocalElectionResultChartSection
                     activeDataset={activeDataset}
-                    availableDatasets={datasets.localElection}
+                    datasets={datasets}
                     selectedArea={deferredArea}
                     setActiveViz={setActiveViz}
                     codeMapper={codeMapper}
@@ -136,8 +136,7 @@ function ChartPanelContent({
                 {sectionVisible["Brexit"] && (
                   <BrexitSection
                     activeDataset={activeDataset}
-                    availableDatasets={datasets.brexit}
-                    availableConstituencyDatasets={datasets.brexitConstituency}
+                    datasets={datasets}
                     selectedArea={deferredArea}
                     setActiveViz={setActiveViz}
                     codeMapper={codeMapper}

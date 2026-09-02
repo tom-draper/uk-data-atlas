@@ -4,7 +4,7 @@ import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ColorRangeDatasetKey, PartyDisplayData } from "./LegendPanel";
 import { RangeControl } from "./controls/RangeControl";
 import { renderCategoryLegend } from "./legendUtils";
-import { getScalarDatasetDefinition } from "@/lib/datasets";
+import { getChartDatasetDefinition } from "@/lib/datasets";
 
 interface LegendContentProps {
 	activeDataset: Dataset | null;
@@ -89,9 +89,9 @@ export default function LegendContent({
 		);
 	};
 
-	const scalarDefinition = getScalarDatasetDefinition(activeDataset.type);
-	if (scalarDefinition) {
-		const { colorRange, legend } = scalarDefinition.map;
+	const chartDefinition = getChartDatasetDefinition(activeDataset.type);
+	if (chartDefinition?.map) {
+		const { colorRange, legend } = chartDefinition.map;
 		return renderDynamicLegend(
 			activeDataset.type as ColorRangeDatasetKey,
 			legend.min,

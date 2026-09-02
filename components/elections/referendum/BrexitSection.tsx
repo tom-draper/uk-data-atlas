@@ -1,21 +1,15 @@
-// components/referendum/BrexitSection.tsx
 "use client";
-
-import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { ActiveViz, BrexitConstituencyDataset, BrexitLADDataset, Dataset, SelectedArea } from "@lib/types";
-import { BoundaryData } from "@lib/types/boundaries";
-import { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
-import BrexitHanrettyEstimatesChart from "./BrexitHanrettyEstimatesChart";
-import BrexitElectoralChart from "./BrexitElectoralChart";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@lib/types";
+import type { BoundaryData } from "@lib/types/boundaries";
+import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import type { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import ChartCards, { hasVisibleChart } from "@/components/ChartCards";
 
 interface BrexitSectionProps {
 	activeDataset: Dataset | null;
-	availableDatasets: Record<string, BrexitLADDataset>;
-	availableConstituencyDatasets: Record<string, BrexitConstituencyDataset>;
+	datasets: Datasets;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -25,63 +19,17 @@ interface BrexitSectionProps {
 	location: string | null;
 }
 
-export default function BrexitSection({
-	activeDataset,
-	availableDatasets,
-	availableConstituencyDatasets,
-	selectedArea,
-	codeMapper,
-	activeViz,
-	setActiveViz,
-	mapManager,
-	boundaryData,
-	location,
-}: BrexitSectionProps) {
+export default function BrexitSection(props: BrexitSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
-	const showHanretty = visibility["brexit-hanretty"];
-	const showElectoral = visibility["brexit-electoral"];
-
-	const aggregatedData = useMemo(
-		() => aggregateDataset({ datasets: availableDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateBrexitStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableDatasets, mapManager, boundaryData, location],
-	);
-	const aggregatedConstituencyData = useMemo(
-		() => aggregateDataset({ datasets: availableConstituencyDatasets, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateBrexitConstituencyStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableConstituencyDatasets, mapManager, boundaryData, location],
-	);
-
-	if (!showHanretty && !showElectoral) return null;
+	if (!hasVisibleChart("Brexit", visibility)) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
 			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>
 				Brexit
 			</h3>
-			{showElectoral && (
-				<BrexitElectoralChart
-					activeDataset={activeDataset}
-					availableDatasets={availableDatasets}
-					aggregatedData={aggregatedData}
-					year={2016}
-					selectedArea={selectedArea}
-					codeMapper={codeMapper}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-			)}
-			{showHanretty && (
-				<BrexitHanrettyEstimatesChart
-					activeDataset={activeDataset}
-					availableDatasets={availableConstituencyDatasets}
-					aggregatedData={aggregatedConstituencyData}
-					year={2016}
-					selectedArea={selectedArea}
-					codeMapper={codeMapper}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-			)}
+			<ChartCards group="Brexit" visibility={visibility} {...props} />
 		</div>
 	);
 }

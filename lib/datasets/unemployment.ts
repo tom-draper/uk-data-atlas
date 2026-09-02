@@ -1,8 +1,8 @@
 import { loadUnemployment } from "@/lib/data/unemployment/loader";
 import type { UnemploymentDataset } from "@/lib/types/unemployment";
-import type { ScalarDatasetDefinition } from "./types";
+import type { ChartDatasetDefinition } from "./types";
 
-export const unemploymentDefinition: ScalarDatasetDefinition<UnemploymentDataset> = {
+export const unemploymentDefinition: ChartDatasetDefinition<UnemploymentDataset> = {
 	type: "unemployment",
 	precompiledFile: "unemployment",
 	chart: {

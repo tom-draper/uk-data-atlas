@@ -1,8 +1,8 @@
 import { loadChildPoverty } from "@/lib/data/child-poverty/loader";
 import type { ChildPovertyDataset } from "@/lib/types/childPoverty";
-import type { ScalarDatasetDefinition } from "./types";
+import type { ChartDatasetDefinition } from "./types";
 
-export const childPovertyDefinition: ScalarDatasetDefinition<ChildPovertyDataset> = {
+export const childPovertyDefinition: ChartDatasetDefinition<ChildPovertyDataset> = {
 	type: "childPoverty",
 	precompiledFile: "child-poverty",
 	chart: {
