@@ -9,3 +9,5 @@ export const SCALAR_DATASET_DEFINITIONS: readonly ScalarDatasetDefinition[] = [
 	fuelPovertyDefinition,
 	homelessnessDefinition,
 ];
+
+export type ScalarDatasetType = "childPoverty" | "fuelPoverty" | "homelessness";
