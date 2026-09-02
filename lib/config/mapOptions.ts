@@ -1,22 +1,24 @@
-import { SCALAR_DATASET_DEFINITIONS } from "../datasets";
-import { MapOptions, ScalarMapOptions } from "../types/mapOptions";
+import { CHART_DATASET_DEFINITIONS } from "../datasets";
+import { MapOptions, ChartMapOptions } from "../types/mapOptions";
 
-const scalarMapOptions: ScalarMapOptions = Object.fromEntries(
-	SCALAR_DATASET_DEFINITIONS.map((definition) => [
+const chartMapOptions: ChartMapOptions = Object.fromEntries(
+	CHART_DATASET_DEFINITIONS.map((definition) => [
 		definition.type,
-		{ colorRange: definition.map.colorRange },
+		{ colorRange: definition.map?.colorRange ?? { min: 0, max: 1 } },
 	]),
-) as ScalarMapOptions;
+) as ChartMapOptions;
 
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
-	...scalarMapOptions,
+	...chartMapOptions,
 	generalElection: {
 		mode: "majority",
 		percentageRange: { min: 0, max: 100 },
+		colorRange: { min: 0, max: 1 },
 	},
 	localElection: {
 		mode: "majority",
 		percentageRange: { min: 0, max: 100 },
+		colorRange: { min: 0, max: 1 },
 	},
 	ageDistribution: {
 		colorRange: { min: 25, max: 65 },

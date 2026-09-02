@@ -5,7 +5,7 @@ import { ActiveViz, Dataset, Datasets, SelectedArea } from "@lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import ScalarChartCards, { hasVisibleScalarChart } from "@/components/ScalarChartCards";
+import ChartCards, { hasVisibleChart } from "@/components/ChartCards";
 
 interface EducationSectionProps {
 	activeDataset: Dataset | null;
@@ -22,14 +22,14 @@ interface EducationSectionProps {
 export default function EducationSection(props: EducationSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
-	if (!hasVisibleScalarChart("Education", visibility)) return null;
+	if (!hasVisibleChart("Education", visibility)) return null;
 
 	return (
 		<div className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}>
 			<h3 className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}>
 				Education
 			</h3>
-			<ScalarChartCards group="Education" visibility={visibility} {...props} />
+			<ChartCards group="Education" visibility={visibility} {...props} />
 		</div>
 	);
 }

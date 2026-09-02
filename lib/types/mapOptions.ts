@@ -2,7 +2,7 @@
 import { Datasets } from "./datasets";
 import { ColorRange } from "./common";
 import type { BaseMapStyle } from "../config/baseMapStyles";
-import type { ScalarDatasetType } from "@/lib/datasets/generated";
+import type { ChartDatasetType } from "@/lib/datasets/generated";
 
 // Base option types reused across visualizations
 interface ColorRangeOption {
@@ -21,8 +21,8 @@ export interface CategoryOptions {
 	percentageRange: ColorRange;
 }
 
-export type GeneralElectionOptions = CategoryOptions;
-export type LocalElectionOptions = CategoryOptions;
+export type GeneralElectionOptions = CategoryOptions & ColorRangeOption;
+export type LocalElectionOptions = CategoryOptions & ColorRangeOption;
 export type HousePriceOptions = ColorRangeOption;
 export type EthnicityOptions = CategoryOptions & ColorRangeOption;
 export type CrimeOptions = ColorRangeOption;
@@ -44,7 +44,7 @@ export type SchoolPerformanceOptions = ColorRangeOption;
 export type ClaimantCountOptions = ColorRangeOption;
 export type NHSWaitingOptions = ColorRangeOption;
 export type UnemploymentOptions = ColorRangeOption;
-export type ScalarMapOptions = Record<ScalarDatasetType, ColorRangeOption>;
+export type ChartMapOptions = Record<ChartDatasetType, ColorRangeOption>;
 
 export type ColorTheme =
 	| "viridis"
@@ -64,7 +64,7 @@ export type ColorTheme =
 
 export type MapMode = keyof Datasets | "custom";
 
-export type MapOptions = ScalarMapOptions & {
+export type MapOptions = ChartMapOptions & {
 	generalElection: GeneralElectionOptions;
 	localElection: LocalElectionOptions;
 	ageDistribution: PopulationOptions;

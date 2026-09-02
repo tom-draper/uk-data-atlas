@@ -1,8 +1,8 @@
 import { loadFuelPoverty } from "@/lib/data/fuel-poverty/loader";
 import type { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
-import type { ScalarDatasetDefinition } from "./types";
+import type { ChartDatasetDefinition } from "./types";
 
-export const fuelPovertyDefinition: ScalarDatasetDefinition<FuelPovertyDataset> = {
+export const fuelPovertyDefinition: ChartDatasetDefinition<FuelPovertyDataset> = {
 	type: "fuelPoverty",
 	precompiledFile: "fuel-poverty",
 	chart: {

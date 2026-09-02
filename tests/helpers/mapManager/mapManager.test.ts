@@ -69,6 +69,7 @@ describe("MapManager election updates", () => {
 				mode: "percentage" as const,
 				selected: "LAB",
 				percentageRange: { min: 0, max: 100 },
+				colorRange: { min: 0, max: 1 },
 			},
 		};
 		const builder = (manager as any).featureBuilder;

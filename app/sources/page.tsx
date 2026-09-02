@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SCALAR_DATASET_DEFINITIONS, type DatasetSource } from "@/lib/datasets";
+import { CHART_DATASET_DEFINITIONS, type DatasetSource } from "@/lib/datasets";
 
 export const metadata: Metadata = {
 	title: "Data Sources - UK Data Atlas",
@@ -274,7 +274,7 @@ const legacyDatasets: DatasetSource[] = [
 ];
 
 const datasets: DatasetSource[] = [
-	...SCALAR_DATASET_DEFINITIONS.map((definition) => definition.source),
+	...CHART_DATASET_DEFINITIONS.map((definition) => definition.source),
 	...legacyDatasets,
 ].filter(
 	(dataset, index, entries) =>

@@ -4,7 +4,7 @@ import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
 import { gazetteer } from "../data/gazetteer/static";
-import { isScalarDataset } from "../datasets";
+import { isChartDataset } from "../datasets";
 
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson | null;
@@ -23,7 +23,7 @@ function getActiveDataOptions(
 ): object | null {
 	if (!activeDataset) return null;
 	if (
-		isScalarDataset(activeDataset) &&
+		isChartDataset(activeDataset) &&
 		activeDataset.type !== "population" &&
 		activeDataset.type !== "ethnicity" &&
 		activeDataset.type !== "imd" &&
@@ -31,7 +31,11 @@ function getActiveDataOptions(
 		activeDataset.type !== "wimd" &&
 		activeDataset.type !== "nimdm" &&
 		activeDataset.type !== "lifeExpectancy" &&
-		activeDataset.type !== "qualification"
+		activeDataset.type !== "qualification" &&
+		activeDataset.type !== "brexit" &&
+		activeDataset.type !== "brexitConstituency" &&
+		activeDataset.type !== "generalElection" &&
+		activeDataset.type !== "localElection"
 	) {
 		return mapOptions[activeDataset.type];
 	}
@@ -136,7 +140,7 @@ export function useMapUpdates({
 
 		const performUpdate = () => {
 			if (
-		isScalarDataset(activeDataset) &&
+		isChartDataset(activeDataset) &&
 		activeDataset.type !== "population" &&
 		activeDataset.type !== "ethnicity" &&
 		activeDataset.type !== "imd" &&
@@ -144,7 +148,11 @@ export function useMapUpdates({
 		activeDataset.type !== "wimd" &&
 		activeDataset.type !== "nimdm" &&
 		activeDataset.type !== "lifeExpectancy" &&
-		activeDataset.type !== "qualification"
+		activeDataset.type !== "qualification" &&
+		activeDataset.type !== "brexit" &&
+		activeDataset.type !== "brexitConstituency" &&
+		activeDataset.type !== "generalElection" &&
+		activeDataset.type !== "localElection"
 	) {
 				return mapManager.updateMapForScalarDataset(
 					geojson,

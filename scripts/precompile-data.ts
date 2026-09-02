@@ -10,11 +10,7 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
 
-import { loadBrexit } from "../lib/data/brexit/loader";
-import { loadBrexitConstituency } from "../lib/data/brexit-constituency/loader";
-import { SCALAR_DATASET_DEFINITIONS } from "../lib/datasets";
-import { loadGeneralElection } from "../lib/data/election/general-election/load";
-import { loadLocalElection } from "../lib/data/election/local-election/load";
+import { CHART_DATASET_DEFINITIONS } from "../lib/datasets";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
@@ -77,14 +73,10 @@ async function main() {
 	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
 
 	const results = await Promise.allSettled([
-		loadBrexit(read).then((d) => out("brexit", d)),
-		loadBrexitConstituency(read).then((d) => out("brexit-constituency", d)),
-		...SCALAR_DATASET_DEFINITIONS.map((definition) =>
+		...CHART_DATASET_DEFINITIONS.map((definition) =>
 			definition.precompile({ text: read, odsContent: readOdsContent, zipCsv: readZip })
 				.then((data) => out(definition.precompiledFile, data)),
 		),
-		loadGeneralElection(read).then((d) => out("general-election", d)),
-		loadLocalElection(read).then((d) => out("local-election", d)),
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
 		loadGazetteerCore(read).then((d) => out("gazetteer.core", d)),
 		loadBoundaryMappings(read).then((d) => out("boundary-mappings", d)),

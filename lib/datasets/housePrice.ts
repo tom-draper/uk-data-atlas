@@ -1,8 +1,8 @@
 import { loadHousePrice } from "@/lib/data/house-price/loader";
 import type { HousePriceDataset } from "@/lib/types/housePrice";
-import type { ScalarDatasetDefinition } from "./types";
+import type { ChartDatasetDefinition } from "./types";
 
-export const housePriceDefinition: ScalarDatasetDefinition<HousePriceDataset> = {
+export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 	type: "housePrice",
 	precompiledFile: "house-price",
 	chart: {
