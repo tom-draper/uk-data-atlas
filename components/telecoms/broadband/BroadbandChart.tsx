@@ -97,7 +97,7 @@ export default function BroadbandChart({
 		<button
 			type="button"
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "min-h-20")}
 			title="Ofcom. Connected Nations Report 2025. ofcom.org.uk"
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
