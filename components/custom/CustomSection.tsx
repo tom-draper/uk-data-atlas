@@ -1,5 +1,4 @@
 import { useMemo, useState, useRef, useEffect } from "react";
-import Papa from "papaparse";
 import { createPortal } from "react-dom";
 import { X, Upload, AlertCircle, ChevronDown } from "lucide-react";
 import {
@@ -16,6 +15,7 @@ import {
 	AreaBank,
 } from "@lib/data/areaBank";
 import { useMatchIndex } from "@/lib/hooks/useMatchIndex";
+import { detectHeaderRow, parseCustomCsv } from "@/lib/data/custom/csv";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
@@ -56,14 +56,6 @@ interface SelectedArea {
 	type: BoundaryType;
 }
 
-function parseCSV(text: string): string[][] {
-	const result = Papa.parse<string[]>(text, {
-		skipEmptyLines: true,
-		transform: (val) => val.trim(),
-	});
-	return result.data;
-}
-
 function getMatchColorClass(percentage: number): string {
 	if (percentage >= 80) return "text-green-600";
 	if (percentage >= 50) return "text-yellow-600";
@@ -71,28 +63,6 @@ function getMatchColorClass(percentage: number): string {
 	return "text-gray-500/80";
 }
 
-
-function detectHeaderRow(rows: string[][]): number {
-	if (rows.length === 0) return 0;
-
-	const isNumeric = (v: string) => v.trim() !== "" && !isNaN(Number(v.trim()));
-
-	// Max number of non-empty cells across the first 20 rows
-	const maxCols = Math.max(...rows.slice(0, 20).map(
-		(r) => r.filter((c) => c.trim() !== "").length,
-	));
-
-	for (let i = 0; i < Math.min(rows.length, 20); i++) {
-		const row = rows[i];
-		const nonEmpty = row.filter((c) => c.trim() !== "");
-		if (nonEmpty.length < maxCols) continue; // row doesn't span full width
-		const numericCount = nonEmpty.filter(isNumeric).length;
-		const textRatio = (nonEmpty.length - numericCount) / nonEmpty.length;
-		if (textRatio >= 0.5) return i; // majority text cells → likely a header
-	}
-
-	return 0;
-}
 
 function ColumnDropdown({
 	columns,
@@ -382,7 +352,7 @@ function UploadModal({
 		const reader = new FileReader();
 		reader.onload = (event) => {
 			const text = event.target?.result as string;
-			const rows = parseCSV(text);
+			const rows = parseCustomCsv(text);
 			setCsvData(rows);
 
 			const detectedHeader = detectHeaderRow(rows);
