@@ -11,10 +11,20 @@ import { ElectionSourceConfig, ELECTION_SOURCES } from "./config";
 
 const KNOWN_PARTIES = ["LAB", "CON", "LD", "GREEN", "REF", "IND"];
 
+type CsvRow = Record<string, string>;
+
+interface UnmappedLocalElectionWardData extends LocalElectionWardData {
+	winningParty: string;
+}
+
+interface ParsedLocalElectionDataset extends LocalElectionDataset {
+	_unmapped?: UnmappedLocalElectionWardData[];
+}
+
 const detectPartyColumns = (headers: string[]) =>
 	headers.filter((h) => KNOWN_PARTIES.includes(h.toUpperCase().trim()));
 
-const parseNumber = (val: any) => {
+const parseNumber = (val: string | undefined): number => {
 	if (!val) return 0;
 	const clean = String(val).replace(/,|%/g, "").trim();
 	const num = parseFloat(clean);
@@ -34,7 +44,7 @@ const findWinner = (votes: Record<string, number>): string => {
 export const parseLocalElectionCsv = (
 	text: string,
 	config: ElectionSourceConfig,
-): LocalElectionDataset => {
+): ParsedLocalElectionDataset => {
 	// Heuristic: Skip metadata lines if they exist (detecting "Local authority name")
 	// This replaces the hardcoded line splitting
 	if (!text.startsWith(config.fields.ladName) && !text.startsWith("WD24")) {
@@ -56,9 +66,9 @@ export const parseLocalElectionCsv = (
 	const partyCols = detectPartyColumns(results.meta.fields || []);
 	const wardWinners: Record<string, string> = {};
 	const wardData: Record<string, LocalElectionWardData> = {};
-	const unmapped: any[] = [];
+	const unmapped: UnmappedLocalElectionWardData[] = [];
 
-	results.data.forEach((row: any) => {
+	results.data.forEach((row: CsvRow) => {
 		// Extract party votes
 		const partyVotes: Record<string, number> = {};
 		partyCols.forEach((p) => (partyVotes[p] = parseNumber(row[p])));
@@ -67,7 +77,7 @@ export const parseLocalElectionCsv = (
 		const laName =
 			row[config.fields.ladName] || row["COUNTYNAME"] || "Unknown"; // Fallback for 2023
 		const wName = row[config.fields.name];
-		const rawCode = row[config.fields.code]?.trim();
+		const rawCode = row[config.fields.code]?.trim() ?? "";
 		const wCode =
 			rawCode && config.wardCodeMap?.[rawCode]
 				? config.wardCodeMap[rawCode]
@@ -106,7 +116,6 @@ export const parseLocalElectionCsv = (
 		results: wardWinners,
 		data: wardData,
 		partyInfo: PARTY_INFO,
-		// @ts-ignore - attaching temporary unmapped data
 		_unmapped: unmapped.length > 0 ? unmapped : undefined,
 	};
 };
@@ -119,7 +128,7 @@ export const loadLocalElection = async (
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, LocalElectionDataset>> => {
 	const refs: LocalElectionDataset[] = [];
-	let raw2023: LocalElectionDataset | null = null;
+	let raw2023: ParsedLocalElectionDataset | null = null;
 
 	for (const config of Object.values(ELECTION_SOURCES)) {
 		const text = await read(config.path);
@@ -138,11 +147,11 @@ export const loadLocalElection = async (
 };
 
 export const reconcile2023Data = (
-	dataset2023: LocalElectionDataset,
+	dataset2023: ParsedLocalElectionDataset,
 	referenceSets: LocalElectionDataset[],
 ): LocalElectionDataset => {
-	// @ts-ignore
-	if (!dataset2023._unmapped) return dataset2023;
+	const { _unmapped: unmapped, ...dataset } = dataset2023;
+	if (!unmapped) return dataset;
 
 	// Build Lookup Map
 	const lookup = new Map<string, string>();
@@ -153,23 +162,23 @@ export const reconcile2023Data = (
 		});
 	});
 
-	// Apply lookup
-	// @ts-ignore
-	dataset2023._unmapped.forEach((item: any) => {
+	const results = { ...dataset.results };
+	const data = { ...dataset.data };
+
+	// Apply lookup without mutating the parsed source dataset.
+	unmapped.forEach((item) => {
 		const key = `${item.ladName}|${item.wardName}`.toLowerCase();
 		const code = lookup.get(key);
 
 		if (code) {
-			dataset2023.results[code] = item.winningParty;
-			dataset2023.data[code] = {
+			results[code] = item.winningParty;
+			data[code] = {
 				...item,
+				wardCode: code,
 				ladCode: code.substring(0, 9), // Infer LA code from Ward Code
 			};
 		}
 	});
 
-	// cleanup
-	// @ts-ignore
-	delete dataset2023._unmapped;
-	return dataset2023;
+	return { ...dataset, results, data };
 };
