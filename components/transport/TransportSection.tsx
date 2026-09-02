@@ -93,7 +93,7 @@ function RoadSafetyCard({
 				})
 			}
 			style={style}
-			className={cardClass(isActive, isDark, "h-20")}
+			className={cardClass(isActive, isDark, "min-h-20")}
 			title="Department for Transport. Provisional road collision statistics for Great Britain, 2025."
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
