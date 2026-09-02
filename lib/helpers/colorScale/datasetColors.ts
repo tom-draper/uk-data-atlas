@@ -1,23 +1,7 @@
 import type {
 	BrexitOptions,
 	CategoryOptions,
-	CrimeOptions,
-	DensityOptions,
 	GenderOptions,
-	HousePriceOptions,
-	IMDOptions,
-	SIMDOptions,
-	WIMDOptions,
-	NIMDMOptions,
-	IncomeOptions,
-	PopulationOptions,
-	QualificationOptions,
-	BroadbandOptions,
-	AirQualityOptions,
-	SchoolPerformanceOptions,
-	ClaimantCountOptions,
-	NHSWaitingOptions,
-	UnemploymentOptions,
 } from "@/lib/types/mapOptions";
 import { normalizeValue, hexToRgb } from "./interpolation";
 import { getThemeColor, themes } from "./themes";
@@ -60,54 +44,6 @@ export function getSequentialColorExpression(
 		"#cccccc",
 		expression,
 	];
-}
-
-function colorFromRange(
-	value: number,
-	options: { colorRange: { min: number; max: number } },
-	themeId: string,
-	expandRange: boolean,
-	invertColor = true,
-): string {
-	const { min, max } = options.colorRange;
-	const normalized = normalizeValue(
-		value,
-		expandRange ? Math.min(min, value) : min,
-		expandRange ? Math.max(max, value) : max,
-	);
-	return getThemeColor(invertColor ? 1 - normalized : normalized, themeId);
-}
-
-export function getColorForAge(
-	medianAge: number,
-	mapOptions: PopulationOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(medianAge, mapOptions, themeId, false);
-}
-
-export function getColorForDensity(
-	density: number,
-	mapOptions: DensityOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(density, mapOptions, themeId, false);
-}
-
-export function getColorForHousePrice(
-	price: number,
-	options: HousePriceOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(price, options, themeId, true);
-}
-
-export function getColorForCrimeRate(
-	rate: number,
-	options: CrimeOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rate, options, themeId, true);
 }
 
 // Pre-parsed color tuples — avoids regex on every feature
@@ -156,111 +92,6 @@ export function getColorForBrexitLeave(
 			t,
 		);
 	}
-}
-
-export function getColorForIMD(
-	score: number,
-	options: IMDOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(score, options, themeId, true);
-}
-
-export function getColorForSIMD(
-	rank: number,
-	options: SIMDOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rank, options, themeId, false, false);
-}
-
-export function getColorForWIMD(
-	rank: number,
-	options: WIMDOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rank, options, themeId, false, false);
-}
-
-export function getColorForNIMDM(
-	rank: number,
-	options: NIMDMOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rank, options, themeId, false, false);
-}
-
-export function getColorForLifeExpectancy(
-	years: number,
-	min: number,
-	max: number,
-	themeId = "viridis",
-) {
-	return getThemeColor(normalizeValue(years, min, max), themeId);
-}
-
-export function getColorForQualification(
-	pctLevel4Plus: number,
-	options: QualificationOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(pctLevel4Plus, options, themeId, true);
-}
-
-export function getColorForIncome(
-	income: number,
-	options: IncomeOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(income, options, themeId, true);
-}
-
-export function getColorForBroadband(
-	speedMbps: number,
-	options: BroadbandOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(speedMbps, options, themeId, true);
-}
-
-export function getColorForAirQuality(
-	no2Mean: number,
-	options: AirQualityOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(no2Mean, options, themeId, true);
-}
-
-export function getColorForSchoolPerformance(
-	pct: number,
-	options: SchoolPerformanceOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(pct, options, themeId, true);
-}
-
-export function getColorForClaimantCount(
-	rate: number,
-	options: ClaimantCountOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rate, options, themeId, true);
-}
-
-export function getColorForUnemployment(
-	rate: number,
-	options: UnemploymentOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rate, options, themeId, true);
-}
-
-export function getColorForNHSWaiting(
-	pct: number,
-	options: NHSWaitingOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(pct, options, themeId, true);
 }
 
 const FEMALE_RGB = [255, 105, 180] as const;
