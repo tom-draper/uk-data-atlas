@@ -7,13 +7,8 @@ import { CustomDataset } from "@/lib/types/custom";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 import { rgbToHex } from "@/lib/helpers/colorScale/interpolation";
+import { ChartCard } from "@/components/ChartCard";
 import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
-import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
@@ -76,15 +71,18 @@ function RoadSafetyCard({
 		: 0;
 	const severityBarWidth = (averageSeverity / 3) * 100;
 	const accent = hasData ? severityColor(averageSeverity) : null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accent,
-		isActive,
-		isDark,
-	);
-
 	return (
-		<button
-			type="button"
+		<ChartCard
+			heading={dataset.dataColumn}
+			headerEnd={
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
+					{locationLabel}
+				</span>
+			}
+			accent={accent}
+			isActive={isActive}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -92,22 +90,8 @@ function RoadSafetyCard({
 					datasetYear: 0,
 				})
 			}
-			style={style}
-			className={cardClass(isActive, isDark, "min-h-20")}
 			title="Department for Transport. Provisional road collision statistics for Great Britain, 2025."
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
-				<h3 className={chartHeadingClass(isDark)}>{dataset.dataColumn}</h3>
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-				>
-					{locationLabel}
-				</span>
-			</div>
-
 			{!hasData ? (
 				<div className="flex-1 mt-1">
 					{chartsLoading ? (
@@ -155,7 +139,7 @@ function RoadSafetyCard({
 					</div>
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }
 
