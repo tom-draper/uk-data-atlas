@@ -220,7 +220,7 @@ function ChartPanelContent({
                 {sectionVisible["Telecoms"] && (
                   <TelecomsSection
                     activeDataset={activeDataset}
-                    availableBroadbandDatasets={datasets.broadband}
+					datasets={datasets}
                     selectedArea={deferredArea}
                     setActiveViz={setActiveViz}
                     codeMapper={codeMapper}
@@ -233,7 +233,7 @@ function ChartPanelContent({
                 {sectionVisible["Environment"] && (
                   <EnvironmentSection
                     activeDataset={activeDataset}
-                    availableAirQualityDatasets={datasets.airQuality}
+					datasets={datasets}
                     selectedArea={deferredArea}
                     activeViz={activeViz}
                     setActiveViz={setActiveViz}
