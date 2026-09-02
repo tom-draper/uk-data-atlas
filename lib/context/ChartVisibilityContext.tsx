@@ -21,8 +21,6 @@ type LegacyChartKey =
 	| "demographics-gender"
 	| "demographics-ethnicity"
 	| "economics-housePrice"
-	| "economics-income"
-	| "economics-crime"
 	| "deprivation-imd"
 	| "deprivation-simd"
 	| "deprivation-wimd"
@@ -30,11 +28,6 @@ type LegacyChartKey =
 	| "health-lifeExpectancy"
 	| "health-healthyLifeExpectancy"
 	| "education-qualifications"
-	| "telecoms-broadband"
-	| "environment-airQuality"
-	| "economics-claimantCount"
-	| "education-schoolPerformance"
-	| "health-nhsWaiting"
 	| "economics-unemployment";
 
 export interface ChartConfigEntry {
@@ -124,8 +117,6 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 		key: "economics-housePrice",
 		label: "House Prices [2023]",
 	},
-	{ group: "Economics", key: "economics-income", label: "Income [2025]" },
-	{ group: "Economics", key: "economics-crime", label: "Crime Rate [2025]" },
 	{ group: "Deprivation", key: "deprivation-imd", label: "Deprivation (IMD) [2019]" },
 	{ group: "Deprivation", key: "deprivation-simd", label: "Deprivation (SIMD) [2020]" },
 	{ group: "Deprivation", key: "deprivation-wimd", label: "Deprivation (WIMD) [2019]" },
@@ -133,11 +124,6 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 	{ group: "Health", key: "health-lifeExpectancy", label: "Life Expectancy [2020-2022]" },
 	{ group: "Health", key: "health-healthyLifeExpectancy", label: "Healthy Life Expectancy [2020-2022]" },
 	{ group: "Education", key: "education-qualifications", label: "Qualifications [2021]" },
-	{ group: "Telecoms", key: "telecoms-broadband", label: "Fixed Broadband Coverage [2025]" },
-	{ group: "Environment", key: "environment-airQuality", label: "Air Quality - NO2 [2022]" },
-	{ group: "Economics", key: "economics-claimantCount", label: "Claimant Count [2026]" },
-	{ group: "Education", key: "education-schoolPerformance", label: "School Performance [2024]" },
-	{ group: "Health", key: "health-nhsWaiting", label: "NHS Waiting Times [Mar 2026]" },
 	{ group: "Economics", key: "economics-unemployment", label: "Unemployment Rate [2024]" },
 	...SCALAR_DATASET_DEFINITIONS.map((definition) => definition.chart),
 ];
@@ -159,8 +145,6 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"demographics-gender": true,
 	"demographics-ethnicity": true,
 	"economics-housePrice": true,
-	"economics-income": true,
-	"economics-crime": true,
 	"deprivation-imd": true,
 	"deprivation-simd": false,
 	"deprivation-wimd": false,
@@ -168,11 +152,6 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	"health-lifeExpectancy": true,
 	"health-healthyLifeExpectancy": false,
 	"education-qualifications": true,
-	"telecoms-broadband": true,
-	"environment-airQuality": true,
-	"economics-claimantCount": true,
-	"education-schoolPerformance": true,
-	"health-nhsWaiting": true,
 	"economics-unemployment": true,
 	...Object.fromEntries(
 		SCALAR_DATASET_DEFINITIONS.map((definition) => [

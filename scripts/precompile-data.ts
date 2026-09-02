@@ -16,18 +16,11 @@ import { loadSIMD } from "../lib/data/simd/loader";
 import { loadNIMDM } from "../lib/data/nimdm/loader";
 import { loadPopulation } from "../lib/data/population/loader";
 import { loadHousePrice } from "../lib/data/house-price/loader";
-import { loadCrime } from "../lib/data/crime/loader";
-import { loadIncome } from "../lib/data/income/loader";
 import { loadLE } from "../lib/data/life-expectancy/loader";
-import { loadBroadband } from "../lib/data/broadband/loader";
-import { loadAirQuality } from "../lib/data/air-quality/loader";
 import { loadQualification } from "../lib/data/qualification/loader";
 import { loadBrexit } from "../lib/data/brexit/loader";
 import { loadBrexitConstituency } from "../lib/data/brexit-constituency/loader";
 import { loadEthnicity } from "../lib/data/ethnicity/loader";
-import { loadClaimantCount } from "../lib/data/claimant-count/loader";
-import { loadSchoolPerformance } from "../lib/data/school-performance/loader";
-import { loadNHSWaiting } from "../lib/data/nhs-waiting/loader";
 import { loadUnemployment } from "../lib/data/unemployment/loader";
 import { SCALAR_DATASET_DEFINITIONS } from "../lib/datasets";
 import { loadGeneralElection } from "../lib/data/election/general-election/load";
@@ -100,22 +93,14 @@ async function main() {
 		loadNIMDM(read).then((d) => out("nimdm", d)),
 		loadPopulation(read).then((d) => out("population", d)),
 		loadHousePrice(read).then((d) => out("house-price", d)),
-		loadCrime(read).then((d) => out("crime", d)),
-		loadIncome(read).then((d) => out("income", d)),
 		loadLE(read, true).then((d) => out("life-expectancy", d)),
-		loadBroadband(read).then((d) => out("broadband", d)),
-		loadAirQuality(read).then((d) => out("air-quality", d)),
 		loadQualification(read).then((d) => out("qualification", d)),
 		loadBrexit(read).then((d) => out("brexit", d)),
 		loadBrexitConstituency(read).then((d) => out("brexit-constituency", d)),
 		loadEthnicity(read).then((d) => out("ethnicity", d)),
-		loadClaimantCount(read).then((d) => out("claimant-count", d)),
-		loadSchoolPerformance(read).then((d) => out("school-performance", d)),
-		loadNHSWaiting(readZip).then((d) => out("nhs-waiting", d)),
 		loadUnemployment(readSource).then((d) => out("unemployment", d)),
 		...SCALAR_DATASET_DEFINITIONS.map((definition) =>
-			readOdsContent(definition.sourcePath)
-				.then(definition.load)
+			definition.precompile({ text: read, odsContent: readOdsContent, zipCsv: readZip })
 				.then((data) => out(definition.precompiledFile, data)),
 		),
 		loadGeneralElection(read).then((d) => out("general-election", d)),

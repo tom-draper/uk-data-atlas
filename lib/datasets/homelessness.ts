@@ -5,7 +5,6 @@ import type { ScalarDatasetDefinition } from "./types";
 export const homelessnessDefinition: ScalarDatasetDefinition<HomelessnessDataset> = {
 	type: "homelessness",
 	precompiledFile: "homelessness",
-	sourcePath: "economics/homelessness/homelessness-2026-q1.ods",
 	chart: {
 		group: "Economics",
 		key: "economics-homelessness",
@@ -31,10 +30,6 @@ export const homelessnessDefinition: ScalarDatasetDefinition<HomelessnessDataset
 		colorRange: { min: 1, max: 12 },
 		legend: { min: 0, max: 20, format: (value) => `${value.toFixed(1)} per 1k households` },
 	},
-	load: loadHomelessness,
-	map: {
-		codeLevel: "localAuthority",
-		valueKey: "householdsPerThousand",
-		mapOptionsKey: "homelessness",
-	},
+	precompile: async (reader) =>
+		loadHomelessness(await reader.odsContent("economics/homelessness/homelessness-2026-q1.ods")),
 };

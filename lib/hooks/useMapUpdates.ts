@@ -34,10 +34,6 @@ function getActiveDataOptions(
 			return mapOptions.localElection;
 		case "housePrice":
 			return mapOptions.housePrice;
-		case "crime":
-			return mapOptions.crime;
-		case "income":
-			return mapOptions.income;
 		case "ethnicity":
 			return mapOptions.ethnicity;
 		case "brexit":
@@ -58,16 +54,6 @@ function getActiveDataOptions(
 			return mapOptions.lifeExpectancy;
 		case "qualification":
 			return mapOptions.qualification;
-		case "broadband":
-			return mapOptions.broadband;
-		case "airQuality":
-			return mapOptions.airQuality;
-		case "schoolPerformance":
-			return mapOptions.schoolPerformance;
-		case "claimantCount":
-			return mapOptions.claimantCount;
-		case "nhsWaiting":
-			return mapOptions.nhsWaiting;
 		case "unemployment":
 			return mapOptions.unemployment;
 		case "population":
@@ -182,20 +168,6 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
-				case "crime":
-					return mapManager.updateMapForCrimeRate(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "income":
-					return mapManager.updateMapForIncome(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
 				case "ethnicity":
 					return mapManager.updateMapForEthnicity(
 						geojson,
@@ -262,41 +234,6 @@ export function useMapUpdates({
 
 				case "lifeExpectancy":
 					return mapManager.updateMapForLifeExpectancy(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "broadband":
-					return mapManager.updateMapForBroadband(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "airQuality":
-					return mapManager.updateMapForAirQuality(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "schoolPerformance":
-					return mapManager.updateMapForSchoolPerformance(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "claimantCount":
-					return mapManager.updateMapForClaimantCount(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "nhsWaiting":
-					return mapManager.updateMapForNHSWaiting(
 						geojson,
 						activeDataset,
 						mapOptions,

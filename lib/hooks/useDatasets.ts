@@ -11,9 +11,7 @@ import { useLocalElectionData } from "@lib/hooks/useLocalElectionData";
 import { useGeneralElectionData } from "@lib/hooks/useGeneralElectionData";
 import { usePopulationData } from "@lib/hooks/usePopulationData";
 import { useHousePriceData } from "@lib/hooks/useHousePriceData";
-import { useCrimeData } from "./useCrimeData";
 import { Datasets } from "../types/datasets";
-import { useIncomeData } from "./useIncomeData";
 import { useEthnicityData } from "./useEthnicityData";
 import { useBrexitData } from "./useBrexitData";
 import { useBrexitConstituencyData } from "./useBrexitConstituencyData";
@@ -23,11 +21,6 @@ import { useWIMDData } from "./useWIMDData";
 import { useNIMDMData } from "./useNIMDMData";
 import { useLifeExpectancyData } from "./useLifeExpectancyData";
 import { useQualificationData } from "./useQualificationData";
-import { useBroadbandData } from "./useBroadbandData";
-import { useAirQualityData } from "./useAirQualityData";
-import { useClaimantCountData } from "./useClaimantCountData";
-import { useSchoolPerformanceData } from "./useSchoolPerformanceData";
-import { useNHSWaitingData } from "./useNHSWaitingData";
 import { useUnemploymentData } from "./useUnemploymentData";
 import { useJsonDatasetLoaders } from "./useJsonDataLoader";
 import { SCALAR_DATASET_DEFINITIONS, type ScalarDatasetType } from "@/lib/datasets";
@@ -57,8 +50,6 @@ export function useDatasets(): UseDatasetsResult {
 	const population = usePopulationData();
 	const ethnicity = useEthnicityData(isEnabled("demographics-ethnicity"));
 	const housePrice = useHousePriceData(isEnabled("economics-housePrice"));
-	const crime = useCrimeData(isEnabled("economics-crime"));
-	const income = useIncomeData(isEnabled("economics-income"));
 	const brexit = useBrexitData(isEnabled("brexit-electoral"));
 	const brexitConstituency = useBrexitConstituencyData(isEnabled("brexit-hanretty"));
 	const imd = useIMDData(isEnabled("deprivation-imd"));
@@ -70,11 +61,6 @@ export function useDatasets(): UseDatasetsResult {
 		isEnabled("health-healthyLifeExpectancy"),
 	);
 	const qualification = useQualificationData(isEnabled("education-qualifications"));
-	const broadband = useBroadbandData(isEnabled("telecoms-broadband"));
-	const airQuality = useAirQualityData(isEnabled("environment-airQuality"));
-	const claimantCount = useClaimantCountData(isEnabled("economics-claimantCount"));
-	const schoolPerformance = useSchoolPerformanceData(isEnabled("education-schoolPerformance"));
-	const nhsWaiting = useNHSWaitingData(isEnabled("health-nhsWaiting"));
 	const unemployment = useUnemploymentData(isEnabled("economics-unemployment"));
 	const scalarDatasets = useJsonDatasetLoaders(
 		SCALAR_DATASET_DEFINITIONS.map((definition) => ({
@@ -96,8 +82,6 @@ export function useDatasets(): UseDatasetsResult {
 		population: population.datasets,
 		ethnicity: ethnicity.datasets,
 		housePrice: housePrice.datasets,
-		crime: crime.datasets,
-		income: income.datasets,
 		brexit: brexit.datasets,
 		brexitConstituency: brexitConstituency.datasets,
 		imd: imd.datasets,
@@ -106,11 +90,6 @@ export function useDatasets(): UseDatasetsResult {
 		nimdm: nimdm.datasets,
 		lifeExpectancy: lifeExpectancy.datasets,
 		qualification: qualification.datasets,
-		broadband: broadband.datasets,
-		airQuality: airQuality.datasets,
-		claimantCount: claimantCount.datasets,
-		schoolPerformance: schoolPerformance.datasets,
-		nhsWaiting: nhsWaiting.datasets,
 		unemployment: unemployment.datasets,
 		...scalarDatasetRecords,
 	};
@@ -121,8 +100,6 @@ export function useDatasets(): UseDatasetsResult {
 		population,
 		ethnicity,
 		housePrice,
-		crime,
-		income,
 		brexit,
 		brexitConstituency,
 		imd,
@@ -131,11 +108,6 @@ export function useDatasets(): UseDatasetsResult {
 		nimdm,
 		lifeExpectancy,
 		qualification,
-		broadband,
-		airQuality,
-		claimantCount,
-		schoolPerformance,
-		nhsWaiting,
 		unemployment,
 		scalarDatasets,
 	];

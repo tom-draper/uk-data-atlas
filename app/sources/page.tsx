@@ -274,9 +274,12 @@ const legacyDatasets: DatasetSource[] = [
 ];
 
 const datasets: DatasetSource[] = [
-	...legacyDatasets,
 	...SCALAR_DATASET_DEFINITIONS.map((definition) => definition.source),
-];
+	...legacyDatasets,
+].filter(
+	(dataset, index, entries) =>
+		entries.findIndex((candidate) => candidate.name === dataset.name) === index,
+);
 
 export default function DatasetsPage() {
 	return (

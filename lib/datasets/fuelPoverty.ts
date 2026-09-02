@@ -5,7 +5,6 @@ import type { ScalarDatasetDefinition } from "./types";
 export const fuelPovertyDefinition: ScalarDatasetDefinition<FuelPovertyDataset> = {
 	type: "fuelPoverty",
 	precompiledFile: "fuel-poverty",
-	sourcePath: "economics/fuel-poverty/fuel-poverty-2024.ods",
 	chart: {
 		group: "Economics",
 		key: "economics-fuelPoverty",
@@ -31,10 +30,6 @@ export const fuelPovertyDefinition: ScalarDatasetDefinition<FuelPovertyDataset> 
 		colorRange: { min: 5, max: 15 },
 		legend: { min: 0, max: 30, format: (value) => `${value.toFixed(0)}% households` },
 	},
-	load: loadFuelPoverty,
-	map: {
-		codeLevel: "lsoa",
-		valueKey: "fuelPovertyRate",
-		mapOptionsKey: "fuelPoverty",
-	},
+	precompile: async (reader) =>
+		loadFuelPoverty(await reader.odsContent("economics/fuel-poverty/fuel-poverty-2024.ods")),
 };
