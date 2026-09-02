@@ -34,9 +34,7 @@ import { AggregatedClaimantCountData, ClaimantCountDataset } from "./claimantCou
 import { AggregatedSchoolPerformanceData, SchoolPerformanceDataset } from "./schoolPerformance";
 import { AggregatedNHSWaitingData, NHSWaitingDataset } from "./nhsWaiting";
 import { AggregatedUnemploymentData, UnemploymentDataset } from "./unemployment";
-import { AggregatedChildPovertyData, ChildPovertyDataset } from "./childPoverty";
-import { AggregatedHomelessnessData, HomelessnessDataset } from "./homelessness";
-import { AggregatedFuelPovertyData, FuelPovertyDataset } from "./fuelPoverty";
+import type { ScalarDataset, ScalarDatasetRecords } from "@/lib/datasets/generated";
 
 export type Dataset =
 	| LocalElectionDataset
@@ -61,9 +59,7 @@ export type Dataset =
 	| SchoolPerformanceDataset
 	| NHSWaitingDataset
 	| UnemploymentDataset
-	| ChildPovertyDataset
-	| HomelessnessDataset
-	| FuelPovertyDataset;
+	| ScalarDataset;
 
 export type Datasets = {
 	localElection: Record<string, LocalElectionDataset>;
@@ -87,10 +83,7 @@ export type Datasets = {
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
 	nhsWaiting: Record<string, NHSWaitingDataset>;
 	unemployment: Record<string, UnemploymentDataset>;
-	childPoverty: Record<string, ChildPovertyDataset>;
-	homelessness: Record<string, HomelessnessDataset>;
-	fuelPoverty: Record<string, FuelPovertyDataset>;
-};
+} & ScalarDatasetRecords;
 
 
 export type ActiveViz = {

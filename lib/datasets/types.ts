@@ -1,5 +1,3 @@
-import type { Dataset } from "@/lib/types/datasets";
-
 export type ScalarMapOptionsKey =
 	| "childPoverty"
 	| "homelessness"
@@ -26,7 +24,7 @@ export interface DatasetSource {
 	description: string;
 }
 
-export interface ScalarDatasetDefinition<T extends Dataset = Dataset> {
+export interface ScalarDatasetDefinition<T extends { type: string } = { type: string }> {
 	type: T["type"];
 	precompiledFile: string;
 	sourcePath: string;
