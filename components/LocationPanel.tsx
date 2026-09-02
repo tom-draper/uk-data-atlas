@@ -23,6 +23,7 @@ import {
 	useTransition,
 	useDeferredValue,
 	useRef,
+	useMemo,
 } from "react";
 import {
 	fetchBoundaryFile,
@@ -111,8 +112,9 @@ export default function LocationPanel({
 			);
 	}, []);
 
-	const geojsonFeatureMap = (() => {
-		if (!geojson) return {} as Record<string, BoundaryGeojson["features"][0]>;
+	const geojsonFeatureMap = useMemo(() => {
+		if (!geojson)
+			return {} as Record<string, BoundaryGeojson["features"][0]>;
 
 		const map: Record<string, BoundaryGeojson["features"][0]> = {};
 		geojson.features.forEach((feature) => {
@@ -126,9 +128,9 @@ export default function LocationPanel({
 		});
 
 		return map;
-	})();
+	}, [geojson]);
 
-	const enrichedPopulation = (() => {
+	const enrichedPopulation = useMemo(() => {
 		const enriched: Record<
 			string,
 			PopulationWardData & {
@@ -154,10 +156,11 @@ export default function LocationPanel({
 		);
 
 		return enriched;
-	})();
+	}, [populationDataset.data, geojsonFeatureMap]);
 
-	const locationPopulations = (() => {
+	const locationPopulations = useMemo(() => {
 		const populations = new Map<string, number>();
+		const populationByLad = new Map<string, number>();
 
 		const countryPops: Record<string, number> = {
 			"United Kingdom": 0,
@@ -179,6 +182,11 @@ export default function LocationPanel({
 				countryPops["Wales"] += population;
 			else if (wardCode.startsWith("N"))
 				countryPops["Northern Ireland"] += population;
+
+			populationByLad.set(
+				wardData.ladCode,
+				(populationByLad.get(wardData.ladCode) ?? 0) + population,
+			);
 		});
 
 		Object.entries(countryPops).forEach(([country, pop]) => {
@@ -189,20 +197,18 @@ export default function LocationPanel({
 			if (COUNTRY_LOCATIONS.has(location)) return;
 
 			if (bounds.lad_codes && bounds.lad_codes.length > 0) {
-				let total = 0;
-				Object.values(enrichedPopulation).forEach((wardData) => {
-					if (bounds.lad_codes.includes(wardData.ladCode)) {
-						total += wardData.totalPopulation;
-					}
-				});
+				const total = bounds.lad_codes.reduce(
+					(sum, ladCode) => sum + (populationByLad.get(ladCode) ?? 0),
+					0,
+				);
 				populations.set(location, total);
 			}
 		});
 
 		return populations;
-	})();
+	}, [enrichedPopulation]);
 
-	const allLocations = (() => {
+	const allLocations = useMemo(() => {
 		return Object.entries(NAMED_LOCATIONS)
 			.flatMap(([location, bounds]) => {
 				const totalPopulation = locationPopulations.get(location) || 0;
@@ -210,16 +216,16 @@ export default function LocationPanel({
 				return [{ name: location, totalPopulation, bounds }];
 			})
 			.sort((a, b) => b.totalPopulation - a.totalPopulation);
-	})();
+	}, [locationPopulations]);
 
-	const filteredLocations = (() => {
+	const filteredLocations = useMemo(() => {
 		if (!deferredSearchQuery.trim()) return allLocations;
 
 		const query = deferredSearchQuery.toLowerCase();
 		return allLocations.filter(({ name }: { name: string }) =>
 			name.toLowerCase().includes(query),
 		);
-	})();
+	}, [allLocations, deferredSearchQuery]);
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchQuery(e.target.value);
@@ -256,97 +262,110 @@ export default function LocationPanel({
 		>
 			<GlassOverlays isDark={isDark} />
 			{/* Content sits above overlays */}
-			<div className="relative flex flex-col h-full" style={{ zIndex: 1 }}>
-			{/* Header with search */}
 			<div
-				className={`shrink-0 ${t.section} flex items-center overflow-hidden`}
+				className="relative flex flex-col h-full"
+				style={{ zIndex: 1 }}
 			>
-				<h2
-					className={`px-2.5 pb-2 pt-2.5 text-sm font-semibold grow ${t.heading}`}
+				{/* Header with search */}
+				<div
+					className={`shrink-0 ${t.section} flex items-center overflow-hidden`}
 				>
-					Locations
-				</h2>
-				<div className="flex items-center transition-all duration-200">
-					<div className="grow">
-						<input
-							ref={inputRef}
-							type="text"
-							aria-label="Search locations"
-							value={searchQuery}
-							onChange={handleSearchChange}
-							onKeyDown={handleKeyDown}
-							placeholder="Search locations..."
-							className={`outline-none text-xs px-1 py-1 mt-0.5 transition-all border-b! border-white/20 duration-200 w-full bg-transparent ${t.text} ${searchOpen ? "opacity-100" : "opacity-0 px-0"}`}
-						/>
-					</div>
-					<button
-						type="button"
-						onClick={handleSearchToggle}
-						className={`mr-3 ml-2 transition-colors cursor-pointer ${t.textMuted} hover:${isDark ? "text-gray-200" : "text-gray-600"}`}
+					<h2
+						className={`px-2.5 pb-2 pt-2.5 text-sm font-semibold grow ${t.heading}`}
 					>
-						{searchOpen ? (
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth="2"
-								stroke="currentColor"
-								className="h-4.5"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M6 18L18 6M6 6l12 12"
-								/>
-							</svg>
-						) : (
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth="2"
-								stroke="currentColor"
-								className="h-4.5"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-								/>
-							</svg>
-						)}
-					</button>
-				</div>
-			</div>
-
-			{/* Scrollable location list */}
-			<div className="overflow-y-auto scroll-container flex-1 p-1 pt-0.5">
-				{filteredLocations.map(({ name, totalPopulation, bounds }: { name: string; totalPopulation: number; bounds: LocationBounds }) => (
-					<button
-						type="button"
-						key={name}
-						onClick={() => onLocationClick(name, bounds)}
-						className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${
-							selectedLocation === name
-								? isDark
-									? "bg-white/15 text-gray-100"
-									: "bg-white/60 text-gray-800"
-								: isDark
-									? "hover:bg-white/10 text-gray-400 hover:text-gray-200"
-									: "hover:bg-white/40 text-gray-600 hover:text-gray-800"
-						}`}
-					>
-						<span className="font-normal truncate mr-2">
-							{name}
-						</span>
-						<span
-							className={`text-xs tabular-nums shrink-0 ${t.textMuted}`}
+						Locations
+					</h2>
+					<div className="flex items-center transition-all duration-200">
+						<div className="grow">
+							<input
+								ref={inputRef}
+								type="text"
+								aria-label="Search locations"
+								value={searchQuery}
+								onChange={handleSearchChange}
+								onKeyDown={handleKeyDown}
+								placeholder="Search locations..."
+								className={`outline-none text-xs px-1 py-1 mt-0.5 transition-all border-b! border-white/20 duration-200 w-full bg-transparent ${t.text} ${searchOpen ? "opacity-100" : "opacity-0 px-0"}`}
+							/>
+						</div>
+						<button
+							type="button"
+							onClick={handleSearchToggle}
+							className={`mr-3 ml-2 transition-colors cursor-pointer ${t.textMuted} hover:${isDark ? "text-gray-200" : "text-gray-600"}`}
 						>
-							{totalPopulation.toLocaleString()}
-						</span>
-					</button>
-				))}
-			</div>
+							{searchOpen ? (
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth="2"
+									stroke="currentColor"
+									className="h-4.5"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M6 18L18 6M6 6l12 12"
+									/>
+								</svg>
+							) : (
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth="2"
+									stroke="currentColor"
+									className="h-4.5"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+									/>
+								</svg>
+							)}
+						</button>
+					</div>
+				</div>
+
+				{/* Scrollable location list */}
+				<div className="overflow-y-auto scroll-container flex-1 p-1 pt-0.5">
+					{filteredLocations.map(
+						({
+							name,
+							totalPopulation,
+							bounds,
+						}: {
+							name: string;
+							totalPopulation: number;
+							bounds: LocationBounds;
+						}) => (
+							<button
+								type="button"
+								key={name}
+								onClick={() => onLocationClick(name, bounds)}
+								className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${
+									selectedLocation === name
+										? isDark
+											? "bg-white/15 text-gray-100"
+											: "bg-white/60 text-gray-800"
+										: isDark
+											? "hover:bg-white/10 text-gray-400 hover:text-gray-200"
+											: "hover:bg-white/40 text-gray-600 hover:text-gray-800"
+								}`}
+							>
+								<span className="font-normal truncate mr-2">
+									{name}
+								</span>
+								<span
+									className={`text-xs tabular-nums shrink-0 ${t.textMuted}`}
+								>
+									{totalPopulation.toLocaleString()}
+								</span>
+							</button>
+						),
+					)}
+				</div>
 			</div>
 		</div>
 	);
