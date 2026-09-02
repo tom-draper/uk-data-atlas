@@ -7,16 +7,11 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface AirQualityChartProps {
 	activeDataset: Dataset | null;
@@ -97,25 +92,17 @@ export default function AirQualityChart({
 	const isActive =
 		activeDataset?.type === "airQuality" && activeDataset.id === dataset?.id;
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		stats ? ACCENT : null,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
 	const no2 = stats?.no2Mean ?? null;
 	const color = no2 != null ? no2Color(no2) : null;
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "min-h-20")}
+		<ChartCard
+			heading={`Air Quality, NO₂ [${dataset.year}]`}
+			accent={stats ? ACCENT : null}
+			isActive={isActive}
 			title="DEFRA. Air Quality Statistics in the UK. uk-air.defra.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -124,11 +111,6 @@ export default function AirQualityChart({
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex items-center justify-between mb-1.5 shrink-0">
-				<h3 className={chartHeadingClass(isDark)}>Air Quality, NO₂ [{dataset.year}]</h3>
-			</div>
-
 			{!stats ? (
 				<div className="flex-1 mt-1">
 					{chartsLoading ? (
@@ -155,6 +137,6 @@ export default function AirQualityChart({
 					</div>
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }

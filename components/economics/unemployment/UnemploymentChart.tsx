@@ -7,16 +7,11 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface UnemploymentChartProps {
@@ -110,24 +105,16 @@ export default function UnemploymentChart({
 	const hasData = stats !== null;
 	const sparkline = stats ? buildSparkline(stats) : null;
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		hasData ? ACCENT : null,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
 	const latestRate = stats?.rates[dataset.latestYear];
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "min-h-20")}
+		<ChartCard
+			heading={`Unemployment Rate [1996-${dataset.latestYear}]`}
+			accent={hasData ? ACCENT : null}
+			isActive={isActive}
 			title="ONS. Model-based estimates of unemployment for local and unitary authorities. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
 					vizId: dataset.id,
@@ -135,10 +122,7 @@ export default function UnemploymentChart({
 					datasetYear: dataset.latestYear,
 				})
 			}
-		>
-			<ChartLoadingBackground />
-
-			{sparkline && (
+			background={sparkline && (
 				<svg
 					className="absolute inset-0 size-full"
 					viewBox="0 0 100 100"
@@ -155,13 +139,7 @@ export default function UnemploymentChart({
 					<circle cx={sparkline.lastPt.x} cy={sparkline.lastPt.y} r="2" fill={LINE_COLOR} vectorEffect="non-scaling-stroke" />
 				</svg>
 			)}
-
-			<div className="relative z-10 flex items-start justify-between mb-1.5 shrink-0">
-				<h3 className={chartHeadingClass(isDark)}>
-					Unemployment Rate [1996-{dataset.latestYear}]
-				</h3>
-			</div>
-
+		>
 			{!hasData ? (
 				<div className="flex-1 mt-1">
 					{chartsLoading ? (
@@ -182,6 +160,6 @@ export default function UnemploymentChart({
 					</div>
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }
