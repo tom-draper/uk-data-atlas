@@ -603,61 +603,6 @@ export class MapManager {
 		return transformed;
 	}
 
-	updateMapForHousePrices(
-		geojson: BoundaryGeojson,
-		dataset: HousePriceDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectWardCode.bind(this.propertyDetector),
-			"housePrice",
-			dataset.data,
-			(data, code) => data.data[code]?.prices[2023] || null,
-			(_, options) => options.housePrice.colorRange,
-		);
-	}
-
-	updateMapForCrimeRate(
-		geojson: BoundaryGeojson,
-		dataset: CrimeDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(
-				this.propertyDetector,
-			),
-			"crime",
-			dataset.data,
-			(data, code) => data.data[code]?.totalRecordedCrime ?? null,
-			(_, options) => options.crime.colorRange,
-		);
-	}
-
-	updateMapForIncome(
-		geojson: BoundaryGeojson,
-		dataset: IncomeDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(
-				this.propertyDetector,
-			),
-			"income",
-			dataset.data,
-			(data, code) => data.data[code]?.annual?.median || null,
-			(_, options) => options.income.colorRange,
-		);
-	}
-
 	updateMapForBrexit(
 		geojson: BoundaryGeojson,
 		dataset: BrexitLADDataset,
@@ -946,23 +891,6 @@ export class MapManager {
 		);
 	}
 
-	updateMapForBroadband(
-		geojson: BoundaryGeojson,
-		dataset: BroadbandDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			"broadband",
-			dataset.data,
-			(data, code) => data.data[code]?.pctFullFibre ?? null,
-			(_, options) => options.broadband.colorRange,
-		);
-	}
-
 	calculateBroadbandStats(
 		geojson: BoundaryGeojson,
 		data: BroadbandDataset["data"],
@@ -970,23 +898,6 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateBroadbandStats(geojson, data, location, datasetId);
-	}
-
-	updateMapForAirQuality(
-		geojson: BoundaryGeojson,
-		dataset: AirQualityDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			"airQuality",
-			dataset.data,
-			(data, code) => data.data[code]?.no2Mean ?? null,
-			(_, options) => options.airQuality.colorRange,
-		);
 	}
 
 	calculateAirQualityStats(
@@ -998,23 +909,6 @@ export class MapManager {
 		return this.statsCalculator.calculateAirQualityStats(geojson, data, location, datasetId);
 	}
 
-	updateMapForClaimantCount(
-		geojson: BoundaryGeojson,
-		dataset: ClaimantCountDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			"claimantCount",
-			dataset.data,
-			(data, code) => data.data[code]?.totalRate ?? null,
-			(_, options) => options.claimantCount.colorRange,
-		);
-	}
-
 	calculateClaimantCountStats(
 		geojson: BoundaryGeojson,
 		data: ClaimantCountDataset["data"],
@@ -1022,43 +916,6 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateClaimantCountStats(geojson, data, location, datasetId);
-	}
-
-	updateMapForSchoolPerformance(
-		geojson: BoundaryGeojson,
-		dataset: SchoolPerformanceDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			"schoolPerformance",
-			dataset.data,
-			(data, code) => data.data[code]?.ptL2basics94 ?? null,
-			(_, options) => options.schoolPerformance.colorRange,
-		);
-	}
-
-	updateMapForNHSWaiting(
-		geojson: BoundaryGeojson,
-		dataset: NHSWaitingDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			"nhsWaiting",
-			dataset.data,
-			(data, code) => {
-				const icbCode = data.ladToIcb[code];
-				return icbCode ? data.data[icbCode]?.pctOver18Weeks ?? null : null;
-			},
-			(_, options) => options.nhsWaiting.colorRange,
-		);
 	}
 
 	calculateSchoolPerformanceStats(
@@ -1077,23 +934,6 @@ export class MapManager {
 		datasetId: string | null = null,
 	) {
 		return this.statsCalculator.calculateNHSWaitingStats(geojson, dataset, location, datasetId);
-	}
-
-	updateMapForUnemployment(
-		geojson: BoundaryGeojson,
-		dataset: UnemploymentDataset,
-		mapOptions: MapOptions,
-	): void {
-		this.updateGenericMap(
-			geojson,
-			dataset,
-			mapOptions,
-			this.propertyDetector.detectLocalAuthorityCode.bind(this.propertyDetector),
-			"unemployment",
-			dataset.data,
-			(data, code) => data.data[code]?.rates[data.latestYear] ?? null,
-			(_, options) => options.unemployment.colorRange,
-		);
 	}
 
 	calculateUnemploymentStats(
