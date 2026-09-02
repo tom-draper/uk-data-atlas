@@ -2,17 +2,16 @@
 import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { ActiveViz, Dataset, LifeExpectancyDataset, NHSWaitingDataset, SelectedArea } from "@lib/types";
+import { ActiveViz, Dataset, Datasets, SelectedArea } from "@lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import LifeExpectancyChart from "./LifeExpectancyChart";
-import NHSWaitingChart from "./NHSWaitingChart";
+import ScalarChartCards, { hasVisibleScalarChart } from "@/components/ScalarChartCards";
 
 interface HealthSectionProps {
 	activeDataset: Dataset | null;
-	availableLifeExpectancyDatasets: Record<string, LifeExpectancyDataset>;
-	availableNHSWaitingDatasets: Record<string, NHSWaitingDataset>;
+	datasets: Datasets;
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -23,8 +22,7 @@ interface HealthSectionProps {
 
 export default function HealthSection({
 	activeDataset,
-	availableLifeExpectancyDatasets,
-	availableNHSWaitingDatasets,
+	datasets,
 	selectedArea,
 	activeViz,
 	setActiveViz,
@@ -36,7 +34,8 @@ export default function HealthSection({
 	const isDark = useIsDark();
 	const showLE = visibility["health-lifeExpectancy"];
 	const showHLE = visibility["health-healthyLifeExpectancy"];
-	const showNHS = visibility["health-nhsWaiting"];
+	const showScalarCharts = hasVisibleScalarChart("Health", visibility);
+	const availableLifeExpectancyDatasets = datasets.lifeExpectancy;
 
 	const aggregatedLifeExpectancyData = useMemo(
 		() => aggregateDataset(
@@ -45,22 +44,7 @@ export default function HealthSection({
 		),
 		[availableLifeExpectancyDatasets, mapManager, boundaryData, location],
 	);
-	const aggregatedNHSWaitingData = useMemo(
-		() => aggregateDataset(
-			{
-				datasets: availableNHSWaitingDatasets,
-				boundaryType: "localAuthority",
-				calculateStats: (mm, g, _d, loc, id) => {
-					const ds = availableNHSWaitingDatasets[id];
-					return ds ? mm.calculateNHSWaitingStats(g, ds, loc, id) : null;
-				},
-			},
-			mapManager, boundaryData, location,
-		),
-		[availableNHSWaitingDatasets, mapManager, boundaryData, location],
-	);
-
-	if (!showLE && !showHLE && !showNHS) return null;
+	if (!showLE && !showHLE && !showScalarCharts) return null;
 
 	const leIds = Object.keys(availableLifeExpectancyDatasets).sort();
 
@@ -85,17 +69,7 @@ export default function HealthSection({
 						]
 					: [],
 			)}
-			{showNHS && (
-				<NHSWaitingChart
-					activeDataset={activeDataset}
-					availableDatasets={availableNHSWaitingDatasets}
-					aggregatedData={aggregatedNHSWaitingData}
-					selectedArea={selectedArea}
-					year={2026}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-			)}
+			<ScalarChartCards group="Health" visibility={visibility} activeDataset={activeDataset} datasets={datasets} selectedArea={selectedArea} activeViz={activeViz} setActiveViz={setActiveViz} mapManager={mapManager} boundaryData={boundaryData} location={location} />
 		</div>
 	);
 }

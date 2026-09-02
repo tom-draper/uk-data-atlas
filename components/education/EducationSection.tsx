@@ -2,18 +2,17 @@
 import { useMemo } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { ActiveViz, Dataset, QualificationDataset, SchoolPerformanceDataset, SelectedArea } from "@lib/types";
+import { ActiveViz, Dataset, Datasets, SelectedArea } from "@lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import QualificationChart from "./QualificationChart";
-import SchoolPerformanceChart from "./SchoolPerformanceChart";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import ScalarChartCards, { hasVisibleScalarChart } from "@/components/ScalarChartCards";
 
 interface EducationSectionProps {
 	activeDataset: Dataset | null;
-	availableQualificationDatasets: Record<string, QualificationDataset>;
-	availableSchoolPerformanceDatasets: Record<string, SchoolPerformanceDataset>;
+	datasets: Datasets;
 	selectedArea: SelectedArea | null;
 	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
@@ -25,8 +24,7 @@ interface EducationSectionProps {
 
 export default function EducationSection({
 	activeDataset,
-	availableQualificationDatasets,
-	availableSchoolPerformanceDatasets,
+	datasets,
 	selectedArea,
 	codeMapper,
 	activeViz,
@@ -38,18 +36,14 @@ export default function EducationSection({
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
 	const showQualifications = visibility["education-qualifications"];
-	const showSchoolPerformance = visibility["education-schoolPerformance"];
+	const showScalarCharts = hasVisibleScalarChart("Education", visibility);
+	const availableQualificationDatasets = datasets.qualification;
 
 	const aggregatedQualificationData = useMemo(
 		() => aggregateDataset({ datasets: availableQualificationDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateQualificationStats(g, d, loc, id) }, mapManager, boundaryData, location),
 		[availableQualificationDatasets, mapManager, boundaryData, location],
 	);
-	const aggregatedSchoolPerformanceData = useMemo(
-		() => aggregateDataset({ datasets: availableSchoolPerformanceDatasets, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateSchoolPerformanceStats(g, d, loc, id) }, mapManager, boundaryData, location),
-		[availableSchoolPerformanceDatasets, mapManager, boundaryData, location],
-	);
-
-	if (!showQualifications && !showSchoolPerformance) return null;
+	if (!showQualifications && !showScalarCharts) return null;
 
 	const qualYears = Object.keys(availableQualificationDatasets).map(Number).sort((a, b) => b - a);
 
@@ -69,18 +63,7 @@ export default function EducationSection({
 					setActiveViz={setActiveViz}
 				/>
 			))}
-			{showSchoolPerformance && (
-				<SchoolPerformanceChart
-					activeDataset={activeDataset}
-					availableDatasets={availableSchoolPerformanceDatasets}
-					aggregatedData={aggregatedSchoolPerformanceData}
-					selectedArea={selectedArea}
-					year={2024}
-					codeMapper={codeMapper}
-					activeViz={activeViz}
-					setActiveViz={setActiveViz}
-				/>
-			)}
+			<ScalarChartCards group="Education" visibility={visibility} activeDataset={activeDataset} datasets={datasets} selectedArea={selectedArea} codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} mapManager={mapManager} boundaryData={boundaryData} location={location} />
 		</div>
 	);
 }

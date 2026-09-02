@@ -191,8 +191,7 @@ function ChartPanelContent({
                 {sectionVisible["Health"] && (
                   <HealthSection
                     activeDataset={activeDataset}
-                    availableLifeExpectancyDatasets={datasets.lifeExpectancy}
-                    availableNHSWaitingDatasets={datasets.nhsWaiting}
+                    datasets={datasets}
                     selectedArea={deferredArea}
                     setActiveViz={setActiveViz}
                     activeViz={activeViz}
@@ -204,10 +203,7 @@ function ChartPanelContent({
                 {sectionVisible["Education"] && (
                   <EducationSection
                     activeDataset={activeDataset}
-                    availableQualificationDatasets={datasets.qualification}
-                    availableSchoolPerformanceDatasets={
-                      datasets.schoolPerformance
-                    }
+                    datasets={datasets}
                     selectedArea={deferredArea}
                     setActiveViz={setActiveViz}
                     codeMapper={codeMapper}
