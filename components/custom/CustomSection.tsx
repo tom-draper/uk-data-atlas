@@ -18,7 +18,7 @@ import { useMatchIndex } from "@/lib/hooks/useMatchIndex";
 import { detectHeaderRow, parseCustomCsv } from "@/lib/data/custom/csv";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
+import { useAggregatedDataset } from "@/lib/hooks/useAggregatedDataset";
 import { getColor } from "@/lib/helpers/colorScale/themes";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
@@ -762,20 +762,20 @@ function CustomDatasetCard({
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 
-	const aggregatedData = useMemo(
-		() =>
-			aggregateDataset(
-				{
-					datasets: { [customDataset.year]: customDataset },
-					boundaryType: customDataset.boundaryType,
-					calculateStats: (mm, g, d, loc, id) =>
-						mm.calculateCustomDatasetStats(g, d, loc, id),
-				},
-				mapManager,
-				boundaryData,
-				location,
-			),
-		[customDataset, mapManager, boundaryData, location],
+	const customDatasets = useMemo(
+		() => ({ [customDataset.year]: customDataset }),
+		[customDataset],
+	);
+	const aggregatedData = useAggregatedDataset(
+		{
+			datasets: customDatasets,
+			boundaryType: customDataset.boundaryType,
+			calculateStats: (mm, g, d, loc, id) =>
+				mm.calculateCustomDatasetStats(g, d, loc, id),
+		},
+		mapManager,
+		boundaryData,
+		location,
 	);
 	const displayValue = (() => {
 		if (!customDataset || !customDataset.data) return null;
