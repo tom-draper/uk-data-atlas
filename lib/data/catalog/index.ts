@@ -10,3 +10,8 @@ export {
 	type SourceArtifact,
 } from "./ingestion";
 export { CATALOGUE_DATASET_DEFINITIONS } from "./registry";
+export type {
+	CatalogueDataset,
+	CatalogueDatasetRecords,
+	CatalogueDatasetType,
+} from "./generated";

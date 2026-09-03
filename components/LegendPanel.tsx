@@ -26,7 +26,7 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import LegendContent from "./LegendContent";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
-import type { ChartDatasetType } from "@/lib/datasets/generated";
+import type { CatalogueDatasetType } from "@/lib/data/catalog";
 
 export type PartyDisplayData = { id: PartyCode; color: string; name: string };
 
@@ -51,7 +51,7 @@ export type ColorRangeDatasetKey =
 	| "claimantCount"
 	| "nhsWaiting"
 	| "unemployment"
-	| ChartDatasetType
+	| CatalogueDatasetType
 	| "custom";
 
 interface LegendPanelProps {

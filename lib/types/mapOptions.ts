@@ -2,7 +2,7 @@
 import { Datasets } from "./datasets";
 import { ColorRange } from "./common";
 import type { BaseMapStyle } from "../config/baseMapStyles";
-import type { ChartDatasetType } from "@/lib/datasets/generated";
+import type { CatalogueDatasetType } from "@/lib/data/catalog";
 
 // Base option types reused across visualizations
 interface ColorRangeOption {
@@ -50,7 +50,7 @@ export type SchoolPerformanceOptions = ColorRangeOption;
 export type ClaimantCountOptions = ColorRangeOption;
 export type NHSWaitingOptions = ColorRangeOption;
 export type UnemploymentOptions = ColorRangeOption;
-export type ChartMapOptions = Record<ChartDatasetType, ColorRangeOption>;
+export type ChartMapOptions = Record<CatalogueDatasetType, ColorRangeOption>;
 
 export type ColorTheme =
 	| "viridis"
