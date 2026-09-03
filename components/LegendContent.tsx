@@ -90,6 +90,23 @@ export default function LegendContent({
 	};
 
 	switch (activeDataset.type) {
+		case "network":
+			return activeDataset.legend ? (
+				<div className="space-y-1 px-1">
+					{activeDataset.legend.map((item) => (
+						<div className="flex items-center gap-2" key={item.label}>
+							<span
+								className="size-3 shrink-0 rounded-xs"
+								style={{ backgroundColor: item.color, opacity: overlayOpacity }}
+							/>
+							<span className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+								{item.label}
+							</span>
+						</div>
+					))}
+				</div>
+			) : null;
+
 		case "population":
 			if (activeViz.vizId.startsWith("ageDistribution")) {
 				return renderDynamicLegend("ageDistribution", 18, 80, 25, 55);

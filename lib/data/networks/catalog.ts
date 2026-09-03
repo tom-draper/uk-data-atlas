@@ -1,5 +1,14 @@
 import type { NetworkDataset } from "@/lib/types/network";
-import { zoomInterpolate } from "@/lib/helpers/mapManager/expressions";
+import { categoryMatch, zoomInterpolate } from "@/lib/helpers/mapManager/expressions";
+
+/** Colours applied directly to the OS `road_classification` tile attribute. */
+export const OS_OPEN_ROADS_CLASSIFICATION_COLORS = {
+	Motorway: "#2563eb",
+	"A Road": "#dc2626",
+	"B Road": "#d97706",
+} as const;
+
+export const OS_OPEN_ROADS_OTHER_ROADS_COLOR = "#94a3b8";
 
 /**
  * External, tile-backed transport overlays. Keeping the endpoint separate from
@@ -23,8 +32,14 @@ export const NETWORK_DATASETS: Record<string, NetworkDataset> = {
 		dataColumn: "Roads",
 		provider: "Ordnance Survey",
 		licence: "Open Government Licence",
-		description: "A generalised road network for Great Britain, from motorways to country lanes.",
+		description: "A generalised, colour-coded road network for Great Britain: motorways, A roads, B roads, and local roads.",
 		available: Boolean(osOpenRoadsTileUrl),
+		legend: [
+			{ label: "Motorway", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS.Motorway },
+			{ label: "A road", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["A Road"] },
+			{ label: "B road", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["B Road"] },
+			{ label: "Other roads", color: OS_OPEN_ROADS_OTHER_ROADS_COLOR },
+		],
 		layer: osOpenRoadsTileUrl
 			? {
 				kind: "vector-line",
@@ -37,7 +52,11 @@ export const NETWORK_DATASETS: Record<string, NetworkDataset> = {
 					attribution: "Contains OS data © Crown copyright and database right",
 				},
 				style: {
-					color: "#c2410c",
+					color: categoryMatch(
+						"road_classification",
+						Object.entries(OS_OPEN_ROADS_CLASSIFICATION_COLORS),
+						OS_OPEN_ROADS_OTHER_ROADS_COLOR,
+					),
 					width: zoomInterpolate([
 						[5, 0.4],
 						[10, 1.2],
