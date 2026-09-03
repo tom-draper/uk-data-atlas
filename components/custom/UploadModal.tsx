@@ -10,15 +10,13 @@ import {
 	guessCodeColumn,
 	guessValueColumn,
 	isPointMode,
-	isSpecialMatchType,
 	matchColumn,
 	uploadColumns,
 } from "@/lib/data/custom/upload";
 import type { CustomDatasetUpload } from "@/lib/data/custom/dataset";
-import { getMatchColorClass } from "./uploadStyles";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { ColumnDropdown } from "./ColumnDropdown";
-import { RowBadge } from "./RowBadge";
+import { BoundaryColumnFields } from "./BoundaryColumnFields";
+import { PointColumnFields } from "./PointColumnFields";
 
 export function UploadModal({
 	isOpen,
@@ -44,7 +42,6 @@ export function UploadModal({
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const isDark = useIsDark();
 
-	const headers = csvData[headerRow] ?? [];
 	const columns = uploadColumns(csvData, headerRow);
 	const matches = matchColumn(csvData, headerRow, selectedColumn, areaBank);
 	const effectiveMatch = chooseMatch(matches, overrideLabel);
@@ -107,6 +104,17 @@ export function UploadModal({
 			if (codeColumn) setSelectedColumn(codeColumn);
 		};
 		reader.readAsText(selectedFile);
+	};
+
+	const handleSelectedColumnChange = (value: string) => {
+		setSelectedColumn(value);
+		setOverrideLabel("");
+		setShowBoundaryOptions(false);
+	};
+
+	const handleOverride = (label: string) => {
+		setOverrideLabel(label);
+		setShowBoundaryOptions(false);
 	};
 
 	const handleHeaderRowChange = (row: number) => {
@@ -237,186 +245,40 @@ export function UploadModal({
 					)}
 
 					{csvData.length > 0 && pointMode && (
-						<div className="animate-in fade-in duration-300 space-y-4">
-							<div className="flex items-center justify-between">
-								<span
-									className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
-								>
-									Detected coordinates — plotting as points
-								</span>
-								<RowBadge
-									headerRow={headerRow}
-									csvData={csvData}
-									onChange={handleHeaderRowChange}
-									isDark={isDark}
-								/>
-							</div>
-							<div>
-								<label
-									className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-								>
-									Latitude
-								</label>
-								<ColumnDropdown
-									columns={columns}
-									value={latColumn}
-									onChange={setLatColumn}
-									placeholder="Latitude column..."
-									isDark={isDark}
-								/>
-							</div>
-							<div>
-								<label
-									className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-								>
-									Longitude
-								</label>
-								<ColumnDropdown
-									columns={columns}
-									value={lngColumn}
-									onChange={setLngColumn}
-									placeholder="Longitude column..."
-									isDark={isDark}
-								/>
-							</div>
-							<div>
-								<label
-									className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-								>
-									Value
-								</label>
-								<ColumnDropdown
-									columns={columns}
-									value={dataColumn}
-									onChange={setDataColumn}
-									placeholder="Value column..."
-									isDark={isDark}
-								/>
-							</div>
-						</div>
+						<PointColumnFields
+							columns={columns}
+							csvData={csvData}
+							headerRow={headerRow}
+							onHeaderRowChange={handleHeaderRowChange}
+							latColumn={latColumn}
+							onLatColumnChange={setLatColumn}
+							lngColumn={lngColumn}
+							onLngColumnChange={setLngColumn}
+							dataColumn={dataColumn}
+							onDataColumnChange={setDataColumn}
+							isDark={isDark}
+						/>
 					)}
 
 					{csvData.length > 0 && !pointMode && (
-						<div className="animate-in fade-in duration-300 space-y-4">
-							<div>
-								<div className="flex items-center justify-between mb-1.5">
-									<label
-										className={`text-xs font-semibold ${isDark ? "text-gray-300" : "text-gray-700"}`}
-									>
-										Area codes
-									</label>
-									<RowBadge
-										headerRow={headerRow}
-										csvData={csvData}
-										onChange={handleHeaderRowChange}
-										isDark={isDark}
-									/>
-								</div>
-								<ColumnDropdown
-									columns={columns}
-									value={selectedColumn}
-									onChange={(v) => {
-										setSelectedColumn(v);
-										setOverrideLabel("");
-										setShowBoundaryOptions(false);
-									}}
-									placeholder="Select area code column..."
-									isDark={isDark}
-								/>
-
-								{selectedColumn && (
-									<div className="mt-2">
-										{matches.length === 0 ? (
-											<p className={`text-[10px] ${isDark ? "text-orange-400" : "text-orange-500"}`}>
-												No boundary type matched. Try a different column.
-											</p>
-										) : (
-											<div>
-												<div className={`flex items-center gap-2 text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-													<span className={`font-semibold ${getMatchColorClass(effectiveMatch!.percentage)}`}>
-														{effectiveMatch!.percentage.toFixed(0)}%
-													</span>
-													<span className={`truncate ${isSpecialMatchType(effectiveMatch!.entry.matchType) ? "italic" : ""}`}>
-														{effectiveMatch!.entry.label}
-													</span>
-													{isSpecialMatchType(effectiveMatch!.entry.matchType) && (
-														<span className={`text-[9px] shrink-0 ${isDark ? "text-gray-600" : "text-gray-400"}`}>
-															coming soon
-														</span>
-													)}
-													{matches.length > 1 && (
-														<button
-															type="button"
-															onClick={() => setShowBoundaryOptions(!showBoundaryOptions)}
-															className={`ml-auto shrink-0 underline underline-offset-2 transition-colors ${
-																isDark
-																	? "text-gray-600 hover:text-gray-400"
-																	: "text-gray-400 hover:text-gray-600"
-															}`}
-														>
-															{showBoundaryOptions ? "Less" : "Change"}
-														</button>
-													)}
-												</div>
-
-												{showBoundaryOptions && (
-													<div
-														className={`mt-1.5 rounded-md border overflow-hidden ${isDark ? "border-white/10" : "border-gray-200"}`}
-													>
-														{matches.map((m) => {
-															const special = isSpecialMatchType(m.entry.matchType);
-															return (
-																<button
-																	key={m.entry.label}
-																	type="button"
-																	disabled={special}
-																	onClick={() => {
-																		setOverrideLabel(m.entry.label);
-																		setShowBoundaryOptions(false);
-																	}}
-																	className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-left text-xs transition-colors ${
-																		special
-																			? isDark ? "opacity-40 cursor-default text-gray-500" : "opacity-40 cursor-default text-gray-400"
-																			: effectiveMatch?.entry.label === m.entry.label
-																				? isDark ? "bg-indigo-600/25 text-indigo-200" : "bg-indigo-50 text-indigo-700"
-																				: isDark ? "text-gray-400 hover:bg-white/5" : "text-gray-600 hover:bg-gray-50"
-																	}`}
-																>
-																	<span className={`text-[10px] w-8 text-right font-semibold ${getMatchColorClass(m.percentage)}`}>
-																		{m.percentage.toFixed(0)}%
-																	</span>
-																	<span className="truncate">{m.entry.label}</span>
-																	{special && (
-																		<span className={`ml-auto text-[9px] shrink-0 ${isDark ? "text-gray-600" : "text-gray-400"}`}>
-																			coming soon
-																		</span>
-																	)}
-																</button>
-															);
-														})}
-													</div>
-												)}
-											</div>
-										)}
-									</div>
-								)}
-							</div>
-
-							<div>
-								<label
-									className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-gray-300" : "text-gray-700"}`}
-								>
-									Values
-								</label>
-								<ColumnDropdown
-									columns={columns}
-									value={dataColumn}
-									onChange={setDataColumn}
-									placeholder="Select data column..."
-									isDark={isDark}
-								/>
-							</div>
-						</div>
+						<BoundaryColumnFields
+							columns={columns}
+							csvData={csvData}
+							headerRow={headerRow}
+							onHeaderRowChange={handleHeaderRowChange}
+							selectedColumn={selectedColumn}
+							onSelectedColumnChange={handleSelectedColumnChange}
+							dataColumn={dataColumn}
+							onDataColumnChange={setDataColumn}
+							matches={matches}
+							effectiveMatch={effectiveMatch}
+							showBoundaryOptions={showBoundaryOptions}
+							onToggleBoundaryOptions={() =>
+								setShowBoundaryOptions(!showBoundaryOptions)
+							}
+							onOverride={handleOverride}
+							isDark={isDark}
+						/>
 					)}
 				</div>
 
