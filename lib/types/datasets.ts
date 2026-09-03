@@ -10,7 +10,10 @@ import { AggregatedClaimantCountData, ClaimantCountDataset } from "./claimantCou
 import { AggregatedSchoolPerformanceData, SchoolPerformanceDataset } from "./schoolPerformance";
 import { AggregatedNHSWaitingData, NHSWaitingDataset } from "./nhsWaiting";
 import { AggregatedUnemploymentData, UnemploymentDataset } from "./unemployment";
-import type { ChartDataset, ChartDatasetRecords } from "@/lib/datasets/generated";
+import type {
+	CatalogueDataset,
+	CatalogueDatasetRecords,
+} from "@/lib/data/catalog";
 
 export type Dataset =
 	| HousePriceDataset
@@ -24,7 +27,7 @@ export type Dataset =
 	| SchoolPerformanceDataset
 	| NHSWaitingDataset
 	| UnemploymentDataset
-	| ChartDataset;
+	| CatalogueDataset;
 
 export type Datasets = {
 	housePrice: Record<string, HousePriceDataset>;
@@ -36,7 +39,7 @@ export type Datasets = {
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
 	nhsWaiting: Record<string, NHSWaitingDataset>;
 	unemployment: Record<string, UnemploymentDataset>;
-} & ChartDatasetRecords;
+} & CatalogueDatasetRecords;
 
 
 export type ActiveViz = {
