@@ -29,6 +29,11 @@ import { StatsCache } from "./statsCache";
 import {
 	aggregateAirQuality,
 	aggregateBroadband,
+	aggregateChildPoverty,
+	aggregateClaimantCount,
+	aggregateFuelPoverty,
+	aggregateHomelessness,
+	aggregateSchoolPerformance,
 	collectBoundaryRecords,
 } from "../datasetAggregation/numeric";
 import { IncomeDataset } from "@/lib/types/income";
@@ -1009,27 +1014,7 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedClaimantCountData | null {
 		return this.calculateNumericStats(
-			"claimantCount", geojson, data, location, datasetId, "localAuthority", (records) => {
-			let totalCount = 0, totalRate = 0, youthCount = 0, youthRate = 0, count = 0;
-
-			for (const record of records) {
-				totalCount += record.totalCount;
-				totalRate += record.totalRate;
-				youthCount += record.youthCount;
-				youthRate += record.youthRate;
-				count++;
-			}
-
-			if (count === 0) return null;
-
-			const result: AggregatedClaimantCountData = {
-				totalCount,
-				totalRate: totalRate / count,
-				youthCount,
-				youthRate: youthRate / count,
-			};
-			return result;
-			},
+			"claimantCount", geojson, data, location, datasetId, "localAuthority", aggregateClaimantCount,
 		);
 	}
 
@@ -1046,18 +1031,7 @@ export class DatasetAggregator {
 			location,
 			datasetId,
 			"localAuthority",
-			(records) => {
-			let childCount = 0, childrenPopulation = 0, count = 0;
-
-			for (const record of records) {
-				childCount += record.childCount;
-				childrenPopulation += record.childrenPopulation;
-				count++;
-			}
-
-			if (count === 0 || childrenPopulation === 0) return null;
-			return { childCount, childPovertyRate: childCount / childrenPopulation * 100 };
-			},
+			aggregateChildPoverty,
 		);
 	}
 
@@ -1074,29 +1048,7 @@ export class DatasetAggregator {
 			location,
 			datasetId,
 			"localAuthority",
-			(records) => {
-			let householdsInTemporaryAccommodation = 0;
-			let householdsPerThousand = 0;
-			let householdsWithChildren = 0;
-			let childrenInTemporaryAccommodation = 0;
-			let count = 0;
-
-			for (const record of records) {
-				householdsInTemporaryAccommodation += record.householdsInTemporaryAccommodation;
-				householdsPerThousand += record.householdsPerThousand;
-				householdsWithChildren += record.householdsWithChildren;
-				childrenInTemporaryAccommodation += record.childrenInTemporaryAccommodation;
-				count++;
-			}
-
-			if (count === 0) return null;
-			return {
-				householdsInTemporaryAccommodation,
-				householdsPerThousand: householdsPerThousand / count,
-				householdsWithChildren,
-				childrenInTemporaryAccommodation,
-			};
-			},
+			aggregateHomelessness,
 		);
 	}
 
@@ -1113,20 +1065,7 @@ export class DatasetAggregator {
 			location,
 			datasetId,
 			"lsoa",
-			(records) => {
-			let householdCount = 0;
-			let fuelPoorHouseholdCount = 0;
-			for (const record of records) {
-				householdCount += record.householdCount;
-				fuelPoorHouseholdCount += record.fuelPoorHouseholdCount;
-			}
-			if (householdCount === 0) return null;
-			return {
-				householdCount,
-				fuelPoorHouseholdCount,
-				fuelPovertyRate: fuelPoorHouseholdCount / householdCount * 100,
-			};
-			},
+			aggregateFuelPoverty,
 		);
 	}
 
@@ -1137,28 +1076,7 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedSchoolPerformanceData | null {
 		return this.calculateNumericStats(
-			"schoolPerformance", geojson, data, location, datasetId, "localAuthority", (records) => {
-			let pt94 = 0, pt95 = 0, att8 = 0, p8 = 0, count = 0;
-
-			for (const record of records) {
-				if (record.ptL2basics94 == null) continue;
-				pt94 += record.ptL2basics94;
-				pt95 += record.ptL2basics95 ?? 0;
-				att8 += record.avgAtt8 ?? 0;
-				p8 += record.avgP8score ?? 0;
-				count++;
-			}
-
-			if (count === 0) return null;
-
-			const result: AggregatedSchoolPerformanceData = {
-				ptL2basics94: pt94 / count,
-				ptL2basics95: pt95 / count,
-				avgAtt8: att8 / count,
-				avgP8score: p8 / count,
-			};
-			return result;
-			},
+			"schoolPerformance", geojson, data, location, datasetId, "localAuthority", aggregateSchoolPerformance,
 		);
 	}
 
