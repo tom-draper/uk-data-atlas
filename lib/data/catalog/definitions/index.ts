@@ -1,10 +1,14 @@
 export { airQualityDatasetDefinition } from "./airQuality";
 export { broadbandDatasetDefinition } from "./broadband";
+export { brexitConstituencyDatasetDefinition } from "./brexitConstituency";
+export { brexitDatasetDefinition } from "./brexit";
 export { childPovertyDatasetDefinition } from "./childPoverty";
 export { claimantCountDatasetDefinition } from "./claimantCount";
 export { crimeDatasetDefinition } from "./crime";
+export { ethnicityDatasetDefinition } from "./ethnicity";
 export { imdDatasetDefinition } from "./imd";
 export { nimdmDatasetDefinition } from "./nimdm";
 export { populationDatasetDefinition } from "./population";
+export { qualificationDatasetDefinition } from "./qualification";
 export { simdDatasetDefinition } from "./simd";
 export { wimdDatasetDefinition } from "./wimd";
