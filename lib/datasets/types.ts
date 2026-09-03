@@ -61,12 +61,16 @@ export interface ChartDefinition<T extends { type: string; data: unknown } = { t
 	keyBy?: "year" | "id";
 }
 
+export type ChartDatasetLegendAggregation<T extends { type: string; data: unknown }> =
+	Pick<ChartDefinition<T>, "calculateStats" | "keyBy">;
+
 export interface ChartDatasetDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }>
 	extends DatasetDefinition<T> {
 	chart: ChartDefinition<T>;
 	charts?: readonly ChartDefinition<T>[];
 	map?: ChartDatasetMap<T>;
 	mapRenderer?: ChartDatasetMapRenderer<T>;
+	legendAggregation?: ChartDatasetLegendAggregation<T>;
 }
 
 export function getChartDefinitions<T extends { type: string; data: unknown }>(

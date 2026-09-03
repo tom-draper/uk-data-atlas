@@ -222,11 +222,7 @@ export default function UIOverlay({
 							mapManager={mapManager}
 							boundaryData={bd}
 							location={selectedLocation}
-							datasets={{
-								localElection: datasets.localElection,
-								generalElection: datasets.generalElection,
-								ethnicity: datasets.ethnicity,
-							}}
+							datasets={datasets}
 						/>
 						{chartPanel}
 					</div>

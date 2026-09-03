@@ -4,6 +4,7 @@ import type { ChartDataset } from "./generated";
 export { CHART_DATASET_DEFINITIONS } from "./generated";
 export type {
 	ChartDatasetDefinition,
+	ChartDatasetLegendAggregation,
 	ChartDatasetMap,
 	ChartDatasetMapRenderer,
 } from "./types";

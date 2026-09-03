@@ -37,6 +37,20 @@ describe("chart dataset registry contract", () => {
 		);
 	});
 
+	it("registers every dataset that contributes a categorical legend", () => {
+		const definitions = CHART_DATASET_DEFINITIONS.filter(
+			(definition) => definition.legendAggregation,
+		);
+		expect(definitions.map((definition) => definition.type)).toEqual([
+			"ethnicity",
+			"generalElection",
+			"localElection",
+		]);
+		for (const definition of definitions) {
+			expect(definition.legendAggregation?.calculateStats).toBeTypeOf("function");
+		}
+	});
+
 	for (const definition of CHART_DATASET_DEFINITIONS) {
 		describe(definition.type, () => {
 			it("has complete provenance and registered chart cards", () => {

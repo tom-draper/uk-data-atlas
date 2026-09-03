@@ -13,6 +13,7 @@ const chart2022: ChartDefinition<LocalElectionDataset> = { group: "Local Electio
 const chart2021: ChartDefinition<LocalElectionDataset> = { group: "Local Election", key: "localElection-2021", label: "2021 Local Elections", defaultVisible: true, componentPath: "@/components/elections/local/LocalElectionRegistryChart", calculateStats, year: 2021 };
 export const localElectionDefinition: ChartDatasetDefinition<LocalElectionDataset> = {
 	...localElectionDatasetDefinition, chart: chart2025, charts: [chart2025, chart2024, chart2023, chart2022, chart2021],
+	legendAggregation: { calculateStats },
 	mapRenderer: {
 		getOptions: (_activeViz, mapOptions) => mapOptions.localElection,
 		render: ({ mapManager, geojson, dataset, mapOptions, isDark }) =>
