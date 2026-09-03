@@ -7,7 +7,7 @@ export interface UnemploymentLADData {
 export interface UnemploymentDataset {
 	id: string;
 	type: "unemployment";
-	year: number; // = latestYear, for compatibility with generic aggregation
+	year: number; // Mirrors latestYear for the common dataset contract.
 	boundaryType: "localAuthority";
 	boundaryYear: number;
 	years: number[]; // sorted, 1996..2021
