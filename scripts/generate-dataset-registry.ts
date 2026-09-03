@@ -9,7 +9,7 @@ const CHART_OUTPUT = join(DATASETS_DIR, "generatedCharts.tsx");
 
 async function main() {
 	const files = (await readdir(DATASETS_DIR))
-		.filter((file) => file.endsWith(".ts") && !["index.ts", "types.ts", "generated.ts"].includes(file))
+		.filter((file) => file.endsWith(".ts") && !["index.ts", "types.ts", "ingestion.ts", "generated.ts"].includes(file))
 		.sort();
 	const definitions = await Promise.all(files.map(async (file) => {
 		const source = await readFile(join(DATASETS_DIR, file), "utf8");

@@ -1,6 +1,7 @@
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import type { BoundaryType } from "@/lib/types/boundaries";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
+import type { DatasetIngestionContract } from "./ingestion";
 
 export interface DatasetSource {
 	name: string;
@@ -10,6 +11,8 @@ export interface DatasetSource {
 	licence: string;
 	licenceUrl: string;
 	description: string;
+	/** Date the source was retrieved, when known. */
+	retrievedAt?: string;
 }
 
 // Only meaningful for datasets rendered as a colour-range choropleth on the
@@ -69,6 +72,8 @@ export interface ChartDatasetDefinition<T extends { type: string; data: unknown 
 	chart: ChartDefinition<T>;
 	charts?: readonly ChartDefinition<T>[];
 	source: DatasetSource;
+	/** Build-time validation requirements for the loader output. */
+	ingestion?: DatasetIngestionContract;
 	map?: ChartDatasetMap<T>;
 	precompile: (reader: DatasetReader) => Promise<Record<string, T>>;
 }

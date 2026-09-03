@@ -9,8 +9,14 @@ import { readFile, mkdir, rename, writeFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
+import { createHash } from "crypto";
 
 import { CHART_DATASET_DEFINITIONS } from "../lib/datasets";
+import {
+	type SourceArtifact,
+	validatePrecompiledDataset,
+} from "../lib/datasets/ingestion";
+import type { DatasetReader } from "../lib/datasets/types";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
@@ -65,6 +71,31 @@ const out = async (name: string, data: unknown) => {
 	await writeAtomically(join(PUBLIC_OUT_DIR, `${name}.json`), json);
 	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
 	console.log(`  precompiled: ${name}.json (${kb} KB)`);
+	return { bytes: Buffer.byteLength(json, "utf8"), sha256: createHash("sha256").update(json).digest("hex") };
+};
+
+const createTrackedReader = () => {
+	const artifacts = new Map<string, SourceArtifact>();
+	const track = async (
+		kind: SourceArtifact["kind"],
+		path: string,
+		readContent: () => Promise<string>,
+	) => {
+		const content = await readContent();
+		artifacts.set(`${kind}:${path}`, {
+			kind,
+			path,
+			bytes: Buffer.byteLength(content, "utf8"),
+			sha256: createHash("sha256").update(content).digest("hex"),
+		});
+		return content;
+	};
+	const reader: DatasetReader = {
+		text: (path) => track("text", path, () => read(path)),
+		odsContent: (path) => track("odsContent", path, () => readOdsContent(path)),
+		zipCsv: (path) => track("zipCsv", path, () => readZip(path)),
+	};
+	return { reader, artifacts };
 };
 
 async function main() {
@@ -72,11 +103,23 @@ async function main() {
 	await mkdir(OUT_DIR, { recursive: true });
 	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
 
+	const chartResults = CHART_DATASET_DEFINITIONS.map(async (definition) => {
+		const { reader, artifacts } = createTrackedReader();
+		const data = await definition.precompile(reader);
+		const summary = validatePrecompiledDataset(definition, data);
+		const output = await out(definition.precompiledFile, data);
+		return {
+			type: definition.type,
+			output: definition.precompiledFile,
+			source: definition.source,
+			contract: definition.ingestion ?? {},
+			inputs: [...artifacts.values()],
+			summary,
+			compiled: output,
+		};
+	});
 	const results = await Promise.allSettled([
-		...CHART_DATASET_DEFINITIONS.map((definition) =>
-			definition.precompile({ text: read, odsContent: readOdsContent, zipCsv: readZip })
-				.then((data) => out(definition.precompiledFile, data)),
-		),
+		...chartResults,
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
 		loadGazetteerCore(read).then((d) => out("gazetteer.core", d)),
 		loadBoundaryMappings(read).then((d) => out("boundary-mappings", d)),
@@ -89,6 +132,12 @@ async function main() {
 		for (const f of failures) console.error("  ERROR:", f.reason);
 		process.exit(1);
 	}
+	await out("dataset-manifest", {
+		version: 1,
+		datasets: results.slice(0, CHART_DATASET_DEFINITIONS.length).map(
+			(result) => (result as PromiseFulfilledResult<unknown>).value,
+		),
+	});
 
 	console.log("Done.");
 }
