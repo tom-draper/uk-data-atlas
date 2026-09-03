@@ -2,12 +2,7 @@
 import { Popup, type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";
 import { BoundaryGeojson } from "@lib/types/geometry";
 import { Party, PartyCode } from "@lib/types/common";
-import {
-	LocalElectionOptions,
-	GeneralElectionOptions,
-	MapOptions,
-	EthnicityOptions,
-} from "@lib/types/mapOptions";
+import { MapOptions } from "@lib/types/mapOptions";
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";
 import { getPercentageColorExpression } from "../colorScale/datasetColors";
@@ -103,7 +98,7 @@ export class LayerManager {
 
 	updatePartyPercentageLayers(
 		geojson: BoundaryGeojson,
-		options: LocalElectionOptions | GeneralElectionOptions,
+		options: MapOptions["localElection"] | MapOptions["generalElection"],
 		visibility: MapOptions["visibility"],
 		isDark = false,
 	): void {
@@ -148,7 +143,7 @@ export class LayerManager {
 
 	updateEthnicityCategoryPercentageLayers(
 		geojson: BoundaryGeojson,
-		options: EthnicityOptions,
+		options: MapOptions["ethnicity"],
 		visibility: MapOptions["visibility"],
 		isDark = false,
 	): void {
