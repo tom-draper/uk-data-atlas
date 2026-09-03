@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { CHART_COMPONENTS } from "@/lib/datasets/generatedCharts";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
-import { validatePrecompiledDataset } from "@/lib/datasets/ingestion";
+import { validatePrecompiledDataset } from "@/lib/data/catalog";
 import { getChartDefinitions } from "@/lib/datasets/types";
 
 const PRECOMPILED = join(process.cwd(), "data", "precompiled");

@@ -41,8 +41,8 @@ export interface DatasetDefinition<
 > {
 	type: T["type"];
 	precompiledFile: string;
-	/** Geography level used by the compiled records, when one is known. */
-	boundaryType?: BoundaryType;
+	/** Geography level used by the compiled records. */
+	boundaryType: BoundaryType;
 	source: DatasetSource;
 	/** Build-time validation requirements for the loader output. */
 	ingestion?: DatasetIngestionContract;

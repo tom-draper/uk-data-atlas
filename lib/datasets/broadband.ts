@@ -4,6 +4,6 @@ import type { ChartDatasetDefinition } from "./types";
 
 export const broadbandDefinition: ChartDatasetDefinition<BroadbandDataset> = {
 	...broadbandDatasetDefinition,
-	chart: { group: "Telecoms", key: "telecoms-broadband", label: "Fixed Broadband Coverage [2025]", defaultVisible: true, componentPath: "@/components/telecoms/broadband/BroadbandChart", boundaryType: "localAuthority", calculateStats: (m, g, d, l, id) => m.calculateBroadbandStats(g, d, l, id), year: 2025 },
+	chart: { group: "Telecoms", key: "telecoms-broadband", label: "Fixed Broadband Coverage [2025]", defaultVisible: true, componentPath: "@/components/telecoms/broadband/BroadbandChart", calculateStats: (m, g, d, l, id) => m.calculateBroadbandStats(g, d, l, id), year: 2025 },
 	map: { valueKey: "pctFullFibre", colorRange: { min: 50, max: 100 }, legend: { min: 0, max: 100, format: (v) => `${v.toFixed(0)}% full fibre` } },
 };

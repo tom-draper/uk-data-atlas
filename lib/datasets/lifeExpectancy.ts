@@ -6,8 +6,8 @@ const calculateStats: ChartDefinition<LifeExpectancyDataset>["calculateStats"] =
 	(mapManager, geojson, data, location, datasetId) =>
 		mapManager.calculateLifeExpectancyStats(geojson, data, location, datasetId);
 
-const le: ChartDefinition<LifeExpectancyDataset> = { group: "Health", key: "health-lifeExpectancy", label: "Life Expectancy [2020-2022]", defaultVisible: true, componentPath: "@/components/health/LifeExpectancyChart", boundaryType: "localAuthority", datasetId: "le", keyBy: "id", calculateStats, year: 2022 };
-const hle: ChartDefinition<LifeExpectancyDataset> = { group: "Health", key: "health-healthyLifeExpectancy", label: "Healthy Life Expectancy [2020-2022]", defaultVisible: false, componentPath: "@/components/health/LifeExpectancyChart", boundaryType: "localAuthority", datasetId: "hle", keyBy: "id", calculateStats, year: 2022 };
+const le: ChartDefinition<LifeExpectancyDataset> = { group: "Health", key: "health-lifeExpectancy", label: "Life Expectancy [2020-2022]", defaultVisible: true, componentPath: "@/components/health/LifeExpectancyChart", datasetId: "le", keyBy: "id", calculateStats, year: 2022 };
+const hle: ChartDefinition<LifeExpectancyDataset> = { group: "Health", key: "health-healthyLifeExpectancy", label: "Healthy Life Expectancy [2020-2022]", defaultVisible: false, componentPath: "@/components/health/LifeExpectancyChart", datasetId: "hle", keyBy: "id", calculateStats, year: 2022 };
 export const lifeExpectancyDefinition: ChartDatasetDefinition<LifeExpectancyDataset> = {
 	...lifeExpectancyDatasetDefinition, chart: le, charts: [le, hle],
 	map: {

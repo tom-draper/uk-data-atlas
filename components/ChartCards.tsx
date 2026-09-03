@@ -49,7 +49,7 @@ export default function ChartCards({ group, visibility, activeDataset, datasets,
 		[group, visibility],
 	);
 	const aggregatedData = useMemo(
-		() => Object.fromEntries(definitions.map(({ definition, chart }) => [definition.type + chart.key, aggregateDataset<any>({ datasets: datasets[definition.type], boundaryType: chart.boundaryType, keyBy: chart.keyBy, calculateStats: chart.calculateStats }, mapManager, boundaryData, location)])),
+		() => Object.fromEntries(definitions.map(({ definition, chart }) => [definition.type + chart.key, aggregateDataset<any>({ datasets: datasets[definition.type], boundaryType: definition.boundaryType, keyBy: chart.keyBy, calculateStats: chart.calculateStats }, mapManager, boundaryData, location)])),
 		[definitions, mapManager, boundaryData, location, ...definitions.map(({ definition }) => datasets[definition.type])],
 	);
 

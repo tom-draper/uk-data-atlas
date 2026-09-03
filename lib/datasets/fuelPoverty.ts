@@ -10,7 +10,6 @@ export const fuelPovertyDefinition: ChartDatasetDefinition<FuelPovertyDataset> =
 		label: "Fuel Poverty [2024]",
 		defaultVisible: true,
 		componentPath: "@/components/economics/fuel-poverty/FuelPovertyChart",
-		boundaryType: "lsoa",
 		calculateStats: (mapManager, geojson, data, location, datasetId) =>
 			mapManager.calculateFuelPovertyStats(geojson, data, location, datasetId),
 		year: 2024,

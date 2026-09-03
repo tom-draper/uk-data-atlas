@@ -1,5 +1,4 @@
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import type { BoundaryType } from "@/lib/types/boundaries";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { DatasetDefinition } from "../data/catalog";
 
@@ -39,7 +38,6 @@ export interface ChartDefinition<T extends { type: string; data: unknown } = { t
 	label: string;
 	defaultVisible: boolean;
 	componentPath: string;
-	boundaryType: BoundaryType;
 	calculateStats(
 		mapManager: MapManager,
 		geojson: BoundaryGeojson,
