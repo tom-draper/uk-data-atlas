@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { validatePrecompiledDataset } from "@/lib/datasets/ingestion";
-import type { ChartDatasetDefinition } from "@/lib/datasets/types";
+import { validatePrecompiledDataset } from "@/lib/data/catalog";
+import type { DatasetDefinition } from "@/lib/data/catalog";
 
 type TestDataset = {
 	type: "test";
@@ -9,14 +9,10 @@ type TestDataset = {
 	data: Record<string, { value: number }>;
 };
 
-const definition: ChartDatasetDefinition<TestDataset> = {
+const definition: DatasetDefinition<TestDataset> = {
 	type: "test",
 	precompiledFile: "test",
-	chart: {
-		group: "Test", key: "test", label: "Test", defaultVisible: true,
-		componentPath: "@/tests/TestChart", boundaryType: "ward",
-		calculateStats: () => null, year: 2025,
-	},
+	boundaryType: "ward",
 	source: { name: "Test", source: "Test", sourceUrl: "https://example.test", year: "2025", licence: "Test", licenceUrl: "https://example.test/licence", description: "Test" },
 	ingestion: { minimumDataRecords: 2, expectedBoundaryYears: [2024], requiredDataFields: ["value"] },
 	precompile: async () => ({}),

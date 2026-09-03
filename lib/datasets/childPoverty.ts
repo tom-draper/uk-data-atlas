@@ -10,7 +10,6 @@ export const childPovertyDefinition: ChartDatasetDefinition<ChildPovertyDataset>
 		label: "Child Poverty [2025]",
 		defaultVisible: true,
 		componentPath: "@/components/economics/child-poverty/ChildPovertyChart",
-		boundaryType: "localAuthority",
 		calculateStats: (mapManager, geojson, data, location, datasetId) =>
 			mapManager.calculateChildPovertyStats(geojson, data, location, datasetId),
 		year: 2025,

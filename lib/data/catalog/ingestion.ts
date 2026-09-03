@@ -54,7 +54,7 @@ export function validatePrecompiledDataset<
 		if (dataset.type !== definition.type) {
 			throw new Error(`${definition.type}: ${key} has type ${String(dataset.type)}.`);
 		}
-		if (definition.boundaryType && dataset.boundaryType !== definition.boundaryType) {
+		if (dataset.boundaryType !== definition.boundaryType) {
 			throw new Error(
 				`${definition.type}: ${key} uses ${String(dataset.boundaryType)} boundaries; expected ${definition.boundaryType}.`,
 			);

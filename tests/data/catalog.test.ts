@@ -6,6 +6,7 @@ import {
 import { validatePrecompiledDataset } from "@/lib/data/catalog";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { getChartDefinitions } from "@/lib/datasets/types";
 import type { DatasetDefinition } from "@/lib/data/catalog";
 
 type TestDataset = {
@@ -49,6 +50,11 @@ describe("dataset catalogue", () => {
 			expect(definition).not.toHaveProperty("charts");
 			expect(definition).not.toHaveProperty("map");
 			expect(definition.boundaryType).toBeTruthy();
+		}
+		for (const definition of CHART_DATASET_DEFINITIONS) {
+			for (const chart of getChartDefinitions(definition)) {
+				expect(chart).not.toHaveProperty("boundaryType");
+			}
 		}
 	});
 

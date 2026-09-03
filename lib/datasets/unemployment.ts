@@ -10,7 +10,6 @@ export const unemploymentDefinition: ChartDatasetDefinition<UnemploymentDataset>
 		label: "Unemployment Rate [2021]",
 		defaultVisible: true,
 		componentPath: "@/components/economics/unemployment/UnemploymentChart",
-		boundaryType: "localAuthority",
 		calculateStats: (mapManager, geojson, data, location, datasetId, dataset) =>
 			dataset ? mapManager.calculateUnemploymentStats(geojson, dataset, location, datasetId) : null,
 		year: 2021,
