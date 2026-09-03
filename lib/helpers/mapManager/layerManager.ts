@@ -4,6 +4,7 @@ import {
 	type GeoJSONSource,
 	type Map as MapLibreMap,
 } from "maplibre-gl";
+import type { FeatureCollection } from "geojson";
 import { BoundaryGeojson } from "@lib/types/geometry";
 import { Party, PartyCode } from "@lib/types/common";
 import { MapOptions } from "@lib/types/mapOptions";
@@ -13,6 +14,7 @@ import { getPercentageColorExpression } from "../colorScale/datasetColors";
 import { DEFAULT_COLOR } from "./featureBuilder";
 import type { PointTooltip } from "@/lib/types/custom";
 import type { MapLayer } from "./layers";
+import type { MapLayerMouseHandler } from "./callbacks";
 import {
 	featureProperty,
 	zoomInterpolate,
@@ -33,7 +35,12 @@ const LEGACY_HEAT_LAYER_ID = "custom-points-heat";
 const FADE_MIN_ZOOM = 6;
 const FADE_MAX_ZOOM = 9;
 
-const EMPTY_FC = { type: "FeatureCollection", features: [] } as const;
+// A fresh collection each time: MapLibre takes ownership of what it is given,
+// so a shared frozen constant would be the wrong thing to hand it.
+const emptyFeatureCollection = (): FeatureCollection => ({
+	type: "FeatureCollection",
+	features: [],
+});
 
 export class LayerManager {
 	private lastFillPaint: FillPaintConfig | null = null;
@@ -91,7 +98,7 @@ export class LayerManager {
 			if (this.sourceGeojson !== geojson) {
 				// Update source data in-place to avoid remove/add flash.
 				const src = this.map.getSource(SOURCE_ID) as GeoJSONSource;
-				src.setData(geojson as any);
+				src.setData(geojson);
 				this.sourceGeojson = geojson;
 			}
 			this.applyVisibility(visibility);
@@ -186,11 +193,11 @@ export class LayerManager {
 		const existing = this.map.getSource(POINT_SOURCE_ID) as
 			GeoJSONSource | undefined;
 		if (existing) {
-			existing.setData(collection as any);
+			existing.setData(collection);
 		} else {
 			this.map.addSource(POINT_SOURCE_ID, {
 				type: "geojson",
-				data: collection as any,
+				data: collection,
 			});
 			this.map.addLayer({
 				id: POINT_LAYER_ID,
@@ -251,11 +258,11 @@ export class LayerManager {
 		const source = this.map.getSource(sourceId) as
 			GeoJSONSource | undefined;
 		if (source) {
-			source.setData(layer.data as any);
+			source.setData(layer.data);
 		} else {
 			this.map.addSource(sourceId, {
 				type: "geojson",
-				data: layer.data as any,
+				data: layer.data,
 			});
 			this.map.addLayer({
 				id: layerId,
@@ -354,38 +361,22 @@ export class LayerManager {
 
 	private addPointTooltipHandlers(): void {
 		if (this.pointTooltipHandlersAttached) return;
-		this.map.on(
-			"mouseenter",
-			POINT_LAYER_ID,
-			this.handlePointMouseEnter as any,
-		);
-		this.map.on(
-			"mouseleave",
-			POINT_LAYER_ID,
-			this.handlePointMouseLeave as any,
-		);
+		this.map.on("mouseenter", POINT_LAYER_ID, this.handlePointMouseEnter);
+		this.map.on("mouseleave", POINT_LAYER_ID, this.handlePointMouseLeave);
 		this.pointTooltipHandlersAttached = true;
 	}
 
 	private removePointTooltipHandlers(): void {
 		if (!this.pointTooltipHandlersAttached) return;
-		this.map.off(
-			"mouseenter",
-			POINT_LAYER_ID,
-			this.handlePointMouseEnter as any,
-		);
-		this.map.off(
-			"mouseleave",
-			POINT_LAYER_ID,
-			this.handlePointMouseLeave as any,
-		);
+		this.map.off("mouseenter", POINT_LAYER_ID, this.handlePointMouseEnter);
+		this.map.off("mouseleave", POINT_LAYER_ID, this.handlePointMouseLeave);
 		this.pointTooltipHandlersAttached = false;
 		this.pointTooltip = undefined;
 		this.pointTooltipDark = false;
 		this.pointPopup?.remove();
 	}
 
-	private handlePointMouseEnter = (event: any): void => {
+	private handlePointMouseEnter: MapLayerMouseHandler = (event) => {
 		if (this.map.getZoom() < FADE_MAX_ZOOM || !this.pointTooltip) return;
 		const properties = event.features?.[0]?.properties as
 			Record<string, string | number> | undefined;
@@ -430,7 +421,7 @@ export class LayerManager {
 			.addTo(this.map);
 	};
 
-	private handlePointMouseLeave = (): void => {
+	private handlePointMouseLeave: MapLayerMouseHandler = () => {
 		this.map.getCanvas().style.cursor = "";
 		this.pointPopup?.remove();
 	};
@@ -440,7 +431,7 @@ export class LayerManager {
 	clearBoundaryData(): void {
 		this.sourceGeojson = null;
 		const src = this.map.getSource(SOURCE_ID) as GeoJSONSource | undefined;
-		if (src) src.setData(EMPTY_FC as any);
+		if (src) src.setData(emptyFeatureCollection());
 	}
 
 	private static readonly BASE_BOUNDARY_LAYERS = [
@@ -469,7 +460,7 @@ export class LayerManager {
 
 	private removeExistingLayers(): void {
 		this.sourceGeojson = null;
-		const source = (this.map as any).getSource(SOURCE_ID);
+		const source = this.map.getSource(SOURCE_ID);
 		if (source) {
 			if (this.map.getLayer(FILL_LAYER_ID))
 				this.map.removeLayer(FILL_LAYER_ID);

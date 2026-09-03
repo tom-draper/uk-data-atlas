@@ -1,13 +1,6 @@
-import type {
-	Map as MapLibreMap,
-	MapGeoJSONFeature,
-	MapMouseEvent,
-} from "maplibre-gl";
+import type { Map as MapLibreMap, MapMouseEvent } from "maplibre-gl";
 
-type MapLayerMouseHandler = (
-	ev: MapMouseEvent & { features?: MapGeoJSONFeature[] },
-) => void;
-import { MapManagerCallbacks } from "./callbacks";
+import { MapManagerCallbacks, type MapLayerMouseHandler } from "./callbacks";
 import { BoundaryType, ElectionData } from "@/lib/types";
 import {
 	boundaryTypeForCodeKey,
