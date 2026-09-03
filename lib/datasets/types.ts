@@ -1,19 +1,14 @@
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import type { BoundaryType } from "@/lib/types/boundaries";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
-import type { DatasetIngestionContract } from "./ingestion";
+import type { DatasetDefinition } from "../data/catalog";
 
-export interface DatasetSource {
-	name: string;
-	source: string;
-	sourceUrl: string;
-	year: string;
-	licence: string;
-	licenceUrl: string;
-	description: string;
-	/** Date the source was retrieved, when known. */
-	retrievedAt?: string;
-}
+export type {
+	DatasetDefinition,
+	DatasetIngestionContract,
+	DatasetReader,
+	DatasetSource,
+} from "../data/catalog";
 
 // Only meaningful for datasets rendered as a colour-range choropleth on the
 // map. Categorical datasets (party winner, majority ethnicity, ...) render
@@ -38,12 +33,6 @@ export interface ChartDatasetMap<T = unknown> {
 	getColorRange?(dataset: T): { min: number; max: number };
 }
 
-export interface DatasetReader {
-	text: (path: string) => Promise<string>;
-	odsContent: (path: string) => Promise<string>;
-	zipCsv: (path: string) => Promise<string>;
-}
-
 export interface ChartDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
 	group: string;
 	key: string;
@@ -66,16 +55,11 @@ export interface ChartDefinition<T extends { type: string; data: unknown } = { t
 	keyBy?: "year" | "id";
 }
 
-export interface ChartDatasetDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
-	type: T["type"];
-	precompiledFile: string;
+export interface ChartDatasetDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }>
+	extends DatasetDefinition<T> {
 	chart: ChartDefinition<T>;
 	charts?: readonly ChartDefinition<T>[];
-	source: DatasetSource;
-	/** Build-time validation requirements for the loader output. */
-	ingestion?: DatasetIngestionContract;
 	map?: ChartDatasetMap<T>;
-	precompile: (reader: DatasetReader) => Promise<Record<string, T>>;
 }
 
 export function getChartDefinitions<T extends { type: string; data: unknown }>(

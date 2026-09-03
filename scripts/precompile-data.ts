@@ -16,7 +16,7 @@ import {
 	type SourceArtifact,
 	validatePrecompiledDataset,
 } from "../lib/datasets/ingestion";
-import type { DatasetReader } from "../lib/datasets/types";
+import type { DatasetReader } from "../lib/data/catalog";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
