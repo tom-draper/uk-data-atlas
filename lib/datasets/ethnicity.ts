@@ -1,3 +1,4 @@
+import { renderEthnicity } from "@/lib/helpers/mapRendering";
 import { ethnicityDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { EthnicityDataset } from "@/lib/types/ethnicity";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
@@ -25,7 +26,7 @@ export const ethnicityDefinition: ChartDatasetDefinition<EthnicityDataset> = {
   legendKind: "ethnicity",
   mapRenderer: {
     getOptions: (_activeViz, mapOptions) => mapOptions.ethnicity,
-    render: ({ mapManager, geojson, dataset, mapOptions, isDark }) =>
-      mapManager.updateMapForEthnicity(geojson, dataset, mapOptions, isDark),
+    render: ({ map, geojson, dataset, mapOptions, isDark }) =>
+      renderEthnicity(map, geojson, dataset, mapOptions, isDark),
   },
 };

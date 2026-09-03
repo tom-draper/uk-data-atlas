@@ -6,6 +6,11 @@ import { useIsDark } from "../context/ThemeContext";
 import { gazetteer } from "../data/gazetteer/static";
 import { getChartDatasetDefinition, isChartDataset } from "../datasets";
 import { categoryFilter } from "../helpers/mapManager/expressions";
+import {
+	renderCustomDataset,
+	renderCustomPoints,
+	renderNumericDataset,
+} from "@/lib/helpers/mapRendering";
 
 /** Builds the vector-tile filter driven by the roads legend's click-to-isolate / right-click-to-exclude state. */
 function buildNetworkFilter(
@@ -112,7 +117,8 @@ export function useMapUpdates({
 			activeDataset?.type === "custom" &&
 			activeDataset.kind === "points"
 		) {
-			mapManager.updateMapForCustomPoints(
+			renderCustomPoints(
+				mapManager,
 				activeDataset,
 				mapOptions,
 				gazetteer.boundsOf(selectedLocation) ?? null,
@@ -138,7 +144,7 @@ export function useMapUpdates({
 		// Point datasets are drawn by the effect above and carry no per-boundary
 		// values (`data` is empty), so the choropleth path below would repaint
 		// every boundary in the default colour — undoing the clearBoundaryData()
-		// that updateMapForCustomPoints() just did — and rebind the hover
+		// that renderCustomPoints() just did — and rebind the hover
 		// handlers to an empty record. Effects run in declaration order, so this
 		// one always wins; skip it instead.
 		if (activeDataset.type === "custom" && activeDataset.kind === "points")
@@ -149,7 +155,7 @@ export function useMapUpdates({
 				const definition = getChartDatasetDefinition(activeDataset.type);
 				if (definition?.mapRenderer) {
 					return definition.mapRenderer.render({
-						mapManager,
+						map: mapManager,
 						geojson,
 						dataset: activeDataset,
 						mapOptions,
@@ -158,7 +164,8 @@ export function useMapUpdates({
 					});
 				}
 				if (definition?.map) {
-					return mapManager.updateMapForNumericDataset(
+					return renderNumericDataset(
+						mapManager,
 						geojson,
 						activeDataset,
 						mapOptions,
@@ -169,7 +176,8 @@ export function useMapUpdates({
 
 			switch (activeDataset.type) {
 				case "custom":
-					return mapManager.updateMapForCustomDataset(
+					return renderCustomDataset(
+						mapManager,
 						geojson,
 						activeDataset,
 						mapOptions,

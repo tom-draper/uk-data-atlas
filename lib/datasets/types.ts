@@ -1,5 +1,5 @@
 import type { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
-import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import type { MapRenderContext } from "@/lib/helpers/mapRendering";
 import type { ActiveViz } from "@/lib/types/datasets";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
@@ -33,8 +33,10 @@ export interface ChartDatasetMapRenderer<
   T extends { type: string; data: unknown },
 > {
   getOptions(activeViz: ActiveViz, mapOptions: MapOptions): object;
+  // Renderers paint through the map context, not the map session itself, so a
+  // dataset definition cannot reach the wider MapManager surface.
   render(context: {
-    mapManager: MapManager;
+    map: MapRenderContext;
     geojson: BoundaryGeojson;
     dataset: T;
     mapOptions: MapOptions;

@@ -1,3 +1,4 @@
+import { renderGeneralElection } from "@/lib/helpers/mapRendering";
 import { generalElectionDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { GeneralElectionDataset } from "@/lib/types/elections";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
@@ -56,12 +57,7 @@ export const generalElectionDefinition: ChartDatasetDefinition<GeneralElectionDa
     legendKind: "party",
     mapRenderer: {
       getOptions: (_activeViz, mapOptions) => mapOptions.generalElection,
-      render: ({ mapManager, geojson, dataset, mapOptions, isDark }) =>
-        mapManager.updateMapForGeneralElection(
-          geojson,
-          dataset,
-          mapOptions,
-          isDark,
-        ),
+      render: ({ map, geojson, dataset, mapOptions, isDark }) =>
+        renderGeneralElection(map, geojson, dataset, mapOptions, isDark),
     },
   };

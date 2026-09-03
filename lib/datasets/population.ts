@@ -1,3 +1,8 @@
+import {
+  renderAgeDistribution,
+  renderGender,
+  renderPopulationDensity,
+} from "@/lib/helpers/mapRendering";
 import { populationDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { PopulationDataset } from "@/lib/types/population";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
@@ -55,16 +60,16 @@ export const populationDefinition: ChartDatasetDefinition<PopulationDataset> = {
           return mapOptions.populationDensity;
       }
     },
-    render: ({ mapManager, geojson, dataset, mapOptions, activeViz }) => {
+    render: ({ map, geojson, dataset, mapOptions, activeViz }) => {
       switch (activeViz.view) {
         case "age":
-          mapManager.updateMapForAgeDistribution(geojson, dataset, mapOptions);
+          renderAgeDistribution(map, geojson, dataset, mapOptions);
           return;
         case "gender":
-          mapManager.updateMapForGender(geojson, dataset, mapOptions);
+          renderGender(map, geojson, dataset, mapOptions);
           return;
         default:
-          mapManager.updateMapForPopulationDensity(geojson, dataset, mapOptions);
+          renderPopulationDensity(map, geojson, dataset, mapOptions);
       }
     },
   },

@@ -1,3 +1,4 @@
+import { renderLocalElection } from "@/lib/helpers/mapRendering";
 import { localElectionDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { LocalElectionDataset } from "@/lib/types/elections";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
@@ -60,12 +61,7 @@ export const localElectionDefinition: ChartDatasetDefinition<LocalElectionDatase
     legendKind: "party",
     mapRenderer: {
       getOptions: (_activeViz, mapOptions) => mapOptions.localElection,
-      render: ({ mapManager, geojson, dataset, mapOptions, isDark }) =>
-        mapManager.updateMapForLocalElection(
-          geojson,
-          dataset,
-          mapOptions,
-          isDark,
-        ),
+      render: ({ map, geojson, dataset, mapOptions, isDark }) =>
+        renderLocalElection(map, geojson, dataset, mapOptions, isDark),
     },
   };
