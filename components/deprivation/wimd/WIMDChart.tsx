@@ -6,8 +6,16 @@ import {
 	WIMDDataset,
 	SelectedArea,
 } from "@lib/types";
-import { useIsDark } from "@/lib/context/ThemeContext";
-import DecileChart from "../DecileChart";
+import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
+import { resolveDeprivationStats } from "../deprivationStats";
+
+const WIMD: DeprivationIndex = {
+	datasetType: "wimd",
+	label: "WIMD",
+	region: "Wales",
+	attribution:
+		"Welsh Government. Welsh Index of Multiple Deprivation 2019. gov.wales",
+};
 
 interface WIMDChartProps {
 	activeDataset: Dataset | null;
@@ -19,33 +27,6 @@ interface WIMDChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-function computeWimdStats(
-	dataset: WIMDDataset,
-	aggregatedData: Record<number, AggregatedWIMDData> | null,
-	selectedArea: SelectedArea | null,
-) {
-	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
-
-	if (selectedArea.type === "lsoa") {
-		const record = dataset.data[selectedArea.code];
-		return record
-			? {
-					averageWIMDScore: record.wimdScore,
-					averageWIMDRank: record.wimdRank,
-					averageWIMDDecile: record.wimdDecile,
-				}
-			: null;
-	}
-
-	if (selectedArea.type === "localAuthority")
-		return dataset.ladStats[selectedArea.code] ?? null;
-
-	if (selectedArea.type === "ward" && selectedArea.data)
-		return dataset.ladStats[selectedArea.data.ladCode] ?? null;
-
-	return null;
-}
-
 export default function WIMDChart({
 	activeDataset,
 	availableDatasets,
@@ -54,42 +35,36 @@ export default function WIMDChart({
 	year,
 	setActiveViz,
 }: WIMDChartProps) {
-	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
-	const wimdStats = computeWimdStats(dataset, aggregatedData, selectedArea);
-	const isActive =
-		activeDataset?.type === "wimd" && activeDataset.id === dataset.id;
+	const stats = resolveDeprivationStats({
+		aggregated: aggregatedData?.[dataset.year] ?? null,
+		ladStats: dataset.ladStats,
+		selectedArea,
+		fineArea: {
+			type: "lsoa",
+			records: dataset.data,
+			statsFor: (record) => ({
+				averageWIMDScore: record.wimdScore,
+				averageWIMDRank: record.wimdRank,
+				averageWIMDDecile: record.wimdDecile,
+			}),
+		},
+	});
 
 	return (
-		<DecileChart
-			title="Welsh Government. Welsh Index of Multiple Deprivation 2019. gov.wales"
-			heading={`Deprivation (WIMD) [${dataset.year}]`}
-			region="Wales"
-			decile={wimdStats ? Math.round(wimdStats.averageWIMDDecile) : null}
-			hasData={wimdStats !== null}
+		<DeprivationChart
+			index={WIMD}
+			dataset={dataset}
+			activeDataset={activeDataset}
+			selectedArea={selectedArea}
+			decile={stats?.averageWIMDDecile ?? null}
+			detail={
+				stats ? { kind: "rank", value: stats.averageWIMDRank } : null
+			}
+			setActiveViz={setActiveViz}
 			extraClassName="block w-full text-left"
-			footer={
-				selectedArea &&
-				wimdStats &&
-				Number.isFinite(wimdStats.averageWIMDRank) ? (
-					<span
-						className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}
-					>
-						Rank{" "}
-						{Math.round(wimdStats.averageWIMDRank).toLocaleString()}
-					</span>
-				) : null
-			}
-			isActive={isActive}
-			onClick={() =>
-				setActiveViz({
-					datasetId: dataset.id,
-					datasetType: dataset.type,
-					datasetYear: dataset.year,
-				})
-			}
 		/>
 	);
 }
