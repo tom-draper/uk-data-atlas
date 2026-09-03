@@ -27,10 +27,9 @@ import {
 } from "react";
 import {
 	fetchBoundaryFile,
-	GEOJSON_PATHS,
 	getProp,
-	PROPERTY_KEYS,
 } from "@lib/data/boundaries/boundaries";
+import { BOUNDARY_CATALOG } from "@lib/data/boundaries/boundaries";
 
 interface LocationPanelProps {
 	selectedLocation: string | null;
@@ -105,7 +104,7 @@ export default function LocationPanel({
 	const deferredSearchQuery = useDeferredValue(searchQuery);
 
 	useEffect(() => {
-		fetchBoundaryFile(GEOJSON_PATHS.ward[2023])
+		fetchBoundaryFile(BOUNDARY_CATALOG.ward.vintages[2023])
 			.then((data) => setGeojson(data))
 			.catch((err) =>
 				console.error("Failed to load ward boundaries:", err),
@@ -120,7 +119,7 @@ export default function LocationPanel({
 		geojson.features.forEach((feature) => {
 			const wardCode = getProp(
 				feature.properties,
-				PROPERTY_KEYS.wardCode,
+				BOUNDARY_CATALOG.ward.properties.code,
 			);
 			if (wardCode) {
 				map[wardCode] = feature;

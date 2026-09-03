@@ -1,5 +1,6 @@
 import type { BoundaryGeojson, Features } from "@lib/types";
-import { type BoundaryType, PROPERTY_KEYS, getProp } from "./boundaries";
+import { type BoundaryType, getProp } from "./boundaries";
+import { BOUNDARY_CATALOG } from "./catalog";
 
 export type CodeType = BoundaryType;
 export type YearCode = number;
@@ -67,16 +68,16 @@ export const buildCrossYearMappings = (
 	const mappings: CodeMapping = {};
 	const codeKeys =
 		type === "ward"
-			? PROPERTY_KEYS.wardCode
+			? BOUNDARY_CATALOG.ward.properties.code
 			: type === "constituency"
-				? PROPERTY_KEYS.constituencyCode
-				: PROPERTY_KEYS.ladCode;
+				? BOUNDARY_CATALOG.constituency.properties.code
+				: BOUNDARY_CATALOG.localAuthority.properties.code;
 	const nameKeys =
 		type === "ward"
-			? PROPERTY_KEYS.wardName
+			? BOUNDARY_CATALOG.ward.properties.name
 			: type === "constituency"
-				? PROPERTY_KEYS.constituencyName
-				: PROPERTY_KEYS.ladName;
+				? BOUNDARY_CATALOG.constituency.properties.name
+				: BOUNDARY_CATALOG.localAuthority.properties.name;
 	const nameIndex: Record<string, Set<{ code: string; year: number }>> = {};
 
 	for (const year of years) {
@@ -92,7 +93,9 @@ export const buildCrossYearMappings = (
 			if (!code || !name) continue;
 
 			const ladCode =
-				type === "ward" ? getProp(props, PROPERTY_KEYS.ladCode) : null;
+				type === "ward"
+					? getProp(props, BOUNDARY_CATALOG.localAuthority.properties.code)
+					: null;
 			const normalizedName = ladCode
 				? `${name.toLowerCase().trim()}|${ladCode}`
 				: name.toLowerCase().trim();
@@ -145,7 +148,7 @@ export const buildConstituencyWardMappings = (
 	for (const feature of constituencyGeoJSON.features) {
 		const code = getProp(
 			feature.properties,
-			PROPERTY_KEYS.constituencyCode,
+			BOUNDARY_CATALOG.constituency.properties.code,
 		);
 		if (!code) continue;
 
@@ -173,7 +176,10 @@ export const buildConstituencyWardMappings = (
 
 	const mappings: Record<string, string[]> = {};
 	for (const feature of wardGeoJSON.features) {
-		const wardCode = getProp(feature.properties, PROPERTY_KEYS.wardCode);
+		const wardCode = getProp(
+			feature.properties,
+			BOUNDARY_CATALOG.ward.properties.code,
+		);
 		if (!wardCode) continue;
 
 		const geometry = feature.geometry as any;

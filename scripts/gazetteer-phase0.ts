@@ -8,7 +8,8 @@ import { gzipSync } from "zlib";
 import { join } from "path";
 import { feature } from "topojson-client";
 import { polygonAreaSqKm } from "../lib/helpers/population";
-import { getProp, PROPERTY_KEYS } from "../lib/data/boundaries/boundaries";
+import { getProp } from "../lib/data/boundaries/boundaries";
+import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 
 const B = join(process.cwd(), "public", "data", "boundaries");
 const FILES = {
@@ -95,8 +96,8 @@ const lad = load(FILES.lad);
 const con = load(FILES.con);
 console.log(`  LAD: ${lad.length}, Constituency: ${con.length}`);
 
-const ladCore = coreEntries(lad, PROPERTY_KEYS.ladCode, PROPERTY_KEYS.ladName, "localAuthority");
-const conCore = coreEntries(con, PROPERTY_KEYS.constituencyCode, PROPERTY_KEYS.constituencyName, "constituency");
+const ladCore = coreEntries(lad, BOUNDARY_CATALOG.localAuthority.properties.code, BOUNDARY_CATALOG.localAuthority.properties.name, "localAuthority");
+const conCore = coreEntries(con, BOUNDARY_CATALOG.constituency.properties.code, BOUNDARY_CATALOG.constituency.properties.name, "constituency");
 const core = { ...ladCore, ...conCore };
 console.log(`\n[CORE] LAD+constituency entries: ${Object.keys(core).length}`, sizes(core));
 
@@ -105,7 +106,7 @@ console.log("\nLoading LSOA (building block)...");
 const lsoa = load(FILES.lsoa);
 console.log(`  LSOA (E+W): ${lsoa.length}`);
 const bbTable = lsoa.map((f) => ({
-	code: getProp(f.properties, PROPERTY_KEYS.lsoaCode),
+	code: getProp(f.properties, BOUNDARY_CATALOG.lsoa.properties.code),
 	areaM2: areaM2(f.geometry),
 	c: centroidOf(f.geometry).map((n) => +n.toFixed(4)),
 }));
@@ -115,8 +116,8 @@ console.log(`  ~${perRow.toFixed(0)} bytes/row  ->  extrapolated OA (~230k): ${(
 
 // --- real area-weighted crosswalk: constituency(2024) -> LAD(2025) via LSOA ---
 console.log("\nDeriving constituency->LAD crosswalk (area-weighted via LSOA)...");
-const conBox = con.map((f) => ({ code: getProp(f.properties, PROPERTY_KEYS.constituencyCode)!, bbox: bboxOf(f.geometry), geom: f.geometry }));
-const ladBox = lad.map((f) => ({ code: getProp(f.properties, PROPERTY_KEYS.ladCode)!, bbox: bboxOf(f.geometry), geom: f.geometry }));
+const conBox = con.map((f) => ({ code: getProp(f.properties, BOUNDARY_CATALOG.constituency.properties.code)!, bbox: bboxOf(f.geometry), geom: f.geometry }));
+const ladBox = lad.map((f) => ({ code: getProp(f.properties, BOUNDARY_CATALOG.localAuthority.properties.code)!, bbox: bboxOf(f.geometry), geom: f.geometry }));
 const inBox = (px: number, py: number, b: number[]) => px >= b[0] && px <= b[2] && py >= b[1] && py <= b[3];
 function assign(px: number, py: number, cand: { code: string; bbox: number[]; geom: GeoJSON.Geometry }[]): string | null {
 	for (const c of cand) if (inBox(px, py, c.bbox) && pointInFeat(px, py, c.geom)) return c.code;

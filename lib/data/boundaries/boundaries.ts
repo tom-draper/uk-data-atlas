@@ -8,65 +8,9 @@ import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
 export { BOUNDARY_CATALOG } from "./catalog";
 export type { BoundaryType, BoundaryYear } from "./catalog";
 
-type BoundaryPathCatalog = {
-	[T in BoundaryType]: (typeof BOUNDARY_CATALOG)[T]["vintages"];
-};
-
-/** @deprecated Use BOUNDARY_CATALOG[type].vintages for new code. */
-export const GEOJSON_PATHS = Object.fromEntries(
-	Object.entries(BOUNDARY_CATALOG).map(([type, definition]) => [
-		type,
-		definition.vintages,
-	]),
-) as BoundaryPathCatalog;
-
 export type WardYear = keyof typeof BOUNDARY_CATALOG.ward.vintages;
 export type ConstituencyYear = keyof typeof BOUNDARY_CATALOG.constituency.vintages;
 export type LocalAuthorityYear = keyof typeof BOUNDARY_CATALOG.localAuthority.vintages;
-
-// Compatibility exports for existing consumers. All values come from the
-// catalogue; new code should prefer BOUNDARY_CATALOG[type].properties.
-export const WARD_CODE_KEYS = BOUNDARY_CATALOG.ward.properties.code;
-const WARD_NAME_KEYS = BOUNDARY_CATALOG.ward.properties.name;
-export const LAD_CODE_KEYS = BOUNDARY_CATALOG.localAuthority.properties.code;
-const LAD_NAME_KEYS = BOUNDARY_CATALOG.localAuthority.properties.name;
-export const CONSTITUENCY_CODE_KEYS = BOUNDARY_CATALOG.constituency.properties.code;
-const CONSTITUENCY_NAME_KEYS = BOUNDARY_CATALOG.constituency.properties.name;
-export const LSOA_CODE_KEYS = BOUNDARY_CATALOG.lsoa.properties.code;
-const LSOA_NAME_KEYS = BOUNDARY_CATALOG.lsoa.properties.name;
-export const DATA_ZONE_CODE_KEYS = BOUNDARY_CATALOG.dataZone.properties.code;
-const DATA_ZONE_NAME_KEYS = BOUNDARY_CATALOG.dataZone.properties.name;
-export const SOA_CODE_KEYS = BOUNDARY_CATALOG.superOutputArea.properties.code;
-const SOA_NAME_KEYS = BOUNDARY_CATALOG.superOutputArea.properties.name;
-
-export type LSOACodeKey = (typeof LSOA_CODE_KEYS)[number];
-export type LSOANameKey = (typeof LSOA_NAME_KEYS)[number];
-export type DataZoneCodeKey = (typeof DATA_ZONE_CODE_KEYS)[number];
-export type DataZoneNameKey = (typeof DATA_ZONE_NAME_KEYS)[number];
-export type SOACodeKey = (typeof SOA_CODE_KEYS)[number];
-export type SOANameKey = (typeof SOA_NAME_KEYS)[number];
-export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
-export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
-export type LADCodeKey = (typeof LAD_CODE_KEYS)[number];
-export type LADNameKey = (typeof LAD_NAME_KEYS)[number];
-export type ConstituencyCodeKey = (typeof CONSTITUENCY_CODE_KEYS)[number];
-export type ConstituencyNameKey = (typeof CONSTITUENCY_NAME_KEYS)[number];
-
-/** @deprecated Use BOUNDARY_CATALOG[type].properties for new code. */
-export const PROPERTY_KEYS = {
-	wardCode: WARD_CODE_KEYS,
-	wardName: WARD_NAME_KEYS,
-	ladCode: LAD_CODE_KEYS,
-	ladName: LAD_NAME_KEYS,
-	constituencyCode: CONSTITUENCY_CODE_KEYS,
-	constituencyName: CONSTITUENCY_NAME_KEYS,
-	lsoaCode: LSOA_CODE_KEYS,
-	lsoaName: LSOA_NAME_KEYS,
-	dataZoneCode: DATA_ZONE_CODE_KEYS,
-	dataZoneName: DATA_ZONE_NAME_KEYS,
-	soaCode: SOA_CODE_KEYS,
-	soaName: SOA_NAME_KEYS,
-} as const;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
 	England: "E",
@@ -219,8 +163,14 @@ export const filterFeatures = (
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
-				const wardCode = getProp(f.properties, PROPERTY_KEYS.wardCode);
-				let ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
+				const wardCode = getProp(
+					f.properties,
+					BOUNDARY_CATALOG.ward.properties.code,
+				);
+				let ladCode = getProp(
+					f.properties,
+					BOUNDARY_CATALOG.localAuthority.properties.code,
+				);
 				const mappedLadCode =
 					wardCode && getLadForWard
 						? getLadForWard(wardCode)
@@ -237,7 +187,10 @@ export const filterFeatures = (
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
-				const ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
+				const ladCode = getProp(
+					f.properties,
+					BOUNDARY_CATALOG.localAuthority.properties.code,
+				);
 				return ladCode && ladCodeSet.has(ladCode);
 			}),
 		};
