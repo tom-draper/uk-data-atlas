@@ -53,6 +53,10 @@ export type VectorLineLayer = {
 	};
 	visibility: LayerVisibility;
 	style: LineLayer["style"];
+	/** Tile attribute a legend-driven filter matches against, e.g. `road_classification`. */
+	filterProperty?: string;
+	/** MapLibre filter applied to the layer; omit to render every feature. */
+	filter?: MapExpression;
 };
 
 export type MapLayer =

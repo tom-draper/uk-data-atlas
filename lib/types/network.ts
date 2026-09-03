@@ -12,6 +12,12 @@ export interface NetworkDataset {
 	licence: string;
 	description: string;
 	available: boolean;
-	legend?: readonly { label: string; color: string }[];
+	legend?: readonly {
+		id: string;
+		label: string;
+		color: string;
+		/** Tile attribute values this row matches; omit for a catch-all "other" row. */
+		values?: readonly string[];
+	}[];
 	layer: Omit<VectorLineLayer, "visibility"> | null;
 }

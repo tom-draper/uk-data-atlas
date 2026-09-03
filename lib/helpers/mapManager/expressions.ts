@@ -49,6 +49,32 @@ export const categoryMatch = (
 ): MapExpression =>
 	expression(["match", featureProperty(property), ...[...values].flat(), fallback]);
 
+/**
+ * Builds a MapLibre filter that shows only the legend rows in `activeIds`.
+ * A row without `values` is a catch-all "other" bucket: it matches anything
+ * not covered by a sibling row's `values`. Returns `undefined` when every row
+ * is active, so the caller can skip filtering entirely.
+ */
+export const categoryFilter = (
+	property: string,
+	legend: readonly { id: string; values?: readonly string[] }[],
+	activeIds: ReadonlySet<string>,
+): MapExpression | undefined => {
+	if (activeIds.size >= legend.length) return undefined;
+
+	const knownValues = legend.flatMap((item) => item.values ?? []);
+	const clauses = legend
+		.filter((item) => activeIds.has(item.id))
+		.map((item) =>
+			item.values
+				? expression(["in", featureProperty(property), ["literal", item.values]])
+				: expression(["!", ["in", featureProperty(property), ["literal", knownValues]]]),
+		);
+
+	if (clauses.length === 0) return expression(["!", ["all"]]);
+	return expression(["any", ...clauses]);
+};
+
 export const hoverOpacity = (opacity: number): MapExpression =>
 	when(
 		[[boolean(featureState("hover"), false), opacity * 0.58]],

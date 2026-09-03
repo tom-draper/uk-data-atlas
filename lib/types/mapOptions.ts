@@ -21,6 +21,12 @@ export interface CategoryOptions {
 	percentageRange: ColorRange;
 }
 
+/** Click-to-isolate / right-click-to-exclude state for a map-native network layer's legend. */
+export interface NetworkOptions {
+	selected?: string;
+	excluded?: string[];
+}
+
 export type GeneralElectionOptions = CategoryOptions & ColorRangeOption;
 export type LocalElectionOptions = CategoryOptions & ColorRangeOption;
 export type HousePriceOptions = ColorRangeOption;
@@ -89,6 +95,7 @@ export type MapOptions = ChartMapOptions & {
 	claimantCount: ClaimantCountOptions;
 	nhsWaiting: NHSWaitingOptions;
 	unemployment: UnemploymentOptions;
+	network: NetworkOptions;
 	theme: {
 		id: ColorTheme;
 	};

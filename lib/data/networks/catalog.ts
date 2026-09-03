@@ -10,6 +10,9 @@ export const OS_OPEN_ROADS_CLASSIFICATION_COLORS = {
 
 export const OS_OPEN_ROADS_OTHER_ROADS_COLOR = "#94a3b8";
 
+/** Tile attribute the roads legend filters on when a category is selected or excluded. */
+const ROAD_CLASSIFICATION_PROPERTY = "road_classification";
+
 /**
  * External, tile-backed transport overlays. Keeping the endpoint separate from
  * the dataset catalogue avoids shipping national geometry to every browser.
@@ -35,10 +38,10 @@ export const NETWORK_DATASETS: Record<string, NetworkDataset> = {
 		description: "A generalised, colour-coded road network for Great Britain: motorways, A roads, B roads, and local roads.",
 		available: Boolean(osOpenRoadsTileUrl),
 		legend: [
-			{ label: "Motorway", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS.Motorway },
-			{ label: "A road", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["A Road"] },
-			{ label: "B road", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["B Road"] },
-			{ label: "Other roads", color: OS_OPEN_ROADS_OTHER_ROADS_COLOR },
+			{ id: "motorway", label: "Motorway", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS.Motorway, values: ["Motorway"] },
+			{ id: "a-road", label: "A road", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["A Road"], values: ["A Road"] },
+			{ id: "b-road", label: "B road", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["B Road"], values: ["B Road"] },
+			{ id: "other", label: "Other roads", color: OS_OPEN_ROADS_OTHER_ROADS_COLOR },
 		],
 		layer: osOpenRoadsTileUrl
 			? {
@@ -51,9 +54,10 @@ export const NETWORK_DATASETS: Record<string, NetworkDataset> = {
 					maxzoom: 14,
 					attribution: "Contains OS data © Crown copyright and database right",
 				},
+				filterProperty: ROAD_CLASSIFICATION_PROPERTY,
 				style: {
 					color: categoryMatch(
-						"road_classification",
+						ROAD_CLASSIFICATION_PROPERTY,
 						Object.entries(OS_OPEN_ROADS_CLASSIFICATION_COLORS),
 						OS_OPEN_ROADS_OTHER_ROADS_COLOR,
 					),
