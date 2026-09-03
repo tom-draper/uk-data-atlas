@@ -6,7 +6,11 @@ import {
 	fetchBoundaryFile,
 	filterFeatures,
 } from "../data/boundaries/boundaries";
-import { BOUNDARY_CATALOG } from "../data/boundaries/catalog";
+import {
+	BOUNDARY_CATALOG,
+	BOUNDARY_TYPES,
+	boundaryYears,
+} from "../data/boundaries/catalog";
 import {
 	extractWardLadMappings,
 	buildCrossYearMappings,
@@ -20,19 +24,12 @@ import type {
 } from "../data/boundaries/mappings";
 import { withCDN } from "../helpers/cdn";
 
-const EMPTY_BOUNDARY_DATA: BoundaryData = {
-	ward: { 2024: null, 2023: null, 2022: null, 2021: null },
-	constituency: { 2024: null, 2019: null, 2017: null, 2015: null },
-	localAuthority: {
-		2025: null,
-		2024: null,
-		2023: null,
-		2016: null,
-	},
-	lsoa: { 2011: null },
-	dataZone: { 2011: null },
-	superOutputArea: { 2011: null },
-};
+const EMPTY_BOUNDARY_DATA: BoundaryData = Object.fromEntries(
+	BOUNDARY_TYPES.map((type) => [
+		type,
+		Object.fromEntries(boundaryYears(type).map((year) => [year, null])),
+	]),
+) as BoundaryData;
 
 // Filtered feature arrays retain references to the loaded geometry, but can still
 // add up when every visited location is kept indefinitely. Keep the most recent
@@ -160,31 +157,12 @@ export const getCachedFilteredBoundaryData = (
 		return cached;
 	}
 
-	const filteredData: BoundaryData = {
-		ward: filterBoundaryGroup(
-			rawData.ward,
-			"ward",
-			location,
-			getLadForWard,
-		),
-		constituency: filterBoundaryGroup(
-			rawData.constituency,
-			"constituency",
-			location,
-		),
-		localAuthority: filterBoundaryGroup(
-			rawData.localAuthority,
-			"localAuthority",
-			location,
-		),
-		lsoa: filterBoundaryGroup(rawData.lsoa, "lsoa", location),
-		dataZone: filterBoundaryGroup(rawData.dataZone, "dataZone", location),
-		superOutputArea: filterBoundaryGroup(
-			rawData.superOutputArea,
-			"superOutputArea",
-			location,
-		),
-	};
+	const filteredData = Object.fromEntries(
+		BOUNDARY_TYPES.map((type) => [
+			type,
+			filterBoundaryGroup(rawData[type], type, location, getLadForWard),
+		]),
+	) as BoundaryData;
 
 	if (cache.size >= LOCATION_BOUNDARY_CACHE_LIMIT) {
 		const oldestKey = cache.keys().next().value;
@@ -198,14 +176,7 @@ export const getCachedFilteredBoundaryData = (
 const extractCodeSets = (
 	boundaryData: BoundaryData,
 	isLoading: boolean,
-): {
-	ward: Record<number, Set<string>>;
-	constituency: Record<number, Set<string>>;
-	localAuthority: Record<number, Set<string>>;
-	lsoa: Record<number, Set<string>>;
-	dataZone: Record<number, Set<string>>;
-	superOutputArea: Record<number, Set<string>>;
-} | null => {
+): Record<BoundaryType, Record<number, Set<string>>> | null => {
 	if (isLoading) return null;
 
 	const extractFromGroup = (
@@ -234,32 +205,15 @@ const extractCodeSets = (
 			{} as Record<number, Set<string>>,
 		);
 
-	return {
-		ward: extractFromGroup(
-			boundaryData.ward,
-			BOUNDARY_CATALOG.ward.properties.code,
-		),
-		constituency: extractFromGroup(
-			boundaryData.constituency,
-			BOUNDARY_CATALOG.constituency.properties.code,
-		),
-		localAuthority: extractFromGroup(
-			boundaryData.localAuthority,
-			BOUNDARY_CATALOG.localAuthority.properties.code,
-		),
-		lsoa: extractFromGroup(
-			boundaryData.lsoa,
-			BOUNDARY_CATALOG.lsoa.properties.code,
-		),
-		dataZone: extractFromGroup(
-			boundaryData.dataZone,
-			BOUNDARY_CATALOG.dataZone.properties.code,
-		),
-		superOutputArea: extractFromGroup(
-			boundaryData.superOutputArea,
-			BOUNDARY_CATALOG.superOutputArea.properties.code,
-		),
-	};
+	return Object.fromEntries(
+		BOUNDARY_TYPES.map((type) => [
+			type,
+			extractFromGroup(
+				boundaryData[type],
+				BOUNDARY_CATALOG[type].properties.code,
+			),
+		]),
+	) as Record<BoundaryType, Record<number, Set<string>>>;
 };
 
 /**
@@ -312,148 +266,126 @@ export function useBoundaryData(
 
 			Promise.all([
 				precompiledMappings,
-				fetchBoundaryGroup("ward"),
-				fetchBoundaryGroup("constituency"),
-				fetchBoundaryGroup("localAuthority"),
-				fetchBoundaryGroup("lsoa"),
-				fetchBoundaryGroup("dataZone"),
-				fetchBoundaryGroup("superOutputArea"),
+				Promise.all(
+					BOUNDARY_TYPES.map(
+						async (type) =>
+							[
+								type,
+								(await fetchBoundaryGroup(type)).data,
+							] as const,
+					),
+				),
 			])
-				.then(
-					([
-						mappings,
-						wards,
-						constituencies,
-						localAuthorities,
-						lsoas,
-						dataZones,
-						superOutputAreas,
-					]) => {
-						if (!mounted) return;
+				.then(([mappings, groups]) => {
+					if (!mounted) return;
 
-						startTransition(() => {
-							setRawData({
-								ward: wards.data,
-								constituency: constituencies.data,
-								localAuthority: localAuthorities.data,
-								lsoa: lsoas.data,
-								dataZone: dataZones.data,
-								superOutputArea: superOutputAreas.data,
-							});
-						});
+					const loaded = Object.fromEntries(groups) as Record<
+						BoundaryType,
+						Record<number, BoundaryGeojson>
+					>;
 
-						if (mappings) {
-							addWardLadMappings?.(mappings.wardToLad);
-							for (const [year, ladMappings] of Object.entries(
-								mappings.ladToWards,
-							)) {
-								addLadWardMappings?.(Number(year), ladMappings);
-							}
-							addCodeMappings?.(
-								"ward",
-								mappings.codeMappings.ward,
-							);
-							addCodeMappings?.(
-								"constituency",
-								mappings.codeMappings.constituency,
-							);
-							addCodeMappings?.(
-								"localAuthority",
-								mappings.codeMappings.localAuthority,
-							);
-							for (const [
-								year,
+					startTransition(() => {
+						setRawData(loaded);
+					});
+
+					if (mappings) {
+						addWardLadMappings?.(mappings.wardToLad);
+						for (const [year, ladMappings] of Object.entries(
+							mappings.ladToWards,
+						)) {
+							addLadWardMappings?.(Number(year), ladMappings);
+						}
+						addCodeMappings?.("ward", mappings.codeMappings.ward);
+						addCodeMappings?.(
+							"constituency",
+							mappings.codeMappings.constituency,
+						);
+						addCodeMappings?.(
+							"localAuthority",
+							mappings.codeMappings.localAuthority,
+						);
+						for (const [
+							year,
+							constituencyMappings,
+						] of Object.entries(mappings.constituencyToWards)) {
+							addConstituencyWardMappings?.(
+								Number(year),
 								constituencyMappings,
-							] of Object.entries(mappings.constituencyToWards)) {
-								addConstituencyWardMappings?.(
-									Number(year),
-									constituencyMappings,
-								);
-							}
-						} else {
-							// Preserve the existing behaviour if an older CDN revision does not
-							// yet contain the generated lookup file.
-							const wardToLad: Record<string, string> = {};
-							for (const [year, boundary] of Object.entries(
-								wards.data,
-							)) {
-								const wardMappings = extractWardLadMappings(
-									boundary.features,
-									BOUNDARY_CATALOG.ward.properties.code,
-									BOUNDARY_CATALOG.localAuthority.properties
-										.code,
-								);
-								Object.assign(
-									wardToLad,
-									wardMappings.wardToLad,
-								);
-								addLadWardMappings?.(
-									Number(year),
-									wardMappings.ladToWards,
-								);
-							}
-							addWardLadMappings?.(wardToLad);
-							addCodeMappings?.(
+							);
+						}
+					} else {
+						// Preserve the existing behaviour if an older CDN revision does not
+						// yet contain the generated lookup file.
+						const wardToLad: Record<string, string> = {};
+						for (const [year, boundary] of Object.entries(
+							loaded.ward,
+						)) {
+							const wardMappings = extractWardLadMappings(
+								boundary.features,
+								BOUNDARY_CATALOG.ward.properties.code,
+								BOUNDARY_CATALOG.localAuthority.properties.code,
+							);
+							Object.assign(wardToLad, wardMappings.wardToLad);
+							addLadWardMappings?.(
+								Number(year),
+								wardMappings.ladToWards,
+							);
+						}
+						addWardLadMappings?.(wardToLad);
+						addCodeMappings?.(
+							"ward",
+							buildCrossYearMappings(
+								loaded.ward,
 								"ward",
-								buildCrossYearMappings(
-									wards.data,
-									"ward",
-									Object.keys(wards.data).map(Number),
-								),
-							);
-							addCodeMappings?.(
+								Object.keys(loaded.ward).map(Number),
+							),
+						);
+						addCodeMappings?.(
+							"constituency",
+							buildCrossYearMappings(
+								loaded.constituency,
 								"constituency",
-								buildCrossYearMappings(
-									constituencies.data,
-									"constituency",
-									Object.keys(constituencies.data).map(
-										Number,
-									),
-								),
-							);
-							addCodeMappings?.(
+								Object.keys(loaded.constituency).map(Number),
+							),
+						);
+						addCodeMappings?.(
+							"localAuthority",
+							buildCrossYearMappings(
+								loaded.localAuthority,
 								"localAuthority",
-								buildCrossYearMappings(
-									localAuthorities.data,
-									"localAuthority",
-									Object.keys(localAuthorities.data).map(
-										Number,
-									),
-								),
-							);
+								Object.keys(loaded.localAuthority).map(Number),
+							),
+						);
 
-							const constituencyEntries = Object.entries(
-								constituencies.data,
-							).filter(([, conData]) => conData?.features);
-							// Only build for the latest ward year — ward highlighting always
-							// uses current boundaries, so historical ward years are not needed.
-							const latestWardYear = Math.max(
-								...Object.keys(wards.data)
-									.map(Number)
-									.filter((y) => wards.data[y]?.features),
-							);
-							const latestWardData = wards.data[latestWardYear];
-							if (latestWardData?.features) {
-								const mergedMappings: Record<string, string[]> =
-									{};
-								for (const [, conData] of constituencyEntries) {
-									const mappings =
-										buildConstituencyWardMappings(
-											latestWardData,
-											conData!,
-										);
-									Object.assign(mergedMappings, mappings);
-								}
-								if (Object.keys(mergedMappings).length > 0) {
-									addConstituencyWardMappings?.(
-										latestWardYear,
-										mergedMappings,
-									);
-								}
+						const constituencyEntries = Object.entries(
+							loaded.constituency,
+						).filter(([, conData]) => conData?.features);
+						// Only build for the latest ward year — ward highlighting always
+						// uses current boundaries, so historical ward years are not needed.
+						const latestWardYear = Math.max(
+							...Object.keys(loaded.ward)
+								.map(Number)
+								.filter((y) => loaded.ward[y]?.features),
+						);
+						const latestWardData = loaded.ward[latestWardYear];
+						if (latestWardData?.features) {
+							const mergedMappings: Record<string, string[]> = {};
+							for (const [, conData] of constituencyEntries) {
+								const mappings = buildConstituencyWardMappings(
+									latestWardData,
+									conData!,
+								);
+								Object.assign(mergedMappings, mappings);
+							}
+							if (Object.keys(mergedMappings).length > 0) {
+								addConstituencyWardMappings?.(
+									latestWardYear,
+									mergedMappings,
+								);
 							}
 						}
-					},
-				)
+					}
+				})
 				.catch((err) => {
 					if (mounted) {
 						setError(

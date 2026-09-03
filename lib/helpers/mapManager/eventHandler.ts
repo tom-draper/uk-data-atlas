@@ -9,6 +9,10 @@ type MapLayerMouseHandler = (
 ) => void;
 import { MapManagerCallbacks } from "./callbacks";
 import { BoundaryType, ElectionData } from "@/lib/types";
+import {
+	boundaryTypeForCodeKey,
+	nameKeyForCodeKey,
+} from "@/lib/data/boundaries/catalog";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
@@ -103,25 +107,14 @@ export class EventHandler {
 		this.handlersAttached = true;
 	}
 
+	// The catalogue pairs each code property with its name property and
+	// geography, so neither has to be guessed from the key's spelling.
 	nameProp(codeProp: string) {
-		if (codeProp === "SOA_CODE") return "SOA_LABEL";
-		if (codeProp === "DataZone") return "Name";
-		return codeProp.replace(/cd$/i, "NM");
+		return nameKeyForCodeKey(codeProp) ?? codeProp.replace(/cd$/i, "NM");
 	}
 
-	boundaryType(codeProp: string) {
-		if (codeProp.toUpperCase().startsWith("LAD")) return "localAuthority";
-		if (codeProp.toUpperCase().startsWith("WD")) return "ward";
-		if (codeProp.toUpperCase().startsWith("PCON")) return "constituency";
-		if (codeProp.toUpperCase().startsWith("LSOA")) return "lsoa";
-		if (
-			codeProp === "SOA_CODE" ||
-			codeProp === "SOA2011" ||
-			codeProp === "SOA"
-		)
-			return "superOutputArea";
-		if (codeProp === "DataZone") return "dataZone";
-		return "ward";
+	boundaryType(codeProp: string): BoundaryType {
+		return boundaryTypeForCodeKey(codeProp) ?? "ward";
 	}
 
 	private handleMouseMove(
