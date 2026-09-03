@@ -36,7 +36,9 @@ tile host.
 
 **OS Open Roads** is a first-class Transport dataset. Its chart card selects
 the network on the map; until the tile URL is configured, the card clearly
-shows that hosting still needs to be set up.
+shows that hosting still needs to be set up. The map uses the supplied
+`road_classification` attribute for styling: motorways are blue, A roads red,
+B roads amber, and the remaining local and unclassified roads grey.
 
 ## Attribution and scope
 
