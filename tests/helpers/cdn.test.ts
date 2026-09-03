@@ -20,7 +20,7 @@ describe("withCDN", () => {
 		const { withCDN } = await import("@/lib/helpers/cdn");
 
 		expect(withCDN("/data/precompiled/population.json")).toBe(
-			"/data/precompiled/population.json?v=v0.1.7",
+			"/data/precompiled/population.json?v=v0.1.8",
 		);
 	});
 
