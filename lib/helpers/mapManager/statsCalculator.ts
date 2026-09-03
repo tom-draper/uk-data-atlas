@@ -46,6 +46,12 @@ import {
 } from "../datasetAggregation/economics";
 import { aggregateIMD, aggregateNIMDM, aggregateSIMD, aggregateWIMD } from "../datasetAggregation/deprivation";
 import { aggregateEthnicity, aggregateLifeExpectancy, aggregateQualifications } from "../datasetAggregation/demographics";
+import {
+	aggregateBrexit,
+	aggregateBrexitConstituencies,
+	aggregateGeneralElection,
+	aggregateLocalElection,
+} from "../datasetAggregation/elections";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
@@ -69,24 +75,6 @@ import { UnemploymentDataset, AggregatedUnemploymentData } from "@/lib/types/une
 import { ChildPovertyDataset, AggregatedChildPovertyData } from "@/lib/types/childPoverty";
 import { HomelessnessDataset, AggregatedHomelessnessData } from "@/lib/types/homelessness";
 import { FuelPovertyDataset, AggregatedFuelPovertyData } from "@/lib/types/fuelPoverty";
-
-const PARTY_KEYS = [
-	"LAB",
-	"CON",
-	"LD",
-	"GREEN",
-	"RUK",
-	"UKIP",
-	"BRX",
-	"SNP",
-	"PC",
-	"DUP",
-	"SF",
-	"SDLP",
-	"UUP",
-	"APNI",
-	"OTHER",
-];
 
 // Pre-computed decay weights for age 90+ distribution
 const AGE_90_WEIGHTS = (() => {
@@ -142,55 +130,7 @@ export class DatasetAggregator {
 			const wardCodeProp = this.propertyDetector.detectWardCode(
 				geojson.features,
 			);
-			const features = geojson.features;
-
-			const stats: WardStats = {
-				partyVotes: {
-					LAB: 0,
-					CON: 0,
-					LD: 0,
-					GREEN: 0,
-					REF: 0,
-					IND: 0,
-					DUP: 0,
-					PC: 0,
-					SNP: 0,
-					SF: 0,
-					APNI: 0,
-					SDLP: 0,
-				},
-				electorate: 0,
-				totalVotes: 0,
-			};
-
-			// Single pass aggregation with direct property access
-			const sv = stats.partyVotes;
-			for (let i = 0; i < features.length; i++) {
-				const ward =
-					wardData[
-						getFeatureProp(features[i].properties, wardCodeProp) ?? ""
-					];
-				if (!ward) continue;
-
-				const pv = ward.partyVotes;
-				sv.LAB = (sv.LAB ?? 0) + (pv.LAB ?? 0);
-				sv.CON = (sv.CON ?? 0) + (pv.CON ?? 0);
-				sv.LD = (sv.LD ?? 0) + (pv.LD ?? 0);
-				sv.GREEN = (sv.GREEN ?? 0) + (pv.GREEN ?? 0);
-				sv.REF = (sv.REF ?? 0) + (pv.REF ?? 0);
-				sv.IND = (sv.IND ?? 0) + (pv.IND ?? 0);
-				sv.DUP = (sv.DUP ?? 0) + (pv.DUP ?? 0);
-				sv.PC = (sv.PC ?? 0) + (pv.PC ?? 0);
-				sv.SNP = (sv.SNP ?? 0) + (pv.SNP ?? 0);
-				sv.SF = (sv.SF ?? 0) + (pv.SF ?? 0);
-				sv.APNI = (sv.APNI ?? 0) + (pv.APNI ?? 0);
-				sv.SDLP = (sv.SDLP ?? 0) + (pv.SDLP ?? 0);
-
-				stats.electorate += ward.electorate;
-				stats.totalVotes += ward.totalVotes;
-			}
-
-			return stats;
+			return aggregateLocalElection(geojson.features, wardCodeProp, wardData);
 		});
 	}
 
@@ -203,52 +143,7 @@ export class DatasetAggregator {
 		return this.cached(`general-election-${location}-${datasetId}`, () => {
 			const constituencyCodeProp =
 				this.propertyDetector.detectConstituencyCode(geojson.features);
-			const features = geojson.features;
-
-			const stats: ConstituencyStats = {
-				totalSeats: 0,
-				electorate: 0,
-				validVotes: 0,
-				invalidVotes: 0,
-				partySeats: {},
-				totalVotes: 0,
-				partyVotes: {},
-			};
-
-			for (let i = 0; i < features.length; i++) {
-				const constituency =
-					constituencyData[
-						getFeatureProp(
-							features[i].properties,
-							constituencyCodeProp,
-						) ?? ""
-					];
-				if (!constituency) continue;
-
-				stats.totalSeats++;
-				stats.electorate += constituency.electorate;
-				stats.validVotes += constituency.validVotes;
-				stats.invalidVotes += constituency.invalidVotes;
-
-				const winningParty = getWinningParty(constituency);
-				if (winningParty) {
-					stats.partySeats[winningParty] =
-						(stats.partySeats[winningParty] || 0) + 1;
-				}
-
-				const pv = constituency.partyVotes;
-				const spv = stats.partyVotes;
-				for (let j = 0; j < PARTY_KEYS.length; j++) {
-					const party = PARTY_KEYS[j];
-					const votes = pv[party] ?? 0;
-					if (votes > 0) {
-						stats.totalVotes += votes;
-						spv[party] = (spv[party] ?? 0) + votes;
-					}
-				}
-			}
-
-			return stats;
+			return aggregateGeneralElection(geojson.features, constituencyCodeProp, constituencyData);
 		});
 	}
 
@@ -337,35 +232,7 @@ export class DatasetAggregator {
 			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 				geojson.features,
 			);
-			const features = geojson.features;
-
-			let totalLeave = 0;
-			let totalRemain = 0;
-			let totalVotes = 0;
-			let totalElectorate = 0;
-
-			for (let i = 0; i < features.length; i++) {
-				const area =
-					brexitData[
-						getFeatureProp(features[i].properties, ladCodeProp) ?? ""
-					];
-				if (!area) continue;
-
-				totalLeave += area.leave;
-				totalRemain += area.remain;
-				totalVotes += area.validVotes;
-				totalElectorate += area.electorate;
-			}
-
-			const result: AggregatedBrexitData = {
-				totalLeave,
-				totalRemain,
-				totalVotes,
-				pctLeave: totalVotes > 0 ? (totalLeave / totalVotes) * 100 : 0,
-				pctRemain: totalVotes > 0 ? (totalRemain / totalVotes) * 100 : 0,
-				electorate: totalElectorate,
-			};
-			return result;
+			return aggregateBrexit(geojson.features, ladCodeProp, brexitData);
 		});
 	}
 
@@ -379,33 +246,7 @@ export class DatasetAggregator {
 			const codeProp = this.propertyDetector.detectConstituencyCode(
 				geojson.features,
 			);
-			const features = geojson.features;
-
-			let totalLeave = 0;
-			let totalRemain = 0;
-			let count = 0;
-
-			for (let i = 0; i < features.length; i++) {
-				const area =
-					constituencyData[
-						getFeatureProp(features[i].properties, codeProp) ?? ""
-					];
-				if (!area) continue;
-
-				totalLeave += area.pctLeave;
-				totalRemain += 100 - area.pctLeave;
-				count++;
-			}
-
-			const result: AggregatedBrexitData = {
-				totalLeave,
-				totalRemain,
-				totalVotes: count,
-				pctLeave: count > 0 ? totalLeave / count : 0,
-				pctRemain: count > 0 ? totalRemain / count : 0,
-				electorate: 0,
-			};
-			return result;
+			return aggregateBrexitConstituencies(geojson.features, codeProp, constituencyData);
 		});
 	}
 
