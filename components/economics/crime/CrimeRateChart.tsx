@@ -75,7 +75,6 @@ export default function CrimeRateChart({
 	selectedArea,
 	codeMapper,
 	year,
-	activeViz,
 	setActiveViz,
 }: CrimeRateChartProps) {
 	const chartsLoading = useChartsLoading();
@@ -102,13 +101,9 @@ export default function CrimeRateChart({
 
 	if (!dataset) return null;
 
-	const isActive = !!(
-		activeDataset &&
-		((activeDataset.type === "crime" &&
-			activeDataset.id === `crime${dataset.year}`) ||
-			(activeViz.datasetType === "custom" &&
-				activeViz.datasetId === "custom"))
-	);
+	const isActive =
+		activeDataset?.type === "crime" &&
+		activeDataset.id === `crime${dataset.year}`;
 
 	const rawValue = crimeRate || 0;
 	const maxThreshold = 100000;

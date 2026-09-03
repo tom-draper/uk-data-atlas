@@ -29,7 +29,6 @@ export default function GeneralElectionRegistryChart({
 	selectedArea,
 	codeMapper,
 	year,
-	activeViz,
 	setActiveViz,
 }: GeneralElectionRegistryChartProps) {
 	const { excludedGeneralParties, selectedGeneralParty } =
@@ -44,13 +43,9 @@ export default function GeneralElectionRegistryChart({
 		selectedGeneralParty,
 	);
 
-	const isActive = !!(
-		activeDataset &&
-		((activeDataset.type === "generalElection" &&
-			activeDataset.id === `generalElection-${year}`) ||
-			(activeViz.datasetType === "custom" &&
-				activeViz.datasetId === "custom"))
-	);
+	const isActive =
+		activeDataset?.type === "generalElection" &&
+		activeDataset.id === `generalElection-${year}`;
 
 	return (
 		<GeneralElectionResultChart
