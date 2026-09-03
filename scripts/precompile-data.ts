@@ -11,7 +11,7 @@ import { fileURLToPath } from "url";
 import { execSync } from "child_process";
 import { createHash } from "crypto";
 
-import { CATALOGUE_DATASET_DEFINITIONS } from "../lib/datasets/catalogue";
+import { CATALOGUE_DATASET_DEFINITIONS } from "../lib/data/catalog";
 import {
 	type SourceArtifact,
 	validatePrecompiledDataset,
