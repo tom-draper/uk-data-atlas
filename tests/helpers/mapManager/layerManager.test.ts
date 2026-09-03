@@ -124,6 +124,29 @@ describe("LayerManager visibility updates", () => {
 		);
 	});
 
+	it("renders vector-tile line layers without loading national GeoJSON", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		manager.render({
+			kind: "vector-line",
+			id: "os-open-roads",
+			source: {
+				tiles: ["https://tiles.example/{z}/{x}/{y}.pbf"],
+				sourceLayer: "RoadLink",
+			},
+			visibility: {
+				hideDataLayer: false,
+				hideBorders: false,
+				hideBoundaryLayer: false,
+				hideOverlay: false,
+				overlayOpacity: 0.6,
+			},
+			style: { color: "#c2410c", width: 1 },
+		});
+
+		expect(map.getLayer("atlas-vector-line-os-open-roads-stroke")).toBeDefined();
+	});
+
 	it("does not re-upload scalar GeoJSON when only the colour expression changes", () => {
 		const map = createMap();
 		const manager = new LayerManager(map as any);

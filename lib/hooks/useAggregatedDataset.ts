@@ -10,7 +10,7 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 
 /** Memoized chart aggregation with the shared aggregateDataset cache beneath it. */
-export function useAggregatedDataset<T extends Dataset>(
+export function useAggregatedDataset<T extends Exclude<Dataset, { type: "network" }>>(
 	config: DatasetConfig<T>,
 	mapManager: MapManager | null,
 	boundaryData: BoundaryData,

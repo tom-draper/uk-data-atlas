@@ -10,6 +10,7 @@ import {
 } from "@lib/types";
 import { BoundaryData as BoundaryDataBoundaries } from "@lib/types/boundaries";
 import { CustomDataset } from "@/lib/types/custom";
+import { NetworkDataset } from "@/lib/types/network";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useState, useDeferredValue } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
@@ -47,6 +48,7 @@ interface ChartPanelProps {
   customDatasets: CustomDataset[];
   addCustomDataset: (dataset: CustomDataset) => void;
   roadSafetyDatasets: CustomDataset[];
+  networkDatasets: NetworkDataset[];
   activeViz: ActiveViz;
   setActiveViz: (value: ActiveViz) => void;
   chartsLoading: boolean;
@@ -73,6 +75,7 @@ function ChartPanelContent({
   customDatasets,
   addCustomDataset,
   roadSafetyDatasets,
+  networkDatasets,
   activeViz,
   setActiveViz,
   chartsLoading,
@@ -236,6 +239,7 @@ function ChartPanelContent({
                 )}
                 <TransportSection
                   roadSafetyDatasets={roadSafetyDatasets}
+				  networkDatasets={networkDatasets}
                   activeViz={activeViz}
                   setActiveViz={setActiveViz}
                   location={location}

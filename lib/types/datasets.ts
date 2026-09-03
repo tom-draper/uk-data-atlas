@@ -3,6 +3,7 @@ import { HousePriceDataset, AggregatedHousePriceData } from "./housePrice";
 import { AggregatedCrimeData, CrimeDataset } from "./crime";
 import { AggregatedIncomeData, IncomeDataset } from "./income";
 import { AggregatedCustomData, CustomDataset } from "./custom";
+import { NetworkDataset } from "./network";
 import { AggregatedBroadbandData, BroadbandDataset } from "./broadband";
 import { AggregatedAirQualityData, AirQualityDataset } from "./airQuality";
 import { AggregatedClaimantCountData, ClaimantCountDataset } from "./claimantCount";
@@ -16,6 +17,7 @@ export type Dataset =
 	| CrimeDataset
 	| IncomeDataset
 	| CustomDataset
+	| NetworkDataset
 	| BroadbandDataset
 	| AirQualityDataset
 	| ClaimantCountDataset
@@ -39,6 +41,6 @@ export type Datasets = {
 
 export type ActiveViz = {
 	vizId: string;
-	datasetType: keyof Datasets | "custom" | "brexitConstituency";
+	datasetType: keyof Datasets | "custom" | "network" | "brexitConstituency";
 	datasetYear: number;
 };
