@@ -15,6 +15,7 @@ export interface DatasetPrecompileSummary {
 
 type CompiledDataset = {
 	type?: unknown;
+	boundaryType?: unknown;
 	boundaryYear?: unknown;
 	data?: unknown;
 };
@@ -52,6 +53,11 @@ export function validatePrecompiledDataset<
 		const dataset = value as CompiledDataset;
 		if (dataset.type !== definition.type) {
 			throw new Error(`${definition.type}: ${key} has type ${String(dataset.type)}.`);
+		}
+		if (definition.boundaryType && dataset.boundaryType !== definition.boundaryType) {
+			throw new Error(
+				`${definition.type}: ${key} uses ${String(dataset.boundaryType)} boundaries; expected ${definition.boundaryType}.`,
+			);
 		}
 		if (!Number.isInteger(dataset.boundaryYear)) {
 			throw new Error(`${definition.type}: ${key} has no integer boundaryYear.`);

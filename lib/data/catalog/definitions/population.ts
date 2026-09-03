@@ -5,6 +5,7 @@ import type { DatasetDefinition } from "../types";
 export const populationDatasetDefinition: DatasetDefinition<PopulationDataset> = {
 	type: "population",
 	precompiledFile: "population",
+	boundaryType: "ward",
 	source: {
 		name: "Population",
 		source: "Office for National Statistics",
