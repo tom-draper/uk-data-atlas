@@ -14,6 +14,7 @@ import {
 	BrexitConstituencyDataset,
 } from "@lib/types";
 import { MapMode, MapOptions } from "@lib/types/mapOptions";
+import type { Map as MapLibreMap } from "maplibre-gl";
 import { LayerManager } from "./layerManager";
 import { EventHandler } from "./eventHandler";
 import { StatsCalculator } from "./statsCalculator";
@@ -70,7 +71,7 @@ export class MapManager {
 		| undefined;
 	private customRangeCache = new WeakMap<CustomDataset, ColorRange>();
 
-	constructor(map: maplibregl.Map, callbacks: MapManagerCallbacks) {
+	constructor(map: MapLibreMap, callbacks: MapManagerCallbacks) {
 		this.layerManager = new LayerManager(map);
 		this.eventHandler = new EventHandler(map, callbacks);
 		this.propertyDetector = new PropertyDetector();

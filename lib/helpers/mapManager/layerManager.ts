@@ -1,5 +1,5 @@
 // lib/utils/mapManager/layerManager.ts
-import maplibregl from "maplibre-gl";
+import { Popup, type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";
 import { BoundaryGeojson } from "@lib/types/geometry";
 import { Party, PartyCode } from "@lib/types/common";
 import {
@@ -38,9 +38,9 @@ export class LayerManager {
 	private pointTooltip: PointTooltip | undefined;
 	private pointTooltipDark = false;
 	private pointTooltipHandlersAttached = false;
-	private pointPopup: maplibregl.Popup | null = null;
+	private pointPopup: Popup | null = null;
 
-	constructor(private map: maplibregl.Map) {}
+	constructor(private map: MapLibreMap) {}
 
 	updateElectionLayers(
 		geojson: BoundaryGeojson,
@@ -200,7 +200,7 @@ export class LayerManager {
 		if (sourceExists && fillLayerExists && lineLayerExists) {
 			if (this.sourceGeojson !== geojson) {
 				// Update source data in-place to avoid remove/add flash.
-				const src = this.map.getSource(SOURCE_ID) as maplibregl.GeoJSONSource;
+				const src = this.map.getSource(SOURCE_ID) as GeoJSONSource;
 				src.setData(geojson as any);
 				this.sourceGeojson = geojson;
 			}
@@ -260,7 +260,7 @@ export class LayerManager {
 				: this.lastFillPaint.opacity(overlayOpacity);
 
 		this.map.setPaintProperty(FILL_LAYER_ID, "fill-color", fillColor);
-		this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity);
+		this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity as any);
 		this.map.setPaintProperty(
 			LINE_LAYER_ID,
 			"line-color",
@@ -291,7 +291,7 @@ export class LayerManager {
 		}
 
 		const existing = this.map.getSource(POINT_SOURCE_ID) as
-			| maplibregl.GeoJSONSource
+			| GeoJSONSource
 			| undefined;
 		if (existing) {
 			existing.setData(collection as any);
@@ -402,7 +402,7 @@ export class LayerManager {
 		});
 
 		if (!this.pointPopup) {
-			this.pointPopup = new maplibregl.Popup({
+			this.pointPopup = new Popup({
 				closeButton: false,
 				closeOnClick: false,
 				offset: 8,
@@ -424,7 +424,7 @@ export class LayerManager {
 	clearBoundaryData(): void {
 		this.sourceGeojson = null;
 		const src = this.map.getSource(SOURCE_ID) as
-			| maplibregl.GeoJSONSource
+			| GeoJSONSource
 			| undefined;
 		if (src) src.setData(EMPTY_FC as any);
 	}

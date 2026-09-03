@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import maplibregl from "maplibre-gl";
+import { Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 interface UseMapLibreInitializationOptions {
@@ -19,14 +19,14 @@ export function useMapLibreInitialization({
 	initialBounds,
 	fitBoundsPadding = 40,
 }: UseMapLibreInitializationOptions) {
-	const mapRef = useRef<maplibregl.Map | null>(null);
+	const mapRef = useRef<MapLibreMap | null>(null);
 	const [mapReady, setMapReady] = useState(false);
 
 	const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
 		if (!el || mapRef.current) return;
 
 		try {
-			const map = new maplibregl.Map({
+			const map = new MapLibreMap({
 				container: el,
 				style,
 				...(initialBounds

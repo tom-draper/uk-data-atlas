@@ -25,7 +25,7 @@ import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { BASE_MAP_STYLES } from "@/lib/config/baseMapStyles";
 import { gazetteer } from "@lib/data/gazetteer/static";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
-import maplibregl from "maplibre-gl";
+import type { Map as MapLibreMap } from "maplibre-gl";
 
 interface MapInterfaceProps {
 	datasets: Datasets;
@@ -240,7 +240,7 @@ export default function MapInterface({
 	};
 
 	const handleExport = () => {
-		type MapWithExport = maplibregl.Map & {
+		type MapWithExport = MapLibreMap & {
 			once(type: "render", listener: () => void): void;
 			triggerRepaint(): void;
 		};

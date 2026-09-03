@@ -1,4 +1,4 @@
-import type { MapGeoJSONFeature, MapMouseEvent } from "maplibre-gl";
+import type { Map as MapLibreMap, MapGeoJSONFeature, MapMouseEvent } from "maplibre-gl";
 
 type MapLayerMouseHandler = (
 	ev: MapMouseEvent & { features?: MapGeoJSONFeature[] },
@@ -62,7 +62,7 @@ export class EventHandler {
 	private handlersAttached = false;
 
 	constructor(
-		private map: maplibregl.Map,
+		private map: MapLibreMap,
 		private callbacks: MapManagerCallbacks,
 	) {
 		this.canvas = this.map.getCanvas();

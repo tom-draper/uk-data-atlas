@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { Map as MapLibreMap } from "maplibre-gl";
 
 interface UseMapInitializationOptions {
 	style: string;
@@ -13,7 +14,7 @@ export function useMapboxInitialization({
 	zoom,
 	maxBounds,
 }: UseMapInitializationOptions) {
-	const mapRef = useRef<maplibregl.Map | null>(null);
+	const mapRef = useRef<MapLibreMap | null>(null);
 	const [mapReady, setMapReady] = useState(false);
 
 	const handleMapContainer = async (el: HTMLDivElement | null) => {
@@ -37,7 +38,7 @@ export function useMapboxInitialization({
 				zoom,
 				maxBounds,
 				preserveDrawingBuffer: true,
-			}) as unknown as maplibregl.Map;
+			}) as unknown as MapLibreMap;
 
 			setMapReady(true);
 		} catch (err) {
