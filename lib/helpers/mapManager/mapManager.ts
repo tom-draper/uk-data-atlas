@@ -17,7 +17,7 @@ import { MapMode, MapOptions } from "@lib/types/mapOptions";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { LayerManager } from "./layerManager";
 import { EventHandler } from "./eventHandler";
-import { DatasetAggregator } from "./statsCalculator";
+import { DatasetAggregator } from "../datasetAggregation";
 import { FeatureBuilder } from "./featureBuilder";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
