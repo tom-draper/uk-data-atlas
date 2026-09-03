@@ -1,4 +1,4 @@
-// lib/utils/mapManager/statsCalculator.ts
+// Aggregation adapter for map boundaries and the shared stats cache.
 import {
 	BoundaryGeojson,
 	LocalElectionDataset,
