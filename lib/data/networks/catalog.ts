@@ -14,6 +14,14 @@ export const OS_OPEN_ROADS_OTHER_ROADS_COLOR = "#94a3b8";
 const ROAD_CLASSIFICATION_PROPERTY = "road_classification";
 
 /**
+ * Hard off-switch, independent of local tile setup: the roads dataset stays
+ * hidden everywhere (including a dev environment with the tile URL
+ * configured) until a production tile host is chosen. Flip to `true` once
+ * that's sorted.
+ */
+const ROADS_DATASET_ENABLED = false;
+
+/**
  * External, tile-backed transport overlays. Keeping the endpoint separate from
  * the dataset catalogue avoids shipping national geometry to every browser.
  *
@@ -36,7 +44,7 @@ export const NETWORK_DATASETS: Record<string, NetworkDataset> = {
 		provider: "Ordnance Survey",
 		licence: "Open Government Licence",
 		description: "A generalised, colour-coded road network for Great Britain: motorways, A roads, B roads, and local roads.",
-		available: Boolean(osOpenRoadsTileUrl),
+		available: ROADS_DATASET_ENABLED && Boolean(osOpenRoadsTileUrl),
 		legend: [
 			{ id: "motorway", label: "Motorway", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS.Motorway, values: ["Motorway"] },
 			{ id: "a-road", label: "A road", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["A Road"], values: ["A Road"] },
