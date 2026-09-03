@@ -5,7 +5,7 @@ import type { BaseMapStyle } from "../config/baseMapStyles";
 import type { CatalogueDatasetType } from "@/lib/data/catalog";
 
 // Base option types reused across visualizations
-interface ColorRangeOption {
+export interface ColorRangeOption {
 	colorRange: ColorRange;
 }
 
@@ -110,3 +110,9 @@ export type MapOptions = ChartMapOptions & {
 		overlayOpacity: number;
 	};
 };
+
+export type ColorRangeMapOptionKey = {
+	[Key in keyof MapOptions]: MapOptions[Key] extends ColorRangeOption
+		? Key
+		: never;
+}[keyof MapOptions];
