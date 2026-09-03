@@ -435,6 +435,34 @@ export class LayerManager {
 		if (this.map.getSource(sourceId)) this.map.removeSource(sourceId);
 	}
 
+	/**
+	 * Counts a vector-line layer's currently rendered features by a tile
+	 * property, for an on-screen breakdown (e.g. the roads chart card). Only
+	 * covers what's actually drawn in the viewport right now, not the dataset
+	 * as a whole, and respects any active `filter` (e.g. a legend isolation).
+	 */
+	countRenderedFeaturesByProperty(
+		id: string,
+		property: string,
+	): Record<string, number> | null {
+		const layerId = `atlas-vector-line-${id}-stroke`;
+		if (!this.map.getLayer(layerId)) return null;
+
+		const counts: Record<string, number> = {};
+		for (const feature of this.map.queryRenderedFeatures({ layers: [layerId] })) {
+			const value = feature.properties?.[property];
+			const key = typeof value === "string" ? value : "Unknown";
+			counts[key] = (counts[key] ?? 0) + 1;
+		}
+		return counts;
+	}
+
+	/** Subscribes to the map settling after a render/pan/zoom; returns an unsubscribe function. */
+	onIdle(callback: () => void): () => void {
+		this.map.on("idle", callback);
+		return () => this.map.off("idle", callback);
+	}
+
 	private addPointTooltipHandlers(): void {
 		if (this.pointTooltipHandlersAttached) return;
 		this.map.on("mouseenter", POINT_LAYER_ID, this.handlePointMouseEnter as any);
