@@ -1,0 +1,37 @@
+{
+  "id": "2025",
+  "title": "Local election results 2025",
+  "description": "Ward-level results for the May 2025 English local elections, keyed by WD25CD ward codes.",
+  "topics": [
+    "politics",
+    "elections",
+    "local-government"
+  ],
+  "publisher": "House of Commons Library",
+  "sourceUrl": "https://commonslibrary.parliament.uk/2025-local-elections-handbook-and-dataset/",
+  "licence": {
+    "name": "Open Parliament Licence",
+    "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/"
+  },
+  "temporalCoverage": "2025",
+  "spatialCoverage": {
+    "geography": "ward",
+    "vintage": 2025,
+    "countries": [
+      "GB-ENG",
+      "GB-WLS"
+    ]
+  },
+  "files": [
+    {
+      "path": "LEH-2025-results-HoC.xlsx",
+      "role": "source"
+    },
+    {
+      "path": "LEH-2025-results-HoC.csv",
+      "role": "derived",
+      "derivedFrom": "LEH-2025-results-HoC.xlsx",
+      "note": "Worksheet extracted to CSV. Remove once the preprocessor reads the workbook directly."
+    }
+  ]
+}

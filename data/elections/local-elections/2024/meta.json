@@ -1,0 +1,37 @@
+{
+  "id": "2024",
+  "title": "Local election results 2024",
+  "description": "Ward-level results for the May 2024 local elections.",
+  "topics": [
+    "politics",
+    "elections",
+    "local-government"
+  ],
+  "publisher": "House of Commons Library",
+  "sourceUrl": "https://commonslibrary.parliament.uk/2025-local-elections-handbook-and-dataset/",
+  "licence": {
+    "name": "Open Parliament Licence",
+    "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/"
+  },
+  "temporalCoverage": "2024",
+  "spatialCoverage": {
+    "geography": "ward",
+    "vintage": 2024,
+    "countries": [
+      "GB-ENG",
+      "GB-WLS"
+    ]
+  },
+  "files": [
+    {
+      "path": "LEH-2024-results-HoC-version.xlsx",
+      "role": "source"
+    },
+    {
+      "path": "Wards results-Table 1.csv",
+      "role": "derived",
+      "derivedFrom": "LEH-2024-results-HoC-version.xlsx",
+      "note": "Worksheet extracted to CSV. Remove once the preprocessor reads the workbook directly."
+    }
+  ]
+}

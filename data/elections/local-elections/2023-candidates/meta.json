@@ -1,0 +1,37 @@
+{
+  "id": "2023-candidates",
+  "title": "Local election candidates 2023",
+  "description": "Ward-level candidate records for the May 2023 local elections. Published as candidates rather than results, so ward totals are derived by summing candidate votes.",
+  "topics": [
+    "politics",
+    "elections",
+    "local-government"
+  ],
+  "publisher": "House of Commons Library",
+  "sourceUrl": "https://commonslibrary.parliament.uk/2025-local-elections-handbook-and-dataset/",
+  "licence": {
+    "name": "Open Parliament Licence",
+    "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/"
+  },
+  "temporalCoverage": "2023",
+  "spatialCoverage": {
+    "geography": "ward",
+    "vintage": 2023,
+    "countries": [
+      "GB-ENG",
+      "GB-WLS"
+    ]
+  },
+  "files": [
+    {
+      "path": "LEH-Candidates-2023.xlsx",
+      "role": "source"
+    },
+    {
+      "path": "Ward_Level-Table 1.csv",
+      "role": "derived",
+      "derivedFrom": "LEH-Candidates-2023.xlsx",
+      "note": "Worksheet extracted to CSV. Remove once the preprocessor reads the workbook directly."
+    }
+  ]
+}

@@ -5,7 +5,7 @@
  * Run via: pnpm precompile
  * Also runs automatically before pnpm dev and pnpm build.
  */
-import { readFile, mkdir, rename, writeFile } from "fs/promises";
+import { readFile, mkdir, rename, stat, writeFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
@@ -17,6 +17,7 @@ import {
 	validatePrecompiledDataset,
 } from "../lib/data/catalog";
 import type { DatasetReader } from "../lib/data/catalog";
+import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
@@ -102,10 +103,38 @@ const createTrackedReader = () => {
 	return { reader, artifacts };
 };
 
+/** Checks that every file a meta.json promises is actually present. */
+async function verifyDescribedFiles(
+	described: DiscoveredDataset[],
+): Promise<void> {
+	const missing: string[] = [];
+	for (const dataset of described) {
+		for (const file of dataset.meta.files) {
+			try {
+				await stat(join(dataset.dir, file.path));
+			} catch {
+				missing.push(`${dataset.id}/${file.path}`);
+			}
+		}
+	}
+	if (missing.length > 0) {
+		throw new Error(
+			`meta.json lists files that do not exist:\n  ${missing.join("\n  ")}`,
+		);
+	}
+}
+
 async function main() {
 	console.log("Pre-compiling datasets...");
 	await mkdir(OUT_DIR, { recursive: true });
 	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
+
+	// Every folder in data/ carrying a meta.json is a dataset. Reading them all
+	// first means a malformed drop fails the build immediately, with the folder
+	// named, rather than surfacing later as a confusing loader error.
+	const described = await discoverDatasets(SOURCE_DATA);
+	console.log(`  described datasets: ${described.length}`);
+	await verifyDescribedFiles(described);
 
 	const chartResults = CATALOGUE_DATASET_DEFINITIONS.map(
 		async (definition) => {

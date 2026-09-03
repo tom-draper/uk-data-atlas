@@ -54,3 +54,6 @@ next-env.d.ts
 /data/oproad_mbtiles_gb.zip
 /data/oproad_mbtiles_gb.zip:Zone.Identifier
 /data/transport/os-open-roads/
+
+# atomic-write temp files from precompile
+data/precompiled/*.tmp
