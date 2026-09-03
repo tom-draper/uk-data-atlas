@@ -2,17 +2,30 @@ import { ethnicityDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { EthnicityDataset } from "@/lib/types/ethnicity";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
-const calculateStats: ChartDefinition<EthnicityDataset>["calculateStats"] =
-	(mapManager, geojson, data, location, datasetId) =>
-		mapManager.calculateEthnicityStats(geojson, data, location, datasetId);
+const calculateStats: ChartDefinition<EthnicityDataset>["calculateStats"] = (
+  mapManager,
+  geojson,
+  data,
+  location,
+  datasetId,
+) => mapManager.calculateEthnicityStats(geojson, data, location, datasetId);
 
 export const ethnicityDefinition: ChartDatasetDefinition<EthnicityDataset> = {
-	...ethnicityDatasetDefinition,
-	chart: { group: "Demographics", key: "demographics-ethnicity", label: "Ethnicity [2021]", defaultVisible: true, componentPath: "@/components/demographics/ethnicity-registry", calculateStats, year: 2021 },
-	legendAggregation: { calculateStats },
-	mapRenderer: {
-		getOptions: (_activeViz, mapOptions) => mapOptions.ethnicity,
-		render: ({ mapManager, geojson, dataset, mapOptions, isDark }) =>
-			mapManager.updateMapForEthnicity(geojson, dataset, mapOptions, isDark),
-	},
+  ...ethnicityDatasetDefinition,
+  chart: {
+    group: "Demographics",
+    key: "demographics-ethnicity",
+    label: "Ethnicity [2021]",
+    defaultVisible: true,
+    componentPath: "@/components/demographics/ethnicity-registry",
+    calculateStats,
+    year: 2021,
+  },
+  legendAggregation: { calculateStats },
+  legendKind: "ethnicity",
+  mapRenderer: {
+    getOptions: (_activeViz, mapOptions) => mapOptions.ethnicity,
+    render: ({ mapManager, geojson, dataset, mapOptions, isDark }) =>
+      mapManager.updateMapForEthnicity(geojson, dataset, mapOptions, isDark),
+  },
 };
