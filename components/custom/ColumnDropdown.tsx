@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
+import type { UploadColumn } from "@/lib/data/custom/upload";
 
 export function ColumnDropdown({
 	columns,
@@ -9,7 +10,7 @@ export function ColumnDropdown({
 	placeholder,
 	isDark,
 }: {
-	columns: { name: string; preview: string; index: number }[];
+	columns: UploadColumn[];
 	value: string;
 	onChange: (name: string) => void;
 	placeholder: string;
