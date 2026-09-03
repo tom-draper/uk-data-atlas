@@ -47,6 +47,20 @@ export type ColorTheme =
 
 export type MapMode = keyof Datasets | "custom";
 
+/**
+ * The dataset types whose map options carry a colour range, so the shared
+ * choropleth path can read `mapOptions[dataset.type].colorRange` without a
+ * cast. Derived, so a new option group joins or leaves it automatically.
+ */
+export type NumericMapOptionsKey = Extract<
+	MapMode,
+	{
+		[K in keyof MapOptions]: MapOptions[K] extends ColorRangeOption
+			? K
+			: never;
+	}[keyof MapOptions]
+>;
+
 export type MapOptions = ChartMapOptions & {
 	generalElection: CategoryOptions;
 	localElection: CategoryOptions;

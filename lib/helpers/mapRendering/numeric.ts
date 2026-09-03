@@ -1,13 +1,18 @@
 import type { BoundaryGeojson } from "@lib/types";
 import type { BoundaryType } from "@/lib/types/boundaries";
 import type { ColorRange } from "@/lib/types/common";
-import type { MapMode, MapOptions } from "@lib/types/mapOptions";
+import type {
+	MapMode,
+	MapOptions,
+	NumericMapOptionsKey,
+} from "@lib/types/mapOptions";
 import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
 import type { BoundaryCodeScope } from "../mapManager/propertyDetector";
 import { valueGeojson, type MapRenderContext } from "./context";
 
 export type NumericDataset = {
-	type: MapMode;
+	/** Names both the map mode and the options group holding its colour range. */
+	type: NumericMapOptionsKey;
 	boundaryType: BoundaryType;
 	data: Record<string, unknown>;
 };
@@ -84,8 +89,7 @@ export function renderNumericDataset<T extends NumericDataset>(
 				: null;
 		},
 		(data, options) =>
-			map.getColorRange?.(data) ??
-			(options[dataset.type] as { colorRange: ColorRange }).colorRange,
+			map.getColorRange?.(data) ?? options[dataset.type].colorRange,
 		map.invertColor,
 	);
 }
