@@ -45,6 +45,7 @@ import {
 	aggregateUnemployment,
 } from "../datasetAggregation/economics";
 import { aggregateIMD, aggregateNIMDM, aggregateSIMD, aggregateWIMD } from "../datasetAggregation/deprivation";
+import { aggregateEthnicity, aggregateLifeExpectancy, aggregateQualifications } from "../datasetAggregation/demographics";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
@@ -280,69 +281,7 @@ export class DatasetAggregator {
 			const ladProp = this.propertyDetector.detectLocalAuthorityCode(
 				geojson.features,
 			);
-			const features = geojson.features;
-
-			// Aggregate all ethnicity data across all features
-			const aggregated: Record<
-				string,
-				Record<string, { population: number; code: string }>
-			> = {};
-
-			for (let i = 0; i < features.length; i++) {
-				const localAuthority =
-					localAuthorityData[
-						getFeatureProp(features[i].properties, ladProp) ?? ""
-					];
-				if (!localAuthority) continue;
-
-				// Iterate through parent categories
-				for (const [parentCategory, subcategories] of Object.entries(
-					localAuthority,
-				)) {
-					// Initialize parent category if not exists
-					if (!aggregated[parentCategory]) {
-						aggregated[parentCategory] = {};
-					}
-
-					// Iterate through subcategories
-					for (const [subcategoryName, ethnicity] of Object.entries(
-						subcategories,
-					)) {
-						// Initialize subcategory if not exists
-						if (!aggregated[parentCategory][subcategoryName]) {
-							aggregated[parentCategory][subcategoryName] = {
-								population: 0,
-								code: ethnicity.code,
-							};
-						}
-
-						// Add population
-						aggregated[parentCategory][subcategoryName].population +=
-							ethnicity.population;
-					}
-				}
-			}
-
-			// Convert to the format with ethnicity property
-			const result: Record<string, EthnicityCategory> = {};
-
-			for (const [parentCategory, subcategories] of Object.entries(
-				aggregated,
-			)) {
-				result[parentCategory] = {};
-
-				for (const [subcategoryName, data] of Object.entries(
-					subcategories,
-				)) {
-					result[parentCategory][subcategoryName] = {
-						ethnicity: subcategoryName,
-						population: data.population,
-						code: data.code,
-					};
-				}
-			}
-
-			return result;
+			return aggregateEthnicity(geojson.features, ladProp, localAuthorityData);
 		});
 	}
 
@@ -493,25 +432,7 @@ export class DatasetAggregator {
 			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 				geojson.features,
 			);
-			let totalMale = 0;
-			let totalFemale = 0;
-			let count = 0;
-
-			for (const feature of geojson.features) {
-				const code = getFeatureProp(feature.properties, ladCodeProp) ?? "";
-				const record = leData[code];
-				if (record) {
-					totalMale += record.maleBirthLE;
-					totalFemale += record.femaleBirthLE;
-					count++;
-				}
-			}
-
-			const stats: AggregatedLifeExpectancyData = {
-				averageMaleLE: count > 0 ? totalMale / count : 0,
-				averageFemaleLE: count > 0 ? totalFemale / count : 0,
-			};
-			return stats;
+			return aggregateLifeExpectancy(geojson.features, ladCodeProp, leData);
 		});
 	}
 
@@ -762,37 +683,7 @@ export class DatasetAggregator {
 			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 				geojson.features,
 			);
-			const seen = new Set<string>();
-			const total: QualificationBreakdown = {
-				noQualifications: 0,
-				level1: 0,
-				level2: 0,
-				apprenticeship: 0,
-				level3: 0,
-				level4Plus: 0,
-				other: 0,
-				total: 0,
-			};
-
-			for (const feature of geojson.features) {
-				const code = getFeatureProp(feature.properties, ladCodeProp) ?? "";
-				if (seen.has(code)) continue;
-				seen.add(code);
-				const record = qualData[code];
-				if (!record) continue;
-				const b = record.breakdown;
-				total.noQualifications += b.noQualifications;
-				total.level1 += b.level1;
-				total.level2 += b.level2;
-				total.apprenticeship += b.apprenticeship;
-				total.level3 += b.level3;
-				total.level4Plus += b.level4Plus;
-				total.other += b.other;
-				total.total += b.total;
-			}
-
-			const result: AggregatedQualificationData = { breakdown: total };
-			return result;
+			return aggregateQualifications(geojson.features, ladCodeProp, qualData);
 		});
 	}
 
