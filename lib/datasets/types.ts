@@ -1,4 +1,4 @@
-import type { DatasetAggregator } from "@/lib/helpers/mapManager/statsCalculator";
+import type { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import type { ActiveViz } from "@/lib/types/datasets";
 import type { BoundaryGeojson } from "@/lib/types/geometry";

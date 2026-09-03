@@ -1,7 +1,7 @@
 import type { Dataset } from "@lib/types/datasets";
 import type { BoundaryType, BoundaryData } from "@lib/types/boundaries";
 import type { BoundaryGeojson } from "@lib/types/geometry";
-import { DatasetAggregator } from "./mapManager/statsCalculator";
+import { DatasetAggregator } from "./datasetAggregation";
 
 type BoundaryDataset = Exclude<Dataset, { type: "network" }>;
 
