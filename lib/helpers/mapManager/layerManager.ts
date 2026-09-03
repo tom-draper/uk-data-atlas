@@ -14,6 +14,14 @@ import { getPercentageColorExpression } from "../colorScale/datasetColors";
 import { DEFAULT_COLOR } from "./featureBuilder";
 import type { PointTooltip } from "@/lib/types/custom";
 import type { MapLayer } from "./layers";
+import {
+	categoryMatch,
+	featureProperty,
+	hoverOpacity,
+	zoomInterpolate,
+	type MapExpression,
+	type PaintValue,
+} from "./expressions";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
@@ -29,8 +37,8 @@ const FADE_MAX_ZOOM = 9;
 const EMPTY_FC = { type: "FeatureCollection", features: [] } as const;
 
 type FillPaintConfig = {
-	color: any;
-	opacity: (overlayOpacity: number) => number | any[];
+	color: PaintValue<string>;
+	opacity: (overlayOpacity: number) => PaintValue<number>;
 };
 
 export class LayerManager {
@@ -74,22 +82,17 @@ export class LayerManager {
 		partyInfo: Party[],
 		visibility: MapOptions["visibility"],
 	): void {
-		const colorExpression: any[] = ["match", ["get", "winningParty"]];
-		partyInfo.forEach((party) => {
-			colorExpression.push(party.key, PARTIES[party.key].color);
-		});
-		colorExpression.push("#cccccc");
+		const colorExpression = categoryMatch(
+			"winningParty",
+			partyInfo.map((party) => [party.key, PARTIES[party.key].color] as const),
+			"#cccccc",
+		);
 
 		this.updateLayers(
 			geojson,
 			{
 				color: colorExpression,
-				opacity: (opacity) => [
-					"case",
-					["boolean", ["feature-state", "hover"], false],
-					opacity * 0.58,
-					opacity,
-				],
+				opacity: hoverOpacity,
 			},
 			visibility,
 		);
@@ -124,25 +127,17 @@ export class LayerManager {
 		geojson: BoundaryGeojson,
 		visibility: MapOptions["visibility"],
 	): void {
-		const colorExpression: any[] = ["match", ["get", "majorityCategory"]];
-
-		Object.entries(ETHNICITY_COLORS).forEach(([ethnicity, color]) => {
-			colorExpression.push(ethnicity, color);
-		});
-
-		// Fallback color for 'NONE' or missing data
-		colorExpression.push("#cccccc");
+		const colorExpression = categoryMatch(
+			"majorityCategory",
+			Object.entries(ETHNICITY_COLORS),
+			"#cccccc",
+		);
 
 		this.updateLayers(
 			geojson,
 			{
 				color: colorExpression,
-				opacity: (opacity) => [
-					"case",
-					["boolean", ["feature-state", "hover"], false],
-					opacity * 0.58,
-					opacity,
-				],
+				opacity: hoverOpacity,
 			},
 			visibility,
 		);
@@ -180,13 +175,8 @@ export class LayerManager {
 		this.updateLayers(
 			geojson,
 			{
-				color: ["get", "color"],
-				opacity: (opacity) => [
-					"case",
-					["boolean", ["feature-state", "hover"], false],
-					opacity * 0.58,
-					opacity,
-				],
+				color: featureProperty("color"),
+				opacity: hoverOpacity,
 			},
 			visibility,
 		);
@@ -194,19 +184,14 @@ export class LayerManager {
 
 	updateValueLayers(
 		geojson: BoundaryGeojson,
-		colorExpression: unknown[],
+		colorExpression: MapExpression,
 		visibility: MapOptions["visibility"],
 	): void {
 		this.updateLayers(
 			geojson,
 			{
 				color: colorExpression,
-				opacity: (opacity) => [
-					"case",
-					["boolean", ["feature-state", "hover"], false],
-					opacity * 0.58,
-					opacity,
-				],
+				opacity: hoverOpacity,
 			},
 			visibility,
 		);
@@ -287,7 +272,7 @@ export class LayerManager {
 				: this.lastFillPaint.opacity(overlayOpacity);
 
 		this.map.setPaintProperty(FILL_LAYER_ID, "fill-color", fillColor);
-		this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity as any);
+		this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity);
 		this.map.setPaintProperty(
 			LINE_LAYER_ID,
 			"line-color",
@@ -333,20 +318,16 @@ export class LayerManager {
 				source: POINT_SOURCE_ID,
 				paint: {
 					"circle-radius": radius.min,
-					"circle-color": ["get", "color"],
+					"circle-color": featureProperty("color"),
 				},
 			});
 		}
 
-		this.map.setPaintProperty(POINT_LAYER_ID, "circle-radius", [
-			"interpolate",
-			["linear"],
-			["zoom"],
-			FADE_MIN_ZOOM,
-			radius.min,
-			10,
-			radius.max,
-		]);
+		this.map.setPaintProperty(
+			POINT_LAYER_ID,
+			"circle-radius",
+			zoomInterpolate([[FADE_MIN_ZOOM, radius.min], [10, radius.max]]),
+		);
 		this.pointTooltip = tooltip;
 		this.pointTooltipDark = isDark;
 		this.pointPopup?.removeClassName("atlas-point-popup--dark");
@@ -360,15 +341,11 @@ export class LayerManager {
 		const o = visibility.overlayOpacity ?? 0.6;
 		const circleMax = visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3);
 		// Circles fade in as we zoom past FADE_MIN_ZOOM.
-		this.map.setPaintProperty(POINT_LAYER_ID, "circle-opacity", [
-			"interpolate",
-			["linear"],
-			["zoom"],
-			FADE_MIN_ZOOM,
-			0,
-			FADE_MAX_ZOOM,
-			circleMax,
-		]);
+		this.map.setPaintProperty(
+			POINT_LAYER_ID,
+			"circle-opacity",
+			zoomInterpolate([[FADE_MIN_ZOOM, 0], [FADE_MAX_ZOOM, circleMax]]),
+		);
 	}
 
 	clearPointLayers(): void {
@@ -395,14 +372,14 @@ export class LayerManager {
 				type: "line",
 				source: sourceId,
 				paint: {
-					"line-color": layer.style.color as any,
-					"line-width": layer.style.width as any,
+					"line-color": layer.style.color,
+					"line-width": layer.style.width,
 				},
 			});
 		}
 
-		this.map.setPaintProperty(layerId, "line-color", layer.style.color as any);
-		this.map.setPaintProperty(layerId, "line-width", layer.style.width as any);
+		this.map.setPaintProperty(layerId, "line-color", layer.style.color);
+		this.map.setPaintProperty(layerId, "line-width", layer.style.width);
 		this.map.setPaintProperty(
 			layerId,
 			"line-opacity",

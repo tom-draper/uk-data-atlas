@@ -47,6 +47,7 @@ import {
 } from "@/lib/helpers/colorScale/datasetColors";
 import type { ColorRange } from "@/lib/types/common";
 import { calculateMedianAge, calculateTotal } from "@/lib/helpers/population";
+import { nullFallback, type MapExpression } from "./expressions";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
@@ -282,7 +283,7 @@ export class MapManager {
 			data: transformedGeojson,
 			colorExpression: range
 				? getSequentialColorExpression(range, mapOptions.theme.id)
-				: ["case", ["==", ["get", "value"], null], "#cccccc", "#cccccc"],
+				: nullFallback("value", "#cccccc", "#cccccc"),
 			visibility: mapOptions.visibility,
 		});
 
@@ -376,7 +377,7 @@ export class MapManager {
 		mapOptions: MapOptions,
 		mode: "population-age" | "population-gender" | "population-density",
 		valueFor: (code: string, feature: Features[number]) => number | null,
-		colorExpression: (options: MapOptions) => unknown[],
+		colorExpression: (options: MapOptions) => MapExpression,
 	): void {
 		const cacheKey = `population-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
 		let wardCodeProp = propCache.get(cacheKey);

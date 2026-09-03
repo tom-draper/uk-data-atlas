@@ -5,6 +5,15 @@ import type {
 } from "@/lib/types/mapOptions";
 import { normalizeValue, hexToRgb } from "./interpolation";
 import { getThemeColor, themes } from "./themes";
+import {
+	equal,
+	featureProperty,
+	lessThan,
+	linearInterpolate,
+	nullFallback,
+	when,
+	type MapExpression,
+} from "../mapManager/expressions";
 
 type ColorRange = { min: number; max: number };
 
@@ -16,34 +25,26 @@ export function getSequentialColorExpression(
 	themeId: string,
 	invertColor = true,
 	property = "value",
-): unknown[] {
+): MapExpression {
 	const theme = themes.find((candidate) => candidate.id === themeId) ?? themes[0];
 	const colors = invertColor ? [...theme.colors].reverse() : theme.colors;
 	if (range.min === range.max) {
-		return [
-			"case",
-			["==", ["get", property], null],
-			"#cccccc",
-			getThemeColor(0.5, themeId),
-		];
+		return nullFallback(property, "#cccccc", getThemeColor(0.5, themeId));
 	}
 	const span = range.max - range.min;
-	const expression: unknown[] = ["interpolate", ["linear"], ["get", property]];
-
-	colors.forEach((color, index) => {
+	const stops = colors.map((color, index) => {
 		const position =
 			colors.length <= 1
 				? range.min
 				: range.min + (span * index) / (colors.length - 1);
-		expression.push(position, color);
+		return [position, color] as const;
 	});
 
-	return [
-		"case",
-		["==", ["get", property], null],
+	return nullFallback(
+		property,
 		"#cccccc",
-		expression,
-	];
+		linearInterpolate(featureProperty(property), stops),
+	);
 }
 
 // Pre-parsed color tuples — avoids regex on every feature
@@ -114,55 +115,38 @@ export function getColorForGenderRatio(
 export function getGenderColorExpression(
 	range: GenderOptions["colorRange"],
 	property = "value",
-): unknown[] {
-	const value = ["get", property];
-	return [
-		"case",
-		["==", value, null],
-		"#cccccc",
-		["<", value, 0],
+): MapExpression {
+	const value = featureProperty(property);
+	return when(
 		[
-			"interpolate",
-			["linear"],
-			value,
-			range.min,
-			"rgba(255, 105, 180, 0.8)",
-			0,
-			"rgba(240, 240, 240, 0.8)",
+			[equal(value, null), "#cccccc"],
+			[lessThan(value, 0), linearInterpolate(value, [
+				[range.min, "rgba(255, 105, 180, 0.8)"],
+				[0, "rgba(240, 240, 240, 0.8)"],
+			])],
 		],
-		[
-			"interpolate",
-			["linear"],
-			value,
-			0,
-			"rgba(240, 240, 240, 0.8)",
-			range.max,
-			"rgba(70, 130, 180, 0.8)",
-		],
-	];
+		linearInterpolate(value, [
+			[0, "rgba(240, 240, 240, 0.8)"],
+			[range.max, "rgba(70, 130, 180, 0.8)"],
+		]),
+	);
 }
 
 export function getPercentageColorExpression(
 	color: string,
 	mapOptions: CategoryOptions,
 	isDark = false,
-) {
+): MapExpression {
 	const range = mapOptions.percentageRange;
 	const partyRgb = hexToRgb(color);
 	const neutralColor = isDark ? "#1f2937" : "#f5f5f5";
 	const neutralRgb = hexToRgb(neutralColor);
-	return [
-		"case",
-		["==", ["get", "percentage"], null],
+	return nullFallback(
+		"percentage",
 		neutralColor,
-		[
-			"interpolate",
-			["linear"],
-			["get", "percentage"],
-			range.min,
-			`rgb(${neutralRgb.r}, ${neutralRgb.g}, ${neutralRgb.b})`,
-			range.max,
-			`rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`,
-		],
-	];
+		linearInterpolate(featureProperty("percentage"), [
+			[range.min, `rgb(${neutralRgb.r}, ${neutralRgb.g}, ${neutralRgb.b})`],
+			[range.max, `rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`],
+		]),
+	);
 }

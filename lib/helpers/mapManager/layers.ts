@@ -1,6 +1,7 @@
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { PointTooltip } from "@/lib/types/custom";
+import type { MapExpression, PaintValue } from "./expressions";
 
 type LayerVisibility = MapOptions["visibility"];
 
@@ -8,7 +9,7 @@ type LayerVisibility = MapOptions["visibility"];
 export type BoundaryFillLayer = {
 	kind: "boundary-fill";
 	data: BoundaryGeojson;
-	colorExpression: unknown[];
+	colorExpression: MapExpression;
 	visibility: LayerVisibility;
 };
 
@@ -33,8 +34,8 @@ export type LineLayer = {
 	data: GeoJSON.FeatureCollection;
 	visibility: LayerVisibility;
 	style: {
-		color: string | unknown[];
-		width: number | unknown[];
+		color: PaintValue<string>;
+		width: PaintValue<number>;
 		opacity?: number;
 	};
 };
