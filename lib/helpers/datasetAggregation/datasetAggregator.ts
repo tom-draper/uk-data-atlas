@@ -1,4 +1,4 @@
-// Aggregation adapter for map boundaries and the shared stats cache.
+// Boundary and cache adapter for dataset aggregation.
 import {
 	BoundaryGeojson,
 	LocalElectionDataset,
@@ -15,8 +15,7 @@ import {
 } from "@lib/types";
 import { calculateTotal, polygonAreaSqKm } from "../population";
 import { calculateAgeGroups } from "../ageDistribution";
-import { PropertyDetector } from "./propertyDetector";
-import { StatsCache } from "./statsCache";
+import type { AggregationCache, BoundaryCodeDetector } from "./ports";
 import {
 	aggregateAirQuality,
 	aggregateBroadband,
@@ -26,23 +25,23 @@ import {
 	aggregateHomelessness,
 	aggregateSchoolPerformance,
 	collectBoundaryRecords,
-} from "../datasetAggregation/numeric";
-import { aggregateNHSWaiting } from "../datasetAggregation/health";
+} from "./numeric";
+import { aggregateNHSWaiting } from "./health";
 import {
 	aggregateCrime,
 	aggregateCustomDataset,
 	aggregateHousePrices,
 	aggregateIncome,
 	aggregateUnemployment,
-} from "../datasetAggregation/economics";
-import { aggregateIMD, aggregateNIMDM, aggregateSIMD, aggregateWIMD } from "../datasetAggregation/deprivation";
-import { aggregateEthnicity, aggregateLifeExpectancy, aggregateQualifications } from "../datasetAggregation/demographics";
+} from "./economics";
+import { aggregateIMD, aggregateNIMDM, aggregateSIMD, aggregateWIMD } from "./deprivation";
+import { aggregateEthnicity, aggregateLifeExpectancy, aggregateQualifications } from "./demographics";
 import {
 	aggregateBrexit,
 	aggregateBrexitConstituencies,
 	aggregateGeneralElection,
 	aggregateLocalElection,
-} from "../datasetAggregation/elections";
+} from "./elections";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
@@ -79,8 +78,8 @@ const AGE_90_WEIGHTS = (() => {
 /** Aggregates dataset records against the currently loaded boundary geometry. */
 export class DatasetAggregator {
 	constructor(
-		private propertyDetector: PropertyDetector,
-		private cache: StatsCache,
+		private propertyDetector: BoundaryCodeDetector,
+		private cache: AggregationCache,
 	) {}
 
 	// Wraps a computation in the shared stats cache. Caching the computed value
