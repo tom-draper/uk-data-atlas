@@ -3,23 +3,14 @@ import type { Features, PropertyKeys } from "@/lib/types";
 /** The boundary property key the reducers are pointed at in these tests. */
 export const CODE_KEY = "LAD24CD" as PropertyKeys;
 
-/** Too few points to enclose anything, which the area helper scores as zero. */
-const DEGENERATE_RING: number[][][] = [
-	[
-		[0, 0],
-		[0, 0],
-		[0, 0],
-	],
-];
-
 /**
  * Boundary features carrying only an area code, plus optional shared geometry
- * for the reducers that measure land area. The default ring is degenerate, so
- * those boundaries contribute no area.
+ * for the reducers that measure land area. Boundaries default to no
+ * geometry at all, so they contribute no area.
  */
 export const features = (
 	codes: string[],
-	coordinates: number[][][] = DEGENERATE_RING,
+	coordinates: number[][][] = [],
 ): Features =>
 	codes.map((code) => ({
 		type: "Feature",

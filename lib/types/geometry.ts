@@ -145,15 +145,29 @@ type KeysOfUnion<T> = T extends any ? keyof T : never;
 
 export type PropertyKeys = KeysOfUnion<Properties>;
 
-type PolygonGeometry = {
+/** A ring of [lon, lat] positions. */
+type Ring = number[][];
+
+export type PolygonGeometry = {
 	type: "Polygon";
-	coordinates: number[][][];
+	coordinates: Ring[];
 };
+
+export type MultiPolygonGeometry = {
+	type: "MultiPolygon";
+	coordinates: Ring[][];
+};
+
+/**
+ * Boundary files carry both shapes: islands and detached parts arrive as
+ * MultiPolygon, so callers must discriminate on `type` rather than assume.
+ */
+export type BoundaryGeometry = PolygonGeometry | MultiPolygonGeometry;
 
 interface BaseFeature {
 	type: "Feature";
 	id: number;
-	geometry: PolygonGeometry;
+	geometry: BoundaryGeometry;
 }
 
 export type Feature = BoundaryGeojson["features"][0];
@@ -197,4 +211,15 @@ export function getFeatureProp(
 ): string | undefined {
 	// Double cast needed: no index signature on the property interfaces
 	return (properties as unknown as Record<string, string | undefined>)[key];
+}
+
+/**
+ * The outer ring of each part of a boundary geometry, ignoring holes. Polygon
+ * and MultiPolygon nest their positions differently, so callers that only need
+ * the outlines should go through here rather than reach into `coordinates`.
+ */
+export function outerRings(geometry: BoundaryGeometry): number[][][] {
+	return geometry.type === "MultiPolygon"
+		? geometry.coordinates.map((polygon) => polygon[0])
+		: geometry.coordinates.slice(0, 1);
 }

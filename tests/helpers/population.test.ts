@@ -4,6 +4,7 @@ import {
 	polygonAreaSqKm,
 } from "@/lib/helpers/population";
 import type { PopulationWardData } from "@/lib/types";
+import type { BoundaryGeometry } from "@lib/types";
 
 describe("calculateTotal", () => {
 	it("sums all age counts", () => {
@@ -50,30 +51,49 @@ describe("polygonAreaSqKm", () => {
 		[0.0, 51.5],
 	];
 
+	const polygon: BoundaryGeometry = {
+		type: "Polygon",
+		coordinates: [squareRing],
+	};
+
 	it("returns a positive area for a valid polygon", () => {
-		const area = polygonAreaSqKm([squareRing]);
-		expect(area).toBeGreaterThan(0);
+		expect(polygonAreaSqKm(polygon)).toBeGreaterThan(0);
 	});
 	it("returns 0 for a degenerate ring with fewer than 4 points", () => {
-		const area = polygonAreaSqKm([
-			[
-				[0, 0],
-				[1, 0],
-				[0, 0],
+		const area = polygonAreaSqKm({
+			type: "Polygon",
+			coordinates: [
+				[
+					[0, 0],
+					[1, 0],
+					[0, 0],
+				],
 			],
-		]);
+		});
 		expect(area).toBe(0);
 	});
 	it("handles MultiPolygon by summing constituent areas", () => {
-		const singleArea = polygonAreaSqKm([squareRing]);
+		const singleArea = polygonAreaSqKm(polygon);
 		// Two identical polygons side by side as a MultiPolygon
-		const multiArea = polygonAreaSqKm([[squareRing], [squareRing]]);
+		const multiArea = polygonAreaSqKm({
+			type: "MultiPolygon",
+			coordinates: [[squareRing], [squareRing]],
+		});
 		expect(multiArea).toBeCloseTo(singleArea * 2, 5);
 	});
 	it("area is reasonable for a ~1km² ward-sized polygon", () => {
 		// 0.01° lat/lon near London ≈ ~0.7 km²
-		const area = polygonAreaSqKm([squareRing]);
+		const area = polygonAreaSqKm(polygon);
 		expect(area).toBeGreaterThan(0.1);
 		expect(area).toBeLessThan(5);
+	});
+});
+
+describe("polygonAreaSqKm edge cases", () => {
+	it("reports no area for a geometry with no rings", () => {
+		expect(polygonAreaSqKm({ type: "Polygon", coordinates: [] })).toBe(0);
+		expect(polygonAreaSqKm({ type: "MultiPolygon", coordinates: [] })).toBe(
+			0,
+		);
 	});
 });

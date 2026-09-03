@@ -1,15 +1,7 @@
 import { NHSWaitingDataset, NHSWaitingICBData } from "@/lib/types/nhsWaiting";
 import { LAD_TO_ICB } from "./ladToIcb";
 import { parseCsv } from "@/lib/helpers/parseCsv";
-
-const toNum = (v: any): number => {
-	const n = parseFloat(
-		String(v ?? "")
-			.replace(/,/g, "")
-			.trim(),
-	);
-	return isNaN(n) ? 0 : n;
-};
+import { parseNumOrZero } from "@/lib/helpers/parseNumber";
 
 // Column names for weekly bands ≥18 weeks
 function isOver18WeeksBand(col: string): boolean {
@@ -45,9 +37,9 @@ export async function loadNHSWaiting(
 		const icbName = (row["Provider Parent Name"] ?? "").trim();
 		if (!icbCode || !icbName) continue;
 
-		const total = toNum(row["Total All"]);
+		const total = parseNumOrZero(row["Total All"]);
 		const over18 = over18Cols.reduce(
-			(sum, col) => sum + toNum(row[col]),
+			(sum, col) => sum + parseNumOrZero(row[col]),
 			0,
 		);
 

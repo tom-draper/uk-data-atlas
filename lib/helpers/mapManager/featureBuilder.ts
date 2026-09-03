@@ -30,7 +30,7 @@ function getCachedArea(feature: Feature): number {
 	const geom = feature.geometry.coordinates as object;
 	let area = featureAreaCache.get(geom);
 	if (area === undefined) {
-		area = polygonAreaSqKm(feature.geometry.coordinates);
+		area = polygonAreaSqKm(feature.geometry);
 		featureAreaCache.set(geom, area);
 	}
 	return area;

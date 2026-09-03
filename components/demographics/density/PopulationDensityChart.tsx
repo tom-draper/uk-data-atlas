@@ -39,7 +39,7 @@ const featureAreaCache = new WeakMap<Feature, number>();
 const getWardPopulationDensity = (feature: Feature, total: number) => {
 	let areaSqKm = featureAreaCache.get(feature);
 	if (areaSqKm === undefined) {
-		areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
+		areaSqKm = polygonAreaSqKm(feature.geometry);
 		featureAreaCache.set(feature, areaSqKm);
 	}
 	const density = areaSqKm > 0 ? total / areaSqKm : 0;
@@ -266,7 +266,7 @@ function PopulationDensityChart({
 									featureAreaCache.get(wardFeature);
 								if (wardArea === undefined) {
 									wardArea = polygonAreaSqKm(
-										wardFeature.geometry.coordinates,
+										wardFeature.geometry,
 									);
 									featureAreaCache.set(wardFeature, wardArea);
 								}
@@ -322,9 +322,7 @@ function PopulationDensityChart({
 						const wardTotal = calculateTotal(populationData.total);
 						let wardArea = featureAreaCache.get(wardFeature);
 						if (wardArea === undefined) {
-							wardArea = polygonAreaSqKm(
-								wardFeature.geometry.coordinates,
-							);
+							wardArea = polygonAreaSqKm(wardFeature.geometry);
 							featureAreaCache.set(wardFeature, wardArea);
 						}
 						totalPopulation += wardTotal;

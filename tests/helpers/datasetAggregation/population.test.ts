@@ -89,7 +89,10 @@ describe("accumulatePopulation", () => {
 			data,
 		);
 
-		expect(totals.totalArea).toBeCloseTo(2 * polygonAreaSqKm(SQUARE), 6);
+		expect(totals.totalArea).toBeCloseTo(
+			2 * polygonAreaSqKm({ type: "Polygon", coordinates: SQUARE }),
+			6,
+		);
 	});
 
 	it("skips features with no population record, area included", () => {
@@ -192,7 +195,10 @@ describe("aggregatePopulation", () => {
 
 		expect(result.populationStats.total).toBe(21);
 		expect(result.medianAge).toBe(40);
-		expect(result.totalArea).toBeCloseTo(2 * polygonAreaSqKm(SQUARE), 6);
+		expect(result.totalArea).toBeCloseTo(
+			2 * polygonAreaSqKm({ type: "Polygon", coordinates: SQUARE }),
+			6,
+		);
 		expect(result.density).toBeCloseTo(21 / result.totalArea, 6);
 	});
 });

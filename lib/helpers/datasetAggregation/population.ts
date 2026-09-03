@@ -118,9 +118,7 @@ export function accumulatePopulation(
 			females[age] = (females[age] || 0) + count;
 		}
 
-		aggregated.totalArea += polygonAreaSqKm(
-			features[i].geometry.coordinates,
-		);
+		aggregated.totalArea += polygonAreaSqKm(features[i].geometry);
 	}
 
 	return aggregated;

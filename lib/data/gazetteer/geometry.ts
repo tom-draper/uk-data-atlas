@@ -1,5 +1,5 @@
 // Geometry helpers for building the gazetteer at build time.
-import { polygonAreaSqKm } from "../../helpers/population";
+import { ringsAreaSqKm } from "../../helpers/population";
 
 type Geom = GeoJSON.Geometry;
 
@@ -45,12 +45,7 @@ export function centroidOf(geom: Geom): [number, number] {
 }
 
 export const areaM2 = (geom: Geom): number =>
-	Math.round(
-		polygonAreaSqKm(
-			(geom as { coordinates: number[][][] | number[][][][] })
-				.coordinates,
-		) * 1e6,
-	);
+	Math.round(ringsAreaSqKm(outerRings(geom)) * 1e6);
 
 export const inBox = (px: number, py: number, b: readonly number[]): boolean =>
 	px >= b[0] && px <= b[2] && py >= b[1] && py <= b[3];

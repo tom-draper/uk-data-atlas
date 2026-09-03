@@ -12,7 +12,7 @@ import { PARTY_INFO } from "@/lib/data/election/parties";
 import { calculateTurnout } from "@/lib/helpers/generalElection";
 
 // Utility to parse vote counts efficiently
-const parseVotes = (value: any): number => {
+const parseVotes = (value: unknown): number => {
 	if (!value || value === "") return 0;
 	const parsed = parseInt(String(value).replace(/,/g, "").trim());
 	return isNaN(parsed) ? 0 : parsed;

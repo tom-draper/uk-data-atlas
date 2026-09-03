@@ -1,6 +1,7 @@
 import type { BoundaryGeojson, Features } from "@lib/types";
 import { type BoundaryType, getProp } from "./boundaries";
 import { BOUNDARY_CATALOG } from "./catalog";
+import { outerRings } from "@lib/types";
 
 export type CodeType = BoundaryType;
 export type YearCode = number;
@@ -155,13 +156,7 @@ export const buildConstituencyWardMappings = (
 		);
 		if (!code) continue;
 
-		const geometry = feature.geometry as any;
-		const rings: number[][][] =
-			geometry.type === "MultiPolygon"
-				? (geometry.coordinates as number[][][][]).map(
-						(polygon: number[][][]) => polygon[0],
-					)
-				: [geometry.coordinates[0] as number[][]];
+		const rings = outerRings(feature.geometry);
 		let minX = Infinity;
 		let minY = Infinity;
 		let maxX = -Infinity;
@@ -185,11 +180,9 @@ export const buildConstituencyWardMappings = (
 		);
 		if (!wardCode) continue;
 
-		const geometry = feature.geometry as any;
-		const ring: number[][] =
-			geometry.type === "MultiPolygon"
-				? (geometry.coordinates as number[][][][])[0][0]
-				: geometry.coordinates[0];
+		// Only the first part is needed: this is a rough centroid for labelling.
+		const [ring] = outerRings(feature.geometry);
+		if (!ring) continue;
 		let cx = 0;
 		let cy = 0;
 		for (const [x, y] of ring) {

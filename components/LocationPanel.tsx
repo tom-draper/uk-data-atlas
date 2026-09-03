@@ -67,20 +67,21 @@ const calculateFeatureBounds = (
 		maxLng = -Infinity,
 		maxLat = -Infinity;
 
-	type Coords = number[] | number[][] | number[][][];
+	// Positions nest to a different depth for Polygon and MultiPolygon, so the
+	// walker recurses until it reaches a [lon, lat] pair.
+	type Positions = number[] | Positions[];
 
-	const processCoords = (coords: Coords): void => {
-		if (typeof coords[0] === "number") {
-			const [lng, lat] = coords as [number, number];
+	const processCoords = (coords: Positions): void => {
+		const [first] = coords;
+		if (typeof first === "number") {
+			const [lng, lat] = coords as number[];
 			minLng = Math.min(minLng, lng);
 			maxLng = Math.max(maxLng, lng);
 			minLat = Math.min(minLat, lat);
 			maxLat = Math.max(maxLat, lat);
-		} else {
-			(coords as number[][] | number[][][]).forEach((c) =>
-				processCoords(c as Coords),
-			);
+			return;
 		}
+		for (const part of coords as Positions[]) processCoords(part);
 	};
 
 	processCoords(feature.geometry.coordinates);
