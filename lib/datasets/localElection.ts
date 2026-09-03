@@ -1,4 +1,4 @@
-import { loadLocalElection } from "@/lib/data/election/local-election/load";
+import { localElectionDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { LocalElectionDataset } from "@/lib/types/elections";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
@@ -12,7 +12,5 @@ const chart2023: ChartDefinition<LocalElectionDataset> = { group: "Local Electio
 const chart2022: ChartDefinition<LocalElectionDataset> = { group: "Local Election", key: "localElection-2022", label: "2022 Local Elections", defaultVisible: true, componentPath: "@/components/elections/local/LocalElectionRegistryChart", boundaryType: "ward", calculateStats, year: 2022 };
 const chart2021: ChartDefinition<LocalElectionDataset> = { group: "Local Election", key: "localElection-2021", label: "2021 Local Elections", defaultVisible: true, componentPath: "@/components/elections/local/LocalElectionRegistryChart", boundaryType: "ward", calculateStats, year: 2021 };
 export const localElectionDefinition: ChartDatasetDefinition<LocalElectionDataset> = {
-	type: "localElection", precompiledFile: "local-election", chart: chart2025, charts: [chart2025, chart2024, chart2023, chart2022, chart2021],
-	source: { name: "Local Election Results", source: "House of Commons Library", sourceUrl: "https://commonslibrary.parliament.uk/2025-local-elections-handbook-and-dataset/", year: "2021, 2022, 2023, 2024, 2025", licence: "Open Parliament Licence", licenceUrl: "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/", description: "Local election results by electoral ward for England and Wales." },
-	precompile: async ({ text }) => loadLocalElection(text),
+	...localElectionDatasetDefinition, chart: chart2025, charts: [chart2025, chart2024, chart2023, chart2022, chart2021],
 };
