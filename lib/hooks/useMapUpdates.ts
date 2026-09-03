@@ -158,7 +158,7 @@ export function useMapUpdates({
 					});
 				}
 				if (definition?.map) {
-					return mapManager.updateMapForScalarDataset(
+					return mapManager.updateMapForNumericDataset(
 						geojson,
 						activeDataset,
 						mapOptions,

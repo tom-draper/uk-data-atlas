@@ -94,7 +94,7 @@ export class StatsCalculator {
 		return result;
 	}
 
-	private calculateScalarStats<T, R>(
+	private calculateNumericStats<T, R>(
 		cachePrefix: string,
 		geojson: BoundaryGeojson,
 		data: Record<string, T>,
@@ -987,7 +987,7 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedBroadbandData | null {
-		return this.calculateScalarStats(
+		return this.calculateNumericStats(
 			"broadband", geojson, broadbandData, location, datasetId, "localAuthority", (records) => {
 			let totalSuperfast = 0, totalUltrafast = 0, totalFullFibre = 0, totalGigabit = 0, count = 0;
 
@@ -1019,7 +1019,7 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedAirQualityData | null {
-		return this.calculateScalarStats(
+		return this.calculateNumericStats(
 			"airQuality", geojson, airQualityData, location, datasetId, "localAuthority", (records) => {
 			let totalNo2 = 0, totalPm25 = 0, totalPm10 = 0, count = 0, pm25Count = 0, pm10Count = 0;
 
@@ -1049,7 +1049,7 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedClaimantCountData | null {
-		return this.calculateScalarStats(
+		return this.calculateNumericStats(
 			"claimantCount", geojson, data, location, datasetId, "localAuthority", (records) => {
 			let totalCount = 0, totalRate = 0, youthCount = 0, youthRate = 0, count = 0;
 
@@ -1080,7 +1080,7 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedChildPovertyData | null {
-		return this.calculateScalarStats(
+		return this.calculateNumericStats(
 			"childPoverty",
 			geojson,
 			data,
@@ -1108,7 +1108,7 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedHomelessnessData | null {
-		return this.calculateScalarStats(
+		return this.calculateNumericStats(
 			"homelessness",
 			geojson,
 			data,
@@ -1147,7 +1147,7 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedFuelPovertyData | null {
-		return this.calculateScalarStats(
+		return this.calculateNumericStats(
 			"fuelPoverty",
 			geojson,
 			data,
@@ -1177,7 +1177,7 @@ export class StatsCalculator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedSchoolPerformanceData | null {
-		return this.calculateScalarStats(
+		return this.calculateNumericStats(
 			"schoolPerformance", geojson, data, location, datasetId, "localAuthority", (records) => {
 			let pt94 = 0, pt95 = 0, att8 = 0, p8 = 0, count = 0;
 

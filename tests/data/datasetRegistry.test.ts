@@ -80,7 +80,7 @@ describe("chart dataset registry contract", () => {
     ]);
 	});
 
-	it("derives scalar map defaults from each dataset definition", () => {
+	it("derives numeric map defaults from each dataset definition", () => {
 		for (const definition of CHART_DATASET_DEFINITIONS) {
 			if (!definition.map) continue;
 			expect(DEFAULT_MAP_OPTIONS[definition.type].colorRange).toEqual(
