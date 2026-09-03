@@ -73,6 +73,11 @@ describe("chart dataset registry contract", () => {
 					expect(legend.min).toBeLessThanOrEqual(legend.max);
 					expect(legend.format(legend.min)).not.toBe("");
 				});
+			} else {
+				it("registers a bespoke map renderer", () => {
+					expect(definition.mapRenderer?.getOptions).toBeTypeOf("function");
+					expect(definition.mapRenderer?.render).toBeTypeOf("function");
+				});
 			}
 		});
 	}
