@@ -126,8 +126,9 @@ export class DatasetAggregator {
 		return this.cached(`${cachePrefix}-${location}-${datasetId}`, () => {
 			const codeProp =
 				codeLevel === "lsoa"
-					? this.propertyDetector.detectLSOACode(geojson.features)
-					: this.propertyDetector.detectLocalAuthorityCode(
+					? this.propertyDetector.detect("lsoa", geojson.features)
+					: this.propertyDetector.detect(
+							"localAuthority",
 							geojson.features,
 						);
 			return aggregate(
@@ -143,7 +144,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	) {
 		return this.cached(`local-election-${location}-${datasetId}`, () => {
-			const wardCodeProp = this.propertyDetector.detectWardCode(
+			const wardCodeProp = this.propertyDetector.detect(
+				"ward",
 				geojson.features,
 			);
 			return aggregateLocalElection(
@@ -161,8 +163,10 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	) {
 		return this.cached(`general-election-${location}-${datasetId}`, () => {
-			const constituencyCodeProp =
-				this.propertyDetector.detectConstituencyCode(geojson.features);
+			const constituencyCodeProp = this.propertyDetector.detect(
+				"constituency",
+				geojson.features,
+			);
 			return aggregateGeneralElection(
 				geojson.features,
 				constituencyCodeProp,
@@ -178,7 +182,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	) {
 		return this.cached(`population-${location}-${datasetId}`, () => {
-			const wardCodeProp = this.propertyDetector.detectWardCode(
+			const wardCodeProp = this.propertyDetector.detect(
+				"ward",
 				geojson.features,
 			);
 			return aggregatePopulation(
@@ -196,7 +201,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	) {
 		return this.cached(`ethnicity-${location}-${datasetId}`, () => {
-			const ladProp = this.propertyDetector.detectLocalAuthorityCode(
+			const ladProp = this.propertyDetector.detect(
+				"localAuthority",
 				geojson.features,
 			);
 			return aggregateEthnicity(
@@ -214,7 +220,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	) {
 		return this.cached(`house-price-${location}-${datasetId}`, () => {
-			const wardCodeProp = this.propertyDetector.detectWardCode(
+			const wardCodeProp = this.propertyDetector.detect(
+				"ward",
 				geojson.features,
 			);
 			return aggregateHousePrices(
@@ -232,7 +239,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	) {
 		return this.cached(`crime-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			const ladCodeProp = this.propertyDetector.detect(
+				"localAuthority",
 				geojson.features,
 			);
 			return aggregateCrime(geojson.features, ladCodeProp, crimeData);
@@ -246,7 +254,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	) {
 		return this.cached(`income-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			const ladCodeProp = this.propertyDetector.detect(
+				"localAuthority",
 				geojson.features,
 			);
 			return aggregateIncome(geojson.features, ladCodeProp, incomeData);
@@ -260,7 +269,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	) {
 		return this.cached(`brexit-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			const ladCodeProp = this.propertyDetector.detect(
+				"localAuthority",
 				geojson.features,
 			);
 			return aggregateBrexit(geojson.features, ladCodeProp, brexitData);
@@ -276,7 +286,8 @@ export class DatasetAggregator {
 		return this.cached(
 			`brexitConstituency-${location}-${datasetId}`,
 			() => {
-				const codeProp = this.propertyDetector.detectConstituencyCode(
+				const codeProp = this.propertyDetector.detect(
+					"constituency",
 					geojson.features,
 				);
 				return aggregateBrexitConstituencies(
@@ -295,7 +306,10 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	) {
 		return this.cached(`custom-dataset-${location}-${datasetId}`, () => {
-			const codeProp = this.propertyDetector.detectCode(geojson.features);
+			const codeProp = this.propertyDetector.detect(
+				"any",
+				geojson.features,
+			);
 
 			return aggregateCustomDataset(geojson.features, codeProp, data);
 		});
@@ -308,7 +322,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedLifeExpectancyData {
 		return this.cached(`lifeExpectancy-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			const ladCodeProp = this.propertyDetector.detect(
+				"localAuthority",
 				geojson.features,
 			);
 			return aggregateLifeExpectancy(
@@ -326,7 +341,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedSIMDData | null {
 		return this.cached(`simd-${location}-${datasetId}`, () => {
-			const dzCodeProp = this.propertyDetector.detectDataZoneCode(
+			const dzCodeProp = this.propertyDetector.detect(
+				"dataZone",
 				geojson.features,
 			);
 			return aggregateSIMD(geojson.features, dzCodeProp, simdData);
@@ -340,7 +356,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedWIMDData | null {
 		return this.cached(`wimd-${location}-${datasetId}`, () => {
-			const lsoaCodeProp = this.propertyDetector.detectLSOACode(
+			const lsoaCodeProp = this.propertyDetector.detect(
+				"lsoa",
 				geojson.features,
 			);
 			return aggregateWIMD(geojson.features, lsoaCodeProp, wimdData);
@@ -354,7 +371,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedNIMDMData | null {
 		return this.cached(`nimdm-${location}-${datasetId}`, () => {
-			const soaCodeProp = this.propertyDetector.detectSOACode(
+			const soaCodeProp = this.propertyDetector.detect(
+				"superOutputArea",
 				geojson.features,
 			);
 			return aggregateNIMDM(geojson.features, soaCodeProp, nimdmData);
@@ -368,7 +386,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedIMDData {
 		return this.cached(`imd-${location}-${datasetId}`, () => {
-			const lsoaCodeProp = this.propertyDetector.detectLSOACode(
+			const lsoaCodeProp = this.propertyDetector.detect(
+				"lsoa",
 				geojson.features,
 			);
 			return aggregateIMD(geojson.features, lsoaCodeProp, imdData);
@@ -382,7 +401,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedQualificationData {
 		return this.cached(`qualification-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			const ladCodeProp = this.propertyDetector.detect(
+				"localAuthority",
 				geojson.features,
 			);
 			return aggregateQualifications(
@@ -519,7 +539,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedNHSWaitingData | null {
 		return this.cached(`nhsWaiting-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			const ladCodeProp = this.propertyDetector.detect(
+				"localAuthority",
 				geojson.features,
 			);
 			return aggregateNHSWaiting(geojson.features, ladCodeProp, dataset);
@@ -533,7 +554,8 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedUnemploymentData | null {
 		return this.cached(`unemployment-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+			const ladCodeProp = this.propertyDetector.detect(
+				"localAuthority",
 				geojson.features,
 			);
 			return aggregateUnemployment(

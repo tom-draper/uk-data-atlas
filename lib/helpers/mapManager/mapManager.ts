@@ -19,7 +19,7 @@ import { LayerManager } from "./layerManager";
 import { EventHandler } from "./eventHandler";
 import { DatasetAggregator } from "../datasetAggregation";
 import { FeatureBuilder } from "./featureBuilder";
-import { PropertyDetector } from "./propertyDetector";
+import { PropertyDetector, type BoundaryCodeScope } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import type { BoundaryType } from "@/lib/types/boundaries";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
@@ -34,9 +34,6 @@ import type { VectorLineLayer } from "./layers";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
-
-// Cache property detections to avoid repeated computation
-const propCache = new Map<string, PropertyKeys>();
 
 type NumericDataset = {
 	type: MapMode;
@@ -67,6 +64,9 @@ export class MapManager {
 			  }
 		| undefined;
 	private customRangeCache = new WeakMap<CustomDataset, ColorRange>();
+	// Which code key a boundary file uses depends only on the property names it
+	// carries, so a detection is reused across every file sharing that schema.
+	private codePropCache = new Map<string, PropertyKeys>();
 
 	constructor(map: MapLibreMap, callbacks: MapManagerCallbacks) {
 		this.layerManager = new LayerManager(map);
@@ -78,6 +78,21 @@ export class MapManager {
 			this.propertyDetector,
 			this.cache,
 		);
+	}
+
+	private resolveCodeProp(
+		scope: BoundaryCodeScope,
+		features: Features,
+	): PropertyKeys {
+		const properties = features[0]?.properties;
+		const cacheKey = `${scope}-${properties ? Object.keys(properties).join(",") : ""}`;
+
+		let codeProp = this.codePropCache.get(cacheKey);
+		if (!codeProp) {
+			codeProp = this.propertyDetector.detect(scope, features);
+			this.codePropCache.set(cacheKey, codeProp);
+		}
+		return codeProp;
 	}
 
 	// Unified election update method
@@ -93,18 +108,10 @@ export class MapManager {
 			? mapOptions.localElection
 			: mapOptions.generalElection;
 
-		// Cache property detection
-		const cacheKey = `${type}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let codeProp = propCache.get(cacheKey);
-
-		if (!codeProp) {
-			codeProp = isLocal
-				? this.propertyDetector.detectWardCode(geojson.features)
-				: this.propertyDetector.detectConstituencyCode(
-						geojson.features,
-					);
-			propCache.set(cacheKey, codeProp);
-		}
+		const codeProp = this.resolveCodeProp(
+			isLocal ? "ward" : "constituency",
+			geojson.features,
+		);
 
 		const mode = options.mode || "majority";
 		const dataMap = isLocal
@@ -212,15 +219,7 @@ export class MapManager {
 		mapOptions: MapOptions,
 		isDark = false,
 	): void {
-		const cacheKey = `ethnicity-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let codeProp = propCache.get(cacheKey);
-
-		if (!codeProp) {
-			codeProp = this.propertyDetector.detectLocalAuthorityCode(
-				geojson.features,
-			);
-			propCache.set(cacheKey, codeProp);
-		}
+		const codeProp = this.resolveCodeProp("localAuthority", geojson.features);
 
 		const mode = mapOptions.ethnicity?.mode || "majority";
 
@@ -258,13 +257,7 @@ export class MapManager {
 		dataset: CustomDataset,
 		mapOptions: MapOptions,
 	): void {
-		const cacheKey = `custom-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let codeProp = propCache.get(cacheKey);
-
-		if (!codeProp) {
-			codeProp = this.propertyDetector.detectCode(geojson.features);
-			propCache.set(cacheKey, codeProp);
-		}
+		const codeProp = this.resolveCodeProp("any", geojson.features);
 
 		const transformedGeojson = this.getValueGeojson(
 			geojson,
@@ -375,15 +368,7 @@ export class MapManager {
 		valueFor: (code: string, feature: Features[number]) => number | null,
 		colorExpression: (options: MapOptions) => MapExpression,
 	): void {
-		const cacheKey = `population-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let wardCodeProp = propCache.get(cacheKey);
-
-		if (!wardCodeProp) {
-			wardCodeProp = this.propertyDetector.detectWardCode(
-				geojson.features,
-			);
-			propCache.set(cacheKey, wardCodeProp);
-		}
+		const wardCodeProp = this.resolveCodeProp("ward", geojson.features);
 
 		const transformedGeojson = this.getValueGeojson(
 			geojson,
@@ -470,43 +455,18 @@ export class MapManager {
 	}
 
 	// Generic update method for simple datasets
-	private detectBoundaryProperty(
-		features: Features,
-		boundaryType: BoundaryType,
-	): PropertyKeys {
-		switch (boundaryType) {
-			case "ward": return this.propertyDetector.detectWardCode(features);
-			case "constituency": return this.propertyDetector.detectConstituencyCode(features);
-			case "localAuthority": return this.propertyDetector.detectLocalAuthorityCode(features);
-			case "lsoa": return this.propertyDetector.detectLSOACode(features);
-			case "dataZone": return this.propertyDetector.detectDataZoneCode(features);
-			case "superOutputArea": return this.propertyDetector.detectSOACode(features);
-		}
-	}
-
 	private updateGenericMap<T extends { data: Record<string, unknown> }>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
-		detectProperty: (features: Features) => PropertyKeys,
+		scope: BoundaryCodeScope,
 		eventType: MapMode,
 		dataForEvents: Record<string, unknown>,
 		valueFor: (dataset: T, code: string) => number | null | undefined,
 		getColorRange: (dataset: T, options: MapOptions) => ColorRange,
 		invertColor = true,
 	): void {
-		const cacheKey = `${eventType}-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let codeProp: PropertyKeys | undefined = propCache.get(cacheKey);
-
-		if (!codeProp) {
-			codeProp = detectProperty(geojson.features);
-			propCache.set(cacheKey, codeProp);
-		}
-
-		if (!codeProp) {
-			console.warn("codeProp is undefined, skipping feature building.");
-			return;
-		}
+		const codeProp = this.resolveCodeProp(scope, geojson.features);
 
 		const transformedGeojson = this.getValueGeojson(
 			geojson,
@@ -538,7 +498,7 @@ export class MapManager {
 			geojson,
 			dataset,
 			mapOptions,
-			(features) => this.detectBoundaryProperty(features, dataset.boundaryType),
+			dataset.boundaryType,
 			dataset.type,
 			dataset.data,
 			(data, code) => {
@@ -606,15 +566,7 @@ export class MapManager {
 		dataset: BrexitLADDataset,
 		mapOptions: MapOptions,
 	): void {
-		const cacheKey = `brexit-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let codeProp = propCache.get(cacheKey);
-
-		if (!codeProp) {
-			codeProp = this.propertyDetector.detectLocalAuthorityCode(
-				geojson.features,
-			);
-			propCache.set(cacheKey, codeProp);
-		}
+		const codeProp = this.resolveCodeProp("localAuthority", geojson.features);
 
 		const features = this.featureBuilder.buildBrexitFeatures(
 			geojson.features,
@@ -638,15 +590,7 @@ export class MapManager {
 		dataset: BrexitConstituencyDataset,
 		mapOptions: MapOptions,
 	): void {
-		const cacheKey = `brexitConstituency-${geojson.features[0]?.properties ? Object.keys(geojson.features[0].properties).join(",") : ""}`;
-		let codeProp = propCache.get(cacheKey);
-
-		if (!codeProp) {
-			codeProp = this.propertyDetector.detectConstituencyCode(
-				geojson.features,
-			);
-			propCache.set(cacheKey, codeProp);
-		}
+		const codeProp = this.resolveCodeProp("constituency", geojson.features);
 
 		const features = this.featureBuilder.buildBrexitConstituencyFeatures(
 			geojson.features,
@@ -702,7 +646,7 @@ export class MapManager {
 
 	destroy(): void {
 		this.eventHandler.destroy();
-		propCache.clear(); // Clean up cache on destroy
+		this.codePropCache.clear();
 		this.activeTransformedGeojson = undefined;
 		this.customRangeCache = new WeakMap<CustomDataset, ColorRange>();
 	}
