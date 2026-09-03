@@ -10,8 +10,8 @@ export const homelessnessDefinition: ChartDatasetDefinition<HomelessnessDataset>
 		label: "Homelessness [2026]",
 		defaultVisible: true,
 		componentPath: "@/components/economics/homelessness/HomelessnessChart",
-		calculateStats: (mapManager, geojson, data, location, datasetId) =>
-			mapManager.calculateHomelessnessStats(geojson, data, location, datasetId),
+		calculateStats: (aggregator, geojson, data, location, datasetId) =>
+			aggregator.calculateHomelessnessStats(geojson, data, location, datasetId),
 		year: 2026,
 	},
 	map: {

@@ -1,3 +1,4 @@
+import type { DatasetAggregator } from "@/lib/helpers/mapManager/statsCalculator";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import type { ActiveViz } from "@/lib/types/datasets";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
@@ -51,7 +52,7 @@ export interface ChartDefinition<
   defaultVisible: boolean;
   componentPath: string;
   calculateStats(
-    mapManager: MapManager,
+	aggregator: DatasetAggregator,
     geojson: BoundaryGeojson,
     data: T["data"],
     location: string | null,

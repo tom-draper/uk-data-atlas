@@ -78,7 +78,8 @@ const AGE_90_WEIGHTS = (() => {
 	return weights.map((w) => w / totalWeight);
 })();
 
-export class StatsCalculator {
+/** Aggregates dataset records against the currently loaded boundary geometry. */
+export class DatasetAggregator {
 	constructor(
 		private propertyDetector: PropertyDetector,
 		private cache: StatsCache,
@@ -869,7 +870,7 @@ export class StatsCalculator {
 	}
 
 	private buildPopulationStatsResult(
-		aggregated: ReturnType<StatsCalculator["aggregatePopulationData"]>,
+		aggregated: ReturnType<DatasetAggregator["aggregatePopulationData"]>,
 	) {
 		const populationStats: PopulationStats = {
 			total: aggregated.totalPop,
