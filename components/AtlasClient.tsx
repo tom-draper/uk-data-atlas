@@ -85,7 +85,11 @@ export default function AtlasClient() {
 	const { datasets, loading: datasetsLoading, errors } = useDatasets();
 	const roadSafety = useRoadSafetyData();
 	const roadSafetyDatasets = Object.values(roadSafety.datasets);
-	const networkDatasets = Object.values(NETWORK_DATASETS);
+	// Hidden until a tile URL is configured (NEXT_PUBLIC_OS_OPEN_ROADS_TILE_URL),
+	// so it stays off in production until we have somewhere to host the tiles.
+	const networkDatasets = Object.values(NETWORK_DATASETS).filter(
+		(dataset) => dataset.available,
+	);
 
 	useEffect(() => {
 		if (!datasetsLoading) setInitialDatasetLoadComplete(true);
