@@ -9,17 +9,30 @@ browser.
 1. Download the current **Vector Tiles (MBTiles)** release from the [OS Data
    Hub](https://osdatahub.os.uk/downloads/open/OpenRoads). The dataset is free
    under the Open Government Licence.
-2. Serve the MBTiles archive, or an equivalent converted tile archive, through
-   a CORS-enabled vector-tile service. It must expose a URL template in the
-   form `https://tiles.example.com/os-open-roads/{z}/{x}/{y}.pbf`.
-3. Inspect the tile metadata and set the RoadLink source-layer name if the
-   service changes it. The supplied archive uses `RoadLink`.
-4. Put the resulting values in the deployment environment (or local `.env`):
+2. Extract `Data/oproad_gb.mbtiles` to
+   `data/transport/os-open-roads/oproad_gb.mbtiles`. The archive and extracted
+   database are ignored by Git.
+3. Start the local CORS-enabled vector-tile service in one terminal:
+
+   ```sh
+   pnpm roads:serve
+   ```
+
+   This uses Docker and TileServer GL at `http://localhost:8080`. The supplied
+   MBTiles use the `road_link` source layer and provide road tiles from zoom 9
+   through 14.
+4. Put the resulting values in local `.env` (already configured for the local
+   server) and restart `pnpm dev` after changing them:
 
    ```dotenv
-   NEXT_PUBLIC_OS_OPEN_ROADS_TILE_URL=https://tiles.example.com/os-open-roads/{z}/{x}/{y}.pbf
-   NEXT_PUBLIC_OS_OPEN_ROADS_SOURCE_LAYER=RoadLink
+   NEXT_PUBLIC_OS_OPEN_ROADS_TILE_URL=http://localhost:8080/data/oproad_gb/{z}/{x}/{y}.pbf
+   NEXT_PUBLIC_OS_OPEN_ROADS_SOURCE_LAYER=road_link
    ```
+
+For production, host the MBTiles (or an equivalent PMTiles/vector-tile
+conversion) behind a public CORS-enabled tile service and replace the local URL
+with its URL template. Do not deploy the local Docker setup as the production
+tile host.
 
 **OS Open Roads** is a first-class Transport dataset. Its chart card selects
 the network on the map; until the tile URL is configured, the card clearly

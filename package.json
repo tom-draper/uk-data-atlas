@@ -14,6 +14,7 @@
     "typecheck": "tsc --noEmit",
     "check": "pnpm typecheck && pnpm test:run",
     "profile:atlas": "node scripts/profile-atlas-memory.mjs",
+    "roads:serve": "node scripts/serve-os-open-roads.mjs",
     "doctor": "npx react-doctor@latest"
   },
   "dependencies": {

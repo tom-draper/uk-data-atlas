@@ -11,7 +11,7 @@ import { zoomInterpolate } from "@/lib/helpers/mapManager/expressions";
  */
 const osOpenRoadsTileUrl = process.env.NEXT_PUBLIC_OS_OPEN_ROADS_TILE_URL;
 const osOpenRoadsSourceLayer =
-	process.env.NEXT_PUBLIC_OS_OPEN_ROADS_SOURCE_LAYER ?? "RoadLink";
+	process.env.NEXT_PUBLIC_OS_OPEN_ROADS_SOURCE_LAYER ?? "road_link";
 
 export const NETWORK_DATASETS: Record<string, NetworkDataset> = {
 	"os-open-roads": {
@@ -32,7 +32,7 @@ export const NETWORK_DATASETS: Record<string, NetworkDataset> = {
 				source: {
 					tiles: [osOpenRoadsTileUrl],
 					sourceLayer: osOpenRoadsSourceLayer,
-					minzoom: 5,
+					minzoom: 9,
 					maxzoom: 14,
 					attribution: "Contains OS data © Crown copyright and database right",
 				},
