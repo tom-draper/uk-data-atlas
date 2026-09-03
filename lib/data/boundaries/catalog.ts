@@ -139,3 +139,33 @@ export const BOUNDARY_CATALOG = {
 export type BoundaryType = keyof typeof BOUNDARY_CATALOG;
 export type BoundaryYear<T extends BoundaryType> =
 	keyof (typeof BOUNDARY_CATALOG)[T]["vintages"];
+
+/** Every geography in catalogue order, for callers that handle all of them. */
+export const BOUNDARY_TYPES = Object.keys(BOUNDARY_CATALOG) as BoundaryType[];
+
+/** The vintages a geography has boundary files for, newest first. */
+export const boundaryYears = (type: BoundaryType): number[] =>
+	Object.keys(BOUNDARY_CATALOG[type].vintages)
+		.map(Number)
+		.sort((a, b) => b - a);
+
+// The catalogue lists each geography's code keys and name keys in step, so a
+// file's code property identifies both its geography and its matching name key.
+const CODE_KEY_INDEX = new Map<string, { type: BoundaryType; nameKey: string }>(
+	BOUNDARY_TYPES.flatMap((type) => {
+		const { code, name } = BOUNDARY_CATALOG[type].properties;
+		return code.map(
+			(key, index) =>
+				[key, { type, nameKey: name[index] ?? name[0] }] as const,
+		);
+	}),
+);
+
+/** The geography a boundary file belongs to, from the code property it carries. */
+export const boundaryTypeForCodeKey = (
+	codeKey: string,
+): BoundaryType | undefined => CODE_KEY_INDEX.get(codeKey)?.type;
+
+/** The name property paired with a code property in the same boundary file. */
+export const nameKeyForCodeKey = (codeKey: string): string | undefined =>
+	CODE_KEY_INDEX.get(codeKey)?.nameKey;
