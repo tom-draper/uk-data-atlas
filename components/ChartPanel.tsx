@@ -243,6 +243,7 @@ function ChartPanelContent({
                   activeViz={activeViz}
                   setActiveViz={setActiveViz}
                   location={location}
+                  mapManager={mapManager}
                 />
                 <CustomSection
                   customDatasets={customDatasets}

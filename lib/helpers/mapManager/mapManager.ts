@@ -1003,6 +1003,17 @@ export class MapManager {
 		this.layerManager.clearLineLayer(id, true);
 	}
 
+	countRenderedFeaturesByProperty(
+		id: string,
+		property: string,
+	): Record<string, number> | null {
+		return this.layerManager.countRenderedFeaturesByProperty(id, property);
+	}
+
+	onIdle(callback: () => void): () => void {
+		return this.layerManager.onIdle(callback);
+	}
+
 	destroy(): void {
 		this.eventHandler.destroy();
 		propCache.clear(); // Clean up cache on destroy
