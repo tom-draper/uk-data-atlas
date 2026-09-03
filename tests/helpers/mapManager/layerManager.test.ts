@@ -14,6 +14,7 @@ function createMap() {
 		removeLayer: (id: string) => layers.delete(id),
 		removeSource: (id: string) => sources.delete(id),
 		setPaintProperty: vi.fn(),
+		setFilter: vi.fn(),
 		sources,
 	};
 }
