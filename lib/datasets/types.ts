@@ -2,13 +2,6 @@ import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { DatasetDefinition } from "../data/catalog";
 
-export type {
-	DatasetDefinition,
-	DatasetIngestionContract,
-	DatasetReader,
-	DatasetSource,
-} from "../data/catalog";
-
 // Only meaningful for datasets rendered as a colour-range choropleth on the
 // map. Categorical datasets (party winner, majority ethnicity, ...) render
 // through their own bespoke map path and leave this unset.
