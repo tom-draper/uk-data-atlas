@@ -13,7 +13,7 @@ import {
 
 type ColorRange = { min: number; max: number };
 
-// Builds a MapLibre paint expression for scalar datasets. The source keeps the
+// Builds a MapLibre paint expression for numeric datasets. The source keeps the
 // raw value so changing a theme or range only changes paint, rather than
 // rebuilding and uploading every boundary feature.
 export function getSequentialColorExpression(

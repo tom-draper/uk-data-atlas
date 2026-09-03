@@ -110,7 +110,7 @@ describe("MapManager election updates", () => {
 		expect(map.sources.get("location-wards")!.setData).not.toHaveBeenCalled();
 	});
 
-	it("renders registry-backed scalar datasets through the shared value path", () => {
+	it("renders registry-backed numeric datasets through the shared value path", () => {
 		const map = createMap();
 		const manager = new MapManager(map as any, { onLocationChange: () => {} });
 		const dataset = {
@@ -155,13 +155,13 @@ describe("MapManager election updates", () => {
 		const builder = (manager as any).featureBuilder;
 		const buildValue = vi.spyOn(builder, "buildValueFeatures");
 
-		manager.updateMapForScalarDataset(
+		manager.updateMapForNumericDataset(
 			geojson,
 			dataset,
 			DEFAULT_MAP_OPTIONS,
 			childPovertyDefinition.map!,
 		);
-		manager.updateMapForScalarDataset(
+		manager.updateMapForNumericDataset(
 			geojson,
 			dataset,
 			{

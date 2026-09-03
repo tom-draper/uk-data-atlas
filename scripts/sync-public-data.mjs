@@ -14,9 +14,9 @@ const SRC = join(ROOT, "data");
 const DEST = join(ROOT, "public", "data");
 
 const SERVE_EXTENSIONS = new Set([".topojson"]);
-const LEGACY_SOURCE_EXTENSIONS = new Set([".csv", ".xlsx", ".xls", ".ods"]);
+const SOURCE_DATA_EXTENSIONS = new Set([".csv", ".xlsx", ".xls", ".ods"]);
 
-async function removeLegacySourceCopies(dir = DEST) {
+async function removeSourceDataCopies(dir = DEST) {
 	let entries;
 	try {
 		entries = await fs.readdir(dir, { withFileTypes: true });
@@ -27,13 +27,13 @@ async function removeLegacySourceCopies(dir = DEST) {
 	for (const entry of entries) {
 		const path = join(dir, entry.name);
 		if (entry.isDirectory()) {
-			await removeLegacySourceCopies(path);
+			await removeSourceDataCopies(path);
 		} else if (
-			LEGACY_SOURCE_EXTENSIONS.has(extname(entry.name).toLowerCase())
+			SOURCE_DATA_EXTENSIONS.has(extname(entry.name).toLowerCase())
 		) {
 			await fs.unlink(path);
 			console.log(
-				`  removed legacy source copy: ${path.replace(ROOT + "/", "")}`,
+				`  removed source data copy: ${path.replace(ROOT + "/", "")}`,
 			);
 		}
 	}
@@ -73,6 +73,6 @@ async function sync(src, dest) {
 }
 
 console.log("Syncing public data from data/ ...");
-await removeLegacySourceCopies();
+await removeSourceDataCopies();
 await sync(SRC, DEST);
 console.log("Done.");

@@ -27,7 +27,7 @@ export interface ChartDatasetMap<T = unknown> {
   getColorRange?(dataset: T): { min: number; max: number };
 }
 
-/** Presentation-specific renderer for datasets that cannot use the shared scalar map path. */
+/** Presentation-specific renderer for datasets that cannot use the shared numeric map path. */
 export interface ChartDatasetMapRenderer<
   T extends { type: string; data: unknown },
 > {

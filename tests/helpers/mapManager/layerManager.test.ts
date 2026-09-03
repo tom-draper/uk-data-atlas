@@ -148,7 +148,7 @@ describe("LayerManager visibility updates", () => {
 		expect(map.getLayer("atlas-vector-line-os-open-roads-stroke")).toBeDefined();
 	});
 
-	it("does not re-upload scalar GeoJSON when only the colour expression changes", () => {
+	it("does not re-upload numeric GeoJSON when only the colour expression changes", () => {
 		const map = createMap();
 		const manager = new LayerManager(map as any);
 		const geojson = {

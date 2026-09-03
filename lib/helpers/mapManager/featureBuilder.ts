@@ -68,7 +68,7 @@ export class FeatureBuilder {
 		}));
 	}
 
-	// Scalar map datasets keep a stable raw value in the source. Their colour is
+	// Numeric map datasets keep a stable raw value in the source. Their colour is
 	// then calculated by a MapLibre paint expression, avoiding a fresh feature
 	// collection whenever a range slider or theme changes.
 	buildValueFeatures(

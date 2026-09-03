@@ -54,13 +54,13 @@ export type { MapManagerCallbacks } from "./callbacks";
 // Cache property detections to avoid repeated computation
 const propCache = new Map<string, PropertyKeys>();
 
-type ScalarDataset = {
+type NumericDataset = {
 	type: MapMode;
 	boundaryType: BoundaryType;
 	data: Record<string, unknown>;
 };
 
-export interface ScalarMapConfig<T extends ScalarDataset> {
+export interface NumericMapConfig<T extends NumericDataset> {
 	valueKey?: string;
 	valueFor?(dataset: T, code: string): number | null;
 	invertColor?: boolean;
@@ -544,11 +544,11 @@ export class MapManager {
 		this.eventHandler.setupEventHandlers(dataForEvents, codeProp);
 	}
 
-	updateMapForScalarDataset<T extends ScalarDataset>(
+	updateMapForNumericDataset<T extends NumericDataset>(
 		geojson: BoundaryGeojson,
 		dataset: T,
 		mapOptions: MapOptions,
-		map: ScalarMapConfig<T>,
+		map: NumericMapConfig<T>,
 	): void {
 		this.updateGenericMap(
 			geojson,
