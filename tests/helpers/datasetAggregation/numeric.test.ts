@@ -34,10 +34,25 @@ describe("collectBoundaryRecords", () => {
 describe("aggregateBroadband", () => {
 	it("averages coverage over the records that report full fibre", () => {
 		const result = aggregateBroadband([
-			{ pctSuperfast: 90, pctUltrafast: 60, pctFullFibre: 40, pctGigabit: 50 },
-			{ pctSuperfast: 80, pctUltrafast: 40, pctFullFibre: 20, pctGigabit: 30 },
+			{
+				pctSuperfast: 90,
+				pctUltrafast: 60,
+				pctFullFibre: 40,
+				pctGigabit: 50,
+			},
+			{
+				pctSuperfast: 80,
+				pctUltrafast: 40,
+				pctFullFibre: 20,
+				pctGigabit: 30,
+			},
 			// Skipped entirely: no full fibre figure to anchor the record.
-			{ pctSuperfast: 100, pctUltrafast: 100, pctFullFibre: null, pctGigabit: 100 },
+			{
+				pctSuperfast: 100,
+				pctUltrafast: 100,
+				pctFullFibre: null,
+				pctGigabit: 100,
+			},
 		] as any);
 
 		expect(result).toEqual({
@@ -49,9 +64,7 @@ describe("aggregateBroadband", () => {
 	});
 
 	it("treats missing optional measures as zero", () => {
-		expect(
-			aggregateBroadband([{ pctFullFibre: 30 }] as any),
-		).toEqual({
+		expect(aggregateBroadband([{ pctFullFibre: 30 }] as any)).toEqual({
 			pctSuperfast: 0,
 			pctUltrafast: 0,
 			pctFullFibre: 30,
@@ -77,12 +90,16 @@ describe("aggregateAirQuality", () => {
 
 	it("reports null for a pollutant no record measures", () => {
 		expect(
-			aggregateAirQuality([{ no2Mean: 20, pm25Mean: null, pm10Mean: null }] as any),
+			aggregateAirQuality([
+				{ no2Mean: 20, pm25Mean: null, pm10Mean: null },
+			] as any),
 		).toEqual({ no2Mean: 20, pm25Mean: null, pm10Mean: null });
 	});
 
 	it("returns null when no record measures NO2", () => {
-		expect(aggregateAirQuality([{ no2Mean: null, pm25Mean: 10 }] as any)).toBeNull();
+		expect(
+			aggregateAirQuality([{ no2Mean: null, pm25Mean: 10 }] as any),
+		).toBeNull();
 	});
 });
 
@@ -119,7 +136,9 @@ describe("aggregateChildPoverty", () => {
 
 	it("returns null when the covered areas have no children", () => {
 		expect(
-			aggregateChildPoverty([{ childCount: 0, childrenPopulation: 0 }] as any),
+			aggregateChildPoverty([
+				{ childCount: 0, childrenPopulation: 0 },
+			] as any),
 		).toBeNull();
 	});
 });
@@ -171,7 +190,9 @@ describe("aggregateFuelPoverty", () => {
 
 	it("returns null when the covered areas have no households", () => {
 		expect(
-			aggregateFuelPoverty([{ householdCount: 0, fuelPoorHouseholdCount: 0 }] as any),
+			aggregateFuelPoverty([
+				{ householdCount: 0, fuelPoorHouseholdCount: 0 },
+			] as any),
 		).toBeNull();
 	});
 });
@@ -179,9 +200,24 @@ describe("aggregateFuelPoverty", () => {
 describe("aggregateSchoolPerformance", () => {
 	it("averages over the records with a basics measure", () => {
 		const result = aggregateSchoolPerformance([
-			{ ptL2basics94: 40, ptL2basics95: 30, avgAtt8: 50, avgP8score: 0.2 },
-			{ ptL2basics94: 60, ptL2basics95: 50, avgAtt8: 46, avgP8score: -0.4 },
-			{ ptL2basics94: null, ptL2basics95: 100, avgAtt8: 100, avgP8score: 2 },
+			{
+				ptL2basics94: 40,
+				ptL2basics95: 30,
+				avgAtt8: 50,
+				avgP8score: 0.2,
+			},
+			{
+				ptL2basics94: 60,
+				ptL2basics95: 50,
+				avgAtt8: 46,
+				avgP8score: -0.4,
+			},
+			{
+				ptL2basics94: null,
+				ptL2basics95: 100,
+				avgAtt8: 100,
+				avgP8score: 2,
+			},
 		] as any);
 
 		expect(result).toEqual({
@@ -193,6 +229,8 @@ describe("aggregateSchoolPerformance", () => {
 	});
 
 	it("returns null when no record has a basics measure", () => {
-		expect(aggregateSchoolPerformance([{ ptL2basics94: null }] as any)).toBeNull();
+		expect(
+			aggregateSchoolPerformance([{ ptL2basics94: null }] as any),
+		).toBeNull();
 	});
 });

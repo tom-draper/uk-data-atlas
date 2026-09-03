@@ -13,8 +13,21 @@ import { getFeatureProp } from "@/lib/types";
 import { getWinningParty } from "../generalElection";
 
 const PARTY_KEYS = [
-	"LAB", "CON", "LD", "GREEN", "RUK", "UKIP", "BRX", "SNP", "PC",
-	"DUP", "SF", "SDLP", "UUP", "APNI", "OTHER",
+	"LAB",
+	"CON",
+	"LD",
+	"GREEN",
+	"RUK",
+	"UKIP",
+	"BRX",
+	"SNP",
+	"PC",
+	"DUP",
+	"SF",
+	"SDLP",
+	"UUP",
+	"APNI",
+	"OTHER",
 ];
 
 export function aggregateLocalElection(
@@ -23,12 +36,26 @@ export function aggregateLocalElection(
 	data: LocalElectionDataset["data"],
 ): WardStats {
 	const stats: WardStats = {
-		partyVotes: { LAB: 0, CON: 0, LD: 0, GREEN: 0, REF: 0, IND: 0, DUP: 0, PC: 0, SNP: 0, SF: 0, APNI: 0, SDLP: 0 },
+		partyVotes: {
+			LAB: 0,
+			CON: 0,
+			LD: 0,
+			GREEN: 0,
+			REF: 0,
+			IND: 0,
+			DUP: 0,
+			PC: 0,
+			SNP: 0,
+			SF: 0,
+			APNI: 0,
+			SDLP: 0,
+		},
 		electorate: 0,
 		totalVotes: 0,
 	};
 	for (const feature of features) {
-		const ward = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const ward =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!ward) continue;
 		const source = ward.partyVotes;
 		const target = stats.partyVotes;
@@ -56,23 +83,31 @@ export function aggregateGeneralElection(
 	data: GeneralElectionDataset["data"],
 ): ConstituencyStats {
 	const stats: ConstituencyStats = {
-		totalSeats: 0, electorate: 0, validVotes: 0, invalidVotes: 0,
-		partySeats: {}, totalVotes: 0, partyVotes: {},
+		totalSeats: 0,
+		electorate: 0,
+		validVotes: 0,
+		invalidVotes: 0,
+		partySeats: {},
+		totalVotes: 0,
+		partyVotes: {},
 	};
 	for (const feature of features) {
-		const constituency = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const constituency =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!constituency) continue;
 		stats.totalSeats++;
 		stats.electorate += constituency.electorate;
 		stats.validVotes += constituency.validVotes;
 		stats.invalidVotes += constituency.invalidVotes;
 		const winner = getWinningParty(constituency);
-		if (winner) stats.partySeats[winner] = (stats.partySeats[winner] || 0) + 1;
+		if (winner)
+			stats.partySeats[winner] = (stats.partySeats[winner] || 0) + 1;
 		for (const party of PARTY_KEYS) {
 			const votes = constituency.partyVotes[party] ?? 0;
 			if (votes > 0) {
 				stats.totalVotes += votes;
-				stats.partyVotes[party] = (stats.partyVotes[party] ?? 0) + votes;
+				stats.partyVotes[party] =
+					(stats.partyVotes[party] ?? 0) + votes;
 			}
 		}
 	}
@@ -84,9 +119,13 @@ export function aggregateBrexit(
 	codeProperty: PropertyKeys,
 	data: BrexitLADDataset["data"],
 ): AggregatedBrexitData {
-	let totalLeave = 0, totalRemain = 0, totalVotes = 0, electorate = 0;
+	let totalLeave = 0,
+		totalRemain = 0,
+		totalVotes = 0,
+		electorate = 0;
 	for (const feature of features) {
-		const area = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const area =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!area) continue;
 		totalLeave += area.leave;
 		totalRemain += area.remain;
@@ -94,9 +133,12 @@ export function aggregateBrexit(
 		electorate += area.electorate;
 	}
 	return {
-		totalLeave, totalRemain, totalVotes, electorate,
-		pctLeave: totalVotes > 0 ? totalLeave / totalVotes * 100 : 0,
-		pctRemain: totalVotes > 0 ? totalRemain / totalVotes * 100 : 0,
+		totalLeave,
+		totalRemain,
+		totalVotes,
+		electorate,
+		pctLeave: totalVotes > 0 ? (totalLeave / totalVotes) * 100 : 0,
+		pctRemain: totalVotes > 0 ? (totalRemain / totalVotes) * 100 : 0,
 	};
 }
 
@@ -105,16 +147,22 @@ export function aggregateBrexitConstituencies(
 	codeProperty: PropertyKeys,
 	data: BrexitConstituencyDataset["data"],
 ): AggregatedBrexitData {
-	let totalLeave = 0, totalRemain = 0, count = 0;
+	let totalLeave = 0,
+		totalRemain = 0,
+		count = 0;
 	for (const feature of features) {
-		const area = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const area =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!area) continue;
 		totalLeave += area.pctLeave;
 		totalRemain += 100 - area.pctLeave;
 		count++;
 	}
 	return {
-		totalLeave, totalRemain, totalVotes: count, electorate: 0,
+		totalLeave,
+		totalRemain,
+		totalVotes: count,
+		electorate: 0,
 		pctLeave: count > 0 ? totalLeave / count : 0,
 		pctRemain: count > 0 ? totalRemain / count : 0,
 	};

@@ -10,20 +10,26 @@ export function aggregateSIMD(
 	codeProperty: PropertyKeys,
 	data: SIMDDataset["data"],
 ): AggregatedSIMDData | null {
-	let rank = 0, quintile = 0, decile = 0, count = 0;
+	let rank = 0,
+		quintile = 0,
+		decile = 0,
+		count = 0;
 	for (const feature of features) {
-		const record = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const record =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!record) continue;
 		rank += record.simdRank;
 		quintile += record.simdQuintile;
 		decile += record.simdDecile;
 		count++;
 	}
-	return count === 0 ? null : {
-		averageSIMDRank: rank / count,
-		averageSIMDQuintile: quintile / count,
-		averageSIMDDecile: decile / count,
-	};
+	return count === 0
+		? null
+		: {
+				averageSIMDRank: rank / count,
+				averageSIMDQuintile: quintile / count,
+				averageSIMDDecile: decile / count,
+			};
 }
 
 export function aggregateWIMD(
@@ -31,20 +37,26 @@ export function aggregateWIMD(
 	codeProperty: PropertyKeys,
 	data: WIMDDataset["data"],
 ): AggregatedWIMDData | null {
-	let score = 0, rank = 0, decile = 0, count = 0;
+	let score = 0,
+		rank = 0,
+		decile = 0,
+		count = 0;
 	for (const feature of features) {
-		const record = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const record =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!record) continue;
 		score += record.wimdScore;
 		rank += record.wimdRank;
 		decile += record.wimdDecile;
 		count++;
 	}
-	return count === 0 ? null : {
-		averageWIMDScore: score / count,
-		averageWIMDRank: rank / count,
-		averageWIMDDecile: decile / count,
-	};
+	return count === 0
+		? null
+		: {
+				averageWIMDScore: score / count,
+				averageWIMDRank: rank / count,
+				averageWIMDDecile: decile / count,
+			};
 }
 
 export function aggregateNIMDM(
@@ -52,18 +64,23 @@ export function aggregateNIMDM(
 	codeProperty: PropertyKeys,
 	data: NIMDMDataset["data"],
 ): AggregatedNIMDMData | null {
-	let rank = 0, decile = 0, count = 0;
+	let rank = 0,
+		decile = 0,
+		count = 0;
 	for (const feature of features) {
-		const record = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const record =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!record) continue;
 		rank += record.nimdmRank;
 		decile += record.nimdmDecile;
 		count++;
 	}
-	return count === 0 ? null : {
-		averageNIMDMRank: rank / count,
-		averageNIMDMDecile: decile / count,
-	};
+	return count === 0
+		? null
+		: {
+				averageNIMDMRank: rank / count,
+				averageNIMDMDecile: decile / count,
+			};
 }
 
 export function aggregateIMD(
@@ -71,9 +88,12 @@ export function aggregateIMD(
 	codeProperty: PropertyKeys,
 	data: IMDDataset["data"],
 ): AggregatedIMDData {
-	let score = 0, decile = 0, count = 0;
+	let score = 0,
+		decile = 0,
+		count = 0;
 	for (const feature of features) {
-		const record = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const record =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!record) continue;
 		score += record.imdScore;
 		decile += record.imdDecile;

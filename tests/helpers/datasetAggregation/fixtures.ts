@@ -4,7 +4,13 @@ import type { Features, PropertyKeys } from "@/lib/types";
 export const CODE_KEY = "LAD24CD" as PropertyKeys;
 
 /** Too few points to enclose anything, which the area helper scores as zero. */
-const DEGENERATE_RING: number[][][] = [[[0, 0], [0, 0], [0, 0]]];
+const DEGENERATE_RING: number[][][] = [
+	[
+		[0, 0],
+		[0, 0],
+		[0, 0],
+	],
+];
 
 /**
  * Boundary features carrying only an area code, plus optional shared geometry
