@@ -4,7 +4,7 @@ import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
 import { gazetteer } from "../data/gazetteer/static";
-import { isChartDataset } from "../datasets";
+import { getChartDatasetDefinition, isChartDataset } from "../datasets";
 import { categoryFilter } from "../helpers/mapManager/expressions";
 
 /** Builds the vector-tile filter driven by the roads legend's click-to-isolate / right-click-to-exclude state. */
@@ -38,41 +38,19 @@ function getActiveDataOptions(
 	mapOptions: MapOptions,
 ): object | null {
 	if (!activeDataset) return null;
-	if (
-		isChartDataset(activeDataset) &&
-		activeDataset.type !== "population" &&
-		activeDataset.type !== "ethnicity" &&
-		activeDataset.type !== "brexit" &&
-		activeDataset.type !== "brexitConstituency" &&
-		activeDataset.type !== "generalElection" &&
-		activeDataset.type !== "localElection"
-	) {
-		return mapOptions[activeDataset.type];
+	if (isChartDataset(activeDataset)) {
+		const definition = getChartDatasetDefinition(activeDataset.type);
+		if (definition?.mapRenderer) {
+			return definition.mapRenderer.getOptions(activeViz, mapOptions);
+		}
+		return definition?.map ? mapOptions[activeDataset.type] : null;
 	}
 
 	switch (activeDataset.type) {
 		case "network":
 			return null;
-		case "generalElection":
-			return mapOptions.generalElection;
-		case "localElection":
-			return mapOptions.localElection;
-		case "ethnicity":
-			return mapOptions.ethnicity;
-		case "brexit":
-			return mapOptions.brexit;
-		case "brexitConstituency":
-			return mapOptions.brexitConstituency;
 		case "custom":
 			return mapOptions.custom;
-		case "population":
-			if (activeViz.vizId.startsWith("ageDistribution")) {
-				return mapOptions.ageDistribution;
-			}
-			if (activeViz.vizId.startsWith("populationDensity")) {
-				return mapOptions.populationDensity;
-			}
-			return mapOptions.gender;
 	}
 }
 
@@ -167,61 +145,28 @@ export function useMapUpdates({
 			return;
 
 		const performUpdate = () => {
-			if (
-				isChartDataset(activeDataset) &&
-				activeDataset.type !== "population" &&
-				activeDataset.type !== "ethnicity" &&
-				activeDataset.type !== "brexit" &&
-				activeDataset.type !== "brexitConstituency" &&
-				activeDataset.type !== "generalElection" &&
-				activeDataset.type !== "localElection"
-			) {
-				return mapManager.updateMapForScalarDataset(
-					geojson,
-					activeDataset,
-					mapOptions,
-				);
+			if (isChartDataset(activeDataset)) {
+				const definition = getChartDatasetDefinition(activeDataset.type);
+				if (definition?.mapRenderer) {
+					return definition.mapRenderer.render({
+						mapManager,
+						geojson,
+						dataset: activeDataset,
+						mapOptions,
+						activeViz,
+						isDark,
+					});
+				}
+				if (definition?.map) {
+					return mapManager.updateMapForScalarDataset(
+						geojson,
+						activeDataset,
+						mapOptions,
+					);
+				}
 			}
 
 			switch (activeDataset.type) {
-				case "generalElection":
-					return mapManager.updateMapForGeneralElection(
-						geojson,
-						activeDataset,
-						mapOptions,
-						isDark,
-					);
-
-				case "localElection":
-					return mapManager.updateMapForLocalElection(
-						geojson,
-						activeDataset,
-						mapOptions,
-						isDark,
-					);
-
-				case "ethnicity":
-					return mapManager.updateMapForEthnicity(
-						geojson,
-						activeDataset,
-						mapOptions,
-						isDark,
-					);
-
-				case "brexit":
-					return mapManager.updateMapForBrexit(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
-				case "brexitConstituency":
-					return mapManager.updateMapForBrexitConstituency(
-						geojson,
-						activeDataset,
-						mapOptions,
-					);
-
 				case "custom":
 					return mapManager.updateMapForCustomDataset(
 						geojson,
@@ -229,29 +174,6 @@ export function useMapUpdates({
 						mapOptions,
 					);
 
-				case "population":
-					// Handle population sub-categories
-					if (activeViz.vizId.startsWith("ageDistribution")) {
-						return mapManager.updateMapForAgeDistribution(
-							geojson,
-							activeDataset,
-							mapOptions,
-						);
-					}
-					if (activeViz.vizId.startsWith("populationDensity")) {
-						return mapManager.updateMapForPopulationDensity(
-							geojson,
-							activeDataset,
-							mapOptions,
-						);
-					}
-					if (activeViz.vizId.startsWith("gender")) {
-						return mapManager.updateMapForGender(
-							geojson,
-							activeDataset,
-							mapOptions,
-						);
-					}
 			}
 		};
 

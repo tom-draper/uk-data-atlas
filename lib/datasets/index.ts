@@ -2,7 +2,11 @@ import { CHART_DATASET_DEFINITIONS } from "./generated";
 import type { ChartDataset } from "./generated";
 
 export { CHART_DATASET_DEFINITIONS } from "./generated";
-export type { ChartDatasetDefinition, ChartDatasetMap } from "./types";
+export type {
+	ChartDatasetDefinition,
+	ChartDatasetMap,
+	ChartDatasetMapRenderer,
+} from "./types";
 export type { ChartDatasetType } from "./generated";
 
 export function getChartDatasetDefinition(type: string) {

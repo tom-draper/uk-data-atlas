@@ -13,4 +13,24 @@ export const populationDefinition: ChartDatasetDefinition<PopulationDataset> = {
 	...populationDatasetDefinition,
 	chart: density,
 	charts: [density, age, gender],
+	mapRenderer: {
+		getOptions: (activeViz, mapOptions) => {
+			if (activeViz.vizId.startsWith("ageDistribution")) return mapOptions.ageDistribution;
+			if (activeViz.vizId.startsWith("populationDensity")) return mapOptions.populationDensity;
+			return mapOptions.gender;
+		},
+		render: ({ mapManager, geojson, dataset, mapOptions, activeViz }) => {
+			if (activeViz.vizId.startsWith("ageDistribution")) {
+				mapManager.updateMapForAgeDistribution(geojson, dataset, mapOptions);
+				return;
+			}
+			if (activeViz.vizId.startsWith("populationDensity")) {
+				mapManager.updateMapForPopulationDensity(geojson, dataset, mapOptions);
+				return;
+			}
+			if (activeViz.vizId.startsWith("gender")) {
+				mapManager.updateMapForGender(geojson, dataset, mapOptions);
+			}
+		},
+	},
 };

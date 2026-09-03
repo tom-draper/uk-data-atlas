@@ -1,5 +1,7 @@
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import type { ActiveViz } from "@/lib/types/datasets";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
+import type { MapOptions } from "@/lib/types/mapOptions";
 import type { DatasetDefinition } from "../data/catalog";
 
 // Only meaningful for datasets rendered as a colour-range choropleth on the
@@ -23,6 +25,19 @@ export interface ChartDatasetMap<T = unknown> {
 	// range (e.g. life expectancy's years, which just spans whatever the
 	// current data covers).
 	getColorRange?(dataset: T): { min: number; max: number };
+}
+
+/** Presentation-specific renderer for datasets that cannot use the shared scalar map path. */
+export interface ChartDatasetMapRenderer<T extends { type: string; data: unknown }> {
+	getOptions(activeViz: ActiveViz, mapOptions: MapOptions): object;
+	render(context: {
+		mapManager: MapManager;
+		geojson: BoundaryGeojson;
+		dataset: T;
+		mapOptions: MapOptions;
+		activeViz: ActiveViz;
+		isDark: boolean;
+	}): void;
 }
 
 export interface ChartDefinition<T extends { type: string; data: unknown } = { type: string; data: unknown }> {
@@ -51,6 +66,7 @@ export interface ChartDatasetDefinition<T extends { type: string; data: unknown 
 	chart: ChartDefinition<T>;
 	charts?: readonly ChartDefinition<T>[];
 	map?: ChartDatasetMap<T>;
+	mapRenderer?: ChartDatasetMapRenderer<T>;
 }
 
 export function getChartDefinitions<T extends { type: string; data: unknown }>(
