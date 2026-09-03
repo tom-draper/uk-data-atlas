@@ -7,9 +7,7 @@ import {
 import { parseCsv, findHeaderLine } from "@/lib/helpers/parseCsv";
 import { parseNullableNum as parseNumber } from "@/lib/helpers/parseNumber";
 
-async function parseAnnualData(
-	text: string,
-): Promise<{
+async function parseAnnualData(text: string): Promise<{
 	data: Record<string, AnnualIncomeData>;
 	names: Record<string, string>;
 }> {
@@ -52,9 +50,7 @@ async function parseAnnualData(
 	return { data: annualData, names };
 }
 
-async function parseHourlyData(
-	text: string,
-): Promise<{
+async function parseHourlyData(text: string): Promise<{
 	data: Record<string, HourlyIncomeData>;
 	names: Record<string, string>;
 }> {

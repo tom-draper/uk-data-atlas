@@ -66,9 +66,7 @@ function computeStats(
 	return null;
 }
 
-function buildSparkline(
-	stats: AggregatedUnemploymentData,
-): {
+function buildSparkline(stats: AggregatedUnemploymentData): {
 	linePath: string;
 	areaPath: string;
 	lastPt: { x: number; y: number };
