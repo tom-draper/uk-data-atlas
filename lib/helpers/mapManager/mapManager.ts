@@ -277,13 +277,14 @@ export class MapManager {
 			(code) => dataset.data[code] ?? null,
 		);
 		const range = this.getCustomRange(dataset);
-		this.layerManager.updateValueLayers(
-			transformedGeojson,
-			range
+		this.layerManager.render({
+			kind: "boundary-fill",
+			data: transformedGeojson,
+			colorExpression: range
 				? getSequentialColorExpression(range, mapOptions.theme.id)
 				: ["case", ["==", ["get", "value"], null], "#cccccc", "#cccccc"],
-			mapOptions.visibility,
-		);
+			visibility: mapOptions.visibility,
+		});
 
 		this.eventHandler.setupEventHandlers(dataset.data, codeProp);
 	}
@@ -349,18 +350,18 @@ export class MapManager {
 		// Add the point layers first, then blank the choropleth beneath. Doing it
 		// in this order matters: clearBoundaryData() calls setData() on the boundary
 		// source, which flips map.isStyleLoaded() to false until the worker re-parses.
-		// updatePointLayers() bails early when the style isn't loaded, so blanking
+		// the point renderer bails early when the style isn't loaded, so blanking
 		// first would drop the points entirely when switching from a boundary dataset
 		// (the map would just clear). Refreshing straight into a point dataset hid the
 		// bug because no boundary source existed yet.
-		this.layerManager.updatePointLayers(
-			collection,
-			mapOptions.visibility,
-			mapOptions.theme.id,
-			dataset.pointStyle?.radius,
-			dataset.pointStyle?.tooltip,
+		this.layerManager.render({
+			kind: "points",
+			data: collection,
+			visibility: mapOptions.visibility,
+			radius: dataset.pointStyle?.radius,
+			tooltip: dataset.pointStyle?.tooltip,
 			isDark,
-		);
+		});
 		this.layerManager.clearBoundaryData();
 	}
 
@@ -394,11 +395,12 @@ export class MapManager {
 			wardCodeProp,
 			valueFor,
 		);
-		this.layerManager.updateValueLayers(
-			transformedGeojson,
-			colorExpression(mapOptions),
-			mapOptions.visibility,
-		);
+		this.layerManager.render({
+			kind: "boundary-fill",
+			data: transformedGeojson,
+			colorExpression: colorExpression(mapOptions),
+			visibility: mapOptions.visibility,
+		});
 		this.eventHandler.setupEventHandlers(dataset.data, wardCodeProp);
 	}
 
@@ -516,15 +518,16 @@ export class MapManager {
 			codeProp,
 			(code) => valueFor(dataset, code),
 		);
-		this.layerManager.updateValueLayers(
-			transformedGeojson,
-			getSequentialColorExpression(
+		this.layerManager.render({
+			kind: "boundary-fill",
+			data: transformedGeojson,
+			colorExpression: getSequentialColorExpression(
 				getColorRange(dataset, mapOptions),
 				mapOptions.theme.id,
 				invertColor,
 			),
-			mapOptions.visibility,
-		);
+			visibility: mapOptions.visibility,
+		});
 		this.eventHandler.setupEventHandlers(dataForEvents, codeProp);
 	}
 

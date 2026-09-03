@@ -13,6 +13,7 @@ import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";
 import { getPercentageColorExpression } from "../colorScale/datasetColors";
 import { DEFAULT_COLOR } from "./featureBuilder";
 import type { PointTooltip } from "@/lib/types/custom";
+import type { MapLayer } from "./layers";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
@@ -41,6 +42,32 @@ export class LayerManager {
 	private pointPopup: Popup | null = null;
 
 	constructor(private map: MapLibreMap) {}
+
+	/** Dispatches a declarative map layer to its renderer. */
+	render(layer: MapLayer): void {
+		switch (layer.kind) {
+			case "boundary-fill":
+				this.updateValueLayers(
+					layer.data,
+					layer.colorExpression,
+					layer.visibility,
+				);
+				return;
+			case "points":
+				this.updatePointLayers(
+					layer.data,
+					layer.visibility,
+					"viridis",
+					layer.radius,
+					layer.tooltip,
+					layer.isDark,
+				);
+				return;
+			case "line":
+				this.updateLineLayer(layer);
+				return;
+		}
+	}
 
 	updateElectionLayers(
 		geojson: BoundaryGeojson,
@@ -352,6 +379,35 @@ export class LayerManager {
 			this.map.removeLayer(LEGACY_HEAT_LAYER_ID);
 		if (this.map.getSource(POINT_SOURCE_ID))
 			this.map.removeSource(POINT_SOURCE_ID);
+	}
+
+	private updateLineLayer(layer: Extract<MapLayer, { kind: "line" }>): void {
+		if (!this.map.isStyleLoaded()) return;
+		const sourceId = `atlas-line-${layer.id}`;
+		const layerId = `${sourceId}-stroke`;
+		const source = this.map.getSource(sourceId) as GeoJSONSource | undefined;
+		if (source) {
+			source.setData(layer.data as any);
+		} else {
+			this.map.addSource(sourceId, { type: "geojson", data: layer.data as any });
+			this.map.addLayer({
+				id: layerId,
+				type: "line",
+				source: sourceId,
+				paint: {
+					"line-color": layer.style.color as any,
+					"line-width": layer.style.width as any,
+				},
+			});
+		}
+
+		this.map.setPaintProperty(layerId, "line-color", layer.style.color as any);
+		this.map.setPaintProperty(layerId, "line-width", layer.style.width as any);
+		this.map.setPaintProperty(
+			layerId,
+			"line-opacity",
+			layer.visibility.hideDataLayer ? 0 : (layer.style.opacity ?? 1),
+		);
 	}
 
 	private addPointTooltipHandlers(): void {

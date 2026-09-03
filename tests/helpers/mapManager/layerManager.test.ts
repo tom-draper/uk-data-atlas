@@ -30,17 +30,42 @@ describe("LayerManager visibility updates", () => {
 			overlayOpacity: 0.6,
 		};
 
-		manager.updatePointLayers(
-			{ type: "FeatureCollection", features: [] },
+		manager.render({
+			kind: "points",
+			data: { type: "FeatureCollection", features: [] },
 			visibility,
-			"viridis",
-			{ min: 1.5, max: 3.5 },
-		);
+			radius: { min: 1.5, max: 3.5 },
+		});
 
 		expect(map.setPaintProperty).toHaveBeenCalledWith(
 			"custom-points-circle",
 			"circle-radius",
 			["interpolate", ["linear"], ["zoom"], 6, 1.5, 10, 3.5],
+		);
+	});
+
+	it("renders standalone line layers through the shared layer contract", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		manager.render({
+			kind: "line",
+			id: "rail-network",
+			data: { type: "FeatureCollection", features: [] },
+			visibility: {
+				hideDataLayer: false,
+				hideBorders: false,
+				hideBoundaryLayer: false,
+				hideOverlay: false,
+				overlayOpacity: 0.6,
+			},
+			style: { color: "#d4006a", width: 2, opacity: 0.8 },
+		});
+
+		expect(map.getLayer("atlas-line-rail-network-stroke")).toBeDefined();
+		expect(map.setPaintProperty).toHaveBeenCalledWith(
+			"atlas-line-rail-network-stroke",
+			"line-opacity",
+			0.8,
 		);
 	});
 
