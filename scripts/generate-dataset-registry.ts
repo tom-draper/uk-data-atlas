@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const DATASETS_DIR = join(ROOT, "lib", "datasets");
+const CATALOGUE_DEFINITIONS_DIR = join(ROOT, "lib", "data", "catalog", "definitions");
 const OUTPUT = join(DATASETS_DIR, "generated.ts");
 const CHART_OUTPUT = join(DATASETS_DIR, "generatedCharts.tsx");
 
@@ -14,13 +15,17 @@ async function main() {
 	const definitions = await Promise.all(files.map(async (file) => {
 		const source = await readFile(join(DATASETS_DIR, file), "utf8");
 		const name = /export const (\w+Definition)\b/.exec(source)?.[1];
-		const type = /type:\s*"([^"]+)"/.exec(source)?.[1];
+		const catalogueDefinition = /import \{ (\w+DatasetDefinition) \} from "@\/lib\/data\/catalog\/definitions";/.exec(source)?.[1];
 		const datasetType = /ChartDatasetDefinition<(\w+)>/.exec(source)?.[1];
 		const componentPaths = [...source.matchAll(/componentPath:\s*"([^"]+)"/g)].map((match) => match[1]);
 		const chartKeys = [...source.matchAll(/key:\s*"([^"]+)"/g)].map((match) => match[1]);
 		if (!name) throw new Error(`${file} must export a named *Definition constant.`);
-		if (!type) throw new Error(`${file} must declare a string literal dataset type.`);
+		if (!catalogueDefinition) throw new Error(`${file} must import its catalogue definition.`);
 		if (!datasetType) throw new Error(`${file} must use ChartDatasetDefinition with its dataset type.`);
+		const catalogueFile = `${catalogueDefinition.replace(/DatasetDefinition$/, "")}.ts`;
+		const catalogueSource = await readFile(join(CATALOGUE_DEFINITIONS_DIR, catalogueFile), "utf8");
+		const type = /type:\s*"([^"]+)"/.exec(catalogueSource)?.[1];
+		if (!type) throw new Error(`${catalogueFile} must declare a string literal dataset type.`);
 		const datasetImport = new RegExp(`import type \\{ ${datasetType} \\} from "([^"]+)";`).exec(source)?.[1];
 		if (!datasetImport) throw new Error(`${file} must import ${datasetType} as a type.`);
 		if (!componentPaths.length || componentPaths.length !== chartKeys.length) throw new Error(`${file} must declare matching chart keys and component paths.`);
