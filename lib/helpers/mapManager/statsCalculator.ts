@@ -26,7 +26,11 @@ import { getWinningParty } from "../generalElection";
 import { calculateAgeGroups } from "../ageDistribution";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
-import { collectBoundaryRecords } from "../datasetAggregation/numeric";
+import {
+	aggregateAirQuality,
+	aggregateBroadband,
+	collectBoundaryRecords,
+} from "../datasetAggregation/numeric";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
@@ -983,28 +987,7 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedBroadbandData | null {
 		return this.calculateNumericStats(
-			"broadband", geojson, broadbandData, location, datasetId, "localAuthority", (records) => {
-			let totalSuperfast = 0, totalUltrafast = 0, totalFullFibre = 0, totalGigabit = 0, count = 0;
-
-			for (const record of records) {
-				if (record.pctFullFibre == null) continue;
-				totalSuperfast += record.pctSuperfast ?? 0;
-				totalUltrafast += record.pctUltrafast ?? 0;
-				totalFullFibre += record.pctFullFibre;
-				totalGigabit += record.pctGigabit ?? 0;
-				count++;
-			}
-
-			if (count === 0) return null;
-
-			const result: AggregatedBroadbandData = {
-				pctSuperfast: totalSuperfast / count,
-				pctUltrafast: totalUltrafast / count,
-				pctFullFibre: totalFullFibre / count,
-				pctGigabit: totalGigabit / count,
-			};
-			return result;
-			},
+			"broadband", geojson, broadbandData, location, datasetId, "localAuthority", aggregateBroadband,
 		);
 	}
 
@@ -1015,26 +998,7 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedAirQualityData | null {
 		return this.calculateNumericStats(
-			"airQuality", geojson, airQualityData, location, datasetId, "localAuthority", (records) => {
-			let totalNo2 = 0, totalPm25 = 0, totalPm10 = 0, count = 0, pm25Count = 0, pm10Count = 0;
-
-			for (const record of records) {
-				if (record.no2Mean == null) continue;
-				totalNo2 += record.no2Mean;
-				if (record.pm25Mean != null) { totalPm25 += record.pm25Mean; pm25Count++; }
-				if (record.pm10Mean != null) { totalPm10 += record.pm10Mean; pm10Count++; }
-				count++;
-			}
-
-			if (count === 0) return null;
-
-			const result: AggregatedAirQualityData = {
-				no2Mean: totalNo2 / count,
-				pm25Mean: pm25Count > 0 ? totalPm25 / pm25Count : null,
-				pm10Mean: pm10Count > 0 ? totalPm10 / pm10Count : null,
-			};
-			return result;
-			},
+			"airQuality", geojson, airQualityData, location, datasetId, "localAuthority", aggregateAirQuality,
 		);
 	}
 
