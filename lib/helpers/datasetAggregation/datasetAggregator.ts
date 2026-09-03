@@ -1,6 +1,8 @@
 // Boundary and cache adapter for dataset aggregation.
 import {
 	BoundaryGeojson,
+	Features,
+	PropertyKeys,
 	LocalElectionDataset,
 	GeneralElectionDataset,
 	PopulationDataset,
@@ -10,7 +12,11 @@ import {
 	BrexitLADDataset,
 	BrexitConstituencyDataset,
 } from "@lib/types";
-import type { AggregationCache, BoundaryCodeDetector } from "./ports";
+import type {
+	AggregationCache,
+	BoundaryCodeDetector,
+	BoundaryCodeScope,
+} from "./ports";
 import {
 	aggregateAirQuality,
 	aggregateBroadband,
@@ -114,6 +120,27 @@ export class DatasetAggregator {
 		return result;
 	}
 
+	/**
+	 * Aggregates over the boundaries currently loaded, keyed by the location and
+	 * dataset the caller is looking at. Every dataset resolves its area code
+	 * property the same way, so only the geography and the reducer differ.
+	 */
+	private byBoundary<R>(
+		key: string,
+		scope: BoundaryCodeScope,
+		geojson: BoundaryGeojson,
+		location: string | null,
+		datasetId: string | null,
+		aggregate: (features: Features, codeProp: PropertyKeys) => R,
+	): R {
+		return this.cached(`${key}-${location}-${datasetId}`, () =>
+			aggregate(
+				geojson.features,
+				this.propertyDetector.detect(scope, geojson.features),
+			),
+		);
+	}
+
 	private calculateNumericStats<T, R>(
 		cachePrefix: string,
 		geojson: BoundaryGeojson,
@@ -123,18 +150,15 @@ export class DatasetAggregator {
 		codeLevel: "localAuthority" | "lsoa",
 		aggregate: (records: T[]) => R | null,
 	): R | null {
-		return this.cached(`${cachePrefix}-${location}-${datasetId}`, () => {
-			const codeProp =
-				codeLevel === "lsoa"
-					? this.propertyDetector.detect("lsoa", geojson.features)
-					: this.propertyDetector.detect(
-							"localAuthority",
-							geojson.features,
-						);
-			return aggregate(
-				collectBoundaryRecords(geojson.features, data, codeProp),
-			);
-		});
+		return this.byBoundary(
+			cachePrefix,
+			codeLevel,
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregate(collectBoundaryRecords(features, data, codeProp)),
+		);
 	}
 
 	calculateLocalElectionStats(
@@ -143,17 +167,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`local-election-${location}-${datasetId}`, () => {
-			const wardCodeProp = this.propertyDetector.detect(
-				"ward",
-				geojson.features,
-			);
-			return aggregateLocalElection(
-				geojson.features,
-				wardCodeProp,
-				wardData,
-			);
-		});
+		return this.byBoundary(
+			"local-election",
+			"ward",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateLocalElection(features, codeProp, wardData),
+		);
 	}
 
 	calculateGeneralElectionStats(
@@ -162,17 +184,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`general-election-${location}-${datasetId}`, () => {
-			const constituencyCodeProp = this.propertyDetector.detect(
-				"constituency",
-				geojson.features,
-			);
-			return aggregateGeneralElection(
-				geojson.features,
-				constituencyCodeProp,
-				constituencyData,
-			);
-		});
+		return this.byBoundary(
+			"general-election",
+			"constituency",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateGeneralElection(features, codeProp, constituencyData),
+		);
 	}
 
 	calculatePopulationStats(
@@ -181,17 +201,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`population-${location}-${datasetId}`, () => {
-			const wardCodeProp = this.propertyDetector.detect(
-				"ward",
-				geojson.features,
-			);
-			return aggregatePopulation(
-				geojson.features,
-				wardCodeProp,
-				populationData,
-			);
-		});
+		return this.byBoundary(
+			"population",
+			"ward",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregatePopulation(features, codeProp, populationData),
+		);
 	}
 
 	calculateEthnicityStats(
@@ -200,17 +218,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`ethnicity-${location}-${datasetId}`, () => {
-			const ladProp = this.propertyDetector.detect(
-				"localAuthority",
-				geojson.features,
-			);
-			return aggregateEthnicity(
-				geojson.features,
-				ladProp,
-				localAuthorityData,
-			);
-		});
+		return this.byBoundary(
+			"ethnicity",
+			"localAuthority",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateEthnicity(features, codeProp, localAuthorityData),
+		);
 	}
 
 	calculateHousePriceStats(
@@ -219,17 +235,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`house-price-${location}-${datasetId}`, () => {
-			const wardCodeProp = this.propertyDetector.detect(
-				"ward",
-				geojson.features,
-			);
-			return aggregateHousePrices(
-				geojson.features,
-				wardCodeProp,
-				wardData,
-			);
-		});
+		return this.byBoundary(
+			"house-price",
+			"ward",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateHousePrices(features, codeProp, wardData),
+		);
 	}
 
 	calculateCrimeStats(
@@ -238,13 +252,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`crime-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detect(
-				"localAuthority",
-				geojson.features,
-			);
-			return aggregateCrime(geojson.features, ladCodeProp, crimeData);
-		});
+		return this.byBoundary(
+			"crime",
+			"localAuthority",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateCrime(features, codeProp, crimeData),
+		);
 	}
 
 	calculateIncomeStats(
@@ -253,13 +269,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`income-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detect(
-				"localAuthority",
-				geojson.features,
-			);
-			return aggregateIncome(geojson.features, ladCodeProp, incomeData);
-		});
+		return this.byBoundary(
+			"income",
+			"localAuthority",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateIncome(features, codeProp, incomeData),
+		);
 	}
 
 	calculateBrexitStats(
@@ -268,13 +286,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`brexit-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detect(
-				"localAuthority",
-				geojson.features,
-			);
-			return aggregateBrexit(geojson.features, ladCodeProp, brexitData);
-		});
+		return this.byBoundary(
+			"brexit",
+			"localAuthority",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateBrexit(features, codeProp, brexitData),
+		);
 	}
 
 	calculateBrexitConstituencyStats(
@@ -283,19 +303,18 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(
-			`brexitConstituency-${location}-${datasetId}`,
-			() => {
-				const codeProp = this.propertyDetector.detect(
-					"constituency",
-					geojson.features,
-				);
-				return aggregateBrexitConstituencies(
-					geojson.features,
+		return this.byBoundary(
+			"brexitConstituency",
+			"constituency",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateBrexitConstituencies(
+					features,
 					codeProp,
 					constituencyData,
-				);
-			},
+				),
 		);
 	}
 
@@ -305,14 +324,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`custom-dataset-${location}-${datasetId}`, () => {
-			const codeProp = this.propertyDetector.detect(
-				"any",
-				geojson.features,
-			);
-
-			return aggregateCustomDataset(geojson.features, codeProp, data);
-		});
+		return this.byBoundary(
+			"custom-dataset",
+			"any",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateCustomDataset(features, codeProp, data),
+		);
 	}
 
 	calculateLifeExpectancyStats(
@@ -321,17 +341,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedLifeExpectancyData {
-		return this.cached(`lifeExpectancy-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detect(
-				"localAuthority",
-				geojson.features,
-			);
-			return aggregateLifeExpectancy(
-				geojson.features,
-				ladCodeProp,
-				leData,
-			);
-		});
+		return this.byBoundary(
+			"lifeExpectancy",
+			"localAuthority",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateLifeExpectancy(features, codeProp, leData),
+		);
 	}
 
 	calculateSIMDStats(
@@ -340,13 +358,14 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedSIMDData | null {
-		return this.cached(`simd-${location}-${datasetId}`, () => {
-			const dzCodeProp = this.propertyDetector.detect(
-				"dataZone",
-				geojson.features,
-			);
-			return aggregateSIMD(geojson.features, dzCodeProp, simdData);
-		});
+		return this.byBoundary(
+			"simd",
+			"dataZone",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) => aggregateSIMD(features, codeProp, simdData),
+		);
 	}
 
 	calculateWIMDStats(
@@ -355,13 +374,14 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedWIMDData | null {
-		return this.cached(`wimd-${location}-${datasetId}`, () => {
-			const lsoaCodeProp = this.propertyDetector.detect(
-				"lsoa",
-				geojson.features,
-			);
-			return aggregateWIMD(geojson.features, lsoaCodeProp, wimdData);
-		});
+		return this.byBoundary(
+			"wimd",
+			"lsoa",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) => aggregateWIMD(features, codeProp, wimdData),
+		);
 	}
 
 	calculateNIMDMStats(
@@ -370,13 +390,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedNIMDMData | null {
-		return this.cached(`nimdm-${location}-${datasetId}`, () => {
-			const soaCodeProp = this.propertyDetector.detect(
-				"superOutputArea",
-				geojson.features,
-			);
-			return aggregateNIMDM(geojson.features, soaCodeProp, nimdmData);
-		});
+		return this.byBoundary(
+			"nimdm",
+			"superOutputArea",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateNIMDM(features, codeProp, nimdmData),
+		);
 	}
 
 	calculateIMDStats(
@@ -385,13 +407,14 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedIMDData {
-		return this.cached(`imd-${location}-${datasetId}`, () => {
-			const lsoaCodeProp = this.propertyDetector.detect(
-				"lsoa",
-				geojson.features,
-			);
-			return aggregateIMD(geojson.features, lsoaCodeProp, imdData);
-		});
+		return this.byBoundary(
+			"imd",
+			"lsoa",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) => aggregateIMD(features, codeProp, imdData),
+		);
 	}
 
 	calculateQualificationStats(
@@ -400,17 +423,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedQualificationData {
-		return this.cached(`qualification-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detect(
-				"localAuthority",
-				geojson.features,
-			);
-			return aggregateQualifications(
-				geojson.features,
-				ladCodeProp,
-				qualData,
-			);
-		});
+		return this.byBoundary(
+			"qualification",
+			"localAuthority",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateQualifications(features, codeProp, qualData),
+		);
 	}
 
 	calculateBroadbandStats(
@@ -538,13 +559,15 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedNHSWaitingData | null {
-		return this.cached(`nhsWaiting-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detect(
-				"localAuthority",
-				geojson.features,
-			);
-			return aggregateNHSWaiting(geojson.features, ladCodeProp, dataset);
-		});
+		return this.byBoundary(
+			"nhsWaiting",
+			"localAuthority",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateNHSWaiting(features, codeProp, dataset),
+		);
 	}
 
 	calculateUnemploymentStats(
@@ -553,16 +576,14 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	): AggregatedUnemploymentData | null {
-		return this.cached(`unemployment-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detect(
-				"localAuthority",
-				geojson.features,
-			);
-			return aggregateUnemployment(
-				geojson.features,
-				ladCodeProp,
-				dataset,
-			);
-		});
+		return this.byBoundary(
+			"unemployment",
+			"localAuthority",
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) =>
+				aggregateUnemployment(features, codeProp, dataset),
+		);
 	}
 }
