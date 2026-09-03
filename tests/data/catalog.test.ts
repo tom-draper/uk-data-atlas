@@ -4,7 +4,7 @@ import {
 	populationDatasetDefinition,
 } from "@/lib/data/catalog/definitions";
 import { validatePrecompiledDataset } from "@/lib/data/catalog";
-import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/datasets/catalogue";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import type { DatasetDefinition } from "@/lib/data/catalog";
 

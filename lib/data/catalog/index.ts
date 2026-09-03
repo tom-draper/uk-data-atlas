@@ -9,3 +9,4 @@ export {
 	type DatasetPrecompileSummary,
 	type SourceArtifact,
 } from "./ingestion";
+export { CATALOGUE_DATASET_DEFINITIONS } from "./registry";
