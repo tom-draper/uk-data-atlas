@@ -1,6 +1,7 @@
 import type { BoundaryGeojson, EthnicityDataset } from "@lib/types";
 import type { MapOptions } from "@lib/types/mapOptions";
 import type { MapRenderContext } from "./context";
+import { ethnicityMajorityPaint, ethnicityPercentagePaint } from "./fillPaint";
 
 export function renderEthnicity(
 	ctx: MapRenderContext,
@@ -24,17 +25,14 @@ export function renderEthnicity(
 	const transformedGeojson =
 		ctx.featureBuilder.formatBoundaryGeoJson(features);
 
-	// Update layers based on mode
-	if (mode === "percentage" && mapOptions.ethnicity?.selected) {
-		ctx.layerManager.updateEthnicityCategoryPercentageLayers(
+	const paint =
+		mode === "percentage"
+			? ethnicityPercentagePaint(mapOptions.ethnicity, isDark)
+			: ethnicityMajorityPaint();
+	if (paint) {
+		ctx.layerManager.paintBoundaries(
 			transformedGeojson,
-			mapOptions.ethnicity,
-			mapOptions.visibility,
-			isDark,
-		);
-	} else {
-		ctx.layerManager.updateEthnicityMajorityLayers(
-			transformedGeojson,
+			paint,
 			mapOptions.visibility,
 		);
 	}

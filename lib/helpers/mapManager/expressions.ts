@@ -103,3 +103,9 @@ export const zoomInterpolate = (
 
 export const heatmapDensity = (): MapExpression =>
 	expression(["heatmap-density"]);
+
+/** How a boundary fill is coloured, and how opaque it is at a given overlay setting. */
+export type FillPaintConfig = {
+	color: PaintValue<string>;
+	opacity: (overlayOpacity: number) => PaintValue<number>;
+};
