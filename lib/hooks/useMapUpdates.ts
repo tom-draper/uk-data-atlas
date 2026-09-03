@@ -1,16 +1,11 @@
 import { useEffect } from "react";
-import { ActiveViz, BoundaryGeojson, BoundaryData, Dataset } from "@lib/types";
+import { ActiveViz, BoundaryGeojson, Dataset } from "@lib/types";
 import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
 import { gazetteer } from "../data/gazetteer/static";
 import { isChartDataset } from "../datasets";
-import {
-	allFilters,
-	categoryFilter,
-	withinFilter,
-	type MapExpression,
-} from "../helpers/mapManager/expressions";
+import { categoryFilter } from "../helpers/mapManager/expressions";
 
 /** Builds the vector-tile filter driven by the roads legend's click-to-isolate / right-click-to-exclude state. */
 function buildNetworkFilter(
@@ -27,60 +22,6 @@ function buildNetworkFilter(
 	return categoryFilter(layer.filterProperty, legend, activeIds);
 }
 
-const signedRingArea = (ring: number[][]): number => {
-	let area = 0;
-	for (let i = 0; i < ring.length - 1; i++) {
-		const [x1, y1] = ring[i];
-		const [x2, y2] = ring[i + 1];
-		area += x1 * y2 - x2 * y1;
-	}
-	return area / 2;
-};
-
-/**
- * `topojson-client` preserves TopoJSON's own ring-winding convention
- * (clockwise exterior rings), which is the reverse of the GeoJSON RFC 7946
- * rule (counter-clockwise exterior, clockwise holes) that MapLibre's `within`
- * expression relies on to tell inside from outside. Re-wind each ring so
- * `within` sees a correctly oriented polygon.
- */
-const withRfc7946Winding = (polygon: number[][][]): number[][][] =>
-	polygon.map((ring, index) => {
-		const isCounterClockwise = signedRingArea(ring) > 0;
-		const shouldBeCounterClockwise = index === 0; // exterior ring CCW, holes CW
-		return isCounterClockwise === shouldBeCounterClockwise ? ring : [...ring].reverse();
-	});
-
-/**
- * Restricts the roads layer to the currently selected location by combining
- * that location's local authorities into one MultiPolygon and testing each
- * road feature against it. Skipped for the whole-UK view, where every local
- * authority would be included anyway.
- */
-function buildLocationFilter(
-	localAuthority: BoundaryData["localAuthority"] | undefined,
-	selectedLocation: string,
-): MapExpression | undefined {
-	if (!localAuthority || !selectedLocation || selectedLocation === "United Kingdom") {
-		return undefined;
-	}
-
-	const latestYear = Object.keys(localAuthority)
-		.map(Number)
-		.sort((a, b) => b - a)
-		.find((year) => (localAuthority[year]?.features.length ?? 0) > 0);
-	const features = latestYear !== undefined ? localAuthority[latestYear]?.features : undefined;
-	if (!features || features.length === 0) return undefined;
-
-	const polygons = features
-		.map((feature) => feature.geometry?.coordinates)
-		.filter((coordinates): coordinates is number[][][] => Array.isArray(coordinates))
-		.map(withRfc7946Winding);
-	if (polygons.length === 0) return undefined;
-
-	return withinFilter({ type: "MultiPolygon", coordinates: polygons });
-}
-
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson | null;
 	activeViz: ActiveViz;
@@ -89,7 +30,6 @@ interface UseMapUpdatesParams {
 	mapOptions: MapOptions;
 	styleReady: boolean;
 	selectedLocation: string;
-	boundaryData: BoundaryData;
 }
 
 function getActiveDataOptions(
@@ -144,7 +84,6 @@ export function useMapUpdates({
 	mapOptions,
 	styleReady,
 	selectedLocation,
-	boundaryData,
 }: UseMapUpdatesParams) {
 	const isDark = useIsDark();
 	const activeDataOptions = getActiveDataOptions(
@@ -166,14 +105,11 @@ export function useMapUpdates({
 				mapManager.updateVectorLineLayer({
 					...activeDataset.layer,
 					visibility: mapOptions.visibility,
-					filter: allFilters([
-						buildNetworkFilter(
-							activeDataset.layer,
-							activeDataset.legend,
-							mapOptions.network,
-						),
-						buildLocationFilter(boundaryData.localAuthority, selectedLocation),
-					]),
+					filter: buildNetworkFilter(
+						activeDataset.layer,
+						activeDataset.legend,
+						mapOptions.network,
+					),
 				});
 			} else {
 				mapManager.clearMapDataLayers();
@@ -187,8 +123,6 @@ export function useMapUpdates({
 		styleReady,
 		mapOptions.visibility,
 		mapOptions.network,
-		selectedLocation,
-		boundaryData.localAuthority,
 	]);
 
 	// Custom point datasets (coordinates / postcodes) render on their own
