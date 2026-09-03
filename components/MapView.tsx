@@ -1,7 +1,7 @@
 
 import { type MapManager } from "@/lib/helpers/mapManager";
 import { useMapUpdates } from "@lib/hooks/useMapUpdates";
-import { ActiveViz, BoundaryGeojson, Dataset } from "@/lib/types";
+import { ActiveViz, BoundaryData, BoundaryGeojson, Dataset } from "@/lib/types";
 import { MapOptions } from "@/lib/types/mapOptions";
 
 interface MapViewProps {
@@ -13,6 +13,7 @@ interface MapViewProps {
 	handleMapContainer: (node: HTMLDivElement | null) => void;
 	styleReady: boolean;
 	selectedLocation: string;
+	boundaryData: BoundaryData;
 }
 
 export default function MapView({
@@ -24,6 +25,7 @@ export default function MapView({
 	handleMapContainer,
 	styleReady,
 	selectedLocation,
+	boundaryData,
 }: MapViewProps) {
 	useMapUpdates({
 		geojson,
@@ -33,6 +35,7 @@ export default function MapView({
 		mapOptions,
 		styleReady,
 		selectedLocation,
+		boundaryData,
 	});
 
 	return (

@@ -75,6 +75,21 @@ export const categoryFilter = (
 	return expression(["any", ...clauses]);
 };
 
+/** Restricts a layer to features that fall entirely within `geometry` (a Polygon or MultiPolygon). */
+export const withinFilter = (
+	geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon,
+): MapExpression => expression(["within", geometry as unknown as object]);
+
+/** Combines filters with AND, dropping the ones that are undefined; returns undefined if none remain. */
+export const allFilters = (
+	filters: readonly (MapExpression | undefined)[],
+): MapExpression | undefined => {
+	const defined = filters.filter((f): f is MapExpression => f !== undefined);
+	if (defined.length === 0) return undefined;
+	if (defined.length === 1) return defined[0];
+	return expression(["all", ...defined]);
+};
+
 export const hoverOpacity = (opacity: number): MapExpression =>
 	when(
 		[[boolean(featureState("hover"), false), opacity * 0.58]],

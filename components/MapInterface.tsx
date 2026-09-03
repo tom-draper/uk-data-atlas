@@ -327,6 +327,7 @@ export default function MapInterface({
 					handleMapContainer={handleMapContainer}
 					styleReady={styleReady}
 					selectedLocation={selectedLocation}
+					boundaryData={boundaryData}
 				/>
 			</div>
 		</ThemeProvider>
