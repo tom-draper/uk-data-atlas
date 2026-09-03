@@ -162,6 +162,7 @@ export function useMapUpdates({
 						geojson,
 						activeDataset,
 						mapOptions,
+						definition.map,
 					);
 				}
 			}
