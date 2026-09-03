@@ -1,6 +1,9 @@
 // Data source: ONS Model-based estimates of unemployment for local and unitary authorities
 // https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/modelledunemploymentforlocalandunitaryauthoritiesm01/current
-import { UnemploymentDataset, UnemploymentLADData } from "@/lib/types/unemployment";
+import {
+	UnemploymentDataset,
+	UnemploymentLADData,
+} from "@/lib/types/unemployment";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 
 // Parse a period label to a year integer, or null if not an annual period we want.
@@ -24,7 +27,9 @@ const toNum = (v: string): number | null => {
 export async function loadUnemployment(
 	readSource: (path: string) => Promise<string>,
 ): Promise<Record<string, UnemploymentDataset>> {
-	const csv = await readSource("economics/unemployment/modelbasedunemploymentdataapril2022rates.csv");
+	const csv = await readSource(
+		"economics/unemployment/modelbasedunemploymentdataapril2022rates.csv",
+	);
 
 	const { data: rawRows } = await parseCsv<string[]>(csv, { header: false });
 	const rows = rawRows as string[][];

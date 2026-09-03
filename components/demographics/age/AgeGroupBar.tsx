@@ -1,5 +1,3 @@
-
-
 interface AgeGroupBarProps {
 	label: string;
 	value: number;

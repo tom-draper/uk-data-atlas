@@ -17,7 +17,12 @@ export const CHART_CONFIG: ChartConfigEntry[] = [
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 	...Object.fromEntries(
-		CHART_DATASET_DEFINITIONS.flatMap((definition) => getChartDefinitions(definition).map((chart) => [chart.key, chart.defaultVisible])),
+		CHART_DATASET_DEFINITIONS.flatMap((definition) =>
+			getChartDefinitions(definition).map((chart) => [
+				chart.key,
+				chart.defaultVisible,
+			]),
+		),
 	),
 };
 

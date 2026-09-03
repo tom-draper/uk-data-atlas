@@ -48,13 +48,17 @@ export default function DecileChart({
 
 	const showData = hasData && !chartsLoading;
 	const displayDecile = decile ? 11 - decile : null;
-	const decileColor = displayDecile ? DECILE_COLORS[displayDecile - 1] : "#9ca3af";
+	const decileColor = displayDecile
+		? DECILE_COLORS[displayDecile - 1]
+		: "#9ca3af";
 
 	return (
 		<ChartCard
 			heading={heading}
 			headerEnd={
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
 					{region}
 				</span>
 			}
@@ -92,7 +96,11 @@ export default function DecileChart({
 							))}
 						</div>
 						<div className="flex justify-between">
-							<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>least deprived</span>
+							<span
+								className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}
+							>
+								least deprived
+							</span>
 							{footer}
 						</div>
 					</div>

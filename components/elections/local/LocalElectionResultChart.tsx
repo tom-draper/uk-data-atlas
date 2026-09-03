@@ -1,7 +1,6 @@
 // components/LocalElectionResultChart.tsx
 "use client";
 
-
 import { LocalElectionDataset, ActiveViz } from "@lib/types";
 import {
 	ChartContentPlaceholder,
@@ -33,7 +32,10 @@ function VoteBar({ data }: { data: ProcessedPartyData[] }) {
 			{data.map((p) => (
 				<div
 					key={p.key}
-					style={{ width: `${p.percentage}%`, backgroundColor: p.color }}
+					style={{
+						width: `${p.percentage}%`,
+						backgroundColor: p.color,
+					}}
 					title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(1)}%)`}
 					className="group relative hover:opacity-80 transition-opacity"
 				>

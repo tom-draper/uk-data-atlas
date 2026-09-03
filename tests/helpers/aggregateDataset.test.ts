@@ -54,8 +54,18 @@ describe("aggregateDataset", () => {
 			calculateStats,
 		};
 
-		const first = aggregateDataset(config, mapManager, boundaryData, "London");
-		const second = aggregateDataset(config, mapManager, boundaryData, "London");
+		const first = aggregateDataset(
+			config,
+			mapManager,
+			boundaryData,
+			"London",
+		);
+		const second = aggregateDataset(
+			config,
+			mapManager,
+			boundaryData,
+			"London",
+		);
 
 		expect(calculateStats).toHaveBeenCalledTimes(1);
 		expect(second).toBe(first);

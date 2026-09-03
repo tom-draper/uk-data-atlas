@@ -35,21 +35,22 @@ function renderElection(
 		: (dataset as GeneralElectionDataset).results;
 
 	const excluded = new Set(options.excluded ?? []);
-	const getWinner = excluded.size > 0
-		? (code: string) => {
-			const votes = dataMap[code]?.partyVotes;
-			if (!votes) return "NONE";
-			let best = "NONE";
-			let bestVotes = -1;
-			for (const [party, v] of Object.entries(votes)) {
-				if (!excluded.has(party) && (v as number) > bestVotes) {
-					bestVotes = v as number;
-					best = party;
+	const getWinner =
+		excluded.size > 0
+			? (code: string) => {
+					const votes = dataMap[code]?.partyVotes;
+					if (!votes) return "NONE";
+					let best = "NONE";
+					let bestVotes = -1;
+					for (const [party, v] of Object.entries(votes)) {
+						if (!excluded.has(party) && (v as number) > bestVotes) {
+							bestVotes = v as number;
+							best = party;
+						}
+					}
+					return best;
 				}
-			}
-			return best;
-		}
-		: (code: string) => resultsMap[code] || "NONE";
+			: (code: string) => resultsMap[code] || "NONE";
 
 	const sourceMode =
 		mode === "percentage" && options.selected
@@ -113,7 +114,14 @@ export function renderGeneralElection(
 	mapOptions: MapOptions,
 	isDark = false,
 ): void {
-	renderElection(ctx, geojson, dataset, mapOptions, "generalElection", isDark);
+	renderElection(
+		ctx,
+		geojson,
+		dataset,
+		mapOptions,
+		"generalElection",
+		isDark,
+	);
 }
 
 export function renderBrexit(

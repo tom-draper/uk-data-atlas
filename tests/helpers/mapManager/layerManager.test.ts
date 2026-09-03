@@ -145,7 +145,9 @@ describe("LayerManager visibility updates", () => {
 			style: { color: "#c2410c", width: 1 },
 		});
 
-		expect(map.getLayer("atlas-vector-line-os-open-roads-stroke")).toBeDefined();
+		expect(
+			map.getLayer("atlas-vector-line-os-open-roads-stroke"),
+		).toBeDefined();
 	});
 
 	it("does not re-upload numeric GeoJSON when only the colour expression changes", () => {

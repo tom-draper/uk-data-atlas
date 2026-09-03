@@ -165,8 +165,7 @@ export function buildUpload(
 
 	if (!file || !draft.selectedColumn || !dataColumn || !match) {
 		return {
-			error:
-				"Please select a file, area code column, data column, and matching area type",
+			error: "Please select a file, area code column, data column, and matching area type",
 		};
 	}
 

@@ -94,7 +94,10 @@ export const buildCrossYearMappings = (
 
 			const ladCode =
 				type === "ward"
-					? getProp(props, BOUNDARY_CATALOG.localAuthority.properties.code)
+					? getProp(
+							props,
+							BOUNDARY_CATALOG.localAuthority.properties.code,
+						)
 					: null;
 			const normalizedName = ladCode
 				? `${name.toLowerCase().trim()}|${ladCode}`

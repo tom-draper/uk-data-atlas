@@ -22,7 +22,10 @@ export interface LevelSource {
 
 export function buildCore(
 	sources: LevelSource[],
-	locations: Record<string, { lad_codes: string[]; bounds: [number, number, number, number] }>,
+	locations: Record<
+		string,
+		{ lad_codes: string[]; bounds: [number, number, number, number] }
+	>,
 	version: number,
 ): GazetteerCore {
 	const byCode: Record<string, GazetteerEntry> = {};
@@ -33,14 +36,21 @@ export function buildCore(
 			const code = getProp(f.properties, src.codeKeys);
 			if (!code) continue;
 			const name = getProp(f.properties, src.nameKeys) ?? "";
-			const parent = src.parentKeys ? getProp(f.properties, src.parentKeys) : undefined;
+			const parent = src.parentKeys
+				? getProp(f.properties, src.parentKeys)
+				: undefined;
 			byCode[code] = {
 				code,
 				name,
 				level: src.level,
 				vintage: src.vintage,
 				areaM2: areaM2(f.geometry),
-				bbox: bboxOf(f.geometry).map((n) => +n.toFixed(4)) as [number, number, number, number],
+				bbox: bboxOf(f.geometry).map((n) => +n.toFixed(4)) as [
+					number,
+					number,
+					number,
+					number,
+				],
 				parents: parent ? [parent] : [],
 			};
 			if (name) {
@@ -75,7 +85,10 @@ export function linkRegions(
 ): void {
 	for (const r of regions) {
 		let areaM2 = 0;
-		let minX = 180, minY = 90, maxX = -180, maxY = -90;
+		let minX = 180,
+			minY = 90,
+			maxX = -180,
+			maxY = -90;
 		const present: string[] = [];
 		for (const lad of r.memberCodes) {
 			const e = core.byCode[lad];
@@ -125,8 +138,14 @@ export function buildCrosswalk(
 	const srcIdx = index(sources, sourceCodeKeys);
 	const tgtIdx = index(targets, targetCodeKeys);
 
-	const assign = (px: number, py: number, cand: typeof srcIdx): string | null => {
-		for (const c of cand) if (inBox(px, py, c.bbox) && pointInGeom(px, py, c.geom)) return c.code;
+	const assign = (
+		px: number,
+		py: number,
+		cand: typeof srcIdx,
+	): string | null => {
+		for (const c of cand)
+			if (inBox(px, py, c.bbox) && pointInGeom(px, py, c.geom))
+				return c.code;
 		return null;
 	};
 
@@ -134,8 +153,16 @@ export function buildCrosswalk(
 	let assigned = 0;
 	for (let i = 0; i < blocks.length; i++) {
 		const [px, py] = centroidOf(blocks[i].geometry);
-		const s = assign(px, py, srcIdx.filter((c) => inBox(px, py, c.bbox)));
-		const t = assign(px, py, tgtIdx.filter((c) => inBox(px, py, c.bbox)));
+		const s = assign(
+			px,
+			py,
+			srcIdx.filter((c) => inBox(px, py, c.bbox)),
+		);
+		const t = assign(
+			px,
+			py,
+			tgtIdx.filter((c) => inBox(px, py, c.bbox)),
+		);
 		if (!s || !t) continue;
 		const w = areaM2(blocks[i].geometry);
 		(accum[s] ??= {})[t] = (accum[s][t] ?? 0) + w;

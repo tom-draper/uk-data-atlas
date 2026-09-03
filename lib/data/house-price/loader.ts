@@ -32,7 +32,10 @@ export async function loadHousePrice(
 		"economics/housing/HPSSA Dataset 37 - Median price paid by wardHPSSA Dataset 37 - Median price paid by ward.csv",
 	);
 	const skipLines = findHeaderLine(csvText, "local authority code");
-	const { data, fields } = await parseCsv(csvText, { header: true, skipLines });
+	const { data, fields } = await parseCsv(csvText, {
+		header: true,
+		skipLines,
+	});
 
 	const timePeriodHeaders = fields.slice(4);
 	const wardData: Record<string, HousePriceWardData> = {};

@@ -28,7 +28,9 @@ export async function loadBroadband(
 			ladCode: code,
 			ladName: name,
 			pctSuperfast: parseNum(row["SFBB availability (% premises)"]),
-			pctUltrafast: parseNum(row["UFBB (100Mbit/s) availability (% premises)"]),
+			pctUltrafast: parseNum(
+				row["UFBB (100Mbit/s) availability (% premises)"],
+			),
 			pctFullFibre: parseNum(row["Full Fibre availability (% premises)"]),
 			pctGigabit: parseNum(row["Gigabit availability (% premises)"]),
 		};

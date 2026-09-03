@@ -48,11 +48,18 @@ export async function loadSIMD(
 	const rows = data as any[];
 	const hasRanks =
 		rows[0] &&
-		(rows[0]["SIMD2020v2_Rank"] !== undefined || rows[0]["SIMD2020_Rank"] !== undefined);
+		(rows[0]["SIMD2020v2_Rank"] !== undefined ||
+			rows[0]["SIMD2020_Rank"] !== undefined);
 
 	type Intermediate = {
-		dzCode: string; dzName: string; councilAreaCode: string; councilAreaName: string;
-		score: number; simdRank: number; simdQuintile: number; simdDecile: number;
+		dzCode: string;
+		dzName: string;
+		councilAreaCode: string;
+		councilAreaName: string;
+		score: number;
+		simdRank: number;
+		simdQuintile: number;
+		simdDecile: number;
 	};
 
 	const intermediates: Intermediate[] = [];
@@ -61,25 +68,51 @@ export async function loadSIMD(
 		const dzCode = row["Data_Zone"]?.trim();
 		if (!dzCode || !dzCode.startsWith("S")) continue;
 
-		const councilAreaName = row["Council_area"]?.trim() || row["Council_Area"]?.trim() || "";
+		const councilAreaName =
+			row["Council_area"]?.trim() || row["Council_Area"]?.trim() || "";
 		const councilAreaCode = COUNCIL_AREA_CODES[councilAreaName] || "";
 
-		let simdRank = 0, simdQuintile = 0, simdDecile = 0, score = 0;
+		let simdRank = 0,
+			simdQuintile = 0,
+			simdDecile = 0,
+			score = 0;
 
 		if (hasRanks) {
-			simdRank = parseInt(row["SIMD2020v2_Rank"] ?? row["SIMD2020_Rank"]) || 0;
-			simdQuintile = parseInt(row["SIMD2020v2_Quintile"] ?? row["SIMD2020_Quintile"]) || 0;
-			simdDecile = parseInt(row["SIMD2020v2_Decile"] ?? row["SIMD2020_Decile"]) || 0;
+			simdRank =
+				parseInt(row["SIMD2020v2_Rank"] ?? row["SIMD2020_Rank"]) || 0;
+			simdQuintile =
+				parseInt(
+					row["SIMD2020v2_Quintile"] ?? row["SIMD2020_Quintile"],
+				) || 0;
+			simdDecile =
+				parseInt(row["SIMD2020v2_Decile"] ?? row["SIMD2020_Decile"]) ||
+				0;
 		} else {
 			const income = parsePct(row["Income_rate"]);
 			const employment = parsePct(row["Employment_rate"]);
 			const health = parseNum(row["CIF"]);
 			const crime = parseNum(row["crime_rate"]);
-			const housing = parsePct(row["overcrowded_rate"]) + parsePct(row["nocentralheat_rate"]);
-			score = income * 0.28 + employment * 0.28 + health * 0.14 + crime * 0.005 + housing * 0.02;
+			const housing =
+				parsePct(row["overcrowded_rate"]) +
+				parsePct(row["nocentralheat_rate"]);
+			score =
+				income * 0.28 +
+				employment * 0.28 +
+				health * 0.14 +
+				crime * 0.005 +
+				housing * 0.02;
 		}
 
-		intermediates.push({ dzCode, dzName: row["Intermediate_Zone"]?.trim() || "", councilAreaCode, councilAreaName, score, simdRank, simdQuintile, simdDecile });
+		intermediates.push({
+			dzCode,
+			dzName: row["Intermediate_Zone"]?.trim() || "",
+			councilAreaCode,
+			councilAreaName,
+			score,
+			simdRank,
+			simdQuintile,
+			simdDecile,
+		});
 	}
 
 	if (!hasRanks && intermediates.length > 0) {
@@ -95,22 +128,29 @@ export async function loadSIMD(
 	const records: Record<string, SIMDDataZoneData> = {};
 	for (const dz of intermediates) {
 		records[dz.dzCode] = {
-			dzCode: dz.dzCode, dzName: dz.dzName,
-			councilAreaCode: dz.councilAreaCode, councilAreaName: dz.councilAreaName,
-			simdRank: dz.simdRank, simdQuintile: dz.simdQuintile, simdDecile: dz.simdDecile,
+			dzCode: dz.dzCode,
+			dzName: dz.dzName,
+			councilAreaCode: dz.councilAreaCode,
+			councilAreaName: dz.councilAreaName,
+			simdRank: dz.simdRank,
+			simdQuintile: dz.simdQuintile,
+			simdDecile: dz.simdDecile,
 		};
 	}
 
-	const councilGroups: Record<string, typeof records[string][]> = {};
+	const councilGroups: Record<string, (typeof records)[string][]> = {};
 	for (const r of Object.values(records)) {
 		(councilGroups[r.councilAreaCode] ??= []).push(r);
 	}
 	const councilStats: SIMDDataset["councilStats"] = {};
 	for (const [code, dzs] of Object.entries(councilGroups)) {
 		councilStats[code] = {
-			averageSIMDRank: dzs.reduce((s, r) => s + r.simdRank, 0) / dzs.length,
-			averageSIMDQuintile: dzs.reduce((s, r) => s + r.simdQuintile, 0) / dzs.length,
-			averageSIMDDecile: dzs.reduce((s, r) => s + r.simdDecile, 0) / dzs.length,
+			averageSIMDRank:
+				dzs.reduce((s, r) => s + r.simdRank, 0) / dzs.length,
+			averageSIMDQuintile:
+				dzs.reduce((s, r) => s + r.simdQuintile, 0) / dzs.length,
+			averageSIMDDecile:
+				dzs.reduce((s, r) => s + r.simdDecile, 0) / dzs.length,
 		};
 	}
 
@@ -125,7 +165,9 @@ export async function loadSIMD(
 			councilStats,
 			metadata: {
 				source: "Scottish Government. Scottish Index of Multiple Deprivation 2020v2.",
-				notes: ["Scotland only. Quintile 1 = most deprived 20% of data zones."],
+				notes: [
+					"Scotland only. Quintile 1 = most deprived 20% of data zones.",
+				],
 			},
 		},
 	};

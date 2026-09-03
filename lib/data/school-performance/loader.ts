@@ -1,4 +1,7 @@
-import { SchoolPerformanceDataset, SchoolPerformanceLADData } from "@/lib/types/schoolPerformance";
+import {
+	SchoolPerformanceDataset,
+	SchoolPerformanceLADData,
+} from "@/lib/types/schoolPerformance";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNullableNum } from "@/lib/helpers/parseNumber";
 

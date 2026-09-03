@@ -19,7 +19,9 @@ export function detectHeaderRow(rows: string[][]): number {
 	const isNumeric = (value: string) =>
 		value.trim() !== "" && !Number.isNaN(Number(value.trim()));
 	const maxColumns = Math.max(
-		...rows.slice(0, 20).map((row) => row.filter((cell) => cell.trim() !== "").length),
+		...rows
+			.slice(0, 20)
+			.map((row) => row.filter((cell) => cell.trim() !== "").length),
 	);
 
 	for (let index = 0; index < Math.min(rows.length, 20); index++) {

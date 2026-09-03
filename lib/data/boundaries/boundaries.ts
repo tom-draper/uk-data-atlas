@@ -9,8 +9,10 @@ export { BOUNDARY_CATALOG } from "./catalog";
 export type { BoundaryType, BoundaryYear } from "./catalog";
 
 export type WardYear = keyof typeof BOUNDARY_CATALOG.ward.vintages;
-export type ConstituencyYear = keyof typeof BOUNDARY_CATALOG.constituency.vintages;
-export type LocalAuthorityYear = keyof typeof BOUNDARY_CATALOG.localAuthority.vintages;
+export type ConstituencyYear =
+	keyof typeof BOUNDARY_CATALOG.constituency.vintages;
+export type LocalAuthorityYear =
+	keyof typeof BOUNDARY_CATALOG.localAuthority.vintages;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
 	England: "E",
@@ -95,7 +97,9 @@ const getPropertyKeys = (type: BoundaryType) => {
 async function doFetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
 	const res = await fetch(path);
 	if (!res.ok) {
-		throw new Error(`Failed to fetch ${path}: ${res.status} ${res.statusText}`);
+		throw new Error(
+			`Failed to fetch ${path}: ${res.status} ${res.statusText}`,
+		);
 	}
 
 	const typedGeojson = decodeBoundaryData(await res.json());
@@ -109,16 +113,19 @@ export function fetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
 	if (BOUNDARY_PENDING[path]) return BOUNDARY_PENDING[path]!;
 
 	const workerFetch = fetchBoundaryInWorker(path);
-	const promise = (workerFetch
-		? workerFetch.catch(() => doFetchBoundaryFile(path))
-		: doFetchBoundaryFile(path)
+	const promise = (
+		workerFetch
+			? workerFetch.catch(() => doFetchBoundaryFile(path))
+			: doFetchBoundaryFile(path)
 	).then((data) => {
 		BOUNDARY_CACHE[path] = data;
 		delete BOUNDARY_PENDING[path];
 		return data;
 	});
 	BOUNDARY_PENDING[path] = promise;
-	promise.catch(() => { delete BOUNDARY_PENDING[path]; });
+	promise.catch(() => {
+		delete BOUNDARY_PENDING[path];
+	});
 	return promise;
 }
 

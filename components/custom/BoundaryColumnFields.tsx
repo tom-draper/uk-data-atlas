@@ -1,5 +1,8 @@
 import { AreaMatch } from "@lib/data/areaBank";
-import { isSpecialMatchType, type UploadColumn } from "@/lib/data/custom/upload";
+import {
+	isSpecialMatchType,
+	type UploadColumn,
+} from "@/lib/data/custom/upload";
 import { getMatchColorClass } from "./uploadStyles";
 import { ColumnDropdown } from "./ColumnDropdown";
 import { LabelledColumn } from "./LabelledColumn";
@@ -28,20 +31,32 @@ function BoundaryMatchSummary({
 	return (
 		<div className="mt-2">
 			{matches.length === 0 ? (
-				<p className={`text-[10px] ${isDark ? "text-orange-400" : "text-orange-500"}`}>
+				<p
+					className={`text-[10px] ${isDark ? "text-orange-400" : "text-orange-500"}`}
+				>
 					No boundary type matched. Try a different column.
 				</p>
 			) : (
 				<div>
-					<div className={`flex items-center gap-2 text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-						<span className={`font-semibold ${getMatchColorClass(effectiveMatch!.percentage)}`}>
+					<div
+						className={`flex items-center gap-2 text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
+					>
+						<span
+							className={`font-semibold ${getMatchColorClass(effectiveMatch!.percentage)}`}
+						>
 							{effectiveMatch!.percentage.toFixed(0)}%
 						</span>
-						<span className={`truncate ${isSpecialMatchType(effectiveMatch!.entry.matchType) ? "italic" : ""}`}>
+						<span
+							className={`truncate ${isSpecialMatchType(effectiveMatch!.entry.matchType) ? "italic" : ""}`}
+						>
 							{effectiveMatch!.entry.label}
 						</span>
-						{isSpecialMatchType(effectiveMatch!.entry.matchType) && (
-							<span className={`text-[9px] shrink-0 ${isDark ? "text-gray-600" : "text-gray-400"}`}>
+						{isSpecialMatchType(
+							effectiveMatch!.entry.matchType,
+						) && (
+							<span
+								className={`text-[9px] shrink-0 ${isDark ? "text-gray-600" : "text-gray-400"}`}
+							>
 								coming soon
 							</span>
 						)}
@@ -65,27 +80,45 @@ function BoundaryMatchSummary({
 							className={`mt-1.5 rounded-md border overflow-hidden ${isDark ? "border-white/10" : "border-gray-200"}`}
 						>
 							{matches.map((m) => {
-								const special = isSpecialMatchType(m.entry.matchType);
+								const special = isSpecialMatchType(
+									m.entry.matchType,
+								);
 								return (
 									<button
 										key={m.entry.label}
 										type="button"
 										disabled={special}
-										onClick={() => onOverride(m.entry.label)}
+										onClick={() =>
+											onOverride(m.entry.label)
+										}
 										className={`w-full flex items-center gap-2.5 px-3 py-1.5 text-left text-xs transition-colors ${
 											special
-												? isDark ? "opacity-40 cursor-default text-gray-500" : "opacity-40 cursor-default text-gray-400"
-												: effectiveMatch?.entry.label === m.entry.label
-													? isDark ? "bg-indigo-600/25 text-indigo-200" : "bg-indigo-50 text-indigo-700"
-													: isDark ? "text-gray-400 hover:bg-white/5" : "text-gray-600 hover:bg-gray-50"
+												? isDark
+													? "opacity-40 cursor-default text-gray-500"
+													: "opacity-40 cursor-default text-gray-400"
+												: effectiveMatch?.entry
+															.label ===
+													  m.entry.label
+													? isDark
+														? "bg-indigo-600/25 text-indigo-200"
+														: "bg-indigo-50 text-indigo-700"
+													: isDark
+														? "text-gray-400 hover:bg-white/5"
+														: "text-gray-600 hover:bg-gray-50"
 										}`}
 									>
-										<span className={`text-[10px] w-8 text-right font-semibold ${getMatchColorClass(m.percentage)}`}>
+										<span
+											className={`text-[10px] w-8 text-right font-semibold ${getMatchColorClass(m.percentage)}`}
+										>
 											{m.percentage.toFixed(0)}%
 										</span>
-										<span className="truncate">{m.entry.label}</span>
+										<span className="truncate">
+											{m.entry.label}
+										</span>
 										{special && (
-											<span className={`ml-auto text-[9px] shrink-0 ${isDark ? "text-gray-600" : "text-gray-400"}`}>
+											<span
+												className={`ml-auto text-[9px] shrink-0 ${isDark ? "text-gray-600" : "text-gray-400"}`}
+											>
 												coming soon
 											</span>
 										)}

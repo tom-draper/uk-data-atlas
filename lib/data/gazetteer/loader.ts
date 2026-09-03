@@ -29,11 +29,19 @@ const REGIONS: Array<{ code: string; locationName: string }> = [
 
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
 
-async function loadFeatures(read: (path: string) => Promise<string>, path: string): Promise<Feat[]> {
-	const topo = JSON.parse(await read(localDataPath(path))) as { objects: Record<string, unknown> };
+async function loadFeatures(
+	read: (path: string) => Promise<string>,
+	path: string,
+): Promise<Feat[]> {
+	const topo = JSON.parse(await read(localDataPath(path))) as {
+		objects: Record<string, unknown>;
+	};
 	const name = Object.keys(topo.objects)[0];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const fc = feature(topo as any, topo.objects[name] as any) as unknown as GeoJSON.FeatureCollection;
+	const fc = feature(
+		topo as any,
+		topo.objects[name] as any,
+	) as unknown as GeoJSON.FeatureCollection;
 	return fc.features as Feat[];
 }
 
@@ -96,14 +104,24 @@ export async function loadGazetteerCore(
 		core,
 		REGIONS.flatMap((r) => {
 			const loc = LOCATIONS[r.locationName];
-			return loc ? [{ code: r.code, name: r.locationName, memberCodes: loc.lad_codes }] : [];
+			return loc
+				? [
+						{
+							code: r.code,
+							name: r.locationName,
+							memberCodes: loc.lad_codes,
+						},
+					]
+				: [];
 		}),
 		currentCodes,
 	);
 
 	const { errors, warnings } = validateCore(core, LOCATIONS);
 	if (warnings.length > 0)
-		console.warn(`  gazetteer: ${warnings.length} warning(s) (LOCATIONS curation debt), e.g. ${warnings[0]}`);
+		console.warn(
+			`  gazetteer: ${warnings.length} warning(s) (LOCATIONS curation debt), e.g. ${warnings[0]}`,
+		);
 	if (errors.length > 0) {
 		throw new Error(
 			`gazetteer core validation failed (${errors.length}):\n  ` +

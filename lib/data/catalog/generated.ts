@@ -24,31 +24,111 @@ import type { simdDatasetDefinition } from "./definitions/simd";
 import type { unemploymentDatasetDefinition } from "./definitions/unemployment";
 import type { wimdDatasetDefinition } from "./definitions/wimd";
 
-export type CatalogueDataset = Awaited<ReturnType<typeof airQualityDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof brexitDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof brexitConstituencyDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof broadbandDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof childPovertyDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof claimantCountDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof crimeDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof ethnicityDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof fuelPovertyDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof generalElectionDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof homelessnessDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof housePriceDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof localElectionDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof nhsWaitingDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof populationDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof qualificationDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof unemploymentDatasetDefinition.precompile>>[string] | Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>[string];
+export type CatalogueDataset =
+	| Awaited<ReturnType<typeof airQualityDatasetDefinition.precompile>>[string]
+	| Awaited<ReturnType<typeof brexitDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof brexitConstituencyDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<ReturnType<typeof broadbandDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof childPovertyDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof claimantCountDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<ReturnType<typeof crimeDatasetDefinition.precompile>>[string]
+	| Awaited<ReturnType<typeof ethnicityDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof fuelPovertyDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof generalElectionDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof homelessnessDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<ReturnType<typeof housePriceDatasetDefinition.precompile>>[string]
+	| Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>[string]
+	| Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof localElectionDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<ReturnType<typeof nhsWaitingDatasetDefinition.precompile>>[string]
+	| Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>[string]
+	| Awaited<ReturnType<typeof populationDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof qualificationDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof unemploymentDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
 export type CatalogueDatasetRecords = {
-	"airQuality": Awaited<ReturnType<typeof airQualityDatasetDefinition.precompile>>;
-	"brexit": Awaited<ReturnType<typeof brexitDatasetDefinition.precompile>>;
-	"brexitConstituency": Awaited<ReturnType<typeof brexitConstituencyDatasetDefinition.precompile>>;
-	"broadband": Awaited<ReturnType<typeof broadbandDatasetDefinition.precompile>>;
-	"childPoverty": Awaited<ReturnType<typeof childPovertyDatasetDefinition.precompile>>;
-	"claimantCount": Awaited<ReturnType<typeof claimantCountDatasetDefinition.precompile>>;
-	"crime": Awaited<ReturnType<typeof crimeDatasetDefinition.precompile>>;
-	"ethnicity": Awaited<ReturnType<typeof ethnicityDatasetDefinition.precompile>>;
-	"fuelPoverty": Awaited<ReturnType<typeof fuelPovertyDatasetDefinition.precompile>>;
-	"generalElection": Awaited<ReturnType<typeof generalElectionDatasetDefinition.precompile>>;
-	"homelessness": Awaited<ReturnType<typeof homelessnessDatasetDefinition.precompile>>;
-	"housePrice": Awaited<ReturnType<typeof housePriceDatasetDefinition.precompile>>;
-	"imd": Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>;
-	"income": Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>;
-	"lifeExpectancy": Awaited<ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>>;
-	"localElection": Awaited<ReturnType<typeof localElectionDatasetDefinition.precompile>>;
-	"nhsWaiting": Awaited<ReturnType<typeof nhsWaitingDatasetDefinition.precompile>>;
-	"nimdm": Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>;
-	"population": Awaited<ReturnType<typeof populationDatasetDefinition.precompile>>;
-	"qualification": Awaited<ReturnType<typeof qualificationDatasetDefinition.precompile>>;
-	"schoolPerformance": Awaited<ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>>;
-	"simd": Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>;
-	"unemployment": Awaited<ReturnType<typeof unemploymentDatasetDefinition.precompile>>;
-	"wimd": Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>;
+	airQuality: Awaited<
+		ReturnType<typeof airQualityDatasetDefinition.precompile>
+	>;
+	brexit: Awaited<ReturnType<typeof brexitDatasetDefinition.precompile>>;
+	brexitConstituency: Awaited<
+		ReturnType<typeof brexitConstituencyDatasetDefinition.precompile>
+	>;
+	broadband: Awaited<
+		ReturnType<typeof broadbandDatasetDefinition.precompile>
+	>;
+	childPoverty: Awaited<
+		ReturnType<typeof childPovertyDatasetDefinition.precompile>
+	>;
+	claimantCount: Awaited<
+		ReturnType<typeof claimantCountDatasetDefinition.precompile>
+	>;
+	crime: Awaited<ReturnType<typeof crimeDatasetDefinition.precompile>>;
+	ethnicity: Awaited<
+		ReturnType<typeof ethnicityDatasetDefinition.precompile>
+	>;
+	fuelPoverty: Awaited<
+		ReturnType<typeof fuelPovertyDatasetDefinition.precompile>
+	>;
+	generalElection: Awaited<
+		ReturnType<typeof generalElectionDatasetDefinition.precompile>
+	>;
+	homelessness: Awaited<
+		ReturnType<typeof homelessnessDatasetDefinition.precompile>
+	>;
+	housePrice: Awaited<
+		ReturnType<typeof housePriceDatasetDefinition.precompile>
+	>;
+	imd: Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>;
+	income: Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>;
+	lifeExpectancy: Awaited<
+		ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
+	>;
+	localElection: Awaited<
+		ReturnType<typeof localElectionDatasetDefinition.precompile>
+	>;
+	nhsWaiting: Awaited<
+		ReturnType<typeof nhsWaitingDatasetDefinition.precompile>
+	>;
+	nimdm: Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>;
+	population: Awaited<
+		ReturnType<typeof populationDatasetDefinition.precompile>
+	>;
+	qualification: Awaited<
+		ReturnType<typeof qualificationDatasetDefinition.precompile>
+	>;
+	schoolPerformance: Awaited<
+		ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>
+	>;
+	simd: Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>;
+	unemployment: Awaited<
+		ReturnType<typeof unemploymentDatasetDefinition.precompile>
+	>;
+	wimd: Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>;
 };

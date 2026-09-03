@@ -10,7 +10,10 @@ const core = JSON.parse(
 	readFileSync(join(PRECOMPILED, "gazetteer.core.json"), "utf8"),
 ) as GazetteerCore;
 const crosswalk = JSON.parse(
-	readFileSync(join(PRECOMPILED, "crosswalk.constituency-localAuthority.json"), "utf8"),
+	readFileSync(
+		join(PRECOMPILED, "crosswalk.constituency-localAuthority.json"),
+		"utf8",
+	),
 ) as Crosswalk;
 
 const g = new Gazetteer(core);
@@ -58,12 +61,16 @@ describe("Gazetteer hierarchy (LAD -> region)", () => {
 	});
 
 	it("descendants: a region contains its member LADs", () => {
-		const lads = g.descendants("E12000002", "localAuthority").map((e) => e.code);
+		const lads = g
+			.descendants("E12000002", "localAuthority")
+			.map((e) => e.code);
 		expect(lads).toContain("E08000003");
 	});
 
 	it("resolveName finds a region by name", () => {
-		expect(g.resolveName("North West", "region").map((e) => e.code)).toContain("E12000002");
+		expect(
+			g.resolveName("North West", "region").map((e) => e.code),
+		).toContain("E12000002");
 	});
 });
 
@@ -80,7 +87,11 @@ describe("Gazetteer conversions (crosswalk 4.4)", () => {
 
 	it("apportion: splitting a value across LADs preserves the total", () => {
 		const c = Object.keys(crosswalk).find((k) => crosswalk[k].length > 2)!;
-		const out = g.apportion({ [c]: 1000 }, "constituency", "localAuthority");
+		const out = g.apportion(
+			{ [c]: 1000 },
+			"constituency",
+			"localAuthority",
+		);
 		const total = Object.values(out).reduce((s, v) => s + v, 0);
 		expect(total).toBeCloseTo(1000, 0);
 		expect(Object.keys(out).length).toBeGreaterThan(1);

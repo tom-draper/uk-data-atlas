@@ -71,7 +71,10 @@ const out = async (name: string, data: unknown) => {
 	await writeAtomically(join(PUBLIC_OUT_DIR, `${name}.json`), json);
 	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
 	console.log(`  precompiled: ${name}.json (${kb} KB)`);
-	return { bytes: Buffer.byteLength(json, "utf8"), sha256: createHash("sha256").update(json).digest("hex") };
+	return {
+		bytes: Buffer.byteLength(json, "utf8"),
+		sha256: createHash("sha256").update(json).digest("hex"),
+	};
 };
 
 const createTrackedReader = () => {
@@ -92,7 +95,8 @@ const createTrackedReader = () => {
 	};
 	const reader: DatasetReader = {
 		text: (path) => track("text", path, () => read(path)),
-		odsContent: (path) => track("odsContent", path, () => readOdsContent(path)),
+		odsContent: (path) =>
+			track("odsContent", path, () => readOdsContent(path)),
 		zipCsv: (path) => track("zipCsv", path, () => readZip(path)),
 	};
 	return { reader, artifacts };
@@ -103,21 +107,23 @@ async function main() {
 	await mkdir(OUT_DIR, { recursive: true });
 	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
 
-	const chartResults = CATALOGUE_DATASET_DEFINITIONS.map(async (definition) => {
-		const { reader, artifacts } = createTrackedReader();
-		const data = await definition.precompile(reader);
-		const summary = validatePrecompiledDataset(definition, data);
-		const output = await out(definition.precompiledFile, data);
-		return {
-			type: definition.type,
-			output: definition.precompiledFile,
-			source: definition.source,
-			contract: definition.ingestion ?? {},
-			inputs: [...artifacts.values()],
-			summary,
-			compiled: output,
-		};
-	});
+	const chartResults = CATALOGUE_DATASET_DEFINITIONS.map(
+		async (definition) => {
+			const { reader, artifacts } = createTrackedReader();
+			const data = await definition.precompile(reader);
+			const summary = validatePrecompiledDataset(definition, data);
+			const output = await out(definition.precompiledFile, data);
+			return {
+				type: definition.type,
+				output: definition.precompiledFile,
+				source: definition.source,
+				contract: definition.ingestion ?? {},
+				inputs: [...artifacts.values()],
+				summary,
+				compiled: output,
+			};
+		},
+	);
 	const results = await Promise.allSettled([
 		...chartResults,
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
@@ -134,9 +140,9 @@ async function main() {
 	}
 	await out("dataset-manifest", {
 		version: 1,
-		datasets: results.slice(0, CATALOGUE_DATASET_DEFINITIONS.length).map(
-			(result) => (result as PromiseFulfilledResult<unknown>).value,
-		),
+		datasets: results
+			.slice(0, CATALOGUE_DATASET_DEFINITIONS.length)
+			.map((result) => (result as PromiseFulfilledResult<unknown>).value),
 	});
 
 	console.log("Done.");

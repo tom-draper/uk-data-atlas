@@ -25,10 +25,7 @@ import {
 	useRef,
 	useMemo,
 } from "react";
-import {
-	fetchBoundaryFile,
-	getProp,
-} from "@lib/data/boundaries/boundaries";
+import { fetchBoundaryFile, getProp } from "@lib/data/boundaries/boundaries";
 import { BOUNDARY_CATALOG } from "@lib/data/boundaries/boundaries";
 
 interface LocationPanelProps {

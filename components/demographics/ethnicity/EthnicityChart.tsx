@@ -49,7 +49,11 @@ function EthnicityBar({ data }: { data: ProcessedEthnicityData[] }) {
 	);
 }
 
-function Legend({ ethnicityData }: { ethnicityData: ProcessedEthnicityData[] }) {
+function Legend({
+	ethnicityData,
+}: {
+	ethnicityData: ProcessedEthnicityData[];
+}) {
 	return (
 		<div className="animate-in fade-in duration-200 mt-1">
 			<div className="grid grid-cols-3 gap-0.5 text-[9px] overflow-y-auto">
@@ -161,7 +165,9 @@ export default function EthnicityChart({
 		<ChartCard
 			heading={`Ethnicity [${dataset.year}]`}
 			headerEnd={
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
 					England &amp; Wales
 				</span>
 			}

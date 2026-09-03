@@ -26,7 +26,8 @@ export function createCustomDataset(
 		const latIndex = headers.indexOf(upload.latColumn ?? "");
 		const lngIndex = headers.indexOf(upload.lngColumn ?? "");
 		const valueIndex = headers.indexOf(upload.dataColumn);
-		if (latIndex === -1 || lngIndex === -1 || valueIndex === -1) return null;
+		if (latIndex === -1 || lngIndex === -1 || valueIndex === -1)
+			return null;
 
 		const points: CustomPoint[] = [];
 		let valueMin = Infinity;
@@ -35,7 +36,8 @@ export function createCustomDataset(
 			const lat = Number.parseFloat(row[latIndex]);
 			const lng = Number.parseFloat(row[lngIndex]);
 			const value = Number.parseFloat(row[valueIndex]);
-			if (Number.isNaN(lat) || Number.isNaN(lng) || Number.isNaN(value)) continue;
+			if (Number.isNaN(lat) || Number.isNaN(lng) || Number.isNaN(value))
+				continue;
 			points.push({ lat, lng, value });
 			valueMin = Math.min(valueMin, value);
 			valueMax = Math.max(valueMax, value);
@@ -61,20 +63,23 @@ export function createCustomDataset(
 		upload.boundaryYear == null ||
 		!upload.boundaryType ||
 		!upload.selectedColumn
-	) return null;
+	)
+		return null;
 
 	const codeIndex = headers.indexOf(upload.selectedColumn);
 	const valueIndex = headers.indexOf(upload.dataColumn);
 	if (codeIndex === -1 || valueIndex === -1) return null;
 
 	const data: Record<string, number> = {};
-	const nameToCode = upload.selectedEntry?.matchType === "name"
-		? upload.selectedEntry.nameToCode
-		: null;
+	const nameToCode =
+		upload.selectedEntry?.matchType === "name"
+			? upload.selectedEntry.nameToCode
+			: null;
 	for (const row of upload.data.slice(upload.headerRow + 1)) {
 		let code = row[codeIndex]?.trim();
 		const value = Number.parseFloat(row[valueIndex]);
-		if (nameToCode && code) code = nameToCode.get(code.toLowerCase()) ?? code;
+		if (nameToCode && code)
+			code = nameToCode.get(code.toLowerCase()) ?? code;
 		if (code && !Number.isNaN(value)) data[code] = value;
 	}
 

@@ -8,4 +8,7 @@ export type BoundaryData = Record<
 	Record<number, BoundaryGeojson | null>
 >;
 
-export type BoundaryCodes = Record<BoundaryType, Record<number, Set<string>>> | null;
+export type BoundaryCodes = Record<
+	BoundaryType,
+	Record<number, Set<string>>
+> | null;

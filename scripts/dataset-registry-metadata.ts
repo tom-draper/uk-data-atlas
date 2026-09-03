@@ -24,11 +24,16 @@ export function catalogueMetadata(
 ): CatalogueDefinitionMetadata {
 	const matches: Array<[string, Record<string, unknown>]> = [];
 	for (const [name, value] of Object.entries(module)) {
-		if (name.endsWith("DatasetDefinition") && isRecord(value) && typeof value.precompile === "function") {
+		if (
+			name.endsWith("DatasetDefinition") &&
+			isRecord(value) &&
+			typeof value.precompile === "function"
+		) {
 			matches.push([name, value]);
 		}
 	}
-	if (matches.length !== 1) return fail(file, "must export exactly one *DatasetDefinition value.");
+	if (matches.length !== 1)
+		return fail(file, "must export exactly one *DatasetDefinition value.");
 	const [name, definition] = matches[0];
 	if (typeof definition.type !== "string") {
 		return fail(file, "must declare a string literal dataset type.");
@@ -36,23 +41,44 @@ export function catalogueMetadata(
 	return { name, type: definition.type };
 }
 
-export function chartMetadata(file: string, module: ModuleExports): ChartDefinitionMetadata {
+export function chartMetadata(
+	file: string,
+	module: ModuleExports,
+): ChartDefinitionMetadata {
 	const matches: Array<[string, Record<string, unknown>]> = [];
 	for (const [name, value] of Object.entries(module)) {
-		if (name.endsWith("Definition") && isRecord(value) && "chart" in value) {
+		if (
+			name.endsWith("Definition") &&
+			isRecord(value) &&
+			"chart" in value
+		) {
 			matches.push([name, value]);
 		}
 	}
-	if (matches.length !== 1) return fail(file, "must export exactly one chart *Definition value.");
+	if (matches.length !== 1)
+		return fail(file, "must export exactly one chart *Definition value.");
 	const [name, definition] = matches[0];
 	if (typeof definition.type !== "string") {
-		return fail(file, "must spread a catalogue definition with a string dataset type.");
+		return fail(
+			file,
+			"must spread a catalogue definition with a string dataset type.",
+		);
 	}
-	const chartValues = Array.isArray(definition.charts) ? definition.charts : [definition.chart];
-	if (chartValues.length === 0) return fail(file, "must declare at least one chart.");
+	const chartValues = Array.isArray(definition.charts)
+		? definition.charts
+		: [definition.chart];
+	if (chartValues.length === 0)
+		return fail(file, "must declare at least one chart.");
 	const charts = chartValues.map((chart) => {
-		if (!isRecord(chart) || typeof chart.key !== "string" || typeof chart.componentPath !== "string") {
-			return fail(file, "must declare string chart keys and component paths.");
+		if (
+			!isRecord(chart) ||
+			typeof chart.key !== "string" ||
+			typeof chart.componentPath !== "string"
+		) {
+			return fail(
+				file,
+				"must declare string chart keys and component paths.",
+			);
 		}
 		return { key: chart.key, componentPath: chart.componentPath };
 	});

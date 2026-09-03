@@ -1,7 +1,6 @@
 // components/GeneralElectionResultChart.tsx
 "use client";
 
-
 import { ActiveViz, GeneralElectionDataset } from "@lib/types";
 import {
 	ChartContentPlaceholder,
@@ -36,7 +35,10 @@ function VoteBar({ data }: { data: ProcessedPartyData[] }) {
 			{data.map((p) => (
 				<div
 					key={p.key}
-					style={{ width: `${p.percentage}%`, backgroundColor: p.color }}
+					style={{
+						width: `${p.percentage}%`,
+						backgroundColor: p.color,
+					}}
 					title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(
 						1,
 					)}%)`}

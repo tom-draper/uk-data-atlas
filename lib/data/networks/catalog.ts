@@ -1,5 +1,8 @@
 import type { NetworkDataset } from "@/lib/types/network";
-import { categoryMatch, zoomInterpolate } from "@/lib/helpers/mapManager/expressions";
+import {
+	categoryMatch,
+	zoomInterpolate,
+} from "@/lib/helpers/mapManager/expressions";
 
 /** Colours applied directly to the OS `road_classification` tile attribute. */
 export const OS_OPEN_ROADS_CLASSIFICATION_COLORS = {
@@ -43,40 +46,61 @@ export const NETWORK_DATASETS: Record<string, NetworkDataset> = {
 		dataColumn: "Roads",
 		provider: "Ordnance Survey",
 		licence: "Open Government Licence",
-		description: "A generalised, colour-coded road network for Great Britain: motorways, A roads, B roads, and local roads.",
+		description:
+			"A generalised, colour-coded road network for Great Britain: motorways, A roads, B roads, and local roads.",
 		available: ROADS_DATASET_ENABLED && Boolean(osOpenRoadsTileUrl),
 		legend: [
-			{ id: "motorway", label: "Motorway", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS.Motorway, values: ["Motorway"] },
-			{ id: "a-road", label: "A road", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["A Road"], values: ["A Road"] },
-			{ id: "b-road", label: "B road", color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["B Road"], values: ["B Road"] },
-			{ id: "other", label: "Other roads", color: OS_OPEN_ROADS_OTHER_ROADS_COLOR },
+			{
+				id: "motorway",
+				label: "Motorway",
+				color: OS_OPEN_ROADS_CLASSIFICATION_COLORS.Motorway,
+				values: ["Motorway"],
+			},
+			{
+				id: "a-road",
+				label: "A road",
+				color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["A Road"],
+				values: ["A Road"],
+			},
+			{
+				id: "b-road",
+				label: "B road",
+				color: OS_OPEN_ROADS_CLASSIFICATION_COLORS["B Road"],
+				values: ["B Road"],
+			},
+			{
+				id: "other",
+				label: "Other roads",
+				color: OS_OPEN_ROADS_OTHER_ROADS_COLOR,
+			},
 		],
 		layer: osOpenRoadsTileUrl
 			? {
-				kind: "vector-line",
-				id: "os-open-roads",
-				source: {
-					tiles: [osOpenRoadsTileUrl],
-					sourceLayer: osOpenRoadsSourceLayer,
-					minzoom: 9,
-					maxzoom: 14,
-					attribution: "Contains OS data © Crown copyright and database right",
-				},
-				filterProperty: ROAD_CLASSIFICATION_PROPERTY,
-				style: {
-					color: categoryMatch(
-						ROAD_CLASSIFICATION_PROPERTY,
-						Object.entries(OS_OPEN_ROADS_CLASSIFICATION_COLORS),
-						OS_OPEN_ROADS_OTHER_ROADS_COLOR,
-					),
-					width: zoomInterpolate([
-						[5, 0.4],
-						[10, 1.2],
-						[14, 2.5],
-					]),
-					opacity: 0.72,
-				},
-			}
+					kind: "vector-line",
+					id: "os-open-roads",
+					source: {
+						tiles: [osOpenRoadsTileUrl],
+						sourceLayer: osOpenRoadsSourceLayer,
+						minzoom: 9,
+						maxzoom: 14,
+						attribution:
+							"Contains OS data © Crown copyright and database right",
+					},
+					filterProperty: ROAD_CLASSIFICATION_PROPERTY,
+					style: {
+						color: categoryMatch(
+							ROAD_CLASSIFICATION_PROPERTY,
+							Object.entries(OS_OPEN_ROADS_CLASSIFICATION_COLORS),
+							OS_OPEN_ROADS_OTHER_ROADS_COLOR,
+						),
+						width: zoomInterpolate([
+							[5, 0.4],
+							[10, 1.2],
+							[14, 2.5],
+						]),
+						opacity: 0.72,
+					},
+				}
 			: null,
 	},
 };

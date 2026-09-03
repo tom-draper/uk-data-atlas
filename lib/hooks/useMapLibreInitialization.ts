@@ -30,7 +30,10 @@ export function useMapLibreInitialization({
 				container: el,
 				style,
 				...(initialBounds
-					? { bounds: initialBounds, fitBoundsOptions: { padding: fitBoundsPadding } }
+					? {
+							bounds: initialBounds,
+							fitBoundsOptions: { padding: fitBoundsPadding },
+						}
 					: { center, zoom }),
 				maxBounds,
 				preserveDrawingBuffer: true,

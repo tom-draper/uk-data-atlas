@@ -45,7 +45,12 @@ export function centroidOf(geom: Geom): [number, number] {
 }
 
 export const areaM2 = (geom: Geom): number =>
-	Math.round(polygonAreaSqKm((geom as { coordinates: number[][][] | number[][][][] }).coordinates) * 1e6);
+	Math.round(
+		polygonAreaSqKm(
+			(geom as { coordinates: number[][][] | number[][][][] })
+				.coordinates,
+		) * 1e6,
+	);
 
 export const inBox = (px: number, py: number, b: readonly number[]): boolean =>
 	px >= b[0] && px <= b[2] && py >= b[1] && py <= b[3];
@@ -67,6 +72,7 @@ function pointInRing(px: number, py: number, ring: number[][]): boolean {
 }
 
 export function pointInGeom(px: number, py: number, geom: Geom): boolean {
-	for (const ring of outerRings(geom)) if (pointInRing(px, py, ring)) return true;
+	for (const ring of outerRings(geom))
+		if (pointInRing(px, py, ring)) return true;
 	return false;
 }

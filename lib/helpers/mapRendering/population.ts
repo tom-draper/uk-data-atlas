@@ -50,7 +50,7 @@ export function renderAgeDistribution(
 		"population-age",
 		(code) => {
 			const ward = dataset.data[code];
-			return ward ? calculateMedianAge(ward) ?? 0 : null;
+			return ward ? (calculateMedianAge(ward) ?? 0) : null;
 		},
 		(options) =>
 			getSequentialColorExpression(
@@ -98,7 +98,8 @@ export function renderPopulationDensity(
 		(code, feature) => {
 			const ward = dataset.data[code];
 			if (!ward) return null;
-			const total = calculateTotal(ward.males) + calculateTotal(ward.females);
+			const total =
+				calculateTotal(ward.males) + calculateTotal(ward.females);
 			const area = ctx.featureBuilder.getFeatureAreaSqKm(feature);
 			return area > 0 ? total / area : 0;
 		},

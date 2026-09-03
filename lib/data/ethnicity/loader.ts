@@ -2,7 +2,10 @@ import { EthnicityCategory, EthnicityDataset } from "@/lib/types/ethnicity";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNullableInt } from "@/lib/helpers/parseNumber";
 
-function parseEthnicityName(fullName: string): { parent: string; subcategory: string } {
+function parseEthnicityName(fullName: string): {
+	parent: string;
+	subcategory: string;
+} {
 	const colonIndex = fullName.indexOf(":");
 	if (colonIndex !== -1) {
 		return {
@@ -21,7 +24,9 @@ function calculateResults(
 		let maxPopulation = 0;
 		let majoritySubcategory = "NONE";
 		for (const subcategories of Object.values(parentCategories)) {
-			for (const [subcategoryName, data] of Object.entries(subcategories)) {
+			for (const [subcategoryName, data] of Object.entries(
+				subcategories,
+			)) {
 				if (data.population > maxPopulation) {
 					maxPopulation = data.population;
 					majoritySubcategory = subcategoryName;
@@ -41,11 +46,16 @@ export async function loadEthnicity(
 		{ header: true },
 	);
 
-	const localAuthorityData: Record<string, Record<string, EthnicityCategory>> = {};
+	const localAuthorityData: Record<
+		string,
+		Record<string, EthnicityCategory>
+	> = {};
 
 	for (const row of data as any[]) {
-		const localAuthorityCode = row["Lower Tier Local Authorities Code"]?.trim();
-		const ethnicGroupCode = row["Ethnic group (20 categories) Code"]?.trim();
+		const localAuthorityCode =
+			row["Lower Tier Local Authorities Code"]?.trim();
+		const ethnicGroupCode =
+			row["Ethnic group (20 categories) Code"]?.trim();
 		if (!localAuthorityCode || !ethnicGroupCode) continue;
 		if (ethnicGroupCode === "-8") continue;
 

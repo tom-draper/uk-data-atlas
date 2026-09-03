@@ -36,7 +36,10 @@ export function valueGeojson<T extends object>(
 	dataset: T,
 	mode: string,
 	codeProp: PropertyKeys,
-	valueFor: (code: string, feature: Features[number]) => number | null | undefined,
+	valueFor: (
+		code: string,
+		feature: Features[number],
+	) => number | null | undefined,
 ): BoundaryGeojson {
 	return ctx.transformed(geojson, dataset, mode, () =>
 		ctx.featureBuilder.formatBoundaryGeoJson(

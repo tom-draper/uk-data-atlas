@@ -39,15 +39,21 @@ function useVisibleRoadBreakdown(
 
 	return useMemo(() => {
 		if (!counts || !dataset.legend) return null;
-		const knownValues = new Set(dataset.legend.flatMap((item) => item.values ?? []));
+		const knownValues = new Set(
+			dataset.legend.flatMap((item) => item.values ?? []),
+		);
 		const buckets = dataset.legend.map((item) => ({
 			id: item.id,
 			label: item.label,
 			color: item.color,
 			count: item.values
-				? item.values.reduce((sum, value) => sum + (counts[value] ?? 0), 0)
+				? item.values.reduce(
+						(sum, value) => sum + (counts[value] ?? 0),
+						0,
+					)
 				: Object.entries(counts).reduce(
-						(sum, [value, count]) => (knownValues.has(value) ? sum : sum + count),
+						(sum, [value, count]) =>
+							knownValues.has(value) ? sum : sum + count,
 						0,
 					),
 		}));
@@ -97,7 +103,8 @@ function RoadSafetyCard({
 		return locationPoints.filter(
 			(point) =>
 				!excludedPointValues.has(point.value) &&
-				(selectedPointValue === undefined || point.value === selectedPointValue),
+				(selectedPointValue === undefined ||
+					point.value === selectedPointValue),
 		);
 	}, [
 		dataset.points,
@@ -108,7 +115,8 @@ function RoadSafetyCard({
 	]);
 	const hasData = points.length > 0;
 	const averageSeverity = hasData
-		? points.reduce((total, point) => total + point.value, 0) / points.length
+		? points.reduce((total, point) => total + point.value, 0) /
+			points.length
 		: 0;
 	const severityBarWidth = (averageSeverity / 3) * 100;
 	const accent = hasData ? severityColor(averageSeverity) : null;
@@ -164,7 +172,9 @@ function NetworkCard({
 		<ChartCard
 			heading={dataset.dataColumn}
 			headerEnd={
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
 					Great Britain
 				</span>
 			}
@@ -183,7 +193,9 @@ function NetworkCard({
 			{!hasBreakdown ? (
 				<ChartCardValueBar
 					hasData
-					value={dataset.available ? "Road network" : "Not configured"}
+					value={
+						dataset.available ? "Road network" : "Not configured"
+					}
 					unit={dataset.available ? "vector tiles" : "add tile URL"}
 					secondary={dataset.licence}
 					barWidth={dataset.available ? 100 : 0}
@@ -191,18 +203,24 @@ function NetworkCard({
 				/>
 			) : (
 				<div className="space-y-1">
-					<div className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+					<div
+						className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
+					>
 						{breakdown.total.toLocaleString("en-GB")} roads in view
 					</div>
 					<div className="flex h-5 rounded overflow-hidden w-full gap-0">
 						{breakdown.buckets
 							.filter((bucket) => bucket.count > 0)
 							.map((bucket) => {
-								const pct = (bucket.count / breakdown.total) * 100;
+								const pct =
+									(bucket.count / breakdown.total) * 100;
 								return (
 									<div
 										key={bucket.id}
-										style={{ width: `${pct}%`, backgroundColor: bucket.color }}
+										style={{
+											width: `${pct}%`,
+											backgroundColor: bucket.color,
+										}}
 										title={`${bucket.label}: ${bucket.count.toLocaleString()} (${pct.toFixed(1)}%)`}
 										className="hover:opacity-80 transition-opacity"
 									>
@@ -219,16 +237,26 @@ function NetworkCard({
 						<div className="animate-in fade-in duration-200 mt-1">
 							<div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
 								{breakdown.buckets.map((bucket) => (
-									<div key={bucket.id} className="flex items-center gap-1 min-w-0">
+									<div
+										key={bucket.id}
+										className="flex items-center gap-1 min-w-0"
+									>
 										<div
 											className="size-1.5 rounded-sm shrink-0"
-											style={{ backgroundColor: bucket.color }}
+											style={{
+												backgroundColor: bucket.color,
+											}}
 										/>
 										<span
 											className={`text-[9px] truncate ${isDark ? "text-gray-400" : "text-gray-500"}`}
 											title={bucket.label}
 										>
-											{((bucket.count / breakdown.total) * 100).toFixed(1)}% {bucket.label}
+											{(
+												(bucket.count /
+													breakdown.total) *
+												100
+											).toFixed(1)}
+											% {bucket.label}
 										</span>
 									</div>
 								))}
@@ -258,7 +286,8 @@ export default function TransportSection({
 }) {
 	const isDark = useIsDark();
 
-	if (roadSafetyDatasets.length === 0 && networkDatasets.length === 0) return null;
+	if (roadSafetyDatasets.length === 0 && networkDatasets.length === 0)
+		return null;
 
 	return (
 		<div

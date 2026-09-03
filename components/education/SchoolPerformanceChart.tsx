@@ -40,13 +40,28 @@ function computeStats(
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
 	const fromRecord = (code: string) => {
-		const r = dataset.data[code] ?? dataset.data[codeMapper?.getCodeForYear("localAuthority", code, dataset.boundaryYear) ?? ""];
+		const r =
+			dataset.data[code] ??
+			dataset.data[
+				codeMapper?.getCodeForYear(
+					"localAuthority",
+					code,
+					dataset.boundaryYear,
+				) ?? ""
+			];
 		if (!r) return null;
-		return { ptL2basics94: r.ptL2basics94, ptL2basics95: r.ptL2basics95, avgAtt8: r.avgAtt8, avgP8score: r.avgP8score };
+		return {
+			ptL2basics94: r.ptL2basics94,
+			ptL2basics95: r.ptL2basics95,
+			avgAtt8: r.avgAtt8,
+			avgP8score: r.avgP8score,
+		};
 	};
 
-	if (selectedArea.type === "localAuthority") return fromRecord(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode) return fromRecord(selectedArea.data.ladCode);
+	if (selectedArea.type === "localAuthority")
+		return fromRecord(selectedArea.code);
+	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
+		return fromRecord(selectedArea.data.ladCode);
 	return null;
 }
 
@@ -66,7 +81,9 @@ export default function SchoolPerformanceChart({
 		? computeStats(dataset, aggregatedData, selectedArea, codeMapper)
 		: null;
 
-	const isActive = activeDataset?.type === "schoolPerformance" && activeDataset.id === dataset?.id;
+	const isActive =
+		activeDataset?.type === "schoolPerformance" &&
+		activeDataset.id === dataset?.id;
 	const hasData = stats !== null && stats.ptL2basics94 != null;
 	const color = gradeColor(stats?.ptL2basics94 ?? null);
 
@@ -79,7 +96,9 @@ export default function SchoolPerformanceChart({
 		<ChartCard
 			heading="GCSE Performance [2023/24]"
 			headerEnd={
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
 					England
 				</span>
 			}

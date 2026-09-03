@@ -14,7 +14,14 @@ const geojson = (properties: Record<string, string>) =>
 				properties,
 				geometry: {
 					type: "Polygon",
-					coordinates: [[[0, 0], [1, 0], [0, 1], [0, 0]]],
+					coordinates: [
+						[
+							[0, 0],
+							[1, 0],
+							[0, 1],
+							[0, 0],
+						],
+					],
 				},
 			},
 		],
@@ -37,9 +44,21 @@ describe("boundary mappings", () => {
 	it("maps same-named wards only within the same local authority", () => {
 		const mappings = buildCrossYearMappings(
 			{
-				2023: geojson({ WD23CD: "W-old", WD23NM: "Central", LAD23CD: "L1" }),
-				2024: geojson({ WD24CD: "W-new", WD24NM: " central ", LAD24CD: "L1" }),
-				2025: geojson({ WD25CD: "W-other", WD25NM: "Central", LAD25CD: "L2" }),
+				2023: geojson({
+					WD23CD: "W-old",
+					WD23NM: "Central",
+					LAD23CD: "L1",
+				}),
+				2024: geojson({
+					WD24CD: "W-new",
+					WD24NM: " central ",
+					LAD24CD: "L1",
+				}),
+				2025: geojson({
+					WD25CD: "W-other",
+					WD25NM: "Central",
+					LAD25CD: "L2",
+				}),
 			},
 			"ward",
 			[2023, 2024, 2025],

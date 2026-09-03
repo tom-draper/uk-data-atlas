@@ -1,12 +1,22 @@
-import { ClaimantCountDataset, ClaimantCountLADData } from "@/lib/types/claimantCount";
+import {
+	ClaimantCountDataset,
+	ClaimantCountLADData,
+} from "@/lib/types/claimantCount";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 
-const COL_TOTAL_COUNT = "Benefit: Total (all UC and JSA claimants); Gender: Total; Age: All categories: Age 16+; measure: Claimant count; measures: Value";
-const COL_TOTAL_RATE = "Benefit: Total (all UC and JSA claimants); Gender: Total; Age: All categories: Age 16+; measure: Claimants as a proportion of residents aged 16-64; measures: Value";
-const COL_YOUTH_COUNT = "Benefit: Total (all UC and JSA claimants); Gender: Total; Age: Aged 16-24; measure: Claimant count; measures: Value";
+const COL_TOTAL_COUNT =
+	"Benefit: Total (all UC and JSA claimants); Gender: Total; Age: All categories: Age 16+; measure: Claimant count; measures: Value";
+const COL_TOTAL_RATE =
+	"Benefit: Total (all UC and JSA claimants); Gender: Total; Age: All categories: Age 16+; measure: Claimants as a proportion of residents aged 16-64; measures: Value";
+const COL_YOUTH_COUNT =
+	"Benefit: Total (all UC and JSA claimants); Gender: Total; Age: Aged 16-24; measure: Claimant count; measures: Value";
 
 const toNum = (v: any): number => {
-	const n = parseFloat(String(v ?? "").replace(/,/g, "").trim());
+	const n = parseFloat(
+		String(v ?? "")
+			.replace(/,/g, "")
+			.trim(),
+	);
 	return isNaN(n) ? 0 : n;
 };
 
@@ -32,7 +42,8 @@ export async function loadClaimantCount(
 		const totalRate = toNum(row[COL_TOTAL_RATE]);
 		const youthCount = toNum(row[COL_YOUTH_COUNT]);
 		// Youth rate is suppressed in source data — derive from youth/total count ratio
-		const youthRate = totalCount > 0 ? (youthCount / totalCount) * totalRate : 0;
+		const youthRate =
+			totalCount > 0 ? (youthCount / totalCount) * totalRate : 0;
 
 		records[code] = {
 			ladCode: code,

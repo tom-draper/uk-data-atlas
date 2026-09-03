@@ -35,7 +35,11 @@ function computeBrexitElectoralStats(
 	codeMapper: CodeMapper | undefined,
 	year: number,
 ) {
-	if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+	if (
+		selectedArea === null &&
+		aggregatedData &&
+		aggregatedData[dataset.year]
+	) {
 		const agg = aggregatedData[dataset.year];
 		return {
 			pctLeave: agg.pctLeave,
@@ -46,11 +50,19 @@ function computeBrexitElectoralStats(
 		};
 	}
 
-	if (selectedArea && selectedArea.type === "localAuthority" && selectedArea.data) {
+	if (
+		selectedArea &&
+		selectedArea.type === "localAuthority" &&
+		selectedArea.data
+	) {
 		const laCode = selectedArea.code;
 		let area = dataset.data?.[laCode];
 		if (!area && codeMapper) {
-			const mappedCode = codeMapper.getCodeForYear("localAuthority", laCode, year);
+			const mappedCode = codeMapper.getCodeForYear(
+				"localAuthority",
+				laCode,
+				year,
+			);
 			if (mappedCode) {
 				area = dataset.data?.[mappedCode];
 			}
@@ -83,9 +95,21 @@ export default function BrexitElectoralChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const brexitStats = dataset ? computeBrexitElectoralStats(dataset, aggregatedData, selectedArea, codeMapper, year) : null;
+	const brexitStats = dataset
+		? computeBrexitElectoralStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				codeMapper,
+				year,
+			)
+		: null;
 
-	const isActive = !!(dataset && activeDataset?.type === "brexit" && activeDataset.id === dataset.id);
+	const isActive = !!(
+		dataset &&
+		activeDataset?.type === "brexit" &&
+		activeDataset.id === dataset.id
+	);
 
 	const pctLeave = brexitStats?.pctLeave ?? 0;
 	const pctRemain = brexitStats?.pctRemain ?? 0;
@@ -115,44 +139,44 @@ export default function BrexitElectoralChart({
 				})
 			}
 		>
-				{!hasData ? (
-					chartsLoading ? (
-						<ChartContentPlaceholder className="h-5" />
-					) : (
-						<div
-							className={`h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-						>
-							No data available
-						</div>
-					)
+			{!hasData ? (
+				chartsLoading ? (
+					<ChartContentPlaceholder className="h-5" />
 				) : (
-					<div className="flex h-5 rounded overflow-hidden">
-						<div
-							style={{
-								width: `${pctLeave.toFixed(1)}%`,
-								backgroundColor: `rgb(180, 20, 20)`,
-							}}
-						>
-							{pctLeave > 20 && (
-								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
-									Leave {pctLeave.toFixed(1)}%
-								</span>
-							)}
-						</div>
-						<div
-							style={{
-								width: `${pctRemain.toFixed(1)}%`,
-								backgroundColor: `rgb(30, 60, 180)`,
-							}}
-						>
-							{pctRemain > 20 && (
-								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
-									Remain {pctRemain.toFixed(1)}%
-								</span>
-							)}
-						</div>
+					<div
+						className={`h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+					>
+						No data available
 					</div>
-				)}
+				)
+			) : (
+				<div className="flex h-5 rounded overflow-hidden">
+					<div
+						style={{
+							width: `${pctLeave.toFixed(1)}%`,
+							backgroundColor: `rgb(180, 20, 20)`,
+						}}
+					>
+						{pctLeave > 20 && (
+							<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
+								Leave {pctLeave.toFixed(1)}%
+							</span>
+						)}
+					</div>
+					<div
+						style={{
+							width: `${pctRemain.toFixed(1)}%`,
+							backgroundColor: `rgb(30, 60, 180)`,
+						}}
+					>
+						{pctRemain > 20 && (
+							<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
+								Remain {pctRemain.toFixed(1)}%
+							</span>
+						)}
+					</div>
+				</div>
+			)}
 		</ChartCard>
 	);
 }

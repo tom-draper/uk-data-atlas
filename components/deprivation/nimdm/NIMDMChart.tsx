@@ -35,7 +35,10 @@ function computeNimdmStats(
 	if (selectedArea.type === "superOutputArea") {
 		const soa = dataset.data[selectedArea.code];
 		if (!soa) return null;
-		return { averageNIMDMRank: soa.nimdmRank, averageNIMDMDecile: soa.nimdmDecile };
+		return {
+			averageNIMDMRank: soa.nimdmRank,
+			averageNIMDMDecile: soa.nimdmDecile,
+		};
 	}
 
 	return null;
@@ -54,20 +57,30 @@ export default function NIMDMChart({
 	if (!dataset) return null;
 
 	const nimdmStats = computeNimdmStats(dataset, aggregatedData, selectedArea);
-	const isActive = activeDataset?.type === "nimdm" && activeDataset.id === dataset.id;
+	const isActive =
+		activeDataset?.type === "nimdm" && activeDataset.id === dataset.id;
 
 	return (
 		<DecileChart
 			title="NISRA. Northern Ireland Multiple Deprivation Measure 2017. nisra.gov.uk"
 			heading={`Deprivation (NIMDM) [${dataset.year}]`}
 			region="Northern Ireland"
-			decile={nimdmStats ? Math.round(nimdmStats.averageNIMDMDecile) : null}
+			decile={
+				nimdmStats ? Math.round(nimdmStats.averageNIMDMDecile) : null
+			}
 			hasData={nimdmStats !== null}
 			extraClassName="block w-full text-left"
 			footer={
-				selectedArea && nimdmStats && Number.isFinite(nimdmStats.averageNIMDMRank) ? (
-					<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-						Rank {Math.round(nimdmStats.averageNIMDMRank).toLocaleString()}
+				selectedArea &&
+				nimdmStats &&
+				Number.isFinite(nimdmStats.averageNIMDMRank) ? (
+					<span
+						className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}
+					>
+						Rank{" "}
+						{Math.round(
+							nimdmStats.averageNIMDMRank,
+						).toLocaleString()}
 					</span>
 				) : null
 			}

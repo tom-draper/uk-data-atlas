@@ -22,7 +22,8 @@ export function getSequentialColorExpression(
 	invertColor = true,
 	property = "value",
 ): MapExpression {
-	const theme = themes.find((candidate) => candidate.id === themeId) ?? themes[0];
+	const theme =
+		themes.find((candidate) => candidate.id === themeId) ?? themes[0];
 	const colors = invertColor ? [...theme.colors].reverse() : theme.colors;
 	if (range.min === range.max) {
 		return nullFallback(property, "#cccccc", getThemeColor(0.5, themeId));
@@ -116,10 +117,13 @@ export function getGenderColorExpression(
 	return when(
 		[
 			[equal(value, null), "#cccccc"],
-			[lessThan(value, 0), linearInterpolate(value, [
-				[range.min, "rgba(255, 105, 180, 0.8)"],
-				[0, "rgba(240, 240, 240, 0.8)"],
-			])],
+			[
+				lessThan(value, 0),
+				linearInterpolate(value, [
+					[range.min, "rgba(255, 105, 180, 0.8)"],
+					[0, "rgba(240, 240, 240, 0.8)"],
+				]),
+			],
 		],
 		linearInterpolate(value, [
 			[0, "rgba(240, 240, 240, 0.8)"],
@@ -141,7 +145,10 @@ export function getPercentageColorExpression(
 		"percentage",
 		neutralColor,
 		linearInterpolate(featureProperty("percentage"), [
-			[range.min, `rgb(${neutralRgb.r}, ${neutralRgb.g}, ${neutralRgb.b})`],
+			[
+				range.min,
+				`rgb(${neutralRgb.r}, ${neutralRgb.g}, ${neutralRgb.b})`,
+			],
 			[range.max, `rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`],
 		]),
 	);

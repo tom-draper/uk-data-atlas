@@ -29,20 +29,29 @@ const definition: DatasetDefinition<TestDataset> = {
 		licenceUrl: "https://example.test/licence",
 		description: "Test",
 	},
-	ingestion: { minimumDataRecords: 2, expectedBoundaryYears: [2024], requiredDataFields: ["value"] },
+	ingestion: {
+		minimumDataRecords: 2,
+		expectedBoundaryYears: [2024],
+		requiredDataFields: ["value"],
+	},
 	precompile: async () => ({}),
 };
 
 describe("dataset catalogue", () => {
 	it("keeps dataset core free of chart presentation", () => {
-		for (const dataset of [populationDatasetDefinition, childPovertyDatasetDefinition]) {
+		for (const dataset of [
+			populationDatasetDefinition,
+			childPovertyDatasetDefinition,
+		]) {
 			expect(dataset).not.toHaveProperty("chart");
 			expect(dataset).not.toHaveProperty("map");
 		}
 	});
 
 	it("provides every registered dataset through a presentation-free registry", () => {
-		expect(CATALOGUE_DATASET_DEFINITIONS.map((definition) => definition.type)).toEqual(
+		expect(
+			CATALOGUE_DATASET_DEFINITIONS.map((definition) => definition.type),
+		).toEqual(
 			CHART_DATASET_DEFINITIONS.map((definition) => definition.type),
 		);
 		for (const definition of CATALOGUE_DATASET_DEFINITIONS) {
@@ -68,6 +77,10 @@ describe("dataset catalogue", () => {
 					data: { A: { value: 1 }, B: { value: 2 } },
 				},
 			}),
-		).toEqual({ datasetCount: 1, dataRecordCount: 2, boundaryYears: [2024] });
+		).toEqual({
+			datasetCount: 1,
+			dataRecordCount: 2,
+			boundaryYears: [2024],
+		});
 	});
 });

@@ -37,7 +37,10 @@ import Chart31 from "@/components/deprivation/simd/SIMDChart";
 import Chart32 from "@/components/economics/unemployment/UnemploymentChart";
 import Chart33 from "@/components/deprivation/wimd/WIMDChart";
 
-export const CHART_COMPONENTS: Record<string, ComponentType<ChartComponentProps>> = {
+export const CHART_COMPONENTS: Record<
+	string,
+	ComponentType<ChartComponentProps>
+> = {
 	"environment-airQuality": Chart0 as ComponentType<ChartComponentProps>,
 	"brexit-electoral": Chart1 as ComponentType<ChartComponentProps>,
 	"brexit-hanretty": Chart2 as ComponentType<ChartComponentProps>,
@@ -56,7 +59,8 @@ export const CHART_COMPONENTS: Record<string, ComponentType<ChartComponentProps>
 	"deprivation-imd": Chart15 as ComponentType<ChartComponentProps>,
 	"economics-income": Chart16 as ComponentType<ChartComponentProps>,
 	"health-lifeExpectancy": Chart17 as ComponentType<ChartComponentProps>,
-	"health-healthyLifeExpectancy": Chart18 as ComponentType<ChartComponentProps>,
+	"health-healthyLifeExpectancy":
+		Chart18 as ComponentType<ChartComponentProps>,
 	"localElection-2025": Chart19 as ComponentType<ChartComponentProps>,
 	"localElection-2024": Chart20 as ComponentType<ChartComponentProps>,
 	"localElection-2023": Chart21 as ComponentType<ChartComponentProps>,
@@ -64,11 +68,13 @@ export const CHART_COMPONENTS: Record<string, ComponentType<ChartComponentProps>
 	"localElection-2021": Chart23 as ComponentType<ChartComponentProps>,
 	"health-nhsWaiting": Chart24 as ComponentType<ChartComponentProps>,
 	"deprivation-nimdm": Chart25 as ComponentType<ChartComponentProps>,
-	"demographics-populationDensity": Chart26 as ComponentType<ChartComponentProps>,
+	"demographics-populationDensity":
+		Chart26 as ComponentType<ChartComponentProps>,
 	"demographics-age": Chart27 as ComponentType<ChartComponentProps>,
 	"demographics-gender": Chart28 as ComponentType<ChartComponentProps>,
 	"education-qualifications": Chart29 as ComponentType<ChartComponentProps>,
-	"education-schoolPerformance": Chart30 as ComponentType<ChartComponentProps>,
+	"education-schoolPerformance":
+		Chart30 as ComponentType<ChartComponentProps>,
 	"deprivation-simd": Chart31 as ComponentType<ChartComponentProps>,
 	"economics-unemployment": Chart32 as ComponentType<ChartComponentProps>,
 	"deprivation-wimd": Chart33 as ComponentType<ChartComponentProps>,

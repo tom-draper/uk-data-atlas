@@ -23,7 +23,17 @@ describe("ChartCards registry selection", () => {
 	});
 
 	it("reports whether a group contains a visible chart", () => {
-		expect(hasVisibleChart("Health", visibility({ "health-nhsWaiting": true }))).toBe(true);
-		expect(hasVisibleChart("Health", visibility({ "health-nhsWaiting": false }))).toBe(false);
+		expect(
+			hasVisibleChart(
+				"Health",
+				visibility({ "health-nhsWaiting": true }),
+			),
+		).toBe(true);
+		expect(
+			hasVisibleChart(
+				"Health",
+				visibility({ "health-nhsWaiting": false }),
+			),
+		).toBe(false);
 	});
 });

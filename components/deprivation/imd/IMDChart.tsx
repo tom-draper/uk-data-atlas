@@ -29,7 +29,10 @@ function computeImdStats(
 	if (selectedArea.type === "lsoa") {
 		const record = dataset.data[selectedArea.code];
 		return record
-			? { averageIMDScore: record.imdScore, averageIMDDecile: record.imdDecile }
+			? {
+					averageIMDScore: record.imdScore,
+					averageIMDDecile: record.imdDecile,
+				}
 			: null;
 	}
 
@@ -55,7 +58,9 @@ export default function IMDChart({
 	if (!dataset) return null;
 
 	const imdStats = computeImdStats(dataset, aggregatedData, selectedArea);
-	const isActive = !!(activeDataset?.type === "imd" && activeDataset.id === dataset.id);
+	const isActive = !!(
+		activeDataset?.type === "imd" && activeDataset.id === dataset.id
+	);
 
 	return (
 		<DecileChart
@@ -66,7 +71,9 @@ export default function IMDChart({
 			hasData={imdStats !== null}
 			footer={
 				imdStats && (
-					<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+					<span
+						className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}
+					>
 						Score {imdStats.averageIMDScore.toFixed(1)}
 					</span>
 				)

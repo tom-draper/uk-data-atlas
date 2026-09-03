@@ -195,46 +195,46 @@ function GenderBalanceByAgeChart({
 	})();
 
 	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-			const tooltip = tooltipRef.current;
-			if (!tooltip || !containerRef.current) return;
+		const tooltip = tooltipRef.current;
+		if (!tooltip || !containerRef.current) return;
 
-			// Find which age row we are hovering over using event delegation
-			// (The target will be one of the bars, closest gets the row wrapper)
-			const row = (e.target as HTMLElement).closest("[data-age]");
+		// Find which age row we are hovering over using event delegation
+		// (The target will be one of the bars, closest gets the row wrapper)
+		const row = (e.target as HTMLElement).closest("[data-age]");
 
-			if (row && row instanceof HTMLElement) {
-				const age = parseInt(row.dataset.age || "0", 10);
-				const data = ageData[age];
+		if (row && row instanceof HTMLElement) {
+			const age = parseInt(row.dataset.age || "0", 10);
+			const data = ageData[age];
 
-				if (data) {
-					const { males, females } = data;
-					const malePct = percentages[age];
+			if (data) {
+				const { males, females } = data;
+				const malePct = percentages[age];
 
-					// Direct DOM update - extremely fast, no React overhead
-					tooltip.innerHTML = `
+				// Direct DOM update - extremely fast, no React overhead
+				tooltip.innerHTML = `
             Age ${age}: ${males.toLocaleString()}M / ${females.toLocaleString()}F 
             <span class="opacity-75">(${malePct.toFixed(1)}% male)</span>
           `;
 
-					// Position the tooltip near the row
-					// We use fixed positioning or calculation based on container
-					const containerRect =
-						containerRef.current.getBoundingClientRect();
-					const rowRect = row.getBoundingClientRect();
+				// Position the tooltip near the row
+				// We use fixed positioning or calculation based on container
+				const containerRect =
+					containerRef.current.getBoundingClientRect();
+				const rowRect = row.getBoundingClientRect();
 
-					// Center tooltip horizontally relative to container
-					tooltip.style.left = "50%";
-					tooltip.style.transform = "translateX(-50%)";
+				// Center tooltip horizontally relative to container
+				tooltip.style.left = "50%";
+				tooltip.style.transform = "translateX(-50%)";
 
-					// Position above the current row
-					const topOffset = rowRect.top - containerRect.top - 8; // 8px buffer
-					tooltip.style.top = `${topOffset}px`;
+				// Position above the current row
+				const topOffset = rowRect.top - containerRect.top - 8; // 8px buffer
+				tooltip.style.top = `${topOffset}px`;
 
-					tooltip.style.opacity = "1";
-				}
-			} else {
-				tooltip.style.opacity = "0";
+				tooltip.style.opacity = "1";
 			}
+		} else {
+			tooltip.style.opacity = "0";
+		}
 	};
 
 	const handleMouseLeave = () => {
@@ -249,7 +249,9 @@ function GenderBalanceByAgeChart({
 				{chartsLoading ? (
 					<ChartContentPlaceholder className="size-full" />
 				) : (
-					<div className="h-full flex items-center justify-center">No data available</div>
+					<div className="h-full flex items-center justify-center">
+						No data available
+					</div>
 				)}
 			</div>
 		);

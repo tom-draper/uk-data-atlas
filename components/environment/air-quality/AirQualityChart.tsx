@@ -32,7 +32,6 @@ function no2Color(no2: number): string {
 	return "#ef4444";
 }
 
-
 function StatPill({
 	label,
 	value,
@@ -45,11 +44,23 @@ function StatPill({
 	isDark: boolean;
 }) {
 	return (
-		<div className={`flex flex-col items-center px-2 py-1 rounded ${isDark ? "bg-white/5" : "bg-black/5"}`}>
-			<span className={`text-[9px] font-medium ${isDark ? "text-gray-400" : "text-gray-500"}`}>{label}</span>
-			<span className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800"}`}>
+		<div
+			className={`flex flex-col items-center px-2 py-1 rounded ${isDark ? "bg-white/5" : "bg-black/5"}`}
+		>
+			<span
+				className={`text-[9px] font-medium ${isDark ? "text-gray-400" : "text-gray-500"}`}
+			>
+				{label}
+			</span>
+			<span
+				className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800"}`}
+			>
 				{value != null ? `${value.toFixed(1)}` : "—"}
-				{value != null && <span className="text-[9px] font-normal ml-0.5">{unit}</span>}
+				{value != null && (
+					<span className="text-[9px] font-normal ml-0.5">
+						{unit}
+					</span>
+				)}
 			</span>
 		</div>
 	);
@@ -65,11 +76,17 @@ function computeStats(
 	const fromRecord = (code: string) => {
 		const r = dataset.data[code];
 		if (!r) return null;
-		return { no2Mean: r.no2Mean, pm25Mean: r.pm25Mean, pm10Mean: r.pm10Mean };
+		return {
+			no2Mean: r.no2Mean,
+			pm25Mean: r.pm25Mean,
+			pm10Mean: r.pm10Mean,
+		};
 	};
 
-	if (selectedArea.type === "localAuthority") return fromRecord(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode) return fromRecord(selectedArea.data.ladCode);
+	if (selectedArea.type === "localAuthority")
+		return fromRecord(selectedArea.code);
+	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
+		return fromRecord(selectedArea.data.ladCode);
 	return null;
 }
 
@@ -90,7 +107,8 @@ export default function AirQualityChart({
 		: null;
 
 	const isActive =
-		activeDataset?.type === "airQuality" && activeDataset.id === dataset?.id;
+		activeDataset?.type === "airQuality" &&
+		activeDataset.id === dataset?.id;
 
 	if (!dataset) return null;
 
@@ -116,7 +134,9 @@ export default function AirQualityChart({
 					{chartsLoading ? (
 						<ChartContentPlaceholder className="h-full" />
 					) : (
-						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+						<div
+							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+						>
 							No data available
 						</div>
 					)}
@@ -124,16 +144,31 @@ export default function AirQualityChart({
 			) : (
 				<div className="flex items-end justify-between gap-1.5 flex-1">
 					<div className="flex items-baseline gap-1">
-						<span className="text-2xl font-bold leading-none" style={{ color: color ?? undefined }}>
+						<span
+							className="text-2xl font-bold leading-none"
+							style={{ color: color ?? undefined }}
+						>
 							{no2 != null ? no2.toFixed(1) : "—"}
 						</span>
-						<span className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+						<span
+							className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
+						>
 							µg/m³
 						</span>
 					</div>
 					<div className="flex gap-1 shrink-0">
-						<StatPill label="PM2.5" value={stats.pm25Mean} unit="µg/m³" isDark={isDark} />
-						<StatPill label="PM10" value={stats.pm10Mean} unit="µg/m³" isDark={isDark} />
+						<StatPill
+							label="PM2.5"
+							value={stats.pm25Mean}
+							unit="µg/m³"
+							isDark={isDark}
+						/>
+						<StatPill
+							label="PM10"
+							value={stats.pm10Mean}
+							unit="µg/m³"
+							isDark={isDark}
+						/>
 					</div>
 				</div>
 			)}

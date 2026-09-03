@@ -45,18 +45,30 @@ function computeStats(
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
 	const fromRecord = (code: string) => {
-		const record = dataset.data[code] ?? dataset.data[codeMapper?.getCodeForYear("localAuthority", code, dataset.boundaryYear) ?? ""];
+		const record =
+			dataset.data[code] ??
+			dataset.data[
+				codeMapper?.getCodeForYear(
+					"localAuthority",
+					code,
+					dataset.boundaryYear,
+				) ?? ""
+			];
 		if (!record) return null;
 		return {
-			householdsInTemporaryAccommodation: record.householdsInTemporaryAccommodation,
+			householdsInTemporaryAccommodation:
+				record.householdsInTemporaryAccommodation,
 			householdsPerThousand: record.householdsPerThousand,
 			householdsWithChildren: record.householdsWithChildren,
-			childrenInTemporaryAccommodation: record.childrenInTemporaryAccommodation,
+			childrenInTemporaryAccommodation:
+				record.childrenInTemporaryAccommodation,
 		};
 	};
 
-	if (selectedArea.type === "localAuthority") return fromRecord(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode) return fromRecord(selectedArea.data.ladCode);
+	if (selectedArea.type === "localAuthority")
+		return fromRecord(selectedArea.code);
+	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
+		return fromRecord(selectedArea.data.ladCode);
 	return null;
 }
 
@@ -71,15 +83,19 @@ export default function HomelessnessChart({
 }: HomelessnessChartProps) {
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
-	const stats = dataset ? computeStats(dataset, aggregatedData, selectedArea, codeMapper) : null;
-	const isActive = activeDataset?.type === "homelessness" && activeDataset.id === dataset?.id;
+	const stats = dataset
+		? computeStats(dataset, aggregatedData, selectedArea, codeMapper)
+		: null;
+	const isActive =
+		activeDataset?.type === "homelessness" &&
+		activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
 	const color = rateColor(stats?.householdsPerThousand ?? 0);
 	if (!dataset) return null;
 
 	const rate = stats?.householdsPerThousand ?? 0;
 	// Bar shows households in temporary accommodation per 1,000 local households.
-	const barWidth = Math.min(rate / 15 * 100, 100);
+	const barWidth = Math.min((rate / 15) * 100, 100);
 
 	return (
 		<ChartCard
@@ -87,14 +103,22 @@ export default function HomelessnessChart({
 			headingClassName="min-w-0 truncate"
 			headingTitle="Homelessness: temporary accommodation [2026]"
 			headerEnd={
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
 					England
 				</span>
 			}
 			accent={hasData ? color : null}
 			isActive={isActive}
 			title="Ministry of Housing, Communities and Local Government. Statutory homelessness statistics. gov.uk"
-			onClick={() => setActiveViz({ datasetId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
+			onClick={() =>
+				setActiveViz({
+					datasetId: dataset.id,
+					datasetType: dataset.type,
+					datasetYear: dataset.year,
+				})
+			}
 		>
 			<ChartCardValueBar
 				hasData={hasData}

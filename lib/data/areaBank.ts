@@ -2,7 +2,8 @@ export interface AreaEntry {
 	label: string;
 	boundaryType: string;
 	year: number;
-	matchType: "code" | "name" | "postcode-full" | "postcode-district" | "coordinate";
+	matchType:
+		"code" | "name" | "postcode-full" | "postcode-district" | "coordinate";
 	codes: Set<string>;
 	nameToCode: Map<string, string>; // lowercase name → boundary code
 }
@@ -170,10 +171,16 @@ export function detectCoordinateColumns(
 	return null;
 }
 
-export function matchColumnAgainstBank(columnData: string[], areaBank: AreaBank): AreaMatch[] {
+export function matchColumnAgainstBank(
+	columnData: string[],
+	areaBank: AreaBank,
+): AreaMatch[] {
 	if (columnData.length === 0 || areaBank.length === 0) return [];
 
-	const sample = columnData.slice(0, 500).map(v => v.trim()).filter(Boolean);
+	const sample = columnData
+		.slice(0, 500)
+		.map((v) => v.trim())
+		.filter(Boolean);
 	if (sample.length === 0) return [];
 
 	const sampleSet = new Set(sample);
@@ -182,17 +189,27 @@ export function matchColumnAgainstBank(columnData: string[], areaBank: AreaBank)
 	for (const entry of areaBank) {
 		let matchCount = 0;
 		if (entry.matchType === "code") {
-			matchCount = [...sampleSet].filter(v => entry.codes.has(v)).length;
+			matchCount = [...sampleSet].filter((v) =>
+				entry.codes.has(v),
+			).length;
 		} else if (entry.matchType === "name") {
-			matchCount = [...sampleSet].filter(v => entry.nameToCode.has(v.toLowerCase())).length;
+			matchCount = [...sampleSet].filter((v) =>
+				entry.nameToCode.has(v.toLowerCase()),
+			).length;
 		}
 		if (matchCount > 0) {
-			results.push({ entry, percentage: (matchCount / sampleSet.size) * 100, matchCount });
+			results.push({
+				entry,
+				percentage: (matchCount / sampleSet.size) * 100,
+				matchCount,
+			});
 		}
 	}
 
 	// Full postcodes take priority over district codes
-	const fullPostcodes = [...sampleSet].filter(v => FULL_POSTCODE_RE.test(v));
+	const fullPostcodes = [...sampleSet].filter((v) =>
+		FULL_POSTCODE_RE.test(v),
+	);
 	if (fullPostcodes.length > 0) {
 		results.push({
 			entry: {
@@ -200,14 +217,18 @@ export function matchColumnAgainstBank(columnData: string[], areaBank: AreaBank)
 				boundaryType: "postcode",
 				year: 0,
 				matchType: "postcode-full",
-				codes: new Set(fullPostcodes.map(v => v.replace(/\s+/, " ").toUpperCase())),
+				codes: new Set(
+					fullPostcodes.map((v) =>
+						v.replace(/\s+/, " ").toUpperCase(),
+					),
+				),
 				nameToCode: new Map(),
 			},
 			percentage: (fullPostcodes.length / sampleSet.size) * 100,
 			matchCount: fullPostcodes.length,
 		});
 	} else {
-		const districts = [...sampleSet].filter(v => DISTRICT_RE.test(v));
+		const districts = [...sampleSet].filter((v) => DISTRICT_RE.test(v));
 		if (districts.length > 0) {
 			results.push({
 				entry: {
@@ -215,7 +236,7 @@ export function matchColumnAgainstBank(columnData: string[], areaBank: AreaBank)
 					boundaryType: "postcode",
 					year: 0,
 					matchType: "postcode-district",
-					codes: new Set(districts.map(v => v.toUpperCase())),
+					codes: new Set(districts.map((v) => v.toUpperCase())),
 					nameToCode: new Map(),
 				},
 				percentage: (districts.length / sampleSet.size) * 100,
@@ -225,19 +246,36 @@ export function matchColumnAgainstBank(columnData: string[], areaBank: AreaBank)
 	}
 
 	// Coordinate detection: all unique values must be decimal numbers in coordinate range
-	const nums = [...sampleSet].map(v => parseFloat(v));
-	if (nums.every(n => !isNaN(n)) && [...sampleSet].some(v => v.includes("."))) {
+	const nums = [...sampleSet].map((v) => parseFloat(v));
+	if (
+		nums.every((n) => !isNaN(n)) &&
+		[...sampleSet].some((v) => v.includes("."))
+	) {
 		const min = Math.min(...nums);
 		const max = Math.max(...nums);
 		if (min >= -90 && max <= 90) {
 			results.push({
-				entry: { label: "Latitude", boundaryType: "coordinate", year: 0, matchType: "coordinate", codes: new Set(), nameToCode: new Map() },
+				entry: {
+					label: "Latitude",
+					boundaryType: "coordinate",
+					year: 0,
+					matchType: "coordinate",
+					codes: new Set(),
+					nameToCode: new Map(),
+				},
 				percentage: 100,
 				matchCount: sampleSet.size,
 			});
 		} else if (min >= -180 && max <= 180) {
 			results.push({
-				entry: { label: "Longitude", boundaryType: "coordinate", year: 0, matchType: "coordinate", codes: new Set(), nameToCode: new Map() },
+				entry: {
+					label: "Longitude",
+					boundaryType: "coordinate",
+					year: 0,
+					matchType: "coordinate",
+					codes: new Set(),
+					nameToCode: new Map(),
+				},
 				percentage: 100,
 				matchCount: sampleSet.size,
 			});
