@@ -1,8 +1,4 @@
-import type {
-	BrexitOptions,
-	CategoryOptions,
-	GenderOptions,
-} from "@/lib/types/mapOptions";
+import type { CategoryOptions, MapOptions } from "@/lib/types/mapOptions";
 import { normalizeValue, hexToRgb } from "./interpolation";
 import { getThemeColor, themes } from "./themes";
 import {
@@ -66,7 +62,7 @@ function lerpRgb(
 
 export function getColorForBrexitLeave(
 	pctLeave: number,
-	options: BrexitOptions,
+	options: MapOptions["brexit"],
 ): string {
 	const midpoint = 50;
 	const { min, max } = options.colorRange;
@@ -100,7 +96,7 @@ const MALE_RGB = [70, 130, 180] as const;
 
 export function getColorForGenderRatio(
 	ratio: number,
-	mapOptions: GenderOptions,
+	mapOptions: MapOptions["gender"],
 ) {
 	const range = mapOptions.colorRange;
 	if (ratio < 0) {
@@ -113,7 +109,7 @@ export function getColorForGenderRatio(
 }
 
 export function getGenderColorExpression(
-	range: GenderOptions["colorRange"],
+	range: MapOptions["gender"]["colorRange"],
 	property = "value",
 ): MapExpression {
 	const value = featureProperty(property);
