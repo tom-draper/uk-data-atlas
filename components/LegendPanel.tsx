@@ -322,6 +322,28 @@ export default function LegendPanel({
 		});
 	};
 
+	const handleNetworkClick = (id: string) => {
+		if (activeDataset?.type !== "network") return;
+		const selected = displayOptions.network?.selected;
+		onMapOptionsChange("network", {
+			selected: selected === id ? undefined : id,
+		});
+	};
+
+	const handleNetworkRightClick = (id: string) => {
+		if (activeDataset?.type !== "network") return;
+		const excluded = displayOptions.network?.excluded ?? [];
+		onMapOptionsChange("network", {
+			excluded: excluded.includes(id)
+				? excluded.filter((item) => item !== id)
+				: [...excluded, id],
+			selected:
+				displayOptions.network?.selected === id
+					? undefined
+					: displayOptions.network?.selected,
+		});
+	};
+
 	const overlayOpacity = Math.min(
 		1,
 		(displayOptions.visibility.overlayOpacity ?? 1) + 0.2,
@@ -426,6 +448,8 @@ export default function LegendPanel({
 							}
 						onPointLegendClick={handlePointLegendClick}
 						onPointLegendRightClick={handlePointLegendRightClick}
+						onNetworkClick={handleNetworkClick}
+						onNetworkRightClick={handleNetworkRightClick}
 					/>
 				</div>
 			</div>

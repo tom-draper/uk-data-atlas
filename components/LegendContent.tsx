@@ -23,6 +23,8 @@ interface LegendContentProps {
 	onEthnicityRightClick: (id: string) => void;
 	onPointLegendClick: (value: string) => void;
 	onPointLegendRightClick: (value: string) => void;
+	onNetworkClick: (id: string) => void;
+	onNetworkRightClick: (id: string) => void;
 }
 
 const defaultFormatLabel = (v: number) => v.toFixed(0);
@@ -44,6 +46,8 @@ export default function LegendContent({
 	onEthnicityRightClick,
 	onPointLegendClick,
 	onPointLegendRightClick,
+	onNetworkClick,
+	onNetworkRightClick,
 }: LegendContentProps) {
 	if (!activeDataset) return null;
 
@@ -90,22 +94,24 @@ export default function LegendContent({
 	};
 
 	switch (activeDataset.type) {
-		case "network":
-			return activeDataset.legend ? (
-				<div className="space-y-1 px-1">
-					{activeDataset.legend.map((item) => (
-						<div className="flex items-center gap-2" key={item.label}>
-							<span
-								className="size-3 shrink-0 rounded-xs"
-								style={{ backgroundColor: item.color, opacity: overlayOpacity }}
-							/>
-							<span className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-								{item.label}
-							</span>
-						</div>
-					))}
-				</div>
-			) : null;
+		case "network": {
+			if (!activeDataset.legend) return null;
+			const networkOpts = displayOptions.network;
+			return renderCategoryLegend(
+				activeDataset.legend.map((item) => ({
+					id: item.id,
+					color: item.color,
+					name: item.label,
+				})),
+				true,
+				networkOpts?.selected,
+				onNetworkClick,
+				overlayOpacity,
+				isDark,
+				new Set(networkOpts?.excluded ?? []),
+				onNetworkRightClick,
+			);
+		}
 
 		case "population":
 			if (activeViz.vizId.startsWith("ageDistribution")) {

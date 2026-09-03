@@ -5,6 +5,22 @@ import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
 import { gazetteer } from "../data/gazetteer/static";
 import { isChartDataset } from "../datasets";
+import { categoryFilter } from "../helpers/mapManager/expressions";
+
+/** Builds the vector-tile filter driven by the roads legend's click-to-isolate / right-click-to-exclude state. */
+function buildNetworkFilter(
+	layer: NonNullable<Extract<Dataset, { type: "network" }>["layer"]>,
+	legend: Extract<Dataset, { type: "network" }>["legend"],
+	network: MapOptions["network"],
+) {
+	if (!legend || !layer.filterProperty) return undefined;
+	const allIds = legend.map((item) => item.id);
+	const { selected, excluded = [] } = network;
+	const activeIds = new Set(
+		selected ? [selected] : allIds.filter((id) => !excluded.includes(id)),
+	);
+	return categoryFilter(layer.filterProperty, legend, activeIds);
+}
 
 interface UseMapUpdatesParams {
 	geojson: BoundaryGeojson | null;
@@ -89,6 +105,11 @@ export function useMapUpdates({
 				mapManager.updateVectorLineLayer({
 					...activeDataset.layer,
 					visibility: mapOptions.visibility,
+					filter: buildNetworkFilter(
+						activeDataset.layer,
+						activeDataset.legend,
+						mapOptions.network,
+					),
 				});
 			} else {
 				mapManager.clearMapDataLayers();
@@ -96,7 +117,13 @@ export function useMapUpdates({
 		} else {
 			mapManager.clearVectorLineLayer("os-open-roads");
 		}
-	}, [activeDataset, mapManager, styleReady, mapOptions.visibility]);
+	}, [
+		activeDataset,
+		mapManager,
+		styleReady,
+		mapOptions.visibility,
+		mapOptions.network,
+	]);
 
 	// Custom point datasets (coordinates / postcodes) render on their own
 	// source/layer and don't need a boundary geojson, so they live in a

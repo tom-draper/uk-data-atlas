@@ -425,6 +425,7 @@ export class LayerManager {
 			"line-opacity",
 			layer.visibility.hideDataLayer ? 0 : (layer.style.opacity ?? 1),
 		);
+		this.map.setFilter(layerId, layer.filter ?? null);
 	}
 
 	clearLineLayer(id: string, vector = false): void {
