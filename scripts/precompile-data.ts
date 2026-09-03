@@ -11,11 +11,11 @@ import { fileURLToPath } from "url";
 import { execSync } from "child_process";
 import { createHash } from "crypto";
 
-import { CHART_DATASET_DEFINITIONS } from "../lib/datasets";
+import { CATALOGUE_DATASET_DEFINITIONS } from "../lib/datasets/catalogue";
 import {
 	type SourceArtifact,
 	validatePrecompiledDataset,
-} from "../lib/datasets/ingestion";
+} from "../lib/data/catalog";
 import type { DatasetReader } from "../lib/data/catalog";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
@@ -103,7 +103,7 @@ async function main() {
 	await mkdir(OUT_DIR, { recursive: true });
 	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
 
-	const chartResults = CHART_DATASET_DEFINITIONS.map(async (definition) => {
+	const chartResults = CATALOGUE_DATASET_DEFINITIONS.map(async (definition) => {
 		const { reader, artifacts } = createTrackedReader();
 		const data = await definition.precompile(reader);
 		const summary = validatePrecompiledDataset(definition, data);
@@ -134,7 +134,7 @@ async function main() {
 	}
 	await out("dataset-manifest", {
 		version: 1,
-		datasets: results.slice(0, CHART_DATASET_DEFINITIONS.length).map(
+		datasets: results.slice(0, CATALOGUE_DATASET_DEFINITIONS.length).map(
 			(result) => (result as PromiseFulfilledResult<unknown>).value,
 		),
 	});

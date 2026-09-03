@@ -5,6 +5,7 @@ import type { DatasetDefinition } from "../types";
 export const childPovertyDatasetDefinition: DatasetDefinition<ChildPovertyDataset> = {
 	type: "childPoverty",
 	precompiledFile: "child-poverty",
+	boundaryType: "localAuthority",
 	source: {
 		name: "Child Poverty",
 		source: "Department for Work and Pensions",

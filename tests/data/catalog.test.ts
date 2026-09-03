@@ -4,6 +4,8 @@ import {
 	populationDatasetDefinition,
 } from "@/lib/data/catalog/definitions";
 import { validatePrecompiledDataset } from "@/lib/data/catalog";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/datasets/catalogue";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import type { DatasetDefinition } from "@/lib/data/catalog";
 
 type TestDataset = {
@@ -16,6 +18,7 @@ type TestDataset = {
 const definition: DatasetDefinition<TestDataset> = {
 	type: "test",
 	precompiledFile: "test",
+	boundaryType: "ward",
 	source: {
 		name: "Test",
 		source: "Test",
@@ -34,6 +37,18 @@ describe("dataset catalogue", () => {
 		for (const dataset of [populationDatasetDefinition, childPovertyDatasetDefinition]) {
 			expect(dataset).not.toHaveProperty("chart");
 			expect(dataset).not.toHaveProperty("map");
+		}
+	});
+
+	it("provides every registered dataset through a presentation-free registry", () => {
+		expect(CATALOGUE_DATASET_DEFINITIONS.map((definition) => definition.type)).toEqual(
+			CHART_DATASET_DEFINITIONS.map((definition) => definition.type),
+		);
+		for (const definition of CATALOGUE_DATASET_DEFINITIONS) {
+			expect(definition).not.toHaveProperty("chart");
+			expect(definition).not.toHaveProperty("charts");
+			expect(definition).not.toHaveProperty("map");
+			expect(definition.boundaryType).toBeTruthy();
 		}
 	});
 
