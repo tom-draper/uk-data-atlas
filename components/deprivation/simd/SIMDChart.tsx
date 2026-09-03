@@ -78,7 +78,7 @@ export default function SIMDChart({
 			isActive={isActive}
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

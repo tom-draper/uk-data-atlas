@@ -109,7 +109,7 @@ export default function BrexitElectoralChart({
 			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

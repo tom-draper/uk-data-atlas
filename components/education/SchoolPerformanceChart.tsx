@@ -88,7 +88,7 @@ export default function SchoolPerformanceChart({
 			title="Department for Education. Key Stage 4 Performance 2023/24. explore-education-statistics.service.gov.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

@@ -754,7 +754,7 @@ function CustomDatasetCard({
 
 	const handleActivate = () => {
 		setActiveViz({
-			vizId: customDataset.id,
+			datasetId: customDataset.id,
 			datasetType: "custom",
 			datasetYear: customDataset.boundaryYear,
 		});
@@ -889,7 +889,7 @@ export default function CustomSection({
 
 		addCustomDataset(dataset);
 		setActiveViz({
-			vizId: id,
+			datasetId: id,
 			datasetType: "custom",
 			datasetYear: dataset.boundaryYear,
 		});
@@ -914,7 +914,7 @@ export default function CustomSection({
 							key={ds.id}
 							customDataset={ds}
 							selectedArea={selectedArea}
-							isActive={activeViz.datasetType === "custom" && activeViz.vizId === ds.id}
+							isActive={activeViz.datasetType === "custom" && activeViz.datasetId === ds.id}
 							setActiveViz={setActiveViz}
 							codeMapper={codeMapper}
 							mapManager={mapManager}

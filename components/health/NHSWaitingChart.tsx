@@ -88,7 +88,7 @@ export default function NHSWaitingChart({
 			title="NHS England. Referral to Treatment waiting times. england.nhs.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

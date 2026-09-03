@@ -43,24 +43,28 @@ export const populationDefinition: ChartDatasetDefinition<PopulationDataset> = {
   charts: [density, age, gender],
   legendKind: "population",
   mapRenderer: {
+    // Population backs three charts, so the active view picks between them.
+    // A link that names no view gets the dataset's primary chart, density.
     getOptions: (activeViz, mapOptions) => {
-      if (activeViz.vizId.startsWith("ageDistribution"))
-        return mapOptions.ageDistribution;
-      if (activeViz.vizId.startsWith("populationDensity"))
-        return mapOptions.populationDensity;
-      return mapOptions.gender;
+      switch (activeViz.view) {
+        case "age":
+          return mapOptions.ageDistribution;
+        case "gender":
+          return mapOptions.gender;
+        default:
+          return mapOptions.populationDensity;
+      }
     },
     render: ({ mapManager, geojson, dataset, mapOptions, activeViz }) => {
-      if (activeViz.vizId.startsWith("ageDistribution")) {
-        mapManager.updateMapForAgeDistribution(geojson, dataset, mapOptions);
-        return;
-      }
-      if (activeViz.vizId.startsWith("populationDensity")) {
-        mapManager.updateMapForPopulationDensity(geojson, dataset, mapOptions);
-        return;
-      }
-      if (activeViz.vizId.startsWith("gender")) {
-        mapManager.updateMapForGender(geojson, dataset, mapOptions);
+      switch (activeViz.view) {
+        case "age":
+          mapManager.updateMapForAgeDistribution(geojson, dataset, mapOptions);
+          return;
+        case "gender":
+          mapManager.updateMapForGender(geojson, dataset, mapOptions);
+          return;
+        default:
+          mapManager.updateMapForPopulationDensity(geojson, dataset, mapOptions);
       }
     },
   },

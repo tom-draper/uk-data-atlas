@@ -96,7 +96,7 @@ export default function QualificationChart({
 			title="Office for National Statistics. Census 2021: Highest Level of Qualification, England and Wales. TS067."
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

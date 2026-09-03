@@ -33,8 +33,8 @@ function Gender({
 	setActiveViz,
 	codeMapper,
 }: GenderProps) {
-	const vizId = `gender-${dataset.year}`;
-	const isActive = activeViz.vizId === vizId;
+	const isActive =
+		activeViz.datasetId === dataset.id && activeViz.view === "gender";
 
 	const { totalMales, totalFemales } = (() => {
 		// Handle no area selected - use aggregated data
@@ -233,7 +233,8 @@ function Gender({
 			title="Office for National Statistics. Census 2021: Sex, Age and Legal Partnership Status, England and Wales. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: vizId,
+					datasetId: dataset.id,
+					view: "gender",
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

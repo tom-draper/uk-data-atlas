@@ -75,7 +75,7 @@ export default function WIMDChart({
 			isActive={isActive}
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

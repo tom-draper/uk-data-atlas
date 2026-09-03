@@ -41,7 +41,7 @@ export default function GeneralElectionRegistryChart({
 		activeDataset &&
 		((activeDataset.type === "generalElection" &&
 			activeDataset.id === `generalElection-${year}`) ||
-			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"))
+			(activeViz.datasetType === "custom" && activeViz.datasetId === "custom"))
 	);
 
 	return <GeneralElectionResultChart data={data} isActive={isActive} setActiveViz={setActiveViz} />;

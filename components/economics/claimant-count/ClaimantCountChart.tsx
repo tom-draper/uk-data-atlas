@@ -80,7 +80,7 @@ export default function ClaimantCountChart({
 			title="ONS/Nomis. Claimant Count (UC + JSA). nomisweb.co.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

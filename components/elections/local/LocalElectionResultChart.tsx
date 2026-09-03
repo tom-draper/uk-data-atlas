@@ -87,7 +87,7 @@ export default function LocalElectionResultChart({
 	const handleActivate = () => {
 		if (data.dataset) {
 			setActiveViz({
-				vizId: data.dataset.id,
+				datasetId: data.dataset.id,
 				datasetType: data.dataset.type,
 				datasetYear: data.dataset.year,
 			});

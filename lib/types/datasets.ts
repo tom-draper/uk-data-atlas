@@ -42,8 +42,16 @@ export type Datasets = {
 } & CatalogueDatasetRecords;
 
 
+/**
+ * Which visualisation of a dataset that backs several. Datasets with a single
+ * visualisation leave it unset.
+ */
+export type VizView = "age" | "density" | "gender";
+
+/** The visualisation on the map: a dataset instance, and which of its views. */
 export type ActiveViz = {
-	vizId: string;
-	datasetType: keyof Datasets | "custom" | "network" | "brexitConstituency";
+	datasetId: string;
+	view?: VizView;
+	datasetType: keyof Datasets | "custom" | "network";
 	datasetYear: number;
 };

@@ -174,7 +174,7 @@ export default function LifeExpectancyChart({
 			title={dataset.metadata.source}
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

@@ -305,7 +305,7 @@ function PriceChart({
 				title="Office for National Statistics. UK House Price Index (HPI): Mean and Median House Prices by Local Authority. ons.gov.uk"
 				onClick={() =>
 					setActiveViz({
-						vizId: dataset.id,
+						datasetId: dataset.id,
 						datasetType: dataset.type,
 						datasetYear: dataset.year,
 					})
@@ -397,7 +397,7 @@ export default function HousePriceChart({
 		((activeDataset.type === "housePrice" &&
 			activeDataset.id === `housePrice${year}`) ||
 			(activeViz.datasetType === "custom" &&
-				activeViz.vizId === "custom"));
+				activeViz.datasetId === "custom"));
 
 	return (
 		<PriceChart
