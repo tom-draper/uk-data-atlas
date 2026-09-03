@@ -36,6 +36,8 @@ import {
 	aggregateSchoolPerformance,
 	collectBoundaryRecords,
 } from "../datasetAggregation/numeric";
+import { aggregateNHSWaiting } from "../datasetAggregation/health";
+import { aggregateUnemployment } from "../datasetAggregation/economics";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
@@ -1088,28 +1090,7 @@ export class DatasetAggregator {
 	): AggregatedNHSWaitingData | null {
 		return this.cached(`nhsWaiting-${location}-${datasetId}`, () => {
 			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-			const seenIcbs = new Set<string>();
-			let total = 0, over18 = 0;
-
-			for (const feature of geojson.features) {
-				const ladCode = getFeatureProp(feature.properties, ladCodeProp) ?? "";
-				const icbCode = dataset.ladToIcb[ladCode];
-				if (!icbCode || seenIcbs.has(icbCode)) continue;
-				const record = dataset.data[icbCode];
-				if (!record) continue;
-				seenIcbs.add(icbCode);
-				total += record.total;
-				over18 += record.over18Weeks;
-			}
-
-			if (total === 0) return null;
-
-			const result: AggregatedNHSWaitingData = {
-				total,
-				over18Weeks: over18,
-				pctOver18Weeks: (over18 / total) * 100,
-			};
-			return result;
+			return aggregateNHSWaiting(geojson.features, ladCodeProp, dataset);
 		});
 	}
 
@@ -1121,33 +1102,7 @@ export class DatasetAggregator {
 	): AggregatedUnemploymentData | null {
 		return this.cached(`unemployment-${location}-${datasetId}`, () => {
 			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-			const sums: Record<number, number> = {};
-			const counts: Record<number, number> = {};
-			for (const yr of dataset.years) { sums[yr] = 0; counts[yr] = 0; }
-
-			for (const feature of geojson.features) {
-				const record = dataset.data[getFeatureProp(feature.properties, ladCodeProp) ?? ""];
-				if (!record) continue;
-				for (const yr of dataset.years) {
-					const v = record.rates[yr];
-					if (v != null) { sums[yr] += v; counts[yr]++; }
-				}
-			}
-
-			const rates: Record<number, number> = {};
-			let hasAny = false;
-			for (const yr of dataset.years) {
-				if (counts[yr] > 0) { rates[yr] = sums[yr] / counts[yr]; hasAny = true; }
-			}
-
-			if (!hasAny) return null;
-
-			const result: AggregatedUnemploymentData = {
-				years: dataset.years,
-				latestYear: dataset.latestYear,
-				rates,
-			};
-			return result;
+			return aggregateUnemployment(geojson.features, ladCodeProp, dataset);
 		});
 	}
 }
