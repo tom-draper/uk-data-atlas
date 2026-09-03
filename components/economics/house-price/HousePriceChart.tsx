@@ -380,18 +380,14 @@ export default function HousePriceChart({
 	year,
 	selectedArea,
 	codeMapper,
-	activeViz,
 	setActiveViz,
 }: HousePriceChartProps) {
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
 	const isActive =
-		activeDataset &&
-		((activeDataset.type === "housePrice" &&
-			activeDataset.id === `housePrice${year}`) ||
-			(activeViz.datasetType === "custom" &&
-				activeViz.datasetId === "custom"));
+		activeDataset?.type === "housePrice" &&
+		activeDataset.id === `housePrice${year}`;
 
 	return (
 		<PriceChart

@@ -29,7 +29,6 @@ export default function LocalElectionRegistryChart({
 	selectedArea,
 	codeMapper,
 	year,
-	activeViz,
 	setActiveViz,
 }: LocalElectionRegistryChartProps) {
 	const { excludedLocalParties, selectedLocalParty } =
@@ -46,13 +45,9 @@ export default function LocalElectionRegistryChart({
 		selectedLocalParty,
 	);
 
-	const isActive = !!(
-		activeDataset &&
-		((activeDataset.type === "localElection" &&
-			activeDataset.id === `localElection${year}`) ||
-			(activeViz.datasetType === "custom" &&
-				activeViz.datasetId === "custom"))
-	);
+	const isActive =
+		activeDataset?.type === "localElection" &&
+		activeDataset.id === `localElection${year}`;
 
 	return (
 		<LocalElectionResultChart

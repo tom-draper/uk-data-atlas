@@ -86,7 +86,6 @@ export default function IncomeChart({
 	selectedArea,
 	year,
 	codeMapper,
-	activeViz,
 	setActiveViz,
 }: IncomeChartProps) {
 	const chartsLoading = useChartsLoading();
@@ -131,11 +130,8 @@ export default function IncomeChart({
 
 	const isActive = !!(
 		dataset &&
-		activeDataset &&
-		((activeDataset.type === "income" &&
-			activeDataset.id === `income${dataset.year}`) ||
-			(activeViz.datasetType === "custom" &&
-				activeViz.datasetId === "custom"))
+		activeDataset?.type === "income" &&
+		activeDataset.id === `income${dataset.year}`
 	);
 	const formattedMedian = medianIncome
 		? `£${Math.round(medianIncome).toLocaleString()}`
