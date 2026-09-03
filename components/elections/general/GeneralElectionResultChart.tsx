@@ -121,7 +121,7 @@ export default function GeneralElectionResultChart({
 }) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const vizId = `generalElection-${data.year}`;
+	const datasetId = `generalElection-${data.year}`;
 	const winnerColor = data.partyData[0]?.color;
 
 	const heightClass = isActive
@@ -148,7 +148,7 @@ export default function GeneralElectionResultChart({
 			onClick={() =>
 				data.dataset &&
 				setActiveViz({
-					vizId: vizId,
+					datasetId: datasetId,
 					datasetType: data.dataset.type,
 					datasetYear: data.year,
 				})

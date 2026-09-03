@@ -75,8 +75,8 @@ function AgeDistribution({
 	setActiveViz,
 	codeMapper,
 }: AgeDistributionProps) {
-	const vizId = `ageDistribution${dataset.year}`;
-	const isActive = activeViz.vizId === vizId;
+	const isActive =
+		activeViz.datasetId === dataset.id && activeViz.view === "age";
 
 	const { medianAge, ageGroups, total, counts, maxCount } = (() => {
 		let max = 0;
@@ -382,7 +382,8 @@ function AgeDistribution({
 			title="Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: vizId,
+					datasetId: dataset.id,
+					view: "age",
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

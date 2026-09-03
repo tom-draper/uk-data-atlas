@@ -117,8 +117,8 @@ export default function EthnicityChart({
 
 	if (!dataset) return null;
 
-	const vizId = dataset.id;
-	const isActive = activeViz.vizId === vizId;
+	const datasetId = dataset.id;
+	const isActive = activeViz.datasetId === datasetId;
 
 	const processedData = (() => {
 		const areaData = selectedArea?.code
@@ -171,7 +171,7 @@ export default function EthnicityChart({
 			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

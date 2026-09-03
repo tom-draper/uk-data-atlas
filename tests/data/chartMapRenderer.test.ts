@@ -11,7 +11,8 @@ import type { ChartDatasetMapRenderer } from "@/lib/datasets";
 const render = (
 	renderer: ChartDatasetMapRenderer<any> | undefined,
 	method: string,
-	vizId: string,
+	datasetId: string,
+	view?: "age" | "density" | "gender",
 ) => {
 	const update = vi.fn();
 	renderer?.render({
@@ -19,7 +20,7 @@ const render = (
 		geojson: {} as never,
 		dataset: {} as never,
 		mapOptions: DEFAULT_MAP_OPTIONS,
-		activeViz: { vizId, datasetType: "population", datasetYear: 2022 },
+		activeViz: { datasetId, view, datasetType: "population", datasetYear: 2022 },
 		isDark: true,
 	});
 	expect(update).toHaveBeenCalledOnce();
@@ -34,9 +35,13 @@ describe("chart map renderers", () => {
 		render(brexitConstituencyDefinition.mapRenderer, "updateMapForBrexitConstituency", "brexit-hanretty");
 	});
 
-	it("routes population visualisations by chart key", () => {
-		render(populationDefinition.mapRenderer, "updateMapForAgeDistribution", "ageDistribution-2022");
-		render(populationDefinition.mapRenderer, "updateMapForPopulationDensity", "populationDensity-2022");
-		render(populationDefinition.mapRenderer, "updateMapForGender", "gender-2022");
+	it("routes population visualisations by the active view", () => {
+		render(populationDefinition.mapRenderer, "updateMapForAgeDistribution", "population2022", "age");
+		render(populationDefinition.mapRenderer, "updateMapForPopulationDensity", "population2022", "density");
+		render(populationDefinition.mapRenderer, "updateMapForGender", "population2022", "gender");
+	});
+
+	it("falls back to the primary chart when a link names no view", () => {
+		render(populationDefinition.mapRenderer, "updateMapForPopulationDensity", "population2022");
 	});
 });

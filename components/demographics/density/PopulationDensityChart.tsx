@@ -174,8 +174,8 @@ function PopulationDensityChart({
 }: PopulationDensityChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const vizId = `populationDensity${dataset.year}`;
-	const isActive = activeViz.vizId === vizId;
+	const isActive =
+		activeViz.datasetId === dataset.id && activeViz.view === "density";
 
 	const { density, areaSqKm, total } = (() => {
 		// Handle no area selected - use aggregated data
@@ -361,7 +361,8 @@ function PopulationDensityChart({
 			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: vizId,
+					datasetId: dataset.id,
+					view: "density",
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

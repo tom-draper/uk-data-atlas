@@ -126,7 +126,7 @@ function RoadSafetyCard({
 			isActive={isActive}
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: "custom",
 					datasetYear: 0,
 				})
@@ -173,7 +173,7 @@ function NetworkCard({
 			minHeightClassName={`transition-[min-height] duration-300 ease-in-out ${isActive ? "min-h-[150px]" : "min-h-[65px]"} block w-full text-left`}
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: "network",
 					datasetYear: dataset.year,
 				})
@@ -276,7 +276,7 @@ export default function TransportSection({
 						dataset={ds}
 						isActive={
 							activeViz.datasetType === "network" &&
-							activeViz.vizId === ds.id
+							activeViz.datasetId === ds.id
 						}
 						setActiveViz={setActiveViz}
 						mapManager={mapManager}
@@ -288,7 +288,7 @@ export default function TransportSection({
 						dataset={ds}
 						isActive={
 							activeViz.datasetType === "custom" &&
-							activeViz.vizId === ds.id
+							activeViz.datasetId === ds.id
 						}
 						setActiveViz={setActiveViz}
 						location={location}

@@ -105,7 +105,7 @@ export default function AirQualityChart({
 			title="DEFRA. Air Quality Statistics in the UK. uk-air.defra.gov.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

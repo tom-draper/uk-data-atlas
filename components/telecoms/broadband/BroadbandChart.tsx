@@ -90,7 +90,7 @@ export default function BroadbandChart({
 			title="Ofcom. Connected Nations Report 2025. ofcom.org.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

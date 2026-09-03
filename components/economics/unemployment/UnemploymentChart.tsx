@@ -117,7 +117,7 @@ export default function UnemploymentChart({
 			title="ONS. Model-based estimates of unemployment for local and unitary authorities. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.latestYear,
 				})

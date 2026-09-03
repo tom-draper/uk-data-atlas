@@ -8,7 +8,7 @@ export function getActiveDataset(
 	customDatasets: (CustomDataset | NetworkDataset)[],
 ): Dataset | null {
 	if (activeViz.datasetType === "custom" || activeViz.datasetType === "network") {
-		return customDatasets.find((d) => d.id === activeViz.vizId) ?? null;
+		return customDatasets.find((d) => d.id === activeViz.datasetId) ?? null;
 	}
 
 	const datasetGroup = datasets[activeViz.datasetType] as
@@ -16,7 +16,7 @@ export function getActiveDataset(
 		| undefined;
 
 	return (
-		datasetGroup?.[activeViz.vizId] ??
+		datasetGroup?.[activeViz.datasetId] ??
 		datasetGroup?.[String(activeViz.datasetYear)] ??
 		null
 	);

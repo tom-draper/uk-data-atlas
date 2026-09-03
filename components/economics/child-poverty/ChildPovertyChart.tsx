@@ -107,7 +107,7 @@ export default function ChildPovertyChart({
 			title="DWP. Children in relative low-income families, before housing costs."
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

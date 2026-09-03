@@ -76,7 +76,7 @@ export default function FuelPovertyChart({
 			title="DESNZ. Fuel poverty (LILEE), England, 2024."
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

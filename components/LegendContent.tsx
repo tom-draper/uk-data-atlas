@@ -101,13 +101,10 @@ export default function LegendContent({
 
   switch (chartDefinition?.legendKind) {
     case "population":
-      if (activeViz.vizId.startsWith("ageDistribution")) {
+      if (activeViz.view === "age") {
         return renderDynamicLegend("ageDistribution", 18, 80, 25, 55);
       }
-      if (activeViz.vizId.startsWith("populationDensity")) {
-        return renderDynamicLegend("populationDensity", 0, 15000, 500, 8000);
-      }
-      if (activeViz.vizId.startsWith("gender")) {
+      if (activeViz.view === "gender") {
         const currentMin = displayOptions.gender?.colorRange?.min ?? -0.1;
         const currentMax = displayOptions.gender?.colorRange?.max ?? 0.1;
         return (
@@ -128,7 +125,8 @@ export default function LegendContent({
           />
         );
       }
-      return null;
+      // A link that names no view gets the dataset's primary chart, density.
+      return renderDynamicLegend("populationDensity", 0, 15000, 500, 8000);
 
     case "ethnicity": {
       const opts = displayOptions.ethnicity;

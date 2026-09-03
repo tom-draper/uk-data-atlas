@@ -107,7 +107,7 @@ export default function CrimeRateChart({
 		((activeDataset.type === "crime" &&
 			activeDataset.id === `crime${dataset.year}`) ||
 			(activeViz.datasetType === "custom" &&
-				activeViz.vizId === "custom"))
+				activeViz.datasetId === "custom"))
 	);
 
 	const rawValue = crimeRate || 0;
@@ -159,7 +159,7 @@ export default function CrimeRateChart({
 			title="Home Office. Police Recorded Crime Open Data Tables. data.police.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

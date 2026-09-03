@@ -94,7 +94,7 @@ export default function HomelessnessChart({
 			accent={hasData ? color : null}
 			isActive={isActive}
 			title="Ministry of Housing, Communities and Local Government. Statutory homelessness statistics. gov.uk"
-			onClick={() => setActiveViz({ vizId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
+			onClick={() => setActiveViz({ datasetId: dataset.id, datasetType: dataset.type, datasetYear: dataset.year })}
 		>
 			<ChartCardValueBar
 				hasData={hasData}

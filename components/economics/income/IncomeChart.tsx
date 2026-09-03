@@ -130,7 +130,7 @@ export default function IncomeChart({
 		((activeDataset.type === "income" &&
 			activeDataset.id === `income${dataset.year}`) ||
 			(activeViz.datasetType === "custom" &&
-				activeViz.vizId === "custom"))
+				activeViz.datasetId === "custom"))
 	);
 	const formattedMedian = medianIncome
 		? `£${Math.round(medianIncome).toLocaleString()}`
@@ -152,7 +152,7 @@ export default function IncomeChart({
 			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})

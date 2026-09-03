@@ -43,7 +43,7 @@ export default function LocalElectionRegistryChart({
 		activeDataset &&
 		((activeDataset.type === "localElection" &&
 			activeDataset.id === `localElection${year}`) ||
-			(activeViz.datasetType === "custom" && activeViz.vizId === "custom"))
+			(activeViz.datasetType === "custom" && activeViz.datasetId === "custom"))
 	);
 
 	return <LocalElectionResultChart data={data} isActive={isActive} setActiveViz={setActiveViz} />;
