@@ -48,6 +48,7 @@ import {
 import type { ColorRange } from "@/lib/types/common";
 import { calculateMedianAge, calculateTotal } from "@/lib/helpers/population";
 import { nullFallback, type MapExpression } from "./expressions";
+import type { VectorLineLayer } from "./layers";
 
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
@@ -983,6 +984,19 @@ export class MapManager {
 
 	updateVisibility(visibility: MapOptions["visibility"]): void {
 		this.layerManager.updateVisibility(visibility);
+	}
+
+	updateVectorLineLayer(layer: VectorLineLayer): void {
+		this.layerManager.render(layer);
+		// A network is a map-native dataset, not an overlay on the previously
+		// selected choropleth or point dataset. Render first because clearing the
+		// boundary source can briefly make the style unavailable.
+		this.layerManager.clearBoundaryData();
+		this.layerManager.clearPointLayers();
+	}
+
+	clearVectorLineLayer(id: string): void {
+		this.layerManager.clearLineLayer(id, true);
 	}
 
 	destroy(): void {

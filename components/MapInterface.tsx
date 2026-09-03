@@ -20,6 +20,7 @@ import type {
 } from "@lib/types";
 import { LSOA_CODE_KEYS, DATA_ZONE_CODE_KEYS, SOA_CODE_KEYS } from "@/lib/data/boundaries/boundaries";
 import type { CustomDataset } from "@/lib/types/custom";
+import type { NetworkDataset } from "@/lib/types/network";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { BASE_MAP_STYLES } from "@/lib/config/baseMapStyles";
@@ -36,6 +37,7 @@ interface MapInterfaceProps {
 	customDatasets: CustomDataset[];
 	addCustomDataset: (dataset: CustomDataset) => void;
 	roadSafetyDatasets: CustomDataset[];
+	networkDatasets: NetworkDataset[];
 	onError?: (error: Error) => void;
 }
 
@@ -48,6 +50,7 @@ export default function MapInterface({
 	customDatasets,
 	addCustomDataset,
 	roadSafetyDatasets,
+	networkDatasets,
 	onError,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
@@ -161,11 +164,12 @@ export default function MapInterface({
 			getActiveDataset(datasets, activeViz, [
 				...customDatasets,
 				...roadSafetyDatasets,
+				...networkDatasets,
 			]),
-		[datasets, activeViz, customDatasets, roadSafetyDatasets],
+		[datasets, activeViz, customDatasets, roadSafetyDatasets, networkDatasets],
 	);
 
-	const rawGeojson = !activeDataset
+	const rawGeojson = !activeDataset || activeDataset.type === "network"
 		? null
 		: (boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
 				activeDataset.boundaryYear
@@ -310,6 +314,7 @@ export default function MapInterface({
 						customDatasets={customDatasets}
 						addCustomDataset={addCustomDataset}
 						roadSafetyDatasets={roadSafetyDatasets}
+						networkDatasets={networkDatasets}
 						onExport={handleExport}
 					/>
 				)}

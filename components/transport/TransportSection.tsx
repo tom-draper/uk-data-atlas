@@ -4,6 +4,7 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { ActiveViz } from "@lib/types";
 import { CustomDataset } from "@/lib/types/custom";
+import { NetworkDataset } from "@/lib/types/network";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 import { rgbToHex } from "@/lib/helpers/colorScale/interpolation";
@@ -99,20 +100,63 @@ function RoadSafetyCard({
 	);
 }
 
+function NetworkCard({
+	dataset,
+	isActive,
+	setActiveViz,
+}: {
+	dataset: NetworkDataset;
+	isActive: boolean;
+	setActiveViz: (value: ActiveViz) => void;
+}) {
+	const isDark = useIsDark();
+	return (
+		<ChartCard
+			heading={dataset.dataColumn}
+			headerEnd={
+				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+					Great Britain
+				</span>
+			}
+			accent="#c2410c"
+			isActive={isActive}
+			onClick={() =>
+				setActiveViz({
+					vizId: dataset.id,
+					datasetType: "network",
+					datasetYear: dataset.year,
+				})
+			}
+			title={`${dataset.provider}. ${dataset.description}`}
+		>
+			<ChartCardValueBar
+				hasData
+				value={dataset.available ? "Road network" : "Not configured"}
+				unit={dataset.available ? "vector tiles" : "add tile URL"}
+				secondary={dataset.licence}
+				barWidth={dataset.available ? 100 : 0}
+				barColor="#c2410c"
+			/>
+		</ChartCard>
+	);
+}
+
 export default function TransportSection({
 	roadSafetyDatasets,
+	networkDatasets,
 	activeViz,
 	setActiveViz,
 	location,
 }: {
 	roadSafetyDatasets: CustomDataset[];
+	networkDatasets: NetworkDataset[];
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	location: string;
 }) {
 	const isDark = useIsDark();
 
-	if (roadSafetyDatasets.length === 0) return null;
+	if (roadSafetyDatasets.length === 0 && networkDatasets.length === 0) return null;
 
 	return (
 		<div
@@ -124,6 +168,17 @@ export default function TransportSection({
 				Transport
 			</h3>
 			<div className="space-y-2">
+				{networkDatasets.map((ds) => (
+					<NetworkCard
+						key={ds.id}
+						dataset={ds}
+						isActive={
+							activeViz.datasetType === "network" &&
+							activeViz.vizId === ds.id
+						}
+						setActiveViz={setActiveViz}
+					/>
+				))}
 				{roadSafetyDatasets.map((ds) => (
 					<RoadSafetyCard
 						key={ds.id}

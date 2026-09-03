@@ -74,6 +74,9 @@ export class LayerManager {
 			case "line":
 				this.updateLineLayer(layer);
 				return;
+			case "vector-line":
+				this.updateVectorLineLayer(layer);
+				return;
 		}
 	}
 
@@ -385,6 +388,50 @@ export class LayerManager {
 			"line-opacity",
 			layer.visibility.hideDataLayer ? 0 : (layer.style.opacity ?? 1),
 		);
+	}
+
+	private updateVectorLineLayer(
+		layer: Extract<MapLayer, { kind: "vector-line" }>,
+	): void {
+		if (!this.map.isStyleLoaded()) return;
+		const sourceId = `atlas-vector-line-${layer.id}`;
+		const layerId = `${sourceId}-stroke`;
+		if (!this.map.getSource(sourceId)) {
+			this.map.addSource(sourceId, {
+				type: "vector",
+				tiles: layer.source.tiles,
+				minzoom: layer.source.minzoom,
+				maxzoom: layer.source.maxzoom,
+				attribution: layer.source.attribution,
+			});
+		}
+		if (!this.map.getLayer(layerId)) {
+			this.map.addLayer({
+				id: layerId,
+				type: "line",
+				source: sourceId,
+				"source-layer": layer.source.sourceLayer,
+				paint: {
+					"line-color": layer.style.color,
+					"line-width": layer.style.width,
+				},
+			});
+		}
+
+		this.map.setPaintProperty(layerId, "line-color", layer.style.color);
+		this.map.setPaintProperty(layerId, "line-width", layer.style.width);
+		this.map.setPaintProperty(
+			layerId,
+			"line-opacity",
+			layer.visibility.hideDataLayer ? 0 : (layer.style.opacity ?? 1),
+		);
+	}
+
+	clearLineLayer(id: string, vector = false): void {
+		const sourceId = `${vector ? "atlas-vector-line" : "atlas-line"}-${id}`;
+		const layerId = `${sourceId}-stroke`;
+		if (this.map.getLayer(layerId)) this.map.removeLayer(layerId);
+		if (this.map.getSource(sourceId)) this.map.removeSource(sourceId);
 	}
 
 	private addPointTooltipHandlers(): void {

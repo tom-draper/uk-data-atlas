@@ -35,6 +35,8 @@ function getActiveDataOptions(
 	}
 
 	switch (activeDataset.type) {
+		case "network":
+			return null;
 		case "generalElection":
 			return mapOptions.generalElection;
 		case "localElection":
@@ -80,6 +82,18 @@ export function useMapUpdates({
 		mapManager.setBorderVisibility(mapOptions.visibility.hideBorders);
 	}, [mapManager, styleReady, mapOptions.visibility]);
 
+	useEffect(() => {
+		if (!mapManager || !styleReady) return;
+		if (activeDataset?.type === "network" && activeDataset.layer) {
+			mapManager.updateVectorLineLayer({
+				...activeDataset.layer,
+				visibility: mapOptions.visibility,
+			});
+		} else {
+			mapManager.clearVectorLineLayer("os-open-roads");
+		}
+	}, [activeDataset, mapManager, styleReady, mapOptions.visibility]);
+
 	// Custom point datasets (coordinates / postcodes) render on their own
 	// source/layer and don't need a boundary geojson, so they live in a
 	// separate effect. Clear the point layer whenever a non-point viz is active.
@@ -111,6 +125,7 @@ export function useMapUpdates({
 
 	useEffect(() => {
 		if (!geojson || !activeDataset || !mapManager) return;
+		if (activeDataset.type === "network") return;
 		// Point datasets are drawn by the effect above and carry no per-boundary
 		// values (`data` is empty), so the choropleth path below would repaint
 		// every boundary in the default colour — undoing the clearBoundaryData()

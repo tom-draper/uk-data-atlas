@@ -9,6 +9,7 @@ import { useDatasets } from "@/lib/hooks/useDatasets";
 import { useRoadSafetyData } from "@/lib/hooks/useRoadSafetyData";
 import type { ActiveViz } from "@/lib/types";
 import type { CustomDataset } from "@/lib/types/custom";
+import { NETWORK_DATASETS } from "@/lib/data/networks/catalog";
 
 const DEFAULT_ACTIVE_VIZ: ActiveViz = {
 	vizId: "localElection2024",
@@ -84,6 +85,7 @@ export default function AtlasClient() {
 	const { datasets, loading: datasetsLoading, errors } = useDatasets();
 	const roadSafety = useRoadSafetyData();
 	const roadSafetyDatasets = Object.values(roadSafety.datasets);
+	const networkDatasets = Object.values(NETWORK_DATASETS);
 
 	useEffect(() => {
 		if (!datasetsLoading) setInitialDatasetLoadComplete(true);
@@ -162,6 +164,7 @@ export default function AtlasClient() {
 				customDatasets={customDatasets}
 				addCustomDataset={(dataset) => setCustomDatasets((prev) => [...prev, dataset])}
 				roadSafetyDatasets={roadSafetyDatasets}
+				networkDatasets={networkDatasets}
 				onError={handleBoundaryError}
 			/>
 		</ErrorBoundary>

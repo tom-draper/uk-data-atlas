@@ -10,6 +10,7 @@ export * from "./mapOptions";
 export * from "./income";
 export * from "./ethnicity";
 export * from "./custom";
+export * from "./network";
 export * from "./referendum";
 export * from "./datasets";
 export * from "./areas";

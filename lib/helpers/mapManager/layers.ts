@@ -40,4 +40,23 @@ export type LineLayer = {
 	};
 };
 
-export type MapLayer = BoundaryFillLayer | PointLayer | LineLayer;
+/** A line layer streamed as Mapbox vector tiles, rather than one large GeoJSON. */
+export type VectorLineLayer = {
+	kind: "vector-line";
+	id: string;
+	source: {
+		tiles: string[];
+		sourceLayer: string;
+		minzoom?: number;
+		maxzoom?: number;
+		attribution?: string;
+	};
+	visibility: LayerVisibility;
+	style: LineLayer["style"];
+};
+
+export type MapLayer =
+	| BoundaryFillLayer
+	| PointLayer
+	| LineLayer
+	| VectorLineLayer;

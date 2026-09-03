@@ -12,6 +12,7 @@ import type {
 } from "@lib/types";
 import { BoundaryData as BoundaryDataBoundaries } from "@lib/types/boundaries";
 import type { CustomDataset } from "@/lib/types/custom";
+import type { NetworkDataset } from "@/lib/types/network";
 import { MapOptions } from "@/lib/types/mapOptions";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
@@ -23,6 +24,7 @@ interface UIOverlayProps {
 	customDatasets: CustomDataset[];
 	addCustomDataset: (dataset: CustomDataset) => void;
 	roadSafetyDatasets: CustomDataset[];
+	networkDatasets: NetworkDataset[];
 	activeDataset: Dataset | null;
 	chartsLoading: boolean;
 	activeViz: ActiveViz;
@@ -105,6 +107,7 @@ export default function UIOverlay({
 	customDatasets,
 	addCustomDataset,
 	roadSafetyDatasets,
+	networkDatasets,
 	activeDataset,
 	activeViz,
 	setActiveViz,
@@ -186,6 +189,7 @@ export default function UIOverlay({
 				customDatasets={customDatasets}
 				addCustomDataset={addCustomDataset}
 				roadSafetyDatasets={roadSafetyDatasets}
+				networkDatasets={networkDatasets}
 				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 				activeDataset={activeDataset}

@@ -3,7 +3,9 @@ import type { BoundaryType, BoundaryData } from "@lib/types/boundaries";
 import type { BoundaryGeojson } from "@lib/types/geometry";
 import { MapManager } from "./mapManager/mapManager";
 
-export interface DatasetConfig<T extends Dataset> {
+type BoundaryDataset = Exclude<Dataset, { type: "network" }>;
+
+export interface DatasetConfig<T extends BoundaryDataset> {
 	datasets: Record<string, T>;
 	boundaryType: BoundaryType;
 	keyBy?: "year" | "id";
@@ -55,7 +57,7 @@ function cachedAggregate(
 	return result;
 }
 
-export function aggregateDataset<T extends Dataset>(
+export function aggregateDataset<T extends BoundaryDataset>(
 	config: DatasetConfig<T>,
 	mapManager: MapManager | null,
 	boundaryData: BoundaryData,
