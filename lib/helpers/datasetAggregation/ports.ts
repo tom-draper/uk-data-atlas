@@ -1,17 +1,14 @@
 // The dependencies aggregation needs from its host, stated as structural ports
 // so this module never imports from the map layer. MapManager's PropertyDetector
 // and StatsCache satisfy them as-is.
-import { Features, PropertyKeys } from "@lib/types";
+import { BoundaryType, Features, PropertyKeys } from "@lib/types";
 
-/** Resolves which boundary property key holds each kind of area code. */
+/**
+ * Resolves which boundary property key holds the area code for a geography,
+ * or for any geography when the boundary file's own is unknown.
+ */
 export interface BoundaryCodeDetector {
-	detectWardCode(features: Features): PropertyKeys;
-	detectConstituencyCode(features: Features): PropertyKeys;
-	detectLocalAuthorityCode(features: Features): PropertyKeys;
-	detectLSOACode(features: Features): PropertyKeys;
-	detectDataZoneCode(features: Features): PropertyKeys;
-	detectSOACode(features: Features): PropertyKeys;
-	detectCode(features: Features): PropertyKeys;
+	detect(scope: BoundaryType | "any", features: Features): PropertyKeys;
 }
 
 /** Memoises aggregation results across map updates. */

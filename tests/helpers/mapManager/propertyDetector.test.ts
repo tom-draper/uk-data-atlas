@@ -1,4 +1,7 @@
-import { detectWardCodeForYear } from "@/lib/helpers/mapManager/propertyDetector";
+import {
+	PropertyDetector,
+	detectWardCodeForYear,
+} from "@/lib/helpers/mapManager/propertyDetector";
 import type { BoundaryGeojson } from "@/lib/types";
 
 const makeFeatures = (
@@ -38,5 +41,41 @@ describe("detectWardCodeForYear", () => {
 			WD23CD: "E05008888",
 		});
 		expect(detectWardCodeForYear(features, 2024)).toBe("WD24CD");
+	});
+});
+
+describe("PropertyDetector.detect", () => {
+	const detector = new PropertyDetector();
+
+	it("finds the code key for the requested geography", () => {
+		const features = makeFeatures({ LAD24CD: "E06000001" });
+		expect(detector.detect("localAuthority", features)).toBe("LAD24CD");
+	});
+
+	it("ignores code keys belonging to other geographies", () => {
+		const features = makeFeatures({ WD24CD: "E05001234" });
+		// No local authority key present, so it falls back to the newest one.
+		expect(detector.detect("localAuthority", features)).toBe("LAD25CD");
+		expect(detector.detect("ward", features)).toBe("WD24CD");
+	});
+
+	it("accepts any geography's code key when the scope is \"any\"", () => {
+		expect(detector.detect("any", makeFeatures({ DataZone: "S01006506" }))).toBe(
+			"DataZone",
+		);
+		expect(detector.detect("any", makeFeatures({ SOA_CODE: "95AA01S1" }))).toBe(
+			"SOA_CODE",
+		);
+	});
+
+	it("prefers the earlier geography when a file carries several code keys", () => {
+		// Catalogue order decides: ward is declared before local authority.
+		const features = makeFeatures({ LAD24CD: "E06000001", WD24CD: "E05001234" });
+		expect(detector.detect("any", features)).toBe("WD24CD");
+	});
+
+	it("falls back to the newest key for an empty features array", () => {
+		expect(detector.detect("ward", [])).toBe("WD25CD");
+		expect(detector.detect("constituency", [])).toBe("PCON24CD");
 	});
 });
