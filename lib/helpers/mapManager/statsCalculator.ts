@@ -37,7 +37,13 @@ import {
 	collectBoundaryRecords,
 } from "../datasetAggregation/numeric";
 import { aggregateNHSWaiting } from "../datasetAggregation/health";
-import { aggregateUnemployment } from "../datasetAggregation/economics";
+import {
+	aggregateCrime,
+	aggregateCustomDataset,
+	aggregateHousePrices,
+	aggregateIncome,
+	aggregateUnemployment,
+} from "../datasetAggregation/economics";
 import { aggregateIMD, aggregateNIMDM, aggregateSIMD, aggregateWIMD } from "../datasetAggregation/deprivation";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
@@ -350,55 +356,7 @@ export class DatasetAggregator {
 			const wardCodeProp = this.propertyDetector.detectWardCode(
 				geojson.features,
 			);
-			const features = geojson.features;
-
-			const yearlyTotals: Record<number, number> = {};
-			const yearlyCounts: Record<number, number> = {};
-			let totalPrice = 0;
-			let wardCount = 0;
-
-			for (let i = 0; i < features.length; i++) {
-				const ward =
-					wardData[
-						getFeatureProp(features[i].properties, wardCodeProp) ?? ""
-					];
-				if (!ward) continue;
-
-				const prices = ward.prices;
-				const price2023 = prices[2023];
-
-				if (price2023 !== null && price2023 !== undefined) {
-					totalPrice += price2023;
-					wardCount++;
-				}
-
-				// Use Object.keys for better performance with small objects
-				const years = Object.keys(prices);
-				for (let j = 0; j < years.length; j++) {
-					const yearNum = Number(years[j]);
-					const price = prices[yearNum];
-					if (price !== null && yearNum <= 2023) {
-						yearlyTotals[yearNum] =
-							(yearlyTotals[yearNum] || 0) + price;
-						yearlyCounts[yearNum] = (yearlyCounts[yearNum] || 0) + 1;
-					}
-				}
-			}
-
-			const averagePrices: Record<number, number> = {};
-			const yearKeys = Object.keys(yearlyTotals);
-			for (let i = 0; i < yearKeys.length; i++) {
-				const yearNum = Number(yearKeys[i]);
-				averagePrices[yearNum] =
-					yearlyTotals[yearNum] / yearlyCounts[yearNum];
-			}
-
-			const result: AggregatedHousePriceData = {
-				averagePrice: wardCount > 0 ? totalPrice / wardCount : 0,
-				wardCount,
-				averagePrices,
-			};
-			return result;
+			return aggregateHousePrices(geojson.features, wardCodeProp, wardData);
 		});
 	}
 
@@ -412,32 +370,7 @@ export class DatasetAggregator {
 			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 				geojson.features,
 			);
-			const features = geojson.features;
-
-			let totalRecordedCrime = 0;
-			let localAuthorityCount = 0;
-
-			for (let i = 0; i < features.length; i++) {
-				const area =
-					crimeData[
-						getFeatureProp(features[i].properties, ladCodeProp) ?? ""
-					];
-				if (!area) continue;
-
-				const crime = area.totalRecordedCrime;
-				if (crime !== null && crime !== undefined) {
-					totalRecordedCrime += crime;
-					localAuthorityCount++;
-				}
-			}
-
-			const result: AggregatedCrimeData = {
-				averageRecordedCrime:
-					localAuthorityCount > 0
-						? totalRecordedCrime / localAuthorityCount
-						: 0,
-			};
-			return result;
+			return aggregateCrime(geojson.features, ladCodeProp, crimeData);
 		});
 	}
 
@@ -451,29 +384,7 @@ export class DatasetAggregator {
 			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 				geojson.features,
 			);
-			const features = geojson.features;
-
-			let totalMedianIncome = 0;
-			let localAuthorityCount = 0;
-
-			for (let i = 0; i < features.length; i++) {
-				const locationIncome =
-					incomeData[
-						getFeatureProp(features[i].properties, ladCodeProp) ?? ""
-					];
-				if (locationIncome?.annual?.median != null) {
-					totalMedianIncome += locationIncome.annual.median;
-					localAuthorityCount++;
-				}
-			}
-
-			const result: AggregatedIncomeData = {
-				averageIncome:
-					localAuthorityCount > 0
-						? totalMedianIncome / localAuthorityCount
-						: 0,
-			};
-			return result;
+			return aggregateIncome(geojson.features, ladCodeProp, incomeData);
 		});
 	}
 
@@ -568,26 +479,7 @@ export class DatasetAggregator {
 		return this.cached(`custom-dataset-${location}-${datasetId}`, () => {
 			const codeProp = this.propertyDetector.detectCode(geojson.features);
 
-			let sum = 0;
-			let count = 0;
-			for (let i = 0; i < geojson.features.length; i++) {
-				const featureCode =
-					getFeatureProp(geojson.features[i].properties, codeProp) ?? "";
-				const featureData = data[featureCode];
-
-				if (typeof featureData === "number") {
-					sum += featureData;
-					count++;
-				}
-			}
-
-			const average = count > 0 ? sum / count : 0;
-
-			const result: AggregatedCustomData = {
-				count,
-				average,
-			};
-			return result;
+			return aggregateCustomDataset(geojson.features, codeProp, data);
 		});
 	}
 
