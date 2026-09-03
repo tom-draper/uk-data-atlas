@@ -6,8 +6,16 @@ import {
 	SIMDDataset,
 	SelectedArea,
 } from "@lib/types";
-import { useIsDark } from "@/lib/context/ThemeContext";
-import DecileChart from "../DecileChart";
+import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
+import { resolveDeprivationStats } from "../deprivationStats";
+
+const SIMD: DeprivationIndex = {
+	datasetType: "simd",
+	label: "SIMD",
+	region: "Scotland",
+	attribution:
+		"Scottish Government. Scottish Index of Multiple Deprivation 2020v2. gov.scot",
+};
 
 interface SIMDChartProps {
 	activeDataset: Dataset | null;
@@ -19,32 +27,6 @@ interface SIMDChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-function computeSimdStats(
-	dataset: SIMDDataset,
-	aggregatedData: Record<number, AggregatedSIMDData> | null,
-	selectedArea: SelectedArea | null,
-) {
-	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
-
-	if (selectedArea.type === "localAuthority")
-		return dataset.councilStats[selectedArea.code] ?? null;
-
-	if (selectedArea.type === "ward" && selectedArea.data)
-		return dataset.councilStats[selectedArea.data.ladCode] ?? null;
-
-	if (selectedArea.type === "dataZone") {
-		const dz = dataset.data[selectedArea.code];
-		if (!dz) return null;
-		return {
-			averageSIMDRank: dz.simdRank,
-			averageSIMDQuintile: dz.simdQuintile,
-			averageSIMDDecile: dz.simdDecile,
-		};
-	}
-
-	return null;
-}
-
 export default function SIMDChart({
 	activeDataset,
 	availableDatasets,
@@ -53,42 +35,36 @@ export default function SIMDChart({
 	year,
 	setActiveViz,
 }: SIMDChartProps) {
-	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
-	const simdStats = computeSimdStats(dataset, aggregatedData, selectedArea);
-	const isActive =
-		activeDataset?.type === "simd" && activeDataset.id === dataset.id;
+	const stats = resolveDeprivationStats({
+		aggregated: aggregatedData?.[dataset.year] ?? null,
+		ladStats: dataset.councilStats,
+		selectedArea,
+		fineArea: {
+			type: "dataZone",
+			records: dataset.data,
+			statsFor: (record) => ({
+				averageSIMDRank: record.simdRank,
+				averageSIMDQuintile: record.simdQuintile,
+				averageSIMDDecile: record.simdDecile,
+			}),
+		},
+	});
 
 	return (
-		<DecileChart
-			title="Scottish Government. Scottish Index of Multiple Deprivation 2020v2. gov.scot"
-			heading={`Deprivation (SIMD) [${dataset.year}]`}
-			region="Scotland"
-			decile={simdStats ? Math.round(simdStats.averageSIMDDecile) : null}
-			hasData={simdStats !== null}
+		<DeprivationChart
+			index={SIMD}
+			dataset={dataset}
+			activeDataset={activeDataset}
+			selectedArea={selectedArea}
+			decile={stats?.averageSIMDDecile ?? null}
+			detail={
+				stats ? { kind: "rank", value: stats.averageSIMDRank } : null
+			}
+			setActiveViz={setActiveViz}
 			extraClassName="block w-full text-left"
-			footer={
-				selectedArea &&
-				simdStats &&
-				Number.isFinite(simdStats.averageSIMDRank) ? (
-					<span
-						className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}
-					>
-						Rank{" "}
-						{Math.round(simdStats.averageSIMDRank).toLocaleString()}
-					</span>
-				) : null
-			}
-			isActive={isActive}
-			onClick={() =>
-				setActiveViz({
-					datasetId: dataset.id,
-					datasetType: dataset.type,
-					datasetYear: dataset.year,
-				})
-			}
 		/>
 	);
 }
