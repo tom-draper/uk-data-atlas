@@ -38,6 +38,7 @@ import {
 } from "../datasetAggregation/numeric";
 import { aggregateNHSWaiting } from "../datasetAggregation/health";
 import { aggregateUnemployment } from "../datasetAggregation/economics";
+import { aggregateIMD, aggregateNIMDM, aggregateSIMD, aggregateWIMD } from "../datasetAggregation/deprivation";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
@@ -632,30 +633,7 @@ export class DatasetAggregator {
 			const dzCodeProp = this.propertyDetector.detectDataZoneCode(
 				geojson.features,
 			);
-			let totalRank = 0;
-			let totalQuintile = 0;
-			let totalDecile = 0;
-			let count = 0;
-
-			for (const feature of geojson.features) {
-				const code = getFeatureProp(feature.properties, dzCodeProp) ?? "";
-				const record = simdData[code];
-				if (record) {
-					totalRank += record.simdRank;
-					totalQuintile += record.simdQuintile;
-					totalDecile += record.simdDecile;
-					count++;
-				}
-			}
-
-			if (count === 0) return null;
-
-			const stats: AggregatedSIMDData = {
-				averageSIMDRank: totalRank / count,
-				averageSIMDQuintile: totalQuintile / count,
-				averageSIMDDecile: totalDecile / count,
-			};
-			return stats;
+			return aggregateSIMD(geojson.features, dzCodeProp, simdData);
 		});
 	}
 
@@ -669,30 +647,7 @@ export class DatasetAggregator {
 			const lsoaCodeProp = this.propertyDetector.detectLSOACode(
 				geojson.features,
 			);
-			let totalScore = 0;
-			let totalRank = 0;
-			let totalDecile = 0;
-			let count = 0;
-
-			for (const feature of geojson.features) {
-				const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
-				const record = wimdData[code];
-				if (record) {
-					totalScore += record.wimdScore;
-					totalRank += record.wimdRank;
-					totalDecile += record.wimdDecile;
-					count++;
-				}
-			}
-
-			if (count === 0) return null;
-
-			const stats: AggregatedWIMDData = {
-				averageWIMDScore: totalScore / count,
-				averageWIMDRank: totalRank / count,
-				averageWIMDDecile: totalDecile / count,
-			};
-			return stats;
+			return aggregateWIMD(geojson.features, lsoaCodeProp, wimdData);
 		});
 	}
 
@@ -706,27 +661,7 @@ export class DatasetAggregator {
 			const soaCodeProp = this.propertyDetector.detectSOACode(
 				geojson.features,
 			);
-			let totalRank = 0;
-			let totalDecile = 0;
-			let count = 0;
-
-			for (const feature of geojson.features) {
-				const code = getFeatureProp(feature.properties, soaCodeProp) ?? "";
-				const record = nimdmData[code];
-				if (record) {
-					totalRank += record.nimdmRank;
-					totalDecile += record.nimdmDecile;
-					count++;
-				}
-			}
-
-			if (count === 0) return null;
-
-			const stats: AggregatedNIMDMData = {
-				averageNIMDMRank: totalRank / count,
-				averageNIMDMDecile: totalDecile / count,
-			};
-			return stats;
+			return aggregateNIMDM(geojson.features, soaCodeProp, nimdmData);
 		});
 	}
 
@@ -740,25 +675,7 @@ export class DatasetAggregator {
 			const lsoaCodeProp = this.propertyDetector.detectLSOACode(
 				geojson.features,
 			);
-			let totalScore = 0;
-			let totalDecile = 0;
-			let count = 0;
-
-			for (const feature of geojson.features) {
-				const code = getFeatureProp(feature.properties, lsoaCodeProp) ?? "";
-				const record = imdData[code];
-				if (record) {
-					totalScore += record.imdScore;
-					totalDecile += record.imdDecile;
-					count++;
-				}
-			}
-
-			const stats: AggregatedIMDData = {
-				averageIMDScore: count > 0 ? totalScore / count : 0,
-				averageIMDDecile: count > 0 ? totalDecile / count : 0,
-			};
-			return stats;
+			return aggregateIMD(geojson.features, lsoaCodeProp, imdData);
 		});
 	}
 
