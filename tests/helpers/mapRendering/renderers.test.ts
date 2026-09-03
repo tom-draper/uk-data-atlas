@@ -14,9 +14,7 @@ import { childPovertyDefinition } from "@/lib/datasets/childPoverty";
 const fakeContext = (codeProp = "LAD25CD") => {
 	const layerManager = {
 		render: vi.fn(),
-		updateElectionLayers: vi.fn(),
-		updatePartyPercentageLayers: vi.fn(),
-		updateColoredLayers: vi.fn(),
+		paintBoundaries: vi.fn(),
 		clearPointLayers: vi.fn(),
 		clearBoundaryData: vi.fn(),
 	};
@@ -66,7 +64,7 @@ describe("renderLocalElection", () => {
 	const dataset = {
 		data: { E05000001: { partyVotes: { LAB: 10, CON: 4 } } },
 		results: { E05000001: "LAB" },
-		partyInfo: {},
+		partyInfo: [{ key: "LAB" }, { key: "CON" }],
 	} as never;
 
 	it("paints winners and binds events against the ward code property", () => {
@@ -79,8 +77,7 @@ describe("renderLocalElection", () => {
 		expect(
 			featureBuilder.buildElectionWinnerFeatures,
 		).toHaveBeenCalledOnce();
-		expect(layerManager.updateElectionLayers).toHaveBeenCalledOnce();
-		expect(layerManager.updatePartyPercentageLayers).not.toHaveBeenCalled();
+		expect(layerManager.paintBoundaries).toHaveBeenCalledOnce();
 		expect(eventHandler.setupEventHandlers).toHaveBeenCalledWith(
 			(dataset as { data: unknown }).data,
 			"WD25CD",
@@ -102,8 +99,7 @@ describe("renderLocalElection", () => {
 		expect(
 			featureBuilder.buildElectionPercentageFeatures,
 		).toHaveBeenCalledOnce();
-		expect(layerManager.updatePartyPercentageLayers).toHaveBeenCalledOnce();
-		expect(layerManager.updateElectionLayers).not.toHaveBeenCalled();
+		expect(layerManager.paintBoundaries).toHaveBeenCalledOnce();
 	});
 
 	it("keys the transform cache on the excluded parties", () => {

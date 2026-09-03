@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { LayerManager } from "@/lib/helpers/mapManager/layerManager";
+import {
+	featureColorPaint,
+	valuePaint,
+} from "@/lib/helpers/mapRendering/fillPaint";
 
 function createMap() {
 	const sources = new Map<string, { setData: ReturnType<typeof vi.fn> }>();
@@ -95,7 +99,7 @@ describe("LayerManager visibility updates", () => {
 			],
 		} as any;
 
-		manager.updateColoredLayers(geojson, {
+		manager.paintBoundaries(geojson, featureColorPaint(), {
 			hideDataLayer: false,
 			hideBorders: false,
 			hideBoundaryLayer: false,
@@ -166,12 +170,24 @@ describe("LayerManager visibility updates", () => {
 			overlayOpacity: 0.6,
 		};
 
-		manager.updateValueLayers(geojson, ["get", "value"], visibility);
+		manager.paintBoundaries(
+			geojson,
+			valuePaint(["get", "value"]),
+			visibility,
+		);
 		const setData = map.sources.get("location-wards")!.setData;
 
-		manager.updateValueLayers(
+		manager.paintBoundaries(
 			geojson,
-			["interpolate", ["linear"], ["get", "value"], 0, "#000", 1, "#fff"],
+			valuePaint([
+				"interpolate",
+				["linear"],
+				["get", "value"],
+				0,
+				"#000",
+				1,
+				"#fff",
+			]),
 			visibility,
 		);
 

@@ -7,6 +7,11 @@ import type {
 } from "@lib/types";
 import type { MapOptions } from "@lib/types/mapOptions";
 import type { MapRenderContext } from "./context";
+import {
+	electionWinnerPaint,
+	featureColorPaint,
+	partyPercentagePaint,
+} from "./fillPaint";
 
 function renderElection(
 	ctx: MapRenderContext,
@@ -78,18 +83,14 @@ function renderElection(
 		},
 	);
 
-	// Update layers
-	if (mode === "percentage" && options.selected) {
-		ctx.layerManager.updatePartyPercentageLayers(
+	const paint =
+		mode === "percentage"
+			? partyPercentagePaint(options, isDark)
+			: electionWinnerPaint(dataset.partyInfo);
+	if (paint) {
+		ctx.layerManager.paintBoundaries(
 			transformedGeojson,
-			options,
-			mapOptions.visibility,
-			isDark,
-		);
-	} else {
-		ctx.layerManager.updateElectionLayers(
-			transformedGeojson,
-			dataset.partyInfo,
+			paint,
 			mapOptions.visibility,
 		);
 	}
@@ -142,8 +143,9 @@ export function renderBrexit(
 	const transformedGeojson =
 		ctx.featureBuilder.formatBoundaryGeoJson(features);
 
-	ctx.layerManager.updateColoredLayers(
+	ctx.layerManager.paintBoundaries(
 		transformedGeojson,
+		featureColorPaint(),
 		mapOptions.visibility,
 	);
 	ctx.eventHandler.setupEventHandlers(dataset.data, codeProp);
@@ -166,8 +168,9 @@ export function renderBrexitConstituency(
 	const transformedGeojson =
 		ctx.featureBuilder.formatBoundaryGeoJson(features);
 
-	ctx.layerManager.updateColoredLayers(
+	ctx.layerManager.paintBoundaries(
 		transformedGeojson,
+		featureColorPaint(),
 		mapOptions.visibility,
 	);
 	ctx.eventHandler.setupEventHandlers(dataset.data, codeProp);

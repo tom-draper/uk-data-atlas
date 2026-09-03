@@ -14,13 +14,13 @@ import { DEFAULT_COLOR } from "./featureBuilder";
 import type { PointTooltip } from "@/lib/types/custom";
 import type { MapLayer } from "./layers";
 import {
-	categoryMatch,
 	featureProperty,
-	hoverOpacity,
 	zoomInterpolate,
+	type FillPaintConfig,
 	type MapExpression,
 	type PaintValue,
 } from "./expressions";
+import { valuePaint } from "../mapRendering/fillPaint";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
@@ -34,11 +34,6 @@ const FADE_MIN_ZOOM = 6;
 const FADE_MAX_ZOOM = 9;
 
 const EMPTY_FC = { type: "FeatureCollection", features: [] } as const;
-
-type FillPaintConfig = {
-	color: PaintValue<string>;
-	opacity: (overlayOpacity: number) => PaintValue<number>;
-};
 
 export class LayerManager {
 	private lastFillPaint: FillPaintConfig | null = null;
@@ -54,9 +49,9 @@ export class LayerManager {
 	render(layer: MapLayer): void {
 		switch (layer.kind) {
 			case "boundary-fill":
-				this.updateValueLayers(
+				this.paintBoundaries(
 					layer.data,
-					layer.colorExpression,
+					valuePaint(layer.colorExpression),
 					layer.visibility,
 				);
 				return;
@@ -79,129 +74,8 @@ export class LayerManager {
 		}
 	}
 
-	updateElectionLayers(
-		geojson: BoundaryGeojson,
-		partyInfo: Party[],
-		visibility: MapOptions["visibility"],
-	): void {
-		const colorExpression = categoryMatch(
-			"winningParty",
-			partyInfo.map(
-				(party) => [party.key, PARTIES[party.key].color] as const,
-			),
-			"#cccccc",
-		);
-
-		this.updateLayers(
-			geojson,
-			{
-				color: colorExpression,
-				opacity: hoverOpacity,
-			},
-			visibility,
-		);
-	}
-
-	updatePartyPercentageLayers(
-		geojson: BoundaryGeojson,
-		options: MapOptions["localElection"] | MapOptions["generalElection"],
-		visibility: MapOptions["visibility"],
-		isDark = false,
-	): void {
-		if (!options.selected) return;
-		const baseColor =
-			PARTIES[options.selected as PartyCode]?.color || "#999999";
-		const fillColorExpression = getPercentageColorExpression(
-			baseColor,
-			options,
-			isDark,
-		);
-
-		this.updateLayers(
-			geojson,
-			{
-				color: fillColorExpression,
-				opacity: (opacity) => opacity,
-			},
-			visibility,
-		);
-	}
-
-	updateEthnicityMajorityLayers(
-		geojson: BoundaryGeojson,
-		visibility: MapOptions["visibility"],
-	): void {
-		const colorExpression = categoryMatch(
-			"majorityCategory",
-			Object.entries(ETHNICITY_COLORS),
-			"#cccccc",
-		);
-
-		this.updateLayers(
-			geojson,
-			{
-				color: colorExpression,
-				opacity: hoverOpacity,
-			},
-			visibility,
-		);
-	}
-
-	updateEthnicityCategoryPercentageLayers(
-		geojson: BoundaryGeojson,
-		options: MapOptions["ethnicity"],
-		visibility: MapOptions["visibility"],
-		isDark = false,
-	): void {
-		if (!options.selected) return;
-		const baseColor = ETHNICITY_COLORS[options.selected];
-
-		const fillColorExpression = getPercentageColorExpression(
-			baseColor,
-			options,
-			isDark,
-		);
-
-		this.updateLayers(
-			geojson,
-			{
-				color: fillColorExpression,
-				opacity: (opacity) => opacity,
-			},
-			visibility,
-		);
-	}
-
-	updateColoredLayers(
-		geojson: BoundaryGeojson,
-		visibility: MapOptions["visibility"],
-	): void {
-		this.updateLayers(
-			geojson,
-			{
-				color: featureProperty("color"),
-				opacity: hoverOpacity,
-			},
-			visibility,
-		);
-	}
-
-	updateValueLayers(
-		geojson: BoundaryGeojson,
-		colorExpression: MapExpression,
-		visibility: MapOptions["visibility"],
-	): void {
-		this.updateLayers(
-			geojson,
-			{
-				color: colorExpression,
-				opacity: hoverOpacity,
-			},
-			visibility,
-		);
-	}
-
-	private updateLayers(
+	/** Paints the boundary fill and outline with a prepared paint config. */
+	paintBoundaries(
 		geojson: BoundaryGeojson,
 		paint: FillPaintConfig,
 		visibility: MapOptions["visibility"],
