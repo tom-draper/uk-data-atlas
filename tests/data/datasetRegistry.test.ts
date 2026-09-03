@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { CHART_COMPONENTS } from "@/lib/datasets/generatedCharts";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { validatePrecompiledDataset } from "@/lib/data/catalog";
 import { getChartDefinitions } from "@/lib/datasets/types";
 
@@ -64,7 +65,7 @@ describe("chart dataset registry contract", () => {
     }
   });
 
-  it("registers every bespoke legend kind", () => {
+	it("registers every bespoke legend kind", () => {
     expect(
       CHART_DATASET_DEFINITIONS.filter(
         (definition) => definition.legendKind,
@@ -77,7 +78,16 @@ describe("chart dataset registry contract", () => {
       ["localElection", "party"],
       ["population", "population"],
     ]);
-  });
+	});
+
+	it("derives scalar map defaults from each dataset definition", () => {
+		for (const definition of CHART_DATASET_DEFINITIONS) {
+			if (!definition.map) continue;
+			expect(DEFAULT_MAP_OPTIONS[definition.type].colorRange).toEqual(
+				definition.map.colorRange,
+			);
+		}
+	});
 
   for (const definition of CHART_DATASET_DEFINITIONS) {
     describe(definition.type, () => {

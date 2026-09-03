@@ -4,7 +4,11 @@
 import { useMemo, useState } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
-import type { MapOptions, CategoryOptions } from "@/lib/types/mapOptions";
+import type {
+	CategoryOptions,
+	ColorRangeMapOptionKey,
+	MapOptions,
+} from "@/lib/types/mapOptions";
 import {
 	ActiveViz,
 	Dataset,
@@ -24,34 +28,11 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import LegendContent from "./LegendContent";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
-import type { CatalogueDatasetType } from "@/lib/data/catalog";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 
 export type PartyDisplayData = { id: PartyCode; color: string; name: string };
 
-export type ColorRangeDatasetKey =
-	| "ageDistribution"
-	| "populationDensity"
-	| "gender"
-	| "housePrice"
-	| "crime"
-	| "income"
-	| "brexit"
-	| "brexitConstituency"
-	| "imd"
-	| "simd"
-	| "wimd"
-	| "nimdm"
-	| "lifeExpectancy"
-	| "qualification"
-	| "broadband"
-	| "airQuality"
-	| "schoolPerformance"
-	| "claimantCount"
-	| "nhsWaiting"
-	| "unemployment"
-	| CatalogueDatasetType
-	| "custom";
+export type ColorRangeDatasetKey = ColorRangeMapOptionKey;
 
 interface LegendPanelProps {
 	activeDataset: Dataset | null;

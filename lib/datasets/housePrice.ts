@@ -16,7 +16,7 @@ export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 	},
 	map: {
 		valueFor: (dataset, code) => dataset.data[code]?.prices[dataset.year] ?? null,
-		colorRange: { min: 100000, max: 600000 },
+		colorRange: { min: 80000, max: 500000 },
 		legend: { min: 0, max: 1000000, format: (value) => `£${Math.round(value / 1000)}k median price` },
 	},
 };
