@@ -10,8 +10,9 @@ import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
 import type { BoundaryData } from "@/lib/types/boundaries";
 import type { ChartKey } from "@/lib/context/ChartVisibilityContext";
+import type { ChartComponentProps } from "./chartComponentTypes";
 
-interface ChartCardsProps {
+export interface ChartCardsProps {
 	group: string;
 	visibility: Record<ChartKey, boolean>;
 	activeDataset: Dataset | null;
@@ -55,6 +56,18 @@ export default function ChartCards({ group, visibility, activeDataset, datasets,
 
 	return definitions.map(({ definition, chart }) => {
 		const Chart = CHART_COMPONENTS[chart.key];
-		return <Chart key={chart.key} activeDataset={activeDataset} availableDatasets={datasets[definition.type]} aggregatedData={aggregatedData[definition.type + chart.key]} year={chart.year} datasetId={chart.datasetId} selectedArea={selectedArea} codeMapper={codeMapper} activeViz={activeViz} setActiveViz={setActiveViz} boundaryData={boundaryData} />;
+		const props: ChartComponentProps = {
+			activeDataset,
+			availableDatasets: datasets[definition.type],
+			aggregatedData: aggregatedData[definition.type + chart.key],
+			year: chart.year,
+			datasetId: chart.datasetId,
+			selectedArea,
+			codeMapper,
+			activeViz,
+			setActiveViz,
+			boundaryData,
+		};
+		return <Chart key={chart.key} {...props} />;
 	});
 }
