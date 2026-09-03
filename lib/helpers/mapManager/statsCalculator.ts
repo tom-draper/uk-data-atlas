@@ -4,25 +4,16 @@ import {
 	LocalElectionDataset,
 	GeneralElectionDataset,
 	PopulationDataset,
-	WardStats,
-	ConstituencyStats,
 	AgeGroups,
 	HousePriceWardData,
-	AggregatedHousePriceData,
 	PopulationStats,
 	CrimeDataset,
-	AggregatedCrimeData,
-	AggregatedIncomeData,
-	AggregatedCustomData,
 	EthnicityDataset,
-	EthnicityCategory,
 	getFeatureProp,
 	BrexitLADDataset,
 	BrexitConstituencyDataset,
-	AggregatedBrexitData,
 } from "@lib/types";
 import { calculateTotal, polygonAreaSqKm } from "../population";
-import { getWinningParty } from "../generalElection";
 import { calculateAgeGroups } from "../ageDistribution";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
@@ -64,7 +55,6 @@ import {
 import {
 	QualificationDataset,
 	AggregatedQualificationData,
-	QualificationBreakdown,
 } from "@/lib/types/qualification";
 import { BroadbandDataset, AggregatedBroadbandData } from "@/lib/types/broadband";
 import { AirQualityDataset, AggregatedAirQualityData } from "@/lib/types/airQuality";
