@@ -17,7 +17,7 @@ import { MapMode, MapOptions } from "@lib/types/mapOptions";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { LayerManager } from "./layerManager";
 import { EventHandler } from "./eventHandler";
-import { StatsCalculator } from "./statsCalculator";
+import { DatasetAggregator } from "./statsCalculator";
 import { FeatureBuilder } from "./featureBuilder";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
@@ -70,7 +70,7 @@ export interface NumericMapConfig<T extends NumericDataset> {
 export class MapManager {
 	private layerManager: LayerManager;
 	private eventHandler: EventHandler;
-	private statsCalculator: StatsCalculator;
+	readonly datasetAggregator: DatasetAggregator;
 	private featureBuilder: FeatureBuilder;
 	private propertyDetector: PropertyDetector;
 	private cache: StatsCache;
@@ -90,10 +90,14 @@ export class MapManager {
 		this.propertyDetector = new PropertyDetector();
 		this.featureBuilder = new FeatureBuilder();
 		this.cache = new StatsCache();
-		this.statsCalculator = new StatsCalculator(
+		this.datasetAggregator = new DatasetAggregator(
 			this.propertyDetector,
 			this.cache,
 		);
+	}
+
+	private get statsCalculator() {
+		return this.datasetAggregator;
 	}
 
 	// Unified election update method

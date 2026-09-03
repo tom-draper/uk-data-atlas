@@ -94,7 +94,7 @@ function ChartPanelContent({
                   codeMapper={codeMapper}
                   activeViz={activeViz}
                   setActiveViz={setActiveViz}
-                  mapManager={mapManager}
+					aggregator={mapManager?.datasetAggregator ?? null}
                   boundaryData={bd}
                   location={location}
                 />

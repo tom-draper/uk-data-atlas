@@ -1,7 +1,7 @@
 import type { Dataset } from "@lib/types/datasets";
 import type { BoundaryType, BoundaryData } from "@lib/types/boundaries";
 import type { BoundaryGeojson } from "@lib/types/geometry";
-import { MapManager } from "./mapManager/mapManager";
+import { DatasetAggregator } from "./mapManager/statsCalculator";
 
 type BoundaryDataset = Exclude<Dataset, { type: "network" }>;
 
@@ -10,7 +10,7 @@ export interface DatasetConfig<T extends BoundaryDataset> {
 	boundaryType: BoundaryType;
 	keyBy?: "year" | "id";
 	calculateStats: (
-		mapManager: MapManager,
+		aggregator: DatasetAggregator,
 		geojson: BoundaryGeojson,
 		data: any,
 		location: string | null,
@@ -24,21 +24,21 @@ export interface DatasetConfig<T extends BoundaryDataset> {
 // map manager, filtered boundary set, dataset record and location lets them
 // share that work without retaining stale data after a location change.
 const aggregateCache = new WeakMap<
-	MapManager,
+	DatasetAggregator,
 	WeakMap<BoundaryData, WeakMap<object, Map<string, Record<string, any> | null>>>
 >();
 
 function cachedAggregate(
-	mapManager: MapManager,
+	aggregator: DatasetAggregator,
 	boundaryData: BoundaryData,
 	datasets: object,
 	cacheKey: string,
 	calculate: () => Record<string, any> | null,
 ): Record<string, any> | null {
-	let boundaryCache = aggregateCache.get(mapManager);
+	let boundaryCache = aggregateCache.get(aggregator);
 	if (!boundaryCache) {
 		boundaryCache = new WeakMap();
-		aggregateCache.set(mapManager, boundaryCache);
+		aggregateCache.set(aggregator, boundaryCache);
 	}
 	let datasetCache = boundaryCache.get(boundaryData);
 	if (!datasetCache) {
@@ -59,17 +59,17 @@ function cachedAggregate(
 
 export function aggregateDataset<T extends BoundaryDataset>(
 	config: DatasetConfig<T>,
-	mapManager: MapManager | null,
+	aggregator: DatasetAggregator | null,
 	boundaryData: BoundaryData,
 	location: string | null,
 ): Record<string, any> | null {
 	if (Object.keys(config.datasets).length === 0) return null;
 
-	if (!mapManager) return null;
+	if (!aggregator) return null;
 
 	const cacheKey = `${config.boundaryType}:${config.keyBy ?? "year"}:${location ?? ""}`;
 	return cachedAggregate(
-		mapManager,
+		aggregator,
 		boundaryData,
 		config.datasets,
 		cacheKey,
@@ -81,7 +81,7 @@ export function aggregateDataset<T extends BoundaryDataset>(
 				const key = config.keyBy === "id" ? datasetId : dataset.year;
 				if (dataset.data && geojson) {
 					result[key] = config.calculateStats(
-						mapManager,
+						aggregator,
 						geojson,
 						dataset.data,
 						location,

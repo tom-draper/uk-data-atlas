@@ -17,7 +17,7 @@ export function useAggregatedDataset<T extends Exclude<Dataset, { type: "network
 	location: string | null,
 ) {
 	return useMemo(
-		() => aggregateDataset(config, mapManager, boundaryData, location),
+		() => aggregateDataset(config, mapManager?.datasetAggregator ?? null, boundaryData, location),
 		[config.datasets, config.boundaryType, config.keyBy, mapManager, boundaryData, location],
 	);
 }

@@ -74,7 +74,7 @@ function useLegendAggregates(
 							keyBy: aggregation.keyBy,
 							calculateStats: aggregation.calculateStats,
 						},
-						mapManager,
+						mapManager?.datasetAggregator ?? null,
 						boundaryData,
 						location,
 					),
