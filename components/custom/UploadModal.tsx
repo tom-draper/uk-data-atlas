@@ -1,12 +1,19 @@
 import { useMemo, useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Upload, AlertCircle } from "lucide-react";
-import {
-	matchColumnAgainstBank,
-	detectCoordinateColumns,
-	AreaBank,
-} from "@lib/data/areaBank";
+import { detectCoordinateColumns, AreaBank } from "@lib/data/areaBank";
 import { detectHeaderRow, parseCustomCsv } from "@/lib/data/custom/csv";
+import {
+	buildUpload,
+	canVisualise,
+	chooseMatch,
+	guessCodeColumn,
+	guessValueColumn,
+	isPointMode,
+	isSpecialMatchType,
+	matchColumn,
+	uploadColumns,
+} from "@/lib/data/custom/upload";
 import type { CustomDatasetUpload } from "@/lib/data/custom/dataset";
 import { getMatchColorClass } from "./uploadStyles";
 import { useIsDark } from "@/lib/context/ThemeContext";
@@ -38,36 +45,10 @@ export function UploadModal({
 	const isDark = useIsDark();
 
 	const headers = csvData[headerRow] ?? [];
-	const firstDataRow = csvData[headerRow + 1] ?? [];
-	const columns = headers.map((name, index) => ({
-		name,
-		preview: (firstDataRow[index] ?? "").slice(0, 25),
-		index,
-	}));
-
-	const matches = (() => {
-		if (!csvData.length || !selectedColumn) return [];
-		const columnIndex = headers.indexOf(selectedColumn);
-		if (columnIndex === -1) return [];
-		const columnData = csvData
-			.slice(headerRow + 1)
-			.flatMap((row) => {
-				const val = row[columnIndex];
-				return val?.trim() ? [val] : [];
-			});
-		return matchColumnAgainstBank(columnData, areaBank);
-	})();
-
-	const effectiveMatch =
-		(overrideLabel && matches.find(m => m.entry.label === overrideLabel)) ||
-		matches[0] ||
-		null;
-
-	const canVisualise =
-		effectiveMatch !== null &&
-		effectiveMatch.entry.matchType !== "postcode-full" &&
-		effectiveMatch.entry.matchType !== "postcode-district" &&
-		effectiveMatch.entry.matchType !== "coordinate";
+	const columns = uploadColumns(csvData, headerRow);
+	const matches = matchColumn(csvData, headerRow, selectedColumn, areaBank);
+	const effectiveMatch = chooseMatch(matches, overrideLabel);
+	const visualisable = canVisualise(effectiveMatch);
 
 	// Route CSVs that carry lat/lng (and don't strongly match a boundary set) to
 	// the point-plotting flow.
@@ -75,27 +56,16 @@ export function UploadModal({
 		() => detectCoordinateColumns(csvData, headerRow),
 		[csvData, headerRow],
 	);
-	const bestBoundaryPct =
-		matches.find(
-			(m) => m.entry.matchType === "code" || m.entry.matchType === "name",
-		)?.percentage ?? 0;
-	const isPointMode = coord !== null && bestBoundaryPct < 60;
+	const pointMode = isPointMode(coord, matches);
 
 	// Prefill the lat/lng/value pickers from detection when entering point mode.
 	useEffect(() => {
 		if (!coord || csvData.length === 0) return;
 		const hdrs = csvData[headerRow] ?? [];
-		const firstRow = csvData[headerRow + 1] ?? [];
 		setLatColumn(hdrs[coord.latIdx] ?? "");
 		setLngColumn(hdrs[coord.lngIdx] ?? "");
-		const valIdx = hdrs.findIndex(
-			(_, i) =>
-				i !== coord.latIdx &&
-				i !== coord.lngIdx &&
-				firstRow[i]?.trim() &&
-				!isNaN(Number(firstRow[i])),
-		);
-		if (valIdx >= 0) setDataColumn(hdrs[valIdx]);
+		const valueColumn = guessValueColumn(csvData, headerRow, coord);
+		if (valueColumn) setDataColumn(valueColumn);
 	}, [coord, csvData, headerRow]);
 
 	const resetForm = () => {
@@ -133,10 +103,7 @@ export function UploadModal({
 			const detectedHeader = detectHeaderRow(rows);
 			setHeaderRow(detectedHeader);
 
-			const headerCells = rows[detectedHeader] ?? [];
-			const codeColumn = headerCells.find((h) =>
-				/code|area|ward|constituency|authority/i.test(h),
-			);
+			const codeColumn = guessCodeColumn(rows[detectedHeader] ?? []);
 			if (codeColumn) setSelectedColumn(codeColumn);
 		};
 		reader.readAsText(selectedFile);
@@ -151,52 +118,25 @@ export function UploadModal({
 	};
 
 	const handleUpload = () => {
-		if (isPointMode) {
-			if (!file || !latColumn || !lngColumn || !dataColumn) {
-				setError(
-					"Please select latitude, longitude, and value columns",
-				);
-				return;
-			}
-			onUpload({
-				file: file.name,
+		const result = buildUpload(
+			{
+				file: file?.name ?? null,
+				csvData,
 				headerRow,
-				data: csvData,
-				mode: "points",
+				selectedColumn,
+				dataColumn,
 				latColumn,
 				lngColumn,
-				dataColumn,
-			});
-			handleClose();
+			},
+			pointMode,
+			effectiveMatch,
+		);
+		if ("error" in result) {
+			setError(result.error);
 			return;
 		}
 
-		if (!file || !selectedColumn || !dataColumn || !effectiveMatch) {
-			setError(
-				"Please select a file, area code column, data column, and matching area type",
-			);
-			return;
-		}
-
-		if (!canVisualise) {
-			setError("Postcode visualisation is coming soon.");
-			return;
-		}
-
-		const entry = effectiveMatch.entry;
-
-		onUpload({
-			file: file.name,
-			headerRow,
-			mode: "choropleth",
-			selectedColumn,
-			dataColumn,
-			boundaryType: entry.boundaryType,
-			boundaryYear: entry.year || null,
-			selectedEntry: entry,
-			data: csvData,
-		});
-
+		onUpload(result.upload);
 		handleClose();
 	};
 
@@ -213,11 +153,6 @@ export function UploadModal({
 	}, [isOpen]);
 
 	if (!isOpen) return null;
-
-	const isSpecialType = (matchType: string) =>
-		matchType === "postcode-full" ||
-		matchType === "postcode-district" ||
-		matchType === "coordinate";
 
 	return createPortal(
 		<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -301,7 +236,7 @@ export function UploadModal({
 						</>
 					)}
 
-					{csvData.length > 0 && isPointMode && (
+					{csvData.length > 0 && pointMode && (
 						<div className="animate-in fade-in duration-300 space-y-4">
 							<div className="flex items-center justify-between">
 								<span
@@ -361,7 +296,7 @@ export function UploadModal({
 						</div>
 					)}
 
-					{csvData.length > 0 && !isPointMode && (
+					{csvData.length > 0 && !pointMode && (
 						<div className="animate-in fade-in duration-300 space-y-4">
 							<div>
 								<div className="flex items-center justify-between mb-1.5">
@@ -401,10 +336,10 @@ export function UploadModal({
 													<span className={`font-semibold ${getMatchColorClass(effectiveMatch!.percentage)}`}>
 														{effectiveMatch!.percentage.toFixed(0)}%
 													</span>
-													<span className={`truncate ${isSpecialType(effectiveMatch!.entry.matchType) ? "italic" : ""}`}>
+													<span className={`truncate ${isSpecialMatchType(effectiveMatch!.entry.matchType) ? "italic" : ""}`}>
 														{effectiveMatch!.entry.label}
 													</span>
-													{isSpecialType(effectiveMatch!.entry.matchType) && (
+													{isSpecialMatchType(effectiveMatch!.entry.matchType) && (
 														<span className={`text-[9px] shrink-0 ${isDark ? "text-gray-600" : "text-gray-400"}`}>
 															coming soon
 														</span>
@@ -429,7 +364,7 @@ export function UploadModal({
 														className={`mt-1.5 rounded-md border overflow-hidden ${isDark ? "border-white/10" : "border-gray-200"}`}
 													>
 														{matches.map((m) => {
-															const special = isSpecialType(m.entry.matchType);
+															const special = isSpecialMatchType(m.entry.matchType);
 															return (
 																<button
 																	key={m.entry.label}
@@ -499,11 +434,11 @@ export function UploadModal({
 						type="button"
 						onClick={handleUpload}
 						disabled={
-							isPointMode
+							pointMode
 								? !(latColumn && lngColumn && dataColumn)
-								: !canVisualise && effectiveMatch !== null
+								: !visualisable && effectiveMatch !== null
 						}
-						className={`cursor-pointer border rounded-sm px-3 py-1 text-xs transition-colors duration-150 shadow-sm ${isDark ? "border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-gray-100" : "border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20 text-gray-500 hover:text-gray-600"} ${(isPointMode ? !(latColumn && lngColumn && dataColumn) : !canVisualise && effectiveMatch !== null) ? "opacity-40 cursor-not-allowed" : ""}`}
+						className={`cursor-pointer border rounded-sm px-3 py-1 text-xs transition-colors duration-150 shadow-sm ${isDark ? "border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-gray-100" : "border-white/20 bg-white/10 backdrop-blur-md hover:bg-white/20 text-gray-500 hover:text-gray-600"} ${(pointMode ? !(latColumn && lngColumn && dataColumn) : !visualisable && effectiveMatch !== null) ? "opacity-40 cursor-not-allowed" : ""}`}
 					>
 						Visualise
 					</button>
