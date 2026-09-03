@@ -11,7 +11,7 @@ export async function loadIMD(
 	const { data } = await parseCsv(text, { header: true });
 
 	const records: Record<string, IMDLSOAData> = {};
-	for (const row of data as any[]) {
+	for (const row of data) {
 		const lsoaCode = row["LSOA code (2011)"]?.trim();
 		if (!lsoaCode || !lsoaCode.startsWith("E")) continue;
 

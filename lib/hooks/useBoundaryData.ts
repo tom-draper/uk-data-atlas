@@ -1,6 +1,6 @@
 // hooks/useBoundaryData.ts
 import { startTransition, useEffect, useMemo, useState } from "react";
-import { BoundaryData, BoundaryGeojson } from "@lib/types";
+import { BoundaryData, BoundaryGeojson, getFeatureProp } from "@lib/types";
 import {
 	BoundaryType,
 	fetchBoundaryFile,
@@ -185,17 +185,20 @@ const extractCodeSets = (
 	) =>
 		Object.entries(group).reduce(
 			(acc, [year, data]) => {
-				if (data?.features) {
+				const first = data?.features[0];
+				if (first) {
 					const codeProp = codeKeys.find(
 						(key) =>
-							(data.features[0]?.properties as any)?.[key] !==
-							undefined,
+							getFeatureProp(first.properties, key) !== undefined,
 					);
 					if (codeProp) {
 						acc[Number(year)] = new Set(
-							data.features.flatMap((f) => {
-								const v = (f.properties as any)[codeProp];
-								return v ? [v] : [];
+							data.features.flatMap((feature) => {
+								const code = getFeatureProp(
+									feature.properties,
+									codeProp,
+								);
+								return code ? [code] : [];
 							}),
 						);
 					}

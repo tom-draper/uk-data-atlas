@@ -45,7 +45,7 @@ export async function loadSIMD(
 		{ header: true },
 	);
 
-	const rows = data as any[];
+	const rows = data;
 	const hasRanks =
 		rows[0] &&
 		(rows[0]["SIMD2020v2_Rank"] !== undefined ||

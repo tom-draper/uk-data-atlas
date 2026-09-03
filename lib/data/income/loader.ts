@@ -16,7 +16,7 @@ async function parseAnnualData(text: string): Promise<{
 
 	const annualData: Record<string, AnnualIncomeData> = {};
 	const names: Record<string, string> = {};
-	for (const row of data as any[]) {
+	for (const row of data) {
 		const code = row["Code"]?.trim();
 		const description = row["Description"]?.trim();
 		if (!code || !description || code === "Code" || !code.startsWith("E"))
@@ -59,7 +59,7 @@ async function parseHourlyData(text: string): Promise<{
 
 	const hourlyData: Record<string, HourlyIncomeData> = {};
 	const names: Record<string, string> = {};
-	for (const row of data as any[]) {
+	for (const row of data) {
 		const code = row["Code"]?.trim();
 		const description = row["Description"]?.trim();
 		if (!code || !description || code === "Code" || !code.startsWith("E"))

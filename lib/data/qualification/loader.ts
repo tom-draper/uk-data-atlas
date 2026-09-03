@@ -31,7 +31,7 @@ export async function loadQualification(
 	});
 
 	const laData: Record<string, QualificationBreakdown> = {};
-	for (const row of data as any[]) {
+	for (const row of data) {
 		const ladCode = pick(
 			row,
 			"Lower Tier Local Authorities Code",

@@ -49,7 +49,7 @@ export async function loadNIMDM(
 	);
 
 	const records: Record<string, NIMDMLSOAData> = {};
-	for (const row of data as any[]) {
+	for (const row of data) {
 		const soaCode = pick(row, "SOA2001", "SOA2011", "SOA_Code", "SOA");
 		if (!soaCode) continue;
 

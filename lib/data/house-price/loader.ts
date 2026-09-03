@@ -40,7 +40,7 @@ export async function loadHousePrice(
 	const timePeriodHeaders = fields.slice(4);
 	const wardData: Record<string, HousePriceWardData> = {};
 
-	for (const row of data as any[]) {
+	for (const row of data) {
 		const rawCode = row["Ward code"]?.trim();
 		if (!rawCode) continue;
 		const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;

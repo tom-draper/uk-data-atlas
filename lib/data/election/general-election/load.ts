@@ -44,7 +44,7 @@ export const parseGeneralElectionCsv = (
 	const constituencyData: Record<string, GeneralElectionConstituencyData> =
 		{};
 
-	for (const row of results.data as any[]) {
+	for (const row of results.data) {
 		const onsId = row[config.fields.onsId]?.trim();
 		if (!onsId) continue;
 

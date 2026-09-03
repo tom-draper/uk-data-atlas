@@ -51,7 +51,7 @@ export async function loadEthnicity(
 		Record<string, EthnicityCategory>
 	> = {};
 
-	for (const row of data as any[]) {
+	for (const row of data) {
 		const localAuthorityCode =
 			row["Lower Tier Local Authorities Code"]?.trim();
 		const ethnicGroupCode =
