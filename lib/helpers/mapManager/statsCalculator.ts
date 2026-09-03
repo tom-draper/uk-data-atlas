@@ -26,6 +26,7 @@ import { getWinningParty } from "../generalElection";
 import { calculateAgeGroups } from "../ageDistribution";
 import { PropertyDetector } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
+import { collectBoundaryRecords } from "../datasetAggregation/numeric";
 import { IncomeDataset } from "@/lib/types/income";
 import { IMDDataset, AggregatedIMDData } from "@/lib/types/imd";
 import { SIMDDataset, AggregatedSIMDData } from "@/lib/types/simd";
@@ -108,14 +109,7 @@ export class DatasetAggregator {
 			const codeProp = codeLevel === "lsoa"
 				? this.propertyDetector.detectLSOACode(geojson.features)
 				: this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-			const records: T[] = [];
-
-			for (const feature of geojson.features) {
-				const record = data[getFeatureProp(feature.properties, codeProp) ?? ""];
-				if (record) records.push(record);
-			}
-
-			return aggregate(records);
+			return aggregate(collectBoundaryRecords(geojson.features, data, codeProp));
 		});
 	}
 
