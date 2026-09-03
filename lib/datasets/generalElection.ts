@@ -12,6 +12,7 @@ const chart2017: ChartDefinition<GeneralElectionDataset> = { group: "General Ele
 const chart2015: ChartDefinition<GeneralElectionDataset> = { group: "General Election", key: "generalElection-2015", label: "2015 General Election", defaultVisible: true, componentPath: "@/components/elections/general/GeneralElectionRegistryChart", calculateStats, year: 2015 };
 export const generalElectionDefinition: ChartDatasetDefinition<GeneralElectionDataset> = {
 	...generalElectionDatasetDefinition, chart: chart2024, charts: [chart2024, chart2019, chart2017, chart2015],
+	legendAggregation: { calculateStats },
 	mapRenderer: {
 		getOptions: (_activeViz, mapOptions) => mapOptions.generalElection,
 		render: ({ mapManager, geojson, dataset, mapOptions, isDark }) =>

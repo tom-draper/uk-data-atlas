@@ -1,10 +1,15 @@
 import { ethnicityDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { EthnicityDataset } from "@/lib/types/ethnicity";
-import type { ChartDatasetDefinition } from "./types";
+import type { ChartDatasetDefinition, ChartDefinition } from "./types";
+
+const calculateStats: ChartDefinition<EthnicityDataset>["calculateStats"] =
+	(mapManager, geojson, data, location, datasetId) =>
+		mapManager.calculateEthnicityStats(geojson, data, location, datasetId);
 
 export const ethnicityDefinition: ChartDatasetDefinition<EthnicityDataset> = {
 	...ethnicityDatasetDefinition,
-	chart: { group: "Demographics", key: "demographics-ethnicity", label: "Ethnicity [2021]", defaultVisible: true, componentPath: "@/components/demographics/ethnicity-registry", calculateStats: (mm, g, d, l, id) => mm.calculateEthnicityStats(g, d, l, id), year: 2021 },
+	chart: { group: "Demographics", key: "demographics-ethnicity", label: "Ethnicity [2021]", defaultVisible: true, componentPath: "@/components/demographics/ethnicity-registry", calculateStats, year: 2021 },
+	legendAggregation: { calculateStats },
 	mapRenderer: {
 		getOptions: (_activeViz, mapOptions) => mapOptions.ethnicity,
 		render: ({ mapManager, geojson, dataset, mapOptions, isDark }) =>

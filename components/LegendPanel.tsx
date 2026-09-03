@@ -1,16 +1,14 @@
 // components/LegendPanel.tsx
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions, CategoryOptions } from "@/lib/types/mapOptions";
 import {
 	ActiveViz,
 	Dataset,
-	EthnicityDataset,
-	GeneralElectionDataset,
-	LocalElectionDataset,
+	Datasets,
 	PartyCode,
 	EthnicityCode,
 	Ethnicity,
@@ -20,13 +18,14 @@ import {
 } from "@/lib/types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import { useAggregatedDataset } from "@/lib/hooks/useAggregatedDataset";
+import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import { RangeControl } from "./controls/RangeControl";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import LegendContent from "./LegendContent";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
 import type { CatalogueDatasetType } from "@/lib/data/catalog";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 
 export type PartyDisplayData = { id: PartyCode; color: string; name: string };
 
@@ -65,17 +64,54 @@ interface LegendPanelProps {
 	mapManager: MapManager | null;
 	boundaryData: BoundaryData;
 	location: string | null;
-	datasets: {
-		localElection: Record<string, LocalElectionDataset>;
-		generalElection: Record<string, GeneralElectionDataset>;
-		ethnicity: Record<string, EthnicityDataset>;
-	};
+	datasets: Datasets;
+}
+
+type LegendAggregates = Record<string, Record<string, any> | null>;
+
+const LEGEND_DEFINITIONS = CHART_DATASET_DEFINITIONS.filter(
+	(definition) => definition.legendAggregation,
+);
+
+function useLegendAggregates(
+	datasets: Datasets,
+	mapManager: MapManager | null,
+	boundaryData: BoundaryData,
+	location: string | null,
+): LegendAggregates {
+	return useMemo(
+		() => Object.fromEntries(
+			LEGEND_DEFINITIONS.flatMap((definition) => {
+				const aggregation = definition.legendAggregation;
+				if (!aggregation) return [];
+				return [[
+					definition.type,
+					aggregateDataset<any>(
+						{
+							datasets: datasets[definition.type],
+							boundaryType: definition.boundaryType,
+							keyBy: aggregation.keyBy,
+							calculateStats: aggregation.calculateStats,
+						},
+						mapManager,
+						boundaryData,
+						location,
+					),
+				]];
+			}),
+		) as LegendAggregates,
+		[
+			mapManager,
+			boundaryData,
+			location,
+			...LEGEND_DEFINITIONS.map((definition) => datasets[definition.type]),
+		],
+	);
 }
 
 function computeParties(
 	activeDataset: Dataset | null,
-	localElectionAgg: Record<string, any> | null,
-	generalElectionAgg: Record<string, any> | null,
+	aggregates: LegendAggregates,
 ): PartyDisplayData[] {
 	if (!activeDataset) return [];
 
@@ -85,9 +121,9 @@ function computeParties(
 		| undefined;
 
 	if (activeDataset.type === "localElection") {
-		datasetData = localElectionAgg ?? undefined;
+		datasetData = aggregates.localElection ?? undefined;
 	} else if (activeDataset.type === "generalElection") {
-		datasetData = generalElectionAgg ?? undefined;
+		datasetData = aggregates.generalElection ?? undefined;
 	}
 
 	if (!datasetData) return [];
@@ -107,10 +143,10 @@ function computeParties(
 
 function computeEthnicities(
 	activeDataset: Dataset | null,
-	ethnicityAgg: Record<string, any> | null,
+	aggregates: LegendAggregates,
 ): { id: EthnicityCode; color: string; name: string }[] {
 	if (!activeDataset || activeDataset.type !== "ethnicity") return [];
-	const yearData = ethnicityAgg?.[activeDataset.year];
+	const yearData = aggregates.ethnicity?.[activeDataset.year];
 	if (!yearData) return [];
 
 	const ethnicityTotals = new Map<string, number>();
@@ -202,12 +238,10 @@ export default function LegendPanel({
 
 	const verticalThemeGradient = `linear-gradient(to bottom, ${activeTheme.colors.join(", ")})`;
 
-	const localElectionAgg = useAggregatedDataset({ datasets: datasets.localElection, boundaryType: "ward", calculateStats: (mm, g, d, loc, id) => mm.calculateLocalElectionStats(g, d, loc, id) }, mapManager, boundaryData, location);
-	const generalElectionAgg = useAggregatedDataset({ datasets: datasets.generalElection, boundaryType: "constituency", calculateStats: (mm, g, d, loc, id) => mm.calculateGeneralElectionStats(g, d, loc, id) }, mapManager, boundaryData, location);
-	const ethnicityAgg = useAggregatedDataset({ datasets: datasets.ethnicity, boundaryType: "localAuthority", calculateStats: (mm, g, d, loc, id) => mm.calculateEthnicityStats(g, d, loc, id) }, mapManager, boundaryData, location);
+	const legendAggregates = useLegendAggregates(datasets, mapManager, boundaryData, location);
 
-	const parties = computeParties(activeDataset, localElectionAgg, generalElectionAgg);
-	const ethnicities = computeEthnicities(activeDataset, ethnicityAgg);
+	const parties = computeParties(activeDataset, legendAggregates);
+	const ethnicities = computeEthnicities(activeDataset, legendAggregates);
 
 	const handleRangeInput = (
 		datasetKey: ColorRangeDatasetKey,
