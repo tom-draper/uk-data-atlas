@@ -988,6 +988,10 @@ export class MapManager {
 
 	updateVectorLineLayer(layer: VectorLineLayer): void {
 		this.layerManager.render(layer);
+		this.clearMapDataLayers();
+	}
+
+	clearMapDataLayers(): void {
 		// A network is a map-native dataset, not an overlay on the previously
 		// selected choropleth or point dataset. Render first because clearing the
 		// boundary source can briefly make the style unavailable.

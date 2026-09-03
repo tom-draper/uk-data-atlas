@@ -84,11 +84,15 @@ export function useMapUpdates({
 
 	useEffect(() => {
 		if (!mapManager || !styleReady) return;
-		if (activeDataset?.type === "network" && activeDataset.layer) {
-			mapManager.updateVectorLineLayer({
-				...activeDataset.layer,
-				visibility: mapOptions.visibility,
-			});
+		if (activeDataset?.type === "network") {
+			if (activeDataset.layer) {
+				mapManager.updateVectorLineLayer({
+					...activeDataset.layer,
+					visibility: mapOptions.visibility,
+				});
+			} else {
+				mapManager.clearMapDataLayers();
+			}
 		} else {
 			mapManager.clearVectorLineLayer("os-open-roads");
 		}
