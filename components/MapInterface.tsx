@@ -18,7 +18,7 @@ import type {
 	SelectedArea,
 	BoundaryData,
 } from "@lib/types";
-import { LSOA_CODE_KEYS, DATA_ZONE_CODE_KEYS, SOA_CODE_KEYS } from "@/lib/data/boundaries/boundaries";
+import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/boundaries";
 import type { CustomDataset } from "@/lib/types/custom";
 import type { NetworkDataset } from "@/lib/types/network";
 import { MAP_CONFIG } from "@/lib/config/map";
@@ -180,9 +180,9 @@ export default function MapInterface({
 		const dataKeys = new Set(Object.keys(activeDataset.data as Record<string, unknown>));
 		if (dataKeys.size === 0) return rawGeojson;
 		const codeKeys: readonly string[] =
-			activeDataset.boundaryType === "lsoa" ? LSOA_CODE_KEYS :
-			activeDataset.boundaryType === "dataZone" ? DATA_ZONE_CODE_KEYS :
-			activeDataset.boundaryType === "superOutputArea" ? SOA_CODE_KEYS :
+			activeDataset.boundaryType === "lsoa" ? BOUNDARY_CATALOG.lsoa.properties.code :
+			activeDataset.boundaryType === "dataZone" ? BOUNDARY_CATALOG.dataZone.properties.code :
+			activeDataset.boundaryType === "superOutputArea" ? BOUNDARY_CATALOG.superOutputArea.properties.code :
 			[];
 		if (codeKeys.length === 0) return rawGeojson;
 		const firstProps = rawGeojson.features[0]?.properties as unknown as Record<string, unknown> | undefined;

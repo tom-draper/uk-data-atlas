@@ -11,12 +11,12 @@ import { gzipSync } from "zlib";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { feature } from "topojson-client";
-import { GEOJSON_PATHS, PROPERTY_KEYS, getProp } from "../lib/data/boundaries/boundaries";
+import { getProp } from "../lib/data/boundaries/boundaries";
+import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
 const OUT_DIRS = [join(ROOT, "data", "precompiled"), join(PUBLIC_DATA, "precompiled")];
-const paths = GEOJSON_PATHS as Record<string, Record<number, string>>;
 const rel = (p: string) => p.slice(p.indexOf("/data/") + "/data/".length);
 
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
@@ -31,16 +31,17 @@ async function load(path: string): Promise<Feat[]> {
 
 interface LevelDef {
 	boundaryType: string;
+	vintages: Record<number, string>;
 	codeKeys: readonly string[];
 	nameKeys: readonly string[];
 }
 const LEVELS: LevelDef[] = [
-	{ boundaryType: "ward", codeKeys: PROPERTY_KEYS.wardCode, nameKeys: PROPERTY_KEYS.wardName },
-	{ boundaryType: "constituency", codeKeys: PROPERTY_KEYS.constituencyCode, nameKeys: PROPERTY_KEYS.constituencyName },
-	{ boundaryType: "localAuthority", codeKeys: PROPERTY_KEYS.ladCode, nameKeys: PROPERTY_KEYS.ladName },
-	{ boundaryType: "lsoa", codeKeys: PROPERTY_KEYS.lsoaCode, nameKeys: PROPERTY_KEYS.lsoaName },
-	{ boundaryType: "dataZone", codeKeys: PROPERTY_KEYS.dataZoneCode, nameKeys: PROPERTY_KEYS.dataZoneName },
-	{ boundaryType: "superOutputArea", codeKeys: PROPERTY_KEYS.soaCode, nameKeys: PROPERTY_KEYS.soaName },
+	{ boundaryType: "ward", vintages: BOUNDARY_CATALOG.ward.vintages, codeKeys: BOUNDARY_CATALOG.ward.properties.code, nameKeys: BOUNDARY_CATALOG.ward.properties.name },
+	{ boundaryType: "constituency", vintages: BOUNDARY_CATALOG.constituency.vintages, codeKeys: BOUNDARY_CATALOG.constituency.properties.code, nameKeys: BOUNDARY_CATALOG.constituency.properties.name },
+	{ boundaryType: "localAuthority", vintages: BOUNDARY_CATALOG.localAuthority.vintages, codeKeys: BOUNDARY_CATALOG.localAuthority.properties.code, nameKeys: BOUNDARY_CATALOG.localAuthority.properties.name },
+	{ boundaryType: "lsoa", vintages: BOUNDARY_CATALOG.lsoa.vintages, codeKeys: BOUNDARY_CATALOG.lsoa.properties.code, nameKeys: BOUNDARY_CATALOG.lsoa.properties.name },
+	{ boundaryType: "dataZone", vintages: BOUNDARY_CATALOG.dataZone.vintages, codeKeys: BOUNDARY_CATALOG.dataZone.properties.code, nameKeys: BOUNDARY_CATALOG.dataZone.properties.name },
+	{ boundaryType: "superOutputArea", vintages: BOUNDARY_CATALOG.superOutputArea.vintages, codeKeys: BOUNDARY_CATALOG.superOutputArea.properties.code, nameKeys: BOUNDARY_CATALOG.superOutputArea.properties.name },
 ];
 
 type MatchIndex = Record<string, Record<number, { codes: string[]; names: Record<string, string> }>>;
@@ -54,9 +55,9 @@ async function main() {
 	console.log("Building match index...");
 	const index: MatchIndex = {};
 	for (const lvl of LEVELS) {
-		const years = Object.keys(paths[lvl.boundaryType] ?? {}).map(Number);
+		const years = Object.keys(lvl.vintages).map(Number);
 		for (const year of years) {
-			const feats = await load(paths[lvl.boundaryType][year]);
+			const feats = await load(lvl.vintages[year]);
 			const codes = new Set<string>();
 			const names: Record<string, string> = {};
 			for (const f of feats) {

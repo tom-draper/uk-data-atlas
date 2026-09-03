@@ -10,14 +10,13 @@ import { gzipSync } from "zlib";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { feature } from "topojson-client";
-import { GEOJSON_PATHS, PROPERTY_KEYS } from "../lib/data/boundaries/boundaries";
+import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import { buildCrosswalk } from "../lib/data/gazetteer/build";
 import { validateCrosswalk } from "../lib/data/gazetteer/validate";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
 const OUT_DIRS = [join(ROOT, "data", "precompiled"), join(PUBLIC_DATA, "precompiled")];
-const paths = GEOJSON_PATHS as Record<string, Record<number, string>>;
 const rel = (p: string) => p.slice(p.indexOf("/data/") + "/data/".length);
 
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
@@ -33,24 +32,24 @@ async function load(path: string): Promise<Feat[]> {
 async function main() {
 	console.log("Building gazetteer crosswalks...");
 	const [lsoa, con, lad] = await Promise.all([
-		load(paths.lsoa[2011]),
-		load(paths.constituency[2024]),
-		load(paths.localAuthority[2025]),
+		load(BOUNDARY_CATALOG.lsoa.vintages[2011]),
+		load(BOUNDARY_CATALOG.constituency.vintages[2024]),
+		load(BOUNDARY_CATALOG.localAuthority.vintages[2025]),
 	]);
 	console.log(`  blocks(LSOA)=${lsoa.length} sources(con)=${con.length} targets(LAD)=${lad.length}`);
 
 	const { crosswalk, assigned, total } = buildCrosswalk(
 		lsoa,
 		con,
-		PROPERTY_KEYS.constituencyCode,
+		BOUNDARY_CATALOG.constituency.properties.code,
 		lad,
-		PROPERTY_KEYS.ladCode,
+		BOUNDARY_CATALOG.localAuthority.properties.code,
 		(d, t) => process.stdout.write(`  ${d}/${t}\r`),
 	);
 	console.log(`\n  assigned ${assigned}/${total} building blocks`);
 
 	const tset = new Set<string>();
-	for (const f of lad) for (const k of PROPERTY_KEYS.ladCode) if (f.properties[k]) tset.add(f.properties[k] as string);
+	for (const f of lad) for (const k of BOUNDARY_CATALOG.localAuthority.properties.code) if (f.properties[k]) tset.add(f.properties[k] as string);
 	const errors = validateCrosswalk("constituency->localAuthority", crosswalk, tset);
 	if (errors.length) {
 		console.error(`  VALIDATION FAILED (${errors.length}): ${errors[0]}`);

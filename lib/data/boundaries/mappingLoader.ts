@@ -1,6 +1,7 @@
 import { feature } from "topojson-client";
 import type { BoundaryGeojson } from "@lib/types";
-import { GEOJSON_PATHS, type BoundaryType, PROPERTY_KEYS } from "./boundaries";
+import type { BoundaryType } from "./boundaries";
+import { BOUNDARY_CATALOG } from "./catalog";
 import { localDataPath } from "./dataPath";
 import {
 	buildConstituencyWardMappings,
@@ -31,7 +32,7 @@ async function loadBoundaryGroup(
 	read: (path: string) => Promise<string>,
 	type: Extract<BoundaryType, "ward" | "constituency" | "localAuthority">,
 ): Promise<BoundaryGroup> {
-	const paths = GEOJSON_PATHS[type];
+	const paths = BOUNDARY_CATALOG[type].vintages;
 	const entries = await Promise.all(
 		Object.entries(paths).map(
 			async ([year, path]) =>
@@ -55,8 +56,8 @@ export async function loadBoundaryMappings(
 	for (const [year, boundary] of Object.entries(wards)) {
 		const mappings = extractWardLadMappings(
 			boundary.features,
-			PROPERTY_KEYS.wardCode,
-			PROPERTY_KEYS.ladCode,
+			BOUNDARY_CATALOG.ward.properties.code,
+			BOUNDARY_CATALOG.localAuthority.properties.code,
 		);
 		Object.assign(wardToLad, mappings.wardToLad);
 		if (Object.keys(mappings.ladToWards).length > 0) {

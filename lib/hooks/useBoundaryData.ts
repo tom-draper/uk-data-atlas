@@ -5,7 +5,6 @@ import {
 	BoundaryType,
 	fetchBoundaryFile,
 	filterFeatures,
-	PROPERTY_KEYS,
 } from "../data/boundaries/boundaries";
 import { BOUNDARY_CATALOG } from "../data/boundaries/catalog";
 import {
@@ -211,23 +210,23 @@ const extractCodeSets = (
 		);
 
 	return {
-		ward: extractFromGroup(boundaryData.ward, PROPERTY_KEYS.wardCode),
+		ward: extractFromGroup(boundaryData.ward, BOUNDARY_CATALOG.ward.properties.code),
 		constituency: extractFromGroup(
 			boundaryData.constituency,
-			PROPERTY_KEYS.constituencyCode,
+			BOUNDARY_CATALOG.constituency.properties.code,
 		),
 		localAuthority: extractFromGroup(
 			boundaryData.localAuthority,
-			PROPERTY_KEYS.ladCode,
+			BOUNDARY_CATALOG.localAuthority.properties.code,
 		),
-		lsoa: extractFromGroup(boundaryData.lsoa, PROPERTY_KEYS.lsoaCode),
+		lsoa: extractFromGroup(boundaryData.lsoa, BOUNDARY_CATALOG.lsoa.properties.code),
 		dataZone: extractFromGroup(
 			boundaryData.dataZone,
-			PROPERTY_KEYS.dataZoneCode,
+			BOUNDARY_CATALOG.dataZone.properties.code,
 		),
 		superOutputArea: extractFromGroup(
 			boundaryData.superOutputArea,
-			PROPERTY_KEYS.soaCode,
+			BOUNDARY_CATALOG.superOutputArea.properties.code,
 		),
 	};
 };
@@ -335,8 +334,8 @@ export function useBoundaryData(
 						for (const [year, boundary] of Object.entries(wards.data)) {
 							const wardMappings = extractWardLadMappings(
 								boundary.features,
-								PROPERTY_KEYS.wardCode,
-								PROPERTY_KEYS.ladCode,
+								BOUNDARY_CATALOG.ward.properties.code,
+								BOUNDARY_CATALOG.localAuthority.properties.code,
 							);
 							Object.assign(wardToLad, wardMappings.wardToLad);
 							addLadWardMappings?.(Number(year), wardMappings.ladToWards);

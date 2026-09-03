@@ -2,7 +2,8 @@
 // scripts/precompile-data.ts. Crosswalk shards are built separately
 // (scripts/gazetteer-crosswalks.ts) since they are expensive and change rarely.
 import { feature } from "topojson-client";
-import { GEOJSON_PATHS, PROPERTY_KEYS, getProp } from "../boundaries/boundaries";
+import { getProp } from "../boundaries/boundaries";
+import { BOUNDARY_CATALOG } from "../boundaries/catalog";
 import { localDataPath } from "../boundaries/dataPath";
 import { LOCATIONS } from "../locations";
 import { buildCore, linkRegions, type LevelSource } from "./build";
@@ -39,32 +40,35 @@ async function loadFeatures(read: (path: string) => Promise<string>, path: strin
 export async function loadGazetteerCore(
 	read: (path: string) => Promise<string>,
 ): Promise<GazetteerCore> {
-	const paths = GEOJSON_PATHS as Record<string, Record<number, string>>;
-
 	// Include multiple LAD vintages (oldest first) so codes referenced by
 	// LOCATIONS that belong to reorganised/abolished councils still resolve;
 	// current codes end up at their newest vintage as newer sources overwrite.
-	const LAD_VINTAGES = [2016, 2023, 2024, 2025];
+	const LAD_VINTAGES = [2016, 2023, 2024, 2025] as const;
 
 	const ladByVintage = await Promise.all(
-		LAD_VINTAGES.map((v) => loadFeatures(read, paths.localAuthority[v])),
+		LAD_VINTAGES.map((v) =>
+			loadFeatures(read, BOUNDARY_CATALOG.localAuthority.vintages[v]),
+		),
 	);
-	const con = await loadFeatures(read, paths.constituency[2024]);
+	const con = await loadFeatures(
+		read,
+		BOUNDARY_CATALOG.constituency.vintages[2024],
+	);
 
 	const sources: LevelSource[] = [
 		...LAD_VINTAGES.map((vintage, i) => ({
 			level: "localAuthority" as const,
 			vintage,
 			features: ladByVintage[i],
-			codeKeys: PROPERTY_KEYS.ladCode,
-			nameKeys: PROPERTY_KEYS.ladName,
+			codeKeys: BOUNDARY_CATALOG.localAuthority.properties.code,
+			nameKeys: BOUNDARY_CATALOG.localAuthority.properties.name,
 		})),
 		{
 			level: "constituency",
 			vintage: 2024,
 			features: con,
-			codeKeys: PROPERTY_KEYS.constituencyCode,
-			nameKeys: PROPERTY_KEYS.constituencyName,
+			codeKeys: BOUNDARY_CATALOG.constituency.properties.code,
+			nameKeys: BOUNDARY_CATALOG.constituency.properties.name,
 		},
 	];
 
@@ -79,7 +83,10 @@ export async function loadGazetteerCore(
 	LAD_VINTAGES.forEach((v, i) => {
 		if (v < 2023) return;
 		for (const f of ladByVintage[i]) {
-			const c = getProp(f.properties, PROPERTY_KEYS.ladCode);
+			const c = getProp(
+				f.properties,
+				BOUNDARY_CATALOG.localAuthority.properties.code,
+			);
 			if (c) currentCodes.add(c);
 		}
 	});
