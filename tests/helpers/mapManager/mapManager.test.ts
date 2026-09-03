@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
+import { childPovertyDefinition } from "@/lib/datasets/childPoverty";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 
 function createMap() {
@@ -158,6 +159,7 @@ describe("MapManager election updates", () => {
 			geojson,
 			dataset,
 			DEFAULT_MAP_OPTIONS,
+			childPovertyDefinition.map!,
 		);
 		manager.updateMapForScalarDataset(
 			geojson,
@@ -166,6 +168,7 @@ describe("MapManager election updates", () => {
 				...DEFAULT_MAP_OPTIONS,
 				childPoverty: { colorRange: { min: 10, max: 30 } },
 			},
+			childPovertyDefinition.map!,
 		);
 
 		expect(buildValue).toHaveBeenCalledTimes(1);

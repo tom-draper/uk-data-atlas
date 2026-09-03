@@ -38,8 +38,6 @@ import { ChildPovertyDataset } from "@/lib/types/childPoverty";
 import { HomelessnessDataset } from "@/lib/types/homelessness";
 import { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
 import type { BoundaryType } from "@/lib/types/boundaries";
-import type { ChartDataset } from "@/lib/datasets/generated";
-import { getChartDatasetDefinition } from "@/lib/datasets";
 import { getPointsInBounds } from "@/lib/helpers/locationPoints";
 import {
 	getGenderColorExpression,
@@ -55,6 +53,19 @@ export type { MapManagerCallbacks } from "./callbacks";
 
 // Cache property detections to avoid repeated computation
 const propCache = new Map<string, PropertyKeys>();
+
+type ScalarDataset = {
+	type: MapMode;
+	boundaryType: BoundaryType;
+	data: Record<string, unknown>;
+};
+
+export interface ScalarMapConfig<T extends ScalarDataset> {
+	valueKey?: string;
+	valueFor?(dataset: T, code: string): number | null;
+	invertColor?: boolean;
+	getColorRange?(dataset: T): ColorRange;
+}
 
 export class MapManager {
 	private layerManager: LayerManager;
@@ -533,15 +544,12 @@ export class MapManager {
 		this.eventHandler.setupEventHandlers(dataForEvents, codeProp);
 	}
 
-	updateMapForScalarDataset(
+	updateMapForScalarDataset<T extends ScalarDataset>(
 		geojson: BoundaryGeojson,
-		dataset: ChartDataset,
+		dataset: T,
 		mapOptions: MapOptions,
+		map: ScalarMapConfig<T>,
 	): void {
-		const definition = getChartDatasetDefinition(dataset.type);
-		if (!definition?.map) return;
-		const map = definition.map;
-
 		this.updateGenericMap(
 			geojson,
 			dataset,
@@ -557,7 +565,7 @@ export class MapManager {
 					: null;
 				return typeof value === "number" && Number.isFinite(value) ? value : null;
 			},
-			(data, options) => map.getColorRange?.(data) ?? options[dataset.type].colorRange,
+			(data, options) => map.getColorRange?.(data) ?? (options[dataset.type] as { colorRange: ColorRange }).colorRange,
 			map.invertColor,
 		);
 	}
