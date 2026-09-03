@@ -1,139 +1,50 @@
 // lib/data/boundaries.ts
 import { BoundaryGeojson } from "@lib/types";
 import { gazetteer } from "@lib/data/gazetteer/static";
-import { withCDN } from "@/lib/helpers/cdn";
 import { decodeBoundaryData } from "./decode";
 import { fetchBoundaryInWorker } from "./worker";
+import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
 
-export const GEOJSON_PATHS = {
-	ward: {
-		2025: withCDN(
-			"/data/boundaries/wards/WD_MAY_2025_UK_BGC_V2_-8581021362622909866.topojson",
-		),
-		2024: withCDN(
-			"/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.topojson",
-		),
-		2023: withCDN(
-			"/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.topojson",
-		),
-		2022: withCDN(
-			"/data/boundaries/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.topojson",
-		),
-		2021: withCDN(
-			"/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.topojson",
-		),
-	},
-	constituency: {
-		2024: withCDN(
-			"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.topojson",
-		),
-		2019: withCDN(
-			"/data/boundaries/constituencies/WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.topojson",
-		),
-		2017: withCDN(
-			"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.topojson",
-		),
-		2015: withCDN(
-			"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.topojson",
-		),
-	},
-	localAuthority: {
-		2025: withCDN(
-			"/data/boundaries/lad/LAD_MAY_2025_UK_BGC_V2_1110015208521213948.topojson",
-		),
-		2024: withCDN(
-			"/data/boundaries/lad/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.topojson",
-		),
-		2023: withCDN(
-			"/data/boundaries/lad/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.topojson",
-		),
-		// 2021: broken topojson - commented out intentionally
-		// 2021: withCDN(
-		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.topojson",
-		// ),
-		2016: withCDN(
-			"/data/boundaries/lad/LAD_Dec_2016_GB_BGC_WGS84.topojson",
-		),
-	},
-	lsoa: {
-		2011: withCDN(
-			"/data/boundaries/lsoa/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.topojson",
-		),
-	},
-	dataZone: {
-		2011: withCDN(
-			"/data/boundaries/datazone/SG_DataZone_Bdry_2011.topojson",
-		),
-	},
-	superOutputArea: {
-		2011: withCDN("/data/boundaries/superOutputArea/NI_SOA_2011.topojson"),
-	},
-} as const;
+export { BOUNDARY_CATALOG } from "./catalog";
+export type { BoundaryType, BoundaryYear } from "./catalog";
 
-export type BoundaryType = keyof typeof GEOJSON_PATHS;
-export type WardYear = keyof typeof GEOJSON_PATHS.ward;
-export type ConstituencyYear = keyof typeof GEOJSON_PATHS.constituency;
-export type LocalAuthorityYear = keyof typeof GEOJSON_PATHS.localAuthority;
+type BoundaryPathCatalog = {
+	[T in BoundaryType]: (typeof BOUNDARY_CATALOG)[T]["vintages"];
+};
 
-// Property keys for each boundary type (prioritized by year)
-export const WARD_CODE_KEYS = [
-	"WD25CD",
-	"WD24CD",
-	"WD23CD",
-	"WD22CD",
-	"WD21CD",
-] as const;
-const WARD_NAME_KEYS = [
-	"WD25NM",
-	"WD24NM",
-	"WD23NM",
-	"WD22NM",
-	"WD21NM",
-] as const;
-export const LAD_CODE_KEYS = [
-	"LAD25CD",
-	"LAD24CD",
-	"LAD23CD",
-	"LAD22CD",
-	"LAD21CD",
-	"LAD16CD",
-] as const;
-const LAD_NAME_KEYS = [
-	"LAD25NM",
-	"LAD24NM",
-	"LAD23NM",
-	"LAD22NM",
-	"LAD21NM",
-	"LAD16NM",
-] as const;
-export const CONSTITUENCY_CODE_KEYS = [
-	"PCON24CD",
-	"pcon19cd",
-	"PCON17CD",
-	"PCON15CD",
-] as const;
-const CONSTITUENCY_NAME_KEYS = [
-	"PCON24NM",
-	"pcon19nm",
-	"PCON17NM",
-	"PCON15NM",
-] as const;
+/** @deprecated Use BOUNDARY_CATALOG[type].vintages for new code. */
+export const GEOJSON_PATHS = Object.fromEntries(
+	Object.entries(BOUNDARY_CATALOG).map(([type, definition]) => [
+		type,
+		definition.vintages,
+	]),
+) as BoundaryPathCatalog;
 
-export const LSOA_CODE_KEYS = ["LSOA11CD", "LSOA21CD"] as const;
-const LSOA_NAME_KEYS = ["LSOA11NM", "LSOA21NM"] as const;
+export type WardYear = keyof typeof BOUNDARY_CATALOG.ward.vintages;
+export type ConstituencyYear = keyof typeof BOUNDARY_CATALOG.constituency.vintages;
+export type LocalAuthorityYear = keyof typeof BOUNDARY_CATALOG.localAuthority.vintages;
+
+// Compatibility exports for existing consumers. All values come from the
+// catalogue; new code should prefer BOUNDARY_CATALOG[type].properties.
+export const WARD_CODE_KEYS = BOUNDARY_CATALOG.ward.properties.code;
+const WARD_NAME_KEYS = BOUNDARY_CATALOG.ward.properties.name;
+export const LAD_CODE_KEYS = BOUNDARY_CATALOG.localAuthority.properties.code;
+const LAD_NAME_KEYS = BOUNDARY_CATALOG.localAuthority.properties.name;
+export const CONSTITUENCY_CODE_KEYS = BOUNDARY_CATALOG.constituency.properties.code;
+const CONSTITUENCY_NAME_KEYS = BOUNDARY_CATALOG.constituency.properties.name;
+export const LSOA_CODE_KEYS = BOUNDARY_CATALOG.lsoa.properties.code;
+const LSOA_NAME_KEYS = BOUNDARY_CATALOG.lsoa.properties.name;
+export const DATA_ZONE_CODE_KEYS = BOUNDARY_CATALOG.dataZone.properties.code;
+const DATA_ZONE_NAME_KEYS = BOUNDARY_CATALOG.dataZone.properties.name;
+export const SOA_CODE_KEYS = BOUNDARY_CATALOG.superOutputArea.properties.code;
+const SOA_NAME_KEYS = BOUNDARY_CATALOG.superOutputArea.properties.name;
+
 export type LSOACodeKey = (typeof LSOA_CODE_KEYS)[number];
 export type LSOANameKey = (typeof LSOA_NAME_KEYS)[number];
-
-export const DATA_ZONE_CODE_KEYS = ["DataZone"] as const;
-const DATA_ZONE_NAME_KEYS = ["Name"] as const;
 export type DataZoneCodeKey = (typeof DATA_ZONE_CODE_KEYS)[number];
 export type DataZoneNameKey = (typeof DATA_ZONE_NAME_KEYS)[number];
-
-export const SOA_CODE_KEYS = ["SOA_CODE", "SOA2011", "SOA"] as const;
-const SOA_NAME_KEYS = ["SOA_LABEL", "SOA2011 Name", "SOA Name"] as const;
 export type SOACodeKey = (typeof SOA_CODE_KEYS)[number];
 export type SOANameKey = (typeof SOA_NAME_KEYS)[number];
-
 export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
 export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
 export type LADCodeKey = (typeof LAD_CODE_KEYS)[number];
@@ -141,6 +52,7 @@ export type LADNameKey = (typeof LAD_NAME_KEYS)[number];
 export type ConstituencyCodeKey = (typeof CONSTITUENCY_CODE_KEYS)[number];
 export type ConstituencyNameKey = (typeof CONSTITUENCY_NAME_KEYS)[number];
 
+/** @deprecated Use BOUNDARY_CATALOG[type].properties for new code. */
 export const PROPERTY_KEYS = {
 	wardCode: WARD_CODE_KEYS,
 	wardName: WARD_NAME_KEYS,
@@ -230,33 +142,7 @@ const isFeatureInBounds = (
  * Get property keys for a given boundary type
  */
 const getPropertyKeys = (type: BoundaryType) => {
-	const keyMap = {
-		ward: {
-			code: PROPERTY_KEYS.wardCode,
-			name: PROPERTY_KEYS.wardName,
-		},
-		constituency: {
-			code: PROPERTY_KEYS.constituencyCode,
-			name: PROPERTY_KEYS.constituencyName,
-		},
-		localAuthority: {
-			code: PROPERTY_KEYS.ladCode,
-			name: PROPERTY_KEYS.ladName,
-		},
-		lsoa: {
-			code: PROPERTY_KEYS.lsoaCode,
-			name: PROPERTY_KEYS.lsoaName,
-		},
-		dataZone: {
-			code: PROPERTY_KEYS.dataZoneCode,
-			name: PROPERTY_KEYS.dataZoneName,
-		},
-		superOutputArea: {
-			code: PROPERTY_KEYS.soaCode,
-			name: PROPERTY_KEYS.soaName,
-		},
-	};
-	return keyMap[type];
+	return BOUNDARY_CATALOG[type].properties;
 };
 
 /**

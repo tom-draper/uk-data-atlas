@@ -1,21 +1,11 @@
 import { BoundaryGeojson } from "./geometry";
+import type { BoundaryType as CatalogBoundaryType } from "../data/boundaries/catalog";
 
-export type BoundaryType = keyof BoundaryData;
+export type BoundaryType = CatalogBoundaryType;
 
-export type BoundaryData = {
-	ward: { [year: number]: BoundaryGeojson | null };
-	constituency: { [year: number]: BoundaryGeojson | null };
-	localAuthority: { [year: number]: BoundaryGeojson | null };
-	lsoa: { [year: number]: BoundaryGeojson | null };
-	dataZone: { [year: number]: BoundaryGeojson | null };
-	superOutputArea: { [year: number]: BoundaryGeojson | null };
-};
+export type BoundaryData = Record<
+	BoundaryType,
+	Record<number, BoundaryGeojson | null>
+>;
 
-export type BoundaryCodes = {
-	ward: Record<number, Set<string>>;
-	constituency: Record<number, Set<string>>;
-	localAuthority: Record<number, Set<string>>;
-	lsoa: Record<number, Set<string>>;
-	dataZone: Record<number, Set<string>>;
-	superOutputArea: Record<number, Set<string>>;
-} | null;
+export type BoundaryCodes = Record<BoundaryType, Record<number, Set<string>>> | null;

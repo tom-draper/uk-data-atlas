@@ -5,9 +5,9 @@ import {
 	BoundaryType,
 	fetchBoundaryFile,
 	filterFeatures,
-	GEOJSON_PATHS,
 	PROPERTY_KEYS,
 } from "../data/boundaries/boundaries";
+import { BOUNDARY_CATALOG } from "../data/boundaries/catalog";
 import {
 	extractWardLadMappings,
 	buildCrossYearMappings,
@@ -85,7 +85,7 @@ type BoundaryGroupLoad = {
 const fetchBoundaryGroup = async (
 	type: BoundaryType,
 ): Promise<BoundaryGroupLoad> => {
-	const paths = GEOJSON_PATHS[type];
+	const paths = BOUNDARY_CATALOG[type].vintages;
 	const years = Object.keys(paths).map(Number);
 
 	const settled = await Promise.allSettled(
