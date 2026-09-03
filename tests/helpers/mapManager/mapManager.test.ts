@@ -2,6 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { childPovertyDefinition } from "@/lib/datasets/childPoverty";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
+import {
+	renderLocalElection,
+	renderNumericDataset,
+} from "@/lib/helpers/mapRendering";
 
 function createMap() {
 	const sources = new Map<string, { setData: ReturnType<typeof vi.fn> }>();
@@ -94,11 +98,11 @@ describe("MapManager election updates", () => {
 				colorRange: { min: 0, max: 1 },
 			},
 		};
-		const builder = (manager as any).featureBuilder;
+		const builder = manager.featureBuilder;
 		const buildPercentage = vi.spyOn(builder, "buildElectionPercentageFeatures");
 
-		manager.updateMapForLocalElection(geojson, dataset, options);
-		manager.updateMapForLocalElection(geojson, dataset, {
+		renderLocalElection(manager, geojson, dataset, options);
+		renderLocalElection(manager, geojson, dataset, {
 			...options,
 			localElection: {
 				...options.localElection,
@@ -152,16 +156,18 @@ describe("MapManager election updates", () => {
 				},
 			],
 		} as any;
-		const builder = (manager as any).featureBuilder;
+		const builder = manager.featureBuilder;
 		const buildValue = vi.spyOn(builder, "buildValueFeatures");
 
-		manager.updateMapForNumericDataset(
+		renderNumericDataset(
+			manager,
 			geojson,
 			dataset,
 			DEFAULT_MAP_OPTIONS,
 			childPovertyDefinition.map!,
 		);
-		manager.updateMapForNumericDataset(
+		renderNumericDataset(
+			manager,
 			geojson,
 			dataset,
 			{

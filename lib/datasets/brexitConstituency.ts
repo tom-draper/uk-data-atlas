@@ -1,3 +1,4 @@
+import { renderBrexitConstituency } from "@/lib/helpers/mapRendering";
 import { brexitConstituencyDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { BrexitConstituencyDataset } from "@/lib/types/referendum";
 import type { ChartDatasetDefinition } from "./types";
@@ -19,7 +20,7 @@ export const brexitConstituencyDefinition: ChartDatasetDefinition<BrexitConstitu
     legendKind: "brexit",
     mapRenderer: {
       getOptions: (_activeViz, mapOptions) => mapOptions.brexitConstituency,
-      render: ({ mapManager, geojson, dataset, mapOptions }) =>
-        mapManager.updateMapForBrexitConstituency(geojson, dataset, mapOptions),
+      render: ({ map, geojson, dataset, mapOptions }) =>
+        renderBrexitConstituency(map, geojson, dataset, mapOptions),
     },
   };

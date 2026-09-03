@@ -1,16 +1,5 @@
 // lib/utils/mapManager/mapManager.ts
-import {
-	BoundaryGeojson,
-	LocalElectionDataset,
-	GeneralElectionDataset,
-	PopulationDataset,
-	EthnicityDataset,
-	PropertyKeys,
-	CustomDataset,
-	Features,
-	BrexitLADDataset,
-	BrexitConstituencyDataset,
-} from "@lib/types";
+import { BoundaryGeojson, Features, PropertyKeys } from "@lib/types";
 import { MapOptions } from "@lib/types/mapOptions";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { LayerManager } from "./layerManager";
@@ -21,22 +10,7 @@ import { PropertyDetector, type BoundaryCodeScope } from "./propertyDetector";
 import { StatsCache } from "./statsCache";
 import type { VectorLineLayer } from "./layers";
 
-import {
-	renderAgeDistribution,
-	renderBrexit,
-	renderBrexitConstituency,
-	renderCustomDataset,
-	renderCustomPoints,
-	renderEthnicity,
-	renderGender,
-	renderGeneralElection,
-	renderLocalElection,
-	renderNumericDataset,
-	renderPopulationDensity,
-	type MapRenderContext,
-	type NumericDataset,
-	type NumericMapConfig,
-} from "../mapRendering";
+import type { MapRenderContext } from "../mapRendering";
 import type { MapManagerCallbacks } from "./callbacks";
 export type { MapManagerCallbacks } from "./callbacks";
 
@@ -111,101 +85,8 @@ export class MapManager implements MapRenderContext {
 		return transformed;
 	}
 
-	updateMapForLocalElection(
-		geojson: BoundaryGeojson,
-		dataset: LocalElectionDataset,
-		mapOptions: MapOptions,
-		isDark = false,
-	): void {
-		renderLocalElection(this, geojson, dataset, mapOptions, isDark);
-	}
-
-	updateMapForGeneralElection(
-		geojson: BoundaryGeojson,
-		dataset: GeneralElectionDataset,
-		mapOptions: MapOptions,
-		isDark = false,
-	): void {
-		renderGeneralElection(this, geojson, dataset, mapOptions, isDark);
-	}
-
-	updateMapForEthnicity(
-		geojson: BoundaryGeojson,
-		dataset: EthnicityDataset,
-		mapOptions: MapOptions,
-		isDark = false,
-	): void {
-		renderEthnicity(this, geojson, dataset, mapOptions, isDark);
-	}
-
-	updateMapForCustomDataset(
-		geojson: BoundaryGeojson,
-		dataset: CustomDataset,
-		mapOptions: MapOptions,
-	): void {
-		renderCustomDataset(this, geojson, dataset, mapOptions);
-	}
-
-	updateMapForCustomPoints(
-		dataset: CustomDataset,
-		mapOptions: MapOptions,
-		bounds: [number, number, number, number] | null = null,
-		isDark = false,
-	): void {
-		renderCustomPoints(this, dataset, mapOptions, bounds, isDark);
-	}
-
 	clearCustomPoints(): void {
 		this.layerManager.clearPointLayers();
-	}
-
-	updateMapForAgeDistribution(
-		geojson: BoundaryGeojson,
-		dataset: PopulationDataset,
-		mapOptions: MapOptions,
-	): void {
-		renderAgeDistribution(this, geojson, dataset, mapOptions);
-	}
-
-	updateMapForGender(
-		geojson: BoundaryGeojson,
-		dataset: PopulationDataset,
-		mapOptions: MapOptions,
-	): void {
-		renderGender(this, geojson, dataset, mapOptions);
-	}
-
-	updateMapForPopulationDensity(
-		geojson: BoundaryGeojson,
-		dataset: PopulationDataset,
-		mapOptions: MapOptions,
-	): void {
-		renderPopulationDensity(this, geojson, dataset, mapOptions);
-	}
-
-	updateMapForNumericDataset<T extends NumericDataset>(
-		geojson: BoundaryGeojson,
-		dataset: T,
-		mapOptions: MapOptions,
-		map: NumericMapConfig<T>,
-	): void {
-		renderNumericDataset(this, geojson, dataset, mapOptions, map);
-	}
-
-	updateMapForBrexit(
-		geojson: BoundaryGeojson,
-		dataset: BrexitLADDataset,
-		mapOptions: MapOptions,
-	): void {
-		renderBrexit(this, geojson, dataset, mapOptions);
-	}
-
-	updateMapForBrexitConstituency(
-		geojson: BoundaryGeojson,
-		dataset: BrexitConstituencyDataset,
-		mapOptions: MapOptions,
-	): void {
-		renderBrexitConstituency(this, geojson, dataset, mapOptions);
 	}
 
 	setBorderVisibility(hidden: boolean): void {

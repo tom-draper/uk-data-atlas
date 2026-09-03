@@ -1,3 +1,4 @@
+import { renderBrexit } from "@/lib/helpers/mapRendering";
 import { brexitDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { BrexitLADDataset } from "@/lib/types/referendum";
 import type { ChartDatasetDefinition } from "./types";
@@ -16,7 +17,7 @@ export const brexitDefinition: ChartDatasetDefinition<BrexitLADDataset> = {
   legendKind: "brexit",
   mapRenderer: {
     getOptions: (_activeViz, mapOptions) => mapOptions.brexit,
-    render: ({ mapManager, geojson, dataset, mapOptions }) =>
-      mapManager.updateMapForBrexit(geojson, dataset, mapOptions),
+    render: ({ map, geojson, dataset, mapOptions }) =>
+      renderBrexit(map, geojson, dataset, mapOptions),
   },
 };
