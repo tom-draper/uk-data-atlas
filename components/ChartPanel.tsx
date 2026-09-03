@@ -14,27 +14,14 @@ import { NetworkDataset } from "@/lib/types/network";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useState, useDeferredValue } from "react";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import GeneralElectionResultChartSection from "./elections/general/GeneralElectionResultChartSection";
-import LocalElectionResultChartSection from "./elections/local/LocalElectionResultChartSection";
-import BrexitSection from "./elections/referendum/BrexitSection";
-import DemographicsChartSection from "./demographics/DemographicsChartSection";
-import EconomicsSection from "./economics/EconomicsSection";
-import DeprivationSection from "./deprivation/DeprivationSection";
-import HealthSection from "./health/HealthSection";
-import EducationSection from "./education/EducationSection";
-import TelecomsSection from "./telecoms/TelecomsSection";
-import EnvironmentSection from "./environment/EnvironmentSection";
 import TransportSection from "./transport/TransportSection";
 import CustomSection from "./custom/CustomSection";
+import ChartSections from "./ChartSections";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
 import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
-import {
-  ChartVisibilityProvider,
-  CHART_CONFIG,
-  useChartVisibility,
-} from "@/lib/context/ChartVisibilityContext";
+import { ChartVisibilityProvider } from "@/lib/context/ChartVisibilityContext";
 import ChartSettings from "./ChartSettings";
 import PanelHeader from "./PanelHeader";
 import PanelFooter from "./PanelFooter";
@@ -57,15 +44,6 @@ interface ChartPanelProps {
   location: string;
 }
 
-function useSectionVisibility() {
-  const { visibility } = useChartVisibility();
-  const byGroup: Record<string, boolean> = {};
-  for (const { group, key } of CHART_CONFIG) {
-    if (visibility[key]) byGroup[group] = true;
-  }
-  return byGroup;
-}
-
 function ChartPanelContent({
   selectedArea,
   activeDataset,
@@ -85,7 +63,6 @@ function ChartPanelContent({
 }: ChartPanelProps) {
   const isDark = useIsDark();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const sectionVisible = useSectionVisibility();
   const deferredArea = useDeferredValue(selectedArea);
   const toggleSettings = () => setSettingsOpen((o) => !o);
 
@@ -110,133 +87,17 @@ function ChartPanelContent({
           ) : (
             <div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container [&>*:first-child]:border-t-0">
               <ChartLoadingProvider loading={chartsLoading}>
-                {sectionVisible["General Election"] && (
-                  <GeneralElectionResultChartSection
-                    activeDataset={activeDataset}
-                    datasets={datasets}
-                    selectedArea={deferredArea}
-                    setActiveViz={setActiveViz}
-                    codeMapper={codeMapper}
-                    activeViz={activeViz}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
-                {sectionVisible["Local Election"] && (
-                  <LocalElectionResultChartSection
-                    activeDataset={activeDataset}
-                    datasets={datasets}
-                    selectedArea={deferredArea}
-                    setActiveViz={setActiveViz}
-                    codeMapper={codeMapper}
-                    activeViz={activeViz}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
-                {sectionVisible["Brexit"] && (
-                  <BrexitSection
-                    activeDataset={activeDataset}
-                    datasets={datasets}
-                    selectedArea={deferredArea}
-                    setActiveViz={setActiveViz}
-                    codeMapper={codeMapper}
-                    activeViz={activeViz}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
-                {sectionVisible["Demographics"] && (
-                  <DemographicsChartSection
-                    activeDataset={activeDataset}
-                    datasets={datasets}
-                    selectedArea={deferredArea}
-                    activeViz={activeViz}
-                    setActiveViz={setActiveViz}
-                    codeMapper={codeMapper}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
-                {sectionVisible["Economics"] && (
-                  <EconomicsSection
-                    activeDataset={activeDataset}
-					datasets={datasets}
-                    selectedArea={deferredArea}
-                    setActiveViz={setActiveViz}
-                    codeMapper={codeMapper}
-                    activeViz={activeViz}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
-                {sectionVisible["Deprivation"] && (
-                  <DeprivationSection
-                    activeDataset={activeDataset}
-                    datasets={datasets}
-                    selectedArea={deferredArea}
-                    setActiveViz={setActiveViz}
-                    activeViz={activeViz}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
-                {sectionVisible["Health"] && (
-                  <HealthSection
-                    activeDataset={activeDataset}
-                    datasets={datasets}
-                    selectedArea={deferredArea}
-                    setActiveViz={setActiveViz}
-                    activeViz={activeViz}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
-                {sectionVisible["Education"] && (
-                  <EducationSection
-                    activeDataset={activeDataset}
-                    datasets={datasets}
-                    selectedArea={deferredArea}
-                    setActiveViz={setActiveViz}
-                    codeMapper={codeMapper}
-                    activeViz={activeViz}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
-                {sectionVisible["Telecoms"] && (
-                  <TelecomsSection
-                    activeDataset={activeDataset}
-					datasets={datasets}
-                    selectedArea={deferredArea}
-                    setActiveViz={setActiveViz}
-                    codeMapper={codeMapper}
-                    activeViz={activeViz}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
-                {sectionVisible["Environment"] && (
-                  <EnvironmentSection
-                    activeDataset={activeDataset}
-					datasets={datasets}
-                    selectedArea={deferredArea}
-                    activeViz={activeViz}
-                    setActiveViz={setActiveViz}
-                    mapManager={mapManager}
-                    boundaryData={bd}
-                    location={location}
-                  />
-                )}
+                <ChartSections
+                  activeDataset={activeDataset}
+                  datasets={datasets}
+                  selectedArea={deferredArea}
+                  codeMapper={codeMapper}
+                  activeViz={activeViz}
+                  setActiveViz={setActiveViz}
+                  mapManager={mapManager}
+                  boundaryData={bd}
+                  location={location}
+                />
                 <TransportSection
                   roadSafetyDatasets={roadSafetyDatasets}
 				  networkDatasets={networkDatasets}

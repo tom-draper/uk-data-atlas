@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { CHART_COMPONENTS } from "@/lib/datasets/generatedCharts";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
+import { CHART_GROUPS } from "@/lib/datasets/chartGroups";
 import { validatePrecompiledDataset } from "@/lib/data/catalog";
 import { getChartDefinitions } from "@/lib/datasets/types";
 
@@ -87,6 +88,20 @@ describe("chart dataset registry contract", () => {
 				definition.map.colorRange,
 			);
 		}
+	});
+
+	it("assigns every registry chart to a displayed group", () => {
+		const chartGroups = new Set(
+			CHART_DATASET_DEFINITIONS.flatMap((definition) =>
+				getChartDefinitions(definition).map((chart) => chart.group),
+			),
+		);
+		expect(CHART_GROUPS.map((definition) => definition.group)).toHaveLength(
+			new Set(CHART_GROUPS.map((definition) => definition.group)).size,
+		);
+		expect(new Set(CHART_GROUPS.map((definition) => definition.group))).toEqual(
+			chartGroups,
+		);
 	});
 
   for (const definition of CHART_DATASET_DEFINITIONS) {
