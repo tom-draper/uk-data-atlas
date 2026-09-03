@@ -21,7 +21,11 @@ describe("aggregateEthnicity", () => {
 	} as any;
 
 	it("sums each subcategory across the covered local authorities", () => {
-		const result = aggregateEthnicity(features(["E1", "E2"]), CODE_KEY, data);
+		const result = aggregateEthnicity(
+			features(["E1", "E2"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(result).toEqual({
 			White: {
@@ -35,14 +39,20 @@ describe("aggregateEthnicity", () => {
 	});
 
 	it("ignores local authorities with no record", () => {
-		const result = aggregateEthnicity(features(["E2", "missing"]), CODE_KEY, data);
+		const result = aggregateEthnicity(
+			features(["E2", "missing"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(result.White.English.population).toBe(50);
 		expect(result.Asian).toBeUndefined();
 	});
 
 	it("returns an empty breakdown when nothing is covered", () => {
-		expect(aggregateEthnicity(features(["missing"]), CODE_KEY, data)).toEqual({});
+		expect(
+			aggregateEthnicity(features(["missing"]), CODE_KEY, data),
+		).toEqual({});
 	});
 });
 
@@ -81,7 +91,11 @@ describe("aggregateQualifications", () => {
 	const data = { E1: breakdown(100, 200), E2: breakdown(300, 400) } as any;
 
 	it("sums the breakdown across the covered areas", () => {
-		const result = aggregateQualifications(features(["E1", "E2"]), CODE_KEY, data);
+		const result = aggregateQualifications(
+			features(["E1", "E2"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(result.breakdown).toEqual({
 			noQualifications: 2,
@@ -107,7 +121,11 @@ describe("aggregateQualifications", () => {
 	});
 
 	it("returns a zeroed breakdown when nothing is covered", () => {
-		const result = aggregateQualifications(features(["missing"]), CODE_KEY, data);
+		const result = aggregateQualifications(
+			features(["missing"]),
+			CODE_KEY,
+			data,
+		);
 		expect(result.breakdown.total).toBe(0);
 	});
 });

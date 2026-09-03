@@ -10,7 +10,10 @@ import type {
 } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
 import type { IncomeDataset } from "@/lib/types/income";
-import type { AggregatedUnemploymentData, UnemploymentDataset } from "@/lib/types/unemployment";
+import type {
+	AggregatedUnemploymentData,
+	UnemploymentDataset,
+} from "@/lib/types/unemployment";
 
 /** Averages each available annual unemployment rate across selected LADs. */
 export function aggregateUnemployment(
@@ -26,7 +29,10 @@ export function aggregateUnemployment(
 	}
 
 	for (const feature of features) {
-		const record = dataset.data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const record =
+			dataset.data[
+				getFeatureProp(feature.properties, codeProperty) ?? ""
+			];
 		if (!record) continue;
 		for (const year of dataset.years) {
 			const rate = record.rates[year];
@@ -46,7 +52,9 @@ export function aggregateUnemployment(
 		}
 	}
 
-	return hasAny ? { years: dataset.years, latestYear: dataset.latestYear, rates } : null;
+	return hasAny
+		? { years: dataset.years, latestYear: dataset.latestYear, rates }
+		: null;
 }
 
 export function aggregateHousePrices(
@@ -56,10 +64,12 @@ export function aggregateHousePrices(
 ): AggregatedHousePriceData {
 	const yearlyTotals: Record<number, number> = {};
 	const yearlyCounts: Record<number, number> = {};
-	let totalPrice = 0, wardCount = 0;
+	let totalPrice = 0,
+		wardCount = 0;
 
 	for (const feature of features) {
-		const ward = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const ward =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!ward) continue;
 		const price2023 = ward.prices[2023];
 		if (price2023 != null) {
@@ -70,8 +80,10 @@ export function aggregateHousePrices(
 			const numericYear = Number(year);
 			const price = ward.prices[numericYear];
 			if (price != null && numericYear <= 2023) {
-				yearlyTotals[numericYear] = (yearlyTotals[numericYear] || 0) + price;
-				yearlyCounts[numericYear] = (yearlyCounts[numericYear] || 0) + 1;
+				yearlyTotals[numericYear] =
+					(yearlyTotals[numericYear] || 0) + price;
+				yearlyCounts[numericYear] =
+					(yearlyCounts[numericYear] || 0) + 1;
 			}
 		}
 	}
@@ -79,7 +91,8 @@ export function aggregateHousePrices(
 	const averagePrices: Record<number, number> = {};
 	for (const year of Object.keys(yearlyTotals)) {
 		const numericYear = Number(year);
-		averagePrices[numericYear] = yearlyTotals[numericYear] / yearlyCounts[numericYear];
+		averagePrices[numericYear] =
+			yearlyTotals[numericYear] / yearlyCounts[numericYear];
 	}
 	return {
 		averagePrice: wardCount > 0 ? totalPrice / wardCount : 0,
@@ -93,9 +106,12 @@ export function aggregateCrime(
 	codeProperty: PropertyKeys,
 	data: CrimeDataset["data"],
 ): AggregatedCrimeData {
-	let totalRecordedCrime = 0, count = 0;
+	let totalRecordedCrime = 0,
+		count = 0;
 	for (const feature of features) {
-		const crime = data[getFeatureProp(feature.properties, codeProperty) ?? ""]?.totalRecordedCrime;
+		const crime =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""]
+				?.totalRecordedCrime;
 		if (crime != null) {
 			totalRecordedCrime += crime;
 			count++;
@@ -109,9 +125,12 @@ export function aggregateIncome(
 	codeProperty: PropertyKeys,
 	data: IncomeDataset["data"],
 ): AggregatedIncomeData {
-	let totalMedianIncome = 0, count = 0;
+	let totalMedianIncome = 0,
+		count = 0;
 	for (const feature of features) {
-		const median = data[getFeatureProp(feature.properties, codeProperty) ?? ""]?.annual?.median;
+		const median =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""]?.annual
+				?.median;
 		if (median != null) {
 			totalMedianIncome += median;
 			count++;
@@ -125,9 +144,11 @@ export function aggregateCustomDataset(
 	codeProperty: PropertyKeys,
 	data: Record<string, number>,
 ): AggregatedCustomData {
-	let sum = 0, count = 0;
+	let sum = 0,
+		count = 0;
 	for (const feature of features) {
-		const value = data[getFeatureProp(feature.properties, codeProperty) ?? ""];
+		const value =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (typeof value === "number") {
 			sum += value;
 			count++;

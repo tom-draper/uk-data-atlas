@@ -30,8 +30,17 @@ import {
 	aggregateIncome,
 	aggregateUnemployment,
 } from "./economics";
-import { aggregateIMD, aggregateNIMDM, aggregateSIMD, aggregateWIMD } from "./deprivation";
-import { aggregateEthnicity, aggregateLifeExpectancy, aggregateQualifications } from "./demographics";
+import {
+	aggregateIMD,
+	aggregateNIMDM,
+	aggregateSIMD,
+	aggregateWIMD,
+} from "./deprivation";
+import {
+	aggregateEthnicity,
+	aggregateLifeExpectancy,
+	aggregateQualifications,
+} from "./demographics";
 import {
 	aggregateBrexit,
 	aggregateBrexitConstituencies,
@@ -51,15 +60,42 @@ import {
 	QualificationDataset,
 	AggregatedQualificationData,
 } from "@/lib/types/qualification";
-import { BroadbandDataset, AggregatedBroadbandData } from "@/lib/types/broadband";
-import { AirQualityDataset, AggregatedAirQualityData } from "@/lib/types/airQuality";
-import { ClaimantCountDataset, AggregatedClaimantCountData } from "@/lib/types/claimantCount";
-import { SchoolPerformanceDataset, AggregatedSchoolPerformanceData } from "@/lib/types/schoolPerformance";
-import { NHSWaitingDataset, AggregatedNHSWaitingData } from "@/lib/types/nhsWaiting";
-import { UnemploymentDataset, AggregatedUnemploymentData } from "@/lib/types/unemployment";
-import { ChildPovertyDataset, AggregatedChildPovertyData } from "@/lib/types/childPoverty";
-import { HomelessnessDataset, AggregatedHomelessnessData } from "@/lib/types/homelessness";
-import { FuelPovertyDataset, AggregatedFuelPovertyData } from "@/lib/types/fuelPoverty";
+import {
+	BroadbandDataset,
+	AggregatedBroadbandData,
+} from "@/lib/types/broadband";
+import {
+	AirQualityDataset,
+	AggregatedAirQualityData,
+} from "@/lib/types/airQuality";
+import {
+	ClaimantCountDataset,
+	AggregatedClaimantCountData,
+} from "@/lib/types/claimantCount";
+import {
+	SchoolPerformanceDataset,
+	AggregatedSchoolPerformanceData,
+} from "@/lib/types/schoolPerformance";
+import {
+	NHSWaitingDataset,
+	AggregatedNHSWaitingData,
+} from "@/lib/types/nhsWaiting";
+import {
+	UnemploymentDataset,
+	AggregatedUnemploymentData,
+} from "@/lib/types/unemployment";
+import {
+	ChildPovertyDataset,
+	AggregatedChildPovertyData,
+} from "@/lib/types/childPoverty";
+import {
+	HomelessnessDataset,
+	AggregatedHomelessnessData,
+} from "@/lib/types/homelessness";
+import {
+	FuelPovertyDataset,
+	AggregatedFuelPovertyData,
+} from "@/lib/types/fuelPoverty";
 
 /** Aggregates dataset records against the currently loaded boundary geometry. */
 export class DatasetAggregator {
@@ -88,10 +124,15 @@ export class DatasetAggregator {
 		aggregate: (records: T[]) => R | null,
 	): R | null {
 		return this.cached(`${cachePrefix}-${location}-${datasetId}`, () => {
-			const codeProp = codeLevel === "lsoa"
-				? this.propertyDetector.detectLSOACode(geojson.features)
-				: this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-			return aggregate(collectBoundaryRecords(geojson.features, data, codeProp));
+			const codeProp =
+				codeLevel === "lsoa"
+					? this.propertyDetector.detectLSOACode(geojson.features)
+					: this.propertyDetector.detectLocalAuthorityCode(
+							geojson.features,
+						);
+			return aggregate(
+				collectBoundaryRecords(geojson.features, data, codeProp),
+			);
 		});
 	}
 
@@ -105,7 +146,11 @@ export class DatasetAggregator {
 			const wardCodeProp = this.propertyDetector.detectWardCode(
 				geojson.features,
 			);
-			return aggregateLocalElection(geojson.features, wardCodeProp, wardData);
+			return aggregateLocalElection(
+				geojson.features,
+				wardCodeProp,
+				wardData,
+			);
 		});
 	}
 
@@ -118,7 +163,11 @@ export class DatasetAggregator {
 		return this.cached(`general-election-${location}-${datasetId}`, () => {
 			const constituencyCodeProp =
 				this.propertyDetector.detectConstituencyCode(geojson.features);
-			return aggregateGeneralElection(geojson.features, constituencyCodeProp, constituencyData);
+			return aggregateGeneralElection(
+				geojson.features,
+				constituencyCodeProp,
+				constituencyData,
+			);
 		});
 	}
 
@@ -150,7 +199,11 @@ export class DatasetAggregator {
 			const ladProp = this.propertyDetector.detectLocalAuthorityCode(
 				geojson.features,
 			);
-			return aggregateEthnicity(geojson.features, ladProp, localAuthorityData);
+			return aggregateEthnicity(
+				geojson.features,
+				ladProp,
+				localAuthorityData,
+			);
 		});
 	}
 
@@ -164,7 +217,11 @@ export class DatasetAggregator {
 			const wardCodeProp = this.propertyDetector.detectWardCode(
 				geojson.features,
 			);
-			return aggregateHousePrices(geojson.features, wardCodeProp, wardData);
+			return aggregateHousePrices(
+				geojson.features,
+				wardCodeProp,
+				wardData,
+			);
 		});
 	}
 
@@ -216,12 +273,19 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	) {
-		return this.cached(`brexitConstituency-${location}-${datasetId}`, () => {
-			const codeProp = this.propertyDetector.detectConstituencyCode(
-				geojson.features,
-			);
-			return aggregateBrexitConstituencies(geojson.features, codeProp, constituencyData);
-		});
+		return this.cached(
+			`brexitConstituency-${location}-${datasetId}`,
+			() => {
+				const codeProp = this.propertyDetector.detectConstituencyCode(
+					geojson.features,
+				);
+				return aggregateBrexitConstituencies(
+					geojson.features,
+					codeProp,
+					constituencyData,
+				);
+			},
+		);
 	}
 
 	calculateCustomDatasetStats(
@@ -247,7 +311,11 @@ export class DatasetAggregator {
 			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 				geojson.features,
 			);
-			return aggregateLifeExpectancy(geojson.features, ladCodeProp, leData);
+			return aggregateLifeExpectancy(
+				geojson.features,
+				ladCodeProp,
+				leData,
+			);
 		});
 	}
 
@@ -317,7 +385,11 @@ export class DatasetAggregator {
 			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
 				geojson.features,
 			);
-			return aggregateQualifications(geojson.features, ladCodeProp, qualData);
+			return aggregateQualifications(
+				geojson.features,
+				ladCodeProp,
+				qualData,
+			);
 		});
 	}
 
@@ -328,7 +400,13 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedBroadbandData | null {
 		return this.calculateNumericStats(
-			"broadband", geojson, broadbandData, location, datasetId, "localAuthority", aggregateBroadband,
+			"broadband",
+			geojson,
+			broadbandData,
+			location,
+			datasetId,
+			"localAuthority",
+			aggregateBroadband,
 		);
 	}
 
@@ -339,7 +417,13 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedAirQualityData | null {
 		return this.calculateNumericStats(
-			"airQuality", geojson, airQualityData, location, datasetId, "localAuthority", aggregateAirQuality,
+			"airQuality",
+			geojson,
+			airQualityData,
+			location,
+			datasetId,
+			"localAuthority",
+			aggregateAirQuality,
 		);
 	}
 
@@ -350,7 +434,13 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedClaimantCountData | null {
 		return this.calculateNumericStats(
-			"claimantCount", geojson, data, location, datasetId, "localAuthority", aggregateClaimantCount,
+			"claimantCount",
+			geojson,
+			data,
+			location,
+			datasetId,
+			"localAuthority",
+			aggregateClaimantCount,
 		);
 	}
 
@@ -412,7 +502,13 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedSchoolPerformanceData | null {
 		return this.calculateNumericStats(
-			"schoolPerformance", geojson, data, location, datasetId, "localAuthority", aggregateSchoolPerformance,
+			"schoolPerformance",
+			geojson,
+			data,
+			location,
+			datasetId,
+			"localAuthority",
+			aggregateSchoolPerformance,
 		);
 	}
 
@@ -423,7 +519,9 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedNHSWaitingData | null {
 		return this.cached(`nhsWaiting-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
 			return aggregateNHSWaiting(geojson.features, ladCodeProp, dataset);
 		});
 	}
@@ -435,8 +533,14 @@ export class DatasetAggregator {
 		datasetId: string | null,
 	): AggregatedUnemploymentData | null {
 		return this.cached(`unemployment-${location}-${datasetId}`, () => {
-			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(geojson.features);
-			return aggregateUnemployment(geojson.features, ladCodeProp, dataset);
+			const ladCodeProp = this.propertyDetector.detectLocalAuthorityCode(
+				geojson.features,
+			);
+			return aggregateUnemployment(
+				geojson.features,
+				ladCodeProp,
+				dataset,
+			);
 		});
 	}
 }

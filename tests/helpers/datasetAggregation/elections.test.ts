@@ -22,7 +22,11 @@ describe("aggregateLocalElection", () => {
 	} as any;
 
 	it("sums party votes, electorate and turnout across the covered wards", () => {
-		const stats = aggregateLocalElection(features(["W1", "W2"]), CODE_KEY, data);
+		const stats = aggregateLocalElection(
+			features(["W1", "W2"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(stats.partyVotes).toEqual({
 			LAB: 120,
@@ -43,7 +47,11 @@ describe("aggregateLocalElection", () => {
 	});
 
 	it("returns a zeroed tally when no covered ward has a result", () => {
-		const stats = aggregateLocalElection(features(["missing"]), CODE_KEY, data);
+		const stats = aggregateLocalElection(
+			features(["missing"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(stats.electorate).toBe(0);
 		expect(stats.totalVotes).toBe(0);
@@ -68,16 +76,28 @@ describe("aggregateGeneralElection", () => {
 	} as any;
 
 	it("awards a seat to the leading party in each covered constituency", () => {
-		const stats = aggregateGeneralElection(features(["C1", "C2"]), CODE_KEY, data);
+		const stats = aggregateGeneralElection(
+			features(["C1", "C2"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(stats.totalSeats).toBe(2);
 		expect(stats.partySeats).toEqual({ LAB: 1, CON: 1 });
 	});
 
 	it("sums the vote and electorate totals", () => {
-		const stats = aggregateGeneralElection(features(["C1", "C2"]), CODE_KEY, data);
+		const stats = aggregateGeneralElection(
+			features(["C1", "C2"]),
+			CODE_KEY,
+			data,
+		);
 
-		expect(stats.partyVotes).toEqual({ LAB: 32000, CON: 33000, GREEN: 2000 });
+		expect(stats.partyVotes).toEqual({
+			LAB: 32000,
+			CON: 33000,
+			GREEN: 2000,
+		});
 		expect(stats.totalVotes).toBe(67000);
 		expect(stats.electorate).toBe(130000);
 		expect(stats.validVotes).toBe(67000);
@@ -88,7 +108,11 @@ describe("aggregateGeneralElection", () => {
 		const withUnknown = {
 			C1: { ...data.C1, partyVotes: { LAB: 20000, MONSTER: 5000 } },
 		} as any;
-		const stats = aggregateGeneralElection(features(["C1"]), CODE_KEY, withUnknown);
+		const stats = aggregateGeneralElection(
+			features(["C1"]),
+			CODE_KEY,
+			withUnknown,
+		);
 
 		expect(stats.partyVotes).toEqual({ LAB: 20000 });
 		expect(stats.totalVotes).toBe(20000);
@@ -104,14 +128,16 @@ describe("aggregateBrexit", () => {
 	} as any;
 
 	it("takes the leave share from the pooled votes", () => {
-		expect(aggregateBrexit(features(["E1", "E2"]), CODE_KEY, data)).toEqual({
-			totalLeave: 10000,
-			totalRemain: 10000,
-			totalVotes: 20000,
-			electorate: 25000,
-			pctLeave: 50,
-			pctRemain: 50,
-		});
+		expect(aggregateBrexit(features(["E1", "E2"]), CODE_KEY, data)).toEqual(
+			{
+				totalLeave: 10000,
+				totalRemain: 10000,
+				totalVotes: 20000,
+				electorate: 25000,
+				pctLeave: 50,
+				pctRemain: 50,
+			},
+		);
 	});
 
 	it("reports zero shares when no covered area voted", () => {
@@ -125,7 +151,11 @@ describe("aggregateBrexitConstituencies", () => {
 	const data = { C1: { pctLeave: 40 }, C2: { pctLeave: 60 } } as any;
 
 	it("averages the estimated leave share across constituencies", () => {
-		const result = aggregateBrexitConstituencies(features(["C1", "C2"]), CODE_KEY, data);
+		const result = aggregateBrexitConstituencies(
+			features(["C1", "C2"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(result.pctLeave).toBe(50);
 		expect(result.pctRemain).toBe(50);
@@ -135,7 +165,11 @@ describe("aggregateBrexitConstituencies", () => {
 	});
 
 	it("reports zero shares when no covered constituency has an estimate", () => {
-		const result = aggregateBrexitConstituencies(features(["missing"]), CODE_KEY, data);
+		const result = aggregateBrexitConstituencies(
+			features(["missing"]),
+			CODE_KEY,
+			data,
+		);
 		expect(result.pctLeave).toBe(0);
 		expect(result.pctRemain).toBe(0);
 	});

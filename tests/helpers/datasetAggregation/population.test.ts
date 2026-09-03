@@ -8,7 +8,10 @@ import {
 import { polygonAreaSqKm } from "@/lib/helpers/population";
 import { CODE_KEY, SQUARE, features } from "./fixtures";
 
-const ward = (males: Record<string, number>, females: Record<string, number>) => {
+const ward = (
+	males: Record<string, number>,
+	females: Record<string, number>,
+) => {
 	const total: Record<string, number> = { ...males };
 	for (const [age, count] of Object.entries(females)) {
 		total[age] = (total[age] ?? 0) + count;
@@ -38,7 +41,11 @@ const emptyTotals = (): PopulationTotals => ({
 
 describe("accumulatePopulation", () => {
 	it("sums headline counts across the covered wards", () => {
-		const totals = accumulatePopulation(features(["W1", "W2"]), CODE_KEY, data);
+		const totals = accumulatePopulation(
+			features(["W1", "W2"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(totals.totalPop).toBe(21);
 		expect(totals.malesPop).toBe(10);
@@ -46,7 +53,11 @@ describe("accumulatePopulation", () => {
 	});
 
 	it("sums the single-year age counts by sex", () => {
-		const totals = accumulatePopulation(features(["W1", "W2"]), CODE_KEY, data);
+		const totals = accumulatePopulation(
+			features(["W1", "W2"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(totals.ageData).toEqual({ "10": 3, "25": 5, "40": 3, "70": 10 });
 		expect(totals.males).toEqual({ "10": 2, "25": 5, "40": 3 });
@@ -54,7 +65,11 @@ describe("accumulatePopulation", () => {
 	});
 
 	it("sums the age bands by sex", () => {
-		const totals = accumulatePopulation(features(["W1", "W2"]), CODE_KEY, data);
+		const totals = accumulatePopulation(
+			features(["W1", "W2"]),
+			CODE_KEY,
+			data,
+		);
 
 		expect(totals.ageGroups.total).toEqual({
 			"0-17": 3,
@@ -68,13 +83,21 @@ describe("accumulatePopulation", () => {
 	});
 
 	it("adds up the area of the wards it counted", () => {
-		const totals = accumulatePopulation(features(["W1", "W2"], SQUARE), CODE_KEY, data);
+		const totals = accumulatePopulation(
+			features(["W1", "W2"], SQUARE),
+			CODE_KEY,
+			data,
+		);
 
 		expect(totals.totalArea).toBeCloseTo(2 * polygonAreaSqKm(SQUARE), 6);
 	});
 
 	it("skips features with no population record, area included", () => {
-		const totals = accumulatePopulation(features(["missing"], SQUARE), CODE_KEY, data);
+		const totals = accumulatePopulation(
+			features(["missing"], SQUARE),
+			CODE_KEY,
+			data,
+		);
 
 		expect(totals.totalPop).toBe(0);
 		expect(totals.totalArea).toBe(0);
@@ -84,7 +107,11 @@ describe("accumulatePopulation", () => {
 
 describe("buildPopulationStats", () => {
 	it("carries the headline counts and bands into the stats", () => {
-		const totals = accumulatePopulation(features(["W1", "W2"]), CODE_KEY, data);
+		const totals = accumulatePopulation(
+			features(["W1", "W2"]),
+			CODE_KEY,
+			data,
+		);
 		const { populationStats } = buildPopulationStats(totals);
 
 		expect(populationStats.total).toBe(21);
@@ -108,7 +135,9 @@ describe("buildPopulationStats", () => {
 		const { ages } = buildPopulationStats(totals);
 
 		const tail = ages.slice(90);
-		expect(tail.reduce((sum: number, entry: any) => sum + entry.count, 0)).toBeCloseTo(100, 6);
+		expect(
+			tail.reduce((sum: number, entry: any) => sum + entry.count, 0),
+		).toBeCloseTo(100, 6);
 		// The spread decays with age rather than being flat.
 		expect(tail[0].count).toBeGreaterThan(tail[9].count);
 	});
@@ -155,7 +184,11 @@ describe("buildPopulationStats", () => {
 
 describe("aggregatePopulation", () => {
 	it("accumulates and derives in one pass over the boundaries", () => {
-		const result = aggregatePopulation(features(["W1", "W2"], SQUARE), CODE_KEY, data);
+		const result = aggregatePopulation(
+			features(["W1", "W2"], SQUARE),
+			CODE_KEY,
+			data,
+		);
 
 		expect(result.populationStats.total).toBe(21);
 		expect(result.medianAge).toBe(40);

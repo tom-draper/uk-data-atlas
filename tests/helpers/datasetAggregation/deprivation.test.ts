@@ -22,7 +22,9 @@ describe("aggregateSIMD", () => {
 	});
 
 	it("ignores zones with no record", () => {
-		expect(aggregateSIMD(features(["S1", "missing"]), CODE_KEY, data)).toEqual({
+		expect(
+			aggregateSIMD(features(["S1", "missing"]), CODE_KEY, data),
+		).toEqual({
 			averageSIMDRank: 100,
 			averageSIMDQuintile: 1,
 			averageSIMDDecile: 2,
@@ -67,7 +69,9 @@ describe("aggregateNIMDM", () => {
 	});
 
 	it("returns null when no covered area has a record", () => {
-		expect(aggregateNIMDM(features(["missing"]), CODE_KEY, data)).toBeNull();
+		expect(
+			aggregateNIMDM(features(["missing"]), CODE_KEY, data),
+		).toBeNull();
 	});
 });
 

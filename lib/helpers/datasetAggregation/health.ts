@@ -1,6 +1,9 @@
 import type { Features, PropertyKeys } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
-import type { AggregatedNHSWaitingData, NHSWaitingDataset } from "@/lib/types/nhsWaiting";
+import type {
+	AggregatedNHSWaitingData,
+	NHSWaitingDataset,
+} from "@/lib/types/nhsWaiting";
 
 /** Aggregates distinct ICB waiting-list records reached by the selected LADs. */
 export function aggregateNHSWaiting(
@@ -9,7 +12,8 @@ export function aggregateNHSWaiting(
 	dataset: NHSWaitingDataset,
 ): AggregatedNHSWaitingData | null {
 	const seenIcbs = new Set<string>();
-	let total = 0, over18Weeks = 0;
+	let total = 0,
+		over18Weeks = 0;
 
 	for (const feature of features) {
 		const ladCode = getFeatureProp(feature.properties, codeProperty) ?? "";
@@ -22,9 +26,11 @@ export function aggregateNHSWaiting(
 		over18Weeks += record.over18Weeks;
 	}
 
-	return total === 0 ? null : {
-		total,
-		over18Weeks,
-		pctOver18Weeks: over18Weeks / total * 100,
-	};
+	return total === 0
+		? null
+		: {
+				total,
+				over18Weeks,
+				pctOver18Weeks: (over18Weeks / total) * 100,
+			};
 }

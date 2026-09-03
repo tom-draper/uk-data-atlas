@@ -1,4 +1,10 @@
-import type { AgeGroups, Features, PopulationDataset, PopulationStats, PropertyKeys } from "@lib/types";
+import type {
+	AgeGroups,
+	Features,
+	PopulationDataset,
+	PopulationStats,
+	PropertyKeys,
+} from "@lib/types";
 import { getFeatureProp } from "@lib/types";
 import { calculateTotal, polygonAreaSqKm } from "../population";
 import { calculateAgeGroups } from "../ageDistribution";
@@ -112,7 +118,9 @@ export function accumulatePopulation(
 			females[age] = (females[age] || 0) + count;
 		}
 
-		aggregated.totalArea += polygonAreaSqKm(features[i].geometry.coordinates);
+		aggregated.totalArea += polygonAreaSqKm(
+			features[i].geometry.coordinates,
+		);
 	}
 
 	return aggregated;
@@ -171,7 +179,9 @@ export function buildPopulationStats(aggregated: PopulationTotals) {
 	}
 
 	const density =
-		aggregated.totalArea > 0 ? aggregated.totalPop / aggregated.totalArea : 0;
+		aggregated.totalArea > 0
+			? aggregated.totalPop / aggregated.totalArea
+			: 0;
 
 	return {
 		populationStats,
@@ -190,5 +200,7 @@ export function aggregatePopulation(
 	codeProperty: PropertyKeys,
 	data: PopulationDataset["data"],
 ) {
-	return buildPopulationStats(accumulatePopulation(features, codeProperty, data));
+	return buildPopulationStats(
+		accumulatePopulation(features, codeProperty, data),
+	);
 }
