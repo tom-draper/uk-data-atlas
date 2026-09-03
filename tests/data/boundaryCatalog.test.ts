@@ -14,7 +14,9 @@ describe("boundary catalogue", () => {
 
 	it("keeps each boundary family's paths and property keys together", () => {
 		for (const definition of Object.values(BOUNDARY_CATALOG)) {
-			expect(definition.properties.code).not.toBe(definition.properties.name);
+			expect(definition.properties.code).not.toBe(
+				definition.properties.name,
+			);
 			expect(Object.keys(definition.vintages)).not.toHaveLength(0);
 		}
 	});

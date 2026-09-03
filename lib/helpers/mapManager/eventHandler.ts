@@ -1,4 +1,8 @@
-import type { Map as MapLibreMap, MapGeoJSONFeature, MapMouseEvent } from "maplibre-gl";
+import type {
+	Map as MapLibreMap,
+	MapGeoJSONFeature,
+	MapMouseEvent,
+} from "maplibre-gl";
 
 type MapLayerMouseHandler = (
 	ev: MapMouseEvent & { features?: MapGeoJSONFeature[] },
@@ -40,7 +44,10 @@ function rafThrottle<T extends unknown[]>(
 	};
 
 	const cancel = () => {
-		if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+		if (rafId !== null) {
+			cancelAnimationFrame(rafId);
+			rafId = null;
+		}
 		trailingArgs = null;
 	};
 
@@ -66,7 +73,9 @@ export class EventHandler {
 		private callbacks: MapManagerCallbacks,
 	) {
 		this.canvas = this.map.getCanvas();
-		const { handler, cancel } = rafThrottle(this.handleMouseMove.bind(this));
+		const { handler, cancel } = rafThrottle(
+			this.handleMouseMove.bind(this),
+		);
 		this._mouseMoveHandler = handler;
 		this._cancelMouseMove = cancel;
 		this._mouseLeaveHandler = this.handleMouseLeave.bind(this);
@@ -105,7 +114,12 @@ export class EventHandler {
 		if (codeProp.toUpperCase().startsWith("WD")) return "ward";
 		if (codeProp.toUpperCase().startsWith("PCON")) return "constituency";
 		if (codeProp.toUpperCase().startsWith("LSOA")) return "lsoa";
-		if (codeProp === "SOA_CODE" || codeProp === "SOA2011" || codeProp === "SOA") return "superOutputArea";
+		if (
+			codeProp === "SOA_CODE" ||
+			codeProp === "SOA2011" ||
+			codeProp === "SOA"
+		)
+			return "superOutputArea";
 		if (codeProp === "DataZone") return "dataZone";
 		return "ward";
 	}
