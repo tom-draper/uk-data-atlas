@@ -6,10 +6,19 @@ import { AggregatedCustomData, CustomDataset } from "./custom";
 import { NetworkDataset } from "./network";
 import { AggregatedBroadbandData, BroadbandDataset } from "./broadband";
 import { AggregatedAirQualityData, AirQualityDataset } from "./airQuality";
-import { AggregatedClaimantCountData, ClaimantCountDataset } from "./claimantCount";
-import { AggregatedSchoolPerformanceData, SchoolPerformanceDataset } from "./schoolPerformance";
+import {
+	AggregatedClaimantCountData,
+	ClaimantCountDataset,
+} from "./claimantCount";
+import {
+	AggregatedSchoolPerformanceData,
+	SchoolPerformanceDataset,
+} from "./schoolPerformance";
 import { AggregatedNHSWaitingData, NHSWaitingDataset } from "./nhsWaiting";
-import { AggregatedUnemploymentData, UnemploymentDataset } from "./unemployment";
+import {
+	AggregatedUnemploymentData,
+	UnemploymentDataset,
+} from "./unemployment";
 import type {
 	CatalogueDataset,
 	CatalogueDatasetRecords,
@@ -40,7 +49,6 @@ export type Datasets = {
 	nhsWaiting: Record<string, NHSWaitingDataset>;
 	unemployment: Record<string, UnemploymentDataset>;
 } & CatalogueDatasetRecords;
-
 
 /**
  * Which visualisation of a dataset that backs several. Datasets with a single

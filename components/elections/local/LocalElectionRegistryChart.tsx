@@ -1,5 +1,11 @@
 "use client";
-import { ActiveViz, AggregatedLocalElectionData, Dataset, LocalElectionDataset, SelectedArea } from "@lib/types";
+import {
+	ActiveViz,
+	AggregatedLocalElectionData,
+	Dataset,
+	LocalElectionDataset,
+	SelectedArea,
+} from "@lib/types";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { computeLocalElectionYearData } from "@/lib/helpers/localElection";
@@ -26,7 +32,8 @@ export default function LocalElectionRegistryChart({
 	activeViz,
 	setActiveViz,
 }: LocalElectionRegistryChartProps) {
-	const { excludedLocalParties, selectedLocalParty } = useExcludedCategories();
+	const { excludedLocalParties, selectedLocalParty } =
+		useExcludedCategories();
 	const data = computeLocalElectionYearData(
 		year,
 		availableDatasets?.[year],
@@ -43,8 +50,15 @@ export default function LocalElectionRegistryChart({
 		activeDataset &&
 		((activeDataset.type === "localElection" &&
 			activeDataset.id === `localElection${year}`) ||
-			(activeViz.datasetType === "custom" && activeViz.datasetId === "custom"))
+			(activeViz.datasetType === "custom" &&
+				activeViz.datasetId === "custom"))
 	);
 
-	return <LocalElectionResultChart data={data} isActive={isActive} setActiveViz={setActiveViz} />;
+	return (
+		<LocalElectionResultChart
+			data={data}
+			isActive={isActive}
+			setActiveViz={setActiveViz}
+		/>
+	);
 }

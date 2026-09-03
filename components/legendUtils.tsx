@@ -48,7 +48,7 @@ export function renderCategoryLegend(
 							}}
 						/>
 						<span
-							className={`text-xs ${isExcluded ? "line-through" : ""} ${isSelected ? (isDark ? "text-gray-100" : "text-gray-700") : (isDark ? "text-gray-400" : "text-gray-500")}`}
+							className={`text-xs ${isExcluded ? "line-through" : ""} ${isSelected ? (isDark ? "text-gray-100" : "text-gray-700") : isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
 							{item.name}
 						</span>

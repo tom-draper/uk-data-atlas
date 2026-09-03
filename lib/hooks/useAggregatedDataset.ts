@@ -10,14 +10,29 @@ import type { BoundaryData } from "@/lib/types/boundaries";
 import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 
 /** Memoized chart aggregation with the shared aggregateDataset cache beneath it. */
-export function useAggregatedDataset<T extends Exclude<Dataset, { type: "network" }>>(
+export function useAggregatedDataset<
+	T extends Exclude<Dataset, { type: "network" }>,
+>(
 	config: DatasetConfig<T>,
 	mapManager: MapManager | null,
 	boundaryData: BoundaryData,
 	location: string | null,
 ) {
 	return useMemo(
-		() => aggregateDataset(config, mapManager?.datasetAggregator ?? null, boundaryData, location),
-		[config.datasets, config.boundaryType, config.keyBy, mapManager, boundaryData, location],
+		() =>
+			aggregateDataset(
+				config,
+				mapManager?.datasetAggregator ?? null,
+				boundaryData,
+				location,
+			),
+		[
+			config.datasets,
+			config.boundaryType,
+			config.keyBy,
+			mapManager,
+			boundaryData,
+			location,
+		],
 	);
 }

@@ -44,7 +44,8 @@ export default function CustomSection({
 	const isDark = useIsDark();
 
 	const handleCustomDatasetApply = (data: CustomDatasetUpload) => {
-		const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+		const id =
+			Date.now().toString(36) + Math.random().toString(36).slice(2);
 		const dataset = createCustomDataset(id, data);
 		if (!dataset) return;
 
@@ -75,7 +76,10 @@ export default function CustomSection({
 							key={ds.id}
 							customDataset={ds}
 							selectedArea={selectedArea}
-							isActive={activeViz.datasetType === "custom" && activeViz.datasetId === ds.id}
+							isActive={
+								activeViz.datasetType === "custom" &&
+								activeViz.datasetId === ds.id
+							}
 							setActiveViz={setActiveViz}
 							codeMapper={codeMapper}
 							mapManager={mapManager}

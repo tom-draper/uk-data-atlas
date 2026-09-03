@@ -1,5 +1,9 @@
 // lib/utils/mapManager/layerManager.ts
-import { Popup, type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";
+import {
+	Popup,
+	type GeoJSONSource,
+	type Map as MapLibreMap,
+} from "maplibre-gl";
 import { BoundaryGeojson } from "@lib/types/geometry";
 import { Party, PartyCode } from "@lib/types/common";
 import { MapOptions } from "@lib/types/mapOptions";
@@ -82,7 +86,9 @@ export class LayerManager {
 	): void {
 		const colorExpression = categoryMatch(
 			"winningParty",
-			partyInfo.map((party) => [party.key, PARTIES[party.key].color] as const),
+			partyInfo.map(
+				(party) => [party.key, PARTIES[party.key].color] as const,
+			),
 			"#cccccc",
 		);
 
@@ -253,7 +259,10 @@ export class LayerManager {
 
 	private applyVisibility(visibility: MapOptions["visibility"]): void {
 		if (!this.lastFillPaint) return;
-		if (!this.map.getLayer(FILL_LAYER_ID) || !this.map.getLayer(LINE_LAYER_ID))
+		if (
+			!this.map.getLayer(FILL_LAYER_ID) ||
+			!this.map.getLayer(LINE_LAYER_ID)
+		)
 			return;
 
 		const overlayOpacity = visibility.overlayOpacity ?? 0.6;
@@ -301,8 +310,7 @@ export class LayerManager {
 		}
 
 		const existing = this.map.getSource(POINT_SOURCE_ID) as
-			| GeoJSONSource
-			| undefined;
+			GeoJSONSource | undefined;
 		if (existing) {
 			existing.setData(collection as any);
 		} else {
@@ -324,7 +332,10 @@ export class LayerManager {
 		this.map.setPaintProperty(
 			POINT_LAYER_ID,
 			"circle-radius",
-			zoomInterpolate([[FADE_MIN_ZOOM, radius.min], [10, radius.max]]),
+			zoomInterpolate([
+				[FADE_MIN_ZOOM, radius.min],
+				[10, radius.max],
+			]),
 		);
 		this.pointTooltip = tooltip;
 		this.pointTooltipDark = isDark;
@@ -342,7 +353,10 @@ export class LayerManager {
 		this.map.setPaintProperty(
 			POINT_LAYER_ID,
 			"circle-opacity",
-			zoomInterpolate([[FADE_MIN_ZOOM, 0], [FADE_MAX_ZOOM, circleMax]]),
+			zoomInterpolate([
+				[FADE_MIN_ZOOM, 0],
+				[FADE_MAX_ZOOM, circleMax],
+			]),
 		);
 	}
 
@@ -360,11 +374,15 @@ export class LayerManager {
 		if (!this.map.isStyleLoaded()) return;
 		const sourceId = `atlas-line-${layer.id}`;
 		const layerId = `${sourceId}-stroke`;
-		const source = this.map.getSource(sourceId) as GeoJSONSource | undefined;
+		const source = this.map.getSource(sourceId) as
+			GeoJSONSource | undefined;
 		if (source) {
 			source.setData(layer.data as any);
 		} else {
-			this.map.addSource(sourceId, { type: "geojson", data: layer.data as any });
+			this.map.addSource(sourceId, {
+				type: "geojson",
+				data: layer.data as any,
+			});
 			this.map.addLayer({
 				id: layerId,
 				type: "line",
@@ -444,7 +462,9 @@ export class LayerManager {
 		if (!this.map.getLayer(layerId)) return null;
 
 		const counts: Record<string, number> = {};
-		for (const feature of this.map.queryRenderedFeatures({ layers: [layerId] })) {
+		for (const feature of this.map.queryRenderedFeatures({
+			layers: [layerId],
+		})) {
 			const value = feature.properties?.[property];
 			const key = typeof value === "string" ? value : "Unknown";
 			counts[key] = (counts[key] ?? 0) + 1;
@@ -460,15 +480,31 @@ export class LayerManager {
 
 	private addPointTooltipHandlers(): void {
 		if (this.pointTooltipHandlersAttached) return;
-		this.map.on("mouseenter", POINT_LAYER_ID, this.handlePointMouseEnter as any);
-		this.map.on("mouseleave", POINT_LAYER_ID, this.handlePointMouseLeave as any);
+		this.map.on(
+			"mouseenter",
+			POINT_LAYER_ID,
+			this.handlePointMouseEnter as any,
+		);
+		this.map.on(
+			"mouseleave",
+			POINT_LAYER_ID,
+			this.handlePointMouseLeave as any,
+		);
 		this.pointTooltipHandlersAttached = true;
 	}
 
 	private removePointTooltipHandlers(): void {
 		if (!this.pointTooltipHandlersAttached) return;
-		this.map.off("mouseenter", POINT_LAYER_ID, this.handlePointMouseEnter as any);
-		this.map.off("mouseleave", POINT_LAYER_ID, this.handlePointMouseLeave as any);
+		this.map.off(
+			"mouseenter",
+			POINT_LAYER_ID,
+			this.handlePointMouseEnter as any,
+		);
+		this.map.off(
+			"mouseleave",
+			POINT_LAYER_ID,
+			this.handlePointMouseLeave as any,
+		);
 		this.pointTooltipHandlersAttached = false;
 		this.pointTooltip = undefined;
 		this.pointTooltipDark = false;
@@ -478,8 +514,7 @@ export class LayerManager {
 	private handlePointMouseEnter = (event: any): void => {
 		if (this.map.getZoom() < FADE_MAX_ZOOM || !this.pointTooltip) return;
 		const properties = event.features?.[0]?.properties as
-			| Record<string, string | number>
-			| undefined;
+			Record<string, string | number> | undefined;
 		if (!properties) return;
 
 		this.map.getCanvas().style.cursor = "pointer";
@@ -515,7 +550,10 @@ export class LayerManager {
 				this.pointPopup.addClassName("atlas-point-popup--dark");
 			}
 		}
-		this.pointPopup.setLngLat(event.lngLat).setDOMContent(content).addTo(this.map);
+		this.pointPopup
+			.setLngLat(event.lngLat)
+			.setDOMContent(content)
+			.addTo(this.map);
 	};
 
 	private handlePointMouseLeave = (): void => {
@@ -527,9 +565,7 @@ export class LayerManager {
 	// switching to a point dataset so stale boundary data doesn't linger beneath.
 	clearBoundaryData(): void {
 		this.sourceGeojson = null;
-		const src = this.map.getSource(SOURCE_ID) as
-			| GeoJSONSource
-			| undefined;
+		const src = this.map.getSource(SOURCE_ID) as GeoJSONSource | undefined;
 		if (src) src.setData(EMPTY_FC as any);
 	}
 
@@ -544,7 +580,11 @@ export class LayerManager {
 		if (!this.map.isStyleLoaded()) return;
 		const opacity = hidden ? 0 : 1;
 		if (this.map.getLayer(LINE_LAYER_ID)) {
-			this.map.setPaintProperty(LINE_LAYER_ID, "line-opacity", hidden ? 0 : 0.05);
+			this.map.setPaintProperty(
+				LINE_LAYER_ID,
+				"line-opacity",
+				hidden ? 0 : 0.05,
+			);
 		}
 		for (const layerId of LayerManager.BASE_BOUNDARY_LAYERS) {
 			if (this.map.getLayer(layerId)) {

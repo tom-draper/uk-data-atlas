@@ -67,7 +67,9 @@ export default function FuelPovertyChart({
 		<ChartCard
 			heading="Fuel Poverty [2024]"
 			headerEnd={
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
 					England
 				</span>
 			}

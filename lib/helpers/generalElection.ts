@@ -52,13 +52,15 @@ export const processPartyVotes = (
 			const votes = rawPartyVotes[party.key as PartyCode] || 0;
 			const percentage = (votes / totalVotes) * 100;
 			if (percentage <= 0) return [];
-			return [{
-				key: party.key,
-				name: party.name,
-				color: PARTIES[party.key as PartyCode]?.color || "#999",
-				votes,
-				percentage,
-			}];
+			return [
+				{
+					key: party.key,
+					name: party.name,
+					color: PARTIES[party.key as PartyCode]?.color || "#999",
+					votes,
+					percentage,
+				},
+			];
 		})
 		.sort((a, b) => b.votes - a.votes);
 };
@@ -81,7 +83,11 @@ export function computeGeneralElectionYearData(
 	aggregatedData: Record<number, AggregatedGeneralElectionData> | null,
 	selectedArea: SelectedArea | null,
 	getCodeForYear:
-		| ((type: "constituency", code: string, targetYear: number) => string | undefined)
+		| ((
+				type: "constituency",
+				code: string,
+				targetYear: number,
+		  ) => string | undefined)
 		| undefined,
 	excluded: Set<string> | undefined,
 	selectedParty: string | undefined,
@@ -103,7 +109,8 @@ export function computeGeneralElectionYearData(
 	let rawPartyVotes: PartyVotes | null = null;
 	let turnout: number | null = null;
 	let isAggregated = false;
-	let seatsSummary: { party: string; count: number; color: string }[] | null = null;
+	let seatsSummary: { party: string; count: number; color: string }[] | null =
+		null;
 	let totalSeats: number | null = null;
 
 	if (selectedArea && selectedArea.type === "constituency") {
@@ -111,7 +118,11 @@ export function computeGeneralElectionYearData(
 		let data = dataset.data?.[constituencyCode];
 
 		if (!data && getCodeForYear) {
-			const mappedCode = getCodeForYear("constituency", constituencyCode, year);
+			const mappedCode = getCodeForYear(
+				"constituency",
+				constituencyCode,
+				year,
+			);
 			if (mappedCode) {
 				data = dataset.data?.[mappedCode];
 			}
@@ -119,13 +130,21 @@ export function computeGeneralElectionYearData(
 
 		if (data) {
 			rawPartyVotes = data.partyVotes;
-			turnout = calculateTurnout(data.validVotes, data.invalidVotes, data.electorate);
+			turnout = calculateTurnout(
+				data.validVotes,
+				data.invalidVotes,
+				data.electorate,
+			);
 		}
 	} else if (selectedArea === null && aggregatedData?.[year]) {
 		const agg = aggregatedData[year];
 		if (agg.partyVotes) {
 			rawPartyVotes = agg.partyVotes as PartyVotes;
-			turnout = calculateTurnout(agg.validVotes, agg.invalidVotes, agg.electorate);
+			turnout = calculateTurnout(
+				agg.validVotes,
+				agg.invalidVotes,
+				agg.electorate,
+			);
 			isAggregated = true;
 			totalSeats = agg.totalSeats;
 
@@ -153,15 +172,16 @@ export function computeGeneralElectionYearData(
 		};
 	}
 
-	const filteredVotes = excluded?.size || selectedParty
-		? Object.fromEntries(
-				Object.entries(rawPartyVotes).filter(
-					([party]) =>
-						!excluded?.has(party) &&
-						(!selectedParty || party === selectedParty),
-				),
-			)
-		: rawPartyVotes;
+	const filteredVotes =
+		excluded?.size || selectedParty
+			? Object.fromEntries(
+					Object.entries(rawPartyVotes).filter(
+						([party]) =>
+							!excluded?.has(party) &&
+							(!selectedParty || party === selectedParty),
+					),
+				)
+			: rawPartyVotes;
 	const partyData = processPartyVotes(filteredVotes, dataset.partyInfo);
 	const totalVotes = partyData.reduce((a, p) => a + p.votes, 0);
 

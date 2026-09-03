@@ -15,7 +15,10 @@ export default function TitlePane() {
 			style={glassStyle(isDark)}
 		>
 			<GlassOverlays isDark={isDark} />
-			<div className={`relative flex items-center ${t.section} rounded-t-md`} style={{ zIndex: 1 }}>
+			<div
+				className={`relative flex items-center ${t.section} rounded-t-md`}
+				style={{ zIndex: 1 }}
+			>
 				<a
 					href="https://github.com/tom-draper/uk-data-atlas"
 					target="_blank"
@@ -35,7 +38,9 @@ export default function TitlePane() {
 				</a>
 				<h1 className={`font-semibold text-[15px] ${t.heading}`}>
 					UK Data Atlas
-					<span className={`ml-2 text-[10px] font-normal align-middle ${t.textMuted}`}>
+					<span
+						className={`ml-2 text-[10px] font-normal align-middle ${t.textMuted}`}
+					>
 						v{packageJson.version}
 					</span>
 				</h1>

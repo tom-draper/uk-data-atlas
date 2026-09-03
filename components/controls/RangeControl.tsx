@@ -60,15 +60,23 @@ export function RangeControl({
 			if (isDraggingMinRef.current) {
 				const newMin = Math.min(
 					getValueFromPosition(e.clientY),
-					currentMaxRef.current - (maxRef.current - minRef.current) * 0.05,
+					currentMaxRef.current -
+						(maxRef.current - minRef.current) * 0.05,
 				);
-				onRangeInputRef.current(Math.max(newMin, minRef.current), currentMaxRef.current);
+				onRangeInputRef.current(
+					Math.max(newMin, minRef.current),
+					currentMaxRef.current,
+				);
 			} else if (isDraggingMaxRef.current) {
 				const newMax = Math.max(
 					getValueFromPosition(e.clientY),
-					currentMinRef.current + (maxRef.current - minRef.current) * 0.05,
+					currentMinRef.current +
+						(maxRef.current - minRef.current) * 0.05,
 				);
-				onRangeInputRef.current(currentMinRef.current, Math.min(newMax, maxRef.current));
+				onRangeInputRef.current(
+					currentMinRef.current,
+					Math.min(newMax, maxRef.current),
+				);
 			}
 		};
 

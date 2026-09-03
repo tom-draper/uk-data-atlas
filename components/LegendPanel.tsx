@@ -61,31 +61,36 @@ function useLegendAggregates(
 	location: string | null,
 ): LegendAggregates {
 	return useMemo(
-		() => Object.fromEntries(
-			LEGEND_DEFINITIONS.flatMap((definition) => {
-				const aggregation = definition.legendAggregation;
-				if (!aggregation) return [];
-				return [[
-					definition.type,
-					aggregateDataset<any>(
-						{
-							datasets: datasets[definition.type],
-							boundaryType: definition.boundaryType,
-							keyBy: aggregation.keyBy,
-							calculateStats: aggregation.calculateStats,
-						},
-						mapManager?.datasetAggregator ?? null,
-						boundaryData,
-						location,
-					),
-				]];
-			}),
-		) as LegendAggregates,
+		() =>
+			Object.fromEntries(
+				LEGEND_DEFINITIONS.flatMap((definition) => {
+					const aggregation = definition.legendAggregation;
+					if (!aggregation) return [];
+					return [
+						[
+							definition.type,
+							aggregateDataset<any>(
+								{
+									datasets: datasets[definition.type],
+									boundaryType: definition.boundaryType,
+									keyBy: aggregation.keyBy,
+									calculateStats: aggregation.calculateStats,
+								},
+								mapManager?.datasetAggregator ?? null,
+								boundaryData,
+								location,
+							),
+						],
+					];
+				}),
+			) as LegendAggregates,
 		[
 			mapManager,
 			boundaryData,
 			location,
-			...LEGEND_DEFINITIONS.map((definition) => datasets[definition.type]),
+			...LEGEND_DEFINITIONS.map(
+				(definition) => datasets[definition.type],
+			),
 		],
 	);
 }
@@ -134,9 +139,10 @@ function computeEthnicities(
 	for (const localAuthorityData of Object.values(
 		yearData,
 	) as EthnicityCategory[]) {
-		for (const [ethnicity, data] of Object.entries(
-			localAuthorityData,
-		) as [string, Ethnicity][]) {
+		for (const [ethnicity, data] of Object.entries(localAuthorityData) as [
+			string,
+			Ethnicity,
+		][]) {
 			const currentTotal = ethnicityTotals.get(ethnicity) || 0;
 			if (typeof data.population === "number") {
 				ethnicityTotals.set(ethnicity, currentTotal + data.population);
@@ -176,7 +182,10 @@ function PercentageRangePanel({
 			style={glassStyle(isDark)}
 		>
 			<GlassOverlays isDark={isDark} />
-			<div className={`relative ${t.section} p-1 overflow-hidden`} style={{ zIndex: 1 }}>
+			<div
+				className={`relative ${t.section} p-1 overflow-hidden`}
+				style={{ zIndex: 1 }}
+			>
 				<RangeControl
 					min={0}
 					max={100}
@@ -219,7 +228,12 @@ export default function LegendPanel({
 
 	const verticalThemeGradient = `linear-gradient(to bottom, ${activeTheme.colors.join(", ")})`;
 
-	const legendAggregates = useLegendAggregates(datasets, mapManager, boundaryData, location);
+	const legendAggregates = useLegendAggregates(
+		datasets,
+		mapManager,
+		boundaryData,
+		location,
+	);
 
 	const parties = computeParties(activeDataset, legendAggregates);
 	const ethnicities = computeEthnicities(activeDataset, legendAggregates);
@@ -385,7 +399,8 @@ export default function LegendPanel({
 	const electionRange = {
 		min: electionOpts?.percentageRange?.min ?? 0,
 		max:
-			(electionOpts as CategoryOptions | null)?.percentageRange?.max ?? 100,
+			(electionOpts as CategoryOptions | null)?.percentageRange?.max ??
+			100,
 	};
 	const handleElectionRangeInput = (min: number, max: number) => {
 		if (!electionType) return;
@@ -439,7 +454,10 @@ export default function LegendPanel({
 				style={glassStyle(isDark)}
 			>
 				<GlassOverlays isDark={isDark} />
-				<div className={`relative ${t.section} p-1 overflow-hidden`} style={{ zIndex: 1 }}>
+				<div
+					className={`relative ${t.section} p-1 overflow-hidden`}
+					style={{ zIndex: 1 }}
+				>
 					<LegendContent
 						activeDataset={activeDataset}
 						activeViz={activeViz}
@@ -460,7 +478,7 @@ export default function LegendPanel({
 						}
 						onEthnicityRightClick={(id) =>
 							handleEthnicityRightClick(id as EthnicityCode)
-							}
+						}
 						onPointLegendClick={handlePointLegendClick}
 						onPointLegendRightClick={handlePointLegendRightClick}
 						onNetworkClick={handleNetworkClick}

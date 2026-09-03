@@ -48,12 +48,17 @@ function computeParticles(medianIncome: number | null) {
 
 	const minIncome = 25000;
 	const maxIncome = 45000;
-	const clampedIncome = Math.max(minIncome, Math.min(medianIncome, maxIncome));
+	const clampedIncome = Math.max(
+		minIncome,
+		Math.min(medianIncome, maxIncome),
+	);
 
 	const minParticles = 4;
 	const maxParticles = 100;
 	const percentage = (clampedIncome - minIncome) / (maxIncome - minIncome);
-	const count = Math.round(minParticles + percentage * (maxParticles - minParticles));
+	const count = Math.round(
+		minParticles + percentage * (maxParticles - minParticles),
+	);
 
 	const rand = seededRandom(Math.round(medianIncome));
 
@@ -142,7 +147,9 @@ export default function IncomeChart({
 		<ChartCard
 			heading={`Median Income [${dataset.year}]`}
 			headerEnd={
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
 					England
 				</span>
 			}
@@ -159,21 +166,21 @@ export default function IncomeChart({
 			}
 			background={
 				<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
-				{particles.map((p) => (
-					<span
-						key={p.id}
-						className={`absolute font-bold ${p.color} ${p.blur}`}
-						style={{
-							top: p.top,
-							left: p.left,
-							fontSize: `${p.size}rem`,
-							opacity: p.opacity,
-							transform: `rotate(${p.rotation}deg)`,
-						}}
-					>
-						£
-					</span>
-				))}
+					{particles.map((p) => (
+						<span
+							key={p.id}
+							className={`absolute font-bold ${p.color} ${p.blur}`}
+							style={{
+								top: p.top,
+								left: p.left,
+								fontSize: `${p.size}rem`,
+								opacity: p.opacity,
+								transform: `rotate(${p.rotation}deg)`,
+							}}
+						>
+							£
+						</span>
+					))}
 				</div>
 			}
 		>

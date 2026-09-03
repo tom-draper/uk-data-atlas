@@ -74,9 +74,15 @@ function computeLeStats(
 	return null;
 }
 
-function computeBarRange(dataset: LifeExpectancyDataset, chartsLoading: boolean) {
+function computeBarRange(
+	dataset: LifeExpectancyDataset,
+	chartsLoading: boolean,
+) {
 	if (chartsLoading) return { min: 55, max: 85 };
-	const vals = Object.values(dataset.data).flatMap((r) => [r.maleBirthLE, r.femaleBirthLE]);
+	const vals = Object.values(dataset.data).flatMap((r) => [
+		r.maleBirthLE,
+		r.femaleBirthLE,
+	]);
 	return { min: Math.min(...vals), max: Math.max(...vals) };
 }
 
@@ -128,8 +134,18 @@ export default function LifeExpectancyChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[datasetId];
 
-	const leStats = dataset ? computeLeStats(dataset, aggregatedData, selectedArea, datasetId, chartsLoading) : null;
-	const barRange = dataset ? computeBarRange(dataset, chartsLoading) : { min: 55, max: 85 };
+	const leStats = dataset
+		? computeLeStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				datasetId,
+				chartsLoading,
+			)
+		: null;
+	const barRange = dataset
+		? computeBarRange(dataset, chartsLoading)
+		: { min: 55, max: 85 };
 
 	const isActive = !!(
 		dataset &&
@@ -181,34 +197,34 @@ export default function LifeExpectancyChart({
 			}
 		>
 			{leStats ? (
-					<div className="mt-1 space-y-0">
-						{leBar(
-							leStats.averageMaleLE,
-							"M",
-							barRange.min,
-							barRange.max,
-							isDark,
-						)}
-						{leBar(
-							leStats.averageFemaleLE,
-							"F",
-							barRange.min,
-							barRange.max,
-							isDark,
-						)}
-					</div>
-				) : (
-					<div className="flex-1 mt-1">
-						{chartsLoading ? (
-							<ChartContentPlaceholder className="h-full" />
-						) : (
-							<div
-								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-							>
-								No data available
-							</div>
-						)}
-					</div>
+				<div className="mt-1 space-y-0">
+					{leBar(
+						leStats.averageMaleLE,
+						"M",
+						barRange.min,
+						barRange.max,
+						isDark,
+					)}
+					{leBar(
+						leStats.averageFemaleLE,
+						"F",
+						barRange.min,
+						barRange.max,
+						isDark,
+					)}
+				</div>
+			) : (
+				<div className="flex-1 mt-1">
+					{chartsLoading ? (
+						<ChartContentPlaceholder className="h-full" />
+					) : (
+						<div
+							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+						>
+							No data available
+						</div>
+					)}
+				</div>
 			)}
 		</ChartCard>
 	);

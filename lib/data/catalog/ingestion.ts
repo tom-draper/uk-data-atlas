@@ -52,7 +52,9 @@ export function validatePrecompiledDataset<
 	for (const [key, value] of Object.entries(compiled)) {
 		const dataset = value as CompiledDataset;
 		if (dataset.type !== definition.type) {
-			throw new Error(`${definition.type}: ${key} has type ${String(dataset.type)}.`);
+			throw new Error(
+				`${definition.type}: ${key} has type ${String(dataset.type)}.`,
+			);
 		}
 		if (dataset.boundaryType !== definition.boundaryType) {
 			throw new Error(
@@ -60,7 +62,9 @@ export function validatePrecompiledDataset<
 			);
 		}
 		if (!Number.isInteger(dataset.boundaryYear)) {
-			throw new Error(`${definition.type}: ${key} has no integer boundaryYear.`);
+			throw new Error(
+				`${definition.type}: ${key} has no integer boundaryYear.`,
+			);
 		}
 		boundaryYears.add(dataset.boundaryYear as number);
 
@@ -75,7 +79,9 @@ export function validatePrecompiledDataset<
 			const record = asRecord(value);
 			for (const field of contract?.requiredDataFields ?? []) {
 				if (!record || !(field in record)) {
-					throw new Error(`${definition.type}: ${key}/${code} is missing ${field}.`);
+					throw new Error(
+						`${definition.type}: ${key}/${code} is missing ${field}.`,
+					);
 				}
 			}
 		}

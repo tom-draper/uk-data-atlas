@@ -32,12 +32,15 @@ export function computeLocalElectionYearData(
 	aggregatedData: Record<number, AggregatedLocalElectionData> | null,
 	selectedArea: SelectedArea | null,
 	getCodeForYear:
-		| ((type: "ward", code: string, targetYear: number) => string | undefined)
+		| ((
+				type: "ward",
+				code: string,
+				targetYear: number,
+		  ) => string | undefined)
 		| undefined,
 	getWardsForLad: ((ladCode: string, year: number) => string[]) | undefined,
 	getWardsForConstituency:
-		| ((constituencyCode: string, wardYear: number) => string[])
-		| undefined,
+		((constituencyCode: string, wardYear: number) => string[]) | undefined,
 	excluded: Set<string> | undefined,
 	selectedParty: string | undefined,
 ): ProcessedLocalElectionYearData {
@@ -110,8 +113,7 @@ export function computeLocalElectionYearData(
 						wardData.partyVotes,
 					)) {
 						aggregatedVotes[partyKey] =
-							(aggregatedVotes[partyKey] || 0) +
-							(votes || 0);
+							(aggregatedVotes[partyKey] || 0) + (votes || 0);
 					}
 					if (wardData.electorate) {
 						totalElectorate += wardData.electorate;
@@ -136,14 +138,11 @@ export function computeLocalElectionYearData(
 		if (cached) {
 			rawPartyVotes = cached.partyVotes as PartyVotes;
 			if (cached.electorate > 0) {
-				const totalVotes = Object.values(
-					cached.partyVotes,
-				).reduce((s, v) => s + (v || 0), 0);
-				turnout = calculateTurnout(
-					totalVotes,
+				const totalVotes = Object.values(cached.partyVotes).reduce(
+					(s, v) => s + (v || 0),
 					0,
-					cached.electorate,
 				);
+				turnout = calculateTurnout(totalVotes, 0, cached.electorate);
 			}
 		}
 	} else if (
@@ -172,8 +171,7 @@ export function computeLocalElectionYearData(
 					aggregatedVotes[party] =
 						(aggregatedVotes[party] || 0) + (votes || 0);
 				}
-				if (wardData.electorate)
-					totalElectorate += wardData.electorate;
+				if (wardData.electorate) totalElectorate += wardData.electorate;
 			}
 		}
 
@@ -184,22 +182,14 @@ export function computeLocalElectionYearData(
 		if (totalVotes > 0) {
 			rawPartyVotes = aggregatedVotes as PartyVotes;
 			if (totalElectorate > 0) {
-				turnout = calculateTurnout(
-					totalVotes,
-					0,
-					totalElectorate,
-				);
+				turnout = calculateTurnout(totalVotes, 0, totalElectorate);
 			}
 		}
 	} else if (selectedArea === null && aggregatedData?.[year]) {
 		const agg = aggregatedData[year];
 		if (agg) {
 			rawPartyVotes = agg.partyVotes;
-			turnout = calculateTurnout(
-				agg.totalVotes,
-				0,
-				agg.electorate,
-			);
+			turnout = calculateTurnout(agg.totalVotes, 0, agg.electorate);
 		}
 	}
 
@@ -214,15 +204,16 @@ export function computeLocalElectionYearData(
 		};
 	}
 
-	const filteredVotes = excluded?.size || selectedParty
-		? Object.fromEntries(
-				Object.entries(rawPartyVotes).filter(
-					([party]) =>
-						!excluded?.has(party) &&
-						(!selectedParty || party === selectedParty),
-				),
-			)
-		: rawPartyVotes;
+	const filteredVotes =
+		excluded?.size || selectedParty
+			? Object.fromEntries(
+					Object.entries(rawPartyVotes).filter(
+						([party]) =>
+							!excluded?.has(party) &&
+							(!selectedParty || party === selectedParty),
+					),
+				)
+			: rawPartyVotes;
 	const partyData = processPartyVotes(filteredVotes, dataset.partyInfo);
 	const totalVotes = partyData.reduce((a, p) => a + p.votes, 0);
 

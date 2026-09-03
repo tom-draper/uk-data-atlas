@@ -25,7 +25,10 @@ export interface DatasetConfig<T extends BoundaryDataset> {
 // share that work without retaining stale data after a location change.
 const aggregateCache = new WeakMap<
 	DatasetAggregator,
-	WeakMap<BoundaryData, WeakMap<object, Map<string, Record<string, any> | null>>>
+	WeakMap<
+		BoundaryData,
+		WeakMap<object, Map<string, Record<string, any> | null>>
+	>
 >();
 
 function cachedAggregate(
@@ -76,8 +79,11 @@ export function aggregateDataset<T extends BoundaryDataset>(
 		() => {
 			const result: Record<string, any> = {};
 
-			for (const [datasetId, dataset] of Object.entries(config.datasets)) {
-				const geojson = boundaryData[config.boundaryType]?.[dataset.boundaryYear];
+			for (const [datasetId, dataset] of Object.entries(
+				config.datasets,
+			)) {
+				const geojson =
+					boundaryData[config.boundaryType]?.[dataset.boundaryYear];
 				const key = config.keyBy === "id" ? datasetId : dataset.year;
 				if (dataset.data && geojson) {
 					result[key] = config.calculateStats(

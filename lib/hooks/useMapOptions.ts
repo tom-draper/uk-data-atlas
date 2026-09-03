@@ -4,7 +4,10 @@ import { MapOptions } from "../types/mapOptions";
 export function useMapOptions(options: MapOptions) {
 	const [mapOptions, setMapOptions] = useState<MapOptions>(options);
 
-	const handleMapOptionsChange = (type: keyof MapOptions, options: Partial<MapOptions[typeof type]>) => {
+	const handleMapOptionsChange = (
+		type: keyof MapOptions,
+		options: Partial<MapOptions[typeof type]>,
+	) => {
 		setMapOptions((prev) => ({
 			...prev,
 			[type]: {

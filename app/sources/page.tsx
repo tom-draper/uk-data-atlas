@@ -6,7 +6,8 @@ import {
 
 export const metadata: Metadata = {
 	title: "Data Sources - UK Data Atlas",
-	description: "Data sources and licensing information for the UK Data Atlas.",
+	description:
+		"Data sources and licensing information for the UK Data Atlas.",
 };
 
 const legacyDatasets: DatasetSource[] = [
@@ -281,7 +282,8 @@ const datasets: DatasetSource[] = [
 	...legacyDatasets,
 ].filter(
 	(dataset, index, entries) =>
-		entries.findIndex((candidate) => candidate.name === dataset.name) === index,
+		entries.findIndex((candidate) => candidate.name === dataset.name) ===
+		index,
 );
 
 export default function DatasetsPage() {

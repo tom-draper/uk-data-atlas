@@ -152,7 +152,9 @@ export function useMapUpdates({
 
 		const performUpdate = () => {
 			if (isChartDataset(activeDataset)) {
-				const definition = getChartDatasetDefinition(activeDataset.type);
+				const definition = getChartDatasetDefinition(
+					activeDataset.type,
+				);
 				if (definition?.mapRenderer) {
 					return definition.mapRenderer.render({
 						map: mapManager,
@@ -182,7 +184,6 @@ export function useMapUpdates({
 						activeDataset,
 						mapOptions,
 					);
-
 			}
 		};
 

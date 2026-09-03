@@ -63,7 +63,13 @@ export default function QualificationChart({
 		activeDataset.id === dataset?.id;
 
 	const breakdown = dataset
-		? computeBreakdown(dataset, aggregatedData, selectedArea, year, chartsLoading)
+		? computeBreakdown(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				year,
+				chartsLoading,
+			)
 		: null;
 
 	const hasData = breakdown !== null && breakdown.total > 0;
@@ -86,7 +92,9 @@ export default function QualificationChart({
 		<ChartCard
 			heading={`Qualifications [${dataset.year}]`}
 			headerEnd={
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
 					England &amp; Wales
 				</span>
 			}

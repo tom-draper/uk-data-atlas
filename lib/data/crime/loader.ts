@@ -10,7 +10,9 @@ const extractYearFromTitle = (title: string): number => {
 export async function loadCrime(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, CrimeDataset>> {
-	const csvText = await read("economics/crime/policeforceareatablesyejune25final.csv");
+	const csvText = await read(
+		"economics/crime/policeforceareatablesyejune25final.csv",
+	);
 	const year = extractYearFromTitle(csvText.split("\n")[0] ?? "");
 
 	const headerLine = findHeaderLine(csvText, "police force area code");

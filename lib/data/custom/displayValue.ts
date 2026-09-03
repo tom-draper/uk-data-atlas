@@ -7,7 +7,11 @@ interface SelectedCustomArea {
 }
 
 interface CustomCodeMapper {
-	getCodeForYear(type: BoundaryType, code: string, targetYear: number): string | undefined;
+	getCodeForYear(
+		type: BoundaryType,
+		code: string,
+		targetYear: number,
+	): string | undefined;
 	getWardsForLad(localAuthorityCode: string, year: number): string[];
 }
 
@@ -37,13 +41,18 @@ export function getCustomDatasetDisplayValue(
 		if (selectedArea.type === "localAuthority") {
 			let value = 0;
 			let count = 0;
-			for (const wardCode of codeMapper.getWardsForLad(selectedArea.code, dataset.boundaryYear)) {
+			for (const wardCode of codeMapper.getWardsForLad(
+				selectedArea.code,
+				dataset.boundaryYear,
+			)) {
 				const mappedWardCode = codeMapper.getCodeForYear(
 					"ward",
 					wardCode,
 					dataset.boundaryYear,
 				);
-				const wardValue = dataset.data[wardCode] ?? (mappedWardCode ? dataset.data[mappedWardCode] : undefined);
+				const wardValue =
+					dataset.data[wardCode] ??
+					(mappedWardCode ? dataset.data[mappedWardCode] : undefined);
 				if (wardValue !== undefined) {
 					value += wardValue;
 					count++;
@@ -54,5 +63,7 @@ export function getCustomDatasetDisplayValue(
 	}
 
 	const aggregate = aggregatedData?.[dataset.year];
-	return aggregate ? { value: aggregate.average, count: aggregate.count } : null;
+	return aggregate
+		? { value: aggregate.average, count: aggregate.count }
+		: null;
 }

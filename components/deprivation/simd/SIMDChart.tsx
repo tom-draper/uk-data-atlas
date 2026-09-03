@@ -58,7 +58,8 @@ export default function SIMDChart({
 	if (!dataset) return null;
 
 	const simdStats = computeSimdStats(dataset, aggregatedData, selectedArea);
-	const isActive = activeDataset?.type === "simd" && activeDataset.id === dataset.id;
+	const isActive =
+		activeDataset?.type === "simd" && activeDataset.id === dataset.id;
 
 	return (
 		<DecileChart
@@ -69,9 +70,14 @@ export default function SIMDChart({
 			hasData={simdStats !== null}
 			extraClassName="block w-full text-left"
 			footer={
-				selectedArea && simdStats && Number.isFinite(simdStats.averageSIMDRank) ? (
-					<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-						Rank {Math.round(simdStats.averageSIMDRank).toLocaleString()}
+				selectedArea &&
+				simdStats &&
+				Number.isFinite(simdStats.averageSIMDRank) ? (
+					<span
+						className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}
+					>
+						Rank{" "}
+						{Math.round(simdStats.averageSIMDRank).toLocaleString()}
 					</span>
 				) : null
 			}

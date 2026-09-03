@@ -74,7 +74,10 @@ export function CustomDatasetCard({
 	const range = dataMax - dataMin || 1;
 
 	const barWidth = displayValue
-		? Math.max(0, Math.min(((displayValue.value - dataMin) / range) * 100, 100))
+		? Math.max(
+				0,
+				Math.min(((displayValue.value - dataMin) / range) * 100, 100),
+			)
 		: 0;
 	const valueColor = displayValue ? getColor(barWidth / 100) : "#6366f1";
 
@@ -128,7 +131,9 @@ export function CustomDatasetCard({
 					{chartsLoading ? (
 						<ChartContentPlaceholder className="h-full" />
 					) : (
-						<div className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}>
+						<div
+							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+						>
 							No data available
 						</div>
 					)}
@@ -137,21 +142,31 @@ export function CustomDatasetCard({
 				<div className="flex-1 flex flex-col gap-1">
 					<div className="flex items-baseline justify-between">
 						<div className="leading-none">
-							<span className="text-2xl font-bold leading-none" style={{ color: valueColor }}>
+							<span
+								className="text-2xl font-bold leading-none"
+								style={{ color: valueColor }}
+							>
 								{displayValue!.value.toLocaleString("en-GB", {
 									minimumFractionDigits: 0,
 									maximumFractionDigits: 2,
 								})}
 							</span>
 						</div>
-						<span className={`text-[9px] ${displayValue!.count > 1 ? "" : "invisible"} ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+						<span
+							className={`text-[9px] ${displayValue!.count > 1 ? "" : "invisible"} ${isDark ? "text-gray-500" : "text-gray-400"}`}
+						>
 							{displayValue!.count} wards avg
 						</span>
 					</div>
-					<div className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}>
+					<div
+						className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}
+					>
 						<div
 							className="h-full rounded-xs transition-all duration-300"
-							style={{ width: `${barWidth}%`, backgroundColor: valueColor }}
+							style={{
+								width: `${barWidth}%`,
+								backgroundColor: valueColor,
+							}}
 						/>
 					</div>
 				</div>

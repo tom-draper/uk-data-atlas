@@ -20,14 +20,16 @@ const decodeXml = (value: string) =>
 
 function tableRows(contentXml: string): string[][] {
 	const start = contentXml.indexOf(`<table:table table:name="${TABLE_NAME}"`);
-	if (start === -1) throw new Error(`Could not find ${TABLE_NAME} in homelessness source`);
+	if (start === -1)
+		throw new Error(`Could not find ${TABLE_NAME} in homelessness source`);
 	const end = contentXml.indexOf("</table:table>", start);
-	if (end === -1) throw new Error(`Could not read ${TABLE_NAME} in homelessness source`);
+	if (end === -1)
+		throw new Error(`Could not read ${TABLE_NAME} in homelessness source`);
 
 	const rows: string[][] = [];
-	for (const rowMatch of contentXml.slice(start, end).matchAll(
-		/<table:table-row\b[^>]*>([\s\S]*?)<\/table:table-row>/g,
-	)) {
+	for (const rowMatch of contentXml
+		.slice(start, end)
+		.matchAll(/<table:table-row\b[^>]*>([\s\S]*?)<\/table:table-row>/g)) {
 		const cells: string[] = [];
 		for (const cellMatch of rowMatch[1].matchAll(
 			/<table:table-cell\b([^>]*)>([\s\S]*?)<\/table:table-cell>|<table:table-cell\b([^>]*)\/>/g,
@@ -52,7 +54,15 @@ export function loadHomelessness(
 ): Record<string, HomelessnessDataset> {
 	const data: Record<string, HomelessnessLADData> = {};
 	for (const row of tableRows(contentXml)) {
-		const [ladCode, ladName, total, _households, perThousand, withChildren, children] = row;
+		const [
+			ladCode,
+			ladName,
+			total,
+			_households,
+			perThousand,
+			withChildren,
+			children,
+		] = row;
 		if (!ladCode || !ladName || !LAD_CODE.test(ladCode)) continue;
 		const rawValues = [total, perThousand, withChildren, children];
 		if (rawValues.some((value) => !value)) continue;

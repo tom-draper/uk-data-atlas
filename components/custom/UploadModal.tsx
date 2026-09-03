@@ -223,8 +223,14 @@ export function UploadModal({
 							className={`w-full flex items-center gap-2 px-3 py-2 rounded-md border text-xs transition-colors ${isDark ? "border-white/10 bg-white/5 text-gray-300 hover:bg-white/10" : "border-gray-200 bg-white/60 text-gray-700 hover:bg-white/80"}`}
 						>
 							<Upload size={13} className="shrink-0" />
-							<span className="truncate font-medium">{file.name}</span>
-							<span className={`ml-auto shrink-0 ${isDark ? "text-gray-500" : "text-gray-400"}`}>Change</span>
+							<span className="truncate font-medium">
+								{file.name}
+							</span>
+							<span
+								className={`ml-auto shrink-0 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+							>
+								Change
+							</span>
 						</button>
 					) : (
 						<>
@@ -239,7 +245,9 @@ export function UploadModal({
 								className={`w-full border-2 border-dashed cursor-pointer rounded-md p-8 transition-colors flex flex-col items-center gap-2 ${isDark ? "border-white/20 hover:border-gray-400 text-gray-500" : "border-gray-300 hover:border-gray-400 text-gray-400"}`}
 							>
 								<Upload size={28} />
-								<span className="text-xs font-medium">Click to select CSV file</span>
+								<span className="text-xs font-medium">
+									Click to select CSV file
+								</span>
 							</button>
 						</>
 					)}

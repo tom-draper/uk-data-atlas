@@ -6,9 +6,15 @@ import {
 	Features,
 	getFeatureProp,
 } from "@lib/types/geometry";
-import { LocalElectionDataset, GeneralElectionDataset } from "@lib/types/elections";
+import {
+	LocalElectionDataset,
+	GeneralElectionDataset,
+} from "@lib/types/elections";
 import { EthnicityDataset } from "@lib/types/ethnicity";
-import { BrexitLADDataset, BrexitConstituencyDataset } from "@lib/types/referendum";
+import {
+	BrexitLADDataset,
+	BrexitConstituencyDataset,
+} from "@lib/types/referendum";
 import { MapOptions } from "@lib/types/mapOptions";
 import { polygonAreaSqKm } from "../population";
 import { getColorForBrexitLeave } from "../colorScale/datasetColors";
@@ -77,7 +83,10 @@ export class FeatureBuilder {
 		valueFor: (code: string, feature: Feature) => number | null | undefined,
 	): Features {
 		return this.mapFeatures(features, (feature) => {
-			const value = valueFor(getFeatureProp(feature.properties, codeProp) ?? "", feature);
+			const value = valueFor(
+				getFeatureProp(feature.properties, codeProp) ?? "",
+				feature,
+			);
 			return { value: Number.isFinite(value) ? value : null };
 		});
 	}
@@ -108,7 +117,8 @@ export class FeatureBuilder {
 		for (const [code, loc] of Object.entries(data)) {
 			if (loc?.partyVotes) {
 				let total = 0;
-				for (const v of Object.values(loc.partyVotes)) total += (v as number) ?? 0;
+				for (const v of Object.values(loc.partyVotes))
+					total += (v as number) ?? 0;
 				totalVotesMap.set(code, total);
 			}
 		}
@@ -120,7 +130,8 @@ export class FeatureBuilder {
 			if (locationData?.partyVotes) {
 				const partyVotes = locationData.partyVotes[partyCode] ?? 0;
 				const totalVotes = totalVotesMap.get(code) ?? 0;
-				percentage = totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
+				percentage =
+					totalVotes > 0 ? (partyVotes / totalVotes) * 100 : 0;
 			}
 			return { percentage, partyCode };
 		});
@@ -168,9 +179,14 @@ export class FeatureBuilder {
 				if (parentCategories) {
 					let maxPopulation = 0;
 					let majorityCategory = "NONE";
-					for (const subcategories of Object.values(parentCategories)) {
+					for (const subcategories of Object.values(
+						parentCategories,
+					)) {
 						for (const [name, d] of Object.entries(subcategories)) {
-							if (!excluded.has(name) && d.population > maxPopulation) {
+							if (
+								!excluded.has(name) &&
+								d.population > maxPopulation
+							) {
 								maxPopulation = d.population;
 								majorityCategory = name;
 							}
@@ -249,12 +265,19 @@ export class FeatureBuilder {
 		constituencyCodeProp: PropertyKeys,
 		mapOptions: MapOptions,
 	): Features {
-		return this.buildColorFeatures(features, constituencyCodeProp, (code) => {
-			const area = dataset.data[code];
-			return area
-				? getColorForBrexitLeave(area.pctLeave, mapOptions.brexitConstituency)
-				: DEFAULT_COLOR;
-		});
+		return this.buildColorFeatures(
+			features,
+			constituencyCodeProp,
+			(code) => {
+				const area = dataset.data[code];
+				return area
+					? getColorForBrexitLeave(
+							area.pctLeave,
+							mapOptions.brexitConstituency,
+						)
+					: DEFAULT_COLOR;
+			},
+		);
 	}
 
 	buildBrexitFeatures(
@@ -270,5 +293,4 @@ export class FeatureBuilder {
 				: DEFAULT_COLOR;
 		});
 	}
-
 }

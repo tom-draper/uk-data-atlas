@@ -27,7 +27,7 @@ export class MapManager implements MapRenderContext {
 				dataset: object;
 				mode: string;
 				geojson: BoundaryGeojson;
-			  }
+		  }
 		| undefined;
 	// Which code key a boundary file uses depends only on the property names it
 	// carries, so a detection is reused across every file sharing that schema.

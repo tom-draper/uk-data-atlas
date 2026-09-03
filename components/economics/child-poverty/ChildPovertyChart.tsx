@@ -117,7 +117,11 @@ export default function ChildPovertyChart({
 				hasData={hasData}
 				value={rate.toFixed(1)}
 				unit="% children"
-				secondary={stats ? `${formatCount(stats.childCount)} affected` : undefined}
+				secondary={
+					stats
+						? `${formatCount(stats.childCount)} affected`
+						: undefined
+				}
 				barWidth={barWidth}
 				barColor={color}
 			/>

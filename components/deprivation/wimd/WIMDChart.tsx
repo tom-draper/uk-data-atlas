@@ -29,7 +29,11 @@ function computeWimdStats(
 	if (selectedArea.type === "lsoa") {
 		const record = dataset.data[selectedArea.code];
 		return record
-			? { averageWIMDScore: record.wimdScore, averageWIMDRank: record.wimdRank, averageWIMDDecile: record.wimdDecile }
+			? {
+					averageWIMDScore: record.wimdScore,
+					averageWIMDRank: record.wimdRank,
+					averageWIMDDecile: record.wimdDecile,
+				}
 			: null;
 	}
 
@@ -55,7 +59,8 @@ export default function WIMDChart({
 	if (!dataset) return null;
 
 	const wimdStats = computeWimdStats(dataset, aggregatedData, selectedArea);
-	const isActive = activeDataset?.type === "wimd" && activeDataset.id === dataset.id;
+	const isActive =
+		activeDataset?.type === "wimd" && activeDataset.id === dataset.id;
 
 	return (
 		<DecileChart
@@ -66,9 +71,14 @@ export default function WIMDChart({
 			hasData={wimdStats !== null}
 			extraClassName="block w-full text-left"
 			footer={
-				selectedArea && wimdStats && Number.isFinite(wimdStats.averageWIMDRank) ? (
-					<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-						Rank {Math.round(wimdStats.averageWIMDRank).toLocaleString()}
+				selectedArea &&
+				wimdStats &&
+				Number.isFinite(wimdStats.averageWIMDRank) ? (
+					<span
+						className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}
+					>
+						Rank{" "}
+						{Math.round(wimdStats.averageWIMDRank).toLocaleString()}
 					</span>
 				) : null
 			}

@@ -11,7 +11,10 @@ export class Gazetteer {
 	private crosswalks: Record<string, Crosswalk>;
 	private childrenByParent: Record<string, string[]> = {};
 
-	constructor(core: GazetteerCore, crosswalks: Record<string, Crosswalk> = {}) {
+	constructor(
+		core: GazetteerCore,
+		crosswalks: Record<string, Crosswalk> = {},
+	) {
 		this.core = core;
 		this.crosswalks = crosswalks;
 		this.version = core.version;
@@ -39,7 +42,9 @@ export class Gazetteer {
 	// --- names (alias-aware, ambiguity-preserving; see 4.6) ---
 	resolveName(name: string, level?: Level): GazetteerEntry[] {
 		const codes = this.core.nameIndex[name.trim().toLowerCase()] ?? [];
-		const entries = codes.map((c) => this.core.byCode[c]).filter(Boolean) as GazetteerEntry[];
+		const entries = codes
+			.map((c) => this.core.byCode[c])
+			.filter(Boolean) as GazetteerEntry[];
 		return level ? entries.filter((e) => e.level === level) : entries;
 	}
 
@@ -88,7 +93,10 @@ export class Gazetteer {
 	}
 
 	// --- conversions (see 4.4) ---
-	overlaps(code: string, targetLevel: Level): Array<{ code: string; weight: number }> {
+	overlaps(
+		code: string,
+		targetLevel: Level,
+	): Array<{ code: string; weight: number }> {
 		const level = this.get(code)?.level;
 		if (!level) return [];
 		return this.crosswalks[key(level, targetLevel)]?.[code] ?? [];

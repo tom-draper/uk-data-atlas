@@ -155,7 +155,9 @@ export function getThemeColor(
 ) {
 	const theme = themeRgb.find((t) => t.id === themeId) ?? themeRgb[0];
 	const colors = theme.rgbColors;
-	const clamped = isNaN(normalizedValue) ? 0 : Math.max(0, Math.min(1, normalizedValue));
+	const clamped = isNaN(normalizedValue)
+		? 0
+		: Math.max(0, Math.min(1, normalizedValue));
 	const index = clamped * (colors.length - 1);
 	const lower = Math.floor(index);
 	const upper = Math.ceil(index);
@@ -187,10 +189,17 @@ const HEATMAP_STOPS: [number, number][] = [
 // Builds a MapLibre `heatmap-color` interpolation expression from a colour
 // theme, so the heatmap shares the palette used to colour discrete points
 // (getColor): low density → the theme's low end, dense → its intense end.
-export function buildHeatmapColorRamp(themeId: string = "viridis"): MapExpression {
-	return linearInterpolate(heatmapDensity(), HEATMAP_STOPS.map(([density, alpha]) => {
-		const rgb = getColor(density, themeId); // "rgb(r, g, b)"
-		const rgba = rgb.replace("rgb(", "rgba(").replace(")", `, ${alpha})`);
-		return [density, rgba] as const;
-	}));
+export function buildHeatmapColorRamp(
+	themeId: string = "viridis",
+): MapExpression {
+	return linearInterpolate(
+		heatmapDensity(),
+		HEATMAP_STOPS.map(([density, alpha]) => {
+			const rgb = getColor(density, themeId); // "rgb(r, g, b)"
+			const rgba = rgb
+				.replace("rgb(", "rgba(")
+				.replace(")", `, ${alpha})`);
+			return [density, rgba] as const;
+		}),
+	);
 }

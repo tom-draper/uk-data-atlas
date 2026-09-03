@@ -1,11 +1,18 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 
-interface WorkerRes { id: number; data?: unknown; error?: string }
+interface WorkerRes {
+	id: number;
+	data?: unknown;
+	error?: string;
+}
 
 let worker: Worker | null = null;
 let nextId = 0;
-const pending = new Map<number, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
+const pending = new Map<
+	number,
+	{ resolve: (v: unknown) => void; reject: (e: Error) => void }
+>();
 
 function getWorker(): Worker | null {
 	if (typeof window === "undefined" || typeof Worker === "undefined")
@@ -40,7 +47,9 @@ function getWorker(): Worker | null {
 async function fetchJson(url: string): Promise<unknown> {
 	const response = await fetch(url);
 	if (!response.ok) {
-		throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+		throw new Error(
+			`Failed to fetch ${url}: ${response.status} ${response.statusText}`,
+		);
 	}
 	return response.json();
 }
@@ -69,28 +78,41 @@ export interface JsonDatasetRequest {
 	enabled: boolean;
 }
 
-export function useJsonDatasetLoaders<T>(requests: readonly JsonDatasetRequest[]) {
-	const [datasets, setDatasets] = useState<Record<string, Record<string, T>>>({});
-	const [loading, setLoading] = useState(requests.some((request) => request.enabled));
+export function useJsonDatasetLoaders<T>(
+	requests: readonly JsonDatasetRequest[],
+) {
+	const [datasets, setDatasets] = useState<Record<string, Record<string, T>>>(
+		{},
+	);
+	const [loading, setLoading] = useState(
+		requests.some((request) => request.enabled),
+	);
 	const [errors, setErrors] = useState<string[]>([]);
 	const loadedUrls = useRef(new Set<string>());
-	const requestKey = requests.map((request) => `${request.key}:${request.url}:${request.enabled}`).join("|");
+	const requestKey = requests
+		.map((request) => `${request.key}:${request.url}:${request.enabled}`)
+		.join("|");
 
 	useEffect(() => {
 		let active = true;
 		const pendingRequests = requests.filter(
-			(request) => request.enabled && !loadedUrls.current.has(request.url),
+			(request) =>
+				request.enabled && !loadedUrls.current.has(request.url),
 		);
 		if (pendingRequests.length === 0) {
 			setLoading(false);
-			return () => { active = false; };
+			return () => {
+				active = false;
+			};
 		}
 		setLoading(true);
-		Promise.allSettled(pendingRequests.map(async (request) => ({
-			key: request.key,
-			url: request.url,
-			data: (await fetchViaWorker(request.url)) as Record<string, T>,
-		}))).then((results) => {
+		Promise.allSettled(
+			pendingRequests.map(async (request) => ({
+				key: request.key,
+				url: request.url,
+				data: (await fetchViaWorker(request.url)) as Record<string, T>,
+			})),
+		).then((results) => {
 			if (!active) return;
 			const loaded: Record<string, Record<string, T>> = {};
 			const nextErrors: string[] = [];
@@ -98,13 +120,20 @@ export function useJsonDatasetLoaders<T>(requests: readonly JsonDatasetRequest[]
 				if (result.status === "fulfilled") {
 					loaded[result.value.key] = result.value.data;
 					loadedUrls.current.add(result.value.url);
-				} else nextErrors.push(result.reason instanceof Error ? result.reason.message : String(result.reason));
+				} else
+					nextErrors.push(
+						result.reason instanceof Error
+							? result.reason.message
+							: String(result.reason),
+					);
 			}
 			setDatasets((current) => ({ ...current, ...loaded }));
 			setErrors(nextErrors);
 			setLoading(false);
 		});
-		return () => { active = false; };
+		return () => {
+			active = false;
+		};
 	}, [requestKey]);
 
 	return { datasets, loading, errors };

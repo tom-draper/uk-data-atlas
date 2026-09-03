@@ -7,13 +7,15 @@ export function getActiveDataset(
 	activeViz: ActiveViz,
 	customDatasets: (CustomDataset | NetworkDataset)[],
 ): Dataset | null {
-	if (activeViz.datasetType === "custom" || activeViz.datasetType === "network") {
+	if (
+		activeViz.datasetType === "custom" ||
+		activeViz.datasetType === "network"
+	) {
 		return customDatasets.find((d) => d.id === activeViz.datasetId) ?? null;
 	}
 
 	const datasetGroup = datasets[activeViz.datasetType] as
-		| Record<string, Dataset>
-		| undefined;
+		Record<string, Dataset> | undefined;
 
 	return (
 		datasetGroup?.[activeViz.datasetId] ??

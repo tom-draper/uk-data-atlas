@@ -60,7 +60,9 @@ describe("uploadColumns", () => {
 
 describe("guessCodeColumn", () => {
 	it("picks the header that reads like an area code", () => {
-		expect(guessCodeColumn(["Value", "Ward Code", "Total"])).toBe("Ward Code");
+		expect(guessCodeColumn(["Value", "Ward Code", "Total"])).toBe(
+			"Ward Code",
+		);
 		expect(guessCodeColumn(["Constituency", "Votes"])).toBe("Constituency");
 	});
 
@@ -70,7 +72,9 @@ describe("guessCodeColumn", () => {
 });
 
 describe("matchColumn", () => {
-	const areaBank: AreaBank = [entry("LADs 2024", "code", ["E06000001", "E06000002"])];
+	const areaBank: AreaBank = [
+		entry("LADs 2024", "code", ["E06000001", "E06000002"]),
+	];
 
 	it("matches the selected column's values against the bank", () => {
 		const matches = matchColumn(csv, 1, "LAD24CD", areaBank);
@@ -86,18 +90,25 @@ describe("matchColumn", () => {
 });
 
 describe("chooseMatch", () => {
-	const matches = [match("LADs 2024", "code", 90), match("Wards 2024", "code", 40)];
+	const matches = [
+		match("LADs 2024", "code", 90),
+		match("Wards 2024", "code", 40),
+	];
 
 	it("takes the strongest match by default", () => {
 		expect(chooseMatch(matches, "")?.entry.label).toBe("LADs 2024");
 	});
 
 	it("honours the reader's override", () => {
-		expect(chooseMatch(matches, "Wards 2024")?.entry.label).toBe("Wards 2024");
+		expect(chooseMatch(matches, "Wards 2024")?.entry.label).toBe(
+			"Wards 2024",
+		);
 	});
 
 	it("falls back to the strongest when the override names nothing", () => {
-		expect(chooseMatch(matches, "Nonexistent")?.entry.label).toBe("LADs 2024");
+		expect(chooseMatch(matches, "Nonexistent")?.entry.label).toBe(
+			"LADs 2024",
+		);
 	});
 
 	it("returns null with no matches at all", () => {
@@ -112,8 +123,12 @@ describe("canVisualise", () => {
 	});
 
 	it("rejects the match types with no boundaries to colour", () => {
-		expect(canVisualise(match("Postcodes", "postcode-full", 90))).toBe(false);
-		expect(canVisualise(match("Districts", "postcode-district", 90))).toBe(false);
+		expect(canVisualise(match("Postcodes", "postcode-full", 90))).toBe(
+			false,
+		);
+		expect(canVisualise(match("Districts", "postcode-district", 90))).toBe(
+			false,
+		);
 		expect(canVisualise(match("Points", "coordinate", 90))).toBe(false);
 		expect(canVisualise(null)).toBe(false);
 	});
@@ -138,7 +153,9 @@ describe("isPointMode", () => {
 	});
 
 	it("ignores a strong match of a type that isn't a boundary set", () => {
-		expect(isPointMode(coord, [match("Postcodes", "postcode-full", 99)])).toBe(true);
+		expect(
+			isPointMode(coord, [match("Postcodes", "postcode-full", 99)]),
+		).toBe(true);
 	});
 
 	it("stays off without coordinate columns", () => {
@@ -148,9 +165,9 @@ describe("isPointMode", () => {
 
 describe("guessValueColumn", () => {
 	it("takes the first numeric column that isn't a coordinate", () => {
-		expect(guessValueColumn(csv, 1, { latIdx: 2, lngIdx: 3 } as never)).toBe(
-			"Value",
-		);
+		expect(
+			guessValueColumn(csv, 1, { latIdx: 2, lngIdx: 3 } as never),
+		).toBe("Value");
 	});
 
 	it("returns nothing when every other column is text", () => {
@@ -176,7 +193,11 @@ describe("buildUpload", () => {
 	};
 
 	it("describes a choropleth upload from the chosen match", () => {
-		const result = buildUpload(draft, false, match("LADs 2024", "code", 90));
+		const result = buildUpload(
+			draft,
+			false,
+			match("LADs 2024", "code", 90),
+		);
 
 		expect(result).toEqual({
 			upload: {
@@ -225,8 +246,7 @@ describe("buildUpload", () => {
 
 	it("asks for the missing choropleth selections", () => {
 		expect(buildUpload({ ...draft, dataColumn: "" }, false, null)).toEqual({
-			error:
-				"Please select a file, area code column, data column, and matching area type",
+			error: "Please select a file, area code column, data column, and matching area type",
 		});
 	});
 

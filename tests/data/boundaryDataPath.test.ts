@@ -4,9 +4,7 @@ import { localDataPath } from "@/lib/data/boundaries/dataPath";
 describe("localDataPath", () => {
 	it("strips deployment cache keys from same-origin data URLs", () => {
 		expect(
-			localDataPath(
-				"/data/boundaries/wards/example.topojson?v=abc123",
-			),
+			localDataPath("/data/boundaries/wards/example.topojson?v=abc123"),
 		).toBe("boundaries/wards/example.topojson");
 	});
 

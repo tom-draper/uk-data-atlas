@@ -110,7 +110,9 @@ describe("getSequentialColorExpression", () => {
 	});
 
 	it("uses a stable midpoint colour for a zero-width range", () => {
-		expect(getSequentialColorExpression({ min: 5, max: 5 }, "viridis")).toEqual([
+		expect(
+			getSequentialColorExpression({ min: 5, max: 5 }, "viridis"),
+		).toEqual([
 			"case",
 			["==", ["get", "value"], null],
 			"#cccccc",

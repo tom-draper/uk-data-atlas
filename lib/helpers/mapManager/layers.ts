@@ -60,7 +60,4 @@ export type VectorLineLayer = {
 };
 
 export type MapLayer =
-	| BoundaryFillLayer
-	| PointLayer
-	| LineLayer
-	| VectorLineLayer;
+	BoundaryFillLayer | PointLayer | LineLayer | VectorLineLayer;

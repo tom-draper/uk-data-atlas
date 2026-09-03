@@ -166,30 +166,52 @@ export default function MapInterface({
 				...roadSafetyDatasets,
 				...networkDatasets,
 			]),
-		[datasets, activeViz, customDatasets, roadSafetyDatasets, networkDatasets],
+		[
+			datasets,
+			activeViz,
+			customDatasets,
+			roadSafetyDatasets,
+			networkDatasets,
+		],
 	);
 
-	const rawGeojson = !activeDataset || activeDataset.type === "network"
-		? null
-		: (boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
-				activeDataset.boundaryYear
-			] ?? null);
+	const rawGeojson =
+		!activeDataset || activeDataset.type === "network"
+			? null
+			: (boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
+					activeDataset.boundaryYear
+				] ?? null);
 
 	const geojson = useMemo(() => {
-		if (!rawGeojson || !activeDataset || !("data" in activeDataset)) return rawGeojson;
-		const dataKeys = new Set(Object.keys(activeDataset.data as Record<string, unknown>));
+		if (!rawGeojson || !activeDataset || !("data" in activeDataset))
+			return rawGeojson;
+		const dataKeys = new Set(
+			Object.keys(activeDataset.data as Record<string, unknown>),
+		);
 		if (dataKeys.size === 0) return rawGeojson;
 		const codeKeys: readonly string[] =
-			activeDataset.boundaryType === "lsoa" ? BOUNDARY_CATALOG.lsoa.properties.code :
-			activeDataset.boundaryType === "dataZone" ? BOUNDARY_CATALOG.dataZone.properties.code :
-			activeDataset.boundaryType === "superOutputArea" ? BOUNDARY_CATALOG.superOutputArea.properties.code :
-			[];
+			activeDataset.boundaryType === "lsoa"
+				? BOUNDARY_CATALOG.lsoa.properties.code
+				: activeDataset.boundaryType === "dataZone"
+					? BOUNDARY_CATALOG.dataZone.properties.code
+					: activeDataset.boundaryType === "superOutputArea"
+						? BOUNDARY_CATALOG.superOutputArea.properties.code
+						: [];
 		if (codeKeys.length === 0) return rawGeojson;
-		const firstProps = rawGeojson.features[0]?.properties as unknown as Record<string, unknown> | undefined;
+		const firstProps = rawGeojson.features[0]?.properties as unknown as
+			Record<string, unknown> | undefined;
 		if (!firstProps) return rawGeojson;
-		const codeKey = codeKeys.find(k => k in firstProps);
+		const codeKey = codeKeys.find((k) => k in firstProps);
 		if (!codeKey) return rawGeojson;
-		const filtered = rawGeojson.features.filter(f => f.properties && dataKeys.has((f.properties as unknown as Record<string, unknown>)[codeKey] as string));
+		const filtered = rawGeojson.features.filter(
+			(f) =>
+				f.properties &&
+				dataKeys.has(
+					(f.properties as unknown as Record<string, unknown>)[
+						codeKey
+					] as string,
+				),
+		);
 		if (filtered.length === rawGeojson.features.length) return rawGeojson;
 		return { ...rawGeojson, features: filtered };
 	}, [rawGeojson, activeDataset]);
@@ -213,7 +235,7 @@ export default function MapInterface({
 			padding: MAP_CONFIG.fitBoundsPadding,
 			duration: 0,
 		});
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [styleReady]);
 
 	const handleLocationClick = (location: string) => {

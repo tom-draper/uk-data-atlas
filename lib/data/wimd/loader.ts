@@ -48,19 +48,66 @@ export async function loadWIMD(
 	for (const rawRow of data as any[]) {
 		const row: Record<string, any> = {};
 		for (const k of Object.keys(rawRow)) row[k.trim()] = rawRow[k];
-		const lsoaCode = pick(row, "LSOA code", "LSOA Code", "lsoa_code", "LSOA_Code", "lsoaCode");
+		const lsoaCode = pick(
+			row,
+			"LSOA code",
+			"LSOA Code",
+			"lsoa_code",
+			"LSOA_Code",
+			"lsoaCode",
+		);
 		if (!lsoaCode || !lsoaCode.startsWith("W")) continue;
 
-		const ladName = pick(row, "Local Authority name", "Local Authority Name", "Local Authority", "la_name", "LA_Name");
+		const ladName = pick(
+			row,
+			"Local Authority name",
+			"Local Authority Name",
+			"Local Authority",
+			"la_name",
+			"LA_Name",
+		);
 		const ladCode = LOCAL_AUTHORITY_CODES[ladName] || "";
 
-		const wimdScore = parseNum(pick(row, "WIMD 2019", "WIMD 2019 Score", "WIMD Score", "wimd_score", "Score"));
-		const wimdRank = parseNumInt(pick(row, "WIMD 2019 Rank", "Overall WIMD 2019 Rank", "WIMD Rank", "wimd_rank", "Rank"));
-		const wimdDecile = parseNumInt(pick(row, "WIMD 2019 Decile", "WIMD Decile", "wimd_decile", "Decile"));
+		const wimdScore = parseNum(
+			pick(
+				row,
+				"WIMD 2019",
+				"WIMD 2019 Score",
+				"WIMD Score",
+				"wimd_score",
+				"Score",
+			),
+		);
+		const wimdRank = parseNumInt(
+			pick(
+				row,
+				"WIMD 2019 Rank",
+				"Overall WIMD 2019 Rank",
+				"WIMD Rank",
+				"wimd_rank",
+				"Rank",
+			),
+		);
+		const wimdDecile = parseNumInt(
+			pick(
+				row,
+				"WIMD 2019 Decile",
+				"WIMD Decile",
+				"wimd_decile",
+				"Decile",
+			),
+		);
 
 		records[lsoaCode] = {
 			lsoaCode,
-			lsoaName: pick(row, "LSOA name", "LSOA Name", "lsoa_name", "LSOA_Name", "lsoaName"),
+			lsoaName: pick(
+				row,
+				"LSOA name",
+				"LSOA Name",
+				"lsoa_name",
+				"LSOA_Name",
+				"lsoaName",
+			),
 			ladCode,
 			ladName,
 			wimdScore,
@@ -69,22 +116,27 @@ export async function loadWIMD(
 		};
 	}
 
-	const sorted = Object.values(records).sort((a, b) => b.wimdScore - a.wimdScore);
+	const sorted = Object.values(records).sort(
+		(a, b) => b.wimdScore - a.wimdScore,
+	);
 	sorted.forEach((record, i) => {
 		record.wimdRank = i + 1;
 		record.wimdDecile = Math.ceil(((i + 1) / sorted.length) * 10);
 	});
 
-	const ladGroups: Record<string, typeof records[string][]> = {};
+	const ladGroups: Record<string, (typeof records)[string][]> = {};
 	for (const r of Object.values(records)) {
 		(ladGroups[r.ladCode] ??= []).push(r);
 	}
 	const ladStats: WIMDDataset["ladStats"] = {};
 	for (const [lad, lsoas] of Object.entries(ladGroups)) {
 		ladStats[lad] = {
-			averageWIMDScore: lsoas.reduce((s, r) => s + r.wimdScore, 0) / lsoas.length,
-			averageWIMDRank: lsoas.reduce((s, r) => s + r.wimdRank, 0) / lsoas.length,
-			averageWIMDDecile: lsoas.reduce((s, r) => s + r.wimdDecile, 0) / lsoas.length,
+			averageWIMDScore:
+				lsoas.reduce((s, r) => s + r.wimdScore, 0) / lsoas.length,
+			averageWIMDRank:
+				lsoas.reduce((s, r) => s + r.wimdRank, 0) / lsoas.length,
+			averageWIMDDecile:
+				lsoas.reduce((s, r) => s + r.wimdDecile, 0) / lsoas.length,
 		};
 	}
 

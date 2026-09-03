@@ -31,7 +31,9 @@ const render = (
 	recipe: keyof typeof rendering,
 	view?: VizView,
 ) => {
-	const recipeMock = vi.mocked(rendering[recipe] as (context: unknown) => void);
+	const recipeMock = vi.mocked(
+		rendering[recipe] as (context: unknown) => void,
+	);
 	recipeMock.mockClear();
 	renderer?.render({
 		map,
@@ -57,12 +59,23 @@ describe("chart map renderers", () => {
 		render(localElectionDefinition.mapRenderer, "renderLocalElection");
 		render(ethnicityDefinition.mapRenderer, "renderEthnicity");
 		render(brexitDefinition.mapRenderer, "renderBrexit");
-		render(brexitConstituencyDefinition.mapRenderer, "renderBrexitConstituency");
+		render(
+			brexitConstituencyDefinition.mapRenderer,
+			"renderBrexitConstituency",
+		);
 	});
 
 	it("routes population visualisations by the active view", () => {
-		render(populationDefinition.mapRenderer, "renderAgeDistribution", "age");
-		render(populationDefinition.mapRenderer, "renderPopulationDensity", "density");
+		render(
+			populationDefinition.mapRenderer,
+			"renderAgeDistribution",
+			"age",
+		);
+		render(
+			populationDefinition.mapRenderer,
+			"renderPopulationDensity",
+			"density",
+		);
 		render(populationDefinition.mapRenderer, "renderGender", "gender");
 	});
 

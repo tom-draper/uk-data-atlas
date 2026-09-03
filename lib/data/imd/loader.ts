@@ -20,32 +20,46 @@ export async function loadIMD(
 			lsoaName: row["LSOA name (2011)"]?.trim() || "",
 			ladCode: row["Local Authority District code (2019)"]?.trim() || "",
 			ladName: row["Local Authority District name (2019)"]?.trim() || "",
-			imdScore: parseNum(row["Index of Multiple Deprivation (IMD) Score"]),
+			imdScore: parseNum(
+				row["Index of Multiple Deprivation (IMD) Score"],
+			),
 			imdRank: parseNumInt(
-				row["Index of Multiple Deprivation (IMD) Rank (where 1 is most deprived)"],
+				row[
+					"Index of Multiple Deprivation (IMD) Rank (where 1 is most deprived)"
+				],
 			),
 			imdDecile: parseNumInt(
-				row["Index of Multiple Deprivation (IMD) Decile (where 1 is most deprived 10% of LSOAs)"],
+				row[
+					"Index of Multiple Deprivation (IMD) Decile (where 1 is most deprived 10% of LSOAs)"
+				],
 			),
 			incomeScore: parseNum(row["Income Score (rate)"]),
 			employmentScore: parseNum(row["Employment Score (rate)"]),
-			educationScore: parseNum(row["Education, Skills and Training Score"]),
-			healthScore: parseNum(row["Health Deprivation and Disability Score"]),
+			educationScore: parseNum(
+				row["Education, Skills and Training Score"],
+			),
+			healthScore: parseNum(
+				row["Health Deprivation and Disability Score"],
+			),
 			crimeScore: parseNum(row["Crime Score"]),
-			housingScore: parseNum(row["Barriers to Housing and Services Score"]),
+			housingScore: parseNum(
+				row["Barriers to Housing and Services Score"],
+			),
 			livingEnvironmentScore: parseNum(row["Living Environment Score"]),
 		};
 	}
 
-	const ladGroups: Record<string, typeof records[string][]> = {};
+	const ladGroups: Record<string, (typeof records)[string][]> = {};
 	for (const r of Object.values(records)) {
 		(ladGroups[r.ladCode] ??= []).push(r);
 	}
 	const ladStats: IMDDataset["ladStats"] = {};
 	for (const [lad, lsoas] of Object.entries(ladGroups)) {
 		ladStats[lad] = {
-			averageIMDScore: lsoas.reduce((s, r) => s + r.imdScore, 0) / lsoas.length,
-			averageIMDDecile: lsoas.reduce((s, r) => s + r.imdDecile, 0) / lsoas.length,
+			averageIMDScore:
+				lsoas.reduce((s, r) => s + r.imdScore, 0) / lsoas.length,
+			averageIMDDecile:
+				lsoas.reduce((s, r) => s + r.imdDecile, 0) / lsoas.length,
 		};
 	}
 

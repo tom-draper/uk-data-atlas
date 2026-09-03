@@ -41,7 +41,9 @@ function AgeDistributionChart({
 				{chartsLoading ? (
 					<ChartContentPlaceholder className="size-full" />
 				) : (
-					<div className="h-full flex items-center justify-center">No data available</div>
+					<div className="h-full flex items-center justify-center">
+						No data available
+					</div>
 				)}
 			</div>
 		);

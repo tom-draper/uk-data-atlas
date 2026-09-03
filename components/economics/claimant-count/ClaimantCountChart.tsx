@@ -37,13 +37,28 @@ function computeStats(
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
 	const fromRecord = (code: string) => {
-		const r = dataset.data[code] ?? dataset.data[codeMapper?.getCodeForYear("localAuthority", code, dataset.boundaryYear) ?? ""];
+		const r =
+			dataset.data[code] ??
+			dataset.data[
+				codeMapper?.getCodeForYear(
+					"localAuthority",
+					code,
+					dataset.boundaryYear,
+				) ?? ""
+			];
 		if (!r) return null;
-		return { totalCount: r.totalCount, totalRate: r.totalRate, youthCount: r.youthCount, youthRate: r.youthRate };
+		return {
+			totalCount: r.totalCount,
+			totalRate: r.totalRate,
+			youthCount: r.youthCount,
+			youthRate: r.youthRate,
+		};
 	};
 
-	if (selectedArea.type === "localAuthority") return fromRecord(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode) return fromRecord(selectedArea.data.ladCode);
+	if (selectedArea.type === "localAuthority")
+		return fromRecord(selectedArea.code);
+	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
+		return fromRecord(selectedArea.data.ladCode);
 	return null;
 }
 
@@ -62,7 +77,9 @@ export default function ClaimantCountChart({
 		? computeStats(dataset, aggregatedData, selectedArea, codeMapper)
 		: null;
 
-	const isActive = activeDataset?.type === "claimantCount" && activeDataset.id === dataset?.id;
+	const isActive =
+		activeDataset?.type === "claimantCount" &&
+		activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
 	const color = rateColor(stats?.totalRate ?? 0);
 
@@ -70,7 +87,7 @@ export default function ClaimantCountChart({
 
 	const rate = stats?.totalRate ?? 0;
 	// Bar capped at 10% = full width
-	const barWidth = Math.min(rate / 10 * 100, 100);
+	const barWidth = Math.min((rate / 10) * 100, 100);
 
 	return (
 		<ChartCard
@@ -90,7 +107,9 @@ export default function ClaimantCountChart({
 				hasData={hasData}
 				value={rate.toFixed(1)}
 				unit="% of 16-64"
-				secondary={stats ? `${stats.youthRate.toFixed(1)}% youth` : undefined}
+				secondary={
+					stats ? `${stats.youthRate.toFixed(1)}% youth` : undefined
+				}
 				barWidth={barWidth}
 				barColor={color}
 			/>

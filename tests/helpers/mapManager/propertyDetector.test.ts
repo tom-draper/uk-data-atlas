@@ -59,18 +59,21 @@ describe("PropertyDetector.detect", () => {
 		expect(detector.detect("ward", features)).toBe("WD24CD");
 	});
 
-	it("accepts any geography's code key when the scope is \"any\"", () => {
-		expect(detector.detect("any", makeFeatures({ DataZone: "S01006506" }))).toBe(
-			"DataZone",
-		);
-		expect(detector.detect("any", makeFeatures({ SOA_CODE: "95AA01S1" }))).toBe(
-			"SOA_CODE",
-		);
+	it('accepts any geography\'s code key when the scope is "any"', () => {
+		expect(
+			detector.detect("any", makeFeatures({ DataZone: "S01006506" })),
+		).toBe("DataZone");
+		expect(
+			detector.detect("any", makeFeatures({ SOA_CODE: "95AA01S1" })),
+		).toBe("SOA_CODE");
 	});
 
 	it("prefers the earlier geography when a file carries several code keys", () => {
 		// Catalogue order decides: ward is declared before local authority.
-		const features = makeFeatures({ LAD24CD: "E06000001", WD24CD: "E05001234" });
+		const features = makeFeatures({
+			LAD24CD: "E06000001",
+			WD24CD: "E05001234",
+		});
 		expect(detector.detect("any", features)).toBe("WD24CD");
 	});
 

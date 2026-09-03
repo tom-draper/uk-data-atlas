@@ -1,7 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { ChartContentPlaceholder, useChartsLoading } from "@/components/ChartLoadingPlaceholder";
+import {
+	ChartContentPlaceholder,
+	useChartsLoading,
+} from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface ChartCardValueBarProps {

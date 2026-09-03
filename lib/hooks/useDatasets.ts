@@ -9,7 +9,10 @@ import {
 } from "@/lib/context/ChartVisibilityContext";
 import { Datasets } from "../types/datasets";
 import { useJsonDatasetLoaders } from "./useJsonDataLoader";
-import { CHART_DATASET_DEFINITIONS, type ChartDatasetType } from "@/lib/datasets";
+import {
+	CHART_DATASET_DEFINITIONS,
+	type ChartDatasetType,
+} from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
 import { withCDN } from "@/lib/helpers/cdn";
 
@@ -24,14 +27,23 @@ export interface UseDatasetsResult {
 }
 
 export function useDatasets(): UseDatasetsResult {
-	const visibility = useSyncExternalStore(subscribeVisibility, getVisibilitySnapshot, getServerSnapshot);
-	const isEnabled = (key: ChartKey) => visibility[key] ?? DEFAULT_VISIBILITY[key];
+	const visibility = useSyncExternalStore(
+		subscribeVisibility,
+		getVisibilitySnapshot,
+		getServerSnapshot,
+	);
+	const isEnabled = (key: ChartKey) =>
+		visibility[key] ?? DEFAULT_VISIBILITY[key];
 
 	const chartDatasets = useJsonDatasetLoaders(
 		CHART_DATASET_DEFINITIONS.map((definition) => ({
 			key: definition.type,
-			url: withCDN(`/data/precompiled/${definition.precompiledFile}.json`),
-			enabled: getChartDefinitions(definition).some((chart) => isEnabled(chart.key)),
+			url: withCDN(
+				`/data/precompiled/${definition.precompiledFile}.json`,
+			),
+			enabled: getChartDefinitions(definition).some((chart) =>
+				isEnabled(chart.key),
+			),
 		})),
 	);
 	const chartDatasetRecords = Object.fromEntries(
@@ -45,5 +57,9 @@ export function useDatasets(): UseDatasetsResult {
 		...chartDatasetRecords,
 	};
 
-	return { datasets, loading: chartDatasets.loading, errors: chartDatasets.errors };
+	return {
+		datasets,
+		loading: chartDatasets.loading,
+		errors: chartDatasets.errors,
+	};
 }

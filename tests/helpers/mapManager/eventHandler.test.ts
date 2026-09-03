@@ -14,7 +14,9 @@ function createMap() {
 describe("EventHandler", () => {
 	it("keeps boundary handlers attached for repeated updates of the same dataset", () => {
 		const map = createMap();
-		const handler = new EventHandler(map as any, { onLocationChange: () => {} });
+		const handler = new EventHandler(map as any, {
+			onLocationChange: () => {},
+		});
 		const data = { E09000001: { value: 10 } };
 
 		handler.setupEventHandlers(data, "LAD24CD");
@@ -26,7 +28,9 @@ describe("EventHandler", () => {
 
 	it("reattaches handlers when the boundary code property changes", () => {
 		const map = createMap();
-		const handler = new EventHandler(map as any, { onLocationChange: () => {} });
+		const handler = new EventHandler(map as any, {
+			onLocationChange: () => {},
+		});
 		const data = { E09000001: { value: 10 } };
 
 		handler.setupEventHandlers(data, "LAD24CD");

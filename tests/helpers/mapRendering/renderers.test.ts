@@ -34,7 +34,10 @@ const fakeContext = (codeProp = "LAD25CD") => {
 		),
 		buildElectionWinnerFeatures: vi.fn(() => []),
 		buildElectionPercentageFeatures: vi.fn(() => []),
-		buildPointCollection: vi.fn(() => ({ type: "FeatureCollection", features: [] })),
+		buildPointCollection: vi.fn(() => ({
+			type: "FeatureCollection",
+			features: [],
+		})),
 		getFeatureAreaSqKm: vi.fn(() => 2),
 	};
 	const eventHandler = { setupEventHandlers: vi.fn() };
@@ -45,8 +48,12 @@ const fakeContext = (codeProp = "LAD25CD") => {
 		featureBuilder,
 		codeProp: vi.fn(() => codeProp),
 		transformed: vi.fn(
-			(_boundary: unknown, _dataset: unknown, _mode: string, build: () => unknown) =>
-				build(),
+			(
+				_boundary: unknown,
+				_dataset: unknown,
+				_mode: string,
+				build: () => unknown,
+			) => build(),
 		),
 	} as unknown as MapRenderContext;
 
@@ -63,12 +70,15 @@ describe("renderLocalElection", () => {
 	} as never;
 
 	it("paints winners and binds events against the ward code property", () => {
-		const { ctx, layerManager, featureBuilder, eventHandler } = fakeContext("WD25CD");
+		const { ctx, layerManager, featureBuilder, eventHandler } =
+			fakeContext("WD25CD");
 
 		renderLocalElection(ctx, geojson, dataset, DEFAULT_MAP_OPTIONS);
 
 		expect(ctx.codeProp).toHaveBeenCalledWith("ward", []);
-		expect(featureBuilder.buildElectionWinnerFeatures).toHaveBeenCalledOnce();
+		expect(
+			featureBuilder.buildElectionWinnerFeatures,
+		).toHaveBeenCalledOnce();
 		expect(layerManager.updateElectionLayers).toHaveBeenCalledOnce();
 		expect(layerManager.updatePartyPercentageLayers).not.toHaveBeenCalled();
 		expect(eventHandler.setupEventHandlers).toHaveBeenCalledWith(
@@ -89,7 +99,9 @@ describe("renderLocalElection", () => {
 			},
 		} as never);
 
-		expect(featureBuilder.buildElectionPercentageFeatures).toHaveBeenCalledOnce();
+		expect(
+			featureBuilder.buildElectionPercentageFeatures,
+		).toHaveBeenCalledOnce();
 		expect(layerManager.updatePartyPercentageLayers).toHaveBeenCalledOnce();
 		expect(layerManager.updateElectionLayers).not.toHaveBeenCalled();
 	});
@@ -100,12 +112,15 @@ describe("renderLocalElection", () => {
 		renderLocalElection(ctx, geojson, dataset, DEFAULT_MAP_OPTIONS);
 		renderLocalElection(ctx, geojson, dataset, {
 			...DEFAULT_MAP_OPTIONS,
-			localElection: { ...DEFAULT_MAP_OPTIONS.localElection, excluded: ["CON"] },
+			localElection: {
+				...DEFAULT_MAP_OPTIONS.localElection,
+				excluded: ["CON"],
+			},
 		} as never);
 
-		const modes = (ctx.transformed as ReturnType<typeof vi.fn>).mock.calls.map(
-			(call) => call[2],
-		);
+		const modes = (
+			ctx.transformed as ReturnType<typeof vi.fn>
+		).mock.calls.map((call) => call[2]);
 		expect(modes).toEqual([
 			"localElection:majority:",
 			"localElection:majority:CON",
@@ -166,7 +181,10 @@ describe("renderCustomPoints", () => {
 
 		renderCustomPoints(ctx, dataset, {
 			...DEFAULT_MAP_OPTIONS,
-			custom: { ...DEFAULT_MAP_OPTIONS.custom, excludedPointValues: [1, 2] },
+			custom: {
+				...DEFAULT_MAP_OPTIONS.custom,
+				excludedPointValues: [1, 2],
+			},
 		} as never);
 
 		expect(layerManager.clearPointLayers).toHaveBeenCalledOnce();
@@ -177,7 +195,9 @@ describe("renderCustomPoints", () => {
 		const { ctx, layerManager } = fakeContext();
 		const order: string[] = [];
 		layerManager.render.mockImplementation(() => order.push("render"));
-		layerManager.clearBoundaryData.mockImplementation(() => order.push("clear"));
+		layerManager.clearBoundaryData.mockImplementation(() =>
+			order.push("clear"),
+		);
 
 		renderCustomPoints(ctx, dataset, DEFAULT_MAP_OPTIONS);
 

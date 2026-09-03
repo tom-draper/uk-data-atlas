@@ -42,11 +42,17 @@ function computeStats(
 		if (!icbCode) return null;
 		const r = dataset.data[icbCode];
 		if (!r) return null;
-		return { total: r.total, over18Weeks: r.over18Weeks, pctOver18Weeks: r.pctOver18Weeks };
+		return {
+			total: r.total,
+			over18Weeks: r.over18Weeks,
+			pctOver18Weeks: r.pctOver18Weeks,
+		};
 	};
 
-	if (selectedArea.type === "localAuthority") return getForLad(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode) return getForLad(selectedArea.data.ladCode);
+	if (selectedArea.type === "localAuthority")
+		return getForLad(selectedArea.code);
+	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
+		return getForLad(selectedArea.data.ladCode);
 	return null;
 }
 
@@ -65,7 +71,9 @@ export default function NHSWaitingChart({
 		? computeStats(dataset, aggregatedData, selectedArea)
 		: null;
 
-	const isActive = activeDataset?.type === "nhsWaiting" && activeDataset.id === dataset?.id;
+	const isActive =
+		activeDataset?.type === "nhsWaiting" &&
+		activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
 	const color = waitColor(stats?.pctOver18Weeks ?? 0);
 
@@ -73,13 +81,15 @@ export default function NHSWaitingChart({
 
 	const pct = stats?.pctOver18Weeks ?? 0;
 	// Bar shows % over 18 weeks, capped at 50% for visual scale
-	const barWidth = Math.min(pct / 50 * 100, 100);
+	const barWidth = Math.min((pct / 50) * 100, 100);
 
 	return (
 		<ChartCard
 			heading={`NHS Waiting Times [${dataset.year}]`}
 			headerEnd={
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
 					England
 				</span>
 			}

@@ -74,11 +74,18 @@ export function renderNumericDataset<T extends NumericDataset>(
 			const mappedValue = map.valueFor?.(data, code);
 			if (mappedValue !== undefined) return mappedValue;
 			const value = map.valueKey
-				? (data.data[code] as unknown as Record<string, unknown> | undefined)?.[map.valueKey]
+				? (
+						data.data[code] as unknown as
+							Record<string, unknown> | undefined
+					)?.[map.valueKey]
 				: null;
-			return typeof value === "number" && Number.isFinite(value) ? value : null;
+			return typeof value === "number" && Number.isFinite(value)
+				? value
+				: null;
 		},
-		(data, options) => map.getColorRange?.(data) ?? (options[dataset.type] as { colorRange: ColorRange }).colorRange,
+		(data, options) =>
+			map.getColorRange?.(data) ??
+			(options[dataset.type] as { colorRange: ColorRange }).colorRange,
 		map.invertColor,
 	);
 }

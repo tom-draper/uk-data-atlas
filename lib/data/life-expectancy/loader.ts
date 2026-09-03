@@ -42,14 +42,18 @@ export async function loadLE(
 	const reads: Promise<string>[] = [
 		read("health/life-expectancy/lifeexpectancylocalareas.csv"),
 	];
-	if (enableHLE) reads.push(read("health/life-expectancy/healthylifeexpectancyuk.csv"));
+	if (enableHLE)
+		reads.push(read("health/life-expectancy/healthylifeexpectancyuk.csv"));
 
 	const [leText, hleText] = await Promise.all(reads);
 
 	const { data: leData } = await parseCsv(leText, { header: true });
 	const leRecords = parsePairedRows(
 		leData as Record<string, string>[],
-		"Area code", "Area name", "Sex", "Life expectancy",
+		"Area code",
+		"Area name",
+		"Sex",
+		"Life expectancy",
 	);
 
 	const result: Record<string, LifeExpectancyDataset> = {
@@ -64,13 +68,18 @@ export async function loadLE(
 			data: leRecords,
 			metadata: {
 				source: "Office for National Statistics. Life expectancy for local areas in England, Northern Ireland and Wales: 2020 to 2022.",
-				notes: ["Life expectancy at birth. England, Wales and Northern Ireland only."],
+				notes: [
+					"Life expectancy at birth. England, Wales and Northern Ireland only.",
+				],
 			},
 		},
 	};
 
 	if (enableHLE && hleText) {
-		const { data: hleDataAll } = await parseCsv(hleText, { header: true, skipLines: 6 });
+		const { data: hleDataAll } = await parseCsv(hleText, {
+			header: true,
+			skipLines: 6,
+		});
 		const hleData = (hleDataAll as Record<string, string>[]).filter(
 			(r) =>
 				r["Period"]?.trim() === "2020 to 2022" &&
@@ -85,10 +94,18 @@ export async function loadLE(
 			boundaryYear: 2023,
 			dataPeriod: "2020–2022",
 			label: "Healthy Life Expectancy",
-			data: parsePairedRows(hleData, "Area code", "Area name", "Sex", "HLE"),
+			data: parsePairedRows(
+				hleData,
+				"Area code",
+				"Area name",
+				"Sex",
+				"HLE",
+			),
 			metadata: {
 				source: "Office for National Statistics. Health state life expectancies, UK: 2020 to 2022.",
-				notes: ["Healthy life expectancy at birth. UK local authorities."],
+				notes: [
+					"Healthy life expectancy at birth. UK local authorities.",
+				],
 			},
 		};
 	}

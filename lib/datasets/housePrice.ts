@@ -11,12 +11,22 @@ export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 		defaultVisible: true,
 		componentPath: "@/components/economics/house-price/HousePriceChart",
 		calculateStats: (aggregator, geojson, data, location, datasetId) =>
-			aggregator.calculateHousePriceStats(geojson, data, location, datasetId),
+			aggregator.calculateHousePriceStats(
+				geojson,
+				data,
+				location,
+				datasetId,
+			),
 		year: 2023,
 	},
 	map: {
-		valueFor: (dataset, code) => dataset.data[code]?.prices[dataset.year] ?? null,
+		valueFor: (dataset, code) =>
+			dataset.data[code]?.prices[dataset.year] ?? null,
 		colorRange: { min: 80000, max: 500000 },
-		legend: { min: 0, max: 1000000, format: (value) => `£${Math.round(value / 1000)}k median price` },
+		legend: {
+			min: 0,
+			max: 1000000,
+			format: (value) => `£${Math.round(value / 1000)}k median price`,
+		},
 	},
 };

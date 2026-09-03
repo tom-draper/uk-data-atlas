@@ -1,5 +1,11 @@
 "use client";
-import { ActiveViz, AggregatedGeneralElectionData, Dataset, GeneralElectionDataset, SelectedArea } from "@lib/types";
+import {
+	ActiveViz,
+	AggregatedGeneralElectionData,
+	Dataset,
+	GeneralElectionDataset,
+	SelectedArea,
+} from "@lib/types";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { computeGeneralElectionYearData } from "@/lib/helpers/generalElection";
@@ -26,7 +32,8 @@ export default function GeneralElectionRegistryChart({
 	activeViz,
 	setActiveViz,
 }: GeneralElectionRegistryChartProps) {
-	const { excludedGeneralParties, selectedGeneralParty } = useExcludedCategories();
+	const { excludedGeneralParties, selectedGeneralParty } =
+		useExcludedCategories();
 	const data = computeGeneralElectionYearData(
 		year,
 		availableDatasets?.[year],
@@ -41,8 +48,15 @@ export default function GeneralElectionRegistryChart({
 		activeDataset &&
 		((activeDataset.type === "generalElection" &&
 			activeDataset.id === `generalElection-${year}`) ||
-			(activeViz.datasetType === "custom" && activeViz.datasetId === "custom"))
+			(activeViz.datasetType === "custom" &&
+				activeViz.datasetId === "custom"))
 	);
 
-	return <GeneralElectionResultChart data={data} isActive={isActive} setActiveViz={setActiveViz} />;
+	return (
+		<GeneralElectionResultChart
+			data={data}
+			isActive={isActive}
+			setActiveViz={setActiveViz}
+		/>
+	);
 }

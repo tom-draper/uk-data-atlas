@@ -28,7 +28,12 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 
 function pickBySubstring(row: Record<string, any>, substring: string): string {
 	for (const [k, v] of Object.entries(row)) {
-		if (k.replace(/\s+/g, " ").includes(substring) && v !== undefined && v !== null && v !== "") {
+		if (
+			k.replace(/\s+/g, " ").includes(substring) &&
+			v !== undefined &&
+			v !== null &&
+			v !== ""
+		) {
 			return String(v).trim();
 		}
 	}
@@ -51,7 +56,9 @@ export async function loadNIMDM(
 		const lgdName = pick(row, "LGD2014NAME", "LGD2014", "LGD", "Council");
 		const lgdCode = LGD_CODES[lgdName] ?? "";
 
-		const nimdmRank = parseNumInt(pickBySubstring(row, "Multiple Deprivation Measure Rank"));
+		const nimdmRank = parseNumInt(
+			pickBySubstring(row, "Multiple Deprivation Measure Rank"),
+		);
 		if (!nimdmRank) continue;
 
 		const nimdmDecile = Math.ceil((nimdmRank / TOTAL_SOAS) * 10);
@@ -66,15 +73,17 @@ export async function loadNIMDM(
 		};
 	}
 
-	const lgdGroups: Record<string, typeof records[string][]> = {};
+	const lgdGroups: Record<string, (typeof records)[string][]> = {};
 	for (const r of Object.values(records)) {
 		(lgdGroups[r.lgdCode] ??= []).push(r);
 	}
 	const lgdStats: NIMDMDataset["lgdStats"] = {};
 	for (const [lgd, soas] of Object.entries(lgdGroups)) {
 		lgdStats[lgd] = {
-			averageNIMDMRank: soas.reduce((s, r) => s + r.nimdmRank, 0) / soas.length,
-			averageNIMDMDecile: soas.reduce((s, r) => s + r.nimdmDecile, 0) / soas.length,
+			averageNIMDMRank:
+				soas.reduce((s, r) => s + r.nimdmRank, 0) / soas.length,
+			averageNIMDMDecile:
+				soas.reduce((s, r) => s + r.nimdmDecile, 0) / soas.length,
 		};
 	}
 
@@ -89,7 +98,9 @@ export async function loadNIMDM(
 			lgdStats,
 			metadata: {
 				source: "Northern Ireland Statistics and Research Agency. Northern Ireland Multiple Deprivation Measure 2017.",
-				notes: ["Northern Ireland only. Decile 1 = most deprived 10% of Super Output Areas."],
+				notes: [
+					"Northern Ireland only. Decile 1 = most deprived 10% of Super Output Areas.",
+				],
 			},
 		},
 	};

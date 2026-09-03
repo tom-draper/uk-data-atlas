@@ -34,7 +34,9 @@ function parseActiveVizFromParams(params: URLSearchParams): ActiveViz | null {
 	if (!datasetId || !datasetType || !datasetYear) return null;
 	const year = parseInt(datasetYear, 10);
 	if (isNaN(year)) return null;
-	const view = VIZ_VIEWS.find((candidate) => candidate === params.get("view"));
+	const view = VIZ_VIEWS.find(
+		(candidate) => candidate === params.get("view"),
+	);
 	return {
 		datasetId,
 		...(view ? { view } : {}),
@@ -179,7 +181,9 @@ export default function AtlasClient() {
 				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 				customDatasets={customDatasets}
-				addCustomDataset={(dataset) => setCustomDatasets((prev) => [...prev, dataset])}
+				addCustomDataset={(dataset) =>
+					setCustomDatasets((prev) => [...prev, dataset])
+				}
 				roadSafetyDatasets={roadSafetyDatasets}
 				networkDatasets={networkDatasets}
 				onError={handleBoundaryError}

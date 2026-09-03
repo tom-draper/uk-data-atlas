@@ -14,7 +14,12 @@ type ChartSectionProps = Omit<ChartCardsProps, "group" | "visibility"> & {
 	showBorder: boolean;
 };
 
-function ChartSection({ group, title, showBorder, ...props }: ChartSectionProps) {
+function ChartSection({
+	group,
+	title,
+	showBorder,
+	...props
+}: ChartSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
 	if (!hasVisibleChart(group, visibility)) return null;
@@ -25,7 +30,9 @@ function ChartSection({ group, title, showBorder, ...props }: ChartSectionProps)
 				isDark ? "border-white/10" : "border-gray-200/80"
 			}`}
 		>
-			<h3 className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800"}`}>
+			<h3
+				className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800"}`}
+			>
 				{title}
 			</h3>
 			<ChartCards group={group} visibility={visibility} {...props} />

@@ -22,7 +22,12 @@ export function ColumnDropdown({
 
 	const openDropdown = () => {
 		const rect = triggerRef.current?.getBoundingClientRect();
-		if (rect) setPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+		if (rect)
+			setPos({
+				top: rect.bottom + 4,
+				left: rect.left,
+				width: rect.width,
+			});
 		setOpen(true);
 	};
 
@@ -41,8 +46,12 @@ export function ColumnDropdown({
 				<span
 					className={`truncate font-medium ${
 						value
-							? isDark ? "text-gray-200" : "text-gray-700"
-							: isDark ? "text-gray-500" : "text-gray-400"
+							? isDark
+								? "text-gray-200"
+								: "text-gray-700"
+							: isDark
+								? "text-gray-500"
+								: "text-gray-400"
 					}`}
 				>
 					{value || placeholder}
@@ -56,18 +65,31 @@ export function ColumnDropdown({
 			{open &&
 				createPortal(
 					<>
-						<div className="fixed inset-0 z-[70]" onClick={() => setOpen(false)} />
+						<div
+							className="fixed inset-0 z-[70]"
+							onClick={() => setOpen(false)}
+						/>
 						<div
 							className={`fixed z-[71] rounded-md border shadow-xl overflow-y-auto ${
-								isDark ? "bg-gray-900 border-white/15" : "bg-white border-gray-200"
+								isDark
+									? "bg-gray-900 border-white/15"
+									: "bg-white border-gray-200"
 							}`}
-							style={{ top: pos.top, left: pos.left, width: pos.width, maxHeight: 240 }}
+							style={{
+								top: pos.top,
+								left: pos.left,
+								width: pos.width,
+								maxHeight: 240,
+							}}
 						>
 							{columns.map((col) => (
 								<button
 									key={col.index}
 									type="button"
-									onClick={() => { onChange(col.name); setOpen(false); }}
+									onClick={() => {
+										onChange(col.name);
+										setOpen(false);
+									}}
 									className={`w-full flex items-center justify-between gap-3 px-3 py-2 text-left text-xs transition-colors ${
 										col.name === value
 											? isDark

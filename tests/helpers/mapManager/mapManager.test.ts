@@ -32,7 +32,9 @@ function createMap() {
 describe("MapManager election updates", () => {
 	it("activates a vector network without retaining boundary data", () => {
 		const map = createMap();
-		const manager = new MapManager(map as any, { onLocationChange: () => {} });
+		const manager = new MapManager(map as any, {
+			onLocationChange: () => {},
+		});
 		const boundarySource = { setData: vi.fn() };
 		map.sources.set("location-wards", boundarySource);
 
@@ -47,13 +49,17 @@ describe("MapManager election updates", () => {
 			style: { color: "#c2410c", width: 1 },
 		});
 
-		expect(map.getLayer("atlas-vector-line-os-open-roads-stroke")).toBeDefined();
+		expect(
+			map.getLayer("atlas-vector-line-os-open-roads-stroke"),
+		).toBeDefined();
 		expect(boundarySource.setData).toHaveBeenCalled();
 	});
 
 	it("reuses the active percentage source when only the range changes", () => {
 		const map = createMap();
-		const manager = new MapManager(map as any, { onLocationChange: () => {} });
+		const manager = new MapManager(map as any, {
+			onLocationChange: () => {},
+		});
 		const dataset = {
 			id: "test-election",
 			type: "localElection",
@@ -99,7 +105,10 @@ describe("MapManager election updates", () => {
 			},
 		};
 		const builder = manager.featureBuilder;
-		const buildPercentage = vi.spyOn(builder, "buildElectionPercentageFeatures");
+		const buildPercentage = vi.spyOn(
+			builder,
+			"buildElectionPercentageFeatures",
+		);
 
 		renderLocalElection(manager, geojson, dataset, options);
 		renderLocalElection(manager, geojson, dataset, {
@@ -111,12 +120,16 @@ describe("MapManager election updates", () => {
 		});
 
 		expect(buildPercentage).toHaveBeenCalledTimes(1);
-		expect(map.sources.get("location-wards")!.setData).not.toHaveBeenCalled();
+		expect(
+			map.sources.get("location-wards")!.setData,
+		).not.toHaveBeenCalled();
 	});
 
 	it("renders registry-backed numeric datasets through the shared value path", () => {
 		const map = createMap();
-		const manager = new MapManager(map as any, { onLocationChange: () => {} });
+		const manager = new MapManager(map as any, {
+			onLocationChange: () => {},
+		});
 		const dataset = {
 			id: "child-poverty-2025",
 			type: "childPoverty" as const,
@@ -141,7 +154,10 @@ describe("MapManager election updates", () => {
 				{
 					type: "Feature",
 					id: 1,
-					properties: { LAD25CD: "E06000001", LAD25NM: "Test authority" },
+					properties: {
+						LAD25CD: "E06000001",
+						LAD25NM: "Test authority",
+					},
 					geometry: {
 						type: "Polygon",
 						coordinates: [
@@ -178,7 +194,9 @@ describe("MapManager election updates", () => {
 		);
 
 		expect(buildValue).toHaveBeenCalledTimes(1);
-		const valueFor = buildValue.mock.calls[0][2] as (code: string) => number | null;
+		const valueFor = buildValue.mock.calls[0][2] as (
+			code: string,
+		) => number | null;
 		expect(valueFor("E06000001")).toBe(25);
 	});
 });
