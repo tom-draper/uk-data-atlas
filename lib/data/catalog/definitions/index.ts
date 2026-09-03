@@ -3,4 +3,8 @@ export { broadbandDatasetDefinition } from "./broadband";
 export { childPovertyDatasetDefinition } from "./childPoverty";
 export { claimantCountDatasetDefinition } from "./claimantCount";
 export { crimeDatasetDefinition } from "./crime";
+export { imdDatasetDefinition } from "./imd";
+export { nimdmDatasetDefinition } from "./nimdm";
 export { populationDatasetDefinition } from "./population";
+export { simdDatasetDefinition } from "./simd";
+export { wimdDatasetDefinition } from "./wimd";
