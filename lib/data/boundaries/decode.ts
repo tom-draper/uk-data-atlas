@@ -1,11 +1,7 @@
 import { BoundaryGeojson } from "@lib/types";
 import * as topojson from "topojson-client";
-import {
-	Feature,
-	FeatureCollection,
-	GeoJsonProperties,
-	Geometry,
-} from "geojson";
+import type { Topology } from "topojson-specification";
+import { FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
 
 interface GeoJsonFeatureCollection extends FeatureCollection<
 	Geometry,
@@ -19,19 +15,24 @@ interface GeoJsonFeatureCollection extends FeatureCollection<
 	};
 }
 
-export const decodeBoundaryData = (json: any): BoundaryGeojson => {
+const isTopology = (json: unknown): json is Topology =>
+	typeof json === "object" &&
+	json !== null &&
+	(json as { type?: unknown }).type === "Topology";
+
+/**
+ * Normalises a fetched boundary file into a GeoJSON FeatureCollection. The
+ * files are TopoJSON, but a plain FeatureCollection is accepted too, so the
+ * shape is decided at runtime rather than assumed.
+ */
+export const decodeBoundaryData = (json: unknown): BoundaryGeojson => {
 	let geojson: GeoJsonFeatureCollection;
-	if (json.type === "Topology") {
+	if (isTopology(json)) {
 		const objectKey = Object.keys(json.objects)[0];
 		if (!objectKey)
 			throw new Error("TopoJSON contains no geometry objects");
 
-		const result:
-			| Feature<Geometry, GeoJsonProperties>
-			| FeatureCollection<Geometry, GeoJsonProperties> = topojson.feature(
-			json,
-			json.objects[objectKey] as any,
-		);
+		const result = topojson.feature(json, json.objects[objectKey]);
 		geojson =
 			result.type === "Feature"
 				? { type: "FeatureCollection", features: [result] }

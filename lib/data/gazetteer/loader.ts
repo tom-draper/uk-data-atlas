@@ -9,6 +9,7 @@ import { LOCATIONS } from "../locations";
 import { buildCore, linkRegions, type LevelSource } from "./build";
 import { validateCore } from "./validate";
 import type { GazetteerCore } from "./types";
+import type { Topology } from "topojson-specification";
 
 export const GAZETTEER_VERSION = 1;
 
@@ -33,16 +34,13 @@ async function loadFeatures(
 	read: (path: string) => Promise<string>,
 	path: string,
 ): Promise<Feat[]> {
-	const topo = JSON.parse(await read(localDataPath(path))) as {
-		objects: Record<string, unknown>;
-	};
+	const topo = JSON.parse(await read(localDataPath(path))) as Topology;
 	const name = Object.keys(topo.objects)[0];
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const fc = feature(
-		topo as any,
-		topo.objects[name] as any,
-	) as unknown as GeoJSON.FeatureCollection;
-	return fc.features as Feat[];
+	// A boundary file's object is a GeometryCollection, so this is a collection
+	// of features; guard rather than assume, since the type allows both.
+	const result = feature(topo, topo.objects[name]);
+	const features = result.type === "Feature" ? [result] : result.features;
+	return features as Feat[];
 }
 
 export async function loadGazetteerCore(
