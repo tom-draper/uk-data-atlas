@@ -148,10 +148,13 @@ export function sheetRows(
 	)) {
 		const row: string[] = [];
 		for (const cellMatch of (rowMatch[1] ?? "").matchAll(
-			/<c\b([^>]*)>([\s\S]*?)<\/c>|<c\b([^>]*)\/>/g,
+			// Self-closing form must be tried first: its attrs can end in "/",
+			// which the open/close alternative's [^>]* also matches, causing it
+			// to swallow the next cell's content up to that cell's </c>.
+			/<c\b([^>]*)\/>|<c\b([^>]*)>([\s\S]*?)<\/c>/g,
 		)) {
-			const attrs = cellMatch[1] ?? cellMatch[3] ?? "";
-			const body = cellMatch[2] ?? "";
+			const attrs = cellMatch[1] ?? cellMatch[2] ?? "";
+			const body = cellMatch[3] ?? "";
 			const type = /\bt="([^"]*)"/.exec(attrs)?.[1];
 
 			let value = "";

@@ -21,6 +21,7 @@ import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import {
 	findSheetPath,
 	parseSharedStrings,
+	percentageStyles,
 	rowsToCsv,
 	sheetRows,
 } from "../lib/data/spreadsheet/xlsx";
@@ -79,8 +80,12 @@ const readXlsxSheet = async (
 	} catch {
 		sharedStrings = [];
 	}
+	// Percentage-styled cells store their fraction (0.756), not the displayed
+	// number (75.6), so the styles need reading too or every percentage comes
+	// out a hundred times too small.
+	const percentStyleIds = percentageStyles(entry("xl/styles.xml"));
 
-	return rowsToCsv(sheetRows(entry(sheetPath), sharedStrings));
+	return rowsToCsv(sheetRows(entry(sheetPath), sharedStrings, percentStyleIds));
 };
 
 // ODS source files are never exposed by the application. The child-poverty

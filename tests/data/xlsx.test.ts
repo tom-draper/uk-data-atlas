@@ -103,6 +103,14 @@ describe("sheetRows", () => {
 		expect(rows).toEqual([["Ward", ""]]);
 	});
 
+	it("reads the cell after a blank self-closing cell, not swallows it", () => {
+		const rows = sheetRows(
+			`<row r="1"><c r="A1" s="26"/><c r="B1" t="s"><v>0</v></c></row>`,
+			strings,
+		);
+		expect(rows).toEqual([["", "Ward"]]);
+	});
+
 	it("scales a percentage-formatted cell to what the sheet displays", () => {
 		const xml = `<row r="1"><c r="A1" s="3"><v>0.254261057173679</v></c><c r="B1" s="0"><v>0.5</v></c></row>`;
 		expect(sheetRows(xml, strings, new Set([3]))).toEqual([
