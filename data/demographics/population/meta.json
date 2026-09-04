@@ -1,0 +1,71 @@
+{
+	"id": "population",
+	"title": "Ward-level population estimates by single year of age and sex",
+	"description": "Mid-year population estimates for electoral wards in England and Wales, broken down by single year of age and sex. Combines the mid-2020 experimental statistics release (2020 ward boundaries) with the mid-2021/mid-2022 release, which republishes both years against both the 2022 and 2023 ward boundaries.",
+	"topics": ["demographics", "population", "census"],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2020-2022",
+	"spatialCoverage": {
+		"geography": "ward",
+		"countries": ["GB-ENG", "GB-WLS"]
+	},
+	"files": [
+		{
+			"path": "sape23dt8a-mid2020ward2020on2021las-syoa-estimates.xlsx",
+			"role": "source",
+			"note": "Table SAPE23DT8a. Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental/mid2020sape23dt8a/sape23dt8amid2020ward2020on2021lasyoaestimatesunformattedcorrection.xlsx"
+		},
+		{
+			"path": "sapewardstablefinal-mid2021-mid2022.xlsx",
+			"role": "source",
+			"note": "Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental/mid2021andmid2022/sapewardstablefinal.xlsx"
+		},
+		{
+			"path": "Mid-2020 Persons-Table 1.csv",
+			"role": "derived",
+			"derivedFrom": "sape23dt8a-mid2020ward2020on2021las-syoa-estimates.xlsx",
+			"note": "Extracted from the 'Mid-2020 Persons' sheet."
+		},
+		{
+			"path": "Mid-2020 Males-Table 1.csv",
+			"role": "derived",
+			"derivedFrom": "sape23dt8a-mid2020ward2020on2021las-syoa-estimates.xlsx",
+			"note": "Extracted from the 'Mid-2020 Males' sheet."
+		},
+		{
+			"path": "Mid-2020 Females-Table 1.csv",
+			"role": "derived",
+			"derivedFrom": "sape23dt8a-mid2020ward2020on2021las-syoa-estimates.xlsx",
+			"note": "Extracted from the 'Mid-2020 Females' sheet."
+		},
+		{
+			"path": "Mid-2021 Ward 2022.csv",
+			"role": "derived",
+			"derivedFrom": "sapewardstablefinal-mid2021-mid2022.xlsx",
+			"note": "Extracted from the 'Mid-2021 Ward 2022' sheet."
+		},
+		{
+			"path": "Mid-2021 Ward 2023.csv",
+			"role": "derived",
+			"derivedFrom": "sapewardstablefinal-mid2021-mid2022.xlsx",
+			"note": "Extracted from the 'Mid-2021 Ward 2023' sheet."
+		},
+		{
+			"path": "Mid-2022 Ward 2022.csv",
+			"role": "derived",
+			"derivedFrom": "sapewardstablefinal-mid2021-mid2022.xlsx",
+			"note": "Extracted from the 'Mid-2022 Ward 2022' sheet."
+		},
+		{
+			"path": "Mid-2022 Ward 2023.csv",
+			"role": "derived",
+			"derivedFrom": "sapewardstablefinal-mid2021-mid2022.xlsx",
+			"note": "Extracted from the 'Mid-2022 Ward 2023' sheet."
+		}
+	]
+}
