@@ -26,12 +26,6 @@
     {
       "path": "LEH-Candidates-2023.xlsx",
       "role": "source"
-    },
-    {
-      "path": "Ward_Level-Table 1.csv",
-      "role": "derived",
-      "derivedFrom": "LEH-Candidates-2023.xlsx",
-      "note": "Worksheet extracted to CSV. Remove once the preprocessor reads the workbook directly."
     }
   ]
 }

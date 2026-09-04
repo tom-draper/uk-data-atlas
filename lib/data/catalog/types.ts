@@ -21,6 +21,8 @@ export interface DatasetSource {
 
 export interface DatasetReader {
 	text: (path: string) => Promise<string>;
+	/** One named worksheet from an .xlsx workbook, rendered as CSV. */
+	xlsxSheet: (path: string, sheet: string) => Promise<string>;
 	odsContent: (path: string) => Promise<string>;
 	zipCsv: (path: string) => Promise<string>;
 }

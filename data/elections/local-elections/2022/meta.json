@@ -26,12 +26,6 @@
     {
       "path": "local-elections-2022.xlsx",
       "role": "source"
-    },
-    {
-      "path": "Wards-results-Table 1.csv",
-      "role": "derived",
-      "derivedFrom": "local-elections-2022.xlsx",
-      "note": "Worksheet extracted to CSV. Remove once the preprocessor reads the workbook directly."
     }
   ]
 }

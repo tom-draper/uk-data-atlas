@@ -18,6 +18,12 @@ import {
 } from "../lib/data/catalog";
 import type { DatasetReader } from "../lib/data/catalog";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
+import {
+	findSheetPath,
+	parseSharedStrings,
+	rowsToCsv,
+	sheetRows,
+} from "../lib/data/spreadsheet/xlsx";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
@@ -45,6 +51,35 @@ const readZip = (path: string): Promise<string> => {
 			maxBuffer: 100 * 1024 * 1024,
 		}).toString("utf8"),
 	);
+};
+
+// Pulls one named worksheet out of an .xlsx and renders it as CSV, so the
+// workbook can stay in data/ exactly as published and no extracted copy has to
+// be committed alongside it.
+const readXlsxSheet = async (
+	path: string,
+	sheetName: string,
+): Promise<string> => {
+	const fullPath = join(SOURCE_DATA, path);
+	const entry = (name: string) =>
+		execSync(`unzip -p "${fullPath}" "${name}"`, {
+			maxBuffer: 512 * 1024 * 1024,
+		}).toString("utf8");
+
+	const sheetPath = findSheetPath(
+		entry("xl/workbook.xml"),
+		entry("xl/_rels/workbook.xml.rels"),
+		sheetName,
+	);
+	// Not every workbook has a shared string table.
+	let sharedStrings: string[] = [];
+	try {
+		sharedStrings = parseSharedStrings(entry("xl/sharedStrings.xml"));
+	} catch {
+		sharedStrings = [];
+	}
+
+	return rowsToCsv(sheetRows(entry(sheetPath), sharedStrings));
 };
 
 // ODS source files are never exposed by the application. The child-poverty
@@ -96,6 +131,10 @@ const createTrackedReader = () => {
 	};
 	const reader: DatasetReader = {
 		text: (path) => track("text", path, () => read(path)),
+		xlsxSheet: (path, sheet) =>
+			track("xlsxSheet", `${path}#${sheet}`, () =>
+				readXlsxSheet(path, sheet),
+			),
 		odsContent: (path) =>
 			track("odsContent", path, () => readOdsContent(path)),
 		zipCsv: (path) => track("zipCsv", path, () => readZip(path)),

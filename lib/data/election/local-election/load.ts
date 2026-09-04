@@ -120,18 +120,18 @@ export const parseLocalElectionCsv = (
 	};
 };
 
-// Loads and parses every configured local election CSV via the provided reader
-// (used by the precompile script), keyed by year. Reference datasets are parsed
-// first so the 2023 dataset (which lacks ward codes) can be reconciled against
-// them.
+// Loads and parses every configured local election worksheet via the provided
+// reader (used by the precompile script), keyed by year. Reference datasets are
+// parsed first so the 2023 dataset (which lacks ward codes) can be reconciled
+// against them.
 export const loadLocalElection = async (
-	read: (path: string) => Promise<string>,
+	readSheet: (path: string, sheet: string) => Promise<string>,
 ): Promise<Record<string, LocalElectionDataset>> => {
 	const refs: LocalElectionDataset[] = [];
 	let raw2023: ParsedLocalElectionDataset | null = null;
 
 	for (const config of Object.values(ELECTION_SOURCES)) {
-		const text = await read(config.path);
+		const text = await readSheet(config.path, config.sheet);
 		const dataset = parseLocalElectionCsv(text, config);
 		if (config.isReference) refs.push(dataset);
 		else raw2023 = dataset;

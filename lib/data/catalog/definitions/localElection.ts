@@ -19,5 +19,5 @@ export const localElectionDatasetDefinition: DatasetDefinition<LocalElectionData
 			description:
 				"Local election results by electoral ward for England and Wales.",
 		},
-		precompile: async ({ text }) => loadLocalElection(text),
+		precompile: async ({ xlsxSheet }) => loadLocalElection(xlsxSheet),
 	};

@@ -26,12 +26,6 @@
     {
       "path": "LEH-2025-results-HoC.xlsx",
       "role": "source"
-    },
-    {
-      "path": "LEH-2025-results-HoC.csv",
-      "role": "derived",
-      "derivedFrom": "LEH-2025-results-HoC.xlsx",
-      "note": "Worksheet extracted to CSV. Remove once the preprocessor reads the workbook directly."
     }
   ]
 }

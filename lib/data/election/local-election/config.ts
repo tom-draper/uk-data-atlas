@@ -8,6 +8,8 @@ export interface ElectionSourceConfig {
 	// Path relative to data/, read at precompile time. The leading segments
 	// are the dataset's id, so this points into its folder alongside meta.json.
 	path: string;
+	// Worksheet inside the workbook holding the ward-level table.
+	sheet: string;
 	// Map internal standard keys to CSV headers
 	fields: {
 		code: string; // Ward Code
@@ -28,7 +30,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	2025: {
 		year: 2025,
 		boundaryYear: 2025, // 2025 HoC data uses WD25CD codes from the May 2025 ward boundary
-		path: "elections/local-elections/2025/LEH-2025-results-HoC.csv",
+		path: "elections/local-elections/2025/LEH-2025-results-HoC.xlsx",
+		sheet: "Ward results",
 		isReference: true,
 		skipRows: 1,
 		fields: {
@@ -42,7 +45,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2024: {
 		year: 2024,
-		path: "elections/local-elections/2024/Wards results-Table 1.csv",
+		path: "elections/local-elections/2024/LEH-2024-results-HoC-version.xlsx",
+		sheet: "Wards results",
 		isReference: true,
 		fields: {
 			code: "Ward code",
@@ -56,7 +60,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2023: {
 		year: 2023,
-		path: "elections/local-elections/2023-candidates/Ward_Level-Table 1.csv",
+		path: "elections/local-elections/2023-candidates/LEH-Candidates-2023.xlsx",
+		sheet: "Ward_Level",
 		isReference: false,
 		fields: {
 			code: "", // Missing in 2023
@@ -69,7 +74,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2022: {
 		year: 2022,
-		path: "elections/local-elections/2022/Wards-results-Table 1.csv",
+		path: "elections/local-elections/2022/local-elections-2022.xlsx",
+		sheet: "Wards-results",
 		isReference: true,
 		fields: {
 			code: "Ward code",
@@ -83,7 +89,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2021: {
 		year: 2021,
-		path: "elections/local-elections/2021/Wards-results-Table 1.csv",
+		path: "elections/local-elections/2021/local_elections_2021_results-2.xlsx",
+		sheet: "Wards-results",
 		isReference: true,
 		fields: {
 			code: "Ward/ED code",

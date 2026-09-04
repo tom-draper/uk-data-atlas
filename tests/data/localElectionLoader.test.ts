@@ -7,6 +7,7 @@ import type { ElectionSourceConfig } from "@/lib/data/election/local-election/co
 const referenceConfig: ElectionSourceConfig = {
 	year: 2024,
 	path: "reference.csv",
+	sheet: "Sheet1",
 	isReference: true,
 	fields: {
 		code: "Ward code",
@@ -22,6 +23,7 @@ const referenceConfig: ElectionSourceConfig = {
 const unmappedConfig: ElectionSourceConfig = {
 	year: 2023,
 	path: "unmapped.csv",
+	sheet: "Sheet1",
 	isReference: false,
 	fields: {
 		code: "",
