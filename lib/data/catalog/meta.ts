@@ -1,7 +1,7 @@
 /**
  * Every dataset in `data/` is a folder holding its untouched source files and a
  * `meta.json` describing where they came from. The folder path is the dataset's
- * id — `elections/local-elections/2025-hoc` — so adding a dataset means dropping
+ * id — `politics/elections/local-elections/2025-hoc` — so adding a dataset means dropping
  * a folder in, not editing a registry.
  *
  * This module is the schema and its validator. It touches no filesystem, so the

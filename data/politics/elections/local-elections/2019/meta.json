@@ -1,0 +1,19 @@
+{
+  "id": "2019",
+  "title": "Local election results 2019",
+  "description": "Ward-level candidate results for the May 2019 local elections in England and Wales. The source archive does not include electorate or turnout figures; Scottish STV records are excluded.",
+  "topics": ["politics", "elections", "local-government"],
+  "publisher": "Local Elections Archive Project",
+  "sourceUrl": "https://www.andrewteale.me.uk/leap/",
+  "licence": {
+    "name": "Creative Commons Attribution-ShareAlike 3.0 Unported",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  "temporalCoverage": "2019",
+  "spatialCoverage": {
+    "geography": "ward",
+    "vintage": 2019,
+    "countries": ["GB-ENG", "GB-WLS"]
+  },
+  "files": [{ "path": "leap-2019-05-02.zip", "role": "source" }]
+}

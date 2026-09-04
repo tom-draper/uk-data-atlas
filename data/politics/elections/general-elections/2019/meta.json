@@ -1,0 +1,24 @@
+{
+  "id": "2019",
+  "title": "UK general election results 2019",
+  "description": "Results of the 2019 UK general election by Westminster parliamentary constituency.",
+  "topics": ["politics", "elections", "parliament"],
+  "publisher": "House of Commons Library",
+  "sourceUrl": "https://commonslibrary.parliament.uk/",
+  "licence": {
+    "name": "Open Parliament Licence",
+    "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/"
+  },
+  "temporalCoverage": "2019",
+  "spatialCoverage": {
+    "geography": "constituency",
+    "vintage": 2019,
+    "countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+  },
+  "files": [
+    {
+      "path": "HoC-GE2019-results-by-constituency.csv",
+      "role": "source"
+    }
+  ]
+}

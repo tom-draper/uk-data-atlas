@@ -62,7 +62,7 @@ export const GENERAL_ELECTION_SOURCES: Record<
 > = {
 	"general-election-2024": {
 		year: 2024,
-		path: "elections/general-elections/HoC-GE2024-results-by-constituency.csv",
+		path: "politics/elections/general-elections/2024/HoC-GE2024-results-by-constituency.csv",
 		requiresHeaderCleaning: true, // Need to skip initial metadata rows
 		constituencyBoundaryYear: 2024,
 		fields: {
@@ -81,7 +81,7 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2019": {
 		year: 2019,
-		path: "elections/general-elections/HoC-GE2019-results-by-constituency.csv",
+		path: "politics/elections/general-elections/2019/HoC-GE2019-results-by-constituency.csv",
 		requiresHeaderCleaning: false,
 		constituencyBoundaryYear: 2019,
 		fields: {
@@ -100,7 +100,7 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2017": {
 		year: 2017,
-		path: "elections/general-elections/HoC-GE2017-results-by-constituency.csv",
+		path: "politics/elections/general-elections/2017/HoC-GE2017-results-by-constituency.csv",
 		requiresHeaderCleaning: false,
 		constituencyBoundaryYear: 2019, // Re-use 2019 boundaries for 2017/2015
 		fields: {
@@ -119,7 +119,7 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2015": {
 		year: 2015,
-		path: "elections/general-elections/HoC-GE2015-results-by-constituency.csv",
+		path: "politics/elections/general-elections/2015/HoC-GE2015-results-by-constituency.csv",
 		requiresHeaderCleaning: false,
 		constituencyBoundaryYear: 2019, // Re-use 2019 boundaries for 2017/2015
 		fields: {

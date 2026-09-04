@@ -1,0 +1,24 @@
+{
+  "id": "2015",
+  "title": "UK general election results 2015",
+  "description": "Results of the 2015 UK general election by Westminster parliamentary constituency.",
+  "topics": ["politics", "elections", "parliament"],
+  "publisher": "House of Commons Library",
+  "sourceUrl": "https://commonslibrary.parliament.uk/",
+  "licence": {
+    "name": "Open Parliament Licence",
+    "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/"
+  },
+  "temporalCoverage": "2015",
+  "spatialCoverage": {
+    "geography": "constituency",
+    "vintage": 2015,
+    "countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+  },
+  "files": [
+    {
+      "path": "HoC-GE2015-results-by-constituency.csv",
+      "role": "source"
+    }
+  ]
+}

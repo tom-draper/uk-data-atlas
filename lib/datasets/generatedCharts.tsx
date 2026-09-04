@@ -26,16 +26,20 @@ import Chart20 from "@/components/elections/local/LocalElectionRegistryChart";
 import Chart21 from "@/components/elections/local/LocalElectionRegistryChart";
 import Chart22 from "@/components/elections/local/LocalElectionRegistryChart";
 import Chart23 from "@/components/elections/local/LocalElectionRegistryChart";
-import Chart24 from "@/components/health/NHSWaitingChart";
-import Chart25 from "@/components/deprivation/nimdm/NIMDMChart";
-import Chart26 from "@/components/demographics/population-density-registry";
-import Chart27 from "@/components/demographics/population-age-registry";
-import Chart28 from "@/components/demographics/population-gender-registry";
-import Chart29 from "@/components/education/QualificationChart";
-import Chart30 from "@/components/education/SchoolPerformanceChart";
-import Chart31 from "@/components/deprivation/simd/SIMDChart";
-import Chart32 from "@/components/economics/unemployment/UnemploymentChart";
-import Chart33 from "@/components/deprivation/wimd/WIMDChart";
+import Chart24 from "@/components/elections/local/LocalElectionRegistryChart";
+import Chart25 from "@/components/elections/local/LocalElectionRegistryChart";
+import Chart26 from "@/components/elections/local/LocalElectionRegistryChart";
+import Chart27 from "@/components/elections/local/LocalElectionRegistryChart";
+import Chart28 from "@/components/health/NHSWaitingChart";
+import Chart29 from "@/components/deprivation/nimdm/NIMDMChart";
+import Chart30 from "@/components/demographics/population-density-registry";
+import Chart31 from "@/components/demographics/population-age-registry";
+import Chart32 from "@/components/demographics/population-gender-registry";
+import Chart33 from "@/components/education/QualificationChart";
+import Chart34 from "@/components/education/SchoolPerformanceChart";
+import Chart35 from "@/components/deprivation/simd/SIMDChart";
+import Chart36 from "@/components/economics/unemployment/UnemploymentChart";
+import Chart37 from "@/components/deprivation/wimd/WIMDChart";
 
 export const CHART_COMPONENTS: Record<
 	string,
@@ -66,16 +70,20 @@ export const CHART_COMPONENTS: Record<
 	"localElection-2023": Chart21 as ComponentType<ChartComponentProps>,
 	"localElection-2022": Chart22 as ComponentType<ChartComponentProps>,
 	"localElection-2021": Chart23 as ComponentType<ChartComponentProps>,
-	"health-nhsWaiting": Chart24 as ComponentType<ChartComponentProps>,
-	"deprivation-nimdm": Chart25 as ComponentType<ChartComponentProps>,
+	"localElection-2019": Chart24 as ComponentType<ChartComponentProps>,
+	"localElection-2018": Chart25 as ComponentType<ChartComponentProps>,
+	"localElection-2017": Chart26 as ComponentType<ChartComponentProps>,
+	"localElection-2016": Chart27 as ComponentType<ChartComponentProps>,
+	"health-nhsWaiting": Chart28 as ComponentType<ChartComponentProps>,
+	"deprivation-nimdm": Chart29 as ComponentType<ChartComponentProps>,
 	"demographics-populationDensity":
-		Chart26 as ComponentType<ChartComponentProps>,
-	"demographics-age": Chart27 as ComponentType<ChartComponentProps>,
-	"demographics-gender": Chart28 as ComponentType<ChartComponentProps>,
-	"education-qualifications": Chart29 as ComponentType<ChartComponentProps>,
-	"education-schoolPerformance":
 		Chart30 as ComponentType<ChartComponentProps>,
-	"deprivation-simd": Chart31 as ComponentType<ChartComponentProps>,
-	"economics-unemployment": Chart32 as ComponentType<ChartComponentProps>,
-	"deprivation-wimd": Chart33 as ComponentType<ChartComponentProps>,
+	"demographics-age": Chart31 as ComponentType<ChartComponentProps>,
+	"demographics-gender": Chart32 as ComponentType<ChartComponentProps>,
+	"education-qualifications": Chart33 as ComponentType<ChartComponentProps>,
+	"education-schoolPerformance":
+		Chart34 as ComponentType<ChartComponentProps>,
+	"deprivation-simd": Chart35 as ComponentType<ChartComponentProps>,
+	"economics-unemployment": Chart36 as ComponentType<ChartComponentProps>,
+	"deprivation-wimd": Chart37 as ComponentType<ChartComponentProps>,
 };

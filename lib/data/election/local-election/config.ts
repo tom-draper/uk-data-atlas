@@ -2,12 +2,17 @@
 
 import { WardYear } from "../../boundaries/boundaries";
 
-export interface ElectionSourceConfig {
+interface ElectionSourceBase {
 	year: number;
 	boundaryYear?: WardYear; // Defaults to year; set when election year has no ward boundary
 	// Path relative to data/, read at precompile time. The leading segments
 	// are the dataset's id, so this points into its folder alongside meta.json.
 	path: string;
+	isReference?: boolean; // Used to fix 2023 data
+}
+
+export interface ElectionTableSourceConfig extends ElectionSourceBase {
+	source: "xlsx";
 	// Worksheet inside the workbook holding the ward-level table.
 	sheet: string;
 	// Map internal standard keys to worksheet table headers.
@@ -20,16 +25,24 @@ export interface ElectionSourceConfig {
 		electorate: string;
 		totalVotes?: string; // 2023 uses 'Grand Total'
 	};
-	isReference?: boolean; // Used to fix 2023 data
 	// Remap ward codes in source data to match the boundary file for that year
 	wardCodeMap?: Record<string, string>;
 }
 
+export interface LeapElectionSourceConfig extends ElectionSourceBase {
+	source: "leap";
+}
+
+export type ElectionSourceConfig =
+	| ElectionTableSourceConfig
+	| LeapElectionSourceConfig;
+
 export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	2025: {
 		year: 2025,
+		source: "xlsx",
 		boundaryYear: 2025, // 2025 HoC data uses WD25CD codes from the May 2025 ward boundary
-		path: "elections/local-elections/2025/LEH-2025-results-HoC.xlsx",
+		path: "politics/elections/local-elections/2025/LEH-2025-results-HoC.xlsx",
 		sheet: "Ward results",
 		isReference: true,
 		fields: {
@@ -43,7 +56,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2024: {
 		year: 2024,
-		path: "elections/local-elections/2024/LEH-2024-results-HoC-version.xlsx",
+		source: "xlsx",
+		path: "politics/elections/local-elections/2024/LEH-2024-results-HoC-version.xlsx",
 		sheet: "Wards results",
 		isReference: true,
 		fields: {
@@ -58,7 +72,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2023: {
 		year: 2023,
-		path: "elections/local-elections/2023-candidates/LEH-Candidates-2023.xlsx",
+		source: "xlsx",
+		path: "politics/elections/local-elections/2023/LEH-Candidates-2023.xlsx",
 		sheet: "Ward_Level",
 		isReference: false,
 		fields: {
@@ -72,7 +87,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2022: {
 		year: 2022,
-		path: "elections/local-elections/2022/local-elections-2022.xlsx",
+		source: "xlsx",
+		path: "politics/elections/local-elections/2022/local-elections-2022.xlsx",
 		sheet: "Wards-results",
 		isReference: true,
 		fields: {
@@ -87,7 +103,8 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2021: {
 		year: 2021,
-		path: "elections/local-elections/2021/local_elections_2021_results-2.xlsx",
+		source: "xlsx",
+		path: "politics/elections/local-elections/2021/local_elections_2021_results-2.xlsx",
 		sheet: "Wards-results",
 		isReference: true,
 		fields: {
@@ -114,5 +131,29 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 			E05014159: "E05000677", // Pilkington Park (Bury)
 			E05014163: "E05000681", // Ramsbottom (Bury)
 		},
+	},
+	2019: {
+		year: 2019,
+		source: "leap",
+		path: "politics/elections/local-elections/2019/leap-2019-05-02.zip",
+		isReference: true,
+	},
+	2018: {
+		year: 2018,
+		source: "leap",
+		path: "politics/elections/local-elections/2018/leap-2018-05-03.zip",
+		isReference: true,
+	},
+	2017: {
+		year: 2017,
+		source: "leap",
+		path: "politics/elections/local-elections/2017/leap-2017-05-04.zip",
+		isReference: true,
+	},
+	2016: {
+		year: 2016,
+		source: "leap",
+		path: "politics/elections/local-elections/2016/leap-2016-05-05.zip",
+		isReference: true,
 	},
 };

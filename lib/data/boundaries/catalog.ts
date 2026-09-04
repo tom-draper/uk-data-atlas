@@ -21,8 +21,28 @@ type BoundaryFamily = {
 export const BOUNDARY_CATALOG = {
 	ward: {
 		properties: {
-			code: ["WD25CD", "WD24CD", "WD23CD", "WD22CD", "WD21CD"],
-			name: ["WD25NM", "WD24NM", "WD23NM", "WD22NM", "WD21NM"],
+			code: [
+				"WD25CD",
+				"WD24CD",
+				"WD23CD",
+				"WD22CD",
+				"WD21CD",
+				"wd19cd",
+				"wd18cd",
+				"wd17cd",
+				"wd16cd",
+			],
+			name: [
+				"WD25NM",
+				"WD24NM",
+				"WD23NM",
+				"WD22NM",
+				"WD21NM",
+				"wd19nm",
+				"wd18nm",
+				"wd17nm",
+				"wd16nm",
+			],
 			parentCode: [
 				"LAD25CD",
 				"LAD24CD",
@@ -30,6 +50,10 @@ export const BOUNDARY_CATALOG = {
 				"LAD22CD",
 				"LAD21CD",
 				"LAD16CD",
+				"lad19cd",
+				"lad18cd",
+				"lad17cd",
+				"lad16cd",
 			],
 		},
 		vintages: {
@@ -47,6 +71,18 @@ export const BOUNDARY_CATALOG = {
 			),
 			2021: withCDN(
 				"/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.topojson",
+			),
+			2019: withCDN(
+				"/data/boundaries/wards/Wards_December_2019_GCB_GB_2022_-3199817513651023624.geojson",
+			),
+			2018: withCDN(
+				"/data/boundaries/wards/Wards_December_2018_GCB_UK_2022_-623525817862961610.geojson",
+			),
+			2017: withCDN(
+				"/data/boundaries/wards/Wards_December_2017_GCB_in_Great_Britain_2022_-2440043846989090720.geojson",
+			),
+			2016: withCDN(
+				"/data/boundaries/wards/Wards_December_2016_GCB_in_Great_Britain_2022_856513180533154279.geojson",
 			),
 		},
 	},

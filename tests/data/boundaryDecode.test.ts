@@ -69,6 +69,27 @@ describe("decodeBoundaryData", () => {
 		);
 	});
 
+	it("reprojects British National Grid GeoJSON to the map's longitude/latitude CRS", () => {
+		const boundary = decodeBoundaryData({
+			type: "FeatureCollection",
+			crs: { type: "name", properties: { name: "EPSG:27700" } },
+			features: [
+				{
+					type: "Feature",
+					properties: {},
+					geometry: { type: "Point", coordinates: [543620, 184826] },
+				},
+			],
+		});
+
+		expect(boundary.crs.properties.name).toBe(
+			"urn:ogc:def:crs:OGC:1.3:CRS84",
+		);
+		const [longitude, latitude] = boundary.features[0].geometry.coordinates;
+		expect(longitude).toBeCloseTo(0.1, 1);
+		expect(latitude).toBeCloseTo(51.5, 1);
+	});
+
 	it("refuses a TopoJSON file with no geometry objects", () => {
 		expect(() =>
 			decodeBoundaryData({

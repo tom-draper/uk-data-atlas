@@ -12,56 +12,28 @@ const calculateStats: ChartDefinition<LocalElectionDataset>["calculateStats"] =
 			datasetId,
 		);
 
-const chart2025: ChartDefinition<LocalElectionDataset> = {
+const localElectionChart = (
+	year: LocalElectionDataset["year"],
+): ChartDefinition<LocalElectionDataset> => ({
 	group: "Local Election",
-	key: "localElection-2025",
-	label: "2025 Local Elections",
+	key: `localElection-${year}`,
+	label: `${year} Local Elections`,
 	defaultVisible: true,
 	componentPath: "@/components/elections/local/LocalElectionRegistryChart",
 	calculateStats,
-	year: 2025,
-};
-const chart2024: ChartDefinition<LocalElectionDataset> = {
-	group: "Local Election",
-	key: "localElection-2024",
-	label: "2024 Local Elections",
-	defaultVisible: true,
-	componentPath: "@/components/elections/local/LocalElectionRegistryChart",
-	calculateStats,
-	year: 2024,
-};
-const chart2023: ChartDefinition<LocalElectionDataset> = {
-	group: "Local Election",
-	key: "localElection-2023",
-	label: "2023 Local Elections",
-	defaultVisible: true,
-	componentPath: "@/components/elections/local/LocalElectionRegistryChart",
-	calculateStats,
-	year: 2023,
-};
-const chart2022: ChartDefinition<LocalElectionDataset> = {
-	group: "Local Election",
-	key: "localElection-2022",
-	label: "2022 Local Elections",
-	defaultVisible: true,
-	componentPath: "@/components/elections/local/LocalElectionRegistryChart",
-	calculateStats,
-	year: 2022,
-};
-const chart2021: ChartDefinition<LocalElectionDataset> = {
-	group: "Local Election",
-	key: "localElection-2021",
-	label: "2021 Local Elections",
-	defaultVisible: true,
-	componentPath: "@/components/elections/local/LocalElectionRegistryChart",
-	calculateStats,
-	year: 2021,
-};
+	year,
+});
+
+const localElectionYears: LocalElectionDataset["year"][] = [
+	2025, 2024, 2023, 2022, 2021, 2019, 2018, 2017, 2016,
+];
+const localElectionCharts = localElectionYears.map(localElectionChart);
+
 export const localElectionDefinition: ChartDatasetDefinition<LocalElectionDataset> =
 	{
 		...localElectionDatasetDefinition,
-		chart: chart2025,
-		charts: [chart2025, chart2024, chart2023, chart2022, chart2021],
+		chart: localElectionChart(2025),
+		charts: localElectionCharts,
 		legendAggregation: { calculateStats },
 		legendKind: "party",
 		mapRenderer: {

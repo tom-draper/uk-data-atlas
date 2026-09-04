@@ -33,6 +33,34 @@ interface WardProperties2021 {
 	WD21NM: string;
 }
 
+interface WardProperties2019 {
+	lad19cd: string;
+	lad19nm: string;
+	wd19cd: string;
+	wd19nm: string;
+}
+
+interface WardProperties2018 {
+	lad18cd: string;
+	lad18nm: string;
+	wd18cd: string;
+	wd18nm: string;
+}
+
+interface WardProperties2017 {
+	lad17cd: string;
+	lad17nm: string;
+	wd17cd: string;
+	wd17nm: string;
+}
+
+interface WardProperties2016 {
+	lad16cd: string;
+	lad16nm: string;
+	wd16cd: string;
+	wd16nm: string;
+}
+
 // Local Authority properties by year
 interface LocalAuthorityProperties2025 {
 	LAD25CD: string;
@@ -125,6 +153,10 @@ export type YearToProperties = {
 	ward_2023: WardProperties2023;
 	ward_2024: WardProperties2024;
 	ward_2025: WardProperties2025;
+	ward_2019: WardProperties2019;
+	ward_2018: WardProperties2018;
+	ward_2017: WardProperties2017;
+	ward_2016: WardProperties2016;
 	// Local Authorities
 	lad_2016: LocalAuthorityProperties2016;
 	lad_2021: LocalAuthorityProperties2021;

@@ -45,7 +45,9 @@ export type ElectionData =
 	| GeneralElectionConstituencyData
 	| LocalAuthorityData;
 
-export const LOCAL_ELECTION_YEARS = [2025, 2024, 2023, 2022, 2021] as const;
+export const LOCAL_ELECTION_YEARS = [
+	2025, 2024, 2023, 2022, 2021, 2019, 2018, 2017, 2016,
+] as const;
 export const GENERAL_ELECTION_YEARS = [2024, 2019, 2017, 2015] as const;
 
 export type LocalElectionYear = (typeof LOCAL_ELECTION_YEARS)[number];

@@ -3,7 +3,7 @@
   "version": "0.1.8",
   "private": true,
   "scripts": {
-    "precompile": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/precompile-data.ts",
+		"precompile": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/precompile-data.mts",
     "dev": "node scripts/sync-public-data.mjs && pnpm precompile && next dev --turbopack",
     "build": "node scripts/sync-public-data.mjs && pnpm precompile && next build --turbopack",
     "start": "next start",

@@ -8,7 +8,7 @@ import { basename, join, relative, sep } from "path";
 import { parseDatasetMeta, type DatasetMeta } from "../lib/data/catalog/meta";
 
 export interface DiscoveredDataset {
-	/** Folder path relative to `data/`, e.g. "elections/local-elections/2025". */
+	/** Folder path relative to `data/`, e.g. "politics/elections/local-elections/2025". */
 	id: string;
 	/** Absolute path to the dataset folder. */
 	dir: string;

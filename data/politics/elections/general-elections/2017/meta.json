@@ -1,0 +1,24 @@
+{
+  "id": "2017",
+  "title": "UK general election results 2017",
+  "description": "Results of the 2017 UK general election by Westminster parliamentary constituency.",
+  "topics": ["politics", "elections", "parliament"],
+  "publisher": "House of Commons Library",
+  "sourceUrl": "https://commonslibrary.parliament.uk/",
+  "licence": {
+    "name": "Open Parliament Licence",
+    "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/"
+  },
+  "temporalCoverage": "2017",
+  "spatialCoverage": {
+    "geography": "constituency",
+    "vintage": 2017,
+    "countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+  },
+  "files": [
+    {
+      "path": "HoC-GE2017-results-by-constituency.csv",
+      "role": "source"
+    }
+  ]
+}

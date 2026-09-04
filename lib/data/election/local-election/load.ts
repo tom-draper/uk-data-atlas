@@ -7,9 +7,26 @@ import {
 } from "@lib/types/index";
 import { WardYear } from "@/lib/data/boundaries/boundaries";
 import { PARTY_INFO } from "@/lib/data/election/parties";
-import { ElectionSourceConfig, ELECTION_SOURCES } from "./config";
+import {
+	type ElectionSourceConfig,
+	type ElectionTableSourceConfig,
+	type LeapElectionSourceConfig,
+	ELECTION_SOURCES,
+} from "./config";
 
 const KNOWN_PARTIES = ["LAB", "CON", "LD", "GREEN", "REF", "IND"];
+
+const LEAP_PARTY_CODES: Record<string, string> = {
+	C: "CON",
+	Lab: "LAB",
+	LD: "LD",
+	Grn: "GREEN",
+	Lib: "LD",
+	UKIP: "UKIP",
+	SNP: "SNP",
+	PC: "PC",
+	Ind: "IND",
+};
 
 type TableRow = Record<string, string>;
 
@@ -31,10 +48,10 @@ const parseNumber = (val: string | undefined): number => {
 	return isNaN(num) ? 0 : num;
 };
 
-const findWinner = (votes: Record<string, number>): string => {
+const findWinner = (votes: Record<string, number | undefined>): string => {
 	return Object.entries(votes).reduce(
 		(winner, [party, count]) =>
-			count > (votes[winner] || 0) ? party : winner,
+			(count ?? 0) > (votes[winner] ?? 0) ? party : winner,
 		"OTHER",
 	);
 };
@@ -43,7 +60,7 @@ const findWinner = (votes: Record<string, number>): string => {
 // time, so PapaParse stays out of the client bundle.
 export const parseLocalElectionTable = (
 	text: string,
-	config: ElectionSourceConfig,
+	config: ElectionTableSourceConfig,
 ): ParsedLocalElectionDataset => {
 	// Heuristic: Skip metadata lines if they exist (detecting "Local authority name")
 	// This replaces the hardcoded line splitting
@@ -120,19 +137,83 @@ export const parseLocalElectionTable = (
 	};
 };
 
+/** Parses LEAP's headerless candidate rows into ward-level results. */
+export const parseLeapLocalElection = (
+	text: string,
+	config: LeapElectionSourceConfig,
+): LocalElectionDataset => {
+	const wardData: Record<string, LocalElectionWardData> = {};
+	const electedParties: Record<string, string[]> = {};
+	const rows = Papa.parse<string[]>(text, { skipEmptyLines: true }).data;
+
+	for (const row of rows) {
+		const [ladName, ladCode, wardName, wardCode, , party, votes, elected] =
+			row;
+		// LEAP's Scottish records only contain first-preference totals, not STV
+		// transfers. Keep this FPTP-compatible series to England and Wales.
+		if (
+			!wardCode ||
+			(!wardCode.startsWith("E") && !wardCode.startsWith("W"))
+		)
+			continue;
+
+		const entry = (wardData[wardCode] ??= {
+			wardCode,
+			wardName,
+			ladName,
+			ladCode,
+			electorate: 0,
+			totalVotes: 0,
+			turnoutPercent: 0,
+			partyVotes: {},
+		});
+		const partyCode = LEAP_PARTY_CODES[party?.trim() ?? ""] ?? "OTHER";
+		const voteCount = parseNumber(votes);
+		entry.partyVotes[partyCode] =
+			(entry.partyVotes[partyCode] ?? 0) + voteCount;
+		entry.totalVotes += voteCount;
+		if (elected === "1") {
+			const winners = (electedParties[wardCode] ??= []);
+			if (!winners.includes(partyCode)) winners.push(partyCode);
+		}
+	}
+
+	const results = Object.fromEntries(
+		Object.entries(wardData).map(([code, entry]) => [
+			code,
+			entry.totalVotes > 0
+				? findWinner(entry.partyVotes)
+				: (electedParties[code]?.[0] ?? "OTHER"),
+		]),
+	);
+	return {
+		id: `localElection${config.year}`,
+		type: "localElection",
+		year: config.year as LocalElectionYear,
+		boundaryYear: (config.boundaryYear ?? config.year) as WardYear,
+		boundaryType: "ward",
+		results,
+		data: wardData,
+		partyInfo: PARTY_INFO,
+	};
+};
+
 // Loads and parses every configured local election worksheet via the provided
 // reader (used by the precompile script), keyed by year. Reference datasets are
 // parsed first so the 2023 dataset (which lacks ward codes) can be reconciled
 // against them.
 export const loadLocalElection = async (
-	readSheet: (path: string, sheet: string) => Promise<string>,
+	readSource: (source: ElectionSourceConfig) => Promise<string>,
 ): Promise<Record<string, LocalElectionDataset>> => {
 	const refs: LocalElectionDataset[] = [];
 	let raw2023: ParsedLocalElectionDataset | null = null;
 
 	for (const config of Object.values(ELECTION_SOURCES)) {
-		const text = await readSheet(config.path, config.sheet);
-		const dataset = parseLocalElectionTable(text, config);
+		const text = await readSource(config);
+		const dataset =
+			config.source === "xlsx"
+				? parseLocalElectionTable(text, config)
+				: parseLeapLocalElection(text, config);
 		if (config.isReference) refs.push(dataset);
 		else raw2023 = dataset;
 	}
