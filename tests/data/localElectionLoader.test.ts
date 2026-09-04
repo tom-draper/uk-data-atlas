@@ -114,13 +114,13 @@ Unmatched,Example Council,55%,900,400,300,100`,
 				"Ward code,Ward name,Local authority name,Local authority code,Turnout (%),Electorate,Total votes,LAB\nE05000001,Central,Example Council,E06000001,50,1000,500,300",
 			"politics/elections/local-elections/2021/local_elections_2021_results-2.xlsx#Wards-results":
 				"Ward/ED code,Ward/ED name,Local authority name,Local authority code,Turnout (%),Electorate,Total votes,LAB\nE05000001,Central,Example Council,E06000001,50,1000,500,300",
-			"politics/elections/local-elections/2019/leap-2019-05-02.zip":
+			"politics/elections/local-elections/2019/leap-2019-05-02.csv":
 				'"Example Council","E06000001","Central","E05000001","Alex Example","Lab","300","1"',
-			"politics/elections/local-elections/2018/leap-2018-05-03.zip":
+			"politics/elections/local-elections/2018/leap-2018-05-03.csv":
 				'"Example Council","E06000001","Central","E05000001","Alex Example","Lab","300","1"',
-			"politics/elections/local-elections/2017/leap-2017-05-04.zip":
+			"politics/elections/local-elections/2017/leap-2017-05-04.csv":
 				'"Example Council","E06000001","Central","E05000001","Alex Example","Lab","300","1"',
-			"politics/elections/local-elections/2016/leap-2016-05-05.zip":
+			"politics/elections/local-elections/2016/leap-2016-05-05.csv":
 				'"Example Council","E06000001","Central","E05000001","Alex Example","Lab","300","1"',
 		};
 		const readSource = async (source: ElectionSourceConfig) => {

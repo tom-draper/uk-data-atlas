@@ -15,5 +15,5 @@
     "vintage": 2018,
     "countries": ["GB-ENG", "GB-WLS"]
   },
-  "files": [{ "path": "leap-2018-05-03.zip", "role": "source" }]
+  "files": [{ "path": "leap-2018-05-03.csv", "role": "source", "note": "Extracted unchanged from LEAP's published ZIP archive." }]
 }

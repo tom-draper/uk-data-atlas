@@ -34,8 +34,7 @@ export interface LeapElectionSourceConfig extends ElectionSourceBase {
 }
 
 export type ElectionSourceConfig =
-	| ElectionTableSourceConfig
-	| LeapElectionSourceConfig;
+	ElectionTableSourceConfig | LeapElectionSourceConfig;
 
 export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	2025: {
@@ -135,25 +134,25 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	2019: {
 		year: 2019,
 		source: "leap",
-		path: "politics/elections/local-elections/2019/leap-2019-05-02.zip",
+		path: "politics/elections/local-elections/2019/leap-2019-05-02.csv",
 		isReference: true,
 	},
 	2018: {
 		year: 2018,
 		source: "leap",
-		path: "politics/elections/local-elections/2018/leap-2018-05-03.zip",
+		path: "politics/elections/local-elections/2018/leap-2018-05-03.csv",
 		isReference: true,
 	},
 	2017: {
 		year: 2017,
 		source: "leap",
-		path: "politics/elections/local-elections/2017/leap-2017-05-04.zip",
+		path: "politics/elections/local-elections/2017/leap-2017-05-04.csv",
 		isReference: true,
 	},
 	2016: {
 		year: 2016,
 		source: "leap",
-		path: "politics/elections/local-elections/2016/leap-2016-05-05.zip",
+		path: "politics/elections/local-elections/2016/leap-2016-05-05.csv",
 		isReference: true,
 	},
 };

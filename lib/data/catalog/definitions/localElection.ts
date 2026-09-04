@@ -22,10 +22,10 @@ export const localElectionDatasetDefinition: DatasetDefinition<LocalElectionData
 			description:
 				"Ward-level local election results for England and Wales. The 2016–2019 archive has candidate votes but not electorate or turnout, and excludes Scottish STV results.",
 		},
-		precompile: async ({ xlsxSheet, zipCsv }) =>
+		precompile: async ({ text, xlsxSheet }) =>
 			loadLocalElection((source) =>
 				source.source === "xlsx"
 					? xlsxSheet(source.path, source.sheet)
-					: zipCsv(source.path),
+					: text(source.path),
 			),
 	};

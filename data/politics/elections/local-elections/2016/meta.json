@@ -15,5 +15,5 @@
     "vintage": 2016,
     "countries": ["GB-ENG", "GB-WLS"]
   },
-  "files": [{ "path": "leap-2016-05-05.zip", "role": "source" }]
+  "files": [{ "path": "leap-2016-05-05.csv", "role": "source", "note": "Extracted unchanged from LEAP's published ZIP archive." }]
 }
