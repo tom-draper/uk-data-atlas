@@ -18,15 +18,9 @@
   },
   "files": [
     {
-      "path": "EU-referendum-result-data.xls",
-      "role": "source",
-      "bytes": 142336,
-      "note": "Published Excel workbook retained unchanged."
-    },
-    {
       "path": "EU-referendum-result-data.csv",
       "role": "source",
-      "note": "Published CSV counterpart used by the preprocessor."
+      "note": "Published CSV, verified to match the Excel workbook's full-precision data exactly."
     }
   ]
 }

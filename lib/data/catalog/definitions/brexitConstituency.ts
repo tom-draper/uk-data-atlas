@@ -19,5 +19,6 @@ export const brexitConstituencyDatasetDefinition: DatasetDefinition<BrexitConsti
 			description:
 				"EU referendum result estimates by Westminster parliamentary constituency.",
 		},
-		precompile: async ({ text }) => loadBrexitConstituency(text),
+		precompile: async ({ xlsxSheet }) =>
+			loadBrexitConstituency((path) => xlsxSheet(path, "DATA")),
 	};

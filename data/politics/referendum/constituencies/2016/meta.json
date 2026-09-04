@@ -18,9 +18,9 @@
   },
   "files": [
     {
-      "path": "eureferendum_constitunecy.csv",
+      "path": "eureferendum_constitunecy.xlsx",
       "role": "source",
-      "note": "CSV export of the Library's published workbook. The original workbook URL is linked from sourceUrl but currently rejects automated downloads."
+      "note": "Published Excel workbook, read directly. Its CSV export rounds leave/remain shares to 1 decimal place; the workbook keeps full precision."
     }
   ]
 }
