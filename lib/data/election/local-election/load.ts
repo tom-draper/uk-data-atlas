@@ -11,7 +11,7 @@ import { ElectionSourceConfig, ELECTION_SOURCES } from "./config";
 
 const KNOWN_PARTIES = ["LAB", "CON", "LD", "GREEN", "REF", "IND"];
 
-type CsvRow = Record<string, string>;
+type TableRow = Record<string, string>;
 
 interface UnmappedLocalElectionWardData extends LocalElectionWardData {
 	winningParty: string;
@@ -39,9 +39,9 @@ const findWinner = (votes: Record<string, number>): string => {
 	);
 };
 
-// Parses a single local election CSV into a dataset. Runs at precompile time
-// (Node) so PapaParse stays out of the client bundle.
-export const parseLocalElectionCsv = (
+// Parses one worksheet rendered as CSV into a dataset. This runs at precompile
+// time, so PapaParse stays out of the client bundle.
+export const parseLocalElectionTable = (
 	text: string,
 	config: ElectionSourceConfig,
 ): ParsedLocalElectionDataset => {
@@ -68,7 +68,7 @@ export const parseLocalElectionCsv = (
 	const wardData: Record<string, LocalElectionWardData> = {};
 	const unmapped: UnmappedLocalElectionWardData[] = [];
 
-	results.data.forEach((row: CsvRow) => {
+	results.data.forEach((row: TableRow) => {
 		// Extract party votes
 		const partyVotes: Record<string, number> = {};
 		partyCols.forEach((p) => (partyVotes[p] = parseNumber(row[p])));
@@ -132,7 +132,7 @@ export const loadLocalElection = async (
 
 	for (const config of Object.values(ELECTION_SOURCES)) {
 		const text = await readSheet(config.path, config.sheet);
-		const dataset = parseLocalElectionCsv(text, config);
+		const dataset = parseLocalElectionTable(text, config);
 		if (config.isReference) refs.push(dataset);
 		else raw2023 = dataset;
 	}

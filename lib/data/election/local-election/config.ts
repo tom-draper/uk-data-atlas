@@ -10,7 +10,7 @@ export interface ElectionSourceConfig {
 	path: string;
 	// Worksheet inside the workbook holding the ward-level table.
 	sheet: string;
-	// Map internal standard keys to CSV headers
+	// Map internal standard keys to worksheet table headers.
 	fields: {
 		code: string; // Ward Code
 		name: string; // Ward Name
@@ -20,7 +20,6 @@ export interface ElectionSourceConfig {
 		electorate: string;
 		totalVotes?: string; // 2023 uses 'Grand Total'
 	};
-	skipRows?: number; // Some files have metadata headers
 	isReference?: boolean; // Used to fix 2023 data
 	// Remap ward codes in source data to match the boundary file for that year
 	wardCodeMap?: Record<string, string>;
@@ -33,7 +32,6 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		path: "elections/local-elections/2025/LEH-2025-results-HoC.xlsx",
 		sheet: "Ward results",
 		isReference: true,
-		skipRows: 1,
 		fields: {
 			code: "ONS ward code",
 			name: "Ward/ County Electoral District name",
