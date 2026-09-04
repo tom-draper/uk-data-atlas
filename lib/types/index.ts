@@ -2,6 +2,7 @@
 export * from "./common";
 export * from "./boundaries";
 export * from "./elections";
+export * from "./historicalGeneralElection";
 export * from "./population";
 export * from "./housePrice";
 export * from "./crime";

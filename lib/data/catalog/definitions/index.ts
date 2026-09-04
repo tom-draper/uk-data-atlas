@@ -9,6 +9,7 @@ export { crimeDatasetDefinition } from "./crime";
 export { ethnicityDatasetDefinition } from "./ethnicity";
 export { fuelPovertyDatasetDefinition } from "./fuelPoverty";
 export { generalElectionDatasetDefinition } from "./generalElection";
+export { historicalGeneralElectionDatasetDefinition } from "./historicalGeneralElection";
 export { homelessnessDatasetDefinition } from "./homelessness";
 export { housePriceDatasetDefinition } from "./housePrice";
 export { imdDatasetDefinition } from "./imd";

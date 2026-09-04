@@ -9,6 +9,7 @@ import type { crimeDatasetDefinition } from "./definitions/crime";
 import type { ethnicityDatasetDefinition } from "./definitions/ethnicity";
 import type { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty";
 import type { generalElectionDatasetDefinition } from "./definitions/generalElection";
+import type { historicalGeneralElectionDatasetDefinition } from "./definitions/historicalGeneralElection";
 import type { homelessnessDatasetDefinition } from "./definitions/homelessness";
 import type { housePriceDatasetDefinition } from "./definitions/housePrice";
 import type { imdDatasetDefinition } from "./definitions/imd";
@@ -44,6 +45,11 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<
 			ReturnType<typeof generalElectionDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<
+				typeof historicalGeneralElectionDatasetDefinition.precompile
+			>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof homelessnessDatasetDefinition.precompile>
@@ -98,6 +104,9 @@ export type CatalogueDatasetRecords = {
 	>;
 	generalElection: Awaited<
 		ReturnType<typeof generalElectionDatasetDefinition.precompile>
+	>;
+	historicalGeneralElection: Awaited<
+		ReturnType<typeof historicalGeneralElectionDatasetDefinition.precompile>
 	>;
 	homelessness: Awaited<
 		ReturnType<typeof homelessnessDatasetDefinition.precompile>

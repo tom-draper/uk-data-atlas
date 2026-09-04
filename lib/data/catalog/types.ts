@@ -48,6 +48,13 @@ export interface DatasetDefinition<
 	source: DatasetSource;
 	/** Build-time validation requirements for the loader output. */
 	ingestion?: DatasetIngestionContract;
+	/**
+	 * True for a dataset that is precompiled and validated but deliberately has
+	 * no chart yet — e.g. it has no boundary geometry to render against. The
+	 * catalogue/chart parity checks treat this as an intentional, temporary
+	 * gap rather than a registration bug.
+	 */
+	chartPending?: boolean;
 	precompile: (reader: DatasetReader) => Promise<Record<string, T>>;
 }
 import type { BoundaryType } from "../boundaries/catalog";

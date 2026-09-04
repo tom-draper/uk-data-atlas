@@ -49,9 +49,13 @@ describe("dataset catalogue", () => {
 	});
 
 	it("provides every registered dataset through a presentation-free registry", () => {
-		expect(
-			CATALOGUE_DATASET_DEFINITIONS.map((definition) => definition.type),
-		).toEqual(
+		// A dataset flagged chartPending is precompiled and validated but has no
+		// chart yet (e.g. no boundary geometry to render against), so it is
+		// deliberately absent from CHART_DATASET_DEFINITIONS.
+		const chartedDefinitions = CATALOGUE_DATASET_DEFINITIONS.filter(
+			(definition) => !definition.chartPending,
+		);
+		expect(chartedDefinitions.map((definition) => definition.type)).toEqual(
 			CHART_DATASET_DEFINITIONS.map((definition) => definition.type),
 		);
 		for (const definition of CATALOGUE_DATASET_DEFINITIONS) {

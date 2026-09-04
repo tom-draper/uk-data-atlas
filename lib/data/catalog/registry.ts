@@ -10,6 +10,7 @@ import { crimeDatasetDefinition } from "./definitions/crime";
 import { ethnicityDatasetDefinition } from "./definitions/ethnicity";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty";
 import { generalElectionDatasetDefinition } from "./definitions/generalElection";
+import { historicalGeneralElectionDatasetDefinition } from "./definitions/historicalGeneralElection";
 import { homelessnessDatasetDefinition } from "./definitions/homelessness";
 import { housePriceDatasetDefinition } from "./definitions/housePrice";
 import { imdDatasetDefinition } from "./definitions/imd";
@@ -37,6 +38,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	ethnicityDatasetDefinition,
 	fuelPovertyDatasetDefinition,
 	generalElectionDatasetDefinition,
+	historicalGeneralElectionDatasetDefinition,
 	homelessnessDatasetDefinition,
 	housePriceDatasetDefinition,
 	imdDatasetDefinition,

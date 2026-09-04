@@ -1,0 +1,24 @@
+{
+	"id": "1918-2019",
+	"title": "UK general election results, 1918-2019",
+	"description": "Results of every UK general election from 1918 to 2019 by constituency, aggregated to broad Conservative/Liberal/Labour/Nationalist/Other vote shares. Uses the Commons Library's own constituency numbering, not ONS codes, and spans ten different boundary reviews, so it is not yet joined to a boundary map in this atlas.",
+	"topics": ["politics", "elections", "parliament", "history"],
+	"publisher": "House of Commons Library",
+	"sourceUrl": "https://commonslibrary.parliament.uk/research-briefings/cbp-8647/",
+	"licence": {
+		"name": "Open Parliament Licence",
+		"url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/"
+	},
+	"temporalCoverage": "1918-2019",
+	"spatialCoverage": {
+		"geography": "constituency",
+		"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+	},
+	"files": [
+		{
+			"path": "1918-2019election_results.csv",
+			"role": "source",
+			"note": "Direct file: https://researchbriefings.files.parliament.uk/documents/CBP-8647/1918-2019election_results.csv. Keyed by the Library's own constituency_id, not an ONS/GSS code; no boundary geometry exists yet for the eras before the 2010-2019 boundary set."
+		}
+	]
+}

@@ -6,8 +6,20 @@ import { CHART_COMPONENTS } from "@/lib/datasets/generatedCharts";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { CHART_GROUPS } from "@/lib/datasets/chartGroups";
-import { validatePrecompiledDataset } from "@/lib/data/catalog";
+import {
+	CATALOGUE_DATASET_DEFINITIONS,
+	validatePrecompiledDataset,
+} from "@/lib/data/catalog";
 import { getChartDefinitions } from "@/lib/datasets/types";
+
+// Precompiled and validated, but deliberately chartless for now (see
+// DatasetDefinition.chartPending), so it has a manifest entry with no
+// matching chart registration.
+const CHART_PENDING_TYPES = new Set(
+	CATALOGUE_DATASET_DEFINITIONS.filter(
+		(definition) => definition.chartPending,
+	).map((definition) => definition.type),
+);
 
 const PRECOMPILED = join(process.cwd(), "data", "precompiled");
 
@@ -45,7 +57,10 @@ const readCompiled = (file: string) => {
 
 describe("chart dataset registry contract", () => {
 	it("has one provenance manifest entry for every registered dataset", () => {
-		expect(manifest.datasets.map((entry) => entry.type).sort()).toEqual(
+		const chartedManifestTypes = manifest.datasets
+			.map((entry) => entry.type)
+			.filter((type) => !CHART_PENDING_TYPES.has(type));
+		expect(chartedManifestTypes.sort()).toEqual(
 			CHART_DATASET_DEFINITIONS.map(
 				(definition) => definition.type,
 			).sort(),
