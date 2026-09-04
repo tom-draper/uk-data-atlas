@@ -52,11 +52,21 @@ const chart2015: ChartDefinition<GeneralElectionDataset> = {
 	calculateStats,
 	year: 2015,
 };
+const chart2010: ChartDefinition<GeneralElectionDataset> = {
+	group: "General Election",
+	key: "generalElection-2010",
+	label: "2010 General Election",
+	defaultVisible: true,
+	componentPath:
+		"@/components/elections/general/GeneralElectionRegistryChart",
+	calculateStats,
+	year: 2010,
+};
 export const generalElectionDefinition: ChartDatasetDefinition<GeneralElectionDataset> =
 	{
 		...generalElectionDatasetDefinition,
 		chart: chart2024,
-		charts: [chart2024, chart2019, chart2017, chart2015],
+		charts: [chart2024, chart2019, chart2017, chart2015, chart2010],
 		legendAggregation: { calculateStats },
 		legendKind: "party",
 		mapRenderer: {

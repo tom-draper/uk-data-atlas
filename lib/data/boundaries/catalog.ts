@@ -92,6 +92,11 @@ export const BOUNDARY_CATALOG = {
 			name: ["PCON24NM", "pcon19nm", "PCON17NM", "PCON15NM"],
 		},
 		vintages: {
+			// The 2010–2019 boundary set did not change. The existing 2017 geometry
+			// therefore also supplies the code-compatible 2010 election map.
+			2010: withCDN(
+				"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.topojson",
+			),
 			2024: withCDN(
 				"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.topojson",
 			),

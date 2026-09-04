@@ -9,7 +9,7 @@ export type GeneralElectionSourceConfig = {
 	// Flag to handle the unique header cleaning logic for the 2024 CSV file
 	requiresHeaderCleaning: boolean;
 	// The year of the boundary GeoJSON file corresponding to this election data
-	constituencyBoundaryYear: 2024 | 2019;
+	constituencyBoundaryYear: ConstituencyYear;
 	fields: {
 		onsId: string;
 		constituencyName: string;
@@ -23,6 +23,8 @@ export type GeneralElectionSourceConfig = {
 		invalidVotes: string;
 		// The list of party columns to iterate over
 		partyColumns: string[];
+		/** Maps a source header to the party key used by the atlas. */
+		partyColumnAliases?: Record<string, string>;
 	};
 };
 
@@ -55,11 +57,45 @@ const KNOWN_PARTIES_PRE_2024 = [
 	"APNI",
 	"UKIP",
 ];
+const KNOWN_PARTIES_2010 = [
+	"Con",
+	"Lab",
+	"LD",
+	"UKIP",
+	"Green",
+	"SNP",
+	"PC",
+	"DUP",
+	"SF",
+	"SDLP",
+	"UUP (as UCUNF)",
+	"APNI",
+];
 
 export const GENERAL_ELECTION_SOURCES: Record<
 	string,
 	GeneralElectionSourceConfig
 > = {
+	"general-election-2010": {
+		year: 2010,
+		path: "politics/elections/general-elections/2010/HoC-GE2010-results-by-constituency.csv",
+		requiresHeaderCleaning: false,
+		constituencyBoundaryYear: 2010,
+		fields: {
+			onsId: "ONS ID",
+			constituencyName: "Constituency name",
+			regionName: "Region name",
+			countryName: "Country name",
+			firstParty: "First party",
+			otherCandidates: "All other candidates",
+			majority: "Majority",
+			electorate: "Electorate",
+			validVotes: "Valid votes",
+			invalidVotes: "Invalid votes",
+			partyColumns: KNOWN_PARTIES_2010,
+			partyColumnAliases: { "UUP (as UCUNF)": "UUP" },
+		},
+	},
 	"general-election-2024": {
 		year: 2024,
 		path: "politics/elections/general-elections/2024/HoC-GE2024-results-by-constituency.csv",

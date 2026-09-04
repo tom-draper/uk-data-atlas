@@ -50,9 +50,12 @@ export const parseGeneralElectionCsv = (
 
 		// 1. Parse party votes using config's party list
 		const partyVotes: Record<string, number> = {};
-		for (const party of config.fields.partyColumns) {
-			const votes = parseVotes(row[party]);
+		for (const sourceColumn of config.fields.partyColumns) {
+			const votes = parseVotes(row[sourceColumn]);
 			if (votes > 0) {
+				const party =
+					config.fields.partyColumnAliases?.[sourceColumn] ??
+					sourceColumn;
 				partyVotes[party.toUpperCase()] = votes;
 			}
 		}

@@ -4,7 +4,7 @@
   "description": "Results of the 2010 UK general election by Westminster parliamentary constituency.",
   "topics": ["politics", "elections", "parliament"],
   "publisher": "House of Commons Library",
-  "sourceUrl": "https://commonslibrary.parliament.uk/",
+  "sourceUrl": "https://commonslibrary.parliament.uk/research-briefings/rp10-36/",
   "licence": {
     "name": "Open Parliament Licence",
     "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/"
@@ -12,6 +12,7 @@
   "temporalCoverage": "2010",
   "spatialCoverage": {
     "geography": "constituency",
+    "vintage": 2010,
     "countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
   },
   "files": [
