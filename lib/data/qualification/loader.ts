@@ -26,9 +26,10 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 export async function loadQualification(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, QualificationDataset>> {
-	const { data } = await parseCsv(await read("education/TS067-2021-1.csv"), {
-		header: true,
-	});
+	const { data } = await parseCsv(
+		await read("education/qualification/TS067-2021-1.csv"),
+		{ header: true },
+	);
 
 	const laData: Record<string, QualificationBreakdown> = {};
 	for (const row of data) {

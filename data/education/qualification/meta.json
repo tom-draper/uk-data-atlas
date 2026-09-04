@@ -1,0 +1,23 @@
+{
+	"id": "qualification",
+	"title": "Highest level of qualification, England and Wales",
+	"description": "Census 2021 table TS067: highest level of qualification held by usual residents aged 16 and over, by local authority district, for England and Wales.",
+	"topics": ["education", "census", "qualifications"],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/datasets/TS067/editions/2021/versions/3",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2021",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": ["GB-ENG", "GB-WLS"]
+	},
+	"files": [
+		{
+			"path": "TS067-2021-1.csv",
+			"role": "source"
+		}
+	]
+}
