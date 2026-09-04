@@ -29,7 +29,10 @@ const radians = (degrees: number) => (degrees * Math.PI) / 180;
 const degrees = (radians: number) => (radians * 180) / Math.PI;
 
 /** Converts an OS National Grid easting/northing pair to WGS84 longitude/latitude. */
-const britishNationalGridToWgs84 = ([easting, northing]: Position): Position => {
+const britishNationalGridToWgs84 = ([
+	easting,
+	northing,
+]: Position): Position => {
 	const airyA = 6377563.396;
 	const airyB = 6356256.909;
 	const scale = 0.9996012717;
@@ -43,7 +46,9 @@ const britishNationalGridToWgs84 = ([easting, northing]: Position): Position => 
 	let latitude = latitudeOrigin;
 	let meridionalArc = 0;
 	do {
-		latitude = (northing - northingOrigin - meridionalArc) / (airyA * scale) + latitude;
+		latitude =
+			(northing - northingOrigin - meridionalArc) / (airyA * scale) +
+			latitude;
 		const deltaLatitude = latitude - latitudeOrigin;
 		const sumLatitude = latitude + latitudeOrigin;
 		meridionalArc =
@@ -56,13 +61,17 @@ const britishNationalGridToWgs84 = ([easting, northing]: Position): Position => 
 				((15 / 8) * n ** 2 + (15 / 8) * n ** 3) *
 					Math.sin(2 * deltaLatitude) *
 					Math.cos(2 * sumLatitude) -
-				(35 / 24) * n ** 3 * Math.sin(3 * deltaLatitude) * Math.cos(3 * sumLatitude));
+				(35 / 24) *
+					n ** 3 *
+					Math.sin(3 * deltaLatitude) *
+					Math.cos(3 * sumLatitude));
 	} while (northing - northingOrigin - meridionalArc >= 0.00001);
 
 	const sinLatitude = Math.sin(latitude);
 	const cosLatitude = Math.cos(latitude);
 	const tangentLatitude = Math.tan(latitude);
-	const nu = (airyA * scale) / Math.sqrt(1 - eccentricitySquared * sinLatitude ** 2);
+	const nu =
+		(airyA * scale) / Math.sqrt(1 - eccentricitySquared * sinLatitude ** 2);
 	const rho =
 		(airyA * scale * (1 - eccentricitySquared)) /
 		(1 - eccentricitySquared * sinLatitude ** 2) ** 1.5;
@@ -73,20 +82,25 @@ const britishNationalGridToWgs84 = ([easting, northing]: Position): Position => 
 		latitude -
 		(tangentLatitude / (2 * rho * nu)) * deltaEasting ** 2 +
 		(tangentLatitude / (24 * rho * nu ** 3)) *
-			(5 + 3 * tangentLatitude ** 2 + etaSquared - 9 * tangentLatitude ** 2 * etaSquared) *
+			(5 +
+				3 * tangentLatitude ** 2 +
+				etaSquared -
+				9 * tangentLatitude ** 2 * etaSquared) *
 			deltaEasting ** 4 -
 		(tangentLatitude / (720 * rho * nu ** 5)) *
 			(61 + 90 * tangentLatitude ** 2 + 45 * tangentLatitude ** 4) *
 			deltaEasting ** 6;
 	const longitudeOsgb =
 		longitudeOrigin +
-		(deltaEasting / (cosLatitude * nu)) -
+		deltaEasting / (cosLatitude * nu) -
 		(deltaEasting ** 3 / (6 * cosLatitude * nu ** 3)) *
 			(nu / rho + 2 * tangentLatitude ** 2) +
 		(deltaEasting ** 5 / (120 * cosLatitude * nu ** 5)) *
 			(5 + 28 * tangentLatitude ** 2 + 24 * tangentLatitude ** 4);
 
-	const nuOsgb = airyA / Math.sqrt(1 - eccentricitySquared * Math.sin(latitudeOsgb) ** 2);
+	const nuOsgb =
+		airyA /
+		Math.sqrt(1 - eccentricitySquared * Math.sin(latitudeOsgb) ** 2);
 	const x1 = nuOsgb * Math.cos(latitudeOsgb) * Math.cos(longitudeOsgb);
 	const y1 = nuOsgb * Math.cos(latitudeOsgb) * Math.sin(longitudeOsgb);
 	const z1 = nuOsgb * (1 - eccentricitySquared) * Math.sin(latitudeOsgb);
@@ -102,11 +116,16 @@ const britishNationalGridToWgs84 = ([easting, northing]: Position): Position => 
 	const wgsB = 6356752.3141;
 	const wgsEccentricitySquared = 1 - (wgsB * wgsB) / (wgsA * wgsA);
 	const planarDistance = Math.hypot(x2, y2);
-	let wgsLatitude = Math.atan2(z2, planarDistance * (1 - wgsEccentricitySquared));
+	let wgsLatitude = Math.atan2(
+		z2,
+		planarDistance * (1 - wgsEccentricitySquared),
+	);
 	let previousLatitude: number;
 	do {
 		previousLatitude = wgsLatitude;
-		const wgsNu = wgsA / Math.sqrt(1 - wgsEccentricitySquared * Math.sin(wgsLatitude) ** 2);
+		const wgsNu =
+			wgsA /
+			Math.sqrt(1 - wgsEccentricitySquared * Math.sin(wgsLatitude) ** 2);
 		wgsLatitude = Math.atan2(
 			z2 + wgsEccentricitySquared * wgsNu * Math.sin(wgsLatitude),
 			planarDistance,
@@ -179,8 +198,8 @@ export const decodeBoundaryData = (json: unknown): BoundaryGeojson => {
 		geojson = {
 			...geojson,
 			crs: {
-			type: "name",
-			properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+				type: "name",
+				properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
 			},
 		};
 	}
