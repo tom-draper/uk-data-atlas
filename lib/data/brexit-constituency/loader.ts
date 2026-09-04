@@ -6,7 +6,9 @@ export async function loadBrexitConstituency(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, BrexitConstituencyDataset>> {
 	const { data } = await parseCsv<string[]>(
-		await read("politics/referendum/eureferendum_constitunecy.csv"),
+		await read(
+			"politics/referendum/constituencies/2016/eureferendum_constitunecy.csv",
+		),
 		{ header: false },
 	);
 

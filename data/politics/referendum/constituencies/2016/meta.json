@@ -1,0 +1,26 @@
+{
+  "id": "2016",
+  "title": "EU referendum constituency estimates and known results 2016",
+  "description": "House of Commons Library lookup combining Chris Hanretty's constituency estimates with published constituency-level results where available.",
+  "topics": ["politics", "referendums", "brexit", "parliament"],
+  "publisher": "House of Commons Library",
+  "sourceUrl": "https://commonslibrary.parliament.uk/brexit-votes-by-constituency/",
+  "licence": {
+    "name": "Open Parliament Licence",
+    "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/"
+  },
+  "retrieved": "2026-09-04",
+  "temporalCoverage": "2016",
+  "spatialCoverage": {
+    "geography": "constituency",
+    "vintage": 2015,
+    "countries": ["GB-ENG", "GB-NIR", "GB-SCT"]
+  },
+  "files": [
+    {
+      "path": "eureferendum_constitunecy.csv",
+      "role": "source",
+      "note": "CSV export of the Library's published workbook. The original workbook URL is linked from sourceUrl but currently rejects automated downloads."
+    }
+  ]
+}

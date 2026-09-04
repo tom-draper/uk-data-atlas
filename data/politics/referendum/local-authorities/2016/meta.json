@@ -1,0 +1,32 @@
+{
+  "id": "2016",
+  "title": "EU referendum results by counting area 2016",
+  "description": "Official EU referendum results by counting area, which generally corresponds to a local authority electoral registration area.",
+  "topics": ["politics", "referendums", "brexit", "local-government"],
+  "publisher": "Electoral Commission",
+  "sourceUrl": "https://www.electoralcommission.org.uk/research-reports-and-data/our-reports-and-data-past-elections-and-referendums/results-and-turnout-eu-referendum",
+  "licence": {
+    "name": "Open Government Licence v3.0",
+    "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+  },
+  "retrieved": "2026-09-04",
+  "temporalCoverage": "2016",
+  "spatialCoverage": {
+    "geography": "localAuthority",
+    "vintage": 2016,
+    "countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+  },
+  "files": [
+    {
+      "path": "EU-referendum-result-data.xls",
+      "role": "source",
+      "bytes": 142336,
+      "note": "Published Excel workbook retained unchanged."
+    },
+    {
+      "path": "EU-referendum-result-data.csv",
+      "role": "source",
+      "note": "Published CSV counterpart used by the preprocessor."
+    }
+  ]
+}
