@@ -27,6 +27,7 @@ import {
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
+import { compileBoundaryAssets } from "./compile-boundaries.mts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -167,6 +168,7 @@ async function main() {
 	console.log("Pre-compiling datasets...");
 	await mkdir(OUT_DIR, { recursive: true });
 	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
+	await compileBoundaryAssets();
 
 	// Every folder in data/ carrying a meta.json is a dataset. Reading them all
 	// first means a malformed drop fails the build immediately, with the folder
