@@ -1,5 +1,6 @@
 import type { BoundaryGeojson, Features } from "@lib/types";
-import { type BoundaryType, getProp } from "./boundaries";
+import type { BoundaryType } from "./boundaries";
+import { getProp } from "./properties";
 import { BOUNDARY_CATALOG } from "./catalog";
 import { outerRings } from "@lib/types";
 

@@ -11,7 +11,7 @@ import { gzipSync } from "zlib";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { feature } from "topojson-client";
-import { getProp } from "../lib/data/boundaries/boundaries";
+import { getProp } from "../lib/data/boundaries/properties";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));

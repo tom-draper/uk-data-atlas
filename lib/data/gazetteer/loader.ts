@@ -2,7 +2,7 @@
 // scripts/precompile-data.ts. Crosswalk shards are built separately
 // (scripts/gazetteer-crosswalks.ts) since they are expensive and change rarely.
 import { feature } from "topojson-client";
-import { getProp } from "../boundaries/boundaries";
+import { getProp } from "../boundaries/properties";
 import { BOUNDARY_CATALOG } from "../boundaries/catalog";
 import { localDataPath } from "../boundaries/dataPath";
 import { LOCATIONS } from "../locations";

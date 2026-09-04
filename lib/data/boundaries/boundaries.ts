@@ -1,12 +1,14 @@
 // lib/data/boundaries.ts
 import { BoundaryGeojson } from "@lib/types";
 import { gazetteer } from "@lib/data/gazetteer/static";
+import { getProp } from "./properties";
 import { decodeBoundaryData } from "./decode";
 import { fetchBoundaryInWorker } from "./worker";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
 
 export { BOUNDARY_CATALOG } from "./catalog";
 export type { BoundaryType, BoundaryYear } from "./catalog";
+export { getProp } from "./properties";
 
 export type WardYear = keyof typeof BOUNDARY_CATALOG.ward.vintages;
 export type ConstituencyYear =
@@ -27,19 +29,6 @@ const featureBoundsCache = new WeakMap<
 	object,
 	[number, number, number, number] | null
 >();
-
-/**
- * Find the first available property from a list of possible keys
- */
-export const getProp = (
-	props: any,
-	keys: readonly string[],
-): string | undefined => {
-	for (const key of keys) {
-		if (key in props && props[key]) return props[key];
-	}
-	return undefined;
-};
 
 /**
  * Fast AABB (Axis-Aligned Bounding Box) intersection check

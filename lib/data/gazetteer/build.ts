@@ -1,5 +1,5 @@
 // Pure build functions: geometry features -> gazetteer artifacts.
-import { getProp } from "../boundaries/boundaries";
+import { getProp } from "../boundaries/properties";
 import { areaM2, bboxOf, centroidOf, inBox, pointInGeom } from "./geometry";
 import type {
 	Crosswalk,
