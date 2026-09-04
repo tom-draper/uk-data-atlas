@@ -88,11 +88,14 @@ async function parsePopulationDataCombined(csvText: string) {
 }
 
 export async function loadPopulation(
-	read: (path: string) => Promise<string>,
+	readSheet: (path: string, sheet: string) => Promise<string>,
 ): Promise<Record<string, PopulationDataset>> {
 	const { malesData, femalesData, totalData } =
 		await parsePopulationDataCombined(
-			await read("demographics/population/Mid-2022 Ward 2023.csv"),
+			await readSheet(
+				"demographics/population/sapewardstablefinal.xlsx",
+				"Mid-2022 Ward 2023",
+			),
 		);
 
 	const allWardCodes = new Set([

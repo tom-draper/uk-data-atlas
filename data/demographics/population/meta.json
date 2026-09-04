@@ -24,48 +24,6 @@
 			"path": "sapewardstablefinal.xlsx",
 			"role": "source",
 			"note": "Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental/mid2021andmid2022/sapewardstablefinal.xlsx"
-		},
-		{
-			"path": "Mid-2020 Persons-Table 1.csv",
-			"role": "derived",
-			"derivedFrom": "sape23dt8amid2020ward2020on2021lasyoaestimatesunformattedcorrection.xlsx",
-			"note": "Extracted from the 'Mid-2020 Persons' sheet."
-		},
-		{
-			"path": "Mid-2020 Males-Table 1.csv",
-			"role": "derived",
-			"derivedFrom": "sape23dt8amid2020ward2020on2021lasyoaestimatesunformattedcorrection.xlsx",
-			"note": "Extracted from the 'Mid-2020 Males' sheet."
-		},
-		{
-			"path": "Mid-2020 Females-Table 1.csv",
-			"role": "derived",
-			"derivedFrom": "sape23dt8amid2020ward2020on2021lasyoaestimatesunformattedcorrection.xlsx",
-			"note": "Extracted from the 'Mid-2020 Females' sheet."
-		},
-		{
-			"path": "Mid-2021 Ward 2022.csv",
-			"role": "derived",
-			"derivedFrom": "sapewardstablefinal.xlsx",
-			"note": "Extracted from the 'Mid-2021 Ward 2022' sheet."
-		},
-		{
-			"path": "Mid-2021 Ward 2023.csv",
-			"role": "derived",
-			"derivedFrom": "sapewardstablefinal.xlsx",
-			"note": "Extracted from the 'Mid-2021 Ward 2023' sheet."
-		},
-		{
-			"path": "Mid-2022 Ward 2022.csv",
-			"role": "derived",
-			"derivedFrom": "sapewardstablefinal.xlsx",
-			"note": "Extracted from the 'Mid-2022 Ward 2022' sheet."
-		},
-		{
-			"path": "Mid-2022 Ward 2023.csv",
-			"role": "derived",
-			"derivedFrom": "sapewardstablefinal.xlsx",
-			"note": "Extracted from the 'Mid-2022 Ward 2023' sheet."
 		}
 	]
 }

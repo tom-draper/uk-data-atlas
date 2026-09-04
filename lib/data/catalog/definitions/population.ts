@@ -17,5 +17,5 @@ export const populationDatasetDefinition: DatasetDefinition<PopulationDataset> =
 				"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 			description: "Ward population estimates.",
 		},
-		precompile: async ({ text }) => loadPopulation(text),
+		precompile: async ({ xlsxSheet }) => loadPopulation(xlsxSheet),
 	};
