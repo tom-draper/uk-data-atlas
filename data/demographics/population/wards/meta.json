@@ -1,29 +1,29 @@
 {
-	"id": "population",
+	"id": "wards",
 	"title": "Ward-level population estimates by single year of age and sex",
 	"description": "Mid-year population estimates for electoral wards in England and Wales, broken down by single year of age and sex. Combines the mid-2020 experimental statistics release (2020 ward boundaries) with the mid-2021/mid-2022 release, which republishes both years against both the 2022 and 2023 ward boundaries.",
 	"topics": ["demographics", "population", "census"],
 	"publisher": "Office for National Statistics",
 	"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental",
-	"licence": {
-		"name": "Open Government Licence v3.0",
-		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
-	},
 	"temporalCoverage": "2020-2022",
 	"spatialCoverage": {
 		"geography": "ward",
 		"countries": ["GB-ENG", "GB-WLS"]
 	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
 	"files": [
 		{
 			"path": "sape23dt8amid2020ward2020on2021lasyoaestimatesunformattedcorrection.xlsx",
 			"role": "source",
-			"note": "Table SAPE23DT8a. Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental/mid2020sape23dt8a/sape23dt8amid2020ward2020on2021lasyoaestimatesunformattedcorrection.xlsx"
+			"note": "Table SAPE23DT8a, mid-2020 on 2020 ward and 2021 LA boundaries. Sheet-per-sex layout, not yet read by a loader. Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental/mid2020sape23dt8a/sape23dt8amid2020ward2020on2021lasyoaestimatesunformattedcorrection.xlsx"
 		},
 		{
 			"path": "sapewardstablefinal.xlsx",
 			"role": "source",
-			"note": "Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental/mid2021andmid2022/sapewardstablefinal.xlsx"
+			"note": "Mid-2021 and mid-2022, each against 2022 and 2023 ward boundaries. Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental/mid2021andmid2022/sapewardstablefinal.xlsx"
 		}
 	]
 }

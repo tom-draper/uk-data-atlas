@@ -93,7 +93,7 @@ export async function loadPopulation(
 	const { malesData, femalesData, totalData } =
 		await parsePopulationDataCombined(
 			await readSheet(
-				"demographics/population/sapewardstablefinal.xlsx",
+				"demographics/population/wards/sapewardstablefinal.xlsx",
 				"Mid-2022 Ward 2023",
 			),
 		);
