@@ -28,6 +28,11 @@ interface WardProperties2022 {
 	WD22NM: string;
 }
 
+interface WardProperties2020 {
+	WD20CD: string;
+	WD20NM: string;
+}
+
 interface WardProperties2021 {
 	WD21CD: string;
 	WD21NM: string;
@@ -109,8 +114,13 @@ interface ConstituencyProperties2017 {
 }
 
 interface ConstituencyProperties2015 {
-	PCON15CD: string;
-	PCON15NM: string;
+	pcon15cd: string;
+	pcon15nm: string;
+}
+
+interface ConstituencyProperties2016 {
+	pcon16cd: string;
+	pcon16nm: string;
 }
 
 // LSOA properties by year
@@ -125,6 +135,13 @@ interface LSOAProperties2021 {
 }
 
 // Scottish Data Zone properties
+// The ONS portal republishes Scottish data zones under the standard code
+// spelling; the Scottish Government's own file uses DataZone/Name.
+interface DataZoneOnsProperties2011 {
+	DZ11CD: string;
+	DZ11NM: string;
+}
+
 interface DataZoneProperties2011 {
 	DataZone: string;
 	Name: string;
@@ -145,9 +162,11 @@ export type YearToProperties = {
 	lsoa_2021: LSOAProperties2021;
 	// Scottish Data Zones
 	dataZone_2011: DataZoneProperties2011;
+	dataZone_ons_2011: DataZoneOnsProperties2011;
 	// NI Super Output Areas
 	superOutputArea_2011: SuperOutputAreaProperties2011;
 	// Wards
+	ward_2020: WardProperties2020;
 	ward_2021: WardProperties2021;
 	ward_2022: WardProperties2022;
 	ward_2023: WardProperties2023;
@@ -166,6 +185,7 @@ export type YearToProperties = {
 	lad_2025: LocalAuthorityProperties2025;
 	// Constituencies
 	constituency_2015: ConstituencyProperties2015;
+	constituency_2016: ConstituencyProperties2016;
 	constituency_2017: ConstituencyProperties2017;
 	constituency_2019: ConstituencyProperties2019;
 	constituency_2024: ConstituencyProperties2024;

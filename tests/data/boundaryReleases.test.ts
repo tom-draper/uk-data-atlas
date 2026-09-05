@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
+	type BoundaryType,
 } from "@/lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
 
@@ -73,6 +74,22 @@ describe("boundary releases", () => {
 				[...dates].sort((a, b) => b - a),
 				type,
 			).toEqual(dates);
+		}
+	});
+
+	// Two releases can share a year - May and December 2023 wards, May and
+	// December 2025 - so which one the year serves is pinned in the catalogue
+	// rather than left to whichever happens to sort first.
+	it("serves a contested year from the release pinned to it", () => {
+		const pinned: [string, number, string][] = [
+			["ward", 2025, "2025-05-uk-bgc-v2"],
+			["ward", 2023, "2023-12-uk-bgc"],
+			["lsoa", 2011, "2011-12-ew-bgc-v3"],
+			["dataZone", 2011, "2011-12-sc-bfc"],
+		];
+		for (const [type, year, id] of pinned) {
+			const { vintages } = BOUNDARY_CATALOG[type as BoundaryType];
+			expect(vintages[year], `${type} ${year}`).toContain(`/${id}/`);
 		}
 	});
 

@@ -67,6 +67,16 @@ const CATALOG = {
 	ward: {
 		releases: [
 			{
+				id: "2025-12-uk-bgc",
+				year: 2025,
+				month: 12,
+				extent: "uk",
+				codeKey: "WD25CD",
+				nameKey: "WD25NM",
+				parentCodeKey: "LAD25CD",
+				asset: asset("ward", "2025-12-uk-bgc"),
+			},
+			{
 				id: "2025-05-uk-bgc-v2",
 				year: 2025,
 				month: 5,
@@ -96,6 +106,16 @@ const CATALOG = {
 				asset: asset("ward", "2023-12-uk-bgc"),
 			},
 			{
+				id: "2023-05-uk-bgc",
+				year: 2023,
+				month: 5,
+				extent: "uk",
+				codeKey: "WD23CD",
+				nameKey: "WD23NM",
+				parentCodeKey: "LAD23CD",
+				asset: asset("ward", "2023-05-uk-bgc"),
+			},
+			{
 				id: "2022-12-uk-bgc",
 				year: 2022,
 				month: 12,
@@ -113,6 +133,15 @@ const CATALOG = {
 				codeKey: "WD21CD",
 				nameKey: "WD21NM",
 				asset: asset("ward", "2021-12-uk-bgc"),
+			},
+			{
+				id: "2020-12-uk-bgc",
+				year: 2020,
+				month: 12,
+				extent: "uk",
+				codeKey: "WD20CD",
+				nameKey: "WD20NM",
+				asset: asset("ward", "2020-12-uk-bgc"),
 			},
 			{
 				id: "2019-12-gb-bgc",
@@ -152,6 +181,9 @@ const CATALOG = {
 				asset: asset("ward", "2016-12-gb-bgc"),
 			},
 		],
+		// May and December 2025 publish the same 8,405 wards; the May release
+		// is the corrected V2 and stays the one served for the year.
+		aliases: { 2025: "2025-05-uk-bgc-v2", 2023: "2023-12-uk-bgc" },
 	},
 	constituency: {
 		releases: [
@@ -182,10 +214,28 @@ const CATALOG = {
 				nameKey: "PCON17NM",
 				asset: asset("constituency", "2017-12-uk-bgc"),
 			},
+			{
+				id: "2016-12-uk-bgc",
+				year: 2016,
+				month: 12,
+				extent: "uk",
+				codeKey: "pcon16cd",
+				nameKey: "pcon16nm",
+				asset: asset("constituency", "2016-12-uk-bgc"),
+			},
+			{
+				id: "2015-12-gb-bgc",
+				year: 2015,
+				month: 12,
+				extent: "gb",
+				codeKey: "pcon15cd",
+				nameKey: "pcon15nm",
+				asset: asset("constituency", "2015-12-gb-bgc"),
+			},
 		],
 		// The 2010–2019 boundary set did not change, so the 2017 geometry also
 		// supplies the code-compatible 2010 and 2015 election maps.
-		aliases: { 2015: "2017-12-uk-bgc", 2010: "2017-12-uk-bgc" },
+		aliases: { 2010: "2017-12-uk-bgc" },
 	},
 	localAuthority: {
 		releases: [
@@ -217,6 +267,24 @@ const CATALOG = {
 				asset: asset("local-authority", "2023-05-uk-bgc-v2"),
 			},
 			{
+				id: "2022-12-uk-bgc-v2",
+				year: 2022,
+				month: 12,
+				extent: "uk",
+				codeKey: "LAD22CD",
+				nameKey: "LAD22NM",
+				asset: asset("local-authority", "2022-12-uk-bgc-v2"),
+			},
+			{
+				id: "2021-12-uk-bgc",
+				year: 2021,
+				month: 12,
+				extent: "uk",
+				codeKey: "LAD21CD",
+				nameKey: "LAD21NM",
+				asset: asset("local-authority", "2021-12-uk-bgc"),
+			},
+			{
 				id: "2016-12-gb-bgc",
 				year: 2016,
 				month: 12,
@@ -238,7 +306,18 @@ const CATALOG = {
 				nameKey: "LSOA11NM",
 				asset: asset("lsoa", "2011-12-ew-bgc-v3"),
 			},
+			{
+				id: "2011-12-w-bgc",
+				year: 2011,
+				month: 12,
+				extent: "w",
+				codeKey: "LSOA11CD",
+				nameKey: "LSOA11NM",
+				asset: asset("lsoa", "2011-12-w-bgc"),
+			},
 		],
+		// Both releases are 2011; the England-and-Wales one covers the other.
+		aliases: { 2011: "2011-12-ew-bgc-v3" },
 		alsoAccepts: { code: ["LSOA21CD"], name: ["LSOA21NM"] },
 	},
 	dataZone: {
@@ -251,6 +330,17 @@ const CATALOG = {
 				codeKey: "DataZone",
 				nameKey: "Name",
 				asset: asset("data-zone", "2011-12-sc-bfc"),
+			},
+			{
+				// Held, not served: the same 2011 data zones as the release
+				// above, but keyed DZ11CD rather than DataZone, so serving it
+				// for 2011 would silently change the codes datasets join on.
+				id: "2011-12-sc-nc",
+				year: 2011,
+				month: 12,
+				extent: "sc",
+				codeKey: "DZ11CD",
+				nameKey: "DZ11NM",
 			},
 		],
 	},

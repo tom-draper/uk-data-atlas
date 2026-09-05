@@ -1,9 +1,10 @@
 // lib/data/generalElectionConfig.ts
 
 import { ConstituencyYear } from "../../boundaries/boundaries";
+import type { GeneralElectionYear } from "@lib/types";
 
 export type GeneralElectionSourceConfig = {
-	year: ConstituencyYear;
+	year: GeneralElectionYear;
 	// Path relative to public/data/, read at precompile time
 	path: string;
 	// Flag to handle the unique header cleaning logic for the 2024 CSV file
