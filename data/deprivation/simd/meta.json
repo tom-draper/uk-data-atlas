@@ -1,0 +1,25 @@
+{
+	"id": "simd",
+	"title": "Scottish Index of Multiple Deprivation 2020v2 indicators",
+	"description": "SIMD 2020v2 indicator data: the underlying income, employment, health, education, access, crime and housing indicators for every Scottish data zone.",
+	"topics": ["deprivation", "scotland"],
+	"publisher": "Scottish Government",
+	"sourceUrl": "https://www.gov.scot/publications/scottish-index-of-multiple-deprivation-2020v2-indicator-data/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2020",
+	"spatialCoverage": {
+		"geography": "dataZone",
+		"vintage": 2011,
+		"countries": ["GB-SCT"]
+	},
+	"files": [
+		{
+			"path": "SIMD+2020v2+-+indicators.csv",
+			"role": "source",
+			"note": "6,976 data zones x 37 columns. gov.scot publishes this as \"SIMD 2020v2 - indicators.xlsx\" (28 January 2020); this CSV is a conversion of that workbook, and the \"+\" characters in the filename are the URL-encoded spaces of the download URL rather than part of the published name. The originating .xlsx is not held in this folder, so the CSV is recorded as the source. Several indicator columns are percentages carrying a literal \"%\" (Income_rate, Employment_rate, ...) and must be stripped before parsing."
+		}
+	]
+}
