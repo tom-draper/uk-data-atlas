@@ -27,7 +27,7 @@ export async function loadQualification(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, QualificationDataset>> {
 	const { data } = await parseCsv(
-		await read("education/qualification/TS067-2021-1.csv"),
+		await read("education/qualification/TS067-2021-3.csv"),
 		{ header: true },
 	);
 
@@ -35,6 +35,7 @@ export async function loadQualification(
 	for (const row of data) {
 		const ladCode = pick(
 			row,
+			"Lower tier local authorities Code",
 			"Lower Tier Local Authorities Code",
 			"geography code",
 			"GeographyCode",

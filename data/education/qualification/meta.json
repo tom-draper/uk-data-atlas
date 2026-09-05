@@ -16,8 +16,9 @@
 	},
 	"files": [
 		{
-			"path": "TS067-2021-1.csv",
-			"role": "source"
+			"path": "TS067-2021-3.csv",
+			"role": "source",
+			"note": "331 local authorities x 8 categories, 2,648 rows. Qualification code -8 is the 'Does not apply' row (full-time students) and is skipped by the loader. Version 3, released 28 March 2023. Versions 1 and 2 are byte-identical to each other and carry the same observations as v3; v3 only rewords labels, downcasing the geography column headers, dropping a stray space before a comma in category 1, and changing category 5 from 'Level 4 qualifications and above' to 'or above'. The loader keys categories by numeric code rather than label, and pick() accepts both the v1 and v3 spellings of the geography header, so either vintage loads."
 		}
 	]
 }
