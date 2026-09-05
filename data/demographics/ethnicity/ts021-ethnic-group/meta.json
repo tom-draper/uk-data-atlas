@@ -1,0 +1,26 @@
+{
+	"id": "ts021-ethnic-group",
+	"title": "Ethnic group (20 categories) by local authority",
+	"description": "Census 2021 usual residents in England and Wales by ethnic group, counted for each lower tier local authority. ONS table TS021, 2021 edition, version 3.",
+	"topics": ["demographics", "ethnicity", "census"],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/datasets/TS021/editions/2021/versions/3",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-05",
+	"temporalCoverage": "2021",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"vintage": 2024,
+		"countries": ["GB-ENG", "GB-WLS"]
+	},
+	"files": [
+		{
+			"path": "TS021-2021-3.csv",
+			"role": "source",
+			"note": "331 local authorities x 20 ethnic groups, 6,620 rows. Ethnic group code -8 is the 'Does not apply' row and is skipped by the loader. Versions 1-3 carry identical observations; v3 only downcased the two geography column headers, so the loader keys on 'Lower tier local authorities Code' and would read nothing from a v1 or v2 file."
+		}
+	]
+}

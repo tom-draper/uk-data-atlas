@@ -42,7 +42,9 @@ export async function loadEthnicity(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, EthnicityDataset>> {
 	const { data } = await parseCsv(
-		await read("demographics/ethnicity/TS021-2021-2.csv"),
+		await read(
+			"demographics/ethnicity/ts021-ethnic-group/TS021-2021-3.csv",
+		),
 		{ header: true },
 	);
 
@@ -53,7 +55,7 @@ export async function loadEthnicity(
 
 	for (const row of data) {
 		const localAuthorityCode =
-			row["Lower Tier Local Authorities Code"]?.trim();
+			row["Lower tier local authorities Code"]?.trim();
 		const ethnicGroupCode =
 			row["Ethnic group (20 categories) Code"]?.trim();
 		if (!localAuthorityCode || !ethnicGroupCode) continue;
