@@ -1,0 +1,82 @@
+# Boundary releases
+
+Every set of areas the atlas can draw lives in one folder:
+
+```
+data/boundaries/<geography>/<release>/
+    meta.json             where it came from, and what each file is
+    source.geojson        as published
+    boundaries.topojson   compiled from it, and what the app serves
+```
+
+`<geography>` is the `BoundaryType` it belongs to, in kebab case: `ward`,
+`local-authority`, `constituency`, `lsoa`, `data-zone`, `super-output-area`.
+
+## Naming a release
+
+```
+<YYYY>-<MM>-<extent>[-<generalisation>][-v<n>]
+
+2023-05-uk-bgc        wards as published in May 2023
+2023-12-uk-bgc        and again in December, which is a different file
+2025-05-uk-bgc-v2     the corrected second version of the May 2025 release
+2011-ni               a publisher who dates a release to the year alone
+```
+
+Date first, so string order is chronological and the newest release is the
+last one. The month is there because ONS republishes a geography more than
+once a year, and the releases differ: May 2023 wards name each ward's local
+authority and December's do not.
+
+`<extent>` is `uk`, `gb`, `ew`, `en`, `w`, `sc` or `ni`. `<generalisation>`
+is the publisher's own code — `bgc` generalised and clipped, `bfc` full
+resolution and clipped, `nc` not clipped. Both change the geometry, so two
+releases that differ only in those are two folders.
+
+What is deliberately **not** in the name: the ONS Open Geography Portal
+appends a hash to every download, and it differs between two downloads of
+the same product, so it identifies nothing. It is recorded in `meta.json`
+instead, under the file it belonged to.
+
+Coordinate system is not in the name either. Sources arrive in EPSG:4326 or
+EPSG:27700 depending on the release; `decode.ts` reprojects British National
+Grid on the way in, and every compiled asset is WGS84.
+
+## Adding a release
+
+1. Download it and put the GeoJSON at
+   `data/boundaries/<geography>/<release>/source.geojson`.
+2. Write `meta.json`. Copy a neighbour: the required fields are `id` (equal
+   to the folder name), `kind: "boundary"`, `title`, `publisher`,
+   `sourceUrl`, `licence`, `spatialCoverage` and `files`. Record the
+   published filename in the source file's `note`.
+3. Add it to `BOUNDARY_CATALOG` in `lib/data/boundaries/catalog.ts`, newest
+   first within its geography. Read the code and name keys off the file
+   rather than copying a neighbour's — they change spelling between
+   releases, and `wd19cd` against `WD19CD` is the difference between a
+   working release and an asset with no properties at all.
+4. `pnpm boundaries:compile`, then `pnpm test:run`.
+
+The tests check the rest: that the asset exists, that it carries the keys
+the release declares, that `meta.json` lists exactly the files present, and
+that releases stay in order.
+
+## Which release serves a year
+
+Most code still asks for a geography and a year. Where one year has several
+releases, the catalogue says which one answers for it:
+
+```ts
+aliases: { 2025: "2025-05-uk-bgc-v2", 2023: "2023-12-uk-bgc" },
+```
+
+Without an entry the newest release in the year wins. Pin it whenever a year
+has more than one, so the choice is a decision in the file rather than a
+consequence of list order. `aliases` also maps a year onto another year's
+release entirely, which is how 2010 constituencies are served from the 2017
+geometry: the areas did not change between them.
+
+A release with no `asset` is held but not served. `data-zone/2011-12-sc-nc`
+is the case to look at — the same 2011 areas as the release beside it, but
+keyed `DZ11CD` instead of `DataZone`, so serving it would change the codes
+datasets join on.

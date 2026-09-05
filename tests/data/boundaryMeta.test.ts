@@ -18,8 +18,11 @@ const filesIn = (dir: string, prefix = ""): string[] =>
 		return name === "meta.json" ? [] : [`${prefix}${name}`];
 	});
 
-const releaseFolders = readdirSync(ROOT).flatMap((geography) =>
-	readdirSync(join(ROOT, geography)).map((release) => ({
+const directories = (dir: string) =>
+	readdirSync(dir).filter((name) => statSync(join(dir, name)).isDirectory());
+
+const releaseFolders = directories(ROOT).flatMap((geography) =>
+	directories(join(ROOT, geography)).map((release) => ({
 		geography,
 		release,
 		dir: join(ROOT, geography, release),
