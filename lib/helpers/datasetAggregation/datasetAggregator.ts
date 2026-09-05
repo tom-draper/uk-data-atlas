@@ -5,7 +5,7 @@ import {
 	PropertyKeys,
 	LocalElectionDataset,
 	GeneralElectionDataset,
-	PopulationDataset,
+	PopulationAgeSexRecord,
 	HousePriceWardData,
 	CrimeDataset,
 	EthnicityDataset,
@@ -195,15 +195,21 @@ export class DatasetAggregator {
 		);
 	}
 
+	/**
+	 * Population is published against more than one geography (wards from the
+	 * SAPE release, local authorities from the mid-year estimates), so the
+	 * boundary scope is a parameter and forms part of the cache key.
+	 */
 	calculatePopulationStats(
 		geojson: BoundaryGeojson,
-		populationData: PopulationDataset["data"],
+		populationData: Record<string, PopulationAgeSexRecord>,
 		location: string | null,
 		datasetId: string | null,
+		scope: BoundaryCodeScope = "ward",
 	) {
 		return this.byBoundary(
-			"population",
-			"ward",
+			`population-${scope}`,
+			scope,
 			geojson,
 			location,
 			datasetId,

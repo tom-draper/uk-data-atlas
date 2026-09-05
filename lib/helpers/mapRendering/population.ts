@@ -1,4 +1,9 @@
-import type { BoundaryGeojson, Features, PopulationDataset } from "@lib/types";
+import type {
+	BoundaryGeojson,
+	Features,
+	PopulationAgeSexRecord,
+} from "@lib/types";
+import type { BoundaryCodeScope } from "@/lib/helpers/datasetAggregation/ports";
 import type { MapOptions } from "@lib/types/mapOptions";
 import {
 	getGenderColorExpression,
@@ -8,23 +13,27 @@ import { calculateMedianAge, calculateTotal } from "@/lib/helpers/population";
 import type { MapExpression } from "../mapManager/expressions";
 import { valueGeojson, type MapRenderContext } from "./context";
 
+/** Any population vintage, whatever geography its records are keyed by. */
+type PopulationRenderDataset = { data: Record<string, PopulationAgeSexRecord> };
+
 function renderPopulation(
 	ctx: MapRenderContext,
 	geojson: BoundaryGeojson,
-	dataset: PopulationDataset,
+	dataset: PopulationRenderDataset,
 	mapOptions: MapOptions,
 	mode: "population-age" | "population-gender" | "population-density",
 	valueFor: (code: string, feature: Features[number]) => number | null,
 	colorExpression: (options: MapOptions) => MapExpression,
+	scope: BoundaryCodeScope,
 ): void {
-	const wardCodeProp = ctx.codeProp("ward", geojson.features);
+	const codeProp = ctx.codeProp(scope, geojson.features);
 
 	const transformedGeojson = valueGeojson(
 		ctx,
 		geojson,
 		dataset,
 		mode,
-		wardCodeProp,
+		codeProp,
 		valueFor,
 	);
 	ctx.layerManager.render({
@@ -33,14 +42,15 @@ function renderPopulation(
 		colorExpression: colorExpression(mapOptions),
 		visibility: mapOptions.visibility,
 	});
-	ctx.eventHandler.setupEventHandlers(dataset.data, wardCodeProp);
+	ctx.eventHandler.setupEventHandlers(dataset.data, codeProp);
 }
 
 export function renderAgeDistribution(
 	ctx: MapRenderContext,
 	geojson: BoundaryGeojson,
-	dataset: PopulationDataset,
+	dataset: PopulationRenderDataset,
 	mapOptions: MapOptions,
+	scope: BoundaryCodeScope = "ward",
 ): void {
 	renderPopulation(
 		ctx,
@@ -49,22 +59,24 @@ export function renderAgeDistribution(
 		mapOptions,
 		"population-age",
 		(code) => {
-			const ward = dataset.data[code];
-			return ward ? (calculateMedianAge(ward) ?? 0) : null;
+			const record = dataset.data[code];
+			return record ? (calculateMedianAge(record) ?? 0) : null;
 		},
 		(options) =>
 			getSequentialColorExpression(
 				options.ageDistribution.colorRange,
 				options.theme.id,
 			),
+		scope,
 	);
 }
 
 export function renderGender(
 	ctx: MapRenderContext,
 	geojson: BoundaryGeojson,
-	dataset: PopulationDataset,
+	dataset: PopulationRenderDataset,
 	mapOptions: MapOptions,
+	scope: BoundaryCodeScope = "ward",
 ): void {
 	renderPopulation(
 		ctx,
@@ -73,21 +85,23 @@ export function renderGender(
 		mapOptions,
 		"population-gender",
 		(code) => {
-			const ward = dataset.data[code];
-			if (!ward) return null;
-			const males = calculateTotal(ward.males);
-			const females = calculateTotal(ward.females);
+			const record = dataset.data[code];
+			if (!record) return null;
+			const males = calculateTotal(record.males);
+			const females = calculateTotal(record.females);
 			return females > 0 ? (males - females) / females : 0;
 		},
 		(options) => getGenderColorExpression(options.gender.colorRange),
+		scope,
 	);
 }
 
 export function renderPopulationDensity(
 	ctx: MapRenderContext,
 	geojson: BoundaryGeojson,
-	dataset: PopulationDataset,
+	dataset: PopulationRenderDataset,
 	mapOptions: MapOptions,
+	scope: BoundaryCodeScope = "ward",
 ): void {
 	renderPopulation(
 		ctx,
@@ -96,10 +110,10 @@ export function renderPopulationDensity(
 		mapOptions,
 		"population-density",
 		(code, feature) => {
-			const ward = dataset.data[code];
-			if (!ward) return null;
+			const record = dataset.data[code];
+			if (!record) return null;
 			const total =
-				calculateTotal(ward.males) + calculateTotal(ward.females);
+				calculateTotal(record.males) + calculateTotal(record.females);
 			const area = ctx.featureBuilder.getFeatureAreaSqKm(feature);
 			return area > 0 ? total / area : 0;
 		},
@@ -108,5 +122,6 @@ export function renderPopulationDensity(
 				options.populationDensity.colorRange,
 				options.theme.id,
 			),
+		scope,
 	);
 }

@@ -1,7 +1,7 @@
 import type {
 	AgeGroups,
 	Features,
-	PopulationDataset,
+	PopulationAgeSexRecord,
 	PopulationStats,
 	PropertyKeys,
 } from "@lib/types";
@@ -39,11 +39,11 @@ export interface PopulationTotals {
 	females: Record<string, number>;
 }
 
-/** Sums population counts and land area over the boundaries with ward data. */
+/** Sums population counts and land area over the boundaries carrying data. */
 export function accumulatePopulation(
 	features: Features,
 	codeProperty: PropertyKeys,
-	data: PopulationDataset["data"],
+	data: Record<string, PopulationAgeSexRecord>,
 ): PopulationTotals {
 	// Pre-allocate objects
 	const ageData: Record<string, number> = {};
@@ -192,11 +192,11 @@ export function buildPopulationStats(aggregated: PopulationTotals) {
 	};
 }
 
-/** Aggregates ward population records over the active boundaries. */
+/** Aggregates population records over the active boundaries. */
 export function aggregatePopulation(
 	features: Features,
 	codeProperty: PropertyKeys,
-	data: PopulationDataset["data"],
+	data: Record<string, PopulationAgeSexRecord>,
 ) {
 	return buildPopulationStats(
 		accumulatePopulation(features, codeProperty, data),

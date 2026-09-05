@@ -2,10 +2,18 @@
 import { LocalAuthorityYear, WardYear } from "../data/boundaries/boundaries";
 import { AgeData } from "./common";
 
-export interface PopulationWardData {
+/**
+ * The age-by-sex counts every population record carries, whatever geography
+ * it is keyed by. Aggregation and map rendering only ever need this much, so
+ * they accept it rather than a boundary-specific record.
+ */
+export interface PopulationAgeSexRecord {
 	total: AgeData;
 	males: AgeData;
 	females: AgeData;
+}
+
+export interface PopulationWardData extends PopulationAgeSexRecord {
 	wardName: string;
 	ladCode: string;
 	ladName: string;
@@ -25,10 +33,7 @@ export interface PopulationDataset {
  * its parent LAD, so the analogous parent here is the country the authority
  * sits in ("E", "N", "S", "W").
  */
-export interface PopulationLocalAuthorityData {
-	total: AgeData;
-	males: AgeData;
-	females: AgeData;
+export interface PopulationLocalAuthorityData extends PopulationAgeSexRecord {
 	ladName: string;
 	country: string;
 }

@@ -2,8 +2,8 @@
 import {
 	BoundaryGeometry,
 	outerRings,
+	PopulationAgeSexRecord,
 	PopulationDataset,
-	PopulationWardData,
 } from "@lib/types";
 
 export const calculateTotal = (ageData: { [age: string]: number }): number => {
@@ -24,11 +24,11 @@ const resolveWardCode = (
 };
 
 export const calculateMedianAge = (
-	wardPopulation: PopulationWardData,
+	population: PopulationAgeSexRecord,
 ): number | null => {
-	if (!wardPopulation?.total) return null;
+	if (!population?.total) return null;
 
-	const ageData = wardPopulation.total;
+	const ageData = population.total;
 	const totalPop = calculateTotal(ageData);
 	if (totalPop === 0) return null;
 

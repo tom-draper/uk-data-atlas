@@ -202,3 +202,27 @@ describe("aggregatePopulation", () => {
 		expect(result.density).toBeCloseTo(21 / result.totalArea, 6);
 	});
 });
+
+describe("aggregatePopulation across geographies", () => {
+	it("aggregates records that carry no ward fields", () => {
+		// Local authority records hold only the age-by-sex counts, so the
+		// aggregation must not depend on a ward's name or parent codes.
+		const localAuthorities = {
+			W1: {
+				total: { "10": 3, "70": 5 },
+				males: { "10": 2, "70": 1 },
+				females: { "10": 1, "70": 4 },
+			},
+		};
+
+		const stats = aggregatePopulation(
+			features(["W1"]),
+			CODE_KEY,
+			localAuthorities,
+		);
+
+		expect(stats.populationStats.total).toBe(8);
+		expect(stats.populationStats.males).toBe(3);
+		expect(stats.populationStats.females).toBe(5);
+	});
+});
