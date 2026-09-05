@@ -1,6 +1,7 @@
 /**
- * Converts published ward GeoJSON into the compact TopoJSON assets served by
- * the application. The GeoJSON files remain in data/ as reproducible sources.
+ * Converts published boundary GeoJSON into the compact TopoJSON assets served
+ * by the application. The GeoJSON files remain in data/ as reproducible
+ * sources.
  *
  * Run `pnpm boundaries:compile --force` after changing the compression values
  * below. Preprocessing runs this automatically when a source is newer than
@@ -8,13 +9,16 @@
  */
 import { createHash } from "crypto";
 import { readFile, rename, stat, writeFile } from "fs/promises";
-import { basename, dirname, join } from "path";
+import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { feature } from "topojson-client";
 import { topology } from "topojson-server";
 import { presimplify, simplify } from "topojson-simplify";
 
-import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
+import {
+	BOUNDARY_CATALOG,
+	BOUNDARY_TYPES,
+} from "../lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "../lib/data/boundaries/decode";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -25,30 +29,40 @@ const QUANTIZATION = 100_000;
 const MINIMUM_PLANAR_TRIANGLE_AREA = 0.0000001;
 
 /**
- * The TopoJSON asset each ward vintage is served from, paired with the
- * published GeoJSON it is compiled from. Derived from the catalogue rather
- * than listed here, so every vintage the application serves stays
- * reproducible and adding one needs no change to this script.
+ * Every release the catalogue serves, paired with the published GeoJSON it is
+ * compiled from. Derived from the catalogue rather than listed here, so adding
+ * a release needs no change to this script.
+ *
+ * The properties to keep come from the release itself, not from its
+ * geography. Filtering by a shared list is how the Dec 2020 ward and Dec 2015
+ * constituency assets came to be written with every property stripped: the
+ * list happened not to mention WD20CD, and spelled pcon15cd in the wrong case,
+ * so the filter matched nothing and kept nothing.
  */
-const wardVintageSources = () =>
-	Object.entries(BOUNDARY_CATALOG.ward.vintages)
-		.map(([year, assetPath]) => {
+const releaseSources = () =>
+	BOUNDARY_TYPES.flatMap((type) =>
+		BOUNDARY_CATALOG[type].releases.flatMap((release) => {
+			if (!release.asset) return [];
 			// withCDN appends a version query outside development.
-			const relative = assetPath.split("?")[0]!.replace(/^\/data\//, "");
+			const relative = release.asset
+				.split("?")[0]!
+				.replace(/^\/data\//, "");
 			const outputPath = join(ROOT, "data", relative);
-			return {
-				year: Number(year),
-				sourcePath: outputPath.replace(/boundaries\.topojson$/, "source.geojson"),
-				outputPath,
-			};
-		})
-		.sort((a, b) => a.year - b.year);
-
-const KEEP_PROPERTIES = new Set([
-	...BOUNDARY_CATALOG.ward.properties.code,
-	...BOUNDARY_CATALOG.ward.properties.name,
-	...(BOUNDARY_CATALOG.ward.properties.parentCode ?? []),
-]);
+			return [
+				{
+					label: `${type}/${release.id}`,
+					objectName: type,
+					keep: new Set<string>([
+						release.codeKey,
+						release.nameKey,
+						...(release.parentCodeKey ? [release.parentCodeKey] : []),
+					]),
+					sourcePath: join(dirname(outputPath), "source.geojson"),
+					outputPath,
+				},
+			];
+		}),
+	).sort((a, b) => a.label.localeCompare(b.label));
 
 const writeAtomically = async (path: string, contents: string) => {
 	const temporaryPath = `${path}.${process.pid}.tmp`;
@@ -78,7 +92,11 @@ const shouldCompile = async (sourcePath: string, outputPath: string) => {
 	}
 };
 
-const simplifyWardSource = (raw: string, objectName: string) => {
+const simplifySource = (
+	raw: string,
+	objectName: string,
+	keep: ReadonlySet<string>,
+) => {
 	const normalised = decodeBoundaryData(JSON.parse(raw));
 	const cleaned = {
 		...normalised,
@@ -86,7 +104,7 @@ const simplifyWardSource = (raw: string, objectName: string) => {
 			...feature,
 			properties: Object.fromEntries(
 				Object.entries(feature.properties ?? {}).filter(([key]) =>
-					KEEP_PROPERTIES.has(key),
+					keep.has(key),
 				),
 			),
 		})),
@@ -102,31 +120,55 @@ const simplifyWardSource = (raw: string, objectName: string) => {
 	return topology({ [objectName]: simplifiedFeatures }, QUANTIZATION);
 };
 
+/** A release whose compiled asset would carry no properties at all. */
+const assertKeptSomething = (
+	label: string,
+	topologyData: { objects: Record<string, unknown> },
+	keep: ReadonlySet<string>,
+) => {
+	const object = Object.values(topologyData.objects)[0] as {
+		geometries?: { properties?: Record<string, unknown> }[];
+	};
+	const first = object?.geometries?.[0]?.properties ?? {};
+	if (Object.keys(first).length === 0) {
+		throw new Error(
+			`${label}: none of ${[...keep].join(", ")} are properties of this ` +
+				`source, so every feature would be written anonymous. Check the ` +
+				`keys the release declares against the file.`,
+		);
+	}
+};
+
 /** Ensures the committed TopoJSON assets are newer than their GeoJSON inputs. */
 export async function compileBoundaryAssets(): Promise<void> {
-	const sources = wardVintageSources();
+	const sources = releaseSources();
 	console.log(
-		`Preparing TopoJSON boundary assets (${sources.length} ward vintages)...`,
+		`Preparing TopoJSON boundary assets (${sources.length} releases)...`,
 	);
-	for (const { year, sourcePath, outputPath } of sources) {
-		const outputName = basename(dirname(outputPath));
-
-		// A vintage published only as TopoJSON cannot be rebuilt here. Say so
+	for (const {
+		label,
+		objectName,
+		keep,
+		sourcePath,
+		outputPath,
+	} of sources) {
+		// A release published only as TopoJSON cannot be rebuilt here. Say so
 		// rather than failing, so it is visible as unreproducible.
 		if (!(await exists(sourcePath))) {
 			console.log(
-				`  boundary: ${year} ${outputName} (no local GeoJSON source, skipped)`,
+				`  boundary: ${label} (no local GeoJSON source, skipped)`,
 			);
 			continue;
 		}
 
 		if (!(await shouldCompile(sourcePath, outputPath))) {
-			console.log(`  boundary: ${year} ${outputName} (up to date)`);
+			console.log(`  boundary: ${label} (up to date)`);
 			continue;
 		}
 
 		const raw = await readFile(sourcePath, "utf8");
-		const topologyData = simplifyWardSource(raw, "wards");
+		const topologyData = simplifySource(raw, objectName, keep);
+		assertKeptSomething(label, topologyData, keep);
 		const output = JSON.stringify(topologyData);
 		await writeAtomically(outputPath, output);
 		const sourceKb = Math.round(Buffer.byteLength(raw, "utf8") / 1024);
@@ -136,7 +178,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 			.digest("hex")
 			.slice(0, 12);
 		console.log(
-			`  boundary: ${year} ${outputName} (${sourceKb} KB -> ${outputKb} KB, ${hash})`,
+			`  boundary: ${label} (${sourceKb} KB -> ${outputKb} KB, ${hash})`,
 		);
 	}
 }
