@@ -18,19 +18,31 @@ import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "../lib/data/boundaries/decode";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-const WARDS_DIR = join(ROOT, "data", "boundaries", "wards");
 
 // Increase quantization for more positional precision. Increase the minimum
 // triangle area for a smaller, less detailed asset.
 const QUANTIZATION = 100_000;
 const MINIMUM_PLANAR_TRIANGLE_AREA = 0.0000001;
 
-const WARD_GEOJSON_SOURCES = [
-	"Wards_December_2016_GCB_in_Great_Britain_2022_856513180533154279.geojson",
-	"Wards_December_2017_GCB_in_Great_Britain_2022_-2440043846989090720.geojson",
-	"Wards_December_2018_GCB_UK_2022_-623525817862961610.geojson",
-	"Wards_December_2019_GCB_GB_2022_-3199817513651023624.geojson",
-] as const;
+/**
+ * The TopoJSON asset each ward vintage is served from, paired with the
+ * published GeoJSON it is compiled from. Derived from the catalogue rather
+ * than listed here, so every vintage the application serves stays
+ * reproducible and adding one needs no change to this script.
+ */
+const wardVintageSources = () =>
+	Object.entries(BOUNDARY_CATALOG.ward.vintages)
+		.map(([year, assetPath]) => {
+			// withCDN appends a version query outside development.
+			const relative = assetPath.split("?")[0]!.replace(/^\/data\//, "");
+			const outputPath = join(ROOT, "data", relative);
+			return {
+				year: Number(year),
+				sourcePath: outputPath.replace(/\.topojson$/, ".geojson"),
+				outputPath,
+			};
+		})
+		.sort((a, b) => a.year - b.year);
 
 const KEEP_PROPERTIES = new Set([
 	...BOUNDARY_CATALOG.ward.properties.code,
@@ -44,8 +56,14 @@ const writeAtomically = async (path: string, contents: string) => {
 	await rename(temporaryPath, path);
 };
 
-const outputPathFor = (sourcePath: string) =>
-	sourcePath.replace(/\.geojson$/, ".topojson");
+const exists = async (path: string) => {
+	try {
+		await stat(path);
+		return true;
+	} catch {
+		return false;
+	}
+};
 
 const shouldCompile = async (sourcePath: string, outputPath: string) => {
 	if (process.argv.includes("--force")) return true;
@@ -86,14 +104,24 @@ const simplifyWardSource = (raw: string, objectName: string) => {
 
 /** Ensures the committed TopoJSON assets are newer than their GeoJSON inputs. */
 export async function compileBoundaryAssets(): Promise<void> {
-	console.log("Preparing TopoJSON boundary assets...");
-	for (const sourceName of WARD_GEOJSON_SOURCES) {
-		const sourcePath = join(WARDS_DIR, sourceName);
-		const outputPath = outputPathFor(sourcePath);
+	const sources = wardVintageSources();
+	console.log(
+		`Preparing TopoJSON boundary assets (${sources.length} ward vintages)...`,
+	);
+	for (const { year, sourcePath, outputPath } of sources) {
 		const outputName = basename(outputPath);
 
+		// A vintage published only as TopoJSON cannot be rebuilt here. Say so
+		// rather than failing, so it is visible as unreproducible.
+		if (!(await exists(sourcePath))) {
+			console.log(
+				`  boundary: ${year} ${outputName} (no local GeoJSON source, skipped)`,
+			);
+			continue;
+		}
+
 		if (!(await shouldCompile(sourcePath, outputPath))) {
-			console.log(`  boundary: ${outputName} (up to date)`);
+			console.log(`  boundary: ${year} ${outputName} (up to date)`);
 			continue;
 		}
 
@@ -108,7 +136,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 			.digest("hex")
 			.slice(0, 12);
 		console.log(
-			`  boundary: ${outputName} (${sourceKb} KB -> ${outputKb} KB, ${hash})`,
+			`  boundary: ${year} ${outputName} (${sourceKb} KB -> ${outputKb} KB, ${hash})`,
 		);
 	}
 }
