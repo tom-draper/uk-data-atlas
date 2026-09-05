@@ -1,0 +1,25 @@
+{
+	"id": "ks4-performance",
+	"title": "Key stage 4 performance by local authority district, 2023/24",
+	"description": "DfE key stage 4 (GCSE) headline measures for academic year 2023/24 in England: Attainment 8, Progress 8, English and maths basics and EBacc, at national, regional and local authority district level.",
+	"topics": ["education", "schools", "england"],
+	"publisher": "Department for Education",
+	"sourceUrl": "https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2023/24",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"vintage": 2024,
+		"countries": ["GB-ENG"]
+	},
+	"files": [
+		{
+			"path": "ks4-lad-2024.csv",
+			"role": "source",
+			"note": "308 rows x 35 columns from the Explore Education Statistics \"Key stage 4 performance\" release, filtered before download and renamed locally: time_period 202324, version Revised, level_methodology Pupil residency, establishment_type_group State-funded schools (LA). Rows are 1 National, 11 Regional and 296 Local authority district; the loader keeps only the local authority district rows whose lad_code starts with E. Not a verbatim published filename, so the exact extract cannot be re-fetched by name — reproduce it by reapplying those filters. The live release has since moved on to 2024/25, so this is a superseded edition."
+		}
+	]
+}
