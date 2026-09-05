@@ -1,0 +1,39 @@
+{
+	"id": "2016-12-gb-bgc",
+	"kind": "boundary",
+	"title": "Local authority districts, December 2016 (Great Britain, generalised, clipped)",
+	"description": "Local authority districts as published for December 2016, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2016",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"vintage": 2016,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "source.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "source.geojson",
+			"role": "source",
+			"note": "Published as LAD_Dec_2016_GB_BGC_2022_699407162867034067.geojson."
+		}
+	]
+}

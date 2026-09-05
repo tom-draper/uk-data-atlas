@@ -1,0 +1,31 @@
+{
+	"id": "2011-12-sc-nc",
+	"kind": "boundary",
+	"title": "Data zones, December 2011 (Scotland, not clipped)",
+	"description": "Data zones as published for December 2011, covering Scotland. Not clipped to the coastline. Held, not served: the same 2011 data zones as 2011-12-sc-bfc but keyed DZ11CD rather than DataZone, so serving it would change the codes datasets join on.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2011",
+	"spatialCoverage": {
+		"geography": "dataZone",
+		"vintage": 2011,
+		"countries": [
+			"GB-SCT"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "source.geojson",
+			"role": "source",
+			"note": "Published as DZ_DEC_2011_SC_NC_45ae61d197ca46658b7431e39e1eb3de_3475346850332818879.geojson."
+		}
+	]
+}

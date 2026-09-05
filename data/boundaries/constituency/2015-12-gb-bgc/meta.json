@@ -1,0 +1,39 @@
+{
+	"id": "2015-12-gb-bgc",
+	"kind": "boundary",
+	"title": "Westminster parliamentary constituencies, December 2015 (Great Britain, generalised, clipped)",
+	"description": "Westminster parliamentary constituencies as published for December 2015, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2015",
+	"spatialCoverage": {
+		"geography": "constituency",
+		"vintage": 2015,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "source.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "source.geojson",
+			"role": "source",
+			"note": "Published as WPC_Dec_2015_GCB_GB_2022_7047333014304224938.geojson."
+		}
+	]
+}

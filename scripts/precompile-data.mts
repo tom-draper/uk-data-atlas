@@ -179,7 +179,13 @@ async function main() {
 	// first means a malformed drop fails the build immediately, with the folder
 	// named, rather than surfacing later as a confusing loader error.
 	const described = await discoverDatasets(SOURCE_DATA);
-	console.log(`  described datasets: ${described.length}`);
+	const boundaries = described.filter(
+		(dataset) => dataset.meta.kind === "boundary",
+	);
+	console.log(
+		`  described datasets: ${described.length - boundaries.length} ` +
+			`(and ${boundaries.length} boundary releases)`,
+	);
 	await verifyDescribedFiles(described);
 
 	const chartResults = CATALOGUE_DATASET_DEFINITIONS.map(

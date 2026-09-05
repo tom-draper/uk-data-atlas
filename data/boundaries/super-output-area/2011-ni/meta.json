@@ -1,0 +1,97 @@
+{
+	"id": "2011-ni",
+	"kind": "boundary",
+	"title": "Super output areas, 2011 (Northern Ireland)",
+	"description": "Super output areas as published for 2011, covering Northern Ireland.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Northern Ireland Statistics and Research Agency",
+	"sourceUrl": "https://www.nisra.gov.uk/",
+	"temporalCoverage": "2011",
+	"spatialCoverage": {
+		"geography": "superOutputArea",
+		"vintage": 2011,
+		"countries": [
+			"GB-NIR"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "shapefile/SOA2011.shp",
+			"note": "Produced outside this repository; compile-boundaries.mts reads GeoJSON, not shapefiles, so it cannot be rebuilt here."
+		},
+		{
+			"path": "mapinfo/SOA2011.DAT",
+			"role": "reference",
+			"bytes": 52608,
+			"note": "The same areas in MapInfo format; no loader reads it."
+		},
+		{
+			"path": "mapinfo/SOA2011.ID",
+			"role": "reference",
+			"bytes": 3560,
+			"note": "The same areas in MapInfo format; no loader reads it."
+		},
+		{
+			"path": "mapinfo/SOA2011.MAP",
+			"role": "reference",
+			"bytes": 18685440,
+			"note": "The same areas in MapInfo format; no loader reads it."
+		},
+		{
+			"path": "mapinfo/SOA2011.tab",
+			"role": "reference",
+			"bytes": 169,
+			"note": "The same areas in MapInfo format; no loader reads it."
+		},
+		{
+			"path": "shapefile/SOA2011.dbf",
+			"role": "reference",
+			"bytes": 52608,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SOA2011.prj",
+			"role": "reference",
+			"bytes": 400,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SOA2011.sbn",
+			"role": "reference",
+			"bytes": 8748,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SOA2011.sbx",
+			"role": "reference",
+			"bytes": 708,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SOA2011.shp",
+			"role": "source",
+			"note": "The published shapefile, and the origin of every other file here."
+		},
+		{
+			"path": "shapefile/SOA2011.shp.xml",
+			"role": "reference",
+			"bytes": 1354,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SOA2011.shx",
+			"role": "reference",
+			"bytes": 7220,
+			"note": "Shapefile companion, needed to read the .shp."
+		}
+	]
+}

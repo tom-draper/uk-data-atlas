@@ -1,0 +1,40 @@
+{
+	"id": "2020-12-uk-bgc",
+	"kind": "boundary",
+	"title": "Wards, December 2020 (United Kingdom, generalised, clipped)",
+	"description": "Wards as published for December 2020, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2020",
+	"spatialCoverage": {
+		"geography": "ward",
+		"vintage": 2020,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "source.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "source.geojson",
+			"role": "source",
+			"note": "Published as Wards_Dec_2020_UK_BGC_2022_-485796631781341866.geojson."
+		}
+	]
+}

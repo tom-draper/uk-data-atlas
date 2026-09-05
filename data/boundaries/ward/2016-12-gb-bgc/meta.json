@@ -1,0 +1,39 @@
+{
+	"id": "2016-12-gb-bgc",
+	"kind": "boundary",
+	"title": "Wards, December 2016 (Great Britain, generalised, clipped)",
+	"description": "Wards as published for December 2016, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2016",
+	"spatialCoverage": {
+		"geography": "ward",
+		"vintage": 2016,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "source.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "source.geojson",
+			"role": "source",
+			"note": "Published as Wards_December_2016_GCB_in_Great_Britain_2022_856513180533154279.geojson."
+		}
+	]
+}

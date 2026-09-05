@@ -49,6 +49,12 @@ export interface DatasetMetaCoverage {
 export interface DatasetMeta {
 	/** Must equal the folder name, so the path and the record cannot disagree. */
 	id: string;
+	/**
+	 * "boundary" is a published set of areas to draw and join to, not a
+	 * dataset with values of its own. It is described the same way and lives
+	 * under data/boundaries/, but no loader compiles it and it has no chart.
+	 */
+	kind?: "dataset" | "boundary";
 	title: string;
 	description?: string;
 	/** Free grouping, independent of the folder tree. */
@@ -65,6 +71,7 @@ export interface DatasetMeta {
 }
 
 const FILE_ROLES = new Set(["source", "derived", "lookup", "reference"]);
+const KINDS = new Set(["dataset", "boundary"]);
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 class MetaError extends Error {
@@ -204,6 +211,14 @@ export function parseDatasetMeta(value: unknown, folder: string): DatasetMeta {
 		);
 	}
 
+	const kind = optionalString(record, "kind", location);
+	if (kind !== undefined && !KINDS.has(kind)) {
+		throw new MetaError(
+			location,
+			`"kind" must be one of ${[...KINDS].join(", ")}`,
+		);
+	}
+
 	const retrieved = optionalString(record, "retrieved", location);
 	if (retrieved !== undefined && !ISO_DATE.test(retrieved)) {
 		throw new MetaError(
@@ -255,6 +270,7 @@ export function parseDatasetMeta(value: unknown, folder: string): DatasetMeta {
 
 	return {
 		id,
+		...(kind !== undefined ? { kind: kind as DatasetMeta["kind"] } : {}),
 		title: requireString(record, "title", location),
 		...(optionalString(record, "description", location) !== undefined
 			? { description: optionalString(record, "description", location) }

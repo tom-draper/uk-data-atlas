@@ -1,0 +1,38 @@
+{
+	"id": "2011-12-ew-bgc-v3",
+	"kind": "boundary",
+	"title": "Lower layer super output areas, December 2011 (England and Wales, generalised, clipped, v3)",
+	"description": "Lower layer super output areas as published for December 2011, covering England and Wales. Generalised to 20 m and clipped to the coastline. Version 3 of the release.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2011",
+	"spatialCoverage": {
+		"geography": "lsoa",
+		"vintage": 2011,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "source.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "source.geojson",
+			"role": "source",
+			"note": "Published as LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.geojson."
+		}
+	]
+}

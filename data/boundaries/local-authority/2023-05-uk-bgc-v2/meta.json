@@ -1,0 +1,40 @@
+{
+	"id": "2023-05-uk-bgc-v2",
+	"kind": "boundary",
+	"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+	"description": "Local authority districts as published for May 2023, covering the United Kingdom. Generalised to 20 m and clipped to the coastline. Version 2 of the release.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2023",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"vintage": 2023,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "source.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "source.geojson",
+			"role": "source",
+			"note": "Published as Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson."
+		}
+	]
+}

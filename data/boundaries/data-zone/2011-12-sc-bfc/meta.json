@@ -1,0 +1,85 @@
+{
+	"id": "2011-12-sc-bfc",
+	"kind": "boundary",
+	"title": "Data zones, December 2011 (Scotland, full resolution, clipped)",
+	"description": "Data zones as published for December 2011, covering Scotland. Full resolution, clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Scottish Government",
+	"sourceUrl": "https://spatialdata.gov.scot/",
+	"temporalCoverage": "2011",
+	"spatialCoverage": {
+		"geography": "dataZone",
+		"vintage": 2011,
+		"countries": [
+			"GB-SCT"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "source.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "shapefile/SG_DataZone_Bdry_2011.cpg",
+			"role": "reference",
+			"bytes": 5,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SG_DataZone_Bdry_2011.dbf",
+			"role": "reference",
+			"bytes": 1165314,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SG_DataZone_Bdry_2011.prj",
+			"role": "reference",
+			"bytes": 417,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SG_DataZone_Bdry_2011.sbn",
+			"role": "reference",
+			"bytes": 65484,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SG_DataZone_Bdry_2011.sbx",
+			"role": "reference",
+			"bytes": 2140,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SG_DataZone_Bdry_2011.shp",
+			"role": "source",
+			"note": "The published shapefile, and the origin of every other file here."
+		},
+		{
+			"path": "shapefile/SG_DataZone_Bdry_2011.shp.xml",
+			"role": "reference",
+			"bytes": 71265,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "shapefile/SG_DataZone_Bdry_2011.shx",
+			"role": "reference",
+			"bytes": 55908,
+			"note": "Shapefile companion, needed to read the .shp."
+		},
+		{
+			"path": "source.geojson",
+			"role": "derived",
+			"derivedFrom": "shapefile/SG_DataZone_Bdry_2011.shp",
+			"note": "Converted from the published shapefile; the atlas has no shapefile reader."
+		}
+	]
+}
