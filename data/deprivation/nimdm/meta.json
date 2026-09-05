@@ -1,0 +1,37 @@
+{
+	"id": "nimdm",
+	"title": "Northern Ireland Multiple Deprivation Measure 2017",
+	"description": "NIMDM 2017 multiple deprivation measure and domain ranks for Northern Ireland, at 2001 super output area level and, as a companion, at 2014 electoral ward level.",
+	"topics": ["deprivation", "northern-ireland"],
+	"publisher": "Northern Ireland Statistics and Research Agency",
+	"sourceUrl": "https://www.nisra.gov.uk/statistics/deprivation/northern-ireland-multiple-deprivation-measure-2017-nimdm2017",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2017",
+	"spatialCoverage": {
+		"geography": "superOutputArea",
+		"vintage": 2011,
+		"countries": ["GB-NIR"]
+	},
+	"files": [
+		{
+			"path": "NIMDM17_SOAresults.xls",
+			"role": "source",
+			"bytes": 1772032,
+			"note": "NIMDM17 SOA-level results workbook, published 23 November 2017 (https://www.nisra.gov.uk/publications/nimdm17-results). Holds the SOA2001 tables including the \"Domain Ranks\" sheet; contains no ward-level data."
+		},
+		{
+			"path": "NIMDM17_SOAresults.csv",
+			"role": "derived",
+			"derivedFrom": "NIMDM17_SOAresults.xls",
+			"note": "CSV of the workbook's SOA domain-rank table, read by the loader. 890 super output areas x 13 columns, followed by trailing blank rows from the spreadsheet export. Header cells contain embedded newlines (e.g. \"Multiple Deprivation Measure Rank \\n(where 1 is most deprived)\"). Codes are NISRA's SOA2001 identifiers such as 95AA01S1, joined here to the NI_SOA_2011 boundaries this repo ships."
+		},
+		{
+			"path": "NIMDM17_Ward2014.csv",
+			"role": "reference",
+			"note": "NIMDM17 results restated for the 2014 electoral wards, a separate NISRA release published 26 July 2018 (https://www.nisra.gov.uk/publications/nimdm17-ward2014-results). 462 wards x 12 columns. Kept for provenance; no loader reads it, and it is not derived from NIMDM17_SOAresults.xls."
+		}
+	]
+}
