@@ -1,0 +1,25 @@
+{
+	"id": "imd",
+	"title": "English Indices of Deprivation 2019",
+	"description": "IoD2019 scores, ranks and deciles for the Index of Multiple Deprivation and each of its domains and supplementary indices, by LSOA for England, with population denominators.",
+	"topics": ["deprivation", "england"],
+	"publisher": "Ministry of Housing, Communities & Local Government",
+	"sourceUrl": "https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2019",
+	"spatialCoverage": {
+		"geography": "lsoa",
+		"vintage": 2011,
+		"countries": ["GB-ENG"]
+	},
+	"files": [
+		{
+			"path": "File_7_-_All_IoD2019_Scores__Ranks__Deciles_and_Population_Denominators_3.csv",
+			"role": "source",
+			"note": "\"File 7: all ranks, deciles and scores for the indices of deprivation, and population denominators\", published 26 September 2019. 32,844 LSOAs x 57 columns. The trailing \"_3\" is part of the published filename, not a download suffix. Direct file: https://assets.publishing.service.gov.uk/media/5dc407b440f0b6379a7acc8d/File_7_-_All_IoD2019_Scores__Ranks__Deciles_and_Population_Denominators_3.csv Several column headers contain an embedded newline (e.g. \"Education\\n Skills and Training Score\"), so they must be matched verbatim rather than by eye."
+		}
+	]
+}
