@@ -19,6 +19,7 @@ export { localElectionDatasetDefinition } from "./localElection";
 export { nhsWaitingDatasetDefinition } from "./nhsWaiting";
 export { nimdmDatasetDefinition } from "./nimdm";
 export { populationDatasetDefinition } from "./population";
+export { populationUkDatasetDefinition } from "./populationUk";
 export { qualificationDatasetDefinition } from "./qualification";
 export { schoolPerformanceDatasetDefinition } from "./schoolPerformance";
 export { simdDatasetDefinition } from "./simd";

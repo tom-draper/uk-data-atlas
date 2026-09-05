@@ -20,6 +20,7 @@ import { localElectionDatasetDefinition } from "./definitions/localElection";
 import { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting";
 import { nimdmDatasetDefinition } from "./definitions/nimdm";
 import { populationDatasetDefinition } from "./definitions/population";
+import { populationUkDatasetDefinition } from "./definitions/populationUk";
 import { qualificationDatasetDefinition } from "./definitions/qualification";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance";
 import { simdDatasetDefinition } from "./definitions/simd";
@@ -48,6 +49,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	nhsWaitingDatasetDefinition,
 	nimdmDatasetDefinition,
 	populationDatasetDefinition,
+	populationUkDatasetDefinition,
 	qualificationDatasetDefinition,
 	schoolPerformanceDatasetDefinition,
 	simdDatasetDefinition,

@@ -19,6 +19,7 @@ import type { localElectionDatasetDefinition } from "./definitions/localElection
 import type { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting";
 import type { nimdmDatasetDefinition } from "./definitions/nimdm";
 import type { populationDatasetDefinition } from "./definitions/population";
+import type { populationUkDatasetDefinition } from "./definitions/populationUk";
 import type { qualificationDatasetDefinition } from "./definitions/qualification";
 import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance";
 import type { simdDatasetDefinition } from "./definitions/simd";
@@ -66,6 +67,9 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof nhsWaitingDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof populationDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof populationUkDatasetDefinition.precompile>
+	  >[string]
 	| Awaited<
 			ReturnType<typeof qualificationDatasetDefinition.precompile>
 	  >[string]
@@ -128,6 +132,9 @@ export type CatalogueDatasetRecords = {
 	nimdm: Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>;
 	population: Awaited<
 		ReturnType<typeof populationDatasetDefinition.precompile>
+	>;
+	populationUk: Awaited<
+		ReturnType<typeof populationUkDatasetDefinition.precompile>
 	>;
 	qualification: Awaited<
 		ReturnType<typeof qualificationDatasetDefinition.precompile>
