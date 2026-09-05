@@ -1,0 +1,32 @@
+{
+	"id": "wimd",
+	"title": "Welsh Index of Multiple Deprivation 2019 index and domain scores",
+	"description": "WIMD 2019 overall index score and the eight domain scores (income, employment, health, education, access to services, housing, community safety, physical environment) for every Welsh LSOA.",
+	"topics": ["deprivation", "wales"],
+	"publisher": "Welsh Government",
+	"sourceUrl": "https://www.gov.wales/welsh-index-multiple-deprivation-full-index-update-ranks-2019",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2019",
+	"spatialCoverage": {
+		"geography": "lsoa",
+		"vintage": 2011,
+		"countries": ["GB-WLS"]
+	},
+	"files": [
+		{
+			"path": "wimd-2019-index-and-domain-scores-by-small-area.ods",
+			"role": "source",
+			"bytes": 285070,
+			"note": "\"WIMD 2019 Index and domain scores by small area\", released 27 November 2019 and last updated 1 October 2020. Sheets: Guidance_Sheet, Data, WIMD_2019_LSOA_index_and_domain_scores."
+		},
+		{
+			"path": "wimd2019.csv",
+			"role": "derived",
+			"derivedFrom": "wimd-2019-index-and-domain-scores-by-small-area.ods",
+			"note": "CSV export of the WIMD_2019_LSOA_index_and_domain_scores sheet, read by the loader. Carries the sheet's three-line preamble, so the real header is on line 4 and data starts on line 5: 1,909 LSOAs x 12 columns. Should disappear once the preprocessor reads the .ods directly via the reader's odsContent."
+		}
+	]
+}
