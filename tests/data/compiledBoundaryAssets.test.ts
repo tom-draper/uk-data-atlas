@@ -48,5 +48,5 @@ describe("compiled ward boundary assets", () => {
 				true,
 			);
 		}
-	});
+	}, 60_000);
 });

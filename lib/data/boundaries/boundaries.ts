@@ -4,17 +4,19 @@ import { gazetteer } from "@lib/data/gazetteer/static";
 import { getProp } from "./properties";
 import { decodeBoundaryData } from "./decode";
 import { fetchBoundaryInWorker } from "./worker";
-import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
+import {
+	BOUNDARY_CATALOG,
+	type BoundaryType,
+	type BoundaryYear,
+} from "./catalog";
 
 export { BOUNDARY_CATALOG } from "./catalog";
 export type { BoundaryType, BoundaryYear } from "./catalog";
 export { getProp } from "./properties";
 
-export type WardYear = keyof typeof BOUNDARY_CATALOG.ward.vintages;
-export type ConstituencyYear =
-	keyof typeof BOUNDARY_CATALOG.constituency.vintages;
-export type LocalAuthorityYear =
-	keyof typeof BOUNDARY_CATALOG.localAuthority.vintages;
+export type WardYear = BoundaryYear<"ward">;
+export type ConstituencyYear = BoundaryYear<"constituency">;
+export type LocalAuthorityYear = BoundaryYear<"localAuthority">;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
 	England: "E",
