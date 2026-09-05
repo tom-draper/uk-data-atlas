@@ -38,7 +38,7 @@ const wardVintageSources = () =>
 			const outputPath = join(ROOT, "data", relative);
 			return {
 				year: Number(year),
-				sourcePath: outputPath.replace(/\.topojson$/, ".geojson"),
+				sourcePath: outputPath.replace(/boundaries\.topojson$/, "source.geojson"),
 				outputPath,
 			};
 		})
@@ -109,7 +109,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 		`Preparing TopoJSON boundary assets (${sources.length} ward vintages)...`,
 	);
 	for (const { year, sourcePath, outputPath } of sources) {
-		const outputName = basename(outputPath);
+		const outputName = basename(dirname(outputPath));
 
 		// A vintage published only as TopoJSON cannot be rebuilt here. Say so
 		// rather than failing, so it is visible as unreproducible.

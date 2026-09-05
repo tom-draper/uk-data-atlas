@@ -58,31 +58,31 @@ export const BOUNDARY_CATALOG = {
 		},
 		vintages: {
 			2025: withCDN(
-				"/data/boundaries/wards/WD_MAY_2025_UK_BGC_V2_-8581021362622909866.topojson",
+				"/data/boundaries/ward/2025-05-uk-bgc-v2/boundaries.topojson",
 			),
 			2024: withCDN(
-				"/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.topojson",
+				"/data/boundaries/ward/2024-12-uk-bgc/boundaries.topojson",
 			),
 			2023: withCDN(
-				"/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.topojson",
+				"/data/boundaries/ward/2023-12-uk-bgc/boundaries.topojson",
 			),
 			2022: withCDN(
-				"/data/boundaries/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.topojson",
+				"/data/boundaries/ward/2022-12-uk-bgc/boundaries.topojson",
 			),
 			2021: withCDN(
-				"/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.topojson",
+				"/data/boundaries/ward/2021-12-uk-bgc/boundaries.topojson",
 			),
 			2019: withCDN(
-				"/data/boundaries/wards/Wards_December_2019_GCB_GB_2022_-3199817513651023624.topojson",
+				"/data/boundaries/ward/2019-12-gb-bgc/boundaries.topojson",
 			),
 			2018: withCDN(
-				"/data/boundaries/wards/Wards_December_2018_GCB_UK_2022_-623525817862961610.topojson",
+				"/data/boundaries/ward/2018-12-uk-bgc/boundaries.topojson",
 			),
 			2017: withCDN(
-				"/data/boundaries/wards/Wards_December_2017_GCB_in_Great_Britain_2022_-2440043846989090720.topojson",
+				"/data/boundaries/ward/2017-12-gb-bgc/boundaries.topojson",
 			),
 			2016: withCDN(
-				"/data/boundaries/wards/Wards_December_2016_GCB_in_Great_Britain_2022_856513180533154279.topojson",
+				"/data/boundaries/ward/2016-12-gb-bgc/boundaries.topojson",
 			),
 		},
 	},
@@ -95,19 +95,19 @@ export const BOUNDARY_CATALOG = {
 			// The 2010–2019 boundary set did not change. The existing 2017 geometry
 			// therefore also supplies the code-compatible 2010 election map.
 			2010: withCDN(
-				"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.topojson",
+				"/data/boundaries/constituency/2017-12-uk-bgc/boundaries.topojson",
 			),
 			2024: withCDN(
-				"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.topojson",
+				"/data/boundaries/constituency/2024-07-uk-bgc/boundaries.topojson",
 			),
 			2019: withCDN(
-				"/data/boundaries/constituencies/WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.topojson",
+				"/data/boundaries/constituency/2019-12-uk-bgc/boundaries.topojson",
 			),
 			2017: withCDN(
-				"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.topojson",
+				"/data/boundaries/constituency/2017-12-uk-bgc/boundaries.topojson",
 			),
 			2015: withCDN(
-				"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.topojson",
+				"/data/boundaries/constituency/2017-12-uk-bgc/boundaries.topojson",
 			),
 		},
 	},
@@ -132,16 +132,16 @@ export const BOUNDARY_CATALOG = {
 		},
 		vintages: {
 			2025: withCDN(
-				"/data/boundaries/lad/LAD_MAY_2025_UK_BGC_V2_1110015208521213948.topojson",
+				"/data/boundaries/local-authority/2025-05-uk-bgc-v2/boundaries.topojson",
 			),
 			2024: withCDN(
-				"/data/boundaries/lad/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.topojson",
+				"/data/boundaries/local-authority/2024-05-uk-bgc/boundaries.topojson",
 			),
 			2023: withCDN(
-				"/data/boundaries/lad/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.topojson",
+				"/data/boundaries/local-authority/2023-05-uk-bgc-v2/boundaries.topojson",
 			),
 			2016: withCDN(
-				"/data/boundaries/lad/LAD_Dec_2016_GB_BGC_WGS84.topojson",
+				"/data/boundaries/local-authority/2016-12-gb-bgc/boundaries.topojson",
 			),
 		},
 	},
@@ -152,7 +152,7 @@ export const BOUNDARY_CATALOG = {
 		},
 		vintages: {
 			2011: withCDN(
-				"/data/boundaries/lsoa/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.topojson",
+				"/data/boundaries/lsoa/2011-12-ew-bgc-v3/boundaries.topojson",
 			),
 		},
 	},
@@ -160,7 +160,7 @@ export const BOUNDARY_CATALOG = {
 		properties: { code: ["DataZone"], name: ["Name"] },
 		vintages: {
 			2011: withCDN(
-				"/data/boundaries/datazone/SG_DataZone_Bdry_2011.topojson",
+				"/data/boundaries/data-zone/2011-12-sc-bfc/boundaries.topojson",
 			),
 		},
 	},
@@ -171,7 +171,7 @@ export const BOUNDARY_CATALOG = {
 		},
 		vintages: {
 			2011: withCDN(
-				"/data/boundaries/superOutputArea/NI_SOA_2011.topojson",
+				"/data/boundaries/super-output-area/2011-ni/boundaries.topojson",
 			),
 		},
 	},

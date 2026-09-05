@@ -13,17 +13,9 @@ import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 
 const B = join(process.cwd(), "public", "data", "boundaries");
 const FILES = {
-	lad: join(B, "lad", "LAD_MAY_2025_UK_BGC_V2_1110015208521213948.topojson"),
-	con: join(
-		B,
-		"constituencies",
-		"Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.topojson",
-	),
-	lsoa: join(
-		B,
-		"lsoa",
-		"LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.topojson",
-	),
+	lad: join(B, "local-authority", "2025-05-uk-bgc-v2", "boundaries.topojson"),
+	con: join(B, "constituency", "2024-07-uk-bgc", "boundaries.topojson"),
+	lsoa: join(B, "lsoa", "2011-12-ew-bgc-v3", "boundaries.topojson"),
 };
 
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
