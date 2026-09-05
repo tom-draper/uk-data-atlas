@@ -1,0 +1,27 @@
+{
+	"id": "ethnic-group-by-age-and-sex",
+	"title": "Ethnic group by age and sex",
+	"description": "Census 2021 usual residents in England and Wales by ethnic group (19 tick-box categories) crossed with sex and single year of age, from England and Wales down to local authority. Not yet read by any loader.",
+	"topics": ["demographics", "ethnicity", "age", "sex", "census"],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/culturalidentity/ethnicity/datasets/ethnicgroupbyageandsexinenglandandwales",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-05",
+	"temporalCoverage": "2021",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"vintage": 2021,
+		"countries": ["GB-ENG", "GB-WLS"]
+	},
+	"files": [
+		{
+			"path": "ethnicgroupagesex11.xlsx",
+			"role": "source",
+			"bytes": 8850690,
+			"note": "Published 23 January 2023. Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/culturalidentity/ethnicity/datasets/ethnicgroupbyageandsexinenglandandwales/2021/ethnicgroupagesex11.xlsx Sheets: Cover, Contents, Notes, then 'Table 1' (ethnic group by sex, 682 rows), 'Table 2' (by single year of age 0-100, 34,441 rows) and 'Table 3' (by age and sex, 34,441 rows, ethnic group columns split per sex). Each table has its header on row 4 and is keyed by Geography Code plus Sex or Age. Uses the 19 tick-box ethnic groups, so there is no 'Does not apply' column and one fewer group than TS021. Covers 341 geographies but only 329 local authorities: two small-population pairs are merged and keyed by the larger partner's own code, so E06000052 is 'Cornwall and Isles of Scilly' (absorbs E06000053) and E09000001 is 'City of London and Westminster' (absorbs E09000033). Split or exclude those two before joining to ts021-ethnic-group."
+		}
+	]
+}
