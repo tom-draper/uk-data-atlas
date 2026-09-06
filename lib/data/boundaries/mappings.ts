@@ -101,9 +101,20 @@ export const buildCrossYearMappings = (
 							BOUNDARY_CATALOG.localAuthority.properties.code,
 						)
 					: null;
+			// The Dec 2017 constituencies are published as "St. Albans" where
+			// every other release says "St Albans", and names are all these
+			// mappings have to match on, so drop abbreviation stops before
+			// comparing. Only for constituencies: ward names are only
+			// qualified by a local authority when the release publishes one,
+			// and without that qualifier dropping stops merges same-named
+			// wards in different countries.
+			const plainName =
+				type === "constituency"
+					? name.toLowerCase().replace(/\./g, "").trim()
+					: name.toLowerCase().trim();
 			const normalizedName = ladCode
-				? `${name.toLowerCase().trim()}|${ladCode}`
-				: name.toLowerCase().trim();
+				? `${plainName}|${ladCode}`
+				: plainName;
 			(nameIndex[normalizedName] ??= new Set()).add({ code, year });
 		}
 	}
