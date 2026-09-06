@@ -1,0 +1,40 @@
+{
+	"id": "claimant-count",
+	"title": "Claimant count by unitary and local authority",
+	"description": "People claiming Universal Credit or Jobseeker's Allowance principally for the reason of being unemployed, by unitary and local authority across the United Kingdom.",
+	"topics": [
+		"economics",
+		"unemployment",
+		"benefits"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/claimantcountbyunitaryandlocalauthorityexperimental",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2026",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "claimant-count-2026.csv",
+			"role": "source",
+			"note": "A NOMIS query export for April 2026, the file the loader reads. NOMIS builds a download from the query rather than publishing it under a fixed name, so this cannot be re-fetched by filename: reproduce it from dataset ucjsa at https://www.nomisweb.co.uk/datasets/ucjsa, by local authority, for the total of all Universal Credit and Jobseeker's Allowance claimants. Its many columns carry the age and sex breakdowns the ONS table below does not."
+		},
+		{
+			"path": "lmregtabcc01august2026.xls",
+			"role": "source",
+			"bytes": 233984,
+			"note": "The published CC01 table, August 2026 release, holding July 2026 data in sheet CC01: counts and proportions of men, women and all people for 410 areas. Supersedes an extract of the May 2026 release that used to sit here. Not read by any loader; kept as the published counterpart to the NOMIS export beside it."
+		}
+	]
+}

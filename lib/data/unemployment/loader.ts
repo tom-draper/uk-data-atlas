@@ -28,7 +28,7 @@ export async function loadUnemployment(
 	readSource: (path: string) => Promise<string>,
 ): Promise<Record<string, UnemploymentDataset>> {
 	const csv = await readSource(
-		"economics/unemployment/modelbasedunemploymentdataapril2022rates.csv",
+		"economics/unemployment/model-based/modelbasedunemploymentdataapril2022rates.csv",
 	);
 
 	const { data: rawRows } = await parseCsv<string[]>(csv, { header: false });

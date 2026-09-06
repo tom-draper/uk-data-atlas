@@ -1,0 +1,32 @@
+{
+	"id": "by-age-and-duration",
+	"title": "Unemployment by age and duration, UNEM01 SA",
+	"description": "Seasonally adjusted unemployment for the United Kingdom by age band and duration of unemployment, as a monthly time series. National totals only, with no geographic breakdown.",
+	"topics": [
+		"economics",
+		"unemployment"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/unemploymentbyageanddurationseasonallyadjustedunem01sa",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "1992-2026",
+	"spatialCoverage": {
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "unem01saaug2026.xls",
+			"role": "source",
+			"note": "The August 2026 release. Sheets: Note, then People, Men and Women, each a time series of levels and rates by age band and duration. United Kingdom totals only, so there is nothing here to draw on a map; kept as context for the local series beside it. Not read by any loader."
+		}
+	]
+}
