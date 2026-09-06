@@ -40,20 +40,31 @@ export async function loadLE(
 	enableHLE = true,
 ): Promise<Record<string, LifeExpectancyDataset>> {
 	const reads: Promise<string>[] = [
-		read("health/life-expectancy/lifeexpectancylocalareas.csv"),
+		read("health/life-expectancy/lifeexpectancylocalareas.xlsx"),
 	];
 	if (enableHLE)
 		reads.push(read("health/life-expectancy/healthylifeexpectancyuk.csv"));
 
 	const [leText, hleText] = await Promise.all(reads);
 
-	const { data: leData } = await parseCsv(leText, { header: true });
+	// Sheet 1 carries every period, area type and age band; the atlas charts
+	// life expectancy at birth for local areas in the latest period.
+	const { data: leDataAll } = await parseCsv(leText, {
+		header: true,
+		skipLines: 5,
+	});
+	const leData = (leDataAll as Record<string, string>[]).filter(
+		(row) =>
+			row["Period"]?.trim() === "2020 to 2022" &&
+			row["Age group"]?.trim() === "<1" &&
+			row["Area type"]?.trim() === "Local Areas",
+	);
 	const leRecords = parsePairedRows(
-		leData as Record<string, string>[],
+		leData,
 		"Area code",
 		"Area name",
 		"Sex",
-		"Life expectancy",
+		"Life expectancy (years)",
 	);
 
 	const result: Record<string, LifeExpectancyDataset> = {

@@ -1,0 +1,36 @@
+{
+	"id": "life-expectancy",
+	"title": "Life expectancy for local areas in England, Northern Ireland and Wales",
+	"description": "Period life expectancy at each age by sex and local area, from 2001 to 2003 through 2020 to 2022, with healthy life expectancy for the United Kingdom alongside it.",
+	"topics": [
+		"health",
+		"life-expectancy"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthandlifeexpectancies/datasets/lifeexpectancyforlocalareasofgreatbritain",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2001-2022",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "lifeexpectancylocalareas.xlsx",
+			"role": "source",
+			"note": "The published workbook. The loader reads sheet \"1\" — 319,206 rows covering every period, area type and age band — and keeps life expectancy at birth for local areas in 2020 to 2022. Sheet \"2\" holds the same figures arranged for filtering."
+		},
+		{
+			"path": "healthylifeexpectancyuk.csv",
+			"role": "derived",
+			"note": "Sheet 1 of the healthy life expectancy workbook, exported to CSV. The workbook itself is not held here, so this extract stands in for it until the published file is downloaded."
+		}
+	]
+}

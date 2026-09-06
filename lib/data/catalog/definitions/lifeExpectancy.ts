@@ -19,5 +19,10 @@ export const lifeExpectancyDatasetDefinition: DatasetDefinition<LifeExpectancyDa
 			description:
 				"Life expectancy and healthy life expectancy estimates by local area for England and Wales.",
 		},
-		precompile: async ({ text }) => loadLE(text, true),
+		// Life expectancy comes from sheet 1 of the workbook; healthy life
+		// expectancy is still an extract of its own workbook.
+		precompile: async ({ text, xlsxSheet }) =>
+			loadLE((path) =>
+				path.endsWith(".xlsx") ? xlsxSheet(path, "1") : text(path),
+			),
 	};
