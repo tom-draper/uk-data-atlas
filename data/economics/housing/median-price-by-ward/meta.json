@@ -1,0 +1,38 @@
+{
+	"id": "median-price-by-ward",
+	"title": "Median price paid by ward, HPSSA Dataset 37",
+	"description": "Median price paid for residential property by ward in England and Wales, quarterly from the year ending December 1995 to the year ending March 2023.",
+	"topics": [
+		"economics",
+		"housing",
+		"house-prices"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/medianpricepaidbywardhpssadataset37",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "1995-2023",
+	"spatialCoverage": {
+		"geography": "ward",
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "hpssadataset37medianpricepaidbyward.zip",
+			"role": "source",
+			"note": "The year ending March 2023 edition, as published. Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/housing/datasets/medianpricepaidbywardhpssadataset37/yearendingmarch2023/hpssadataset37medianpricepaidbyward.zip It holds one file, \"HPSSA Dataset 37 - Median price paid by ward.xls\" (128 MB), so the archive is kept rather than the workbook: it is the published artefact and a third of the size."
+		},
+		{
+			"path": "table-1a-median-price-paid-by-ward.csv",
+			"role": "derived",
+			"derivedFrom": "hpssadataset37medianpricepaidbyward.zip",
+			"note": "Table 1a of the workbook, the sheet the loader reads. The workbook is a legacy BIFF .xls, which the preprocessor cannot open — xlsxSheet reads the zip-based .xlsx format only — so this extract stays until it can. Renamed from a doubled filename produced by the original export."
+		}
+	]
+}

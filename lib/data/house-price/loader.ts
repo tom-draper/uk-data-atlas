@@ -29,7 +29,7 @@ export async function loadHousePrice(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, HousePriceDataset>> {
 	const csvText = await read(
-		"economics/housing/HPSSA Dataset 37 - Median price paid by wardHPSSA Dataset 37 - Median price paid by ward.csv",
+		"economics/housing/median-price-by-ward/table-1a-median-price-paid-by-ward.csv",
 	);
 	const skipLines = findHeaderLine(csvText, "local authority code");
 	const { data, fields } = await parseCsv(csvText, {
