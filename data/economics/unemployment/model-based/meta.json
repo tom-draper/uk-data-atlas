@@ -1,0 +1,33 @@
+{
+	"id": "model-based",
+	"title": "Modelled unemployment for local and unitary authorities, M01",
+	"description": "Model-based estimates of the unemployment rate and level for local and unitary authorities and 2010 parliamentary constituencies, as annual financial and calendar year periods from 1996/97 to April 2021 to March 2022.",
+	"topics": [
+		"economics",
+		"unemployment"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/modelledunemploymentforlocalandunitaryauthoritiesm01/current",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "1996-2022",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "modelbasedunemploymentdataaugust2022.xls",
+			"role": "source",
+			"note": "The August 2022 release, the last one: ONS discontinued M01 on 16 August 2022 with no further updates planned, so this is the final edition rather than a snapshot to refresh. Direct file: https://www.ons.gov.uk/file?uri=/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/modelledunemploymentforlocalandunitaryauthoritiesm01/current/modelbasedunemploymentdataaugust2022.xls Sheets: Note, Index, then levels and rates for local and unitary authorities and again for 2010 parliamentary constituencies. The loader reads \"LA,UA Rates\", taking only the annual periods; the rolling quarterly ones such as \"Apr 2021 to Mar 2022\" are skipped. Supersedes extracts of the April 2022 release that used to sit here, whose 2020 and 2021 figures ONS revised in this edition."
+		}
+	]
+}

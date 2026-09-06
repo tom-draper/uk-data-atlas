@@ -17,18 +17,25 @@ function periodToYear(label: string): number | null {
 	return null;
 }
 
+/**
+ * A rate, to the one decimal place the workbook publishes. It stores the
+ * modelled value at full precision — 3.55097048 for a published 3.6 — and the
+ * confidence interval in the column beside it is around two percentage points
+ * wide, so carrying those digits would assert a precision the estimate does
+ * not have.
+ */
 const toNum = (v: string): number | null => {
 	const s = v.trim();
 	if (!s || s === ":" || s === "..") return null;
 	const n = parseFloat(s.replace(/,/g, ""));
-	return isNaN(n) ? null : n;
+	return isNaN(n) ? null : Number(n.toFixed(1));
 };
 
 export async function loadUnemployment(
 	readSource: (path: string) => Promise<string>,
 ): Promise<Record<string, UnemploymentDataset>> {
 	const csv = await readSource(
-		"economics/unemployment/model-based/modelbasedunemploymentdataapril2022rates.csv",
+		"economics/unemployment/model-based/modelbasedunemploymentdataaugust2022.xls",
 	);
 
 	const { data: rawRows } = await parseCsv<string[]>(csv, { header: false });
