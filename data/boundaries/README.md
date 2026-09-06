@@ -21,8 +21,9 @@ compile, and `super-output-area/2011-ni`, converted from a shapefile outside
 this repository. `scripts/sync-public-data.mjs` copies those two across.
 
 `<geography>` is the `BoundaryType` it belongs to, in kebab case: `ward`,
-`local-authority`, `constituency`, `lsoa`, `data-zone`, `super-output-area`,
-`country`, `local-planning-authority`.
+`local-authority`, `county-and-unitary-authority`, `constituency`, `region`,
+`country`, `msoa`, `lsoa`, `data-zone`, `super-output-area`,
+`local-planning-authority`, `integrated-care-board`.
 
 Adding a geography means adding a family to `CATALOG`, which creates the
 `BoundaryType` on its own. Three places still need the new keys spelled out,
@@ -62,6 +63,11 @@ and the stem is stable even where the trailing hash is not.
 Coordinate system is not in the name either. Sources arrive in EPSG:4326 or
 EPSG:27700 depending on the release; `decode.ts` reprojects British National
 Grid on the way in, and every compiled asset is WGS84.
+
+Some products the Open Geography Portal serves only through its API rather
+than as a named download. Export those from the feature service, name the
+file for the layer, and record the query in `meta.json` — that query is what
+reproduces the file, since there is no published filename to fetch by.
 
 ## Adding a release
 

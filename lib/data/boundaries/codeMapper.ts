@@ -25,6 +25,10 @@ const emptyCodeMappings = (): CodeMappings => ({
 	superOutputArea: {},
 	country: {},
 	localPlanningAuthority: {},
+	region: {},
+	countyAndUnitaryAuthority: {},
+	integratedCareBoard: {},
+	msoa: {},
 });
 
 const emptyReverseMappings = (): ReverseCodeMappings => ({
@@ -36,6 +40,10 @@ const emptyReverseMappings = (): ReverseCodeMappings => ({
 	superOutputArea: {},
 	country: {},
 	localPlanningAuthority: {},
+	region: {},
+	countyAndUnitaryAuthority: {},
+	integratedCareBoard: {},
+	msoa: {},
 });
 
 /** Mutable, framework-independent boundary-code lookup. */

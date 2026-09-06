@@ -196,6 +196,30 @@ interface LocalPlanningAuthorityProperties2019 {
 	lpa19nm: string;
 }
 
+// Region properties by year
+interface RegionProperties2025 {
+	RGN25CD: string;
+	RGN25NM: string;
+}
+
+// County and unitary authority properties by year
+interface CountyAndUnitaryAuthorityProperties2025 {
+	CTYUA25CD: string;
+	CTYUA25NM: string;
+}
+
+// Integrated care board properties by year
+interface IntegratedCareBoardProperties2026 {
+	ICB26CD: string;
+	ICB26NM: string;
+}
+
+// Middle layer super output area properties by year
+interface MSOAProperties2021 {
+	MSOA21CD: string;
+	MSOA21NM: string;
+}
+
 // NI Super Output Area properties
 interface SuperOutputAreaProperties2011 {
 	SOA_CODE: string;
@@ -249,6 +273,14 @@ export type YearToProperties = {
 	country_2025: CountryProperties2025;
 	// Local planning authorities
 	localPlanningAuthority_2019: LocalPlanningAuthorityProperties2019;
+	// Regions
+	region_2025: RegionProperties2025;
+	// Counties and unitary authorities
+	countyAndUnitaryAuthority_2025: CountyAndUnitaryAuthorityProperties2025;
+	// Integrated care boards
+	integratedCareBoard_2026: IntegratedCareBoardProperties2026;
+	// Middle layer super output areas
+	msoa_2021: MSOAProperties2021;
 };
 
 export type Properties = ValueOf<YearToProperties>;

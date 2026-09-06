@@ -1,0 +1,33 @@
+{
+	"id": "2026-04-en-bgc",
+	"kind": "boundary",
+	"title": "Integrated care boards, April 2026 (England, generalised, clipped)",
+	"description": "NHS integrated care boards as published for April 2026, the geography NHS England reports referral to treatment waiting times against.",
+	"topics": [
+		"boundaries",
+		"geography",
+		"health"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2026",
+	"spatialCoverage": {
+		"geography": "integratedCareBoard",
+		"vintage": 2026,
+		"countries": [
+			"GB-ENG"
+		]
+	},
+	"files": [
+		{
+			"path": "ICB_APR_2026_EN_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Integrated_Care_Boards_April_2026_Boundaries_EN_BGC\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Integrated_Care_Boards_April_2026_Boundaries_EN_BGC/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 36 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}

@@ -38,6 +38,10 @@ const boundaryData = (code: string): BoundaryData => {
 		superOutputArea: { 2011: geojson },
 		country: { 2025: geojson },
 		localPlanningAuthority: { 2019: geojson },
+		region: { 2025: geojson },
+		countyAndUnitaryAuthority: { 2025: geojson },
+		integratedCareBoard: { 2026: geojson },
+		msoa: { 2021: geojson },
 	};
 };
 

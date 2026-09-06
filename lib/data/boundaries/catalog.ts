@@ -469,6 +469,58 @@ const CATALOG = {
 			},
 		],
 	},
+	region: {
+		releases: [
+			{
+				id: "2025-12-en-bgc",
+				year: 2025,
+				month: 12,
+				extent: "en",
+				codeKey: "RGN25CD",
+				nameKey: "RGN25NM",
+				asset: asset("region", "2025-12-en-bgc"),
+			},
+		],
+	},
+	countyAndUnitaryAuthority: {
+		releases: [
+			{
+				id: "2025-12-uk-bgc",
+				year: 2025,
+				month: 12,
+				extent: "uk",
+				codeKey: "CTYUA25CD",
+				nameKey: "CTYUA25NM",
+				asset: asset("county-and-unitary-authority", "2025-12-uk-bgc"),
+			},
+		],
+	},
+	integratedCareBoard: {
+		releases: [
+			{
+				id: "2026-04-en-bgc",
+				year: 2026,
+				month: 4,
+				extent: "en",
+				codeKey: "ICB26CD",
+				nameKey: "ICB26NM",
+				asset: asset("integrated-care-board", "2026-04-en-bgc"),
+			},
+		],
+	},
+	msoa: {
+		releases: [
+			{
+				id: "2021-12-ew-bgc-v3",
+				year: 2021,
+				month: 12,
+				extent: "ew",
+				codeKey: "MSOA21CD",
+				nameKey: "MSOA21NM",
+				asset: asset("msoa", "2021-12-ew-bgc-v3"),
+			},
+		],
+	},
 } as const satisfies Record<string, BoundaryFamily>;
 
 export type BoundaryType = keyof typeof CATALOG;

@@ -1,0 +1,34 @@
+{
+	"id": "2021-12-ew-bgc-v3",
+	"kind": "boundary",
+	"title": "Middle layer super output areas, December 2021 (England and Wales, generalised, clipped)",
+	"description": "Census 2021 middle layer super output areas for England and Wales, the tier between lower layer super output areas and local authority districts.",
+	"topics": [
+		"boundaries",
+		"geography",
+		"census"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2021",
+	"spatialCoverage": {
+		"geography": "msoa",
+		"vintage": 2021,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "MSOA_2021_EW_BGC_V3.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Middle_layer_Super_Output_Areas_December_2021_Boundaries_EW_BGC_V3\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Middle_layer_Super_Output_Areas_December_2021_Boundaries_EW_BGC_V3/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 7,264 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename. 6,856 English and 408 Welsh areas."
+		}
+	]
+}

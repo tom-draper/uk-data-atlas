@@ -1,0 +1,35 @@
+{
+	"id": "2025-12-uk-bgc",
+	"kind": "boundary",
+	"title": "Counties and unitary authorities, December 2025 (United Kingdom, generalised, clipped)",
+	"description": "Upper tier local government areas as published for December 2025: counties, unitary authorities, metropolitan and London boroughs. The geography many ONS tables report local authority figures against, which the lower tier districts cannot represent.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2025",
+	"spatialCoverage": {
+		"geography": "countyAndUnitaryAuthority",
+		"vintage": 2025,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "CTYUA_DEC_2025_UK_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Counties_and_Unitary_Authorities_December_2025_Boundaries_UK_BGC\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Counties_and_Unitary_Authorities_December_2025_Boundaries_UK_BGC/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 218 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename. 153 English areas, plus 22 Welsh, 32 Scottish and 11 Northern Irish."
+		}
+	]
+}
