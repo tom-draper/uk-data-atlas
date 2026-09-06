@@ -26,6 +26,8 @@ import type {
 } from "@/lib/types/fuelPoverty";
 import type {
 	AggregatedSchoolPerformanceData,
+	AggregatedSchoolPerformanceGapData,
+	SchoolPerformanceGapMeasures,
 	SchoolPerformanceMeasures,
 } from "@/lib/types/schoolPerformance";
 
@@ -188,6 +190,35 @@ export function aggregateFuelPoverty(
 				fuelPoorHouseholdCount,
 				fuelPovertyRate:
 					(fuelPoorHouseholdCount / householdCount) * 100,
+			};
+}
+
+/**
+ * Averages the gap across an area's districts. Districts whose cohorts fell
+ * below the reporting floor carry a null gap and are skipped, so a region is
+ * summarised from the districts that could be measured rather than being
+ * dragged toward zero by the ones that could not.
+ */
+export function aggregateSchoolPerformanceGap(
+	records: SchoolPerformanceGapMeasures[],
+): AggregatedSchoolPerformanceGapData | null {
+	let gap = 0,
+		disadvantaged = 0,
+		notDisadvantaged = 0,
+		count = 0;
+	for (const record of records) {
+		if (record.att8Gap == null) continue;
+		gap += record.att8Gap;
+		disadvantaged += record.att8Disadvantaged ?? 0;
+		notDisadvantaged += record.att8NotDisadvantaged ?? 0;
+		count++;
+	}
+	return count === 0
+		? null
+		: {
+				att8Gap: gap / count,
+				att8Disadvantaged: disadvantaged / count,
+				att8NotDisadvantaged: notDisadvantaged / count,
 			};
 }
 

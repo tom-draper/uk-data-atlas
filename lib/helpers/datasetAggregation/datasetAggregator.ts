@@ -25,6 +25,7 @@ import {
 	aggregateFuelPoverty,
 	aggregateHomelessness,
 	aggregateSchoolPerformance,
+	aggregateSchoolPerformanceGap,
 	collectBoundaryRecords,
 } from "./numeric";
 import { aggregateNHSWaiting } from "./health";
@@ -80,8 +81,10 @@ import {
 } from "@/lib/types/claimantCount";
 import {
 	SchoolPerformanceConstituencyDataset,
+	SchoolPerformanceGapDataset,
 	SchoolPerformanceDataset,
 	AggregatedSchoolPerformanceData,
+	AggregatedSchoolPerformanceGapData,
 } from "@/lib/types/schoolPerformance";
 import {
 	NHSWaitingDataset,
@@ -574,6 +577,23 @@ export class DatasetAggregator {
 			datasetId,
 			"constituency",
 			aggregateSchoolPerformance,
+		);
+	}
+
+	calculateSchoolPerformanceGapStats(
+		geojson: BoundaryGeojson,
+		data: SchoolPerformanceGapDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedSchoolPerformanceGapData | null {
+		return this.calculateNumericStats(
+			"schoolPerformanceGap",
+			geojson,
+			data,
+			location,
+			datasetId,
+			"localAuthority",
+			aggregateSchoolPerformanceGap,
 		);
 	}
 

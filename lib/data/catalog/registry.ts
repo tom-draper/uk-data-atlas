@@ -24,6 +24,7 @@ import { populationUkDatasetDefinition } from "./definitions/populationUk";
 import { qualificationDatasetDefinition } from "./definitions/qualification";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance";
 import { schoolPerformanceConstituencyDatasetDefinition } from "./definitions/schoolPerformanceConstituency";
+import { schoolPerformanceDisadvantageDatasetDefinition } from "./definitions/schoolPerformanceDisadvantage";
 import { simdDatasetDefinition } from "./definitions/simd";
 import { unemploymentDatasetDefinition } from "./definitions/unemployment";
 import { wimdDatasetDefinition } from "./definitions/wimd";
@@ -54,6 +55,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	qualificationDatasetDefinition,
 	schoolPerformanceDatasetDefinition,
 	schoolPerformanceConstituencyDatasetDefinition,
+	schoolPerformanceDisadvantageDatasetDefinition,
 	simdDatasetDefinition,
 	unemploymentDatasetDefinition,
 	wimdDatasetDefinition,

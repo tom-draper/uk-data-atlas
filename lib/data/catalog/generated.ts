@@ -23,6 +23,7 @@ import type { populationUkDatasetDefinition } from "./definitions/populationUk";
 import type { qualificationDatasetDefinition } from "./definitions/qualification";
 import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance";
 import type { schoolPerformanceConstituencyDatasetDefinition } from "./definitions/schoolPerformanceConstituency";
+import type { schoolPerformanceDisadvantageDatasetDefinition } from "./definitions/schoolPerformanceDisadvantage";
 import type { simdDatasetDefinition } from "./definitions/simd";
 import type { unemploymentDatasetDefinition } from "./definitions/unemployment";
 import type { wimdDatasetDefinition } from "./definitions/wimd";
@@ -80,6 +81,11 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<
 				typeof schoolPerformanceConstituencyDatasetDefinition.precompile
+			>
+	  >[string]
+	| Awaited<
+			ReturnType<
+				typeof schoolPerformanceDisadvantageDatasetDefinition.precompile
 			>
 	  >[string]
 	| Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>[string]
@@ -151,6 +157,11 @@ export type CatalogueDatasetRecords = {
 	schoolPerformanceConstituency: Awaited<
 		ReturnType<
 			typeof schoolPerformanceConstituencyDatasetDefinition.precompile
+		>
+	>;
+	schoolPerformanceGap: Awaited<
+		ReturnType<
+			typeof schoolPerformanceDisadvantageDatasetDefinition.precompile
 		>
 	>;
 	simd: Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>;
