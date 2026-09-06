@@ -30,7 +30,7 @@ export async function loadSchoolPerformance(
 ): Promise<Record<string, SchoolPerformanceDataset>> {
 	const { data } = await parseCsv<Record<string, string>>(
 		await read(
-			"education/ks4-performance/202425_local_authority_district_revised.csv",
+			"education/ks4-performance/local-authority-district/202425_local_authority_district_revised.csv",
 		),
 		{ header: true },
 	);
