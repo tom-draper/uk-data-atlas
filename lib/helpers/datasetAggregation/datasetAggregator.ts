@@ -79,6 +79,7 @@ import {
 	AggregatedClaimantCountData,
 } from "@/lib/types/claimantCount";
 import {
+	SchoolPerformanceConstituencyDataset,
 	SchoolPerformanceDataset,
 	AggregatedSchoolPerformanceData,
 } from "@/lib/types/schoolPerformance";
@@ -147,7 +148,7 @@ export class DatasetAggregator {
 		data: Record<string, T>,
 		location: string | null,
 		datasetId: string | null,
-		codeLevel: "localAuthority" | "lsoa",
+		codeLevel: "localAuthority" | "lsoa" | "constituency",
 		aggregate: (records: T[]) => R | null,
 	): R | null {
 		return this.byBoundary(
@@ -555,6 +556,23 @@ export class DatasetAggregator {
 			location,
 			datasetId,
 			"localAuthority",
+			aggregateSchoolPerformance,
+		);
+	}
+
+	calculateSchoolPerformanceConstituencyStats(
+		geojson: BoundaryGeojson,
+		data: SchoolPerformanceConstituencyDataset["data"],
+		location: string | null,
+		datasetId: string | null,
+	): AggregatedSchoolPerformanceData | null {
+		return this.calculateNumericStats(
+			"schoolPerformanceConstituency",
+			geojson,
+			data,
+			location,
+			datasetId,
+			"constituency",
 			aggregateSchoolPerformance,
 		);
 	}

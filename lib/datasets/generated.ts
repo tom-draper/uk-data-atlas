@@ -26,6 +26,7 @@ import { nimdmDefinition } from "./nimdm";
 import { populationDefinition } from "./population";
 import { qualificationDefinition } from "./qualification";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
+import { schoolPerformanceConstituencyDefinition } from "./schoolPerformanceConstituency";
 import { simdDefinition } from "./simd";
 import { unemploymentDefinition } from "./unemployment";
 import { wimdDefinition } from "./wimd";
@@ -57,6 +58,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		populationDefinition,
 		qualificationDefinition,
 		schoolPerformanceDefinition,
+		schoolPerformanceConstituencyDefinition,
 		simdDefinition,
 		unemploymentDefinition,
 		wimdDefinition,

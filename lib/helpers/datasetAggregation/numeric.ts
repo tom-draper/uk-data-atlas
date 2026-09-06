@@ -26,7 +26,7 @@ import type {
 } from "@/lib/types/fuelPoverty";
 import type {
 	AggregatedSchoolPerformanceData,
-	SchoolPerformanceDataset,
+	SchoolPerformanceMeasures,
 } from "@/lib/types/schoolPerformance";
 
 /** Collects the numeric dataset records represented by the active boundaries. */
@@ -191,8 +191,10 @@ export function aggregateFuelPoverty(
 			};
 }
 
+// Reads only the headline measures, so it serves both the local authority
+// district and the parliamentary constituency datasets.
 export function aggregateSchoolPerformance(
-	records: SchoolPerformanceDataset["data"][string][],
+	records: SchoolPerformanceMeasures[],
 ): AggregatedSchoolPerformanceData | null {
 	let pt94 = 0,
 		pt95 = 0,

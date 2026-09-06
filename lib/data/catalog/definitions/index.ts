@@ -22,6 +22,7 @@ export { populationDatasetDefinition } from "./population";
 export { populationUkDatasetDefinition } from "./populationUk";
 export { qualificationDatasetDefinition } from "./qualification";
 export { schoolPerformanceDatasetDefinition } from "./schoolPerformance";
+export { schoolPerformanceConstituencyDatasetDefinition } from "./schoolPerformanceConstituency";
 export { simdDatasetDefinition } from "./simd";
 export { unemploymentDatasetDefinition } from "./unemployment";
 export { wimdDatasetDefinition } from "./wimd";

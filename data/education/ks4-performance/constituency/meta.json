@@ -1,0 +1,26 @@
+{
+	"id": "constituency",
+	"title": "Key stage 4 performance by parliamentary constituency",
+	"description": "DfE key stage 4 (GCSE) measures for England by Westminster parliamentary constituency: Attainment 8, Progress 8, English and maths basics, EBacc entry and achievement, and subject-level entry rates.",
+	"topics": ["education", "schools", "england"],
+	"publisher": "Department for Education",
+	"sourceUrl": "https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance/2024-25",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2023/24-2024/25",
+	"spatialCoverage": {
+		"geography": "constituency",
+		"vintage": 2024,
+		"countries": ["GB-ENG"]
+	},
+	"files": [
+		{
+			"path": "202425_parliamentary_constituency_revised.csv",
+			"role": "source",
+			"note": "Published verbatim from the 2024/25 release's \"Download all data (ZIP)\" bundle (https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance/2024-25/explore). 7,516 rows x 180 columns. The file spans 2018/19 to 2024/25, but the constituencies change vintage partway through: 2018/19 to 2022/23 use the 533 pre-review seats (E14000530 upwards) and 2023/24 onwards use the 543 seats of the July 2024 review (E14001063 upwards). Only the two 2024-boundary years are compiled, since joining the earlier years would need the 2010-to-2024 crosswalk and would silently mix geographies. Rows repeat per geography_basis (Pupil residency and School location), which must be pinned; unlike the sibling local-authority-district file there are no disadvantage or FSM breakdown rows. Progress 8 is unpublished at revised stage for 2024/25 and appears as \"z\" for all 543 seats, so it parses to null; 2023/24 carries it."
+		}
+	]
+}

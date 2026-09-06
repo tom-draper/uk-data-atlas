@@ -27,6 +27,22 @@ export interface SchoolPerformanceDataset {
 	data: Record<string, SchoolPerformanceLADData>;
 }
 
+export interface SchoolPerformanceConstituencyData extends SchoolPerformanceMeasures {
+	pconCode: string;
+	pconName: string;
+	/** Keyed by the year the academic year ends in, as above. */
+	series: Record<number, SchoolPerformanceMeasures>;
+}
+
+export interface SchoolPerformanceConstituencyDataset {
+	id: string;
+	type: "schoolPerformanceConstituency";
+	year: number;
+	boundaryType: "constituency";
+	boundaryYear: number;
+	data: Record<string, SchoolPerformanceConstituencyData>;
+}
+
 export interface AggregatedSchoolPerformanceData {
 	ptL2basics94: number | null;
 	ptL2basics95: number | null;
