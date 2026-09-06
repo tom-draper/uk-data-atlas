@@ -1,0 +1,30 @@
+{
+	"id": "road-safety",
+	"title": "Road casualty statistics: provisional collisions, 2025",
+	"description": "Provisional reported road collisions in Great Britain for 2025, one row per collision with location, severity and conditions.",
+	"topics": [
+		"transport",
+		"road-safety"
+	],
+	"publisher": "Department for Transport",
+	"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/road-accidents-and-safety-statistics",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2025",
+	"spatialCoverage": {
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT"
+		]
+	},
+	"files": [
+		{
+			"path": "dft-road-casualty-statistics-collision-provisional-2025.csv",
+			"role": "source",
+			"note": "Published as dft-road-casualty-statistics-collision-provisional-2025.csv."
+		}
+	]
+}

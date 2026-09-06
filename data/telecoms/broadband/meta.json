@@ -1,0 +1,87 @@
+{
+	"id": "broadband",
+	"title": "Connected Nations, fixed broadband coverage, July 2025",
+	"description": "Ofcom fixed broadband coverage across the United Kingdom, reporting superfast, ultrafast and gigabit availability and full fibre take-up at several geographies.",
+	"topics": [
+		"telecoms",
+		"broadband",
+		"infrastructure"
+	],
+	"publisher": "Ofcom",
+	"sourceUrl": "https://www.ofcom.org.uk/research-and-data/telecoms-research/connected-nations",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2025-07",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "202507_fixed_laua_coverage_r01.csv",
+			"role": "source",
+			"note": "Fixed coverage by local authority, all premises. The only file here any loader reads."
+		},
+		{
+			"path": "202507_fixed_coverage_UK_and_nations_r01.csv",
+			"role": "reference",
+			"note": "Fixed coverage for the UK and its nations. Kept for provenance; no loader reads it.",
+			"bytes": 28283
+		},
+		{
+			"path": "202507_fixed_devcon_coverage_r01.csv",
+			"role": "reference",
+			"note": "Fixed coverage by devolved nation and region, all premises. Kept for provenance; no loader reads it.",
+			"bytes": 27423
+		},
+		{
+			"path": "202507_fixed_devcon_res_coverage_r01.csv",
+			"role": "reference",
+			"note": "The same by devolved nation and region, residential premises only. Kept for provenance; no loader reads it.",
+			"bytes": 27017
+		},
+		{
+			"path": "202507_fixed_laua_res_coverage_r01.csv",
+			"role": "reference",
+			"note": "The same by local authority, residential premises only. Kept for provenance; no loader reads it.",
+			"bytes": 70301
+		},
+		{
+			"path": "202507_fixed_oa_coverage_r01.zip",
+			"role": "reference",
+			"note": "Fixed coverage by output area, as published in a zip archive. Kept for provenance; no loader reads it.",
+			"bytes": 8907742
+		},
+		{
+			"path": "202507_fixed_pc_coverage_r01.zip",
+			"role": "reference",
+			"note": "Fixed coverage by postcode, as published in a zip archive. Kept for provenance; no loader reads it.",
+			"bytes": 27387921
+		},
+		{
+			"path": "202507_fixed_pcon_coverage_r01.csv",
+			"role": "reference",
+			"note": "Fixed coverage by parliamentary constituency, all premises. Kept for provenance; no loader reads it.",
+			"bytes": 126589
+		},
+		{
+			"path": "202507_fixed_pcon_res_coverage_r01.csv",
+			"role": "reference",
+			"note": "The same by parliamentary constituency, residential premises only. Kept for provenance; no loader reads it.",
+			"bytes": 124950
+		},
+		{
+			"path": "202507_full_fibre_take-up_laua_r01.csv",
+			"role": "reference",
+			"note": "Full fibre take-up by local authority. Kept for provenance; no loader reads it.",
+			"bytes": 10766
+		}
+	]
+}

@@ -1,0 +1,29 @@
+{
+	"id": "nhs-waiting-times",
+	"title": "Referral to treatment waiting times, March 2026",
+	"description": "Consultant-led referral to treatment waiting times by provider and commissioner for England, as the full monthly extract.",
+	"topics": [
+		"health",
+		"nhs",
+		"waiting-times"
+	],
+	"publisher": "NHS England",
+	"sourceUrl": "https://www.england.nhs.uk/statistics/statistical-work-areas/rtt-waiting-times/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2026-03",
+	"spatialCoverage": {
+		"countries": [
+			"GB-ENG"
+		]
+	},
+	"files": [
+		{
+			"path": "rtt-mar-2026.zip",
+			"role": "source",
+			"note": "The published full monthly extract, holding 20260331-RTT-March-2026-full-extract.csv (84.5 MB uncompressed). The archive was renamed locally; the publisher's own filename was not recorded and should be restored on the next download."
+		}
+	]
+}

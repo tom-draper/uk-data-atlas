@@ -1,0 +1,30 @@
+{
+	"id": "homelessness",
+	"title": "Statutory homelessness live tables, January to March 2026",
+	"description": "Households in temporary accommodation by English local authority, including households with children, from the statutory homelessness live tables.",
+	"topics": [
+		"economics",
+		"housing",
+		"homelessness"
+	],
+	"publisher": "Ministry of Housing, Communities and Local Government",
+	"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2026-Q1",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": [
+			"GB-ENG"
+		]
+	},
+	"files": [
+		{
+			"path": "homelessness-2026-q1.ods",
+			"role": "source",
+			"note": "The published workbook, sheets val1 onwards. Renamed locally; the publisher's own filename was not recorded and should be restored on the next download."
+		}
+	]
+}

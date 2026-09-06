@@ -1,0 +1,33 @@
+{
+	"id": "child-poverty",
+	"title": "Children in low income families, local area statistics",
+	"description": "Children aged under 16 living in relative low-income families before housing costs, by local authority, financial years ending 2023 to 2025.",
+	"topics": [
+		"economics",
+		"poverty",
+		"children"
+	],
+	"publisher": "Department for Work and Pensions",
+	"sourceUrl": "https://www.gov.uk/government/statistics/children-in-low-income-families-local-area-statistics-2022-to-2025",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2022-2025",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "children-in-low-income-families-2022-2025.ods",
+			"role": "source",
+			"note": "The published workbook, complete with its Cover, Contents, Guidance and Notes sheets. Renamed locally; the publisher's own filename was not recorded and should be restored on the next download."
+		}
+	]
+}

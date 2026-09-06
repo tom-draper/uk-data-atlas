@@ -1,0 +1,30 @@
+{
+	"id": "fuel-poverty",
+	"title": "Sub-regional fuel poverty, 2024",
+	"description": "Fuel poverty estimates under the Low Income Low Energy Efficiency measure, by lower layer super output area, parliamentary constituency and local authority in England.",
+	"topics": [
+		"economics",
+		"energy",
+		"poverty"
+	],
+	"publisher": "Department for Energy Security and Net Zero",
+	"sourceUrl": "https://www.gov.uk/government/collections/fuel-poverty-statistics",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2024",
+	"spatialCoverage": {
+		"geography": "lsoa",
+		"countries": [
+			"GB-ENG"
+		]
+	},
+	"files": [
+		{
+			"path": "fuel-poverty-2024.ods",
+			"role": "source",
+			"note": "The published workbook. Sheets: Title, then LSOA, parliamentary constituency and local authority level results. Renamed locally; the publisher's own filename was not recorded and should be restored on the next download."
+		}
+	]
+}
