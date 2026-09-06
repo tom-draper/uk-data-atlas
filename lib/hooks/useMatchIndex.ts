@@ -8,9 +8,10 @@ import {
 	type MatchIndex,
 } from "../data/areaBank";
 
-// Lazily loads the precomputed match-index shard (810 KB gz) and derives the
-// AreaBank used for upload-column matching. Gated by `enabled` so the shard is
-// only fetched when the upload flow needs it, not on every page load.
+// Lazily loads the precomputed match-index shard (1.4 MB gz, every geography
+// the catalogue serves) and derives the AreaBank used for upload-column
+// matching. Gated by `enabled` so the shard is only fetched when the upload
+// flow needs it, not on every page load.
 export function useMatchIndex(enabled: boolean): {
 	areaBank: AreaBank;
 	loading: boolean;

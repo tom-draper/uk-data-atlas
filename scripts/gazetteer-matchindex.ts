@@ -12,7 +12,10 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { feature } from "topojson-client";
 import { getProp } from "../lib/data/boundaries/properties";
-import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
+import {
+	BOUNDARY_CATALOG,
+	BOUNDARY_TYPES,
+} from "../lib/data/boundaries/catalog";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -37,50 +40,18 @@ async function load(path: string): Promise<Feat[]> {
 	return fc.features as Feat[];
 }
 
-interface LevelDef {
-	boundaryType: string;
-	vintages: Record<number, string>;
-	codeKeys: readonly string[];
-	nameKeys: readonly string[];
-}
-const LEVELS: LevelDef[] = [
-	{
-		boundaryType: "ward",
-		vintages: BOUNDARY_CATALOG.ward.vintages,
-		codeKeys: BOUNDARY_CATALOG.ward.properties.code,
-		nameKeys: BOUNDARY_CATALOG.ward.properties.name,
-	},
-	{
-		boundaryType: "constituency",
-		vintages: BOUNDARY_CATALOG.constituency.vintages,
-		codeKeys: BOUNDARY_CATALOG.constituency.properties.code,
-		nameKeys: BOUNDARY_CATALOG.constituency.properties.name,
-	},
-	{
-		boundaryType: "localAuthority",
-		vintages: BOUNDARY_CATALOG.localAuthority.vintages,
-		codeKeys: BOUNDARY_CATALOG.localAuthority.properties.code,
-		nameKeys: BOUNDARY_CATALOG.localAuthority.properties.name,
-	},
-	{
-		boundaryType: "lsoa",
-		vintages: BOUNDARY_CATALOG.lsoa.vintages,
-		codeKeys: BOUNDARY_CATALOG.lsoa.properties.code,
-		nameKeys: BOUNDARY_CATALOG.lsoa.properties.name,
-	},
-	{
-		boundaryType: "dataZone",
-		vintages: BOUNDARY_CATALOG.dataZone.vintages,
-		codeKeys: BOUNDARY_CATALOG.dataZone.properties.code,
-		nameKeys: BOUNDARY_CATALOG.dataZone.properties.name,
-	},
-	{
-		boundaryType: "superOutputArea",
-		vintages: BOUNDARY_CATALOG.superOutputArea.vintages,
-		codeKeys: BOUNDARY_CATALOG.superOutputArea.properties.code,
-		nameKeys: BOUNDARY_CATALOG.superOutputArea.properties.name,
-	},
-];
+/**
+ * Every geography the catalogue serves, derived rather than listed, so a new
+ * one is matchable as soon as it has a release. An uploaded CSV can then be
+ * recognised by any geography the atlas can draw, not only the handful that
+ * back its own datasets.
+ */
+const LEVELS = BOUNDARY_TYPES.map((boundaryType) => ({
+	boundaryType,
+	vintages: BOUNDARY_CATALOG[boundaryType].vintages as Record<number, string>,
+	codeKeys: BOUNDARY_CATALOG[boundaryType].properties.code,
+	nameKeys: BOUNDARY_CATALOG[boundaryType].properties.name,
+}));
 
 type MatchIndex = Record<
 	string,
