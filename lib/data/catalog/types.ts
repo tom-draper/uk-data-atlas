@@ -23,6 +23,11 @@ export interface DatasetReader {
 	text: (path: string) => Promise<string>;
 	/** One named worksheet from an .xlsx workbook, rendered as CSV. */
 	xlsxSheet: (path: string, sheet: string) => Promise<string>;
+	/**
+	 * The same for a legacy .xls workbook, which may be given directly or as
+	 * the single entry of a .zip, the form some publishers ship it in.
+	 */
+	xlsSheet: (path: string, sheet: string) => Promise<string>;
 	odsContent: (path: string) => Promise<string>;
 	zipCsv: (path: string) => Promise<string>;
 }

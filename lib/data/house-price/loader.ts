@@ -1,6 +1,6 @@
 import { HousePriceDataset, HousePriceWardData } from "@/lib/types/housePrice";
 import { parseCsv, findHeaderLine } from "@/lib/helpers/parseCsv";
-import { parseNullableInt } from "@/lib/helpers/parseNumber";
+import { parseNullableNum } from "@/lib/helpers/parseNumber";
 
 const SALFORD_WARD_CODE_REMAP: Record<string, string> = {
 	E05000759: "E05013018",
@@ -29,7 +29,7 @@ export async function loadHousePrice(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, HousePriceDataset>> {
 	const csvText = await read(
-		"economics/housing/median-price-by-ward/table-1a-median-price-paid-by-ward.csv",
+		"economics/housing/median-price-by-ward/hpssadataset37medianpricepaidbyward.zip",
 	);
 	const skipLines = findHeaderLine(csvText, "local authority code");
 	const { data, fields } = await parseCsv(csvText, {
@@ -47,7 +47,12 @@ export async function loadHousePrice(
 
 		const prices: Record<number, number> = {};
 		for (const period of timePeriodHeaders) {
-			const price = parseNullableInt(row[period]);
+			// Medians of an even number of sales land on a half penny, and
+			// the workbook holds that rather than the rounded figure it
+			// displays. Round rather than truncate, so a price is never a
+			// pound light.
+			const rawPrice = parseNullableNum(row[period]);
+			const price = rawPrice === null ? null : Math.round(rawPrice);
 			if (price !== null) {
 				const yearMatch = period.match(/\d{4}/);
 				if (yearMatch) prices[parseInt(yearMatch[0])] = price;

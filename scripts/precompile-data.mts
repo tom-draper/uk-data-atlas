@@ -18,6 +18,7 @@ import {
 } from "../lib/data/catalog";
 import type { DatasetReader } from "../lib/data/catalog";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
+import { readWorkbookStream, xlsSheetRows } from "../lib/data/spreadsheet/xls";
 import {
 	findSheetPath,
 	parseSharedStrings,
@@ -54,6 +55,25 @@ const readBoundaryAsset = async (path: string) => {
 	} catch {
 		return readFile(join(SOURCE_DATA, path), "utf8");
 	}
+};
+
+/**
+ * Pulls one named worksheet out of a legacy .xls and renders it as CSV. Some
+ * publishers ship the workbook inside a zip — HPSSA is 128 MB uncompressed
+ * against 36 MB zipped — so a zip holding a single .xls is unwrapped first.
+ */
+const readXlsSheet = async (
+	path: string,
+	sheetName: string,
+): Promise<string> => {
+	const fullPath = join(SOURCE_DATA, path);
+	const bytes = path.endsWith(".zip")
+		? execSync(`unzip -p "${fullPath}" "*.xls"`, {
+				maxBuffer: 512 * 1024 * 1024,
+			})
+		: await readFile(fullPath);
+	const stream = readWorkbookStream(new Uint8Array(bytes));
+	return rowsToCsv(xlsSheetRows(stream, sheetName));
 };
 
 // Reads a file relative to data/ (raw source data, not synced to public)
@@ -99,7 +119,9 @@ const readXlsxSheet = async (
 	// out a hundred times too small.
 	const percentStyleIds = percentageStyles(entry("xl/styles.xml"));
 
-	return rowsToCsv(sheetRows(entry(sheetPath), sharedStrings, percentStyleIds));
+	return rowsToCsv(
+		sheetRows(entry(sheetPath), sharedStrings, percentStyleIds),
+	);
 };
 
 // ODS source files are never exposed by the application. The child-poverty
@@ -154,6 +176,10 @@ const createTrackedReader = () => {
 		xlsxSheet: (path, sheet) =>
 			track("xlsxSheet", `${path}#${sheet}`, () =>
 				readXlsxSheet(path, sheet),
+			),
+		xlsSheet: (path, sheet) =>
+			track("xlsSheet", `${path}#${sheet}`, () =>
+				readXlsSheet(path, sheet),
 			),
 		odsContent: (path) =>
 			track("odsContent", path, () => readOdsContent(path)),
@@ -222,8 +248,12 @@ async function main() {
 	const results = await Promise.allSettled([
 		...chartResults,
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
-		loadGazetteerCore(readBoundaryAsset).then((d) => out("gazetteer.core", d)),
-		loadBoundaryMappings(readBoundaryAsset).then((d) => out("boundary-mappings", d)),
+		loadGazetteerCore(readBoundaryAsset).then((d) =>
+			out("gazetteer.core", d),
+		),
+		loadBoundaryMappings(readBoundaryAsset).then((d) =>
+			out("boundary-mappings", d),
+		),
 	]);
 
 	const failures = results.filter(

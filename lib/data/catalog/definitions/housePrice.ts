@@ -19,5 +19,7 @@ export const housePriceDatasetDefinition: DatasetDefinition<HousePriceDataset> =
 			description:
 				"Median house price paid by ward for England and Wales.",
 		},
-		precompile: async ({ text }) => loadHousePrice(text),
+		// Table 1a of the workbook, read from inside the published zip.
+		precompile: async ({ xlsSheet }) =>
+			loadHousePrice((path) => xlsSheet(path, "1a")),
 	};
