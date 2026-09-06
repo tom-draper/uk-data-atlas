@@ -20,12 +20,25 @@ beside their `meta.json`, because nothing here can rebuild them:
 compile, and `super-output-area/2011-ni`, converted from a shapefile outside
 this repository. `scripts/sync-public-data.mjs` copies those two across.
 
-`<geography>` is the `BoundaryType` it belongs to, in kebab case. Administrative:
-`ward`, `local-authority`, `county-and-unitary-authority`, `combined-authority`,
-`constituency`, `region`, `country`. Statistical: `msoa`, `lsoa`, `data-zone`,
-`super-output-area`, `itl1`, `itl2`, `itl3`. Service and functional:
-`integrated-care-board`, `police-force-area`, `community-safety-partnership`,
-`local-planning-authority`, `major-town-and-city`.
+`<geography>` is the `BoundaryType` it belongs to, in kebab case.
+
+- Administrative: `ward`, `county-electoral-division`, `local-authority`,
+  `county-and-unitary-authority`, `combined-authority`, `region`, `country`.
+- Electoral: `constituency`, `scottish-parliamentary-constituency`,
+  `scottish-parliamentary-region`, `senedd-constituency`,
+  `senedd-electoral-region`.
+- Statistical: `msoa`, `lsoa`, `data-zone`, `super-output-area`, `itl1`,
+  `itl2`, `itl3`, `travel-to-work-area`.
+- Health: `nhs-england-region`, `integrated-care-board`,
+  `sub-integrated-care-board-location`, `local-health-board`.
+- Other services: `police-force-area`, `community-safety-partnership`,
+  `fire-and-rescue-authority`, `local-planning-authority`, `national-park`,
+  `major-town-and-city`.
+
+Most of these back no dataset of the atlas's own. They are here so an uploaded
+file can be matched against whatever geography it happens to be keyed by, and
+they cost nothing until something asks for them: the app fetches only the
+geographies its visible charts can aggregate against.
 
 Adding a geography means adding a family to `CATALOG`, which creates the
 `BoundaryType` on its own. Three places still need the new keys spelled out,

@@ -49,6 +49,17 @@ const boundaryData = (code: string): BoundaryData => {
 		itl2: { 2021: geojson },
 		itl3: { 2021: geojson },
 		majorTownAndCity: { 2015: geojson },
+		scottishParliamentaryConstituency: { 2021: geojson },
+		scottishParliamentaryRegion: { 2022: geojson },
+		seneddConstituency: { 2022: geojson },
+		seneddElectoralRegion: { 2022: geojson },
+		localHealthBoard: { 2023: geojson },
+		nhsEnglandRegion: { 2022: geojson },
+		subIntegratedCareBoardLocation: { 2026: geojson },
+		fireAndRescueAuthority: { 2021: geojson },
+		nationalPark: { 2020: geojson },
+		countyElectoralDivision: { 2023: geojson },
+		travelToWorkArea: { 2011: geojson },
 	};
 };
 

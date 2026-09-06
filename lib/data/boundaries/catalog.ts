@@ -612,6 +612,156 @@ const CATALOG = {
 			},
 		],
 	},
+	scottishParliamentaryConstituency: {
+		releases: [
+			{
+				id: "2021-05-sc-bgc",
+				year: 2021,
+				month: 5,
+				extent: "sc",
+				codeKey: "SPC21CD",
+				nameKey: "SPC21NM",
+				asset: asset(
+					"scottish-parliamentary-constituency",
+					"2021-05-sc-bgc",
+				),
+			},
+		],
+	},
+	scottishParliamentaryRegion: {
+		releases: [
+			{
+				id: "2022-12-sc-bgc",
+				year: 2022,
+				month: 12,
+				extent: "sc",
+				codeKey: "SPR22CD",
+				nameKey: "SPR22NM",
+				asset: asset("scottish-parliamentary-region", "2022-12-sc-bgc"),
+			},
+		],
+	},
+	seneddConstituency: {
+		releases: [
+			{
+				id: "2022-12-w-bgc",
+				year: 2022,
+				month: 12,
+				extent: "w",
+				codeKey: "SENC22CD",
+				nameKey: "SENC22NM",
+				asset: asset("senedd-constituency", "2022-12-w-bgc"),
+			},
+		],
+	},
+	seneddElectoralRegion: {
+		releases: [
+			{
+				id: "2022-12-w-bgc",
+				year: 2022,
+				month: 12,
+				extent: "w",
+				codeKey: "SENER22CD",
+				nameKey: "SENER22NM",
+				asset: asset("senedd-electoral-region", "2022-12-w-bgc"),
+			},
+		],
+	},
+	localHealthBoard: {
+		releases: [
+			{
+				id: "2023-12-w-bgc",
+				year: 2023,
+				month: 12,
+				extent: "w",
+				codeKey: "LHB23CD",
+				nameKey: "LHB23NM",
+				asset: asset("local-health-board", "2023-12-w-bgc"),
+			},
+		],
+	},
+	nhsEnglandRegion: {
+		releases: [
+			{
+				id: "2022-07-en-bgc",
+				year: 2022,
+				month: 7,
+				extent: "en",
+				codeKey: "NHSER22CD",
+				nameKey: "NHSER22NM",
+				asset: asset("nhs-england-region", "2022-07-en-bgc"),
+			},
+		],
+	},
+	subIntegratedCareBoardLocation: {
+		releases: [
+			{
+				id: "2026-04-en-bgc",
+				year: 2026,
+				month: 4,
+				extent: "en",
+				codeKey: "SICBL26CD",
+				nameKey: "SICBL26NM",
+				parentCodeKey: "ICB26CD",
+				asset: asset(
+					"sub-integrated-care-board-location",
+					"2026-04-en-bgc",
+				),
+			},
+		],
+	},
+	fireAndRescueAuthority: {
+		releases: [
+			{
+				id: "2021-05-ew-bgc",
+				year: 2021,
+				month: 5,
+				extent: "ew",
+				codeKey: "FRA21CD",
+				nameKey: "FRA21NM",
+				asset: asset("fire-and-rescue-authority", "2021-05-ew-bgc"),
+			},
+		],
+	},
+	nationalPark: {
+		releases: [
+			{
+				id: "2020-12-gb-bgc",
+				year: 2020,
+				month: 12,
+				extent: "gb",
+				codeKey: "NPARK20CD",
+				nameKey: "NPARK20NM",
+				asset: asset("national-park", "2020-12-gb-bgc"),
+			},
+		],
+	},
+	countyElectoralDivision: {
+		releases: [
+			{
+				id: "2023-05-en-bgc",
+				year: 2023,
+				month: 5,
+				extent: "en",
+				codeKey: "CED23CD",
+				nameKey: "CED23NM",
+				asset: asset("county-electoral-division", "2023-05-en-bgc"),
+			},
+		],
+	},
+	travelToWorkArea: {
+		releases: [
+			{
+				id: "2011-12-uk-gcb",
+				year: 2011,
+				month: 12,
+				extent: "uk",
+				codeKey: "TTWA11CD",
+				nameKey: "TTWA11NM",
+				asset: asset("travel-to-work-area", "2011-12-uk-gcb"),
+			},
+		],
+	},
 } as const satisfies Record<string, BoundaryFamily>;
 
 export type BoundaryType = keyof typeof CATALOG;

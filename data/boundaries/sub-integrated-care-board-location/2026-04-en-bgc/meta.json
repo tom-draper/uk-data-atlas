@@ -1,0 +1,32 @@
+{
+	"id": "2026-04-en-bgc",
+	"kind": "boundary",
+	"title": "Sub integrated care board locations, April 2026 (England, generalised, clipped)",
+	"description": "The commissioning areas within each integrated care board, which each feature names through its ICB code.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2026",
+	"spatialCoverage": {
+		"geography": "subIntegratedCareBoardLocation",
+		"vintage": 2026,
+		"countries": [
+			"GB-ENG"
+		]
+	},
+	"files": [
+		{
+			"path": "SICBL_APR_2026_EN_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Sub_Integrated_Care_Board_Locations_April_2026_Boundaries_EN_BGC\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Sub_Integrated_Care_Board_Locations_April_2026_Boundaries_EN_BGC/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 106 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}

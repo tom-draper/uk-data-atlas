@@ -1,0 +1,32 @@
+{
+	"id": "2022-12-sc-bgc",
+	"kind": "boundary",
+	"title": "Scottish Parliamentary regions, December 2022 (Scotland, generalised, clipped)",
+	"description": "The eight regions that return the Scottish Parliament's additional member seats.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2022",
+	"spatialCoverage": {
+		"geography": "scottishParliamentaryRegion",
+		"vintage": 2022,
+		"countries": [
+			"GB-SCT"
+		]
+	},
+	"files": [
+		{
+			"path": "SPR_DEC_2022_SC_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Scottish_Parliamentary_Regions_December_2022_SC_BGC\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Scottish_Parliamentary_Regions_December_2022_SC_BGC/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 8 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}

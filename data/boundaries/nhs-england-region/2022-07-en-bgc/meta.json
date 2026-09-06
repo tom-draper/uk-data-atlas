@@ -1,0 +1,32 @@
+{
+	"id": "2022-07-en-bgc",
+	"kind": "boundary",
+	"title": "NHS England regions, July 2022 (England, generalised, clipped)",
+	"description": "The seven regions NHS England is organised into, above the integrated care boards.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2022",
+	"spatialCoverage": {
+		"geography": "nhsEnglandRegion",
+		"vintage": 2022,
+		"countries": [
+			"GB-ENG"
+		]
+	},
+	"files": [
+		{
+			"path": "NHSER_JUL_2022_EN_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"NHS_England_Regions_July_2022_EN_BGC_2022\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/NHS_England_Regions_July_2022_EN_BGC_2022/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 7 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}

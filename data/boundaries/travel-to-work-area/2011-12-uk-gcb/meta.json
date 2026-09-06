@@ -1,0 +1,35 @@
+{
+	"id": "2011-12-uk-gcb",
+	"kind": "boundary",
+	"title": "Travel to work areas, December 2011 (United Kingdom, generalised, clipped)",
+	"description": "Areas within which most residents also work, built from commuting flows rather than administration.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2011",
+	"spatialCoverage": {
+		"geography": "travelToWorkArea",
+		"vintage": 2011,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "TTWA_DEC_2011_UK_GCB.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Travel_to_Work_Areas_Dec_2011_GCB_in_United_Kingdom_2022\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Travel_to_Work_Areas_Dec_2011_GCB_in_United_Kingdom_2022/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 228 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}

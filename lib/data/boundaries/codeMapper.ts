@@ -36,6 +36,17 @@ const emptyCodeMappings = (): CodeMappings => ({
 	itl2: {},
 	itl3: {},
 	majorTownAndCity: {},
+	scottishParliamentaryConstituency: {},
+	scottishParliamentaryRegion: {},
+	seneddConstituency: {},
+	seneddElectoralRegion: {},
+	localHealthBoard: {},
+	nhsEnglandRegion: {},
+	subIntegratedCareBoardLocation: {},
+	fireAndRescueAuthority: {},
+	nationalPark: {},
+	countyElectoralDivision: {},
+	travelToWorkArea: {},
 });
 
 const emptyReverseMappings = (): ReverseCodeMappings => ({
@@ -58,6 +69,17 @@ const emptyReverseMappings = (): ReverseCodeMappings => ({
 	itl2: {},
 	itl3: {},
 	majorTownAndCity: {},
+	scottishParliamentaryConstituency: {},
+	scottishParliamentaryRegion: {},
+	seneddConstituency: {},
+	seneddElectoralRegion: {},
+	localHealthBoard: {},
+	nhsEnglandRegion: {},
+	subIntegratedCareBoardLocation: {},
+	fireAndRescueAuthority: {},
+	nationalPark: {},
+	countyElectoralDivision: {},
+	travelToWorkArea: {},
 });
 
 /** Mutable, framework-independent boundary-code lookup. */

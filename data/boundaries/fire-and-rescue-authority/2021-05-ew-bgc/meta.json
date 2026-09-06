@@ -1,0 +1,33 @@
+{
+	"id": "2021-05-ew-bgc",
+	"kind": "boundary",
+	"title": "Fire and rescue authorities, May 2021 (England and Wales, generalised, clipped)",
+	"description": "The 47 fire and rescue authority areas of England and Wales.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2021",
+	"spatialCoverage": {
+		"geography": "fireAndRescueAuthority",
+		"vintage": 2021,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "FRA_MAY_2021_EW_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Fire_and_Rescue_Authorities_May_2021_EW_BGC_2022\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Fire_and_Rescue_Authorities_May_2021_EW_BGC_2022/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 47 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}

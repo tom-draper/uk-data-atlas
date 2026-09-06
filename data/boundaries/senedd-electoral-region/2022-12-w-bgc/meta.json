@@ -1,0 +1,32 @@
+{
+	"id": "2022-12-w-bgc",
+	"kind": "boundary",
+	"title": "Senedd Cymru electoral regions, December 2022 (Wales, generalised, clipped)",
+	"description": "The five regions that return the Welsh Parliament's additional member seats.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2022",
+	"spatialCoverage": {
+		"geography": "seneddElectoralRegion",
+		"vintage": 2022,
+		"countries": [
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "SENER_DEC_2022_WA_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Senedd_Cymru_Electoral_Regions_December_2022_WA_BGC\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Senedd_Cymru_Electoral_Regions_December_2022_WA_BGC/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 5 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}

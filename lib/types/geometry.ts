@@ -255,6 +255,62 @@ interface MajorTownAndCityProperties2015 {
 	TCITY15NM: string;
 }
 
+interface ScottishParliamentaryConstituencyProperties2021 {
+	SPC21CD: string;
+	SPC21NM: string;
+}
+
+interface ScottishParliamentaryRegionProperties2022 {
+	SPR22CD: string;
+	SPR22NM: string;
+}
+
+interface SeneddConstituencyProperties2022 {
+	SENC22CD: string;
+	SENC22NM: string;
+}
+
+interface SeneddElectoralRegionProperties2022 {
+	SENER22CD: string;
+	SENER22NM: string;
+}
+
+interface LocalHealthBoardProperties2023 {
+	LHB23CD: string;
+	LHB23NM: string;
+}
+
+interface NhsEnglandRegionProperties2022 {
+	NHSER22CD: string;
+	NHSER22NM: string;
+}
+
+interface SubIntegratedCareBoardLocationProperties2026 {
+	SICBL26CD: string;
+	SICBL26NM: string;
+	ICB26CD: string;
+}
+
+interface FireAndRescueAuthorityProperties2021 {
+	FRA21CD: string;
+	FRA21NM: string;
+}
+
+interface NationalParkProperties2020 {
+	NPARK20CD: string;
+	NPARK20NM: string;
+}
+
+interface CountyElectoralDivisionProperties2023 {
+	CED23CD: string;
+	CED23NM: string;
+}
+
+interface TravelToWorkAreaProperties2011 {
+	TTWA11CD: string;
+	TTWA11NM: string;
+}
+
 // NI Super Output Area properties
 interface SuperOutputAreaProperties2011 {
 	SOA_CODE: string;
@@ -323,6 +379,17 @@ export type YearToProperties = {
 	itl2_2021: Itl2Properties2021;
 	itl3_2021: Itl3Properties2021;
 	majorTownAndCity_2015: MajorTownAndCityProperties2015;
+	scottishParliamentaryConstituency_2021: ScottishParliamentaryConstituencyProperties2021;
+	scottishParliamentaryRegion_2022: ScottishParliamentaryRegionProperties2022;
+	seneddConstituency_2022: SeneddConstituencyProperties2022;
+	seneddElectoralRegion_2022: SeneddElectoralRegionProperties2022;
+	localHealthBoard_2023: LocalHealthBoardProperties2023;
+	nhsEnglandRegion_2022: NhsEnglandRegionProperties2022;
+	subIntegratedCareBoardLocation_2026: SubIntegratedCareBoardLocationProperties2026;
+	fireAndRescueAuthority_2021: FireAndRescueAuthorityProperties2021;
+	nationalPark_2020: NationalParkProperties2020;
+	countyElectoralDivision_2023: CountyElectoralDivisionProperties2023;
+	travelToWorkArea_2011: TravelToWorkAreaProperties2011;
 };
 
 export type Properties = ValueOf<YearToProperties>;

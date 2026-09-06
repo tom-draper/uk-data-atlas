@@ -1,0 +1,32 @@
+{
+	"id": "2023-05-en-bgc",
+	"kind": "boundary",
+	"title": "County electoral divisions, May 2023 (England, generalised, clipped)",
+	"description": "The electoral divisions county councils are elected by, the county tier equivalent of a ward.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2023",
+	"spatialCoverage": {
+		"geography": "countyElectoralDivision",
+		"vintage": 2023,
+		"countries": [
+			"GB-ENG"
+		]
+	},
+	"files": [
+		{
+			"path": "CED_MAY_2023_EN_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"County_Electoral_Division_May_2023_Boundaries_EN_BGC\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/County_Electoral_Division_May_2023_Boundaries_EN_BGC/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 1,367 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}
