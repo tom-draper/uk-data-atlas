@@ -67,6 +67,16 @@ const CATALOG = {
 	ward: {
 		releases: [
 			{
+				id: "2026-05-uk-bgc",
+				year: 2026,
+				month: 5,
+				extent: "uk",
+				codeKey: "WD26CD",
+				nameKey: "WD26NM",
+				parentCodeKey: "LAD26CD",
+				asset: asset("ward", "2026-05-uk-bgc"),
+			},
+			{
 				id: "2025-12-uk-bgc",
 				year: 2025,
 				month: 12,
@@ -95,6 +105,15 @@ const CATALOG = {
 				nameKey: "WD24NM",
 				parentCodeKey: "LAD24CD",
 				asset: asset("ward", "2024-12-uk-bgc"),
+			},
+			{
+				id: "2024-05-uk-bgc",
+				year: 2024,
+				month: 5,
+				extent: "uk",
+				codeKey: "WD24CD",
+				nameKey: "WD24NM",
+				asset: asset("ward", "2024-05-uk-bgc"),
 			},
 			{
 				id: "2023-12-uk-bgc",
@@ -183,7 +202,12 @@ const CATALOG = {
 		],
 		// May and December 2025 publish the same 8,405 wards; the May release
 		// is the corrected V2 and stays the one served for the year.
-		aliases: { 2025: "2025-05-uk-bgc-v2", 2023: "2023-12-uk-bgc" },
+		aliases: {
+			2025: "2025-05-uk-bgc-v2",
+			// December names each ward's local authority; May does not.
+			2024: "2024-12-uk-bgc",
+			2023: "2023-12-uk-bgc",
+		},
 	},
 	constituency: {
 		releases: [
@@ -290,6 +314,15 @@ const CATALOG = {
 				asset: asset("local-authority", "2021-12-uk-bgc"),
 			},
 			{
+				id: "2018-12-uk-bgc",
+				year: 2018,
+				month: 12,
+				extent: "uk",
+				codeKey: "lad18cd",
+				nameKey: "lad18nm",
+				asset: asset("local-authority", "2018-12-uk-bgc"),
+			},
+			{
 				id: "2016-12-gb-bgc",
 				year: 2016,
 				month: 12,
@@ -364,6 +397,77 @@ const CATALOG = {
 			code: ["SOA2011", "SOA"],
 			name: ["SOA2011 Name", "SOA Name"],
 		},
+	},
+	country: {
+		releases: [
+			{
+				id: "2025-12-uk-bgc",
+				year: 2025,
+				month: 12,
+				extent: "uk",
+				codeKey: "CTRY25CD",
+				nameKey: "CTRY25NM",
+				asset: asset("country", "2025-12-uk-bgc"),
+			},
+			{
+				id: "2024-12-uk-bgc",
+				year: 2024,
+				month: 12,
+				extent: "uk",
+				codeKey: "CTRY24CD",
+				nameKey: "CTRY24NM",
+				asset: asset("country", "2024-12-uk-bgc"),
+			},
+			{
+				id: "2023-12-uk-bgc",
+				year: 2023,
+				month: 12,
+				extent: "uk",
+				codeKey: "CTRY23CD",
+				nameKey: "CTRY23NM",
+				asset: asset("country", "2023-12-uk-bgc"),
+			},
+			{
+				id: "2022-12-uk-bgc",
+				year: 2022,
+				month: 12,
+				extent: "uk",
+				codeKey: "CTRY22CD",
+				nameKey: "CTRY22NM",
+				asset: asset("country", "2022-12-uk-bgc"),
+			},
+			{
+				id: "2021-12-uk-bgc",
+				year: 2021,
+				month: 12,
+				extent: "uk",
+				codeKey: "CTRY21CD",
+				nameKey: "CTRY21NM",
+				asset: asset("country", "2021-12-uk-bgc"),
+			},
+			{
+				id: "2020-12-uk-bgc",
+				year: 2020,
+				month: 12,
+				extent: "uk",
+				codeKey: "CTRY20CD",
+				nameKey: "CTRY20NM",
+				asset: asset("country", "2020-12-uk-bgc"),
+			},
+		],
+	},
+	localPlanningAuthority: {
+		releases: [
+			{
+				id: "2019-04-uk-bgc",
+				year: 2019,
+				month: 4,
+				extent: "uk",
+				codeKey: "lpa19cd",
+				nameKey: "lpa19nm",
+				asset: asset("local-planning-authority", "2019-04-uk-bgc"),
+			},
+		],
 	},
 } as const satisfies Record<string, BoundaryFamily>;
 

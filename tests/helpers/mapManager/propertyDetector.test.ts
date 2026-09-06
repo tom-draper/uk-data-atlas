@@ -3,6 +3,12 @@ import {
 	detectWardCodeForYear,
 } from "@/lib/helpers/mapManager/propertyDetector";
 import type { BoundaryGeojson } from "@/lib/types";
+import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
+
+// The key the detector falls back to is whichever ward release is newest, so
+// read it from the catalogue rather than naming a year that a later release
+// will quietly move.
+const NEWEST_WARD_CODE = BOUNDARY_CATALOG.ward.properties.code[0];
 
 const makeFeatures = (
 	properties: Record<string, string>,
@@ -28,12 +34,12 @@ describe("detectWardCodeForYear", () => {
 		// Asking for 2025, WD25CD not present → should fall back to WD22CD
 		expect(detectWardCodeForYear(features, 2025)).toBe("WD22CD");
 	});
-	it("returns the first key (WD25CD) when no key is present in properties", () => {
+	it("returns the newest key when no key is present in properties", () => {
 		const features = makeFeatures({ SOME_OTHER_KEY: "value" });
-		expect(detectWardCodeForYear(features, 2023)).toBe("WD25CD");
+		expect(detectWardCodeForYear(features, 2023)).toBe(NEWEST_WARD_CODE);
 	});
-	it("returns the first key for an empty features array", () => {
-		expect(detectWardCodeForYear([], 2023)).toBe("WD25CD");
+	it("returns the newest key for an empty features array", () => {
+		expect(detectWardCodeForYear([], 2023)).toBe(NEWEST_WARD_CODE);
 	});
 	it("picks the correct year-specific key for 2024", () => {
 		const features = makeFeatures({
@@ -78,7 +84,7 @@ describe("PropertyDetector.detect", () => {
 	});
 
 	it("falls back to the newest key for an empty features array", () => {
-		expect(detector.detect("ward", [])).toBe("WD25CD");
+		expect(detector.detect("ward", [])).toBe(NEWEST_WARD_CODE);
 		expect(detector.detect("constituency", [])).toBe("PCON24CD");
 	});
 });

@@ -2,6 +2,13 @@
 import { ValueOf } from "next/dist/shared/lib/constants";
 
 // Ward properties by year
+interface WardProperties2026 {
+	LAD26CD: string;
+	LAD26NM: string;
+	WD26CD: string;
+	WD26NM: string;
+}
+
 interface WardProperties2025 {
 	LAD25CD: string;
 	LAD25NM: string;
@@ -92,6 +99,11 @@ interface LocalAuthorityProperties2021 {
 	LAD21NM: string;
 }
 
+interface LocalAuthorityProperties2018 {
+	lad18cd: string;
+	lad18nm: string;
+}
+
 interface LocalAuthorityProperties2016 {
 	LAD16CD: string;
 	LAD16NM: string;
@@ -147,6 +159,43 @@ interface DataZoneProperties2011 {
 	Name: string;
 }
 
+// Country properties by year
+interface CountryProperties2020 {
+	CTRY20CD: string;
+	CTRY20NM: string;
+}
+
+interface CountryProperties2021 {
+	CTRY21CD: string;
+	CTRY21NM: string;
+}
+
+interface CountryProperties2022 {
+	CTRY22CD: string;
+	CTRY22NM: string;
+}
+
+interface CountryProperties2023 {
+	CTRY23CD: string;
+	CTRY23NM: string;
+}
+
+interface CountryProperties2024 {
+	CTRY24CD: string;
+	CTRY24NM: string;
+}
+
+interface CountryProperties2025 {
+	CTRY25CD: string;
+	CTRY25NM: string;
+}
+
+// Local planning authority properties by year
+interface LocalPlanningAuthorityProperties2019 {
+	lpa19cd: string;
+	lpa19nm: string;
+}
+
 // NI Super Output Area properties
 interface SuperOutputAreaProperties2011 {
 	SOA_CODE: string;
@@ -171,6 +220,7 @@ export type YearToProperties = {
 	ward_2022: WardProperties2022;
 	ward_2023: WardProperties2023;
 	ward_2024: WardProperties2024;
+	ward_2026: WardProperties2026;
 	ward_2025: WardProperties2025;
 	ward_2019: WardProperties2019;
 	ward_2018: WardProperties2018;
@@ -178,6 +228,7 @@ export type YearToProperties = {
 	ward_2016: WardProperties2016;
 	// Local Authorities
 	lad_2016: LocalAuthorityProperties2016;
+	lad_2018: LocalAuthorityProperties2018;
 	lad_2021: LocalAuthorityProperties2021;
 	lad_2022: LocalAuthorityProperties2022;
 	lad_2023: LocalAuthorityProperties2023;
@@ -189,6 +240,15 @@ export type YearToProperties = {
 	constituency_2017: ConstituencyProperties2017;
 	constituency_2019: ConstituencyProperties2019;
 	constituency_2024: ConstituencyProperties2024;
+	// Countries
+	country_2020: CountryProperties2020;
+	country_2021: CountryProperties2021;
+	country_2022: CountryProperties2022;
+	country_2023: CountryProperties2023;
+	country_2024: CountryProperties2024;
+	country_2025: CountryProperties2025;
+	// Local planning authorities
+	localPlanningAuthority_2019: LocalPlanningAuthorityProperties2019;
 };
 
 export type Properties = ValueOf<YearToProperties>;

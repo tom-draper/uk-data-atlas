@@ -18,7 +18,15 @@ converted from a shapefile outside this repository. Both are named in
 `.gitignore`; a new release of either kind needs adding there.
 
 `<geography>` is the `BoundaryType` it belongs to, in kebab case: `ward`,
-`local-authority`, `constituency`, `lsoa`, `data-zone`, `super-output-area`.
+`local-authority`, `constituency`, `lsoa`, `data-zone`, `super-output-area`,
+`country`, `local-planning-authority`.
+
+Adding a geography means adding a family to `CATALOG`, which creates the
+`BoundaryType` on its own. Three places still need the new keys spelled out,
+because they are unions rather than derivations: the property interfaces in
+`lib/types/geometry.ts`, the empty records in
+`lib/data/boundaries/codeMapper.ts`, and the fixture in
+`tests/hooks/useBoundaryData.test.ts`.
 
 ## Naming a release
 

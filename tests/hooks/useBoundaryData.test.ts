@@ -36,6 +36,8 @@ const boundaryData = (code: string): BoundaryData => {
 		lsoa: { 2011: geojson },
 		dataZone: { 2011: geojson },
 		superOutputArea: { 2011: geojson },
+		country: { 2025: geojson },
+		localPlanningAuthority: { 2019: geojson },
 	};
 };
 

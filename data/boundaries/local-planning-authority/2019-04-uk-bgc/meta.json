@@ -1,0 +1,41 @@
+{
+	"id": "2019-04-uk-bgc",
+	"kind": "boundary",
+	"title": "Local planning authorities, April 2019 (United Kingdom, generalised, clipped)",
+	"description": "Local planning authorities as published for April 2019, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography",
+		"planning"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2019",
+	"spatialCoverage": {
+		"geography": "localPlanningAuthority",
+		"vintage": 2019,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "Local_Planning_Authorities_April_2019_UK_BGC_2022_-8543893928399963864.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "Local_Planning_Authorities_April_2019_UK_BGC_2022_-8543893928399963864.geojson",
+			"role": "source",
+			"note": "Published as Local_Planning_Authorities_April_2019_UK_BGC_2022_-8543893928399963864.geojson."
+		}
+	]
+}

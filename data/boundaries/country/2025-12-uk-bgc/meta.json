@@ -1,0 +1,40 @@
+{
+	"id": "2025-12-uk-bgc",
+	"kind": "boundary",
+	"title": "Countries, December 2025 (United Kingdom, generalised, clipped)",
+	"description": "Countries as published for December 2025, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2025",
+	"spatialCoverage": {
+		"geography": "country",
+		"vintage": 2025,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "Countries_December_2025_Boundaries_UK_BGC_-4760573642517658145.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "Countries_December_2025_Boundaries_UK_BGC_-4760573642517658145.geojson",
+			"role": "source",
+			"note": "Published as Countries_December_2025_Boundaries_UK_BGC_-4760573642517658145.geojson."
+		}
+	]
+}

@@ -1,0 +1,40 @@
+{
+	"id": "2023-12-uk-bgc",
+	"kind": "boundary",
+	"title": "Countries, December 2023 (United Kingdom, generalised, clipped)",
+	"description": "Countries as published for December 2023, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2023",
+	"spatialCoverage": {
+		"geography": "country",
+		"vintage": 2023,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "Countries_December_2023_Boundaries_UK_BGC_7680513041963091487.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "Countries_December_2023_Boundaries_UK_BGC_7680513041963091487.geojson",
+			"role": "source",
+			"note": "Published as Countries_December_2023_Boundaries_UK_BGC_7680513041963091487.geojson."
+		}
+	]
+}

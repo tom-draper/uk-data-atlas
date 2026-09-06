@@ -29,15 +29,22 @@ const releaseFolders = directories(ROOT).flatMap((geography) =>
 	})),
 );
 
-/** The catalogue's BoundaryType for each geography folder. */
-const GEOGRAPHY_TYPE: Record<string, string> = {
-	ward: "ward",
-	"local-authority": "localAuthority",
-	constituency: "constituency",
-	lsoa: "lsoa",
-	"data-zone": "dataZone",
-	"super-output-area": "superOutputArea",
-};
+/**
+ * The catalogue's BoundaryType for each geography folder, read off the asset
+ * paths rather than listed here, so a new geography needs no edit to pass.
+ */
+const GEOGRAPHY_TYPE: Record<string, string> = Object.fromEntries(
+	BOUNDARY_TYPES.flatMap((type) => {
+		const asset = BOUNDARY_CATALOG[type].releases.find(
+			(r) => r.asset,
+		)?.asset;
+		const folder = asset
+			?.split("?")[0]
+			?.split("/data/boundaries/")[1]
+			?.split("/")[0];
+		return folder ? [[folder, type]] : [];
+	}),
+);
 
 describe("boundary release metadata", () => {
 	it("describes every release folder on disk", () => {

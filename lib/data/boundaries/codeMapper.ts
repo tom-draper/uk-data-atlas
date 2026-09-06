@@ -23,6 +23,8 @@ const emptyCodeMappings = (): CodeMappings => ({
 	lsoa: {},
 	dataZone: {},
 	superOutputArea: {},
+	country: {},
+	localPlanningAuthority: {},
 });
 
 const emptyReverseMappings = (): ReverseCodeMappings => ({
@@ -32,6 +34,8 @@ const emptyReverseMappings = (): ReverseCodeMappings => ({
 	lsoa: {},
 	dataZone: {},
 	superOutputArea: {},
+	country: {},
+	localPlanningAuthority: {},
 });
 
 /** Mutable, framework-independent boundary-code lookup. */

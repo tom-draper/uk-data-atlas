@@ -1,0 +1,40 @@
+{
+	"id": "2026-05-uk-bgc",
+	"kind": "boundary",
+	"title": "Wards, May 2026 (United Kingdom, generalised, clipped)",
+	"description": "Electoral wards as published for May 2026, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2026",
+	"spatialCoverage": {
+		"geography": "ward",
+		"vintage": 2026,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "boundaries.topojson",
+			"role": "derived",
+			"derivedFrom": "WD_MAY_2026_UK_BGC_-6729380219658751476.geojson",
+			"note": "Compiled by scripts/compile-boundaries.mts."
+		},
+		{
+			"path": "WD_MAY_2026_UK_BGC_-6729380219658751476.geojson",
+			"role": "source",
+			"note": "Published as WD_MAY_2026_UK_BGC_-6729380219658751476.geojson."
+		}
+	]
+}
