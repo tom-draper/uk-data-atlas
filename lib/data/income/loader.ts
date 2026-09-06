@@ -99,12 +99,12 @@ export async function loadIncome(
 	const [annualResult, hourlyResult] = await Promise.all([
 		parseAnnualData(
 			await read(
-				"economics/income/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.csv",
+				"economics/income/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.xlsx",
 			),
 		),
 		parseHourlyData(
 			await read(
-				"economics/income/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.csv",
+				"economics/income/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.xlsx",
 			),
 		),
 	]);

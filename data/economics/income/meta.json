@@ -1,0 +1,159 @@
+{
+	"id": "income",
+	"title": "Place of residence by local authority, ASHE Table 8",
+	"description": "Annual Survey of Hours and Earnings estimates for 2025, by the local authority an employee lives in: weekly, hourly and annual pay, overtime, and paid hours worked, each with its coefficients of variation.",
+	"topics": [
+		"economics",
+		"earnings",
+		"employment"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/placeofresidencebylocalauthorityashetable8",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2025",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.xlsx",
+			"role": "source",
+			"note": "Table 8.5a, Hourly pay - Gross. The loader reads its \"All\" sheet, covering every employee job; the workbook also splits the same table by sex and by full or part time."
+		},
+		{
+			"path": "PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.xlsx",
+			"role": "source",
+			"note": "Table 8.7a, Annual pay - Gross. The loader reads its \"All\" sheet, covering every employee job; the workbook also splits the same table by sex and by full or part time."
+		},
+		{
+			"path": "PROV - Home Geography Table 8.10a   Paid hours worked - Basic 2025.xlsx",
+			"role": "reference",
+			"note": "Table 8.10a, Paid hours worked - Basic. Kept for provenance; no loader reads it.",
+			"bytes": 396838
+		},
+		{
+			"path": "PROV - Home Geography Table 8.10b   Paid hours worked - Basic 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.10b, coefficients of variation for table 8.10a. Kept for provenance; no loader reads it.",
+			"bytes": 381856
+		},
+		{
+			"path": "PROV - Home Geography Table 8.11a   Paid hours worked - Overtime 2025.xlsx",
+			"role": "reference",
+			"note": "Table 8.11a, Paid hours worked - Overtime. Kept for provenance; no loader reads it.",
+			"bytes": 322181
+		},
+		{
+			"path": "PROV - Home Geography Table 8.11b   Paid hours worked - Overtime 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.11b, coefficients of variation for table 8.11a. Kept for provenance; no loader reads it.",
+			"bytes": 354763
+		},
+		{
+			"path": "PROV - Home Geography Table 8.1a   Weekly pay - Gross 2025.xlsx",
+			"role": "reference",
+			"note": "Table 8.1a, Weekly pay - Gross. Kept for provenance; no loader reads it.",
+			"bytes": 473948
+		},
+		{
+			"path": "PROV - Home Geography Table 8.1b   Weekly pay - Gross 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.1b, coefficients of variation for table 8.1a. Kept for provenance; no loader reads it.",
+			"bytes": 388056
+		},
+		{
+			"path": "PROV - Home Geography Table 8.2a   Weekly pay - Excluding overtime 2025.xlsx",
+			"role": "reference",
+			"note": "Table 8.2a, Weekly pay - Excluding overtime. Kept for provenance; no loader reads it.",
+			"bytes": 473059
+		},
+		{
+			"path": "PROV - Home Geography Table 8.2b   Weekly pay - Excluding overtime 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.2b, coefficients of variation for table 8.2a. Kept for provenance; no loader reads it.",
+			"bytes": 387989
+		},
+		{
+			"path": "PROV - Home Geography Table 8.3a   Basic Pay - Including other pay 2025.xlsx",
+			"role": "reference",
+			"note": "Table 8.3a, Basic Pay - Including other pay. Kept for provenance; no loader reads it.",
+			"bytes": 472451
+		},
+		{
+			"path": "PROV - Home Geography Table 8.3b   Basic Pay - Including other pay 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.3b, coefficients of variation for table 8.3a. Kept for provenance; no loader reads it.",
+			"bytes": 388940
+		},
+		{
+			"path": "PROV - Home Geography Table 8.4a   Overtime pay 2025.xlsx",
+			"role": "reference",
+			"note": "Table 8.4a, Overtime pay. Kept for provenance; no loader reads it.",
+			"bytes": 324465
+		},
+		{
+			"path": "PROV - Home Geography Table 8.4b   Overtime pay 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.4b, coefficients of variation for table 8.4a. Kept for provenance; no loader reads it.",
+			"bytes": 355096
+		},
+		{
+			"path": "PROV - Home Geography Table 8.5b   Hourly pay - Gross 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.5b, coefficients of variation for table 8.5a. Kept for provenance; no loader reads it.",
+			"bytes": 394470
+		},
+		{
+			"path": "PROV - Home Geography Table 8.6a   Hourly pay - Excluding overtime 2025.xlsx",
+			"role": "reference",
+			"note": "Table 8.6a, Hourly pay - Excluding overtime. Kept for provenance; no loader reads it.",
+			"bytes": 459617
+		},
+		{
+			"path": "PROV - Home Geography Table 8.6b   Hourly pay - Excluding overtime 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.6b, coefficients of variation for table 8.6a. Kept for provenance; no loader reads it.",
+			"bytes": 394840
+		},
+		{
+			"path": "PROV - Home Geography Table 8.7b   Annual pay - Gross 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.7b, coefficients of variation for table 8.7a. Kept for provenance; no loader reads it.",
+			"bytes": 382776
+		},
+		{
+			"path": "PROV - Home Geography Table 8.8a   Annual pay - Incentive 2025.xlsx",
+			"role": "reference",
+			"note": "Table 8.8a, Annual pay - Incentive. Kept for provenance; no loader reads it.",
+			"bytes": 320001
+		},
+		{
+			"path": "PROV - Home Geography Table 8.8b   Annual pay - Incentive 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.8b, coefficients of variation for table 8.8a. Kept for provenance; no loader reads it.",
+			"bytes": 356281
+		},
+		{
+			"path": "PROV - Home Geography Table 8.9a   Paid hours worked - Total 2025.xlsx",
+			"role": "reference",
+			"note": "Table 8.9a, Paid hours worked - Total. Kept for provenance; no loader reads it.",
+			"bytes": 400735
+		},
+		{
+			"path": "PROV - Home Geography Table 8.9b   Paid hours worked - Total 2025 CV.xlsx",
+			"role": "reference",
+			"note": "Table 8.9b, coefficients of variation for table 8.9a. Kept for provenance; no loader reads it.",
+			"bytes": 384564
+		}
+	]
+}
