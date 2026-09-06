@@ -14,7 +14,7 @@
 		"test:run": "vitest run",
 		"test:e2e": "playwright test",
 		"typecheck": "tsc --noEmit",
-		"check": "pnpm typecheck && pnpm format:check && pnpm test:run",
+		"check": "pnpm boundaries:compile && pnpm typecheck && pnpm format:check && pnpm test:run",
 		"profile:atlas": "node scripts/profile-atlas-memory.mjs",
 		"roads:serve": "node scripts/serve-os-open-roads.mjs",
 		"doctor": "npx react-doctor@latest"
