@@ -11,7 +11,7 @@ export async function loadCrime(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, CrimeDataset>> {
 	const csvText = await read(
-		"economics/crime/policeforceareatablesyejune25final.csv",
+		"economics/crime/policeforceareatablesyejune25final.xlsx",
 	);
 	const year = extractYearFromTitle(csvText.split("\n")[0] ?? "");
 

@@ -1,0 +1,103 @@
+{
+	"id": "crime",
+	"title": "Police force area data tables",
+	"description": "ONS police recorded crime for headline offence groups, published quarterly as police force area tables. Table C2 breaks the counts down by community safety partnership area, which maps to local authority districts in England and Wales.",
+	"topics": [
+		"crime",
+		"justice"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/datasets/policeforceareadatatables",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2023-2026",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "policeforceareatablesyejune25final.xlsx",
+			"role": "source",
+			"note": "Police force area tables for the year ending June 2025. Table C2, recorded crime by community safety partnership area, is the sheet the loader reads."
+		},
+		{
+			"path": "pfatablesfinaljun23.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending June 2023. No Table C2: the community safety partnership tables begin with the year ending June 2024 edition, so this vintage cannot feed the loader.",
+			"bytes": 245142
+		},
+		{
+			"path": "pfatablessep23final.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending September 2023. No Table C2: the community safety partnership tables begin with the year ending June 2024 edition, so this vintage cannot feed the loader.",
+			"bytes": 188733
+		},
+		{
+			"path": "pfatablesyedec2025.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending December 2025. Kept for provenance; no loader reads it.",
+			"bytes": 658566
+		},
+		{
+			"path": "pfatablesyedec23.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending December 2023. No Table C2: the community safety partnership tables begin with the year ending June 2024 edition, so this vintage cannot feed the loader.",
+			"bytes": 179758
+		},
+		{
+			"path": "pfatablesyemar24correctionv2.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending March 2024. No Table C2: the community safety partnership tables begin with the year ending June 2024 edition, so this vintage cannot feed the loader.",
+			"bytes": 240367
+		},
+		{
+			"path": "pfatablesyemarch2026.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending March 2026. Kept for provenance; no loader reads it.",
+			"bytes": 656967
+		},
+		{
+			"path": "pfatableyemar231.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending March 2023. No Table C2: the community safety partnership tables begin with the year ending June 2024 edition, so this vintage cannot feed the loader.",
+			"bytes": 352137
+		},
+		{
+			"path": "policeforceareatablesfinal.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending June 2024. Kept for provenance; no loader reads it.",
+			"bytes": 661141
+		},
+		{
+			"path": "policeforceareatablesyearendingseptember2024final.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending September 2024. Kept for provenance; no loader reads it.",
+			"bytes": 663246
+		},
+		{
+			"path": "policeforceareatablesyedecember2024.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending December 2024. Kept for provenance; no loader reads it.",
+			"bytes": 660636
+		},
+		{
+			"path": "policeforceareatablesyemarch2025.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending March 2025. Kept for provenance; no loader reads it.",
+			"bytes": 657010
+		},
+		{
+			"path": "policeforceareatablesyesep25.xlsx",
+			"role": "reference",
+			"note": "Police force area tables for the year ending September 2025. Kept for provenance; no loader reads it.",
+			"bytes": 659147
+		}
+	]
+}
