@@ -1,5 +1,12 @@
 // hooks/useBoundaryData.ts
-import { startTransition, useEffect, useMemo, useState } from "react";
+import {
+	startTransition,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+	useSyncExternalStore,
+} from "react";
 import { BoundaryData, BoundaryGeojson, getFeatureProp } from "@lib/types";
 import {
 	BoundaryType,
@@ -23,6 +30,12 @@ import type {
 	YearCode,
 } from "../data/boundaries/mappings";
 import { withCDN } from "../helpers/cdn";
+import { requiredBoundaryTypes } from "../data/boundaries/required";
+import {
+	DEFAULT_VISIBILITY,
+	getVisibilitySnapshot,
+	subscribeVisibility,
+} from "../context/ChartVisibilityContext";
 
 const EMPTY_BOUNDARY_DATA: BoundaryData = Object.fromEntries(
 	BOUNDARY_TYPES.map((type) => [
@@ -224,6 +237,7 @@ const extractCodeSets = (
  * Now accepts the full codeMapper from useCodeMapper()
  */
 export function useBoundaryData(
+	activeBoundaryType?: BoundaryType,
 	selectedLocation?: string,
 	codeMapper?: {
 		getLadForWard: (wardCode: string) => string | undefined;
@@ -250,7 +264,23 @@ export function useBoundaryData(
 	const getLadForWard = codeMapper?.getLadForWard;
 	const addConstituencyWardMappings = codeMapper?.addConstituencyWardMappings;
 
-	// Load all boundary files on mount
+	// Only the geographies the visible charts can actually aggregate against,
+	// rather than every boundary the catalogue serves. Subscribed rather than
+	// read once, so enabling a chart loads what it needs.
+	const visibility = useSyncExternalStore(
+		subscribeVisibility,
+		getVisibilitySnapshot,
+		() => DEFAULT_VISIBILITY,
+	);
+	const requiredKey = useMemo(
+		() =>
+			[...requiredBoundaryTypes(visibility, [activeBoundaryType])]
+				.sort()
+				.join(","),
+		[visibility, activeBoundaryType],
+	);
+	const loadedTypes = useRef(new Set<BoundaryType>());
+
 	useEffect(() => {
 		let mounted = true;
 
@@ -267,10 +297,18 @@ export function useBoundaryData(
 					return null;
 				});
 
+			// Fetch only what is newly required; anything already held stays.
+			const wanted = requiredKey
+				? (requiredKey.split(",") as BoundaryType[])
+				: [];
+			const missing = wanted.filter(
+				(type) => !loadedTypes.current.has(type),
+			);
+
 			Promise.all([
 				precompiledMappings,
 				Promise.all(
-					BOUNDARY_TYPES.map(
+					missing.map(
 						async (type) =>
 							[
 								type,
@@ -282,13 +320,16 @@ export function useBoundaryData(
 				.then(([mappings, groups]) => {
 					if (!mounted) return;
 
-					const loaded = Object.fromEntries(groups) as Record<
-						BoundaryType,
-						Record<number, BoundaryGeojson>
+					for (const [type] of groups) loadedTypes.current.add(type);
+					const fetched = Object.fromEntries(groups) as Partial<
+						Record<BoundaryType, Record<number, BoundaryGeojson>>
 					>;
 
 					startTransition(() => {
-						setRawData(loaded);
+						setRawData((previous) => ({
+							...previous,
+							...fetched,
+						}));
 					});
 
 					if (mappings) {
@@ -316,12 +357,17 @@ export function useBoundaryData(
 								constituencyMappings,
 							);
 						}
-					} else {
+					} else if (
+						fetched.ward &&
+						fetched.constituency &&
+						fetched.localAuthority
+					) {
 						// Preserve the existing behaviour if an older CDN revision does not
-						// yet contain the generated lookup file.
+						// yet contain the generated lookup file. Only possible when this
+						// batch happened to fetch all three geographies it derives from.
 						const wardToLad: Record<string, string> = {};
 						for (const [year, boundary] of Object.entries(
-							loaded.ward,
+							fetched.ward,
 						)) {
 							const wardMappings = extractWardLadMappings(
 								boundary.features,
@@ -338,39 +384,40 @@ export function useBoundaryData(
 						addCodeMappings?.(
 							"ward",
 							buildCrossYearMappings(
-								loaded.ward,
+								fetched.ward,
 								"ward",
-								Object.keys(loaded.ward).map(Number),
+								Object.keys(fetched.ward).map(Number),
 							),
 						);
 						addCodeMappings?.(
 							"constituency",
 							buildCrossYearMappings(
-								loaded.constituency,
+								fetched.constituency,
 								"constituency",
-								Object.keys(loaded.constituency).map(Number),
+								Object.keys(fetched.constituency).map(Number),
 							),
 						);
 						addCodeMappings?.(
 							"localAuthority",
 							buildCrossYearMappings(
-								loaded.localAuthority,
+								fetched.localAuthority,
 								"localAuthority",
-								Object.keys(loaded.localAuthority).map(Number),
+								Object.keys(fetched.localAuthority).map(Number),
 							),
 						);
 
 						const constituencyEntries = Object.entries(
-							loaded.constituency,
+							fetched.constituency,
 						).filter(([, conData]) => conData?.features);
 						// Only build for the latest ward year — ward highlighting always
 						// uses current boundaries, so historical ward years are not needed.
+						const wardGroup = fetched.ward;
 						const latestWardYear = Math.max(
-							...Object.keys(loaded.ward)
+							...Object.keys(wardGroup)
 								.map(Number)
-								.filter((y) => loaded.ward[y]?.features),
+								.filter((y) => wardGroup[y]?.features),
 						);
-						const latestWardData = loaded.ward[latestWardYear];
+						const latestWardData = wardGroup[latestWardYear];
 						if (latestWardData?.features) {
 							const mergedMappings: Record<string, string[]> = {};
 							for (const [, conData] of constituencyEntries) {
@@ -409,6 +456,7 @@ export function useBoundaryData(
 			mounted = false;
 		};
 	}, [
+		requiredKey,
 		addWardLadMappings,
 		addLadWardMappings,
 		addCodeMappings,
@@ -418,7 +466,7 @@ export function useBoundaryData(
 	const loc = selectedLocation || null;
 
 	const filteredData = useMemo<BoundaryData>(() => {
-		if (isLoading || !rawData.ward[2024]) return EMPTY_BOUNDARY_DATA;
+		if (isLoading) return EMPTY_BOUNDARY_DATA;
 		return getCachedFilteredBoundaryData(rawData, loc, getLadForWard);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rawData, loc]);

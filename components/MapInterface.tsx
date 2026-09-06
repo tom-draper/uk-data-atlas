@@ -7,6 +7,7 @@ import { useBoundaryData } from "@/lib/hooks/useBoundaryData";
 import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
+import { boundaryTypeForDatasetType } from "@/lib/data/boundaries/required";
 import { normalizeElectionDatasetCodes } from "@/lib/data/election/local-election/normalize";
 
 import MapView from "@components/MapView";
@@ -87,7 +88,11 @@ export default function MapInterface({
 		boundaryCodes,
 		isLoading: boundariesLoading,
 		error: boundaryError,
-	} = useBoundaryData(selectedLocation, codeMapper);
+	} = useBoundaryData(
+		boundaryTypeForDatasetType(activeViz?.datasetType),
+		selectedLocation,
+		codeMapper,
+	);
 
 	useEffect(() => {
 		if (boundaryError) onError?.(boundaryError);
