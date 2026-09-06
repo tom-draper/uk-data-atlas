@@ -26,12 +26,6 @@
 	},
 	"files": [
 		{
-			"path": "boundaries.topojson",
-			"role": "derived",
-			"derivedFrom": "WD_MAY_2025_UK_BGC_V2_-8581021362622909866.geojson",
-			"note": "Compiled by scripts/compile-boundaries.mts."
-		},
-		{
 			"path": "WD_MAY_2025_UK_BGC_V2_-8581021362622909866.geojson",
 			"role": "source",
 			"note": "Published as WD_MAY_2025_UK_BGC_V2_-8581021362622909866.geojson."

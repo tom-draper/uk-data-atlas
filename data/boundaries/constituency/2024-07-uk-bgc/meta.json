@@ -26,12 +26,6 @@
 	},
 	"files": [
 		{
-			"path": "boundaries.topojson",
-			"role": "derived",
-			"derivedFrom": "Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson",
-			"note": "Compiled by scripts/compile-boundaries.mts."
-		},
-		{
 			"path": "Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson",
 			"role": "lookup",
 			"note": "Published as Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson."

@@ -42,6 +42,20 @@ const PUBLIC_OUT_DIR = join(PUBLIC_DATA, "precompiled");
 // served to the browser during local development.
 const read = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
 
+/**
+ * Reads a compiled boundary asset. The compiler writes them to public/data,
+ * where they are served from; the two releases published as TopoJSON rather
+ * than GeoJSON are committed in data/ and copied across afterwards, so fall
+ * back there for those.
+ */
+const readBoundaryAsset = async (path: string) => {
+	try {
+		return await readFile(join(PUBLIC_DATA, path), "utf8");
+	} catch {
+		return readFile(join(SOURCE_DATA, path), "utf8");
+	}
+};
+
 // Reads a file relative to data/ (raw source data, not synced to public)
 const readSource = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
 
@@ -208,8 +222,8 @@ async function main() {
 	const results = await Promise.allSettled([
 		...chartResults,
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
-		loadGazetteerCore(read).then((d) => out("gazetteer.core", d)),
-		loadBoundaryMappings(read).then((d) => out("boundary-mappings", d)),
+		loadGazetteerCore(readBoundaryAsset).then((d) => out("gazetteer.core", d)),
+		loadBoundaryMappings(readBoundaryAsset).then((d) => out("boundary-mappings", d)),
 	]);
 
 	const failures = results.filter(

@@ -1,12 +1,19 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
 import { getProp } from "@/lib/data/boundaries/properties";
 
-const localBoundaryPath = (path: string) =>
-	join(process.cwd(), "data", path.replace(/^\/data\//, ""));
+/**
+ * Compiled assets live in public/data, where they are served from; the two
+ * releases published as TopoJSON are committed in data/. Look in both.
+ */
+const localBoundaryPath = (path: string) => {
+	const relative = path.split("?")[0]!.replace(/^\/data\//, "");
+	const served = join(process.cwd(), "public", "data", relative);
+	return existsSync(served) ? served : join(process.cwd(), "data", relative);
+};
 
 const WARD_VINTAGES = Object.keys(BOUNDARY_CATALOG.ward.vintages).map(Number);
 

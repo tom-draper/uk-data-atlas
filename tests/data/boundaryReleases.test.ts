@@ -8,8 +8,15 @@ import {
 } from "@/lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
 
-const localBoundaryPath = (path: string) =>
-	join(process.cwd(), "data", path.split("?")[0]!.replace(/^\/data\//, ""));
+/**
+ * Compiled assets live in public/data, where they are served from; the two
+ * releases published as TopoJSON are committed in data/. Look in both.
+ */
+const localBoundaryPath = (path: string) => {
+	const relative = path.split("?")[0]!.replace(/^\/data\//, "");
+	const served = join(process.cwd(), "public", "data", relative);
+	return existsSync(served) ? served : join(process.cwd(), "data", relative);
+};
 
 const catalogued = BOUNDARY_TYPES.flatMap((type) =>
 	BOUNDARY_CATALOG[type].releases.map((release) => ({ type, release })),

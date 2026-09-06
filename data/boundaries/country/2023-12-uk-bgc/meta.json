@@ -26,12 +26,6 @@
 	},
 	"files": [
 		{
-			"path": "boundaries.topojson",
-			"role": "derived",
-			"derivedFrom": "Countries_December_2023_Boundaries_UK_BGC_7680513041963091487.geojson",
-			"note": "Compiled by scripts/compile-boundaries.mts."
-		},
-		{
 			"path": "Countries_December_2023_Boundaries_UK_BGC_7680513041963091487.geojson",
 			"role": "source",
 			"note": "Published as Countries_December_2023_Boundaries_UK_BGC_7680513041963091487.geojson."

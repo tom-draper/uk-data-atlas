@@ -1,7 +1,8 @@
 /**
  * Converts published boundary GeoJSON into the compact TopoJSON assets served
- * by the application. The GeoJSON files remain in data/ as reproducible
- * sources.
+ * by the application, writing them into public/data where they are served
+ * from. The GeoJSON files remain in data/ as reproducible sources, and are the
+ * only form of a release this repository commits.
  *
  * Run `pnpm boundaries:compile --force` after changing the compression values
  * below. Preprocessing runs this automatically when a source is newer than
@@ -9,7 +10,7 @@
  */
 import { createHash } from "crypto";
 import { readFileSync } from "fs";
-import { readFile, rename, stat, writeFile } from "fs/promises";
+import { mkdir, readFile, rename, stat, writeFile } from "fs/promises";
 import { basename, dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { feature } from "topojson-client";
@@ -80,7 +81,11 @@ const releaseSources = () =>
 			const relative = release.asset
 				.split("?")[0]!
 				.replace(/^\/data\//, "");
-			const outputPath = join(ROOT, "data", relative);
+			// The release folder in data/ holds the meta and the published
+			// GeoJSON; the compiled asset is written straight to where it is
+			// served from, rather than into data/ and copied across after.
+			const releaseDir = dirname(join(ROOT, "data", relative));
+			const outputPath = join(ROOT, "public", "data", relative);
 			return [
 				{
 					label: `${type}/${release.id}`,
@@ -93,7 +98,7 @@ const releaseSources = () =>
 							: []),
 					]),
 					sourcePath: sourceFromMeta(
-						dirname(outputPath),
+						releaseDir,
 						`${type}/${release.id}`,
 					),
 					outputPath,
@@ -103,6 +108,8 @@ const releaseSources = () =>
 	).sort((a, b) => a.label.localeCompare(b.label));
 
 const writeAtomically = async (path: string, contents: string) => {
+	// public/data is not committed, so the release folder may not exist yet.
+	await mkdir(dirname(path), { recursive: true });
 	const temporaryPath = `${path}.${process.pid}.tmp`;
 	await writeFile(temporaryPath, contents);
 	await rename(temporaryPath, path);

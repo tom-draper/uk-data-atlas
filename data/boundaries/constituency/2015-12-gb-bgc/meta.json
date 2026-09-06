@@ -25,12 +25,6 @@
 	},
 	"files": [
 		{
-			"path": "boundaries.topojson",
-			"role": "derived",
-			"derivedFrom": "WPC_Dec_2015_GCB_GB_2022_7047333014304224938.geojson",
-			"note": "Compiled by scripts/compile-boundaries.mts."
-		},
-		{
 			"path": "WPC_Dec_2015_GCB_GB_2022_7047333014304224938.geojson",
 			"role": "source",
 			"note": "Published as WPC_Dec_2015_GCB_GB_2022_7047333014304224938.geojson."

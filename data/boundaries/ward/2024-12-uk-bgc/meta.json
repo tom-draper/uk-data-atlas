@@ -26,12 +26,6 @@
 	},
 	"files": [
 		{
-			"path": "boundaries.topojson",
-			"role": "derived",
-			"derivedFrom": "Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson",
-			"note": "Compiled by scripts/compile-boundaries.mts."
-		},
-		{
 			"path": "Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson",
 			"role": "source",
 			"note": "Published as Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson."

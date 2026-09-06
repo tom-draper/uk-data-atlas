@@ -26,12 +26,6 @@
 	},
 	"files": [
 		{
-			"path": "boundaries.topojson",
-			"role": "derived",
-			"derivedFrom": "Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson",
-			"note": "Compiled by scripts/compile-boundaries.mts."
-		},
-		{
 			"path": "Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson",
 			"role": "source",
 			"note": "Published as Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson."

@@ -27,12 +27,6 @@
 	},
 	"files": [
 		{
-			"path": "boundaries.topojson",
-			"role": "derived",
-			"derivedFrom": "Local_Planning_Authorities_April_2019_UK_BGC_2022_-8543893928399963864.geojson",
-			"note": "Compiled by scripts/compile-boundaries.mts."
-		},
-		{
 			"path": "Local_Planning_Authorities_April_2019_UK_BGC_2022_-8543893928399963864.geojson",
 			"role": "source",
 			"note": "Published as Local_Planning_Authorities_April_2019_UK_BGC_2022_-8543893928399963864.geojson."

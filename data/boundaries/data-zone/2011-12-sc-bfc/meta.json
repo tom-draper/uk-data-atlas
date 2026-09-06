@@ -23,12 +23,6 @@
 	},
 	"files": [
 		{
-			"path": "boundaries.topojson",
-			"role": "derived",
-			"derivedFrom": "source.geojson",
-			"note": "Compiled by scripts/compile-boundaries.mts."
-		},
-		{
 			"path": "shapefile/SG_DataZone_Bdry_2011.cpg",
 			"role": "reference",
 			"bytes": 5,
