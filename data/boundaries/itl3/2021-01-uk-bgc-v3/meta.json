@@ -1,0 +1,35 @@
+{
+	"id": "2021-01-uk-bgc-v3",
+	"kind": "boundary",
+	"title": "International territorial level 3, January 2021 (United Kingdom, generalised, clipped)",
+	"description": "The finest tier of the ITL geography, the level regional gross domestic product and productivity are published at.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2021",
+	"spatialCoverage": {
+		"geography": "itl3",
+		"vintage": 2021,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"files": [
+		{
+			"path": "ITL3_JAN_2021_UK_BGC_V3.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"International_Territorial_Level_3_January_2021_UK_BGC_V3_2022\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/International_Territorial_Level_3_January_2021_UK_BGC_V3_2022/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 179 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}

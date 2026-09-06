@@ -1,0 +1,33 @@
+{
+	"id": "2023-12-ew-bgc",
+	"kind": "boundary",
+	"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+	"description": "Community safety partnership areas, the geography ONS reports police recorded crime against in Table C2 of the police force area tables.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2023",
+	"spatialCoverage": {
+		"geography": "communitySafetyPartnership",
+		"vintage": 2023,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "CSP_DEC_2023_EW_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Community_Safety_Partnerships_December_2023_Boundaries_EW_BGC\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Community_Safety_Partnerships_December_2023_Boundaries_EW_BGC/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 314 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}

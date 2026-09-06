@@ -29,6 +29,13 @@ const emptyCodeMappings = (): CodeMappings => ({
 	countyAndUnitaryAuthority: {},
 	integratedCareBoard: {},
 	msoa: {},
+	communitySafetyPartnership: {},
+	policeForceArea: {},
+	combinedAuthority: {},
+	itl1: {},
+	itl2: {},
+	itl3: {},
+	majorTownAndCity: {},
 });
 
 const emptyReverseMappings = (): ReverseCodeMappings => ({
@@ -44,6 +51,13 @@ const emptyReverseMappings = (): ReverseCodeMappings => ({
 	countyAndUnitaryAuthority: {},
 	integratedCareBoard: {},
 	msoa: {},
+	communitySafetyPartnership: {},
+	policeForceArea: {},
+	combinedAuthority: {},
+	itl1: {},
+	itl2: {},
+	itl3: {},
+	majorTownAndCity: {},
 });
 
 /** Mutable, framework-independent boundary-code lookup. */

@@ -20,10 +20,12 @@ beside their `meta.json`, because nothing here can rebuild them:
 compile, and `super-output-area/2011-ni`, converted from a shapefile outside
 this repository. `scripts/sync-public-data.mjs` copies those two across.
 
-`<geography>` is the `BoundaryType` it belongs to, in kebab case: `ward`,
-`local-authority`, `county-and-unitary-authority`, `constituency`, `region`,
-`country`, `msoa`, `lsoa`, `data-zone`, `super-output-area`,
-`local-planning-authority`, `integrated-care-board`.
+`<geography>` is the `BoundaryType` it belongs to, in kebab case. Administrative:
+`ward`, `local-authority`, `county-and-unitary-authority`, `combined-authority`,
+`constituency`, `region`, `country`. Statistical: `msoa`, `lsoa`, `data-zone`,
+`super-output-area`, `itl1`, `itl2`, `itl3`. Service and functional:
+`integrated-care-board`, `police-force-area`, `community-safety-partnership`,
+`local-planning-authority`, `major-town-and-city`.
 
 Adding a geography means adding a family to `CATALOG`, which creates the
 `BoundaryType` on its own. Three places still need the new keys spelled out,

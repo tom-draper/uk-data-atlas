@@ -42,6 +42,13 @@ const boundaryData = (code: string): BoundaryData => {
 		countyAndUnitaryAuthority: { 2025: geojson },
 		integratedCareBoard: { 2026: geojson },
 		msoa: { 2021: geojson },
+		communitySafetyPartnership: { 2023: geojson },
+		policeForceArea: { 2023: geojson },
+		combinedAuthority: { 2025: geojson },
+		itl1: { 2021: geojson },
+		itl2: { 2021: geojson },
+		itl3: { 2021: geojson },
+		majorTownAndCity: { 2015: geojson },
 	};
 };
 

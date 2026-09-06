@@ -521,6 +521,97 @@ const CATALOG = {
 			},
 		],
 	},
+	communitySafetyPartnership: {
+		releases: [
+			{
+				id: "2023-12-ew-bgc",
+				year: 2023,
+				month: 12,
+				extent: "ew",
+				codeKey: "CSP23CD",
+				nameKey: "CSP23NM",
+				asset: asset("community-safety-partnership", "2023-12-ew-bgc"),
+			},
+		],
+	},
+	policeForceArea: {
+		releases: [
+			{
+				id: "2023-12-ew-bgc",
+				year: 2023,
+				month: 12,
+				extent: "ew",
+				codeKey: "PFA23CD",
+				nameKey: "PFA23NM",
+				asset: asset("police-force-area", "2023-12-ew-bgc"),
+			},
+		],
+	},
+	combinedAuthority: {
+		releases: [
+			{
+				id: "2025-12-en-bgc",
+				year: 2025,
+				month: 12,
+				extent: "en",
+				codeKey: "CAUTH25CD",
+				nameKey: "CAUTH25NM",
+				asset: asset("combined-authority", "2025-12-en-bgc"),
+			},
+		],
+	},
+	itl1: {
+		releases: [
+			{
+				id: "2021-01-uk-bgc",
+				year: 2021,
+				month: 1,
+				extent: "uk",
+				codeKey: "ITL121CD",
+				nameKey: "ITL121NM",
+				asset: asset("itl1", "2021-01-uk-bgc"),
+			},
+		],
+	},
+	itl2: {
+		releases: [
+			{
+				id: "2021-01-uk-bgc-v2",
+				year: 2021,
+				month: 1,
+				extent: "uk",
+				codeKey: "ITL221CD",
+				nameKey: "ITL221NM",
+				asset: asset("itl2", "2021-01-uk-bgc-v2"),
+			},
+		],
+	},
+	itl3: {
+		releases: [
+			{
+				id: "2021-01-uk-bgc-v3",
+				year: 2021,
+				month: 1,
+				extent: "uk",
+				codeKey: "ITL321CD",
+				nameKey: "ITL321NM",
+				asset: asset("itl3", "2021-01-uk-bgc-v3"),
+			},
+		],
+	},
+	majorTownAndCity: {
+		releases: [
+			{
+				id: "2015-12-ew-bgc",
+				year: 2015,
+				month: 12,
+				extent: "ew",
+				codeKey: "TCITY15CD",
+				nameKey: "TCITY15NM",
+				asset: asset("major-town-and-city", "2015-12-ew-bgc"),
+			},
+		],
+	},
 } as const satisfies Record<string, BoundaryFamily>;
 
 export type BoundaryType = keyof typeof CATALOG;

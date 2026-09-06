@@ -220,6 +220,41 @@ interface MSOAProperties2021 {
 	MSOA21NM: string;
 }
 
+interface CommunitySafetyPartnershipProperties2023 {
+	CSP23CD: string;
+	CSP23NM: string;
+}
+
+interface PoliceForceAreaProperties2023 {
+	PFA23CD: string;
+	PFA23NM: string;
+}
+
+interface CombinedAuthorityProperties2025 {
+	CAUTH25CD: string;
+	CAUTH25NM: string;
+}
+
+interface Itl1Properties2021 {
+	ITL121CD: string;
+	ITL121NM: string;
+}
+
+interface Itl2Properties2021 {
+	ITL221CD: string;
+	ITL221NM: string;
+}
+
+interface Itl3Properties2021 {
+	ITL321CD: string;
+	ITL321NM: string;
+}
+
+interface MajorTownAndCityProperties2015 {
+	TCITY15CD: string;
+	TCITY15NM: string;
+}
+
 // NI Super Output Area properties
 interface SuperOutputAreaProperties2011 {
 	SOA_CODE: string;
@@ -281,6 +316,13 @@ export type YearToProperties = {
 	integratedCareBoard_2026: IntegratedCareBoardProperties2026;
 	// Middle layer super output areas
 	msoa_2021: MSOAProperties2021;
+	communitySafetyPartnership_2023: CommunitySafetyPartnershipProperties2023;
+	policeForceArea_2023: PoliceForceAreaProperties2023;
+	combinedAuthority_2025: CombinedAuthorityProperties2025;
+	itl1_2021: Itl1Properties2021;
+	itl2_2021: Itl2Properties2021;
+	itl3_2021: Itl3Properties2021;
+	majorTownAndCity_2015: MajorTownAndCityProperties2015;
 };
 
 export type Properties = ValueOf<YearToProperties>;

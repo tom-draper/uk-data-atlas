@@ -1,0 +1,33 @@
+{
+	"id": "2015-12-ew-bgc",
+	"kind": "boundary",
+	"title": "Major towns and cities, December 2015 (England and Wales, generalised, clipped)",
+	"description": "The built-up area extents of the largest towns and cities in England and Wales, for placing a map in context rather than joining data to.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2015",
+	"spatialCoverage": {
+		"geography": "majorTownAndCity",
+		"vintage": 2015,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "TCITY_DEC_2015_EW_BGC.geojson",
+			"role": "source",
+			"note": "Exported from the Open Geography Portal feature service \"Major_Towns_and_Cities_December_2015_Boundaries\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Major_Towns_and_Cities_December_2015_Boundaries/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 112 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+		}
+	]
+}
