@@ -1,0 +1,33 @@
+{
+	"id": "mean-price-by-ward",
+	"title": "Mean price paid by ward, HPSSA Dataset 38",
+	"description": "Mean price paid for residential property by ward in England and Wales, quarterly from the year ending December 1995 to the year ending March 2023. The companion to Dataset 37, which reports the median.",
+	"topics": [
+		"economics",
+		"housing",
+		"house-prices"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/meanpricepaidbywardhpssadataset38",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "1995-2023",
+	"spatialCoverage": {
+		"geography": "ward",
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "hpssadataset38meanpricepaidbyward.zip",
+			"role": "source",
+			"bytes": 86139398,
+			"note": "The year ending March 2023 edition, as published. Direct file: https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/housing/datasets/meanpricepaidbywardhpssadataset38/yearendingmarch2023/hpssadataset38meanpricepaidbyward.zip It holds one file, \"HPSSA Dataset 38 - Mean price paid by ward.xls\" (210 MB), so the archive is kept rather than the workbook: it is the published artefact and well under half the size. No loader reads this dataset yet; the atlas charts the median from Dataset 37 beside it."
+		}
+	]
+}
