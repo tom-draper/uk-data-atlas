@@ -234,8 +234,13 @@ const CATALOG = {
 			},
 		],
 		// The 2010–2019 boundary set did not change, so the 2017 geometry also
-		// supplies the code-compatible 2010 and 2015 election maps.
-		aliases: { 2010: "2017-12-uk-bgc" },
+		// supplies the code-compatible 2010 and 2015 election maps. 2015 is
+		// aliased rather than served from its own release because the Dec 2015
+		// file covers Great Britain only, and is short six of its own
+		// constituencies besides — 626 of the 650 areas — so serving it would
+		// drop Northern Ireland, five Scottish seats and one Welsh seat from a
+		// year whose areas are identical to 2017's.
+		aliases: { 2010: "2017-12-uk-bgc", 2015: "2017-12-uk-bgc" },
 	},
 	localAuthority: {
 		releases: [
