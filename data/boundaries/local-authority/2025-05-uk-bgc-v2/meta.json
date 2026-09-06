@@ -28,11 +28,11 @@
 		{
 			"path": "boundaries.topojson",
 			"role": "derived",
-			"derivedFrom": "source.geojson",
+			"derivedFrom": "LAD_MAY_2025_UK_BGC_V2_1110015208521213948.geojson",
 			"note": "Compiled by scripts/compile-boundaries.mts."
 		},
 		{
-			"path": "source.geojson",
+			"path": "LAD_MAY_2025_UK_BGC_V2_1110015208521213948.geojson",
 			"role": "source",
 			"note": "Published as LAD_MAY_2025_UK_BGC_V2_1110015208521213948.geojson."
 		}

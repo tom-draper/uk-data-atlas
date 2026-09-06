@@ -8,8 +8,9 @@
  * its generated TopoJSON asset.
  */
 import { createHash } from "crypto";
+import { readFileSync } from "fs";
 import { readFile, rename, stat, writeFile } from "fs/promises";
-import { dirname, join } from "path";
+import { basename, dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { feature } from "topojson-client";
 import { topology } from "topojson-server";
@@ -20,6 +21,7 @@ import {
 	BOUNDARY_TYPES,
 } from "../lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "../lib/data/boundaries/decode";
+import { parseDatasetMeta } from "../lib/data/catalog/meta";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -27,6 +29,37 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 // triangle area for a smaller, less detailed asset.
 const QUANTIZATION = 100_000;
 const MINIMUM_PLANAR_TRIANGLE_AREA = 0.0000001;
+
+/**
+ * The GeoJSON a release is compiled from, named by its own meta.json.
+ *
+ * Sources keep the filename the publisher gave them, so that someone
+ * searching for a published boundary file finds this repository. The name
+ * therefore differs per release and cannot be hardcoded — the one exception
+ * being a GeoJSON this project converted itself, which never had a published
+ * name and stays `source.geojson`. A release's meta lists exactly one GeoJSON
+ * that is not a lookup or a companion, and that is the one to read.
+ */
+const sourceFromMeta = (releaseDir: string, label: string): string | null => {
+	const meta = parseDatasetMeta(
+		JSON.parse(readFileSync(join(releaseDir, "meta.json"), "utf8")),
+		basename(releaseDir),
+	);
+	const sources = meta.files.filter(
+		(file) =>
+			file.path.endsWith(".geojson") &&
+			(file.role === "source" || file.role === "derived"),
+	);
+	// A release published only as TopoJSON, or converted outside this repo,
+	// lists no GeoJSON at all; the caller reports it as unreproducible.
+	if (sources.length === 0) return null;
+	if (sources.length > 1) {
+		throw new Error(
+			`${label}: meta.json lists ${sources.length} source GeoJSON files, expected one`,
+		);
+	}
+	return join(releaseDir, sources[0]!.path);
+};
 
 /**
  * Every release the catalogue serves, paired with the published GeoJSON it is
@@ -55,9 +88,14 @@ const releaseSources = () =>
 					keep: new Set<string>([
 						release.codeKey,
 						release.nameKey,
-						...(release.parentCodeKey ? [release.parentCodeKey] : []),
+						...(release.parentCodeKey
+							? [release.parentCodeKey]
+							: []),
 					]),
-					sourcePath: join(dirname(outputPath), "source.geojson"),
+					sourcePath: sourceFromMeta(
+						dirname(outputPath),
+						`${type}/${release.id}`,
+					),
 					outputPath,
 				},
 			];
@@ -145,16 +183,10 @@ export async function compileBoundaryAssets(): Promise<void> {
 	console.log(
 		`Preparing TopoJSON boundary assets (${sources.length} releases)...`,
 	);
-	for (const {
-		label,
-		objectName,
-		keep,
-		sourcePath,
-		outputPath,
-	} of sources) {
+	for (const { label, objectName, keep, sourcePath, outputPath } of sources) {
 		// A release published only as TopoJSON cannot be rebuilt here. Say so
 		// rather than failing, so it is visible as unreproducible.
-		if (!(await exists(sourcePath))) {
+		if (sourcePath === null || !(await exists(sourcePath))) {
 			console.log(
 				`  boundary: ${label} (no local GeoJSON source, skipped)`,
 			);

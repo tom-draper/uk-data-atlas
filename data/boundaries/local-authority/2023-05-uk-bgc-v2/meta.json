@@ -28,11 +28,11 @@
 		{
 			"path": "boundaries.topojson",
 			"role": "derived",
-			"derivedFrom": "source.geojson",
+			"derivedFrom": "Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson",
 			"note": "Compiled by scripts/compile-boundaries.mts."
 		},
 		{
-			"path": "source.geojson",
+			"path": "Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson",
 			"role": "source",
 			"note": "Published as Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson."
 		}

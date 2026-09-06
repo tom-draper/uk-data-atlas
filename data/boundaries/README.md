@@ -41,10 +41,12 @@ is the publisher's own code — `bgc` generalised and clipped, `bfc` full
 resolution and clipped, `nc` not clipped. Both change the geometry, so two
 releases that differ only in those are two folders.
 
-What is deliberately **not** in the name: the ONS Open Geography Portal
-appends a hash to every download, and it differs between two downloads of
-the same product, so it identifies nothing. It is recorded in `meta.json`
-instead, under the file it belonged to.
+The hash the ONS Open Geography Portal appends to a download is deliberately
+**not** in the folder name: it differs between two downloads of the same
+product, so it identifies nothing. The GeoJSON inside keeps it, because it
+keeps the filename the publisher gave it — someone searching for
+`Wards_December_2024_Boundaries_UK_BGC` should be able to find this project,
+and the stem is stable even where the trailing hash is not.
 
 Coordinate system is not in the name either. Sources arrive in EPSG:4326 or
 EPSG:27700 depending on the release; `decode.ts` reprojects British National
@@ -52,12 +54,15 @@ Grid on the way in, and every compiled asset is WGS84.
 
 ## Adding a release
 
-1. Download it and put the GeoJSON at
-   `data/boundaries/<geography>/<release>/source.geojson`.
+1. Download it into `data/boundaries/<geography>/<release>/`, keeping the
+   filename it was published under. A GeoJSON this project converted itself,
+   from a shapefile say, never had a published name and is `source.geojson`.
 2. Write `meta.json`. Copy a neighbour: the required fields are `id` (equal
    to the folder name), `kind: "boundary"`, `title`, `publisher`,
-   `sourceUrl`, `licence`, `spatialCoverage` and `files`. Record the
-   published filename in the source file's `note`.
+   `sourceUrl`, `licence`, `spatialCoverage` and `files`. The compiler finds
+   the GeoJSON to read through `files`, taking the one entry that is a
+   `.geojson` with role `source` or `derived`, so that entry's `path` has to
+   match the file on disk.
 3. Add it to `BOUNDARY_CATALOG` in `lib/data/boundaries/catalog.ts`, newest
    first within its geography. Read the code and name keys off the file
    rather than copying a neighbour's — they change spelling between

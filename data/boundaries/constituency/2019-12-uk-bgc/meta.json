@@ -28,11 +28,11 @@
 		{
 			"path": "boundaries.topojson",
 			"role": "derived",
-			"derivedFrom": "source.geojson",
+			"derivedFrom": "WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.geojson",
 			"note": "Compiled by scripts/compile-boundaries.mts."
 		},
 		{
-			"path": "source.geojson",
+			"path": "WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.geojson",
 			"role": "source",
 			"note": "Published as WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.geojson."
 		}

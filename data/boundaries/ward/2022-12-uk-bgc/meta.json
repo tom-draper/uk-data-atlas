@@ -28,11 +28,11 @@
 		{
 			"path": "boundaries.topojson",
 			"role": "derived",
-			"derivedFrom": "source.geojson",
+			"derivedFrom": "Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson",
 			"note": "Compiled by scripts/compile-boundaries.mts."
 		},
 		{
-			"path": "source.geojson",
+			"path": "Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson",
 			"role": "source",
 			"note": "Published as Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson."
 		}

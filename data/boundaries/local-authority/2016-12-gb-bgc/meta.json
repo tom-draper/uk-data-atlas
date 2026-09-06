@@ -27,11 +27,11 @@
 		{
 			"path": "boundaries.topojson",
 			"role": "derived",
-			"derivedFrom": "source.geojson",
+			"derivedFrom": "LAD_Dec_2016_GB_BGC_2022_699407162867034067.geojson",
 			"note": "Compiled by scripts/compile-boundaries.mts."
 		},
 		{
-			"path": "source.geojson",
+			"path": "LAD_Dec_2016_GB_BGC_2022_699407162867034067.geojson",
 			"role": "source",
 			"note": "Published as LAD_Dec_2016_GB_BGC_2022_699407162867034067.geojson."
 		}
