@@ -1,15 +1,16 @@
 {
 	"id": "ks4-performance",
-	"title": "Key stage 4 performance by local authority district, 2023/24",
-	"description": "DfE key stage 4 (GCSE) headline measures for academic year 2023/24 in England: Attainment 8, Progress 8, English and maths basics and EBacc, at national, regional and local authority district level.",
+	"title": "Key stage 4 performance by local authority district",
+	"description": "DfE key stage 4 (GCSE) measures for England by local authority district, covering academic years 2018/19 to 2024/25: Attainment 8, Progress 8, English and maths basics, EBacc entry and achievement, and subject-level entry rates.",
 	"topics": ["education", "schools", "england"],
 	"publisher": "Department for Education",
-	"sourceUrl": "https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance",
+	"sourceUrl": "https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance/2024-25",
 	"licence": {
 		"name": "Open Government Licence v3.0",
 		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
 	},
-	"temporalCoverage": "2023/24",
+	"retrieved": "2026-09-06",
+	"temporalCoverage": "2018/19-2024/25",
 	"spatialCoverage": {
 		"geography": "localAuthority",
 		"vintage": 2024,
@@ -17,9 +18,9 @@
 	},
 	"files": [
 		{
-			"path": "ks4-lad-2024.csv",
+			"path": "202425_local_authority_district_revised.csv",
 			"role": "source",
-			"note": "308 rows x 35 columns from the Explore Education Statistics \"Key stage 4 performance\" release, filtered before download and renamed locally: time_period 202324, version Revised, level_methodology Pupil residency, establishment_type_group State-funded schools (LA). Rows are 1 National, 11 Regional and 296 Local authority district; the loader keeps only the local authority district rows whose lad_code starts with E. Not a verbatim published filename, so the exact extract cannot be re-fetched by name — reproduce it by reapplying those filters. The live release has since moved on to 2024/25, so this is a superseded edition."
+			"note": "Published verbatim from the 2024/25 release's \"Download all data (ZIP)\" bundle (https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance/2024-25/explore). 22,451 rows x 187 columns covering seven academic years at national, regional and local authority district level. Three gotchas. Each year appears under a single version — Final for 2018/19, 2021/22, 2022/23 and 2023/24; Revised for 2019/20, 2020/21 and 2024/25 — so filtering on version drops whole years instead of deduplicating them. Rows repeat per geography_basis (Pupil residency and School location) and per breakdown_topic (Total, Disadvantage status, FSM status), so both must be pinned to get one row per district. Suppressed values appear as letters such as \"z\", which parse to null rather than a number. Supersedes the hand-filtered 35-column extract this folder previously held, which reported 2023/24 as Revised; those figures are now Final, which moved 12 of 296 districts on Attainment 8 and 11 on Progress 8, all by 0.1, with pupil counts unchanged."
 		}
 	]
 }

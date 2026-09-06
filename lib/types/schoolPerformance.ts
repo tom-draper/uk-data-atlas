@@ -1,11 +1,21 @@
-export interface SchoolPerformanceLADData {
-	ladCode: string;
-	ladName: string;
+/** The headline KS4 measures for one local authority district in one year. */
+export interface SchoolPerformanceMeasures {
 	ptL2basics94: number | null;
 	ptL2basics95: number | null;
 	avgAtt8: number | null;
 	avgP8score: number | null;
 	pupils: number | null;
+}
+
+export interface SchoolPerformanceLADData extends SchoolPerformanceMeasures {
+	ladCode: string;
+	ladName: string;
+	/**
+	 * Every academic year the release covers, keyed by the year it ends in.
+	 * The fields above repeat the most recent year so callers that only want
+	 * the headline figure need not reach into the series.
+	 */
+	series: Record<number, SchoolPerformanceMeasures>;
 }
 
 export interface SchoolPerformanceDataset {

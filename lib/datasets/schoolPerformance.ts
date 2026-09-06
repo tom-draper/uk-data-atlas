@@ -8,12 +8,12 @@ export const schoolPerformanceDefinition: ChartDatasetDefinition<SchoolPerforman
 		chart: {
 			group: "Education",
 			key: "education-schoolPerformance",
-			label: "School Performance [2024]",
+			label: "School Performance [2024/25]",
 			defaultVisible: true,
 			componentPath: "@/components/education/SchoolPerformanceChart",
 			calculateStats: (m, g, d, l, id) =>
 				m.calculateSchoolPerformanceStats(g, d, l, id),
-			year: 2024,
+			year: 2025,
 		},
 		map: {
 			valueKey: "ptL2basics94",

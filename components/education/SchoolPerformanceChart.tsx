@@ -94,7 +94,7 @@ export default function SchoolPerformanceChart({
 
 	return (
 		<ChartCard
-			heading="GCSE Performance [2023/24]"
+			heading="GCSE Performance [2024/25]"
 			headerEnd={
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
@@ -104,7 +104,7 @@ export default function SchoolPerformanceChart({
 			}
 			accent={hasData ? color : null}
 			isActive={isActive}
-			title="Department for Education. Key Stage 4 Performance 2023/24. explore-education-statistics.service.gov.uk"
+			title="Department for Education. Key Stage 4 Performance 2024/25. explore-education-statistics.service.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,
