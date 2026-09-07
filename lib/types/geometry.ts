@@ -311,6 +311,11 @@ interface TravelToWorkAreaProperties2011 {
 	TTWA11NM: string;
 }
 
+interface ParishProperties2025 {
+	PARNCP25CD: string;
+	PARNCP25NM: string;
+}
+
 interface ParishProperties2024 {
 	PARNCP24CD: string;
 	PARNCP24NM: string;
@@ -396,6 +401,7 @@ export type YearToProperties = {
 	countyElectoralDivision_2023: CountyElectoralDivisionProperties2023;
 	travelToWorkArea_2011: TravelToWorkAreaProperties2011;
 	parish_2024: ParishProperties2024;
+	parish_2025: ParishProperties2025;
 };
 
 export type Properties = ValueOf<YearToProperties>;

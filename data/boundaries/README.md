@@ -69,6 +69,14 @@ is the publisher's own code — `bgc` generalised and clipped, `bfc` full
 resolution and clipped, `nc` not clipped. Both change the geometry, so two
 releases that differ only in those are two folders.
 
+**Always take `bgc`.** The publisher offers the same areas at several
+generalisations, and the ultra generalised `buc` is an order of magnitude
+smaller — regions are 5.4 MB as `bgc` against 0.4 MB as `buc` — but it is
+smaller because it is coarser, and the detail is gone for good once taken.
+`bgc` is already generalised to 20 m, which the compiler simplifies further
+on the way to the served asset, so the size is paid once in the repository
+rather than by every viewer. Take `bfc` only where nothing else exists.
+
 The hash the ONS Open Geography Portal appends to a download is deliberately
 **not** in the folder name: it differs between two downloads of the same
 product, so it identifies nothing. The GeoJSON inside keeps it, because it

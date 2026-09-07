@@ -1,0 +1,33 @@
+{
+	"id": "2025-05-ew-bgc",
+	"kind": "boundary",
+	"title": "Parishes and non civil parished areas, May 2025 (England and Wales, generalised, clipped)",
+	"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely. The finest administrative geography published for the two countries.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2025",
+	"spatialCoverage": {
+		"geography": "parish",
+		"vintage": 2025,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "Parishes_and_Non_Civil_Parished_Areas_(May_2025)_Boundaries_EW_BGC.geojson",
+			"role": "source",
+			"note": "Published as Parishes_and_Non_Civil_Parished_Areas_(May_2025)_Boundaries_EW_BGC.geojson, 11,539 features in WGS84. Downloaded from the portal rather than exported from its feature service, whose parenthesised name the ArcGIS endpoint will not resolve."
+		}
+	]
+}

@@ -765,6 +765,15 @@ const CATALOG = {
 	parish: {
 		releases: [
 			{
+				id: "2025-05-ew-bgc",
+				year: 2025,
+				month: 5,
+				extent: "ew",
+				codeKey: "PARNCP25CD",
+				nameKey: "PARNCP25NM",
+				asset: asset("parish", "2025-05-ew-bgc"),
+			},
+			{
 				id: "2024-12-ew-bgc",
 				year: 2024,
 				month: 12,
