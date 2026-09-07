@@ -90,6 +90,8 @@ const fetchPrecompiledBoundaryMappings =
 
 type BoundaryGroupLoad = {
 	data: Record<number, BoundaryGeojson>;
+	/** One message per vintage that could not be fetched. */
+	failures: string[];
 };
 
 /** Fetch all boundary files for a given type. */
@@ -116,17 +118,28 @@ const fetchBoundaryGroup = async (
 			> => r.status === "fulfilled",
 		)
 		.map((r) => r.value);
+	// A vintage that fails to load leaves every chart keyed to it drawing
+	// nothing, and the card gives no sign of it: it still renders, aggregates
+	// to zero and, when clicked, leaves the previous layer on the map. Report
+	// the failure rather than only logging it. One file often serves several
+	// years, so a single 404 can take out one card and leave its neighbours
+	// working, which is a confusing thing to debug from the outside.
+	const failures: string[] = [];
 	settled.forEach((result, index) => {
 		if (result.status === "rejected") {
-			console.error(
-				`[boundaries] Failed to load ${type} year ${years[index]}:`,
-				result.reason,
-			);
+			const message = `Could not load ${type} boundaries for ${years[index]}: ${
+				result.reason instanceof Error
+					? result.reason.message
+					: String(result.reason)
+			}`;
+			console.error(`[boundaries] ${message}`);
+			failures.push(message);
 		}
 	});
 
 	return {
 		data: Object.fromEntries(results),
+		failures,
 	};
 };
 
@@ -308,22 +321,31 @@ export function useBoundaryData(
 			Promise.all([
 				precompiledMappings,
 				Promise.all(
-					missing.map(
-						async (type) =>
-							[
-								type,
-								(await fetchBoundaryGroup(type)).data,
-							] as const,
-					),
+					missing.map(async (type) => {
+						const { data, failures } =
+							await fetchBoundaryGroup(type);
+						return [type, data, failures] as const;
+					}),
 				),
 			])
 				.then(([mappings, groups]) => {
 					if (!mounted) return;
 
 					for (const [type] of groups) loadedTypes.current.add(type);
-					const fetched = Object.fromEntries(groups) as Partial<
+					const fetched = Object.fromEntries(
+						groups.map(([type, data]) => [type, data]),
+					) as Partial<
 						Record<BoundaryType, Record<number, BoundaryGeojson>>
 					>;
+
+					// Whatever did load is still worth drawing, so keep it and
+					// report the gaps alongside rather than instead.
+					const failures = groups.flatMap(
+						([, , groupFailures]) => groupFailures,
+					);
+					if (failures.length > 0) {
+						setError(new Error(failures.join("; ")));
+					}
 
 					startTransition(() => {
 						setRawData((previous) => ({
@@ -372,7 +394,9 @@ export function useBoundaryData(
 							const wardMappings = extractWardLadMappings(
 								boundary.features,
 								BOUNDARY_CATALOG.ward.properties.code,
-								BOUNDARY_CATALOG.localAuthority.properties.code,
+								BOUNDARY_CATALOG.ward.properties.parentCode ??
+									BOUNDARY_CATALOG.localAuthority.properties
+										.code,
 							);
 							Object.assign(wardToLad, wardMappings.wardToLad);
 							addLadWardMappings?.(
