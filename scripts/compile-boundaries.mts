@@ -23,8 +23,12 @@ import {
 } from "../lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "../lib/data/boundaries/decode";
 import { parseDatasetMeta } from "../lib/data/catalog/meta";
+import { polygonAreaSqKm } from "../lib/helpers/population";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+
+/** Served beside each release's boundaries.topojson. */
+export const PROPERTIES_FILENAME = "properties.json";
 
 // Increase quantization for more positional precision. Increase the minimum
 // triangle area for a smaller, less detailed asset.
@@ -102,6 +106,10 @@ const releaseSources = () =>
 						`${type}/${release.id}`,
 					),
 					outputPath,
+					propertiesPath: join(
+						dirname(outputPath),
+						PROPERTIES_FILENAME,
+					),
 				},
 			];
 		}),
@@ -137,6 +145,90 @@ const shouldCompile = async (sourcePath: string, outputPath: string) => {
 	}
 };
 
+/**
+ * The properties sidecar written beside each compiled release.
+ *
+ * Every chart aggregates over its own vintage, but none of them read a
+ * coordinate: `filterFeatures` and the reducers key off the code properties
+ * alone, and a hover is a dataset lookup. The only runtime readers of geometry
+ * are the map, which draws one vintage at a time, and two derived values —
+ * area, for population density, and extent, for fitting the map to an area.
+ *
+ * Deriving those two here and serving the properties on their own means a
+ * vintage a chart merely aggregates over costs a few hundred KB instead of
+ * several MB, and never puts a coordinate on the heap. A boundary file is
+ * ~99% coordinates, and only the vintage being drawn needs them.
+ *
+ * The derived values are computed from the finished topology rather than from
+ * the source, so a value read off the sidecar is the one the runtime would
+ * have computed from the asset it was served.
+ */
+const DERIVED_PROPERTIES = ["areaSqKm", "bbox"] as const;
+
+/** One record per feature, in the order the topology lists them. */
+export type BoundaryPropertiesFile = {
+	release: string;
+	features: Record<string, unknown>[];
+};
+
+const round = (value: number, places: number) => {
+	const factor = 10 ** places;
+	return Math.round(value * factor) / factor;
+};
+
+// Significant figures rather than decimal places, so the relative error is the
+// same for a City of London ward and a Highland one. Fixed places cost the
+// smallest areas most: at four places, 0.0693 km² is out by 0.06%.
+const toPrecision = (value: number, figures: number) =>
+	value === 0 ? 0 : Number(value.toPrecision(figures));
+
+const featureExtent = (
+	geometry: { coordinates: unknown } | null,
+): [number, number, number, number] | undefined => {
+	if (!geometry) return undefined;
+	let west = Infinity,
+		south = Infinity,
+		east = -Infinity,
+		north = -Infinity;
+	const walk = (coordinates: unknown): void => {
+		if (!Array.isArray(coordinates)) return;
+		if (typeof coordinates[0] === "number") {
+			const [longitude, latitude] = coordinates as number[];
+			west = Math.min(west, longitude!);
+			east = Math.max(east, longitude!);
+			south = Math.min(south, latitude!);
+			north = Math.max(north, latitude!);
+			return;
+		}
+		for (const part of coordinates) walk(part);
+	};
+	walk(geometry.coordinates);
+	if (west === Infinity) return undefined;
+	// Four places is a little over a metre, far below what fitting a map to an
+	// area can show, and four fewer characters per number across every feature.
+	return [round(west, 4), round(south, 4), round(east, 4), round(north, 4)];
+};
+
+/** The published properties of each feature, plus the two derived values. */
+const releaseProperties = (
+	topologyData: ReturnType<typeof topology>,
+	objectName: string,
+): Record<string, unknown>[] => {
+	const object = topologyData.objects[objectName];
+	if (!object || object.type !== "GeometryCollection") return [];
+	const decoded = feature(topologyData, object);
+	const features =
+		decoded.type === "FeatureCollection" ? decoded.features : [decoded];
+	return features.map((source) => ({
+		...source.properties,
+		areaSqKm: toPrecision(
+			source.geometry ? polygonAreaSqKm(source.geometry as never) : 0,
+			7,
+		),
+		bbox: featureExtent(source.geometry as never),
+	}));
+};
+
 const simplifySource = (
 	raw: string,
 	objectName: string,
@@ -165,6 +257,25 @@ const simplifySource = (
 	return topology({ [objectName]: simplifiedFeatures }, QUANTIZATION);
 };
 
+/**
+ * A sidecar that would not stand in for the geometry it replaces. The whole
+ * point of the file is that nothing downstream needs the coordinates, so a
+ * derived value silently missing would put them back on the critical path.
+ */
+const assertDerivedPresent = (
+	label: string,
+	features: Record<string, unknown>[],
+) => {
+	for (const key of DERIVED_PROPERTIES) {
+		if (features.every((record) => record[key] === undefined)) {
+			throw new Error(
+				`${label}: no feature carries a ${key}, so the properties file ` +
+					`cannot stand in for the geometry.`,
+			);
+		}
+	}
+};
+
 /** A release whose compiled asset would carry no properties at all. */
 const assertKeptSomething = (
 	label: string,
@@ -190,7 +301,14 @@ export async function compileBoundaryAssets(): Promise<void> {
 	console.log(
 		`Preparing TopoJSON boundary assets (${sources.length} releases)...`,
 	);
-	for (const { label, objectName, keep, sourcePath, outputPath } of sources) {
+	for (const {
+		label,
+		objectName,
+		keep,
+		sourcePath,
+		outputPath,
+		propertiesPath,
+	} of sources) {
 		// A release published only as TopoJSON cannot be rebuilt here. Say so
 		// rather than failing, so it is visible as unreproducible.
 		if (sourcePath === null || !(await exists(sourcePath))) {
@@ -200,7 +318,10 @@ export async function compileBoundaryAssets(): Promise<void> {
 			continue;
 		}
 
-		if (!(await shouldCompile(sourcePath, outputPath))) {
+		if (
+			!(await shouldCompile(sourcePath, outputPath)) &&
+			(await exists(propertiesPath))
+		) {
 			console.log(`  boundary: ${label} (up to date)`);
 			continue;
 		}
@@ -209,15 +330,25 @@ export async function compileBoundaryAssets(): Promise<void> {
 		const topologyData = simplifySource(raw, objectName, keep);
 		assertKeptSomething(label, topologyData, keep);
 		const output = JSON.stringify(topologyData);
+		const propertyRecords = releaseProperties(topologyData, objectName);
+		assertDerivedPresent(label, propertyRecords);
+		const properties = JSON.stringify({
+			release: label,
+			features: propertyRecords,
+		} satisfies BoundaryPropertiesFile);
 		await writeAtomically(outputPath, output);
+		await writeAtomically(propertiesPath, properties);
 		const sourceKb = Math.round(Buffer.byteLength(raw, "utf8") / 1024);
 		const outputKb = Math.round(Buffer.byteLength(output, "utf8") / 1024);
+		const propertiesKb = Math.round(
+			Buffer.byteLength(properties, "utf8") / 1024,
+		);
 		const hash = createHash("sha256")
 			.update(output)
 			.digest("hex")
 			.slice(0, 12);
 		console.log(
-			`  boundary: ${label} (${sourceKb} KB -> ${outputKb} KB, ${hash})`,
+			`  boundary: ${label} (${sourceKb} KB -> ${outputKb} KB + ${propertiesKb} KB properties, ${hash})`,
 		);
 	}
 }
