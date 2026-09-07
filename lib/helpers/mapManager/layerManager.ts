@@ -57,6 +57,14 @@ const asMapData = (geojson: BoundaryGeojson) =>
 export class LayerManager {
 	private lastFillPaint: FillPaintConfig | null = null;
 	private sourceGeojson: BoundaryGeojson | null = null;
+	// A paint that arrived while the style was mid-update, to apply once it
+	// settles. Only the newest is worth keeping: each one supersedes the last.
+	private deferredPaint: {
+		geojson: BoundaryGeojson;
+		paint: FillPaintConfig;
+		visibility: MapOptions["visibility"];
+	} | null = null;
+	private awaitingStyle = false;
 	private pointTooltip: PointTooltip | undefined;
 	private pointTooltipDark = false;
 	private pointTooltipHandlersAttached = false;
@@ -100,11 +108,38 @@ export class LayerManager {
 		visibility: MapOptions["visibility"],
 	): void {
 		this.lastFillPaint = paint;
-		const styleLoaded = this.map.isStyleLoaded();
+		// maplibre reports the style as unloaded while it is still working
+		// through an earlier update, so a paint can land in a window where
+		// nothing can be added to it. Returning here used to drop that paint
+		// entirely: the boundary layer stayed missing until something else
+		// happened to change, because the geojson the render is keyed to does
+		// not change again on its own. Hold it and apply it once the map goes
+		// idle. Rare when the geometry was already in memory; easy to hit now
+		// that it arrives asynchronously, a render at a time.
+		if (!this.map.isStyleLoaded()) {
+			this.deferredPaint = { geojson, paint, visibility };
+			if (!this.awaitingStyle) {
+				this.awaitingStyle = true;
+				this.map.once("idle", () => {
+					this.awaitingStyle = false;
+					const deferred = this.deferredPaint;
+					this.deferredPaint = null;
+					if (deferred) {
+						this.paintBoundaries(
+							deferred.geojson,
+							deferred.paint,
+							deferred.visibility,
+						);
+					}
+				});
+			}
+			return;
+		}
+		this.deferredPaint = null;
+
 		const sourceExists = !!this.map.getSource(SOURCE_ID);
 		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
 		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
-		if (!styleLoaded) return;
 
 		if (sourceExists && fillLayerExists && lineLayerExists) {
 			if (this.sourceGeojson !== geojson) {
