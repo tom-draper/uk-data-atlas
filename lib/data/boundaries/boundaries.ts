@@ -167,7 +167,8 @@ export const filterFeatures = (
 				);
 				let ladCode = getProp(
 					f.properties,
-					BOUNDARY_CATALOG.localAuthority.properties.code,
+					BOUNDARY_CATALOG.ward.properties.parentCode ??
+						BOUNDARY_CATALOG.localAuthority.properties.code,
 				);
 				const mappedLadCode =
 					wardCode && getLadForWard
