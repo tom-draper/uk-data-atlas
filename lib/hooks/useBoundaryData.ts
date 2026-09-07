@@ -10,7 +10,7 @@ import {
 import { BoundaryData, BoundaryGeojson, getFeatureProp } from "@lib/types";
 import {
 	BoundaryType,
-	fetchBoundaryFile,
+	fetchBoundaryProperties,
 	filterFeatures,
 } from "../data/boundaries/boundaries";
 import {
@@ -94,17 +94,26 @@ type BoundaryGroupLoad = {
 	failures: string[];
 };
 
-/** Fetch all boundary files for a given type. */
+/**
+ * Fetch every vintage of a geography, as properties rather than geometry.
+ *
+ * This is what the charts aggregate over, and none of them read a coordinate:
+ * `filterFeatures` and the reducers key off the code properties, area and
+ * extent come from the compiled values, and a hover is a dataset lookup. The
+ * geometry of the one vintage being drawn is fetched separately, by whatever
+ * is drawing it — which is the difference between holding a few hundred MB and
+ * several GB, and between fetching 14 MB of wards and 93 MB.
+ */
 const fetchBoundaryGroup = async (
 	type: BoundaryType,
 ): Promise<BoundaryGroupLoad> => {
-	const paths = BOUNDARY_CATALOG[type].vintages;
+	const paths = BOUNDARY_CATALOG[type].propertyVintages;
 	const years = Object.keys(paths).map(Number);
 
 	const settled = await Promise.allSettled(
 		years.map(async (year) => {
 			const path = paths[year as keyof typeof paths];
-			const data = await fetchBoundaryFile(path);
+			const data = await fetchBoundaryProperties(path);
 			return [year, data] as const;
 		}),
 	);
@@ -387,6 +396,11 @@ export function useBoundaryData(
 						// Preserve the existing behaviour if an older CDN revision does not
 						// yet contain the generated lookup file. Only possible when this
 						// batch happened to fetch all three geographies it derives from.
+						// Ward↔LAD and the cross-year mappings are built from properties
+						// and still work here; constituency→ward is matched by shape, so
+						// it yields nothing now that these are properties alone. That
+						// pairing comes from the precompiled file above, which is the
+						// supported path — this remains only as a partial fallback.
 						const wardToLad: Record<string, string> = {};
 						for (const [year, boundary] of Object.entries(
 							fetched.ward,

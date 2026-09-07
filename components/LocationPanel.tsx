@@ -25,7 +25,10 @@ import {
 	useRef,
 	useMemo,
 } from "react";
-import { fetchBoundaryFile, getProp } from "@lib/data/boundaries/boundaries";
+import {
+	fetchBoundaryProperties,
+	getProp,
+} from "@lib/data/boundaries/boundaries";
 import { BOUNDARY_CATALOG } from "@lib/data/boundaries/boundaries";
 import { featureExtent } from "@lib/data/boundaries/derived";
 
@@ -78,7 +81,9 @@ export default function LocationPanel({
 	const deferredSearchQuery = useDeferredValue(searchQuery);
 
 	useEffect(() => {
-		fetchBoundaryFile(BOUNDARY_CATALOG.ward.vintages[2023])
+		// Only each ward's extent is wanted here, which the properties sidecar
+		// carries, so this does not pull a whole vintage's coordinates in.
+		fetchBoundaryProperties(BOUNDARY_CATALOG.ward.propertyVintages[2023]!)
 			.then((data) => setGeojson(data))
 			.catch((err) =>
 				console.error("Failed to load ward boundaries:", err),

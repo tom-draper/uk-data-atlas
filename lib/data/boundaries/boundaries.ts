@@ -25,8 +25,89 @@ const COUNTRY_PREFIXES: Record<string, string> = {
 	"Northern Ireland": "N",
 };
 
-const BOUNDARY_CACHE: Record<string, BoundaryGeojson> = {};
+/**
+ * Decoded geometry, most recently used last.
+ *
+ * Only the vintage being drawn needs coordinates — every chart aggregates over
+ * its own vintage by code alone, from the properties sidecar — so this holds a
+ * few rather than every file a session touches. A UK ward vintage is around a
+ * million coordinate pairs, so an unbounded cache is the difference between a
+ * few hundred MB and several GB. Keeping more than one still makes moving back
+ * and forth between two years a cache hit rather than a refetch.
+ */
+const GEOMETRY_CACHE_LIMIT = 3;
+const BOUNDARY_CACHE = new Map<string, BoundaryGeojson>();
 const BOUNDARY_PENDING: Partial<Record<string, Promise<BoundaryGeojson>>> = {};
+
+const rememberGeometry = (path: string, data: BoundaryGeojson) => {
+	BOUNDARY_CACHE.delete(path);
+	BOUNDARY_CACHE.set(path, data);
+	if (BOUNDARY_CACHE.size > GEOMETRY_CACHE_LIMIT) {
+		BOUNDARY_CACHE.delete(BOUNDARY_CACHE.keys().next().value!);
+	}
+};
+
+/** Properties sidecars, held for every vintage: they are small and all needed. */
+const PROPERTIES_CACHE = new Map<string, BoundaryGeojson>();
+const PROPERTIES_PENDING = new Map<string, Promise<BoundaryGeojson>>();
+
+type PropertiesFile = {
+	release?: string;
+	features?: Record<string, unknown>[];
+};
+
+/**
+ * A sidecar read as a boundary collection whose features carry no geometry, so
+ * that filtering and aggregation — which only ever read properties — take it
+ * unchanged wherever they would take a decoded file.
+ */
+const decodeProperties = (json: unknown): BoundaryGeojson => {
+	const records = (json as PropertiesFile)?.features;
+	if (!Array.isArray(records)) {
+		throw new Error("Properties file contains no features");
+	}
+	return {
+		type: "FeatureCollection",
+		crs: {
+			type: "name",
+			properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+		},
+		features: records.map((properties, index) => ({
+			type: "Feature" as const,
+			id: index + 1,
+			geometry: null,
+			properties,
+		})),
+	} as unknown as BoundaryGeojson;
+};
+
+/** The properties of every feature in a release, without its coordinates. */
+export function fetchBoundaryProperties(
+	path: string,
+): Promise<BoundaryGeojson> {
+	const cached = PROPERTIES_CACHE.get(path);
+	if (cached) return Promise.resolve(cached);
+	const pending = PROPERTIES_PENDING.get(path);
+	if (pending) return pending;
+
+	const promise = fetch(path)
+		.then(async (response) => {
+			if (!response.ok) {
+				throw new Error(
+					`Failed to fetch ${path}: ${response.status} ${response.statusText}`,
+				);
+			}
+			return decodeProperties(await response.json());
+		})
+		.then((data) => {
+			PROPERTIES_CACHE.set(path, data);
+			PROPERTIES_PENDING.delete(path);
+			return data;
+		});
+	PROPERTIES_PENDING.set(path, promise);
+	promise.catch(() => PROPERTIES_PENDING.delete(path));
+	return promise;
+}
 const featureBoundsCache = new WeakMap<
 	object,
 	[number, number, number, number] | null
@@ -94,13 +175,17 @@ async function doFetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
 	}
 
 	const typedGeojson = decodeBoundaryData(await res.json());
-	BOUNDARY_CACHE[path] = typedGeojson;
+	rememberGeometry(path, typedGeojson);
 	delete BOUNDARY_PENDING[path];
 	return typedGeojson;
 }
 
 export function fetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
-	if (BOUNDARY_CACHE[path]) return Promise.resolve(BOUNDARY_CACHE[path]);
+	const cached = BOUNDARY_CACHE.get(path);
+	if (cached) {
+		rememberGeometry(path, cached);
+		return Promise.resolve(cached);
+	}
 	if (BOUNDARY_PENDING[path]) return BOUNDARY_PENDING[path]!;
 
 	const workerFetch = fetchBoundaryInWorker(path);
@@ -109,7 +194,7 @@ export function fetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
 			? workerFetch.catch(() => doFetchBoundaryFile(path))
 			: doFetchBoundaryFile(path)
 	).then((data) => {
-		BOUNDARY_CACHE[path] = data;
+		rememberGeometry(path, data);
 		delete BOUNDARY_PENDING[path];
 		return data;
 	});

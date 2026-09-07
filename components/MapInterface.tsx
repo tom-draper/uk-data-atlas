@@ -4,6 +4,7 @@ import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
 import { useBoundaryData } from "@/lib/hooks/useBoundaryData";
+import { useActiveGeometry } from "@/lib/hooks/useActiveGeometry";
 import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
@@ -18,6 +19,7 @@ import type {
 	Datasets,
 	SelectedArea,
 	BoundaryData,
+	BoundaryType,
 } from "@lib/types";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/boundaries";
 import type { CustomDataset } from "@/lib/types/custom";
@@ -58,7 +60,7 @@ export default function MapInterface({
 	const [loadedStyleId, setLoadedStyleId] = useState<string | null>(null);
 
 	const codeMapper = useCodeMapper();
-	const { addWardLadMappings } = codeMapper;
+	const { addWardLadMappings, getLadForWard } = codeMapper;
 
 	// Supplement the code mapper with ward→LAD mappings from election data.
 	// Boundary files older than 2022 lack LAD properties, so wards that were
@@ -180,12 +182,19 @@ export default function MapInterface({
 		],
 	);
 
-	const rawGeojson =
+	// `boundaryData` carries properties alone, which is all the charts read.
+	// Drawing needs coordinates, so the active vintage's geometry is fetched
+	// on its own rather than the whole catalogue being held decoded.
+	const { geometry: rawGeojson } = useActiveGeometry(
 		!activeDataset || activeDataset.type === "network"
-			? null
-			: (boundaryData[activeDataset.boundaryType as keyof BoundaryData]?.[
-					activeDataset.boundaryYear
-				] ?? null);
+			? undefined
+			: (activeDataset.boundaryType as BoundaryType),
+		!activeDataset || activeDataset.type === "network"
+			? undefined
+			: activeDataset.boundaryYear,
+		selectedLocation ?? null,
+		getLadForWard,
+	);
 
 	const geojson = useMemo(() => {
 		if (!rawGeojson || !activeDataset || !("data" in activeDataset))

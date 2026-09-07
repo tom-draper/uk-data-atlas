@@ -56,6 +56,15 @@ const asset = (geography: string, release: string) =>
 	withCDN(`/data/boundaries/${geography}/${release}/boundaries.topojson`);
 
 /**
+ * The properties sidecar served beside a release's geometry, written by
+ * `scripts/compile-boundaries.mts`. Derived from the asset URL rather than
+ * declared per release, so the two cannot name different releases; the
+ * substitution is on the filename, which leaves any version query in place.
+ */
+export const propertiesAsset = (asset: string) =>
+	asset.replace("/boundaries.topojson", "/properties.json");
+
+/**
  * Authoritative catalogue of the boundary releases the atlas supports.
  *
  * Add a release here and it is served, compiled and offered as a match target;
@@ -895,6 +904,11 @@ export const BOUNDARY_CATALOG = Object.fromEntries(
 				releases: family.releases,
 				properties: familyProperties(family),
 				vintages: familyVintages(family),
+				propertyVintages: Object.fromEntries(
+					Object.entries(familyVintages(family)).map(
+						([year, url]) => [year, propertiesAsset(url)],
+					),
+				) as Record<number, string>,
 			},
 		];
 	}),
@@ -904,6 +918,7 @@ export const BOUNDARY_CATALOG = Object.fromEntries(
 		releases: readonly BoundaryRelease[];
 		properties: BoundaryProperties;
 		vintages: Record<number, string>;
+		propertyVintages: Record<number, string>;
 	}
 >;
 

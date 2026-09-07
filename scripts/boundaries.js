@@ -178,9 +178,9 @@ async function processDirectory(inputDir, outputDir) {
 		fs.mkdirSync(outputDir, { recursive: true });
 	}
 
-	const files = fs.readdirSync(inputDir).filter((f) =>
-		f.endsWith(".geojson")
-	);
+	const files = fs
+		.readdirSync(inputDir)
+		.filter((f) => f.endsWith(".geojson"));
 
 	console.log(`Found ${files.length} GeoJSON files to process\n`);
 

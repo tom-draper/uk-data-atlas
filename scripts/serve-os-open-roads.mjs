@@ -4,7 +4,12 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repositoryRoot = dirname(dirname(fileURLToPath(import.meta.url)));
-const dataDirectory = join(repositoryRoot, "data", "transport", "os-open-roads");
+const dataDirectory = join(
+	repositoryRoot,
+	"data",
+	"transport",
+	"os-open-roads",
+);
 const mbtilesFile = join(dataDirectory, "oproad_gb.mbtiles");
 
 if (!existsSync(mbtilesFile)) {
@@ -33,7 +38,9 @@ const server = spawn(
 );
 
 server.on("error", (error) => {
-	console.error(`Could not start the OS Open Roads tile server: ${error.message}`);
+	console.error(
+		`Could not start the OS Open Roads tile server: ${error.message}`,
+	);
 	process.exit(1);
 });
 
