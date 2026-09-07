@@ -31,7 +31,12 @@ import { BOUNDARY_CATALOG } from "@lib/data/boundaries/boundaries";
 interface LocationPanelProps {
 	selectedLocation: string | null;
 	onLocationClick: (location: string, bounds: LocationBounds) => void;
-	populationDataset: PopulationDataset;
+	/**
+	 * Absent whenever no population chart is enabled, because the dataset is
+	 * fetched per chart. The panel is not a chart, so it has to cope: without
+	 * it the locations carry no population and the list comes out empty.
+	 */
+	populationDataset: PopulationDataset | undefined;
 }
 
 const COUNTRY_LOCATIONS = new Set([
@@ -136,7 +141,7 @@ export default function LocationPanel({
 			}
 		> = {};
 
-		Object.entries(populationDataset.data).forEach(
+		Object.entries(populationDataset?.data ?? {}).forEach(
 			([wardCode, wardData]: [string, PopulationWardData]) => {
 				const feature = geojsonFeatureMap[wardCode];
 				const bounds: [number, number, number, number] = feature
@@ -153,7 +158,7 @@ export default function LocationPanel({
 		);
 
 		return enriched;
-	}, [populationDataset.data, geojsonFeatureMap]);
+	}, [populationDataset?.data, geojsonFeatureMap]);
 
 	const locationPopulations = useMemo(() => {
 		const populations = new Map<string, number>();

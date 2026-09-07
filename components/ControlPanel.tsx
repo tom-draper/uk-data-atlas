@@ -9,7 +9,7 @@ import { MapOptions as MapOptionsType } from "@/lib/types/mapOptions";
 interface ControlPanelProps {
 	selectedLocation: string | null;
 	onLocationClick: (location: string, bounds: LocationBounds) => void;
-	populationDataset: PopulationDataset;
+	populationDataset: PopulationDataset | undefined;
 	onZoomIn: () => void;
 	onZoomOut: () => void;
 	handleMapOptionsChange: (
