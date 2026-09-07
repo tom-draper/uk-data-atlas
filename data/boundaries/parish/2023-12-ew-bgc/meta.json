@@ -1,0 +1,33 @@
+{
+	"id": "2023-12-ew-bgc",
+	"kind": "boundary",
+	"title": "Parishes and non civil parished areas, December 2023 (England and Wales, generalised, clipped)",
+	"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2023",
+	"spatialCoverage": {
+		"geography": "parish",
+		"vintage": 2023,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "Parishes_and_Non_Civil_Parished_Areas_December_2023_Boundaries_EW_BGC_9125989404983862971.geojson",
+			"role": "source",
+			"note": "Published as Parishes_and_Non_Civil_Parished_Areas_December_2023_Boundaries_EW_BGC_9125989404983862971.geojson, 11,548 features on the British National Grid, which decode.ts reprojects."
+		}
+	]
+}

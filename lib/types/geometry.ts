@@ -311,6 +311,31 @@ interface TravelToWorkAreaProperties2011 {
 	TTWA11NM: string;
 }
 
+interface ParishProperties2026 {
+	PARNCP26CD: string;
+	PARNCP26NM: string;
+}
+
+interface ParishProperties2023 {
+	PARNCP23CD: string;
+	PARNCP23NM: string;
+}
+
+interface ParishProperties2022 {
+	PARNCP22CD: string;
+	PARNCP22NM: string;
+}
+
+interface ParishProperties2021 {
+	PARNCP21CD: string;
+	PARNCP21NM: string;
+}
+
+interface ParishProperties2019 {
+	parncp19cd: string;
+	parncp19nm: string;
+}
+
 interface ParishProperties2025 {
 	PARNCP25CD: string;
 	PARNCP25NM: string;
@@ -402,6 +427,11 @@ export type YearToProperties = {
 	travelToWorkArea_2011: TravelToWorkAreaProperties2011;
 	parish_2024: ParishProperties2024;
 	parish_2025: ParishProperties2025;
+	parish_2026: ParishProperties2026;
+	parish_2023: ParishProperties2023;
+	parish_2022: ParishProperties2022;
+	parish_2021: ParishProperties2021;
+	parish_2019: ParishProperties2019;
 };
 
 export type Properties = ValueOf<YearToProperties>;

@@ -1,0 +1,33 @@
+{
+	"id": "2019-04-ew-bgc",
+	"kind": "boundary",
+	"title": "Parishes and non civil parished areas, April 2019 (England and Wales, generalised, clipped)",
+	"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-07",
+	"temporalCoverage": "2019",
+	"spatialCoverage": {
+		"geography": "parish",
+		"vintage": 2019,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"files": [
+		{
+			"path": "Parishes_and_Non_Civil_Parished_Areas_April_2019_GCB_EW_2022_7767177223882237005.geojson",
+			"role": "source",
+			"note": "Published as Parishes_and_Non_Civil_Parished_Areas_April_2019_GCB_EW_2022_7767177223882237005.geojson, 11,556 features on the British National Grid, which decode.ts reprojects. Published under the older GCB label for the same generalised, clipped product. Its code and name properties are lower case, unlike the releases around it."
+		}
+	]
+}
