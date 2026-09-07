@@ -87,7 +87,7 @@ export default function SchoolPerformanceConstituencyChart({
 
 	return (
 		<ChartCard
-			heading="GCSE Performance by Constituency [2024/25]"
+			heading="GCSE Performance [2024/25]"
 			headerEnd={
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
