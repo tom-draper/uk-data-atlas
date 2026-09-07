@@ -60,6 +60,7 @@ const boundaryData = (code: string): BoundaryData => {
 		nationalPark: { 2020: geojson },
 		countyElectoralDivision: { 2023: geojson },
 		travelToWorkArea: { 2011: geojson },
+		parish: { 2024: geojson },
 	};
 };
 

@@ -22,8 +22,9 @@ this repository. `scripts/sync-public-data.mjs` copies those two across.
 
 `<geography>` is the `BoundaryType` it belongs to, in kebab case.
 
-- Administrative: `ward`, `county-electoral-division`, `local-authority`,
-  `county-and-unitary-authority`, `combined-authority`, `region`, `country`.
+- Administrative: `parish`, `ward`, `county-electoral-division`,
+  `local-authority`, `county-and-unitary-authority`, `combined-authority`,
+  `region`, `country`.
 - Electoral: `constituency`, `scottish-parliamentary-constituency`,
   `scottish-parliamentary-region`, `senedd-constituency`,
   `senedd-electoral-region`.

@@ -762,6 +762,19 @@ const CATALOG = {
 			},
 		],
 	},
+	parish: {
+		releases: [
+			{
+				id: "2024-12-ew-bgc",
+				year: 2024,
+				month: 12,
+				extent: "ew",
+				codeKey: "PARNCP24CD",
+				nameKey: "PARNCP24NM",
+				asset: asset("parish", "2024-12-ew-bgc"),
+			},
+		],
+	},
 } as const satisfies Record<string, BoundaryFamily>;
 
 export type BoundaryType = keyof typeof CATALOG;

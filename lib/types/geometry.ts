@@ -311,6 +311,11 @@ interface TravelToWorkAreaProperties2011 {
 	TTWA11NM: string;
 }
 
+interface ParishProperties2024 {
+	PARNCP24CD: string;
+	PARNCP24NM: string;
+}
+
 // NI Super Output Area properties
 interface SuperOutputAreaProperties2011 {
 	SOA_CODE: string;
@@ -390,6 +395,7 @@ export type YearToProperties = {
 	nationalPark_2020: NationalParkProperties2020;
 	countyElectoralDivision_2023: CountyElectoralDivisionProperties2023;
 	travelToWorkArea_2011: TravelToWorkAreaProperties2011;
+	parish_2024: ParishProperties2024;
 };
 
 export type Properties = ValueOf<YearToProperties>;

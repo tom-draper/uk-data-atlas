@@ -47,6 +47,7 @@ const emptyCodeMappings = (): CodeMappings => ({
 	nationalPark: {},
 	countyElectoralDivision: {},
 	travelToWorkArea: {},
+	parish: {},
 });
 
 const emptyReverseMappings = (): ReverseCodeMappings => ({
@@ -80,6 +81,7 @@ const emptyReverseMappings = (): ReverseCodeMappings => ({
 	nationalPark: {},
 	countyElectoralDivision: {},
 	travelToWorkArea: {},
+	parish: {},
 });
 
 /** Mutable, framework-independent boundary-code lookup. */
