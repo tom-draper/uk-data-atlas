@@ -128,7 +128,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-1.7, 53.7, -1.4, 53.9],
 	},
 	Sheffield: {
-		lad_codes: ["E08000019"],
+		lad_codes: ["E08000039"],
 		bounds: [-1.6, 53.3, -1.3, 53.5],
 	},
 	Bradford: {
@@ -152,7 +152,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-1.55, 53.65, -1.45, 53.72],
 	},
 	Barnsley: {
-		lad_codes: ["E08000016"],
+		lad_codes: ["E08000038"],
 		bounds: [-1.55, 53.52, -1.45, 53.58],
 	},
 	Rotherham: {
@@ -428,7 +428,10 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-1.52, 52.88, -1.42, 52.97],
 	},
 	Northampton: {
-		lad_codes: ["E06000061"],
+		// West Northamptonshire. E06000061 next door is North
+		// Northamptonshire, which holds Kettering and Corby and none of the
+		// town, so nothing keyed to a ward or authority drew anything here.
+		lad_codes: ["E06000062"],
 		bounds: [-0.93, 52.22, -0.85, 52.27],
 	},
 	Lincoln: {
@@ -446,7 +449,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Scotland
 	Glasgow: {
-		lad_codes: ["S12000046"],
+		lad_codes: ["S12000049"],
 		bounds: [-4.35, 55.8, -4.15, 55.92],
 	},
 	Edinburgh: {
@@ -587,7 +590,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 			// County Durham and Northumberland Unitary Authorities
 			"E06000047", // County Durham
-			"E06000048", // Northumberland (***This was missing from your list***)
+			"E06000057", // Northumberland (***This was missing from your list***)
 
 			// Tyne and Wear Metropolitan Districts
 			"E08000037", // Gateshead (***The correct code for Gateshead***)
@@ -816,10 +819,10 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000201",
 			"E07000202",
 			"E07000203",
-			"E07000240",
-			"E07000241",
-			"E07000242",
-			"E07000243",
+			"E07000100",
+			"E07000104",
+			"E07000097",
+			"E07000101",
 			"E07000244",
 			"E07000245",
 
@@ -1015,10 +1018,10 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E08000035",
 			"E08000036",
 			// South Yorkshire
-			"E08000016",
+			"E08000038",
 			"E08000017",
 			"E08000018",
-			"E08000019",
+			"E08000039",
 			// North Yorkshire
 			"E07000163",
 			"E07000164",
@@ -1164,7 +1167,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"S12000035", // East Renfrewshire
 			"S12000038", // Renfrewshire
 			"S12000045", // Inverclyde
-			"S12000046", // East Dunbartonshire
+			"S12000049", // East Dunbartonshire
 			"S12000047", // West Dunbartonshire
 		],
 		bounds: [-4.6, 55.7, -4.0, 56.1],
