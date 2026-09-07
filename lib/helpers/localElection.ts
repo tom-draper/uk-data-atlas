@@ -72,7 +72,10 @@ export function computeLocalElectionYearData(
 
 		if (data) {
 			rawPartyVotes = data.partyVotes;
-			turnout = data.turnoutPercent;
+			// The LEAP archive publishes candidate votes but no electorate, so
+			// its wards carry a zero turnout meaning "not recorded". Treat it
+			// as absent, the way the area branches below already do.
+			turnout = data.turnoutPercent || null;
 		}
 	} else if (
 		selectedArea &&

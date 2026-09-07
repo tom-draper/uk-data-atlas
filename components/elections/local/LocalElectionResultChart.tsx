@@ -100,11 +100,11 @@ export default function LocalElectionResultChart({
 		<ChartCard
 			heading={`${data.year} Local Elections`}
 			headerEnd={
-				data.turnout && (
+				data.turnout ? (
 					<span className="text-[9px] text-gray-500 font-medium">
 						{data.turnout.toFixed(1)}% turnout
 					</span>
-				)
+				) : null
 			}
 			accent={accentColor}
 			isActive={isActive}
