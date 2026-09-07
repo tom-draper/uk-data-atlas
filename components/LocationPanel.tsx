@@ -27,6 +27,7 @@ import {
 } from "react";
 import { fetchBoundaryFile, getProp } from "@lib/data/boundaries/boundaries";
 import { BOUNDARY_CATALOG } from "@lib/data/boundaries/boundaries";
+import { featureExtent } from "@lib/data/boundaries/derived";
 
 interface LocationPanelProps {
 	selectedLocation: string | null;
@@ -57,41 +58,11 @@ const calculateWardPopulation = (wardData: PopulationWardData): number => {
 	);
 };
 
-/**
- * Calculate bounds from a GeoJSON feature
- */
+/** The extent of a ward, or the sentinel the panel treats as unknown. */
 const calculateFeatureBounds = (
-	feature: BoundaryGeojson["features"][0],
-): [number, number, number, number] => {
-	if (!feature?.geometry) {
-		return [-1, -1, -1, -1];
-	}
-
-	let minLng = Infinity,
-		minLat = Infinity,
-		maxLng = -Infinity,
-		maxLat = -Infinity;
-
-	// Positions nest to a different depth for Polygon and MultiPolygon, so the
-	// walker recurses until it reaches a [lon, lat] pair.
-	type Positions = number[] | Positions[];
-
-	const processCoords = (coords: Positions): void => {
-		const [first] = coords;
-		if (typeof first === "number") {
-			const [lng, lat] = coords as number[];
-			minLng = Math.min(minLng, lng);
-			maxLng = Math.max(maxLng, lng);
-			minLat = Math.min(minLat, lat);
-			maxLat = Math.max(maxLat, lat);
-			return;
-		}
-		for (const part of coords as Positions[]) processCoords(part);
-	};
-
-	processCoords(feature.geometry.coordinates);
-	return [minLng, minLat, maxLng, maxLat];
-};
+	feature: BoundaryGeojson["features"][0] | undefined,
+): [number, number, number, number] =>
+	(feature && featureExtent(feature)) ?? [-1, -1, -1, -1];
 
 export default function LocationPanel({
 	selectedLocation,

@@ -462,7 +462,14 @@ export type BoundaryGeometry = PolygonGeometry | MultiPolygonGeometry;
 interface BaseFeature {
 	type: "Feature";
 	id: number;
-	geometry: BoundaryGeometry;
+	/**
+	 * Null for a collection loaded from a release's properties sidecar rather
+	 * than its geometry. Every chart aggregates over its vintage by code
+	 * alone, so most vintages are held that way; only the one being drawn
+	 * carries coordinates. Read area and extent through the helpers in
+	 * `lib/data/boundaries/derived.ts`, which use the compiled values.
+	 */
+	geometry: BoundaryGeometry | null;
 }
 
 export type Feature = BoundaryGeojson["features"][0];

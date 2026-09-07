@@ -6,7 +6,8 @@ import type {
 	PropertyKeys,
 } from "@lib/types";
 import { getFeatureProp } from "@lib/types";
-import { calculateTotal, polygonAreaSqKm } from "../population";
+import { calculateTotal } from "../population";
+import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
 import { calculateAgeGroups } from "../ageDistribution";
 
 // Pre-computed decay weights for age 90+ distribution
@@ -118,7 +119,7 @@ export function accumulatePopulation(
 			females[age] = (females[age] || 0) + count;
 		}
 
-		aggregated.totalArea += polygonAreaSqKm(features[i].geometry);
+		aggregated.totalArea += featureAreaSqKm(features[i]);
 	}
 
 	return aggregated;

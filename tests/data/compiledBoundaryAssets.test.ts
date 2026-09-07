@@ -45,8 +45,8 @@ describe("compiled ward boundary assets", () => {
 				),
 			).toMatch(/^[EW]05/);
 
-			const coordinates = firstFeature.geometry.coordinates
-				.flat(Infinity)
+			const coordinates = firstFeature
+				.geometry!.coordinates.flat(Infinity)
 				.filter((value): value is number => typeof value === "number");
 			expect(coordinates.some((value) => Math.abs(value) < 10)).toBe(
 				true,

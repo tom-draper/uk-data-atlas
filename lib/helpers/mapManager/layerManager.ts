@@ -42,6 +42,18 @@ const emptyFeatureCollection = (): FeatureCollection => ({
 	features: [],
 });
 
+/**
+ * The collection handed to maplibre.
+ *
+ * GeoJSON allows a feature to carry no geometry, and one loaded from a
+ * release's properties sidecar does — but only the vintage being drawn ever
+ * reaches the map, and that one is always loaded with its coordinates.
+ * maplibre's own types do not admit the null, so the assertion is made here,
+ * once, at the edge rather than inside the render recipes.
+ */
+const asMapData = (geojson: BoundaryGeojson) =>
+	geojson as unknown as GeoJSON.FeatureCollection;
+
 export class LayerManager {
 	private lastFillPaint: FillPaintConfig | null = null;
 	private sourceGeojson: BoundaryGeojson | null = null;
@@ -98,7 +110,7 @@ export class LayerManager {
 			if (this.sourceGeojson !== geojson) {
 				// Update source data in-place to avoid remove/add flash.
 				const src = this.map.getSource(SOURCE_ID) as GeoJSONSource;
-				src.setData(geojson);
+				src.setData(asMapData(geojson));
 				this.sourceGeojson = geojson;
 			}
 			this.applyVisibility(visibility);
@@ -473,7 +485,7 @@ export class LayerManager {
 	private addSource(geojson: BoundaryGeojson): void {
 		this.map.addSource(SOURCE_ID, {
 			type: "geojson",
-			data: geojson,
+			data: asMapData(geojson),
 		});
 	}
 }

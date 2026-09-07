@@ -16,25 +16,12 @@ import {
 	BrexitConstituencyDataset,
 } from "@lib/types/referendum";
 import { MapOptions } from "@lib/types/mapOptions";
-import { polygonAreaSqKm } from "../population";
+import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
 import { getColorForBrexitLeave } from "../colorScale/datasetColors";
 import { getColor } from "../colorScale/themes";
 import { CustomPoint } from "@/lib/types/custom";
 
 export const DEFAULT_COLOR = "#cccccc";
-
-// Cache computed area per feature geometry — avoids re-traversing polygon vertices across dataset switches
-const featureAreaCache = new WeakMap<object, number>();
-
-function getCachedArea(feature: Feature): number {
-	const geom = feature.geometry.coordinates as object;
-	let area = featureAreaCache.get(geom);
-	if (area === undefined) {
-		area = polygonAreaSqKm(feature.geometry);
-		featureAreaCache.set(geom, area);
-	}
-	return area;
-}
 
 export class FeatureBuilder {
 	formatBoundaryGeoJson(features: Features): BoundaryGeojson {
@@ -92,7 +79,7 @@ export class FeatureBuilder {
 	}
 
 	getFeatureAreaSqKm(feature: Feature): number {
-		return getCachedArea(feature);
+		return featureAreaSqKm(feature);
 	}
 
 	buildElectionWinnerFeatures(

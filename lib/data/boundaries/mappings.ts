@@ -168,6 +168,9 @@ export const buildConstituencyWardMappings = (
 		);
 		if (!code) continue;
 
+		// A vintage held as properties alone cannot be matched by shape; the
+		// precompiled mappings cover that case, this fallback needs geometry.
+		if (!feature.geometry) continue;
 		const rings = outerRings(feature.geometry);
 		let minX = Infinity;
 		let minY = Infinity;
@@ -192,6 +195,7 @@ export const buildConstituencyWardMappings = (
 		);
 		if (!wardCode) continue;
 
+		if (!feature.geometry) continue;
 		// Only the first part is needed: this is a rough centroid for labelling.
 		const [ring] = outerRings(feature.geometry);
 		if (!ring) continue;

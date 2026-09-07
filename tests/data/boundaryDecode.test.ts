@@ -85,7 +85,8 @@ describe("decodeBoundaryData", () => {
 		expect(boundary.crs.properties.name).toBe(
 			"urn:ogc:def:crs:OGC:1.3:CRS84",
 		);
-		const [longitude, latitude] = boundary.features[0].geometry.coordinates;
+		const [longitude, latitude] =
+			boundary.features[0].geometry!.coordinates;
 		expect(longitude).toBeCloseTo(0.1, 1);
 		expect(latitude).toBeCloseTo(51.5, 1);
 	});

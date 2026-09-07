@@ -10,7 +10,8 @@ import {
 	SelectedArea,
 	getFeatureProp,
 } from "@/lib/types";
-import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
+import { calculateTotal } from "@/lib/helpers/population";
+import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartContentPlaceholder,
@@ -33,15 +34,8 @@ interface PopulationDensityChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-// Cache computed area per feature object — avoids re-traversing polygon vertices on every hover
-const featureAreaCache = new WeakMap<Feature, number>();
-
 const getWardPopulationDensity = (feature: Feature, total: number) => {
-	let areaSqKm = featureAreaCache.get(feature);
-	if (areaSqKm === undefined) {
-		areaSqKm = polygonAreaSqKm(feature.geometry);
-		featureAreaCache.set(feature, areaSqKm);
-	}
+	const areaSqKm = featureAreaSqKm(feature);
 	const density = areaSqKm > 0 ? total / areaSqKm : 0;
 	return { density, areaSqKm };
 };
@@ -262,16 +256,8 @@ function PopulationDensityChart({
 								const wardTotal = calculateTotal(
 									populationData.total,
 								);
-								let wardArea =
-									featureAreaCache.get(wardFeature);
-								if (wardArea === undefined) {
-									wardArea = polygonAreaSqKm(
-										wardFeature.geometry,
-									);
-									featureAreaCache.set(wardFeature, wardArea);
-								}
 								totalPopulation += wardTotal;
-								totalArea += wardArea;
+								totalArea += featureAreaSqKm(wardFeature);
 							}
 						}
 					}
@@ -320,13 +306,8 @@ function PopulationDensityChart({
 					const wardFeature = featureIndex.get(wardCode);
 					if (wardFeature) {
 						const wardTotal = calculateTotal(populationData.total);
-						let wardArea = featureAreaCache.get(wardFeature);
-						if (wardArea === undefined) {
-							wardArea = polygonAreaSqKm(wardFeature.geometry);
-							featureAreaCache.set(wardFeature, wardArea);
-						}
 						totalPopulation += wardTotal;
-						totalArea += wardArea;
+						totalArea += featureAreaSqKm(wardFeature);
 					}
 				}
 			}
