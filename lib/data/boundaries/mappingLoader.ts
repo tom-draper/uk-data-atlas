@@ -9,8 +9,19 @@ import {
 	extractWardLadMappings,
 	type PrecompiledBoundaryMappings,
 } from "./mappings";
+import { wardLadFromGeometry } from "./wardLadGeometry";
 
 type BoundaryGroup = Record<number, BoundaryGeojson>;
+
+/**
+ * How ward releases spell the local authority they name — `lad16cd` among
+ * them, which the local authority family's own key list does not carry, since
+ * it describes a different set of files. Reading a ward's parent with the
+ * wrong list finds nothing and the release contributes no mapping at all.
+ */
+const WARD_PARENT_CODE_KEYS =
+	BOUNDARY_CATALOG.ward.properties.parentCode ??
+	BOUNDARY_CATALOG.localAuthority.properties.code;
 
 async function loadBoundaryFile(
 	read: (path: string) => Promise<string>,
@@ -48,12 +59,42 @@ export async function loadBoundaryMappings(
 		const mappings = extractWardLadMappings(
 			boundary.features,
 			BOUNDARY_CATALOG.ward.properties.code,
-			BOUNDARY_CATALOG.localAuthority.properties.code,
+			WARD_PARENT_CODE_KEYS,
 		);
 		Object.assign(wardToLad, mappings.wardToLad);
 		if (Object.keys(mappings.ladToWards).length > 0) {
 			ladToWards[Number(year)] = mappings.ladToWards;
 		}
+	}
+
+	// ONS published no local authority for the December 2017 to 2021 wards, so
+	// those releases contribute nothing above, and a ward one of them
+	// introduced that was later abolished ends up in no mapping at all. That
+	// ward is then dropped from every filtered view, because `filterFeatures`
+	// keeps a ward only when its authority is one of the location's — which is
+	// how a card keyed to an older release comes to draw nothing anywhere but
+	// the whole United Kingdom, leaving whatever was on the map before it.
+	//
+	// Fill only the gaps, and fill them from the newest authorities, because
+	// that is the vocabulary the gazetteer's locations mostly speak. A ward
+	// that already names its own authority keeps it: that release said which
+	// authority it meant, and some locations are still named by the codes of
+	// the era those releases belong to.
+	const newestLocalAuthorities =
+		localAuthorities[
+			Math.max(...Object.keys(localAuthorities).map(Number))
+		];
+	for (const boundary of Object.values(wards)) {
+		Object.assign(
+			wardToLad,
+			wardLadFromGeometry(
+				boundary.features,
+				BOUNDARY_CATALOG.ward.properties.code,
+				newestLocalAuthorities.features,
+				BOUNDARY_CATALOG.localAuthority.properties.code,
+				(wardCode) => !wardToLad[wardCode],
+			),
+		);
 	}
 
 	const latestWardYear = Math.max(...Object.keys(wards).map(Number));
