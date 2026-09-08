@@ -986,6 +986,10 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 	// Lancashire
 	Lancashire: {
 		lad_codes: [
+			// Historic Lancashire unitary areas, plus Sefton for Southport.
+			"E06000008", // Blackburn with Darwen
+			"E06000009", // Blackpool
+			"E08000014", // Sefton (Southport)
 			"E07000117",
 			"E07000118",
 			"E07000119",
@@ -999,7 +1003,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000127",
 			"E07000128",
 		],
-		bounds: [-3.2, 53.7, -2.2, 54.2],
+		bounds: [-3.2, 53.3, -2.2, 54.2],
 	},
 
 	// Cheshire

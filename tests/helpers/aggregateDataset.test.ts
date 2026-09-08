@@ -73,4 +73,46 @@ describe("aggregateDataset", () => {
 		aggregateDataset(config, mapManager, boundaryData, "Manchester");
 		expect(calculateStats).toHaveBeenCalledTimes(2);
 	});
+
+	it("gives a replacement location slice a fresh aggregator cache identity", () => {
+		const mapManager = {} as any;
+		const boundaryData = {
+			localAuthority: {
+				2025: { type: "FeatureCollection", features: [] },
+			},
+		} as any;
+		const calculateStats = vi.fn(() => ({ total: 1 }));
+		const first = {
+			"2025": {
+				id: "example",
+				type: "custom",
+				kind: "choropleth",
+				year: 2025,
+				boundaryYear: 2025,
+				boundaryType: "localAuthority",
+				dataColumn: "Example",
+				data: { E1: 1 },
+			},
+		} as any;
+		const replacement = {
+			"2025": { ...first["2025"], data: { E2: 2 } },
+		} as any;
+
+		for (const datasets of [first, replacement]) {
+			aggregateDataset(
+				{
+					datasets,
+					boundaryType: "localAuthority",
+					calculateStats,
+				},
+				mapManager,
+				boundaryData,
+				"Lancashire",
+			);
+		}
+
+		expect(calculateStats).toHaveBeenCalledTimes(2);
+		const calls = calculateStats.mock.calls as unknown as unknown[][];
+		expect(calls[0]![4]).not.toBe(calls[1]![4]);
+	});
 });

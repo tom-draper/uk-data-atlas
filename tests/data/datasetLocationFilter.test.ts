@@ -115,4 +115,36 @@ describe("location-scoped chart datasets", () => {
 			[includedCode]: { votes: 10 },
 		});
 	});
+
+	it("returns compact all-location population totals before slicing wards", async () => {
+		const includedLad = greaterManchester.memberCodes[0]!;
+		const payload = {
+			2022: {
+				boundaryYear: 2023,
+				data: {
+					E05000001: {
+						ladCode: includedLad,
+						total: { 0: 100, 1: 200 },
+					},
+					E05000002: {
+						ladCode: "E06000001",
+						total: { 0: 300 },
+					},
+				},
+			},
+		};
+
+		const filtered = (await filterDatasetPayloadForLocation(payload, {
+			location: "Greater Manchester",
+			boundaryType: "ward",
+			includeLocationPopulationSummary: true,
+		})) as typeof payload & {
+			2022: { locationPopulations: Record<string, number> };
+		};
+
+		expect(filtered[2022].locationPopulations["Greater Manchester"]).toBe(
+			300,
+		);
+		expect(filtered[2022].locationPopulations.England).toBe(600);
+	});
 });

@@ -180,6 +180,7 @@ export default function AtlasClient() {
 			)}
 			<MapInterface
 				datasets={datasets}
+				datasetsLoading={datasetsLoading}
 				selectedLocation={selectedLocation}
 				setSelectedLocation={setSelectedLocation}
 				activeViz={activeViz}

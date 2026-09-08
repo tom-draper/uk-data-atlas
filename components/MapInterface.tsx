@@ -33,6 +33,7 @@ import type { Map as MapLibreMap } from "maplibre-gl";
 
 interface MapInterfaceProps {
 	datasets: Datasets;
+	datasetsLoading: boolean;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	selectedLocation: string;
@@ -46,6 +47,7 @@ interface MapInterfaceProps {
 
 export default function MapInterface({
 	datasets,
+	datasetsLoading,
 	activeViz,
 	setActiveViz,
 	selectedLocation,
@@ -326,7 +328,7 @@ export default function MapInterface({
 		return { ...datasets, localElection: normalizedLocalElection };
 	}, [datasets, boundaryCodes?.ward, getCodeForYear]);
 
-	const chartsLoading = boundariesLoading || !mapManager;
+	const chartsLoading = datasetsLoading || boundariesLoading || !mapManager;
 
 	return (
 		<ThemeProvider value={mapOptions.baseStyle.id === "darkMatter"}>

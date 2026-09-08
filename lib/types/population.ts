@@ -26,6 +26,8 @@ export interface PopulationDataset {
 	boundaryYear: WardYear;
 	boundaryType: "ward";
 	data: Record<string, PopulationWardData>;
+	/** Compact list-panel totals calculated while the worker has the full data. */
+	locationPopulations?: Record<string, number>;
 }
 
 /**

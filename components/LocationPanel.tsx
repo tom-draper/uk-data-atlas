@@ -2,12 +2,7 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
 import { gazetteer } from "@lib/data/gazetteer/static";
-import {
-	LocationBounds,
-	BoundaryGeojson,
-	PopulationDataset,
-	PopulationWardData,
-} from "@lib/types";
+import { LocationBounds, PopulationDataset } from "@lib/types";
 
 // Named locations sourced from the gazetteer (built once). Shaped as the old
 // LocationBounds record so downstream list/handlers are unchanged.
@@ -18,19 +13,12 @@ const NAMED_LOCATIONS: Record<string, LocationBounds> = Object.fromEntries(
 	}),
 );
 import {
-	useEffect,
 	useState,
 	useTransition,
 	useDeferredValue,
 	useRef,
 	useMemo,
 } from "react";
-import {
-	fetchBoundaryProperties,
-	getProp,
-} from "@lib/data/boundaries/boundaries";
-import { BOUNDARY_CATALOG } from "@lib/data/boundaries/boundaries";
-import { featureExtent } from "@lib/data/boundaries/derived";
 
 interface LocationPanelProps {
 	selectedLocation: string | null;
@@ -43,36 +31,11 @@ interface LocationPanelProps {
 	populationDataset: PopulationDataset | undefined;
 }
 
-const COUNTRY_LOCATIONS = new Set([
-	"England",
-	"Scotland",
-	"Wales",
-	"Northern Ireland",
-	"United Kingdom",
-]);
-
-/**
- * Calculate total population for a ward
- */
-const calculateWardPopulation = (wardData: PopulationWardData): number => {
-	return Object.values(wardData.total).reduce(
-		(sum: number, val: number) => sum + val,
-		0,
-	);
-};
-
-/** The extent of a ward, or the sentinel the panel treats as unknown. */
-const calculateFeatureBounds = (
-	feature: BoundaryGeojson["features"][0] | undefined,
-): [number, number, number, number] =>
-	(feature && featureExtent(feature)) ?? [-1, -1, -1, -1];
-
 export default function LocationPanel({
 	selectedLocation,
 	onLocationClick,
 	populationDataset,
 }: LocationPanelProps) {
-	const [geojson, setGeojson] = useState<BoundaryGeojson | null>(null);
 	const [searchOpen, setSearchOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [, startTransition] = useTransition();
@@ -80,121 +43,16 @@ export default function LocationPanel({
 
 	const deferredSearchQuery = useDeferredValue(searchQuery);
 
-	useEffect(() => {
-		// Only each ward's extent is wanted here, which the properties sidecar
-		// carries, so this does not pull a whole vintage's coordinates in.
-		fetchBoundaryProperties(BOUNDARY_CATALOG.ward.propertyVintages[2023]!)
-			.then((data) => setGeojson(data))
-			.catch((err) =>
-				console.error("Failed to load ward boundaries:", err),
-			);
-	}, []);
-
-	const geojsonFeatureMap = useMemo(() => {
-		if (!geojson)
-			return {} as Record<string, BoundaryGeojson["features"][0]>;
-
-		const map: Record<string, BoundaryGeojson["features"][0]> = {};
-		geojson.features.forEach((feature) => {
-			const wardCode = getProp(
-				feature.properties,
-				BOUNDARY_CATALOG.ward.properties.code,
-			);
-			if (wardCode) {
-				map[wardCode] = feature;
-			}
-		});
-
-		return map;
-	}, [geojson]);
-
-	const enrichedPopulation = useMemo(() => {
-		const enriched: Record<
-			string,
-			PopulationWardData & {
-				bounds: [number, number, number, number];
-				totalPopulation: number;
-			}
-		> = {};
-
-		Object.entries(populationDataset?.data ?? {}).forEach(
-			([wardCode, wardData]: [string, PopulationWardData]) => {
-				const feature = geojsonFeatureMap[wardCode];
-				const bounds: [number, number, number, number] = feature
-					? calculateFeatureBounds(feature)
-					: [-1, -1, -1, -1];
-				const totalPopulation = calculateWardPopulation(wardData);
-
-				enriched[wardCode] = {
-					...wardData,
-					bounds,
-					totalPopulation,
-				};
-			},
-		);
-
-		return enriched;
-	}, [populationDataset?.data, geojsonFeatureMap]);
-
-	const locationPopulations = useMemo(() => {
-		const populations = new Map<string, number>();
-		const populationByLad = new Map<string, number>();
-
-		const countryPops: Record<string, number> = {
-			"United Kingdom": 0,
-			England: 0,
-			Scotland: 5479900,
-			Wales: 0,
-			"Northern Ireland": 1903175,
-		};
-
-		Object.entries(enrichedPopulation).forEach(([wardCode, wardData]) => {
-			const population = wardData.totalPopulation;
-
-			countryPops["United Kingdom"] += population;
-
-			if (wardCode.startsWith("E")) countryPops["England"] += population;
-			else if (wardCode.startsWith("S"))
-				countryPops["Scotland"] += population;
-			else if (wardCode.startsWith("W"))
-				countryPops["Wales"] += population;
-			else if (wardCode.startsWith("N"))
-				countryPops["Northern Ireland"] += population;
-
-			populationByLad.set(
-				wardData.ladCode,
-				(populationByLad.get(wardData.ladCode) ?? 0) + population,
-			);
-		});
-
-		Object.entries(countryPops).forEach(([country, pop]) => {
-			populations.set(country, pop);
-		});
-
-		Object.entries(NAMED_LOCATIONS).forEach(([location, bounds]) => {
-			if (COUNTRY_LOCATIONS.has(location)) return;
-
-			if (bounds.lad_codes && bounds.lad_codes.length > 0) {
-				const total = bounds.lad_codes.reduce(
-					(sum, ladCode) => sum + (populationByLad.get(ladCode) ?? 0),
-					0,
-				);
-				populations.set(location, total);
-			}
-		});
-
-		return populations;
-	}, [enrichedPopulation]);
-
 	const allLocations = useMemo(() => {
 		return Object.entries(NAMED_LOCATIONS)
 			.flatMap(([location, bounds]) => {
-				const totalPopulation = locationPopulations.get(location) || 0;
+				const totalPopulation =
+					populationDataset?.locationPopulations?.[location] || 0;
 				if (totalPopulation <= 0) return [];
 				return [{ name: location, totalPopulation, bounds }];
 			})
 			.sort((a, b) => b.totalPopulation - a.totalPopulation);
-	}, [locationPopulations]);
+	}, [populationDataset?.locationPopulations]);
 
 	const filteredLocations = useMemo(() => {
 		if (!deferredSearchQuery.trim()) return allLocations;

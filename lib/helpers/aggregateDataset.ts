@@ -31,6 +31,24 @@ const aggregateCache = new WeakMap<
 	>
 >();
 
+// Dataset ids are stable across locations, whereas each worker response has a
+// distinct data object. Include that identity in the aggregator cache key so a
+// temporary aggregate against the previous location's slice cannot be reused
+// after the matching slice arrives.
+const dataCacheIds = new WeakMap<object, number>();
+let nextDataCacheId = 0;
+
+const cacheDatasetId = (datasetId: string, dataset: object) => {
+	const data = Reflect.get(dataset, "data");
+	const identity = data && typeof data === "object" ? data : dataset;
+	let id = dataCacheIds.get(identity);
+	if (id === undefined) {
+		id = nextDataCacheId++;
+		dataCacheIds.set(identity, id);
+	}
+	return `${datasetId}:${id}`;
+};
+
 function cachedAggregate(
 	aggregator: DatasetAggregator,
 	boundaryData: BoundaryData,
@@ -91,7 +109,7 @@ export function aggregateDataset<T extends BoundaryDataset>(
 						geojson,
 						dataset.data,
 						location,
-						datasetId,
+						cacheDatasetId(datasetId, dataset),
 						dataset,
 					);
 				} else {

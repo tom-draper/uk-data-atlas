@@ -44,6 +44,8 @@ export function useDatasets(selectedLocation: string): UseDatasetsResult {
 			filter: {
 				location: selectedLocation,
 				boundaryType: definition.boundaryType,
+				includeLocationPopulationSummary:
+					definition.type === "population",
 			},
 			enabled: getChartDefinitions(definition).some((chart) =>
 				isEnabled(chart.key),

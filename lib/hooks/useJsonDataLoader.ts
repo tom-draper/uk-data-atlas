@@ -17,7 +17,7 @@ const pending = new Map<
 const pendingFetches = new Map<string, Promise<unknown>>();
 
 const requestCacheKey = (url: string, filter?: DatasetLocationFilter) =>
-	`${url}\u0000${filter?.location ?? ""}\u0000${filter?.boundaryType ?? ""}`;
+	`${url}\u0000${filter?.location ?? ""}\u0000${filter?.boundaryType ?? ""}\u0000${filter?.includeLocationPopulationSummary ?? false}`;
 
 function getWorker(): Worker | null {
 	if (typeof window === "undefined" || typeof Worker === "undefined")
@@ -111,7 +111,7 @@ export function useJsonDatasetLoaders<T>(
 	const requestKey = requests
 		.map(
 			(request) =>
-				`${request.key}:${request.url}:${request.enabled}:${request.filter?.location ?? ""}:${request.filter?.boundaryType ?? ""}`,
+				`${request.key}:${request.url}:${request.enabled}:${request.filter?.location ?? ""}:${request.filter?.boundaryType ?? ""}:${request.filter?.includeLocationPopulationSummary ?? false}`,
 		)
 		.join("|");
 

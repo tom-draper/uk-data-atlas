@@ -7,11 +7,13 @@ import { withCDN } from "../helpers/cdn";
 export type DatasetLocationFilter = {
 	location: string;
 	boundaryType: BoundaryType;
+	includeLocationPopulationSummary?: boolean;
 };
 
 type DatasetRecord = {
 	boundaryYear?: number;
 	data?: Record<string, unknown>;
+	locationPopulations?: Record<string, number>;
 	[key: string]: unknown;
 };
 
@@ -22,6 +24,54 @@ const COUNTRY_PREFIXES: Record<string, string> = {
 	Scotland: "S",
 	Wales: "W",
 	"Northern Ireland": "N",
+};
+
+const populationTotal = (record: unknown): number => {
+	if (!record || typeof record !== "object") return 0;
+	const total = Reflect.get(record, "total");
+	if (!total || typeof total !== "object") return 0;
+	return Object.values(total as Record<string, unknown>).reduce<number>(
+		(sum, value) => sum + (typeof value === "number" ? value : 0),
+		0,
+	);
+};
+
+const locationPopulationSummary = (data: Record<string, unknown>) => {
+	const byLad = new Map<string, number>();
+	const countries: Record<string, number> = {
+		"United Kingdom": 0,
+		England: 0,
+		Scotland: 5_479_900,
+		Wales: 0,
+		"Northern Ireland": 1_903_175,
+	};
+
+	for (const [wardCode, record] of Object.entries(data)) {
+		const population = populationTotal(record);
+		countries["United Kingdom"] += population;
+		if (wardCode.startsWith("E")) countries.England += population;
+		else if (wardCode.startsWith("S")) countries.Scotland += population;
+		else if (wardCode.startsWith("W")) countries.Wales += population;
+		else if (wardCode.startsWith("N"))
+			countries["Northern Ireland"] += population;
+
+		const ladCode =
+			record && typeof record === "object"
+				? Reflect.get(record, "ladCode")
+				: undefined;
+		if (typeof ladCode === "string")
+			byLad.set(ladCode, (byLad.get(ladCode) ?? 0) + population);
+	}
+
+	return Object.fromEntries(
+		gazetteer.namedLocations().map((location) => {
+			if (location in countries) return [location, countries[location]!];
+			const total = (
+				gazetteer.namedLocation(location)?.memberCodes ?? []
+			).reduce((sum, ladCode) => sum + (byLad.get(ladCode) ?? 0), 0);
+			return [location, total];
+		}),
+	);
 };
 const BOUNDARY_MAPPINGS_URL = withCDN(
 	"/data/precompiled/boundary-mappings.json",
@@ -204,11 +254,22 @@ export const filterDatasetPayloadForLocation = async (
 				)
 					return [id, dataset] as const;
 				const matcher = await matcherFor(filter, dataset.boundaryYear);
-				if (!matcher) return [id, dataset] as const;
+				const locationPopulations =
+					filter.includeLocationPopulationSummary
+						? locationPopulationSummary(dataset.data)
+						: undefined;
+				if (!matcher)
+					return [
+						id,
+						locationPopulations
+							? { ...dataset, locationPopulations }
+							: dataset,
+					] as const;
 				return [
 					id,
 					{
 						...dataset,
+						...(locationPopulations && { locationPopulations }),
 						data: Object.fromEntries(
 							Object.entries(dataset.data).filter(([code]) =>
 								matcher(code),
