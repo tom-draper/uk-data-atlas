@@ -84,12 +84,26 @@ const regionForLad = (gazetteer: Gazetteer, code: string) => {
 	return countryForCode(code);
 };
 
-const regionForRecord = (gazetteer: Gazetteer, record: unknown) => {
+const ladCodeForRecord = (
+	record: unknown,
+	code: string,
+	wardToLad: Record<string, string> = {},
+) => {
 	if (!record || typeof record !== "object") return null;
 	const ladCode = Reflect.get(record, "ladCode");
-	return typeof ladCode === "string"
-		? regionForLad(gazetteer, ladCode)
-		: null;
+	return typeof ladCode === "string" && ladCode !== "Unknown"
+		? ladCode
+		: (wardToLad[code] ?? null);
+};
+
+const regionForRecord = (
+	gazetteer: Gazetteer,
+	record: unknown,
+	code: string,
+	wardToLad?: Record<string, string>,
+) => {
+	const ladCode = ladCodeForRecord(record, code, wardToLad);
+	return ladCode ? regionForLad(gazetteer, ladCode) : null;
 };
 
 const populationTotal = (record: unknown) => {
@@ -294,6 +308,7 @@ const localElectionAggregate = (records: LocalElectionRecord[]) => {
 const localElectionLocationSummaries = (
 	gazetteer: Gazetteer,
 	payload: DatasetPayload,
+	wardToLad: Record<string, string>,
 ) =>
 	Object.fromEntries(
 		Object.entries(payload).map(([datasetId, dataset]) => [
@@ -303,17 +318,25 @@ const localElectionLocationSummaries = (
 					const members = new Set(
 						gazetteer.namedLocation(location)?.memberCodes ?? [],
 					);
-					const records = Object.values(dataset.data ?? {}).filter(
-						(record) => {
-							const ladCode = Reflect.get(record, "ladCode");
-							if (typeof ladCode !== "string") return false;
-							if (location === "United Kingdom") return true;
+					const records = Object.entries(dataset.data ?? {}).flatMap(
+						([code, record]) => {
+							const ladCode = ladCodeForRecord(
+								record,
+								code,
+								wardToLad,
+							);
+							if (!ladCode) return [];
+							if (location === "United Kingdom")
+								return [record as LocalElectionRecord];
 							const prefix = COUNTRY_PREFIXES[location];
-							return prefix
+							const matches = prefix
 								? ladCode.startsWith(prefix)
 								: members.has(ladCode);
+							return matches
+								? [record as LocalElectionRecord]
+								: [];
 						},
-					) as LocalElectionRecord[];
+					);
 					return [location, localElectionAggregate(records)];
 				}),
 			),
@@ -362,6 +385,7 @@ export async function writeDatasetRegionChunks({
 					? localElectionLocationSummaries(
 							gazetteer,
 							value as DatasetPayload,
+							boundaryMappings?.wardToLad ?? {},
 						)
 					: undefined;
 		for (const region of REGION_CHUNK_KEYS) chunks.set(region, {});
@@ -372,7 +396,14 @@ export async function writeDatasetRegionChunks({
 			if (!dataset.data) continue;
 			const records = new Map<RegionChunkKey, Record<string, unknown>>();
 			for (const [code, record] of Object.entries(dataset.data)) {
-				const region = regionForRecord(gazetteer, record);
+				const region = regionForRecord(
+					gazetteer,
+					record,
+					code,
+					file === "local-election"
+						? (boundaryMappings?.wardToLad ?? {})
+						: undefined,
+				);
 				if (!region) continue;
 				const regionRecords = records.get(region) ?? {};
 				regionRecords[code] = record;

@@ -2,6 +2,7 @@ import {
 	filterDatasetPayloadForLocation,
 	type DatasetLocationFilter,
 } from "../data/datasetLocationFilter";
+import { mergeDatasetPayloads } from "../data/mergeDatasetPayloads";
 
 interface Req {
 	id: number;
@@ -14,30 +15,6 @@ interface CancelReq {
 	type: "cancel";
 	id: number;
 }
-
-const mergePayloads = (payloads: unknown[]) => {
-	const merged: Record<string, Record<string, unknown>> = {};
-	for (const payload of payloads) {
-		for (const [datasetId, dataset] of Object.entries(
-			payload as Record<string, Record<string, unknown>>,
-		)) {
-			const existing = merged[datasetId];
-			const data = dataset.data as Record<string, unknown> | undefined;
-			if (!existing) {
-				merged[datasetId] = {
-					...dataset,
-					...(data && { data: { ...data } }),
-				};
-				continue;
-			}
-			if (data) {
-				const existingData = existing.data as Record<string, unknown>;
-				existing.data = { ...existingData, ...data };
-			}
-		}
-	}
-	return merged;
-};
 
 const controllers = new Map<number, AbortController>();
 
@@ -69,7 +46,7 @@ self.addEventListener("message", async (e: MessageEvent<Req | CancelReq>) => {
 		try {
 			payload =
 				chunkUrls && chunkUrls.length > 0
-					? mergePayloads(
+					? mergeDatasetPayloads(
 							await Promise.all(
 								chunkUrls.map((chunkUrl) =>
 									fetchJson(chunkUrl, controller.signal),
