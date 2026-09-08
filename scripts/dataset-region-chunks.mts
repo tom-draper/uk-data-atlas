@@ -23,7 +23,28 @@ type DatasetPayload = Record<
 	{ data?: Record<string, unknown>; [key: string]: unknown }
 >;
 
+type LocalElectionRecord = {
+	ladCode?: string;
+	electorate?: number;
+	totalVotes?: number;
+	partyVotes?: Record<string, number | undefined>;
+};
+
 const CHUNKED_FILES = new Set(["population", "local-election"]);
+const LOCAL_ELECTION_PARTIES = [
+	"LAB",
+	"CON",
+	"LD",
+	"GREEN",
+	"REF",
+	"IND",
+	"DUP",
+	"PC",
+	"SNP",
+	"SF",
+	"APNI",
+	"SDLP",
+] as const;
 
 const countryForCode = (code: string): RegionChunkKey | null => {
 	if (code.startsWith("S")) return "Scotland";
@@ -102,6 +123,56 @@ const populationLocationSummary = (
 	);
 };
 
+const localElectionAggregate = (records: LocalElectionRecord[]) => {
+	const partyVotes = Object.fromEntries(
+		LOCAL_ELECTION_PARTIES.map((party) => [party, 0]),
+	) as Record<string, number>;
+	let electorate = 0;
+	let totalVotes = 0;
+	for (const record of records) {
+		electorate += record.electorate ?? 0;
+		totalVotes += record.totalVotes ?? 0;
+		for (const party of LOCAL_ELECTION_PARTIES)
+			partyVotes[party] += record.partyVotes?.[party] ?? 0;
+	}
+	return { partyVotes, electorate, totalVotes };
+};
+
+const localElectionLocationSummaries = (
+	gazetteer: Gazetteer,
+	payload: DatasetPayload,
+) =>
+	Object.fromEntries(
+		Object.entries(payload).map(([datasetId, dataset]) => [
+			datasetId,
+			Object.fromEntries(
+				gazetteer.namedLocations().map((location) => {
+					const countryPrefix: Record<string, string> = {
+						England: "E",
+						Scotland: "S",
+						Wales: "W",
+						"Northern Ireland": "N",
+					};
+					const members = new Set(
+						gazetteer.namedLocation(location)?.memberCodes ?? [],
+					);
+					const records = Object.values(dataset.data ?? {}).filter(
+						(record) => {
+							const ladCode = Reflect.get(record, "ladCode");
+							if (typeof ladCode !== "string") return false;
+							if (location === "United Kingdom") return true;
+							const prefix = countryPrefix[location];
+							return prefix
+								? ladCode.startsWith(prefix)
+								: members.has(ladCode);
+						},
+					) as LocalElectionRecord[];
+					return [location, localElectionAggregate(records)];
+				}),
+			),
+		]),
+	);
+
 const writeAtomically = async (path: string, contents: string) => {
 	await mkdir(dirname(path), { recursive: true });
 	const temporaryPath = `${path}.${process.pid}.tmp`;
@@ -130,6 +201,13 @@ export async function writeDatasetRegionChunks({
 			file === "population"
 				? populationLocationSummary(gazetteer, value as DatasetPayload)
 				: undefined;
+		const locationAggregates =
+			file === "local-election"
+				? localElectionLocationSummaries(
+						gazetteer,
+						value as DatasetPayload,
+					)
+				: undefined;
 		for (const region of REGION_CHUNK_KEYS) chunks.set(region, {});
 
 		for (const [datasetId, dataset] of Object.entries(
@@ -148,6 +226,9 @@ export async function writeDatasetRegionChunks({
 				chunks.get(region)![datasetId] = {
 					...dataset,
 					...(locationPopulations && { locationPopulations }),
+					...(locationAggregates && {
+						locationAggregates: locationAggregates[datasetId],
+					}),
 					data,
 				};
 			}

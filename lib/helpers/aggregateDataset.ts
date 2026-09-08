@@ -85,8 +85,19 @@ export function aggregateDataset<T extends BoundaryDataset>(
 	location: string | null,
 ): Record<string, any> | null {
 	if (Object.keys(config.datasets).length === 0) return null;
+	const precomputed = Object.fromEntries(
+		Object.entries(config.datasets).flatMap(([datasetId, dataset]) => {
+			const aggregate = Reflect.get(dataset, "locationAggregate");
+			if (aggregate === undefined) return [];
+			const key = config.keyBy === "id" ? datasetId : dataset.year;
+			return [[key, aggregate]];
+		}),
+	);
+	if (Object.keys(precomputed).length === Object.keys(config.datasets).length)
+		return precomputed;
 
-	if (!aggregator) return null;
+	if (!aggregator)
+		return Object.keys(precomputed).length ? precomputed : null;
 
 	const cacheKey = `${config.boundaryType}:${config.keyBy ?? "year"}:${location ?? ""}`;
 	return cachedAggregate(
@@ -103,6 +114,14 @@ export function aggregateDataset<T extends BoundaryDataset>(
 				const geojson =
 					boundaryData[config.boundaryType]?.[dataset.boundaryYear];
 				const key = config.keyBy === "id" ? datasetId : dataset.year;
+				const precomputedAggregate = Reflect.get(
+					dataset,
+					"locationAggregate",
+				);
+				if (precomputedAggregate !== undefined) {
+					result[key] = precomputedAggregate;
+					continue;
+				}
 				if (dataset.data && geojson) {
 					result[key] = config.calculateStats(
 						aggregator,

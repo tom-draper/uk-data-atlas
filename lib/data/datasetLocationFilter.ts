@@ -14,6 +14,8 @@ type DatasetRecord = {
 	boundaryYear?: number;
 	data?: Record<string, unknown>;
 	locationPopulations?: Record<string, number>;
+	locationAggregate?: unknown;
+	locationAggregates?: Record<string, unknown>;
 	[key: string]: unknown;
 };
 
@@ -253,6 +255,18 @@ export const filterDatasetPayloadForLocation = async (
 					Array.isArray(dataset.data)
 				)
 					return [id, dataset] as const;
+				const { locationAggregates, ...datasetWithoutAggregates } =
+					dataset;
+				const scopedDataset = locationAggregates
+					? {
+							...datasetWithoutAggregates,
+							...(locationAggregates[filter.location] !==
+								undefined && {
+								locationAggregate:
+									locationAggregates[filter.location],
+							}),
+						}
+					: dataset;
 				const matcher = await matcherFor(filter, dataset.boundaryYear);
 				const locationPopulations =
 					filter.includeLocationPopulationSummary
@@ -263,13 +277,13 @@ export const filterDatasetPayloadForLocation = async (
 					return [
 						id,
 						locationPopulations
-							? { ...dataset, locationPopulations }
-							: dataset,
+							? { ...scopedDataset, locationPopulations }
+							: scopedDataset,
 					] as const;
 				return [
 					id,
 					{
-						...dataset,
+						...scopedDataset,
 						...(locationPopulations && { locationPopulations }),
 						data: Object.fromEntries(
 							Object.entries(dataset.data).filter(([code]) =>

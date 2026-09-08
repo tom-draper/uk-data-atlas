@@ -147,4 +147,49 @@ describe("location-scoped chart datasets", () => {
 		);
 		expect(filtered[2022].locationPopulations.England).toBe(600);
 	});
+
+	it("keeps only the selected precomputed card aggregate", async () => {
+		const includedCode = greaterManchester.memberCodes[0]!;
+		const greaterManchesterAggregate = {
+			partyVotes: { LAB: 10 },
+			electorate: 20,
+			totalVotes: 10,
+		};
+		const payload = {
+			2024: {
+				boundaryYear: 2024,
+				data: {
+					[includedCode]: { value: 10 },
+					E06000001: { value: 20 },
+				},
+				locationAggregates: {
+					"Greater Manchester": greaterManchesterAggregate,
+					Lancashire: {
+						partyVotes: { CON: 12 },
+						electorate: 24,
+						totalVotes: 12,
+					},
+				},
+			},
+		};
+
+		const filtered = (await filterDatasetPayloadForLocation(payload, {
+			location: "Greater Manchester",
+			boundaryType: "localAuthority",
+		})) as {
+			2024: {
+				data: Record<string, { value: number }>;
+				locationAggregate: typeof greaterManchesterAggregate;
+				locationAggregates?: undefined;
+			};
+		};
+
+		expect(filtered[2024].locationAggregate).toEqual(
+			greaterManchesterAggregate,
+		);
+		expect(filtered[2024].locationAggregates).toBeUndefined();
+		expect(filtered[2024].data).toEqual({
+			[includedCode]: { value: 10 },
+		});
+	});
 });

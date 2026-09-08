@@ -66,6 +66,10 @@ export interface LocalElectionDataset extends BaseElectionDataset<LocalElectionW
 	boundaryYear: WardYear;
 	results: Record<string, string>;
 	data: Record<string, LocalElectionWardData>;
+	/** Selected-location card summary, emitted by the worker when available. */
+	locationAggregate?: AggregatedLocalElectionData;
+	/** Build artifact retained only until the worker selects one location. */
+	locationAggregates?: Record<string, AggregatedLocalElectionData>;
 }
 
 export interface GeneralElectionDataset extends BaseElectionDataset<GeneralElectionConstituencyData> {

@@ -28,6 +28,38 @@ describe("aggregateDataset", () => {
 		expect(aggregate).toBeNull();
 	});
 
+	it("uses selected-location aggregates without boundary data", () => {
+		const aggregate = {
+			partyVotes: { LAB: 10 },
+			electorate: 20,
+			totalVotes: 10,
+		};
+		const datasets = {
+			"2024": {
+				id: "localElection2024",
+				type: "localElection",
+				year: 2024,
+				boundaryYear: 2024,
+				boundaryType: "ward",
+				data: {},
+				locationAggregate: aggregate,
+			},
+		} as any;
+
+		expect(
+			aggregateDataset(
+				{
+					datasets,
+					boundaryType: "ward",
+					calculateStats: vi.fn(),
+				},
+				null,
+				{} as any,
+				"Greater Manchester",
+			),
+		).toEqual({ 2024: aggregate });
+	});
+
 	it("shares an aggregate requested by multiple consumers", () => {
 		const mapManager = {} as any;
 		const boundaryData = {
