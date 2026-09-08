@@ -87,7 +87,7 @@ export function aggregateIMD(
 	features: Features,
 	codeProperty: PropertyKeys,
 	data: IMDDataset["data"],
-): AggregatedIMDData {
+): AggregatedIMDData | null {
 	let score = 0,
 		decile = 0,
 		count = 0;
@@ -99,8 +99,10 @@ export function aggregateIMD(
 		decile += record.imdDecile;
 		count++;
 	}
-	return {
-		averageIMDScore: count > 0 ? score / count : 0,
-		averageIMDDecile: count > 0 ? decile / count : 0,
-	};
+	return count === 0
+		? null
+		: {
+				averageIMDScore: score / count,
+				averageIMDDecile: decile / count,
+			};
 }

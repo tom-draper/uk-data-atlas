@@ -47,8 +47,11 @@ export const filterFeatures = (
 
 	const { code: codeKeys } = BOUNDARY_CATALOG[type].properties;
 
-	// Filter by country prefix (England, Scotland, Wales, Northern Ireland)
-	if (COUNTRY_PREFIXES[location]) {
+	// Filter by country prefix (England, Scotland, Wales, Northern Ireland).
+	// Northern Ireland's super output area codes (e.g. "95AA01S1") don't
+	// follow this convention, so that geography always falls through to the
+	// bbox-based filter below instead.
+	if (COUNTRY_PREFIXES[location] && type !== "superOutputArea") {
 		const prefix = COUNTRY_PREFIXES[location];
 		return {
 			...geojson,

@@ -193,7 +193,11 @@ const matcherFor = async (
 ): Promise<CodeMatcher | null> => {
 	if (!filter.location || filter.location === "United Kingdom") return null;
 	const countryPrefix = COUNTRY_PREFIXES[filter.location];
-	if (countryPrefix) return (code) => code.startsWith(countryPrefix);
+	// Northern Ireland's super output area codes (e.g. "95AA01S1") don't
+	// follow the country-prefix convention, so fall through to the
+	// bbox-based matcher below instead.
+	if (countryPrefix && filter.boundaryType !== "superOutputArea")
+		return (code) => code.startsWith(countryPrefix);
 
 	const location = gazetteer.namedLocation(filter.location);
 	if (!location) return null;

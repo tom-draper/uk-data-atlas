@@ -88,10 +88,7 @@ describe("aggregateIMD", () => {
 		});
 	});
 
-	it("reports zeros rather than null when nothing is covered", () => {
-		expect(aggregateIMD(features(["missing"]), CODE_KEY, data)).toEqual({
-			averageIMDScore: 0,
-			averageIMDDecile: 0,
-		});
+	it("returns null when no covered area has a record", () => {
+		expect(aggregateIMD(features(["missing"]), CODE_KEY, data)).toBeNull();
 	});
 });

@@ -69,6 +69,50 @@ describe("location-scoped chart datasets", () => {
 		});
 	});
 
+	it("falls through to bbox filtering for a country whose codes don't carry its GSS prefix", async () => {
+		// Northern Ireland's super output area codes (e.g. "95AA01S1") don't
+		// start with "N", so selecting the country must not use the
+		// letter-prefix fast path that every other country geography does.
+		const northernIreland = gazetteer.namedLocation("Northern Ireland")!;
+		const includedCode = "95AA01S1";
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(
+				async () =>
+					new Response(
+						JSON.stringify({
+							features: [
+								{
+									SOA_CODE: includedCode,
+									bbox: northernIreland.bbox,
+								},
+								{ SOA_CODE: "95AA01S2", bbox: [0, 0, 1, 1] },
+							],
+						}),
+						{ status: 200 },
+					),
+			),
+		);
+		const payload = {
+			2017: {
+				boundaryYear: 2011,
+				data: {
+					[includedCode]: { nimdmRank: 10 },
+					"95AA01S2": { nimdmRank: 20 },
+				},
+			},
+		};
+
+		const filtered = (await filterDatasetPayloadForLocation(payload, {
+			location: "Northern Ireland",
+			boundaryType: "superOutputArea",
+		})) as typeof payload;
+
+		expect(filtered[2017]!.data).toEqual({
+			[includedCode]: { nimdmRank: 10 },
+		});
+	});
+
 	it("keeps constituencies which overlap a member local authority", async () => {
 		const includedCode = "E14000001";
 		vi.stubGlobal(

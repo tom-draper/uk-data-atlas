@@ -416,7 +416,7 @@ export class DatasetAggregator {
 		imdData: IMDDataset["data"],
 		location: string | null,
 		datasetId: string | null,
-	): AggregatedIMDData {
+	): AggregatedIMDData | null {
 		return this.byBoundary(
 			"imd",
 			"lsoa",

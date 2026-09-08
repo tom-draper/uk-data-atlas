@@ -60,6 +60,47 @@ describe("properties-only boundary filtering", () => {
 		});
 	});
 
+	it("falls through to bbox filtering for a country whose codes don't carry its GSS prefix", () => {
+		// Northern Ireland's super output area codes (e.g. "95AA01S1") don't
+		// start with "N" like every other NI geography, so selecting the
+		// country must not use the letter-prefix fast path for this type.
+		const northernIreland = gazetteer.namedLocation("Northern Ireland");
+		expect(northernIreland?.bbox).toBeDefined();
+
+		const boundaries = {
+			type: "FeatureCollection",
+			features: [
+				{
+					type: "Feature",
+					properties: {
+						SOA_CODE: "95AA01S1",
+						bbox: northernIreland!.bbox,
+					},
+					geometry: null,
+				},
+				{
+					type: "Feature",
+					properties: {
+						SOA_CODE: "95AA01S2",
+						bbox: [0, 0, 1, 1],
+					},
+					geometry: null,
+				},
+			],
+		} as unknown as BoundaryGeojson;
+
+		const filtered = filterFeatures(
+			boundaries,
+			"Northern Ireland",
+			"superOutputArea",
+		);
+
+		expect(filtered.features).toHaveLength(1);
+		expect(filtered.features[0]?.properties).toMatchObject({
+			SOA_CODE: "95AA01S1",
+		});
+	});
+
 	it("prefers constituency-to-LAD overlaps over the coarse bbox fallback", () => {
 		const greaterManchester = gazetteer.namedLocation("Greater Manchester");
 		expect(greaterManchester?.memberCodes).toBeDefined();
