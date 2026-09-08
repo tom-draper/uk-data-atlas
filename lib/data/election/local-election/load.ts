@@ -236,7 +236,12 @@ export const reconcile2023Data = (
 
 	// Build Lookup Map
 	const lookup = new Map<string, { wardCode: string; ladCode: string }>();
-	referenceSets.forEach((ds) => {
+	const referencesByProximity = [...referenceSets].sort(
+		(a, b) =>
+			Math.abs(a.year - dataset.year) - Math.abs(b.year - dataset.year) ||
+			b.year - a.year,
+	);
+	referencesByProximity.forEach((ds) => {
 		Object.entries(ds.data).forEach(([code, data]) => {
 			const key = `${data.ladName}|${data.wardName}`.toLowerCase();
 			if (!lookup.has(key)) {

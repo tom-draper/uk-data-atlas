@@ -76,6 +76,31 @@ Unmatched,Example Council,55%,900,400,300,100`,
 		]);
 	});
 
+	it("prefers the closest ward-code reference vintage", () => {
+		const olderReference = parseLocalElectionTable(
+			`Ward code,Ward name,Local authority name,Local authority code,Turnout (%),Electorate,Total votes,LAB
+E05000001,Central,Example Council,E06000001,50%,1000,500,300`,
+			{ ...referenceConfig, year: 2022 },
+		);
+		const newerReference = parseLocalElectionTable(
+			`Ward code,Ward name,Local authority name,Local authority code,Turnout (%),Electorate,Total votes,LAB
+E05000002,Central,Example Council,E06000001,50%,1000,500,300`,
+			referenceConfig,
+		);
+		const unmapped = parseLocalElectionTable(
+			`WARDNAME,DISTRICTNAME,TURNOUT,ELECT,Grand Total,LAB
+Central,Example Council,60%,1200,700,250`,
+			unmappedConfig,
+		);
+
+		const reconciled = reconcile2023Data(unmapped, [
+			olderReference,
+			newerReference,
+		]);
+
+		expect(reconciled.data).toHaveProperty("E05000002");
+	});
+
 	it("aggregates LEAP candidate rows and excludes Scottish STV records", () => {
 		const config: LeapElectionSourceConfig = {
 			year: 2019,
