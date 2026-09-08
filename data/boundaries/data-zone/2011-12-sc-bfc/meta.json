@@ -70,10 +70,10 @@
 			"note": "Shapefile companion, needed to read the .shp."
 		},
 		{
-			"path": "source.geojson",
+			"path": "boundaries.topojson",
 			"role": "derived",
 			"derivedFrom": "shapefile/SG_DataZone_Bdry_2011.shp",
-			"note": "Converted from the published shapefile; the atlas has no shapefile reader."
+			"note": "Converted from the published shapefile to GeoJSON, reprojected from the shapefile's native EPSG:27700 (British National Grid) to WGS84 with scripts/reproject-datazone-boundary.mts (the atlas has no shapefile reader and every other boundary release in the catalog is WGS84), then compiled to TopoJSON. The intermediate reprojected GeoJSON is ~80MB, too large to check in, so only this compiled topology is kept; compile-boundaries.mts reads it directly, the same as superOutputArea/2011-ni."
 		}
 	]
 }
