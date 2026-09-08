@@ -84,14 +84,7 @@ function useLegendAggregates(
 					];
 				}),
 			) as LegendAggregates,
-		[
-			mapManager,
-			boundaryData,
-			location,
-			...LEGEND_DEFINITIONS.map(
-				(definition) => datasets[definition.type],
-			),
-		],
+		[datasets, mapManager, boundaryData, location],
 	);
 }
 
