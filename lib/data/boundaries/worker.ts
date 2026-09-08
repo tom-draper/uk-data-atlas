@@ -1,10 +1,13 @@
 import type { BoundaryGeojson } from "@lib/types";
+import type { BoundaryGeometryFilter } from "./boundaries";
 
 interface WorkerResponse {
 	id: number;
 	data?: BoundaryGeojson;
 	error?: string;
 }
+
+type WorkerFilter = Omit<BoundaryGeometryFilter, "getLadForWard">;
 
 let worker: Worker | null = null;
 let nextRequestId = 0;
@@ -48,6 +51,7 @@ const getWorker = (): Worker | null => {
 
 export const fetchBoundaryInWorker = (
 	url: string,
+	filter?: BoundaryGeometryFilter,
 ): Promise<BoundaryGeojson> | null => {
 	const currentWorker = getWorker();
 	if (!currentWorker) return null;
@@ -55,6 +59,11 @@ export const fetchBoundaryInWorker = (
 	return new Promise((resolve, reject) => {
 		const id = nextRequestId++;
 		pending.set(id, { resolve, reject });
-		currentWorker.postMessage({ id, url });
+		const { getLadForWard: _getLadForWard, ...workerFilter } = filter ?? {};
+		currentWorker.postMessage({
+			id,
+			url,
+			filter: workerFilter as WorkerFilter,
+		});
 	});
 };

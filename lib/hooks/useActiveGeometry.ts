@@ -5,7 +5,6 @@ import {
 	BOUNDARY_CATALOG,
 	type BoundaryType,
 	fetchBoundaryFile,
-	filterFeatures,
 } from "../data/boundaries/boundaries";
 import {
 	constituencyReleaseIdForYear,
@@ -105,17 +104,16 @@ export function useActiveGeometry(
 
 		let active = true;
 		setState((previous) => ({ ...previous, isLoading: true, error: null }));
-		fetchBoundaryFile(path)
+		fetchBoundaryFile(path, {
+			type,
+			location: location ?? null,
+			getLadForWard,
+			constituencyLadOverlaps: constituencyOverlaps,
+		})
 			.then((data) => {
 				if (!active) return;
 				setState({
-					geometry: filterFeatures(
-						data,
-						location ?? null,
-						type,
-						getLadForWard,
-						constituencyOverlaps,
-					),
+					geometry: data,
 					requestKey,
 					isLoading: false,
 					error: null,
