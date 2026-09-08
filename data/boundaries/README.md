@@ -19,6 +19,9 @@ beside their `meta.json`, because nothing here can rebuild them:
 `lsoa/2011-12-w-bgc`, published by ONS as TopoJSON with no GeoJSON to
 compile, and `super-output-area/2011-ni`, converted from a shapefile outside
 this repository. `scripts/sync-public-data.mjs` copies those two across.
+`scripts/compile-boundaries.mts` also derives their generated
+`properties.json` sidecars from the committed TopoJSON, so they participate in
+the same lightweight boundary loading as every other release.
 
 `<geography>` is the `BoundaryType` it belongs to, in kebab case.
 

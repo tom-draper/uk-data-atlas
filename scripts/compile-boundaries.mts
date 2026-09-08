@@ -56,7 +56,8 @@ const sourceFromMeta = (releaseDir: string, label: string): string | null => {
 			(file.role === "source" || file.role === "derived"),
 	);
 	// A release published only as TopoJSON, or converted outside this repo,
-	// lists no GeoJSON at all; the caller reports it as unreproducible.
+	// lists no GeoJSON at all. Its geometry remains unreproducible here, but
+	// the caller can still derive a properties sidecar from that topology.
 	if (sources.length === 0) return null;
 	if (sources.length > 1) {
 		throw new Error(
@@ -105,6 +106,10 @@ const releaseSources = () =>
 						releaseDir,
 						`${type}/${release.id}`,
 					),
+					// A small number of releases are held only as TopoJSON. They
+					// cannot be recompiled, but their existing topology is enough to
+					// derive the sidecar the runtime reads.
+					topologySourcePath: join(ROOT, "data", relative),
 					outputPath,
 					propertiesPath: join(
 						dirname(outputPath),
@@ -212,9 +217,11 @@ const featureExtent = (
 /** The published properties of each feature, plus the two derived values. */
 const releaseProperties = (
 	topologyData: ReturnType<typeof topology>,
-	objectName: string,
+	objectName?: string,
 ): Record<string, unknown>[] => {
-	const object = topologyData.objects[objectName];
+	const object =
+		(objectName ? topologyData.objects[objectName] : undefined) ??
+		Object.values(topologyData.objects)[0];
 	if (!object || object.type !== "GeometryCollection") return [];
 	const decoded = feature(topologyData, object);
 	const features =
@@ -276,6 +283,19 @@ const assertDerivedPresent = (
 	}
 };
 
+const serializeProperties = (
+	label: string,
+	topologyData: ReturnType<typeof topology>,
+	objectName?: string,
+) => {
+	const features = releaseProperties(topologyData, objectName);
+	assertDerivedPresent(label, features);
+	return JSON.stringify({
+		release: label,
+		features,
+	} satisfies BoundaryPropertiesFile);
+};
+
 /** A release whose compiled asset would carry no properties at all. */
 const assertKeptSomething = (
 	label: string,
@@ -295,7 +315,7 @@ const assertKeptSomething = (
 	}
 };
 
-/** Ensures the committed TopoJSON assets are newer than their GeoJSON inputs. */
+/** Compiles GeoJSON releases and derives properties for every served release. */
 export async function compileBoundaryAssets(): Promise<void> {
 	const sources = releaseSources();
 	console.log(
@@ -306,14 +326,39 @@ export async function compileBoundaryAssets(): Promise<void> {
 		objectName,
 		keep,
 		sourcePath,
+		topologySourcePath,
 		outputPath,
 		propertiesPath,
 	} of sources) {
-		// A release published only as TopoJSON cannot be rebuilt here. Say so
-		// rather than failing, so it is visible as unreproducible.
-		if (sourcePath === null || !(await exists(sourcePath))) {
+		if (sourcePath === null) {
+			if (!(await exists(topologySourcePath))) {
+				console.log(
+					`  boundary: ${label} (no local GeoJSON or TopoJSON source, skipped)`,
+				);
+				continue;
+			}
+			if (!(await shouldCompile(topologySourcePath, propertiesPath))) {
+				console.log(`  boundary: ${label} (properties up to date)`);
+				continue;
+			}
+
+			const topologyData = JSON.parse(
+				await readFile(topologySourcePath, "utf8"),
+			) as ReturnType<typeof topology>;
+			const properties = serializeProperties(label, topologyData);
+			await writeAtomically(propertiesPath, properties);
+			const propertiesKb = Math.round(
+				Buffer.byteLength(properties, "utf8") / 1024,
+			);
 			console.log(
-				`  boundary: ${label} (no local GeoJSON source, skipped)`,
+				`  boundary: ${label} (TopoJSON source -> ${propertiesKb} KB properties)`,
+			);
+			continue;
+		}
+
+		if (!(await exists(sourcePath))) {
+			console.log(
+				`  boundary: ${label} (local GeoJSON source missing, skipped)`,
 			);
 			continue;
 		}
@@ -330,12 +375,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 		const topologyData = simplifySource(raw, objectName, keep);
 		assertKeptSomething(label, topologyData, keep);
 		const output = JSON.stringify(topologyData);
-		const propertyRecords = releaseProperties(topologyData, objectName);
-		assertDerivedPresent(label, propertyRecords);
-		const properties = JSON.stringify({
-			release: label,
-			features: propertyRecords,
-		} satisfies BoundaryPropertiesFile);
+		const properties = serializeProperties(label, topologyData, objectName);
 		await writeAtomically(outputPath, output);
 		await writeAtomically(propertiesPath, properties);
 		const sourceKb = Math.round(Buffer.byteLength(raw, "utf8") / 1024);

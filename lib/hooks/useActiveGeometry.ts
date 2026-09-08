@@ -8,6 +8,35 @@ import {
 	filterFeatures,
 } from "../data/boundaries/boundaries";
 
+type GeometryState = {
+	geometry: BoundaryGeojson | null;
+	/** The request which produced `geometry`, rather than one now in flight. */
+	requestKey: string | null;
+	isLoading: boolean;
+	error: Error | null;
+};
+
+/** Identifies the complete boundary request, including its location filter. */
+export function geometryRequestKey(
+	path: string | null,
+	type: BoundaryType | undefined,
+	location: string | null,
+): string | null {
+	return path && type ? `${path}\u0000${type}\u0000${location ?? ""}` : null;
+}
+
+/**
+ * A completed request may remain in state while another request is in flight.
+ * Do not let its geometry be rendered for the new request in that interval.
+ */
+export function geometryForRequest(
+	geometry: BoundaryGeojson | null,
+	loadedRequestKey: string | null,
+	currentRequestKey: string | null,
+): BoundaryGeojson | null {
+	return loadedRequestKey === currentRequestKey ? geometry : null;
+}
+
 /**
  * The coordinates of the one vintage being drawn.
  *
@@ -27,20 +56,27 @@ export function useActiveGeometry(
 	isLoading: boolean;
 	error: Error | null;
 } {
-	const [state, setState] = useState<{
-		geometry: BoundaryGeojson | null;
-		isLoading: boolean;
-		error: Error | null;
-	}>({ geometry: null, isLoading: false, error: null });
+	const [state, setState] = useState<GeometryState>({
+		geometry: null,
+		requestKey: null,
+		isLoading: false,
+		error: null,
+	});
 
 	const path =
 		type && year !== undefined
 			? (BOUNDARY_CATALOG[type].vintages[year] ?? null)
 			: null;
+	const requestKey = geometryRequestKey(path, type, location);
 
 	useEffect(() => {
 		if (!path || !type) {
-			setState({ geometry: null, isLoading: false, error: null });
+			setState({
+				geometry: null,
+				requestKey: null,
+				isLoading: false,
+				error: null,
+			});
 			return;
 		}
 
@@ -56,6 +92,7 @@ export function useActiveGeometry(
 						type,
 						getLadForWard,
 					),
+					requestKey,
 					isLoading: false,
 					error: null,
 				});
@@ -67,13 +104,25 @@ export function useActiveGeometry(
 						? reason
 						: new Error(String(reason));
 				console.error(`[boundaries] ${error.message}`);
-				setState({ geometry: null, isLoading: false, error });
+				setState({
+					geometry: null,
+					requestKey,
+					isLoading: false,
+					error,
+				});
 			});
 
 		return () => {
 			active = false;
 		};
-	}, [path, type, location, getLadForWard]);
+	}, [path, type, location, getLadForWard, requestKey]);
 
-	return state;
+	return {
+		...state,
+		geometry: geometryForRequest(
+			state.geometry,
+			state.requestKey,
+			requestKey,
+		),
+	};
 }
