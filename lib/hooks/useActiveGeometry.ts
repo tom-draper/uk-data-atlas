@@ -7,6 +7,11 @@ import {
 	fetchBoundaryFile,
 	filterFeatures,
 } from "../data/boundaries/boundaries";
+import {
+	constituencyReleaseIdForYear,
+	type ConstituencyLadOverlaps,
+} from "../data/boundaries/constituencyLadOverlaps";
+import type { Crosswalk } from "../data/gazetteer/types";
 
 type GeometryState = {
 	geometry: BoundaryGeojson | null;
@@ -21,8 +26,11 @@ export function geometryRequestKey(
 	path: string | null,
 	type: BoundaryType | undefined,
 	location: string | null,
+	filterKey = "",
 ): string | null {
-	return path && type ? `${path}\u0000${type}\u0000${location ?? ""}` : null;
+	return path && type
+		? `${path}\u0000${type}\u0000${location ?? ""}\u0000${filterKey}`
+		: null;
 }
 
 /**
@@ -51,6 +59,7 @@ export function useActiveGeometry(
 	year: number | undefined,
 	location: string | null,
 	getLadForWard?: (wardCode: string) => string | undefined,
+	constituencyLadOverlaps?: ConstituencyLadOverlaps | null,
 ): {
 	geometry: BoundaryGeojson | null;
 	isLoading: boolean;
@@ -67,7 +76,21 @@ export function useActiveGeometry(
 		type && year !== undefined
 			? (BOUNDARY_CATALOG[type].vintages[year] ?? null)
 			: null;
-	const requestKey = geometryRequestKey(path, type, location);
+	const constituencyOverlaps: Crosswalk | undefined =
+		type === "constituency" && year !== undefined
+			? constituencyLadOverlaps?.releases[
+					constituencyReleaseIdForYear(year) ?? ""
+				]
+			: undefined;
+	// The overlap lookup changes the filter's result, so it must be part of the
+	// request identity. That prevents the coarse bbox result being drawn while
+	// the precise constituency set is applied.
+	const requestKey = geometryRequestKey(
+		path,
+		type,
+		location,
+		constituencyOverlaps ? "constituency-lad-overlaps" : "bbox",
+	);
 
 	useEffect(() => {
 		if (!path || !type) {
@@ -91,6 +114,7 @@ export function useActiveGeometry(
 						location ?? null,
 						type,
 						getLadForWard,
+						constituencyOverlaps,
 					),
 					requestKey,
 					isLoading: false,
@@ -115,7 +139,7 @@ export function useActiveGeometry(
 		return () => {
 			active = false;
 		};
-	}, [path, type, location, getLadForWard, requestKey]);
+	}, [path, type, location, getLadForWard, constituencyOverlaps, requestKey]);
 
 	return {
 		...state,

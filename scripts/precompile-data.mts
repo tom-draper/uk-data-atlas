@@ -155,6 +155,16 @@ const out = async (name: string, data: unknown) => {
 	};
 };
 
+/**
+ * A small, separately generated geography artifact that the client fetches
+ * alongside boundary properties. Keep the tracked copy authoritative and
+ * mirror it for the local dev/build server like the normal precompiled data.
+ */
+const mirrorPrecompiledArtifact = async (name: string) => {
+	const contents = await readFile(join(OUT_DIR, `${name}.json`), "utf8");
+	await writeAtomically(join(PUBLIC_OUT_DIR, `${name}.json`), contents);
+};
+
 const createTrackedReader = () => {
 	const artifacts = new Map<string, SourceArtifact>();
 	const track = async (
@@ -214,6 +224,7 @@ async function main() {
 	await mkdir(OUT_DIR, { recursive: true });
 	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
 	await compileBoundaryAssets();
+	await mirrorPrecompiledArtifact("constituency-lad-overlaps");
 
 	// Every folder in data/ carrying a meta.json is a dataset. Reading them all
 	// first means a malformed drop fails the build immediately, with the folder

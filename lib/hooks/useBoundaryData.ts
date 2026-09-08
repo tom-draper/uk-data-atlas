@@ -32,6 +32,11 @@ import type {
 import { withCDN } from "../helpers/cdn";
 import { requiredBoundaryTypes } from "../data/boundaries/required";
 import {
+	constituencyReleaseIdForYear,
+	fetchConstituencyLadOverlaps,
+	type ConstituencyLadOverlaps,
+} from "../data/boundaries/constituencyLadOverlaps";
+import {
 	DEFAULT_VISIBILITY,
 	getVisibilitySnapshot,
 	subscribeVisibility,
@@ -51,7 +56,13 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = Object.fromEntries(
 const LOCATION_BOUNDARY_CACHE_LIMIT = 20;
 const filteredBoundaryDataCache = new WeakMap<
 	BoundaryData,
-	Map<string, BoundaryData>
+	Map<
+		string,
+		{
+			data: BoundaryData;
+			constituencyLadOverlaps: ConstituencyLadOverlaps | null;
+		}
+	>
 >();
 
 const BOUNDARY_MAPPINGS_URL = withCDN(
@@ -160,12 +171,25 @@ const filterBoundaryGroup = (
 	type: BoundaryType,
 	location: string | null,
 	getLadForWard?: (wardCode: string) => string | undefined,
+	constituencyLadOverlaps: ConstituencyLadOverlaps | null = null,
 ): Record<number, BoundaryGeojson | null> => {
 	const filtered: Record<number, BoundaryGeojson | null> = {};
 
 	for (const [year, data] of Object.entries(group)) {
+		const releaseId =
+			type === "constituency"
+				? constituencyReleaseIdForYear(Number(year))
+				: undefined;
 		filtered[Number(year)] = data
-			? filterFeatures(data, location, type, getLadForWard)
+			? filterFeatures(
+					data,
+					location,
+					type,
+					getLadForWard,
+					releaseId
+						? constituencyLadOverlaps?.releases[releaseId]
+						: undefined,
+				)
 			: null;
 	}
 
@@ -176,6 +200,7 @@ export const getCachedFilteredBoundaryData = (
 	rawData: BoundaryData,
 	location: string | null,
 	getLadForWard?: (wardCode: string) => string | undefined,
+	constituencyLadOverlaps: ConstituencyLadOverlaps | null = null,
 ): BoundaryData => {
 	let cache = filteredBoundaryDataCache.get(rawData);
 	if (!cache) {
@@ -185,17 +210,23 @@ export const getCachedFilteredBoundaryData = (
 
 	const cacheKey = location ?? "";
 	const cached = cache.get(cacheKey);
-	if (cached) {
+	if (cached && cached.constituencyLadOverlaps === constituencyLadOverlaps) {
 		// Refresh the entry so the map acts as a least-recently-used cache.
 		cache.delete(cacheKey);
 		cache.set(cacheKey, cached);
-		return cached;
+		return cached.data;
 	}
 
 	const filteredData = Object.fromEntries(
 		BOUNDARY_TYPES.map((type) => [
 			type,
-			filterBoundaryGroup(rawData[type], type, location, getLadForWard),
+			filterBoundaryGroup(
+				rawData[type],
+				type,
+				location,
+				getLadForWard,
+				constituencyLadOverlaps,
+			),
 		]),
 	) as BoundaryData;
 
@@ -203,7 +234,7 @@ export const getCachedFilteredBoundaryData = (
 		const oldestKey = cache.keys().next().value;
 		if (oldestKey !== undefined) cache.delete(oldestKey);
 	}
-	cache.set(cacheKey, filteredData);
+	cache.set(cacheKey, { data: filteredData, constituencyLadOverlaps });
 
 	return filteredData;
 };
@@ -278,6 +309,8 @@ export function useBoundaryData(
 	const [rawData, setRawData] = useState<BoundaryData>(EMPTY_BOUNDARY_DATA);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
+	const [constituencyLadOverlaps, setConstituencyLadOverlaps] =
+		useState<ConstituencyLadOverlaps | null>(null);
 
 	// Extract the individual functions to use as dependencies
 	const addWardLadMappings = codeMapper?.addWardLadMappings;
@@ -326,6 +359,15 @@ export function useBoundaryData(
 			const missing = wanted.filter(
 				(type) => !loadedTypes.current.has(type),
 			);
+			const overlaps = wanted.includes("constituency")
+				? fetchConstituencyLadOverlaps().catch((error) => {
+						console.warn(
+							"[boundaries] Falling back to constituency bbox filtering:",
+							error,
+						);
+						return null;
+					})
+				: Promise.resolve(null);
 
 			Promise.all([
 				precompiledMappings,
@@ -336,9 +378,12 @@ export function useBoundaryData(
 						return [type, data, failures] as const;
 					}),
 				),
+				overlaps,
 			])
-				.then(([mappings, groups]) => {
+				.then(([mappings, groups, loadedOverlaps]) => {
 					if (!mounted) return;
+					if (loadedOverlaps)
+						setConstituencyLadOverlaps(loadedOverlaps);
 
 					for (const [type] of groups) loadedTypes.current.add(type);
 					const fetched = Object.fromEntries(
@@ -505,9 +550,14 @@ export function useBoundaryData(
 
 	const filteredData = useMemo<BoundaryData>(() => {
 		if (isLoading) return EMPTY_BOUNDARY_DATA;
-		return getCachedFilteredBoundaryData(rawData, loc, getLadForWard);
+		return getCachedFilteredBoundaryData(
+			rawData,
+			loc,
+			getLadForWard,
+			constituencyLadOverlaps,
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [rawData, loc]);
+	}, [rawData, loc, constituencyLadOverlaps]);
 
 	const boundaryCodes = useMemo(
 		() => extractCodeSets(rawData, isLoading),
@@ -517,6 +567,7 @@ export function useBoundaryData(
 	return {
 		boundaryData: filteredData,
 		boundaryCodes,
+		constituencyLadOverlaps,
 		isLoading,
 		error,
 	};

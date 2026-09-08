@@ -23,6 +23,13 @@ this repository. `scripts/sync-public-data.mjs` copies those two across.
 `properties.json` sidecars from the committed TopoJSON, so they participate in
 the same lightweight boundary loading as every other release.
 
+Constituencies do not nest cleanly inside local authorities. The tracked
+`data/precompiled/constituency-lad-overlaps.json` records each served
+constituency release's derived, weighted overlaps with current local authority
+areas. It is built by `scripts/gazetteer-crosswalks.ts` from LSOA building
+blocks and lets named locations filter constituency data without downloading
+coordinates.
+
 `<geography>` is the `BoundaryType` it belongs to, in kebab case.
 
 - Administrative: `parish`, `ward`, `county-electoral-division`,

@@ -42,4 +42,23 @@ describe("active geometry requests", () => {
 			geometryForRequest(geometry, greaterManchester, westMidlands),
 		).toBeNull();
 	});
+
+	it("replaces a coarse constituency result when overlap data arrives", () => {
+		const bboxFallback = geometryRequestKey(
+			"/data/boundaries/constituency/2024.topojson",
+			"constituency",
+			"Greater Manchester",
+			"bbox",
+		);
+		const preciseOverlapFilter = geometryRequestKey(
+			"/data/boundaries/constituency/2024.topojson",
+			"constituency",
+			"Greater Manchester",
+			"constituency-lad-overlaps",
+		);
+
+		expect(
+			geometryForRequest(geometry, bboxFallback, preciseOverlapFilter),
+		).toBeNull();
+	});
 });

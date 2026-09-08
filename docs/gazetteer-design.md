@@ -519,8 +519,9 @@ modules once their call sites are gone.
    pass; run the 6.1 validation suite; ship it, unused.
    **In progress:** `lib/data/gazetteer/` builds `gazetteer.core.json` (LAD across
    4 vintages + constituency, 51 KB gz) in `precompile-data.ts`, and
-   `scripts/gazetteer-crosswalks.ts` builds `crosswalk.constituency-localAuthority.json`
-   (5 KB gz) separately. Validation runs and already surfaced real debt: 9
+   `scripts/gazetteer-crosswalks.ts` builds the versioned
+   `constituency-lad-overlaps.json` shard (19 KB gz across the four served
+   constituency releases) separately. Validation runs and already surfaced real debt: 9
    `LOCATIONS` members predate our boundary vintages (recoded pre-2016), reported
    as warnings.
    **Backfill (done):** LAD -> region hierarchy is populated for the 9 English

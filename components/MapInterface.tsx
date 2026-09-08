@@ -88,6 +88,7 @@ export default function MapInterface({
 	const {
 		boundaryData,
 		boundaryCodes,
+		constituencyLadOverlaps,
 		isLoading: boundariesLoading,
 		error: boundaryError,
 	} = useBoundaryData(
@@ -194,6 +195,7 @@ export default function MapInterface({
 			: activeDataset.boundaryYear,
 		selectedLocation ?? null,
 		getLadForWard,
+		constituencyLadOverlaps,
 	);
 
 	const geojson = useMemo(() => {

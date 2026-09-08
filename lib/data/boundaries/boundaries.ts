@@ -4,6 +4,8 @@ import { gazetteer } from "@lib/data/gazetteer/static";
 import { getProp } from "./properties";
 import { decodeBoundaryData } from "./decode";
 import { fetchBoundaryInWorker } from "./worker";
+import { featureExtent } from "./derived";
+import type { Crosswalk } from "../gazetteer/types";
 import {
 	BOUNDARY_CATALOG,
 	type BoundaryType,
@@ -108,44 +110,18 @@ export function fetchBoundaryProperties(
 	promise.catch(() => PROPERTIES_PENDING.delete(path));
 	return promise;
 }
-const featureBoundsCache = new WeakMap<
-	object,
-	[number, number, number, number] | null
->();
-
 /**
  * Fast AABB (Axis-Aligned Bounding Box) intersection check
  */
 const isFeatureInBounds = (
-	feature: any,
+	feature: BoundaryGeojson["features"][number],
 	bounds: [number, number, number, number],
 ): boolean => {
 	const [west, south, east, north] = bounds;
-	let featureBounds = featureBoundsCache.get(feature);
-	if (featureBounds === undefined) {
-		if (!feature.geometry?.coordinates) {
-			featureBounds = null;
-		} else {
-			const flatCoords =
-				feature.geometry.type === "MultiPolygon"
-					? feature.geometry.coordinates.flat(2)
-					: feature.geometry.coordinates.flat(1);
-
-			let minX = Infinity,
-				minY = Infinity;
-			let maxX = -Infinity,
-				maxY = -Infinity;
-
-			for (const [x, y] of flatCoords) {
-				minX = Math.min(minX, x);
-				maxX = Math.max(maxX, x);
-				minY = Math.min(minY, y);
-				maxY = Math.max(maxY, y);
-			}
-			featureBounds = [minX, minY, maxX, maxY];
-		}
-		featureBoundsCache.set(feature, featureBounds);
-	}
+	// Properties sidecars omit coordinates, but carry the same compiled extent
+	// that the geometry path would calculate. `featureExtent` uses it first and
+	// falls back to a cached coordinate walk for full boundary files.
+	const featureBounds = featureExtent(feature);
 
 	return (
 		featureBounds !== null &&
@@ -214,6 +190,7 @@ export const filterFeatures = (
 	location: string | null,
 	type: BoundaryType,
 	getLadForWard?: (wardCode: string) => string | undefined,
+	constituencyLadOverlaps?: Crosswalk,
 ): BoundaryGeojson => {
 	// No filtering needed for UK-wide view
 	if (!location || location === "United Kingdom") {
@@ -311,6 +288,26 @@ export const filterFeatures = (
 	}
 
 	// Filter constituencies by bounding box
+	if (
+		type === "constituency" &&
+		loc.memberCodes?.length &&
+		constituencyLadOverlaps
+	) {
+		const ladCodeSet = new Set(loc.memberCodes);
+		return {
+			...geojson,
+			features: geojson.features.filter((feature) => {
+				const constituencyCode = getProp(feature.properties, codeKeys);
+				return (
+					constituencyLadOverlaps[constituencyCode ?? ""] ?? []
+				).some(({ code }) => ladCodeSet.has(code));
+			}),
+		};
+	}
+
+	// A crosswalk is not needed for country-wide locations and remains an
+	// optional progressive enhancement if its generated file cannot be served.
+	// Bbox filtering preserves the previous fallback in those cases.
 	if (type === "constituency" && loc.bbox) {
 		return {
 			...geojson,
