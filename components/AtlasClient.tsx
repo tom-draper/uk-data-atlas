@@ -101,7 +101,11 @@ export default function AtlasClient() {
 	const [initialDatasetLoadComplete, setInitialDatasetLoadComplete] =
 		useState(false);
 
-	const { datasets, loading: datasetsLoading, errors } = useDatasets();
+	const {
+		datasets,
+		loading: datasetsLoading,
+		errors,
+	} = useDatasets(selectedLocation);
 	const roadSafety = useRoadSafetyData();
 	const roadSafetyDatasets = Object.values(roadSafety.datasets);
 	// Hidden until a tile URL is configured (NEXT_PUBLIC_OS_OPEN_ROADS_TILE_URL),

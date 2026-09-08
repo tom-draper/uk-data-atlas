@@ -26,7 +26,7 @@ export interface UseDatasetsResult {
 	errors: string[];
 }
 
-export function useDatasets(): UseDatasetsResult {
+export function useDatasets(selectedLocation: string): UseDatasetsResult {
 	const visibility = useSyncExternalStore(
 		subscribeVisibility,
 		getVisibilitySnapshot,
@@ -41,6 +41,10 @@ export function useDatasets(): UseDatasetsResult {
 			url: withCDN(
 				`/data/precompiled/${definition.precompiledFile}.json`,
 			),
+			filter: {
+				location: selectedLocation,
+				boundaryType: definition.boundaryType,
+			},
 			enabled: getChartDefinitions(definition).some((chart) =>
 				isEnabled(chart.key),
 			),

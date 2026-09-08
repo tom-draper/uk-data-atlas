@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import type { DatasetLocationFilter } from "../data/datasetLocationFilter";
 
 interface WorkerRes {
 	id: number;
@@ -13,6 +14,10 @@ const pending = new Map<
 	number,
 	{ resolve: (v: unknown) => void; reject: (e: Error) => void }
 >();
+const pendingFetches = new Map<string, Promise<unknown>>();
+
+const requestCacheKey = (url: string, filter?: DatasetLocationFilter) =>
+	`${url}\u0000${filter?.location ?? ""}\u0000${filter?.boundaryType ?? ""}`;
 
 function getWorker(): Worker | null {
 	if (typeof window === "undefined" || typeof Worker === "undefined")
@@ -54,8 +59,15 @@ async function fetchJson(url: string): Promise<unknown> {
 	return response.json();
 }
 
-function fetchViaWorker(url: string): Promise<unknown> {
-	return new Promise((resolve, reject) => {
+function fetchViaWorker(
+	url: string,
+	filter?: DatasetLocationFilter,
+): Promise<unknown> {
+	const cacheKey = requestCacheKey(url, filter);
+	const existing = pendingFetches.get(cacheKey);
+	if (existing) return existing;
+
+	const request = new Promise<unknown>((resolve, reject) => {
 		const w = getWorker();
 		if (!w) {
 			fetchJson(url).then(resolve).catch(reject);
@@ -64,18 +76,25 @@ function fetchViaWorker(url: string): Promise<unknown> {
 		const id = nextId++;
 		pending.set(id, { resolve, reject });
 		try {
-			w.postMessage({ id, url });
+			w.postMessage({ id, url, filter });
 		} catch (error) {
 			pending.delete(id);
 			reject(error instanceof Error ? error : new Error(String(error)));
 		}
 	});
+	pendingFetches.set(cacheKey, request);
+	request.then(
+		() => pendingFetches.delete(cacheKey),
+		() => pendingFetches.delete(cacheKey),
+	);
+	return request;
 }
 
 export interface JsonDatasetRequest {
 	key: string;
 	url: string;
 	enabled: boolean;
+	filter?: DatasetLocationFilter;
 }
 
 export function useJsonDatasetLoaders<T>(
@@ -88,16 +107,22 @@ export function useJsonDatasetLoaders<T>(
 		requests.some((request) => request.enabled),
 	);
 	const [errors, setErrors] = useState<string[]>([]);
-	const loadedUrls = useRef(new Set<string>());
+	const loadedRequests = useRef(new Set<string>());
 	const requestKey = requests
-		.map((request) => `${request.key}:${request.url}:${request.enabled}`)
+		.map(
+			(request) =>
+				`${request.key}:${request.url}:${request.enabled}:${request.filter?.location ?? ""}:${request.filter?.boundaryType ?? ""}`,
+		)
 		.join("|");
 
 	useEffect(() => {
 		let active = true;
 		const pendingRequests = requests.filter(
 			(request) =>
-				request.enabled && !loadedUrls.current.has(request.url),
+				request.enabled &&
+				!loadedRequests.current.has(
+					requestCacheKey(request.url, request.filter),
+				),
 		);
 		if (pendingRequests.length === 0) {
 			setLoading(false);
@@ -110,7 +135,11 @@ export function useJsonDatasetLoaders<T>(
 			pendingRequests.map(async (request) => ({
 				key: request.key,
 				url: request.url,
-				data: (await fetchViaWorker(request.url)) as Record<string, T>,
+				filter: request.filter,
+				data: (await fetchViaWorker(
+					request.url,
+					request.filter,
+				)) as Record<string, T>,
 			})),
 		).then((results) => {
 			if (!active) return;
@@ -119,7 +148,9 @@ export function useJsonDatasetLoaders<T>(
 			for (const result of results) {
 				if (result.status === "fulfilled") {
 					loaded[result.value.key] = result.value.data;
-					loadedUrls.current.add(result.value.url);
+					loadedRequests.current.add(
+						requestCacheKey(result.value.url, result.value.filter),
+					);
 				} else
 					nextErrors.push(
 						result.reason instanceof Error
