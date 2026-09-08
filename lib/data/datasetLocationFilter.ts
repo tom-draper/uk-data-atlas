@@ -256,7 +256,8 @@ export const filterDatasetPayloadForLocation = async (
 				const matcher = await matcherFor(filter, dataset.boundaryYear);
 				const locationPopulations =
 					filter.includeLocationPopulationSummary
-						? locationPopulationSummary(dataset.data)
+						? (dataset.locationPopulations ??
+							locationPopulationSummary(dataset.data))
 						: undefined;
 				if (!matcher)
 					return [

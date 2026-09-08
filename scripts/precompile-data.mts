@@ -30,6 +30,7 @@ import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
+import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -239,10 +240,12 @@ async function main() {
 	);
 	await verifyDescribedFiles(described);
 
+	const compiledDatasets = new Map<string, unknown>();
 	const chartResults = CATALOGUE_DATASET_DEFINITIONS.map(
 		async (definition) => {
 			const { reader, artifacts } = createTrackedReader();
 			const data = await definition.precompile(reader);
+			compiledDatasets.set(definition.precompiledFile, data);
 			const summary = validatePrecompiledDataset(definition, data);
 			const output = await out(definition.precompiledFile, data);
 			return {
@@ -256,12 +259,16 @@ async function main() {
 			};
 		},
 	);
+	const gazetteerCore = loadGazetteerCore(readBoundaryAsset).then(
+		async (data) => {
+			await out("gazetteer.core", data);
+			return data;
+		},
+	);
 	const results = await Promise.allSettled([
 		...chartResults,
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
-		loadGazetteerCore(readBoundaryAsset).then((d) =>
-			out("gazetteer.core", d),
-		),
+		gazetteerCore,
 		loadBoundaryMappings(readBoundaryAsset).then((d) =>
 			out("boundary-mappings", d),
 		),
@@ -274,6 +281,11 @@ async function main() {
 		for (const f of failures) console.error("  ERROR:", f.reason);
 		process.exit(1);
 	}
+	await writeDatasetRegionChunks({
+		root: ROOT,
+		datasets: compiledDatasets,
+		core: await gazetteerCore,
+	});
 	await out("dataset-manifest", {
 		version: 1,
 		datasets: results

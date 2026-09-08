@@ -15,6 +15,11 @@ import {
 } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
 import { withCDN } from "@/lib/helpers/cdn";
+import {
+	REGION_CHUNKED_DATASET_TYPES,
+	regionChunkPath,
+	regionChunksForLocation,
+} from "@/lib/data/datasetRegionChunks";
 
 function getServerSnapshot(): Record<ChartKey, boolean> {
 	return DEFAULT_VISIBILITY;
@@ -47,6 +52,13 @@ export function useDatasets(selectedLocation: string): UseDatasetsResult {
 				includeLocationPopulationSummary:
 					definition.type === "population",
 			},
+			chunkUrls: REGION_CHUNKED_DATASET_TYPES.has(definition.type)
+				? (regionChunksForLocation(selectedLocation)?.map((region) =>
+						withCDN(
+							regionChunkPath(definition.precompiledFile, region),
+						),
+					) ?? undefined)
+				: undefined,
 			enabled: getChartDefinitions(definition).some((chart) =>
 				isEnabled(chart.key),
 			),

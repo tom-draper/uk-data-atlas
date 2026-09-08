@@ -62,6 +62,7 @@ async function fetchJson(url: string): Promise<unknown> {
 function fetchViaWorker(
 	url: string,
 	filter?: DatasetLocationFilter,
+	chunkUrls?: readonly string[],
 ): Promise<unknown> {
 	const cacheKey = requestCacheKey(url, filter);
 	const existing = pendingFetches.get(cacheKey);
@@ -76,7 +77,7 @@ function fetchViaWorker(
 		const id = nextId++;
 		pending.set(id, { resolve, reject });
 		try {
-			w.postMessage({ id, url, filter });
+			w.postMessage({ id, url, filter, chunkUrls });
 		} catch (error) {
 			pending.delete(id);
 			reject(error instanceof Error ? error : new Error(String(error)));
@@ -95,6 +96,7 @@ export interface JsonDatasetRequest {
 	url: string;
 	enabled: boolean;
 	filter?: DatasetLocationFilter;
+	chunkUrls?: readonly string[];
 }
 
 export function useJsonDatasetLoaders<T>(
@@ -111,7 +113,7 @@ export function useJsonDatasetLoaders<T>(
 	const requestKey = requests
 		.map(
 			(request) =>
-				`${request.key}:${request.url}:${request.enabled}:${request.filter?.location ?? ""}:${request.filter?.boundaryType ?? ""}:${request.filter?.includeLocationPopulationSummary ?? false}`,
+				`${request.key}:${request.url}:${request.enabled}:${request.filter?.location ?? ""}:${request.filter?.boundaryType ?? ""}:${request.filter?.includeLocationPopulationSummary ?? false}:${request.chunkUrls?.join(",") ?? ""}`,
 		)
 		.join("|");
 
@@ -136,9 +138,11 @@ export function useJsonDatasetLoaders<T>(
 				key: request.key,
 				url: request.url,
 				filter: request.filter,
+				chunkUrls: request.chunkUrls,
 				data: (await fetchViaWorker(
 					request.url,
 					request.filter,
+					request.chunkUrls,
 				)) as Record<string, T>,
 			})),
 		).then((results) => {
