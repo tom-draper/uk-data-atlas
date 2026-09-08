@@ -378,7 +378,8 @@ export async function writeDatasetRegionChunks({
 				regionRecords[code] = record;
 				records.set(region, regionRecords);
 			}
-			for (const [region, data] of records) {
+			for (const region of REGION_CHUNK_KEYS) {
+				const data = records.get(region) ?? {};
 				const regionalAggregates = locationAggregates?.[datasetId]
 					? locationAggregatesForRegion(
 							gazetteer,
