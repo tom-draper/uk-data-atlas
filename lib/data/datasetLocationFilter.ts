@@ -13,6 +13,7 @@ export type DatasetLocationFilter = {
 type DatasetRecord = {
 	boundaryYear?: number;
 	data?: Record<string, unknown>;
+	results?: Record<string, unknown>;
 	locationPopulations?: Record<string, number>;
 	locationAggregate?: unknown;
 	locationAggregates?: Record<string, unknown>;
@@ -20,6 +21,19 @@ type DatasetRecord = {
 };
 
 type CodeMatcher = (code: string) => boolean;
+
+/**
+ * The fields keyed by the dataset's own boundary codes, and so scopable by the
+ * same matcher.
+ *
+ * `results` is the precomputed per-area headline — a winning party, a majority
+ * ethnicity, a leave/remain call — that the map's choropleth reads. It is keyed
+ * exactly like `data`, so leaving it whole shipped every ward in the country for
+ * whichever location was selected. Nothing else may be added here without
+ * checking its keys: `ladStats` on IMD, for one, is keyed by local authority
+ * while its `data` is keyed by LSOA, so this matcher would empty it.
+ */
+const CODE_KEYED_FIELDS = ["data", "results"] as const;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
 	England: "E",
@@ -284,16 +298,25 @@ export const filterDatasetPayloadForLocation = async (
 							? { ...scopedDataset, locationPopulations }
 							: scopedDataset,
 					] as const;
+				const scopedFields: Record<
+					string,
+					Record<string, unknown>
+				> = {};
+				for (const field of CODE_KEYED_FIELDS) {
+					const records = dataset[field];
+					if (!records || typeof records !== "object") continue;
+					scopedFields[field] = Object.fromEntries(
+						Object.entries(records).filter(([code]) =>
+							matcher(code),
+						),
+					);
+				}
 				return [
 					id,
 					{
 						...scopedDataset,
 						...(locationPopulations && { locationPopulations }),
-						data: Object.fromEntries(
-							Object.entries(dataset.data).filter(([code]) =>
-								matcher(code),
-							),
-						),
+						...scopedFields,
 					},
 				] as const;
 			},

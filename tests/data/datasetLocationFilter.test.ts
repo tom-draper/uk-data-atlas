@@ -236,4 +236,70 @@ describe("location-scoped chart datasets", () => {
 			[includedCode]: { value: 10 },
 		});
 	});
+
+	// `results` is what the choropleth paints from and is keyed exactly like
+	// `data`, so leaving it whole shipped every area in the country.
+	it("scopes the per-area results map alongside the records", async () => {
+		const includedCode = greaterManchester.memberCodes[0]!;
+		const payload = {
+			2016: {
+				boundaryYear: 2024,
+				data: {
+					[includedCode]: { leave: 10 },
+					E06000001: { leave: 20 },
+				},
+				results: { [includedCode]: "remain", E06000001: "leave" },
+			},
+		};
+
+		const filtered = (await filterDatasetPayloadForLocation(payload, {
+			location: "Greater Manchester",
+			boundaryType: "localAuthority",
+		})) as typeof payload;
+
+		expect(filtered[2016].results).toEqual({ [includedCode]: "remain" });
+		expect(Object.keys(filtered[2016].data)).toEqual([includedCode]);
+	});
+
+	// Only fields keyed by the dataset's own boundary codes may be scoped by its
+	// matcher. IMD's `ladStats` is keyed by local authority while its records are
+	// keyed by LSOA, so scoping it with the LSOA matcher would empty it.
+	it("leaves sibling records keyed by another geography untouched", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(
+				async () =>
+					new Response(
+						JSON.stringify({
+							features: [
+								{
+									LSOA11CD: "E01000001",
+									bbox: greaterManchester.bbox,
+								},
+							],
+						}),
+						{ status: 200 },
+					),
+			),
+		);
+		const ladStats = { E08000001: { averageRank: 5 } };
+		const payload = {
+			2019: {
+				boundaryYear: 2011,
+				data: {
+					E01000001: { imdScore: 1 },
+					E01000002: { imdScore: 2 },
+				},
+				ladStats,
+			},
+		};
+
+		const filtered = (await filterDatasetPayloadForLocation(payload, {
+			location: "Greater Manchester",
+			boundaryType: "lsoa",
+		})) as typeof payload;
+
+		expect(filtered[2019].ladStats).toEqual(ladStats);
+		expect(Object.keys(filtered[2019].data)).toEqual(["E01000001"]);
+	});
 });
