@@ -31,14 +31,43 @@ export interface UseDatasetsResult {
 	errors: string[];
 }
 
-export function useDatasets(selectedLocation: string): UseDatasetsResult {
+/**
+ * Whether a dataset is worth fetching: a visible card reads it, or the map is
+ * drawing it.
+ *
+ * The active visualisation counts even when its own card is hidden, which
+ * mirrors `requiredBoundaryTypes` keeping that visualisation's geography loaded
+ * on the same grounds. Six datasets ship with every card hidden by default (the
+ * Hanretty estimates, the Scottish, Welsh and Northern Irish deprivation
+ * indices, and two school performance breakdowns), so without this a link to one
+ * of them opened by anyone on default settings drew an empty map.
+ */
+export function datasetIsNeeded(
+	definition: (typeof CHART_DATASET_DEFINITIONS)[number],
+	visibility: Record<ChartKey, boolean>,
+	activeDatasetType?: string,
+): boolean {
+	if (definition.type === activeDatasetType) return true;
+	return getChartDefinitions(definition).some(
+		(chart) => visibility[chart.key] ?? DEFAULT_VISIBILITY[chart.key],
+	);
+}
+
+/**
+ * The chart datasets for the current view.
+ *
+ * @param activeDatasetType The dataset the map is drawing, kept loaded whether
+ * or not its card is shown. See `datasetIsNeeded`.
+ */
+export function useDatasets(
+	selectedLocation: string,
+	activeDatasetType?: string,
+): UseDatasetsResult {
 	const visibility = useSyncExternalStore(
 		subscribeVisibility,
 		getVisibilitySnapshot,
 		getServerSnapshot,
 	);
-	const isEnabled = (key: ChartKey) =>
-		visibility[key] ?? DEFAULT_VISIBILITY[key];
 
 	const chartDatasets = useJsonDatasetLoaders(
 		CHART_DATASET_DEFINITIONS.map((definition) => ({
@@ -59,9 +88,7 @@ export function useDatasets(selectedLocation: string): UseDatasetsResult {
 						),
 					) ?? undefined)
 				: undefined,
-			enabled: getChartDefinitions(definition).some((chart) =>
-				isEnabled(chart.key),
-			),
+			enabled: datasetIsNeeded(definition, visibility, activeDatasetType),
 		})),
 	);
 	const chartDatasetRecords = Object.fromEntries(
