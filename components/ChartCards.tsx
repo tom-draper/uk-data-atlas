@@ -79,13 +79,7 @@ export default function ChartCards({
 					),
 				]),
 			),
-		[
-			definitions,
-			aggregator,
-			boundaryData,
-			location,
-			...definitions.map(({ definition }) => datasets[definition.type]),
-		],
+		[definitions, datasets, aggregator, boundaryData, location],
 	);
 
 	return definitions.map(({ definition, chart }) => {
