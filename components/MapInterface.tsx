@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
@@ -256,34 +256,39 @@ export default function MapInterface({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [styleReady]);
 
-	const handleLocationClick = (location: string) => {
-		const bounds = gazetteer.boundsOf(location);
-		if (!map.current || !bounds) return;
+	const handleLocationClick = useCallback(
+		(location: string) => {
+			const bounds = gazetteer.boundsOf(location);
+			if (!map.current || !bounds) return;
 
-		// Start the camera transition before the location change re-renders the
-		// panel and refreshes point data; otherwise that work can delay the first
-		// animation frame and make the move appear instantaneous.
-		map.current.fitBounds(bounds, {
-			padding: MAP_CONFIG.fitBoundsPadding,
-			duration: MAP_CONFIG.fitBoundsDuration,
-			// A deliberate location selection should retain its spatial context even
-			// when the browser has a reduced-motion preference.
-			essential: true,
-		});
-		setSelectedLocation(location);
-	};
+			// Start the camera transition before the location change re-renders the
+			// panel and refreshes point data; otherwise that work can delay the first
+			// animation frame and make the move appear instantaneous.
+			map.current.fitBounds(bounds, {
+				padding: MAP_CONFIG.fitBoundsPadding,
+				duration: MAP_CONFIG.fitBoundsDuration,
+				// A deliberate location selection should retain its spatial context even
+				// when the browser has a reduced-motion preference.
+				essential: true,
+			});
+			setSelectedLocation(location);
+			// `map` is a ref, stable for the component's lifetime.
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		},
+		[setSelectedLocation],
+	);
 
-	const handleZoomIn = () => {
+	const handleZoomIn = useCallback(() => {
 		const currentMap = map.current;
 		if (currentMap) currentMap.zoomTo(currentMap.getZoom() + 1);
-	};
+	}, []);
 
-	const handleZoomOut = () => {
+	const handleZoomOut = useCallback(() => {
 		const currentMap = map.current;
 		if (currentMap) currentMap.zoomTo(currentMap.getZoom() - 1);
-	};
+	}, []);
 
-	const handleExport = () => {
+	const handleExport = useCallback(() => {
 		type MapWithExport = MapLibreMap & {
 			once(type: "render", listener: () => void): void;
 			triggerRepaint(): void;
@@ -304,7 +309,7 @@ export default function MapInterface({
 		});
 
 		mapInstance.triggerRepaint();
-	};
+	}, []);
 
 	const { getCodeForYear } = codeMapper;
 	const normalizedDatasets = useMemo(() => {
