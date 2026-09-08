@@ -101,6 +101,23 @@ Central,Example Council,60%,1200,700,250`,
 		expect(reconciled.data).toHaveProperty("E05000002");
 	});
 
+	it("reconciles ampersand and 'and' ward-name variants", () => {
+		const reference = parseLocalElectionTable(
+			`Ward code,Ward name,Local authority name,Local authority code,Turnout (%),Electorate,Total votes,LAB
+E05013022,Cadishead and Lower Irlam,Salford,E08000006,50%,1000,500,300`,
+			referenceConfig,
+		);
+		const unmapped = parseLocalElectionTable(
+			`WARDNAME,DISTRICTNAME,TURNOUT,ELECT,Grand Total,LAB
+Cadishead & Lower Irlam,Salford,60%,1200,700,250`,
+			unmappedConfig,
+		);
+
+		const reconciled = reconcile2023Data(unmapped, [reference]);
+
+		expect(reconciled.data).toHaveProperty("E05013022");
+	});
+
 	it("aggregates LEAP candidate rows and excludes Scottish STV records", () => {
 		const config: LeapElectionSourceConfig = {
 			year: 2019,

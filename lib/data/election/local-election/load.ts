@@ -56,6 +56,14 @@ const findWinner = (votes: Record<string, number | undefined>): string => {
 	);
 };
 
+// LEAP uses "and" while the 2023 workbook commonly uses "&" for the same
+// ward name. This is a presentation difference, not a fuzzy name match.
+const reconciliationName = (name: string) =>
+	name.toLowerCase().replace(/&/g, " and ").replace(/\s+/g, " ").trim();
+
+const reconciliationKey = (ladName: string, wardName: string) =>
+	`${reconciliationName(ladName)}|${reconciliationName(wardName)}`;
+
 // Parses one worksheet rendered as CSV into a dataset. This runs at precompile
 // time, so PapaParse stays out of the client bundle.
 export const parseLocalElectionTable = (
@@ -243,7 +251,7 @@ export const reconcile2023Data = (
 	);
 	referencesByProximity.forEach((ds) => {
 		Object.entries(ds.data).forEach(([code, data]) => {
-			const key = `${data.ladName}|${data.wardName}`.toLowerCase();
+			const key = reconciliationKey(data.ladName, data.wardName);
 			if (!lookup.has(key)) {
 				lookup.set(key, { wardCode: code, ladCode: data.ladCode });
 			}
@@ -255,7 +263,7 @@ export const reconcile2023Data = (
 
 	// Apply lookup without mutating the parsed source dataset.
 	unmapped.forEach((item) => {
-		const key = `${item.ladName}|${item.wardName}`.toLowerCase();
+		const key = reconciliationKey(item.ladName, item.wardName);
 		const match = lookup.get(key);
 
 		if (match) {
