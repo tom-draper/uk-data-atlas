@@ -28,35 +28,65 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";
 
-let _cachedStorageKey: string | null | undefined = undefined;
-let _cachedVisibility: Record<ChartKey, boolean> = DEFAULT_VISIBILITY;
+let hasReadStoredVisibility = false;
+let cachedVisibility: Record<ChartKey, boolean> = DEFAULT_VISIBILITY;
+const visibilityListeners = new Set<() => void>();
+let isListeningForStorage = false;
 
-export function getVisibilitySnapshot(): Record<ChartKey, boolean> {
-	const raw = localStorage.getItem(STORAGE_KEY);
-	if (raw === _cachedStorageKey) return _cachedVisibility;
-	_cachedStorageKey = raw;
-	if (!raw) {
-		_cachedVisibility = DEFAULT_VISIBILITY;
-		return _cachedVisibility;
-	}
+const parseVisibility = (raw: string | null): Record<ChartKey, boolean> => {
+	if (!raw) return DEFAULT_VISIBILITY;
 	try {
 		const parsed = JSON.parse(raw) as Partial<Record<ChartKey, boolean>>;
 		const persisted: Record<ChartKey, boolean> = {};
 		for (const [key, value] of Object.entries(parsed)) {
 			if (typeof value === "boolean") persisted[key] = value;
 		}
-		_cachedVisibility = { ...DEFAULT_VISIBILITY, ...persisted };
+		return { ...DEFAULT_VISIBILITY, ...persisted };
 	} catch {
-		localStorage.removeItem(STORAGE_KEY);
-		_cachedStorageKey = null;
-		_cachedVisibility = DEFAULT_VISIBILITY;
+		return DEFAULT_VISIBILITY;
 	}
-	return _cachedVisibility;
+};
+
+const notifyVisibilityListeners = () => {
+	for (const listener of visibilityListeners) listener();
+};
+
+const handleStorage = (event: StorageEvent) => {
+	// A null key means localStorage.clear(), which also resets this preference.
+	if (event.key !== null && event.key !== STORAGE_KEY) return;
+	hasReadStoredVisibility = true;
+	cachedVisibility = parseVisibility(
+		event.key === null ? null : event.newValue,
+	);
+	notifyVisibilityListeners();
+};
+
+export function getVisibilitySnapshot(): Record<ChartKey, boolean> {
+	if (hasReadStoredVisibility) return cachedVisibility;
+	hasReadStoredVisibility = true;
+	try {
+		cachedVisibility = parseVisibility(localStorage.getItem(STORAGE_KEY));
+	} catch {
+		// Privacy settings can make localStorage unavailable. Visibility still
+		// works for this session, using the defaults as its initial value.
+		cachedVisibility = DEFAULT_VISIBILITY;
+	}
+	return cachedVisibility;
 }
 
 export function subscribeVisibility(callback: () => void): () => void {
-	window.addEventListener("storage", callback);
-	return () => window.removeEventListener("storage", callback);
+	visibilityListeners.add(callback);
+	if (!isListeningForStorage) {
+		window.addEventListener("storage", handleStorage);
+		isListeningForStorage = true;
+	}
+	return () => {
+		visibilityListeners.delete(callback);
+		if (visibilityListeners.size === 0 && isListeningForStorage) {
+			window.removeEventListener("storage", handleStorage);
+			isListeningForStorage = false;
+		}
+	};
 }
 
 interface ChartVisibilityContextValue {
@@ -83,10 +113,11 @@ export function ChartVisibilityProvider({
 	const toggle = (key: ChartKey) => {
 		const current = getVisibilitySnapshot();
 		const next = { ...current, [key]: !current[key] };
+		cachedVisibility = next;
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 		} catch {}
-		window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
+		notifyVisibilityListeners();
 	};
 
 	const ctxValue = { visibility, toggle };
