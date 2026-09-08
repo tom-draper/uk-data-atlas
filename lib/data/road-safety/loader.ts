@@ -1,5 +1,6 @@
-import { CustomDataset, CustomPoint } from "@/lib/types/custom";
+import { CustomDataset, CustomPoint, PointSummary } from "@/lib/types/custom";
 import { parseCsv } from "@/lib/helpers/parseCsv";
+import type { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
 
 const YEAR = 2025;
 const ID = `roadSafety${YEAR}`;
@@ -56,12 +57,63 @@ const SEVERITY_STYLE = {
 // Coordinates are rounded to 5 dp (~1 m) to keep the precompiled payload compact.
 const round5 = (n: number) => Math.round(n * 1e5) / 1e5;
 
+/**
+ * What the card shows for each named location, counted the same way the client
+ * would: every point inside the location's bounding box, as `getPointsInBounds`
+ * selects them. Precomputing it is what lets the 6 MB point file stay unfetched
+ * until someone selects the dataset.
+ */
+const summariseByLocation = (
+	points: readonly CustomPoint[],
+	gazetteer: Gazetteer,
+): Record<string, PointSummary> => {
+	const locations = gazetteer.namedLocations().flatMap((name) => {
+		const bbox = gazetteer.boundsOf(name);
+		return bbox ? [{ name, bbox, count: 0, total: 0 }] : [];
+	});
+
+	for (const point of points) {
+		for (const location of locations) {
+			const [west, south, east, north] = location.bbox;
+			if (
+				point.lng >= west &&
+				point.lng <= east &&
+				point.lat >= south &&
+				point.lat <= north
+			) {
+				location.count++;
+				location.total += point.value;
+			}
+		}
+	}
+
+	return Object.fromEntries(
+		locations.map(({ name, count, total }) => [
+			name,
+			{
+				count,
+				// Three decimal places is well beyond the one the card renders.
+				averageValue:
+					count > 0 ? Math.round((total / count) * 1e3) / 1e3 : 0,
+			},
+		]),
+	);
+};
+
+export interface RoadSafetyCompilation {
+	/** The card's dataset, small enough to fetch on every page load. */
+	datasets: Record<string, CustomDataset>;
+	/** The collisions themselves, fetched only once the dataset is selected. */
+	points: Record<string, CustomPoint[]>;
+}
+
 // Loads the DfT road safety collision dataset as a point dataset. Reuses the
 // custom point render path (kind: "points") so it exercises the coordinate map
 // layer with real, national-scale data.
 export async function loadRoadSafety(
 	read: (path: string) => Promise<string>,
-): Promise<Record<string, CustomDataset>> {
+	gazetteer: Gazetteer,
+): Promise<RoadSafetyCompilation> {
 	const { data } = await parseCsv(await read(SOURCE), { header: true });
 
 	const points: CustomPoint[] = [];
@@ -101,11 +153,11 @@ export async function loadRoadSafety(
 		boundaryType: "ward",
 		boundaryYear: 0,
 		data: {},
-		points,
+		pointSummaries: summariseByLocation(points, gazetteer),
 		valueMin: 1,
 		valueMax: 3,
 		pointStyle: SEVERITY_STYLE,
 	};
 
-	return { [ID]: dataset };
+	return { datasets: { [ID]: dataset }, points: { [ID]: points } };
 }

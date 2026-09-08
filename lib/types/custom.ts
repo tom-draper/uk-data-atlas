@@ -24,6 +24,15 @@ export interface PointStyle {
 	radius?: { min: number; max: number };
 }
 
+/**
+ * What a point dataset's card shows for one named location, precompiled so the
+ * card can be drawn before — or without — the points themselves being fetched.
+ */
+export interface PointSummary {
+	count: number;
+	averageValue: number;
+}
+
 export interface CustomDataset {
 	id: string;
 	type: "custom";
@@ -37,8 +46,13 @@ export interface CustomDataset {
 	dataColumn: string;
 	// Populated for choropleth datasets (boundary code → value).
 	data: { [key: string]: number };
-	// Populated for point datasets.
+	// Populated for point datasets. A national point set is fetched separately
+	// and only once its dataset is selected, so this stays undefined until then
+	// — `pointSummaries` is what the card reads in the meantime.
 	points?: CustomPoint[];
+	// Per-named-location counts, present on precompiled point datasets whose
+	// points load lazily.
+	pointSummaries?: Record<string, PointSummary>;
 	valueMin?: number;
 	valueMax?: number;
 	pointStyle?: PointStyle;

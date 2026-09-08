@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import MapInterface from "@components/MapInterface";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
@@ -106,8 +106,15 @@ export default function AtlasClient() {
 		loading: datasetsLoading,
 		errors,
 	} = useDatasets(selectedLocation);
-	const roadSafety = useRoadSafetyData();
-	const roadSafetyDatasets = Object.values(roadSafety.datasets);
+	// Only the selected dataset's points are worth fetching, so tell the loader
+	// which visualisation is showing.
+	const roadSafety = useRoadSafetyData(
+		activeViz.datasetType === "custom" ? activeViz.datasetId : undefined,
+	);
+	const roadSafetyDatasets = useMemo(
+		() => Object.values(roadSafety.datasets),
+		[roadSafety.datasets],
+	);
 	// Hidden until a tile URL is configured (NEXT_PUBLIC_OS_OPEN_ROADS_TILE_URL),
 	// so it stays off in production until we have somewhere to host the tiles.
 	const networkDatasets = Object.values(NETWORK_DATASETS).filter(

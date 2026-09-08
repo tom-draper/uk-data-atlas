@@ -94,9 +94,11 @@ function RoadSafetyCard({
 }) {
 	const isDark = useIsDark();
 	const { excludedPointValues, selectedPointValue } = useExcludedCategories();
+	const loadedPoints = dataset.points;
 	const points = useMemo(() => {
+		if (!loadedPoints) return null;
 		const locationPoints = getPointsInBounds(
-			dataset.points ?? [],
+			loadedPoints,
 			gazetteer.boundsOf(location),
 		);
 		if (!isActive) return locationPoints;
@@ -107,17 +109,25 @@ function RoadSafetyCard({
 					point.value === selectedPointValue),
 		);
 	}, [
-		dataset.points,
+		loadedPoints,
 		location,
 		isActive,
 		excludedPointValues,
 		selectedPointValue,
 	]);
-	const hasData = points.length > 0;
-	const averageSeverity = hasData
-		? points.reduce((total, point) => total + point.value, 0) /
-			points.length
-		: 0;
+
+	// The points are only fetched once the dataset is selected, so until then
+	// the card reads the counts precompiled for each location. They agree: both
+	// count the collisions inside the location's bounding box.
+	const summary = dataset.pointSummaries?.[location];
+	const collisions = points ? points.length : (summary?.count ?? 0);
+	const hasData = collisions > 0;
+	const averageSeverity = !hasData
+		? 0
+		: points
+			? points.reduce((total, point) => total + point.value, 0) /
+				points.length
+			: (summary?.averageValue ?? 0);
 	const severityBarWidth = (averageSeverity / 3) * 100;
 	const accent = hasData ? severityColor(averageSeverity) : null;
 	return (
@@ -143,7 +153,7 @@ function RoadSafetyCard({
 		>
 			<ChartCardValueBar
 				hasData={hasData}
-				value={points.length.toLocaleString("en-GB")}
+				value={collisions.toLocaleString("en-GB")}
 				unit="collisions"
 				secondary={`severity ${averageSeverity.toFixed(1)} / 3`}
 				barWidth={severityBarWidth}
