@@ -62,7 +62,7 @@ Unmatched,Example Council,55%,900,400,300,100`,
 		expect(reconciled.results).toEqual({ E05000001: "CON" });
 		expect(reconciled.data.E05000001).toMatchObject({
 			wardCode: "E05000001",
-			ladCode: "E05000001",
+			ladCode: "E06000001",
 			wardName: "Central",
 			partyVotes: { LAB: 250, CON: 450 },
 		});

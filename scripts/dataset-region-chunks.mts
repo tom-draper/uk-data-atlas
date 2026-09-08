@@ -380,6 +380,16 @@ export async function writeDatasetRegionChunks({
 			}
 			for (const region of REGION_CHUNK_KEYS) {
 				const data = records.get(region) ?? {};
+				const results =
+					file === "local-election" &&
+					dataset.results &&
+					typeof dataset.results === "object"
+						? Object.fromEntries(
+								Object.entries(
+									dataset.results as Record<string, unknown>,
+								).filter(([code]) => code in data),
+							)
+						: undefined;
 				const regionalAggregates = locationAggregates?.[datasetId]
 					? locationAggregatesForRegion(
 							gazetteer,
@@ -396,6 +406,7 @@ export async function writeDatasetRegionChunks({
 					...(regionalAggregates && {
 						locationAggregates: regionalAggregates,
 					}),
+					...(results && { results }),
 					data,
 				};
 			}

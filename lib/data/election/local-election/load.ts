@@ -235,11 +235,13 @@ export const reconcile2023Data = (
 	if (!unmapped) return dataset;
 
 	// Build Lookup Map
-	const lookup = new Map<string, string>();
+	const lookup = new Map<string, { wardCode: string; ladCode: string }>();
 	referenceSets.forEach((ds) => {
 		Object.entries(ds.data).forEach(([code, data]) => {
 			const key = `${data.ladName}|${data.wardName}`.toLowerCase();
-			if (!lookup.has(key)) lookup.set(key, code);
+			if (!lookup.has(key)) {
+				lookup.set(key, { wardCode: code, ladCode: data.ladCode });
+			}
 		});
 	});
 
@@ -249,14 +251,14 @@ export const reconcile2023Data = (
 	// Apply lookup without mutating the parsed source dataset.
 	unmapped.forEach((item) => {
 		const key = `${item.ladName}|${item.wardName}`.toLowerCase();
-		const code = lookup.get(key);
+		const match = lookup.get(key);
 
-		if (code) {
-			results[code] = item.winningParty;
-			data[code] = {
+		if (match) {
+			results[match.wardCode] = item.winningParty;
+			data[match.wardCode] = {
 				...item,
-				wardCode: code,
-				ladCode: code.substring(0, 9), // Infer LA code from Ward Code
+				wardCode: match.wardCode,
+				ladCode: match.ladCode,
 			};
 		}
 	});
