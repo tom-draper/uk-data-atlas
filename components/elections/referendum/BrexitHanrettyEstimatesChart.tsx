@@ -72,9 +72,8 @@ export default function BrexitHanrettyEstimatesChart({
 		: null;
 
 	const isActive = !!(
-		dataset &&
 		activeDataset?.type === "brexitConstituency" &&
-		activeDataset.id === dataset.id
+		activeDataset.id === (dataset?.id ?? `brexitConstituency${year}`)
 	);
 
 	const pctLeave = brexitStats?.pctLeave ?? 0;
@@ -88,11 +87,9 @@ export default function BrexitHanrettyEstimatesChart({
 			: result === "remain"
 				? REMAIN_COLOR
 				: null;
-	if (!dataset) return null;
-
 	return (
 		<ChartCard
-			heading={`Hanretty Estimates [${dataset.year}]`}
+			heading={`Hanretty Estimates [${dataset?.year ?? year}]`}
 			headerEnd={
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
@@ -106,9 +103,9 @@ export default function BrexitHanrettyEstimatesChart({
 			title="Hanretty, C. (2017). Areal interpolation and the UK's referendum on EU membership. Journal of Elections, Public Opinion and Parties, 27(4), 466–483. Published via House of Commons Library."
 			onClick={() =>
 				setActiveViz({
-					datasetId: dataset.id,
-					datasetType: dataset.type,
-					datasetYear: dataset.year,
+					datasetId: dataset?.id ?? `brexitConstituency${year}`,
+					datasetType: "brexitConstituency",
+					datasetYear: dataset?.year ?? year,
 				})
 			}
 		>

@@ -206,7 +206,7 @@ export default function MapInterface({
 		const dataKeys = new Set(
 			Object.keys(activeDataset.data as Record<string, unknown>),
 		);
-		if (dataKeys.size === 0) return rawGeojson;
+		if (dataKeys.size === 0) return { ...rawGeojson, features: [] };
 		const codeKeys: readonly string[] =
 			activeDataset.boundaryType === "lsoa"
 				? BOUNDARY_CATALOG.lsoa.properties.code

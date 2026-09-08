@@ -106,9 +106,8 @@ export default function BrexitElectoralChart({
 		: null;
 
 	const isActive = !!(
-		dataset &&
 		activeDataset?.type === "brexit" &&
-		activeDataset.id === dataset.id
+		activeDataset.id === (dataset?.id ?? `brexit${year}`)
 	);
 
 	const pctLeave = brexitStats?.pctLeave ?? 0;
@@ -122,20 +121,18 @@ export default function BrexitElectoralChart({
 			: result === "remain"
 				? REMAIN_COLOR
 				: null;
-	if (!dataset) return null;
-
 	return (
 		<ChartCard
-			heading={`Electoral Commission [${dataset.year}]`}
+			heading={`Electoral Commission [${dataset?.year ?? year}]`}
 			accent={accentColor}
 			isActive={isActive}
 			minHeightClassName="min-h-[65px]"
 			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
 			onClick={() =>
 				setActiveViz({
-					datasetId: dataset.id,
-					datasetType: dataset.type,
-					datasetYear: dataset.year,
+					datasetId: dataset?.id ?? `brexit${year}`,
+					datasetType: "brexit",
+					datasetYear: dataset?.year ?? year,
 				})
 			}
 		>
