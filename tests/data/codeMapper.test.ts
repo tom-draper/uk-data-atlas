@@ -31,4 +31,28 @@ describe("CodeMapperStore", () => {
 			"W2",
 		]);
 	});
+
+	// The reverse index is derived on first read, so mappings added afterwards
+	// have to be folded into it rather than only into the forward mappings.
+	it("keeps reverse lookups current when mappings arrive after the first read", () => {
+		const mapper = new CodeMapperStore();
+		mapper.addCodeMappings("ward", { "W-2019": { 2024: "W-2024" } });
+
+		expect(mapper.getHighlightCodes("ward", "W-2024")).toEqual(
+			new Set(["W-2024", "W-2019"]),
+		);
+
+		mapper.addCodeMappings("ward", { "W-2016": { 2024: "W-2024" } });
+		mapper.addCodeMapping("ward", "W-2017", 2024, "W-2024");
+
+		expect(mapper.findSourceCodes("ward", "W-2024", 2024)).toEqual(
+			expect.arrayContaining(["W-2019", "W-2016", "W-2017"]),
+		);
+		expect(mapper.getHighlightCodes("ward", "W-2024")).toEqual(
+			new Set(["W-2024", "W-2019", "W-2016", "W-2017"]),
+		);
+
+		mapper.clearCodeMappings("ward");
+		expect(mapper.findSourceCodes("ward", "W-2024", 2024)).toEqual([]);
+	});
 });

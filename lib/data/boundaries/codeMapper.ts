@@ -50,47 +50,17 @@ const emptyCodeMappings = (): CodeMappings => ({
 	parish: {},
 });
 
-const emptyReverseMappings = (): ReverseCodeMappings => ({
-	ward: {},
-	localAuthority: {},
-	constituency: {},
-	lsoa: {},
-	dataZone: {},
-	superOutputArea: {},
-	country: {},
-	localPlanningAuthority: {},
-	region: {},
-	countyAndUnitaryAuthority: {},
-	integratedCareBoard: {},
-	msoa: {},
-	communitySafetyPartnership: {},
-	policeForceArea: {},
-	combinedAuthority: {},
-	itl1: {},
-	itl2: {},
-	itl3: {},
-	majorTownAndCity: {},
-	scottishParliamentaryConstituency: {},
-	scottishParliamentaryRegion: {},
-	seneddConstituency: {},
-	seneddElectoralRegion: {},
-	localHealthBoard: {},
-	nhsEnglandRegion: {},
-	subIntegratedCareBoardLocation: {},
-	fireAndRescueAuthority: {},
-	nationalPark: {},
-	countyElectoralDivision: {},
-	travelToWorkArea: {},
-	parish: {},
-});
-
 /** Mutable, framework-independent boundary-code lookup. */
 export class CodeMapperStore implements CodeMapper {
 	private wardToLad: Record<string, string> = {};
 	private ladToWards: Record<number, Record<string, string[]>> = {};
 	private constituencyToWards: Record<number, Record<string, string[]>> = {};
 	private codeMappings = emptyCodeMappings();
-	private reverseMappings: ReverseCodeMappings = emptyReverseMappings();
+	// Built per geography on first read rather than alongside the forward
+	// mappings. The precompiled file carries 124k ward pairs, so maintaining it
+	// eagerly cost ~15k Sets (5 MB) on every load for a lookup only the
+	// highlight helpers below ever perform.
+	private reverseMappings: Partial<ReverseCodeMappings> = {};
 
 	getLadForWard = (wardCode: string): string | undefined => {
 		const direct = this.wardToLad[wardCode];
@@ -164,6 +134,27 @@ export class CodeMapperStore implements CodeMapper {
 			: [];
 	};
 
+	/**
+	 * Which codes map *to* each code, for one geography. Derived from the
+	 * forward mappings the first time something asks, and kept in step by the
+	 * add methods only once it exists.
+	 */
+	private reverseFor = (type: CodeType): Record<string, Set<string>> => {
+		const cached = this.reverseMappings[type];
+		if (cached) return cached;
+
+		const reverse: Record<string, Set<string>> = {};
+		for (const [fromCode, yearMap] of Object.entries(
+			this.codeMappings[type],
+		)) {
+			for (const toCode of Object.values(yearMap)) {
+				(reverse[toCode] ??= new Set()).add(fromCode);
+			}
+		}
+		this.reverseMappings[type] = reverse;
+		return reverse;
+	};
+
 	addCodeMapping = (
 		type: CodeType,
 		fromCode: string,
@@ -172,16 +163,17 @@ export class CodeMapperStore implements CodeMapper {
 	): void => {
 		if (!fromCode || !toYear || !toCode) return;
 		(this.codeMappings[type][fromCode] ??= {})[toYear] = toCode;
-		(this.reverseMappings[type][toCode] ??= new Set()).add(fromCode);
+		const reverse = this.reverseMappings[type];
+		if (reverse) (reverse[toCode] ??= new Set()).add(fromCode);
 	};
 
 	addCodeMappings = (type: CodeType, mappings: CodeMapping): void => {
 		Object.assign(this.codeMappings[type], mappings);
+		const reverse = this.reverseMappings[type];
+		if (!reverse) return;
 		for (const [fromCode, yearMap] of Object.entries(mappings)) {
 			for (const toCode of Object.values(yearMap)) {
-				(this.reverseMappings[type][toCode] ??= new Set()).add(
-					fromCode,
-				);
+				(reverse[toCode] ??= new Set()).add(fromCode);
 			}
 		}
 	};
@@ -208,7 +200,7 @@ export class CodeMapperStore implements CodeMapper {
 		targetCode: string,
 		targetYear: YearCode,
 	): string[] =>
-		[...(this.reverseMappings[type][targetCode] ?? [])].filter(
+		[...(this.reverseFor(type)[targetCode] ?? [])].filter(
 			(sourceCode) =>
 				this.codeMappings[type][sourceCode]?.[targetYear] ===
 				targetCode,
@@ -220,7 +212,7 @@ export class CodeMapperStore implements CodeMapper {
 			this.codeMappings[type][code] ?? {},
 		))
 			codes.add(mappedCode);
-		for (const sourceCode of this.reverseMappings[type][code] ?? []) {
+		for (const sourceCode of this.reverseFor(type)[code] ?? []) {
 			codes.add(sourceCode);
 			for (const mappedCode of Object.values(
 				this.codeMappings[type][sourceCode] ?? {},
@@ -235,7 +227,7 @@ export class CodeMapperStore implements CodeMapper {
 		this.ladToWards = {};
 		this.constituencyToWards = {};
 		this.codeMappings = emptyCodeMappings();
-		this.reverseMappings = emptyReverseMappings();
+		this.reverseMappings = {};
 	};
 
 	clearWardLadMap = (): void => {
@@ -248,10 +240,10 @@ export class CodeMapperStore implements CodeMapper {
 	clearCodeMappings = (type?: CodeType): void => {
 		if (type) {
 			this.codeMappings[type] = {};
-			this.reverseMappings[type] = {};
+			delete this.reverseMappings[type];
 		} else {
 			this.codeMappings = emptyCodeMappings();
-			this.reverseMappings = emptyReverseMappings();
+			this.reverseMappings = {};
 		}
 	};
 
