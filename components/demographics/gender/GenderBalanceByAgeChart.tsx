@@ -7,6 +7,7 @@ import {
 	SelectedArea,
 } from "@/lib/types";
 import {
+	getAreaCachedValue,
 	resolveWardData,
 	getLadCachedValue,
 } from "@/lib/helpers/demographicData";
@@ -35,6 +36,7 @@ function GenderBalanceByAgeChart({
 	codeMapper,
 }: GenderBalanceByAgeChartProps) {
 	const chartsLoading = useChartsLoading();
+	const mappingGeneration = codeMapper?.getMappingGeneration() ?? 0;
 	// Refs for direct DOM manipulation (avoids re-renders on hover)
 	const tooltipRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -102,6 +104,8 @@ function GenderBalanceByAgeChart({
 				genderBalanceCache,
 				selectedArea.code,
 				dataset.year,
+				dataset,
+				mappingGeneration,
 				() => {
 					const wardCodes = codeMapper.getWardsForLad!(
 						selectedArea.code,
@@ -149,45 +153,64 @@ function GenderBalanceByAgeChart({
 			);
 		}
 
-		// Handle Constituency Selection (no cache — constituency-ward maps load async and a
-		// stale cache would permanently hide data if computed before mappings were ready)
+		// Mapping generation changes when the async constituency lookup is ready,
+		// so this cache cannot retain an early empty result.
 		if (
 			selectedArea &&
 			selectedArea.type === "constituency" &&
 			codeMapper?.getWardsForConstituency
 		) {
-			const wardCodes = codeMapper.getWardsForConstituency(
-				selectedArea.code,
-				dataset.boundaryYear,
-			);
+			return getAreaCachedValue(
+				genderBalanceCache,
+				`constituency-${selectedArea.code}`,
+				dataset.year,
+				dataset,
+				mappingGeneration,
+				() => {
+					const wardCodes = codeMapper.getWardsForConstituency(
+						selectedArea.code,
+						dataset.boundaryYear,
+					);
 
-			if (wardCodes.length === 0) return { ageData: [], percentages: [] };
+					if (wardCodes.length === 0)
+						return { ageData: [], percentages: [] };
 
-			const aggregatedMales = new Array(91).fill(0);
-			const aggregatedFemales = new Array(91).fill(0);
+					const aggregatedMales = new Array(91).fill(0);
+					const aggregatedFemales = new Array(91).fill(0);
 
-			for (const wardCode of wardCodes) {
-				const wardData = resolveWardData(dataset, wardCode, codeMapper);
-				if (wardData) {
-					for (let age = 0; age < 91; age++) {
-						const ageStr = AGE_STRING_KEYS[age];
-						aggregatedMales[age] += wardData.males[ageStr] || 0;
-						aggregatedFemales[age] += wardData.females[ageStr] || 0;
+					for (const wardCode of wardCodes) {
+						const wardData = resolveWardData(
+							dataset,
+							wardCode,
+							codeMapper,
+						);
+						if (wardData) {
+							for (let age = 0; age < 91; age++) {
+								const ageStr = AGE_STRING_KEYS[age];
+								aggregatedMales[age] +=
+									wardData.males[ageStr] || 0;
+								aggregatedFemales[age] +=
+									wardData.females[ageStr] || 0;
+							}
+						}
 					}
-				}
-			}
 
-			const data: Array<{ age: number; males: number; females: number }> =
-				new Array(91);
-			const pct: number[] = new Array(91);
-			for (let age = 0; age < 91; age++) {
-				const m = aggregatedMales[age];
-				const f = aggregatedFemales[age];
-				data[age] = { age, males: m, females: f };
-				pct[age] = m + f > 0 ? (m / (m + f)) * 100 : 50;
-			}
+					const data: Array<{
+						age: number;
+						males: number;
+						females: number;
+					}> = new Array(91);
+					const pct: number[] = new Array(91);
+					for (let age = 0; age < 91; age++) {
+						const m = aggregatedMales[age];
+						const f = aggregatedFemales[age];
+						data[age] = { age, males: m, females: f };
+						pct[age] = m + f > 0 ? (m / (m + f)) * 100 : 50;
+					}
 
-			return { ageData: data, percentages: pct };
+					return { ageData: data, percentages: pct };
+				},
+			);
 		}
 
 		// Unsupported area type or missing data

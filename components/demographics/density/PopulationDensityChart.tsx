@@ -19,6 +19,7 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import {
+	getAreaCachedValue,
 	resolveWardData,
 	getLadCachedValue,
 } from "@/lib/helpers/demographicData";
@@ -170,6 +171,7 @@ function PopulationDensityChart({
 	const isDark = useIsDark();
 	const isActive =
 		activeViz.datasetId === dataset.id && activeViz.view === "density";
+	const mappingGeneration = codeMapper?.getMappingGeneration() ?? 0;
 
 	const { density, areaSqKm, total } = (() => {
 		// Handle no area selected - use aggregated data
@@ -227,6 +229,8 @@ function PopulationDensityChart({
 				densityCache,
 				selectedArea.code,
 				dataset.year,
+				dataset,
+				mappingGeneration,
 				() => {
 					const wardCodes = codeMapper.getWardsForLad!(
 						selectedArea.code,
@@ -273,52 +277,63 @@ function PopulationDensityChart({
 			);
 		}
 
-		// Handle Constituency Selection (no cache — stale cache risks hiding data if computed
-		// before constituency-ward mappings finish loading asynchronously)
+		// Mapping generation changes when the async constituency lookup is ready,
+		// so this cache cannot retain an early empty result.
 		if (
 			selectedArea &&
 			selectedArea.type === "constituency" &&
 			codeMapper?.getWardsForConstituency
 		) {
-			const wardCodes = codeMapper.getWardsForConstituency(
-				selectedArea.code,
-				dataset.boundaryYear,
-			);
+			return getAreaCachedValue(
+				densityCache,
+				`constituency-${selectedArea.code}`,
+				dataset.year,
+				dataset,
+				mappingGeneration,
+				() => {
+					const wardCodes = codeMapper.getWardsForConstituency(
+						selectedArea.code,
+						dataset.boundaryYear,
+					);
 
-			if (wardCodes.length === 0)
-				return { density: null, areaSqKm: null, total: null };
+					if (wardCodes.length === 0)
+						return { density: null, areaSqKm: null, total: null };
 
-			const wardCodeProp = detectWardCodeForYear(
-				geojson.features,
-				dataset.boundaryYear,
-			);
-			const featureIndex = getFeatureIndex(geojson, wardCodeProp);
-			let totalPopulation = 0;
-			let totalArea = 0;
+					const wardCodeProp = detectWardCodeForYear(
+						geojson.features,
+						dataset.boundaryYear,
+					);
+					const featureIndex = getFeatureIndex(geojson, wardCodeProp);
+					let totalPopulation = 0;
+					let totalArea = 0;
 
-			for (const wardCode of wardCodes) {
-				const populationData = resolveWardData(
-					dataset,
-					wardCode,
-					codeMapper,
-				);
-				if (populationData) {
-					const wardFeature = featureIndex.get(wardCode);
-					if (wardFeature) {
-						const wardTotal = calculateTotal(populationData.total);
-						totalPopulation += wardTotal;
-						totalArea += featureAreaSqKm(wardFeature);
+					for (const wardCode of wardCodes) {
+						const populationData = resolveWardData(
+							dataset,
+							wardCode,
+							codeMapper,
+						);
+						if (populationData) {
+							const wardFeature = featureIndex.get(wardCode);
+							if (wardFeature) {
+								const wardTotal = calculateTotal(
+									populationData.total,
+								);
+								totalPopulation += wardTotal;
+								totalArea += featureAreaSqKm(wardFeature);
+							}
+						}
 					}
-				}
-			}
 
-			return totalArea > 0
-				? {
-						density: totalPopulation / totalArea,
-						areaSqKm: totalArea,
-						total: totalPopulation,
-					}
-				: { density: null, areaSqKm: null, total: null };
+					return totalArea > 0
+						? {
+								density: totalPopulation / totalArea,
+								areaSqKm: totalArea,
+								total: totalPopulation,
+							}
+						: { density: null, areaSqKm: null, total: null };
+				},
+			);
 		}
 
 		// Unsupported area type

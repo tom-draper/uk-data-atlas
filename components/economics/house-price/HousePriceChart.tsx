@@ -41,13 +41,44 @@ interface PriceChartProps {
 		constituencyCode: string,
 		wardYear: number,
 	) => string[];
+	mappingGeneration: number;
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
 const LINE_COLOR = "#6366f1"; // indigo-500
 
+const MAX_HOUSE_PRICE_CACHE_ENTRIES = 50;
 const housePriceLookupCache = new Map<string, Map<number, any>>();
+const housePriceDatasetIds = new WeakMap<object, number>();
+let nextHousePriceDatasetId = 0;
+
+const housePriceCacheKey = (
+	areaKey: string,
+	dataset: object,
+	mappingGeneration: number,
+) => {
+	let datasetId = housePriceDatasetIds.get(dataset);
+	if (datasetId === undefined) {
+		datasetId = nextHousePriceDatasetId++;
+		housePriceDatasetIds.set(dataset, datasetId);
+	}
+	return `${areaKey}:${datasetId}:${mappingGeneration}`;
+};
+
+const housePriceYearCache = (cacheKey: string) => {
+	let yearCache = housePriceLookupCache.get(cacheKey);
+	if (!yearCache) {
+		if (housePriceLookupCache.size >= MAX_HOUSE_PRICE_CACHE_ENTRIES) {
+			housePriceLookupCache.delete(
+				housePriceLookupCache.keys().next().value!,
+			);
+		}
+		yearCache = new Map();
+		housePriceLookupCache.set(cacheKey, yearCache);
+	}
+	return yearCache;
+};
 
 function PriceChart({
 	dataset,
@@ -56,6 +87,7 @@ function PriceChart({
 	getCodeForYear,
 	getWardsForLad,
 	getWardsForConstituency,
+	mappingGeneration,
 	isActive,
 	setActiveViz,
 }: PriceChartProps) {
@@ -75,11 +107,13 @@ function PriceChart({
 		} else if (selectedArea && selectedArea.type === "ward") {
 			// Ward selected - lookup ward data
 			const wardCode = selectedArea.code;
-			const cacheKey = `ward-${wardCode}`;
-			if (!housePriceLookupCache.has(cacheKey)) {
-				housePriceLookupCache.set(cacheKey, new Map());
-			}
-			const yearCache = housePriceLookupCache.get(cacheKey)!;
+			const yearCache = housePriceYearCache(
+				housePriceCacheKey(
+					`ward-${wardCode}`,
+					dataset,
+					mappingGeneration,
+				),
+			);
 
 			if (yearCache.has(dataset.year)) {
 				const cached = yearCache.get(dataset.year);
@@ -114,12 +148,13 @@ function PriceChart({
 		) {
 			// Local Authority selected - aggregate ward data
 			const ladCode = selectedArea.code;
-			const cacheKey = `lad-${ladCode}`;
-
-			if (!housePriceLookupCache.has(cacheKey)) {
-				housePriceLookupCache.set(cacheKey, new Map());
-			}
-			const yearCache = housePriceLookupCache.get(cacheKey)!;
+			const yearCache = housePriceYearCache(
+				housePriceCacheKey(
+					`lad-${ladCode}`,
+					dataset,
+					mappingGeneration,
+				),
+			);
 
 			if (yearCache.has(dataset.year)) {
 				const cached = yearCache.get(dataset.year);
@@ -190,49 +225,64 @@ function PriceChart({
 			selectedArea.type === "constituency" &&
 			getWardsForConstituency
 		) {
-			// No cache — stale cache risks hiding data if computed before constituency-ward
-			// mappings finish loading asynchronously
 			const constituencyCode = selectedArea.code;
-			const wardCodes = getWardsForConstituency(
-				constituencyCode,
-				dataset.boundaryYear,
+			const yearCache = housePriceYearCache(
+				housePriceCacheKey(
+					`constituency-${constituencyCode}`,
+					dataset,
+					mappingGeneration,
+				),
 			);
-			if (wardCodes.length > 0) {
-				const yearlyPrices: Record<number, number[]> = {};
-				for (const wardCode of wardCodes) {
-					let wardData = dataset.data?.[wardCode];
-					if (!wardData && getCodeForYear) {
-						const mapped = getCodeForYear(
-							"ward",
-							wardCode,
-							dataset.boundaryYear,
-						);
-						if (mapped) wardData = dataset.data[mapped];
-					}
-					if (wardData?.prices) {
-						for (const [year, price] of Object.entries(
-							wardData.prices,
-						)) {
-							if (price !== null && price !== undefined) {
-								const yearNum = Number(year);
-								if (!yearlyPrices[yearNum])
-									yearlyPrices[yearNum] = [];
-								yearlyPrices[yearNum].push(price as number);
+
+			if (yearCache.has(dataset.year)) {
+				const cached = yearCache.get(dataset.year);
+				prices = cached?.prices || {};
+				price2023 = prices[2023] || null;
+			} else {
+				const wardCodes = getWardsForConstituency(
+					constituencyCode,
+					dataset.boundaryYear,
+				);
+				if (wardCodes.length > 0) {
+					const yearlyPrices: Record<number, number[]> = {};
+					for (const wardCode of wardCodes) {
+						let wardData = dataset.data?.[wardCode];
+						if (!wardData && getCodeForYear) {
+							const mapped = getCodeForYear(
+								"ward",
+								wardCode,
+								dataset.boundaryYear,
+							);
+							if (mapped) wardData = dataset.data[mapped];
+						}
+						if (wardData?.prices) {
+							for (const [year, price] of Object.entries(
+								wardData.prices,
+							)) {
+								if (price !== null && price !== undefined) {
+									const yearNum = Number(year);
+									if (!yearlyPrices[yearNum])
+										yearlyPrices[yearNum] = [];
+									yearlyPrices[yearNum].push(price as number);
+								}
 							}
 						}
 					}
-				}
-				for (const [year, priceArray] of Object.entries(yearlyPrices)) {
-					if (priceArray.length > 0) {
-						const sorted = priceArray.toSorted((a, b) => a - b);
-						const mid = Math.floor(sorted.length / 2);
-						prices[Number(year)] =
-							sorted.length % 2 === 0
-								? (sorted[mid - 1] + sorted[mid]) / 2
-								: sorted[mid];
+					for (const [year, priceArray] of Object.entries(
+						yearlyPrices,
+					)) {
+						if (priceArray.length > 0) {
+							const sorted = priceArray.toSorted((a, b) => a - b);
+							const mid = Math.floor(sorted.length / 2);
+							prices[Number(year)] =
+								sorted.length % 2 === 0
+									? (sorted[mid - 1] + sorted[mid]) / 2
+									: sorted[mid];
+						}
 					}
+					price2023 = prices[2023] || null;
 				}
-				price2023 = prices[2023] || null;
+				yearCache.set(dataset.year, { prices });
 			}
 		} else {
 			// Other area types or missing mapper
@@ -398,6 +448,7 @@ export default function HousePriceChart({
 			getCodeForYear={codeMapper?.getCodeForYear}
 			getWardsForLad={codeMapper?.getWardsForLad}
 			getWardsForConstituency={codeMapper?.getWardsForConstituency}
+			mappingGeneration={codeMapper?.getMappingGeneration() ?? 0}
 			isActive={isActive as boolean}
 			setActiveViz={setActiveViz}
 		/>

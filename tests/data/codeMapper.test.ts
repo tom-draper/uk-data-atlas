@@ -32,6 +32,17 @@ describe("CodeMapperStore", () => {
 		]);
 	});
 
+	it("advances the mapping generation when constituency wards are loaded", () => {
+		const mapper = new CodeMapperStore();
+		expect(mapper.getMappingGeneration()).toBe(0);
+
+		mapper.addConstituencyWardMappings(2024, { C1: ["W1"] });
+		expect(mapper.getMappingGeneration()).toBe(1);
+
+		mapper.clearAllMappings();
+		expect(mapper.getMappingGeneration()).toBe(2);
+	});
+
 	// The reverse index is derived on first read, so mappings added afterwards
 	// have to be folded into it rather than only into the forward mappings.
 	it("keeps reverse lookups current when mappings arrive after the first read", () => {

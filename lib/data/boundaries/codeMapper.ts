@@ -11,6 +11,7 @@ export interface CodeMapper {
 		constituencyCode: string,
 		wardYear: YearCode,
 	): string[];
+	getMappingGeneration(): number;
 }
 
 type CodeMappings = Record<CodeType, CodeMapping>;
@@ -55,6 +56,10 @@ export class CodeMapperStore implements CodeMapper {
 	private wardToLad: Record<string, string> = {};
 	private ladToWards: Record<number, Record<string, string[]>> = {};
 	private constituencyToWards: Record<number, Record<string, string[]>> = {};
+	// Constituency mappings arrive asynchronously. Consumers use this token in
+	// their aggregate cache keys so an empty result produced before they arrive
+	// cannot be retained after the mappings are available.
+	private mappingGeneration = 0;
 	private codeMappings = emptyCodeMappings();
 	// Built per geography on first read rather than alongside the forward
 	// mappings. The precompiled file carries 124k ward pairs, so maintaining it
@@ -117,9 +122,13 @@ export class CodeMapperStore implements CodeMapper {
 		year: YearCode,
 		mappings: Record<string, string[]>,
 	): void => {
-		if (year)
+		if (year) {
 			Object.assign((this.constituencyToWards[year] ??= {}), mappings);
+			this.mappingGeneration++;
+		}
 	};
+
+	getMappingGeneration = (): number => this.mappingGeneration;
 
 	getWardsForConstituency = (
 		constituencyCode: string,
@@ -226,6 +235,7 @@ export class CodeMapperStore implements CodeMapper {
 		this.wardToLad = {};
 		this.ladToWards = {};
 		this.constituencyToWards = {};
+		this.mappingGeneration++;
 		this.codeMappings = emptyCodeMappings();
 		this.reverseMappings = {};
 	};

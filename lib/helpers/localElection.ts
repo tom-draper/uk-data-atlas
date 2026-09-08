@@ -16,15 +16,32 @@ export interface ProcessedLocalElectionYearData {
 	hasData: boolean;
 }
 
-// Cache LAD vote aggregations — keyed by ladCode, then election year
-const MAX_LAD_CACHE_ENTRIES = 50;
-const localElectionLadCache = new Map<
+// Cache area vote aggregations by area, dataset slice and election year.
+// The mapping generation invalidates results created before constituency ward
+// mappings arrive or before the current location's election codes are mapped.
+const MAX_AREA_CACHE_ENTRIES = 50;
+const localElectionAreaCache = new Map<
 	string,
 	Map<
 		number,
 		{ partyVotes: Record<string, number>; electorate: number } | null
 	>
 >();
+const localElectionDatasetIds = new WeakMap<object, number>();
+let nextLocalElectionDatasetId = 0;
+
+const localElectionCacheKey = (
+	areaKey: string,
+	dataset: object,
+	mappingGeneration: number,
+) => {
+	let datasetId = localElectionDatasetIds.get(dataset);
+	if (datasetId === undefined) {
+		datasetId = nextLocalElectionDatasetId++;
+		localElectionDatasetIds.set(dataset, datasetId);
+	}
+	return `${areaKey}:${datasetId}:${mappingGeneration}`;
+};
 
 export function computeLocalElectionYearData(
 	year: number,
@@ -41,6 +58,7 @@ export function computeLocalElectionYearData(
 	getWardsForLad: ((ladCode: string, year: number) => string[]) | undefined,
 	getWardsForConstituency:
 		((constituencyCode: string, wardYear: number) => string[]) | undefined,
+	mappingGeneration: number,
 	excluded: Set<string> | undefined,
 	selectedParty: string | undefined,
 ): ProcessedLocalElectionYearData {
@@ -83,17 +101,22 @@ export function computeLocalElectionYearData(
 		getWardsForLad
 	) {
 		const ladCode = selectedArea.code;
+		const cacheKey = localElectionCacheKey(
+			`lad-${ladCode}`,
+			dataset,
+			mappingGeneration,
+		);
 
 		// Check cache first
-		if (!localElectionLadCache.has(ladCode)) {
-			if (localElectionLadCache.size >= MAX_LAD_CACHE_ENTRIES) {
-				localElectionLadCache.delete(
-					localElectionLadCache.keys().next().value!,
+		if (!localElectionAreaCache.has(cacheKey)) {
+			if (localElectionAreaCache.size >= MAX_AREA_CACHE_ENTRIES) {
+				localElectionAreaCache.delete(
+					localElectionAreaCache.keys().next().value!,
 				);
 			}
-			localElectionLadCache.set(ladCode, new Map());
+			localElectionAreaCache.set(cacheKey, new Map());
 		}
-		const yearCache = localElectionLadCache.get(ladCode)!;
+		const yearCache = localElectionAreaCache.get(cacheKey)!;
 
 		let cached = yearCache.get(year);
 		if (!yearCache.has(year)) {
@@ -154,38 +177,70 @@ export function computeLocalElectionYearData(
 		getWardsForConstituency
 	) {
 		const constituencyCode = selectedArea.code;
-		const wardCodes = getWardsForConstituency(
-			constituencyCode,
-			dataset.boundaryYear,
+		const cacheKey = localElectionCacheKey(
+			`constituency-${constituencyCode}`,
+			dataset,
+			mappingGeneration,
 		);
-		const aggregatedVotes: Record<string, number> = {};
-		let totalElectorate = 0;
+		if (!localElectionAreaCache.has(cacheKey)) {
+			if (localElectionAreaCache.size >= MAX_AREA_CACHE_ENTRIES) {
+				localElectionAreaCache.delete(
+					localElectionAreaCache.keys().next().value!,
+				);
+			}
+			localElectionAreaCache.set(cacheKey, new Map());
+		}
+		const yearCache = localElectionAreaCache.get(cacheKey)!;
 
-		for (const wardCode of wardCodes) {
-			let wardData = dataset.data[wardCode];
-			if (!wardData && getCodeForYear) {
-				const mapped = getCodeForYear("ward", wardCode, year);
-				if (mapped) wardData = dataset.data[mapped];
-			}
-			if (wardData?.partyVotes) {
-				for (const [party, votes] of Object.entries(
-					wardData.partyVotes,
-				)) {
-					aggregatedVotes[party] =
-						(aggregatedVotes[party] || 0) + (votes || 0);
+		let cached = yearCache.get(year);
+		if (!yearCache.has(year)) {
+			const wardCodes = getWardsForConstituency(
+				constituencyCode,
+				dataset.boundaryYear,
+			);
+			const aggregatedVotes: Record<string, number> = {};
+			let totalElectorate = 0;
+
+			for (const wardCode of wardCodes) {
+				let wardData = dataset.data[wardCode];
+				if (!wardData && getCodeForYear) {
+					const mapped = getCodeForYear("ward", wardCode, year);
+					if (mapped) wardData = dataset.data[mapped];
 				}
-				if (wardData.electorate) totalElectorate += wardData.electorate;
+				if (wardData?.partyVotes) {
+					for (const [party, votes] of Object.entries(
+						wardData.partyVotes,
+					)) {
+						aggregatedVotes[party] =
+							(aggregatedVotes[party] || 0) + (votes || 0);
+					}
+					if (wardData.electorate)
+						totalElectorate += wardData.electorate;
+				}
 			}
+
+			const totalVotes = Object.values(aggregatedVotes).reduce(
+				(s, v) => s + (v || 0),
+				0,
+			);
+			cached =
+				totalVotes > 0
+					? {
+							partyVotes: aggregatedVotes,
+							electorate: totalElectorate,
+						}
+					: null;
+			yearCache.set(year, cached);
 		}
 
-		const totalVotes = Object.values(aggregatedVotes).reduce(
-			(s, v) => s + (v || 0),
-			0,
-		);
-		if (totalVotes > 0) {
-			rawPartyVotes = aggregatedVotes as PartyVotes;
-			if (totalElectorate > 0) {
-				turnout = calculateTurnout(totalVotes, 0, totalElectorate);
+		if (cached) {
+			rawPartyVotes = cached.partyVotes as PartyVotes;
+			if (cached.electorate > 0) {
+				const totalVotes = Object.values(cached.partyVotes).reduce(
+					(s, v) => s + (v || 0),
+					0,
+				);
+				turnout = calculateTurnout(totalVotes, 0, cached.electorate);
 			}
 		}
 	} else if (selectedArea === null && aggregatedData?.[year]) {

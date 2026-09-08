@@ -2,6 +2,17 @@ import { PopulationDataset, PopulationWardData } from "../types/population";
 import { CodeMapper } from "../hooks/useCodeMapper";
 
 const MAX_LAD_CACHE_ENTRIES = 50;
+const datasetCacheIds = new WeakMap<object, number>();
+let nextDatasetCacheId = 0;
+
+const datasetCacheId = (dataset: object) => {
+	let id = datasetCacheIds.get(dataset);
+	if (id === undefined) {
+		id = nextDatasetCacheId++;
+		datasetCacheIds.set(dataset, id);
+	}
+	return id;
+};
 
 export function resolveWardData(
 	dataset: PopulationDataset,
@@ -20,14 +31,18 @@ export function resolveWardData(
 	return wardData;
 }
 
-// Bounded LRU-style cache lookup — computes and caches on first access per (ladCode, year) pair.
-export function getLadCachedValue<T>(
+// Bounded LRU-style cache lookup. Dataset identity and mapping generation are
+// part of the key because location slices and constituency mappings can change
+// while a chart component remains mounted.
+export function getAreaCachedValue<T>(
 	cache: Map<string, Map<number, T>>,
-	ladCode: string,
+	areaKey: string,
 	year: number,
+	dataset: object,
+	mappingGeneration: number,
 	compute: () => T,
 ): T {
-	const cacheKey = `lad-${ladCode}`;
+	const cacheKey = `${areaKey}:${datasetCacheId(dataset)}:${mappingGeneration}`;
 	if (!cache.has(cacheKey)) {
 		if (cache.size >= MAX_LAD_CACHE_ENTRIES) {
 			cache.delete(cache.keys().next().value!);
@@ -39,4 +54,22 @@ export function getLadCachedValue<T>(
 		yearCache.set(year, compute());
 	}
 	return yearCache.get(year)!;
+}
+
+export function getLadCachedValue<T>(
+	cache: Map<string, Map<number, T>>,
+	ladCode: string,
+	year: number,
+	dataset: object,
+	mappingGeneration: number,
+	compute: () => T,
+): T {
+	return getAreaCachedValue(
+		cache,
+		`lad-${ladCode}`,
+		year,
+		dataset,
+		mappingGeneration,
+		compute,
+	);
 }

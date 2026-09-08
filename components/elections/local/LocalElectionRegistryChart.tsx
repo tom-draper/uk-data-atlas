@@ -41,6 +41,7 @@ export default function LocalElectionRegistryChart({
 		codeMapper?.getCodeForYear,
 		codeMapper?.getWardsForLad,
 		codeMapper?.getWardsForConstituency,
+		codeMapper?.getMappingGeneration() ?? 0,
 		excludedLocalParties,
 		selectedLocalParty,
 	);
