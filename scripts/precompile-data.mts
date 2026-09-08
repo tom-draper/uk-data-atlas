@@ -265,13 +265,17 @@ async function main() {
 			return data;
 		},
 	);
+	const boundaryMappings = loadBoundaryMappings(readBoundaryAsset).then(
+		async (data) => {
+			await out("boundary-mappings", data);
+			return data;
+		},
+	);
 	const results = await Promise.allSettled([
 		...chartResults,
 		loadRoadSafety(readSource).then((d) => out("road-safety", d)),
 		gazetteerCore,
-		loadBoundaryMappings(readBoundaryAsset).then((d) =>
-			out("boundary-mappings", d),
-		),
+		boundaryMappings,
 	]);
 
 	const failures = results.filter(
@@ -285,6 +289,7 @@ async function main() {
 		root: ROOT,
 		datasets: compiledDatasets,
 		core: await gazetteerCore,
+		boundaryMappings: await boundaryMappings,
 	});
 	await out("dataset-manifest", {
 		version: 1,

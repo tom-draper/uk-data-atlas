@@ -1,7 +1,11 @@
-import { mkdir, rename, writeFile } from "fs/promises";
+import { mkdir, readFile, rename, writeFile } from "fs/promises";
 import { dirname, join } from "path";
 import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "../lib/data/gazetteer/types";
+import type { PrecompiledBoundaryMappings } from "../lib/data/boundaries/mappings";
+import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
+import { getProp } from "../lib/data/boundaries/properties";
+import { aggregatePopulation } from "../lib/helpers/datasetAggregation/population";
 const REGION_CHUNK_KEYS = [
 	"E12000001",
 	"E12000002",
@@ -30,6 +34,17 @@ type LocalElectionRecord = {
 	partyVotes?: Record<string, number | undefined>;
 };
 
+type PopulationRecord = {
+	ladCode?: string;
+	total?: Record<string, number>;
+	males?: Record<string, number>;
+	females?: Record<string, number>;
+};
+
+type BoundaryPropertiesFile = {
+	features?: Record<string, unknown>[];
+};
+
 const CHUNKED_FILES = new Set(["population", "local-election"]);
 const LOCAL_ELECTION_PARTIES = [
 	"LAB",
@@ -51,6 +66,13 @@ const countryForCode = (code: string): RegionChunkKey | null => {
 	if (code.startsWith("W")) return "Wales";
 	if (code.startsWith("N")) return "Northern Ireland";
 	return null;
+};
+
+const COUNTRY_PREFIXES: Record<string, string> = {
+	England: "E",
+	Scotland: "S",
+	Wales: "W",
+	"Northern Ireland": "N",
 };
 
 const regionForLad = (gazetteer: Gazetteer, code: string) => {
@@ -123,6 +145,137 @@ const populationLocationSummary = (
 	);
 };
 
+const locationMatchesRecord = (
+	location: string,
+	members: ReadonlySet<string>,
+	code: string,
+	record: { ladCode?: string },
+	wardToLad: Record<string, string>,
+) => {
+	if (location === "United Kingdom") return true;
+	const countryPrefix = COUNTRY_PREFIXES[location];
+	if (countryPrefix) return code.startsWith(countryPrefix);
+	return members.has(wardToLad[code] ?? record.ladCode ?? "");
+};
+
+const populationPropertiesPath = (root: string, boundaryYear: number) => {
+	const asset = BOUNDARY_CATALOG.ward.propertyVintages[boundaryYear];
+	if (!asset)
+		throw new Error(
+			`Population boundary year ${boundaryYear} has no ward properties asset`,
+		);
+	return join(root, "public", asset.split("?")[0]!.replace(/^\//, ""));
+};
+
+const populationLocationSummaries = async (
+	root: string,
+	gazetteer: Gazetteer,
+	payload: DatasetPayload,
+	wardToLad: Record<string, string>,
+) =>
+	Object.fromEntries(
+		await Promise.all(
+			Object.entries(payload).map(async ([datasetId, dataset]) => {
+				const boundaryYear = dataset.boundaryYear;
+				if (typeof boundaryYear !== "number") return [datasetId, {}];
+				const properties = JSON.parse(
+					await readFile(
+						populationPropertiesPath(root, boundaryYear),
+						"utf8",
+					),
+				) as BoundaryPropertiesFile;
+				const codeProperty = "__populationCode";
+				const features = (properties.features ?? []).flatMap(
+					(properties, index) => {
+						const code = getProp(
+							properties,
+							BOUNDARY_CATALOG.ward.properties.code,
+						);
+						return code
+							? [
+									{
+										type: "Feature" as const,
+										id: index,
+										geometry: null,
+										properties: {
+											...properties,
+											[codeProperty]: code,
+										},
+									},
+								]
+							: [];
+					},
+				);
+				const featuresByCode = new Map(
+					features.map((feature) => [
+						Reflect.get(feature.properties, codeProperty) as string,
+						feature,
+					]),
+				);
+				const data = dataset.data ?? {};
+				return [
+					datasetId,
+					Object.fromEntries(
+						gazetteer.namedLocations().map((location) => {
+							const members = new Set(
+								gazetteer.namedLocation(location)
+									?.memberCodes ?? [],
+							);
+							const selectedFeatures = Object.entries(
+								data,
+							).flatMap(([code, record]) =>
+								locationMatchesRecord(
+									location,
+									members,
+									code,
+									(record ?? {}) as PopulationRecord,
+									wardToLad,
+								)
+									? [featuresByCode.get(code)].filter(Boolean)
+									: [],
+							);
+							return [
+								location,
+								aggregatePopulation(
+									selectedFeatures as never,
+									codeProperty as never,
+									data as never,
+								),
+							];
+						}),
+					),
+				];
+			}),
+		),
+	);
+
+const locationBelongsToRegion = (
+	gazetteer: Gazetteer,
+	location: string,
+	region: RegionChunkKey,
+) => {
+	if (location === "United Kingdom") return true;
+	const countryPrefix = COUNTRY_PREFIXES[location];
+	if (countryPrefix)
+		return countryPrefix === "E"
+			? region.startsWith("E")
+			: countryForCode(countryPrefix) === region;
+	return (gazetteer.namedLocation(location)?.memberCodes ?? []).some(
+		(code) => regionForLad(gazetteer, code) === region,
+	);
+};
+
+const locationAggregatesForRegion = (
+	gazetteer: Gazetteer,
+	aggregates: Record<string, unknown>,
+	region: RegionChunkKey,
+) =>
+	Object.fromEntries(
+		Object.entries(aggregates).filter(([location]) =>
+			locationBelongsToRegion(gazetteer, location, region),
+		),
+	);
+
 const localElectionAggregate = (records: LocalElectionRecord[]) => {
 	const partyVotes = Object.fromEntries(
 		LOCAL_ELECTION_PARTIES.map((party) => [party, 0]),
@@ -147,12 +300,6 @@ const localElectionLocationSummaries = (
 			datasetId,
 			Object.fromEntries(
 				gazetteer.namedLocations().map((location) => {
-					const countryPrefix: Record<string, string> = {
-						England: "E",
-						Scotland: "S",
-						Wales: "W",
-						"Northern Ireland": "N",
-					};
 					const members = new Set(
 						gazetteer.namedLocation(location)?.memberCodes ?? [],
 					);
@@ -161,7 +308,7 @@ const localElectionLocationSummaries = (
 							const ladCode = Reflect.get(record, "ladCode");
 							if (typeof ladCode !== "string") return false;
 							if (location === "United Kingdom") return true;
-							const prefix = countryPrefix[location];
+							const prefix = COUNTRY_PREFIXES[location];
 							return prefix
 								? ladCode.startsWith(prefix)
 								: members.has(ladCode);
@@ -185,10 +332,12 @@ export async function writeDatasetRegionChunks({
 	root,
 	datasets,
 	core,
+	boundaryMappings,
 }: {
 	root: string;
 	datasets: ReadonlyMap<string, unknown>;
 	core: GazetteerCore;
+	boundaryMappings?: Pick<PrecompiledBoundaryMappings, "wardToLad">;
 }) {
 	const gazetteer = new Gazetteer(core);
 	const outDir = join(root, "data", "precompiled", "chunks");
@@ -202,12 +351,19 @@ export async function writeDatasetRegionChunks({
 				? populationLocationSummary(gazetteer, value as DatasetPayload)
 				: undefined;
 		const locationAggregates =
-			file === "local-election"
-				? localElectionLocationSummaries(
+			file === "population"
+				? await populationLocationSummaries(
+						root,
 						gazetteer,
 						value as DatasetPayload,
+						boundaryMappings?.wardToLad ?? {},
 					)
-				: undefined;
+				: file === "local-election"
+					? localElectionLocationSummaries(
+							gazetteer,
+							value as DatasetPayload,
+						)
+					: undefined;
 		for (const region of REGION_CHUNK_KEYS) chunks.set(region, {});
 
 		for (const [datasetId, dataset] of Object.entries(
@@ -223,11 +379,21 @@ export async function writeDatasetRegionChunks({
 				records.set(region, regionRecords);
 			}
 			for (const [region, data] of records) {
+				const regionalAggregates = locationAggregates?.[datasetId]
+					? locationAggregatesForRegion(
+							gazetteer,
+							locationAggregates[datasetId] as Record<
+								string,
+								unknown
+							>,
+							region,
+						)
+					: undefined;
 				chunks.get(region)![datasetId] = {
 					...dataset,
 					...(locationPopulations && { locationPopulations }),
-					...(locationAggregates && {
-						locationAggregates: locationAggregates[datasetId],
+					...(regionalAggregates && {
+						locationAggregates: regionalAggregates,
 					}),
 					data,
 				};

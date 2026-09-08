@@ -28,6 +28,10 @@ export interface PopulationDataset {
 	data: Record<string, PopulationWardData>;
 	/** Compact list-panel totals calculated while the worker has the full data. */
 	locationPopulations?: Record<string, number>;
+	/** Selected-location card summary, emitted by the worker when available. */
+	locationAggregate?: AggregatedPopulationData;
+	/** Build artifact retained only until the worker selects one location. */
+	locationAggregates?: Record<string, AggregatedPopulationData>;
 }
 
 /**
