@@ -1,18 +1,19 @@
 "use client";
 import {
 	CHART_CONFIG,
-	ChartKey,
 	useChartVisibility,
 } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { CHART_GROUPS } from "@/lib/datasets/chartGroups";
 
-const groups = CHART_CONFIG.reduce<
-	Record<string, { key: ChartKey; label: string }[]>
->((acc, item) => {
-	if (!acc[item.group]) acc[item.group] = [];
-	acc[item.group].push({ key: item.key, label: item.label });
-	return acc;
-}, {});
+// Keep the settings menu in exactly the same group and chart order as the
+// chart panel. CHART_CONFIG supplies the within-group order used by ChartCards.
+const groups = CHART_GROUPS.flatMap(({ group, title }) => {
+	const items = CHART_CONFIG.filter((item) => item.group === group).map(
+		({ key, label }) => ({ key, label }),
+	);
+	return items.length > 0 ? [{ title, items }] : [];
+});
 
 export default function ChartSettings() {
 	const { visibility, toggle } = useChartVisibility();
@@ -20,12 +21,12 @@ export default function ChartSettings() {
 
 	return (
 		<div className="flex-1 p-2.5 overflow-y-auto scroll-container space-y-4">
-			{Object.entries(groups).map(([group, items]) => (
-				<div key={group}>
+			{groups.map(({ title, items }) => (
+				<div key={title}>
 					<h4
 						className={`text-xs font-bold mb-1.5 ${isDark ? "text-gray-200" : "text-gray-700"}`}
 					>
-						{group}
+						{title}
 					</h4>
 					<div className="space-y-1.5">
 						{items.map(({ key, label }) => (

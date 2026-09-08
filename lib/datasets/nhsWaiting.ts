@@ -7,7 +7,7 @@ export const nhsWaitingDefinition: ChartDatasetDefinition<NHSWaitingDataset> = {
 	chart: {
 		group: "Health",
 		key: "health-nhsWaiting",
-		label: "NHS Waiting Times [Mar 2026]",
+		label: "NHS Waiting Times [2026]",
 		defaultVisible: true,
 		componentPath: "@/components/health/NHSWaitingChart",
 		calculateStats: (m, g, _d, l, id, dataset) =>

@@ -8,7 +8,7 @@ export const schoolPerformanceConstituencyDefinition: ChartDatasetDefinition<Sch
 		chart: {
 			group: "Education",
 			key: "education-schoolPerformanceConstituency",
-			label: "School Performance by Constituency [2024/25]",
+			label: "GCSE Performance by Constituency [2024/25]",
 			defaultVisible: false,
 			componentPath:
 				"@/components/education/SchoolPerformanceConstituencyChart",
