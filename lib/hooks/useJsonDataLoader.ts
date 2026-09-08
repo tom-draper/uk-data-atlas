@@ -10,14 +10,40 @@ interface WorkerRes {
 
 let worker: Worker | null = null;
 let nextId = 0;
-const pending = new Map<
-	number,
-	{ resolve: (v: unknown) => void; reject: (e: Error) => void }
->();
-const pendingFetches = new Map<string, Promise<unknown>>();
+type PendingRequest = {
+	resolve: (v: unknown) => void;
+	reject: (e: Error) => void;
+	signal?: AbortSignal;
+	onAbort?: () => void;
+};
+const pending = new Map<number, PendingRequest>();
+const SLICE_CACHE_LIMIT = 3;
 
-const requestCacheKey = (url: string, filter?: DatasetLocationFilter) =>
-	`${url}\u0000${filter?.location ?? ""}\u0000${filter?.boundaryType ?? ""}\u0000${filter?.includeLocationPopulationSummary ?? false}`;
+type CachedSlice<T> = {
+	datasets: Record<string, Record<string, T>>;
+	errors: string[];
+};
+
+// A location slice contains every enabled dataset for one view. Retaining a
+// few whole slices makes back-and-forth navigation instant without allowing
+// the many individual dataset responses to grow without bound.
+const completedSlices = new Map<string, CachedSlice<unknown>>();
+
+const abortError = () => new DOMException("Request cancelled", "AbortError");
+
+const removeAbortListener = (entry: PendingRequest) => {
+	if (entry.signal && entry.onAbort)
+		entry.signal.removeEventListener("abort", entry.onAbort);
+};
+
+const rememberSlice = <T>(key: string, slice: CachedSlice<T>) => {
+	completedSlices.delete(key);
+	completedSlices.set(key, slice as CachedSlice<unknown>);
+	if (completedSlices.size > SLICE_CACHE_LIMIT) {
+		const oldest = completedSlices.keys().next().value;
+		if (oldest !== undefined) completedSlices.delete(oldest);
+	}
+};
 
 function getWorker(): Worker | null {
 	if (typeof window === "undefined" || typeof Worker === "undefined")
@@ -35,13 +61,17 @@ function getWorker(): Worker | null {
 			const callbacks = pending.get(id);
 			if (!callbacks) return;
 			pending.delete(id);
+			removeAbortListener(callbacks);
 			if (error) callbacks.reject(new Error(error));
 			else callbacks.resolve(data);
 		};
 		worker.onerror = (e) => {
 			console.error("Data worker error:", e.message);
 			const err = new Error(e.message ?? "Worker error");
-			for (const callbacks of pending.values()) callbacks.reject(err);
+			for (const callbacks of pending.values()) {
+				removeAbortListener(callbacks);
+				callbacks.reject(err);
+			}
 			pending.clear();
 			worker = null;
 		};
@@ -49,8 +79,8 @@ function getWorker(): Worker | null {
 	return worker;
 }
 
-async function fetchJson(url: string): Promise<unknown> {
-	const response = await fetch(url);
+async function fetchJson(url: string, signal?: AbortSignal): Promise<unknown> {
+	const response = await fetch(url, { signal });
 	if (!response.ok) {
 		throw new Error(
 			`Failed to fetch ${url}: ${response.status} ${response.statusText}`,
@@ -63,32 +93,36 @@ function fetchViaWorker(
 	url: string,
 	filter?: DatasetLocationFilter,
 	chunkUrls?: readonly string[],
+	signal?: AbortSignal,
 ): Promise<unknown> {
-	const cacheKey = requestCacheKey(url, filter);
-	const existing = pendingFetches.get(cacheKey);
-	if (existing) return existing;
-
-	const request = new Promise<unknown>((resolve, reject) => {
+	return new Promise<unknown>((resolve, reject) => {
+		if (signal?.aborted) {
+			reject(abortError());
+			return;
+		}
 		const w = getWorker();
 		if (!w) {
-			fetchJson(url).then(resolve).catch(reject);
+			fetchJson(url, signal).then(resolve).catch(reject);
 			return;
 		}
 		const id = nextId++;
-		pending.set(id, { resolve, reject });
+		const onAbort = () => {
+			if (!pending.has(id)) return;
+			pending.delete(id);
+			w.postMessage({ type: "cancel", id });
+			reject(abortError());
+		};
+		pending.set(id, { resolve, reject, signal, onAbort });
+		signal?.addEventListener("abort", onAbort, { once: true });
 		try {
 			w.postMessage({ id, url, filter, chunkUrls });
 		} catch (error) {
+			const callbacks = pending.get(id);
 			pending.delete(id);
+			if (callbacks) removeAbortListener(callbacks);
 			reject(error instanceof Error ? error : new Error(String(error)));
 		}
 	});
-	pendingFetches.set(cacheKey, request);
-	request.then(
-		() => pendingFetches.delete(cacheKey),
-		() => pendingFetches.delete(cacheKey),
-	);
-	return request;
 }
 
 export interface JsonDatasetRequest {
@@ -109,7 +143,6 @@ export function useJsonDatasetLoaders<T>(
 		requests.some((request) => request.enabled),
 	);
 	const [errors, setErrors] = useState<string[]>([]);
-	const loadedRequests = useRef(new Set<string>());
 	const requestKey = requests
 		.map(
 			(request) =>
@@ -118,20 +151,25 @@ export function useJsonDatasetLoaders<T>(
 		.join("|");
 
 	useEffect(() => {
-		let active = true;
-		const pendingRequests = requests.filter(
-			(request) =>
-				request.enabled &&
-				!loadedRequests.current.has(
-					requestCacheKey(request.url, request.filter),
-				),
-		);
-		if (pendingRequests.length === 0) {
+		const cached = completedSlices.get(requestKey) as
+			CachedSlice<T> | undefined;
+		if (cached) {
+			completedSlices.delete(requestKey);
+			completedSlices.set(requestKey, cached as CachedSlice<unknown>);
+			setDatasets(cached.datasets);
+			setErrors(cached.errors);
 			setLoading(false);
-			return () => {
-				active = false;
-			};
+			return;
 		}
+
+		const controller = new AbortController();
+		const pendingRequests = requests.filter((request) => request.enabled);
+		if (pendingRequests.length === 0) {
+			setDatasets({});
+			setLoading(false);
+			return;
+		}
+		setDatasets({});
 		setLoading(true);
 		Promise.allSettled(
 			pendingRequests.map(async (request) => ({
@@ -143,18 +181,16 @@ export function useJsonDatasetLoaders<T>(
 					request.url,
 					request.filter,
 					request.chunkUrls,
+					controller.signal,
 				)) as Record<string, T>,
 			})),
 		).then((results) => {
-			if (!active) return;
+			if (controller.signal.aborted) return;
 			const loaded: Record<string, Record<string, T>> = {};
 			const nextErrors: string[] = [];
 			for (const result of results) {
 				if (result.status === "fulfilled") {
 					loaded[result.value.key] = result.value.data;
-					loadedRequests.current.add(
-						requestCacheKey(result.value.url, result.value.filter),
-					);
 				} else
 					nextErrors.push(
 						result.reason instanceof Error
@@ -162,12 +198,14 @@ export function useJsonDatasetLoaders<T>(
 							: String(result.reason),
 					);
 			}
-			setDatasets((current) => ({ ...current, ...loaded }));
+			const slice = { datasets: loaded, errors: nextErrors };
+			rememberSlice(requestKey, slice);
+			setDatasets(loaded);
 			setErrors(nextErrors);
 			setLoading(false);
 		});
 		return () => {
-			active = false;
+			controller.abort();
 		};
 	}, [requestKey]);
 
