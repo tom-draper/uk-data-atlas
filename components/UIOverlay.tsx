@@ -4,7 +4,6 @@ import LegendPanel from "@components/LegendPanel";
 import ChartPanel from "@components/ChartPanel";
 import type {
 	ActiveViz,
-	BoundaryCodes,
 	BoundaryData,
 	Dataset,
 	Datasets,
@@ -32,7 +31,6 @@ interface UIOverlayProps {
 	selectedLocation: string;
 	selectedArea: SelectedArea | null;
 	boundaryData: BoundaryData;
-	boundaryCodes: BoundaryCodes;
 	mapOptions: MapOptions;
 	codeMapper?: CodeMapper;
 	mapManager: MapManager | null;
@@ -115,7 +113,6 @@ export default function UIOverlay({
 	selectedLocation,
 	selectedArea,
 	boundaryData,
-	boundaryCodes,
 	mapOptions,
 	codeMapper,
 	mapManager,
@@ -205,7 +202,6 @@ export default function UIOverlay({
 				chartsLoading={chartsLoading}
 				selectedArea={selectedArea}
 				boundaryData={boundaryData}
-				boundaryCodes={boundaryCodes}
 				codeMapper={codeMapper}
 				mapManager={mapManager}
 				location={selectedLocation}

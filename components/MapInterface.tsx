@@ -89,7 +89,7 @@ export default function MapInterface({
 
 	const {
 		boundaryData,
-		boundaryCodes,
+		wardCodes,
 		constituencyLadOverlaps,
 		isLoading: boundariesLoading,
 		error: boundaryError,
@@ -313,11 +313,11 @@ export default function MapInterface({
 
 	const { getCodeForYear } = codeMapper;
 	const normalizedDatasets = useMemo(() => {
-		if (!boundaryCodes?.ward) return datasets;
+		if (!wardCodes) return datasets;
 
 		const normalizedLocalElection = Object.fromEntries(
 			Object.entries(datasets.localElection).map(([year, dataset]) => {
-				const validCodes = boundaryCodes.ward[dataset.boundaryYear];
+				const validCodes = wardCodes[dataset.boundaryYear];
 				if (!validCodes) return [year, dataset];
 				return [
 					year,
@@ -331,7 +331,7 @@ export default function MapInterface({
 		) as typeof datasets.localElection;
 
 		return { ...datasets, localElection: normalizedLocalElection };
-	}, [datasets, boundaryCodes?.ward, getCodeForYear]);
+	}, [datasets, wardCodes, getCodeForYear]);
 
 	const chartsLoading = datasetsLoading || boundariesLoading || !mapManager;
 
@@ -343,7 +343,6 @@ export default function MapInterface({
 						selectedLocation={selectedLocation}
 						selectedArea={selectedArea}
 						boundaryData={boundaryData}
-						boundaryCodes={boundaryCodes}
 						mapOptions={mapOptions}
 						codeMapper={codeMapper}
 						onMapOptionsChange={handleMapOptionsChange}

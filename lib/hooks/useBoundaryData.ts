@@ -7,7 +7,12 @@ import {
 	useState,
 	useSyncExternalStore,
 } from "react";
-import { BoundaryData, BoundaryGeojson, getFeatureProp } from "@lib/types";
+import {
+	BoundaryData,
+	BoundaryGeojson,
+	WardCodes,
+	getFeatureProp,
+} from "@lib/types";
 import {
 	BoundaryType,
 	fetchBoundaryProperties,
@@ -239,50 +244,43 @@ export const getCachedFilteredBoundaryData = (
 	return filteredData;
 };
 
-const extractCodeSets = (
+/**
+ * The ward codes each vintage actually contains, which is what election data is
+ * normalised against.
+ *
+ * Only wards are collected. Building a set per vintage of every geography meant
+ * ~150k strings held for geographies nothing asks about — LSOAs alone are 35k
+ * per vintage — so a second caller wanting another geography should extend this
+ * deliberately rather than get it for free.
+ */
+const extractWardCodes = (
 	boundaryData: BoundaryData,
 	isLoading: boolean,
-): Record<BoundaryType, Record<number, Set<string>>> | null => {
+): WardCodes => {
 	if (isLoading) return null;
 
-	const extractFromGroup = (
-		group: Record<number, BoundaryGeojson | null>,
-		codeKeys: readonly string[],
-	) =>
-		Object.entries(group).reduce(
-			(acc, [year, data]) => {
-				const first = data?.features[0];
-				if (first) {
-					const codeProp = codeKeys.find(
-						(key) =>
-							getFeatureProp(first.properties, key) !== undefined,
-					);
-					if (codeProp) {
-						acc[Number(year)] = new Set(
-							data.features.flatMap((feature) => {
-								const code = getFeatureProp(
-									feature.properties,
-									codeProp,
-								);
-								return code ? [code] : [];
-							}),
-						);
-					}
-				}
-				return acc;
-			},
-			{} as Record<number, Set<string>>,
-		);
+	const codeKeys = BOUNDARY_CATALOG.ward.properties.code;
+	const byYear: Record<number, Set<string>> = {};
 
-	return Object.fromEntries(
-		BOUNDARY_TYPES.map((type) => [
-			type,
-			extractFromGroup(
-				boundaryData[type],
-				BOUNDARY_CATALOG[type].properties.code,
-			),
-		]),
-	) as Record<BoundaryType, Record<number, Set<string>>>;
+	for (const [year, data] of Object.entries(boundaryData.ward)) {
+		const first = data?.features[0];
+		if (!first) continue;
+		// Every feature in a release shares a schema, so the key the first one
+		// uses is the key for all of them.
+		const codeProp = codeKeys.find(
+			(key) => getFeatureProp(first.properties, key) !== undefined,
+		);
+		if (!codeProp) continue;
+
+		const codes = new Set<string>();
+		for (const feature of data.features) {
+			const code = getFeatureProp(feature.properties, codeProp);
+			if (code) codes.add(code);
+		}
+		byYear[Number(year)] = codes;
+	}
+
+	return byYear;
 };
 
 /**
@@ -559,14 +557,14 @@ export function useBoundaryData(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rawData, loc, constituencyLadOverlaps]);
 
-	const boundaryCodes = useMemo(
-		() => extractCodeSets(rawData, isLoading),
+	const wardCodes = useMemo(
+		() => extractWardCodes(rawData, isLoading),
 		[rawData, isLoading],
 	);
 
 	return {
 		boundaryData: filteredData,
-		boundaryCodes,
+		wardCodes,
 		constituencyLadOverlaps,
 		isLoading,
 		error,

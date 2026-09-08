@@ -8,7 +8,8 @@ export type BoundaryData = Record<
 	Record<number, BoundaryGeojson | null>
 >;
 
-export type BoundaryCodes = Record<
-	BoundaryType,
-	Record<number, Set<string>>
-> | null;
+/**
+ * The ward codes present in each loaded ward vintage, keyed by boundary year,
+ * or null while the boundaries are still loading.
+ */
+export type WardCodes = Record<number, Set<string>> | null;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Upload } from "lucide-react";
-import { ActiveViz, BoundaryCodes, CustomDataset } from "@/lib/types";
+import { ActiveViz, CustomDataset } from "@/lib/types";
 import { AreaBank } from "@lib/data/areaBank";
 import { useMatchIndex } from "@/lib/hooks/useMatchIndex";
 import {
@@ -19,7 +19,6 @@ export default function CustomSection({
 	customDatasets,
 	addCustomDataset,
 	selectedArea,
-	boundaryCodes: _boundaryCodes,
 	activeViz,
 	setActiveViz,
 	codeMapper,
@@ -30,7 +29,6 @@ export default function CustomSection({
 	customDatasets: CustomDataset[];
 	addCustomDataset: (dataset: CustomDataset) => void;
 	selectedArea: SelectedCustomArea | null;
-	boundaryCodes: BoundaryCodes;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 	codeMapper?: CodeMapper;

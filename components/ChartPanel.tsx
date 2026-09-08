@@ -6,7 +6,6 @@ import {
 	ActiveViz,
 	SelectedArea,
 	BoundaryData,
-	BoundaryCodes,
 } from "@lib/types";
 import { BoundaryData as BoundaryDataBoundaries } from "@lib/types/boundaries";
 import { CustomDataset } from "@/lib/types/custom";
@@ -30,7 +29,6 @@ interface ChartPanelProps {
 	selectedArea: SelectedArea | null;
 	activeDataset: Dataset | null;
 	boundaryData: BoundaryData;
-	boundaryCodes: BoundaryCodes;
 	datasets: Datasets;
 	customDatasets: CustomDataset[];
 	addCustomDataset: (dataset: CustomDataset) => void;
@@ -48,7 +46,6 @@ function ChartPanelContent({
 	selectedArea,
 	activeDataset,
 	boundaryData,
-	boundaryCodes,
 	datasets,
 	customDatasets,
 	addCustomDataset,
@@ -118,7 +115,6 @@ function ChartPanelContent({
 									activeViz={activeViz}
 									setActiveViz={setActiveViz}
 									codeMapper={codeMapper}
-									boundaryCodes={boundaryCodes}
 									mapManager={mapManager}
 									boundaryData={bd}
 									location={location}
