@@ -165,11 +165,9 @@ export function useJsonDatasetLoaders<T>(
 		const controller = new AbortController();
 		const pendingRequests = requests.filter((request) => request.enabled);
 		if (pendingRequests.length === 0) {
-			setDatasets({});
 			setLoading(false);
 			return;
 		}
-		setDatasets({});
 		setLoading(true);
 		Promise.allSettled(
 			pendingRequests.map(async (request) => ({
