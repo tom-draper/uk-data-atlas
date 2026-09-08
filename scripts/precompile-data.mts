@@ -245,7 +245,15 @@ async function main() {
 	const chartResults = CATALOGUE_DATASET_DEFINITIONS.map(
 		async (definition) => {
 			const { reader, artifacts } = createTrackedReader();
-			const data = await definition.precompile(reader);
+			const compiled = await definition.precompile(reader);
+			const data = definition.coverageCountries
+				? Object.fromEntries(
+						Object.entries(compiled).map(([id, dataset]) => [
+							id,
+							{ ...dataset, coverageCountries: definition.coverageCountries },
+						]),
+					)
+				: compiled;
 			compiledDatasets.set(definition.precompiledFile, data);
 			const summary = validatePrecompiledDataset(definition, data);
 			const output = await out(definition.precompiledFile, data);

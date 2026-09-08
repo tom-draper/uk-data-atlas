@@ -23,8 +23,9 @@ import type {
 	CatalogueDataset,
 	CatalogueDatasetRecords,
 } from "@/lib/data/catalog";
+import type { DatasetCoverage } from "./coverage";
 
-export type Dataset =
+type DatasetValue =
 	| HousePriceDataset
 	| CrimeDataset
 	| IncomeDataset
@@ -37,6 +38,9 @@ export type Dataset =
 	| NHSWaitingDataset
 	| UnemploymentDataset
 	| CatalogueDataset;
+
+/** Every map dataset may declare the countries its source can cover. */
+export type Dataset = DatasetValue & DatasetCoverage;
 
 export type Datasets = {
 	housePrice: Record<string, HousePriceDataset>;

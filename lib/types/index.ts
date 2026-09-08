@@ -1,5 +1,6 @@
 // lib/types/index.ts
 export * from "./common";
+export * from "./coverage";
 export * from "./boundaries";
 export * from "./elections";
 export * from "./historicalGeneralElection";

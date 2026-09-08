@@ -1,3 +1,6 @@
+import type { BoundaryType } from "../boundaries/catalog";
+import type { DatasetCountry } from "@/lib/types/coverage";
+
 /**
  * Framework-neutral dataset contracts.
  *
@@ -50,6 +53,8 @@ export interface DatasetDefinition<
 	precompiledFile: string;
 	/** Geography level used by the compiled records. */
 	boundaryType: BoundaryType;
+	/** Countries the source can cover, copied to each compiled vintage. */
+	coverageCountries?: readonly DatasetCountry[];
 	source: DatasetSource;
 	/** Build-time validation requirements for the loader output. */
 	ingestion?: DatasetIngestionContract;
@@ -62,4 +67,3 @@ export interface DatasetDefinition<
 	chartPending?: boolean;
 	precompile: (reader: DatasetReader) => Promise<Record<string, T>>;
 }
-import type { BoundaryType } from "../boundaries/catalog";

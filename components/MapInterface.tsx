@@ -8,6 +8,7 @@ import { useActiveGeometry } from "@/lib/hooks/useActiveGeometry";
 import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
+import { filterGeometryToDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { boundaryTypeForDatasetType } from "@/lib/data/boundaries/required";
 import { normalizeElectionDatasetCodes } from "@/lib/data/election/local-election/normalize";
 
@@ -203,10 +204,21 @@ export default function MapInterface({
 	const geojson = useMemo(() => {
 		if (!rawGeojson || !activeDataset || !("data" in activeDataset))
 			return rawGeojson;
+		const coverageGeometry = filterGeometryToDatasetCoverage(
+			rawGeojson,
+			activeDataset,
+		);
 		const dataKeys = new Set(
 			Object.keys(activeDataset.data as Record<string, unknown>),
 		);
-		if (dataKeys.size === 0) return { ...rawGeojson, features: [] };
+		// A country-specific payload can have no records even though the source
+		// covers that country (for example, a year without Welsh elections).
+		// Keep its declared coverage visible, but preserve the empty-map behaviour
+		// for datasets that have no published coverage at all.
+		if (dataKeys.size === 0)
+			return activeDataset.coverageCountries
+				? coverageGeometry
+				: { ...coverageGeometry, features: [] };
 		const codeKeys: readonly string[] =
 			activeDataset.boundaryType === "lsoa"
 				? BOUNDARY_CATALOG.lsoa.properties.code
@@ -215,13 +227,13 @@ export default function MapInterface({
 					: activeDataset.boundaryType === "superOutputArea"
 						? BOUNDARY_CATALOG.superOutputArea.properties.code
 						: [];
-		if (codeKeys.length === 0) return rawGeojson;
-		const firstProps = rawGeojson.features[0]?.properties as unknown as
-			Record<string, unknown> | undefined;
-		if (!firstProps) return rawGeojson;
+		if (codeKeys.length === 0) return coverageGeometry;
+		const firstProps = coverageGeometry.features[0]
+			?.properties as unknown as Record<string, unknown> | undefined;
+		if (!firstProps) return coverageGeometry;
 		const codeKey = codeKeys.find((k) => k in firstProps);
-		if (!codeKey) return rawGeojson;
-		const filtered = rawGeojson.features.filter(
+		if (!codeKey) return coverageGeometry;
+		const filtered = coverageGeometry.features.filter(
 			(f) =>
 				f.properties &&
 				dataKeys.has(
@@ -230,8 +242,9 @@ export default function MapInterface({
 					] as string,
 				),
 		);
-		if (filtered.length === rawGeojson.features.length) return rawGeojson;
-		return { ...rawGeojson, features: filtered };
+		if (filtered.length === coverageGeometry.features.length)
+			return coverageGeometry;
+		return { ...coverageGeometry, features: filtered };
 	}, [rawGeojson, activeDataset]);
 
 	// Initialize map manager with stable callbacks

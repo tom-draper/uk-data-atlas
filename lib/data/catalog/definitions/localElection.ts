@@ -7,6 +7,7 @@ export const localElectionDatasetDefinition: DatasetDefinition<LocalElectionData
 		type: "localElection",
 		precompiledFile: "local-election",
 		boundaryType: "ward",
+		coverageCountries: ["GB-ENG", "GB-WLS"],
 		ingestion: {
 			minimumDatasets: 9,
 			requiredDataFields: ["wardCode", "wardName", "partyVotes"],
