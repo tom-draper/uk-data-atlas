@@ -73,36 +73,93 @@ const filteredBoundaryDataCache = new WeakMap<
 const BOUNDARY_MAPPINGS_URL = withCDN(
 	"/data/precompiled/boundary-mappings.json",
 );
-let boundaryMappingsCache: PrecompiledBoundaryMappings | null = null;
-let boundaryMappingsPending: Promise<PrecompiledBoundaryMappings> | null = null;
+/** The parts of a code mapper the precompiled mappings are loaded into. */
+type BoundaryMappingTarget = {
+	addWardLadMappings?: (mappings: Record<string, string>) => void;
+	addLadWardMappings?: (
+		year: YearCode,
+		mappings: Record<string, string[]>,
+	) => void;
+	addCodeMappings?: (type: CodeType, mappings: CodeMapping) => void;
+	addConstituencyWardMappings?: (
+		year: YearCode,
+		mappings: Record<string, string[]>,
+	) => void;
+};
 
-const fetchPrecompiledBoundaryMappings =
-	(): Promise<PrecompiledBoundaryMappings> => {
-		if (boundaryMappingsCache)
-			return Promise.resolve(boundaryMappingsCache);
-		if (boundaryMappingsPending) return boundaryMappingsPending;
+const applyBoundaryMappings = (
+	mappings: PrecompiledBoundaryMappings,
+	target: BoundaryMappingTarget,
+) => {
+	target.addWardLadMappings?.(mappings.wardToLad);
+	for (const [year, ladMappings] of Object.entries(mappings.ladToWards)) {
+		target.addLadWardMappings?.(Number(year), ladMappings);
+	}
+	target.addCodeMappings?.("ward", mappings.codeMappings.ward);
+	target.addCodeMappings?.(
+		"constituency",
+		mappings.codeMappings.constituency,
+	);
+	target.addCodeMappings?.(
+		"localAuthority",
+		mappings.codeMappings.localAuthority,
+	);
+	for (const [year, constituencyMappings] of Object.entries(
+		mappings.constituencyToWards,
+	)) {
+		target.addConstituencyWardMappings?.(
+			Number(year),
+			constituencyMappings,
+		);
+	}
+};
 
-		boundaryMappingsPending = fetch(BOUNDARY_MAPPINGS_URL)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error(
-						`Failed to fetch boundary mappings: ${response.status} ${response.statusText}`,
-					);
-				}
-				return response.json() as Promise<PrecompiledBoundaryMappings>;
-			})
-			.then((mappings) => {
-				boundaryMappingsCache = mappings;
-				boundaryMappingsPending = null;
-				return mappings;
-			})
-			.catch((error) => {
-				boundaryMappingsPending = null;
-				throw error;
-			});
+/**
+ * Load the precompiled mappings into a code mapper, once per mapper.
+ *
+ * Applying them copies the whole file into the mapper, so holding the parsed
+ * payload afterwards kept a second copy of a 3.9 MB document alive for the life
+ * of the page. Only whether a mapper has been seeded is remembered; the payload
+ * goes out of scope with the promise that carried it. Later loads reuse that
+ * record rather than re-parsing, which is what the payload was being kept for.
+ *
+ * Resolves false when the file cannot be read, which is the caller's signal to
+ * derive what it can from the boundary properties instead.
+ */
+const seededMappers = new WeakMap<BoundaryMappingTarget, Promise<boolean>>();
 
-		return boundaryMappingsPending;
-	};
+const seedBoundaryMappings = (
+	target: BoundaryMappingTarget,
+): Promise<boolean> => {
+	const seeded = seededMappers.get(target);
+	if (seeded) return seeded;
+
+	const seeding = fetch(BOUNDARY_MAPPINGS_URL)
+		.then(async (response) => {
+			if (!response.ok) {
+				throw new Error(
+					`Failed to fetch boundary mappings: ${response.status} ${response.statusText}`,
+				);
+			}
+			applyBoundaryMappings(
+				(await response.json()) as PrecompiledBoundaryMappings,
+				target,
+			);
+			return true;
+		})
+		.catch((error) => {
+			console.warn(
+				"[boundaries] Falling back to in-browser mapping generation:",
+				error,
+			);
+			// Leave nothing recorded, so a later load can try again.
+			seededMappers.delete(target);
+			return false;
+		});
+
+	seededMappers.set(target, seeding);
+	return seeding;
+};
 
 type BoundaryGroupLoad = {
 	data: Record<number, BoundaryGeojson>;
@@ -341,14 +398,9 @@ export function useBoundaryData(
 			setIsLoading(true);
 			setError(null);
 
-			const precompiledMappings =
-				fetchPrecompiledBoundaryMappings().catch((error) => {
-					console.warn(
-						"[boundaries] Falling back to in-browser mapping generation:",
-						error,
-					);
-					return null;
-				});
+			const precompiledMappings = codeMapper
+				? seedBoundaryMappings(codeMapper)
+				: Promise.resolve(false);
 
 			// Fetch only what is newly required; anything already held stays.
 			const wanted = requiredKey
@@ -378,7 +430,7 @@ export function useBoundaryData(
 				),
 				overlaps,
 			])
-				.then(([mappings, groups, loadedOverlaps]) => {
+				.then(([mappingsApplied, groups, loadedOverlaps]) => {
 					if (!mounted) return;
 					if (loadedOverlaps)
 						setConstituencyLadOverlaps(loadedOverlaps);
@@ -406,32 +458,8 @@ export function useBoundaryData(
 						}));
 					});
 
-					if (mappings) {
-						addWardLadMappings?.(mappings.wardToLad);
-						for (const [year, ladMappings] of Object.entries(
-							mappings.ladToWards,
-						)) {
-							addLadWardMappings?.(Number(year), ladMappings);
-						}
-						addCodeMappings?.("ward", mappings.codeMappings.ward);
-						addCodeMappings?.(
-							"constituency",
-							mappings.codeMappings.constituency,
-						);
-						addCodeMappings?.(
-							"localAuthority",
-							mappings.codeMappings.localAuthority,
-						);
-						for (const [
-							year,
-							constituencyMappings,
-						] of Object.entries(mappings.constituencyToWards)) {
-							addConstituencyWardMappings?.(
-								Number(year),
-								constituencyMappings,
-							);
-						}
-					} else if (
+					if (
+						!mappingsApplied &&
 						fetched.ward &&
 						fetched.constituency &&
 						fetched.localAuthority
@@ -538,6 +566,7 @@ export function useBoundaryData(
 		};
 	}, [
 		requiredKey,
+		codeMapper,
 		addWardLadMappings,
 		addLadWardMappings,
 		addCodeMappings,
