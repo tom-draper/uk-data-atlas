@@ -16,7 +16,6 @@ import {
 import {
 	BoundaryType,
 	fetchBoundaryProperties,
-	filterFeatures,
 } from "../data/boundaries/boundaries";
 import {
 	BOUNDARY_CATALOG,
@@ -41,6 +40,7 @@ import {
 	fetchConstituencyLadOverlaps,
 	type ConstituencyLadOverlaps,
 } from "../data/boundaries/constituencyLadOverlaps";
+import { getCachedFilteredBoundaryData } from "../data/boundaries/locationFilter";
 import {
 	DEFAULT_VISIBILITY,
 	getVisibilitySnapshot,
@@ -53,22 +53,6 @@ const EMPTY_BOUNDARY_DATA: BoundaryData = Object.fromEntries(
 		Object.fromEntries(boundaryYears(type).map((year) => [year, null])),
 	]),
 ) as BoundaryData;
-
-// Filtered feature arrays retain references to the loaded geometry, but can still
-// add up when every visited location is kept indefinitely. Keep the most recent
-// locations only, and scope each cache to its raw boundary payload so a reload
-// cannot return stale data.
-const LOCATION_BOUNDARY_CACHE_LIMIT = 20;
-const filteredBoundaryDataCache = new WeakMap<
-	BoundaryData,
-	Map<
-		string,
-		{
-			data: BoundaryData;
-			constituencyLadOverlaps: ConstituencyLadOverlaps | null;
-		}
-	>
->();
 
 const BOUNDARY_MAPPINGS_URL = withCDN(
 	"/data/precompiled/boundary-mappings.json",
@@ -225,81 +209,7 @@ const fetchBoundaryGroup = async (
 	};
 };
 
-/**
- * Apply location filtering to a group of boundaries
- */
-const filterBoundaryGroup = (
-	group: Record<number, BoundaryGeojson | null>,
-	type: BoundaryType,
-	location: string | null,
-	getLadForWard?: (wardCode: string) => string | undefined,
-	constituencyLadOverlaps: ConstituencyLadOverlaps | null = null,
-): Record<number, BoundaryGeojson | null> => {
-	const filtered: Record<number, BoundaryGeojson | null> = {};
-
-	for (const [year, data] of Object.entries(group)) {
-		const releaseId =
-			type === "constituency"
-				? constituencyReleaseIdForYear(Number(year))
-				: undefined;
-		filtered[Number(year)] = data
-			? filterFeatures(
-					data,
-					location,
-					type,
-					getLadForWard,
-					releaseId
-						? constituencyLadOverlaps?.releases[releaseId]
-						: undefined,
-				)
-			: null;
-	}
-
-	return filtered;
-};
-
-export const getCachedFilteredBoundaryData = (
-	rawData: BoundaryData,
-	location: string | null,
-	getLadForWard?: (wardCode: string) => string | undefined,
-	constituencyLadOverlaps: ConstituencyLadOverlaps | null = null,
-): BoundaryData => {
-	let cache = filteredBoundaryDataCache.get(rawData);
-	if (!cache) {
-		cache = new Map();
-		filteredBoundaryDataCache.set(rawData, cache);
-	}
-
-	const cacheKey = location ?? "";
-	const cached = cache.get(cacheKey);
-	if (cached && cached.constituencyLadOverlaps === constituencyLadOverlaps) {
-		// Refresh the entry so the map acts as a least-recently-used cache.
-		cache.delete(cacheKey);
-		cache.set(cacheKey, cached);
-		return cached.data;
-	}
-
-	const filteredData = Object.fromEntries(
-		BOUNDARY_TYPES.map((type) => [
-			type,
-			filterBoundaryGroup(
-				rawData[type],
-				type,
-				location,
-				getLadForWard,
-				constituencyLadOverlaps,
-			),
-		]),
-	) as BoundaryData;
-
-	if (cache.size >= LOCATION_BOUNDARY_CACHE_LIMIT) {
-		const oldestKey = cache.keys().next().value;
-		if (oldestKey !== undefined) cache.delete(oldestKey);
-	}
-	cache.set(cacheKey, { data: filteredData, constituencyLadOverlaps });
-
-	return filteredData;
-};
+export { getCachedFilteredBoundaryData } from "../data/boundaries/locationFilter";
 
 /**
  * The ward codes each vintage actually contains, which is what election data is
