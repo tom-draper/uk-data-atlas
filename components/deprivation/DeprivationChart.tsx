@@ -25,7 +25,6 @@ export function DeprivationChart({
 	decile,
 	detail,
 	setActiveViz,
-	extraClassName,
 }: {
 	index: DeprivationIndex;
 	dataset: { id: string; type: Dataset["type"]; year: number };
@@ -34,7 +33,6 @@ export function DeprivationChart({
 	decile: number | null;
 	detail: DeprivationDetail | null;
 	setActiveViz: (value: ActiveViz) => void;
-	extraClassName?: string;
 }) {
 	const isDark = useIsDark();
 	// A rank only means something for one area; the aggregate of a whole
@@ -51,7 +49,6 @@ export function DeprivationChart({
 			region={index.region}
 			decile={decile === null ? null : Math.round(decile)}
 			hasData={decile !== null}
-			extraClassName={extraClassName}
 			footer={
 				showDetail ? (
 					<span

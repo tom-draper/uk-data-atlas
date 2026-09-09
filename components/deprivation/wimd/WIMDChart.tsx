@@ -64,7 +64,6 @@ export default function WIMDChart({
 				stats ? { kind: "rank", value: stats.averageWIMDRank } : null
 			}
 			setActiveViz={setActiveViz}
-			extraClassName="block w-full text-left"
 		/>
 	);
 }

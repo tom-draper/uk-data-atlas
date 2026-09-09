@@ -1,10 +1,8 @@
 "use client";
 import type { ReactNode } from "react";
-import {
-	ChartContentPlaceholder,
-	useChartsLoading,
-} from "@/components/ChartLoadingPlaceholder";
+import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { ChartCard } from "@/components/ChartCard";
+import { useChartsLoading } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
 
 export const DECILE_COLORS = [
@@ -28,7 +26,6 @@ interface DecileChartProps {
 	footer: ReactNode;
 	hasData: boolean;
 	isActive: boolean;
-	extraClassName?: string;
 	onClick: () => void;
 }
 
@@ -40,7 +37,6 @@ export default function DecileChart({
 	footer,
 	hasData,
 	isActive,
-	extraClassName,
 	onClick,
 }: DecileChartProps) {
 	const chartsLoading = useChartsLoading();
@@ -64,60 +60,17 @@ export default function DecileChart({
 			}
 			accent={showData ? decileColor : null}
 			isActive={isActive}
-			minHeightClassName={`min-h-[72px]${extraClassName ? ` ${extraClassName}` : ""}`}
 			title={title}
 			onClick={onClick}
 		>
-			{showData ? (
-				<div className="flex items-start gap-2.5">
-					<div className="shrink-0 w-8 text-right leading-none mt-[-2px]">
-						<span
-							className="text-3xl font-bold leading-none"
-							style={{ color: decileColor }}
-						>
-							{displayDecile}
-						</span>
-					</div>
-					<div className="flex-1 flex flex-col gap-1.5">
-						<div className="flex gap-[2px]">
-							{DECILE_COLORS.map((color, i) => (
-								<div
-									key={i}
-									className="flex-1 h-3 rounded-[2px]"
-									style={{
-										backgroundColor:
-											displayDecile === i + 1
-												? color
-												: isDark
-													? "rgba(255,255,255,0.1)"
-													: "rgba(0,0,0,0.08)",
-									}}
-								/>
-							))}
-						</div>
-						<div className="flex justify-between">
-							<span
-								className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}
-							>
-								least deprived
-							</span>
-							{footer}
-						</div>
-					</div>
-				</div>
-			) : (
-				<div className="flex-1">
-					{chartsLoading ? (
-						<ChartContentPlaceholder className="h-full" />
-					) : (
-						<div
-							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-						>
-							No data available
-						</div>
-					)}
-				</div>
-			)}
+			<ChartCardValueBar
+				hasData={showData}
+				value={displayDecile ?? ""}
+				unit="decile"
+				secondary={footer}
+				barWidth={(displayDecile ?? 0) * 10}
+				barColor={decileColor}
+			/>
 		</ChartCard>
 	);
 }

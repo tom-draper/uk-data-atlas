@@ -63,7 +63,6 @@ export default function NIMDMChart({
 				stats ? { kind: "rank", value: stats.averageNIMDMRank } : null
 			}
 			setActiveViz={setActiveViz}
-			extraClassName="block w-full text-left"
 		/>
 	);
 }

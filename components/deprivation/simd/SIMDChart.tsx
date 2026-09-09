@@ -64,7 +64,6 @@ export default function SIMDChart({
 				stats ? { kind: "rank", value: stats.averageSIMDRank } : null
 			}
 			setActiveViz={setActiveViz}
-			extraClassName="block w-full text-left"
 		/>
 	);
 }
