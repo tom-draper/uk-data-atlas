@@ -6,6 +6,7 @@ export const crimeDatasetDefinition: DatasetDefinition<CrimeDataset> = {
 	type: "crime",
 	precompiledFile: "crime",
 	boundaryType: "localAuthority",
+	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {
 		name: "Crime",
 		source: "Office for National Statistics",
