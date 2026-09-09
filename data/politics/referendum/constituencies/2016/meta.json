@@ -14,7 +14,7 @@
   "spatialCoverage": {
     "geography": "constituency",
     "vintage": 2015,
-    "countries": ["GB-ENG", "GB-NIR", "GB-SCT"]
+    "countries": ["GB-ENG", "GB-WLS"]
   },
   "files": [
     {
