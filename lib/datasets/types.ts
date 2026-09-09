@@ -3,7 +3,19 @@ import type { MapRenderContext } from "@/lib/helpers/mapRendering";
 import type { ActiveViz } from "@/lib/types/datasets";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
+import type { ComponentType } from "react";
+import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import type { DatasetDefinition } from "../data/catalog";
+
+/**
+ * A client-side adapter from the generic chart-card pipeline to one chart
+ * component's dataset-specific props.
+ */
+export type ChartPresentation = {
+	component: ComponentType<ChartComponentProps>;
+};
+
+export type ChartPresentationRegistry = Record<string, ChartPresentation>;
 
 // Only meaningful for datasets rendered as a colour-range choropleth on the
 // map. Categorical datasets (party winner, majority ethnicity, ...) render

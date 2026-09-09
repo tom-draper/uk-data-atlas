@@ -8,6 +8,8 @@ export type {
 	ChartDatasetLegendKind,
 	ChartDatasetMap,
 	ChartDatasetMapRenderer,
+	ChartPresentation,
+	ChartPresentationRegistry,
 } from "./types";
 export type { ChartDatasetType } from "./generated";
 

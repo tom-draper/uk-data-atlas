@@ -2,7 +2,10 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { CHART_COMPONENTS } from "@/lib/datasets/generatedCharts";
+import {
+	CHART_PRESENTATIONS,
+	getChartPresentation,
+} from "@/lib/datasets/generatedCharts";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { CHART_GROUPS } from "@/lib/datasets/chartGroups";
@@ -121,6 +124,18 @@ describe("chart dataset registry contract", () => {
 		).toEqual(chartGroups);
 	});
 
+	it("has one typed presentation for every registered chart", () => {
+		const chartKeys = CHART_DATASET_DEFINITIONS.flatMap((definition) =>
+			getChartDefinitions(definition).map((chart) => chart.key),
+		);
+		expect(Object.keys(CHART_PRESENTATIONS).sort()).toEqual(
+			[...chartKeys].sort(),
+		);
+		for (const key of chartKeys) {
+			expect(getChartPresentation(key)?.component).toBeTypeOf("function");
+		}
+	});
+
 	for (const definition of CHART_DATASET_DEFINITIONS) {
 		describe(definition.type, () => {
 			it("has complete provenance and registered chart cards", () => {
@@ -138,9 +153,10 @@ describe("chart dataset registry contract", () => {
 					(chart) => chart.key,
 				);
 				expect(new Set(chartKeys).size).toBe(chartKeys.length);
-				for (const key of chartKeys) {
-					expect(CHART_COMPONENTS[key]).toBeTypeOf("function");
-				}
+				for (const key of chartKeys)
+					expect(getChartPresentation(key)?.component).toBeTypeOf(
+						"function",
+					);
 			});
 
 			it("has a validated, provenance-matched compiled artifact", () => {

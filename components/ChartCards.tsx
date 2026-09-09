@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
-import { CHART_COMPONENTS } from "@/lib/datasets/generatedCharts";
+import { getChartPresentation } from "@/lib/datasets/generatedCharts";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
 import type { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import type { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
@@ -83,7 +83,12 @@ export default function ChartCards({
 	);
 
 	return definitions.map(({ definition, chart }) => {
-		const Chart = CHART_COMPONENTS[chart.key];
+		const presentation = getChartPresentation(chart.key);
+		if (!presentation) {
+			console.error(`No chart presentation registered for ${chart.key}.`);
+			return null;
+		}
+		const Chart = presentation.component;
 		const props: ChartComponentProps = {
 			activeDataset,
 			availableDatasets: datasets[definition.type],
