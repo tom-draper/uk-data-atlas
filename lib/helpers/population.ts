@@ -1,26 +1,13 @@
-// lib/population/utils.ts
 import {
 	BoundaryGeometry,
 	outerRings,
 	PopulationAgeSexRecord,
-	PopulationDataset,
 } from "@lib/types";
 
 export const calculateTotal = (ageData: { [age: string]: number }): number => {
 	let sum = 0;
 	for (const key in ageData) sum += ageData[key];
 	return sum;
-};
-
-const resolveWardCode = (
-	wardCode: string,
-	wardName: string,
-	population: PopulationDataset["data"],
-	wardCodeMap: { [name: string]: string },
-): string => {
-	if (population[wardCode]) return wardCode;
-	const normalizedName = wardName?.toLowerCase().trim();
-	return wardCodeMap[normalizedName] || "";
 };
 
 export const calculateMedianAge = (

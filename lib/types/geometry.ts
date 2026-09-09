@@ -481,8 +481,6 @@ export type BoundaryGeojsonFeature<
 	properties: YearToProperties[Y];
 };
 
-export type AnyFeature = BoundaryGeojson<keyof YearToProperties>;
-
 export interface BoundaryGeojson<
 	Y extends keyof YearToProperties = keyof YearToProperties,
 > {
