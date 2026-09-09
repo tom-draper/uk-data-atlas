@@ -8,7 +8,7 @@ export const schoolPerformanceDisadvantageDefinition: ChartDatasetDefinition<Sch
 		chart: {
 			group: "Education",
 			key: "education-schoolPerformanceGap",
-			label: "Attainment 8 Disadvantage Gap [2024/25]",
+			label: "Attainment 8 Gap [2024/25]",
 			defaultVisible: false,
 			componentPath:
 				"@/components/education/SchoolPerformanceDisadvantageChart",

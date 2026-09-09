@@ -95,7 +95,7 @@ export default function SchoolPerformanceDisadvantageChart({
 
 	return (
 		<ChartCard
-			heading="Attainment 8 Disadvantage Gap [2024/25]"
+			heading="Attainment 8 Gap [2024/25]"
 			headerEnd={
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}

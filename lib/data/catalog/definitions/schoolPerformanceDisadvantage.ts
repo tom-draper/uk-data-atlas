@@ -9,7 +9,7 @@ export const schoolPerformanceDisadvantageDatasetDefinition: DatasetDefinition<S
 		boundaryType: "localAuthority",
 		coverageCountries: ["GB-ENG"],
 		source: {
-			name: "Attainment 8 Disadvantage Gap",
+			name: "Attainment 8 Gap",
 			source: "Department for Education",
 			sourceUrl:
 				"https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance/2024-25",
