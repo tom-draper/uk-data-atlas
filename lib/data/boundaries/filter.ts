@@ -3,6 +3,7 @@ import { gazetteer } from "@lib/data/gazetteer/static";
 import type { Crosswalk } from "../gazetteer/types";
 import { featureExtent } from "./derived";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
+import { boundaryCapabilityFor } from "./capabilities";
 import { getProp } from "./properties";
 
 const COUNTRY_PREFIXES: Record<string, string> = {
@@ -46,12 +47,10 @@ export const filterFeatures = (
 	}
 
 	const { code: codeKeys } = BOUNDARY_CATALOG[type].properties;
+	const capability = boundaryCapabilityFor(type);
 
 	// Filter by country prefix (England, Scotland, Wales, Northern Ireland).
-	// Northern Ireland's super output area codes (e.g. "95AA01S1") don't
-	// follow this convention, so that geography always falls through to the
-	// bbox-based filter below instead.
-	if (COUNTRY_PREFIXES[location] && type !== "superOutputArea") {
+	if (COUNTRY_PREFIXES[location] && capability.countryPrefixFilter) {
 		const prefix = COUNTRY_PREFIXES[location];
 		return {
 			...geojson,
@@ -68,20 +67,18 @@ export const filterFeatures = (
 		return geojson;
 	}
 
-	// Filter wards by LAD code (uses getLadForWard for historical releases
-	// without an LAD property).
-	if (type === "ward" && loc.memberCodes?.length) {
+	if (
+		capability.locationScope.kind === "parent-map" &&
+		loc.memberCodes?.length
+	) {
 		const ladCodeSet = new Set(loc.memberCodes);
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
-				const wardCode = getProp(
-					f.properties,
-					BOUNDARY_CATALOG.ward.properties.code,
-				);
+				const wardCode = getProp(f.properties, codeKeys);
 				let ladCode = getProp(
 					f.properties,
-					BOUNDARY_CATALOG.ward.properties.parentCode ??
+					BOUNDARY_CATALOG[type].properties.parentCode ??
 						BOUNDARY_CATALOG.localAuthority.properties.code,
 				);
 				const mappedLadCode =
@@ -94,28 +91,21 @@ export const filterFeatures = (
 		};
 	}
 
-	// Filter local authorities by LAD code
-	if (type === "localAuthority" && loc.memberCodes?.length) {
+	if (
+		capability.locationScope.kind === "direct-membership" &&
+		loc.memberCodes?.length
+	) {
 		const ladCodeSet = new Set(loc.memberCodes);
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
-				const ladCode = getProp(
-					f.properties,
-					BOUNDARY_CATALOG.localAuthority.properties.code,
-				);
-				return ladCode && ladCodeSet.has(ladCode);
+				const code = getProp(f.properties, codeKeys);
+				return code && ladCodeSet.has(code);
 			}),
 		};
 	}
 
-	// Smaller-area geographies do not have a common parent-code property.
-	if (
-		(type === "lsoa" ||
-			type === "dataZone" ||
-			type === "superOutputArea") &&
-		loc.bbox
-	) {
+	if (capability.locationScope.kind === "bbox" && loc.bbox) {
 		return {
 			...geojson,
 			features: geojson.features.filter((f) =>
@@ -125,7 +115,7 @@ export const filterFeatures = (
 	}
 
 	if (
-		type === "constituency" &&
+		capability.locationScope.kind === "crosswalk" &&
 		loc.memberCodes?.length &&
 		constituencyLadOverlaps
 	) {
@@ -143,7 +133,7 @@ export const filterFeatures = (
 
 	// A crosswalk is not needed for country-wide locations and remains an
 	// optional progressive enhancement if its generated file cannot be served.
-	if (type === "constituency" && loc.bbox) {
+	if (capability.locationScope.kind === "crosswalk" && loc.bbox) {
 		return {
 			...geojson,
 			features: geojson.features.filter((f) =>

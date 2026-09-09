@@ -11,6 +11,8 @@ import { getActiveDataset } from "@/lib/helpers/activeDataset";
 import { filterGeometryToDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { getChartDatasetDefinition } from "@/lib/datasets";
 import { boundaryTypeForDatasetType } from "@/lib/data/boundaries/required";
+import { boundaryCapabilityFor } from "@/lib/data/boundaries/capabilities";
+import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 import { normalizeElectionDatasetCodes } from "@/lib/data/election/local-election/normalize";
 
 import MapView from "@components/MapView";
@@ -23,7 +25,6 @@ import type {
 	BoundaryData,
 	BoundaryType,
 } from "@lib/types";
-import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/boundaries";
 import type { CustomDataset } from "@/lib/types/custom";
 import type { NetworkDataset } from "@/lib/types/network";
 import { MAP_CONFIG } from "@/lib/config/map";
@@ -229,14 +230,11 @@ export default function MapInterface({
 			return coverageCountries
 				? coverageGeometry
 				: { ...coverageGeometry, features: [] };
-		const codeKeys: readonly string[] =
-			activeDataset.boundaryType === "lsoa"
-				? BOUNDARY_CATALOG.lsoa.properties.code
-				: activeDataset.boundaryType === "dataZone"
-					? BOUNDARY_CATALOG.dataZone.properties.code
-					: activeDataset.boundaryType === "superOutputArea"
-						? BOUNDARY_CATALOG.superOutputArea.properties.code
-						: [];
+		const boundaryType = activeDataset.boundaryType as BoundaryType;
+		const codeKeys: readonly string[] = boundaryCapabilityFor(boundaryType)
+			.filterGeometryToDatasetData
+			? BOUNDARY_CATALOG[boundaryType].properties.code
+			: [];
 		if (codeKeys.length === 0) return coverageGeometry;
 		const firstProps = coverageGeometry.features[0]
 			?.properties as unknown as Record<string, unknown> | undefined;

@@ -1,6 +1,7 @@
 import { gazetteer } from "./gazetteer/static";
 import type { Crosswalk } from "./gazetteer/types";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./boundaries/catalog";
+import { boundaryCapabilityFor } from "./boundaries/capabilities";
 import { getProp } from "./boundaries/properties";
 import { withCDN } from "../helpers/cdn";
 import { codeKeyedFieldsFor, type DatasetPayloadLayout } from "./catalog/types";
@@ -160,7 +161,7 @@ const intersects = (a: readonly number[], b: readonly number[]) =>
 	a[0]! <= b[2]! && a[2]! >= b[0]! && a[1]! <= b[3]! && a[3]! >= b[1]!;
 
 const bboxMatcherFor = (
-	type: Extract<BoundaryType, "lsoa" | "dataZone" | "superOutputArea">,
+	type: BoundaryType,
 	year: number,
 	bbox: readonly number[],
 ): Promise<CodeMatcher | null> => {
@@ -219,47 +220,43 @@ const matcherFor = async (
 	year: number | undefined,
 ): Promise<CodeMatcher | null> => {
 	if (!filter.location || filter.location === "United Kingdom") return null;
+	const capability = boundaryCapabilityFor(filter.boundaryType);
 	const countryPrefix = COUNTRY_PREFIXES[filter.location];
-	// Northern Ireland's super output area codes (e.g. "95AA01S1") don't
-	// follow the country-prefix convention, so fall through to the
-	// bbox-based matcher below instead.
-	if (countryPrefix && filter.boundaryType !== "superOutputArea")
+	if (countryPrefix && capability.countryPrefixFilter)
 		return (code) => code.startsWith(countryPrefix);
 
 	const location = gazetteer.namedLocation(filter.location);
 	if (!location) return null;
 	const memberCodes = new Set(location.memberCodes ?? []);
 
-	if (filter.boundaryType === "localAuthority" && memberCodes.size > 0) {
-		return (code) => memberCodes.has(code);
-	}
-	if (filter.boundaryType === "ward" && memberCodes.size > 0) {
-		const wardToLad = await fetchWardToLad();
-		return (code) => memberCodes.has(wardToLad[code] ?? "");
-	}
-	if (
-		filter.boundaryType === "constituency" &&
-		memberCodes.size > 0 &&
-		year !== undefined
-	) {
-		const release = constituencyReleaseForYear(year);
-		const overlaps = release
-			? (await fetchConstituencyOverlaps())[release]
-			: undefined;
-		if (!overlaps) return null;
-		return (code) =>
-			(overlaps[code] ?? []).some(({ code: ladCode }) =>
-				memberCodes.has(ladCode),
-			);
-	}
-	if (
-		(filter.boundaryType === "lsoa" ||
-			filter.boundaryType === "dataZone" ||
-			filter.boundaryType === "superOutputArea") &&
-		location.bbox &&
-		year !== undefined
-	) {
-		return bboxMatcherFor(filter.boundaryType, year, location.bbox);
+	switch (capability.locationScope.kind) {
+		case "direct-membership":
+			return memberCodes.size > 0
+				? (code) => memberCodes.has(code)
+				: null;
+		case "parent-map": {
+			if (memberCodes.size === 0) return null;
+			const wardToLad = await fetchWardToLad();
+			return (code) => memberCodes.has(wardToLad[code] ?? "");
+		}
+		case "crosswalk": {
+			if (memberCodes.size === 0 || year === undefined) return null;
+			const release = constituencyReleaseForYear(year);
+			const overlaps = release
+				? (await fetchConstituencyOverlaps())[release]
+				: undefined;
+			if (!overlaps) return null;
+			return (code) =>
+				(overlaps[code] ?? []).some(({ code: ladCode }) =>
+					memberCodes.has(ladCode),
+				);
+		}
+		case "bbox":
+			return location.bbox && year !== undefined
+				? bboxMatcherFor(filter.boundaryType, year, location.bbox)
+				: null;
+		case "none":
+			return null;
 	}
 
 	return null;

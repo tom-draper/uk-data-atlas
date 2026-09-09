@@ -6,6 +6,10 @@ import {
 	boundaryYears,
 	nameKeyForCodeKey,
 } from "@/lib/data/boundaries/catalog";
+import {
+	BOUNDARY_CAPABILITIES,
+	boundaryCapabilityFor,
+} from "@/lib/data/boundaries/capabilities";
 
 describe("boundary catalogue", () => {
 	it("describes every downloadable boundary vintage", () => {
@@ -33,6 +37,21 @@ describe("boundary catalogue", () => {
 describe("catalogue lookups", () => {
 	it("lists every geography in declaration order", () => {
 		expect(BOUNDARY_TYPES).toEqual(Object.keys(BOUNDARY_CATALOG));
+	});
+
+	it("declares capabilities for every geography", () => {
+		expect(Object.keys(BOUNDARY_CAPABILITIES)).toEqual(BOUNDARY_TYPES);
+	});
+
+	it("keeps exceptional location and map-data behaviour with its geography", () => {
+		expect(
+			boundaryCapabilityFor("superOutputArea").countryPrefixFilter,
+		).toBe(false);
+		for (const type of ["lsoa", "dataZone", "superOutputArea"] as const) {
+			expect(
+				boundaryCapabilityFor(type).filterGeometryToDatasetData,
+			).toBe(true);
+		}
 	});
 
 	it("reports a geography's vintages newest first", () => {
