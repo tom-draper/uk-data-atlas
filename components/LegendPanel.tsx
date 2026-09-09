@@ -233,7 +233,7 @@ function HousePriceMeasurePanel({
 					className={`relative h-4 w-7 rounded-full transition-colors ${isMean ? "bg-indigo-500" : isDark ? "bg-gray-600" : "bg-gray-300"}`}
 				>
 					<span
-						className={`absolute top-0.5 size-3 rounded-full bg-white shadow transition-transform ${isMean ? "translate-x-0.5" : "translate-x-3.5"}`}
+						className={`absolute top-0.5 left-0.5 size-3 rounded-full bg-white shadow transition-transform ${isMean ? "" : "translate-x-3"}`}
 					/>
 				</button>
 				<span className={isMean ? "text-gray-400" : "font-medium"}>
