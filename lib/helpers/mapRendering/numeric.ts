@@ -19,7 +19,7 @@ export type NumericDataset = {
 
 export interface NumericMapConfig<T extends NumericDataset> {
 	valueKey?: string;
-	valueFor?(dataset: T, code: string): number | null;
+	valueFor?(dataset: T, code: string, mapOptions: MapOptions): number | null;
 	invertColor?: boolean;
 	getColorRange?(dataset: T): ColorRange;
 }
@@ -76,7 +76,7 @@ export function renderNumericDataset<T extends NumericDataset>(
 		dataset.type,
 		dataset.data,
 		(data, code) => {
-			const mappedValue = map.valueFor?.(data, code);
+			const mappedValue = map.valueFor?.(data, code, mapOptions);
 			if (mappedValue !== undefined) return mappedValue;
 			const value = map.valueKey
 				? (

@@ -6,7 +6,10 @@ export interface HousePriceWardData {
 	ladName: string;
 	wardCode: string;
 	wardName: string;
+	/** Median price paid, by calendar year. */
 	prices: Record<number, number>;
+	/** Mean price paid, by calendar year. */
+	meanPrices: Record<number, number>;
 }
 
 export type HousePriceYear = 2023;

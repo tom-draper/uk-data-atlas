@@ -20,13 +20,18 @@ export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 		year: 2023,
 	},
 	map: {
-		valueFor: (dataset, code) =>
-			dataset.data[code]?.prices[dataset.year] ?? null,
+		valueFor: (dataset, code, mapOptions) => {
+			const ward = dataset.data[code];
+			if (!ward) return null;
+			return mapOptions.housePrice.measure === "mean"
+				? (ward.meanPrices[dataset.year] ?? null)
+				: (ward.prices[dataset.year] ?? null);
+		},
 		colorRange: { min: 80000, max: 500000 },
 		legend: {
 			min: 0,
 			max: 1000000,
-			format: (value) => `£${Math.round(value / 1000)}k median price`,
+			format: (value) => `£${Math.round(value / 1000)}k`,
 		},
 	},
 };

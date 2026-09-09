@@ -25,38 +25,70 @@ const SALFORD_WARD_CODE_REMAP: Record<string, string> = {
 	E05000778: "E05013037",
 };
 
+const MEDIAN_PRICE_PATH =
+	"economics/housing/median-price-by-ward/hpssadataset37medianpricepaidbyward.zip";
+const MEAN_PRICE_PATH =
+	"economics/housing/mean-price-by-ward/hpssadataset38meanpricepaidbyward.zip";
+
+async function parsePriceRows(csvText: string) {
+	const skipLines = findHeaderLine(csvText, "local authority code");
+	return parseCsv(csvText, { header: true, skipLines });
+}
+
+function pricesForRow(
+	row: Record<string, string>,
+	timePeriodHeaders: string[],
+): Record<number, number> {
+	const prices: Record<number, number> = {};
+	for (const period of timePeriodHeaders) {
+		// Medians of an even number of sales land on a half penny, and the
+		// workbooks hold that rather than the rounded figure they display.
+		const rawPrice = parseNullableNum(row[period]);
+		const price = rawPrice === null ? null : Math.round(rawPrice);
+		if (price === null) continue;
+		const yearMatch = period.match(/\d{4}/);
+		if (yearMatch) prices[parseInt(yearMatch[0])] = price;
+	}
+	return prices;
+}
+
 export async function loadHousePrice(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, HousePriceDataset>> {
-	const csvText = await read(
-		"economics/housing/median-price-by-ward/hpssadataset37medianpricepaidbyward.zip",
-	);
-	const skipLines = findHeaderLine(csvText, "local authority code");
-	const { data, fields } = await parseCsv(csvText, {
-		header: true,
-		skipLines,
-	});
-
-	const timePeriodHeaders = fields.slice(4);
+	const [medianCsv, meanCsv] = await Promise.all([
+		read(MEDIAN_PRICE_PATH),
+		read(MEAN_PRICE_PATH),
+	]);
+	const [median, mean] = await Promise.all([
+		parsePriceRows(medianCsv),
+		parsePriceRows(meanCsv),
+	]);
 	const wardData: Record<string, HousePriceWardData> = {};
 
-	for (const row of data) {
+	for (const row of median.data) {
 		const rawCode = row["Ward code"]?.trim();
 		if (!rawCode) continue;
 		const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
 
-		const prices: Record<number, number> = {};
-		for (const period of timePeriodHeaders) {
-			// Medians of an even number of sales land on a half penny, and
-			// the workbook holds that rather than the rounded figure it
-			// displays. Round rather than truncate, so a price is never a
-			// pound light.
-			const rawPrice = parseNullableNum(row[period]);
-			const price = rawPrice === null ? null : Math.round(rawPrice);
-			if (price !== null) {
-				const yearMatch = period.match(/\d{4}/);
-				if (yearMatch) prices[parseInt(yearMatch[0])] = price;
-			}
+		wardData[wardCode] = {
+			ladCode: row["Local authority code"]?.trim() || "",
+			ladName: row["Local authority name"]?.trim() || "",
+			wardCode,
+			wardName: row["Ward name"]?.trim() || "",
+			prices: pricesForRow(row, median.fields.slice(4)),
+			meanPrices: {},
+		};
+	}
+
+	for (const row of mean.data) {
+		const rawCode = row["Ward code"]?.trim();
+		if (!rawCode) continue;
+		const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
+		const meanPrices = pricesForRow(row, mean.fields.slice(4));
+		const existing = wardData[wardCode];
+		if (existing) {
+			existing.meanPrices = meanPrices;
+			continue;
 		}
 
 		wardData[wardCode] = {
@@ -64,7 +96,8 @@ export async function loadHousePrice(
 			ladName: row["Local authority name"]?.trim() || "",
 			wardCode,
 			wardName: row["Ward name"]?.trim() || "",
-			prices,
+			prices: {},
+			meanPrices,
 		};
 	}
 

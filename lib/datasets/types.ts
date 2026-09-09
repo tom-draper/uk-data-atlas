@@ -10,7 +10,7 @@ import type { DatasetDefinition } from "../data/catalog";
 // through their own bespoke map path and leave this unset.
 export interface ChartDatasetMap<T = unknown> {
 	valueKey?: string;
-	valueFor?(dataset: T, code: string): number | null;
+	valueFor?(dataset: T, code: string, mapOptions: MapOptions): number | null;
 	colorRange: { min: number; max: number };
 	legend: {
 		min: number;

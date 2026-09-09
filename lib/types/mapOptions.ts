@@ -9,6 +9,10 @@ export interface ColorRangeOption {
 	colorRange: ColorRange;
 }
 
+export interface HousePriceOptions extends ColorRangeOption {
+	measure: "median" | "mean";
+}
+
 export interface CustomOptions extends ColorRangeOption {
 	selectedPointValue?: number;
 	excludedPointValues?: number[];
@@ -27,7 +31,12 @@ export interface NetworkOptions {
 	excluded?: string[];
 }
 
-export type ChartMapOptions = Record<CatalogueDatasetType, ColorRangeOption>;
+export type ChartMapOptions = Omit<
+	Record<CatalogueDatasetType, ColorRangeOption>,
+	"housePrice"
+> & {
+	housePrice: HousePriceOptions;
+};
 
 export type ColorTheme =
 	| "viridis"

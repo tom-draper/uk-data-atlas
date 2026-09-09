@@ -201,6 +201,49 @@ function PercentageRangePanel({
 	);
 }
 
+function HousePriceMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "median" | "mean";
+	onChange: (measure: "median" | "mean") => void;
+}) {
+	const isDark = useIsDark();
+	const t = panelTheme(isDark);
+	const isMean = measure === "mean";
+	return (
+		<div
+			className={`pointer-events-auto rounded-md w-fit ml-auto relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
+			style={glassStyle(isDark)}
+		>
+			<GlassOverlays isDark={isDark} />
+			<div
+				className={`relative ${t.section} flex items-center gap-2 p-2 text-xs`}
+				style={{ zIndex: 1 }}
+			>
+				<span className={isMean ? "text-gray-400" : "font-medium"}>
+					Median
+				</span>
+				<button
+					type="button"
+					role="switch"
+					aria-checked={isMean}
+					aria-label="Show mean house prices"
+					onClick={() => onChange(isMean ? "median" : "mean")}
+					className={`relative h-4 w-7 rounded-full transition-colors ${isMean ? "bg-indigo-500" : isDark ? "bg-gray-600" : "bg-gray-300"}`}
+				>
+					<span
+						className={`absolute top-0.5 size-3 rounded-full bg-white shadow transition-transform ${isMean ? "translate-x-3.5" : "translate-x-0.5"}`}
+					/>
+				</button>
+				<span className={isMean ? "font-medium" : "text-gray-400"}>
+					Mean
+				</span>
+			</div>
+		</div>
+	);
+}
+
 export default function LegendPanel({
 	activeDataset,
 	activeViz,
@@ -385,6 +428,7 @@ export default function LegendPanel({
 	const showEthnicityPct =
 		activeDataset?.type === "ethnicity" &&
 		ethnicityOpts?.mode === "percentage";
+	const showHousePriceMeasure = activeDataset?.type === "housePrice";
 
 	const isDark = useIsDark();
 	const t = panelTheme(isDark);
@@ -479,6 +523,15 @@ export default function LegendPanel({
 					/>
 				</div>
 			</div>
+
+			{showHousePriceMeasure && (
+				<HousePriceMeasurePanel
+					measure={displayOptions.housePrice.measure}
+					onChange={(measure) =>
+						onMapOptionsChange("housePrice", { measure })
+					}
+				/>
+			)}
 
 			{showElectionPct && electionType && electionOpts && (
 				<PercentageRangePanel
