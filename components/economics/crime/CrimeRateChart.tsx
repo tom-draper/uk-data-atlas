@@ -7,11 +7,8 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import {
-	ChartContentPlaceholder,
-	useChartsLoading,
-} from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface CrimeRateChartProps {
@@ -24,14 +21,6 @@ interface CrimeRateChartProps {
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
-
-const layers = [
-	{ r: 45, opacity: 0.3 },
-	{ r: 35, opacity: 0.4 },
-	{ r: 25, opacity: 0.5 },
-	{ r: 15, opacity: 0.6 },
-	{ r: 5, opacity: 0.8 },
-];
 
 function computeCrimeRate(
 	dataset: CrimeDataset,
@@ -77,17 +66,8 @@ export default function CrimeRateChart({
 	year,
 	setActiveViz,
 }: CrimeRateChartProps) {
-	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
-
-	const filterId = `contour-filter-${year}`;
-
-	const distortionSeed = selectedArea
-		? (selectedArea.code || "")
-				.split("")
-				.reduce((acc, char) => acc + char.charCodeAt(0), 0) % 100
-		: 0;
 
 	const crimeRate = dataset
 		? computeCrimeRate(
@@ -107,32 +87,14 @@ export default function CrimeRateChart({
 
 	const rawValue = crimeRate || 0;
 	const maxThreshold = 100000;
-	const minThreshold = 5000;
 
-	let intensity = 0;
 	const hasData = crimeRate !== null && crimeRate > 0;
-	if (hasData && rawValue > minThreshold) {
-		intensity = Math.min(
-			Math.max(
-				(rawValue - minThreshold) / (maxThreshold - minThreshold),
-				0,
-			),
-			1,
-		);
-	}
+	// A total above 100,000 offences fills the bar; lower totals remain
+	// proportional so small authorities are not visually flattened to zero.
+	const intensity = Math.min(rawValue / maxThreshold, 1);
 
-	const baseHue = 50 - intensity * 50;
-	const hotHue = 50 - intensity * 50;
-
-	const dynamicBgColor = hasData
-		? isDark
-			? `hsl(${baseHue}, ${20 + intensity * 30}%, ${8 + intensity * 8}%)`
-			: `hsl(${baseHue}, ${40 + intensity * 40}%, ${95 - intensity * 20}%)`
-		: "";
-
-	// Same hue as the background, at a mid-brightness level visible in both modes
-	const borderColor = hasData
-		? `hsl(${baseHue}, ${50 + intensity * 40}%, 60%)`
+	const color = hasData
+		? `hsl(${50 - intensity * 50}, ${50 + intensity * 40}%, 50%)`
 		: null;
 
 	return (
@@ -145,12 +107,8 @@ export default function CrimeRateChart({
 					England &amp; Wales
 				</span>
 			}
-			accent={null}
+			accent={color}
 			isActive={isActive}
-			style={
-				dynamicBgColor ? { backgroundColor: dynamicBgColor } : undefined
-			}
-			activeStyle={borderColor ? { borderColor } : undefined}
 			title="Home Office. Police Recorded Crime Open Data Tables. data.police.uk"
 			onClick={() =>
 				setActiveViz({
@@ -159,88 +117,14 @@ export default function CrimeRateChart({
 					datasetYear: dataset.year,
 				})
 			}
-			background={
-				<>
-					{hasData && intensity > 0 && (
-						<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-							<svg
-								viewBox="-100 -100 300 300"
-								preserveAspectRatio="xMidYMid slice"
-								className="size-full"
-							>
-								<defs>
-									<filter
-										id={filterId}
-										x="-50%"
-										y="-50%"
-										width="200%"
-										height="200%"
-									>
-										<feTurbulence
-											type="fractalNoise"
-											baseFrequency="0.04"
-											numOctaves="3"
-											seed={distortionSeed}
-											result="noise"
-										/>
-										<feDisplacementMap
-											in="SourceGraphic"
-											in2="noise"
-											scale={20 + intensity * 20}
-										/>
-									</filter>
-								</defs>
-
-								<g filter={`url(#${filterId})`}>
-									{layers.map((layer, i) => (
-										<circle
-											key={i}
-											cx="50"
-											cy="50"
-											r={layer.r * 2.5}
-											fill={`hsla(${hotHue + (20 - i * 5)}, 80%, ${60 - i * 5}%, ${layer.opacity + intensity * 0.2})`}
-										/>
-									))}
-								</g>
-							</svg>
-						</div>
-					)}
-					<div
-						className={`absolute inset-0 z-0 ${isDark ? "bg-black/20" : "bg-white/20"}`}
-					/>
-				</>
-			}
 		>
-			{crimeRate ? (
-				<div className="flex-1 mt-1.5 flex items-center justify-center">
-					<div
-						className="text-xl font-bold"
-						style={{
-							color: isDark
-								? intensity > 0.5
-									? "#fca5a5"
-									: "#fdba74"
-								: intensity > 0.5
-									? "#7f1d1d"
-									: "#78350f",
-						}}
-					>
-						{Math.round(crimeRate).toLocaleString()}
-					</div>
-				</div>
-			) : (
-				<div className="flex-1 mt-1.5">
-					{chartsLoading ? (
-						<ChartContentPlaceholder className="h-full" />
-					) : (
-						<div
-							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-						>
-							No data available
-						</div>
-					)}
-				</div>
-			)}
+			<ChartCardValueBar
+				hasData={hasData}
+				value={Math.round(rawValue).toLocaleString()}
+				unit="offences"
+				barWidth={intensity * 100}
+				barColor={color ?? undefined}
+			/>
 		</ChartCard>
 	);
 }
