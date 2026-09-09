@@ -31,6 +31,32 @@ describe("location-scoped chart datasets", () => {
 		});
 	});
 
+	it("keeps ICB records reached by the selected local authorities", async () => {
+		const includedLad = greaterManchester.memberCodes[0]!;
+		const payload = {
+			2026: {
+				boundaryYear: 2024,
+				data: {
+					QOP: { pctOver18Weeks: 37 },
+					QOTHER: { pctOver18Weeks: 30 },
+				},
+				ladToIcb: {
+					[includedLad]: "QOP",
+					E06000001: "QOTHER",
+				},
+			},
+		};
+
+		const filtered = (await filterDatasetPayloadForLocation(payload, {
+			location: "Greater Manchester",
+			boundaryType: "localAuthority",
+		})) as typeof payload;
+
+		expect(filtered[2026].data).toEqual({
+			QOP: { pctOver18Weeks: 37 },
+		});
+	});
+
 	it("keeps ward records by their local-authority membership", async () => {
 		const includedCode = "E05000001";
 		vi.stubGlobal(

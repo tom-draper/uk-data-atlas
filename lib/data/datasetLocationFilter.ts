@@ -23,6 +23,26 @@ type DatasetRecord = {
 type CodeMatcher = (code: string) => boolean;
 
 /**
+ * NHS waiting-time records are keyed by ICB rather than by their displayed LAD
+ * boundaries. Keep the ICB records reached by the selected LADs when slicing
+ * the payload for a location.
+ */
+const icbCodesForLocation = (
+	dataset: DatasetRecord,
+	matcher: CodeMatcher,
+): Set<string> | null => {
+	const ladToIcb = dataset.ladToIcb;
+	if (!ladToIcb || typeof ladToIcb !== "object" || Array.isArray(ladToIcb))
+		return null;
+
+	return new Set(
+		Object.entries(ladToIcb).flatMap(([ladCode, icbCode]) =>
+			matcher(ladCode) && typeof icbCode === "string" ? [icbCode] : [],
+		),
+	);
+};
+
+/**
  * The fields keyed by the dataset's own boundary codes, and so scopable by the
  * same matcher.
  *
@@ -302,12 +322,15 @@ export const filterDatasetPayloadForLocation = async (
 					string,
 					Record<string, unknown>
 				> = {};
+				const icbCodes = icbCodesForLocation(dataset, matcher);
 				for (const field of CODE_KEYED_FIELDS) {
 					const records = dataset[field];
 					if (!records || typeof records !== "object") continue;
 					scopedFields[field] = Object.fromEntries(
-						Object.entries(records).filter(([code]) =>
-							matcher(code),
+						Object.entries(records).filter(
+							([code]) =>
+								matcher(code) ||
+								(field === "data" && icbCodes?.has(code)),
 						),
 					);
 				}
