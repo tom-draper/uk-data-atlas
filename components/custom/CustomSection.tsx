@@ -4,9 +4,9 @@ import { ActiveViz, CustomDataset } from "@/lib/types";
 import { AreaBank } from "@lib/data/areaBank";
 import { useMatchIndex } from "@/lib/hooks/useMatchIndex";
 import {
-	createCustomDataset,
-	type CustomDatasetUpload,
-} from "@/lib/data/custom/dataset";
+	materialiseCustomImport,
+	type CustomImport,
+} from "@/lib/data/custom/import";
 import type { SelectedCustomArea } from "./types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
@@ -41,10 +41,14 @@ export default function CustomSection({
 	const { areaBank } = useMatchIndex(isOpen);
 	const isDark = useIsDark();
 
-	const handleCustomDatasetApply = (data: CustomDatasetUpload) => {
+	const handleCustomDatasetApply = (customImport: CustomImport) => {
 		const id =
 			Date.now().toString(36) + Math.random().toString(36).slice(2);
-		const dataset = createCustomDataset(id, data);
+		const { dataset } = materialiseCustomImport(
+			id,
+			customImport.document,
+			customImport.plan,
+		);
 		if (!dataset) return;
 
 		addCustomDataset(dataset);

@@ -4,7 +4,7 @@ import { X, Upload, AlertCircle } from "lucide-react";
 import { detectCoordinateColumns, AreaBank } from "@lib/data/areaBank";
 import { detectHeaderRow, parseCustomCsv } from "@/lib/data/custom/csv";
 import {
-	buildUpload,
+	buildCustomImport,
 	canVisualise,
 	chooseMatch,
 	guessCodeColumn,
@@ -13,7 +13,7 @@ import {
 	matchColumn,
 	uploadColumns,
 } from "@/lib/data/custom/upload";
-import type { CustomDatasetUpload } from "@/lib/data/custom/dataset";
+import type { CustomImport } from "@/lib/data/custom/import";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { BoundaryColumnFields } from "./BoundaryColumnFields";
 import { PointColumnFields } from "./PointColumnFields";
@@ -26,7 +26,7 @@ export function UploadModal({
 }: {
 	isOpen: boolean;
 	onClose: () => void;
-	onUpload: (data: CustomDatasetUpload) => void;
+	onUpload: (customImport: CustomImport) => void;
 	areaBank: AreaBank;
 }) {
 	const [file, setFile] = useState<File | null>(null);
@@ -126,7 +126,7 @@ export function UploadModal({
 	};
 
 	const handleUpload = () => {
-		const result = buildUpload(
+		const result = buildCustomImport(
 			{
 				file: file?.name ?? null,
 				csvData,
@@ -144,7 +144,7 @@ export function UploadModal({
 			return;
 		}
 
-		onUpload(result.upload);
+		onUpload(result.customImport);
 		handleClose();
 	};
 

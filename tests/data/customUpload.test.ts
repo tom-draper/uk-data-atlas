@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { AreaBank, AreaEntry, AreaMatch } from "@/lib/data/areaBank";
 import {
-	buildUpload,
+	buildCustomImport,
 	canVisualise,
 	chooseMatch,
 	guessCodeColumn,
@@ -181,7 +181,7 @@ describe("guessValueColumn", () => {
 	});
 });
 
-describe("buildUpload", () => {
+describe("buildCustomImport", () => {
 	const draft = {
 		file: "areas.csv",
 		csvData: csv,
@@ -193,66 +193,75 @@ describe("buildUpload", () => {
 	};
 
 	it("describes a choropleth upload from the chosen match", () => {
-		const result = buildUpload(
+		const result = buildCustomImport(
 			draft,
 			false,
 			match("LADs 2024", "code", 90),
 		);
 
 		expect(result).toEqual({
-			upload: {
-				file: "areas.csv",
-				headerRow: 1,
-				mode: "choropleth",
-				selectedColumn: "LAD24CD",
-				dataColumn: "Value",
-				boundaryType: "localAuthority",
-				boundaryYear: 2024,
-				selectedEntry: expect.objectContaining({ label: "LADs 2024" }),
-				data: csv,
+			customImport: {
+				document: {
+					fileName: "areas.csv",
+					format: "csv",
+					headerRow: 1,
+					rows: csv,
+				},
+				plan: {
+					kind: "choropleth",
+					codeColumn: "LAD24CD",
+					valueColumn: "Value",
+					boundaryType: "localAuthority",
+					boundaryYear: 2024,
+				},
 			},
 		});
 	});
 
 	it("describes a point upload from the coordinate columns", () => {
-		const result = buildUpload(draft, true, null);
+		const result = buildCustomImport(draft, true, null);
 
 		expect(result).toEqual({
-			upload: {
-				file: "areas.csv",
-				headerRow: 1,
-				data: csv,
-				mode: "points",
-				latColumn: "Latitude",
-				lngColumn: "Longitude",
-				dataColumn: "Value",
+			customImport: {
+				document: {
+					fileName: "areas.csv",
+					format: "csv",
+					headerRow: 1,
+					rows: csv,
+				},
+				plan: {
+					kind: "points",
+					latitudeColumn: "Latitude",
+					longitudeColumn: "Longitude",
+					valueColumn: "Value",
+				},
 			},
 		});
 	});
 
-	it("reports a yearless area set as having no boundary year", () => {
-		const undated = match("Postcodes areas", "code", 90);
-		undated.entry.year = 0;
-		const result = buildUpload(draft, false, undated);
-
-		expect(result).toHaveProperty("upload.boundaryYear", null);
-	});
-
 	it("asks for the missing point columns", () => {
-		expect(buildUpload({ ...draft, lngColumn: "" }, true, null)).toEqual({
+		expect(
+			buildCustomImport({ ...draft, lngColumn: "" }, true, null),
+		).toEqual({
 			error: "Please select latitude, longitude, and value columns",
 		});
 	});
 
 	it("asks for the missing choropleth selections", () => {
-		expect(buildUpload({ ...draft, dataColumn: "" }, false, null)).toEqual({
+		expect(
+			buildCustomImport({ ...draft, dataColumn: "" }, false, null),
+		).toEqual({
 			error: "Please select a file, area code column, data column, and matching area type",
 		});
 	});
 
 	it("refuses a match the atlas cannot draw", () => {
 		expect(
-			buildUpload(draft, false, match("Postcodes", "postcode-full", 90)),
+			buildCustomImport(
+				draft,
+				false,
+				match("Postcodes", "postcode-full", 90),
+			),
 		).toEqual({ error: "Postcode visualisation is coming soon." });
 	});
 });

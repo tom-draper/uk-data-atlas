@@ -9,7 +9,8 @@ import {
 	type AreaMatch,
 	type CoordinateColumns,
 } from "@/lib/data/areaBank";
-import type { CustomDatasetUpload } from "./dataset";
+import { createCsvImportDocument, type CustomImport } from "./import";
+import type { BoundaryType } from "@/lib/types/boundaries";
 
 /** A column offered to the pickers, with a taste of its first data row. */
 export interface UploadColumn {
@@ -137,11 +138,11 @@ export interface UploadDraft {
  * The upload a draft describes, or the reason it cannot be sent yet. Returning
  * the message keeps every validation rule in one readable place.
  */
-export function buildUpload(
+export function buildCustomImport(
 	draft: UploadDraft,
 	pointMode: boolean,
 	match: AreaMatch | null,
-): { upload: CustomDatasetUpload } | { error: string } {
+): { customImport: CustomImport } | { error: string } {
 	const { file, csvData, headerRow, dataColumn } = draft;
 
 	if (pointMode) {
@@ -151,14 +152,14 @@ export function buildUpload(
 			};
 		}
 		return {
-			upload: {
-				file,
-				headerRow,
-				data: csvData,
-				mode: "points",
-				latColumn: draft.latColumn,
-				lngColumn: draft.lngColumn,
-				dataColumn,
+			customImport: {
+				document: createCsvImportDocument(file, csvData, headerRow),
+				plan: {
+					kind: "points",
+					latitudeColumn: draft.latColumn,
+					longitudeColumn: draft.lngColumn,
+					valueColumn: dataColumn,
+				},
 			},
 		};
 	}
@@ -174,16 +175,18 @@ export function buildUpload(
 	}
 
 	return {
-		upload: {
-			file,
-			headerRow,
-			mode: "choropleth",
-			selectedColumn: draft.selectedColumn,
-			dataColumn,
-			boundaryType: match.entry.boundaryType,
-			boundaryYear: match.entry.year || null,
-			selectedEntry: match.entry,
-			data: csvData,
+		customImport: {
+			document: createCsvImportDocument(file, csvData, headerRow),
+			plan: {
+				kind: "choropleth",
+				codeColumn: draft.selectedColumn,
+				valueColumn: dataColumn,
+				boundaryType: match.entry.boundaryType as BoundaryType,
+				boundaryYear: match.entry.year,
+				...(match.entry.matchType === "name" && {
+					nameToCode: match.entry.nameToCode,
+				}),
+			},
 		},
 	};
 }
