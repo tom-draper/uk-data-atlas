@@ -6,6 +6,7 @@ export const incomeDatasetDefinition: DatasetDefinition<IncomeDataset> = {
 	type: "income",
 	precompiledFile: "income",
 	boundaryType: "localAuthority",
+	coverageCountries: ["GB-ENG"],
 	source: {
 		name: "Income",
 		source: "Office for National Statistics",
@@ -16,7 +17,7 @@ export const incomeDatasetDefinition: DatasetDefinition<IncomeDataset> = {
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Earnings estimates by local authority of residence for England and Wales.",
+			"Earnings estimates by local authority of residence for England.",
 	},
 	// Each workbook holds the same table split by sex and hours; "All" is the
 	// sheet covering every employee job.

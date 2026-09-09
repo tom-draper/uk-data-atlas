@@ -17,7 +17,7 @@ export const lifeExpectancyDatasetDefinition: DatasetDefinition<LifeExpectancyDa
 			licenceUrl:
 				"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 			description:
-				"Life expectancy and healthy life expectancy estimates by local area for England and Wales.",
+				"Life expectancy estimates by local area in England, Wales and Northern Ireland; healthy life expectancy estimates across the UK.",
 		},
 		// Life expectancy comes from sheet 1 of the workbook; healthy life
 		// expectancy is still an extract of its own workbook.

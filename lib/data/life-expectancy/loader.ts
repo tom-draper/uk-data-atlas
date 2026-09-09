@@ -109,6 +109,7 @@ export async function loadLE(
 			boundaryYear: 2023,
 			dataPeriod: "2020–2022",
 			label: "Life Expectancy",
+			coverageCountries: ["GB-ENG", "GB-WLS", "GB-NIR"],
 			data: leRecords,
 			metadata: {
 				source: "Office for National Statistics. Life expectancy for local areas in England, Northern Ireland and Wales: 2020 to 2022.",
@@ -146,6 +147,7 @@ export async function loadLE(
 			boundaryYear: 2023,
 			dataPeriod: "2020–2022",
 			label: "Healthy Life Expectancy",
+			coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
 			data: hleRecords,
 			metadata: {
 				source: "Office for National Statistics. Health state life expectancies, UK: 2020 to 2022.",

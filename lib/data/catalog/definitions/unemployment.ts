@@ -7,6 +7,7 @@ export const unemploymentDatasetDefinition: DatasetDefinition<UnemploymentDatase
 		type: "unemployment",
 		precompiledFile: "unemployment",
 		boundaryType: "localAuthority",
+		coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS"],
 		source: {
 			name: "Unemployment",
 			source: "Office for National Statistics",

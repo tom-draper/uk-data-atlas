@@ -7,6 +7,7 @@ export const homelessnessDatasetDefinition: DatasetDefinition<HomelessnessDatase
 		type: "homelessness",
 		precompiledFile: "homelessness",
 		boundaryType: "localAuthority",
+		coverageCountries: ["GB-ENG"],
 		source: {
 			name: "Temporary Accommodation",
 			source: "Ministry of Housing, Communities and Local Government",

@@ -7,6 +7,7 @@ export const schoolPerformanceConstituencyDatasetDefinition: DatasetDefinition<S
 		type: "schoolPerformanceConstituency",
 		precompiledFile: "school-performance-constituency",
 		boundaryType: "constituency",
+		coverageCountries: ["GB-ENG"],
 		source: {
 			name: "School Performance (KS4, Constituency)",
 			source: "Department for Education",

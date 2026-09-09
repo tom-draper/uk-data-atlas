@@ -1,3 +1,5 @@
+import type { DatasetCoverage } from "./coverage";
+
 export interface LifeExpectancyLADData {
 	ladCode: string;
 	ladName: string;
@@ -5,7 +7,7 @@ export interface LifeExpectancyLADData {
 	femaleBirthLE: number;
 }
 
-export interface LifeExpectancyDataset {
+export interface LifeExpectancyDataset extends DatasetCoverage {
 	id: string;
 	year: number;
 	type: "lifeExpectancy";

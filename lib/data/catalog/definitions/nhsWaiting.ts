@@ -7,6 +7,7 @@ export const nhsWaitingDatasetDefinition: DatasetDefinition<NHSWaitingDataset> =
 		type: "nhsWaiting",
 		precompiledFile: "nhs-waiting",
 		boundaryType: "localAuthority",
+		coverageCountries: ["GB-ENG"],
 		source: {
 			name: "NHS Waiting Times",
 			source: "NHS England",

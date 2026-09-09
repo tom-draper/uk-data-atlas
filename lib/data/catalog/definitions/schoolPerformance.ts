@@ -7,6 +7,7 @@ export const schoolPerformanceDatasetDefinition: DatasetDefinition<SchoolPerform
 		type: "schoolPerformance",
 		precompiledFile: "school-performance",
 		boundaryType: "localAuthority",
+		coverageCountries: ["GB-ENG"],
 		source: {
 			name: "School Performance (KS4)",
 			source: "Department for Education",

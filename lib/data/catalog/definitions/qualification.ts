@@ -7,6 +7,7 @@ export const qualificationDatasetDefinition: DatasetDefinition<QualificationData
 		type: "qualification",
 		precompiledFile: "qualification",
 		boundaryType: "localAuthority",
+		coverageCountries: ["GB-ENG", "GB-WLS"],
 		source: {
 			name: "Qualifications",
 			source: "Office for National Statistics",
