@@ -8,7 +8,6 @@ import {
 } from "@lib/types";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
-import { useIsDark } from "@/lib/context/ThemeContext";
 import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 
 interface ChildPovertyChartProps {
@@ -75,7 +74,6 @@ export default function ChildPovertyChart({
 	codeMapper,
 	setActiveViz,
 }: ChildPovertyChartProps) {
-	const isDark = useIsDark();
 	const dataset = availableDatasets[year];
 	const stats = dataset
 		? statsFor(dataset, aggregatedData, selectedArea, codeMapper)
@@ -95,13 +93,6 @@ export default function ChildPovertyChart({
 	return (
 		<ChartCard
 			heading={`Child Poverty [${year}]`}
-			headerEnd={
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-				>
-					England
-				</span>
-			}
 			accent={accent}
 			isActive={active}
 			title="DWP. Children in relative low-income families, before housing costs."
