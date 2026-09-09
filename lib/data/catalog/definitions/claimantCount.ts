@@ -18,5 +18,5 @@ export const claimantCountDatasetDefinition: DatasetDefinition<ClaimantCountData
 			description:
 				"Claimants of Universal Credit and Jobseeker's Allowance by local authority district for Great Britain.",
 		},
-		precompile: ({ text }) => loadClaimantCount(text),
+		precompile: ({ text, xlsxSheet }) => loadClaimantCount(text, xlsxSheet),
 	};
