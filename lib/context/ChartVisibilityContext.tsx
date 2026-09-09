@@ -9,10 +9,18 @@ export interface ChartConfigEntry {
 	group: string;
 	key: ChartKey;
 	label: string;
+	source: string;
 }
 
 export const CHART_CONFIG: ChartConfigEntry[] = [
-	...CHART_DATASET_DEFINITIONS.flatMap(getChartDefinitions),
+	...CHART_DATASET_DEFINITIONS.flatMap((definition) =>
+		getChartDefinitions(definition).map(({ group, key, label }) => ({
+			group,
+			key,
+			label,
+			source: definition.source.source,
+		})),
+	),
 ];
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {

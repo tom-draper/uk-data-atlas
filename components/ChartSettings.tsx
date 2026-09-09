@@ -10,7 +10,7 @@ import { CHART_GROUPS } from "@/lib/datasets/chartGroups";
 // chart panel. CHART_CONFIG supplies the within-group order used by ChartCards.
 const groups = CHART_GROUPS.flatMap(({ group, title }) => {
 	const items = CHART_CONFIG.filter((item) => item.group === group).map(
-		({ key, label }) => ({ key, label }),
+		({ key, label, source }) => ({ key, label, source }),
 	);
 	return items.length > 0 ? [{ title, items }] : [];
 });
@@ -29,10 +29,11 @@ export default function ChartSettings() {
 						{title}
 					</h4>
 					<div className="space-y-1.5">
-						{items.map(({ key, label }) => (
+						{items.map(({ key, label, source }) => (
 							<label
 								key={key}
 								className="flex items-center gap-2 cursor-pointer group"
+								title={source}
 							>
 								<input
 									type="checkbox"
