@@ -5,6 +5,7 @@ import {
 	UnemploymentLADData,
 } from "@/lib/types/unemployment";
 import { parseCsv } from "@/lib/helpers/parseCsv";
+import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
 
 // Parse a period label to a year integer, or null if not an annual period we want.
 // Keeps: "1996/97" (-> 1996), "Jan 2004 to Dec 2004" (-> 2004).
@@ -30,6 +31,43 @@ const toNum = (v: string): number | null => {
 	const n = parseFloat(s.replace(/,/g, ""));
 	return isNaN(n) ? null : Number(n.toFixed(1));
 };
+
+/** Add post-2023 authority records from the predecessor rate estimates. */
+export function addMergedUnemploymentAuthorities(
+	records: Record<string, UnemploymentLADData>,
+	years: readonly number[],
+): void {
+	for (const [target, { name, predecessors }] of Object.entries(
+		APRIL_2023_LAD_MERGERS,
+	)) {
+		if (records[target]) continue;
+		const source = predecessors.map((code) => {
+			const record = records[code];
+			if (!record)
+				throw new Error(
+					`Missing unemployment predecessor ${code} for ${target}`,
+				);
+			return record;
+		});
+		const rates = Object.fromEntries(
+			years.map((year) => {
+				const values = source
+					.map((record) => record.rates[year])
+					.filter((rate): rate is number => rate !== null);
+				// The workbook publishes rates, not the denominators needed for a
+				// new weighted estimate. Match the chart's existing area aggregation.
+				return [
+					year,
+					values.length > 0
+						? values.reduce((sum, rate) => sum + rate, 0) /
+							values.length
+						: null,
+				];
+			}),
+		) as Record<number, number | null>;
+		records[target] = { ladCode: target, ladName: name, rates };
+	}
+}
 
 export async function loadUnemployment(
 	readSource: (path: string) => Promise<string>,
@@ -71,6 +109,7 @@ export async function loadUnemployment(
 
 		records[code] = { ladCode: code, ladName: name, rates };
 	}
+	addMergedUnemploymentAuthorities(records, years);
 
 	const dataset: UnemploymentDataset = {
 		id: "unemployment",

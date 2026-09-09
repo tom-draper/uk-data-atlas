@@ -4,6 +4,7 @@ import {
 } from "@/lib/types/qualification";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNullableInt } from "@/lib/helpers/parseNumber";
+import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
 
 const CATEGORY_MAP: Record<string, keyof QualificationBreakdown> = {
 	"0": "noQualifications",
@@ -21,6 +22,39 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 		if (v !== undefined && v !== null && v !== "") return String(v).trim();
 	}
 	return "";
+}
+
+/** Add post-2023 authority records by summing every Census category. */
+export function addMergedQualificationAuthorities(
+	data: Record<string, QualificationBreakdown>,
+): void {
+	for (const [target, { predecessors }] of Object.entries(
+		APRIL_2023_LAD_MERGERS,
+	)) {
+		if (data[target]) continue;
+		const merged: QualificationBreakdown = {
+			noQualifications: 0,
+			level1: 0,
+			level2: 0,
+			apprenticeship: 0,
+			level3: 0,
+			level4Plus: 0,
+			other: 0,
+			total: 0,
+		};
+		for (const predecessor of predecessors) {
+			const breakdown = data[predecessor];
+			if (!breakdown)
+				throw new Error(
+					`Missing qualification predecessor ${predecessor} for ${target}`,
+				);
+			for (const key of Object.keys(merged) as Array<
+				keyof QualificationBreakdown
+			>)
+				merged[key] += breakdown[key];
+		}
+		data[target] = merged;
+	}
 }
 
 export async function loadQualification(
@@ -76,6 +110,7 @@ export async function loadQualification(
 		laData[ladCode][field] += count;
 		laData[ladCode].total += count;
 	}
+	addMergedQualificationAuthorities(laData);
 
 	const records: QualificationDataset["data"] = {};
 	for (const [ladCode, breakdown] of Object.entries(laData)) {

@@ -1,6 +1,7 @@
 import { EthnicityCategory, EthnicityDataset } from "@/lib/types/ethnicity";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNullableInt } from "@/lib/helpers/parseNumber";
+import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
 
 type EthnicityData = Record<string, Record<string, EthnicityCategory>>;
 
@@ -10,20 +11,12 @@ type EthnicityData = Record<string, Record<string, EthnicityCategory>>;
  * changes in its population estimates methods guide:
  * https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/populationestimatesforenglandandwalesmid2022methodsguide
  */
-export const ETHNICITY_LAD_PREDECESSORS = {
-	E06000063: ["E07000026", "E07000028", "E07000029"], // Cumberland
-	E06000064: ["E07000027", "E07000030", "E07000031"], // Westmorland and Furness
-	E06000065: [
-		"E07000163",
-		"E07000164",
-		"E07000165",
-		"E07000166",
-		"E07000167",
-		"E07000168",
-		"E07000169",
-	], // North Yorkshire (excludes the separate City of York)
-	E06000066: ["E07000187", "E07000188", "E07000189", "E07000246"], // Somerset
-} as const;
+export const ETHNICITY_LAD_PREDECESSORS: Record<string, readonly string[]> =
+	Object.fromEntries(
+		Object.entries(APRIL_2023_LAD_MERGERS).map(
+			([target, { predecessors }]) => [target, predecessors],
+		),
+	);
 
 /** Add derived 2023 authority records by summing every census category. */
 export function addMergedEthnicityAuthorities(data: EthnicityData): void {

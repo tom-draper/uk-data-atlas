@@ -1,5 +1,6 @@
 import { LifeExpectancyDataset, LifeExpectancyLADData } from "@/lib/types";
 import { parseCsv } from "@/lib/helpers/parseCsv";
+import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
 
 function parsePairedRows(
 	rows: Record<string, string>[],
@@ -35,6 +36,37 @@ function parsePairedRows(
 	return records;
 }
 
+/** Add post-2023 authority records from their predecessor life-expectancy estimates. */
+export function addMergedLifeExpectancyAuthorities(
+	records: Record<string, LifeExpectancyLADData>,
+): void {
+	for (const [target, { name, predecessors }] of Object.entries(
+		APRIL_2023_LAD_MERGERS,
+	)) {
+		if (records[target]) continue;
+		const source = predecessors.map((code) => {
+			const record = records[code];
+			if (!record)
+				throw new Error(
+					`Missing life expectancy predecessor ${code} for ${target}`,
+				);
+			return record;
+		});
+		// The source does not provide a merger denominator. Match the chart's
+		// existing area aggregation by taking the mean of its component estimates.
+		records[target] = {
+			ladCode: target,
+			ladName: name,
+			maleBirthLE:
+				source.reduce((sum, record) => sum + record.maleBirthLE, 0) /
+				source.length,
+			femaleBirthLE:
+				source.reduce((sum, record) => sum + record.femaleBirthLE, 0) /
+				source.length,
+		};
+	}
+}
+
 export async function loadLE(
 	read: (path: string) => Promise<string>,
 	enableHLE = true,
@@ -66,6 +98,7 @@ export async function loadLE(
 		"Sex",
 		"Life expectancy (years)",
 	);
+	addMergedLifeExpectancyAuthorities(leRecords);
 
 	const result: Record<string, LifeExpectancyDataset> = {
 		le: {
@@ -97,6 +130,14 @@ export async function loadLE(
 				r["Age group"]?.trim() === "<1" &&
 				r["Area type"]?.trim() === "Local Areas",
 		);
+		const hleRecords = parsePairedRows(
+			hleData,
+			"Area code",
+			"Area name",
+			"Sex",
+			"HLE",
+		);
+		addMergedLifeExpectancyAuthorities(hleRecords);
 		result.hle = {
 			id: "hle",
 			year: 2022,
@@ -105,13 +146,7 @@ export async function loadLE(
 			boundaryYear: 2023,
 			dataPeriod: "2020–2022",
 			label: "Healthy Life Expectancy",
-			data: parsePairedRows(
-				hleData,
-				"Area code",
-				"Area name",
-				"Sex",
-				"HLE",
-			),
+			data: hleRecords,
 			metadata: {
 				source: "Office for National Statistics. Health state life expectancies, UK: 2020 to 2022.",
 				notes: [
