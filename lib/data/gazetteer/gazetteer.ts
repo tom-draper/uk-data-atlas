@@ -1,5 +1,5 @@
 // Runtime gazetteer API (design doc 7). Pure and synchronous over already-loaded
-// artifacts; the hook (useGazetteer) handles loading/lifecycle. Supersedes
+// artifacts, which are passed in whole at construction. Supersedes
 // LOCATIONS / areaBank / codeMapper as consumers migrate (Phase 3+).
 import type { Crosswalk, GazetteerCore, GazetteerEntry, Level } from "./types";
 
@@ -22,10 +22,6 @@ export class Gazetteer {
 		for (const e of Object.values(core.byCode))
 			for (const p of e.parents)
 				(this.childrenByParent[p] ??= []).push(e.code);
-	}
-
-	registerCrosswalk(from: Level, to: Level, cw: Crosswalk): void {
-		this.crosswalks[key(from, to)] = cw;
 	}
 
 	// --- identity / attributes ---

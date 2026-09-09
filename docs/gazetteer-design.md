@@ -536,8 +536,12 @@ modules once their call sites are gone.
    validate against current `LOCATIONS` / `areaBank` / `codeMapper` outputs (they
    must agree, this is 6.1's regression guard).
    **Done:** `lib/data/gazetteer/gazetteer.ts` (`Gazetteer` class: get / resolveName
-   / membersOf / boundsOf / areaM2 / overlaps / apportion / ancestors) +
-   `lib/hooks/useGazetteer.ts` (eager core, lazy crosswalk). `tests/data/gazetteer.test.ts`
+   / membersOf / boundsOf / areaM2 / overlaps / apportion / ancestors). The core is
+   bundled statically by `lib/data/gazetteer/static.ts` rather than fetched through
+   a hook, and the constituency/LAD crosswalk is loaded lazily by
+   `lib/data/boundaries/constituencyLadOverlaps.ts`; the `useGazetteer` hook this
+   step originally proposed was never wired up and has been removed.
+   `tests/data/gazetteer.test.ts`
    asserts `membersOf`/`boundsOf` equal `LOCATIONS` for all 154 named locations
    and that crosswalk weights sum to 1 / apportion preserves totals (7 tests
    green). `areaBank`/`codeMapper` parity is validated during their Phase 3/4/5

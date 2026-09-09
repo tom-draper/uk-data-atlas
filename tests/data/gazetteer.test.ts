@@ -16,8 +16,9 @@ const crosswalk = JSON.parse(
 	),
 ) as Crosswalk;
 
-const g = new Gazetteer(core);
-g.registerCrosswalk("constituency", "localAuthority", crosswalk);
+const g = new Gazetteer(core, {
+	"constituency->localAuthority": crosswalk,
+});
 
 describe("Gazetteer core agrees with LOCATIONS (regression guard)", () => {
 	it("membersOf matches LOCATIONS.lad_codes for every named location", () => {
