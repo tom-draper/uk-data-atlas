@@ -8,7 +8,7 @@ export const schoolPerformanceDefinition: ChartDatasetDefinition<SchoolPerforman
 		chart: {
 			group: "Education",
 			key: "education-schoolPerformance",
-			label: "GCSE Performance by Ward [2024/25]",
+			label: "GCSE Performance [2024/25]",
 			defaultVisible: true,
 			componentPath: "@/components/education/SchoolPerformanceChart",
 			calculateStats: (m, g, d, l, id) =>
