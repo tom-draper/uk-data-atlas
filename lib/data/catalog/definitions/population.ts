@@ -7,6 +7,7 @@ export const populationDatasetDefinition: DatasetDefinition<PopulationDataset> =
 		type: "population",
 		precompiledFile: "population",
 		boundaryType: "ward",
+		coverageCountries: ["GB-ENG", "GB-WLS"],
 		source: {
 			name: "Population",
 			source: "Office for National Statistics",

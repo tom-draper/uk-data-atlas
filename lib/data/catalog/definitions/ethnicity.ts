@@ -6,6 +6,7 @@ export const ethnicityDatasetDefinition: DatasetDefinition<EthnicityDataset> = {
 	type: "ethnicity",
 	precompiledFile: "ethnicity",
 	boundaryType: "localAuthority",
+	coverageCountries: ["GB-ENG", "GB-WLS"],
 	source: {
 		name: "Ethnicity",
 		source: "Office for National Statistics",
