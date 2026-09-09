@@ -9,13 +9,13 @@ import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { useMapStyle } from "@/lib/hooks/useMapStyle";
 import { useMapCamera } from "@/lib/hooks/useMapCamera";
+import { useLocalElectionDatasets } from "@/lib/hooks/useLocalElectionDatasets";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
 import { filterGeometryToDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { getChartDatasetDefinition } from "@/lib/datasets";
 import { boundaryTypeForDatasetType } from "@/lib/datasets/boundaryRequirements";
 import { boundaryCapabilityFor } from "@/lib/data/boundaries/capabilities";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
-import { normalizeElectionDatasetCodes } from "@/lib/data/election/local-election/normalize";
 
 import MapView from "@components/MapView";
 import UIOverlay from "@components/UIOverlay";
@@ -64,30 +64,7 @@ export default function MapInterface({
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
 
 	const codeMapper = useCodeMapper();
-	const { addWardLadMappings, getLadForWard } = codeMapper;
-
-	// Supplement the code mapper with ward→LAD mappings from election data.
-	// Boundary files older than 2022 lack LAD properties, so wards that were
-	// reorganised between 2021 and 2022 (e.g. Bury and Rochdale) can't be
-	// resolved from boundary metadata alone. The election CSVs carry ladCode
-	// per row so we can fill the gap here.
-	useEffect(() => {
-		const mappings: Record<string, string> = {};
-		for (const dataset of Object.values(datasets.localElection)) {
-			for (const ward of Object.values(dataset.data)) {
-				if (
-					ward.wardCode &&
-					ward.ladCode &&
-					ward.ladCode !== "Unknown"
-				) {
-					mappings[ward.wardCode] = ward.ladCode;
-				}
-			}
-		}
-		if (Object.keys(mappings).length > 0) {
-			addWardLadMappings(mappings);
-		}
-	}, [datasets.localElection, addWardLadMappings]);
+	const { getLadForWard } = codeMapper;
 
 	const {
 		boundaryData,
@@ -222,27 +199,11 @@ export default function MapInterface({
 		setSelectedLocation,
 	);
 
-	const { getCodeForYear } = codeMapper;
-	const normalizedDatasets = useMemo(() => {
-		if (!wardCodes) return datasets;
-
-		const normalizedLocalElection = Object.fromEntries(
-			Object.entries(datasets.localElection).map(([year, dataset]) => {
-				const validCodes = wardCodes[dataset.boundaryYear];
-				if (!validCodes) return [year, dataset];
-				return [
-					year,
-					normalizeElectionDatasetCodes(
-						dataset,
-						validCodes,
-						getCodeForYear,
-					),
-				];
-			}),
-		) as typeof datasets.localElection;
-
-		return { ...datasets, localElection: normalizedLocalElection };
-	}, [datasets, wardCodes, getCodeForYear]);
+	const normalizedDatasets = useLocalElectionDatasets(
+		datasets,
+		wardCodes,
+		codeMapper,
+	);
 
 	const chartsLoading = datasetsLoading || boundariesLoading || !mapManager;
 
