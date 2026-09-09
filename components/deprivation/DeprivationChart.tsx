@@ -1,5 +1,5 @@
 "use client";
-import type { ActiveViz, Dataset, SelectedArea } from "@lib/types";
+import type { ActiveViz, Dataset } from "@lib/types";
 import DecileChart from "./DecileChart";
 
 /** The identity and wording of one national deprivation index. */
@@ -10,6 +10,9 @@ export interface DeprivationIndex {
 	label: string;
 	region: string;
 	attribution: string;
+	metric: DeprivationDetail["kind"];
+	/** Highest value in this fixed index release, used to normalise its bar. */
+	metricMaximum: number;
 }
 
 /** The one line of detail under the decile: a rank, or a deprivation score. */
@@ -20,7 +23,6 @@ export function DeprivationChart({
 	index,
 	dataset,
 	activeDataset,
-	selectedArea,
 	decile,
 	detail,
 	setActiveViz,
@@ -28,17 +30,24 @@ export function DeprivationChart({
 	index: DeprivationIndex;
 	dataset: { id: string; type: Dataset["type"]; year: number };
 	activeDataset: Dataset | null;
-	selectedArea: SelectedArea | null;
 	decile: number | null;
 	detail: DeprivationDetail | null;
 	setActiveViz: (value: ActiveViz) => void;
 }) {
-	// A rank only means something for one area; the aggregate of a whole
-	// selection does not, so it is shown only alongside a selected area.
-	const showDetail =
-		detail !== null &&
-		Number.isFinite(detail.value) &&
-		(detail.kind === "score" || selectedArea !== null);
+	const hasDetail = detail !== null && Number.isFinite(detail.value);
+	const barWidth = hasDetail
+		? Math.max(
+				0,
+				Math.min(
+					100,
+					index.metric === "score"
+						? (detail.value / index.metricMaximum) * 100
+						: ((index.metricMaximum + 1 - detail.value) /
+								index.metricMaximum) *
+								100,
+				),
+			)
+		: 0;
 
 	return (
 		<DecileChart
@@ -48,7 +57,7 @@ export function DeprivationChart({
 			decile={decile === null ? null : Math.round(decile)}
 			hasData={decile !== null}
 			detail={
-				showDetail
+				hasDetail
 					? {
 							value:
 								detail.kind === "rank"
@@ -58,6 +67,7 @@ export function DeprivationChart({
 						}
 					: null
 			}
+			barWidth={barWidth}
 			isActive={
 				activeDataset?.type === index.datasetType &&
 				activeDataset.id === dataset.id

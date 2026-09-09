@@ -23,6 +23,7 @@ interface DecileChartProps {
 	region: string;
 	decile: number | null;
 	detail: { value: string; unit: string } | null;
+	barWidth: number;
 	hasData: boolean;
 	isActive: boolean;
 	onClick: () => void;
@@ -34,6 +35,7 @@ export default function DecileChart({
 	region,
 	decile,
 	detail,
+	barWidth,
 	hasData,
 	isActive,
 	onClick,
@@ -68,7 +70,7 @@ export default function DecileChart({
 				value={detail?.value ?? displayDecile ?? ""}
 				unit={detail?.unit ?? "decile"}
 				secondary={detail ? `Decile ${displayDecile}` : undefined}
-				barWidth={(displayDecile ?? 0) * 10}
+				barWidth={barWidth}
 				barColor={decileColor}
 				valueColor={primaryIsDecile ? decileColor : undefined}
 				secondaryColor={detail ? decileColor : undefined}

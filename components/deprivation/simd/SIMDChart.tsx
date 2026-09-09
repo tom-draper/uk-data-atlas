@@ -15,6 +15,8 @@ const SIMD: DeprivationIndex = {
 	region: "Scotland",
 	attribution:
 		"Scottish Government. Scottish Index of Multiple Deprivation 2020v2. gov.scot",
+	metric: "rank",
+	metricMaximum: 6976,
 };
 
 interface SIMDChartProps {
@@ -58,7 +60,6 @@ export default function SIMDChart({
 			index={SIMD}
 			dataset={dataset}
 			activeDataset={activeDataset}
-			selectedArea={selectedArea}
 			decile={stats?.averageSIMDDecile ?? null}
 			detail={
 				stats ? { kind: "rank", value: stats.averageSIMDRank } : null

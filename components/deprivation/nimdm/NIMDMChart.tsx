@@ -15,6 +15,8 @@ const NIMDM: DeprivationIndex = {
 	region: "Northern Ireland",
 	attribution:
 		"NISRA. Northern Ireland Multiple Deprivation Measure 2017. nisra.gov.uk",
+	metric: "rank",
+	metricMaximum: 890,
 };
 
 interface NIMDMChartProps {
@@ -57,7 +59,6 @@ export default function NIMDMChart({
 			index={NIMDM}
 			dataset={dataset}
 			activeDataset={activeDataset}
-			selectedArea={selectedArea}
 			decile={stats?.averageNIMDMDecile ?? null}
 			detail={
 				stats ? { kind: "rank", value: stats.averageNIMDMRank } : null

@@ -15,6 +15,8 @@ const WIMD: DeprivationIndex = {
 	region: "Wales",
 	attribution:
 		"Welsh Government. Welsh Index of Multiple Deprivation 2019. gov.wales",
+	metric: "score",
+	metricMaximum: 86.6,
 };
 
 interface WIMDChartProps {
@@ -58,10 +60,9 @@ export default function WIMDChart({
 			index={WIMD}
 			dataset={dataset}
 			activeDataset={activeDataset}
-			selectedArea={selectedArea}
 			decile={stats?.averageWIMDDecile ?? null}
 			detail={
-				stats ? { kind: "rank", value: stats.averageWIMDRank } : null
+				stats ? { kind: "score", value: stats.averageWIMDScore } : null
 			}
 			setActiveViz={setActiveViz}
 		/>

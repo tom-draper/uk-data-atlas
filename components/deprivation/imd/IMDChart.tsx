@@ -15,6 +15,8 @@ const IMD: DeprivationIndex = {
 	region: "England",
 	attribution:
 		"Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019. gov.uk",
+	metric: "score",
+	metricMaximum: 92.735,
 };
 
 interface IMDChartProps {
@@ -57,7 +59,6 @@ export default function IMDChart({
 			index={IMD}
 			dataset={dataset}
 			activeDataset={activeDataset}
-			selectedArea={selectedArea}
 			decile={stats?.averageIMDDecile ?? null}
 			detail={
 				stats ? { kind: "score", value: stats.averageIMDScore } : null
