@@ -1,10 +1,5 @@
 import type { ColorTheme } from "@/lib/types/mapOptions";
 import { hexToRgb } from "./interpolation";
-import {
-	heatmapDensity,
-	linearInterpolate,
-	type MapExpression,
-} from "../mapManager/expressions";
 
 const themeDefinitions = [
 	{
@@ -173,33 +168,4 @@ export function getThemeColor(
 
 export function getColor(normalisedValue: number, themeId: string = "viridis") {
 	return getThemeColor(1 - normalisedValue, themeId);
-}
-
-// Density stops → [heatmap-density, alpha]. Density 0 is fully transparent so
-// empty areas show the basemap; alpha climbs with density.
-const HEATMAP_STOPS: [number, number][] = [
-	[0, 0],
-	[0.1, 0.35],
-	[0.3, 0.55],
-	[0.5, 0.7],
-	[0.7, 0.85],
-	[1, 0.95],
-];
-
-// Builds a MapLibre `heatmap-color` interpolation expression from a colour
-// theme, so the heatmap shares the palette used to colour discrete points
-// (getColor): low density → the theme's low end, dense → its intense end.
-export function buildHeatmapColorRamp(
-	themeId: string = "viridis",
-): MapExpression {
-	return linearInterpolate(
-		heatmapDensity(),
-		HEATMAP_STOPS.map(([density, alpha]) => {
-			const rgb = getColor(density, themeId); // "rgb(r, g, b)"
-			const rgba = rgb
-				.replace("rgb(", "rgba(")
-				.replace(")", `, ${alpha})`);
-			return [density, rgba] as const;
-		}),
-	);
 }
