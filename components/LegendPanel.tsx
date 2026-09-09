@@ -487,7 +487,7 @@ export default function LegendPanel({
 	return (
 		<div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full gap-2.5">
 			<div
-				className={`pointer-events-auto rounded-md relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
+				className={`pointer-events-auto rounded-md w-fit ml-auto relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
 				style={glassStyle(isDark)}
 			>
 				<GlassOverlays isDark={isDark} />
