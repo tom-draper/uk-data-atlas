@@ -10,6 +10,7 @@ export interface ValidationResult {
 export function validateCore(
 	core: GazetteerCore,
 	locations: Record<string, { lad_codes: string[] }>,
+	currentLocalAuthorityCodes?: ReadonlySet<string>,
 ): ValidationResult {
 	const errors: string[] = [];
 	const warnings: string[] = [];
@@ -29,9 +30,16 @@ export function validateCore(
 
 	// areaM2 rolls up: a region's area equals the sum of its child LAD areas.
 	const childArea: Record<string, number> = {};
-	for (const e of Object.values(core.byCode))
+	for (const e of Object.values(core.byCode)) {
+		if (
+			e.level === "localAuthority" &&
+			currentLocalAuthorityCodes &&
+			!currentLocalAuthorityCodes.has(e.code)
+		)
+			continue;
 		for (const p of e.parents)
 			childArea[p] = (childArea[p] ?? 0) + e.areaM2;
+	}
 	for (const e of Object.values(core.byCode)) {
 		if (e.level !== "region") continue;
 		const summed = childArea[e.code] ?? 0;

@@ -58,6 +58,12 @@ describe("Gazetteer hierarchy (LAD -> region)", () => {
 	it("ancestors: a LAD rolls up to its region", () => {
 		const anc = g.ancestors("E08000003").map((e) => e.code); // Manchester
 		expect(anc).toContain("E12000002"); // North West
+		expect(g.ancestors("E06000018").map((e) => e.code)).toContain(
+			"E12000004", // Nottingham, East Midlands
+		);
+		expect(g.ancestors("E06000027").map((e) => e.code)).toContain(
+			"E12000009", // Torbay, South West
+		);
 	});
 
 	it("descendants: a region contains its member LADs", () => {
@@ -65,6 +71,11 @@ describe("Gazetteer hierarchy (LAD -> region)", () => {
 			.descendants("E12000002", "localAuthority")
 			.map((e) => e.code);
 		expect(lads).toContain("E08000003");
+		expect(
+			g
+				.descendants("E12000004", "localAuthority")
+				.map((entry) => entry.code),
+		).toContain("E06000018"); // Nottingham
 	});
 
 	it("resolveName finds a region by name", () => {

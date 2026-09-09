@@ -6,29 +6,98 @@ import { getProp } from "../boundaries/properties";
 import { BOUNDARY_CATALOG } from "../boundaries/catalog";
 import { localDataPath } from "../boundaries/dataPath";
 import { LOCATIONS } from "../locations";
-import { buildCore, linkRegions, type LevelSource } from "./build";
+import { buildCore, type LevelSource } from "./build";
+import { bboxOf, centroidOf, outerRings, pointInGeom } from "./geometry";
 import { validateCore } from "./validate";
 import type { GazetteerCore } from "./types";
 import type { Topology } from "topojson-specification";
 
 export const GAZETTEER_VERSION = 1;
 
-// The 9 English regions (ONS E12 codes) mapped to their LOCATIONS key. Members
-// come from LOCATIONS; entries are synthesised in linkRegions. Nations
-// (Scotland/Wales/NI) are a follow-up.
-const REGIONS: Array<{ code: string; locationName: string }> = [
-	{ code: "E12000001", locationName: "North East" },
-	{ code: "E12000002", locationName: "North West" },
-	{ code: "E12000003", locationName: "Yorkshire" },
-	{ code: "E12000004", locationName: "East Midlands" },
-	{ code: "E12000005", locationName: "West Midlands" },
-	{ code: "E12000006", locationName: "East of England" },
-	{ code: "E12000007", locationName: "London" },
-	{ code: "E12000008", locationName: "South East" },
-	{ code: "E12000009", locationName: "South West" },
-];
-
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
+
+type Region = {
+	code: string;
+	name: string;
+	geometry: GeoJSON.Geometry;
+};
+
+/**
+ * Assign every English LAD to its ONS region using the boundary geometry,
+ * rather than a hand-maintained subset of named-location members. The latter
+ * omitted East Midlands entirely and left records out of the region chunks.
+ */
+function linkLadsToRegions(
+	core: GazetteerCore,
+	localAuthorityFeatures: Feat[],
+	regionFeatures: Feat[],
+	currentCodes: Set<string>,
+): void {
+	const regions = regionFeatures.flatMap((feature) => {
+		const code = getProp(
+			feature.properties,
+			BOUNDARY_CATALOG.region.properties.code,
+		);
+		const name = getProp(
+			feature.properties,
+			BOUNDARY_CATALOG.region.properties.name,
+		);
+		return code && name ? [{ code, name, geometry: feature.geometry }] : [];
+	}) as Region[];
+	const regionForPoint = (lng: number, lat: number) =>
+		regions.find(({ geometry }) => pointInGeom(lng, lat, geometry));
+	const regionForGeometry = (geometry: GeoJSON.Geometry) => {
+		const fromCentroid = regionForPoint(...centroidOf(geometry));
+		if (fromCentroid) return fromCentroid;
+		// The compiled TopoJSON keeps only code/name properties, so the ONS
+		// representative point is unavailable here. A coastal area's vertex
+		// centroid can fall in the sea (Torbay); fall back to an interior vertex.
+		for (const ring of outerRings(geometry))
+			for (const [lng, lat] of ring) {
+				const region = regionForPoint(lng, lat);
+				if (region) return region;
+			}
+		return undefined;
+	};
+
+	for (const feature of localAuthorityFeatures) {
+		const code = getProp(
+			feature.properties,
+			BOUNDARY_CATALOG.localAuthority.properties.code,
+		);
+		if (!code?.startsWith("E")) continue;
+		const entry = core.byCode[code];
+		if (!entry) continue;
+		const region = regionForGeometry(feature.geometry);
+		if (region) entry.parents = [region.code];
+	}
+
+	for (const region of regions) {
+		const members = Object.values(core.byCode).filter(
+			(entry) =>
+				entry.level === "localAuthority" &&
+				currentCodes.has(entry.code) &&
+				entry.parents[0] === region.code,
+		);
+		if (members.length === 0) continue;
+		core.byCode[region.code] = {
+			code: region.code,
+			name: region.name,
+			level: "region",
+			vintage: 2025,
+			areaM2: members.reduce((sum, entry) => sum + entry.areaM2, 0),
+			bbox: bboxOf(region.geometry).map((n) => +n.toFixed(4)) as [
+				number,
+				number,
+				number,
+				number,
+			],
+			parents: [],
+		};
+		const nameIndex = (core.nameIndex[region.name.toLowerCase()] ??= []);
+		if (!nameIndex.includes(region.code)) nameIndex.push(region.code);
+	}
+}
 
 async function loadFeatures(
 	read: (path: string) => Promise<string>,
@@ -59,6 +128,10 @@ export async function loadGazetteerCore(
 	const con = await loadFeatures(
 		read,
 		BOUNDARY_CATALOG.constituency.vintages[2024],
+	);
+	const regions = await loadFeatures(
+		read,
+		BOUNDARY_CATALOG.region.vintages[2025],
 	);
 
 	const sources: LevelSource[] = [
@@ -97,25 +170,9 @@ export async function loadGazetteerCore(
 		}
 	});
 
-	// Backfill LAD -> region hierarchy from LOCATIONS region membership.
-	linkRegions(
-		core,
-		REGIONS.flatMap((r) => {
-			const loc = LOCATIONS[r.locationName];
-			return loc
-				? [
-						{
-							code: r.code,
-							name: r.locationName,
-							memberCodes: loc.lad_codes,
-						},
-					]
-				: [];
-		}),
-		currentCodes,
-	);
+	linkLadsToRegions(core, ladByVintage.flat(), regions, currentCodes);
 
-	const { errors, warnings } = validateCore(core, LOCATIONS);
+	const { errors, warnings } = validateCore(core, LOCATIONS, currentCodes);
 	if (warnings.length > 0)
 		console.warn(
 			`  gazetteer: ${warnings.length} warning(s) (LOCATIONS curation debt), e.g. ${warnings[0]}`,
