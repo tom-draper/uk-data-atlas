@@ -922,18 +922,6 @@ export const BOUNDARY_CATALOG = Object.fromEntries(
 	}
 >;
 
-/** Every release of a geography, newest first. */
-export const boundaryReleases = (
-	type: BoundaryType,
-): readonly BoundaryRelease[] => BOUNDARY_CATALOG[type].releases;
-
-/** One release by its id, e.g. `boundaryRelease("ward", "2023-05-uk-bgc")`. */
-export const boundaryRelease = (
-	type: BoundaryType,
-	id: string,
-): BoundaryRelease | undefined =>
-	BOUNDARY_CATALOG[type].releases.find((release) => release.id === id);
-
 /** The vintages a geography has boundary files for, newest first. */
 export const boundaryYears = (type: BoundaryType): number[] =>
 	Object.keys(BOUNDARY_CATALOG[type].vintages)
