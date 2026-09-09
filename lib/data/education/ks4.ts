@@ -27,3 +27,27 @@ export function readMeasures(
 		pupils: parseNullableNum(row["pupil_count"]),
 	};
 }
+
+/**
+ * The yearly measures for one geography. The loader records carry identifying
+ * fields too, so copy only the shared measure fields into the chart series.
+ */
+export function measureSeries<T extends SchoolPerformanceMeasures>(
+	byYear: ReadonlyMap<number, ReadonlyMap<string, T>>,
+	years: readonly number[],
+	code: string,
+): Record<number, SchoolPerformanceMeasures> {
+	const series: Record<number, SchoolPerformanceMeasures> = {};
+	for (const year of years) {
+		const measures = byYear.get(year)?.get(code);
+		if (!measures) continue;
+		series[year] = {
+			ptL2basics94: measures.ptL2basics94,
+			ptL2basics95: measures.ptL2basics95,
+			avgAtt8: measures.avgAtt8,
+			avgP8score: measures.avgP8score,
+			pupils: measures.pupils,
+		};
+	}
+	return series;
+}

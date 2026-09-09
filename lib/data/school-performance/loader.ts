@@ -1,10 +1,9 @@
 import {
 	SchoolPerformanceDataset,
 	SchoolPerformanceLADData,
-	SchoolPerformanceMeasures,
 } from "@/lib/types/schoolPerformance";
 import { parseCsv } from "@/lib/helpers/parseCsv";
-import { endYear, readMeasures } from "@/lib/data/education/ks4";
+import { endYear, measureSeries, readMeasures } from "@/lib/data/education/ks4";
 
 export async function loadSchoolPerformance(
 	read: (path: string) => Promise<string>,
@@ -58,20 +57,10 @@ export async function loadSchoolPerformance(
 	// covers is kept alongside them so a district can be charted over time.
 	const records: Record<string, SchoolPerformanceLADData> = {};
 	for (const [code, record] of byYear.get(latest)!) {
-		const series: Record<number, SchoolPerformanceMeasures> = {};
-		for (const year of years) {
-			const forYear = byYear.get(year)?.get(code);
-			if (forYear) {
-				series[year] = {
-					ptL2basics94: forYear.ptL2basics94,
-					ptL2basics95: forYear.ptL2basics95,
-					avgAtt8: forYear.avgAtt8,
-					avgP8score: forYear.avgP8score,
-					pupils: forYear.pupils,
-				};
-			}
-		}
-		records[code] = { ...record, series };
+		records[code] = {
+			...record,
+			series: measureSeries(byYear, years, code),
+		};
 	}
 
 	return {
