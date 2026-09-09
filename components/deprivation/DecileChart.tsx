@@ -3,19 +3,28 @@ import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { ChartCard } from "@/components/ChartCard";
 import { useChartsLoading } from "@/components/ChartLoadingPlaceholder";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { hexToRgb, rgbToHex } from "@/lib/helpers/colorScale/interpolation";
 
-export const DECILE_COLORS = [
-	"#15803d", // 1 - least deprived
-	"#16a34a", // 2
-	"#22c55e", // 3
-	"#4ade80", // 4
-	"#a3e635", // 5
-	"#eab308", // 6
-	"#f59e0b", // 7
-	"#f97316", // 8
-	"#ef4444", // 9
-	"#dc2626", // 10 - most deprived
-];
+const LEAST_DEPRIVED = "#15803d";
+const MID_DEPRIVATION = "#eab308";
+const MOST_DEPRIVED = "#dc2626";
+
+function mixColors(start: string, end: string, amount: number) {
+	const from = hexToRgb(start);
+	const to = hexToRgb(end);
+	return rgbToHex(
+		from.r + (to.r - from.r) * amount,
+		from.g + (to.g - from.g) * amount,
+		from.b + (to.b - from.b) * amount,
+	);
+}
+
+export function deprivationColor(severity: number) {
+	const normalized = Math.max(0, Math.min(1, severity));
+	return normalized <= 0.5
+		? mixColors(LEAST_DEPRIVED, MID_DEPRIVATION, normalized * 2)
+		: mixColors(MID_DEPRIVATION, MOST_DEPRIVED, (normalized - 0.5) * 2);
+}
 
 interface DecileChartProps {
 	title: string;
@@ -46,7 +55,7 @@ export default function DecileChart({
 	const showData = hasData && !chartsLoading;
 	const displayDecile = decile ? 11 - decile : null;
 	const decileColor = displayDecile
-		? DECILE_COLORS[displayDecile - 1]
+		? deprivationColor(barWidth / 100)
 		: "#9ca3af";
 	const primaryIsDecile = detail === null;
 
