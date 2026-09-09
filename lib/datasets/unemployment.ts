@@ -33,11 +33,11 @@ export const unemploymentDefinition: ChartDatasetDefinition<UnemploymentDataset>
 		map: {
 			valueFor: (dataset, code) =>
 				dataset.data[code]?.rates[dataset.latestYear] ?? null,
-			colorRange: { min: 0, max: 15 },
+			colorRange: { min: 2.2, max: 6.8 },
 			legend: {
-				min: 0,
-				max: 15,
-				format: (value) => `${value.toFixed(1)}% unemployed`,
+				min: 2.2,
+				max: 6.8,
+				format: (value) => `${value.toFixed(1)}%`,
 			},
 		},
 	};
