@@ -102,15 +102,6 @@ export class CodeMapperStore implements CodeMapper {
 		return [];
 	};
 
-	addLadWardMapping = (
-		year: YearCode,
-		ladCode: string,
-		wardCodes: string[],
-	): void => {
-		if (!year || !ladCode || !wardCodes.length) return;
-		(this.ladToWards[year] ??= {})[ladCode] = wardCodes;
-	};
-
 	addLadWardMappings = (
 		year: YearCode,
 		mappings: Record<string, string[]>,
@@ -193,17 +184,6 @@ export class CodeMapperStore implements CodeMapper {
 		targetYear: YearCode,
 	): string | undefined => this.codeMappings[type][code]?.[targetYear];
 
-	getAllEquivalentCodes = (
-		type: CodeType,
-		code: string,
-	): Array<{ year: YearCode; code: string }> =>
-		Object.entries(this.codeMappings[type][code] ?? {}).map(
-			([year, mappedCode]) => ({
-				year: Number(year),
-				code: mappedCode,
-			}),
-		);
-
 	findSourceCodes = (
 		type: CodeType,
 		targetCode: string,
@@ -240,13 +220,6 @@ export class CodeMapperStore implements CodeMapper {
 		this.reverseMappings = {};
 	};
 
-	clearWardLadMap = (): void => {
-		this.wardToLad = {};
-	};
-	clearLadWardMap = (): void => {
-		this.ladToWards = {};
-	};
-
 	clearCodeMappings = (type?: CodeType): void => {
 		if (type) {
 			this.codeMappings[type] = {};
@@ -255,20 +228,5 @@ export class CodeMapperStore implements CodeMapper {
 			this.codeMappings = emptyCodeMappings();
 			this.reverseMappings = {};
 		}
-	};
-
-	getMappingCounts = () => {
-		const ladToWards: Record<number, number> = {};
-		for (const [year, mappings] of Object.entries(this.ladToWards)) {
-			ladToWards[Number(year)] = Object.keys(mappings).length;
-		}
-		return {
-			wardToLad: Object.keys(this.wardToLad).length,
-			ladToWards,
-			ward: Object.keys(this.codeMappings.ward).length,
-			localAuthority: Object.keys(this.codeMappings.localAuthority)
-				.length,
-			constituency: Object.keys(this.codeMappings.constituency).length,
-		};
 	};
 }
