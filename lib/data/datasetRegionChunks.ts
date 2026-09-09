@@ -1,10 +1,5 @@
 import { gazetteer } from "./gazetteer/static";
 
-export const REGION_CHUNKED_DATASET_TYPES = new Set([
-	"population",
-	"localElection",
-]);
-
 export const REGION_CHUNK_KEYS = [
 	"E12000001",
 	"E12000002",

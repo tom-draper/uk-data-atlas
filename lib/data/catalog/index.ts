@@ -1,9 +1,13 @@
 export type {
 	DatasetDefinition,
 	DatasetIngestionContract,
+	DatasetLocationScope,
+	DatasetPayloadLayout,
 	DatasetReader,
+	RegionalChunkLayout,
 	DatasetSource,
 } from "./types";
+export { codeKeyedFieldsFor, DEFAULT_CODE_KEYED_FIELDS } from "./types";
 export {
 	validatePrecompiledDataset,
 	type DatasetPrecompileSummary,

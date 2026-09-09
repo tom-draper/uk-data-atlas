@@ -46,6 +46,47 @@ export interface DatasetIngestionContract {
 	requiredDataFields?: readonly string[];
 }
 
+/** The code-keyed maps used by the standard compiled dataset payload. */
+export const DEFAULT_CODE_KEYED_FIELDS = ["data", "results"] as const;
+
+export type DatasetLocationScope =
+	| { kind: "boundary" }
+	| {
+			/**
+			 * Records are keyed by another geography. The mapping holds source
+			 * boundary code → record code, as with LAD → ICB waiting-time data.
+			 */
+			kind: "mapped";
+			mappingField: string;
+	  };
+
+export interface RegionalChunkLayout {
+	kind: "regional";
+	/** Use ward → LAD mappings when a record has no usable LAD code of its own. */
+	wardToLadFallback?: boolean;
+	/** Include the compact all-location population totals in every chunk. */
+	populationSummary?: boolean;
+	/** Precompute the card aggregate this payload needs for each named location. */
+	locationAggregate?: "population" | "localElection";
+}
+
+/**
+ * How a compiled payload is sliced and delivered. This stays framework-neutral
+ * so the precompiler and browser worker use the same declaration.
+ */
+export interface DatasetPayloadLayout {
+	/** Maps keyed by the dataset's own record codes. Defaults to data + results. */
+	codeKeyedFields?: readonly string[];
+	/** How records are reached from a selected named location. */
+	locationScope?: DatasetLocationScope;
+	/** Omit unless this dataset is large enough to serve in regional chunks. */
+	regionChunks?: RegionalChunkLayout;
+}
+
+export const codeKeyedFieldsFor = (
+	layout?: DatasetPayloadLayout,
+): readonly string[] => layout?.codeKeyedFields ?? DEFAULT_CODE_KEYED_FIELDS;
+
 export interface DatasetDefinition<
 	T extends { type: string; data: unknown } = { type: string; data: unknown },
 > {
@@ -58,6 +99,8 @@ export interface DatasetDefinition<
 	source: DatasetSource;
 	/** Build-time validation requirements for the loader output. */
 	ingestion?: DatasetIngestionContract;
+	/** Transport semantics shared by the precompiler and browser data worker. */
+	payload?: DatasetPayloadLayout;
 	/**
 	 * True for a dataset that is precompiled and validated but deliberately has
 	 * no chart yet — e.g. it has no boundary geometry to render against. The

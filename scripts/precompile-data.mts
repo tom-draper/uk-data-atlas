@@ -17,6 +17,7 @@ import {
 	validatePrecompiledDataset,
 } from "../lib/data/catalog";
 import type { DatasetReader } from "../lib/data/catalog";
+import type { DatasetPayloadLayout } from "../lib/data/catalog/types";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import { readWorkbookStream, xlsSheetRows } from "../lib/data/spreadsheet/xls";
 import {
@@ -241,7 +242,10 @@ async function main() {
 	);
 	await verifyDescribedFiles(described);
 
-	const compiledDatasets = new Map<string, unknown>();
+	const compiledDatasets = new Map<
+		string,
+		{ data: unknown; layout?: DatasetPayloadLayout }
+	>();
 	const chartResults = CATALOGUE_DATASET_DEFINITIONS.map(
 		async (definition) => {
 			const { reader, artifacts } = createTrackedReader();
@@ -250,11 +254,17 @@ async function main() {
 				? Object.fromEntries(
 						Object.entries(compiled).map(([id, dataset]) => [
 							id,
-							{ ...dataset, coverageCountries: definition.coverageCountries },
+							{
+								...dataset,
+								coverageCountries: definition.coverageCountries,
+							},
 						]),
 					)
 				: compiled;
-			compiledDatasets.set(definition.precompiledFile, data);
+			compiledDatasets.set(definition.precompiledFile, {
+				data,
+				layout: definition.payload,
+			});
 			const summary = validatePrecompiledDataset(definition, data);
 			const output = await out(definition.precompiledFile, data);
 			return {

@@ -38,6 +38,32 @@ const definition: DatasetDefinition<TestDataset> = {
 };
 
 describe("dataset catalogue", () => {
+	it("declares non-default payload delivery profiles beside their datasets", () => {
+		const definitionFor = (type: string) =>
+			CATALOGUE_DATASET_DEFINITIONS.find(
+				(definition) => definition.type === type,
+			);
+
+		expect(
+			definitionFor("population")?.payload?.regionChunks,
+		).toMatchObject({
+			kind: "regional",
+			populationSummary: true,
+			locationAggregate: "population",
+		});
+		expect(
+			definitionFor("localElection")?.payload?.regionChunks,
+		).toMatchObject({
+			kind: "regional",
+			wardToLadFallback: true,
+			locationAggregate: "localElection",
+		});
+		expect(definitionFor("nhsWaiting")?.payload?.locationScope).toEqual({
+			kind: "mapped",
+			mappingField: "ladToIcb",
+		});
+	});
+
 	it("keeps dataset core free of chart presentation", () => {
 		for (const dataset of [
 			populationDatasetDefinition,

@@ -52,6 +52,7 @@ self.addEventListener("message", async (e: MessageEvent<Req | CancelReq>) => {
 									fetchJson(chunkUrl, controller.signal),
 								),
 							),
+							filter?.payloadLayout,
 						)
 					: await fetchJson(url, controller.signal);
 		} catch (chunkError) {

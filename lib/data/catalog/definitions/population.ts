@@ -8,6 +8,13 @@ export const populationDatasetDefinition: DatasetDefinition<PopulationDataset> =
 		precompiledFile: "population",
 		boundaryType: "ward",
 		coverageCountries: ["GB-ENG", "GB-WLS"],
+		payload: {
+			regionChunks: {
+				kind: "regional",
+				populationSummary: true,
+				locationAggregate: "population",
+			},
+		},
 		source: {
 			name: "Population",
 			source: "Office for National Statistics",

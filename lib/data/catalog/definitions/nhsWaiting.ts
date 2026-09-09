@@ -8,6 +8,9 @@ export const nhsWaitingDatasetDefinition: DatasetDefinition<NHSWaitingDataset> =
 		precompiledFile: "nhs-waiting",
 		boundaryType: "localAuthority",
 		coverageCountries: ["GB-ENG"],
+		payload: {
+			locationScope: { kind: "mapped", mappingField: "ladToIcb" },
+		},
 		source: {
 			name: "NHS Waiting Times",
 			source: "NHS England",

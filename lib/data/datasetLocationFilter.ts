@@ -3,10 +3,12 @@ import type { Crosswalk } from "./gazetteer/types";
 import { BOUNDARY_CATALOG, type BoundaryType } from "./boundaries/catalog";
 import { getProp } from "./boundaries/properties";
 import { withCDN } from "../helpers/cdn";
+import { codeKeyedFieldsFor, type DatasetPayloadLayout } from "./catalog/types";
 
 export type DatasetLocationFilter = {
 	location: string;
 	boundaryType: BoundaryType;
+	payloadLayout?: DatasetPayloadLayout;
 	includeLocationPopulationSummary?: boolean;
 };
 
@@ -23,37 +25,28 @@ type DatasetRecord = {
 type CodeMatcher = (code: string) => boolean;
 
 /**
- * NHS waiting-time records are keyed by ICB rather than by their displayed LAD
- * boundaries. Keep the ICB records reached by the selected LADs when slicing
- * the payload for a location.
+ * Records can be keyed by a geography other than the displayed boundary. Keep
+ * the mapped records reached by the selected boundary codes when slicing.
  */
-const icbCodesForLocation = (
+const mappedCodesForLocation = (
 	dataset: DatasetRecord,
 	matcher: CodeMatcher,
+	layout?: DatasetPayloadLayout,
 ): Set<string> | null => {
-	const ladToIcb = dataset.ladToIcb;
-	if (!ladToIcb || typeof ladToIcb !== "object" || Array.isArray(ladToIcb))
+	const scope = layout?.locationScope;
+	if (scope?.kind !== "mapped") return null;
+	const mapping = dataset[scope.mappingField];
+	if (!mapping || typeof mapping !== "object" || Array.isArray(mapping))
 		return null;
 
 	return new Set(
-		Object.entries(ladToIcb).flatMap(([ladCode, icbCode]) =>
-			matcher(ladCode) && typeof icbCode === "string" ? [icbCode] : [],
+		Object.entries(mapping).flatMap(([boundaryCode, recordCode]) =>
+			matcher(boundaryCode) && typeof recordCode === "string"
+				? [recordCode]
+				: [],
 		),
 	);
 };
-
-/**
- * The fields keyed by the dataset's own boundary codes, and so scopable by the
- * same matcher.
- *
- * `results` is the precomputed per-area headline — a winning party, a majority
- * ethnicity, a leave/remain call — that the map's choropleth reads. It is keyed
- * exactly like `data`, so leaving it whole shipped every ward in the country for
- * whichever location was selected. Nothing else may be added here without
- * checking its keys: `ladStats` on IMD, for one, is keyed by local authority
- * while its `data` is keyed by LSOA, so this matcher would empty it.
- */
-const CODE_KEYED_FIELDS = ["data", "results"] as const;
 
 const COUNTRY_PREFIXES: Record<string, string> = {
 	England: "E",
@@ -322,15 +315,19 @@ export const filterDatasetPayloadForLocation = async (
 					string,
 					Record<string, unknown>
 				> = {};
-				const icbCodes = icbCodesForLocation(dataset, matcher);
-				for (const field of CODE_KEYED_FIELDS) {
+				const mappedCodes = mappedCodesForLocation(
+					dataset,
+					matcher,
+					filter.payloadLayout,
+				);
+				for (const field of codeKeyedFieldsFor(filter.payloadLayout)) {
 					const records = dataset[field];
 					if (!records || typeof records !== "object") continue;
 					scopedFields[field] = Object.fromEntries(
 						Object.entries(records).filter(
 							([code]) =>
 								matcher(code) ||
-								(field === "data" && icbCodes?.has(code)),
+								(field === "data" && mappedCodes?.has(code)),
 						),
 					);
 				}

@@ -28,4 +28,29 @@ describe("mergeDatasetPayloads", () => {
 			results: { E1: "LAB", E2: "CON" },
 		});
 	});
+
+	it("uses a payload layout's additional code-keyed fields", () => {
+		const merged = mergeDatasetPayloads(
+			[
+				{
+					"2024": {
+						data: { E1: { value: 1 } },
+						summaries: { E1: "A" },
+					},
+				},
+				{
+					"2024": {
+						data: { E2: { value: 2 } },
+						summaries: { E2: "B" },
+					},
+				},
+			],
+			{ codeKeyedFields: ["data", "summaries"] },
+		);
+
+		expect(merged["2024"]).toMatchObject({
+			data: { E1: { value: 1 }, E2: { value: 2 } },
+			summaries: { E1: "A", E2: "B" },
+		});
+	});
 });

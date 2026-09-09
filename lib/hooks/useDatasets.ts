@@ -16,7 +16,6 @@ import {
 import { getChartDefinitions } from "@/lib/datasets/types";
 import { withCDN } from "@/lib/helpers/cdn";
 import {
-	REGION_CHUNKED_DATASET_TYPES,
 	regionChunkPath,
 	regionChunksForLocation,
 } from "@/lib/data/datasetRegionChunks";
@@ -78,10 +77,12 @@ export function useDatasets(
 			filter: {
 				location: selectedLocation,
 				boundaryType: definition.boundaryType,
+				payloadLayout: definition.payload,
 				includeLocationPopulationSummary:
-					definition.type === "population",
+					definition.payload?.regionChunks?.populationSummary ===
+					true,
 			},
-			chunkUrls: REGION_CHUNKED_DATASET_TYPES.has(definition.type)
+			chunkUrls: definition.payload?.regionChunks
 				? (regionChunksForLocation(selectedLocation)?.map((region) =>
 						withCDN(
 							regionChunkPath(definition.precompiledFile, region),

@@ -8,6 +8,13 @@ export const localElectionDatasetDefinition: DatasetDefinition<LocalElectionData
 		precompiledFile: "local-election",
 		boundaryType: "ward",
 		coverageCountries: ["GB-ENG", "GB-WLS"],
+		payload: {
+			regionChunks: {
+				kind: "regional",
+				wardToLadFallback: true,
+				locationAggregate: "localElection",
+			},
+		},
 		ingestion: {
 			minimumDatasets: 9,
 			requiredDataFields: ["wardCode", "wardName", "partyVotes"],

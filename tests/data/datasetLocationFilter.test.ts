@@ -50,6 +50,9 @@ describe("location-scoped chart datasets", () => {
 		const filtered = (await filterDatasetPayloadForLocation(payload, {
 			location: "Greater Manchester",
 			boundaryType: "localAuthority",
+			payloadLayout: {
+				locationScope: { kind: "mapped", mappingField: "ladToIcb" },
+			},
 		})) as typeof payload;
 
 		expect(filtered[2026].data).toEqual({

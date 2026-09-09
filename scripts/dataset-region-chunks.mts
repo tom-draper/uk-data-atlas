@@ -5,6 +5,10 @@ import type { GazetteerCore } from "../lib/data/gazetteer/types";
 import type { PrecompiledBoundaryMappings } from "../lib/data/boundaries/mappings";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import { getProp } from "../lib/data/boundaries/properties";
+import {
+	codeKeyedFieldsFor,
+	type DatasetPayloadLayout,
+} from "../lib/data/catalog/types";
 import { aggregatePopulation } from "../lib/helpers/datasetAggregation/population";
 const REGION_CHUNK_KEYS = [
 	"E12000001",
@@ -45,7 +49,11 @@ type BoundaryPropertiesFile = {
 	features?: Record<string, unknown>[];
 };
 
-const CHUNKED_FILES = new Set(["population", "local-election"]);
+type CompiledDataset = {
+	data: unknown;
+	layout?: DatasetPayloadLayout;
+};
+
 const LOCAL_ELECTION_PARTIES = [
 	"LAB",
 	"CON",
@@ -350,7 +358,7 @@ const writeAtomically = async (path: string, contents: string) => {
 	await rename(temporaryPath, path);
 };
 
-/** Build non-duplicating regional payloads for the large ward datasets. */
+/** Build non-duplicating regional payloads for datasets that opt into chunks. */
 export async function writeDatasetRegionChunks({
 	root,
 	datasets,
@@ -358,7 +366,7 @@ export async function writeDatasetRegionChunks({
 	boundaryMappings,
 }: {
 	root: string;
-	datasets: ReadonlyMap<string, unknown>;
+	datasets: ReadonlyMap<string, CompiledDataset>;
 	core: GazetteerCore;
 	boundaryMappings?: Pick<PrecompiledBoundaryMappings, "wardToLad">;
 }) {
@@ -366,33 +374,32 @@ export async function writeDatasetRegionChunks({
 	const outDir = join(root, "data", "precompiled", "chunks");
 	const publicDir = join(root, "public", "data", "precompiled", "chunks");
 
-	for (const [file, value] of datasets) {
-		if (!CHUNKED_FILES.has(file)) continue;
+	for (const [file, compiled] of datasets) {
+		const chunkLayout = compiled.layout?.regionChunks;
+		if (!chunkLayout || chunkLayout.kind !== "regional") continue;
+		const value = compiled.data as DatasetPayload;
 		const chunks = new Map<RegionChunkKey, DatasetPayload>();
-		const locationPopulations =
-			file === "population"
-				? populationLocationSummary(gazetteer, value as DatasetPayload)
-				: undefined;
+		const locationPopulations = chunkLayout.populationSummary
+			? populationLocationSummary(gazetteer, value)
+			: undefined;
 		const locationAggregates =
-			file === "population"
+			chunkLayout.locationAggregate === "population"
 				? await populationLocationSummaries(
 						root,
 						gazetteer,
-						value as DatasetPayload,
+						value,
 						boundaryMappings?.wardToLad ?? {},
 					)
-				: file === "local-election"
+				: chunkLayout.locationAggregate === "localElection"
 					? localElectionLocationSummaries(
 							gazetteer,
-							value as DatasetPayload,
+							value,
 							boundaryMappings?.wardToLad ?? {},
 						)
 					: undefined;
 		for (const region of REGION_CHUNK_KEYS) chunks.set(region, {});
 
-		for (const [datasetId, dataset] of Object.entries(
-			value as DatasetPayload,
-		)) {
+		for (const [datasetId, dataset] of Object.entries(value)) {
 			if (!dataset.data) continue;
 			const records = new Map<RegionChunkKey, Record<string, unknown>>();
 			for (const [code, record] of Object.entries(dataset.data)) {
@@ -400,7 +407,7 @@ export async function writeDatasetRegionChunks({
 					gazetteer,
 					record,
 					code,
-					file === "local-election"
+					chunkLayout.wardToLadFallback
 						? (boundaryMappings?.wardToLad ?? {})
 						: undefined,
 				);
@@ -411,16 +418,28 @@ export async function writeDatasetRegionChunks({
 			}
 			for (const region of REGION_CHUNK_KEYS) {
 				const data = records.get(region) ?? {};
-				const results =
-					file === "local-election" &&
-					dataset.results &&
-					typeof dataset.results === "object"
-						? Object.fromEntries(
-								Object.entries(
-									dataset.results as Record<string, unknown>,
-								).filter(([code]) => code in data),
-							)
-						: undefined;
+				const codeKeyedFields = Object.fromEntries(
+					codeKeyedFieldsFor(compiled.layout).flatMap((field) => {
+						if (field === "data") return [];
+						const values = dataset[field];
+						if (
+							!values ||
+							typeof values !== "object" ||
+							Array.isArray(values)
+						)
+							return [];
+						return [
+							[
+								field,
+								Object.fromEntries(
+									Object.entries(values).filter(
+										([code]) => code in data,
+									),
+								),
+							],
+						];
+					}),
+				);
 				const regionalAggregates = locationAggregates?.[datasetId]
 					? locationAggregatesForRegion(
 							gazetteer,
@@ -437,7 +456,7 @@ export async function writeDatasetRegionChunks({
 					...(regionalAggregates && {
 						locationAggregates: regionalAggregates,
 					}),
-					...(results && { results }),
+					...codeKeyedFields,
 					data,
 				};
 			}
