@@ -9,7 +9,6 @@ import type {
 	Datasets,
 	SelectedArea,
 } from "@lib/types";
-import { BoundaryData as BoundaryDataBoundaries } from "@lib/types/boundaries";
 import type { CustomDataset } from "@/lib/types/custom";
 import type { NetworkDataset } from "@/lib/types/network";
 import { MapOptions } from "@/lib/types/mapOptions";
@@ -186,8 +185,6 @@ export default function UIOverlay({
 		/>
 	);
 
-	const bd = boundaryData as unknown as BoundaryDataBoundaries;
-
 	const chartPanel = (
 		<ExcludedCategoriesContext.Provider value={excludedCategories}>
 			<ChartPanel
@@ -225,7 +222,7 @@ export default function UIOverlay({
 						mapOptions={mapOptions}
 						onMapOptionsChange={onMapOptionsChange}
 						mapManager={mapManager}
-						boundaryData={bd}
+						boundaryData={boundaryData}
 						location={selectedLocation}
 						datasets={datasets}
 					/>

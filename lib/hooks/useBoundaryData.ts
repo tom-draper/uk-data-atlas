@@ -35,7 +35,7 @@ import type {
 	YearCode,
 } from "../data/boundaries/mappings";
 import { withCDN } from "../helpers/cdn";
-import { requiredBoundaryTypes } from "../data/boundaries/required";
+import { requiredBoundaryTypes } from "../datasets/boundaryRequirements";
 import {
 	constituencyReleaseIdForYear,
 	fetchConstituencyLadOverlaps,

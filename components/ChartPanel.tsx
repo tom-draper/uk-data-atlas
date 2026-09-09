@@ -7,7 +7,6 @@ import {
 	SelectedArea,
 	BoundaryData,
 } from "@lib/types";
-import { BoundaryData as BoundaryDataBoundaries } from "@lib/types/boundaries";
 import { CustomDataset } from "@/lib/types/custom";
 import { NetworkDataset } from "@/lib/types/network";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
@@ -63,9 +62,6 @@ function ChartPanelContent({
 	const deferredArea = useDeferredValue(selectedArea);
 	const toggleSettings = () => setSettingsOpen((o) => !o);
 
-	// BoundaryData from @lib/types is the same shape as @lib/types/boundaries
-	const bd = boundaryData as unknown as BoundaryDataBoundaries;
-
 	return (
 		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
 			<div
@@ -97,7 +93,7 @@ function ChartPanelContent({
 									aggregator={
 										mapManager?.datasetAggregator ?? null
 									}
-									boundaryData={bd}
+									boundaryData={boundaryData}
 									location={location}
 								/>
 								<TransportSection
@@ -116,7 +112,7 @@ function ChartPanelContent({
 									setActiveViz={setActiveViz}
 									codeMapper={codeMapper}
 									mapManager={mapManager}
-									boundaryData={bd}
+									boundaryData={boundaryData}
 									location={location}
 								/>
 							</ChartLoadingProvider>

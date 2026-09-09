@@ -10,7 +10,7 @@ import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
 import { filterGeometryToDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { getChartDatasetDefinition } from "@/lib/datasets";
-import { boundaryTypeForDatasetType } from "@/lib/data/boundaries/required";
+import { boundaryTypeForDatasetType } from "@/lib/datasets/boundaryRequirements";
 import { boundaryCapabilityFor } from "@/lib/data/boundaries/capabilities";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 import { normalizeElectionDatasetCodes } from "@/lib/data/election/local-election/normalize";
