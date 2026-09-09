@@ -7,6 +7,39 @@ import { gazetteer } from "@/lib/data/gazetteer/static";
 import type { BoundaryGeojson } from "@/lib/types";
 
 describe("properties-only boundary filtering", () => {
+	it("keeps current unitary authorities in their historic county scopes", () => {
+		const boundaries = {
+			type: "FeatureCollection",
+			features: [
+				{
+					type: "Feature",
+					properties: { LAD24CD: "E06000066" }, // Somerset
+					geometry: null,
+				},
+				{
+					type: "Feature",
+					properties: { LAD24CD: "E06000065" }, // North Yorkshire
+					geometry: null,
+				},
+			],
+		} as unknown as BoundaryGeojson;
+
+		for (const [location, code] of [
+			["Somerset", "E06000066"],
+			["North Yorkshire", "E06000065"],
+		] as const) {
+			const filtered = filterFeatures(
+				boundaries,
+				location,
+				"localAuthority",
+			);
+			expect(filtered.features).toHaveLength(1);
+			expect(filtered.features[0]?.properties).toMatchObject({
+				LAD24CD: code,
+			});
+		}
+	});
+
 	it("keeps location-filtered geometry in a distinct cache entry", () => {
 		const path = "/data/boundaries/ward/2024.topojson";
 		const greaterManchester = geometryCacheKey(path, {

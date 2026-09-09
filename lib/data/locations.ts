@@ -642,11 +642,11 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 	// South West England
 	"South West": {
 		lad_codes: [
-			// Bristol, Bath and Somerset Unitaries/Authorities
+			// Bristol, Bath and Somerset unitaries/authorities
 			"E06000023", // Bristol, City of
 			"E06000022", // Bath and North East Somerset
 			"E06000024", // North Somerset
-			// 'E06000056', // Somerset (Unitary Authority since 2023)
+			"E06000066", // Somerset (unitary authority since 2023)
 
 			// Cornwall and Devon Unitaries/Authorities
 			"E06000052", // Cornwall
@@ -665,7 +665,6 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			// Dorset Unitaries
 			"E06000058", // Bournemouth, Christchurch and Poole
 			"E06000059", // Dorset Council
-			"E06000066", // Dorset Council
 
 			// Gloucestershire Authorities
 			"E06000025", // South Gloucestershire
@@ -857,11 +856,16 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 	// Somerset
 	Somerset: {
 		lad_codes: [
+			// Successive boundaries: five districts, then Somerset West and
+			// Taunton, then the 2023 unitary authority. Keeping every vintage
+			// lets each dataset select the code that matches its boundaries.
 			"E07000187",
 			"E07000188",
 			"E07000189",
 			"E07000190",
 			"E07000191",
+			"E07000246",
+			"E06000066",
 		],
 		bounds: [-3.8, 50.9, -2.2, 51.4],
 	},
@@ -1032,6 +1036,8 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000165",
 			"E07000166",
 			"E07000167",
+			"E07000168",
+			"E07000169",
 			"E06000010",
 			"E06000011",
 			// East Riding
@@ -1039,6 +1045,22 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E06000065",
 		],
 		bounds: [-2.6, 53.3, -0.3, 54.6],
+	},
+
+	// North Yorkshire has had a single unitary authority since April 2023.
+	// Retain its former districts for datasets published against older LADs.
+	"North Yorkshire": {
+		lad_codes: [
+			"E07000163",
+			"E07000164",
+			"E07000165",
+			"E07000166",
+			"E07000167",
+			"E07000168",
+			"E07000169",
+			"E06000065",
+		],
+		bounds: [-2.5647, 53.6212, -0.2125, 54.5602],
 	},
 
 	// Lincolnshire
