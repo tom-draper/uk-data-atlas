@@ -9,6 +9,7 @@ import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
 import { filterGeometryToDatasetCoverage } from "@/lib/helpers/datasetCoverage";
+import { getChartDatasetDefinition } from "@/lib/datasets";
 import { boundaryTypeForDatasetType } from "@/lib/data/boundaries/required";
 import { normalizeElectionDatasetCodes } from "@/lib/data/election/local-election/normalize";
 
@@ -204,9 +205,18 @@ export default function MapInterface({
 	const geojson = useMemo(() => {
 		if (!rawGeojson || !activeDataset || !("data" in activeDataset))
 			return rawGeojson;
+		// The compiled payload carries coverage for production data, while the
+		// definition keeps the map correct if a client is still holding a prior
+		// payload after a hot reload or CDN update.
+		const coverageCountries =
+			activeDataset.coverageCountries ??
+			getChartDatasetDefinition(activeDataset.type)?.coverageCountries;
+		const coverageDataset = coverageCountries
+			? { ...activeDataset, coverageCountries }
+			: activeDataset;
 		const coverageGeometry = filterGeometryToDatasetCoverage(
 			rawGeojson,
-			activeDataset,
+			coverageDataset,
 		);
 		const dataKeys = new Set(
 			Object.keys(activeDataset.data as Record<string, unknown>),
@@ -216,7 +226,7 @@ export default function MapInterface({
 		// Keep its declared coverage visible, but preserve the empty-map behaviour
 		// for datasets that have no published coverage at all.
 		if (dataKeys.size === 0)
-			return activeDataset.coverageCountries
+			return coverageCountries
 				? coverageGeometry
 				: { ...coverageGeometry, features: [] };
 		const codeKeys: readonly string[] =

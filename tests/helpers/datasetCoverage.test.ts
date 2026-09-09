@@ -63,4 +63,54 @@ describe("filterGeometryToDatasetCoverage", () => {
 			}),
 		).toBe(geometry);
 	});
+
+	it("filters local-authority geometry by the current LAD code property", () => {
+		const localAuthorityGeometry = {
+			type: "FeatureCollection",
+			features: [
+				{
+					type: "Feature",
+					properties: { LAD24CD: "E06000001" },
+					geometry: null,
+				},
+				{
+					type: "Feature",
+					properties: { LAD24CD: "W06000001" },
+					geometry: null,
+				},
+				{
+					type: "Feature",
+					properties: { LAD24CD: "S12000033" },
+					geometry: null,
+				},
+				{
+					type: "Feature",
+					properties: { LAD24CD: "N09000001" },
+					geometry: null,
+				},
+			],
+		} as any;
+
+		const filtered = filterGeometryToDatasetCoverage(
+			localAuthorityGeometry,
+			{
+				id: "ethnicity2021",
+				type: "ethnicity",
+				year: 2021,
+				boundaryType: "localAuthority",
+				boundaryYear: 2024,
+				data: {},
+				results: {},
+				coverageCountries: ["GB-ENG", "GB-WLS"],
+			} as any,
+		);
+
+		expect(
+			filtered.features.map(
+				(feature) =>
+					(feature.properties as unknown as Record<string, string>)
+						.LAD24CD,
+			),
+		).toEqual(["E06000001", "W06000001"]);
+	});
 });
