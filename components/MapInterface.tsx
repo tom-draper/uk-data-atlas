@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
@@ -7,6 +7,8 @@ import { useBoundaryData } from "@/lib/hooks/useBoundaryData";
 import { useActiveGeometry } from "@/lib/hooks/useActiveGeometry";
 import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
+import { useMapStyle } from "@/lib/hooks/useMapStyle";
+import { useMapCamera } from "@/lib/hooks/useMapCamera";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
 import { filterGeometryToDatasetCoverage } from "@/lib/helpers/datasetCoverage";
 import { getChartDatasetDefinition } from "@/lib/datasets";
@@ -29,10 +31,8 @@ import type { CustomDataset } from "@/lib/types/custom";
 import type { NetworkDataset } from "@/lib/types/network";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
-import { BASE_MAP_STYLES } from "@/lib/config/baseMapStyles";
 import { gazetteer } from "@lib/data/gazetteer/static";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
-import type { Map as MapLibreMap } from "maplibre-gl";
 
 interface MapInterfaceProps {
 	datasets: Datasets;
@@ -62,7 +62,6 @@ export default function MapInterface({
 	onError,
 }: MapInterfaceProps) {
 	const [selectedArea, setSelectedArea] = useState<SelectedArea | null>(null);
-	const [loadedStyleId, setLoadedStyleId] = useState<string | null>(null);
 
 	const codeMapper = useCodeMapper();
 	const { addWardLadMappings, getLadForWard } = codeMapper;
@@ -118,53 +117,7 @@ export default function MapInterface({
 	});
 	const { mapOptions, setMapOptions: handleMapOptionsChange } =
 		useMapOptions(DEFAULT_MAP_OPTIONS);
-	const styleReady = loadedStyleId === mapOptions.baseStyle.id;
-
-	// Track whether the initial style has been applied (style is loaded in useMapLibreInitialization).
-	const initialStyleApplied = useRef(false);
-
-	// Switch base map style and re-render data layers after the new style loads.
-	// On the initial mapReady=true, the style is already loaded, so skip setStyle()
-	// and just bump the version counter so useMapUpdates fires immediately.
-	useEffect(() => {
-		const mapInstance = map.current;
-		if (!mapInstance || !mapReady) return;
-
-		const currentStyleId = mapOptions.baseStyle.id;
-
-		const handleStyleReady = () => {
-			// Wait until style + sources + sprite state settle
-			if (mapInstance.isStyleLoaded()) {
-				setLoadedStyleId(currentStyleId);
-			}
-		};
-
-		mapInstance.on("idle", handleStyleReady);
-
-		const styleUrl = BASE_MAP_STYLES.find(
-			(s) => s.id === currentStyleId,
-		)?.url;
-
-		// Initial load
-		if (!initialStyleApplied.current) {
-			initialStyleApplied.current = true;
-
-			handleStyleReady();
-
-			return () => {
-				mapInstance.off("idle", handleStyleReady);
-			};
-		}
-
-		// Style switch
-		if (styleUrl) {
-			mapInstance.setStyle(styleUrl);
-		}
-
-		return () => {
-			mapInstance.off("idle", handleStyleReady);
-		};
-	}, [mapOptions.baseStyle.id, mapReady]);
+	const styleReady = useMapStyle(map, mapReady, mapOptions.baseStyle.id);
 
 	// Stable interaction handlers - created once, never change identity
 	const interactionHandlers = useInteractionHandlers({
@@ -262,75 +215,12 @@ export default function MapInterface({
 		interactionHandlers,
 	});
 
-	const initialFitDone = useRef(false);
-
-	// Fit to initial location from URL params once on first style ready
-	useEffect(() => {
-		if (!styleReady || !map.current || initialFitDone.current) return;
-		const bounds = gazetteer.boundsOf(selectedLocation);
-		if (!bounds) return;
-		initialFitDone.current = true;
-		map.current.fitBounds(bounds, {
-			padding: MAP_CONFIG.fitBoundsPadding,
-			duration: 0,
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [styleReady]);
-
-	const handleLocationClick = useCallback(
-		(location: string) => {
-			const bounds = gazetteer.boundsOf(location);
-			if (!map.current || !bounds) return;
-
-			// Start the camera transition before the location change re-renders the
-			// panel and refreshes point data; otherwise that work can delay the first
-			// animation frame and make the move appear instantaneous.
-			map.current.fitBounds(bounds, {
-				padding: MAP_CONFIG.fitBoundsPadding,
-				duration: MAP_CONFIG.fitBoundsDuration,
-				// A deliberate location selection should retain its spatial context even
-				// when the browser has a reduced-motion preference.
-				essential: true,
-			});
-			setSelectedLocation(location);
-			// `map` is a ref, stable for the component's lifetime.
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		},
-		[setSelectedLocation],
+	const { onLocationClick, onZoomIn, onZoomOut, onExport } = useMapCamera(
+		map,
+		selectedLocation,
+		styleReady,
+		setSelectedLocation,
 	);
-
-	const handleZoomIn = useCallback(() => {
-		const currentMap = map.current;
-		if (currentMap) currentMap.zoomTo(currentMap.getZoom() + 1);
-	}, []);
-
-	const handleZoomOut = useCallback(() => {
-		const currentMap = map.current;
-		if (currentMap) currentMap.zoomTo(currentMap.getZoom() - 1);
-	}, []);
-
-	const handleExport = useCallback(() => {
-		type MapWithExport = MapLibreMap & {
-			once(type: "render", listener: () => void): void;
-			triggerRepaint(): void;
-		};
-		const mapInstance = map.current as MapWithExport | null;
-		if (!mapInstance) return;
-
-		mapInstance.once("render", () => {
-			const canvas = mapInstance.getCanvas();
-			const dataURL = canvas.toDataURL("image/png");
-
-			const link = document.createElement("a");
-			link.href = dataURL;
-			link.download = "map.png";
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
-		});
-
-		mapInstance.triggerRepaint();
-	}, []);
 
 	const { getCodeForYear } = codeMapper;
 	const normalizedDatasets = useMemo(() => {
@@ -367,9 +257,9 @@ export default function MapInterface({
 						mapOptions={mapOptions}
 						codeMapper={codeMapper}
 						onMapOptionsChange={handleMapOptionsChange}
-						onLocationClick={handleLocationClick}
-						onZoomIn={handleZoomIn}
-						onZoomOut={handleZoomOut}
+						onLocationClick={onLocationClick}
+						onZoomIn={onZoomIn}
+						onZoomOut={onZoomOut}
 						activeDataset={activeDataset}
 						activeViz={activeViz}
 						setActiveViz={setActiveViz}
@@ -380,7 +270,7 @@ export default function MapInterface({
 						addCustomDataset={addCustomDataset}
 						roadSafetyDatasets={roadSafetyDatasets}
 						networkDatasets={networkDatasets}
-						onExport={handleExport}
+						onExport={onExport}
 					/>
 				)}
 				<MapView
