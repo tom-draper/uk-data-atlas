@@ -4,26 +4,7 @@ import {
 	SchoolPerformanceMeasures,
 } from "@/lib/types/schoolPerformance";
 import { parseCsv } from "@/lib/helpers/parseCsv";
-import { parseNullableNum } from "@/lib/helpers/parseNumber";
-
-/**
- * "202425" is the 2024/25 academic year. The atlas keys these by the year the
- * academic year ends in, so 202425 becomes 2025.
- */
-function endYear(timePeriod: string): number | null {
-	const start = Number(timePeriod.slice(0, 4));
-	return Number.isFinite(start) && start > 1900 ? start + 1 : null;
-}
-
-function readMeasures(row: Record<string, string>): SchoolPerformanceMeasures {
-	return {
-		ptL2basics94: parseNullableNum(row["engmath_94_percent"]),
-		ptL2basics95: parseNullableNum(row["engmath_95_percent"]),
-		avgAtt8: parseNullableNum(row["attainment8_average"]),
-		avgP8score: parseNullableNum(row["progress8_average"]),
-		pupils: parseNullableNum(row["pupil_count"]),
-	};
-}
+import { endYear, readMeasures } from "@/lib/data/education/ks4";
 
 export async function loadSchoolPerformance(
 	read: (path: string) => Promise<string>,

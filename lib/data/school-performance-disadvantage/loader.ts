@@ -4,6 +4,7 @@ import {
 	SchoolPerformanceGapMeasures,
 } from "@/lib/types/schoolPerformance";
 import { parseCsv } from "@/lib/helpers/parseCsv";
+import { endYear } from "@/lib/data/education/ks4";
 import { parseNullableNum } from "@/lib/helpers/parseNumber";
 
 /**
@@ -17,11 +18,6 @@ const MINIMUM_PUPILS = 6;
 
 const DISADVANTAGED = "Disadvantaged";
 const NOT_DISADVANTAGED = "Not known to be disadvantaged";
-
-function endYear(timePeriod: string): number | null {
-	const start = Number(timePeriod.slice(0, 4));
-	return Number.isFinite(start) && start > 1900 ? start + 1 : null;
-}
 
 /** The difference, or null when either side is missing or too small to report. */
 function difference(

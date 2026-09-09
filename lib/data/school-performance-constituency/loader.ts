@@ -4,7 +4,7 @@ import {
 	SchoolPerformanceMeasures,
 } from "@/lib/types/schoolPerformance";
 import { parseCsv } from "@/lib/helpers/parseCsv";
-import { parseNullableNum } from "@/lib/helpers/parseNumber";
+import { endYear, readMeasures } from "@/lib/data/education/ks4";
 
 /**
  * The release spans 2018/19 onwards, but the constituencies were redrawn for
@@ -14,21 +14,6 @@ import { parseNullableNum } from "@/lib/helpers/parseNumber";
  * years would need the 2010-to-2024 crosswalk.
  */
 const FIRST_2024_BOUNDARY_YEAR = 2024;
-
-function endYear(timePeriod: string): number | null {
-	const start = Number(timePeriod.slice(0, 4));
-	return Number.isFinite(start) && start > 1900 ? start + 1 : null;
-}
-
-function readMeasures(row: Record<string, string>): SchoolPerformanceMeasures {
-	return {
-		ptL2basics94: parseNullableNum(row["engmath_94_percent"]),
-		ptL2basics95: parseNullableNum(row["engmath_95_percent"]),
-		avgAtt8: parseNullableNum(row["attainment8_average"]),
-		avgP8score: parseNullableNum(row["progress8_average"]),
-		pupils: parseNullableNum(row["pupil_count"]),
-	};
-}
 
 export async function loadSchoolPerformanceConstituency(
 	read: (path: string) => Promise<string>,
