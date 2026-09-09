@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import { APRIL_2023_LAD_MERGERS } from "@/lib/data/localAuthority/reorganisations";
 import { addMergedLifeExpectancyAuthorities } from "@/lib/data/life-expectancy/loader";
 import { addMergedQualificationAuthorities } from "@/lib/data/qualification/loader";
-import { addMergedUnemploymentAuthorities } from "@/lib/data/unemployment/loader";
+import {
+	addMergedUnemploymentAuthorities,
+	normaliseUnemploymentBoundaryCodes,
+} from "@/lib/data/unemployment/loader";
 import type { LifeExpectancyLADData } from "@/lib/types/lifeExpectancy";
 import type { QualificationBreakdown } from "@/lib/types/qualification";
 import type { UnemploymentLADData } from "@/lib/types/unemployment";
@@ -12,6 +15,36 @@ const predecessors = Object.values(APRIL_2023_LAD_MERGERS).flatMap(
 );
 
 describe("2023 reorganised authority loader records", () => {
+	it("uses current Scottish boundary codes for unchanged authorities", () => {
+		const data: Record<string, UnemploymentLADData> = {
+			S12000024: {
+				ladCode: "S12000024",
+				ladName: "Perth and Kinross",
+				rates: { 2021: 3.1 },
+			},
+			S12000044: {
+				ladCode: "S12000044",
+				ladName: "North Lanarkshire",
+				rates: { 2021: 4.1 },
+			},
+		};
+
+		normaliseUnemploymentBoundaryCodes(data);
+
+		expect(data.S12000048).toMatchObject({
+			ladCode: "S12000048",
+			ladName: "Perth and Kinross",
+			rates: { 2021: 3.1 },
+		});
+		expect(data.S12000050).toMatchObject({
+			ladCode: "S12000050",
+			ladName: "North Lanarkshire",
+			rates: { 2021: 4.1 },
+		});
+		expect(data.S12000024).toBeUndefined();
+		expect(data.S12000044).toBeUndefined();
+	});
+
 	it("averages predecessor unemployment rate estimates", () => {
 		const data = Object.fromEntries(
 			predecessors.map((code, index) => [

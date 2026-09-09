@@ -32,6 +32,29 @@ const toNum = (v: string): number | null => {
 	return isNaN(n) ? null : Number(n.toFixed(1));
 };
 
+// Scotland reassigned these unchanged council areas new statistical codes
+// between the historical unemployment release and the 2024 map boundaries.
+// The dataset is always rendered on current boundaries, so key it accordingly.
+const SCOTTISH_LAD_CODE_REPLACEMENTS: Record<string, string> = {
+	S12000015: "S12000047", // Fife
+	S12000024: "S12000048", // Perth and Kinross
+	S12000046: "S12000049", // Glasgow City
+	S12000044: "S12000050", // North Lanarkshire
+};
+
+export function normaliseUnemploymentBoundaryCodes(
+	records: Record<string, UnemploymentLADData>,
+): void {
+	for (const [legacyCode, currentCode] of Object.entries(
+		SCOTTISH_LAD_CODE_REPLACEMENTS,
+	)) {
+		const record = records[legacyCode];
+		if (!record || records[currentCode]) continue;
+		records[currentCode] = { ...record, ladCode: currentCode };
+		delete records[legacyCode];
+	}
+}
+
 /** Add post-2023 authority records from the predecessor rate estimates. */
 export function addMergedUnemploymentAuthorities(
 	records: Record<string, UnemploymentLADData>,
@@ -109,6 +132,7 @@ export async function loadUnemployment(
 
 		records[code] = { ladCode: code, ladName: name, rates };
 	}
+	normaliseUnemploymentBoundaryCodes(records);
 	addMergedUnemploymentAuthorities(records, years);
 
 	const dataset: UnemploymentDataset = {
