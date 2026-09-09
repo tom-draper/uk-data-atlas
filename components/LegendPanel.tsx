@@ -221,8 +221,8 @@ function HousePriceMeasurePanel({
 				className={`relative ${t.section} flex items-center gap-2 p-2 text-xs`}
 				style={{ zIndex: 1 }}
 			>
-				<span className={isMean ? "text-gray-400" : "font-medium"}>
-					Median
+				<span className={isMean ? "font-medium" : "text-gray-400"}>
+					Mean
 				</span>
 				<button
 					type="button"
@@ -233,11 +233,11 @@ function HousePriceMeasurePanel({
 					className={`relative h-4 w-7 rounded-full transition-colors ${isMean ? "bg-indigo-500" : isDark ? "bg-gray-600" : "bg-gray-300"}`}
 				>
 					<span
-						className={`absolute top-0.5 size-3 rounded-full bg-white shadow transition-transform ${isMean ? "translate-x-3.5" : "translate-x-0.5"}`}
+						className={`absolute top-0.5 size-3 rounded-full bg-white shadow transition-transform ${isMean ? "translate-x-0.5" : "translate-x-3.5"}`}
 					/>
 				</button>
-				<span className={isMean ? "font-medium" : "text-gray-400"}>
-					Mean
+				<span className={isMean ? "text-gray-400" : "font-medium"}>
+					Median
 				</span>
 			</div>
 		</div>
