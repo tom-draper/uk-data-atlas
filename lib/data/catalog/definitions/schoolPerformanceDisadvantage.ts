@@ -7,6 +7,7 @@ export const schoolPerformanceDisadvantageDatasetDefinition: DatasetDefinition<S
 		type: "schoolPerformanceGap",
 		precompiledFile: "school-performance-disadvantage",
 		boundaryType: "localAuthority",
+		coverageCountries: ["GB-ENG"],
 		source: {
 			name: "Attainment 8 Disadvantage Gap",
 			source: "Department for Education",
