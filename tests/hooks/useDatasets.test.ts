@@ -37,7 +37,6 @@ describe("datasetIsNeeded", () => {
 		expect(hiddenByDefault.map((d) => d.type).sort()).toEqual([
 			"brexitConstituency",
 			"nimdm",
-			"schoolPerformanceConstituency",
 			"schoolPerformanceGap",
 			"simd",
 			"wimd",

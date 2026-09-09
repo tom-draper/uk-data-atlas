@@ -7,6 +7,9 @@ export const schoolPerformanceConstituencyDatasetDefinition: DatasetDefinition<S
 		type: "schoolPerformanceConstituency",
 		precompiledFile: "school-performance-constituency",
 		boundaryType: "constituency",
+		// Keep the compiled series available for future use without registering
+		// it in the browser chart registry or fetching it for map views.
+		chartPending: true,
 		coverageCountries: ["GB-ENG"],
 		source: {
 			name: "School Performance (KS4, Constituency)",

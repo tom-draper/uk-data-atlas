@@ -38,11 +38,10 @@ import Chart32 from "@/components/demographics/population-age-registry";
 import Chart33 from "@/components/demographics/population-gender-registry";
 import Chart34 from "@/components/education/QualificationChart";
 import Chart35 from "@/components/education/SchoolPerformanceChart";
-import Chart36 from "@/components/education/SchoolPerformanceConstituencyChart";
-import Chart37 from "@/components/education/SchoolPerformanceDisadvantageChart";
-import Chart38 from "@/components/deprivation/simd/SIMDChart";
-import Chart39 from "@/components/economics/unemployment/UnemploymentChart";
-import Chart40 from "@/components/deprivation/wimd/WIMDChart";
+import Chart36 from "@/components/education/SchoolPerformanceDisadvantageChart";
+import Chart37 from "@/components/deprivation/simd/SIMDChart";
+import Chart38 from "@/components/economics/unemployment/UnemploymentChart";
+import Chart39 from "@/components/deprivation/wimd/WIMDChart";
 
 export const CHART_COMPONENTS: Record<
 	string,
@@ -87,11 +86,9 @@ export const CHART_COMPONENTS: Record<
 	"education-qualifications": Chart34 as ComponentType<ChartComponentProps>,
 	"education-schoolPerformance":
 		Chart35 as ComponentType<ChartComponentProps>,
-	"education-schoolPerformanceConstituency":
-		Chart36 as ComponentType<ChartComponentProps>,
 	"education-schoolPerformanceGap":
-		Chart37 as ComponentType<ChartComponentProps>,
-	"deprivation-simd": Chart38 as ComponentType<ChartComponentProps>,
-	"economics-unemployment": Chart39 as ComponentType<ChartComponentProps>,
-	"deprivation-wimd": Chart40 as ComponentType<ChartComponentProps>,
+		Chart36 as ComponentType<ChartComponentProps>,
+	"deprivation-simd": Chart37 as ComponentType<ChartComponentProps>,
+	"economics-unemployment": Chart38 as ComponentType<ChartComponentProps>,
+	"deprivation-wimd": Chart39 as ComponentType<ChartComponentProps>,
 };

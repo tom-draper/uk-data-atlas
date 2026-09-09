@@ -13,7 +13,11 @@ describe("dataset registry metadata", () => {
 					precompile: async () => ({}),
 				},
 			}),
-		).toEqual({ name: "exampleDatasetDefinition", type: "example" });
+		).toEqual({
+			name: "exampleDatasetDefinition",
+			type: "example",
+			chartPending: false,
+		});
 	});
 
 	it("reads every chart from a multi-chart definition", () => {

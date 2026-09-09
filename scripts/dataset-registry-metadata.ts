@@ -1,6 +1,7 @@
 export type CatalogueDefinitionMetadata = {
 	name: string;
 	type: string;
+	chartPending: boolean;
 };
 
 export type ChartDefinitionMetadata = {
@@ -38,7 +39,11 @@ export function catalogueMetadata(
 	if (typeof definition.type !== "string") {
 		return fail(file, "must declare a string literal dataset type.");
 	}
-	return { name, type: definition.type };
+	return {
+		name,
+		type: definition.type,
+		chartPending: definition.chartPending === true,
+	};
 }
 
 export function chartMetadata(
