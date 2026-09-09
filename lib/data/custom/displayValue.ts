@@ -24,7 +24,7 @@ export function getCustomDatasetDisplayValue(
 	dataset: CustomDataset,
 	selectedArea: SelectedCustomArea | null,
 	codeMapper: CustomCodeMapper,
-	aggregatedData: Record<string, AggregatedCustomData> | null,
+	aggregatedData: Record<string, AggregatedCustomData | null> | null,
 ): CustomDatasetDisplayValue | null {
 	if (selectedArea) {
 		const directValue = dataset.data[selectedArea.code];

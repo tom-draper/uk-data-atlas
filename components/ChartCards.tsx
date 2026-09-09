@@ -66,7 +66,7 @@ export default function ChartCards({
 			Object.fromEntries(
 				definitions.map(({ definition, chart }) => [
 					definition.type + chart.key,
-					aggregateDataset<any>(
+					aggregateDataset(
 						{
 							datasets: datasets[definition.type],
 							boundaryType: definition.boundaryType,

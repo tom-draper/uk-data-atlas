@@ -12,8 +12,9 @@ import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 /** Memoized chart aggregation with the shared aggregateDataset cache beneath it. */
 export function useAggregatedDataset<
 	T extends Exclude<Dataset, { type: "network" }>,
+	R,
 >(
-	config: DatasetConfig<T>,
+	config: DatasetConfig<T, R>,
 	mapManager: MapManager | null,
 	boundaryData: BoundaryData,
 	location: string | null,

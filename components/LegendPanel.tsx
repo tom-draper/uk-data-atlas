@@ -48,7 +48,7 @@ interface LegendPanelProps {
 	datasets: Datasets;
 }
 
-type LegendAggregates = Record<string, Record<string, any> | null>;
+type LegendAggregates = Record<string, Record<string, unknown> | null>;
 
 const LEGEND_DEFINITIONS = CHART_DATASET_DEFINITIONS.filter(
 	(definition) => definition.legendAggregation,
@@ -69,7 +69,7 @@ function useLegendAggregates(
 					return [
 						[
 							definition.type,
-							aggregateDataset<any>(
+							aggregateDataset(
 								{
 									datasets: datasets[definition.type],
 									boundaryType: definition.boundaryType,
@@ -100,9 +100,13 @@ function computeParties(
 		| undefined;
 
 	if (activeDataset.type === "localElection") {
-		datasetData = aggregates.localElection ?? undefined;
+		datasetData = aggregates.localElection as
+			| Record<number, WardStats>
+			| undefined;
 	} else if (activeDataset.type === "generalElection") {
-		datasetData = aggregates.generalElection ?? undefined;
+		datasetData = aggregates.generalElection as
+			| Record<number, ConstituencyStats>
+			| undefined;
 	}
 
 	if (!datasetData) return [];

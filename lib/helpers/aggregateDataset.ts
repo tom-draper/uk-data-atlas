@@ -4,19 +4,20 @@ import type { BoundaryGeojson } from "@lib/types/geometry";
 import { DatasetAggregator } from "./datasetAggregation";
 
 type BoundaryDataset = Exclude<Dataset, { type: "network" }>;
+type Aggregate = Record<string, unknown> | null;
 
-export interface DatasetConfig<T extends BoundaryDataset> {
+export interface DatasetConfig<T extends BoundaryDataset, R = unknown> {
 	datasets: Record<string, T>;
 	boundaryType: BoundaryType;
 	keyBy?: "year" | "id";
 	calculateStats: (
 		aggregator: DatasetAggregator,
 		geojson: BoundaryGeojson,
-		data: any,
+		data: T["data"],
 		location: string | null,
 		datasetId: string,
 		dataset?: T,
-	) => any;
+	) => R | null;
 }
 
 // Chart sections and the legend often request the same aggregate during one
@@ -27,7 +28,7 @@ const aggregateCache = new WeakMap<
 	DatasetAggregator,
 	WeakMap<
 		BoundaryData,
-		WeakMap<object, Map<string, Record<string, any> | null>>
+		WeakMap<object, Map<string, Aggregate>>
 	>
 >();
 
@@ -49,13 +50,13 @@ const cacheDatasetId = (datasetId: string, dataset: object) => {
 	return `${datasetId}:${id}`;
 };
 
-function cachedAggregate(
+function cachedAggregate<R>(
 	aggregator: DatasetAggregator,
 	boundaryData: BoundaryData,
 	datasets: object,
 	cacheKey: string,
-	calculate: () => Record<string, any> | null,
-): Record<string, any> | null {
+	calculate: () => Record<string, R | null>,
+): Record<string, R | null> {
 	let boundaryCache = aggregateCache.get(aggregator);
 	if (!boundaryCache) {
 		boundaryCache = new WeakMap();
@@ -71,28 +72,29 @@ function cachedAggregate(
 		entries = new Map();
 		datasetCache.set(datasets, entries);
 	}
-	if (entries.has(cacheKey)) return entries.get(cacheKey) ?? null;
+	if (entries.has(cacheKey))
+		return entries.get(cacheKey) as Record<string, R | null>;
 
 	const result = calculate();
 	entries.set(cacheKey, result);
 	return result;
 }
 
-export function aggregateDataset<T extends BoundaryDataset>(
-	config: DatasetConfig<T>,
+export function aggregateDataset<T extends BoundaryDataset, R>(
+	config: DatasetConfig<T, R>,
 	aggregator: DatasetAggregator | null,
 	boundaryData: BoundaryData,
 	location: string | null,
-): Record<string, any> | null {
+): Record<string, R | null> | null {
 	if (Object.keys(config.datasets).length === 0) return null;
-	const precomputed = Object.fromEntries(
-		Object.entries(config.datasets).flatMap(([datasetId, dataset]) => {
-			const aggregate = Reflect.get(dataset, "locationAggregate");
-			if (aggregate === undefined) return [];
+	const precomputed: Record<string, R | null> = {};
+	for (const [datasetId, dataset] of Object.entries(config.datasets)) {
+		const aggregate = Reflect.get(dataset, "locationAggregate");
+		if (aggregate !== undefined) {
 			const key = config.keyBy === "id" ? datasetId : dataset.year;
-			return [[key, aggregate]];
-		}),
-	);
+			precomputed[key] = aggregate as R;
+		}
+	}
 	if (Object.keys(precomputed).length === Object.keys(config.datasets).length)
 		return precomputed;
 
@@ -106,7 +108,7 @@ export function aggregateDataset<T extends BoundaryDataset>(
 		config.datasets,
 		cacheKey,
 		() => {
-			const result: Record<string, any> = {};
+			const result: Record<string, R | null> = {};
 
 			for (const [datasetId, dataset] of Object.entries(
 				config.datasets,
@@ -119,7 +121,7 @@ export function aggregateDataset<T extends BoundaryDataset>(
 					"locationAggregate",
 				);
 				if (precomputedAggregate !== undefined) {
-					result[key] = precomputedAggregate;
+					result[key] = precomputedAggregate as R;
 					continue;
 				}
 				if (dataset.data && geojson) {
