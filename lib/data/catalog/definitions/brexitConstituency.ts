@@ -7,7 +7,7 @@ export const brexitConstituencyDatasetDefinition: DatasetDefinition<BrexitConsti
 		type: "brexitConstituency",
 		precompiledFile: "brexit-constituency",
 		boundaryType: "constituency",
-		coverageCountries: ["GB-ENG", "GB-WLS"],
+		coverageCountries: ["GB-ENG"],
 		source: {
 			name: "EU Referendum Results (Constituency Estimates)",
 			source: "Hanretty, C. (2017). Areal interpolation and the UK's referendum on EU membership. Journal of Elections, Public Opinion and Parties, 27(4), 466-483.",

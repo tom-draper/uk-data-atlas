@@ -17,9 +17,8 @@ export async function loadBrexitConstituency(
 
 	for (const row of data as string[][]) {
 		const code = row[1]?.trim() || "";
-		// The published lookup covers English and Welsh constituencies. Scottish
-		// and Northern Irish records are not comparable estimates, so stay out.
-		if (!code.startsWith("E14") && !code.startsWith("W07")) continue;
+		// Hanretty's estimates cover English constituencies only.
+		if (!code.startsWith("E14")) continue;
 
 		const pctLeave = parsePct(row[6]);
 		const isKnownResult = row[4]?.trim().toLowerCase() === "yes";
