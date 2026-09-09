@@ -10,10 +10,12 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 interface ChartCardValueBarProps {
 	hasData: boolean;
 	value: ReactNode;
-	unit: ReactNode;
+	unit?: ReactNode;
 	barWidth: number;
 	barColor?: string;
+	valueColor?: string;
 	secondary?: ReactNode;
+	secondaryColor?: string;
 }
 
 export function ChartCardValueBar({
@@ -22,7 +24,9 @@ export function ChartCardValueBar({
 	unit,
 	barWidth,
 	barColor,
+	valueColor,
 	secondary,
+	secondaryColor,
 }: ChartCardValueBarProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
@@ -49,19 +53,22 @@ export function ChartCardValueBar({
 				<div className="leading-none">
 					<span
 						className="text-2xl font-bold leading-none"
-						style={{ color: barColor }}
+						style={{ color: valueColor ?? barColor }}
 					>
 						{value}
 					</span>
-					<span
-						className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}
-					>
-						{unit}
-					</span>
+					{unit && (
+						<span
+							className={`text-[10px] font-normal leading-none ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}
+						>
+							{unit}
+						</span>
+					)}
 				</div>
 				{secondary && (
 					<span
 						className={`text-[9px] ${isDark ? "text-gray-500" : "text-gray-400"}`}
+						style={{ color: secondaryColor }}
 					>
 						{secondary}
 					</span>

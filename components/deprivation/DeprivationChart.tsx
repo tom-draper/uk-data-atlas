@@ -1,6 +1,5 @@
 "use client";
 import type { ActiveViz, Dataset, SelectedArea } from "@lib/types";
-import { useIsDark } from "@/lib/context/ThemeContext";
 import DecileChart from "./DecileChart";
 
 /** The identity and wording of one national deprivation index. */
@@ -34,7 +33,6 @@ export function DeprivationChart({
 	detail: DeprivationDetail | null;
 	setActiveViz: (value: ActiveViz) => void;
 }) {
-	const isDark = useIsDark();
 	// A rank only means something for one area; the aggregate of a whole
 	// selection does not, so it is shown only alongside a selected area.
 	const showDetail =
@@ -49,16 +47,16 @@ export function DeprivationChart({
 			region={index.region}
 			decile={decile === null ? null : Math.round(decile)}
 			hasData={decile !== null}
-			footer={
-				showDetail ? (
-					<span
-						className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}
-					>
-						{detail.kind === "rank"
-							? `Rank ${Math.round(detail.value).toLocaleString()}`
-							: `Score ${detail.value.toFixed(1)}`}
-					</span>
-				) : null
+			detail={
+				showDetail
+					? {
+							value:
+								detail.kind === "rank"
+									? Math.round(detail.value).toLocaleString()
+									: detail.value.toFixed(1),
+							unit: detail.kind,
+						}
+					: null
 			}
 			isActive={
 				activeDataset?.type === index.datasetType &&

@@ -1,5 +1,4 @@
 "use client";
-import type { ReactNode } from "react";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { ChartCard } from "@/components/ChartCard";
 import { useChartsLoading } from "@/components/ChartLoadingPlaceholder";
@@ -23,7 +22,7 @@ interface DecileChartProps {
 	heading: string;
 	region: string;
 	decile: number | null;
-	footer: ReactNode;
+	detail: { value: string; unit: string } | null;
 	hasData: boolean;
 	isActive: boolean;
 	onClick: () => void;
@@ -34,7 +33,7 @@ export default function DecileChart({
 	heading,
 	region,
 	decile,
-	footer,
+	detail,
 	hasData,
 	isActive,
 	onClick,
@@ -47,6 +46,7 @@ export default function DecileChart({
 	const decileColor = displayDecile
 		? DECILE_COLORS[displayDecile - 1]
 		: "#9ca3af";
+	const primaryIsDecile = detail === null;
 
 	return (
 		<ChartCard
@@ -65,11 +65,13 @@ export default function DecileChart({
 		>
 			<ChartCardValueBar
 				hasData={showData}
-				value={displayDecile ?? ""}
-				unit="decile"
-				secondary={footer}
+				value={detail?.value ?? displayDecile ?? ""}
+				unit={detail?.unit ?? "decile"}
+				secondary={detail ? `Decile ${displayDecile}` : undefined}
 				barWidth={(displayDecile ?? 0) * 10}
 				barColor={decileColor}
+				valueColor={primaryIsDecile ? decileColor : undefined}
+				secondaryColor={detail ? decileColor : undefined}
 			/>
 		</ChartCard>
 	);
