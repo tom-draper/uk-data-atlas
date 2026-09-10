@@ -1,78 +1,28 @@
-// lib/utils/mapManager/layerManager.ts
-import {
-	Popup,
-	type GeoJSONSource,
-	type Map as MapLibreMap,
-} from "maplibre-gl";
-import type { FeatureCollection } from "geojson";
-import { BoundaryGeojson } from "@lib/types/geometry";
-import { Party, PartyCode } from "@lib/types/common";
-import { MapOptions } from "@lib/types/mapOptions";
-import { PARTIES } from "@/lib/data/election/parties";
-import { ETHNICITY_COLORS } from "../colorScale/ethnicityColors";
-import { getPercentageColorExpression } from "../colorScale/datasetColors";
-import { DEFAULT_COLOR } from "./featureBuilder";
-import type { PointTooltip } from "@/lib/types/custom";
+import type { Map as MapLibreMap } from "maplibre-gl";
+import type { BoundaryGeojson } from "@/lib/types/geometry";
+import type { MapOptions } from "@/lib/types/mapOptions";
 import type { MapLayer } from "./layers";
-import type { MapLayerMouseHandler } from "./callbacks";
-import {
-	featureProperty,
-	zoomInterpolate,
-	type FillPaintConfig,
-	type MapExpression,
-	type PaintValue,
-} from "./expressions";
+import type { FillPaintConfig } from "./expressions";
 import { valuePaint } from "../mapRendering/fillPaint";
-
-const SOURCE_ID = "location-wards";
-const FILL_LAYER_ID = "wards-fill";
-const LINE_LAYER_ID = "wards-line";
-const POINT_SOURCE_ID = "custom-points";
-const POINT_LAYER_ID = "custom-points-circle";
-const LEGACY_HEAT_LAYER_ID = "custom-points-heat";
-
-// Individual points appear only once they are distinct enough to be useful.
-const FADE_MIN_ZOOM = 6;
-const FADE_MAX_ZOOM = 9;
-
-// A fresh collection each time: MapLibre takes ownership of what it is given,
-// so a shared frozen constant would be the wrong thing to hand it.
-const emptyFeatureCollection = (): FeatureCollection => ({
-	type: "FeatureCollection",
-	features: [],
-});
+import { BoundaryLayerController } from "./boundaryLayers";
+import { LineLayerController } from "./lineLayers";
+import { PointLayerController } from "./pointLayers";
 
 /**
- * The collection handed to maplibre.
- *
- * GeoJSON allows a feature to carry no geometry, and one loaded from a
- * release's properties sidecar does — but only the vintage being drawn ever
- * reaches the map, and that one is always loaded with its coordinates.
- * maplibre's own types do not admit the null, so the assertion is made here,
- * once, at the edge rather than inside the render recipes.
+ * Public map-layer facade. Each controller owns one independent MapLibre
+ * resource family while callers retain the original, declarative API.
  */
-const asMapData = (geojson: BoundaryGeojson) =>
-	geojson as unknown as GeoJSON.FeatureCollection;
-
 export class LayerManager {
-	private lastFillPaint: FillPaintConfig | null = null;
-	private sourceGeojson: BoundaryGeojson | null = null;
-	// A paint that arrived while the style was mid-update, to apply once it
-	// settles. Only the newest is worth keeping: each one supersedes the last.
-	private deferredPaint: {
-		geojson: BoundaryGeojson;
-		paint: FillPaintConfig;
-		visibility: MapOptions["visibility"];
-	} | null = null;
-	private awaitingStyle = false;
-	private pointTooltip: PointTooltip | undefined;
-	private pointTooltipDark = false;
-	private pointTooltipHandlersAttached = false;
-	private pointPopup: Popup | null = null;
+	private readonly boundaries: BoundaryLayerController;
+	private readonly points: PointLayerController;
+	private readonly lines: LineLayerController;
 
-	constructor(private map: MapLibreMap) {}
+	constructor(private readonly map: MapLibreMap) {
+		this.boundaries = new BoundaryLayerController(map);
+		this.points = new PointLayerController(map);
+		this.lines = new LineLayerController(map);
+	}
 
-	/** Dispatches a declarative map layer to its renderer. */
 	render(layer: MapLayer): void {
 		switch (layer.kind) {
 			case "boundary-fill":
@@ -83,444 +33,60 @@ export class LayerManager {
 				);
 				return;
 			case "points":
-				this.updatePointLayers(
+				this.points.update(
 					layer.data,
 					layer.visibility,
-					"viridis",
 					layer.radius,
 					layer.tooltip,
 					layer.isDark,
 				);
 				return;
 			case "line":
-				this.updateLineLayer(layer);
+				this.lines.update(layer);
 				return;
 			case "vector-line":
-				this.updateVectorLineLayer(layer);
+				this.lines.updateVector(layer);
 				return;
 		}
 	}
 
-	/** Paints the boundary fill and outline with a prepared paint config. */
 	paintBoundaries(
 		geojson: BoundaryGeojson,
 		paint: FillPaintConfig,
 		visibility: MapOptions["visibility"],
 	): void {
-		this.lastFillPaint = paint;
-		// maplibre reports the style as unloaded while it is still working
-		// through an earlier update, so a paint can land in a window where
-		// nothing can be added to it. Returning here used to drop that paint
-		// entirely: the boundary layer stayed missing until something else
-		// happened to change, because the geojson the render is keyed to does
-		// not change again on its own. Hold it and apply it once the map goes
-		// idle. Rare when the geometry was already in memory; easy to hit now
-		// that it arrives asynchronously, a render at a time.
-		if (!this.map.isStyleLoaded()) {
-			this.deferredPaint = { geojson, paint, visibility };
-			if (!this.awaitingStyle) {
-				this.awaitingStyle = true;
-				this.map.once("idle", () => {
-					this.awaitingStyle = false;
-					const deferred = this.deferredPaint;
-					this.deferredPaint = null;
-					if (deferred) {
-						this.paintBoundaries(
-							deferred.geojson,
-							deferred.paint,
-							deferred.visibility,
-						);
-					}
-				});
-			}
-			return;
-		}
-		this.deferredPaint = null;
-
-		const sourceExists = !!this.map.getSource(SOURCE_ID);
-		const fillLayerExists = !!this.map.getLayer(FILL_LAYER_ID);
-		const lineLayerExists = !!this.map.getLayer(LINE_LAYER_ID);
-
-		if (sourceExists && fillLayerExists && lineLayerExists) {
-			if (this.sourceGeojson !== geojson) {
-				// Update source data in-place to avoid remove/add flash.
-				const src = this.map.getSource(SOURCE_ID) as GeoJSONSource;
-				src.setData(asMapData(geojson));
-				this.sourceGeojson = geojson;
-			}
-			this.applyVisibility(visibility);
-			return;
-		}
-
-		// First render: remove any partial state then build from scratch
-		this.removeExistingLayers();
-		this.addSource(geojson);
-		this.sourceGeojson = geojson;
-
-		this.map.addLayer({
-			id: FILL_LAYER_ID,
-			type: "fill",
-			source: SOURCE_ID,
-			paint: {
-				"fill-color": DEFAULT_COLOR,
-				"fill-opacity": 0,
-			},
-		});
-
-		this.map.addLayer({
-			id: LINE_LAYER_ID,
-			type: "line",
-			source: SOURCE_ID,
-			paint: {
-				"line-color": "#000",
-				"line-width": 1,
-				"line-opacity": 0,
-			},
-		});
-		this.applyVisibility(visibility);
+		this.boundaries.paint(geojson, paint, visibility);
 	}
 
 	updateVisibility(visibility: MapOptions["visibility"]): void {
-		if (!this.map.isStyleLoaded() || !this.lastFillPaint) return;
-		this.applyVisibility(visibility);
-	}
-
-	private applyVisibility(visibility: MapOptions["visibility"]): void {
-		if (!this.lastFillPaint) return;
-		if (
-			!this.map.getLayer(FILL_LAYER_ID) ||
-			!this.map.getLayer(LINE_LAYER_ID)
-		)
-			return;
-
-		const overlayOpacity = visibility.overlayOpacity ?? 0.6;
-		const hidden = visibility.hideBoundaryLayer;
-		const fillColor = hidden
-			? "transparent"
-			: visibility.hideDataLayer
-				? DEFAULT_COLOR
-				: this.lastFillPaint.color;
-		const fillOpacity = hidden
-			? 0
-			: visibility.hideDataLayer
-				? overlayOpacity
-				: this.lastFillPaint.opacity(overlayOpacity);
-
-		this.map.setPaintProperty(FILL_LAYER_ID, "fill-color", fillColor);
-		this.map.setPaintProperty(FILL_LAYER_ID, "fill-opacity", fillOpacity);
-		this.map.setPaintProperty(
-			LINE_LAYER_ID,
-			"line-color",
-			hidden ? "transparent" : "#000",
-		);
-		this.map.setPaintProperty(
-			LINE_LAYER_ID,
-			"line-opacity",
-			hidden || visibility.hideBorders ? 0 : 0.05,
-		);
-	}
-
-	// --- Custom point datasets (coordinates / postcodes) ---
-
-	updatePointLayers(
-		collection: GeoJSON.FeatureCollection,
-		visibility: MapOptions["visibility"],
-		_themeId: string,
-		radius: { min: number; max: number } = { min: 3, max: 7 },
-		tooltip?: PointTooltip,
-		isDark = false,
-	): void {
-		if (!this.map.isStyleLoaded()) return;
-		// Remove the old aggregate layer during hot reloads or after switching
-		// from an earlier version of the point renderer.
-		if (this.map.getLayer(LEGACY_HEAT_LAYER_ID)) {
-			this.map.removeLayer(LEGACY_HEAT_LAYER_ID);
-		}
-
-		const existing = this.map.getSource(POINT_SOURCE_ID) as
-			GeoJSONSource | undefined;
-		if (existing) {
-			existing.setData(collection);
-		} else {
-			this.map.addSource(POINT_SOURCE_ID, {
-				type: "geojson",
-				data: collection,
-			});
-			this.map.addLayer({
-				id: POINT_LAYER_ID,
-				type: "circle",
-				source: POINT_SOURCE_ID,
-				paint: {
-					"circle-radius": radius.min,
-					"circle-color": featureProperty("color"),
-				},
-			});
-		}
-
-		this.map.setPaintProperty(
-			POINT_LAYER_ID,
-			"circle-radius",
-			zoomInterpolate([
-				[FADE_MIN_ZOOM, radius.min],
-				[10, radius.max],
-			]),
-		);
-		this.pointTooltip = tooltip;
-		this.pointTooltipDark = isDark;
-		this.pointPopup?.removeClassName("atlas-point-popup--dark");
-		if (isDark) this.pointPopup?.addClassName("atlas-point-popup--dark");
-		if (tooltip?.fields.length) {
-			this.addPointTooltipHandlers();
-		} else {
-			this.removePointTooltipHandlers();
-		}
-
-		const o = visibility.overlayOpacity ?? 0.6;
-		const circleMax = visibility.hideDataLayer ? 0 : Math.min(1, o + 0.3);
-		// Circles fade in as we zoom past FADE_MIN_ZOOM.
-		this.map.setPaintProperty(
-			POINT_LAYER_ID,
-			"circle-opacity",
-			zoomInterpolate([
-				[FADE_MIN_ZOOM, 0],
-				[FADE_MAX_ZOOM, circleMax],
-			]),
-		);
+		this.boundaries.updateVisibility(visibility);
 	}
 
 	clearPointLayers(): void {
-		this.removePointTooltipHandlers();
-		if (this.map.getLayer(POINT_LAYER_ID))
-			this.map.removeLayer(POINT_LAYER_ID);
-		if (this.map.getLayer(LEGACY_HEAT_LAYER_ID))
-			this.map.removeLayer(LEGACY_HEAT_LAYER_ID);
-		if (this.map.getSource(POINT_SOURCE_ID))
-			this.map.removeSource(POINT_SOURCE_ID);
-	}
-
-	private updateLineLayer(layer: Extract<MapLayer, { kind: "line" }>): void {
-		if (!this.map.isStyleLoaded()) return;
-		const sourceId = `atlas-line-${layer.id}`;
-		const layerId = `${sourceId}-stroke`;
-		const source = this.map.getSource(sourceId) as
-			GeoJSONSource | undefined;
-		if (source) {
-			source.setData(layer.data);
-		} else {
-			this.map.addSource(sourceId, {
-				type: "geojson",
-				data: layer.data,
-			});
-			this.map.addLayer({
-				id: layerId,
-				type: "line",
-				source: sourceId,
-				paint: {
-					"line-color": layer.style.color,
-					"line-width": layer.style.width,
-				},
-			});
-		}
-
-		this.map.setPaintProperty(layerId, "line-color", layer.style.color);
-		this.map.setPaintProperty(layerId, "line-width", layer.style.width);
-		this.map.setPaintProperty(
-			layerId,
-			"line-opacity",
-			layer.visibility.hideDataLayer ? 0 : (layer.style.opacity ?? 1),
-		);
-	}
-
-	private updateVectorLineLayer(
-		layer: Extract<MapLayer, { kind: "vector-line" }>,
-	): void {
-		if (!this.map.isStyleLoaded()) return;
-		const sourceId = `atlas-vector-line-${layer.id}`;
-		const layerId = `${sourceId}-stroke`;
-		if (!this.map.getSource(sourceId)) {
-			this.map.addSource(sourceId, {
-				type: "vector",
-				tiles: layer.source.tiles,
-				minzoom: layer.source.minzoom,
-				maxzoom: layer.source.maxzoom,
-				attribution: layer.source.attribution,
-			});
-		}
-		if (!this.map.getLayer(layerId)) {
-			this.map.addLayer({
-				id: layerId,
-				type: "line",
-				source: sourceId,
-				"source-layer": layer.source.sourceLayer,
-				paint: {
-					"line-color": layer.style.color,
-					"line-width": layer.style.width,
-				},
-			});
-		}
-
-		this.map.setPaintProperty(layerId, "line-color", layer.style.color);
-		this.map.setPaintProperty(layerId, "line-width", layer.style.width);
-		this.map.setPaintProperty(
-			layerId,
-			"line-opacity",
-			layer.visibility.hideDataLayer ? 0 : (layer.style.opacity ?? 1),
-		);
-		this.map.setFilter(layerId, layer.filter ?? null);
+		this.points.clear();
 	}
 
 	clearLineLayer(id: string, vector = false): void {
-		const sourceId = `${vector ? "atlas-vector-line" : "atlas-line"}-${id}`;
-		const layerId = `${sourceId}-stroke`;
-		if (this.map.getLayer(layerId)) this.map.removeLayer(layerId);
-		if (this.map.getSource(sourceId)) this.map.removeSource(sourceId);
+		this.lines.clear(id, vector);
 	}
 
-	/**
-	 * Counts a vector-line layer's currently rendered features by a tile
-	 * property, for an on-screen breakdown (e.g. the roads chart card). Only
-	 * covers what's actually drawn in the viewport right now, not the dataset
-	 * as a whole, and respects any active `filter` (e.g. a legend isolation).
-	 */
 	countRenderedFeaturesByProperty(
 		id: string,
 		property: string,
 	): Record<string, number> | null {
-		const layerId = `atlas-vector-line-${id}-stroke`;
-		if (!this.map.getLayer(layerId)) return null;
-
-		const counts: Record<string, number> = {};
-		for (const feature of this.map.queryRenderedFeatures({
-			layers: [layerId],
-		})) {
-			const value = feature.properties?.[property];
-			const key = typeof value === "string" ? value : "Unknown";
-			counts[key] = (counts[key] ?? 0) + 1;
-		}
-		return counts;
+		return this.lines.countRenderedFeaturesByProperty(id, property);
 	}
 
-	/** Subscribes to the map settling after a render/pan/zoom; returns an unsubscribe function. */
 	onIdle(callback: () => void): () => void {
 		this.map.on("idle", callback);
 		return () => this.map.off("idle", callback);
 	}
 
-	private addPointTooltipHandlers(): void {
-		if (this.pointTooltipHandlersAttached) return;
-		this.map.on("mouseenter", POINT_LAYER_ID, this.handlePointMouseEnter);
-		this.map.on("mouseleave", POINT_LAYER_ID, this.handlePointMouseLeave);
-		this.pointTooltipHandlersAttached = true;
-	}
-
-	private removePointTooltipHandlers(): void {
-		if (!this.pointTooltipHandlersAttached) return;
-		this.map.off("mouseenter", POINT_LAYER_ID, this.handlePointMouseEnter);
-		this.map.off("mouseleave", POINT_LAYER_ID, this.handlePointMouseLeave);
-		this.pointTooltipHandlersAttached = false;
-		this.pointTooltip = undefined;
-		this.pointTooltipDark = false;
-		this.pointPopup?.remove();
-	}
-
-	private handlePointMouseEnter: MapLayerMouseHandler = (event) => {
-		if (this.map.getZoom() < FADE_MAX_ZOOM || !this.pointTooltip) return;
-		const properties = event.features?.[0]?.properties as
-			Record<string, string | number> | undefined;
-		if (!properties) return;
-
-		this.map.getCanvas().style.cursor = "pointer";
-		const content = document.createElement("div");
-		content.className = "atlas-point-popup__body";
-		const heading = document.createElement("p");
-		heading.className = "atlas-point-popup__heading";
-		heading.textContent = this.pointTooltip.title;
-		content.appendChild(heading);
-
-		this.pointTooltip.fields.forEach((field, index) => {
-			const value = properties[`detail${index}`];
-			if (value === undefined || value === "") return;
-			const row = document.createElement("div");
-			row.className = "atlas-point-popup__row";
-			const label = document.createElement("span");
-			label.className = "atlas-point-popup__label";
-			label.textContent = field;
-			const detail = document.createElement("span");
-			detail.className = "atlas-point-popup__value";
-			detail.textContent = String(value);
-			row.append(label, detail);
-			content.appendChild(row);
-		});
-
-		if (!this.pointPopup) {
-			this.pointPopup = new Popup({
-				closeButton: false,
-				closeOnClick: false,
-				offset: 8,
-			}).addClassName("atlas-point-popup");
-			if (this.pointTooltipDark) {
-				this.pointPopup.addClassName("atlas-point-popup--dark");
-			}
-		}
-		this.pointPopup
-			.setLngLat(event.lngLat)
-			.setDOMContent(content)
-			.addTo(this.map);
-	};
-
-	private handlePointMouseLeave: MapLayerMouseHandler = () => {
-		this.map.getCanvas().style.cursor = "";
-		this.pointPopup?.remove();
-	};
-
-	// Blanks the choropleth fill/line without tearing the source down — used when
-	// switching to a point dataset so stale boundary data doesn't linger beneath.
 	clearBoundaryData(): void {
-		this.sourceGeojson = null;
-		const src = this.map.getSource(SOURCE_ID) as GeoJSONSource | undefined;
-		if (src) src.setData(emptyFeatureCollection());
+		this.boundaries.clear();
 	}
-
-	private static readonly BASE_BOUNDARY_LAYERS = [
-		"boundary_county",
-		"boundary_state",
-		"boundary_country_outline",
-		"boundary_country_inner",
-	];
 
 	setBorderVisibility(hidden: boolean): void {
-		if (!this.map.isStyleLoaded()) return;
-		const opacity = hidden ? 0 : 1;
-		if (this.map.getLayer(LINE_LAYER_ID)) {
-			this.map.setPaintProperty(
-				LINE_LAYER_ID,
-				"line-opacity",
-				hidden ? 0 : 0.05,
-			);
-		}
-		for (const layerId of LayerManager.BASE_BOUNDARY_LAYERS) {
-			if (this.map.getLayer(layerId)) {
-				this.map.setPaintProperty(layerId, "line-opacity", opacity);
-			}
-		}
-	}
-
-	private removeExistingLayers(): void {
-		this.sourceGeojson = null;
-		const source = this.map.getSource(SOURCE_ID);
-		if (source) {
-			if (this.map.getLayer(FILL_LAYER_ID))
-				this.map.removeLayer(FILL_LAYER_ID);
-			if (this.map.getLayer(LINE_LAYER_ID))
-				this.map.removeLayer(LINE_LAYER_ID);
-			this.map.removeSource(SOURCE_ID);
-		}
-	}
-
-	private addSource(geojson: BoundaryGeojson): void {
-		this.map.addSource(SOURCE_ID, {
-			type: "geojson",
-			data: asMapData(geojson),
-		});
+		this.boundaries.setBorderVisibility(hidden);
 	}
 }

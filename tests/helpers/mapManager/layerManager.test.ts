@@ -5,12 +5,21 @@ import {
 	valuePaint,
 } from "@/lib/helpers/mapRendering/fillPaint";
 
-function createMap() {
+function createMap(styleLoaded = true) {
 	const sources = new Map<string, { setData: ReturnType<typeof vi.fn> }>();
 	const layers = new Set<string>();
+	let isStyleLoaded = styleLoaded;
+	let idleCallback: (() => void) | undefined;
 
 	return {
-		isStyleLoaded: () => true,
+		isStyleLoaded: () => isStyleLoaded,
+		setStyleLoaded: (loaded: boolean) => {
+			isStyleLoaded = loaded;
+		},
+		once: vi.fn((_event: string, callback: () => void) => {
+			idleCallback = callback;
+		}),
+		triggerIdle: () => idleCallback?.(),
 		getSource: (id: string) => sources.get(id),
 		getLayer: (id: string) => (layers.has(id) ? { id } : undefined),
 		addSource: (id: string) => sources.set(id, { setData: vi.fn() }),
@@ -197,5 +206,35 @@ describe("LayerManager visibility updates", () => {
 			"fill-color",
 			["interpolate", ["linear"], ["get", "value"], 0, "#000", 1, "#fff"],
 		);
+	});
+
+	it("retries the latest boundary paint once a pending style becomes ready", () => {
+		const map = createMap(false);
+		const manager = new LayerManager(map as any);
+		const visibility = {
+			hideDataLayer: false,
+			hideBorders: false,
+			hideBoundaryLayer: false,
+			hideOverlay: false,
+			overlayOpacity: 0.6,
+		};
+
+		manager.paintBoundaries(
+			{
+				type: "FeatureCollection",
+				crs: { type: "name", properties: { name: "CRS84" } },
+				features: [],
+			} as any,
+			featureColorPaint(),
+			visibility,
+		);
+
+		expect(map.getLayer("wards-fill")).toBeUndefined();
+		expect(map.once).toHaveBeenCalledWith("idle", expect.any(Function));
+
+		map.setStyleLoaded(true);
+		map.triggerIdle();
+
+		expect(map.getLayer("wards-fill")).toBeDefined();
 	});
 });
