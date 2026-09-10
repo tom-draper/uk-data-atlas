@@ -19,6 +19,8 @@ interface DynamicRangeLegendProps extends RangeLegendControls {
 	datasetKey: ColorRangeDatasetKey;
 	absoluteRange: { min: number; max: number };
 	defaultRange: { min: number; max: number };
+	/** A data-derived initial range, superseded once the visitor adjusts it. */
+	currentRange?: { min: number; max: number };
 	formatLabel?: (value: number) => string;
 }
 
@@ -27,6 +29,7 @@ export function DynamicRangeLegend({
 	datasetKey,
 	absoluteRange,
 	defaultRange,
+	currentRange,
 	formatLabel = defaultFormatLabel,
 	displayOptions,
 	verticalThemeGradient,
@@ -35,9 +38,13 @@ export function DynamicRangeLegend({
 	onRangeChangeEnd,
 }: DynamicRangeLegendProps) {
 	const currentMin =
-		displayOptions[datasetKey].colorRange?.min ?? defaultRange.min;
+		currentRange?.min ??
+		displayOptions[datasetKey].colorRange?.min ??
+		defaultRange.min;
 	const currentMax =
-		displayOptions[datasetKey].colorRange?.max ?? defaultRange.max;
+		currentRange?.max ??
+		displayOptions[datasetKey].colorRange?.max ??
+		defaultRange.max;
 	const labels = [
 		formatLabel(currentMax),
 		formatLabel((currentMax - currentMin) * 0.75 + currentMin),

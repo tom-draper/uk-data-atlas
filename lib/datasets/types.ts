@@ -33,10 +33,9 @@ export interface ChartDatasetMap<T = unknown> {
 	// (matches updateGenericMap's default). Rank-based datasets, where a
 	// low rank means "most deprived", set this false to flip that.
 	invertColor?: boolean;
-	// Overrides `colorRange` on the map with a range computed from the
-	// dataset itself, for datasets whose scale isn't a fixed, user-tunable
-	// range (e.g. life expectancy's years, which just spans whatever the
-	// current data covers).
+	// Provides the data-derived range used until a visitor adjusts the shared
+	// colour-range control. This keeps datasets with different natural scales
+	// useful on first load without disabling the legend handles.
 	getColorRange?(dataset: T): { min: number; max: number };
 }
 
