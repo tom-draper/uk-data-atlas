@@ -126,11 +126,10 @@ export default function GeneralElectionResultChart({
 	const datasetId = `generalElection-${data.year}`;
 	const winnerColor = data.partyData[0]?.color;
 
-	const heightClass = isActive
-		? data.isAggregated
-			? "min-h-[205px]"
-			: "min-h-[95px]"
-		: "min-h-[65px]";
+	// An active general-election card can show the national seats breakdown.
+	// Reserve that compact layout from the loading state onwards so hovering a
+	// constituency cannot move every card below it.
+	const heightClass = isActive ? "min-h-[205px]" : "min-h-[65px]";
 
 	const accentColor = winnerColor ?? "#6366f1";
 	return (
