@@ -16,6 +16,7 @@ import type {
 	AggregationCache,
 	BoundaryCodeDetector,
 	BoundaryCodeScope,
+	BoundaryAggregationSpec,
 } from "./ports";
 import {
 	aggregateAirQuality,
@@ -32,7 +33,6 @@ import { aggregateNHSWaiting } from "./health";
 import { aggregatePopulation } from "./population";
 import {
 	aggregateCrime,
-	aggregateCustomDataset,
 	aggregateHousePrices,
 	aggregateIncome,
 	aggregateUnemployment,
@@ -142,6 +142,28 @@ export class DatasetAggregator {
 				geojson.features,
 				this.propertyDetector.detect(scope, geojson.features),
 			),
+		);
+	}
+
+	/**
+	 * Run a dataset-owned aggregation specification through the shared boundary
+	 * code detection and cache. New datasets no longer need a method added to
+	 * this facade: they declare one of these small specs beside their reducer.
+	 */
+	aggregate<T, R>(
+		spec: BoundaryAggregationSpec<T, R>,
+		geojson: BoundaryGeojson,
+		data: T,
+		location: string | null,
+		datasetId: string | null,
+	): R {
+		return this.byBoundary(
+			spec.cacheKey,
+			spec.scope,
+			geojson,
+			location,
+			datasetId,
+			(features, codeProp) => spec.aggregate(features, codeProp, data),
 		);
 	}
 
@@ -325,23 +347,6 @@ export class DatasetAggregator {
 					codeProp,
 					constituencyData,
 				),
-		);
-	}
-
-	calculateCustomDatasetStats(
-		geojson: BoundaryGeojson,
-		data: Record<string, number>,
-		location: string | null,
-		datasetId: string | null,
-	) {
-		return this.byBoundary(
-			"custom-dataset",
-			"any",
-			geojson,
-			location,
-			datasetId,
-			(features, codeProp) =>
-				aggregateCustomDataset(features, codeProp, data),
 		);
 	}
 
