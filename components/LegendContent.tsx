@@ -79,7 +79,8 @@ export default function LegendContent({
 			displayOptions,
 		);
 		const configuredRange =
-			displayOptions[activeDataset.type as ColorRangeDatasetKey].colorRange;
+			displayOptions[activeDataset.type as ColorRangeDatasetKey]
+				.colorRange;
 		const usesInitialRange =
 			dynamicRange &&
 			configuredRange.min === colorRange.min &&
