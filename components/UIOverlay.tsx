@@ -2,6 +2,7 @@ import { useMemo, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import ControlPanel from "@components/ControlPanel";
 import LegendPanel from "@components/LegendPanel";
+import { ChartPanelShell } from "@components/ChartPanelShell";
 import type {
 	ActiveViz,
 	BoundaryData,
@@ -23,13 +24,19 @@ const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
 
 function ChartPanelLoading() {
 	return (
-		<div
-			className="pointer-events-auto flex h-full w-[320px] flex-col p-2.5"
-			role="status"
-			aria-label="Loading data panel"
-		>
-			<div className="h-full min-h-80 animate-pulse rounded-md bg-black/10" />
-		</div>
+		<ChartPanelShell>
+			{() => (
+				<div
+					className="space-y-2.5 flex-1 px-2.5 overflow-hidden"
+					role="status"
+					aria-label="Loading data panel"
+				>
+					<div className="chart-shimmer h-16" />
+					<div className="chart-shimmer h-16" />
+					<div className="chart-shimmer h-16" />
+				</div>
+			)}
+		</ChartPanelShell>
 	);
 }
 

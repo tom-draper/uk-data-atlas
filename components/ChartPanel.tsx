@@ -10,19 +10,15 @@ import {
 import { CustomDataset } from "@/lib/types/custom";
 import { NetworkDataset } from "@/lib/types/network";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import { useState, useDeferredValue } from "react";
+import { useDeferredValue } from "react";
 import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import TransportSection from "./transport/TransportSection";
 import CustomSection from "./custom/CustomSection";
 import ChartSections from "./ChartSections";
-import { useIsDark } from "@/lib/context/ThemeContext";
-import { glassStyle } from "@/lib/helpers/panelTheme";
-import GlassOverlays from "./GlassOverlays";
 import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
 import { ChartVisibilityProvider } from "@/lib/context/ChartVisibilityContext";
 import ChartSettings from "./ChartSettings";
-import PanelHeader from "./PanelHeader";
-import PanelFooter from "./PanelFooter";
+import { ChartPanelShell } from "./ChartPanelShell";
 
 interface ChartPanelProps {
 	selectedArea: SelectedArea | null;
@@ -57,72 +53,53 @@ function ChartPanelContent({
 	mapManager,
 	location,
 }: ChartPanelProps) {
-	const isDark = useIsDark();
-	const [settingsOpen, setSettingsOpen] = useState(false);
 	const deferredArea = useDeferredValue(selectedArea);
-	const toggleSettings = () => setSettingsOpen((o) => !o);
 
 	return (
-		<div className="pointer-events-auto p-2.5 flex flex-col h-full w-[320px]">
-			<div
-				className={`rounded-md h-full flex flex-col relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
-				style={glassStyle(isDark)}
-			>
-				<GlassOverlays isDark={isDark} />
-				<div
-					className="relative flex flex-col h-full"
-					style={{ zIndex: 1 }}
-				>
-					<PanelHeader
-						settingsOpen={settingsOpen}
-						onToggleSettings={toggleSettings}
-					/>
-
-					{settingsOpen ? (
-						<ChartSettings />
-					) : (
-						<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container [&>*:first-child]:border-t-0">
-							<ChartLoadingProvider loading={chartsLoading}>
-								<ChartSections
-									activeDataset={activeDataset}
-									datasets={datasets}
-									selectedArea={deferredArea}
-									codeMapper={codeMapper}
-									activeViz={activeViz}
-									setActiveViz={setActiveViz}
-									aggregator={
-										mapManager?.datasetAggregator ?? null
-									}
-									boundaryData={boundaryData}
-									location={location}
-								/>
-								<TransportSection
-									roadSafetyDatasets={roadSafetyDatasets}
-									networkDatasets={networkDatasets}
-									activeViz={activeViz}
-									setActiveViz={setActiveViz}
-									location={location}
-									mapManager={mapManager}
-								/>
-								<CustomSection
-									customDatasets={customDatasets}
-									addCustomDataset={addCustomDataset}
-									selectedArea={deferredArea}
-									activeViz={activeViz}
-									setActiveViz={setActiveViz}
-									codeMapper={codeMapper}
-									mapManager={mapManager}
-									boundaryData={boundaryData}
-									location={location}
-								/>
-							</ChartLoadingProvider>
-						</div>
-					)}
-
-					<PanelFooter />
-				</div>
-			</div>
-		</div>
+		<ChartPanelShell>
+			{(settingsOpen) =>
+				settingsOpen ? (
+					<ChartSettings />
+				) : (
+					<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container [&>*:first-child]:border-t-0">
+						<ChartLoadingProvider loading={chartsLoading}>
+							<ChartSections
+								activeDataset={activeDataset}
+								datasets={datasets}
+								selectedArea={deferredArea}
+								codeMapper={codeMapper}
+								activeViz={activeViz}
+								setActiveViz={setActiveViz}
+								aggregator={
+									mapManager?.datasetAggregator ?? null
+								}
+								boundaryData={boundaryData}
+								location={location}
+							/>
+							<TransportSection
+								roadSafetyDatasets={roadSafetyDatasets}
+								networkDatasets={networkDatasets}
+								activeViz={activeViz}
+								setActiveViz={setActiveViz}
+								location={location}
+								mapManager={mapManager}
+							/>
+							<CustomSection
+								customDatasets={customDatasets}
+								addCustomDataset={addCustomDataset}
+								selectedArea={deferredArea}
+								activeViz={activeViz}
+								setActiveViz={setActiveViz}
+								codeMapper={codeMapper}
+								mapManager={mapManager}
+								boundaryData={boundaryData}
+								location={location}
+							/>
+						</ChartLoadingProvider>
+					</div>
+				)
+			}
+		</ChartPanelShell>
 	);
 }
 
