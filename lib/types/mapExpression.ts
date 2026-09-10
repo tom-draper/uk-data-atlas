@@ -5,5 +5,4 @@ export type MapExpression = ExpressionSpecification;
 
 /** A literal paint value or an expression resolved by MapLibre. */
 export type PaintValue<T extends string | number = string | number> =
-	| T
-	| MapExpression;
+	T | MapExpression;
