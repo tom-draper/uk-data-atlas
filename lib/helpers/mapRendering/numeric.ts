@@ -20,6 +20,7 @@ export type NumericDataset = {
 export interface NumericMapConfig<T extends NumericDataset> {
 	valueKey?: string;
 	valueFor?(dataset: T, code: string, mapOptions: MapOptions): number | null;
+	colorRange?: ColorRange;
 	invertColor?: boolean;
 	getColorRange?(dataset: T): ColorRange;
 }
@@ -88,8 +89,18 @@ export function renderNumericDataset<T extends NumericDataset>(
 				? value
 				: null;
 		},
-		(data, options) =>
-			map.getColorRange?.(data) ?? options[dataset.type].colorRange,
+		(data, options) => {
+			const configuredRange = options[dataset.type].colorRange;
+			if (
+				map.getColorRange &&
+				map.colorRange &&
+				configuredRange.min === map.colorRange.min &&
+				configuredRange.max === map.colorRange.max
+			) {
+				return map.getColorRange(data);
+			}
+			return configuredRange;
+		},
 		map.invertColor,
 	);
 }

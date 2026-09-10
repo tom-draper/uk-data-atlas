@@ -75,6 +75,12 @@ export default function LegendContent({
 	if (chartDefinition?.map) {
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
 		const dynamicRange = getColorRange?.(activeDataset as never);
+		const configuredRange =
+			displayOptions[activeDataset.type as ColorRangeDatasetKey].colorRange;
+		const usesInitialRange =
+			dynamicRange &&
+			configuredRange.min === colorRange.min &&
+			configuredRange.max === colorRange.max;
 		return (
 			<DynamicRangeLegend
 				{...rangeControls}
@@ -88,6 +94,7 @@ export default function LegendContent({
 					max: dynamicRange?.max ?? colorRange.max,
 				}}
 				formatLabel={legend.format}
+				currentRange={usesInitialRange ? dynamicRange : undefined}
 			/>
 		);
 	}

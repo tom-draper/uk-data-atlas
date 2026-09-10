@@ -7,6 +7,7 @@ import {
 	renderPopulationDensity,
 	type MapRenderContext,
 } from "@/lib/helpers/mapRendering";
+import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
 import { childPovertyDefinition } from "@/lib/datasets/childPoverty";
 
 // The recipes only need a MapRenderContext, so they can be exercised without a
@@ -161,6 +162,43 @@ describe("renderNumericDataset", () => {
 		const valueFor = featureBuilder.buildValueFeatures.mock.calls[0][2];
 		expect(valueFor("E06000001", {})).toBe(25);
 		expect(valueFor("missing", {})).toBeNull();
+	});
+
+	it("uses a data-derived range until a legend adjustment is configured", () => {
+		const { ctx, layerManager } = fakeContext();
+		const dataset = {
+			type: "childPoverty",
+			boundaryType: "localAuthority",
+			data: { E06000001: { value: 25 } },
+		} as never;
+		const map = {
+			valueKey: "value",
+			colorRange: { min: 20, max: 80 },
+			getColorRange: () => ({ min: 40, max: 60 }),
+		};
+		const initialOptions = {
+			...DEFAULT_MAP_OPTIONS,
+			childPoverty: { colorRange: { min: 20, max: 80 } },
+		};
+
+		renderNumericDataset(ctx, geojson, dataset, initialOptions, map);
+		expect(layerManager.render.mock.calls[0][0].colorExpression).toEqual(
+			getSequentialColorExpression({ min: 40, max: 60 }, "viridis"),
+		);
+
+		renderNumericDataset(
+			ctx,
+			geojson,
+			dataset,
+			{
+				...initialOptions,
+				childPoverty: { colorRange: { min: 45, max: 55 } },
+			},
+			map,
+		);
+		expect(layerManager.render.mock.calls[1][0].colorExpression).toEqual(
+			getSequentialColorExpression({ min: 45, max: 55 }, "viridis"),
+		);
 	});
 });
 
