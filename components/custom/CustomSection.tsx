@@ -10,7 +10,7 @@ import {
 import type { SelectedCustomArea } from "./types";
 import { BoundaryData } from "@lib/types/boundaries";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { WardDataResolver } from "@/lib/data/boundaries/codeMapper";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { CustomDatasetCard } from "./CustomDatasetCard";
 import { UploadModal } from "./UploadModal";
@@ -31,7 +31,7 @@ export default function CustomSection({
 	selectedArea: SelectedCustomArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper?: CodeMapper;
+	codeMapper?: WardDataResolver;
 	mapManager: MapManager | null;
 	boundaryData: BoundaryData;
 	location: string | null;

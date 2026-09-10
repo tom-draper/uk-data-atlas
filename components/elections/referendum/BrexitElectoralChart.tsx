@@ -6,7 +6,7 @@ import {
 	BrexitLADDataset,
 	SelectedArea,
 } from "@lib/types";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -19,7 +19,7 @@ interface BrexitChartProps {
 	availableDatasets: Record<string, BrexitLADDataset>;
 	aggregatedData: Record<number, AggregatedBrexitData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -32,7 +32,7 @@ function computeBrexitElectoralStats(
 	dataset: BrexitLADDataset,
 	aggregatedData: Record<number, AggregatedBrexitData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 	year: number,
 ) {
 	if (

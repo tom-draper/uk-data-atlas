@@ -8,7 +8,7 @@ import {
 } from "@lib/types";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 
 interface ClaimantCountChartProps {
 	activeDataset: Dataset | null;
@@ -16,7 +16,7 @@ interface ClaimantCountChartProps {
 	aggregatedData: Record<number, AggregatedClaimantCountData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -32,7 +32,7 @@ function computeStats(
 	dataset: ClaimantCountDataset,
 	aggregatedData: Record<number, AggregatedClaimantCountData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 ): AggregatedClaimantCountData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 

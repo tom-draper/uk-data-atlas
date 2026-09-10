@@ -12,7 +12,7 @@ import type {
 import type { CustomDataset } from "@/lib/types/custom";
 import type { NetworkDataset } from "@/lib/types/network";
 import { MapOptions } from "@/lib/types/mapOptions";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { PanelContext } from "@/lib/context/PanelContext";
 import { ExcludedCategoriesContext } from "@/lib/context/ExcludedCategoriesContext";

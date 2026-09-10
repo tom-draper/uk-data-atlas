@@ -6,7 +6,7 @@ import {
 	LocalElectionDataset,
 	SelectedArea,
 } from "@lib/types";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { computeLocalElectionYearData } from "@/lib/helpers/localElection";
 import LocalElectionResultChart from "./LocalElectionResultChart";
@@ -16,7 +16,7 @@ interface LocalElectionRegistryChartProps {
 	availableDatasets: Record<string, LocalElectionDataset>;
 	aggregatedData: Record<number, AggregatedLocalElectionData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: PopulationCodeResolver;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;

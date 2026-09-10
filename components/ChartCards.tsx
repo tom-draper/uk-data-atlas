@@ -5,7 +5,7 @@ import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
 import { getChartPresentation } from "@/lib/datasets/generatedCharts";
 import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
-import type { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import type { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
 import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
 import type { BoundaryData } from "@/lib/types/boundaries";

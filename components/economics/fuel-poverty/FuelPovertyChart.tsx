@@ -6,7 +6,6 @@ import {
 	FuelPovertyDataset,
 	SelectedArea,
 } from "@lib/types";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
@@ -17,7 +16,6 @@ interface Props {
 	aggregatedData: Record<number, AggregatedFuelPovertyData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

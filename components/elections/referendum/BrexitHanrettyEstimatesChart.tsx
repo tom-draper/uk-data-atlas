@@ -7,7 +7,6 @@ import {
 	SelectedArea,
 } from "@lib/types";
 
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -20,7 +19,6 @@ interface BrexitHanrettyEstimatesChartProps {
 	availableDatasets: Record<string, BrexitConstituencyDataset>;
 	aggregatedData: Record<number, AggregatedBrexitData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;

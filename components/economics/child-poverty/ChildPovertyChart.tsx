@@ -8,7 +8,7 @@ import {
 } from "@lib/types";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 
 interface ChildPovertyChartProps {
 	activeDataset: Dataset | null;
@@ -16,7 +16,7 @@ interface ChildPovertyChartProps {
 	aggregatedData: Record<number, AggregatedChildPovertyData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -38,7 +38,7 @@ function statsFor(
 	dataset: ChildPovertyDataset,
 	aggregatedData: Record<number, AggregatedChildPovertyData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper?: CodeMapper,
+	codeMapper?: CodeYearResolver,
 ): AggregatedChildPovertyData | null {
 	if (!selectedArea) return aggregatedData?.[dataset.year] ?? null;
 	const code =

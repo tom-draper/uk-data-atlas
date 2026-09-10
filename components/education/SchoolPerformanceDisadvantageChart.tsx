@@ -9,7 +9,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 
 interface SchoolPerformanceDisadvantageChartProps {
 	activeDataset: Dataset | null;
@@ -17,7 +17,7 @@ interface SchoolPerformanceDisadvantageChartProps {
 	aggregatedData: Record<number, AggregatedSchoolPerformanceGapData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -36,7 +36,7 @@ function computeStats(
 	dataset: SchoolPerformanceGapDataset,
 	aggregatedData: Record<number, AggregatedSchoolPerformanceGapData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 ): AggregatedSchoolPerformanceGapData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 

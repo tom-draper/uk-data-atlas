@@ -1,5 +1,5 @@
 import { PopulationDataset, PopulationWardData } from "../types/population";
-import { CodeMapper } from "../hooks/useCodeMapper";
+import type { CodeYearResolver } from "../data/boundaries/codeMapper";
 
 const MAX_LAD_CACHE_ENTRIES = 50;
 const datasetCacheIds = new WeakMap<object, number>();
@@ -17,7 +17,7 @@ const datasetCacheId = (dataset: object) => {
 export function resolveWardData(
 	dataset: PopulationDataset,
 	wardCode: string,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 ): PopulationWardData | undefined {
 	let wardData = dataset.data[wardCode];
 	if (!wardData && codeMapper?.getCodeForYear) {

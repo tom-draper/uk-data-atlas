@@ -12,7 +12,7 @@ import {
 } from "@/lib/types";
 import { calculateTotal } from "@/lib/helpers/population";
 import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -30,7 +30,7 @@ interface PopulationDensityChartProps {
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: PopulationCodeResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

@@ -10,7 +10,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 
 interface HomelessnessChartProps {
 	activeDataset: Dataset | null;
@@ -18,7 +18,7 @@ interface HomelessnessChartProps {
 	aggregatedData: Record<number, AggregatedHomelessnessData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -40,7 +40,7 @@ function computeStats(
 	dataset: HomelessnessDataset,
 	aggregatedData: Record<number, AggregatedHomelessnessData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 ): AggregatedHomelessnessData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 

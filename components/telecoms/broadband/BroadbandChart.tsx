@@ -12,7 +12,7 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 
 interface BroadbandChartProps {
 	activeDataset: Dataset | null;
@@ -20,7 +20,7 @@ interface BroadbandChartProps {
 	aggregatedData: Record<number, AggregatedBroadbandData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -31,7 +31,7 @@ function computeStats(
 	dataset: BroadbandDataset,
 	aggregatedData: Record<number, AggregatedBroadbandData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 ): AggregatedBroadbandData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 

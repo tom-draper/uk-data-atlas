@@ -6,7 +6,7 @@ import type { SelectedCustomArea } from "./types";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useAggregatedDataset } from "@/lib/hooks/useAggregatedDataset";
 import { getColor } from "@/lib/helpers/colorScale/themes";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { WardDataResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -28,7 +28,7 @@ export function CustomDatasetCard({
 	selectedArea: SelectedCustomArea | null;
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper: CodeMapper;
+	codeMapper: WardDataResolver;
 	mapManager: MapManager | null;
 	boundaryData: BoundaryData;
 	location: string | null;

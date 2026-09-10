@@ -8,7 +8,6 @@ import {
 	AggregatedEthnicityData,
 } from "@/lib/types";
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -83,7 +82,8 @@ interface EthnicityChartProps {
 	dataset: EthnicityDataset | undefined;
 	aggregatedData: Record<number, AggregatedEthnicityData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	// Accepted by the registry's common props but not needed by this chart.
+	codeMapper?: unknown;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

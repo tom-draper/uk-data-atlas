@@ -14,6 +14,24 @@ export interface CodeMapper {
 	getMappingGeneration(): number;
 }
 
+/** Resolves a boundary code into the dataset's boundary vintage. */
+export type CodeYearResolver = Pick<CodeMapper, "getCodeForYear">;
+
+/** Finds the wards belonging to larger statistical areas. */
+export type WardMembershipResolver = Pick<
+	CodeMapper,
+	"getWardsForLad" | "getWardsForConstituency"
+>;
+
+/** Resolves a ward directly or through the larger area which contains it. */
+export type WardDataResolver = CodeYearResolver & WardMembershipResolver;
+
+/** Signals that asynchronously loaded mappings have changed. */
+export type MappingGenerationReader = Pick<CodeMapper, "getMappingGeneration">;
+
+/** Read-only resolver required by population charts that aggregate wards. */
+export type PopulationCodeResolver = WardDataResolver & MappingGenerationReader;
+
 type CodeMappings = Record<CodeType, CodeMapping>;
 type ReverseCodeMappings = Record<CodeType, Record<string, Set<string>>>;
 

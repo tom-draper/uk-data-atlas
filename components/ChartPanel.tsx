@@ -11,7 +11,7 @@ import { CustomDataset } from "@/lib/types/custom";
 import { NetworkDataset } from "@/lib/types/network";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useState, useDeferredValue } from "react";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import TransportSection from "./transport/TransportSection";
 import CustomSection from "./custom/CustomSection";
 import ChartSections from "./ChartSections";

@@ -6,7 +6,7 @@ import {
 	CrimeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
@@ -16,7 +16,7 @@ interface CrimeRateChartProps {
 	availableDatasets: Record<string, CrimeDataset>;
 	aggregatedData: Record<number, AggregatedCrimeData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -26,7 +26,7 @@ function computeCrimeRate(
 	dataset: CrimeDataset,
 	aggregatedData: Record<number, AggregatedCrimeData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 	year: number,
 ): number | null {
 	let rate: number | null = null;

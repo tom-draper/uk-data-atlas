@@ -7,7 +7,7 @@ import {
 	IncomeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -21,7 +21,7 @@ interface IncomeChartProps {
 	aggregatedData: Record<number, AggregatedIncomeData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }

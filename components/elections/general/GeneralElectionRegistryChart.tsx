@@ -6,7 +6,7 @@ import {
 	GeneralElectionDataset,
 	SelectedArea,
 } from "@lib/types";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { computeGeneralElectionYearData } from "@/lib/helpers/generalElection";
 import GeneralElectionResultChart from "./GeneralElectionResultChart";
@@ -16,7 +16,7 @@ interface GeneralElectionRegistryChartProps {
 	availableDatasets: Record<string, GeneralElectionDataset>;
 	aggregatedData: Record<number, AggregatedGeneralElectionData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;

@@ -1,4 +1,4 @@
-import type { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
 import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
 import type { BoundaryData } from "@/lib/types/boundaries";
 

@@ -9,7 +9,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 
 interface SchoolPerformanceConstituencyChartProps {
 	activeDataset: Dataset | null;
@@ -17,7 +17,7 @@ interface SchoolPerformanceConstituencyChartProps {
 	aggregatedData: Record<number, AggregatedSchoolPerformanceData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -35,7 +35,7 @@ function computeStats(
 	dataset: SchoolPerformanceConstituencyDataset,
 	aggregatedData: Record<number, AggregatedSchoolPerformanceData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 ): AggregatedSchoolPerformanceData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 	if (selectedArea.type !== "constituency") return null;

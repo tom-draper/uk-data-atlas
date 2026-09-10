@@ -6,7 +6,7 @@ import {
 	SelectedArea,
 } from "@/lib/types";
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import { ChartCard } from "@/components/ChartCard";
 
 const MALE_COLOR = "#60a5fa"; // blue-400, matches chart bars
@@ -18,7 +18,7 @@ interface GenderProps {
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper?: CodeMapper;
+	codeMapper?: PopulationCodeResolver;
 }
 
 // Cache for LAD gender aggregations (bounded to prevent unbounded memory growth)

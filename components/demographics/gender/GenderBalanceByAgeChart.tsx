@@ -1,6 +1,6 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
 import { useRef } from "react";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	AggregatedPopulationData,
 	PopulationDataset,
@@ -20,7 +20,7 @@ export interface GenderBalanceByAgeChartProps {
 	dataset: PopulationDataset;
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: PopulationCodeResolver;
 }
 
 // Pre-create age indices and string keys (constants)

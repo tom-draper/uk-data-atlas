@@ -12,7 +12,7 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 
 interface UnemploymentChartProps {
 	activeDataset: Dataset | null;
@@ -20,7 +20,7 @@ interface UnemploymentChartProps {
 	aggregatedData: Record<number, AggregatedUnemploymentData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -32,7 +32,7 @@ function computeStats(
 	dataset: UnemploymentDataset,
 	aggregatedData: Record<number, AggregatedUnemploymentData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 ): AggregatedUnemploymentData | null {
 	if (selectedArea === null) {
 		const agg = aggregatedData?.[dataset.latestYear] ?? null;
