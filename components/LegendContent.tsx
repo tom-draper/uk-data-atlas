@@ -1,7 +1,11 @@
 "use client";
-import type { ActiveViz, Dataset, EthnicityCode } from "@lib/types";
+import type { ActiveViz, Dataset } from "@lib/types";
 import type { MapOptions } from "@/lib/types/mapOptions";
-import type { ColorRangeDatasetKey, PartyDisplayData } from "./LegendPanel";
+import type {
+	ColorRangeDatasetKey,
+	EthnicityDisplayData,
+	PartyDisplayData,
+} from "./legend/types";
 import { RangeControl } from "./controls/RangeControl";
 import { renderCategoryLegend } from "./legendUtils";
 import { getChartDatasetDefinition } from "@/lib/datasets";
@@ -14,7 +18,7 @@ interface LegendContentProps {
 	overlayOpacity: number;
 	isDark: boolean;
 	parties: PartyDisplayData[];
-	ethnicities: { id: EthnicityCode; color: string; name: string }[];
+	ethnicities: EthnicityDisplayData[];
 	onRangeInput: (key: ColorRangeDatasetKey, min: number, max: number) => void;
 	onRangeChangeEnd: (key: ColorRangeDatasetKey) => void;
 	onPartyClick: (id: string) => void;

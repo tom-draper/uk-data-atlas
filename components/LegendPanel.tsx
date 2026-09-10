@@ -1,251 +1,42 @@
-// components/LegendPanel.tsx
 "use client";
 
-import { useMemo, useState } from "react";
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
+import type { MapOptions } from "@/lib/types/mapOptions";
 import type {
-	CategoryOptions,
-	ColorRangeMapOptionKey,
-	MapOptions,
-} from "@/lib/types/mapOptions";
-import {
 	ActiveViz,
 	Dataset,
 	Datasets,
-	PartyCode,
 	EthnicityCode,
-	Ethnicity,
-	EthnicityCategory,
-	WardStats,
-	ConstituencyStats,
+	PartyCode,
 } from "@/lib/types";
-import { BoundaryData } from "@lib/types/boundaries";
-import { MapManager } from "@/lib/helpers/mapManager/mapManager";
-import { aggregateDataset } from "@/lib/helpers/aggregateDataset";
-import { RangeControl } from "./controls/RangeControl";
+import type { BoundaryData } from "@/lib/types/boundaries";
+import type { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import LegendContent from "./LegendContent";
-import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
+import { glassStyle, panelTheme } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
-import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
-
-export type PartyDisplayData = { id: PartyCode; color: string; name: string };
-
-export type ColorRangeDatasetKey = ColorRangeMapOptionKey;
+import LegendContent from "./LegendContent";
+import {
+	ethnicityLegendItems,
+	partyLegendItems,
+	useLegendAggregates,
+} from "./legend/legendData";
+import {
+	HousePriceMeasurePanel,
+	PercentageRangePanel,
+} from "./legend/LegendSupplementalPanels";
+import type { MapOptionsChangeHandler } from "./legend/types";
+import { useLegendControls } from "./legend/useLegendControls";
 
 interface LegendPanelProps {
 	activeDataset: Dataset | null;
 	activeViz: ActiveViz;
 	mapOptions: MapOptions;
-	onMapOptionsChange: (
-		type: keyof MapOptions,
-		options: Partial<MapOptions[typeof type]>,
-	) => void;
+	onMapOptionsChange: MapOptionsChangeHandler;
 	mapManager: MapManager | null;
 	boundaryData: BoundaryData;
 	location: string | null;
 	datasets: Datasets;
-}
-
-type LegendAggregates = Record<string, Record<string, unknown> | null>;
-
-const LEGEND_DEFINITIONS = CHART_DATASET_DEFINITIONS.filter(
-	(definition) => definition.legendAggregation,
-);
-
-function useLegendAggregates(
-	datasets: Datasets,
-	mapManager: MapManager | null,
-	boundaryData: BoundaryData,
-	location: string | null,
-): LegendAggregates {
-	return useMemo(
-		() =>
-			Object.fromEntries(
-				LEGEND_DEFINITIONS.flatMap((definition) => {
-					const aggregation = definition.legendAggregation;
-					if (!aggregation) return [];
-					return [
-						[
-							definition.type,
-							aggregateDataset(
-								{
-									datasets: datasets[definition.type],
-									boundaryType: definition.boundaryType,
-									keyBy: aggregation.keyBy,
-									calculateStats: aggregation.calculateStats,
-								},
-								mapManager?.datasetAggregator ?? null,
-								boundaryData,
-								location,
-							),
-						],
-					];
-				}),
-			) as LegendAggregates,
-		[datasets, mapManager, boundaryData, location],
-	);
-}
-
-function computeParties(
-	activeDataset: Dataset | null,
-	aggregates: LegendAggregates,
-): PartyDisplayData[] {
-	if (!activeDataset) return [];
-
-	let datasetData:
-		| Record<number, WardStats>
-		| Record<number, ConstituencyStats>
-		| undefined;
-
-	if (activeDataset.type === "localElection") {
-		datasetData = aggregates.localElection as
-			| Record<number, WardStats>
-			| undefined;
-	} else if (activeDataset.type === "generalElection") {
-		datasetData = aggregates.generalElection as
-			| Record<number, ConstituencyStats>
-			| undefined;
-	}
-
-	if (!datasetData) return [];
-
-	const yearData = datasetData[activeDataset.year];
-	if (!yearData?.partyVotes) return [];
-
-	return Object.entries(yearData.partyVotes as Record<PartyCode, number>)
-		.filter(([_, votes]) => votes > 0)
-		.sort((a, b) => b[1] - a[1])
-		.map(([id, _]) => ({
-			id: id as PartyCode,
-			color: PARTIES[id as PartyCode]?.color || "#ccc",
-			name: PARTIES[id as PartyCode]?.name || id,
-		}));
-}
-
-function computeEthnicities(
-	activeDataset: Dataset | null,
-	aggregates: LegendAggregates,
-): { id: EthnicityCode; color: string; name: string }[] {
-	if (!activeDataset || activeDataset.type !== "ethnicity") return [];
-	const yearData = aggregates.ethnicity?.[activeDataset.year];
-	if (!yearData) return [];
-
-	const ethnicityTotals = new Map<string, number>();
-	for (const localAuthorityData of Object.values(
-		yearData,
-	) as EthnicityCategory[]) {
-		for (const [ethnicity, data] of Object.entries(localAuthorityData) as [
-			string,
-			Ethnicity,
-		][]) {
-			const currentTotal = ethnicityTotals.get(ethnicity) || 0;
-			if (typeof data.population === "number") {
-				ethnicityTotals.set(ethnicity, currentTotal + data.population);
-			}
-		}
-	}
-
-	return Array.from(ethnicityTotals.entries())
-		.filter(([_, count]) => count > 0)
-		.sort((a, b) => b[1] - a[1])
-		.map(([id]: [EthnicityCode, number]) => ({
-			id,
-			color: ETHNICITY_COLORS[id] || "#ccc",
-			name: id,
-		}));
-}
-
-// Secondary panel for the percentage-range slider shown when a party/ethnicity is selected
-function PercentageRangePanel({
-	range,
-	gradient,
-	opacity,
-	onRangeInput,
-	onRangeChangeEnd,
-}: {
-	range: { min: number; max: number };
-	gradient: string;
-	opacity: number;
-	onRangeInput: (min: number, max: number) => void;
-	onRangeChangeEnd: () => void;
-}) {
-	const isDark = useIsDark();
-	const t = panelTheme(isDark);
-	return (
-		<div
-			className={`pointer-events-auto rounded-md w-fit ml-auto relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
-			style={glassStyle(isDark)}
-		>
-			<GlassOverlays isDark={isDark} />
-			<div
-				className={`relative ${t.section} p-1 overflow-hidden`}
-				style={{ zIndex: 1 }}
-			>
-				<RangeControl
-					min={0}
-					max={100}
-					currentMin={range.min}
-					currentMax={range.max}
-					gradient={gradient}
-					labels={[
-						`${range.max.toFixed(0)}%`,
-						"",
-						"",
-						"",
-						`${range.min.toFixed(0)}%`,
-					]}
-					opacity={opacity}
-					onRangeInput={onRangeInput}
-					onRangeChangeEnd={onRangeChangeEnd}
-				/>
-			</div>
-		</div>
-	);
-}
-
-function HousePriceMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "median" | "mean";
-	onChange: (measure: "median" | "mean") => void;
-}) {
-	const isDark = useIsDark();
-	const t = panelTheme(isDark);
-	const isMean = measure === "mean";
-	return (
-		<div
-			className={`pointer-events-auto rounded-md w-fit ml-auto relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
-			style={glassStyle(isDark)}
-		>
-			<GlassOverlays isDark={isDark} />
-			<div
-				className={`relative ${t.section} flex items-center gap-2 p-2 text-xs`}
-				style={{ zIndex: 1 }}
-			>
-				<span className={isMean ? "font-medium" : "text-gray-400"}>
-					Mean
-				</span>
-				<button
-					type="button"
-					role="switch"
-					aria-checked={isMean}
-					aria-label="Show mean house prices"
-					onClick={() => onChange(isMean ? "median" : "mean")}
-					className={`relative h-4 w-7 rounded-full transition-colors ${isMean ? "bg-indigo-500" : isDark ? "bg-gray-600" : "bg-gray-300"}`}
-				>
-					<span
-						className={`absolute top-0.5 left-0.5 size-3 rounded-full bg-white shadow transition-transform ${isMean ? "" : "translate-x-3"}`}
-					/>
-				</button>
-				<span className={isMean ? "text-gray-400" : "font-medium"}>
-					Median
-				</span>
-			</div>
-		</div>
-	);
 }
 
 export default function LegendPanel({
@@ -258,235 +49,29 @@ export default function LegendPanel({
 	location,
 	datasets,
 }: LegendPanelProps) {
-	const [liveOptions, setLiveOptions] = useState<MapOptions | null>(null);
-
-	// Use liveOptions if dragging, otherwise fall back to mapOptions from props
-	const displayOptions = liveOptions || mapOptions;
-
-	const themeId = displayOptions.theme.id;
-	const activeTheme = themes.find((t) => t.id === themeId) || themes[0];
-
+	const controls = useLegendControls(
+		activeDataset,
+		mapOptions,
+		onMapOptionsChange,
+	);
+	const activeTheme =
+		themes.find((theme) => theme.id === controls.displayOptions.theme.id) ??
+		themes[0];
 	const verticalThemeGradient = `linear-gradient(to bottom, ${activeTheme.colors.join(", ")})`;
-
-	const legendAggregates = useLegendAggregates(
+	const overlayOpacity = Math.min(
+		1,
+		(controls.displayOptions.visibility.overlayOpacity ?? 1) + 0.2,
+	);
+	const aggregates = useLegendAggregates(
 		datasets,
 		mapManager,
 		boundaryData,
 		location,
 	);
-
-	const parties = computeParties(activeDataset, legendAggregates);
-	const ethnicities = computeEthnicities(activeDataset, legendAggregates);
-
-	const handleRangeInput = (
-		datasetKey: ColorRangeDatasetKey,
-		min: number,
-		max: number,
-	) => {
-		setLiveOptions((prev) => {
-			const base = prev || mapOptions;
-			return {
-				...base,
-				[datasetKey]: { ...base[datasetKey], colorRange: { min, max } },
-			};
-		});
-	};
-
-	const handleRangeChangeEnd = (datasetKey: ColorRangeDatasetKey) => {
-		if (!liveOptions) return;
-		const range = liveOptions[datasetKey]?.colorRange;
-		if (range) onMapOptionsChange(datasetKey, { colorRange: range });
-		setLiveOptions(null);
-	};
-
-	const handlePartyClick = (partyCode: PartyCode) => {
-		const datasetType = activeDataset?.type;
-		if (
-			!datasetType ||
-			(datasetType !== "generalElection" &&
-				datasetType !== "localElection")
-		)
-			return;
-
-		const options = displayOptions[datasetType];
-		if (options.mode === "percentage" && options.selected === partyCode) {
-			onMapOptionsChange(datasetType, {
-				mode: "majority",
-				selected: undefined,
-			});
-		} else {
-			onMapOptionsChange(datasetType, {
-				mode: "percentage",
-				selected: partyCode,
-			});
-		}
-	};
-
-	const handleEthnicityClick = (ethnicityCode: EthnicityCode) => {
-		if (activeDataset?.type !== "ethnicity") return;
-		const { mode, selected } = displayOptions.ethnicity;
-		if (mode === "percentage" && selected === ethnicityCode) {
-			onMapOptionsChange("ethnicity", {
-				mode: "majority",
-				selected: undefined,
-			});
-		} else {
-			onMapOptionsChange("ethnicity", {
-				mode: "percentage",
-				selected: ethnicityCode,
-			});
-		}
-	};
-
-	const handlePartyRightClick = (partyCode: PartyCode) => {
-		const datasetType = activeDataset?.type;
-		if (
-			!datasetType ||
-			(datasetType !== "generalElection" &&
-				datasetType !== "localElection")
-		)
-			return;
-		const current = displayOptions[datasetType].excluded ?? [];
-		const next = current.includes(partyCode)
-			? current.filter((p) => p !== partyCode)
-			: [...current, partyCode];
-		onMapOptionsChange(datasetType, { excluded: next });
-	};
-
-	const handleEthnicityRightClick = (ethnicityCode: EthnicityCode) => {
-		if (activeDataset?.type !== "ethnicity") return;
-		const current = displayOptions.ethnicity.excluded ?? [];
-		const next = current.includes(ethnicityCode)
-			? current.filter((e) => e !== ethnicityCode)
-			: [...current, ethnicityCode];
-		onMapOptionsChange("ethnicity", { excluded: next });
-	};
-
-	const handlePointLegendClick = (value: string) => {
-		if (activeDataset?.type !== "custom" || activeDataset.kind !== "points")
-			return;
-		const numericValue = Number(value);
-		if (!Number.isFinite(numericValue)) return;
-		const selected = displayOptions.custom.selectedPointValue;
-		onMapOptionsChange("custom", {
-			selectedPointValue:
-				selected === numericValue ? undefined : numericValue,
-		});
-	};
-
-	const handlePointLegendRightClick = (value: string) => {
-		if (activeDataset?.type !== "custom" || activeDataset.kind !== "points")
-			return;
-		const numericValue = Number(value);
-		if (!Number.isFinite(numericValue)) return;
-		const excluded = displayOptions.custom.excludedPointValues ?? [];
-		onMapOptionsChange("custom", {
-			excludedPointValues: excluded.includes(numericValue)
-				? excluded.filter((item) => item !== numericValue)
-				: [...excluded, numericValue],
-			selectedPointValue:
-				displayOptions.custom.selectedPointValue === numericValue
-					? undefined
-					: displayOptions.custom.selectedPointValue,
-		});
-	};
-
-	const handleNetworkClick = (id: string) => {
-		if (activeDataset?.type !== "network") return;
-		const selected = displayOptions.network?.selected;
-		onMapOptionsChange("network", {
-			selected: selected === id ? undefined : id,
-		});
-	};
-
-	const handleNetworkRightClick = (id: string) => {
-		if (activeDataset?.type !== "network") return;
-		const excluded = displayOptions.network?.excluded ?? [];
-		onMapOptionsChange("network", {
-			excluded: excluded.includes(id)
-				? excluded.filter((item) => item !== id)
-				: [...excluded, id],
-			selected:
-				displayOptions.network?.selected === id
-					? undefined
-					: displayOptions.network?.selected,
-		});
-	};
-
-	const overlayOpacity = Math.min(
-		1,
-		(displayOptions.visibility.overlayOpacity ?? 1) + 0.2,
-	);
-
-	// Derive election percentage range panel state
-	const electionType = ["generalElection", "localElection"].includes(
-		activeDataset?.type || "",
-	)
-		? (activeDataset!.type as "generalElection" | "localElection")
-		: null;
-	const electionOpts = electionType ? displayOptions[electionType] : null;
-	const showElectionPct = electionOpts?.mode === "percentage";
-
-	// Derive ethnicity percentage range panel state
-	const ethnicityOpts = displayOptions.ethnicity;
-	const showEthnicityPct =
-		activeDataset?.type === "ethnicity" &&
-		ethnicityOpts?.mode === "percentage";
-	const showHousePriceMeasure = activeDataset?.type === "housePrice";
-
+	const parties = partyLegendItems(activeDataset, aggregates);
+	const ethnicities = ethnicityLegendItems(activeDataset, aggregates);
 	const isDark = useIsDark();
-	const t = panelTheme(isDark);
-
-	const electionRange = {
-		min: electionOpts?.percentageRange?.min ?? 0,
-		max:
-			(electionOpts as CategoryOptions | null)?.percentageRange?.max ??
-			100,
-	};
-	const handleElectionRangeInput = (min: number, max: number) => {
-		if (!electionType) return;
-		setLiveOptions((prev) => {
-			const base = prev || mapOptions;
-			return {
-				...base,
-				[electionType]: {
-					...base[electionType],
-					percentageRange: { min, max },
-				},
-			};
-		});
-	};
-	const handleElectionRangeChangeEnd = () => {
-		if (!liveOptions || !electionType) return;
-		onMapOptionsChange(electionType, {
-			percentageRange: liveOptions[electionType].percentageRange,
-		});
-		setLiveOptions(null);
-	};
-
-	const ethnicityRange = {
-		min: ethnicityOpts?.percentageRange?.min ?? 0,
-		max: (ethnicityOpts as CategoryOptions)?.percentageRange?.max ?? 100,
-	};
-	const handleEthnicityRangeInput = (min: number, max: number) => {
-		setLiveOptions((prev) => {
-			const base = prev || mapOptions;
-			return {
-				...base,
-				ethnicity: {
-					...base.ethnicity,
-					percentageRange: { min, max },
-				},
-			};
-		});
-	};
-	const handleEthnicityRangeChangeEnd = () => {
-		if (!liveOptions) return;
-		onMapOptionsChange("ethnicity", {
-			percentageRange: liveOptions.ethnicity.percentageRange,
-		});
-		setLiveOptions(null);
-	};
+	const theme = panelTheme(isDark);
 
 	return (
 		<div className="pointer-events-none p-2.5 pr-0 flex flex-col h-full gap-2.5">
@@ -496,64 +81,72 @@ export default function LegendPanel({
 			>
 				<GlassOverlays isDark={isDark} />
 				<div
-					className={`relative ${t.section} p-1 overflow-hidden`}
+					className={`relative ${theme.section} p-1 overflow-hidden`}
 					style={{ zIndex: 1 }}
 				>
 					<LegendContent
 						activeDataset={activeDataset}
 						activeViz={activeViz}
-						displayOptions={displayOptions}
+						displayOptions={controls.displayOptions}
 						verticalThemeGradient={verticalThemeGradient}
 						overlayOpacity={overlayOpacity}
 						isDark={isDark}
 						parties={parties}
 						ethnicities={ethnicities}
-						onRangeInput={handleRangeInput}
-						onRangeChangeEnd={handleRangeChangeEnd}
-						onPartyClick={(id) => handlePartyClick(id as PartyCode)}
+						onRangeInput={controls.handleRangeInput}
+						onRangeChangeEnd={controls.handleRangeChangeEnd}
+						onPartyClick={(id) =>
+							controls.handlePartyClick(id as PartyCode)
+						}
 						onPartyRightClick={(id) =>
-							handlePartyRightClick(id as PartyCode)
+							controls.handlePartyRightClick(id as PartyCode)
 						}
 						onEthnicityClick={(id) =>
-							handleEthnicityClick(id as EthnicityCode)
+							controls.handleEthnicityClick(id as EthnicityCode)
 						}
 						onEthnicityRightClick={(id) =>
-							handleEthnicityRightClick(id as EthnicityCode)
+							controls.handleEthnicityRightClick(
+								id as EthnicityCode,
+							)
 						}
-						onPointLegendClick={handlePointLegendClick}
-						onPointLegendRightClick={handlePointLegendRightClick}
-						onNetworkClick={handleNetworkClick}
-						onNetworkRightClick={handleNetworkRightClick}
+						onPointLegendClick={controls.handlePointLegendClick}
+						onPointLegendRightClick={
+							controls.handlePointLegendRightClick
+						}
+						onNetworkClick={controls.handleNetworkClick}
+						onNetworkRightClick={controls.handleNetworkRightClick}
 					/>
 				</div>
 			</div>
 
-			{showHousePriceMeasure && (
+			{activeDataset?.type === "housePrice" && (
 				<HousePriceMeasurePanel
-					measure={displayOptions.housePrice.measure}
+					measure={controls.displayOptions.housePrice.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("housePrice", { measure })
 					}
 				/>
 			)}
 
-			{showElectionPct && electionType && electionOpts && (
-				<PercentageRangePanel
-					range={electionRange}
-					gradient={`linear-gradient(to bottom, ${PARTIES[electionOpts.selected as PartyCode]?.color || "#999"}, ${isDark ? "#1f2937" : "#f5f5f5"})`}
-					opacity={overlayOpacity}
-					onRangeInput={handleElectionRangeInput}
-					onRangeChangeEnd={handleElectionRangeChangeEnd}
-				/>
-			)}
+			{controls.showElectionPct &&
+				controls.electionType &&
+				controls.electionOptions && (
+					<PercentageRangePanel
+						range={controls.electionRange}
+						gradient={`linear-gradient(to bottom, ${PARTIES[controls.electionOptions.selected as PartyCode]?.color || "#999"}, ${isDark ? "#1f2937" : "#f5f5f5"})`}
+						opacity={overlayOpacity}
+						onRangeInput={controls.handleElectionRangeInput}
+						onRangeChangeEnd={controls.handleElectionRangeChangeEnd}
+					/>
+				)}
 
-			{showEthnicityPct && (
+			{controls.showEthnicityPct && (
 				<PercentageRangePanel
-					range={ethnicityRange}
-					gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[ethnicityOpts.selected as EthnicityCode] || "#999"}, ${isDark ? "#1f2937" : "#f5f5f5"})`}
+					range={controls.ethnicityRange}
+					gradient={`linear-gradient(to bottom, ${ETHNICITY_COLORS[controls.displayOptions.ethnicity.selected as EthnicityCode] || "#999"}, ${isDark ? "#1f2937" : "#f5f5f5"})`}
 					opacity={overlayOpacity}
-					onRangeInput={handleEthnicityRangeInput}
-					onRangeChangeEnd={handleEthnicityRangeChangeEnd}
+					onRangeInput={controls.handleEthnicityRangeInput}
+					onRangeChangeEnd={controls.handleEthnicityRangeChangeEnd}
 				/>
 			)}
 		</div>
