@@ -35,14 +35,14 @@ const filterBoundaryGroup = (
 				: undefined;
 		filtered[Number(year)] = data
 			? filterFeatures(
-						data,
-						location,
-						type,
-						getLadForWard,
-						releaseId
-							? constituencyLadOverlaps?.releases[releaseId]
-							: undefined,
-					)
+					data,
+					location,
+					type,
+					getLadForWard,
+					releaseId
+						? constituencyLadOverlaps?.releases[releaseId]
+						: undefined,
+				)
 			: null;
 	}
 	return filtered;

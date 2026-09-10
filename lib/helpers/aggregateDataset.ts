@@ -26,10 +26,7 @@ export interface DatasetConfig<T extends BoundaryDataset, R = unknown> {
 // share that work without retaining stale data after a location change.
 const aggregateCache = new WeakMap<
 	DatasetAggregator,
-	WeakMap<
-		BoundaryData,
-		WeakMap<object, Map<string, Aggregate>>
-	>
+	WeakMap<BoundaryData, WeakMap<object, Map<string, Aggregate>>>
 >();
 
 // Dataset ids are stable across locations, whereas each worker response has a
