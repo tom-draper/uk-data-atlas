@@ -1,6 +1,7 @@
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { PointTooltip } from "@/lib/types/custom";
+import type { NetworkVectorLayer } from "@/lib/types/network";
 import type { MapExpression, PaintValue } from "./expressions";
 
 type LayerVisibility = MapOptions["visibility"];
@@ -41,22 +42,8 @@ export type LineLayer = {
 };
 
 /** A line layer streamed as Mapbox vector tiles, rather than one large GeoJSON. */
-export type VectorLineLayer = {
-	kind: "vector-line";
-	id: string;
-	source: {
-		tiles: string[];
-		sourceLayer: string;
-		minzoom?: number;
-		maxzoom?: number;
-		attribution?: string;
-	};
+export type VectorLineLayer = NetworkVectorLayer & {
 	visibility: LayerVisibility;
-	style: LineLayer["style"];
-	/** Tile attribute a legend-driven filter matches against, e.g. `road_classification`. */
-	filterProperty?: string;
-	/** MapLibre filter applied to the layer; omit to render every feature. */
-	filter?: MapExpression;
 };
 
 export type MapLayer =
