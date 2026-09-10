@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import packageJson from "../../package.json";
 
 afterEach(() => {
 	vi.unstubAllEnvs();
@@ -20,7 +21,7 @@ describe("withCDN", () => {
 		const { withCDN } = await import("@/lib/helpers/cdn");
 
 		expect(withCDN("/data/precompiled/population.json")).toBe(
-			"/data/precompiled/population.json?v=v0.1.9",
+			`/data/precompiled/population.json?v=v${packageJson.version}`,
 		);
 	});
 
