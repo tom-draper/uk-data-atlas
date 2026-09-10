@@ -1,10 +1,22 @@
 import { describe, expect, it } from "vitest";
 import {
 	catalogueMetadata,
+	chartDefinitionFiles,
 	chartMetadata,
 } from "@/scripts/dataset-registry-metadata";
 
 describe("dataset registry metadata", () => {
+	it("only selects chart-definition modules from the dataset directory", () => {
+		expect(
+			chartDefinitionFiles([
+				"index.ts",
+				"boundaryRequirements.ts",
+				"population.ts",
+				"generatedCharts.tsx",
+			]),
+		).toEqual(["population.ts"]);
+	});
+
 	it("reads catalogue metadata from the exported definition value", () => {
 		expect(
 			catalogueMetadata("example.ts", {

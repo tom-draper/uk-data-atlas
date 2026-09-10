@@ -12,12 +12,30 @@ export type ChartDefinitionMetadata = {
 
 type ModuleExports = Record<string, unknown>;
 
+const chartDefinitionExclusions = new Set([
+	"index.ts",
+	"types.ts",
+	"ingestion.ts",
+	"generated.ts",
+	"chartGroups.ts",
+	"boundaryRequirements.ts",
+]);
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;
 
 const fail = (file: string, message: string): never => {
 	throw new Error(`${file} ${message}`);
 };
+
+/** Dataset-directory modules that declare chart definitions, in stable order. */
+export const chartDefinitionFiles = (files: readonly string[]): string[] =>
+	files
+		.filter(
+			(file) =>
+				file.endsWith(".ts") && !chartDefinitionExclusions.has(file),
+		)
+		.sort();
 
 export function catalogueMetadata(
 	file: string,
