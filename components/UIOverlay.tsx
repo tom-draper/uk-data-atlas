@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useSyncExternalStore } from "react";
+import dynamic from "next/dynamic";
 import ControlPanel from "@components/ControlPanel";
 import LegendPanel from "@components/LegendPanel";
-import ChartPanel from "@components/ChartPanel";
 import type {
 	ActiveViz,
 	BoundaryData,
@@ -18,6 +18,43 @@ import { PanelContext } from "@/lib/context/PanelContext";
 import { ExcludedCategoriesContext } from "@/lib/context/ExcludedCategoriesContext";
 import { MobilePanels } from "./ui-overlay/MobilePanels";
 import { excludedCategoriesForMapOptions } from "./ui-overlay/excludedCategories";
+
+const DESKTOP_MEDIA_QUERY = "(min-width: 768px)";
+
+function ChartPanelLoading() {
+	return (
+		<div
+			className="pointer-events-auto flex h-full w-[320px] flex-col p-2.5"
+			role="status"
+			aria-label="Loading data panel"
+		>
+			<div className="h-full min-h-80 animate-pulse rounded-md bg-black/10" />
+		</div>
+	);
+}
+
+const ChartPanel = dynamic(() => import("@components/ChartPanel"), {
+	ssr: false,
+	loading: ChartPanelLoading,
+});
+
+function subscribeToDesktopLayout(onStoreChange: () => void) {
+	const mediaQuery = window.matchMedia(DESKTOP_MEDIA_QUERY);
+	mediaQuery.addEventListener("change", onStoreChange);
+	return () => mediaQuery.removeEventListener("change", onStoreChange);
+}
+
+function getDesktopLayoutSnapshot() {
+	return window.matchMedia(DESKTOP_MEDIA_QUERY).matches;
+}
+
+function useIsDesktopLayout() {
+	return useSyncExternalStore(
+		subscribeToDesktopLayout,
+		getDesktopLayoutSnapshot,
+		() => false,
+	);
+}
 
 interface UIOverlayProps {
 	datasets: Datasets;
@@ -67,6 +104,7 @@ export default function UIOverlay({
 	onZoomOut,
 	onExport,
 }: UIOverlayProps) {
+	const isDesktopLayout = useIsDesktopLayout();
 	const panelContextValue = { selectedArea, selectedLocation };
 	const excludedCategories = useMemo(
 		() => excludedCategoriesForMapOptions(mapOptions),
@@ -121,32 +159,37 @@ export default function UIOverlay({
 	return (
 		<PanelContext.Provider value={panelContextValue}>
 			<div className="fixed inset-0 z-50 size-full pointer-events-none">
-				<div className="hidden md:flex absolute left-0 h-full">
-					{controlPanel(onLocationClick)}
-				</div>
-				<div className="hidden md:flex absolute right-0 h-full">
-					<LegendPanel
-						activeDataset={activeDataset}
-						activeViz={activeViz}
-						mapOptions={mapOptions}
-						onMapOptionsChange={onMapOptionsChange}
-						mapManager={mapManager}
-						boundaryData={boundaryData}
-						location={selectedLocation}
-						datasets={datasets}
+				{isDesktopLayout ? (
+					<>
+						<div className="absolute left-0 flex h-full">
+							{controlPanel(onLocationClick)}
+						</div>
+						<div className="absolute right-0 flex h-full">
+							<LegendPanel
+								activeDataset={activeDataset}
+								activeViz={activeViz}
+								mapOptions={mapOptions}
+								onMapOptionsChange={onMapOptionsChange}
+								mapManager={mapManager}
+								boundaryData={boundaryData}
+								location={selectedLocation}
+								datasets={datasets}
+							/>
+							{chartPanel}
+						</div>
+					</>
+				) : (
+					<MobilePanels
+						isDark={mapOptions.baseStyle.id === "darkMatter"}
+						renderControlPanel={(closePanel) =>
+							controlPanel((location) => {
+								onLocationClick(location);
+								closePanel();
+							})
+						}
+						chartPanel={chartPanel}
 					/>
-					{chartPanel}
-				</div>
-				<MobilePanels
-					isDark={mapOptions.baseStyle.id === "darkMatter"}
-					renderControlPanel={(closePanel) =>
-						controlPanel((location) => {
-							onLocationClick(location);
-							closePanel();
-						})
-					}
-					chartPanel={chartPanel}
-				/>
+				)}
 			</div>
 		</PanelContext.Provider>
 	);
