@@ -15,7 +15,7 @@ const boundary = (code: string) =>
 				geometry: null,
 			},
 		],
-	} as unknown as BoundaryGeojson);
+	}) as unknown as BoundaryGeojson;
 
 describe("boundary load state", () => {
 	it("keeps partial groups eligible for a future retry", () => {

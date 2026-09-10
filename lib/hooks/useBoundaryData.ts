@@ -134,9 +134,9 @@ export function useBoundaryData(
 					}
 
 					startTransition(() => {
-					setRawData((previous) =>
-						mergeBoundaryGroups(previous, boundaryGroups),
-					);
+						setRawData((previous) =>
+							mergeBoundaryGroups(previous, boundaryGroups),
+						);
 						setIsLoading(false);
 					});
 
