@@ -4,18 +4,14 @@ import { useMapManager } from "@lib/hooks/useMapManager";
 import { useInteractionHandlers } from "@/lib/hooks/useInteractionHandlers";
 import { useMapOptions } from "@/lib/hooks/useMapOptions";
 import { useBoundaryData } from "@/lib/hooks/useBoundaryData";
-import { useActiveGeometry } from "@/lib/hooks/useActiveGeometry";
+import { useActiveDatasetGeometry } from "@/lib/hooks/useActiveDatasetGeometry";
 import { useCodeMapper } from "@/lib/hooks/useCodeMapper";
 import { useMapInitialization } from "@/lib/hooks/useMapInitialization";
 import { useMapStyle } from "@/lib/hooks/useMapStyle";
 import { useMapCamera } from "@/lib/hooks/useMapCamera";
 import { useLocalElectionDatasets } from "@/lib/hooks/useLocalElectionDatasets";
 import { getActiveDataset } from "@/lib/helpers/activeDataset";
-import { filterGeometryToDatasetCoverage } from "@/lib/helpers/datasetCoverage";
-import { getChartDatasetDefinition } from "@/lib/datasets";
 import { boundaryTypeForDatasetType } from "@/lib/datasets/boundaryRequirements";
-import { boundaryCapabilityFor } from "@/lib/data/boundaries/capabilities";
-import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 
 import MapView from "@components/MapView";
 import UIOverlay from "@components/UIOverlay";
@@ -25,7 +21,6 @@ import type {
 	Datasets,
 	SelectedArea,
 	BoundaryData,
-	BoundaryType,
 } from "@lib/types";
 import type { CustomDataset } from "@/lib/types/custom";
 import type { NetworkDataset } from "@/lib/types/network";
@@ -118,72 +113,12 @@ export default function MapInterface({
 		],
 	);
 
-	// `boundaryData` carries properties alone, which is all the charts read.
-	// Drawing needs coordinates, so the active vintage's geometry is fetched
-	// on its own rather than the whole catalogue being held decoded.
-	const { geometry: rawGeojson } = useActiveGeometry(
-		!activeDataset || activeDataset.type === "network"
-			? undefined
-			: (activeDataset.boundaryType as BoundaryType),
-		!activeDataset || activeDataset.type === "network"
-			? undefined
-			: activeDataset.boundaryYear,
+	const { geometry: geojson } = useActiveDatasetGeometry(
+		activeDataset,
 		selectedLocation ?? null,
 		getLadForWard,
 		constituencyLadOverlaps,
 	);
-
-	const geojson = useMemo(() => {
-		if (!rawGeojson || !activeDataset || !("data" in activeDataset))
-			return rawGeojson;
-		// The compiled payload carries coverage for production data, while the
-		// definition keeps the map correct if a client is still holding a prior
-		// payload after a hot reload or CDN update.
-		const coverageCountries =
-			activeDataset.coverageCountries ??
-			getChartDatasetDefinition(activeDataset.type)?.coverageCountries;
-		const coverageDataset = coverageCountries
-			? { ...activeDataset, coverageCountries }
-			: activeDataset;
-		const coverageGeometry = filterGeometryToDatasetCoverage(
-			rawGeojson,
-			coverageDataset,
-		);
-		const dataKeys = new Set(
-			Object.keys(activeDataset.data as Record<string, unknown>),
-		);
-		// A country-specific payload can have no records even though the source
-		// covers that country (for example, a year without Welsh elections).
-		// Keep its declared coverage visible, but preserve the empty-map behaviour
-		// for datasets that have no published coverage at all.
-		if (dataKeys.size === 0)
-			return coverageCountries
-				? coverageGeometry
-				: { ...coverageGeometry, features: [] };
-		const boundaryType = activeDataset.boundaryType as BoundaryType;
-		const codeKeys: readonly string[] = boundaryCapabilityFor(boundaryType)
-			.filterGeometryToDatasetData
-			? BOUNDARY_CATALOG[boundaryType].properties.code
-			: [];
-		if (codeKeys.length === 0) return coverageGeometry;
-		const firstProps = coverageGeometry.features[0]
-			?.properties as unknown as Record<string, unknown> | undefined;
-		if (!firstProps) return coverageGeometry;
-		const codeKey = codeKeys.find((k) => k in firstProps);
-		if (!codeKey) return coverageGeometry;
-		const filtered = coverageGeometry.features.filter(
-			(f) =>
-				f.properties &&
-				dataKeys.has(
-					(f.properties as unknown as Record<string, unknown>)[
-						codeKey
-					] as string,
-				),
-		);
-		if (filtered.length === coverageGeometry.features.length)
-			return coverageGeometry;
-		return { ...coverageGeometry, features: filtered };
-	}, [rawGeojson, activeDataset]);
 
 	// Initialize map manager with stable callbacks
 	const mapManager = useMapManager({
