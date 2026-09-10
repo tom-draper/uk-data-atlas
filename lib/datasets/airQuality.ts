@@ -1,4 +1,5 @@
 import { airQualityDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { airQualityAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { AirQualityDataset } from "@/lib/types/airQuality";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -11,7 +12,7 @@ export const airQualityDefinition: ChartDatasetDefinition<AirQualityDataset> = {
 		defaultVisible: true,
 		componentPath: "@/components/environment/air-quality/AirQualityChart",
 		calculateStats: (m, g, d, l, id) =>
-			m.calculateAirQualityStats(g, d, l, id),
+			m.aggregate(airQualityAggregation, g, d, l, id),
 		year: 2022,
 	},
 	map: {

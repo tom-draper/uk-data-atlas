@@ -1,4 +1,5 @@
 import { nhsWaitingDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { nhsWaitingAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { NHSWaitingDataset } from "@/lib/types/nhsWaiting";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -11,7 +12,9 @@ export const nhsWaitingDefinition: ChartDatasetDefinition<NHSWaitingDataset> = {
 		defaultVisible: true,
 		componentPath: "@/components/health/NHSWaitingChart",
 		calculateStats: (m, g, _d, l, id, dataset) =>
-			dataset ? m.calculateNHSWaitingStats(g, dataset, l, id) : null,
+			dataset
+				? m.aggregate(nhsWaitingAggregation, g, dataset, l, id)
+				: null,
 		year: 2026,
 	},
 	map: {

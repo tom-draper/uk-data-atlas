@@ -4,4 +4,8 @@
  * while the implementation is split by domain.
  */
 export { DatasetAggregator } from "./datasetAggregator";
-export type { AggregationCache, BoundaryCodeDetector } from "./ports";
+export type {
+	AggregationCache,
+	BoundaryAggregationSpec,
+	BoundaryCodeDetector,
+} from "./ports";

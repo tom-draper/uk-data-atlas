@@ -1,4 +1,5 @@
 import { renderBrexitConstituency } from "@/lib/helpers/mapRendering";
+import { brexitConstituencyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { brexitConstituencyDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { BrexitConstituencyDataset } from "@/lib/types/referendum";
 import type { ChartDatasetDefinition } from "./types";
@@ -14,7 +15,7 @@ export const brexitConstituencyDefinition: ChartDatasetDefinition<BrexitConstitu
 			componentPath:
 				"@/components/elections/referendum/BrexitHanrettyEstimatesChart",
 			calculateStats: (mm, g, d, l, id) =>
-				mm.calculateBrexitConstituencyStats(g, d, l, id),
+				mm.aggregate(brexitConstituencyAggregation, g, d, l, id),
 			year: 2016,
 		},
 		legendKind: "brexit",

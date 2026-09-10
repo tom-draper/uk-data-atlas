@@ -1,4 +1,5 @@
 import { unemploymentDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { unemploymentAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { UnemploymentDataset } from "@/lib/types/unemployment";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -21,7 +22,8 @@ export const unemploymentDefinition: ChartDatasetDefinition<UnemploymentDataset>
 				dataset,
 			) =>
 				dataset
-					? aggregator.calculateUnemploymentStats(
+					? aggregator.aggregate(
+							unemploymentAggregation,
 							geojson,
 							dataset,
 							location,

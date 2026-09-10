@@ -1,4 +1,5 @@
 import { qualificationDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { qualificationAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { QualificationDataset } from "@/lib/types/qualification";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -12,7 +13,7 @@ export const qualificationDefinition: ChartDatasetDefinition<QualificationDatase
 			defaultVisible: true,
 			componentPath: "@/components/education/QualificationChart",
 			calculateStats: (mm, g, d, l, id) =>
-				mm.calculateQualificationStats(g, d, l, id),
+				mm.aggregate(qualificationAggregation, g, d, l, id),
 			year: 2021,
 		},
 		map: {

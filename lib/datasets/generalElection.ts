@@ -1,11 +1,13 @@
 import { renderGeneralElection } from "@/lib/helpers/mapRendering";
+import { generalElectionAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { generalElectionDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { GeneralElectionDataset } from "@/lib/types/elections";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
 const calculateStats: ChartDefinition<GeneralElectionDataset>["calculateStats"] =
 	(mapManager, geojson, data, location, datasetId) =>
-		mapManager.calculateGeneralElectionStats(
+		mapManager.aggregate(
+			generalElectionAggregation,
 			geojson,
 			data,
 			location,

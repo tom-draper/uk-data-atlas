@@ -1,4 +1,5 @@
 import { claimantCountDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { claimantCountAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { ClaimantCountDataset } from "@/lib/types/claimantCount";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -13,7 +14,7 @@ export const claimantCountDefinition: ChartDatasetDefinition<ClaimantCountDatase
 			componentPath:
 				"@/components/economics/claimant-count/ClaimantCountChart",
 			calculateStats: (m, g, d, l, id) =>
-				m.calculateClaimantCountStats(g, d, l, id),
+				m.aggregate(claimantCountAggregation, g, d, l, id),
 			year: 2026,
 		},
 		map: {
