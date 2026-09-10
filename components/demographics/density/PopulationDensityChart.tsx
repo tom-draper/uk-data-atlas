@@ -1,29 +1,17 @@
-// components/population/density/PopulationDensityChart.tsx
-import { detectWardCodeForYear } from "@/lib/helpers/mapManager/propertyDetector";
-import {
+import type {
 	ActiveViz,
 	AggregatedPopulationData,
 	BoundaryData,
-	BoundaryGeojson,
-	Feature,
 	PopulationDataset,
 	SelectedArea,
-	getFeatureProp,
 } from "@/lib/types";
-import { calculateTotal } from "@/lib/helpers/population";
-import { featureAreaSqKm } from "@/lib/data/boundaries/derived";
 import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
-import {
-	getAreaCachedValue,
-	getLadCachedValue,
-	populationAreaMappingsAvailable,
-	resolvePopulationAreaWards,
-} from "@/lib/helpers/demographicData";
+import { resolvePopulationDensity } from "@/lib/helpers/populationDensity";
 import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface PopulationDensityChartProps {
@@ -36,13 +24,6 @@ interface PopulationDensityChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const getWardPopulationDensity = (feature: Feature, total: number) => {
-	const areaSqKm = featureAreaSqKm(feature);
-	const density = areaSqKm > 0 ? total / areaSqKm : 0;
-	return { density, areaSqKm };
-};
-
-// Seeded random number generator (extracted to avoid recreating in useMemo)
 const createSeededRandom = (seed: number) => {
 	let currentSeed = seed;
 	return () => {
@@ -51,12 +32,11 @@ const createSeededRandom = (seed: number) => {
 	};
 };
 
-// Pre-calculate density categories (constant)
 const DENSITY_CATEGORIES = [
 	{
 		threshold: 2000,
 		label: "Low",
-		hex: "#22c55e", // green-500
+		hex: "#22c55e",
 		color: "bg-green-500",
 		count: 15,
 		variations: ["bg-green-400", "bg-green-500", "bg-green-600"],
@@ -64,7 +44,7 @@ const DENSITY_CATEGORIES = [
 	{
 		threshold: 5000,
 		label: "Medium",
-		hex: "#eab308", // yellow-500
+		hex: "#eab308",
 		color: "bg-yellow-500",
 		count: 30,
 		variations: ["bg-yellow-400", "bg-yellow-500", "bg-yellow-600"],
@@ -72,7 +52,7 @@ const DENSITY_CATEGORIES = [
 	{
 		threshold: Infinity,
 		label: "High",
-		hex: "#ef4444", // red-500
+		hex: "#ef4444",
 		color: "bg-red-500",
 		count: 50,
 		variations: ["bg-red-400", "bg-red-500", "bg-red-600"],
@@ -80,10 +60,8 @@ const DENSITY_CATEGORIES = [
 ] as const;
 
 const getDensityCategory = (density: number) => {
-	for (let i = 0; i < DENSITY_CATEGORIES.length; i++) {
-		if (density < DENSITY_CATEGORIES[i].threshold) {
-			return DENSITY_CATEGORIES[i];
-		}
+	for (const category of DENSITY_CATEGORIES) {
+		if (density < category.threshold) return category;
 	}
 	return DENSITY_CATEGORIES[DENSITY_CATEGORIES.length - 1];
 };
@@ -92,30 +70,28 @@ function DensityGrid({ density }: { density: number }) {
 	const gridWidth = 18;
 	const gridHeight = 4;
 	const totalSquares = gridWidth * gridHeight;
-
 	const squareClasses = (() => {
 		const category = getDensityCategory(density);
 		const seededRandom = createSeededRandom(Math.floor(density));
-
-		const indices = new Array(totalSquares);
-		for (let i = 0; i < totalSquares; i++) {
-			indices[i] = i;
+		const indices = Array.from(
+			{ length: totalSquares },
+			(_, index) => index,
+		);
+		for (let index = indices.length - 1; index > 0; index--) {
+			const randomIndex = Math.floor(seededRandom() * (index + 1));
+			[indices[index], indices[randomIndex]] = [
+				indices[randomIndex],
+				indices[index],
+			];
 		}
-
-		for (let i = indices.length - 1; i > 0; i--) {
-			const j = Math.floor(seededRandom() * (i + 1));
-			[indices[i], indices[j]] = [indices[j], indices[i]];
-		}
-
 		const colors = new Array(totalSquares).fill("bg-gray-200");
-		for (let i = 0; i < category.count; i++) {
-			const index = indices[i];
+		for (let index = 0; index < category.count; index++) {
+			const square = indices[index];
 			const colorIndex = Math.floor(
 				seededRandom() * category.variations.length,
 			);
-			colors[index] = category.variations[colorIndex];
+			colors[square] = category.variations[colorIndex];
 		}
-
 		return colors;
 	})();
 
@@ -127,9 +103,9 @@ function DensityGrid({ density }: { density: number }) {
 				gridTemplateRows: `repeat(${gridHeight}, 1fr)`,
 			}}
 		>
-			{squareClasses.map((className, i) => (
+			{squareClasses.map((className, index) => (
 				<div
-					key={i}
+					key={index}
 					className={`rounded-xs transition-all duration-300 ${className}`}
 				/>
 			))}
@@ -137,29 +113,7 @@ function DensityGrid({ density }: { density: number }) {
 	);
 }
 
-const densityCache = new Map<string, Map<number, any>>();
-
-const featureIndexCache = new WeakMap<object, Map<string, Feature>>();
-
-const getFeatureIndex = (
-	geojson: BoundaryGeojson,
-	wardCodeProp: string,
-): Map<string, Feature> => {
-	let index = featureIndexCache.get(geojson);
-	if (!index) {
-		index = new Map();
-		for (const feature of geojson.features) {
-			const code = feature.properties
-				? getFeatureProp(feature.properties, wardCodeProp)
-				: undefined;
-			if (code) index.set(String(code), feature);
-		}
-		featureIndexCache.set(geojson, index);
-	}
-	return index;
-};
-
-function PopulationDensityChart({
+export default function PopulationDensityChart({
 	dataset,
 	aggregatedData,
 	boundaryData,
@@ -172,174 +126,16 @@ function PopulationDensityChart({
 	const isDark = useIsDark();
 	const isActive =
 		activeViz.datasetId === dataset.id && activeViz.view === "density";
-	const mappingGeneration = codeMapper?.getMappingGeneration() ?? 0;
-
-	const { density, areaSqKm, total } = (() => {
-		// Handle no area selected - use aggregated data
-		if (selectedArea === null && aggregatedData) {
-			const data = aggregatedData[dataset.year];
-			if (!data) return { density: null, areaSqKm: null, total: null };
-			return {
-				density: data.density,
-				areaSqKm: data.totalArea,
-				total: data.populationStats.total,
-			};
-		}
-
-		const geojson = boundaryData.ward[dataset.boundaryYear];
-		if (!geojson) {
-			return { density: null, areaSqKm: null, total: null };
-		}
-
-		// Handle Ward Selection
-		if (selectedArea && selectedArea.type === "ward") {
-			const wardCodeProp = detectWardCodeForYear(
-				geojson.features,
-				dataset.boundaryYear,
-			);
-			const wardRecord = resolvePopulationAreaWards(
-				dataset,
-				selectedArea,
-				codeMapper,
-			)?.[0];
-
-			if (wardRecord) {
-				const featureIndex = getFeatureIndex(geojson, wardCodeProp);
-				const wardFeature = featureIndex.get(wardRecord.code);
-
-				if (wardFeature) {
-					const total = calculateTotal(wardRecord.data.total);
-					return {
-						...getWardPopulationDensity(wardFeature, total),
-						total,
-					};
-				}
-			}
-
-			return { density: null, areaSqKm: null, total: null };
-		}
-
-		// Handle Local Authority Selection
-		if (
-			selectedArea &&
-			selectedArea.type === "localAuthority" &&
-			populationAreaMappingsAvailable(selectedArea, codeMapper)
-		) {
-			return getLadCachedValue(
-				densityCache,
-				selectedArea.code,
-				dataset.year,
-				dataset,
-				mappingGeneration,
-				() => {
-					const wardRecords = resolvePopulationAreaWards(
-						dataset,
-						selectedArea,
-						codeMapper,
-					);
-
-					if (!wardRecords?.length)
-						return { density: null, areaSqKm: null, total: null };
-
-					const wardCodeProp = detectWardCodeForYear(
-						geojson.features,
-						dataset.boundaryYear,
-					);
-					const featureIndex = getFeatureIndex(geojson, wardCodeProp);
-					let totalPopulation = 0;
-					let totalArea = 0;
-
-					for (const {
-						code: wardCode,
-						data: populationData,
-					} of wardRecords) {
-						if (populationData) {
-							const wardFeature = featureIndex.get(wardCode);
-							if (wardFeature) {
-								const wardTotal = calculateTotal(
-									populationData.total,
-								);
-								totalPopulation += wardTotal;
-								totalArea += featureAreaSqKm(wardFeature);
-							}
-						}
-					}
-
-					return totalArea > 0
-						? {
-								density: totalPopulation / totalArea,
-								areaSqKm: totalArea,
-								total: totalPopulation,
-							}
-						: { density: null, areaSqKm: null, total: null };
-				},
-			);
-		}
-
-		// Mapping generation changes when the async constituency lookup is ready,
-		// so this cache cannot retain an early empty result.
-		if (
-			selectedArea &&
-			selectedArea.type === "constituency" &&
-			populationAreaMappingsAvailable(selectedArea, codeMapper)
-		) {
-			return getAreaCachedValue(
-				densityCache,
-				`constituency-${selectedArea.code}`,
-				dataset.year,
-				dataset,
-				mappingGeneration,
-				() => {
-					const wardRecords = resolvePopulationAreaWards(
-						dataset,
-						selectedArea,
-						codeMapper,
-					);
-
-					if (!wardRecords?.length)
-						return { density: null, areaSqKm: null, total: null };
-
-					const wardCodeProp = detectWardCodeForYear(
-						geojson.features,
-						dataset.boundaryYear,
-					);
-					const featureIndex = getFeatureIndex(geojson, wardCodeProp);
-					let totalPopulation = 0;
-					let totalArea = 0;
-
-					for (const {
-						code: wardCode,
-						data: populationData,
-					} of wardRecords) {
-						if (populationData) {
-							const wardFeature = featureIndex.get(wardCode);
-							if (wardFeature) {
-								const wardTotal = calculateTotal(
-									populationData.total,
-								);
-								totalPopulation += wardTotal;
-								totalArea += featureAreaSqKm(wardFeature);
-							}
-						}
-					}
-
-					return totalArea > 0
-						? {
-								density: totalPopulation / totalArea,
-								areaSqKm: totalArea,
-								total: totalPopulation,
-							}
-						: { density: null, areaSqKm: null, total: null };
-				},
-			);
-		}
-
-		// Unsupported area type
-		return { density: null, areaSqKm: null, total: null };
-	})();
-
+	const { density, areaSqKm, total } = resolvePopulationDensity({
+		dataset,
+		aggregatedData,
+		boundaryData,
+		selectedArea,
+		codeMapper,
+	});
 	const accentColor =
 		density !== null ? getDensityCategory(density).hex : null;
+
 	return (
 		<ChartCard
 			heading={`Population Density [${dataset.year}]`}
@@ -404,5 +200,3 @@ function PopulationDensityChart({
 		</ChartCard>
 	);
 }
-
-export default PopulationDensityChart;
