@@ -1,4 +1,5 @@
 import { fuelPovertyDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { fuelPovertyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { FuelPovertyDataset } from "@/lib/types/fuelPoverty";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -13,7 +14,8 @@ export const fuelPovertyDefinition: ChartDatasetDefinition<FuelPovertyDataset> =
 			componentPath:
 				"@/components/economics/fuel-poverty/FuelPovertyChart",
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>
-				aggregator.calculateFuelPovertyStats(
+				aggregator.aggregate(
+					fuelPovertyAggregation,
 					geojson,
 					data,
 					location,

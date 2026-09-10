@@ -1,4 +1,5 @@
 import { nimdmDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { nimdmAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { NIMDMDataset } from "@/lib/types/nimdm";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -11,7 +12,7 @@ export const nimdmDefinition: ChartDatasetDefinition<NIMDMDataset> = {
 		defaultVisible: false,
 		componentPath: "@/components/deprivation/nimdm/NIMDMChart",
 		calculateStats: (mm, g, d, l, id) =>
-			mm.calculateNIMDMStats(g, d, l, id),
+			mm.aggregate(nimdmAggregation, g, d, l, id),
 		year: 2017,
 	},
 	map: {

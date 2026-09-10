@@ -1,4 +1,5 @@
 import { housePriceDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { housePriceAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { HousePriceDataset } from "@/lib/types/housePrice";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -11,7 +12,8 @@ export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 		defaultVisible: true,
 		componentPath: "@/components/economics/house-price/HousePriceChart",
 		calculateStats: (aggregator, geojson, data, location, datasetId) =>
-			aggregator.calculateHousePriceStats(
+			aggregator.aggregate(
+				housePriceAggregation,
 				geojson,
 				data,
 				location,

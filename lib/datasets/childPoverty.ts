@@ -1,4 +1,5 @@
 import { childPovertyDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { childPovertyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { ChildPovertyDataset } from "@/lib/types/childPoverty";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -13,7 +14,8 @@ export const childPovertyDefinition: ChartDatasetDefinition<ChildPovertyDataset>
 			componentPath:
 				"@/components/economics/child-poverty/ChildPovertyChart",
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>
-				aggregator.calculateChildPovertyStats(
+				aggregator.aggregate(
+					childPovertyAggregation,
 					geojson,
 					data,
 					location,

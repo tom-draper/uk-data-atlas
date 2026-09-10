@@ -1,4 +1,5 @@
 import { broadbandDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { broadbandAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { BroadbandDataset } from "@/lib/types/broadband";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -11,7 +12,7 @@ export const broadbandDefinition: ChartDatasetDefinition<BroadbandDataset> = {
 		defaultVisible: true,
 		componentPath: "@/components/telecoms/broadband/BroadbandChart",
 		calculateStats: (m, g, d, l, id) =>
-			m.calculateBroadbandStats(g, d, l, id),
+			m.aggregate(broadbandAggregation, g, d, l, id),
 		year: 2025,
 	},
 	map: {

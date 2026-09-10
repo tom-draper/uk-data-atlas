@@ -1,4 +1,5 @@
 import { simdDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { simdAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { SIMDDataset } from "@/lib/types/simd";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -10,7 +11,8 @@ export const simdDefinition: ChartDatasetDefinition<SIMDDataset> = {
 		label: "Deprivation (SIMD) [2020]",
 		defaultVisible: false,
 		componentPath: "@/components/deprivation/simd/SIMDChart",
-		calculateStats: (mm, g, d, l, id) => mm.calculateSIMDStats(g, d, l, id),
+		calculateStats: (mm, g, d, l, id) =>
+			mm.aggregate(simdAggregation, g, d, l, id),
 		year: 2020,
 	},
 	map: {

@@ -1,4 +1,5 @@
 import { crimeDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { crimeAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { CrimeDataset } from "@/lib/types/crime";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -10,7 +11,8 @@ export const crimeDefinition: ChartDatasetDefinition<CrimeDataset> = {
 		label: "Crime Rate [2025]",
 		defaultVisible: true,
 		componentPath: "@/components/economics/crime/CrimeRateChart",
-		calculateStats: (m, g, d, l, id) => m.calculateCrimeStats(g, d, l, id),
+		calculateStats: (m, g, d, l, id) =>
+			m.aggregate(crimeAggregation, g, d, l, id),
 		year: 2025,
 	},
 	map: {

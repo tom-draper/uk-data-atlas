@@ -1,4 +1,5 @@
 import { schoolPerformanceDisadvantageDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { schoolPerformanceGapAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { SchoolPerformanceGapDataset } from "@/lib/types/schoolPerformance";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -13,7 +14,7 @@ export const schoolPerformanceDisadvantageDefinition: ChartDatasetDefinition<Sch
 			componentPath:
 				"@/components/education/SchoolPerformanceDisadvantageChart",
 			calculateStats: (m, g, d, l, id) =>
-				m.calculateSchoolPerformanceGapStats(g, d, l, id),
+				m.aggregate(schoolPerformanceGapAggregation, g, d, l, id),
 			year: 2025,
 		},
 		map: {

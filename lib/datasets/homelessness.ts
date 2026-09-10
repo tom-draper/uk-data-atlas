@@ -1,4 +1,5 @@
 import { homelessnessDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { homelessnessAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { HomelessnessDataset } from "@/lib/types/homelessness";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -13,7 +14,8 @@ export const homelessnessDefinition: ChartDatasetDefinition<HomelessnessDataset>
 			componentPath:
 				"@/components/economics/homelessness/HomelessnessChart",
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>
-				aggregator.calculateHomelessnessStats(
+				aggregator.aggregate(
+					homelessnessAggregation,
 					geojson,
 					data,
 					location,

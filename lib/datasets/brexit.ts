@@ -1,4 +1,5 @@
 import { renderBrexit } from "@/lib/helpers/mapRendering";
+import { brexitAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { brexitDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { BrexitLADDataset } from "@/lib/types/referendum";
 import type { ChartDatasetDefinition } from "./types";
@@ -12,7 +13,7 @@ export const brexitDefinition: ChartDatasetDefinition<BrexitLADDataset> = {
 		defaultVisible: true,
 		componentPath: "@/components/elections/referendum/BrexitElectoralChart",
 		calculateStats: (mm, g, d, l, id) =>
-			mm.calculateBrexitStats(g, d, l, id),
+			mm.aggregate(brexitAggregation, g, d, l, id),
 		year: 2016,
 	},
 	legendKind: "brexit",

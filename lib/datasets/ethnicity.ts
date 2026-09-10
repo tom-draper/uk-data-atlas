@@ -1,4 +1,5 @@
 import { renderEthnicity } from "@/lib/helpers/mapRendering";
+import { ethnicityAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { ethnicityDatasetDefinition } from "@/lib/data/catalog/definitions";
 import type { EthnicityDataset } from "@/lib/types/ethnicity";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
@@ -9,7 +10,14 @@ const calculateStats: ChartDefinition<EthnicityDataset>["calculateStats"] = (
 	data,
 	location,
 	datasetId,
-) => mapManager.calculateEthnicityStats(geojson, data, location, datasetId);
+) =>
+	mapManager.aggregate(
+		ethnicityAggregation,
+		geojson,
+		data,
+		location,
+		datasetId,
+	);
 
 export const ethnicityDefinition: ChartDatasetDefinition<EthnicityDataset> = {
 	...ethnicityDatasetDefinition,

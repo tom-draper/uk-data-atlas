@@ -1,10 +1,12 @@
 import { lifeExpectancyDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { lifeExpectancyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { LifeExpectancyDataset } from "@/lib/types/lifeExpectancy";
 import type { ChartDatasetDefinition, ChartDefinition } from "./types";
 
 const calculateStats: ChartDefinition<LifeExpectancyDataset>["calculateStats"] =
 	(mapManager, geojson, data, location, datasetId) =>
-		mapManager.calculateLifeExpectancyStats(
+		mapManager.aggregate(
+			lifeExpectancyAggregation,
 			geojson,
 			data,
 			location,

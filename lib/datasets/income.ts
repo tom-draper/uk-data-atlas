@@ -1,4 +1,5 @@
 import { incomeDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { incomeAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { IncomeDataset } from "@/lib/types/income";
 import type { ChartDatasetDefinition } from "./types";
 
@@ -10,7 +11,8 @@ export const incomeDefinition: ChartDatasetDefinition<IncomeDataset> = {
 		label: "Income [2025]",
 		defaultVisible: true,
 		componentPath: "@/components/economics/income/IncomeChart",
-		calculateStats: (m, g, d, l, id) => m.calculateIncomeStats(g, d, l, id),
+		calculateStats: (m, g, d, l, id) =>
+			m.aggregate(incomeAggregation, g, d, l, id),
 		year: 2025,
 	},
 	map: {

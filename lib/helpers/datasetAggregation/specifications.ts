@@ -64,74 +64,128 @@ export const customDatasetAggregation: BoundaryAggregationSpec<
 };
 
 export const localElectionAggregation = boundaryAggregation(
-	"local-election", "ward", aggregateLocalElection,
+	"local-election",
+	"ward",
+	aggregateLocalElection,
 );
 export const generalElectionAggregation = boundaryAggregation(
-	"general-election", "constituency", aggregateGeneralElection,
+	"general-election",
+	"constituency",
+	aggregateGeneralElection,
 );
 export const populationAggregation = boundaryAggregation(
-	"population-ward", "ward", aggregatePopulation,
+	"population-ward",
+	"ward",
+	aggregatePopulation,
 );
 export const ethnicityAggregation = boundaryAggregation(
-	"ethnicity", "localAuthority", aggregateEthnicity,
+	"ethnicity",
+	"localAuthority",
+	aggregateEthnicity,
 );
 export const housePriceAggregation = boundaryAggregation(
-	"house-price", "ward", aggregateHousePrices,
+	"house-price",
+	"ward",
+	aggregateHousePrices,
 );
 export const crimeAggregation = boundaryAggregation(
-	"crime", "localAuthority", aggregateCrime,
+	"crime",
+	"localAuthority",
+	aggregateCrime,
 );
 export const incomeAggregation = boundaryAggregation(
-	"income", "localAuthority", aggregateIncome,
+	"income",
+	"localAuthority",
+	aggregateIncome,
 );
 export const brexitAggregation = boundaryAggregation(
-	"brexit", "localAuthority", aggregateBrexit,
+	"brexit",
+	"localAuthority",
+	aggregateBrexit,
 );
 export const brexitConstituencyAggregation = boundaryAggregation(
-	"brexitConstituency", "constituency", aggregateBrexitConstituencies,
+	"brexitConstituency",
+	"constituency",
+	aggregateBrexitConstituencies,
 );
 export const lifeExpectancyAggregation = boundaryAggregation(
-	"lifeExpectancy", "localAuthority", aggregateLifeExpectancy,
+	"lifeExpectancy",
+	"localAuthority",
+	aggregateLifeExpectancy,
 );
-export const simdAggregation = boundaryAggregation("simd", "dataZone", aggregateSIMD);
-export const wimdAggregation = boundaryAggregation("wimd", "lsoa", aggregateWIMD);
+export const simdAggregation = boundaryAggregation(
+	"simd",
+	"dataZone",
+	aggregateSIMD,
+);
+export const wimdAggregation = boundaryAggregation(
+	"wimd",
+	"lsoa",
+	aggregateWIMD,
+);
 export const nimdmAggregation = boundaryAggregation(
-	"nimdm", "superOutputArea", aggregateNIMDM,
+	"nimdm",
+	"superOutputArea",
+	aggregateNIMDM,
 );
 export const imdAggregation = boundaryAggregation("imd", "lsoa", aggregateIMD);
 export const qualificationAggregation = boundaryAggregation(
-	"qualification", "localAuthority", aggregateQualifications,
+	"qualification",
+	"localAuthority",
+	aggregateQualifications,
 );
 export const broadbandAggregation = numericAggregation(
-	"broadband", "localAuthority", aggregateBroadband,
+	"broadband",
+	"localAuthority",
+	aggregateBroadband,
 );
 export const airQualityAggregation = numericAggregation(
-	"airQuality", "localAuthority", aggregateAirQuality,
+	"airQuality",
+	"localAuthority",
+	aggregateAirQuality,
 );
 export const claimantCountAggregation = numericAggregation(
-	"claimantCount", "localAuthority", aggregateClaimantCount,
+	"claimantCount",
+	"localAuthority",
+	aggregateClaimantCount,
 );
 export const childPovertyAggregation = numericAggregation(
-	"childPoverty", "localAuthority", aggregateChildPoverty,
+	"childPoverty",
+	"localAuthority",
+	aggregateChildPoverty,
 );
 export const homelessnessAggregation = numericAggregation(
-	"homelessness", "localAuthority", aggregateHomelessness,
+	"homelessness",
+	"localAuthority",
+	aggregateHomelessness,
 );
 export const fuelPovertyAggregation = numericAggregation(
-	"fuelPoverty", "lsoa", aggregateFuelPoverty,
+	"fuelPoverty",
+	"lsoa",
+	aggregateFuelPoverty,
 );
 export const schoolPerformanceAggregation = numericAggregation(
-	"schoolPerformance", "localAuthority", aggregateSchoolPerformance,
+	"schoolPerformance",
+	"localAuthority",
+	aggregateSchoolPerformance,
 );
 export const schoolPerformanceConstituencyAggregation = numericAggregation(
-	"schoolPerformanceConstituency", "constituency", aggregateSchoolPerformance,
+	"schoolPerformanceConstituency",
+	"constituency",
+	aggregateSchoolPerformance,
 );
 export const schoolPerformanceGapAggregation = numericAggregation(
-	"schoolPerformanceGap", "localAuthority", aggregateSchoolPerformanceGap,
+	"schoolPerformanceGap",
+	"localAuthority",
+	aggregateSchoolPerformanceGap,
 );
 export const nhsWaitingAggregation = boundaryAggregation(
-	"nhsWaiting", "localAuthority", aggregateNHSWaiting,
+	"nhsWaiting",
+	"localAuthority",
+	aggregateNHSWaiting,
 );
 export const unemploymentAggregation = boundaryAggregation(
-	"unemployment", "localAuthority", aggregateUnemployment,
+	"unemployment",
+	"localAuthority",
+	aggregateUnemployment,
 );
