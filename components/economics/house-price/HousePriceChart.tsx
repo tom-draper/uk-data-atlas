@@ -1,14 +1,17 @@
-// components/HousePriceChart.tsx
 "use client";
-import {
+
+import type {
 	ActiveViz,
 	AggregatedHousePriceData,
 	Dataset,
 	HousePriceDataset,
 	SelectedArea,
 } from "@lib/types";
-import React from "react";
 import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
+import {
+	HousePriceSeriesCache,
+	type HousePriceSeriesInput,
+} from "@/lib/helpers/housePriceSeries";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -31,283 +34,36 @@ interface PriceChartProps {
 	dataset: HousePriceDataset;
 	aggregatedData: Record<number, AggregatedHousePriceData> | null;
 	selectedArea: SelectedArea | null;
-	getCodeForYear?: (
-		type: "ward" | "localAuthority",
-		code: string,
-		targetYear: number,
-	) => string | undefined;
-	getWardsForLad?: (ladCode: string, year: number) => string[];
-	getWardsForConstituency?: (
-		constituencyCode: string,
-		wardYear: number,
-	) => string[];
+	codeMapper?: HousePriceSeriesInput["codeMapper"];
 	mappingGeneration: number;
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const LINE_COLOR = "#6366f1"; // indigo-500
-
-const MAX_HOUSE_PRICE_CACHE_ENTRIES = 50;
-const housePriceLookupCache = new Map<string, Map<number, any>>();
-const housePriceDatasetIds = new WeakMap<object, number>();
-let nextHousePriceDatasetId = 0;
-
-const housePriceCacheKey = (
-	areaKey: string,
-	dataset: object,
-	mappingGeneration: number,
-) => {
-	let datasetId = housePriceDatasetIds.get(dataset);
-	if (datasetId === undefined) {
-		datasetId = nextHousePriceDatasetId++;
-		housePriceDatasetIds.set(dataset, datasetId);
-	}
-	return `${areaKey}:${datasetId}:${mappingGeneration}`;
-};
-
-const housePriceYearCache = (cacheKey: string) => {
-	let yearCache = housePriceLookupCache.get(cacheKey);
-	if (!yearCache) {
-		if (housePriceLookupCache.size >= MAX_HOUSE_PRICE_CACHE_ENTRIES) {
-			housePriceLookupCache.delete(
-				housePriceLookupCache.keys().next().value!,
-			);
-		}
-		yearCache = new Map();
-		housePriceLookupCache.set(cacheKey, yearCache);
-	}
-	return yearCache;
-};
+const LINE_COLOR = "#6366f1";
+const housePriceSeriesCache = new HousePriceSeriesCache();
 
 function PriceChart({
 	dataset,
 	aggregatedData,
 	selectedArea,
-	getCodeForYear,
-	getWardsForLad,
-	getWardsForConstituency,
+	codeMapper,
 	mappingGeneration,
 	isActive,
 	setActiveViz,
 }: PriceChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const { priceData, currentPrice } = (() => {
-		let prices: Record<number, number> = {};
-		let price2023: number | null = null;
+	const { priceData, currentPrice } = housePriceSeriesCache.resolve(
+		{
+			dataset,
+			aggregatedData,
+			selectedArea,
+			codeMapper,
+		},
+		mappingGeneration,
+	);
 
-		if (selectedArea === null && aggregatedData) {
-			const yearAggregatedData = aggregatedData[dataset.year];
-			if (yearAggregatedData) {
-				// No area selected - show aggregated data
-				prices = yearAggregatedData.averagePrices || {};
-				price2023 = yearAggregatedData.averagePrice || null;
-			}
-		} else if (selectedArea && selectedArea.type === "ward") {
-			// Ward selected - lookup ward data
-			const wardCode = selectedArea.code;
-			const yearCache = housePriceYearCache(
-				housePriceCacheKey(
-					`ward-${wardCode}`,
-					dataset,
-					mappingGeneration,
-				),
-			);
-
-			if (yearCache.has(dataset.year)) {
-				const cached = yearCache.get(dataset.year);
-				prices = cached?.prices || {};
-				price2023 = prices[2023] || null;
-			} else {
-				let data = dataset.data?.[wardCode];
-
-				if (!data && getCodeForYear) {
-					const mappedCode = getCodeForYear(
-						"ward",
-						wardCode,
-						dataset.boundaryYear,
-					);
-					if (mappedCode) {
-						data = dataset.data[mappedCode];
-					}
-				}
-
-				if (data) {
-					prices = data.prices;
-					price2023 = prices[2023] || null;
-				}
-
-				// Cache the result
-				yearCache.set(dataset.year, data || null);
-			}
-		} else if (
-			selectedArea &&
-			selectedArea.type === "localAuthority" &&
-			getWardsForLad
-		) {
-			// Local Authority selected - aggregate ward data
-			const ladCode = selectedArea.code;
-			const yearCache = housePriceYearCache(
-				housePriceCacheKey(
-					`lad-${ladCode}`,
-					dataset,
-					mappingGeneration,
-				),
-			);
-
-			if (yearCache.has(dataset.year)) {
-				const cached = yearCache.get(dataset.year);
-				prices = cached?.prices || {};
-				price2023 = prices[2023] || null;
-			} else {
-				// Get all wards in this LAD
-				const wardCodes = getWardsForLad(ladCode, 2022);
-
-				if (wardCodes.length > 0) {
-					// Aggregate prices across all wards
-					const yearlyPrices: Record<number, number[]> = {};
-
-					for (const wardCode of wardCodes) {
-						let wardData = dataset.data?.[wardCode];
-
-						// Try to map to the dataset's year if ward code doesn't exist
-						if (!wardData && getCodeForYear) {
-							const mappedCode = getCodeForYear(
-								"ward",
-								wardCode,
-								2022,
-							);
-							if (mappedCode) {
-								wardData = dataset.data[mappedCode];
-							}
-						}
-
-						if (wardData?.prices) {
-							// Collect prices by year
-							for (const [year, price] of Object.entries(
-								wardData.prices,
-							)) {
-								if (price !== null && price !== undefined) {
-									const yearNum = Number(year);
-									if (!yearlyPrices[yearNum]) {
-										yearlyPrices[yearNum] = [];
-									}
-									yearlyPrices[yearNum].push(price as number);
-								}
-							}
-						}
-					}
-
-					// Calculate median for each year
-					for (const [year, priceArray] of Object.entries(
-						yearlyPrices,
-					)) {
-						if (priceArray.length > 0) {
-							// Sort and find median
-							const sorted = priceArray.toSorted((a, b) => a - b);
-							const mid = Math.floor(sorted.length / 2);
-							prices[Number(year)] =
-								sorted.length % 2 === 0
-									? (sorted[mid - 1] + sorted[mid]) / 2
-									: sorted[mid];
-						}
-					}
-
-					price2023 = prices[2023] || null;
-				}
-
-				// Cache the result
-				yearCache.set(dataset.year, { prices });
-			}
-		} else if (
-			selectedArea &&
-			selectedArea.type === "constituency" &&
-			getWardsForConstituency
-		) {
-			const constituencyCode = selectedArea.code;
-			const yearCache = housePriceYearCache(
-				housePriceCacheKey(
-					`constituency-${constituencyCode}`,
-					dataset,
-					mappingGeneration,
-				),
-			);
-
-			if (yearCache.has(dataset.year)) {
-				const cached = yearCache.get(dataset.year);
-				prices = cached?.prices || {};
-				price2023 = prices[2023] || null;
-			} else {
-				const wardCodes = getWardsForConstituency(
-					constituencyCode,
-					dataset.boundaryYear,
-				);
-				if (wardCodes.length > 0) {
-					const yearlyPrices: Record<number, number[]> = {};
-					for (const wardCode of wardCodes) {
-						let wardData = dataset.data?.[wardCode];
-						if (!wardData && getCodeForYear) {
-							const mapped = getCodeForYear(
-								"ward",
-								wardCode,
-								dataset.boundaryYear,
-							);
-							if (mapped) wardData = dataset.data[mapped];
-						}
-						if (wardData?.prices) {
-							for (const [year, price] of Object.entries(
-								wardData.prices,
-							)) {
-								if (price !== null && price !== undefined) {
-									const yearNum = Number(year);
-									if (!yearlyPrices[yearNum])
-										yearlyPrices[yearNum] = [];
-									yearlyPrices[yearNum].push(price as number);
-								}
-							}
-						}
-					}
-					for (const [year, priceArray] of Object.entries(
-						yearlyPrices,
-					)) {
-						if (priceArray.length > 0) {
-							const sorted = priceArray.toSorted((a, b) => a - b);
-							const mid = Math.floor(sorted.length / 2);
-							prices[Number(year)] =
-								sorted.length % 2 === 0
-									? (sorted[mid - 1] + sorted[mid]) / 2
-									: sorted[mid];
-						}
-					}
-					price2023 = prices[2023] || null;
-				}
-				yearCache.set(dataset.year, { prices });
-			}
-		} else {
-			// Other area types or missing mapper
-			return {
-				priceData: [],
-				currentPrice: null,
-			};
-		}
-
-		// Sort by year and filter out null values
-		const sortedPrices = Object.entries(prices)
-			.filter(([_, price]) => price !== null && price !== undefined)
-			.sort(([a], [b]) => Number(a) - Number(b))
-			.map(([year, price]) => ({
-				year: Number(year),
-				price: price as number,
-			}));
-
-		return {
-			priceData: sortedPrices,
-			currentPrice: price2023,
-		};
-	})();
-
-	// Calculate SVG path for the line chart with straight lines
 	const { linePath, areaPath } = (() => {
 		if (priceData.length < 2) return { linePath: "", areaPath: "" };
 
@@ -315,23 +71,19 @@ function PriceChart({
 		const height = 100;
 		const maxPrice = 700000;
 		const minPrice = 0;
-
-		const calculatedPoints = priceData.map((d, i) => {
-			const x = (i / (priceData.length - 1)) * width;
-			const normalizedPrice = Math.min(d.price, maxPrice);
+		const calculatedPoints = priceData.map((datum, index) => {
+			const x = (index / (priceData.length - 1)) * width;
+			const normalizedPrice = Math.min(datum.price, maxPrice);
 			const y =
 				height -
 				((normalizedPrice - minPrice) / (maxPrice - minPrice)) * height;
 			return { x, y };
 		});
-
-		// Create straight line path
-		const line = `M ${calculatedPoints.map((p) => `${p.x},${p.y}`).join(" L ")}`;
-
-		// Create area path extending to bottom
-		const area = `${line} L ${width},${height} L 0,${height} Z`;
-
-		return { linePath: line, areaPath: area };
+		const line = `M ${calculatedPoints.map((point) => `${point.x},${point.y}`).join(" L ")}`;
+		return {
+			linePath: line,
+			areaPath: `${line} L ${width},${height} L 0,${height} Z`,
+		};
 	})();
 
 	const formattedPrice = currentPrice
@@ -379,12 +131,10 @@ function PriceChart({
 								/>
 							</linearGradient>
 						</defs>
-
 						<path
 							d={areaPath}
 							fill={`url(#gradient-${dataset.year})`}
 						/>
-
 						<path
 							d={linePath}
 							fill="none"
@@ -445,11 +195,9 @@ export default function HousePriceChart({
 			dataset={dataset}
 			aggregatedData={aggregatedData}
 			selectedArea={selectedArea}
-			getCodeForYear={codeMapper?.getCodeForYear}
-			getWardsForLad={codeMapper?.getWardsForLad}
-			getWardsForConstituency={codeMapper?.getWardsForConstituency}
+			codeMapper={codeMapper}
 			mappingGeneration={codeMapper?.getMappingGeneration() ?? 0}
-			isActive={isActive as boolean}
+			isActive={isActive}
 			setActiveViz={setActiveViz}
 		/>
 	);
