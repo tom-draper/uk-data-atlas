@@ -19,3 +19,10 @@ export interface AggregationCache {
 	get(key: string): unknown;
 	set(key: string, value: unknown): void;
 }
+
+/** A dataset-owned recipe for aggregating records over one boundary vintage. */
+export interface BoundaryAggregationSpec<T, R> {
+	cacheKey: string;
+	scope: BoundaryCodeScope;
+	aggregate(features: Features, codeProp: PropertyKeys, data: T): R;
+}

@@ -5,6 +5,7 @@ import { getCustomDatasetDisplayValue } from "@/lib/data/custom/displayValue";
 import type { SelectedCustomArea } from "./types";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useAggregatedDataset } from "@/lib/hooks/useAggregatedDataset";
+import { customDatasetAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import { getColor } from "@/lib/helpers/colorScale/themes";
 import type { WardDataResolver } from "@/lib/data/boundaries/codeMapper";
 import {
@@ -44,8 +45,14 @@ export function CustomDatasetCard({
 		{
 			datasets: customDatasets,
 			boundaryType: customDataset.boundaryType,
-			calculateStats: (mm, g, d, loc, id) =>
-				mm.calculateCustomDatasetStats(g, d, loc, id),
+			calculateStats: (aggregator, geojson, data, location, datasetId) =>
+				aggregator.aggregate(
+					customDatasetAggregation,
+					geojson,
+					data,
+					location,
+					datasetId,
+				),
 		},
 		mapManager,
 		boundaryData,
