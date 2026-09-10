@@ -9,6 +9,7 @@ export * from "./housePrice";
 export * from "./crime";
 export * from "./geometry";
 export * from "./mapOptions";
+export * from "./mapExpression";
 export * from "./income";
 export * from "./ethnicity";
 export * from "./custom";

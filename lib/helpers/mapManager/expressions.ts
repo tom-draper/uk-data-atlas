@@ -1,9 +1,6 @@
-import type { ExpressionSpecification } from "maplibre-gl";
+import type { MapExpression, PaintValue } from "@/lib/types/mapExpression";
 
-/** MapLibre expression values, constructed through the helpers below. */
-export type MapExpression = ExpressionSpecification;
-export type PaintValue<T extends string | number = string | number> =
-	T | MapExpression;
+export type { MapExpression, PaintValue } from "@/lib/types/mapExpression";
 
 // MapLibre's published expression union is intentionally exhaustive. Keep the
 // structural conversion here so renderers use named, reviewable operations.

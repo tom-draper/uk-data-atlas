@@ -1,4 +1,25 @@
-import type { VectorLineLayer } from "@/lib/helpers/mapManager/layers";
+import type { MapExpression, PaintValue } from "./mapExpression";
+
+/** A map-native vector-tile layer before view-specific visibility is applied. */
+export interface NetworkVectorLayer {
+	kind: "vector-line";
+	id: string;
+	source: {
+		tiles: string[];
+		sourceLayer: string;
+		minzoom?: number;
+		maxzoom?: number;
+		attribution?: string;
+	};
+	style: {
+		color: PaintValue<string>;
+		width: PaintValue<number>;
+		opacity?: number;
+	};
+	/** Tile attribute a legend-driven filter matches against. */
+	filterProperty?: string;
+	filter?: MapExpression;
+}
 
 /** A map-native dataset whose geometry is streamed as vector tiles. */
 export interface NetworkDataset {
@@ -19,5 +40,5 @@ export interface NetworkDataset {
 		/** Tile attribute values this row matches; omit for a catch-all "other" row. */
 		values?: readonly string[];
 	}[];
-	layer: Omit<VectorLineLayer, "visibility"> | null;
+	layer: NetworkVectorLayer | null;
 }
