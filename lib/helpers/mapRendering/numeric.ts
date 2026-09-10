@@ -22,7 +22,7 @@ export interface NumericMapConfig<T extends NumericDataset> {
 	valueFor?(dataset: T, code: string, mapOptions: MapOptions): number | null;
 	colorRange?: ColorRange;
 	invertColor?: boolean;
-	getColorRange?(dataset: T): ColorRange;
+	getColorRange?(dataset: T, mapOptions: MapOptions): ColorRange;
 }
 
 /** Paints one value per boundary on the theme's sequential colour ramp. */
@@ -97,7 +97,7 @@ export function renderNumericDataset<T extends NumericDataset>(
 				configuredRange.min === map.colorRange.min &&
 				configuredRange.max === map.colorRange.max
 			) {
-				return map.getColorRange(data);
+				return map.getColorRange(data, options);
 			}
 			return configuredRange;
 		},

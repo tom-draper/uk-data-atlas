@@ -7,6 +7,9 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 		{
 			colorRange: definition.map?.colorRange ?? { min: 0, max: 1 },
 			...(definition.type === "housePrice" ? { measure: "median" } : {}),
+			...(definition.type === "lifeExpectancy"
+				? { measure: "average" }
+				: {}),
 		},
 	]),
 ) as ChartMapOptions;
