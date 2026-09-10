@@ -7,36 +7,20 @@ import {
 	useState,
 	useSyncExternalStore,
 } from "react";
+import type { BoundaryData, BoundaryGeojson } from "@lib/types";
+import type { BoundaryType } from "../data/boundaries/catalog";
 import {
-	BoundaryData,
-	BoundaryGeojson,
-	WardCodes,
-	getFeatureProp,
-} from "@lib/types";
+	EMPTY_BOUNDARY_DATA,
+	fetchBoundaryPropertyGroup,
+} from "../data/boundaries/propertyLoader";
 import {
-	BoundaryType,
-	fetchBoundaryProperties,
-} from "../data/boundaries/boundaries";
-import {
-	BOUNDARY_CATALOG,
-	BOUNDARY_TYPES,
-	boundaryYears,
-} from "../data/boundaries/catalog";
-import {
-	extractWardLadMappings,
-	buildCrossYearMappings,
-	buildConstituencyWardMappings,
-} from "../data/boundaries/mappings";
-import type {
-	CodeMapping,
-	CodeType,
-	PrecompiledBoundaryMappings,
-	YearCode,
-} from "../data/boundaries/mappings";
-import { withCDN } from "../helpers/cdn";
+	deriveBoundaryMappings,
+	seedBoundaryMappings,
+	type BoundaryMappingTarget,
+} from "../data/boundaries/mappingSeeder";
+import { extractWardCodes } from "../data/boundaries/wardCodes";
 import { requiredBoundaryTypes } from "../datasets/boundaryRequirements";
 import {
-	constituencyReleaseIdForYear,
 	fetchConstituencyLadOverlaps,
 	type ConstituencyLadOverlaps,
 } from "../data/boundaries/constituencyLadOverlaps";
@@ -47,209 +31,6 @@ import {
 	subscribeVisibility,
 } from "../context/ChartVisibilityContext";
 
-const EMPTY_BOUNDARY_DATA: BoundaryData = Object.fromEntries(
-	BOUNDARY_TYPES.map((type) => [
-		type,
-		Object.fromEntries(boundaryYears(type).map((year) => [year, null])),
-	]),
-) as BoundaryData;
-
-const BOUNDARY_MAPPINGS_URL = withCDN(
-	"/data/precompiled/boundary-mappings.json",
-);
-/** The parts of a code mapper the precompiled mappings are loaded into. */
-type BoundaryMappingTarget = {
-	addWardLadMappings?: (mappings: Record<string, string>) => void;
-	addLadWardMappings?: (
-		year: YearCode,
-		mappings: Record<string, string[]>,
-	) => void;
-	addCodeMappings?: (type: CodeType, mappings: CodeMapping) => void;
-	addConstituencyWardMappings?: (
-		year: YearCode,
-		mappings: Record<string, string[]>,
-	) => void;
-};
-
-const applyBoundaryMappings = (
-	mappings: PrecompiledBoundaryMappings,
-	target: BoundaryMappingTarget,
-) => {
-	target.addWardLadMappings?.(mappings.wardToLad);
-	for (const [year, ladMappings] of Object.entries(mappings.ladToWards)) {
-		target.addLadWardMappings?.(Number(year), ladMappings);
-	}
-	target.addCodeMappings?.("ward", mappings.codeMappings.ward);
-	target.addCodeMappings?.(
-		"constituency",
-		mappings.codeMappings.constituency,
-	);
-	target.addCodeMappings?.(
-		"localAuthority",
-		mappings.codeMappings.localAuthority,
-	);
-	for (const [year, constituencyMappings] of Object.entries(
-		mappings.constituencyToWards,
-	)) {
-		target.addConstituencyWardMappings?.(
-			Number(year),
-			constituencyMappings,
-		);
-	}
-};
-
-/**
- * Load the precompiled mappings into a code mapper, once per mapper.
- *
- * Applying them copies the whole file into the mapper, so holding the parsed
- * payload afterwards kept a second copy of a 3.9 MB document alive for the life
- * of the page. Only whether a mapper has been seeded is remembered; the payload
- * goes out of scope with the promise that carried it. Later loads reuse that
- * record rather than re-parsing, which is what the payload was being kept for.
- *
- * Resolves false when the file cannot be read, which is the caller's signal to
- * derive what it can from the boundary properties instead.
- */
-const seededMappers = new WeakMap<BoundaryMappingTarget, Promise<boolean>>();
-
-const seedBoundaryMappings = (
-	target: BoundaryMappingTarget,
-): Promise<boolean> => {
-	const seeded = seededMappers.get(target);
-	if (seeded) return seeded;
-
-	const seeding = fetch(BOUNDARY_MAPPINGS_URL)
-		.then(async (response) => {
-			if (!response.ok) {
-				throw new Error(
-					`Failed to fetch boundary mappings: ${response.status} ${response.statusText}`,
-				);
-			}
-			applyBoundaryMappings(
-				(await response.json()) as PrecompiledBoundaryMappings,
-				target,
-			);
-			return true;
-		})
-		.catch((error) => {
-			console.warn(
-				"[boundaries] Falling back to in-browser mapping generation:",
-				error,
-			);
-			// Leave nothing recorded, so a later load can try again.
-			seededMappers.delete(target);
-			return false;
-		});
-
-	seededMappers.set(target, seeding);
-	return seeding;
-};
-
-type BoundaryGroupLoad = {
-	data: Record<number, BoundaryGeojson>;
-	/** One message per vintage that could not be fetched. */
-	failures: string[];
-};
-
-/**
- * Fetch every vintage of a geography, as properties rather than geometry.
- *
- * This is what the charts aggregate over, and none of them read a coordinate:
- * `filterFeatures` and the reducers key off the code properties, area and
- * extent come from the compiled values, and a hover is a dataset lookup. The
- * geometry of the one vintage being drawn is fetched separately, by whatever
- * is drawing it — which is the difference between holding a few hundred MB and
- * several GB, and between fetching 14 MB of wards and 93 MB.
- */
-const fetchBoundaryGroup = async (
-	type: BoundaryType,
-): Promise<BoundaryGroupLoad> => {
-	const paths = BOUNDARY_CATALOG[type].propertyVintages;
-	const years = Object.keys(paths).map(Number);
-
-	const settled = await Promise.allSettled(
-		years.map(async (year) => {
-			const path = paths[year as keyof typeof paths];
-			const data = await fetchBoundaryProperties(path);
-			return [year, data] as const;
-		}),
-	);
-
-	const results = settled
-		.filter(
-			(
-				r,
-			): r is PromiseFulfilledResult<
-				readonly [number, BoundaryGeojson]
-			> => r.status === "fulfilled",
-		)
-		.map((r) => r.value);
-	// A vintage that fails to load leaves every chart keyed to it drawing
-	// nothing, and the card gives no sign of it: it still renders, aggregates
-	// to zero and, when clicked, leaves the previous layer on the map. Report
-	// the failure rather than only logging it. One file often serves several
-	// years, so a single 404 can take out one card and leave its neighbours
-	// working, which is a confusing thing to debug from the outside.
-	const failures: string[] = [];
-	settled.forEach((result, index) => {
-		if (result.status === "rejected") {
-			const message = `Could not load ${type} boundaries for ${years[index]}: ${
-				result.reason instanceof Error
-					? result.reason.message
-					: String(result.reason)
-			}`;
-			console.error(`[boundaries] ${message}`);
-			failures.push(message);
-		}
-	});
-
-	return {
-		data: Object.fromEntries(results),
-		failures,
-	};
-};
-
-export { getCachedFilteredBoundaryData } from "../data/boundaries/locationFilter";
-
-/**
- * The ward codes each vintage actually contains, which is what election data is
- * normalised against.
- *
- * Only wards are collected. Building a set per vintage of every geography meant
- * ~150k strings held for geographies nothing asks about — LSOAs alone are 35k
- * per vintage — so a second caller wanting another geography should extend this
- * deliberately rather than get it for free.
- */
-const extractWardCodes = (
-	boundaryData: BoundaryData,
-	isLoading: boolean,
-): WardCodes => {
-	if (isLoading) return null;
-
-	const codeKeys = BOUNDARY_CATALOG.ward.properties.code;
-	const byYear: Record<number, Set<string>> = {};
-
-	for (const [year, data] of Object.entries(boundaryData.ward)) {
-		const first = data?.features[0];
-		if (!first) continue;
-		// Every feature in a release shares a schema, so the key the first one
-		// uses is the key for all of them.
-		const codeProp = codeKeys.find(
-			(key) => getFeatureProp(first.properties, key) !== undefined,
-		);
-		if (!codeProp) continue;
-
-		const codes = new Set<string>();
-		for (const feature of data.features) {
-			const code = getFeatureProp(feature.properties, codeProp);
-			if (code) codes.add(code);
-		}
-		byYear[Number(year)] = codes;
-	}
-
-	return byYear;
-};
-
 /**
  * Hook to load and filter boundary data
  * Now accepts the full codeMapper from useCodeMapper()
@@ -257,19 +38,7 @@ const extractWardCodes = (
 export function useBoundaryData(
 	activeBoundaryType?: BoundaryType,
 	selectedLocation?: string,
-	codeMapper?: {
-		getLadForWard: (wardCode: string) => string | undefined;
-		addWardLadMappings: (mappings: Record<string, string>) => void;
-		addLadWardMappings: (
-			year: YearCode,
-			mappings: Record<string, string[]>,
-		) => void;
-		addCodeMappings: (type: CodeType, mappings: CodeMapping) => void;
-		addConstituencyWardMappings: (
-			year: YearCode,
-			mappings: Record<string, string[]>,
-		) => void;
-	},
+	codeMapper?: BoundaryMappingTarget,
 ) {
 	const [rawData, setRawData] = useState<BoundaryData>(EMPTY_BOUNDARY_DATA);
 	const [isLoading, setIsLoading] = useState(true);
@@ -277,12 +46,8 @@ export function useBoundaryData(
 	const [constituencyLadOverlaps, setConstituencyLadOverlaps] =
 		useState<ConstituencyLadOverlaps | null>(null);
 
-	// Extract the individual functions to use as dependencies
-	const addWardLadMappings = codeMapper?.addWardLadMappings;
-	const addLadWardMappings = codeMapper?.addLadWardMappings;
-	const addCodeMappings = codeMapper?.addCodeMappings;
+	// Kept separately because filtering is memoized independently of loading.
 	const getLadForWard = codeMapper?.getLadForWard;
-	const addConstituencyWardMappings = codeMapper?.addConstituencyWardMappings;
 
 	// Only the geographies the visible charts can actually aggregate against,
 	// rather than every boundary the catalogue serves. Subscribed rather than
@@ -334,7 +99,7 @@ export function useBoundaryData(
 				Promise.all(
 					missing.map(async (type) => {
 						const { data, failures } =
-							await fetchBoundaryGroup(type);
+							await fetchBoundaryPropertyGroup(type);
 						return [type, data, failures] as const;
 					}),
 				),
@@ -368,92 +133,8 @@ export function useBoundaryData(
 						}));
 					});
 
-					if (
-						!mappingsApplied &&
-						fetched.ward &&
-						fetched.constituency &&
-						fetched.localAuthority
-					) {
-						// Preserve the existing behaviour if an older CDN revision does not
-						// yet contain the generated lookup file. Only possible when this
-						// batch happened to fetch all three geographies it derives from.
-						// Ward↔LAD and the cross-year mappings are built from properties
-						// and still work here; constituency→ward is matched by shape, so
-						// it yields nothing now that these are properties alone. That
-						// pairing comes from the precompiled file above, which is the
-						// supported path — this remains only as a partial fallback.
-						const wardToLad: Record<string, string> = {};
-						for (const [year, boundary] of Object.entries(
-							fetched.ward,
-						)) {
-							const wardMappings = extractWardLadMappings(
-								boundary.features,
-								BOUNDARY_CATALOG.ward.properties.code,
-								BOUNDARY_CATALOG.ward.properties.parentCode ??
-									BOUNDARY_CATALOG.localAuthority.properties
-										.code,
-							);
-							Object.assign(wardToLad, wardMappings.wardToLad);
-							addLadWardMappings?.(
-								Number(year),
-								wardMappings.ladToWards,
-							);
-						}
-						addWardLadMappings?.(wardToLad);
-						addCodeMappings?.(
-							"ward",
-							buildCrossYearMappings(
-								fetched.ward,
-								"ward",
-								Object.keys(fetched.ward).map(Number),
-							),
-						);
-						addCodeMappings?.(
-							"constituency",
-							buildCrossYearMappings(
-								fetched.constituency,
-								"constituency",
-								Object.keys(fetched.constituency).map(Number),
-							),
-						);
-						addCodeMappings?.(
-							"localAuthority",
-							buildCrossYearMappings(
-								fetched.localAuthority,
-								"localAuthority",
-								Object.keys(fetched.localAuthority).map(Number),
-							),
-						);
-
-						const constituencyEntries = Object.entries(
-							fetched.constituency,
-						).filter(([, conData]) => conData?.features);
-						// Only build for the latest ward year — ward highlighting always
-						// uses current boundaries, so historical ward years are not needed.
-						const wardGroup = fetched.ward;
-						const latestWardYear = Math.max(
-							...Object.keys(wardGroup)
-								.map(Number)
-								.filter((y) => wardGroup[y]?.features),
-						);
-						const latestWardData = wardGroup[latestWardYear];
-						if (latestWardData?.features) {
-							const mergedMappings: Record<string, string[]> = {};
-							for (const [, conData] of constituencyEntries) {
-								const mappings = buildConstituencyWardMappings(
-									latestWardData,
-									conData!,
-								);
-								Object.assign(mergedMappings, mappings);
-							}
-							if (Object.keys(mergedMappings).length > 0) {
-								addConstituencyWardMappings?.(
-									latestWardYear,
-									mergedMappings,
-								);
-							}
-						}
-					}
+					if (!mappingsApplied && codeMapper)
+						deriveBoundaryMappings(fetched, codeMapper);
 				})
 				.catch((err) => {
 					if (mounted) {
@@ -474,14 +155,7 @@ export function useBoundaryData(
 		return () => {
 			mounted = false;
 		};
-	}, [
-		requiredKey,
-		codeMapper,
-		addWardLadMappings,
-		addLadWardMappings,
-		addCodeMappings,
-		addConstituencyWardMappings,
-	]);
+	}, [requiredKey, codeMapper]);
 
 	const loc = selectedLocation || null;
 

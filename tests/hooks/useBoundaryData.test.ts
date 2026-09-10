@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getCachedFilteredBoundaryData } from "@/lib/hooks/useBoundaryData";
+import { getCachedFilteredBoundaryData } from "@/lib/data/boundaries/locationFilter";
 import type { BoundaryData } from "@/lib/types";
 
 const feature = (code: string) => ({
