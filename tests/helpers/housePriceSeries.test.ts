@@ -6,13 +6,17 @@ import {
 } from "@/lib/helpers/housePriceSeries";
 import type { HousePriceDataset, SelectedArea } from "@/lib/types";
 
-const wardData = (wardCode: string, prices: Record<number, number>) => ({
+const wardData = (
+	wardCode: string,
+	prices: Record<number, number>,
+	meanPrices: Record<number, number> = {},
+) => ({
 	ladCode: "LAD",
 	ladName: "Example authority",
 	wardCode,
 	wardName: wardCode,
 	prices,
-	meanPrices: {},
+	meanPrices,
 });
 
 const dataset = (data: HousePriceDataset["data"]): HousePriceDataset => ({
@@ -35,10 +39,13 @@ describe("resolveHousePriceSeries", () => {
 				2023: {
 					averagePrice: 200000,
 					averagePrices: { 2023: 200000, 2021: 150000 },
+					averageMeanPrice: 250000,
+					averageMeanPrices: { 2023: 250000, 2021: 190000 },
 					wardCount: 2,
 				},
 			},
 			selectedArea: null,
+			measure: "median",
 		});
 
 		expect(series).toEqual({
@@ -50,6 +57,19 @@ describe("resolveHousePriceSeries", () => {
 		});
 	});
 
+	it("uses mean prices when the mean measure is selected", () => {
+		const series = resolveHousePriceSeries({
+			dataset: dataset({
+				W1: wardData("W1", { 2023: 175000 }, { 2023: 225000 }),
+			}),
+			aggregatedData: null,
+			selectedArea: selectedArea("ward", "W1"),
+			measure: "mean",
+		});
+
+		expect(series.currentPrice).toBe(225000);
+	});
+
 	it("maps a selected ward to the dataset boundary vintage", () => {
 		const getCodeForYear = vi.fn(() => "W-2022");
 		const series = resolveHousePriceSeries({
@@ -58,6 +78,7 @@ describe("resolveHousePriceSeries", () => {
 			}),
 			aggregatedData: null,
 			selectedArea: selectedArea("ward", "W-current"),
+			measure: "median",
 			codeMapper: {
 				getCodeForYear,
 				getWardsForLad: () => [],
@@ -81,6 +102,7 @@ describe("resolveHousePriceSeries", () => {
 			}),
 			aggregatedData: null,
 			selectedArea: selectedArea("localAuthority", "LAD"),
+			measure: "median",
 			codeMapper: {
 				getCodeForYear: () => undefined,
 				getWardsForLad: () => ["W1", "W2", "W3"],
@@ -106,6 +128,7 @@ describe("resolveHousePriceSeries", () => {
 			}),
 			aggregatedData: null,
 			selectedArea: selectedArea("constituency", "C1"),
+			measure: "median",
 			codeMapper: {
 				getCodeForYear: () => undefined,
 				getWardsForLad: () => [],
@@ -125,6 +148,7 @@ describe("HousePriceSeriesCache", () => {
 			dataset: dataset({ W1: wardData("W1", { 2023: 100000 }) }),
 			aggregatedData: null,
 			selectedArea: selectedArea("localAuthority", "LAD"),
+			measure: "median",
 			codeMapper: {
 				getCodeForYear: () => undefined,
 				getWardsForLad,

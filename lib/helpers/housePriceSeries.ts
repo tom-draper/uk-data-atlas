@@ -4,6 +4,9 @@ import type {
 	HousePriceDataset,
 	SelectedArea,
 } from "@/lib/types";
+import type { HousePriceOptions } from "@/lib/types/mapOptions";
+
+type HousePriceMeasure = HousePriceOptions["measure"];
 
 export type HousePricePoint = {
 	year: number;
@@ -19,6 +22,7 @@ export type HousePriceSeriesInput = {
 	dataset: HousePriceDataset;
 	aggregatedData: Record<number, AggregatedHousePriceData> | null;
 	selectedArea: SelectedArea | null;
+	measure: HousePriceMeasure;
 	codeMapper?: Pick<
 		PopulationCodeResolver,
 		"getCodeForYear" | "getWardsForLad" | "getWardsForConstituency"
@@ -48,11 +52,17 @@ const median = (values: number[]): number => {
 		: sorted[middle];
 };
 
+const pricesFor = (
+	ward: HousePriceDataset["data"][string],
+	measure: HousePriceMeasure,
+) => (measure === "mean" ? ward.meanPrices : ward.prices);
+
 const aggregateWardPrices = (
 	dataset: HousePriceDataset,
 	wardCodes: string[],
 	mapper: HousePriceSeriesInput["codeMapper"],
 	mappingYear: number,
+	measure: HousePriceMeasure,
 ): Record<number, number> => {
 	const valuesByYear: Record<number, number[]> = {};
 
@@ -67,7 +77,9 @@ const aggregateWardPrices = (
 			if (mappedCode) wardData = dataset.data[mappedCode];
 		}
 
-		for (const [year, price] of Object.entries(wardData?.prices ?? {})) {
+		for (const [year, price] of Object.entries(
+			wardData ? pricesFor(wardData, measure) : {},
+		)) {
 			if (price === null || price === undefined) continue;
 			(valuesByYear[Number(year)] ??= []).push(price);
 		}
@@ -85,12 +97,17 @@ export const resolveHousePriceSeries = ({
 	dataset,
 	aggregatedData,
 	selectedArea,
+	measure,
 	codeMapper,
 }: HousePriceSeriesInput): HousePriceSeries => {
 	if (selectedArea === null) {
 		const aggregate = aggregatedData?.[dataset.year];
 		return aggregate
-			? seriesFromPrices(aggregate.averagePrices)
+			? seriesFromPrices(
+					measure === "mean"
+						? aggregate.averageMeanPrices
+						: aggregate.averagePrices,
+				)
 			: emptySeries();
 	}
 
@@ -104,13 +121,15 @@ export const resolveHousePriceSeries = ({
 			);
 			if (mappedCode) wardData = dataset.data[mappedCode];
 		}
-		return wardData ? seriesFromPrices(wardData.prices) : emptySeries();
+		return wardData
+			? seriesFromPrices(pricesFor(wardData, measure))
+			: emptySeries();
 	}
 
 	if (selectedArea.type === "localAuthority" && codeMapper) {
 		const wardCodes = codeMapper.getWardsForLad(selectedArea.code, 2022);
 		return seriesFromPrices(
-			aggregateWardPrices(dataset, wardCodes, codeMapper, 2022),
+			aggregateWardPrices(dataset, wardCodes, codeMapper, 2022, measure),
 		);
 	}
 
@@ -125,6 +144,7 @@ export const resolveHousePriceSeries = ({
 				wardCodes,
 				codeMapper,
 				dataset.boundaryYear,
+				measure,
 			),
 		);
 	}
@@ -160,7 +180,7 @@ export class HousePriceSeriesCache {
 	}
 
 	private keyFor(
-		{ dataset, selectedArea }: HousePriceSeriesInput,
+		{ dataset, selectedArea, measure }: HousePriceSeriesInput,
 		mappingGeneration: number,
 	): string {
 		let datasetId = this.datasetIds.get(dataset);
@@ -168,6 +188,6 @@ export class HousePriceSeriesCache {
 			datasetId = this.nextDatasetId++;
 			this.datasetIds.set(dataset, datasetId);
 		}
-		return `${selectedArea!.type}-${selectedArea!.code}:${datasetId}:${mappingGeneration}`;
+		return `${selectedArea!.type}-${selectedArea!.code}:${datasetId}:${mappingGeneration}:${measure}`;
 	}
 }

@@ -64,8 +64,12 @@ export function aggregateHousePrices(
 ): AggregatedHousePriceData {
 	const yearlyTotals: Record<number, number> = {};
 	const yearlyCounts: Record<number, number> = {};
+	const yearlyMeanTotals: Record<number, number> = {};
+	const yearlyMeanCounts: Record<number, number> = {};
 	let totalPrice = 0,
-		wardCount = 0;
+		wardCount = 0,
+		totalMeanPrice = 0,
+		meanWardCount = 0;
 
 	for (const feature of features) {
 		const ward =
@@ -75,6 +79,11 @@ export function aggregateHousePrices(
 		if (price2023 != null) {
 			totalPrice += price2023;
 			wardCount++;
+		}
+		const meanPrice2023 = ward.meanPrices[2023];
+		if (meanPrice2023 != null) {
+			totalMeanPrice += meanPrice2023;
+			meanWardCount++;
 		}
 		for (const year of Object.keys(ward.prices)) {
 			const numericYear = Number(year);
@@ -86,6 +95,16 @@ export function aggregateHousePrices(
 					(yearlyCounts[numericYear] || 0) + 1;
 			}
 		}
+		for (const year of Object.keys(ward.meanPrices)) {
+			const numericYear = Number(year);
+			const price = ward.meanPrices[numericYear];
+			if (price != null && numericYear <= 2023) {
+				yearlyMeanTotals[numericYear] =
+					(yearlyMeanTotals[numericYear] || 0) + price;
+				yearlyMeanCounts[numericYear] =
+					(yearlyMeanCounts[numericYear] || 0) + 1;
+			}
+		}
 	}
 
 	const averagePrices: Record<number, number> = {};
@@ -94,10 +113,19 @@ export function aggregateHousePrices(
 		averagePrices[numericYear] =
 			yearlyTotals[numericYear] / yearlyCounts[numericYear];
 	}
+	const averageMeanPrices: Record<number, number> = {};
+	for (const year of Object.keys(yearlyMeanTotals)) {
+		const numericYear = Number(year);
+		averageMeanPrices[numericYear] =
+			yearlyMeanTotals[numericYear] / yearlyMeanCounts[numericYear];
+	}
 	return {
 		averagePrice: wardCount > 0 ? totalPrice / wardCount : 0,
 		wardCount,
 		averagePrices,
+		averageMeanPrice:
+			meanWardCount > 0 ? totalMeanPrice / meanWardCount : 0,
+		averageMeanPrices,
 	};
 }
 

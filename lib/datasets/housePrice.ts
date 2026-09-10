@@ -29,6 +29,8 @@ export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 				? (ward.meanPrices[dataset.year] ?? null)
 				: (ward.prices[dataset.year] ?? null);
 		},
+		sourceMode: (_dataset, mapOptions) =>
+			`housePrice:${mapOptions.housePrice.measure}`,
 		colorRange: { min: 80000, max: 500000 },
 		legend: {
 			min: 0,
