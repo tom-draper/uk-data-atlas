@@ -26,5 +26,7 @@ export interface HousePriceDataset {
 export type AggregatedHousePriceData = {
 	averagePrice: number;
 	averagePrices: Record<number, number>;
+	averageMeanPrice: number;
+	averageMeanPrices: Record<number, number>;
 	wardCount: number;
 };

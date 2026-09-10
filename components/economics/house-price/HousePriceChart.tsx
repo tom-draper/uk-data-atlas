@@ -17,6 +17,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
 
 interface HousePriceChartProps {
@@ -36,6 +37,7 @@ interface PriceChartProps {
 	selectedArea: SelectedArea | null;
 	codeMapper?: HousePriceSeriesInput["codeMapper"];
 	mappingGeneration: number;
+	measure: HousePriceSeriesInput["measure"];
 	isActive: boolean;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -49,6 +51,7 @@ function PriceChart({
 	selectedArea,
 	codeMapper,
 	mappingGeneration,
+	measure,
 	isActive,
 	setActiveViz,
 }: PriceChartProps) {
@@ -59,6 +62,7 @@ function PriceChart({
 			dataset,
 			aggregatedData,
 			selectedArea,
+			measure,
 			codeMapper,
 		},
 		mappingGeneration,
@@ -92,7 +96,7 @@ function PriceChart({
 
 	return (
 		<ChartCard
-			heading={`Median House Price [${dataset.year}]`}
+			heading={`${measure === "mean" ? "Mean" : "Median"} House Price [${dataset.year}]`}
 			accent={LINE_COLOR}
 			isActive={isActive}
 			title="Office for National Statistics. UK House Price Index (HPI): Mean and Median House Prices by Local Authority. ons.gov.uk"
@@ -182,6 +186,7 @@ export default function HousePriceChart({
 	codeMapper,
 	setActiveViz,
 }: HousePriceChartProps) {
+	const measure = useCurrentMapOptions().housePrice.measure;
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
@@ -197,6 +202,7 @@ export default function HousePriceChart({
 			selectedArea={selectedArea}
 			codeMapper={codeMapper}
 			mappingGeneration={codeMapper?.getMappingGeneration() ?? 0}
+			measure={measure}
 			isActive={isActive}
 			setActiveViz={setActiveViz}
 		/>

@@ -1,11 +1,7 @@
 import type { BoundaryGeojson } from "@lib/types";
 import type { BoundaryType } from "@/lib/types/boundaries";
 import type { ColorRange } from "@/lib/types/common";
-import type {
-	MapMode,
-	MapOptions,
-	NumericMapOptionsKey,
-} from "@lib/types/mapOptions";
+import type { MapOptions, NumericMapOptionsKey } from "@lib/types/mapOptions";
 import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
 import type { BoundaryCodeScope } from "../mapManager/propertyDetector";
 import { valueGeojson, type MapRenderContext } from "./context";
@@ -21,6 +17,8 @@ export interface NumericMapConfig<T extends NumericDataset> {
 	valueKey?: string;
 	valueFor?(dataset: T, code: string, mapOptions: MapOptions): number | null;
 	colorRange?: ColorRange;
+	/** Identifies option-dependent source values for the transformed GeoJSON cache. */
+	sourceMode?(dataset: T, mapOptions: MapOptions): string;
 	invertColor?: boolean;
 	getColorRange?(dataset: T, mapOptions: MapOptions): ColorRange;
 }
@@ -32,7 +30,7 @@ function renderChoropleth<T extends { data: Record<string, unknown> }>(
 	dataset: T,
 	mapOptions: MapOptions,
 	scope: BoundaryCodeScope,
-	eventType: MapMode,
+	sourceMode: string,
 	dataForEvents: Record<string, unknown>,
 	valueFor: (dataset: T, code: string) => number | null | undefined,
 	getColorRange: (dataset: T, options: MapOptions) => ColorRange,
@@ -44,7 +42,7 @@ function renderChoropleth<T extends { data: Record<string, unknown> }>(
 		ctx,
 		geojson,
 		dataset,
-		eventType,
+		sourceMode,
 		codeProp,
 		(code) => valueFor(dataset, code),
 	);
@@ -74,7 +72,7 @@ export function renderNumericDataset<T extends NumericDataset>(
 		dataset,
 		mapOptions,
 		dataset.boundaryType,
-		dataset.type,
+		map.sourceMode?.(dataset, mapOptions) ?? dataset.type,
 		dataset.data,
 		(data, code) => {
 			const mappedValue = map.valueFor?.(data, code, mapOptions);

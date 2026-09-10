@@ -23,6 +23,8 @@ export type ChartPresentationRegistry = Record<string, ChartPresentation>;
 export interface ChartDatasetMap<T = unknown> {
 	valueKey?: string;
 	valueFor?(dataset: T, code: string, mapOptions: MapOptions): number | null;
+	/** Identifies option-dependent source values for the transformed GeoJSON cache. */
+	sourceMode?(dataset: T, mapOptions: MapOptions): string;
 	colorRange: { min: number; max: number };
 	legend: {
 		min: number;

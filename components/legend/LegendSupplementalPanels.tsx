@@ -52,63 +52,19 @@ export function PercentageRangePanel({
 	);
 }
 
-export function HousePriceMeasurePanel({
-	measure,
-	onChange,
-}: {
-	measure: "median" | "mean";
-	onChange: (measure: "median" | "mean") => void;
-}) {
-	const isDark = useIsDark();
-	const theme = panelTheme(isDark);
-	const isMean = measure === "mean";
-	return (
-		<div
-			className={`pointer-events-auto rounded-md w-fit ml-auto relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
-			style={glassStyle(isDark)}
-		>
-			<GlassOverlays isDark={isDark} />
-			<div
-				className={`relative ${theme.section} flex items-center gap-2 p-2 text-xs`}
-				style={{ zIndex: 1 }}
-			>
-				<span className={isMean ? "font-medium" : "text-gray-400"}>
-					Mean
-				</span>
-				<button
-					type="button"
-					role="switch"
-					aria-checked={isMean}
-					aria-label="Show mean house prices"
-					onClick={() => onChange(isMean ? "median" : "mean")}
-					className={`relative h-4 w-7 rounded-full transition-colors ${isMean ? "bg-indigo-500" : isDark ? "bg-gray-600" : "bg-gray-300"}`}
-				>
-					<span
-						className={`absolute top-0.5 left-0.5 size-3 rounded-full bg-white shadow transition-transform ${isMean ? "" : "translate-x-3"}`}
-					/>
-				</button>
-				<span className={isMean ? "text-gray-400" : "font-medium"}>
-					Median
-				</span>
-			</div>
-		</div>
-	);
-}
+type MeasureOption<Value extends string> = readonly [Value, string];
 
-export function LifeExpectancyMeasurePanel({
+function GlassSegmentedMeasurePanel<Value extends string>({
 	measure,
+	measures,
 	onChange,
 }: {
-	measure: "average" | "male" | "female";
-	onChange: (measure: "average" | "male" | "female") => void;
+	measure: Value;
+	measures: readonly MeasureOption<Value>[];
+	onChange: (measure: Value) => void;
 }) {
 	const isDark = useIsDark();
 	const theme = panelTheme(isDark);
-	const measures = [
-		["average", "Average"],
-		["male", "Male"],
-		["female", "Female"],
-	] as const;
 	const selectedClass = isDark
 		? "border-white/25 bg-white/15 text-gray-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.32),inset_0_-1px_0_rgba(0,0,0,0.18),0_2px_5px_rgba(0,0,0,0.28)]"
 		: "border-white/60 bg-white/35 text-gray-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.85),inset_0_-1px_0_rgba(0,0,0,0.06),0_2px_5px_rgba(15,23,42,0.14)]";
@@ -139,5 +95,48 @@ export function LifeExpectancyMeasurePanel({
 				})}
 			</div>
 		</div>
+	);
+}
+
+const HOUSE_PRICE_MEASURES = [
+	["median", "Median"],
+	["mean", "Mean"],
+] as const;
+
+export function HousePriceMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "median" | "mean";
+	onChange: (measure: "median" | "mean") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={HOUSE_PRICE_MEASURES}
+			onChange={onChange}
+		/>
+	);
+}
+
+const LIFE_EXPECTANCY_MEASURES = [
+	["average", "Average"],
+	["male", "Male"],
+	["female", "Female"],
+] as const;
+
+export function LifeExpectancyMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "average" | "male" | "female";
+	onChange: (measure: "average" | "male" | "female") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={LIFE_EXPECTANCY_MEASURES}
+			onChange={onChange}
+		/>
 	);
 }

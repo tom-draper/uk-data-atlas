@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_MAP_OPTIONS } from "@/lib/config/mapOptions";
 import { childPovertyDefinition } from "@/lib/datasets/childPoverty";
+import { housePriceDefinition } from "@/lib/datasets/housePrice";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import {
 	renderLocalElection,
@@ -146,7 +147,7 @@ describe("MapManager election updates", () => {
 					childPovertyRate: 25,
 				},
 			},
-		};
+		} as any;
 		const geojson = {
 			type: "FeatureCollection",
 			crs: { type: "name", properties: { name: "CRS84" } },
@@ -198,5 +199,86 @@ describe("MapManager election updates", () => {
 			code: string,
 		) => number | null;
 		expect(valueFor("E06000001")).toBe(25);
+	});
+
+	it("rebuilds house-price source values when the selected measure changes", () => {
+		const map = createMap();
+		const manager = new MapManager(map as any, {
+			onLocationChange: () => {},
+		});
+		const dataset = {
+			id: "housePrice2023",
+			type: "housePrice" as const,
+			year: 2023,
+			boundaryType: "ward" as const,
+			boundaryYear: 2021,
+			data: {
+				W0001: {
+					ladCode: "LAD",
+					ladName: "Test authority",
+					wardCode: "W0001",
+					wardName: "Test ward",
+					prices: { 2023: 200000 },
+					meanPrices: { 2023: 300000 },
+				},
+			},
+		} as any;
+		const geojson = {
+			type: "FeatureCollection",
+			crs: { type: "name", properties: { name: "CRS84" } },
+			features: [
+				{
+					type: "Feature",
+					id: 1,
+					properties: { WD21CD: "W0001", WD21NM: "Test ward" },
+					geometry: {
+						type: "Polygon",
+						coordinates: [
+							[
+								[0, 0],
+								[1, 0],
+								[0, 1],
+								[0, 0],
+							],
+						],
+					},
+				},
+			],
+		} as any;
+		const buildValue = vi.spyOn(
+			manager.featureBuilder,
+			"buildValueFeatures",
+		);
+
+		renderNumericDataset(
+			manager,
+			geojson,
+			dataset,
+			DEFAULT_MAP_OPTIONS,
+			housePriceDefinition.map!,
+		);
+		renderNumericDataset(
+			manager,
+			geojson,
+			dataset,
+			{
+				...DEFAULT_MAP_OPTIONS,
+				housePrice: {
+					...DEFAULT_MAP_OPTIONS.housePrice,
+					measure: "mean",
+				},
+			},
+			housePriceDefinition.map!,
+		);
+
+		expect(buildValue).toHaveBeenCalledTimes(2);
+		const medianValue = buildValue.mock.calls[0][2] as (
+			code: string,
+		) => number | null;
+		const meanValue = buildValue.mock.calls[1][2] as (
+			code: string,
+		) => number | null;
+		expect(medianValue("W0001")).toBe(200000);
+		expect(meanValue("W0001")).toBe(300000);
 	});
 });
