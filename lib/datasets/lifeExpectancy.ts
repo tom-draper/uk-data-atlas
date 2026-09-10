@@ -41,17 +41,28 @@ export const lifeExpectancyDefinition: ChartDatasetDefinition<LifeExpectancyData
 		chart: le,
 		charts: [le, hle],
 		map: {
-			valueFor: (dataset, code) => {
+			valueFor: (dataset, code, mapOptions) => {
 				const area = dataset.data[code];
-				return area
-					? (area.maleBirthLE + area.femaleBirthLE) / 2
-					: null;
+				if (!area) return null;
+				switch (mapOptions.lifeExpectancy.measure) {
+					case "male":
+						return area.maleBirthLE;
+					case "female":
+						return area.femaleBirthLE;
+					default:
+						return (area.maleBirthLE + area.femaleBirthLE) / 2;
+				}
 			},
-			getColorRange: (dataset) => {
+			getColorRange: (dataset, mapOptions) => {
 				let min = Infinity;
 				let max = -Infinity;
 				for (const area of Object.values(dataset.data)) {
-					const value = (area.maleBirthLE + area.femaleBirthLE) / 2;
+					const value =
+						mapOptions.lifeExpectancy.measure === "male"
+							? area.maleBirthLE
+							: mapOptions.lifeExpectancy.measure === "female"
+								? area.femaleBirthLE
+								: (area.maleBirthLE + area.femaleBirthLE) / 2;
 					min = Math.min(min, value);
 					max = Math.max(max, value);
 				}

@@ -36,7 +36,10 @@ export interface ChartDatasetMap<T = unknown> {
 	// Provides the data-derived range used until a visitor adjusts the shared
 	// colour-range control. This keeps datasets with different natural scales
 	// useful on first load without disabling the legend handles.
-	getColorRange?(dataset: T): { min: number; max: number };
+	getColorRange?(
+		dataset: T,
+		mapOptions: MapOptions,
+	): { min: number; max: number };
 }
 
 /** Presentation-specific renderer for datasets that cannot use the shared numeric map path. */

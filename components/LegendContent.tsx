@@ -74,7 +74,10 @@ export default function LegendContent({
 	const chartDefinition = getChartDatasetDefinition(activeDataset.type);
 	if (chartDefinition?.map) {
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
-		const dynamicRange = getColorRange?.(activeDataset as never);
+		const dynamicRange = getColorRange?.(
+			activeDataset as never,
+			displayOptions,
+		);
 		const configuredRange =
 			displayOptions[activeDataset.type as ColorRangeDatasetKey].colorRange;
 		const usesInitialRange =

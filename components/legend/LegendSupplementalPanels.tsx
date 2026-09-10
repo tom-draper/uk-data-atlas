@@ -94,3 +94,50 @@ export function HousePriceMeasurePanel({
 		</div>
 	);
 }
+
+export function LifeExpectancyMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "average" | "male" | "female";
+	onChange: (measure: "average" | "male" | "female") => void;
+}) {
+	const isDark = useIsDark();
+	const theme = panelTheme(isDark);
+	const measures = [
+		["average", "Average"],
+		["male", "Male"],
+		["female", "Female"],
+	] as const;
+	const selectedClass = isDark
+		? "border-white/25 bg-white/15 text-gray-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.32),inset_0_-1px_0_rgba(0,0,0,0.18),0_2px_5px_rgba(0,0,0,0.28)]"
+		: "border-white/60 bg-white/35 text-gray-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.85),inset_0_-1px_0_rgba(0,0,0,0.06),0_2px_5px_rgba(15,23,42,0.14)]";
+
+	return (
+		<div
+			className={`pointer-events-auto rounded-md w-fit ml-auto relative overflow-hidden ${isDark ? "text-gray-100" : "text-gray-800"}`}
+			style={glassStyle(isDark)}
+		>
+			<GlassOverlays isDark={isDark} />
+			<div
+				className={`relative ${theme.section} flex rounded-sm p-1 text-xs`}
+				style={{ zIndex: 1 }}
+			>
+				{measures.map(([value, label]) => {
+					const isSelected = measure === value;
+					return (
+						<button
+							type="button"
+							key={value}
+							aria-pressed={isSelected}
+							onClick={() => onChange(value)}
+							className={`cursor-pointer rounded-sm border px-2 py-1 backdrop-blur-md transition-all duration-200 ${isSelected ? selectedClass : isDark ? "border-transparent text-gray-400 hover:bg-white/10" : "border-transparent text-gray-500 hover:bg-white/20"}`}
+						>
+							{label}
+						</button>
+					);
+				})}
+			</div>
+		</div>
+	);
+}

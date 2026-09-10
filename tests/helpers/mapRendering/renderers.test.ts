@@ -9,6 +9,7 @@ import {
 } from "@/lib/helpers/mapRendering";
 import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
 import { childPovertyDefinition } from "@/lib/datasets/childPoverty";
+import { lifeExpectancyDefinition } from "@/lib/datasets/lifeExpectancy";
 
 // The recipes only need a MapRenderContext, so they can be exercised without a
 // MapLibre map behind them.
@@ -199,6 +200,48 @@ describe("renderNumericDataset", () => {
 		expect(layerManager.render.mock.calls[1][0].colorExpression).toEqual(
 			getSequentialColorExpression({ min: 45, max: 55 }, "viridis"),
 		);
+	});
+});
+
+describe("life expectancy map measures", () => {
+	const dataset = {
+		type: "lifeExpectancy",
+		boundaryType: "localAuthority",
+		data: {
+			E06000001: { maleBirthLE: 70, femaleBirthLE: 80 },
+			E06000002: { maleBirthLE: 72, femaleBirthLE: 84 },
+		},
+	} as never;
+	const map = lifeExpectancyDefinition.map!;
+
+	it("selects the requested value and derives its matching legend range", () => {
+		const options = (measure: "average" | "male" | "female") => ({
+			...DEFAULT_MAP_OPTIONS,
+			lifeExpectancy: {
+				...DEFAULT_MAP_OPTIONS.lifeExpectancy,
+				measure,
+			},
+		});
+
+		expect(map.valueFor?.(dataset, "E06000001", options("average"))).toBe(
+			75,
+		);
+		expect(map.valueFor?.(dataset, "E06000001", options("male"))).toBe(70);
+		expect(map.valueFor?.(dataset, "E06000001", options("female"))).toBe(
+			80,
+		);
+		expect(map.getColorRange?.(dataset, options("average"))).toEqual({
+			min: 75,
+			max: 78,
+		});
+		expect(map.getColorRange?.(dataset, options("male"))).toEqual({
+			min: 70,
+			max: 72,
+		});
+		expect(map.getColorRange?.(dataset, options("female"))).toEqual({
+			min: 80,
+			max: 84,
+		});
 	});
 });
 
