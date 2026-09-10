@@ -131,6 +131,7 @@ export function useBoundaryData(
 							...previous,
 							...fetched,
 						}));
+						setIsLoading(false);
 					});
 
 					if (!mappingsApplied && codeMapper)
@@ -143,10 +144,8 @@ export function useBoundaryData(
 								? err
 								: new Error("Failed to load boundaries"),
 						);
+						setIsLoading(false);
 					}
-				})
-				.finally(() => {
-					if (mounted) setIsLoading(false);
 				});
 		};
 
