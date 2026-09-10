@@ -8,8 +8,9 @@ import {
 } from "@/lib/types";
 import {
 	getAreaCachedValue,
-	resolveWardData,
 	getLadCachedValue,
+	populationAreaMappingsAvailable,
+	resolvePopulationAreaWards,
 } from "@/lib/helpers/demographicData";
 import {
 	ChartContentPlaceholder,
@@ -62,11 +63,11 @@ function GenderBalanceByAgeChart({
 
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
-			const wardData = resolveWardData(
+			const wardData = resolvePopulationAreaWards(
 				dataset,
-				selectedArea.code,
+				selectedArea,
 				codeMapper,
-			);
+			)?.[0]?.data;
 
 			if (wardData) {
 				const { males, females } = wardData;
@@ -98,7 +99,7 @@ function GenderBalanceByAgeChart({
 		if (
 			selectedArea &&
 			selectedArea.type === "localAuthority" &&
-			codeMapper?.getWardsForLad
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
 			return getLadCachedValue(
 				genderBalanceCache,
@@ -107,23 +108,19 @@ function GenderBalanceByAgeChart({
 				dataset,
 				mappingGeneration,
 				() => {
-					const wardCodes = codeMapper.getWardsForLad!(
-						selectedArea.code,
-						dataset.boundaryYear,
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
 					);
 
-					if (wardCodes.length === 0)
+					if (!wardRecords?.length)
 						return { ageData: [], percentages: [] };
 
 					const aggregatedMales = new Array(91).fill(0);
 					const aggregatedFemales = new Array(91).fill(0);
 
-					for (const wardCode of wardCodes) {
-						const wardData = resolveWardData(
-							dataset,
-							wardCode,
-							codeMapper,
-						);
+					for (const { data: wardData } of wardRecords) {
 						if (wardData) {
 							for (let age = 0; age < 91; age++) {
 								const ageStr = AGE_STRING_KEYS[age];
@@ -158,7 +155,7 @@ function GenderBalanceByAgeChart({
 		if (
 			selectedArea &&
 			selectedArea.type === "constituency" &&
-			codeMapper?.getWardsForConstituency
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
 			return getAreaCachedValue(
 				genderBalanceCache,
@@ -167,23 +164,19 @@ function GenderBalanceByAgeChart({
 				dataset,
 				mappingGeneration,
 				() => {
-					const wardCodes = codeMapper.getWardsForConstituency(
-						selectedArea.code,
-						dataset.boundaryYear,
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
 					);
 
-					if (wardCodes.length === 0)
+					if (!wardRecords?.length)
 						return { ageData: [], percentages: [] };
 
 					const aggregatedMales = new Array(91).fill(0);
 					const aggregatedFemales = new Array(91).fill(0);
 
-					for (const wardCode of wardCodes) {
-						const wardData = resolveWardData(
-							dataset,
-							wardCode,
-							codeMapper,
-						);
+					for (const { data: wardData } of wardRecords) {
 						if (wardData) {
 							for (let age = 0; age < 91; age++) {
 								const ageStr = AGE_STRING_KEYS[age];

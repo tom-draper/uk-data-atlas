@@ -1,5 +1,9 @@
-import { PopulationDataset, PopulationWardData } from "../types/population";
-import type { CodeYearResolver } from "../data/boundaries/codeMapper";
+import type { PopulationCodeResolver } from "../data/boundaries/codeMapper";
+import type { SelectedArea } from "../types/areas";
+import type {
+	PopulationDataset,
+	PopulationWardData,
+} from "../types/population";
 
 const MAX_LAD_CACHE_ENTRIES = 50;
 const datasetCacheIds = new WeakMap<object, number>();
@@ -17,7 +21,7 @@ const datasetCacheId = (dataset: object) => {
 export function resolveWardData(
 	dataset: PopulationDataset,
 	wardCode: string,
-	codeMapper: CodeYearResolver | undefined,
+	codeMapper: Pick<PopulationCodeResolver, "getCodeForYear"> | undefined,
 ): PopulationWardData | undefined {
 	let wardData = dataset.data[wardCode];
 	if (!wardData && codeMapper?.getCodeForYear) {
@@ -29,6 +33,74 @@ export function resolveWardData(
 		if (mappedCode) wardData = dataset.data[mappedCode];
 	}
 	return wardData;
+}
+
+export type PopulationWardRecord = {
+	/** Boundary code used to find geometry, before any dataset-year mapping. */
+	code: string;
+	data: PopulationWardData;
+};
+
+/** Whether a selected area can be resolved without caching a premature miss. */
+export function populationAreaMappingsAvailable(
+	selectedArea: SelectedArea | null,
+	codeMapper: PopulationCodeResolver | undefined,
+): boolean {
+	switch (selectedArea?.type) {
+		case "ward":
+			return true;
+		case "localAuthority":
+			return !!codeMapper?.getWardsForLad;
+		case "constituency":
+			return !!codeMapper?.getWardsForConstituency;
+		default:
+			return false;
+	}
+}
+
+/**
+ * Resolves the ward records represented by a selected area. The charts can
+ * then aggregate their own metric without each repeating ward/LAD/
+ * constituency mapping rules.
+ *
+ * `null` means that the selected area is unsupported or the required mapping
+ * has not arrived; an empty array is a supported area with no matching data.
+ */
+export function resolvePopulationAreaWards(
+	dataset: PopulationDataset,
+	selectedArea: SelectedArea | null,
+	codeMapper: PopulationCodeResolver | undefined,
+): PopulationWardRecord[] | null {
+	if (
+		!selectedArea ||
+		!populationAreaMappingsAvailable(selectedArea, codeMapper)
+	)
+		return null;
+
+	const wardCodes = (() => {
+		switch (selectedArea.type) {
+			case "ward":
+				return [selectedArea.code];
+			case "localAuthority":
+				return codeMapper?.getWardsForLad(
+					selectedArea.code,
+					dataset.boundaryYear,
+				);
+			case "constituency":
+				return codeMapper?.getWardsForConstituency(
+					selectedArea.code,
+					dataset.boundaryYear,
+				);
+			default:
+				return null;
+		}
+	})();
+	if (!wardCodes) return null;
+
+	return wardCodes.flatMap((code) => {
+		const data = resolveWardData(dataset, code, codeMapper);
+		return data ? [{ code, data }] : [];
+	});
 }
 
 // Bounded LRU-style cache lookup. Dataset identity and mapping generation are

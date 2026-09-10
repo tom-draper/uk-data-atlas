@@ -20,8 +20,9 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import {
 	getAreaCachedValue,
-	resolveWardData,
 	getLadCachedValue,
+	populationAreaMappingsAvailable,
+	resolvePopulationAreaWards,
 } from "@/lib/helpers/demographicData";
 import { useIsDark } from "@/lib/context/ThemeContext";
 
@@ -192,23 +193,22 @@ function PopulationDensityChart({
 
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
-			const wardCode = selectedArea.code;
 			const wardCodeProp = detectWardCodeForYear(
 				geojson.features,
 				dataset.boundaryYear,
 			);
-			const populationData = resolveWardData(
+			const wardRecord = resolvePopulationAreaWards(
 				dataset,
-				wardCode,
+				selectedArea,
 				codeMapper,
-			);
+			)?.[0];
 
-			if (populationData) {
+			if (wardRecord) {
 				const featureIndex = getFeatureIndex(geojson, wardCodeProp);
-				const wardFeature = featureIndex.get(wardCode);
+				const wardFeature = featureIndex.get(wardRecord.code);
 
 				if (wardFeature) {
-					const total = calculateTotal(populationData.total);
+					const total = calculateTotal(wardRecord.data.total);
 					return {
 						...getWardPopulationDensity(wardFeature, total),
 						total,
@@ -223,7 +223,7 @@ function PopulationDensityChart({
 		if (
 			selectedArea &&
 			selectedArea.type === "localAuthority" &&
-			codeMapper?.getWardsForLad
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
 			return getLadCachedValue(
 				densityCache,
@@ -232,12 +232,13 @@ function PopulationDensityChart({
 				dataset,
 				mappingGeneration,
 				() => {
-					const wardCodes = codeMapper.getWardsForLad!(
-						selectedArea.code,
-						dataset.boundaryYear,
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
 					);
 
-					if (wardCodes.length === 0)
+					if (!wardRecords?.length)
 						return { density: null, areaSqKm: null, total: null };
 
 					const wardCodeProp = detectWardCodeForYear(
@@ -248,12 +249,10 @@ function PopulationDensityChart({
 					let totalPopulation = 0;
 					let totalArea = 0;
 
-					for (const wardCode of wardCodes) {
-						const populationData = resolveWardData(
-							dataset,
-							wardCode,
-							codeMapper,
-						);
+					for (const {
+						code: wardCode,
+						data: populationData,
+					} of wardRecords) {
 						if (populationData) {
 							const wardFeature = featureIndex.get(wardCode);
 							if (wardFeature) {
@@ -282,7 +281,7 @@ function PopulationDensityChart({
 		if (
 			selectedArea &&
 			selectedArea.type === "constituency" &&
-			codeMapper?.getWardsForConstituency
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
 			return getAreaCachedValue(
 				densityCache,
@@ -291,12 +290,13 @@ function PopulationDensityChart({
 				dataset,
 				mappingGeneration,
 				() => {
-					const wardCodes = codeMapper.getWardsForConstituency(
-						selectedArea.code,
-						dataset.boundaryYear,
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
 					);
 
-					if (wardCodes.length === 0)
+					if (!wardRecords?.length)
 						return { density: null, areaSqKm: null, total: null };
 
 					const wardCodeProp = detectWardCodeForYear(
@@ -307,12 +307,10 @@ function PopulationDensityChart({
 					let totalPopulation = 0;
 					let totalArea = 0;
 
-					for (const wardCode of wardCodes) {
-						const populationData = resolveWardData(
-							dataset,
-							wardCode,
-							codeMapper,
-						);
+					for (const {
+						code: wardCode,
+						data: populationData,
+					} of wardRecords) {
 						if (populationData) {
 							const wardFeature = featureIndex.get(wardCode);
 							if (wardFeature) {

@@ -11,8 +11,9 @@ import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import { ChartCard } from "@/components/ChartCard";
 import {
 	getAreaCachedValue,
-	resolveWardData,
 	getLadCachedValue,
+	populationAreaMappingsAvailable,
+	resolvePopulationAreaWards,
 } from "@/lib/helpers/demographicData";
 import { getAgeColor } from "@/lib/helpers/ageDistribution";
 
@@ -118,11 +119,11 @@ function AgeDistribution({
 
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
-			const wardData = resolveWardData(
+			const wardData = resolvePopulationAreaWards(
 				dataset,
-				selectedArea.code,
+				selectedArea,
 				codeMapper,
-			);
+			)?.[0]?.data;
 
 			if (!wardData) {
 				return {
@@ -199,7 +200,7 @@ function AgeDistribution({
 		if (
 			selectedArea &&
 			selectedArea.type === "localAuthority" &&
-			codeMapper?.getWardsForLad
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
 			return getLadCachedValue(
 				ageDistributionCache,
@@ -208,12 +209,13 @@ function AgeDistribution({
 				dataset,
 				mappingGeneration,
 				() => {
-					const wardCodes = codeMapper.getWardsForLad!(
-						selectedArea.code,
-						dataset.boundaryYear,
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
 					);
 
-					if (wardCodes.length === 0) {
+					if (!wardRecords?.length) {
 						return {
 							medianAge: 0,
 							ageGroups: EMPTY_AGE_GROUPS,
@@ -225,13 +227,8 @@ function AgeDistribution({
 
 					// Aggregate age counts across all wards
 					const aggregatedCounts = new Uint32Array(100);
-					for (const wardCode of wardCodes) {
-						const wardData = resolveWardData(
-							dataset,
-							wardCode,
-							codeMapper,
-						);
-						if (wardData?.total) {
+					for (const { data: wardData } of wardRecords) {
+						if (wardData.total) {
 							for (let i = 0; i < 90; i++) {
 								aggregatedCounts[i] +=
 									wardData.total[AGE_STRING_KEYS[i]] || 0;
@@ -286,7 +283,7 @@ function AgeDistribution({
 		if (
 			selectedArea &&
 			selectedArea.type === "constituency" &&
-			codeMapper?.getWardsForConstituency
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
 			return getAreaCachedValue(
 				ageDistributionCache,
@@ -295,12 +292,13 @@ function AgeDistribution({
 				dataset,
 				mappingGeneration,
 				() => {
-					const wardCodes = codeMapper.getWardsForConstituency(
-						selectedArea.code,
-						dataset.boundaryYear,
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
 					);
 
-					if (wardCodes.length === 0) {
+					if (!wardRecords?.length) {
 						return {
 							medianAge: 0,
 							ageGroups: EMPTY_AGE_GROUPS,
@@ -311,13 +309,8 @@ function AgeDistribution({
 					}
 
 					const aggregatedCounts = new Uint32Array(100);
-					for (const wardCode of wardCodes) {
-						const wardData = resolveWardData(
-							dataset,
-							wardCode,
-							codeMapper,
-						);
-						if (wardData?.total) {
+					for (const { data: wardData } of wardRecords) {
+						if (wardData.total) {
 							for (let i = 0; i < 90; i++) {
 								aggregatedCounts[i] +=
 									wardData.total[AGE_STRING_KEYS[i]] || 0;
