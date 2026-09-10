@@ -14,6 +14,11 @@ import {
 	fetchBoundaryPropertyGroup,
 } from "../data/boundaries/propertyLoader";
 import {
+	completedBoundaryTypes,
+	mergeBoundaryGroups,
+	type BoundaryGroupResult,
+} from "../data/boundaries/loadState";
+import {
 	deriveBoundaryMappings,
 	seedBoundaryMappings,
 	type BoundaryMappingTarget,
@@ -100,37 +105,38 @@ export function useBoundaryData(
 					missing.map(async (type) => {
 						const { data, failures } =
 							await fetchBoundaryPropertyGroup(type);
-						return [type, data, failures] as const;
+						return [type, { data, failures }] as const;
 					}),
 				),
 				overlaps,
 			])
 				.then(([mappingsApplied, groups, loadedOverlaps]) => {
 					if (!mounted) return;
+					const boundaryGroups = groups as BoundaryGroupResult[];
 					if (loadedOverlaps)
 						setConstituencyLadOverlaps(loadedOverlaps);
 
-					for (const [type] of groups) loadedTypes.current.add(type);
+					for (const type of completedBoundaryTypes(boundaryGroups))
+						loadedTypes.current.add(type);
 					const fetched = Object.fromEntries(
-						groups.map(([type, data]) => [type, data]),
+						boundaryGroups.map(([type, { data }]) => [type, data]),
 					) as Partial<
 						Record<BoundaryType, Record<number, BoundaryGeojson>>
 					>;
 
 					// Whatever did load is still worth drawing, so keep it and
 					// report the gaps alongside rather than instead.
-					const failures = groups.flatMap(
-						([, , groupFailures]) => groupFailures,
+					const failures = boundaryGroups.flatMap(
+						([, { failures: groupFailures }]) => groupFailures,
 					);
 					if (failures.length > 0) {
 						setError(new Error(failures.join("; ")));
 					}
 
 					startTransition(() => {
-						setRawData((previous) => ({
-							...previous,
-							...fetched,
-						}));
+					setRawData((previous) =>
+						mergeBoundaryGroups(previous, boundaryGroups),
+					);
 						setIsLoading(false);
 					});
 
