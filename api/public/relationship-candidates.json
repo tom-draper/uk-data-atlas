@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:ba91cc6fa41316de63325f0ba6e794bd1ba8bc6db42df62462de139d5e5e7081",
+	"contentHash": "sha256:e4f59103cc33ba716b828346946a12c9a18f67c777f134c3cfdcbbc626db2efc",
 	"candidates": [
 		{
 			"id": "parish-2019-04-ew-bgc-to-local-authority-unavailable",
@@ -117,7 +117,8 @@
 					"missingValueFeatureCount": 0
 				},
 				"reasons": []
-			}
+			},
+			"publishedCrosswalkId": "sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment"
 		},
 		{
 			"id": "ward-2016-12-gb-bgc-to-local-authority-unavailable",
@@ -195,7 +196,8 @@
 					"missingValueFeatureCount": 0
 				},
 				"reasons": []
-			}
+			},
+			"publishedCrosswalkId": "ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment"
 		},
 		{
 			"id": "ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2",
@@ -234,7 +236,8 @@
 					"missingValueFeatureCount": 0
 				},
 				"reasons": []
-			}
+			},
+			"publishedCrosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment"
 		},
 		{
 			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc",
@@ -273,7 +276,8 @@
 					"missingValueFeatureCount": 0
 				},
 				"reasons": []
-			}
+			},
+			"publishedCrosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment"
 		},
 		{
 			"id": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-05-uk-bgc-v2",
@@ -352,7 +356,8 @@
 					"missingValueFeatureCount": 0
 				},
 				"reasons": []
-			}
+			},
+			"publishedCrosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment"
 		},
 		{
 			"id": "ward-2026-05-uk-bgc-to-local-authority-unavailable",
