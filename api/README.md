@@ -930,6 +930,10 @@ pnpm start
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`
 - `GET /v1/areas/{type}/{release}/{code}`
+- `GET /v1/crosswalks`
+- `GET /v1/crosswalks/{crosswalk-id}`
+- `GET /v1/crosswalks/{crosswalk-id}/records`
+- `GET /v1/atlas-release`
 
 The build scans every `../data/**/meta.json`, so a newly added dataset becomes
 visible to the source inventory on the next build without changing API code.
@@ -959,4 +963,16 @@ The first crosswalk build is a published, many-to-many constituency lookup
 from the source's `2010` label to the July 2024 release. Its records are
 marked `official-lookup` and `publisher-supplied`, but deliberately have
 `weighting.status: not-provided`: they may support relationship discovery, not
-value apportionment or an implied one-to-one identity conversion.
+value apportionment or an implied one-to-one identity conversion. Published
+crosswalks also feed `public/geography-inventory.json`, which reports each
+boundary release's known relationships (direction, method, quality and
+weighting) or an explicit gap when no crosswalk references it yet.
+
+The build's final step writes `public/atlas-release.json`, an immutable
+manifest that references every other build-time artifact (the boundary
+registry, derived boundaries, area inventory, crosswalk inventory, geography
+inventory and source inventory) by its content hash, plus a single `releaseId`
+hash of that set. Rebuilding without changing any input produces the same
+`releaseId`; changing any one artifact changes it. This is a first, minimal
+step toward the release and provenance model described above, not the full
+versioned release history it will eventually anchor.

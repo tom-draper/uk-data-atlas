@@ -7,6 +7,7 @@ import {
 	type AreaLookup,
 	type AreaReleaseArtifact,
 } from "./areaInventory";
+import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { CrosswalkArtifact, CrosswalkInventory } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
@@ -94,12 +95,22 @@ export const readCrosswalkLookup = (
 		}),
 	);
 
+export const readAtlasRelease = (apiRoot: string): AtlasRelease => {
+	const path = join(apiRoot, "public", "atlas-release.json");
+	const release = JSON.parse(readFileSync(path, "utf8")) as AtlasRelease;
+	if (release.schemaVersion !== 1 || !Array.isArray(release.artifacts)) {
+		throw new Error(`Invalid atlas release manifest at ${path}`);
+	}
+	return release;
+};
+
 export type ApiCatalogues = {
 	boundaryRegistry: BoundaryRegistry;
 	geographyInventory: GeographyInventory;
 	areaLookup: AreaLookup;
 	crosswalkInventory: CrosswalkInventory;
 	crosswalkLookup: CrosswalkLookup;
+	atlasRelease: AtlasRelease;
 };
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
@@ -110,6 +121,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		areaLookup: readAreaLookup(apiRoot),
 		crosswalkInventory,
 		crosswalkLookup: readCrosswalkLookup(apiRoot, crosswalkInventory),
+		atlasRelease: readAtlasRelease(apiRoot),
 	};
 };
 
@@ -119,6 +131,7 @@ export const createApiServer = ({
 	areaLookup,
 	crosswalkInventory,
 	crosswalkLookup,
+	atlasRelease,
 }: ApiCatalogues) =>
 	createServer((request, response) => {
 		const result = route(
@@ -129,6 +142,7 @@ export const createApiServer = ({
 			areaLookup,
 			crosswalkInventory,
 			crosswalkLookup,
+			atlasRelease,
 		);
 		response.writeHead(result.status, {
 			"cache-control": "public, max-age=300",

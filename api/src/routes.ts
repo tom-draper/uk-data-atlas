@@ -1,4 +1,5 @@
 import type { AreaLookup } from "./areaInventory";
+import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { CrosswalkArtifact, CrosswalkInventory } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
@@ -63,6 +64,7 @@ export const route = (
 	areaLookup?: AreaLookup,
 	crosswalkInventory?: CrosswalkInventory,
 	crosswalkLookup?: CrosswalkLookup,
+	atlasRelease?: AtlasRelease,
 ): ApiResponse => {
 	if (method !== "GET") {
 		return problem(405, "Method Not Allowed", "This API is read-only.");
@@ -92,6 +94,7 @@ export const route = (
 					"/v1/crosswalks",
 					"/v1/crosswalks/{crosswalk-id}",
 					"/v1/crosswalks/{crosswalk-id}/records",
+					"/v1/atlas-release",
 				],
 			}),
 		};
@@ -245,6 +248,20 @@ export const route = (
 			? crosswalk.records.filter((record) => record.source.code === source)
 			: crosswalk.records;
 		return { status: 200, body: envelope(registry, records) };
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-release"
+	) {
+		return atlasRelease
+			? { status: 200, body: envelope(registry, atlasRelease) }
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the atlas release manifest before starting the API.",
+				);
 	}
 
 	return problem(404, "Not Found", "No API resource matches that path.");
