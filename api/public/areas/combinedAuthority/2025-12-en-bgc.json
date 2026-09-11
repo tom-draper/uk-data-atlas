@@ -1,0 +1,70 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:7d92965736e95d7e8a9bb0ec8cfdd1bf522d0958259ca8edc88338b0c2551446",
+	"geography": "combinedAuthority",
+	"boundaryRelease": "2025-12-en-bgc",
+	"codeProperty": "CAUTH25CD",
+	"nameProperty": "CAUTH25NM",
+	"areas": [
+		{
+			"code": "E47000001",
+			"name": "Greater Manchester"
+		},
+		{
+			"code": "E47000002",
+			"name": "South Yorkshire"
+		},
+		{
+			"code": "E47000003",
+			"name": "West Yorkshire"
+		},
+		{
+			"code": "E47000004",
+			"name": "Liverpool City Region"
+		},
+		{
+			"code": "E47000006",
+			"name": "Tees Valley"
+		},
+		{
+			"code": "E47000007",
+			"name": "West Midlands"
+		},
+		{
+			"code": "E47000008",
+			"name": "Cambridgeshire and Peterborough"
+		},
+		{
+			"code": "E47000009",
+			"name": "West of England"
+		},
+		{
+			"code": "E47000012",
+			"name": "York and North Yorkshire"
+		},
+		{
+			"code": "E47000013",
+			"name": "East Midlands"
+		},
+		{
+			"code": "E47000014",
+			"name": "North East"
+		},
+		{
+			"code": "E47000015",
+			"name": "Devon and Torbay"
+		},
+		{
+			"code": "E47000016",
+			"name": "Hull and East Yorkshire"
+		},
+		{
+			"code": "E47000017",
+			"name": "Greater Lincolnshire"
+		},
+		{
+			"code": "E47000018",
+			"name": "Lancashire"
+		}
+	]
+}

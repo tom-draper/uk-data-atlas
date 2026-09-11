@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:4ad159b2564010c8a5d514ebb5af83c728be6def622efae640156bfdcd1d0aee",
+	"geography": "scottishParliamentaryRegion",
+	"boundaryRelease": "2022-12-sc-bgc",
+	"codeProperty": "SPR22CD",
+	"nameProperty": "SPR22NM",
+	"areas": [
+		{
+			"code": "S17000011",
+			"name": "Highlands and Islands"
+		},
+		{
+			"code": "S17000012",
+			"name": "Lothian"
+		},
+		{
+			"code": "S17000013",
+			"name": "Mid Scotland and Fife"
+		},
+		{
+			"code": "S17000014",
+			"name": "North East Scotland"
+		},
+		{
+			"code": "S17000015",
+			"name": "South Scotland"
+		},
+		{
+			"code": "S17000018",
+			"name": "West Scotland"
+		},
+		{
+			"code": "S17000019",
+			"name": "Central Scotland"
+		},
+		{
+			"code": "S17000020",
+			"name": "Glasgow"
+		}
+	]
+}

@@ -1,0 +1,1610 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:3fb8321da62654e2907bf72818a76cc46b201e9729019797d2051a0ed76b222f",
+	"geography": "localPlanningAuthority",
+	"boundaryRelease": "2019-04-uk-bgc",
+	"codeProperty": "lpa19cd",
+	"nameProperty": "lpa19nm",
+	"areas": [
+		{
+			"code": "E60000001",
+			"name": "County Durham LPA"
+		},
+		{
+			"code": "E60000002",
+			"name": "Darlington LPA"
+		},
+		{
+			"code": "E60000003",
+			"name": "Hartlepool LPA"
+		},
+		{
+			"code": "E60000004",
+			"name": "Middlesbrough LPA"
+		},
+		{
+			"code": "E60000005",
+			"name": "Northumberland LPA"
+		},
+		{
+			"code": "E60000006",
+			"name": "Redcar and Cleveland LPA"
+		},
+		{
+			"code": "E60000007",
+			"name": "Stockton-on-Tees LPA"
+		},
+		{
+			"code": "E60000008",
+			"name": "Gateshead LPA"
+		},
+		{
+			"code": "E60000009",
+			"name": "Newcastle upon Tyne LPA"
+		},
+		{
+			"code": "E60000010",
+			"name": "North Tyneside LPA"
+		},
+		{
+			"code": "E60000011",
+			"name": "South Tyneside LPA"
+		},
+		{
+			"code": "E60000012",
+			"name": "Sunderland LPA"
+		},
+		{
+			"code": "E60000013",
+			"name": "Blackburn with Darwen LPA"
+		},
+		{
+			"code": "E60000014",
+			"name": "Blackpool LPA"
+		},
+		{
+			"code": "E60000015",
+			"name": "Cheshire East LPA"
+		},
+		{
+			"code": "E60000016",
+			"name": "Cheshire West and Chester LPA"
+		},
+		{
+			"code": "E60000017",
+			"name": "Halton LPA"
+		},
+		{
+			"code": "E60000018",
+			"name": "Warrington LPA"
+		},
+		{
+			"code": "E60000019",
+			"name": "Allerdale LPA"
+		},
+		{
+			"code": "E60000020",
+			"name": "Barrow-in-Furness LPA"
+		},
+		{
+			"code": "E60000021",
+			"name": "Carlisle LPA"
+		},
+		{
+			"code": "E60000022",
+			"name": "Copeland LPA"
+		},
+		{
+			"code": "E60000023",
+			"name": "Eden LPA"
+		},
+		{
+			"code": "E60000024",
+			"name": "South Lakeland LPA"
+		},
+		{
+			"code": "E60000025",
+			"name": "Bolton LPA"
+		},
+		{
+			"code": "E60000026",
+			"name": "Bury LPA"
+		},
+		{
+			"code": "E60000027",
+			"name": "Manchester LPA"
+		},
+		{
+			"code": "E60000028",
+			"name": "Oldham LPA"
+		},
+		{
+			"code": "E60000029",
+			"name": "Rochdale LPA"
+		},
+		{
+			"code": "E60000030",
+			"name": "Salford LPA"
+		},
+		{
+			"code": "E60000031",
+			"name": "Stockport LPA"
+		},
+		{
+			"code": "E60000032",
+			"name": "Tameside LPA"
+		},
+		{
+			"code": "E60000033",
+			"name": "Trafford LPA"
+		},
+		{
+			"code": "E60000034",
+			"name": "Wigan LPA"
+		},
+		{
+			"code": "E60000035",
+			"name": "Burnley LPA"
+		},
+		{
+			"code": "E60000036",
+			"name": "Chorley LPA"
+		},
+		{
+			"code": "E60000037",
+			"name": "Fylde LPA"
+		},
+		{
+			"code": "E60000038",
+			"name": "Hyndburn LPA"
+		},
+		{
+			"code": "E60000039",
+			"name": "Lancaster LPA"
+		},
+		{
+			"code": "E60000040",
+			"name": "Pendle LPA"
+		},
+		{
+			"code": "E60000041",
+			"name": "Preston LPA"
+		},
+		{
+			"code": "E60000042",
+			"name": "Ribble Valley LPA"
+		},
+		{
+			"code": "E60000043",
+			"name": "Rossendale LPA"
+		},
+		{
+			"code": "E60000044",
+			"name": "South Ribble LPA"
+		},
+		{
+			"code": "E60000045",
+			"name": "West Lancashire LPA"
+		},
+		{
+			"code": "E60000046",
+			"name": "Wyre LPA"
+		},
+		{
+			"code": "E60000047",
+			"name": "Knowsley LPA"
+		},
+		{
+			"code": "E60000048",
+			"name": "Liverpool LPA"
+		},
+		{
+			"code": "E60000049",
+			"name": "Sefton LPA"
+		},
+		{
+			"code": "E60000050",
+			"name": "St. Helens LPA"
+		},
+		{
+			"code": "E60000051",
+			"name": "Wirral LPA"
+		},
+		{
+			"code": "E60000052",
+			"name": "East Riding of Yorkshire LPA"
+		},
+		{
+			"code": "E60000053",
+			"name": "Kingston upon Hull, City of LPA"
+		},
+		{
+			"code": "E60000054",
+			"name": "North East Lincolnshire LPA"
+		},
+		{
+			"code": "E60000055",
+			"name": "North Lincolnshire LPA"
+		},
+		{
+			"code": "E60000056",
+			"name": "York LPA"
+		},
+		{
+			"code": "E60000057",
+			"name": "Craven LPA"
+		},
+		{
+			"code": "E60000058",
+			"name": "Hambleton LPA"
+		},
+		{
+			"code": "E60000059",
+			"name": "Harrogate LPA"
+		},
+		{
+			"code": "E60000060",
+			"name": "Richmondshire LPA"
+		},
+		{
+			"code": "E60000061",
+			"name": "Ryedale LPA"
+		},
+		{
+			"code": "E60000062",
+			"name": "Scarborough LPA"
+		},
+		{
+			"code": "E60000063",
+			"name": "Selby LPA"
+		},
+		{
+			"code": "E60000064",
+			"name": "Barnsley LPA"
+		},
+		{
+			"code": "E60000065",
+			"name": "Doncaster LPA"
+		},
+		{
+			"code": "E60000066",
+			"name": "Rotherham LPA"
+		},
+		{
+			"code": "E60000067",
+			"name": "Sheffield LPA"
+		},
+		{
+			"code": "E60000068",
+			"name": "Bradford LPA"
+		},
+		{
+			"code": "E60000069",
+			"name": "Calderdale LPA"
+		},
+		{
+			"code": "E60000070",
+			"name": "Kirklees LPA"
+		},
+		{
+			"code": "E60000071",
+			"name": "Leeds LPA"
+		},
+		{
+			"code": "E60000072",
+			"name": "Wakefield LPA"
+		},
+		{
+			"code": "E60000073",
+			"name": "Derby LPA"
+		},
+		{
+			"code": "E60000074",
+			"name": "Leicester LPA"
+		},
+		{
+			"code": "E60000075",
+			"name": "Nottingham LPA"
+		},
+		{
+			"code": "E60000076",
+			"name": "Rutland LPA"
+		},
+		{
+			"code": "E60000077",
+			"name": "Amber Valley LPA"
+		},
+		{
+			"code": "E60000078",
+			"name": "Bolsover LPA"
+		},
+		{
+			"code": "E60000079",
+			"name": "Chesterfield LPA"
+		},
+		{
+			"code": "E60000080",
+			"name": "Derbyshire Dales LPA"
+		},
+		{
+			"code": "E60000081",
+			"name": "Erewash LPA"
+		},
+		{
+			"code": "E60000082",
+			"name": "High Peak LPA"
+		},
+		{
+			"code": "E60000083",
+			"name": "North East Derbyshire LPA"
+		},
+		{
+			"code": "E60000084",
+			"name": "South Derbyshire LPA"
+		},
+		{
+			"code": "E60000085",
+			"name": "Blaby LPA"
+		},
+		{
+			"code": "E60000086",
+			"name": "Charnwood LPA"
+		},
+		{
+			"code": "E60000087",
+			"name": "Harborough LPA"
+		},
+		{
+			"code": "E60000088",
+			"name": "Hinckley and Bosworth LPA"
+		},
+		{
+			"code": "E60000089",
+			"name": "Melton LPA"
+		},
+		{
+			"code": "E60000090",
+			"name": "North West Leicestershire LPA"
+		},
+		{
+			"code": "E60000091",
+			"name": "Oadby and Wigston LPA"
+		},
+		{
+			"code": "E60000092",
+			"name": "Boston LPA"
+		},
+		{
+			"code": "E60000093",
+			"name": "East Lindsey LPA"
+		},
+		{
+			"code": "E60000094",
+			"name": "Lincoln LPA"
+		},
+		{
+			"code": "E60000095",
+			"name": "North Kesteven LPA"
+		},
+		{
+			"code": "E60000096",
+			"name": "South Holland LPA"
+		},
+		{
+			"code": "E60000097",
+			"name": "South Kesteven LPA"
+		},
+		{
+			"code": "E60000098",
+			"name": "West Lindsey LPA"
+		},
+		{
+			"code": "E60000099",
+			"name": "Corby LPA"
+		},
+		{
+			"code": "E60000100",
+			"name": "Daventry LPA"
+		},
+		{
+			"code": "E60000101",
+			"name": "East Northamptonshire LPA"
+		},
+		{
+			"code": "E60000102",
+			"name": "Kettering LPA"
+		},
+		{
+			"code": "E60000103",
+			"name": "Northampton LPA"
+		},
+		{
+			"code": "E60000104",
+			"name": "South Northamptonshire LPA"
+		},
+		{
+			"code": "E60000105",
+			"name": "Wellingborough LPA"
+		},
+		{
+			"code": "E60000106",
+			"name": "Ashfield LPA"
+		},
+		{
+			"code": "E60000107",
+			"name": "Bassetlaw LPA"
+		},
+		{
+			"code": "E60000108",
+			"name": "Broxtowe LPA"
+		},
+		{
+			"code": "E60000109",
+			"name": "Gedling LPA"
+		},
+		{
+			"code": "E60000110",
+			"name": "Mansfield LPA"
+		},
+		{
+			"code": "E60000111",
+			"name": "Newark and Sherwood LPA"
+		},
+		{
+			"code": "E60000112",
+			"name": "Rushcliffe LPA"
+		},
+		{
+			"code": "E60000113",
+			"name": "Herefordshire, County of LPA"
+		},
+		{
+			"code": "E60000114",
+			"name": "Shropshire LPA"
+		},
+		{
+			"code": "E60000115",
+			"name": "Stoke-on-Trent LPA"
+		},
+		{
+			"code": "E60000116",
+			"name": "Telford and Wrekin LPA"
+		},
+		{
+			"code": "E60000117",
+			"name": "Cannock Chase LPA"
+		},
+		{
+			"code": "E60000118",
+			"name": "East Staffordshire LPA"
+		},
+		{
+			"code": "E60000119",
+			"name": "Lichfield LPA"
+		},
+		{
+			"code": "E60000120",
+			"name": "Newcastle-under-Lyme LPA"
+		},
+		{
+			"code": "E60000121",
+			"name": "South Staffordshire LPA"
+		},
+		{
+			"code": "E60000122",
+			"name": "Stafford LPA"
+		},
+		{
+			"code": "E60000123",
+			"name": "Staffordshire Moorlands LPA"
+		},
+		{
+			"code": "E60000124",
+			"name": "Tamworth LPA"
+		},
+		{
+			"code": "E60000125",
+			"name": "North Warwickshire LPA"
+		},
+		{
+			"code": "E60000126",
+			"name": "Nuneaton and Bedworth LPA"
+		},
+		{
+			"code": "E60000127",
+			"name": "Rugby LPA"
+		},
+		{
+			"code": "E60000128",
+			"name": "Stratford-on-Avon LPA"
+		},
+		{
+			"code": "E60000129",
+			"name": "Warwick LPA"
+		},
+		{
+			"code": "E60000130",
+			"name": "Birmingham LPA"
+		},
+		{
+			"code": "E60000131",
+			"name": "Coventry LPA"
+		},
+		{
+			"code": "E60000132",
+			"name": "Dudley LPA"
+		},
+		{
+			"code": "E60000133",
+			"name": "Sandwell LPA"
+		},
+		{
+			"code": "E60000134",
+			"name": "Solihull LPA"
+		},
+		{
+			"code": "E60000135",
+			"name": "Walsall LPA"
+		},
+		{
+			"code": "E60000136",
+			"name": "Wolverhampton LPA"
+		},
+		{
+			"code": "E60000137",
+			"name": "Bromsgrove LPA"
+		},
+		{
+			"code": "E60000138",
+			"name": "Malvern Hills LPA"
+		},
+		{
+			"code": "E60000139",
+			"name": "Redditch LPA"
+		},
+		{
+			"code": "E60000140",
+			"name": "Worcester LPA"
+		},
+		{
+			"code": "E60000141",
+			"name": "Wychavon LPA"
+		},
+		{
+			"code": "E60000142",
+			"name": "Wyre Forest LPA"
+		},
+		{
+			"code": "E60000143",
+			"name": "Bedford LPA"
+		},
+		{
+			"code": "E60000144",
+			"name": "Central Bedfordshire LPA"
+		},
+		{
+			"code": "E60000145",
+			"name": "Luton LPA"
+		},
+		{
+			"code": "E60000146",
+			"name": "Peterborough LPA"
+		},
+		{
+			"code": "E60000147",
+			"name": "Southend-on-Sea LPA"
+		},
+		{
+			"code": "E60000148",
+			"name": "Thurrock LPA"
+		},
+		{
+			"code": "E60000149",
+			"name": "Cambridge LPA"
+		},
+		{
+			"code": "E60000150",
+			"name": "East Cambridgeshire LPA"
+		},
+		{
+			"code": "E60000151",
+			"name": "Fenland LPA"
+		},
+		{
+			"code": "E60000152",
+			"name": "Huntingdonshire LPA"
+		},
+		{
+			"code": "E60000153",
+			"name": "South Cambridgeshire LPA"
+		},
+		{
+			"code": "E60000154",
+			"name": "Basildon LPA"
+		},
+		{
+			"code": "E60000155",
+			"name": "Braintree LPA"
+		},
+		{
+			"code": "E60000156",
+			"name": "Brentwood LPA"
+		},
+		{
+			"code": "E60000157",
+			"name": "Castle Point LPA"
+		},
+		{
+			"code": "E60000158",
+			"name": "Chelmsford LPA"
+		},
+		{
+			"code": "E60000159",
+			"name": "Colchester LPA"
+		},
+		{
+			"code": "E60000160",
+			"name": "Epping Forest LPA"
+		},
+		{
+			"code": "E60000161",
+			"name": "Harlow LPA"
+		},
+		{
+			"code": "E60000162",
+			"name": "Maldon LPA"
+		},
+		{
+			"code": "E60000163",
+			"name": "Rochford LPA"
+		},
+		{
+			"code": "E60000164",
+			"name": "Tendring LPA"
+		},
+		{
+			"code": "E60000165",
+			"name": "Uttlesford LPA"
+		},
+		{
+			"code": "E60000166",
+			"name": "Broxbourne LPA"
+		},
+		{
+			"code": "E60000167",
+			"name": "Dacorum LPA"
+		},
+		{
+			"code": "E60000168",
+			"name": "East Hertfordshire LPA"
+		},
+		{
+			"code": "E60000169",
+			"name": "Hertsmere LPA"
+		},
+		{
+			"code": "E60000170",
+			"name": "North Hertfordshire LPA"
+		},
+		{
+			"code": "E60000171",
+			"name": "St Albans LPA"
+		},
+		{
+			"code": "E60000172",
+			"name": "Stevenage LPA"
+		},
+		{
+			"code": "E60000173",
+			"name": "Three Rivers LPA"
+		},
+		{
+			"code": "E60000174",
+			"name": "Watford LPA"
+		},
+		{
+			"code": "E60000175",
+			"name": "Welwyn Hatfield LPA"
+		},
+		{
+			"code": "E60000176",
+			"name": "Breckland LPA"
+		},
+		{
+			"code": "E60000177",
+			"name": "Broadland LPA"
+		},
+		{
+			"code": "E60000178",
+			"name": "Great Yarmouth LPA"
+		},
+		{
+			"code": "E60000179",
+			"name": "King's Lynn and West Norfolk LPA"
+		},
+		{
+			"code": "E60000180",
+			"name": "North Norfolk LPA"
+		},
+		{
+			"code": "E60000181",
+			"name": "Norwich LPA"
+		},
+		{
+			"code": "E60000182",
+			"name": "South Norfolk LPA"
+		},
+		{
+			"code": "E60000183",
+			"name": "Babergh LPA"
+		},
+		{
+			"code": "E60000184",
+			"name": "East Suffolk LPA"
+		},
+		{
+			"code": "E60000185",
+			"name": "Ipswich LPA"
+		},
+		{
+			"code": "E60000186",
+			"name": "Mid Suffolk LPA"
+		},
+		{
+			"code": "E60000187",
+			"name": "West Suffolk LPA"
+		},
+		{
+			"code": "E60000188",
+			"name": "Camden LPA"
+		},
+		{
+			"code": "E60000189",
+			"name": "City of London LPA"
+		},
+		{
+			"code": "E60000190",
+			"name": "Hackney LPA"
+		},
+		{
+			"code": "E60000191",
+			"name": "Hammersmith and Fulham LPA"
+		},
+		{
+			"code": "E60000192",
+			"name": "Haringey LPA"
+		},
+		{
+			"code": "E60000193",
+			"name": "Islington LPA"
+		},
+		{
+			"code": "E60000194",
+			"name": "Kensington and Chelsea LPA"
+		},
+		{
+			"code": "E60000195",
+			"name": "Lambeth LPA"
+		},
+		{
+			"code": "E60000196",
+			"name": "Lewisham LPA"
+		},
+		{
+			"code": "E60000197",
+			"name": "Newham LPA"
+		},
+		{
+			"code": "E60000198",
+			"name": "Southwark LPA"
+		},
+		{
+			"code": "E60000199",
+			"name": "Tower Hamlets LPA"
+		},
+		{
+			"code": "E60000200",
+			"name": "Wandsworth LPA"
+		},
+		{
+			"code": "E60000201",
+			"name": "Westminster LPA"
+		},
+		{
+			"code": "E60000202",
+			"name": "Barking and Dagenham LPA"
+		},
+		{
+			"code": "E60000203",
+			"name": "Barnet LPA"
+		},
+		{
+			"code": "E60000204",
+			"name": "Bexley LPA"
+		},
+		{
+			"code": "E60000205",
+			"name": "Brent LPA"
+		},
+		{
+			"code": "E60000206",
+			"name": "Bromley LPA"
+		},
+		{
+			"code": "E60000207",
+			"name": "Croydon LPA"
+		},
+		{
+			"code": "E60000208",
+			"name": "Ealing LPA"
+		},
+		{
+			"code": "E60000209",
+			"name": "Enfield LPA"
+		},
+		{
+			"code": "E60000210",
+			"name": "Greenwich LPA"
+		},
+		{
+			"code": "E60000211",
+			"name": "Harrow LPA"
+		},
+		{
+			"code": "E60000212",
+			"name": "Havering LPA"
+		},
+		{
+			"code": "E60000213",
+			"name": "Hillingdon LPA"
+		},
+		{
+			"code": "E60000214",
+			"name": "Hounslow LPA"
+		},
+		{
+			"code": "E60000215",
+			"name": "Kingston upon Thames LPA"
+		},
+		{
+			"code": "E60000216",
+			"name": "Merton LPA"
+		},
+		{
+			"code": "E60000217",
+			"name": "Redbridge LPA"
+		},
+		{
+			"code": "E60000218",
+			"name": "Richmond upon Thames LPA"
+		},
+		{
+			"code": "E60000219",
+			"name": "Sutton LPA"
+		},
+		{
+			"code": "E60000220",
+			"name": "Waltham Forest LPA"
+		},
+		{
+			"code": "E60000221",
+			"name": "Bracknell Forest LPA"
+		},
+		{
+			"code": "E60000222",
+			"name": "Brighton and Hove LPA"
+		},
+		{
+			"code": "E60000223",
+			"name": "Isle of Wight LPA"
+		},
+		{
+			"code": "E60000224",
+			"name": "Medway LPA"
+		},
+		{
+			"code": "E60000225",
+			"name": "Milton Keynes LPA"
+		},
+		{
+			"code": "E60000226",
+			"name": "Portsmouth LPA"
+		},
+		{
+			"code": "E60000227",
+			"name": "Reading LPA"
+		},
+		{
+			"code": "E60000228",
+			"name": "Slough LPA"
+		},
+		{
+			"code": "E60000229",
+			"name": "Southampton LPA"
+		},
+		{
+			"code": "E60000230",
+			"name": "West Berkshire LPA"
+		},
+		{
+			"code": "E60000231",
+			"name": "Windsor and Maidenhead LPA"
+		},
+		{
+			"code": "E60000232",
+			"name": "Wokingham LPA"
+		},
+		{
+			"code": "E60000233",
+			"name": "Aylesbury Vale LPA"
+		},
+		{
+			"code": "E60000234",
+			"name": "Chiltern LPA"
+		},
+		{
+			"code": "E60000235",
+			"name": "South Bucks LPA"
+		},
+		{
+			"code": "E60000236",
+			"name": "Wycombe LPA"
+		},
+		{
+			"code": "E60000237",
+			"name": "Eastbourne LPA"
+		},
+		{
+			"code": "E60000238",
+			"name": "Hastings LPA"
+		},
+		{
+			"code": "E60000239",
+			"name": "Lewes LPA"
+		},
+		{
+			"code": "E60000240",
+			"name": "Rother LPA"
+		},
+		{
+			"code": "E60000241",
+			"name": "Wealden LPA"
+		},
+		{
+			"code": "E60000242",
+			"name": "Basingstoke and Deane LPA"
+		},
+		{
+			"code": "E60000243",
+			"name": "East Hampshire LPA"
+		},
+		{
+			"code": "E60000244",
+			"name": "Eastleigh LPA"
+		},
+		{
+			"code": "E60000245",
+			"name": "Fareham LPA"
+		},
+		{
+			"code": "E60000246",
+			"name": "Gosport LPA"
+		},
+		{
+			"code": "E60000247",
+			"name": "Hart LPA"
+		},
+		{
+			"code": "E60000248",
+			"name": "Havant LPA"
+		},
+		{
+			"code": "E60000249",
+			"name": "New Forest LPA"
+		},
+		{
+			"code": "E60000250",
+			"name": "Rushmoor LPA"
+		},
+		{
+			"code": "E60000251",
+			"name": "Test Valley LPA"
+		},
+		{
+			"code": "E60000252",
+			"name": "Winchester LPA"
+		},
+		{
+			"code": "E60000253",
+			"name": "Ashford LPA"
+		},
+		{
+			"code": "E60000254",
+			"name": "Canterbury LPA"
+		},
+		{
+			"code": "E60000255",
+			"name": "Dartford LPA"
+		},
+		{
+			"code": "E60000256",
+			"name": "Dover LPA"
+		},
+		{
+			"code": "E60000257",
+			"name": "Folkestone and Hythe LPA"
+		},
+		{
+			"code": "E60000258",
+			"name": "Gravesham LPA"
+		},
+		{
+			"code": "E60000259",
+			"name": "Maidstone LPA"
+		},
+		{
+			"code": "E60000260",
+			"name": "Sevenoaks LPA"
+		},
+		{
+			"code": "E60000261",
+			"name": "Swale LPA"
+		},
+		{
+			"code": "E60000262",
+			"name": "Thanet LPA"
+		},
+		{
+			"code": "E60000263",
+			"name": "Tonbridge and Malling LPA"
+		},
+		{
+			"code": "E60000264",
+			"name": "Tunbridge Wells LPA"
+		},
+		{
+			"code": "E60000265",
+			"name": "Cherwell LPA"
+		},
+		{
+			"code": "E60000266",
+			"name": "Oxford LPA"
+		},
+		{
+			"code": "E60000267",
+			"name": "South Oxfordshire LPA"
+		},
+		{
+			"code": "E60000268",
+			"name": "Vale of White Horse LPA"
+		},
+		{
+			"code": "E60000269",
+			"name": "West Oxfordshire LPA"
+		},
+		{
+			"code": "E60000270",
+			"name": "Elmbridge LPA"
+		},
+		{
+			"code": "E60000271",
+			"name": "Epsom and Ewell LPA"
+		},
+		{
+			"code": "E60000272",
+			"name": "Guildford LPA"
+		},
+		{
+			"code": "E60000273",
+			"name": "Mole Valley LPA"
+		},
+		{
+			"code": "E60000274",
+			"name": "Reigate and Banstead LPA"
+		},
+		{
+			"code": "E60000275",
+			"name": "Runnymede LPA"
+		},
+		{
+			"code": "E60000276",
+			"name": "Spelthorne LPA"
+		},
+		{
+			"code": "E60000277",
+			"name": "Surrey Heath LPA"
+		},
+		{
+			"code": "E60000278",
+			"name": "Tandridge LPA"
+		},
+		{
+			"code": "E60000279",
+			"name": "Waverley LPA"
+		},
+		{
+			"code": "E60000280",
+			"name": "Woking LPA"
+		},
+		{
+			"code": "E60000281",
+			"name": "Adur LPA"
+		},
+		{
+			"code": "E60000282",
+			"name": "Arun LPA"
+		},
+		{
+			"code": "E60000283",
+			"name": "Chichester LPA"
+		},
+		{
+			"code": "E60000284",
+			"name": "Crawley LPA"
+		},
+		{
+			"code": "E60000285",
+			"name": "Horsham LPA"
+		},
+		{
+			"code": "E60000286",
+			"name": "Mid Sussex LPA"
+		},
+		{
+			"code": "E60000287",
+			"name": "Worthing LPA"
+		},
+		{
+			"code": "E60000288",
+			"name": "Bath and North East Somerset LPA"
+		},
+		{
+			"code": "E60000289",
+			"name": "Bournemouth, Christchurch and Poole LPA"
+		},
+		{
+			"code": "E60000290",
+			"name": "Bristol, City of LPA"
+		},
+		{
+			"code": "E60000291",
+			"name": "Cornwall LPA"
+		},
+		{
+			"code": "E60000292",
+			"name": "Dorset LPA"
+		},
+		{
+			"code": "E60000293",
+			"name": "Isles of Scilly LPA"
+		},
+		{
+			"code": "E60000294",
+			"name": "North Somerset LPA"
+		},
+		{
+			"code": "E60000295",
+			"name": "Plymouth LPA"
+		},
+		{
+			"code": "E60000296",
+			"name": "South Gloucestershire LPA"
+		},
+		{
+			"code": "E60000297",
+			"name": "Swindon LPA"
+		},
+		{
+			"code": "E60000298",
+			"name": "Torbay LPA"
+		},
+		{
+			"code": "E60000299",
+			"name": "Wiltshire LPA"
+		},
+		{
+			"code": "E60000300",
+			"name": "East Devon LPA"
+		},
+		{
+			"code": "E60000301",
+			"name": "Exeter LPA"
+		},
+		{
+			"code": "E60000302",
+			"name": "Mid Devon LPA"
+		},
+		{
+			"code": "E60000303",
+			"name": "North Devon LPA"
+		},
+		{
+			"code": "E60000304",
+			"name": "South Hams LPA"
+		},
+		{
+			"code": "E60000305",
+			"name": "Teignbridge LPA"
+		},
+		{
+			"code": "E60000306",
+			"name": "Torridge LPA"
+		},
+		{
+			"code": "E60000307",
+			"name": "West Devon LPA"
+		},
+		{
+			"code": "E60000308",
+			"name": "Cheltenham LPA"
+		},
+		{
+			"code": "E60000309",
+			"name": "Cotswold LPA"
+		},
+		{
+			"code": "E60000310",
+			"name": "Forest of Dean LPA"
+		},
+		{
+			"code": "E60000311",
+			"name": "Gloucester LPA"
+		},
+		{
+			"code": "E60000312",
+			"name": "Stroud LPA"
+		},
+		{
+			"code": "E60000313",
+			"name": "Tewkesbury LPA"
+		},
+		{
+			"code": "E60000314",
+			"name": "Mendip LPA"
+		},
+		{
+			"code": "E60000315",
+			"name": "Sedgemoor LPA"
+		},
+		{
+			"code": "E60000316",
+			"name": "Somerset West and Taunton LPA"
+		},
+		{
+			"code": "E60000317",
+			"name": "South Somerset LPA"
+		},
+		{
+			"code": "E60000318",
+			"name": "Dartmoor National Park LPA"
+		},
+		{
+			"code": "E60000319",
+			"name": "Exmoor National Park LPA"
+		},
+		{
+			"code": "E60000320",
+			"name": "Lake District National Park LPA"
+		},
+		{
+			"code": "E60000321",
+			"name": "New Forest National Park LPA"
+		},
+		{
+			"code": "E60000322",
+			"name": "North York Moors National Park LPA"
+		},
+		{
+			"code": "E60000323",
+			"name": "Northumberland National Park LPA"
+		},
+		{
+			"code": "E60000324",
+			"name": "Peak District National Park LPA"
+		},
+		{
+			"code": "E60000325",
+			"name": "South Downs National Park LPA"
+		},
+		{
+			"code": "E60000326",
+			"name": "The Broads Authority LPA"
+		},
+		{
+			"code": "E60000327",
+			"name": "Yorkshire Dales National Park LPA"
+		},
+		{
+			"code": "E60000328",
+			"name": "Ebbsfleet Development Corporation LPA"
+		},
+		{
+			"code": "E60000329",
+			"name": "London Legacy Development Corporation LPA"
+		},
+		{
+			"code": "E60000330",
+			"name": "Old Oak and Park Royal Development Corporation LPA"
+		},
+		{
+			"code": "N13000001",
+			"name": "Antrim and Newtownabbey LPA"
+		},
+		{
+			"code": "N13000002",
+			"name": "Ards and North Down LPA"
+		},
+		{
+			"code": "N13000003",
+			"name": "Armagh City, Banbridge and Craigavon LPA"
+		},
+		{
+			"code": "N13000004",
+			"name": "Belfast LPA"
+		},
+		{
+			"code": "N13000005",
+			"name": "Causeway Coast and Glens LPA"
+		},
+		{
+			"code": "N13000006",
+			"name": "Derry City and Strabane LPA"
+		},
+		{
+			"code": "N13000007",
+			"name": "Fermanagh and Omagh LPA"
+		},
+		{
+			"code": "N13000008",
+			"name": "Lisburn and Castlereagh LPA"
+		},
+		{
+			"code": "N13000009",
+			"name": "Mid and East Antrim LPA"
+		},
+		{
+			"code": "N13000010",
+			"name": "Mid Ulster LPA"
+		},
+		{
+			"code": "N13000011",
+			"name": "Newry, Mourne and Down LPA"
+		},
+		{
+			"code": "S44000001",
+			"name": "Aberdeen City LPA"
+		},
+		{
+			"code": "S44000002",
+			"name": "Aberdeenshire LPA"
+		},
+		{
+			"code": "S44000003",
+			"name": "Angus LPA"
+		},
+		{
+			"code": "S44000004",
+			"name": "Argyll and Bute LPA"
+		},
+		{
+			"code": "S44000005",
+			"name": "City of Edinburgh LPA"
+		},
+		{
+			"code": "S44000006",
+			"name": "Clackmannanshire LPA"
+		},
+		{
+			"code": "S44000007",
+			"name": "Dumfries and Galloway LPA"
+		},
+		{
+			"code": "S44000008",
+			"name": "Dundee City LPA"
+		},
+		{
+			"code": "S44000009",
+			"name": "East Ayrshire LPA"
+		},
+		{
+			"code": "S44000010",
+			"name": "East Dunbartonshire LPA"
+		},
+		{
+			"code": "S44000011",
+			"name": "East Lothian LPA"
+		},
+		{
+			"code": "S44000012",
+			"name": "East Renfrewshire LPA"
+		},
+		{
+			"code": "S44000013",
+			"name": "Falkirk LPA"
+		},
+		{
+			"code": "S44000014",
+			"name": "Fife LPA"
+		},
+		{
+			"code": "S44000015",
+			"name": "Glasgow City LPA"
+		},
+		{
+			"code": "S44000016",
+			"name": "Highland LPA"
+		},
+		{
+			"code": "S44000017",
+			"name": "Inverclyde LPA"
+		},
+		{
+			"code": "S44000018",
+			"name": "Midlothian LPA"
+		},
+		{
+			"code": "S44000019",
+			"name": "Moray LPA"
+		},
+		{
+			"code": "S44000020",
+			"name": "Na h-Eileanan Siar LPA"
+		},
+		{
+			"code": "S44000021",
+			"name": "North Ayrshire LPA"
+		},
+		{
+			"code": "S44000022",
+			"name": "North Lanarkshire LPA"
+		},
+		{
+			"code": "S44000023",
+			"name": "Orkney Islands LPA"
+		},
+		{
+			"code": "S44000024",
+			"name": "Perth and Kinross LPA"
+		},
+		{
+			"code": "S44000025",
+			"name": "Renfrewshire LPA"
+		},
+		{
+			"code": "S44000026",
+			"name": "Scottish Borders LPA"
+		},
+		{
+			"code": "S44000027",
+			"name": "Shetland Islands LPA"
+		},
+		{
+			"code": "S44000028",
+			"name": "South Ayrshire LPA"
+		},
+		{
+			"code": "S44000029",
+			"name": "South Lanarkshire LPA"
+		},
+		{
+			"code": "S44000030",
+			"name": "Stirling LPA"
+		},
+		{
+			"code": "S44000031",
+			"name": "The Cairngorms National Park LPA"
+		},
+		{
+			"code": "S44000032",
+			"name": "The Loch Lomond and the Trossachs National Park LPA"
+		},
+		{
+			"code": "S44000033",
+			"name": "West Dunbartonshire LPA"
+		},
+		{
+			"code": "S44000034",
+			"name": "West Lothian LPA"
+		},
+		{
+			"code": "W43000001",
+			"name": "Isle of Anglesey LPA"
+		},
+		{
+			"code": "W43000002",
+			"name": "Gwynedd LPA"
+		},
+		{
+			"code": "W43000003",
+			"name": "Snowdonia National Park LPA"
+		},
+		{
+			"code": "W43000004",
+			"name": "Conwy LPA"
+		},
+		{
+			"code": "W43000005",
+			"name": "Denbighshire LPA"
+		},
+		{
+			"code": "W43000006",
+			"name": "Flintshire LPA"
+		},
+		{
+			"code": "W43000007",
+			"name": "Wrexham LPA"
+		},
+		{
+			"code": "W43000008",
+			"name": "Powys LPA"
+		},
+		{
+			"code": "W43000009",
+			"name": "Ceredigion LPA"
+		},
+		{
+			"code": "W43000010",
+			"name": "Pembrokeshire Coast National Park LPA"
+		},
+		{
+			"code": "W43000011",
+			"name": "Pembrokeshire LPA"
+		},
+		{
+			"code": "W43000012",
+			"name": "Carmarthenshire LPA"
+		},
+		{
+			"code": "W43000013",
+			"name": "Brecon Beacons National Park LPA"
+		},
+		{
+			"code": "W43000014",
+			"name": "Swansea LPA"
+		},
+		{
+			"code": "W43000015",
+			"name": "Neath Port Talbot LPA"
+		},
+		{
+			"code": "W43000016",
+			"name": "Bridgend LPA"
+		},
+		{
+			"code": "W43000017",
+			"name": "Vale of Glamorgan LPA"
+		},
+		{
+			"code": "W43000018",
+			"name": "Cardiff LPA"
+		},
+		{
+			"code": "W43000019",
+			"name": "Rhondda Cynon Taf LPA"
+		},
+		{
+			"code": "W43000020",
+			"name": "Merthyr Tydfil LPA"
+		},
+		{
+			"code": "W43000021",
+			"name": "Caerphilly LPA"
+		},
+		{
+			"code": "W43000022",
+			"name": "Blaenau Gwent LPA"
+		},
+		{
+			"code": "W43000023",
+			"name": "Torfaen LPA"
+		},
+		{
+			"code": "W43000024",
+			"name": "Monmouthshire LPA"
+		},
+		{
+			"code": "W43000025",
+			"name": "Newport LPA"
+		}
+	]
+}

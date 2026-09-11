@@ -1,0 +1,1311 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:252592fe688000dffd235746bd7cb327604ff28a23def38577e3e956e3ef0d12",
+	"geography": "communitySafetyPartnership",
+	"boundaryRelease": "2023-12-ew-bgc",
+	"codeProperty": "CSP23CD",
+	"nameProperty": "CSP23NM",
+	"areas": [
+		{
+			"code": "E22000001",
+			"name": "Bath and North East Somerset"
+		},
+		{
+			"code": "E22000002",
+			"name": "Bristol, City of"
+		},
+		{
+			"code": "E22000003",
+			"name": "North Somerset"
+		},
+		{
+			"code": "E22000006",
+			"name": "South Gloucestershire"
+		},
+		{
+			"code": "E22000009",
+			"name": "Bedford"
+		},
+		{
+			"code": "E22000010",
+			"name": "Luton"
+		},
+		{
+			"code": "E22000013",
+			"name": "Cambridge"
+		},
+		{
+			"code": "E22000014",
+			"name": "East Cambridgeshire"
+		},
+		{
+			"code": "E22000015",
+			"name": "Fenland"
+		},
+		{
+			"code": "E22000016",
+			"name": "Huntingdonshire"
+		},
+		{
+			"code": "E22000017",
+			"name": "Peterborough"
+		},
+		{
+			"code": "E22000018",
+			"name": "South Cambridgeshire"
+		},
+		{
+			"code": "E22000023",
+			"name": "Halton"
+		},
+		{
+			"code": "E22000026",
+			"name": "Warrington"
+		},
+		{
+			"code": "E22000027",
+			"name": "Hartlepool"
+		},
+		{
+			"code": "E22000028",
+			"name": "Redcar and Cleveland"
+		},
+		{
+			"code": "E22000029",
+			"name": "Middlesbrough"
+		},
+		{
+			"code": "E22000030",
+			"name": "Stockton-on-Tees"
+		},
+		{
+			"code": "E22000031",
+			"name": "Allerdale"
+		},
+		{
+			"code": "E22000032",
+			"name": "Barrow-in-Furness"
+		},
+		{
+			"code": "E22000033",
+			"name": "Carlisle"
+		},
+		{
+			"code": "E22000034",
+			"name": "Copeland"
+		},
+		{
+			"code": "E22000035",
+			"name": "Eden"
+		},
+		{
+			"code": "E22000036",
+			"name": "South Lakeland"
+		},
+		{
+			"code": "E22000037",
+			"name": "Amber Valley"
+		},
+		{
+			"code": "E22000038",
+			"name": "Bolsover"
+		},
+		{
+			"code": "E22000039",
+			"name": "Chesterfield"
+		},
+		{
+			"code": "E22000040",
+			"name": "Derby"
+		},
+		{
+			"code": "E22000041",
+			"name": "Derbyshire Dales"
+		},
+		{
+			"code": "E22000042",
+			"name": "Erewash"
+		},
+		{
+			"code": "E22000043",
+			"name": "High Peak"
+		},
+		{
+			"code": "E22000044",
+			"name": "North East Derbyshire"
+		},
+		{
+			"code": "E22000045",
+			"name": "South Derbyshire"
+		},
+		{
+			"code": "E22000049",
+			"name": "Exeter"
+		},
+		{
+			"code": "E22000050",
+			"name": "Isles of Scilly"
+		},
+		{
+			"code": "E22000056",
+			"name": "Plymouth"
+		},
+		{
+			"code": "E22000060",
+			"name": "Torbay"
+		},
+		{
+			"code": "E22000063",
+			"name": "Bournemouth"
+		},
+		{
+			"code": "E22000067",
+			"name": "Poole"
+		},
+		{
+			"code": "E22000072",
+			"name": "Darlington"
+		},
+		{
+			"code": "E22000079",
+			"name": "Basildon"
+		},
+		{
+			"code": "E22000080",
+			"name": "Braintree"
+		},
+		{
+			"code": "E22000081",
+			"name": "Brentwood"
+		},
+		{
+			"code": "E22000082",
+			"name": "Castle Point"
+		},
+		{
+			"code": "E22000083",
+			"name": "Chelmsford"
+		},
+		{
+			"code": "E22000084",
+			"name": "Colchester"
+		},
+		{
+			"code": "E22000085",
+			"name": "Epping Forest"
+		},
+		{
+			"code": "E22000086",
+			"name": "Harlow"
+		},
+		{
+			"code": "E22000087",
+			"name": "Maldon"
+		},
+		{
+			"code": "E22000088",
+			"name": "Rochford"
+		},
+		{
+			"code": "E22000089",
+			"name": "Southend-on-Sea"
+		},
+		{
+			"code": "E22000090",
+			"name": "Tendring"
+		},
+		{
+			"code": "E22000091",
+			"name": "Thurrock"
+		},
+		{
+			"code": "E22000092",
+			"name": "Uttlesford"
+		},
+		{
+			"code": "E22000093",
+			"name": "Cheltenham"
+		},
+		{
+			"code": "E22000094",
+			"name": "Cotswold"
+		},
+		{
+			"code": "E22000095",
+			"name": "Forest of Dean"
+		},
+		{
+			"code": "E22000096",
+			"name": "Gloucester"
+		},
+		{
+			"code": "E22000097",
+			"name": "Stroud"
+		},
+		{
+			"code": "E22000098",
+			"name": "Tewkesbury"
+		},
+		{
+			"code": "E22000099",
+			"name": "Bolton"
+		},
+		{
+			"code": "E22000100",
+			"name": "Bury"
+		},
+		{
+			"code": "E22000101",
+			"name": "Manchester"
+		},
+		{
+			"code": "E22000102",
+			"name": "Oldham"
+		},
+		{
+			"code": "E22000103",
+			"name": "Rochdale"
+		},
+		{
+			"code": "E22000104",
+			"name": "Salford"
+		},
+		{
+			"code": "E22000105",
+			"name": "Stockport"
+		},
+		{
+			"code": "E22000106",
+			"name": "Tameside"
+		},
+		{
+			"code": "E22000107",
+			"name": "Trafford"
+		},
+		{
+			"code": "E22000108",
+			"name": "Wigan"
+		},
+		{
+			"code": "E22000110",
+			"name": "East Hampshire"
+		},
+		{
+			"code": "E22000111",
+			"name": "Eastleigh"
+		},
+		{
+			"code": "E22000112",
+			"name": "Fareham"
+		},
+		{
+			"code": "E22000113",
+			"name": "Gosport"
+		},
+		{
+			"code": "E22000115",
+			"name": "Havant"
+		},
+		{
+			"code": "E22000116",
+			"name": "Isle of Wight"
+		},
+		{
+			"code": "E22000117",
+			"name": "New Forest"
+		},
+		{
+			"code": "E22000118",
+			"name": "Portsmouth"
+		},
+		{
+			"code": "E22000120",
+			"name": "Southampton"
+		},
+		{
+			"code": "E22000121",
+			"name": "Test Valley"
+		},
+		{
+			"code": "E22000122",
+			"name": "Winchester"
+		},
+		{
+			"code": "E22000123",
+			"name": "Broxbourne"
+		},
+		{
+			"code": "E22000124",
+			"name": "Dacorum"
+		},
+		{
+			"code": "E22000125",
+			"name": "East Hertfordshire"
+		},
+		{
+			"code": "E22000126",
+			"name": "Hertsmere"
+		},
+		{
+			"code": "E22000127",
+			"name": "North Hertfordshire"
+		},
+		{
+			"code": "E22000128",
+			"name": "St Albans"
+		},
+		{
+			"code": "E22000129",
+			"name": "Stevenage"
+		},
+		{
+			"code": "E22000130",
+			"name": "Three Rivers"
+		},
+		{
+			"code": "E22000131",
+			"name": "Watford"
+		},
+		{
+			"code": "E22000132",
+			"name": "Welwyn Hatfield"
+		},
+		{
+			"code": "E22000133",
+			"name": "East Riding of Yorkshire"
+		},
+		{
+			"code": "E22000134",
+			"name": "Kingston upon Hull, City of"
+		},
+		{
+			"code": "E22000135",
+			"name": "North East Lincolnshire"
+		},
+		{
+			"code": "E22000136",
+			"name": "North Lincolnshire"
+		},
+		{
+			"code": "E22000137",
+			"name": "Ashford"
+		},
+		{
+			"code": "E22000138",
+			"name": "Canterbury"
+		},
+		{
+			"code": "E22000140",
+			"name": "Dover"
+		},
+		{
+			"code": "E22000142",
+			"name": "Maidstone"
+		},
+		{
+			"code": "E22000143",
+			"name": "Medway"
+		},
+		{
+			"code": "E22000144",
+			"name": "Sevenoaks"
+		},
+		{
+			"code": "E22000145",
+			"name": "Shepway"
+		},
+		{
+			"code": "E22000146",
+			"name": "Swale"
+		},
+		{
+			"code": "E22000147",
+			"name": "Thanet"
+		},
+		{
+			"code": "E22000148",
+			"name": "Tonbridge and Malling"
+		},
+		{
+			"code": "E22000149",
+			"name": "Tunbridge Wells"
+		},
+		{
+			"code": "E22000150",
+			"name": "Blackburn with Darwen"
+		},
+		{
+			"code": "E22000151",
+			"name": "Blackpool"
+		},
+		{
+			"code": "E22000152",
+			"name": "Burnley"
+		},
+		{
+			"code": "E22000153",
+			"name": "Chorley"
+		},
+		{
+			"code": "E22000154",
+			"name": "Fylde"
+		},
+		{
+			"code": "E22000155",
+			"name": "Hyndburn"
+		},
+		{
+			"code": "E22000156",
+			"name": "Lancaster"
+		},
+		{
+			"code": "E22000157",
+			"name": "Pendle"
+		},
+		{
+			"code": "E22000158",
+			"name": "Preston"
+		},
+		{
+			"code": "E22000159",
+			"name": "Ribble Valley"
+		},
+		{
+			"code": "E22000160",
+			"name": "Rossendale"
+		},
+		{
+			"code": "E22000161",
+			"name": "South Ribble"
+		},
+		{
+			"code": "E22000162",
+			"name": "West Lancashire"
+		},
+		{
+			"code": "E22000163",
+			"name": "Wyre"
+		},
+		{
+			"code": "E22000164",
+			"name": "Blaby"
+		},
+		{
+			"code": "E22000165",
+			"name": "Charnwood"
+		},
+		{
+			"code": "E22000166",
+			"name": "Harborough"
+		},
+		{
+			"code": "E22000167",
+			"name": "Hinckley and Bosworth"
+		},
+		{
+			"code": "E22000168",
+			"name": "Leicester"
+		},
+		{
+			"code": "E22000169",
+			"name": "Melton"
+		},
+		{
+			"code": "E22000170",
+			"name": "North West Leicestershire"
+		},
+		{
+			"code": "E22000171",
+			"name": "Oadby and Wigston"
+		},
+		{
+			"code": "E22000172",
+			"name": "Rutland"
+		},
+		{
+			"code": "E22000173",
+			"name": "Boston"
+		},
+		{
+			"code": "E22000174",
+			"name": "East Lindsey"
+		},
+		{
+			"code": "E22000175",
+			"name": "Lincoln"
+		},
+		{
+			"code": "E22000176",
+			"name": "North Kesteven"
+		},
+		{
+			"code": "E22000177",
+			"name": "South Holland"
+		},
+		{
+			"code": "E22000178",
+			"name": "South Kesteven"
+		},
+		{
+			"code": "E22000179",
+			"name": "West Lindsey"
+		},
+		{
+			"code": "E22000180",
+			"name": "City of London"
+		},
+		{
+			"code": "E22000181",
+			"name": "Knowsley"
+		},
+		{
+			"code": "E22000182",
+			"name": "Liverpool"
+		},
+		{
+			"code": "E22000183",
+			"name": "Sefton"
+		},
+		{
+			"code": "E22000184",
+			"name": "St. Helens"
+		},
+		{
+			"code": "E22000185",
+			"name": "Wirral"
+		},
+		{
+			"code": "E22000186",
+			"name": "Barking and Dagenham"
+		},
+		{
+			"code": "E22000187",
+			"name": "Barnet"
+		},
+		{
+			"code": "E22000188",
+			"name": "Bexley"
+		},
+		{
+			"code": "E22000189",
+			"name": "Brent"
+		},
+		{
+			"code": "E22000190",
+			"name": "Bromley"
+		},
+		{
+			"code": "E22000191",
+			"name": "Camden"
+		},
+		{
+			"code": "E22000192",
+			"name": "Westminster"
+		},
+		{
+			"code": "E22000193",
+			"name": "Croydon"
+		},
+		{
+			"code": "E22000194",
+			"name": "Ealing"
+		},
+		{
+			"code": "E22000195",
+			"name": "Enfield"
+		},
+		{
+			"code": "E22000196",
+			"name": "Greenwich"
+		},
+		{
+			"code": "E22000197",
+			"name": "Hackney"
+		},
+		{
+			"code": "E22000198",
+			"name": "Hammersmith and Fulham"
+		},
+		{
+			"code": "E22000199",
+			"name": "Haringey"
+		},
+		{
+			"code": "E22000200",
+			"name": "Harrow"
+		},
+		{
+			"code": "E22000201",
+			"name": "Havering"
+		},
+		{
+			"code": "E22000202",
+			"name": "Hillingdon"
+		},
+		{
+			"code": "E22000203",
+			"name": "Hounslow"
+		},
+		{
+			"code": "E22000204",
+			"name": "Islington"
+		},
+		{
+			"code": "E22000205",
+			"name": "Kensington and Chelsea"
+		},
+		{
+			"code": "E22000206",
+			"name": "Kingston upon Thames"
+		},
+		{
+			"code": "E22000207",
+			"name": "Lambeth"
+		},
+		{
+			"code": "E22000208",
+			"name": "Lewisham"
+		},
+		{
+			"code": "E22000209",
+			"name": "Merton"
+		},
+		{
+			"code": "E22000210",
+			"name": "Newham"
+		},
+		{
+			"code": "E22000211",
+			"name": "Redbridge"
+		},
+		{
+			"code": "E22000212",
+			"name": "Richmond upon Thames"
+		},
+		{
+			"code": "E22000213",
+			"name": "Southwark"
+		},
+		{
+			"code": "E22000214",
+			"name": "Sutton"
+		},
+		{
+			"code": "E22000215",
+			"name": "Tower Hamlets"
+		},
+		{
+			"code": "E22000216",
+			"name": "Waltham Forest"
+		},
+		{
+			"code": "E22000217",
+			"name": "Wandsworth"
+		},
+		{
+			"code": "E22000218",
+			"name": "Breckland"
+		},
+		{
+			"code": "E22000219",
+			"name": "Broadland"
+		},
+		{
+			"code": "E22000220",
+			"name": "Great Yarmouth"
+		},
+		{
+			"code": "E22000221",
+			"name": "King's Lynn and West Norfolk"
+		},
+		{
+			"code": "E22000222",
+			"name": "North Norfolk"
+		},
+		{
+			"code": "E22000223",
+			"name": "Norwich"
+		},
+		{
+			"code": "E22000224",
+			"name": "South Norfolk"
+		},
+		{
+			"code": "E22000233",
+			"name": "Corby"
+		},
+		{
+			"code": "E22000235",
+			"name": "East Northamptonshire"
+		},
+		{
+			"code": "E22000236",
+			"name": "Kettering"
+		},
+		{
+			"code": "E22000237",
+			"name": "Northampton"
+		},
+		{
+			"code": "E22000239",
+			"name": "Wellingborough"
+		},
+		{
+			"code": "E22000244",
+			"name": "Gateshead"
+		},
+		{
+			"code": "E22000245",
+			"name": "Newcastle upon Tyne"
+		},
+		{
+			"code": "E22000246",
+			"name": "North Tyneside"
+		},
+		{
+			"code": "E22000247",
+			"name": "South Tyneside"
+		},
+		{
+			"code": "E22000248",
+			"name": "Sunderland"
+		},
+		{
+			"code": "E22000251",
+			"name": "Ashfield"
+		},
+		{
+			"code": "E22000252",
+			"name": "Bassetlaw"
+		},
+		{
+			"code": "E22000255",
+			"name": "Mansfield"
+		},
+		{
+			"code": "E22000256",
+			"name": "Newark and Sherwood"
+		},
+		{
+			"code": "E22000257",
+			"name": "Nottingham"
+		},
+		{
+			"code": "E22000259",
+			"name": "Barnsley"
+		},
+		{
+			"code": "E22000260",
+			"name": "Doncaster"
+		},
+		{
+			"code": "E22000261",
+			"name": "Rotherham"
+		},
+		{
+			"code": "E22000262",
+			"name": "Sheffield"
+		},
+		{
+			"code": "E22000263",
+			"name": "Cannock Chase"
+		},
+		{
+			"code": "E22000264",
+			"name": "East Staffordshire"
+		},
+		{
+			"code": "E22000265",
+			"name": "Lichfield"
+		},
+		{
+			"code": "E22000266",
+			"name": "Newcastle-under-Lyme"
+		},
+		{
+			"code": "E22000267",
+			"name": "South Staffordshire"
+		},
+		{
+			"code": "E22000268",
+			"name": "Stafford"
+		},
+		{
+			"code": "E22000269",
+			"name": "Staffordshire Moorlands"
+		},
+		{
+			"code": "E22000270",
+			"name": "Stoke-on-Trent"
+		},
+		{
+			"code": "E22000271",
+			"name": "Tamworth"
+		},
+		{
+			"code": "E22000273",
+			"name": "Ipswich"
+		},
+		{
+			"code": "E22000274",
+			"name": "Suffolk Coastal"
+		},
+		{
+			"code": "E22000278",
+			"name": "Waveney"
+		},
+		{
+			"code": "E22000279",
+			"name": "Elmbridge"
+		},
+		{
+			"code": "E22000280",
+			"name": "Epsom and Ewell"
+		},
+		{
+			"code": "E22000281",
+			"name": "Guildford"
+		},
+		{
+			"code": "E22000282",
+			"name": "Mole Valley"
+		},
+		{
+			"code": "E22000283",
+			"name": "Reigate and Banstead"
+		},
+		{
+			"code": "E22000284",
+			"name": "Runnymede"
+		},
+		{
+			"code": "E22000285",
+			"name": "Spelthorne"
+		},
+		{
+			"code": "E22000286",
+			"name": "Surrey Heath"
+		},
+		{
+			"code": "E22000287",
+			"name": "Tandridge"
+		},
+		{
+			"code": "E22000288",
+			"name": "Waverley"
+		},
+		{
+			"code": "E22000289",
+			"name": "Woking"
+		},
+		{
+			"code": "E22000290",
+			"name": "Adur"
+		},
+		{
+			"code": "E22000291",
+			"name": "Arun"
+		},
+		{
+			"code": "E22000292",
+			"name": "Brighton and Hove"
+		},
+		{
+			"code": "E22000293",
+			"name": "Chichester"
+		},
+		{
+			"code": "E22000294",
+			"name": "Crawley"
+		},
+		{
+			"code": "E22000295",
+			"name": "Eastbourne"
+		},
+		{
+			"code": "E22000296",
+			"name": "Hastings"
+		},
+		{
+			"code": "E22000297",
+			"name": "Horsham"
+		},
+		{
+			"code": "E22000298",
+			"name": "Lewes"
+		},
+		{
+			"code": "E22000299",
+			"name": "Mid Sussex"
+		},
+		{
+			"code": "E22000300",
+			"name": "Rother"
+		},
+		{
+			"code": "E22000301",
+			"name": "Wealden"
+		},
+		{
+			"code": "E22000302",
+			"name": "Worthing"
+		},
+		{
+			"code": "E22000303",
+			"name": "Aylesbury Vale"
+		},
+		{
+			"code": "E22000304",
+			"name": "Bracknell Forest"
+		},
+		{
+			"code": "E22000305",
+			"name": "Cherwell"
+		},
+		{
+			"code": "E22000306",
+			"name": "Chiltern"
+		},
+		{
+			"code": "E22000307",
+			"name": "Milton Keynes"
+		},
+		{
+			"code": "E22000308",
+			"name": "Oxford"
+		},
+		{
+			"code": "E22000309",
+			"name": "Reading"
+		},
+		{
+			"code": "E22000310",
+			"name": "Slough"
+		},
+		{
+			"code": "E22000311",
+			"name": "South Bucks"
+		},
+		{
+			"code": "E22000312",
+			"name": "South Oxfordshire"
+		},
+		{
+			"code": "E22000313",
+			"name": "Vale of White Horse"
+		},
+		{
+			"code": "E22000314",
+			"name": "West Berkshire"
+		},
+		{
+			"code": "E22000315",
+			"name": "West Oxfordshire"
+		},
+		{
+			"code": "E22000316",
+			"name": "Windsor and Maidenhead"
+		},
+		{
+			"code": "E22000317",
+			"name": "Wokingham"
+		},
+		{
+			"code": "E22000318",
+			"name": "Wycombe"
+		},
+		{
+			"code": "E22000319",
+			"name": "North Warwickshire"
+		},
+		{
+			"code": "E22000320",
+			"name": "Nuneaton and Bedworth"
+		},
+		{
+			"code": "E22000321",
+			"name": "Rugby"
+		},
+		{
+			"code": "E22000326",
+			"name": "Herefordshire, County of"
+		},
+		{
+			"code": "E22000332",
+			"name": "South Worcester"
+		},
+		{
+			"code": "E22000333",
+			"name": "Telford and Wrekin"
+		},
+		{
+			"code": "E22000335",
+			"name": "Birmingham"
+		},
+		{
+			"code": "E22000336",
+			"name": "Coventry"
+		},
+		{
+			"code": "E22000337",
+			"name": "Dudley"
+		},
+		{
+			"code": "E22000338",
+			"name": "Sandwell"
+		},
+		{
+			"code": "E22000339",
+			"name": "Solihull"
+		},
+		{
+			"code": "E22000340",
+			"name": "Walsall"
+		},
+		{
+			"code": "E22000341",
+			"name": "Wolverhampton"
+		},
+		{
+			"code": "E22000342",
+			"name": "Bradford"
+		},
+		{
+			"code": "E22000343",
+			"name": "Calderdale"
+		},
+		{
+			"code": "E22000344",
+			"name": "Kirklees"
+		},
+		{
+			"code": "E22000345",
+			"name": "Leeds"
+		},
+		{
+			"code": "E22000346",
+			"name": "Wakefield"
+		},
+		{
+			"code": "E22000350",
+			"name": "Swindon"
+		},
+		{
+			"code": "E22000352",
+			"name": "Dartford and Gravesham"
+		},
+		{
+			"code": "E22000353",
+			"name": "Central Bedfordshire"
+		},
+		{
+			"code": "E22000354",
+			"name": "Cheshire East"
+		},
+		{
+			"code": "E22000355",
+			"name": "Cheshire West and Chester"
+		},
+		{
+			"code": "E22000356",
+			"name": "Cornwall"
+		},
+		{
+			"code": "E22000357",
+			"name": "Daventry and South Northamptonshire"
+		},
+		{
+			"code": "E22000358",
+			"name": "Northumberland"
+		},
+		{
+			"code": "E22000359",
+			"name": "South Warwickshire"
+		},
+		{
+			"code": "E22000360",
+			"name": "Shropshire"
+		},
+		{
+			"code": "E22000361",
+			"name": "Wiltshire"
+		},
+		{
+			"code": "E22000362",
+			"name": "East and Mid Devon"
+		},
+		{
+			"code": "E22000363",
+			"name": "North Devon"
+		},
+		{
+			"code": "E22000364",
+			"name": "South Devon and Dartmoor"
+		},
+		{
+			"code": "E22000365",
+			"name": "County Durham"
+		},
+		{
+			"code": "E22000366",
+			"name": "South Nottinghamshire"
+		},
+		{
+			"code": "E22000367",
+			"name": "Dorset"
+		},
+		{
+			"code": "E22000368",
+			"name": "North Worcestershire"
+		},
+		{
+			"code": "E22000369",
+			"name": "Somerset"
+		},
+		{
+			"code": "E22000371",
+			"name": "City of York"
+		},
+		{
+			"code": "E22000372",
+			"name": "North Yorkshire"
+		},
+		{
+			"code": "E22000373",
+			"name": "Western Suffolk"
+		},
+		{
+			"code": "E22000374",
+			"name": "North Hampshire"
+		},
+		{
+			"code": "W14000001",
+			"name": "Isle of Anglesey",
+			"aliases": [
+				"Ynys Môn"
+			]
+		},
+		{
+			"code": "W14000002",
+			"name": "Gwynedd"
+		},
+		{
+			"code": "W14000003",
+			"name": "Conwy"
+		},
+		{
+			"code": "W14000004",
+			"name": "Denbighshire",
+			"aliases": [
+				"Sir Ddinbych"
+			]
+		},
+		{
+			"code": "W14000005",
+			"name": "Flintshire",
+			"aliases": [
+				"Sir y Fflint"
+			]
+		},
+		{
+			"code": "W14000006",
+			"name": "Wrexham",
+			"aliases": [
+				"Wrecsam"
+			]
+		},
+		{
+			"code": "W14000007",
+			"name": "Powys"
+		},
+		{
+			"code": "W14000008",
+			"name": "Ceredigion"
+		},
+		{
+			"code": "W14000009",
+			"name": "Pembrokeshire",
+			"aliases": [
+				"Sir Benfro"
+			]
+		},
+		{
+			"code": "W14000010",
+			"name": "Carmarthenshire",
+			"aliases": [
+				"Sir Gaerfyrddin"
+			]
+		},
+		{
+			"code": "W14000011",
+			"name": "Swansea",
+			"aliases": [
+				"Abertawe"
+			]
+		},
+		{
+			"code": "W14000012",
+			"name": "Neath Port Talbot",
+			"aliases": [
+				"Castell-nedd Port Talbot"
+			]
+		},
+		{
+			"code": "W14000013",
+			"name": "Bridgend",
+			"aliases": [
+				"Pen-y-bont ar Ogwr"
+			]
+		},
+		{
+			"code": "W14000014",
+			"name": "Vale of Glamorgan",
+			"aliases": [
+				"Bro Morgannwg"
+			]
+		},
+		{
+			"code": "W14000015",
+			"name": "Cardiff",
+			"aliases": [
+				"Caerdydd"
+			]
+		},
+		{
+			"code": "W14000018",
+			"name": "Caerphilly",
+			"aliases": [
+				"Caerffili"
+			]
+		},
+		{
+			"code": "W14000019",
+			"name": "Blaenau Gwent"
+		},
+		{
+			"code": "W14000020",
+			"name": "Torfaen",
+			"aliases": [
+				"Tor-faen"
+			]
+		},
+		{
+			"code": "W14000021",
+			"name": "Monmouthshire",
+			"aliases": [
+				"Sir Fynwy"
+			]
+		},
+		{
+			"code": "W14000022",
+			"name": "Newport",
+			"aliases": [
+				"Casnewydd"
+			]
+		},
+		{
+			"code": "W14000023",
+			"name": "Cwm Taf"
+		}
+	]
+}

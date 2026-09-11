@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:1c82e1c615e25967dad1de38e891ce802a37dee7d6e21c292ab23979ad5df2d6",
+	"geography": "nhsEnglandRegion",
+	"boundaryRelease": "2022-07-en-bgc",
+	"codeProperty": "NHSER22CD",
+	"nameProperty": "NHSER22NM",
+	"areas": [
+		{
+			"code": "E40000003",
+			"name": "London"
+		},
+		{
+			"code": "E40000005",
+			"name": "South East"
+		},
+		{
+			"code": "E40000006",
+			"name": "South West"
+		},
+		{
+			"code": "E40000007",
+			"name": "East of England"
+		},
+		{
+			"code": "E40000010",
+			"name": "North West"
+		},
+		{
+			"code": "E40000011",
+			"name": "Midlands"
+		},
+		{
+			"code": "E40000012",
+			"name": "North East and Yorkshire"
+		}
+	]
+}

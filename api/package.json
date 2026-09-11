@@ -4,7 +4,8 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"build": "pnpm build:boundary-registry && pnpm build:geography-inventory",
+		"build": "pnpm build:boundary-registry && pnpm build:area-inventory && pnpm build:geography-inventory",
+		"build:area-inventory": "tsx scripts/build-area-inventory.ts",
 		"build:boundary-registry": "tsx scripts/build-boundary-registry.ts",
 		"build:geography-inventory": "tsx scripts/build-geography-inventory.ts",
 		"start": "tsx scripts/serve.ts",

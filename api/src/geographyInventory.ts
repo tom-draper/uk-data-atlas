@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import type { AreaInventory } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { SourceInventory } from "./sourceInventory";
 
@@ -7,10 +8,16 @@ export type GeographyReleaseInventory = {
 	geography: string;
 	countries: string[];
 	inputFormats: string[];
-	areaIdentities: {
-		status: "not-compiled";
-		reason: string;
-	};
+	areaIdentities:
+		| {
+				status: "available";
+				recordCount: number;
+				artifact: string;
+		  }
+		| {
+				status: "not-compiled";
+				reason: string;
+		  };
 	relationships: {
 		status: "not-compiled";
 		reason: string;
@@ -43,13 +50,23 @@ const pending = {
 export const createGeographyInventory = (
 	boundaryRegistry: BoundaryRegistry,
 	sourceInventory: SourceInventory,
+	areaInventory?: AreaInventory,
 ): GeographyInventory => {
+	const areasByRelease = new Map(
+		areaInventory?.releases.map((release) => [
+			`${release.geography}/${release.id}`,
+			release,
+		]) ?? [],
+	);
 	const sourceByKey = new Map(
 		sourceInventory.sources.map((source) => [source.key, source]),
 	);
 	const releases = boundaryRegistry.releases.map((release) => {
 		const source = sourceByKey.get(
 			`boundaries/${toKebabCase(release.geography)}/${release.id}`,
+		);
+		const areaRelease = areasByRelease.get(
+			`${release.geography}/${release.id}`,
 		);
 		return {
 			id: release.id,
@@ -58,7 +75,14 @@ export const createGeographyInventory = (
 			inputFormats: [
 				...new Set(source?.files.map((file) => file.extension) ?? []),
 			].sort(),
-			areaIdentities: pending,
+			areaIdentities:
+				areaRelease?.status === "available"
+					? {
+							status: "available" as const,
+							recordCount: areaRelease.recordCount,
+							artifact: areaRelease.artifact,
+						}
+					: (areaRelease ?? pending),
 			relationships: pending,
 		};
 	});

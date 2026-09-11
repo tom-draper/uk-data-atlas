@@ -1,0 +1,254 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:c4d736b36a3069f96b52a256785a99e8eff092f9484a56fbae61de9f744ea2c1",
+	"geography": "seneddConstituency",
+	"boundaryRelease": "2022-12-w-bgc",
+	"codeProperty": "SENC22CD",
+	"nameProperty": "SENC22NM",
+	"areas": [
+		{
+			"code": "W09000001",
+			"name": "Ynys Môn"
+		},
+		{
+			"code": "W09000002",
+			"name": "Arfon"
+		},
+		{
+			"code": "W09000003",
+			"name": "Aberconwy"
+		},
+		{
+			"code": "W09000004",
+			"name": "Clwyd West",
+			"aliases": [
+				"Gorllewin Clwyd"
+			]
+		},
+		{
+			"code": "W09000005",
+			"name": "Vale of Clwyd",
+			"aliases": [
+				"Dyffryn Clwyd"
+			]
+		},
+		{
+			"code": "W09000006",
+			"name": "Delyn"
+		},
+		{
+			"code": "W09000007",
+			"name": "Alyn and Deeside",
+			"aliases": [
+				"Alun a Glannau Dyfrdwy"
+			]
+		},
+		{
+			"code": "W09000008",
+			"name": "Wrexham",
+			"aliases": [
+				"Wrecsam"
+			]
+		},
+		{
+			"code": "W09000009",
+			"name": "Clwyd South",
+			"aliases": [
+				"De Clwyd"
+			]
+		},
+		{
+			"code": "W09000010",
+			"name": "Dwyfor Meirionnydd"
+		},
+		{
+			"code": "W09000011",
+			"name": "Montgomeryshire",
+			"aliases": [
+				"Sir Drefaldwyn"
+			]
+		},
+		{
+			"code": "W09000012",
+			"name": "Ceredigion"
+		},
+		{
+			"code": "W09000014",
+			"name": "Preseli Pembrokeshire",
+			"aliases": [
+				"Preseli Sir Benfro"
+			]
+		},
+		{
+			"code": "W09000015",
+			"name": "Carmarthen East and Dinefwr",
+			"aliases": [
+				"Dwyrain Caerfyrddin a Dinefwr"
+			]
+		},
+		{
+			"code": "W09000016",
+			"name": "Carmarthen West and South Pembrokeshire",
+			"aliases": [
+				"Gorllewin Caerfyrddin a De Sir Benfro"
+			]
+		},
+		{
+			"code": "W09000017",
+			"name": "Llanelli"
+		},
+		{
+			"code": "W09000018",
+			"name": "Gower",
+			"aliases": [
+				"Gwyr"
+			]
+		},
+		{
+			"code": "W09000019",
+			"name": "Swansea West",
+			"aliases": [
+				"Gorllewin Abertawe"
+			]
+		},
+		{
+			"code": "W09000020",
+			"name": "Swansea East",
+			"aliases": [
+				"Dwyrain Abertawe"
+			]
+		},
+		{
+			"code": "W09000021",
+			"name": "Neath",
+			"aliases": [
+				"Castell-nedd"
+			]
+		},
+		{
+			"code": "W09000022",
+			"name": "Aberavon",
+			"aliases": [
+				"Aberafan"
+			]
+		},
+		{
+			"code": "W09000023",
+			"name": "Bridgend",
+			"aliases": [
+				"Pen-y-bont ar Ogwr"
+			]
+		},
+		{
+			"code": "W09000025",
+			"name": "Rhondda"
+		},
+		{
+			"code": "W09000026",
+			"name": "Cynon Valley",
+			"aliases": [
+				"Cwm Cynon"
+			]
+		},
+		{
+			"code": "W09000029",
+			"name": "Cardiff West",
+			"aliases": [
+				"Gorllewin Caerdydd"
+			]
+		},
+		{
+			"code": "W09000031",
+			"name": "Cardiff Central",
+			"aliases": [
+				"Canol Caerdydd"
+			]
+		},
+		{
+			"code": "W09000034",
+			"name": "Monmouth",
+			"aliases": [
+				"Sir Fynwy"
+			]
+		},
+		{
+			"code": "W09000035",
+			"name": "Caerphilly",
+			"aliases": [
+				"Caerffili"
+			]
+		},
+		{
+			"code": "W09000036",
+			"name": "Islwyn"
+		},
+		{
+			"code": "W09000037",
+			"name": "Torfaen"
+		},
+		{
+			"code": "W09000038",
+			"name": "Blaenau Gwent"
+		},
+		{
+			"code": "W09000039",
+			"name": "Newport West",
+			"aliases": [
+				"Gorllewin Casnewydd"
+			]
+		},
+		{
+			"code": "W09000040",
+			"name": "Newport East",
+			"aliases": [
+				"Dwyrain Casnewydd"
+			]
+		},
+		{
+			"code": "W09000041",
+			"name": "Brecon and Radnorshire",
+			"aliases": [
+				"Brycheiniog a Sir Faesyfed"
+			]
+		},
+		{
+			"code": "W09000042",
+			"name": "Cardiff North",
+			"aliases": [
+				"Gogledd Caerdydd"
+			]
+		},
+		{
+			"code": "W09000043",
+			"name": "Cardiff South and Penarth",
+			"aliases": [
+				"De Caerdydd a Phenarth"
+			]
+		},
+		{
+			"code": "W09000044",
+			"name": "Merthyr Tydfil and Rhymney",
+			"aliases": [
+				"Merthyr Tudful a Rhymni"
+			]
+		},
+		{
+			"code": "W09000045",
+			"name": "Ogmore",
+			"aliases": [
+				"Ogwr"
+			]
+		},
+		{
+			"code": "W09000046",
+			"name": "Pontypridd"
+		},
+		{
+			"code": "W09000047",
+			"name": "Vale of Glamorgan",
+			"aliases": [
+				"Bro Morgannwg"
+			]
+		}
+	]
+}

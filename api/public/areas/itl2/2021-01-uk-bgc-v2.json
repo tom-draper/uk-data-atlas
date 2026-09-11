@@ -1,0 +1,174 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:f7db77090ed6f22004e4cb1ee41e949acd602413ca6b0916a558e055e4ae2cbe",
+	"geography": "itl2",
+	"boundaryRelease": "2021-01-uk-bgc-v2",
+	"codeProperty": "ITL221CD",
+	"nameProperty": "ITL221NM",
+	"areas": [
+		{
+			"code": "TLC1",
+			"name": "Tees Valley and Durham"
+		},
+		{
+			"code": "TLC2",
+			"name": "Northumberland, and Tyne and Wear"
+		},
+		{
+			"code": "TLD1",
+			"name": "Cumbria"
+		},
+		{
+			"code": "TLD3",
+			"name": "Greater Manchester"
+		},
+		{
+			"code": "TLD4",
+			"name": "Lancashire"
+		},
+		{
+			"code": "TLD6",
+			"name": "Cheshire"
+		},
+		{
+			"code": "TLD7",
+			"name": "Merseyside"
+		},
+		{
+			"code": "TLE1",
+			"name": "East Yorkshire and Northern Lincolnshire"
+		},
+		{
+			"code": "TLE2",
+			"name": "North Yorkshire"
+		},
+		{
+			"code": "TLE3",
+			"name": "South Yorkshire"
+		},
+		{
+			"code": "TLE4",
+			"name": "West Yorkshire"
+		},
+		{
+			"code": "TLF1",
+			"name": "Derbyshire and Nottinghamshire"
+		},
+		{
+			"code": "TLF2",
+			"name": "Leicestershire, Rutland and Northamptonshire"
+		},
+		{
+			"code": "TLF3",
+			"name": "Lincolnshire"
+		},
+		{
+			"code": "TLG1",
+			"name": "Herefordshire, Worcestershire and Warwickshire"
+		},
+		{
+			"code": "TLG2",
+			"name": "Shropshire and Staffordshire"
+		},
+		{
+			"code": "TLG3",
+			"name": "West Midlands"
+		},
+		{
+			"code": "TLH1",
+			"name": "East Anglia"
+		},
+		{
+			"code": "TLH2",
+			"name": "Bedfordshire and Hertfordshire"
+		},
+		{
+			"code": "TLH3",
+			"name": "Essex"
+		},
+		{
+			"code": "TLI3",
+			"name": "Inner London - West"
+		},
+		{
+			"code": "TLI4",
+			"name": "Inner London - East"
+		},
+		{
+			"code": "TLI5",
+			"name": "Outer London - East and North East"
+		},
+		{
+			"code": "TLI6",
+			"name": "Outer London - South"
+		},
+		{
+			"code": "TLI7",
+			"name": "Outer London - West and North West"
+		},
+		{
+			"code": "TLJ1",
+			"name": "Berkshire, Buckinghamshire and Oxfordshire"
+		},
+		{
+			"code": "TLJ2",
+			"name": "Surrey, East and West Sussex"
+		},
+		{
+			"code": "TLJ3",
+			"name": "Hampshire and Isle of Wight"
+		},
+		{
+			"code": "TLJ4",
+			"name": "Kent"
+		},
+		{
+			"code": "TLK1",
+			"name": "Gloucestershire, Wiltshire and Bath/Bristol area"
+		},
+		{
+			"code": "TLK2",
+			"name": "Dorset and Somerset"
+		},
+		{
+			"code": "TLK3",
+			"name": "Cornwall and Isles of Scilly"
+		},
+		{
+			"code": "TLK4",
+			"name": "Devon"
+		},
+		{
+			"code": "TLL1",
+			"name": "West Wales and The Valleys"
+		},
+		{
+			"code": "TLL2",
+			"name": "East Wales"
+		},
+		{
+			"code": "TLM5",
+			"name": "North Eastern Scotland"
+		},
+		{
+			"code": "TLM6",
+			"name": "Highlands and Islands"
+		},
+		{
+			"code": "TLM7",
+			"name": "Eastern Scotland"
+		},
+		{
+			"code": "TLM8",
+			"name": "West Central Scotland"
+		},
+		{
+			"code": "TLM9",
+			"name": "Southern Scotland"
+		},
+		{
+			"code": "TLN0",
+			"name": "Northern Ireland"
+		}
+	]
+}
