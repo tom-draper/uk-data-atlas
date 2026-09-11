@@ -11,7 +11,7 @@
 			},
 			"from": {
 				"geography": "constituency",
-				"boundaryRelease": "2010",
+				"boundaryRelease": "2019-12-uk-bgc",
 				"codeProperty": "PCON10CD",
 				"nameProperty": "PCON10NM",
 				"aliasProperty": "PCON10NMW"

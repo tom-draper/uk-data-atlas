@@ -41,13 +41,6 @@
 			]
 		},
 		{
-			"check": "endpoints-verified",
-			"reason": "The lookup labels its source side 2010, and no boundary release has that identity, so its source codes are not checked against compiled areas. Those constituencies were unchanged until 2024 and all 650 codes resolve in the 2017 and 2019 UK releases; pointing the lookup at one of them has not been reviewed yet.",
-			"resources": [
-				"crosswalks/constituency-2010-to-2024-official-lookup-v2"
-			]
-		},
-		{
 			"check": "source-names-consistent",
 			"reason": "The publisher lookup names N06000004 Belfast West in three rows and Belfast North in one. Both names are kept as labels rather than the Atlas correcting the source.",
 			"resources": [

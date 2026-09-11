@@ -8,7 +8,7 @@
 	},
 	"from": {
 		"geography": "constituency",
-		"boundaryRelease": "2010"
+		"boundaryRelease": "2019-12-uk-bgc"
 	},
 	"to": {
 		"geography": "constituency",
@@ -30,8 +30,9 @@
 		],
 		"endpoints": {
 			"from": {
-				"status": "not-available",
-				"reason": "No compiled area release is available for constituency/2010."
+				"status": "verified",
+				"availableAreaCount": 650,
+				"referencedCodeCount": 650
 			},
 			"to": {
 				"status": "verified",
@@ -15100,5 +15101,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:56da3161376549ae831ab49ed95ae9506a2c0e7f876b12de91cc353e4f15e64d"
+	"contentHash": "sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82"
 }

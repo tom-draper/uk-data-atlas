@@ -337,14 +337,14 @@ paths:
                 atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
                 data:
                   - id: constituency-2010-to-2024-official-lookup-v2
-                    from: { geography: constituency, boundaryRelease: "2010" }
+                    from: { geography: constituency, boundaryRelease: 2019-12-uk-bgc }
                     to: { geography: constituency, boundaryRelease: 2024-07-uk-bgc }
                     method: official-lookup
                     quality: publisher-supplied
                     weighting: { status: not-provided }
                     recordCount: 650
                     artifact: crosswalks/constituency-2010-to-2024-official-lookup-v2.json
-                    contentHash: "sha256:ce61b3f59c495498e9a7cfd7fb4ff6d3d742cffa8b27150a58c27b6f099b038d"
+                    contentHash: "sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82"
                   - id: ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment
                     from: { geography: ward, boundaryRelease: 2025-05-uk-bgc-v2 }
                     to: { geography: localAuthority, boundaryRelease: 2025-05-uk-bgc-v2 }
@@ -392,12 +392,12 @@ paths:
                     atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
                     data:
                       schemaVersion: 1
-                      contentHash: "sha256:ce61b3f59c495498e9a7cfd7fb4ff6d3d742cffa8b27150a58c27b6f099b038d"
+                      contentHash: "sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82"
                       id: constituency-2010-to-2024-official-lookup-v2
                       method: official-lookup
                       quality: publisher-supplied
                       weighting: { status: not-provided }
-                      from: { geography: constituency, boundaryRelease: "2010" }
+                      from: { geography: constituency, boundaryRelease: 2019-12-uk-bgc }
                       to: { geography: constituency, boundaryRelease: 2024-07-uk-bgc }
                       provenance:
                         input: "boundaries/constituency/2024-07-uk-bgc/Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson"
@@ -406,6 +406,9 @@ paths:
                         sourceNameConflicts:
                           - code: N06000004
                             names: [Belfast North, Belfast West]
+                        endpoints:
+                          from: { status: verified, availableAreaCount: 650, referencedCodeCount: 650 }
+                          to: { status: verified, availableAreaCount: 650, referencedCodeCount: 650 }
                     meta:
                       nextCursor: null
                 areaOverlap:
@@ -632,13 +635,13 @@ paths:
                   summary:
                     resourceCount: 77
                     checkCount: 316
-                    passedCount: 287
-                    waivedCount: 29
+                    passedCount: 288
+                    waivedCount: 28
                     coverage:
                       boundaryReleases: 67
                       areaIdentities: 67
                       servableGeometry: 40
-                      withRelationships: 14
+                      withRelationships: 15
                       crosswalks: 9
                       weightedCrosswalks: 1
                   resources:
