@@ -292,6 +292,65 @@ test("gets the atlas release manifest", () => {
 	);
 });
 
+test("paginates crosswalk records with opaque cursors", () => {
+	const pagedCrosswalk: CrosswalkArtifact = {
+		...crosswalkArtifact,
+		id: "paged-crosswalk",
+		records: [
+			...crosswalkArtifact.records,
+			{
+				source: { code: "E14000002", labels: ["Other old seat"] },
+				targets: [{ code: "E14001002", labels: ["Other new seat"] }],
+			},
+		],
+	};
+	const pagedLookup: CrosswalkLookup = new Map([
+		[pagedCrosswalk.id, pagedCrosswalk],
+	]);
+	const first = route(
+		"GET",
+		"/v1/crosswalks/paged-crosswalk/records?limit=1",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		pagedLookup,
+	);
+	assert.equal(first.status, 200);
+	assert.deepEqual("data" in first.body && first.body.data, [
+		pagedCrosswalk.records[0],
+	]);
+	const cursor = "meta" in first.body ? first.body.meta.nextCursor : null;
+	assert.equal(typeof cursor, "string");
+	assert.ok(cursor);
+
+	const second = route(
+		"GET",
+		`/v1/crosswalks/paged-crosswalk/records?limit=1&cursor=${cursor}`,
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		pagedLookup,
+	);
+	assert.equal(second.status, 200);
+	assert.deepEqual("data" in second.body && second.body.data, [
+		pagedCrosswalk.records[1],
+	]);
+	assert.equal("meta" in second.body && second.body.meta.nextCursor, null);
+
+	const invalid = route(
+		"GET",
+		"/v1/crosswalks/paged-crosswalk/records?limit=0",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		pagedLookup,
+	);
+	assert.equal(invalid.status, 400);
+});
+
 test("uses the immutable release id in every successful envelope", () => {
 	const response = route(
 		"GET",

@@ -13,7 +13,7 @@ type Envelope<T> = {
 	apiVersion: "v1";
 	atlasRelease: string;
 	data: T;
-	meta: { nextCursor: null };
+	meta: { nextCursor: string | null };
 };
 
 export type ApiResponse = {
@@ -28,11 +28,15 @@ type Problem = {
 	detail: string;
 };
 
-const envelope = <T>(atlasRelease: string, data: T): Envelope<T> => ({
+const envelope = <T>(
+	atlasRelease: string,
+	data: T,
+	nextCursor: string | null = null,
+): Envelope<T> => ({
 	apiVersion: "v1",
 	atlasRelease,
 	data,
-	meta: { nextCursor: null },
+	meta: { nextCursor },
 });
 
 const problem = (
@@ -54,6 +58,27 @@ const problem = (
 const decodePathSegment = (segment: string) => {
 	try {
 		return decodeURIComponent(segment);
+	} catch {
+		return undefined;
+	}
+};
+
+const DEFAULT_PAGE_SIZE = 100;
+const MAX_PAGE_SIZE = 500;
+
+const readPageSize = (value: string | null): number | undefined => {
+	if (value === null) return DEFAULT_PAGE_SIZE;
+	if (!/^[1-9]\d*$/.test(value)) return undefined;
+	const size = Number(value);
+	return size <= MAX_PAGE_SIZE ? size : undefined;
+};
+
+const cursorFor = (code: string) => Buffer.from(code).toString("base64url");
+
+const codeFromCursor = (cursor: string): string | undefined => {
+	try {
+		const code = Buffer.from(cursor, "base64url").toString("utf8");
+		return code.length > 0 && cursorFor(code) === cursor ? code : undefined;
 	} catch {
 		return undefined;
 	}
@@ -251,12 +276,44 @@ export const route = (
 			);
 		}
 		const source = parsedUrl.searchParams.get("source");
-		const records = source
-			? crosswalk.records.filter(
-					(record) => record.source.code === source,
-				)
-			: crosswalk.records;
-		return { status: 200, body: envelope(releaseId, records) };
+		if (source !== null) {
+			const records = crosswalk.records.filter(
+				(record) => record.source.code === source,
+			);
+			return { status: 200, body: envelope(releaseId, records) };
+		}
+		const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
+		if (pageSize === undefined) {
+			return problem(
+				400,
+				"Invalid Query",
+				`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
+			);
+		}
+		const cursor = parsedUrl.searchParams.get("cursor");
+		const cursorCode = cursor ? codeFromCursor(cursor) : undefined;
+		if (cursor && !cursorCode) {
+			return problem(400, "Invalid Query", "cursor is invalid.");
+		}
+		const offset = cursorCode
+			? crosswalk.records.findIndex(
+					(record) => record.source.code === cursorCode,
+				) + 1
+			: 0;
+		if (cursorCode && offset === 0) {
+			return problem(
+				400,
+				"Invalid Query",
+				"cursor is not valid for this crosswalk.",
+			);
+		}
+		const records = crosswalk.records.slice(offset, offset + pageSize);
+		const lastRecord = records.at(-1);
+		const nextCursor =
+			offset + records.length < crosswalk.records.length && lastRecord
+				? cursorFor(lastRecord.source.code)
+				: null;
+		return { status: 200, body: envelope(releaseId, records, nextCursor) };
 	}
 
 	if (
