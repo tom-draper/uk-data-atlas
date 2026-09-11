@@ -8,8 +8,9 @@ import {
 	type AreaReleaseArtifact,
 } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { CrosswalkArtifact, CrosswalkInventory } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
-import { route } from "./routes";
+import { route, type CrosswalkLookup } from "./routes";
 
 const registryPath = (apiRoot: string) =>
 	join(apiRoot, "public", "boundary-releases.json");
@@ -63,22 +64,61 @@ export const readAreaLookup = (apiRoot: string): AreaLookup => {
 	return createAreaLookup(artifacts);
 };
 
+export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory => {
+	const path = join(apiRoot, "public", "crosswalk-inventory.json");
+	const inventory = JSON.parse(readFileSync(path, "utf8")) as CrosswalkInventory;
+	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.crosswalks)) {
+		throw new Error(`Invalid crosswalk inventory at ${path}`);
+	}
+	return inventory;
+};
+
+export const readCrosswalkLookup = (
+	apiRoot: string,
+	inventory: CrosswalkInventory,
+): CrosswalkLookup =>
+	new Map(
+		inventory.crosswalks.map((crosswalk) => {
+			const path = join(apiRoot, "public", crosswalk.artifact);
+			const artifact = JSON.parse(
+				readFileSync(path, "utf8"),
+			) as CrosswalkArtifact;
+			if (
+				artifact.schemaVersion !== 1 ||
+				artifact.contentHash !== crosswalk.contentHash ||
+				!Array.isArray(artifact.records)
+			) {
+				throw new Error(`Invalid crosswalk artifact at ${path}`);
+			}
+			return [crosswalk.id, artifact];
+		}),
+	);
+
 export type ApiCatalogues = {
 	boundaryRegistry: BoundaryRegistry;
 	geographyInventory: GeographyInventory;
 	areaLookup: AreaLookup;
+	crosswalkInventory: CrosswalkInventory;
+	crosswalkLookup: CrosswalkLookup;
 };
 
-export const readApiCatalogues = (apiRoot: string): ApiCatalogues => ({
-	boundaryRegistry: readBoundaryRegistry(apiRoot),
-	geographyInventory: readGeographyInventory(apiRoot),
-	areaLookup: readAreaLookup(apiRoot),
-});
+export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
+	const crosswalkInventory = readCrosswalkInventory(apiRoot);
+	return {
+		boundaryRegistry: readBoundaryRegistry(apiRoot),
+		geographyInventory: readGeographyInventory(apiRoot),
+		areaLookup: readAreaLookup(apiRoot),
+		crosswalkInventory,
+		crosswalkLookup: readCrosswalkLookup(apiRoot, crosswalkInventory),
+	};
+};
 
 export const createApiServer = ({
 	boundaryRegistry,
 	geographyInventory,
 	areaLookup,
+	crosswalkInventory,
+	crosswalkLookup,
 }: ApiCatalogues) =>
 	createServer((request, response) => {
 		const result = route(
@@ -87,6 +127,8 @@ export const createApiServer = ({
 			boundaryRegistry,
 			geographyInventory,
 			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
 		);
 		response.writeHead(result.status, {
 			"cache-control": "public, max-age=300",

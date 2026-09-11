@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
-import { route } from "../src/routes";
+import { route, type CrosswalkLookup } from "../src/routes";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { CrosswalkArtifact, CrosswalkInventory } from "../src/crosswalkInventory";
 import type { GeographyInventory } from "../src/geographyInventory";
 
 const registry: BoundaryRegistry = {
@@ -42,6 +43,47 @@ const areaLookup = createAreaLookup([
 		nameProperty: "WD25NM",
 		areas: [{ code: "E05000001", name: "Example ward" }],
 	},
+]);
+
+const crosswalkArtifact: CrosswalkArtifact = {
+	schemaVersion: 1,
+	contentHash: "sha256:crosswalk-artifact",
+	id: "constituency-2010-to-2024",
+	method: "official-lookup",
+	quality: "publisher-supplied",
+	weighting: { status: "not-provided" },
+	from: { geography: "constituency", boundaryRelease: "2010" },
+	to: { geography: "constituency", boundaryRelease: "2024-07-uk-bgc" },
+	provenance: { input: "lookup.geojson", inputHash: "sha256:input" },
+	validation: { sourceNameConflicts: [] },
+	records: [
+		{
+			source: { code: "E14000001", labels: ["Old seat"] },
+			targets: [{ code: "E14001001", labels: ["New seat A"] }],
+		},
+	],
+};
+
+const crosswalkInventory: CrosswalkInventory = {
+	schemaVersion: 1,
+	contentHash: "sha256:crosswalk-inventory",
+	crosswalks: [
+		{
+			id: crosswalkArtifact.id,
+			from: crosswalkArtifact.from,
+			to: crosswalkArtifact.to,
+			method: crosswalkArtifact.method,
+			quality: crosswalkArtifact.quality,
+			weighting: crosswalkArtifact.weighting,
+			recordCount: crosswalkArtifact.records.length,
+			artifact: `crosswalks/${crosswalkArtifact.id}.json`,
+			contentHash: crosswalkArtifact.contentHash,
+		},
+	],
+};
+
+const crosswalkLookup: CrosswalkLookup = new Map([
+	[crosswalkArtifact.id, crosswalkArtifact],
 ]);
 
 test("lists published geographies", () => {
@@ -100,6 +142,106 @@ test("gets a compiled area by its full identity", () => {
 		code: "E05000001",
 		name: "Example ward",
 	});
+});
+
+test("lists published crosswalks", () => {
+	const response = route(
+		"GET",
+		"/v1/crosswalks",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual(
+		"data" in response.body && response.body.data,
+		crosswalkInventory.crosswalks,
+	);
+});
+
+test("gets one crosswalk's metadata without its full record set", () => {
+	const response = route(
+		"GET",
+		"/v1/crosswalks/constituency-2010-to-2024",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(response.status, 200);
+	const data = "data" in response.body ? response.body.data : undefined;
+	assert.ok(data && !("records" in (data as object)));
+	assert.deepEqual(data, {
+		schemaVersion: 1,
+		contentHash: "sha256:crosswalk-artifact",
+		id: "constituency-2010-to-2024",
+		method: "official-lookup",
+		quality: "publisher-supplied",
+		weighting: { status: "not-provided" },
+		from: { geography: "constituency", boundaryRelease: "2010" },
+		to: { geography: "constituency", boundaryRelease: "2024-07-uk-bgc" },
+		provenance: { input: "lookup.geojson", inputHash: "sha256:input" },
+		validation: { sourceNameConflicts: [] },
+	});
+
+	const missing = route(
+		"GET",
+		"/v1/crosswalks/unknown",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(missing.status, 404);
+});
+
+test("filters crosswalk records by source code", () => {
+	const response = route(
+		"GET",
+		"/v1/crosswalks/constituency-2010-to-2024/records?source=E14000001",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual(
+		"data" in response.body && response.body.data,
+		crosswalkArtifact.records,
+	);
+
+	const unfiltered = route(
+		"GET",
+		"/v1/crosswalks/constituency-2010-to-2024/records",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.deepEqual(
+		"data" in unfiltered.body && unfiltered.body.data,
+		crosswalkArtifact.records,
+	);
+
+	const noMatch = route(
+		"GET",
+		"/v1/crosswalks/constituency-2010-to-2024/records?source=unknown",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.deepEqual(
+		"data" in noMatch.body && noMatch.body.data,
+		[],
+	);
 });
 
 test("uses problem details for missing resources and unsupported methods", () => {

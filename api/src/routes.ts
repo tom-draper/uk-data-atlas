@@ -1,6 +1,9 @@
 import type { AreaLookup } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { CrosswalkArtifact, CrosswalkInventory } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
+
+export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
 type Envelope<T> = {
 	apiVersion: "v1";
@@ -58,12 +61,15 @@ export const route = (
 	registry: BoundaryRegistry,
 	geographyInventory?: GeographyInventory,
 	areaLookup?: AreaLookup,
+	crosswalkInventory?: CrosswalkInventory,
+	crosswalkLookup?: CrosswalkLookup,
 ): ApiResponse => {
 	if (method !== "GET") {
 		return problem(405, "Method Not Allowed", "This API is read-only.");
 	}
 
-	const pathname = new URL(url ?? "/", "http://localhost").pathname;
+	const parsedUrl = new URL(url ?? "/", "http://localhost");
+	const pathname = parsedUrl.pathname;
 	const segments = pathname.split("/").filter(Boolean).map(decodePathSegment);
 	if (segments.some((segment) => segment === undefined)) {
 		return problem(
@@ -83,6 +89,9 @@ export const route = (
 					"/v1/boundary-releases",
 					"/v1/geography-inventory",
 					"/v1/areas/{type}/{release}/{code}",
+					"/v1/crosswalks",
+					"/v1/crosswalks/{crosswalk-id}",
+					"/v1/crosswalks/{crosswalk-id}/records",
 				],
 			}),
 		};
@@ -184,6 +193,58 @@ export const route = (
 					"Not Found",
 					"No boundary release matches that identity.",
 				);
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "crosswalks"
+	) {
+		return crosswalkInventory
+			? { status: 200, body: envelope(registry, crosswalkInventory.crosswalks) }
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the crosswalk inventory before starting the API.",
+				);
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "crosswalks"
+	) {
+		const crosswalk = crosswalkLookup?.get(segments[2] as string);
+		if (!crosswalk) {
+			return problem(
+				404,
+				"Not Found",
+				"No crosswalk matches that identity.",
+			);
+		}
+		const { records, ...metadata } = crosswalk;
+		return { status: 200, body: envelope(registry, metadata) };
+	}
+
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "crosswalks" &&
+		segments[3] === "records"
+	) {
+		const crosswalk = crosswalkLookup?.get(segments[2] as string);
+		if (!crosswalk) {
+			return problem(
+				404,
+				"Not Found",
+				"No crosswalk matches that identity.",
+			);
+		}
+		const source = parsedUrl.searchParams.get("source");
+		const records = source
+			? crosswalk.records.filter((record) => record.source.code === source)
+			: crosswalk.records;
+		return { status: 200, body: envelope(registry, records) };
 	}
 
 	return problem(404, "Not Found", "No API resource matches that path.");
