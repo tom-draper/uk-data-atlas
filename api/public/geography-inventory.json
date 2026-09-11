@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:a892894ecd1784761a1649b0a2ce9681ca4dca71c3ed2224f659329f078a4a87",
+	"contentHash": "sha256:16ff4f2fb31df93aef0357abcfb7f2737d5fb8dd77af86bde8000ac74a3f89d0",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -721,8 +721,22 @@
 				"artifact": "areas/localAuthority/2016-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2016-12-gb-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1596,8 +1610,22 @@
 				"artifact": "areas/ward/2016-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2016-12-gb-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		}
 	],

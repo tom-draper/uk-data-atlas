@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:a929f62e9bb48b591034852d09c4f3a10a4633099301eb3b6544823dedb5dafb",
+	"releaseId": "sha256:86e3107a837cb7e1098f41d468180757d4885286f8f4706e695f4b507c663615",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,17 +25,17 @@
 		{
 			"id": "crosswalk-inventory",
 			"path": "crosswalk-inventory.json",
-			"contentHash": "sha256:ec714b8c142670450a17e59ab19581a277385502dbe831a7093ef66648f69f7f"
+			"contentHash": "sha256:a108b37defef0c32fa0403807d25cf24828603b1c119fdaa1ea9d3e44e48fffb"
 		},
 		{
 			"id": "relationship-candidates",
 			"path": "relationship-candidates.json",
-			"contentHash": "sha256:678922ed7f22924239c359f47259e279021964d298855ca841e43c7af25733d8"
+			"contentHash": "sha256:5873f3b00d13fa8297349d778652f5fb528ba5db23820657e08b7fd6f2cd1cb8"
 		},
 		{
 			"id": "geography-inventory",
 			"path": "geography-inventory.json",
-			"contentHash": "sha256:1936fa0d5f881a7f3e35bd96379c4cbc9cac4fcc436dc8933c7342b65a9396c6"
+			"contentHash": "sha256:bdb7d4a15c7fb729d1b6efacd44b20b4e1d05f9f7a250a1cd0f2e9c4a4cd8025"
 		},
 		{
 			"id": "source-inventory",

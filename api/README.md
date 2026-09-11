@@ -54,8 +54,9 @@ only **available** when its endpoint, contract and provenance are published.
       cursor pagination.
 - [x] Translate a 2010 Westminster constituency code to its 2024 successor
       mapping through the published official lookup.
-- [x] Translate wards in the supported 2022–25 releases to their verified
-      parent local authorities through clean-containment crosswalks.
+- [x] Translate wards in the supported December 2016 and 2022–25 releases to
+      their verified parent local authorities through clean-containment
+      crosswalks.
 - [x] Translate April 2026 sub-integrated-care-board locations to their
       integrated care boards through verified clean containment.
 - [x] Navigate each published relationship in both directions, including ward
