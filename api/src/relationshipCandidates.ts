@@ -98,6 +98,15 @@ const propertyStem = (key: string, suffix: "code" | "name") =>
 const propertyFamily = (key: string, suffix: "code" | "name") =>
 	propertyStem(key, suffix).replace(/\d+$/, "");
 
+// Publishers are inconsistent about field case across releases: the 2016 ward
+// file carries lad16cd while the 2016 LAD file carries LAD16CD.
+const samePropertyPair = (
+	left: { codeProperty: string; nameProperty: string },
+	right: { codeProperty: string; nameProperty: string },
+) =>
+	left.codeProperty.toLowerCase() === right.codeProperty.toLowerCase() &&
+	left.nameProperty.toLowerCase() === right.nameProperty.toLowerCase();
+
 const propertyPairs = (properties: Record<string, unknown>) => {
 	const keys = Object.keys(properties);
 	const codeKeys = keys.filter((key) => /(?:cd|code)$/i.test(key));
@@ -282,17 +291,13 @@ export const compileRelationshipCandidates = (
 			nameProperty: artifact.nameProperty,
 		};
 		const candidatePairs = propertyPairs(initialProperties).filter(
-			(pair) =>
-				pair.codeProperty !== from.codeProperty ||
-				pair.nameProperty !== from.nameProperty,
+			(pair) => !samePropertyPair(pair, from),
 		);
 		if (candidatePairs.length === 0) continue;
 		const propertiesByFeature = readProperties(source.path);
 		for (const pair of candidatePairs) {
-			const matches = artifacts.filter(
-				(candidate) =>
-					candidate.codeProperty === pair.codeProperty &&
-					candidate.nameProperty === pair.nameProperty,
+			const matches = artifacts.filter((candidate) =>
+				samePropertyPair(candidate, pair),
 			);
 			const geographies = targetGeographies(artifacts, pair);
 			const to: CandidateTarget =

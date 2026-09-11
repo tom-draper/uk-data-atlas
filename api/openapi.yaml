@@ -196,60 +196,6 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
-  /areas:
-    get:
-      operationId: listAreas
-      summary: List or search compiled area identities
-      description: >
-        Searches official codes, names and supplied aliases case-insensitively.
-        Exact code matches take precedence over prefix matches, so a bare code
-        can safely resolve to every matching geography/release identity. Name,
-        alias and non-exact code queries use prefix matching.
-      parameters:
-        - name: q
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Official code, name or alias prefix. Omit to list areas.
-        - name: geography
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Restrict results to one geography type.
-        - name: release
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Restrict results to one boundary release.
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 500
-            default: 100
-        - name: cursor
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Opaque cursor from the previous response's nextCursor.
-      responses:
-        "200":
-          description: A cursor-paginated page of matching area identities.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AreaListEnvelope"
-        "400":
-          $ref: "#/components/responses/InvalidQuery"
-        "503":
-          $ref: "#/components/responses/CatalogueUnavailable"
-
   /areas/{geography}/{release}/{code}:
     get:
       operationId: getArea
