@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:9f5c22d299fd328bcbe045fc7cbf2f2cc49242bf5e85ca193f68ef21eb1db43c",
+	"releaseId": "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -16,6 +16,11 @@
 			"id": "area-inventory",
 			"path": "area-inventory.json",
 			"contentHash": "sha256:474c76c956aecff46a1380ac9707193a65c335d2d9c89cb59a10a99e3099de02"
+		},
+		{
+			"id": "geometry-sources",
+			"path": "geometry-sources.json",
+			"contentHash": "sha256:381777277f6e597a7e5743ffb1e0dd68e021f05b6223eff08cfc86836e51329b"
 		},
 		{
 			"id": "crosswalk-inventory",
