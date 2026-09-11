@@ -1,0 +1,205 @@
+openapi: 3.1.1
+info:
+    title: UK Data Atlas API
+    version: v1
+    description: |
+        A read-only, versioned discovery API for UK Data Atlas boundary releases.
+        The current implementation is intentionally limited to release metadata.
+servers:
+    - url: http://127.0.0.1:3001/v1
+      description: Local standalone server
+paths:
+    /:
+        get:
+            operationId: getApiIndex
+            responses:
+                "200":
+                    description: API discovery document
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/IndexEnvelope"
+    /geographies:
+        get:
+            operationId: listGeographies
+            responses:
+                "200":
+                    description: Published geography families and their latest releases
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/GeographyListEnvelope"
+    /boundary-releases:
+        get:
+            operationId: listBoundaryReleases
+            responses:
+                "200":
+                    description: Published boundary-release metadata
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/BoundaryReleaseListEnvelope"
+    /boundary-releases/{type}/{release}:
+        get:
+            operationId: getBoundaryRelease
+            parameters:
+                - $ref: "#/components/parameters/BoundaryType"
+                - $ref: "#/components/parameters/BoundaryRelease"
+            responses:
+                "200":
+                    description: One published boundary release
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/BoundaryReleaseEnvelope"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+components:
+    parameters:
+        BoundaryType:
+            name: type
+            in: path
+            required: true
+            schema:
+                type: string
+        BoundaryRelease:
+            name: release
+            in: path
+            required: true
+            schema:
+                type: string
+    responses:
+        NotFound:
+            description: No matching API resource
+            content:
+                application/problem+json:
+                    schema:
+                        $ref: "#/components/schemas/Problem"
+    schemas:
+        Envelope:
+            type: object
+            required: [apiVersion, atlasRelease, data, meta]
+            properties:
+                apiVersion:
+                    type: string
+                    const: v1
+                atlasRelease:
+                    type: string
+                    description: Content hash of the registry serving the response.
+                data: {}
+                meta:
+                    type: object
+                    required: [nextCursor]
+                    properties:
+                        nextCursor:
+                            type: "null"
+        Index:
+            type: object
+            required: [name, links]
+            properties:
+                name:
+                    type: string
+                links:
+                    type: array
+                    items:
+                        type: string
+        Geography:
+            type: object
+            required: [id, latestRelease, releaseCount]
+            properties:
+                id:
+                    type: string
+                latestRelease:
+                    type: string
+                releaseCount:
+                    type: integer
+                    minimum: 1
+        BoundaryRelease:
+            type: object
+            required: [id, geography, title, coverage, source, metadataHash]
+            properties:
+                id:
+                    type: string
+                geography:
+                    type: string
+                title:
+                    type: string
+                description:
+                    type: string
+                temporalCoverage:
+                    type: string
+                coverage:
+                    type: object
+                    required: [countries]
+                    properties:
+                        countries:
+                            type: array
+                            items:
+                                type: string
+                source:
+                    type: object
+                    required: [publisher, url, licence]
+                    properties:
+                        publisher:
+                            type: string
+                        url:
+                            type: string
+                            format: uri
+                        retrievedAt:
+                            type: string
+                        licence:
+                            type: object
+                            required: [name]
+                            properties:
+                                name:
+                                    type: string
+                                url:
+                                    type: string
+                                    format: uri
+                metadataHash:
+                    type: string
+        Problem:
+            type: object
+            required: [type, title, status, detail]
+            properties:
+                type:
+                    type: string
+                    format: uri
+                title:
+                    type: string
+                status:
+                    type: integer
+                detail:
+                    type: string
+        IndexEnvelope:
+            allOf:
+                - $ref: "#/components/schemas/Envelope"
+                - type: object
+                  properties:
+                      data:
+                          $ref: "#/components/schemas/Index"
+        GeographyListEnvelope:
+            allOf:
+                - $ref: "#/components/schemas/Envelope"
+                - type: object
+                  properties:
+                      data:
+                          type: array
+                          items:
+                              $ref: "#/components/schemas/Geography"
+        BoundaryReleaseListEnvelope:
+            allOf:
+                - $ref: "#/components/schemas/Envelope"
+                - type: object
+                  properties:
+                      data:
+                          type: array
+                          items:
+                              $ref: "#/components/schemas/BoundaryRelease"
+        BoundaryReleaseEnvelope:
+            allOf:
+                - $ref: "#/components/schemas/Envelope"
+                - type: object
+                  properties:
+                      data:
+                          $ref: "#/components/schemas/BoundaryRelease"

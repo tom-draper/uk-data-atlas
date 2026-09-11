@@ -1,0 +1,1566 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
+	"releases": [
+		{
+			"id": "2025-12-en-bgc",
+			"geography": "combinedAuthority",
+			"title": "Combined authorities, December 2025 (England, generalised, clipped)",
+			"description": "English combined authorities and combined county authorities. ONS reports some local area statistics against these, including the life expectancy series held here.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:6674a5e354661262ca18eebe9667e39774396aa2794caf8e954bd2a2e6b05e50"
+		},
+		{
+			"id": "2023-12-ew-bgc",
+			"geography": "communitySafetyPartnership",
+			"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+			"description": "Community safety partnership areas, the geography ONS reports police recorded crime against in Table C2 of the police force area tables.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:13ef79817e985d5bf3994158949955f6c168e223c7eb102208056170ab0ae768"
+		},
+		{
+			"id": "2024-07-uk-bgc",
+			"geography": "constituency",
+			"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+			"description": "Westminster parliamentary constituencies as published for July 2024, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2024",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:cb36a990db1b57ae973ebe88874fae7f560a12721fa784cf5e52a9fd5e8466f3"
+		},
+		{
+			"id": "2019-12-uk-bgc",
+			"geography": "constituency",
+			"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+			"description": "Westminster parliamentary constituencies as published for December 2019, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2019",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:8c00f2461ea86b9d4724e304067b3d36f6800c7aed929f78efc7bfacc048d462"
+		},
+		{
+			"id": "2017-12-uk-bgc",
+			"geography": "constituency",
+			"title": "Westminster parliamentary constituencies, December 2017 (United Kingdom, generalised, clipped)",
+			"description": "Westminster parliamentary constituencies as published for December 2017, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2017",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:aec65f9166c56c476fcb65c8a8446c88138776aedc974d9e8f29dc00f5e5996c"
+		},
+		{
+			"id": "2016-12-uk-bgc",
+			"geography": "constituency",
+			"title": "Westminster parliamentary constituencies, December 2016 (United Kingdom, generalised, clipped)",
+			"description": "Westminster parliamentary constituencies as published for December 2016, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2016",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:73099b0ffeb036f389135422e8371f63ffa8013fba0d2bdae54a6b8ecb3c26b7"
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "constituency",
+			"title": "Westminster parliamentary constituencies, December 2015 (Great Britain, generalised, clipped)",
+			"description": "Westminster parliamentary constituencies as published for December 2015, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2015",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:68f24ded1d0326d965f64b69647e70a47f7fb03a59c76247b95170c79f5fb1a9"
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "country",
+			"title": "Countries, December 2025 (United Kingdom, generalised, clipped)",
+			"description": "Countries as published for December 2025, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:a696280b2e6f0c64656a9d41fc09adad56e7d00661fc60df896db775bf516b17"
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "country",
+			"title": "Countries, December 2024 (United Kingdom, generalised, clipped)",
+			"description": "Countries as published for December 2024, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2024",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:8a45576d3041bf9ce55f3017a5d046a08f2b8146f6ee22d760a19a76272e91ba"
+		},
+		{
+			"id": "2023-12-uk-bgc",
+			"geography": "country",
+			"title": "Countries, December 2023 (United Kingdom, generalised, clipped)",
+			"description": "Countries as published for December 2023, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:1b138b204c9278746c35b88be146055a3dab358a836e29d1c0f73507d8f2c364"
+		},
+		{
+			"id": "2022-12-uk-bgc",
+			"geography": "country",
+			"title": "Countries, December 2022 (United Kingdom, generalised, clipped)",
+			"description": "Countries as published for December 2022, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:b6faafb9bb0ff609aa4e4ac79a6ae12f4a8ee00ff73c5fcc9ec67879d574760f"
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "country",
+			"title": "Countries, December 2021 (United Kingdom, generalised, clipped)",
+			"description": "Countries as published for December 2021, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:422472ac5f3e1b9df77a2b6a5d4c33e0a32a5bc63b013ee151824d95ba62be24"
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "country",
+			"title": "Countries, December 2020 (United Kingdom, generalised, clipped)",
+			"description": "Countries as published for December 2020, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2020",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:ae7c1bb03b5ad0068231d7864e6587e67bf4f08a6beb5d4a62a483ee2a4aaa89"
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "countyAndUnitaryAuthority",
+			"title": "Counties and unitary authorities, December 2025 (United Kingdom, generalised, clipped)",
+			"description": "Upper tier local government areas as published for December 2025: counties, unitary authorities, metropolitan and London boroughs. The geography many ONS tables report local authority figures against, which the lower tier districts cannot represent.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:68f832220c5ebec5d7e43de1d3930ca4ba784bab861add09acaebd5e4b207fe2"
+		},
+		{
+			"id": "2023-05-en-bgc",
+			"geography": "countyElectoralDivision",
+			"title": "County electoral divisions, May 2023 (England, generalised, clipped)",
+			"description": "The electoral divisions county councils are elected by, the county tier equivalent of a ward.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-ENG"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:e3a837c3ec6bf1f814b70f8e9dad1ee9ba7a67513384e0361c8a6b086eeb3063"
+		},
+		{
+			"id": "2011-12-sc-nc",
+			"geography": "dataZone",
+			"title": "Data zones, December 2011 (Scotland, not clipped)",
+			"description": "Data zones as published for December 2011, covering Scotland. Not clipped to the coastline. Held, not served: the same 2011 data zones as 2011-12-sc-bfc but keyed DZ11CD rather than DataZone, so serving it would change the codes datasets join on.",
+			"temporalCoverage": "2011",
+			"coverage": {
+				"countries": [
+					"GB-SCT"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:58b667408522f42b4738c7ddf1db2ea4ec512de6b752e64c65768266c7cb501e"
+		},
+		{
+			"id": "2011-12-sc-bfc",
+			"geography": "dataZone",
+			"title": "Data zones, December 2011 (Scotland, full resolution, clipped)",
+			"description": "Data zones as published for December 2011, covering Scotland. Full resolution, clipped to the coastline.",
+			"temporalCoverage": "2011",
+			"coverage": {
+				"countries": [
+					"GB-SCT"
+				]
+			},
+			"source": {
+				"publisher": "Scottish Government",
+				"url": "https://spatialdata.gov.scot/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:dc8bcc8dfd97724efa1cd81a40aeca46984cf6437777951e2e68ac6ec832fb95"
+		},
+		{
+			"id": "2021-05-ew-bgc",
+			"geography": "fireAndRescueAuthority",
+			"title": "Fire and rescue authorities, May 2021 (England and Wales, generalised, clipped)",
+			"description": "The 47 fire and rescue authority areas of England and Wales.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:e36657555d7b6695bd7b6b7d3f1cea1a917c92e62ca50fce7c141882609d1203"
+		},
+		{
+			"id": "2026-04-en-bgc",
+			"geography": "integratedCareBoard",
+			"title": "Integrated care boards, April 2026 (England, generalised, clipped)",
+			"description": "NHS integrated care boards as published for April 2026, the geography NHS England reports referral to treatment waiting times against.",
+			"temporalCoverage": "2026",
+			"coverage": {
+				"countries": [
+					"GB-ENG"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:598dad1a78a6f5ae764ec30bb9a8153f357ed7435b069a39a16766112aba1558"
+		},
+		{
+			"id": "2021-01-uk-bgc",
+			"geography": "itl1",
+			"title": "International territorial level 1, January 2021 (United Kingdom, generalised, clipped)",
+			"description": "The twelve ITL1 areas: the nine English regions plus Wales, Scotland and Northern Ireland. The top tier of the geography that replaced NUTS for UK economic statistics.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:29a2e8a6b07732d758b615764a2e4af2cfe2df90b14103b278ff1d9f42d3435a"
+		},
+		{
+			"id": "2021-01-uk-bgc-v2",
+			"geography": "itl2",
+			"title": "International territorial level 2, January 2021 (United Kingdom, generalised, clipped)",
+			"description": "The middle tier of the ITL geography used for UK economic statistics, between the ITL1 nations and regions and the ITL3 local areas.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:7afe95cb269960e38add867369e932d1eace482c9b528f7add82efd8ee4cedd6"
+		},
+		{
+			"id": "2021-01-uk-bgc-v3",
+			"geography": "itl3",
+			"title": "International territorial level 3, January 2021 (United Kingdom, generalised, clipped)",
+			"description": "The finest tier of the ITL geography, the level regional gross domestic product and productivity are published at.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:3b2edf94104928061c3dac616fddb1fccc1e79c90fb27a606297090e4b84a1c8"
+		},
+		{
+			"id": "2025-05-uk-bgc-v2",
+			"geography": "localAuthority",
+			"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+			"description": "Local authority districts as published for May 2025, covering the United Kingdom. Generalised to 20 m and clipped to the coastline. Version 2 of the release.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:95d5f992ed7e85b86f20b6d3d00b745d593a0083727ab2500ac6809cdf82532c"
+		},
+		{
+			"id": "2024-05-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for May 2024, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2024",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:faa515680684ce4dd670c5cb8b44bd671cbbfffb148af0640944e4e817fce6b0"
+		},
+		{
+			"id": "2023-05-uk-bgc-v2",
+			"geography": "localAuthority",
+			"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+			"description": "Local authority districts as published for May 2023, covering the United Kingdom. Generalised to 20 m and clipped to the coastline. Version 2 of the release.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:231a7436f0749c6f26a37ef3858dbb722a28905702b920af4e4ad98def5f56d1"
+		},
+		{
+			"id": "2022-12-uk-bgc-v2",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2022 (United Kingdom, generalised, clipped, v2)",
+			"description": "Local authority districts as published for December 2022, covering the United Kingdom. Generalised to 20 m and clipped to the coastline. Version 2 of the release.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:e50151a76cfa0bd2415c0a1184b7414fb286b96580fd33d81cff60580bfafdac"
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2021 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for December 2021, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:439d27a543681e4dff9e4c4b93ebfe616bda10d69f68e348c957dad1f747cad7"
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2018 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for December 2018, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2018",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:87871cda996eb243db0ef7b8c0da2c8d28bdbb50f5332a77b14f9a8d19809fe0"
+		},
+		{
+			"id": "2016-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2016 (Great Britain, generalised, clipped)",
+			"description": "Local authority districts as published for December 2016, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2016",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:0e6fb09babbb678cff8497008fed10bbcb36cd08dce24ce121f8acdfa132f3c0"
+		},
+		{
+			"id": "2023-12-w-bgc",
+			"geography": "localHealthBoard",
+			"title": "Local health boards, December 2023 (Wales, generalised, clipped)",
+			"description": "The seven local health boards that plan and deliver NHS services in Wales.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:8695bf0b8610d1e0a6dff9e4bb4a024dfb2da8332734cdcb81bae2d43df28276"
+		},
+		{
+			"id": "2019-04-uk-bgc",
+			"geography": "localPlanningAuthority",
+			"title": "Local planning authorities, April 2019 (United Kingdom, generalised, clipped)",
+			"description": "Local planning authorities as published for April 2019, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2019",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:90f5ea1f73f9083a98e363da06550ab4e2cdd5ba177a90c15e858c3a751c5ad9"
+		},
+		{
+			"id": "2011-12-w-bgc",
+			"geography": "lsoa",
+			"title": "Lower layer super output areas, December 2011 (Wales, generalised, clipped)",
+			"description": "Lower layer super output areas as published for December 2011, covering Wales. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2011",
+			"coverage": {
+				"countries": [
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:6b0479a5e5066ba24a49ee22ccb7ced212e0c74d068c88b5db0aaaf2ee9cde9b"
+		},
+		{
+			"id": "2011-12-ew-bgc-v3",
+			"geography": "lsoa",
+			"title": "Lower layer super output areas, December 2011 (England and Wales, generalised, clipped, v3)",
+			"description": "Lower layer super output areas as published for December 2011, covering England and Wales. Generalised to 20 m and clipped to the coastline. Version 3 of the release.",
+			"temporalCoverage": "2011",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:6a0e3820eedb02a39281fd791576fb2f30ea8f8077796c6a3240187193356e8f"
+		},
+		{
+			"id": "2015-12-ew-bgc",
+			"geography": "majorTownAndCity",
+			"title": "Major towns and cities, December 2015 (England and Wales, generalised, clipped)",
+			"description": "The built-up area extents of the largest towns and cities in England and Wales, for placing a map in context rather than joining data to.",
+			"temporalCoverage": "2015",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:cc2e15f90128a3515b4d3796aa1d8734e2cda6446889f09cc6c7f0c4ae3e6b8f"
+		},
+		{
+			"id": "2021-12-ew-bgc-v3",
+			"geography": "msoa",
+			"title": "Middle layer super output areas, December 2021 (England and Wales, generalised, clipped)",
+			"description": "Census 2021 middle layer super output areas for England and Wales, the tier between lower layer super output areas and local authority districts.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:a917727e93745b52e18f67cc3ae08aa06fbc64179c18ed7d082fa003a4d5dc96"
+		},
+		{
+			"id": "2020-12-gb-bgc",
+			"geography": "nationalPark",
+			"title": "National parks, December 2020 (Great Britain, generalised, clipped)",
+			"description": "The 15 national parks of England, Wales and Scotland.",
+			"temporalCoverage": "2020",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:157b901410a89038ce861411285d6266c09cd37e41395cba70740317371cfee7"
+		},
+		{
+			"id": "2022-07-en-bgc",
+			"geography": "nhsEnglandRegion",
+			"title": "NHS England regions, July 2022 (England, generalised, clipped)",
+			"description": "The seven regions NHS England is organised into, above the integrated care boards.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-ENG"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:aa2f92c9d3d09a56874adc8b0c5bc5326be4a13dc5ed526b3124346f4c182aac"
+		},
+		{
+			"id": "2026-05-ew-bgc",
+			"geography": "parish",
+			"title": "Parishes and non civil parished areas, May 2026 (England and Wales, generalised, clipped)",
+			"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely.",
+			"temporalCoverage": "2026",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:dbd715f88745b45facc76f5b8a7fd10a16a9f6c1da2fa346854e112b9c2b3710"
+		},
+		{
+			"id": "2025-05-ew-bgc",
+			"geography": "parish",
+			"title": "Parishes and non civil parished areas, May 2025 (England and Wales, generalised, clipped)",
+			"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely. The finest administrative geography published for the two countries.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:91b3f9a3a88d67d3e51435cfd2efb7effc4455aaa1299f8262afd240dc660449"
+		},
+		{
+			"id": "2024-12-ew-bgc",
+			"geography": "parish",
+			"title": "Parishes and non civil parished areas, December 2024 (England and Wales, generalised, clipped)",
+			"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely. The finest administrative geography published for the two countries.",
+			"temporalCoverage": "2024",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:dce2e73212515de1493969b8605b4463d3478fee2baae23742dcdb5c76c51438"
+		},
+		{
+			"id": "2023-12-ew-bgc",
+			"geography": "parish",
+			"title": "Parishes and non civil parished areas, December 2023 (England and Wales, generalised, clipped)",
+			"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:99e5b054f1ea28793bc68b3f87165e664c8df02699202c8f5683fc83cb6c0226"
+		},
+		{
+			"id": "2022-12-ew-bgc-v3",
+			"geography": "parish",
+			"title": "Parishes and non civil parished areas, December 2022 (England and Wales, generalised, clipped)",
+			"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:0b6939c9e15db1b485bda387647e3ef7434375c713d9b936afa445053cc2a3c2"
+		},
+		{
+			"id": "2021-12-ew-bgc",
+			"geography": "parish",
+			"title": "Parishes and non civil parished areas, December 2021 (England and Wales, generalised, clipped)",
+			"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:3ddf76b02872475647ad14177b88a336a5842b907d95f10d4c3882da5154575e"
+		},
+		{
+			"id": "2019-04-ew-bgc",
+			"geography": "parish",
+			"title": "Parishes and non civil parished areas, April 2019 (England and Wales, generalised, clipped)",
+			"description": "Civil parishes and communities, together with the non civil parished areas that fill the gaps between them, so the set tiles England and Wales completely.",
+			"temporalCoverage": "2019",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:21c526d98ded9b7e564affe94accabe191f106a3ff31d7141cf7252c5dd21b38"
+		},
+		{
+			"id": "2023-12-ew-bgc",
+			"geography": "policeForceArea",
+			"title": "Police force areas, December 2023 (England and Wales, generalised, clipped)",
+			"description": "The 43 territorial police force areas of England and Wales, the geography the P tables of the ONS police force area tables report against.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:99a0f5e5d6d27c5e99d1434b80bf5b5dbdd7815c741df08204ced5d2443af8de"
+		},
+		{
+			"id": "2025-12-en-bgc",
+			"geography": "region",
+			"title": "Regions, December 2025 (England, generalised, clipped)",
+			"description": "The nine English regions as published for December 2025. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-06",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:e40a5ec957ae6a715a2e5f4e1015e3a20b5ecaa7f13e888fc9836d2b068a7312"
+		},
+		{
+			"id": "2021-05-sc-bgc",
+			"geography": "scottishParliamentaryConstituency",
+			"title": "Scottish Parliamentary constituencies, May 2021 (Scotland, generalised, clipped)",
+			"description": "The 73 constituency seats of the Scottish Parliament.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-SCT"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:2199f52f65696ad9fab3d95d3fbec3d12edf7a8f6b58eec12b9763278bdd041d"
+		},
+		{
+			"id": "2022-12-sc-bgc",
+			"geography": "scottishParliamentaryRegion",
+			"title": "Scottish Parliamentary regions, December 2022 (Scotland, generalised, clipped)",
+			"description": "The eight regions that return the Scottish Parliament's additional member seats.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-SCT"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:f093e626b9846636de102ae6f70ff6ca1ac4836048f760b51278eadb317f2c17"
+		},
+		{
+			"id": "2022-12-w-bgc",
+			"geography": "seneddConstituency",
+			"title": "Senedd Cymru constituencies, December 2022 (Wales, generalised, clipped)",
+			"description": "The 40 constituency seats of the Welsh Parliament.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:8a2009de010f07df03f6344baeb0e488ea04bc4622fe134305900db67af4df95"
+		},
+		{
+			"id": "2022-12-w-bgc",
+			"geography": "seneddElectoralRegion",
+			"title": "Senedd Cymru electoral regions, December 2022 (Wales, generalised, clipped)",
+			"description": "The five regions that return the Welsh Parliament's additional member seats.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:5a0e5eff97f694f2501f48eaeb7875da56b4d24819774a8bed7e7fa257974577"
+		},
+		{
+			"id": "2026-04-en-bgc",
+			"geography": "subIntegratedCareBoardLocation",
+			"title": "Sub integrated care board locations, April 2026 (England, generalised, clipped)",
+			"description": "The commissioning areas within each integrated care board, which each feature names through its ICB code.",
+			"temporalCoverage": "2026",
+			"coverage": {
+				"countries": [
+					"GB-ENG"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:2f710bc32ea3daf8d4bb0749be644bab4d47839a89e36861b7bed858f671935f"
+		},
+		{
+			"id": "2011-ni",
+			"geography": "superOutputArea",
+			"title": "Super output areas, 2011 (Northern Ireland)",
+			"description": "Super output areas as published for 2011, covering Northern Ireland.",
+			"temporalCoverage": "2011",
+			"coverage": {
+				"countries": [
+					"GB-NIR"
+				]
+			},
+			"source": {
+				"publisher": "Northern Ireland Statistics and Research Agency",
+				"url": "https://www.nisra.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:bbcf9697971e00e022ea35e706f9c2e670748dd0bad4b073622b5fce68d9984c"
+		},
+		{
+			"id": "2011-12-uk-gcb",
+			"geography": "travelToWorkArea",
+			"title": "Travel to work areas, December 2011 (United Kingdom, generalised, clipped)",
+			"description": "Areas within which most residents also work, built from commuting flows rather than administration.",
+			"temporalCoverage": "2011",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-07",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:26a4467bccb8c0c07fa27035530c193adb2e93c592e7f213b1eb0d9fac7fd500"
+		},
+		{
+			"id": "2026-05-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, May 2026 (United Kingdom, generalised, clipped)",
+			"description": "Electoral wards as published for May 2026, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2026",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:b67838eb1ee5aabd2a51445b7cd53ab3183dec34e70dbf22c3452a9f174ecf1d"
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2025 (United Kingdom, generalised, clipped)",
+			"description": "Wards as published for December 2025, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:0b4c78b1577e119b31ae24b2a59107290750b631d3928f054f18239955a1eb25"
+		},
+		{
+			"id": "2025-05-uk-bgc-v2",
+			"geography": "ward",
+			"title": "Wards, May 2025 (United Kingdom, generalised, clipped, v2)",
+			"description": "Wards as published for May 2025, covering the United Kingdom. Generalised to 20 m and clipped to the coastline. Version 2 of the release.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:d5b4dfe8ef6850358a9200e79bbe3280b573086200dea54f0419f705b8ae6eeb"
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2024 (United Kingdom, generalised, clipped)",
+			"description": "Wards as published for December 2024, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2024",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:d508a0725d21e7809581e856acaec30ae055f3a993ac917c3f3ef487b16014a3"
+		},
+		{
+			"id": "2024-05-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, May 2024 (United Kingdom, generalised, clipped)",
+			"description": "Electoral wards as published for May 2024, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2024",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:c6d6eb714c5d3405a730fcae161f67e67476e053adaabeff50a9074254a8fc07"
+		},
+		{
+			"id": "2023-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2023 (United Kingdom, generalised, clipped)",
+			"description": "Wards as published for December 2023, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:a5109273926b4e57c339afc6d476f7bf2c8ad0a8fbfaece800c4b2edd8b2e414"
+		},
+		{
+			"id": "2023-05-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, May 2023 (United Kingdom, generalised, clipped)",
+			"description": "Wards as published for May 2023, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:40fd8c9f2200dbccb466a37d5098dc3ace8672fc50783ff5166bba0031a68cc3"
+		},
+		{
+			"id": "2022-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2022 (United Kingdom, generalised, clipped)",
+			"description": "Wards as published for December 2022, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:d6289932c4f820fc0a628f10d5117938247410746e5ddd2187c8a21fd319aa39"
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2021 (United Kingdom, generalised, clipped)",
+			"description": "Wards as published for December 2021, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:e8866554765d223fb35b0efc41255b30ebb1720709492d716f554e065c09c580"
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2020 (United Kingdom, generalised, clipped)",
+			"description": "Wards as published for December 2020, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2020",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:cf3bb9f457189981a778c39d4265ea129ca1e95cf464d0d57c260bc16c34de9c"
+		},
+		{
+			"id": "2019-12-gb-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2019 (Great Britain, generalised, clipped)",
+			"description": "Wards as published for December 2019, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2019",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:5decc170cee60d10d13c0953ac24d8ecaad202063cb9f725ef8836e5a052d6b7"
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2018 (United Kingdom, generalised, clipped)",
+			"description": "Wards as published for December 2018, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2018",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:ae16b5da71e04ed17bd0df32b15a1432325940ca7d483c90170a9a94a32b0634"
+		},
+		{
+			"id": "2017-12-gb-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2017 (Great Britain, generalised, clipped)",
+			"description": "Wards as published for December 2017, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2017",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:05193d444819f4792c39376286ab2814feaaaa91cc53376184f36e0351738235"
+		},
+		{
+			"id": "2016-12-gb-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2016 (Great Britain, generalised, clipped)",
+			"description": "Wards as published for December 2016, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2016",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:229595c28eb51e48be521fce99b5ffc667d2c9eb262df36b59f939e7635fbd32"
+		}
+	]
+}
