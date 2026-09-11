@@ -59,7 +59,20 @@ const crosswalkArtifact: CrosswalkArtifact = {
 	from: { geography: "constituency", boundaryRelease: "2010" },
 	to: { geography: "constituency", boundaryRelease: "2024-07-uk-bgc" },
 	provenance: { input: "lookup.geojson", inputHash: "sha256:input" },
-	validation: { sourceNameConflicts: [] },
+	validation: {
+		sourceNameConflicts: [],
+		endpoints: {
+			from: {
+				status: "not-available",
+				reason: "No compiled area release is available for constituency/2010.",
+			},
+			to: {
+				status: "verified",
+				availableAreaCount: 650,
+				referencedCodeCount: 650,
+			},
+		},
+	},
 	records: [
 		{
 			source: { code: "E14000001", labels: ["Old seat"] },
@@ -188,7 +201,7 @@ test("gets one crosswalk's metadata without its full record set", () => {
 		from: { geography: "constituency", boundaryRelease: "2010" },
 		to: { geography: "constituency", boundaryRelease: "2024-07-uk-bgc" },
 		provenance: { input: "lookup.geojson", inputHash: "sha256:input" },
-		validation: { sourceNameConflicts: [] },
+		validation: crosswalkArtifact.validation,
 	});
 
 	const missing = route(

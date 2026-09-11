@@ -981,6 +981,12 @@ adapter rather than assuming every crosswalk shares one method, so further
 sources can declare `area-overlap` or `population-overlap` without changing
 the compiler.
 
+Before publication, the crosswalk compiler validates every referenced code
+against the compiled area artifact for that endpoint and fails on a missing
+code. When the repository does not hold an endpoint's historical release, it
+records that endpoint as `not-available` instead of implying verification;
+the 2010 constituency side of the published lookup is the current example.
+
 The build's final step writes `public/atlas-release.json`, an immutable
 manifest that references every other build-time artifact (the boundary
 registry, derived boundaries, area inventory, crosswalk inventory, geography

@@ -1,8 +1,38 @@
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readCrosswalkAdapters } from "../src/crosswalkAdapters";
 import { compileCrosswalks } from "../src/crosswalkInventory";
+import {
+	createAreaLookup,
+	type AreaInventory,
+	type AreaReleaseArtifact,
+} from "../src/areaInventory";
+
+const readCompiledAreaLookup = (outputDirectory: string) => {
+	const inventory = JSON.parse(
+		readFileSync(join(outputDirectory, "area-inventory.json"), "utf8"),
+	) as AreaInventory;
+	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.releases)) {
+		throw new Error("Invalid area inventory before compiling crosswalks.");
+	}
+	const artifacts = inventory.releases.flatMap((release) => {
+		if (release.status !== "available") return [];
+		const path = join(outputDirectory, release.artifact);
+		const artifact = JSON.parse(
+			readFileSync(path, "utf8"),
+		) as AreaReleaseArtifact;
+		if (
+			artifact.schemaVersion !== 1 ||
+			artifact.contentHash !== release.contentHash ||
+			!Array.isArray(artifact.areas)
+		) {
+			throw new Error(`Invalid area release artifact at ${path}`);
+		}
+		return [artifact];
+	});
+	return createAreaLookup(artifacts);
+};
 
 export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "api", "public");
@@ -16,6 +46,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 		readCrosswalkAdapters(
 			join(repositoryRoot, "api", "config", "crosswalk-adapters.json"),
 		),
+		readCompiledAreaLookup(outputDirectory),
 	);
 	for (const artifact of artifacts) {
 		const path = join(outputDirectory, "crosswalks", `${artifact.id}.json`);
