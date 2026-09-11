@@ -20,3 +20,27 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
+
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir api typecheck
+      - run: pnpm --dir api test
+      # The build runs every compiler and the validation gate, which fails on
+      # an exception no waiver covers.
+      - run: pnpm --dir api build
+      - name: Committed API artifacts match a fresh build
+        run: |
+          changed="$(git status --porcelain -- api/public)"
+          if [ -n "$changed" ]; then
+            echo "$changed"
+            echo "api/public is stale: run 'pnpm --dir api build' and commit the result."
+            exit 1
+          fi
