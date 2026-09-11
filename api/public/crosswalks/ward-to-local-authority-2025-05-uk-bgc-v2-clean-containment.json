@@ -19,7 +19,19 @@
 		"inputHash": "sha256:e3dddb3174c0c18e70b7d029cceef2d8b063cfd0c81250ab91273804e80f9094"
 	},
 	"validation": {
-		"sourceNameConflicts": []
+		"sourceNameConflicts": [],
+		"endpoints": {
+			"from": {
+				"status": "verified",
+				"availableAreaCount": 8405,
+				"referencedCodeCount": 8405
+			},
+			"to": {
+				"status": "verified",
+				"availableAreaCount": 361,
+				"referencedCodeCount": 361
+			}
+		}
 	},
 	"records": [
 		{
@@ -136027,5 +136039,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:4416aac5cac4b092189ed22665ad149bdd3b370a0dab1b75529993932f51fab3"
+	"contentHash": "sha256:adb170e664942be14538d66636aed63ca18b50cafe401fd7eeb7fa10b1e07925"
 }

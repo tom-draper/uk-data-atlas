@@ -749,7 +749,7 @@ components:
               type: string
         validation:
           type: object
-          required: [sourceNameConflicts]
+          required: [sourceNameConflicts, endpoints]
           properties:
             sourceNameConflicts:
               type: array
@@ -763,6 +763,33 @@ components:
                     type: array
                     items:
                       type: string
+            endpoints:
+              type: object
+              required: [from, to]
+              properties:
+                from:
+                  $ref: "#/components/schemas/CrosswalkEndpointValidation"
+                to:
+                  $ref: "#/components/schemas/CrosswalkEndpointValidation"
+
+    CrosswalkEndpointValidation:
+      oneOf:
+        - type: object
+          required: [status, availableAreaCount, referencedCodeCount]
+          properties:
+            status:
+              const: verified
+            availableAreaCount:
+              type: integer
+            referencedCodeCount:
+              type: integer
+        - type: object
+          required: [status, reason]
+          properties:
+            status:
+              const: not-available
+            reason:
+              type: string
 
     CrosswalkMetadataEnvelope:
       allOf:

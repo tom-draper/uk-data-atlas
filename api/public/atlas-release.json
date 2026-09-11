@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:4a66aa2cdf641e823178ef51e385e3fa7afa5f66c0ae7fea3e347028c69b2a47",
+	"releaseId": "sha256:671e3cdf852ed9fc53c8c056278eb39fa21e31f55de6eaec056856bfce2843fc",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -20,7 +20,7 @@
 		{
 			"id": "crosswalk-inventory",
 			"path": "crosswalk-inventory.json",
-			"contentHash": "sha256:cf8bca3a12b989894465619948a4d019fca1b7e6f9bbbaf474fd3077acb27afc"
+			"contentHash": "sha256:675578732e9ea0a60639fe8eb29b359ae83985d2ea0ed39b3a597364b7652065"
 		},
 		{
 			"id": "geography-inventory",

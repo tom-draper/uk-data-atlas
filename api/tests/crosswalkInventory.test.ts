@@ -3,6 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
+import { createAreaLookup } from "../src/areaInventory";
 import { compileCrosswalks } from "../src/crosswalkInventory";
 
 test("compiles a published lookup without inventing apportionment weights", () => {
@@ -36,27 +37,54 @@ test("compiles a published lookup without inventing apportionment weights", () =
 	);
 
 	try {
-		const { artifacts, inventory } = compileCrosswalks(root, [
+		const areaLookup = createAreaLookup([
 			{
-				id: "constituency-2010-to-2024",
-				input,
-				method: "official-lookup",
-				quality: "publisher-supplied",
-				weighting: { status: "not-provided" },
-				from: {
-					geography: "constituency",
-					boundaryRelease: "2010",
-					codeProperty: "OLDCD",
-					nameProperty: "OLDNM",
-				},
-				to: {
-					geography: "constituency",
-					boundaryRelease: "2024",
-					codeProperty: "NEWCD",
-					nameProperty: "NEWNM",
-				},
+				schemaVersion: 1,
+				contentHash: "sha256:old",
+				geography: "constituency",
+				boundaryRelease: "2010",
+				codeProperty: "OLDCD",
+				nameProperty: "OLDNM",
+				areas: [{ code: "E14000001", name: "Old seat" }],
+			},
+			{
+				schemaVersion: 1,
+				contentHash: "sha256:new",
+				geography: "constituency",
+				boundaryRelease: "2024",
+				codeProperty: "NEWCD",
+				nameProperty: "NEWNM",
+				areas: [
+					{ code: "E14001001", name: "New seat A" },
+					{ code: "E14001002", name: "New seat B" },
+				],
 			},
 		]);
+		const { artifacts, inventory } = compileCrosswalks(
+			root,
+			[
+				{
+					id: "constituency-2010-to-2024",
+					input,
+					method: "official-lookup",
+					quality: "publisher-supplied",
+					weighting: { status: "not-provided" },
+					from: {
+						geography: "constituency",
+						boundaryRelease: "2010",
+						codeProperty: "OLDCD",
+						nameProperty: "OLDNM",
+					},
+					to: {
+						geography: "constituency",
+						boundaryRelease: "2024",
+						codeProperty: "NEWCD",
+						nameProperty: "NEWNM",
+					},
+				},
+			],
+			areaLookup,
+		);
 		assert.deepEqual(artifacts[0].weighting, { status: "not-provided" });
 		assert.deepEqual(artifacts[0].records, [
 			{
@@ -68,6 +96,18 @@ test("compiles a published lookup without inventing apportionment weights", () =
 			},
 		]);
 		assert.deepEqual(artifacts[0].validation.sourceNameConflicts, []);
+		assert.deepEqual(artifacts[0].validation.endpoints, {
+			from: {
+				status: "verified",
+				availableAreaCount: 1,
+				referencedCodeCount: 1,
+			},
+			to: {
+				status: "verified",
+				availableAreaCount: 2,
+				referencedCodeCount: 2,
+			},
+		});
 		assert.equal(inventory.crosswalks[0].recordCount, 1);
 	} finally {
 		rmSync(root, { recursive: true, force: true });

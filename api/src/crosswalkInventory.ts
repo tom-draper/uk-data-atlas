@@ -8,6 +8,7 @@ import type {
 	CrosswalkSideAdapter,
 	CrosswalkWeighting,
 } from "./crosswalkAdapters";
+import type { AreaLookup } from "./areaInventory";
 
 export type {
 	CrosswalkMethod,
@@ -37,9 +38,21 @@ export type CrosswalkArtifact = {
 	provenance: { input: string; inputHash: string };
 	validation: {
 		sourceNameConflicts: Array<{ code: string; names: string[] }>;
+		endpoints: {
+			from: CrosswalkEndpointValidation;
+			to: CrosswalkEndpointValidation;
+		};
 	};
 	records: Array<{ source: CrosswalkArea; targets: CrosswalkArea[] }>;
 };
+
+export type CrosswalkEndpointValidation =
+	| {
+			status: "verified";
+			availableAreaCount: number;
+			referencedCodeCount: number;
+	  }
+	| { status: "not-available"; reason: string };
 
 export type CrosswalkInventory = {
 	schemaVersion: 1;
@@ -100,9 +113,40 @@ const mergeArea = (
 	labels: [...new Set([...left.labels, ...right.labels])].sort(),
 });
 
+const validateEndpoint = (
+	crosswalkId: string,
+	side: "from" | "to",
+	adapter: CrosswalkSideAdapter,
+	codes: Set<string>,
+	areaLookup: AreaLookup | undefined,
+): CrosswalkEndpointValidation => {
+	const identity = `${adapter.geography}/${adapter.boundaryRelease}`;
+	const areas = areaLookup?.get(identity);
+	if (!areas) {
+		return {
+			status: "not-available",
+			reason: `No compiled area release is available for ${identity}.`,
+		};
+	}
+	const missing = [...codes].filter((code) => !areas.has(code));
+	if (missing.length > 0) {
+		throw new Error(
+			`${crosswalkId}: ${side} references ${missing.length} code${
+				missing.length === 1 ? "" : "s"
+			} absent from ${identity}: ${missing.slice(0, 10).join(", ")}`,
+		);
+	}
+	return {
+		status: "verified",
+		availableAreaCount: areas.size,
+		referencedCodeCount: codes.size,
+	};
+};
+
 export const compileCrosswalks = (
 	repositoryRoot: string,
 	adapters: CrosswalkAdapter[],
+	areaLookup?: AreaLookup,
 ): { inventory: CrosswalkInventory; artifacts: CrosswalkArtifact[] } => {
 	const artifacts = adapters.map((adapter) => {
 		const inputPath = join(repositoryRoot, "data", adapter.input);
@@ -166,6 +210,26 @@ export const compileCrosswalks = (
 			.filter(([, names]) => names.size > 1)
 			.map(([code, names]) => ({ code, names: [...names].sort() }))
 			.sort((left, right) => left.code.localeCompare(right.code));
+		const endpoints = {
+			from: validateEndpoint(
+				adapter.id,
+				"from",
+				adapter.from,
+				new Set(records.keys()),
+				areaLookup,
+			),
+			to: validateEndpoint(
+				adapter.id,
+				"to",
+				adapter.to,
+				new Set(
+					[...records.values()].flatMap((record) => [
+						...record.targets.keys(),
+					]),
+				),
+				areaLookup,
+			),
+		};
 		const artifactWithoutHash = {
 			schemaVersion: 1 as const,
 			id: adapter.id,
@@ -181,7 +245,7 @@ export const compileCrosswalks = (
 				boundaryRelease: adapter.to.boundaryRelease,
 			},
 			provenance: { input: adapter.input, inputHash: sha256(input) },
-			validation: { sourceNameConflicts },
+			validation: { sourceNameConflicts, endpoints },
 			records: [...records.values()]
 				.map((record) => ({
 					source: record.source,
