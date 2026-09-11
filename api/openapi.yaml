@@ -29,6 +29,16 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/GeographyListEnvelope"
+    /geography-inventory:
+        get:
+            operationId: getGeographyInventory
+            responses:
+                "200":
+                    description: Compiled coverage of available geography releases
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/GeographyInventoryEnvelope"
     /boundary-releases:
         get:
             operationId: listBoundaryReleases
@@ -114,6 +124,82 @@ components:
                 releaseCount:
                     type: integer
                     minimum: 1
+        CompilerCoverage:
+            type: object
+            required: [status, reason]
+            properties:
+                status:
+                    type: string
+                    const: not-compiled
+                reason:
+                    type: string
+        GeographyReleaseInventory:
+            type: object
+            required:
+                [
+                    id,
+                    geography,
+                    countries,
+                    inputFormats,
+                    areaIdentities,
+                    relationships,
+                ]
+            properties:
+                id:
+                    type: string
+                geography:
+                    type: string
+                countries:
+                    type: array
+                    items:
+                        type: string
+                inputFormats:
+                    type: array
+                    items:
+                        type: string
+                areaIdentities:
+                    $ref: "#/components/schemas/CompilerCoverage"
+                relationships:
+                    $ref: "#/components/schemas/CompilerCoverage"
+        GeographyCoverage:
+            type: object
+            required: [id, countries, releaseCount]
+            properties:
+                id:
+                    type: string
+                countries:
+                    type: array
+                    items:
+                        type: string
+                releaseCount:
+                    type: integer
+                    minimum: 1
+        GeographyInventory:
+            type: object
+            required:
+                [
+                    schemaVersion,
+                    contentHash,
+                    boundaryRegistryHash,
+                    releases,
+                    geographies,
+                ]
+            properties:
+                schemaVersion:
+                    type: integer
+                    const: 1
+                contentHash:
+                    type: string
+                boundaryRegistryHash:
+                    type: string
+                releases:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/GeographyReleaseInventory"
+                geographies:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/GeographyCoverage"
         BoundaryRelease:
             type: object
             required: [id, geography, title, coverage, source, metadataHash]
@@ -187,6 +273,13 @@ components:
                           type: array
                           items:
                               $ref: "#/components/schemas/Geography"
+        GeographyInventoryEnvelope:
+            allOf:
+                - $ref: "#/components/schemas/Envelope"
+                - type: object
+                  properties:
+                      data:
+                          $ref: "#/components/schemas/GeographyInventory"
         BoundaryReleaseListEnvelope:
             allOf:
                 - $ref: "#/components/schemas/Envelope"

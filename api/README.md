@@ -916,7 +916,7 @@ the website's boundary catalogue or expose its browser asset URLs.
 Run it from this directory:
 
 ```sh
-pnpm build:boundary-registry
+pnpm build
 pnpm test
 pnpm start
 ```
@@ -926,8 +926,13 @@ pnpm start
 
 - `GET /v1`
 - `GET /v1/geographies`
+- `GET /v1/geography-inventory`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`
 
-The generated `public/boundary-releases.json` is the service's only current
-input. It remains independent of the current Next.js application.
+The build scans every `../data/**/meta.json`, so a newly added dataset becomes
+visible to the source inventory on the next build without changing API code.
+Boundary releases also feed `public/geography-inventory.json`, which reports
+the input formats and whether area identity and conversion compilers are
+available. The current release metadata and inventories remain independent of
+the Next.js application.

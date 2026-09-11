@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { route } from "../src/routes";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type { GeographyInventory } from "../src/geographyInventory";
 
 const registry: BoundaryRegistry = {
 	schemaVersion: 1,
@@ -20,6 +21,14 @@ const registry: BoundaryRegistry = {
 			metadataHash: "sha256:metadata",
 		},
 	],
+};
+
+const geographyInventory: GeographyInventory = {
+	schemaVersion: 1,
+	contentHash: "sha256:geography",
+	boundaryRegistryHash: "sha256:registry",
+	releases: [],
+	geographies: [],
 };
 
 test("lists published geographies", () => {
@@ -45,6 +54,20 @@ test("gets one boundary release", () => {
 	assert.equal(
 		"data" in response.body && response.body.data,
 		registry.releases[0],
+	);
+});
+
+test("publishes the geography compiler coverage", () => {
+	const response = route(
+		"GET",
+		"/v1/geography-inventory",
+		registry,
+		geographyInventory,
+	);
+	assert.equal(response.status, 200);
+	assert.equal(
+		"data" in response.body && response.body.data,
+		geographyInventory,
 	);
 });
 

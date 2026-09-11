@@ -1,4 +1,5 @@
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { GeographyInventory } from "./geographyInventory";
 
 type Envelope<T> = {
 	apiVersion: "v1";
@@ -54,6 +55,7 @@ export const route = (
 	method: string | undefined,
 	url: string | undefined,
 	registry: BoundaryRegistry,
+	geographyInventory?: GeographyInventory,
 ): ApiResponse => {
 	if (method !== "GET") {
 		return problem(405, "Method Not Allowed", "This API is read-only.");
@@ -74,7 +76,11 @@ export const route = (
 			status: 200,
 			body: envelope(registry, {
 				name: "UK Data Atlas API",
-				links: ["/v1/geographies", "/v1/boundary-releases"],
+				links: [
+					"/v1/geographies",
+					"/v1/boundary-releases",
+					"/v1/geography-inventory",
+				],
 			}),
 		};
 	}
@@ -101,6 +107,20 @@ export const route = (
 			}))
 			.sort((left, right) => left.id.localeCompare(right.id));
 		return { status: 200, body: envelope(registry, geographies) };
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "geography-inventory"
+	) {
+		return geographyInventory
+			? { status: 200, body: envelope(registry, geographyInventory) }
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the geography inventory before starting the API.",
+				);
 	}
 
 	if (
