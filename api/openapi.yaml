@@ -43,6 +43,7 @@ paths:
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/areas/{type}/{release}/{code}/relationships
+                    - /v1/areas/{type}/{release}/{code}/geometry
                     - /v1/crosswalks
                     - /v1/crosswalks/{crosswalk-id}
                     - /v1/crosswalks/{crosswalk-id}/records
@@ -312,6 +313,61 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /areas/{geography}/{release}/{code}/geometry:
+    get:
+      operationId: getAreaGeometry
+      summary: Get one compiled area's raw geometry as a GeoJSON Feature
+      description: >
+        Serves the area's own geometry straight from its raw, cached WGS84
+        source GeoJSON, not a generalised or simplified derivative. A code
+        that maps to more than one feature fragment in the source (e.g. an
+        area split across islands) is returned as a single GeometryCollection
+        rather than picking one fragment. This is a raw geometry lookup, not
+        yet the tiled or simplified delivery the full proposal describes.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The official source code for this area on this boundary release.
+      responses:
+        "200":
+          description: The matching area as a GeoJSON Feature.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaGeometryEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
+                data:
+                  type: Feature
+                  id: constituency/2024-07-uk-bgc/E14001262
+                  properties:
+                    id: constituency/2024-07-uk-bgc/E14001262
+                    geography: constituency
+                    boundaryRelease: 2024-07-uk-bgc
+                    code: E14001262
+                    name: Halifax
+                  geometry:
+                    type: Polygon
+                    coordinates: [[[-1.9269, 53.7874], [-1.9146, 53.7815]]]
+                meta:
+                  nextCursor: null
+        "404":
+          description: >
+            Either no compiled area matches that identity, or the area exists
+            but no feature for its code was found in the raw geometry source.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/GeometryUnavailable"
+
   /crosswalks:
     get:
       operationId: listCrosswalks
@@ -503,14 +559,16 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    InvalidQuery:
-      description: A query parameter is malformed or its cursor is not valid for this result set.
+    CatalogueUnavailable:
+      description: The referenced build artifact has not been built yet.
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    CatalogueUnavailable:
-      description: The referenced build artifact has not been built yet.
+    GeometryUnavailable:
+      description: >
+        The area exists but its geometry could not be loaded, e.g. its source
+        is not yet WGS84-ready.
       content:
         application/problem+json:
           schema:
@@ -860,6 +918,45 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/AreaRelationship"
+
+    GeoJsonGeometry:
+      type: object
+      description: >
+        A GeoJSON geometry object as read from the raw cached source, or a
+        GeometryCollection when the source represents one area code as more
+        than one feature fragment.
+      required: [type]
+      properties:
+        type:
+          type: string
+        coordinates:
+          description: Present on every geometry type except GeometryCollection.
+        geometries:
+          type: array
+          items:
+            $ref: "#/components/schemas/GeoJsonGeometry"
+          description: Present only when type is GeometryCollection.
+
+    AreaGeometry:
+      type: object
+      required: [type, id, properties, geometry]
+      properties:
+        type:
+          const: Feature
+        id:
+          type: string
+        properties:
+          $ref: "#/components/schemas/Area"
+        geometry:
+          $ref: "#/components/schemas/GeoJsonGeometry"
+
+    AreaGeometryEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/AreaGeometry"
 
     AreaRelationshipsEnvelope:
       allOf:

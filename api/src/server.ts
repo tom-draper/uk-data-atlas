@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import {
 	createAreaLookup,
 	type AreaInventory,
@@ -8,6 +8,8 @@ import {
 	type AreaReleaseArtifact,
 } from "./areaInventory";
 import type { AtlasRelease } from "./atlasRelease";
+import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
+import { readGeometrySourceLookup } from "./geometrySources";
 import {
 	createAreaRelationshipIndex,
 	type AreaRelationshipIndex,
@@ -124,6 +126,7 @@ export type ApiCatalogues = {
 	areaLookup: AreaLookup;
 	areaSearchIndex: AreaSearchIndex;
 	areaRelationshipIndex: AreaRelationshipIndex;
+	areaGeometryCache: AreaGeometryCache;
 	crosswalkInventory: CrosswalkInventory;
 	crosswalkLookup: CrosswalkLookup;
 	atlasRelease: AtlasRelease;
@@ -132,6 +135,7 @@ export type ApiCatalogues = {
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const areaLookup = readAreaLookup(apiRoot);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
+	const geometrySources = readGeometrySourceLookup(apiRoot);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
 	return {
 		boundaryRegistry: readBoundaryRegistry(apiRoot),
@@ -140,6 +144,10 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		areaSearchIndex: createAreaSearchIndex(areaLookup),
 		areaRelationshipIndex: createAreaRelationshipIndex(
 			crosswalkLookup.values(),
+		),
+		areaGeometryCache: new AreaGeometryCache(
+			resolve(apiRoot, ".."),
+			geometrySources,
 		),
 		crosswalkInventory,
 		crosswalkLookup,
@@ -153,6 +161,7 @@ export const createApiServer = ({
 	areaLookup,
 	areaSearchIndex,
 	areaRelationshipIndex,
+	areaGeometryCache,
 	crosswalkInventory,
 	crosswalkLookup,
 	atlasRelease,
@@ -167,6 +176,9 @@ export const createApiServer = ({
 			crosswalkInventory,
 			crosswalkLookup,
 			atlasRelease,
+			areaSearchIndex,
+			areaRelationshipIndex,
+			areaGeometryCache,
 		);
 		response.writeHead(result.status, {
 			"cache-control": "public, max-age=300",

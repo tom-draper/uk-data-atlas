@@ -1,4 +1,5 @@
 import type { AreaLookup } from "./areaInventory";
+import type { AreaGeometryCache } from "./areaGeometry";
 import {
 	createAreaRelationshipIndex,
 	type AreaRelationshipIndex,
@@ -140,6 +141,7 @@ export const route = (
 	atlasRelease?: AtlasRelease,
 	areaSearchIndex?: AreaSearchIndex,
 	areaRelationshipIndex?: AreaRelationshipIndex,
+	areaGeometryCache?: AreaGeometryCache,
 ): ApiResponse => {
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -169,6 +171,7 @@ export const route = (
 					"/v1/areas",
 					"/v1/areas/{type}/{release}/{code}",
 					"/v1/areas/{type}/{release}/{code}/relationships",
+					"/v1/areas/{type}/{release}/{code}/geometry",
 					"/v1/crosswalks",
 					"/v1/crosswalks/{crosswalk-id}",
 					"/v1/crosswalks/{crosswalk-id}/records",
@@ -267,6 +270,65 @@ export const route = (
 				? cursorFor(lastArea.id)
 				: null;
 		return { status: 200, body: envelope(releaseId, areas, nextCursor) };
+	}
+
+	if (
+		segments.length === 6 &&
+		segments[0] === "v1" &&
+		segments[1] === "areas" &&
+		segments[5] === "geometry"
+	) {
+		const [geography, boundaryRelease, code] = segments.slice(2, 5);
+		const area = areaLookup
+			?.get([geography, boundaryRelease].join("/"))
+			?.get(code as string);
+		if (!area)
+			return problem(
+				404,
+				"Not Found",
+				"No compiled area matches that identity.",
+			);
+		if (!areaGeometryCache)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the geometry source registry before retrieving geometry.",
+			);
+		try {
+			const geometry = areaGeometryCache.get(
+				geography as string,
+				boundaryRelease as string,
+				code as string,
+			);
+			if (!geometry)
+				return problem(
+					404,
+					"Not Found",
+					"No raw geometry matches that area identity.",
+				);
+			return {
+				status: 200,
+				body: envelope(releaseId, {
+					type: "Feature",
+					id: [geography, boundaryRelease, code].join("/"),
+					properties: {
+						id: [geography, boundaryRelease, area.code].join("/"),
+						geography,
+						boundaryRelease,
+						...area,
+					},
+					geometry,
+				}),
+			};
+		} catch (error) {
+			return problem(
+				503,
+				"Geometry Unavailable",
+				error instanceof Error
+					? error.message
+					: "Geometry could not be loaded.",
+			);
+		}
 	}
 
 	if (
