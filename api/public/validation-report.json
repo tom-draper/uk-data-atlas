@@ -1,25 +1,25 @@
 {
 	"schemaVersion": 1,
 	"inputs": {
-		"boundaryRegistry": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
-		"areaInventory": "sha256:ab26754ea9cd1a517c060682fa6465479452b9c2e62d4679791556fb498509b5",
-		"geometrySources": "sha256:8a1f577ded8845340c40c69224bcdf728a7b6ef1567d6716da990a31c31c6bee",
-		"crosswalkInventory": "sha256:8e756cc502740f257920c3d91fdef13c7e6a420dd1ad4b8b6d2815ce4919b1cf",
-		"relationshipCandidates": "sha256:1da853f398e07f492bda71289ee48a0c8c0250a199a58dbf6166172a1e04f957",
-		"geographyInventory": "sha256:a843563d7f6a802b6b7d30fbb661009b4c54fa8a1bacb5daf23d6d25eb994713",
-		"waivers": "sha256:e01845720f4cfb741b9f782dbfcb19d891fb88016a80f7efd1d96f9d4399b9bf"
+		"boundaryRegistry": "sha256:9c73ed179658325c8f725d623596ef4240d9c8733eaae69941357ca38362bb5e",
+		"areaInventory": "sha256:878a70b41f31b058e3a9cc7a101acc86ca81b50ec275f44762d51db605d5efcd",
+		"geometrySources": "sha256:1a8c7d4c2bca0c30c92660a4793f185ba4048805477d5f056f176d01bb6947b4",
+		"crosswalkInventory": "sha256:29dc114d1a0d62561345319ac989c88713d60e5630840af11364b42aeafa59c6",
+		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
+		"geographyInventory": "sha256:493978304280afb4780713f57b53b3ab284ca268233aec959aa3d41cf3d23392",
+		"waivers": "sha256:72af2f1632fbaa8fd398f263fe860651c9e38875931a748a91a0e64b99adae12"
 	},
 	"summary": {
-		"resourceCount": 77,
-		"checkCount": 316,
-		"passedCount": 297,
-		"waivedCount": 19,
+		"resourceCount": 86,
+		"checkCount": 357,
+		"passedCount": 337,
+		"waivedCount": 20,
 		"coverage": {
-			"boundaryReleases": 67,
-			"areaIdentities": 67,
-			"servableGeometry": 65,
-			"withRelationships": 15,
-			"crosswalks": 9,
+			"boundaryReleases": 71,
+			"areaIdentities": 71,
+			"servableGeometry": 69,
+			"withRelationships": 22,
+			"crosswalks": 14,
 			"weightedCrosswalks": 1
 		}
 	},
@@ -37,7 +37,7 @@
 					"id": "release-coverage",
 					"status": "passed",
 					"measured": {
-						"boundaryReleaseCount": 67
+						"boundaryReleaseCount": 71
 					}
 				}
 			]
@@ -799,6 +799,35 @@
 			]
 		},
 		{
+			"id": "boundary-releases/localAuthority/2019-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 382
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/localAuthority/2021-12-uk-bgc",
 			"kind": "boundary-release",
 			"status": "waived",
@@ -929,6 +958,35 @@
 			]
 		},
 		{
+			"id": "boundary-releases/localAuthority/2024-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 361
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/localAuthority/2025-05-uk-bgc-v2",
 			"kind": "boundary-release",
 			"status": "passed",
@@ -949,6 +1007,64 @@
 					"status": "passed",
 					"measured": {
 						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2025-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 361
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2026-05-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 361
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "urn:ogc:def:crs:OGC:1.3:CRS84"
 					}
 				},
 				{
@@ -2028,7 +2144,7 @@
 		{
 			"id": "boundary-releases/ward/2025-05-uk-bgc-v2",
 			"kind": "boundary-release",
-			"status": "passed",
+			"status": "waived",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -2050,7 +2166,11 @@
 				},
 				{
 					"id": "candidates-reviewed",
-					"status": "passed"
+					"status": "waived",
+					"detail": "Relationship candidates awaiting a decision: ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc (eligible).",
+					"waiver": {
+						"reason": "Its local authority fields also match the December 2025 release, which holds the same 361 authorities as May 2025. These wards' parents are already published against the May 2025 release, and the December 2025 release takes its wards from the December 2025 ward crosswalk, so this pairing is not published."
+					}
 				}
 			]
 		},
@@ -2210,6 +2330,66 @@
 			]
 		},
 		{
+			"id": "crosswalks/parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 11556
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 11542
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "crosswalks/sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -2360,6 +2540,36 @@
 			]
 		},
 		{
+			"id": "crosswalks/ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8396
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "crosswalks/ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -2369,6 +2579,66 @@
 					"status": "passed",
 					"measured": {
 						"recordCount": 8405
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8405
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8413
 					}
 				},
 				{
@@ -2420,5 +2690,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:4e85a399732125d76741749012ca4488694dbca20592d8ce38a28eb3245d277c"
+	"contentHash": "sha256:d46d48b9f47d4bd38afb37ea0b2e16e7c3f557f56f26eb9332430c904b1353c3"
 }

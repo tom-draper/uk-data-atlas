@@ -37,6 +37,11 @@
 			"resources": [
 				"crosswalks/constituency-2010-to-2024-official-lookup-v2"
 			]
+		},
+		{
+			"check": "candidates-reviewed",
+			"reason": "Its local authority fields also match the December 2025 release, which holds the same 361 authorities as May 2025. These wards' parents are already published against the May 2025 release, and the December 2025 release takes its wards from the December 2025 ward crosswalk, so this pairing is not published.",
+			"resources": ["boundary-releases/ward/2025-05-uk-bgc-v2"]
 		}
 	]
 }

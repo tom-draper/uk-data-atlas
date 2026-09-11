@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:1da853f398e07f492bda71289ee48a0c8c0250a199a58dbf6166172a1e04f957",
+	"contentHash": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
 	"candidates": [
 		{
-			"id": "parish-2019-04-ew-bgc-to-local-authority-unavailable",
+			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc",
 			"input": "boundaries/parish/2019-04-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_April_2019_GCB_EW_2022_7767177223882237005.geojson",
 			"from": {
 				"geography": "parish",
@@ -13,10 +13,11 @@
 			},
 			"to": {
 				"geography": "localAuthority",
+				"boundaryRelease": "2019-12-uk-bgc",
 				"codeProperty": "lad19cd",
 				"nameProperty": "lad19nm"
 			},
-			"status": "not-available",
+			"status": "eligible",
 			"validation": {
 				"endpoints": {
 					"from": {
@@ -25,8 +26,9 @@
 						"referencedCodeCount": 11556
 					},
 					"to": {
-						"status": "not-available",
-						"reason": "No compiled target release has lad19cd/lad19nm fields."
+						"status": "verified",
+						"availableAreaCount": 382,
+						"referencedCodeCount": 339
 					}
 				},
 				"relationship": {
@@ -36,13 +38,12 @@
 					"multiTargetSourceCount": 0,
 					"missingValueFeatureCount": 0
 				},
-				"reasons": [
-					"No compiled target release has lad19cd/lad19nm fields."
-				]
-			}
+				"reasons": []
+			},
+			"publishedCrosswalkId": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment"
 		},
 		{
-			"id": "parish-2026-05-ew-bgc-to-local-authority-unavailable",
+			"id": "parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc",
 			"input": "boundaries/parish/2026-05-ew-bgc/PARNCP_MAY_2026_EW_BGC_5023227107847847413.geojson",
 			"from": {
 				"geography": "parish",
@@ -52,10 +53,11 @@
 			},
 			"to": {
 				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc",
 				"codeProperty": "LAD26CD",
 				"nameProperty": "LAD26NM"
 			},
-			"status": "not-available",
+			"status": "eligible",
 			"validation": {
 				"endpoints": {
 					"from": {
@@ -64,8 +66,9 @@
 						"referencedCodeCount": 11542
 					},
 					"to": {
-						"status": "not-available",
-						"reason": "No compiled target release has LAD26CD/LAD26NM fields."
+						"status": "verified",
+						"availableAreaCount": 361,
+						"referencedCodeCount": 318
 					}
 				},
 				"relationship": {
@@ -75,10 +78,9 @@
 					"multiTargetSourceCount": 0,
 					"missingValueFeatureCount": 0
 				},
-				"reasons": [
-					"No compiled target release has LAD26CD/LAD26NM fields."
-				]
-			}
+				"reasons": []
+			},
+			"publishedCrosswalkId": "parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment"
 		},
 		{
 			"id": "sub-integrated-care-board-location-2026-04-en-bgc-to-integrated-care-board-2026-04-en-bgc",
@@ -281,6 +283,46 @@
 			"publishedCrosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment"
 		},
 		{
+			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc",
+			"input": "boundaries/ward/2024-12-uk-bgc/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"codeProperty": "WD24CD",
+				"nameProperty": "WD24NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"codeProperty": "LAD24CD",
+				"nameProperty": "LAD24NM"
+			},
+			"status": "eligible",
+			"validation": {
+				"endpoints": {
+					"from": {
+						"status": "verified",
+						"availableAreaCount": 8396,
+						"referencedCodeCount": 8396
+					},
+					"to": {
+						"status": "verified",
+						"availableAreaCount": 361,
+						"referencedCodeCount": 361
+					}
+				},
+				"relationship": {
+					"sourceFeatureCount": 8396,
+					"sourceCodeCount": 8396,
+					"targetCodeCount": 361,
+					"multiTargetSourceCount": 0,
+					"missingValueFeatureCount": 0
+				},
+				"reasons": []
+			},
+			"publishedCrosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment"
+		},
+		{
 			"id": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-05-uk-bgc-v2",
 			"input": "boundaries/ward/2025-05-uk-bgc-v2/WD_MAY_2025_UK_BGC_V2_-8581021362622909866.geojson",
 			"from": {
@@ -319,6 +361,45 @@
 				"reasons": []
 			},
 			"publishedCrosswalkId": "ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment"
+		},
+		{
+			"id": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc",
+			"input": "boundaries/ward/2025-05-uk-bgc-v2/WD_MAY_2025_UK_BGC_V2_-8581021362622909866.geojson",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2",
+				"codeProperty": "WD25CD",
+				"nameProperty": "WD25NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "LAD25CD",
+				"nameProperty": "LAD25NM"
+			},
+			"status": "eligible",
+			"validation": {
+				"endpoints": {
+					"from": {
+						"status": "verified",
+						"availableAreaCount": 8405,
+						"referencedCodeCount": 8405
+					},
+					"to": {
+						"status": "verified",
+						"availableAreaCount": 361,
+						"referencedCodeCount": 361
+					}
+				},
+				"relationship": {
+					"sourceFeatureCount": 8405,
+					"sourceCodeCount": 8405,
+					"targetCodeCount": 361,
+					"multiTargetSourceCount": 0,
+					"missingValueFeatureCount": 0
+				},
+				"reasons": []
+			}
 		},
 		{
 			"id": "ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2",
@@ -361,7 +442,47 @@
 			"publishedCrosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment"
 		},
 		{
-			"id": "ward-2026-05-uk-bgc-to-local-authority-unavailable",
+			"id": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc",
+			"input": "boundaries/ward/2025-12-uk-bgc/WD_DEC_2025_UK_BGC_4818954163088901457.geojson",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "WD25CD",
+				"nameProperty": "WD25NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "LAD25CD",
+				"nameProperty": "LAD25NM"
+			},
+			"status": "eligible",
+			"validation": {
+				"endpoints": {
+					"from": {
+						"status": "verified",
+						"availableAreaCount": 8405,
+						"referencedCodeCount": 8405
+					},
+					"to": {
+						"status": "verified",
+						"availableAreaCount": 361,
+						"referencedCodeCount": 361
+					}
+				},
+				"relationship": {
+					"sourceFeatureCount": 8405,
+					"sourceCodeCount": 8405,
+					"targetCodeCount": 361,
+					"multiTargetSourceCount": 0,
+					"missingValueFeatureCount": 0
+				},
+				"reasons": []
+			},
+			"publishedCrosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment"
+		},
+		{
+			"id": "ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc",
 			"input": "boundaries/ward/2026-05-uk-bgc/WD_MAY_2026_UK_BGC_-6729380219658751476.geojson",
 			"from": {
 				"geography": "ward",
@@ -371,10 +492,11 @@
 			},
 			"to": {
 				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc",
 				"codeProperty": "LAD26CD",
 				"nameProperty": "LAD26NM"
 			},
-			"status": "not-available",
+			"status": "eligible",
 			"validation": {
 				"endpoints": {
 					"from": {
@@ -383,8 +505,9 @@
 						"referencedCodeCount": 8413
 					},
 					"to": {
-						"status": "not-available",
-						"reason": "No compiled target release has LAD26CD/LAD26NM fields."
+						"status": "verified",
+						"availableAreaCount": 361,
+						"referencedCodeCount": 361
 					}
 				},
 				"relationship": {
@@ -394,10 +517,9 @@
 					"multiTargetSourceCount": 0,
 					"missingValueFeatureCount": 0
 				},
-				"reasons": [
-					"No compiled target release has LAD26CD/LAD26NM fields."
-				]
-			}
+				"reasons": []
+			},
+			"publishedCrosswalkId": "ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment"
 		}
 	]
 }

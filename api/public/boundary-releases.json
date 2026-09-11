@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
+	"contentHash": "sha256:9c73ed179658325c8f725d623596ef4240d9c8733eaae69941357ca38362bb5e",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -520,6 +520,54 @@
 			"metadataHash": "sha256:3b2edf94104928061c3dac616fddb1fccc1e79c90fb27a606297090e4b84a1c8"
 		},
 		{
+			"id": "2026-05-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, May 2026 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for May 2026, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2026",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:19ac5efc5250a783062a55a5fa1329046b76e7ff732369ad93ae75730687d915"
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for December 2025, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:9359a1bce3a28966280dd8e47e1b7e5979d01a9e5c432d075e4b3b1a2199e5f2"
+		},
+		{
 			"id": "2025-05-uk-bgc-v2",
 			"geography": "localAuthority",
 			"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
@@ -542,6 +590,30 @@
 				}
 			},
 			"metadataHash": "sha256:95d5f992ed7e85b86f20b6d3d00b745d593a0083727ab2500ac6809cdf82532c"
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for December 2024, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2024",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:60b07f91b882aa5d41a2cadc5f1be5fad634c5afc8a4216ea47cb6990318665a"
 		},
 		{
 			"id": "2024-05-uk-bgc",
@@ -638,6 +710,30 @@
 				}
 			},
 			"metadataHash": "sha256:439d27a543681e4dff9e4c4b93ebfe616bda10d69f68e348c957dad1f747cad7"
+		},
+		{
+			"id": "2019-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2019 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for December 2019, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2019",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:32e1e89bdaea89d5163c1a2682f6855c9864d2f0a4768b2851363f7f47e35b5c"
 		},
 		{
 			"id": "2018-12-uk-bgc",

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:ab26754ea9cd1a517c060682fa6465479452b9c2e62d4679791556fb498509b5",
-	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
+	"contentHash": "sha256:878a70b41f31b058e3a9cc7a101acc86ca81b50ec275f44762d51db605d5efcd",
+	"boundaryRegistryHash": "sha256:9c73ed179658325c8f725d623596ef4240d9c8733eaae69941357ca38362bb5e",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -224,6 +224,26 @@
 			"nameProperty": "ITL321NM"
 		},
 		{
+			"id": "2026-05-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 361,
+			"artifact": "areas/localAuthority/2026-05-uk-bgc.json",
+			"contentHash": "sha256:bf3b8365d5ae3b30c1d34059f4eb573f92632351c52b956f8f72d13bf3891ce1",
+			"codeProperty": "LAD26CD",
+			"nameProperty": "LAD26NM"
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 361,
+			"artifact": "areas/localAuthority/2025-12-uk-bgc.json",
+			"contentHash": "sha256:53eeb1c7f828f03e50c8f66081d88019ec9f9a31b2a56b41d2b3eff891e40b24",
+			"codeProperty": "LAD25CD",
+			"nameProperty": "LAD25NM"
+		},
+		{
 			"id": "2025-05-uk-bgc-v2",
 			"geography": "localAuthority",
 			"status": "available",
@@ -232,6 +252,16 @@
 			"contentHash": "sha256:5c832fa744ee66475a4f0d0cda3faea14eadd039abb6e9223e248e8445ac608a",
 			"codeProperty": "LAD25CD",
 			"nameProperty": "LAD25NM"
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 361,
+			"artifact": "areas/localAuthority/2024-12-uk-bgc.json",
+			"contentHash": "sha256:31265967f1dfba88b929c7a0656f06d8a0d544c118fdd9d201e1b4b8aecec6b1",
+			"codeProperty": "LAD24CD",
+			"nameProperty": "LAD24NM"
 		},
 		{
 			"id": "2024-05-uk-bgc",
@@ -272,6 +302,16 @@
 			"contentHash": "sha256:bad319cb06dab4ba8ce6f1c9490a96c423f9745be9e0d80e9acfcf11b67842e6",
 			"codeProperty": "LAD21CD",
 			"nameProperty": "LAD21NM"
+		},
+		{
+			"id": "2019-12-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 382,
+			"artifact": "areas/localAuthority/2019-12-uk-bgc.json",
+			"contentHash": "sha256:ee6cec9445fd13f8b3607068ae9d2e3b8f5163e8f5611686d47504b4b02e0d56",
+			"codeProperty": "lad19cd",
+			"nameProperty": "lad19nm"
 		},
 		{
 			"id": "2018-12-uk-bgc",
