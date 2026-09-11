@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:45a4fd6084294b5d9b017be9efc19e7d165e347fa00119af9be7d5710efc7298",
+	"contentHash": "sha256:5d8388cb3f4bb0f9cc7347a7a0bb139ae009c23d221a7c5bfbf45bb0393d14e7",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -312,8 +312,22 @@
 		{
 			"id": "2011-12-w-bgc",
 			"geography": "lsoa",
-			"status": "not-compiled",
-			"reason": "No declared GeoJSON source is available for this release."
+			"status": "available",
+			"recordCount": 1909,
+			"artifact": "areas/lsoa/2011-12-w-bgc.json",
+			"contentHash": "sha256:f5754d1eef26a50551d62f6b0240d60e4f99989e2d1c9fda24b3886b0fa46e5a",
+			"codeProperty": "LSOA11CD",
+			"nameProperty": "LSOA11NM",
+			"derivedFrom": {
+				"source": {
+					"geography": "lsoa",
+					"boundaryRelease": "2011-12-ew-bgc-v3"
+				},
+				"filter": {
+					"property": "LSOA11CD",
+					"startsWith": "W"
+				}
+			}
 		},
 		{
 			"id": "2011-12-ew-bgc-v3",

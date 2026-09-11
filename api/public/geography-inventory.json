@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:d2b3bcccafe6a49375ed4d3fa9aee03395da3e4d39031faa799adce25331dccd",
+	"contentHash": "sha256:f3b1da516584d9f57e0793f52110d79452a7e9077fae7a4134b6a177f7f7d6bd",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -680,10 +680,9 @@
 				".topojson"
 			],
 			"areaIdentities": {
-				"id": "2011-12-w-bgc",
-				"geography": "lsoa",
-				"status": "not-compiled",
-				"reason": "No declared GeoJSON source is available for this release."
+				"status": "available",
+				"recordCount": 1909,
+				"artifact": "areas/lsoa/2011-12-w-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",

@@ -2,6 +2,10 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { AreaAdapterManifest, AreaPropertyAdapter } from "./areaAdapters";
+import type {
+	AreaSourceAdapter,
+	AreaSourceAdapterManifest,
+} from "./areaSourceAdapters";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 
 type FeatureCollection = {
@@ -26,6 +30,7 @@ export type AreaReleaseArtifact = {
 	boundaryRelease: string;
 	codeProperty: string;
 	nameProperty: string;
+	derivedFrom?: AreaSourceAdapter;
 	areas: AreaRecord[];
 };
 
@@ -38,6 +43,7 @@ type AvailableAreaRelease = {
 	contentHash: string;
 	codeProperty: string;
 	nameProperty: string;
+	derivedFrom?: AreaSourceAdapter;
 };
 
 type UnavailableAreaRelease = {
@@ -125,6 +131,7 @@ const compileGeoJson = (
 	geography: string,
 	boundaryRelease: string,
 	adapter?: AreaPropertyAdapter,
+	sourceAdapter?: AreaSourceAdapter,
 ): AreaReleaseArtifact | UnavailableAreaRelease => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as FeatureCollection;
 	if (
@@ -138,7 +145,26 @@ const compileGeoJson = (
 			reason: "The declared GeoJSON source is not a FeatureCollection.",
 		};
 	}
-	const firstProperties = source.features[0]?.properties;
+	const features = sourceAdapter
+		? source.features.filter((feature) => {
+				const properties = feature.properties as
+					Record<string, unknown> | undefined;
+				const value = properties?.[sourceAdapter.filter.property];
+				return (
+					typeof value === "string" &&
+					value.startsWith(sourceAdapter.filter.startsWith)
+				);
+			})
+		: source.features;
+	if (features.length === 0) {
+		return {
+			id: boundaryRelease,
+			geography,
+			status: "not-compiled",
+			reason: "The configured source selection did not match any features.",
+		};
+	}
+	const firstProperties = features[0]?.properties;
 	if (typeof firstProperties !== "object" || firstProperties === null) {
 		return {
 			id: boundaryRelease,
@@ -166,7 +192,7 @@ const compileGeoJson = (
 		);
 	}
 	const areasByCode = new Map<string, AreaRecord>();
-	for (const [index, feature] of source.features.entries()) {
+	for (const [index, feature] of features.entries()) {
 		if (
 			typeof feature.properties !== "object" ||
 			feature.properties === null
@@ -216,6 +242,7 @@ const compileGeoJson = (
 		boundaryRelease,
 		codeProperty: fields.codeProperty,
 		nameProperty: fields.nameProperty,
+		...(sourceAdapter === undefined ? {} : { derivedFrom: sourceAdapter }),
 		areas,
 	});
 	return {
@@ -225,6 +252,7 @@ const compileGeoJson = (
 		boundaryRelease,
 		codeProperty: fields.codeProperty,
 		nameProperty: fields.nameProperty,
+		...(sourceAdapter === undefined ? {} : { derivedFrom: sourceAdapter }),
 		areas,
 	};
 };
@@ -233,15 +261,18 @@ export const compileAreas = (
 	repositoryRoot: string,
 	boundaryRegistry: BoundaryRegistry,
 	adapters: AreaAdapterManifest = {},
+	sourceAdapters: AreaSourceAdapterManifest = {},
 ): CompiledAreas => {
 	const artifacts: AreaReleaseArtifact[] = [];
 	const releases = boundaryRegistry.releases.map((release) => {
+		const identity = `${release.geography}/${release.id}`;
+		const sourceAdapter = sourceAdapters[identity];
 		const directory = join(
 			repositoryRoot,
 			"data",
 			"boundaries",
-			toKebabCase(release.geography),
-			release.id,
+			toKebabCase(sourceAdapter?.source.geography ?? release.geography),
+			sourceAdapter?.source.boundaryRelease ?? release.id,
 		);
 		const sourcePath = sourceGeoJsonPath(directory);
 		if (!sourcePath || !existsSync(sourcePath)) {
@@ -256,7 +287,8 @@ export const compileAreas = (
 			sourcePath,
 			release.geography,
 			release.id,
-			adapters[`${release.geography}/${release.id}`],
+			adapters[identity],
+			sourceAdapter,
 		);
 		if ("areas" in result) {
 			artifacts.push(result);
@@ -269,6 +301,9 @@ export const compileAreas = (
 				contentHash: result.contentHash,
 				codeProperty: result.codeProperty,
 				nameProperty: result.nameProperty,
+				...(result.derivedFrom === undefined
+					? {}
+					: { derivedFrom: result.derivedFrom }),
 			};
 		}
 		return result;

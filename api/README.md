@@ -941,3 +941,11 @@ releases with target and parent fields use explicit API-owned property adapters
 in `config/area-property-adapters.json`; unsupported formats remain visible as
 gaps rather than being guessed. The current release metadata and inventories
 remain independent of the Next.js application.
+
+Where an API release is a deterministic subset of a higher-coverage raw
+GeoJSON source, `config/area-source-adapters.json` declares the source and
+selection rule. The build writes the selected GeoJSON under
+`public/boundaries/` and records its provenance and content hash in
+`public/derived-boundaries.json`. For example, Welsh 2011 LSOAs are selected
+from the raw England-and-Wales GeoJSON by official code prefix; no generated
+TopoJSON is read by this API build.

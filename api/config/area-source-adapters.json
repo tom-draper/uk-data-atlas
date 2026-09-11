@@ -1,0 +1,15 @@
+{
+	"schemaVersion": 1,
+	"releases": {
+		"lsoa/2011-12-w-bgc": {
+			"source": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"filter": {
+				"property": "LSOA11CD",
+				"startsWith": "W"
+			}
+		}
+	}
+}
