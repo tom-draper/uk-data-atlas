@@ -52,8 +52,8 @@ only **available** when its endpoint, contract and provenance are published.
       code matches return every matching geography/release identity.
 - [x] List compiled area identities with geography/release filters and stable
       cursor pagination.
-- [x] Translate a 2010 Westminster constituency code to its 2024 successor
-      mapping through the published official lookup.
+- [x] Translate a 2010–2024 Westminster constituency code to its 2024
+      successor mapping through the published official lookup.
 - [x] Translate wards in the supported December 2016 and 2022–25 releases to
       their verified parent local authorities through clean-containment
       crosswalks.
@@ -1109,7 +1109,10 @@ topologies for identity lookup while deliberately leaving geometry conversion
 to a future, separately validated compiler.
 
 The first crosswalk build is a published, many-to-many constituency lookup
-from the source's `2010` label to the July 2024 release. Its records are
+from the constituencies in force from 2010 to 2024 to the July 2024 release.
+The publisher labels its source side 2010; the compiler verifies it against
+the December 2019 release, which holds the same 650 codes, and keeps the
+lookup's own names as record labels. Its records are
 marked `official-lookup` and `publisher-supplied`, but deliberately have
 `weighting.status: not-provided`: they may support relationship discovery, not
 value apportionment or an implied one-to-one identity conversion. Published
@@ -1155,8 +1158,8 @@ dropped with the slivers, and generalised files cannot tell the two apart.
 Before publication, the crosswalk compiler validates every referenced code
 against the compiled area artifact for that endpoint and fails on a missing
 code. When the repository does not hold an endpoint's historical release, it
-records that endpoint as `not-available` instead of implying verification;
-the 2010 constituency side of the published lookup is the current example.
+records that endpoint as `not-available` instead of implying verification,
+and the validation report lists it as an exception until one is found.
 
 `public/relationship-candidates.json` is the discovery half of the
 "relationship coverage" goal: it scans every compiled area release's raw

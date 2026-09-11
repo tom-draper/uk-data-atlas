@@ -4,21 +4,21 @@
 		"boundaryRegistry": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 		"areaInventory": "sha256:ab26754ea9cd1a517c060682fa6465479452b9c2e62d4679791556fb498509b5",
 		"geometrySources": "sha256:8a1f577ded8845340c40c69224bcdf728a7b6ef1567d6716da990a31c31c6bee",
-		"crosswalkInventory": "sha256:07f782b1d99b89a7f0f0958a407ab006bc32adb1a3b6d1ac2a4ab59594b7812b",
+		"crosswalkInventory": "sha256:8e756cc502740f257920c3d91fdef13c7e6a420dd1ad4b8b6d2815ce4919b1cf",
 		"relationshipCandidates": "sha256:1da853f398e07f492bda71289ee48a0c8c0250a199a58dbf6166172a1e04f957",
-		"geographyInventory": "sha256:09706efdb411ac96ffa070b75b4e03fab719b64ee684baf6d11cf94df4f6b154",
-		"waivers": "sha256:22f9a3221fcbc126afc2ebc2ad8dce12f02c4c82a536aadf6bb3ed73ded348de"
+		"geographyInventory": "sha256:a843563d7f6a802b6b7d30fbb661009b4c54fa8a1bacb5daf23d6d25eb994713",
+		"waivers": "sha256:31ca20b7234071b7dd7b3a35566e797b9c0ad8d5c041650f620b56559e3ddf26"
 	},
 	"summary": {
 		"resourceCount": 77,
 		"checkCount": 316,
-		"passedCount": 287,
-		"waivedCount": 29,
+		"passedCount": 288,
+		"waivedCount": 28,
 		"coverage": {
 			"boundaryReleases": 67,
 			"areaIdentities": 67,
 			"servableGeometry": 40,
-			"withRelationships": 14,
+			"withRelationships": 15,
 			"crosswalks": 9,
 			"weightedCrosswalks": 1
 		}
@@ -2101,11 +2101,7 @@
 				},
 				{
 					"id": "endpoints-verified",
-					"status": "waived",
-					"detail": "from: No compiled area release is available for constituency/2010.",
-					"waiver": {
-						"reason": "The lookup labels its source side 2010, and no boundary release has that identity, so its source codes are not checked against compiled areas. Those constituencies were unchanged until 2024 and all 650 codes resolve in the 2017 and 2019 UK releases; pointing the lookup at one of them has not been reviewed yet."
-					}
+					"status": "passed"
 				},
 				{
 					"id": "source-names-consistent",
@@ -2385,5 +2381,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:53910ca230b994450a34ebeab4a95d0ec137b24ac877f8ba44950dbcd35daa4c"
+	"contentHash": "sha256:b32357130e8e4ef24cd1778798b47d5c9cf074602cbe8c67e939493b1a67d132"
 }

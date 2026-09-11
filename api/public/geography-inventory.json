@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:09706efdb411ac96ffa070b75b4e03fab719b64ee684baf6d11cf94df4f6b154",
+	"contentHash": "sha256:a843563d7f6a802b6b7d30fbb661009b4c54fa8a1bacb5daf23d6d25eb994713",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -67,7 +67,7 @@
 						"direction": "to",
 						"counterpart": {
 							"geography": "constituency",
-							"boundaryRelease": "2010"
+							"boundaryRelease": "2019-12-uk-bgc"
 						},
 						"method": "official-lookup",
 						"quality": "publisher-supplied",
@@ -111,8 +111,22 @@
 				"artifact": "areas/constituency/2019-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "constituency-2010-to-2024-official-lookup-v2",
+						"direction": "from",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2024-07-uk-bgc"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
+					}
+				]
 			}
 		},
 		{
