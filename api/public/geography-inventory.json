@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:c21032c580e85ade9671c9c7154804964a16c78c32e2f57c19f4f76c9047b287",
+	"contentHash": "sha256:d2b3bcccafe6a49375ed4d3fa9aee03395da3e4d39031faa799adce25331dccd",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -801,10 +801,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2026-05-ew-bgc",
-				"geography": "parish",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 11542,
+				"artifact": "areas/parish/2026-05-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -922,10 +921,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2019-04-ew-bgc",
-				"geography": "parish",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 11556,
+				"artifact": "areas/parish/2019-04-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1057,10 +1055,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2026-04-en-bgc",
-				"geography": "subIntegratedCareBoardLocation",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 106,
+				"artifact": "areas/subIntegratedCareBoardLocation/2026-04-en-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1133,10 +1130,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2026-05-uk-bgc",
-				"geography": "ward",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 8413,
+				"artifact": "areas/ward/2026-05-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1156,10 +1152,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2025-12-uk-bgc",
-				"geography": "ward",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 8405,
+				"artifact": "areas/ward/2025-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1179,10 +1174,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2025-05-uk-bgc-v2",
-				"geography": "ward",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 8405,
+				"artifact": "areas/ward/2025-05-uk-bgc-v2.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1202,10 +1196,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2024-12-uk-bgc",
-				"geography": "ward",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 8396,
+				"artifact": "areas/ward/2024-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1269,10 +1262,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2023-05-uk-bgc",
-				"geography": "ward",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 8441,
+				"artifact": "areas/ward/2023-05-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1292,10 +1284,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2022-12-uk-bgc",
-				"geography": "ward",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 8482,
+				"artifact": "areas/ward/2022-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1422,10 +1413,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"id": "2016-12-gb-bgc",
-				"geography": "ward",
-				"status": "not-compiled",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 8668,
+				"artifact": "areas/ward/2016-12-gb-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",

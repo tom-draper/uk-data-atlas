@@ -1,0 +1,45 @@
+{
+	"schemaVersion": 1,
+	"releases": {
+		"parish/2019-04-ew-bgc": {
+			"codeProperty": "parncp19cd",
+			"nameProperty": "parncp19nm"
+		},
+		"parish/2026-05-ew-bgc": {
+			"codeProperty": "PARNCP26CD",
+			"nameProperty": "PARNCP26NM"
+		},
+		"subIntegratedCareBoardLocation/2026-04-en-bgc": {
+			"codeProperty": "SICBL26CD",
+			"nameProperty": "SICBL26NM"
+		},
+		"ward/2016-12-gb-bgc": {
+			"codeProperty": "wd16cd",
+			"nameProperty": "wd16nm"
+		},
+		"ward/2022-12-uk-bgc": {
+			"codeProperty": "WD22CD",
+			"nameProperty": "WD22NM"
+		},
+		"ward/2023-05-uk-bgc": {
+			"codeProperty": "WD23CD",
+			"nameProperty": "WD23NM"
+		},
+		"ward/2024-12-uk-bgc": {
+			"codeProperty": "WD24CD",
+			"nameProperty": "WD24NM"
+		},
+		"ward/2025-05-uk-bgc-v2": {
+			"codeProperty": "WD25CD",
+			"nameProperty": "WD25NM"
+		},
+		"ward/2025-12-uk-bgc": {
+			"codeProperty": "WD25CD",
+			"nameProperty": "WD25NM"
+		},
+		"ward/2026-05-uk-bgc": {
+			"codeProperty": "WD26CD",
+			"nameProperty": "WD26NM"
+		}
+	}
+}
