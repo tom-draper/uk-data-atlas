@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
 import { route, type CrosswalkLookup } from "../src/routes";
+import type { AtlasRelease } from "../src/atlasRelease";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type { CrosswalkArtifact, CrosswalkInventory } from "../src/crosswalkInventory";
 import type { GeographyInventory } from "../src/geographyInventory";
@@ -242,6 +243,42 @@ test("filters crosswalk records by source code", () => {
 		"data" in noMatch.body && noMatch.body.data,
 		[],
 	);
+});
+
+const atlasRelease: AtlasRelease = {
+	schemaVersion: 1,
+	releaseId: "sha256:atlas-release",
+	generatedAt: "2026-09-11T00:00:00.000Z",
+	artifacts: [
+		{
+			id: "boundary-registry",
+			path: "boundary-releases.json",
+			contentHash: "sha256:registry",
+		},
+	],
+};
+
+test("gets the atlas release manifest", () => {
+	const response = route(
+		"GET",
+		"/v1/atlas-release",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		atlasRelease,
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual(
+		"data" in response.body && response.body.data,
+		atlasRelease,
+	);
+});
+
+test("reports the atlas release as unavailable before it is built", () => {
+	const response = route("GET", "/v1/atlas-release", registry);
+	assert.equal(response.status, 503);
 });
 
 test("uses problem details for missing resources and unsupported methods", () => {

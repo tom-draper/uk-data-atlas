@@ -1,0 +1,60 @@
+import assert from "node:assert/strict";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import test from "node:test";
+import { createAtlasRelease } from "../src/atlasRelease";
+
+const writeArtifacts = (directory: string, crosswalkContent = "[]") => {
+	writeFileSync(join(directory, "boundary-releases.json"), "{}");
+	writeFileSync(join(directory, "derived-boundaries.json"), "{}");
+	writeFileSync(join(directory, "area-inventory.json"), "{}");
+	writeFileSync(join(directory, "crosswalk-inventory.json"), crosswalkContent);
+	writeFileSync(join(directory, "geography-inventory.json"), "{}");
+	writeFileSync(join(directory, "source-inventory.json"), "{}");
+};
+
+test("references every build-time artifact by content hash", () => {
+	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		writeArtifacts(directory);
+		const release = createAtlasRelease(directory, "2026-09-11T00:00:00.000Z");
+		assert.equal(release.artifacts.length, 6);
+		assert.ok(
+			release.artifacts.every((artifact) =>
+				/^sha256:[a-f0-9]{64}$/.test(artifact.contentHash),
+			),
+		);
+		assert.match(release.releaseId, /^sha256:[a-f0-9]{64}$/);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("is deterministic for unchanged artifacts and changes when content changes", () => {
+	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		writeArtifacts(directory);
+		const first = createAtlasRelease(directory, "2026-09-11T00:00:00.000Z");
+		const second = createAtlasRelease(directory, "2026-09-12T00:00:00.000Z");
+		assert.equal(first.releaseId, second.releaseId);
+
+		writeArtifacts(directory, '[{"id":"changed"}]');
+		const third = createAtlasRelease(directory, "2026-09-11T00:00:00.000Z");
+		assert.notEqual(first.releaseId, third.releaseId);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("fails loudly when a referenced artifact is missing", () => {
+	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		assert.throws(
+			() => createAtlasRelease(directory, "2026-09-11T00:00:00.000Z"),
+			/boundary-registry/,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});

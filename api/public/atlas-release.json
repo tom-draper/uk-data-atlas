@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"releaseId": "sha256:a2a3a6e185439cda614f364fe483c18c5f039f1a8edb42663c416c19b1592732",
+	"generatedAt": "2026-09-11T10:42:21.358Z",
+	"artifacts": [
+		{
+			"id": "boundary-registry",
+			"path": "boundary-releases.json",
+			"contentHash": "sha256:303d696e0550415f3f540dbf11bef2b7b543ea8b45f5adc872b954a668fed5dd"
+		},
+		{
+			"id": "derived-boundaries",
+			"path": "derived-boundaries.json",
+			"contentHash": "sha256:2a6a5311b47980dfb9d830497b84d1874a825d23b647068a1b5c0691d3c78972"
+		},
+		{
+			"id": "area-inventory",
+			"path": "area-inventory.json",
+			"contentHash": "sha256:474c76c956aecff46a1380ac9707193a65c335d2d9c89cb59a10a99e3099de02"
+		},
+		{
+			"id": "crosswalk-inventory",
+			"path": "crosswalk-inventory.json",
+			"contentHash": "sha256:7092c2411fc46c5b1e451827b44dd59970ee87605d318d8e043c3a36e93e7117"
+		},
+		{
+			"id": "geography-inventory",
+			"path": "geography-inventory.json",
+			"contentHash": "sha256:7ef1e4c3c8e14054ad74626e40b9e3c2461fc17f93546fb4af2ba5281047731a"
+		},
+		{
+			"id": "source-inventory",
+			"path": "source-inventory.json",
+			"contentHash": "sha256:ddcde081194e6b3dd8419c93fa15b5ec0f3a821bfeb41c39f395df23f4db220a"
+		}
+	]
+}
