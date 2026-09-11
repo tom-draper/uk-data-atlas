@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:09650db18647bfc1477bf8e789eca466669a6ea5f0bc65d115b7d9e429b349e9",
+	"contentHash": "sha256:edef7cab349aab9014d4cb3521f978e575206ef501049cdd48876002e750dae0",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -19,7 +19,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -39,7 +39,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -60,8 +60,22 @@
 				"artifact": "areas/constituency/2024-07-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "constituency-2010-to-2024-official-lookup-v2",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2010"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -83,7 +97,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -105,7 +119,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -127,7 +141,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -148,7 +162,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -170,7 +184,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -192,7 +206,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -214,7 +228,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -236,7 +250,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -258,7 +272,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -280,7 +294,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -302,7 +316,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -321,7 +335,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -340,7 +354,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -367,7 +381,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -387,7 +401,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -406,7 +420,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -428,7 +442,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -450,7 +464,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -472,7 +486,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -494,7 +508,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -516,7 +530,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -538,7 +552,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -560,7 +574,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -582,7 +596,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -604,7 +618,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -625,7 +639,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -644,7 +658,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -666,7 +680,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -685,7 +699,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -705,7 +719,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -725,7 +739,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -745,7 +759,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -766,7 +780,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -785,7 +799,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -805,7 +819,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -825,7 +839,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -845,7 +859,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -865,7 +879,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -885,7 +899,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -905,7 +919,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -925,7 +939,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -945,7 +959,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -964,7 +978,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -983,7 +997,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1002,7 +1016,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1021,7 +1035,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1040,7 +1054,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1059,7 +1073,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1089,7 +1103,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1111,7 +1125,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1133,7 +1147,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1155,7 +1169,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1177,7 +1191,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1199,7 +1213,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1221,7 +1235,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1243,7 +1257,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1265,7 +1279,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1287,7 +1301,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1309,7 +1323,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1331,7 +1345,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1352,7 +1366,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1374,7 +1388,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1395,7 +1409,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1416,7 +1430,7 @@
 			},
 			"relationships": {
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		}
 	],

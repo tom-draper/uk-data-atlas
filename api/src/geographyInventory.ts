@@ -1,7 +1,17 @@
 import { createHash } from "node:crypto";
 import type { AreaInventory } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { SourceInventory } from "./sourceInventory";
+
+export type GeographyRelationship = {
+	id: string;
+	direction: "from" | "to";
+	counterpart: { geography: string; boundaryRelease: string };
+	method: "official-lookup";
+	quality: "publisher-supplied";
+	weighting: { status: "not-provided" };
+};
 
 export type GeographyReleaseInventory = {
 	id: string;
@@ -18,10 +28,15 @@ export type GeographyReleaseInventory = {
 				status: "not-compiled";
 				reason: string;
 		  };
-	relationships: {
-		status: "not-compiled";
-		reason: string;
-	};
+	relationships:
+		| {
+				status: "available";
+				crosswalks: GeographyRelationship[];
+		  }
+		| {
+				status: "not-compiled";
+				reason: string;
+		  };
 };
 
 export type GeographyInventory = {
@@ -47,10 +62,42 @@ const pending = {
 	reason: "No API compiler adapter has been published for this release yet.",
 };
 
+const relationshipsPending = {
+	status: "not-compiled" as const,
+	reason: "No published crosswalk references this boundary release yet.",
+};
+
+const crosswalksByRelease = (
+	crosswalkInventory: CrosswalkInventory | undefined,
+): Map<string, GeographyRelationship[]> => {
+	const map = new Map<string, GeographyRelationship[]>();
+	for (const crosswalk of crosswalkInventory?.crosswalks ?? []) {
+		const sides: Array<["from" | "to", typeof crosswalk.from, typeof crosswalk.to]> = [
+			["from", crosswalk.from, crosswalk.to],
+			["to", crosswalk.to, crosswalk.from],
+		];
+		for (const [direction, side, counterpart] of sides) {
+			const key = `${side.geography}/${side.boundaryRelease}`;
+			const relationships = map.get(key) ?? [];
+			relationships.push({
+				id: crosswalk.id,
+				direction,
+				counterpart,
+				method: crosswalk.method,
+				quality: crosswalk.quality,
+				weighting: crosswalk.weighting,
+			});
+			map.set(key, relationships);
+		}
+	}
+	return map;
+};
+
 export const createGeographyInventory = (
 	boundaryRegistry: BoundaryRegistry,
 	sourceInventory: SourceInventory,
 	areaInventory?: AreaInventory,
+	crosswalkInventory?: CrosswalkInventory,
 ): GeographyInventory => {
 	const areasByRelease = new Map(
 		areaInventory?.releases.map((release) => [
@@ -58,6 +105,7 @@ export const createGeographyInventory = (
 			release,
 		]) ?? [],
 	);
+	const relationshipsByRelease = crosswalksByRelease(crosswalkInventory);
 	const sourceByKey = new Map(
 		sourceInventory.sources.map((source) => [source.key, source]),
 	);
@@ -66,6 +114,9 @@ export const createGeographyInventory = (
 			`boundaries/${toKebabCase(release.geography)}/${release.id}`,
 		);
 		const areaRelease = areasByRelease.get(
+			`${release.geography}/${release.id}`,
+		);
+		const relationships = relationshipsByRelease.get(
 			`${release.geography}/${release.id}`,
 		);
 		return {
@@ -83,7 +134,9 @@ export const createGeographyInventory = (
 							artifact: areaRelease.artifact,
 						}
 					: (areaRelease ?? pending),
-			relationships: pending,
+			relationships: relationships
+				? { status: "available" as const, crosswalks: relationships }
+				: relationshipsPending,
 		};
 	});
 	const geographyCountries = new Map<string, Set<string>>();

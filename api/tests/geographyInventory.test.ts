@@ -38,6 +38,64 @@ test("discovers source metadata and reports boundary compiler coverage", () => {
 	assert.match(geographyInventory.contentHash, /^sha256:[a-f0-9]{64}$/);
 });
 
+test("reports crosswalk relationship coverage and its gaps", () => {
+	const sourceInventory = createSourceInventory(repositoryRoot);
+	const boundaryRegistry = createBoundaryRegistry(repositoryRoot);
+	const geographyInventory = createGeographyInventory(
+		boundaryRegistry,
+		sourceInventory,
+		undefined,
+		{
+			schemaVersion: 1,
+			contentHash: "sha256:test",
+			crosswalks: [
+				{
+					id: "constituency-2010-to-2024-official-lookup-v2",
+					from: { geography: "constituency", boundaryRelease: "2010" },
+					to: {
+						geography: "constituency",
+						boundaryRelease: "2024-07-uk-bgc",
+					},
+					method: "official-lookup",
+					quality: "publisher-supplied",
+					weighting: { status: "not-provided" },
+					recordCount: 650,
+					artifact:
+						"crosswalks/constituency-2010-to-2024-official-lookup-v2.json",
+					contentHash: "sha256:test",
+				},
+			],
+		},
+	);
+
+	const target = geographyInventory.releases.find(
+		(release) =>
+			release.geography === "constituency" &&
+			release.id === "2024-07-uk-bgc",
+	);
+	assert.deepEqual(target?.relationships, {
+		status: "available",
+		crosswalks: [
+			{
+				id: "constituency-2010-to-2024-official-lookup-v2",
+				direction: "to",
+				counterpart: { geography: "constituency", boundaryRelease: "2010" },
+				method: "official-lookup",
+				quality: "publisher-supplied",
+				weighting: { status: "not-provided" },
+			},
+		],
+	});
+
+	const unrelated = geographyInventory.releases.find(
+		(release) => release !== target,
+	);
+	assert.deepEqual(unrelated?.relationships, {
+		status: "not-compiled",
+		reason: "No published crosswalk references this boundary release yet.",
+	});
+});
+
 test("discovers new source metadata without a hard-coded dataset list", () => {
 	const temporaryRoot = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const sourceDirectory = join(
