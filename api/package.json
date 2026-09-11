@@ -1,0 +1,17 @@
+{
+	"name": "@uk-data-atlas/api",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"build:boundary-registry": "tsx scripts/build-boundary-registry.ts",
+		"start": "tsx scripts/serve.ts",
+		"test": "tsx --test tests/*.test.ts",
+		"typecheck": "tsc --noEmit -p tsconfig.json"
+	},
+	"devDependencies": {
+		"@types/node": "^26.4.1",
+		"tsx": "^4.23.13",
+		"typescript": "^7.0.2"
+	}
+}
