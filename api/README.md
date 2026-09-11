@@ -130,6 +130,68 @@ provenance, and explicit semantics such as `combined-authority`,
 `ceremonial-county`, `historic-county`, or `editorial-grouping`. “Devon” is not
 unambiguous without this.
 
+### Geography intelligence: codes, names, history and relationships
+
+This deserves equal billing with geometry. A user with a code from an old CSV
+should be able to ask four straightforward questions without knowing which ONS
+lookup, release, or boundary file to find:
+
+1. **What is this?** Return its official name, type, release, extent, aliases,
+   geometry reference, status and provenance.
+2. **What did it become / where did it come from?** Follow code changes across
+   releases, making a recode, split, merger, abolition or boundary redraw
+   explicit.
+3. **What areas contain it or does it contain?** Return clean hierarchy where
+   it exists, such as an LAD's wards, and weighted overlap where it does not.
+4. **How does it relate to another geography?** Translate between types and
+   releases with the relationship and its evidential quality stated.
+
+An area record therefore needs a relationship graph rather than a single
+`parentCode` column:
+
+```ts
+type AreaRelation = {
+  relation:
+    | "contains" | "within"
+    | "predecessor" | "successor"
+    | "recode-of" | "split-from" | "merged-from"
+    | "overlaps" | "equivalent-to";
+  target: string;              // canonical Atlas area id
+  validFrom?: string;
+  validTo?: string;
+  method: "official-lookup" | "clean-containment" | "same-geometry-recode"
+    | "area-overlap" | "population-overlap" | "inferred";
+  weight?: number;
+  quality: "exact" | "best-fit" | "inferred";
+  provenance: string;
+};
+```
+
+The graph must distinguish **history** from **similarity**. A 1:1 recode may
+have a safe successor. A ward split into three does not have one successor; it
+has three successor relations, and a query asking for an `identity` answer must
+fail rather than nominate the largest fragment. Similarly, an LAD may contain
+wards exactly while a constituency overlaps LADs only approximately; both are
+relationships, but they do not deserve the same label.
+
+Useful additions beyond code translation are:
+
+- code validation and historical code aliases, including the reason a supplied
+  code cannot be resolved;
+- official and alternate names (including Welsh names where supplied), with
+  name-match explanations and ambiguity preserved;
+- predecessor/successor timelines and change events, so a caller can explain
+  an abolished area rather than merely receive a replacement code;
+- reverse relationships (`ward -> LAD`, `LAD -> wards`, `LAD ->
+  constituencies`, `constituency -> LADs`) without having to download all
+  geometry;
+- coordinate lookup (`lng`, `lat` -> containing areas in selected releases),
+  useful for joining a point dataset or validating a geocode;
+- area comparison: names, codes, geometry/bounds and membership differences
+  between releases; and
+- an explicit absence result: a geography can be unavailable, not applicable
+  in a nation, abolished, or present but not mapped with enough confidence.
+
 ### Dataset and measure identity
 
 A dataset describes an imported source. A measure is the independently usable
@@ -237,8 +299,12 @@ the claim supported by the actual input data.
 ```
 GET /v1/areas/{area-id}
 GET /v1/areas:resolve?q=manchester&type=local-authority&release=2025-05-uk-bgc-v2
+GET /v1/areas:resolve?code=E07000026
 GET /v1/areas/{area-id}/ancestors
 GET /v1/areas/{area-id}/descendants?type=ward
+GET /v1/areas/{area-id}/relations?type=constituency
+GET /v1/areas/{area-id}/history
+GET /v1/areas:contains?lng=-2.2426&lat=53.4808&types=ward,local-authority,constituency
 GET /v1/areas/{area-id}/geometry?format=geojson&simplification=standard
 GET /v1/boundaries/{type}/{release}/features?bbox=-2.7,53.3,-1.9,53.8
 GET /v1/boundaries/{type}/{release}/tiles/{z}/{x}/{y}.mvt
@@ -260,6 +326,17 @@ Geometry needs two delivery forms:
 `simplification` selects named, documented tiers (`standard`, `high`, `full`),
 not a raw tolerance whose output is hard to reproduce. Every geometry response
 includes CRS, release, generalisation and a content hash.
+
+`/history` presents an area-change timeline rather than an unqualified “new
+code”. For example, it can say that an old district was abolished, list its
+official successors and distinguish a same-geometry recode from a split. The
+response has an `identityResult` only when the relationship is one-to-one and
+exact; otherwise it supplies candidate areas and relationship metadata.
+
+`/areas:contains` is a deliberately bounded point-in-polygon convenience
+endpoint. It accepts a coordinate and selected types/releases, returns all
+matching areas with boundary versions, and is rate-limited. It is not a
+replacement for a bulk geocoder or spatial-analysis service.
 
 ### 3. Named locations
 
@@ -348,6 +425,46 @@ The API needs separate `purpose` values:
 Bulk crosswalk records should be downloadable as Parquet/CSV/NDJSON with the
 metadata manifest alongside them. They should not be scraped from paginated
 JSON.
+
+Translation must also cover changes **within the same area type over time**.
+For example, a caller should be able to translate a 2019 ward code to the 2024
+ward release, or ask whether a code is still current:
+
+```json
+{
+  "source": {
+    "type": "ward",
+    "release": "2019-12-gb-bgc",
+    "codes": ["E05001234"]
+  },
+  "target": { "type": "ward", "release": "2024-12-uk-bgc" },
+  "purpose": "identity",
+  "methodPreference": ["official-lookup", "same-geometry-recode"]
+}
+```
+
+If the old ward was simply recoded, the response has one exact target. If it
+was split or redrawn, the `identity` request returns `conversion_required` with
+the available successor/crosswalk options; it does not pretend that an
+area-weighted target is the same area. The same endpoint translates types:
+
+```json
+{
+  "source": {
+    "type": "local-authority",
+    "release": "2025-05-uk-bgc-v2",
+    "codes": ["E08000003"]
+  },
+  "target": { "type": "ward", "release": "2024-12-uk-bgc" },
+  "purpose": "membership",
+  "methodPreference": ["clean-containment", "inferred"]
+}
+```
+
+That returns the ward members plus, per member, whether the relation came from
+a published parent code, a separately maintained lookup, or an inference.
+Membership is naturally reversible: asking for an LAD's wards or a ward's LAD
+should use the same relationship records and yield the same evidence.
 
 ### 5. Retrieve data
 
