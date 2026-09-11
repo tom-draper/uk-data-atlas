@@ -278,6 +278,24 @@ const CATALOG = {
 	localAuthority: {
 		releases: [
 			{
+				id: "2026-05-uk-bgc",
+				year: 2026,
+				month: 5,
+				extent: "uk",
+				codeKey: "LAD26CD",
+				nameKey: "LAD26NM",
+				asset: asset("local-authority", "2026-05-uk-bgc"),
+			},
+			{
+				id: "2025-12-uk-bgc",
+				year: 2025,
+				month: 12,
+				extent: "uk",
+				codeKey: "LAD25CD",
+				nameKey: "LAD25NM",
+				asset: asset("local-authority", "2025-12-uk-bgc"),
+			},
+			{
 				id: "2025-05-uk-bgc-v2",
 				year: 2025,
 				month: 5,
@@ -285,6 +303,15 @@ const CATALOG = {
 				codeKey: "LAD25CD",
 				nameKey: "LAD25NM",
 				asset: asset("local-authority", "2025-05-uk-bgc-v2"),
+			},
+			{
+				id: "2024-12-uk-bgc",
+				year: 2024,
+				month: 12,
+				extent: "uk",
+				codeKey: "LAD24CD",
+				nameKey: "LAD24NM",
+				asset: asset("local-authority", "2024-12-uk-bgc"),
 			},
 			{
 				id: "2024-05-uk-bgc",
@@ -323,6 +350,15 @@ const CATALOG = {
 				asset: asset("local-authority", "2021-12-uk-bgc"),
 			},
 			{
+				id: "2019-12-uk-bgc",
+				year: 2019,
+				month: 12,
+				extent: "uk",
+				codeKey: "lad19cd",
+				nameKey: "lad19nm",
+				asset: asset("local-authority", "2019-12-uk-bgc"),
+			},
+			{
 				id: "2018-12-uk-bgc",
 				year: 2018,
 				month: 12,
@@ -341,6 +377,14 @@ const CATALOG = {
 				asset: asset("local-authority", "2016-12-gb-bgc"),
 			},
 		],
+		// May and December publish the same 361 authorities in 2024 and 2025.
+		// The May releases stay the ones served, so datasets and the
+		// precompiled constituency overlaps keep joining the geometry they
+		// were built against.
+		aliases: {
+			2025: "2025-05-uk-bgc-v2",
+			2024: "2024-05-uk-bgc",
+		},
 	},
 	lsoa: {
 		releases: [

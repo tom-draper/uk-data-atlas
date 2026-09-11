@@ -9,6 +9,7 @@ import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 // read it from the catalogue rather than naming a year that a later release
 // will quietly move.
 const NEWEST_WARD_CODE = BOUNDARY_CATALOG.ward.properties.code[0];
+const NEWEST_LAD_CODE = BOUNDARY_CATALOG.localAuthority.properties.code[0];
 
 const makeFeatures = (
 	properties: Record<string, string>,
@@ -61,7 +62,9 @@ describe("PropertyDetector.detect", () => {
 	it("ignores code keys belonging to other geographies", () => {
 		const features = makeFeatures({ WD24CD: "E05001234" });
 		// No local authority key present, so it falls back to the newest one.
-		expect(detector.detect("localAuthority", features)).toBe("LAD25CD");
+		expect(detector.detect("localAuthority", features)).toBe(
+			NEWEST_LAD_CODE,
+		);
 		expect(detector.detect("ward", features)).toBe("WD24CD");
 	});
 
