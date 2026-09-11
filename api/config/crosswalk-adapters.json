@@ -6,7 +6,9 @@
 			"input": "boundaries/constituency/2024-07-uk-bgc/Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson",
 			"method": "official-lookup",
 			"quality": "publisher-supplied",
-			"weighting": { "status": "not-provided" },
+			"weighting": {
+				"status": "not-provided"
+			},
 			"from": {
 				"geography": "constituency",
 				"boundaryRelease": "2010",
@@ -27,7 +29,9 @@
 			"input": "boundaries/ward/2025-05-uk-bgc-v2/WD_MAY_2025_UK_BGC_V2_-8581021362622909866.geojson",
 			"method": "clean-containment",
 			"quality": "publisher-supplied",
-			"weighting": { "status": "not-applicable" },
+			"weighting": {
+				"status": "not-applicable"
+			},
 			"from": {
 				"geography": "ward",
 				"boundaryRelease": "2025-05-uk-bgc-v2",
@@ -41,6 +45,111 @@
 				"codeProperty": "LAD25CD",
 				"nameProperty": "LAD25NM",
 				"aliasProperty": "LAD25NMW"
+			}
+		},
+		{
+			"id": "sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment",
+			"input": "boundaries/sub-integrated-care-board-location/2026-04-en-bgc/SICBL_APR_2026_EN_BGC.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "subIntegratedCareBoardLocation",
+				"boundaryRelease": "2026-04-en-bgc",
+				"codeProperty": "SICBL26CD",
+				"nameProperty": "SICBL26NM"
+			},
+			"to": {
+				"geography": "integratedCareBoard",
+				"boundaryRelease": "2026-04-en-bgc",
+				"codeProperty": "ICB26CD",
+				"nameProperty": "ICB26NM"
+			}
+		},
+		{
+			"id": "ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment",
+			"input": "boundaries/ward/2022-12-uk-bgc/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc",
+				"codeProperty": "WD22CD",
+				"nameProperty": "WD22NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2022-12-uk-bgc-v2",
+				"codeProperty": "LAD22CD",
+				"nameProperty": "LAD22NM"
+			}
+		},
+		{
+			"id": "ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+			"input": "boundaries/ward/2023-05-uk-bgc/WD_MAY_2023_UK_BGC_932649178890735580.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc",
+				"codeProperty": "WD23CD",
+				"nameProperty": "WD23NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2",
+				"codeProperty": "LAD23CD",
+				"nameProperty": "LAD23NM"
+			}
+		},
+		{
+			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
+			"input": "boundaries/ward/2024-12-uk-bgc/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"codeProperty": "WD24CD",
+				"nameProperty": "WD24NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc",
+				"codeProperty": "LAD24CD",
+				"nameProperty": "LAD24NM"
+			}
+		},
+		{
+			"id": "ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+			"input": "boundaries/ward/2025-12-uk-bgc/WD_DEC_2025_UK_BGC_4818954163088901457.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "WD25CD",
+				"nameProperty": "WD25NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2",
+				"codeProperty": "LAD25CD",
+				"nameProperty": "LAD25NM"
 			}
 		}
 	]
