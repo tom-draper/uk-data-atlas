@@ -48,6 +48,10 @@ only **available** when its endpoint, contract and provenance are published.
       the exact set of compiled artifacts behind a response.
 - [x] List published crosswalks, inspect their method and validation, and page
       through their mappings.
+- [x] Search area identities by official code, name or supplied alias; exact
+      code matches return every matching geography/release identity.
+- [x] List compiled area identities with geography/release filters and stable
+      cursor pagination.
 - [x] Translate a 2010 Westminster constituency code to its 2024 successor
       mapping through the published official lookup.
 - [x] Translate a May 2025 ward to its May 2025 local authority through a
@@ -55,9 +59,6 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Geography and place intelligence — next
 
-- [ ] Search by official code, exact name, alias and name prefix. A bare code
-      must return all plausible geography/release identities rather than guessing.
-- [ ] List areas for a geography/release with pagination and filters.
 - [ ] Resolve a canonical area page with validity, aliases, extent, provenance
       and links to geometry and relationships.
 - [ ] Return parent and child areas: ward → local authority, local authority →

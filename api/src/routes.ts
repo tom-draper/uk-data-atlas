@@ -84,6 +84,47 @@ const codeFromCursor = (cursor: string): string | undefined => {
 	}
 };
 
+export type AreaSearchResult = {
+	id: string;
+	geography: string;
+	boundaryRelease: string;
+	code: string;
+	name: string;
+	aliases?: string[];
+};
+
+const searchableAreas = (areaLookup: AreaLookup): AreaSearchResult[] =>
+	[...areaLookup.entries()]
+		.flatMap(([identity, areas]) => {
+			const slash = identity.indexOf("/");
+			const geography = identity.slice(0, slash);
+			const boundaryRelease = identity.slice(slash + 1);
+			return [...areas.values()].map((area) => ({
+				id: [geography, boundaryRelease, area.code].join("/"),
+				geography,
+				boundaryRelease,
+				...area,
+			}));
+		})
+		.sort((left, right) => left.id.localeCompare(right.id));
+
+export type AreaSearchIndex = AreaSearchResult[];
+
+export const createAreaSearchIndex = (
+	areaLookup: AreaLookup,
+): AreaSearchIndex => searchableAreas(areaLookup);
+
+const matchesAreaQuery = (area: AreaSearchResult, query: string) => {
+	const normalizedQuery = query.toLocaleLowerCase();
+	return (
+		area.code.toLocaleLowerCase().startsWith(normalizedQuery) ||
+		area.name.toLocaleLowerCase().startsWith(normalizedQuery) ||
+		area.aliases?.some((alias) =>
+			alias.toLocaleLowerCase().startsWith(normalizedQuery),
+		) === true
+	);
+};
+
 export const route = (
 	method: string | undefined,
 	url: string | undefined,
@@ -93,6 +134,7 @@ export const route = (
 	crosswalkInventory?: CrosswalkInventory,
 	crosswalkLookup?: CrosswalkLookup,
 	atlasRelease?: AtlasRelease,
+	areaSearchIndex?: AreaSearchIndex,
 ): ApiResponse => {
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -119,6 +161,7 @@ export const route = (
 					"/v1/geographies",
 					"/v1/boundary-releases",
 					"/v1/geography-inventory",
+					"/v1/areas",
 					"/v1/areas/{type}/{release}/{code}",
 					"/v1/crosswalks",
 					"/v1/crosswalks/{crosswalk-id}",
@@ -151,6 +194,73 @@ export const route = (
 			}))
 			.sort((left, right) => left.id.localeCompare(right.id));
 		return { status: 200, body: envelope(releaseId, geographies) };
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "areas"
+	) {
+		if (!areaLookup) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the area inventory before searching areas.",
+			);
+		}
+		const geography = parsedUrl.searchParams.get("geography");
+		const boundaryRelease = parsedUrl.searchParams.get("release");
+		const query = parsedUrl.searchParams.get("q")?.trim();
+		const filtered = (
+			areaSearchIndex ?? searchableAreas(areaLookup)
+		).filter(
+			(area) =>
+				(geography === null || area.geography === geography) &&
+				(boundaryRelease === null ||
+					area.boundaryRelease === boundaryRelease),
+		);
+		const exactCodeMatches = query
+			? filtered.filter(
+					(area) =>
+						area.code.toLocaleLowerCase() ===
+						query.toLocaleLowerCase(),
+				)
+			: [];
+		const matches = query
+			? exactCodeMatches.length > 0
+				? exactCodeMatches
+				: filtered.filter((area) => matchesAreaQuery(area, query))
+			: filtered;
+		const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
+		if (pageSize === undefined) {
+			return problem(
+				400,
+				"Invalid Query",
+				"limit must be an integer between 1 and " + MAX_PAGE_SIZE + ".",
+			);
+		}
+		const cursor = parsedUrl.searchParams.get("cursor");
+		const cursorId = cursor ? codeFromCursor(cursor) : undefined;
+		if (cursor && !cursorId) {
+			return problem(400, "Invalid Query", "cursor is invalid.");
+		}
+		const offset = cursorId
+			? matches.findIndex((area) => area.id === cursorId) + 1
+			: 0;
+		if (cursorId && offset === 0) {
+			return problem(
+				400,
+				"Invalid Query",
+				"cursor is not valid for this area query.",
+			);
+		}
+		const areas = matches.slice(offset, offset + pageSize);
+		const lastArea = areas.at(-1);
+		const nextCursor =
+			offset + areas.length < matches.length && lastArea
+				? cursorFor(lastArea.id)
+				: null;
+		return { status: 200, body: envelope(releaseId, areas, nextCursor) };
 	}
 
 	if (
