@@ -11,8 +11,7 @@ export type CrosswalkSideAdapter = {
 export type CrosswalkMethod = "official-lookup" | "clean-containment";
 export type CrosswalkQuality = "publisher-supplied";
 export type CrosswalkWeighting =
-	| { status: "not-provided" }
-	| { status: "not-applicable" };
+	{ status: "not-provided" } | { status: "not-applicable" };
 
 export type CrosswalkAdapter = {
 	id: string;

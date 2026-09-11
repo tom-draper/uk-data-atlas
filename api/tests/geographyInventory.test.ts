@@ -51,7 +51,10 @@ test("reports crosswalk relationship coverage and its gaps", () => {
 			crosswalks: [
 				{
 					id: "constituency-2010-to-2024-official-lookup-v2",
-					from: { geography: "constituency", boundaryRelease: "2010" },
+					from: {
+						geography: "constituency",
+						boundaryRelease: "2010",
+					},
 					to: {
 						geography: "constituency",
 						boundaryRelease: "2024-07-uk-bgc",
@@ -79,7 +82,10 @@ test("reports crosswalk relationship coverage and its gaps", () => {
 			{
 				id: "constituency-2010-to-2024-official-lookup-v2",
 				direction: "to",
-				counterpart: { geography: "constituency", boundaryRelease: "2010" },
+				counterpart: {
+					geography: "constituency",
+					boundaryRelease: "2010",
+				},
 				method: "official-lookup",
 				quality: "publisher-supplied",
 				weighting: { status: "not-provided" },

@@ -9,7 +9,10 @@ import {
 } from "./areaInventory";
 import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
-import type { CrosswalkArtifact, CrosswalkInventory } from "./crosswalkInventory";
+import type {
+	CrosswalkArtifact,
+	CrosswalkInventory,
+} from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
 import { route, type CrosswalkLookup } from "./routes";
 
@@ -67,7 +70,9 @@ export const readAreaLookup = (apiRoot: string): AreaLookup => {
 
 export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory => {
 	const path = join(apiRoot, "public", "crosswalk-inventory.json");
-	const inventory = JSON.parse(readFileSync(path, "utf8")) as CrosswalkInventory;
+	const inventory = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as CrosswalkInventory;
 	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.crosswalks)) {
 		throw new Error(`Invalid crosswalk inventory at ${path}`);
 	}
