@@ -300,19 +300,6 @@ export const compileRelationshipCandidates = (
 				samePropertyPair(candidate, pair),
 			);
 			const geographies = targetGeographies(artifacts, pair);
-			const to: CandidateTarget =
-				matches.length === 1
-					? {
-							geography: matches[0].geography,
-							boundaryRelease: matches[0].boundaryRelease,
-							...pair,
-						}
-					: {
-							...(geographies.length === 1
-								? { geography: geographies[0] }
-								: {}),
-							...pair,
-						};
 			const relationships = new Map<string, Set<string>>();
 			let missingValueFeatureCount = 0;
 			for (const properties of propertiesByFeature) {
@@ -333,88 +320,101 @@ export const compileRelationshipCandidates = (
 			const multiTargetSourceCount = [...relationships.values()].filter(
 				(targets) => targets.size > 1,
 			).length;
-			const target = matches.length === 1 ? matches[0] : undefined;
-			const reasons: string[] = [];
-			if (matches.length === 0) {
-				reasons.push(
-					`No compiled target release has ${pair.codeProperty}/${pair.nameProperty} fields.`,
-				);
-			} else if (matches.length > 1) {
-				reasons.push(
-					`${matches.length} compiled target releases share ${pair.codeProperty}/${pair.nameProperty} fields.`,
-				);
-			}
+			const sourceReasons: string[] = [];
 			if (missingValueFeatureCount > 0) {
-				reasons.push(
+				sourceReasons.push(
 					`${missingValueFeatureCount} source features have no usable source or target code.`,
 				);
 			}
 			if (multiTargetSourceCount > 0) {
-				reasons.push(
+				sourceReasons.push(
 					`${multiTargetSourceCount} source codes map to more than one target code.`,
 				);
 			}
-			const targetAreas = target
-				? new Map(target.areas.map((area) => [area.code, area]))
-				: undefined;
-			const unresolvedTargetCodes = targetAreas
-				? [...targetCodes].filter((code) => !targetAreas.has(code))
-				: [];
-			if (unresolvedTargetCodes.length > 0) {
-				reasons.push(
-					`${unresolvedTargetCodes.length} target codes are absent from the compiled target release.`,
-				);
-			}
-			const status = !target
-				? "not-available"
-				: reasons.length === 0
-					? "eligible"
-					: "needs-review";
-			const candidate: RelationshipCandidate = {
-				id: candidateId(from, to),
-				input: source.input,
-				from,
-				to,
-				status,
-				validation: {
-					endpoints: {
-						from: {
-							status: "verified",
-							availableAreaCount: artifact.areas.length,
-							referencedCodeCount: relationships.size,
+			// Publishers reuse field names across releases (May and December
+			// local authorities both carry LAD24CD), so every compiled release
+			// with the fields is a candidate target in its own right.
+			for (const target of matches.length > 0 ? matches : [undefined]) {
+				const to: CandidateTarget = target
+					? {
+							geography: target.geography,
+							boundaryRelease: target.boundaryRelease,
+							...pair,
+						}
+					: {
+							...(geographies.length === 1
+								? { geography: geographies[0] }
+								: {}),
+							...pair,
+						};
+				const reasons = target
+					? [...sourceReasons]
+					: [
+							`No compiled target release has ${pair.codeProperty}/${pair.nameProperty} fields.`,
+							...sourceReasons,
+						];
+				const targetAreas = target
+					? new Map(target.areas.map((area) => [area.code, area]))
+					: undefined;
+				const unresolvedTargetCodes = targetAreas
+					? [...targetCodes].filter((code) => !targetAreas.has(code))
+					: [];
+				if (unresolvedTargetCodes.length > 0) {
+					reasons.push(
+						`${unresolvedTargetCodes.length} target codes are absent from the compiled target release.`,
+					);
+				}
+				const status = !target
+					? "not-available"
+					: reasons.length === 0
+						? "eligible"
+						: "needs-review";
+				const candidate: RelationshipCandidate = {
+					id: candidateId(from, to),
+					input: source.input,
+					from,
+					to,
+					status,
+					validation: {
+						endpoints: {
+							from: {
+								status: "verified",
+								availableAreaCount: artifact.areas.length,
+								referencedCodeCount: relationships.size,
+							},
+							to: target
+								? {
+										status: "verified",
+										availableAreaCount: target.areas.length,
+										referencedCodeCount: targetCodes.size,
+									}
+								: {
+										status: "not-available",
+										reason: reasons[0],
+									},
 						},
-						to: target
-							? {
-									status: "verified",
-									availableAreaCount: target.areas.length,
-									referencedCodeCount: targetCodes.size,
-								}
-							: {
-									status: "not-available",
-									reason: reasons[0],
-								},
+						relationship: {
+							sourceFeatureCount: propertiesByFeature.length,
+							sourceCodeCount: relationships.size,
+							targetCodeCount: targetCodes.size,
+							multiTargetSourceCount,
+							missingValueFeatureCount,
+						},
+						reasons,
 					},
-					relationship: {
-						sourceFeatureCount: propertiesByFeature.length,
-						sourceCodeCount: relationships.size,
-						targetCodeCount: targetCodes.size,
-						multiTargetSourceCount,
-						missingValueFeatureCount,
-					},
-					reasons,
-				},
-			};
-			const published = publishedRelationships.find(
-				(relationship) =>
-					relationship.from.geography === from.geography &&
-					relationship.from.boundaryRelease ===
-						from.boundaryRelease &&
-					"boundaryRelease" in to &&
-					relationship.to.geography === to.geography &&
-					relationship.to.boundaryRelease === to.boundaryRelease,
-			);
-			if (published) candidate.publishedCrosswalkId = published.id;
-			candidates.push(candidate);
+				};
+				const published = publishedRelationships.find(
+					(relationship) =>
+						relationship.from.geography === from.geography &&
+						relationship.from.boundaryRelease ===
+							from.boundaryRelease &&
+						"boundaryRelease" in to &&
+						relationship.to.geography === to.geography &&
+						relationship.to.boundaryRelease === to.boundaryRelease,
+				);
+				if (published) candidate.publishedCrosswalkId = published.id;
+				candidates.push(candidate);
+			}
 		}
 	}
 	candidates.sort((left, right) => left.id.localeCompare(right.id));
