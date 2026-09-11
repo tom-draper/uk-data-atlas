@@ -56,6 +56,9 @@ only **available** when its endpoint, contract and provenance are published.
       mapping through the published official lookup.
 - [x] Translate a May 2025 ward to its May 2025 local authority through a
       clean-containment crosswalk.
+- [x] Navigate published relationships in both directions, including ward →
+      local authority and local authority → ward for the May 2025 containment
+      crosswalk.
 
 ### Geography and place intelligence — next
 

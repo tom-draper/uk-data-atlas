@@ -8,6 +8,10 @@ import {
 	type AreaReleaseArtifact,
 } from "./areaInventory";
 import type { AtlasRelease } from "./atlasRelease";
+import {
+	createAreaRelationshipIndex,
+	type AreaRelationshipIndex,
+} from "./areaRelationships";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	CrosswalkArtifact,
@@ -119,6 +123,7 @@ export type ApiCatalogues = {
 	geographyInventory: GeographyInventory;
 	areaLookup: AreaLookup;
 	areaSearchIndex: AreaSearchIndex;
+	areaRelationshipIndex: AreaRelationshipIndex;
 	crosswalkInventory: CrosswalkInventory;
 	crosswalkLookup: CrosswalkLookup;
 	atlasRelease: AtlasRelease;
@@ -127,13 +132,17 @@ export type ApiCatalogues = {
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const areaLookup = readAreaLookup(apiRoot);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
+	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
 	return {
 		boundaryRegistry: readBoundaryRegistry(apiRoot),
 		geographyInventory: readGeographyInventory(apiRoot),
 		areaLookup,
 		areaSearchIndex: createAreaSearchIndex(areaLookup),
+		areaRelationshipIndex: createAreaRelationshipIndex(
+			crosswalkLookup.values(),
+		),
 		crosswalkInventory,
-		crosswalkLookup: readCrosswalkLookup(apiRoot, crosswalkInventory),
+		crosswalkLookup,
 		atlasRelease: readAtlasRelease(apiRoot),
 	};
 };
@@ -143,6 +152,7 @@ export const createApiServer = ({
 	geographyInventory,
 	areaLookup,
 	areaSearchIndex,
+	areaRelationshipIndex,
 	crosswalkInventory,
 	crosswalkLookup,
 	atlasRelease,
