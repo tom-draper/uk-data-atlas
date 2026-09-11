@@ -21,6 +21,7 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "boundary-registry", path: "boundary-releases.json" },
 	{ id: "derived-boundaries", path: "derived-boundaries.json" },
 	{ id: "area-inventory", path: "area-inventory.json" },
+	{ id: "geometry-sources", path: "geometry-sources.json" },
 	{ id: "crosswalk-inventory", path: "crosswalk-inventory.json" },
 	{ id: "relationship-candidates", path: "relationship-candidates.json" },
 	{ id: "geography-inventory", path: "geography-inventory.json" },

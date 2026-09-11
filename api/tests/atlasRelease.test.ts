@@ -9,6 +9,7 @@ const writeArtifacts = (directory: string, crosswalkContent = "[]") => {
 	writeFileSync(join(directory, "boundary-releases.json"), "{}");
 	writeFileSync(join(directory, "derived-boundaries.json"), "{}");
 	writeFileSync(join(directory, "area-inventory.json"), "{}");
+	writeFileSync(join(directory, "geometry-sources.json"), "{}");
 	writeFileSync(
 		join(directory, "crosswalk-inventory.json"),
 		crosswalkContent,
@@ -23,7 +24,7 @@ test("references every build-time artifact by content hash", () => {
 	try {
 		writeArtifacts(directory);
 		const release = createAtlasRelease(directory);
-		assert.equal(release.artifacts.length, 7);
+		assert.equal(release.artifacts.length, 8);
 		assert.ok(
 			release.artifacts.every((artifact) =>
 				/^sha256:[a-f0-9]{64}$/.test(artifact.contentHash),

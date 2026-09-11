@@ -1,0 +1,475 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:8a1f577ded8845340c40c69224bcdf728a7b6ef1567d6716da990a31c31c6bee",
+	"releases": [
+		{
+			"id": "combinedAuthority/2025-12-en-bgc",
+			"status": "available",
+			"input": "boundaries/combined-authority/2025-12-en-bgc/CAUTH_DEC_2025_EN_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "CAUTH25CD"
+		},
+		{
+			"id": "communitySafetyPartnership/2023-12-ew-bgc",
+			"status": "available",
+			"input": "boundaries/community-safety-partnership/2023-12-ew-bgc/CSP_DEC_2023_EW_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "CSP23CD"
+		},
+		{
+			"id": "constituency/2024-07-uk-bgc",
+			"status": "available",
+			"input": "boundaries/constituency/2024-07-uk-bgc/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "PCON24CD"
+		},
+		{
+			"id": "constituency/2019-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/constituency/2019-12-uk-bgc/WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "pcon19cd"
+		},
+		{
+			"id": "constituency/2017-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/constituency/2017-12-uk-bgc/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "PCON17CD"
+		},
+		{
+			"id": "constituency/2016-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/constituency/2016-12-uk-bgc/WPC_Dec_2016_GCB_UK_2022_6001514062979181782.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "pcon16cd"
+		},
+		{
+			"id": "constituency/2015-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/constituency/2015-12-gb-bgc/WPC_Dec_2015_GCB_GB_2022_7047333014304224938.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "pcon15cd"
+		},
+		{
+			"id": "country/2025-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/country/2025-12-uk-bgc/Countries_December_2025_Boundaries_UK_BGC_-4760573642517658145.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "CTRY25CD"
+		},
+		{
+			"id": "country/2024-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/country/2024-12-uk-bgc/Countries_December_2024_Boundaries_UK_BGC_-6819391823965546166.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "CTRY24CD"
+		},
+		{
+			"id": "country/2023-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/country/2023-12-uk-bgc/Countries_December_2023_Boundaries_UK_BGC_7680513041963091487.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "CTRY23CD"
+		},
+		{
+			"id": "country/2022-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/country/2022-12-uk-bgc/Countries_December_2022_UK_BGC_-1387859806748767595.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "CTRY22CD"
+		},
+		{
+			"id": "country/2021-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/country/2021-12-uk-bgc/Countries_December_2021_UK_BGC_2022_-3824609336580301863.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "CTRY21CD"
+		},
+		{
+			"id": "country/2020-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/country/2020-12-uk-bgc/Countries_December_2020_UK_BGC_2022_-3298893893498233057.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "CTRY20CD"
+		},
+		{
+			"id": "countyAndUnitaryAuthority/2025-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/county-and-unitary-authority/2025-12-uk-bgc/CTYUA_DEC_2025_UK_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "CTYUA25CD"
+		},
+		{
+			"id": "countyElectoralDivision/2023-05-en-bgc",
+			"status": "available",
+			"input": "boundaries/county-electoral-division/2023-05-en-bgc/CED_MAY_2023_EN_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "CED23CD"
+		},
+		{
+			"id": "dataZone/2011-12-sc-nc",
+			"status": "available",
+			"input": "boundaries/data-zone/2011-12-sc-nc/DZ_DEC_2011_SC_NC_45ae61d197ca46658b7431e39e1eb3de_3475346850332818879.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "DZ11CD"
+		},
+		{
+			"id": "dataZone/2011-12-sc-bfc",
+			"status": "not-available",
+			"reason": "No declared raw GeoJSON source is available."
+		},
+		{
+			"id": "fireAndRescueAuthority/2021-05-ew-bgc",
+			"status": "available",
+			"input": "boundaries/fire-and-rescue-authority/2021-05-ew-bgc/FRA_MAY_2021_EW_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "FRA21CD"
+		},
+		{
+			"id": "integratedCareBoard/2026-04-en-bgc",
+			"status": "available",
+			"input": "boundaries/integrated-care-board/2026-04-en-bgc/ICB_APR_2026_EN_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "ICB26CD"
+		},
+		{
+			"id": "itl1/2021-01-uk-bgc",
+			"status": "available",
+			"input": "boundaries/itl1/2021-01-uk-bgc/ITL1_JAN_2021_UK_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "ITL121CD"
+		},
+		{
+			"id": "itl2/2021-01-uk-bgc-v2",
+			"status": "available",
+			"input": "boundaries/itl2/2021-01-uk-bgc-v2/ITL2_JAN_2021_UK_BGC_V2.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "ITL221CD"
+		},
+		{
+			"id": "itl3/2021-01-uk-bgc-v3",
+			"status": "available",
+			"input": "boundaries/itl3/2021-01-uk-bgc-v3/ITL3_JAN_2021_UK_BGC_V3.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "ITL321CD"
+		},
+		{
+			"id": "localAuthority/2025-05-uk-bgc-v2",
+			"status": "available",
+			"input": "boundaries/local-authority/2025-05-uk-bgc-v2/LAD_MAY_2025_UK_BGC_V2_1110015208521213948.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD25CD"
+		},
+		{
+			"id": "localAuthority/2024-05-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2024-05-uk-bgc/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD24CD"
+		},
+		{
+			"id": "localAuthority/2023-05-uk-bgc-v2",
+			"status": "available",
+			"input": "boundaries/local-authority/2023-05-uk-bgc-v2/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD23CD"
+		},
+		{
+			"id": "localAuthority/2022-12-uk-bgc-v2",
+			"status": "available",
+			"input": "boundaries/local-authority/2022-12-uk-bgc-v2/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "LAD22CD"
+		},
+		{
+			"id": "localAuthority/2021-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2021-12-uk-bgc/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "LAD21CD"
+		},
+		{
+			"id": "localAuthority/2018-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2018-12-uk-bgc/LAD_December_2018_Boundaries_UK_BGC_2022_-4607993750040860815.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "lad18cd"
+		},
+		{
+			"id": "localAuthority/2016-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2016-12-gb-bgc/LAD_Dec_2016_GB_BGC_2022_699407162867034067.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "LAD16CD"
+		},
+		{
+			"id": "localHealthBoard/2023-12-w-bgc",
+			"status": "available",
+			"input": "boundaries/local-health-board/2023-12-w-bgc/LHB_DEC_2023_WA_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "LHB23CD"
+		},
+		{
+			"id": "localPlanningAuthority/2019-04-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-planning-authority/2019-04-uk-bgc/Local_Planning_Authorities_April_2019_UK_BGC_2022_-8543893928399963864.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "lpa19cd"
+		},
+		{
+			"id": "lsoa/2011-12-w-bgc",
+			"status": "available",
+			"input": "boundaries/lsoa/2011-12-ew-bgc-v3/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "LSOA11CD",
+			"selection": {
+				"property": "LSOA11CD",
+				"startsWith": "W"
+			}
+		},
+		{
+			"id": "lsoa/2011-12-ew-bgc-v3",
+			"status": "available",
+			"input": "boundaries/lsoa/2011-12-ew-bgc-v3/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "LSOA11CD"
+		},
+		{
+			"id": "majorTownAndCity/2015-12-ew-bgc",
+			"status": "available",
+			"input": "boundaries/major-town-and-city/2015-12-ew-bgc/TCITY_DEC_2015_EW_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "TCITY15CD"
+		},
+		{
+			"id": "msoa/2021-12-ew-bgc-v3",
+			"status": "available",
+			"input": "boundaries/msoa/2021-12-ew-bgc-v3/MSOA_2021_EW_BGC_V3.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "MSOA21CD"
+		},
+		{
+			"id": "nationalPark/2020-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/national-park/2020-12-gb-bgc/NPARK_DEC_2020_GB_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "NPARK20CD"
+		},
+		{
+			"id": "nhsEnglandRegion/2022-07-en-bgc",
+			"status": "available",
+			"input": "boundaries/nhs-england-region/2022-07-en-bgc/NHSER_JUL_2022_EN_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "NHSER22CD"
+		},
+		{
+			"id": "parish/2026-05-ew-bgc",
+			"status": "available",
+			"input": "boundaries/parish/2026-05-ew-bgc/PARNCP_MAY_2026_EW_BGC_5023227107847847413.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "PARNCP26CD"
+		},
+		{
+			"id": "parish/2025-05-ew-bgc",
+			"status": "available",
+			"input": "boundaries/parish/2025-05-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_(May_2025)_Boundaries_EW_BGC.geojson",
+			"crs": "urn:ogc:def:crs:OGC:1.3:CRS84",
+			"codeProperty": "PARNCP25CD"
+		},
+		{
+			"id": "parish/2024-12-ew-bgc",
+			"status": "available",
+			"input": "boundaries/parish/2024-12-ew-bgc/PARNCP_DEC_2024_EW_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "PARNCP24CD"
+		},
+		{
+			"id": "parish/2023-12-ew-bgc",
+			"status": "available",
+			"input": "boundaries/parish/2023-12-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_December_2023_Boundaries_EW_BGC_9125989404983862971.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "PARNCP23CD"
+		},
+		{
+			"id": "parish/2022-12-ew-bgc-v3",
+			"status": "available",
+			"input": "boundaries/parish/2022-12-ew-bgc-v3/Parishes_and_Non_Civil_Parished_Areas_December_2022_EW_BGC_V3_-951660277727317362.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "PARNCP22CD"
+		},
+		{
+			"id": "parish/2021-12-ew-bgc",
+			"status": "available",
+			"input": "boundaries/parish/2021-12-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_December_2021_EW_BGC_2022_6549060336393416523.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "PARNCP21CD"
+		},
+		{
+			"id": "parish/2019-04-ew-bgc",
+			"status": "available",
+			"input": "boundaries/parish/2019-04-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_April_2019_GCB_EW_2022_7767177223882237005.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "parncp19cd"
+		},
+		{
+			"id": "policeForceArea/2023-12-ew-bgc",
+			"status": "available",
+			"input": "boundaries/police-force-area/2023-12-ew-bgc/PFA_DEC_2023_EW_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "PFA23CD"
+		},
+		{
+			"id": "region/2025-12-en-bgc",
+			"status": "available",
+			"input": "boundaries/region/2025-12-en-bgc/RGN_DEC_2025_EN_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "RGN25CD"
+		},
+		{
+			"id": "scottishParliamentaryConstituency/2021-05-sc-bgc",
+			"status": "available",
+			"input": "boundaries/scottish-parliamentary-constituency/2021-05-sc-bgc/SPC_MAY_2021_SC_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "SPC21CD"
+		},
+		{
+			"id": "scottishParliamentaryRegion/2022-12-sc-bgc",
+			"status": "available",
+			"input": "boundaries/scottish-parliamentary-region/2022-12-sc-bgc/SPR_DEC_2022_SC_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "SPR22CD"
+		},
+		{
+			"id": "seneddConstituency/2022-12-w-bgc",
+			"status": "available",
+			"input": "boundaries/senedd-constituency/2022-12-w-bgc/SENC_DEC_2022_WA_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "SENC22CD"
+		},
+		{
+			"id": "seneddElectoralRegion/2022-12-w-bgc",
+			"status": "available",
+			"input": "boundaries/senedd-electoral-region/2022-12-w-bgc/SENER_DEC_2022_WA_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "SENER22CD"
+		},
+		{
+			"id": "subIntegratedCareBoardLocation/2026-04-en-bgc",
+			"status": "available",
+			"input": "boundaries/sub-integrated-care-board-location/2026-04-en-bgc/SICBL_APR_2026_EN_BGC.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "SICBL26CD"
+		},
+		{
+			"id": "superOutputArea/2011-ni",
+			"status": "not-available",
+			"reason": "No declared raw GeoJSON source is available."
+		},
+		{
+			"id": "travelToWorkArea/2011-12-uk-gcb",
+			"status": "available",
+			"input": "boundaries/travel-to-work-area/2011-12-uk-gcb/TTWA_DEC_2011_UK_GCB.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "TTWA11CD"
+		},
+		{
+			"id": "ward/2026-05-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2026-05-uk-bgc/WD_MAY_2026_UK_BGC_-6729380219658751476.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "WD26CD"
+		},
+		{
+			"id": "ward/2025-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2025-12-uk-bgc/WD_DEC_2025_UK_BGC_4818954163088901457.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "WD25CD"
+		},
+		{
+			"id": "ward/2025-05-uk-bgc-v2",
+			"status": "available",
+			"input": "boundaries/ward/2025-05-uk-bgc-v2/WD_MAY_2025_UK_BGC_V2_-8581021362622909866.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "WD25CD"
+		},
+		{
+			"id": "ward/2024-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2024-12-uk-bgc/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "WD24CD"
+		},
+		{
+			"id": "ward/2024-05-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2024-05-uk-bgc/Wards_May_2024_Boundaries_UK_BGC_-1422695860224013345.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "WD24CD"
+		},
+		{
+			"id": "ward/2023-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2023-12-uk-bgc/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "WD23CD"
+		},
+		{
+			"id": "ward/2023-05-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2023-05-uk-bgc/WD_MAY_2023_UK_BGC_932649178890735580.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "WD23CD"
+		},
+		{
+			"id": "ward/2022-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2022-12-uk-bgc/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "WD22CD"
+		},
+		{
+			"id": "ward/2021-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2021-12-uk-bgc/Wards_December_2021_UK_BGC_2022_-3127229614810050524.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "WD21CD"
+		},
+		{
+			"id": "ward/2020-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2020-12-uk-bgc/Wards_Dec_2020_UK_BGC_2022_-485796631781341866.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "WD20CD"
+		},
+		{
+			"id": "ward/2019-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2019-12-gb-bgc/Wards_December_2019_GCB_GB_2022_-3199817513651023624.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "wd19cd"
+		},
+		{
+			"id": "ward/2018-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2018-12-uk-bgc/Wards_December_2018_GCB_UK_2022_-623525817862961610.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "wd18cd"
+		},
+		{
+			"id": "ward/2017-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2017-12-gb-bgc/Wards_December_2017_GCB_in_Great_Britain_2022_-2440043846989090720.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "wd17cd"
+		},
+		{
+			"id": "ward/2016-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2016-12-gb-bgc/Wards_December_2016_GCB_in_Great_Britain_2022_856513180533154279.geojson",
+			"crs": "EPSG:27700",
+			"codeProperty": "wd16cd"
+		}
+	]
+}
