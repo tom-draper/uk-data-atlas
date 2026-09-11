@@ -11,6 +11,7 @@ import type {
 	CrosswalkInventory,
 } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
+import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -142,6 +143,7 @@ export const route = (
 	areaSearchIndex?: AreaSearchIndex,
 	areaRelationshipIndex?: AreaRelationshipIndex,
 	areaGeometryCache?: AreaGeometryCache,
+	relationshipCandidateInventory?: RelationshipCandidateInventory,
 ): ApiResponse => {
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -175,6 +177,7 @@ export const route = (
 					"/v1/crosswalks",
 					"/v1/crosswalks/{crosswalk-id}",
 					"/v1/crosswalks/{crosswalk-id}/records",
+					"/v1/relationship-candidates",
 					"/v1/atlas-release",
 				],
 			}),
@@ -534,6 +537,26 @@ export const route = (
 				? cursorFor(lastRecord.source.code)
 				: null;
 		return { status: 200, body: envelope(releaseId, records, nextCursor) };
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "relationship-candidates"
+	) {
+		return relationshipCandidateInventory
+			? {
+					status: 200,
+					body: envelope(
+						releaseId,
+						relationshipCandidateInventory.candidates,
+					),
+				}
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the relationship candidate inventory before starting the API.",
+				);
 	}
 
 	if (
