@@ -29,7 +29,7 @@ export const childPovertyDefinition: ChartDatasetDefinition<ChildPovertyDataset>
 			legend: {
 				min: 0,
 				max: 60,
-				format: (value) => `${value.toFixed(0)}% children`,
+				format: (value) => `${value.toFixed(0)}%`,
 			},
 		},
 	};

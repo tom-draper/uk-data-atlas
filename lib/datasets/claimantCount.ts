@@ -20,6 +20,6 @@ export const claimantCountDefinition: ChartDatasetDefinition<ClaimantCountDatase
 		map: {
 			valueKey: "totalRate",
 			colorRange: { min: 1, max: 8 },
-			legend: { min: 0, max: 20, format: (v) => `${v.toFixed(1)}% rate` },
+			legend: { min: 0, max: 20, format: (v) => `${v.toFixed(1)}%` },
 		},
 	};
