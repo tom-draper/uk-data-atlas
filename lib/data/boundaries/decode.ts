@@ -104,7 +104,9 @@ const britishNationalGridToWgs84 = ([
 	const x1 = nuOsgb * Math.cos(latitudeOsgb) * Math.cos(longitudeOsgb);
 	const y1 = nuOsgb * Math.cos(latitudeOsgb) * Math.sin(longitudeOsgb);
 	const z1 = nuOsgb * (1 - eccentricitySquared) * Math.sin(latitudeOsgb);
-	const scaleFactor = 20.4894e-6;
+	// OSGB36 to WGS84 is the inverse of the Ordnance Survey's published
+	// WGS84 to OSGB36 Helmert, whose scale is +20.4894 ppm.
+	const scaleFactor = -20.4894e-6;
 	const rx = radians(0.1502 / 3600);
 	const ry = radians(0.247 / 3600);
 	const rz = radians(0.8421 / 3600);
