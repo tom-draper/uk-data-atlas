@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7fb88411e29f94bb5462a35467d99cb8fac261529a6d0334a999227a8f8407f5",
+	"contentHash": "sha256:1da853f398e07f492bda71289ee48a0c8c0250a199a58dbf6166172a1e04f957",
 	"candidates": [
 		{
 			"id": "parish-2019-04-ew-bgc-to-local-authority-unavailable",
@@ -157,7 +157,8 @@
 					"missingValueFeatureCount": 0
 				},
 				"reasons": []
-			}
+			},
+			"publishedCrosswalkId": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment"
 		},
 		{
 			"id": "ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2",
