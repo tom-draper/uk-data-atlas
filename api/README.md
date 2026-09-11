@@ -1,0 +1,740 @@
+# UK Data Atlas API proposal
+
+## Decision in brief
+
+Build a public, versioned **data-and-geography API**, not an API that merely
+serves the files currently used by the website. Its distinctive promise should
+be:
+
+> Ask for a documented public measure, a place, and a geography; receive data
+> that is joined to an explicit boundary release, with the source, repair,
+> transformation, coverage, and uncertainty visible in the response.
+
+The hard-won asset is not a collection of CSVs. It is the maintained link
+between source records, area identities, boundary vintages, crosswalks, and
+human place names. A caller should not need to discover separately that a
+Great Britain boundary file excludes Northern Ireland, that a ward release did
+not include its LAD code, or that a dataset's codes belong to a different
+boundary year.
+
+The Atlas should be the source of a **reproducible answer**, not an opaque
+source of apparently authoritative numbers.
+
+This document proposes a public API at `https://api.ukdataatlas.com/v1`. It is
+an implementation proposal, not a promise that every listed endpoint is ready.
+The present `data/precompiled` files and browser-facing TopoJSON are internal
+build products; their shape and filenames must remain free to change.
+
+## The user problem
+
+Today, making a UK population-density map can require all of the following:
+
+1. Find compatible boundary releases for England, Wales, Scotland, and
+   Northern Ireland.
+2. Find population tables for those nations, often at different dates and
+   geography types.
+3. Establish whether the codes in each table identify the geometries being
+   drawn, and recover from renamed, split, merged, or missing areas.
+4. Calculate area with a suitable projection, use a consistent denominator,
+   and avoid falsely implying national comparability where it does not exist.
+5. Repeat the same work for each new map or analysis.
+
+The Atlas has already addressed parts of this: it keeps source material and
+metadata, compiles consistent WGS84 boundary assets, records releases and
+property keys, infers some ward-to-LAD membership, preserves cross-year code
+mappings, produces weighted constituency/LAD overlaps, and curates named
+locations such as Greater Manchester and Devon. The API should expose those
+decisions as first-class, inspectable products.
+
+## Principles and non-goals
+
+### Principles
+
+- **Identity before geometry.** A code on its own is not enough. Geography
+  type, boundary release, and code form an area identity.
+- **No silent conversion.** Every geographic conversion reports its method,
+  weights, source and target releases, and quality. A caller must opt into a
+  best-fit result where it is not an exact correspondence.
+- **Provenance travels with data.** Records link to original publishers,
+  licences, retrieval dates, input hashes, transformations, and the Atlas
+  release that produced them.
+- **Raw, harmonised, and derived are separate.** A cleaned source value is not
+  the same thing as a value re-expressed on another boundary, and neither is
+  the same thing as a density or rate calculated by the API.
+- **Coverage is data.** England-only, GB-only, UK, partial, suppressed and
+  unknown must be machine-readable, never inferred from an absent record.
+- **Open standards at the edge.** JSON for discovery, GeoJSON and vector tiles
+  for spatial use, CSV/NDJSON/Parquet for tabular analysis, and OpenAPI for the
+  contract. Do not make users learn the Atlas's internal TypeScript model.
+- **Immutable releases, helpful aliases.** `latest` is convenient but mutable;
+  every response also carries a pinned release identifier that can be cited and
+  reproduced.
+
+### Non-goals for the first public release
+
+- Replacing the original statistical publishers or claiming their update
+  cadence.
+- Promising that every measure is comparable across all four nations.
+- Performing arbitrary GIS analysis, geocoding, or universal postcode lookup.
+- Producing a single "correct" historical equivalent for every changed area.
+- Exposing unlicensed inputs just because a transformed result exists.
+- Treating an inferred relationship as equal in authority to a published
+  lookup.
+
+## What makes the API valuable
+
+The public contract should offer five connected capabilities.
+
+| Capability | What a caller gets | Why it avoids repeat work |
+| --- | --- | --- |
+| Dataset catalogue | Measures, units, periods, coverage, licences and source lineage | Finds usable data before downloading it |
+| Canonical areas | Stable identifiers, aliases, parents, releases, bounds and geometry references | Removes name/code ambiguity |
+| Boundary releases | Valid geometry for a specified geography and vintage | Prevents mismatching a 2019 table to 2024 polygons by accident |
+| Crosswalks | Published, inferred, area-weighted or population-weighted mappings | Makes conversions explicit and reusable |
+| Named locations | Versioned area sets for places such as Greater Manchester, Devon or London | Makes common real-world scopes portable and inspectable |
+
+The boundary utilities are the differentiator. Open data portals already host
+many individual tables. Far fewer products let someone request a dataset on a
+chosen, documented geography and tell them exactly what changed on the way.
+
+## Domain model
+
+### Canonical references
+
+Every addressable area has an Atlas identifier:
+
+```
+{geography}/{boundary-release}/{source-code}
+
+ward/2024-12-uk-bgc/E05013820
+local-authority/2025-05-uk-bgc-v2/E08000003
+constituency/2024-07-uk-bgc/E14001262
+```
+
+`source-code` remains visible and searchable, but it is not the public primary
+key. This avoids ambiguity between types and vintages and keeps a future path
+for non-ONS identifiers. An area response includes its official name, aliases,
+code namespace, release, nation/extent, parent relations, bounding box, and a
+link to geometry.
+
+Named locations are a different resource. They are editorial, versioned sets
+of canonical areas, not invented boundary types:
+
+```
+location/greater-manchester/2026-09
+location/devon/2026-09
+```
+
+Each has a definition (`member areas`, their releases, and selection rule),
+provenance, and explicit semantics such as `combined-authority`,
+`ceremonial-county`, `historic-county`, or `editorial-grouping`. “Devon” is not
+unambiguous without this.
+
+### Dataset and measure identity
+
+A dataset describes an imported source. A measure is the independently usable
+series or field within it:
+
+```
+dataset/population-uk@2026.09.0
+measure/population-estimate
+measure/population-density
+```
+
+Measures must declare:
+
+- geography and boundary release of the source rows;
+- time semantics (`point`, `annual`, `quarterly`, `rolling-period`), period and
+  publication date;
+- unit, decimal precision and whether the value is a count, rate, ratio,
+  rank, median, index, category, or uncertainty interval;
+- aggregation semantics: `extensive`, `intensive-with-numerator-denominator`,
+  `non-aggregatable`, or `categorical`;
+- coverage, known exclusions, suppression rules, and comparability notes;
+- source and Atlas transformation lineage.
+
+This prevents a damaging API behaviour: summing percentages, averaging medians,
+or pretending that ranks can be converted between boundaries. The API may
+aggregate a count; it may derive a rate only when it has a suitable numerator
+and denominator; it should reject or return `not-supported` for the rest.
+
+### Conversion is a named method, not a boolean
+
+Crosswalks are directional and versioned resources:
+
+```
+crosswalk/ward/2020-12-uk-bgc/to/local-authority/2024-05-uk-bgc
+```
+
+Each relation includes a `method` and `quality`:
+
+| Method | Meaning | Appropriate use |
+| --- | --- | --- |
+| `official-lookup` | Publisher supplied an explicit correspondence | Preferred whenever available |
+| `same-geometry-recode` | 1:1 code/name change with unchanged geometry | Safe identity migration |
+| `clean-containment` | A published parent code or verified nesting relation | Membership and exact roll-up |
+| `area-overlap` | Geometry intersection, weighted by area | Land-area quantities; not people by default |
+| `population-overlap` | Fine-grained population building blocks apportioned across targets | Counts whose distribution follows resident population |
+| `inferred` | Carefully documented heuristic, for example recovered ward-to-LAD membership | Discovery/matching; requires a warning |
+
+The response must always state whether weights cover all source area, whether
+they sum to one, the weighting denominator/date, topology/geometry inputs, and
+the expected error or limitations. A conversion from ward to LAD is not the
+same kind of claim as a 2024 constituency to 2019 constituency approximation.
+
+## Proposed endpoint surface
+
+All endpoints are under `/v1`. Collection endpoints paginate with opaque
+`cursor` values and return `Link` headers. Read endpoints accept `Accept` or
+`format=` where appropriate. `latest` is allowed only in discovery endpoints;
+responses resolve it to an immutable `atlasRelease`.
+
+### 1. Discovery and catalogue
+
+```
+GET /v1
+GET /v1/releases
+GET /v1/datasets
+GET /v1/datasets/{dataset-id}
+GET /v1/measures
+GET /v1/measures/{measure-id}
+GET /v1/geographies
+GET /v1/boundary-releases
+GET /v1/locations
+```
+
+Example:
+
+```http
+GET /v1/measures/population-estimate
+```
+
+```json
+{
+  "id": "population-estimate",
+  "label": "Usual resident population estimate",
+  "valueKind": "count",
+  "aggregation": { "kind": "extensive", "operation": "sum" },
+  "periods": ["2022"],
+  "sourceGeography": {
+    "type": "ward",
+    "boundaryRelease": "2020-12-uk-bgc"
+  },
+  "coverage": { "kind": "partial", "includes": ["England", "Wales", "Scotland", "Northern Ireland"] },
+  "datasets": ["population-uk@2026.09.0"],
+  "links": {
+    "data": "/v1/data/population-estimate",
+    "provenance": "/v1/provenance/datasets/population-uk@2026.09.0"
+  }
+}
+```
+
+The example coverage is illustrative; the production catalogue must only make
+the claim supported by the actual input data.
+
+### 2. Find places and inspect geography
+
+```
+GET /v1/areas/{area-id}
+GET /v1/areas:resolve?q=manchester&type=local-authority&release=2025-05-uk-bgc-v2
+GET /v1/areas/{area-id}/ancestors
+GET /v1/areas/{area-id}/descendants?type=ward
+GET /v1/areas/{area-id}/geometry?format=geojson&simplification=standard
+GET /v1/boundaries/{type}/{release}/features?bbox=-2.7,53.3,-1.9,53.8
+GET /v1/boundaries/{type}/{release}/tiles/{z}/{x}/{y}.mvt
+```
+
+Name resolution is deliberately ambiguity-preserving: a search for
+`Manchester` can return Manchester LAD, Greater Manchester named location,
+Manchester constituency, historical records, and a confidence/alias reason.
+The API must never silently choose one.
+
+Geometry needs two delivery forms:
+
+- **Vector tiles** for interactive maps and large releases. This is the default
+  map integration, with CDN cache headers and a bounded property set.
+- **GeoJSON** for a single feature, a small filtered collection, download, or
+  reproducible analysis. Large nationwide GeoJSON returns an asynchronous
+  export link rather than exhausting a request.
+
+`simplification` selects named, documented tiers (`standard`, `high`, `full`),
+not a raw tolerance whose output is hard to reproduce. Every geometry response
+includes CRS, release, generalisation and a content hash.
+
+### 3. Named locations
+
+```
+GET /v1/locations/greater-manchester
+GET /v1/locations/greater-manchester/members?type=local-authority
+GET /v1/locations/greater-manchester/geometry?mode=union
+```
+
+```json
+{
+  "id": "greater-manchester@2026-09",
+  "label": "Greater Manchester",
+  "kind": "combined-authority",
+  "definition": {
+    "selection": "explicit-members",
+    "members": [
+      "local-authority/2025-05-uk-bgc-v2/E08000001"
+    ]
+  },
+  "provenance": {
+    "kind": "official-lookup",
+    "source": "…",
+    "retrievedAt": "2026-09-01"
+  },
+  "atlasRelease": "2026.09.0"
+}
+```
+
+Do not create a union polygon at query time for every request. Serve a cached,
+versioned union where it is valuable, or return the member geometries. A union
+can obscure gaps and overlaps; its response must retain the member list.
+
+### 4. Crosswalks and code translation
+
+```
+GET /v1/crosswalks
+GET /v1/crosswalks/{crosswalk-id}
+GET /v1/crosswalks/{crosswalk-id}/records?source=E05001234
+POST /v1/translate
+```
+
+`POST /translate` is for small interactive translations, rather than forcing
+callers to discover an opaque crosswalk identifier first:
+
+```json
+{
+  "source": {
+    "type": "constituency",
+    "release": "2024-07-uk-bgc",
+    "codes": ["E14001262"]
+  },
+  "target": { "type": "local-authority", "release": "2025-05-uk-bgc-v2" },
+  "purpose": "membership",
+  "methodPreference": ["official-lookup", "population-overlap", "area-overlap"]
+}
+```
+
+```json
+{
+  "results": [{
+    "source": "E14001262",
+    "targets": [
+      { "code": "E08000003", "weight": 0.71 },
+      { "code": "E08000004", "weight": 0.29 }
+    ],
+    "crosswalk": {
+      "id": "constituency-2024-to-lad-2025-population-v1",
+      "method": "population-overlap",
+      "coverage": 1,
+      "quality": "best-fit"
+    }
+  }]
+}
+```
+
+The API needs separate `purpose` values:
+
+- `membership`: return all intersecting/mapped target areas; weights are useful
+  metadata, not an instruction to apportion values.
+- `identity`: allow only `official-lookup` or `same-geometry-recode`; otherwise
+  return no single answer.
+- `apportion`: return weights and require the caller to acknowledge the chosen
+  method, or use the data endpoint's conversion option.
+
+Bulk crosswalk records should be downloadable as Parquet/CSV/NDJSON with the
+metadata manifest alongside them. They should not be scraped from paginated
+JSON.
+
+### 5. Retrieve data
+
+The core query endpoint is deliberately constrained:
+
+```
+GET /v1/data/{measure-id}
+  ?period=2022
+  &area=location/greater-manchester@2026-09
+  &geography=ward/2024-12-uk-bgc
+  &conversion=population-overlap
+  &include=area,provenance,quality
+  &format=geojson
+```
+
+It answers, in order:
+
+1. Which measure and period?
+2. Which scope: one area, a named location, a bounding box, or the full source
+   coverage?
+3. Which output geography/release?
+4. Is conversion required, and which declared method is acceptable?
+5. Which representation should be returned?
+
+Default output is compact JSON rows. `format=geojson` joins a value to the
+requested geometry; `format=csv`, `ndjson`, and `parquet` are exports. Use
+asynchronous export jobs for results that exceed a documented row or byte
+limit:
+
+```
+POST /v1/exports
+GET  /v1/exports/{job-id}
+```
+
+For a compatible source query, a row looks like:
+
+```json
+{
+  "area": "ward/2020-12-uk-bgc/E05001234",
+  "period": "2022",
+  "value": 12450,
+  "status": "observed",
+  "quality": {
+    "geography": "source-exact",
+    "conversion": null,
+    "suppression": null
+  }
+}
+```
+
+For an output generated through a crosswalk, it becomes explicitly different:
+
+```json
+{
+  "area": "ward/2024-12-uk-bgc/E05009999",
+  "period": "2022",
+  "value": 12108.4,
+  "status": "derived",
+  "quality": {
+    "geography": "best-fit",
+    "conversion": "ward-2020-to-ward-2024-population-v1",
+    "sourceCoverage": 0.997,
+    "rounding": "unrounded-derived-value"
+  }
+}
+```
+
+Do not round converted count values into a false claim that fractional people
+were observed. Return a raw derived value and clearly document recommended
+presentation rounding.
+
+### 6. Server-side aggregation and derived measures
+
+Allow it only under explicit rules:
+
+```
+GET /v1/data/population-estimate?area=location/devon@2026-09&aggregate=sum
+GET /v1/data/population-density?area=location/devon@2026-09&period=2022
+```
+
+For density, the service calculates `sum(population) / union-area`, retaining
+the source population period and boundary release of the denominator. It must
+not average ward densities. For a rate, it must sum numerators and denominators
+then divide. For medians, ranks, categorical winners, and statistical measures
+without valid aggregation semantics, return `422 aggregation_not_supported`
+with the reason and any valid alternatives.
+
+This guardrail is more valuable than offering a superficially flexible query
+language that manufactures invalid figures.
+
+### 7. Provenance, releases and validation
+
+```
+GET /v1/provenance/datasets/{dataset-release}
+GET /v1/provenance/boundaries/{type}/{release}
+GET /v1/provenance/crosswalks/{crosswalk-id}
+GET /v1/validation/{resource-id}
+GET /v1/releases/{atlas-release}/manifest
+```
+
+The release manifest is the reproducibility anchor. It contains all input and
+output hashes, licences, build software revision, validation summary, and
+stable URLs. Responses also carry:
+
+```http
+ETag: "sha256:…"
+X-Atlas-Release: 2026.09.0
+X-Data-Status: observed
+Link: </v1/provenance/datasets/population-uk@2026.09.0>; rel="provenance"
+```
+
+`/validation` should publish both passing invariants and known exceptions:
+unmatched source records, missing geometry, crosswalk coverage, row counts,
+weight sums, duplicate codes, and differences from a prior release. It is not
+enough for the team to see this only in CI.
+
+## Response envelope and errors
+
+Every JSON response uses a small common envelope:
+
+```json
+{
+  "apiVersion": "v1",
+  "atlasRelease": "2026.09.0",
+  "data": [],
+  "meta": {
+    "licences": [],
+    "provenance": [],
+    "nextCursor": null
+  }
+}
+```
+
+Use RFC 9457 Problem Details for errors. Important machine-readable codes:
+
+- `ambiguous_area` — more than one area matches a code or name;
+- `unsupported_geography` — requested release/type is not available;
+- `conversion_required` — source and requested geography differ;
+- `conversion_not_available` — no defensible crosswalk exists;
+- `conversion_not_authorised` — caller requested a non-approved method;
+- `aggregation_not_supported` — measure semantics make the operation invalid;
+- `partial_coverage` — result is possible only with missing/suppressed areas;
+- `licence_restricted` — original licence prevents the requested redistribution.
+
+Partial coverage is normally a `200` response with an explicit quality flag;
+it should not look like success with a mysteriously short row set.
+
+## Architecture
+
+The public service should be built from immutable, independently testable
+artifacts rather than doing spatial repair or crosswalk generation on requests.
+
+```text
+publisher files + ONS/OS boundary releases + curated place definitions
+                         |
+                         v
+             import adapters and source manifests
+                         |
+                         v
+  normalised observation store + boundary release registry + area registry
+                         |                         |
+                         |                         +--> geometry compiler / tiles
+                         v
+      crosswalk builder + validation + provenance ledger
+                         |
+                         v
+      immutable Atlas release manifest and signed content hashes
+                         |
+          +--------------+---------------+
+          |                              |
+          v                              v
+ object storage/CDN (Parquet,       query API (catalogue,
+ GeoJSON, tiles, manifests)         lookup, small joins, exports)
+```
+
+### Build-time data products
+
+1. **Source manifest** — retain source URL, licence, retrieval date, raw input
+   hash, adapter version and source-specific caveats. The existing dataset
+   manifest is a useful start.
+2. **Boundary registry** — formalise the current boundary catalogue as a
+   serialised product with code/name/parent property keys, CRS, extent,
+   generalisation, source metadata and hash.
+3. **Area registry** — canonical areas, aliases, clean parentage and named
+   locations. Extend the existing gazetteer rather than inventing parallel
+   identifiers.
+4. **Crosswalk registry** — versioned directional mappings with method,
+   weights, denominator, coverage and validation facts. Keep the existing
+   constituency/LAD overlap artifact as the first example, but do not represent
+   all mappings as a simple code-to-code dictionary.
+5. **Observation store** — typed records keyed by `measure`, `period`, and
+   canonical source area. Store raw imported values separately from harmonised
+   and derived results.
+6. **Release manifest** — an immutable manifest links exactly the versions of
+   all five products that shipped together.
+
+### Serving components
+
+- Static catalogues, manifests, crosswalk downloads, boundaries and vector
+  tiles belong on object storage behind a CDN; they are cacheable and cheap.
+- A stateless API service handles discovery, small row queries, resolution,
+  policy checks and signed export URLs.
+- A columnar query engine or object-store query layer serves filtered data;
+  start with partitioned Parquet by dataset/measure/period/geography rather
+  than a large operational database.
+- An asynchronous worker creates joins, unions and bulk extracts beyond safe
+  request limits.
+- A spatial database/index is justified for point-in-polygon and complex bbox
+  work, but should not be introduced merely to serve precomputed tiles.
+
+This can begin within the existing Next application for a small beta, but the
+API contract, release build and storage layout should be framework-independent.
+The map site's deployment lifecycle must not be the only way to publish an API
+release.
+
+## Data quality policy
+
+The API needs a product policy as much as it needs endpoints.
+
+### Quality labels
+
+Use a controlled vocabulary, not prose alone:
+
+| Field | Example values |
+| --- | --- |
+| `recordStatus` | `observed`, `cleaned`, `derived`, `suppressed`, `missing` |
+| `geographyMatch` | `source-exact`, `official-lookup`, `same-geometry-recode`, `best-fit`, `inferred` |
+| `coverage` | fraction plus list of missing/suppressed areas |
+| `comparability` | `within-release`, `cross-release-qualified`, `not-comparable` |
+| `confidence` | `high`, `medium`, `low`, with a linked explanation—not a fake statistical probability |
+
+### Required release gates
+
+A data or boundary release does not publish unless it passes or explicitly
+waives checks for:
+
+- source hash and licence recorded;
+- unique canonical source-area identity;
+- known unmatched, duplicate and suppressed records accounted for;
+- referenced boundary release and feature count available;
+- crosswalk source/target codes resolve; weight sums and coverage are checked;
+- extensive conversion preserves totals within a stated tolerance;
+- rates and densities use declared numerators/denominators;
+- geometry validity and topology checks appropriate to the source;
+- public examples and API schema contract tests;
+- differences from the prior release reviewed by a person.
+
+The validation result, including waivers, is published with the resource.
+
+## Authentication, quotas and licensing
+
+Start with anonymous read access for catalogue, metadata, modest map queries,
+and openly licensed small downloads. Add API keys before broad public launch so
+the service can provide fair-use limits, attribution telemetry and abuse
+protection without making open data needlessly hard to use.
+
+Large exports, high-volume tiles and expensive conversion requests should need
+an API key and documented quotas. Do not gate a resource merely because it is
+popular; cache and publish bulk files where a licence permits it.
+
+Licensing is a real constraint, not footer text. The metadata must preserve
+licence terms per source, derive the most restrictive applicable condition for
+a multi-source output, emit an attribution block, and block redistribution when
+the source terms require it. Legal review is required before branding outputs
+as an open API or promising a licence for transformed data.
+
+## Critical risks and weaknesses
+
+This is potentially very useful, but it can fail in predictable ways.
+
+| Risk / weakness | Why it matters | Mitigation |
+| --- | --- | --- |
+| False authority | A clean API response can make estimated or inferred results appear official | Prominent quality/provenance fields, separate observed and derived endpoints, no silent fallback |
+| Geographic change is not reversible | Splits/mergers cannot always be converted exactly | Directional crosswalks, method choice, coverage/error disclosure, reject invalid requests |
+| UK-wide comparability is uneven | National statistics use different definitions, periods and small-area systems | Treat coverage and comparability as measure metadata; launch with a small honest UK-wide catalogue |
+| Editorial places are contestable | “Devon”, “London”, and regions have multiple legitimate meanings | Version named locations, state their kind and membership, support alternatives rather than hiding the choice |
+| Maintenance burden | Boundary releases, source updates and repairs require ongoing stewardship | Automate intake/validation, assign dataset owners, publish a deprecation policy, keep releases immutable |
+| Geometry cost | GeoJSON and runtime unions can be huge and slow | Tiles/CDN, named simplification tiers, asynchronous exports, precomputed common unions |
+| Licence incompatibility | Public-source data is not automatically freely redistributable in all forms | Per-resource licence policy and legal review before exposure |
+| API scope creep | "One-stop shop" can become an unmaintainable general GIS platform | Start with registry/crosswalk/data delivery; decline arbitrary spatial analysis initially |
+| Incomplete repairs | Some inferred ward mappings may be wrong or only partially covered | Publish confidence and evidence, accept corrections, distinguish inferred mappings from official ones |
+| Breaking reproducibility | `latest` can change an analysis underneath a user | Immutable release URLs, ETags, manifests, changelog and deprecation windows |
+
+The most important criticism: the Atlas must not sell “all UK public data in a
+single consistent schema” before it can uphold that claim. Its honest advantage
+is a growing, transparent catalogue with exceptionally good geography handling.
+Depth and traceability are more credible than breadth.
+
+## Recommended delivery plan
+
+### Phase 0 — make the contract testable
+
+Before public endpoints, define JSON Schema/OpenAPI types for area identity,
+boundary release, dataset/measure, provenance, quality and crosswalk. Publish
+an internal `atlas-release` manifest. Add a machine-readable compatibility test
+to the existing precompile pipeline.
+
+**Exit criterion:** one immutable local release can be inspected without
+reading repository source code.
+
+### Phase 1 — publish geography first
+
+Publish `geographies`, `boundary-releases`, `areas:resolve`, area metadata,
+named locations, geometry links and the initial crosswalk catalogue. Do this
+even before a rich data query API: these utilities are the most distinctive and
+easiest to validate independently.
+
+Initial products should build directly on the present boundary catalogue,
+gazetteer core, curated locations, inferred ward/LAD mappings and
+constituency/LAD overlap work. Mark the latter two at their actual quality
+level; do not upgrade their status in transit to the API.
+
+**Exit criterion:** an external user can locate an area, obtain an exact
+boundary release, inspect membership, and download a documented crosswalk.
+
+### Phase 2 — a small, high-quality data beta
+
+Choose three to five measures with clear ownership and complementary uses:
+
+- population count and population density;
+- a local-authority UK-wide measure with clean source metadata;
+- one small-area deprivation measure where coverage limits are explicit;
+- a constituency measure that demonstrates crosswalk disclosure.
+
+Serve source-exact data and simple named-location aggregation first. Add
+Parquet/CSV downloads and attribution. Avoid universal on-the-fly geographic
+conversion at this stage.
+
+**Exit criterion:** a user can reproduce a documented population-density map
+for a named location from one request sequence, with cited inputs.
+
+### Phase 3 — controlled conversion and exports
+
+Add crosswalk-aware output geography, only for measures whose aggregation
+semantics have been declared and tested. Introduce asynchronous GeoJSON/Parquet
+exports, API keys, quotas, release changelog and status monitoring.
+
+**Exit criterion:** conversions preserve extensive totals within documented
+tolerance and return honest quality metadata in every format.
+
+### Phase 4 — scale coverage, not endpoint complexity
+
+Add datasets through repeatable adapter/manifest templates. Prioritise the
+coverage gaps that unlock genuinely UK-wide workflows: nation-compatible
+population baselines, more complete small-area geography, and official or
+well-evidenced change crosswalks. Add postcodes or point lookups only after
+licensing, update cadence and privacy implications are settled.
+
+## Where to focus first
+
+1. **Release and provenance model.** This is foundational. Without a pinned
+   release, hashes, licence lineage and changelog, a public API only makes the
+   existing work easier to misuse.
+2. **Boundary and crosswalk inventory.** Turn every current repair,
+   translation, inferred relationship and overlap into a versioned, typed
+   registry with an evidence level. This is the unique product.
+3. **Measure semantics.** Record what can be summed, recomputed, converted or
+   only displayed on its source geography. This protects users from plausible
+   but wrong outputs.
+4. **A deliberately narrow beta.** One excellent end-to-end population example
+   is more persuasive than forty undocumented CSV endpoints.
+5. **Validation and public exceptions.** Invest in tests and a visible quality
+   report before clever query capabilities. Boundary errors are expensive and
+   hard for downstream users to spot.
+6. **Licensing and stewardship.** Confirm redistribution rights, attribution,
+   update responsibility and deprecation policy before inviting dependency on
+   the service.
+
+## Concrete next repository work
+
+The first implementation tickets should be small and separable:
+
+1. Define `api/openapi.yaml` and JSON examples for the Phase 1 resources.
+2. Create a build-time `atlas-release.json` that references the existing
+   dataset manifest, boundary catalogue, gazetteer core, location definitions
+   and crosswalk artifacts by hash.
+3. Serialise the boundary catalogue to an API-safe JSON registry; do not expose
+   browser URLs or TypeScript internals as the contract.
+4. Extend crosswalk artifacts with direction, releases, method, weighting
+   basis, coverage, quality and provenance metadata.
+5. Add schemas and validation tests for measure aggregation semantics and
+   coverage.
+6. Build read-only Phase 1 route handlers backed by static artifacts, then
+   host/cache those artifacts independently from the UI bundle.
+7. Publish one tutorial that builds a population-density map and cites the
+   exact Atlas release.
+
+This sequence turns the current, valuable internal geography knowledge into a
+public foundation without prematurely committing to an expensive general-purpose
+data platform.
