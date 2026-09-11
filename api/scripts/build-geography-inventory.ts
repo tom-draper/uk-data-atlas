@@ -5,6 +5,7 @@ import { createBoundaryRegistry } from "./build-boundary-registry";
 import { createGeographyInventory } from "../src/geographyInventory";
 import { createSourceInventory } from "../src/sourceInventory";
 import type { AreaInventory } from "../src/areaInventory";
+import type { CrosswalkInventory } from "../src/crosswalkInventory";
 
 export const buildGeographyInventory = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "api", "public");
@@ -18,10 +19,20 @@ export const buildGeographyInventory = (repositoryRoot: string) => {
 	const areaInventory = existsSync(areaInventoryPath)
 		? (JSON.parse(readFileSync(areaInventoryPath, "utf8")) as AreaInventory)
 		: undefined;
+	const crosswalkInventoryPath = join(
+		outputDirectory,
+		"crosswalk-inventory.json",
+	);
+	const crosswalkInventory = existsSync(crosswalkInventoryPath)
+		? (JSON.parse(
+				readFileSync(crosswalkInventoryPath, "utf8"),
+			) as CrosswalkInventory)
+		: undefined;
 	const geographyInventory = createGeographyInventory(
 		createBoundaryRegistry(repositoryRoot),
 		sourceInventory,
 		areaInventory,
+		crosswalkInventory,
 	);
 	const sourcePath = join(outputDirectory, "source-inventory.json");
 	const geographyPath = join(outputDirectory, "geography-inventory.json");
