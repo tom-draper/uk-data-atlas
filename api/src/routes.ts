@@ -169,6 +169,7 @@ export const route = (
 				links: [
 					"/v1/geographies",
 					"/v1/boundary-releases",
+					"/v1/boundary-releases/{type}/{release}",
 					"/v1/geography-inventory",
 					"/v1/areas",
 					"/v1/areas/{type}/{release}/{code}",

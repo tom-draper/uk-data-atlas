@@ -101,6 +101,34 @@ test("marks a candidate eligible when the target release fully covers it", () =>
 	}
 });
 
+test("matches a target release whose field names differ only in case", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		// The source spells the parent fields in lower case; the compiled LAD
+		// release records them in upper case.
+		writeWardSource(root, [
+			{ WD25CD: "E1", WD25NM: "Ward One", lad25cd: "L1", lad25nm: "LAD One" },
+		]);
+		writeLadSource(root, [{ code: "L1", name: "LAD One" }]);
+		const inventory = compileRelationshipCandidates(root, [
+			wardArtifact([{ code: "E1", name: "Ward One" }]),
+			ladArtifact([{ code: "L1", name: "LAD One" }]),
+		]);
+		assert.equal(inventory.candidates.length, 1);
+		const [candidate] = inventory.candidates;
+		assert.equal(candidate.id, "ward-2025-to-local-authority-2025");
+		assert.equal(candidate.status, "eligible");
+		assert.deepEqual(candidate.to, {
+			geography: "localAuthority",
+			boundaryRelease: "2025",
+			codeProperty: "lad25cd",
+			nameProperty: "lad25nm",
+		});
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
 test("reports not-available when no compiled release matches the extra property pair", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {

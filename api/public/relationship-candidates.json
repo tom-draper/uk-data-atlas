@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:e4f59103cc33ba716b828346946a12c9a18f67c777f134c3cfdcbbc626db2efc",
+	"contentHash": "sha256:7fb88411e29f94bb5462a35467d99cb8fac261529a6d0334a999227a8f8407f5",
 	"candidates": [
 		{
 			"id": "parish-2019-04-ew-bgc-to-local-authority-unavailable",
@@ -121,7 +121,7 @@
 			"publishedCrosswalkId": "sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment"
 		},
 		{
-			"id": "ward-2016-12-gb-bgc-to-local-authority-unavailable",
+			"id": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc",
 			"input": "boundaries/ward/2016-12-gb-bgc/Wards_December_2016_GCB_in_Great_Britain_2022_856513180533154279.geojson",
 			"from": {
 				"geography": "ward",
@@ -131,10 +131,11 @@
 			},
 			"to": {
 				"geography": "localAuthority",
+				"boundaryRelease": "2016-12-gb-bgc",
 				"codeProperty": "lad16cd",
 				"nameProperty": "lad16nm"
 			},
-			"status": "not-available",
+			"status": "eligible",
 			"validation": {
 				"endpoints": {
 					"from": {
@@ -143,8 +144,9 @@
 						"referencedCodeCount": 8668
 					},
 					"to": {
-						"status": "not-available",
-						"reason": "No compiled target release has lad16cd/lad16nm fields."
+						"status": "verified",
+						"availableAreaCount": 380,
+						"referencedCodeCount": 380
 					}
 				},
 				"relationship": {
@@ -154,9 +156,7 @@
 					"multiTargetSourceCount": 0,
 					"missingValueFeatureCount": 0
 				},
-				"reasons": [
-					"No compiled target release has lad16cd/lad16nm fields."
-				]
+				"reasons": []
 			}
 		},
 		{

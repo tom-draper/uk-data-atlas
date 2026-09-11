@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857",
+	"releaseId": "sha256:a929f62e9bb48b591034852d09c4f3a10a4633099301eb3b6544823dedb5dafb",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -30,7 +30,7 @@
 		{
 			"id": "relationship-candidates",
 			"path": "relationship-candidates.json",
-			"contentHash": "sha256:540a2a8d0ad5972988deb66ad112b28fbb4ed217d6a9ca2bb0e5e2148d2a10ac"
+			"contentHash": "sha256:678922ed7f22924239c359f47259e279021964d298855ca841e43c7af25733d8"
 		},
 		{
 			"id": "geography-inventory",
