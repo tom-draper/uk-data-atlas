@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f3b1da516584d9f57e0793f52110d79452a7e9077fae7a4134b6a177f7f7d6bd",
+	"contentHash": "sha256:09650db18647bfc1477bf8e789eca466669a6ea5f0bc65d115b7d9e429b349e9",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -361,10 +361,9 @@
 				".xml"
 			],
 			"areaIdentities": {
-				"id": "2011-12-sc-bfc",
-				"geography": "dataZone",
-				"status": "not-compiled",
-				"reason": "No declared GeoJSON source is available for this release."
+				"status": "available",
+				"recordCount": 6976,
+				"artifact": "areas/dataZone/2011-12-sc-bfc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1084,10 +1083,9 @@
 				".xml"
 			],
 			"areaIdentities": {
-				"id": "2011-ni",
-				"geography": "superOutputArea",
-				"status": "not-compiled",
-				"reason": "No declared GeoJSON source is available for this release."
+				"status": "available",
+				"recordCount": 890,
+				"artifact": "areas/superOutputArea/2011-ni.json"
 			},
 			"relationships": {
 				"status": "not-compiled",

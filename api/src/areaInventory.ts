@@ -7,6 +7,7 @@ import type {
 	AreaSourceAdapterManifest,
 } from "./areaSourceAdapters";
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import { readDbfRecords } from "./dbf";
 
 type FeatureCollection = {
 	type?: unknown;
@@ -126,55 +127,42 @@ const sourceGeoJsonPath = (directory: string) => {
 	return file ? join(directory, file.path) : undefined;
 };
 
-const compileGeoJson = (
+const sourceDbfPath = (directory: string) => {
+	const metadata = JSON.parse(
+		readFileSync(join(directory, "meta.json"), "utf8"),
+	) as BoundaryMetadata;
+	if (!Array.isArray(metadata.files)) return undefined;
+	const shapefile = metadata.files.find(
+		(candidate) =>
+			typeof candidate === "object" &&
+			candidate !== null &&
+			(candidate as { role?: unknown }).role === "source" &&
+			typeof (candidate as { path?: unknown }).path === "string" &&
+			(candidate as { path: string }).path.toLowerCase().endsWith(".shp"),
+	) as { path: string } | undefined;
+	return shapefile
+		? join(directory, shapefile.path.replace(/\.shp$/i, ".dbf"))
+		: undefined;
+};
+
+const compileProperties = (
 	path: string,
+	propertiesByFeature: Array<Record<string, unknown>>,
 	geography: string,
 	boundaryRelease: string,
 	adapter?: AreaPropertyAdapter,
 	sourceAdapter?: AreaSourceAdapter,
 ): AreaReleaseArtifact | UnavailableAreaRelease => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as FeatureCollection;
-	if (
-		source.type !== "FeatureCollection" ||
-		!Array.isArray(source.features)
-	) {
+	const firstProperties = propertiesByFeature[0];
+	if (!firstProperties) {
 		return {
 			id: boundaryRelease,
 			geography,
 			status: "not-compiled",
-			reason: "The declared GeoJSON source is not a FeatureCollection.",
+			reason: "The declared source has no feature properties.",
 		};
 	}
-	const features = sourceAdapter
-		? source.features.filter((feature) => {
-				const properties = feature.properties as
-					Record<string, unknown> | undefined;
-				const value = properties?.[sourceAdapter.filter.property];
-				return (
-					typeof value === "string" &&
-					value.startsWith(sourceAdapter.filter.startsWith)
-				);
-			})
-		: source.features;
-	if (features.length === 0) {
-		return {
-			id: boundaryRelease,
-			geography,
-			status: "not-compiled",
-			reason: "The configured source selection did not match any features.",
-		};
-	}
-	const firstProperties = features[0]?.properties;
-	if (typeof firstProperties !== "object" || firstProperties === null) {
-		return {
-			id: boundaryRelease,
-			geography,
-			status: "not-compiled",
-			reason: "The declared GeoJSON source has no feature properties.",
-		};
-	}
-	const fields =
-		adapter ?? findProperties(firstProperties as Record<string, unknown>);
+	const fields = adapter ?? findProperties(firstProperties);
 	if (!fields) {
 		return {
 			id: boundaryRelease,
@@ -192,14 +180,7 @@ const compileGeoJson = (
 		);
 	}
 	const areasByCode = new Map<string, AreaRecord>();
-	for (const [index, feature] of features.entries()) {
-		if (
-			typeof feature.properties !== "object" ||
-			feature.properties === null
-		) {
-			throw new Error(`${path}: feature ${index} has no properties`);
-		}
-		const properties = feature.properties as Record<string, unknown>;
+	for (const [index, properties] of propertiesByFeature.entries()) {
 		const code = stringValue(properties[fields.codeProperty]);
 		const name = stringValue(properties[fields.nameProperty]);
 		if (!code || !name) {
@@ -257,6 +238,63 @@ const compileGeoJson = (
 	};
 };
 
+const compileGeoJson = (
+	path: string,
+	geography: string,
+	boundaryRelease: string,
+	adapter?: AreaPropertyAdapter,
+	sourceAdapter?: AreaSourceAdapter,
+): AreaReleaseArtifact | UnavailableAreaRelease => {
+	const source = JSON.parse(readFileSync(path, "utf8")) as FeatureCollection;
+	if (
+		source.type !== "FeatureCollection" ||
+		!Array.isArray(source.features)
+	) {
+		return {
+			id: boundaryRelease,
+			geography,
+			status: "not-compiled",
+			reason: "The declared GeoJSON source is not a FeatureCollection.",
+		};
+	}
+	const features = sourceAdapter
+		? source.features.filter((feature) => {
+				const properties = feature.properties as
+					Record<string, unknown> | undefined;
+				const value = properties?.[sourceAdapter.filter.property];
+				return (
+					typeof value === "string" &&
+					value.startsWith(sourceAdapter.filter.startsWith)
+				);
+			})
+		: source.features;
+	if (features.length === 0) {
+		return {
+			id: boundaryRelease,
+			geography,
+			status: "not-compiled",
+			reason: "The configured source selection did not match any features.",
+		};
+	}
+	const propertiesByFeature = features.map((feature, index) => {
+		if (
+			typeof feature.properties !== "object" ||
+			feature.properties === null
+		) {
+			throw new Error(`${path}: feature ${index} has no properties`);
+		}
+		return feature.properties as Record<string, unknown>;
+	});
+	return compileProperties(
+		path,
+		propertiesByFeature,
+		geography,
+		boundaryRelease,
+		adapter,
+		sourceAdapter,
+	);
+};
+
 export const compileAreas = (
 	repositoryRoot: string,
 	boundaryRegistry: BoundaryRegistry,
@@ -274,22 +312,36 @@ export const compileAreas = (
 			toKebabCase(sourceAdapter?.source.geography ?? release.geography),
 			sourceAdapter?.source.boundaryRelease ?? release.id,
 		);
-		const sourcePath = sourceGeoJsonPath(directory);
-		if (!sourcePath || !existsSync(sourcePath)) {
+		const geoJsonPath = sourceGeoJsonPath(directory);
+		const dbfPath = sourceDbfPath(directory);
+		if (
+			(!geoJsonPath || !existsSync(geoJsonPath)) &&
+			(!dbfPath || !existsSync(dbfPath))
+		) {
 			return {
 				id: release.id,
 				geography: release.geography,
 				status: "not-compiled" as const,
-				reason: "No declared GeoJSON source is available for this release.",
+				reason: "No declared GeoJSON or Shapefile attribute source is available for this release.",
 			};
 		}
-		const result = compileGeoJson(
-			sourcePath,
-			release.geography,
-			release.id,
-			adapters[identity],
-			sourceAdapter,
-		);
+		const result =
+			geoJsonPath && existsSync(geoJsonPath)
+				? compileGeoJson(
+						geoJsonPath,
+						release.geography,
+						release.id,
+						adapters[identity],
+						sourceAdapter,
+					)
+				: compileProperties(
+						dbfPath as string,
+						readDbfRecords(dbfPath as string),
+						release.geography,
+						release.id,
+						adapters[identity],
+						sourceAdapter,
+					);
 		if ("areas" in result) {
 			artifacts.push(result);
 			return {

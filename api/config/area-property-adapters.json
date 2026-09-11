@@ -1,6 +1,10 @@
 {
 	"schemaVersion": 1,
 	"releases": {
+		"dataZone/2011-12-sc-bfc": {
+			"codeProperty": "DataZone",
+			"nameProperty": "Name"
+		},
 		"parish/2019-04-ew-bgc": {
 			"codeProperty": "parncp19cd",
 			"nameProperty": "parncp19nm"
@@ -12,6 +16,10 @@
 		"subIntegratedCareBoardLocation/2026-04-en-bgc": {
 			"codeProperty": "SICBL26CD",
 			"nameProperty": "SICBL26NM"
+		},
+		"superOutputArea/2011-ni": {
+			"codeProperty": "SOA_CODE",
+			"nameProperty": "SOA_LABEL"
 		},
 		"ward/2016-12-gb-bgc": {
 			"codeProperty": "wd16cd",

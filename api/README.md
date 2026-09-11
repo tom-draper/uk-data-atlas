@@ -949,3 +949,8 @@ selection rule. The build writes the selected GeoJSON under
 `public/derived-boundaries.json`. For example, Welsh 2011 LSOAs are selected
 from the raw England-and-Wales GeoJSON by official code prefix; no generated
 TopoJSON is read by this API build.
+
+For canonical identities only, a declared Shapefile source can also be read
+through its companion dBase (`.dbf`) attributes. This avoids using generated
+topologies for identity lookup while deliberately leaving geometry conversion
+to a future, separately validated compiler.

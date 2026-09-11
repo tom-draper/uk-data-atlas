@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5d8388cb3f4bb0f9cc7347a7a0bb139ae009c23d221a7c5bfbf45bb0393d14e7",
+	"contentHash": "sha256:ab26754ea9cd1a517c060682fa6465479452b9c2e62d4679791556fb498509b5",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -166,8 +166,12 @@
 		{
 			"id": "2011-12-sc-bfc",
 			"geography": "dataZone",
-			"status": "not-compiled",
-			"reason": "No declared GeoJSON source is available for this release."
+			"status": "available",
+			"recordCount": 6976,
+			"artifact": "areas/dataZone/2011-12-sc-bfc.json",
+			"contentHash": "sha256:62075d67d2c29754f57495650508bd7d0b7d820fd9f95c4d7d8629ade649dbc9",
+			"codeProperty": "DataZone",
+			"nameProperty": "Name"
 		},
 		{
 			"id": "2021-05-ew-bgc",
@@ -522,8 +526,12 @@
 		{
 			"id": "2011-ni",
 			"geography": "superOutputArea",
-			"status": "not-compiled",
-			"reason": "No declared GeoJSON source is available for this release."
+			"status": "available",
+			"recordCount": 890,
+			"artifact": "areas/superOutputArea/2011-ni.json",
+			"contentHash": "sha256:df39bfd3e54d1273c19875246b49b83eafee7d6373e5670f6b39a95463a28221",
+			"codeProperty": "SOA_CODE",
+			"nameProperty": "SOA_LABEL"
 		},
 		{
 			"id": "2011-12-uk-gcb",
