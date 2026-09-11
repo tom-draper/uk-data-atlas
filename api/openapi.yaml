@@ -1,361 +1,837 @@
-openapi: 3.1.1
+openapi: 3.1.0
 info:
-    title: UK Data Atlas API
-    version: v1
-    description: |
-        A read-only, versioned discovery API for UK Data Atlas boundary releases.
-        The current implementation is intentionally limited to release metadata.
+  title: UK Data Atlas API
+  version: "0.1.0"
+  description: |
+    This describes exactly the read-only routes implemented in `src/routes.ts`
+    and served by `pnpm start`. It is not the full public API proposed in
+    `README.md`: it does not yet cover measures, data retrieval, named
+    locations, or write-side aggregation. Those remain proposal, not
+    contract, until they are implemented and added here.
+
+    Every successful response is wrapped in the envelope described by
+    `Envelope`. Note a current limitation: the envelope's `atlasRelease`
+    field is the boundary registry's own content hash, not the `releaseId`
+    from `GET /atlas-release`. The two will be unified once every route
+    cites the same immutable release identifier.
+  license:
+    name: Proposal; no licence has been assigned yet
 servers:
-    - url: http://127.0.0.1:3001/v1
-      description: Local standalone server
+  - url: http://127.0.0.1:3001/v1
+    description: Local development server (pnpm start)
 paths:
-    /:
-        get:
-            operationId: getApiIndex
-            responses:
-                "200":
-                    description: API discovery document
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/IndexEnvelope"
-    /geographies:
-        get:
-            operationId: listGeographies
-            responses:
-                "200":
-                    description: Published geography families and their latest releases
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/GeographyListEnvelope"
-    /geography-inventory:
-        get:
-            operationId: getGeographyInventory
-            responses:
-                "200":
-                    description: Compiled coverage of available geography releases
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/GeographyInventoryEnvelope"
-    /areas/{type}/{release}/{code}:
-        get:
-            operationId: getArea
-            parameters:
-                - $ref: "#/components/parameters/BoundaryType"
-                - $ref: "#/components/parameters/BoundaryRelease"
-                - $ref: "#/components/parameters/AreaCode"
-            responses:
-                "200":
-                    description: One compiled area identity
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/AreaEnvelope"
-                "404":
-                    $ref: "#/components/responses/NotFound"
-    /boundary-releases:
-        get:
-            operationId: listBoundaryReleases
-            responses:
-                "200":
-                    description: Published boundary-release metadata
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/BoundaryReleaseListEnvelope"
-    /boundary-releases/{type}/{release}:
-        get:
-            operationId: getBoundaryRelease
-            parameters:
-                - $ref: "#/components/parameters/BoundaryType"
-                - $ref: "#/components/parameters/BoundaryRelease"
-            responses:
-                "200":
-                    description: One published boundary release
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/BoundaryReleaseEnvelope"
-                "404":
-                    $ref: "#/components/responses/NotFound"
-components:
-    parameters:
-        BoundaryType:
-            name: type
-            in: path
-            required: true
-            schema:
-                type: string
-        BoundaryRelease:
-            name: release
-            in: path
-            required: true
-            schema:
-                type: string
-        AreaCode:
-            name: code
-            in: path
-            required: true
-            schema:
-                type: string
-    responses:
-        NotFound:
-            description: No matching API resource
-            content:
-                application/problem+json:
-                    schema:
-                        $ref: "#/components/schemas/Problem"
-    schemas:
-        Envelope:
-            type: object
-            required: [apiVersion, atlasRelease, data, meta]
-            properties:
-                apiVersion:
-                    type: string
-                    const: v1
-                atlasRelease:
-                    type: string
-                    description: Content hash of the registry serving the response.
-                data: {}
+  /:
+    get:
+      operationId: getRoot
+      summary: API discovery
+      description: Lists the currently implemented resource paths.
+      responses:
+        "200":
+          description: Discovery document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                data:
+                  name: UK Data Atlas API
+                  links:
+                    - /v1/geographies
+                    - /v1/boundary-releases
+                    - /v1/geography-inventory
+                    - /v1/areas/{type}/{release}/{code}
+                    - /v1/crosswalks
+                    - /v1/crosswalks/{crosswalk-id}
+                    - /v1/crosswalks/{crosswalk-id}/records
+                    - /v1/atlas-release
                 meta:
-                    type: object
-                    required: [nextCursor]
-                    properties:
-                        nextCursor:
-                            type: "null"
-        Index:
-            type: object
-            required: [name, links]
-            properties:
+                  nextCursor: null
+
+  /geographies:
+    get:
+      operationId: listGeographies
+      summary: List geography types with their latest boundary release
+      responses:
+        "200":
+          description: One entry per geography type present in the boundary registry.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeographySummaryListEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                data:
+                  - id: constituency
+                    latestRelease: 2024-07-uk-bgc
+                    releaseCount: 1
+                meta:
+                  nextCursor: null
+
+  /boundary-releases:
+    get:
+      operationId: listBoundaryReleases
+      summary: List every compiled boundary release
+      responses:
+        "200":
+          description: The full boundary registry.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BoundaryReleaseListEnvelope"
+
+  /boundary-releases/{geography}/{release}:
+    get:
+      operationId: getBoundaryRelease
+      summary: Get one boundary release's metadata
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+      responses:
+        "200":
+          description: The matching boundary release.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BoundaryReleaseEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                data:
+                  id: 2024-07-uk-bgc
+                  geography: constituency
+                  title: Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)
+                  description: Westminster parliamentary constituencies as published for July 2024, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.
+                  temporalCoverage: "2024"
+                  coverage:
+                    countries: [GB-ENG, GB-NIR, GB-SCT, GB-WLS]
+                  source:
+                    publisher: Office for National Statistics
+                    url: https://geoportal.statistics.gov.uk/
+                    licence:
+                      name: Open Government Licence v3.0
+                      url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+                  metadataHash: "sha256:cb36a990db1b57ae973ebe88874fae7f560a12721fa784cf5e52a9fd5e8466f3"
+                meta:
+                  nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /geography-inventory:
+    get:
+      operationId: getGeographyInventory
+      summary: Report area identity and relationship (crosswalk) coverage per boundary release
+      description: >
+        For every boundary release, states whether an area identity artifact
+        has been compiled and which published crosswalks reference it, or an
+        explicit reason why neither is available yet. This is the coverage
+        report described in the README's domain model, not a promise that
+        every release is fully supported.
+      responses:
+        "200":
+          description: The current geography inventory.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeographyInventoryEnvelope"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /areas/{geography}/{release}/{code}:
+    get:
+      operationId: getArea
+      summary: Get one compiled area by its full identity
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The official source code for this area on this boundary release.
+      responses:
+        "200":
+          description: The matching compiled area.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                data:
+                  id: constituency/2024-07-uk-bgc/E14001262
+                  geography: constituency
+                  boundaryRelease: 2024-07-uk-bgc
+                  code: E14001262
+                  name: Halifax
+                meta:
+                  nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /crosswalks:
+    get:
+      operationId: listCrosswalks
+      summary: List published crosswalks
+      responses:
+        "200":
+          description: The current crosswalk inventory.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrosswalkSummaryListEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                data:
+                  - id: constituency-2010-to-2024-official-lookup-v2
+                    from: { geography: constituency, boundaryRelease: "2010" }
+                    to: { geography: constituency, boundaryRelease: 2024-07-uk-bgc }
+                    method: official-lookup
+                    quality: publisher-supplied
+                    weighting: { status: not-provided }
+                    recordCount: 650
+                    artifact: crosswalks/constituency-2010-to-2024-official-lookup-v2.json
+                    contentHash: "sha256:ce61b3f59c495498e9a7cfd7fb4ff6d3d742cffa8b27150a58c27b6f099b038d"
+                meta:
+                  nextCursor: null
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /crosswalks/{crosswalkId}:
+    get:
+      operationId: getCrosswalk
+      summary: Get one crosswalk's metadata
+      description: >
+        Returns the crosswalk's method, quality, weighting, endpoints,
+        provenance and validation facts, but not its full record set. Fetch
+        `/crosswalks/{crosswalkId}/records` for the mappings themselves.
+      parameters:
+        - $ref: "#/components/parameters/CrosswalkId"
+      responses:
+        "200":
+          description: The matching crosswalk's metadata.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrosswalkMetadataEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                data:
+                  schemaVersion: 1
+                  contentHash: "sha256:ce61b3f59c495498e9a7cfd7fb4ff6d3d742cffa8b27150a58c27b6f099b038d"
+                  id: constituency-2010-to-2024-official-lookup-v2
+                  method: official-lookup
+                  quality: publisher-supplied
+                  weighting: { status: not-provided }
+                  from: { geography: constituency, boundaryRelease: "2010" }
+                  to: { geography: constituency, boundaryRelease: 2024-07-uk-bgc }
+                  provenance:
+                    input: "boundaries/constituency/2024-07-uk-bgc/Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson"
+                    inputHash: "sha256:62e1ac00a3a6cce21055d623e7141e814e7212014a37fab0b0a3d693cf0e82a3"
+                  validation:
+                    sourceNameConflicts:
+                      - code: N06000004
+                        names: [Belfast North, Belfast West]
+                meta:
+                  nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /crosswalks/{crosswalkId}/records:
+    get:
+      operationId: listCrosswalkRecords
+      summary: List (optionally filtered) records for one crosswalk
+      parameters:
+        - $ref: "#/components/parameters/CrosswalkId"
+        - name: source
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            Filter to the record whose source code matches exactly. Omit to
+            return every record; there is no pagination yet, so a bulk
+            consumer should prefer downloading the crosswalk artifact
+            directly until an export endpoint exists.
+      responses:
+        "200":
+          description: >
+            The matching records, or an empty array if `source` matched
+            nothing.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrosswalkRecordListEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                data:
+                  - source: { code: N06000004, labels: [Belfast North, Belfast West] }
+                    targets:
+                      - { code: N05000002, labels: [Belfast North] }
+                      - { code: N05000003, labels: [Belfast South and Mid Down] }
+                      - { code: N05000004, labels: [Belfast West] }
+                      - { code: N05000014, labels: [South Antrim] }
+                meta:
+                  nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /atlas-release:
+    get:
+      operationId: getAtlasRelease
+      summary: Get the current immutable atlas release manifest
+      description: >
+        References the boundary registry, derived boundaries, area
+        inventory, crosswalk inventory, geography inventory and source
+        inventory by content hash, plus a single `releaseId` hash of that
+        set. Rebuilding without changing any input reproduces the same
+        `releaseId`.
+      responses:
+        "200":
+          description: The current atlas release manifest.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AtlasReleaseEnvelope"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+components:
+  parameters:
+    Geography:
+      name: geography
+      in: path
+      required: true
+      schema:
+        type: string
+      description: A geography type id, e.g. `constituency` or `ward`.
+    Release:
+      name: release
+      in: path
+      required: true
+      schema:
+        type: string
+      description: A boundary release id, e.g. `2024-07-uk-bgc`.
+    CrosswalkId:
+      name: crosswalkId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: A crosswalk id, e.g. `constituency-2010-to-2024-official-lookup-v2`.
+
+  responses:
+    NotFound:
+      description: No resource matches that identity.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    CatalogueUnavailable:
+      description: The referenced build artifact has not been built yet.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+
+  schemas:
+    Problem:
+      type: object
+      description: RFC 9457 Problem Details.
+      required: [type, title, status, detail]
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+
+    Envelope:
+      type: object
+      required: [apiVersion, atlasRelease, data, meta]
+      properties:
+        apiVersion:
+          type: string
+          const: v1
+        atlasRelease:
+          type: string
+          description: >
+            Currently the boundary registry's content hash (see the known
+            limitation noted in the API description), not the
+            `/atlas-release` `releaseId`.
+        meta:
+          type: object
+          required: [nextCursor]
+          properties:
+            nextCursor:
+              type: "null"
+              description: Reserved for future pagination; always null today.
+
+    RootDocument:
+      type: object
+      required: [name, links]
+      properties:
+        name:
+          type: string
+        links:
+          type: array
+          items:
+            type: string
+
+    RootEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/RootDocument"
+
+    GeographySummary:
+      type: object
+      required: [id, latestRelease, releaseCount]
+      properties:
+        id:
+          type: string
+        latestRelease:
+          type: string
+        releaseCount:
+          type: integer
+
+    GeographySummaryListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/GeographySummary"
+
+    BoundaryRelease:
+      type: object
+      required: [id, geography, title, coverage, source, metadataHash]
+      properties:
+        id:
+          type: string
+        geography:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        temporalCoverage:
+          type: string
+        coverage:
+          type: object
+          required: [countries]
+          properties:
+            countries:
+              type: array
+              items:
+                type: string
+        source:
+          type: object
+          required: [publisher, url, licence]
+          properties:
+            publisher:
+              type: string
+            url:
+              type: string
+              format: uri
+            retrievedAt:
+              type: string
+              format: date
+            licence:
+              type: object
+              required: [name]
+              properties:
                 name:
-                    type: string
-                links:
-                    type: array
-                    items:
-                        type: string
-        Geography:
-            type: object
-            required: [id, latestRelease, releaseCount]
-            properties:
-                id:
-                    type: string
-                latestRelease:
-                    type: string
-                releaseCount:
-                    type: integer
-                    minimum: 1
-        CompilerCoverage:
-            type: object
-            required: [status, reason]
-            properties:
-                status:
-                    type: string
-                    const: not-compiled
-                reason:
-                    type: string
-        AvailableAreaCoverage:
-            type: object
-            required: [status, recordCount, artifact]
-            properties:
-                status:
-                    type: string
-                    const: available
-                recordCount:
-                    type: integer
-                    minimum: 1
-                artifact:
-                    type: string
-        AreaCoverage:
-            oneOf:
-                - $ref: "#/components/schemas/AvailableAreaCoverage"
-                - $ref: "#/components/schemas/CompilerCoverage"
-        GeographyReleaseInventory:
-            type: object
-            required:
-                [
-                    id,
-                    geography,
-                    countries,
-                    inputFormats,
-                    areaIdentities,
-                    relationships,
-                ]
-            properties:
-                id:
-                    type: string
-                geography:
-                    type: string
-                countries:
-                    type: array
-                    items:
-                        type: string
-                inputFormats:
-                    type: array
-                    items:
-                        type: string
-                areaIdentities:
-                    $ref: "#/components/schemas/AreaCoverage"
-                relationships:
-                    $ref: "#/components/schemas/CompilerCoverage"
-        GeographyCoverage:
+                  type: string
+                url:
+                  type: string
+                  format: uri
+        metadataHash:
+          type: string
+
+    BoundaryReleaseListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/BoundaryRelease"
+
+    BoundaryReleaseEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/BoundaryRelease"
+
+    AreaIdentityCoverage:
+      oneOf:
+        - type: object
+          required: [status, recordCount, artifact]
+          properties:
+            status:
+              const: available
+            recordCount:
+              type: integer
+            artifact:
+              type: string
+        - type: object
+          required: [status, reason]
+          properties:
+            status:
+              const: not-compiled
+            reason:
+              type: string
+
+    GeographyRelationship:
+      type: object
+      required: [id, direction, counterpart, method, quality, weighting]
+      properties:
+        id:
+          type: string
+        direction:
+          enum: [from, to]
+        counterpart:
+          type: object
+          required: [geography, boundaryRelease]
+          properties:
+            geography:
+              type: string
+            boundaryRelease:
+              type: string
+        method:
+          const: official-lookup
+        quality:
+          const: publisher-supplied
+        weighting:
+          type: object
+          required: [status]
+          properties:
+            status:
+              const: not-provided
+
+    RelationshipCoverage:
+      oneOf:
+        - type: object
+          required: [status, crosswalks]
+          properties:
+            status:
+              const: available
+            crosswalks:
+              type: array
+              items:
+                $ref: "#/components/schemas/GeographyRelationship"
+        - type: object
+          required: [status, reason]
+          properties:
+            status:
+              const: not-compiled
+            reason:
+              type: string
+
+    GeographyReleaseInventory:
+      type: object
+      required:
+        - id
+        - geography
+        - countries
+        - inputFormats
+        - areaIdentities
+        - relationships
+      properties:
+        id:
+          type: string
+        geography:
+          type: string
+        countries:
+          type: array
+          items:
+            type: string
+        inputFormats:
+          type: array
+          items:
+            type: string
+        areaIdentities:
+          $ref: "#/components/schemas/AreaIdentityCoverage"
+        relationships:
+          $ref: "#/components/schemas/RelationshipCoverage"
+
+    GeographyInventory:
+      type: object
+      required:
+        - schemaVersion
+        - contentHash
+        - boundaryRegistryHash
+        - releases
+        - geographies
+      properties:
+        schemaVersion:
+          const: 1
+        contentHash:
+          type: string
+        boundaryRegistryHash:
+          type: string
+        releases:
+          type: array
+          items:
+            $ref: "#/components/schemas/GeographyReleaseInventory"
+        geographies:
+          type: array
+          items:
             type: object
             required: [id, countries, releaseCount]
             properties:
-                id:
+              id:
+                type: string
+              countries:
+                type: array
+                items:
+                  type: string
+              releaseCount:
+                type: integer
+
+    GeographyInventoryEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/GeographyInventory"
+
+    Area:
+      type: object
+      required: [id, geography, boundaryRelease, code, name]
+      properties:
+        id:
+          type: string
+        geography:
+          type: string
+        boundaryRelease:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+
+    AreaEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/Area"
+
+    CrosswalkSide:
+      type: object
+      required: [geography, boundaryRelease]
+      properties:
+        geography:
+          type: string
+        boundaryRelease:
+          type: string
+
+    CrosswalkSummary:
+      type: object
+      required:
+        - id
+        - from
+        - to
+        - method
+        - quality
+        - weighting
+        - recordCount
+        - artifact
+        - contentHash
+      properties:
+        id:
+          type: string
+        from:
+          $ref: "#/components/schemas/CrosswalkSide"
+        to:
+          $ref: "#/components/schemas/CrosswalkSide"
+        method:
+          const: official-lookup
+        quality:
+          const: publisher-supplied
+        weighting:
+          type: object
+          required: [status]
+          properties:
+            status:
+              const: not-provided
+        recordCount:
+          type: integer
+        artifact:
+          type: string
+        contentHash:
+          type: string
+
+    CrosswalkSummaryListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/CrosswalkSummary"
+
+    CrosswalkMetadata:
+      type: object
+      required:
+        - schemaVersion
+        - contentHash
+        - id
+        - method
+        - quality
+        - weighting
+        - from
+        - to
+        - provenance
+        - validation
+      properties:
+        schemaVersion:
+          const: 1
+        contentHash:
+          type: string
+        id:
+          type: string
+        method:
+          const: official-lookup
+        quality:
+          const: publisher-supplied
+        weighting:
+          type: object
+          required: [status]
+          properties:
+            status:
+              const: not-provided
+        from:
+          $ref: "#/components/schemas/CrosswalkSide"
+        to:
+          $ref: "#/components/schemas/CrosswalkSide"
+        provenance:
+          type: object
+          required: [input, inputHash]
+          properties:
+            input:
+              type: string
+            inputHash:
+              type: string
+        validation:
+          type: object
+          required: [sourceNameConflicts]
+          properties:
+            sourceNameConflicts:
+              type: array
+              items:
+                type: object
+                required: [code, names]
+                properties:
+                  code:
                     type: string
-                countries:
+                  names:
                     type: array
                     items:
-                        type: string
-                releaseCount:
-                    type: integer
-                    minimum: 1
-        GeographyInventory:
-            type: object
-            required:
-                [
-                    schemaVersion,
-                    contentHash,
-                    boundaryRegistryHash,
-                    releases,
-                    geographies,
-                ]
-            properties:
-                schemaVersion:
-                    type: integer
-                    const: 1
-                contentHash:
-                    type: string
-                boundaryRegistryHash:
-                    type: string
-                releases:
-                    type: array
-                    items:
-                        $ref: "#/components/schemas/GeographyReleaseInventory"
-                geographies:
-                    type: array
-                    items:
-                        $ref: "#/components/schemas/GeographyCoverage"
-        BoundaryRelease:
-            type: object
-            required: [id, geography, title, coverage, source, metadataHash]
-            properties:
-                id:
-                    type: string
-                geography:
-                    type: string
-                title:
-                    type: string
-                description:
-                    type: string
-                temporalCoverage:
-                    type: string
-                coverage:
-                    type: object
-                    required: [countries]
-                    properties:
-                        countries:
-                            type: array
-                            items:
-                                type: string
-                source:
-                    type: object
-                    required: [publisher, url, licence]
-                    properties:
-                        publisher:
-                            type: string
-                        url:
-                            type: string
-                            format: uri
-                        retrievedAt:
-                            type: string
-                        licence:
-                            type: object
-                            required: [name]
-                            properties:
-                                name:
-                                    type: string
-                                url:
-                                    type: string
-                                    format: uri
-                metadataHash:
-                    type: string
-        Area:
-            type: object
-            required: [id, geography, boundaryRelease, code, name]
-            properties:
-                id:
-                    type: string
-                geography:
-                    type: string
-                boundaryRelease:
-                    type: string
-                code:
-                    type: string
-                name:
-                    type: string
-                aliases:
-                    type: array
-                    items:
-                        type: string
-        Problem:
-            type: object
-            required: [type, title, status, detail]
-            properties:
-                type:
-                    type: string
-                    format: uri
-                title:
-                    type: string
-                status:
-                    type: integer
-                detail:
-                    type: string
-        IndexEnvelope:
-            allOf:
-                - $ref: "#/components/schemas/Envelope"
-                - type: object
-                  properties:
-                      data:
-                          $ref: "#/components/schemas/Index"
-        GeographyListEnvelope:
-            allOf:
-                - $ref: "#/components/schemas/Envelope"
-                - type: object
-                  properties:
-                      data:
-                          type: array
-                          items:
-                              $ref: "#/components/schemas/Geography"
-        GeographyInventoryEnvelope:
-            allOf:
-                - $ref: "#/components/schemas/Envelope"
-                - type: object
-                  properties:
-                      data:
-                          $ref: "#/components/schemas/GeographyInventory"
-        AreaEnvelope:
-            allOf:
-                - $ref: "#/components/schemas/Envelope"
-                - type: object
-                  properties:
-                      data:
-                          $ref: "#/components/schemas/Area"
-        BoundaryReleaseListEnvelope:
-            allOf:
-                - $ref: "#/components/schemas/Envelope"
-                - type: object
-                  properties:
-                      data:
-                          type: array
-                          items:
-                              $ref: "#/components/schemas/BoundaryRelease"
-        BoundaryReleaseEnvelope:
-            allOf:
-                - $ref: "#/components/schemas/Envelope"
-                - type: object
-                  properties:
-                      data:
-                          $ref: "#/components/schemas/BoundaryRelease"
+                      type: string
+
+    CrosswalkMetadataEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/CrosswalkMetadata"
+
+    CrosswalkArea:
+      type: object
+      required: [code, labels]
+      properties:
+        code:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+          description: >
+            Non-canonical name candidates. More than one entry means the
+            source disagreed with itself about this area's name; it is not
+            an alias list to pick from arbitrarily.
+
+    CrosswalkRecord:
+      type: object
+      required: [source, targets]
+      properties:
+        source:
+          $ref: "#/components/schemas/CrosswalkArea"
+        targets:
+          type: array
+          items:
+            $ref: "#/components/schemas/CrosswalkArea"
+
+    CrosswalkRecordListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/CrosswalkRecord"
+
+    AtlasReleaseArtifactRef:
+      type: object
+      required: [id, path, contentHash]
+      properties:
+        id:
+          type: string
+        path:
+          type: string
+        contentHash:
+          type: string
+
+    AtlasRelease:
+      type: object
+      required: [schemaVersion, releaseId, generatedAt, artifacts]
+      properties:
+        schemaVersion:
+          const: 1
+        releaseId:
+          type: string
+        generatedAt:
+          type: string
+          format: date-time
+        artifacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AtlasReleaseArtifactRef"
+
+    AtlasReleaseEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/AtlasRelease"
