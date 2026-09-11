@@ -271,10 +271,17 @@ paths:
       operationId: getAreaGeometry
       summary: Get one compiled area's raw geometry as a GeoJSON Feature
       description: >
-        Serves the area's own geometry straight from its raw, cached WGS84
-        source GeoJSON, not a generalised or simplified derivative. A code
-        that maps to more than one feature fragment in the source (e.g. an
-        area split across islands) is returned as a single GeometryCollection
+        Serves the area's own geometry from its raw, cached source GeoJSON,
+        not a generalised or simplified derivative, always in WGS84. A source
+        in British National Grid (EPSG:27700) is reprojected per area through
+        EPSG:1314, OSGB36 to WGS 84 (6), a Helmert transformation EPSG states
+        as accurate to 2 m in Great Britain; `properties.geometrySource`
+        records the source CRS and any transformation applied. Northern
+        Ireland areas in those releases are refused with a 503, because
+        reprojected they land at least 50 m from the ONS's own WGS84 release;
+        request them from a WGS84 release instead. A code that
+        maps to more than one feature fragment in the source (e.g. an area
+        split across islands) is returned as a single GeometryCollection
         rather than picking one fragment. This is a raw geometry lookup, not
         yet the tiled or simplified delivery the full proposal describes.
       parameters:
@@ -305,6 +312,7 @@ paths:
                     boundaryRelease: 2024-07-uk-bgc
                     code: E14001262
                     name: Halifax
+                    geometrySource: { sourceCrs: "EPSG:4326" }
                   geometry:
                     type: Polygon
                     coordinates: [[[-1.9269, 53.7874], [-1.9146, 53.7815]]]
@@ -631,16 +639,16 @@ paths:
                   inputs:
                     boundaryRegistry: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
                     crosswalkInventory: "sha256:07f782b1d99b89a7f0f0958a407ab006bc32adb1a3b6d1ac2a4ab59594b7812b"
-                    waivers: "sha256:22f9a3221fcbc126afc2ebc2ad8dce12f02c4c82a536aadf6bb3ed73ded348de"
+                    waivers: "sha256:e01845720f4cfb741b9f782dbfcb19d891fb88016a80f7efd1d96f9d4399b9bf"
                   summary:
                     resourceCount: 77
                     checkCount: 316
-                    passedCount: 288
-                    waivedCount: 28
+                    passedCount: 297
+                    waivedCount: 19
                     coverage:
                       boundaryReleases: 67
                       areaIdentities: 67
-                      servableGeometry: 40
+                      servableGeometry: 65
                       withRelationships: 15
                       crosswalks: 9
                       weightedCrosswalks: 1
@@ -679,7 +687,7 @@ paths:
                 apiVersion: v1
                 atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
                 data:
-                  id: boundary-releases/ward/2016-12-gb-bgc
+                  id: boundary-releases/dataZone/2011-12-sc-bfc
                   kind: boundary-release
                   status: waived
                   checks:
@@ -687,13 +695,12 @@ paths:
                       status: passed
                     - id: area-identities
                       status: passed
-                      measured: { areaCount: 8668 }
+                      measured: { areaCount: 6976 }
                     - id: geometry-servable
                       status: waived
-                      detail: Geometry is EPSG:27700, and only WGS84 geometry is served.
-                      measured: { crs: "EPSG:27700" }
+                      detail: No declared raw GeoJSON source is available.
                       waiver:
-                        reason: Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it.
+                        reason: Held only as Shapefile and MapInfo sources. Identities are read from the Shapefile attribute table, but no compiler reads Shapefile geometry yet.
                     - id: candidates-reviewed
                       status: passed
                 meta:
@@ -828,8 +835,9 @@ components:
             $ref: "#/components/schemas/Problem"
     GeometryUnavailable:
       description: >
-        The area exists but its geometry could not be loaded, e.g. its source
-        is not yet WGS84-ready.
+        The area exists but its geometry cannot be served: no raw source is
+        declared, its CRS has no transformation to WGS84, or the
+        transformation is not trusted for that area.
       content:
         application/problem+json:
           schema:
@@ -1213,9 +1221,38 @@ components:
         id:
           type: string
         properties:
-          $ref: "#/components/schemas/Area"
+          allOf:
+            - $ref: "#/components/schemas/Area"
+            - type: object
+              required: [geometrySource]
+              properties:
+                geometrySource:
+                  $ref: "#/components/schemas/GeometrySource"
         geometry:
           $ref: "#/components/schemas/GeoJsonGeometry"
+
+    GeometrySource:
+      type: object
+      description: >
+        Where the served WGS84 geometry came from. `transformation` is
+        present only when the source was reprojected.
+      required: [sourceCrs]
+      properties:
+        sourceCrs:
+          type: string
+        transformation:
+          type: object
+          required: [name, epsg, accuracyM, areaOfUse]
+          properties:
+            name:
+              type: string
+            epsg:
+              type: string
+            accuracyM:
+              type: number
+              description: EPSG's stated accuracy within the area of use.
+            areaOfUse:
+              type: string
 
     AreaGeometryEnvelope:
       allOf:
@@ -1774,7 +1811,11 @@ components:
               type: integer
             coverage:
               type: object
-              description: How many boundary releases each capability reaches.
+              description: >
+                How many boundary releases each capability reaches.
+                servableGeometry counts releases with servable geometry for
+                at least some areas; their geometry-servable checks name any
+                areas refused.
               required:
                 - boundaryReleases
                 - areaIdentities

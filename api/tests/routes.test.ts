@@ -256,6 +256,7 @@ test("gets an area's geometry as a GeoJSON Feature", () => {
 				code: "E05000001",
 				name: "Example ward",
 				aliases: ["Enghraifft ward"],
+				geometrySource: { sourceCrs: "EPSG:4326" },
 			},
 			geometry: { type: "Point", coordinates: [-2.24, 53.48] },
 		});
@@ -318,7 +319,7 @@ test("surfaces a missing or unsupported geometry source as a clear error", () =>
 				"ward/2025-01-en-ward",
 				{
 					input: "boundaries/ward/2025-01-en-ward/wards.geojson",
-					crs: "EPSG:27700",
+					crs: "EPSG:3857",
 					codeProperty: "WD25CD",
 				},
 			],
@@ -338,6 +339,10 @@ test("surfaces a missing or unsupported geometry source as a clear error", () =>
 			nonWgs84Cache,
 		);
 		assert.equal(nonWgs84.status, 503);
+		assert.match(
+			"detail" in nonWgs84.body ? nonWgs84.body.detail : "",
+			/No transformation to WGS84 is available for geometry in EPSG:3857\./,
+		);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}
@@ -825,8 +830,8 @@ const validationReport: ValidationReport = {
 				{
 					id: "geometry-servable",
 					status: "waived",
-					detail: "Geometry is EPSG:27700, and only WGS84 geometry is served.",
-					waiver: { reason: "No reprojection step yet." },
+					detail: "Geometry is EPSG:3857, and no transformation to WGS84 is available.",
+					waiver: { reason: "No transformation yet." },
 				},
 			],
 		},

@@ -1205,14 +1205,29 @@ step toward the release and provenance model described above, not the full
 versioned release history it will eventually anchor.
 
 `public/geometry-sources.json` records, per compiled area release, where its
-raw WGS84 GeoJSON lives, its CRS, and its code property, or an explicit
+raw GeoJSON lives, its CRS, and its code property, or an explicit
 `not-available` reason when no raw source is declared. `GET
 /v1/areas/{type}/{release}/{code}/geometry` serves that geometry directly as
 a GeoJSON Feature, reading and caching the source file on first request
 rather than precompiling per-area geometry artifacts. A source code that maps
 to more than one feature fragment (an area split across islands, for
 example) is returned as a single `GeometryCollection` instead of an
-arbitrarily chosen fragment. A non-WGS84 source is refused rather than
-served unprojected; only `EPSG:4326`/`CRS84` sources are currently read. This
-is a raw per-area lookup, not the tiled or simplified delivery the full
-proposal describes for map rendering at scale.
+arbitrarily chosen fragment. Geometry is always served in WGS84. Sources in
+British National Grid (EPSG:27700), 25 of the current releases, are
+reprojected one requested area at a time through EPSG:1314, OSGB36 to WGS 84
+(6): the seven-parameter Helmert transformation the website build already
+uses, which EPSG states as accurate to 2 m within Great Britain. Checked
+against the ONS's own WGS84 release of the same boundaries, reprojected Great
+Britain authorities land a median 1 to 2 m away, and no authority's median
+exceeds 5 m, well inside these files' 20 m generalisation.
+
+Northern Ireland is the exception. In the UK-wide British National Grid files
+it lands at least 50 m from the ONS's WGS84 release (a median of about 65 m
+over both the 11 district councils and 410 wards), a shift none of the
+standard transformations tried explains. Those areas are refused with a 503
+naming a WGS84 release as the alternative, rather than served with an
+accuracy they do not have, and the validation report waives the 16 affected
+releases with that reason. Each response's `properties.geometrySource` names
+the source CRS and any transformation. A source in any other CRS is refused
+rather than served unprojected. This is a raw per-area lookup, not the tiled or
+simplified delivery the full proposal describes for map rendering at scale.
