@@ -47,6 +47,7 @@ paths:
                     - /v1/crosswalks
                     - /v1/crosswalks/{crosswalk-id}
                     - /v1/crosswalks/{crosswalk-id}/records
+                    - /v1/relationship-candidates
                     - /v1/atlas-release
                 meta:
                   nextCursor: null
@@ -501,6 +502,58 @@ paths:
                   nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
+
+  /relationship-candidates:
+    get:
+      operationId: listRelationshipCandidates
+      summary: List discovered relationship candidates and their coverage gaps
+      description: >
+        Scans every compiled area release's raw source for extra code/name
+        property pairs beyond the one already used for its own identity, and
+        reports whether a matching compiled target release exists. A
+        candidate already covered by a published crosswalk carries that
+        crosswalk's id in `publishedCrosswalkId`. This is a discovery and gap
+        report, not an instruction to auto-publish every `eligible` candidate
+        as a crosswalk without review — see the `status` values below.
+      responses:
+        "200":
+          description: The discovered relationship candidates.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RelationshipCandidateListEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
+                data:
+                  - id: parish-2019-04-ew-bgc-to-local-authority-unavailable
+                    input: boundaries/parish/2019-04-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_April_2019_GCB_EW_2022_7767177223882237005.geojson
+                    from:
+                      geography: parish
+                      boundaryRelease: 2019-04-ew-bgc
+                      codeProperty: parncp19cd
+                      nameProperty: parncp19nm
+                    to:
+                      geography: localAuthority
+                      codeProperty: lad19cd
+                      nameProperty: lad19nm
+                    status: not-available
+                    validation:
+                      endpoints:
+                        from: { status: verified, availableAreaCount: 11556, referencedCodeCount: 11556 }
+                        to: { status: not-available, reason: "No compiled target release has lad19cd/lad19nm fields." }
+                      relationship:
+                        sourceFeatureCount: 11556
+                        sourceCodeCount: 11556
+                        targetCodeCount: 339
+                        multiTargetSourceCount: 0
+                        missingValueFeatureCount: 0
+                      reasons:
+                        - "No compiled target release has lad19cd/lad19nm fields."
+                meta:
+                  nextCursor: null
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
 
   /atlas-release:
     get:
@@ -1178,6 +1231,118 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/CrosswalkRecord"
+
+    RelationshipCandidateSide:
+      type: object
+      required: [geography, boundaryRelease, codeProperty, nameProperty]
+      properties:
+        geography:
+          type: string
+        boundaryRelease:
+          type: string
+        codeProperty:
+          type: string
+        nameProperty:
+          type: string
+
+    RelationshipCandidateTarget:
+      type: object
+      required: [codeProperty, nameProperty]
+      properties:
+        geography:
+          type: string
+        boundaryRelease:
+          type: string
+        codeProperty:
+          type: string
+        nameProperty:
+          type: string
+      description: >
+        `boundaryRelease` (and sometimes `geography`) are present only when
+        exactly one compiled area release already uses this code/name
+        property pair.
+
+    RelationshipCandidateEndpointStatus:
+      oneOf:
+        - type: object
+          required: [status, availableAreaCount, referencedCodeCount]
+          properties:
+            status:
+              const: verified
+            availableAreaCount:
+              type: integer
+            referencedCodeCount:
+              type: integer
+        - type: object
+          required: [status, reason]
+          properties:
+            status:
+              const: not-available
+            reason:
+              type: string
+
+    RelationshipCandidate:
+      type: object
+      required: [id, input, from, to, status, validation]
+      properties:
+        id:
+          type: string
+        input:
+          type: string
+        from:
+          $ref: "#/components/schemas/RelationshipCandidateSide"
+        to:
+          $ref: "#/components/schemas/RelationshipCandidateTarget"
+        status:
+          enum: [eligible, needs-review, not-available]
+        publishedCrosswalkId:
+          type: string
+          description: Set when a published crosswalk already covers this candidate.
+        validation:
+          type: object
+          required: [endpoints, relationship, reasons]
+          properties:
+            endpoints:
+              type: object
+              required: [from, to]
+              properties:
+                from:
+                  $ref: "#/components/schemas/RelationshipCandidateEndpointStatus"
+                to:
+                  $ref: "#/components/schemas/RelationshipCandidateEndpointStatus"
+            relationship:
+              type: object
+              required:
+                - sourceFeatureCount
+                - sourceCodeCount
+                - targetCodeCount
+                - multiTargetSourceCount
+                - missingValueFeatureCount
+              properties:
+                sourceFeatureCount:
+                  type: integer
+                sourceCodeCount:
+                  type: integer
+                targetCodeCount:
+                  type: integer
+                multiTargetSourceCount:
+                  type: integer
+                missingValueFeatureCount:
+                  type: integer
+            reasons:
+              type: array
+              items:
+                type: string
+
+    RelationshipCandidateListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/RelationshipCandidate"
 
     AtlasReleaseArtifactRef:
       type: object

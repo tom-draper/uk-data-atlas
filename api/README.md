@@ -1071,6 +1071,7 @@ pnpm start
 - `GET /v1/crosswalks`
 - `GET /v1/crosswalks/{crosswalk-id}`
 - `GET /v1/crosswalks/{crosswalk-id}/records`
+- `GET /v1/relationship-candidates`
 - `GET /v1/atlas-release`
 
 The build scans every `../data/**/meta.json`, so a newly added dataset becomes
@@ -1125,11 +1126,24 @@ code. When the repository does not hold an endpoint's historical release, it
 records that endpoint as `not-available` instead of implying verification;
 the 2010 constituency side of the published lookup is the current example.
 
+`public/relationship-candidates.json` is the discovery half of the
+"relationship coverage" goal: it scans every compiled area release's raw
+source for extra code/name property pairs beyond the one already used for
+its own identity, checks whether a matching compiled target release exists,
+and reports coverage stats (referenced-but-missing target codes, source
+codes with more than one target, missing values). Each candidate is
+`eligible`, `needs-review`, or `not-available`, and carries the covering
+crosswalk's id in `publishedCrosswalkId` when one already exists. `GET
+/v1/relationship-candidates` exposes this directly; it is a gap report for a
+human to act on, not an instruction to auto-publish every `eligible`
+candidate without review.
+
 The build's final step writes `public/atlas-release.json`, an immutable
 manifest that references every other build-time artifact (the boundary
-registry, derived boundaries, area inventory, crosswalk inventory, geography
-inventory and source inventory) by its content hash, plus a single `releaseId`
-hash of that set. Rebuilding without changing any input produces the same
+registry, derived boundaries, area inventory, geometry source registry,
+crosswalk inventory, relationship candidate inventory, geography inventory
+and source inventory) by its content hash, plus a single `releaseId` hash of
+that set. Rebuilding without changing any input produces the same
 `releaseId`; changing any one artifact changes it. This is a first, minimal
 step toward the release and provenance model described above, not the full
 versioned release history it will eventually anchor.

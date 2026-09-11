@@ -20,6 +20,7 @@ import type {
 	CrosswalkInventory,
 } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
+import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import {
 	createAreaSearchIndex,
 	route,
@@ -120,6 +121,19 @@ export const readAtlasRelease = (apiRoot: string): AtlasRelease => {
 	return release;
 };
 
+export const readRelationshipCandidateInventory = (
+	apiRoot: string,
+): RelationshipCandidateInventory => {
+	const path = join(apiRoot, "public", "relationship-candidates.json");
+	const inventory = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as RelationshipCandidateInventory;
+	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.candidates)) {
+		throw new Error(`Invalid relationship candidate inventory at ${path}`);
+	}
+	return inventory;
+};
+
 export type ApiCatalogues = {
 	boundaryRegistry: BoundaryRegistry;
 	geographyInventory: GeographyInventory;
@@ -130,6 +144,7 @@ export type ApiCatalogues = {
 	crosswalkInventory: CrosswalkInventory;
 	crosswalkLookup: CrosswalkLookup;
 	atlasRelease: AtlasRelease;
+	relationshipCandidateInventory: RelationshipCandidateInventory;
 };
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
@@ -152,6 +167,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease: readAtlasRelease(apiRoot),
+		relationshipCandidateInventory: readRelationshipCandidateInventory(apiRoot),
 	};
 };
 
@@ -165,6 +181,7 @@ export const createApiServer = ({
 	crosswalkInventory,
 	crosswalkLookup,
 	atlasRelease,
+	relationshipCandidateInventory,
 }: ApiCatalogues) =>
 	createServer((request, response) => {
 		const result = route(
@@ -179,6 +196,7 @@ export const createApiServer = ({
 			areaSearchIndex,
 			areaRelationshipIndex,
 			areaGeometryCache,
+			relationshipCandidateInventory,
 		);
 		response.writeHead(result.status, {
 			"cache-control": "public, max-age=300",

@@ -13,6 +13,7 @@ import type {
 	CrosswalkInventory,
 } from "../src/crosswalkInventory";
 import type { GeographyInventory } from "../src/geographyInventory";
+import type { RelationshipCandidateInventory } from "../src/relationshipCandidates";
 
 const registry: BoundaryRegistry = {
 	schemaVersion: 1,
@@ -622,6 +623,79 @@ test("gets the atlas release manifest", () => {
 		"data" in response.body && response.body.data,
 		atlasRelease,
 	);
+});
+
+const relationshipCandidateInventory: RelationshipCandidateInventory = {
+	schemaVersion: 1,
+	contentHash: "sha256:relationship-candidates",
+	candidates: [
+		{
+			id: "parish-2019-04-ew-bgc-to-local-authority-unavailable",
+			input: "boundaries/parish/2019-04-ew-bgc/parishes.geojson",
+			from: {
+				geography: "parish",
+				boundaryRelease: "2019-04-ew-bgc",
+				codeProperty: "parncp19cd",
+				nameProperty: "parncp19nm",
+			},
+			to: { codeProperty: "lad19cd", nameProperty: "lad19nm" },
+			status: "not-available",
+			validation: {
+				endpoints: {
+					from: {
+						status: "verified",
+						availableAreaCount: 11556,
+						referencedCodeCount: 11556,
+					},
+					to: {
+						status: "not-available",
+						reason: "No compiled target release has lad19cd/lad19nm fields.",
+					},
+				},
+				relationship: {
+					sourceFeatureCount: 11556,
+					sourceCodeCount: 11556,
+					targetCodeCount: 339,
+					multiTargetSourceCount: 0,
+					missingValueFeatureCount: 0,
+				},
+				reasons: ["No compiled target release has lad19cd/lad19nm fields."],
+			},
+		},
+	],
+};
+
+test("lists discovered relationship candidates and their coverage gaps", () => {
+	const response = route(
+		"GET",
+		"/v1/relationship-candidates",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		atlasRelease,
+		undefined,
+		undefined,
+		undefined,
+		relationshipCandidateInventory,
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual(
+		"data" in response.body && response.body.data,
+		relationshipCandidateInventory.candidates,
+	);
+});
+
+test("reports relationship candidates as unavailable before they are built", () => {
+	const response = route(
+		"GET",
+		"/v1/relationship-candidates",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(response.status, 503);
 });
 
 test("paginates crosswalk records with opaque cursors", () => {
