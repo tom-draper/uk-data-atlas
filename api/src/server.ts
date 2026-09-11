@@ -21,6 +21,7 @@ import type {
 } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
+import type { ValidationReport } from "./validationReport";
 import {
 	createAreaSearchIndex,
 	route,
@@ -134,6 +135,15 @@ export const readRelationshipCandidateInventory = (
 	return inventory;
 };
 
+export const readValidationReport = (apiRoot: string): ValidationReport => {
+	const path = join(apiRoot, "public", "validation-report.json");
+	const report = JSON.parse(readFileSync(path, "utf8")) as ValidationReport;
+	if (report.schemaVersion !== 1 || !Array.isArray(report.resources)) {
+		throw new Error(`Invalid validation report at ${path}`);
+	}
+	return report;
+};
+
 export type ApiCatalogues = {
 	boundaryRegistry: BoundaryRegistry;
 	geographyInventory: GeographyInventory;
@@ -145,6 +155,7 @@ export type ApiCatalogues = {
 	crosswalkLookup: CrosswalkLookup;
 	atlasRelease: AtlasRelease;
 	relationshipCandidateInventory: RelationshipCandidateInventory;
+	validationReport: ValidationReport;
 };
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
@@ -168,6 +179,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		crosswalkLookup,
 		atlasRelease: readAtlasRelease(apiRoot),
 		relationshipCandidateInventory: readRelationshipCandidateInventory(apiRoot),
+		validationReport: readValidationReport(apiRoot),
 	};
 };
 
@@ -182,6 +194,7 @@ export const createApiServer = ({
 	crosswalkLookup,
 	atlasRelease,
 	relationshipCandidateInventory,
+	validationReport,
 }: ApiCatalogues) =>
 	createServer((request, response) => {
 		const result = route(
@@ -197,6 +210,7 @@ export const createApiServer = ({
 			areaRelationshipIndex,
 			areaGeometryCache,
 			relationshipCandidateInventory,
+			validationReport,
 		);
 		response.writeHead(result.status, {
 			"cache-control": "public, max-age=300",

@@ -14,6 +14,7 @@ import type {
 } from "../src/crosswalkInventory";
 import type { GeographyInventory } from "../src/geographyInventory";
 import type { RelationshipCandidateInventory } from "../src/relationshipCandidates";
+import type { ValidationReport } from "../src/validationReport";
 
 const registry: BoundaryRegistry = {
 	schemaVersion: 1,
@@ -794,5 +795,115 @@ test("uses problem details for missing resources and unsupported methods", () =>
 	assert.equal(
 		"title" in write.body && write.body.title,
 		"Method Not Allowed",
+	);
+});
+
+const validationReport: ValidationReport = {
+	schemaVersion: 1,
+	contentHash: "sha256:validation",
+	inputs: { boundaryRegistry: "sha256:registry" },
+	summary: {
+		resourceCount: 2,
+		checkCount: 2,
+		passedCount: 1,
+		waivedCount: 1,
+		coverage: {
+			boundaryReleases: 1,
+			areaIdentities: 1,
+			servableGeometry: 0,
+			withRelationships: 1,
+			crosswalks: 1,
+			weightedCrosswalks: 0,
+		},
+	},
+	resources: [
+		{
+			id: "boundary-releases/ward/2025-01-en-ward",
+			kind: "boundary-release",
+			status: "waived",
+			checks: [
+				{
+					id: "geometry-servable",
+					status: "waived",
+					detail: "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					waiver: { reason: "No reprojection step yet." },
+				},
+			],
+		},
+		{
+			id: "crosswalks/constituency-2010-to-2024-official-lookup-v2",
+			kind: "crosswalk",
+			status: "passed",
+			checks: [{ id: "artifact-integrity", status: "passed" }],
+		},
+	],
+};
+
+const validationRoute = (url: string, report?: ValidationReport) =>
+	route(
+		"GET",
+		url,
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		atlasRelease,
+		undefined,
+		undefined,
+		undefined,
+		relationshipCandidateInventory,
+		report,
+	);
+
+test("serves the validation report, optionally only resources with waivers", () => {
+	const all = validationRoute("/v1/validation", validationReport);
+	assert.equal(all.status, 200);
+	assert.deepEqual("data" in all.body && all.body.data, validationReport);
+	const waived = validationRoute("/v1/validation?status=waived", validationReport);
+	assert.deepEqual(
+		"data" in waived.body &&
+			(waived.body.data as ValidationReport).resources.map(
+				(resource) => resource.id,
+			),
+		["boundary-releases/ward/2025-01-en-ward"],
+	);
+	assert.equal(
+		validationRoute("/v1/validation?status=failed", validationReport).status,
+		400,
+	);
+});
+
+test("serves one resource's validation at the resource's own path", () => {
+	const release = validationRoute(
+		"/v1/validation/boundary-releases/ward/2025-01-en-ward",
+		validationReport,
+	);
+	assert.equal(release.status, 200);
+	assert.deepEqual(
+		"data" in release.body && release.body.data,
+		validationReport.resources[0],
+	);
+	const crosswalk = validationRoute(
+		"/v1/validation/crosswalks/constituency-2010-to-2024-official-lookup-v2",
+		validationReport,
+	);
+	assert.equal(crosswalk.status, 200);
+	assert.equal(
+		validationRoute("/v1/validation/crosswalks/unknown", validationReport)
+			.status,
+		404,
+	);
+	assert.equal(
+		validationRoute("/v1/validation/areas/ward", validationReport).status,
+		404,
+	);
+});
+
+test("reports validation as unavailable before the report is built", () => {
+	assert.equal(validationRoute("/v1/validation").status, 503);
+	assert.equal(
+		validationRoute("/v1/validation/crosswalks/unknown").status,
+		503,
 	);
 });

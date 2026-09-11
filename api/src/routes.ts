@@ -12,6 +12,7 @@ import type {
 } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
+import type { ValidationReport } from "./validationReport";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -144,6 +145,7 @@ export const route = (
 	areaRelationshipIndex?: AreaRelationshipIndex,
 	areaGeometryCache?: AreaGeometryCache,
 	relationshipCandidateInventory?: RelationshipCandidateInventory,
+	validationReport?: ValidationReport,
 ): ApiResponse => {
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -179,6 +181,9 @@ export const route = (
 					"/v1/crosswalks/{crosswalk-id}",
 					"/v1/crosswalks/{crosswalk-id}/records",
 					"/v1/relationship-candidates",
+					"/v1/validation",
+					"/v1/validation/boundary-releases/{type}/{release}",
+					"/v1/validation/crosswalks/{crosswalk-id}",
 					"/v1/atlas-release",
 				],
 			}),
@@ -572,6 +577,61 @@ export const route = (
 					"Catalogue Unavailable",
 					"Build the atlas release manifest before starting the API.",
 				);
+	}
+
+	const isValidationResource =
+		segments[0] === "v1" &&
+		segments[1] === "validation" &&
+		((segments[2] === "boundary-releases" && segments.length === 5) ||
+			(segments[2] === "crosswalks" && segments.length === 4));
+	if (
+		(segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "validation") ||
+		isValidationResource
+	) {
+		if (!validationReport) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the validation report before starting the API.",
+			);
+		}
+		if (isValidationResource) {
+			// Resource ids repeat the validated resource's own API path.
+			const id = segments.slice(2).join("/");
+			const resource = validationReport.resources.find(
+				(candidate) => candidate.id === id,
+			);
+			return resource
+				? { status: 200, body: envelope(releaseId, resource) }
+				: problem(
+						404,
+						"Not Found",
+						"No validated resource matches that identity.",
+					);
+		}
+		const status = parsedUrl.searchParams.get("status");
+		if (status !== null && status !== "passed" && status !== "waived") {
+			return problem(
+				400,
+				"Invalid Query",
+				"status must be passed or waived.",
+			);
+		}
+		const { resources, ...report } = validationReport;
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				...report,
+				resources:
+					status === null
+						? resources
+						: resources.filter(
+								(resource) => resource.status === status,
+							),
+			}),
+		};
 	}
 
 	return problem(404, "Not Found", "No API resource matches that path.");

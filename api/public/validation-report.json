@@ -1,0 +1,2389 @@
+{
+	"schemaVersion": 1,
+	"inputs": {
+		"boundaryRegistry": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
+		"areaInventory": "sha256:ab26754ea9cd1a517c060682fa6465479452b9c2e62d4679791556fb498509b5",
+		"geometrySources": "sha256:8a1f577ded8845340c40c69224bcdf728a7b6ef1567d6716da990a31c31c6bee",
+		"crosswalkInventory": "sha256:07f782b1d99b89a7f0f0958a407ab006bc32adb1a3b6d1ac2a4ab59594b7812b",
+		"relationshipCandidates": "sha256:1da853f398e07f492bda71289ee48a0c8c0250a199a58dbf6166172a1e04f957",
+		"geographyInventory": "sha256:09706efdb411ac96ffa070b75b4e03fab719b64ee684baf6d11cf94df4f6b154",
+		"waivers": "sha256:22f9a3221fcbc126afc2ebc2ad8dce12f02c4c82a536aadf6bb3ed73ded348de"
+	},
+	"summary": {
+		"resourceCount": 77,
+		"checkCount": 316,
+		"passedCount": 287,
+		"waivedCount": 29,
+		"coverage": {
+			"boundaryReleases": 67,
+			"areaIdentities": 67,
+			"servableGeometry": 40,
+			"withRelationships": 14,
+			"crosswalks": 9,
+			"weightedCrosswalks": 1
+		}
+	},
+	"resources": [
+		{
+			"id": "atlas",
+			"kind": "atlas",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "registry-links",
+					"status": "passed"
+				},
+				{
+					"id": "release-coverage",
+					"status": "passed",
+					"measured": {
+						"boundaryReleaseCount": 67
+					}
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/combinedAuthority/2025-12-en-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 15
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/communitySafetyPartnership/2023-12-ew-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 314
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/constituency/2015-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 626
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/constituency/2016-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 650
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/constituency/2017-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 650
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/constituency/2019-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 650
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/constituency/2024-07-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 650
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/country/2020-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 4
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/country/2021-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 4
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/country/2022-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 4
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/country/2023-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 4
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/country/2024-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 4
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/country/2025-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 4
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/countyAndUnitaryAuthority/2025-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 218
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/countyElectoralDivision/2023-05-en-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 1367
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/dataZone/2011-12-sc-bfc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 6976
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "No declared raw GeoJSON source is available.",
+					"waiver": {
+						"reason": "Held only as Shapefile and MapInfo sources. Identities are read from the Shapefile attribute table, but no compiler reads Shapefile geometry yet."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/dataZone/2011-12-sc-nc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 6976
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/fireAndRescueAuthority/2021-05-ew-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 47
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/integratedCareBoard/2026-04-en-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 36
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/itl1/2021-01-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 12
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/itl2/2021-01-uk-bgc-v2",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 41
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/itl3/2021-01-uk-bgc-v3",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 179
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2016-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 380
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2018-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 391
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2021-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 374
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2022-12-uk-bgc-v2",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 374
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2023-05-uk-bgc-v2",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 361
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2024-05-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 361
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2025-05-uk-bgc-v2",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 361
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localHealthBoard/2023-12-w-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 7
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localPlanningAuthority/2019-04-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 400
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/lsoa/2011-12-ew-bgc-v3",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 34753
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/lsoa/2011-12-w-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 1909
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/majorTownAndCity/2015-12-ew-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 112
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/msoa/2021-12-ew-bgc-v3",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 7264
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/nationalPark/2020-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 15
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/nhsEnglandRegion/2022-07-en-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 7
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/parish/2019-04-ew-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 11556
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/parish/2021-12-ew-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 11562
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/parish/2022-12-ew-bgc-v3",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 11567
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/parish/2023-12-ew-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 11548
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/parish/2024-12-ew-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 11541
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/parish/2025-05-ew-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 11539
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "urn:ogc:def:crs:OGC:1.3:CRS84"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/parish/2026-05-ew-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 11542
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/policeForceArea/2023-12-ew-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 43
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/region/2025-12-en-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 9
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/scottishParliamentaryConstituency/2021-05-sc-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 73
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/scottishParliamentaryRegion/2022-12-sc-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/seneddConstituency/2022-12-w-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 40
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/seneddElectoralRegion/2022-12-w-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 5
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/subIntegratedCareBoardLocation/2026-04-en-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 106
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/superOutputArea/2011-ni",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 890
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "No declared raw GeoJSON source is available.",
+					"waiver": {
+						"reason": "Held only as Shapefile and MapInfo sources. Identities are read from the Shapefile attribute table, but no compiler reads Shapefile geometry yet."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/travelToWorkArea/2011-12-uk-gcb",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 228
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2016-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8668
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2017-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8669
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2018-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 9114
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2019-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8425
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2020-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8887
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2021-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8694
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2022-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8482
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2023-05-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8441
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2023-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8441
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2024-05-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8396
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2024-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8396
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2025-05-uk-bgc-v2",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8405
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2025-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8405
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2026-05-uk-bgc",
+			"kind": "boundary-release",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8413
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "waived",
+					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"measured": {
+						"crs": "EPSG:27700"
+					},
+					"waiver": {
+						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/constituency-2010-to-2024-official-lookup-v2",
+			"kind": "crosswalk",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 650
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "waived",
+					"detail": "from: No compiled area release is available for constituency/2010.",
+					"waiver": {
+						"reason": "The lookup labels its source side 2010, and no boundary release has that identity, so its source codes are not checked against compiled areas. Those constituencies were unchanged until 2024 and all 650 codes resolve in the 2017 and 2019 UK releases; pointing the lookup at one of them has not been reviewed yet."
+					}
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "waived",
+					"detail": "The input gives more than one name for N06000004 (Belfast North / Belfast West).",
+					"waiver": {
+						"reason": "The publisher lookup names N06000004 Belfast West in three rows and Belfast North in one. Both names are kept as labels rather than the Atlas correcting the source."
+					}
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 650
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "weights-sum-to-one",
+					"status": "passed",
+					"measured": {
+						"maxDeviation": 0.000001,
+						"tolerance": 0.00001
+					}
+				},
+				{
+					"id": "area-coverage",
+					"status": "passed",
+					"measured": {
+						"minimumCoverage": 0.99,
+						"minimumSourceCoverage": 0.99606,
+						"minimumTargetCoverage": 0.997111
+					}
+				},
+				{
+					"id": "sliver-separation",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"widestSliverWidthM": 15.1,
+						"narrowestOverlapWidthM": 332.1,
+						"sliverPairCount": 1381
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 106
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8668
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8482
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8441
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8396
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8405
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8405
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		}
+	],
+	"contentHash": "sha256:53910ca230b994450a34ebeab4a95d0ec137b24ac877f8ba44950dbcd35daa4c"
+}
