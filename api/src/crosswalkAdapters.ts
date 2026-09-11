@@ -8,63 +8,110 @@ export type CrosswalkSideAdapter = {
 	aliasProperty?: string;
 };
 
-export type CrosswalkMethod = "official-lookup" | "clean-containment";
-export type CrosswalkQuality = "publisher-supplied";
+export type CrosswalkMethod =
+	"official-lookup" | "clean-containment" | "area-overlap";
+export type CrosswalkQuality = "publisher-supplied" | "derived";
+export type AreaOverlapWeighting = {
+	status: "provided";
+	basis: "area";
+	normalisation: "per-source";
+};
 export type CrosswalkWeighting =
-	{ status: "not-provided" } | { status: "not-applicable" };
+	| { status: "not-provided" }
+	| { status: "not-applicable" }
+	| AreaOverlapWeighting;
 
-export type CrosswalkAdapter = {
+// Property adapters read an explicit source/target code pair from each
+// feature of one published file.
+export type PropertyCrosswalkAdapter = {
 	id: string;
 	input: string;
-	method: CrosswalkMethod;
-	quality: CrosswalkQuality;
-	weighting: CrosswalkWeighting;
+	method: "official-lookup" | "clean-containment";
+	quality: "publisher-supplied";
+	weighting: { status: "not-provided" } | { status: "not-applicable" };
 	from: CrosswalkSideAdapter;
 	to: CrosswalkSideAdapter;
 };
 
+// Area-overlap adapters intersect two compiled releases' geometries, read
+// from the geometry source registry rather than declared here.
+export type AreaOverlapCrosswalkAdapter = {
+	id: string;
+	method: "area-overlap";
+	quality: "derived";
+	weighting: AreaOverlapWeighting;
+	from: { geography: string; boundaryRelease: string };
+	to: { geography: string; boundaryRelease: string };
+	sliverWidthM: number;
+	minimumCoverage: number;
+};
+
+export type CrosswalkAdapter =
+	PropertyCrosswalkAdapter | AreaOverlapCrosswalkAdapter;
+
 type AdapterFile = { schemaVersion?: unknown; crosswalks?: unknown };
 
-const METHODS: CrosswalkMethod[] = ["official-lookup", "clean-containment"];
-const QUALITIES: CrosswalkQuality[] = ["publisher-supplied"];
-const WEIGHTING_STATUSES = ["not-provided", "not-applicable"];
+const PROPERTY_METHODS = ["official-lookup", "clean-containment"];
+const PROPERTY_WEIGHTING_STATUSES = ["not-provided", "not-applicable"];
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null;
+
+const hasStrings = (value: unknown, keys: string[]) =>
+	isRecord(value) && keys.every((key) => typeof value[key] === "string");
 
 const validSide = (side: unknown): side is CrosswalkSideAdapter =>
-	typeof side === "object" &&
-	side !== null &&
-	["geography", "boundaryRelease", "codeProperty", "nameProperty"].every(
-		(key) => typeof (side as Record<string, unknown>)[key] === "string",
-	) &&
+	hasStrings(side, [
+		"geography",
+		"boundaryRelease",
+		"codeProperty",
+		"nameProperty",
+	]) &&
 	((side as { aliasProperty?: unknown }).aliasProperty === undefined ||
 		typeof (side as { aliasProperty?: unknown }).aliasProperty ===
 			"string");
 
-const validWeighting = (weighting: unknown): weighting is CrosswalkWeighting =>
-	typeof weighting === "object" &&
-	weighting !== null &&
-	WEIGHTING_STATUSES.includes(
-		(weighting as { status?: unknown }).status as string,
-	);
+const validPropertyAdapter = (
+	adapter: Record<string, unknown>,
+): adapter is PropertyCrosswalkAdapter =>
+	typeof adapter.input === "string" &&
+	PROPERTY_METHODS.includes(adapter.method as string) &&
+	adapter.quality === "publisher-supplied" &&
+	isRecord(adapter.weighting) &&
+	PROPERTY_WEIGHTING_STATUSES.includes(adapter.weighting.status as string) &&
+	validSide(adapter.from) &&
+	validSide(adapter.to);
+
+const validAreaOverlapAdapter = (
+	adapter: Record<string, unknown>,
+): adapter is AreaOverlapCrosswalkAdapter =>
+	adapter.method === "area-overlap" &&
+	adapter.quality === "derived" &&
+	isRecord(adapter.weighting) &&
+	adapter.weighting.status === "provided" &&
+	adapter.weighting.basis === "area" &&
+	adapter.weighting.normalisation === "per-source" &&
+	hasStrings(adapter.from, ["geography", "boundaryRelease"]) &&
+	hasStrings(adapter.to, ["geography", "boundaryRelease"]) &&
+	typeof adapter.sliverWidthM === "number" &&
+	adapter.sliverWidthM > 0 &&
+	typeof adapter.minimumCoverage === "number" &&
+	adapter.minimumCoverage > 0 &&
+	adapter.minimumCoverage <= 1;
 
 export const readCrosswalkAdapters = (path: string): CrosswalkAdapter[] => {
 	const file = JSON.parse(readFileSync(path, "utf8")) as AdapterFile;
 	if (file.schemaVersion !== 1 || !Array.isArray(file.crosswalks)) {
 		throw new Error(`Invalid crosswalk adapter manifest at ${path}`);
 	}
-	return file.crosswalks.map((adapter) => {
+	return file.crosswalks.map((adapter: unknown) => {
 		if (
-			typeof adapter !== "object" ||
-			adapter === null ||
-			typeof (adapter as CrosswalkAdapter).id !== "string" ||
-			typeof (adapter as CrosswalkAdapter).input !== "string" ||
-			!METHODS.includes((adapter as CrosswalkAdapter).method) ||
-			!QUALITIES.includes((adapter as CrosswalkAdapter).quality) ||
-			!validWeighting((adapter as CrosswalkAdapter).weighting) ||
-			!validSide((adapter as CrosswalkAdapter).from) ||
-			!validSide((adapter as CrosswalkAdapter).to)
+			!isRecord(adapter) ||
+			typeof adapter.id !== "string" ||
+			!(validPropertyAdapter(adapter) || validAreaOverlapAdapter(adapter))
 		) {
 			throw new Error(`Invalid crosswalk adapter at ${path}`);
 		}
-		return adapter as CrosswalkAdapter;
+		return adapter;
 	});
 };

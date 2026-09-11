@@ -59,6 +59,9 @@ only **available** when its endpoint, contract and provenance are published.
       crosswalks.
 - [x] Translate April 2026 sub-integrated-care-board locations to their
       integrated care boards through verified clean containment.
+- [x] Apportion July 2024 Westminster constituencies across May 2024 local
+      authorities by area overlap, with per-source weights, overlap areas,
+      coverage and the sliver rule published alongside each record.
 - [x] Navigate each published relationship in both directions, including ward
       → local authority and local authority → ward.
 
@@ -1117,9 +1120,31 @@ clean hierarchical membership, so its `weighting.status` is `not-applicable`
 rather than `not-provided`: the difference distinguishes a fact that was
 never a proportional split from one whose split was simply not published.
 The crosswalk adapter format carries `method`, `quality` and `weighting` per
-adapter rather than assuming every crosswalk shares one method, so further
-sources can declare `area-overlap` or `population-overlap` without changing
-the compiler.
+adapter rather than assuming every crosswalk shares one method.
+
+The third method, `area-overlap`, is computed rather than read. Its first
+crosswalk intersects the July 2024 constituency boundaries with the May 2024
+local authority boundaries, both read from the geometry source registry, and
+is marked `derived` rather than `publisher-supplied`. Areas are ellipsoidal
+square metres, measured in EPSG:6933, a Lambert cylindrical equal-area
+projection of WGS 84. Each record gives the constituency's area and
+`coverage`, and for each authority a `weight`, the overlap area, and the
+overlap's share of each side. Weights are shares of the covered area and sum
+to 1, so they apportion a whole constituency quantity. They describe land
+area, not people: a constituency's residents are rarely spread evenly across
+its area.
+
+Both inputs are generalised to 20 m independently, so wherever the true
+boundaries coincide they leave slivers a few metres wide. The compiler drops
+a pair whose widest intersecting piece is narrower than the adapter's
+`sliverWidthM` (twice area over perimeter), and publishes how many pairs it
+dropped. On the 2024 inputs the widest sliver is 15 m and the narrowest real
+overlap 332 m. The build fails if any pair falls between half and twice the
+threshold, or if any constituency or authority is less than
+`minimumCoverage` covered by kept overlaps, rather than publishing a split
+that a slightly different rule would change. Its remaining limit is the
+generalisation itself: a genuine overlap narrower than the threshold would be
+dropped with the slivers, and generalised files cannot tell the two apart.
 
 Before publication, the crosswalk compiler validates every referenced code
 against the compiled area artifact for that endpoint and fails on a missing

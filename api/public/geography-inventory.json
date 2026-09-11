@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:16ff4f2fb31df93aef0357abcfb7f2737d5fb8dd77af86bde8000ac74a3f89d0",
+	"contentHash": "sha256:09706efdb411ac96ffa070b75b4e03fab719b64ee684baf6d11cf94df4f6b154",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -73,6 +73,21 @@
 						"quality": "publisher-supplied",
 						"weighting": {
 							"status": "not-provided"
+						}
+					},
+					{
+						"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2024-05-uk-bgc"
+						},
+						"method": "area-overlap",
+						"quality": "derived",
+						"weighting": {
+							"status": "provided",
+							"basis": "area",
+							"normalisation": "per-source"
 						}
 					}
 				]
@@ -583,6 +598,21 @@
 						"quality": "publisher-supplied",
 						"weighting": {
 							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2024-07-uk-bgc"
+						},
+						"method": "area-overlap",
+						"quality": "derived",
+						"weighting": {
+							"status": "provided",
+							"basis": "area",
+							"normalisation": "per-source"
 						}
 					}
 				]

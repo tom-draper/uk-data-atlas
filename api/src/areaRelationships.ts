@@ -5,7 +5,16 @@ import type {
 	CrosswalkWeighting,
 } from "./crosswalkInventory";
 
-export type AreaRelation = "within" | "contains" | "successor" | "predecessor";
+export type AreaRelation =
+	"within" | "contains" | "successor" | "predecessor" | "overlaps";
+
+export type AreaOverlap = {
+	areaM2: number;
+	/** Overlap as a share of this area. */
+	shareOfArea: number;
+	/** Overlap as a share of the counterpart area. */
+	shareOfCounterpart: number;
+};
 
 export type AreaRelationship = {
 	relation: AreaRelation;
@@ -22,6 +31,7 @@ export type AreaRelationship = {
 		quality: CrosswalkQuality;
 		weighting: CrosswalkWeighting;
 	};
+	overlap?: AreaOverlap;
 };
 
 export type AreaRelationshipIndex = Map<string, AreaRelationship[]>;
@@ -36,7 +46,24 @@ const relationFor = (
 	if (method === "clean-containment") {
 		return direction === "from" ? "within" : "contains";
 	}
+	if (method === "area-overlap") return "overlaps";
 	return direction === "from" ? "successor" : "predecessor";
+};
+
+const overlapFor = (
+	target: CrosswalkArtifact["records"][number]["targets"][number],
+	direction: "from" | "to",
+): { overlap?: AreaOverlap } => {
+	if (!("overlapAreaM2" in target)) return {};
+	return {
+		overlap: {
+			areaM2: target.overlapAreaM2,
+			shareOfArea:
+				direction === "from" ? target.sourceShare : target.targetShare,
+			shareOfCounterpart:
+				direction === "from" ? target.targetShare : target.sourceShare,
+		},
+	};
 };
 
 const addRelationship = (
@@ -82,6 +109,7 @@ export const createAreaRelationshipIndex = (
 						labels: target.labels,
 					},
 					crosswalk: crosswalkMetadata,
+					...overlapFor(target, "from"),
 				});
 				addRelationship(index, targetId, {
 					relation: relationFor(crosswalk.method, "to"),
@@ -93,6 +121,7 @@ export const createAreaRelationshipIndex = (
 						labels: record.source.labels,
 					},
 					crosswalk: crosswalkMetadata,
+					...overlapFor(target, "to"),
 				});
 			}
 		}
