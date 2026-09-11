@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:878a70b41f31b058e3a9cc7a101acc86ca81b50ec275f44762d51db605d5efcd",
-	"boundaryRegistryHash": "sha256:9c73ed179658325c8f725d623596ef4240d9c8733eaae69941357ca38362bb5e",
+	"contentHash": "sha256:6deb26f05b9a9a2b20aa7d3cfa99f1a748542abb424ce144856d9cbbf2b0e6cf",
+	"boundaryRegistryHash": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",

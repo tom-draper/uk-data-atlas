@@ -3,7 +3,6 @@ import test from "node:test";
 import {
 	canServeAsWgs84,
 	geometryProvenance,
-	refusalFor,
 	toWgs84Geometry,
 } from "../src/reprojection";
 
@@ -89,13 +88,4 @@ test("leaves WGS84 geometry alone and refuses an unknown CRS", () => {
 		geometryProvenance("EPSG:27700").transformation?.epsg,
 		"EPSG:1314",
 	);
-});
-
-test("refuses Northern Ireland areas from British National Grid only", () => {
-	assert.match(
-		refusalFor("EPSG:27700", "N09000003") ?? "",
-		/Northern Ireland geometry in British National Grid releases is not served/,
-	);
-	assert.equal(refusalFor("EPSG:27700", "E06000046"), undefined);
-	assert.equal(refusalFor("EPSG:4326", "N09000003"), undefined);
 });

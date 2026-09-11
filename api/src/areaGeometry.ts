@@ -4,10 +4,15 @@ import {
 	canServeAsWgs84,
 	geometryProvenance,
 	isWgs84,
-	refusalFor,
 	toWgs84Geometry,
 	type GeometryProvenance,
 } from "./reprojection";
+import {
+	appliesTo,
+	offsetGeometry,
+	readGridOffset,
+	type GridOffset,
+} from "./gridOffset";
 
 export type GeoJsonGeometry = {
 	type: string;
@@ -18,6 +23,8 @@ export type GeometrySource = {
 	input: string;
 	crs: string;
 	codeProperty: string;
+	/** Grid corrections the release declares, by definition id. */
+	corrections?: string[];
 };
 export type GeometrySourceLookup = Map<string, GeometrySource>;
 type Feature = { properties?: unknown; geometry?: unknown };
@@ -35,6 +42,7 @@ type CachedRelease = {
 };
 export class AreaGeometryCache {
 	private readonly releases = new Map<string, CachedRelease>();
+	private readonly offsets = new Map<string, GridOffset>();
 	constructor(
 		private readonly repositoryRoot: string,
 		private readonly sources: GeometrySourceLookup,
@@ -57,9 +65,44 @@ export class AreaGeometryCache {
 			);
 		return source;
 	}
-	/** The geometry's source CRS, and how it was transformed to WGS84. */
-	provenance(geography: string, boundaryRelease: string): GeometryProvenance {
-		return geometryProvenance(this.source(geography, boundaryRelease).crs);
+	/** The declared corrections that move this area, loaded once each. */
+	private correctionsFor(source: GeometrySource, code: string): GridOffset[] {
+		return (source.corrections ?? [])
+			.map((id) => {
+				let offset = this.offsets.get(id);
+				if (!offset) {
+					offset = readGridOffset(this.repositoryRoot, id);
+					this.offsets.set(id, offset);
+				}
+				return offset;
+			})
+			.filter((offset) => appliesTo(offset, code));
+	}
+	/**
+	 * The geometry's source CRS, how it was transformed to WGS84, and, given
+	 * an area code, any declared correction that moved that area.
+	 */
+	provenance(
+		geography: string,
+		boundaryRelease: string,
+		code?: string,
+	): GeometryProvenance {
+		const source = this.source(geography, boundaryRelease);
+		const corrections =
+			code === undefined || isWgs84(source.crs)
+				? []
+				: this.correctionsFor(source, code);
+		return {
+			...geometryProvenance(source.crs),
+			...(corrections.length > 0
+				? {
+						corrections: corrections.map(({ id, description }) => ({
+							id,
+							description,
+						})),
+					}
+				: {}),
+		};
 	}
 	/** The area's geometry in WGS84, reprojected from its source if needed. */
 	get(
@@ -123,11 +166,18 @@ export class AreaGeometryCache {
 		}
 		const geometry = release.geometries.get(code);
 		if (!geometry || isWgs84(release.crs)) return geometry;
-		const refusal = refusalFor(release.crs, code);
-		if (refusal) throw new Error(refusal);
 		let reprojected = release.wgs84.get(code);
 		if (!reprojected) {
-			reprojected = toWgs84Geometry(geometry, release.crs);
+			// A declared correction moves the area in the publisher's own
+			// grid, before it is reprojected.
+			const corrected = this.correctionsFor(
+				this.source(geography, boundaryRelease),
+				code,
+			).reduce(
+				(moved, offset) => offsetGeometry(offset, moved),
+				geometry,
+			);
+			reprojected = toWgs84Geometry(corrected, release.crs);
 			release.wgs84.set(code, reprojected);
 		}
 		return reprojected;
