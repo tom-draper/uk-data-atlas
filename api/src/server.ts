@@ -14,7 +14,12 @@ import type {
 	CrosswalkInventory,
 } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
-import { route, type CrosswalkLookup } from "./routes";
+import {
+	createAreaSearchIndex,
+	route,
+	type AreaSearchIndex,
+	type CrosswalkLookup,
+} from "./routes";
 
 const registryPath = (apiRoot: string) =>
 	join(apiRoot, "public", "boundary-releases.json");
@@ -113,17 +118,20 @@ export type ApiCatalogues = {
 	boundaryRegistry: BoundaryRegistry;
 	geographyInventory: GeographyInventory;
 	areaLookup: AreaLookup;
+	areaSearchIndex: AreaSearchIndex;
 	crosswalkInventory: CrosswalkInventory;
 	crosswalkLookup: CrosswalkLookup;
 	atlasRelease: AtlasRelease;
 };
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
+	const areaLookup = readAreaLookup(apiRoot);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
 	return {
 		boundaryRegistry: readBoundaryRegistry(apiRoot),
 		geographyInventory: readGeographyInventory(apiRoot),
-		areaLookup: readAreaLookup(apiRoot),
+		areaLookup,
+		areaSearchIndex: createAreaSearchIndex(areaLookup),
 		crosswalkInventory,
 		crosswalkLookup: readCrosswalkLookup(apiRoot, crosswalkInventory),
 		atlasRelease: readAtlasRelease(apiRoot),
@@ -134,6 +142,7 @@ export const createApiServer = ({
 	boundaryRegistry,
 	geographyInventory,
 	areaLookup,
+	areaSearchIndex,
 	crosswalkInventory,
 	crosswalkLookup,
 	atlasRelease,

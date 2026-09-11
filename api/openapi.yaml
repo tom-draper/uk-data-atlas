@@ -40,6 +40,7 @@ paths:
                     - /v1/geographies
                     - /v1/boundary-releases
                     - /v1/geography-inventory
+                    - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/crosswalks
                     - /v1/crosswalks/{crosswalk-id}
@@ -135,6 +136,114 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GeographyInventoryEnvelope"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /areas:
+    get:
+      operationId: listAreas
+      summary: List or search compiled area identities
+      description: >
+        Searches official codes, names and supplied aliases case-insensitively.
+        Exact code matches take precedence over prefix matches, so a bare code
+        can safely resolve to every matching geography/release identity. Name,
+        alias and non-exact code queries use prefix matching.
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Official code, name or alias prefix. Omit to list areas.
+        - name: geography
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Restrict results to one geography type.
+        - name: release
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Restrict results to one boundary release.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Opaque cursor from the previous response's nextCursor.
+      responses:
+        "200":
+          description: A cursor-paginated page of matching area identities.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaListEnvelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /areas:
+    get:
+      operationId: listAreas
+      summary: List or search compiled area identities
+      description: >
+        Searches official codes, names and supplied aliases case-insensitively.
+        Exact code matches take precedence over prefix matches, so a bare code
+        can safely resolve to every matching geography/release identity. Name,
+        alias and non-exact code queries use prefix matching.
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Official code, name or alias prefix. Omit to list areas.
+        - name: geography
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Restrict results to one geography type.
+        - name: release
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Restrict results to one boundary release.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Opaque cursor from the previous response's nextCursor.
+      responses:
+        "200":
+          description: A cursor-paginated page of matching area identities.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaListEnvelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -312,8 +421,8 @@ paths:
       summary: Get the current immutable atlas release manifest
       description: >
         References the boundary registry, derived boundaries, area
-        inventory, crosswalk inventory, geography inventory and source
-        inventory by content hash, plus a single `releaseId` hash of that
+        inventory, crosswalk inventory, relationship-candidate inventory,
+        geography inventory and source inventory by content hash, plus a single `releaseId` hash of that
         set. Rebuilding without changing any input reproduces the same
         `releaseId`.
       responses:
@@ -353,6 +462,18 @@ components:
   responses:
     NotFound:
       description: No resource matches that identity.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    InvalidQuery:
+      description: A query parameter is malformed or its cursor is not valid for this result set.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    InvalidQuery:
+      description: A query parameter is malformed or its cursor is not valid for this result set.
       content:
         application/problem+json:
           schema:
@@ -658,6 +779,26 @@ components:
           type: array
           items:
             type: string
+
+    AreaListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Area"
+
+    AreaListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Area"
 
     AreaEnvelope:
       allOf:
