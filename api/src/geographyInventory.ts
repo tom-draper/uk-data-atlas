@@ -77,7 +77,9 @@ const crosswalksByRelease = (
 ): Map<string, GeographyRelationship[]> => {
 	const map = new Map<string, GeographyRelationship[]>();
 	for (const crosswalk of crosswalkInventory?.crosswalks ?? []) {
-		const sides: Array<["from" | "to", typeof crosswalk.from, typeof crosswalk.to]> = [
+		const sides: Array<
+			["from" | "to", typeof crosswalk.from, typeof crosswalk.to]
+		> = [
 			["from", crosswalk.from, crosswalk.to],
 			["to", crosswalk.to, crosswalk.from],
 		];

@@ -4,7 +4,10 @@ import { createAreaLookup } from "../src/areaInventory";
 import { route, type CrosswalkLookup } from "../src/routes";
 import type { AtlasRelease } from "../src/atlasRelease";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
-import type { CrosswalkArtifact, CrosswalkInventory } from "../src/crosswalkInventory";
+import type {
+	CrosswalkArtifact,
+	CrosswalkInventory,
+} from "../src/crosswalkInventory";
 import type { GeographyInventory } from "../src/geographyInventory";
 
 const registry: BoundaryRegistry = {
@@ -239,16 +242,12 @@ test("filters crosswalk records by source code", () => {
 		crosswalkInventory,
 		crosswalkLookup,
 	);
-	assert.deepEqual(
-		"data" in noMatch.body && noMatch.body.data,
-		[],
-	);
+	assert.deepEqual("data" in noMatch.body && noMatch.body.data, []);
 });
 
 const atlasRelease: AtlasRelease = {
 	schemaVersion: 1,
 	releaseId: "sha256:atlas-release",
-	generatedAt: "2026-09-11T00:00:00.000Z",
 	artifacts: [
 		{
 			id: "boundary-registry",
@@ -270,9 +269,31 @@ test("gets the atlas release manifest", () => {
 		atlasRelease,
 	);
 	assert.equal(response.status, 200);
+	assert.equal(
+		"atlasRelease" in response.body && response.body.atlasRelease,
+		atlasRelease.releaseId,
+	);
 	assert.deepEqual(
 		"data" in response.body && response.body.data,
 		atlasRelease,
+	);
+});
+
+test("uses the immutable release id in every successful envelope", () => {
+	const response = route(
+		"GET",
+		"/v1/geographies",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		atlasRelease,
+	);
+	assert.equal(response.status, 200);
+	assert.equal(
+		"atlasRelease" in response.body && response.body.atlasRelease,
+		atlasRelease.releaseId,
 	);
 });
 

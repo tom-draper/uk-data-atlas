@@ -1,7 +1,10 @@
 import type { AreaLookup } from "./areaInventory";
 import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
-import type { CrosswalkArtifact, CrosswalkInventory } from "./crosswalkInventory";
+import type {
+	CrosswalkArtifact,
+	CrosswalkInventory,
+} from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
@@ -25,9 +28,9 @@ type Problem = {
 	detail: string;
 };
 
-const envelope = <T>(registry: BoundaryRegistry, data: T): Envelope<T> => ({
+const envelope = <T>(atlasRelease: string, data: T): Envelope<T> => ({
 	apiVersion: "v1",
-	atlasRelease: registry.contentHash,
+	atlasRelease,
 	data,
 	meta: { nextCursor: null },
 });
@@ -66,6 +69,7 @@ export const route = (
 	crosswalkLookup?: CrosswalkLookup,
 	atlasRelease?: AtlasRelease,
 ): ApiResponse => {
+	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
 		return problem(405, "Method Not Allowed", "This API is read-only.");
 	}
@@ -84,7 +88,7 @@ export const route = (
 	if (segments.length === 1 && segments[0] === "v1") {
 		return {
 			status: 200,
-			body: envelope(registry, {
+			body: envelope(releaseId, {
 				name: "UK Data Atlas API",
 				links: [
 					"/v1/geographies",
@@ -121,7 +125,7 @@ export const route = (
 				releaseCount: releases.length,
 			}))
 			.sort((left, right) => left.id.localeCompare(right.id));
-		return { status: 200, body: envelope(registry, geographies) };
+		return { status: 200, body: envelope(releaseId, geographies) };
 	}
 
 	if (
@@ -143,7 +147,7 @@ export const route = (
 		return area
 			? {
 					status: 200,
-					body: envelope(registry, {
+					body: envelope(releaseId, {
 						id: `${geography}/${boundaryRelease}/${area.code}`,
 						geography,
 						boundaryRelease,
@@ -163,7 +167,7 @@ export const route = (
 		segments[1] === "geography-inventory"
 	) {
 		return geographyInventory
-			? { status: 200, body: envelope(registry, geographyInventory) }
+			? { status: 200, body: envelope(releaseId, geographyInventory) }
 			: problem(
 					503,
 					"Catalogue Unavailable",
@@ -176,7 +180,7 @@ export const route = (
 		segments[0] === "v1" &&
 		segments[1] === "boundary-releases"
 	) {
-		return { status: 200, body: envelope(registry, registry.releases) };
+		return { status: 200, body: envelope(releaseId, registry.releases) };
 	}
 
 	if (
@@ -190,7 +194,7 @@ export const route = (
 				candidate.id === segments[3],
 		);
 		return release
-			? { status: 200, body: envelope(registry, release) }
+			? { status: 200, body: envelope(releaseId, release) }
 			: problem(
 					404,
 					"Not Found",
@@ -204,7 +208,10 @@ export const route = (
 		segments[1] === "crosswalks"
 	) {
 		return crosswalkInventory
-			? { status: 200, body: envelope(registry, crosswalkInventory.crosswalks) }
+			? {
+					status: 200,
+					body: envelope(releaseId, crosswalkInventory.crosswalks),
+				}
 			: problem(
 					503,
 					"Catalogue Unavailable",
@@ -226,7 +233,7 @@ export const route = (
 			);
 		}
 		const { records, ...metadata } = crosswalk;
-		return { status: 200, body: envelope(registry, metadata) };
+		return { status: 200, body: envelope(releaseId, metadata) };
 	}
 
 	if (
@@ -245,9 +252,11 @@ export const route = (
 		}
 		const source = parsedUrl.searchParams.get("source");
 		const records = source
-			? crosswalk.records.filter((record) => record.source.code === source)
+			? crosswalk.records.filter(
+					(record) => record.source.code === source,
+				)
 			: crosswalk.records;
-		return { status: 200, body: envelope(registry, records) };
+		return { status: 200, body: envelope(releaseId, records) };
 	}
 
 	if (
@@ -256,7 +265,7 @@ export const route = (
 		segments[1] === "atlas-release"
 	) {
 		return atlasRelease
-			? { status: 200, body: envelope(registry, atlasRelease) }
+			? { status: 200, body: envelope(releaseId, atlasRelease) }
 			: problem(
 					503,
 					"Catalogue Unavailable",

@@ -10,10 +10,9 @@ info:
     contract, until they are implemented and added here.
 
     Every successful response is wrapped in the envelope described by
-    `Envelope`. Note a current limitation: the envelope's `atlasRelease`
-    field is the boundary registry's own content hash, not the `releaseId`
-    from `GET /atlas-release`. The two will be unified once every route
-    cites the same immutable release identifier.
+    `Envelope`. Its `atlasRelease` field is the immutable `releaseId` from
+    `GET /atlas-release`, so clients can identify the exact set of artifacts
+    that produced a response.
   license:
     name: Proposal; no licence has been assigned yet
 servers:
@@ -340,13 +339,13 @@ components:
     NotFound:
       description: No resource matches that identity.
       content:
-        application/json:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
     CatalogueUnavailable:
       description: The referenced build artifact has not been built yet.
       content:
-        application/json:
+        application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
 
@@ -376,9 +375,8 @@ components:
         atlasRelease:
           type: string
           description: >
-            Currently the boundary registry's content hash (see the known
-            limitation noted in the API description), not the
-            `/atlas-release` `releaseId`.
+            The immutable `/atlas-release` `releaseId` for the artifacts that
+            produced this response.
         meta:
           type: object
           required: [nextCursor]
@@ -823,15 +821,12 @@ components:
 
     AtlasRelease:
       type: object
-      required: [schemaVersion, releaseId, generatedAt, artifacts]
+      required: [schemaVersion, releaseId, artifacts]
       properties:
         schemaVersion:
           const: 1
         releaseId:
           type: string
-        generatedAt:
-          type: string
-          format: date-time
         artifacts:
           type: array
           items:

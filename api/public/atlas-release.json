@@ -1,7 +1,6 @@
 {
 	"schemaVersion": 1,
 	"releaseId": "sha256:4a66aa2cdf641e823178ef51e385e3fa7afa5f66c0ae7fea3e347028c69b2a47",
-	"generatedAt": "2026-09-11T10:57:33.608Z",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
