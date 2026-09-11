@@ -264,14 +264,29 @@ paths:
             type: string
           description: >
             Filter to the record whose source code matches exactly. Omit to
-            return every record; there is no pagination yet, so a bulk
-            consumer should prefer downloading the crosswalk artifact
-            directly until an export endpoint exists.
+            return a cursor-paginated list. A source lookup returns at most
+            one record and has no next cursor.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+          description: Maximum records to return when source is omitted.
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Opaque cursor from the previous response's nextCursor.
       responses:
         "200":
           description: >
-            The matching records, or an empty array if `source` matched
-            nothing.
+            One page of matching records, or an empty array if `source`
+            matched nothing. Bulk consumers should prefer downloading the
+            static crosswalk artifact until an export endpoint exists.
           content:
             application/json:
               schema:
@@ -382,8 +397,10 @@ components:
           required: [nextCursor]
           properties:
             nextCursor:
-              type: "null"
-              description: Reserved for future pagination; always null today.
+              oneOf:
+                - type: string
+                - type: "null"
+              description: Opaque cursor for the next page, or null at the end.
 
     RootDocument:
       type: object
