@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import type { AreaAdapterManifest, AreaPropertyAdapter } from "./areaAdapters";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 
 type FeatureCollection = {
@@ -123,6 +124,7 @@ const compileGeoJson = (
 	path: string,
 	geography: string,
 	boundaryRelease: string,
+	adapter?: AreaPropertyAdapter,
 ): AreaReleaseArtifact | UnavailableAreaRelease => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as FeatureCollection;
 	if (
@@ -145,7 +147,8 @@ const compileGeoJson = (
 			reason: "The declared GeoJSON source has no feature properties.",
 		};
 	}
-	const fields = findProperties(firstProperties as Record<string, unknown>);
+	const fields =
+		adapter ?? findProperties(firstProperties as Record<string, unknown>);
 	if (!fields) {
 		return {
 			id: boundaryRelease,
@@ -154,8 +157,15 @@ const compileGeoJson = (
 			reason: "Could not identify exactly one matching code/name property pair.",
 		};
 	}
-	const codes = new Set<string>();
-	const areas: AreaRecord[] = [];
+	if (
+		!(fields.codeProperty in firstProperties) ||
+		!(fields.nameProperty in firstProperties)
+	) {
+		throw new Error(
+			`${path}: configured code/name properties do not exist on the first feature`,
+		);
+	}
+	const areasByCode = new Map<string, AreaRecord>();
 	for (const [index, feature] of source.features.entries()) {
 		if (
 			typeof feature.properties !== "object" ||
@@ -171,11 +181,27 @@ const compileGeoJson = (
 				`${path}: feature ${index} has no usable code or name`,
 			);
 		}
-		if (codes.has(code))
-			throw new Error(`${path}: duplicate area code ${code}`);
-		codes.add(code);
 		const welshName = stringValue(properties[`${fields.nameProperty}W`]);
-		areas.push({
+		const existing = areasByCode.get(code);
+		if (existing) {
+			if (existing.name !== name) {
+				throw new Error(
+					`${path}: area code ${code} has conflicting names`,
+				);
+			}
+			if (
+				welshName &&
+				welshName !== name &&
+				!existing.aliases?.includes(welshName)
+			) {
+				existing.aliases = [
+					...(existing.aliases ?? []),
+					welshName,
+				].sort();
+			}
+			continue;
+		}
+		areasByCode.set(code, {
 			code,
 			name,
 			...(welshName && welshName !== name
@@ -183,6 +209,7 @@ const compileGeoJson = (
 				: {}),
 		});
 	}
+	const areas = [...areasByCode.values()];
 	const content = JSON.stringify({
 		schemaVersion: 1,
 		geography,
@@ -205,6 +232,7 @@ const compileGeoJson = (
 export const compileAreas = (
 	repositoryRoot: string,
 	boundaryRegistry: BoundaryRegistry,
+	adapters: AreaAdapterManifest = {},
 ): CompiledAreas => {
 	const artifacts: AreaReleaseArtifact[] = [];
 	const releases = boundaryRegistry.releases.map((release) => {
@@ -228,6 +256,7 @@ export const compileAreas = (
 			sourcePath,
 			release.geography,
 			release.id,
+			adapters[`${release.geography}/${release.id}`],
 		);
 		if ("areas" in result) {
 			artifacts.push(result);

@@ -1,0 +1,434 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:457135a025b2e98ef1f00f98d5838accfe6d0edddafc59c3273e12146a170a43",
+	"geography": "subIntegratedCareBoardLocation",
+	"boundaryRelease": "2026-04-en-bgc",
+	"codeProperty": "SICBL26CD",
+	"nameProperty": "SICBL26NM",
+	"areas": [
+		{
+			"code": "E38000006",
+			"name": "NHS South Yorkshire ICB - 02P"
+		},
+		{
+			"code": "E38000007",
+			"name": "NHS Essex ICB - 99E"
+		},
+		{
+			"code": "E38000008",
+			"name": "NHS Nottingham and Nottinghamshire ICB - 02Q"
+		},
+		{
+			"code": "E38000014",
+			"name": "NHS Lancashire and South Cumbria ICB - 00Q"
+		},
+		{
+			"code": "E38000015",
+			"name": "NHS Lancashire and South Cumbria ICB - 00R"
+		},
+		{
+			"code": "E38000016",
+			"name": "NHS Greater Manchester ICB - 00T"
+		},
+		{
+			"code": "E38000021",
+			"name": "NHS Surrey and Sussex ICB - 09D"
+		},
+		{
+			"code": "E38000024",
+			"name": "NHS Greater Manchester ICB - 00V"
+		},
+		{
+			"code": "E38000025",
+			"name": "NHS West Yorkshire ICB - 02T"
+		},
+		{
+			"code": "E38000028",
+			"name": "NHS Staffordshire and Stoke-on-Trent ICB - 04Y"
+		},
+		{
+			"code": "E38000030",
+			"name": "NHS Essex ICB - 99F"
+		},
+		{
+			"code": "E38000034",
+			"name": "NHS Lancashire and South Cumbria ICB - 00X"
+		},
+		{
+			"code": "E38000044",
+			"name": "NHS South Yorkshire ICB - 02X"
+		},
+		{
+			"code": "E38000045",
+			"name": "NHS Dorset ICB - 11J"
+		},
+		{
+			"code": "E38000049",
+			"name": "NHS Central East ICB - 06K"
+		},
+		{
+			"code": "E38000050",
+			"name": "NHS Lancashire and South Cumbria ICB - 01A"
+		},
+		{
+			"code": "E38000051",
+			"name": "NHS Leicester, Leicestershire and Rutland ICB - 03W"
+		},
+		{
+			"code": "E38000052",
+			"name": "NHS Humber and North Yorkshire ICB - 02Y"
+		},
+		{
+			"code": "E38000053",
+			"name": "NHS Staffordshire and Stoke-on-Trent ICB - 05D"
+		},
+		{
+			"code": "E38000062",
+			"name": "NHS Gloucestershire ICB - 11M"
+		},
+		{
+			"code": "E38000068",
+			"name": "NHS Cheshire and Merseyside ICB - 01F"
+		},
+		{
+			"code": "E38000079",
+			"name": "NHS Central East ICB - 06N"
+		},
+		{
+			"code": "E38000080",
+			"name": "NHS Greater Manchester ICB - 01D"
+		},
+		{
+			"code": "E38000085",
+			"name": "NHS Humber and North Yorkshire ICB - 03F"
+		},
+		{
+			"code": "E38000086",
+			"name": "NHS Norfolk and Suffolk ICB - 06L"
+		},
+		{
+			"code": "E38000089",
+			"name": "NHS Cornwall and the Isles of Scilly ICB - 11N"
+		},
+		{
+			"code": "E38000091",
+			"name": "NHS Cheshire and Merseyside ICB - 01J"
+		},
+		{
+			"code": "E38000097",
+			"name": "NHS Leicester, Leicestershire and Rutland ICB - 04C"
+		},
+		{
+			"code": "E38000101",
+			"name": "NHS Cheshire and Merseyside ICB - 99A"
+		},
+		{
+			"code": "E38000106",
+			"name": "NHS Essex ICB - 06Q"
+		},
+		{
+			"code": "E38000117",
+			"name": "NHS Essex ICB - 06T"
+		},
+		{
+			"code": "E38000119",
+			"name": "NHS Humber and North Yorkshire ICB - 03H"
+		},
+		{
+			"code": "E38000122",
+			"name": "NHS Humber and North Yorkshire ICB - 03K"
+		},
+		{
+			"code": "E38000126",
+			"name": "NHS Staffordshire and Stoke-on-Trent ICB - 05G"
+		},
+		{
+			"code": "E38000127",
+			"name": "NHS North East and North Cumbria ICB - 99C"
+		},
+		{
+			"code": "E38000130",
+			"name": "NHS North East and North Cumbria ICB - 00L"
+		},
+		{
+			"code": "E38000135",
+			"name": "NHS Greater Manchester ICB - 00Y"
+		},
+		{
+			"code": "E38000136",
+			"name": "NHS Thames Valley ICB - 10Q"
+		},
+		{
+			"code": "E38000137",
+			"name": "NHS Hampshire and Isle of Wight ICB - 10R"
+		},
+		{
+			"code": "E38000141",
+			"name": "NHS South Yorkshire ICB - 03L"
+		},
+		{
+			"code": "E38000143",
+			"name": "NHS Greater Manchester ICB - 01G"
+		},
+		{
+			"code": "E38000146",
+			"name": "NHS South Yorkshire ICB - 03N"
+		},
+		{
+			"code": "E38000150",
+			"name": "NHS Somerset ICB - 11X"
+		},
+		{
+			"code": "E38000153",
+			"name": "NHS Staffordshire and Stoke-on-Trent ICB - 05Q"
+		},
+		{
+			"code": "E38000161",
+			"name": "NHS Cheshire and Merseyside ICB - 01T"
+		},
+		{
+			"code": "E38000163",
+			"name": "NHS North East and North Cumbria ICB - 00N"
+		},
+		{
+			"code": "E38000168",
+			"name": "NHS Essex ICB - 99G"
+		},
+		{
+			"code": "E38000170",
+			"name": "NHS Cheshire and Merseyside ICB - 01V"
+		},
+		{
+			"code": "E38000172",
+			"name": "NHS Cheshire and Merseyside ICB - 01X"
+		},
+		{
+			"code": "E38000173",
+			"name": "NHS Staffordshire and Stoke-on-Trent ICB - 05V"
+		},
+		{
+			"code": "E38000174",
+			"name": "NHS Greater Manchester ICB - 01W"
+		},
+		{
+			"code": "E38000175",
+			"name": "NHS Staffordshire and Stoke-on-Trent ICB - 05W"
+		},
+		{
+			"code": "E38000176",
+			"name": "NHS North East and North Cumbria ICB - 00P"
+		},
+		{
+			"code": "E38000185",
+			"name": "NHS Essex ICB - 07G"
+		},
+		{
+			"code": "E38000187",
+			"name": "NHS Greater Manchester ICB - 02A"
+		},
+		{
+			"code": "E38000188",
+			"name": "NHS Humber and North Yorkshire ICB - 03Q"
+		},
+		{
+			"code": "E38000190",
+			"name": "NHS West Yorkshire ICB - 03R"
+		},
+		{
+			"code": "E38000194",
+			"name": "NHS Cheshire and Merseyside ICB - 02E"
+		},
+		{
+			"code": "E38000197",
+			"name": "NHS Essex ICB - 07H"
+		},
+		{
+			"code": "E38000200",
+			"name": "NHS Lancashire and South Cumbria ICB - 02G"
+		},
+		{
+			"code": "E38000201",
+			"name": "NHS Leicester, Leicestershire and Rutland ICB - 04V"
+		},
+		{
+			"code": "E38000204",
+			"name": "NHS Norfolk and Suffolk ICB - 07K"
+		},
+		{
+			"code": "E38000205",
+			"name": "NHS Greater Manchester ICB - 02H"
+		},
+		{
+			"code": "E38000208",
+			"name": "NHS Cheshire and Merseyside ICB - 12F"
+		},
+		{
+			"code": "E38000212",
+			"name": "NHS North East and North Cumbria ICB - 13T"
+		},
+		{
+			"code": "E38000215",
+			"name": "NHS North East and North Cumbria ICB - 01H"
+		},
+		{
+			"code": "E38000217",
+			"name": "NHS Greater Manchester ICB - 14L"
+		},
+		{
+			"code": "E38000221",
+			"name": "NHS Thames Valley ICB - 15A"
+		},
+		{
+			"code": "E38000222",
+			"name": "NHS Bristol, North Somerset and South Gloucestershire ICB - 15C"
+		},
+		{
+			"code": "E38000223",
+			"name": "NHS Thames Valley ICB - 14Y"
+		},
+		{
+			"code": "E38000225",
+			"name": "NHS West Yorkshire ICB - 15F"
+		},
+		{
+			"code": "E38000226",
+			"name": "NHS Lancashire and South Cumbria ICB - 02M"
+		},
+		{
+			"code": "E38000227",
+			"name": "NHS Lancashire and South Cumbria ICB - 01E"
+		},
+		{
+			"code": "E38000228",
+			"name": "NHS Lancashire and South Cumbria ICB - 01K"
+		},
+		{
+			"code": "E38000230",
+			"name": "NHS Devon ICB - 15N"
+		},
+		{
+			"code": "E38000231",
+			"name": "NHS Bath and North East Somerset, Swindon and Wiltshire ICB - 92G"
+		},
+		{
+			"code": "E38000232",
+			"name": "NHS West Yorkshire ICB - 36J"
+		},
+		{
+			"code": "E38000233",
+			"name": "NHS Cheshire and Merseyside ICB - 27D"
+		},
+		{
+			"code": "E38000234",
+			"name": "NHS North East and North Cumbria ICB - 84H"
+		},
+		{
+			"code": "E38000235",
+			"name": "NHS Surrey and Sussex ICB - 97R"
+		},
+		{
+			"code": "E38000236",
+			"name": "NHS Herefordshire and Worcestershire ICB - 18C"
+		},
+		{
+			"code": "E38000237",
+			"name": "NHS Kent and Medway ICB - 91Q"
+		},
+		{
+			"code": "E38000238",
+			"name": "NHS Lincolnshire ICB - 71E"
+		},
+		{
+			"code": "E38000239",
+			"name": "NHS Norfolk and Suffolk ICB - 26A"
+		},
+		{
+			"code": "E38000240",
+			"name": "NHS West and North London ICB - 93C"
+		},
+		{
+			"code": "E38000241",
+			"name": "NHS Humber and North Yorkshire ICB - 42D"
+		},
+		{
+			"code": "E38000243",
+			"name": "NHS Nottingham and Nottinghamshire ICB - 52R"
+		},
+		{
+			"code": "E38000244",
+			"name": "NHS South East London ICB - 72Q"
+		},
+		{
+			"code": "E38000245",
+			"name": "NHS South West London ICB - 36L"
+		},
+		{
+			"code": "E38000247",
+			"name": "NHS North East and North Cumbria ICB - 16C"
+		},
+		{
+			"code": "E38000249",
+			"name": "NHS Central East ICB - M1J4Y"
+		},
+		{
+			"code": "E38000251",
+			"name": "NHS Coventry and Warwickshire ICB - B2M3M"
+		},
+		{
+			"code": "E38000254",
+			"name": "NHS West Yorkshire ICB - X2C4Y"
+		},
+		{
+			"code": "E38000255",
+			"name": "NHS North East London ICB - A3A8R"
+		},
+		{
+			"code": "E38000256",
+			"name": "NHS West and North London ICB - W2U3Z"
+		},
+		{
+			"code": "E38000257",
+			"name": "NHS Shropshire, Telford and Wrekin ICB - M2L0M"
+		},
+		{
+			"code": "E38000258",
+			"name": "NHS Birmingham and Solihull ICB - 15E"
+		},
+		{
+			"code": "E38000259",
+			"name": "NHS Black Country ICB - D2P2L"
+		},
+		{
+			"code": "E38000260",
+			"name": "NHS Central East ICB - 06H"
+		},
+		{
+			"code": "E38000261",
+			"name": "NHS Derby and Derbyshire ICB - 15M"
+		},
+		{
+			"code": "E38000262",
+			"name": "NHS Northamptonshire ICB - 78H"
+		},
+		{
+			"code": "E38000263",
+			"name": "NHS Greater Manchester ICB - 01Y"
+		},
+		{
+			"code": "E38000265",
+			"name": "NHS Surrey and Sussex ICB - 70F"
+		},
+		{
+			"code": "E38000266",
+			"name": "NHS Hampshire and Isle of Wight ICB - D9Y0V"
+		},
+		{
+			"code": "E38000267",
+			"name": "NHS Surrey and Sussex ICB - 92A"
+		},
+		{
+			"code": "E38000268",
+			"name": "NHS Thames Valley ICB - U2G6B"
+		}
+	]
+}

@@ -74,3 +74,92 @@ test("compiles canonical area identities from an unambiguous GeoJSON source", ()
 		rmSync(root, { recursive: true, force: true });
 	}
 });
+
+test("uses a release-specific adapter when a source contains parent fields", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	const directory = join(
+		root,
+		"data",
+		"boundaries",
+		"combined-authority",
+		"2025-12-en-bgc",
+	);
+	mkdirSync(directory, { recursive: true });
+	writeFileSync(
+		join(directory, "meta.json"),
+		JSON.stringify({ files: [{ path: "areas.geojson", role: "source" }] }),
+	);
+	writeFileSync(
+		join(directory, "areas.geojson"),
+		JSON.stringify({
+			type: "FeatureCollection",
+			features: [
+				{
+					properties: {
+						CAUTH25CD: "E47000001",
+						CAUTH25NM: "Greater Manchester",
+						LAD25CD: "E08000001",
+						LAD25NM: "Bolton",
+					},
+				},
+			],
+		}),
+	);
+
+	try {
+		const { artifacts } = compileAreas(root, registry, {
+			"combinedAuthority/2025-12-en-bgc": {
+				codeProperty: "CAUTH25CD",
+				nameProperty: "CAUTH25NM",
+			},
+		});
+		assert.deepEqual(artifacts[0].areas, [
+			{ code: "E47000001", name: "Greater Manchester" },
+		]);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
+test("coalesces matching feature fragments for one official area code", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	const directory = join(
+		root,
+		"data",
+		"boundaries",
+		"combined-authority",
+		"2025-12-en-bgc",
+	);
+	mkdirSync(directory, { recursive: true });
+	writeFileSync(
+		join(directory, "meta.json"),
+		JSON.stringify({ files: [{ path: "areas.geojson", role: "source" }] }),
+	);
+	writeFileSync(
+		join(directory, "areas.geojson"),
+		JSON.stringify({
+			type: "FeatureCollection",
+			features: [
+				{
+					properties: {
+						CAUTH25CD: "E47000001",
+						CAUTH25NM: "Greater Manchester",
+					},
+				},
+				{
+					properties: {
+						CAUTH25CD: "E47000001",
+						CAUTH25NM: "Greater Manchester",
+					},
+				},
+			],
+		}),
+	);
+
+	try {
+		const { artifacts } = compileAreas(root, registry);
+		assert.equal(artifacts[0].areas.length, 1);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});

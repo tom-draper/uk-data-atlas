@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readAreaAdapters } from "../src/areaAdapters";
 import { compileAreas } from "../src/areaInventory";
 import { createBoundaryRegistry } from "./build-boundary-registry";
 
@@ -14,6 +15,14 @@ export const buildAreaInventory = (repositoryRoot: string) => {
 	const { artifacts, inventory } = compileAreas(
 		repositoryRoot,
 		createBoundaryRegistry(repositoryRoot),
+		readAreaAdapters(
+			join(
+				repositoryRoot,
+				"api",
+				"config",
+				"area-property-adapters.json",
+			),
+		),
 	);
 	for (const artifact of artifacts) {
 		const directory = join(outputDirectory, "areas", artifact.geography);

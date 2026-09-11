@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:b764b3de6983533fb8c61217d91fd203b2ba9f2da9d6290b524d9ce7646256cb",
+	"contentHash": "sha256:45a4fd6084294b5d9b017be9efc19e7d165e347fa00119af9be7d5710efc7298",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -368,8 +368,12 @@
 		{
 			"id": "2026-05-ew-bgc",
 			"geography": "parish",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 11542,
+			"artifact": "areas/parish/2026-05-ew-bgc.json",
+			"contentHash": "sha256:382f7beae051ccaeb788957598c3b5b0f77636e9a33b24d0b65d67e789c21740",
+			"codeProperty": "PARNCP26CD",
+			"nameProperty": "PARNCP26NM"
 		},
 		{
 			"id": "2025-05-ew-bgc",
@@ -424,8 +428,12 @@
 		{
 			"id": "2019-04-ew-bgc",
 			"geography": "parish",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 11556,
+			"artifact": "areas/parish/2019-04-ew-bgc.json",
+			"contentHash": "sha256:044f6290db966762eb4ea2ed49c92d842f1b6e44114d04531797f8c732caca11",
+			"codeProperty": "parncp19cd",
+			"nameProperty": "parncp19nm"
 		},
 		{
 			"id": "2023-12-ew-bgc",
@@ -490,8 +498,12 @@
 		{
 			"id": "2026-04-en-bgc",
 			"geography": "subIntegratedCareBoardLocation",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 106,
+			"artifact": "areas/subIntegratedCareBoardLocation/2026-04-en-bgc.json",
+			"contentHash": "sha256:457135a025b2e98ef1f00f98d5838accfe6d0edddafc59c3273e12146a170a43",
+			"codeProperty": "SICBL26CD",
+			"nameProperty": "SICBL26NM"
 		},
 		{
 			"id": "2011-ni",
@@ -512,26 +524,42 @@
 		{
 			"id": "2026-05-uk-bgc",
 			"geography": "ward",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 8413,
+			"artifact": "areas/ward/2026-05-uk-bgc.json",
+			"contentHash": "sha256:d9acf073575215e957ed17fa97a37e964bb2b8af0992bf6935efe8bf60fe6567",
+			"codeProperty": "WD26CD",
+			"nameProperty": "WD26NM"
 		},
 		{
 			"id": "2025-12-uk-bgc",
 			"geography": "ward",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 8405,
+			"artifact": "areas/ward/2025-12-uk-bgc.json",
+			"contentHash": "sha256:ade2418945df73ca0c7428d9ebc698da4ea0aab5c8710409b1c203e985b12d2e",
+			"codeProperty": "WD25CD",
+			"nameProperty": "WD25NM"
 		},
 		{
 			"id": "2025-05-uk-bgc-v2",
 			"geography": "ward",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 8405,
+			"artifact": "areas/ward/2025-05-uk-bgc-v2.json",
+			"contentHash": "sha256:9d7f064949d3c1365ce93799434e2432a01b143cec654f08ca5b006eb62240ab",
+			"codeProperty": "WD25CD",
+			"nameProperty": "WD25NM"
 		},
 		{
 			"id": "2024-12-uk-bgc",
 			"geography": "ward",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 8396,
+			"artifact": "areas/ward/2024-12-uk-bgc.json",
+			"contentHash": "sha256:f82398b92702e504d468d6d9e51fe3bc6ccbb3acea467316e783c427cfb0d360",
+			"codeProperty": "WD24CD",
+			"nameProperty": "WD24NM"
 		},
 		{
 			"id": "2024-05-uk-bgc",
@@ -556,14 +584,22 @@
 		{
 			"id": "2023-05-uk-bgc",
 			"geography": "ward",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 8441,
+			"artifact": "areas/ward/2023-05-uk-bgc.json",
+			"contentHash": "sha256:4910cadfe2df4877bbc96fe4f98a52c8c629401adf81ef47714d15524ffc32e4",
+			"codeProperty": "WD23CD",
+			"nameProperty": "WD23NM"
 		},
 		{
 			"id": "2022-12-uk-bgc",
 			"geography": "ward",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 8482,
+			"artifact": "areas/ward/2022-12-uk-bgc.json",
+			"contentHash": "sha256:6193af5fbe8a02f789beb8b7adabba6ceca36c585d09c23a43c7ca0d7aad0b61",
+			"codeProperty": "WD22CD",
+			"nameProperty": "WD22NM"
 		},
 		{
 			"id": "2021-12-uk-bgc",
@@ -618,8 +654,12 @@
 		{
 			"id": "2016-12-gb-bgc",
 			"geography": "ward",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 8668,
+			"artifact": "areas/ward/2016-12-gb-bgc.json",
+			"contentHash": "sha256:db5d9a79b319ea350ec428522a5e0f57de2fdc3559983b58657fc07f69e7b3b4",
+			"codeProperty": "wd16cd",
+			"nameProperty": "wd16nm"
 		}
 	]
 }

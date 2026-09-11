@@ -936,5 +936,8 @@ visible to the source inventory on the next build without changing API code.
 Boundary releases also feed `public/geography-inventory.json`, which reports
 the input formats and whether area identity and conversion compilers are
 available. GeoJSON releases with one unambiguous code/name property pair also
-produce release-specific area artifacts for exact identity lookup. The current
-release metadata and inventories remain independent of the Next.js application.
+produce release-specific area artifacts for exact identity lookup. Exceptional
+releases with target and parent fields use explicit API-owned property adapters
+in `config/area-property-adapters.json`; unsupported formats remain visible as
+gaps rather than being guessed. The current release metadata and inventories
+remain independent of the Next.js application.
