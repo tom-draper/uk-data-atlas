@@ -1,0 +1,22 @@
+{
+	"schemaVersion": 1,
+	"releases": [
+		{
+			"geography": "lsoa",
+			"boundaryRelease": "2011-12-w-bgc",
+			"artifact": "boundaries/lsoa/2011-12-w-bgc.geojson",
+			"featureCount": 1909,
+			"contentHash": "sha256:cfe808536e439ffa90c4d05fd252c5f693027723763fe7e34e74265568e7ce4f",
+			"derivedFrom": {
+				"source": {
+					"geography": "lsoa",
+					"boundaryRelease": "2011-12-ew-bgc-v3"
+				},
+				"filter": {
+					"property": "LSOA11CD",
+					"startsWith": "W"
+				}
+			}
+		}
+	]
+}

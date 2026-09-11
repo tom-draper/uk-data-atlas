@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readAreaAdapters } from "../src/areaAdapters";
+import { readAreaSourceAdapters } from "../src/areaSourceAdapters";
 import { compileAreas } from "../src/areaInventory";
 import { createBoundaryRegistry } from "./build-boundary-registry";
 
@@ -22,6 +23,9 @@ export const buildAreaInventory = (repositoryRoot: string) => {
 				"config",
 				"area-property-adapters.json",
 			),
+		),
+		readAreaSourceAdapters(
+			join(repositoryRoot, "api", "config", "area-source-adapters.json"),
 		),
 	);
 	for (const artifact of artifacts) {
