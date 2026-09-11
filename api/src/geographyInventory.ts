@@ -1,16 +1,21 @@
 import { createHash } from "node:crypto";
 import type { AreaInventory } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
-import type { CrosswalkInventory } from "./crosswalkInventory";
+import type {
+	CrosswalkInventory,
+	CrosswalkMethod,
+	CrosswalkQuality,
+	CrosswalkWeighting,
+} from "./crosswalkInventory";
 import type { SourceInventory } from "./sourceInventory";
 
 export type GeographyRelationship = {
 	id: string;
 	direction: "from" | "to";
 	counterpart: { geography: string; boundaryRelease: string };
-	method: "official-lookup";
-	quality: "publisher-supplied";
-	weighting: { status: "not-provided" };
+	method: CrosswalkMethod;
+	quality: CrosswalkQuality;
+	weighting: CrosswalkWeighting;
 };
 
 export type GeographyReleaseInventory = {
