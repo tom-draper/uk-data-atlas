@@ -242,7 +242,10 @@ test("reprojects British National Grid geometry to WGS84 when an area is read", 
 					},
 					{
 						properties: { wd16cd: "N08000001" },
-						geometry: { type: "Point", coordinates: [146000, 530000] },
+						geometry: {
+							type: "Point",
+							coordinates: [146000, 530000],
+						},
 					},
 				],
 			}),
@@ -297,9 +300,9 @@ test("reprojects British National Grid geometry to WGS84 when an area is read", 
 		);
 		assert.ok(Math.abs(shift - 66.8) < 0.5, `moved ${shift} m`);
 		assert.deepEqual(
-			cache.provenance("ward", "2016", "N08000001").corrections?.map(
-				({ id }) => id,
-			),
+			cache
+				.provenance("ward", "2016", "N08000001")
+				.corrections?.map(({ id }) => id),
 			["northern-ireland-offset"],
 		);
 		assert.equal(
