@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:8a1f577ded8845340c40c69224bcdf728a7b6ef1567d6716da990a31c31c6bee",
+	"contentHash": "sha256:1a8c7d4c2bca0c30c92660a4793f185ba4048805477d5f056f176d01bb6947b4",
 	"releases": [
 		{
 			"id": "combinedAuthority/2025-12-en-bgc",
@@ -155,11 +155,32 @@
 			"codeProperty": "ITL321CD"
 		},
 		{
+			"id": "localAuthority/2026-05-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2026-05-uk-bgc/LAD_MAY_2026_UK_BGC.geojson",
+			"crs": "urn:ogc:def:crs:OGC:1.3:CRS84",
+			"codeProperty": "LAD26CD"
+		},
+		{
+			"id": "localAuthority/2025-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2025-12-uk-bgc/Local_Authority_Districts_DEC_2025_Boundaries_UK_BGC_-3661362025657049476.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD25CD"
+		},
+		{
 			"id": "localAuthority/2025-05-uk-bgc-v2",
 			"status": "available",
 			"input": "boundaries/local-authority/2025-05-uk-bgc-v2/LAD_MAY_2025_UK_BGC_V2_1110015208521213948.geojson",
 			"crs": "EPSG:4326",
 			"codeProperty": "LAD25CD"
+		},
+		{
+			"id": "localAuthority/2024-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2024-12-uk-bgc/Local_Authority_Districts_December_2024_Boundaries_UK_BGC_7423724764112241180.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD24CD"
 		},
 		{
 			"id": "localAuthority/2024-05-uk-bgc",
@@ -188,6 +209,13 @@
 			"input": "boundaries/local-authority/2021-12-uk-bgc/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.geojson",
 			"crs": "EPSG:27700",
 			"codeProperty": "LAD21CD"
+		},
+		{
+			"id": "localAuthority/2019-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2019-12-uk-bgc/Local_Authority_Districts_December_2019_GCB_UK_2022_-8923619463176079630.geojson",
+			"crs": "EPSG:4326",
+			"codeProperty": "lad19cd"
 		},
 		{
 			"id": "localAuthority/2018-12-uk-bgc",

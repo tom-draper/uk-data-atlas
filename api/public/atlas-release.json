@@ -1,11 +1,11 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:966fe9906dd49c4ac71d058600158341976784c806a3c3b67dd2b9ff472eefce",
+	"releaseId": "sha256:6491eaf2f0918bf915c3c93fcb74a2f5a9899ecec03aa668deb819ac077ed7cf",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
 			"path": "boundary-releases.json",
-			"contentHash": "sha256:303d696e0550415f3f540dbf11bef2b7b543ea8b45f5adc872b954a668fed5dd"
+			"contentHash": "sha256:7e5bf4c4dcd1afdfd059320acf5f77030645dd43823bed9c5d6705b9a6dbd681"
 		},
 		{
 			"id": "derived-boundaries",
@@ -15,37 +15,37 @@
 		{
 			"id": "area-inventory",
 			"path": "area-inventory.json",
-			"contentHash": "sha256:474c76c956aecff46a1380ac9707193a65c335d2d9c89cb59a10a99e3099de02"
+			"contentHash": "sha256:f112b07997ed85455e32ee389e2fd43a2ad1b50e40019f696b9ac94f3a425014"
 		},
 		{
 			"id": "geometry-sources",
 			"path": "geometry-sources.json",
-			"contentHash": "sha256:381777277f6e597a7e5743ffb1e0dd68e021f05b6223eff08cfc86836e51329b"
+			"contentHash": "sha256:bc2d8801c96efffb1ea1a5ec9f05666cc3d00e4f6b0932f79cd580843bed88f8"
 		},
 		{
 			"id": "crosswalk-inventory",
 			"path": "crosswalk-inventory.json",
-			"contentHash": "sha256:6b5f3b2dc857cbe13eef6ca9dbfd647d7ff9bf6f7158a49feb9f1cee33ac2f62"
+			"contentHash": "sha256:211c8c1bd0bbdf32ac4e5b11cc8655f2a6872e57b048a96dc578c75f109701d4"
 		},
 		{
 			"id": "relationship-candidates",
 			"path": "relationship-candidates.json",
-			"contentHash": "sha256:5873f3b00d13fa8297349d778652f5fb528ba5db23820657e08b7fd6f2cd1cb8"
+			"contentHash": "sha256:dc3719dbb15889246c9a2827d244f23ce480dcb587df9e95dbf95ccd01479571"
 		},
 		{
 			"id": "geography-inventory",
 			"path": "geography-inventory.json",
-			"contentHash": "sha256:55f3220f18ae5b4006914b3133f934b1bdd4f268338c9d480b6cd27c53cbc6c1"
+			"contentHash": "sha256:d0a47c921f0a1d3093958fedda56d8422691ba2256e1b525c533c300755e7664"
 		},
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:545bea41be3a29cb25fcd4c8714108a248c3d5090a27335068599cbd0a229688"
+			"contentHash": "sha256:7fbbb0e1285f92cedf9e910503c9774675b21b0b82574e27b0fb46f647f1bbbb"
 		},
 		{
 			"id": "source-inventory",
 			"path": "source-inventory.json",
-			"contentHash": "sha256:ddcde081194e6b3dd8419c93fa15b5ec0f3a821bfeb41c39f395df23f4db220a"
+			"contentHash": "sha256:995758803663a0a2f6e911f6a1b8eea652dd095c13572145d17e951f7a888e3f"
 		}
 	]
 }

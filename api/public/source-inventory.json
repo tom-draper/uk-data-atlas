@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4c51e263bf00d9c8aec095151824f87682c75d3c9d83128738be10ef08232ae4",
+	"contentHash": "sha256:93eaf94828a23c64ed6c9b36c49bde540e0628b50eabf77d0db2480a8b7b0b77",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -423,6 +423,22 @@
 			"metadataHash": "sha256:87871cda996eb243db0ef7b8c0da2c8d28bdbb50f5332a77b14f9a8d19809fe0"
 		},
 		{
+			"key": "boundaries/local-authority/2019-12-uk-bgc",
+			"metadataId": "2019-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2019 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:32e1e89bdaea89d5163c1a2682f6855c9864d2f0a4768b2851363f7f47e35b5c"
+		},
+		{
 			"key": "boundaries/local-authority/2021-12-uk-bgc",
 			"metadataId": "2021-12-uk-bgc",
 			"kind": "boundary",
@@ -487,6 +503,22 @@
 			"metadataHash": "sha256:faa515680684ce4dd670c5cb8b44bd671cbbfffb148af0640944e4e817fce6b0"
 		},
 		{
+			"key": "boundaries/local-authority/2024-12-uk-bgc",
+			"metadataId": "2024-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:60b07f91b882aa5d41a2cadc5f1be5fad634c5afc8a4216ea47cb6990318665a"
+		},
+		{
 			"key": "boundaries/local-authority/2025-05-uk-bgc-v2",
 			"metadataId": "2025-05-uk-bgc-v2",
 			"kind": "boundary",
@@ -501,6 +533,38 @@
 				}
 			],
 			"metadataHash": "sha256:95d5f992ed7e85b86f20b6d3d00b745d593a0083727ab2500ac6809cdf82532c"
+		},
+		{
+			"key": "boundaries/local-authority/2025-12-uk-bgc",
+			"metadataId": "2025-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:9359a1bce3a28966280dd8e47e1b7e5979d01a9e5c432d075e4b3b1a2199e5f2"
+		},
+		{
+			"key": "boundaries/local-authority/2026-05-uk-bgc",
+			"metadataId": "2026-05-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, May 2026 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2026",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:19ac5efc5250a783062a55a5fa1329046b76e7ff732369ad93ae75730687d915"
 		},
 		{
 			"key": "boundaries/local-health-board/2023-12-w-bgc",

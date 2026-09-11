@@ -633,24 +633,24 @@ paths:
                 $ref: "#/components/schemas/ValidationReportEnvelope"
               example:
                 apiVersion: v1
-                atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
+                atlasRelease: "sha256:6491eaf2f0918bf915c3c93fcb74a2f5a9899ecec03aa668deb819ac077ed7cf"
                 data:
                   schemaVersion: 1
                   inputs:
-                    boundaryRegistry: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
-                    crosswalkInventory: "sha256:07f782b1d99b89a7f0f0958a407ab006bc32adb1a3b6d1ac2a4ab59594b7812b"
-                    waivers: "sha256:e01845720f4cfb741b9f782dbfcb19d891fb88016a80f7efd1d96f9d4399b9bf"
+                    boundaryRegistry: "sha256:9c73ed179658325c8f725d623596ef4240d9c8733eaae69941357ca38362bb5e"
+                    crosswalkInventory: "sha256:29dc114d1a0d62561345319ac989c88713d60e5630840af11364b42aeafa59c6"
+                    waivers: "sha256:72af2f1632fbaa8fd398f263fe860651c9e38875931a748a91a0e64b99adae12"
                   summary:
-                    resourceCount: 77
-                    checkCount: 316
-                    passedCount: 297
-                    waivedCount: 19
+                    resourceCount: 86
+                    checkCount: 357
+                    passedCount: 337
+                    waivedCount: 20
                     coverage:
-                      boundaryReleases: 67
-                      areaIdentities: 67
-                      servableGeometry: 65
-                      withRelationships: 15
-                      crosswalks: 9
+                      boundaryReleases: 71
+                      areaIdentities: 71
+                      servableGeometry: 69
+                      withRelationships: 22
+                      crosswalks: 14
                       weightedCrosswalks: 1
                   resources:
                     - id: atlas
@@ -661,7 +661,7 @@ paths:
                           status: passed
                         - id: release-coverage
                           status: passed
-                          measured: { boundaryReleaseCount: 67 }
+                          measured: { boundaryReleaseCount: 71 }
                 meta:
                   nextCursor: null
         "400":

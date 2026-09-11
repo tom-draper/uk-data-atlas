@@ -174,6 +174,111 @@
 			}
 		},
 		{
+			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
+			"input": "boundaries/parish/2019-04-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_April_2019_GCB_EW_2022_7767177223882237005.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2019-04-ew-bgc",
+				"codeProperty": "parncp19cd",
+				"nameProperty": "parncp19nm"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-12-uk-bgc",
+				"codeProperty": "lad19cd",
+				"nameProperty": "lad19nm"
+			}
+		},
+		{
+			"id": "parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"input": "boundaries/parish/2026-05-ew-bgc/PARNCP_MAY_2026_EW_BGC_5023227107847847413.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2026-05-ew-bgc",
+				"codeProperty": "PARNCP26CD",
+				"nameProperty": "PARNCP26NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc",
+				"codeProperty": "LAD26CD",
+				"nameProperty": "LAD26NM"
+			}
+		},
+		{
+			"id": "ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"input": "boundaries/ward/2026-05-uk-bgc/WD_MAY_2026_UK_BGC_-6729380219658751476.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc",
+				"codeProperty": "WD26CD",
+				"nameProperty": "WD26NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc",
+				"codeProperty": "LAD26CD",
+				"nameProperty": "LAD26NM"
+			}
+		},
+		{
+			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
+			"input": "boundaries/ward/2024-12-uk-bgc/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"codeProperty": "WD24CD",
+				"nameProperty": "WD24NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"codeProperty": "LAD24CD",
+				"nameProperty": "LAD24NM"
+			}
+		},
+		{
+			"id": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+			"input": "boundaries/ward/2025-12-uk-bgc/WD_DEC_2025_UK_BGC_4818954163088901457.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "WD25CD",
+				"nameProperty": "WD25NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "LAD25CD",
+				"nameProperty": "LAD25NM"
+			}
+		},
+		{
 			"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 			"method": "area-overlap",
 			"quality": "derived",
