@@ -143,7 +143,10 @@ only **available** when its endpoint, contract and provenance are published.
 
 - [ ] Every data response links to source, transformation, geography match and
       Atlas release provenance.
-- [ ] Coverage report for every geography/release/measure combination.
+- [ ] Coverage report for every geography/release/measure combination. The
+      geography and release half is served by `GET /v1/validation`, with
+      every exception and the reason it was accepted; measures are not yet
+      covered.
 - [ ] Machine-readable change log, release notifications and deprecation
       policy.
 - [ ] Cached bulk exports and reproducible query snapshots.
@@ -1076,6 +1079,9 @@ pnpm start
 - `GET /v1/crosswalks/{crosswalk-id}`
 - `GET /v1/crosswalks/{crosswalk-id}/records`
 - `GET /v1/relationship-candidates`
+- `GET /v1/validation`
+- `GET /v1/validation/boundary-releases/{type}/{release}`
+- `GET /v1/validation/crosswalks/{crosswalk-id}`
 - `GET /v1/atlas-release`
 
 The build scans every `../data/**/meta.json`, so a newly added dataset becomes
@@ -1164,12 +1170,33 @@ crosswalk's id in `publishedCrosswalkId` when one already exists. `GET
 human to act on, not an instruction to auto-publish every `eligible`
 candidate without review.
 
+`public/validation-report.json` applies the release gates above to what the
+build has produced. It checks the links between the Atlas's own artifacts,
+each boundary release (licence, compiled identities, servable geometry, and
+relationship candidates awaiting a decision) and each crosswalk (artifact
+integrity, resolvable endpoints, consistent source names, at least one
+target per source, and the checks its method needs: one parent for clean
+containment; weights summing to 1, required coverage and sliver separation
+for area overlap). Where it can, it recomputes rather than restating a
+compiler's claim: artifact hashes, code resolution against compiled areas,
+weight sums, and coverage from the published shares.
+
+A check either passes or is waived. Every exception must be listed in
+`config/validation-waivers.json` with its reason, and the build fails on one
+that is not, or on a waiver that no longer matches an exception, so the file
+stays an accurate list of known gaps. The report publishes each waived
+check's finding beside its reason. `GET /v1/validation` serves the report,
+with `?status=waived` for just the exceptions, and each boundary release and
+crosswalk's checks are also served at `/v1/validation` followed by the
+resource's own path. It covers geography only so far; measure checks such as
+unmatched records and preserved totals belong here once measures exist.
+
 The build's final step writes `public/atlas-release.json`, an immutable
 manifest that references every other build-time artifact (the boundary
 registry, derived boundaries, area inventory, geometry source registry,
-crosswalk inventory, relationship candidate inventory, geography inventory
-and source inventory) by its content hash, plus a single `releaseId` hash of
-that set. Rebuilding without changing any input produces the same
+crosswalk inventory, relationship candidate inventory, geography inventory,
+validation report and source inventory) by its content hash, plus a single
+`releaseId` hash of that set. Rebuilding without changing any input produces the same
 `releaseId`; changing any one artifact changes it. This is a first, minimal
 step toward the release and provenance model described above, not the full
 versioned release history it will eventually anchor.

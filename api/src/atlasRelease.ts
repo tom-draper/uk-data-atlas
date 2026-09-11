@@ -25,6 +25,7 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "crosswalk-inventory", path: "crosswalk-inventory.json" },
 	{ id: "relationship-candidates", path: "relationship-candidates.json" },
 	{ id: "geography-inventory", path: "geography-inventory.json" },
+	{ id: "validation-report", path: "validation-report.json" },
 	{ id: "source-inventory", path: "source-inventory.json" },
 ];
 

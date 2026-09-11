@@ -49,6 +49,9 @@ paths:
                     - /v1/crosswalks/{crosswalk-id}
                     - /v1/crosswalks/{crosswalk-id}/records
                     - /v1/relationship-candidates
+                    - /v1/validation
+                    - /v1/validation/boundary-releases/{type}/{release}
+                    - /v1/validation/crosswalks/{crosswalk-id}
                     - /v1/atlas-release
                 meta:
                   nextCursor: null
@@ -591,15 +594,181 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /validation:
+    get:
+      operationId: getValidationReport
+      summary: Report every release gate, including waived exceptions
+      description: >
+        The build checks each boundary release, each crosswalk and the links
+        between the Atlas's own artifacts, recomputing what it can from the
+        published artifacts rather than trusting each compiler's claims. A
+        check either passes or is waived: the build fails on any exception
+        without a recorded reason, and on any waiver that no longer matches
+        an exception. Waived checks carry what was found and why it was
+        accepted.
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            enum: [passed, waived]
+          description: Return only resources with this status.
+      responses:
+        "200":
+          description: The validation report for the current Atlas release.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationReportEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
+                data:
+                  schemaVersion: 1
+                  inputs:
+                    boundaryRegistry: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                    crosswalkInventory: "sha256:07f782b1d99b89a7f0f0958a407ab006bc32adb1a3b6d1ac2a4ab59594b7812b"
+                    waivers: "sha256:22f9a3221fcbc126afc2ebc2ad8dce12f02c4c82a536aadf6bb3ed73ded348de"
+                  summary:
+                    resourceCount: 77
+                    checkCount: 316
+                    passedCount: 287
+                    waivedCount: 29
+                    coverage:
+                      boundaryReleases: 67
+                      areaIdentities: 67
+                      servableGeometry: 40
+                      withRelationships: 14
+                      crosswalks: 9
+                      weightedCrosswalks: 1
+                  resources:
+                    - id: atlas
+                      kind: atlas
+                      status: passed
+                      checks:
+                        - id: registry-links
+                          status: passed
+                        - id: release-coverage
+                          status: passed
+                          measured: { boundaryReleaseCount: 67 }
+                meta:
+                  nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /validation/boundary-releases/{geography}/{release}:
+    get:
+      operationId: getBoundaryReleaseValidation
+      summary: Get one boundary release's checks
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+      responses:
+        "200":
+          description: The boundary release's checks.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResourceEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
+                data:
+                  id: boundary-releases/ward/2016-12-gb-bgc
+                  kind: boundary-release
+                  status: waived
+                  checks:
+                    - id: licence-recorded
+                      status: passed
+                    - id: area-identities
+                      status: passed
+                      measured: { areaCount: 8668 }
+                    - id: geometry-servable
+                      status: waived
+                      detail: Geometry is EPSG:27700, and only WGS84 geometry is served.
+                      measured: { crs: "EPSG:27700" }
+                      waiver:
+                        reason: Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it.
+                    - id: candidates-reviewed
+                      status: passed
+                meta:
+                  nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /validation/crosswalks/{crosswalkId}:
+    get:
+      operationId: getCrosswalkValidation
+      summary: Get one crosswalk's checks
+      description: >
+        Every crosswalk is checked for artifact integrity, resolvable
+        endpoints, consistent source names and at least one target per
+        source. Clean containment must give each source exactly one parent.
+        Area overlap must have weights summing to 1, the coverage its adapter
+        requires, and clear separation between slivers and real overlaps.
+      parameters:
+        - $ref: "#/components/parameters/CrosswalkId"
+      responses:
+        "200":
+          description: The crosswalk's checks.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResourceEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
+                data:
+                  id: crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap
+                  kind: crosswalk
+                  status: passed
+                  checks:
+                    - id: artifact-integrity
+                      status: passed
+                      measured: { recordCount: 650 }
+                    - id: endpoints-verified
+                      status: passed
+                    - id: source-names-consistent
+                      status: passed
+                    - id: targets-present
+                      status: passed
+                    - id: weights-sum-to-one
+                      status: passed
+                      measured: { maxDeviation: 0.000001, tolerance: 0.00001 }
+                    - id: area-coverage
+                      status: passed
+                      measured:
+                        minimumCoverage: 0.99
+                        minimumSourceCoverage: 0.99606
+                        minimumTargetCoverage: 0.997111
+                    - id: sliver-separation
+                      status: passed
+                      measured:
+                        sliverWidthM: 100
+                        widestSliverWidthM: 15.1
+                        narrowestOverlapWidthM: 332.1
+                        sliverPairCount: 1381
+                meta:
+                  nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /atlas-release:
     get:
       operationId: getAtlasRelease
       summary: Get the current immutable atlas release manifest
       description: >
         References the boundary registry, derived boundaries, area
-        inventory, crosswalk inventory, relationship-candidate inventory,
-        geography inventory and source inventory by content hash, plus a single `releaseId` hash of that
-        set. Rebuilding without changing any input reproduces the same
+        inventory, geometry source registry, crosswalk inventory,
+        relationship-candidate inventory, geography inventory, validation
+        report and source inventory by content hash, plus a single
+        `releaseId` hash of that set. Rebuilding without changing any input reproduces the same
         `releaseId`.
       responses:
         "200":
@@ -1517,6 +1686,132 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/RelationshipCandidate"
+
+    ValidationCheck:
+      type: object
+      required: [id, status]
+      properties:
+        id:
+          enum:
+            - registry-links
+            - release-coverage
+            - licence-recorded
+            - area-identities
+            - geometry-servable
+            - candidates-reviewed
+            - artifact-integrity
+            - endpoints-verified
+            - source-names-consistent
+            - targets-present
+            - single-parent
+            - weights-sum-to-one
+            - area-coverage
+            - sliver-separation
+        status:
+          enum: [passed, waived]
+        detail:
+          type: string
+          description: What the check found. Present on every waived check.
+        measured:
+          type: object
+          description: Figures the check measured, whether it passed or not.
+          additionalProperties:
+            type: [number, string, "null"]
+        waiver:
+          type: object
+          required: [reason]
+          properties:
+            reason:
+              type: string
+
+    ValidationResource:
+      type: object
+      required: [id, kind, status, checks]
+      properties:
+        id:
+          type: string
+          description: >
+            `atlas` for checks across the Atlas's own artifacts; otherwise
+            the validated resource's API path, such as
+            `crosswalks/{crosswalkId}`.
+        kind:
+          enum: [atlas, boundary-release, crosswalk]
+        status:
+          enum: [passed, waived]
+          description: waived when any of its checks is waived.
+        checks:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationCheck"
+
+    ValidationReport:
+      type: object
+      required: [schemaVersion, contentHash, inputs, summary, resources]
+      properties:
+        schemaVersion:
+          const: 1
+        contentHash:
+          type: string
+        inputs:
+          type: object
+          description: Content hashes of the artifacts and waivers the checks read.
+          additionalProperties:
+            type: string
+        summary:
+          type: object
+          required: [resourceCount, checkCount, passedCount, waivedCount, coverage]
+          properties:
+            resourceCount:
+              type: integer
+            checkCount:
+              type: integer
+            passedCount:
+              type: integer
+            waivedCount:
+              type: integer
+            coverage:
+              type: object
+              description: How many boundary releases each capability reaches.
+              required:
+                - boundaryReleases
+                - areaIdentities
+                - servableGeometry
+                - withRelationships
+                - crosswalks
+                - weightedCrosswalks
+              properties:
+                boundaryReleases:
+                  type: integer
+                areaIdentities:
+                  type: integer
+                servableGeometry:
+                  type: integer
+                withRelationships:
+                  type: integer
+                crosswalks:
+                  type: integer
+                weightedCrosswalks:
+                  type: integer
+        resources:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationResource"
+
+    ValidationReportEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/ValidationReport"
+
+    ValidationResourceEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/ValidationResource"
 
     AtlasReleaseArtifactRef:
       type: object

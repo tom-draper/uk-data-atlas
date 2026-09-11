@@ -1,0 +1,58 @@
+{
+	"schemaVersion": 1,
+	"waivers": [
+		{
+			"check": "geometry-servable",
+			"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it.",
+			"resources": [
+				"boundary-releases/constituency/2016-12-uk-bgc",
+				"boundary-releases/country/2020-12-uk-bgc",
+				"boundary-releases/country/2021-12-uk-bgc",
+				"boundary-releases/country/2022-12-uk-bgc",
+				"boundary-releases/country/2023-12-uk-bgc",
+				"boundary-releases/country/2024-12-uk-bgc",
+				"boundary-releases/country/2025-12-uk-bgc",
+				"boundary-releases/localAuthority/2016-12-gb-bgc",
+				"boundary-releases/localAuthority/2018-12-uk-bgc",
+				"boundary-releases/localAuthority/2021-12-uk-bgc",
+				"boundary-releases/localAuthority/2022-12-uk-bgc-v2",
+				"boundary-releases/localPlanningAuthority/2019-04-uk-bgc",
+				"boundary-releases/parish/2019-04-ew-bgc",
+				"boundary-releases/parish/2021-12-ew-bgc",
+				"boundary-releases/parish/2022-12-ew-bgc-v3",
+				"boundary-releases/parish/2023-12-ew-bgc",
+				"boundary-releases/parish/2026-05-ew-bgc",
+				"boundary-releases/ward/2016-12-gb-bgc",
+				"boundary-releases/ward/2017-12-gb-bgc",
+				"boundary-releases/ward/2018-12-uk-bgc",
+				"boundary-releases/ward/2019-12-gb-bgc",
+				"boundary-releases/ward/2023-05-uk-bgc",
+				"boundary-releases/ward/2024-05-uk-bgc",
+				"boundary-releases/ward/2025-12-uk-bgc",
+				"boundary-releases/ward/2026-05-uk-bgc"
+			]
+		},
+		{
+			"check": "geometry-servable",
+			"reason": "Held only as Shapefile and MapInfo sources. Identities are read from the Shapefile attribute table, but no compiler reads Shapefile geometry yet.",
+			"resources": [
+				"boundary-releases/dataZone/2011-12-sc-bfc",
+				"boundary-releases/superOutputArea/2011-ni"
+			]
+		},
+		{
+			"check": "endpoints-verified",
+			"reason": "The lookup labels its source side 2010, and no boundary release has that identity, so its source codes are not checked against compiled areas. Those constituencies were unchanged until 2024 and all 650 codes resolve in the 2017 and 2019 UK releases; pointing the lookup at one of them has not been reviewed yet.",
+			"resources": [
+				"crosswalks/constituency-2010-to-2024-official-lookup-v2"
+			]
+		},
+		{
+			"check": "source-names-consistent",
+			"reason": "The publisher lookup names N06000004 Belfast West in three rows and Belfast North in one. Both names are kept as labels rather than the Atlas correcting the source.",
+			"resources": [
+				"crosswalks/constituency-2010-to-2024-official-lookup-v2"
+			]
+		}
+	]
+}
