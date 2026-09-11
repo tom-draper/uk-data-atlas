@@ -129,6 +129,55 @@ test("matches a target release whose field names differ only in case", () => {
 	}
 });
 
+test("offers every compiled release that shares the parent fields as its own target", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		// May and December releases of the same authorities both carry LAD25CD.
+		writeWardSource(root, [
+			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L1", LAD25NM: "LAD One" },
+		]);
+		writeLadSource(root, [{ code: "L1", name: "LAD One" }]);
+		writeSource(root, "local-authority", "2025-12", "lads.geojson", [
+			{ LAD25CD: "L1", LAD25NM: "LAD One" },
+		]);
+		const inventory = compileRelationshipCandidates(
+			root,
+			[
+				wardArtifact([{ code: "E1", name: "Ward One" }]),
+				ladArtifact([{ code: "L1", name: "LAD One" }]),
+				{
+					...ladArtifact([{ code: "L1", name: "LAD One" }]),
+					boundaryRelease: "2025-12",
+				},
+			],
+			[
+				{
+					id: "ward-to-local-authority-2025-clean-containment",
+					from: { geography: "ward", boundaryRelease: "2025" },
+					to: { geography: "localAuthority", boundaryRelease: "2025" },
+				},
+			],
+		);
+		assert.deepEqual(
+			inventory.candidates.map((candidate) => [
+				candidate.id,
+				candidate.status,
+				candidate.publishedCrosswalkId,
+			]),
+			[
+				[
+					"ward-2025-to-local-authority-2025",
+					"eligible",
+					"ward-to-local-authority-2025-clean-containment",
+				],
+				["ward-2025-to-local-authority-2025-12", "eligible", undefined],
+			],
+		);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
 test("reports not-available when no compiled release matches the extra property pair", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
