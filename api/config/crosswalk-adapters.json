@@ -1,0 +1,23 @@
+{
+	"schemaVersion": 1,
+	"crosswalks": [
+		{
+			"id": "constituency-2010-to-2024-official-lookup-v2",
+			"input": "boundaries/constituency/2024-07-uk-bgc/Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2010",
+				"codeProperty": "PCON10CD",
+				"nameProperty": "PCON10NM",
+				"aliasProperty": "PCON10NMW"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc",
+				"codeProperty": "PCON24CD",
+				"nameProperty": "PCON24NM",
+				"aliasProperty": "PCON24NMW"
+			}
+		}
+	]
+}

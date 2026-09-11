@@ -1,0 +1,25 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:9b6d10039de41aa99ac5a7b0453cc569cb23b3e3984f029499b1fb01ca478af6",
+	"crosswalks": [
+		{
+			"id": "constituency-2010-to-2024-official-lookup-v2",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2010"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"recordCount": 650,
+			"artifact": "crosswalks/constituency-2010-to-2024-official-lookup-v2.json",
+			"contentHash": "sha256:ce61b3f59c495498e9a7cfd7fb4ff6d3d742cffa8b27150a58c27b6f099b038d"
+		}
+	]
+}
