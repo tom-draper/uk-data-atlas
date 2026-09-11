@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
+import { AreaGeometryCache, type GeometrySourceLookup } from "../src/areaGeometry";
 import { route, type CrosswalkLookup } from "../src/routes";
 import type { AtlasRelease } from "../src/atlasRelease";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
@@ -195,6 +199,146 @@ test("gets a compiled area by its full identity", () => {
 		name: "Example ward",
 		aliases: ["Enghraifft ward"],
 	});
+});
+
+test("gets an area's geometry as a GeoJSON Feature", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		const directory = join(root, "data", "boundaries", "ward", "2025-01-en-ward");
+		mkdirSync(directory, { recursive: true });
+		writeFileSync(
+			join(directory, "wards.geojson"),
+			JSON.stringify({
+				type: "FeatureCollection",
+				features: [
+					{
+						properties: { WD25CD: "E05000001" },
+						geometry: { type: "Point", coordinates: [-2.24, 53.48] },
+					},
+				],
+			}),
+		);
+		const sources: GeometrySourceLookup = new Map([
+			[
+				"ward/2025-01-en-ward",
+				{
+					input: "boundaries/ward/2025-01-en-ward/wards.geojson",
+					crs: "EPSG:4326",
+					codeProperty: "WD25CD",
+				},
+			],
+		]);
+		const areaGeometryCache = new AreaGeometryCache(root, sources);
+
+		const response = route(
+			"GET",
+			"/v1/areas/ward/2025-01-en-ward/E05000001/geometry",
+			registry,
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			undefined,
+			undefined,
+			undefined,
+			areaGeometryCache,
+		);
+		assert.equal(response.status, 200);
+		assert.deepEqual("data" in response.body && response.body.data, {
+			type: "Feature",
+			id: "ward/2025-01-en-ward/E05000001",
+			properties: {
+				id: "ward/2025-01-en-ward/E05000001",
+				geography: "ward",
+				boundaryRelease: "2025-01-en-ward",
+				code: "E05000001",
+				name: "Example ward",
+				aliases: ["Enghraifft ward"],
+			},
+			geometry: { type: "Point", coordinates: [-2.24, 53.48] },
+		});
+
+		const unknownArea = route(
+			"GET",
+			"/v1/areas/ward/2025-01-en-ward/E05099999/geometry",
+			registry,
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			undefined,
+			undefined,
+			undefined,
+			areaGeometryCache,
+		);
+		assert.equal(unknownArea.status, 404);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
+test("reports geometry as unavailable before the geometry cache is built", () => {
+	const response = route(
+		"GET",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/geometry",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(response.status, 503);
+});
+
+test("surfaces a missing or unsupported geometry source as a clear error", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		const noSourceCache = new AreaGeometryCache(root, new Map());
+		const noSource = route(
+			"GET",
+			"/v1/areas/ward/2025-01-en-ward/E05000001/geometry",
+			registry,
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			undefined,
+			undefined,
+			undefined,
+			noSourceCache,
+		);
+		assert.equal(noSource.status, 503);
+		assert.equal(
+			"title" in noSource.body && noSource.body.title,
+			"Geometry Unavailable",
+		);
+
+		const nonWgs84Sources: GeometrySourceLookup = new Map([
+			[
+				"ward/2025-01-en-ward",
+				{
+					input: "boundaries/ward/2025-01-en-ward/wards.geojson",
+					crs: "EPSG:27700",
+					codeProperty: "WD25CD",
+				},
+			],
+		]);
+		const nonWgs84Cache = new AreaGeometryCache(root, nonWgs84Sources);
+		const nonWgs84 = route(
+			"GET",
+			"/v1/areas/ward/2025-01-en-ward/E05000001/geometry",
+			registry,
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			undefined,
+			undefined,
+			undefined,
+			nonWgs84Cache,
+		);
+		assert.equal(nonWgs84.status, 503);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
 });
 
 test("searches and paginates compiled area identities", () => {

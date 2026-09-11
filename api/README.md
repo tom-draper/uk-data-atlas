@@ -1064,7 +1064,10 @@ pnpm start
 - `GET /v1/geography-inventory`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`
+- `GET /v1/areas`
 - `GET /v1/areas/{type}/{release}/{code}`
+- `GET /v1/areas/{type}/{release}/{code}/relationships`
+- `GET /v1/areas/{type}/{release}/{code}/geometry`
 - `GET /v1/crosswalks`
 - `GET /v1/crosswalks/{crosswalk-id}`
 - `GET /v1/crosswalks/{crosswalk-id}/records`
@@ -1130,3 +1133,16 @@ hash of that set. Rebuilding without changing any input produces the same
 `releaseId`; changing any one artifact changes it. This is a first, minimal
 step toward the release and provenance model described above, not the full
 versioned release history it will eventually anchor.
+
+`public/geometry-sources.json` records, per compiled area release, where its
+raw WGS84 GeoJSON lives, its CRS, and its code property, or an explicit
+`not-available` reason when no raw source is declared. `GET
+/v1/areas/{type}/{release}/{code}/geometry` serves that geometry directly as
+a GeoJSON Feature, reading and caching the source file on first request
+rather than precompiling per-area geometry artifacts. A source code that maps
+to more than one feature fragment (an area split across islands, for
+example) is returned as a single `GeometryCollection` instead of an
+arbitrarily chosen fragment. A non-WGS84 source is refused rather than
+served unprojected; only `EPSG:4326`/`CRS84` sources are currently read. This
+is a raw per-area lookup, not the tiled or simplified delivery the full
+proposal describes for map rendering at scale.
