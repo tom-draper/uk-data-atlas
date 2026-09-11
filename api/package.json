@@ -7,7 +7,7 @@
 		"node": ">=24 <25"
 	},
 	"scripts": {
-		"build": "pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:crosswalk-inventory && pnpm build:geography-inventory && pnpm build:atlas-release",
+		"build": "pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:crosswalk-inventory && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:atlas-release",
 		"build:area-inventory": "tsx scripts/build-area-inventory.ts",
 		"build:atlas-release": "tsx scripts/build-atlas-release.ts",
 		"build:boundary-registry": "tsx scripts/build-boundary-registry.ts",
@@ -16,7 +16,8 @@
 		"build:geography-inventory": "tsx scripts/build-geography-inventory.ts",
 		"start": "tsx scripts/serve.ts",
 		"test": "tsx --test tests/*.test.ts",
-		"typecheck": "tsc --noEmit -p tsconfig.json"
+		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"build:relationship-candidates": "tsx scripts/build-relationship-candidates.ts"
 	},
 	"devDependencies": {
 		"@types/node": "^26.4.1",

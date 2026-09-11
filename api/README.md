@@ -25,6 +25,136 @@ an implementation proposal, not a promise that every listed endpoint is ready.
 The present `data/precompiled` files and browser-facing TopoJSON are internal
 build products; their shape and filenames must remain free to change.
 
+## Capability checklist
+
+This is the practical product checklist. Status means the public API behaviour,
+not merely that a website asset or source file happens to exist. A feature is
+only **available** when its endpoint, contract and provenance are published.
+
+| Status        | Meaning                                                                                              |
+| ------------- | ---------------------------------------------------------------------------------------------------- |
+| Available     | Implemented in the read-only v1 API today                                                            |
+| Next          | Can be built from the API's current boundary and identity foundation                                 |
+| Data required | Technically feasible, but needs a versioned authoritative source before it can be published honestly |
+| Later         | Valuable, but deliberately outside the early public API                                              |
+
+### Available now
+
+- [x] Discover supported geographies and their boundary releases.
+- [x] Inspect a boundary release's coverage, publisher, licence and metadata.
+- [x] Retrieve an area identity when its geography, release and official code
+      are known. Names and supplied Welsh aliases are returned where available.
+- [x] Inspect the immutable Atlas release manifest, allowing a caller to cite
+      the exact set of compiled artifacts behind a response.
+- [x] List published crosswalks, inspect their method and validation, and page
+      through their mappings.
+- [x] Translate a 2010 Westminster constituency code to its 2024 successor
+      mapping through the published official lookup.
+- [x] Translate a May 2025 ward to its May 2025 local authority through a
+      clean-containment crosswalk.
+
+### Geography and place intelligence — next
+
+- [ ] Search by official code, exact name, alias and name prefix. A bare code
+      must return all plausible geography/release identities rather than guessing.
+- [ ] List areas for a geography/release with pagination and filters.
+- [ ] Resolve a canonical area page with validity, aliases, extent, provenance
+      and links to geometry and relationships.
+- [ ] Return parent and child areas: ward → local authority, local authority →
+      wards, constituency → wards, and other documented containment relationships.
+- [ ] Return reverse crosswalk lookups without forcing clients to download an
+      entire mapping.
+- [ ] Publish a directional relationship graph: within, contains, overlaps,
+      predecessor, successor, split-from, merged-from and equivalent-to, each with
+      method, quality and provenance.
+- [ ] Explain historical code changes rather than pretending every old area has
+      a single modern replacement.
+- [ ] Return explicit absence states: abolished, unsupported geography, partial
+      coverage, or no sufficiently trustworthy conversion.
+- [ ] Publish compiler-discovered relationship candidates only after endpoint
+      validation and an explicit decision to promote them to crosswalks.
+
+### Named locations — next
+
+- [ ] Search named places such as Greater Manchester, Devon and London.
+- [ ] Publish versioned named-location definitions with membership, provenance
+      and clear semantics: combined authority, ceremonial county, historic county
+      or editorial grouping.
+- [ ] List all wards, local authorities or constituencies in a named location.
+      The response must state whether membership means fully contained, intersecting
+      or weighted overlap.
+- [ ] Return a named location's boundary, bounding box and optional union
+      geometry.
+- [ ] Compare location definitions and membership across releases.
+
+### Boundaries and spatial queries — next
+
+- [ ] Retrieve versioned area geometry as GeoJSON, with reproducible
+      simplification tiers and geometry provenance.
+- [ ] Retrieve boundary JSON for a collection, for example all wards in a
+      constituency or local authority.
+- [ ] Return bounding boxes, centroids and land area in m², hectares and km²,
+      calculated with a documented projection and method.
+- [ ] Point lookup: longitude/latitude → containing supported areas for a
+      selected boundary release.
+- [ ] Compare two boundary releases to identify recodes, membership changes and
+      geometry changes.
+- [ ] Deliver vector tiles and cached exports for map-scale workloads.
+
+### Statistics and measures — data required
+
+- [ ] Catalogue datasets and measures with units, period, coverage, licence,
+      source lineage, revision status, suppression and comparability notes.
+- [ ] Return population estimates for a supported ward, local authority,
+      constituency, country or named location.
+- [ ] Return population density only when the population date/geography and the
+      documented land-area denominator are compatible.
+- [ ] Return time series, rankings, comparisons and uncertainty intervals.
+- [ ] Return life expectancy by total, male and female where the source
+      publishes those series.
+- [ ] Return house-price, deprivation, election and other curated measures with
+      their own aggregation rules.
+- [ ] Export data as JSON, CSV, NDJSON and Parquet.
+- [ ] Aggregate additive measures over parent areas or named locations; reject
+      invalid operations such as summing medians or averaging ranks.
+- [ ] Convert measures across releases only with an explicit, appropriate
+      crosswalk: official, exact, area-weighted or population-weighted.
+
+### Postcodes, homes and addresses — data required, later
+
+- [ ] Postcode → ward, local authority, constituency and country lookup, with
+      an explicit postcode release and containment method.
+- [ ] Count active postcodes within an area.
+- [ ] Return postcode-sector, district and area statistics.
+- [ ] Return a clearly defined count of households, dwellings, addresses or
+      homes. These are different measures and must never be silently substituted.
+- [ ] Provide postcode and address history where a source permits it.
+
+### Reliability and product capabilities — next
+
+- [ ] Every data response links to source, transformation, geography match and
+      Atlas release provenance.
+- [ ] Coverage report for every geography/release/measure combination.
+- [ ] Machine-readable change log, release notifications and deprecation
+      policy.
+- [ ] Cached bulk exports and reproducible query snapshots.
+- [ ] Operational API keys, fair rate limits and managed services only when
+      they add service value rather than restricting openly licensed data.
+
+### Examples this checklist is intended to answer
+
+- Given a ward code, identify its name and documented parent local authority,
+  constituency and country for a chosen release.
+- Given “Greater Manchester”, return the relevant named-location definition
+  and its constituencies under a stated membership rule.
+- Given a historical ward code, show its predecessor/successor timeline and
+  flag splits or mergers instead of inventing a one-to-one match.
+- Given an area identity or named location, return its geometry, land area,
+  population, density or other measure only when compatible source data exists.
+- Given a constituency, return a versioned count of active postcodes, homes or
+  households only after the exact measure, source date and spatial containment
+  method are declared.
+
 ### Product posture
 
 The initial goal is a useful, open and sustainable public product;
