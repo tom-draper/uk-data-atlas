@@ -13,7 +13,13 @@ const writeSource = (
 	filename: string,
 	features: Array<Record<string, unknown>>,
 ) => {
-	const directory = join(root, "data", "boundaries", geography, boundaryRelease);
+	const directory = join(
+		root,
+		"data",
+		"boundaries",
+		geography,
+		boundaryRelease,
+	);
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(
 		join(directory, filename),
@@ -28,13 +34,18 @@ const writeSource = (
 	);
 };
 
-const writeWardSource = (root: string, features: Array<Record<string, unknown>>) =>
-	writeSource(root, "ward", "2025", "wards.geojson", features);
+const writeWardSource = (
+	root: string,
+	features: Array<Record<string, unknown>>,
+) => writeSource(root, "ward", "2025", "wards.geojson", features);
 
 // Every artifact scanned needs a real source directory, even one only used
 // as a match target: give it a LAD-only file so its own scan finds no extra
 // candidate property pairs beyond its own identity.
-const writeLadSource = (root: string, areas: Array<{ code: string; name: string }>) =>
+const writeLadSource = (
+	root: string,
+	areas: Array<{ code: string; name: string }>,
+) =>
 	writeSource(
 		root,
 		"local-authority",
@@ -43,7 +54,9 @@ const writeLadSource = (root: string, areas: Array<{ code: string; name: string 
 		areas.map((area) => ({ LAD25CD: area.code, LAD25NM: area.name })),
 	);
 
-const wardArtifact = (areas: Array<{ code: string; name: string }>): AreaReleaseArtifact => ({
+const wardArtifact = (
+	areas: Array<{ code: string; name: string }>,
+): AreaReleaseArtifact => ({
 	schemaVersion: 1,
 	contentHash: "sha256:ward-areas",
 	geography: "ward",
@@ -53,7 +66,9 @@ const wardArtifact = (areas: Array<{ code: string; name: string }>): AreaRelease
 	areas,
 });
 
-const ladArtifact = (areas: Array<{ code: string; name: string }>): AreaReleaseArtifact => ({
+const ladArtifact = (
+	areas: Array<{ code: string; name: string }>,
+): AreaReleaseArtifact => ({
 	schemaVersion: 1,
 	contentHash: "sha256:lad-areas",
 	geography: "localAuthority",
@@ -67,8 +82,18 @@ test("marks a candidate eligible when the target release fully covers it", () =>
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
 		writeWardSource(root, [
-			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L1", LAD25NM: "LAD One" },
-			{ WD25CD: "E2", WD25NM: "Ward Two", LAD25CD: "L1", LAD25NM: "LAD One" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				LAD25CD: "L1",
+				LAD25NM: "LAD One",
+			},
+			{
+				WD25CD: "E2",
+				WD25NM: "Ward Two",
+				LAD25CD: "L1",
+				LAD25NM: "LAD One",
+			},
 		]);
 		writeLadSource(root, [{ code: "L1", name: "LAD One" }]);
 		const artifacts = [
@@ -85,8 +110,16 @@ test("marks a candidate eligible when the target release fully covers it", () =>
 		assert.equal(candidate.status, "eligible");
 		assert.equal(candidate.publishedCrosswalkId, undefined);
 		assert.deepEqual(candidate.validation.endpoints, {
-			from: { status: "verified", availableAreaCount: 2, referencedCodeCount: 2 },
-			to: { status: "verified", availableAreaCount: 1, referencedCodeCount: 1 },
+			from: {
+				status: "verified",
+				availableAreaCount: 2,
+				referencedCodeCount: 2,
+			},
+			to: {
+				status: "verified",
+				availableAreaCount: 1,
+				referencedCodeCount: 1,
+			},
 		});
 		assert.deepEqual(candidate.validation.relationship, {
 			sourceFeatureCount: 2,
@@ -107,7 +140,12 @@ test("matches a target release whose field names differ only in case", () => {
 		// The source spells the parent fields in lower case; the compiled LAD
 		// release records them in upper case.
 		writeWardSource(root, [
-			{ WD25CD: "E1", WD25NM: "Ward One", lad25cd: "L1", lad25nm: "LAD One" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				lad25cd: "L1",
+				lad25nm: "LAD One",
+			},
 		]);
 		writeLadSource(root, [{ code: "L1", name: "LAD One" }]);
 		const inventory = compileRelationshipCandidates(root, [
@@ -134,7 +172,12 @@ test("offers every compiled release that shares the parent fields as its own tar
 	try {
 		// May and December releases of the same authorities both carry LAD25CD.
 		writeWardSource(root, [
-			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L1", LAD25NM: "LAD One" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				LAD25CD: "L1",
+				LAD25NM: "LAD One",
+			},
 		]);
 		writeLadSource(root, [{ code: "L1", name: "LAD One" }]);
 		writeSource(root, "local-authority", "2025-12", "lads.geojson", [
@@ -154,7 +197,10 @@ test("offers every compiled release that shares the parent fields as its own tar
 				{
 					id: "ward-to-local-authority-2025-clean-containment",
 					from: { geography: "ward", boundaryRelease: "2025" },
-					to: { geography: "localAuthority", boundaryRelease: "2025" },
+					to: {
+						geography: "localAuthority",
+						boundaryRelease: "2025",
+					},
 				},
 			],
 		);
@@ -182,7 +228,12 @@ test("reports not-available when no compiled release matches the extra property 
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
 		writeWardSource(root, [
-			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L1", LAD25NM: "LAD One" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				LAD25CD: "L1",
+				LAD25NM: "LAD One",
+			},
 		]);
 		const inventory = compileRelationshipCandidates(root, [
 			wardArtifact([{ code: "E1", name: "Ward One" }]),
@@ -204,8 +255,18 @@ test("flags needs-review when the target release is missing referenced codes", (
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
 		writeWardSource(root, [
-			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L1", LAD25NM: "LAD One" },
-			{ WD25CD: "E2", WD25NM: "Ward Two", LAD25CD: "L2", LAD25NM: "LAD Two" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				LAD25CD: "L1",
+				LAD25NM: "LAD One",
+			},
+			{
+				WD25CD: "E2",
+				WD25NM: "Ward Two",
+				LAD25CD: "L2",
+				LAD25NM: "LAD Two",
+			},
 		]);
 		writeLadSource(root, [{ code: "L1", name: "LAD One" }]);
 		const artifacts = [
@@ -232,9 +293,19 @@ test("flags needs-review and counts multi-target source codes", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
 		writeWardSource(root, [
-			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L1", LAD25NM: "LAD One" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				LAD25CD: "L1",
+				LAD25NM: "LAD One",
+			},
 			// Same ward code disagreeing about its LAD across features.
-			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L2", LAD25NM: "LAD Two" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				LAD25CD: "L2",
+				LAD25NM: "LAD Two",
+			},
 		]);
 		writeLadSource(root, [
 			{ code: "L1", name: "LAD One" },
@@ -250,7 +321,10 @@ test("flags needs-review and counts multi-target source codes", () => {
 		const inventory = compileRelationshipCandidates(root, artifacts);
 		const [candidate] = inventory.candidates;
 		assert.equal(candidate.status, "needs-review");
-		assert.equal(candidate.validation.relationship.multiTargetSourceCount, 1);
+		assert.equal(
+			candidate.validation.relationship.multiTargetSourceCount,
+			1,
+		);
 		assert.match(
 			candidate.validation.reasons.join(" "),
 			/1 source codes map to more than one target code\./,
@@ -264,7 +338,12 @@ test("counts features with a missing source or target value", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
 		writeWardSource(root, [
-			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L1", LAD25NM: "LAD One" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				LAD25CD: "L1",
+				LAD25NM: "LAD One",
+			},
 			{ WD25CD: "E2", WD25NM: "Ward Two", LAD25CD: "", LAD25NM: "" },
 		]);
 		writeLadSource(root, [{ code: "L1", name: "LAD One" }]);
@@ -278,7 +357,10 @@ test("counts features with a missing source or target value", () => {
 		const inventory = compileRelationshipCandidates(root, artifacts);
 		const [candidate] = inventory.candidates;
 		assert.equal(candidate.status, "needs-review");
-		assert.equal(candidate.validation.relationship.missingValueFeatureCount, 1);
+		assert.equal(
+			candidate.validation.relationship.missingValueFeatureCount,
+			1,
+		);
 		assert.match(
 			candidate.validation.reasons.join(" "),
 			/1 source features have no usable source or target code\./,
@@ -292,7 +374,12 @@ test("links a candidate to a published crosswalk that already covers it", () => 
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
 		writeWardSource(root, [
-			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L1", LAD25NM: "LAD One" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				LAD25CD: "L1",
+				LAD25NM: "LAD One",
+			},
 		]);
 		writeLadSource(root, [{ code: "L1", name: "LAD One" }]);
 		const artifacts = [
@@ -324,7 +411,9 @@ test("skips a release whose declared source file is missing, and is deterministi
 		mkdirSync(directory, { recursive: true });
 		writeFileSync(
 			join(directory, "meta.json"),
-			JSON.stringify({ files: [{ path: "wards.geojson", role: "source" }] }),
+			JSON.stringify({
+				files: [{ path: "wards.geojson", role: "source" }],
+			}),
 		);
 		const inventory1 = compileRelationshipCandidates(root, [
 			wardArtifact([{ code: "E1", name: "Ward One" }]),
@@ -333,7 +422,12 @@ test("skips a release whose declared source file is missing, and is deterministi
 		assert.match(inventory1.contentHash, /^sha256:[a-f0-9]{64}$/);
 
 		writeWardSource(root, [
-			{ WD25CD: "E1", WD25NM: "Ward One", LAD25CD: "L1", LAD25NM: "LAD One" },
+			{
+				WD25CD: "E1",
+				WD25NM: "Ward One",
+				LAD25CD: "L1",
+				LAD25NM: "LAD One",
+			},
 		]);
 		writeLadSource(root, [{ code: "L1", name: "LAD One" }]);
 		const artifacts = [
