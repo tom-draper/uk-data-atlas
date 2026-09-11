@@ -25,6 +25,19 @@ an implementation proposal, not a promise that every listed endpoint is ready.
 The present `data/precompiled` files and browser-facing TopoJSON are internal
 build products; their shape and filenames must remain free to change.
 
+### Product posture
+
+The initial goal is a useful, open and sustainable public product;
+commercialisation is deliberately deferred. The Atlas should earn trust through
+accurate geography handling, transparent provenance and stable public releases
+before considering how to monetise it.
+
+Any future paid offering must add operational value rather than restrict access
+to openly licensed Atlas artifacts. Examples might include higher service
+limits, managed exports, release-change notifications, support, private data
+integration or managed deployments. This proposal therefore treats API keys as
+an operational control, not an early paywall.
+
 ## The user problem
 
 Today, making a UK population-density map can require all of the following:
@@ -717,9 +730,9 @@ The validation result, including waivers, is published with the resource.
 ## Authentication, quotas and licensing
 
 Start with anonymous read access for catalogue, metadata, modest map queries,
-and openly licensed small downloads. Add API keys before broad public launch so
-the service can provide fair-use limits, attribution telemetry and abuse
-protection without making open data needlessly hard to use.
+and openly licensed small downloads. Introduce API keys when they are needed
+for abuse prevention, higher-cost operations or user-facing service features,
+without making open data needlessly hard to use.
 
 Large exports, high-volume tiles and expensive conversion requests should need
 an API key and documented quotas. Do not gate a resource merely because it is
@@ -800,7 +813,8 @@ for a named location from one request sequence, with cited inputs.
 
 Add crosswalk-aware output geography, only for measures whose aggregation
 semantics have been declared and tested. Introduce asynchronous GeoJSON/Parquet
-exports, API keys, quotas, release changelog and status monitoring.
+exports, operational API keys and quotas where needed, release changelog and
+status monitoring.
 
 **Exit criterion:** conversions preserve extensive totals within documented
 tolerance and return honest quality metadata in every format.
