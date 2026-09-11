@@ -954,3 +954,9 @@ For canonical identities only, a declared Shapefile source can also be read
 through its companion dBase (`.dbf`) attributes. This avoids using generated
 topologies for identity lookup while deliberately leaving geometry conversion
 to a future, separately validated compiler.
+
+The first crosswalk build is a published, many-to-many constituency lookup
+from the source's `2010` label to the July 2024 release. Its records are
+marked `official-lookup` and `publisher-supplied`, but deliberately have
+`weighting.status: not-provided`: they may support relationship discovery, not
+value apportionment or an implied one-to-one identity conversion.
