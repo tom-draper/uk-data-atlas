@@ -2,6 +2,9 @@
 	"name": "uk-data-atlas",
 	"version": "0.1.10",
 	"private": true,
+	"engines": {
+		"node": ">=24 <25"
+	},
 	"scripts": {
 		"precompile": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/generate-sources-readme.mts && npx tsx scripts/precompile-data.mts",
 		"boundaries:compile": "npx tsx scripts/compile-boundaries.mts",

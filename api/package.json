@@ -3,6 +3,9 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
+	"engines": {
+		"node": ">=24 <25"
+	},
 	"scripts": {
 		"build": "pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:crosswalk-inventory && pnpm build:geography-inventory && pnpm build:atlas-release",
 		"build:area-inventory": "tsx scripts/build-area-inventory.ts",
