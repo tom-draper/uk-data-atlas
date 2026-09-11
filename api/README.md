@@ -968,6 +968,19 @@ crosswalks also feed `public/geography-inventory.json`, which reports each
 boundary release's known relationships (direction, method, quality and
 weighting) or an explicit gap when no crosswalk references it yet.
 
+The second crosswalk build is a different method: each ward's `clean-
+containment` membership in its local authority, read from the published
+parent code already present on the same 2025-05 ward boundary release (every
+target local authority code resolves to a compiled area on the matching
+release). Unlike the constituency lookup, no weighting concept applies to a
+clean hierarchical membership, so its `weighting.status` is `not-applicable`
+rather than `not-provided`: the difference distinguishes a fact that was
+never a proportional split from one whose split was simply not published.
+The crosswalk adapter format carries `method`, `quality` and `weighting` per
+adapter rather than assuming every crosswalk shares one method, so further
+sources can declare `area-overlap` or `population-overlap` without changing
+the compiler.
+
 The build's final step writes `public/atlas-release.json`, an immutable
 manifest that references every other build-time artifact (the boundary
 registry, derived boundaries, area inventory, crosswalk inventory, geography

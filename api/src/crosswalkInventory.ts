@@ -3,7 +3,16 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
 	CrosswalkAdapter,
+	CrosswalkMethod,
+	CrosswalkQuality,
 	CrosswalkSideAdapter,
+	CrosswalkWeighting,
+} from "./crosswalkAdapters";
+
+export type {
+	CrosswalkMethod,
+	CrosswalkQuality,
+	CrosswalkWeighting,
 } from "./crosswalkAdapters";
 
 type FeatureCollection = {
@@ -20,9 +29,9 @@ export type CrosswalkArtifact = {
 	schemaVersion: 1;
 	contentHash: string;
 	id: string;
-	method: "official-lookup";
-	quality: "publisher-supplied";
-	weighting: { status: "not-provided" };
+	method: CrosswalkMethod;
+	quality: CrosswalkQuality;
+	weighting: CrosswalkWeighting;
 	from: { geography: string; boundaryRelease: string };
 	to: { geography: string; boundaryRelease: string };
 	provenance: { input: string; inputHash: string };
@@ -39,9 +48,9 @@ export type CrosswalkInventory = {
 		id: string;
 		from: { geography: string; boundaryRelease: string };
 		to: { geography: string; boundaryRelease: string };
-		method: "official-lookup";
-		quality: "publisher-supplied";
-		weighting: { status: "not-provided" };
+		method: CrosswalkMethod;
+		quality: CrosswalkQuality;
+		weighting: CrosswalkWeighting;
 		recordCount: number;
 		artifact: string;
 		contentHash: string;
@@ -160,9 +169,9 @@ export const compileCrosswalks = (
 		const artifactWithoutHash = {
 			schemaVersion: 1 as const,
 			id: adapter.id,
-			method: "official-lookup" as const,
-			quality: "publisher-supplied" as const,
-			weighting: { status: "not-provided" as const },
+			method: adapter.method,
+			quality: adapter.quality,
+			weighting: adapter.weighting,
 			from: {
 				geography: adapter.from.geography,
 				boundaryRelease: adapter.from.boundaryRelease,
