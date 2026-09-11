@@ -1,3 +1,4 @@
+import type { AreaLookup } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { GeographyInventory } from "./geographyInventory";
 
@@ -56,6 +57,7 @@ export const route = (
 	url: string | undefined,
 	registry: BoundaryRegistry,
 	geographyInventory?: GeographyInventory,
+	areaLookup?: AreaLookup,
 ): ApiResponse => {
 	if (method !== "GET") {
 		return problem(405, "Method Not Allowed", "This API is read-only.");
@@ -80,6 +82,7 @@ export const route = (
 					"/v1/geographies",
 					"/v1/boundary-releases",
 					"/v1/geography-inventory",
+					"/v1/areas/{type}/{release}/{code}",
 				],
 			}),
 		};
@@ -107,6 +110,39 @@ export const route = (
 			}))
 			.sort((left, right) => left.id.localeCompare(right.id));
 		return { status: 200, body: envelope(registry, geographies) };
+	}
+
+	if (
+		segments.length === 5 &&
+		segments[0] === "v1" &&
+		segments[1] === "areas"
+	) {
+		const [geography, boundaryRelease, code] = segments.slice(2);
+		if (!geography || !boundaryRelease || !code) {
+			return problem(
+				400,
+				"Invalid Path",
+				"An area identity is incomplete.",
+			);
+		}
+		const area = areaLookup
+			?.get(`${geography}/${boundaryRelease}`)
+			?.get(code);
+		return area
+			? {
+					status: 200,
+					body: envelope(registry, {
+						id: `${geography}/${boundaryRelease}/${area.code}`,
+						geography,
+						boundaryRelease,
+						...area,
+					}),
+				}
+			: problem(
+					404,
+					"Not Found",
+					"No compiled area matches that identity.",
+				);
 	}
 
 	if (

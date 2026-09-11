@@ -929,10 +929,12 @@ pnpm start
 - `GET /v1/geography-inventory`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`
+- `GET /v1/areas/{type}/{release}/{code}`
 
 The build scans every `../data/**/meta.json`, so a newly added dataset becomes
 visible to the source inventory on the next build without changing API code.
 Boundary releases also feed `public/geography-inventory.json`, which reports
 the input formats and whether area identity and conversion compilers are
-available. The current release metadata and inventories remain independent of
-the Next.js application.
+available. GeoJSON releases with one unambiguous code/name property pair also
+produce release-specific area artifacts for exact identity lookup. The current
+release metadata and inventories remain independent of the Next.js application.

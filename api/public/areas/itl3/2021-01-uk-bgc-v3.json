@@ -1,0 +1,726 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:05216534aca243529eee2f921933d8b04d831aa0899317a48dadfccd17f6be70",
+	"geography": "itl3",
+	"boundaryRelease": "2021-01-uk-bgc-v3",
+	"codeProperty": "ITL321CD",
+	"nameProperty": "ITL321NM",
+	"areas": [
+		{
+			"code": "TLC11",
+			"name": "Hartlepool and Stockton-on-Tees"
+		},
+		{
+			"code": "TLC12",
+			"name": "South Teesside"
+		},
+		{
+			"code": "TLC13",
+			"name": "Darlington"
+		},
+		{
+			"code": "TLC14",
+			"name": "Durham"
+		},
+		{
+			"code": "TLC21",
+			"name": "Northumberland"
+		},
+		{
+			"code": "TLC22",
+			"name": "Tyneside"
+		},
+		{
+			"code": "TLC23",
+			"name": "Sunderland"
+		},
+		{
+			"code": "TLD11",
+			"name": "West Cumbria"
+		},
+		{
+			"code": "TLD12",
+			"name": "East Cumbria"
+		},
+		{
+			"code": "TLD33",
+			"name": "Manchester"
+		},
+		{
+			"code": "TLD34",
+			"name": "Greater Manchester South West"
+		},
+		{
+			"code": "TLD35",
+			"name": "Greater Manchester South East"
+		},
+		{
+			"code": "TLD36",
+			"name": "Greater Manchester North West"
+		},
+		{
+			"code": "TLD37",
+			"name": "Greater Manchester North East"
+		},
+		{
+			"code": "TLD41",
+			"name": "Blackburn with Darwen"
+		},
+		{
+			"code": "TLD42",
+			"name": "Blackpool"
+		},
+		{
+			"code": "TLD44",
+			"name": "Lancaster and Wyre"
+		},
+		{
+			"code": "TLD45",
+			"name": "Mid Lancashire"
+		},
+		{
+			"code": "TLD46",
+			"name": "East Lancashire"
+		},
+		{
+			"code": "TLD47",
+			"name": "Chorley and West Lancashire"
+		},
+		{
+			"code": "TLD61",
+			"name": "Warrington"
+		},
+		{
+			"code": "TLD62",
+			"name": "Cheshire East"
+		},
+		{
+			"code": "TLD63",
+			"name": "Cheshire West and Chester"
+		},
+		{
+			"code": "TLD71",
+			"name": "East Merseyside"
+		},
+		{
+			"code": "TLD72",
+			"name": "Liverpool"
+		},
+		{
+			"code": "TLD73",
+			"name": "Sefton"
+		},
+		{
+			"code": "TLD74",
+			"name": "Wirral"
+		},
+		{
+			"code": "TLE11",
+			"name": "Kingston upon Hull, City of"
+		},
+		{
+			"code": "TLE12",
+			"name": "East Riding of Yorkshire"
+		},
+		{
+			"code": "TLE13",
+			"name": "North and North East Lincolnshire"
+		},
+		{
+			"code": "TLE21",
+			"name": "York"
+		},
+		{
+			"code": "TLE22",
+			"name": "North Yorkshire CC"
+		},
+		{
+			"code": "TLE31",
+			"name": "Barnsley, Doncaster and Rotherham"
+		},
+		{
+			"code": "TLE32",
+			"name": "Sheffield"
+		},
+		{
+			"code": "TLE41",
+			"name": "Bradford"
+		},
+		{
+			"code": "TLE42",
+			"name": "Leeds"
+		},
+		{
+			"code": "TLE44",
+			"name": "Calderdale and Kirklees"
+		},
+		{
+			"code": "TLE45",
+			"name": "Wakefield"
+		},
+		{
+			"code": "TLF11",
+			"name": "Derby"
+		},
+		{
+			"code": "TLF12",
+			"name": "East Derbyshire"
+		},
+		{
+			"code": "TLF13",
+			"name": "South and West Derbyshire"
+		},
+		{
+			"code": "TLF14",
+			"name": "Nottingham"
+		},
+		{
+			"code": "TLF15",
+			"name": "North Nottinghamshire"
+		},
+		{
+			"code": "TLF16",
+			"name": "South Nottinghamshire"
+		},
+		{
+			"code": "TLF21",
+			"name": "Leicester"
+		},
+		{
+			"code": "TLF22",
+			"name": "Leicestershire CC and Rutland"
+		},
+		{
+			"code": "TLF24",
+			"name": "West Northamptonshire"
+		},
+		{
+			"code": "TLF25",
+			"name": "North Northamptonshire"
+		},
+		{
+			"code": "TLF30",
+			"name": "Lincolnshire CC"
+		},
+		{
+			"code": "TLG11",
+			"name": "Herefordshire, County of"
+		},
+		{
+			"code": "TLG12",
+			"name": "Worcestershire CC"
+		},
+		{
+			"code": "TLG13",
+			"name": "Warwickshire CC"
+		},
+		{
+			"code": "TLG21",
+			"name": "Telford and Wrekin"
+		},
+		{
+			"code": "TLG22",
+			"name": "Shropshire"
+		},
+		{
+			"code": "TLG23",
+			"name": "Stoke-on-Trent"
+		},
+		{
+			"code": "TLG24",
+			"name": "Staffordshire CC"
+		},
+		{
+			"code": "TLG31",
+			"name": "Birmingham"
+		},
+		{
+			"code": "TLG32",
+			"name": "Solihull"
+		},
+		{
+			"code": "TLG33",
+			"name": "Coventry"
+		},
+		{
+			"code": "TLG36",
+			"name": "Dudley"
+		},
+		{
+			"code": "TLG37",
+			"name": "Sandwell"
+		},
+		{
+			"code": "TLG38",
+			"name": "Walsall"
+		},
+		{
+			"code": "TLG39",
+			"name": "Wolverhampton"
+		},
+		{
+			"code": "TLH11",
+			"name": "Peterborough"
+		},
+		{
+			"code": "TLH12",
+			"name": "Cambridgeshire CC"
+		},
+		{
+			"code": "TLH14",
+			"name": "Suffolk CC"
+		},
+		{
+			"code": "TLH15",
+			"name": "Norwich and East Norfolk"
+		},
+		{
+			"code": "TLH16",
+			"name": "North and West Norfolk"
+		},
+		{
+			"code": "TLH17",
+			"name": "Breckland and South Norfolk"
+		},
+		{
+			"code": "TLH21",
+			"name": "Luton"
+		},
+		{
+			"code": "TLH23",
+			"name": "Hertfordshire CC"
+		},
+		{
+			"code": "TLH24",
+			"name": "Bedford"
+		},
+		{
+			"code": "TLH25",
+			"name": "Central Bedfordshire"
+		},
+		{
+			"code": "TLH31",
+			"name": "Southend-on-Sea"
+		},
+		{
+			"code": "TLH32",
+			"name": "Thurrock"
+		},
+		{
+			"code": "TLH34",
+			"name": "Essex Haven Gateway"
+		},
+		{
+			"code": "TLH35",
+			"name": "West Essex"
+		},
+		{
+			"code": "TLH36",
+			"name": "Heart of Essex"
+		},
+		{
+			"code": "TLH37",
+			"name": "Essex Thames Gateway"
+		},
+		{
+			"code": "TLI31",
+			"name": "Camden and City of London"
+		},
+		{
+			"code": "TLI32",
+			"name": "Westminster"
+		},
+		{
+			"code": "TLI33",
+			"name": "Kensington & Chelsea and Hammersmith & Fulham"
+		},
+		{
+			"code": "TLI34",
+			"name": "Wandsworth"
+		},
+		{
+			"code": "TLI41",
+			"name": "Hackney and Newham"
+		},
+		{
+			"code": "TLI42",
+			"name": "Tower Hamlets"
+		},
+		{
+			"code": "TLI43",
+			"name": "Haringey and Islington"
+		},
+		{
+			"code": "TLI44",
+			"name": "Lewisham and Southwark"
+		},
+		{
+			"code": "TLI45",
+			"name": "Lambeth"
+		},
+		{
+			"code": "TLI51",
+			"name": "Bexley and Greenwich"
+		},
+		{
+			"code": "TLI52",
+			"name": "Barking & Dagenham and Havering"
+		},
+		{
+			"code": "TLI53",
+			"name": "Redbridge and Waltham Forest"
+		},
+		{
+			"code": "TLI54",
+			"name": "Enfield"
+		},
+		{
+			"code": "TLI61",
+			"name": "Bromley"
+		},
+		{
+			"code": "TLI62",
+			"name": "Croydon"
+		},
+		{
+			"code": "TLI63",
+			"name": "Merton, Kingston upon Thames and Sutton"
+		},
+		{
+			"code": "TLI71",
+			"name": "Barnet"
+		},
+		{
+			"code": "TLI72",
+			"name": "Brent"
+		},
+		{
+			"code": "TLI73",
+			"name": "Ealing"
+		},
+		{
+			"code": "TLI74",
+			"name": "Harrow and Hillingdon"
+		},
+		{
+			"code": "TLI75",
+			"name": "Hounslow and Richmond upon Thames"
+		},
+		{
+			"code": "TLJ11",
+			"name": "Berkshire"
+		},
+		{
+			"code": "TLJ12",
+			"name": "Milton Keynes"
+		},
+		{
+			"code": "TLJ13",
+			"name": "Buckinghamshire"
+		},
+		{
+			"code": "TLJ14",
+			"name": "Oxfordshire CC"
+		},
+		{
+			"code": "TLJ21",
+			"name": "Brighton and Hove"
+		},
+		{
+			"code": "TLJ22",
+			"name": "East Sussex CC"
+		},
+		{
+			"code": "TLJ25",
+			"name": "West Surrey"
+		},
+		{
+			"code": "TLJ26",
+			"name": "East Surrey"
+		},
+		{
+			"code": "TLJ27",
+			"name": "West Sussex (South West)"
+		},
+		{
+			"code": "TLJ28",
+			"name": "West Sussex (North East)"
+		},
+		{
+			"code": "TLJ31",
+			"name": "Portsmouth"
+		},
+		{
+			"code": "TLJ32",
+			"name": "Southampton"
+		},
+		{
+			"code": "TLJ34",
+			"name": "Isle of Wight"
+		},
+		{
+			"code": "TLJ35",
+			"name": "South Hampshire"
+		},
+		{
+			"code": "TLJ36",
+			"name": "Central Hampshire"
+		},
+		{
+			"code": "TLJ37",
+			"name": "North Hampshire"
+		},
+		{
+			"code": "TLJ41",
+			"name": "Medway"
+		},
+		{
+			"code": "TLJ43",
+			"name": "Kent Thames Gateway"
+		},
+		{
+			"code": "TLJ44",
+			"name": "East Kent"
+		},
+		{
+			"code": "TLJ45",
+			"name": "Mid Kent"
+		},
+		{
+			"code": "TLJ46",
+			"name": "West Kent"
+		},
+		{
+			"code": "TLK11",
+			"name": "Bristol, City of"
+		},
+		{
+			"code": "TLK12",
+			"name": "Bath and North East Somerset, North Somerset and South Gloucestershire"
+		},
+		{
+			"code": "TLK13",
+			"name": "Gloucestershire CC"
+		},
+		{
+			"code": "TLK14",
+			"name": "Swindon"
+		},
+		{
+			"code": "TLK15",
+			"name": "Wiltshire"
+		},
+		{
+			"code": "TLK23",
+			"name": "Somerset CC"
+		},
+		{
+			"code": "TLK30",
+			"name": "Cornwall and Isles of Scilly"
+		},
+		{
+			"code": "TLK41",
+			"name": "Plymouth"
+		},
+		{
+			"code": "TLK42",
+			"name": "Torbay"
+		},
+		{
+			"code": "TLK43",
+			"name": "Devon CC"
+		},
+		{
+			"code": "TLL11",
+			"name": "Isle of Anglesey"
+		},
+		{
+			"code": "TLL12",
+			"name": "Gwynedd"
+		},
+		{
+			"code": "TLL13",
+			"name": "Conwy and Denbighshire"
+		},
+		{
+			"code": "TLL14",
+			"name": "South West Wales"
+		},
+		{
+			"code": "TLL15",
+			"name": "Central Valleys"
+		},
+		{
+			"code": "TLL16",
+			"name": "Gwent Valleys"
+		},
+		{
+			"code": "TLL17",
+			"name": "Bridgend and Neath Port Talbot"
+		},
+		{
+			"code": "TLL18",
+			"name": "Swansea"
+		},
+		{
+			"code": "TLL21",
+			"name": "Monmouthshire and Newport"
+		},
+		{
+			"code": "TLL22",
+			"name": "Cardiff and Vale of Glamorgan"
+		},
+		{
+			"code": "TLL23",
+			"name": "Flintshire and Wrexham"
+		},
+		{
+			"code": "TLL24",
+			"name": "Powys"
+		},
+		{
+			"code": "TLM50",
+			"name": "Aberdeen City and Aberdeenshire"
+		},
+		{
+			"code": "TLM61",
+			"name": "Caithness and Sutherland, and Ross and Cromarty"
+		},
+		{
+			"code": "TLM62",
+			"name": "Inverness and Nairn, Moray, and Badenoch and Strathspey"
+		},
+		{
+			"code": "TLM63",
+			"name": "Lochaber, Skye and Lochalsh, Arran and Cumbrae, and Argyll and Bute"
+		},
+		{
+			"code": "TLM64",
+			"name": "Na h-Eileanan Siar"
+		},
+		{
+			"code": "TLM65",
+			"name": "Orkney Islands"
+		},
+		{
+			"code": "TLM66",
+			"name": "Shetland Islands"
+		},
+		{
+			"code": "TLM71",
+			"name": "Angus and Dundee City"
+		},
+		{
+			"code": "TLM72",
+			"name": "Clackmannanshire and Fife"
+		},
+		{
+			"code": "TLM73",
+			"name": "East Lothian and Midlothian"
+		},
+		{
+			"code": "TLM75",
+			"name": "City of Edinburgh"
+		},
+		{
+			"code": "TLM76",
+			"name": "Falkirk"
+		},
+		{
+			"code": "TLM77",
+			"name": "Perth and Kinross, and Stirling"
+		},
+		{
+			"code": "TLM78",
+			"name": "West Lothian"
+		},
+		{
+			"code": "TLM81",
+			"name": "East Dunbartonshire, West Dunbartonshire, and Helensburgh and Lomond"
+		},
+		{
+			"code": "TLM82",
+			"name": "Glasgow City"
+		},
+		{
+			"code": "TLM83",
+			"name": "Inverclyde, East Renfrewshire, and Renfrewshire"
+		},
+		{
+			"code": "TLM84",
+			"name": "North Lanarkshire"
+		},
+		{
+			"code": "TLM91",
+			"name": "Scottish Borders"
+		},
+		{
+			"code": "TLM92",
+			"name": "Dumfries and Galloway"
+		},
+		{
+			"code": "TLM93",
+			"name": "East Ayrshire and North Ayrshire mainland"
+		},
+		{
+			"code": "TLM94",
+			"name": "South Ayrshire"
+		},
+		{
+			"code": "TLM95",
+			"name": "South Lanarkshire"
+		},
+		{
+			"code": "TLN06",
+			"name": "Belfast"
+		},
+		{
+			"code": "TLN07",
+			"name": "Armagh City, Banbridge and Craigavon"
+		},
+		{
+			"code": "TLN08",
+			"name": "Newry, Mourne and Down"
+		},
+		{
+			"code": "TLN09",
+			"name": "Ards and North Down"
+		},
+		{
+			"code": "TLN0A",
+			"name": "Derry City and Strabane"
+		},
+		{
+			"code": "TLN0B",
+			"name": "Mid Ulster"
+		},
+		{
+			"code": "TLN0C",
+			"name": "Causeway Coast and Glens"
+		},
+		{
+			"code": "TLN0D",
+			"name": "Antrim and Newtownabbey"
+		},
+		{
+			"code": "TLN0E",
+			"name": "Lisburn and Castlereagh"
+		},
+		{
+			"code": "TLN0F",
+			"name": "Mid and East Antrim"
+		},
+		{
+			"code": "TLN0G",
+			"name": "Fermanagh and Omagh"
+		},
+		{
+			"code": "TLK24",
+			"name": "Bournemouth, Christchurch and Poole"
+		},
+		{
+			"code": "TLK25",
+			"name": "Dorset"
+		}
+	]
+}

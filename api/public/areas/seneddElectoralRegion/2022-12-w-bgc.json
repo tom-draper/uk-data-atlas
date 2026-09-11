@@ -1,0 +1,45 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:478a17c73030d094f8acf3bcc726c03743d0698a8ee420b34b610f99d170b95b",
+	"geography": "seneddElectoralRegion",
+	"boundaryRelease": "2022-12-w-bgc",
+	"codeProperty": "SENER22CD",
+	"nameProperty": "SENER22NM",
+	"areas": [
+		{
+			"code": "W10000001",
+			"name": "North Wales",
+			"aliases": [
+				"Gogledd Cymru"
+			]
+		},
+		{
+			"code": "W10000006",
+			"name": "Mid and West Wales",
+			"aliases": [
+				"Canolbarth a Gorllewin Cymru"
+			]
+		},
+		{
+			"code": "W10000007",
+			"name": "South Wales Central",
+			"aliases": [
+				"Canol De Cymru"
+			]
+		},
+		{
+			"code": "W10000008",
+			"name": "South Wales East",
+			"aliases": [
+				"Dwyrain De Cymru"
+			]
+		},
+		{
+			"code": "W10000009",
+			"name": "South Wales West",
+			"aliases": [
+				"Gorllewin De Cymru"
+			]
+		}
+	]
+}

@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:896ce61d6c66d3929e8bf01a26b5c2e2afae655341925ea1e77baa9a79531e6a",
+	"geography": "country",
+	"boundaryRelease": "2020-12-uk-bgc",
+	"codeProperty": "CTRY20CD",
+	"nameProperty": "CTRY20NM",
+	"areas": [
+		{
+			"code": "E92000001",
+			"name": "England"
+		},
+		{
+			"code": "N92000002",
+			"name": "Northern Ireland"
+		},
+		{
+			"code": "S92000003",
+			"name": "Scotland"
+		},
+		{
+			"code": "W92000004",
+			"name": "Wales"
+		}
+	]
+}

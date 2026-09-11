@@ -1,0 +1,79 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:8cc59a5393d710f825367be5f0113fbf545681300ffb51042ba9477a6a0f1d5f",
+	"geography": "nationalPark",
+	"boundaryRelease": "2020-12-gb-bgc",
+	"codeProperty": "NPARK20CD",
+	"nameProperty": "NPARK20NM",
+	"areas": [
+		{
+			"code": "E26000001",
+			"name": "Dartmoor National Park"
+		},
+		{
+			"code": "E26000002",
+			"name": "Exmoor National Park"
+		},
+		{
+			"code": "E26000004",
+			"name": "Northumberland National Park"
+		},
+		{
+			"code": "E26000005",
+			"name": "North York Moors National Park"
+		},
+		{
+			"code": "E26000006",
+			"name": "Peak District National Park"
+		},
+		{
+			"code": "E26000007",
+			"name": "The Broads Authority"
+		},
+		{
+			"code": "E26000009",
+			"name": "New Forest National Park"
+		},
+		{
+			"code": "E26000010",
+			"name": "South Downs National Park"
+		},
+		{
+			"code": "E26000011",
+			"name": "Lake District National Park"
+		},
+		{
+			"code": "E26000012",
+			"name": "Yorkshire Dales National Park"
+		},
+		{
+			"code": "S21000002",
+			"name": "The Loch Lomond and the Trossachs National Park"
+		},
+		{
+			"code": "S21000003",
+			"name": "The Cairngorms National Park"
+		},
+		{
+			"code": "W18000001",
+			"name": "Brecon Beacons National Park",
+			"aliases": [
+				"Parc Cenedlaethol Bannau Brycheiniog"
+			]
+		},
+		{
+			"code": "W18000002",
+			"name": "Pembrokeshire Coast National Park",
+			"aliases": [
+				"Parc Cenedlaethol Afordir Penfro"
+			]
+		},
+		{
+			"code": "W18000003",
+			"name": "Snowdonia National Park",
+			"aliases": [
+				"Parc Cenedlaethol Eryri"
+			]
+		}
+	]
+}

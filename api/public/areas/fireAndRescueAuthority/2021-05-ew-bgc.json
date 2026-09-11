@@ -1,0 +1,198 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:4481ca340f19e728cdb4cc4f020e89fad8a4427a7051372260179bcdcfbaf6a2",
+	"geography": "fireAndRescueAuthority",
+	"boundaryRelease": "2021-05-ew-bgc",
+	"codeProperty": "FRA21CD",
+	"nameProperty": "FRA21NM",
+	"areas": [
+		{
+			"code": "E31000001",
+			"name": "Avon"
+		},
+		{
+			"code": "E31000002",
+			"name": "Bedfordshire"
+		},
+		{
+			"code": "E31000003",
+			"name": "Royal Berkshire"
+		},
+		{
+			"code": "E31000004",
+			"name": "Buckinghamshire & Milton Keynes"
+		},
+		{
+			"code": "E31000005",
+			"name": "Cambridgeshire"
+		},
+		{
+			"code": "E31000006",
+			"name": "Cheshire"
+		},
+		{
+			"code": "E31000007",
+			"name": "Cleveland"
+		},
+		{
+			"code": "E31000008",
+			"name": "Cornwall"
+		},
+		{
+			"code": "E31000009",
+			"name": "Cumbria"
+		},
+		{
+			"code": "E31000010",
+			"name": "Derbyshire"
+		},
+		{
+			"code": "E31000011",
+			"name": "Devon & Somerset"
+		},
+		{
+			"code": "E31000013",
+			"name": "County Durham and Darlington"
+		},
+		{
+			"code": "E31000014",
+			"name": "East Sussex"
+		},
+		{
+			"code": "E31000015",
+			"name": "Essex"
+		},
+		{
+			"code": "E31000016",
+			"name": "Gloucestershire"
+		},
+		{
+			"code": "E31000018",
+			"name": "Hereford & Worcester"
+		},
+		{
+			"code": "E31000019",
+			"name": "Hertfordshire"
+		},
+		{
+			"code": "E31000020",
+			"name": "Humberside"
+		},
+		{
+			"code": "E31000022",
+			"name": "Kent"
+		},
+		{
+			"code": "E31000023",
+			"name": "Lancashire"
+		},
+		{
+			"code": "E31000024",
+			"name": "Leicestershire"
+		},
+		{
+			"code": "E31000025",
+			"name": "Lincolnshire"
+		},
+		{
+			"code": "E31000026",
+			"name": "Norfolk"
+		},
+		{
+			"code": "E31000027",
+			"name": "North Yorkshire"
+		},
+		{
+			"code": "E31000028",
+			"name": "Northamptonshire"
+		},
+		{
+			"code": "E31000029",
+			"name": "Northumberland"
+		},
+		{
+			"code": "E31000030",
+			"name": "Nottinghamshire and City of Nottingham"
+		},
+		{
+			"code": "E31000031",
+			"name": "Oxfordshire"
+		},
+		{
+			"code": "E31000032",
+			"name": "Shropshire"
+		},
+		{
+			"code": "E31000033",
+			"name": "Stoke-on-Trent and Staffordshire"
+		},
+		{
+			"code": "E31000034",
+			"name": "Suffolk"
+		},
+		{
+			"code": "E31000035",
+			"name": "Surrey"
+		},
+		{
+			"code": "E31000036",
+			"name": "Warwickshire"
+		},
+		{
+			"code": "E31000037",
+			"name": "West Sussex"
+		},
+		{
+			"code": "E31000039",
+			"name": "Isles of Scilly"
+		},
+		{
+			"code": "E31000040",
+			"name": "Greater Manchester"
+		},
+		{
+			"code": "E31000041",
+			"name": "Merseyside"
+		},
+		{
+			"code": "E31000042",
+			"name": "South Yorkshire"
+		},
+		{
+			"code": "E31000043",
+			"name": "Tyne and Wear"
+		},
+		{
+			"code": "E31000044",
+			"name": "West Midlands"
+		},
+		{
+			"code": "E31000045",
+			"name": "West Yorkshire"
+		},
+		{
+			"code": "E31000046",
+			"name": "London Fire and Emergency Planning Authority"
+		},
+		{
+			"code": "E31000047",
+			"name": "Dorset & Wiltshire"
+		},
+		{
+			"code": "E31000048",
+			"name": "Hampshire and Isle of Wight"
+		},
+		{
+			"code": "W25000001",
+			"name": "North Wales"
+		},
+		{
+			"code": "W25000002",
+			"name": "Mid and West Wales"
+		},
+		{
+			"code": "W25000003",
+			"name": "South Wales"
+		}
+	]
+}

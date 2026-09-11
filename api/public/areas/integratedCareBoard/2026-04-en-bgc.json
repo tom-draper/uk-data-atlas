@@ -1,0 +1,154 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:d75788fc39d335523e54c5122d58296f13ffa8104e3c0312858fe747e06fc7dc",
+	"geography": "integratedCareBoard",
+	"boundaryRelease": "2026-04-en-bgc",
+	"codeProperty": "ICB26CD",
+	"nameProperty": "ICB26NM",
+	"areas": [
+		{
+			"code": "E54000008",
+			"name": "NHS Cheshire and Merseyside Integrated Care Board"
+		},
+		{
+			"code": "E54000010",
+			"name": "NHS Staffordshire and Stoke-on-Trent Integrated Care Board"
+		},
+		{
+			"code": "E54000011",
+			"name": "NHS Shropshire, Telford and Wrekin Integrated Care Board"
+		},
+		{
+			"code": "E54000013",
+			"name": "NHS Lincolnshire Integrated Care Board"
+		},
+		{
+			"code": "E54000015",
+			"name": "NHS Leicester, Leicestershire and Rutland Integrated Care Board"
+		},
+		{
+			"code": "E54000018",
+			"name": "NHS Coventry and Warwickshire Integrated Care Board"
+		},
+		{
+			"code": "E54000019",
+			"name": "NHS Herefordshire and Worcestershire Integrated Care Board"
+		},
+		{
+			"code": "E54000029",
+			"name": "NHS North East London Integrated Care Board"
+		},
+		{
+			"code": "E54000030",
+			"name": "NHS South East London Integrated Care Board"
+		},
+		{
+			"code": "E54000031",
+			"name": "NHS South West London Integrated Care Board"
+		},
+		{
+			"code": "E54000032",
+			"name": "NHS Kent and Medway Integrated Care Board"
+		},
+		{
+			"code": "E54000036",
+			"name": "NHS Cornwall and the Isles of Scilly Integrated Care Board"
+		},
+		{
+			"code": "E54000037",
+			"name": "NHS Devon Integrated Care Board"
+		},
+		{
+			"code": "E54000038",
+			"name": "NHS Somerset Integrated Care Board"
+		},
+		{
+			"code": "E54000039",
+			"name": "NHS Bristol, North Somerset and South Gloucestershire Integrated Care Board"
+		},
+		{
+			"code": "E54000040",
+			"name": "NHS Bath and North East Somerset, Swindon and Wiltshire Integrated Care Board"
+		},
+		{
+			"code": "E54000041",
+			"name": "NHS Dorset Integrated Care Board"
+		},
+		{
+			"code": "E54000043",
+			"name": "NHS Gloucestershire Integrated Care Board"
+		},
+		{
+			"code": "E54000048",
+			"name": "NHS Lancashire and South Cumbria Integrated Care Board"
+		},
+		{
+			"code": "E54000050",
+			"name": "NHS North East and North Cumbria Integrated Care Board"
+		},
+		{
+			"code": "E54000051",
+			"name": "NHS Humber and North Yorkshire Integrated Care Board"
+		},
+		{
+			"code": "E54000054",
+			"name": "NHS West Yorkshire Integrated Care Board"
+		},
+		{
+			"code": "E54000055",
+			"name": "NHS Birmingham and Solihull Integrated Care Board"
+		},
+		{
+			"code": "E54000057",
+			"name": "NHS Greater Manchester Integrated Care Board"
+		},
+		{
+			"code": "E54000058",
+			"name": "NHS Derby and Derbyshire Integrated Care Board"
+		},
+		{
+			"code": "E54000059",
+			"name": "NHS Northamptonshire Integrated Care Board"
+		},
+		{
+			"code": "E54000060",
+			"name": "NHS Nottingham and Nottinghamshire Integrated Care Board"
+		},
+		{
+			"code": "E54000061",
+			"name": "NHS South Yorkshire Integrated Care Board"
+		},
+		{
+			"code": "E54000062",
+			"name": "NHS Black Country Integrated Care Board"
+		},
+		{
+			"code": "E54000065",
+			"name": "NHS Central East Integrated Care Board"
+		},
+		{
+			"code": "E54000066",
+			"name": "NHS Essex Integrated Care Board"
+		},
+		{
+			"code": "E54000067",
+			"name": "NHS Hampshire and Isle of Wight Integrated Care Board"
+		},
+		{
+			"code": "E54000068",
+			"name": "NHS Norfolk and Suffolk Integrated Care Board"
+		},
+		{
+			"code": "E54000069",
+			"name": "NHS Surrey and Sussex Integrated Care Board"
+		},
+		{
+			"code": "E54000070",
+			"name": "NHS Thames Valley Integrated Care Board"
+		},
+		{
+			"code": "E54000071",
+			"name": "NHS West and North London Integrated Care Board"
+		}
+	]
+}

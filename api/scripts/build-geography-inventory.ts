@@ -1,9 +1,10 @@
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createBoundaryRegistry } from "./build-boundary-registry";
 import { createGeographyInventory } from "../src/geographyInventory";
 import { createSourceInventory } from "../src/sourceInventory";
+import type { AreaInventory } from "../src/areaInventory";
 
 export const buildGeographyInventory = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "api", "public");
@@ -13,9 +14,14 @@ export const buildGeographyInventory = (repositoryRoot: string) => {
 		);
 	}
 	const sourceInventory = createSourceInventory(repositoryRoot);
+	const areaInventoryPath = join(outputDirectory, "area-inventory.json");
+	const areaInventory = existsSync(areaInventoryPath)
+		? (JSON.parse(readFileSync(areaInventoryPath, "utf8")) as AreaInventory)
+		: undefined;
 	const geographyInventory = createGeographyInventory(
 		createBoundaryRegistry(repositoryRoot),
 		sourceInventory,
+		areaInventory,
 	);
 	const sourcePath = join(outputDirectory, "source-inventory.json");
 	const geographyPath = join(outputDirectory, "geography-inventory.json");

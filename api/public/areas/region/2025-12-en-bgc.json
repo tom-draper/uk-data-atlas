@@ -1,0 +1,73 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:f14c1baeda8c351d90886f6731e8c254594ad5f873a68cd7cb3ad61a9258536c",
+	"geography": "region",
+	"boundaryRelease": "2025-12-en-bgc",
+	"codeProperty": "RGN25CD",
+	"nameProperty": "RGN25NM",
+	"areas": [
+		{
+			"code": "E12000001",
+			"name": "North East",
+			"aliases": [
+				"Gogledd Ddwyrain"
+			]
+		},
+		{
+			"code": "E12000002",
+			"name": "North West",
+			"aliases": [
+				"Gogledd Orllewin"
+			]
+		},
+		{
+			"code": "E12000003",
+			"name": "Yorkshire and The Humber",
+			"aliases": [
+				"Swydd Efrog a Humber"
+			]
+		},
+		{
+			"code": "E12000004",
+			"name": "East Midlands",
+			"aliases": [
+				"Dwyrain y Canolbarth"
+			]
+		},
+		{
+			"code": "E12000005",
+			"name": "West Midlands",
+			"aliases": [
+				"Gorllewin y Canolbarth"
+			]
+		},
+		{
+			"code": "E12000006",
+			"name": "East of England",
+			"aliases": [
+				"Dwyrain Lloegr"
+			]
+		},
+		{
+			"code": "E12000007",
+			"name": "London",
+			"aliases": [
+				"Llundain"
+			]
+		},
+		{
+			"code": "E12000008",
+			"name": "South East",
+			"aliases": [
+				"De Ddwyrain"
+			]
+		},
+		{
+			"code": "E12000009",
+			"name": "South West",
+			"aliases": [
+				"De Orllewin"
+			]
+		}
+	]
+}

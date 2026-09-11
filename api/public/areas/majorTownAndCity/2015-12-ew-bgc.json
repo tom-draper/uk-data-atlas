@@ -1,0 +1,458 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:f6fc88fb2fd7e339347145da67b745cc86e9c55c8e6c097e247d1f43226382b5",
+	"geography": "majorTownAndCity",
+	"boundaryRelease": "2015-12-ew-bgc",
+	"codeProperty": "TCITY15CD",
+	"nameProperty": "TCITY15NM",
+	"areas": [
+		{
+			"code": "J01000001",
+			"name": "Barnsley"
+		},
+		{
+			"code": "J01000002",
+			"name": "Basildon"
+		},
+		{
+			"code": "J01000003",
+			"name": "Basingstoke"
+		},
+		{
+			"code": "J01000004",
+			"name": "Bath"
+		},
+		{
+			"code": "J01000005",
+			"name": "Bedford"
+		},
+		{
+			"code": "J01000006",
+			"name": "Birkenhead"
+		},
+		{
+			"code": "J01000007",
+			"name": "Birmingham"
+		},
+		{
+			"code": "J01000008",
+			"name": "Blackburn"
+		},
+		{
+			"code": "J01000009",
+			"name": "Blackpool"
+		},
+		{
+			"code": "J01000010",
+			"name": "Bolton"
+		},
+		{
+			"code": "J01000011",
+			"name": "Bournemouth"
+		},
+		{
+			"code": "J01000012",
+			"name": "Bracknell"
+		},
+		{
+			"code": "J01000013",
+			"name": "Bradford"
+		},
+		{
+			"code": "J01000014",
+			"name": "Brighton and Hove"
+		},
+		{
+			"code": "J01000015",
+			"name": "Bristol"
+		},
+		{
+			"code": "J01000016",
+			"name": "Burnley"
+		},
+		{
+			"code": "J01000017",
+			"name": "Burton upon Trent"
+		},
+		{
+			"code": "J01000018",
+			"name": "Bury"
+		},
+		{
+			"code": "J01000019",
+			"name": "Cambridge"
+		},
+		{
+			"code": "J01000020",
+			"name": "Cardiff"
+		},
+		{
+			"code": "J01000021",
+			"name": "Carlisle"
+		},
+		{
+			"code": "J01000022",
+			"name": "Chatham"
+		},
+		{
+			"code": "J01000023",
+			"name": "Chelmsford"
+		},
+		{
+			"code": "J01000024",
+			"name": "Cheltenham"
+		},
+		{
+			"code": "J01000025",
+			"name": "Chester"
+		},
+		{
+			"code": "J01000026",
+			"name": "Chesterfield"
+		},
+		{
+			"code": "J01000027",
+			"name": "Colchester"
+		},
+		{
+			"code": "J01000028",
+			"name": "Coventry"
+		},
+		{
+			"code": "J01000029",
+			"name": "Crawley"
+		},
+		{
+			"code": "J01000030",
+			"name": "Darlington"
+		},
+		{
+			"code": "J01000031",
+			"name": "Derby"
+		},
+		{
+			"code": "J01000032",
+			"name": "Doncaster"
+		},
+		{
+			"code": "J01000033",
+			"name": "Dudley"
+		},
+		{
+			"code": "J01000034",
+			"name": "Eastbourne"
+		},
+		{
+			"code": "J01000035",
+			"name": "Exeter"
+		},
+		{
+			"code": "J01000036",
+			"name": "Gateshead"
+		},
+		{
+			"code": "J01000037",
+			"name": "Gillingham"
+		},
+		{
+			"code": "J01000038",
+			"name": "Gloucester"
+		},
+		{
+			"code": "J01000039",
+			"name": "Grimsby"
+		},
+		{
+			"code": "J01000040",
+			"name": "Guildford"
+		},
+		{
+			"code": "J01000041",
+			"name": "Halifax"
+		},
+		{
+			"code": "J01000042",
+			"name": "Harlow"
+		},
+		{
+			"code": "J01000043",
+			"name": "Harrogate"
+		},
+		{
+			"code": "J01000044",
+			"name": "Hartlepool"
+		},
+		{
+			"code": "J01000045",
+			"name": "Hastings"
+		},
+		{
+			"code": "J01000046",
+			"name": "Hemel Hempstead"
+		},
+		{
+			"code": "J01000047",
+			"name": "High Wycombe"
+		},
+		{
+			"code": "J01000048",
+			"name": "Huddersfield"
+		},
+		{
+			"code": "J01000049",
+			"name": "Ipswich"
+		},
+		{
+			"code": "J01000050",
+			"name": "Kingston upon Hull"
+		},
+		{
+			"code": "J01000051",
+			"name": "Leeds"
+		},
+		{
+			"code": "J01000052",
+			"name": "Leicester"
+		},
+		{
+			"code": "J01000053",
+			"name": "Lincoln"
+		},
+		{
+			"code": "J01000054",
+			"name": "Liverpool"
+		},
+		{
+			"code": "J01000055",
+			"name": "London"
+		},
+		{
+			"code": "J01000056",
+			"name": "Luton"
+		},
+		{
+			"code": "J01000057",
+			"name": "Maidstone"
+		},
+		{
+			"code": "J01000058",
+			"name": "Manchester"
+		},
+		{
+			"code": "J01000059",
+			"name": "Mansfield"
+		},
+		{
+			"code": "J01000060",
+			"name": "Middlesbrough"
+		},
+		{
+			"code": "J01000061",
+			"name": "Milton Keynes"
+		},
+		{
+			"code": "J01000062",
+			"name": "Newcastle upon Tyne"
+		},
+		{
+			"code": "J01000063",
+			"name": "Newcastle-under-Lyme"
+		},
+		{
+			"code": "J01000064",
+			"name": "Newport"
+		},
+		{
+			"code": "J01000065",
+			"name": "Northampton"
+		},
+		{
+			"code": "J01000066",
+			"name": "Norwich"
+		},
+		{
+			"code": "J01000067",
+			"name": "Nottingham"
+		},
+		{
+			"code": "J01000068",
+			"name": "Nuneaton"
+		},
+		{
+			"code": "J01000069",
+			"name": "Oldham"
+		},
+		{
+			"code": "J01000070",
+			"name": "Oxford"
+		},
+		{
+			"code": "J01000071",
+			"name": "Peterborough"
+		},
+		{
+			"code": "J01000072",
+			"name": "Plymouth"
+		},
+		{
+			"code": "J01000073",
+			"name": "Poole"
+		},
+		{
+			"code": "J01000074",
+			"name": "Portsmouth"
+		},
+		{
+			"code": "J01000075",
+			"name": "Preston"
+		},
+		{
+			"code": "J01000076",
+			"name": "Reading"
+		},
+		{
+			"code": "J01000077",
+			"name": "Redditch"
+		},
+		{
+			"code": "J01000078",
+			"name": "Rochdale"
+		},
+		{
+			"code": "J01000079",
+			"name": "Rotherham"
+		},
+		{
+			"code": "J01000080",
+			"name": "Salford"
+		},
+		{
+			"code": "J01000081",
+			"name": "Scunthorpe"
+		},
+		{
+			"code": "J01000082",
+			"name": "Sheffield"
+		},
+		{
+			"code": "J01000083",
+			"name": "Shrewsbury"
+		},
+		{
+			"code": "J01000084",
+			"name": "Slough"
+		},
+		{
+			"code": "J01000085",
+			"name": "Solihull"
+		},
+		{
+			"code": "J01000086",
+			"name": "South Shields"
+		},
+		{
+			"code": "J01000087",
+			"name": "Southampton"
+		},
+		{
+			"code": "J01000088",
+			"name": "Southend-on-Sea"
+		},
+		{
+			"code": "J01000089",
+			"name": "Southport"
+		},
+		{
+			"code": "J01000090",
+			"name": "St Albans"
+		},
+		{
+			"code": "J01000091",
+			"name": "St Helens"
+		},
+		{
+			"code": "J01000092",
+			"name": "Stevenage"
+		},
+		{
+			"code": "J01000093",
+			"name": "Stockport"
+		},
+		{
+			"code": "J01000094",
+			"name": "Stockton-on-Tees"
+		},
+		{
+			"code": "J01000095",
+			"name": "Stoke-on-Trent"
+		},
+		{
+			"code": "J01000096",
+			"name": "Sunderland"
+		},
+		{
+			"code": "J01000097",
+			"name": "Sutton Coldfield"
+		},
+		{
+			"code": "J01000098",
+			"name": "Swansea"
+		},
+		{
+			"code": "J01000099",
+			"name": "Swindon"
+		},
+		{
+			"code": "J01000100",
+			"name": "Telford"
+		},
+		{
+			"code": "J01000101",
+			"name": "Wakefield"
+		},
+		{
+			"code": "J01000102",
+			"name": "Walsall"
+		},
+		{
+			"code": "J01000103",
+			"name": "Warrington"
+		},
+		{
+			"code": "J01000104",
+			"name": "Watford"
+		},
+		{
+			"code": "J01000105",
+			"name": "West Bromwich"
+		},
+		{
+			"code": "J01000106",
+			"name": "Weston-Super-Mare"
+		},
+		{
+			"code": "J01000107",
+			"name": "Wigan"
+		},
+		{
+			"code": "J01000108",
+			"name": "Woking"
+		},
+		{
+			"code": "J01000109",
+			"name": "Wolverhampton"
+		},
+		{
+			"code": "J01000110",
+			"name": "Worcester"
+		},
+		{
+			"code": "J01000111",
+			"name": "Worthing"
+		},
+		{
+			"code": "J01000112",
+			"name": "York"
+		}
+	]
+}

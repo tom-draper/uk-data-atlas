@@ -1,0 +1,302 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:fbeca10090780d1c226f92ace344efac371aaef488abab05473d16fe0714aeb9",
+	"geography": "scottishParliamentaryConstituency",
+	"boundaryRelease": "2021-05-sc-bgc",
+	"codeProperty": "SPC21CD",
+	"nameProperty": "SPC21NM",
+	"areas": [
+		{
+			"code": "S16000074",
+			"name": "Aberdeen Central"
+		},
+		{
+			"code": "S16000075",
+			"name": "Aberdeen Donside"
+		},
+		{
+			"code": "S16000076",
+			"name": "Aberdeen South and North Kincardine"
+		},
+		{
+			"code": "S16000077",
+			"name": "Aberdeenshire East"
+		},
+		{
+			"code": "S16000078",
+			"name": "Aberdeenshire West"
+		},
+		{
+			"code": "S16000079",
+			"name": "Airdrie and Shotts"
+		},
+		{
+			"code": "S16000080",
+			"name": "Almond Valley"
+		},
+		{
+			"code": "S16000081",
+			"name": "Angus North and Mearns"
+		},
+		{
+			"code": "S16000082",
+			"name": "Angus South"
+		},
+		{
+			"code": "S16000083",
+			"name": "Argyll and Bute"
+		},
+		{
+			"code": "S16000084",
+			"name": "Ayr"
+		},
+		{
+			"code": "S16000085",
+			"name": "Banffshire and Buchan Coast"
+		},
+		{
+			"code": "S16000086",
+			"name": "Caithness, Sutherland and Ross"
+		},
+		{
+			"code": "S16000087",
+			"name": "Carrick, Cumnock and Doon Valley"
+		},
+		{
+			"code": "S16000088",
+			"name": "Clackmannanshire and Dunblane"
+		},
+		{
+			"code": "S16000089",
+			"name": "Clydebank and Milngavie"
+		},
+		{
+			"code": "S16000090",
+			"name": "Clydesdale"
+		},
+		{
+			"code": "S16000092",
+			"name": "Cowdenbeath"
+		},
+		{
+			"code": "S16000093",
+			"name": "Cumbernauld and Kilsyth"
+		},
+		{
+			"code": "S16000094",
+			"name": "Cunninghame North"
+		},
+		{
+			"code": "S16000095",
+			"name": "Cunninghame South"
+		},
+		{
+			"code": "S16000096",
+			"name": "Dumbarton"
+		},
+		{
+			"code": "S16000097",
+			"name": "Dumfriesshire"
+		},
+		{
+			"code": "S16000098",
+			"name": "Dundee City East"
+		},
+		{
+			"code": "S16000099",
+			"name": "Dundee City West"
+		},
+		{
+			"code": "S16000100",
+			"name": "Dunfermline"
+		},
+		{
+			"code": "S16000101",
+			"name": "East Kilbride"
+		},
+		{
+			"code": "S16000102",
+			"name": "East Lothian"
+		},
+		{
+			"code": "S16000103",
+			"name": "Eastwood"
+		},
+		{
+			"code": "S16000104",
+			"name": "Edinburgh Central"
+		},
+		{
+			"code": "S16000105",
+			"name": "Edinburgh Eastern"
+		},
+		{
+			"code": "S16000106",
+			"name": "Edinburgh Northern and Leith"
+		},
+		{
+			"code": "S16000107",
+			"name": "Edinburgh Pentlands"
+		},
+		{
+			"code": "S16000108",
+			"name": "Edinburgh Southern"
+		},
+		{
+			"code": "S16000109",
+			"name": "Edinburgh Western"
+		},
+		{
+			"code": "S16000110",
+			"name": "Na h-Eileanan an Iar"
+		},
+		{
+			"code": "S16000111",
+			"name": "Ettrick, Roxburgh and Berwickshire"
+		},
+		{
+			"code": "S16000112",
+			"name": "Falkirk East"
+		},
+		{
+			"code": "S16000113",
+			"name": "Falkirk West"
+		},
+		{
+			"code": "S16000114",
+			"name": "Galloway and West Dumfries"
+		},
+		{
+			"code": "S16000115",
+			"name": "Glasgow Anniesland"
+		},
+		{
+			"code": "S16000116",
+			"name": "Glasgow Cathcart"
+		},
+		{
+			"code": "S16000117",
+			"name": "Glasgow Kelvin"
+		},
+		{
+			"code": "S16000118",
+			"name": "Glasgow Maryhill and Springburn"
+		},
+		{
+			"code": "S16000119",
+			"name": "Glasgow Pollok"
+		},
+		{
+			"code": "S16000121",
+			"name": "Glasgow Shettleston"
+		},
+		{
+			"code": "S16000122",
+			"name": "Glasgow Southside"
+		},
+		{
+			"code": "S16000123",
+			"name": "Greenock and Inverclyde"
+		},
+		{
+			"code": "S16000124",
+			"name": "Hamilton, Larkhall and Stonehouse"
+		},
+		{
+			"code": "S16000125",
+			"name": "Inverness and Nairn"
+		},
+		{
+			"code": "S16000126",
+			"name": "Kilmarnock and Irvine Valley"
+		},
+		{
+			"code": "S16000127",
+			"name": "Kirkcaldy"
+		},
+		{
+			"code": "S16000128",
+			"name": "Linlithgow"
+		},
+		{
+			"code": "S16000129",
+			"name": "Mid Fife and Glenrothes"
+		},
+		{
+			"code": "S16000130",
+			"name": "Midlothian North and Musselburgh"
+		},
+		{
+			"code": "S16000131",
+			"name": "Midlothian South, Tweeddale and Lauderdale"
+		},
+		{
+			"code": "S16000132",
+			"name": "Moray"
+		},
+		{
+			"code": "S16000133",
+			"name": "Motherwell and Wishaw"
+		},
+		{
+			"code": "S16000134",
+			"name": "North East Fife"
+		},
+		{
+			"code": "S16000135",
+			"name": "Orkney Islands"
+		},
+		{
+			"code": "S16000136",
+			"name": "Paisley"
+		},
+		{
+			"code": "S16000137",
+			"name": "Perthshire North"
+		},
+		{
+			"code": "S16000138",
+			"name": "Perthshire South and Kinross-shire"
+		},
+		{
+			"code": "S16000139",
+			"name": "Renfrewshire North and West"
+		},
+		{
+			"code": "S16000140",
+			"name": "Renfrewshire South"
+		},
+		{
+			"code": "S16000141",
+			"name": "Rutherglen"
+		},
+		{
+			"code": "S16000142",
+			"name": "Shetland Islands"
+		},
+		{
+			"code": "S16000143",
+			"name": "Skye, Lochaber and Badenoch"
+		},
+		{
+			"code": "S16000144",
+			"name": "Stirling"
+		},
+		{
+			"code": "S16000146",
+			"name": "Uddingston and Bellshill"
+		},
+		{
+			"code": "S16000148",
+			"name": "Strathkelvin and Bearsden"
+		},
+		{
+			"code": "S16000149",
+			"name": "Coatbridge and Chryston"
+		},
+		{
+			"code": "S16000150",
+			"name": "Glasgow Provan"
+		}
+	]
+}

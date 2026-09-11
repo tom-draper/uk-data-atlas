@@ -1,0 +1,58 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:2b735f9e8be9fb74c08677b89e66a420f6ec9bea66b5e2da9e42aed77e8ba079",
+	"geography": "itl1",
+	"boundaryRelease": "2021-01-uk-bgc",
+	"codeProperty": "ITL121CD",
+	"nameProperty": "ITL121NM",
+	"areas": [
+		{
+			"code": "TLC",
+			"name": "North East (England)"
+		},
+		{
+			"code": "TLD",
+			"name": "North West (England)"
+		},
+		{
+			"code": "TLE",
+			"name": "Yorkshire and The Humber"
+		},
+		{
+			"code": "TLF",
+			"name": "East Midlands (England)"
+		},
+		{
+			"code": "TLG",
+			"name": "West Midlands (England)"
+		},
+		{
+			"code": "TLH",
+			"name": "East"
+		},
+		{
+			"code": "TLI",
+			"name": "London"
+		},
+		{
+			"code": "TLJ",
+			"name": "South East (England)"
+		},
+		{
+			"code": "TLK",
+			"name": "South West (England)"
+		},
+		{
+			"code": "TLL",
+			"name": "Wales"
+		},
+		{
+			"code": "TLM",
+			"name": "Scotland"
+		},
+		{
+			"code": "TLN",
+			"name": "Northern Ireland"
+		}
+	]
+}

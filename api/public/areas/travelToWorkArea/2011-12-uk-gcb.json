@@ -1,0 +1,922 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:ae2f042158da9319b69244705709ef78fedba643ef5626603063b17dd6d18e4f",
+	"geography": "travelToWorkArea",
+	"boundaryRelease": "2011-12-uk-gcb",
+	"codeProperty": "TTWA11CD",
+	"nameProperty": "TTWA11NM",
+	"areas": [
+		{
+			"code": "E30000004",
+			"name": "Barnsley"
+		},
+		{
+			"code": "E30000018",
+			"name": "Bradford"
+		},
+		{
+			"code": "E30000029",
+			"name": "Halifax"
+		},
+		{
+			"code": "E30000039",
+			"name": "Skipton"
+		},
+		{
+			"code": "E30000046",
+			"name": "Dorchester and Weymouth"
+		},
+		{
+			"code": "E30000051",
+			"name": "Falmouth"
+		},
+		{
+			"code": "E30000054",
+			"name": "Grantham"
+		},
+		{
+			"code": "E30000061",
+			"name": "Hastings"
+		},
+		{
+			"code": "E30000064",
+			"name": "Hexham"
+		},
+		{
+			"code": "E30000070",
+			"name": "Isle of Wight"
+		},
+		{
+			"code": "E30000076",
+			"name": "Lancaster and Morecambe"
+		},
+		{
+			"code": "E30000093",
+			"name": "Middlesbrough and Stockton"
+		},
+		{
+			"code": "E30000095",
+			"name": "Minehead"
+		},
+		{
+			"code": "E30000106",
+			"name": "Penrith"
+		},
+		{
+			"code": "E30000108",
+			"name": "Peterborough"
+		},
+		{
+			"code": "E30000110",
+			"name": "Poole"
+		},
+		{
+			"code": "E30000124",
+			"name": "Spalding"
+		},
+		{
+			"code": "E30000135",
+			"name": "Thetford and Mildenhall"
+		},
+		{
+			"code": "E30000147",
+			"name": "Whitby"
+		},
+		{
+			"code": "E30000159",
+			"name": "Andover"
+		},
+		{
+			"code": "E30000160",
+			"name": "Ashford"
+		},
+		{
+			"code": "E30000161",
+			"name": "Banbury"
+		},
+		{
+			"code": "E30000162",
+			"name": "Barnstaple"
+		},
+		{
+			"code": "E30000163",
+			"name": "Barrow-in-Furness"
+		},
+		{
+			"code": "E30000164",
+			"name": "Basingstoke"
+		},
+		{
+			"code": "E30000165",
+			"name": "Bath"
+		},
+		{
+			"code": "E30000166",
+			"name": "Bedford"
+		},
+		{
+			"code": "E30000167",
+			"name": "Bideford"
+		},
+		{
+			"code": "E30000168",
+			"name": "Birkenhead"
+		},
+		{
+			"code": "E30000169",
+			"name": "Birmingham"
+		},
+		{
+			"code": "E30000170",
+			"name": "Blackburn"
+		},
+		{
+			"code": "E30000171",
+			"name": "Blackpool"
+		},
+		{
+			"code": "E30000172",
+			"name": "Blandford Forum and Gillingham"
+		},
+		{
+			"code": "E30000173",
+			"name": "Blyth and Ashington"
+		},
+		{
+			"code": "E30000174",
+			"name": "Boston"
+		},
+		{
+			"code": "E30000175",
+			"name": "Bournemouth"
+		},
+		{
+			"code": "E30000176",
+			"name": "Bridgwater"
+		},
+		{
+			"code": "E30000177",
+			"name": "Bridlington"
+		},
+		{
+			"code": "E30000178",
+			"name": "Bridport"
+		},
+		{
+			"code": "E30000179",
+			"name": "Brighton"
+		},
+		{
+			"code": "E30000180",
+			"name": "Bristol"
+		},
+		{
+			"code": "E30000181",
+			"name": "Bude"
+		},
+		{
+			"code": "E30000182",
+			"name": "Burnley"
+		},
+		{
+			"code": "E30000183",
+			"name": "Burton upon Trent"
+		},
+		{
+			"code": "E30000184",
+			"name": "Bury St Edmunds"
+		},
+		{
+			"code": "E30000185",
+			"name": "Buxton"
+		},
+		{
+			"code": "E30000186",
+			"name": "Cambridge"
+		},
+		{
+			"code": "E30000187",
+			"name": "Canterbury"
+		},
+		{
+			"code": "E30000188",
+			"name": "Chelmsford"
+		},
+		{
+			"code": "E30000189",
+			"name": "Cheltenham"
+		},
+		{
+			"code": "E30000190",
+			"name": "Chesterfield"
+		},
+		{
+			"code": "E30000191",
+			"name": "Chichester and Bognor Regis"
+		},
+		{
+			"code": "E30000192",
+			"name": "Clacton"
+		},
+		{
+			"code": "E30000193",
+			"name": "Colchester"
+		},
+		{
+			"code": "E30000194",
+			"name": "Corby"
+		},
+		{
+			"code": "E30000195",
+			"name": "Coventry"
+		},
+		{
+			"code": "E30000196",
+			"name": "Crawley"
+		},
+		{
+			"code": "E30000197",
+			"name": "Crewe"
+		},
+		{
+			"code": "E30000198",
+			"name": "Cromer and Sheringham"
+		},
+		{
+			"code": "E30000199",
+			"name": "Darlington"
+		},
+		{
+			"code": "E30000200",
+			"name": "Derby"
+		},
+		{
+			"code": "E30000201",
+			"name": "Doncaster"
+		},
+		{
+			"code": "E30000202",
+			"name": "Dudley"
+		},
+		{
+			"code": "E30000203",
+			"name": "Durham and Bishop Auckland"
+		},
+		{
+			"code": "E30000204",
+			"name": "Eastbourne"
+		},
+		{
+			"code": "E30000205",
+			"name": "Evesham"
+		},
+		{
+			"code": "E30000206",
+			"name": "Exeter"
+		},
+		{
+			"code": "E30000208",
+			"name": "Folkestone and Dover"
+		},
+		{
+			"code": "E30000209",
+			"name": "Gloucester"
+		},
+		{
+			"code": "E30000210",
+			"name": "Great Yarmouth"
+		},
+		{
+			"code": "E30000211",
+			"name": "Grimsby"
+		},
+		{
+			"code": "E30000212",
+			"name": "Guildford and Aldershot"
+		},
+		{
+			"code": "E30000214",
+			"name": "Harrogate"
+		},
+		{
+			"code": "E30000215",
+			"name": "Hartlepool"
+		},
+		{
+			"code": "E30000216",
+			"name": "Hereford"
+		},
+		{
+			"code": "E30000218",
+			"name": "High Wycombe and Aylesbury"
+		},
+		{
+			"code": "E30000219",
+			"name": "Huddersfield"
+		},
+		{
+			"code": "E30000220",
+			"name": "Hull"
+		},
+		{
+			"code": "E30000221",
+			"name": "Huntingdon"
+		},
+		{
+			"code": "E30000222",
+			"name": "Ipswich"
+		},
+		{
+			"code": "E30000223",
+			"name": "Kendal"
+		},
+		{
+			"code": "E30000224",
+			"name": "Kettering and Wellingborough"
+		},
+		{
+			"code": "E30000225",
+			"name": "King's Lynn"
+		},
+		{
+			"code": "E30000226",
+			"name": "Kingsbridge and Dartmouth"
+		},
+		{
+			"code": "E30000227",
+			"name": "Launceston"
+		},
+		{
+			"code": "E30000228",
+			"name": "Leamington Spa"
+		},
+		{
+			"code": "E30000229",
+			"name": "Leeds"
+		},
+		{
+			"code": "E30000230",
+			"name": "Leicester"
+		},
+		{
+			"code": "E30000231",
+			"name": "Lincoln"
+		},
+		{
+			"code": "E30000232",
+			"name": "Liskeard"
+		},
+		{
+			"code": "E30000233",
+			"name": "Liverpool"
+		},
+		{
+			"code": "E30000234",
+			"name": "London"
+		},
+		{
+			"code": "E30000235",
+			"name": "Lowestoft"
+		},
+		{
+			"code": "E30000236",
+			"name": "Ludlow"
+		},
+		{
+			"code": "E30000237",
+			"name": "Luton"
+		},
+		{
+			"code": "E30000238",
+			"name": "Malton"
+		},
+		{
+			"code": "E30000239",
+			"name": "Manchester"
+		},
+		{
+			"code": "E30000240",
+			"name": "Mansfield"
+		},
+		{
+			"code": "E30000241",
+			"name": "Margate and Ramsgate"
+		},
+		{
+			"code": "E30000242",
+			"name": "Medway"
+		},
+		{
+			"code": "E30000243",
+			"name": "Milton Keynes"
+		},
+		{
+			"code": "E30000244",
+			"name": "Newbury"
+		},
+		{
+			"code": "E30000245",
+			"name": "Newcastle"
+		},
+		{
+			"code": "E30000246",
+			"name": "Northallerton"
+		},
+		{
+			"code": "E30000247",
+			"name": "Northampton"
+		},
+		{
+			"code": "E30000248",
+			"name": "Norwich"
+		},
+		{
+			"code": "E30000249",
+			"name": "Nottingham"
+		},
+		{
+			"code": "E30000250",
+			"name": "Oxford"
+		},
+		{
+			"code": "E30000252",
+			"name": "Penzance"
+		},
+		{
+			"code": "E30000253",
+			"name": "Plymouth"
+		},
+		{
+			"code": "E30000254",
+			"name": "Portsmouth"
+		},
+		{
+			"code": "E30000255",
+			"name": "Preston"
+		},
+		{
+			"code": "E30000256",
+			"name": "Reading"
+		},
+		{
+			"code": "E30000257",
+			"name": "Redruth and Truro"
+		},
+		{
+			"code": "E30000258",
+			"name": "Salisbury"
+		},
+		{
+			"code": "E30000259",
+			"name": "Scarborough"
+		},
+		{
+			"code": "E30000260",
+			"name": "Scunthorpe"
+		},
+		{
+			"code": "E30000261",
+			"name": "Sheffield"
+		},
+		{
+			"code": "E30000262",
+			"name": "Shrewsbury"
+		},
+		{
+			"code": "E30000263",
+			"name": "Sidmouth"
+		},
+		{
+			"code": "E30000264",
+			"name": "Skegness and Louth"
+		},
+		{
+			"code": "E30000266",
+			"name": "Slough and Heathrow"
+		},
+		{
+			"code": "E30000267",
+			"name": "Southampton"
+		},
+		{
+			"code": "E30000268",
+			"name": "Southend"
+		},
+		{
+			"code": "E30000270",
+			"name": "St Austell and Newquay"
+		},
+		{
+			"code": "E30000271",
+			"name": "Stafford"
+		},
+		{
+			"code": "E30000272",
+			"name": "Stevenage and Welwyn Garden City"
+		},
+		{
+			"code": "E30000273",
+			"name": "Stoke-on-Trent"
+		},
+		{
+			"code": "E30000274",
+			"name": "Street and Wells"
+		},
+		{
+			"code": "E30000275",
+			"name": "Sunderland"
+		},
+		{
+			"code": "E30000276",
+			"name": "Swindon"
+		},
+		{
+			"code": "E30000277",
+			"name": "Taunton"
+		},
+		{
+			"code": "E30000278",
+			"name": "Telford"
+		},
+		{
+			"code": "E30000279",
+			"name": "Torquay and Paignton"
+		},
+		{
+			"code": "E30000280",
+			"name": "Trowbridge"
+		},
+		{
+			"code": "E30000281",
+			"name": "Tunbridge Wells"
+		},
+		{
+			"code": "E30000282",
+			"name": "Wadebridge"
+		},
+		{
+			"code": "E30000283",
+			"name": "Wakefield and Castleford"
+		},
+		{
+			"code": "E30000284",
+			"name": "Warrington and Wigan"
+		},
+		{
+			"code": "E30000285",
+			"name": "Weston-super-Mare"
+		},
+		{
+			"code": "E30000286",
+			"name": "Whitehaven"
+		},
+		{
+			"code": "E30000287",
+			"name": "Wisbech"
+		},
+		{
+			"code": "E30000288",
+			"name": "Wolverhampton and Walsall"
+		},
+		{
+			"code": "E30000289",
+			"name": "Worcester and Kidderminster"
+		},
+		{
+			"code": "E30000290",
+			"name": "Workington"
+		},
+		{
+			"code": "E30000291",
+			"name": "Worksop and Retford"
+		},
+		{
+			"code": "E30000292",
+			"name": "Worthing"
+		},
+		{
+			"code": "E30000293",
+			"name": "Yeovil"
+		},
+		{
+			"code": "E30000294",
+			"name": "York"
+		},
+		{
+			"code": "K01000005",
+			"name": "Cinderford and Ross-on-Wye"
+		},
+		{
+			"code": "K01000009",
+			"name": "Berwick"
+		},
+		{
+			"code": "K01000010",
+			"name": "Carlisle"
+		},
+		{
+			"code": "K01000011",
+			"name": "Chester"
+		},
+		{
+			"code": "K01000013",
+			"name": "Newport"
+		},
+		{
+			"code": "K01000014",
+			"name": "Oswestry"
+		},
+		{
+			"code": "N12000001",
+			"name": "Ballymena"
+		},
+		{
+			"code": "N12000002",
+			"name": "Belfast"
+		},
+		{
+			"code": "N12000003",
+			"name": "Coleraine"
+		},
+		{
+			"code": "N12000004",
+			"name": "Cookstown and Magherafelt"
+		},
+		{
+			"code": "N12000005",
+			"name": "Craigavon"
+		},
+		{
+			"code": "N12000006",
+			"name": "Derry"
+		},
+		{
+			"code": "N12000007",
+			"name": "Dungannon"
+		},
+		{
+			"code": "N12000008",
+			"name": "Enniskillen"
+		},
+		{
+			"code": "N12000009",
+			"name": "Newry and Banbridge"
+		},
+		{
+			"code": "N12000010",
+			"name": "Omagh and Strabane"
+		},
+		{
+			"code": "S22000005",
+			"name": "Campbeltown"
+		},
+		{
+			"code": "S22000013",
+			"name": "Western Isles"
+		},
+		{
+			"code": "S22000032",
+			"name": "Mull and Islay"
+		},
+		{
+			"code": "S22000035",
+			"name": "Orkney Islands"
+		},
+		{
+			"code": "S22000039",
+			"name": "Shetland Islands"
+		},
+		{
+			"code": "S22000047",
+			"name": "Aberdeen"
+		},
+		{
+			"code": "S22000048",
+			"name": "Alness and Invergordon"
+		},
+		{
+			"code": "S22000049",
+			"name": "Arbroath and Montrose"
+		},
+		{
+			"code": "S22000050",
+			"name": "Aviemore and Grantown-on-Spey"
+		},
+		{
+			"code": "S22000051",
+			"name": "Ayr"
+		},
+		{
+			"code": "S22000052",
+			"name": "Broadford and Kyle of Lochalsh"
+		},
+		{
+			"code": "S22000053",
+			"name": "Dalbeattie and Castle Douglas"
+		},
+		{
+			"code": "S22000054",
+			"name": "Dumbarton and Helensburgh"
+		},
+		{
+			"code": "S22000055",
+			"name": "Dumfries"
+		},
+		{
+			"code": "S22000056",
+			"name": "Dundee"
+		},
+		{
+			"code": "S22000057",
+			"name": "Dunfermline and Kirkcaldy"
+		},
+		{
+			"code": "S22000058",
+			"name": "Dunoon and Rothesay"
+		},
+		{
+			"code": "S22000059",
+			"name": "Edinburgh"
+		},
+		{
+			"code": "S22000060",
+			"name": "Elgin"
+		},
+		{
+			"code": "S22000061",
+			"name": "Falkirk and Stirling"
+		},
+		{
+			"code": "S22000062",
+			"name": "Fort William"
+		},
+		{
+			"code": "S22000063",
+			"name": "Galashiels and Peebles"
+		},
+		{
+			"code": "S22000064",
+			"name": "Girvan"
+		},
+		{
+			"code": "S22000065",
+			"name": "Glasgow"
+		},
+		{
+			"code": "S22000066",
+			"name": "Golspie and Brora"
+		},
+		{
+			"code": "S22000067",
+			"name": "Hawick and Kelso"
+		},
+		{
+			"code": "S22000068",
+			"name": "Inverness"
+		},
+		{
+			"code": "S22000069",
+			"name": "Kilmarnock and Irvine"
+		},
+		{
+			"code": "S22000070",
+			"name": "Livingston"
+		},
+		{
+			"code": "S22000071",
+			"name": "Motherwell and Airdrie"
+		},
+		{
+			"code": "S22000072",
+			"name": "Newton Stewart"
+		},
+		{
+			"code": "S22000073",
+			"name": "Oban"
+		},
+		{
+			"code": "S22000074",
+			"name": "Perth"
+		},
+		{
+			"code": "S22000075",
+			"name": "Peterhead"
+		},
+		{
+			"code": "S22000076",
+			"name": "Pitlochry and Aberfeldy"
+		},
+		{
+			"code": "S22000077",
+			"name": "Portree"
+		},
+		{
+			"code": "S22000078",
+			"name": "St Andrews and Cupar"
+		},
+		{
+			"code": "S22000079",
+			"name": "Stranraer"
+		},
+		{
+			"code": "S22000080",
+			"name": "Thurso"
+		},
+		{
+			"code": "S22000081",
+			"name": "Turriff and Banff"
+		},
+		{
+			"code": "S22000082",
+			"name": "Ullapool"
+		},
+		{
+			"code": "S22000083",
+			"name": "Wick"
+		},
+		{
+			"code": "S22000084",
+			"name": "Fraserburgh"
+		},
+		{
+			"code": "S22000085",
+			"name": "Greenock"
+		},
+		{
+			"code": "S22000086",
+			"name": "Lochgilphead"
+		},
+		{
+			"code": "W22000003",
+			"name": "Bridgend"
+		},
+		{
+			"code": "W22000009",
+			"name": "Haverfordwest and Milford Haven"
+		},
+		{
+			"code": "W22000011",
+			"name": "Llandrindod Wells and Builth Wells"
+		},
+		{
+			"code": "W22000015",
+			"name": "Newtown and Welshpool"
+		},
+		{
+			"code": "W22000016",
+			"name": "Pembroke and Tenby"
+		},
+		{
+			"code": "W22000021",
+			"name": "Aberystwyth"
+		},
+		{
+			"code": "W22000022",
+			"name": "Bangor and Holyhead"
+		},
+		{
+			"code": "W22000023",
+			"name": "Brecon"
+		},
+		{
+			"code": "W22000024",
+			"name": "Cardiff"
+		},
+		{
+			"code": "W22000025",
+			"name": "Cardigan"
+		},
+		{
+			"code": "W22000026",
+			"name": "Colwyn Bay"
+		},
+		{
+			"code": "W22000028",
+			"name": "Llanelli"
+		},
+		{
+			"code": "W22000029",
+			"name": "Merthyr Tydfil"
+		},
+		{
+			"code": "W22000030",
+			"name": "Pwllheli and Porthmadog"
+		},
+		{
+			"code": "W22000031",
+			"name": "Rhyl"
+		},
+		{
+			"code": "W22000032",
+			"name": "Swansea"
+		},
+		{
+			"code": "W22000033",
+			"name": "Tywyn and Dolgellau"
+		},
+		{
+			"code": "W22000034",
+			"name": "Wrexham"
+		}
+	]
+}

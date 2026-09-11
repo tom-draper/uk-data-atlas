@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5e98b4c43cef99a38adb0f02cab6c0baac5fb0c5f5f166c4bde23070b93f18f1",
+	"contentHash": "sha256:c21032c580e85ade9671c9c7154804964a16c78c32e2f57c19f4f76c9047b287",
 	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
 	"releases": [
 		{
@@ -13,8 +13,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 15,
+				"artifact": "areas/combinedAuthority/2025-12-en-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -32,8 +33,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 314,
+				"artifact": "areas/communitySafetyPartnership/2023-12-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -53,8 +55,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 650,
+				"artifact": "areas/constituency/2024-07-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -74,8 +77,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 650,
+				"artifact": "areas/constituency/2019-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -95,8 +99,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 650,
+				"artifact": "areas/constituency/2017-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -116,8 +121,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 650,
+				"artifact": "areas/constituency/2016-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -136,8 +142,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 626,
+				"artifact": "areas/constituency/2015-12-gb-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -157,8 +164,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 4,
+				"artifact": "areas/country/2025-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -178,8 +186,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 4,
+				"artifact": "areas/country/2024-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -199,8 +208,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 4,
+				"artifact": "areas/country/2023-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -220,8 +230,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 4,
+				"artifact": "areas/country/2022-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -241,8 +252,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 4,
+				"artifact": "areas/country/2021-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -262,8 +274,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 4,
+				"artifact": "areas/country/2020-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -283,8 +296,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 218,
+				"artifact": "areas/countyAndUnitaryAuthority/2025-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -301,8 +315,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 1367,
+				"artifact": "areas/countyElectoralDivision/2023-05-en-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -319,8 +334,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 6976,
+				"artifact": "areas/dataZone/2011-12-sc-nc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -345,8 +361,10 @@
 				".xml"
 			],
 			"areaIdentities": {
+				"id": "2011-12-sc-bfc",
+				"geography": "dataZone",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No declared GeoJSON source is available for this release."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -364,8 +382,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 47,
+				"artifact": "areas/fireAndRescueAuthority/2021-05-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -382,8 +401,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 36,
+				"artifact": "areas/integratedCareBoard/2026-04-en-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -403,8 +423,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 12,
+				"artifact": "areas/itl1/2021-01-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -424,8 +445,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 41,
+				"artifact": "areas/itl2/2021-01-uk-bgc-v2.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -445,8 +467,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 179,
+				"artifact": "areas/itl3/2021-01-uk-bgc-v3.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -466,8 +489,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 361,
+				"artifact": "areas/localAuthority/2025-05-uk-bgc-v2.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -487,8 +511,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 361,
+				"artifact": "areas/localAuthority/2024-05-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -508,8 +533,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 361,
+				"artifact": "areas/localAuthority/2023-05-uk-bgc-v2.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -529,8 +555,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 374,
+				"artifact": "areas/localAuthority/2022-12-uk-bgc-v2.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -550,8 +577,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 374,
+				"artifact": "areas/localAuthority/2021-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -571,8 +599,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 391,
+				"artifact": "areas/localAuthority/2018-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -591,8 +620,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 380,
+				"artifact": "areas/localAuthority/2016-12-gb-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -609,8 +639,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 7,
+				"artifact": "areas/localHealthBoard/2023-12-w-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -630,8 +661,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 400,
+				"artifact": "areas/localPlanningAuthority/2019-04-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -648,8 +680,10 @@
 				".topojson"
 			],
 			"areaIdentities": {
+				"id": "2011-12-w-bgc",
+				"geography": "lsoa",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No declared GeoJSON source is available for this release."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -667,8 +701,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 34753,
+				"artifact": "areas/lsoa/2011-12-ew-bgc-v3.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -686,8 +721,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 112,
+				"artifact": "areas/majorTownAndCity/2015-12-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -705,8 +741,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 7264,
+				"artifact": "areas/msoa/2021-12-ew-bgc-v3.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -725,8 +762,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 15,
+				"artifact": "areas/nationalPark/2020-12-gb-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -743,8 +781,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 7,
+				"artifact": "areas/nhsEnglandRegion/2022-07-en-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -762,8 +801,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2026-05-ew-bgc",
+				"geography": "parish",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -781,8 +822,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 11539,
+				"artifact": "areas/parish/2025-05-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -800,8 +842,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 11541,
+				"artifact": "areas/parish/2024-12-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -819,8 +862,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 11548,
+				"artifact": "areas/parish/2023-12-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -838,8 +882,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 11567,
+				"artifact": "areas/parish/2022-12-ew-bgc-v3.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -857,8 +902,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 11562,
+				"artifact": "areas/parish/2021-12-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -876,8 +922,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2019-04-ew-bgc",
+				"geography": "parish",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -895,8 +943,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 43,
+				"artifact": "areas/policeForceArea/2023-12-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -913,8 +962,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 9,
+				"artifact": "areas/region/2025-12-en-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -931,8 +981,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 73,
+				"artifact": "areas/scottishParliamentaryConstituency/2021-05-sc-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -949,8 +1000,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 8,
+				"artifact": "areas/scottishParliamentaryRegion/2022-12-sc-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -967,8 +1019,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 40,
+				"artifact": "areas/seneddConstituency/2022-12-w-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -985,8 +1038,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 5,
+				"artifact": "areas/seneddElectoralRegion/2022-12-w-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1003,8 +1057,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2026-04-en-bgc",
+				"geography": "subIntegratedCareBoardLocation",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1032,8 +1088,10 @@
 				".xml"
 			],
 			"areaIdentities": {
+				"id": "2011-ni",
+				"geography": "superOutputArea",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "No declared GeoJSON source is available for this release."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1053,8 +1111,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 228,
+				"artifact": "areas/travelToWorkArea/2011-12-uk-gcb.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1074,8 +1133,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2026-05-uk-bgc",
+				"geography": "ward",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1095,8 +1156,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2025-12-uk-bgc",
+				"geography": "ward",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1116,8 +1179,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2025-05-uk-bgc-v2",
+				"geography": "ward",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1137,8 +1202,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2024-12-uk-bgc",
+				"geography": "ward",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1158,8 +1225,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 8396,
+				"artifact": "areas/ward/2024-05-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1179,8 +1247,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 8441,
+				"artifact": "areas/ward/2023-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1200,8 +1269,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2023-05-uk-bgc",
+				"geography": "ward",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1221,8 +1292,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2022-12-uk-bgc",
+				"geography": "ward",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1242,8 +1315,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 8694,
+				"artifact": "areas/ward/2021-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1263,8 +1337,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 8887,
+				"artifact": "areas/ward/2020-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1283,8 +1358,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 8425,
+				"artifact": "areas/ward/2019-12-gb-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1304,8 +1380,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 9114,
+				"artifact": "areas/ward/2018-12-uk-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1324,8 +1401,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"status": "available",
+				"recordCount": 8669,
+				"artifact": "areas/ward/2017-12-gb-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1344,8 +1422,10 @@
 				".geojson"
 			],
 			"areaIdentities": {
+				"id": "2016-12-gb-bgc",
+				"geography": "ward",
 				"status": "not-compiled",
-				"reason": "No API compiler adapter has been published for this release yet."
+				"reason": "Could not identify exactly one matching code/name property pair."
 			},
 			"relationships": {
 				"status": "not-compiled",

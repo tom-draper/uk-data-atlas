@@ -1,0 +1,625 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:b764b3de6983533fb8c61217d91fd203b2ba9f2da9d6290b524d9ce7646256cb",
+	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
+	"releases": [
+		{
+			"id": "2025-12-en-bgc",
+			"geography": "combinedAuthority",
+			"status": "available",
+			"recordCount": 15,
+			"artifact": "areas/combinedAuthority/2025-12-en-bgc.json",
+			"contentHash": "sha256:7d92965736e95d7e8a9bb0ec8cfdd1bf522d0958259ca8edc88338b0c2551446",
+			"codeProperty": "CAUTH25CD",
+			"nameProperty": "CAUTH25NM"
+		},
+		{
+			"id": "2023-12-ew-bgc",
+			"geography": "communitySafetyPartnership",
+			"status": "available",
+			"recordCount": 314,
+			"artifact": "areas/communitySafetyPartnership/2023-12-ew-bgc.json",
+			"contentHash": "sha256:252592fe688000dffd235746bd7cb327604ff28a23def38577e3e956e3ef0d12",
+			"codeProperty": "CSP23CD",
+			"nameProperty": "CSP23NM"
+		},
+		{
+			"id": "2024-07-uk-bgc",
+			"geography": "constituency",
+			"status": "available",
+			"recordCount": 650,
+			"artifact": "areas/constituency/2024-07-uk-bgc.json",
+			"contentHash": "sha256:77090f645fcaf7d5bf78e9973464e79ae9c5373ead42f1fecc14c39ba075db9d",
+			"codeProperty": "PCON24CD",
+			"nameProperty": "PCON24NM"
+		},
+		{
+			"id": "2019-12-uk-bgc",
+			"geography": "constituency",
+			"status": "available",
+			"recordCount": 650,
+			"artifact": "areas/constituency/2019-12-uk-bgc.json",
+			"contentHash": "sha256:f23bb9b367674668a675dcc8c1853d57605b5dd5e634d5b5aa67f8b7a1b9da02",
+			"codeProperty": "pcon19cd",
+			"nameProperty": "pcon19nm"
+		},
+		{
+			"id": "2017-12-uk-bgc",
+			"geography": "constituency",
+			"status": "available",
+			"recordCount": 650,
+			"artifact": "areas/constituency/2017-12-uk-bgc.json",
+			"contentHash": "sha256:b8cd6f16148901af97bf4665c35132b9caeb3150747a684fccef27dc7090ae9a",
+			"codeProperty": "PCON17CD",
+			"nameProperty": "PCON17NM"
+		},
+		{
+			"id": "2016-12-uk-bgc",
+			"geography": "constituency",
+			"status": "available",
+			"recordCount": 650,
+			"artifact": "areas/constituency/2016-12-uk-bgc.json",
+			"contentHash": "sha256:c105eb5c8b1abed048237a0071d3fb1e9c548dfd7788b3201e6e8e99bc427829",
+			"codeProperty": "pcon16cd",
+			"nameProperty": "pcon16nm"
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "constituency",
+			"status": "available",
+			"recordCount": 626,
+			"artifact": "areas/constituency/2015-12-gb-bgc.json",
+			"contentHash": "sha256:c5b97468289a1adb7c4415faa751ac06475931585b2e4f5871f201a1364cd9e3",
+			"codeProperty": "pcon15cd",
+			"nameProperty": "pcon15nm"
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "country",
+			"status": "available",
+			"recordCount": 4,
+			"artifact": "areas/country/2025-12-uk-bgc.json",
+			"contentHash": "sha256:ad95745b5a9d39fe05366e868d171ab20a3717c6099bdf5e75ba82432ae1b090",
+			"codeProperty": "CTRY25CD",
+			"nameProperty": "CTRY25NM"
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "country",
+			"status": "available",
+			"recordCount": 4,
+			"artifact": "areas/country/2024-12-uk-bgc.json",
+			"contentHash": "sha256:695d7fcc0e5c209fb08842d037087abcdcc4b99855ba032bbfb60f1896916389",
+			"codeProperty": "CTRY24CD",
+			"nameProperty": "CTRY24NM"
+		},
+		{
+			"id": "2023-12-uk-bgc",
+			"geography": "country",
+			"status": "available",
+			"recordCount": 4,
+			"artifact": "areas/country/2023-12-uk-bgc.json",
+			"contentHash": "sha256:0d2d0d8adc930e47b3db20fe398e0b7ae4f2dc56f2a0f665edbf6d696eaa0e18",
+			"codeProperty": "CTRY23CD",
+			"nameProperty": "CTRY23NM"
+		},
+		{
+			"id": "2022-12-uk-bgc",
+			"geography": "country",
+			"status": "available",
+			"recordCount": 4,
+			"artifact": "areas/country/2022-12-uk-bgc.json",
+			"contentHash": "sha256:9550bb58df65e7b9041e005a8009cf5bfac297829de9d8c05f554e033f59524e",
+			"codeProperty": "CTRY22CD",
+			"nameProperty": "CTRY22NM"
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "country",
+			"status": "available",
+			"recordCount": 4,
+			"artifact": "areas/country/2021-12-uk-bgc.json",
+			"contentHash": "sha256:9b15b8e2ac3def7348f305776a1bc3af5fb134c1c4b71d7b74e5766ad46aa3ff",
+			"codeProperty": "CTRY21CD",
+			"nameProperty": "CTRY21NM"
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "country",
+			"status": "available",
+			"recordCount": 4,
+			"artifact": "areas/country/2020-12-uk-bgc.json",
+			"contentHash": "sha256:896ce61d6c66d3929e8bf01a26b5c2e2afae655341925ea1e77baa9a79531e6a",
+			"codeProperty": "CTRY20CD",
+			"nameProperty": "CTRY20NM"
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "countyAndUnitaryAuthority",
+			"status": "available",
+			"recordCount": 218,
+			"artifact": "areas/countyAndUnitaryAuthority/2025-12-uk-bgc.json",
+			"contentHash": "sha256:eef6157d89d36fc74beff83db1ed3da5f02e5a30af4769e6dc8cb3d59f9785ff",
+			"codeProperty": "CTYUA25CD",
+			"nameProperty": "CTYUA25NM"
+		},
+		{
+			"id": "2023-05-en-bgc",
+			"geography": "countyElectoralDivision",
+			"status": "available",
+			"recordCount": 1367,
+			"artifact": "areas/countyElectoralDivision/2023-05-en-bgc.json",
+			"contentHash": "sha256:3b40121ed1e34a67b113a2aca3cf132a9ca9a7b6a00cd5882d34fbcd94f8861a",
+			"codeProperty": "CED23CD",
+			"nameProperty": "CED23NM"
+		},
+		{
+			"id": "2011-12-sc-nc",
+			"geography": "dataZone",
+			"status": "available",
+			"recordCount": 6976,
+			"artifact": "areas/dataZone/2011-12-sc-nc.json",
+			"contentHash": "sha256:115e5e21b45f210041b5de1af56d90ad020071816e76165c31ea2cdc8bfc920c",
+			"codeProperty": "DZ11CD",
+			"nameProperty": "DZ11NM"
+		},
+		{
+			"id": "2011-12-sc-bfc",
+			"geography": "dataZone",
+			"status": "not-compiled",
+			"reason": "No declared GeoJSON source is available for this release."
+		},
+		{
+			"id": "2021-05-ew-bgc",
+			"geography": "fireAndRescueAuthority",
+			"status": "available",
+			"recordCount": 47,
+			"artifact": "areas/fireAndRescueAuthority/2021-05-ew-bgc.json",
+			"contentHash": "sha256:4481ca340f19e728cdb4cc4f020e89fad8a4427a7051372260179bcdcfbaf6a2",
+			"codeProperty": "FRA21CD",
+			"nameProperty": "FRA21NM"
+		},
+		{
+			"id": "2026-04-en-bgc",
+			"geography": "integratedCareBoard",
+			"status": "available",
+			"recordCount": 36,
+			"artifact": "areas/integratedCareBoard/2026-04-en-bgc.json",
+			"contentHash": "sha256:d75788fc39d335523e54c5122d58296f13ffa8104e3c0312858fe747e06fc7dc",
+			"codeProperty": "ICB26CD",
+			"nameProperty": "ICB26NM"
+		},
+		{
+			"id": "2021-01-uk-bgc",
+			"geography": "itl1",
+			"status": "available",
+			"recordCount": 12,
+			"artifact": "areas/itl1/2021-01-uk-bgc.json",
+			"contentHash": "sha256:2b735f9e8be9fb74c08677b89e66a420f6ec9bea66b5e2da9e42aed77e8ba079",
+			"codeProperty": "ITL121CD",
+			"nameProperty": "ITL121NM"
+		},
+		{
+			"id": "2021-01-uk-bgc-v2",
+			"geography": "itl2",
+			"status": "available",
+			"recordCount": 41,
+			"artifact": "areas/itl2/2021-01-uk-bgc-v2.json",
+			"contentHash": "sha256:f7db77090ed6f22004e4cb1ee41e949acd602413ca6b0916a558e055e4ae2cbe",
+			"codeProperty": "ITL221CD",
+			"nameProperty": "ITL221NM"
+		},
+		{
+			"id": "2021-01-uk-bgc-v3",
+			"geography": "itl3",
+			"status": "available",
+			"recordCount": 179,
+			"artifact": "areas/itl3/2021-01-uk-bgc-v3.json",
+			"contentHash": "sha256:05216534aca243529eee2f921933d8b04d831aa0899317a48dadfccd17f6be70",
+			"codeProperty": "ITL321CD",
+			"nameProperty": "ITL321NM"
+		},
+		{
+			"id": "2025-05-uk-bgc-v2",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 361,
+			"artifact": "areas/localAuthority/2025-05-uk-bgc-v2.json",
+			"contentHash": "sha256:5c832fa744ee66475a4f0d0cda3faea14eadd039abb6e9223e248e8445ac608a",
+			"codeProperty": "LAD25CD",
+			"nameProperty": "LAD25NM"
+		},
+		{
+			"id": "2024-05-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 361,
+			"artifact": "areas/localAuthority/2024-05-uk-bgc.json",
+			"contentHash": "sha256:7ccc829d47ce7e7eed0d847bc285cad2e96abe768a3008506b3aefaa15b3f935",
+			"codeProperty": "LAD24CD",
+			"nameProperty": "LAD24NM"
+		},
+		{
+			"id": "2023-05-uk-bgc-v2",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 361,
+			"artifact": "areas/localAuthority/2023-05-uk-bgc-v2.json",
+			"contentHash": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19",
+			"codeProperty": "LAD23CD",
+			"nameProperty": "LAD23NM"
+		},
+		{
+			"id": "2022-12-uk-bgc-v2",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 374,
+			"artifact": "areas/localAuthority/2022-12-uk-bgc-v2.json",
+			"contentHash": "sha256:e3f8f29fcc848605b8e780a3dd4ab3b711167064d4e869997237ee81c2285060",
+			"codeProperty": "LAD22CD",
+			"nameProperty": "LAD22NM"
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 374,
+			"artifact": "areas/localAuthority/2021-12-uk-bgc.json",
+			"contentHash": "sha256:bad319cb06dab4ba8ce6f1c9490a96c423f9745be9e0d80e9acfcf11b67842e6",
+			"codeProperty": "LAD21CD",
+			"nameProperty": "LAD21NM"
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 391,
+			"artifact": "areas/localAuthority/2018-12-uk-bgc.json",
+			"contentHash": "sha256:4d720a8e3e6c4b149e96eea216290f433540ce4616490f72b424dede0b68fea5",
+			"codeProperty": "lad18cd",
+			"nameProperty": "lad18nm"
+		},
+		{
+			"id": "2016-12-gb-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 380,
+			"artifact": "areas/localAuthority/2016-12-gb-bgc.json",
+			"contentHash": "sha256:2ca2840c27a5bb8acadff68a7e48425c6a910b57b41a7b11dcc020d0eeaf3665",
+			"codeProperty": "LAD16CD",
+			"nameProperty": "LAD16NM"
+		},
+		{
+			"id": "2023-12-w-bgc",
+			"geography": "localHealthBoard",
+			"status": "available",
+			"recordCount": 7,
+			"artifact": "areas/localHealthBoard/2023-12-w-bgc.json",
+			"contentHash": "sha256:cf79e42dd16032838db099cdb0c1fc57542c45f0dcfa56cd4238e483503cdb8d",
+			"codeProperty": "LHB23CD",
+			"nameProperty": "LHB23NM"
+		},
+		{
+			"id": "2019-04-uk-bgc",
+			"geography": "localPlanningAuthority",
+			"status": "available",
+			"recordCount": 400,
+			"artifact": "areas/localPlanningAuthority/2019-04-uk-bgc.json",
+			"contentHash": "sha256:3fb8321da62654e2907bf72818a76cc46b201e9729019797d2051a0ed76b222f",
+			"codeProperty": "lpa19cd",
+			"nameProperty": "lpa19nm"
+		},
+		{
+			"id": "2011-12-w-bgc",
+			"geography": "lsoa",
+			"status": "not-compiled",
+			"reason": "No declared GeoJSON source is available for this release."
+		},
+		{
+			"id": "2011-12-ew-bgc-v3",
+			"geography": "lsoa",
+			"status": "available",
+			"recordCount": 34753,
+			"artifact": "areas/lsoa/2011-12-ew-bgc-v3.json",
+			"contentHash": "sha256:f4e0776a1192b05ac9f672b11aa54de56f4fa810ac70fca271da7fdf359704cf",
+			"codeProperty": "LSOA11CD",
+			"nameProperty": "LSOA11NM"
+		},
+		{
+			"id": "2015-12-ew-bgc",
+			"geography": "majorTownAndCity",
+			"status": "available",
+			"recordCount": 112,
+			"artifact": "areas/majorTownAndCity/2015-12-ew-bgc.json",
+			"contentHash": "sha256:f6fc88fb2fd7e339347145da67b745cc86e9c55c8e6c097e247d1f43226382b5",
+			"codeProperty": "TCITY15CD",
+			"nameProperty": "TCITY15NM"
+		},
+		{
+			"id": "2021-12-ew-bgc-v3",
+			"geography": "msoa",
+			"status": "available",
+			"recordCount": 7264,
+			"artifact": "areas/msoa/2021-12-ew-bgc-v3.json",
+			"contentHash": "sha256:0d4a26cead705fd1898991749b0b832e73dba1117a8e127fea3463884f51a6bd",
+			"codeProperty": "MSOA21CD",
+			"nameProperty": "MSOA21NM"
+		},
+		{
+			"id": "2020-12-gb-bgc",
+			"geography": "nationalPark",
+			"status": "available",
+			"recordCount": 15,
+			"artifact": "areas/nationalPark/2020-12-gb-bgc.json",
+			"contentHash": "sha256:8cc59a5393d710f825367be5f0113fbf545681300ffb51042ba9477a6a0f1d5f",
+			"codeProperty": "NPARK20CD",
+			"nameProperty": "NPARK20NM"
+		},
+		{
+			"id": "2022-07-en-bgc",
+			"geography": "nhsEnglandRegion",
+			"status": "available",
+			"recordCount": 7,
+			"artifact": "areas/nhsEnglandRegion/2022-07-en-bgc.json",
+			"contentHash": "sha256:1c82e1c615e25967dad1de38e891ce802a37dee7d6e21c292ab23979ad5df2d6",
+			"codeProperty": "NHSER22CD",
+			"nameProperty": "NHSER22NM"
+		},
+		{
+			"id": "2026-05-ew-bgc",
+			"geography": "parish",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2025-05-ew-bgc",
+			"geography": "parish",
+			"status": "available",
+			"recordCount": 11539,
+			"artifact": "areas/parish/2025-05-ew-bgc.json",
+			"contentHash": "sha256:37f00a79a140608e407e4045158ec1071701a8cf26b4cfbbacec9bdb16b4a573",
+			"codeProperty": "PARNCP25CD",
+			"nameProperty": "PARNCP25NM"
+		},
+		{
+			"id": "2024-12-ew-bgc",
+			"geography": "parish",
+			"status": "available",
+			"recordCount": 11541,
+			"artifact": "areas/parish/2024-12-ew-bgc.json",
+			"contentHash": "sha256:39f278823a7387126188d2e32b15a02e4424b44243b9788ec29e4eea4b4ac081",
+			"codeProperty": "PARNCP24CD",
+			"nameProperty": "PARNCP24NM"
+		},
+		{
+			"id": "2023-12-ew-bgc",
+			"geography": "parish",
+			"status": "available",
+			"recordCount": 11548,
+			"artifact": "areas/parish/2023-12-ew-bgc.json",
+			"contentHash": "sha256:c938c548dd7b2568e6bd1b3cacf28470db99b3e97be847752a111db3d0f57a3e",
+			"codeProperty": "PARNCP23CD",
+			"nameProperty": "PARNCP23NM"
+		},
+		{
+			"id": "2022-12-ew-bgc-v3",
+			"geography": "parish",
+			"status": "available",
+			"recordCount": 11567,
+			"artifact": "areas/parish/2022-12-ew-bgc-v3.json",
+			"contentHash": "sha256:10852496c1c66a04ce11c37d7d2616cca2273a048edb81f040ae1366eae75ad9",
+			"codeProperty": "PARNCP22CD",
+			"nameProperty": "PARNCP22NM"
+		},
+		{
+			"id": "2021-12-ew-bgc",
+			"geography": "parish",
+			"status": "available",
+			"recordCount": 11562,
+			"artifact": "areas/parish/2021-12-ew-bgc.json",
+			"contentHash": "sha256:e22c38029fb140f8a70d078777bee9263bf8f506559b38fe6e0741bfc9b5d6a7",
+			"codeProperty": "PARNCP21CD",
+			"nameProperty": "PARNCP21NM"
+		},
+		{
+			"id": "2019-04-ew-bgc",
+			"geography": "parish",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2023-12-ew-bgc",
+			"geography": "policeForceArea",
+			"status": "available",
+			"recordCount": 43,
+			"artifact": "areas/policeForceArea/2023-12-ew-bgc.json",
+			"contentHash": "sha256:021fe2482e8a1b30714e6bf76755aa0c1158753ffd55ef2e4a4f7aa3028d9d46",
+			"codeProperty": "PFA23CD",
+			"nameProperty": "PFA23NM"
+		},
+		{
+			"id": "2025-12-en-bgc",
+			"geography": "region",
+			"status": "available",
+			"recordCount": 9,
+			"artifact": "areas/region/2025-12-en-bgc.json",
+			"contentHash": "sha256:f14c1baeda8c351d90886f6731e8c254594ad5f873a68cd7cb3ad61a9258536c",
+			"codeProperty": "RGN25CD",
+			"nameProperty": "RGN25NM"
+		},
+		{
+			"id": "2021-05-sc-bgc",
+			"geography": "scottishParliamentaryConstituency",
+			"status": "available",
+			"recordCount": 73,
+			"artifact": "areas/scottishParliamentaryConstituency/2021-05-sc-bgc.json",
+			"contentHash": "sha256:fbeca10090780d1c226f92ace344efac371aaef488abab05473d16fe0714aeb9",
+			"codeProperty": "SPC21CD",
+			"nameProperty": "SPC21NM"
+		},
+		{
+			"id": "2022-12-sc-bgc",
+			"geography": "scottishParliamentaryRegion",
+			"status": "available",
+			"recordCount": 8,
+			"artifact": "areas/scottishParliamentaryRegion/2022-12-sc-bgc.json",
+			"contentHash": "sha256:4ad159b2564010c8a5d514ebb5af83c728be6def622efae640156bfdcd1d0aee",
+			"codeProperty": "SPR22CD",
+			"nameProperty": "SPR22NM"
+		},
+		{
+			"id": "2022-12-w-bgc",
+			"geography": "seneddConstituency",
+			"status": "available",
+			"recordCount": 40,
+			"artifact": "areas/seneddConstituency/2022-12-w-bgc.json",
+			"contentHash": "sha256:c4d736b36a3069f96b52a256785a99e8eff092f9484a56fbae61de9f744ea2c1",
+			"codeProperty": "SENC22CD",
+			"nameProperty": "SENC22NM"
+		},
+		{
+			"id": "2022-12-w-bgc",
+			"geography": "seneddElectoralRegion",
+			"status": "available",
+			"recordCount": 5,
+			"artifact": "areas/seneddElectoralRegion/2022-12-w-bgc.json",
+			"contentHash": "sha256:478a17c73030d094f8acf3bcc726c03743d0698a8ee420b34b610f99d170b95b",
+			"codeProperty": "SENER22CD",
+			"nameProperty": "SENER22NM"
+		},
+		{
+			"id": "2026-04-en-bgc",
+			"geography": "subIntegratedCareBoardLocation",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2011-ni",
+			"geography": "superOutputArea",
+			"status": "not-compiled",
+			"reason": "No declared GeoJSON source is available for this release."
+		},
+		{
+			"id": "2011-12-uk-gcb",
+			"geography": "travelToWorkArea",
+			"status": "available",
+			"recordCount": 228,
+			"artifact": "areas/travelToWorkArea/2011-12-uk-gcb.json",
+			"contentHash": "sha256:ae2f042158da9319b69244705709ef78fedba643ef5626603063b17dd6d18e4f",
+			"codeProperty": "TTWA11CD",
+			"nameProperty": "TTWA11NM"
+		},
+		{
+			"id": "2026-05-uk-bgc",
+			"geography": "ward",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "ward",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2025-05-uk-bgc-v2",
+			"geography": "ward",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "ward",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2024-05-uk-bgc",
+			"geography": "ward",
+			"status": "available",
+			"recordCount": 8396,
+			"artifact": "areas/ward/2024-05-uk-bgc.json",
+			"contentHash": "sha256:54728c4277fb31cf1145e28113ae7eead0552d5cc4cbc4b64ee9bcde2250e814",
+			"codeProperty": "WD24CD",
+			"nameProperty": "WD24NM"
+		},
+		{
+			"id": "2023-12-uk-bgc",
+			"geography": "ward",
+			"status": "available",
+			"recordCount": 8441,
+			"artifact": "areas/ward/2023-12-uk-bgc.json",
+			"contentHash": "sha256:21acf7576c2fac314f4daf78320f66133f2cf7b5dcb6534cb94e2b6edbc0f7db",
+			"codeProperty": "WD23CD",
+			"nameProperty": "WD23NM"
+		},
+		{
+			"id": "2023-05-uk-bgc",
+			"geography": "ward",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2022-12-uk-bgc",
+			"geography": "ward",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "ward",
+			"status": "available",
+			"recordCount": 8694,
+			"artifact": "areas/ward/2021-12-uk-bgc.json",
+			"contentHash": "sha256:40aad610bb225c00de198f96c6b816eed8d7dec14a330a113c3f8c8e0c62684d",
+			"codeProperty": "WD21CD",
+			"nameProperty": "WD21NM"
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "ward",
+			"status": "available",
+			"recordCount": 8887,
+			"artifact": "areas/ward/2020-12-uk-bgc.json",
+			"contentHash": "sha256:4bfb5190bc06e7b52a261dbf246de956121ab74acad909a180946656468b0447",
+			"codeProperty": "WD20CD",
+			"nameProperty": "WD20NM"
+		},
+		{
+			"id": "2019-12-gb-bgc",
+			"geography": "ward",
+			"status": "available",
+			"recordCount": 8425,
+			"artifact": "areas/ward/2019-12-gb-bgc.json",
+			"contentHash": "sha256:fd8f10cc8648b485089e8710e7bbc31f8d8fd6d4a83678abfe71234e9b6a055b",
+			"codeProperty": "wd19cd",
+			"nameProperty": "wd19nm"
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "ward",
+			"status": "available",
+			"recordCount": 9114,
+			"artifact": "areas/ward/2018-12-uk-bgc.json",
+			"contentHash": "sha256:7063d16729f25bbbb7b81c1d238ee0dfdc3ce4a2b4383e0ba124ad103ec256c4",
+			"codeProperty": "wd18cd",
+			"nameProperty": "wd18nm"
+		},
+		{
+			"id": "2017-12-gb-bgc",
+			"geography": "ward",
+			"status": "available",
+			"recordCount": 8669,
+			"artifact": "areas/ward/2017-12-gb-bgc.json",
+			"contentHash": "sha256:493711bf119a2a76fd053b49c419dfc25a28a1079cba4ab45cba6455c9b561ea",
+			"codeProperty": "wd17cd",
+			"nameProperty": "wd17nm"
+		},
+		{
+			"id": "2016-12-gb-bgc",
+			"geography": "ward",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		}
+	]
+}

@@ -1,0 +1,59 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:cf79e42dd16032838db099cdb0c1fc57542c45f0dcfa56cd4238e483503cdb8d",
+	"geography": "localHealthBoard",
+	"boundaryRelease": "2023-12-w-bgc",
+	"codeProperty": "LHB23CD",
+	"nameProperty": "LHB23NM",
+	"areas": [
+		{
+			"code": "W11000023",
+			"name": "Betsi Cadwaladr University Health Board",
+			"aliases": [
+				"Bwrdd Iechyd Prifysgol Betsi Cadwaladr"
+			]
+		},
+		{
+			"code": "W11000024",
+			"name": "Powys Teaching Health Board",
+			"aliases": [
+				"Bwrdd Iechyd Addysgu Powys"
+			]
+		},
+		{
+			"code": "W11000025",
+			"name": "Hywel Dda University Health Board",
+			"aliases": [
+				"Bwrdd Iechyd Prifysgol Hywel Dda"
+			]
+		},
+		{
+			"code": "W11000028",
+			"name": "Aneurin Bevan University Health Board",
+			"aliases": [
+				"Bwrdd Iechyd Prifysgol Aneurin Bevan"
+			]
+		},
+		{
+			"code": "W11000029",
+			"name": "Cardiff and Vale University Health Board",
+			"aliases": [
+				"Bwrdd Iechyd Prifysgol Caerdydd a’r Fro"
+			]
+		},
+		{
+			"code": "W11000030",
+			"name": "Cwm Taf Morgannwg University Health Board",
+			"aliases": [
+				"Bwrdd Iechyd Prifysgol Cwm Taf Morgannwg"
+			]
+		},
+		{
+			"code": "W11000031",
+			"name": "Swansea Bay University Health Board",
+			"aliases": [
+				"Bwrdd Iechyd Prifysgol Bae Abertawe"
+			]
+		}
+	]
+}

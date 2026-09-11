@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:0d2d0d8adc930e47b3db20fe398e0b7ae4f2dc56f2a0f665edbf6d696eaa0e18",
+	"geography": "country",
+	"boundaryRelease": "2023-12-uk-bgc",
+	"codeProperty": "CTRY23CD",
+	"nameProperty": "CTRY23NM",
+	"areas": [
+		{
+			"code": "E92000001",
+			"name": "England",
+			"aliases": [
+				"Lloegr"
+			]
+		},
+		{
+			"code": "N92000002",
+			"name": "Northern Ireland",
+			"aliases": [
+				"Gogledd Iwerddon"
+			]
+		},
+		{
+			"code": "S92000003",
+			"name": "Scotland",
+			"aliases": [
+				"Yr Alban"
+			]
+		},
+		{
+			"code": "W92000004",
+			"name": "Wales",
+			"aliases": [
+				"Cymru"
+			]
+		}
+	]
+}

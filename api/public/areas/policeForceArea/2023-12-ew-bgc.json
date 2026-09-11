@@ -1,0 +1,182 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:021fe2482e8a1b30714e6bf76755aa0c1158753ffd55ef2e4a4f7aa3028d9d46",
+	"geography": "policeForceArea",
+	"boundaryRelease": "2023-12-ew-bgc",
+	"codeProperty": "PFA23CD",
+	"nameProperty": "PFA23NM",
+	"areas": [
+		{
+			"code": "E23000001",
+			"name": "Metropolitan Police"
+		},
+		{
+			"code": "E23000002",
+			"name": "Cumbria"
+		},
+		{
+			"code": "E23000003",
+			"name": "Lancashire"
+		},
+		{
+			"code": "E23000004",
+			"name": "Merseyside"
+		},
+		{
+			"code": "E23000005",
+			"name": "Greater Manchester"
+		},
+		{
+			"code": "E23000006",
+			"name": "Cheshire"
+		},
+		{
+			"code": "E23000007",
+			"name": "Northumbria"
+		},
+		{
+			"code": "E23000008",
+			"name": "Durham"
+		},
+		{
+			"code": "E23000009",
+			"name": "North Yorkshire"
+		},
+		{
+			"code": "E23000010",
+			"name": "West Yorkshire"
+		},
+		{
+			"code": "E23000011",
+			"name": "South Yorkshire"
+		},
+		{
+			"code": "E23000012",
+			"name": "Humberside"
+		},
+		{
+			"code": "E23000013",
+			"name": "Cleveland"
+		},
+		{
+			"code": "E23000014",
+			"name": "West Midlands"
+		},
+		{
+			"code": "E23000015",
+			"name": "Staffordshire"
+		},
+		{
+			"code": "E23000016",
+			"name": "West Mercia"
+		},
+		{
+			"code": "E23000017",
+			"name": "Warwickshire"
+		},
+		{
+			"code": "E23000018",
+			"name": "Derbyshire"
+		},
+		{
+			"code": "E23000019",
+			"name": "Nottinghamshire"
+		},
+		{
+			"code": "E23000020",
+			"name": "Lincolnshire"
+		},
+		{
+			"code": "E23000021",
+			"name": "Leicestershire"
+		},
+		{
+			"code": "E23000022",
+			"name": "Northamptonshire"
+		},
+		{
+			"code": "E23000023",
+			"name": "Cambridgeshire"
+		},
+		{
+			"code": "E23000024",
+			"name": "Norfolk"
+		},
+		{
+			"code": "E23000025",
+			"name": "Suffolk"
+		},
+		{
+			"code": "E23000026",
+			"name": "Bedfordshire"
+		},
+		{
+			"code": "E23000027",
+			"name": "Hertfordshire"
+		},
+		{
+			"code": "E23000028",
+			"name": "Essex"
+		},
+		{
+			"code": "E23000029",
+			"name": "Thames Valley"
+		},
+		{
+			"code": "E23000030",
+			"name": "Hampshire"
+		},
+		{
+			"code": "E23000031",
+			"name": "Surrey"
+		},
+		{
+			"code": "E23000032",
+			"name": "Kent"
+		},
+		{
+			"code": "E23000033",
+			"name": "Sussex"
+		},
+		{
+			"code": "E23000034",
+			"name": "London, City of"
+		},
+		{
+			"code": "E23000035",
+			"name": "Devon & Cornwall"
+		},
+		{
+			"code": "E23000036",
+			"name": "Avon and Somerset"
+		},
+		{
+			"code": "E23000037",
+			"name": "Gloucestershire"
+		},
+		{
+			"code": "E23000038",
+			"name": "Wiltshire"
+		},
+		{
+			"code": "E23000039",
+			"name": "Dorset"
+		},
+		{
+			"code": "W15000001",
+			"name": "North Wales"
+		},
+		{
+			"code": "W15000002",
+			"name": "Gwent"
+		},
+		{
+			"code": "W15000003",
+			"name": "South Wales"
+		},
+		{
+			"code": "W15000004",
+			"name": "Dyfed-Powys"
+		}
+	]
+}
