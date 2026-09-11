@@ -3,6 +3,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readCrosswalkAdapters } from "../src/crosswalkAdapters";
 import { compileCrosswalks } from "../src/crosswalkInventory";
+import { readGeometrySourceLookup } from "../src/geometrySources";
 import {
 	createAreaLookup,
 	type AreaInventory,
@@ -47,6 +48,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 			join(repositoryRoot, "api", "config", "crosswalk-adapters.json"),
 		),
 		readCompiledAreaLookup(outputDirectory),
+		readGeometrySourceLookup(join(repositoryRoot, "api")),
 	);
 	for (const artifact of artifacts) {
 		const path = join(outputDirectory, "crosswalks", `${artifact.id}.json`);

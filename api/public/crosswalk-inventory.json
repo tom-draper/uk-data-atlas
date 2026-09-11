@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:ad4c8eba1221b46fe5b4fdbdbdc6477b27a267b4175dc2439390624e39f77fe4",
+	"contentHash": "sha256:07f782b1d99b89a7f0f0958a407ab006bc32adb1a3b6d1ac2a4ab59594b7812b",
 	"crosswalks": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2",
@@ -153,6 +153,27 @@
 			"recordCount": 8668,
 			"artifact": "crosswalks/ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment.json",
 			"contentHash": "sha256:95f3b0a1dda67fd49a087cbf7778a02012c3c3a4ce57f9b9583d4c8ba6b1c0fe"
+		},
+		{
+			"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"method": "area-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "area",
+				"normalisation": "per-source"
+			},
+			"recordCount": 650,
+			"artifact": "crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap.json",
+			"contentHash": "sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7"
 		}
 	]
 }

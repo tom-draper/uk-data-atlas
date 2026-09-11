@@ -39,6 +39,7 @@ paths:
                   links:
                     - /v1/geographies
                     - /v1/boundary-releases
+                    - /v1/boundary-releases/{type}/{release}
                     - /v1/geography-inventory
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
@@ -238,7 +239,9 @@ paths:
         Returns only relationships from published crosswalks. A
         clean-containment mapping is represented as within from child to parent
         and contains in reverse. An official historical lookup is represented
-        as successor from source to target and predecessor in reverse.
+        as successor from source to target and predecessor in reverse. An
+        area-overlap mapping is represented as overlaps in both directions,
+        with the shared area and its share of each side.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -348,6 +351,15 @@ paths:
                     recordCount: 8405
                     artifact: crosswalks/ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment.json
                     contentHash: "sha256:4416aac5cac4b092189ed22665ad149bdd3b370a0dab1b75529993932f51fab3"
+                  - id: constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap
+                    from: { geography: constituency, boundaryRelease: 2024-07-uk-bgc }
+                    to: { geography: localAuthority, boundaryRelease: 2024-05-uk-bgc }
+                    method: area-overlap
+                    quality: derived
+                    weighting: { status: provided, basis: area, normalisation: per-source }
+                    recordCount: 650
+                    artifact: crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap.json
+                    contentHash: "sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7"
                 meta:
                   nextCursor: null
         "503":
@@ -370,27 +382,69 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CrosswalkMetadataEnvelope"
-              example:
-                apiVersion: v1
-                atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
-                data:
-                  schemaVersion: 1
-                  contentHash: "sha256:ce61b3f59c495498e9a7cfd7fb4ff6d3d742cffa8b27150a58c27b6f099b038d"
-                  id: constituency-2010-to-2024-official-lookup-v2
-                  method: official-lookup
-                  quality: publisher-supplied
-                  weighting: { status: not-provided }
-                  from: { geography: constituency, boundaryRelease: "2010" }
-                  to: { geography: constituency, boundaryRelease: 2024-07-uk-bgc }
-                  provenance:
-                    input: "boundaries/constituency/2024-07-uk-bgc/Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson"
-                    inputHash: "sha256:62e1ac00a3a6cce21055d623e7141e814e7212014a37fab0b0a3d693cf0e82a3"
-                  validation:
-                    sourceNameConflicts:
-                      - code: N06000004
-                        names: [Belfast North, Belfast West]
-                meta:
-                  nextCursor: null
+              examples:
+                officialLookup:
+                  value:
+                    apiVersion: v1
+                    atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                    data:
+                      schemaVersion: 1
+                      contentHash: "sha256:ce61b3f59c495498e9a7cfd7fb4ff6d3d742cffa8b27150a58c27b6f099b038d"
+                      id: constituency-2010-to-2024-official-lookup-v2
+                      method: official-lookup
+                      quality: publisher-supplied
+                      weighting: { status: not-provided }
+                      from: { geography: constituency, boundaryRelease: "2010" }
+                      to: { geography: constituency, boundaryRelease: 2024-07-uk-bgc }
+                      provenance:
+                        input: "boundaries/constituency/2024-07-uk-bgc/Westminster_PCON_(2010)_to_future_Westminster_PCON_(2024)_Lookup_in_the_UK_(V2).geojson"
+                        inputHash: "sha256:62e1ac00a3a6cce21055d623e7141e814e7212014a37fab0b0a3d693cf0e82a3"
+                      validation:
+                        sourceNameConflicts:
+                          - code: N06000004
+                            names: [Belfast North, Belfast West]
+                    meta:
+                      nextCursor: null
+                areaOverlap:
+                  value:
+                    apiVersion: v1
+                    atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
+                    data:
+                      schemaVersion: 1
+                      id: constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap
+                      method: area-overlap
+                      quality: derived
+                      weighting: { status: provided, basis: area, normalisation: per-source }
+                      from: { geography: constituency, boundaryRelease: 2024-07-uk-bgc }
+                      to: { geography: localAuthority, boundaryRelease: 2024-05-uk-bgc }
+                      provenance:
+                        inputs:
+                          - side: from
+                            input: boundaries/constituency/2024-07-uk-bgc/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson
+                            inputHash: "sha256:d3ac7aea554e63864a030baf6b5b2069cb8b1870e16a611ae21df6ad23b04383"
+                          - side: to
+                            input: boundaries/local-authority/2024-05-uk-bgc/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson
+                            inputHash: "sha256:a54c16257bac529d380d7f9e9a3449186fda563ee426e565153a08e60d4afa3a"
+                        areaProjection: EPSG:6933
+                        clipping: polygon-clipping@0.15.7
+                      validation:
+                        sourceNameConflicts: []
+                        endpoints:
+                          from: { status: verified, availableAreaCount: 650, referencedCodeCount: 650 }
+                          to: { status: verified, availableAreaCount: 361, referencedCodeCount: 361 }
+                        overlap:
+                          candidatePairCount: 3600
+                          intersectingPairCount: 2329
+                          sliverPairCount: 1381
+                          sliverWidthM: 100
+                          widestSliverWidthM: 15.1
+                          narrowestOverlapWidthM: 332.1
+                          minimumCoverage: 0.99
+                          minimumSourceCoverage: 0.99606
+                          minimumTargetCoverage: 0.997111
+                      contentHash: "sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7"
+                    meta:
+                      nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -430,22 +484,58 @@ paths:
             One page of matching records, or an empty array if `source`
             matched nothing. Bulk consumers should prefer downloading the
             static crosswalk artifact until an export endpoint exists.
+            Records of an `area-overlap` crosswalk also carry each source's
+            area and coverage and each target's weight, overlap area and
+            shares.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CrosswalkRecordListEnvelope"
-              example:
-                apiVersion: v1
-                atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
-                data:
-                  - source: { code: N06000004, labels: [Belfast North, Belfast West] }
-                    targets:
-                      - { code: N05000002, labels: [Belfast North] }
-                      - { code: N05000003, labels: [Belfast South and Mid Down] }
-                      - { code: N05000004, labels: [Belfast West] }
-                      - { code: N05000014, labels: [South Antrim] }
-                meta:
-                  nextCursor: null
+              examples:
+                officialLookup:
+                  value:
+                    apiVersion: v1
+                    atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
+                    data:
+                      - source: { code: N06000004, labels: [Belfast North, Belfast West] }
+                        targets:
+                          - { code: N05000002, labels: [Belfast North] }
+                          - { code: N05000003, labels: [Belfast South and Mid Down] }
+                          - { code: N05000004, labels: [Belfast West] }
+                          - { code: N05000014, labels: [South Antrim] }
+                    meta:
+                      nextCursor: null
+                areaOverlap:
+                  value:
+                    apiVersion: v1
+                    atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
+                    data:
+                      - source:
+                          code: E14001067
+                          labels: [Arundel and South Downs]
+                          areaM2: 835415269
+                          coverage: 0.999884
+                        targets:
+                          - code: E07000224
+                            labels: [Arun]
+                            weight: 0.122779
+                            overlapAreaM2: 102559824
+                            sourceShare: 0.122765
+                            targetShare: 0.463915
+                          - code: E07000225
+                            labels: [Chichester]
+                            weight: 0.614952
+                            overlapAreaM2: 513680634
+                            sourceShare: 0.614881
+                            targetShare: 0.652975
+                          - code: E07000227
+                            labels: [Horsham]
+                            weight: 0.262269
+                            overlapAreaM2: 219077810
+                            sourceShare: 0.262238
+                            targetShare: 0.413031
+                    meta:
+                      nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -751,15 +841,11 @@ components:
             boundaryRelease:
               type: string
         method:
-          enum: [official-lookup, clean-containment]
+          $ref: "#/components/schemas/CrosswalkMethod"
         quality:
-          const: publisher-supplied
+          $ref: "#/components/schemas/CrosswalkQuality"
         weighting:
-          type: object
-          required: [status]
-          properties:
-            status:
-              enum: [not-provided, not-applicable]
+          $ref: "#/components/schemas/CrosswalkWeighting"
 
     RelationshipCoverage:
       oneOf:
@@ -873,7 +959,21 @@ components:
       required: [relation, counterpart, crosswalk]
       properties:
         relation:
-          enum: [within, contains, successor, predecessor]
+          enum: [within, contains, successor, predecessor, overlaps]
+        overlap:
+          description: >
+            Present only for `overlaps` relationships. Each share is seen from
+            this area's side: `shareOfArea` is the overlap as a share of this
+            area and `shareOfCounterpart` as a share of the counterpart.
+          type: object
+          required: [areaM2, shareOfArea, shareOfCounterpart]
+          properties:
+            areaM2:
+              type: integer
+            shareOfArea:
+              type: number
+            shareOfCounterpart:
+              type: number
         counterpart:
           type: object
           required: [id, geography, boundaryRelease, code, labels]
@@ -897,15 +997,11 @@ components:
             id:
               type: string
             method:
-              enum: [official-lookup, clean-containment]
+              $ref: "#/components/schemas/CrosswalkMethod"
             quality:
-              const: publisher-supplied
+              $ref: "#/components/schemas/CrosswalkQuality"
             weighting:
-              type: object
-              required: [status]
-              properties:
-                status:
-                  enum: [not-provided, not-applicable]
+              $ref: "#/components/schemas/CrosswalkWeighting"
 
     AreaWithRelationships:
       allOf:
@@ -975,16 +1071,6 @@ components:
               items:
                 $ref: "#/components/schemas/Area"
 
-    AreaListEnvelope:
-      allOf:
-        - $ref: "#/components/schemas/Envelope"
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: "#/components/schemas/Area"
-
     AreaEnvelope:
       allOf:
         - $ref: "#/components/schemas/Envelope"
@@ -1001,6 +1087,40 @@ components:
           type: string
         boundaryRelease:
           type: string
+
+    CrosswalkMethod:
+      description: >
+        `official-lookup` and `clean-containment` read an explicit code pair
+        from a published file. `area-overlap` intersects the two releases'
+        boundary geometries and weights each source by the area it shares
+        with each target.
+      enum: [official-lookup, clean-containment, area-overlap]
+
+    CrosswalkQuality:
+      description: >
+        `publisher-supplied` mappings restate a publisher's own
+        correspondence. `derived` mappings are computed by the Atlas.
+      enum: [publisher-supplied, derived]
+
+    CrosswalkWeighting:
+      oneOf:
+        - type: object
+          required: [status]
+          properties:
+            status:
+              enum: [not-provided, not-applicable]
+        - type: object
+          description: >
+            Each record's target weights are shares of the source's area
+            covered by its published targets, and sum to 1 within rounding.
+          required: [status, basis, normalisation]
+          properties:
+            status:
+              const: provided
+            basis:
+              const: area
+            normalisation:
+              const: per-source
 
     CrosswalkSummary:
       type: object
@@ -1022,15 +1142,11 @@ components:
         to:
           $ref: "#/components/schemas/CrosswalkSide"
         method:
-          enum: [official-lookup, clean-containment]
+          $ref: "#/components/schemas/CrosswalkMethod"
         quality:
-          const: publisher-supplied
+          $ref: "#/components/schemas/CrosswalkQuality"
         weighting:
-          type: object
-          required: [status]
-          properties:
-            status:
-              enum: [not-provided, not-applicable]
+          $ref: "#/components/schemas/CrosswalkWeighting"
         recordCount:
           type: integer
         artifact:
@@ -1069,31 +1185,58 @@ components:
         id:
           type: string
         method:
-          enum: [official-lookup, clean-containment]
+          $ref: "#/components/schemas/CrosswalkMethod"
         quality:
-          const: publisher-supplied
+          $ref: "#/components/schemas/CrosswalkQuality"
         weighting:
-          type: object
-          required: [status]
-          properties:
-            status:
-              enum: [not-provided, not-applicable]
+          $ref: "#/components/schemas/CrosswalkWeighting"
         from:
           $ref: "#/components/schemas/CrosswalkSide"
         to:
           $ref: "#/components/schemas/CrosswalkSide"
         provenance:
-          type: object
-          required: [input, inputHash]
-          properties:
-            input:
-              type: string
-            inputHash:
-              type: string
+          oneOf:
+            - type: object
+              description: The one published file the code pairs are read from.
+              required: [input, inputHash]
+              properties:
+                input:
+                  type: string
+                inputHash:
+                  type: string
+            - type: object
+              description: >
+                The two boundary geometries an `area-overlap` crosswalk
+                intersects, how areas were measured, and the clipping library
+                that computed each intersection.
+              required: [inputs, areaProjection, clipping]
+              properties:
+                inputs:
+                  type: array
+                  items:
+                    type: object
+                    required: [side, input, inputHash]
+                    properties:
+                      side:
+                        enum: [from, to]
+                      input:
+                        type: string
+                      inputHash:
+                        type: string
+                areaProjection:
+                  const: EPSG:6933
+                  description: >
+                    Lambert cylindrical equal-area on the WGS 84 ellipsoid, so
+                    every area is an ellipsoidal area in square metres.
+                clipping:
+                  type: string
+                  description: Clipping library and version, e.g. `polygon-clipping@0.15.7`.
         validation:
           type: object
           required: [sourceNameConflicts, endpoints]
           properties:
+            overlap:
+              $ref: "#/components/schemas/AreaOverlapValidation"
             sourceNameConflicts:
               type: array
               items:
@@ -1134,6 +1277,47 @@ components:
             reason:
               type: string
 
+    AreaOverlapValidation:
+      type: object
+      description: >
+        Present only for `area-overlap` crosswalks. Two independently
+        generalised boundaries leave narrow slivers where they disagree. A
+        pair whose widest intersecting piece is narrower than `sliverWidthM`
+        (twice its area over its perimeter) is dropped as a sliver. The build
+        fails unless every sliver is under half that width and every kept
+        overlap at least twice it, and unless every source and target area is
+        at least `minimumCoverage` covered by kept overlaps.
+      required:
+        - candidatePairCount
+        - intersectingPairCount
+        - sliverPairCount
+        - sliverWidthM
+        - widestSliverWidthM
+        - narrowestOverlapWidthM
+        - minimumCoverage
+        - minimumSourceCoverage
+        - minimumTargetCoverage
+      properties:
+        candidatePairCount:
+          type: integer
+          description: Pairs whose bounding boxes meet, and so were clipped.
+        intersectingPairCount:
+          type: integer
+        sliverPairCount:
+          type: integer
+        sliverWidthM:
+          type: number
+        widestSliverWidthM:
+          type: [number, "null"]
+        narrowestOverlapWidthM:
+          type: number
+        minimumCoverage:
+          type: number
+        minimumSourceCoverage:
+          type: number
+        minimumTargetCoverage:
+          type: number
+
     CrosswalkMetadataEnvelope:
       allOf:
         - $ref: "#/components/schemas/Envelope"
@@ -1168,6 +1352,48 @@ components:
           items:
             $ref: "#/components/schemas/CrosswalkArea"
 
+    AreaOverlapRecord:
+      type: object
+      description: >
+        One `area-overlap` source with the targets it shares area with, after
+        slivers are dropped. Areas are ellipsoidal square metres.
+      required: [source, targets]
+      properties:
+        source:
+          allOf:
+            - $ref: "#/components/schemas/CrosswalkArea"
+            - type: object
+              required: [areaM2, coverage]
+              properties:
+                areaM2:
+                  type: integer
+                coverage:
+                  type: number
+                  description: Share of the source's area covered by its targets.
+        targets:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/CrosswalkArea"
+              - type: object
+                required:
+                  [weight, overlapAreaM2, sourceShare, targetShare]
+                properties:
+                  weight:
+                    type: number
+                    description: >
+                      Share of the source's covered area. A record's weights
+                      sum to 1 within rounding, so they apportion a whole
+                      source quantity across its targets.
+                  overlapAreaM2:
+                    type: integer
+                  sourceShare:
+                    type: number
+                    description: Overlap as a share of the whole source area.
+                  targetShare:
+                    type: number
+                    description: Overlap as a share of the whole target area.
+
     CrosswalkRecordListEnvelope:
       allOf:
         - $ref: "#/components/schemas/Envelope"
@@ -1176,7 +1402,9 @@ components:
             data:
               type: array
               items:
-                $ref: "#/components/schemas/CrosswalkRecord"
+                anyOf:
+                  - $ref: "#/components/schemas/CrosswalkRecord"
+                  - $ref: "#/components/schemas/AreaOverlapRecord"
 
     RelationshipCandidateSide:
       type: object
