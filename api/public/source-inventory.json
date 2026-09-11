@@ -1,0 +1,2045 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:4c51e263bf00d9c8aec095151824f87682c75d3c9d83128738be10ef08232ae4",
+	"sources": [
+		{
+			"key": "boundaries/combined-authority/2025-12-en-bgc",
+			"metadataId": "2025-12-en-bgc",
+			"kind": "boundary",
+			"title": "Combined authorities, December 2025 (England, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:6674a5e354661262ca18eebe9667e39774396aa2794caf8e954bd2a2e6b05e50"
+		},
+		{
+			"key": "boundaries/community-safety-partnership/2023-12-ew-bgc",
+			"metadataId": "2023-12-ew-bgc",
+			"kind": "boundary",
+			"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:13ef79817e985d5bf3994158949955f6c168e223c7eb102208056170ab0ae768"
+		},
+		{
+			"key": "boundaries/constituency/2015-12-gb-bgc",
+			"metadataId": "2015-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Westminster parliamentary constituencies, December 2015 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2015",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:68f24ded1d0326d965f64b69647e70a47f7fb03a59c76247b95170c79f5fb1a9"
+		},
+		{
+			"key": "boundaries/constituency/2016-12-uk-bgc",
+			"metadataId": "2016-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Westminster parliamentary constituencies, December 2016 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2016",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:73099b0ffeb036f389135422e8371f63ffa8013fba0d2bdae54a6b8ecb3c26b7"
+		},
+		{
+			"key": "boundaries/constituency/2017-12-uk-bgc",
+			"metadataId": "2017-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Westminster parliamentary constituencies, December 2017 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2017",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:aec65f9166c56c476fcb65c8a8446c88138776aedc974d9e8f29dc00f5e5996c"
+		},
+		{
+			"key": "boundaries/constituency/2019-12-uk-bgc",
+			"metadataId": "2019-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:8c00f2461ea86b9d4724e304067b3d36f6800c7aed929f78efc7bfacc048d462"
+		},
+		{
+			"key": "boundaries/constituency/2024-07-uk-bgc",
+			"metadataId": "2024-07-uk-bgc",
+			"kind": "boundary",
+			"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "lookup"
+				},
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:cb36a990db1b57ae973ebe88874fae7f560a12721fa784cf5e52a9fd5e8466f3"
+		},
+		{
+			"key": "boundaries/country/2020-12-uk-bgc",
+			"metadataId": "2020-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Countries, December 2020 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2020",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:ae7c1bb03b5ad0068231d7864e6587e67bf4f08a6beb5d4a62a483ee2a4aaa89"
+		},
+		{
+			"key": "boundaries/country/2021-12-uk-bgc",
+			"metadataId": "2021-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Countries, December 2021 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:422472ac5f3e1b9df77a2b6a5d4c33e0a32a5bc63b013ee151824d95ba62be24"
+		},
+		{
+			"key": "boundaries/country/2022-12-uk-bgc",
+			"metadataId": "2022-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Countries, December 2022 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:b6faafb9bb0ff609aa4e4ac79a6ae12f4a8ee00ff73c5fcc9ec67879d574760f"
+		},
+		{
+			"key": "boundaries/country/2023-12-uk-bgc",
+			"metadataId": "2023-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Countries, December 2023 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:1b138b204c9278746c35b88be146055a3dab358a836e29d1c0f73507d8f2c364"
+		},
+		{
+			"key": "boundaries/country/2024-12-uk-bgc",
+			"metadataId": "2024-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Countries, December 2024 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:8a45576d3041bf9ce55f3017a5d046a08f2b8146f6ee22d760a19a76272e91ba"
+		},
+		{
+			"key": "boundaries/country/2025-12-uk-bgc",
+			"metadataId": "2025-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Countries, December 2025 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:a696280b2e6f0c64656a9d41fc09adad56e7d00661fc60df896db775bf516b17"
+		},
+		{
+			"key": "boundaries/county-and-unitary-authority/2025-12-uk-bgc",
+			"metadataId": "2025-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Counties and unitary authorities, December 2025 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:68f832220c5ebec5d7e43de1d3930ca4ba784bab861add09acaebd5e4b207fe2"
+		},
+		{
+			"key": "boundaries/county-electoral-division/2023-05-en-bgc",
+			"metadataId": "2023-05-en-bgc",
+			"kind": "boundary",
+			"title": "County electoral divisions, May 2023 (England, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:e3a837c3ec6bf1f814b70f8e9dad1ee9ba7a67513384e0361c8a6b086eeb3063"
+		},
+		{
+			"key": "boundaries/data-zone/2011-12-sc-bfc",
+			"metadataId": "2011-12-sc-bfc",
+			"kind": "boundary",
+			"title": "Data zones, December 2011 (Scotland, full resolution, clipped)",
+			"publisher": "Scottish Government",
+			"sourceUrl": "https://spatialdata.gov.scot/",
+			"temporalCoverage": "2011",
+			"files": [
+				{
+					"extension": ".cpg",
+					"role": "reference"
+				},
+				{
+					"extension": ".dbf",
+					"role": "reference"
+				},
+				{
+					"extension": ".prj",
+					"role": "reference"
+				},
+				{
+					"extension": ".sbn",
+					"role": "reference"
+				},
+				{
+					"extension": ".sbx",
+					"role": "reference"
+				},
+				{
+					"extension": ".shp",
+					"role": "source"
+				},
+				{
+					"extension": ".xml",
+					"role": "reference"
+				},
+				{
+					"extension": ".shx",
+					"role": "reference"
+				},
+				{
+					"extension": ".topojson",
+					"role": "derived"
+				}
+			],
+			"metadataHash": "sha256:dc8bcc8dfd97724efa1cd81a40aeca46984cf6437777951e2e68ac6ec832fb95"
+		},
+		{
+			"key": "boundaries/data-zone/2011-12-sc-nc",
+			"metadataId": "2011-12-sc-nc",
+			"kind": "boundary",
+			"title": "Data zones, December 2011 (Scotland, not clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2011",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:58b667408522f42b4738c7ddf1db2ea4ec512de6b752e64c65768266c7cb501e"
+		},
+		{
+			"key": "boundaries/fire-and-rescue-authority/2021-05-ew-bgc",
+			"metadataId": "2021-05-ew-bgc",
+			"kind": "boundary",
+			"title": "Fire and rescue authorities, May 2021 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:e36657555d7b6695bd7b6b7d3f1cea1a917c92e62ca50fce7c141882609d1203"
+		},
+		{
+			"key": "boundaries/integrated-care-board/2026-04-en-bgc",
+			"metadataId": "2026-04-en-bgc",
+			"kind": "boundary",
+			"title": "Integrated care boards, April 2026 (England, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2026",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:598dad1a78a6f5ae764ec30bb9a8153f357ed7435b069a39a16766112aba1558"
+		},
+		{
+			"key": "boundaries/itl1/2021-01-uk-bgc",
+			"metadataId": "2021-01-uk-bgc",
+			"kind": "boundary",
+			"title": "International territorial level 1, January 2021 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:29a2e8a6b07732d758b615764a2e4af2cfe2df90b14103b278ff1d9f42d3435a"
+		},
+		{
+			"key": "boundaries/itl2/2021-01-uk-bgc-v2",
+			"metadataId": "2021-01-uk-bgc-v2",
+			"kind": "boundary",
+			"title": "International territorial level 2, January 2021 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:7afe95cb269960e38add867369e932d1eace482c9b528f7add82efd8ee4cedd6"
+		},
+		{
+			"key": "boundaries/itl3/2021-01-uk-bgc-v3",
+			"metadataId": "2021-01-uk-bgc-v3",
+			"kind": "boundary",
+			"title": "International territorial level 3, January 2021 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:3b2edf94104928061c3dac616fddb1fccc1e79c90fb27a606297090e4b84a1c8"
+		},
+		{
+			"key": "boundaries/local-authority/2016-12-gb-bgc",
+			"metadataId": "2016-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2016 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2016",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:0e6fb09babbb678cff8497008fed10bbcb36cd08dce24ce121f8acdfa132f3c0"
+		},
+		{
+			"key": "boundaries/local-authority/2018-12-uk-bgc",
+			"metadataId": "2018-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2018 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2018",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:87871cda996eb243db0ef7b8c0da2c8d28bdbb50f5332a77b14f9a8d19809fe0"
+		},
+		{
+			"key": "boundaries/local-authority/2021-12-uk-bgc",
+			"metadataId": "2021-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2021 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:439d27a543681e4dff9e4c4b93ebfe616bda10d69f68e348c957dad1f747cad7"
+		},
+		{
+			"key": "boundaries/local-authority/2022-12-uk-bgc-v2",
+			"metadataId": "2022-12-uk-bgc-v2",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2022 (United Kingdom, generalised, clipped, v2)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:e50151a76cfa0bd2415c0a1184b7414fb286b96580fd33d81cff60580bfafdac"
+		},
+		{
+			"key": "boundaries/local-authority/2023-05-uk-bgc-v2",
+			"metadataId": "2023-05-uk-bgc-v2",
+			"kind": "boundary",
+			"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:231a7436f0749c6f26a37ef3858dbb722a28905702b920af4e4ad98def5f56d1"
+		},
+		{
+			"key": "boundaries/local-authority/2024-05-uk-bgc",
+			"metadataId": "2024-05-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:faa515680684ce4dd670c5cb8b44bd671cbbfffb148af0640944e4e817fce6b0"
+		},
+		{
+			"key": "boundaries/local-authority/2025-05-uk-bgc-v2",
+			"metadataId": "2025-05-uk-bgc-v2",
+			"kind": "boundary",
+			"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:95d5f992ed7e85b86f20b6d3d00b745d593a0083727ab2500ac6809cdf82532c"
+		},
+		{
+			"key": "boundaries/local-health-board/2023-12-w-bgc",
+			"metadataId": "2023-12-w-bgc",
+			"kind": "boundary",
+			"title": "Local health boards, December 2023 (Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:8695bf0b8610d1e0a6dff9e4bb4a024dfb2da8332734cdcb81bae2d43df28276"
+		},
+		{
+			"key": "boundaries/local-planning-authority/2019-04-uk-bgc",
+			"metadataId": "2019-04-uk-bgc",
+			"kind": "boundary",
+			"title": "Local planning authorities, April 2019 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:90f5ea1f73f9083a98e363da06550ab4e2cdd5ba177a90c15e858c3a751c5ad9"
+		},
+		{
+			"key": "boundaries/lsoa/2011-12-ew-bgc-v3",
+			"metadataId": "2011-12-ew-bgc-v3",
+			"kind": "boundary",
+			"title": "Lower layer super output areas, December 2011 (England and Wales, generalised, clipped, v3)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2011",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:6a0e3820eedb02a39281fd791576fb2f30ea8f8077796c6a3240187193356e8f"
+		},
+		{
+			"key": "boundaries/lsoa/2011-12-w-bgc",
+			"metadataId": "2011-12-w-bgc",
+			"kind": "boundary",
+			"title": "Lower layer super output areas, December 2011 (Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2011",
+			"files": [
+				{
+					"extension": ".topojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:6b0479a5e5066ba24a49ee22ccb7ced212e0c74d068c88b5db0aaaf2ee9cde9b"
+		},
+		{
+			"key": "boundaries/major-town-and-city/2015-12-ew-bgc",
+			"metadataId": "2015-12-ew-bgc",
+			"kind": "boundary",
+			"title": "Major towns and cities, December 2015 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2015",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:cc2e15f90128a3515b4d3796aa1d8734e2cda6446889f09cc6c7f0c4ae3e6b8f"
+		},
+		{
+			"key": "boundaries/msoa/2021-12-ew-bgc-v3",
+			"metadataId": "2021-12-ew-bgc-v3",
+			"kind": "boundary",
+			"title": "Middle layer super output areas, December 2021 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:a917727e93745b52e18f67cc3ae08aa06fbc64179c18ed7d082fa003a4d5dc96"
+		},
+		{
+			"key": "boundaries/national-park/2020-12-gb-bgc",
+			"metadataId": "2020-12-gb-bgc",
+			"kind": "boundary",
+			"title": "National parks, December 2020 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2020",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:157b901410a89038ce861411285d6266c09cd37e41395cba70740317371cfee7"
+		},
+		{
+			"key": "boundaries/nhs-england-region/2022-07-en-bgc",
+			"metadataId": "2022-07-en-bgc",
+			"kind": "boundary",
+			"title": "NHS England regions, July 2022 (England, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:aa2f92c9d3d09a56874adc8b0c5bc5326be4a13dc5ed526b3124346f4c182aac"
+		},
+		{
+			"key": "boundaries/parish/2019-04-ew-bgc",
+			"metadataId": "2019-04-ew-bgc",
+			"kind": "boundary",
+			"title": "Parishes and non civil parished areas, April 2019 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:21c526d98ded9b7e564affe94accabe191f106a3ff31d7141cf7252c5dd21b38"
+		},
+		{
+			"key": "boundaries/parish/2021-12-ew-bgc",
+			"metadataId": "2021-12-ew-bgc",
+			"kind": "boundary",
+			"title": "Parishes and non civil parished areas, December 2021 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:3ddf76b02872475647ad14177b88a336a5842b907d95f10d4c3882da5154575e"
+		},
+		{
+			"key": "boundaries/parish/2022-12-ew-bgc-v3",
+			"metadataId": "2022-12-ew-bgc-v3",
+			"kind": "boundary",
+			"title": "Parishes and non civil parished areas, December 2022 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:0b6939c9e15db1b485bda387647e3ef7434375c713d9b936afa445053cc2a3c2"
+		},
+		{
+			"key": "boundaries/parish/2023-12-ew-bgc",
+			"metadataId": "2023-12-ew-bgc",
+			"kind": "boundary",
+			"title": "Parishes and non civil parished areas, December 2023 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:99e5b054f1ea28793bc68b3f87165e664c8df02699202c8f5683fc83cb6c0226"
+		},
+		{
+			"key": "boundaries/parish/2024-12-ew-bgc",
+			"metadataId": "2024-12-ew-bgc",
+			"kind": "boundary",
+			"title": "Parishes and non civil parished areas, December 2024 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:dce2e73212515de1493969b8605b4463d3478fee2baae23742dcdb5c76c51438"
+		},
+		{
+			"key": "boundaries/parish/2025-05-ew-bgc",
+			"metadataId": "2025-05-ew-bgc",
+			"kind": "boundary",
+			"title": "Parishes and non civil parished areas, May 2025 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:91b3f9a3a88d67d3e51435cfd2efb7effc4455aaa1299f8262afd240dc660449"
+		},
+		{
+			"key": "boundaries/parish/2026-05-ew-bgc",
+			"metadataId": "2026-05-ew-bgc",
+			"kind": "boundary",
+			"title": "Parishes and non civil parished areas, May 2026 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2026",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:dbd715f88745b45facc76f5b8a7fd10a16a9f6c1da2fa346854e112b9c2b3710"
+		},
+		{
+			"key": "boundaries/police-force-area/2023-12-ew-bgc",
+			"metadataId": "2023-12-ew-bgc",
+			"kind": "boundary",
+			"title": "Police force areas, December 2023 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:99a0f5e5d6d27c5e99d1434b80bf5b5dbdd7815c741df08204ced5d2443af8de"
+		},
+		{
+			"key": "boundaries/region/2025-12-en-bgc",
+			"metadataId": "2025-12-en-bgc",
+			"kind": "boundary",
+			"title": "Regions, December 2025 (England, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:e40a5ec957ae6a715a2e5f4e1015e3a20b5ecaa7f13e888fc9836d2b068a7312"
+		},
+		{
+			"key": "boundaries/scottish-parliamentary-constituency/2021-05-sc-bgc",
+			"metadataId": "2021-05-sc-bgc",
+			"kind": "boundary",
+			"title": "Scottish Parliamentary constituencies, May 2021 (Scotland, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:2199f52f65696ad9fab3d95d3fbec3d12edf7a8f6b58eec12b9763278bdd041d"
+		},
+		{
+			"key": "boundaries/scottish-parliamentary-region/2022-12-sc-bgc",
+			"metadataId": "2022-12-sc-bgc",
+			"kind": "boundary",
+			"title": "Scottish Parliamentary regions, December 2022 (Scotland, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:f093e626b9846636de102ae6f70ff6ca1ac4836048f760b51278eadb317f2c17"
+		},
+		{
+			"key": "boundaries/senedd-constituency/2022-12-w-bgc",
+			"metadataId": "2022-12-w-bgc",
+			"kind": "boundary",
+			"title": "Senedd Cymru constituencies, December 2022 (Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:8a2009de010f07df03f6344baeb0e488ea04bc4622fe134305900db67af4df95"
+		},
+		{
+			"key": "boundaries/senedd-electoral-region/2022-12-w-bgc",
+			"metadataId": "2022-12-w-bgc",
+			"kind": "boundary",
+			"title": "Senedd Cymru electoral regions, December 2022 (Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:5a0e5eff97f694f2501f48eaeb7875da56b4d24819774a8bed7e7fa257974577"
+		},
+		{
+			"key": "boundaries/sub-integrated-care-board-location/2026-04-en-bgc",
+			"metadataId": "2026-04-en-bgc",
+			"kind": "boundary",
+			"title": "Sub integrated care board locations, April 2026 (England, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2026",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:2f710bc32ea3daf8d4bb0749be644bab4d47839a89e36861b7bed858f671935f"
+		},
+		{
+			"key": "boundaries/super-output-area/2011-ni",
+			"metadataId": "2011-ni",
+			"kind": "boundary",
+			"title": "Super output areas, 2011 (Northern Ireland)",
+			"publisher": "Northern Ireland Statistics and Research Agency",
+			"sourceUrl": "https://www.nisra.gov.uk/",
+			"temporalCoverage": "2011",
+			"files": [
+				{
+					"extension": ".topojson",
+					"role": "derived"
+				},
+				{
+					"extension": ".dat",
+					"role": "reference"
+				},
+				{
+					"extension": ".id",
+					"role": "reference"
+				},
+				{
+					"extension": ".map",
+					"role": "reference"
+				},
+				{
+					"extension": ".tab",
+					"role": "reference"
+				},
+				{
+					"extension": ".dbf",
+					"role": "reference"
+				},
+				{
+					"extension": ".prj",
+					"role": "reference"
+				},
+				{
+					"extension": ".sbn",
+					"role": "reference"
+				},
+				{
+					"extension": ".sbx",
+					"role": "reference"
+				},
+				{
+					"extension": ".shp",
+					"role": "source"
+				},
+				{
+					"extension": ".xml",
+					"role": "reference"
+				},
+				{
+					"extension": ".shx",
+					"role": "reference"
+				}
+			],
+			"metadataHash": "sha256:bbcf9697971e00e022ea35e706f9c2e670748dd0bad4b073622b5fce68d9984c"
+		},
+		{
+			"key": "boundaries/travel-to-work-area/2011-12-uk-gcb",
+			"metadataId": "2011-12-uk-gcb",
+			"kind": "boundary",
+			"title": "Travel to work areas, December 2011 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2011",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:26a4467bccb8c0c07fa27035530c193adb2e93c592e7f213b1eb0d9fac7fd500"
+		},
+		{
+			"key": "boundaries/ward/2016-12-gb-bgc",
+			"metadataId": "2016-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2016 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2016",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:229595c28eb51e48be521fce99b5ffc667d2c9eb262df36b59f939e7635fbd32"
+		},
+		{
+			"key": "boundaries/ward/2017-12-gb-bgc",
+			"metadataId": "2017-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2017 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2017",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:05193d444819f4792c39376286ab2814feaaaa91cc53376184f36e0351738235"
+		},
+		{
+			"key": "boundaries/ward/2018-12-uk-bgc",
+			"metadataId": "2018-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2018 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2018",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:ae16b5da71e04ed17bd0df32b15a1432325940ca7d483c90170a9a94a32b0634"
+		},
+		{
+			"key": "boundaries/ward/2019-12-gb-bgc",
+			"metadataId": "2019-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2019 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:5decc170cee60d10d13c0953ac24d8ecaad202063cb9f725ef8836e5a052d6b7"
+		},
+		{
+			"key": "boundaries/ward/2020-12-uk-bgc",
+			"metadataId": "2020-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2020 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2020",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:cf3bb9f457189981a778c39d4265ea129ca1e95cf464d0d57c260bc16c34de9c"
+		},
+		{
+			"key": "boundaries/ward/2021-12-uk-bgc",
+			"metadataId": "2021-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2021 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:e8866554765d223fb35b0efc41255b30ebb1720709492d716f554e065c09c580"
+		},
+		{
+			"key": "boundaries/ward/2022-12-uk-bgc",
+			"metadataId": "2022-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2022 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:d6289932c4f820fc0a628f10d5117938247410746e5ddd2187c8a21fd319aa39"
+		},
+		{
+			"key": "boundaries/ward/2023-05-uk-bgc",
+			"metadataId": "2023-05-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, May 2023 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:40fd8c9f2200dbccb466a37d5098dc3ace8672fc50783ff5166bba0031a68cc3"
+		},
+		{
+			"key": "boundaries/ward/2023-12-uk-bgc",
+			"metadataId": "2023-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2023 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:a5109273926b4e57c339afc6d476f7bf2c8ad0a8fbfaece800c4b2edd8b2e414"
+		},
+		{
+			"key": "boundaries/ward/2024-05-uk-bgc",
+			"metadataId": "2024-05-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, May 2024 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:c6d6eb714c5d3405a730fcae161f67e67476e053adaabeff50a9074254a8fc07"
+		},
+		{
+			"key": "boundaries/ward/2024-12-uk-bgc",
+			"metadataId": "2024-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2024 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:d508a0725d21e7809581e856acaec30ae055f3a993ac917c3f3ef487b16014a3"
+		},
+		{
+			"key": "boundaries/ward/2025-05-uk-bgc-v2",
+			"metadataId": "2025-05-uk-bgc-v2",
+			"kind": "boundary",
+			"title": "Wards, May 2025 (United Kingdom, generalised, clipped, v2)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:d5b4dfe8ef6850358a9200e79bbe3280b573086200dea54f0419f705b8ae6eeb"
+		},
+		{
+			"key": "boundaries/ward/2025-12-uk-bgc",
+			"metadataId": "2025-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2025 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:0b4c78b1577e119b31ae24b2a59107290750b631d3928f054f18239955a1eb25"
+		},
+		{
+			"key": "boundaries/ward/2026-05-uk-bgc",
+			"metadataId": "2026-05-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, May 2026 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2026",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:b67838eb1ee5aabd2a51445b7cd53ab3183dec34e70dbf22c3452a9f174ecf1d"
+		},
+		{
+			"key": "demographics/ethnicity/ethnic-group-by-age-and-sex",
+			"metadataId": "ethnic-group-by-age-and-sex",
+			"title": "Ethnic group by age and sex",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/culturalidentity/ethnicity/datasets/ethnicgroupbyageandsexinenglandandwales",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:e4e2cc8768471e12dccc6c601824cbcab21ee8fb8f94f1f62d9fca9fc9cf26bd"
+		},
+		{
+			"key": "demographics/ethnicity/ts021-ethnic-group",
+			"metadataId": "ts021-ethnic-group",
+			"title": "Ethnic group (20 categories) by local authority",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/datasets/TS021/editions/2021/versions/3",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:03d8943c2a0c92c30816a743cd2343e249c39fa2578655882941d6c2de799777"
+		},
+		{
+			"key": "demographics/population/england-wales",
+			"metadataId": "england-wales",
+			"title": "England and Wales population estimates",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/estimatesofthepopulationforenglandandwales",
+			"temporalCoverage": "1838-2025",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:3f445afdba380d42a174bb97ee148be4031406ce0de8e60cc984ddce9c945252"
+		},
+		{
+			"key": "demographics/population/uk",
+			"metadataId": "uk",
+			"title": "UK population estimates",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland",
+			"temporalCoverage": "1838-2024",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				}
+			],
+			"metadataHash": "sha256:404118a4d2497cf6ab48e02b6b7f5c96def6667316b84954c86558e2ff8611f5"
+		},
+		{
+			"key": "demographics/population/wards",
+			"metadataId": "wards",
+			"title": "Ward-level population estimates by single year of age and sex",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental",
+			"temporalCoverage": "2020-2022",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:11ead644d3d9c67c3abae584162bce8412d489a3abebb95ae38f9a3bef55cea2"
+		},
+		{
+			"key": "deprivation/imd",
+			"metadataId": "imd",
+			"title": "English Indices of Deprivation 2019",
+			"publisher": "Ministry of Housing, Communities & Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:8eb4be2afd813fa56e6b43aeccc1650740ed9d8d98c4d69f5e6ab7d5a2af2ffa"
+		},
+		{
+			"key": "deprivation/nimdm",
+			"metadataId": "nimdm",
+			"title": "Northern Ireland Multiple Deprivation Measure 2017",
+			"publisher": "Northern Ireland Statistics and Research Agency",
+			"sourceUrl": "https://www.nisra.gov.uk/statistics/deprivation/northern-ireland-multiple-deprivation-measure-2017-nimdm2017",
+			"temporalCoverage": "2017",
+			"files": [
+				{
+					"extension": ".xls",
+					"role": "source"
+				},
+				{
+					"extension": ".csv",
+					"role": "derived"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				}
+			],
+			"metadataHash": "sha256:aed2676e8d734239706ad002e774de8b90b347138c07f8a3bb342526e57cfc4c"
+		},
+		{
+			"key": "deprivation/simd",
+			"metadataId": "simd",
+			"title": "Scottish Index of Multiple Deprivation 2020v2 indicators",
+			"publisher": "Scottish Government",
+			"sourceUrl": "https://www.gov.scot/publications/scottish-index-of-multiple-deprivation-2020v2-indicator-data/",
+			"temporalCoverage": "2020",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:a5db50956725774cc24b805073d0cac65cc0852d3bfd9895d17f400e190770ae"
+		},
+		{
+			"key": "deprivation/wimd",
+			"metadataId": "wimd",
+			"title": "Welsh Index of Multiple Deprivation 2019 index and domain scores",
+			"publisher": "Welsh Government",
+			"sourceUrl": "https://www.gov.wales/welsh-index-multiple-deprivation-full-index-update-ranks-2019",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				},
+				{
+					"extension": ".csv",
+					"role": "derived"
+				}
+			],
+			"metadataHash": "sha256:6d535febd16ac4a462fe7ed2aaf338d777d9b58d694ebdf2cf3c18bb97206a2e"
+		},
+		{
+			"key": "economics/child-poverty",
+			"metadataId": "child-poverty",
+			"title": "Children in low income families, local area statistics",
+			"publisher": "Department for Work and Pensions",
+			"sourceUrl": "https://www.gov.uk/government/statistics/children-in-low-income-families-local-area-statistics-2022-to-2025",
+			"temporalCoverage": "2022-2025",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:170c4d5cf30d477b87459a6763c92a86603dbd8fea0e2f4c5a01a7bc3161b21a"
+		},
+		{
+			"key": "economics/claimant-count",
+			"metadataId": "claimant-count",
+			"title": "Claimant count by unitary and local authority",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/claimantcountbyunitaryandlocalauthorityexperimental",
+			"temporalCoverage": "2026",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				},
+				{
+					"extension": ".xls",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:e597c1afb35cab542bdc9f00ed50f7dc4b740c092ac3bffd13a14c900c5c27a2"
+		},
+		{
+			"key": "economics/crime",
+			"metadataId": "crime",
+			"title": "Police force area data tables",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/datasets/policeforceareadatatables",
+			"temporalCoverage": "2023-2026",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				}
+			],
+			"metadataHash": "sha256:691db78e721e36954a861672090d931e74b3101dee58ba74a92f035013ccfa04"
+		},
+		{
+			"key": "economics/fuel-poverty",
+			"metadataId": "fuel-poverty",
+			"title": "Sub-regional fuel poverty, 2024",
+			"publisher": "Department for Energy Security and Net Zero",
+			"sourceUrl": "https://www.gov.uk/government/collections/fuel-poverty-statistics",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:99b10db7b4330e40a10f6da14b937b971081714681b2774cd27e318c4f45d54d"
+		},
+		{
+			"key": "economics/homelessness",
+			"metadataId": "homelessness",
+			"title": "Statutory homelessness live tables, January to March 2026",
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness",
+			"temporalCoverage": "2026-Q1",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:474ad6d26ff44478e39fd542c5fa638d3937a584abbdd46a55237c3a3ccd7558"
+		},
+		{
+			"key": "economics/household-economic-activity",
+			"metadataId": "household-economic-activity",
+			"title": "Households by combined economic activity status, Table A1(LA)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/householdsbycombinedeconomicactivitystatusofhouseholdmembersbylocalauthoritytablea1la",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:24215fd0aa1f21a463f933e525ba54fda35217a1005b08d78fd9dc8c189968a2"
+		},
+		{
+			"key": "economics/housing/mean-price-by-ward",
+			"metadataId": "mean-price-by-ward",
+			"title": "Mean price paid by ward, HPSSA Dataset 38",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/meanpricepaidbywardhpssadataset38",
+			"temporalCoverage": "1995-2023",
+			"files": [
+				{
+					"extension": ".zip",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:7f70451107ca397963de02e33d2ebeeb9a3ee6b063f1883d92fb983ca5d083c8"
+		},
+		{
+			"key": "economics/housing/median-price-by-ward",
+			"metadataId": "median-price-by-ward",
+			"title": "Median price paid by ward, HPSSA Dataset 37",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/medianpricepaidbywardhpssadataset37",
+			"temporalCoverage": "1995-2023",
+			"files": [
+				{
+					"extension": ".zip",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:ea32a54a75a9765a4f2ebd2037d86e5107ad25811a7938de0f9a8b2a2a95fa77"
+		},
+		{
+			"key": "economics/income",
+			"metadataId": "income",
+			"title": "Place of residence by local authority, ASHE Table 8",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/placeofresidencebylocalauthorityashetable8",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "reference"
+				}
+			],
+			"metadataHash": "sha256:21e4fd11c94939cba3ae047669aebad4e209fcd92fc5dfa34d6567635995b3c1"
+		},
+		{
+			"key": "economics/unemployment/by-age-and-duration",
+			"metadataId": "by-age-and-duration",
+			"title": "Unemployment by age and duration, UNEM01 SA",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/unemploymentbyageanddurationseasonallyadjustedunem01sa",
+			"temporalCoverage": "1992-2026",
+			"files": [
+				{
+					"extension": ".xls",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:d3baddbaad4e4f4a3f0d7ed99231f509ef0df59d1b54e6e453c26c73dc21accc"
+		},
+		{
+			"key": "economics/unemployment/local-indicators",
+			"metadataId": "local-indicators",
+			"title": "Regional labour market: local indicators, LI01",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/datasets/li01regionallabourmarketlocalindicatorsforcountieslocalandunitaryauthorities",
+			"temporalCoverage": "2025-2026",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:7bf0bb7685a3334438854246ce8736e719b8178e8acab2bd24891b33e9069d88"
+		},
+		{
+			"key": "economics/unemployment/model-based",
+			"metadataId": "model-based",
+			"title": "Modelled unemployment for local and unitary authorities, M01",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/modelledunemploymentforlocalandunitaryauthoritiesm01/current",
+			"temporalCoverage": "1996-2022",
+			"files": [
+				{
+					"extension": ".xls",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:dd4066e8055f5ffd2554d127ac3d3df4879a98954a324af39f44f819db556d45"
+		},
+		{
+			"key": "education/ks4-performance/constituency",
+			"metadataId": "constituency",
+			"title": "Key stage 4 performance by parliamentary constituency",
+			"publisher": "Department for Education",
+			"sourceUrl": "https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance/2024-25",
+			"temporalCoverage": "2023/24-2024/25",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:8d1a4216d93947eb89aa0f53aee17fe8c030118a522d481de542e7024165ad51"
+		},
+		{
+			"key": "education/ks4-performance/local-authority-district",
+			"metadataId": "local-authority-district",
+			"title": "Key stage 4 performance by local authority district",
+			"publisher": "Department for Education",
+			"sourceUrl": "https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance/2024-25",
+			"temporalCoverage": "2018/19-2024/25",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:5a12299ef09db9a685c54e041cf80d223d57946428223d6e39c1123663963609"
+		},
+		{
+			"key": "education/qualification",
+			"metadataId": "qualification",
+			"title": "Highest level of qualification, England and Wales",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/datasets/TS067/editions/2021/versions/3",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:37e2df6d1d556b07e8529c7d531aa70e0694e76584764287d3a20026bce85bfa"
+		},
+		{
+			"key": "health/life-expectancy",
+			"metadataId": "life-expectancy",
+			"title": "Life expectancy for local areas in England, Northern Ireland and Wales",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthandlifeexpectancies/datasets/lifeexpectancyforlocalareasofgreatbritain",
+			"temporalCoverage": "2001-2022",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				},
+				{
+					"extension": ".csv",
+					"role": "derived"
+				}
+			],
+			"metadataHash": "sha256:c3e4c3c04dddf55e7bf77b03db445083dd43283a770aa5e8adc921a7ef66151d"
+		},
+		{
+			"key": "health/nhs-waiting-times",
+			"metadataId": "nhs-waiting-times",
+			"title": "Referral to treatment waiting times, March 2026",
+			"publisher": "NHS England",
+			"sourceUrl": "https://www.england.nhs.uk/statistics/statistical-work-areas/rtt-waiting-times/",
+			"temporalCoverage": "2026-03",
+			"files": [
+				{
+					"extension": ".zip",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:18631a23e13815aba3754c9f54164991bed0545d349f780a8e821c55b33b69f0"
+		},
+		{
+			"key": "politics/elections/general-elections/1918-2019",
+			"metadataId": "1918-2019",
+			"title": "UK general election results, 1918-2019",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/research-briefings/cbp-8647/",
+			"temporalCoverage": "1918-2019",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:cea42dc6db4ae5247324a5b30c095d2c4a1a5a969cb49b3d5228bdd1976527ff"
+		},
+		{
+			"key": "politics/elections/general-elections/2010",
+			"metadataId": "2010",
+			"title": "UK general election results 2010",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/research-briefings/rp10-36/",
+			"temporalCoverage": "2010",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:f15cfe88992cf758e019cdc2193337465583307af3f5ff8079a197375d5d3808"
+		},
+		{
+			"key": "politics/elections/general-elections/2015",
+			"metadataId": "2015",
+			"title": "UK general election results 2015",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/",
+			"temporalCoverage": "2015",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:3153b9ed75102088c12cb502830f4cf14c1019a852fa5a2fa85f43c1fea6acab"
+		},
+		{
+			"key": "politics/elections/general-elections/2017",
+			"metadataId": "2017",
+			"title": "UK general election results 2017",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/",
+			"temporalCoverage": "2017",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:ffcf34c43ea3f8c660a2467e16f4ff145ba64ef0ce7d7112918d9d81fdf6766e"
+		},
+		{
+			"key": "politics/elections/general-elections/2019",
+			"metadataId": "2019",
+			"title": "UK general election results 2019",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:d011373d5d6e9ca9098cbc9d6b26ea02f8eb91423556b091017ed384a50a9c1d"
+		},
+		{
+			"key": "politics/elections/general-elections/2024",
+			"metadataId": "2024",
+			"title": "UK general election results 2024",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:a55f563dd21ed837eec99e5f608cf4c0b7129d97e7ae113482492d2c94b4c2bc"
+		},
+		{
+			"key": "politics/elections/local-elections/2016",
+			"metadataId": "2016",
+			"title": "Local election results 2016",
+			"publisher": "Local Elections Archive Project",
+			"sourceUrl": "https://www.andrewteale.me.uk/leap/",
+			"temporalCoverage": "2016",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:de43416f1ccb84438e34318f8637417e0e0e925eea018788ac3b8d63237db17b"
+		},
+		{
+			"key": "politics/elections/local-elections/2017",
+			"metadataId": "2017",
+			"title": "Local election results 2017",
+			"publisher": "Local Elections Archive Project",
+			"sourceUrl": "https://www.andrewteale.me.uk/leap/",
+			"temporalCoverage": "2017",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:1f5141ca3d2d9a9d738a180f47d6490bce7df4d1609728087e8d61063f97c543"
+		},
+		{
+			"key": "politics/elections/local-elections/2018",
+			"metadataId": "2018",
+			"title": "Local election results 2018",
+			"publisher": "Local Elections Archive Project",
+			"sourceUrl": "https://www.andrewteale.me.uk/leap/",
+			"temporalCoverage": "2018",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:dfc787645155d0e8a765a0e8b2b5a75cb1e4527fb02891b4896fecf1a168cb6e"
+		},
+		{
+			"key": "politics/elections/local-elections/2019",
+			"metadataId": "2019",
+			"title": "Local election results 2019",
+			"publisher": "Local Elections Archive Project",
+			"sourceUrl": "https://www.andrewteale.me.uk/leap/",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:89952f2ab539c9e942ee74b63083c8f9ede80b939c1a5121ac5576d3b95bf7da"
+		},
+		{
+			"key": "politics/elections/local-elections/2021",
+			"metadataId": "2021",
+			"title": "Local election results 2021",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/data/parliament-elections-data/2021-local-elections-handbook-and-dataset/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:9cd9eeb2471363132d5c22df6f1641adccfb7c11296809105aa618ddd9ce654c"
+		},
+		{
+			"key": "politics/elections/local-elections/2022",
+			"metadataId": "2022",
+			"title": "Local election results 2022",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/data/parliament-elections-data/2022-local-elections-handbook-and-dataset/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:4c98e6d45eab9672710ebda81cefdc5335f646afbd4490a6702842f9bc69846c"
+		},
+		{
+			"key": "politics/elections/local-elections/2023",
+			"metadataId": "2023",
+			"title": "Local election candidates 2023",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/2023-local-elections-handbook-and-dataset/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:6fb250266a528ccda19623dbae2bb2c33808b2fa25ae3557e9347e7bb8313ac5"
+		},
+		{
+			"key": "politics/elections/local-elections/2024",
+			"metadataId": "2024",
+			"title": "Local election results 2024",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/2024-local-elections-handbook-and-dataset/",
+			"temporalCoverage": "2024",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:d94b2e29a8c2369e1304c39811cda52eb48010b21252a4da3141e9a6d790aee1"
+		},
+		{
+			"key": "politics/elections/local-elections/2025",
+			"metadataId": "2025",
+			"title": "Local election results 2025",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/2025-local-elections-handbook-and-dataset/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:a9588448fbf874029edbef4cf1eb0a0281a5a8865de4f3ec6ba687f8c6437cf9"
+		},
+		{
+			"key": "politics/referendum/constituencies/2016",
+			"metadataId": "2016",
+			"title": "EU referendum constituency estimates and known results 2016",
+			"publisher": "House of Commons Library",
+			"sourceUrl": "https://commonslibrary.parliament.uk/brexit-votes-by-constituency/",
+			"temporalCoverage": "2016",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:877fb1af27a85c0a6f9f26da63a129d7cdc2388de4a9cbbb0f029756e41e079b"
+		},
+		{
+			"key": "politics/referendum/local-authorities/2016",
+			"metadataId": "2016",
+			"title": "EU referendum results by counting area 2016",
+			"publisher": "Electoral Commission",
+			"sourceUrl": "https://www.electoralcommission.org.uk/research-reports-and-data/our-reports-and-data-past-elections-and-referendums/results-and-turnout-eu-referendum",
+			"temporalCoverage": "2016",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:1ccd9b3d171eb65a2a0ae32462a8e594e68bbaf3918222fbbe10dc4bec204988"
+		},
+		{
+			"key": "telecoms/broadband",
+			"metadataId": "broadband",
+			"title": "Connected Nations, fixed broadband coverage, July 2025",
+			"publisher": "Ofcom",
+			"sourceUrl": "https://www.ofcom.org.uk/research-and-data/telecoms-research/connected-nations",
+			"temporalCoverage": "2025-07",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				},
+				{
+					"extension": ".zip",
+					"role": "reference"
+				},
+				{
+					"extension": ".zip",
+					"role": "reference"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				}
+			],
+			"metadataHash": "sha256:8dd9be33ab7dab4a9a965f17dcc22f627dc0adf8c73e5f285780532ba8f45c06"
+		},
+		{
+			"key": "transport/road-safety",
+			"metadataId": "road-safety",
+			"title": "Road casualty statistics: provisional collisions, 2025",
+			"publisher": "Department for Transport",
+			"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/road-accidents-and-safety-statistics",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:19ed221152a06ccb3fd8eeb6df7c77b3c797c293de49a2a214b14509c0283317"
+		}
+	]
+}

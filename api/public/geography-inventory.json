@@ -1,0 +1,1614 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:5e98b4c43cef99a38adb0f02cab6c0baac5fb0c5f5f166c4bde23070b93f18f1",
+	"boundaryRegistryHash": "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912",
+	"releases": [
+		{
+			"id": "2025-12-en-bgc",
+			"geography": "combinedAuthority",
+			"countries": [
+				"GB-ENG"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2023-12-ew-bgc",
+			"geography": "communitySafetyPartnership",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2024-07-uk-bgc",
+			"geography": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2019-12-uk-bgc",
+			"geography": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2017-12-uk-bgc",
+			"geography": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2016-12-uk-bgc",
+			"geography": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "country",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "country",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2023-12-uk-bgc",
+			"geography": "country",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2022-12-uk-bgc",
+			"geography": "country",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "country",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "country",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "countyAndUnitaryAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2023-05-en-bgc",
+			"geography": "countyElectoralDivision",
+			"countries": [
+				"GB-ENG"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2011-12-sc-nc",
+			"geography": "dataZone",
+			"countries": [
+				"GB-SCT"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2011-12-sc-bfc",
+			"geography": "dataZone",
+			"countries": [
+				"GB-SCT"
+			],
+			"inputFormats": [
+				".cpg",
+				".dbf",
+				".prj",
+				".sbn",
+				".sbx",
+				".shp",
+				".shx",
+				".topojson",
+				".xml"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-05-ew-bgc",
+			"geography": "fireAndRescueAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2026-04-en-bgc",
+			"geography": "integratedCareBoard",
+			"countries": [
+				"GB-ENG"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-01-uk-bgc",
+			"geography": "itl1",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-01-uk-bgc-v2",
+			"geography": "itl2",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-01-uk-bgc-v3",
+			"geography": "itl3",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2025-05-uk-bgc-v2",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2024-05-uk-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2023-05-uk-bgc-v2",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2022-12-uk-bgc-v2",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2016-12-gb-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2023-12-w-bgc",
+			"geography": "localHealthBoard",
+			"countries": [
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2019-04-uk-bgc",
+			"geography": "localPlanningAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2011-12-w-bgc",
+			"geography": "lsoa",
+			"countries": [
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".topojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2011-12-ew-bgc-v3",
+			"geography": "lsoa",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2015-12-ew-bgc",
+			"geography": "majorTownAndCity",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-12-ew-bgc-v3",
+			"geography": "msoa",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2020-12-gb-bgc",
+			"geography": "nationalPark",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2022-07-en-bgc",
+			"geography": "nhsEnglandRegion",
+			"countries": [
+				"GB-ENG"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2026-05-ew-bgc",
+			"geography": "parish",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2025-05-ew-bgc",
+			"geography": "parish",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2024-12-ew-bgc",
+			"geography": "parish",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2023-12-ew-bgc",
+			"geography": "parish",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2022-12-ew-bgc-v3",
+			"geography": "parish",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-12-ew-bgc",
+			"geography": "parish",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2019-04-ew-bgc",
+			"geography": "parish",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2023-12-ew-bgc",
+			"geography": "policeForceArea",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2025-12-en-bgc",
+			"geography": "region",
+			"countries": [
+				"GB-ENG"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-05-sc-bgc",
+			"geography": "scottishParliamentaryConstituency",
+			"countries": [
+				"GB-SCT"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2022-12-sc-bgc",
+			"geography": "scottishParliamentaryRegion",
+			"countries": [
+				"GB-SCT"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2022-12-w-bgc",
+			"geography": "seneddConstituency",
+			"countries": [
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2022-12-w-bgc",
+			"geography": "seneddElectoralRegion",
+			"countries": [
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2026-04-en-bgc",
+			"geography": "subIntegratedCareBoardLocation",
+			"countries": [
+				"GB-ENG"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2011-ni",
+			"geography": "superOutputArea",
+			"countries": [
+				"GB-NIR"
+			],
+			"inputFormats": [
+				".dat",
+				".dbf",
+				".id",
+				".map",
+				".prj",
+				".sbn",
+				".sbx",
+				".shp",
+				".shx",
+				".tab",
+				".topojson",
+				".xml"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2011-12-uk-gcb",
+			"geography": "travelToWorkArea",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2026-05-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2025-12-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2025-05-uk-bgc-v2",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2024-12-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2024-05-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2023-12-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2023-05-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2022-12-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2019-12-gb-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2017-12-gb-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		},
+		{
+			"id": "2016-12-gb-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No API compiler adapter has been published for this release yet."
+			}
+		}
+	],
+	"geographies": [
+		{
+			"id": "combinedAuthority",
+			"countries": [
+				"GB-ENG"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "communitySafetyPartnership",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 5
+		},
+		{
+			"id": "country",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 6
+		},
+		{
+			"id": "countyAndUnitaryAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "countyElectoralDivision",
+			"countries": [
+				"GB-ENG"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "dataZone",
+			"countries": [
+				"GB-SCT"
+			],
+			"releaseCount": 2
+		},
+		{
+			"id": "fireAndRescueAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "integratedCareBoard",
+			"countries": [
+				"GB-ENG"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "itl1",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "itl2",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "itl3",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 7
+		},
+		{
+			"id": "localHealthBoard",
+			"countries": [
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "localPlanningAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "lsoa",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"releaseCount": 2
+		},
+		{
+			"id": "majorTownAndCity",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "msoa",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "nationalPark",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "nhsEnglandRegion",
+			"countries": [
+				"GB-ENG"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "parish",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"releaseCount": 7
+		},
+		{
+			"id": "policeForceArea",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "region",
+			"countries": [
+				"GB-ENG"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "scottishParliamentaryConstituency",
+			"countries": [
+				"GB-SCT"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "scottishParliamentaryRegion",
+			"countries": [
+				"GB-SCT"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "seneddConstituency",
+			"countries": [
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "seneddElectoralRegion",
+			"countries": [
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "subIntegratedCareBoardLocation",
+			"countries": [
+				"GB-ENG"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "superOutputArea",
+			"countries": [
+				"GB-NIR"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "travelToWorkArea",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 1
+		},
+		{
+			"id": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"releaseCount": 14
+		}
+	]
+}
