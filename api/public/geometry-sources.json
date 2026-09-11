@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:1a8c7d4c2bca0c30c92660a4793f185ba4048805477d5f056f176d01bb6947b4",
+	"contentHash": "sha256:728e25505bebd9d060bd7f4fba1632af003180eb6a9c3f439baf3f6f60815883",
 	"releases": [
 		{
 			"id": "combinedAuthority/2025-12-en-bgc",
@@ -56,42 +56,60 @@
 			"status": "available",
 			"input": "boundaries/country/2025-12-uk-bgc/Countries_December_2025_Boundaries_UK_BGC_-4760573642517658145.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "CTRY25CD"
+			"codeProperty": "CTRY25CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "country/2024-12-uk-bgc",
 			"status": "available",
 			"input": "boundaries/country/2024-12-uk-bgc/Countries_December_2024_Boundaries_UK_BGC_-6819391823965546166.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "CTRY24CD"
+			"codeProperty": "CTRY24CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "country/2023-12-uk-bgc",
 			"status": "available",
 			"input": "boundaries/country/2023-12-uk-bgc/Countries_December_2023_Boundaries_UK_BGC_7680513041963091487.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "CTRY23CD"
+			"codeProperty": "CTRY23CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "country/2022-12-uk-bgc",
 			"status": "available",
 			"input": "boundaries/country/2022-12-uk-bgc/Countries_December_2022_UK_BGC_-1387859806748767595.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "CTRY22CD"
+			"codeProperty": "CTRY22CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "country/2021-12-uk-bgc",
 			"status": "available",
 			"input": "boundaries/country/2021-12-uk-bgc/Countries_December_2021_UK_BGC_2022_-3824609336580301863.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "CTRY21CD"
+			"codeProperty": "CTRY21CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "country/2020-12-uk-bgc",
 			"status": "available",
 			"input": "boundaries/country/2020-12-uk-bgc/Countries_December_2020_UK_BGC_2022_-3298893893498233057.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "CTRY20CD"
+			"codeProperty": "CTRY20CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "countyAndUnitaryAuthority/2025-12-uk-bgc",
@@ -201,14 +219,20 @@
 			"status": "available",
 			"input": "boundaries/local-authority/2022-12-uk-bgc-v2/Local_Authority_Districts_December_2022_UK_BGC_V2_8941445649355329203.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "LAD22CD"
+			"codeProperty": "LAD22CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "localAuthority/2021-12-uk-bgc",
 			"status": "available",
 			"input": "boundaries/local-authority/2021-12-uk-bgc/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "LAD21CD"
+			"codeProperty": "LAD21CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "localAuthority/2019-12-uk-bgc",
@@ -222,7 +246,10 @@
 			"status": "available",
 			"input": "boundaries/local-authority/2018-12-uk-bgc/LAD_December_2018_Boundaries_UK_BGC_2022_-4607993750040860815.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "lad18cd"
+			"codeProperty": "lad18cd",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "localAuthority/2016-12-gb-bgc",
@@ -243,7 +270,10 @@
 			"status": "available",
 			"input": "boundaries/local-planning-authority/2019-04-uk-bgc/Local_Planning_Authorities_April_2019_UK_BGC_2022_-8543893928399963864.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "lpa19cd"
+			"codeProperty": "lpa19cd",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "lsoa/2011-12-w-bgc",
@@ -406,14 +436,20 @@
 			"status": "available",
 			"input": "boundaries/ward/2026-05-uk-bgc/WD_MAY_2026_UK_BGC_-6729380219658751476.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "WD26CD"
+			"codeProperty": "WD26CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "ward/2025-12-uk-bgc",
 			"status": "available",
 			"input": "boundaries/ward/2025-12-uk-bgc/WD_DEC_2025_UK_BGC_4818954163088901457.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "WD25CD"
+			"codeProperty": "WD25CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "ward/2025-05-uk-bgc-v2",
@@ -434,7 +470,10 @@
 			"status": "available",
 			"input": "boundaries/ward/2024-05-uk-bgc/Wards_May_2024_Boundaries_UK_BGC_-1422695860224013345.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "WD24CD"
+			"codeProperty": "WD24CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "ward/2023-12-uk-bgc",
@@ -448,7 +487,10 @@
 			"status": "available",
 			"input": "boundaries/ward/2023-05-uk-bgc/WD_MAY_2023_UK_BGC_932649178890735580.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "WD23CD"
+			"codeProperty": "WD23CD",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "ward/2022-12-uk-bgc",
@@ -483,7 +525,10 @@
 			"status": "available",
 			"input": "boundaries/ward/2018-12-uk-bgc/Wards_December_2018_GCB_UK_2022_-623525817862961610.geojson",
 			"crs": "EPSG:27700",
-			"codeProperty": "wd18cd"
+			"codeProperty": "wd18cd",
+			"corrections": [
+				"northern-ireland-offset"
+			]
 		},
 		{
 			"id": "ward/2017-12-gb-bgc",

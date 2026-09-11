@@ -29,6 +29,14 @@ export const readGeometrySourceLookup = (
 						input: r.input,
 						crs: r.crs,
 						codeProperty: r.codeProperty,
+						...(Array.isArray(r.corrections)
+							? {
+									corrections: r.corrections.filter(
+										(id): id is string =>
+											typeof id === "string",
+									),
+								}
+							: {}),
 					} satisfies GeometrySource,
 				] as const,
 			];

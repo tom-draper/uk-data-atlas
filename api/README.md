@@ -1221,13 +1221,20 @@ against the ONS's own WGS84 release of the same boundaries, reprojected Great
 Britain authorities land a median 1 to 2 m away, and no authority's median
 exceeds 5 m, well inside these files' 20 m generalisation.
 
-Northern Ireland is the exception. In the UK-wide British National Grid files
-it lands at least 50 m from the ONS's WGS84 release (a median of about 65 m
-over both the 11 district councils and 410 wards), a shift none of the
-standard transformations tried explains. Those areas are refused with a 503
-naming a WGS84 release as the alternative, rather than served with an
-accuracy they do not have, and the validation report waives the 16 affected
-releases with that reason. Each response's `properties.geometrySource` names
-the source CRS and any transformation. A source in any other CRS is refused
+Northern Ireland is the exception. In the ONS's UK-wide British National Grid
+files it sits a linear transform away from its true grid position, about 66 m
+east at Belfast, and no published transformation reproduces the shift. The 15
+releases measured to carry it declare `northern-ireland-offset` in their
+`meta.json`. The website's boundary compiler and this API both move those
+releases' Northern Ireland areas by the correction fitted in
+`data/boundaries/northern-ireland-offset.json` before reprojecting, which puts
+them within a metre of NISRA's native boundaries; the geometry registry
+records each release's declared corrections, and a corrected area's
+`properties.geometrySource.corrections` names the correction applied.
+Constituencies December 2016 are British National Grid but already accurate,
+and are served uncorrected. Three WGS84 releases, constituencies December 2017
+and 2019 and travel to work areas 2011, are off in Northern Ireland by a
+different shift that is not corrected yet. Each response's
+`properties.geometrySource` names the source CRS and any transformation. A source in any other CRS is refused
 rather than served unprojected. This is a raw per-area lookup, not the tiled or
 simplified delivery the full proposal describes for map rendering at scale.

@@ -183,6 +183,7 @@ const inputs = (
 		areaRegistryHash?: string;
 		waivers?: ValidationWaiver[];
 		wardCodes?: string[];
+		geometryCorrections?: string[];
 	} = {},
 ): ValidationInputs => {
 	const areaArtifacts = [
@@ -237,6 +238,9 @@ const inputs = (
 						? (overrides.crs ?? "EPSG:4326")
 						: "EPSG:4326",
 				codeProperty: "CD",
+				...(id === "ward/2025" && overrides.geometryCorrections
+					? { corrections: overrides.geometryCorrections }
+					: {}),
 			})),
 		},
 		crosswalkInventory: {
@@ -379,17 +383,29 @@ test("passes British National Grid geometry and records its transformation", () 
 				crs: "EPSG:27700",
 				transformation: "OSGB36 to WGS 84 (6)",
 				transformationAccuracyM: 2,
-				refusedAreaCount: 0,
 			},
 		},
 	);
 	assert.equal(report.summary.coverage.servableGeometry, 2);
+	const corrected = compileValidationReport(
+		inputs({
+			crs: "EPSG:27700",
+			geometryCorrections: ["northern-ireland-offset"],
+		}),
+	);
+	assert.equal(
+		corrected.resources
+			.find((resource) => resource.id === "boundary-releases/ward/2025")
+			?.checks.find((entry) => entry.id === "geometry-servable")?.measured
+			?.corrections,
+		"northern-ireland-offset",
+	);
 	assert.throws(
 		() =>
 			compileValidationReport(
-				inputs({ crs: "EPSG:27700", wardCodes: ["W1", "W2", "N1"] }),
+				inputs({ geometryCorrections: ["northern-ireland-offset"] }),
 			),
-		/boundary-releases\/ward\/2025 fails geometry-servable: 1 of 3 areas cannot be served\. Northern Ireland geometry/,
+		/boundary-releases\/ward\/2025 fails geometry-servable: Declares northern-ireland-offset, a British National Grid correction, on EPSG:4326 geometry\./,
 	);
 });
 

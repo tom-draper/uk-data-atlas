@@ -8,11 +8,7 @@ import type {
 } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
 import type { GeometrySourceRegistry } from "./geometrySourceRegistry";
-import {
-	canServeAsWgs84,
-	geometryProvenance,
-	refusalFor,
-} from "./reprojection";
+import { canServeAsWgs84, geometryProvenance } from "./reprojection";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 
 export const VALIDATION_CHECKS = [
@@ -260,12 +256,9 @@ const boundaryReleaseFindings = (
 	const geometry = inputs.geometrySources.releases.find(
 		(candidate) => candidate.id === identity,
 	);
-	const refusals =
-		geometry?.status === "available"
-			? (artifact?.areas ?? []).flatMap((area) => {
-					const reason = refusalFor(String(geometry.crs), area.code);
-					return reason ? [reason] : [];
-				})
+	const corrections =
+		geometry?.status === "available" && Array.isArray(geometry.corrections)
+			? (geometry.corrections as unknown[]).map(String)
 			: [];
 	const geometryProblem =
 		geometry?.status !== "available"
@@ -275,8 +268,9 @@ const boundaryReleaseFindings = (
 				)
 			: !canServeAsWgs84(String(geometry.crs))
 				? `Geometry is ${String(geometry.crs)}, and no transformation to WGS84 is available.`
-				: refusals.length > 0
-					? `${refusals.length} of ${artifact?.areas.length} areas cannot be served. ${[...new Set(refusals)].join(" ")}`
+				: corrections.length > 0 &&
+					  String(geometry.crs) !== "EPSG:27700"
+					? `Declares ${corrections.join(", ")}, a British National Grid correction, on ${String(geometry.crs)} geometry.`
 					: undefined;
 	const transformation =
 		geometry?.status === "available"
@@ -316,7 +310,12 @@ const boundaryReleaseFindings = (
 									transformation: transformation.name,
 									transformationAccuracyM:
 										transformation.accuracyM,
-									refusedAreaCount: refusals.length,
+									...(corrections.length > 0
+										? {
+												corrections:
+													corrections.join(", "),
+											}
+										: {}),
 								}
 							: {}),
 					}

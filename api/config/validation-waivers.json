@@ -10,28 +10,6 @@
 			]
 		},
 		{
-			"check": "geometry-servable",
-			"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas.",
-			"resources": [
-				"boundary-releases/constituency/2016-12-uk-bgc",
-				"boundary-releases/country/2020-12-uk-bgc",
-				"boundary-releases/country/2021-12-uk-bgc",
-				"boundary-releases/country/2022-12-uk-bgc",
-				"boundary-releases/country/2023-12-uk-bgc",
-				"boundary-releases/country/2024-12-uk-bgc",
-				"boundary-releases/country/2025-12-uk-bgc",
-				"boundary-releases/localAuthority/2018-12-uk-bgc",
-				"boundary-releases/localAuthority/2021-12-uk-bgc",
-				"boundary-releases/localAuthority/2022-12-uk-bgc-v2",
-				"boundary-releases/localPlanningAuthority/2019-04-uk-bgc",
-				"boundary-releases/ward/2018-12-uk-bgc",
-				"boundary-releases/ward/2023-05-uk-bgc",
-				"boundary-releases/ward/2024-05-uk-bgc",
-				"boundary-releases/ward/2025-12-uk-bgc",
-				"boundary-releases/ward/2026-05-uk-bgc"
-			]
-		},
-		{
 			"check": "source-names-consistent",
 			"reason": "The publisher lookup names N06000004 Belfast West in three rows and Belfast North in one. Both names are kept as labels rather than the Atlas correcting the source.",
 			"resources": [

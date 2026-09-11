@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:93eaf94828a23c64ed6c9b36c49bde540e0628b50eabf77d0db2480a8b7b0b77",
+	"contentHash": "sha256:89a70e58374f3ed45ad6cf80a055c0711ed418b45534453b33331ad66f521f4e",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -132,7 +132,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:ae7c1bb03b5ad0068231d7864e6587e67bf4f08a6beb5d4a62a483ee2a4aaa89"
+			"metadataHash": "sha256:50096f5e4a5fb0b259e81f2de37cb7ae018e7c50c7baa46da7e3bb03a6ef01d2"
 		},
 		{
 			"key": "boundaries/country/2021-12-uk-bgc",
@@ -148,7 +148,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:422472ac5f3e1b9df77a2b6a5d4c33e0a32a5bc63b013ee151824d95ba62be24"
+			"metadataHash": "sha256:9f8bd666b76286478c7be1913f6086fb5eaf354d3e595fac4e520b9a963566ba"
 		},
 		{
 			"key": "boundaries/country/2022-12-uk-bgc",
@@ -164,7 +164,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:b6faafb9bb0ff609aa4e4ac79a6ae12f4a8ee00ff73c5fcc9ec67879d574760f"
+			"metadataHash": "sha256:51cc9652e5e3dc3ce259c33b29add1ad586b1bb089061242245d9d09bf09051f"
 		},
 		{
 			"key": "boundaries/country/2023-12-uk-bgc",
@@ -180,7 +180,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:1b138b204c9278746c35b88be146055a3dab358a836e29d1c0f73507d8f2c364"
+			"metadataHash": "sha256:03d99600f026a67084b5a96989635746eb9be1f96f5cd0f4895a335189c86ae5"
 		},
 		{
 			"key": "boundaries/country/2024-12-uk-bgc",
@@ -196,7 +196,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:8a45576d3041bf9ce55f3017a5d046a08f2b8146f6ee22d760a19a76272e91ba"
+			"metadataHash": "sha256:da6cb1cab4f9e80ad25f66acf2c9d61ab79261ad15f7cb880385891762a4a0e2"
 		},
 		{
 			"key": "boundaries/country/2025-12-uk-bgc",
@@ -212,7 +212,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:a696280b2e6f0c64656a9d41fc09adad56e7d00661fc60df896db775bf516b17"
+			"metadataHash": "sha256:ae4654a76a5c27f643c09498f3d0aa271af626c9ba373ce37a6e985310785f39"
 		},
 		{
 			"key": "boundaries/county-and-unitary-authority/2025-12-uk-bgc",
@@ -420,7 +420,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:87871cda996eb243db0ef7b8c0da2c8d28bdbb50f5332a77b14f9a8d19809fe0"
+			"metadataHash": "sha256:1061a4b4577bdda6c8b4dcd30997c57a58ad64de418a43d50c8bfa3db200513c"
 		},
 		{
 			"key": "boundaries/local-authority/2019-12-uk-bgc",
@@ -452,7 +452,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:439d27a543681e4dff9e4c4b93ebfe616bda10d69f68e348c957dad1f747cad7"
+			"metadataHash": "sha256:a9de24f8cfd72921ebd78fa0149265b922cd2f0b175d5de6012f38992652d672"
 		},
 		{
 			"key": "boundaries/local-authority/2022-12-uk-bgc-v2",
@@ -468,7 +468,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:e50151a76cfa0bd2415c0a1184b7414fb286b96580fd33d81cff60580bfafdac"
+			"metadataHash": "sha256:3467e9d3daa3d2aed6f7f1a2e4b3a06aaa66a23e5a4459551bfd70f4b38408f9"
 		},
 		{
 			"key": "boundaries/local-authority/2023-05-uk-bgc-v2",
@@ -596,7 +596,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:90f5ea1f73f9083a98e363da06550ab4e2cdd5ba177a90c15e858c3a751c5ad9"
+			"metadataHash": "sha256:1abb4b9ce944b295eace86c46a80b3215fb9ff53ff34d155dd782f111a2c108b"
 		},
 		{
 			"key": "boundaries/lsoa/2011-12-ew-bgc-v3",
@@ -1040,7 +1040,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:ae16b5da71e04ed17bd0df32b15a1432325940ca7d483c90170a9a94a32b0634"
+			"metadataHash": "sha256:8c724d85207fad621a9df92192ef09da0210c9ad24de90eb9136b2dd21f065f5"
 		},
 		{
 			"key": "boundaries/ward/2019-12-gb-bgc",
@@ -1120,7 +1120,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:40fd8c9f2200dbccb466a37d5098dc3ace8672fc50783ff5166bba0031a68cc3"
+			"metadataHash": "sha256:b45b3b374e47d3bbe3cc31c955d2ff54ddf981ae4e6a128bb9dd798620e55fc1"
 		},
 		{
 			"key": "boundaries/ward/2023-12-uk-bgc",
@@ -1152,7 +1152,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:c6d6eb714c5d3405a730fcae161f67e67476e053adaabeff50a9074254a8fc07"
+			"metadataHash": "sha256:a1b820934ccb0d77d5a8f42cf3c7f1515a222047600184870169746b7edf2247"
 		},
 		{
 			"key": "boundaries/ward/2024-12-uk-bgc",
@@ -1200,7 +1200,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:0b4c78b1577e119b31ae24b2a59107290750b631d3928f054f18239955a1eb25"
+			"metadataHash": "sha256:489136fd37ef1d1a99a381824277ee3727969dcafcc14472a0ce8acac52373db"
 		},
 		{
 			"key": "boundaries/ward/2026-05-uk-bgc",
@@ -1216,7 +1216,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:b67838eb1ee5aabd2a51445b7cd53ab3183dec34e70dbf22c3452a9f174ecf1d"
+			"metadataHash": "sha256:ff227955a704a762c340b3cb407f0cc8a42f53f4f9a9996556a488680e8f411b"
 		},
 		{
 			"key": "demographics/ethnicity/ethnic-group-by-age-and-sex",

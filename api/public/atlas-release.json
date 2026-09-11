@@ -1,11 +1,11 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:6491eaf2f0918bf915c3c93fcb74a2f5a9899ecec03aa668deb819ac077ed7cf",
+	"releaseId": "sha256:7ae746ebc845f17dced61fe2e49edcd4d4c88a2517238535b32c11a4d1d3cbc0",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
 			"path": "boundary-releases.json",
-			"contentHash": "sha256:7e5bf4c4dcd1afdfd059320acf5f77030645dd43823bed9c5d6705b9a6dbd681"
+			"contentHash": "sha256:07f06fd2970c65d03d11665dc7e2dcc4b791fc5d5d37afe08ebdb259ab1f279e"
 		},
 		{
 			"id": "derived-boundaries",
@@ -15,12 +15,12 @@
 		{
 			"id": "area-inventory",
 			"path": "area-inventory.json",
-			"contentHash": "sha256:f112b07997ed85455e32ee389e2fd43a2ad1b50e40019f696b9ac94f3a425014"
+			"contentHash": "sha256:6fca26591c2bfbc126aa0b9fe4272e644d2d1c75e13714ad7dc438a4cfa1fe1c"
 		},
 		{
 			"id": "geometry-sources",
 			"path": "geometry-sources.json",
-			"contentHash": "sha256:bc2d8801c96efffb1ea1a5ec9f05666cc3d00e4f6b0932f79cd580843bed88f8"
+			"contentHash": "sha256:391a91f8ec7080865714fd8f21e5f2c528fb5b717c7ba8eac6ee60744cb6c8a5"
 		},
 		{
 			"id": "crosswalk-inventory",
@@ -35,17 +35,17 @@
 		{
 			"id": "geography-inventory",
 			"path": "geography-inventory.json",
-			"contentHash": "sha256:d0a47c921f0a1d3093958fedda56d8422691ba2256e1b525c533c300755e7664"
+			"contentHash": "sha256:db6eff79c223d7867922a918e54e6ca98a3646c83364824fe51423a5d849c171"
 		},
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:7fbbb0e1285f92cedf9e910503c9774675b21b0b82574e27b0fb46f647f1bbbb"
+			"contentHash": "sha256:118d8e91f987505e32e1fef7952f430b3efde1b75b3f7bbd90c662c01fc4d671"
 		},
 		{
 			"id": "source-inventory",
 			"path": "source-inventory.json",
-			"contentHash": "sha256:995758803663a0a2f6e911f6a1b8eea652dd095c13572145d17e951f7a888e3f"
+			"contentHash": "sha256:fa7a157b9958e91b03fc22076d396e23dc5d3a2439cd1f0c347e78bd9c256522"
 		}
 	]
 }

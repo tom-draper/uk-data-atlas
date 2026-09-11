@@ -13,7 +13,13 @@ const writeBoundarySource = (
 	filename: string,
 	geojson: unknown,
 ) => {
-	const directory = join(root, "data", "boundaries", geography, boundaryRelease);
+	const directory = join(
+		root,
+		"data",
+		"boundaries",
+		geography,
+		boundaryRelease,
+	);
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(join(directory, filename), JSON.stringify(geojson));
 	writeFileSync(
@@ -102,7 +108,10 @@ test("uses the original raw source location for a derived boundary release", () 
 				boundaryRelease: "2011-12-w-bgc",
 				codeProperty: "LSOA11CD",
 				derivedFrom: {
-					source: { geography: "lsoa", boundaryRelease: "2011-12-ew-bgc-v3" },
+					source: {
+						geography: "lsoa",
+						boundaryRelease: "2011-12-ew-bgc-v3",
+					},
 					filter: { property: "LSOA11CD", startsWith: "W" },
 				},
 			}),
@@ -117,6 +126,32 @@ test("uses the original raw source location for a derived boundary release", () 
 				selection: { property: "LSOA11CD", startsWith: "W" },
 			},
 		]);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
+test("records the grid corrections a release declares", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		writeBoundarySource(root, "ward", "2025", "wards.geojson", {
+			type: "FeatureCollection",
+			crs: { type: "name", properties: { name: "EPSG:27700" } },
+			features: [],
+		});
+		const directory = join(root, "data", "boundaries", "ward", "2025");
+		writeFileSync(
+			join(directory, "meta.json"),
+			JSON.stringify({
+				files: [{ path: "wards.geojson", role: "source" }],
+				corrections: ["northern-ireland-offset"],
+			}),
+		);
+		const [release] = createGeometrySourceRegistry(root, [
+			artifact({}),
+		]).releases;
+		assert.deepEqual(release.corrections, ["northern-ireland-offset"]);
+		assert.equal(release.crs, "EPSG:27700");
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}

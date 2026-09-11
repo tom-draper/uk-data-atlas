@@ -277,9 +277,9 @@ paths:
         EPSG:1314, OSGB36 to WGS 84 (6), a Helmert transformation EPSG states
         as accurate to 2 m in Great Britain; `properties.geometrySource`
         records the source CRS and any transformation applied. Northern
-        Ireland areas in those releases are refused with a 503, because
-        reprojected they land at least 50 m from the ONS's own WGS84 release;
-        request them from a WGS84 release instead. A code that
+        Ireland areas in the releases that declare `northern-ireland-offset`
+        are first moved by that correction, which the ONS's grid files need
+        there, and `geometrySource.corrections` names it when applied. A code that
         maps to more than one feature fragment in the source (e.g. an area
         split across islands) is returned as a single GeometryCollection
         rather than picking one fragment. This is a raw geometry lookup, not
@@ -633,18 +633,18 @@ paths:
                 $ref: "#/components/schemas/ValidationReportEnvelope"
               example:
                 apiVersion: v1
-                atlasRelease: "sha256:6491eaf2f0918bf915c3c93fcb74a2f5a9899ecec03aa668deb819ac077ed7cf"
+                atlasRelease: "sha256:7ae746ebc845f17dced61fe2e49edcd4d4c88a2517238535b32c11a4d1d3cbc0"
                 data:
                   schemaVersion: 1
                   inputs:
-                    boundaryRegistry: "sha256:9c73ed179658325c8f725d623596ef4240d9c8733eaae69941357ca38362bb5e"
+                    boundaryRegistry: "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44"
                     crosswalkInventory: "sha256:29dc114d1a0d62561345319ac989c88713d60e5630840af11364b42aeafa59c6"
-                    waivers: "sha256:72af2f1632fbaa8fd398f263fe860651c9e38875931a748a91a0e64b99adae12"
+                    waivers: "sha256:69c839c2cd9886dbdef9a598b99e16024ad7e53404a65db5010dccc6d85d23ef"
                   summary:
                     resourceCount: 86
                     checkCount: 357
-                    passedCount: 337
-                    waivedCount: 20
+                    passedCount: 353
+                    waivedCount: 4
                     coverage:
                       boundaryReleases: 71
                       areaIdentities: 71
@@ -836,8 +836,7 @@ components:
     GeometryUnavailable:
       description: >
         The area exists but its geometry cannot be served: no raw source is
-        declared, its CRS has no transformation to WGS84, or the
-        transformation is not trusted for that area.
+        declared, or its CRS has no transformation to WGS84.
       content:
         application/problem+json:
           schema:
@@ -1253,6 +1252,19 @@ components:
               description: EPSG's stated accuracy within the area of use.
             areaOfUse:
               type: string
+        corrections:
+          type: array
+          description: >
+            Declared grid corrections that moved this area before it was
+            reprojected, such as `northern-ireland-offset`.
+          items:
+            type: object
+            required: [id, description]
+            properties:
+              id:
+                type: string
+              description:
+                type: string
 
     AreaGeometryEnvelope:
       allOf:

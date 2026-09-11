@@ -1,5 +1,11 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
@@ -7,6 +13,7 @@ import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
 } from "../src/areaGeometry";
+import { toWgs84Geometry } from "../src/reprojection";
 
 const writeSource = (root: string, input: string, geojson: unknown) => {
 	const path = join(root, "data", input);
@@ -240,6 +247,17 @@ test("reprojects British National Grid geometry to WGS84 when an area is read", 
 				],
 			}),
 		);
+		// The cache reads the shared correction from the repository.
+		writeFileSync(
+			join(root, "data", "boundaries", "northern-ireland-offset.json"),
+			readFileSync(
+				new URL(
+					"../../data/boundaries/northern-ireland-offset.json",
+					import.meta.url,
+				),
+				"utf8",
+			),
+		);
 		const cache = new AreaGeometryCache(
 			root,
 			new Map([
@@ -249,6 +267,7 @@ test("reprojects British National Grid geometry to WGS84 when an area is read", 
 						input: "boundaries/ward/2016/wards.geojson",
 						crs: "EPSG:27700",
 						codeProperty: "wd16cd",
+						corrections: ["northern-ireland-offset"],
 					},
 				],
 			]),
@@ -261,9 +280,31 @@ test("reprojects British National Grid geometry to WGS84 when an area is read", 
 		assert.deepEqual(geometry.coordinates[0][0], [-0.1283539, 51.5039908]);
 		assert.equal(geometry.coordinates[0].length, 4);
 		assert.equal(cache.get("ward", "2016", "E05000001"), geometry);
-		assert.throws(
-			() => cache.get("ward", "2016", "N08000001"),
-			/Northern Ireland geometry in British National Grid releases is not served/,
+		// A Northern Ireland area is moved by the declared offset before it is
+		// reprojected: about 66 m east and 11 m south here, near Belfast.
+		const belfast = cache.get("ward", "2016", "N08000001") as {
+			coordinates: [number, number];
+		};
+		const uncorrected = toWgs84Geometry(
+			{ type: "Point", coordinates: [146000, 530000] },
+			"EPSG:27700",
+		) as unknown as { coordinates: [number, number] };
+		const shift = Math.hypot(
+			(belfast.coordinates[0] - uncorrected.coordinates[0]) *
+				111320 *
+				Math.cos((54.6 * Math.PI) / 180),
+			(belfast.coordinates[1] - uncorrected.coordinates[1]) * 110574,
+		);
+		assert.ok(Math.abs(shift - 66.8) < 0.5, `moved ${shift} m`);
+		assert.deepEqual(
+			cache.provenance("ward", "2016", "N08000001").corrections?.map(
+				({ id }) => id,
+			),
+			["northern-ireland-offset"],
+		);
+		assert.equal(
+			cache.provenance("ward", "2016", "E05000001").corrections,
+			undefined,
 		);
 		assert.deepEqual(cache.provenance("ward", "2016"), {
 			sourceCrs: "EPSG:27700",

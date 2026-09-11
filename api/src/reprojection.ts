@@ -13,13 +13,13 @@ export type GeometryTransformation = {
 export type GeometryProvenance = {
 	sourceCrs: string;
 	transformation?: GeometryTransformation;
+	/** Declared grid corrections that moved this area before reprojection. */
+	corrections?: Array<{ id: string; description: string }>;
 };
 
 type Reprojection = {
 	transformation: GeometryTransformation;
 	toWgs84: (position: Position) => Position;
-	/** Areas this transformation must not be trusted for, and why. */
-	refuses?: { code: (code: string) => boolean; reason: string };
 };
 
 export const isWgs84 = (crs: string) =>
@@ -51,26 +51,11 @@ const REPROJECTIONS: Record<string, Reprojection> = {
 			const [lon, lat] = britishNationalGrid.forward(position);
 			return [round(lon), round(lat)];
 		},
-		// Measured against the ONS's own WGS84 releases of the same boundaries,
-		// Great Britain lands within a few metres, but Northern Ireland in the
-		// UK-wide British National Grid files lands at least 50 m away (a
-		// median of about 65 m), a shift no standard transformation explains.
-		// GSS codes for Northern Ireland start with N.
-		refuses: {
-			code: (code) => code.startsWith("N"),
-			reason: "Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
-		},
 	},
 };
 
 export const canServeAsWgs84 = (crs: string) =>
 	isWgs84(crs) || crs in REPROJECTIONS;
-
-/** Why an area's geometry in this CRS cannot be served, if it cannot. */
-export const refusalFor = (crs: string, code: string): string | undefined => {
-	const refuses = isWgs84(crs) ? undefined : REPROJECTIONS[crs]?.refuses;
-	return refuses?.code(code) ? refuses.reason : undefined;
-};
 
 export const geometryProvenance = (crs: string): GeometryProvenance =>
 	isWgs84(crs) || !(crs in REPROJECTIONS)

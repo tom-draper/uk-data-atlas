@@ -45,6 +45,16 @@ const crs = (path: string) => {
 		.match(/"crs"\s*:\s*\{[\s\S]*?"name"\s*:\s*"([^"]+)"/);
 	return m?.[1] ?? "EPSG:4326";
 };
+// Grid corrections a release declares, by the id of their shared definition
+// in data/boundaries/, which the website's boundary compiler also applies.
+const declaredCorrections = (directory: string): string[] => {
+	const meta = JSON.parse(
+		readFileSync(join(directory, "meta.json"), "utf8"),
+	) as { corrections?: unknown };
+	return Array.isArray(meta.corrections)
+		? meta.corrections.filter((id): id is string => typeof id === "string")
+		: [];
+};
 export const createGeometrySourceRegistry = (
 	root: string,
 	artifacts: AreaReleaseArtifact[],
@@ -63,12 +73,14 @@ export const createGeometrySourceRegistry = (
 				status: "not-available",
 				reason: "No declared raw GeoJSON source is available.",
 			};
+		const corrections = declaredCorrections(dir);
 		return {
 			id: a.geography + "/" + a.boundaryRelease,
 			status: "available",
 			input: join("boundaries", kebab(g), r, path.slice(dir.length + 1)),
 			crs: crs(path),
 			codeProperty: a.codeProperty,
+			...(corrections.length > 0 ? { corrections } : {}),
 			...(a.derivedFrom ? { selection: a.derivedFrom.filter } : {}),
 		};
 	});
