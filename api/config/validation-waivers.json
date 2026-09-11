@@ -3,7 +3,15 @@
 	"waivers": [
 		{
 			"check": "geometry-servable",
-			"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it.",
+			"reason": "Held only as Shapefile and MapInfo sources. Identities are read from the Shapefile attribute table, but no compiler reads Shapefile geometry yet.",
+			"resources": [
+				"boundary-releases/dataZone/2011-12-sc-bfc",
+				"boundary-releases/superOutputArea/2011-ni"
+			]
+		},
+		{
+			"check": "geometry-servable",
+			"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas.",
 			"resources": [
 				"boundary-releases/constituency/2016-12-uk-bgc",
 				"boundary-releases/country/2020-12-uk-bgc",
@@ -12,32 +20,15 @@
 				"boundary-releases/country/2023-12-uk-bgc",
 				"boundary-releases/country/2024-12-uk-bgc",
 				"boundary-releases/country/2025-12-uk-bgc",
-				"boundary-releases/localAuthority/2016-12-gb-bgc",
 				"boundary-releases/localAuthority/2018-12-uk-bgc",
 				"boundary-releases/localAuthority/2021-12-uk-bgc",
 				"boundary-releases/localAuthority/2022-12-uk-bgc-v2",
 				"boundary-releases/localPlanningAuthority/2019-04-uk-bgc",
-				"boundary-releases/parish/2019-04-ew-bgc",
-				"boundary-releases/parish/2021-12-ew-bgc",
-				"boundary-releases/parish/2022-12-ew-bgc-v3",
-				"boundary-releases/parish/2023-12-ew-bgc",
-				"boundary-releases/parish/2026-05-ew-bgc",
-				"boundary-releases/ward/2016-12-gb-bgc",
-				"boundary-releases/ward/2017-12-gb-bgc",
 				"boundary-releases/ward/2018-12-uk-bgc",
-				"boundary-releases/ward/2019-12-gb-bgc",
 				"boundary-releases/ward/2023-05-uk-bgc",
 				"boundary-releases/ward/2024-05-uk-bgc",
 				"boundary-releases/ward/2025-12-uk-bgc",
 				"boundary-releases/ward/2026-05-uk-bgc"
-			]
-		},
-		{
-			"check": "geometry-servable",
-			"reason": "Held only as Shapefile and MapInfo sources. Identities are read from the Shapefile attribute table, but no compiler reads Shapefile geometry yet.",
-			"resources": [
-				"boundary-releases/dataZone/2011-12-sc-bfc",
-				"boundary-releases/superOutputArea/2011-ni"
 			]
 		},
 		{

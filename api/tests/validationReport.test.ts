@@ -182,10 +182,11 @@ const inputs = (
 		candidates?: RelationshipCandidate[];
 		areaRegistryHash?: string;
 		waivers?: ValidationWaiver[];
+		wardCodes?: string[];
 	} = {},
 ): ValidationInputs => {
 	const areaArtifacts = [
-		areaArtifact("ward", ["W1", "W2"]),
+		areaArtifact("ward", overrides.wardCodes ?? ["W1", "W2"]),
 		areaArtifact("localAuthority", ["L1"]),
 	];
 	const crosswalks = overrides.crosswalks ?? [containment(), overlap()];
@@ -332,16 +333,16 @@ test("passes every check on consistent artifacts and recomputes their figures", 
 
 test("fails on an unwaived exception and publishes a waived one with its reason", () => {
 	assert.throws(
-		() => compileValidationReport(inputs({ crs: "EPSG:27700" })),
-		/boundary-releases\/ward\/2025 fails geometry-servable: Geometry is EPSG:27700/,
+		() => compileValidationReport(inputs({ crs: "EPSG:3857" })),
+		/boundary-releases\/ward\/2025 fails geometry-servable: Geometry is EPSG:3857, and no transformation to WGS84 is available\./,
 	);
 	const report = compileValidationReport(
 		inputs({
-			crs: "EPSG:27700",
+			crs: "EPSG:3857",
 			waivers: [
 				{
 					check: "geometry-servable",
-					reason: "No reprojection step yet.",
+					reason: "No transformation yet.",
 					resources: ["boundary-releases/ward/2025"],
 				},
 			],
@@ -356,13 +357,40 @@ test("fails on an unwaived exception and publishes a waived one with its reason"
 		{
 			id: "geometry-servable",
 			status: "waived",
-			detail: "Geometry is EPSG:27700, and only WGS84 geometry is served.",
-			measured: { crs: "EPSG:27700" },
-			waiver: { reason: "No reprojection step yet." },
+			detail: "Geometry is EPSG:3857, and no transformation to WGS84 is available.",
+			measured: { crs: "EPSG:3857" },
+			waiver: { reason: "No transformation yet." },
 		},
 	);
 	assert.equal(report.summary.waivedCount, 1);
 	assert.equal(report.summary.coverage.servableGeometry, 1);
+});
+
+test("passes British National Grid geometry and records its transformation", () => {
+	const report = compileValidationReport(inputs({ crs: "EPSG:27700" }));
+	assert.deepEqual(
+		report.resources
+			.find((resource) => resource.id === "boundary-releases/ward/2025")
+			?.checks.find((entry) => entry.id === "geometry-servable"),
+		{
+			id: "geometry-servable",
+			status: "passed",
+			measured: {
+				crs: "EPSG:27700",
+				transformation: "OSGB36 to WGS 84 (6)",
+				transformationAccuracyM: 2,
+				refusedAreaCount: 0,
+			},
+		},
+	);
+	assert.equal(report.summary.coverage.servableGeometry, 2);
+	assert.throws(
+		() =>
+			compileValidationReport(
+				inputs({ crs: "EPSG:27700", wardCodes: ["W1", "W2", "N1"] }),
+			),
+		/boundary-releases\/ward\/2025 fails geometry-servable: 1 of 3 areas cannot be served\. Northern Ireland geometry/,
+	);
 });
 
 test("fails on a waiver that no longer matches an exception, or is listed twice", () => {
@@ -378,7 +406,7 @@ test("fails on a waiver that no longer matches an exception, or is listed twice"
 	assert.throws(
 		() =>
 			compileValidationReport(
-				inputs({ crs: "EPSG:27700", waivers: [waiver, waiver] }),
+				inputs({ crs: "EPSG:3857", waivers: [waiver, waiver] }),
 			),
 		/Duplicate waiver: geometry-servable boundary-releases\/ward\/2025/,
 	);

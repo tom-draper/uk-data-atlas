@@ -7,17 +7,17 @@
 		"crosswalkInventory": "sha256:8e756cc502740f257920c3d91fdef13c7e6a420dd1ad4b8b6d2815ce4919b1cf",
 		"relationshipCandidates": "sha256:1da853f398e07f492bda71289ee48a0c8c0250a199a58dbf6166172a1e04f957",
 		"geographyInventory": "sha256:a843563d7f6a802b6b7d30fbb661009b4c54fa8a1bacb5daf23d6d25eb994713",
-		"waivers": "sha256:31ca20b7234071b7dd7b3a35566e797b9c0ad8d5c041650f620b56559e3ddf26"
+		"waivers": "sha256:e01845720f4cfb741b9f782dbfcb19d891fb88016a80f7efd1d96f9d4399b9bf"
 	},
 	"summary": {
 		"resourceCount": 77,
 		"checkCount": 316,
-		"passedCount": 288,
-		"waivedCount": 28,
+		"passedCount": 297,
+		"waivedCount": 19,
 		"coverage": {
 			"boundaryReleases": 67,
 			"areaIdentities": 67,
-			"servableGeometry": 40,
+			"servableGeometry": 65,
 			"withRelationships": 15,
 			"crosswalks": 9,
 			"weightedCrosswalks": 1
@@ -148,12 +148,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "18 of 650 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 18
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -268,12 +271,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "1 of 4 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 1
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -301,12 +307,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "1 of 4 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 1
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -334,12 +343,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "1 of 4 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 1
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -367,12 +379,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "1 of 4 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 1
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -400,12 +415,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "1 of 4 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 1
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -433,12 +451,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "1 of 4 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 1
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -712,7 +733,7 @@
 		{
 			"id": "boundary-releases/localAuthority/2016-12-gb-bgc",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -727,13 +748,12 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"status": "passed",
 					"measured": {
-						"crs": "EPSG:27700"
-					},
-					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 0
 					}
 				},
 				{
@@ -761,12 +781,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "11 of 391 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 11
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -794,12 +817,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "11 of 374 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 11
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -827,12 +853,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "11 of 374 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 11
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -976,12 +1005,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "11 of 400 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 11
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -1167,7 +1199,7 @@
 		{
 			"id": "boundary-releases/parish/2019-04-ew-bgc",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -1182,13 +1214,12 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"status": "passed",
 					"measured": {
-						"crs": "EPSG:27700"
-					},
-					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 0
 					}
 				},
 				{
@@ -1200,7 +1231,7 @@
 		{
 			"id": "boundary-releases/parish/2021-12-ew-bgc",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -1215,13 +1246,12 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"status": "passed",
 					"measured": {
-						"crs": "EPSG:27700"
-					},
-					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 0
 					}
 				},
 				{
@@ -1233,7 +1263,7 @@
 		{
 			"id": "boundary-releases/parish/2022-12-ew-bgc-v3",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -1248,13 +1278,12 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"status": "passed",
 					"measured": {
-						"crs": "EPSG:27700"
-					},
-					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 0
 					}
 				},
 				{
@@ -1266,7 +1295,7 @@
 		{
 			"id": "boundary-releases/parish/2023-12-ew-bgc",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -1281,13 +1310,12 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"status": "passed",
 					"measured": {
-						"crs": "EPSG:27700"
-					},
-					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 0
 					}
 				},
 				{
@@ -1357,7 +1385,7 @@
 		{
 			"id": "boundary-releases/parish/2026-05-ew-bgc",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -1372,13 +1400,12 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"status": "passed",
 					"measured": {
-						"crs": "EPSG:27700"
-					},
-					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 0
 					}
 				},
 				{
@@ -1652,7 +1679,7 @@
 		{
 			"id": "boundary-releases/ward/2016-12-gb-bgc",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -1667,13 +1694,12 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"status": "passed",
 					"measured": {
-						"crs": "EPSG:27700"
-					},
-					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 0
 					}
 				},
 				{
@@ -1685,7 +1711,7 @@
 		{
 			"id": "boundary-releases/ward/2017-12-gb-bgc",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -1700,13 +1726,12 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"status": "passed",
 					"measured": {
-						"crs": "EPSG:27700"
-					},
-					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 0
 					}
 				},
 				{
@@ -1734,12 +1759,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "462 of 9114 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 462
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -1751,7 +1779,7 @@
 		{
 			"id": "boundary-releases/ward/2019-12-gb-bgc",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -1766,13 +1794,12 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"status": "passed",
 					"measured": {
-						"crs": "EPSG:27700"
-					},
-					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 0
 					}
 				},
 				{
@@ -1887,12 +1914,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "462 of 8441 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 462
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -1949,12 +1979,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "462 of 8396 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 462
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -2040,12 +2073,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "462 of 8405 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 462
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -2073,12 +2109,15 @@
 				{
 					"id": "geometry-servable",
 					"status": "waived",
-					"detail": "Geometry is EPSG:27700, and only WGS84 geometry is served.",
+					"detail": "462 of 8413 areas cannot be served. Northern Ireland geometry in British National Grid releases is not served: reprojected, it lands at least 50 m from the ONS's own WGS84 release of the same boundaries. Use a WGS84 release for Northern Ireland areas.",
 					"measured": {
-						"crs": "EPSG:27700"
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2,
+						"refusedAreaCount": 462
 					},
 					"waiver": {
-						"reason": "Published by the ONS in British National Grid (EPSG:27700). The geometry endpoint serves WGS84 only and the API has no reprojection step yet. Identities and crosswalks for these releases do not depend on it."
+						"reason": "Great Britain areas are served, reprojected from British National Grid, but Northern Ireland areas are not. Reprojected the same way, they land at least 50 m from the ONS's own WGS84 release of the same boundaries (median 65 m across the 11 district councils and 64 m across 410 wards), a shift no standard transformation explains. Use a WGS84 release for Northern Ireland areas."
 					}
 				},
 				{
@@ -2381,5 +2420,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:b32357130e8e4ef24cd1778798b47d5c9cf074602cbe8c67e939493b1a67d132"
+	"contentHash": "sha256:4e85a399732125d76741749012ca4488694dbca20592d8ce38a28eb3245d277c"
 }

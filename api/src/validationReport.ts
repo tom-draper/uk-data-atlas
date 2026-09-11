@@ -8,6 +8,11 @@ import type {
 } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
 import type { GeometrySourceRegistry } from "./geometrySourceRegistry";
+import {
+	canServeAsWgs84,
+	geometryProvenance,
+	refusalFor,
+} from "./reprojection";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 
 export const VALIDATION_CHECKS = [
@@ -98,9 +103,6 @@ const WEIGHT_SUM_TOLERANCE = 1e-5;
 
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
-
-const isWgs84 = (crs: string) =>
-	crs === "EPSG:4326" || crs === "CRS84" || crs.endsWith(":CRS84");
 
 const listed = (values: string[], limit = 10) =>
 	values.length > limit
@@ -258,15 +260,28 @@ const boundaryReleaseFindings = (
 	const geometry = inputs.geometrySources.releases.find(
 		(candidate) => candidate.id === identity,
 	);
+	const refusals =
+		geometry?.status === "available"
+			? (artifact?.areas ?? []).flatMap((area) => {
+					const reason = refusalFor(String(geometry.crs), area.code);
+					return reason ? [reason] : [];
+				})
+			: [];
 	const geometryProblem =
 		geometry?.status !== "available"
 			? String(
 					geometry?.reason ??
 						"Absent from the geometry source registry.",
 				)
-			: !isWgs84(String(geometry.crs))
-				? `Geometry is ${String(geometry.crs)}, and only WGS84 geometry is served.`
-				: undefined;
+			: !canServeAsWgs84(String(geometry.crs))
+				? `Geometry is ${String(geometry.crs)}, and no transformation to WGS84 is available.`
+				: refusals.length > 0
+					? `${refusals.length} of ${artifact?.areas.length} areas cannot be served. ${[...new Set(refusals)].join(" ")}`
+					: undefined;
+	const transformation =
+		geometry?.status === "available"
+			? geometryProvenance(String(geometry.crs)).transformation
+			: undefined;
 
 	const unreviewed = inputs.relationshipCandidates.candidates.filter(
 		(candidate) =>
@@ -294,7 +309,17 @@ const boundaryReleaseFindings = (
 			geometryProblem === undefined,
 			geometryProblem,
 			geometry?.status === "available"
-				? { crs: String(geometry.crs) }
+				? {
+						crs: String(geometry.crs),
+						...(transformation
+							? {
+									transformation: transformation.name,
+									transformationAccuracyM:
+										transformation.accuracyM,
+									refusedAreaCount: refusals.length,
+								}
+							: {}),
+					}
 				: undefined,
 		),
 		check(
@@ -650,7 +675,7 @@ export const compileValidationReport = (
 				servableGeometry: inputs.geometrySources.releases.filter(
 					(release) =>
 						release.status === "available" &&
-						isWgs84(String(release.crs)),
+						canServeAsWgs84(String(release.crs)),
 				).length,
 				withRelationships: geography.filter(
 					(release) => release.relationships.status === "available",

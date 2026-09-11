@@ -325,6 +325,10 @@ export const route = (
 						geography,
 						boundaryRelease,
 						...area,
+						geometrySource: areaGeometryCache.provenance(
+							geography as string,
+							boundaryRelease as string,
+						),
 					},
 					geometry,
 				}),
