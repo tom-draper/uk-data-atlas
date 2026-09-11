@@ -117,8 +117,25 @@ const crosswalkInventory: CrosswalkInventory = {
 	],
 };
 
+const containmentCrosswalk: CrosswalkArtifact = {
+	...crosswalkArtifact,
+	contentHash: "sha256:containment-artifact",
+	id: "ward-to-local-authority-2025",
+	method: "clean-containment",
+	weighting: { status: "not-applicable" },
+	from: { geography: "ward", boundaryRelease: "2025-01-en-ward" },
+	to: { geography: "localAuthority", boundaryRelease: "2025-01-uk-lad" },
+	records: [
+		{
+			source: { code: "E05000001", labels: ["Example ward"] },
+			targets: [{ code: "E08000001", labels: ["Greater Manchester"] }],
+		},
+	],
+};
+
 const crosswalkLookup: CrosswalkLookup = new Map([
 	[crosswalkArtifact.id, crosswalkArtifact],
+	[containmentCrosswalk.id, containmentCrosswalk],
 ]);
 
 test("lists published geographies", () => {
@@ -259,6 +276,77 @@ test("searches and paginates compiled area identities", () => {
 		},
 	]);
 	assert.equal("meta" in second.body && second.body.meta.nextCursor, null);
+});
+
+test("navigates published relationships in both directions", () => {
+	const ward = route(
+		"GET",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/relationships",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(ward.status, 200);
+	assert.deepEqual("data" in ward.body && ward.body.data, {
+		id: "ward/2025-01-en-ward/E05000001",
+		geography: "ward",
+		boundaryRelease: "2025-01-en-ward",
+		code: "E05000001",
+		name: "Example ward",
+		aliases: ["Enghraifft ward"],
+		relationships: [
+			{
+				relation: "within",
+				counterpart: {
+					id: "localAuthority/2025-01-uk-lad/E08000001",
+					geography: "localAuthority",
+					boundaryRelease: "2025-01-uk-lad",
+					code: "E08000001",
+					labels: ["Greater Manchester"],
+				},
+				crosswalk: {
+					id: "ward-to-local-authority-2025",
+					method: "clean-containment",
+					quality: "publisher-supplied",
+					weighting: { status: "not-applicable" },
+				},
+			},
+		],
+	});
+
+	const localAuthority = route(
+		"GET",
+		"/v1/areas/localAuthority/2025-01-uk-lad/E08000001/relationships",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(localAuthority.status, 200);
+	const data =
+		"data" in localAuthority.body ? localAuthority.body.data : undefined;
+	assert.ok(data && typeof data === "object" && "relationships" in data);
+	assert.deepEqual((data as { relationships: unknown }).relationships, [
+		{
+			relation: "contains",
+			counterpart: {
+				id: "ward/2025-01-en-ward/E05000001",
+				geography: "ward",
+				boundaryRelease: "2025-01-en-ward",
+				code: "E05000001",
+				labels: ["Example ward"],
+			},
+			crosswalk: {
+				id: "ward-to-local-authority-2025",
+				method: "clean-containment",
+				quality: "publisher-supplied",
+				weighting: { status: "not-applicable" },
+			},
+		},
+	]);
 });
 
 test("lists published crosswalks", () => {

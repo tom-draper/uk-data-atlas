@@ -1,4 +1,8 @@
 import type { AreaLookup } from "./areaInventory";
+import {
+	createAreaRelationshipIndex,
+	type AreaRelationshipIndex,
+} from "./areaRelationships";
 import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
@@ -135,6 +139,7 @@ export const route = (
 	crosswalkLookup?: CrosswalkLookup,
 	atlasRelease?: AtlasRelease,
 	areaSearchIndex?: AreaSearchIndex,
+	areaRelationshipIndex?: AreaRelationshipIndex,
 ): ApiResponse => {
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -163,6 +168,7 @@ export const route = (
 					"/v1/geography-inventory",
 					"/v1/areas",
 					"/v1/areas/{type}/{release}/{code}",
+					"/v1/areas/{type}/{release}/{code}/relationships",
 					"/v1/crosswalks",
 					"/v1/crosswalks/{crosswalk-id}",
 					"/v1/crosswalks/{crosswalk-id}/records",
@@ -261,6 +267,48 @@ export const route = (
 				? cursorFor(lastArea.id)
 				: null;
 		return { status: 200, body: envelope(releaseId, areas, nextCursor) };
+	}
+
+	if (
+		segments.length === 6 &&
+		segments[0] === "v1" &&
+		segments[1] === "areas" &&
+		segments[5] === "relationships"
+	) {
+		const [geography, boundaryRelease, code] = segments.slice(2, 5);
+		const area = areaLookup
+			?.get([geography, boundaryRelease].join("/"))
+			?.get(code as string);
+		if (!area) {
+			return problem(
+				404,
+				"Not Found",
+				"No compiled area matches that identity.",
+			);
+		}
+		if (!crosswalkLookup) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the crosswalk inventory before looking up relationships.",
+			);
+		}
+		const areaId = [geography, boundaryRelease, code].join("/");
+		const relationships =
+			(
+				areaRelationshipIndex ??
+				createAreaRelationshipIndex(crosswalkLookup.values())
+			).get(areaId) ?? [];
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				id: areaId,
+				geography,
+				boundaryRelease,
+				...area,
+				relationships,
+			}),
+		};
 	}
 
 	if (

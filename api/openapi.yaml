@@ -42,6 +42,7 @@ paths:
                     - /v1/geography-inventory
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
+                    - /v1/areas/{type}/{release}/{code}/relationships
                     - /v1/crosswalks
                     - /v1/crosswalks/{crosswalk-id}
                     - /v1/crosswalks/{crosswalk-id}/records
@@ -280,6 +281,36 @@ paths:
                   nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
+
+  /areas/{geography}/{release}/{code}/relationships:
+    get:
+      operationId: getAreaRelationships
+      summary: Get published relationships for one compiled area
+      description: >
+        Returns only relationships from published crosswalks. A
+        clean-containment mapping is represented as within from child to parent
+        and contains in reverse. An official historical lookup is represented
+        as successor from source to target and predecessor in reverse.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The official source code for this area on this boundary release.
+      responses:
+        "200":
+          description: The area identity and its published relationship edges.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaRelationshipsEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
 
   /crosswalks:
     get:
@@ -779,6 +810,64 @@ components:
           type: array
           items:
             type: string
+
+    AreaRelationship:
+      type: object
+      required: [relation, counterpart, crosswalk]
+      properties:
+        relation:
+          enum: [within, contains, successor, predecessor]
+        counterpart:
+          type: object
+          required: [id, geography, boundaryRelease, code, labels]
+          properties:
+            id:
+              type: string
+            geography:
+              type: string
+            boundaryRelease:
+              type: string
+            code:
+              type: string
+            labels:
+              type: array
+              items:
+                type: string
+        crosswalk:
+          type: object
+          required: [id, method, quality, weighting]
+          properties:
+            id:
+              type: string
+            method:
+              enum: [official-lookup, clean-containment]
+            quality:
+              const: publisher-supplied
+            weighting:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  enum: [not-provided, not-applicable]
+
+    AreaWithRelationships:
+      allOf:
+        - $ref: "#/components/schemas/Area"
+        - type: object
+          required: [relationships]
+          properties:
+            relationships:
+              type: array
+              items:
+                $ref: "#/components/schemas/AreaRelationship"
+
+    AreaRelationshipsEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/AreaWithRelationships"
 
     AreaListEnvelope:
       allOf:
