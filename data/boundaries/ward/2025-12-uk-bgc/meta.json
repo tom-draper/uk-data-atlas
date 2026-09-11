@@ -30,5 +30,8 @@
 			"role": "source",
 			"note": "Published as WD_DEC_2025_UK_BGC_4818954163088901457.geojson."
 		}
+	],
+	"corrections": [
+		"northern-ireland-offset"
 	]
 }

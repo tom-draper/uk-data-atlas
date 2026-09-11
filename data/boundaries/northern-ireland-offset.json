@@ -1,0 +1,11 @@
+{
+	"id": "northern-ireland-offset",
+	"description": "Moves Northern Ireland features in an ONS UK-wide British National Grid release to where the ONS's own WGS84 releases place them. In these files Northern Ireland sits a linear transform away from its true grid position: about 66 m east and 11 m south at Belfast, 50 m east and 21 m south at Enniskillen. Great Britain is unaffected. No published OSGB36 or TM65 transformation reproduces the shift, so it is corrected empirically.",
+	"crs": "EPSG:27700",
+	"codePrefix": "N",
+	"origin": { "easting": 100000, "northing": 500000 },
+	"unitMetres": 100000,
+	"east": [59.903, 12.65, 0.312],
+	"north": [-14.836, -0.411, 11.851],
+	"evidence": "Fitted by least squares to 62,394 vertex pairs: Northern Ireland in local authority districts December 2022 and wards May 2023 (British National Grid) against the same vertices in local authority districts May 2023 and wards December 2022 (WGS84), brought into the grid through EPSG:1314. Residuals: median 3 mm, 99th percentile 1.1 cm. Held-out wards December 2025 against May 2025, and May 2024 against December 2024, fit equally well. After correction and EPSG:1314, every declaring release lies a median 0.3 to 0.6 m from NISRA's native full-resolution 2011 super output area boundaries (TM65 Irish Grid through EPSG:1641), the same as the ONS WGS84 releases, where uncorrected it lies 39 to 51 m away."
+}

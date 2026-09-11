@@ -144,3 +144,35 @@ A release with no `asset` is held but not served. `data-zone/2011-12-sc-nc`
 is the case to look at — the same 2011 areas as the release beside it, but
 keyed `DZ11CD` instead of `DataZone`, so serving it would change the codes
 datasets join on.
+
+## Correcting a release's geometry
+
+Northern Ireland in the ONS's UK-wide British National Grid releases is not
+where the ONS's own WGS84 releases put it. Reprojected through the same
+Helmert transformation as Great Britain, it lands 39 to 51 m from NISRA's
+native full-resolution boundaries, where the WGS84 releases land within a
+metre. The shift is a linear transform of the grid, about 66 m east at
+Belfast and 50 m east at Enniskillen, and no published OSGB36 or TM65
+transformation reproduces it.
+
+`northern-ireland-offset.json` holds the correction, fitted to the WGS84
+releases and checked against NISRA; its `evidence` gives the numbers. A
+release opts in from its `meta.json`:
+
+```json
+"corrections": ["northern-ireland-offset"]
+```
+
+The compiler then moves every feature whose code starts with `N` before it
+reprojects the grid, and leaves Great Britain alone. It refuses a declaration
+on a source that is not British National Grid, and one that would move
+nothing. Fifteen releases declare it: the countries from 2020 to 2025, local
+authorities 2018, 2021 and December 2022, local planning authorities 2019,
+and wards 2018 and May 2023 to May 2026 wherever they are British National
+Grid. Each was measured before declaring. Constituencies December 2016 are
+British National Grid too but already accurate, so they do not declare it.
+
+Three WGS84 releases are also off in Northern Ireland, by a different shift
+this correction does not fix: constituencies December 2017 and December 2019,
+and travel to work areas 2011. They are served as published until that shift
+is measured and corrected.

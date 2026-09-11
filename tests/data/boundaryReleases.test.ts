@@ -110,3 +110,46 @@ describe("boundary releases", () => {
 		}
 	});
 });
+
+describe("Northern Ireland in British National Grid releases", () => {
+	// Belfast's outline did not change between December 2022 and May 2023.
+	// The December release is British National Grid and carries the ONS's
+	// Northern Ireland offset; the May release is WGS84 and does not. Compiled,
+	// the two must agree, where uncorrected they sat about 65 m apart. Each
+	// asset is simplified and quantised on its own, which moves an extent edge
+	// by several metres, so agreement means well inside the offset, not exact.
+	const extent = (asset: string) => {
+		const belfast = decodeBoundaryData(
+			JSON.parse(readFileSync(localBoundaryPath(asset), "utf8")),
+		).features.find((feature) =>
+			Object.values(feature.properties ?? {}).includes("N09000003"),
+		)!;
+		const positions = JSON.stringify(belfast.geometry)
+			.match(/-?\d+\.\d+,-?\d+\.\d+/g)!
+			.map((pair) => pair.split(",").map(Number) as [number, number]);
+		return [
+			Math.min(...positions.map(([lon]) => lon)),
+			Math.min(...positions.map(([, lat]) => lat)),
+			Math.max(...positions.map(([lon]) => lon)),
+			Math.max(...positions.map(([, lat]) => lat)),
+		];
+	};
+
+	it("draws Belfast where the WGS84 release does", () => {
+		const release = (id: string) =>
+			BOUNDARY_CATALOG.localAuthority.releases.find((r) => r.id === id)!
+				.asset!;
+		const corrected = extent(release("2022-12-uk-bgc-v2"));
+		const reference = extent(release("2023-05-uk-bgc-v2"));
+		const metresPerDegree = [
+			111320 * Math.cos((54.6 * Math.PI) / 180),
+			110574,
+		];
+		corrected.forEach((value, index) => {
+			const metres =
+				Math.abs(value - reference[index]!) *
+				metresPerDegree[index % 2]!;
+			expect(metres, `extent edge ${index}`).toBeLessThan(15);
+		});
+	});
+});

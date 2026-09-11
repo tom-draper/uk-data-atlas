@@ -30,5 +30,8 @@
 			"role": "source",
 			"note": "Published as Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.geojson."
 		}
+	],
+	"corrections": [
+		"northern-ireland-offset"
 	]
 }

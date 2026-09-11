@@ -99,3 +99,40 @@ describe("boundary release metadata", () => {
 		}
 	});
 });
+
+describe("declared geometry corrections", () => {
+	const declaring = releaseFolders.flatMap(({ geography, release, dir }) => {
+		const meta = parseDatasetMeta(
+			JSON.parse(readFileSync(join(dir, "meta.json"), "utf8")),
+			release,
+		);
+		return (meta.corrections ?? []).map((id) => ({
+			where: `${geography}/${release}`,
+			id,
+			source: meta.files.find(
+				(file) =>
+					file.path.endsWith(".geojson") && file.role === "source",
+			),
+			dir,
+		}));
+	});
+
+	it("names a definition that exists beside the releases", () => {
+		expect(declaring.length).toBeGreaterThan(0);
+		for (const { where, id } of declaring) {
+			expect(readdirSync(ROOT), where).toContain(`${id}.json`);
+		}
+	});
+
+	it("is declared only on a British National Grid source", () => {
+		for (const { where, source, dir } of declaring) {
+			expect(source, `${where} has no GeoJSON source`).toBeDefined();
+			// The CRS is declared at the top of the file, before any feature.
+			const head = readFileSync(join(dir, source!.path), "utf8").slice(
+				0,
+				512,
+			);
+			expect(head, where).toContain("27700");
+		}
+	});
+});

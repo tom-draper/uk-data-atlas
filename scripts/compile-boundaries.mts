@@ -22,6 +22,11 @@ import {
 	BOUNDARY_TYPES,
 } from "../lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "../lib/data/boundaries/decode";
+import {
+	applyGridOffset,
+	parseGridOffset,
+	type GridOffset,
+} from "../lib/data/boundaries/gridOffset";
 import { parseDatasetMeta } from "../lib/data/catalog/meta";
 import { polygonAreaSqKm } from "../lib/helpers/population";
 
@@ -45,11 +50,31 @@ const MINIMUM_PLANAR_TRIANGLE_AREA = 0.0000001;
  * name and stays `source.geojson`. A release's meta lists exactly one GeoJSON
  * that is not a lookup or a companion, and that is the one to read.
  */
-const sourceFromMeta = (releaseDir: string, label: string): string | null => {
-	const meta = parseDatasetMeta(
+const readReleaseMeta = (releaseDir: string) =>
+	parseDatasetMeta(
 		JSON.parse(readFileSync(join(releaseDir, "meta.json"), "utf8")),
 		basename(releaseDir),
 	);
+
+/**
+ * The corrections a release's meta.json declares, loaded from their
+ * definitions in data/boundaries/, with the paths that define them so a
+ * change to either recompiles the release.
+ */
+const correctionsFromMeta = (releaseDir: string) =>
+	(readReleaseMeta(releaseDir).corrections ?? []).map((id) => {
+		const path = join(ROOT, "data", "boundaries", `${id}.json`);
+		return {
+			path,
+			offset: parseGridOffset(
+				JSON.parse(readFileSync(path, "utf8")),
+				path,
+			),
+		};
+	});
+
+const sourceFromMeta = (releaseDir: string, label: string): string | null => {
+	const meta = readReleaseMeta(releaseDir);
 	const sources = meta.files.filter(
 		(file) =>
 			file.path.endsWith(".geojson") &&
@@ -91,10 +116,19 @@ const releaseSources = () =>
 			// served from, rather than into data/ and copied across after.
 			const releaseDir = dirname(join(ROOT, "data", relative));
 			const outputPath = join(ROOT, "public", "data", relative);
+			const corrections = correctionsFromMeta(releaseDir);
 			return [
 				{
 					label: `${type}/${release.id}`,
 					objectName: type,
+					codeKey: release.codeKey,
+					offsets: corrections.map(({ offset }) => offset),
+					// The meta and any correction it declares change the output as
+					// surely as the source does.
+					inputs: [
+						join(releaseDir, "meta.json"),
+						...corrections.map(({ path }) => path),
+					],
 					keep: new Set<string>([
 						release.codeKey,
 						release.nameKey,
@@ -137,14 +171,13 @@ const exists = async (path: string) => {
 	}
 };
 
-const shouldCompile = async (sourcePath: string, outputPath: string) => {
+const shouldCompile = async (inputPaths: string[], outputPath: string) => {
 	if (process.argv.includes("--force")) return true;
 	try {
-		const [source, output] = await Promise.all([
-			stat(sourcePath),
-			stat(outputPath),
-		]);
-		return source.mtimeMs > output.mtimeMs;
+		const [output, ...inputs] = await Promise.all(
+			[outputPath, ...inputPaths].map((path) => stat(path)),
+		);
+		return inputs.some((input) => input.mtimeMs > output!.mtimeMs);
 	} catch {
 		return true;
 	}
@@ -240,8 +273,22 @@ const simplifySource = (
 	raw: string,
 	objectName: string,
 	keep: ReadonlySet<string>,
+	correction: { label: string; codeKey: string; offsets: GridOffset[] },
 ) => {
-	const normalised = decodeBoundaryData(JSON.parse(raw));
+	// Corrections work in the publisher's grid, so they run before decoding
+	// reprojects it.
+	const normalised = decodeBoundaryData(
+		correction.offsets.reduce(
+			(collection, offset) =>
+				applyGridOffset(
+					collection,
+					offset,
+					correction.codeKey,
+					correction.label,
+				),
+			JSON.parse(raw),
+		),
+	);
 	const cleaned = {
 		...normalised,
 		features: normalised.features.map((feature) => ({
@@ -324,6 +371,9 @@ export async function compileBoundaryAssets(): Promise<void> {
 	for (const {
 		label,
 		objectName,
+		codeKey,
+		offsets,
+		inputs,
 		keep,
 		sourcePath,
 		topologySourcePath,
@@ -337,7 +387,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 				);
 				continue;
 			}
-			if (!(await shouldCompile(topologySourcePath, propertiesPath))) {
+			if (!(await shouldCompile([topologySourcePath], propertiesPath))) {
 				console.log(`  boundary: ${label} (properties up to date)`);
 				continue;
 			}
@@ -364,7 +414,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 		}
 
 		if (
-			!(await shouldCompile(sourcePath, outputPath)) &&
+			!(await shouldCompile([sourcePath, ...inputs], outputPath)) &&
 			(await exists(propertiesPath))
 		) {
 			console.log(`  boundary: ${label} (up to date)`);
@@ -372,7 +422,11 @@ export async function compileBoundaryAssets(): Promise<void> {
 		}
 
 		const raw = await readFile(sourcePath, "utf8");
-		const topologyData = simplifySource(raw, objectName, keep);
+		const topologyData = simplifySource(raw, objectName, keep, {
+			label,
+			codeKey,
+			offsets,
+		});
 		assertKeptSomething(label, topologyData, keep);
 		const output = JSON.stringify(topologyData);
 		const properties = serializeProperties(label, topologyData, objectName);

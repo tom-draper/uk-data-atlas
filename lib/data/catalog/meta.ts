@@ -68,6 +68,11 @@ export interface DatasetMeta {
 	temporalCoverage?: string;
 	spatialCoverage?: DatasetMetaCoverage;
 	files: DatasetMetaFile[];
+	/**
+	 * Corrections the boundary compiler applies to this release's geometry,
+	 * each the id of a definition in data/boundaries/. See the README there.
+	 */
+	corrections?: string[];
 }
 
 const FILE_ROLES = new Set(["source", "derived", "lookup", "reference"]);
@@ -299,5 +304,14 @@ export function parseDatasetMeta(value: unknown, folder: string): DatasetMeta {
 			: {}),
 		...(spatialCoverage ? { spatialCoverage } : {}),
 		files: parsedFiles,
+		...(optionalStringArray(record, "corrections", location) !== undefined
+			? {
+					corrections: optionalStringArray(
+						record,
+						"corrections",
+						location,
+					),
+				}
+			: {}),
 	};
 }
