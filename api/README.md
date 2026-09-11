@@ -187,6 +187,37 @@ fail rather than nominate the largest fragment. Similarly, an LAD may contain
 wards exactly while a constituency overlaps LADs only approximately; both are
 relationships, but they do not deserve the same label.
 
+### API-owned geography compiler and completeness
+
+The website's gazetteer is a useful client-side optimisation, not the API's
+canonical geography source. It is intentionally shaped around the boundary
+vintages, code mappings and crosswalks that the map currently needs. The API
+must instead compile its own complete, release-aware geography products from
+raw boundary releases and authoritative correspondence sources. It may reuse
+source material from the website, but must not inherit its limited data model
+or deployment lifecycle.
+
+The compiler produces five separately versioned products:
+
+1. **Areas** — every imported area identity, its names and aliases, validity,
+   extent, geometry reference and provenance.
+2. **Relationships** — directional containment, history and equivalence facts
+   between exact source and target identities.
+3. **Crosswalks** — directional weighted mappings, including their method,
+   denominator, coverage and validation facts.
+4. **Change events** — human-readable recodes, splits, mergers, abolitions and
+   boundary changes linked to supporting evidence.
+5. **Coverage report** — machine-readable statements of what is official,
+   derived, partial or not available for each geography/release pair.
+
+“Complete” must mean that the API can give an honest answer for every supported
+request, not that it fabricates a one-to-one conversion for every historical
+change. When no authoritative or defensible derived relationship exists, the
+API returns `conversion_not_available` with the coverage reason. It must never
+calculate geometry repair, polygon overlap or inferred parentage during a
+request; expensive work belongs in the compiler and its outputs are immutable
+release artifacts.
+
 Useful additions beyond code translation are:
 
 - code validation and historical code aliases, including the reason a supplied
@@ -661,9 +692,10 @@ publisher files + ONS/OS boundary releases + curated place definitions
 2. **Boundary registry** — formalise the current boundary catalogue as a
    serialised product with code/name/parent property keys, CRS, extent,
    generalisation, source metadata and hash.
-3. **Area registry** — canonical areas, aliases, clean parentage and named
-   locations. Extend the existing gazetteer rather than inventing parallel
-   identifiers.
+3. **Area registry** — API-owned canonical areas, aliases, clean parentage,
+   historical relations and named locations. Build it independently of the
+   website gazetteer, while reusing compatible raw inputs and preserving their
+   provenance.
 4. **Crosswalk registry** — versioned directional mappings with method,
    weights, denominator, coverage and validation facts. Keep the existing
    constituency/LAD overlap artifact as the first example, but do not represent
@@ -771,9 +803,11 @@ Depth and traceability are more credible than breadth.
 ### Phase 0 — make the contract testable
 
 Before public endpoints, define JSON Schema/OpenAPI types for area identity,
-boundary release, dataset/measure, provenance, quality and crosswalk. Publish
-an internal `atlas-release` manifest. Add a machine-readable compatibility test
-to the existing precompile pipeline.
+boundary release, dataset/measure, provenance, quality and crosswalk. Build an
+API-owned geography inventory that states which area releases, historical
+relations and conversion methods are actually available. Publish an internal
+`atlas-release` manifest and add compiler validation for identity uniqueness,
+relationship targets, weight sums and coverage.
 
 **Exit criterion:** one immutable local release can be inspected without
 reading repository source code.
@@ -785,10 +819,10 @@ named locations, geometry links and the initial crosswalk catalogue. Do this
 even before a rich data query API: these utilities are the most distinctive and
 easiest to validate independently.
 
-Initial products should build directly on the present boundary catalogue,
-gazetteer core, curated locations, inferred ward/LAD mappings and
-constituency/LAD overlap work. Mark the latter two at their actual quality
-level; do not upgrade their status in transit to the API.
+Initial products may reuse the present boundary catalogue, curated locations,
+inferred ward/LAD mappings and constituency/LAD overlap work as inputs. The
+API compiler must give each an explicit release identity and evidence label;
+do not upgrade the latter two's status in transit to the API.
 
 **Exit criterion:** an external user can locate an area, obtain an exact
 boundary release, inspect membership, and download a documented crosswalk.
@@ -852,20 +886,48 @@ licensing, update cadence and privacy implications are settled.
 The first implementation tickets should be small and separable:
 
 1. Define `api/openapi.yaml` and JSON examples for the Phase 1 resources.
-2. Create a build-time `atlas-release.json` that references the existing
-   dataset manifest, boundary catalogue, gazetteer core, location definitions
-   and crosswalk artifacts by hash.
-3. Serialise the boundary catalogue to an API-safe JSON registry; do not expose
-   browser URLs or TypeScript internals as the contract.
+2. Build an API-owned geography inventory that serialises every available
+   boundary release and reports missing historical relations and conversions.
+3. Create versioned area, relationship and change-event artifacts keyed by
+   geography, boundary release and official code; do not expose browser URLs,
+   website TypeScript models or code-only identities as the contract.
 4. Extend crosswalk artifacts with direction, releases, method, weighting
-   basis, coverage, quality and provenance metadata.
-5. Add schemas and validation tests for measure aggregation semantics and
-   coverage.
-6. Build read-only Phase 1 route handlers backed by static artifacts, then
+   basis, coverage, quality and provenance metadata; validate targets and
+   weight sums before publication.
+5. Create a build-time `atlas-release.json` that references the API's dataset,
+   geography, location and crosswalk artifacts by hash.
+6. Add schemas and validation tests for geography coverage, conversion absence
+   and measure aggregation semantics.
+7. Build read-only Phase 1 route handlers backed by static artifacts, then
    host/cache those artifacts independently from the UI bundle.
-7. Publish one tutorial that builds a population-density map and cites the
+8. Publish one tutorial that builds a population-density map and cites the
    exact Atlas release.
 
 This sequence turns the current, valuable internal geography knowledge into a
 public foundation without prematurely committing to an expensive general-purpose
 data platform.
+
+## Initial standalone implementation
+
+The first build artifact is an API-safe boundary-release registry generated
+directly from `../data/boundaries/**/meta.json`. It deliberately does not import
+the website's boundary catalogue or expose its browser asset URLs.
+
+Run it from this directory:
+
+```sh
+pnpm build:boundary-registry
+pnpm test
+pnpm start
+```
+
+`pnpm start` runs an independent Node HTTP server at
+`http://127.0.0.1:3001/v1`. Its initial read-only endpoints are:
+
+- `GET /v1`
+- `GET /v1/geographies`
+- `GET /v1/boundary-releases`
+- `GET /v1/boundary-releases/{type}/{release}`
+
+The generated `public/boundary-releases.json` is the service's only current
+input. It remains independent of the current Next.js application.
