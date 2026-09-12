@@ -874,7 +874,19 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Dorset
 	Dorset: {
-		lad_codes: ["E06000058", "E06000059"],
+		// The six districts merged into two unitary authorities in 2019.
+		// Keeping every vintage lets each dataset select the code that matches
+		// its boundaries.
+		lad_codes: [
+			"E07000048", // Christchurch
+			"E07000049", // East Dorset
+			"E07000050", // North Dorset
+			"E07000051", // Purbeck
+			"E07000052", // West Dorset
+			"E07000053", // Weymouth and Portland
+			"E06000058", // Bournemouth, Christchurch and Poole
+			"E06000059", // Dorset
+		],
 		bounds: [-2.8, 50.6, -1.6, 51.1],
 	},
 
@@ -924,11 +936,15 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000223",
 			"E07000224",
 			"E07000225",
-			"E07000226", // West Sussex
+			"E07000226",
+			"E07000227",
+			"E07000228",
+			"E07000229", // West Sussex
 			"E07000061",
 			"E07000062",
 			"E07000063",
 			"E07000064",
+			"E07000065",
 			"E06000043", // East Sussex & Brighton
 		],
 		bounds: [-0.9, 50.7, 1.0, 51.2],
@@ -978,7 +994,13 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Oxfordshire
 	Oxfordshire: {
-		lad_codes: ["E07000177", "E07000178", "E07000179"],
+		lad_codes: [
+			"E07000177", // Cherwell
+			"E07000178", // Oxford
+			"E07000179", // South Oxfordshire
+			"E07000180", // Vale of White Horse
+			"E07000181", // West Oxfordshire
+		],
 		bounds: [-1.8, 51.5, -0.9, 52.2],
 	},
 
@@ -1105,12 +1127,19 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Suffolk
 	Suffolk: {
+		// Suffolk Coastal and Waveney became East Suffolk, and Forest Heath and
+		// St Edmundsbury became West Suffolk, in 2019. Keeping every vintage
+		// lets each dataset select the code that matches its boundaries.
 		lad_codes: [
-			"E07000200",
-			"E07000201",
-			"E07000202",
-			"E07000203",
-			"E07000204",
+			"E07000200", // Babergh
+			"E07000201", // Forest Heath
+			"E07000202", // Ipswich
+			"E07000203", // Mid Suffolk
+			"E07000204", // St Edmundsbury
+			"E07000205", // Suffolk Coastal
+			"E07000206", // Waveney
+			"E07000244", // East Suffolk
+			"E07000245", // West Suffolk
 		],
 		bounds: [0.3, 51.9, 1.7, 52.6],
 	},
@@ -1123,6 +1152,9 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000194",
 			"E07000195",
 			"E07000196",
+			"E07000197", // Stafford
+			"E07000198", // Staffordshire Moorlands
+			"E07000199", // Tamworth
 			"E06000021", // Stoke-on-Trent
 		],
 		bounds: [-2.3, 52.6, -1.5, 53.2],
