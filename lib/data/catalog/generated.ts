@@ -17,6 +17,7 @@ import type { imdDatasetDefinition } from "./definitions/imd";
 import type { incomeDatasetDefinition } from "./definitions/income";
 import type { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy";
 import type { localElectionDatasetDefinition } from "./definitions/localElection";
+import type { mobileCoverageDatasetDefinition } from "./definitions/mobileCoverage";
 import type { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting";
 import type { nimdmDatasetDefinition } from "./definitions/nimdm";
 import type { populationDatasetDefinition } from "./definitions/population";
@@ -69,6 +70,9 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<
 			ReturnType<typeof localElectionDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof mobileCoverageDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<ReturnType<typeof nhsWaitingDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>[string]
@@ -144,6 +148,9 @@ export type CatalogueDatasetRecords = {
 	>;
 	localElection: Awaited<
 		ReturnType<typeof localElectionDatasetDefinition.precompile>
+	>;
+	mobileCoverage: Awaited<
+		ReturnType<typeof mobileCoverageDatasetDefinition.precompile>
 	>;
 	nhsWaiting: Awaited<
 		ReturnType<typeof nhsWaitingDatasetDefinition.precompile>
