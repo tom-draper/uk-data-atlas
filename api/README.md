@@ -192,6 +192,10 @@ only **available** when its endpoint, contract and provenance are published.
       nations. A caller can opt into a code-compatible geometry release for a
       map join; the route still has no implicit release selection, conversion
       or aggregation.
+- [x] Include a compact provenance chain with every population response: the
+      immutable Atlas release, measure and dataset links, observation artifact
+      hash, source geography, caller-selected code match (if any), and an
+      explicit no-transformation statement.
 - [ ] Return population estimates for a supported ward, local authority,
       constituency, country or named location.
 - [ ] Return population density only when the population date/geography and the
@@ -224,8 +228,8 @@ only **available** when its endpoint, contract and provenance are published.
       `GET /v1/measures/{measure-id}/compatibility`. This is evidence for
       selecting a conversion path, not proof that candidate geometries are
       identical or a licence to select one automatically.
-- [ ] Every data response links to source, transformation, geography match and
-      Atlas release provenance.
+- [x] Every implemented data response links to source, transformation,
+      geography match and Atlas release provenance.
 - [ ] Coverage report for every geography/release/measure combination. The
       geography and release half is served by `GET /v1/validation`, with
       every exception and the reason it was accepted; measures are not yet

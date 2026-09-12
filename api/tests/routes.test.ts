@@ -425,6 +425,55 @@ const routeWithData = (url: string) =>
 		measureCompatibilityInventory,
 	);
 
+const populationProvenance = (
+	datasetId: "population" | "population-uk",
+	geography: "ward" | "localAuthority",
+	period: string,
+	contentHash: string,
+	geometry?: {
+		boundaryRelease: string;
+		compatibility: "exact-code-set" | "code-set-compatible";
+		note: string;
+	},
+) => ({
+	atlasRelease: { id: registry.contentHash, href: "/v1/atlas-release" },
+	measure: {
+		id: "population-estimate",
+		href: "/v1/measures/population-estimate",
+	},
+	source: {
+		dataset: { id: datasetId, href: `/v1/datasets/${datasetId}` },
+		observations: {
+			artifact:
+				geography === "ward"
+					? "population-observations"
+					: "population-local-authority-observations",
+			contentHash,
+			period,
+		},
+	},
+	geography: {
+		source: { type: geography, boundaryYear: 2023 },
+		match:
+			geometry === undefined
+				? {
+						status: "no-boundary-release-selected",
+						note: "The published observations declare a geography type and code vintage, but not a boundary release.",
+					}
+				: {
+						status: "caller-selected-code-join",
+						boundaryRelease: geometry.boundaryRelease,
+						compatibility: geometry.compatibility,
+						href: "/v1/measures/population-estimate/compatibility",
+						note: geometry.note,
+					},
+	},
+	transformation: {
+		status: "not-applied",
+		note: "Values are served source-exact; no geographic conversion or aggregation was applied.",
+	},
+});
+
 test("publishes datasets, measures and source-exact population observations", () => {
 	const datasets = routeWithData("/v1/datasets");
 	assert.equal(datasets.status, 200);
@@ -450,6 +499,12 @@ test("publishes datasets, measures and source-exact population observations", ()
 		source: dataCatalog.measures[0]?.sources[0],
 		period: "2022",
 		sourceGeography: { type: "ward", boundaryYear: 2023 },
+		provenance: populationProvenance(
+			"population",
+			"ward",
+			"2022",
+			populationObservations.contentHash,
+		),
 		conversion: null,
 		aggregation: null,
 		records: [populationObservations.records[0]],
@@ -464,6 +519,12 @@ test("publishes datasets, measures and source-exact population observations", ()
 		source: dataCatalog.measures[0]?.sources[0],
 		period: "2022",
 		sourceGeography: { type: "ward", boundaryYear: 2023 },
+		provenance: populationProvenance(
+			"population",
+			"ward",
+			"2022",
+			populationObservations.contentHash,
+		),
 		conversion: null,
 		aggregation: null,
 		records: [populationObservations.records[1]],
@@ -480,6 +541,12 @@ test("publishes datasets, measures and source-exact population observations", ()
 			source: dataCatalog.measures[0]?.sources[1],
 			period: "2024",
 			sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+			provenance: populationProvenance(
+				"population-uk",
+				"localAuthority",
+				"2024",
+				populationLocalAuthorityObservations.contentHash,
+			),
 			conversion: null,
 			aggregation: null,
 			records: [
@@ -504,6 +571,17 @@ test("publishes datasets, measures and source-exact population observations", ()
 			areaIdentityTemplate: "ward/2023-05-uk-bgc/{areaCode}",
 			note: "Values remain source-exact and are joined to this caller-selected geometry by matching area code. This is not a geometry conversion or an assertion of equal geometry.",
 		},
+		provenance: populationProvenance(
+			"population",
+			"ward",
+			"2022",
+			populationObservations.contentHash,
+			{
+				boundaryRelease: "2023-05-uk-bgc",
+				compatibility: "code-set-compatible",
+				note: "Values remain source-exact and are joined to this caller-selected geometry by matching area code. This is not a geometry conversion or an assertion of equal geometry.",
+			},
+		),
 		conversion: null,
 		aggregation: null,
 		records: [populationObservations.records[0]],
