@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7299c56b9ad4b6502aec846466227edc3710cfb80a1e4390d3dfcea0feb396ee",
+	"contentHash": "sha256:6378b915446fab01ad0cf10d5d0ce161d52d7461654a0c14d95e763e6391902a",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -128,6 +128,37 @@
 			"compiled": {
 				"bytes": 49880,
 				"sha256": "9b2914caf62d3b96625a3c932993f424fb6fee7bdf9ca2754a27a1dcb3f88463"
+			}
+		},
+		{
+			"id": "car-availability",
+			"label": "Car Availability",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/datasets/TS045/editions/2021/versions/4",
+			"temporalCoverage": "2021",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Cars or vans available to each household, by local authority district for England and Wales (Census 2021). Shares are of households.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "transport/car-availability/TS045-2021-4.csv",
+					"bytes": 92461,
+					"sha256": "b6fcbd62f19dbcc48860f9d11543a033b1c43b3f0218280be423a838c1283693"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 335,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 44562,
+				"sha256": "d2156c276965a936e3c2cb57e6141e63b053ddb8dd6d9c934fd489f3864e152f"
 			}
 		},
 		{
@@ -346,6 +377,37 @@
 			"compiled": {
 				"bytes": 1587376,
 				"sha256": "3c78483b3b0b0d55e5b79f06298ff5dc05be36dde1d34c8e208ebf8441daea65"
+			}
+		},
+		{
+			"id": "ghg-emissions",
+			"label": "Greenhouse Gas Emissions",
+			"publisher": "Department for Energy Security and Net Zero",
+			"sourceUrl": "https://www.gov.uk/government/statistics/uk-local-authority-and-regional-greenhouse-gas-emissions-statistics-2005-to-2024",
+			"temporalCoverage": "2005-2024",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Territorial greenhouse gas emissions by local authority across the United Kingdom, 2005 to 2024, broken down by sector. Aggregated from the published sub-sector and gas detail to a sector total in kt CO2e.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "environment/ghg-emissions/ghg-lad-2005-2024.csv",
+					"bytes": 753912,
+					"sha256": "9e7b9e67a1a65bb41690f6d4c86d8e5d03565da1fef93bc5d1f8e6aed54a163e"
+				}
+			],
+			"summary": {
+				"datasetCount": 20,
+				"dataRecordCount": 7220,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 2481145,
+				"sha256": "4b17409ecfc7380ad4ded2d7aa4768cf5fb83b3f702e0e49cd8645dbf3a89f9e"
 			}
 		},
 		{
@@ -666,6 +728,37 @@
 			}
 		},
 		{
+			"id": "mobile-coverage",
+			"label": "Mobile Coverage",
+			"publisher": "Ofcom",
+			"sourceUrl": "https://www.ofcom.org.uk/phones-and-broadband/coverage-and-speeds/connected-nations-20252/data-downloads-2025",
+			"temporalCoverage": "2025",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "4G and 5G coverage by local authority district across the UK, reported as the share of premises and landmass reached by all four mobile operators and by at least one.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "telecoms/mobile/202507_mobile_coverage_laua_r01.csv",
+					"bytes": 238487,
+					"sha256": "fd843704566aa842b3a364c6983c4aee472963778f68af216ea8a9062235730d"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 361,
+				"boundaryYears": [
+					2024
+				]
+			},
+			"compiled": {
+				"bytes": 77314,
+				"sha256": "44b51eaed2adac71159b9ff804fdc331f7ebfd4136bcc84820ae8b4cfc268f82"
+			}
+		},
+		{
 			"id": "nhs-waiting",
 			"label": "NHS Waiting Times",
 			"publisher": "NHS England",
@@ -942,6 +1035,37 @@
 			"compiled": {
 				"bytes": 1235927,
 				"sha256": "b31197ad3651fe203dfc7fa3ec1dab8626b494b7a4af16e4b71b429360382bb9"
+			}
+		},
+		{
+			"id": "travel-to-work",
+			"label": "Travel to Work",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/datasets/TS061/editions/2021/versions/6",
+			"temporalCoverage": "2021",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "How people in employment travel to their place of work, by local authority district for England and Wales (Census 2021). Shares are of people in employment.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "transport/travel-to-work/TS061-2021-6.csv",
+					"bytes": 205193,
+					"sha256": "00250d9d5f6e4ceab7b88549dede07a6799d29763df8331627beb8d1569209be"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 335,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 63893,
+				"sha256": "afa34c5f28a11c6807ffc967fc1c1388af8a9771be157bd0869ef7f24e26753d"
 			}
 		},
 		{
