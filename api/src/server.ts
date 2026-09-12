@@ -37,6 +37,7 @@ import {
 	route,
 	type AreaSearchIndex,
 	type CrosswalkLookup,
+	type RouteContext,
 } from "./routes";
 
 const registryPath = (apiRoot: string) =>
@@ -222,24 +223,7 @@ export const readPopulationLocalAuthorityObservations = (
 	return observations;
 };
 
-export type ApiCatalogues = {
-	boundaryRegistry: BoundaryRegistry;
-	geographyInventory: GeographyInventory;
-	areaLookup: AreaLookup;
-	areaSearchIndex: AreaSearchIndex;
-	areaRelationshipIndex: AreaRelationshipIndex;
-	areaGeometryCache: AreaGeometryCache;
-	crosswalkInventory: CrosswalkInventory;
-	crosswalkLookup: CrosswalkLookup;
-	atlasRelease: AtlasRelease;
-	relationshipCandidateInventory: RelationshipCandidateInventory;
-	validationReport: ValidationReport;
-	namedLocationInventory: NamedLocationInventory;
-	namedLocationLookup: NamedLocationLookup;
-	dataCatalog: DataCatalog;
-	populationObservations: PopulationObservationArtifact;
-	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
-};
+export type ApiCatalogues = Required<RouteContext>;
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const areaLookup = readAreaLookup(apiRoot);
@@ -275,45 +259,9 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	};
 };
 
-export const createApiServer = ({
-	boundaryRegistry,
-	geographyInventory,
-	areaLookup,
-	areaSearchIndex,
-	areaRelationshipIndex,
-	areaGeometryCache,
-	crosswalkInventory,
-	crosswalkLookup,
-	atlasRelease,
-	relationshipCandidateInventory,
-	validationReport,
-	namedLocationInventory,
-	namedLocationLookup,
-	dataCatalog,
-	populationObservations,
-	populationLocalAuthorityObservations,
-}: ApiCatalogues) =>
+export const createApiServer = (catalogues: ApiCatalogues) =>
 	createServer((request, response) => {
-		const result = route(
-			request.method,
-			request.url,
-			boundaryRegistry,
-			geographyInventory,
-			areaLookup,
-			crosswalkInventory,
-			crosswalkLookup,
-			atlasRelease,
-			areaSearchIndex,
-			areaRelationshipIndex,
-			areaGeometryCache,
-			relationshipCandidateInventory,
-			validationReport,
-			namedLocationInventory,
-			namedLocationLookup,
-			dataCatalog,
-			populationObservations,
-			populationLocalAuthorityObservations,
-		);
+		const result = route(request.method, request.url, catalogues);
 		response.writeHead(result.status, {
 			"cache-control": "public, max-age=300",
 			"content-type":

@@ -79,7 +79,7 @@ test("resolves every component reference", () => {
 });
 
 test("documents exactly the routes advertised by the API index", () => {
-	const response = route("GET", "/v1", registry);
+	const response = route("GET", "/v1", { boundaryRegistry: registry });
 	assert.equal(response.status, 200);
 	const { links } = (response.body as { data: { links: string[] } }).data;
 	const advertised = ["/v1", ...links].map(routeShape).sort();
