@@ -5,9 +5,10 @@ info:
   description: |
     This describes exactly the read-only routes implemented in `src/routes.ts`
     and served by `pnpm start`. It is not the full public API proposed in
-    `README.md`: it does not yet cover measures, data retrieval, named
-    locations, or write-side aggregation. Those remain proposal, not
-    contract, until they are implemented and added here.
+    `README.md`: it does not yet cover write-side aggregation or geography
+    conversion for measures. The population route is intentionally
+    source-exact: it serves only the published Ward 2023 code vintage and
+    does not choose a geometry-release month on a caller's behalf.
 
     Every successful response is wrapped in the envelope described by
     `Envelope`. Its `atlasRelease` field is the immutable `releaseId` from
@@ -41,6 +42,11 @@ paths:
                     - /v1/boundary-releases
                     - /v1/boundary-releases/{type}/{release}
                     - /v1/geography-inventory
+                    - /v1/datasets
+                    - /v1/datasets/{dataset-id}
+                    - /v1/measures
+                    - /v1/measures/{measure-id}
+                    - /v1/data/population-estimate
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/areas/{type}/{release}/{code}/relationships
@@ -143,6 +149,140 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GeographyInventoryEnvelope"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /datasets:
+    get:
+      operationId: listDatasets
+      summary: List published source datasets and their lineage
+      responses:
+        "200":
+          description: Dataset metadata compiled from the repository dataset manifest.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /datasets/{dataset-id}:
+    get:
+      operationId: getDataset
+      summary: Get one published source dataset and its input hashes
+      parameters:
+        - name: dataset-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Dataset metadata and source lineage.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /measures:
+    get:
+      operationId: listMeasures
+      summary: List measures currently available to query
+      responses:
+        "200":
+          description: Measure definitions, coverage and supported operations.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /measures/{measure-id}:
+    get:
+      operationId: getMeasure
+      summary: Get one measure's semantics and availability
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The measure definition.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /data/population-estimate:
+    get:
+      operationId: getPopulationEstimate
+      summary: Retrieve source-exact 2022 population observations
+      description: >
+        Serves observed values for the source's Ward 2023 code vintage in
+        England and Wales. It does not select a May/December boundary release,
+        convert values, or aggregate them. A requested `release`, `conversion`
+        or `aggregate` therefore receives 422 rather than an implied result.
+      parameters:
+        - name: period
+          in: query
+          required: true
+          schema:
+            const: "2022"
+        - name: geography
+          in: query
+          required: true
+          schema:
+            const: ward
+        - name: boundaryYear
+          in: query
+          required: true
+          schema:
+            const: "2023"
+        - name: areaCode
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Return the one observed source-area code, if present.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A cursor-paginated page of observed ward values.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "422":
+          description: The requested operation is not supported for this source-exact measure.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 

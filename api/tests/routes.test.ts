@@ -22,6 +22,10 @@ import {
 	type NamedLocationInventory,
 } from "../src/namedLocations";
 import type { ValidationReport } from "../src/validationReport";
+import type {
+	DataCatalog,
+	PopulationObservationArtifact,
+} from "../src/dataCatalog";
 
 const registry: BoundaryRegistry = {
 	schemaVersion: 1,
@@ -171,6 +175,75 @@ const namedLocationInventory: NamedLocationInventory = {
 
 const namedLocationLookup = createNamedLocationLookup(namedLocationInventory);
 
+const dataCatalog: DataCatalog = {
+	schemaVersion: 1,
+	contentHash: "sha256:data-catalog",
+	source: {
+		artifact: "data/precompiled/dataset-manifest.json",
+		manifestVersion: 1,
+	},
+	datasets: [
+		{
+			id: "population",
+			label: "Population",
+			publisher: "ONS",
+			sourceUrl: "https://example.com/population",
+			temporalCoverage: "2022",
+			licence: { name: "Open Government Licence" },
+			inputs: [],
+			summary: {
+				datasetCount: 1,
+				dataRecordCount: 2,
+				boundaryYears: [2023],
+			},
+			compiled: { bytes: 1, sha256: "compiled" },
+		},
+	],
+	measures: [
+		{
+			id: "population-estimate",
+			label: "Ward population estimate",
+			datasetId: "population",
+			valueKind: "count",
+			unit: "people",
+			aggregation: {
+				kind: "extensive",
+				operation: "sum",
+				available: false,
+			},
+			periods: ["2022"],
+			sourceGeography: { type: "ward", boundaryYear: 2023 },
+			coverage: {
+				kind: "partial",
+				countries: ["GB-ENG", "GB-WLS"],
+				recordCount: 2,
+				note: "England and Wales only.",
+			},
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: {
+				data: "/v1/data/population-estimate",
+				dataset: "/v1/datasets/population",
+			},
+		},
+	],
+};
+
+const populationObservations: PopulationObservationArtifact = {
+	schemaVersion: 1,
+	contentHash: "sha256:population-observations",
+	measureId: "population-estimate",
+	period: "2022",
+	sourceGeography: { type: "ward", boundaryYear: 2023 },
+	records: [
+		{ areaCode: "E05000001", value: 100, status: "observed" },
+		{ areaCode: "W05000001", value: 200, status: "observed" },
+	],
+};
+
 const routeWithNamedLocations = (url: string) =>
 	route(
 		"GET",
@@ -189,6 +262,85 @@ const routeWithNamedLocations = (url: string) =>
 		namedLocationInventory,
 		namedLocationLookup,
 	);
+
+const routeWithData = (url: string) =>
+	route(
+		"GET",
+		url,
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		dataCatalog,
+		populationObservations,
+	);
+
+test("publishes datasets, measures and source-exact population observations", () => {
+	const datasets = routeWithData("/v1/datasets");
+	assert.equal(datasets.status, 200);
+	assert.deepEqual(
+		"data" in datasets.body && datasets.body.data,
+		dataCatalog.datasets,
+	);
+
+	const measure = routeWithData("/v1/measures/population-estimate");
+	assert.equal(measure.status, 200);
+	assert.deepEqual(
+		"data" in measure.body && measure.body.data,
+		dataCatalog.measures[0],
+	);
+
+	const first = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=1",
+	);
+	assert.equal(first.status, 200);
+	const firstData = "data" in first.body ? first.body.data : undefined;
+	assert.deepEqual(firstData, {
+		measure: dataCatalog.measures[0],
+		period: "2022",
+		sourceGeography: { type: "ward", boundaryYear: 2023 },
+		conversion: null,
+		aggregation: null,
+		records: [populationObservations.records[0]],
+	});
+	const cursor = "meta" in first.body ? first.body.meta.nextCursor : null;
+	assert.equal(typeof cursor, "string");
+	const second = routeWithData(
+		`/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=1&cursor=${cursor}`,
+	);
+	assert.deepEqual("data" in second.body && second.body.data, {
+		measure: dataCatalog.measures[0],
+		period: "2022",
+		sourceGeography: { type: "ward", boundaryYear: 2023 },
+		conversion: null,
+		aggregation: null,
+		records: [populationObservations.records[1]],
+	});
+});
+
+test("refuses population conversions and aggregation until they are implemented", () => {
+	const invalidSource = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2024",
+	);
+	assert.equal(invalidSource.status, 400);
+	const conversion = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-12-uk-bgc",
+	);
+	assert.equal(conversion.status, 422);
+	const aggregation = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&aggregate=sum",
+	);
+	assert.equal(aggregation.status, 422);
+});
 
 test("lists published geographies", () => {
 	const response = route("GET", "/v1/geographies", registry);

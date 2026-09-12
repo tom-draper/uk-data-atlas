@@ -183,8 +183,13 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Statistics and measures — data required
 
-- [ ] Catalogue datasets and measures with units, period, coverage, licence,
-      source lineage, revision status, suppression and comparability notes.
+- [x] Catalogue compiled datasets with their source inputs, hashes, licences,
+      temporal coverage and record counts through `GET /v1/datasets`; publish
+      the first measure definitions through `GET /v1/measures`.
+- [x] Return source-exact 2022 population estimates for the published Ward
+      2023 code vintage in England and Wales through
+      `GET /v1/data/population-estimate`. The route deliberately has no
+      geometry-release selection, conversion or aggregation yet.
 - [ ] Return population estimates for a supported ward, local authority,
       constituency, country or named location.
 - [ ] Return population density only when the population date/geography and the
@@ -545,19 +550,21 @@ GET /v1/measures/population-estimate
   "periods": ["2022"],
   "sourceGeography": {
     "type": "ward",
-    "boundaryRelease": "2020-12-uk-bgc"
+    "boundaryYear": 2023
   },
-  "coverage": { "kind": "partial", "includes": ["England", "Wales", "Scotland", "Northern Ireland"] },
-  "datasets": ["population-uk@2026.09.0"],
+  "coverage": { "kind": "partial", "includes": ["England", "Wales"] },
+  "datasets": ["population"],
   "links": {
     "data": "/v1/data/population-estimate",
-    "provenance": "/v1/provenance/datasets/population-uk@2026.09.0"
+    "dataset": "/v1/datasets/population"
   }
 }
 ```
 
-The example coverage is illustrative; the production catalogue must only make
-the claim supported by the actual input data.
+The live first measure uses this narrower source identity because its input
+identifies a Ward 2023 code vintage but does not establish whether a May or
+December 2023 geometry should be silently selected. The production catalogue
+must only make the claim supported by the actual input data.
 
 ### 2. Find places and inspect geography
 
@@ -1148,6 +1155,11 @@ pnpm start
 - `GET /v1`
 - `GET /v1/geographies`
 - `GET /v1/geography-inventory`
+- `GET /v1/datasets`
+- `GET /v1/datasets/{dataset-id}`
+- `GET /v1/measures`
+- `GET /v1/measures/{measure-id}`
+- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`
 - `GET /v1/areas`

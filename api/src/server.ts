@@ -27,6 +27,7 @@ import {
 	type NamedLocationLookup,
 } from "./namedLocations";
 import type { ValidationReport } from "./validationReport";
+import type { DataCatalog, PopulationObservationArtifact } from "./dataCatalog";
 import {
 	createAreaSearchIndex,
 	route,
@@ -162,6 +163,37 @@ export const readValidationReport = (apiRoot: string): ValidationReport => {
 	return report;
 };
 
+export const readDataCatalog = (apiRoot: string): DataCatalog => {
+	const path = join(apiRoot, "public", "data-catalog.json");
+	const catalog = JSON.parse(readFileSync(path, "utf8")) as DataCatalog;
+	if (
+		catalog.schemaVersion !== 1 ||
+		!Array.isArray(catalog.datasets) ||
+		!Array.isArray(catalog.measures)
+	) {
+		throw new Error(`Invalid data catalogue at ${path}`);
+	}
+	return catalog;
+};
+
+export const readPopulationObservations = (
+	apiRoot: string,
+): PopulationObservationArtifact => {
+	const path = join(apiRoot, "public", "population-observations.json");
+	const observations = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as PopulationObservationArtifact;
+	if (
+		observations.schemaVersion !== 1 ||
+		observations.measureId !== "population-estimate" ||
+		observations.period !== "2022" ||
+		!Array.isArray(observations.records)
+	) {
+		throw new Error(`Invalid population observations at ${path}`);
+	}
+	return observations;
+};
+
 export type ApiCatalogues = {
 	boundaryRegistry: BoundaryRegistry;
 	geographyInventory: GeographyInventory;
@@ -176,12 +208,15 @@ export type ApiCatalogues = {
 	validationReport: ValidationReport;
 	namedLocationInventory: NamedLocationInventory;
 	namedLocationLookup: NamedLocationLookup;
+	dataCatalog: DataCatalog;
+	populationObservations: PopulationObservationArtifact;
 };
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const areaLookup = readAreaLookup(apiRoot);
 	const namedLocationInventory = readNamedLocationInventory(apiRoot);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
+	const dataCatalog = readDataCatalog(apiRoot);
 	const geometrySources = readGeometrySourceLookup(apiRoot);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
 	return {
@@ -204,6 +239,8 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		validationReport: readValidationReport(apiRoot),
 		namedLocationInventory,
 		namedLocationLookup: createNamedLocationLookup(namedLocationInventory),
+		dataCatalog,
+		populationObservations: readPopulationObservations(apiRoot),
 	};
 };
 
@@ -221,6 +258,8 @@ export const createApiServer = ({
 	validationReport,
 	namedLocationInventory,
 	namedLocationLookup,
+	dataCatalog,
+	populationObservations,
 }: ApiCatalogues) =>
 	createServer((request, response) => {
 		const result = route(
@@ -239,6 +278,8 @@ export const createApiServer = ({
 			validationReport,
 			namedLocationInventory,
 			namedLocationLookup,
+			dataCatalog,
+			populationObservations,
 		);
 		response.writeHead(result.status, {
 			"cache-control": "public, max-age=300",
