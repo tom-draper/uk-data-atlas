@@ -1,0 +1,1691 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:516a3194ebb029a789b5e197a958f7a07b9a82d038b33c9f2d361e5dafcd1241",
+	"measureId": "travel-to-work-car",
+	"sourceGeography": {
+		"type": "localAuthority",
+		"boundaryYear": 2025
+	},
+	"periods": [
+		{
+			"period": "2021",
+			"records": [
+				{
+					"areaCode": "E06000001",
+					"value": 24724,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000002",
+					"value": 34805,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000003",
+					"value": 36917,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000004",
+					"value": 55316,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000005",
+					"value": 28229,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000006",
+					"value": 35011,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000007",
+					"value": 57478,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000008",
+					"value": 39592,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000009",
+					"value": 32857,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000010",
+					"value": 70341,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000011",
+					"value": 95648,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000012",
+					"value": 45220,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000013",
+					"value": 51442,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000014",
+					"value": 38009,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000015",
+					"value": 64607,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000016",
+					"value": 80980,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000017",
+					"value": 9553,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000018",
+					"value": 56000,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000019",
+					"value": 51576,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000020",
+					"value": 53438,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000021",
+					"value": 74396,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000022",
+					"value": 38390,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000023",
+					"value": 86244,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000024",
+					"value": 55756,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000025",
+					"value": 76586,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000026",
+					"value": 68196,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000027",
+					"value": 34600,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000030",
+					"value": 61328,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000031",
+					"value": 56116,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000032",
+					"value": 54360,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000033",
+					"value": 35975,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000034",
+					"value": 46793,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000035",
+					"value": 75805,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000036",
+					"value": 32354,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000037",
+					"value": 38488,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000038",
+					"value": 30819,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000039",
+					"value": 38191,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000040",
+					"value": 29897,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000041",
+					"value": 35502,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000042",
+					"value": 69698,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000043",
+					"value": 37978,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000044",
+					"value": 45561,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000045",
+					"value": 57600,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000046",
+					"value": 31804,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000047",
+					"value": 139329,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000049",
+					"value": 100896,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000050",
+					"value": 92448,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000051",
+					"value": 89890,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000052",
+					"value": 153027,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000053",
+					"value": 301,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000054",
+					"value": 131205,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000055",
+					"value": 47293,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000056",
+					"value": 81796,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000057",
+					"value": 82150,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000058",
+					"value": 95981,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000059",
+					"value": 96129,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000060",
+					"value": 128166,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000061",
+					"value": 112707,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000062",
+					"value": 121851,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000063",
+					"value": 77672,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000064",
+					"value": 60233,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000065",
+					"value": 158679,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E06000066",
+					"value": 155992,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000008",
+					"value": 15015,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000009",
+					"value": 24208,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000010",
+					"value": 30874,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000011",
+					"value": 47311,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000012",
+					"value": 35564,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000026",
+					"value": 26895,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000027",
+					"value": 17440,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000028",
+					"value": 32355,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000029",
+					"value": 18422,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000030",
+					"value": 15466,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000031",
+					"value": 27327,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000032",
+					"value": 37642,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000033",
+					"value": 26510,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000034",
+					"value": 29019,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000035",
+					"value": 18012,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000036",
+					"value": 32675,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000037",
+					"value": 24712,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000038",
+					"value": 30306,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000039",
+					"value": 34126,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000040",
+					"value": 36988,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000041",
+					"value": 24366,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000042",
+					"value": 22864,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000043",
+					"value": 25396,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000044",
+					"value": 21599,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000045",
+					"value": 36013,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000046",
+					"value": 18163,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000047",
+					"value": 14001,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000061",
+					"value": 23472,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000062",
+					"value": 21176,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000063",
+					"value": 20978,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000064",
+					"value": 20498,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000065",
+					"value": 40930,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000066",
+					"value": 45549,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000067",
+					"value": 44436,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000068",
+					"value": 15056,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000069",
+					"value": 23182,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000070",
+					"value": 40856,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000071",
+					"value": 46947,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000072",
+					"value": 28738,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000073",
+					"value": 26935,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000074",
+					"value": 17864,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000075",
+					"value": 20783,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000076",
+					"value": 36002,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000077",
+					"value": 22916,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000078",
+					"value": 24939,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000079",
+					"value": 21476,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000080",
+					"value": 25018,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000081",
+					"value": 37502,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000082",
+					"value": 32780,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000083",
+					"value": 25694,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000084",
+					"value": 45375,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000085",
+					"value": 32359,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000086",
+					"value": 37696,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000087",
+					"value": 30126,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000088",
+					"value": 21585,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000089",
+					"value": 23136,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000090",
+					"value": 33991,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000091",
+					"value": 45606,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000092",
+					"value": 29183,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000093",
+					"value": 34202,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000094",
+					"value": 25845,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000095",
+					"value": 25199,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000096",
+					"value": 36740,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000098",
+					"value": 22478,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000099",
+					"value": 29168,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000102",
+					"value": 20987,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000103",
+					"value": 21578,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000105",
+					"value": 34941,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000106",
+					"value": 33096,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000107",
+					"value": 28396,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000108",
+					"value": 30174,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000109",
+					"value": 27390,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000110",
+					"value": 46739,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000111",
+					"value": 24746,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000112",
+					"value": 25854,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000113",
+					"value": 40920,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000114",
+					"value": 32639,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000115",
+					"value": 32515,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000116",
+					"value": 23485,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000117",
+					"value": 24986,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000118",
+					"value": 34337,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000119",
+					"value": 19624,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000120",
+					"value": 23362,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000121",
+					"value": 34668,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000122",
+					"value": 24768,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000123",
+					"value": 35979,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000124",
+					"value": 18109,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000125",
+					"value": 21077,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000126",
+					"value": 32872,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000127",
+					"value": 32434,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000128",
+					"value": 28884,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000129",
+					"value": 30949,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000130",
+					"value": 47260,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000131",
+					"value": 26480,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000132",
+					"value": 33349,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000133",
+					"value": 14775,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000134",
+					"value": 32004,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000135",
+					"value": 15054,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000136",
+					"value": 24645,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000137",
+					"value": 35411,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000138",
+					"value": 25139,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000139",
+					"value": 35009,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000140",
+					"value": 31623,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000141",
+					"value": 39027,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000142",
+					"value": 26436,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000143",
+					"value": 42308,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000144",
+					"value": 36850,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000145",
+					"value": 25351,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000146",
+					"value": 44882,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000147",
+					"value": 25266,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000148",
+					"value": 27308,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000149",
+					"value": 39255,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000163",
+					"value": 14125,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000164",
+					"value": 24261,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000165",
+					"value": 38720,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000166",
+					"value": 13907,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000167",
+					"value": 14485,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000168",
+					"value": 26383,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000169",
+					"value": 26798,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000170",
+					"value": 38316,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000171",
+					"value": 37131,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000172",
+					"value": 26122,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000173",
+					"value": 30232,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000174",
+					"value": 35279,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000175",
+					"value": 34341,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000176",
+					"value": 25933,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000177",
+					"value": 42861,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000178",
+					"value": 18941,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000179",
+					"value": 33659,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000180",
+					"value": 31813,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000181",
+					"value": 30213,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000187",
+					"value": 30741,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000188",
+					"value": 36017,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000189",
+					"value": 49004,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000192",
+					"value": 33995,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000193",
+					"value": 36329,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000194",
+					"value": 29534,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000195",
+					"value": 36287,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000196",
+					"value": 32220,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000197",
+					"value": 37658,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000198",
+					"value": 29411,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000199",
+					"value": 24783,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000200",
+					"value": 24949,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000202",
+					"value": 35976,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000203",
+					"value": 29880,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000207",
+					"value": 21607,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000208",
+					"value": 14562,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000209",
+					"value": 27640,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000210",
+					"value": 17710,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000211",
+					"value": 31804,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000212",
+					"value": 19878,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000213",
+					"value": 24875,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000214",
+					"value": 21810,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000215",
+					"value": 18669,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000216",
+					"value": 24883,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000217",
+					"value": 21298,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000218",
+					"value": 20242,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000219",
+					"value": 40247,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000220",
+					"value": 32797,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000221",
+					"value": 33310,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000222",
+					"value": 30780,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000223",
+					"value": 15333,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000224",
+					"value": 43772,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000225",
+					"value": 27785,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000226",
+					"value": 30329,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000227",
+					"value": 34698,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000228",
+					"value": 34385,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000229",
+					"value": 25666,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000234",
+					"value": 26699,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000235",
+					"value": 19753,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000236",
+					"value": 26975,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000237",
+					"value": 28252,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000238",
+					"value": 37734,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000239",
+					"value": 29738,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000240",
+					"value": 24750,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000241",
+					"value": 26163,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000242",
+					"value": 34052,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000243",
+					"value": 24361,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000244",
+					"value": 62417,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000245",
+					"value": 55329,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E07000246",
+					"value": 40230,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000001",
+					"value": 74633,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000002",
+					"value": 47521,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000003",
+					"value": 90596,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000004",
+					"value": 57614,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000005",
+					"value": 57245,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000006",
+					"value": 57496,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000007",
+					"value": 68802,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000008",
+					"value": 60311,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000009",
+					"value": 49381,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000010",
+					"value": 97738,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000011",
+					"value": 39764,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000012",
+					"value": 92061,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000013",
+					"value": 51970,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000014",
+					"value": 65759,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000015",
+					"value": 77614,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000016",
+					"value": 73267,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000017",
+					"value": 89116,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000018",
+					"value": 77270,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000019",
+					"value": 119969,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000021",
+					"value": 53973,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000022",
+					"value": 48055,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000023",
+					"value": 34458,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000024",
+					"value": 67381,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000025",
+					"value": 224520,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000026",
+					"value": 80078,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000027",
+					"value": 92390,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000028",
+					"value": 83381,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000029",
+					"value": 50511,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000030",
+					"value": 75720,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000031",
+					"value": 67271,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000032",
+					"value": 122308,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000033",
+					"value": 50780,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000034",
+					"value": 110258,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000035",
+					"value": 171277,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000036",
+					"value": 101855,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E08000037",
+					"value": 45206,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000001",
+					"value": 137,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000002",
+					"value": 33124,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000003",
+					"value": 49966,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000004",
+					"value": 45422,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000005",
+					"value": 38137,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000006",
+					"value": 48156,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000007",
+					"value": 7584,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000008",
+					"value": 55888,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000009",
+					"value": 46023,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000010",
+					"value": 49867,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000011",
+					"value": 30783,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000012",
+					"value": 12497,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000013",
+					"value": 8295,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000014",
+					"value": 19893,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000015",
+					"value": 41141,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000016",
+					"value": 49247,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000017",
+					"value": 59132,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000018",
+					"value": 43814,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000019",
+					"value": 8423,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000020",
+					"value": 5818,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000021",
+					"value": 22497,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000022",
+					"value": 18007,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000023",
+					"value": 26238,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000024",
+					"value": 24248,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000025",
+					"value": 30722,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000026",
+					"value": 43199,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000027",
+					"value": 18068,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000028",
+					"value": 15583,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000029",
+					"value": 38482,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000030",
+					"value": 15091,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000031",
+					"value": 29506,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000032",
+					"value": 18765,
+					"status": "observed"
+				},
+				{
+					"areaCode": "E09000033",
+					"value": 7245,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000001",
+					"value": 19269,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000002",
+					"value": 31604,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000003",
+					"value": 30267,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000004",
+					"value": 26431,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000005",
+					"value": 49180,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000006",
+					"value": 42422,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000008",
+					"value": 16398,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000009",
+					"value": 34600,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000010",
+					"value": 54575,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000011",
+					"value": 61614,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000012",
+					"value": 40399,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000013",
+					"value": 42739,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000014",
+					"value": 32119,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000015",
+					"value": 69914,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000016",
+					"value": 68677,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000018",
+					"value": 50452,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000019",
+					"value": 21864,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000020",
+					"value": 27310,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000021",
+					"value": 23781,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000022",
+					"value": 41910,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000023",
+					"value": 35560,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W06000024",
+					"value": 17587,
+					"status": "observed"
+				}
+			]
+		}
+	]
+}

@@ -22,9 +22,6 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 		"area-inventory.json",
 		"population-observations.json",
 		"population-local-authority-observations.json",
-		"ghg-emissions-observations.json",
-		"mobile-4g-coverage-observations.json",
-		"mobile-5g-coverage-observations.json",
 	];
 	for (const file of required) {
 		if (!existsSync(join(publicDirectory, file))) {
@@ -40,8 +37,11 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 			read<AreaReleaseArtifact>(join(publicDirectory, release.artifact)),
 		];
 	});
+	const dataCatalog = read<DataCatalog>(
+		join(publicDirectory, "data-catalog.json"),
+	);
 	const compatibility = compileMeasureCompatibility(
-		read<DataCatalog>(join(publicDirectory, "data-catalog.json")),
+		dataCatalog,
 		read<BoundaryRegistry>(join(publicDirectory, "boundary-releases.json")),
 		artifacts,
 		read<PopulationObservationArtifact>(
@@ -53,15 +53,16 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 				"population-local-authority-observations.json",
 			),
 		),
-		[
-			"ghg-emissions",
-			"mobile-4g-coverage",
-			"mobile-5g-coverage",
-		].map((measureId) =>
-			read<MeasureObservationArtifact>(
-				join(publicDirectory, `${measureId}-observations.json`),
+		dataCatalog.measures
+			.filter((measure) => measure.id !== "population-estimate")
+			.map((measure) =>
+				read<MeasureObservationArtifact>(
+					join(
+						publicDirectory,
+						`${measure.id}-observations.json`,
+					),
+				),
 			),
-		),
 	);
 	const outputPath = join(publicDirectory, "measure-compatibility.json");
 	writeFileSync(outputPath, `${JSON.stringify(compatibility, null, "\t")}\n`);

@@ -118,8 +118,7 @@ const observationsFor = (
 	artifacts: {
 		populationObservations?: PopulationObservationArtifact;
 		populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
-		ghgEmissionsObservations?: MeasureObservationArtifact;
-		mobileCoverageObservations?: MeasureObservationArtifact[];
+		measureObservations?: MeasureObservationArtifact[];
 	},
 ):
 	| (ObservationArtifactReference & { records: PopulationObservation[] })
@@ -147,12 +146,9 @@ const observationsFor = (
 				}
 			: undefined;
 	}
-	const byMeasure = [
-		...(artifacts.ghgEmissionsObservations
-			? [artifacts.ghgEmissionsObservations]
-			: []),
-		...(artifacts.mobileCoverageObservations ?? []),
-	].find((candidate) => candidate.measureId === measureId);
+	const byMeasure = (artifacts.measureObservations ?? []).find(
+		(candidate) => candidate.measureId === measureId,
+	);
 	const records = byMeasure?.periods.find(
 		(candidate) => candidate.period === period,
 	)?.records;
@@ -283,8 +279,8 @@ export type RouteContext = {
 	dataCatalog?: DataCatalog;
 	populationObservations?: PopulationObservationArtifact;
 	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
-	ghgEmissionsObservations?: MeasureObservationArtifact;
-	mobileCoverageObservations?: MeasureObservationArtifact[];
+	/** Every measure's observations bar the two population artifacts. */
+	measureObservations?: MeasureObservationArtifact[];
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
 };
 
@@ -315,8 +311,7 @@ export const route = (
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
-		ghgEmissionsObservations,
-		mobileCoverageObservations,
+		measureObservations,
 		measureCompatibilityInventory,
 	} = context;
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
@@ -646,8 +641,7 @@ export const route = (
 			{
 				populationObservations,
 				populationLocalAuthorityObservations,
-				ghgEmissionsObservations,
-				mobileCoverageObservations,
+				measureObservations,
 			},
 		);
 		if (!observations) {

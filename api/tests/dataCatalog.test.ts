@@ -24,6 +24,28 @@ const dataset = (
 	compiled: { bytes: 10, sha256: "compiled" },
 });
 
+/** Every travel mode, because the compiler reads each as its own measure. */
+const travelBreakdown = (car: number) => ({
+	workFromHome: 10,
+	publicTransport: 20,
+	car,
+	taxi: 1,
+	motorcycle: 2,
+	bicycle: 3,
+	onFoot: 4,
+	other: 5,
+	total: car + 45,
+});
+
+/** The same for every car-availability band. */
+const carBreakdown = (noCar: number) => ({
+	noCar,
+	oneCar: 40,
+	twoCars: 30,
+	threeOrMoreCars: 10,
+	total: noCar + 80,
+});
+
 /** One authority-year of emissions, with a land-use sink that pulls it down. */
 const emissionsYear = (year: number) => ({
 	year,
@@ -41,6 +63,10 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 	const populationUk = join(directory, "population-uk.json");
 	const ghgEmissions = join(directory, "ghg-emissions.json");
 	const mobileCoverage = join(directory, "mobile-coverage.json");
+	const censusPaths = {
+		"travel-to-work": join(directory, "travel-to-work.json"),
+		"car-availability": join(directory, "car-availability.json"),
+	};
 	writeFileSync(
 		manifest,
 		JSON.stringify({
@@ -50,6 +76,8 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 				dataset("population-uk", 8, 2),
 				dataset("ghg-emissions", 4, 2, 2025),
 				dataset("mobile-coverage", 2, 1, 2024),
+				dataset("travel-to-work", 2, 1, 2025),
+				dataset("car-availability", 2, 1, 2025),
 			],
 		}),
 	);
@@ -110,12 +138,41 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 			},
 		}),
 	);
+	writeFileSync(
+		censusPaths["travel-to-work"],
+		JSON.stringify({
+			"2021": {
+				year: 2021,
+				boundaryYear: 2025,
+				boundaryType: "localAuthority",
+				data: {
+					E06000001: { breakdown: travelBreakdown(240) },
+					W06000001: { breakdown: travelBreakdown(120) },
+				},
+			},
+		}),
+	);
+	writeFileSync(
+		censusPaths["car-availability"],
+		JSON.stringify({
+			"2021": {
+				year: 2021,
+				boundaryYear: 2025,
+				boundaryType: "localAuthority",
+				data: {
+					E06000001: { breakdown: carBreakdown(100) },
+					W06000001: { breakdown: carBreakdown(50) },
+				},
+			},
+		}),
+	);
 	return {
 		manifest,
 		population,
 		populationUk,
 		ghgEmissions,
 		mobileCoverage,
+		censusPaths,
 	};
 };
 
@@ -130,6 +187,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			populationUk,
 			ghgEmissions,
 			mobileCoverage,
+			censusPaths,
 		} = writeSources(directory);
 		const result = compileDataCatalog(
 			manifest,
@@ -137,8 +195,9 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			populationUk,
 			ghgEmissions,
 			mobileCoverage,
+			censusPaths,
 		);
-		assert.equal(result.catalog.datasets.length, 4);
+		assert.equal(result.catalog.datasets.length, 6);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -196,6 +255,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			populationUk,
 			ghgEmissions,
 			mobileCoverage,
+			censusPaths,
 		} = writeSources(
 			directory,
 			3,
@@ -207,6 +267,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			populationUk,
 			ghgEmissions,
 			mobileCoverage,
+			censusPaths,
 		),
 			/expected 3 records/,
 		);
@@ -226,6 +287,7 @@ test("rejects local-authority population data whose codes change between periods
 			populationUk,
 			ghgEmissions,
 			mobileCoverage,
+			censusPaths,
 		} = writeSources(directory);
 		const source = JSON.parse(readFileSync(populationUk, "utf8"));
 		delete source["2024"].data.N09000001;
@@ -237,6 +299,7 @@ test("rejects local-authority population data whose codes change between periods
 			populationUk,
 			ghgEmissions,
 			mobileCoverage,
+			censusPaths,
 		),
 			/local-authority codes change between periods/,
 		);

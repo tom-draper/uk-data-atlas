@@ -34,15 +34,30 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		"precompiled",
 		"mobile-coverage.json",
 	);
+	const censusPaths = {
+		"travel-to-work": join(
+			repositoryRoot,
+			"data",
+			"precompiled",
+			"travel-to-work.json",
+		),
+		"car-availability": join(
+			repositoryRoot,
+			"data",
+			"precompiled",
+			"car-availability.json",
+		),
+	};
 	if (
 		!existsSync(manifestPath) ||
 		!existsSync(populationPath) ||
 		!existsSync(populationUkPath) ||
 		!existsSync(ghgEmissionsPath) ||
-		!existsSync(mobileCoveragePath)
+		!existsSync(mobileCoveragePath) ||
+		Object.values(censusPaths).some((path) => !existsSync(path))
 	) {
 		throw new Error(
-			"Build the dataset manifest, ward population, UK local-authority population, greenhouse gas emissions and mobile coverage data before the API data catalogue.",
+			"Build the dataset manifest, ward population, UK local-authority population, greenhouse gas emissions, mobile coverage and census transport data before the API data catalogue.",
 		);
 	}
 	const outputDirectory = join(repositoryRoot, "api", "public");
@@ -52,12 +67,14 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		populationLocalAuthorityObservations,
 		ghgEmissionsObservations,
 		mobileCoverageObservations,
+		censusObservations,
 	} = compileDataCatalog(
 		manifestPath,
 		populationPath,
 		populationUkPath,
 		ghgEmissionsPath,
 		mobileCoveragePath,
+		censusPaths,
 	);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
@@ -77,16 +94,17 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		ghgEmissionsObservationsPath,
 		`${JSON.stringify(ghgEmissionsObservations, null, "\t")}\n`,
 	);
-	const mobileCoverageObservationPaths = mobileCoverageObservations.map(
-		(observations) => {
-			const path = join(
-				outputDirectory,
-				`${observations.measureId}-observations.json`,
-			);
-			writeFileSync(path, `${JSON.stringify(observations, null, "\t")}\n`);
-			return path;
-		},
-	);
+	const measureObservationPaths = [
+		...mobileCoverageObservations,
+		...censusObservations,
+	].map((observations) => {
+		const path = join(
+			outputDirectory,
+			`${observations.measureId}-observations.json`,
+		);
+		writeFileSync(path, `${JSON.stringify(observations, null, "\t")}\n`);
+		return path;
+	});
 	writeFileSync(
 		observationsPath,
 		`${JSON.stringify(populationObservations, null, "\t")}\n`,
@@ -100,8 +118,11 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		observationsPath,
 		localAuthorityObservationsPath,
 		ghgEmissionsObservationsPath,
-		mobileCoverageObservationPaths,
-		mobileRecordCount: mobileCoverageObservations.reduce(
+		measureObservationPaths,
+		measureRecordCount: [
+			...mobileCoverageObservations,
+			...censusObservations,
+		].reduce(
 			(count, observations) =>
 				count +
 				observations.periods.reduce(
@@ -128,6 +149,6 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildDataCatalog(repositoryRoot);
 	console.log(
-		`Wrote data catalogue, ${result.wardRecordCount} ward observations, ${result.localAuthorityRecordCount} local-authority observations, ${result.emissionsRecordCount} emissions observations and ${result.mobileRecordCount} mobile coverage observations to ${result.catalogPath}`,
+		`Wrote data catalogue, ${result.wardRecordCount} ward observations, ${result.localAuthorityRecordCount} local-authority observations, ${result.emissionsRecordCount} emissions observations and ${result.measureRecordCount} other measure observations to ${result.catalogPath}`,
 	);
 }

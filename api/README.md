@@ -230,6 +230,15 @@ only **available** when its endpoint, contract and provenance are published.
       published metrics are not measures: the at-least-one-operator variants
       are nearly saturated, and the landmass variants use a denominator the
       declared premises weight does not apply to.
+- [x] Return source-exact Census 2021 travel to work and car availability
+      through `GET /v1/data/travel-to-work-{mode}` and
+      `GET /v1/data/car-availability-{band}`: Local Authority 2025 codes for
+      England and Wales. Published as counts, not shares, because a count of
+      people or households adds over areas; each breakdown publishes its own
+      `-total` denominator so a caller can derive a share and knows its
+      universe. The four authorities created in April 2023 postdate the census
+      and are compiled by summing their predecessors, which is exact for a
+      count.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight. No measure offers the operation yet, so a caller cannot
@@ -1217,6 +1226,9 @@ pnpm start
 - `GET /v1/measures/ghg-emissions/coverage`
 - `GET /v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2024`
 - `GET /v1/measures/mobile-4g-coverage`
+- `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`
