@@ -99,6 +99,17 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Complete the standard small-area hierarchies with explicit national
       coverage: OA → LSOA → MSOA → LAD where applicable, Scottish data zone
       and Northern Irish super output area equivalents.
+- [ ] Report an area's capability/availability matrix: supported geometry,
+      parent/child relations, crosswalks, named-location membership, datasets
+      and measures for its exact release.
+- [ ] Return an area-specific citation bundle with sources, licences, input and
+      geometry hashes, validation results and the immutable Atlas release.
+- [ ] Resolve the most appropriate available boundary release for a requested
+      date, always returning the exact release selected rather than a mutable
+      `latest` alias.
+- [ ] Find published conversion paths between two area identities and rank
+      them by source authority and exactness; support small, declared multi-step
+      crosswalk composition without hiding intermediate mappings.
 - [ ] Return explicit absence states: abolished, unsupported geography, partial
       coverage, or no sufficiently trustworthy conversion.
 - [ ] Publish compiler-discovered relationship candidates only after endpoint
@@ -115,6 +126,8 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Return a named location's boundary, bounding box and optional union
       geometry.
 - [ ] Compare location definitions and membership across releases.
+- [ ] Return explicit alternatives for ambiguous real-world names, for example
+      ceremonial, historic and administrative definitions of Devon.
 
 ### Boundaries and spatial queries — next
 
@@ -126,11 +139,21 @@ only **available** when its endpoint, contract and provenance are published.
       calculated with a documented projection and method.
 - [ ] Point lookup: longitude/latitude → containing supported areas for a
       selected boundary release.
+- [ ] Find nearby areas for a coordinate outside a boundary, reporting distance
+      and making clear that nearest is not the same as containing.
+- [ ] Retrieve the areas that intersect a bounded bbox for a chosen release,
+      for efficient map and analysis clients.
 - [ ] List an area's genuine neighbours, including shared-border length and an
       explicit choice to exclude point-only touches. This supports local
       comparison, map navigation and spatial modelling.
 - [ ] Compare two boundary releases to identify recodes, membership changes and
       geometry changes.
+- [ ] Report the overlap between two specified areas, including shared area and
+      each area's share, for investigating relationships such as constituency ↔
+      LAD without downloading both geometries.
+- [ ] Expose geometry metadata without transferring coordinates: source CRS,
+      transformation, hash, validity checks, generalisation tier, area/perimeter
+      method, centroid and a guaranteed-inside label point.
 - [ ] Deliver vector tiles and cached exports for map-scale workloads.
 - [ ] Publish bulk, versioned CSV/NDJSON/Parquet downloads for area identities,
       aliases, hierarchy relations, named-location membership and crosswalks.
@@ -141,6 +164,9 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Data ingestion and geography matching — next
 
+- [ ] Validate batches of supplied codes/names quickly, reporting invalid,
+      abolished, ambiguous and unsupported values before a caller submits a
+      full matching or upload job.
 - [ ] Accept a column of supplied codes or place names and return an auditable
       match report: candidate geography/release, exact/alias/fuzzy match method,
       ambiguity, unmatched values and recommended next action.
@@ -191,9 +217,17 @@ only **available** when its endpoint, contract and provenance are published.
       covered.
 - [ ] Machine-readable change log, release notifications and deprecation
       policy.
+- [ ] Compare two Atlas releases, identifying changed datasets, boundary
+      releases, crosswalks, validation exceptions and named-location definitions.
+- [ ] Generate a ready-to-use attribution and licence block for selected
+      resources, suitable for a map, report or bulk download.
 - [ ] Cached bulk exports and reproducible query snapshots.
 - [ ] Operational API keys, fair rate limits and managed services only when
       they add service value rather than restricting openly licensed data.
+- [ ] Publish an export manifest for every asynchronous or bulk download with
+      its schema, query, row count, content hashes, provenance and Atlas release.
+- [ ] Report a measure/geography/release quality matrix before large queries,
+      including observed, derived, missing and suppressed-value coverage.
 
 ### Examples this checklist is intended to answer
 
