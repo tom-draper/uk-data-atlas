@@ -338,6 +338,18 @@ paths:
           description: >
             Add the selected release's canonical area identity, name and
             aliases to each record. Requires a compatible `release`.
+        - name: format
+          in: query
+          required: false
+          schema:
+            enum: [json, csv, ndjson]
+            default: json
+          description: >
+            `json` returns the API envelope. `csv` and `ndjson` return one
+            provenance-bearing row per observation, suitable for downloads and
+            line-oriented processing. Tabular responses are paginated like the
+            JSON ones, but carry the next page as a `Link` header with
+            `rel="next"` because they have no envelope to hold a cursor.
         - name: limit
           in: query
           required: false
@@ -353,11 +365,25 @@ paths:
             type: string
       responses:
         "200":
-          description: A cursor-paginated page of observed ward values.
+          description: A cursor-paginated JSON page or a source-exact tabular export.
+          headers:
+            Link:
+              description: >
+                Present on a tabular page that is not the last. An RFC 8288
+                `rel="next"` relation holding the same query with its cursor
+                advanced.
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+            text/csv:
+              schema:
+                type: string
+            application/x-ndjson:
+              schema:
+                type: string
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "422":

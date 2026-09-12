@@ -619,6 +619,69 @@ test("publishes datasets, measures and source-exact population observations", ()
 		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&include=area",
 	);
 	assert.equal(includeWithoutRelease.status, 400);
+
+	const csv = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&areaCode=E05000001&format=csv",
+	);
+	assert.equal(csv.status, 200);
+	assert.equal(csv.representation?.contentType, "text/csv; charset=utf-8");
+	assert.equal(
+		csv.representation?.body,
+		'atlasRelease,measureId,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status\n"sha256:registry","population-estimate","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed"\n',
+	);
+
+	const ndjson = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&areaCode=E05000001&format=ndjson",
+	);
+	assert.equal(ndjson.status, 200);
+	assert.equal(
+		ndjson.representation?.contentType,
+		"application/x-ndjson; charset=utf-8",
+	);
+	assert.deepEqual(JSON.parse(String(ndjson.representation?.body)), {
+		atlasRelease: "sha256:registry",
+		measureId: "population-estimate",
+		datasetId: "population",
+		period: "2022",
+		geography: "ward",
+		boundaryYear: 2023,
+		boundaryRelease: "",
+		geometryCompatibility: "",
+		transformationStatus: "not-applied",
+		areaCode: "E05000001",
+		areaId: "",
+		areaName: "",
+		areaAliases: "",
+		value: 100,
+		status: "observed",
+	});
+
+	const csvPage = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=1&format=csv",
+	);
+	assert.equal(csvPage.status, 200);
+	const pageCursor =
+		"meta" in csvPage.body ? csvPage.body.meta.nextCursor : null;
+	assert.equal(typeof pageCursor, "string");
+	assert.equal(
+		csvPage.representation?.headers?.link,
+		`</v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=1&format=csv&cursor=${pageCursor}>; rel="next"`,
+	);
+	assert.equal(
+		String(csvPage.representation?.body).trimEnd().split("\n").length,
+		2,
+	);
+
+	const csvLastPage = routeWithData(
+		`/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=1&format=csv&cursor=${pageCursor}`,
+	);
+	assert.equal(csvLastPage.status, 200);
+	assert.deepEqual(csvLastPage.representation?.headers, {});
+
+	const invalidFormat = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=parquet",
+	);
+	assert.equal(invalidFormat.status, 400);
 });
 
 test("publishes measure boundary candidates as code compatibility only", () => {

@@ -25,6 +25,11 @@ import type {
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import { measureCoverage } from "./measureCoverage";
 import {
+	exportPopulationRecords,
+	type PopulationExportRecord,
+	type TabularFormat,
+} from "./tabularExport";
+import {
 	sourceExactProvenance,
 	type CallerSelectedGeometry,
 } from "./sourceExactProvenance";
@@ -41,6 +46,11 @@ type Envelope<T> = {
 export type ApiResponse = {
 	status: number;
 	body: Envelope<unknown> | Problem;
+	representation?: {
+		contentType: string;
+		body: string;
+		headers?: Record<string, string>;
+	};
 };
 
 type Problem = {
@@ -87,6 +97,13 @@ const decodePathSegment = (segment: string) => {
 
 const DEFAULT_PAGE_SIZE = 100;
 const MAX_PAGE_SIZE = 500;
+
+/** The same query with the cursor advanced, as a relative `Link` target. */
+const nextPageHref = (parsedUrl: URL, nextCursor: string) => {
+	const params = new URLSearchParams(parsedUrl.searchParams);
+	params.set("cursor", nextCursor);
+	return `${parsedUrl.pathname}?${params.toString()}`;
+};
 
 const readPageSize = (value: string | null): number | undefined => {
 	if (value === null) return DEFAULT_PAGE_SIZE;
@@ -519,6 +536,18 @@ export const route = (
 		}
 		const areaCode = parsedUrl.searchParams.get("areaCode");
 		const include = parsedUrl.searchParams.get("include");
+		const requestedFormat = parsedUrl.searchParams.get("format") ?? "json";
+		if (
+			requestedFormat !== "json" &&
+			requestedFormat !== "csv" &&
+			requestedFormat !== "ndjson"
+		) {
+			return problem(
+				400,
+				"Invalid Query",
+				"format must be one of json, csv or ndjson.",
+			);
+		}
 		if (include !== null && include !== "area") {
 			return problem(
 				400,
@@ -617,11 +646,50 @@ export const route = (
 				"The selected release is compatible but its compiled area inventory is incomplete.",
 			);
 		}
+		const exportRecords = recordsWithAreas.filter(
+			(record): record is PopulationExportRecord => record !== undefined,
+		);
 		const lastRecord = records.at(-1);
 		const nextCursor =
 			offset + records.length < matches.length && lastRecord
 				? cursorFor(lastRecord.areaCode)
 				: null;
+		if (requestedFormat !== "json") {
+			const exported = exportPopulationRecords(
+				requestedFormat as TabularFormat,
+				{
+					atlasRelease: releaseId,
+					measureId: measure.id,
+					source,
+					period: period as string,
+					geometry,
+					records: exportRecords,
+				},
+			);
+			return {
+				status: 200,
+				body: envelope(
+					releaseId,
+					{
+						format: requestedFormat,
+						rowCount: exportRecords.length,
+					},
+					nextCursor,
+				),
+				representation: {
+					...exported,
+					// A tabular body carries no envelope, so the only way a
+					// caller can tell a page from the whole partition is the
+					// link relation. Without it an export silently stops at
+					// the page size.
+					headers: nextCursor
+						? {
+								link: `<${nextPageHref(parsedUrl, nextCursor)}>; rel="next"`,
+							}
+						: {},
+				},
+			};
+		}
 		return {
 			status: 200,
 			body: envelope(
@@ -635,7 +703,7 @@ export const route = (
 					provenance,
 					conversion: null,
 					aggregation: null,
-					records: recordsWithAreas,
+					records: exportRecords,
 				},
 				nextCursor,
 			),
