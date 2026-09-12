@@ -189,8 +189,9 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Return source-exact population estimates through
       `GET /v1/data/population-estimate`: 2022 Ward 2023 codes in England and
       Wales, plus 2011–2024 Local Authority 2023 codes across all four UK
-      nations. The route deliberately has no geometry-release selection,
-      conversion or aggregation yet.
+      nations. A caller can opt into a code-compatible geometry release for a
+      map join; the route still has no implicit release selection, conversion
+      or aggregation.
 - [ ] Return population estimates for a supported ward, local authority,
       constituency, country or named location.
 - [ ] Return population density only when the population date/geography and the
@@ -1174,6 +1175,7 @@ pnpm start
 - `GET /v1/measures/{measure-id}`
 - `GET /v1/measures/{measure-id}/compatibility`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023`
+- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`

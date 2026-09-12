@@ -426,15 +426,70 @@ export const route = (
 				"population-estimate supports only a published source period, geography and boundary year; inspect /v1/measures/population-estimate for available sources.",
 			);
 		}
+		const requestedRelease = parsedUrl.searchParams.get("release");
+		let geometry:
+			| {
+					boundaryRelease: string;
+					selection: "caller-specified";
+					compatibility: "exact-code-set" | "code-set-compatible";
+					areaIdentityTemplate: string;
+					note: string;
+			  }
+			| undefined;
+		if (requestedRelease) {
+			if (!measureCompatibilityInventory) {
+				return problem(
+					503,
+					"Catalogue Unavailable",
+					"Build measure compatibility before selecting a geometry release for observations.",
+				);
+			}
+			const compatibilitySource = measureCompatibilityInventory.measures
+				.find(
+					(candidate) =>
+						candidate.measureId === "population-estimate",
+				)
+				?.sources.find(
+					(candidate) =>
+						candidate.datasetId === source.datasetId &&
+						candidate.sourceGeography.type ===
+							source.sourceGeography.type &&
+						candidate.sourceGeography.boundaryYear ===
+							source.sourceGeography.boundaryYear &&
+						candidate.periods.includes(period ?? ""),
+				);
+			const candidate = compatibilitySource?.candidates.find(
+				(candidate) => candidate.boundaryRelease === requestedRelease,
+			);
+			if (
+				!candidate ||
+				(candidate.status !== "exact-code-set" &&
+					candidate.status !== "code-set-compatible") ||
+				candidate.unmatchedSourceCodeCount !== 0 ||
+				candidate.matchedSourceShare !== 1
+			) {
+				return problem(
+					422,
+					"Operation Not Supported",
+					"The requested release does not contain every source area code for this measure partition. Inspect /v1/measures/population-estimate/compatibility for supported candidates.",
+				);
+			}
+			geometry = {
+				boundaryRelease: candidate.boundaryRelease,
+				selection: "caller-specified",
+				compatibility: candidate.status,
+				areaIdentityTemplate: `${source.sourceGeography.type}/${candidate.boundaryRelease}/{areaCode}`,
+				note: "Values remain source-exact and are joined to this caller-selected geometry by matching area code. This is not a geometry conversion or an assertion of equal geometry.",
+			};
+		}
 		if (
-			parsedUrl.searchParams.has("release") ||
 			parsedUrl.searchParams.has("conversion") ||
 			parsedUrl.searchParams.has("aggregate")
 		) {
 			return problem(
 				422,
 				"Operation Not Supported",
-				"This source-exact endpoint does not yet select a geometry release, convert observations, or aggregate them.",
+				"This source-exact endpoint does not yet convert observations or aggregate them.",
 			);
 		}
 		const areaCode = parsedUrl.searchParams.get("areaCode");
@@ -492,6 +547,7 @@ export const route = (
 					source,
 					period,
 					sourceGeography: source.sourceGeography,
+					...(geometry === undefined ? {} : { geometry }),
 					conversion: null,
 					aggregation: null,
 					records,

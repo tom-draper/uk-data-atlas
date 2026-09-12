@@ -7,8 +7,9 @@ info:
     and served by `pnpm start`. It is not the full public API proposed in
     `README.md`: it does not yet cover write-side aggregation or geography
     conversion for measures. The population route is intentionally
-    source-exact: it serves only the published Ward 2023 code vintage and
-    does not choose a geometry-release month on a caller's behalf.
+    source-exact: it serves only published source code vintages and never
+    chooses a geometry release on a caller's behalf. A caller may explicitly
+    select a code-compatible release for a map join.
 
     Every successful response is wrapped in the envelope described by
     `Envelope`. Its `atlasRelease` field is the immutable `releaseId` from
@@ -259,11 +260,13 @@ paths:
       description: >
         Serves observed values for two source partitions: 2022 Ward 2023 codes
         in England and Wales, and 2011–2024 Local Authority 2023 codes across
-        all four UK nations. It does not select a May/December boundary
-        release, convert values, or aggregate them. A requested `release`,
-        `conversion` or `aggregate` therefore receives 422 rather than an
-        implied result. `GET /measures/population-estimate` declares the valid
-        period/geography combinations.
+        all four UK nations. It never selects a May/December boundary release,
+        converts values, or aggregates them. A caller may supply `release`
+        only when the compatibility report proves that every source code is
+        present; the response identifies that caller-selected code join.
+        `GET /measures/population-estimate` declares valid period/geography
+        combinations, and `GET /measures/population-estimate/compatibility`
+        declares eligible releases.
       parameters:
         - name: period
           in: query
@@ -281,6 +284,15 @@ paths:
           required: true
           schema:
             const: "2023"
+        - name: release
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            Caller-selected geometry release. Accepted only when every source
+            code is present in a published compatibility candidate; it does
+            not convert values or assert equal geometry.
         - name: areaCode
           in: query
           required: false
