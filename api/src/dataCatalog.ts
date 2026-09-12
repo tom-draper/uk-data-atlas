@@ -66,30 +66,33 @@ export type DatasetCatalogueEntry = {
 	compiled: { bytes: number; sha256: string };
 };
 
-export type PopulationMeasure = {
-	id: "population-estimate";
-	label: string;
-	datasetId: "population";
-	valueKind: "count";
-	unit: "people";
-	aggregation: { kind: "extensive"; operation: "sum"; available: false };
-	periods: ["2022"];
-	sourceGeography: { type: "ward"; boundaryYear: 2023 };
+export type Country = "GB-ENG" | "GB-NIR" | "GB-SCT" | "GB-WLS";
+
+export type PopulationSource = {
+	datasetId: "population" | "population-uk";
+	periods: string[];
+	sourceGeography: { type: "ward" | "localAuthority"; boundaryYear: 2023 };
 	coverage: {
-		kind: "partial";
-		countries: Array<"GB-ENG" | "GB-WLS">;
+		kind: "partial" | "source-reported";
+		countries: Country[];
 		recordCount: number;
 		note: string;
 	};
+};
+
+export type PopulationMeasure = {
+	id: "population-estimate";
+	label: "Population estimate";
+	valueKind: "count";
+	unit: "people";
+	aggregation: { kind: "extensive"; operation: "sum"; available: false };
+	sources: PopulationSource[];
 	availability: {
 		sourceExact: true;
 		conversion: false;
 		aggregation: false;
 	};
-	links: {
-		data: "/v1/data/population-estimate";
-		dataset: "/v1/datasets/population";
-	};
+	links: { data: "/v1/data/population-estimate" };
 };
 
 export type DataCatalog = {
@@ -116,6 +119,14 @@ export type PopulationObservationArtifact = {
 	period: "2022";
 	sourceGeography: { type: "ward"; boundaryYear: 2023 };
 	records: PopulationObservation[];
+};
+
+export type PopulationLocalAuthorityObservationArtifact = {
+	schemaVersion: 1;
+	contentHash: string;
+	measureId: "population-estimate";
+	sourceGeography: { type: "localAuthority"; boundaryYear: 2023 };
+	periods: Array<{ period: string; records: PopulationObservation[] }>;
 };
 
 const sha256 = (content: string) =>
@@ -205,19 +216,15 @@ const compileDataset = (
 	};
 };
 
-const populationRecords = (path: string): PopulationObservation[] => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
-	const period = object(source["2022"], `${path}.2022`);
-	if (period.boundaryYear !== 2023 || period.boundaryType !== "ward") {
-		throw new Error(
-			`${path}: expected 2022 ward data on the 2023 code vintage`,
-		);
-	}
-	const data = object(period.data, `${path}.2022.data`);
-	return Object.entries(data)
+const recordsFromData = (
+	data: Record<string, unknown>,
+	path: string,
+	codePattern: RegExp,
+): PopulationObservation[] =>
+	Object.entries(data)
 		.map(([areaCode, record]) => {
-			if (!/^[EW]\d{8}$/.test(areaCode)) {
-				throw new Error(`${path}: unsupported ward code ${areaCode}`);
+			if (!codePattern.test(areaCode)) {
+				throw new Error(`${path}: unsupported area code ${areaCode}`);
 			}
 			const total = object(
 				object(record, `${path}.${areaCode}`).total,
@@ -237,16 +244,87 @@ const populationRecords = (path: string): PopulationObservation[] => {
 			};
 		})
 		.sort((left, right) => left.areaCode.localeCompare(right.areaCode));
+
+const populationRecords = (path: string): PopulationObservation[] => {
+	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const period = object(source["2022"], `${path}.2022`);
+	if (period.boundaryYear !== 2023 || period.boundaryType !== "ward") {
+		throw new Error(
+			`${path}: expected 2022 ward data on the 2023 code vintage`,
+		);
+	}
+	return recordsFromData(
+		object(period.data, `${path}.2022.data`),
+		path,
+		/^[EW]\d{8}$/,
+	);
 };
 
-const populationCountries = (records: PopulationObservation[]) =>
+const countryForCode = (code: string): Country => {
+	const country = (
+		{
+			E: "GB-ENG",
+			N: "GB-NIR",
+			S: "GB-SCT",
+			W: "GB-WLS",
+		} as const
+	)[code[0] as "E" | "N" | "S" | "W"];
+	if (!country) throw new Error(`Unsupported country prefix in ${code}`);
+	return country;
+};
+
+const countriesFor = (records: PopulationObservation[]): Country[] =>
 	[
-		...new Set(
-			records.map((record) =>
-				record.areaCode.startsWith("E") ? "GB-ENG" : "GB-WLS",
-			),
-		),
-	].sort() as Array<"GB-ENG" | "GB-WLS">;
+		...new Set(records.map((record) => countryForCode(record.areaCode))),
+	].sort() as Country[];
+
+const localAuthorityPopulationRecords = (
+	path: string,
+): PopulationLocalAuthorityObservationArtifact["periods"] => {
+	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const periods = Object.entries(source)
+		.map(([period, value]) => {
+			if (!/^\d{4}$/.test(period)) {
+				throw new Error(`${path}: invalid population period ${period}`);
+			}
+			const entry = object(value, `${path}.${period}`);
+			if (
+				entry.year !== Number(period) ||
+				entry.boundaryYear !== 2023 ||
+				entry.boundaryType !== "localAuthority"
+			) {
+				throw new Error(
+					`${path}.${period}: expected local-authority data on the 2023 code vintage`,
+				);
+			}
+			return {
+				period,
+				records: recordsFromData(
+					object(entry.data, `${path}.${period}.data`),
+					`${path}.${period}`,
+					/^[ENSW]\d{8}$/,
+				),
+			};
+		})
+		.sort((left, right) => left.period.localeCompare(right.period));
+	if (periods.length === 0)
+		throw new Error(`${path} has no population periods`);
+	const expectedCodes = periods[0]?.records
+		.map((record) => record.areaCode)
+		.join(",");
+	if (
+		periods.some(
+			(period) =>
+				period.records.map((record) => record.areaCode).join(",") !==
+				expectedCodes,
+		)
+	) {
+		throw new Error(
+			`${path}: local-authority codes change between periods`,
+		);
+	}
+	return periods;
+};
 
 /**
  * Compile source-lineage metadata and one intentionally narrow, source-exact
@@ -256,9 +334,11 @@ const populationCountries = (records: PopulationObservation[]) =>
 export const compileDataCatalog = (
 	manifestPath: string,
 	populationPath: string,
+	populationUkPath: string,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
+	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -280,6 +360,11 @@ export const compileDataCatalog = (
 	const population = datasets.find((dataset) => dataset.id === "population");
 	if (!population)
 		throw new Error(`${manifestPath} has no population dataset`);
+	const populationUk = datasets.find(
+		(dataset) => dataset.id === "population-uk",
+	);
+	if (!populationUk)
+		throw new Error(`${manifestPath} has no population-uk dataset`);
 	const records = populationRecords(populationPath);
 	if (records.length !== population.summary.dataRecordCount) {
 		throw new Error(
@@ -294,31 +379,68 @@ export const compileDataCatalog = (
 			`${manifestPath}: population must declare boundary year 2023`,
 		);
 	}
-	const countries = populationCountries(records);
+	const countries = countriesFor(records);
+	const localAuthorityPeriods =
+		localAuthorityPopulationRecords(populationUkPath);
+	const localAuthorityRecords = localAuthorityPeriods.flatMap(
+		(period) => period.records,
+	);
+	if (localAuthorityRecords.length !== populationUk.summary.dataRecordCount) {
+		throw new Error(
+			`${populationUkPath}: expected ${populationUk.summary.dataRecordCount} records from the manifest, found ${localAuthorityRecords.length}`,
+		);
+	}
+	if (localAuthorityPeriods.length !== populationUk.summary.datasetCount) {
+		throw new Error(
+			`${populationUkPath}: expected ${populationUk.summary.datasetCount} periods from the manifest, found ${localAuthorityPeriods.length}`,
+		);
+	}
+	if (
+		populationUk.summary.boundaryYears.length !== 1 ||
+		populationUk.summary.boundaryYears[0] !== 2023
+	) {
+		throw new Error(
+			`${manifestPath}: population-uk must declare boundary year 2023`,
+		);
+	}
 	const measure: PopulationMeasure = {
 		id: "population-estimate",
-		label: "Ward population estimate",
-		datasetId: "population",
+		label: "Population estimate",
 		valueKind: "count",
 		unit: "people",
 		aggregation: { kind: "extensive", operation: "sum", available: false },
-		periods: ["2022"],
-		sourceGeography: { type: "ward", boundaryYear: 2023 },
-		coverage: {
-			kind: "partial",
-			countries,
-			recordCount: records.length,
-			note: "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.",
-		},
+		sources: [
+			{
+				datasetId: "population",
+				periods: ["2022"],
+				sourceGeography: { type: "ward", boundaryYear: 2023 },
+				coverage: {
+					kind: "partial",
+					countries,
+					recordCount: records.length,
+					note: "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.",
+				},
+			},
+			{
+				datasetId: "population-uk",
+				periods: localAuthorityPeriods.map((period) => period.period),
+				sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+				coverage: {
+					kind: "source-reported",
+					countries: countriesFor(
+						localAuthorityPeriods[0]?.records ?? [],
+					),
+					recordCount: localAuthorityPeriods[0]?.records.length ?? 0,
+					note: "Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage.",
+				},
+			},
+		],
 		availability: {
 			sourceExact: true,
 			conversion: false,
 			aggregation: false,
 		},
-		links: {
-			data: "/v1/data/population-estimate",
-			dataset: "/v1/datasets/population",
-		},
+		links: { data: "/v1/data/population-estimate" },
 	};
 	const catalogContent = JSON.stringify({
 		schemaVersion: 1,
@@ -335,6 +457,12 @@ export const compileDataCatalog = (
 		period: "2022",
 		sourceGeography: { type: "ward", boundaryYear: 2023 },
 		records,
+	});
+	const localAuthorityObservationsContent = JSON.stringify({
+		schemaVersion: 1,
+		measureId: "population-estimate",
+		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+		periods: localAuthorityPeriods,
 	});
 	return {
 		catalog: {
@@ -354,6 +482,13 @@ export const compileDataCatalog = (
 			period: "2022",
 			sourceGeography: { type: "ward", boundaryYear: 2023 },
 			records,
+		},
+		populationLocalAuthorityObservations: {
+			schemaVersion: 1,
+			contentHash: sha256(localAuthorityObservationsContent),
+			measureId: "population-estimate",
+			sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+			periods: localAuthorityPeriods,
 		},
 	};
 };

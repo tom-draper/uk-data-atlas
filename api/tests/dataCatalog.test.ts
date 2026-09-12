@@ -1,81 +1,128 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import { compileDataCatalog } from "../src/dataCatalog";
 
-test("publishes dataset lineage and source-exact England and Wales population observations", () => {
+const dataset = (
+	output: string,
+	dataRecordCount: number,
+	datasetCount: number,
+) => ({
+	output,
+	source: {
+		name: output,
+		source: "Office for National Statistics",
+		sourceUrl: `https://example.com/${output}`,
+		year: output === "population" ? "2022" : "2011-2024",
+		licence: "Open Government Licence v3.0",
+	},
+	inputs: [],
+	summary: { datasetCount, dataRecordCount, boundaryYears: [2023] },
+	compiled: { bytes: 10, sha256: "compiled" },
+});
+
+const writeSources = (directory: string, wardRecordCount = 2) => {
+	const manifest = join(directory, "dataset-manifest.json");
+	const population = join(directory, "population.json");
+	const populationUk = join(directory, "population-uk.json");
+	writeFileSync(
+		manifest,
+		JSON.stringify({
+			version: 4,
+			datasets: [
+				dataset("population", wardRecordCount, 1),
+				dataset("population-uk", 8, 2),
+			],
+		}),
+	);
+	writeFileSync(
+		population,
+		JSON.stringify({
+			"2022": {
+				boundaryYear: 2023,
+				boundaryType: "ward",
+				data: {
+					W05000001: { total: { "0": 5, "90": 2 } },
+					E05000001: { total: { "0": 4, "90": 3 } },
+				},
+			},
+		}),
+	);
+	const localAuthorities = {
+		E06000001: { total: { "0": 4, "90": 3 } },
+		N09000001: { total: { "0": 5, "90": 2 } },
+		S12000001: { total: { "0": 6, "90": 1 } },
+		W06000001: { total: { "0": 7, "90": 2 } },
+	};
+	writeFileSync(
+		populationUk,
+		JSON.stringify({
+			"2023": {
+				year: 2023,
+				boundaryYear: 2023,
+				boundaryType: "localAuthority",
+				data: localAuthorities,
+			},
+			"2024": {
+				year: 2024,
+				boundaryYear: 2023,
+				boundaryType: "localAuthority",
+				data: localAuthorities,
+			},
+		}),
+	);
+	return { manifest, population, populationUk };
+};
+
+test("publishes source-exact ward and UK local-authority population partitions", () => {
 	const directory = mkdtempSync(
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const manifest = join(directory, "dataset-manifest.json");
-		const population = join(directory, "population.json");
-		writeFileSync(
-			manifest,
-			JSON.stringify({
-				version: 4,
-				datasets: [
-					{
-						output: "population",
-						source: {
-							name: "Population",
-							source: "Office for National Statistics",
-							sourceUrl: "https://example.com/population",
-							year: "2022",
-							licence: "Open Government Licence v3.0",
-							licenceUrl: "https://example.com/licence",
-						},
-						inputs: [
-							{
-								kind: "xlsxSheet",
-								path: "population.xlsx#data",
-								bytes: 12,
-								sha256: "input",
-							},
-						],
-						summary: {
-							datasetCount: 1,
-							dataRecordCount: 2,
-							boundaryYears: [2023],
-						},
-						compiled: { bytes: 10, sha256: "compiled" },
-					},
-				],
-			}),
-		);
-		writeFileSync(
-			population,
-			JSON.stringify({
-				"2022": {
-					boundaryYear: 2023,
-					boundaryType: "ward",
-					data: {
-						W05000001: { total: { "0": 5, "90": 2 } },
-						E05000001: { total: { "0": 4, "90": 3 } },
-					},
+		const { manifest, population, populationUk } = writeSources(directory);
+		const result = compileDataCatalog(manifest, population, populationUk);
+		assert.equal(result.catalog.datasets.length, 2);
+		assert.deepEqual(result.catalog.measures[0]?.sources, [
+			{
+				datasetId: "population",
+				periods: ["2022"],
+				sourceGeography: { type: "ward", boundaryYear: 2023 },
+				coverage: {
+					kind: "partial",
+					countries: ["GB-ENG", "GB-WLS"],
+					recordCount: 2,
+					note: "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.",
 				},
-			}),
-		);
-
-		const { catalog, populationObservations } = compileDataCatalog(
-			manifest,
-			population,
-		);
-		assert.equal(catalog.datasets.length, 1);
-		assert.equal(catalog.measures[0]?.coverage.kind, "partial");
-		assert.deepEqual(catalog.measures[0]?.coverage.countries, [
-			"GB-ENG",
-			"GB-WLS",
+			},
+			{
+				datasetId: "population-uk",
+				periods: ["2023", "2024"],
+				sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+				coverage: {
+					kind: "source-reported",
+					countries: ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"],
+					recordCount: 4,
+					note: "Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage.",
+				},
+			},
 		]);
-		assert.deepEqual(populationObservations.records, [
+		assert.deepEqual(result.populationObservations.records, [
 			{ areaCode: "E05000001", value: 7, status: "observed" },
 			{ areaCode: "W05000001", value: 7, status: "observed" },
 		]);
-		assert.match(catalog.contentHash, /^sha256:[a-f0-9]{64}$/);
+		assert.equal(
+			result.populationLocalAuthorityObservations.periods.length,
+			2,
+		);
+		assert.deepEqual(
+			result.populationLocalAuthorityObservations.periods[1]?.records[1],
+			{ areaCode: "N09000001", value: 7, status: "observed" },
+		);
+		assert.match(result.catalog.contentHash, /^sha256:[a-f0-9]{64}$/);
 		assert.match(
-			populationObservations.contentHash,
+			result.populationLocalAuthorityObservations.contentHash,
 			/^sha256:[a-f0-9]{64}$/,
 		);
 	} finally {
@@ -88,46 +135,31 @@ test("rejects a population source whose record count disagrees with its manifest
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const manifest = join(directory, "dataset-manifest.json");
-		const population = join(directory, "population.json");
-		writeFileSync(
-			manifest,
-			JSON.stringify({
-				version: 1,
-				datasets: [
-					{
-						output: "population",
-						source: {
-							name: "Population",
-							source: "ONS",
-							sourceUrl: "https://example.com",
-							year: "2022",
-							licence: "OGL",
-						},
-						inputs: [],
-						summary: {
-							datasetCount: 1,
-							dataRecordCount: 2,
-							boundaryYears: [2023],
-						},
-						compiled: { bytes: 1, sha256: "x" },
-					},
-				],
-			}),
-		);
-		writeFileSync(
-			population,
-			JSON.stringify({
-				"2022": {
-					boundaryYear: 2023,
-					boundaryType: "ward",
-					data: { E05000001: { total: { "0": 1 } } },
-				},
-			}),
+		const { manifest, population, populationUk } = writeSources(
+			directory,
+			3,
 		);
 		assert.throws(
-			() => compileDataCatalog(manifest, population),
-			/expected 2 records/,
+			() => compileDataCatalog(manifest, population, populationUk),
+			/expected 3 records/,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("rejects local-authority population data whose codes change between periods", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const { manifest, population, populationUk } = writeSources(directory);
+		const source = JSON.parse(readFileSync(populationUk, "utf8"));
+		delete source["2024"].data.N09000001;
+		writeFileSync(populationUk, JSON.stringify(source));
+		assert.throws(
+			() => compileDataCatalog(manifest, population, populationUk),
+			/local-authority codes change between periods/,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

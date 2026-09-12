@@ -16,30 +16,55 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		"precompiled",
 		"population.json",
 	);
-	if (!existsSync(manifestPath) || !existsSync(populationPath)) {
+	const populationUkPath = join(
+		repositoryRoot,
+		"data",
+		"precompiled",
+		"population-uk.json",
+	);
+	if (
+		!existsSync(manifestPath) ||
+		!existsSync(populationPath) ||
+		!existsSync(populationUkPath)
+	) {
 		throw new Error(
-			"Build the dataset manifest and ward population data before the API data catalogue.",
+			"Build the dataset manifest, ward population and UK local-authority population data before the API data catalogue.",
 		);
 	}
 	const outputDirectory = join(repositoryRoot, "api", "public");
-	const { catalog, populationObservations } = compileDataCatalog(
-		manifestPath,
-		populationPath,
-	);
+	const {
+		catalog,
+		populationObservations,
+		populationLocalAuthorityObservations,
+	} = compileDataCatalog(manifestPath, populationPath, populationUkPath);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
 		outputDirectory,
 		"population-observations.json",
+	);
+	const localAuthorityObservationsPath = join(
+		outputDirectory,
+		"population-local-authority-observations.json",
 	);
 	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, "\t")}\n`);
 	writeFileSync(
 		observationsPath,
 		`${JSON.stringify(populationObservations, null, "\t")}\n`,
 	);
+	writeFileSync(
+		localAuthorityObservationsPath,
+		`${JSON.stringify(populationLocalAuthorityObservations, null, "\t")}\n`,
+	);
 	return {
 		catalogPath,
 		observationsPath,
-		recordCount: populationObservations.records.length,
+		localAuthorityObservationsPath,
+		wardRecordCount: populationObservations.records.length,
+		localAuthorityRecordCount:
+			populationLocalAuthorityObservations.periods.reduce(
+				(count, period) => count + period.records.length,
+				0,
+			),
 	};
 };
 
@@ -48,6 +73,6 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildDataCatalog(repositoryRoot);
 	console.log(
-		`Wrote data catalogue and ${result.recordCount} population observations to ${result.catalogPath}`,
+		`Wrote data catalogue, ${result.wardRecordCount} ward observations and ${result.localAuthorityRecordCount} local-authority observations to ${result.catalogPath}`,
 	);
 }

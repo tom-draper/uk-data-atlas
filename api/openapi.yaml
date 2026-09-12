@@ -227,23 +227,27 @@ paths:
   /data/population-estimate:
     get:
       operationId: getPopulationEstimate
-      summary: Retrieve source-exact 2022 population observations
+      summary: Retrieve source-exact population observations
       description: >
-        Serves observed values for the source's Ward 2023 code vintage in
-        England and Wales. It does not select a May/December boundary release,
-        convert values, or aggregate them. A requested `release`, `conversion`
-        or `aggregate` therefore receives 422 rather than an implied result.
+        Serves observed values for two source partitions: 2022 Ward 2023 codes
+        in England and Wales, and 2011–2024 Local Authority 2023 codes across
+        all four UK nations. It does not select a May/December boundary
+        release, convert values, or aggregate them. A requested `release`,
+        `conversion` or `aggregate` therefore receives 422 rather than an
+        implied result. `GET /measures/population-estimate` declares the valid
+        period/geography combinations.
       parameters:
         - name: period
           in: query
           required: true
           schema:
-            const: "2022"
+            type: string
+          description: A period listed by the measure's matching source partition.
         - name: geography
           in: query
           required: true
           schema:
-            const: ward
+            enum: [ward, localAuthority]
         - name: boundaryYear
           in: query
           required: true

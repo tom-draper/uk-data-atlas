@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:ef48b1c94d4e83849854abf64e2cb669c4d5a086f5a97077332acfbcda609d70",
+	"contentHash": "sha256:7299c56b9ad4b6502aec846466227edc3710cfb80a1e4390d3dfcea0feb396ee",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1010,8 +1010,7 @@
 	"measures": [
 		{
 			"id": "population-estimate",
-			"label": "Ward population estimate",
-			"datasetId": "population",
+			"label": "Population estimate",
 			"valueKind": "count",
 			"unit": "people",
 			"aggregation": {
@@ -1019,30 +1018,68 @@
 				"operation": "sum",
 				"available": false
 			},
-			"periods": [
-				"2022"
+			"sources": [
+				{
+					"datasetId": "population",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 7608,
+						"note": "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				},
+				{
+					"datasetId": "population-uk",
+					"periods": [
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage."
+					}
+				}
 			],
-			"sourceGeography": {
-				"type": "ward",
-				"boundaryYear": 2023
-			},
-			"coverage": {
-				"kind": "partial",
-				"countries": [
-					"GB-ENG",
-					"GB-WLS"
-				],
-				"recordCount": 7608,
-				"note": "Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
-			},
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
 				"aggregation": false
 			},
 			"links": {
-				"data": "/v1/data/population-estimate",
-				"dataset": "/v1/datasets/population"
+				"data": "/v1/data/population-estimate"
 			}
 		}
 	]

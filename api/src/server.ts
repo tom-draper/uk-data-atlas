@@ -27,7 +27,11 @@ import {
 	type NamedLocationLookup,
 } from "./namedLocations";
 import type { ValidationReport } from "./validationReport";
-import type { DataCatalog, PopulationObservationArtifact } from "./dataCatalog";
+import type {
+	DataCatalog,
+	PopulationLocalAuthorityObservationArtifact,
+	PopulationObservationArtifact,
+} from "./dataCatalog";
 import {
 	createAreaSearchIndex,
 	route,
@@ -194,6 +198,30 @@ export const readPopulationObservations = (
 	return observations;
 };
 
+export const readPopulationLocalAuthorityObservations = (
+	apiRoot: string,
+): PopulationLocalAuthorityObservationArtifact => {
+	const path = join(
+		apiRoot,
+		"public",
+		"population-local-authority-observations.json",
+	);
+	const observations = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as PopulationLocalAuthorityObservationArtifact;
+	if (
+		observations.schemaVersion !== 1 ||
+		observations.measureId !== "population-estimate" ||
+		observations.sourceGeography.type !== "localAuthority" ||
+		!Array.isArray(observations.periods)
+	) {
+		throw new Error(
+			`Invalid local-authority population observations at ${path}`,
+		);
+	}
+	return observations;
+};
+
 export type ApiCatalogues = {
 	boundaryRegistry: BoundaryRegistry;
 	geographyInventory: GeographyInventory;
@@ -210,6 +238,7 @@ export type ApiCatalogues = {
 	namedLocationLookup: NamedLocationLookup;
 	dataCatalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
+	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
 };
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
@@ -241,6 +270,8 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		namedLocationLookup: createNamedLocationLookup(namedLocationInventory),
 		dataCatalog,
 		populationObservations: readPopulationObservations(apiRoot),
+		populationLocalAuthorityObservations:
+			readPopulationLocalAuthorityObservations(apiRoot),
 	};
 };
 
@@ -260,6 +291,7 @@ export const createApiServer = ({
 	namedLocationLookup,
 	dataCatalog,
 	populationObservations,
+	populationLocalAuthorityObservations,
 }: ApiCatalogues) =>
 	createServer((request, response) => {
 		const result = route(
@@ -280,6 +312,7 @@ export const createApiServer = ({
 			namedLocationLookup,
 			dataCatalog,
 			populationObservations,
+			populationLocalAuthorityObservations,
 		);
 		response.writeHead(result.status, {
 			"cache-control": "public, max-age=300",
