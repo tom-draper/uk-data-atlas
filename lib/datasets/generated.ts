@@ -30,6 +30,7 @@ import { qualificationDefinition } from "./qualification";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
 import { schoolPerformanceDisadvantageDefinition } from "./schoolPerformanceDisadvantage";
 import { simdDefinition } from "./simd";
+import { travelToWorkDefinition } from "./travelToWork";
 import { unemploymentDefinition } from "./unemployment";
 import { wimdDefinition } from "./wimd";
 
@@ -64,6 +65,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		schoolPerformanceDefinition,
 		schoolPerformanceDisadvantageDefinition,
 		simdDefinition,
+		travelToWorkDefinition,
 		unemploymentDefinition,
 		wimdDefinition,
 	];

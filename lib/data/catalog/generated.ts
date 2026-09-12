@@ -27,6 +27,7 @@ import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPer
 import type { schoolPerformanceConstituencyDatasetDefinition } from "./definitions/schoolPerformanceConstituency";
 import type { schoolPerformanceDisadvantageDatasetDefinition } from "./definitions/schoolPerformanceDisadvantage";
 import type { simdDatasetDefinition } from "./definitions/simd";
+import type { travelToWorkDatasetDefinition } from "./definitions/travelToWork";
 import type { unemploymentDatasetDefinition } from "./definitions/unemployment";
 import type { wimdDatasetDefinition } from "./definitions/wimd";
 
@@ -97,6 +98,9 @@ export type CatalogueDataset =
 			>
 	  >[string]
 	| Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof travelToWorkDatasetDefinition.precompile>
+	  >[string]
 	| Awaited<
 			ReturnType<typeof unemploymentDatasetDefinition.precompile>
 	  >[string]
@@ -179,6 +183,9 @@ export type CatalogueDatasetRecords = {
 		>
 	>;
 	simd: Awaited<ReturnType<typeof simdDatasetDefinition.precompile>>;
+	travelToWork: Awaited<
+		ReturnType<typeof travelToWorkDatasetDefinition.precompile>
+	>;
 	unemployment: Awaited<
 		ReturnType<typeof unemploymentDatasetDefinition.precompile>
 	>;

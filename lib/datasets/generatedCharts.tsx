@@ -29,8 +29,9 @@ import Chart23 from "@/components/education/QualificationChart";
 import Chart24 from "@/components/education/SchoolPerformanceChart";
 import Chart25 from "@/components/education/SchoolPerformanceDisadvantageChart";
 import Chart26 from "@/components/deprivation/simd/SIMDChart";
-import Chart27 from "@/components/economics/unemployment/UnemploymentChart";
-import Chart28 from "@/components/deprivation/wimd/WIMDChart";
+import Chart27 from "@/components/transport/travel-to-work/TravelToWorkChart";
+import Chart28 from "@/components/economics/unemployment/UnemploymentChart";
+import Chart29 from "@/components/deprivation/wimd/WIMDChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -206,6 +207,12 @@ const Chart28Presentation = {
 	),
 } satisfies ChartPresentation;
 
+const Chart29Presentation = {
+	component: (props) => (
+		<Chart29 {...(props as ComponentProps<typeof Chart29>)} />
+	),
+} satisfies ChartPresentation;
+
 export const CHART_PRESENTATIONS = {
 	"environment-airQuality": Chart0Presentation,
 	"brexit-electoral": Chart1Presentation,
@@ -247,8 +254,9 @@ export const CHART_PRESENTATIONS = {
 	"education-schoolPerformance": Chart24Presentation,
 	"education-schoolPerformanceGap": Chart25Presentation,
 	"deprivation-simd": Chart26Presentation,
-	"economics-unemployment": Chart27Presentation,
-	"deprivation-wimd": Chart28Presentation,
+	"transport-travelToWork": Chart27Presentation,
+	"economics-unemployment": Chart28Presentation,
+	"deprivation-wimd": Chart29Presentation,
 } satisfies ChartPresentationRegistry;
 
 export type ChartPresentationKey = keyof typeof CHART_PRESENTATIONS;
