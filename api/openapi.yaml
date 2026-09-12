@@ -51,6 +51,7 @@ paths:
                     - /v1/measures/{measure-id}/coverage
                     - /v1/data/{measure-id}
                     - /v1/data/{measure-id}/series
+                    - /v1/data/{measure-id}/rankings
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/areas/{type}/{release}/{code}/relationships
@@ -458,6 +459,75 @@ paths:
       responses:
         "200":
           description: Source-exact observations in ascending source period order.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: The requested conversion, aggregation or geometry release is not supported.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /data/{measure-id}/rankings:
+    get:
+      operationId: getSourceExactMeasureRankings
+      summary: Rank areas within one source-exact measure partition
+      description: >
+        Ranks only the observations published for one period, geography and
+        code vintage. Uses competition ranking: tied values share a rank and
+        the following rank accounts for all preceding observations (1, 1, 3).
+        It does not select a boundary release, convert values or aggregate them.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: period
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: geography
+          in: query
+          required: true
+          schema:
+            enum: [ward, localAuthority]
+        - name: boundaryYear
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: order
+          in: query
+          required: false
+          schema:
+            enum: [asc, desc]
+            default: desc
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cursor-paginated competition ranks for the source partition.
           content:
             application/json:
               schema:
