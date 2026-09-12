@@ -1,9 +1,9 @@
-import type { PopulationSource } from "./dataCatalog";
+import type { MeasureSource } from "./dataCatalog";
 import type { CallerSelectedGeometry } from "./sourceExactProvenance";
 
 export type TabularFormat = "csv" | "ndjson";
 
-export type PopulationExportRecord = {
+export type MeasureExportRecord = {
 	areaCode: string;
 	value: number;
 	status: "observed";
@@ -15,13 +15,15 @@ export type PopulationExportRecord = {
 	};
 };
 
-type PopulationExportInput = {
+type MeasureExportInput = {
 	atlasRelease: string;
 	measureId: string;
-	source: PopulationSource;
+	/** Carried per row so a downloaded file cannot be read in the wrong unit. */
+	unit: string;
+	source: MeasureSource;
 	period: string;
 	geometry?: CallerSelectedGeometry;
-	records: PopulationExportRecord[];
+	records: MeasureExportRecord[];
 };
 
 const csvValue = (value: string | number) =>
@@ -30,14 +32,16 @@ const csvValue = (value: string | number) =>
 const exportRows = ({
 	atlasRelease,
 	measureId,
+	unit,
 	source,
 	period,
 	geometry,
 	records,
-}: PopulationExportInput) =>
+}: MeasureExportInput) =>
 	records.map((record) => ({
 		atlasRelease,
 		measureId,
+		unit,
 		datasetId: source.datasetId,
 		period,
 		geography: source.sourceGeography.type,
@@ -56,6 +60,7 @@ const exportRows = ({
 const columns = [
 	"atlasRelease",
 	"measureId",
+	"unit",
 	"datasetId",
 	"period",
 	"geography",
@@ -76,9 +81,9 @@ const columns = [
  * the JSON API envelope. Every row repeats the minimum provenance necessary
  * to keep a downloaded page interpretable outside the Atlas API.
  */
-export const exportPopulationRecords = (
+export const exportMeasureRecords = (
 	format: TabularFormat,
-	input: PopulationExportInput,
+	input: MeasureExportInput,
 ): { contentType: string; body: string } => {
 	const rows = exportRows(input);
 	if (format === "ndjson") {

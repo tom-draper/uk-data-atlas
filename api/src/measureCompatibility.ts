@@ -3,6 +3,8 @@ import type { AreaReleaseArtifact } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	DataCatalog,
+	MeasureObservationArtifact,
+	MeasureSource,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
 	PopulationSource,
@@ -30,7 +32,7 @@ export type CompatibilityCandidate = {
 };
 
 export type MeasureCompatibilitySource = {
-	datasetId: PopulationSource["datasetId"];
+	datasetId: MeasureSource["datasetId"];
 	sourceGeography: PopulationSource["sourceGeography"];
 	periods: string[];
 	candidates: CompatibilityCandidate[];
@@ -48,7 +50,7 @@ export type MeasureCompatibilityInventory = {
 		areaArtifacts: Record<string, string>;
 	};
 	measures: Array<{
-		measureId: "population-estimate";
+		measureId: string;
 		sources: MeasureCompatibilitySource[];
 	}>;
 };
@@ -59,21 +61,34 @@ const sha256 = (content: string) =>
 const sample = (codes: Set<string>) => [...codes].sort().slice(0, 20);
 
 const sourceCodes = (
-	source: PopulationSource,
+	measureId: string,
+	source: MeasureSource,
 	wardObservations: PopulationObservationArtifact,
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
+	emissionsObservations: MeasureObservationArtifact,
 ) => {
-	if (source.sourceGeography.type === "ward") {
-		return new Set(
-			wardObservations.records.map((record) => record.areaCode),
-		);
+	if (measureId === "population-estimate") {
+		if (source.sourceGeography.type === "ward") {
+			return new Set(
+				wardObservations.records.map((record) => record.areaCode),
+			);
+		}
+		const records = localAuthorityObservations.periods.find(
+			(period) => period.period === source.periods[0],
+		)?.records;
+		if (!records) {
+			throw new Error(
+				`No local-authority observations exist for ${source.periods[0]}.`,
+			);
+		}
+		return new Set(records.map((record) => record.areaCode));
 	}
-	const records = localAuthorityObservations.periods.find(
+	const records = emissionsObservations.periods.find(
 		(period) => period.period === source.periods[0],
 	)?.records;
 	if (!records) {
 		throw new Error(
-			`No local-authority observations exist for ${source.periods[0]}.`,
+			`No ${measureId} observations exist for ${source.periods[0]}.`,
 		);
 	}
 	return new Set(records.map((record) => record.areaCode));
@@ -127,12 +142,10 @@ export const compileMeasureCompatibility = (
 	areaArtifacts: AreaReleaseArtifact[],
 	wardObservations: PopulationObservationArtifact,
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
+	emissionsObservations: MeasureObservationArtifact,
 ): MeasureCompatibilityInventory => {
-	const population = dataCatalog.measures.find(
-		(measure) => measure.id === "population-estimate",
-	);
-	if (!population) {
-		throw new Error("Data catalogue has no population-estimate measure.");
+	if (dataCatalog.measures.length === 0) {
+		throw new Error("Data catalogue has no measures.");
 	}
 	const artifactsByIdentity = new Map(
 		areaArtifacts.map((artifact) => [
@@ -140,11 +153,14 @@ export const compileMeasureCompatibility = (
 			artifact,
 		]),
 	);
-	const sources = population.sources.map((source) => {
+	const sourcesFor = (measure: (typeof dataCatalog.measures)[number]) =>
+		measure.sources.map((source) => {
 		const codes = sourceCodes(
+			measure.id,
 			source,
 			wardObservations,
 			localAuthorityObservations,
+			emissionsObservations,
 		);
 		const candidates = boundaryRegistry.releases
 			.filter(
@@ -170,6 +186,11 @@ export const compileMeasureCompatibility = (
 			note: "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry.",
 		};
 	});
+	const measures = dataCatalog.measures.map((measure) => ({
+		measureId: measure.id,
+		sources: sourcesFor(measure),
+	}));
+	const sources = measures.flatMap((measure) => measure.sources);
 	const compatibleArtifacts = areaArtifacts.filter((artifact) =>
 		sources.some(
 			(source) =>
@@ -194,9 +215,9 @@ export const compileMeasureCompatibility = (
 		populationObservations: wardObservations.contentHash,
 		populationLocalAuthorityObservations:
 			localAuthorityObservations.contentHash,
+		ghgEmissionsObservations: emissionsObservations.contentHash,
 		areaArtifacts: areaArtifactHashes,
 	};
-	const measures = [{ measureId: "population-estimate" as const, sources }];
 	return {
 		schemaVersion: 1,
 		contentHash: sha256(

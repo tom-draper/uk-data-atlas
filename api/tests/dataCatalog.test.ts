@@ -9,6 +9,7 @@ const dataset = (
 	output: string,
 	dataRecordCount: number,
 	datasetCount: number,
+	boundaryYear = 2023,
 ) => ({
 	output,
 	source: {
@@ -19,14 +20,26 @@ const dataset = (
 		licence: "Open Government Licence v3.0",
 	},
 	inputs: [],
-	summary: { datasetCount, dataRecordCount, boundaryYears: [2023] },
+	summary: { datasetCount, dataRecordCount, boundaryYears: [boundaryYear] },
 	compiled: { bytes: 10, sha256: "compiled" },
+});
+
+/** One authority-year of emissions, with a land-use sink that pulls it down. */
+const emissionsYear = (year: number) => ({
+	year,
+	boundaryYear: 2025,
+	boundaryType: "localAuthority",
+	data: {
+		E06000001: { totalKtCO2e: 400 },
+		S12000001: { totalKtCO2e: -5 },
+	},
 });
 
 const writeSources = (directory: string, wardRecordCount = 2) => {
 	const manifest = join(directory, "dataset-manifest.json");
 	const population = join(directory, "population.json");
 	const populationUk = join(directory, "population-uk.json");
+	const ghgEmissions = join(directory, "ghg-emissions.json");
 	writeFileSync(
 		manifest,
 		JSON.stringify({
@@ -34,6 +47,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 			datasets: [
 				dataset("population", wardRecordCount, 1),
 				dataset("population-uk", 8, 2),
+				dataset("ghg-emissions", 4, 2, 2025),
 			],
 		}),
 	);
@@ -73,7 +87,14 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 			},
 		}),
 	);
-	return { manifest, population, populationUk };
+	writeFileSync(
+		ghgEmissions,
+		JSON.stringify({
+			"2023": emissionsYear(2023),
+			"2024": emissionsYear(2024),
+		}),
+	);
+	return { manifest, population, populationUk, ghgEmissions };
 };
 
 test("publishes source-exact ward and UK local-authority population partitions", () => {
@@ -81,9 +102,9 @@ test("publishes source-exact ward and UK local-authority population partitions",
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const { manifest, population, populationUk } = writeSources(directory);
-		const result = compileDataCatalog(manifest, population, populationUk);
-		assert.equal(result.catalog.datasets.length, 2);
+		const { manifest, population, populationUk, ghgEmissions } = writeSources(directory);
+		const result = compileDataCatalog(manifest, population, populationUk, ghgEmissions);
+		assert.equal(result.catalog.datasets.length, 3);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -135,12 +156,12 @@ test("rejects a population source whose record count disagrees with its manifest
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const { manifest, population, populationUk } = writeSources(
+		const { manifest, population, populationUk, ghgEmissions } = writeSources(
 			directory,
 			3,
 		);
 		assert.throws(
-			() => compileDataCatalog(manifest, population, populationUk),
+			() => compileDataCatalog(manifest, population, populationUk, ghgEmissions),
 			/expected 3 records/,
 		);
 	} finally {
@@ -153,12 +174,12 @@ test("rejects local-authority population data whose codes change between periods
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const { manifest, population, populationUk } = writeSources(directory);
+		const { manifest, population, populationUk, ghgEmissions } = writeSources(directory);
 		const source = JSON.parse(readFileSync(populationUk, "utf8"));
 		delete source["2024"].data.N09000001;
 		writeFileSync(populationUk, JSON.stringify(source));
 		assert.throws(
-			() => compileDataCatalog(manifest, population, populationUk),
+			() => compileDataCatalog(manifest, population, populationUk, ghgEmissions),
 			/local-authority codes change between periods/,
 		);
 	} finally {

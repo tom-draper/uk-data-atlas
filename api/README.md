@@ -201,6 +201,12 @@ only **available** when its endpoint, contract and provenance are published.
       immutable Atlas release, measure and dataset links, observation artifact
       hash, source geography, caller-selected code match (if any), and an
       explicit no-transformation statement.
+- [x] Return source-exact greenhouse gas emissions through
+      `GET /v1/data/ghg-emissions`: 2005-2024 Local Authority 2025 codes across
+      all four UK nations, as net territorial emissions in kt CO2e. Emissions
+      per resident are not served: a ratio cannot be summed over areas, and the
+      API does not yet aggregate. The same code-compatible geometry join,
+      provenance chain and tabular export as the population measure apply.
 - [ ] Return population estimates for a supported ward, local authority,
       constituency, country or named location.
 - [ ] Return population density only when the population date/geography and the
@@ -210,8 +216,9 @@ only **available** when its endpoint, contract and provenance are published.
       publishes those series.
 - [ ] Return house-price, deprivation, election and other curated measures with
       their own aggregation rules.
-- [x] Export source-exact population pages as JSON, CSV or NDJSON, retaining
-      row-level release, source and geography provenance outside the API. A
+- [x] Export any published measure's source-exact pages as JSON, CSV or NDJSON,
+      retaining row-level release, source, unit and geography provenance
+      outside the API. A
       tabular page that is not the last carries its successor in a `Link`
       header with `rel="next"`.
 - [ ] Export large datasets as Parquet, with an immutable export manifest and
@@ -1194,6 +1201,9 @@ pnpm start
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
+- `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&release=2025-05-uk-bgc-v2&include=area`
+- `GET /v1/measures/ghg-emissions/coverage`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`

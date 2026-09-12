@@ -1,9 +1,4 @@
-import type {
-	PopulationLocalAuthorityObservationArtifact,
-	PopulationMeasure,
-	PopulationObservationArtifact,
-	PopulationSource,
-} from "./dataCatalog";
+import type { Measure, MeasureSource } from "./dataCatalog";
 import type { CompatibilityStatus } from "./measureCompatibility";
 
 export type CallerSelectedGeometry = {
@@ -17,14 +12,19 @@ export type CallerSelectedGeometry = {
 	note: string;
 };
 
+/** The published artifact a response's values were read from. */
+export type ObservationArtifactReference = {
+	/** The artifact's file name under /v1, without its extension. */
+	artifact: string;
+	contentHash: string;
+};
+
 type SourceExactProvenanceInput = {
 	atlasRelease: string;
-	measure: PopulationMeasure;
-	source: PopulationSource;
+	measure: Measure;
+	source: MeasureSource;
 	period: string;
-	observations:
-		| PopulationObservationArtifact
-		| PopulationLocalAuthorityObservationArtifact;
+	observations: ObservationArtifactReference;
 	geometry?: CallerSelectedGeometry;
 };
 
@@ -56,10 +56,7 @@ export const sourceExactProvenance = ({
 			href: `/v1/datasets/${source.datasetId}`,
 		},
 		observations: {
-			artifact:
-				source.sourceGeography.type === "ward"
-					? "population-observations"
-					: "population-local-authority-observations",
+			artifact: observations.artifact,
 			contentHash: observations.contentHash,
 			period,
 		},

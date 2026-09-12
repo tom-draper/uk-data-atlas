@@ -19,6 +19,9 @@ import type {
 import type { ValidationReport } from "./validationReport";
 import type {
 	DataCatalog,
+	MeasureObservationArtifact,
+	MeasureSource,
+	PopulationObservation,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
 } from "./dataCatalog";
@@ -26,13 +29,14 @@ import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import { measureCoverage } from "./measureCoverage";
 import { reconcileMembers } from "./memberReconciliation";
 import {
-	exportPopulationRecords,
-	type PopulationExportRecord,
+	exportMeasureRecords,
+	type MeasureExportRecord,
 	type TabularFormat,
 } from "./tabularExport";
 import {
 	sourceExactProvenance,
 	type CallerSelectedGeometry,
+	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
@@ -98,6 +102,65 @@ const decodePathSegment = (segment: string) => {
 
 const DEFAULT_PAGE_SIZE = 100;
 const MAX_PAGE_SIZE = 500;
+
+/**
+ * The published observations behind one measure source, whichever artifact
+ * holds them.
+ *
+ * The ward population artifact predates the per-period shape and carries a
+ * single period at its top level, so it is adapted here rather than reshaped
+ * on disk, which would change a published file.
+ */
+const observationsFor = (
+	measureId: string,
+	source: MeasureSource,
+	period: string,
+	artifacts: {
+		populationObservations?: PopulationObservationArtifact;
+		populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
+		ghgEmissionsObservations?: MeasureObservationArtifact;
+	},
+):
+	| (ObservationArtifactReference & { records: PopulationObservation[] })
+	| undefined => {
+	if (measureId === "population-estimate") {
+		if (source.sourceGeography.type === "ward") {
+			const artifact = artifacts.populationObservations;
+			return artifact && artifact.period === period
+				? {
+						artifact: "population-observations",
+						contentHash: artifact.contentHash,
+						records: artifact.records,
+					}
+				: undefined;
+		}
+		const artifact = artifacts.populationLocalAuthorityObservations;
+		const records = artifact?.periods.find(
+			(candidate) => candidate.period === period,
+		)?.records;
+		return artifact && records
+			? {
+					artifact: "population-local-authority-observations",
+					contentHash: artifact.contentHash,
+					records,
+				}
+			: undefined;
+	}
+	if (measureId === "ghg-emissions") {
+		const artifact = artifacts.ghgEmissionsObservations;
+		const records = artifact?.periods.find(
+			(candidate) => candidate.period === period,
+		)?.records;
+		return artifact && records
+			? {
+					artifact: "ghg-emissions-observations",
+					contentHash: artifact.contentHash,
+					records,
+				}
+			: undefined;
+	}
+	return undefined;
+};
 
 /** The same query with the cursor advanced, as a relative `Link` target. */
 const nextPageHref = (parsedUrl: URL, nextCursor: string) => {
@@ -217,6 +280,7 @@ export type RouteContext = {
 	dataCatalog?: DataCatalog;
 	populationObservations?: PopulationObservationArtifact;
 	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
+	ghgEmissionsObservations?: MeasureObservationArtifact;
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
 };
 
@@ -247,6 +311,7 @@ export const route = (
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
+		ghgEmissionsObservations,
 		measureCompatibilityInventory,
 	} = context;
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
@@ -281,7 +346,7 @@ export const route = (
 					"/v1/measures/{measure-id}",
 					"/v1/measures/{measure-id}/compatibility",
 					"/v1/measures/{measure-id}/coverage",
-					"/v1/data/population-estimate",
+					"/v1/data/{measure-id}",
 					"/v1/areas",
 					"/v1/areas:contains",
 					"/v1/areas/{type}/{release}/{code}",
@@ -392,7 +457,7 @@ export const route = (
 		const coverage = measureCoverage(
 			dataCatalog,
 			measureCompatibilityInventory,
-			segments[2] as "population-estimate",
+			segments[2] as string,
 		);
 		return coverage
 			? { status: 200, body: envelope(releaseId, coverage) }
@@ -441,40 +506,39 @@ export const route = (
 				);
 	}
 
-	if (
-		segments.length === 3 &&
-		segments[0] === "v1" &&
-		segments[1] === "data" &&
-		segments[2] === "population-estimate"
-	) {
-		if (
-			!dataCatalog ||
-			!populationObservations ||
-			!populationLocalAuthorityObservations
-		) {
+	if (segments.length === 3 && segments[0] === "v1" && segments[1] === "data") {
+		if (!dataCatalog) {
 			return problem(
 				503,
 				"Catalogue Unavailable",
-				"Build the data catalogue before retrieving population observations.",
+				"Build the data catalogue before retrieving observations.",
+			);
+		}
+		const measureId = segments[2] as string;
+		const measure = dataCatalog.measures.find(
+			(candidate) => candidate.id === measureId,
+		);
+		if (!measure) {
+			return problem(
+				404,
+				"Not Found",
+				"No published measure serves data at that path.",
 			);
 		}
 		const period = parsedUrl.searchParams.get("period");
 		const geography = parsedUrl.searchParams.get("geography");
 		const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
-		const measure = dataCatalog.measures.find(
-			(candidate) => candidate.id === "population-estimate",
-		);
-		const source = measure?.sources.find(
+		const source = measure.sources.find(
 			(candidate) =>
 				candidate.periods.includes(period ?? "") &&
 				candidate.sourceGeography.type === geography &&
 				String(candidate.sourceGeography.boundaryYear) === boundaryYear,
 		);
-		if (!measure || !source) {
+		if (!source) {
 			return problem(
 				400,
 				"Invalid Query",
-				"population-estimate supports only a published source period, geography and boundary year; inspect /v1/measures/population-estimate for available sources.",
+				`${measureId} supports only a published source period, geography and boundary year; inspect /v1/measures/${measureId} for available sources.`,
 			);
 		}
 		const requestedRelease = parsedUrl.searchParams.get("release");
@@ -490,7 +554,7 @@ export const route = (
 			const compatibilitySource = measureCompatibilityInventory.measures
 				.find(
 					(candidate) =>
-						candidate.measureId === "population-estimate",
+						candidate.measureId === measureId,
 				)
 				?.sources.find(
 					(candidate) =>
@@ -514,7 +578,7 @@ export const route = (
 				return problem(
 					422,
 					"Operation Not Supported",
-					"The requested release does not contain every source area code for this measure partition. Inspect /v1/measures/population-estimate/compatibility for supported candidates.",
+					`The requested release does not contain every source area code for this measure partition. Inspect /v1/measures/${measureId}/compatibility for supported candidates.`,
 				);
 			}
 			geometry = {
@@ -570,28 +634,30 @@ export const route = (
 				"Build the area inventory before including canonical area identities.",
 			);
 		}
-		const sourceRecords =
-			source.sourceGeography.type === "ward"
-				? populationObservations.records
-				: populationLocalAuthorityObservations.periods.find(
-						(candidate) => candidate.period === period,
-					)?.records;
-		if (!sourceRecords) {
+		const observations = observationsFor(
+			measureId,
+			source,
+			period as string,
+			{
+				populationObservations,
+				populationLocalAuthorityObservations,
+				ghgEmissionsObservations,
+			},
+		);
+		if (!observations) {
 			return problem(
 				503,
 				"Catalogue Unavailable",
-				"The population observation artifact does not contain the catalogue's declared source period.",
+				`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
 			);
 		}
+		const sourceRecords = observations.records;
 		const provenance = sourceExactProvenance({
 			atlasRelease: releaseId,
 			measure,
 			source,
 			period: period as string,
-			observations:
-				source.sourceGeography.type === "ward"
-					? populationObservations
-					: populationLocalAuthorityObservations,
+			observations,
 			geometry,
 		});
 		const matches = areaCode
@@ -648,7 +714,7 @@ export const route = (
 			);
 		}
 		const exportRecords = recordsWithAreas.filter(
-			(record): record is PopulationExportRecord => record !== undefined,
+			(record): record is MeasureExportRecord => record !== undefined,
 		);
 		const lastRecord = records.at(-1);
 		const nextCursor =
@@ -656,11 +722,12 @@ export const route = (
 				? cursorFor(lastRecord.areaCode)
 				: null;
 		if (requestedFormat !== "json") {
-			const exported = exportPopulationRecords(
+			const exported = exportMeasureRecords(
 				requestedFormat as TabularFormat,
 				{
 					atlasRelease: releaseId,
 					measureId: measure.id,
+					unit: measure.unit,
 					source,
 					period: period as string,
 					geometry,
