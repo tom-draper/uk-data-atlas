@@ -22,6 +22,7 @@ import { imdDefinition } from "./imd";
 import { incomeDefinition } from "./income";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
+import { mobileCoverageDefinition } from "./mobileCoverage";
 import { nhsWaitingDefinition } from "./nhsWaiting";
 import { nimdmDefinition } from "./nimdm";
 import { populationDefinition } from "./population";
@@ -55,6 +56,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		incomeDefinition,
 		lifeExpectancyDefinition,
 		localElectionDefinition,
+		mobileCoverageDefinition,
 		nhsWaitingDefinition,
 		nimdmDefinition,
 		populationDefinition,

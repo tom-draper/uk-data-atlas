@@ -19,17 +19,18 @@ import Chart13 from "@/components/deprivation/imd/IMDChart";
 import Chart14 from "@/components/economics/income/IncomeChart";
 import Chart15 from "@/components/health/LifeExpectancyChart";
 import Chart16 from "@/components/elections/local/LocalElectionRegistryChart";
-import Chart17 from "@/components/health/NHSWaitingChart";
-import Chart18 from "@/components/deprivation/nimdm/NIMDMChart";
-import Chart19 from "@/components/demographics/population-density-registry";
-import Chart20 from "@/components/demographics/population-age-registry";
-import Chart21 from "@/components/demographics/population-gender-registry";
-import Chart22 from "@/components/education/QualificationChart";
-import Chart23 from "@/components/education/SchoolPerformanceChart";
-import Chart24 from "@/components/education/SchoolPerformanceDisadvantageChart";
-import Chart25 from "@/components/deprivation/simd/SIMDChart";
-import Chart26 from "@/components/economics/unemployment/UnemploymentChart";
-import Chart27 from "@/components/deprivation/wimd/WIMDChart";
+import Chart17 from "@/components/telecoms/mobile/MobileCoverageChart";
+import Chart18 from "@/components/health/NHSWaitingChart";
+import Chart19 from "@/components/deprivation/nimdm/NIMDMChart";
+import Chart20 from "@/components/demographics/population-density-registry";
+import Chart21 from "@/components/demographics/population-age-registry";
+import Chart22 from "@/components/demographics/population-gender-registry";
+import Chart23 from "@/components/education/QualificationChart";
+import Chart24 from "@/components/education/SchoolPerformanceChart";
+import Chart25 from "@/components/education/SchoolPerformanceDisadvantageChart";
+import Chart26 from "@/components/deprivation/simd/SIMDChart";
+import Chart27 from "@/components/economics/unemployment/UnemploymentChart";
+import Chart28 from "@/components/deprivation/wimd/WIMDChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -199,6 +200,12 @@ const Chart27Presentation = {
 	),
 } satisfies ChartPresentation;
 
+const Chart28Presentation = {
+	component: (props) => (
+		<Chart28 {...(props as ComponentProps<typeof Chart28>)} />
+	),
+} satisfies ChartPresentation;
+
 export const CHART_PRESENTATIONS = {
 	"environment-airQuality": Chart0Presentation,
 	"brexit-electoral": Chart1Presentation,
@@ -230,17 +237,18 @@ export const CHART_PRESENTATIONS = {
 	"localElection-2018": Chart16Presentation,
 	"localElection-2017": Chart16Presentation,
 	"localElection-2016": Chart16Presentation,
-	"health-nhsWaiting": Chart17Presentation,
-	"deprivation-nimdm": Chart18Presentation,
-	"demographics-populationDensity": Chart19Presentation,
-	"demographics-age": Chart20Presentation,
-	"demographics-gender": Chart21Presentation,
-	"education-qualifications": Chart22Presentation,
-	"education-schoolPerformance": Chart23Presentation,
-	"education-schoolPerformanceGap": Chart24Presentation,
-	"deprivation-simd": Chart25Presentation,
-	"economics-unemployment": Chart26Presentation,
-	"deprivation-wimd": Chart27Presentation,
+	"telecoms-mobileCoverage": Chart17Presentation,
+	"health-nhsWaiting": Chart18Presentation,
+	"deprivation-nimdm": Chart19Presentation,
+	"demographics-populationDensity": Chart20Presentation,
+	"demographics-age": Chart21Presentation,
+	"demographics-gender": Chart22Presentation,
+	"education-qualifications": Chart23Presentation,
+	"education-schoolPerformance": Chart24Presentation,
+	"education-schoolPerformanceGap": Chart25Presentation,
+	"deprivation-simd": Chart26Presentation,
+	"economics-unemployment": Chart27Presentation,
+	"deprivation-wimd": Chart28Presentation,
 } satisfies ChartPresentationRegistry;
 
 export type ChartPresentationKey = keyof typeof CHART_PRESENTATIONS;

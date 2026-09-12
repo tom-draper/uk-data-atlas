@@ -17,6 +17,7 @@ export { imdDatasetDefinition } from "./imd";
 export { incomeDatasetDefinition } from "./income";
 export { lifeExpectancyDatasetDefinition } from "./lifeExpectancy";
 export { localElectionDatasetDefinition } from "./localElection";
+export { mobileCoverageDatasetDefinition } from "./mobileCoverage";
 export { nhsWaitingDatasetDefinition } from "./nhsWaiting";
 export { nimdmDatasetDefinition } from "./nimdm";
 export { populationDatasetDefinition } from "./population";
