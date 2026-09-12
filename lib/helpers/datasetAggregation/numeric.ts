@@ -25,6 +25,10 @@ import type {
 	FuelPovertyDataset,
 } from "@/lib/types/fuelPoverty";
 import type {
+	AggregatedGhgEmissionsData,
+	GhgEmissionsDataset,
+} from "@/lib/types/ghgEmissions";
+import type {
 	AggregatedSchoolPerformanceData,
 	AggregatedSchoolPerformanceGapData,
 	SchoolPerformanceGapMeasures,
@@ -144,6 +148,45 @@ export function aggregateChildPoverty(
 		: {
 				childCount,
 				childPovertyRate: (childCount / childrenPopulation) * 100,
+			};
+}
+
+/**
+ * Emissions are a count, so they add across authorities; the per-person figure
+ * has to be recomputed from the summed population rather than averaged, or a
+ * rural authority with few residents would weigh as heavily as a city.
+ */
+export function aggregateGhgEmissions(
+	records: GhgEmissionsDataset["data"][string][],
+): AggregatedGhgEmissionsData | null {
+	let totalKtCO2e = 0,
+		excludingLandUseKtCO2e = 0,
+		populationThousands = 0,
+		transport = 0,
+		domestic = 0,
+		industry = 0,
+		count = 0;
+	for (const record of records) {
+		totalKtCO2e += record.totalKtCO2e;
+		excludingLandUseKtCO2e += record.excludingLandUseKtCO2e;
+		populationThousands += record.populationThousands;
+		transport += record.transport;
+		domestic += record.domestic;
+		industry += record.industry;
+		count++;
+	}
+	return count === 0
+		? null
+		: {
+				totalKtCO2e,
+				excludingLandUseKtCO2e,
+				perPersonTCO2e:
+					populationThousands > 0
+						? totalKtCO2e / populationThousands
+						: 0,
+				transport,
+				domestic,
+				industry,
 			};
 }
 

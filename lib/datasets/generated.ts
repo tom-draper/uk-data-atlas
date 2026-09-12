@@ -15,6 +15,7 @@ import { crimeDefinition } from "./crime";
 import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { generalElectionDefinition } from "./generalElection";
+import { ghgEmissionsDefinition } from "./ghgEmissions";
 import { homelessnessDefinition } from "./homelessness";
 import { housePriceDefinition } from "./housePrice";
 import { imdDefinition } from "./imd";
@@ -47,6 +48,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		ethnicityDefinition,
 		fuelPovertyDefinition,
 		generalElectionDefinition,
+		ghgEmissionsDefinition,
 		homelessnessDefinition,
 		housePriceDefinition,
 		imdDefinition,

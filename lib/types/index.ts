@@ -28,6 +28,7 @@ export * from "./airQuality";
 export * from "./claimantCount";
 export * from "./childPoverty";
 export * from "./fuelPoverty";
+export * from "./ghgEmissions";
 export * from "./schoolPerformance";
 export * from "./nhsWaiting";
 export * from "./unemployment";
