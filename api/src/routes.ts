@@ -17,6 +17,7 @@ import type {
 	NamedLocationLookup,
 } from "./namedLocations";
 import type { ValidationReport } from "./validationReport";
+import type { DataCatalog, PopulationObservationArtifact } from "./dataCatalog";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -187,6 +188,8 @@ export const route = (
 	validationReport?: ValidationReport,
 	namedLocationInventory?: NamedLocationInventory,
 	namedLocationLookup?: NamedLocationLookup,
+	dataCatalog?: DataCatalog,
+	populationObservations?: PopulationObservationArtifact,
 ): ApiResponse => {
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -214,6 +217,11 @@ export const route = (
 					"/v1/boundary-releases",
 					"/v1/boundary-releases/{type}/{release}",
 					"/v1/geography-inventory",
+					"/v1/datasets",
+					"/v1/datasets/{dataset-id}",
+					"/v1/measures",
+					"/v1/measures/{measure-id}",
+					"/v1/data/population-estimate",
 					"/v1/areas",
 					"/v1/areas:contains",
 					"/v1/areas/{type}/{release}/{code}",
@@ -236,6 +244,176 @@ export const route = (
 					"/v1/atlas-release",
 				],
 			}),
+		};
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "datasets"
+	) {
+		return dataCatalog
+			? { status: 200, body: envelope(releaseId, dataCatalog.datasets) }
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the data catalogue before listing datasets.",
+				);
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "datasets"
+	) {
+		if (!dataCatalog) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue before retrieving datasets.",
+			);
+		}
+		const dataset = dataCatalog.datasets.find(
+			(candidate) => candidate.id === segments[2],
+		);
+		return dataset
+			? { status: 200, body: envelope(releaseId, dataset) }
+			: problem(
+					404,
+					"Not Found",
+					"No published dataset matches that id.",
+				);
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "measures"
+	) {
+		return dataCatalog
+			? { status: 200, body: envelope(releaseId, dataCatalog.measures) }
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the data catalogue before listing measures.",
+				);
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "measures"
+	) {
+		if (!dataCatalog) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue before retrieving measures.",
+			);
+		}
+		const measure = dataCatalog.measures.find(
+			(candidate) => candidate.id === segments[2],
+		);
+		return measure
+			? { status: 200, body: envelope(releaseId, measure) }
+			: problem(
+					404,
+					"Not Found",
+					"No published measure matches that id.",
+				);
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "data" &&
+		segments[2] === "population-estimate"
+	) {
+		if (!dataCatalog || !populationObservations) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue before retrieving population observations.",
+			);
+		}
+		const period = parsedUrl.searchParams.get("period");
+		const geography = parsedUrl.searchParams.get("geography");
+		const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
+		if (
+			period !== populationObservations.period ||
+			geography !== populationObservations.sourceGeography.type ||
+			boundaryYear !==
+				String(populationObservations.sourceGeography.boundaryYear)
+		) {
+			return problem(
+				400,
+				"Invalid Query",
+				"population-estimate currently supports only period=2022&geography=ward&boundaryYear=2023, its published source geography.",
+			);
+		}
+		if (
+			parsedUrl.searchParams.has("release") ||
+			parsedUrl.searchParams.has("conversion") ||
+			parsedUrl.searchParams.has("aggregate")
+		) {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"This source-exact endpoint does not yet select a geometry release, convert observations, or aggregate them.",
+			);
+		}
+		const areaCode = parsedUrl.searchParams.get("areaCode");
+		const matches = areaCode
+			? populationObservations.records.filter(
+					(record) => record.areaCode === areaCode,
+				)
+			: populationObservations.records;
+		const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
+		if (pageSize === undefined) {
+			return problem(
+				400,
+				"Invalid Query",
+				`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
+			);
+		}
+		const cursor = parsedUrl.searchParams.get("cursor");
+		const cursorCode = cursor ? codeFromCursor(cursor) : undefined;
+		if (cursor && !cursorCode) {
+			return problem(400, "Invalid Query", "cursor is invalid.");
+		}
+		const offset = cursorCode
+			? matches.findIndex((record) => record.areaCode === cursorCode) + 1
+			: 0;
+		if (cursorCode && offset === 0) {
+			return problem(
+				400,
+				"Invalid Query",
+				"cursor is not valid for this population query.",
+			);
+		}
+		const records = matches.slice(offset, offset + pageSize);
+		const lastRecord = records.at(-1);
+		const nextCursor =
+			offset + records.length < matches.length && lastRecord
+				? cursorFor(lastRecord.areaCode)
+				: null;
+		const measure = dataCatalog.measures.find(
+			(candidate) => candidate.id === "population-estimate",
+		);
+		return {
+			status: 200,
+			body: envelope(
+				releaseId,
+				{
+					measure,
+					period: populationObservations.period,
+					sourceGeography: populationObservations.sourceGeography,
+					conversion: null,
+					aggregation: null,
+					records,
+				},
+				nextCursor,
+			),
 		};
 	}
 

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:17e447b2d5221285d17c4b13e61b7634c12a845c5220088b2f5d9b2cb9dc7e2c",
+	"releaseId": "sha256:fe8f6d8f9979677e9f8b0e10eb44aaccd48281ca695cfca9981bbf762ec1a8b2",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -21,6 +21,16 @@
 			"id": "named-locations",
 			"path": "named-locations.json",
 			"contentHash": "sha256:238d4f3ccd87ae39836e610380d86a5b9e11ea6421ea9f887618f98db56169c5"
+		},
+		{
+			"id": "data-catalog",
+			"path": "data-catalog.json",
+			"contentHash": "sha256:4848c5afe2fc8821a5d53f51fa6fbb54ec7e4b5568e9b397e1e5f9fc96e4ba59"
+		},
+		{
+			"id": "population-observations",
+			"path": "population-observations.json",
+			"contentHash": "sha256:be57872d64d3d57598295ecd26bc0b5dc2bb0ebc82ae06be09234c7fe3103cd8"
 		},
 		{
 			"id": "geometry-sources",
