@@ -78,6 +78,9 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Resolve a named location's direct member codes in one specified
       geography/release, reporting unresolved legacy codes rather than applying
       an implicit historical conversion.
+- [x] Find every area containing a WGS84 point in one specified geography and
+      release. Points on exterior or hole rings are included and labelled
+      `boundary`, so shared-border ambiguity remains visible to callers.
 
 ### Geography and place intelligence — next
 
@@ -137,8 +140,8 @@ only **available** when its endpoint, contract and provenance are published.
       constituency or local authority.
 - [ ] Return bounding boxes, centroids and land area in m², hectares and km²,
       calculated with a documented projection and method.
-- [ ] Point lookup: longitude/latitude → containing supported areas for a
-      selected boundary release.
+- [ ] Expand point lookup beyond its current single geography/release scope,
+      with documented request limits and an efficient multi-geography strategy.
 - [ ] Find nearby areas for a coordinate outside a boundary, reporting distance
       and making clear that nearest is not the same as containing.
 - [ ] Retrieve the areas that intersect a bounded bbox for a chosen release,

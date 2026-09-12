@@ -200,6 +200,50 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /areas:contains:
+    get:
+      operationId: findContainingAreas
+      summary: Find areas containing a WGS84 point in one boundary release
+      description: >
+        Uses a cached bounding-box prefilter followed by an exact polygon test.
+        Points on exterior or hole rings are included and labelled `boundary`;
+        a point on a shared border may therefore return more than one area.
+      parameters:
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+        - name: geography
+          in: query
+          required: true
+          schema: { type: string }
+        - name: release
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Every area whose geometry contains the point.
+          content:
+            application/json:
+              schema: { type: object }
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/GeometryUnavailable"
+
   /areas/{geography}/{release}/{code}:
     get:
       operationId: getArea

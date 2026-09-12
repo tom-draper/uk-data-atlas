@@ -13,6 +13,14 @@ import {
 	readGridOffset,
 	type GridOffset,
 } from "./gridOffset";
+import {
+	containPoint,
+	geometryBounds,
+	pointInBounds,
+	type Coordinate,
+	type GeometryBounds,
+	type PointContainment,
+} from "./areaContainment";
 
 export type GeoJsonGeometry = {
 	type: string;
@@ -39,6 +47,13 @@ type CachedRelease = {
 	// Reprojected lazily, one requested area at a time: whole releases can
 	// hold millions of vertices, and most requests read a single area.
 	wgs84: Map<string, GeoJsonGeometry>;
+	/** WGS84 bounds, built lazily with the geometry used for containment. */
+	bounds: Map<string, GeometryBounds | undefined>;
+};
+
+export type ContainingArea = {
+	code: string;
+	containment: Exclude<PointContainment, "outside">;
 };
 export class AreaGeometryCache {
 	private readonly releases = new Map<string, CachedRelease>();
@@ -154,7 +169,12 @@ export class AreaGeometryCache {
 						: feature.geometry,
 				);
 			}
-			release = { crs: source.crs, geometries, wgs84: new Map() };
+			release = {
+				crs: source.crs,
+				geometries,
+				wgs84: new Map(),
+				bounds: new Map(),
+			};
 			this.releases.set(identity, release);
 			while (this.releases.size > this.maxReleases)
 				this.releases.delete(
@@ -181,5 +201,38 @@ export class AreaGeometryCache {
 			release.wgs84.set(code, reprojected);
 		}
 		return reprojected;
+	}
+	/**
+	 * Find areas containing a WGS84 point within one boundary release. Bounds are
+	 * cached before the exact polygon test, so repeated map clicks avoid scanning
+	 * every ring of every feature.
+	 */
+	findContaining(
+		geography: string,
+		boundaryRelease: string,
+		point: Coordinate,
+	): ContainingArea[] {
+		// Calling get loads and validates the release without requiring a known
+		// code; the empty code can never turn into a result.
+		this.get(geography, boundaryRelease, "");
+		const identity = [geography, boundaryRelease].join("/");
+		const release = this.releases.get(identity);
+		if (!release) return [];
+		const matches: ContainingArea[] = [];
+		for (const code of release.geometries.keys()) {
+			const geometry = this.get(geography, boundaryRelease, code);
+			if (!geometry) continue;
+			let bounds = release.bounds.get(code);
+			if (bounds === undefined && !release.bounds.has(code)) {
+				bounds = geometryBounds(geometry);
+				release.bounds.set(code, bounds);
+			}
+			if (!bounds || !pointInBounds(point, bounds)) continue;
+			const containment = containPoint(point, geometry);
+			if (containment !== "outside") matches.push({ code, containment });
+		}
+		return matches.sort((left, right) =>
+			left.code.localeCompare(right.code),
+		);
 	}
 }
