@@ -93,6 +93,12 @@ only **available** when its endpoint, contract and provenance are published.
       method, quality and provenance.
 - [ ] Add official ward and LAD historical change lookups. Do not promote
       name-based matching or same-code continuity to a public equivalence claim.
+- [ ] Find and explain a multi-step relationship path, for example 2019 ward →
+      current LAD → constituency. Return every step's method, release and
+      quality rather than collapsing it to an undocumented answer.
+- [ ] Complete the standard small-area hierarchies with explicit national
+      coverage: OA → LSOA → MSOA → LAD where applicable, Scottish data zone
+      and Northern Irish super output area equivalents.
 - [ ] Return explicit absence states: abolished, unsupported geography, partial
       coverage, or no sufficiently trustworthy conversion.
 - [ ] Publish compiler-discovered relationship candidates only after endpoint
@@ -120,9 +126,31 @@ only **available** when its endpoint, contract and provenance are published.
       calculated with a documented projection and method.
 - [ ] Point lookup: longitude/latitude → containing supported areas for a
       selected boundary release.
+- [ ] List an area's genuine neighbours, including shared-border length and an
+      explicit choice to exclude point-only touches. This supports local
+      comparison, map navigation and spatial modelling.
 - [ ] Compare two boundary releases to identify recodes, membership changes and
       geometry changes.
 - [ ] Deliver vector tiles and cached exports for map-scale workloads.
+- [ ] Publish bulk, versioned CSV/NDJSON/Parquet downloads for area identities,
+      aliases, hierarchy relations, named-location membership and crosswalks.
+      Users should not need thousands of API calls to reproduce a lookup.
+- [ ] Support bounded custom-polygon overlap queries (for example “which wards
+      overlap this drawn area?”), with area shares and method/provenance. Keep
+      this asynchronous and rate-limited; it is not a general GIS service.
+
+### Data ingestion and geography matching — next
+
+- [ ] Accept a column of supplied codes or place names and return an auditable
+      match report: candidate geography/release, exact/alias/fuzzy match method,
+      ambiguity, unmatched values and recommended next action.
+- [ ] Detect mixed or stale code systems in the same input and propose only
+      published conversion paths; never silently normalise them.
+- [ ] Provide a downloadable match result and a reproducible matching manifest,
+      so a user can join their own dataset without redoing the Atlas's repair
+      and code-resolution work.
+- [ ] Add optional user-confirmed matching rules for repeated imports, kept
+      separate from the public canonical aliases until reviewed.
 
 ### Statistics and measures — data required
 
