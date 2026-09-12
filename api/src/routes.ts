@@ -23,6 +23,7 @@ import type {
 	PopulationObservationArtifact,
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import { measureCoverage } from "./measureCoverage";
 import {
 	sourceExactProvenance,
 	type CallerSelectedGeometry,
@@ -261,6 +262,7 @@ export const route = (
 					"/v1/measures",
 					"/v1/measures/{measure-id}",
 					"/v1/measures/{measure-id}/compatibility",
+					"/v1/measures/{measure-id}/coverage",
 					"/v1/data/population-estimate",
 					"/v1/areas",
 					"/v1/areas:contains",
@@ -353,6 +355,33 @@ export const route = (
 					404,
 					"Not Found",
 					"No published measure compatibility record matches that id.",
+				);
+	}
+
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "measures" &&
+		segments[3] === "coverage"
+	) {
+		if (!dataCatalog || !measureCompatibilityInventory) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue and measure compatibility before retrieving measure coverage.",
+			);
+		}
+		const coverage = measureCoverage(
+			dataCatalog,
+			measureCompatibilityInventory,
+			segments[2] as "population-estimate",
+		);
+		return coverage
+			? { status: 200, body: envelope(releaseId, coverage) }
+			: problem(
+					404,
+					"Not Found",
+					"No published measure coverage record matches that id.",
 				);
 	}
 

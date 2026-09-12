@@ -48,6 +48,7 @@ paths:
                     - /v1/measures
                     - /v1/measures/{measure-id}
                     - /v1/measures/{measure-id}/compatibility
+                    - /v1/measures/{measure-id}/coverage
                     - /v1/data/population-estimate
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
@@ -244,6 +245,33 @@ paths:
       responses:
         "200":
           description: Compatibility counts and bounded samples of unmatched source and candidate-only codes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /measures/{measure-id}/coverage:
+    get:
+      operationId: getMeasureCoverage
+      summary: Report source and boundary code coverage for a measure
+      description: >
+        Summarises each source partition's published coverage and the proportion
+        of its area codes found in every assessed boundary release. An eligible
+        code join means all source codes are present; it does not assert equal
+        geometry or perform a geographic conversion.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Source coverage and boundary code-coverage summary.
           content:
             application/json:
               schema:

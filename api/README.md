@@ -230,10 +230,10 @@ only **available** when its endpoint, contract and provenance are published.
       identical or a licence to select one automatically.
 - [x] Every implemented data response links to source, transformation,
       geography match and Atlas release provenance.
-- [ ] Coverage report for every geography/release/measure combination. The
-      geography and release half is served by `GET /v1/validation`, with
-      every exception and the reason it was accepted; measures are not yet
-      covered.
+- [x] Publish source and boundary code coverage for each implemented measure
+      partition through `GET /v1/measures/{measure-id}/coverage`. Geography
+      and release integrity remains available from `GET /v1/validation`; a
+      code-coverage result is explicitly not a claim of equal geometry.
 - [ ] Machine-readable change log, release notifications and deprecation
       policy.
 - [ ] Compare two Atlas releases, identifying changed datasets, boundary
@@ -1178,6 +1178,7 @@ pnpm start
 - `GET /v1/measures`
 - `GET /v1/measures/{measure-id}`
 - `GET /v1/measures/{measure-id}/compatibility`
+- `GET /v1/measures/{measure-id}/coverage`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
