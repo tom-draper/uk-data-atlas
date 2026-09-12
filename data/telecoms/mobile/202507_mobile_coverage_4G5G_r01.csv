@@ -1,0 +1,1017 @@
+﻿Level,Location code,Location,4G5G_105_prem_out_at_least_one,4G5G_95_prem_out_at_least_one,4G5G_105_prem_out_all,4G5G_95_prem_out_all,4G5G_105_geo_out_at_least_one,4G5G_95_geo_out_at_least_one,4G5G_105_geo_out_all,4G5G_95_geo_out_all
+UK,K02000001,UK,99.97,99.64,98.95,89.29,95.7,88.42,81.66,51.26
+Nation,E92000001,England,99.98,99.7,99.14,89.97,98.84,94.5,90.52,59.41
+Nation,N92000002,Northern Ireland,99.85,98.84,97.4,76.77,98.33,92.41,86.31,50.73
+Nation,S92000003,Scotland,99.96,99.66,98.58,90.28,89.78,78.07,67.32,38.97
+Nation,W92000004,Wales,99.88,99.08,97.2,82.77,96.55,86.75,77.16,46.93
+Local authority,S12000033,Aberdeen City,100,100,99.82,96.91,99.99,98.95,97.38,80.24
+Local authority,S12000034,Aberdeenshire,99.93,99.13,96.67,75.39,94.57,85.67,78.13,47.89
+Local authority,E07000223,Adur,100,99.99,99.83,94.69,99.79,94.46,86.55,65.5
+Local authority,E07000032,Amber Valley,100,99.93,99.6,91.97,99.98,99.05,97.21,75.65
+Local authority,S12000041,Angus,99.96,99.49,98.55,88.74,90.45,81.04,68.58,44.17
+Local authority,N09000001,Antrim and Newtownabbey,100,99.78,99.39,85.9,99.98,98.9,96.4,64.48
+Local authority,N09000011,Ards and North Down,100,99.9,99.81,84.05,100,99.4,99.05,72.04
+Local authority,S12000035,Argyll and Bute,99.76,98.26,93.28,75.25,89.47,75.96,60.98,30.57
+Local authority,N09000002,"Armagh City, Banbridge and Craigavon",99.93,98.77,98.4,70.94,99.69,95.74,94.05,55.7
+Local authority,E07000224,Arun,100,99.89,99.8,96.26,99.41,92.68,90.04,69.27
+Local authority,E07000170,Ashfield,100,99.99,99.99,93.7,100,99.25,98.14,81.26
+Local authority,E07000105,Ashford,99.97,99.27,98.08,76.93,99.74,95.44,92.04,47.76
+Local authority,E07000200,Babergh,99.98,99.09,96.74,72.52,99.98,96.55,94.07,53.62
+Local authority,E09000002,Barking and Dagenham,100,100,100,98.13,100,100,100,97.6
+Local authority,E09000003,Barnet,100,100,100,98.99,100,100,99.99,96.11
+Local authority,E08000016,Barnsley,100,99.92,99.86,90.41,99.66,96.95,95.06,71.9
+Local authority,E07000066,Basildon,100,100,100,96.62,100,99.91,99.96,91.06
+Local authority,E07000084,Basingstoke and Deane,99.99,99.84,98.88,90,99.94,97.58,94.65,62.27
+Local authority,E07000171,Bassetlaw,100,99.03,99.55,80.2,100,98.12,96.35,63.01
+Local authority,E06000022,Bath and North East Somerset,99.97,99.29,99.28,85.51,99.92,96.79,94.63,70.87
+Local authority,E06000055,Bedford,100,99.83,99.66,87.68,100,98.82,97.96,67.73
+Local authority,N09000003,Belfast,100,100,99.89,95.68,100,99.9,98.27,85.76
+Local authority,E09000004,Bexley,100,100,100,98.29,100,99.98,99.36,95.11
+Local authority,E08000025,Birmingham,100,100,99.99,99.25,100,99.9,99.41,94.9
+Local authority,E07000129,Blaby,100,99.99,99.97,90.57,100,99.99,99.76,92.62
+Local authority,E06000008,Blackburn with Darwen,100,99.97,99.91,97.79,99.95,97.77,95.59,74.99
+Local authority,E06000009,Blackpool,100,100,100,97.49,100,100,99.94,92.92
+Local authority,W06000019,Blaenau Gwent,100,99.91,99.59,90.41,99.94,97.66,95,76.92
+Local authority,E07000033,Bolsover,100,99.81,99.22,75.9,100,98.32,97.41,68.57
+Local authority,E08000001,Bolton,100,100,99.99,97.58,100,99.75,99.34,91.06
+Local authority,E07000136,Boston,100,99.7,99.72,79.07,100,97.89,99.46,48.41
+Local authority,E06000058,"Bournemouth, Christchurch and Poole",100,100,99.93,94.81,100,99.95,97.95,84.1
+Local authority,E06000036,Bracknell Forest,100,99.98,100,95.73,100,98.83,96.92,70.83
+Local authority,E08000032,Bradford,100,99.95,99.92,95.54,99.93,98.23,97.28,81.17
+Local authority,E07000067,Braintree,100,99.15,99.08,82.82,99.96,94.25,94.71,54
+Local authority,E07000143,Breckland,100,98.88,97.08,72.22,99.99,94.8,91.2,48.22
+Local authority,E09000005,Brent,100,100,100,99.98,100,100,100,99.69
+Local authority,E07000068,Brentwood,100,99.95,99.98,92.63,100,99.4,97.69,80.07
+Local authority,W06000013,Bridgend,100,99.98,99.61,90.76,99.63,97.89,93.94,74.83
+Local authority,E06000043,Brighton and Hove,100,100,99.79,97.98,100,98.92,97.87,85.74
+Local authority,E06000023,"Bristol, City of",100,100,100,98.72,100,99.89,99.66,96.18
+Local authority,E07000144,Broadland,100,99.15,98.73,70.68,100,96.76,93.2,45.97
+Local authority,E09000006,Bromley,100,99.98,99.89,95.12,99.94,98.61,96.28,76.47
+Local authority,E07000234,Bromsgrove,100,99.93,99.89,91.63,100,98.74,98.12,76.54
+Local authority,E07000095,Broxbourne,100,100,100,98.55,100,100,99.05,86.1
+Local authority,E07000172,Broxtowe,100,100,99.97,94.02,100,99.8,99.52,91.05
+Local authority,E06000060,Buckinghamshire,100,99.61,98.3,82.83,99.92,96.97,93.48,62.87
+Local authority,E07000117,Burnley,100,99.97,99.84,95.47,99.83,95.51,93.24,67.99
+Local authority,E08000002,Bury,100,100,100,97.36,100,99.53,98.89,90.74
+Local authority,W06000018,Caerphilly,100,99.97,99.88,95.38,98.74,96.91,95.39,80.72
+Local authority,E08000033,Calderdale,99.97,99.72,99.33,93.22,98.91,93.76,85.28,61.25
+Local authority,E07000008,Cambridge,100,100,100,98.97,100,100,100,97.89
+Local authority,E09000007,Camden,100,100,100,99.97,100,100,99.86,94.6
+Local authority,E07000192,Cannock Chase,100,99.98,99.81,94.36,100,99.22,91.89,64.7
+Local authority,E07000106,Canterbury,99.99,99.84,99.42,88.62,99.94,96.66,92.65,60.79
+Local authority,W06000015,Cardiff,100,99.99,99.91,98.51,100,99.85,99.03,90.19
+Local authority,W06000010,Carmarthenshire,99.68,97.59,94.69,76.5,97.68,88.62,78.84,46.6
+Local authority,E07000069,Castle Point,100,100,99.95,84.95,100,99.7,99.48,78.74
+Local authority,N09000004,Causeway Coast and Glens,99.95,98.75,97,67.57,97.44,91.77,85.84,52.4
+Local authority,E06000056,Central Bedfordshire,100,99.93,98.84,82.17,100,99.1,98.07,71.47
+Local authority,W06000008,Ceredigion,99.27,94.97,90.05,65.46,95.69,82.72,69.63,39.95
+Local authority,E07000130,Charnwood,100,99.83,99.24,87.89,99.89,97.13,96.13,69.95
+Local authority,E07000070,Chelmsford,100,99.86,99.23,84.86,100,98.25,96.8,56.93
+Local authority,E07000078,Cheltenham,100,100,99.98,91.56,99.99,99.85,99.04,83.64
+Local authority,E07000177,Cherwell,100,99.73,98.02,81.34,100,98.92,96.81,66.87
+Local authority,E06000049,Cheshire East,99.94,99.67,99.2,86.45,99.36,96.85,94.94,64.88
+Local authority,E06000050,Cheshire West and Chester,99.98,99.8,99.63,81.47,99.9,98.85,97.13,64.49
+Local authority,E07000034,Chesterfield,100,100,99.98,94.65,100,100,99.67,92.1
+Local authority,E07000225,Chichester,99.98,99.45,98.14,81.18,99.63,95.41,86.08,50.42
+Local authority,E07000118,Chorley,100,99.99,99.81,88.74,99.98,99.48,98.69,83.02
+Local authority,S12000036,City of Edinburgh,100,100,100,99.36,99.97,99.01,98.23,88.78
+Local authority,E09000001,City of London,100,100,100,100,100,100,100,100
+Local authority,S12000005,Clackmannanshire,100,100,99.96,95.88,97.26,89.44,90.53,67.61
+Local authority,E07000071,Colchester,100,99.49,99.43,84.68,100,97.14,94.96,49.63
+Local authority,W06000003,Conwy,99.59,98.72,95.81,76.05,96.25,84.45,72.83,41.66
+Local authority,E06000052,Cornwall,99.84,97.93,95,74.91,99.06,91.55,86,56.56
+Local authority,E07000079,Cotswold,99.95,98.7,95.66,67.17,99.55,94.82,91.78,60.07
+Local authority,E06000047,County Durham,99.96,99.59,98.78,84.76,96.06,87.93,81.92,54.17
+Local authority,E08000026,Coventry,100,100,99.97,96.01,100,99.94,99.88,88.93
+Local authority,E07000226,Crawley,100,100,100,98.15,100,100,99.91,86.68
+Local authority,E09000008,Croydon,100,100,99.88,98.31,100,100,98.91,90.5
+Local authority,E06000063,Cumberland,99.9,99.29,97.37,77.51,92.98,84.29,77.75,43.54
+Local authority,E07000096,Dacorum,100,99.78,99.65,94.35,99.94,95.55,95.47,69.99
+Local authority,E06000005,Darlington,100,99.99,99.86,92.6,99.99,99.23,98.35,77.43
+Local authority,E07000107,Dartford,100,100,100,98.26,100,99.93,99.81,93.49
+Local authority,W06000004,Denbighshire,99.86,98.8,97.29,75.07,97.69,89,80.83,51.06
+Local authority,E06000015,Derby,100,100,100,99.86,100,100,100,99.39
+Local authority,E07000035,Derbyshire Dales,99.41,97.66,93.91,76.49,99.32,93.25,85.79,52.31
+Local authority,N09000005,Derry City and Strabane,99.65,98.66,95.05,76.33,95.79,84.63,72.16,41.9
+Local authority,E08000017,Doncaster,100,99.89,99.93,89.62,100,98.35,98.22,73.51
+Local authority,E06000059,Dorset,99.98,99.16,97.1,79.09,99.82,95.92,90.48,57.15
+Local authority,E07000108,Dover,100,99.66,98.89,83,99.97,98.82,97.78,71.37
+Local authority,E08000027,Dudley,100,100,100,95.58,100,99.99,99.84,94.29
+Local authority,S12000006,Dumfries and Galloway,99.88,98.87,96.58,77.64,96.37,86.17,74.75,43.1
+Local authority,S12000042,Dundee City,100,100,100,99.61,100,100,99.87,96.28
+Local authority,E09000009,Ealing,100,100,100,100,100,100,100,99.78
+Local authority,S12000008,East Ayrshire,99.99,99.89,99.69,90.59,96.49,87.45,76.26,48.66
+Local authority,E07000009,East Cambridgeshire,100,99.28,99.54,73,100,98.96,99.13,66.73
+Local authority,E07000040,East Devon,99.94,99.15,97.18,76.44,99.55,95.28,91.43,65.62
+Local authority,S12000045,East Dunbartonshire,100,99.94,99.83,93.03,98.2,94.16,90.5,64.3
+Local authority,E07000085,East Hampshire,99.99,99.57,98.65,83.53,99.87,96.81,93.17,60.93
+Local authority,E07000242,East Hertfordshire,100,99.18,98.72,86.59,99.97,95.61,95.81,63.13
+Local authority,E07000137,East Lindsey,99.98,99.17,97.87,67.95,99.89,97.65,97.1,52.56
+Local authority,S12000010,East Lothian,99.98,99.8,99.25,86.72,98.84,93.09,85.42,57.24
+Local authority,S12000011,East Renfrewshire,100,99.99,99.93,96.71,99.94,97.51,91.72,65
+Local authority,E06000011,East Riding of Yorkshire,100,99.49,97.54,74.96,99.88,98.18,96.6,60.86
+Local authority,E07000193,East Staffordshire,99.99,99.51,98.76,81.45,99.77,94.7,89.76,52
+Local authority,E07000244,East Suffolk,100,98.76,96.7,76.42,99.98,95.33,91.57,45.35
+Local authority,E07000061,Eastbourne,100,99.99,99.97,95.15,99.83,96.2,96.47,78.98
+Local authority,E07000086,Eastleigh,100,100,99.92,93.1,100,99.8,99.72,89.33
+Local authority,E07000207,Elmbridge,100,100,99.96,98.26,100,100,99.47,90.76
+Local authority,E09000010,Enfield,100,100,100,99.74,100,100,99.91,95.92
+Local authority,E07000072,Epping Forest,100,99.36,99.43,86.37,100,97.89,97.54,66.21
+Local authority,E07000208,Epsom and Ewell,100,100,100,93.6,100,100,99.59,88.22
+Local authority,E07000036,Erewash,100,100,99.96,91.2,100,100,99.92,89.34
+Local authority,E07000041,Exeter,100,100,100,96.59,100,99.78,99.43,92.07
+Local authority,S12000014,Falkirk,99.99,99.88,98.6,90.93,99.96,97.75,90.05,69.24
+Local authority,E07000087,Fareham,100,100,100,97.28,100,99.99,99.9,91.12
+Local authority,E07000010,Fenland,100,99.39,99.1,76.04,100,98.47,99.64,51.57
+Local authority,N09000006,Fermanagh and Omagh,99.55,97.56,92.61,56.69,98.35,90.95,81.97,44.5
+Local authority,S12000047,Fife,99.99,99.82,99.63,90.16,99.94,97.79,95.93,70.82
+Local authority,W06000005,Flintshire,99.99,99.39,97.57,68.13,99.82,97.04,93.9,58.95
+Local authority,E07000112,Folkestone and Hythe,99.96,99.79,98.9,84.08,99.51,96.07,93.12,62.32
+Local authority,E07000080,Forest of Dean,99.93,97.3,92.92,64.92,99.4,93.92,84.77,51.55
+Local authority,E07000119,Fylde,100,99.84,98.36,69.37,100,99.89,99.32,62.69
+Local authority,E08000037,Gateshead,100,99.93,99.95,96.23,100,99.55,97.02,80.48
+Local authority,E07000173,Gedling,100,99.98,99.95,95.95,100,99.34,95.74,80.1
+Local authority,S12000049,Glasgow City,100,100,100,99.61,100,100,99.96,97.01
+Local authority,E07000081,Gloucester,100,100,100,96.08,100,100,99.99,95.25
+Local authority,E07000088,Gosport,100,100,100,98.31,100,100,100,97.33
+Local authority,E07000109,Gravesham,99.99,99.51,99.21,93.12,99.5,96.63,90.94,62.87
+Local authority,E07000145,Great Yarmouth,100,99.93,99.34,84.41,100,99.39,98.54,63.56
+Local authority,E09000011,Greenwich,100,100,100,99.24,100,100,99.46,96.26
+Local authority,E07000209,Guildford,99.93,99.63,99.41,88.79,99.71,95.91,94.1,64.09
+Local authority,W06000002,Gwynedd,99.59,97.84,93.7,69.43,93.11,80.29,66.6,37.21
+Local authority,E09000012,Hackney,100,100,100,99.98,100,100,100,99.97
+Local authority,E06000006,Halton,100,100,99.98,97.34,100,100,99.78,89.54
+Local authority,E09000013,Hammersmith and Fulham,100,100,100,99.98,100,100,100,99.98
+Local authority,E07000131,Harborough,99.99,99.11,97.92,75,99.73,94.84,93.43,59.67
+Local authority,E09000014,Haringey,100,100,100,99.43,100,100,99.82,97.5
+Local authority,E07000073,Harlow,100,100,100,99.1,100,100,100,97.7
+Local authority,E09000015,Harrow,100,100,100,99.82,100,100,99.72,97.15
+Local authority,E07000089,Hart,100,99.97,99.8,82.96,100,99.54,98.26,59.87
+Local authority,E06000001,Hartlepool,100,100,99.9,78.16,99.97,99.37,97.66,72.11
+Local authority,E07000062,Hastings,100,100,100,97.85,99.7,97.72,96.27,87.59
+Local authority,E07000090,Havant,100,100,99.99,97.44,100,100,99.96,91.19
+Local authority,E09000016,Havering,100,100,99.99,97.78,100,100,99.72,90.19
+Local authority,E06000019,"Herefordshire, County of",99.93,98.38,96.91,75.95,99.57,95.54,89.93,54.16
+Local authority,E07000098,Hertsmere,100,100,100,98.85,100,100,99.97,94.31
+Local authority,E07000037,High Peak,99.96,98.8,98.62,93.71,91.17,77.53,68.33,46.01
+Local authority,S12000017,Highland,99.73,98.46,94.13,77.87,82.11,67.01,55.41,28.03
+Local authority,E09000017,Hillingdon,100,100,100,99.21,100,100,99.34,91.75
+Local authority,E07000132,Hinckley and Bosworth,100,99.76,99.26,79.28,100,98.91,97.24,65.14
+Local authority,E07000227,Horsham,100,99.88,99.4,83.07,99.87,96.71,93.49,59.26
+Local authority,E09000018,Hounslow,100,100,100,99.98,100,100,100,98.56
+Local authority,E07000011,Huntingdonshire,100,99.77,95.82,75.54,100,98.9,98.11,64.17
+Local authority,E07000120,Hyndburn,100,100,99.97,98.36,100,99.96,98.95,87.92
+Local authority,S12000018,Inverclyde,100,99.97,99.94,96.99,98.71,91.75,89.78,66.93
+Local authority,E07000202,Ipswich,100,100,100,99.14,100,100,99.8,96.75
+Local authority,W06000001,Isle of Anglesey,100,99.31,93.91,53.24,99.91,96.59,91.42,48.88
+Local authority,E06000046,Isle of Wight,100,99.75,99.11,84.81,99.95,97.92,95.29,70.64
+Local authority,E06000053,Isles of Scilly,99.88,94.1,96.03,78.73,98.71,83.93,85.34,55.64
+Local authority,E09000019,Islington,100,100,100,100,100,100,100,100
+Local authority,E09000020,Kensington and Chelsea,100,100,100,100,100,100,100,100
+Local authority,E07000146,King's Lynn and West Norfolk,100,99.45,99.06,68.74,100,98.64,97.77,57.15
+Local authority,E06000010,"Kingston upon Hull, City of",100,100,100,99.49,100,100,100,97.9
+Local authority,E09000021,Kingston upon Thames,100,100,100,98.87,100,100,99.96,94.71
+Local authority,E08000034,Kirklees,100,99.93,99.85,94.26,99.56,97.58,95.37,77.06
+Local authority,E08000011,Knowsley,100,100,100,94.32,100,99.96,99.17,85.82
+Local authority,E09000022,Lambeth,100,100,100,100,100,100,100,100
+Local authority,E07000121,Lancaster,99.85,98.69,98.52,85.88,94.93,83.95,85.09,50.68
+Local authority,E08000035,Leeds,100,99.96,99.87,96.1,99.99,99.51,98.46,83.69
+Local authority,E06000016,Leicester,100,100,100,99.2,100,100,99.98,97.64
+Local authority,E07000063,Lewes,100,99.85,99.49,89.44,99.93,97.65,96.52,69.18
+Local authority,E09000023,Lewisham,100,100,100,100,100,100,100,99.91
+Local authority,E07000194,Lichfield,100,99.61,98.64,69.68,100,99.1,97.54,62.88
+Local authority,E07000138,Lincoln,100,100,100,98.46,100,100,99.94,95.37
+Local authority,N09000007,Lisburn and Castlereagh,100,99.82,99.48,84.42,100,98.48,97.43,67.46
+Local authority,E08000012,Liverpool,100,100,100,99.03,100,100,99.96,97.78
+Local authority,E06000032,Luton,100,100,100,99.86,100,100,99.99,96.99
+Local authority,E07000110,Maidstone,99.99,99.57,97.46,85.57,99.27,94.9,92.04,55.97
+Local authority,E07000074,Maldon,100,99.49,95.42,61.62,100,99.03,97.84,45.98
+Local authority,E07000235,Malvern Hills,99.99,98.55,96.25,67.8,99.87,95.49,91.55,48.43
+Local authority,E08000003,Manchester,100,100,100,99.86,100,99.99,99.9,97.76
+Local authority,E07000174,Mansfield,100,99.84,99.81,90.92,99.99,98.42,97.84,79.55
+Local authority,E06000035,Medway,100,99.9,99.94,93.81,99.84,98.5,97.56,76.01
+Local authority,E07000133,Melton,100,98.08,92.75,74.92,99.97,96.12,93.67,52.43
+Local authority,W06000024,Merthyr Tydfil,100,99.95,97.46,85.57,99.4,94.33,84.5,57.72
+Local authority,E09000024,Merton,100,100,100,99.82,100,100,99.76,93.1
+Local authority,N09000008,Mid and East Antrim,99.99,99.46,97.64,73.02,99.38,95.03,89.36,59.45
+Local authority,E07000042,Mid Devon,99.76,97.56,94.59,72.24,98.43,89.97,83.18,51.62
+Local authority,E07000203,Mid Suffolk,100,98.39,93.91,60.26,100,97.2,93.12,45.04
+Local authority,E07000228,Mid Sussex,99.99,99.59,98.27,80.81,99.25,91.81,87.27,49.38
+Local authority,N09000009,Mid Ulster,99.88,97.53,96.27,56.19,99.58,94.13,90.11,44.17
+Local authority,E06000002,Middlesbrough,100,100,100,97.77,100,100,99.89,94.09
+Local authority,S12000019,Midlothian,99.99,99.86,99.46,91.09,97.88,93.21,86.62,60.39
+Local authority,E06000042,Milton Keynes,100,100,99.87,93.33,100,99.75,99.06,75.87
+Local authority,E07000210,Mole Valley,99.96,98.94,98.99,78.61,99.11,90.51,87.72,49.44
+Local authority,W06000021,Monmouthshire,99.73,97.88,96.28,82.98,98.18,88.76,80.16,49.34
+Local authority,S12000020,Moray,99.99,99.5,94.89,75.34,94.9,85.19,73.14,40.14
+Local authority,S12000013,Na h-Eileanan Siar,99.95,97.66,89.47,61.78,95.73,85.06,72.97,43.58
+Local authority,W06000012,Neath Port Talbot,100,99.62,98.71,89.75,99.18,93.74,83.92,54.27
+Local authority,E07000091,New Forest,99.97,99.45,99.04,81.44,99.43,87.85,81.63,42.18
+Local authority,E07000175,Newark and Sherwood,100,99.41,97.53,74.95,100,98.01,94.99,58.22
+Local authority,E08000021,Newcastle upon Tyne,100,100,100,98.72,100,99.99,99.88,94.1
+Local authority,E07000195,Newcastle-under-Lyme,100,99.97,99.89,90.65,99.89,98.35,97.01,77.3
+Local authority,E09000025,Newham,100,100,100,99.62,100,100,100,99.86
+Local authority,W06000022,Newport,100,99.94,99.85,96.48,100,99.73,99.29,85.25
+Local authority,N09000010,"Newry, Mourne and Down",99.11,95.37,91.25,62.91,96.41,88.62,81.15,45.19
+Local authority,S12000021,North Ayrshire,99.98,99.92,97.44,89.37,94.04,83.24,70.87,39.42
+Local authority,E07000043,North Devon,99.64,96.87,95.55,73.92,97.86,88.24,78.69,46.89
+Local authority,E07000038,North East Derbyshire,99.99,99.43,99.48,82.06,99.89,97.23,94.89,67.16
+Local authority,E06000012,North East Lincolnshire,99.99,99.85,99.74,88.28,99.9,97.59,97.12,71.26
+Local authority,E07000099,North Hertfordshire,100,99.88,99.73,80.82,99.99,98.25,97.47,71.45
+Local authority,E07000139,North Kesteven,100,99.6,98.5,70.21,100,99.19,98.54,58.68
+Local authority,S12000050,North Lanarkshire,100,99.98,99.87,94.85,99.91,96.89,92.14,68.73
+Local authority,E06000013,North Lincolnshire,100,99.39,97.19,79.1,100,98.74,97.79,65.58
+Local authority,E07000147,North Norfolk,100,97.41,93.53,63.66,99.97,95.24,91.37,41.6
+Local authority,E06000061,North Northamptonshire,100,99.64,99.26,86.93,99.92,95.7,95.03,63.21
+Local authority,E06000024,North Somerset,100,99.75,99.24,76.65,99.96,98.07,97.3,74.91
+Local authority,E08000022,North Tyneside,100,100,100,94.44,100,100,99.98,92.75
+Local authority,E07000218,North Warwickshire,100,99.23,96.06,66.93,100,98.43,96.39,63.34
+Local authority,E07000134,North West Leicestershire,100,99.84,98.85,74.38,100,98.3,95.94,61.54
+Local authority,E06000065,North Yorkshire,99.74,98.53,96.22,76.6,95.17,86.83,77.15,47.87
+Local authority,E06000057,Northumberland,99.92,99.31,97.96,79.94,96.09,86.79,77.39,48.15
+Local authority,E07000148,Norwich,100,100,100,97.66,100,100,99.89,93.08
+Local authority,E06000018,Nottingham,100,100,100,99.89,100,100,100,99.26
+Local authority,E07000219,Nuneaton and Bedworth,100,100,99.98,94.68,100,99.96,99.71,84.24
+Local authority,E07000135,Oadby and Wigston,100,100,100,98.22,100,100,100,95.19
+Local authority,E08000004,Oldham,100,100,99.99,98.14,99.12,94.87,91.35,80.67
+Local authority,S12000023,Orkney Islands,99.97,97.85,71.22,32.48,99.04,92.41,82.37,40.22
+Local authority,E07000178,Oxford,100,100,100,99.37,100,100,99.97,98.71
+Local authority,W06000009,Pembrokeshire,99.89,97.9,94.22,75.54,99.09,92.78,85.19,52.72
+Local authority,E07000122,Pendle,99.96,99.57,98.87,88.08,99.42,94.64,91.32,64.76
+Local authority,S12000048,Perth and Kinross,99.91,99.35,97.49,82.81,84.39,71.26,61.57,36.21
+Local authority,E06000031,Peterborough,100,99.99,99.99,92.6,100,98.96,99.21,78.65
+Local authority,E06000026,Plymouth,100,100,99.99,98.31,100,99.76,99.25,94.34
+Local authority,E06000044,Portsmouth,100,100,100,99.96,100,100,100,99.15
+Local authority,W06000023,Powys,99.29,95.86,91.9,74.24,94.41,80.64,69.85,40.32
+Local authority,E07000123,Preston,99.99,99.95,99.94,92.52,99.49,96.89,96.34,71.35
+Local authority,E06000038,Reading,100,100,100,99.07,100,100,100,98.96
+Local authority,E09000026,Redbridge,100,100,99.92,98.21,100,100,98.88,94.01
+Local authority,E06000003,Redcar and Cleveland,100,99.92,99.62,89.14,99.23,96.53,94.24,66.64
+Local authority,E07000236,Redditch,100,99.99,99.68,94,100,99.54,98.87,77.09
+Local authority,E07000211,Reigate and Banstead,100,99.99,99.94,95.74,100,99.73,98.92,82.89
+Local authority,S12000038,Renfrewshire,100,99.98,99.89,92.3,99.51,93.18,91.84,65.64
+Local authority,W06000016,Rhondda Cynon Taf,100,99.91,95.98,83.57,99.21,93.24,86.39,61.74
+Local authority,E07000124,Ribble Valley,99.93,99.21,96.36,81.04,95.43,88.95,77.26,48.05
+Local authority,E09000027,Richmond upon Thames,100,100,100,99.9,100,100,98.25,87.98
+Local authority,E08000005,Rochdale,100,99.96,99.86,95.88,99.98,98.83,97.48,80.12
+Local authority,E07000075,Rochford,100,99.56,99.29,84.07,100,99.05,98.57,47.8
+Local authority,E07000125,Rossendale,100,99.99,99.38,94.63,99.88,97.68,95.17,75.24
+Local authority,E07000064,Rother,99.99,99.45,98.18,80.68,99.73,93.32,83.37,44.9
+Local authority,E08000018,Rotherham,100,99.97,99.7,88.56,100,99.71,97.02,74.99
+Local authority,E07000220,Rugby,100,99.58,99.53,91.76,100,99.02,98.82,74.48
+Local authority,E07000212,Runnymede,100,99.88,99.89,96.06,100,99.53,98.85,84.79
+Local authority,E07000176,Rushcliffe,100,99.33,98.86,82.36,100,98.61,99.17,66.84
+Local authority,E07000092,Rushmoor,100,100,100,96.95,100,99.97,99.7,81.81
+Local authority,E06000017,Rutland,100,99.29,96.83,64.52,99.91,98.2,96.76,65.5
+Local authority,E08000006,Salford,100,100,99.99,98.81,100,100,99.16,89.37
+Local authority,E08000028,Sandwell,100,100,100,98.86,100,100,99.93,98.33
+Local authority,S12000026,Scottish Borders,99.78,99.04,97.12,85.53,96,85.24,74.64,45.23
+Local authority,E08000014,Sefton,100,99.99,99.99,89.99,100,99.92,97.47,76.79
+Local authority,E07000111,Sevenoaks,99.99,99.22,97.86,74.52,99.72,94.08,89.59,47.57
+Local authority,E08000019,Sheffield,99.99,99.95,99.85,96.14,96.51,90.7,82.8,60.02
+Local authority,S12000027,Shetland Islands,99.93,98.43,91.94,55.26,98.87,91.85,79.94,45.26
+Local authority,E06000051,Shropshire,99.92,98.48,96.98,75.42,99.54,94.64,91,51.81
+Local authority,E06000039,Slough,100,100,100,99.58,100,100,100,98.88
+Local authority,E08000029,Solihull,100,100,99.95,92.76,100,99.99,99.68,80.33
+Local authority,E06000066,Somerset,99.93,98.98,96.67,75.33,99.21,95.56,88.83,58.47
+Local authority,S12000028,South Ayrshire,99.76,99.47,99.16,90.65,94.18,81.11,67.76,41.36
+Local authority,E07000012,South Cambridgeshire,100,99.89,99.07,69.22,100,99.55,99.23,76.84
+Local authority,E07000039,South Derbyshire,100,99.01,98.35,75.8,100,97.87,96.23,64.56
+Local authority,E06000025,South Gloucestershire,100,99.96,99.79,92.35,99.98,98.55,96.23,74.37
+Local authority,E07000044,South Hams,99.68,96.55,90.86,68.06,98.03,88.69,83.05,52.8
+Local authority,E07000140,South Holland,100,98.34,97.8,66.07,100,96.95,98.6,40.77
+Local authority,E07000141,South Kesteven,100,99.69,99.4,87.31,99.99,98.53,97.54,72.57
+Local authority,S12000029,South Lanarkshire,99.99,99.69,99.53,92.65,97.08,88.54,82.42,56.97
+Local authority,E07000149,South Norfolk,100,98.23,92.86,65.06,100,96.91,95.24,46.93
+Local authority,E07000179,South Oxfordshire,100,99.72,99.27,74.77,99.94,98.02,94.38,67.21
+Local authority,E07000126,South Ribble,100,100,99.93,94.13,99.98,99.48,99.14,88.94
+Local authority,E07000196,South Staffordshire,100,99.99,99.29,85.43,100,99.7,96,71.05
+Local authority,E08000023,South Tyneside,100,100,99.36,95.81,100,100,99.37,93.84
+Local authority,E06000045,Southampton,100,100,100,99.64,100,100,99.99,97.07
+Local authority,E06000033,Southend-on-Sea,100,100,100,96.43,100,100,100,95.89
+Local authority,E09000028,Southwark,100,100,100,99.94,100,100,99.91,99.33
+Local authority,E07000213,Spelthorne,100,100,100,99.52,100,100,100,99.1
+Local authority,E07000240,St Albans,100,99.99,100,97.53,100,99.92,99.53,88.62
+Local authority,E08000013,St. Helens,100,99.97,99.96,91.43,100,99.99,99.92,86.81
+Local authority,E07000197,Stafford,100,99.79,98.61,87.59,99.94,98.07,93.21,59.58
+Local authority,E07000198,Staffordshire Moorlands,99.81,98.36,97.14,85.22,98.08,89.02,80.41,49.58
+Local authority,E07000243,Stevenage,100,100,100,99.26,100,100,100,98.72
+Local authority,S12000030,Stirling,99.94,99.51,97.46,82.25,87.39,75.68,64.62,38.64
+Local authority,E08000007,Stockport,100,99.95,99.92,96.41,100,99.31,98.76,86.64
+Local authority,E06000004,Stockton-on-Tees,100,100,99.9,92.42,99.99,99.13,97.38,76.63
+Local authority,E06000021,Stoke-on-Trent,100,100,100,97.85,100,100,99.98,95.75
+Local authority,E07000221,Stratford-on-Avon,100,99.37,96.92,70.82,99.99,98.31,96.74,60.26
+Local authority,E07000082,Stroud,99.95,99,94.12,76.2,99.29,95.13,91.51,63.58
+Local authority,E08000024,Sunderland,100,100,100,94.54,100,100,99.68,91.42
+Local authority,E07000214,Surrey Heath,100,99.95,99.94,91.55,100,99.6,98.59,73.09
+Local authority,E09000029,Sutton,100,100,100,99.84,100,100,99.99,98.48
+Local authority,E07000113,Swale,99.97,99.71,97.62,73.87,99.64,96.41,92.77,47.88
+Local authority,W06000011,Swansea,99.98,99.88,99.05,84.39,98.65,93.82,87.15,57.9
+Local authority,E06000030,Swindon,100,100,99.95,93.04,100,99.7,99.56,84.53
+Local authority,E08000008,Tameside,100,100,99.82,98.41,99.72,97.9,97.35,85.02
+Local authority,E07000199,Tamworth,100,100,100,98.54,100,100,99.92,97.56
+Local authority,E07000215,Tandridge,100,99.58,99.63,85.45,100,99.21,96.87,67.2
+Local authority,E07000045,Teignbridge,99.8,98.53,97.37,82.14,98.3,88.31,81.1,47.08
+Local authority,E06000020,Telford and Wrekin,100,99.36,99.07,88.15,99.81,98.18,95.58,54.51
+Local authority,E07000076,Tendring,100,99.92,98.75,79,100,99.13,98.33,61.35
+Local authority,E07000093,Test Valley,100,99.48,98.32,81.5,99.91,97.68,93.81,60.73
+Local authority,E07000083,Tewkesbury,100,99.57,98.93,72.08,99.91,97.61,94.57,59.62
+Local authority,E07000114,Thanet,100,99.99,99.79,90.56,100,99.99,99.74,82.59
+Local authority,E07000102,Three Rivers,100,99.81,99.83,96.6,99.99,98.76,98.24,85.57
+Local authority,E06000034,Thurrock,100,100,99.97,92.86,100,99.93,99.82,86.13
+Local authority,E07000115,Tonbridge and Malling,100,99.75,98.82,68.99,99.98,97.1,93.1,54.72
+Local authority,E06000027,Torbay,100,99.93,99.67,93.25,100,99.64,97.78,82.98
+Local authority,W06000020,Torfaen,99.99,99.91,99.88,90.88,98.9,94.72,92.07,67.7
+Local authority,E07000046,Torridge,99.8,98.18,95.36,70.08,99.26,90.93,81.49,42.29
+Local authority,E09000030,Tower Hamlets,100,100,100,100,100,100,100,100
+Local authority,E08000009,Trafford,100,100,99.99,98.82,100,100,99.04,89.58
+Local authority,E07000116,Tunbridge Wells,99.99,99.68,97.73,74.82,99.95,96.53,86.66,37.62
+Local authority,E07000077,Uttlesford,99.9,97.74,97.06,70.6,99.98,96.46,96.92,59.47
+Local authority,W06000014,Vale of Glamorgan,100,99.69,98.27,86.19,99.97,99.08,93.78,67.17
+Local authority,E07000180,Vale of White Horse,100,99.92,95.06,75.73,100,98.98,97.78,70.8
+Local authority,E08000036,Wakefield,100,100,99.97,95.9,100,99.96,99.11,89.88
+Local authority,E08000030,Walsall,100,100,99.85,91.03,100,100,99.62,84.29
+Local authority,E09000031,Waltham Forest,100,100,100,96.95,100,100,99.99,94.17
+Local authority,E09000032,Wandsworth,100,100,100,99.75,100,100,99.86,96.66
+Local authority,E06000007,Warrington,100,99.97,99.99,96,100,99.95,99.69,88.57
+Local authority,E07000222,Warwick,100,99.98,99.99,95.1,100,99.4,99.3,76.57
+Local authority,E07000103,Watford,100,100,100,99.89,100,100,99.98,94.04
+Local authority,E07000216,Waverley,100,99.2,97.35,77.36,99.83,93.63,86.73,42.56
+Local authority,E07000065,Wealden,99.96,99,97.01,74.46,99.67,92.51,86.15,46.91
+Local authority,E07000241,Welwyn Hatfield,100,99.99,99.93,96.14,100,99.15,97.73,75.41
+Local authority,E06000037,West Berkshire,100,99.49,99.24,87.42,99.94,97.78,95.13,65.62
+Local authority,E07000047,West Devon,99.91,96.2,91.28,67.38,96.12,84.48,76.92,43.04
+Local authority,S12000039,West Dunbartonshire,100,100,99.99,92.33,98.26,89.48,89.47,66.06
+Local authority,E07000127,West Lancashire,100,99.82,98.93,74.42,100,99.64,99.01,61.43
+Local authority,E07000142,West Lindsey,100,98.75,95.14,59.45,99.95,97.67,96.65,53.11
+Local authority,S12000040,West Lothian,100,99.94,99.66,88.55,99.82,97.38,93.25,67.37
+Local authority,E06000062,West Northamptonshire,100,99.62,98.86,88.5,99.98,97.65,95.61,67.64
+Local authority,E07000181,West Oxfordshire,100,99.36,99.09,69.5,99.86,97.94,96.78,66.37
+Local authority,E07000245,West Suffolk,100,99.2,98.06,81.14,99.94,95.57,91.09,53.01
+Local authority,E09000033,Westminster,100,100,100,100,100,100,100,99.95
+Local authority,E06000064,Westmorland and Furness,99.81,98.1,93.53,73.91,95.54,85.76,77.41,46.58
+Local authority,E08000010,Wigan,100,100,99.98,93.63,100,99.99,99.4,83.26
+Local authority,E06000054,Wiltshire,99.99,99.09,97.99,79.91,99.39,94.31,91.35,61.93
+Local authority,E07000094,Winchester,100,99.37,98.45,82.91,99.97,96.01,91.01,59.58
+Local authority,E06000040,Windsor and Maidenhead,100,99.98,99.96,94.89,100,99.74,99.47,81.22
+Local authority,E08000015,Wirral,100,100,100,93.99,100,100,99.93,91.67
+Local authority,E07000217,Woking,100,99.99,100,95.73,100,99.93,99.94,78.76
+Local authority,E06000041,Wokingham,100,100,99.99,90.86,100,99.85,99.48,83.12
+Local authority,E08000031,Wolverhampton,100,100,100,97.94,100,100,100,97.04
+Local authority,E07000237,Worcester,100,100,100,98.59,100,100,100,96.14
+Local authority,E07000229,Worthing,100,100,100,99.79,100,99.73,99.39,94.68
+Local authority,W06000006,Wrexham,99.98,99.46,97.81,71.41,98.7,92.78,88.57,45.73
+Local authority,E07000238,Wychavon,100,99.23,98.78,76.34,99.98,98.7,97.18,65.73
+Local authority,E07000128,Wyre,99.86,99.2,98.76,86.03,98.72,93.32,93.74,60.41
+Local authority,E07000239,Wyre Forest,100,99.62,99.01,87.43,99.71,95.65,88.87,59.01
+Local authority,E06000014,York,100,99.98,99.57,93.62,100,99.96,99.5,82.09
+Westminster constituency,W07000081,Aberafan Maesteg,100,99.46,98.74,88.12,99.1,93.22,84.79,56.54
+Westminster constituency,S14000060,Aberdeen North,100,100,99.99,98.55,100,99.62,98.13,88.62
+Westminster constituency,S14000061,Aberdeen South,100,99.99,99.65,95.39,99.99,98.16,96.49,70.34
+Westminster constituency,S14000062,Aberdeenshire North and Moray East,99.99,99.7,94.65,75.3,99.94,97.49,94.03,65.73
+Westminster constituency,S14000063,Airdrie and Shotts,100,99.93,99.6,92.9,99.94,96.43,90.63,63.22
+Westminster constituency,E14001063,Aldershot,100,100,99.99,97.08,100,99.92,99.71,75.04
+Westminster constituency,E14001064,Aldridge-Brownhills,100,100,99.57,81.9,100,100,99.37,78.03
+Westminster constituency,S14000064,Alloa and Grangemouth,100,100,100,95.93,97.66,91.14,92.49,73.65
+Westminster constituency,E14001065,Altrincham and Sale West,100,100,99.98,97.73,100,100,98.03,82.9
+Westminster constituency,W07000082,Alyn and Deeside,99.99,99.37,98.79,70.83,99.64,96.17,94.39,59.23
+Westminster constituency,E14001066,Amber Valley,100,99.99,99.85,92.65,100,99.92,99.59,83.35
+Westminster constituency,S14000065,Angus and Perthshire Glens,99.86,98.91,96.44,81.13,82.95,69.11,56.54,32.07
+Westminster constituency,S14000066,Arbroath and Broughty Ferry,100,99.83,99.48,92.8,99.98,98.99,96.43,68.37
+Westminster constituency,S14000067,"Argyll, Bute and South Lochaber",99.74,98.14,92.15,74.11,88.18,74.25,59.18,30.39
+Westminster constituency,E14001067,Arundel and South Downs,99.98,99.18,97.5,72.89,99.6,94.48,86.22,47.26
+Westminster constituency,E14001068,Ashfield,100,99.98,99.96,94.09,100,99.15,97.92,80.5
+Westminster constituency,E14001069,Ashford,99.93,99.54,98.63,82.72,98.81,91.6,86.31,50.66
+Westminster constituency,E14001070,Ashton-under-Lyne,100,100,99.99,99.14,100,99.95,99.45,94.97
+Westminster constituency,E14001071,Aylesbury,100,99.92,97.29,84.6,99.91,96.6,92.68,62.8
+Westminster constituency,S14000107,"Ayr, Carrick and Cumnock",99.7,99.34,99.01,91.7,93.34,78.72,63.37,37.07
+Westminster constituency,E14001072,Banbury,100,99.51,98.58,83.97,99.86,97.51,95.35,66.72
+Westminster constituency,W07000083,Bangor Aberconwy,99.38,97.92,94.03,76.5,95.88,82.99,70.57,38.8
+Westminster constituency,E14001073,Barking,100,100,100,97.05,100,100,100,97.86
+Westminster constituency,E14001074,Barnsley North,100,100,99.98,92.97,100,99.86,98.21,84.13
+Westminster constituency,E14001075,Barnsley South,100,100,99.99,92.02,100,99.82,99.16,85.4
+Westminster constituency,E14001076,Barrow and Furness,99.89,98.71,94.27,71.81,90.04,77.77,71.41,36.09
+Westminster constituency,E14001077,Basildon and Billericay,100,100,100,96.7,100,99.84,99.94,91.64
+Westminster constituency,E14001078,Basingstoke,100,99.96,99.97,98.65,100,99.4,99.38,88.37
+Westminster constituency,E14001079,Bassetlaw,100,99.07,99.61,81.85,100,97.53,94.79,58.8
+Westminster constituency,E14001080,Bath,100,99.89,99.8,94.83,99.69,95.86,93.02,74.07
+Westminster constituency,S14000068,Bathgate and Linlithgow,100,99.99,99.42,88.88,100,98.5,94.72,73.76
+Westminster constituency,E14001081,Battersea,100,100,100,100,100,100,100,100
+Westminster constituency,E14001082,Beaconsfield,100,99.83,99.91,95.35,100,99.44,97.95,78.67
+Westminster constituency,E14001083,Beckenham and Penge,100,100,100,99.63,100,100,100,98.69
+Westminster constituency,E14001084,Bedford,100,100,100,98.1,100,100,100,97.51
+Westminster constituency,N05000001,Belfast East,100,99.99,99.99,99.67,100,99.64,99.78,88.69
+Westminster constituency,N05000002,Belfast North,100,100,100,98.09,100,100,99.99,91.24
+Westminster constituency,N05000003,Belfast South and Mid Down,100,99.97,99.95,96.34,100,99.53,99.29,78.71
+Westminster constituency,N05000004,Belfast West,100,100,99.62,86.38,100,99.9,94.84,72.04
+Westminster constituency,E14001085,Bermondsey and Old Southwark,100,100,100,100,100,100,100,100
+Westminster constituency,S14000108,"Berwickshire, Roxburgh and Selkirk",99.79,99.05,96.97,84.7,96.82,87.02,76.42,46.47
+Westminster constituency,E14001086,Bethnal Green and Stepney,100,100,100,100,100,100,100,100
+Westminster constituency,E14001087,Beverley and Holderness,99.99,99.05,96.92,66.79,100,97.91,97.55,54.96
+Westminster constituency,E14001088,Bexhill and Battle,99.99,99.43,98.04,78.67,99.71,92.86,82.92,45.2
+Westminster constituency,E14001089,Bexleyheath and Crayford,100,100,100,99.09,100,99.96,99,97.3
+Westminster constituency,E14001090,Bicester and Woodstock,100,99.93,98.05,74.42,99.99,99.15,98.03,68.68
+Westminster constituency,E14001091,Birkenhead,100,100,100,98.34,100,100,100,97.43
+Westminster constituency,E14001092,Birmingham Edgbaston,100,100,100,99.9,100,100,99.99,97.68
+Westminster constituency,E14001093,Birmingham Erdington,100,100,100,100,100,100,100,99.81
+Westminster constituency,E14001094,Birmingham Hall Green and Moseley,100,100,100,99.21,100,100,100,98.52
+Westminster constituency,E14001095,Birmingham Hodge Hill and Solihull North,100,100,100,99.4,100,100,100,99.51
+Westminster constituency,E14001096,Birmingham Ladywood,100,100,100,100,100,100,100,99.99
+Westminster constituency,E14001097,Birmingham Northfield,100,100,100,99.19,100,100,100,99.28
+Westminster constituency,E14001098,Birmingham Perry Barr,100,100,100,99.02,100,100,100,96.95
+Westminster constituency,E14001099,Birmingham Selly Oak,100,100,100,99.91,100,100,100,99.58
+Westminster constituency,E14001100,Birmingham Yardley,100,100,100,99.96,100,100,100,99.8
+Westminster constituency,E14001101,Bishop Auckland,99.8,98.81,96.79,79.6,93.54,81.1,72.9,42.19
+Westminster constituency,E14001102,Blackburn,100,100,99.97,99.01,99.96,99.07,98.9,92.91
+Westminster constituency,E14001103,Blackley and Middleton South,100,100,100,99.93,100,100,99.87,96.13
+Westminster constituency,E14001104,Blackpool North and Fleetwood,100,100,100,94.2,100,100,100,93.63
+Westminster constituency,E14001105,Blackpool South,100,100,100,97.2,100,100,99.92,90.99
+Westminster constituency,W07000084,Blaenau Gwent and Rhymney,100,99.94,99.7,92.49,99.96,98.41,96.52,80.97
+Westminster constituency,E14001106,Blaydon and Consett,100,99.83,99.9,90.91,100,99.52,97.46,77.72
+Westminster constituency,E14001107,Blyth and Ashington,100,100,99.99,90.73,100,99.93,99.27,85.32
+Westminster constituency,E14001108,Bognor Regis and Littlehampton,100,100,99.97,98.02,100,100,99.97,96.45
+Westminster constituency,E14001109,Bolsover,100,99.69,99.29,73.74,100,98.72,97.95,70.57
+Westminster constituency,E14001110,Bolton North East,100,100,100,97.38,100,99.98,99.35,92.37
+Westminster constituency,E14001111,Bolton South and Walkden,100,100,100,99.12,100,100,99.5,91.79
+Westminster constituency,E14001112,Bolton West,100,100,99.97,96.81,100,99.55,99.32,90.34
+Westminster constituency,E14001113,Bootle,100,100,100,97.32,100,100,100,96.03
+Westminster constituency,E14001114,Boston and Skegness,99.99,99.38,99.5,76.25,99.99,97.96,99.06,51.18
+Westminster constituency,E14001115,Bournemouth East,100,100,100,95.94,100,100,100,91.12
+Westminster constituency,E14001116,Bournemouth West,100,100,100,97.34,100,100,100,95.55
+Westminster constituency,E14001117,Bracknell,100,99.98,100,96.51,100,98.26,93.98,67.73
+Westminster constituency,E14001118,Bradford East,100,100,100,99.6,100,100,99.94,98.16
+Westminster constituency,E14001119,Bradford South,100,100,99.95,98.51,100,99.63,98.97,93.14
+Westminster constituency,E14001120,Bradford West,100,99.98,100,99.47,100,99.96,99.81,96.07
+Westminster constituency,E14001121,Braintree,100,99.15,98.88,80.51,99.96,94.29,94.79,51.34
+Westminster constituency,W07000085,"Brecon, Radnor and Cwm Tawe",99.37,97.14,93.13,81.16,94.06,80.04,67.59,39.2
+Westminster constituency,E14001122,Brent East,100,100,100,99.98,100,100,100,99.68
+Westminster constituency,E14001123,Brent West,100,100,100,100,100,100,100,99.64
+Westminster constituency,E14001124,Brentford and Isleworth,100,100,100,99.96,100,100,100,97.92
+Westminster constituency,E14001125,Brentwood and Ongar,100,99.56,99.67,86.78,100,98.62,97.49,68.07
+Westminster constituency,W07000086,Bridgend,100,99.99,99.89,93.39,99.97,99.11,96.03,80.06
+Westminster constituency,E14001126,Bridgwater,99.98,99.33,98.87,79.8,98.7,94.78,91.23,55.57
+Westminster constituency,E14001127,Bridlington and The Wolds,99.99,99.35,96.52,79.04,99.71,97.42,94.04,58.61
+Westminster constituency,E14001128,Brigg and Immingham,99.99,99.31,97.98,67.33,99.96,97.83,96.29,59.11
+Westminster constituency,E14001129,Brighton Kemptown and Peacehaven,100,100,99.38,93.75,100,98.79,98.14,84.9
+Westminster constituency,E14001130,Brighton Pavilion,100,100,99.97,99.11,100,98.74,97.21,88.14
+Westminster constituency,E14001131,Bristol Central,100,100,100,99.8,100,99.93,99.65,98.61
+Westminster constituency,E14001132,Bristol East,100,100,100,98.82,100,100,99.69,95.48
+Westminster constituency,E14001133,Bristol North East,100,100,100,99.29,100,100,100,98.28
+Westminster constituency,E14001134,Bristol North West,100,100,100,96.8,100,99.73,99.37,94.14
+Westminster constituency,E14001135,Bristol South,100,100,100,99.21,100,100,99.99,98.6
+Westminster constituency,E14001136,Broadland and Fakenham,100,98.23,97.7,59.57,100,96.38,93.36,45.45
+Westminster constituency,E14001137,Bromley and Biggin Hill,100,100,99.96,94.79,100,99.87,99.23,81.47
+Westminster constituency,E14001138,Bromsgrove,100,99.93,99.89,91.63,100,98.74,98.12,76.54
+Westminster constituency,E14001139,Broxbourne,100,99.99,99.95,96.02,100,98.59,95.82,74.75
+Westminster constituency,E14001140,Broxtowe,100,100,99.97,94.28,100,99.74,99.37,89.18
+Westminster constituency,E14001141,Buckingham and Bletchley,100,99.68,98.9,86.4,100,98.51,97.41,65.44
+Westminster constituency,E14001142,Burnley,100,99.97,99.86,94.06,99.84,95.84,93.73,69.39
+Westminster constituency,E14001143,Burton and Uttoxeter,99.99,99.69,99.58,86.15,99.82,96.15,93.4,60.06
+Westminster constituency,E14001144,Bury North,100,100,100,96.05,100,99.23,99.22,91.58
+Westminster constituency,E14001145,Bury South,100,100,100,99.05,100,100,98.52,89.97
+Westminster constituency,E14001146,Bury St Edmunds and Stowmarket,100,99.31,98.01,80.39,99.98,97.52,94.5,51.67
+Westminster constituency,W07000087,Caerfyrddin,99.37,96.16,91.09,70.55,97.29,87.11,76.95,44.4
+Westminster constituency,W07000088,Caerphilly,100,99.98,99.88,95.39,99.89,98.63,96.96,81.61
+Westminster constituency,S14000069,"Caithness, Sutherland and Easter Ross",99.86,98.18,95.41,73.84,86.25,71.51,58.78,29.67
+Westminster constituency,E14001147,Calder Valley,99.95,99.42,98.64,89.09,98.68,92.46,82.2,55.12
+Westminster constituency,E14001148,Camborne and Redruth,99.65,98.33,97.85,78.31,99.73,95.26,93.37,69.19
+Westminster constituency,E14001149,Cambridge,100,100,100,99.77,100,100,100,98.82
+Westminster constituency,E14001150,Cannock Chase,100,99.98,99.81,94.36,100,99.22,91.89,64.7
+Westminster constituency,E14001151,Canterbury,99.99,99.87,99.42,92.25,99.92,96.67,91.97,60.43
+Westminster constituency,W07000089,Cardiff East,100,100,100,99.98,100,100,100,97.98
+Westminster constituency,W07000090,Cardiff North,100,99.98,99.98,98.79,100,99.01,98.47,88.7
+Westminster constituency,W07000091,Cardiff South and Penarth,100,99.95,99.78,96.3,99.95,98.18,94.59,74.95
+Westminster constituency,W07000092,Cardiff West,100,99.98,99.7,94.45,100,99.81,98.49,80.8
+Westminster constituency,E14001152,Carlisle,99.99,99.69,99.51,90.76,97.76,89.97,84.76,50.49
+Westminster constituency,E14001153,Carshalton and Wallington,100,100,100,99.87,100,100,99.98,98.16
+Westminster constituency,E14001154,Castle Point,100,100,99.96,84.45,100,99.76,99.57,80.04
+Westminster constituency,S14000109,Central Ayrshire,100,99.93,99.69,89.05,99.98,98.9,98.24,75.63
+Westminster constituency,E14001155,Central Devon,99.61,96.86,93.56,68.96,98.1,87.94,80.22,45.22
+Westminster constituency,E14001156,Central Suffolk and North Ipswich,99.99,98.66,97.02,69.71,100,97,94.59,53.15
+Westminster constituency,W07000093,Ceredigion Preseli,99.34,95.31,88.45,63.11,96.38,84.76,71.94,41.7
+Westminster constituency,E14001157,Chatham and Aylesford,100,99.98,99.79,88.88,99.94,98.14,96.71,71.22
+Westminster constituency,E14001158,Cheadle,100,100,100,97.46,100,100,99.99,95.38
+Westminster constituency,E14001159,Chelmsford,100,100,100,99.3,100,100,99.96,97.13
+Westminster constituency,E14001160,Chelsea and Fulham,100,100,100,99.98,100,100,100,99.97
+Westminster constituency,E14001161,Cheltenham,100,100,99.97,90.17,99.99,99.8,98.73,79.6
+Westminster constituency,E14001162,Chesham and Amersham,100,99.88,99.3,87.79,99.95,97.63,94.43,70.04
+Westminster constituency,E14001163,Chester North and Neston,100,100,99.9,87.78,100,100,99.51,69.36
+Westminster constituency,E14001164,Chester South and Eddisbury,99.91,99.33,98.52,65.64,99.9,98.44,95.82,53.98
+Westminster constituency,E14001165,Chesterfield,100,100,99.98,96.47,100,100,99.58,92.94
+Westminster constituency,E14001166,Chichester,100,99.91,99.55,90.79,99.78,97.71,92.56,71.35
+Westminster constituency,E14001167,Chingford and Woodford Green,100,100,100,96.57,100,100,99.94,89.65
+Westminster constituency,E14001168,Chippenham,100,99.91,99.87,90.41,100,99.06,98.21,76.22
+Westminster constituency,E14001169,Chipping Barnet,100,100,100,98.04,100,100,99.99,94.59
+Westminster constituency,E14001170,Chorley,100,99.99,99.89,90.62,99.97,99.25,98.2,80.7
+Westminster constituency,E14001171,Christchurch,100,99.94,99.67,80.15,100,99.63,95.26,65.26
+Westminster constituency,E14001172,Cities of London and Westminster,100,100,100,100,100,100,100,99.95
+Westminster constituency,E14001173,City of Durham,100,99.65,97.76,85.84,100,98.48,95.8,71.54
+Westminster constituency,E14001174,Clacton,100,99.9,98.49,80.02,100,98.98,98.45,58.51
+Westminster constituency,E14001175,Clapham and Brixton Hill,100,100,100,100,100,100,100,100
+Westminster constituency,W07000094,Clwyd East,99.98,99,96.13,71.15,99.74,95.94,90.64,60.18
+Westminster constituency,W07000095,Clwyd North,99.98,99.94,99.15,75.42,99.24,97.37,93.94,66.31
+Westminster constituency,S14000070,Coatbridge and Bellshill,100,100,100,95.3,100,100,99.31,88.97
+Westminster constituency,E14001176,Colchester,100,99.99,99.96,93.11,100,99.87,95.3,78.67
+Westminster constituency,E14001177,Colne Valley,100,99.89,99.53,91.58,98.97,95.23,90.14,62.13
+Westminster constituency,E14001178,Congleton,100,99.98,99.89,91.27,99.99,99.19,97.96,79.89
+Westminster constituency,E14001179,Corby and East Northamptonshire,100,99.2,98.57,82,99.84,92.87,92.31,55.42
+Westminster constituency,E14001180,Coventry East,100,100,100,98.58,100,100,99.98,96.18
+Westminster constituency,E14001181,Coventry North West,100,100,99.91,91.01,100,99.84,99.71,76.08
+Westminster constituency,E14001182,Coventry South,100,100,100,98.14,100,100,100,97.91
+Westminster constituency,S14000071,Cowdenbeath and Kirkcaldy,100,100,99.99,94.22,100,99.17,98.05,80.87
+Westminster constituency,E14001183,Cramlington and Killingworth,100,100,99.54,80.41,100,99.96,99.51,84.06
+Westminster constituency,E14001184,Crawley,100,100,100,98.15,100,100,99.91,86.68
+Westminster constituency,E14001185,Crewe and Nantwich,100,100,99.96,93.77,100,99.94,99.39,84.27
+Westminster constituency,E14001186,Croydon East,100,100,99.83,97.08,100,100,98.31,85.42
+Westminster constituency,E14001187,Croydon South,100,100,99.7,96.55,100,100,98.7,88.53
+Westminster constituency,E14001188,Croydon West,100,100,100,99.97,100,100,100,99.97
+Westminster constituency,S14000072,Cumbernauld and Kirkintilloch,100,99.94,99.73,94.35,99.8,95.74,90.37,64.45
+Westminster constituency,E14001189,Dagenham and Rainham,100,100,100,99.1,100,100,99.93,93.55
+Westminster constituency,E14001190,Darlington,100,100,99.98,93.94,100,99.91,99.78,84.56
+Westminster constituency,E14001191,Dartford,100,100,100,98.21,100,99.92,99.78,92.99
+Westminster constituency,E14001192,Daventry,100,98.93,97.36,72.3,99.97,97.04,95.58,65.67
+Westminster constituency,E14001193,Derby North,100,100,100,99.93,100,100,100,99.74
+Westminster constituency,E14001194,Derby South,100,100,100,99.87,100,100,100,99.92
+Westminster constituency,E14001195,Derbyshire Dales,99.52,97.87,94.09,72.87,99.4,93.81,86.98,53.57
+Westminster constituency,E14001196,Dewsbury and Batley,100,99.96,99.98,96.74,99.94,98.36,99.09,86.3
+Westminster constituency,E14001197,Didcot and Wantage,100,99.89,99.63,77.2,99.98,99.04,97.82,78.55
+Westminster constituency,E14001198,Doncaster Central,100,99.95,99.93,92.73,100,99.04,98.79,83.75
+Westminster constituency,E14001199,Doncaster East and the Isle of Axholme,100,99.77,98.55,78.16,100,97.83,97.68,64.27
+Westminster constituency,E14001200,Doncaster North,100,99.7,99.86,88.46,100,99.13,99.15,76.28
+Westminster constituency,E14001201,Dorking and Horley,99.96,98.73,97.31,75.08,99.06,89.72,86.15,47.86
+Westminster constituency,E14001202,Dover and Deal,100,99.7,98.86,83.2,99.95,98.77,97.17,70.63
+Westminster constituency,E14001203,Droitwich and Evesham,100,99.47,99.37,77.23,100,99.11,98.04,65.27
+Westminster constituency,E14001204,Dudley,100,100,100,97.64,100,99.98,99.57,93.77
+Westminster constituency,E14001205,Dulwich and West Norwood,100,100,100,99.82,100,100,99.83,98.66
+Westminster constituency,S14000073,Dumfries and Galloway,99.93,99.1,96.52,77,97.69,89.01,75.92,43.12
+Westminster constituency,S14000074,"Dumfriesshire, Clydesdale and Tweeddale",99.77,97.91,96.43,78.17,94.22,81.64,72.74,43.43
+Westminster constituency,S14000075,Dundee Central,100,100,100,99.69,100,100,99.81,95.76
+Westminster constituency,S14000076,Dunfermline and Dollar,100,99.79,99.64,92.94,99.95,98.95,97.11,76.65
+Westminster constituency,E14001206,Dunstable and Leighton Buzzard,100,100,99.91,93.77,100,99.89,98.7,85.61
+Westminster constituency,W07000096,Dwyfor Meirionnydd,99.52,97.41,92.59,65.5,93.12,80.24,66.8,37.41
+Westminster constituency,E14001207,Ealing Central and Acton,100,100,100,100,100,100,100,100
+Westminster constituency,E14001208,Ealing North,100,100,100,100,100,100,100,99.66
+Westminster constituency,E14001209,Ealing Southall,100,100,100,100,100,100,100,99.71
+Westminster constituency,E14001210,Earley and Woodley,100,100,100,95.43,100,100,99.94,95.54
+Westminster constituency,E14001211,Easington,100,99.93,99.86,86.14,99.99,99.11,97.42,72.95
+Westminster constituency,N05000005,East Antrim,99.99,99.48,96.86,72.67,99.01,93.38,84.77,57.43
+Westminster constituency,E14001212,East Grinstead and Uckfield,99.99,98.93,96.85,76.66,99.31,89.95,84.57,42.84
+Westminster constituency,E14001213,East Ham,100,100,100,100,100,100,100,100
+Westminster constituency,E14001214,East Hampshire,99.99,99.46,97.49,80.63,99.86,96.81,92,59.2
+Westminster constituency,S14000077,East Kilbride and Strathaven,100,99.99,99.99,97.33,98.33,91.66,84.03,66.42
+Westminster constituency,N05000006,East Londonderry,99.99,99.23,94.87,65.23,99.68,94.75,87.96,54.38
+Westminster constituency,S14000021,East Renfrewshire,100,99.99,99.93,96.71,99.94,97.51,91.72,65
+Westminster constituency,E14001215,East Surrey,100,99.63,99.66,86.53,100,99.25,97.03,68.25
+Westminster constituency,E14001216,East Thanet,100,100,99.94,96.98,100,100,99.63,94.31
+Westminster constituency,E14001217,East Wiltshire,99.97,99.08,97.54,75.4,99.47,92.96,91.54,61.86
+Westminster constituency,E14001218,East Worthing and Shoreham,100,99.99,99.89,96.42,99.84,95.64,89.44,72.17
+Westminster constituency,E14001219,Eastbourne,100,99.99,99.97,95.15,99.83,96.2,96.47,78.98
+Westminster constituency,E14001220,Eastleigh,100,99.99,99.98,95.23,100,99.73,99.68,88.69
+Westminster constituency,S14000078,Edinburgh East and Musselburgh,100,100,100,99.75,100,100,100,97.43
+Westminster constituency,S14000079,Edinburgh North and Leith,100,100,100,100,100,100,100,99.95
+Westminster constituency,S14000080,Edinburgh South,100,100,100,99.62,100,100,100,98.56
+Westminster constituency,S14000081,Edinburgh South West,100,100,99.99,98.52,99.91,97.18,95.29,76.48
+Westminster constituency,S14000082,Edinburgh West,100,100,100,98.68,100,99.85,99.42,92.15
+Westminster constituency,E14001221,Edmonton and Winchmore Hill,100,100,100,99.99,100,100,100,99.93
+Westminster constituency,E14001222,Ellesmere Port and Bromborough,100,100,99.92,87.37,100,99.56,99.62,61.94
+Westminster constituency,E14001223,Eltham and Chislehurst,100,100,100,93.71,100,99.92,99.05,86.42
+Westminster constituency,E14001224,Ely and East Cambridgeshire,100,99.35,99.61,75.29,100,99.04,99.21,66.6
+Westminster constituency,E14001225,Enfield North,100,100,100,99.93,100,100,99.82,94.91
+Westminster constituency,E14001226,Epping Forest,100,99.83,99.85,91.89,100,98.16,97.58,75.22
+Westminster constituency,E14001227,Epsom and Ewell,100,100,99.99,94.91,100,100,98.7,85.62
+Westminster constituency,E14001228,Erewash,100,100,100,94.73,100,100,100,93.17
+Westminster constituency,E14001229,Erith and Thamesmead,100,100,99.99,98.39,100,100,98.52,93.3
+Westminster constituency,E14001230,Esher and Walton,100,100,100,99.39,100,99.99,99.82,94.52
+Westminster constituency,E14001231,Exeter,100,100,99.99,98.88,100,99.68,99.2,91.5
+Westminster constituency,E14001232,Exmouth and Exeter East,100,99.97,98.45,82.96,99.96,98.76,95.51,73.84
+Westminster constituency,S14000083,Falkirk,99.99,99.81,97.73,88,99.95,96.9,86.49,61.51
+Westminster constituency,E14001233,Fareham and Waterlooville,100,99.97,99.95,96.72,100,98.42,95.83,68.69
+Westminster constituency,E14001234,Farnham and Bordon,100,99.61,99.59,87.33,99.99,97.16,94.71,57.22
+Westminster constituency,E14001235,Faversham and Mid Kent,99.95,99.22,96.74,80.84,98.88,91.62,86.77,47.13
+Westminster constituency,E14001236,Feltham and Heston,100,100,100,99.99,100,100,100,98.84
+Westminster constituency,N05000007,Fermanagh and South Tyrone,99.85,97.46,94.52,62.18,98.88,91.07,83.47,45.4
+Westminster constituency,E14001237,Filton and Bradley Stoke,100,100,100,97.66,100,100,100,97.33
+Westminster constituency,E14001238,Finchley and Golders Green,100,100,100,99.07,100,100,99.96,97.12
+Westminster constituency,E14001239,Folkestone and Hythe,100,99.99,99.83,90.64,100,99.8,99.21,74.1
+Westminster constituency,E14001240,Forest of Dean,99.94,97.36,93.06,64.23,99.46,94.47,86.08,50.73
+Westminster constituency,N05000008,Foyle,100,99.97,99.62,85.52,99.99,98.72,97.15,74.53
+Westminster constituency,E14001241,Frome and East Somerset,99.97,99.35,98.34,78.78,99.98,98.14,94.43,70.01
+Westminster constituency,E14001242,Fylde,100,99.87,98.66,74.8,100,99.9,99.36,64.35
+Westminster constituency,E14001243,Gainsborough,100,98.75,95.14,59.45,99.95,97.67,96.65,53.11
+Westminster constituency,E14001244,Gateshead Central and Whickham,100,100,100,99.6,100,99.9,97.29,90.81
+Westminster constituency,E14001245,Gedling,100,100,99.99,97.66,100,99.99,99.72,93.97
+Westminster constituency,E14001246,Gillingham and Rainham,100,100,100,96.94,100,100,100,96.62
+Westminster constituency,S14000084,Glasgow East,100,100,100,99.98,100,100,100,99.67
+Westminster constituency,S14000085,Glasgow North,100,100,100,99.88,100,100,100,97.25
+Westminster constituency,S14000086,Glasgow North East,100,100,100,98.63,100,100,99.93,94.38
+Westminster constituency,S14000087,Glasgow South,100,100,100,99.14,100,99.97,99.84,93.86
+Westminster constituency,S14000088,Glasgow South West,100,100,100,99.91,100,100,100,98.58
+Westminster constituency,S14000089,Glasgow West,100,100,100,100,100,100,100,99.89
+Westminster constituency,E14001247,Glastonbury and Somerton,99.89,98.79,92.89,64.31,99.92,98.46,95.48,64.82
+Westminster constituency,S14000090,Glenrothes and Mid Fife,100,99.83,99.96,93.03,99.86,98.12,97.52,77.18
+Westminster constituency,E14001248,Gloucester,100,100,100,95.72,100,100,99.99,94.84
+Westminster constituency,E14001249,Godalming and Ash,99.9,99.21,97.95,75.43,99.75,94.17,88.01,46.97
+Westminster constituency,E14001250,Goole and Pocklington,100,99.74,97.69,68.16,99.99,99.35,98.83,68.31
+Westminster constituency,S14000091,Gordon and Buchan,99.92,98.74,97.27,73.24,99.36,93.77,89.24,56.89
+Westminster constituency,E14001251,Gorton and Denton,100,100,100,99.9,100,100,100,99.04
+Westminster constituency,E14001252,Gosport,100,100,100,97.87,100,100,100,97.41
+Westminster constituency,W07000097,Gower,99.96,99.69,97.7,69.83,98.34,92.41,84.3,50.6
+Westminster constituency,E14001253,Grantham and Bourne,100,99.57,99.22,85.56,100,98.67,98.36,70.04
+Westminster constituency,E14001254,Gravesham,99.99,99.51,99.21,93.12,99.5,96.63,90.94,62.87
+Westminster constituency,E14001255,Great Grimsby and Cleethorpes,100,100,100,96.42,100,100,100,95.24
+Westminster constituency,E14001256,Great Yarmouth,100,99.93,99.34,84.41,100,99.39,98.54,63.56
+Westminster constituency,E14001257,Greenwich and Woolwich,100,100,100,98.89,100,100,100,97.34
+Westminster constituency,E14001258,Guildford,100,99.8,99.73,91.76,99.87,96.04,95.92,71.88
+Westminster constituency,E14001259,Hackney North and Stoke Newington,100,100,100,99.94,100,100,100,99.95
+Westminster constituency,E14001260,Hackney South and Shoreditch,100,100,100,100,100,100,100,100
+Westminster constituency,E14001261,Halesowen,100,100,100,95.86,100,100,99.98,95.25
+Westminster constituency,E14001262,Halifax,100,100,99.99,97.18,100,99.78,99.58,89.76
+Westminster constituency,E14001263,Hamble Valley,100,100,99.91,91.52,100,99.88,98.89,81.78
+Westminster constituency,S14000092,Hamilton and Clyde Valley,100,99.89,99.68,91.31,98.52,89.07,87.01,65.25
+Westminster constituency,E14001264,Hammersmith and Chiswick,100,100,100,100,100,100,100,99.98
+Westminster constituency,E14001265,Hampstead and Highgate,100,100,100,99.76,100,100,99.69,90.47
+Westminster constituency,E14001266,"Harborough, Oadby and Wigston",100,99.9,99.63,87.67,99.97,96.87,95.23,64.74
+Westminster constituency,E14001267,Harlow,100,99.72,99.68,95.77,100,98.72,98.59,73.84
+Westminster constituency,E14001268,Harpenden and Berkhamsted,100,99.77,99.57,90.51,99.95,96.52,96.38,73.56
+Westminster constituency,E14001269,Harrogate and Knaresborough,100,99.68,99.49,89.47,99.98,97.66,97.04,64.26
+Westminster constituency,E14001270,Harrow East,100,100,100,99.86,100,100,99.43,94.85
+Westminster constituency,E14001271,Harrow West,100,100,100,100,100,100,100,100
+Westminster constituency,E14001272,Hartlepool,100,100,99.9,78.16,99.97,99.37,97.66,72.11
+Westminster constituency,E14001273,Harwich and North Essex,100,99.85,99.18,73.63,100,98.68,97.57,56.9
+Westminster constituency,E14001274,Hastings and Rye,100,99.97,99.89,94.41,99.93,98.74,94.56,67.63
+Westminster constituency,E14001275,Havant,100,100,99.99,97.14,100,100,99.96,90.17
+Westminster constituency,E14001276,Hayes and Harlington,100,100,100,99.93,100,100,100,95.48
+Westminster constituency,E14001277,Hazel Grove,100,99.83,99.75,91.75,100,98.58,97.51,77.45
+Westminster constituency,E14001278,Hemel Hempstead,100,99.86,99.86,97.56,100,98.34,97.66,79.74
+Westminster constituency,E14001279,Hendon,100,100,100,99.73,100,100,99.99,97.24
+Westminster constituency,E14001280,Henley and Thame,99.99,99.58,98.92,74.8,99.93,97.84,93.62,64.5
+Westminster constituency,E14001281,Hereford and South Herefordshire,99.91,98.61,97.69,84.36,99.4,93.8,87.44,54.83
+Westminster constituency,E14001282,Herne Bay and Sandwich,100,99.8,99.38,77.84,100,98.51,98.05,70.9
+Westminster constituency,E14001283,Hertford and Stortford,100,99.53,99.47,93.01,99.99,98.27,98.88,76
+Westminster constituency,E14001284,Hertsmere,100,100,99.97,97.29,100,99.49,98.97,86.84
+Westminster constituency,E14001285,Hexham,99.92,98.72,97.23,76.97,96.24,86,76.33,46.63
+Westminster constituency,E14001286,Heywood and Middleton North,100,99.93,99.99,97.94,99.96,98.48,97.78,81.16
+Westminster constituency,E14001287,High Peak,99.96,98.8,98.62,93.71,91.17,77.53,68.33,46.01
+Westminster constituency,E14001288,Hinckley and Bosworth,100,99.63,99.55,79.17,100,98.88,98.75,66.72
+Westminster constituency,E14001289,Hitchin,100,99.84,99.71,87.74,99.98,98.1,97.32,75.52
+Westminster constituency,E14001290,Holborn and St Pancras,100,100,100,100,100,100,100,100
+Westminster constituency,E14001291,Honiton and Sidmouth,99.89,98.42,96.74,74.72,99.43,94.06,90.14,62.51
+Westminster constituency,E14001292,Hornchurch and Upminster,100,100,99.99,95.85,100,100,99.56,86.77
+Westminster constituency,E14001293,Hornsey and Friern Barnet,100,100,100,98.65,100,100,99.75,96.56
+Westminster constituency,E14001294,Horsham,100,99.91,99.45,85.34,99.89,96.68,93.12,59.38
+Westminster constituency,E14001295,Houghton and Sunderland South,100,100,100,91.71,100,100,99.73,90.33
+Westminster constituency,E14001296,Hove and Portslade,100,100,100,99.75,100,99.56,98.66,84.42
+Westminster constituency,E14001297,Huddersfield,100,99.9,99.95,96.13,100,99.28,99.41,90.09
+Westminster constituency,E14001298,Huntingdon,100,99.82,99.43,84.33,100,99.46,99.06,71.65
+Westminster constituency,E14001299,Hyndburn,100,100,99.97,98.12,99.95,99.49,98.25,86.75
+Westminster constituency,E14001300,Ilford North,100,100,99.79,96.05,100,100,97.76,91.06
+Westminster constituency,E14001301,Ilford South,100,100,100,99.92,100,100,100,99.74
+Westminster constituency,S14000093,Inverclyde and Renfrewshire West,100,99.97,99.94,95.01,99,93.12,90.57,65.92
+Westminster constituency,S14000094,"Inverness, Skye and West Ross-shire",99.58,98.72,93.55,83.01,76.67,61.22,51.23,26.18
+Westminster constituency,E14001302,Ipswich,100,100,100,98.98,100,100,99.75,96.46
+Westminster constituency,E14001303,Isle of Wight East,100,99.82,99.17,83.97,99.99,98.22,95.11,68.53
+Westminster constituency,E14001304,Isle of Wight West,100,99.68,99.04,85.68,99.94,97.8,95.36,71.48
+Westminster constituency,E14001305,Islington North,100,100,100,100,100,100,100,100
+Westminster constituency,E14001306,Islington South and Finsbury,100,100,100,100,100,100,100,100
+Westminster constituency,E14001307,Jarrow and Gateshead East,100,100,100,99.29,100,100,100,98.17
+Westminster constituency,E14001308,Keighley and Ilkley,100,99.83,99.7,91.67,99.85,96.27,94.84,71.88
+Westminster constituency,E14001309,Kenilworth and Southam,100,99.21,97.54,70.68,100,98.82,97.47,61.01
+Westminster constituency,E14001310,Kensington and Bayswater,100,100,100,100,100,100,100,100
+Westminster constituency,E14001311,Kettering,100,99.76,99.61,86.86,100,98.51,97.48,66.3
+Westminster constituency,S14000110,Kilmarnock and Loudoun,100,99.94,99.83,91.55,99.46,95.4,88.3,57.85
+Westminster constituency,E14001312,Kingston and Surbiton,100,100,100,98.64,100,100,99.94,93.28
+Westminster constituency,E14001313,Kingston upon Hull East,100,100,100,99.47,100,100,100,96.35
+Westminster constituency,E14001314,Kingston upon Hull North and Cottingham,100,100,99.99,97.94,100,100,99.99,92.35
+Westminster constituency,E14001315,Kingston upon Hull West and Haltemprice,100,100,100,97.41,100,100,99.97,94.23
+Westminster constituency,E14001316,Kingswinford and South Staffordshire,100,99.99,99.3,88.13,99.99,99.55,92.85,65.59
+Westminster constituency,E14001317,Knowsley,100,100,100,92.14,100,99.93,98.69,80.98
+Westminster constituency,N05000009,Lagan Valley,100,99.72,99.19,77.36,100,98.24,97.08,63.75
+Westminster constituency,E14001318,Lancaster and Wyre,99.7,98.56,98.05,83.92,94.52,85.08,86.27,49.94
+Westminster constituency,E14001319,Leeds Central and Headingley,100,100,100,99.94,100,100,100,99.46
+Westminster constituency,E14001320,Leeds East,100,100,100,96.57,100,100,99.77,89.13
+Westminster constituency,E14001321,Leeds North East,100,100,99.98,99.24,100,99.21,98.7,84.08
+Westminster constituency,E14001322,Leeds North West,100,100,99.99,95.54,99.98,99.79,99.6,89.31
+Westminster constituency,E14001323,Leeds South,100,100,100,99.93,100,100,99.62,93.41
+Westminster constituency,E14001324,Leeds South West and Morley,100,100,100,99.26,100,100,99.88,96.68
+Westminster constituency,E14001325,Leeds West and Pudsey,100,99.98,99.99,97.97,100,99.92,99.28,90.8
+Westminster constituency,E14001326,Leicester East,100,100,100,98.47,100,100,100,97.8
+Westminster constituency,E14001327,Leicester South,100,100,100,99.97,100,100,100,99.15
+Westminster constituency,E14001328,Leicester West,100,100,100,99.09,100,100,99.95,96.63
+Westminster constituency,E14001329,Leigh and Atherton,100,100,100,95.47,100,100,99.35,86.25
+Westminster constituency,E14001330,Lewes,99.97,99.81,99.48,89.22,99.85,96.75,95.13,67.32
+Westminster constituency,E14001331,Lewisham East,100,100,100,100,100,100,100,99.81
+Westminster constituency,E14001332,Lewisham North,100,100,100,100,100,100,100,100
+Westminster constituency,E14001333,Lewisham West and East Dulwich,100,100,100,100,100,100,100,100
+Westminster constituency,E14001334,Leyton and Wanstead,100,100,100,100,100,100,100,98.41
+Westminster constituency,E14001335,Lichfield,99.99,99.68,98.26,66.4,99.86,96.32,91.21,52.29
+Westminster constituency,E14001336,Lincoln,100,100,99.94,96.8,100,99.38,99.76,89.47
+Westminster constituency,E14001337,Liverpool Garston,100,100,100,99.1,100,100,99.97,95.95
+Westminster constituency,E14001338,Liverpool Riverside,100,100,100,99.29,100,100,100,99.2
+Westminster constituency,E14001339,Liverpool Walton,100,100,100,99.62,100,100,99.84,98.58
+Westminster constituency,E14001340,Liverpool Wavertree,100,100,100,98.34,100,100,100,98.96
+Westminster constituency,E14001341,Liverpool West Derby,100,100,100,98.09,100,100,100,97.32
+Westminster constituency,S14000095,Livingston,100,99.91,99.92,89.14,99.68,96.65,92.5,63.75
+Westminster constituency,W07000098,Llanelli,99.99,99.04,98.36,82.56,99.93,97.33,89.67,59.22
+Westminster constituency,S14000096,Lothian East,99.98,99.77,99.13,84.5,98.83,93,85.24,56.72
+Westminster constituency,E14001342,Loughborough,100,99.99,100,94.42,99.98,99.25,98.94,78.78
+Westminster constituency,E14001343,Louth and Horncastle,99.99,99.28,97.21,65.78,99.86,97.52,96.53,52.27
+Westminster constituency,E14001344,Lowestoft,100,99.56,98.15,90.35,100,97.13,96.38,57.3
+Westminster constituency,E14001345,Luton North,100,100,100,99.94,100,100,100,99.7
+Westminster constituency,E14001346,Luton South and South Bedfordshire,100,100,99.85,95.58,100,99.96,99.15,80.04
+Westminster constituency,E14001347,Macclesfield,99.77,98.92,98.69,91.7,97.55,90.73,88.41,63.12
+Westminster constituency,E14001348,Maidenhead,100,99.97,99.95,95.47,100,99.48,99.28,79.34
+Westminster constituency,E14001349,Maidstone and Malling,100,99.91,99.78,86.88,100,98.78,99.54,78.99
+Westminster constituency,E14001350,Makerfield,100,100,99.97,93.72,100,99.99,99.83,86.01
+Westminster constituency,E14001351,Maldon,100,99.72,97.27,70.04,100,99.37,98.15,52.81
+Westminster constituency,E14001352,Manchester Central,100,100,100,99.85,100,100,99.9,98.43
+Westminster constituency,E14001353,Manchester Rusholme,100,100,100,100,100,100,100,100
+Westminster constituency,E14001354,Manchester Withington,100,100,100,100,100,100,100,97.15
+Westminster constituency,E14001355,Mansfield,100,99.84,99.82,91.53,99.99,98.32,97.71,79.24
+Westminster constituency,E14001356,Melksham and Devizes,100,99.58,99.26,79.23,99.4,96.31,95.36,69.09
+Westminster constituency,E14001357,Melton and Syston,100,98.73,95.75,76.31,99.97,96.26,94.51,55.97
+Westminster constituency,E14001358,Meriden and Solihull East,100,100,99.9,89.75,100,99.99,99.59,77.73
+Westminster constituency,W07000099,Merthyr Tydfil and Aberdare,100,99.93,96.11,81.82,99.29,91.56,82.09,52.41
+Westminster constituency,W07000100,Mid and South Pembrokeshire,99.97,98.23,96.67,80.01,99.66,94.5,89.99,57.05
+Westminster constituency,E14001359,Mid Bedfordshire,100,99.95,97.47,71.62,99.99,99.11,97.78,67.98
+Westminster constituency,E14001360,Mid Buckinghamshire,100,98.89,96.07,56.86,99.87,96.26,91.86,57.29
+Westminster constituency,E14001361,Mid Cheshire,100,99.98,99.84,87.68,99.96,98.77,96.79,72.24
+Westminster constituency,E14001362,Mid Derbyshire,100,99.97,99.89,91.95,99.99,99.31,98.23,80.45
+Westminster constituency,E14001363,Mid Dorset and North Poole,100,99.76,99.29,84.49,100,98.83,92.74,54.88
+Westminster constituency,S14000097,Mid Dunbartonshire,100,99.99,99.98,93.02,97.97,93.45,89.42,62.43
+Westminster constituency,E14001364,Mid Leicestershire,100,99.86,98.23,86.69,99.83,96.15,89.53,55.96
+Westminster constituency,E14001365,Mid Norfolk,100,98.67,95.2,68.31,100,97.91,95.66,54.35
+Westminster constituency,E14001366,Mid Sussex,99.98,99.84,99.57,81.97,99.7,96.95,95.02,60.07
+Westminster constituency,N05000010,Mid Ulster,99.9,97.89,96.32,51.82,99.57,95.17,91.2,43.72
+Westminster constituency,E14001367,Middlesbrough and Thornaby East,100,100,100,98.22,100,100,100,97.23
+Westminster constituency,E14001368,Middlesbrough South and East Cleveland,99.99,99.88,99.45,92.3,99.03,95.66,93.41,70.18
+Westminster constituency,S14000045,Midlothian,99.99,99.86,99.46,91.09,97.88,93.21,86.62,60.39
+Westminster constituency,E14001369,Milton Keynes Central,100,100,100,95.73,100,99.88,99.63,88.79
+Westminster constituency,E14001370,Milton Keynes North,100,99.99,99.64,89.48,100,99.68,98.79,70.39
+Westminster constituency,E14001371,Mitcham and Morden,100,100,100,99.99,100,100,100,97.36
+Westminster constituency,W07000101,Monmouthshire,99.73,97.88,96.28,82.98,98.18,88.76,80.16,49.34
+Westminster constituency,W07000102,Montgomeryshire and Glyndwr,99.59,96.7,92.66,62.84,95.3,82.5,74.23,42.59
+Westminster constituency,S14000098,"Moray West, Nairn and Strathspey",99.95,99.25,97.35,77.81,88.65,75.38,64.15,31.78
+Westminster constituency,E14001372,Morecambe and Lunesdale,99.9,98.12,96.93,76.92,97.75,87.77,81.93,52.08
+Westminster constituency,S14000099,"Motherwell, Wishaw and Carluke",100,99.97,99.93,93.54,99.81,98.06,94.44,71.06
+Westminster constituency,S14000027,Na h-Eileanan An Iar,99.95,97.66,89.47,61.78,95.73,85.06,72.97,43.58
+Westminster constituency,W07000103,Neath and Swansea East,100,99.97,99.77,90.91,99.41,96.11,88.31,60.48
+Westminster constituency,E14001373,New Forest East,99.98,99.49,99.39,87.7,99.5,86.88,79.08,37.9
+Westminster constituency,E14001374,New Forest West,99.96,99.41,98.72,75.55,99.35,88.92,84.46,46.94
+Westminster constituency,E14001375,Newark,100,99.16,97.76,76.7,100,98.24,98.25,63.89
+Westminster constituency,E14001376,Newbury,100,99.84,99.56,90.3,100,98.71,96.23,68.96
+Westminster constituency,E14001377,Newcastle upon Tyne Central and West,100,100,100,99,100,100,100,98.07
+Westminster constituency,E14001378,Newcastle upon Tyne East and Wallsend,100,100,100,95.93,100,100,99.94,94.92
+Westminster constituency,E14001379,Newcastle upon Tyne North,100,100,100,99.8,100,100,99.92,96.24
+Westminster constituency,E14001380,Newcastle-under-Lyme,100,100,100,97.77,100,99.91,99.81,90.15
+Westminster constituency,W07000104,Newport East,100,99.91,99.79,96.4,100,99.65,99.05,83.23
+Westminster constituency,W07000105,Newport West and Islwyn,100,99.96,99.91,95.22,97.7,95.47,94.29,80.54
+Westminster constituency,N05000011,Newry and Armagh,99.23,95.67,89.96,63.26,98.73,91.13,82.33,45.56
+Westminster constituency,E14001381,Newton Abbot,99.98,99.21,98.16,86.69,99.83,94.58,90.22,55.01
+Westminster constituency,E14001382,Newton Aycliffe and Spennymoor,100,99.99,99.89,82.43,99.98,99.33,98.28,77.66
+Westminster constituency,E14001383,Normanton and Hemsworth,100,99.98,99.99,94.43,100,99.96,98.87,87.2
+Westminster constituency,N05000012,North Antrim,99.94,98.6,98.41,74.14,95.95,90.24,87.08,52.98
+Westminster constituency,S14000048,North Ayrshire and Arran,99.97,99.89,96.36,88.3,93.56,81.9,68.6,36.84
+Westminster constituency,E14001384,North Bedfordshire,100,99.57,98.86,74.02,100,98.57,97.75,64.75
+Westminster constituency,E14001385,North Cornwall,99.73,96.33,90.57,68.51,98.65,89.93,83.19,51.61
+Westminster constituency,E14001386,North Cotswolds,99.93,98.27,95.39,64.86,99.41,93.99,90.75,62.25
+Westminster constituency,E14001387,North Devon,99.64,96.87,95.55,73.92,97.86,88.24,78.69,46.89
+Westminster constituency,E14001388,North Dorset,99.99,99.15,96.95,71.94,99.9,96.54,92.83,62.22
+Westminster constituency,N05000013,North Down,100,99.99,99.96,85.48,100,99.38,98.21,77.39
+Westminster constituency,E14001389,North Durham,100,99.41,99.06,86.12,99.48,95.87,90.49,63.39
+Westminster constituency,E14001390,North East Cambridgeshire,100,99.39,99.1,76.04,100,98.47,99.64,51.57
+Westminster constituency,E14001391,North East Derbyshire,99.99,99.55,99.52,85.25,99.86,96.73,94,66.58
+Westminster constituency,S14000100,North East Fife,99.98,99.65,98.91,80.69,99.93,97.15,94.81,65.98
+Westminster constituency,E14001392,North East Hampshire,100,99.93,99.54,77.79,100,98.94,97,60.25
+Westminster constituency,E14001393,North East Hertfordshire,100,99.27,98.49,70.4,99.97,96.01,96.36,63.14
+Westminster constituency,E14001394,North East Somerset and Hanham,99.96,98.99,99.32,82.16,99.98,96.86,96.09,73.41
+Westminster constituency,E14001395,North Herefordshire,99.94,98.13,96.07,66.88,99.66,96.43,91.21,53.82
+Westminster constituency,E14001396,North Norfolk,100,97.54,92.93,64.22,99.97,95.1,90.49,39.63
+Westminster constituency,E14001397,North Northumberland,99.8,98.92,96.26,76.2,95.69,87.1,77.6,48.25
+Westminster constituency,E14001398,North Shropshire,99.99,98.14,96.47,70.62,99.92,97.48,94.12,45.51
+Westminster constituency,E14001399,North Somerset,100,99.84,99.02,68.88,99.94,97.08,96.24,74.51
+Westminster constituency,E14001400,North Warwickshire and Bedworth,100,99.72,98.87,79.86,100,98.84,97.93,67.56
+Westminster constituency,E14001401,North West Cambridgeshire,100,99.85,94.07,77.78,100,98.23,97.33,62.28
+Westminster constituency,E14001402,North West Essex,99.91,97.96,96.62,68.95,99.98,95.82,95.96,54.95
+Westminster constituency,E14001403,North West Hampshire,99.99,99.75,98.8,86.46,99.89,97.02,94.78,61.87
+Westminster constituency,E14001404,North West Leicestershire,100,99.95,98.87,75.52,99.99,98.33,95.69,61.76
+Westminster constituency,E14001405,North West Norfolk,100,99.51,98.87,68.16,100,98.6,97.25,60.08
+Westminster constituency,E14001406,Northampton North,100,100,100,99.98,100,100,100,99.96
+Westminster constituency,E14001407,Northampton South,100,100,100,99.73,100,100,99.98,98.61
+Westminster constituency,E14001408,Norwich North,100,99.97,100,91.43,100,99.69,99.64,82.53
+Westminster constituency,E14001409,Norwich South,100,100,100,97.48,100,100,100,95.47
+Westminster constituency,E14001410,Nottingham East,100,100,100,100,100,100,100,100
+Westminster constituency,E14001411,Nottingham North and Kimberley,100,100,100,98.81,100,100,100,98.06
+Westminster constituency,E14001412,Nottingham South,100,100,100,99.7,100,100,100,98.87
+Westminster constituency,E14001413,Nuneaton,100,99.75,98.42,91.8,100,98.3,94,65.81
+Westminster constituency,E14001414,Old Bexley and Sidcup,100,100,100,98.44,100,100,99.9,93.67
+Westminster constituency,E14001415,Oldham East and Saddleworth,100,100,99.98,96.43,98.8,93.02,88.26,74.46
+Westminster constituency,E14001416,"Oldham West, Chadderton and Royton",100,100,100,99.7,100,99.98,99.88,98.02
+Westminster constituency,S14000051,Orkney and Shetland,99.95,98.14,81.55,43.84,98.94,92.08,80.94,43.19
+Westminster constituency,E14001417,Orpington,100,99.92,99.68,95.31,99.87,97.05,92.73,66.79
+Westminster constituency,E14001418,Ossett and Denby Dale,100,99.98,99.79,88.94,100,99.61,98.57,84.51
+Westminster constituency,E14001419,Oxford East,100,100,100,99.19,100,100,100,98.95
+Westminster constituency,E14001420,Oxford West and Abingdon,100,100,100,92.99,100,99.53,99.5,83.51
+Westminster constituency,S14000101,Paisley and Renfrewshire North,100,99.98,99.98,97.68,100,99.25,97.84,85.5
+Westminster constituency,S14000102,Paisley and Renfrewshire South,100,99.97,99.82,89.6,99.13,89.04,88.79,58.19
+Westminster constituency,E14001421,Peckham,100,100,100,100,100,100,100,100
+Westminster constituency,E14001422,Pendle and Clitheroe,99.96,99.59,98.31,88.58,99.58,95.68,92.31,65.61
+Westminster constituency,E14001423,Penistone and Stocksbridge,99.99,99.77,99.61,87.13,98.13,92.63,89.97,59.98
+Westminster constituency,E14001424,Penrith and Solway,99.74,98.42,95.07,70.7,94.39,86.95,79.26,43.97
+Westminster constituency,S14000103,Perth and Kinross-shire,99.98,99.75,98.86,87.98,93.57,85.12,80.48,53.74
+Westminster constituency,E14001425,Peterborough,100,99.98,100,93.32,100,99.52,99.98,79.26
+Westminster constituency,E14001426,Plymouth Moor View,100,100,99.96,96.22,100,99.44,98.31,89.4
+Westminster constituency,E14001427,Plymouth Sutton and Devonport,100,100,100,99.67,100,100,99.97,98.88
+Westminster constituency,E14001428,"Pontefract, Castleford and Knottingley",100,100,100,96.47,100,100,99.9,94.38
+Westminster constituency,W07000106,Pontypridd,100,99.84,96.95,84.84,98.87,95,91.94,75.04
+Westminster constituency,E14001429,Poole,100,100,100,97.57,100,100,99.97,97.04
+Westminster constituency,E14001430,Poplar and Limehouse,100,100,100,100,100,100,100,100
+Westminster constituency,E14001431,Portsmouth North,100,100,100,99.92,100,100,100,98.83
+Westminster constituency,E14001432,Portsmouth South,100,100,100,100,100,100,100,99.8
+Westminster constituency,E14001433,Preston,100,100,100,96.83,100,99.97,99.8,89.32
+Westminster constituency,E14001434,Putney,100,100,100,99.2,100,100,99.66,91.7
+Westminster constituency,E14001435,Queen's Park and Maida Vale,100,100,100,100,100,100,100,100
+Westminster constituency,E14001436,Rawmarsh and Conisbrough,100,99.98,99.97,91.81,100,99.91,98.82,84.39
+Westminster constituency,E14001437,Rayleigh and Wickford,100,99.94,99.73,90.94,100,99.59,99.3,78.18
+Westminster constituency,E14001438,Reading Central,100,100,100,99.85,100,100,100,99.76
+Westminster constituency,E14001439,Reading West and Mid Berkshire,99.99,99.26,99.12,88.04,99.87,96.64,93.83,62.07
+Westminster constituency,E14001440,Redcar,100,100,99.96,90.16,100,99.99,98.34,65.94
+Westminster constituency,E14001441,Redditch,100,99.64,98.95,90.42,99.93,97.44,94.45,62.12
+Westminster constituency,E14001442,Reigate,100,99.99,99.93,96.98,100,99.59,98.39,81.18
+Westminster constituency,W07000107,Rhondda and Ogmore,100,99.99,95.63,85.53,99.24,94.83,85.89,61
+Westminster constituency,E14001443,Ribble Valley,99.94,99.47,98.34,79.45,95.77,89.46,79.12,49.84
+Westminster constituency,E14001444,Richmond and Northallerton,99.66,98.08,95.39,71.68,93.88,84.38,72.07,42.73
+Westminster constituency,E14001445,Richmond Park,100,100,100,99.82,100,100,97.18,81.47
+Westminster constituency,E14001446,Rochdale,100,99.99,99.69,92.91,99.99,99.04,97.03,78.21
+Westminster constituency,E14001447,Rochester and Strood,100,99.74,99.85,87.18,99.79,98,96.75,69.13
+Westminster constituency,E14001448,Romford,100,100,99.99,99.62,100,100,99.87,95.31
+Westminster constituency,E14001449,Romsey and Southampton North,99.99,99.38,97.94,80.39,99.92,97.7,93.57,59.47
+Westminster constituency,E14001450,Rossendale and Darwen,99.99,99.96,99.48,94.59,99.92,97.49,94.75,71.33
+Westminster constituency,E14001451,Rother Valley,100,99.93,99.15,82.96,100,99.54,95.52,67.73
+Westminster constituency,E14001452,Rotherham,100,100,99.99,92.55,100,100,99.37,85.88
+Westminster constituency,E14001453,Rugby,100,100,99.76,93.3,100,99.86,99.52,84.5
+Westminster constituency,E14001454,"Ruislip, Northwood and Pinner",100,100,99.99,98.3,100,100,98.36,85.94
+Westminster constituency,E14001455,Runcorn and Helsby,100,99.78,99.75,89.5,99.87,98.15,96.93,73.22
+Westminster constituency,E14001456,Runnymede and Weybridge,100,99.9,99.87,95.43,100,99.65,98.77,86.18
+Westminster constituency,E14001457,Rushcliffe,100,99.44,99.83,88.55,100,99.33,99.36,73.59
+Westminster constituency,S14000104,Rutherglen,100,100,99.94,97.56,100,100,99.22,93.72
+Westminster constituency,E14001458,Rutland and Stamford,99.99,99,97.32,72.77,99.79,96.38,94.48,62.74
+Westminster constituency,E14001459,Salford,100,100,100,99.93,100,100,99.55,93.73
+Westminster constituency,E14001460,Salisbury,100,97.19,97.05,77.21,99.72,95.64,90.42,61.46
+Westminster constituency,E14001461,Scarborough and Whitby,99.84,98.93,96.04,89.24,95.87,86.09,68.17,41.13
+Westminster constituency,E14001462,Scunthorpe,100,99.58,98.09,88.86,100,99.37,98.97,76.21
+Westminster constituency,E14001463,Sefton Central,100,99.97,99.99,88.27,100,99.86,95.74,76.14
+Westminster constituency,E14001464,Selby,100,99.06,98.05,69.48,100,99.38,98.83,67.47
+Westminster constituency,E14001465,Sevenoaks,99.99,99.29,97.76,77.56,99.59,93.59,88.81,53.79
+Westminster constituency,E14001466,Sheffield Brightside and Hillsborough,100,100,100,99.95,100,100,100,98.62
+Westminster constituency,E14001467,Sheffield Central,100,100,100,99.17,100,100,100,98.86
+Westminster constituency,E14001468,Sheffield Hallam,99.95,99.7,99.13,89.05,94.48,85.08,69.19,36.91
+Westminster constituency,E14001469,Sheffield Heeley,100,100,100,95.39,100,100,99.67,91.68
+Westminster constituency,E14001470,Sheffield South East,100,100,99.94,97.54,100,99.61,98.78,90.02
+Westminster constituency,E14001471,Sherwood Forest,100,99.74,97.99,74.26,100,98.07,90.95,52.89
+Westminster constituency,E14001472,Shipley,100,99.96,99.97,88.62,99.98,99.81,99.04,81.63
+Westminster constituency,E14001473,Shrewsbury,99.99,99.76,99.73,92.38,99.77,97.45,97,72.6
+Westminster constituency,E14001474,Sittingbourne and Sheppey,100,99.91,98.37,73.46,100,99.34,97.66,51.55
+Westminster constituency,E14001475,Skipton and Ripon,99.49,98.15,93.58,75.03,90.81,78.48,67.67,40.06
+Westminster constituency,E14001476,Sleaford and North Hykeham,100,99.57,98.44,68.97,100,99.12,98.47,57.66
+Westminster constituency,E14001477,Slough,100,100,100,99.61,100,100,100,99.21
+Westminster constituency,E14001478,Smethwick,100,100,100,99.41,100,100,100,99.4
+Westminster constituency,E14001479,Solihull West and Shirley,100,100,100,94.75,100,100,99.94,86.59
+Westminster constituency,N05000014,South Antrim,100,99.69,99,79.18,99.99,98.93,96.26,62.3
+Westminster constituency,E14001480,South Basildon and East Thurrock,100,100,99.98,92.32,100,99.91,99.93,86.71
+Westminster constituency,E14001481,South Cambridgeshire,100,99.98,98.71,75.37,100,99.71,99.1,78.56
+Westminster constituency,E14001482,South Cotswolds,99.99,99.49,96.69,67.35,99.8,97.28,95.23,60.33
+Westminster constituency,E14001483,South Derbyshire,100,99.04,98.77,78.98,100,97.87,95.86,65.04
+Westminster constituency,E14001484,South Devon,99.72,97.1,94.24,74.49,98.38,89.64,84.04,55.29
+Westminster constituency,E14001485,South Dorset,99.98,99.53,96.86,88.66,99.4,93.81,80.8,45.18
+Westminster constituency,N05000015,South Down,99.18,95.2,93.67,65.87,95.46,87.16,82.06,45.19
+Westminster constituency,E14001486,South East Cornwall,99.91,98.32,94.91,74.81,99.17,92.25,85.79,59.59
+Westminster constituency,E14001487,South Holland and The Deepings,100,98.55,98.08,70.17,100,97.07,98.65,42.78
+Westminster constituency,E14001488,South Leicestershire,100,99.82,99.3,82.6,100,99.26,98.63,78.08
+Westminster constituency,E14001489,South Norfolk,100,98.85,93.65,68.26,100,97.11,95.67,50.73
+Westminster constituency,E14001490,South Northamptonshire,100,99.46,97.54,75.98,100,98.29,95.51,66.24
+Westminster constituency,E14001491,South Ribble,100,100,99.88,94.45,100,99.99,99.86,91.25
+Westminster constituency,E14001492,South Shields,100,100,98.94,93.36,100,100,98.82,89.55
+Westminster constituency,E14001493,South Shropshire,99.76,97.5,94.3,65.42,99.32,92.83,88.33,50.98
+Westminster constituency,E14001494,South Suffolk,99.98,99.09,96.74,72.52,99.98,96.55,94.07,53.62
+Westminster constituency,E14001495,South West Devon,99.96,99.02,95.31,83.34,97.94,89,82.62,51.47
+Westminster constituency,E14001496,South West Hertfordshire,100,99.82,99.84,96.79,99.99,98.86,98.35,86.4
+Westminster constituency,E14001497,South West Norfolk,100,99.08,98.16,71.49,99.99,94.64,91.8,45.85
+Westminster constituency,E14001498,South West Wiltshire,99.96,99.7,98.03,81.58,97.84,88.26,82.1,51.92
+Westminster constituency,E14001499,Southampton Itchen,100,100,100,99.33,100,100,100,98.29
+Westminster constituency,E14001500,Southampton Test,100,100,100,99.93,100,100,99.99,96.19
+Westminster constituency,E14001501,Southend East and Rochford,100,99.7,99.66,90.78,100,99.01,98.56,43.86
+Westminster constituency,E14001502,Southend West and Leigh,100,100,100,96.55,100,100,100,96.81
+Westminster constituency,E14001503,Southgate and Wood Green,100,100,100,99.45,100,100,99.99,94.91
+Westminster constituency,E14001504,Southport,100,99.9,99.69,75.01,100,99.43,99.43,61.11
+Westminster constituency,E14001505,Spelthorne,100,100,100,99.52,100,100,100,99.1
+Westminster constituency,E14001506,Spen Valley,100,100,99.99,96.85,100,100,99.93,95.14
+Westminster constituency,E14001507,St Albans,100,100,100,99.06,100,100,99.95,92.49
+Westminster constituency,E14001508,St Austell and Newquay,99.98,99.13,96.03,80.63,99.42,94.85,90.71,64.16
+Westminster constituency,E14001509,St Helens North,100,99.96,99.96,90.79,100,99.99,99.89,85.05
+Westminster constituency,E14001510,St Helens South and Whiston,100,99.99,99.96,93.03,100,100,99.97,90.12
+Westminster constituency,E14001511,St Ives,99.86,96.95,93.57,64.61,99.04,89.74,83.67,49.6
+Westminster constituency,E14001512,St Neots and Mid Cambridgeshire,100,99.84,99.45,68.38,100,98.66,98.44,69.43
+Westminster constituency,E14001513,Stafford,100,99.72,98.77,87.69,99.88,97.43,93.96,57.29
+Westminster constituency,E14001514,Staffordshire Moorlands,99.81,98.24,96.88,84.81,98.03,88.74,79.71,48.58
+Westminster constituency,E14001515,Stalybridge and Hyde,100,100,99.59,97.2,99.54,96.55,95.88,77.94
+Westminster constituency,E14001516,Stevenage,100,100,99.99,98.82,100,99.58,97.83,86.64
+Westminster constituency,S14000105,Stirling and Strathallan,99.94,99.53,97.53,82.93,88.11,76.59,65.82,40.14
+Westminster constituency,E14001517,Stockport,100,100,100,99.48,100,100,99.9,95.38
+Westminster constituency,E14001518,Stockton North,100,100,99.82,96.15,100,99.03,98.22,73.47
+Westminster constituency,E14001519,Stockton West,100,99.99,99.83,84.99,99.99,98.79,96.47,73.36
+Westminster constituency,E14001520,Stoke-on-Trent Central,100,100,100,98.96,100,100,100,97.86
+Westminster constituency,E14001521,Stoke-on-Trent North,100,100,99.97,89.63,100,99.99,99.9,88.24
+Westminster constituency,E14001522,Stoke-on-Trent South,99.97,99.91,99.7,92.91,99.62,97.68,95.66,75.63
+Westminster constituency,E14001523,"Stone, Great Wyrley and Penkridge",100,99.95,99.09,84.51,99.99,98.99,94.58,68.07
+Westminster constituency,E14001524,Stourbridge,100,100,100,96.6,100,100,99.99,96.42
+Westminster constituency,N05000016,Strangford,99.97,99.41,99.1,79.12,99.98,98.92,98.61,66.93
+Westminster constituency,E14001525,Stratford and Bow,100,100,100,100,100,100,100,100
+Westminster constituency,E14001526,Stratford-on-Avon,100,99.37,97.65,76.71,100,97.93,96.88,62.09
+Westminster constituency,E14001527,Streatham and Croydon North,100,100,100,100,100,100,100,99.96
+Westminster constituency,E14001528,Stretford and Urmston,100,100,100,99.53,100,100,100,95.57
+Westminster constituency,E14001529,Stroud,99.97,99.4,93.86,80.59,99.69,96.77,92.11,64.95
+Westminster constituency,E14001530,Suffolk Coastal,100,98.22,95.95,72.59,99.97,94.1,89.4,44.38
+Westminster constituency,E14001531,Sunderland Central,100,100,100,96.48,100,100,99.83,94.79
+Westminster constituency,E14001532,Surrey Heath,100,99.95,99.92,90.31,100,99.66,98.17,66.47
+Westminster constituency,E14001533,Sussex Weald,99.96,98.88,95.67,72.78,99.63,91.44,82.95,41.07
+Westminster constituency,E14001534,Sutton and Cheam,100,100,100,99.81,100,100,100,98.93
+Westminster constituency,E14001535,Sutton Coldfield,100,100,99.94,94.63,100,99.55,97.29,80.03
+Westminster constituency,W07000108,Swansea West,100,100,99.99,94.38,100,99.97,99.77,91.42
+Westminster constituency,E14001536,Swindon North,100,100,99.91,92.29,100,99.96,99.36,79.48
+Westminster constituency,E14001537,Swindon South,100,100,100,99.3,100,100,99.98,97.57
+Westminster constituency,E14001538,Tamworth,100,99.63,99.16,91.63,100,98.64,97.81,67.43
+Westminster constituency,E14001539,Tatton,100,99.84,98.67,75.24,100,99.7,98.7,73.23
+Westminster constituency,E14001540,Taunton and Wellington,99.98,99.27,99.26,86.69,99.5,95.89,93.47,64.06
+Westminster constituency,E14001541,Telford,100,99.75,99.49,95.24,100,99.36,98.09,87.37
+Westminster constituency,E14001542,Tewkesbury,100,99.63,99.13,80.55,99.88,97.05,93.42,61.07
+Westminster constituency,E14001543,The Wrekin,99.99,98.76,98.45,75.42,99.71,96.51,93.8,48.65
+Westminster constituency,E14001544,Thirsk and Malton,99.4,97.81,95.31,67.65,97.31,89.82,80.47,50.49
+Westminster constituency,E14001545,Thornbury and Yate,100,99.88,99.38,82.74,99.98,98.28,95.54,70.63
+Westminster constituency,E14001546,Thurrock,100,100,99.98,95.99,100,100,99.67,86.33
+Westminster constituency,E14001547,Tipton and Wednesbury,100,100,100,99.62,100,100,100,99.58
+Westminster constituency,E14001548,Tiverton and Minehead,99.7,97.59,92.9,68.31,97.98,90.19,76.21,45.01
+Westminster constituency,E14001549,Tonbridge,100,99.54,98.48,75.1,99.99,96.36,91.82,46.74
+Westminster constituency,E14001550,Tooting,100,100,100,100,100,100,100,100
+Westminster constituency,E14001551,Torbay,100,99.91,99.61,95.71,100,99.44,97.68,84.22
+Westminster constituency,W07000109,Torfaen,99.99,99.91,99.88,90.88,98.9,94.72,92.07,67.7
+Westminster constituency,E14001552,Torridge and Tavistock,99.83,97.46,93.92,68.81,97.22,86.49,77.19,40.71
+Westminster constituency,E14001553,Tottenham,100,100,100,100,100,100,100,100
+Westminster constituency,E14001554,Truro and Falmouth,99.91,98.63,97.75,83.98,99.44,92.75,89.94,62.45
+Westminster constituency,E14001555,Tunbridge Wells,99.99,99.74,98.12,75.75,99.94,97.19,86.48,38.98
+Westminster constituency,E14001556,Twickenham,100,100,100,99.95,100,100,100,98.32
+Westminster constituency,E14001557,Tynemouth,100,100,100,98.23,100,100,99.95,96.75
+Westminster constituency,N05000017,Upper Bann,100,99.62,99.61,72.75,100,98.56,98.6,61.22
+Westminster constituency,E14001558,Uxbridge and South Ruislip,100,100,100,99.29,100,100,99.87,95.9
+Westminster constituency,W07000110,Vale of Glamorgan,100,99.63,97.84,84.98,99.97,99.31,94.03,67.8
+Westminster constituency,E14001559,Vauxhall and Camberwell Green,100,100,100,100,100,100,100,100
+Westminster constituency,E14001560,Wakefield and Rothwell,100,100,100,99.06,100,100,99.21,92.99
+Westminster constituency,E14001561,Wallasey,100,100,100,88.38,100,100,99.96,89.08
+Westminster constituency,E14001562,Walsall and Bloxwich,100,100,100,96.38,100,100,99.82,88.69
+Westminster constituency,E14001563,Walthamstow,100,100,100,95.65,100,100,100,96.66
+Westminster constituency,E14001564,Warrington North,100,99.93,100,95.37,100,99.9,99.56,88.78
+Westminster constituency,E14001565,Warrington South,100,100,100,97.95,100,100,99.81,88.32
+Westminster constituency,E14001566,Warwick and Leamington,100,100,100,98.28,100,99.37,99.38,85.35
+Westminster constituency,E14001567,Washington and Gateshead South,100,99.99,99.97,94.72,100,99.79,97.73,85.24
+Westminster constituency,E14001568,Watford,100,100,100,99.9,100,100,99.98,94.83
+Westminster constituency,E14001569,Waveney Valley,100,97.54,92.27,51.99,100,97.1,93.53,39.79
+Westminster constituency,E14001570,Weald of Kent,99.98,98.82,93.9,56.65,99.93,96.56,93.05,46.49
+Westminster constituency,E14001571,Wellingborough and Rushden,100,99.98,99.97,94.95,100,99.99,99.99,91.61
+Westminster constituency,E14001572,Wells and Mendip Hills,100,98.54,96.32,54.5,99.97,98.59,97.11,67.43
+Westminster constituency,E14001573,Welwyn Hatfield,100,100,99.96,97.4,100,99.53,98.38,79.75
+Westminster constituency,S14000111,West Aberdeenshire and Kincardine,99.9,99.04,95.45,75.26,89.98,77.06,65.86,35.25
+Westminster constituency,E14001574,West Bromwich,100,100,100,97.77,100,100,99.83,96.84
+Westminster constituency,E14001575,West Dorset,99.96,98.26,95.45,76.49,99.83,95.19,91.2,58.32
+Westminster constituency,S14000106,West Dunbartonshire,100,100,99.99,92.54,98.26,89.52,89.51,66.19
+Westminster constituency,E14001576,West Ham and Beckton,100,100,100,99.13,100,100,100,99.73
+Westminster constituency,E14001577,West Lancashire,100,99.9,99.07,80.74,100,99.79,98.89,61.84
+Westminster constituency,E14001578,West Suffolk,100,99.11,97.57,80.76,99.93,94.71,89.37,52.03
+Westminster constituency,N05000018,West Tyrone,99.01,96.42,90.89,56.31,96.54,87.31,76.15,40.2
+Westminster constituency,E14001579,West Worcestershire,99.99,98.69,96.72,69.93,99.89,96.24,92.94,53.68
+Westminster constituency,E14001580,Westmorland and Lonsdale,99.68,97.63,92.09,71,94.31,83.61,76.38,45.74
+Westminster constituency,E14001581,Weston-super-Mare,100,100,99.61,88.37,100,99.99,99.13,78.56
+Westminster constituency,E14001582,Wetherby and Easingwold,100,98.6,97.09,65.42,99.93,98.46,97.71,66.91
+Westminster constituency,E14001583,Whitehaven and Workington,99.97,99.5,97.55,77.21,91.16,83.01,73.01,45.41
+Westminster constituency,E14001584,Widnes and Halewood,100,100,100,96.83,100,100,99.95,90.99
+Westminster constituency,E14001585,Wigan,100,100,99.97,96.01,100,99.97,99.4,85.83
+Westminster constituency,E14001586,Wimbledon,100,100,100,99.48,100,100,99.61,90.51
+Westminster constituency,E14001587,Winchester,100,99.24,98.08,81.65,99.97,95.68,90.5,59.98
+Westminster constituency,E14001588,Windsor,100,100,100,95.07,100,99.98,99.73,81.39
+Westminster constituency,E14001589,Wirral West,100,100,99.99,92.77,100,100,99.9,89.61
+Westminster constituency,E14001590,Witham,100,98.56,98.4,72.23,99.99,96.5,95.35,51.19
+Westminster constituency,E14001591,Witney,100,99.37,92.58,60.36,99.96,98.63,97.15,60.86
+Westminster constituency,E14001592,Woking,100,99.99,100,95.73,100,99.93,99.94,78.76
+Westminster constituency,E14001593,Wokingham,100,100,99.99,87.36,100,99.81,99.35,79.52
+Westminster constituency,E14001594,Wolverhampton North East,100,100,100,96.35,100,100,100,96.11
+Westminster constituency,E14001595,Wolverhampton South East,100,100,100,98.83,100,100,100,99.3
+Westminster constituency,E14001596,Wolverhampton West,100,100,100,96.58,100,100,100,94.27
+Westminster constituency,E14001597,Worcester,100,100,100,98.59,100,100,100,96.14
+Westminster constituency,E14001598,Worsley and Eccles,100,100,99.97,91.84,100,100,98.64,78.57
+Westminster constituency,E14001599,Worthing West,100,99.92,99.91,98.56,99.31,91.05,89.35,69
+Westminster constituency,W07000111,Wrexham,99.98,99.48,98.92,79,99.75,96.62,94.65,49.26
+Westminster constituency,E14001600,Wycombe,100,99.65,99.47,92.67,99.8,92.96,85.04,55.6
+Westminster constituency,E14001601,Wyre Forest,100,99.62,99.01,87.43,99.71,95.65,88.87,59.01
+Westminster constituency,E14001602,Wythenshawe and Sale East,100,100,99.99,99.27,100,99.97,99.82,96.12
+Westminster constituency,E14001603,Yeovil,99.96,99.58,98.85,87.86,99.79,98.18,96.56,71.79
+Westminster constituency,W07000112,Ynys Môn,100,99.31,93.91,53.24,99.91,96.59,91.42,48.88
+Westminster constituency,E14001604,York Central,100,100,100,99.8,100,100,99.99,97.68
+Westminster constituency,E14001605,York Outer,100,99.96,99.05,86.22,100,99.96,99.43,79.76
