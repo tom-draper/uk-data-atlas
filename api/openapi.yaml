@@ -46,6 +46,7 @@ paths:
                     - /v1/datasets/{dataset-id}
                     - /v1/measures
                     - /v1/measures/{measure-id}
+                    - /v1/measures/{measure-id}/compatibility
                     - /v1/data/population-estimate
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
@@ -215,6 +216,33 @@ paths:
       responses:
         "200":
           description: The measure definition.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /measures/{measure-id}/compatibility:
+    get:
+      operationId: getMeasureCompatibility
+      summary: Report source-code compatibility with compiled boundary releases
+      description: >
+        Compares every source partition's area-code set with compiled boundary
+        releases of the same geography and source boundary year. A
+        `code-set-compatible` result means every source code occurs in the
+        candidate; it does not select that release or assert identical geometry.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Compatibility counts and bounded samples of unmatched source and candidate-only codes.
           content:
             application/json:
               schema:

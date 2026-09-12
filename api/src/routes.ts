@@ -22,6 +22,7 @@ import type {
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
 } from "./dataCatalog";
+import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -193,6 +194,7 @@ export type RouteContext = {
 	dataCatalog?: DataCatalog;
 	populationObservations?: PopulationObservationArtifact;
 	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
+	measureCompatibilityInventory?: MeasureCompatibilityInventory;
 };
 
 /**
@@ -222,6 +224,7 @@ export const route = (
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
+		measureCompatibilityInventory,
 	} = context;
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -253,6 +256,7 @@ export const route = (
 					"/v1/datasets/{dataset-id}",
 					"/v1/measures",
 					"/v1/measures/{measure-id}",
+					"/v1/measures/{measure-id}/compatibility",
 					"/v1/data/population-estimate",
 					"/v1/areas",
 					"/v1/areas:contains",
@@ -314,6 +318,37 @@ export const route = (
 					404,
 					"Not Found",
 					"No published dataset matches that id.",
+				);
+	}
+
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "measures" &&
+		segments[3] === "compatibility"
+	) {
+		if (!measureCompatibilityInventory) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build measure compatibility before retrieving compatible boundary releases.",
+			);
+		}
+		const measure = measureCompatibilityInventory.measures.find(
+			(candidate) => candidate.measureId === segments[2],
+		);
+		return measure
+			? {
+					status: 200,
+					body: envelope(releaseId, {
+						...measure,
+						note: "Candidates report code-set compatibility only. They do not select a geometry release or assert equal geometry.",
+					}),
+				}
+			: problem(
+					404,
+					"Not Found",
+					"No published measure compatibility record matches that id.",
 				);
 	}
 
