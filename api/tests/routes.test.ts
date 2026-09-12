@@ -149,6 +149,41 @@ const compatibleWardAreaLookup = createAreaLookup([
 	},
 ]);
 
+// Named locations are curated from the gazetteer and carry codes from several
+// vintages, so this lookup spans three releases: one older than the requested
+// release, the requested one, and one newer.
+const namedLocationAreaLookup = createAreaLookup([
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:legacy-local-authority-areas",
+		geography: "localAuthority",
+		boundaryRelease: "2019-12-uk-lad",
+		codeProperty: "LAD19CD",
+		nameProperty: "LAD19NM",
+		areas: [{ code: "E08000999", name: "Legacy authority" }],
+	},
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:local-authority-areas",
+		geography: "localAuthority",
+		boundaryRelease: "2025-01-uk-lad",
+		codeProperty: "LAD25CD",
+		nameProperty: "LAD25NM",
+		areas: [
+			{ code: "E08000001", name: "Greater Manchester", aliases: ["GM"] },
+		],
+	},
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:recoded-local-authority-areas",
+		geography: "localAuthority",
+		boundaryRelease: "2026-05-uk-lad",
+		codeProperty: "LAD26CD",
+		nameProperty: "LAD26NM",
+		areas: [{ code: "E08000998", name: "Recoded authority" }],
+	},
+]);
+
 const crosswalkArtifact: CrosswalkArtifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:crosswalk-artifact",
@@ -232,7 +267,12 @@ const namedLocationInventory: NamedLocationInventory = {
 			id: "greater-manchester",
 			label: "Greater Manchester",
 			kind: "editorial-grouping",
-			memberCodes: ["E08000001", "E08000999"],
+			memberCodes: [
+				"E08000000",
+				"E08000001",
+				"E08000998",
+				"E08000999",
+			],
 			bbox: [-2.5, 53.3, -2, 53.7],
 		},
 	],
@@ -389,7 +429,7 @@ const routeWithNamedLocations = (url: string) =>
 		url,
 		registry,
 		geographyInventory,
-		areaLookup,
+		namedLocationAreaLookup,
 		crosswalkInventory,
 		crosswalkLookup,
 		undefined,
@@ -1450,7 +1490,29 @@ test("publishes curated named locations and reports unresolved legacy members", 
 				aliases: ["GM"],
 			},
 		],
-		unresolvedMemberCodes: ["E08000999"],
+		unresolvedMemberCodes: ["E08000000", "E08000998", "E08000999"],
+		coverage: {
+			memberCodeCount: 4,
+			resolvedCount: 1,
+			unresolvedCount: 3,
+			complete: false,
+			unresolved: [
+				{ code: "E08000000", status: "unknown", presentIn: [] },
+				{
+					code: "E08000998",
+					status: "not-yet-current",
+					name: "Recoded authority",
+					presentIn: ["2026-05-uk-lad"],
+				},
+				{
+					code: "E08000999",
+					status: "superseded",
+					name: "Legacy authority",
+					presentIn: ["2019-12-uk-lad"],
+				},
+			],
+			note: "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry.",
+		},
 	});
 });
 

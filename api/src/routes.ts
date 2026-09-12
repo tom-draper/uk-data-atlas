@@ -24,6 +24,7 @@ import type {
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import { measureCoverage } from "./measureCoverage";
+import { reconcileMembers } from "./memberReconciliation";
 import {
 	exportPopulationRecords,
 	type PopulationExportRecord,
@@ -955,7 +956,7 @@ export const route = (
 			);
 		}
 		const areas = areaLookup?.get(`${geography}/${boundaryRelease}`);
-		if (!areas) {
+		if (!areaLookup || !areas) {
 			return problem(
 				404,
 				"Not Found",
@@ -979,6 +980,13 @@ export const route = (
 				members,
 				unresolvedMemberCodes: location.memberCodes.filter(
 					(code) => !resolvedCodes.has(code),
+				),
+				coverage: reconcileMembers(
+					areaLookup,
+					geography,
+					boundaryRelease,
+					location.memberCodes,
+					resolvedCodes,
 				),
 			}),
 		};
