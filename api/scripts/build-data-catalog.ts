@@ -28,14 +28,21 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		"precompiled",
 		"ghg-emissions.json",
 	);
+	const mobileCoveragePath = join(
+		repositoryRoot,
+		"data",
+		"precompiled",
+		"mobile-coverage.json",
+	);
 	if (
 		!existsSync(manifestPath) ||
 		!existsSync(populationPath) ||
 		!existsSync(populationUkPath) ||
-		!existsSync(ghgEmissionsPath)
+		!existsSync(ghgEmissionsPath) ||
+		!existsSync(mobileCoveragePath)
 	) {
 		throw new Error(
-			"Build the dataset manifest, ward population, UK local-authority population and greenhouse gas emissions data before the API data catalogue.",
+			"Build the dataset manifest, ward population, UK local-authority population, greenhouse gas emissions and mobile coverage data before the API data catalogue.",
 		);
 	}
 	const outputDirectory = join(repositoryRoot, "api", "public");
@@ -44,11 +51,13 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		populationObservations,
 		populationLocalAuthorityObservations,
 		ghgEmissionsObservations,
+		mobileCoverageObservations,
 	} = compileDataCatalog(
 		manifestPath,
 		populationPath,
 		populationUkPath,
 		ghgEmissionsPath,
+		mobileCoveragePath,
 	);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
@@ -68,6 +77,16 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		ghgEmissionsObservationsPath,
 		`${JSON.stringify(ghgEmissionsObservations, null, "\t")}\n`,
 	);
+	const mobileCoverageObservationPaths = mobileCoverageObservations.map(
+		(observations) => {
+			const path = join(
+				outputDirectory,
+				`${observations.measureId}-observations.json`,
+			);
+			writeFileSync(path, `${JSON.stringify(observations, null, "\t")}\n`);
+			return path;
+		},
+	);
 	writeFileSync(
 		observationsPath,
 		`${JSON.stringify(populationObservations, null, "\t")}\n`,
@@ -81,6 +100,16 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		observationsPath,
 		localAuthorityObservationsPath,
 		ghgEmissionsObservationsPath,
+		mobileCoverageObservationPaths,
+		mobileRecordCount: mobileCoverageObservations.reduce(
+			(count, observations) =>
+				count +
+				observations.periods.reduce(
+					(periodCount, period) => periodCount + period.records.length,
+					0,
+				),
+			0,
+		),
 		emissionsRecordCount: ghgEmissionsObservations.periods.reduce(
 			(count, period) => count + period.records.length,
 			0,
@@ -99,6 +128,6 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildDataCatalog(repositoryRoot);
 	console.log(
-		`Wrote data catalogue, ${result.wardRecordCount} ward observations, ${result.localAuthorityRecordCount} local-authority observations and ${result.emissionsRecordCount} emissions observations to ${result.catalogPath}`,
+		`Wrote data catalogue, ${result.wardRecordCount} ward observations, ${result.localAuthorityRecordCount} local-authority observations, ${result.emissionsRecordCount} emissions observations and ${result.mobileRecordCount} mobile coverage observations to ${result.catalogPath}`,
 	);
 }

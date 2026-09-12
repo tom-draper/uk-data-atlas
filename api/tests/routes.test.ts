@@ -58,6 +58,7 @@ const route = (
 	populationLocalAuthorityObservations?: RouteContext["populationLocalAuthorityObservations"],
 	measureCompatibilityInventory?: RouteContext["measureCompatibilityInventory"],
 	ghgEmissionsObservations?: RouteContext["ghgEmissionsObservations"],
+	mobileCoverageObservations?: RouteContext["mobileCoverageObservations"],
 ) =>
 	routeRequest(method, url, {
 		boundaryRegistry,
@@ -78,6 +79,7 @@ const route = (
 		populationLocalAuthorityObservations,
 		measureCompatibilityInventory,
 		ghgEmissionsObservations,
+		mobileCoverageObservations,
 	});
 
 const registry: BoundaryRegistry = {
@@ -385,8 +387,62 @@ const dataCatalog: DataCatalog = {
 			},
 			links: { data: "/v1/data/ghg-emissions" },
 		},
+		{
+			id: "mobile-5g-coverage",
+			label: "5G mobile coverage",
+			valueKind: "ratio",
+			unit: "% of premises",
+			aggregation: {
+				kind: "intensive",
+				operation: "weighted-mean",
+				weight: {
+					description: "The authority's premises count.",
+					datasetField: "premisesCount",
+				},
+				available: false,
+			},
+			sources: [
+				{
+					datasetId: "mobile-coverage",
+					periods: ["2025"],
+					sourceGeography: {
+						type: "localAuthority",
+						boundaryYear: 2024,
+					},
+					coverage: {
+						kind: "source-reported",
+						countries: ["GB-ENG"],
+						recordCount: 1,
+						note: "All UK nations.",
+					},
+				},
+			],
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: { data: "/v1/data/mobile-5g-coverage" },
+		},
 	],
 };
+
+const mobileCoverageObservations: MeasureObservationArtifact[] = [
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:mobile-5g-observations",
+		measureId: "mobile-5g-coverage",
+		sourceGeography: { type: "localAuthority", boundaryYear: 2024 },
+		periods: [
+			{
+				period: "2025",
+				records: [
+					{ areaCode: "E06000001", value: 40.5, status: "observed" },
+				],
+			},
+		],
+	},
+];
 
 const ghgEmissionsObservations: MeasureObservationArtifact = {
 	schemaVersion: 1,
@@ -513,6 +569,7 @@ const routeWithData = (url: string) =>
 		populationLocalAuthorityObservations,
 		measureCompatibilityInventory,
 		ghgEmissionsObservations,
+		mobileCoverageObservations,
 	);
 
 const populationProvenance = (
@@ -783,7 +840,7 @@ test("serves greenhouse gas emissions as a second source-exact measure", () => {
 					(measure) => measure.id,
 				)
 			: [],
-		["population-estimate", "ghg-emissions"],
+		["population-estimate", "ghg-emissions", "mobile-5g-coverage"],
 	);
 
 	const observed = routeWithData(
@@ -830,6 +887,63 @@ test("carries the measure's unit into a tabular export", () => {
 	assert.ok(header?.startsWith("atlasRelease,measureId,unit,"));
 	// Without the unit a saved emissions file is indistinguishable from people.
 	assert.ok(first?.includes('"kt CO2e"'));
+});
+
+test("declares a coverage share as intensive, so it is never summed", () => {
+	const measures = routeWithData("/v1/measures");
+	assert.deepEqual(
+		"data" in measures.body
+			? (
+					measures.body.data as Array<{
+						id: string;
+						aggregation: { kind: string };
+					}>
+				).map((measure) => [measure.id, measure.aggregation.kind])
+			: [],
+		[
+			["population-estimate", "extensive"],
+			["ghg-emissions", "extensive"],
+			["mobile-5g-coverage", "intensive"],
+		],
+	);
+
+	const measure = routeWithData("/v1/measures/mobile-5g-coverage");
+	const aggregation =
+		"data" in measure.body
+			? (measure.body.data as { aggregation: Record<string, unknown> })
+					.aggregation
+			: undefined;
+	// A share cannot be added, and the weight it would need is named rather
+	// than silently assumed.
+	assert.equal(aggregation?.kind, "intensive");
+	assert.equal(aggregation?.operation, "weighted-mean");
+	assert.deepEqual(aggregation?.weight, {
+		description: "The authority's premises count.",
+		datasetField: "premisesCount",
+	});
+	assert.equal(aggregation?.available, false);
+
+	const observed = routeWithData(
+		"/v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2024",
+	);
+	assert.equal(observed.status, 200);
+	const data = "data" in observed.body ? (observed.body.data as never) : {};
+	assert.deepEqual((data as { records: unknown }).records, [
+		{ areaCode: "E06000001", value: 40.5, status: "observed" },
+	]);
+	assert.equal(
+		(data as { provenance: { source: { observations: { artifact: string } } } })
+			.provenance.source.observations.artifact,
+		"mobile-5g-coverage-observations",
+	);
+
+	// The emissions code vintage is not this measure's.
+	assert.equal(
+		routeWithData(
+			"/v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2025",
+		).status,
+		400,
+	);
 });
 
 test("publishes measure boundary candidates as code compatibility only", () => {

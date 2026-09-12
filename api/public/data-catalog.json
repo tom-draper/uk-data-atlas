@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:14c13712c12250190af1529aa21f9af14da719e84dda40e436bbc6a45c164f45",
+	"contentHash": "sha256:070e5f79aea841be40563b539f8de357d7018d40d15c55b47cde8437e710a30d",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1270,6 +1270,106 @@
 				"Values are net territorial emissions across every sector and gas. Land use, land use change and forestry is a net sink in most rural authorities, so their totals are lower than their gross emissions. No published authority-year is negative, but nothing in the method prevents it.",
 				"Emissions per resident are not served. They are a ratio, and a ratio cannot be summed over areas or compared between authorities of different size without recomputing it from the underlying totals.",
 				"Local authority totals exclude sources the publisher cannot attribute to an area, such as aviation and shipping, so they do not sum to the national inventory."
+			]
+		},
+		{
+			"id": "mobile-4g-coverage",
+			"label": "4G mobile coverage",
+			"valueKind": "ratio",
+			"unit": "% of premises",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The authority's premises count, which the published coverage percentages are computed against.",
+					"datasetField": "premisesCount"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "mobile-coverage",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Published source records cover all four UK nations for the single available period."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/mobile-4g-coverage"
+			},
+			"notes": [
+				"Premises with an indoor 4G signal from all four mobile network operators. Indoor coverage is modelled by the publisher, not measured at each premises.",
+				"This is a share of premises, so it does not add over areas. Combining authorities needs a premises-weighted mean, and the weight is not served here; averaging the percentages flat would weigh the Isles of Scilly as heavily as Birmingham."
+			]
+		},
+		{
+			"id": "mobile-5g-coverage",
+			"label": "5G mobile coverage",
+			"valueKind": "ratio",
+			"unit": "% of premises",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The authority's premises count, which the published coverage percentages are computed against.",
+					"datasetField": "premisesCount"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "mobile-coverage",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Published source records cover all four UK nations for the single available period."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/mobile-5g-coverage"
+			},
+			"notes": [
+				"Premises with an outdoor 5G signal from all four mobile network operators, at the publisher's high-confidence threshold. 5G is reported outdoors only.",
+				"This is a share of premises, so it does not add over areas. Combining authorities needs a premises-weighted mean, and the weight is not served here; averaging the percentages flat would weigh the Isles of Scilly as heavily as Birmingham."
 			]
 		}
 	]

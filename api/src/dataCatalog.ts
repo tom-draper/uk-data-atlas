@@ -85,17 +85,32 @@ export type MeasureSource = {
 	};
 };
 
+/**
+ * How a measure may legitimately be combined over areas.
+ *
+ * The distinction is the one that stops an API from producing confident
+ * nonsense. An extensive value adds: two authorities' tonnes of CO2e are a
+ * region's tonnes. An intensive value does not: two authorities' coverage
+ * percentages are not a region's coverage, and averaging them flat weighs a
+ * thousand premises the same as half a million. `available` says whether the
+ * API will perform the operation, which it will not yet for either kind.
+ */
+export type MeasureAggregation =
+	| { kind: "extensive"; operation: "sum"; available: false }
+	| {
+			kind: "intensive";
+			operation: "weighted-mean";
+			/** The denominator a caller has to weight by, and where to find it. */
+			weight: { description: string; datasetField: string };
+			available: false;
+	  };
+
 export type Measure = {
 	id: string;
 	label: string;
-	valueKind: "count" | "quantity";
+	valueKind: "count" | "quantity" | "ratio";
 	unit: string;
-	/**
-	 * How the measure may legitimately be combined over areas. Every measure
-	 * published so far is extensive, so its values add; `available` says
-	 * whether the API will actually do the adding, which it will not yet.
-	 */
-	aggregation: { kind: "extensive"; operation: "sum"; available: false };
+	aggregation: MeasureAggregation;
 	sources: MeasureSource[];
 	availability: {
 		sourceExact: true;
@@ -364,22 +379,24 @@ const localAuthorityPopulationRecords = (
  * over areas. Per-person intensity is deliberately not served: it is a ratio,
  * and summing or averaging it over a group of authorities would be wrong.
  */
-const ghgEmissionsPeriods = (
+const localAuthorityFieldPeriods = (
 	path: string,
+	field: string,
+	boundaryYear: number,
 ): MeasureObservationArtifact["periods"] => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
 			if (!/^\d{4}$/.test(period))
-				throw new Error(`${path}: invalid emissions period ${period}`);
+				throw new Error(`${path}: invalid period ${period}`);
 			const entry = object(value, `${path}.${period}`);
 			if (
 				entry.year !== Number(period) ||
-				entry.boundaryYear !== 2025 ||
+				entry.boundaryYear !== boundaryYear ||
 				entry.boundaryType !== "localAuthority"
 			) {
 				throw new Error(
-					`${path}.${period}: expected local-authority data on the 2025 code vintage`,
+					`${path}.${period}: expected local-authority data on the ${boundaryYear} code vintage`,
 				);
 			}
 			const data = object(entry.data, `${path}.${period}.data`);
@@ -392,21 +409,25 @@ const ghgEmissionsPeriods = (
 								`${path}: unsupported area code ${areaCode}`,
 							);
 						}
-						const total = object(
+						const observed = object(
 							record,
 							`${path}.${period}.${areaCode}`,
-						).totalKtCO2e;
-						if (typeof total !== "number" || !Number.isFinite(total))
+						)[field];
+						// Not guarded by number(), which rejects negatives:
+						// land use is a net sink in most rural authorities, and
+						// nothing in the publisher's method stops one exceeding
+						// the other sectors.
+						if (
+							typeof observed !== "number" ||
+							!Number.isFinite(observed)
+						) {
 							throw new Error(
-								`${path}.${period}.${areaCode}.totalKtCO2e must be a finite number`,
+								`${path}.${period}.${areaCode}.${field} must be a finite number`,
 							);
+						}
 						return {
 							areaCode,
-							// Not guarded by number(), which rejects negatives:
-							// land use is a net sink in 190 of the 361
-							// authorities, and nothing in the publisher's method
-							// prevents one from exceeding the other sectors.
-							value: total,
+							value: observed,
 							status: "observed" as const,
 						};
 					})
@@ -416,8 +437,7 @@ const ghgEmissionsPeriods = (
 			};
 		})
 		.sort((left, right) => left.period.localeCompare(right.period));
-	if (periods.length === 0)
-		throw new Error(`${path} has no emissions periods`);
+	if (periods.length === 0) throw new Error(`${path} has no periods`);
 	return periods;
 };
 
@@ -431,11 +451,13 @@ export const compileDataCatalog = (
 	populationPath: string,
 	populationUkPath: string,
 	ghgEmissionsPath: string,
+	mobileCoveragePath: string,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
 	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
 	ghgEmissionsObservations: MeasureObservationArtifact;
+	mobileCoverageObservations: MeasureObservationArtifact[];
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -505,7 +527,11 @@ export const compileDataCatalog = (
 	);
 	if (!emissions)
 		throw new Error(`${manifestPath} has no ghg-emissions dataset`);
-	const emissionsPeriods = ghgEmissionsPeriods(ghgEmissionsPath);
+	const emissionsPeriods = localAuthorityFieldPeriods(
+		ghgEmissionsPath,
+		"totalKtCO2e",
+		2025,
+	);
 	const emissionsRecordCount = emissionsPeriods.reduce(
 		(total, period) => total + period.records.length,
 		0,
@@ -561,6 +587,114 @@ export const compileDataCatalog = (
 			"Local authority totals exclude sources the publisher cannot attribute to an area, such as aviation and shipping, so they do not sum to the national inventory.",
 		],
 	};
+	const mobile = datasets.find(
+		(dataset) => dataset.id === "mobile-coverage",
+	);
+	if (!mobile)
+		throw new Error(`${manifestPath} has no mobile-coverage dataset`);
+	if (
+		mobile.summary.boundaryYears.length !== 1 ||
+		mobile.summary.boundaryYears[0] !== 2024
+	) {
+		throw new Error(
+			`${manifestPath}: mobile-coverage must declare boundary year 2024`,
+		);
+	}
+	/**
+	 * Two of the six published coverage metrics.
+	 *
+	 * The "at least one operator" variants sit between 94% and 100% for indoor
+	 * 4G and are nearly saturated, so they distinguish almost nothing; the
+	 * landmass variants use a different denominator and so cannot be weighted
+	 * by premises the way the aggregation contract below declares. Both remain
+	 * in the compiled dataset for anyone reading it directly.
+	 */
+	const mobileMetrics = [
+		{
+			id: "mobile-4g-coverage",
+			label: "4G mobile coverage",
+			field: "pct4GIndoorAll",
+			note: "Premises with an indoor 4G signal from all four mobile network operators. Indoor coverage is modelled by the publisher, not measured at each premises.",
+		},
+		{
+			id: "mobile-5g-coverage",
+			label: "5G mobile coverage",
+			field: "pct5GOutdoorAll",
+			note: "Premises with an outdoor 5G signal from all four mobile network operators, at the publisher's high-confidence threshold. 5G is reported outdoors only.",
+		},
+	] as const;
+	const mobileObservations = mobileMetrics.map((metric) => {
+		const periods = localAuthorityFieldPeriods(
+			mobileCoveragePath,
+			metric.field,
+			2024,
+		);
+		const content = JSON.stringify({
+			schemaVersion: 1,
+			measureId: metric.id,
+			sourceGeography: { type: "localAuthority", boundaryYear: 2024 },
+			periods,
+		});
+		return {
+			metric,
+			artifact: {
+				schemaVersion: 1 as const,
+				contentHash: sha256(content),
+				measureId: metric.id,
+				sourceGeography: {
+					type: "localAuthority" as const,
+					boundaryYear: 2024,
+				},
+				periods,
+			},
+		};
+	});
+	const mobileMeasures: Measure[] = mobileObservations.map(
+		({ metric, artifact }) => ({
+			id: metric.id,
+			label: metric.label,
+			valueKind: "ratio",
+			unit: "% of premises",
+			aggregation: {
+				kind: "intensive",
+				operation: "weighted-mean",
+				weight: {
+					description:
+						"The authority's premises count, which the published coverage percentages are computed against.",
+					datasetField: "premisesCount",
+				},
+				available: false,
+			},
+			sources: [
+				{
+					datasetId: "mobile-coverage",
+					periods: artifact.periods.map((period) => period.period),
+					sourceGeography: {
+						type: "localAuthority",
+						boundaryYear: 2024,
+					},
+					coverage: {
+						kind: "source-reported",
+						countries: countriesFor(
+							artifact.periods[0]?.records ?? [],
+						),
+						recordCount: artifact.periods[0]?.records.length ?? 0,
+						note: "Published source records cover all four UK nations for the single available period.",
+					},
+				},
+			],
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: { data: `/v1/data/${metric.id}` },
+			notes: [
+				metric.note,
+				"This is a share of premises, so it does not add over areas. Combining authorities needs a premises-weighted mean, and the weight is not served here; averaging the percentages flat would weigh the Isles of Scilly as heavily as Birmingham.",
+			],
+		}),
+	);
 	const measure: Measure = {
 		id: "population-estimate",
 		label: "Population estimate",
@@ -607,7 +741,7 @@ export const compileDataCatalog = (
 			manifestVersion: manifest.version,
 		},
 		datasets,
-		measures: [measure, emissionsMeasure],
+		measures: [measure, emissionsMeasure, ...mobileMeasures],
 	});
 	const emissionsObservationsContent = JSON.stringify({
 		schemaVersion: 1,
@@ -637,7 +771,7 @@ export const compileDataCatalog = (
 				manifestVersion: manifest.version,
 			},
 			datasets,
-			measures: [measure, emissionsMeasure],
+			measures: [measure, emissionsMeasure, ...mobileMeasures],
 		},
 		populationObservations: {
 			schemaVersion: 1,
@@ -661,5 +795,8 @@ export const compileDataCatalog = (
 			sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
 			periods: emissionsPeriods,
 		},
+		mobileCoverageObservations: mobileObservations.map(
+			({ artifact }) => artifact,
+		),
 	};
 };

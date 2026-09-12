@@ -119,6 +119,7 @@ const observationsFor = (
 		populationObservations?: PopulationObservationArtifact;
 		populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
 		ghgEmissionsObservations?: MeasureObservationArtifact;
+		mobileCoverageObservations?: MeasureObservationArtifact[];
 	},
 ):
 	| (ObservationArtifactReference & { records: PopulationObservation[] })
@@ -146,20 +147,22 @@ const observationsFor = (
 				}
 			: undefined;
 	}
-	if (measureId === "ghg-emissions") {
-		const artifact = artifacts.ghgEmissionsObservations;
-		const records = artifact?.periods.find(
-			(candidate) => candidate.period === period,
-		)?.records;
-		return artifact && records
-			? {
-					artifact: "ghg-emissions-observations",
-					contentHash: artifact.contentHash,
-					records,
-				}
-			: undefined;
-	}
-	return undefined;
+	const byMeasure = [
+		...(artifacts.ghgEmissionsObservations
+			? [artifacts.ghgEmissionsObservations]
+			: []),
+		...(artifacts.mobileCoverageObservations ?? []),
+	].find((candidate) => candidate.measureId === measureId);
+	const records = byMeasure?.periods.find(
+		(candidate) => candidate.period === period,
+	)?.records;
+	return byMeasure && records
+		? {
+				artifact: `${byMeasure.measureId}-observations`,
+				contentHash: byMeasure.contentHash,
+				records,
+			}
+		: undefined;
 };
 
 /** The same query with the cursor advanced, as a relative `Link` target. */
@@ -281,6 +284,7 @@ export type RouteContext = {
 	populationObservations?: PopulationObservationArtifact;
 	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
 	ghgEmissionsObservations?: MeasureObservationArtifact;
+	mobileCoverageObservations?: MeasureObservationArtifact[];
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
 };
 
@@ -312,6 +316,7 @@ export const route = (
 		populationObservations,
 		populationLocalAuthorityObservations,
 		ghgEmissionsObservations,
+		mobileCoverageObservations,
 		measureCompatibilityInventory,
 	} = context;
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
@@ -642,6 +647,7 @@ export const route = (
 				populationObservations,
 				populationLocalAuthorityObservations,
 				ghgEmissionsObservations,
+				mobileCoverageObservations,
 			},
 		);
 		if (!observations) {
