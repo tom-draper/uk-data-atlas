@@ -839,6 +839,65 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-0.6, 51.6, 1.8, 53.2],
 	},
 
+	// East Midlands
+	"East Midlands": {
+		lad_codes: [
+			// Derbyshire
+			"E06000015", // Derby
+			"E07000032", // Amber Valley
+			"E07000033", // Bolsover
+			"E07000034", // Chesterfield
+			"E07000035", // Derbyshire Dales
+			"E07000036", // Erewash
+			"E07000037", // High Peak
+			"E07000038", // North East Derbyshire
+			"E07000039", // South Derbyshire
+
+			// Leicestershire and Rutland
+			"E06000016", // Leicester
+			"E06000017", // Rutland
+			"E07000129", // Blaby
+			"E07000130", // Charnwood
+			"E07000131", // Harborough
+			"E07000132", // Hinckley and Bosworth
+			"E07000133", // Melton
+			"E07000134", // North West Leicestershire
+			"E07000135", // Oadby and Wigston
+
+			// Lincolnshire
+			"E07000136", // Boston
+			"E07000137", // East Lindsey
+			"E07000138", // Lincoln
+			"E07000139", // North Kesteven
+			"E07000140", // South Holland
+			"E07000141", // South Kesteven
+			"E07000142", // West Lindsey
+
+			// Northamptonshire. The seven districts became two unitary
+			// authorities in 2021; both vintages are listed.
+			"E06000061", // North Northamptonshire
+			"E06000062", // West Northamptonshire
+			"E07000150", // Corby
+			"E07000151", // Daventry
+			"E07000152", // East Northamptonshire
+			"E07000153", // Kettering
+			"E07000154", // Northampton
+			"E07000155", // South Northamptonshire
+			"E07000156", // Wellingborough
+
+			// Nottinghamshire
+			"E06000018", // Nottingham
+			"E07000170", // Ashfield
+			"E07000171", // Bassetlaw
+			"E07000172", // Broxtowe
+			"E07000173", // Gedling
+			"E07000174", // Mansfield
+			"E07000175", // Newark and Sherwood
+			"E07000176", // Rushcliffe
+		],
+		bounds: [-2.0, 52.0, 0.4, 53.6],
+	},
+
 	// Devon
 	Devon: {
 		lad_codes: [
