@@ -223,6 +223,17 @@ only **available** when its endpoint, contract and provenance are published.
       header with `rel="next"`.
 - [ ] Export large datasets as Parquet, with an immutable export manifest and
       documented schema/versioning policy.
+- [x] Return source-exact mobile coverage through
+      `GET /v1/data/mobile-4g-coverage` and `GET /v1/data/mobile-5g-coverage`:
+      2025 Local Authority 2024 codes across all four UK nations, as the share
+      of premises reached by all four mobile network operators. The other four
+      published metrics are not measures: the at-least-one-operator variants
+      are nearly saturated, and the landmass variants use a denominator the
+      declared premises weight does not apply to.
+- [x] Declare whether each measure's values may be combined over areas, and on
+      what terms: extensive values add, intensive values are a ratio that needs
+      a named weight. No measure offers the operation yet, so a caller cannot
+      obtain a silently wrong regional figure.
 - [ ] Aggregate additive measures over parent areas or named locations; reject
       invalid operations such as summing medians or averaging ranks.
 - [ ] Convert measures across releases only with an explicit, appropriate
@@ -1204,6 +1215,8 @@ pnpm start
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&release=2025-05-uk-bgc-v2&include=area`
 - `GET /v1/measures/ghg-emissions/coverage`
+- `GET /v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2024`
+- `GET /v1/measures/mobile-4g-coverage`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`

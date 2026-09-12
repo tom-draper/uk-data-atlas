@@ -292,6 +292,11 @@ paths:
         `ghg-emissions` covers 2005–2024 Local Authority 2025 codes across all
         four nations, as net territorial emissions in kt CO2e; emissions per
         resident are not served, because a ratio cannot be summed over areas.
+        `mobile-4g-coverage` and `mobile-5g-coverage` cover 2025 Local
+        Authority 2024 codes across all four nations, as the share of premises
+        reached by all four mobile network operators. Both are declared
+        intensive: a share does not add over areas, and combining authorities
+        needs the premises weight the measure names.
         This route never selects a May/December boundary release, converts
         values, or aggregates them. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the
@@ -309,8 +314,9 @@ paths:
           schema:
             type: string
           description: >
-            A published measure id, for example `population-estimate` or
-            `ghg-emissions`. `GET /measures` lists them.
+            A published measure id, for example `population-estimate`,
+            `ghg-emissions` or `mobile-5g-coverage`. `GET /measures` lists
+            them, each with the aggregation its values permit.
         - name: period
           in: query
           required: true

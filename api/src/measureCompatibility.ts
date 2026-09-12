@@ -65,7 +65,7 @@ const sourceCodes = (
 	source: MeasureSource,
 	wardObservations: PopulationObservationArtifact,
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
-	emissionsObservations: MeasureObservationArtifact,
+	otherObservations: MeasureObservationArtifact[],
 ) => {
 	if (measureId === "population-estimate") {
 		if (source.sourceGeography.type === "ward") {
@@ -83,9 +83,10 @@ const sourceCodes = (
 		}
 		return new Set(records.map((record) => record.areaCode));
 	}
-	const records = emissionsObservations.periods.find(
-		(period) => period.period === source.periods[0],
-	)?.records;
+	const records = otherObservations
+		.find((candidate) => candidate.measureId === measureId)
+		?.periods.find((period) => period.period === source.periods[0])
+		?.records;
 	if (!records) {
 		throw new Error(
 			`No ${measureId} observations exist for ${source.periods[0]}.`,
@@ -142,7 +143,7 @@ export const compileMeasureCompatibility = (
 	areaArtifacts: AreaReleaseArtifact[],
 	wardObservations: PopulationObservationArtifact,
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
-	emissionsObservations: MeasureObservationArtifact,
+	otherObservations: MeasureObservationArtifact[],
 ): MeasureCompatibilityInventory => {
 	if (dataCatalog.measures.length === 0) {
 		throw new Error("Data catalogue has no measures.");
@@ -160,7 +161,7 @@ export const compileMeasureCompatibility = (
 			source,
 			wardObservations,
 			localAuthorityObservations,
-			emissionsObservations,
+			otherObservations,
 		);
 		const candidates = boundaryRegistry.releases
 			.filter(
@@ -215,7 +216,16 @@ export const compileMeasureCompatibility = (
 		populationObservations: wardObservations.contentHash,
 		populationLocalAuthorityObservations:
 			localAuthorityObservations.contentHash,
-		ghgEmissionsObservations: emissionsObservations.contentHash,
+		measureObservations: Object.fromEntries(
+			otherObservations
+				.map((observations) => [
+					observations.measureId,
+					observations.contentHash,
+				])
+				.sort(([left], [right]) =>
+					String(left).localeCompare(String(right)),
+				),
+		),
 		areaArtifacts: areaArtifactHashes,
 	};
 	return {

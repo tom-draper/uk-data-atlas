@@ -172,7 +172,7 @@ test("reports code compatibility without claiming geometry equivalence", () => {
 		artifacts,
 		wardObservations,
 		localAuthorityObservations,
-		emissionsObservations,
+		[emissionsObservations],
 	);
 	const sources = inventory.measures[0]?.sources;
 	assert.equal(sources?.[0]?.candidates[0]?.status, "code-set-compatible");

@@ -1,14 +1,20 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:8ed319f75e94f432e124e0fbd49702125061f8d22b3e6f2fa8be5b5ca9292d52",
+	"contentHash": "sha256:9de73cfa97248c78c0be4b76733d7b098972f3008616e4ad2dd33670ff27443e",
 	"inputs": {
-		"dataCatalog": "sha256:14c13712c12250190af1529aa21f9af14da719e84dda40e436bbc6a45c164f45",
+		"dataCatalog": "sha256:070e5f79aea841be40563b539f8de357d7018d40d15c55b47cde8437e710a30d",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
-		"ghgEmissionsObservations": "sha256:5adf191291c17242e186a6015de015a512d311d621119fc6bb189e3bc477efcc",
+		"measureObservations": {
+			"ghg-emissions": "sha256:5adf191291c17242e186a6015de015a512d311d621119fc6bb189e3bc477efcc",
+			"mobile-4g-coverage": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
+			"mobile-5g-coverage": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3"
+		},
 		"areaArtifacts": {
 			"localAuthority/2023-05-uk-bgc-v2": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19",
+			"localAuthority/2024-05-uk-bgc": "sha256:7ccc829d47ce7e7eed0d847bc285cad2e96abe768a3008506b3aefaa15b3f935",
+			"localAuthority/2024-12-uk-bgc": "sha256:31265967f1dfba88b929c7a0656f06d8a0d544c118fdd9d201e1b4b8aecec6b1",
 			"localAuthority/2025-05-uk-bgc-v2": "sha256:5c832fa744ee66475a4f0d0cda3faea14eadd039abb6e9223e248e8445ac608a",
 			"localAuthority/2025-12-uk-bgc": "sha256:53eeb1c7f828f03e50c8f66081d88019ec9f9a31b2a56b41d2b3eff891e40b24",
 			"ward/2023-05-uk-bgc": "sha256:4910cadfe2df4877bbc96fe4f98a52c8c629401adf81ef47714d15524ffc32e4",
@@ -213,6 +219,118 @@
 						{
 							"boundaryRelease": "2025-12-uk-bgc",
 							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "mobile-4g-coverage",
+			"sources": [
+				{
+					"datasetId": "mobile-coverage",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "mobile-5g-coverage",
+			"sources": [
+				{
+					"datasetId": "mobile-coverage",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",

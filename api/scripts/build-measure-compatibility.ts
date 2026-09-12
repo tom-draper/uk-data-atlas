@@ -23,6 +23,8 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 		"population-observations.json",
 		"population-local-authority-observations.json",
 		"ghg-emissions-observations.json",
+		"mobile-4g-coverage-observations.json",
+		"mobile-5g-coverage-observations.json",
 	];
 	for (const file of required) {
 		if (!existsSync(join(publicDirectory, file))) {
@@ -51,8 +53,14 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 				"population-local-authority-observations.json",
 			),
 		),
-		read<MeasureObservationArtifact>(
-			join(publicDirectory, "ghg-emissions-observations.json"),
+		[
+			"ghg-emissions",
+			"mobile-4g-coverage",
+			"mobile-5g-coverage",
+		].map((measureId) =>
+			read<MeasureObservationArtifact>(
+				join(publicDirectory, `${measureId}-observations.json`),
+			),
 		),
 	);
 	const outputPath = join(publicDirectory, "measure-compatibility.json");
