@@ -299,6 +299,14 @@ paths:
           schema:
             type: string
           description: Return the one observed source-area code, if present.
+        - name: include
+          in: query
+          required: false
+          schema:
+            enum: [area]
+          description: >
+            Add the selected release's canonical area identity, name and
+            aliases to each record. Requires a compatible `release`.
         - name: limit
           in: query
           required: false
