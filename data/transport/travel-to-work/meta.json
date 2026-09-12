@@ -1,0 +1,24 @@
+{
+	"id": "travel-to-work",
+	"title": "Method used to travel to workplace, England and Wales",
+	"description": "Census 2021 table TS061: how usual residents aged 16 and over in employment travelled to their place of work, by local authority district, for England and Wales.",
+	"topics": ["transport", "census", "commuting"],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/datasets/TS061/editions/2021/versions/6",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2021",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": ["GB-ENG", "GB-WLS"]
+	},
+	"files": [
+		{
+			"path": "TS061-2021-6.csv",
+			"role": "source",
+			"note": "331 local authorities x 12 categories, 3,972 rows. Category 12 is 'Not in employment or aged 15 years and under' and is skipped by the loader, so the denominator is people in employment rather than the whole population. Version 6, released 15 January 2024. The loader keys categories by numeric code rather than label so a relabelled version still loads."
+		}
+	]
+}

@@ -28,6 +28,7 @@ import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerforma
 import { schoolPerformanceConstituencyDatasetDefinition } from "./definitions/schoolPerformanceConstituency";
 import { schoolPerformanceDisadvantageDatasetDefinition } from "./definitions/schoolPerformanceDisadvantage";
 import { simdDatasetDefinition } from "./definitions/simd";
+import { travelToWorkDatasetDefinition } from "./definitions/travelToWork";
 import { unemploymentDatasetDefinition } from "./definitions/unemployment";
 import { wimdDatasetDefinition } from "./definitions/wimd";
 
@@ -61,6 +62,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	schoolPerformanceConstituencyDatasetDefinition,
 	schoolPerformanceDisadvantageDatasetDefinition,
 	simdDatasetDefinition,
+	travelToWorkDatasetDefinition,
 	unemploymentDatasetDefinition,
 	wimdDatasetDefinition,
 ];

@@ -30,6 +30,7 @@ export * from "./childPoverty";
 export * from "./fuelPoverty";
 export * from "./ghgEmissions";
 export * from "./mobileCoverage";
+export * from "./travelToWork";
 export * from "./schoolPerformance";
 export * from "./nhsWaiting";
 export * from "./unemployment";

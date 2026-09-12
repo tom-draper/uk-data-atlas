@@ -31,6 +31,7 @@ import {
 	aggregateEthnicity,
 	aggregateLifeExpectancy,
 	aggregateQualifications,
+	aggregateTravelToWork,
 } from "./demographics";
 import {
 	aggregateBrexit,
@@ -135,6 +136,11 @@ export const qualificationAggregation = boundaryAggregation(
 	"qualification",
 	"localAuthority",
 	aggregateQualifications,
+);
+export const travelToWorkAggregation = boundaryAggregation(
+	"travelToWork",
+	"localAuthority",
+	aggregateTravelToWork,
 );
 export const broadbandAggregation = numericAggregation(
 	"broadband",
