@@ -32,6 +32,7 @@ import type {
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
 } from "./dataCatalog";
+import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import {
 	createAreaSearchIndex,
 	route,
@@ -223,6 +224,19 @@ export const readPopulationLocalAuthorityObservations = (
 	return observations;
 };
 
+export const readMeasureCompatibility = (
+	apiRoot: string,
+): MeasureCompatibilityInventory => {
+	const path = join(apiRoot, "public", "measure-compatibility.json");
+	const inventory = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as MeasureCompatibilityInventory;
+	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.measures)) {
+		throw new Error(`Invalid measure compatibility inventory at ${path}`);
+	}
+	return inventory;
+};
+
 export type ApiCatalogues = Required<RouteContext>;
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
@@ -256,6 +270,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		populationObservations: readPopulationObservations(apiRoot),
 		populationLocalAuthorityObservations:
 			readPopulationLocalAuthorityObservations(apiRoot),
+		measureCompatibilityInventory: readMeasureCompatibility(apiRoot),
 	};
 };
 

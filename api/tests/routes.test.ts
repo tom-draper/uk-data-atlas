@@ -31,6 +31,7 @@ import type {
 	DataCatalog,
 	PopulationObservationArtifact,
 } from "../src/dataCatalog";
+import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
 
 // Most tests exercise one narrow dependency combination. This fixture adapter
 // keeps those cases concise while ensuring the production router only accepts
@@ -323,6 +324,48 @@ const populationLocalAuthorityObservations: PopulationLocalAuthorityObservationA
 		],
 	};
 
+const measureCompatibilityInventory: MeasureCompatibilityInventory = {
+	schemaVersion: 1,
+	contentHash: "sha256:measure-compatibility",
+	inputs: {
+		dataCatalog: "sha256:data-catalog",
+		boundaryRegistry: "sha256:registry",
+		populationObservations: "sha256:population-observations",
+		populationLocalAuthorityObservations:
+			"sha256:population-local-authority-observations",
+		areaArtifacts: { "ward/2023-05-uk-bgc": "sha256:areas" },
+	},
+	measures: [
+		{
+			measureId: "population-estimate",
+			sources: [
+				{
+					datasetId: "population",
+					sourceGeography: { type: "ward", boundaryYear: 2023 },
+					periods: ["2022"],
+					candidates: [
+						{
+							boundaryRelease: "2023-05-uk-bgc",
+							title: "Wards, May 2023",
+							coverageCountries: ["GB-ENG", "GB-WLS"],
+							status: "code-set-compatible",
+							sourceCodeCount: 2,
+							candidateCodeCount: 3,
+							matchingCodeCount: 2,
+							matchedSourceShare: 1,
+							unmatchedSourceCodeCount: 0,
+							unmatchedSourceCodeSample: [],
+							candidateOnlyCodeCount: 1,
+							candidateOnlyCodeSample: ["S13000001"],
+						},
+					],
+					note: "Compatibility is based only on area-code membership.",
+				},
+			],
+		},
+	],
+};
+
 const routeWithNamedLocations = (url: string) =>
 	route(
 		"GET",
@@ -425,6 +468,29 @@ test("publishes datasets, measures and source-exact population observations", ()
 				{ areaCode: "N09000001", value: 400, status: "observed" },
 			],
 		},
+	);
+});
+
+test("publishes measure boundary candidates as code compatibility only", () => {
+	const response = routeRequest(
+		"GET",
+		"/v1/measures/population-estimate/compatibility",
+		{
+			boundaryRegistry: registry,
+			measureCompatibilityInventory,
+		},
+	);
+	assert.equal(response.status, 200);
+	const data = "data" in response.body ? response.body.data : undefined;
+	assert.ok(data && typeof data === "object");
+	assert.equal(
+		(data as { sources: Array<{ candidates: Array<{ status: string }> }> })
+			.sources[0]?.candidates[0]?.status,
+		"code-set-compatible",
+	);
+	assert.match(
+		(data as { note: string }).note,
+		/do not select a geometry release/,
 	);
 });
 

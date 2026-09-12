@@ -1,0 +1,160 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:5a0dfdefd58918a49b43199b0f98d39bd552b917d5673700e793dd36e5cd972d",
+	"inputs": {
+		"dataCatalog": "sha256:7299c56b9ad4b6502aec846466227edc3710cfb80a1e4390d3dfcea0feb396ee",
+		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
+		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
+		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
+		"areaArtifacts": {
+			"localAuthority/2023-05-uk-bgc-v2": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19",
+			"ward/2023-05-uk-bgc": "sha256:4910cadfe2df4877bbc96fe4f98a52c8c629401adf81ef47714d15524ffc32e4",
+			"ward/2023-12-uk-bgc": "sha256:21acf7576c2fac314f4daf78320f66133f2cf7b5dcb6534cb94e2b6edbc0f7db"
+		}
+	},
+	"measures": [
+		{
+			"measureId": "population-estimate",
+			"sources": [
+				{
+					"datasetId": "population",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2022"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc",
+							"title": "Wards, May 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 7608,
+							"candidateCodeCount": 8441,
+							"matchingCodeCount": 7608,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 833,
+							"candidateOnlyCodeSample": [
+								"E05009289",
+								"E05009290",
+								"E05009293",
+								"E05009294",
+								"E05009295",
+								"E05009296",
+								"E05009298",
+								"E05009299",
+								"E05009300",
+								"E05009301",
+								"E05009303",
+								"E05009306",
+								"E05009307",
+								"E05009311",
+								"E05009312",
+								"E05011091",
+								"N08000101",
+								"N08000102",
+								"N08000103",
+								"N08000104"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Wards, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 7608,
+							"candidateCodeCount": 8441,
+							"matchingCodeCount": 7608,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 833,
+							"candidateOnlyCodeSample": [
+								"E05009289",
+								"E05009290",
+								"E05009293",
+								"E05009294",
+								"E05009295",
+								"E05009296",
+								"E05009298",
+								"E05009299",
+								"E05009300",
+								"E05009301",
+								"E05009303",
+								"E05009306",
+								"E05009307",
+								"E05009311",
+								"E05009312",
+								"E05011091",
+								"N08000101",
+								"N08000102",
+								"N08000103",
+								"N08000104"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "population-uk",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		}
+	]
+}

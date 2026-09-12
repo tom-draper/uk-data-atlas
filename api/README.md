@@ -218,6 +218,11 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Reliability and product capabilities — next
 
+- [x] Publish code-set compatibility candidates between an implemented
+      measure's source geography and compiled boundary releases through
+      `GET /v1/measures/{measure-id}/compatibility`. This is evidence for
+      selecting a conversion path, not proof that candidate geometries are
+      identical or a licence to select one automatically.
 - [ ] Every data response links to source, transformation, geography match and
       Atlas release provenance.
 - [ ] Coverage report for every geography/release/measure combination. The
@@ -1167,6 +1172,7 @@ pnpm start
 - `GET /v1/datasets/{dataset-id}`
 - `GET /v1/measures`
 - `GET /v1/measures/{measure-id}`
+- `GET /v1/measures/{measure-id}/compatibility`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/boundary-releases`
