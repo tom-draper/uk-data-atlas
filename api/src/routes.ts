@@ -28,6 +28,7 @@ import type {
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import { measureCoverage } from "./measureCoverage";
 import { reconcileMembers } from "./memberReconciliation";
+import { rankObservations, type RankingOrder } from "./ranking";
 import {
 	exportMeasureRecords,
 	type MeasureExportRecord,
@@ -175,6 +176,13 @@ const readPageSize = (value: string | null): number | undefined => {
 	const size = Number(value);
 	return size <= MAX_PAGE_SIZE ? size : undefined;
 };
+
+const readRankingOrder = (value: string | null): RankingOrder | undefined =>
+	value === null || value === "desc"
+		? "desc"
+		: value === "asc"
+			? "asc"
+			: undefined;
 
 const readCoordinate = (
 	value: string | null,
@@ -349,6 +357,7 @@ export const route = (
 					"/v1/measures/{measure-id}/coverage",
 					"/v1/data/{measure-id}",
 					"/v1/data/{measure-id}/series",
+					"/v1/data/{measure-id}/rankings",
 					"/v1/areas",
 					"/v1/areas:contains",
 					"/v1/areas/{type}/{release}/{code}",
@@ -441,6 +450,136 @@ export const route = (
 					"Not Found",
 					"No published measure compatibility record matches that id.",
 				);
+	}
+
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "data" &&
+		segments[3] === "rankings"
+	) {
+		if (!dataCatalog) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue before retrieving source-exact rankings.",
+			);
+		}
+		const measureId = segments[2] as string;
+		const measure = dataCatalog.measures.find(
+			(candidate) => candidate.id === measureId,
+		);
+		if (!measure) {
+			return problem(
+				404,
+				"Not Found",
+				"No published measure serves rankings at that path.",
+			);
+		}
+		if (
+			parsedUrl.searchParams.has("release") ||
+			parsedUrl.searchParams.has("conversion") ||
+			parsedUrl.searchParams.has("aggregate")
+		) {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"This source-exact ranking endpoint does not select geometry releases, convert observations or aggregate them.",
+			);
+		}
+		const period = parsedUrl.searchParams.get("period");
+		const geography = parsedUrl.searchParams.get("geography");
+		const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
+		const source = measure.sources.find(
+			(candidate) =>
+				candidate.periods.includes(period ?? "") &&
+				candidate.sourceGeography.type === geography &&
+				String(candidate.sourceGeography.boundaryYear) === boundaryYear,
+		);
+		if (!source) {
+			return problem(
+				400,
+				"Invalid Query",
+				`${measureId} supports rankings only for a published source period, geography and boundary year.`,
+			);
+		}
+		const observations = observationsFor(
+			measureId,
+			source,
+			period as string,
+			{
+				populationObservations,
+				populationLocalAuthorityObservations,
+				measureObservations,
+			},
+		);
+		if (!observations) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
+			);
+		}
+		const order = readRankingOrder(parsedUrl.searchParams.get("order"));
+		if (!order) {
+			return problem(400, "Invalid Query", "order must be asc or desc.");
+		}
+		const ranked = rankObservations(observations.records, order);
+		const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
+		if (pageSize === undefined) {
+			return problem(
+				400,
+				"Invalid Query",
+				`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
+			);
+		}
+		const cursor = parsedUrl.searchParams.get("cursor");
+		const cursorCode = cursor ? codeFromCursor(cursor) : undefined;
+		if (cursor && !cursorCode) {
+			return problem(400, "Invalid Query", "cursor is invalid.");
+		}
+		const offset = cursorCode
+			? ranked.findIndex((record) => record.areaCode === cursorCode) + 1
+			: 0;
+		if (cursorCode && offset === 0) {
+			return problem(
+				400,
+				"Invalid Query",
+				"cursor is not valid for this ranking query.",
+			);
+		}
+		const records = ranked.slice(offset, offset + pageSize);
+		const lastRecord = records.at(-1);
+		const nextCursor =
+			offset + records.length < ranked.length && lastRecord
+				? cursorFor(lastRecord.areaCode)
+				: null;
+		return {
+			status: 200,
+			body: envelope(
+				releaseId,
+				{
+					measure,
+					source,
+					period,
+					sourceGeography: source.sourceGeography,
+					provenance: sourceExactProvenance({
+						atlasRelease: releaseId,
+						measure,
+						source,
+						period: period as string,
+						observations,
+					}),
+					ranking: {
+						order,
+						method: "competition",
+						note: "Equal values share a rank; the following rank accounts for every preceding observation (for example 1, 1, 3).",
+					},
+					records,
+				},
+				nextCursor,
+			),
+		};
 	}
 
 	if (
