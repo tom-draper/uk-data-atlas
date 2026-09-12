@@ -65,7 +65,7 @@ const sourceCodes = (
 	source: MeasureSource,
 	wardObservations: PopulationObservationArtifact,
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
-	otherObservations: MeasureObservationArtifact[],
+	measureObservations: MeasureObservationArtifact[],
 ) => {
 	if (measureId === "population-estimate") {
 		if (source.sourceGeography.type === "ward") {
@@ -83,7 +83,7 @@ const sourceCodes = (
 		}
 		return new Set(records.map((record) => record.areaCode));
 	}
-	const records = otherObservations
+	const records = measureObservations
 		.find((candidate) => candidate.measureId === measureId)
 		?.periods.find((period) => period.period === source.periods[0])
 		?.records;
@@ -143,7 +143,7 @@ export const compileMeasureCompatibility = (
 	areaArtifacts: AreaReleaseArtifact[],
 	wardObservations: PopulationObservationArtifact,
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
-	otherObservations: MeasureObservationArtifact[],
+	measureObservations: MeasureObservationArtifact[],
 ): MeasureCompatibilityInventory => {
 	if (dataCatalog.measures.length === 0) {
 		throw new Error("Data catalogue has no measures.");
@@ -161,7 +161,7 @@ export const compileMeasureCompatibility = (
 			source,
 			wardObservations,
 			localAuthorityObservations,
-			otherObservations,
+			measureObservations,
 		);
 		const candidates = boundaryRegistry.releases
 			.filter(
@@ -217,7 +217,7 @@ export const compileMeasureCompatibility = (
 		populationLocalAuthorityObservations:
 			localAuthorityObservations.contentHash,
 		measureObservations: Object.fromEntries(
-			otherObservations
+			measureObservations
 				.map((observations) => [
 					observations.measureId,
 					observations.contentHash,

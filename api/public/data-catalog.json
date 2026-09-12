@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:070e5f79aea841be40563b539f8de357d7018d40d15c55b47cde8437e710a30d",
+	"contentHash": "sha256:5f51bbf5587b10854d72755953ed911f65f8e73b3975e510c56bb28c94cdd091",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1370,6 +1370,645 @@
 			"notes": [
 				"Premises with an outdoor 5G signal from all four mobile network operators, at the publisher's high-confidence threshold. 5G is reported outdoors only.",
 				"This is a share of premises, so it does not add over areas. Combining authorities needs a premises-weighted mean, and the weight is not served here; averaging the percentages flat would weigh the Isles of Scilly as heavily as Birmingham."
+			]
+		},
+		{
+			"id": "travel-to-work-car",
+			"label": "Travel to work by car or van",
+			"valueKind": "count",
+			"unit": "people in employment",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "travel-to-work",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/travel-to-work-car"
+			},
+			"notes": [
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "travel-to-work-home",
+			"label": "Work mainly at or from home",
+			"valueKind": "count",
+			"unit": "people in employment",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "travel-to-work",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/travel-to-work-home"
+			},
+			"notes": [
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "travel-to-work-public-transport",
+			"label": "Travel to work by public transport",
+			"valueKind": "count",
+			"unit": "people in employment",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "travel-to-work",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/travel-to-work-public-transport"
+			},
+			"notes": [
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "travel-to-work-on-foot",
+			"label": "Travel to work on foot",
+			"valueKind": "count",
+			"unit": "people in employment",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "travel-to-work",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/travel-to-work-on-foot"
+			},
+			"notes": [
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "travel-to-work-bicycle",
+			"label": "Travel to work by bicycle",
+			"valueKind": "count",
+			"unit": "people in employment",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "travel-to-work",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/travel-to-work-bicycle"
+			},
+			"notes": [
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "travel-to-work-taxi",
+			"label": "Travel to work by taxi",
+			"valueKind": "count",
+			"unit": "people in employment",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "travel-to-work",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/travel-to-work-taxi"
+			},
+			"notes": [
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "travel-to-work-motorcycle",
+			"label": "Travel to work by motorcycle",
+			"valueKind": "count",
+			"unit": "people in employment",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "travel-to-work",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/travel-to-work-motorcycle"
+			},
+			"notes": [
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "travel-to-work-other",
+			"label": "Travel to work by another method",
+			"valueKind": "count",
+			"unit": "people in employment",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "travel-to-work",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/travel-to-work-other"
+			},
+			"notes": [
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "travel-to-work-total",
+			"label": "People in employment",
+			"valueKind": "count",
+			"unit": "people in employment",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "travel-to-work",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/travel-to-work-total"
+			},
+			"notes": [
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "car-availability-none",
+			"label": "Households with no car or van",
+			"valueKind": "count",
+			"unit": "households",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "car-availability",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/car-availability-none"
+			},
+			"notes": [
+				"Households, not people. A household with four residents and one car counts once.",
+				"The top category is open-ended, so the table gives no count of vehicles.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "car-availability-one",
+			"label": "Households with one car or van",
+			"valueKind": "count",
+			"unit": "households",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "car-availability",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/car-availability-one"
+			},
+			"notes": [
+				"Households, not people. A household with four residents and one car counts once.",
+				"The top category is open-ended, so the table gives no count of vehicles.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "car-availability-two",
+			"label": "Households with two cars or vans",
+			"valueKind": "count",
+			"unit": "households",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "car-availability",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/car-availability-two"
+			},
+			"notes": [
+				"Households, not people. A household with four residents and one car counts once.",
+				"The top category is open-ended, so the table gives no count of vehicles.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "car-availability-three-or-more",
+			"label": "Households with three or more cars or vans",
+			"valueKind": "count",
+			"unit": "households",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "car-availability",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/car-availability-three-or-more"
+			},
+			"notes": [
+				"Households, not people. A household with four residents and one car counts once.",
+				"The top category is open-ended, so the table gives no count of vehicles.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+			]
+		},
+		{
+			"id": "car-availability-total",
+			"label": "Households",
+			"valueKind": "count",
+			"unit": "households",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "car-availability",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 335,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/car-availability-total"
+			},
+			"notes": [
+				"Households, not people. A household with four residents and one car counts once.",
+				"The top category is open-ended, so the table gives no count of vehicles.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
 			]
 		}
 	]

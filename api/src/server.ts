@@ -225,43 +225,37 @@ export const readPopulationLocalAuthorityObservations = (
 	return observations;
 };
 
-export const readGhgEmissionsObservations = (
+/**
+ * Every measure's observations except the two population artifacts, which
+ * predate the convention. Driven by the catalogue rather than a hardcoded
+ * list, so publishing a measure needs no change here.
+ */
+export const readMeasureObservations = (
 	apiRoot: string,
-): MeasureObservationArtifact => {
-	const path = join(apiRoot, "public", "ghg-emissions-observations.json");
-	const observations = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as MeasureObservationArtifact;
-	if (
-		observations.schemaVersion !== 1 ||
-		observations.measureId !== "ghg-emissions" ||
-		observations.sourceGeography.type !== "localAuthority" ||
-		!Array.isArray(observations.periods)
-	) {
-		throw new Error(`Invalid emissions observations at ${path}`);
-	}
-	return observations;
-};
-
-/** Each mobile coverage metric is published as its own measure artifact. */
-export const readMobileCoverageObservations = (
-	apiRoot: string,
+	dataCatalog: DataCatalog,
 ): MeasureObservationArtifact[] =>
-	["mobile-4g-coverage", "mobile-5g-coverage"].map((measureId) => {
-		const path = join(apiRoot, "public", `${measureId}-observations.json`);
-		const observations = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as MeasureObservationArtifact;
-		if (
-			observations.schemaVersion !== 1 ||
-			observations.measureId !== measureId ||
-			observations.sourceGeography.type !== "localAuthority" ||
-			!Array.isArray(observations.periods)
-		) {
-			throw new Error(`Invalid mobile coverage observations at ${path}`);
-		}
-		return observations;
-	});
+	dataCatalog.measures
+		.filter((measure) => measure.id !== "population-estimate")
+		.map((measure) => {
+			const path = join(
+				apiRoot,
+				"public",
+				`${measure.id}-observations.json`,
+			);
+			const observations = JSON.parse(
+				readFileSync(path, "utf8"),
+			) as MeasureObservationArtifact;
+			if (
+				observations.schemaVersion !== 1 ||
+				observations.measureId !== measure.id ||
+				observations.sourceGeography.type !==
+					measure.sources[0]?.sourceGeography.type ||
+				!Array.isArray(observations.periods)
+			) {
+				throw new Error(`Invalid measure observations at ${path}`);
+			}
+			return observations;
+		});
 
 export const readMeasureCompatibility = (
 	apiRoot: string,
@@ -309,8 +303,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		populationObservations: readPopulationObservations(apiRoot),
 		populationLocalAuthorityObservations:
 			readPopulationLocalAuthorityObservations(apiRoot),
-		ghgEmissionsObservations: readGhgEmissionsObservations(apiRoot),
-		mobileCoverageObservations: readMobileCoverageObservations(apiRoot),
+		measureObservations: readMeasureObservations(apiRoot, dataCatalog),
 		measureCompatibilityInventory: readMeasureCompatibility(apiRoot),
 	};
 };

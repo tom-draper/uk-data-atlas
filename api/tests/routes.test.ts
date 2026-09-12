@@ -57,8 +57,7 @@ const route = (
 	populationObservations?: RouteContext["populationObservations"],
 	populationLocalAuthorityObservations?: RouteContext["populationLocalAuthorityObservations"],
 	measureCompatibilityInventory?: RouteContext["measureCompatibilityInventory"],
-	ghgEmissionsObservations?: RouteContext["ghgEmissionsObservations"],
-	mobileCoverageObservations?: RouteContext["mobileCoverageObservations"],
+	measureObservations?: RouteContext["measureObservations"],
 ) =>
 	routeRequest(method, url, {
 		boundaryRegistry,
@@ -78,8 +77,7 @@ const route = (
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureCompatibilityInventory,
-		ghgEmissionsObservations,
-		mobileCoverageObservations,
+		measureObservations,
 	});
 
 const registry: BoundaryRegistry = {
@@ -424,10 +422,61 @@ const dataCatalog: DataCatalog = {
 			},
 			links: { data: "/v1/data/mobile-5g-coverage" },
 		},
+		{
+			id: "travel-to-work-car",
+			label: "Travel to work by car or van",
+			valueKind: "count",
+			unit: "people in employment",
+			aggregation: {
+				kind: "extensive",
+				operation: "sum",
+				available: false,
+			},
+			sources: [
+				{
+					datasetId: "travel-to-work",
+					periods: ["2021"],
+					sourceGeography: {
+						type: "localAuthority",
+						boundaryYear: 2025,
+					},
+					coverage: {
+						kind: "partial",
+						countries: ["GB-ENG", "GB-WLS"],
+						recordCount: 1,
+						note: "England and Wales only.",
+					},
+				},
+			],
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: { data: "/v1/data/travel-to-work-car" },
+			notes: [
+				"Usual residents aged 16 and over in employment in the week before the census.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count.",
+			],
+		},
 	],
 };
 
-const mobileCoverageObservations: MeasureObservationArtifact[] = [
+const measureObservations: MeasureObservationArtifact[] = [
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:emissions-observations",
+		measureId: "ghg-emissions",
+		sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
+		periods: [
+			{
+				period: "2024",
+				records: [
+					{ areaCode: "E06000001", value: 400, status: "observed" },
+				],
+			},
+		],
+	},
 	{
 		schemaVersion: 1,
 		contentHash: "sha256:mobile-5g-observations",
@@ -442,20 +491,21 @@ const mobileCoverageObservations: MeasureObservationArtifact[] = [
 			},
 		],
 	},
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:travel-car-observations",
+		measureId: "travel-to-work-car",
+		sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
+		periods: [
+			{
+				period: "2021",
+				records: [
+					{ areaCode: "E06000001", value: 24724, status: "observed" },
+				],
+			},
+		],
+	},
 ];
-
-const ghgEmissionsObservations: MeasureObservationArtifact = {
-	schemaVersion: 1,
-	contentHash: "sha256:emissions-observations",
-	measureId: "ghg-emissions",
-	sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
-	periods: [
-		{
-			period: "2024",
-			records: [{ areaCode: "E06000001", value: 400, status: "observed" }],
-		},
-	],
-};
 
 const populationObservations: PopulationObservationArtifact = {
 	schemaVersion: 1,
@@ -568,8 +618,7 @@ const routeWithData = (url: string) =>
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureCompatibilityInventory,
-		ghgEmissionsObservations,
-		mobileCoverageObservations,
+		measureObservations,
 	);
 
 const populationProvenance = (
@@ -840,7 +889,12 @@ test("serves greenhouse gas emissions as a second source-exact measure", () => {
 					(measure) => measure.id,
 				)
 			: [],
-		["population-estimate", "ghg-emissions", "mobile-5g-coverage"],
+		[
+			"population-estimate",
+			"ghg-emissions",
+			"mobile-5g-coverage",
+			"travel-to-work-car",
+		],
 	);
 
 	const observed = routeWithData(
@@ -904,6 +958,7 @@ test("declares a coverage share as intensive, so it is never summed", () => {
 			["population-estimate", "extensive"],
 			["ghg-emissions", "extensive"],
 			["mobile-5g-coverage", "intensive"],
+			["travel-to-work-car", "extensive"],
 		],
 	);
 
@@ -943,6 +998,38 @@ test("declares a coverage share as intensive, so it is never summed", () => {
 			"/v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2025",
 		).status,
 		400,
+	);
+});
+
+test("publishes a census breakdown as counts with its own denominator", () => {
+	const observed = routeWithData(
+		"/v1/data/travel-to-work-car?period=2021&geography=localAuthority&boundaryYear=2025",
+	);
+	assert.equal(observed.status, 200);
+	const data = "data" in observed.body ? (observed.body.data as never) : {};
+	assert.deepEqual((data as { records: unknown }).records, [
+		{ areaCode: "E06000001", value: 24724, status: "observed" },
+	]);
+
+	const measure = routeWithData("/v1/measures/travel-to-work-car");
+	const published =
+		"data" in measure.body
+			? (measure.body.data as {
+					valueKind: string;
+					unit: string;
+					aggregation: { kind: string };
+					notes: string[];
+				})
+			: undefined;
+	// A count of people adds over areas, so no weight is needed. The universe
+	// is stated, because a share of the wrong denominator is the likelier error.
+	assert.equal(published?.valueKind, "count");
+	assert.equal(published?.unit, "people in employment");
+	assert.equal(published?.aggregation.kind, "extensive");
+	assert.match(published?.notes[0] ?? "", /aged 16 and over in employment/);
+	assert.match(
+		published?.notes.join(" ") ?? "",
+		/created in April 2023 are compiled by summing their predecessors/,
 	);
 });
 

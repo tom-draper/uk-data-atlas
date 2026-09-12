@@ -409,10 +409,18 @@ const localAuthorityFieldPeriods = (
 								`${path}: unsupported area code ${areaCode}`,
 							);
 						}
-						const observed = object(
+						// A dotted field reaches into a nested breakdown,
+						// which is how the census datasets are compiled.
+						let observed: unknown = object(
 							record,
 							`${path}.${period}.${areaCode}`,
-						)[field];
+						);
+						for (const segment of field.split(".")) {
+							observed = object(
+								observed,
+								`${path}.${period}.${areaCode}`,
+							)[segment];
+						}
 						// Not guarded by number(), which rejects negatives:
 						// land use is a net sink in most rural authorities, and
 						// nothing in the publisher's method stops one exceeding
@@ -452,12 +460,14 @@ export const compileDataCatalog = (
 	populationUkPath: string,
 	ghgEmissionsPath: string,
 	mobileCoveragePath: string,
+	censusPaths: Record<"travel-to-work" | "car-availability", string>,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
 	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
 	ghgEmissionsObservations: MeasureObservationArtifact;
 	mobileCoverageObservations: MeasureObservationArtifact[];
+	censusObservations: MeasureObservationArtifact[];
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -695,6 +705,151 @@ export const compileDataCatalog = (
 			],
 		}),
 	);
+	/**
+	 * The census breakdowns, published as counts rather than shares.
+	 *
+	 * A count of people or households is extensive, so it adds over areas and
+	 * needs no weight. Publishing the categories and their denominator lets a
+	 * caller derive any share they want and know exactly what it is a share
+	 * of, which is safer than the API dividing for them and leaving the
+	 * universe implicit.
+	 */
+	const censusBreakdowns = [
+		{
+			datasetId: "travel-to-work",
+			field: "breakdown",
+			unit: "people in employment",
+			universe:
+				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
+			categories: [
+				["car", "car", "Travel to work by car or van"],
+				["home", "workFromHome", "Work mainly at or from home"],
+				[
+					"public-transport",
+					"publicTransport",
+					"Travel to work by public transport",
+				],
+				["on-foot", "onFoot", "Travel to work on foot"],
+				["bicycle", "bicycle", "Travel to work by bicycle"],
+				["taxi", "taxi", "Travel to work by taxi"],
+				["motorcycle", "motorcycle", "Travel to work by motorcycle"],
+				["other", "other", "Travel to work by another method"],
+				["total", "total", "People in employment"],
+			],
+			notes: [
+				"Driving and being a passenger are one category here; the census counts them apart.",
+				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
+			],
+		},
+		{
+			datasetId: "car-availability",
+			field: "breakdown",
+			unit: "households",
+			universe:
+				"Households, not people. A household with four residents and one car counts once.",
+			categories: [
+				["none", "noCar", "Households with no car or van"],
+				["one", "oneCar", "Households with one car or van"],
+				["two", "twoCars", "Households with two cars or vans"],
+				[
+					"three-or-more",
+					"threeOrMoreCars",
+					"Households with three or more cars or vans",
+				],
+				["total", "total", "Households"],
+			],
+			notes: [
+				"The top category is open-ended, so the table gives no count of vehicles.",
+			],
+		},
+	] as const;
+
+	const censusObservations = censusBreakdowns.flatMap((breakdown) => {
+		const dataset = datasets.find(
+			(candidate) => candidate.id === breakdown.datasetId,
+		);
+		if (!dataset)
+			throw new Error(
+				`${manifestPath} has no ${breakdown.datasetId} dataset`,
+			);
+		if (
+			dataset.summary.boundaryYears.length !== 1 ||
+			dataset.summary.boundaryYears[0] !== 2025
+		) {
+			throw new Error(
+				`${manifestPath}: ${breakdown.datasetId} must declare boundary year 2025`,
+			);
+		}
+		const path = censusPaths[breakdown.datasetId];
+		return breakdown.categories.map(([suffix, field, label]) => {
+			const measureId = `${breakdown.datasetId}-${suffix}`;
+			const periods = localAuthorityFieldPeriods(
+				path,
+				`${breakdown.field}.${field}`,
+				2025,
+			);
+			const content = JSON.stringify({
+				schemaVersion: 1,
+				measureId,
+				sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
+				periods,
+			});
+			return {
+				measure: {
+					id: measureId,
+					label,
+					valueKind: "count",
+					unit: breakdown.unit,
+					aggregation: {
+						kind: "extensive",
+						operation: "sum",
+						available: false,
+					},
+					sources: [
+						{
+							datasetId: breakdown.datasetId,
+							periods: periods.map((period) => period.period),
+							sourceGeography: {
+								type: "localAuthority",
+								boundaryYear: 2025,
+							},
+							coverage: {
+								kind: "partial",
+								countries: countriesFor(
+									periods[0]?.records ?? [],
+								),
+								recordCount: periods[0]?.records.length ?? 0,
+								note: "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values.",
+							},
+						},
+					],
+					availability: {
+						sourceExact: true,
+						conversion: false,
+						aggregation: false,
+					},
+					links: { data: `/v1/data/${measureId}` },
+					notes: [
+						breakdown.universe,
+						...breakdown.notes,
+						"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count.",
+					],
+				} satisfies Measure,
+				artifact: {
+					schemaVersion: 1 as const,
+					contentHash: sha256(content),
+					measureId,
+					sourceGeography: {
+						type: "localAuthority" as const,
+						boundaryYear: 2025,
+					},
+					periods,
+				},
+			};
+		});
+	});
+	const censusMeasures = censusObservations.map(({ measure }) => measure);
+
 	const measure: Measure = {
 		id: "population-estimate",
 		label: "Population estimate",
@@ -741,7 +896,12 @@ export const compileDataCatalog = (
 			manifestVersion: manifest.version,
 		},
 		datasets,
-		measures: [measure, emissionsMeasure, ...mobileMeasures],
+		measures: [
+			measure,
+			emissionsMeasure,
+			...mobileMeasures,
+			...censusMeasures,
+		],
 	});
 	const emissionsObservationsContent = JSON.stringify({
 		schemaVersion: 1,
@@ -771,7 +931,12 @@ export const compileDataCatalog = (
 				manifestVersion: manifest.version,
 			},
 			datasets,
-			measures: [measure, emissionsMeasure, ...mobileMeasures],
+			measures: [
+				measure,
+				emissionsMeasure,
+				...mobileMeasures,
+				...censusMeasures,
+			],
 		},
 		populationObservations: {
 			schemaVersion: 1,
@@ -798,5 +963,6 @@ export const compileDataCatalog = (
 		mobileCoverageObservations: mobileObservations.map(
 			({ artifact }) => artifact,
 		),
+		censusObservations: censusObservations.map(({ artifact }) => artifact),
 	};
 };
