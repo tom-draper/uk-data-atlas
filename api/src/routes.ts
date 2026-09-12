@@ -84,6 +84,20 @@ const readPageSize = (value: string | null): number | undefined => {
 	return size <= MAX_PAGE_SIZE ? size : undefined;
 };
 
+const readCoordinate = (
+	value: string | null,
+	minimum: number,
+	maximum: number,
+): number | undefined => {
+	if (value === null || value.trim().length === 0) return undefined;
+	const coordinate = Number(value);
+	return Number.isFinite(coordinate) &&
+		coordinate >= minimum &&
+		coordinate <= maximum
+		? coordinate
+		: undefined;
+};
+
 const cursorFor = (code: string) => Buffer.from(code).toString("base64url");
 
 const codeFromCursor = (cursor: string): string | undefined => {
@@ -201,6 +215,7 @@ export const route = (
 					"/v1/boundary-releases/{type}/{release}",
 					"/v1/geography-inventory",
 					"/v1/areas",
+					"/v1/areas:contains",
 					"/v1/areas/{type}/{release}/{code}",
 					"/v1/areas/{type}/{release}/{code}/history",
 					"/v1/areas/{type}/{release}/{code}/parents",
@@ -222,6 +237,99 @@ export const route = (
 				],
 			}),
 		};
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "areas:contains"
+	) {
+		const longitude = readCoordinate(
+			parsedUrl.searchParams.get("lng"),
+			-180,
+			180,
+		);
+		const latitude = readCoordinate(
+			parsedUrl.searchParams.get("lat"),
+			-90,
+			90,
+		);
+		const geography = parsedUrl.searchParams.get("geography");
+		const boundaryRelease = parsedUrl.searchParams.get("release");
+		if (
+			longitude === undefined ||
+			latitude === undefined ||
+			!geography ||
+			!boundaryRelease
+		) {
+			return problem(
+				400,
+				"Invalid Query",
+				"lng (-180 to 180), lat (-90 to 90), geography and release are required.",
+			);
+		}
+		if (!areaLookup || !areaGeometryCache) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the area inventory and geometry source registry before point lookup.",
+			);
+		}
+		if (!areaLookup.has(`${geography}/${boundaryRelease}`)) {
+			return problem(
+				404,
+				"Not Found",
+				"No compiled area release matches the requested geography and release.",
+			);
+		}
+		try {
+			const matches = areaGeometryCache
+				.findContaining(geography, boundaryRelease, [
+					longitude,
+					latitude,
+				])
+				.flatMap(({ code, containment }) => {
+					const area = findArea(
+						areaLookup,
+						geography,
+						boundaryRelease,
+						code,
+					);
+					return area
+						? [
+								{
+									id: `${geography}/${boundaryRelease}/${code}`,
+									...area,
+									containment,
+									geometrySource:
+										areaGeometryCache.provenance(
+											geography,
+											boundaryRelease,
+											code,
+										),
+								},
+							]
+						: [];
+				});
+			return {
+				status: 200,
+				body: envelope(releaseId, {
+					point: { lng: longitude, lat: latitude },
+					geography,
+					boundaryRelease,
+					boundaryRule: "included",
+					matches,
+				}),
+			};
+		} catch (error) {
+			return problem(
+				503,
+				"Geometry Unavailable",
+				error instanceof Error
+					? error.message
+					: "Geometry could not be loaded for point lookup.",
+			);
+		}
 	}
 
 	if (
