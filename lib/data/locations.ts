@@ -985,12 +985,12 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 	// Gloucestershire
 	Gloucestershire: {
 		lad_codes: [
-			"E07000077",
-			"E07000078",
-			"E07000079",
-			"E07000080",
-			"E07000081",
-			"E07000082",
+			"E07000078", // Cheltenham
+			"E07000079", // Cotswold
+			"E07000080", // Forest of Dean
+			"E07000081", // Gloucester
+			"E07000082", // Stroud
+			"E07000083", // Tewkesbury
 		],
 		bounds: [-2.6, 51.6, -1.7, 52.1],
 	},
@@ -1083,9 +1083,8 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000140",
 			"E07000141",
 			"E07000142",
-			"E06000013",
-			"E06000014",
-			"E06000015", // North & NE Lincs, Hull
+			"E06000013", // North Lincolnshire
+			"E06000012", // North East Lincolnshire
 		],
 		bounds: [-0.8, 52.6, 0.4, 53.7],
 	},
