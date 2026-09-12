@@ -266,7 +266,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-1.3, 54.53, -1.15, 54.58],
 	},
 	Gateshead: {
-		lad_codes: ["E08000037"],
+		lad_codes: ["E08000037", "E08000020"],
 		bounds: [-1.7, 54.93, -1.55, 55.0],
 	},
 	"South Shields": {
@@ -590,16 +590,17 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 			// County Durham and Northumberland Unitary Authorities
 			"E06000047", // County Durham
-			"E06000057", // Northumberland (***This was missing from your list***)
+			"E06000057", // Northumberland
+			"E06000048", // Northumberland (pre-2019 code)
 
 			// Tyne and Wear Metropolitan Districts
-			"E08000037", // Gateshead (***The correct code for Gateshead***)
+			"E08000037", // Gateshead
+			"E08000020", // Gateshead (pre-2018 code)
 			"E08000021", // Newcastle upon Tyne
 			"E08000022", // North Tyneside
 			"E08000023", // South Tyneside
 			"E08000024", // Sunderland
 		],
-		// Corrected bounding box
 		bounds: [-2.7, 54.2, -0.5, 55.9],
 	},
 
@@ -701,6 +702,10 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E06000045", // Southampton
 			"E06000046", // Isle of Wight
 			"E06000060", // Buckinghamshire UA (Supersedes E07 codes for Aylesbury Vale, Chiltern, South Bucks, Wycombe)
+			"E07000004", // Aylesbury Vale
+			"E07000005", // Chiltern
+			"E07000006", // South Bucks
+			"E07000007", // Wycombe
 
 			// East Sussex (5 codes)
 			"E07000061", // Eastbourne
@@ -1049,6 +1054,21 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000241",
 		],
 		bounds: [-0.6, 51.6, 0.3, 52.1],
+	},
+
+	// Buckinghamshire
+	Buckinghamshire: {
+		// The four districts merged into one unitary authority in 2020.
+		// Keeping every vintage lets each dataset select the code that matches
+		// its boundaries. Milton Keynes has been separate throughout.
+		lad_codes: [
+			"E07000004", // Aylesbury Vale
+			"E07000005", // Chiltern
+			"E07000006", // South Bucks
+			"E07000007", // Wycombe
+			"E06000060", // Buckinghamshire
+		],
+		bounds: [-1.1, 51.5, -0.5, 52.1],
 	},
 
 	// Oxfordshire
