@@ -1240,27 +1240,51 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// The Highlands
 	"The Highlands": {
-		lad_codes: ["S12000017"], // Highland Council
+		lad_codes: [
+			"S12000017", // Highland
+			"S12000035", // Argyll and Bute
+		],
 		bounds: [-6.0, 56.3, -3.0, 58.7],
 	},
 
 	// Grampian (Aberdeenshire + Aberdeen City + Moray)
 	Grampian: {
-		lad_codes: ["S12000033", "S12000020", "S12000013"],
+		lad_codes: [
+			"S12000033", // Aberdeen City
+			"S12000034", // Aberdeenshire
+			"S12000020", // Moray
+		],
 		bounds: [-3.8, 56.8, -1.8, 58.0],
 	},
 
 	// Central Belt (Glasgow + Edinburgh + Stirling + Falkirk + West Lothian)
 	"Central Belt": {
 		lad_codes: [
-			"S12000049",
-			"S12000046",
-			"S12000036",
-			"S12000030",
-			"S12000014",
-			"S12000039",
+			"S12000049", // Glasgow City
+			"S12000046", // Glasgow City (pre-2019 code)
+			"S12000036", // City of Edinburgh
+			"S12000030", // Stirling
+			"S12000014", // Falkirk
+			"S12000005", // Clackmannanshire
+			"S12000039", // West Dunbartonshire
+			"S12000045", // East Dunbartonshire
+			"S12000050", // North Lanarkshire
+			"S12000044", // North Lanarkshire (pre-2019 code)
+			"S12000029", // South Lanarkshire
+			"S12000010", // East Lothian
+			"S12000019", // Midlothian
+			"S12000040", // West Lothian
 		],
 		bounds: [-4.6, 55.7, -3.0, 56.1],
+	},
+
+	// Fife
+	Fife: {
+		lad_codes: [
+			"S12000047", // Fife
+			"S12000015", // Fife (pre-2019 code)
+		],
+		bounds: [-3.8, 55.9, -2.5, 56.5],
 	},
 
 	// Scottish Borders
@@ -1277,13 +1301,23 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Tayside (Perth & Kinross, Angus, Dundee)
 	Tayside: {
-		lad_codes: ["S12000041", "S12000045", "S12000042"],
+		lad_codes: [
+			"S12000041", // Angus
+			"S12000042", // Dundee City
+			"S12000048", // Perth and Kinross
+			"S12000024", // Perth and Kinross (pre-2019 code)
+		],
 		bounds: [-4.6, 56.2, -2.5, 57.2],
 	},
 
 	// Lowlands (South Ayrshire, Dumfries & Galloway)
 	Lowlands: {
-		lad_codes: ["S12000028", "S12000006"],
+		lad_codes: [
+			"S12000028", // South Ayrshire
+			"S12000008", // East Ayrshire
+			"S12000021", // North Ayrshire
+			"S12000006", // Dumfries and Galloway
+		],
 		bounds: [-5.5, 54.8, -2.9, 55.5],
 	},
 
@@ -1303,7 +1337,11 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// North East Scotland
 	"North East Scotland": {
-		lad_codes: ["S12000020", "S12000033", "S12000013"],
+		lad_codes: [
+			"S12000020", // Moray
+			"S12000033", // Aberdeen City
+			"S12000034", // Aberdeenshire
+		],
 		bounds: [-3.8, 56.9, -1.9, 58.0],
 	},
 
