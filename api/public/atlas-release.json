@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:7ae746ebc845f17dced61fe2e49edcd4d4c88a2517238535b32c11a4d1d3cbc0",
+	"releaseId": "sha256:17e447b2d5221285d17c4b13e61b7634c12a845c5220088b2f5d9b2cb9dc7e2c",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -16,6 +16,11 @@
 			"id": "area-inventory",
 			"path": "area-inventory.json",
 			"contentHash": "sha256:6fca26591c2bfbc126aa0b9fe4272e644d2d1c75e13714ad7dc438a4cfa1fe1c"
+		},
+		{
+			"id": "named-locations",
+			"path": "named-locations.json",
+			"contentHash": "sha256:238d4f3ccd87ae39836e610380d86a5b9e11ea6421ea9f887618f98db56169c5"
 		},
 		{
 			"id": "geometry-sources",

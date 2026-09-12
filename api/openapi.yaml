@@ -266,6 +266,77 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /areas/{geography}/{release}/{code}/history:
+    get:
+      operationId: getAreaHistory
+      summary: Explain a code's published historical relationships and same-code continuity
+      description: >
+        Returns published predecessor and successor relationships plus every
+        other release of the same geography that contains the same code.
+        Same-code continuity is not evidence of unchanged geometry or a
+        one-to-one historical equivalent.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Area history, including a warning about same-code continuity.
+          content:
+            application/json:
+              schema: { type: object }
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /areas/{geography}/{release}/{code}/parents:
+    get:
+      operationId: getAreaParents
+      summary: List published clean-containment parents for an area
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The area and its `within` relationships.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaRelationshipsEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /areas/{geography}/{release}/{code}/children:
+    get:
+      operationId: getAreaChildren
+      summary: List published clean-containment children for an area
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The area and its `contains` relationships.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaRelationshipsEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /areas/{geography}/{release}/{code}/geometry:
     get:
       operationId: getAreaGeometry
@@ -775,7 +846,7 @@ paths:
       summary: Get the current immutable atlas release manifest
       description: >
         References the boundary registry, derived boundaries, area
-        inventory, geometry source registry, crosswalk inventory,
+        inventory, named-location inventory, geometry source registry, crosswalk inventory,
         relationship-candidate inventory, geography inventory, validation
         report and source inventory by content hash, plus a single
         `releaseId` hash of that set. Rebuilding without changing any input reproduces the same
@@ -789,6 +860,128 @@ paths:
                 $ref: "#/components/schemas/AtlasReleaseEnvelope"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+
+  /translations:
+    get:
+      operationId: translateAreaCode
+      summary: Translate one code through a published directional crosswalk
+      description: >
+        `identity` permits publisher-supplied historical lookups only,
+        `membership` permits clean containment only, and `apportion` permits
+        area-overlap crosswalks only. The route does not treat a shared code
+        across releases as proof of unchanged geography.
+      parameters:
+        - name: sourceGeography
+          in: query
+          required: true
+          schema: { type: string }
+        - name: sourceRelease
+          in: query
+          required: true
+          schema: { type: string }
+        - name: code
+          in: query
+          required: true
+          schema: { type: string }
+        - name: targetGeography
+          in: query
+          required: true
+          schema: { type: string }
+        - name: targetRelease
+          in: query
+          required: true
+          schema: { type: string }
+        - name: purpose
+          in: query
+          schema:
+            type: string
+            enum: [identity, membership, apportion]
+            default: membership
+      responses:
+        "200":
+          description: Matching published crosswalk records.
+          content:
+            application/json:
+              schema: { type: object }
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "422":
+          description: No published conversion supports the requested purpose.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+  /locations:
+    get:
+      operationId: listNamedLocations
+      summary: List curated Atlas named locations
+      description: >
+        Locations are editorial groupings of area codes, not automatically
+        official administrative geographies. `q` matches an id or label prefix.
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Named location definitions.
+          content:
+            application/json:
+              schema: { type: object }
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /locations/{location-id}:
+    get:
+      operationId: getNamedLocation
+      summary: Get one curated named-location definition
+      parameters:
+        - name: location-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The location's editorial definition, source codes and bounds.
+          content:
+            application/json:
+              schema: { type: object }
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /locations/{location-id}/members:
+    get:
+      operationId: getNamedLocationMembers
+      summary: Resolve a named location's direct code members in one area release
+      description: >
+        `release` is required because location definitions may include legacy
+        codes. Missing members are returned explicitly; this route never
+        applies an implicit historical conversion.
+      parameters:
+        - name: location-id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: geography
+          in: query
+          schema:
+            type: string
+            default: localAuthority
+        - name: release
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Directly resolved members and explicitly unresolved codes.
+          content:
+            application/json:
+              schema: { type: object }
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   parameters:

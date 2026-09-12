@@ -64,20 +64,35 @@ only **available** when its endpoint, contract and provenance are published.
       coverage and the sliver rule published alongside each record.
 - [x] Navigate each published relationship in both directions, including ward
       → local authority and local authority → ward.
+- [x] Ask for a focused area history. It lists published predecessor/successor
+      relationships and other releases carrying the same code, while explicitly
+      warning that shared code does not prove unchanged geometry.
+- [x] Retrieve published clean-containment parents and children directly, such
+      as a ward's local authority or an LAD's wards.
+- [x] Translate a code through a published directional crosswalk with an
+      explicit purpose: official historical identity, clean membership, or
+      area-overlap apportionment. Unsupported conversions return an error.
+- [x] Search and inspect all 155 curated named locations. Their definitions
+      are versioned in the Atlas release and explicitly labelled editorial
+      groupings rather than silently presented as official geographies.
+- [x] Resolve a named location's direct member codes in one specified
+      geography/release, reporting unresolved legacy codes rather than applying
+      an implicit historical conversion.
 
 ### Geography and place intelligence — next
 
 - [ ] Resolve a canonical area page with validity, aliases, extent, provenance
       and links to geometry and relationships.
-- [ ] Return parent and child areas: ward → local authority, local authority →
-      wards, constituency → wards, and other documented containment relationships.
-- [ ] Return reverse crosswalk lookups without forcing clients to download an
-      entire mapping.
+- [ ] Expand parent/child coverage beyond currently published clean-containment
+      relationships, for example constituency → wards where an authoritative or
+      carefully qualified mapping exists.
+- [ ] Add purpose-aware reverse translation rather than requiring a caller to
+      reverse a directional crosswalk themselves.
 - [ ] Publish a directional relationship graph: within, contains, overlaps,
       predecessor, successor, split-from, merged-from and equivalent-to, each with
       method, quality and provenance.
-- [ ] Explain historical code changes rather than pretending every old area has
-      a single modern replacement.
+- [ ] Add official ward and LAD historical change lookups. Do not promote
+      name-based matching or same-code continuity to a public equivalence claim.
 - [ ] Return explicit absence states: abolished, unsupported geography, partial
       coverage, or no sufficiently trustworthy conversion.
 - [ ] Publish compiler-discovered relationship candidates only after endpoint
@@ -85,13 +100,12 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Named locations — next
 
-- [ ] Search named places such as Greater Manchester, Devon and London.
-- [ ] Publish versioned named-location definitions with membership, provenance
-      and clear semantics: combined authority, ceremonial county, historic county
-      or editorial grouping.
+- [ ] Add sourced semantic classifications where available: combined authority,
+      ceremonial county or historic county. Definitions currently remain
+      transparently labelled `editorial-grouping`.
 - [ ] List all wards, local authorities or constituencies in a named location.
-      The response must state whether membership means fully contained, intersecting
-      or weighted overlap.
+      The response must state whether membership means direct code match, fully
+      contained, intersecting or weighted overlap.
 - [ ] Return a named location's boundary, bounding box and optional union
       geometry.
 - [ ] Compare location definitions and membership across releases.

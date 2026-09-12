@@ -12,6 +12,10 @@ import type {
 } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
+import type {
+	NamedLocationInventory,
+	NamedLocationLookup,
+} from "./namedLocations";
 import type { ValidationReport } from "./validationReport";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
@@ -132,6 +136,27 @@ const matchesAreaQuery = (area: AreaSearchResult, query: string) => {
 	);
 };
 
+const findArea = (
+	areaLookup: AreaLookup | undefined,
+	geography: string,
+	boundaryRelease: string,
+	code: string,
+) => areaLookup?.get(`${geography}/${boundaryRelease}`)?.get(code);
+
+const relationshipsFor = (
+	areaRelationshipIndex: AreaRelationshipIndex | undefined,
+	crosswalkLookup: CrosswalkLookup | undefined,
+	geography: string,
+	boundaryRelease: string,
+	code: string,
+) =>
+	(
+		areaRelationshipIndex ??
+		(crosswalkLookup
+			? createAreaRelationshipIndex(crosswalkLookup.values())
+			: undefined)
+	)?.get(`${geography}/${boundaryRelease}/${code}`) ?? [];
+
 export const route = (
 	method: string | undefined,
 	url: string | undefined,
@@ -146,6 +171,8 @@ export const route = (
 	areaGeometryCache?: AreaGeometryCache,
 	relationshipCandidateInventory?: RelationshipCandidateInventory,
 	validationReport?: ValidationReport,
+	namedLocationInventory?: NamedLocationInventory,
+	namedLocationLookup?: NamedLocationLookup,
 ): ApiResponse => {
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -175,8 +202,15 @@ export const route = (
 					"/v1/geography-inventory",
 					"/v1/areas",
 					"/v1/areas/{type}/{release}/{code}",
+					"/v1/areas/{type}/{release}/{code}/history",
+					"/v1/areas/{type}/{release}/{code}/parents",
+					"/v1/areas/{type}/{release}/{code}/children",
 					"/v1/areas/{type}/{release}/{code}/relationships",
 					"/v1/areas/{type}/{release}/{code}/geometry",
+					"/v1/translations",
+					"/v1/locations",
+					"/v1/locations/{location-id}",
+					"/v1/locations/{location-id}/members",
 					"/v1/crosswalks",
 					"/v1/crosswalks/{crosswalk-id}",
 					"/v1/crosswalks/{crosswalk-id}/records",
@@ -186,6 +220,187 @@ export const route = (
 					"/v1/validation/crosswalks/{crosswalk-id}",
 					"/v1/atlas-release",
 				],
+			}),
+		};
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "translations"
+	) {
+		if (!crosswalkLookup) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the crosswalk inventory before translating area codes.",
+			);
+		}
+		const source = {
+			geography: parsedUrl.searchParams.get("sourceGeography"),
+			boundaryRelease: parsedUrl.searchParams.get("sourceRelease"),
+			code: parsedUrl.searchParams.get("code"),
+		};
+		const target = {
+			geography: parsedUrl.searchParams.get("targetGeography"),
+			boundaryRelease: parsedUrl.searchParams.get("targetRelease"),
+		};
+		const purpose = parsedUrl.searchParams.get("purpose") ?? "membership";
+		if (
+			!source.geography ||
+			!source.boundaryRelease ||
+			!source.code ||
+			!target.geography ||
+			!target.boundaryRelease ||
+			!["identity", "membership", "apportion"].includes(purpose)
+		) {
+			return problem(
+				400,
+				"Invalid Query",
+				"sourceGeography, sourceRelease, code, targetGeography and targetRelease are required; purpose must be identity, membership or apportion.",
+			);
+		}
+		const matches = [...crosswalkLookup.values()].flatMap((crosswalk) => {
+			if (
+				crosswalk.from.geography !== source.geography ||
+				crosswalk.from.boundaryRelease !== source.boundaryRelease ||
+				crosswalk.to.geography !== target.geography ||
+				crosswalk.to.boundaryRelease !== target.boundaryRelease
+			)
+				return [];
+			const record = crosswalk.records.find(
+				(candidate) => candidate.source.code === source.code,
+			);
+			if (!record) return [];
+			const validForPurpose =
+				(purpose === "identity" &&
+					crosswalk.method === "official-lookup") ||
+				(purpose === "membership" &&
+					crosswalk.method === "clean-containment") ||
+				(purpose === "apportion" &&
+					crosswalk.method === "area-overlap");
+			return validForPurpose
+				? [
+						{
+							crosswalk: {
+								id: crosswalk.id,
+								method: crosswalk.method,
+								quality: crosswalk.quality,
+								weighting: crosswalk.weighting,
+							},
+							source: record.source,
+							targets: record.targets,
+						},
+					]
+				: [];
+		});
+		return matches.length > 0
+			? {
+					status: 200,
+					body: envelope(releaseId, {
+						source,
+						target,
+						purpose,
+						matches,
+					}),
+				}
+			: problem(
+					422,
+					"Conversion Unavailable",
+					"No published crosswalk supports this source, target and purpose. Same codes across releases are not treated as proof of geographic identity.",
+				);
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "locations"
+	) {
+		if (!namedLocationInventory) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the named location inventory before listing locations.",
+			);
+		}
+		const query = parsedUrl.searchParams
+			.get("q")
+			?.trim()
+			.toLocaleLowerCase();
+		const locations = namedLocationInventory.locations.filter(
+			(location) =>
+				!query ||
+				location.id.startsWith(query) ||
+				location.label.toLocaleLowerCase().startsWith(query),
+		);
+		return { status: 200, body: envelope(releaseId, locations) };
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "locations"
+	) {
+		const location = namedLocationLookup?.get(segments[2] as string);
+		return location
+			? { status: 200, body: envelope(releaseId, location) }
+			: problem(
+					404,
+					"Not Found",
+					"No named location matches that identity.",
+				);
+	}
+
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "locations" &&
+		segments[3] === "members"
+	) {
+		const location = namedLocationLookup?.get(segments[2] as string);
+		if (!location) {
+			return problem(
+				404,
+				"Not Found",
+				"No named location matches that identity.",
+			);
+		}
+		const geography =
+			parsedUrl.searchParams.get("geography") ?? "localAuthority";
+		const boundaryRelease = parsedUrl.searchParams.get("release");
+		if (!boundaryRelease) {
+			return problem(
+				400,
+				"Invalid Query",
+				"release is required to resolve a named location's members.",
+			);
+		}
+		const areas = areaLookup?.get(`${geography}/${boundaryRelease}`);
+		if (!areas) {
+			return problem(
+				404,
+				"Not Found",
+				"No compiled area release matches the requested member geography and release.",
+			);
+		}
+		const members = location.memberCodes.flatMap((code) => {
+			const area = areas.get(code);
+			return area
+				? [{ id: `${geography}/${boundaryRelease}/${code}`, ...area }]
+				: [];
+		});
+		const resolvedCodes = new Set(members.map((member) => member.code));
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				location,
+				geography,
+				boundaryRelease,
+				membership: "direct-code-match",
+				members,
+				unresolvedMemberCodes: location.memberCodes.filter(
+					(code) => !resolvedCodes.has(code),
+				),
 			}),
 		};
 	}
@@ -285,12 +500,119 @@ export const route = (
 		segments.length === 6 &&
 		segments[0] === "v1" &&
 		segments[1] === "areas" &&
+		segments[5] === "history"
+	) {
+		const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
+			string,
+			string,
+			string,
+		];
+		const area = findArea(areaLookup, geography, boundaryRelease, code);
+		if (!area) {
+			return problem(
+				404,
+				"Not Found",
+				"No compiled area matches that identity.",
+			);
+		}
+		const sameCodeReleases = searchableAreas(areaLookup ?? new Map())
+			.filter(
+				(candidate) =>
+					candidate.geography === geography &&
+					candidate.code === code &&
+					candidate.boundaryRelease !== boundaryRelease,
+			)
+			.map((candidate) => ({
+				...candidate,
+				status: "same-code-continuity" as const,
+			}))
+			.sort((left, right) =>
+				left.boundaryRelease.localeCompare(right.boundaryRelease),
+			);
+		const relationships = relationshipsFor(
+			areaRelationshipIndex,
+			crosswalkLookup,
+			geography,
+			boundaryRelease,
+			code,
+		).filter(
+			(relationship) =>
+				relationship.relation === "successor" ||
+				relationship.relation === "predecessor",
+		);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				id: `${geography}/${boundaryRelease}/${code}`,
+				geography,
+				boundaryRelease,
+				...area,
+				relationships,
+				sameCodeReleases,
+				note: "Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.",
+			}),
+		};
+	}
+
+	if (
+		segments.length === 6 &&
+		segments[0] === "v1" &&
+		segments[1] === "areas" &&
+		(segments[5] === "parents" || segments[5] === "children")
+	) {
+		const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
+			string,
+			string,
+			string,
+		];
+		const area = findArea(areaLookup, geography, boundaryRelease, code);
+		if (!area) {
+			return problem(
+				404,
+				"Not Found",
+				"No compiled area matches that identity.",
+			);
+		}
+		if (!crosswalkLookup) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the crosswalk inventory before looking up area membership.",
+			);
+		}
+		const relation = segments[5] === "parents" ? "within" : "contains";
+		const relationships = relationshipsFor(
+			areaRelationshipIndex,
+			crosswalkLookup,
+			geography,
+			boundaryRelease,
+			code,
+		).filter((relationship) => relationship.relation === relation);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				id: `${geography}/${boundaryRelease}/${code}`,
+				geography,
+				boundaryRelease,
+				...area,
+				relationships,
+			}),
+		};
+	}
+
+	if (
+		segments.length === 6 &&
+		segments[0] === "v1" &&
+		segments[1] === "areas" &&
 		segments[5] === "geometry"
 	) {
 		const [geography, boundaryRelease, code] = segments.slice(2, 5);
-		const area = areaLookup
-			?.get([geography, boundaryRelease].join("/"))
-			?.get(code as string);
+		const area = findArea(
+			areaLookup,
+			geography as string,
+			boundaryRelease as string,
+			code as string,
+		);
 		if (!area)
 			return problem(
 				404,
@@ -352,9 +674,12 @@ export const route = (
 		segments[5] === "relationships"
 	) {
 		const [geography, boundaryRelease, code] = segments.slice(2, 5);
-		const area = areaLookup
-			?.get([geography, boundaryRelease].join("/"))
-			?.get(code as string);
+		const area = findArea(
+			areaLookup,
+			geography as string,
+			boundaryRelease as string,
+			code as string,
+		);
 		if (!area) {
 			return problem(
 				404,
@@ -369,16 +694,17 @@ export const route = (
 				"Build the crosswalk inventory before looking up relationships.",
 			);
 		}
-		const areaId = [geography, boundaryRelease, code].join("/");
-		const relationships =
-			(
-				areaRelationshipIndex ??
-				createAreaRelationshipIndex(crosswalkLookup.values())
-			).get(areaId) ?? [];
+		const relationships = relationshipsFor(
+			areaRelationshipIndex,
+			crosswalkLookup,
+			geography as string,
+			boundaryRelease as string,
+			code as string,
+		);
 		return {
 			status: 200,
 			body: envelope(releaseId, {
-				id: areaId,
+				id: [geography, boundaryRelease, code].join("/"),
 				geography,
 				boundaryRelease,
 				...area,

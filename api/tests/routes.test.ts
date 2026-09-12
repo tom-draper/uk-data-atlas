@@ -4,7 +4,10 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
-import { AreaGeometryCache, type GeometrySourceLookup } from "../src/areaGeometry";
+import {
+	AreaGeometryCache,
+	type GeometrySourceLookup,
+} from "../src/areaGeometry";
 import { route, type CrosswalkLookup } from "../src/routes";
 import type { AtlasRelease } from "../src/atlasRelease";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
@@ -14,6 +17,10 @@ import type {
 } from "../src/crosswalkInventory";
 import type { GeographyInventory } from "../src/geographyInventory";
 import type { RelationshipCandidateInventory } from "../src/relationshipCandidates";
+import {
+	createNamedLocationLookup,
+	type NamedLocationInventory,
+} from "../src/namedLocations";
 import type { ValidationReport } from "../src/validationReport";
 
 const registry: BoundaryRegistry = {
@@ -144,6 +151,45 @@ const crosswalkLookup: CrosswalkLookup = new Map([
 	[containmentCrosswalk.id, containmentCrosswalk],
 ]);
 
+const namedLocationInventory: NamedLocationInventory = {
+	schemaVersion: 1,
+	contentHash: "sha256:named-locations",
+	source: {
+		artifact: "data/precompiled/gazetteer.core.json",
+		gazetteerVersion: 1,
+	},
+	locations: [
+		{
+			id: "greater-manchester",
+			label: "Greater Manchester",
+			kind: "editorial-grouping",
+			memberCodes: ["E08000001", "E08000999"],
+			bbox: [-2.5, 53.3, -2, 53.7],
+		},
+	],
+};
+
+const namedLocationLookup = createNamedLocationLookup(namedLocationInventory);
+
+const routeWithNamedLocations = (url: string) =>
+	route(
+		"GET",
+		url,
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		namedLocationInventory,
+		namedLocationLookup,
+	);
+
 test("lists published geographies", () => {
 	const response = route("GET", "/v1/geographies", registry);
 	assert.equal(response.status, 200);
@@ -206,7 +252,13 @@ test("gets a compiled area by its full identity", () => {
 test("gets an area's geometry as a GeoJSON Feature", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
-		const directory = join(root, "data", "boundaries", "ward", "2025-01-en-ward");
+		const directory = join(
+			root,
+			"data",
+			"boundaries",
+			"ward",
+			"2025-01-en-ward",
+		);
 		mkdirSync(directory, { recursive: true });
 		writeFileSync(
 			join(directory, "wards.geojson"),
@@ -215,7 +267,10 @@ test("gets an area's geometry as a GeoJSON Feature", () => {
 				features: [
 					{
 						properties: { WD25CD: "E05000001" },
-						geometry: { type: "Point", coordinates: [-2.24, 53.48] },
+						geometry: {
+							type: "Point",
+							coordinates: [-2.24, 53.48],
+						},
 					},
 				],
 			}),
@@ -500,6 +555,155 @@ test("navigates published relationships in both directions", () => {
 	]);
 });
 
+test("offers focused parent and child containment routes", () => {
+	const parents = route(
+		"GET",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/parents",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(parents.status, 200);
+	const parentData = "data" in parents.body ? parents.body.data : undefined;
+	assert.ok(parentData && typeof parentData === "object");
+	assert.equal(
+		(parentData as { relationships: Array<{ relation: string }> })
+			.relationships[0]?.relation,
+		"within",
+	);
+
+	const children = route(
+		"GET",
+		"/v1/areas/localAuthority/2025-01-uk-lad/E08000001/children",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(children.status, 200);
+	const childData = "data" in children.body ? children.body.data : undefined;
+	assert.ok(childData && typeof childData === "object");
+	assert.equal(
+		(childData as { relationships: Array<{ relation: string }> })
+			.relationships[0]?.relation,
+		"contains",
+	);
+});
+
+test("reports same-code continuity without calling it an exact historical match", () => {
+	const historyLookup = createAreaLookup([
+		{
+			schemaVersion: 1,
+			contentHash: "sha256:ward-2024",
+			geography: "ward",
+			boundaryRelease: "2024-01-en-ward",
+			codeProperty: "WD24CD",
+			nameProperty: "WD24NM",
+			areas: [{ code: "E05000001", name: "Example ward" }],
+		},
+		{
+			schemaVersion: 1,
+			contentHash: "sha256:ward-2025",
+			geography: "ward",
+			boundaryRelease: "2025-01-en-ward",
+			codeProperty: "WD25CD",
+			nameProperty: "WD25NM",
+			areas: [{ code: "E05000001", name: "Example ward" }],
+		},
+	]);
+	const response = route(
+		"GET",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/history",
+		registry,
+		geographyInventory,
+		historyLookup,
+	);
+	assert.equal(response.status, 200);
+	const data = "data" in response.body ? response.body.data : undefined;
+	assert.deepEqual((data as { sameCodeReleases: unknown }).sameCodeReleases, [
+		{
+			id: "ward/2024-01-en-ward/E05000001",
+			geography: "ward",
+			boundaryRelease: "2024-01-en-ward",
+			code: "E05000001",
+			name: "Example ward",
+			status: "same-code-continuity",
+		},
+	]);
+	assert.match(
+		(data as { note: string }).note,
+		/does not assert unchanged geometry/,
+	);
+});
+
+test("translates codes only through a crosswalk valid for the requested purpose", () => {
+	const response = route(
+		"GET",
+		"/v1/translations?sourceGeography=constituency&sourceRelease=2010&code=E14000001&targetGeography=constituency&targetRelease=2024-07-uk-bgc&purpose=identity",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(response.status, 200);
+	const data = "data" in response.body ? response.body.data : undefined;
+	assert.deepEqual((data as { matches: unknown }).matches, [
+		{
+			crosswalk: {
+				id: "constituency-2010-to-2024",
+				method: "official-lookup",
+				quality: "publisher-supplied",
+				weighting: { status: "not-provided" },
+			},
+			source: { code: "E14000001", labels: ["Old seat"] },
+			targets: [{ code: "E14001001", labels: ["New seat A"] }],
+		},
+	]);
+
+	const unsupported = route(
+		"GET",
+		"/v1/translations?sourceGeography=constituency&sourceRelease=2010&code=E14000001&targetGeography=constituency&targetRelease=2024-07-uk-bgc&purpose=membership",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	assert.equal(unsupported.status, 422);
+});
+
+test("publishes curated named locations and reports unresolved legacy members", () => {
+	const list = routeWithNamedLocations("/v1/locations?q=greater");
+	assert.equal(list.status, 200);
+	assert.deepEqual("data" in list.body && list.body.data, [
+		namedLocationInventory.locations[0],
+	]);
+
+	const members = routeWithNamedLocations(
+		"/v1/locations/greater-manchester/members?release=2025-01-uk-lad",
+	);
+	assert.equal(members.status, 200);
+	assert.deepEqual("data" in members.body && members.body.data, {
+		location: namedLocationInventory.locations[0],
+		geography: "localAuthority",
+		boundaryRelease: "2025-01-uk-lad",
+		membership: "direct-code-match",
+		members: [
+			{
+				id: "localAuthority/2025-01-uk-lad/E08000001",
+				code: "E08000001",
+				name: "Greater Manchester",
+				aliases: ["GM"],
+			},
+		],
+		unresolvedMemberCodes: ["E08000999"],
+	});
+});
+
 test("lists published crosswalks", () => {
 	const response = route(
 		"GET",
@@ -665,7 +869,9 @@ const relationshipCandidateInventory: RelationshipCandidateInventory = {
 					multiTargetSourceCount: 0,
 					missingValueFeatureCount: 0,
 				},
-				reasons: ["No compiled target release has lad19cd/lad19nm fields."],
+				reasons: [
+					"No compiled target release has lad19cd/lad19nm fields.",
+				],
 			},
 		},
 	],
@@ -865,7 +1071,10 @@ test("serves the validation report, optionally only resources with waivers", () 
 	const all = validationRoute("/v1/validation", validationReport);
 	assert.equal(all.status, 200);
 	assert.deepEqual("data" in all.body && all.body.data, validationReport);
-	const waived = validationRoute("/v1/validation?status=waived", validationReport);
+	const waived = validationRoute(
+		"/v1/validation?status=waived",
+		validationReport,
+	);
 	assert.deepEqual(
 		"data" in waived.body &&
 			(waived.body.data as ValidationReport).resources.map(
@@ -874,7 +1083,8 @@ test("serves the validation report, optionally only resources with waivers", () 
 		["boundary-releases/ward/2025-01-en-ward"],
 	);
 	assert.equal(
-		validationRoute("/v1/validation?status=failed", validationReport).status,
+		validationRoute("/v1/validation?status=failed", validationReport)
+			.status,
 		400,
 	);
 });
