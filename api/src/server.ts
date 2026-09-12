@@ -29,6 +29,7 @@ import {
 import type { ValidationReport } from "./validationReport";
 import type {
 	DataCatalog,
+	MeasureObservationArtifact,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
 } from "./dataCatalog";
@@ -224,6 +225,24 @@ export const readPopulationLocalAuthorityObservations = (
 	return observations;
 };
 
+export const readGhgEmissionsObservations = (
+	apiRoot: string,
+): MeasureObservationArtifact => {
+	const path = join(apiRoot, "public", "ghg-emissions-observations.json");
+	const observations = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as MeasureObservationArtifact;
+	if (
+		observations.schemaVersion !== 1 ||
+		observations.measureId !== "ghg-emissions" ||
+		observations.sourceGeography.type !== "localAuthority" ||
+		!Array.isArray(observations.periods)
+	) {
+		throw new Error(`Invalid emissions observations at ${path}`);
+	}
+	return observations;
+};
+
 export const readMeasureCompatibility = (
 	apiRoot: string,
 ): MeasureCompatibilityInventory => {
@@ -270,6 +289,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		populationObservations: readPopulationObservations(apiRoot),
 		populationLocalAuthorityObservations:
 			readPopulationLocalAuthorityObservations(apiRoot),
+		ghgEmissionsObservations: readGhgEmissionsObservations(apiRoot),
 		measureCompatibilityInventory: readMeasureCompatibility(apiRoot),
 	};
 };

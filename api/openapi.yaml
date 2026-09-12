@@ -49,7 +49,7 @@ paths:
                     - /v1/measures/{measure-id}
                     - /v1/measures/{measure-id}/compatibility
                     - /v1/measures/{measure-id}/coverage
-                    - /v1/data/population-estimate
+                    - /v1/data/{measure-id}
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/areas/{type}/{release}/{code}/relationships
@@ -281,24 +281,36 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
-  /data/population-estimate:
+  /data/{measure-id}:
     get:
-      operationId: getPopulationEstimate
-      summary: Retrieve source-exact population observations
+      operationId: getMeasureObservations
+      summary: Retrieve a measure's source-exact observations
       description: >
-        Serves observed values for two source partitions: 2022 Ward 2023 codes
-        in England and Wales, and 2011–2024 Local Authority 2023 codes across
-        all four UK nations. It never selects a May/December boundary release,
-        converts values, or aggregates them. A caller may supply `release`
-        only when the compatibility report proves that every source code is
-        present; the response identifies that caller-selected code join.
-        `GET /measures/population-estimate` declares valid period/geography
-        combinations, and `GET /measures/population-estimate/compatibility`
-        declares eligible releases. Every response includes compact provenance
-        linking the immutable Atlas release, measure, source dataset and
-        observation artifact, along with the selected geography match and an
-        explicit statement that no transformation has been applied.
+        Serves observed values for one published measure and source partition.
+        `population-estimate` covers 2022 Ward 2023 codes in England and Wales,
+        and 2011–2024 Local Authority 2023 codes across all four UK nations.
+        `ghg-emissions` covers 2005–2024 Local Authority 2025 codes across all
+        four nations, as net territorial emissions in kt CO2e; emissions per
+        resident are not served, because a ratio cannot be summed over areas.
+        This route never selects a May/December boundary release, converts
+        values, or aggregates them. A caller may supply `release` only when the
+        compatibility report proves that every source code is present; the
+        response identifies that caller-selected code join.
+        `GET /measures/{measure-id}` declares valid period/geography
+        combinations, and `GET /measures/{measure-id}/compatibility` declares
+        eligible releases. Every response includes compact provenance linking
+        the immutable Atlas release, measure, source dataset and observation
+        artifact, along with the selected geography match and an explicit
+        statement that no transformation has been applied.
       parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: >
+            A published measure id, for example `population-estimate` or
+            `ghg-emissions`. `GET /measures` lists them.
         - name: period
           in: query
           required: true
@@ -347,7 +359,8 @@ paths:
           description: >
             `json` returns the API envelope. `csv` and `ndjson` return one
             provenance-bearing row per observation, suitable for downloads and
-            line-oriented processing. Tabular responses are paginated like the
+            line-oriented processing. Each row carries the measure's `unit`, so
+            a saved file cannot be read in the wrong one. Tabular responses are paginated like the
             JSON ones, but carry the next page as a `Link` header with
             `rel="next"` because they have no envelope to hold a cursor.
         - name: limit

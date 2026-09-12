@@ -68,10 +68,15 @@ export type DatasetCatalogueEntry = {
 
 export type Country = "GB-ENG" | "GB-NIR" | "GB-SCT" | "GB-WLS";
 
-export type PopulationSource = {
-	datasetId: "population" | "population-uk";
+export type SourceGeography = {
+	type: "ward" | "localAuthority";
+	boundaryYear: number;
+};
+
+export type MeasureSource = {
+	datasetId: string;
 	periods: string[];
-	sourceGeography: { type: "ward" | "localAuthority"; boundaryYear: 2023 };
+	sourceGeography: SourceGeography;
 	coverage: {
 		kind: "partial" | "source-reported";
 		countries: Country[];
@@ -80,20 +85,32 @@ export type PopulationSource = {
 	};
 };
 
-export type PopulationMeasure = {
-	id: "population-estimate";
-	label: "Population estimate";
-	valueKind: "count";
-	unit: "people";
+export type Measure = {
+	id: string;
+	label: string;
+	valueKind: "count" | "quantity";
+	unit: string;
+	/**
+	 * How the measure may legitimately be combined over areas. Every measure
+	 * published so far is extensive, so its values add; `available` says
+	 * whether the API will actually do the adding, which it will not yet.
+	 */
 	aggregation: { kind: "extensive"; operation: "sum"; available: false };
-	sources: PopulationSource[];
+	sources: MeasureSource[];
 	availability: {
 		sourceExact: true;
 		conversion: false;
 		aggregation: false;
 	};
-	links: { data: "/v1/data/population-estimate" };
+	links: { data: string };
+	/** Anything a caller must know to read the values correctly. */
+	notes?: string[];
 };
+
+/** @deprecated Use `MeasureSource`; kept so existing imports keep compiling. */
+export type PopulationSource = MeasureSource;
+/** @deprecated Use `Measure`. */
+export type PopulationMeasure = Measure;
 
 export type DataCatalog = {
 	schemaVersion: 1;
@@ -103,7 +120,7 @@ export type DataCatalog = {
 		manifestVersion: number;
 	};
 	datasets: DatasetCatalogueEntry[];
-	measures: PopulationMeasure[];
+	measures: Measure[];
 };
 
 export type PopulationObservation = {
@@ -119,6 +136,19 @@ export type PopulationObservationArtifact = {
 	period: "2022";
 	sourceGeography: { type: "ward"; boundaryYear: 2023 };
 	records: PopulationObservation[];
+};
+
+/**
+ * A measure's observations, one block per period. The ward population artifact
+ * predates this shape and carries a single period at the top level; everything
+ * published since uses this.
+ */
+export type MeasureObservationArtifact = {
+	schemaVersion: 1;
+	contentHash: string;
+	measureId: string;
+	sourceGeography: SourceGeography;
+	periods: Array<{ period: string; records: PopulationObservation[] }>;
 };
 
 export type PopulationLocalAuthorityObservationArtifact = {
@@ -327,6 +357,71 @@ const localAuthorityPopulationRecords = (
 };
 
 /**
+ * Read compiled emissions as one observation per authority per year.
+ *
+ * The value is the net territorial total in kt CO2e across every sector and
+ * gas, which is what the publisher reports and the only figure here that adds
+ * over areas. Per-person intensity is deliberately not served: it is a ratio,
+ * and summing or averaging it over a group of authorities would be wrong.
+ */
+const ghgEmissionsPeriods = (
+	path: string,
+): MeasureObservationArtifact["periods"] => {
+	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const periods = Object.entries(source)
+		.map(([period, value]) => {
+			if (!/^\d{4}$/.test(period))
+				throw new Error(`${path}: invalid emissions period ${period}`);
+			const entry = object(value, `${path}.${period}`);
+			if (
+				entry.year !== Number(period) ||
+				entry.boundaryYear !== 2025 ||
+				entry.boundaryType !== "localAuthority"
+			) {
+				throw new Error(
+					`${path}.${period}: expected local-authority data on the 2025 code vintage`,
+				);
+			}
+			const data = object(entry.data, `${path}.${period}.data`);
+			return {
+				period,
+				records: Object.entries(data)
+					.map(([areaCode, record]) => {
+						if (!/^[ENSW]\d{8}$/.test(areaCode)) {
+							throw new Error(
+								`${path}: unsupported area code ${areaCode}`,
+							);
+						}
+						const total = object(
+							record,
+							`${path}.${period}.${areaCode}`,
+						).totalKtCO2e;
+						if (typeof total !== "number" || !Number.isFinite(total))
+							throw new Error(
+								`${path}.${period}.${areaCode}.totalKtCO2e must be a finite number`,
+							);
+						return {
+							areaCode,
+							// Not guarded by number(), which rejects negatives:
+							// land use is a net sink in 190 of the 361
+							// authorities, and nothing in the publisher's method
+							// prevents one from exceeding the other sectors.
+							value: total,
+							status: "observed" as const,
+						};
+					})
+					.sort((left, right) =>
+						left.areaCode.localeCompare(right.areaCode),
+					),
+			};
+		})
+		.sort((left, right) => left.period.localeCompare(right.period));
+	if (periods.length === 0)
+		throw new Error(`${path} has no emissions periods`);
+	return periods;
+};
+
+/**
  * Compile source-lineage metadata and one intentionally narrow, source-exact
  * population measure. It does not select a geometry release: the published
  * input records only declare the Ward 2023 code vintage, not a boundary month.
@@ -335,10 +430,12 @@ export const compileDataCatalog = (
 	manifestPath: string,
 	populationPath: string,
 	populationUkPath: string,
+	ghgEmissionsPath: string,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
 	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
+	ghgEmissionsObservations: MeasureObservationArtifact;
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -403,7 +500,68 @@ export const compileDataCatalog = (
 			`${manifestPath}: population-uk must declare boundary year 2023`,
 		);
 	}
-	const measure: PopulationMeasure = {
+	const emissions = datasets.find(
+		(dataset) => dataset.id === "ghg-emissions",
+	);
+	if (!emissions)
+		throw new Error(`${manifestPath} has no ghg-emissions dataset`);
+	const emissionsPeriods = ghgEmissionsPeriods(ghgEmissionsPath);
+	const emissionsRecordCount = emissionsPeriods.reduce(
+		(total, period) => total + period.records.length,
+		0,
+	);
+	if (emissionsRecordCount !== emissions.summary.dataRecordCount) {
+		throw new Error(
+			`${ghgEmissionsPath}: expected ${emissions.summary.dataRecordCount} records from the manifest, found ${emissionsRecordCount}`,
+		);
+	}
+	if (emissionsPeriods.length !== emissions.summary.datasetCount) {
+		throw new Error(
+			`${ghgEmissionsPath}: expected ${emissions.summary.datasetCount} periods from the manifest, found ${emissionsPeriods.length}`,
+		);
+	}
+	if (
+		emissions.summary.boundaryYears.length !== 1 ||
+		emissions.summary.boundaryYears[0] !== 2025
+	) {
+		throw new Error(
+			`${manifestPath}: ghg-emissions must declare boundary year 2025`,
+		);
+	}
+	const emissionsMeasure: Measure = {
+		id: "ghg-emissions",
+		label: "Greenhouse gas emissions",
+		valueKind: "quantity",
+		unit: "kt CO2e",
+		aggregation: { kind: "extensive", operation: "sum", available: false },
+		sources: [
+			{
+				datasetId: "ghg-emissions",
+				periods: emissionsPeriods.map((period) => period.period),
+				sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
+				coverage: {
+					kind: "source-reported",
+					countries: countriesFor(
+						emissionsPeriods[0]?.records ?? [],
+					),
+					recordCount: emissionsPeriods[0]?.records.length ?? 0,
+					note: "Published source records cover all four UK nations for every available period, restated on one code vintage by the publisher.",
+				},
+			},
+		],
+		availability: {
+			sourceExact: true,
+			conversion: false,
+			aggregation: false,
+		},
+		links: { data: "/v1/data/ghg-emissions" },
+		notes: [
+			"Values are net territorial emissions across every sector and gas. Land use, land use change and forestry is a net sink in most rural authorities, so their totals are lower than their gross emissions. No published authority-year is negative, but nothing in the method prevents it.",
+			"Emissions per resident are not served. They are a ratio, and a ratio cannot be summed over areas or compared between authorities of different size without recomputing it from the underlying totals.",
+			"Local authority totals exclude sources the publisher cannot attribute to an area, such as aviation and shipping, so they do not sum to the national inventory.",
+		],
+	};
+	const measure: Measure = {
 		id: "population-estimate",
 		label: "Population estimate",
 		valueKind: "count",
@@ -449,7 +607,13 @@ export const compileDataCatalog = (
 			manifestVersion: manifest.version,
 		},
 		datasets,
-		measures: [measure],
+		measures: [measure, emissionsMeasure],
+	});
+	const emissionsObservationsContent = JSON.stringify({
+		schemaVersion: 1,
+		measureId: "ghg-emissions",
+		sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
+		periods: emissionsPeriods,
 	});
 	const observationsContent = JSON.stringify({
 		schemaVersion: 1,
@@ -473,7 +637,7 @@ export const compileDataCatalog = (
 				manifestVersion: manifest.version,
 			},
 			datasets,
-			measures: [measure],
+			measures: [measure, emissionsMeasure],
 		},
 		populationObservations: {
 			schemaVersion: 1,
@@ -489,6 +653,13 @@ export const compileDataCatalog = (
 			measureId: "population-estimate",
 			sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 			periods: localAuthorityPeriods,
+		},
+		ghgEmissionsObservations: {
+			schemaVersion: 1,
+			contentHash: sha256(emissionsObservationsContent),
+			measureId: "ghg-emissions",
+			sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
+			periods: emissionsPeriods,
 		},
 	};
 };

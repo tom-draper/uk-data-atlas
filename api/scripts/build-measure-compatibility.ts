@@ -5,6 +5,7 @@ import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type {
 	DataCatalog,
+	MeasureObservationArtifact,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
 } from "../src/dataCatalog";
@@ -21,6 +22,7 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 		"area-inventory.json",
 		"population-observations.json",
 		"population-local-authority-observations.json",
+		"ghg-emissions-observations.json",
 	];
 	for (const file of required) {
 		if (!existsSync(join(publicDirectory, file))) {
@@ -49,6 +51,9 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 				"population-local-authority-observations.json",
 			),
 		),
+		read<MeasureObservationArtifact>(
+			join(publicDirectory, "ghg-emissions-observations.json"),
+		),
 	);
 	const outputPath = join(publicDirectory, "measure-compatibility.json");
 	writeFileSync(outputPath, `${JSON.stringify(compatibility, null, "\t")}\n`);
@@ -60,6 +65,6 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildMeasureCompatibility(repositoryRoot);
 	console.log(
-		`Wrote compatibility for ${result.measureCount} measure to ${result.outputPath}`,
+		`Wrote compatibility for ${result.measureCount} measures to ${result.outputPath}`,
 	);
 }

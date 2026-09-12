@@ -27,6 +27,7 @@ import {
 } from "../src/namedLocations";
 import type { ValidationReport } from "../src/validationReport";
 import type {
+	MeasureObservationArtifact,
 	PopulationLocalAuthorityObservationArtifact,
 	DataCatalog,
 	PopulationObservationArtifact,
@@ -56,6 +57,7 @@ const route = (
 	populationObservations?: RouteContext["populationObservations"],
 	populationLocalAuthorityObservations?: RouteContext["populationLocalAuthorityObservations"],
 	measureCompatibilityInventory?: RouteContext["measureCompatibilityInventory"],
+	ghgEmissionsObservations?: RouteContext["ghgEmissionsObservations"],
 ) =>
 	routeRequest(method, url, {
 		boundaryRegistry,
@@ -75,6 +77,7 @@ const route = (
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureCompatibilityInventory,
+		ghgEmissionsObservations,
 	});
 
 const registry: BoundaryRegistry = {
@@ -349,6 +352,52 @@ const dataCatalog: DataCatalog = {
 			},
 			links: { data: "/v1/data/population-estimate" },
 		},
+		{
+			id: "ghg-emissions",
+			label: "Greenhouse gas emissions",
+			valueKind: "quantity",
+			unit: "kt CO2e",
+			aggregation: {
+				kind: "extensive",
+				operation: "sum",
+				available: false,
+			},
+			sources: [
+				{
+					datasetId: "ghg-emissions",
+					periods: ["2024"],
+					sourceGeography: {
+						type: "localAuthority",
+						boundaryYear: 2025,
+					},
+					coverage: {
+						kind: "source-reported",
+						countries: ["GB-ENG"],
+						recordCount: 1,
+						note: "All UK nations.",
+					},
+				},
+			],
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: { data: "/v1/data/ghg-emissions" },
+		},
+	],
+};
+
+const ghgEmissionsObservations: MeasureObservationArtifact = {
+	schemaVersion: 1,
+	contentHash: "sha256:emissions-observations",
+	measureId: "ghg-emissions",
+	sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
+	periods: [
+		{
+			period: "2024",
+			records: [{ areaCode: "E06000001", value: 400, status: "observed" }],
+		},
 	],
 };
 
@@ -463,6 +512,7 @@ const routeWithData = (url: string) =>
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureCompatibilityInventory,
+		ghgEmissionsObservations,
 	);
 
 const populationProvenance = (
@@ -667,7 +717,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	assert.equal(csv.representation?.contentType, "text/csv; charset=utf-8");
 	assert.equal(
 		csv.representation?.body,
-		'atlasRelease,measureId,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status\n"sha256:registry","population-estimate","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed"\n',
+		'atlasRelease,measureId,unit,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status\n"sha256:registry","population-estimate","people","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed"\n',
 	);
 
 	const ndjson = routeWithData(
@@ -681,6 +731,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	assert.deepEqual(JSON.parse(String(ndjson.representation?.body)), {
 		atlasRelease: "sha256:registry",
 		measureId: "population-estimate",
+		unit: "people",
 		datasetId: "population",
 		period: "2022",
 		geography: "ward",
@@ -722,6 +773,63 @@ test("publishes datasets, measures and source-exact population observations", ()
 		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=parquet",
 	);
 	assert.equal(invalidFormat.status, 400);
+});
+
+test("serves greenhouse gas emissions as a second source-exact measure", () => {
+	const measures = routeWithData("/v1/measures");
+	assert.deepEqual(
+		"data" in measures.body
+			? (measures.body.data as Array<{ id: string }>).map(
+					(measure) => measure.id,
+				)
+			: [],
+		["population-estimate", "ghg-emissions"],
+	);
+
+	const observed = routeWithData(
+		"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025",
+	);
+	assert.equal(observed.status, 200);
+	const data = "data" in observed.body ? (observed.body.data as never) : {};
+	assert.deepEqual((data as { records: unknown }).records, [
+		{ areaCode: "E06000001", value: 400, status: "observed" },
+	]);
+	// The provenance names the emissions artifact, not a population one.
+	assert.equal(
+		(data as { provenance: { source: { observations: { artifact: string } } } })
+			.provenance.source.observations.artifact,
+		"ghg-emissions-observations",
+	);
+
+	// A period the measure does not publish is rejected, not served empty.
+	assert.equal(
+		routeWithData(
+			"/v1/data/ghg-emissions?period=1999&geography=localAuthority&boundaryYear=2025",
+		).status,
+		400,
+	);
+	// So is the population measure's own code vintage.
+	assert.equal(
+		routeWithData(
+			"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2023",
+		).status,
+		400,
+	);
+	assert.equal(
+		routeWithData("/v1/data/not-a-measure?period=2024").status,
+		404,
+	);
+});
+
+test("carries the measure's unit into a tabular export", () => {
+	const csv = routeWithData(
+		"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&format=csv",
+	);
+	assert.equal(csv.status, 200);
+	const [header, first] = String(csv.representation?.body).split("\n");
+	assert.ok(header?.startsWith("atlasRelease,measureId,unit,"));
+	// Without the unit a saved emissions file is indistinguishable from people.
+	assert.ok(first?.includes('"kt CO2e"'));
 });
 
 test("publishes measure boundary candidates as code compatibility only", () => {

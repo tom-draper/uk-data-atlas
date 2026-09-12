@@ -4,6 +4,7 @@ import type { AreaReleaseArtifact } from "../src/areaInventory";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type {
 	DataCatalog,
+	MeasureObservationArtifact,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
 } from "../src/dataCatalog";
@@ -155,6 +156,15 @@ const localAuthorityObservations: PopulationLocalAuthorityObservationArtifact =
 		],
 	};
 
+/** This fixture publishes only the population measure, so it goes unread. */
+const emissionsObservations: MeasureObservationArtifact = {
+	schemaVersion: 1,
+	contentHash: "sha256:emissions-observations",
+	measureId: "ghg-emissions",
+	sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
+	periods: [],
+};
+
 test("reports code compatibility without claiming geometry equivalence", () => {
 	const inventory = compileMeasureCompatibility(
 		dataCatalog,
@@ -162,6 +172,7 @@ test("reports code compatibility without claiming geometry equivalence", () => {
 		artifacts,
 		wardObservations,
 		localAuthorityObservations,
+		emissionsObservations,
 	);
 	const sources = inventory.measures[0]?.sources;
 	assert.equal(sources?.[0]?.candidates[0]?.status, "code-set-compatible");
