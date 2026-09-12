@@ -218,8 +218,11 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Rank a source-exact measure partition through
       `GET /v1/data/{measure-id}/rankings`, using documented competition ranks
       for ties and refusing release selection, conversion and aggregation.
-- [ ] Return comparisons and uncertainty intervals where the measure semantics
-      and source publication support them.
+- [x] Compare two source-exact areas through
+      `GET /v1/data/{measure-id}/compare`, with explicitly named baseline and
+      comparison sides, a directed same-unit difference, and no relative
+      difference for ratio measures.
+- [ ] Return uncertainty intervals where the source publication supports them.
 - [ ] Return life expectancy by total, male and female where the source
       publishes those series.
 - [ ] Return house-price, deprivation, election and other curated measures with
@@ -1231,6 +1234,7 @@ pnpm start
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
 - `GET /v1/data/population-estimate/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023`
+- `GET /v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000001&comparisonAreaCode=W05000001`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&release=2025-05-uk-bgc-v2&include=area`
 - `GET /v1/measures/ghg-emissions/coverage`

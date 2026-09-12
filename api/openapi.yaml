@@ -52,6 +52,7 @@ paths:
                     - /v1/data/{measure-id}
                     - /v1/data/{measure-id}/series
                     - /v1/data/{measure-id}/rankings
+                    - /v1/data/{measure-id}/compare
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/areas/{type}/{release}/{code}/relationships
@@ -528,6 +529,67 @@ paths:
       responses:
         "200":
           description: Cursor-paginated competition ranks for the source partition.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: The requested conversion, aggregation or geometry release is not supported.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /data/{measure-id}/compare:
+    get:
+      operationId: compareSourceExactMeasureAreas
+      summary: Compare two areas within one source-exact measure partition
+      description: >
+        Returns the comparison observation minus the baseline observation for
+        one published period, geography and code vintage. The two named areas
+        must be in the same source partition. Ratios report a difference on
+        their source scale rather than a misleading relative change. The route
+        does not select a boundary release, convert values or aggregate them.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: period
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: geography
+          in: query
+          required: true
+          schema:
+            enum: [ward, localAuthority]
+        - name: boundaryYear
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: baselineAreaCode
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: comparisonAreaCode
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The named source-exact observations and their directed difference.
           content:
             application/json:
               schema:
