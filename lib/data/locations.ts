@@ -128,7 +128,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-1.7, 53.7, -1.4, 53.9],
 	},
 	Sheffield: {
-		lad_codes: ["E08000039"],
+		lad_codes: ["E08000019", "E08000039"],
 		bounds: [-1.6, 53.3, -1.3, 53.5],
 	},
 	Bradford: {
@@ -152,7 +152,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-1.55, 53.65, -1.45, 53.72],
 	},
 	Barnsley: {
-		lad_codes: ["E08000038"],
+		lad_codes: ["E08000016", "E08000038"],
 		bounds: [-1.55, 53.52, -1.45, 53.58],
 	},
 	Rotherham: {
@@ -449,7 +449,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Scotland
 	Glasgow: {
-		lad_codes: ["S12000049"],
+		lad_codes: ["S12000049", "S12000046"],
 		bounds: [-4.35, 55.8, -4.15, 55.92],
 	},
 	Edinburgh: {
@@ -473,7 +473,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-4.0, 56.1, -3.9, 56.15],
 	},
 	Perth: {
-		lad_codes: ["S12000048"],
+		lad_codes: ["S12000048", "S12000024"],
 		bounds: [-3.5, 56.38, -3.4, 56.43],
 	},
 	Paisley: {
@@ -802,26 +802,28 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000077",
 
 			// Hertfordshire LADs: Broxbourne, Dacorum, East Herts, Hertsmere, North Herts, St Albans, Stevenage, Three Rivers, Watford, Welwyn Hatfield
+			// East Herts, St Albans, Stevenage and Welwyn Hatfield were recoded
+			// in 2019; both vintages are listed because datasets carry both.
 			"E07000095",
 			"E07000096",
 			"E07000097",
+			"E07000242",
 			"E07000098",
 			"E07000099",
 			"E07000100",
+			"E07000240",
 			"E07000101",
+			"E07000243",
 			"E07000102",
 			"E07000103",
 			"E07000104",
+			"E07000241",
 
 			// Suffolk LADs: Ipswich, East Suffolk, West Suffolk (incorporating boundary changes up to 2019)
 			"E07000200",
 			"E07000201",
 			"E07000202",
 			"E07000203",
-			"E07000100",
-			"E07000104",
-			"E07000097",
-			"E07000101",
 			"E07000244",
 			"E07000245",
 
@@ -953,17 +955,23 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Hertfordshire
 	Hertfordshire: {
+		// East Herts, St Albans, Stevenage and Welwyn Hatfield were recoded in
+		// 2019; both vintages are listed because datasets carry both.
 		lad_codes: [
 			"E07000095",
 			"E07000096",
 			"E07000097",
+			"E07000242",
 			"E07000098",
 			"E07000099",
 			"E07000100",
+			"E07000240",
 			"E07000101",
+			"E07000243",
 			"E07000102",
 			"E07000103",
 			"E07000104",
+			"E07000241",
 		],
 		bounds: [-0.6, 51.6, 0.3, 52.1],
 	},
@@ -1026,9 +1034,11 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E08000035",
 			"E08000036",
 			// South Yorkshire
+			"E08000016",
 			"E08000038",
 			"E08000017",
 			"E08000018",
+			"E08000019",
 			"E08000039",
 			// North Yorkshire
 			"E07000163",
@@ -1154,6 +1164,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 	"Central Belt": {
 		lad_codes: [
 			"S12000049",
+			"S12000046",
 			"S12000036",
 			"S12000030",
 			"S12000014",
@@ -1170,7 +1181,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// The Hebrides (Na h-Eileanan Siar + Skye)
 	"The Hebrides": {
-		lad_codes: ["S12000013", "S12000048"], // Western Isles + Highland (Skye area)
+		lad_codes: ["S12000013", "S12000017"], // Western Isles + Highland (Skye area)
 		bounds: [-8.0, 56.7, -5.5, 58.4],
 	},
 
@@ -1190,11 +1201,12 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 	"Greater Glasgow and Clyde": {
 		lad_codes: [
 			"S12000049", // Glasgow City
-			"S12000035", // East Renfrewshire
+			"S12000046", // Glasgow City (pre-2019 code)
+			"S12000011", // East Renfrewshire
 			"S12000038", // Renfrewshire
-			"S12000045", // Inverclyde
-			"S12000049", // East Dunbartonshire
-			"S12000047", // West Dunbartonshire
+			"S12000018", // Inverclyde
+			"S12000045", // East Dunbartonshire
+			"S12000039", // West Dunbartonshire
 		],
 		bounds: [-4.6, 55.7, -4.0, 56.1],
 	},
