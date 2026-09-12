@@ -266,7 +266,10 @@ paths:
         present; the response identifies that caller-selected code join.
         `GET /measures/population-estimate` declares valid period/geography
         combinations, and `GET /measures/population-estimate/compatibility`
-        declares eligible releases.
+        declares eligible releases. Every response includes compact provenance
+        linking the immutable Atlas release, measure, source dataset and
+        observation artifact, along with the selected geography match and an
+        explicit statement that no transformation has been applied.
       parameters:
         - name: period
           in: query

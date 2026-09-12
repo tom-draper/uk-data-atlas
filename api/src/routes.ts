@@ -23,6 +23,10 @@ import type {
 	PopulationObservationArtifact,
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import {
+	sourceExactProvenance,
+	type CallerSelectedGeometry,
+} from "./sourceExactProvenance";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -419,7 +423,7 @@ export const route = (
 				candidate.sourceGeography.type === geography &&
 				String(candidate.sourceGeography.boundaryYear) === boundaryYear,
 		);
-		if (!source) {
+		if (!measure || !source) {
 			return problem(
 				400,
 				"Invalid Query",
@@ -427,15 +431,7 @@ export const route = (
 			);
 		}
 		const requestedRelease = parsedUrl.searchParams.get("release");
-		let geometry:
-			| {
-					boundaryRelease: string;
-					selection: "caller-specified";
-					compatibility: "exact-code-set" | "code-set-compatible";
-					areaIdentityTemplate: string;
-					note: string;
-			  }
-			| undefined;
+		let geometry: CallerSelectedGeometry | undefined;
 		if (requestedRelease) {
 			if (!measureCompatibilityInventory) {
 				return problem(
@@ -528,6 +524,17 @@ export const route = (
 				"The population observation artifact does not contain the catalogue's declared source period.",
 			);
 		}
+		const provenance = sourceExactProvenance({
+			atlasRelease: releaseId,
+			measure,
+			source,
+			period: period as string,
+			observations:
+				source.sourceGeography.type === "ward"
+					? populationObservations
+					: populationLocalAuthorityObservations,
+			geometry,
+		});
 		const matches = areaCode
 			? sourceRecords.filter((record) => record.areaCode === areaCode)
 			: sourceRecords;
@@ -596,6 +603,7 @@ export const route = (
 					period,
 					sourceGeography: source.sourceGeography,
 					...(geometry === undefined ? {} : { geometry }),
+					provenance,
 					conversion: null,
 					aggregation: null,
 					records: recordsWithAreas,
