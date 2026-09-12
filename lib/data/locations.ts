@@ -1408,4 +1408,50 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		lad_codes: ["W06000009"],
 		bounds: [-5.5, 51.6, -4.5, 52.1],
 	},
+
+	// ----------------------------
+	// NORTHERN IRELAND
+	// ----------------------------
+	// The eleven councils nest into no official sub-national geography, so
+	// these groupings are editorial, like the Scottish ones above. Between
+	// them they cover every council.
+
+	// Belfast Metropolitan Area
+	"Belfast Metropolitan Area": {
+		lad_codes: [
+			"N09000003", // Belfast
+			"N09000007", // Lisburn and Castlereagh
+			"N09000011", // Ards and North Down
+			"N09000001", // Antrim and Newtownabbey
+		],
+		bounds: [-6.5, 54.32, -5.43, 54.81],
+	},
+
+	// Causeway Coast and Antrim
+	"Causeway Coast and Antrim": {
+		lad_codes: [
+			"N09000004", // Causeway Coast and Glens
+			"N09000008", // Mid and East Antrim
+		],
+		bounds: [-7.17, 54.69, -5.69, 55.31],
+	},
+
+	// West of Northern Ireland
+	"West of Northern Ireland": {
+		lad_codes: [
+			"N09000005", // Derry City and Strabane
+			"N09000006", // Fermanagh and Omagh
+			"N09000009", // Mid Ulster
+		],
+		bounds: [-8.18, 54.11, -6.41, 55.07],
+	},
+
+	// Armagh, Down and Newry
+	"Armagh, Down and Newry": {
+		lad_codes: [
+			"N09000010", // Newry, Mourne and Down
+			"N09000002", // Armagh City, Banbridge and Craigavon
+		],
+		bounds: [-6.88, 54.02, -5.52, 54.59],
+	},
 };
