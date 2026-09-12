@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5f51bbf5587b10854d72755953ed911f65f8e73b3975e510c56bb28c94cdd091",
+	"contentHash": "sha256:68a2d792277876dda4721bc126b19c710a613acaeb50da68e5b092cd610c644e",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1140,7 +1140,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1200,7 +1200,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/population-estimate"
@@ -1214,7 +1214,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1261,7 +1261,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/ghg-emissions"
@@ -1380,7 +1380,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1406,7 +1406,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/travel-to-work-car"
@@ -1426,7 +1426,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1452,7 +1452,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/travel-to-work-home"
@@ -1472,7 +1472,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1498,7 +1498,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/travel-to-work-public-transport"
@@ -1518,7 +1518,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1544,7 +1544,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/travel-to-work-on-foot"
@@ -1564,7 +1564,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1590,7 +1590,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/travel-to-work-bicycle"
@@ -1610,7 +1610,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1636,7 +1636,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/travel-to-work-taxi"
@@ -1656,7 +1656,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1682,7 +1682,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/travel-to-work-motorcycle"
@@ -1702,7 +1702,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1728,7 +1728,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/travel-to-work-other"
@@ -1748,7 +1748,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1774,7 +1774,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/travel-to-work-total"
@@ -1794,7 +1794,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1820,7 +1820,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/car-availability-none"
@@ -1839,7 +1839,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1865,7 +1865,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/car-availability-one"
@@ -1884,7 +1884,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1910,7 +1910,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/car-availability-two"
@@ -1929,7 +1929,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -1955,7 +1955,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/car-availability-three-or-more"
@@ -1974,7 +1974,7 @@
 			"aggregation": {
 				"kind": "extensive",
 				"operation": "sum",
-				"available": false
+				"available": true
 			},
 			"sources": [
 				{
@@ -2000,7 +2000,7 @@
 			"availability": {
 				"sourceExact": true,
 				"conversion": false,
-				"aggregation": false
+				"aggregation": true
 			},
 			"links": {
 				"data": "/v1/data/car-availability-total"

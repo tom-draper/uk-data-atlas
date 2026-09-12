@@ -93,10 +93,10 @@ export type MeasureSource = {
  * region's tonnes. An intensive value does not: two authorities' coverage
  * percentages are not a region's coverage, and averaging them flat weighs a
  * thousand premises the same as half a million. `available` says whether the
- * API will perform the operation, which it will not yet for either kind.
+ * API currently exposes the operation for the measure.
  */
 export type MeasureAggregation =
-	| { kind: "extensive"; operation: "sum"; available: false }
+	| { kind: "extensive"; operation: "sum"; available: boolean }
 	| {
 			kind: "intensive";
 			operation: "weighted-mean";
@@ -115,7 +115,7 @@ export type Measure = {
 	availability: {
 		sourceExact: true;
 		conversion: false;
-		aggregation: false;
+		aggregation: boolean;
 	};
 	links: { data: string };
 	/** Anything a caller must know to read the values correctly. */
@@ -569,7 +569,7 @@ export const compileDataCatalog = (
 		label: "Greenhouse gas emissions",
 		valueKind: "quantity",
 		unit: "kt CO2e",
-		aggregation: { kind: "extensive", operation: "sum", available: false },
+		aggregation: { kind: "extensive", operation: "sum", available: true },
 		sources: [
 			{
 				datasetId: "ghg-emissions",
@@ -577,9 +577,7 @@ export const compileDataCatalog = (
 				sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
 				coverage: {
 					kind: "source-reported",
-					countries: countriesFor(
-						emissionsPeriods[0]?.records ?? [],
-					),
+					countries: countriesFor(emissionsPeriods[0]?.records ?? []),
 					recordCount: emissionsPeriods[0]?.records.length ?? 0,
 					note: "Published source records cover all four UK nations for every available period, restated on one code vintage by the publisher.",
 				},
@@ -588,7 +586,7 @@ export const compileDataCatalog = (
 		availability: {
 			sourceExact: true,
 			conversion: false,
-			aggregation: false,
+			aggregation: true,
 		},
 		links: { data: "/v1/data/ghg-emissions" },
 		notes: [
@@ -597,9 +595,7 @@ export const compileDataCatalog = (
 			"Local authority totals exclude sources the publisher cannot attribute to an area, such as aviation and shipping, so they do not sum to the national inventory.",
 		],
 	};
-	const mobile = datasets.find(
-		(dataset) => dataset.id === "mobile-coverage",
-	);
+	const mobile = datasets.find((dataset) => dataset.id === "mobile-coverage");
 	if (!mobile)
 		throw new Error(`${manifestPath} has no mobile-coverage dataset`);
 	if (
@@ -803,7 +799,7 @@ export const compileDataCatalog = (
 					aggregation: {
 						kind: "extensive",
 						operation: "sum",
-						available: false,
+						available: true,
 					},
 					sources: [
 						{
@@ -826,7 +822,7 @@ export const compileDataCatalog = (
 					availability: {
 						sourceExact: true,
 						conversion: false,
-						aggregation: false,
+						aggregation: true,
 					},
 					links: { data: `/v1/data/${measureId}` },
 					notes: [
@@ -855,7 +851,7 @@ export const compileDataCatalog = (
 		label: "Population estimate",
 		valueKind: "count",
 		unit: "people",
-		aggregation: { kind: "extensive", operation: "sum", available: false },
+		aggregation: { kind: "extensive", operation: "sum", available: true },
 		sources: [
 			{
 				datasetId: "population",
@@ -885,7 +881,7 @@ export const compileDataCatalog = (
 		availability: {
 			sourceExact: true,
 			conversion: false,
-			aggregation: false,
+			aggregation: true,
 		},
 		links: { data: "/v1/data/population-estimate" },
 	};

@@ -5,8 +5,10 @@ info:
   description: |
     This describes exactly the read-only routes implemented in `src/routes.ts`
     and served by `pnpm start`. It is not the full public API proposed in
-    `README.md`: it does not yet cover write-side aggregation or geography
-    conversion for measures. The population route is intentionally
+    `README.md`: it does not yet cover geography conversion for measures. It
+    can sum an extensive measure over a named location only when every curated
+    member code occurs directly in the selected source partition. The
+    population route is intentionally
     source-exact: it serves only published source code vintages and never
     chooses a geometry release on a caller's behalf. A caller may explicitly
     select a code-compatible release for a map join.
@@ -53,6 +55,7 @@ paths:
                     - /v1/data/{measure-id}/series
                     - /v1/data/{measure-id}/rankings
                     - /v1/data/{measure-id}/compare
+                    - /v1/data/{measure-id}/aggregate
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/areas/{type}/{release}/{code}/relationships
@@ -415,6 +418,65 @@ paths:
           $ref: "#/components/responses/InvalidQuery"
         "422":
           description: The requested operation is not supported for this source-exact measure.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /data/{measure-id}/aggregate:
+    get:
+      operationId: aggregateSourceExactMeasureLocation
+      summary: Sum an extensive measure over a complete named-location code set
+      description: >
+        Returns a derived sum only for a measure declared extensive and
+        available for aggregation. Every curated member code of `locationId`
+        must occur in the requested source partition; otherwise the request is
+        rejected rather than silently returning a partial total. This route
+        does not select a boundary release or perform a code or geometry
+        conversion. Named locations are editorial code groupings, not claims
+        of official administrative geography.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: period
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: geography
+          in: query
+          required: true
+          schema:
+            enum: [ward, localAuthority]
+        - name: boundaryYear
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: locationId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: An id returned by `GET /locations`.
+      responses:
+        "200":
+          description: A derived sum with its direct-code membership evidence and source provenance.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: The measure is non-additive, aggregation is unavailable, or the location is not a complete direct match.
           content:
             application/problem+json:
               schema:
