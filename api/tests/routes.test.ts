@@ -55,6 +55,7 @@ const route = (
 	dataCatalog?: RouteContext["dataCatalog"],
 	populationObservations?: RouteContext["populationObservations"],
 	populationLocalAuthorityObservations?: RouteContext["populationLocalAuthorityObservations"],
+	measureCompatibilityInventory?: RouteContext["measureCompatibilityInventory"],
 ) =>
 	routeRequest(method, url, {
 		boundaryRegistry,
@@ -73,6 +74,7 @@ const route = (
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
+		measureCompatibilityInventory,
 	});
 
 const registry: BoundaryRegistry = {
@@ -405,6 +407,7 @@ const routeWithData = (url: string) =>
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
+		measureCompatibilityInventory,
 	);
 
 test("publishes datasets, measures and source-exact population observations", () => {
@@ -469,6 +472,27 @@ test("publishes datasets, measures and source-exact population observations", ()
 			],
 		},
 	);
+
+	const withGeometry = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&areaCode=E05000001",
+	);
+	assert.equal(withGeometry.status, 200);
+	assert.deepEqual("data" in withGeometry.body && withGeometry.body.data, {
+		measure: dataCatalog.measures[0],
+		source: dataCatalog.measures[0]?.sources[0],
+		period: "2022",
+		sourceGeography: { type: "ward", boundaryYear: 2023 },
+		geometry: {
+			boundaryRelease: "2023-05-uk-bgc",
+			selection: "caller-specified",
+			compatibility: "code-set-compatible",
+			areaIdentityTemplate: "ward/2023-05-uk-bgc/{areaCode}",
+			note: "Values remain source-exact and are joined to this caller-selected geometry by matching area code. This is not a geometry conversion or an assertion of equal geometry.",
+		},
+		conversion: null,
+		aggregation: null,
+		records: [populationObservations.records[0]],
+	});
 });
 
 test("publishes measure boundary candidates as code compatibility only", () => {
@@ -499,10 +523,10 @@ test("refuses population conversions and aggregation until they are implemented"
 		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2024",
 	);
 	assert.equal(invalidSource.status, 400);
-	const conversion = routeWithData(
+	const incompatibleRelease = routeWithData(
 		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-12-uk-bgc",
 	);
-	assert.equal(conversion.status, 422);
+	assert.equal(incompatibleRelease.status, 422);
 	const aggregation = routeWithData(
 		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&aggregate=sum",
 	);
