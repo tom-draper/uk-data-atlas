@@ -134,6 +134,21 @@ const areaLookup = createAreaLookup([
 	},
 ]);
 
+const compatibleWardAreaLookup = createAreaLookup([
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:compatible-wards",
+		geography: "ward",
+		boundaryRelease: "2023-05-uk-bgc",
+		codeProperty: "WD23CD",
+		nameProperty: "WD23NM",
+		areas: [
+			{ code: "E05000001", name: "Compatible ward" },
+			{ code: "W05000001", name: "Ward compatible" },
+		],
+	},
+]);
+
 const crosswalkArtifact: CrosswalkArtifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:crosswalk-artifact",
@@ -493,6 +508,39 @@ test("publishes datasets, measures and source-exact population observations", ()
 		aggregation: null,
 		records: [populationObservations.records[0]],
 	});
+
+	const withArea = routeRequest(
+		"GET",
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&areaCode=E05000001&include=area",
+		{
+			boundaryRegistry: registry,
+			areaLookup: compatibleWardAreaLookup,
+			dataCatalog,
+			populationObservations,
+			populationLocalAuthorityObservations,
+			measureCompatibilityInventory,
+		},
+	);
+	assert.equal(withArea.status, 200);
+	const data = "data" in withArea.body ? withArea.body.data : undefined;
+	assert.ok(data && typeof data === "object");
+	assert.deepEqual((data as { records: unknown }).records, [
+		{
+			areaCode: "E05000001",
+			value: 100,
+			status: "observed",
+			area: {
+				id: "ward/2023-05-uk-bgc/E05000001",
+				code: "E05000001",
+				name: "Compatible ward",
+			},
+		},
+	]);
+
+	const includeWithoutRelease = routeWithData(
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&include=area",
+	);
+	assert.equal(includeWithoutRelease.status, 400);
 });
 
 test("publishes measure boundary candidates as code compatibility only", () => {

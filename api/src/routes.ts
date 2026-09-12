@@ -493,6 +493,28 @@ export const route = (
 			);
 		}
 		const areaCode = parsedUrl.searchParams.get("areaCode");
+		const include = parsedUrl.searchParams.get("include");
+		if (include !== null && include !== "area") {
+			return problem(
+				400,
+				"Invalid Query",
+				"include currently supports only area.",
+			);
+		}
+		if (include === "area" && !geometry) {
+			return problem(
+				400,
+				"Invalid Query",
+				"include=area requires a caller-selected compatible release.",
+			);
+		}
+		if (include === "area" && !areaLookup) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the area inventory before including canonical area identities.",
+			);
+		}
 		const sourceRecords =
 			source.sourceGeography.type === "ward"
 				? populationObservations.records
@@ -533,6 +555,32 @@ export const route = (
 			);
 		}
 		const records = matches.slice(offset, offset + pageSize);
+		const recordsWithAreas =
+			include === "area"
+				? records.map((record) => {
+						const area = findArea(
+							areaLookup,
+							source.sourceGeography.type,
+							geometry?.boundaryRelease ?? "",
+							record.areaCode,
+						);
+						if (!area) return undefined;
+						return {
+							...record,
+							area: {
+								id: `${source.sourceGeography.type}/${geometry?.boundaryRelease}/${area.code}`,
+								...area,
+							},
+						};
+					})
+				: records;
+		if (recordsWithAreas.some((record) => record === undefined)) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"The selected release is compatible but its compiled area inventory is incomplete.",
+			);
+		}
 		const lastRecord = records.at(-1);
 		const nextCursor =
 			offset + records.length < matches.length && lastRecord
@@ -550,7 +598,7 @@ export const route = (
 					...(geometry === undefined ? {} : { geometry }),
 					conversion: null,
 					aggregation: null,
-					records,
+					records: recordsWithAreas,
 				},
 				nextCursor,
 			),

@@ -1176,6 +1176,7 @@ pnpm start
 - `GET /v1/measures/{measure-id}/compatibility`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc`
+- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`
