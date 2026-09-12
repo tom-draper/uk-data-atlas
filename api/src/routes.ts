@@ -27,6 +27,7 @@ import type {
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import { compareObservations } from "./comparison";
+import { aggregateLocationMembers } from "./aggregation";
 import { measureCoverage } from "./measureCoverage";
 import { reconcileMembers } from "./memberReconciliation";
 import { rankObservations, type RankingOrder } from "./ranking";
@@ -360,6 +361,7 @@ export const route = (
 					"/v1/data/{measure-id}/series",
 					"/v1/data/{measure-id}/rankings",
 					"/v1/data/{measure-id}/compare",
+					"/v1/data/{measure-id}/aggregate",
 					"/v1/areas",
 					"/v1/areas:contains",
 					"/v1/areas/{type}/{release}/{code}",
@@ -421,6 +423,134 @@ export const route = (
 					"Not Found",
 					"No published dataset matches that id.",
 				);
+	}
+
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "data" &&
+		segments[3] === "aggregate"
+	) {
+		if (!dataCatalog || !namedLocationLookup) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue and named location inventory before aggregating observations.",
+			);
+		}
+		const measureId = segments[2] as string;
+		const measure = dataCatalog.measures.find(
+			(candidate) => candidate.id === measureId,
+		);
+		if (!measure)
+			return problem(
+				404,
+				"Not Found",
+				"No published measure serves aggregation at that path.",
+			);
+		if (
+			measure.aggregation.kind !== "extensive" ||
+			!measure.aggregation.available
+		) {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"This measure is not available for additive aggregation.",
+			);
+		}
+		if (
+			parsedUrl.searchParams.has("release") ||
+			parsedUrl.searchParams.has("conversion")
+		) {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"This aggregation does not select a geometry release or convert observations.",
+			);
+		}
+		const period = parsedUrl.searchParams.get("period");
+		const geography = parsedUrl.searchParams.get("geography");
+		const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
+		const locationId = parsedUrl.searchParams.get("locationId");
+		if (!locationId) {
+			return problem(400, "Invalid Query", "locationId is required.");
+		}
+		const location = namedLocationLookup.get(locationId);
+		if (!location)
+			return problem(
+				404,
+				"Not Found",
+				"No named location matches locationId.",
+			);
+		const source = measure.sources.find(
+			(candidate) =>
+				candidate.periods.includes(period ?? "") &&
+				candidate.sourceGeography.type === geography &&
+				String(candidate.sourceGeography.boundaryYear) === boundaryYear,
+		);
+		if (!source)
+			return problem(
+				400,
+				"Invalid Query",
+				`${measureId} has no published source for that period, geography and boundary year.`,
+			);
+		const observations = observationsFor(
+			measureId,
+			source,
+			period as string,
+			{
+				populationObservations,
+				populationLocalAuthorityObservations,
+				measureObservations,
+			},
+		);
+		if (!observations)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
+			);
+		const aggregate = aggregateLocationMembers(
+			location,
+			observations.records,
+		);
+		if (aggregate.unresolvedMemberCodes.length > 0) {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"The named location is not a complete direct code match for this source partition; no conversion or partial sum was applied.",
+			);
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				measure,
+				source,
+				period,
+				sourceGeography: source.sourceGeography,
+				location,
+				provenance: {
+					...sourceExactProvenance({
+						atlasRelease: releaseId,
+						measure,
+						source,
+						period: period as string,
+						observations,
+					}),
+					transformation: {
+						status: "not-applied",
+						note: "Input observations are source-exact; no geographic conversion was applied.",
+					},
+				},
+				aggregation: {
+					operation: "sum",
+					membership: "direct-code-match",
+					inputRecordCount: aggregate.members.length,
+					note: "Every curated location member code was found in the published source partition.",
+				},
+				record: { value: aggregate.value, status: "derived" },
+			}),
+		};
 	}
 
 	if (

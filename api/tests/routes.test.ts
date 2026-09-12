@@ -278,6 +278,31 @@ const namedLocationInventory: NamedLocationInventory = {
 
 const namedLocationLookup = createNamedLocationLookup(namedLocationInventory);
 
+const aggregationNamedLocationLookup = createNamedLocationLookup({
+	schemaVersion: 1,
+	contentHash: "sha256:aggregation-locations",
+	source: {
+		artifact: "data/precompiled/gazetteer.core.json",
+		gazetteerVersion: 1,
+	},
+	locations: [
+		{
+			id: "test-wards",
+			label: "Test wards",
+			kind: "editorial-grouping",
+			memberCodes: ["E05000001", "W05000001"],
+			bbox: [-2.5, 53.3, -2, 53.7],
+		},
+		{
+			id: "incomplete-test-wards",
+			label: "Incomplete test wards",
+			kind: "editorial-grouping",
+			memberCodes: ["E05000001", "E05000999"],
+			bbox: [-2.5, 53.3, -2, 53.7],
+		},
+	],
+});
+
 const dataCatalog: DataCatalog = {
 	schemaVersion: 1,
 	contentHash: "sha256:data-catalog",
@@ -311,7 +336,7 @@ const dataCatalog: DataCatalog = {
 			aggregation: {
 				kind: "extensive",
 				operation: "sum",
-				available: false,
+				available: true,
 			},
 			sources: [
 				{
@@ -343,7 +368,7 @@ const dataCatalog: DataCatalog = {
 			availability: {
 				sourceExact: true,
 				conversion: false,
-				aggregation: false,
+				aggregation: true,
 			},
 			links: { data: "/v1/data/population-estimate" },
 		},
@@ -355,7 +380,7 @@ const dataCatalog: DataCatalog = {
 			aggregation: {
 				kind: "extensive",
 				operation: "sum",
-				available: false,
+				available: true,
 			},
 			sources: [
 				{
@@ -376,7 +401,7 @@ const dataCatalog: DataCatalog = {
 			availability: {
 				sourceExact: true,
 				conversion: false,
-				aggregation: false,
+				aggregation: true,
 			},
 			links: { data: "/v1/data/ghg-emissions" },
 		},
@@ -425,7 +450,7 @@ const dataCatalog: DataCatalog = {
 			aggregation: {
 				kind: "extensive",
 				operation: "sum",
-				available: false,
+				available: true,
 			},
 			sources: [
 				{
@@ -446,7 +471,7 @@ const dataCatalog: DataCatalog = {
 			availability: {
 				sourceExact: true,
 				conversion: false,
-				aggregation: false,
+				aggregation: true,
 			},
 			links: { data: "/v1/data/travel-to-work-car" },
 			notes: [
@@ -1222,7 +1247,7 @@ test("publishes source and boundary code coverage without claiming equal geometr
 			availability: {
 				sourceExact: true,
 				conversion: false,
-				aggregation: false,
+				aggregation: true,
 			},
 			href: "/v1/measures/population-estimate",
 		},
@@ -1274,7 +1299,7 @@ test("publishes source and boundary code coverage without claiming equal geometr
 	assert.equal(missing.status, 404);
 });
 
-test("refuses population conversions and aggregation until they are implemented", () => {
+test("keeps aggregation separate from the source-exact observation route", () => {
 	const invalidSource = routeWithData(
 		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2024",
 	);
@@ -1287,6 +1312,72 @@ test("refuses population conversions and aggregation until they are implemented"
 		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&aggregate=sum",
 	);
 	assert.equal(aggregation.status, 422);
+});
+
+test("aggregates an extensive measure only over a complete direct named-location match", () => {
+	const context: RouteContext = {
+		boundaryRegistry: registry,
+		namedLocationLookup: aggregationNamedLocationLookup,
+		dataCatalog,
+		populationObservations,
+		populationLocalAuthorityObservations,
+		measureObservations,
+	};
+	const response = routeRequest(
+		"GET",
+		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=test-wards",
+		context,
+	);
+	assert.equal(response.status, 200);
+	const data = "data" in response.body ? response.body.data : undefined;
+	assert.deepEqual(
+		(
+			data as {
+				aggregation: unknown;
+				record: unknown;
+				provenance: { transformation: unknown };
+			}
+		).aggregation,
+		{
+			operation: "sum",
+			membership: "direct-code-match",
+			inputRecordCount: 2,
+			note: "Every curated location member code was found in the published source partition.",
+		},
+	);
+	assert.deepEqual((data as { record: unknown }).record, {
+		value: 300,
+		status: "derived",
+	});
+	assert.deepEqual(
+		(data as { provenance: { transformation: unknown } }).provenance
+			.transformation,
+		{
+			status: "not-applied",
+			note: "Input observations are source-exact; no geographic conversion was applied.",
+		},
+	);
+
+	const incomplete = routeRequest(
+		"GET",
+		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=incomplete-test-wards",
+		context,
+	);
+	assert.equal(incomplete.status, 422);
+
+	const intensive = routeRequest(
+		"GET",
+		"/v1/data/mobile-5g-coverage/aggregate?period=2025&geography=localAuthority&boundaryYear=2024&locationId=test-wards",
+		context,
+	);
+	assert.equal(intensive.status, 422);
+
+	const conversion = routeRequest(
+		"GET",
+		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=test-wards&release=2023-05-uk-bgc",
+		context,
+	);
+	assert.equal(conversion.status, 422);
 });
 
 test("lists published geographies", () => {

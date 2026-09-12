@@ -204,8 +204,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Return source-exact greenhouse gas emissions through
       `GET /v1/data/ghg-emissions`: 2005-2024 Local Authority 2025 codes across
       all four UK nations, as net territorial emissions in kt CO2e. Emissions
-      per resident are not served: a ratio cannot be summed over areas, and the
-      API does not yet aggregate. The same code-compatible geometry join,
+      per resident are not served: a ratio cannot be summed over areas. The same code-compatible geometry join,
       provenance chain and tabular export as the population measure apply.
 - [ ] Return population estimates for a supported ward, local authority,
       constituency, country or named location.
@@ -222,6 +221,12 @@ only **available** when its endpoint, contract and provenance are published.
       `GET /v1/data/{measure-id}/compare`, with explicitly named baseline and
       comparison sides, a directed same-unit difference, and no relative
       difference for ratio measures.
+- [x] Sum a published extensive measure through
+      `GET /v1/data/{measure-id}/aggregate` only when every member code in a
+      curated named location occurs directly in one requested source partition.
+      The response marks the value as derived and supplies its direct-code
+      membership evidence; non-additive measures, incomplete locations and all
+      conversions are rejected.
 - [ ] Return uncertainty intervals where the source publication supports them.
 - [ ] Return life expectancy by total, male and female where the source
       publishes those series.
@@ -879,11 +884,13 @@ presentation rounding.
 Allow it only under explicit rules:
 
 ```
-GET /v1/data/population-estimate?area=location/devon@2026-09&aggregate=sum
+GET /v1/data/population-estimate/aggregate?period={period}&geography={source-geography}&boundaryYear={source-boundary-year}&locationId={location-id}
 GET /v1/data/population-density?area=location/devon@2026-09&period=2022
 ```
 
-For density, the service calculates `sum(population) / union-area`, retaining
+The first route is currently safe only when every named-location member code
+occurs directly in the selected source partition; it never converts codes or
+returns a partial sum. For density, the service calculates `sum(population) / union-area`, retaining
 the source population period and boundary release of the denominator. It must
 not average ward densities. For a rate, it must sum numerators and denominators
 then divide. For medians, ranks, categorical winners, and statistical measures
