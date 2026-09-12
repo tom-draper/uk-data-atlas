@@ -21,6 +21,11 @@ import type {
 } from "./crosswalkInventory";
 import type { GeographyInventory } from "./geographyInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
+import {
+	createNamedLocationLookup,
+	type NamedLocationInventory,
+	type NamedLocationLookup,
+} from "./namedLocations";
 import type { ValidationReport } from "./validationReport";
 import {
 	createAreaSearchIndex,
@@ -135,6 +140,19 @@ export const readRelationshipCandidateInventory = (
 	return inventory;
 };
 
+export const readNamedLocationInventory = (
+	apiRoot: string,
+): NamedLocationInventory => {
+	const path = join(apiRoot, "public", "named-locations.json");
+	const inventory = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as NamedLocationInventory;
+	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.locations)) {
+		throw new Error(`Invalid named location inventory at ${path}`);
+	}
+	return inventory;
+};
+
 export const readValidationReport = (apiRoot: string): ValidationReport => {
 	const path = join(apiRoot, "public", "validation-report.json");
 	const report = JSON.parse(readFileSync(path, "utf8")) as ValidationReport;
@@ -156,10 +174,13 @@ export type ApiCatalogues = {
 	atlasRelease: AtlasRelease;
 	relationshipCandidateInventory: RelationshipCandidateInventory;
 	validationReport: ValidationReport;
+	namedLocationInventory: NamedLocationInventory;
+	namedLocationLookup: NamedLocationLookup;
 };
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const areaLookup = readAreaLookup(apiRoot);
+	const namedLocationInventory = readNamedLocationInventory(apiRoot);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
 	const geometrySources = readGeometrySourceLookup(apiRoot);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
@@ -178,8 +199,11 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease: readAtlasRelease(apiRoot),
-		relationshipCandidateInventory: readRelationshipCandidateInventory(apiRoot),
+		relationshipCandidateInventory:
+			readRelationshipCandidateInventory(apiRoot),
 		validationReport: readValidationReport(apiRoot),
+		namedLocationInventory,
+		namedLocationLookup: createNamedLocationLookup(namedLocationInventory),
 	};
 };
 
@@ -195,6 +219,8 @@ export const createApiServer = ({
 	atlasRelease,
 	relationshipCandidateInventory,
 	validationReport,
+	namedLocationInventory,
+	namedLocationLookup,
 }: ApiCatalogues) =>
 	createServer((request, response) => {
 		const result = route(
@@ -211,6 +237,8 @@ export const createApiServer = ({
 			areaGeometryCache,
 			relationshipCandidateInventory,
 			validationReport,
+			namedLocationInventory,
+			namedLocationLookup,
 		);
 		response.writeHead(result.status, {
 			"cache-control": "public, max-age=300",

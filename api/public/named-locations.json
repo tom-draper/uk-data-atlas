@@ -1,0 +1,2625 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:1144a608f9b6ccae5a635c282301ff7e41f15544cd5fd8c227e3d97277a17095",
+	"source": {
+		"artifact": "data/precompiled/gazetteer.core.json",
+		"gazetteerVersion": 1
+	},
+	"locations": [
+		{
+			"id": "aberdeen",
+			"label": "Aberdeen",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000033"
+			],
+			"bbox": [
+				-2.2,
+				57.1,
+				-2,
+				57.2
+			]
+		},
+		{
+			"id": "aberystwyth",
+			"label": "Aberystwyth",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000008"
+			],
+			"bbox": [
+				-4.1,
+				52.4,
+				-4.05,
+				52.43
+			]
+		},
+		{
+			"id": "bangor",
+			"label": "Bangor",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000001"
+			],
+			"bbox": [
+				-4.15,
+				53.22,
+				-4.1,
+				53.25
+			]
+		},
+		{
+			"id": "barnsley",
+			"label": "Barnsley",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000038"
+			],
+			"bbox": [
+				-1.55,
+				53.52,
+				-1.45,
+				53.58
+			]
+		},
+		{
+			"id": "basingstoke",
+			"label": "Basingstoke",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000084"
+			],
+			"bbox": [
+				-1.1,
+				51.25,
+				-1.05,
+				51.28
+			]
+		},
+		{
+			"id": "bath",
+			"label": "Bath",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000022"
+			],
+			"bbox": [
+				-2.4,
+				51.36,
+				-2.32,
+				51.4
+			]
+		},
+		{
+			"id": "belfast",
+			"label": "Belfast",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"N09000003"
+			],
+			"bbox": [
+				-6,
+				54.57,
+				-5.85,
+				54.65
+			]
+		},
+		{
+			"id": "birmingham",
+			"label": "Birmingham",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000025"
+			],
+			"bbox": [
+				-2,
+				52.4,
+				-1.75,
+				52.6
+			]
+		},
+		{
+			"id": "blackburn",
+			"label": "Blackburn",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000008"
+			],
+			"bbox": [
+				-2.5,
+				53.73,
+				-2.43,
+				53.77
+			]
+		},
+		{
+			"id": "blackpool",
+			"label": "Blackpool",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000009"
+			],
+			"bbox": [
+				-3.08,
+				53.8,
+				-3,
+				53.85
+			]
+		},
+		{
+			"id": "bolton",
+			"label": "Bolton",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000001"
+			],
+			"bbox": [
+				-2.45,
+				53.55,
+				-2.4,
+				53.6
+			]
+		},
+		{
+			"id": "bournemouth",
+			"label": "Bournemouth",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000058"
+			],
+			"bbox": [
+				-1.95,
+				50.7,
+				-1.8,
+				50.75
+			]
+		},
+		{
+			"id": "bradford",
+			"label": "Bradford",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000032"
+			],
+			"bbox": [
+				-2,
+				53.75,
+				-1.7,
+				53.85
+			]
+		},
+		{
+			"id": "brighton-and-hove",
+			"label": "Brighton and Hove",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000043"
+			],
+			"bbox": [
+				-0.2,
+				50.8,
+				-0.05,
+				50.87
+			]
+		},
+		{
+			"id": "bristol",
+			"label": "Bristol",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000023"
+			],
+			"bbox": [
+				-2.7,
+				51.4,
+				-2.5,
+				51.55
+			]
+		},
+		{
+			"id": "cambridge",
+			"label": "Cambridge",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000008"
+			],
+			"bbox": [
+				0.08,
+				52.18,
+				0.18,
+				52.23
+			]
+		},
+		{
+			"id": "canterbury",
+			"label": "Canterbury",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000106"
+			],
+			"bbox": [
+				0.95,
+				51.25,
+				1.15,
+				51.32
+			]
+		},
+		{
+			"id": "cardiff",
+			"label": "Cardiff",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000015"
+			],
+			"bbox": [
+				-3.25,
+				51.45,
+				-3.1,
+				51.53
+			]
+		},
+		{
+			"id": "cardiff-and-the-valleys",
+			"label": "Cardiff and The Valleys",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000015",
+				"W06000016",
+				"W06000018",
+				"W06000019",
+				"W06000020",
+				"W06000021",
+				"W06000022"
+			],
+			"bbox": [
+				-3.5,
+				51.4,
+				-2.8,
+				51.8
+			]
+		},
+		{
+			"id": "carlisle",
+			"label": "Carlisle",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000028"
+			],
+			"bbox": [
+				-3,
+				54.88,
+				-2.9,
+				54.95
+			]
+		},
+		{
+			"id": "central-belt",
+			"label": "Central Belt",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000014",
+				"S12000030",
+				"S12000036",
+				"S12000039",
+				"S12000049"
+			],
+			"bbox": [
+				-4.6,
+				55.7,
+				-3,
+				56.1
+			]
+		},
+		{
+			"id": "cheltenham",
+			"label": "Cheltenham",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000078"
+			],
+			"bbox": [
+				-2.12,
+				51.88,
+				-2.05,
+				51.93
+			]
+		},
+		{
+			"id": "cheshire",
+			"label": "Cheshire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000006",
+				"E06000007",
+				"E06000049",
+				"E06000050"
+			],
+			"bbox": [
+				-3.1,
+				53,
+				-2.3,
+				53.5
+			]
+		},
+		{
+			"id": "chester",
+			"label": "Chester",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000050"
+			],
+			"bbox": [
+				-2.95,
+				53.15,
+				-2.85,
+				53.25
+			]
+		},
+		{
+			"id": "chesterfield",
+			"label": "Chesterfield",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000034"
+			],
+			"bbox": [
+				-1.45,
+				53.22,
+				-1.38,
+				53.25
+			]
+		},
+		{
+			"id": "colchester",
+			"label": "Colchester",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000071"
+			],
+			"bbox": [
+				0.87,
+				51.88,
+				0.93,
+				51.92
+			]
+		},
+		{
+			"id": "cornwall",
+			"label": "Cornwall",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000052"
+			],
+			"bbox": [
+				-5.1,
+				50.23,
+				-5,
+				50.28
+			]
+		},
+		{
+			"id": "coventry",
+			"label": "Coventry",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000026"
+			],
+			"bbox": [
+				-1.6,
+				52.35,
+				-1.45,
+				52.45
+			]
+		},
+		{
+			"id": "crawley",
+			"label": "Crawley",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000226"
+			],
+			"bbox": [
+				-0.2,
+				51.1,
+				-0.15,
+				51.13
+			]
+		},
+		{
+			"id": "darlington",
+			"label": "Darlington",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000005"
+			],
+			"bbox": [
+				-1.6,
+				54.52,
+				-1.5,
+				54.56
+			]
+		},
+		{
+			"id": "derby",
+			"label": "Derby",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000015"
+			],
+			"bbox": [
+				-1.52,
+				52.88,
+				-1.42,
+				52.97
+			]
+		},
+		{
+			"id": "derbyshire",
+			"label": "Derbyshire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000015",
+				"E07000032",
+				"E07000033",
+				"E07000034",
+				"E07000035",
+				"E07000036",
+				"E07000037",
+				"E07000038"
+			],
+			"bbox": [
+				-2,
+				52.8,
+				-1.3,
+				53.5
+			]
+		},
+		{
+			"id": "devon",
+			"label": "Devon",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000052",
+				"E07000040",
+				"E07000041",
+				"E07000042",
+				"E07000043",
+				"E07000044",
+				"E07000045",
+				"E07000046",
+				"E07000047"
+			],
+			"bbox": [
+				-4.9,
+				50.2,
+				-2.9,
+				51.3
+			]
+		},
+		{
+			"id": "doncaster",
+			"label": "Doncaster",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000017"
+			],
+			"bbox": [
+				-1.2,
+				53.5,
+				-1,
+				53.58
+			]
+		},
+		{
+			"id": "dorset",
+			"label": "Dorset",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000058",
+				"E06000059"
+			],
+			"bbox": [
+				-2.8,
+				50.6,
+				-1.6,
+				51.1
+			]
+		},
+		{
+			"id": "dudley",
+			"label": "Dudley",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000027"
+			],
+			"bbox": [
+				-2.15,
+				52.48,
+				-2.05,
+				52.55
+			]
+		},
+		{
+			"id": "dundee",
+			"label": "Dundee",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000042"
+			],
+			"bbox": [
+				-3.1,
+				56.45,
+				-2.9,
+				56.5
+			]
+		},
+		{
+			"id": "durham",
+			"label": "Durham",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000047"
+			],
+			"bbox": [
+				-1.9,
+				54.5,
+				-1.4,
+				54.9
+			]
+		},
+		{
+			"id": "east-of-england",
+			"label": "East of England",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000031",
+				"E06000032",
+				"E06000033",
+				"E06000034",
+				"E06000055",
+				"E06000056",
+				"E07000008",
+				"E07000009",
+				"E07000010",
+				"E07000011",
+				"E07000012",
+				"E07000066",
+				"E07000067",
+				"E07000068",
+				"E07000069",
+				"E07000070",
+				"E07000071",
+				"E07000072",
+				"E07000073",
+				"E07000074",
+				"E07000075",
+				"E07000076",
+				"E07000077",
+				"E07000095",
+				"E07000096",
+				"E07000097",
+				"E07000098",
+				"E07000099",
+				"E07000100",
+				"E07000101",
+				"E07000102",
+				"E07000103",
+				"E07000104",
+				"E07000143",
+				"E07000144",
+				"E07000145",
+				"E07000146",
+				"E07000147",
+				"E07000148",
+				"E07000149",
+				"E07000200",
+				"E07000201",
+				"E07000202",
+				"E07000203",
+				"E07000244",
+				"E07000245"
+			],
+			"bbox": [
+				-0.6,
+				51.6,
+				1.8,
+				53.2
+			]
+		},
+		{
+			"id": "edinburgh",
+			"label": "Edinburgh",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000036"
+			],
+			"bbox": [
+				-3.3,
+				55.9,
+				-3.1,
+				56
+			]
+		},
+		{
+			"id": "england",
+			"label": "England",
+			"kind": "editorial-grouping",
+			"memberCodes": [],
+			"bbox": [
+				-6.5,
+				49.9,
+				1.8,
+				55.8
+			]
+		},
+		{
+			"id": "essex",
+			"label": "Essex",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000033",
+				"E07000066",
+				"E07000067",
+				"E07000068",
+				"E07000069",
+				"E07000070",
+				"E07000071",
+				"E07000072",
+				"E07000073",
+				"E07000074",
+				"E07000075",
+				"E07000076"
+			],
+			"bbox": [
+				0.2,
+				51.5,
+				1.3,
+				52.1
+			]
+		},
+		{
+			"id": "exeter",
+			"label": "Exeter",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000041"
+			],
+			"bbox": [
+				-3.6,
+				50.7,
+				-3.45,
+				50.75
+			]
+		},
+		{
+			"id": "gateshead",
+			"label": "Gateshead",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000037"
+			],
+			"bbox": [
+				-1.7,
+				54.93,
+				-1.55,
+				55
+			]
+		},
+		{
+			"id": "glasgow",
+			"label": "Glasgow",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000049"
+			],
+			"bbox": [
+				-4.35,
+				55.8,
+				-4.15,
+				55.92
+			]
+		},
+		{
+			"id": "gloucester",
+			"label": "Gloucester",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000081"
+			],
+			"bbox": [
+				-2.27,
+				51.85,
+				-2.22,
+				51.89
+			]
+		},
+		{
+			"id": "gloucestershire",
+			"label": "Gloucestershire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000077",
+				"E07000078",
+				"E07000079",
+				"E07000080",
+				"E07000081",
+				"E07000082"
+			],
+			"bbox": [
+				-2.6,
+				51.6,
+				-1.7,
+				52.1
+			]
+		},
+		{
+			"id": "grampian",
+			"label": "Grampian",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000013",
+				"S12000020",
+				"S12000033"
+			],
+			"bbox": [
+				-3.8,
+				56.8,
+				-1.8,
+				58
+			]
+		},
+		{
+			"id": "greater-glasgow-and-clyde",
+			"label": "Greater Glasgow and Clyde",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000035",
+				"S12000038",
+				"S12000045",
+				"S12000047",
+				"S12000049"
+			],
+			"bbox": [
+				-4.6,
+				55.7,
+				-4,
+				56.1
+			]
+		},
+		{
+			"id": "greater-manchester",
+			"label": "Greater Manchester",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000001",
+				"E08000002",
+				"E08000003",
+				"E08000004",
+				"E08000005",
+				"E08000006",
+				"E08000007",
+				"E08000008",
+				"E08000009",
+				"E08000010"
+			],
+			"bbox": [
+				-2.5,
+				53.3,
+				-2,
+				53.7
+			]
+		},
+		{
+			"id": "guildford",
+			"label": "Guildford",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000209"
+			],
+			"bbox": [
+				-0.6,
+				51.23,
+				-0.55,
+				51.27
+			]
+		},
+		{
+			"id": "halifax",
+			"label": "Halifax",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000033"
+			],
+			"bbox": [
+				-2,
+				53.7,
+				-1.8,
+				53.77
+			]
+		},
+		{
+			"id": "hampshire",
+			"label": "Hampshire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000044",
+				"E06000045",
+				"E07000084",
+				"E07000085",
+				"E07000086",
+				"E07000087",
+				"E07000088",
+				"E07000089",
+				"E07000090",
+				"E07000091",
+				"E07000092",
+				"E07000093"
+			],
+			"bbox": [
+				-1.9,
+				50.7,
+				-0.7,
+				51.4
+			]
+		},
+		{
+			"id": "harrogate",
+			"label": "Harrogate",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000165"
+			],
+			"bbox": [
+				-1.6,
+				53.95,
+				-1.5,
+				54.02
+			]
+		},
+		{
+			"id": "hartlepool",
+			"label": "Hartlepool",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000001"
+			],
+			"bbox": [
+				-1.25,
+				54.68,
+				-1.18,
+				54.72
+			]
+		},
+		{
+			"id": "hereford",
+			"label": "Hereford",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000019"
+			],
+			"bbox": [
+				-2.75,
+				51.95,
+				-2.65,
+				52.15
+			]
+		},
+		{
+			"id": "hertfordshire",
+			"label": "Hertfordshire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000095",
+				"E07000096",
+				"E07000097",
+				"E07000098",
+				"E07000099",
+				"E07000100",
+				"E07000101",
+				"E07000102",
+				"E07000103",
+				"E07000104"
+			],
+			"bbox": [
+				-0.6,
+				51.6,
+				0.3,
+				52.1
+			]
+		},
+		{
+			"id": "huddersfield",
+			"label": "Huddersfield",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000034"
+			],
+			"bbox": [
+				-1.85,
+				53.6,
+				-1.75,
+				53.68
+			]
+		},
+		{
+			"id": "hull",
+			"label": "Hull",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000010"
+			],
+			"bbox": [
+				-0.4,
+				53.72,
+				-0.3,
+				53.78
+			]
+		},
+		{
+			"id": "inverness",
+			"label": "Inverness",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000017"
+			],
+			"bbox": [
+				-4.3,
+				57.45,
+				-4.2,
+				57.5
+			]
+		},
+		{
+			"id": "ipswich",
+			"label": "Ipswich",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000202"
+			],
+			"bbox": [
+				1.13,
+				52.04,
+				1.2,
+				52.08
+			]
+		},
+		{
+			"id": "kent",
+			"label": "Kent",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000035",
+				"E06000036",
+				"E07000105",
+				"E07000106",
+				"E07000107",
+				"E07000108",
+				"E07000109",
+				"E07000110",
+				"E07000111",
+				"E07000112",
+				"E07000113",
+				"E07000114",
+				"E07000115",
+				"E07000116"
+			],
+			"bbox": [
+				0.3,
+				50.8,
+				1.6,
+				51.5
+			]
+		},
+		{
+			"id": "lancashire",
+			"label": "Lancashire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000008",
+				"E06000009",
+				"E07000117",
+				"E07000118",
+				"E07000119",
+				"E07000120",
+				"E07000121",
+				"E07000122",
+				"E07000123",
+				"E07000124",
+				"E07000125",
+				"E07000126",
+				"E07000127",
+				"E07000128",
+				"E08000014"
+			],
+			"bbox": [
+				-3.2,
+				53.3,
+				-2.2,
+				54.2
+			]
+		},
+		{
+			"id": "lancaster",
+			"label": "Lancaster",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000121"
+			],
+			"bbox": [
+				-2.85,
+				54.02,
+				-2.78,
+				54.08
+			]
+		},
+		{
+			"id": "leeds",
+			"label": "Leeds",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000035"
+			],
+			"bbox": [
+				-1.7,
+				53.7,
+				-1.4,
+				53.9
+			]
+		},
+		{
+			"id": "leicester",
+			"label": "Leicester",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000016"
+			],
+			"bbox": [
+				-1.2,
+				52.6,
+				-1.05,
+				52.68
+			]
+		},
+		{
+			"id": "lincoln",
+			"label": "Lincoln",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000138"
+			],
+			"bbox": [
+				-0.58,
+				53.21,
+				-0.52,
+				53.25
+			]
+		},
+		{
+			"id": "lincolnshire",
+			"label": "Lincolnshire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000013",
+				"E06000014",
+				"E06000015",
+				"E07000136",
+				"E07000137",
+				"E07000138",
+				"E07000139",
+				"E07000140",
+				"E07000141",
+				"E07000142"
+			],
+			"bbox": [
+				-0.8,
+				52.6,
+				0.4,
+				53.7
+			]
+		},
+		{
+			"id": "lisburn",
+			"label": "Lisburn",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"N09000007"
+			],
+			"bbox": [
+				-6.08,
+				54.5,
+				-6,
+				54.55
+			]
+		},
+		{
+			"id": "liverpool",
+			"label": "Liverpool",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000012"
+			],
+			"bbox": [
+				-3,
+				53.35,
+				-2.85,
+				53.48
+			]
+		},
+		{
+			"id": "london",
+			"label": "London",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E09000001",
+				"E09000002",
+				"E09000003",
+				"E09000004",
+				"E09000005",
+				"E09000006",
+				"E09000007",
+				"E09000008",
+				"E09000009",
+				"E09000010",
+				"E09000011",
+				"E09000012",
+				"E09000013",
+				"E09000014",
+				"E09000015",
+				"E09000016",
+				"E09000017",
+				"E09000018",
+				"E09000019",
+				"E09000020",
+				"E09000021",
+				"E09000022",
+				"E09000023",
+				"E09000024",
+				"E09000025",
+				"E09000026",
+				"E09000027",
+				"E09000028",
+				"E09000029",
+				"E09000030",
+				"E09000031",
+				"E09000032",
+				"E09000033"
+			],
+			"bbox": [
+				-0.5,
+				51.3,
+				0.3,
+				51.7
+			]
+		},
+		{
+			"id": "londonderry",
+			"label": "Londonderry",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"N09000005"
+			],
+			"bbox": [
+				-7.35,
+				54.98,
+				-7.28,
+				55.03
+			]
+		},
+		{
+			"id": "lowlands",
+			"label": "Lowlands",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000006",
+				"S12000028"
+			],
+			"bbox": [
+				-5.5,
+				54.8,
+				-2.9,
+				55.5
+			]
+		},
+		{
+			"id": "luton",
+			"label": "Luton",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000032"
+			],
+			"bbox": [
+				-0.45,
+				51.87,
+				-0.4,
+				51.9
+			]
+		},
+		{
+			"id": "maidstone",
+			"label": "Maidstone",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000110"
+			],
+			"bbox": [
+				0.48,
+				51.25,
+				0.58,
+				51.3
+			]
+		},
+		{
+			"id": "manchester",
+			"label": "Manchester",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000003"
+			],
+			"bbox": [
+				-2.3,
+				53.45,
+				-2.2,
+				53.52
+			]
+		},
+		{
+			"id": "mansfield",
+			"label": "Mansfield",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000174"
+			],
+			"bbox": [
+				-1.22,
+				53.13,
+				-1.17,
+				53.18
+			]
+		},
+		{
+			"id": "merseyside",
+			"label": "Merseyside",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000011",
+				"E08000012",
+				"E08000013",
+				"E08000014",
+				"E08000015"
+			],
+			"bbox": [
+				-3.1,
+				53.3,
+				-2.7,
+				53.55
+			]
+		},
+		{
+			"id": "mid-wales",
+			"label": "Mid Wales",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000023",
+				"W06000024"
+			],
+			"bbox": [
+				-4.8,
+				51.8,
+				-2.9,
+				52.8
+			]
+		},
+		{
+			"id": "middlesbrough",
+			"label": "Middlesbrough",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000002"
+			],
+			"bbox": [
+				-1.3,
+				54.53,
+				-1.15,
+				54.58
+			]
+		},
+		{
+			"id": "milton-keynes",
+			"label": "Milton Keynes",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000042"
+			],
+			"bbox": [
+				-0.82,
+				51.98,
+				-0.68,
+				52.08
+			]
+		},
+		{
+			"id": "newcastle-upon-tyne",
+			"label": "Newcastle upon Tyne",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000021"
+			],
+			"bbox": [
+				-1.75,
+				54.95,
+				-1.55,
+				55.05
+			]
+		},
+		{
+			"id": "newport",
+			"label": "Newport",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000022"
+			],
+			"bbox": [
+				-3.05,
+				51.55,
+				-2.95,
+				51.62
+			]
+		},
+		{
+			"id": "newry",
+			"label": "Newry",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"N09000010"
+			],
+			"bbox": [
+				-6.37,
+				54.17,
+				-6.32,
+				54.2
+			]
+		},
+		{
+			"id": "norfolk",
+			"label": "Norfolk",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000143",
+				"E07000144",
+				"E07000145",
+				"E07000146",
+				"E07000147",
+				"E07000148",
+				"E07000149"
+			],
+			"bbox": [
+				0.2,
+				52.3,
+				1.8,
+				53
+			]
+		},
+		{
+			"id": "north-east",
+			"label": "North East",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000001",
+				"E06000002",
+				"E06000003",
+				"E06000004",
+				"E06000005",
+				"E06000047",
+				"E06000057",
+				"E08000021",
+				"E08000022",
+				"E08000023",
+				"E08000024",
+				"E08000037"
+			],
+			"bbox": [
+				-2.7,
+				54.2,
+				-0.5,
+				55.9
+			]
+		},
+		{
+			"id": "north-east-scotland",
+			"label": "North East Scotland",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000013",
+				"S12000020",
+				"S12000033"
+			],
+			"bbox": [
+				-3.8,
+				56.9,
+				-1.9,
+				58
+			]
+		},
+		{
+			"id": "north-wales",
+			"label": "North Wales",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000001",
+				"W06000002",
+				"W06000003",
+				"W06000004",
+				"W06000005",
+				"W06000006"
+			],
+			"bbox": [
+				-4.8,
+				52.7,
+				-2.8,
+				53.5
+			]
+		},
+		{
+			"id": "north-west",
+			"label": "North West",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000006",
+				"E06000007",
+				"E06000008",
+				"E06000009",
+				"E06000049",
+				"E06000050",
+				"E06000063",
+				"E06000064",
+				"E07000026",
+				"E07000027",
+				"E07000028",
+				"E07000029",
+				"E07000030",
+				"E07000031",
+				"E07000117",
+				"E07000118",
+				"E07000119",
+				"E07000120",
+				"E07000121",
+				"E07000122",
+				"E07000123",
+				"E07000124",
+				"E07000125",
+				"E07000126",
+				"E07000127",
+				"E07000128",
+				"E08000001",
+				"E08000002",
+				"E08000003",
+				"E08000004",
+				"E08000005",
+				"E08000006",
+				"E08000007",
+				"E08000008",
+				"E08000009",
+				"E08000010",
+				"E08000011",
+				"E08000012",
+				"E08000013",
+				"E08000014",
+				"E08000015"
+			],
+			"bbox": [
+				-3.6,
+				53.3,
+				-2.1,
+				55.1
+			]
+		},
+		{
+			"id": "north-yorkshire",
+			"label": "North Yorkshire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000065",
+				"E07000163",
+				"E07000164",
+				"E07000165",
+				"E07000166",
+				"E07000167",
+				"E07000168",
+				"E07000169"
+			],
+			"bbox": [
+				-2.5647,
+				53.6212,
+				-0.2125,
+				54.5602
+			]
+		},
+		{
+			"id": "northampton",
+			"label": "Northampton",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000062"
+			],
+			"bbox": [
+				-0.93,
+				52.22,
+				-0.85,
+				52.27
+			]
+		},
+		{
+			"id": "northern-ireland",
+			"label": "Northern Ireland",
+			"kind": "editorial-grouping",
+			"memberCodes": [],
+			"bbox": [
+				-8.3,
+				53.9,
+				-5.3,
+				55.4
+			]
+		},
+		{
+			"id": "norwich",
+			"label": "Norwich",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000148"
+			],
+			"bbox": [
+				1.25,
+				52.6,
+				1.35,
+				52.65
+			]
+		},
+		{
+			"id": "nottingham",
+			"label": "Nottingham",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000018"
+			],
+			"bbox": [
+				-1.2,
+				52.9,
+				-1.1,
+				53
+			]
+		},
+		{
+			"id": "oldham",
+			"label": "Oldham",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000004"
+			],
+			"bbox": [
+				-2.15,
+				53.52,
+				-2.05,
+				53.57
+			]
+		},
+		{
+			"id": "oxford",
+			"label": "Oxford",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000178"
+			],
+			"bbox": [
+				-1.3,
+				51.72,
+				-1.2,
+				51.78
+			]
+		},
+		{
+			"id": "oxfordshire",
+			"label": "Oxfordshire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000177",
+				"E07000178",
+				"E07000179"
+			],
+			"bbox": [
+				-1.8,
+				51.5,
+				-0.9,
+				52.2
+			]
+		},
+		{
+			"id": "paisley",
+			"label": "Paisley",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000038"
+			],
+			"bbox": [
+				-4.45,
+				55.83,
+				-4.4,
+				55.87
+			]
+		},
+		{
+			"id": "pembrokeshire-coast",
+			"label": "Pembrokeshire Coast",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000009"
+			],
+			"bbox": [
+				-5.5,
+				51.6,
+				-4.5,
+				52.1
+			]
+		},
+		{
+			"id": "perth",
+			"label": "Perth",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000048"
+			],
+			"bbox": [
+				-3.5,
+				56.38,
+				-3.4,
+				56.43
+			]
+		},
+		{
+			"id": "peterborough",
+			"label": "Peterborough",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000031"
+			],
+			"bbox": [
+				-0.28,
+				52.55,
+				-0.2,
+				52.6
+			]
+		},
+		{
+			"id": "plymouth",
+			"label": "Plymouth",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000026"
+			],
+			"bbox": [
+				-4.2,
+				50.35,
+				-4.05,
+				50.45
+			]
+		},
+		{
+			"id": "poole",
+			"label": "Poole",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000029"
+			],
+			"bbox": [
+				-2.05,
+				50.7,
+				-1.95,
+				50.75
+			]
+		},
+		{
+			"id": "portsmouth",
+			"label": "Portsmouth",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000044"
+			],
+			"bbox": [
+				-1.15,
+				50.77,
+				-1.05,
+				50.85
+			]
+		},
+		{
+			"id": "preston",
+			"label": "Preston",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000123"
+			],
+			"bbox": [
+				-2.75,
+				53.75,
+				-2.68,
+				53.78
+			]
+		},
+		{
+			"id": "reading",
+			"label": "Reading",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000038"
+			],
+			"bbox": [
+				-1,
+				51.42,
+				-0.92,
+				51.48
+			]
+		},
+		{
+			"id": "rochdale",
+			"label": "Rochdale",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000005"
+			],
+			"bbox": [
+				-2.2,
+				53.6,
+				-2.1,
+				53.65
+			]
+		},
+		{
+			"id": "rotherham",
+			"label": "Rotherham",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000018"
+			],
+			"bbox": [
+				-1.4,
+				53.4,
+				-1.3,
+				53.48
+			]
+		},
+		{
+			"id": "salford",
+			"label": "Salford",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000006"
+			],
+			"bbox": [
+				-2.35,
+				53.47,
+				-2.25,
+				53.53
+			]
+		},
+		{
+			"id": "sandwell",
+			"label": "Sandwell",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000028"
+			],
+			"bbox": [
+				-2.05,
+				52.48,
+				-1.95,
+				52.55
+			]
+		},
+		{
+			"id": "scarborough",
+			"label": "Scarborough",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000168"
+			],
+			"bbox": [
+				-0.45,
+				54.25,
+				-0.35,
+				54.32
+			]
+		},
+		{
+			"id": "scotland",
+			"label": "Scotland",
+			"kind": "editorial-grouping",
+			"memberCodes": [],
+			"bbox": [
+				-8.6,
+				54.6,
+				1.8,
+				60.9
+			]
+		},
+		{
+			"id": "scottish-borders",
+			"label": "Scottish Borders",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000026"
+			],
+			"bbox": [
+				-3.7,
+				55,
+				-2,
+				55.9
+			]
+		},
+		{
+			"id": "scottish-islands",
+			"label": "Scottish Islands",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000013",
+				"S12000023",
+				"S12000027"
+			],
+			"bbox": [
+				-8.6,
+				56.7,
+				-0.8,
+				60.9
+			]
+		},
+		{
+			"id": "sheffield",
+			"label": "Sheffield",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000039"
+			],
+			"bbox": [
+				-1.6,
+				53.3,
+				-1.3,
+				53.5
+			]
+		},
+		{
+			"id": "shrewsbury",
+			"label": "Shrewsbury",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000051"
+			],
+			"bbox": [
+				-2.8,
+				52.65,
+				-2.65,
+				52.8
+			]
+		},
+		{
+			"id": "slough",
+			"label": "Slough",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000039"
+			],
+			"bbox": [
+				-0.62,
+				51.5,
+				-0.57,
+				51.53
+			]
+		},
+		{
+			"id": "solihull",
+			"label": "Solihull",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000029"
+			],
+			"bbox": [
+				-1.85,
+				52.38,
+				-1.7,
+				52.48
+			]
+		},
+		{
+			"id": "somerset",
+			"label": "Somerset",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000066",
+				"E07000187",
+				"E07000188",
+				"E07000189",
+				"E07000190",
+				"E07000191",
+				"E07000246"
+			],
+			"bbox": [
+				-3.8,
+				50.9,
+				-2.2,
+				51.4
+			]
+		},
+		{
+			"id": "south-east",
+			"label": "South East",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000035",
+				"E06000036",
+				"E06000037",
+				"E06000038",
+				"E06000039",
+				"E06000040",
+				"E06000041",
+				"E06000042",
+				"E06000043",
+				"E06000044",
+				"E06000045",
+				"E06000046",
+				"E06000060",
+				"E07000061",
+				"E07000062",
+				"E07000063",
+				"E07000064",
+				"E07000065",
+				"E07000084",
+				"E07000085",
+				"E07000086",
+				"E07000087",
+				"E07000088",
+				"E07000089",
+				"E07000090",
+				"E07000091",
+				"E07000092",
+				"E07000093",
+				"E07000094",
+				"E07000105",
+				"E07000106",
+				"E07000107",
+				"E07000108",
+				"E07000109",
+				"E07000110",
+				"E07000111",
+				"E07000112",
+				"E07000113",
+				"E07000114",
+				"E07000115",
+				"E07000116",
+				"E07000178",
+				"E07000179",
+				"E07000180",
+				"E07000207",
+				"E07000208",
+				"E07000209",
+				"E07000210",
+				"E07000211",
+				"E07000212",
+				"E07000213",
+				"E07000214",
+				"E07000215",
+				"E07000216",
+				"E07000217",
+				"E07000223",
+				"E07000224",
+				"E07000225",
+				"E07000226",
+				"E07000227",
+				"E07000228"
+			],
+			"bbox": [
+				-1.8,
+				50.7,
+				1.5,
+				52.1
+			]
+		},
+		{
+			"id": "south-east-wales",
+			"label": "South East Wales",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000013",
+				"W06000014",
+				"W06000015",
+				"W06000016",
+				"W06000018"
+			],
+			"bbox": [
+				-3.3,
+				51.4,
+				-2.6,
+				51.8
+			]
+		},
+		{
+			"id": "south-shields",
+			"label": "South Shields",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000023"
+			],
+			"bbox": [
+				-1.45,
+				54.98,
+				-1.4,
+				55.02
+			]
+		},
+		{
+			"id": "south-wales",
+			"label": "South Wales",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000009",
+				"W06000010",
+				"W06000011",
+				"W06000012",
+				"W06000013",
+				"W06000014",
+				"W06000015",
+				"W06000016",
+				"W06000018",
+				"W06000019",
+				"W06000020",
+				"W06000021",
+				"W06000022"
+			],
+			"bbox": [
+				-4.8,
+				51.3,
+				-2.8,
+				51.8
+			]
+		},
+		{
+			"id": "south-west",
+			"label": "South West",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000022",
+				"E06000023",
+				"E06000024",
+				"E06000025",
+				"E06000026",
+				"E06000027",
+				"E06000028",
+				"E06000052",
+				"E06000053",
+				"E06000054",
+				"E06000058",
+				"E06000059",
+				"E06000066",
+				"E07000040",
+				"E07000041",
+				"E07000042",
+				"E07000043",
+				"E07000044",
+				"E07000045",
+				"E07000046",
+				"E07000047",
+				"E07000078",
+				"E07000079",
+				"E07000080",
+				"E07000081",
+				"E07000082",
+				"E07000083"
+			],
+			"bbox": [
+				-6.5,
+				49.9,
+				-1.3,
+				52.1
+			]
+		},
+		{
+			"id": "southampton",
+			"label": "Southampton",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000045"
+			],
+			"bbox": [
+				-1.45,
+				50.88,
+				-1.35,
+				50.95
+			]
+		},
+		{
+			"id": "southend-on-sea",
+			"label": "Southend-on-Sea",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000033"
+			],
+			"bbox": [
+				0.68,
+				51.53,
+				0.75,
+				51.56
+			]
+		},
+		{
+			"id": "staffordshire",
+			"label": "Staffordshire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000021",
+				"E07000192",
+				"E07000193",
+				"E07000194",
+				"E07000195",
+				"E07000196"
+			],
+			"bbox": [
+				-2.3,
+				52.6,
+				-1.5,
+				53.2
+			]
+		},
+		{
+			"id": "stirling",
+			"label": "Stirling",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000030"
+			],
+			"bbox": [
+				-4,
+				56.1,
+				-3.9,
+				56.15
+			]
+		},
+		{
+			"id": "stockport",
+			"label": "Stockport",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000007"
+			],
+			"bbox": [
+				-2.2,
+				53.38,
+				-2.1,
+				53.45
+			]
+		},
+		{
+			"id": "stockton-on-tees",
+			"label": "Stockton-on-Tees",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000004"
+			],
+			"bbox": [
+				-1.35,
+				54.55,
+				-1.25,
+				54.6
+			]
+		},
+		{
+			"id": "stoke-on-trent",
+			"label": "Stoke-on-Trent",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000021"
+			],
+			"bbox": [
+				-2.25,
+				52.97,
+				-2.1,
+				53.08
+			]
+		},
+		{
+			"id": "suffolk",
+			"label": "Suffolk",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000200",
+				"E07000201",
+				"E07000202",
+				"E07000203",
+				"E07000204"
+			],
+			"bbox": [
+				0.3,
+				51.9,
+				1.7,
+				52.6
+			]
+		},
+		{
+			"id": "sunderland",
+			"label": "Sunderland",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000024"
+			],
+			"bbox": [
+				-1.45,
+				54.85,
+				-1.3,
+				54.95
+			]
+		},
+		{
+			"id": "sussex",
+			"label": "Sussex",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000043",
+				"E07000061",
+				"E07000062",
+				"E07000063",
+				"E07000064",
+				"E07000223",
+				"E07000224",
+				"E07000225",
+				"E07000226"
+			],
+			"bbox": [
+				-0.9,
+				50.7,
+				1,
+				51.2
+			]
+		},
+		{
+			"id": "swansea",
+			"label": "Swansea",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000011"
+			],
+			"bbox": [
+				-4.05,
+				51.6,
+				-3.9,
+				51.67
+			]
+		},
+		{
+			"id": "swindon",
+			"label": "Swindon",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000030"
+			],
+			"bbox": [
+				-1.82,
+				51.54,
+				-1.75,
+				51.58
+			]
+		},
+		{
+			"id": "tayside",
+			"label": "Tayside",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000041",
+				"S12000042",
+				"S12000045"
+			],
+			"bbox": [
+				-4.6,
+				56.2,
+				-2.5,
+				57.2
+			]
+		},
+		{
+			"id": "the-hebrides",
+			"label": "The Hebrides",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000013",
+				"S12000048"
+			],
+			"bbox": [
+				-8,
+				56.7,
+				-5.5,
+				58.4
+			]
+		},
+		{
+			"id": "the-highlands",
+			"label": "The Highlands",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"S12000017"
+			],
+			"bbox": [
+				-6,
+				56.3,
+				-3,
+				58.7
+			]
+		},
+		{
+			"id": "the-valleys",
+			"label": "The Valleys",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000019",
+				"W06000020",
+				"W06000021",
+				"W06000022",
+				"W06000024"
+			],
+			"bbox": [
+				-3.5,
+				51.5,
+				-2.9,
+				51.8
+			]
+		},
+		{
+			"id": "torquay",
+			"label": "Torquay",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000027"
+			],
+			"bbox": [
+				-3.55,
+				50.43,
+				-3.48,
+				50.48
+			]
+		},
+		{
+			"id": "united-kingdom",
+			"label": "United Kingdom",
+			"kind": "editorial-grouping",
+			"memberCodes": [],
+			"bbox": [
+				-8.6,
+				49.9,
+				1.8,
+				60.9
+			]
+		},
+		{
+			"id": "wakefield",
+			"label": "Wakefield",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000036"
+			],
+			"bbox": [
+				-1.55,
+				53.65,
+				-1.45,
+				53.72
+			]
+		},
+		{
+			"id": "wales",
+			"label": "Wales",
+			"kind": "editorial-grouping",
+			"memberCodes": [],
+			"bbox": [
+				-5.3,
+				51.3,
+				-2.6,
+				53.5
+			]
+		},
+		{
+			"id": "walsall",
+			"label": "Walsall",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000030"
+			],
+			"bbox": [
+				-2.05,
+				52.55,
+				-1.95,
+				52.63
+			]
+		},
+		{
+			"id": "warrington",
+			"label": "Warrington",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000007"
+			],
+			"bbox": [
+				-2.65,
+				53.35,
+				-2.5,
+				53.45
+			]
+		},
+		{
+			"id": "west-midlands",
+			"label": "West Midlands",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000019",
+				"E06000020",
+				"E06000021",
+				"E06000051",
+				"E07000192",
+				"E07000193",
+				"E07000194",
+				"E07000195",
+				"E07000196",
+				"E07000197",
+				"E07000199",
+				"E07000218",
+				"E07000219",
+				"E07000220",
+				"E07000221",
+				"E07000222",
+				"E07000234",
+				"E07000235",
+				"E07000236",
+				"E07000237",
+				"E07000238",
+				"E07000239",
+				"E08000025",
+				"E08000026",
+				"E08000027",
+				"E08000028",
+				"E08000029",
+				"E08000030",
+				"E08000031"
+			],
+			"bbox": [
+				-3.1,
+				52.2,
+				-1.4,
+				53
+			]
+		},
+		{
+			"id": "west-wales",
+			"label": "West Wales",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000008",
+				"W06000010",
+				"W06000011"
+			],
+			"bbox": [
+				-5.5,
+				51.4,
+				-3.7,
+				52.2
+			]
+		},
+		{
+			"id": "wigan",
+			"label": "Wigan",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000010"
+			],
+			"bbox": [
+				-2.65,
+				53.52,
+				-2.6,
+				53.57
+			]
+		},
+		{
+			"id": "winchester",
+			"label": "Winchester",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000094"
+			],
+			"bbox": [
+				-1.35,
+				51.05,
+				-1.28,
+				51.08
+			]
+		},
+		{
+			"id": "wolverhampton",
+			"label": "Wolverhampton",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E08000031"
+			],
+			"bbox": [
+				-2.2,
+				52.55,
+				-2.05,
+				52.63
+			]
+		},
+		{
+			"id": "worcester",
+			"label": "Worcester",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E07000237"
+			],
+			"bbox": [
+				-2.25,
+				52.17,
+				-2.18,
+				52.22
+			]
+		},
+		{
+			"id": "wrexham",
+			"label": "Wrexham",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"W06000006"
+			],
+			"bbox": [
+				-3.05,
+				53.03,
+				-2.95,
+				53.08
+			]
+		},
+		{
+			"id": "york",
+			"label": "York",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000014"
+			],
+			"bbox": [
+				-1.15,
+				53.92,
+				-1,
+				54
+			]
+		},
+		{
+			"id": "yorkshire",
+			"label": "Yorkshire",
+			"kind": "editorial-grouping",
+			"memberCodes": [
+				"E06000010",
+				"E06000011",
+				"E06000014",
+				"E06000065",
+				"E07000163",
+				"E07000164",
+				"E07000165",
+				"E07000166",
+				"E07000167",
+				"E07000168",
+				"E07000169",
+				"E08000017",
+				"E08000018",
+				"E08000032",
+				"E08000033",
+				"E08000034",
+				"E08000035",
+				"E08000036",
+				"E08000038",
+				"E08000039"
+			],
+			"bbox": [
+				-2.6,
+				53.3,
+				-0.3,
+				54.6
+			]
+		}
+	]
+}
