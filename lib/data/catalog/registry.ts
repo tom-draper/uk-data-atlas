@@ -4,6 +4,7 @@ import { airQualityDatasetDefinition } from "./definitions/airQuality";
 import { brexitDatasetDefinition } from "./definitions/brexit";
 import { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstituency";
 import { broadbandDatasetDefinition } from "./definitions/broadband";
+import { carAvailabilityDatasetDefinition } from "./definitions/carAvailability";
 import { childPovertyDatasetDefinition } from "./definitions/childPoverty";
 import { claimantCountDatasetDefinition } from "./definitions/claimantCount";
 import { crimeDatasetDefinition } from "./definitions/crime";
@@ -38,6 +39,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	brexitDatasetDefinition,
 	brexitConstituencyDatasetDefinition,
 	broadbandDatasetDefinition,
+	carAvailabilityDatasetDefinition,
 	childPovertyDatasetDefinition,
 	claimantCountDatasetDefinition,
 	crimeDatasetDefinition,
