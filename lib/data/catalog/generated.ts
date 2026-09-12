@@ -3,6 +3,7 @@ import type { airQualityDatasetDefinition } from "./definitions/airQuality";
 import type { brexitDatasetDefinition } from "./definitions/brexit";
 import type { brexitConstituencyDatasetDefinition } from "./definitions/brexitConstituency";
 import type { broadbandDatasetDefinition } from "./definitions/broadband";
+import type { carAvailabilityDatasetDefinition } from "./definitions/carAvailability";
 import type { childPovertyDatasetDefinition } from "./definitions/childPoverty";
 import type { claimantCountDatasetDefinition } from "./definitions/claimantCount";
 import type { crimeDatasetDefinition } from "./definitions/crime";
@@ -38,6 +39,9 @@ export type CatalogueDataset =
 			ReturnType<typeof brexitConstituencyDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<ReturnType<typeof broadbandDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof carAvailabilityDatasetDefinition.precompile>
+	  >[string]
 	| Awaited<
 			ReturnType<typeof childPovertyDatasetDefinition.precompile>
 	  >[string]
@@ -116,6 +120,9 @@ export type CatalogueDatasetRecords = {
 	>;
 	broadband: Awaited<
 		ReturnType<typeof broadbandDatasetDefinition.precompile>
+	>;
+	carAvailability: Awaited<
+		ReturnType<typeof carAvailabilityDatasetDefinition.precompile>
 	>;
 	childPoverty: Awaited<
 		ReturnType<typeof childPovertyDatasetDefinition.precompile>
