@@ -1250,7 +1250,13 @@ paths:
       description: >
         `release` is required because location definitions may include legacy
         codes. Missing members are returned explicitly; this route never
-        applies an implicit historical conversion.
+        applies an implicit historical conversion. A `coverage` object counts
+        resolved and unresolved members and classifies each unresolved code
+        against the compiled releases of its geography as `superseded`,
+        `not-yet-current`, `absent-from-release` or `unknown`, naming the
+        releases that are the evidence. The classification is relative to the
+        requested release and reports code membership only; it asserts nothing
+        about geometry.
       parameters:
         - name: location-id
           in: path
@@ -1267,7 +1273,9 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Directly resolved members and explicitly unresolved codes.
+          description: >
+            Directly resolved members, explicitly unresolved codes, and the
+            coverage that explains each one.
           content:
             application/json:
               schema: { type: object }

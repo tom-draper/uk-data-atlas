@@ -77,7 +77,12 @@ only **available** when its endpoint, contract and provenance are published.
       groupings rather than silently presented as official geographies.
 - [x] Resolve a named location's direct member codes in one specified
       geography/release, reporting unresolved legacy codes rather than applying
-      an implicit historical conversion.
+      an implicit historical conversion. Each unresolved code is classified
+      against the compiled releases of its geography — superseded, not yet
+      current, absent from the requested release, or unknown — so a caller can
+      tell an abolished district from a recode it has yet to adopt. Of the 155
+      curated locations, 14 are incomplete against the May 2023 local authority
+      release.
 - [x] Find every area containing a WGS84 point in one specified geography and
       release. Points on exterior or hole rings are included and labelled
       `boundary`, so shared-border ambiguity remains visible to callers.
@@ -1190,6 +1195,7 @@ pnpm start
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`
 - `GET /v1/areas`
