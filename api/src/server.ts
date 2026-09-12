@@ -282,8 +282,12 @@ export const createApiServer = (catalogues: ApiCatalogues) =>
 			"content-type":
 				result.status >= 400
 					? "application/problem+json"
-					: "application/json",
+					: (result.representation?.contentType ??
+						"application/json"),
 			"x-content-type-options": "nosniff",
+			...result.representation?.headers,
 		});
-		response.end(`${JSON.stringify(result.body)}\n`);
+		response.end(
+			result.representation?.body ?? `${JSON.stringify(result.body)}\n`,
+		);
 	});

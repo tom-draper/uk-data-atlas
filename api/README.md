@@ -205,7 +205,12 @@ only **available** when its endpoint, contract and provenance are published.
       publishes those series.
 - [ ] Return house-price, deprivation, election and other curated measures with
       their own aggregation rules.
-- [ ] Export data as JSON, CSV, NDJSON and Parquet.
+- [x] Export source-exact population pages as JSON, CSV or NDJSON, retaining
+      row-level release, source and geography provenance outside the API. A
+      tabular page that is not the last carries its successor in a `Link`
+      header with `rel="next"`.
+- [ ] Export large datasets as Parquet, with an immutable export manifest and
+      documented schema/versioning policy.
 - [ ] Aggregate additive measures over parent areas or named locations; reject
       invalid operations such as summing medians or averaging ranks.
 - [ ] Convert measures across releases only with an explicit, appropriate
@@ -1182,6 +1187,8 @@ pnpm start
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
+- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv`
+- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`
