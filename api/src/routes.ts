@@ -26,6 +26,7 @@ import type {
 	PopulationObservationArtifact,
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import { compareObservations } from "./comparison";
 import { measureCoverage } from "./measureCoverage";
 import { reconcileMembers } from "./memberReconciliation";
 import { rankObservations, type RankingOrder } from "./ranking";
@@ -358,6 +359,7 @@ export const route = (
 					"/v1/data/{measure-id}",
 					"/v1/data/{measure-id}/series",
 					"/v1/data/{measure-id}/rankings",
+					"/v1/data/{measure-id}/compare",
 					"/v1/areas",
 					"/v1/areas:contains",
 					"/v1/areas/{type}/{release}/{code}",
@@ -419,6 +421,123 @@ export const route = (
 					"Not Found",
 					"No published dataset matches that id.",
 				);
+	}
+
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "data" &&
+		segments[3] === "compare"
+	) {
+		if (!dataCatalog) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue before comparing source-exact observations.",
+			);
+		}
+		const measureId = segments[2] as string;
+		const measure = dataCatalog.measures.find(
+			(candidate) => candidate.id === measureId,
+		);
+		if (!measure) {
+			return problem(
+				404,
+				"Not Found",
+				"No published measure serves comparisons at that path.",
+			);
+		}
+		if (
+			parsedUrl.searchParams.has("release") ||
+			parsedUrl.searchParams.has("conversion") ||
+			parsedUrl.searchParams.has("aggregate")
+		) {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"This source-exact comparison endpoint does not select geometry releases, convert observations or aggregate them.",
+			);
+		}
+		const period = parsedUrl.searchParams.get("period");
+		const geography = parsedUrl.searchParams.get("geography");
+		const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
+		const baselineAreaCode = parsedUrl.searchParams.get("baselineAreaCode");
+		const comparisonAreaCode =
+			parsedUrl.searchParams.get("comparisonAreaCode");
+		if (!baselineAreaCode || !comparisonAreaCode) {
+			return problem(
+				400,
+				"Invalid Query",
+				"baselineAreaCode and comparisonAreaCode are required.",
+			);
+		}
+		if (baselineAreaCode === comparisonAreaCode) {
+			return problem(
+				400,
+				"Invalid Query",
+				"baselineAreaCode and comparisonAreaCode must differ.",
+			);
+		}
+		const source = measure.sources.find(
+			(candidate) =>
+				candidate.periods.includes(period ?? "") &&
+				candidate.sourceGeography.type === geography &&
+				String(candidate.sourceGeography.boundaryYear) === boundaryYear,
+		);
+		if (!source) {
+			return problem(
+				400,
+				"Invalid Query",
+				`${measureId} supports comparisons only for a published source period, geography and boundary year.`,
+			);
+		}
+		const observations = observationsFor(
+			measureId,
+			source,
+			period as string,
+			{
+				populationObservations,
+				populationLocalAuthorityObservations,
+				measureObservations,
+			},
+		);
+		if (!observations) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
+			);
+		}
+		const baseline = observations.records.find(
+			(record) => record.areaCode === baselineAreaCode,
+		);
+		const comparison = observations.records.find(
+			(record) => record.areaCode === comparisonAreaCode,
+		);
+		if (!baseline || !comparison) {
+			return problem(
+				404,
+				"Not Found",
+				"One or both requested area codes have no published source-exact observation.",
+			);
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				measure,
+				source,
+				period,
+				sourceGeography: source.sourceGeography,
+				provenance: sourceExactProvenance({
+					atlasRelease: releaseId,
+					measure,
+					source,
+					period: period as string,
+					observations,
+				}),
+				comparison: compareObservations(measure, baseline, comparison),
+			}),
+		};
 	}
 
 	if (
