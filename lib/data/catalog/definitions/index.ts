@@ -3,6 +3,7 @@ export { airQualityDatasetDefinition } from "./airQuality";
 export { brexitDatasetDefinition } from "./brexit";
 export { brexitConstituencyDatasetDefinition } from "./brexitConstituency";
 export { broadbandDatasetDefinition } from "./broadband";
+export { carAvailabilityDatasetDefinition } from "./carAvailability";
 export { childPovertyDatasetDefinition } from "./childPoverty";
 export { claimantCountDatasetDefinition } from "./claimantCount";
 export { crimeDatasetDefinition } from "./crime";

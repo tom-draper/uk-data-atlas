@@ -1,0 +1,24 @@
+{
+	"id": "car-availability",
+	"title": "Car or van availability, England and Wales",
+	"description": "Census 2021 table TS045: the number of cars or vans available to each household, by local authority district, for England and Wales.",
+	"topics": ["transport", "census", "households"],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/datasets/TS045/editions/2021/versions/4",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"temporalCoverage": "2021",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": ["GB-ENG", "GB-WLS"]
+	},
+	"files": [
+		{
+			"path": "TS045-2021-4.csv",
+			"role": "source",
+			"note": "331 local authorities x 5 categories, 1,655 rows. Counts households, not people. Category -8 is the 'Does not apply' row, which is zero for every authority in this table, and is skipped by the loader. Version 4, released 28 March 2023. The loader keys categories by numeric code rather than label so a relabelled version still loads."
+		}
+	]
+}
