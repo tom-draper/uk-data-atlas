@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:fe8f6d8f9979677e9f8b0e10eb44aaccd48281ca695cfca9981bbf762ec1a8b2",
+	"releaseId": "sha256:0e43e54b9d36d402be4470020152e691008d8c74d6e25216ad1a8562c6aab790",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,12 +25,17 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:4848c5afe2fc8821a5d53f51fa6fbb54ec7e4b5568e9b397e1e5f9fc96e4ba59"
+			"contentHash": "sha256:db55d65818b255845c23437ae9e09d694d111a670a3579238b7d257fe5415e30"
 		},
 		{
 			"id": "population-observations",
 			"path": "population-observations.json",
 			"contentHash": "sha256:be57872d64d3d57598295ecd26bc0b5dc2bb0ebc82ae06be09234c7fe3103cd8"
+		},
+		{
+			"id": "population-local-authority-observations",
+			"path": "population-local-authority-observations.json",
+			"contentHash": "sha256:4c66f79477cd4ca66b4e70a0cc47c269cdad6c9330009614c58131beb3cbc6a9"
 		},
 		{
 			"id": "geometry-sources",

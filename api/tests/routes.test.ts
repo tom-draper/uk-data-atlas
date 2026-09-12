@@ -23,6 +23,7 @@ import {
 } from "../src/namedLocations";
 import type { ValidationReport } from "../src/validationReport";
 import type {
+	PopulationLocalAuthorityObservationArtifact,
 	DataCatalog,
 	PopulationObservationArtifact,
 } from "../src/dataCatalog";
@@ -202,8 +203,7 @@ const dataCatalog: DataCatalog = {
 	measures: [
 		{
 			id: "population-estimate",
-			label: "Ward population estimate",
-			datasetId: "population",
+			label: "Population estimate",
 			valueKind: "count",
 			unit: "people",
 			aggregation: {
@@ -211,23 +211,39 @@ const dataCatalog: DataCatalog = {
 				operation: "sum",
 				available: false,
 			},
-			periods: ["2022"],
-			sourceGeography: { type: "ward", boundaryYear: 2023 },
-			coverage: {
-				kind: "partial",
-				countries: ["GB-ENG", "GB-WLS"],
-				recordCount: 2,
-				note: "England and Wales only.",
-			},
+			sources: [
+				{
+					datasetId: "population",
+					periods: ["2022"],
+					sourceGeography: { type: "ward", boundaryYear: 2023 },
+					coverage: {
+						kind: "partial",
+						countries: ["GB-ENG", "GB-WLS"],
+						recordCount: 2,
+						note: "England and Wales only.",
+					},
+				},
+				{
+					datasetId: "population-uk",
+					periods: ["2024"],
+					sourceGeography: {
+						type: "localAuthority",
+						boundaryYear: 2023,
+					},
+					coverage: {
+						kind: "source-reported",
+						countries: ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"],
+						recordCount: 4,
+						note: "All UK nations.",
+					},
+				},
+			],
 			availability: {
 				sourceExact: true,
 				conversion: false,
 				aggregation: false,
 			},
-			links: {
-				data: "/v1/data/population-estimate",
-				dataset: "/v1/datasets/population",
-			},
+			links: { data: "/v1/data/population-estimate" },
 		},
 	],
 };
@@ -243,6 +259,23 @@ const populationObservations: PopulationObservationArtifact = {
 		{ areaCode: "W05000001", value: 200, status: "observed" },
 	],
 };
+
+const populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact =
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:population-local-authority-observations",
+		measureId: "population-estimate",
+		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+		periods: [
+			{
+				period: "2024",
+				records: [
+					{ areaCode: "E06000001", value: 300, status: "observed" },
+					{ areaCode: "N09000001", value: 400, status: "observed" },
+				],
+			},
+		],
+	};
 
 const routeWithNamedLocations = (url: string) =>
 	route(
@@ -282,6 +315,7 @@ const routeWithData = (url: string) =>
 		undefined,
 		dataCatalog,
 		populationObservations,
+		populationLocalAuthorityObservations,
 	);
 
 test("publishes datasets, measures and source-exact population observations", () => {
@@ -306,6 +340,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	const firstData = "data" in first.body ? first.body.data : undefined;
 	assert.deepEqual(firstData, {
 		measure: dataCatalog.measures[0],
+		source: dataCatalog.measures[0]?.sources[0],
 		period: "2022",
 		sourceGeography: { type: "ward", boundaryYear: 2023 },
 		conversion: null,
@@ -319,12 +354,32 @@ test("publishes datasets, measures and source-exact population observations", ()
 	);
 	assert.deepEqual("data" in second.body && second.body.data, {
 		measure: dataCatalog.measures[0],
+		source: dataCatalog.measures[0]?.sources[0],
 		period: "2022",
 		sourceGeography: { type: "ward", boundaryYear: 2023 },
 		conversion: null,
 		aggregation: null,
 		records: [populationObservations.records[1]],
 	});
+
+	const localAuthority = routeWithData(
+		"/v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023&areaCode=N09000001",
+	);
+	assert.equal(localAuthority.status, 200);
+	assert.deepEqual(
+		"data" in localAuthority.body && localAuthority.body.data,
+		{
+			measure: dataCatalog.measures[0],
+			source: dataCatalog.measures[0]?.sources[1],
+			period: "2024",
+			sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+			conversion: null,
+			aggregation: null,
+			records: [
+				{ areaCode: "N09000001", value: 400, status: "observed" },
+			],
+		},
+	);
 });
 
 test("refuses population conversions and aggregation until they are implemented", () => {

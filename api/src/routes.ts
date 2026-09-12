@@ -17,7 +17,11 @@ import type {
 	NamedLocationLookup,
 } from "./namedLocations";
 import type { ValidationReport } from "./validationReport";
-import type { DataCatalog, PopulationObservationArtifact } from "./dataCatalog";
+import type {
+	DataCatalog,
+	PopulationLocalAuthorityObservationArtifact,
+	PopulationObservationArtifact,
+} from "./dataCatalog";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -190,6 +194,7 @@ export const route = (
 	namedLocationLookup?: NamedLocationLookup,
 	dataCatalog?: DataCatalog,
 	populationObservations?: PopulationObservationArtifact,
+	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact,
 ): ApiResponse => {
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -329,7 +334,11 @@ export const route = (
 		segments[1] === "data" &&
 		segments[2] === "population-estimate"
 	) {
-		if (!dataCatalog || !populationObservations) {
+		if (
+			!dataCatalog ||
+			!populationObservations ||
+			!populationLocalAuthorityObservations
+		) {
 			return problem(
 				503,
 				"Catalogue Unavailable",
@@ -339,16 +348,20 @@ export const route = (
 		const period = parsedUrl.searchParams.get("period");
 		const geography = parsedUrl.searchParams.get("geography");
 		const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
-		if (
-			period !== populationObservations.period ||
-			geography !== populationObservations.sourceGeography.type ||
-			boundaryYear !==
-				String(populationObservations.sourceGeography.boundaryYear)
-		) {
+		const measure = dataCatalog.measures.find(
+			(candidate) => candidate.id === "population-estimate",
+		);
+		const source = measure?.sources.find(
+			(candidate) =>
+				candidate.periods.includes(period ?? "") &&
+				candidate.sourceGeography.type === geography &&
+				String(candidate.sourceGeography.boundaryYear) === boundaryYear,
+		);
+		if (!source) {
 			return problem(
 				400,
 				"Invalid Query",
-				"population-estimate currently supports only period=2022&geography=ward&boundaryYear=2023, its published source geography.",
+				"population-estimate supports only a published source period, geography and boundary year; inspect /v1/measures/population-estimate for available sources.",
 			);
 		}
 		if (
@@ -363,11 +376,22 @@ export const route = (
 			);
 		}
 		const areaCode = parsedUrl.searchParams.get("areaCode");
+		const sourceRecords =
+			source.sourceGeography.type === "ward"
+				? populationObservations.records
+				: populationLocalAuthorityObservations.periods.find(
+						(candidate) => candidate.period === period,
+					)?.records;
+		if (!sourceRecords) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"The population observation artifact does not contain the catalogue's declared source period.",
+			);
+		}
 		const matches = areaCode
-			? populationObservations.records.filter(
-					(record) => record.areaCode === areaCode,
-				)
-			: populationObservations.records;
+			? sourceRecords.filter((record) => record.areaCode === areaCode)
+			: sourceRecords;
 		const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
 		if (pageSize === undefined) {
 			return problem(
@@ -397,17 +421,15 @@ export const route = (
 			offset + records.length < matches.length && lastRecord
 				? cursorFor(lastRecord.areaCode)
 				: null;
-		const measure = dataCatalog.measures.find(
-			(candidate) => candidate.id === "population-estimate",
-		);
 		return {
 			status: 200,
 			body: envelope(
 				releaseId,
 				{
 					measure,
-					period: populationObservations.period,
-					sourceGeography: populationObservations.sourceGeography,
+					source,
+					period,
+					sourceGeography: source.sourceGeography,
 					conversion: null,
 					aggregation: null,
 					records,
