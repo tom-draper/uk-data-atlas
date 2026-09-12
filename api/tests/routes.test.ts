@@ -270,12 +270,7 @@ const namedLocationInventory: NamedLocationInventory = {
 			id: "greater-manchester",
 			label: "Greater Manchester",
 			kind: "editorial-grouping",
-			memberCodes: [
-				"E08000000",
-				"E08000001",
-				"E08000998",
-				"E08000999",
-			],
+			memberCodes: ["E08000000", "E08000001", "E08000998", "E08000999"],
 			bbox: [-2.5, 53.3, -2, 53.7],
 		},
 	],
@@ -332,7 +327,7 @@ const dataCatalog: DataCatalog = {
 				},
 				{
 					datasetId: "population-uk",
-					periods: ["2024"],
+					periods: ["2022", "2023", "2024"],
 					sourceGeography: {
 						type: "localAuthority",
 						boundaryYear: 2023,
@@ -526,6 +521,20 @@ const populationLocalAuthorityObservations: PopulationLocalAuthorityObservationA
 		measureId: "population-estimate",
 		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 		periods: [
+			{
+				period: "2022",
+				records: [
+					{ areaCode: "E06000001", value: 280, status: "observed" },
+					{ areaCode: "N09000001", value: 380, status: "observed" },
+				],
+			},
+			{
+				period: "2023",
+				records: [
+					{ areaCode: "E06000001", value: 290, status: "observed" },
+					{ areaCode: "N09000001", value: 390, status: "observed" },
+				],
+			},
 			{
 				period: "2024",
 				records: [
@@ -881,6 +890,57 @@ test("publishes datasets, measures and source-exact population observations", ()
 	assert.equal(invalidFormat.status, 400);
 });
 
+test("returns a source-exact series without selecting a geometry release", () => {
+	const response = routeWithData(
+		"/v1/data/population-estimate/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023",
+	);
+	assert.equal(response.status, 200);
+	const data = "data" in response.body ? response.body.data : undefined;
+	assert.ok(data && typeof data === "object");
+	assert.deepEqual((data as { series: unknown }).series, [
+		{
+			period: "2022",
+			areaCode: "N09000001",
+			value: 380,
+			status: "observed",
+		},
+		{
+			period: "2023",
+			areaCode: "N09000001",
+			value: 390,
+			status: "observed",
+		},
+		{
+			period: "2024",
+			areaCode: "N09000001",
+			value: 400,
+			status: "observed",
+		},
+	]);
+	assert.deepEqual(
+		(data as { provenance: { source: { observations: unknown } } })
+			.provenance.source.observations,
+		{
+			artifact: "population-local-authority-observations",
+			contentHash: "sha256:population-local-authority-observations",
+			periods: ["2022", "2023", "2024"],
+		},
+	);
+
+	assert.equal(
+		routeWithData(
+			"/v1/data/population-estimate/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023&release=2023-05-uk-bgc",
+		).status,
+		422,
+	);
+	assert.equal(
+		routeWithData(
+			"/v1/data/population-estimate/series?areaCode=unknown&geography=localAuthority&boundaryYear=2023",
+		).status,
+		404,
+	);
+});
+
 test("serves greenhouse gas emissions as a second source-exact measure", () => {
 	const measures = routeWithData("/v1/measures");
 	assert.deepEqual(
@@ -907,8 +967,11 @@ test("serves greenhouse gas emissions as a second source-exact measure", () => {
 	]);
 	// The provenance names the emissions artifact, not a population one.
 	assert.equal(
-		(data as { provenance: { source: { observations: { artifact: string } } } })
-			.provenance.source.observations.artifact,
+		(
+			data as {
+				provenance: { source: { observations: { artifact: string } } };
+			}
+		).provenance.source.observations.artifact,
 		"ghg-emissions-observations",
 	);
 
@@ -987,8 +1050,11 @@ test("declares a coverage share as intensive, so it is never summed", () => {
 		{ areaCode: "E06000001", value: 40.5, status: "observed" },
 	]);
 	assert.equal(
-		(data as { provenance: { source: { observations: { artifact: string } } } })
-			.provenance.source.observations.artifact,
+		(
+			data as {
+				provenance: { source: { observations: { artifact: string } } };
+			}
+		).provenance.source.observations.artifact,
 		"mobile-5g-coverage-observations",
 	);
 
@@ -1103,7 +1169,7 @@ test("publishes source and boundary code coverage without claiming equal geometr
 					id: "population-uk",
 					href: "/v1/datasets/population-uk",
 				},
-				periods: ["2024"],
+				periods: ["2022", "2023", "2024"],
 				sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 				sourceCoverage: dataCatalog.measures[0]?.sources[1]?.coverage,
 				boundaryCoverage: [],

@@ -211,7 +211,12 @@ only **available** when its endpoint, contract and provenance are published.
       constituency, country or named location.
 - [ ] Return population density only when the population date/geography and the
       documented land-area denominator are compatible.
-- [ ] Return time series, rankings, comparisons and uncertainty intervals.
+- [x] Return source-exact time series for one published area code and source
+      partition through `GET /v1/data/{measure-id}/series`. The route neither
+      converts nor aggregates values, and reports the observation artifact and
+      all periods in its provenance.
+- [ ] Return rankings, comparisons and uncertainty intervals where the measure
+      semantics and source publication support them.
 - [ ] Return life expectancy by total, male and female where the source
       publishes those series.
 - [ ] Return house-price, deprivation, election and other curated measures with
@@ -1221,6 +1226,7 @@ pnpm start
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
+- `GET /v1/data/population-estimate/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&release=2025-05-uk-bgc-v2&include=area`
 - `GET /v1/measures/ghg-emissions/coverage`

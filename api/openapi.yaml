@@ -50,6 +50,7 @@ paths:
                     - /v1/measures/{measure-id}/compatibility
                     - /v1/measures/{measure-id}/coverage
                     - /v1/data/{measure-id}
+                    - /v1/data/{measure-id}/series
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/areas/{type}/{release}/{code}/relationships
@@ -412,6 +413,61 @@ paths:
           $ref: "#/components/responses/InvalidQuery"
         "422":
           description: The requested operation is not supported for this source-exact measure.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /data/{measure-id}/series:
+    get:
+      operationId: getSourceExactMeasureSeries
+      summary: Retrieve one area's source-exact time series
+      description: >
+        Returns all published observations for one area code within one source
+        geography and code vintage. It does not select a boundary release,
+        convert values or aggregate them. Supply `datasetId` when a measure has
+        more than one source for the requested geography and boundary year.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: areaCode
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: geography
+          in: query
+          required: true
+          schema:
+            enum: [ward, localAuthority]
+        - name: boundaryYear
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: datasetId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Source-exact observations in ascending source period order.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: The requested conversion, aggregation or geometry release is not supported.
           content:
             application/problem+json:
               schema:
