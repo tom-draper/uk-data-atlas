@@ -176,26 +176,53 @@ const relationshipsFor = (
 			: undefined)
 	)?.get(`${geography}/${boundaryRelease}/${code}`) ?? [];
 
+export type RouteContext = {
+	boundaryRegistry: BoundaryRegistry;
+	geographyInventory?: GeographyInventory;
+	areaLookup?: AreaLookup;
+	crosswalkInventory?: CrosswalkInventory;
+	crosswalkLookup?: CrosswalkLookup;
+	atlasRelease?: AtlasRelease;
+	areaSearchIndex?: AreaSearchIndex;
+	areaRelationshipIndex?: AreaRelationshipIndex;
+	areaGeometryCache?: AreaGeometryCache;
+	relationshipCandidateInventory?: RelationshipCandidateInventory;
+	validationReport?: ValidationReport;
+	namedLocationInventory?: NamedLocationInventory;
+	namedLocationLookup?: NamedLocationLookup;
+	dataCatalog?: DataCatalog;
+	populationObservations?: PopulationObservationArtifact;
+	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
+};
+
+/**
+ * Route a request against named, independently-built catalogues. Keeping the
+ * dependencies in one object prevents a newly added artifact from silently
+ * shifting a long positional argument list at every call site.
+ */
 export const route = (
 	method: string | undefined,
 	url: string | undefined,
-	registry: BoundaryRegistry,
-	geographyInventory?: GeographyInventory,
-	areaLookup?: AreaLookup,
-	crosswalkInventory?: CrosswalkInventory,
-	crosswalkLookup?: CrosswalkLookup,
-	atlasRelease?: AtlasRelease,
-	areaSearchIndex?: AreaSearchIndex,
-	areaRelationshipIndex?: AreaRelationshipIndex,
-	areaGeometryCache?: AreaGeometryCache,
-	relationshipCandidateInventory?: RelationshipCandidateInventory,
-	validationReport?: ValidationReport,
-	namedLocationInventory?: NamedLocationInventory,
-	namedLocationLookup?: NamedLocationLookup,
-	dataCatalog?: DataCatalog,
-	populationObservations?: PopulationObservationArtifact,
-	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact,
+	context: RouteContext,
 ): ApiResponse => {
+	const {
+		boundaryRegistry: registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		atlasRelease,
+		areaSearchIndex,
+		areaRelationshipIndex,
+		areaGeometryCache,
+		relationshipCandidateInventory,
+		validationReport,
+		namedLocationInventory,
+		namedLocationLookup,
+		dataCatalog,
+		populationObservations,
+		populationLocalAuthorityObservations,
+	} = context;
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
 		return problem(405, "Method Not Allowed", "This API is read-only.");

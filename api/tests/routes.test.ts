@@ -8,7 +8,11 @@ import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
 } from "../src/areaGeometry";
-import { route, type CrosswalkLookup } from "../src/routes";
+import {
+	route as routeRequest,
+	type CrosswalkLookup,
+	type RouteContext,
+} from "../src/routes";
 import type { AtlasRelease } from "../src/atlasRelease";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type {
@@ -27,6 +31,48 @@ import type {
 	DataCatalog,
 	PopulationObservationArtifact,
 } from "../src/dataCatalog";
+
+// Most tests exercise one narrow dependency combination. This fixture adapter
+// keeps those cases concise while ensuring the production router only accepts
+// its named RouteContext.
+const route = (
+	method: string | undefined,
+	url: string | undefined,
+	boundaryRegistry: BoundaryRegistry,
+	geographyInventory?: RouteContext["geographyInventory"],
+	areaLookup?: RouteContext["areaLookup"],
+	crosswalkInventory?: RouteContext["crosswalkInventory"],
+	crosswalkLookup?: RouteContext["crosswalkLookup"],
+	atlasRelease?: RouteContext["atlasRelease"],
+	areaSearchIndex?: RouteContext["areaSearchIndex"],
+	areaRelationshipIndex?: RouteContext["areaRelationshipIndex"],
+	areaGeometryCache?: RouteContext["areaGeometryCache"],
+	relationshipCandidateInventory?: RouteContext["relationshipCandidateInventory"],
+	validationReport?: RouteContext["validationReport"],
+	namedLocationInventory?: RouteContext["namedLocationInventory"],
+	namedLocationLookup?: RouteContext["namedLocationLookup"],
+	dataCatalog?: RouteContext["dataCatalog"],
+	populationObservations?: RouteContext["populationObservations"],
+	populationLocalAuthorityObservations?: RouteContext["populationLocalAuthorityObservations"],
+) =>
+	routeRequest(method, url, {
+		boundaryRegistry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		atlasRelease,
+		areaSearchIndex,
+		areaRelationshipIndex,
+		areaGeometryCache,
+		relationshipCandidateInventory,
+		validationReport,
+		namedLocationInventory,
+		namedLocationLookup,
+		dataCatalog,
+		populationObservations,
+		populationLocalAuthorityObservations,
+	});
 
 const registry: BoundaryRegistry = {
 	schemaVersion: 1,
