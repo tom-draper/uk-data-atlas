@@ -1,4 +1,8 @@
 import { SIMDDataset, SIMDDataZoneData } from "@/lib/types/simd";
+import {
+	isMostDeprivedSIMD,
+	summariseDeprivationBy,
+} from "@/lib/helpers/datasetAggregation/deprivation";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 
 const COUNCIL_AREA_CODES: Record<string, string> = {
@@ -95,21 +99,11 @@ export async function loadSIMD(
 		};
 	}
 
-	const councilGroups: Record<string, (typeof records)[string][]> = {};
-	for (const r of Object.values(records)) {
-		(councilGroups[r.councilAreaCode] ??= []).push(r);
-	}
-	const councilStats: SIMDDataset["councilStats"] = {};
-	for (const [code, dzs] of Object.entries(councilGroups)) {
-		councilStats[code] = {
-			averageSIMDRank:
-				dzs.reduce((s, r) => s + r.simdRank, 0) / dzs.length,
-			averageSIMDQuintile:
-				dzs.reduce((s, r) => s + r.simdQuintile, 0) / dzs.length,
-			averageSIMDDecile:
-				dzs.reduce((s, r) => s + r.simdDecile, 0) / dzs.length,
-		};
-	}
+	const councilStats: SIMDDataset["councilStats"] = summariseDeprivationBy(
+		Object.values(records),
+		(record) => record.councilAreaCode,
+		isMostDeprivedSIMD,
+	);
 
 	return {
 		2020: {

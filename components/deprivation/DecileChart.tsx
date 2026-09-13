@@ -30,10 +30,15 @@ interface DecileChartProps {
 	title: string;
 	heading: string;
 	region: string;
-	decile: number | null;
-	detail: { value: string; unit: string } | null;
-	barWidth: number;
 	hasData: boolean;
+	value: string | number;
+	unit: string;
+	secondary?: string;
+	barWidth: number;
+	/** From 0, least deprived, to 1, most deprived; sets the colour. */
+	severity: number;
+	/** Colour the headline value itself, when it is the decile. */
+	colorValue?: boolean;
 	isActive: boolean;
 	onClick: () => void;
 }
@@ -42,10 +47,13 @@ export default function DecileChart({
 	title,
 	heading,
 	region,
-	decile,
-	detail,
-	barWidth,
 	hasData,
+	value,
+	unit,
+	secondary,
+	barWidth,
+	severity,
+	colorValue = false,
 	isActive,
 	onClick,
 }: DecileChartProps) {
@@ -53,9 +61,7 @@ export default function DecileChart({
 	const isDark = useIsDark();
 
 	const showData = hasData && !chartsLoading;
-	const displayDecile = decile ? 11 - decile : null;
-	const decileColor = hasData ? deprivationColor(barWidth / 100) : "#9ca3af";
-	const primaryIsDecile = detail === null;
+	const color = hasData ? deprivationColor(severity) : "#9ca3af";
 
 	return (
 		<ChartCard
@@ -67,26 +73,20 @@ export default function DecileChart({
 					{region}
 				</span>
 			}
-			accent={showData ? decileColor : null}
+			accent={showData ? color : null}
 			isActive={isActive}
 			title={title}
 			onClick={onClick}
 		>
 			<ChartCardValueBar
 				hasData={showData}
-				value={detail?.value ?? displayDecile ?? ""}
-				unit={detail?.unit ?? "decile"}
-				secondary={
-					detail && displayDecile
-						? `Decile ${displayDecile}`
-						: undefined
-				}
+				value={value}
+				unit={unit}
+				secondary={secondary}
 				barWidth={barWidth}
-				barColor={decileColor}
-				valueColor={primaryIsDecile ? decileColor : undefined}
-				secondaryColor={
-					detail && displayDecile ? decileColor : undefined
-				}
+				barColor={color}
+				valueColor={colorValue ? color : undefined}
+				secondaryColor={secondary ? color : undefined}
 			/>
 		</ChartCard>
 	);

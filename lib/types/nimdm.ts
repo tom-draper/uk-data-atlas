@@ -1,3 +1,5 @@
+import type { DeprivationSummary } from "./deprivation";
+
 export interface NIMDMLSOAData {
 	soaCode: string;
 	soaName: string;
@@ -21,10 +23,5 @@ export interface NIMDMDataset {
 	};
 }
 
-/**
- * NISRA publishes ranks, not deciles, for super output areas, so nothing here
- * carries a decile.
- */
-export interface AggregatedNIMDMData {
-	averageNIMDMRank: number;
-}
+/** A group of areas, summarised without averaging ranks or deciles. */
+export type AggregatedNIMDMData = DeprivationSummary;
