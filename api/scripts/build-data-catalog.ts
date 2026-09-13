@@ -141,10 +141,13 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		outputDirectory,
 		"ghg-emissions-observations.json",
 	);
+	// The catalogue is read by people, so it stays indented. Observation
+	// artifacts are read only by the server and run to hundreds of thousands of
+	// records, where indentation roughly doubles the size on disk.
 	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, "\t")}\n`);
 	writeFileSync(
 		ghgEmissionsObservationsPath,
-		`${JSON.stringify(ghgEmissionsObservations, null, "\t")}\n`,
+		`${JSON.stringify(ghgEmissionsObservations)}\n`,
 	);
 	const measureObservationPaths = [
 		...mobileCoverageObservations,
@@ -158,16 +161,16 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 			outputDirectory,
 			`${observations.measureId}-observations.json`,
 		);
-		writeFileSync(path, `${JSON.stringify(observations, null, "\t")}\n`);
+		writeFileSync(path, `${JSON.stringify(observations)}\n`);
 		return path;
 	});
 	writeFileSync(
 		observationsPath,
-		`${JSON.stringify(populationObservations, null, "\t")}\n`,
+		`${JSON.stringify(populationObservations)}\n`,
 	);
 	writeFileSync(
 		localAuthorityObservationsPath,
-		`${JSON.stringify(populationLocalAuthorityObservations, null, "\t")}\n`,
+		`${JSON.stringify(populationLocalAuthorityObservations)}\n`,
 	);
 	return {
 		catalogPath,
