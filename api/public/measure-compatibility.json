@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:3b69a64337aacb4f75734b0487b4f999f76f60c21444eaabebd07bd97d227eb6",
+	"contentHash": "sha256:826934d38ee5a1435aa758916d497c40f895d7a059579801c3b789829abb1686",
 	"inputs": {
-		"dataCatalog": "sha256:eed36dcfc35ba5098d4f9cdd72c81de5b28f8cd4d7615d3edda0dbd933d2aaaa",
+		"dataCatalog": "sha256:f4dfa91d0d92e5bb067021e495f3e9d278a2f531bfd745e3e530cd48aa08009e",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -18,6 +18,7 @@
 			"imd-rank": "sha256:8320612d0617286f36f619c41172be9fbe57f2f1d02cd3e8f75c6422925059dd",
 			"mobile-4g-coverage": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
 			"mobile-5g-coverage": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
+			"nimdm-rank": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
 			"population-density": "sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe440e451",
 			"travel-to-work-bicycle": "sha256:050316e54d984231753d46c2fb62aaa504cd2b24af11672b7a6abaac0fc61b05",
 			"travel-to-work-car": "sha256:516a3194ebb029a789b5e197a958f7a07b9a82d038b33c9f2d361e5dafcd1241",
@@ -37,6 +38,7 @@
 			"localAuthority/2025-12-uk-bgc": "sha256:53eeb1c7f828f03e50c8f66081d88019ec9f9a31b2a56b41d2b3eff891e40b24",
 			"lsoa/2011-12-ew-bgc-v3": "sha256:f4e0776a1192b05ac9f672b11aa54de56f4fa810ac70fca271da7fdf359704cf",
 			"lsoa/2011-12-w-bgc": "sha256:f5754d1eef26a50551d62f6b0240d60e4f99989e2d1c9fda24b3886b0fa46e5a",
+			"superOutputArea/2011-ni": "sha256:df39bfd3e54d1273c19875246b49b83eafee7d6373e5670f6b39a95463a28221",
 			"ward/2020-12-uk-bgc": "sha256:4bfb5190bc06e7b52a261dbf246de956121ab74acad909a180946656468b0447",
 			"ward/2023-05-uk-bgc": "sha256:4910cadfe2df4877bbc96fe4f98a52c8c629401adf81ef47714d15524ffc32e4",
 			"ward/2023-12-uk-bgc": "sha256:21acf7576c2fac314f4daf78320f66133f2cf7b5dcb6534cb94e2b6edbc0f7db"
@@ -546,6 +548,40 @@
 								"W01000019",
 								"W01000020"
 							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "nimdm-rank",
+			"sources": [
+				{
+					"datasetId": "nimdm",
+					"sourceGeography": {
+						"type": "superOutputArea",
+						"boundaryYear": 2011
+					},
+					"periods": [
+						"2017"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2011-ni",
+							"title": "Super output areas, 2011 (Northern Ireland)",
+							"coverageCountries": [
+								"GB-NIR"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 890,
+							"candidateCodeCount": 890,
+							"matchingCodeCount": 890,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."

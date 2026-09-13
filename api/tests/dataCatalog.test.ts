@@ -66,6 +66,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 	const landArea = join(directory, "land-area.json");
 	const housePrice = join(directory, "house-price.json");
 	const imd = join(directory, "imd.json");
+	const nimdm = join(directory, "nimdm.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -84,6 +85,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
 				dataset("imd", 3, 1, 2011),
+				dataset("nimdm", 2, 1, 2011),
 			],
 		}),
 	);
@@ -221,6 +223,21 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 			},
 		}),
 	);
+	writeFileSync(
+		nimdm,
+		JSON.stringify({
+			"2017": {
+				year: 2017,
+				boundaryYear: 2011,
+				boundaryType: "superOutputArea",
+				data: {
+					// NISRA codes, not GSS: a ward suffix and a split suffix.
+					"95ZZ06W1": { nimdmRank: 1, nimdmDecile: 1 },
+					"95AA01S1": { nimdmRank: 516, nimdmDecile: 6 },
+				},
+			},
+		}),
+	);
 	return {
 		manifest,
 		population,
@@ -231,6 +248,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 		landArea,
 		housePrice,
 		imd,
+		nimdm,
 	};
 };
 
@@ -249,6 +267,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			landArea,
 			housePrice,
 			imd,
+			nimdm,
 		} = writeSources(directory);
 		const result = compileDataCatalog(
 			manifest,
@@ -260,8 +279,9 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			landArea,
 			housePrice,
 			imd,
+			nimdm,
 		);
-		assert.equal(result.catalog.datasets.length, 9);
+		assert.equal(result.catalog.datasets.length, 10);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -323,6 +343,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			landArea,
 			housePrice,
 			imd,
+			nimdm,
 		} = writeSources(
 			directory,
 			3,
@@ -338,6 +359,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			landArea,
 			housePrice,
 			imd,
+			nimdm,
 		),
 			/expected 3 records/,
 		);
@@ -361,6 +383,7 @@ test("rejects local-authority population data whose codes change between periods
 			landArea,
 			housePrice,
 			imd,
+			nimdm,
 		} = writeSources(directory);
 		const source = JSON.parse(readFileSync(populationUk, "utf8"));
 		delete source["2024"].data.N09000001;
@@ -376,6 +399,7 @@ test("rejects local-authority population data whose codes change between periods
 			landArea,
 			housePrice,
 			imd,
+			nimdm,
 		),
 			/local-authority codes change between periods/,
 		);
@@ -419,6 +443,7 @@ test("refuses to derive density when the denominator misses an area", () => {
 					sources.landArea,
 					sources.housePrice,
 					sources.imd,
+					sources.nimdm,
 				),
 			/no land area for W06000001/,
 		);
@@ -463,6 +488,7 @@ test("refuses to derive density from an area with no land", () => {
 					sources.landArea,
 					sources.housePrice,
 					sources.imd,
+					sources.nimdm,
 				),
 			/E06000001 has no land area/,
 		);
@@ -487,6 +513,7 @@ test("derives density and marks the values as derived, not observed", () => {
 			sources.landArea,
 			sources.housePrice,
 			sources.imd,
+			sources.nimdm,
 		);
 
 		const density = result.populationDensityObservations;
@@ -527,6 +554,7 @@ test("publishes house prices under the publisher's own codes and years", () => {
 			sources.landArea,
 			sources.housePrice,
 			sources.imd,
+			sources.nimdm,
 		);
 		const periods = result.housePriceObservations.periods;
 
@@ -573,6 +601,7 @@ test("publishes deprivation rank and decile as they were published", () => {
 			sources.landArea,
 			sources.housePrice,
 			sources.imd,
+			sources.nimdm,
 		);
 		const [rank, decile] = result.imdObservations;
 
@@ -594,6 +623,49 @@ test("publishes deprivation rank and decile as they were published", () => {
 			// The comparability limit is stated, not left to the caller.
 			assert.match(measure?.notes?.[0] ?? "", /within England alone/);
 		}
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes the northern irish rank on its own nisra codes", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const sources = writeSources(directory);
+		const result = compileDataCatalog(
+			sources.manifest,
+			sources.population,
+			sources.populationUk,
+			sources.ghgEmissions,
+			sources.mobileCoverage,
+			sources.censusPaths,
+			sources.landArea,
+			sources.housePrice,
+			sources.imd,
+			sources.nimdm,
+		);
+		assert.deepEqual(
+			result.nimdmObservations.periods[0]?.records.map((record) => [
+				record.areaCode,
+				record.value,
+			]),
+			[
+				["95AA01S1", 516],
+				["95ZZ06W1", 1],
+			],
+		);
+		const measure = result.catalog.measures.find(
+			(candidate) => candidate.id === "nimdm-rank",
+		);
+		// A NISRA code carries no country letter but is still Northern Ireland.
+		assert.deepEqual(measure?.sources[0]?.coverage.countries, ["GB-NIR"]);
+		// Only the rank is published; the decile is not NISRA's.
+		assert.equal(
+			result.catalog.measures.some((candidate) => candidate.id === "nimdm-decile"),
+			false,
+		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}
