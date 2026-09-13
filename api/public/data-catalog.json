@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:eddf12288a360f9857b11b0b8c22248b60e44767e723a738a3d77f6837dcb10b",
+	"contentHash": "sha256:ab4cbbb0dd5b18a0fd9183802c7b22724672b11318a16f238641f448986c50da",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1568,6 +1568,94 @@
 			"notes": [
 				"A position within Wales alone. The English, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
 				"Taken from the Welsh Government's published deciles."
+			]
+		},
+		{
+			"id": "simd-rank",
+			"label": "Scottish Index of Multiple Deprivation rank",
+			"valueKind": "ordinal",
+			"unit": "rank of 6,976 data zones, where 1 is the most deprived",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "rank",
+				"note": "A rank records an order, not a distance: the gap between ranks 1 and 2 need not equal the gap between 100 and 101. Averaging ranks over areas produces a number with no meaning.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "simd",
+					"periods": [
+						"2020"
+					],
+					"sourceGeography": {
+						"type": "dataZone",
+						"boundaryYear": 2011
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-SCT"
+						],
+						"recordCount": 6976,
+						"note": "Scotland only. The other three nations publish their own indices, which are not comparable with this one."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/simd-rank"
+			},
+			"notes": [
+				"A position within Scotland alone. The English, Welsh and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+				"SIMD 2020v2, taken from the Scottish Government's published data zone lookup, whose ranks agree with its separately published ranks workbook."
+			]
+		},
+		{
+			"id": "simd-decile",
+			"label": "Scottish Index of Multiple Deprivation decile",
+			"valueKind": "ordinal",
+			"unit": "decile, where 1 is the most deprived tenth of data zones",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "decile",
+				"note": "A decile is a band of ranks. Averaging deciles over areas produces a number with no meaning, and the share of a place's data zones in each decile is the defensible summary instead.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "simd",
+					"periods": [
+						"2020"
+					],
+					"sourceGeography": {
+						"type": "dataZone",
+						"boundaryYear": 2011
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-SCT"
+						],
+						"recordCount": 6976,
+						"note": "Scotland only. The other three nations publish their own indices, which are not comparable with this one."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/simd-decile"
+			},
+			"notes": [
+				"A position within Scotland alone. The English, Welsh and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+				"Taken from the Scottish Government's published data zone lookup. Quintiles are also published there but are not offered as a measure."
 			]
 		},
 		{

@@ -590,6 +590,7 @@ export const compileDataCatalog = (
 	imdPath: string,
 	nimdmPath: string,
 	wimdPath: string,
+	simdPath: string,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -1288,6 +1289,23 @@ export const compileDataCatalog = (
 			],
 			decileNotes: [
 				"Taken from the Welsh Government's published deciles.",
+			],
+		}),
+		...deprivationIndex({
+			datasetId: "simd",
+			path: simdPath,
+			label: "Scottish Index of Multiple Deprivation",
+			nation: "Scotland",
+			otherNations: "English, Welsh and Northern Irish",
+			geography: "dataZone",
+			areaNoun: "data zones",
+			rankField: "simdRank",
+			decileField: "simdDecile",
+			rankNotes: [
+				"SIMD 2020v2, taken from the Scottish Government's published data zone lookup, whose ranks agree with its separately published ranks workbook.",
+			],
+			decileNotes: [
+				"Taken from the Scottish Government's published data zone lookup. Quintiles are also published there but are not offered as a measure.",
 			],
 		}),
 	];

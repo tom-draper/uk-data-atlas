@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:d9c13b13b5b5558d9b6d8625081361c2d0f482cf37a3025464fce1ef6a3ef529",
+	"contentHash": "sha256:248c761091243b15aa85f40a0544f557e2e833184ea97215136f5482796043df",
 	"inputs": {
-		"dataCatalog": "sha256:eddf12288a360f9857b11b0b8c22248b60e44767e723a738a3d77f6837dcb10b",
+		"dataCatalog": "sha256:ab4cbbb0dd5b18a0fd9183802c7b22724672b11318a16f238641f448986c50da",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -20,6 +20,8 @@
 			"mobile-5g-coverage": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
 			"nimdm-rank": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
 			"population-density": "sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe440e451",
+			"simd-decile": "sha256:253414cf7ab82282c0e003f2d963804f8fe73e07bca29a5b9261049f6956925c",
+			"simd-rank": "sha256:7010ceb2e025a9e2a859509558f46b35a89394182f6aff3853b7b5f08a894830",
 			"travel-to-work-bicycle": "sha256:050316e54d984231753d46c2fb62aaa504cd2b24af11672b7a6abaac0fc61b05",
 			"travel-to-work-car": "sha256:516a3194ebb029a789b5e197a958f7a07b9a82d038b33c9f2d361e5dafcd1241",
 			"travel-to-work-home": "sha256:7eb903b8369bc2fcdb74020ddc2ea19fe052823fc07b1eb8778f50d1fb8da20f",
@@ -33,6 +35,8 @@
 			"wimd-rank": "sha256:2b2d1cf909f6bcd942f22e3e898adc183aa454dfce580475feb01ffced876654"
 		},
 		"areaArtifacts": {
+			"dataZone/2011-12-sc-bfc": "sha256:62075d67d2c29754f57495650508bd7d0b7d820fd9f95c4d7d8629ade649dbc9",
+			"dataZone/2011-12-sc-nc": "sha256:115e5e21b45f210041b5de1af56d90ad020071816e76165c31ea2cdc8bfc920c",
 			"localAuthority/2023-05-uk-bgc-v2": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19",
 			"localAuthority/2024-05-uk-bgc": "sha256:7ccc829d47ce7e7eed0d847bc285cad2e96abe768a3008506b3aefaa15b3f935",
 			"localAuthority/2024-12-uk-bgc": "sha256:31265967f1dfba88b929c7a0656f06d8a0d544c118fdd9d201e1b4b8aecec6b1",
@@ -689,6 +693,106 @@
 							"sourceCodeCount": 1909,
 							"candidateCodeCount": 1909,
 							"matchingCodeCount": 1909,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "simd-rank",
+			"sources": [
+				{
+					"datasetId": "simd",
+					"sourceGeography": {
+						"type": "dataZone",
+						"boundaryYear": 2011
+					},
+					"periods": [
+						"2020"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2011-12-sc-bfc",
+							"title": "Data zones, December 2011 (Scotland, full resolution, clipped)",
+							"coverageCountries": [
+								"GB-SCT"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 6976,
+							"candidateCodeCount": 6976,
+							"matchingCodeCount": 6976,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2011-12-sc-nc",
+							"title": "Data zones, December 2011 (Scotland, not clipped)",
+							"coverageCountries": [
+								"GB-SCT"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 6976,
+							"candidateCodeCount": 6976,
+							"matchingCodeCount": 6976,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "simd-decile",
+			"sources": [
+				{
+					"datasetId": "simd",
+					"sourceGeography": {
+						"type": "dataZone",
+						"boundaryYear": 2011
+					},
+					"periods": [
+						"2020"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2011-12-sc-bfc",
+							"title": "Data zones, December 2011 (Scotland, full resolution, clipped)",
+							"coverageCountries": [
+								"GB-SCT"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 6976,
+							"candidateCodeCount": 6976,
+							"matchingCodeCount": 6976,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2011-12-sc-nc",
+							"title": "Data zones, December 2011 (Scotland, not clipped)",
+							"coverageCountries": [
+								"GB-SCT"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 6976,
+							"candidateCodeCount": 6976,
+							"matchingCodeCount": 6976,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
