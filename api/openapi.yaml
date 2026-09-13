@@ -352,7 +352,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority]
+            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -479,7 +479,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority]
+            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -569,7 +569,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority]
+            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -636,7 +636,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority]
+            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -691,7 +691,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority]
+            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -761,7 +761,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority]
+            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true

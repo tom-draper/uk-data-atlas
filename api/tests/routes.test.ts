@@ -510,10 +510,51 @@ const dataCatalog: DataCatalog = {
 			},
 			links: { data: "/v1/data/house-price-median" },
 		},
+		{
+			id: "small-area-fixture",
+			label: "Small area fixture",
+			valueKind: "count",
+			unit: "people",
+			aggregation: { kind: "extensive", operation: "sum", available: true },
+			sources: [
+				{
+					datasetId: "small-area",
+					periods: ["2019"],
+					sourceGeography: { type: "lsoa", boundaryYear: 2011 },
+					coverage: {
+						kind: "partial",
+						countries: ["GB-ENG"],
+						recordCount: 2,
+						note: "England only.",
+					},
+				},
+			],
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: { data: "/v1/data/small-area-fixture" },
+		},
 	],
 };
 
 const measureObservations: MeasureObservationArtifact[] = [
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:small-area-observations",
+		measureId: "small-area-fixture",
+		sourceGeography: { type: "lsoa", boundaryYear: 2011 },
+		periods: [
+			{
+				period: "2019",
+				records: [
+					{ areaCode: "E01000001", value: 1500, status: "observed" },
+					{ areaCode: "E01000002", value: 1600, status: "observed" },
+				],
+			},
+		],
+	},
 	{
 		schemaVersion: 1,
 		contentHash: "sha256:house-price-observations",
@@ -1114,6 +1155,7 @@ test("serves greenhouse gas emissions as a second source-exact measure", () => {
 			"mobile-5g-coverage",
 			"travel-to-work-car",
 			"house-price-median",
+			"small-area-fixture",
 		],
 	);
 
@@ -1183,6 +1225,7 @@ test("declares a coverage share as intensive, so it is never summed", () => {
 			["mobile-5g-coverage", "intensive"],
 			["travel-to-work-car", "extensive"],
 			["house-price-median", "non-aggregatable"],
+			["small-area-fixture", "extensive"],
 		],
 	);
 
@@ -1296,6 +1339,27 @@ test("sums a country from the GSS code prefix, or refuses to", () => {
 	);
 	// A local authority is not yet an aggregation target.
 	assert.equal(routeWithData(`${query}&areaCode=E06000001`).status, 400);
+});
+
+test("serves a small-area partition on its own geography", () => {
+	const observed = routeWithData(
+		"/v1/data/small-area-fixture?period=2019&geography=lsoa&boundaryYear=2011",
+	);
+	assert.equal(observed.status, 200);
+	const data = "data" in observed.body ? (observed.body.data as never) : {};
+	assert.deepEqual(
+		(data as { sourceGeography: unknown }).sourceGeography,
+		{ type: "lsoa", boundaryYear: 2011 },
+	);
+	assert.equal((data as { records: unknown[] }).records.length, 2);
+
+	// An LSOA partition is not a data zone partition, even for the same year.
+	assert.equal(
+		routeWithData(
+			"/v1/data/small-area-fixture?period=2019&geography=dataZone&boundaryYear=2011",
+		).status,
+		400,
+	);
 });
 
 test("refuses to combine a median, and says why", () => {
