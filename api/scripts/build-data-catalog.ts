@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,
+	observationArtifactName,
 } from "../src/dataCatalog";
 
 export const buildDataCatalog = (repositoryRoot: string) => {
@@ -25,6 +26,8 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		simd: precompiled("simd.json"),
 		lifeExpectancySeries: precompiled("life-expectancy-series.json"),
 		populationConstituency: precompiled("population-constituency.json"),
+		generalElection: precompiled("general-election.json"),
+		localElection: precompiled("local-election.json"),
 	};
 	const missing = Object.values(inputs).filter((path) => !existsSync(path));
 	if (missing.length > 0) {
@@ -46,6 +49,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		nimdmObservations,
 		lifeExpectancyObservations,
 		populationConstituencyObservations,
+		electionObservations,
 	} = compileDataCatalog(inputs);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
@@ -81,10 +85,26 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		...imdObservations,
 		nimdmObservations,
 		...lifeExpectancyObservations,
+		...electionObservations,
 	].map((observations) => {
+		const measure = catalog.measures.find(
+			(candidate) => candidate.id === observations.measureId,
+		);
+		const source = measure?.sources.find(
+			(candidate) =>
+				candidate.sourceGeography.type ===
+					observations.sourceGeography.type &&
+				candidate.sourceGeography.boundaryYear ===
+					observations.sourceGeography.boundaryYear,
+		);
+		if (!measure || !source) {
+			throw new Error(
+				`No catalogue source matches ${observations.measureId} on ${observations.sourceGeography.type} ${observations.sourceGeography.boundaryYear}.`,
+			);
+		}
 		const path = join(
 			outputDirectory,
-			`${observations.measureId}-observations.json`,
+			`${observationArtifactName(observations.measureId, source)}.json`,
 		);
 		writeFileSync(path, `${JSON.stringify(observations)}\n`);
 		return path;
@@ -111,11 +131,13 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 			...imdObservations,
 			nimdmObservations,
 			...lifeExpectancyObservations,
+			...electionObservations,
 		].reduce(
 			(count, observations) =>
 				count +
 				observations.periods.reduce(
-					(periodCount, period) => periodCount + period.records.length,
+					(periodCount, period) =>
+						periodCount + period.records.length,
 					0,
 				),
 			0,

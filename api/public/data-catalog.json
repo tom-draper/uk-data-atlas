@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:6489b6e88d4c64c6ec7855b8d7061558d50aaca2561e7e84e9a9c1075cd7262e",
+	"contentHash": "sha256:e550268598e3fd8e1c06a672f10e6f255cfc2662874151989b5c7b0ef855ac7b",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1336,6 +1336,3680 @@
 			"links": {
 				"data": "/v1/data/population-estimate"
 			}
+		},
+		{
+			"id": "general-election-valid-votes",
+			"label": "General election valid votes",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-valid-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-valid-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-valid-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-valid-votes"
+			},
+			"notes": [
+				"Valid ballot papers counted in each constituency. Invalid ballot papers are excluded, as in the source field."
+			]
+		},
+		{
+			"id": "general-election-turnout",
+			"label": "General election turnout",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The electorate for the same election and area.",
+					"datasetField": "electorate"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-turnout-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-turnout-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-turnout-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/general-election-turnout"
+			},
+			"notes": [
+				"Turnout is a percentage of the electorate, so it does not add across areas. A combined turnout needs the summed electorate as its denominator."
+			]
+		},
+		{
+			"id": "general-election-apni-votes",
+			"label": "General election votes for Alliance Party",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-apni-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-apni-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-apni-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-apni-votes"
+			},
+			"notes": [
+				"Votes for Alliance Party. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-brx-votes",
+			"label": "General election votes for Brexit Party",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-brx-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-brx-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-brx-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-brx-votes"
+			},
+			"notes": [
+				"Votes for Brexit Party. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-con-votes",
+			"label": "General election votes for Conservative",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-con-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-con-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-con-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-con-votes"
+			},
+			"notes": [
+				"Votes for Conservative. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-dup-votes",
+			"label": "General election votes for Democratic Unionist Party",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-dup-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-dup-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-dup-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-dup-votes"
+			},
+			"notes": [
+				"Votes for Democratic Unionist Party. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-green-votes",
+			"label": "General election votes for Green",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-green-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-green-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-green-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-green-votes"
+			},
+			"notes": [
+				"Votes for Green. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-lab-votes",
+			"label": "General election votes for Labour",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-lab-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-lab-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-lab-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-lab-votes"
+			},
+			"notes": [
+				"Votes for Labour. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-ld-votes",
+			"label": "General election votes for Liberal Democrat",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-ld-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-ld-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-ld-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-ld-votes"
+			},
+			"notes": [
+				"Votes for Liberal Democrat. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-other-votes",
+			"label": "General election votes for Other candidates",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-other-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-other-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-other-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-other-votes"
+			},
+			"notes": [
+				"Votes for Other candidates. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-pc-votes",
+			"label": "General election votes for Plaid Cymru",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-pc-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-pc-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-pc-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-pc-votes"
+			},
+			"notes": [
+				"Votes for Plaid Cymru. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-ruk-votes",
+			"label": "General election votes for Reform UK",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-ruk-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-ruk-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-ruk-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-ruk-votes"
+			},
+			"notes": [
+				"Votes for Reform UK. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-sdlp-votes",
+			"label": "General election votes for Social Democratic and Labour Party",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-sdlp-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-sdlp-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-sdlp-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-sdlp-votes"
+			},
+			"notes": [
+				"Votes for Social Democratic and Labour Party. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-sf-votes",
+			"label": "General election votes for Sinn Féin",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-sf-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-sf-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-sf-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-sf-votes"
+			},
+			"notes": [
+				"Votes for Sinn Féin. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-snp-votes",
+			"label": "General election votes for Scottish National Party",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-snp-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-snp-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-snp-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-snp-votes"
+			},
+			"notes": [
+				"Votes for Scottish National Party. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-ukip-votes",
+			"label": "General election votes for UKIP",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-ukip-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-ukip-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-ukip-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-ukip-votes"
+			},
+			"notes": [
+				"Votes for UKIP. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-uup-votes",
+			"label": "General election votes for Ulster Unionist Party",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-uup-votes-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-uup-votes-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-uup-votes-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-uup-votes"
+			},
+			"notes": [
+				"Votes for Ulster Unionist Party. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-candidate-votes",
+			"label": "Local election candidate votes",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-candidate-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-candidate-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-candidate-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-candidate-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-candidate-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-candidate-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-candidate-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-candidate-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-candidate-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-candidate-votes"
+			},
+			"notes": [
+				"Candidate votes counted in each ward. Multi-member wards can allow each voter more than one vote, so this is not necessarily a count of ballot papers.",
+				"1 source row with the literal ward code NA is excluded: it has no official area identity to which the API can attach a value."
+			]
+		},
+		{
+			"id": "local-election-turnout",
+			"label": "Local election turnout",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The electorate for the same election and area.",
+					"datasetField": "electorate"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-turnout-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-turnout-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-turnout-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-turnout-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-turnout-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/local-election-turnout"
+			},
+			"notes": [
+				"Turnout is a percentage of the electorate, so it does not add across areas. A combined turnout needs the summed electorate as its denominator.",
+				"The Local Elections Archive Project files for 2016–2019 do not publish electorate or turnout, so those polling years are deliberately absent rather than represented as zero turnout."
+			]
+		},
+		{
+			"id": "local-election-con-votes",
+			"label": "Local election votes for Conservative",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-con-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-con-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-con-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-con-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-con-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-con-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-con-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-con-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-con-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-con-votes"
+			},
+			"notes": [
+				"Votes for Conservative. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-green-votes",
+			"label": "Local election votes for Green",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-green-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-green-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-green-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-green-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-green-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-green-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-green-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-green-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-green-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-green-votes"
+			},
+			"notes": [
+				"Votes for Green. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-ind-votes",
+			"label": "Local election votes for Independent",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-ind-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-ind-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-ind-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-ind-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-ind-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-ind-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-ind-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-ind-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-ind-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-ind-votes"
+			},
+			"notes": [
+				"Votes for Independent. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-lab-votes",
+			"label": "Local election votes for Labour",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-lab-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-lab-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-lab-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-lab-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-lab-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-lab-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-lab-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-lab-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-lab-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-lab-votes"
+			},
+			"notes": [
+				"Votes for Labour. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-ld-votes",
+			"label": "Local election votes for Liberal Democrat",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-ld-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-ld-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-ld-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-ld-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-ld-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-ld-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-ld-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-ld-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-ld-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-ld-votes"
+			},
+			"notes": [
+				"Votes for Liberal Democrat. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-other-votes",
+			"label": "Local election votes for Other candidates",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-other-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-other-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-other-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-other-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-other-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-other-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-other-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-other-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-other-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-other-votes"
+			},
+			"notes": [
+				"Votes for Other candidates. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-pc-votes",
+			"label": "Local election votes for Plaid Cymru",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-pc-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-pc-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-pc-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-pc-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-pc-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-pc-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-pc-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-pc-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-pc-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-pc-votes"
+			},
+			"notes": [
+				"Votes for Plaid Cymru. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-ref-votes",
+			"label": "Local election votes for Reform",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-ref-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-ref-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-ref-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-ref-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-ref-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-ref-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-ref-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-ref-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-ref-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-ref-votes"
+			},
+			"notes": [
+				"Votes for Reform. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-ukip-votes",
+			"label": "Local election votes for UKIP",
+			"valueKind": "count",
+			"unit": "votes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-ukip-votes-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2211,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-ukip-votes-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3110,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-ukip-votes-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2749,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-ukip-votes-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5280,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-ukip-votes-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 3862,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-ukip-votes-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. Rows with the literal, unaddressable code NA are excluded."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-ukip-votes-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4196,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-ukip-votes-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-ukip-votes-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1401,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-election-ukip-votes"
+			},
+			"notes": [
+				"Votes for UKIP. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
 		},
 		{
 			"id": "population-density",

@@ -3,10 +3,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import {
-	compileDataCatalog,
-	type DataCatalogInputs,
-} from "../src/dataCatalog";
+import { compileDataCatalog, type DataCatalogInputs } from "../src/dataCatalog";
 
 const dataset = (
 	output: string,
@@ -80,6 +77,8 @@ const writeSources = (
 		directory,
 		"population-constituency.json",
 	);
+	const generalElection = join(directory, "general-election.json");
+	const localElection = join(directory, "local-election.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -103,6 +102,8 @@ const writeSources = (
 				dataset("simd", 1, 1, 2011),
 				dataset("life-expectancy-series", 4, 2, 2021),
 				dataset("population-constituency", 4, 2, 2024),
+				dataset("general-election", 4, 2, 2019),
+				dataset("local-election", 4, 2, 2019),
 			],
 		}),
 	);
@@ -324,6 +325,84 @@ const writeSources = (
 			"2022": constituencyYear(2022, 0),
 		}),
 	);
+	writeFileSync(
+		generalElection,
+		JSON.stringify({
+			"2019": {
+				year: 2019,
+				boundaryType: "constituency",
+				boundaryYear: 2019,
+				data: {
+					E14000001: {
+						validVotes: 100,
+						turnoutPercent: 70,
+						partyVotes: { CON: 60, LAB: 40 },
+					},
+					W07000001: {
+						validVotes: 80,
+						turnoutPercent: 64,
+						partyVotes: { LAB: 50, LD: 30 },
+					},
+				},
+			},
+			"2024": {
+				year: 2024,
+				boundaryType: "constituency",
+				boundaryYear: 2024,
+				data: {
+					E14001001: {
+						validVotes: 110,
+						turnoutPercent: 62,
+						partyVotes: { CON: 40, LAB: 70 },
+					},
+					N06000001: {
+						validVotes: 90,
+						turnoutPercent: 58,
+						partyVotes: { DUP: 45, SF: 45 },
+					},
+				},
+			},
+		}),
+	);
+	writeFileSync(
+		localElection,
+		JSON.stringify({
+			"2019": {
+				year: 2019,
+				boundaryType: "ward",
+				boundaryYear: 2019,
+				data: {
+					E05000001: {
+						totalVotes: 100,
+						turnoutPercent: 0,
+						partyVotes: { CON: 60, LAB: 40 },
+					},
+					W05000001: {
+						totalVotes: 80,
+						turnoutPercent: 0,
+						partyVotes: { LAB: 50, LD: 30 },
+					},
+				},
+			},
+			"2024": {
+				year: 2024,
+				boundaryType: "ward",
+				boundaryYear: 2024,
+				data: {
+					E05001001: {
+						totalVotes: 120,
+						turnoutPercent: 42,
+						partyVotes: { CON: 50, LAB: 70 },
+					},
+					W05001001: {
+						totalVotes: 90,
+						turnoutPercent: 39,
+						partyVotes: { LAB: 45, PC: 45 },
+					},
+				},
+			},
+		}),
+	);
 	return {
 		manifest,
 		population,
@@ -340,6 +419,8 @@ const writeSources = (
 		simd,
 		lifeExpectancySeries,
 		populationConstituency,
+		generalElection,
+		localElection,
 	};
 };
 
@@ -350,7 +431,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 14);
+		assert.equal(result.catalog.datasets.length, 16);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -420,13 +501,67 @@ test("rejects a population source whose record count disagrees with its manifest
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const sources = writeSources(
-			directory,
-			3,
+		const sources = writeSources(directory, 3);
+		assert.throws(() => compileDataCatalog(sources), /expected 3 records/);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes source-exact election turnout and party vote counts", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const result = compileDataCatalog(writeSources(directory));
+		const measure = (id: string) =>
+			result.catalog.measures.find((candidate) => candidate.id === id);
+
+		const generalVotes = measure("general-election-valid-votes");
+		assert.equal(generalVotes?.aggregation.kind, "extensive");
+		assert.deepEqual(
+			generalVotes?.sources.map((source) => [
+				source.sourceGeography,
+				source.periods,
+			]),
+			[
+				[{ type: "constituency", boundaryYear: 2019 }, ["2019"]],
+				[{ type: "constituency", boundaryYear: 2024 }, ["2024"]],
+			],
 		);
-		assert.throws(
-			() => compileDataCatalog(sources),
-			/expected 3 records/,
+		assert.equal(measure("general-election-lab-votes")?.unit, "votes");
+		assert.equal(measure("local-election-pc-votes")?.valueKind, "count");
+
+		// The archive's older local-election files lack turnout; zero is not a
+		// result, so 2019 is absent from that measure.
+		assert.deepEqual(
+			measure("local-election-turnout")?.sources.map(
+				(source) => source.periods,
+			),
+			[["2024"]],
+		);
+		assert.equal(
+			measure("local-election-turnout")?.aggregation.kind,
+			"intensive",
+		);
+
+		const labour2019 = result.electionObservations.find(
+			(artifact) =>
+				artifact.measureId === "general-election-lab-votes" &&
+				artifact.sourceGeography.boundaryYear === 2019,
+		);
+		assert.deepEqual(labour2019?.periods[0]?.records, [
+			{ areaCode: "E14000001", value: 40, status: "observed" },
+			{ areaCode: "W07000001", value: 50, status: "observed" },
+		]);
+		const reform2019 = result.electionObservations.find(
+			(artifact) =>
+				artifact.measureId === "general-election-sf-votes" &&
+				artifact.sourceGeography.boundaryYear === 2019,
+		);
+		assert.deepEqual(
+			reform2019?.periods[0]?.records.map((record) => record.value),
+			[0, 0],
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
@@ -475,8 +610,7 @@ test("refuses to derive density when the denominator misses an area", () => {
 		);
 
 		assert.throws(
-			() =>
-				compileDataCatalog(sources),
+			() => compileDataCatalog(sources),
 			/no land area for W06000001/,
 		);
 	} finally {
@@ -509,8 +643,7 @@ test("refuses to derive density from an area with no land", () => {
 
 		// A zero denominator would publish Infinity as a density.
 		assert.throws(
-			() =>
-				compileDataCatalog(sources),
+			() => compileDataCatalog(sources),
 			/E06000001 has no land area/,
 		);
 	} finally {
@@ -594,7 +727,10 @@ test("publishes deprivation rank and decile as they were published", () => {
 		const [rank, decile] = result.imdObservations;
 
 		assert.equal(rank?.measureId, "imd-rank");
-		assert.deepEqual(rank?.sourceGeography, { type: "lsoa", boundaryYear: 2011 });
+		assert.deepEqual(rank?.sourceGeography, {
+			type: "lsoa",
+			boundaryYear: 2011,
+		});
 		// Ties are served as published, not re-ranked into 1, 2, 3.
 		assert.deepEqual(
 			rank?.periods[0]?.records.map((record) => record.value),
@@ -640,7 +776,9 @@ test("publishes the northern irish rank on its own nisra codes", () => {
 		assert.deepEqual(measure?.sources[0]?.coverage.countries, ["GB-NIR"]);
 		// Only the rank is published; the decile is not NISRA's.
 		assert.equal(
-			result.catalog.measures.some((candidate) => candidate.id === "nimdm-decile"),
+			result.catalog.measures.some(
+				(candidate) => candidate.id === "nimdm-decile",
+			),
 			false,
 		);
 	} finally {
@@ -670,7 +808,10 @@ test("publishes each nation's index as its own family on its own geography", () 
 			"GB-SCT",
 		]);
 		// Each says which nation it is a position within.
-		assert.match(measure("wimd-rank")?.notes?.[0] ?? "", /within Wales alone/);
+		assert.match(
+			measure("wimd-rank")?.notes?.[0] ?? "",
+			/within Wales alone/,
+		);
 		assert.match(
 			measure("simd-rank")?.notes?.[0] ?? "",
 			/within Scotland alone/,
@@ -701,7 +842,9 @@ test("publishes the life expectancy series with each published interval", () => 
 		const latest = male?.periods.at(-1)?.records[0];
 		assert.equal(latest?.areaCode, "E06000001");
 		assert.equal(latest?.value, 75.97);
-		assert.ok(Math.abs((latest?.confidenceInterval?.lower ?? 0) - 75.27) < 1e-9);
+		assert.ok(
+			Math.abs((latest?.confidenceInterval?.lower ?? 0) - 75.27) < 1e-9,
+		);
 		assert.equal(female?.periods[0]?.records[0]?.value, 78.08);
 
 		const measure = result.catalog.measures.find(
@@ -728,8 +871,14 @@ test("refuses an interval that does not contain its estimate", () => {
 	);
 	try {
 		const sources = writeSources(directory);
-		const series = JSON.parse(readFileSync(sources.lifeExpectancySeries, "utf8"));
-		series["2022"].data.E06000001.male = { value: 75.97, lower: 76, upper: 77 };
+		const series = JSON.parse(
+			readFileSync(sources.lifeExpectancySeries, "utf8"),
+		);
+		series["2022"].data.E06000001.male = {
+			value: 75.97,
+			lower: 76,
+			upper: 77,
+		};
 		writeFileSync(sources.lifeExpectancySeries, JSON.stringify(series));
 		assert.throws(
 			() => compileDataCatalog(sources),
