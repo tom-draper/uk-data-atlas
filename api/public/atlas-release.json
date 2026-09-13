@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:f607bd02da77f8607ce33f1cbd7ef8bb89ee11878681d6fba5da16c2f5a1169e",
+	"releaseId": "sha256:572dc1ff113a3149ef787fc5ac3761548b2bd6f8f56104a4c3667d43edc1376d",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,22 +25,22 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:2b509f0c87a3770d72a98e1d945cbf218c5aad55a6b852de9a57d396e7c8aae1"
+			"contentHash": "sha256:a350e8b961fd77f342efa8c6f58591e0db597d41746f3938aeb4d0f89580a86c"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:18864111c5bc46d06b3d3de0868c73c958d436d3ad3bd176b68ae8003f5824d4"
+			"contentHash": "sha256:a1baa8386c1db7376e6227f8ef7d5b25f9d5cc86d5a5d4c110d9772455f0bb86"
 		},
 		{
 			"id": "population-observations",
 			"path": "population-observations.json",
-			"contentHash": "sha256:be57872d64d3d57598295ecd26bc0b5dc2bb0ebc82ae06be09234c7fe3103cd8"
+			"contentHash": "sha256:cbcb0587c7f697f90dad4b0250cf26c132e47788adf0096c104035c06b03adb4"
 		},
 		{
 			"id": "population-local-authority-observations",
 			"path": "population-local-authority-observations.json",
-			"contentHash": "sha256:4c66f79477cd4ca66b4e70a0cc47c269cdad6c9330009614c58131beb3cbc6a9"
+			"contentHash": "sha256:c554cd5f1a371c6c1e76b368c484b9972427a84b734c77841d21a0adf94b8b6d"
 		},
 		{
 			"id": "geometry-sources",

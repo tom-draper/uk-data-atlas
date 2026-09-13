@@ -88,6 +88,12 @@ export type MeasureSource = {
 	datasetId: string;
 	periods: string[];
 	sourceGeography: SourceGeography;
+	/**
+	 * The observation artifact's filename stem, when one dataset contributes
+	 * more than one source-geography partition to the same measure. Most
+	 * measures retain the conventional measure-id filename.
+	 */
+	observationArtifact?: string;
 	coverage: {
 		kind: "partial" | "source-reported";
 		countries: Country[];
@@ -244,6 +250,7 @@ export const observationArtifactName = (
 	measureId: string,
 	source: MeasureSource,
 ) => {
+	if (source.observationArtifact) return source.observationArtifact;
 	if (measureId !== "population-estimate") return `${measureId}-observations`;
 	if (source.datasetId === "population") return "population-observations";
 	if (source.datasetId === "population-uk")
@@ -552,6 +559,100 @@ const localAuthorityFieldPeriods = (
 	return periods;
 };
 
+type ElectionMeasureField =
+	{ kind: "field"; field: string } | { kind: "partyVotes"; party: string };
+
+/**
+ * Read one numeric series from a compiled election dataset. Election boundary
+ * vintages legitimately change between polling years, so the caller later
+ * splits these periods into source-geography partitions rather than claiming
+ * one timeless constituency or ward geography.
+ */
+const electionFieldPeriods = (
+	path: string,
+	geography: "constituency" | "ward",
+	field: ElectionMeasureField,
+): Array<{
+	period: string;
+	boundaryYear: number;
+	records: PopulationObservation[];
+	unaddressableRecordCount: number;
+}> => {
+	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const periods = Object.entries(source)
+		.map(([period, value]) => {
+			if (!/^\d{4}$/.test(period))
+				throw new Error(`${path}: invalid election period ${period}`);
+			const entry = object(value, `${path}.${period}`);
+			if (
+				entry.year !== Number(period) ||
+				entry.boundaryType !== geography ||
+				typeof entry.boundaryYear !== "number"
+			) {
+				throw new Error(
+					`${path}.${period}: expected ${geography} election data with a boundary year`,
+				);
+			}
+			const data = object(entry.data, `${path}.${period}.data`);
+			const unaddressableCodes = Object.keys(data).filter(
+				(areaCode) => !isPublishedAreaCode(areaCode),
+			);
+			if (unaddressableCodes.some((areaCode) => areaCode !== "NA")) {
+				throw new Error(
+					`${path}.${period}: unsupported area code ${unaddressableCodes.find((areaCode) => areaCode !== "NA")}`,
+				);
+			}
+			return {
+				period,
+				boundaryYear: entry.boundaryYear,
+				records: Object.entries(data)
+					.map(
+						([areaCode, record]):
+							PopulationObservation | undefined => {
+							if (!isPublishedAreaCode(areaCode)) {
+								return undefined;
+							}
+							const row = object(
+								record,
+								`${path}.${period}.${areaCode}`,
+							);
+							const observed =
+								field.kind === "field"
+									? row[field.field]
+									: (object(
+											row.partyVotes,
+											`${path}.${period}.${areaCode}.partyVotes`,
+										)[field.party] ?? 0);
+							return {
+								areaCode,
+								value: number(
+									observed,
+									`${path}.${period}.${areaCode}.${
+										field.kind === "field"
+											? field.field
+											: `partyVotes.${field.party}`
+									}`,
+								),
+								status: "observed" as const,
+							};
+						},
+					)
+					.filter(
+						(record): record is PopulationObservation =>
+							record !== undefined,
+					)
+					.sort((left, right) =>
+						left.areaCode.localeCompare(right.areaCode),
+					),
+				unaddressableRecordCount: unaddressableCodes.length,
+			};
+		})
+		.sort((left, right) => left.period.localeCompare(right.period));
+	if (periods.length === 0)
+		throw new Error(`${path} has no election periods`);
+	return periods;
+};
+
 /**
  * The house price partition, restored to the codes its publisher used.
  *
@@ -580,8 +681,10 @@ const housePricePeriods = (
 	const data = object(edition.data, `${path}.2023.data`);
 	const byPeriod = new Map<string, PopulationObservation[]>();
 	for (const [compiledCode, record] of Object.entries(data)) {
-		const sourceWardCode = object(record, `${path}.${compiledCode}`)
-			.sourceWardCode;
+		const sourceWardCode = object(
+			record,
+			`${path}.${compiledCode}`,
+		).sourceWardCode;
 		const areaCode =
 			typeof sourceWardCode === "string" ? sourceWardCode : compiledCode;
 		if (!/^[EW]\d{8}$/.test(areaCode)) {
@@ -641,6 +744,8 @@ export type DataCatalogInputs = {
 	simd: string;
 	lifeExpectancySeries: string;
 	populationConstituency: string;
+	generalElection: string;
+	localElection: string;
 };
 
 export const compileDataCatalog = ({
@@ -659,6 +764,8 @@ export const compileDataCatalog = ({
 	simd: simdPath,
 	lifeExpectancySeries: lifeExpectancySeriesPath,
 	populationConstituency: populationConstituencyPath,
+	generalElection: generalElectionPath,
+	localElection: localElectionPath,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -672,6 +779,7 @@ export const compileDataCatalog = ({
 	nimdmObservations: MeasureObservationArtifact;
 	lifeExpectancyObservations: MeasureObservationArtifact[];
 	populationConstituencyObservations: MeasureObservationArtifact;
+	electionObservations: MeasureObservationArtifact[];
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -715,10 +823,15 @@ export const compileDataCatalog = ({
 	const countries = countriesFor(records);
 	// ONS's own constituency estimates, one partition per mid-year.
 	const constituencyPeriods = Object.entries(
-		JSON.parse(readFileSync(populationConstituencyPath, "utf8")) as PopulationFile,
+		JSON.parse(
+			readFileSync(populationConstituencyPath, "utf8"),
+		) as PopulationFile,
 	)
 		.map(([period, value]) => {
-			const entry = object(value, `${populationConstituencyPath}.${period}`);
+			const entry = object(
+				value,
+				`${populationConstituencyPath}.${period}`,
+			);
 			if (
 				!/^\d{4}$/.test(period) ||
 				entry.year !== Number(period) ||
@@ -729,7 +842,10 @@ export const compileDataCatalog = ({
 					`${populationConstituencyPath}.${period}: expected constituency data on the 2024 code vintage`,
 				);
 			}
-			const data = object(entry.data, `${populationConstituencyPath}.${period}.data`);
+			const data = object(
+				entry.data,
+				`${populationConstituencyPath}.${period}.data`,
+			);
 			return {
 				period,
 				records: Object.entries(data)
@@ -741,14 +857,18 @@ export const compileDataCatalog = ({
 						return {
 							areaCode,
 							value: number(
-								object(record, `${populationConstituencyPath}.${period}.${areaCode}`)
-									.total,
+								object(
+									record,
+									`${populationConstituencyPath}.${period}.${areaCode}`,
+								).total,
 								`${populationConstituencyPath}.${period}.${areaCode}.total`,
 							),
 							status: "observed" as const,
 						};
 					})
-					.sort((left, right) => left.areaCode.localeCompare(right.areaCode)),
+					.sort((left, right) =>
+						left.areaCode.localeCompare(right.areaCode),
+					),
 			};
 		})
 		.sort((left, right) => left.period.localeCompare(right.period));
@@ -756,12 +876,16 @@ export const compileDataCatalog = ({
 		(dataset) => dataset.id === "population-constituency",
 	);
 	if (!constituencyDataset)
-		throw new Error(`${manifestPath} has no population-constituency dataset`);
+		throw new Error(
+			`${manifestPath} has no population-constituency dataset`,
+		);
 	const constituencyRecordCount = constituencyPeriods.reduce(
 		(total, period) => total + period.records.length,
 		0,
 	);
-	if (constituencyRecordCount !== constituencyDataset.summary.dataRecordCount) {
+	if (
+		constituencyRecordCount !== constituencyDataset.summary.dataRecordCount
+	) {
 		throw new Error(
 			`${populationConstituencyPath}: expected ${constituencyDataset.summary.dataRecordCount} records from the manifest, found ${constituencyRecordCount}`,
 		);
@@ -1122,11 +1246,13 @@ export const compileDataCatalog = ({
 	 * A mismatch throws rather than publishing a plausible-looking figure.
 	 */
 	const landArea = datasets.find((dataset) => dataset.id === "land-area");
-	if (!landArea)
-		throw new Error(`${manifestPath} has no land-area dataset`);
+	if (!landArea) throw new Error(`${manifestPath} has no land-area dataset`);
 	const landAreaByCode = new Map(
-		localAuthorityFieldPeriods(landAreaPath, "landSquareKm", 2024)[0]
-			?.records.map((record) => [record.areaCode, record.value]) ?? [],
+		localAuthorityFieldPeriods(
+			landAreaPath,
+			"landSquareKm",
+			2024,
+		)[0]?.records.map((record) => [record.areaCode, record.value]) ?? [],
 	);
 	if (landAreaByCode.size === 0)
 		throw new Error(`${landAreaPath} has no land area records`);
@@ -1242,7 +1368,9 @@ export const compileDataCatalog = ({
 				sourceGeography: { type: "ward", boundaryYear: 2020 },
 				coverage: {
 					kind: "partial",
-					countries: countriesFor(housePriceByPeriod.at(-1)?.records ?? []),
+					countries: countriesFor(
+						housePriceByPeriod.at(-1)?.records ?? [],
+					),
 					recordCount: housePriceByPeriod.at(-1)?.records.length ?? 0,
 					note: "Published for England and Wales only. A ward with too few sales in a period has no value for it, so the record count varies by period; the count here is the latest period's.",
 				},
@@ -1288,7 +1416,9 @@ export const compileDataCatalog = ({
 			(candidate) => candidate.id === index.datasetId,
 		);
 		if (!dataset)
-			throw new Error(`${manifestPath} has no ${index.datasetId} dataset`);
+			throw new Error(
+				`${manifestPath} has no ${index.datasetId} dataset`,
+			);
 		if (
 			dataset.summary.boundaryYears.length !== 1 ||
 			dataset.summary.boundaryYears[0] !== 2011
@@ -1479,7 +1609,10 @@ export const compileDataCatalog = ({
 			{
 				datasetId: "nimdm",
 				periods: nimdmPeriods.map((period) => period.period),
-				sourceGeography: { type: "superOutputArea", boundaryYear: 2011 },
+				sourceGeography: {
+					type: "superOutputArea",
+					boundaryYear: 2011,
+				},
 				coverage: {
 					kind: "partial",
 					countries: countriesFor(nimdmPeriods[0]?.records ?? []),
@@ -1528,7 +1661,10 @@ export const compileDataCatalog = ({
 			}
 			return {
 				period: entry.period,
-				data: object(entry.data, `${lifeExpectancySeriesPath}.${key}.data`),
+				data: object(
+					entry.data,
+					`${lifeExpectancySeriesPath}.${key}.data`,
+				),
 			};
 		})
 		.sort((left, right) => left.period.localeCompare(right.period));
@@ -1559,7 +1695,9 @@ export const compileDataCatalog = ({
 						confidenceInterval: { lower, upper },
 					};
 				})
-				.sort((left, right) => left.areaCode.localeCompare(right.areaCode)),
+				.sort((left, right) =>
+					left.areaCode.localeCompare(right.areaCode),
+				),
 		}));
 		const sourceGeography = {
 			type: "localAuthority" as const,
@@ -1624,6 +1762,292 @@ export const compileDataCatalog = ({
 		};
 	});
 
+	/**
+	 * Elections are source-exact, polling-year measures. A constituency or ward
+	 * code can be reused in a later boundary release, but that does not move an
+	 * election result onto the later map; every distinct source boundary year is
+	 * therefore its own partition. Vote counts add within one election. Turnout
+	 * is a ratio, and party results remain counts rather than manufactured vote
+	 * shares, so callers can calculate a share against the denominator they use.
+	 */
+	const partyNames: Record<string, string> = {
+		APNI: "Alliance Party",
+		BRX: "Brexit Party",
+		CON: "Conservative",
+		DUP: "Democratic Unionist Party",
+		GREEN: "Green",
+		IND: "Independent",
+		LAB: "Labour",
+		LD: "Liberal Democrat",
+		OTHER: "Other candidates",
+		PC: "Plaid Cymru",
+		REF: "Reform",
+		RUK: "Reform UK",
+		SDLP: "Social Democratic and Labour Party",
+		SF: "Sinn Féin",
+		SNP: "Scottish National Party",
+		UKIP: "UKIP",
+		UUP: "Ulster Unionist Party",
+	};
+	const electionMeasures = (election: {
+		datasetId: "general-election" | "local-election";
+		path: string;
+		geography: "constituency" | "ward";
+		label: string;
+		countField: string;
+		countId: string;
+		countLabel: string;
+		countNote: string;
+		turnoutPeriods: "all" | "reported";
+	}) => {
+		const dataset = datasets.find(
+			(candidate) => candidate.id === election.datasetId,
+		);
+		if (!dataset)
+			throw new Error(
+				`${manifestPath} has no ${election.datasetId} dataset`,
+			);
+		const countPeriods = electionFieldPeriods(
+			election.path,
+			election.geography,
+			{
+				kind: "field",
+				field: election.countField,
+			},
+		);
+		const recordCount = countPeriods.reduce(
+			(total, period) => total + period.records.length,
+			0,
+		);
+		const unaddressableRecordCount = countPeriods.reduce(
+			(total, period) => total + period.unaddressableRecordCount,
+			0,
+		);
+		if (
+			recordCount + unaddressableRecordCount !==
+			dataset.summary.dataRecordCount
+		) {
+			throw new Error(
+				`${election.path}: expected ${dataset.summary.dataRecordCount} records from the manifest, found ${recordCount} addressable and ${unaddressableRecordCount} unaddressable`,
+			);
+		}
+		if (countPeriods.length !== dataset.summary.datasetCount) {
+			throw new Error(
+				`${election.path}: expected ${dataset.summary.datasetCount} election periods from the manifest, found ${countPeriods.length}`,
+			);
+		}
+
+		const parties = [
+			...new Set(
+				Object.values(
+					JSON.parse(
+						readFileSync(election.path, "utf8"),
+					) as PopulationFile,
+				).flatMap((value) =>
+					Object.values(
+						object(value, election.path).data as Record<
+							string,
+							unknown
+						>,
+					).flatMap((record) =>
+						Object.keys(
+							object(record, election.path).partyVotes as Record<
+								string,
+								unknown
+							>,
+						),
+					),
+				),
+			),
+		].sort();
+		const metrics: Array<{
+			id: string;
+			label: string;
+			field: ElectionMeasureField;
+			aggregation: MeasureAggregation;
+			notes: string[];
+			filter?: (period: (typeof countPeriods)[number]) => boolean;
+		}> = [
+			{
+				id: election.countId,
+				label: election.countLabel,
+				field: { kind: "field", field: election.countField },
+				aggregation: {
+					kind: "extensive",
+					operation: "sum",
+					available: true,
+				},
+				notes: [
+					election.countNote,
+					...(unaddressableRecordCount > 0
+						? [
+								`${unaddressableRecordCount} source row${unaddressableRecordCount === 1 ? "" : "s"} with the literal ward code NA is excluded: it has no official area identity to which the API can attach a value.`,
+							]
+						: []),
+				],
+			},
+			{
+				id: `${election.datasetId}-turnout`,
+				label: `${election.label} turnout`,
+				field: { kind: "field", field: "turnoutPercent" },
+				aggregation: {
+					kind: "intensive",
+					operation: "weighted-mean",
+					weight: {
+						description:
+							"The electorate for the same election and area.",
+						datasetField: "electorate",
+					},
+					available: false,
+				},
+				notes: [
+					"Turnout is a percentage of the electorate, so it does not add across areas. A combined turnout needs the summed electorate as its denominator.",
+					...(election.turnoutPeriods === "reported"
+						? [
+								"The Local Elections Archive Project files for 2016–2019 do not publish electorate or turnout, so those polling years are deliberately absent rather than represented as zero turnout.",
+							]
+						: []),
+				],
+				...(election.turnoutPeriods === "reported"
+					? {
+							filter: (period) =>
+								period.records.some(
+									(record) => record.value > 0,
+								),
+						}
+					: {}),
+			},
+			...parties.map((party) => ({
+				id: `${election.datasetId}-${party.toLowerCase()}-votes`,
+				label: `${election.label} votes for ${partyNames[party] ?? party}`,
+				field: { kind: "partyVotes" as const, party },
+				aggregation: {
+					kind: "extensive" as const,
+					operation: "sum" as const,
+					available: true,
+				},
+				notes: [
+					`Votes for ${partyNames[party] ?? party}. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share.`,
+				],
+			})),
+		];
+
+		return metrics.flatMap((metric) => {
+			const periods = electionFieldPeriods(
+				election.path,
+				election.geography,
+				metric.field,
+			).filter(metric.filter ?? (() => true));
+			const byBoundaryYear = new Map<number, typeof periods>();
+			for (const period of periods) {
+				const partition = byBoundaryYear.get(period.boundaryYear) ?? [];
+				partition.push(period);
+				byBoundaryYear.set(period.boundaryYear, partition);
+			}
+			const sources = [...byBoundaryYear.entries()]
+				.sort(([left], [right]) => left - right)
+				.map(([boundaryYear, sourcePeriods]) => {
+					const sourceUnaddressableRecordCount = sourcePeriods.reduce(
+						(total, period) =>
+							total + period.unaddressableRecordCount,
+						0,
+					);
+					const sourceGeography = {
+						type: election.geography,
+						boundaryYear,
+					} as SourceGeography;
+					const observationArtifact = `${metric.id}-${election.geography}-${boundaryYear}-observations`;
+					return {
+						datasetId: election.datasetId,
+						periods: sourcePeriods.map((period) => period.period),
+						sourceGeography,
+						observationArtifact,
+						coverage: {
+							kind: "partial" as const,
+							countries: countriesFor(
+								sourcePeriods[0]?.records ?? [],
+							),
+							recordCount: sourcePeriods[0]?.records.length ?? 0,
+							note: `Source-exact ${election.label.toLowerCase()} records for the listed polling years. Record coverage varies with the areas that held an election.${sourceUnaddressableRecordCount > 0 ? " Rows with the literal, unaddressable code NA are excluded." : ""}`,
+						},
+					};
+				});
+			const measure: Measure = {
+				id: metric.id,
+				label: metric.label,
+				valueKind: metric.id.endsWith("turnout") ? "ratio" : "count",
+				unit: metric.id.endsWith("turnout") ? "percent" : "votes",
+				aggregation: metric.aggregation,
+				sources,
+				availability: {
+					sourceExact: true,
+					conversion: false,
+					aggregation: metric.aggregation.available,
+				},
+				links: { data: `/v1/data/${metric.id}` },
+				notes: metric.notes,
+			};
+			return sources.map((source) => {
+				const sourcePeriods =
+					byBoundaryYear.get(source.sourceGeography.boundaryYear) ??
+					[];
+				const artifactPeriods = sourcePeriods.map(
+					({ period, records }) => ({
+						period,
+						records,
+					}),
+				);
+				const content = JSON.stringify({
+					schemaVersion: 1,
+					measureId: metric.id,
+					sourceGeography: source.sourceGeography,
+					periods: artifactPeriods,
+				});
+				return {
+					measure,
+					artifact: {
+						schemaVersion: 1 as const,
+						contentHash: sha256(content),
+						measureId: metric.id,
+						sourceGeography: source.sourceGeography,
+						periods: artifactPeriods,
+					},
+				};
+			});
+		});
+	};
+	const electionObservations = [
+		...electionMeasures({
+			datasetId: "general-election",
+			path: generalElectionPath,
+			geography: "constituency",
+			label: "General election",
+			countField: "validVotes",
+			countId: "general-election-valid-votes",
+			countLabel: "General election valid votes",
+			countNote:
+				"Valid ballot papers counted in each constituency. Invalid ballot papers are excluded, as in the source field.",
+			turnoutPeriods: "all",
+		}),
+		...electionMeasures({
+			datasetId: "local-election",
+			path: localElectionPath,
+			geography: "ward",
+			label: "Local election",
+			countField: "totalVotes",
+			countId: "local-election-candidate-votes",
+			countLabel: "Local election candidate votes",
+			countNote:
+				"Candidate votes counted in each ward. Multi-member wards can allow each voter more than one vote, so this is not necessarily a count of ballot papers.",
+			turnoutPeriods: "reported",
+		}),
+	];
+	const electionMeasureDefinitions = [
+		...new Map(
+			electionObservations.map(({ measure }) => [measure.id, measure]),
+		).values(),
+	];
+
 	const measure: Measure = {
 		id: "population-estimate",
 		label: "Population estimate",
@@ -1661,7 +2085,9 @@ export const compileDataCatalog = ({
 				sourceGeography: { type: "constituency", boundaryYear: 2024 },
 				coverage: {
 					kind: "partial",
-					countries: countriesFor(constituencyPeriods[0]?.records ?? []),
+					countries: countriesFor(
+						constituencyPeriods[0]?.records ?? [],
+					),
 					recordCount: constituencyPeriods[0]?.records.length ?? 0,
 					note: "Published by ONS for the constituencies first contested in July 2024, in England and Wales only. These are ONS's own estimates for each constituency, not ward estimates added up: wards do not nest within these constituencies, and the published ward lookup splits some wards between them without weights.",
 				},
@@ -1683,6 +2109,7 @@ export const compileDataCatalog = ({
 		datasets,
 		measures: [
 			measure,
+			...electionMeasureDefinitions,
 			densityMeasure,
 			housePriceMeasure,
 			...imdMeasures,
@@ -1723,6 +2150,7 @@ export const compileDataCatalog = ({
 			datasets,
 			measures: [
 				measure,
+				...electionMeasureDefinitions,
 				densityMeasure,
 				housePriceMeasure,
 				...imdMeasures,
@@ -1768,6 +2196,9 @@ export const compileDataCatalog = ({
 		censusObservations: censusObservations.map(({ artifact }) => artifact),
 		imdObservations: imdObservations.map(({ artifact }) => artifact),
 		lifeExpectancyObservations: lifeExpectancyMeasures.map(
+			({ artifact }) => artifact,
+		),
+		electionObservations: electionObservations.map(
 			({ artifact }) => artifact,
 		),
 		nimdmObservations: {

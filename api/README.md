@@ -286,8 +286,12 @@ only **available** when its endpoint, contract and provenance are published.
       `GET /v1/data/simd-rank` and `GET /v1/data/simd-decile`: 6,976 data zones
       on 2011 codes, taken from the Scottish Government's published data zone
       lookup, which matches both compiled data zone releases exactly.
-- [ ] Return election and other curated measures with their own aggregation
-      rules.
+- [x] Return source-exact general- and local-election vote counts, party vote
+      counts and turnout through `GET /v1/data/{measure-id}`. Election periods
+      remain on the source boundary vintage; vote counts may be summed within
+      one election, while turnout is a non-aggregatable percentage. The local
+      archive's 2016–2019 files do not publish turnout, so those years are
+      absent from that measure rather than represented as zero.
 - [x] Export any published measure's source-exact pages as JSON, CSV or NDJSON,
       retaining row-level release, source, unit and geography provenance
       outside the API. A
