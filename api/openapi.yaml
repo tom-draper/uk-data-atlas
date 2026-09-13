@@ -303,6 +303,14 @@ paths:
         reached by all four mobile network operators. Both are declared
         intensive: a share does not add over areas, and combining authorities
         needs the premises weight the measure names.
+        `population-density` is the one derived measure: mid-year population
+        divided by ONS Standard Area Measurement land area, which excludes
+        inland water. Its values carry `status: "derived"` rather than
+        `observed`, no publisher is answerable for the quotient, and the
+        measure names both input datasets in `derivedFrom` so attribution
+        covers the denominator. It is intensive, so it neither aggregates nor
+        converts.
+
         The `travel-to-work-*` and `car-availability-*` measures cover Census
         2021 Local Authority 2025 codes for England and Wales, as counts rather
         than shares: a count of people or households adds over areas, and each

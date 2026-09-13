@@ -34,6 +34,12 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		"precompiled",
 		"mobile-coverage.json",
 	);
+	const landAreaPath = join(
+		repositoryRoot,
+		"data",
+		"precompiled",
+		"land-area.json",
+	);
 	const censusPaths = {
 		"travel-to-work": join(
 			repositoryRoot,
@@ -54,6 +60,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		!existsSync(populationUkPath) ||
 		!existsSync(ghgEmissionsPath) ||
 		!existsSync(mobileCoveragePath) ||
+		!existsSync(landAreaPath) ||
 		Object.values(censusPaths).some((path) => !existsSync(path))
 	) {
 		throw new Error(
@@ -68,6 +75,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		ghgEmissionsObservations,
 		mobileCoverageObservations,
 		censusObservations,
+		populationDensityObservations,
 	} = compileDataCatalog(
 		manifestPath,
 		populationPath,
@@ -75,6 +83,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		ghgEmissionsPath,
 		mobileCoveragePath,
 		censusPaths,
+		landAreaPath,
 	);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
@@ -97,6 +106,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	const measureObservationPaths = [
 		...mobileCoverageObservations,
 		...censusObservations,
+		populationDensityObservations,
 	].map((observations) => {
 		const path = join(
 			outputDirectory,
@@ -122,6 +132,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		measureRecordCount: [
 			...mobileCoverageObservations,
 			...censusObservations,
+			populationDensityObservations,
 		].reduce(
 			(count, observations) =>
 				count +

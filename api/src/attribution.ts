@@ -110,6 +110,10 @@ export const attributionFor = (
 		}
 		for (const source of measure.sources)
 			addDataset(source.datasetId, `measure=${id}`);
+		// A derived measure's denominator is not one of its sources, but it is
+		// just as much a part of the answer.
+		for (const datasetId of measure.derivedFrom?.datasetIds ?? [])
+			addDataset(datasetId, `measure=${id}`);
 	}
 
 	for (const identity of request.boundaryReleases)

@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7314e3a4d8e257c5798ef1173486199f70227ca61b3c56f0706ae6b2f37290ff",
+	"contentHash": "sha256:1e6a715e36de0e0284788c0f37289fcab8155c209fa464f6f9dc674874776808",
 	"inputs": {
-		"dataCatalog": "sha256:68a2d792277876dda4721bc126b19c710a613acaeb50da68e5b092cd610c644e",
+		"dataCatalog": "sha256:3bb3d474736ab2612d3751c260da0fc723cfbd7fafd07b07bed2f313b9605d73",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -15,6 +15,7 @@
 			"ghg-emissions": "sha256:5adf191291c17242e186a6015de015a512d311d621119fc6bb189e3bc477efcc",
 			"mobile-4g-coverage": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
 			"mobile-5g-coverage": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
+			"population-density": "sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe440e451",
 			"travel-to-work-bicycle": "sha256:050316e54d984231753d46c2fb62aaa504cd2b24af11672b7a6abaac0fc61b05",
 			"travel-to-work-car": "sha256:516a3194ebb029a789b5e197a958f7a07b9a82d038b33c9f2d361e5dafcd1241",
 			"travel-to-work-home": "sha256:7eb903b8369bc2fcdb74020ddc2ea19fe052823fc07b1eb8778f50d1fb8da20f",
@@ -132,6 +133,56 @@
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
 				},
+				{
+					"datasetId": "population-uk",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "population-density",
+			"sources": [
 				{
 					"datasetId": "population-uk",
 					"sourceGeography": {
