@@ -1,6 +1,11 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import {
+	isLegacyPopulationSource,
+	observationArtifactName,
+	type DataCatalog,
+} from "./dataCatalog";
 
 export type AtlasReleaseArtifactRef = {
 	id: string;
@@ -37,8 +42,37 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "source-inventory", path: "source-inventory.json" },
 ];
 
+/**
+ * Observation artifacts are catalogued per measure source. Deriving them from
+ * the data catalogue means adding a source cannot leave a release manifest
+ * that pins the description but not the observations it serves.
+ */
+const cataloguedObservationArtifacts = (
+	publicDirectory: string,
+): Array<{ id: string; path: string }> => {
+	const catalogPath = join(publicDirectory, "data-catalog.json");
+	const catalog = JSON.parse(
+		readFileSync(catalogPath, "utf8"),
+	) as Partial<DataCatalog>;
+	if (!Array.isArray(catalog.measures)) return [];
+	const artifacts = new Map<string, { id: string; path: string }>();
+	for (const measure of catalog.measures) {
+		for (const source of measure.sources ?? []) {
+			if (isLegacyPopulationSource(measure.id, source)) continue;
+			const stem = observationArtifactName(measure.id, source);
+			artifacts.set(stem, {
+				id: `observations/${stem}`,
+				path: `${stem}.json`,
+			});
+		}
+	}
+	return [...artifacts.values()].sort((left, right) =>
+		left.id.localeCompare(right.id),
+	);
+};
+
 export const createAtlasRelease = (publicDirectory: string): AtlasRelease => {
-	const artifacts = RELEASE_ARTIFACTS.map(({ id, path }) => {
+	const artifactReference = ({ id, path }: { id: string; path: string }) => {
 		const fullPath = join(publicDirectory, path);
 		if (!existsSync(fullPath)) {
 			throw new Error(
@@ -50,7 +84,13 @@ export const createAtlasRelease = (publicDirectory: string): AtlasRelease => {
 			path,
 			contentHash: sha256(readFileSync(fullPath, "utf8")),
 		};
-	});
+	};
+	const artifacts = [
+		...RELEASE_ARTIFACTS.map(artifactReference),
+		...cataloguedObservationArtifacts(publicDirectory).map(
+			artifactReference,
+		),
+	];
 	const releaseId = sha256(JSON.stringify({ artifacts }));
 	return { schemaVersion: 1, releaseId, artifacts };
 };
