@@ -24,6 +24,7 @@ import type { mobileCoverageDatasetDefinition } from "./definitions/mobileCovera
 import type { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting";
 import type { nimdmDatasetDefinition } from "./definitions/nimdm";
 import type { populationDatasetDefinition } from "./definitions/population";
+import type { populationConstituencyDatasetDefinition } from "./definitions/populationConstituency";
 import type { populationUkDatasetDefinition } from "./definitions/populationUk";
 import type { qualificationDatasetDefinition } from "./definitions/qualification";
 import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance";
@@ -88,6 +89,11 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof nhsWaitingDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof populationDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<
+				typeof populationConstituencyDatasetDefinition.precompile
+			>
+	  >[string]
 	| Awaited<
 			ReturnType<typeof populationUkDatasetDefinition.precompile>
 	  >[string]
@@ -179,6 +185,9 @@ export type CatalogueDatasetRecords = {
 	nimdm: Awaited<ReturnType<typeof nimdmDatasetDefinition.precompile>>;
 	population: Awaited<
 		ReturnType<typeof populationDatasetDefinition.precompile>
+	>;
+	populationConstituency: Awaited<
+		ReturnType<typeof populationConstituencyDatasetDefinition.precompile>
 	>;
 	populationUk: Awaited<
 		ReturnType<typeof populationUkDatasetDefinition.precompile>

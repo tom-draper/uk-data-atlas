@@ -32,6 +32,7 @@ export * from "./ghgEmissions";
 export * from "./mobileCoverage";
 export * from "./landArea";
 export * from "./lifeExpectancySeries";
+export * from "./populationConstituency";
 export * from "./carAvailability";
 export * from "./travelToWork";
 export * from "./schoolPerformance";

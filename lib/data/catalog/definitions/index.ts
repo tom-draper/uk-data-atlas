@@ -24,6 +24,7 @@ export { mobileCoverageDatasetDefinition } from "./mobileCoverage";
 export { nhsWaitingDatasetDefinition } from "./nhsWaiting";
 export { nimdmDatasetDefinition } from "./nimdm";
 export { populationDatasetDefinition } from "./population";
+export { populationConstituencyDatasetDefinition } from "./populationConstituency";
 export { populationUkDatasetDefinition } from "./populationUk";
 export { qualificationDatasetDefinition } from "./qualification";
 export { schoolPerformanceDatasetDefinition } from "./schoolPerformance";
