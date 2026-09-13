@@ -7,7 +7,7 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
-import { resolveDeprivationStats } from "../deprivationStats";
+import { resolveDeprivation } from "../deprivationStats";
 
 const SIMD: DeprivationIndex = {
 	datasetType: "simd",
@@ -17,6 +17,7 @@ const SIMD: DeprivationIndex = {
 		"Scottish Government. Scottish Index of Multiple Deprivation 2020v2. gov.scot",
 	metric: "rank",
 	metricMaximum: 6976,
+	areaNoun: "data zones",
 };
 
 interface SIMDChartProps {
@@ -40,19 +41,11 @@ export default function SIMDChart({
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
-	const stats = resolveDeprivationStats({
+	const resolved = resolveDeprivation({
 		aggregated: aggregatedData?.[dataset.year] ?? null,
 		ladStats: dataset.councilStats,
 		selectedArea,
-		fineArea: {
-			type: "dataZone",
-			records: dataset.data,
-			statsFor: (record) => ({
-				averageSIMDRank: record.simdRank,
-				averageSIMDQuintile: record.simdQuintile,
-				averageSIMDDecile: record.simdDecile,
-			}),
-		},
+		fineArea: { type: "dataZone", records: dataset.data },
 	});
 
 	return (
@@ -60,9 +53,19 @@ export default function SIMDChart({
 			index={SIMD}
 			dataset={dataset}
 			activeDataset={activeDataset}
-			decile={stats?.averageSIMDDecile ?? null}
-			detail={
-				stats ? { kind: "rank", value: stats.averageSIMDRank } : null
+			view={
+				resolved === null
+					? null
+					: resolved.kind === "summary"
+						? resolved
+						: {
+								kind: "area",
+								decile: resolved.record.simdDecile,
+								detail: {
+									kind: "rank",
+									value: resolved.record.simdRank,
+								},
+							}
 			}
 			setActiveViz={setActiveViz}
 		/>

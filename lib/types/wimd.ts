@@ -1,3 +1,5 @@
+import type { DeprivationSummary } from "./deprivation";
+
 export interface WIMDLSOAData {
 	lsoaCode: string;
 	lsoaName: string;
@@ -22,8 +24,5 @@ export interface WIMDDataset {
 	};
 }
 
-export interface AggregatedWIMDData {
-	averageWIMDScore: number;
-	averageWIMDRank: number;
-	averageWIMDDecile: number;
-}
+/** A group of areas, summarised without averaging ranks or deciles. */
+export type AggregatedWIMDData = DeprivationSummary;
