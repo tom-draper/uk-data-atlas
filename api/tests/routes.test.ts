@@ -1213,6 +1213,35 @@ test("publishes a census breakdown as counts with its own denominator", () => {
 	);
 });
 
+test("converts a measure only through a crosswalk the caller names", () => {
+	const base =
+		"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023";
+
+	// The route never picks a conversion path on the caller's behalf.
+	assert.equal(routeWithData(base).status, 400);
+	assert.equal(routeWithData(`${base}&crosswalk=not-published`).status, 404);
+
+	// A crosswalk that starts somewhere else cannot convert this partition.
+	const wrongStart = routeWithData(
+		`${base}&crosswalk=${crosswalkArtifact.id}`,
+	);
+	assert.equal(wrongStart.status, 422);
+	assert.match(
+		"detail" in wrongStart.body ? wrongStart.body.detail : "",
+		/starts at constituency/,
+	);
+
+	// A share cannot be regrouped by adding it up.
+	const intensive = routeWithData(
+		`/v1/data/mobile-5g-coverage/convert?period=2025&geography=localAuthority&boundaryYear=2024&crosswalk=${crosswalkArtifact.id}`,
+	);
+	assert.equal(intensive.status, 422);
+	assert.match(
+		"detail" in intensive.body ? intensive.body.detail : "",
+		/Only an extensive measure can be converted/,
+	);
+});
+
 test("publishes measure boundary candidates as code compatibility only", () => {
 	const response = routeRequest(
 		"GET",
