@@ -103,7 +103,7 @@ const writeSources = (
 				dataset("life-expectancy-series", 4, 2, 2021),
 				dataset("population-constituency", 4, 2, 2024),
 				dataset("general-election", 4, 2, 2019),
-				dataset("local-election", 4, 2, 2019),
+				dataset("local-election", 5, 2, 2019),
 			],
 		}),
 	);
@@ -382,6 +382,11 @@ const writeSources = (
 						turnoutPercent: 0,
 						partyVotes: { LAB: 50, LD: 30 },
 					},
+					E58000050: {
+						totalVotes: 50,
+						turnoutPercent: 0,
+						partyVotes: { CON: 30, LAB: 20 },
+					},
 				},
 			},
 			"2024": {
@@ -531,6 +536,15 @@ test("publishes source-exact election turnout and party vote counts", () => {
 		);
 		assert.equal(measure("general-election-lab-votes")?.unit, "votes");
 		assert.equal(measure("local-election-pc-votes")?.valueKind, "count");
+		assert.equal(
+			measure("local-election-candidate-votes")?.sources[0]?.coverage
+				.recordCount,
+			2,
+		);
+		assert.match(
+			measure("local-election-candidate-votes")?.notes?.[1] ?? "",
+			/county-electoral-division codes is excluded/,
+		);
 
 		// The archive's older local-election files lack turnout; zero is not a
 		// result, so 2019 is absent from that measure.
