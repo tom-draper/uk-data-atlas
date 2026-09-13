@@ -63,6 +63,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 	const populationUk = join(directory, "population-uk.json");
 	const ghgEmissions = join(directory, "ghg-emissions.json");
 	const mobileCoverage = join(directory, "mobile-coverage.json");
+	const landArea = join(directory, "land-area.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -78,6 +79,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 				dataset("mobile-coverage", 2, 1, 2024),
 				dataset("travel-to-work", 2, 1, 2025),
 				dataset("car-availability", 2, 1, 2025),
+				dataset("land-area", 2, 1, 2024),
 			],
 		}),
 	);
@@ -166,6 +168,22 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 			},
 		}),
 	);
+	writeFileSync(
+		landArea,
+		JSON.stringify({
+			"2024": {
+				year: 2024,
+				boundaryYear: 2024,
+				boundaryType: "localAuthority",
+				data: {
+					E06000001: { landSquareKm: 10 },
+					N09000001: { landSquareKm: 20 },
+					S12000001: { landSquareKm: 40 },
+					W06000001: { landSquareKm: 50 },
+				},
+			},
+		}),
+	);
 	return {
 		manifest,
 		population,
@@ -173,6 +191,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 		ghgEmissions,
 		mobileCoverage,
 		censusPaths,
+		landArea,
 	};
 };
 
@@ -188,6 +207,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			ghgEmissions,
 			mobileCoverage,
 			censusPaths,
+			landArea,
 		} = writeSources(directory);
 		const result = compileDataCatalog(
 			manifest,
@@ -196,8 +216,9 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			ghgEmissions,
 			mobileCoverage,
 			censusPaths,
+			landArea,
 		);
-		assert.equal(result.catalog.datasets.length, 6);
+		assert.equal(result.catalog.datasets.length, 7);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -256,6 +277,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			ghgEmissions,
 			mobileCoverage,
 			censusPaths,
+			landArea,
 		} = writeSources(
 			directory,
 			3,
@@ -268,6 +290,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			ghgEmissions,
 			mobileCoverage,
 			censusPaths,
+			landArea,
 		),
 			/expected 3 records/,
 		);
@@ -288,6 +311,7 @@ test("rejects local-authority population data whose codes change between periods
 			ghgEmissions,
 			mobileCoverage,
 			censusPaths,
+			landArea,
 		} = writeSources(directory);
 		const source = JSON.parse(readFileSync(populationUk, "utf8"));
 		delete source["2024"].data.N09000001;
@@ -300,9 +324,131 @@ test("rejects local-authority population data whose codes change between periods
 			ghgEmissions,
 			mobileCoverage,
 			censusPaths,
+			landArea,
 		),
 			/local-authority codes change between periods/,
 		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("refuses to derive density when the denominator misses an area", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const sources = writeSources(directory);
+		// Drop one authority the population partition publishes.
+		writeFileSync(
+			sources.landArea,
+			JSON.stringify({
+				"2024": {
+					year: 2024,
+					boundaryYear: 2024,
+					boundaryType: "localAuthority",
+					data: {
+						E06000001: { landSquareKm: 10 },
+						N09000001: { landSquareKm: 20 },
+						S12000001: { landSquareKm: 40 },
+					},
+				},
+			}),
+		);
+
+		assert.throws(
+			() =>
+				compileDataCatalog(
+					sources.manifest,
+					sources.population,
+					sources.populationUk,
+					sources.ghgEmissions,
+					sources.mobileCoverage,
+					sources.censusPaths,
+					sources.landArea,
+				),
+			/no land area for W06000001/,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("refuses to derive density from an area with no land", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const sources = writeSources(directory);
+		writeFileSync(
+			sources.landArea,
+			JSON.stringify({
+				"2024": {
+					year: 2024,
+					boundaryYear: 2024,
+					boundaryType: "localAuthority",
+					data: {
+						E06000001: { landSquareKm: 0 },
+						N09000001: { landSquareKm: 20 },
+						S12000001: { landSquareKm: 40 },
+						W06000001: { landSquareKm: 50 },
+					},
+				},
+			}),
+		);
+
+		// A zero denominator would publish Infinity as a density.
+		assert.throws(
+			() =>
+				compileDataCatalog(
+					sources.manifest,
+					sources.population,
+					sources.populationUk,
+					sources.ghgEmissions,
+					sources.mobileCoverage,
+					sources.censusPaths,
+					sources.landArea,
+				),
+			/E06000001 has no land area/,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("derives density and marks the values as derived, not observed", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const sources = writeSources(directory);
+		const result = compileDataCatalog(
+			sources.manifest,
+			sources.population,
+			sources.populationUk,
+			sources.ghgEmissions,
+			sources.mobileCoverage,
+			sources.censusPaths,
+			sources.landArea,
+		);
+
+		const density = result.populationDensityObservations;
+		const record = density.periods[0]?.records.find(
+			(candidate) => candidate.areaCode === "E06000001",
+		);
+		// 7 people over 10 square kilometres.
+		assert.equal(record?.value, 0.7);
+		assert.equal(record?.status, "derived");
+
+		const measure = result.catalog.measures.find(
+			(candidate) => candidate.id === "population-density",
+		);
+		assert.equal(measure?.aggregation.kind, "intensive");
+		// The denominator is attributable even though it is not a source.
+		assert.deepEqual(measure?.derivedFrom?.datasetIds, [
+			"population-uk",
+			"land-area",
+		]);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

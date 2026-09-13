@@ -208,8 +208,15 @@ only **available** when its endpoint, contract and provenance are published.
       provenance chain and tabular export as the population measure apply.
 - [ ] Return population estimates for a supported ward, local authority,
       constituency, country or named location.
-- [ ] Return population density only when the population date/geography and the
-      documented land-area denominator are compatible.
+- [x] Return population density through `GET /v1/data/population-density`:
+      2011-2024 Local Authority 2023 codes across all four UK nations, as
+      people per square kilometre. The denominator is the ONS Standard Area
+      Measurement land area, which excludes inland water; the larger extent of
+      the realm is published alongside it but deliberately not used. The two
+      code sets are verified identical when the catalogue is compiled, and a
+      missing or zero denominator fails the build rather than publishing a
+      figure. Values are marked `derived`, not `observed`, and the measure
+      names both input datasets so attribution covers the denominator too.
 - [x] Return source-exact time series for one published area code and source
       partition through `GET /v1/data/{measure-id}/series`. The route neither
       converts nor aggregates values, and reports the observation artifact and
@@ -1273,6 +1280,8 @@ pnpm start
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
+- `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`

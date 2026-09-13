@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:68a2d792277876dda4721bc126b19c710a613acaeb50da68e5b092cd610c644e",
+	"contentHash": "sha256:3bb3d474736ab2612d3751c260da0fc723cfbd7fafd07b07bed2f313b9605d73",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -601,6 +601,37 @@
 			"compiled": {
 				"bytes": 186260,
 				"sha256": "09b265a1e9966e2374886bdc74bb420cd8c6cb6f355fc5c16ba0ed442d74d30a"
+			}
+		},
+		{
+			"id": "land-area",
+			"label": "Land Area",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/datasets/standard-area-measurements-for-the-local-authority-districts-december-2024-in-the-uk",
+			"temporalCoverage": "2024",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Standard Area Measurements by local authority district across the UK: land area excluding inland water, alongside the extent of the realm and inland water, in hectares.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "geography/land-area/sam-lad-2024-12.csv",
+					"bytes": 19115,
+					"sha256": "a507a632fd3dc616f88e1be9a3af9c22ec26f55d35f0969233abd358bea8c59e"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 361,
+				"boundaryYears": [
+					2024
+				]
+			},
+			"compiled": {
+				"bytes": 58475,
+				"sha256": "22ab4aecdd0cec7d03102e194a207946b333f5d58fc5540688284facdab713ac"
 			}
 		},
 		{
@@ -1205,6 +1236,78 @@
 			"links": {
 				"data": "/v1/data/population-estimate"
 			}
+		},
+		{
+			"id": "population-density",
+			"label": "Population density",
+			"valueKind": "ratio",
+			"unit": "people per square kilometre",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The authority's land area in square kilometres, which is this measure's denominator.",
+					"datasetField": "landSquareKm"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "population-uk",
+					"periods": [
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Derived for every area and period the population partition publishes; the denominator covers exactly the same code set."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/population-density"
+			},
+			"derivedFrom": {
+				"datasetIds": [
+					"population-uk",
+					"land-area"
+				],
+				"note": "Mid-year population divided by Standard Area Measurement land area. Both inputs must be attributed when this measure is used."
+			},
+			"notes": [
+				"Derived: mid-year population divided by land area. It is not a source observation, and no publisher is responsible for the quotient.",
+				"The denominator is the ONS Standard Area Measurement land area, which excludes inland water. The extent of the realm is larger and would give a lower figure; it is published in the land-area dataset but deliberately not used here.",
+				"The population is published on the 2023 local-authority code vintage and the land area on the December 2024 vintage. The two code sets were verified identical when this was compiled, so no conversion was applied.",
+				"Density is a ratio, so it does not add over areas. Combining authorities needs a land-area weighted mean, which is the same as recomputing it from the summed population and summed land area."
+			]
 		},
 		{
 			"id": "ghg-emissions",
