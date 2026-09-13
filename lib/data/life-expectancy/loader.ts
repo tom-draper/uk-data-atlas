@@ -57,6 +57,7 @@ export function addMergedLifeExpectancyAuthorities(
 		records[target] = {
 			ladCode: target,
 			ladName: name,
+			derivedFromPredecessors: [...predecessors],
 			maleBirthLE:
 				source.reduce((sum, record) => sum + record.maleBirthLE, 0) /
 				source.length,
