@@ -16,7 +16,14 @@ export const simdDatasetDefinition: DatasetDefinition<SIMDDataset> = {
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Deprivation scores, ranks and quintiles by data zone for Scotland.",
+			"Published deprivation ranks, deciles and quintiles by data zone for Scotland.",
 	},
-	precompile: async ({ text }) => loadSIMD(text),
+	precompile: async ({ text, xlsxSheet }) =>
+		loadSIMD(
+			text,
+			await xlsxSheet(
+				"deprivation/simd/SIMD+2020v2+-+datazone+lookup+-+updated+2025.xlsx",
+				"SIMD 2020v2 DZ lookup data",
+			),
+		),
 };
