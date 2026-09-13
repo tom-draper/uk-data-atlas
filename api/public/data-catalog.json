@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:e79cf11b12e20ff2f2381cb633e21386a427a391d1d4ea56fca468b4552e1856",
+	"contentHash": "sha256:a1e76433a98620142f882bc1514a984523858bd9af6b798722e78c2bdbcad9b0",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -562,8 +562,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 10544620,
-				"sha256": "c90b4fcd27d351fce56981506c8e67e37c131349f8cb6fc79e2197a81350a9c0"
+				"bytes": 10533660,
+				"sha256": "01f67eab2faf53d2cc75f3b6ad6a6ed8414aedc0e8f6be69682c1714af97dc0d"
 			}
 		},
 		{
@@ -847,8 +847,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 129644,
-				"sha256": "be2057810b56fbcc81a981c6b5821a68ae41c1acc8bd4a120f298210ced57b86"
+				"bytes": 114947,
+				"sha256": "bb783da1edf90f4618e55fb738c0ba1985a6bc82bea6da69140078854e238c6b"
 			}
 		},
 		{
@@ -1070,8 +1070,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 1235905,
-				"sha256": "77264cc4cc542930b6ee383ad9efc5b61b6ce23c55b5437565688bbd277f2f98"
+				"bytes": 1233547,
+				"sha256": "d6c17d522c6ddac0f122383f38acbce4f79098f00f070c423574a5560e26234b"
 			}
 		},
 		{
@@ -1169,8 +1169,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 301149,
-				"sha256": "459cfdf4e6d1ce145ebdb163f912d61e0532961eea3624d3f8ed14d7c0397ff0"
+				"bytes": 299545,
+				"sha256": "d012a323f768fe4a0d61a67a4c1398e591c7f02eeaaf093b9a1b0d2682386be9"
 			}
 		}
 	],
