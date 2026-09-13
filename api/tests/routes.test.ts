@@ -1213,6 +1213,44 @@ test("publishes a census breakdown as counts with its own denominator", () => {
 	);
 });
 
+test("sums a country from the GSS code prefix, or refuses to", () => {
+	const query =
+		"/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025";
+
+	const england = routeWithData(`${query}&areaCode=E92000001`);
+	assert.equal(england.status, 200);
+	const data =
+		"data" in england.body
+			? (england.body.data as {
+					record: { value: number; status: string };
+					aggregation: { membership: string; inputRecordCount: number };
+				})
+			: undefined;
+	assert.equal(data?.record.value, 400);
+	assert.equal(data?.record.status, "derived");
+	// Membership is definitional, not a geometric comparison.
+	assert.equal(data?.aggregation.membership, "gss-country-code");
+	assert.equal(data?.aggregation.inputRecordCount, 1);
+
+	// A country the partition does not reach must not sum to a confident zero.
+	const scotland = routeWithData(`${query}&areaCode=S92000003`);
+	assert.equal(scotland.status, 422);
+	assert.match(
+		"detail" in scotland.body ? scotland.body.detail : "",
+		/publishes no areas for that country/,
+	);
+
+	// Exactly one of the two ways of naming an area.
+	assert.equal(routeWithData(query).status, 400);
+	assert.equal(
+		routeWithData(`${query}&areaCode=E92000001&locationId=greater-manchester`)
+			.status,
+		400,
+	);
+	// A local authority is not yet an aggregation target.
+	assert.equal(routeWithData(`${query}&areaCode=E06000001`).status, 400);
+});
+
 test("converts a measure only through a crosswalk the caller names", () => {
 	const base =
 		"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023";

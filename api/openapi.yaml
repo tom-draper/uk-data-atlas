@@ -428,15 +428,28 @@ paths:
   /data/{measure-id}/aggregate:
     get:
       operationId: aggregateSourceExactMeasureLocation
-      summary: Sum an extensive measure over a complete named-location code set
+      summary: Sum an extensive measure over a named location or a country
       description: >
         Returns a derived sum only for a measure declared extensive and
-        available for aggregation. Every curated member code of `locationId`
-        must occur in the requested source partition; otherwise the request is
-        rejected rather than silently returning a partial total. This route
-        does not select a boundary release or perform a code or geometry
-        conversion. Named locations are editorial code groupings, not claims
-        of official administrative geography.
+        available for aggregation. Supply exactly one of `locationId` or
+        `areaCode`.
+
+        With `locationId`, every curated member code must occur in the
+        requested source partition; otherwise the request is rejected rather
+        than silently returning a partial total. Named locations are editorial
+        code groupings, not claims of official administrative geography.
+
+        With `areaCode`, which currently accepts a country code such as
+        `E92000001`, membership follows the first character of the GSS area
+        code, which the coding scheme assigns by country. That is definitional
+        rather than geometric, so it needs no boundary comparison and cannot
+        drift between releases. The sum covers every area of that country the
+        partition publishes, which is not a claim of national completeness: a
+        partition holding no areas for the country is rejected rather than
+        summed to zero.
+
+        This route does not select a boundary release or perform a code or
+        geometry conversion.
       parameters:
         - name: measure-id
           in: path
@@ -460,10 +473,20 @@ paths:
             type: integer
         - name: locationId
           in: query
-          required: true
+          required: false
           schema:
             type: string
-          description: An id returned by `GET /locations`.
+          description: >
+            An id returned by `GET /locations`. Supply this or `areaCode`, not
+            both.
+        - name: areaCode
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            A country code, such as `E92000001`. Supply this or `locationId`,
+            not both.
       responses:
         "200":
           description: A derived sum with its direct-code membership evidence and source provenance.
@@ -476,7 +499,10 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
-          description: The measure is non-additive, aggregation is unavailable, or the location is not a complete direct match.
+          description: >
+            The measure is non-additive, aggregation is unavailable, the
+            location is not a complete direct match, or the partition holds no
+            areas for the requested country.
           content:
             application/problem+json:
               schema:
