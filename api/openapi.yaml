@@ -314,6 +314,9 @@ paths:
         `non-aggregatable`, and both are positions within England alone: the
         other nations' indices use different methods and cannot be compared.
 
+        `wimd-rank` and `wimd-decile` cover the Welsh Index of Multiple
+        Deprivation 2019 for 1,909 LSOAs on 2011 codes, as published.
+
         `nimdm-rank` covers the Northern Ireland Multiple Deprivation Measure
         2017 for 890 super output areas, identified by NISRA codes such as
         `95AA01S1` rather than GSS codes.

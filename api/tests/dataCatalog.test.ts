@@ -67,6 +67,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 	const housePrice = join(directory, "house-price.json");
 	const imd = join(directory, "imd.json");
 	const nimdm = join(directory, "nimdm.json");
+	const wimd = join(directory, "wimd.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -86,6 +87,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 				dataset("house-price", 3, 1, 2021),
 				dataset("imd", 3, 1, 2011),
 				dataset("nimdm", 2, 1, 2011),
+				dataset("wimd", 1, 1, 2011),
 			],
 		}),
 	);
@@ -238,6 +240,17 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 			},
 		}),
 	);
+	writeFileSync(
+		wimd,
+		JSON.stringify({
+			"2019": {
+				year: 2019,
+				boundaryYear: 2011,
+				boundaryType: "lsoa",
+				data: { W01000001: { wimdRank: 885, wimdDecile: 5 } },
+			},
+		}),
+	);
 	return {
 		manifest,
 		population,
@@ -249,6 +262,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 		housePrice,
 		imd,
 		nimdm,
+		wimd,
 	};
 };
 
@@ -268,6 +282,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			housePrice,
 			imd,
 			nimdm,
+			wimd,
 		} = writeSources(directory);
 		const result = compileDataCatalog(
 			manifest,
@@ -280,8 +295,9 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			housePrice,
 			imd,
 			nimdm,
+			wimd,
 		);
-		assert.equal(result.catalog.datasets.length, 10);
+		assert.equal(result.catalog.datasets.length, 11);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -344,6 +360,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			housePrice,
 			imd,
 			nimdm,
+			wimd,
 		} = writeSources(
 			directory,
 			3,
@@ -360,6 +377,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			housePrice,
 			imd,
 			nimdm,
+			wimd,
 		),
 			/expected 3 records/,
 		);
@@ -384,6 +402,7 @@ test("rejects local-authority population data whose codes change between periods
 			housePrice,
 			imd,
 			nimdm,
+			wimd,
 		} = writeSources(directory);
 		const source = JSON.parse(readFileSync(populationUk, "utf8"));
 		delete source["2024"].data.N09000001;
@@ -400,6 +419,7 @@ test("rejects local-authority population data whose codes change between periods
 			housePrice,
 			imd,
 			nimdm,
+			wimd,
 		),
 			/local-authority codes change between periods/,
 		);
@@ -444,6 +464,7 @@ test("refuses to derive density when the denominator misses an area", () => {
 					sources.housePrice,
 					sources.imd,
 					sources.nimdm,
+					sources.wimd,
 				),
 			/no land area for W06000001/,
 		);
@@ -489,6 +510,7 @@ test("refuses to derive density from an area with no land", () => {
 					sources.housePrice,
 					sources.imd,
 					sources.nimdm,
+					sources.wimd,
 				),
 			/E06000001 has no land area/,
 		);
@@ -514,6 +536,7 @@ test("derives density and marks the values as derived, not observed", () => {
 			sources.housePrice,
 			sources.imd,
 			sources.nimdm,
+			sources.wimd,
 		);
 
 		const density = result.populationDensityObservations;
@@ -555,6 +578,7 @@ test("publishes house prices under the publisher's own codes and years", () => {
 			sources.housePrice,
 			sources.imd,
 			sources.nimdm,
+			sources.wimd,
 		);
 		const periods = result.housePriceObservations.periods;
 
@@ -602,6 +626,7 @@ test("publishes deprivation rank and decile as they were published", () => {
 			sources.housePrice,
 			sources.imd,
 			sources.nimdm,
+			sources.wimd,
 		);
 		const [rank, decile] = result.imdObservations;
 
@@ -645,6 +670,7 @@ test("publishes the northern irish rank on its own nisra codes", () => {
 			sources.housePrice,
 			sources.imd,
 			sources.nimdm,
+			sources.wimd,
 		);
 		assert.deepEqual(
 			result.nimdmObservations.periods[0]?.records.map((record) => [
@@ -666,6 +692,40 @@ test("publishes the northern irish rank on its own nisra codes", () => {
 			result.catalog.measures.some((candidate) => candidate.id === "nimdm-decile"),
 			false,
 		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes the welsh index as its own family", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const sources = writeSources(directory);
+		const result = compileDataCatalog(
+			sources.manifest,
+			sources.population,
+			sources.populationUk,
+			sources.ghgEmissions,
+			sources.mobileCoverage,
+			sources.censusPaths,
+			sources.landArea,
+			sources.housePrice,
+			sources.imd,
+			sources.nimdm,
+			sources.wimd,
+		);
+		const measure = (id: string) =>
+			result.catalog.measures.find((candidate) => candidate.id === id);
+		assert.deepEqual(measure("wimd-rank")?.sources[0]?.sourceGeography, {
+			type: "lsoa",
+			boundaryYear: 2011,
+		});
+		assert.deepEqual(measure("wimd-decile")?.sources[0]?.coverage.countries, [
+			"GB-WLS",
+		]);
+		assert.match(measure("wimd-rank")?.notes?.[0] ?? "", /within Wales alone/);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

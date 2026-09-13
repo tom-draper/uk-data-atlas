@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:37022df67be9c50bbc5768f885dd015e63fa9b5cf76fa12d646f56c691cae033",
+	"contentHash": "sha256:d9c13b13b5b5558d9b6d8625081361c2d0f482cf37a3025464fce1ef6a3ef529",
 	"inputs": {
-		"dataCatalog": "sha256:65d7176f058abfaea7857b7746bb939c87891bdc9927217d405b67d103f83cd0",
+		"dataCatalog": "sha256:eddf12288a360f9857b11b0b8c22248b60e44767e723a738a3d77f6837dcb10b",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -28,7 +28,9 @@
 			"travel-to-work-other": "sha256:c1384df82568336500267f46ca953350ec0fcd6688bb15ae06c17b75251a6e50",
 			"travel-to-work-public-transport": "sha256:c0b9aece424ea4ff7611ea29f06453b144eb75e2a8e7a986ece8345013df5d90",
 			"travel-to-work-taxi": "sha256:2fb4efc651999afebcf88114f70fdb099dc374ad307a5b3740703ff4a9c033f1",
-			"travel-to-work-total": "sha256:47b4206b4a59ff798cdddf5ebfeb981d33f5a35baedc6ffde1dcc2823d5bf506"
+			"travel-to-work-total": "sha256:47b4206b4a59ff798cdddf5ebfeb981d33f5a35baedc6ffde1dcc2823d5bf506",
+			"wimd-decile": "sha256:b26d55f31599a26c3c54ee731ae25d9f884e2a3ba367bd886fcc2b22e2c527c0",
+			"wimd-rank": "sha256:2b2d1cf909f6bcd942f22e3e898adc183aa454dfce580475feb01ffced876654"
 		},
 		"areaArtifacts": {
 			"localAuthority/2023-05-uk-bgc-v2": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19",
@@ -548,6 +550,150 @@
 								"W01000019",
 								"W01000020"
 							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "wimd-rank",
+			"sources": [
+				{
+					"datasetId": "wimd",
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2011
+					},
+					"periods": [
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2011-12-ew-bgc-v3",
+							"title": "Lower layer super output areas, December 2011 (England and Wales, generalised, clipped, v3)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 1909,
+							"candidateCodeCount": 34753,
+							"matchingCodeCount": 1909,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 32844,
+							"candidateOnlyCodeSample": [
+								"E01000001",
+								"E01000002",
+								"E01000003",
+								"E01000005",
+								"E01000006",
+								"E01000007",
+								"E01000008",
+								"E01000009",
+								"E01000010",
+								"E01000011",
+								"E01000012",
+								"E01000013",
+								"E01000014",
+								"E01000015",
+								"E01000016",
+								"E01000017",
+								"E01000018",
+								"E01000019",
+								"E01000020",
+								"E01000021"
+							]
+						},
+						{
+							"boundaryRelease": "2011-12-w-bgc",
+							"title": "Lower layer super output areas, December 2011 (Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 1909,
+							"candidateCodeCount": 1909,
+							"matchingCodeCount": 1909,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "wimd-decile",
+			"sources": [
+				{
+					"datasetId": "wimd",
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2011
+					},
+					"periods": [
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2011-12-ew-bgc-v3",
+							"title": "Lower layer super output areas, December 2011 (England and Wales, generalised, clipped, v3)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 1909,
+							"candidateCodeCount": 34753,
+							"matchingCodeCount": 1909,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 32844,
+							"candidateOnlyCodeSample": [
+								"E01000001",
+								"E01000002",
+								"E01000003",
+								"E01000005",
+								"E01000006",
+								"E01000007",
+								"E01000008",
+								"E01000009",
+								"E01000010",
+								"E01000011",
+								"E01000012",
+								"E01000013",
+								"E01000014",
+								"E01000015",
+								"E01000016",
+								"E01000017",
+								"E01000018",
+								"E01000019",
+								"E01000020",
+								"E01000021"
+							]
+						},
+						{
+							"boundaryRelease": "2011-12-w-bgc",
+							"title": "Lower layer super output areas, December 2011 (Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 1909,
+							"candidateCodeCount": 1909,
+							"matchingCodeCount": 1909,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."

@@ -1,0 +1,9561 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:b26d55f31599a26c3c54ee731ae25d9f884e2a3ba367bd886fcc2b22e2c527c0",
+	"measureId": "wimd-decile",
+	"sourceGeography": {
+		"type": "lsoa",
+		"boundaryYear": 2011
+	},
+	"periods": [
+		{
+			"period": "2019",
+			"records": [
+				{
+					"areaCode": "W01000001",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000002",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000003",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000004",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000005",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000006",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000007",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000008",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000009",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000010",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000011",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000012",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000013",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000014",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000015",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000016",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000017",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000018",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000019",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000020",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000021",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000022",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000023",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000024",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000025",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000026",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000027",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000028",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000029",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000030",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000031",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000032",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000033",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000034",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000035",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000036",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000037",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000038",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000039",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000040",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000041",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000042",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000043",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000044",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000047",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000048",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000049",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000050",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000051",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000052",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000053",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000054",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000056",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000057",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000059",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000060",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000061",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000062",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000063",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000064",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000065",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000066",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000067",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000068",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000069",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000070",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000071",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000072",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000073",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000074",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000075",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000076",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000077",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000078",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000079",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000080",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000081",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000082",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000083",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000084",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000085",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000086",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000087",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000088",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000089",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000090",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000091",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000092",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000093",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000094",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000095",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000096",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000097",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000098",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000099",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000100",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000101",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000102",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000103",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000104",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000105",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000106",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000107",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000108",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000109",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000110",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000111",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000112",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000113",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000114",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000115",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000116",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000117",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000118",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000119",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000121",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000122",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000123",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000124",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000125",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000126",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000127",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000128",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000129",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000130",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000131",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000132",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000133",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000134",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000135",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000136",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000137",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000138",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000139",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000140",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000141",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000142",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000143",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000144",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000145",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000146",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000147",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000148",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000149",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000150",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000151",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000152",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000153",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000154",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000155",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000156",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000157",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000158",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000159",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000162",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000163",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000164",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000165",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000166",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000167",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000168",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000169",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000170",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000171",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000172",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000173",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000174",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000175",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000176",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000177",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000178",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000179",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000180",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000181",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000182",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000183",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000184",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000185",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000186",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000187",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000188",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000189",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000190",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000191",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000192",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000193",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000194",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000195",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000196",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000197",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000198",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000199",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000200",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000201",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000202",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000203",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000204",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000205",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000206",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000207",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000208",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000209",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000210",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000211",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000212",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000213",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000214",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000215",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000216",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000217",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000218",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000219",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000220",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000221",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000222",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000223",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000224",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000225",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000226",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000227",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000228",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000229",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000230",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000231",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000232",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000233",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000234",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000235",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000236",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000237",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000238",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000239",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000240",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000241",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000242",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000243",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000244",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000245",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000246",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000247",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000248",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000249",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000250",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000251",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000252",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000253",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000254",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000255",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000256",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000257",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000258",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000259",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000260",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000261",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000262",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000263",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000264",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000265",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000266",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000267",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000268",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000269",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000270",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000271",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000272",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000273",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000274",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000275",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000276",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000277",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000278",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000279",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000280",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000281",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000282",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000283",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000284",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000285",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000286",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000287",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000288",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000289",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000290",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000291",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000292",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000293",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000294",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000295",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000296",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000297",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000298",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000299",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000300",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000301",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000302",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000303",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000304",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000305",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000306",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000307",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000308",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000309",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000310",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000311",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000312",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000313",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000314",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000315",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000316",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000317",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000318",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000319",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000320",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000321",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000322",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000323",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000324",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000325",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000326",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000327",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000328",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000329",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000330",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000331",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000332",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000333",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000334",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000335",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000336",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000337",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000338",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000339",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000340",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000341",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000342",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000343",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000344",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000345",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000346",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000347",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000348",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000349",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000350",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000351",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000352",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000353",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000354",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000355",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000356",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000359",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000360",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000361",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000362",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000363",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000364",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000365",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000366",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000367",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000368",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000369",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000370",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000371",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000372",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000373",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000374",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000375",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000376",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000377",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000378",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000379",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000380",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000381",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000382",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000383",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000384",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000385",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000386",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000387",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000388",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000389",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000390",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000391",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000392",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000393",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000394",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000395",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000396",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000397",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000398",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000399",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000400",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000401",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000402",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000403",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000404",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000405",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000406",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000407",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000408",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000409",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000410",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000411",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000412",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000413",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000414",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000415",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000416",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000417",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000418",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000419",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000420",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000422",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000423",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000424",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000425",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000426",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000427",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000428",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000429",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000430",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000431",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000432",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000433",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000434",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000438",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000439",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000440",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000441",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000442",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000443",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000444",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000445",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000446",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000447",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000448",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000449",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000450",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000451",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000452",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000453",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000454",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000455",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000456",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000457",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000458",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000459",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000460",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000461",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000464",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000465",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000466",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000467",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000470",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000471",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000472",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000473",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000474",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000475",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000476",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000477",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000478",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000479",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000480",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000481",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000482",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000483",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000484",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000485",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000486",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000487",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000488",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000489",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000492",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000493",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000494",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000496",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000497",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000498",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000499",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000500",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000501",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000502",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000503",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000504",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000505",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000506",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000507",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000508",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000509",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000510",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000511",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000512",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000513",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000515",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000516",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000517",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000518",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000519",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000522",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000523",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000524",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000525",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000527",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000528",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000529",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000531",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000532",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000533",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000534",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000535",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000536",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000537",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000538",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000539",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000540",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000541",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000542",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000543",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000544",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000545",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000546",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000547",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000548",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000549",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000550",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000551",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000552",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000553",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000554",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000555",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000556",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000557",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000558",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000559",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000560",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000561",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000562",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000563",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000564",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000565",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000566",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000567",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000568",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000569",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000570",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000571",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000572",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000573",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000574",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000575",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000576",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000577",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000578",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000579",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000580",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000581",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000582",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000583",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000584",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000585",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000586",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000587",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000588",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000589",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000590",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000591",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000592",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000593",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000594",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000595",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000596",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000597",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000598",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000599",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000600",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000601",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000602",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000603",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000604",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000605",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000606",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000607",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000608",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000609",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000610",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000611",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000612",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000613",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000614",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000615",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000616",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000617",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000618",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000619",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000620",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000621",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000622",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000623",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000624",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000625",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000626",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000627",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000628",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000629",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000630",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000631",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000632",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000633",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000634",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000635",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000636",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000637",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000638",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000639",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000640",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000641",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000642",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000643",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000644",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000645",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000646",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000647",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000648",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000649",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000650",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000651",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000652",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000653",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000654",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000655",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000656",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000657",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000658",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000659",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000660",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000662",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000663",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000664",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000665",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000666",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000667",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000670",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000671",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000672",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000673",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000674",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000675",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000676",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000677",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000678",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000679",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000680",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000681",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000682",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000683",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000684",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000685",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000686",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000687",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000688",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000689",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000690",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000691",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000692",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000693",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000694",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000695",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000696",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000697",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000698",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000699",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000700",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000701",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000702",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000703",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000704",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000705",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000706",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000707",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000708",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000709",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000710",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000711",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000712",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000713",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000714",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000715",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000716",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000717",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000718",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000719",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000720",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000721",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000722",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000723",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000724",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000725",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000726",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000727",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000728",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000729",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000730",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000731",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000732",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000733",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000734",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000735",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000736",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000737",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000738",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000739",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000740",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000741",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000742",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000744",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000745",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000746",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000747",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000749",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000750",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000751",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000752",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000753",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000754",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000755",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000756",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000757",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000758",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000759",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000760",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000761",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000762",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000763",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000764",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000765",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000766",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000767",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000768",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000769",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000770",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000771",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000772",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000773",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000774",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000775",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000776",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000777",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000778",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000779",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000781",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000782",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000784",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000785",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000786",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000787",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000788",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000789",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000790",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000791",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000792",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000793",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000794",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000795",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000796",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000797",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000798",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000799",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000800",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000801",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000802",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000803",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000804",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000805",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000806",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000807",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000808",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000809",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000810",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000811",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000812",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000813",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000814",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000815",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000816",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000817",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000818",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000819",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000820",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000821",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000822",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000823",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000824",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000825",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000826",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000827",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000828",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000829",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000830",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000831",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000832",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000833",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000834",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000835",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000836",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000837",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000838",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000839",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000840",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000841",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000842",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000843",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000844",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000845",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000846",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000847",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000848",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000849",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000850",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000851",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000852",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000853",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000854",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000855",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000856",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000857",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000858",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000859",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000860",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000861",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000862",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000863",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000864",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000865",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000866",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000867",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000868",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000869",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000870",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000871",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000872",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000873",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000874",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000875",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000876",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000877",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000878",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000879",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000880",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000881",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000882",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000883",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000884",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000885",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000886",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000887",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000888",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000889",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000890",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000891",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000892",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000893",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000894",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000895",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000896",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000897",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000898",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000899",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000900",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000901",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000902",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000903",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000904",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000905",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000906",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000907",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000908",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000909",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000910",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000911",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000912",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000913",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000914",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000915",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000916",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000917",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000918",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000919",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000920",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000921",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000922",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000923",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000924",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000925",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000926",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000927",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000928",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000929",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000930",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000931",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000932",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000933",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000934",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000935",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000936",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000937",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000938",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000939",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000940",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000941",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000942",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000943",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000944",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000945",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000946",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000947",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000948",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000949",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000950",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000951",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000952",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000953",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000954",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000955",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000956",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000957",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000958",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000959",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000960",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000961",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000962",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000963",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000964",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000965",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000966",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000967",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000968",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000969",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000970",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000971",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000973",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000974",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000975",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000976",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000977",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000978",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000979",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000980",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000981",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000982",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000983",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000984",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000985",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000986",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000987",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000989",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000990",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000991",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000992",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000993",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000994",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000995",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000996",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000997",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000998",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01000999",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001000",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001001",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001002",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001003",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001004",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001005",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001006",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001007",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001008",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001009",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001010",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001011",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001012",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001013",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001014",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001015",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001016",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001017",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001018",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001019",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001020",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001021",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001022",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001023",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001024",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001025",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001026",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001027",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001028",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001029",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001030",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001031",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001032",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001033",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001034",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001035",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001036",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001037",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001038",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001039",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001040",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001041",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001042",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001043",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001044",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001045",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001046",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001047",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001048",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001049",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001050",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001051",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001052",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001053",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001054",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001055",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001056",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001057",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001058",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001059",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001060",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001061",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001062",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001063",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001064",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001065",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001066",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001067",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001068",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001069",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001070",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001071",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001072",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001073",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001075",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001076",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001077",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001078",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001079",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001080",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001081",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001082",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001083",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001084",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001085",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001086",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001087",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001088",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001089",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001090",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001091",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001092",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001093",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001094",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001095",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001096",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001097",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001098",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001099",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001100",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001101",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001102",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001103",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001104",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001105",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001106",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001107",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001108",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001109",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001110",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001111",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001112",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001113",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001114",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001115",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001116",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001117",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001118",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001119",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001120",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001121",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001122",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001123",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001124",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001125",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001126",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001127",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001128",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001129",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001130",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001131",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001132",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001133",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001134",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001135",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001136",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001137",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001138",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001139",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001140",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001141",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001142",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001143",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001144",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001145",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001146",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001147",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001148",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001149",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001150",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001151",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001152",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001153",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001154",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001155",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001156",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001157",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001158",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001159",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001160",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001161",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001162",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001164",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001165",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001166",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001167",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001168",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001169",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001170",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001171",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001172",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001173",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001174",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001175",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001176",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001177",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001178",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001179",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001180",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001181",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001182",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001183",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001184",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001185",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001186",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001187",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001188",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001189",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001190",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001191",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001192",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001193",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001194",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001195",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001196",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001197",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001198",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001199",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001200",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001201",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001202",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001203",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001204",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001205",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001206",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001207",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001208",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001209",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001210",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001211",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001212",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001213",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001214",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001215",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001216",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001217",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001218",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001219",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001220",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001221",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001222",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001223",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001224",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001225",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001226",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001227",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001228",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001229",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001230",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001231",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001232",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001233",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001234",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001235",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001236",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001237",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001238",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001239",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001240",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001241",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001242",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001243",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001244",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001245",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001246",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001247",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001248",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001249",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001250",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001251",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001252",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001253",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001255",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001256",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001257",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001258",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001259",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001260",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001261",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001262",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001263",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001264",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001265",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001266",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001267",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001268",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001269",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001270",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001271",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001272",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001273",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001274",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001275",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001276",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001277",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001278",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001279",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001280",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001281",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001282",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001283",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001284",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001285",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001286",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001287",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001288",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001289",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001290",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001291",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001292",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001293",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001294",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001295",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001296",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001297",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001298",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001299",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001300",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001301",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001302",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001303",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001304",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001305",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001306",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001307",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001308",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001309",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001310",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001311",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001312",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001313",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001314",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001315",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001316",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001317",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001318",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001319",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001320",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001321",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001322",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001324",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001325",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001326",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001327",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001328",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001329",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001330",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001331",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001332",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001333",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001334",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001335",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001336",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001337",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001338",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001339",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001340",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001341",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001342",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001343",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001344",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001345",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001346",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001347",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001348",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001349",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001350",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001351",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001352",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001353",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001354",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001355",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001356",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001357",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001358",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001359",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001360",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001361",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001362",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001363",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001364",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001365",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001366",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001367",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001368",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001369",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001370",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001371",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001372",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001373",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001374",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001375",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001376",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001377",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001378",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001379",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001380",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001381",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001382",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001383",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001384",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001385",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001386",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001387",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001388",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001389",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001390",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001391",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001392",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001393",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001394",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001395",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001396",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001397",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001398",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001399",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001400",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001401",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001402",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001403",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001404",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001405",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001406",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001407",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001408",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001409",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001410",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001411",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001412",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001413",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001414",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001415",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001416",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001417",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001418",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001419",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001420",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001421",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001422",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001423",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001424",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001425",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001426",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001427",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001428",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001429",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001430",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001431",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001432",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001433",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001434",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001435",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001436",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001437",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001438",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001439",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001440",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001441",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001442",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001443",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001444",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001445",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001446",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001447",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001448",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001449",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001450",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001451",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001452",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001453",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001454",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001455",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001456",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001457",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001458",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001459",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001460",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001461",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001462",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001463",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001464",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001465",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001466",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001467",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001468",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001469",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001470",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001471",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001472",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001473",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001474",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001475",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001476",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001477",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001478",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001479",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001480",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001481",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001482",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001483",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001484",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001485",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001486",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001487",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001488",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001489",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001490",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001491",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001492",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001493",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001494",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001495",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001496",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001497",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001498",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001499",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001500",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001501",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001502",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001503",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001504",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001505",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001506",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001507",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001508",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001509",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001510",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001511",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001512",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001513",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001514",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001515",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001516",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001517",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001518",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001519",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001520",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001521",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001522",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001523",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001524",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001525",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001526",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001527",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001528",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001529",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001530",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001531",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001532",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001533",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001534",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001535",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001536",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001537",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001538",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001539",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001540",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001541",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001542",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001543",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001545",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001546",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001548",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001549",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001551",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001552",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001553",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001554",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001555",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001556",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001557",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001558",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001559",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001560",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001561",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001562",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001563",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001564",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001565",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001566",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001567",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001568",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001569",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001571",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001572",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001573",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001574",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001575",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001576",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001577",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001578",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001579",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001580",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001581",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001582",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001583",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001584",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001585",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001586",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001587",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001588",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001589",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001590",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001591",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001592",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001593",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001594",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001595",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001596",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001597",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001598",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001599",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001600",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001601",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001602",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001603",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001604",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001605",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001606",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001607",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001608",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001609",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001610",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001611",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001612",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001613",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001614",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001615",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001616",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001617",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001618",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001619",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001620",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001621",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001622",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001623",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001624",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001625",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001626",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001627",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001628",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001629",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001630",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001631",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001632",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001633",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001634",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001635",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001636",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001637",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001638",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001639",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001640",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001641",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001642",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001643",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001644",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001645",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001646",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001647",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001648",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001649",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001650",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001651",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001652",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001653",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001654",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001655",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001657",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001658",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001659",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001660",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001661",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001662",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001663",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001664",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001665",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001666",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001667",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001668",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001669",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001670",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001671",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001672",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001673",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001674",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001675",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001676",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001677",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001678",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001679",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001680",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001681",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001682",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001683",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001684",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001685",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001686",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001687",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001688",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001689",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001690",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001691",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001692",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001693",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001694",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001695",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001696",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001697",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001698",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001699",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001702",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001703",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001704",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001705",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001706",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001707",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001708",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001709",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001710",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001711",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001712",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001713",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001714",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001715",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001716",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001717",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001718",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001719",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001720",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001721",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001722",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001724",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001725",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001726",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001727",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001728",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001729",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001730",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001731",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001732",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001733",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001734",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001735",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001736",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001737",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001738",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001739",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001740",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001741",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001742",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001743",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001744",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001745",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001746",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001747",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001748",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001749",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001750",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001751",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001752",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001753",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001754",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001755",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001756",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001757",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001758",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001759",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001760",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001761",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001762",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001764",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001765",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001766",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001767",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001768",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001769",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001770",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001771",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001772",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001773",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001774",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001775",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001776",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001777",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001778",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001779",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001780",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001781",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001782",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001783",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001784",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001785",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001786",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001787",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001788",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001789",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001790",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001791",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001792",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001793",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001794",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001795",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001796",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001797",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001798",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001799",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001800",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001802",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001803",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001804",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001805",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001806",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001807",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001808",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001809",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001810",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001811",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001812",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001813",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001814",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001815",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001816",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001817",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001818",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001819",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001820",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001821",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001822",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001823",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001824",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001825",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001826",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001827",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001828",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001829",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001830",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001831",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001832",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001833",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001834",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001835",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001836",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001837",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001838",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001839",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001840",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001841",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001842",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001843",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001844",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001846",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001847",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001848",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001849",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001850",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001851",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001852",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001853",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001854",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001855",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001856",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001857",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001858",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001859",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001860",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001861",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001862",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001863",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001864",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001865",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001866",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001867",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001868",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001869",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001870",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001871",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001872",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001873",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001874",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001875",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001876",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001877",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001878",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001879",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001880",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001881",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001882",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001883",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001884",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001885",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001886",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001887",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001888",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001889",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001890",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001891",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001892",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001893",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001894",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001895",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001896",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001897",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001898",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001899",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001900",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001901",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001902",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001903",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001904",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001905",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001906",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001907",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001908",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001909",
+					"value": 4,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001910",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001911",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001912",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001913",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001914",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001915",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001916",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001917",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001918",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001919",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001920",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001921",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001922",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001923",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001924",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001925",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001926",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001927",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001928",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001929",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001930",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001931",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001932",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001933",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001934",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001935",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001936",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001937",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001938",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001939",
+					"value": 5,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001940",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001941",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001942",
+					"value": 2,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001943",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001944",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001945",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001946",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001947",
+					"value": 9,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001948",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001949",
+					"value": 8,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001950",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001951",
+					"value": 6,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001952",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001953",
+					"value": 7,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001954",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001955",
+					"value": 1,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001956",
+					"value": 10,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001957",
+					"value": 3,
+					"status": "observed"
+				},
+				{
+					"areaCode": "W01001958",
+					"value": 6,
+					"status": "observed"
+				}
+			]
+		}
+	]
+}

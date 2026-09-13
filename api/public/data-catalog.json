@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:65d7176f058abfaea7857b7746bb939c87891bdc9927217d405b67d103f83cd0",
+	"contentHash": "sha256:eddf12288a360f9857b11b0b8c22248b60e44767e723a738a3d77f6837dcb10b",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1480,6 +1480,94 @@
 			"notes": [
 				"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
 				"Deciles divide England's 32,844 LSOAs into ten near-equal groups by rank."
+			]
+		},
+		{
+			"id": "wimd-rank",
+			"label": "Welsh Index of Multiple Deprivation rank",
+			"valueKind": "ordinal",
+			"unit": "rank of 1,909 LSOAs, where 1 is the most deprived",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "rank",
+				"note": "A rank records an order, not a distance: the gap between ranks 1 and 2 need not equal the gap between 100 and 101. Averaging ranks over areas produces a number with no meaning.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "wimd",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2011
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-WLS"
+						],
+						"recordCount": 1909,
+						"note": "Wales only. The other three nations publish their own indices, which are not comparable with this one."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/wimd-rank"
+			},
+			"notes": [
+				"A position within Wales alone. The English, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+				"Taken from the Welsh Government's published ranks. The separately published scores are rounded to one decimal place, so ranking them does not reproduce these ranks."
+			]
+		},
+		{
+			"id": "wimd-decile",
+			"label": "Welsh Index of Multiple Deprivation decile",
+			"valueKind": "ordinal",
+			"unit": "decile, where 1 is the most deprived tenth of LSOAs",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "decile",
+				"note": "A decile is a band of ranks. Averaging deciles over areas produces a number with no meaning, and the share of a place's LSOAs in each decile is the defensible summary instead.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "wimd",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2011
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-WLS"
+						],
+						"recordCount": 1909,
+						"note": "Wales only. The other three nations publish their own indices, which are not comparable with this one."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/wimd-decile"
+			},
+			"notes": [
+				"A position within Wales alone. The English, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+				"Taken from the Welsh Government's published deciles."
 			]
 		},
 		{
