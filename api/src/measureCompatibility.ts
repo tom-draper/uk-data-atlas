@@ -5,7 +5,7 @@ import {
 	type DataCatalog,
 	findMeasureObservations,
 	isLegacyPopulationSource,
-	MeasureObservationArtifact,
+	AnyMeasureObservationArtifact,
 	MeasureSource,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
@@ -67,7 +67,7 @@ const sourceCodes = (
 	source: MeasureSource,
 	wardObservations: PopulationObservationArtifact,
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
-	measureObservations: MeasureObservationArtifact[],
+	measureObservations: AnyMeasureObservationArtifact[],
 ) => {
 	if (isLegacyPopulationSource(measureId, source)) {
 		if (source.sourceGeography.type === "ward") {
@@ -146,7 +146,7 @@ export const compileMeasureCompatibility = (
 	areaArtifacts: AreaReleaseArtifact[],
 	wardObservations: PopulationObservationArtifact,
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
-	measureObservations: MeasureObservationArtifact[],
+	measureObservations: AnyMeasureObservationArtifact[],
 ): MeasureCompatibilityInventory => {
 	if (dataCatalog.measures.length === 0) {
 		throw new Error("Data catalogue has no measures.");
@@ -159,37 +159,39 @@ export const compileMeasureCompatibility = (
 	);
 	const sourcesFor = (measure: (typeof dataCatalog.measures)[number]) =>
 		measure.sources.map((source) => {
-		const codes = sourceCodes(
-			measure.id,
-			source,
-			wardObservations,
-			localAuthorityObservations,
-			measureObservations,
-		);
-		const candidates = boundaryRegistry.releases
-			.filter(
-				(release) =>
-					release.geography === source.sourceGeography.type &&
-					release.temporalCoverage ===
-						String(source.sourceGeography.boundaryYear),
-			)
-			.flatMap((release) => {
-				const artifact = artifactsByIdentity.get(
-					`${release.geography}/${release.id}`,
-				);
-				return artifact ? [candidateFor(codes, artifact, release)] : [];
-			})
-			.sort((left, right) =>
-				left.boundaryRelease.localeCompare(right.boundaryRelease),
+			const codes = sourceCodes(
+				measure.id,
+				source,
+				wardObservations,
+				localAuthorityObservations,
+				measureObservations,
 			);
-		return {
-			datasetId: source.datasetId,
-			sourceGeography: source.sourceGeography,
-			periods: source.periods,
-			candidates,
-			note: "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry.",
-		};
-	});
+			const candidates = boundaryRegistry.releases
+				.filter(
+					(release) =>
+						release.geography === source.sourceGeography.type &&
+						release.temporalCoverage ===
+							String(source.sourceGeography.boundaryYear),
+				)
+				.flatMap((release) => {
+					const artifact = artifactsByIdentity.get(
+						`${release.geography}/${release.id}`,
+					);
+					return artifact
+						? [candidateFor(codes, artifact, release)]
+						: [];
+				})
+				.sort((left, right) =>
+					left.boundaryRelease.localeCompare(right.boundaryRelease),
+				);
+			return {
+				datasetId: source.datasetId,
+				sourceGeography: source.sourceGeography,
+				periods: source.periods,
+				candidates,
+				note: "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry.",
+			};
+		});
 	const measures = dataCatalog.measures.map((measure) => ({
 		measureId: measure.id,
 		sources: sourcesFor(measure),

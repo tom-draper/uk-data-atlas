@@ -6,7 +6,7 @@ import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import {
 	type DataCatalog,
 	isLegacyPopulationSource,
-	type MeasureObservationArtifact,
+	type AnyMeasureObservationArtifact,
 	observationArtifactName,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
@@ -57,9 +57,11 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 		),
 		dataCatalog.measures.flatMap((measure) =>
 			measure.sources
-				.filter((source) => !isLegacyPopulationSource(measure.id, source))
+				.filter(
+					(source) => !isLegacyPopulationSource(measure.id, source),
+				)
 				.map((source) =>
-					read<MeasureObservationArtifact>(
+					read<AnyMeasureObservationArtifact>(
 						join(
 							publicDirectory,
 							`${observationArtifactName(measure.id, source)}.json`,
