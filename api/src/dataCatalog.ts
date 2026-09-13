@@ -491,36 +491,12 @@ const localAuthorityFieldPeriods = (
 /**
  * The house price partition, restored to the codes its publisher used.
  *
- * The website remaps Salford's twenty wards onto their 2021 codes so the map
- * joins to current boundaries, but those wards were redrawn in 2021: a price
- * measured on the old ward is not a price for the new one. The API reverses
- * the remap, so every value sits under the code it was published against.
- * Keep this in step with SALFORD_WARD_CODE_REMAP in
- * lib/data/house-price/loader.ts.
+ * The website moves Salford's twenty wards onto their 2021 codes so the map
+ * joins, but those wards were redrawn in 2021: a price measured on the old ward
+ * is not a price for the new one. The compiled record keeps the published code
+ * as `sourceWardCode`, so every value is served under the code it was published
+ * against, and the list of moved wards lives only in the website loader.
  */
-const SALFORD_2021_CODE_TO_SOURCE_CODE: Record<string, string> = {
-	E05013018: "E05000759",
-	E05013020: "E05000760",
-	E05013021: "E05000761",
-	E05013022: "E05000762",
-	E05013023: "E05000763",
-	E05013024: "E05000764",
-	E05013025: "E05000765",
-	E05013019: "E05000766",
-	E05013026: "E05000767",
-	E05013030: "E05000768",
-	E05013027: "E05000769",
-	E05013028: "E05000770",
-	E05013029: "E05000771",
-	E05013032: "E05000772",
-	E05013033: "E05000773",
-	E05013034: "E05000774",
-	E05013035: "E05000775",
-	E05013036: "E05000776",
-	E05013031: "E05000777",
-	E05013037: "E05000778",
-};
-
 /**
  * The last period published for a full calendar year. The workbook is a
  * quarterly rolling series, and each year's figure here is the year ending
@@ -540,8 +516,10 @@ const housePricePeriods = (
 	const data = object(edition.data, `${path}.2023.data`);
 	const byPeriod = new Map<string, PopulationObservation[]>();
 	for (const [compiledCode, record] of Object.entries(data)) {
+		const sourceWardCode = object(record, `${path}.${compiledCode}`)
+			.sourceWardCode;
 		const areaCode =
-			SALFORD_2021_CODE_TO_SOURCE_CODE[compiledCode] ?? compiledCode;
+			typeof sourceWardCode === "string" ? sourceWardCode : compiledCode;
 		if (!/^[EW]\d{8}$/.test(areaCode)) {
 			throw new Error(`${path}: unsupported ward code ${areaCode}`);
 		}
