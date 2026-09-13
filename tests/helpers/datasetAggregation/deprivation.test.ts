@@ -57,14 +57,13 @@ describe("aggregateWIMD", () => {
 
 describe("aggregateNIMDM", () => {
 	const data = {
-		N1: { nimdmRank: 100, nimdmDecile: 1 },
-		N2: { nimdmRank: 500, nimdmDecile: 5 },
+		N1: { nimdmRank: 100 },
+		N2: { nimdmRank: 500 },
 	} as any;
 
-	it("averages rank and decile over the covered areas", () => {
+	it("averages rank over the covered areas, with no decile", () => {
 		expect(aggregateNIMDM(features(["N1", "N2"]), CODE_KEY, data)).toEqual({
 			averageNIMDMRank: 300,
-			averageNIMDMDecile: 3,
 		});
 	});
 
