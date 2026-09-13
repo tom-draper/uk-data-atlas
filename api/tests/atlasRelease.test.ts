@@ -61,6 +61,50 @@ test("is deterministic for unchanged artifacts and changes when content changes"
 	}
 });
 
+test("pins every non-legacy observation artifact declared by the catalogue", () => {
+	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		writeArtifacts(directory);
+		writeFileSync(
+			join(directory, "data-catalog.json"),
+			JSON.stringify({
+				measures: [
+					{
+						id: "fixture-measure",
+						sources: [
+							{
+								datasetId: "fixture",
+								periods: ["2024"],
+								sourceGeography: {
+									type: "ward",
+									boundaryYear: 2024,
+								},
+								observationArtifact: "fixture-observations",
+							},
+						],
+					},
+				],
+			}),
+		);
+		writeFileSync(join(directory, "fixture-observations.json"), "[]");
+		const release = createAtlasRelease(directory);
+		assert.deepEqual(
+			release.artifacts.find(
+				(artifact) =>
+					artifact.id === "observations/fixture-observations",
+			),
+			{
+				id: "observations/fixture-observations",
+				path: "fixture-observations.json",
+				contentHash:
+					"sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+			},
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
 test("fails loudly when a referenced artifact is missing", () => {
 	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
