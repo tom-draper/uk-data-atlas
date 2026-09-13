@@ -145,6 +145,7 @@ const readGeometries = (
 	crosswalkId: string,
 	endpoint: { geography: string; boundaryRelease: string },
 	geometrySources: GeometrySourceLookup,
+	codePattern?: RegExp,
 ) => {
 	const identity = `${endpoint.geography}/${endpoint.boundaryRelease}`;
 	const source = geometrySources.get(identity);
@@ -188,6 +189,7 @@ const readGeometries = (
 				`${crosswalkId}: ${source.input} feature ${index} has no ${source.codeProperty}.`,
 			);
 		}
+		if (codePattern && !codePattern.test(code)) continue;
 		const polygons = polygonsByCode.get(code.trim()) ?? [];
 		polygons.push(
 			...toPolygons(
@@ -246,11 +248,22 @@ export const compileAreaOverlapCrosswalk = (
 	geometrySources: GeometrySourceLookup,
 	areaLookup: AreaLookup | undefined,
 ): AreaOverlapCrosswalkArtifact => {
+	let sourceCodePattern: RegExp | undefined;
+	if (adapter.sourceCodePattern) {
+		try {
+			sourceCodePattern = new RegExp(adapter.sourceCodePattern);
+		} catch {
+			throw new Error(
+				`${adapter.id}: sourceCodePattern is not a valid regular expression`,
+			);
+		}
+	}
 	const sources = readGeometries(
 		repositoryRoot,
 		adapter.id,
 		adapter.from,
 		geometrySources,
+		sourceCodePattern,
 	);
 	const targets = readGeometries(
 		repositoryRoot,
@@ -412,7 +425,13 @@ export const compileAreaOverlapCrosswalk = (
 		},
 		provenance: {
 			inputs: [
-				{ side: "from" as const, ...sources.provenance },
+				{
+					side: "from" as const,
+					...sources.provenance,
+					...(adapter.sourceCodePattern
+						? { sourceCodePattern: adapter.sourceCodePattern }
+						: {}),
+				},
 				{ side: "to" as const, ...targets.provenance },
 			],
 			areaProjection: "EPSG:6933" as const,

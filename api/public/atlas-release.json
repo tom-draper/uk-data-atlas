@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:4a9b3b803acde9a9a137dbddbbe753b7fd087f33abe3fb1582157cb488749619",
+	"releaseId": "sha256:f95e7cd79a938ec67a2c8403a69223e2cf754e6b9f91ab0e9aec32c3b43d8616",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -20,7 +20,7 @@
 		{
 			"id": "named-locations",
 			"path": "named-locations.json",
-			"contentHash": "sha256:238d4f3ccd87ae39836e610380d86a5b9e11ea6421ea9f887618f98db56169c5"
+			"contentHash": "sha256:e2da69cbbf92e55d1e6806ee399dbffde610fcef925b1b01228371d42021bf28"
 		},
 		{
 			"id": "data-catalog",
@@ -50,7 +50,7 @@
 		{
 			"id": "crosswalk-inventory",
 			"path": "crosswalk-inventory.json",
-			"contentHash": "sha256:211c8c1bd0bbdf32ac4e5b11cc8655f2a6872e57b048a96dc578c75f109701d4"
+			"contentHash": "sha256:0f947bed96fb281a900c1fbe8670a2426483715c8b4f6a212f989ce937af63fd"
 		},
 		{
 			"id": "relationship-candidates",
@@ -60,17 +60,17 @@
 		{
 			"id": "geography-inventory",
 			"path": "geography-inventory.json",
-			"contentHash": "sha256:db6eff79c223d7867922a918e54e6ca98a3646c83364824fe51423a5d849c171"
+			"contentHash": "sha256:60f7f181c719dd21a90e8991f91151c971074eb61d81ef2b2d988ec789b37927"
 		},
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:118d8e91f987505e32e1fef7952f430b3efde1b75b3f7bbd90c662c01fc4d671"
+			"contentHash": "sha256:a700d61753480bb94d965f6ae4641c9fdf24ed8316a44fbb16e6449c25a7e04b"
 		},
 		{
 			"id": "source-inventory",
 			"path": "source-inventory.json",
-			"contentHash": "sha256:fa7a157b9958e91b03fc22076d396e23dc5d3a2439cd1f0c347e78bd9c256522"
+			"contentHash": "sha256:7718d0c91c8ba3ab557949b24102e797a9e680c78e96e1296f0374f56131dc48"
 		},
 		{
 			"id": "observations/car-availability-none-observations",

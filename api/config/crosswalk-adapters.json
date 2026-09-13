@@ -297,6 +297,27 @@
 			},
 			"sliverWidthM": 100,
 			"minimumCoverage": 0.99
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
+			"method": "area-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "area",
+				"normalisation": "per-source"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "region",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"sourceCodePattern": "^E",
+			"sliverWidthM": 100,
+			"minimumCoverage": 0.99
 		}
 	]
 }
