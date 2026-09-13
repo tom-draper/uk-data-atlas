@@ -1,8 +1,10 @@
 import { createHash } from "node:crypto";
 import type { AreaReleaseArtifact } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
-import type {
-	DataCatalog,
+import {
+	type DataCatalog,
+	findMeasureObservations,
+	isLegacyPopulationSource,
 	MeasureObservationArtifact,
 	MeasureSource,
 	PopulationLocalAuthorityObservationArtifact,
@@ -67,7 +69,7 @@ const sourceCodes = (
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
 	measureObservations: MeasureObservationArtifact[],
 ) => {
-	if (measureId === "population-estimate") {
+	if (isLegacyPopulationSource(measureId, source)) {
 		if (source.sourceGeography.type === "ward") {
 			return new Set(
 				wardObservations.records.map((record) => record.areaCode),
@@ -83,13 +85,14 @@ const sourceCodes = (
 		}
 		return new Set(records.map((record) => record.areaCode));
 	}
-	const records = measureObservations
-		.find((candidate) => candidate.measureId === measureId)
-		?.periods.find((period) => period.period === source.periods[0])
-		?.records;
+	const records = findMeasureObservations(
+		measureObservations,
+		measureId,
+		source,
+	)?.periods.find((period) => period.period === source.periods[0])?.records;
 	if (!records) {
 		throw new Error(
-			`No ${measureId} observations exist for ${source.periods[0]}.`,
+			`No ${measureId} observations exist for ${source.sourceGeography.type} in ${source.periods[0]}.`,
 		);
 	}
 	return new Set(records.map((record) => record.areaCode));

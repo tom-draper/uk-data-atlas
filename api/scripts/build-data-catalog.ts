@@ -24,6 +24,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		wimd: precompiled("wimd.json"),
 		simd: precompiled("simd.json"),
 		lifeExpectancySeries: precompiled("life-expectancy-series.json"),
+		populationConstituency: precompiled("population-constituency.json"),
 	};
 	const missing = Object.values(inputs).filter((path) => !existsSync(path));
 	if (missing.length > 0) {
@@ -44,6 +45,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		imdObservations,
 		nimdmObservations,
 		lifeExpectancyObservations,
+		populationConstituencyObservations,
 	} = compileDataCatalog(inputs);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
@@ -65,6 +67,11 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 	writeFileSync(
 		ghgEmissionsObservationsPath,
 		`${JSON.stringify(ghgEmissionsObservations)}\n`,
+	);
+	// A further source of a multi-source measure is named for its dataset.
+	writeFileSync(
+		join(outputDirectory, "population-constituency-observations.json"),
+		`${JSON.stringify(populationConstituencyObservations)}\n`,
 	);
 	const measureObservationPaths = [
 		...mobileCoverageObservations,

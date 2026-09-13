@@ -76,6 +76,10 @@ const writeSources = (
 	const wimd = join(directory, "wimd.json");
 	const simd = join(directory, "simd.json");
 	const lifeExpectancySeries = join(directory, "life-expectancy-series.json");
+	const populationConstituency = join(
+		directory,
+		"population-constituency.json",
+	);
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -98,6 +102,7 @@ const writeSources = (
 				dataset("wimd", 1, 1, 2011),
 				dataset("simd", 1, 1, 2011),
 				dataset("life-expectancy-series", 4, 2, 2021),
+				dataset("population-constituency", 4, 2, 2024),
 			],
 		}),
 	);
@@ -303,6 +308,22 @@ const writeSources = (
 			"2022": lifeExpectancyPeriod(2022, 0),
 		}),
 	);
+	const constituencyYear = (year: number, offset: number) => ({
+		year,
+		boundaryType: "constituency",
+		boundaryYear: 2024,
+		data: {
+			E14001063: { total: 119256 - offset },
+			W07000081: { total: 90000 - offset },
+		},
+	});
+	writeFileSync(
+		populationConstituency,
+		JSON.stringify({
+			"2021": constituencyYear(2021, 1000),
+			"2022": constituencyYear(2022, 0),
+		}),
+	);
 	return {
 		manifest,
 		population,
@@ -318,6 +339,7 @@ const writeSources = (
 		wimd,
 		simd,
 		lifeExpectancySeries,
+		populationConstituency,
 	};
 };
 
@@ -328,7 +350,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 13);
+		assert.equal(result.catalog.datasets.length, 14);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -352,7 +374,25 @@ test("publishes source-exact ward and UK local-authority population partitions",
 					note: "Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage.",
 				},
 			},
+			{
+				datasetId: "population-constituency",
+				periods: ["2021", "2022"],
+				sourceGeography: { type: "constituency", boundaryYear: 2024 },
+				coverage: {
+					kind: "partial",
+					countries: ["GB-ENG", "GB-WLS"],
+					recordCount: 2,
+					note: "Published by ONS for the constituencies first contested in July 2024, in England and Wales only. These are ONS's own estimates for each constituency, not ward estimates added up: wards do not nest within these constituencies, and the published ward lookup splits some wards between them without weights.",
+				},
+			},
 		]);
+		assert.deepEqual(
+			result.populationConstituencyObservations.periods[1]?.records,
+			[
+				{ areaCode: "E14001063", value: 119256, status: "observed" },
+				{ areaCode: "W07000081", value: 90000, status: "observed" },
+			],
+		);
 		assert.deepEqual(result.populationObservations.records, [
 			{ areaCode: "E05000001", value: 7, status: "observed" },
 			{ areaCode: "W05000001", value: 7, status: "observed" },

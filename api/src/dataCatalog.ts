@@ -74,7 +74,13 @@ export type SourceGeography = {
 	 * they are not interchangeable: an English LSOA, a Scottish data zone and a
 	 * Northern Irish super output area are drawn to different sizes and rules.
 	 */
-	type: "ward" | "localAuthority" | "lsoa" | "dataZone" | "superOutputArea";
+	type:
+		| "ward"
+		| "localAuthority"
+		| "constituency"
+		| "lsoa"
+		| "dataZone"
+		| "superOutputArea";
 	boundaryYear: number;
 };
 
@@ -215,6 +221,49 @@ export type PopulationLocalAuthorityObservationArtifact = {
 	sourceGeography: { type: "localAuthority"; boundaryYear: 2023 };
 	periods: Array<{ period: string; records: PopulationObservation[] }>;
 };
+
+/**
+ * The population artifacts that predate the per-period convention, which
+ * carry their own shapes and file names.
+ */
+const LEGACY_POPULATION_DATASETS = new Set(["population", "population-uk"]);
+
+export const isLegacyPopulationSource = (
+	measureId: string,
+	source: MeasureSource,
+) =>
+	measureId === "population-estimate" &&
+	LEGACY_POPULATION_DATASETS.has(source.datasetId);
+
+/**
+ * The published file, without its extension, holding one measure source's
+ * observations. A single-source measure keeps `{measure-id}-observations`; each
+ * further source of a multi-source measure is named for its dataset.
+ */
+export const observationArtifactName = (
+	measureId: string,
+	source: MeasureSource,
+) => {
+	if (measureId !== "population-estimate") return `${measureId}-observations`;
+	if (source.datasetId === "population") return "population-observations";
+	if (source.datasetId === "population-uk")
+		return "population-local-authority-observations";
+	return `${source.datasetId}-observations`;
+};
+
+/** The artifact holding a non-legacy measure source's observations. */
+export const findMeasureObservations = (
+	artifacts: MeasureObservationArtifact[],
+	measureId: string,
+	source: MeasureSource,
+) =>
+	artifacts.find(
+		(candidate) =>
+			candidate.measureId === measureId &&
+			candidate.sourceGeography.type === source.sourceGeography.type &&
+			candidate.sourceGeography.boundaryYear ===
+				source.sourceGeography.boundaryYear,
+	);
 
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
@@ -591,6 +640,7 @@ export type DataCatalogInputs = {
 	wimd: string;
 	simd: string;
 	lifeExpectancySeries: string;
+	populationConstituency: string;
 };
 
 export const compileDataCatalog = ({
@@ -608,6 +658,7 @@ export const compileDataCatalog = ({
 	wimd: wimdPath,
 	simd: simdPath,
 	lifeExpectancySeries: lifeExpectancySeriesPath,
+	populationConstituency: populationConstituencyPath,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -620,6 +671,7 @@ export const compileDataCatalog = ({
 	imdObservations: MeasureObservationArtifact[];
 	nimdmObservations: MeasureObservationArtifact;
 	lifeExpectancyObservations: MeasureObservationArtifact[];
+	populationConstituencyObservations: MeasureObservationArtifact;
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -661,6 +713,65 @@ export const compileDataCatalog = ({
 		);
 	}
 	const countries = countriesFor(records);
+	// ONS's own constituency estimates, one partition per mid-year.
+	const constituencyPeriods = Object.entries(
+		JSON.parse(readFileSync(populationConstituencyPath, "utf8")) as PopulationFile,
+	)
+		.map(([period, value]) => {
+			const entry = object(value, `${populationConstituencyPath}.${period}`);
+			if (
+				!/^\d{4}$/.test(period) ||
+				entry.year !== Number(period) ||
+				entry.boundaryType !== "constituency" ||
+				entry.boundaryYear !== 2024
+			) {
+				throw new Error(
+					`${populationConstituencyPath}.${period}: expected constituency data on the 2024 code vintage`,
+				);
+			}
+			const data = object(entry.data, `${populationConstituencyPath}.${period}.data`);
+			return {
+				period,
+				records: Object.entries(data)
+					.map(([areaCode, record]) => {
+						if (!/^(E14|W07)\d{6}$/.test(areaCode))
+							throw new Error(
+								`${populationConstituencyPath}: unsupported constituency code ${areaCode}`,
+							);
+						return {
+							areaCode,
+							value: number(
+								object(record, `${populationConstituencyPath}.${period}.${areaCode}`)
+									.total,
+								`${populationConstituencyPath}.${period}.${areaCode}.total`,
+							),
+							status: "observed" as const,
+						};
+					})
+					.sort((left, right) => left.areaCode.localeCompare(right.areaCode)),
+			};
+		})
+		.sort((left, right) => left.period.localeCompare(right.period));
+	const constituencyDataset = datasets.find(
+		(dataset) => dataset.id === "population-constituency",
+	);
+	if (!constituencyDataset)
+		throw new Error(`${manifestPath} has no population-constituency dataset`);
+	const constituencyRecordCount = constituencyPeriods.reduce(
+		(total, period) => total + period.records.length,
+		0,
+	);
+	if (constituencyRecordCount !== constituencyDataset.summary.dataRecordCount) {
+		throw new Error(
+			`${populationConstituencyPath}: expected ${constituencyDataset.summary.dataRecordCount} records from the manifest, found ${constituencyRecordCount}`,
+		);
+	}
+	const constituencyContent = JSON.stringify({
+		schemaVersion: 1,
+		measureId: "population-estimate",
+		sourceGeography: { type: "constituency", boundaryYear: 2024 },
+		periods: constituencyPeriods,
+	});
 	const localAuthorityPeriods =
 		localAuthorityPopulationRecords(populationUkPath);
 	const localAuthorityRecords = localAuthorityPeriods.flatMap(
@@ -1544,6 +1655,17 @@ export const compileDataCatalog = ({
 					note: "Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage.",
 				},
 			},
+			{
+				datasetId: "population-constituency",
+				periods: constituencyPeriods.map((period) => period.period),
+				sourceGeography: { type: "constituency", boundaryYear: 2024 },
+				coverage: {
+					kind: "partial",
+					countries: countriesFor(constituencyPeriods[0]?.records ?? []),
+					recordCount: constituencyPeriods[0]?.records.length ?? 0,
+					note: "Published by ONS for the constituencies first contested in July 2024, in England and Wales only. These are ONS's own estimates for each constituency, not ward estimates added up: wards do not nest within these constituencies, and the published ward lookup splits some wards between them without weights.",
+				},
+			},
 		],
 		availability: {
 			sourceExact: true,
@@ -1610,6 +1732,13 @@ export const compileDataCatalog = ({
 				...mobileMeasures,
 				...censusMeasures,
 			],
+		},
+		populationConstituencyObservations: {
+			schemaVersion: 1,
+			contentHash: sha256(constituencyContent),
+			measureId: "population-estimate",
+			sourceGeography: { type: "constituency", boundaryYear: 2024 },
+			periods: constituencyPeriods,
 		},
 		populationObservations: {
 			schemaVersion: 1,

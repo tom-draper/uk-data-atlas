@@ -206,8 +206,15 @@ only **available** when its endpoint, contract and provenance are published.
       all four UK nations, as net territorial emissions in kt CO2e. Emissions
       per resident are not served: a ratio cannot be summed over areas. The same code-compatible geometry join,
       provenance chain and tabular export as the population measure apply.
-- [ ] Return population estimates for a supported ward, local authority,
-      constituency, country or named location.
+- [x] Return population estimates for a supported ward, local authority,
+      constituency, country or named location. Ward and local authority come
+      from their source partitions, country and named location from
+      `/aggregate`, and constituency from ONS's own mid-2021 and mid-2022
+      estimates for the 575 July 2024 constituencies in England and Wales,
+      served as a third partition of `population-estimate`. They are not ward
+      estimates added up: wards do not nest within these constituencies, and
+      ONS's ward-to-constituency lookup splits some wards between them without
+      weights, so no exact conversion exists.
 - [x] Return population density through `GET /v1/data/population-density`:
       2011-2024 Local Authority 2023 codes across all four UK nations, as
       people per square kilometre. The denominator is the ONS Standard Area
@@ -1329,6 +1336,7 @@ pnpm start
 - `GET /v1/data/imd-decile?period=2019&geography=lsoa&boundaryYear=2011&release=2011-12-ew-bgc-v3&include=area`
 - `GET /v1/data/life-expectancy-female/rankings?period=2020-2022&geography=localAuthority&boundaryYear=2021`
 - `GET /v1/data/life-expectancy-male/series?areaCode=E06000001&geography=localAuthority&boundaryYear=2021`
+- `GET /v1/data/population-estimate?period=2022&geography=constituency&boundaryYear=2024&release=2024-07-uk-bgc&include=area`
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`

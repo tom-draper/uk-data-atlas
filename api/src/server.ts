@@ -27,11 +27,13 @@ import {
 	type NamedLocationLookup,
 } from "./namedLocations";
 import type { ValidationReport } from "./validationReport";
-import type {
-	DataCatalog,
-	MeasureObservationArtifact,
-	PopulationLocalAuthorityObservationArtifact,
-	PopulationObservationArtifact,
+import {
+	type DataCatalog,
+	isLegacyPopulationSource,
+	type MeasureObservationArtifact,
+	observationArtifactName,
+	type PopulationLocalAuthorityObservationArtifact,
+	type PopulationObservationArtifact,
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import {
@@ -234,28 +236,32 @@ export const readMeasureObservations = (
 	apiRoot: string,
 	dataCatalog: DataCatalog,
 ): MeasureObservationArtifact[] =>
-	dataCatalog.measures
-		.filter((measure) => measure.id !== "population-estimate")
-		.map((measure) => {
-			const path = join(
-				apiRoot,
-				"public",
-				`${measure.id}-observations.json`,
-			);
-			const observations = JSON.parse(
-				readFileSync(path, "utf8"),
-			) as MeasureObservationArtifact;
-			if (
-				observations.schemaVersion !== 1 ||
-				observations.measureId !== measure.id ||
-				observations.sourceGeography.type !==
-					measure.sources[0]?.sourceGeography.type ||
-				!Array.isArray(observations.periods)
-			) {
-				throw new Error(`Invalid measure observations at ${path}`);
-			}
-			return observations;
-		});
+	dataCatalog.measures.flatMap((measure) =>
+		measure.sources
+			.filter((source) => !isLegacyPopulationSource(measure.id, source))
+			.map((source) => {
+				const path = join(
+					apiRoot,
+					"public",
+					`${observationArtifactName(measure.id, source)}.json`,
+				);
+				const observations = JSON.parse(
+					readFileSync(path, "utf8"),
+				) as MeasureObservationArtifact;
+				if (
+					observations.schemaVersion !== 1 ||
+					observations.measureId !== measure.id ||
+					observations.sourceGeography.type !==
+						source.sourceGeography.type ||
+					observations.sourceGeography.boundaryYear !==
+						source.sourceGeography.boundaryYear ||
+					!Array.isArray(observations.periods)
+				) {
+					throw new Error(`Invalid measure observations at ${path}`);
+				}
+				return observations;
+			}),
+	);
 
 export const readMeasureCompatibility = (
 	apiRoot: string,

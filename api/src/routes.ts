@@ -17,13 +17,16 @@ import type {
 	NamedLocationLookup,
 } from "./namedLocations";
 import type { ValidationReport } from "./validationReport";
-import type {
-	DataCatalog,
-	MeasureObservationArtifact,
-	MeasureSource,
-	PopulationObservation,
-	PopulationLocalAuthorityObservationArtifact,
-	PopulationObservationArtifact,
+import {
+	type DataCatalog,
+	findMeasureObservations,
+	isLegacyPopulationSource,
+	type MeasureObservationArtifact,
+	type MeasureSource,
+	observationArtifactName,
+	type PopulationObservation,
+	type PopulationLocalAuthorityObservationArtifact,
+	type PopulationObservationArtifact,
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import { compareObservations } from "./comparison";
@@ -133,7 +136,7 @@ const observationsFor = (
 ):
 	| (ObservationArtifactReference & { records: PopulationObservation[] })
 	| undefined => {
-	if (measureId === "population-estimate") {
+	if (isLegacyPopulationSource(measureId, source)) {
 		if (source.sourceGeography.type === "ward") {
 			const artifact = artifacts.populationObservations;
 			return artifact && artifact.period === period
@@ -156,16 +159,18 @@ const observationsFor = (
 				}
 			: undefined;
 	}
-	const byMeasure = (artifacts.measureObservations ?? []).find(
-		(candidate) => candidate.measureId === measureId,
+	const artifact = findMeasureObservations(
+		artifacts.measureObservations ?? [],
+		measureId,
+		source,
 	);
-	const records = byMeasure?.periods.find(
+	const records = artifact?.periods.find(
 		(candidate) => candidate.period === period,
 	)?.records;
-	return byMeasure && records
+	return artifact && records
 		? {
-				artifact: `${byMeasure.measureId}-observations`,
-				contentHash: byMeasure.contentHash,
+				artifact: observationArtifactName(measureId, source),
+				contentHash: artifact.contentHash,
 				records,
 			}
 		: undefined;

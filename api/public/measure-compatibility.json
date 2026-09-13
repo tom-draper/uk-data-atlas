@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:a7960c7758a6a8c4e73b314ca180dfbe51527c00394567250cc4d1b8dc9bb94a",
+	"contentHash": "sha256:833875fed2c3bc5ad33b6a76a2fb53b63f9c59a16e5dd6f6771936f304c72daf",
 	"inputs": {
-		"dataCatalog": "sha256:b44935740ba404b8be9bbde270c9ad968cc3a6ef12c29779d005b617b2735694",
+		"dataCatalog": "sha256:6489b6e88d4c64c6ec7855b8d7061558d50aaca2561e7e84e9a9c1075cd7262e",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -22,6 +22,7 @@
 			"mobile-5g-coverage": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
 			"nimdm-rank": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
 			"population-density": "sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe440e451",
+			"population-estimate": "sha256:a05515bb0a5c4cf148f534ae1bb1c1b9b7401506731c07627ac93dc356e43d0a",
 			"simd-decile": "sha256:253414cf7ab82282c0e003f2d963804f8fe73e07bca29a5b9261049f6956925c",
 			"simd-rank": "sha256:7010ceb2e025a9e2a859509558f46b35a89394182f6aff3853b7b5f08a894830",
 			"travel-to-work-bicycle": "sha256:050316e54d984231753d46c2fb62aaa504cd2b24af11672b7a6abaac0fc61b05",
@@ -37,6 +38,7 @@
 			"wimd-rank": "sha256:2b2d1cf909f6bcd942f22e3e898adc183aa454dfce580475feb01ffced876654"
 		},
 		"areaArtifacts": {
+			"constituency/2024-07-uk-bgc": "sha256:77090f645fcaf7d5bf78e9973464e79ae9c5373ead42f1fecc14c39ba075db9d",
 			"dataZone/2011-12-sc-bfc": "sha256:62075d67d2c29754f57495650508bd7d0b7d820fd9f95c4d7d8629ade649dbc9",
 			"dataZone/2011-12-sc-nc": "sha256:115e5e21b45f210041b5de1af56d90ad020071816e76165c31ea2cdc8bfc920c",
 			"localAuthority/2021-12-uk-bgc": "sha256:bad319cb06dab4ba8ce6f1c9490a96c423f9745be9e0d80e9acfcf11b67842e6",
@@ -191,6 +193,60 @@
 							"unmatchedSourceCodeSample": [],
 							"candidateOnlyCodeCount": 0,
 							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "population-constituency",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2021",
+						"2022"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 575,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 575,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 75,
+							"candidateOnlyCodeSample": [
+								"N05000001",
+								"N05000002",
+								"N05000003",
+								"N05000004",
+								"N05000005",
+								"N05000006",
+								"N05000007",
+								"N05000008",
+								"N05000009",
+								"N05000010",
+								"N05000011",
+								"N05000012",
+								"N05000013",
+								"N05000014",
+								"N05000015",
+								"N05000016",
+								"N05000017",
+								"N05000018",
+								"S14000021",
+								"S14000027"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."

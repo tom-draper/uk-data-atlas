@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:b44935740ba404b8be9bbde270c9ad968cc3a6ef12c29779d005b617b2735694",
+	"contentHash": "sha256:6489b6e88d4c64c6ec7855b8d7061558d50aaca2561e7e84e9a9c1075cd7262e",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -914,6 +914,43 @@
 			}
 		},
 		{
+			"id": "population-constituency",
+			"label": "Population (Constituency)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/parliamentaryconstituencymidyearpopulationestimates",
+			"temporalCoverage": "2021-2022",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Mid-year usual resident population for Westminster parliamentary constituencies in England and Wales, on the constituencies first contested in July 2024.",
+			"inputs": [
+				{
+					"kind": "xlsxSheet",
+					"path": "demographics/population-constituency/sapepconstablefinal.xlsx#Mid-2021 PCON 2025",
+					"bytes": 440924,
+					"sha256": "04e69e31ba3bd5bc23a913c8123288b407f6fb00f102ca1f87a22b9318259a1a"
+				},
+				{
+					"kind": "xlsxSheet",
+					"path": "demographics/population-constituency/sapepconstablefinal.xlsx#Mid-2022 PCON 2025",
+					"bytes": 441106,
+					"sha256": "d19fffdedc642fbb05c42d6382d90665e08e7a17855d0c3fecbdb371e712e8a0"
+				}
+			],
+			"summary": {
+				"datasetCount": 2,
+				"dataRecordCount": 1150,
+				"boundaryYears": [
+					2024
+				]
+			},
+			"compiled": {
+				"bytes": 113480,
+				"sha256": "b024b718e3dae21bf6fe86925636e0349ab73f6724ae0bbb2461e51f4e308272"
+			}
+		},
+		{
 			"id": "population-uk",
 			"label": "Population (Local Authority)",
 			"publisher": "Office for National Statistics",
@@ -1268,6 +1305,26 @@
 						],
 						"recordCount": 361,
 						"note": "Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage."
+					}
+				},
+				{
+					"datasetId": "population-constituency",
+					"periods": [
+						"2021",
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 575,
+						"note": "Published by ONS for the constituencies first contested in July 2024, in England and Wales only. These are ONS's own estimates for each constituency, not ward estimates added up: wards do not nest within these constituencies, and the published ward lookup splits some wards between them without weights."
 					}
 				}
 			],
