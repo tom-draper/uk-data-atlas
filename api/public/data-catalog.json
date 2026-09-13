@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:b4eecbc816ab84a9e4615e623686b72f00f0428747bc637d5c7ec2bc6fc7b8a3",
+	"contentHash": "sha256:eed36dcfc35ba5098d4f9cdd72c81de5b28f8cd4d7615d3edda0dbd933d2aaaa",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1380,6 +1380,94 @@
 				"Each period is the year ending December of that year. The source is a quarterly rolling series whose last edition ends at March 2023; that partial year is not comparable and is not published here.",
 				"Ward codes are those the publisher used, which are mostly December 2020 ward codes. Two Leeds wards carry later codes in the source itself, so the partition is not an exact code set for any one release.",
 				"Medians of an even number of sales fall on a half penny in the workbook; values are rounded to the whole pound the publisher displays."
+			]
+		},
+		{
+			"id": "imd-rank",
+			"label": "Index of Multiple Deprivation rank",
+			"valueKind": "ordinal",
+			"unit": "rank of 32,844 LSOAs, where 1 is the most deprived",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "rank",
+				"note": "A rank records an order, not a distance: the gap between ranks 1 and 2 need not equal the gap between 100 and 101. Averaging ranks over areas produces a number with no meaning.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "imd",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2011
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 32844,
+						"note": "England only. The other three nations publish their own indices, which are not comparable with this one."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/imd-rank"
+			},
+			"notes": [
+				"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+				"The published file itself contains 26 tied ranks; they are served as published rather than re-ranked."
+			]
+		},
+		{
+			"id": "imd-decile",
+			"label": "Index of Multiple Deprivation decile",
+			"valueKind": "ordinal",
+			"unit": "decile, where 1 is the most deprived tenth of LSOAs",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "decile",
+				"note": "A decile is a band of ranks. Averaging deciles over areas produces a number with no meaning, and the share of a place's LSOAs in each decile is the defensible summary instead.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "imd",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2011
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 32844,
+						"note": "England only. The other three nations publish their own indices, which are not comparable with this one."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/imd-decile"
+			},
+			"notes": [
+				"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
+				"Deciles divide England's 32,844 LSOAs into ten near-equal groups by rank."
 			]
 		},
 		{

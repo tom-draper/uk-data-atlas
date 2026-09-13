@@ -309,6 +309,11 @@ paths:
         `statistic: median`: a median of medians is not the median of the
         underlying sales, so aggregation and conversion both refuse it.
 
+        `imd-rank` and `imd-decile` cover the English Index of Multiple
+        Deprivation 2019 for 32,844 LSOAs on 2011 codes. Both are ordinal and
+        `non-aggregatable`, and both are positions within England alone: the
+        other nations' indices use different methods and cannot be compared.
+
         `population-density` is the one derived measure: mid-year population
         divided by ONS Standard Area Measurement land area, which excludes
         inland water. Its values carry `status: "derived"` rather than
