@@ -237,8 +237,18 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Return uncertainty intervals where the source publication supports them.
 - [ ] Return life expectancy by total, male and female where the source
       publishes those series.
-- [ ] Return house-price, deprivation, election and other curated measures with
-      their own aggregation rules.
+- [x] Return median house price paid through `GET /v1/data/house-price-median`:
+      ward-level, England and Wales, 1995-2022, each period the year ending
+      December. The final edition's year ending March 2023 is not comparable
+      and is not published. Values sit under the ward codes the publisher used,
+      mostly December 2020 codes; Salford's twenty wards, which the website
+      remaps onto their redrawn 2021 codes, are restored to the codes they were
+      published against. Declared `non-aggregatable`: a median of medians is not
+      the median of the underlying sales, and aggregation and conversion both
+      refuse with that reason.
+- [ ] Return deprivation, election and other curated measures with their own
+      aggregation rules. Deprivation is published by LSOA, which the data
+      routes do not yet accept as a source geography.
 - [x] Export any published measure's source-exact pages as JSON, CSV or NDJSON,
       retaining row-level release, source, unit and geography provenance
       outside the API. A
@@ -264,8 +274,10 @@ only **available** when its endpoint, contract and provenance are published.
       count.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
-      a named weight. No measure offers the operation yet, so a caller cannot
-      obtain a silently wrong regional figure.
+      a named weight, and non-aggregatable values such as medians, ranks and
+      deciles cannot be combined at all, with the statistic named. Only
+      extensive measures aggregate or convert, so a caller cannot obtain a
+      silently wrong regional figure.
 - [x] Sum an extensive measure over a curated named location or a country
       through `GET /v1/data/{measure-id}/aggregate`. Country membership follows
       the GSS code prefix, which the coding scheme assigns by country, so it is
@@ -1281,6 +1293,7 @@ pnpm start
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`

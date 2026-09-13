@@ -479,10 +479,55 @@ const dataCatalog: DataCatalog = {
 				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count.",
 			],
 		},
+		{
+			id: "house-price-median",
+			label: "Median house price paid",
+			valueKind: "currency",
+			unit: "GBP",
+			aggregation: {
+				kind: "non-aggregatable",
+				statistic: "median",
+				note: "A median of ward medians is not the median of the underlying sales.",
+				available: false,
+			},
+			sources: [
+				{
+					datasetId: "house-price",
+					periods: ["2022"],
+					sourceGeography: { type: "ward", boundaryYear: 2020 },
+					coverage: {
+						kind: "partial",
+						countries: ["GB-ENG"],
+						recordCount: 1,
+						note: "England and Wales only.",
+					},
+				},
+			],
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: { data: "/v1/data/house-price-median" },
+		},
 	],
 };
 
 const measureObservations: MeasureObservationArtifact[] = [
+	{
+		schemaVersion: 1,
+		contentHash: "sha256:house-price-observations",
+		measureId: "house-price-median",
+		sourceGeography: { type: "ward", boundaryYear: 2020 },
+		periods: [
+			{
+				period: "2022",
+				records: [
+					{ areaCode: "E05000001", value: 250000, status: "observed" },
+				],
+			},
+		],
+	},
 	{
 		schemaVersion: 1,
 		contentHash: "sha256:emissions-observations",
@@ -1068,6 +1113,7 @@ test("serves greenhouse gas emissions as a second source-exact measure", () => {
 			"ghg-emissions",
 			"mobile-5g-coverage",
 			"travel-to-work-car",
+			"house-price-median",
 		],
 	);
 
@@ -1136,6 +1182,7 @@ test("declares a coverage share as intensive, so it is never summed", () => {
 			["ghg-emissions", "extensive"],
 			["mobile-5g-coverage", "intensive"],
 			["travel-to-work-car", "extensive"],
+			["house-price-median", "non-aggregatable"],
 		],
 	);
 
@@ -1249,6 +1296,31 @@ test("sums a country from the GSS code prefix, or refuses to", () => {
 	);
 	// A local authority is not yet an aggregation target.
 	assert.equal(routeWithData(`${query}&areaCode=E06000001`).status, 400);
+});
+
+test("refuses to combine a median, and says why", () => {
+	const observed = routeWithData(
+		"/v1/data/house-price-median?period=2022&geography=ward&boundaryYear=2020",
+	);
+	assert.equal(observed.status, 200);
+
+	const aggregate = routeWithData(
+		"/v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001",
+	);
+	assert.equal(aggregate.status, 422);
+	assert.match(
+		"detail" in aggregate.body ? aggregate.body.detail : "",
+		/is a median and cannot be combined over areas\. A median of ward medians/,
+	);
+
+	const convert = routeWithData(
+		`/v1/data/house-price-median/convert?period=2022&geography=ward&boundaryYear=2020&crosswalk=${crosswalkArtifact.id}`,
+	);
+	assert.equal(convert.status, 422);
+	assert.match(
+		"detail" in convert.body ? convert.body.detail : "",
+		/This measure is a median/,
+	);
 });
 
 test("converts a measure only through a crosswalk the caller names", () => {

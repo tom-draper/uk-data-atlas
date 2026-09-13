@@ -490,7 +490,9 @@ export const route = (
 			return problem(
 				422,
 				"Operation Not Supported",
-				"This measure is not available for additive aggregation.",
+				measure.aggregation.kind === "non-aggregatable"
+					? `This measure is a ${measure.aggregation.statistic} and cannot be combined over areas. ${measure.aggregation.note}`
+					: "This measure is not available for additive aggregation.",
 			);
 		}
 		if (
@@ -673,7 +675,9 @@ export const route = (
 			return problem(
 				422,
 				"Operation Not Supported",
-				"Only an extensive measure can be converted across releases; this measure's values do not add over areas.",
+				measure.aggregation.kind === "non-aggregatable"
+					? `Only an extensive measure can be converted across releases. This measure is a ${measure.aggregation.statistic}: ${measure.aggregation.note}`
+					: "Only an extensive measure can be converted across releases; this measure's values do not add over areas.",
 			);
 		}
 		const crosswalkId = parsedUrl.searchParams.get("crosswalk");
