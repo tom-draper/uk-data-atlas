@@ -69,7 +69,12 @@ export type DatasetCatalogueEntry = {
 export type Country = "GB-ENG" | "GB-NIR" | "GB-SCT" | "GB-WLS";
 
 export type SourceGeography = {
-	type: "ward" | "localAuthority";
+	/**
+	 * The small-area geographies are the four nations' deprivation units, and
+	 * they are not interchangeable: an English LSOA, a Scottish data zone and a
+	 * Northern Irish super output area are drawn to different sizes and rules.
+	 */
+	type: "ward" | "localAuthority" | "lsoa" | "dataZone" | "superOutputArea";
 	boundaryYear: number;
 };
 
