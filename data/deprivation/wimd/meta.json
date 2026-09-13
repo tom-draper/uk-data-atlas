@@ -2,7 +2,10 @@
 	"id": "wimd",
 	"title": "Welsh Index of Multiple Deprivation 2019 index and domain scores",
 	"description": "WIMD 2019 overall index score and the eight domain scores (income, employment, health, education, access to services, housing, community safety, physical environment) for every Welsh LSOA.",
-	"topics": ["deprivation", "wales"],
+	"topics": [
+		"deprivation",
+		"wales"
+	],
 	"publisher": "Welsh Government",
 	"sourceUrl": "https://www.gov.wales/welsh-index-multiple-deprivation-full-index-update-ranks-2019",
 	"licence": {
@@ -13,7 +16,9 @@
 	"spatialCoverage": {
 		"geography": "lsoa",
 		"vintage": 2011,
-		"countries": ["GB-WLS"]
+		"countries": [
+			"GB-WLS"
+		]
 	},
 	"files": [
 		{
@@ -27,6 +32,11 @@
 			"role": "derived",
 			"derivedFrom": "wimd-2019-index-and-domain-scores-by-small-area.ods",
 			"note": "CSV export of the WIMD_2019_LSOA_index_and_domain_scores sheet, read by the loader. Carries the sheet's three-line preamble, so the real header is on line 4 and data starts on line 5: 1,909 LSOAs x 12 columns. Should disappear once the preprocessor reads the .ods directly via the reader's odsContent."
+		},
+		{
+			"path": "welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods",
+			"role": "source",
+			"note": "\"WIMD 2019 index and domain ranks by small area\", as published at https://www.gov.wales/sites/default/files/statistics-and-research/2022-02/welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods. The loader reads the published overall rank and decile from the Deciles_quintiles_quartiles table. Ranks must not be recomputed from the scores sheet: its scores are rounded to one decimal place, and re-ranking them disagrees with the published rank for 1,341 of 1,909 LSOAs."
 		}
 	]
 }

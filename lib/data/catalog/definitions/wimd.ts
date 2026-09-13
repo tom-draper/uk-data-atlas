@@ -17,5 +17,11 @@ export const wimdDatasetDefinition: DatasetDefinition<WIMDDataset> = {
 		description:
 			"Deprivation scores, ranks and deciles by lower super output area for Wales.",
 	},
-	precompile: async ({ text }) => loadWIMD(text),
+	precompile: async ({ text, odsContent }) =>
+		loadWIMD(
+			text,
+			await odsContent(
+				"deprivation/wimd/welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods",
+			),
+		),
 };
