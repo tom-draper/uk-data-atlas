@@ -294,7 +294,9 @@ paths:
       description: >
         Serves observed values for one published measure and source partition.
         `population-estimate` covers 2022 Ward 2023 codes in England and Wales,
-        and 2011–2024 Local Authority 2023 codes across all four UK nations.
+        2011–2024 Local Authority 2023 codes across all four UK nations, and
+        ONS's own mid-2021 and mid-2022 estimates for the July 2024 Westminster
+        constituencies in England and Wales.
         `ghg-emissions` covers 2005–2024 Local Authority 2025 codes across all
         four nations, as net territorial emissions in kt CO2e; emissions per
         resident are not served, because a ratio cannot be summed over areas.
@@ -378,7 +380,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
+            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -506,7 +508,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
+            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -596,7 +598,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
+            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -663,7 +665,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
+            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -718,7 +720,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
+            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true
@@ -788,7 +790,7 @@ paths:
           in: query
           required: true
           schema:
-            enum: [ward, localAuthority, lsoa, dataZone, superOutputArea]
+            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
         - name: boundaryYear
           in: query
           required: true

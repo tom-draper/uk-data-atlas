@@ -3,9 +3,11 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
-import type {
-	DataCatalog,
-	MeasureObservationArtifact,
+import {
+	type DataCatalog,
+	isLegacyPopulationSource,
+	type MeasureObservationArtifact,
+	observationArtifactName,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
 } from "../src/dataCatalog";
@@ -53,16 +55,18 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 				"population-local-authority-observations.json",
 			),
 		),
-		dataCatalog.measures
-			.filter((measure) => measure.id !== "population-estimate")
-			.map((measure) =>
-				read<MeasureObservationArtifact>(
-					join(
-						publicDirectory,
-						`${measure.id}-observations.json`,
+		dataCatalog.measures.flatMap((measure) =>
+			measure.sources
+				.filter((source) => !isLegacyPopulationSource(measure.id, source))
+				.map((source) =>
+					read<MeasureObservationArtifact>(
+						join(
+							publicDirectory,
+							`${observationArtifactName(measure.id, source)}.json`,
+						),
 					),
 				),
-			),
+		),
 	);
 	const outputPath = join(publicDirectory, "measure-compatibility.json");
 	writeFileSync(outputPath, `${JSON.stringify(compatibility, null, "\t")}\n`);
