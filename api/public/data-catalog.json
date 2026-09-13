@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:6fb587bde448a79cef8dfb7764e71e68723fe2ef439dee65d9c9e173e83d8761",
+	"contentHash": "sha256:b44935740ba404b8be9bbde270c9ad968cc3a6ef12c29779d005b617b2735694",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -669,6 +669,37 @@
 			"compiled": {
 				"bytes": 58384,
 				"sha256": "cd293efc4e7b5fe3d3e139ae7b52c67843ae696826ccae66abf28a9156288fe3"
+			}
+		},
+		{
+			"id": "life-expectancy-series",
+			"label": "Life Expectancy Series",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthandlifeexpectancies/bulletins/lifeexpectancyforlocalareasonenglandandwales/2020to2022",
+			"temporalCoverage": "2001-2003 to 2020-2022",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Life expectancy at birth for local areas in England, Wales and Northern Ireland, by sex, for every three-year period from 2001 to 2003 onwards, with 95% confidence intervals.",
+			"inputs": [
+				{
+					"kind": "xlsxSheet",
+					"path": "health/life-expectancy/lifeexpectancylocalareas.xlsx#1",
+					"bytes": 29954840,
+					"sha256": "207a1ce5466e439da948e14f00c46608039cb73e9d41aa663fc8998d7c550679"
+				}
+			],
+			"summary": {
+				"datasetCount": 20,
+				"dataRecordCount": 6800,
+				"boundaryYears": [
+					2021
+				]
+			},
+			"compiled": {
+				"bytes": 1122370,
+				"sha256": "15967895f2dbe163442424fb566ea02cbcd40cdf6d73027997df0aea2ede3f38"
 			}
 		},
 		{
@@ -1716,8 +1747,27 @@
 			},
 			"sources": [
 				{
-					"datasetId": "life-expectancy",
+					"datasetId": "life-expectancy-series",
 					"periods": [
+						"2001-2003",
+						"2002-2004",
+						"2003-2005",
+						"2004-2006",
+						"2005-2007",
+						"2006-2008",
+						"2007-2009",
+						"2008-2010",
+						"2009-2011",
+						"2010-2012",
+						"2011-2013",
+						"2012-2014",
+						"2013-2015",
+						"2014-2016",
+						"2015-2017",
+						"2016-2018",
+						"2017-2019",
+						"2018-2020",
+						"2019-2021",
 						"2020-2022"
 					],
 					"sourceGeography": {
@@ -1744,10 +1794,14 @@
 			"links": {
 				"data": "/v1/data/life-expectancy-male"
 			},
+			"uncertainty": {
+				"kind": "confidence-interval",
+				"level": 0.95,
+				"note": "The publisher's 95% confidence interval, reflecting the random variation in deaths behind each estimate. Overlapping intervals mean two areas cannot be told apart with confidence, even when their central values differ."
+			},
 			"notes": [
-				"A period life expectancy for the three years 2020 to 2022, not a forecast for anyone born in them.",
-				"On the publisher's December 2021 local-authority codes. The four authorities created in April 2023 are not published and are not served; their predecessor districts are.",
-				"The source also publishes 95% confidence intervals and a series back to 2001 to 2003; neither is served yet."
+				"Each period is a three-year period life expectancy, not a forecast for anyone born in it.",
+				"On the publisher's December 2021 local-authority codes, to which ONS restates the whole series. The four authorities created in April 2023 are not published and are not served; their predecessor districts are."
 			]
 		},
 		{
@@ -1763,8 +1817,27 @@
 			},
 			"sources": [
 				{
-					"datasetId": "life-expectancy",
+					"datasetId": "life-expectancy-series",
 					"periods": [
+						"2001-2003",
+						"2002-2004",
+						"2003-2005",
+						"2004-2006",
+						"2005-2007",
+						"2006-2008",
+						"2007-2009",
+						"2008-2010",
+						"2009-2011",
+						"2010-2012",
+						"2011-2013",
+						"2012-2014",
+						"2013-2015",
+						"2014-2016",
+						"2015-2017",
+						"2016-2018",
+						"2017-2019",
+						"2018-2020",
+						"2019-2021",
 						"2020-2022"
 					],
 					"sourceGeography": {
@@ -1791,10 +1864,14 @@
 			"links": {
 				"data": "/v1/data/life-expectancy-female"
 			},
+			"uncertainty": {
+				"kind": "confidence-interval",
+				"level": 0.95,
+				"note": "The publisher's 95% confidence interval, reflecting the random variation in deaths behind each estimate. Overlapping intervals mean two areas cannot be told apart with confidence, even when their central values differ."
+			},
 			"notes": [
-				"A period life expectancy for the three years 2020 to 2022, not a forecast for anyone born in them.",
-				"On the publisher's December 2021 local-authority codes. The four authorities created in April 2023 are not published and are not served; their predecessor districts are.",
-				"The source also publishes 95% confidence intervals and a series back to 2001 to 2003; neither is served yet."
+				"Each period is a three-year period life expectancy, not a forecast for anyone born in it.",
+				"On the publisher's December 2021 local-authority codes, to which ONS restates the whole series. The four authorities created in April 2023 are not published and are not served; their predecessor districts are."
 			]
 		},
 		{

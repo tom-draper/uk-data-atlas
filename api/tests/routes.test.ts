@@ -943,7 +943,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	assert.equal(csv.representation?.contentType, "text/csv; charset=utf-8");
 	assert.equal(
 		csv.representation?.body,
-		'atlasRelease,measureId,unit,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status\n"sha256:registry","population-estimate","people","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed"\n',
+		'atlasRelease,measureId,unit,datasetId,period,geography,boundaryYear,boundaryRelease,geometryCompatibility,transformationStatus,areaCode,areaId,areaName,areaAliases,value,status,lowerBound,upperBound\n"sha256:registry","population-estimate","people","population","2022","ward","2023","","","not-applied","E05000001","","","","100","observed","",""\n',
 	);
 
 	const ndjson = routeWithData(
@@ -971,6 +971,8 @@ test("publishes datasets, measures and source-exact population observations", ()
 		areaAliases: "",
 		value: 100,
 		status: "observed",
+		lowerBound: "",
+		upperBound: "",
 	});
 
 	const csvPage = routeWithData(

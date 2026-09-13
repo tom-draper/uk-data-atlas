@@ -325,10 +325,15 @@ paths:
         `95AA01S1` rather than GSS codes.
 
         `life-expectancy-male` and `life-expectancy-female` cover life
-        expectancy at birth for 2020 to 2022 in England, Wales and Northern
-        Ireland, on December 2021 local-authority codes. They are
-        `non-aggregatable`: a combined population's life expectancy has to be
-        recalculated from deaths and population, not averaged.
+        expectancy at birth in England, Wales and Northern Ireland for every
+        three-year period from 2001 to 2003 to 2020 to 2022, on December 2021
+        local-authority codes. They are `non-aggregatable`: a combined
+        population's life expectancy has to be recalculated from deaths and
+        population, not averaged.
+
+        A measure that declares `uncertainty` carries the publisher's interval
+        on each record as `confidenceInterval` (`lower`, `upper`), at the level
+        the measure states. Intervals are never computed by this API.
 
         `population-density` is the one derived measure: mid-year population
         divided by ONS Standard Area Measurement land area, which excludes
@@ -412,7 +417,8 @@ paths:
             `json` returns the API envelope. `csv` and `ndjson` return one
             provenance-bearing row per observation, suitable for downloads and
             line-oriented processing. Each row carries the measure's `unit`, so
-            a saved file cannot be read in the wrong one. Tabular responses are paginated like the
+            a saved file cannot be read in the wrong one, and ends with
+            `lowerBound` and `upperBound`, empty where no interval is published. Tabular responses are paginated like the
             JSON ones, but carry the next page as a `Link` header with
             `rel="next"` because they have no envelope to hold a cursor.
         - name: limit

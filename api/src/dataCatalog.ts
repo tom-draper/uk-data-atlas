@@ -141,6 +141,16 @@ export type Measure = {
 	 * alongside the measure's own sources.
 	 */
 	derivedFrom?: { datasetIds: string[]; note: string };
+	/**
+	 * Set when the publisher reports an interval around each value. Records then
+	 * carry `confidenceInterval`; a value with no published interval has none,
+	 * and no interval is ever computed here.
+	 */
+	uncertainty?: {
+		kind: "confidence-interval";
+		level: number;
+		note: string;
+	};
 	/** Anything a caller must know to read the values correctly. */
 	notes?: string[];
 };
@@ -169,6 +179,11 @@ export type PopulationObservation = {
 	 * computed from other measures, and no publisher is answerable for it.
 	 */
 	status: "observed" | "derived";
+	/**
+	 * The publisher's interval around this value, where one is published. The
+	 * measure's `uncertainty` says what kind of interval it is.
+	 */
+	confidenceInterval?: { lower: number; upper: number };
 };
 
 export type PopulationObservationArtifact = {
@@ -575,7 +590,7 @@ export type DataCatalogInputs = {
 	nimdm: string;
 	wimd: string;
 	simd: string;
-	lifeExpectancy: string;
+	lifeExpectancySeries: string;
 };
 
 export const compileDataCatalog = ({
@@ -592,7 +607,7 @@ export const compileDataCatalog = ({
 	nimdm: nimdmPath,
 	wimd: wimdPath,
 	simd: simdPath,
-	lifeExpectancy: lifeExpectancyPath,
+	lifeExpectancySeries: lifeExpectancySeriesPath,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -1376,60 +1391,65 @@ export const compileDataCatalog = ({
 	};
 
 	/**
-	 * Life expectancy at birth, as ONS publishes it for local areas.
+	 * Life expectancy at birth, as ONS publishes it for local areas: every
+	 * three-year period from 2001 to 2003, each with its 95% confidence interval.
 	 *
 	 * ONS publishes male and female series but no persons total, so there is no
-	 * total measure. The loader also builds values for the four authorities
-	 * created in April 2023 by averaging their predecessors; those are marked on
-	 * the compiled record and left out, because no publisher reported them.
+	 * total measure. The series is read from its own compiled dataset rather than
+	 * the website's, which holds only the latest period and adds averaged values
+	 * for the four authorities created in April 2023.
 	 */
-	const lifeExpectancySource = object(
-		object(
-			JSON.parse(readFileSync(lifeExpectancyPath, "utf8")),
-			lifeExpectancyPath,
-		).le,
-		`${lifeExpectancyPath}.le`,
-	);
-	if (lifeExpectancySource.boundaryType !== "localAuthority") {
-		throw new Error(
-			`${lifeExpectancyPath}: expected local-authority life expectancy`,
-		);
-	}
-	const lifeExpectancyData = object(
-		lifeExpectancySource.data,
-		`${lifeExpectancyPath}.le.data`,
-	);
-	const lifeExpectancyMeasures = (
-		[
-			["male", "maleBirthLE", "Male life expectancy at birth"],
-			["female", "femaleBirthLE", "Female life expectancy at birth"],
-		] as const
-	).map(([sex, field, label]) => {
+	const lifeExpectancySource = JSON.parse(
+		readFileSync(lifeExpectancySeriesPath, "utf8"),
+	) as PopulationFile;
+	const lifeExpectancyPeriods = Object.entries(lifeExpectancySource)
+		.map(([key, value]) => {
+			const entry = object(value, `${lifeExpectancySeriesPath}.${key}`);
+			if (
+				entry.boundaryType !== "localAuthority" ||
+				entry.boundaryYear !== 2021 ||
+				typeof entry.period !== "string" ||
+				!/^\d{4}-\d{4}$/.test(entry.period)
+			) {
+				throw new Error(
+					`${lifeExpectancySeriesPath}.${key}: expected a local-authority period on the 2021 code vintage`,
+				);
+			}
+			return {
+				period: entry.period,
+				data: object(entry.data, `${lifeExpectancySeriesPath}.${key}.data`),
+			};
+		})
+		.sort((left, right) => left.period.localeCompare(right.period));
+	const lifeExpectancyMeasures = (["male", "female"] as const).map((sex) => {
 		const measureId = `life-expectancy-${sex}`;
-		const records = Object.entries(lifeExpectancyData)
-			.filter(
-				([, record]) =>
-					!Array.isArray(
-						object(record, `${lifeExpectancyPath}.le.data`)
-							.derivedFromPredecessors,
-					),
-			)
-			.map(([areaCode, record]) => {
-				if (!isPublishedAreaCode(areaCode))
-					throw new Error(
-						`${lifeExpectancyPath}: unsupported area code ${areaCode}`,
+		const periods = lifeExpectancyPeriods.map(({ period, data }) => ({
+			period,
+			records: Object.entries(data)
+				.map(([areaCode, record]) => {
+					const context = `${lifeExpectancySeriesPath}.${period}.${areaCode}.${sex}`;
+					if (!isPublishedAreaCode(areaCode))
+						throw new Error(`${context}: unsupported area code`);
+					const estimate = object(
+						object(record, context)[sex],
+						context,
 					);
-				return {
-					areaCode,
-					value: number(
-						object(record, `${lifeExpectancyPath}.le.data.${areaCode}`)[field],
-						`${lifeExpectancyPath}.le.data.${areaCode}.${field}`,
-					),
-					status: "observed" as const,
-				};
-			})
-			.sort((left, right) => left.areaCode.localeCompare(right.areaCode));
-		const periods = [{ period: "2020-2022", records }];
+					const value = number(estimate.value, `${context}.value`);
+					const lower = number(estimate.lower, `${context}.lower`);
+					const upper = number(estimate.upper, `${context}.upper`);
+					if (!(lower <= value && value <= upper))
+						throw new Error(
+							`${context}: the interval ${lower} to ${upper} does not contain ${value}`,
+						);
+					return {
+						areaCode,
+						value,
+						status: "observed" as const,
+						confidenceInterval: { lower, upper },
+					};
+				})
+				.sort((left, right) => left.areaCode.localeCompare(right.areaCode)),
+		}));
 		const sourceGeography = {
 			type: "localAuthority" as const,
 			boundaryYear: 2021,
@@ -1440,9 +1460,10 @@ export const compileDataCatalog = ({
 			sourceGeography,
 			periods,
 		});
+		const latestRecords = periods.at(-1)?.records ?? [];
 		const measure: Measure = {
 			id: measureId,
-			label,
+			label: `${sex === "male" ? "Male" : "Female"} life expectancy at birth`,
 			valueKind: "quantity",
 			unit: "years",
 			aggregation: {
@@ -1453,13 +1474,13 @@ export const compileDataCatalog = ({
 			},
 			sources: [
 				{
-					datasetId: "life-expectancy",
-					periods: ["2020-2022"],
+					datasetId: "life-expectancy-series",
+					periods: periods.map((period) => period.period),
 					sourceGeography,
 					coverage: {
 						kind: "partial",
-						countries: countriesFor(records),
-						recordCount: records.length,
+						countries: countriesFor(latestRecords),
+						recordCount: latestRecords.length,
 						note: "England, Wales and Northern Ireland. Scotland's local life expectancy is published separately by National Records of Scotland.",
 					},
 				},
@@ -1470,10 +1491,14 @@ export const compileDataCatalog = ({
 				aggregation: false,
 			},
 			links: { data: `/v1/data/${measureId}` },
+			uncertainty: {
+				kind: "confidence-interval",
+				level: 0.95,
+				note: "The publisher's 95% confidence interval, reflecting the random variation in deaths behind each estimate. Overlapping intervals mean two areas cannot be told apart with confidence, even when their central values differ.",
+			},
 			notes: [
-				"A period life expectancy for the three years 2020 to 2022, not a forecast for anyone born in them.",
-				"On the publisher's December 2021 local-authority codes. The four authorities created in April 2023 are not published and are not served; their predecessor districts are.",
-				"The source also publishes 95% confidence intervals and a series back to 2001 to 2003; neither is served yet.",
+				"Each period is a three-year period life expectancy, not a forecast for anyone born in it.",
+				"On the publisher's December 2021 local-authority codes, to which ONS restates the whole series. The four authorities created in April 2023 are not published and are not served; their predecessor districts are.",
 			],
 		};
 		return {

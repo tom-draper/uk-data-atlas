@@ -75,7 +75,7 @@ const writeSources = (
 	const nimdm = join(directory, "nimdm.json");
 	const wimd = join(directory, "wimd.json");
 	const simd = join(directory, "simd.json");
-	const lifeExpectancy = join(directory, "life-expectancy.json");
+	const lifeExpectancySeries = join(directory, "life-expectancy-series.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -97,7 +97,7 @@ const writeSources = (
 				dataset("nimdm", 2, 1, 2011),
 				dataset("wimd", 1, 1, 2011),
 				dataset("simd", 1, 1, 2011),
-				dataset("life-expectancy", 2, 1, 2023),
+				dataset("life-expectancy-series", 4, 2, 2021),
 			],
 		}),
 	);
@@ -275,22 +275,32 @@ const writeSources = (
 			},
 		}),
 	);
-	writeFileSync(
-		lifeExpectancy,
-		JSON.stringify({
-			le: {
-				boundaryType: "localAuthority",
-				data: {
-					E07000028: { maleBirthLE: 77.29, femaleBirthLE: 81.5 },
-					E06000001: { maleBirthLE: 75.97, femaleBirthLE: 80.08 },
-					// Averaged from predecessors by the loader, not published.
-					E06000063: {
-						maleBirthLE: 77,
-						femaleBirthLE: 81,
-						derivedFromPredecessors: ["E07000026", "E07000028"],
-					},
-				},
+	const estimate = (value: number) => ({
+		value,
+		lower: value - 0.7,
+		upper: value + 0.7,
+	});
+	const lifeExpectancyPeriod = (year: number, offset: number) => ({
+		year,
+		period: `${year - 2}-${year}`,
+		boundaryType: "localAuthority",
+		boundaryYear: 2021,
+		data: {
+			E07000028: {
+				male: estimate(77.29 - offset),
+				female: estimate(81.5 - offset),
 			},
+			E06000001: {
+				male: estimate(75.97 - offset),
+				female: estimate(80.08 - offset),
+			},
+		},
+	});
+	writeFileSync(
+		lifeExpectancySeries,
+		JSON.stringify({
+			"2003": lifeExpectancyPeriod(2003, 2),
+			"2022": lifeExpectancyPeriod(2022, 0),
 		}),
 	);
 	return {
@@ -307,7 +317,7 @@ const writeSources = (
 		nimdm,
 		wimd,
 		simd,
-		lifeExpectancy,
+		lifeExpectancySeries,
 	};
 };
 
@@ -634,7 +644,7 @@ test("publishes each nation's index as its own family on its own geography", () 
 	}
 });
 
-test("publishes life expectancy by sex, leaving out values the loader averaged", () => {
+test("publishes the life expectancy series with each published interval", () => {
 	const directory = mkdtempSync(
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
@@ -645,28 +655,45 @@ test("publishes life expectancy by sex, leaving out values the loader averaged",
 
 		assert.equal(male?.measureId, "life-expectancy-male");
 		assert.deepEqual(
-			male?.periods[0]?.records.map((record) => [record.areaCode, record.value]),
-			[
-				["E06000001", 75.97],
-				["E07000028", 77.29],
-			],
+			male?.periods.map((period) => period.period),
+			["2001-2003", "2020-2022"],
 		);
-		assert.equal(female?.periods[0]?.records[0]?.value, 80.08);
+		const latest = male?.periods.at(-1)?.records[0];
+		assert.equal(latest?.areaCode, "E06000001");
+		assert.equal(latest?.value, 75.97);
+		assert.ok(Math.abs((latest?.confidenceInterval?.lower ?? 0) - 75.27) < 1e-9);
+		assert.equal(female?.periods[0]?.records[0]?.value, 78.08);
 
 		const measure = result.catalog.measures.find(
 			(candidate) => candidate.id === "life-expectancy-female",
 		);
 		assert.equal(measure?.aggregation.kind, "non-aggregatable");
-		assert.deepEqual(measure?.sources[0]?.sourceGeography, {
-			type: "localAuthority",
-			boundaryYear: 2021,
-		});
-		// No persons total is published, so none is offered.
+		assert.deepEqual(measure?.uncertainty?.kind, "confidence-interval");
+		assert.equal(measure?.uncertainty?.level, 0.95);
+		assert.equal(measure?.sources[0]?.datasetId, "life-expectancy-series");
 		assert.equal(
 			result.catalog.measures.some(
 				(candidate) => candidate.id === "life-expectancy-total",
 			),
 			false,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("refuses an interval that does not contain its estimate", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const sources = writeSources(directory);
+		const series = JSON.parse(readFileSync(sources.lifeExpectancySeries, "utf8"));
+		series["2022"].data.E06000001.male = { value: 75.97, lower: 76, upper: 77 };
+		writeFileSync(sources.lifeExpectancySeries, JSON.stringify(series));
+		assert.throws(
+			() => compileDataCatalog(sources),
+			/interval 76 to 77 does not contain 75.97/,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

@@ -6,7 +6,8 @@ export type TabularFormat = "csv" | "ndjson";
 export type MeasureExportRecord = {
 	areaCode: string;
 	value: number;
-	status: "observed";
+	status: "observed" | "derived";
+	confidenceInterval?: { lower: number; upper: number };
 	area?: {
 		id: string;
 		code: string;
@@ -55,6 +56,8 @@ const exportRows = ({
 		areaAliases: record.area?.aliases?.join(" | ") ?? "",
 		value: record.value,
 		status: record.status,
+		lowerBound: record.confidenceInterval?.lower ?? "",
+		upperBound: record.confidenceInterval?.upper ?? "",
 	}));
 
 const columns = [
@@ -74,6 +77,10 @@ const columns = [
 	"areaAliases",
 	"value",
 	"status",
+	// Appended rather than placed beside the value, so existing columns keep
+	// their positions. Empty where the publisher gives no interval.
+	"lowerBound",
+	"upperBound",
 ] as const;
 
 /**
