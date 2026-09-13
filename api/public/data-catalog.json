@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:e550268598e3fd8e1c06a672f10e6f255cfc2662874151989b5c7b0ef855ac7b",
+	"contentHash": "sha256:a99cae03031082555c69fae64dde59624f5644ccd2c6dcc25bf8024bb5876ddb",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -2932,8 +2932,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -2952,8 +2952,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -2971,8 +2971,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -2990,8 +2990,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3009,8 +3009,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3048,8 +3048,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3086,8 +3086,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -3101,7 +3101,8 @@
 			},
 			"notes": [
 				"Candidate votes counted in each ward. Multi-member wards can allow each voter more than one vote, so this is not necessarily a count of ballot papers.",
-				"1 source row with the literal ward code NA is excluded: it has no official area identity to which the API can attach a value."
+				"1 source row with the literal ward code NA is excluded: it has no official area identity to which the API can attach a value.",
+				"4136 source rows with county-electoral-division codes is excluded from this ward measure. Historical county-electoral-division boundary vintages are not yet published by the API."
 			]
 		},
 		{
@@ -3134,8 +3135,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3173,8 +3174,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3211,8 +3212,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -3256,8 +3257,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3276,8 +3277,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3295,8 +3296,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3314,8 +3315,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3333,8 +3334,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3372,8 +3373,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3410,8 +3411,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -3454,8 +3455,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3474,8 +3475,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3493,8 +3494,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3512,8 +3513,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3531,8 +3532,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3570,8 +3571,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3608,8 +3609,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -3652,8 +3653,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3672,8 +3673,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3691,8 +3692,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3710,8 +3711,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3729,8 +3730,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3768,8 +3769,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3806,8 +3807,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -3850,8 +3851,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3870,8 +3871,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3889,8 +3890,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3908,8 +3909,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3927,8 +3928,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -3966,8 +3967,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4004,8 +4005,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -4048,8 +4049,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4068,8 +4069,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4087,8 +4088,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4106,8 +4107,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4125,8 +4126,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4164,8 +4165,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4202,8 +4203,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -4246,8 +4247,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4266,8 +4267,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4285,8 +4286,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4304,8 +4305,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4323,8 +4324,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4362,8 +4363,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4400,8 +4401,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -4444,8 +4445,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4464,8 +4465,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4483,8 +4484,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4502,8 +4503,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4521,8 +4522,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4560,8 +4561,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4598,8 +4599,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -4642,8 +4643,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4662,8 +4663,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4681,8 +4682,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4700,8 +4701,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4719,8 +4720,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4758,8 +4759,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4796,8 +4797,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],
@@ -4840,8 +4841,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 2211,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2210,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4860,8 +4861,8 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 3110,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 1392,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4879,8 +4880,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 2749,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2748,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4898,8 +4899,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 5280,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 5273,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4917,8 +4918,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 3862,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 2496,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4956,8 +4957,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 4196,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 4041,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4994,8 +4995,8 @@
 						"countries": [
 							"GB-ENG"
 						],
-						"recordCount": 1401,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election."
+						"recordCount": 513,
+						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				}
 			],

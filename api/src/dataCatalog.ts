@@ -562,6 +562,15 @@ const localAuthorityFieldPeriods = (
 type ElectionMeasureField =
 	{ kind: "field"; field: string } | { kind: "partyVotes"; party: string };
 
+const electionCodeKind = (code: string) =>
+	/^[EW]05\d{6}$/.test(code)
+		? "ward"
+		: /^E58\d{6}$/.test(code)
+			? "countyElectoralDivision"
+			: /^(E14|W07|S14|N0[56])\d{6}$/.test(code)
+				? "constituency"
+				: undefined;
+
 /**
  * Read one numeric series from a compiled election dataset. Election boundary
  * vintages legitimately change between polling years, so the caller later
@@ -577,6 +586,7 @@ const electionFieldPeriods = (
 	boundaryYear: number;
 	records: PopulationObservation[];
 	unaddressableRecordCount: number;
+	otherGeographyRecordCount: number;
 }> => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
 	const periods = Object.entries(source)
@@ -595,13 +605,19 @@ const electionFieldPeriods = (
 			}
 			const data = object(entry.data, `${path}.${period}.data`);
 			const unaddressableCodes = Object.keys(data).filter(
-				(areaCode) => !isPublishedAreaCode(areaCode),
+				(areaCode) => !electionCodeKind(areaCode) && areaCode !== "NA",
 			);
-			if (unaddressableCodes.some((areaCode) => areaCode !== "NA")) {
+			if (unaddressableCodes.length > 0) {
 				throw new Error(
-					`${path}.${period}: unsupported area code ${unaddressableCodes.find((areaCode) => areaCode !== "NA")}`,
+					`${path}.${period}: unsupported area code ${unaddressableCodes[0]}`,
 				);
 			}
+			const otherGeographyRecordCount = Object.keys(data).filter(
+				(areaCode) => {
+					const kind = electionCodeKind(areaCode);
+					return kind !== undefined && kind !== geography;
+				},
+			).length;
 			return {
 				period,
 				boundaryYear: entry.boundaryYear,
@@ -609,7 +625,7 @@ const electionFieldPeriods = (
 					.map(
 						([areaCode, record]):
 							PopulationObservation | undefined => {
-							if (!isPublishedAreaCode(areaCode)) {
+							if (electionCodeKind(areaCode) !== geography) {
 								return undefined;
 							}
 							const row = object(
@@ -644,7 +660,10 @@ const electionFieldPeriods = (
 					.sort((left, right) =>
 						left.areaCode.localeCompare(right.areaCode),
 					),
-				unaddressableRecordCount: unaddressableCodes.length,
+				unaddressableRecordCount: Object.keys(data).filter(
+					(areaCode) => areaCode === "NA",
+				).length,
+				otherGeographyRecordCount,
 			};
 		})
 		.sort((left, right) => left.period.localeCompare(right.period));
@@ -1823,12 +1842,18 @@ export const compileDataCatalog = ({
 			(total, period) => total + period.unaddressableRecordCount,
 			0,
 		);
+		const otherGeographyRecordCount = countPeriods.reduce(
+			(total, period) => total + period.otherGeographyRecordCount,
+			0,
+		);
 		if (
-			recordCount + unaddressableRecordCount !==
+			recordCount +
+				unaddressableRecordCount +
+				otherGeographyRecordCount !==
 			dataset.summary.dataRecordCount
 		) {
 			throw new Error(
-				`${election.path}: expected ${dataset.summary.dataRecordCount} records from the manifest, found ${recordCount} addressable and ${unaddressableRecordCount} unaddressable`,
+				`${election.path}: expected ${dataset.summary.dataRecordCount} records from the manifest, found ${recordCount} ${election.geography} records, ${otherGeographyRecordCount} records in another geography and ${unaddressableRecordCount} unaddressable`,
 			);
 		}
 		if (countPeriods.length !== dataset.summary.datasetCount) {
@@ -1882,6 +1907,11 @@ export const compileDataCatalog = ({
 					...(unaddressableRecordCount > 0
 						? [
 								`${unaddressableRecordCount} source row${unaddressableRecordCount === 1 ? "" : "s"} with the literal ward code NA is excluded: it has no official area identity to which the API can attach a value.`,
+							]
+						: []),
+					...(otherGeographyRecordCount > 0
+						? [
+								`${otherGeographyRecordCount} source row${otherGeographyRecordCount === 1 ? "" : "s"} with county-electoral-division codes is excluded from this ${election.geography} measure. Historical county-electoral-division boundary vintages are not yet published by the API.`,
 							]
 						: []),
 				],
@@ -1952,6 +1982,12 @@ export const compileDataCatalog = ({
 							total + period.unaddressableRecordCount,
 						0,
 					);
+					const sourceOtherGeographyRecordCount =
+						sourcePeriods.reduce(
+							(total, period) =>
+								total + period.otherGeographyRecordCount,
+							0,
+						);
 					const sourceGeography = {
 						type: election.geography,
 						boundaryYear,
@@ -1968,7 +2004,7 @@ export const compileDataCatalog = ({
 								sourcePeriods[0]?.records ?? [],
 							),
 							recordCount: sourcePeriods[0]?.records.length ?? 0,
-							note: `Source-exact ${election.label.toLowerCase()} records for the listed polling years. Record coverage varies with the areas that held an election.${sourceUnaddressableRecordCount > 0 ? " Rows with the literal, unaddressable code NA are excluded." : ""}`,
+							note: `Source-exact ${election.label.toLowerCase()} records for the listed polling years. Record coverage varies with the areas that held an election.${sourceUnaddressableRecordCount > 0 ? " Rows with the literal, unaddressable code NA are excluded." : ""}${sourceOtherGeographyRecordCount > 0 ? " County-electoral-division rows are excluded from this ward measure pending historical boundary releases." : ""}`,
 						},
 					};
 				});
