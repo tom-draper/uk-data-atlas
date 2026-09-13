@@ -3,8 +3,8 @@ export interface NIMDMLSOAData {
 	soaName: string;
 	lgdCode: string;
 	lgdName: string;
+	/** Published rank, where 1 is the most deprived of 890. */
 	nimdmRank: number;
-	nimdmDecile: number;
 }
 
 export interface NIMDMDataset {
@@ -21,7 +21,10 @@ export interface NIMDMDataset {
 	};
 }
 
+/**
+ * NISRA publishes ranks, not deciles, for super output areas, so nothing here
+ * carries a decile.
+ */
 export interface AggregatedNIMDMData {
 	averageNIMDMRank: number;
-	averageNIMDMDecile: number;
 }

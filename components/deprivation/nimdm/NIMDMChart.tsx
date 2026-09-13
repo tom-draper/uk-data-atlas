@@ -49,7 +49,6 @@ export default function NIMDMChart({
 			records: dataset.data,
 			statsFor: (record) => ({
 				averageNIMDMRank: record.nimdmRank,
-				averageNIMDMDecile: record.nimdmDecile,
 			}),
 		},
 	});
@@ -59,7 +58,8 @@ export default function NIMDMChart({
 			index={NIMDM}
 			dataset={dataset}
 			activeDataset={activeDataset}
-			decile={stats?.averageNIMDMDecile ?? null}
+			// NISRA publishes no decile for these areas, so none is shown.
+			decile={null}
 			detail={
 				stats ? { kind: "rank", value: stats.averageNIMDMRank } : null
 			}
