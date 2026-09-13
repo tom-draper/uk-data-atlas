@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f9daa5a98955fb87ca259933d05d87b01195d24f9f8694f1cd50ef0dd1f5aee5",
+	"contentHash": "sha256:bc1b741e3418c4d11befa3afca10e1bc0f582f211ce401bcecebd3a5d1252153",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -2903,6 +2903,1461 @@
 			},
 			"notes": [
 				"Votes for Ulster Unionist Party. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "general-election-apni-vote-share",
+			"label": "General election vote share for Alliance Party",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-apni-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-apni-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-apni-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-apni-vote-share"
+			},
+			"notes": [
+				"Alliance Party votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-brx-vote-share",
+			"label": "General election vote share for Brexit Party",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-brx-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-brx-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-brx-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-brx-vote-share"
+			},
+			"notes": [
+				"Brexit Party votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-con-vote-share",
+			"label": "General election vote share for Conservative",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-con-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-con-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-con-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-con-vote-share"
+			},
+			"notes": [
+				"Conservative votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-dup-vote-share",
+			"label": "General election vote share for Democratic Unionist Party",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-dup-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-dup-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-dup-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-dup-vote-share"
+			},
+			"notes": [
+				"Democratic Unionist Party votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-green-vote-share",
+			"label": "General election vote share for Green",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-green-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-green-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-green-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-green-vote-share"
+			},
+			"notes": [
+				"Green votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-lab-vote-share",
+			"label": "General election vote share for Labour",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-lab-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-lab-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-lab-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-lab-vote-share"
+			},
+			"notes": [
+				"Labour votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-ld-vote-share",
+			"label": "General election vote share for Liberal Democrat",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-ld-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-ld-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-ld-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-ld-vote-share"
+			},
+			"notes": [
+				"Liberal Democrat votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-other-vote-share",
+			"label": "General election vote share for Other candidates",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-other-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-other-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-other-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-other-vote-share"
+			},
+			"notes": [
+				"Other candidates votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-pc-vote-share",
+			"label": "General election vote share for Plaid Cymru",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-pc-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-pc-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-pc-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-pc-vote-share"
+			},
+			"notes": [
+				"Plaid Cymru votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-ruk-vote-share",
+			"label": "General election vote share for Reform UK",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-ruk-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-ruk-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-ruk-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-ruk-vote-share"
+			},
+			"notes": [
+				"Reform UK votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-sdlp-vote-share",
+			"label": "General election vote share for Social Democratic and Labour Party",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-sdlp-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-sdlp-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-sdlp-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-sdlp-vote-share"
+			},
+			"notes": [
+				"Social Democratic and Labour Party votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-sf-vote-share",
+			"label": "General election vote share for Sinn Féin",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-sf-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-sf-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-sf-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-sf-vote-share"
+			},
+			"notes": [
+				"Sinn Féin votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-snp-vote-share",
+			"label": "General election vote share for Scottish National Party",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-snp-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-snp-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-snp-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-snp-vote-share"
+			},
+			"notes": [
+				"Scottish National Party votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-ukip-vote-share",
+			"label": "General election vote share for UKIP",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-ukip-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-ukip-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-ukip-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-ukip-vote-share"
+			},
+			"notes": [
+				"UKIP votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
+			]
+		},
+		{
+			"id": "general-election-uup-vote-share",
+			"label": "General election vote share for Ulster Unionist Party",
+			"valueKind": "ratio",
+			"unit": "percent",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The area's valid ballot papers for the same election.",
+					"datasetField": "validVotes",
+					"measureId": "general-election-valid-votes"
+				},
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-uup-vote-share-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-uup-vote-share-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-uup-vote-share-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/general-election-uup-vote-share"
+			},
+			"notes": [
+				"Ulster Unionist Party votes divided by the source-published valid ballot papers. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight."
 			]
 		},
 		{

@@ -123,8 +123,13 @@ export type MeasureAggregation =
 			kind: "intensive";
 			operation: "weighted-mean";
 			/** The denominator a caller has to weight by, and where to find it. */
-			weight: { description: string; datasetField: string };
-			available: false;
+			weight: {
+				description: string;
+				datasetField: string;
+				/** Published measure that supplies the weight when aggregation is available. */
+				measureId?: string;
+			};
+			available: boolean;
 	  }
 	| {
 			/**
@@ -585,7 +590,9 @@ const localAuthorityFieldPeriods = (
 };
 
 type ElectionMeasureField =
-	{ kind: "field"; field: string } | { kind: "partyVotes"; party: string };
+	| { kind: "field"; field: string }
+	| { kind: "partyVotes"; party: string }
+	| { kind: "partyVoteShare"; party: string; denominator: string };
 
 const electionCodeKind = (code: string) =>
 	/^[EW]05\d{6}$/.test(code)
@@ -660,10 +667,35 @@ const electionFieldPeriods = (
 							const observed =
 								field.kind === "field"
 									? row[field.field]
-									: (object(
-											row.partyVotes,
-											`${path}.${period}.${areaCode}.partyVotes`,
-										)[field.party] ?? 0);
+									: field.kind === "partyVotes"
+										? (object(
+												row.partyVotes,
+												`${path}.${period}.${areaCode}.partyVotes`,
+											)[field.party] ?? 0)
+										: (() => {
+												const denominator = number(
+													row[field.denominator],
+													`${path}.${period}.${areaCode}.${field.denominator}`,
+												);
+												if (denominator <= 0) {
+													throw new Error(
+														`${path}.${period}.${areaCode}.${field.denominator} must be greater than zero for a party vote share`,
+													);
+												}
+												const partyVotes =
+													object(
+														row.partyVotes,
+														`${path}.${period}.${areaCode}.partyVotes`,
+													)[field.party] ?? 0;
+												return (
+													(100 *
+														number(
+															partyVotes,
+															`${path}.${period}.${areaCode}.partyVotes.${field.party}`,
+														)) /
+													denominator
+												);
+											})();
 							return {
 								areaCode,
 								value: number(
@@ -671,7 +703,9 @@ const electionFieldPeriods = (
 									`${path}.${period}.${areaCode}.${
 										field.kind === "field"
 											? field.field
-											: `partyVotes.${field.party}`
+											: field.kind === "partyVotes"
+												? `partyVotes.${field.party}`
+												: `partyVoteShare.${field.party}`
 									}`,
 								),
 								status: "observed" as const,
@@ -1863,8 +1897,8 @@ export const compileDataCatalog = ({
 	 * code can be reused in a later boundary release, but that does not move an
 	 * election result onto the later map; every distinct source boundary year is
 	 * therefore its own partition. Vote counts add within one election. Turnout
-	 * is a ratio, and party results remain counts rather than manufactured vote
-	 * shares, so callers can calculate a share against the denominator they use.
+	 * is a ratio; party shares are published only when a source provides a valid
+	 * ballot denominator, and carry that denominator for weighted aggregation.
 	 */
 	const partyNames: Record<string, string> = {
 		APNI: "Alliance Party",
@@ -1895,6 +1929,11 @@ export const compileDataCatalog = ({
 		countLabel: string;
 		countNote: string;
 		turnoutPeriods: "all" | "reported";
+		partyShareDenominator?: {
+			field: string;
+			measureId: string;
+			label: string;
+		};
 	}) => {
 		const dataset = datasets.find(
 			(candidate) => candidate.id === election.datasetId,
@@ -1962,6 +2001,7 @@ export const compileDataCatalog = ({
 				),
 			),
 		].sort();
+		const partyShareDenominator = election.partyShareDenominator;
 		const metrics: Array<{
 			id: string;
 			label: string;
@@ -2037,6 +2077,30 @@ export const compileDataCatalog = ({
 					`Votes for ${partyNames[party] ?? party}. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share.`,
 				],
 			})),
+			...(partyShareDenominator
+				? parties.map((party) => ({
+						id: `${election.datasetId}-${party.toLowerCase()}-vote-share`,
+						label: `${election.label} vote share for ${partyNames[party] ?? party}`,
+						field: {
+							kind: "partyVoteShare" as const,
+							party,
+							denominator: partyShareDenominator.field,
+						},
+						aggregation: {
+							kind: "intensive" as const,
+							operation: "weighted-mean" as const,
+							weight: {
+								description: `The area's ${partyShareDenominator.label.toLowerCase()} for the same election.`,
+								datasetField: partyShareDenominator.field,
+								measureId: partyShareDenominator.measureId,
+							},
+							available: true,
+						},
+						notes: [
+							`${partyNames[party] ?? party} votes divided by the source-published ${partyShareDenominator.label.toLowerCase()}. The percentage does not add across areas; the API combines it by summing party votes and valid ballots through this weight.`,
+						],
+					}))
+				: []),
 		];
 
 		return metrics.flatMap((metric) => {
@@ -2088,8 +2152,16 @@ export const compileDataCatalog = ({
 			const measure: Measure = {
 				id: metric.id,
 				label: metric.label,
-				valueKind: metric.id.endsWith("turnout") ? "ratio" : "count",
-				unit: metric.id.endsWith("turnout") ? "percent" : "votes",
+				valueKind:
+					metric.id.endsWith("turnout") ||
+					metric.id.endsWith("vote-share")
+						? "ratio"
+						: "count",
+				unit:
+					metric.id.endsWith("turnout") ||
+					metric.id.endsWith("vote-share")
+						? "percent"
+						: "votes",
 				aggregation: metric.aggregation,
 				sources,
 				availability: {
@@ -2223,6 +2295,11 @@ export const compileDataCatalog = ({
 			countNote:
 				"Valid ballot papers counted in each constituency. Invalid ballot papers are excluded, as in the source field.",
 			turnoutPeriods: "all",
+			partyShareDenominator: {
+				field: "validVotes",
+				measureId: "general-election-valid-votes",
+				label: "valid ballot papers",
+			},
 		}),
 		...electionWinnerMeasures({
 			datasetId: "general-election",

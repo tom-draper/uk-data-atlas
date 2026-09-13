@@ -604,6 +604,30 @@ test("publishes source-exact election turnout and party vote counts", () => {
 				note: "A winning-party label has no numeric order and cannot be summed, averaged, ranked or converted across areas.",
 			},
 		);
+		const conservativeShare2019 = result.electionObservations.find(
+			(artifact) =>
+				artifact.measureId === "general-election-con-vote-share" &&
+				artifact.sourceGeography.boundaryYear === 2019,
+		);
+		assert.deepEqual(conservativeShare2019?.periods[0]?.records, [
+			{ areaCode: "E14000001", value: 60, status: "observed" },
+			{ areaCode: "W07000001", value: 0, status: "observed" },
+		]);
+		assert.deepEqual(
+			measure("general-election-con-vote-share")?.aggregation,
+			{
+				kind: "intensive",
+				operation: "weighted-mean",
+				weight: {
+					description:
+						"The area's valid ballot papers for the same election.",
+					datasetField: "validVotes",
+					measureId: "general-election-valid-votes",
+				},
+				available: true,
+			},
+		);
+		assert.equal(measure("local-election-con-vote-share"), undefined);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

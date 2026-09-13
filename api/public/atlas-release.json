@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:fb06492ec7a76aaf04b6b830d857549d845afe158a8d0881caf67ec0062a09b1",
+	"releaseId": "sha256:16f11f67a6dad247c4d0097062624befd790f45f04dbf273e7a2f69c5c22fd1d",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,12 +25,12 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:53d03c940e735cb02606494e7f4a217f76d234ec8dd7993e1e0dcb5f1b7b9c48"
+			"contentHash": "sha256:08e5fa7acfad3a0d4073dba0b32990f8d8caf0e8c9d69365f10f6432cbb1117a"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:2585cdb5e391562029769088e20269e398b8a61f35a5fe1ebcc7c2acc7afd6f6"
+			"contentHash": "sha256:2c367f5fc3b2307ec92c87c15229f6d405d3696ea005455730676dec9c44b311"
 		},
 		{
 			"id": "population-observations",
