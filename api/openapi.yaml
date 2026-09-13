@@ -484,6 +484,94 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /data/{measure-id}/convert:
+    get:
+      operationId: convertSourceExactMeasure
+      summary: Regroup an extensive measure onto a published crosswalk's target areas
+      description: >
+        Converts a source partition onto another geography or code vintage
+        using the crosswalk the caller names. The route never selects a
+        conversion path: `GET /crosswalks` lists the published ones, and the
+        response repeats the chosen crosswalk's method, quality, weighting and
+        content hash.
+
+        Only a measure declared extensive may be converted, because conversion
+        works by adding values up. An intensive measure is rejected: a share or
+        a rank cannot be regrouped by summing, and weighting one by area
+        produces a number with no meaning.
+
+        The reported `method` distinguishes the two outcomes. `exact` means
+        every source area sits wholly within one target, so the conversion is a
+        regrouping and the partition total is unchanged. `area-weighted` means
+        some sources were split in proportion to overlapping area, which is an
+        estimate that assumes the measure is spread evenly across each source.
+
+        A source code the crosswalk does not carry, or a split source with no
+        published weight, is rejected rather than partially converted.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: crosswalk
+          in: query
+          required: true
+          schema:
+            type: string
+          description: A crosswalk id returned by `GET /crosswalks`.
+        - name: period
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: geography
+          in: query
+          required: true
+          schema:
+            enum: [ward, localAuthority]
+        - name: boundaryYear
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: >
+            Cursor-paginated derived values on the crosswalk's target areas,
+            with the conversion method and the crosswalk's own provenance.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: >
+            The measure is intensive, the crosswalk starts at another
+            geography, or the partition cannot be converted completely.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /data/{measure-id}/series:
     get:
       operationId: getSourceExactMeasureSeries

@@ -261,8 +261,14 @@ only **available** when its endpoint, contract and provenance are published.
       obtain a silently wrong regional figure.
 - [ ] Aggregate additive measures over parent areas or named locations; reject
       invalid operations such as summing medians or averaging ranks.
-- [ ] Convert measures across releases only with an explicit, appropriate
-      crosswalk: official, exact, area-weighted or population-weighted.
+- [x] Convert an extensive measure across releases through
+      `GET /v1/data/{measure-id}/convert`, using only the crosswalk the caller
+      names. The response repeats that crosswalk's method, quality, weighting
+      and content hash, and reports whether the result was an exact regrouping
+      (every source wholly inside one target, partition total unchanged) or an
+      area-weighted estimate. An intensive measure is refused, as is a source
+      code the crosswalk does not carry or a split source with no published
+      weight. Population-weighted conversion is not yet offered.
 
 ### Postcodes, homes and addresses — data required, later
 
@@ -1250,6 +1256,7 @@ pnpm start
 - `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`
