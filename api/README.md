@@ -263,8 +263,12 @@ only **available** when its endpoint, contract and provenance are published.
       2011 codes, taken from the Welsh Government's published ranks and
       deciles. Ranks are not recomputed from the published scores, which are
       rounded to one decimal place.
-- [ ] Return the Scottish deprivation index, and election and other curated
-      measures, with their own aggregation rules.
+- [x] Return the Scottish Index of Multiple Deprivation 2020v2 through
+      `GET /v1/data/simd-rank` and `GET /v1/data/simd-decile`: 6,976 data zones
+      on 2011 codes, taken from the Scottish Government's published data zone
+      lookup, which matches both compiled data zone releases exactly.
+- [ ] Return election and other curated measures with their own aggregation
+      rules.
 - [x] Export any published measure's source-exact pages as JSON, CSV or NDJSON,
       retaining row-level release, source, unit and geography provenance
       outside the API. A
