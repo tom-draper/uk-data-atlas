@@ -19,6 +19,7 @@ import { imdDatasetDefinition } from "./definitions/imd";
 import { incomeDatasetDefinition } from "./definitions/income";
 import { landAreaDatasetDefinition } from "./definitions/landArea";
 import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy";
+import { lifeExpectancySeriesDatasetDefinition } from "./definitions/lifeExpectancySeries";
 import { localElectionDatasetDefinition } from "./definitions/localElection";
 import { mobileCoverageDatasetDefinition } from "./definitions/mobileCoverage";
 import { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting";
@@ -55,6 +56,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	incomeDatasetDefinition,
 	landAreaDatasetDefinition,
 	lifeExpectancyDatasetDefinition,
+	lifeExpectancySeriesDatasetDefinition,
 	localElectionDatasetDefinition,
 	mobileCoverageDatasetDefinition,
 	nhsWaitingDatasetDefinition,

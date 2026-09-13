@@ -18,6 +18,7 @@ import type { imdDatasetDefinition } from "./definitions/imd";
 import type { incomeDatasetDefinition } from "./definitions/income";
 import type { landAreaDatasetDefinition } from "./definitions/landArea";
 import type { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy";
+import type { lifeExpectancySeriesDatasetDefinition } from "./definitions/lifeExpectancySeries";
 import type { localElectionDatasetDefinition } from "./definitions/localElection";
 import type { mobileCoverageDatasetDefinition } from "./definitions/mobileCoverage";
 import type { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting";
@@ -74,6 +75,9 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof landAreaDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof lifeExpectancySeriesDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof localElectionDatasetDefinition.precompile>
@@ -159,6 +163,9 @@ export type CatalogueDatasetRecords = {
 	landArea: Awaited<ReturnType<typeof landAreaDatasetDefinition.precompile>>;
 	lifeExpectancy: Awaited<
 		ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
+	>;
+	lifeExpectancySeries: Awaited<
+		ReturnType<typeof lifeExpectancySeriesDatasetDefinition.precompile>
 	>;
 	localElection: Awaited<
 		ReturnType<typeof localElectionDatasetDefinition.precompile>

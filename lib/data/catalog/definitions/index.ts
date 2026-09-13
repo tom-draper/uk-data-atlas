@@ -18,6 +18,7 @@ export { imdDatasetDefinition } from "./imd";
 export { incomeDatasetDefinition } from "./income";
 export { landAreaDatasetDefinition } from "./landArea";
 export { lifeExpectancyDatasetDefinition } from "./lifeExpectancy";
+export { lifeExpectancySeriesDatasetDefinition } from "./lifeExpectancySeries";
 export { localElectionDatasetDefinition } from "./localElection";
 export { mobileCoverageDatasetDefinition } from "./mobileCoverage";
 export { nhsWaitingDatasetDefinition } from "./nhsWaiting";
