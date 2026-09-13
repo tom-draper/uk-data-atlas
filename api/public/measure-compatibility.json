@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:9e40447f232c1c82505ae284fe44e71d4431283d9e8676a5f0bc5785f099dfaf",
+	"contentHash": "sha256:fd285337121c17341ddbf2aa5228ce5c7ea14ef420278a9aa4e7759d42518823",
 	"inputs": {
-		"dataCatalog": "sha256:a99cae03031082555c69fae64dde59624f5644ccd2c6dcc25bf8024bb5876ddb",
+		"dataCatalog": "sha256:f9daa5a98955fb87ca259933d05d87b01195d24f9f8694f1cd50ef0dd1f5aee5",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -29,6 +29,7 @@
 			"general-election-ukip-votes": "sha256:d2d017622df2f9e18272772d419d121271183a3afc4bbf71a38e424e11ee5e78",
 			"general-election-uup-votes": "sha256:d1ee2ee3870c8406f69962d561d82c97f7e21fcfe9f61f68e9e2cf47702a89a1",
 			"general-election-valid-votes": "sha256:5a7381947d58fee01479b253daa3899d971aeacc2d72d3bd1ec86f0f1e72ce25",
+			"general-election-winning-party": "sha256:021de8e176cbdd61ac79fd4a227ecef84720e3427691064cffd937066e748a0f",
 			"ghg-emissions": "sha256:5adf191291c17242e186a6015de015a512d311d621119fc6bb189e3bc477efcc",
 			"house-price-median": "sha256:23c9606dc8ea74c20429bf1791360a0f13b673281fc755effb48ba739753ab17",
 			"imd-decile": "sha256:4b374a910c0ab30ae55f253c84bc0bec6f8a954a704e2a78861db909c8fe63ee",
@@ -46,6 +47,7 @@
 			"local-election-ref-votes": "sha256:fa362f65626152eed364deba3a5573aa5f48ef9c49de4fba85b302fb34b3e67e",
 			"local-election-turnout": "sha256:a40407932d6d33332727c76243cef84805f0b32aed36642216d4c385d86f9dcd",
 			"local-election-ukip-votes": "sha256:6f0b864cbe70a04cd71a02b342e96de4e079bb30d3f9d4f8ec4847a5f23e6ae8",
+			"local-election-winning-party": "sha256:3c2a78d86606d576910cacffed7e9cb4f07c118d5760703607c0e4210aca4211",
 			"mobile-4g-coverage": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
 			"mobile-5g-coverage": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
 			"nimdm-rank": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
@@ -1622,6 +1624,89 @@
 		},
 		{
 			"measureId": "general-election-uup-votes",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-winning-party",
 			"sources": [
 				{
 					"datasetId": "general-election",
@@ -8185,6 +8270,678 @@
 		},
 		{
 			"measureId": "local-election-ukip-votes",
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"periods": [
+						"2016"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2016-12-gb-bgc",
+							"title": "Wards, December 2016 (Great Britain, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 2210,
+							"candidateCodeCount": 8668,
+							"matchingCodeCount": 2198,
+							"matchedSourceShare": 0.9945701357466064,
+							"unmatchedSourceCodeCount": 12,
+							"unmatchedSourceCodeSample": [
+								"E05001607",
+								"E05002777",
+								"E05002780",
+								"E05002785",
+								"E05008530",
+								"E05008532",
+								"E05008537",
+								"E05011348",
+								"E05011349",
+								"E05012955",
+								"E05012968",
+								"E05012969"
+							],
+							"candidateOnlyCodeCount": 6470,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "local-election",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"periods": [
+						"2017"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2017-12-gb-bgc",
+							"title": "Wards, December 2017 (Great Britain, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 1392,
+							"candidateCodeCount": 8669,
+							"matchingCodeCount": 1385,
+							"matchedSourceShare": 0.9949712643678161,
+							"unmatchedSourceCodeCount": 7,
+							"unmatchedSourceCodeSample": [
+								"E05002780",
+								"W05000859",
+								"W05000868",
+								"W05000869",
+								"W05000870",
+								"W05000901",
+								"W05000902"
+							],
+							"candidateOnlyCodeCount": 7284,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "local-election",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"periods": [
+						"2018"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2018-12-uk-bgc",
+							"title": "Wards, December 2018 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 2748,
+							"candidateCodeCount": 9114,
+							"matchingCodeCount": 2742,
+							"matchedSourceShare": 0.9978165938864629,
+							"unmatchedSourceCodeCount": 6,
+							"unmatchedSourceCodeSample": [
+								"E05012647",
+								"E05012648",
+								"E05012841",
+								"E05012842",
+								"E05012968",
+								"E05012969"
+							],
+							"candidateOnlyCodeCount": 6372,
+							"candidateOnlyCodeSample": [
+								"E05001019",
+								"E05001020",
+								"E05001022",
+								"E05001023",
+								"E05001024",
+								"E05001025",
+								"E05001026",
+								"E05001027",
+								"E05001028",
+								"E05001029",
+								"E05001030",
+								"E05001031",
+								"E05001032",
+								"E05001033",
+								"E05001034",
+								"E05001035",
+								"E05001036",
+								"E05001037",
+								"E05001038",
+								"E05001505"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "local-election",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-gb-bgc",
+							"title": "Wards, December 2019 (Great Britain, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8425,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3154,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "local-election",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2021-12-uk-bgc",
+							"title": "Wards, December 2021 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 2496,
+							"candidateCodeCount": 8694,
+							"matchingCodeCount": 2496,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 6198,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "local-election",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"periods": [
+						"2022"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2022-12-uk-bgc",
+							"title": "Wards, December 2022 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 3533,
+							"candidateCodeCount": 8482,
+							"matchingCodeCount": 3533,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 4949,
+							"candidateOnlyCodeSample": [
+								"E05000886",
+								"E05000887",
+								"E05000888",
+								"E05000889",
+								"E05000890",
+								"E05000891",
+								"E05000892",
+								"E05000893",
+								"E05000894",
+								"E05000895",
+								"E05000896",
+								"E05000897",
+								"E05000898",
+								"E05000899",
+								"E05000900",
+								"E05000901",
+								"E05000902",
+								"E05000903",
+								"E05000904",
+								"E05000905"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "local-election",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2023"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc",
+							"title": "Wards, May 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 4041,
+							"candidateCodeCount": 8441,
+							"matchingCodeCount": 3447,
+							"matchedSourceShare": 0.8530066815144766,
+							"unmatchedSourceCodeCount": 594,
+							"unmatchedSourceCodeSample": [
+								"E05000887",
+								"E05000888",
+								"E05000890",
+								"E05000891",
+								"E05000893",
+								"E05000895",
+								"E05000899",
+								"E05000902",
+								"E05000903",
+								"E05000906",
+								"E05000915",
+								"E05001527",
+								"E05001528",
+								"E05001529",
+								"E05001530",
+								"E05001532",
+								"E05001534",
+								"E05001535",
+								"E05001536",
+								"E05001537"
+							],
+							"candidateOnlyCodeCount": 4994,
+							"candidateOnlyCodeSample": [
+								"E05001115",
+								"E05001117",
+								"E05001121",
+								"E05001122",
+								"E05001130",
+								"E05001133",
+								"E05001236",
+								"E05001237",
+								"E05001239",
+								"E05001240",
+								"E05001243",
+								"E05001244",
+								"E05001245",
+								"E05001246",
+								"E05001247",
+								"E05001248",
+								"E05001249",
+								"E05001251",
+								"E05001252",
+								"E05001253"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Wards, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 4041,
+							"candidateCodeCount": 8441,
+							"matchingCodeCount": 3447,
+							"matchedSourceShare": 0.8530066815144766,
+							"unmatchedSourceCodeCount": 594,
+							"unmatchedSourceCodeSample": [
+								"E05000887",
+								"E05000888",
+								"E05000890",
+								"E05000891",
+								"E05000893",
+								"E05000895",
+								"E05000899",
+								"E05000902",
+								"E05000903",
+								"E05000906",
+								"E05000915",
+								"E05001527",
+								"E05001528",
+								"E05001529",
+								"E05001530",
+								"E05001532",
+								"E05001534",
+								"E05001535",
+								"E05001536",
+								"E05001537"
+							],
+							"candidateOnlyCodeCount": 4994,
+							"candidateOnlyCodeSample": [
+								"E05001115",
+								"E05001117",
+								"E05001121",
+								"E05001122",
+								"E05001130",
+								"E05001133",
+								"E05001236",
+								"E05001237",
+								"E05001239",
+								"E05001240",
+								"E05001243",
+								"E05001244",
+								"E05001245",
+								"E05001246",
+								"E05001247",
+								"E05001248",
+								"E05001249",
+								"E05001251",
+								"E05001252",
+								"E05001253"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "local-election",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Wards, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 1903,
+							"candidateCodeCount": 8396,
+							"matchingCodeCount": 1903,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 6493,
+							"candidateOnlyCodeSample": [
+								"E05000954",
+								"E05000955",
+								"E05000956",
+								"E05000957",
+								"E05000958",
+								"E05000959",
+								"E05000960",
+								"E05000961",
+								"E05000962",
+								"E05000963",
+								"E05000964",
+								"E05000965",
+								"E05000966",
+								"E05000967",
+								"E05000968",
+								"E05000969",
+								"E05000970",
+								"E05000971",
+								"E05000972",
+								"E05000973"
+							]
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Wards, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 1903,
+							"candidateCodeCount": 8396,
+							"matchingCodeCount": 1903,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 6493,
+							"candidateOnlyCodeSample": [
+								"E05000954",
+								"E05000955",
+								"E05000956",
+								"E05000957",
+								"E05000958",
+								"E05000959",
+								"E05000960",
+								"E05000961",
+								"E05000962",
+								"E05000963",
+								"E05000964",
+								"E05000965",
+								"E05000966",
+								"E05000967",
+								"E05000968",
+								"E05000969",
+								"E05000970",
+								"E05000971",
+								"E05000972",
+								"E05000973"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "local-election",
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Wards, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 513,
+							"candidateCodeCount": 8405,
+							"matchingCodeCount": 513,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 7892,
+							"candidateOnlyCodeSample": [
+								"E05000932",
+								"E05000933",
+								"E05000934",
+								"E05000935",
+								"E05000936",
+								"E05000937",
+								"E05000938",
+								"E05000939",
+								"E05000940",
+								"E05000941",
+								"E05000942",
+								"E05000943",
+								"E05000944",
+								"E05000945",
+								"E05000946",
+								"E05000947",
+								"E05000948",
+								"E05000949",
+								"E05000950",
+								"E05000951"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Wards, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 513,
+							"candidateCodeCount": 8405,
+							"matchingCodeCount": 513,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 7892,
+							"candidateOnlyCodeSample": [
+								"E05000932",
+								"E05000933",
+								"E05000934",
+								"E05000935",
+								"E05000936",
+								"E05000937",
+								"E05000938",
+								"E05000939",
+								"E05000940",
+								"E05000941",
+								"E05000942",
+								"E05000943",
+								"E05000944",
+								"E05000945",
+								"E05000946",
+								"E05000947",
+								"E05000948",
+								"E05000949",
+								"E05000950",
+								"E05000951"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "local-election-winning-party",
 			"sources": [
 				{
 					"datasetId": "local-election",

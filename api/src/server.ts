@@ -30,7 +30,7 @@ import type { ValidationReport } from "./validationReport";
 import {
 	type DataCatalog,
 	isLegacyPopulationSource,
-	type MeasureObservationArtifact,
+	type AnyMeasureObservationArtifact,
 	observationArtifactName,
 	type PopulationLocalAuthorityObservationArtifact,
 	type PopulationObservationArtifact,
@@ -235,7 +235,7 @@ export const readPopulationLocalAuthorityObservations = (
 export const readMeasureObservations = (
 	apiRoot: string,
 	dataCatalog: DataCatalog,
-): MeasureObservationArtifact[] =>
+): AnyMeasureObservationArtifact[] =>
 	dataCatalog.measures.flatMap((measure) =>
 		measure.sources
 			.filter((source) => !isLegacyPopulationSource(measure.id, source))
@@ -247,7 +247,7 @@ export const readMeasureObservations = (
 				);
 				const observations = JSON.parse(
 					readFileSync(path, "utf8"),
-				) as MeasureObservationArtifact;
+				) as AnyMeasureObservationArtifact;
 				if (
 					observations.schemaVersion !== 1 ||
 					observations.measureId !== measure.id ||

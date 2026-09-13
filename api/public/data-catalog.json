@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:a99cae03031082555c69fae64dde59624f5644ccd2c6dcc25bf8024bb5876ddb",
+	"contentHash": "sha256:f9daa5a98955fb87ca259933d05d87b01195d24f9f8694f1cd50ef0dd1f5aee5",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -2906,6 +2906,98 @@
 			]
 		},
 		{
+			"id": "general-election-winning-party",
+			"label": "General election winning party",
+			"valueKind": "categorical",
+			"unit": "party",
+			"aggregation": {
+				"kind": "categorical",
+				"available": false,
+				"note": "A winning-party label has no numeric order and cannot be summed, averaged, ranked or converted across areas."
+			},
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2010"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"observationArtifact": "general-election-winning-party-constituency-2010-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-reported general election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "general-election-winning-party-constituency-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-reported general election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "general-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "general-election-winning-party-constituency-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 650,
+						"note": "Source-reported general election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/general-election-winning-party"
+			},
+			"notes": [
+				"The label records the party that won the source area. It is not a numeric score, and a group of areas can have a distribution of winners rather than one additive outcome."
+			]
+		},
+		{
 			"id": "local-election-candidate-votes",
 			"label": "Local election candidate votes",
 			"valueKind": "count",
@@ -5010,6 +5102,204 @@
 			},
 			"notes": [
 				"Votes for UKIP. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share."
+			]
+		},
+		{
+			"id": "local-election-winning-party",
+			"label": "Local election winning party",
+			"valueKind": "categorical",
+			"unit": "party",
+			"aggregation": {
+				"kind": "categorical",
+				"available": false,
+				"note": "A winning-party label has no numeric order and cannot be summed, averaged, ranked or converted across areas."
+			},
+			"sources": [
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2016"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2016
+					},
+					"observationArtifact": "local-election-winning-party-ward-2016-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 2210,
+						"note": "Source-reported local election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2017
+					},
+					"observationArtifact": "local-election-winning-party-ward-2017-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 1392,
+						"note": "Source-reported local election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2018"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2018
+					},
+					"observationArtifact": "local-election-winning-party-ward-2018-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2748,
+						"note": "Source-reported local election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2019"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "local-election-winning-party-ward-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 5273,
+						"note": "Source-reported local election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "local-election-winning-party-ward-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 2496,
+						"note": "Source-reported local election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2022"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2022
+					},
+					"observationArtifact": "local-election-winning-party-ward-2022-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 3533,
+						"note": "Source-reported local election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2023
+					},
+					"observationArtifact": "local-election-winning-party-ward-2023-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 4041,
+						"note": "Source-reported local election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2024
+					},
+					"observationArtifact": "local-election-winning-party-ward-2024-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 1903,
+						"note": "Source-reported local election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				},
+				{
+					"datasetId": "local-election",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "ward",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "local-election-winning-party-ward-2025-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 513,
+						"note": "Source-reported local election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/local-election-winning-party"
+			},
+			"notes": [
+				"The label records the party that won the source area. It is not a numeric score, and a group of areas can have a distribution of winners rather than one additive outcome."
 			]
 		},
 		{

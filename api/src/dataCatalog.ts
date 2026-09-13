@@ -115,6 +115,11 @@ export type MeasureSource = {
 export type MeasureAggregation =
 	| { kind: "extensive"; operation: "sum"; available: boolean }
 	| {
+			kind: "categorical";
+			available: false;
+			note: string;
+	  }
+	| {
 			kind: "intensive";
 			operation: "weighted-mean";
 			/** The denominator a caller has to weight by, and where to find it. */
@@ -137,7 +142,8 @@ export type MeasureAggregation =
 export type Measure = {
 	id: string;
 	label: string;
-	valueKind: "count" | "quantity" | "ratio" | "currency" | "ordinal";
+	valueKind:
+		"count" | "quantity" | "ratio" | "currency" | "ordinal" | "categorical";
 	unit: string;
 	aggregation: MeasureAggregation;
 	sources: MeasureSource[];
@@ -198,6 +204,19 @@ export type PopulationObservation = {
 	confidenceInterval?: { lower: number; upper: number };
 };
 
+/** A source-reported label, intentionally distinct from a numeric value. */
+export type CategoricalObservation = {
+	areaCode: string;
+	category: string;
+	status: "observed";
+};
+
+export type MeasureObservation = PopulationObservation | CategoricalObservation;
+
+export const isNumericObservation = (
+	record: MeasureObservation,
+): record is PopulationObservation => "value" in record;
+
 export type PopulationObservationArtifact = {
 	schemaVersion: 1;
 	contentHash: string;
@@ -212,13 +231,19 @@ export type PopulationObservationArtifact = {
  * predates this shape and carries a single period at the top level; everything
  * published since uses this.
  */
-export type MeasureObservationArtifact = {
+export type MeasureObservationArtifact<
+	T extends MeasureObservation = PopulationObservation,
+> = {
 	schemaVersion: 1;
 	contentHash: string;
 	measureId: string;
 	sourceGeography: SourceGeography;
-	periods: Array<{ period: string; records: PopulationObservation[] }>;
+	periods: Array<{ period: string; records: T[] }>;
 };
+
+export type AnyMeasureObservationArtifact =
+	| MeasureObservationArtifact
+	| MeasureObservationArtifact<CategoricalObservation>;
 
 export type PopulationLocalAuthorityObservationArtifact = {
 	schemaVersion: 1;
@@ -260,7 +285,7 @@ export const observationArtifactName = (
 
 /** The artifact holding a non-legacy measure source's observations. */
 export const findMeasureObservations = (
-	artifacts: MeasureObservationArtifact[],
+	artifacts: AnyMeasureObservationArtifact[],
 	measureId: string,
 	source: MeasureSource,
 ) =>
@@ -427,7 +452,7 @@ const countryForCode = (code: string): Country => {
 	return country;
 };
 
-const countriesFor = (records: PopulationObservation[]): Country[] =>
+const countriesFor = (records: Array<{ areaCode: string }>): Country[] =>
 	[
 		...new Set(records.map((record) => countryForCode(record.areaCode))),
 	].sort() as Country[];
@@ -672,6 +697,58 @@ const electionFieldPeriods = (
 	return periods;
 };
 
+/** Read the publisher's winning-party label without coercing it to a number. */
+const electionWinnerPeriods = (
+	path: string,
+	geography: "constituency" | "ward",
+): Array<{
+	period: string;
+	boundaryYear: number;
+	records: CategoricalObservation[];
+}> => {
+	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const periods = Object.entries(source)
+		.map(([period, value]) => {
+			const entry = object(value, `${path}.${period}`);
+			if (
+				!/^\d{4}$/.test(period) ||
+				entry.year !== Number(period) ||
+				entry.boundaryType !== geography ||
+				typeof entry.boundaryYear !== "number"
+			) {
+				throw new Error(
+					`${path}.${period}: expected ${geography} election results with a boundary year`,
+				);
+			}
+			const results = object(entry.results, `${path}.${period}.results`);
+			return {
+				period,
+				boundaryYear: entry.boundaryYear,
+				records: Object.entries(results)
+					.flatMap(([areaCode, category]) => {
+						if (electionCodeKind(areaCode) !== geography) return [];
+						return [
+							{
+								areaCode,
+								category: string(
+									category,
+									`${path}.${period}.results.${areaCode}`,
+								),
+								status: "observed" as const,
+							},
+						];
+					})
+					.sort((left, right) =>
+						left.areaCode.localeCompare(right.areaCode),
+					),
+			};
+		})
+		.sort((left, right) => left.period.localeCompare(right.period));
+	if (periods.length === 0)
+		throw new Error(`${path} has no election result periods`);
+	return periods;
+};
+
 /**
  * The house price partition, restored to the codes its publisher used.
  *
@@ -798,7 +875,7 @@ export const compileDataCatalog = ({
 	nimdmObservations: MeasureObservationArtifact;
 	lifeExpectancyObservations: MeasureObservationArtifact[];
 	populationConstituencyObservations: MeasureObservationArtifact;
-	electionObservations: MeasureObservationArtifact[];
+	electionObservations: AnyMeasureObservationArtifact[];
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -2052,6 +2129,88 @@ export const compileDataCatalog = ({
 			});
 		});
 	};
+	const electionWinnerMeasures = (election: {
+		datasetId: "general-election" | "local-election";
+		path: string;
+		geography: "constituency" | "ward";
+		label: string;
+	}) => {
+		const periods = electionWinnerPeriods(
+			election.path,
+			election.geography,
+		);
+		const byBoundaryYear = new Map<number, typeof periods>();
+		for (const period of periods) {
+			const partition = byBoundaryYear.get(period.boundaryYear) ?? [];
+			partition.push(period);
+			byBoundaryYear.set(period.boundaryYear, partition);
+		}
+		const measureId = `${election.datasetId}-winning-party`;
+		const sources = [...byBoundaryYear.entries()]
+			.sort(([left], [right]) => left - right)
+			.map(([boundaryYear, sourcePeriods]) => ({
+				datasetId: election.datasetId,
+				periods: sourcePeriods.map((period) => period.period),
+				sourceGeography: {
+					type: election.geography,
+					boundaryYear,
+				} as SourceGeography,
+				observationArtifact: `${measureId}-${election.geography}-${boundaryYear}-observations`,
+				coverage: {
+					kind: "partial" as const,
+					countries: countriesFor(sourcePeriods[0]?.records ?? []),
+					recordCount: sourcePeriods[0]?.records.length ?? 0,
+					note: `Source-reported ${election.label.toLowerCase()} winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking.`,
+				},
+			}));
+		const measure: Measure = {
+			id: measureId,
+			label: `${election.label} winning party`,
+			valueKind: "categorical",
+			unit: "party",
+			aggregation: {
+				kind: "categorical",
+				available: false,
+				note: "A winning-party label has no numeric order and cannot be summed, averaged, ranked or converted across areas.",
+			},
+			sources,
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: { data: `/v1/data/${measureId}` },
+			notes: [
+				"The label records the party that won the source area. It is not a numeric score, and a group of areas can have a distribution of winners rather than one additive outcome.",
+			],
+		};
+		return sources.map((source) => {
+			const sourcePeriods =
+				byBoundaryYear.get(source.sourceGeography.boundaryYear) ?? [];
+			const artifactPeriods = sourcePeriods.map(
+				({ period, records }) => ({
+					period,
+					records,
+				}),
+			);
+			const content = JSON.stringify({
+				schemaVersion: 1,
+				measureId,
+				sourceGeography: source.sourceGeography,
+				periods: artifactPeriods,
+			});
+			return {
+				measure,
+				artifact: {
+					schemaVersion: 1 as const,
+					contentHash: sha256(content),
+					measureId,
+					sourceGeography: source.sourceGeography,
+					periods: artifactPeriods,
+				},
+			};
+		});
+	};
 	const electionObservations = [
 		...electionMeasures({
 			datasetId: "general-election",
@@ -2065,6 +2224,12 @@ export const compileDataCatalog = ({
 				"Valid ballot papers counted in each constituency. Invalid ballot papers are excluded, as in the source field.",
 			turnoutPeriods: "all",
 		}),
+		...electionWinnerMeasures({
+			datasetId: "general-election",
+			path: generalElectionPath,
+			geography: "constituency",
+			label: "General election",
+		}),
 		...electionMeasures({
 			datasetId: "local-election",
 			path: localElectionPath,
@@ -2076,6 +2241,12 @@ export const compileDataCatalog = ({
 			countNote:
 				"Candidate votes counted in each ward. Multi-member wards can allow each voter more than one vote, so this is not necessarily a count of ballot papers.",
 			turnoutPeriods: "reported",
+		}),
+		...electionWinnerMeasures({
+			datasetId: "local-election",
+			path: localElectionPath,
+			geography: "ward",
+			label: "Local election",
 		}),
 	];
 	const electionMeasureDefinitions = [

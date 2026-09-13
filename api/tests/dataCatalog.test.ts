@@ -344,6 +344,7 @@ const writeSources = (
 						partyVotes: { LAB: 50, LD: 30 },
 					},
 				},
+				results: { E14000001: "CON", W07000001: "LAB" },
 			},
 			"2024": {
 				year: 2024,
@@ -361,6 +362,7 @@ const writeSources = (
 						partyVotes: { DUP: 45, SF: 45 },
 					},
 				},
+				results: { E14001001: "LAB", N06000001: "DUP" },
 			},
 		}),
 	);
@@ -388,6 +390,11 @@ const writeSources = (
 						partyVotes: { CON: 30, LAB: 20 },
 					},
 				},
+				results: {
+					E05000001: "CON",
+					W05000001: "LAB",
+					E58000050: "CON",
+				},
 			},
 			"2024": {
 				year: 2024,
@@ -405,6 +412,7 @@ const writeSources = (
 						partyVotes: { LAB: 45, PC: 45 },
 					},
 				},
+				results: { E05001001: "LAB", W05001001: "LAB" },
 			},
 		}),
 	);
@@ -574,8 +582,27 @@ test("publishes source-exact election turnout and party vote counts", () => {
 				artifact.sourceGeography.boundaryYear === 2019,
 		);
 		assert.deepEqual(
-			reform2019?.periods[0]?.records.map((record) => record.value),
+			reform2019?.periods[0]?.records.map((record) =>
+				"value" in record ? record.value : undefined,
+			),
 			[0, 0],
+		);
+		const winners2019 = result.electionObservations.find(
+			(artifact) =>
+				artifact.measureId === "general-election-winning-party" &&
+				artifact.sourceGeography.boundaryYear === 2019,
+		);
+		assert.deepEqual(winners2019?.periods[0]?.records, [
+			{ areaCode: "E14000001", category: "CON", status: "observed" },
+			{ areaCode: "W07000001", category: "LAB", status: "observed" },
+		]);
+		assert.deepEqual(
+			measure("general-election-winning-party")?.aggregation,
+			{
+				kind: "categorical",
+				available: false,
+				note: "A winning-party label has no numeric order and cannot be summed, averaged, ranked or converted across areas.",
+			},
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

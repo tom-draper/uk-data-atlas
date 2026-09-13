@@ -20,8 +20,10 @@ import type { ValidationReport } from "./validationReport";
 import {
 	type DataCatalog,
 	findMeasureObservations,
+	isNumericObservation,
 	isLegacyPopulationSource,
-	type MeasureObservationArtifact,
+	type AnyMeasureObservationArtifact,
+	type MeasureObservation,
 	type MeasureSource,
 	observationArtifactName,
 	type PopulationObservation,
@@ -131,10 +133,10 @@ const observationsFor = (
 	artifacts: {
 		populationObservations?: PopulationObservationArtifact;
 		populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
-		measureObservations?: MeasureObservationArtifact[];
+		measureObservations?: AnyMeasureObservationArtifact[];
 	},
 ):
-	| (ObservationArtifactReference & { records: PopulationObservation[] })
+	| (ObservationArtifactReference & { records: MeasureObservation[] })
 	| undefined => {
 	if (isLegacyPopulationSource(measureId, source)) {
 		if (source.sourceGeography.type === "ward") {
@@ -338,7 +340,7 @@ export type RouteContext = {
 	populationObservations?: PopulationObservationArtifact;
 	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
 	/** Every measure's observations bar the two population artifacts. */
-	measureObservations?: MeasureObservationArtifact[];
+	measureObservations?: AnyMeasureObservationArtifact[];
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
 };
 
@@ -582,8 +584,17 @@ export const route = (
 				"Catalogue Unavailable",
 				`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
 			);
+		const numericRecords =
+			observations.records.filter(isNumericObservation);
+		if (numericRecords.length !== observations.records.length) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The observation artifact for ${measureId} does not contain numeric records required for aggregation.`,
+			);
+		}
 		const byLocation = location
-			? aggregateLocationMembers(location, observations.records)
+			? aggregateLocationMembers(location, numericRecords)
 			: undefined;
 		if (byLocation && byLocation.unresolvedMemberCodes.length > 0) {
 			return problem(
@@ -594,10 +605,7 @@ export const route = (
 		}
 		const byCountry = location
 			? undefined
-			: aggregateCountryMembers(
-					areaCode as string,
-					observations.records,
-				);
+			: aggregateCountryMembers(areaCode as string, numericRecords);
 		// A country the partition does not reach would otherwise sum to zero,
 		// which reads as an observation rather than an absence.
 		if (byCountry && byCountry.members.length === 0) {
@@ -746,7 +754,16 @@ export const route = (
 				"Catalogue Unavailable",
 				`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
 			);
-		const converted = convertObservations(artifact, observations.records);
+		const numericRecords =
+			observations.records.filter(isNumericObservation);
+		if (numericRecords.length !== observations.records.length) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The observation artifact for ${measureId} does not contain numeric records required for conversion.`,
+			);
+		}
+		const converted = convertObservations(artifact, numericRecords);
 		if (converted.status === "refused") {
 			return problem(422, "Operation Not Supported", converted.reason);
 		}
@@ -854,6 +871,13 @@ export const route = (
 				"No published measure serves comparisons at that path.",
 			);
 		}
+		if (measure.valueKind === "categorical") {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"Categorical measures have no numeric difference to compare.",
+			);
+		}
 		if (
 			parsedUrl.searchParams.has("release") ||
 			parsedUrl.searchParams.has("conversion") ||
@@ -915,10 +939,19 @@ export const route = (
 				`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
 			);
 		}
-		const baseline = observations.records.find(
+		const numericRecords =
+			observations.records.filter(isNumericObservation);
+		if (numericRecords.length !== observations.records.length) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The observation artifact for ${measureId} does not contain numeric records required for comparison.`,
+			);
+		}
+		const baseline = numericRecords.find(
 			(record) => record.areaCode === baselineAreaCode,
 		);
-		const comparison = observations.records.find(
+		const comparison = numericRecords.find(
 			(record) => record.areaCode === comparisonAreaCode,
 		);
 		if (!baseline || !comparison) {
@@ -1002,6 +1035,13 @@ export const route = (
 				"No published measure serves rankings at that path.",
 			);
 		}
+		if (measure.valueKind === "categorical") {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"Categorical measures have no numeric order to rank.",
+			);
+		}
 		if (
 			parsedUrl.searchParams.has("release") ||
 			parsedUrl.searchParams.has("conversion") ||
@@ -1046,11 +1086,20 @@ export const route = (
 				`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
 			);
 		}
+		const numericRecords =
+			observations.records.filter(isNumericObservation);
+		if (numericRecords.length !== observations.records.length) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The observation artifact for ${measureId} does not contain numeric records required for ranking.`,
+			);
+		}
 		const order = readRankingOrder(parsedUrl.searchParams.get("order"));
 		if (!order) {
 			return problem(400, "Invalid Query", "order must be asc or desc.");
 		}
-		const ranked = rankObservations(observations.records, order);
+		const ranked = rankObservations(numericRecords, order);
 		const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
 		if (pageSize === undefined) {
 			return problem(
@@ -1404,6 +1453,13 @@ export const route = (
 				"format must be one of json, csv or ndjson.",
 			);
 		}
+		if (measure.valueKind === "categorical" && requestedFormat !== "json") {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"Tabular exports currently support numeric measures only; request JSON for categorical observations.",
+			);
+		}
 		if (include !== null && include !== "area") {
 			return problem(
 				400,
@@ -1504,8 +1560,12 @@ export const route = (
 				"The selected release is compatible but its compiled area inventory is incomplete.",
 			);
 		}
-		const exportRecords = recordsWithAreas.filter(
-			(record): record is MeasureExportRecord => record !== undefined,
+		const resolvedRecords = recordsWithAreas.filter(
+			(record) => record !== undefined,
+		);
+		const exportRecords = resolvedRecords.filter(
+			(record): record is MeasureExportRecord =>
+				isNumericObservation(record),
 		);
 		const lastRecord = records.at(-1);
 		const nextCursor =
@@ -1562,7 +1622,7 @@ export const route = (
 					provenance,
 					conversion: null,
 					aggregation: null,
-					records: exportRecords,
+					records: resolvedRecords,
 				},
 				nextCursor,
 			),
@@ -1850,7 +1910,11 @@ export const route = (
 		};
 	}
 
-	if (segments.length === 2 && segments[0] === "v1" && segments[1] === "attribution") {
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "attribution"
+	) {
 		if (!dataCatalog || !crosswalkInventory) {
 			return problem(
 				503,

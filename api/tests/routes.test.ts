@@ -27,6 +27,7 @@ import {
 } from "../src/namedLocations";
 import type { ValidationReport } from "../src/validationReport";
 import type {
+	CategoricalObservation,
 	MeasureObservationArtifact,
 	PopulationLocalAuthorityObservationArtifact,
 	DataCatalog,
@@ -515,7 +516,11 @@ const dataCatalog: DataCatalog = {
 			label: "Small area fixture",
 			valueKind: "count",
 			unit: "people",
-			aggregation: { kind: "extensive", operation: "sum", available: true },
+			aggregation: {
+				kind: "extensive",
+				operation: "sum",
+				available: true,
+			},
 			sources: [
 				{
 					datasetId: "small-area",
@@ -564,7 +569,11 @@ const measureObservations: MeasureObservationArtifact[] = [
 			{
 				period: "2022",
 				records: [
-					{ areaCode: "E05000001", value: 250000, status: "observed" },
+					{
+						areaCode: "E05000001",
+						value: 250000,
+						status: "observed",
+					},
 				],
 			},
 		],
@@ -718,6 +727,13 @@ const routeWithNamedLocations = (url: string) =>
 	);
 
 const routeWithData = (url: string) =>
+	routeWithCatalog(url, dataCatalog, measureObservations);
+
+const routeWithCatalog = (
+	url: string,
+	catalog: DataCatalog,
+	observations: RouteContext["measureObservations"],
+) =>
 	route(
 		"GET",
 		url,
@@ -734,11 +750,11 @@ const routeWithData = (url: string) =>
 		undefined,
 		undefined,
 		undefined,
-		dataCatalog,
+		catalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureCompatibilityInventory,
-		measureObservations,
+		observations,
 	);
 
 const populationProvenance = (
@@ -1108,6 +1124,99 @@ test("ranks one source-exact partition with stable cursors", () => {
 	);
 });
 
+test("serves categorical winners without numeric operations", () => {
+	const measureId = "general-election-winning-party";
+	const catalog: DataCatalog = {
+		...dataCatalog,
+		measures: [
+			...dataCatalog.measures,
+			{
+				id: measureId,
+				label: "General election winning party",
+				valueKind: "categorical",
+				unit: "party",
+				aggregation: {
+					kind: "categorical",
+					available: false,
+					note: "A winning-party label cannot be combined numerically.",
+				},
+				sources: [
+					{
+						datasetId: "general-election",
+						periods: ["2024"],
+						sourceGeography: { type: "ward", boundaryYear: 2024 },
+						coverage: {
+							kind: "partial",
+							countries: ["GB-ENG", "GB-WLS"],
+							recordCount: 2,
+							note: "Fixture winners.",
+						},
+					},
+				],
+				availability: {
+					sourceExact: true,
+					conversion: false,
+					aggregation: false,
+				},
+				links: { data: `/v1/data/${measureId}` },
+			},
+		],
+	};
+	const winners: MeasureObservationArtifact<CategoricalObservation> = {
+		schemaVersion: 1,
+		contentHash: "sha256:winners",
+		measureId,
+		sourceGeography: { type: "ward", boundaryYear: 2024 },
+		periods: [
+			{
+				period: "2024",
+				records: [
+					{
+						areaCode: "E05000001",
+						category: "LAB",
+						status: "observed",
+					},
+					{
+						areaCode: "W05000001",
+						category: "PC",
+						status: "observed",
+					},
+				],
+			},
+		],
+	};
+	const response = routeWithCatalog(
+		`/v1/data/${measureId}?period=2024&geography=ward&boundaryYear=2024`,
+		catalog,
+		[...measureObservations, winners],
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual(
+		"data" in response.body &&
+			(response.body.data as { records: unknown }).records,
+		[
+			{ areaCode: "E05000001", category: "LAB", status: "observed" },
+			{ areaCode: "W05000001", category: "PC", status: "observed" },
+		],
+	);
+	assert.equal(
+		routeWithCatalog(
+			`/v1/data/${measureId}/rankings?period=2024&geography=ward&boundaryYear=2024`,
+			catalog,
+			[...measureObservations, winners],
+		).status,
+		422,
+	);
+	assert.equal(
+		routeWithCatalog(
+			`/v1/data/${measureId}?period=2024&geography=ward&boundaryYear=2024&format=csv`,
+			catalog,
+			[...measureObservations, winners],
+		).status,
+		422,
+	);
+});
+
 test("compares two source-exact areas in an explicit direction", () => {
 	const response = routeWithData(
 		"/v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000001&comparisonAreaCode=W05000001",
@@ -1315,7 +1424,10 @@ test("sums a country from the GSS code prefix, or refuses to", () => {
 		"data" in england.body
 			? (england.body.data as {
 					record: { value: number; status: string };
-					aggregation: { membership: string; inputRecordCount: number };
+					aggregation: {
+						membership: string;
+						inputRecordCount: number;
+					};
 				})
 			: undefined;
 	assert.equal(data?.record.value, 400);
@@ -1335,8 +1447,9 @@ test("sums a country from the GSS code prefix, or refuses to", () => {
 	// Exactly one of the two ways of naming an area.
 	assert.equal(routeWithData(query).status, 400);
 	assert.equal(
-		routeWithData(`${query}&areaCode=E92000001&locationId=greater-manchester`)
-			.status,
+		routeWithData(
+			`${query}&areaCode=E92000001&locationId=greater-manchester`,
+		).status,
 		400,
 	);
 	// A local authority is not yet an aggregation target.
@@ -1349,10 +1462,10 @@ test("serves a small-area partition on its own geography", () => {
 	);
 	assert.equal(observed.status, 200);
 	const data = "data" in observed.body ? (observed.body.data as never) : {};
-	assert.deepEqual(
-		(data as { sourceGeography: unknown }).sourceGeography,
-		{ type: "lsoa", boundaryYear: 2011 },
-	);
+	assert.deepEqual((data as { sourceGeography: unknown }).sourceGeography, {
+		type: "lsoa",
+		boundaryYear: 2011,
+	});
 	assert.equal((data as { records: unknown[] }).records.length, 2);
 
 	// An LSOA partition is not a data zone partition, even for the same year.
