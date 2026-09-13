@@ -3,7 +3,10 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { compileDataCatalog } from "../src/dataCatalog";
+import {
+	compileDataCatalog,
+	type DataCatalogInputs,
+} from "../src/dataCatalog";
 
 const dataset = (
 	output: string,
@@ -57,7 +60,10 @@ const emissionsYear = (year: number) => ({
 	},
 });
 
-const writeSources = (directory: string, wardRecordCount = 2) => {
+const writeSources = (
+	directory: string,
+	wardRecordCount = 2,
+): DataCatalogInputs => {
 	const manifest = join(directory, "dataset-manifest.json");
 	const population = join(directory, "population.json");
 	const populationUk = join(directory, "population-uk.json");
@@ -293,7 +299,8 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 		populationUk,
 		ghgEmissions,
 		mobileCoverage,
-		censusPaths,
+		travelToWork: censusPaths["travel-to-work"],
+		carAvailability: censusPaths["car-availability"],
 		landArea,
 		housePrice,
 		imd,
@@ -309,36 +316,8 @@ test("publishes source-exact ward and UK local-authority population partitions",
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const {
-			manifest,
-			population,
-			populationUk,
-			ghgEmissions,
-			mobileCoverage,
-			censusPaths,
-			landArea,
-			housePrice,
-			imd,
-			nimdm,
-			wimd,
-			simd,
-			lifeExpectancy,
-		} = writeSources(directory);
-		const result = compileDataCatalog(
-			manifest,
-			population,
-			populationUk,
-			ghgEmissions,
-			mobileCoverage,
-			censusPaths,
-			landArea,
-			housePrice,
-			imd,
-			nimdm,
-			wimd,
-			simd,
-			lifeExpectancy,
-		);
+		const sources = writeSources(directory);
+		const result = compileDataCatalog(sources);
 		assert.equal(result.catalog.datasets.length, 13);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
@@ -391,40 +370,12 @@ test("rejects a population source whose record count disagrees with its manifest
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const {
-			manifest,
-			population,
-			populationUk,
-			ghgEmissions,
-			mobileCoverage,
-			censusPaths,
-			landArea,
-			housePrice,
-			imd,
-			nimdm,
-			wimd,
-			simd,
-			lifeExpectancy,
-		} = writeSources(
+		const sources = writeSources(
 			directory,
 			3,
 		);
 		assert.throws(
-			() => compileDataCatalog(
-			manifest,
-			population,
-			populationUk,
-			ghgEmissions,
-			mobileCoverage,
-			censusPaths,
-			landArea,
-			housePrice,
-			imd,
-			nimdm,
-			wimd,
-			simd,
-			lifeExpectancy,
-		),
+			() => compileDataCatalog(sources),
 			/expected 3 records/,
 		);
 	} finally {
@@ -437,40 +388,12 @@ test("rejects local-authority population data whose codes change between periods
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
 	try {
-		const {
-			manifest,
-			population,
-			populationUk,
-			ghgEmissions,
-			mobileCoverage,
-			censusPaths,
-			landArea,
-			housePrice,
-			imd,
-			nimdm,
-			wimd,
-			simd,
-			lifeExpectancy,
-		} = writeSources(directory);
-		const source = JSON.parse(readFileSync(populationUk, "utf8"));
+		const sources = writeSources(directory);
+		const source = JSON.parse(readFileSync(sources.populationUk, "utf8"));
 		delete source["2024"].data.N09000001;
-		writeFileSync(populationUk, JSON.stringify(source));
+		writeFileSync(sources.populationUk, JSON.stringify(source));
 		assert.throws(
-			() => compileDataCatalog(
-			manifest,
-			population,
-			populationUk,
-			ghgEmissions,
-			mobileCoverage,
-			censusPaths,
-			landArea,
-			housePrice,
-			imd,
-			nimdm,
-			wimd,
-			simd,
-			lifeExpectancy,
-		),
+			() => compileDataCatalog(sources),
 			/local-authority codes change between periods/,
 		);
 	} finally {
@@ -503,21 +426,7 @@ test("refuses to derive density when the denominator misses an area", () => {
 
 		assert.throws(
 			() =>
-				compileDataCatalog(
-					sources.manifest,
-					sources.population,
-					sources.populationUk,
-					sources.ghgEmissions,
-					sources.mobileCoverage,
-					sources.censusPaths,
-					sources.landArea,
-					sources.housePrice,
-					sources.imd,
-					sources.nimdm,
-					sources.wimd,
-					sources.simd,
-					sources.lifeExpectancy,
-				),
+				compileDataCatalog(sources),
 			/no land area for W06000001/,
 		);
 	} finally {
@@ -551,21 +460,7 @@ test("refuses to derive density from an area with no land", () => {
 		// A zero denominator would publish Infinity as a density.
 		assert.throws(
 			() =>
-				compileDataCatalog(
-					sources.manifest,
-					sources.population,
-					sources.populationUk,
-					sources.ghgEmissions,
-					sources.mobileCoverage,
-					sources.censusPaths,
-					sources.landArea,
-					sources.housePrice,
-					sources.imd,
-					sources.nimdm,
-					sources.wimd,
-					sources.simd,
-					sources.lifeExpectancy,
-				),
+				compileDataCatalog(sources),
 			/E06000001 has no land area/,
 		);
 	} finally {
@@ -579,21 +474,7 @@ test("derives density and marks the values as derived, not observed", () => {
 	);
 	try {
 		const sources = writeSources(directory);
-		const result = compileDataCatalog(
-			sources.manifest,
-			sources.population,
-			sources.populationUk,
-			sources.ghgEmissions,
-			sources.mobileCoverage,
-			sources.censusPaths,
-			sources.landArea,
-			sources.housePrice,
-			sources.imd,
-			sources.nimdm,
-			sources.wimd,
-			sources.simd,
-			sources.lifeExpectancy,
-		);
+		const result = compileDataCatalog(sources);
 
 		const density = result.populationDensityObservations;
 		const record = density.periods[0]?.records.find(
@@ -623,21 +504,7 @@ test("publishes house prices under the publisher's own codes and years", () => {
 	);
 	try {
 		const sources = writeSources(directory);
-		const result = compileDataCatalog(
-			sources.manifest,
-			sources.population,
-			sources.populationUk,
-			sources.ghgEmissions,
-			sources.mobileCoverage,
-			sources.censusPaths,
-			sources.landArea,
-			sources.housePrice,
-			sources.imd,
-			sources.nimdm,
-			sources.wimd,
-			sources.simd,
-			sources.lifeExpectancy,
-		);
+		const result = compileDataCatalog(sources);
 		const periods = result.housePriceObservations.periods;
 
 		// The year ending March 2023 is not a comparable period.
@@ -673,21 +540,7 @@ test("publishes deprivation rank and decile as they were published", () => {
 	);
 	try {
 		const sources = writeSources(directory);
-		const result = compileDataCatalog(
-			sources.manifest,
-			sources.population,
-			sources.populationUk,
-			sources.ghgEmissions,
-			sources.mobileCoverage,
-			sources.censusPaths,
-			sources.landArea,
-			sources.housePrice,
-			sources.imd,
-			sources.nimdm,
-			sources.wimd,
-			sources.simd,
-			sources.lifeExpectancy,
-		);
+		const result = compileDataCatalog(sources);
 		const [rank, decile] = result.imdObservations;
 
 		assert.equal(rank?.measureId, "imd-rank");
@@ -719,21 +572,7 @@ test("publishes the northern irish rank on its own nisra codes", () => {
 	);
 	try {
 		const sources = writeSources(directory);
-		const result = compileDataCatalog(
-			sources.manifest,
-			sources.population,
-			sources.populationUk,
-			sources.ghgEmissions,
-			sources.mobileCoverage,
-			sources.censusPaths,
-			sources.landArea,
-			sources.housePrice,
-			sources.imd,
-			sources.nimdm,
-			sources.wimd,
-			sources.simd,
-			sources.lifeExpectancy,
-		);
+		const result = compileDataCatalog(sources);
 		assert.deepEqual(
 			result.nimdmObservations.periods[0]?.records.map((record) => [
 				record.areaCode,
@@ -765,21 +604,7 @@ test("publishes each nation's index as its own family on its own geography", () 
 	);
 	try {
 		const sources = writeSources(directory);
-		const result = compileDataCatalog(
-			sources.manifest,
-			sources.population,
-			sources.populationUk,
-			sources.ghgEmissions,
-			sources.mobileCoverage,
-			sources.censusPaths,
-			sources.landArea,
-			sources.housePrice,
-			sources.imd,
-			sources.nimdm,
-			sources.wimd,
-			sources.simd,
-			sources.lifeExpectancy,
-		);
+		const result = compileDataCatalog(sources);
 		const measure = (id: string) =>
 			result.catalog.measures.find((candidate) => candidate.id === id);
 
@@ -815,21 +640,7 @@ test("publishes life expectancy by sex, leaving out values the loader averaged",
 	);
 	try {
 		const sources = writeSources(directory);
-		const result = compileDataCatalog(
-			sources.manifest,
-			sources.population,
-			sources.populationUk,
-			sources.ghgEmissions,
-			sources.mobileCoverage,
-			sources.censusPaths,
-			sources.landArea,
-			sources.housePrice,
-			sources.imd,
-			sources.nimdm,
-			sources.wimd,
-			sources.simd,
-			sources.lifeExpectancy,
-		);
+		const result = compileDataCatalog(sources);
 		const [male, female] = result.lifeExpectancyObservations;
 
 		assert.equal(male?.measureId, "life-expectancy-male");

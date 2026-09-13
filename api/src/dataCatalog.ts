@@ -556,21 +556,44 @@ const housePricePeriods = (
  * population measure. It does not select a geometry release: the published
  * input records only declare the Ward 2023 code vintage, not a boundary month.
  */
-export const compileDataCatalog = (
-	manifestPath: string,
-	populationPath: string,
-	populationUkPath: string,
-	ghgEmissionsPath: string,
-	mobileCoveragePath: string,
-	censusPaths: Record<"travel-to-work" | "car-availability", string>,
-	landAreaPath: string,
-	housePricePath: string,
-	imdPath: string,
-	nimdmPath: string,
-	wimdPath: string,
-	simdPath: string,
-	lifeExpectancyPath: string,
-): {
+/**
+ * The compiled files the catalogue is built from, by name. Named rather than
+ * positional because every published measure adds one, and a shifted
+ * positional list compiles fine while reading the wrong file.
+ */
+export type DataCatalogInputs = {
+	manifest: string;
+	population: string;
+	populationUk: string;
+	ghgEmissions: string;
+	mobileCoverage: string;
+	travelToWork: string;
+	carAvailability: string;
+	landArea: string;
+	housePrice: string;
+	imd: string;
+	nimdm: string;
+	wimd: string;
+	simd: string;
+	lifeExpectancy: string;
+};
+
+export const compileDataCatalog = ({
+	manifest: manifestPath,
+	population: populationPath,
+	populationUk: populationUkPath,
+	ghgEmissions: ghgEmissionsPath,
+	mobileCoverage: mobileCoveragePath,
+	travelToWork: travelToWorkPath,
+	carAvailability: carAvailabilityPath,
+	landArea: landAreaPath,
+	housePrice: housePricePath,
+	imd: imdPath,
+	nimdm: nimdmPath,
+	wimd: wimdPath,
+	simd: simdPath,
+	lifeExpectancy: lifeExpectancyPath,
+}: DataCatalogInputs): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
 	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
@@ -874,6 +897,10 @@ export const compileDataCatalog = (
 		},
 	] as const;
 
+	const censusPaths = {
+		"travel-to-work": travelToWorkPath,
+		"car-availability": carAvailabilityPath,
+	};
 	const censusObservations = censusBreakdowns.flatMap((breakdown) => {
 		const dataset = datasets.find(
 			(candidate) => candidate.id === breakdown.datasetId,

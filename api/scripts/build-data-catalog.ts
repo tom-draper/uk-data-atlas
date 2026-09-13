@@ -1,112 +1,34 @@
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { compileDataCatalog } from "../src/dataCatalog";
+import {
+	compileDataCatalog,
+	type DataCatalogInputs,
+} from "../src/dataCatalog";
 
 export const buildDataCatalog = (repositoryRoot: string) => {
-	const manifestPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"dataset-manifest.json",
-	);
-	const populationPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"population.json",
-	);
-	const populationUkPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"population-uk.json",
-	);
-	const ghgEmissionsPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"ghg-emissions.json",
-	);
-	const mobileCoveragePath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"mobile-coverage.json",
-	);
-	const lifeExpectancyPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"life-expectancy.json",
-	);
-	const wimdPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"wimd.json",
-	);
-	const simdPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"simd.json",
-	);
-	const nimdmPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"nimdm.json",
-	);
-	const imdPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"imd.json",
-	);
-	const housePricePath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"house-price.json",
-	);
-	const landAreaPath = join(
-		repositoryRoot,
-		"data",
-		"precompiled",
-		"land-area.json",
-	);
-	const censusPaths = {
-		"travel-to-work": join(
-			repositoryRoot,
-			"data",
-			"precompiled",
-			"travel-to-work.json",
-		),
-		"car-availability": join(
-			repositoryRoot,
-			"data",
-			"precompiled",
-			"car-availability.json",
-		),
+	const precompiled = (file: string) =>
+		join(repositoryRoot, "data", "precompiled", file);
+	const inputs: DataCatalogInputs = {
+		manifest: precompiled("dataset-manifest.json"),
+		population: precompiled("population.json"),
+		populationUk: precompiled("population-uk.json"),
+		ghgEmissions: precompiled("ghg-emissions.json"),
+		mobileCoverage: precompiled("mobile-coverage.json"),
+		travelToWork: precompiled("travel-to-work.json"),
+		carAvailability: precompiled("car-availability.json"),
+		landArea: precompiled("land-area.json"),
+		housePrice: precompiled("house-price.json"),
+		imd: precompiled("imd.json"),
+		nimdm: precompiled("nimdm.json"),
+		wimd: precompiled("wimd.json"),
+		simd: precompiled("simd.json"),
+		lifeExpectancy: precompiled("life-expectancy.json"),
 	};
-	if (
-		!existsSync(manifestPath) ||
-		!existsSync(populationPath) ||
-		!existsSync(populationUkPath) ||
-		!existsSync(ghgEmissionsPath) ||
-		!existsSync(mobileCoveragePath) ||
-		!existsSync(landAreaPath) ||
-		!existsSync(housePricePath) ||
-		!existsSync(imdPath) ||
-		!existsSync(nimdmPath) ||
-		!existsSync(wimdPath) ||
-		!existsSync(simdPath) ||
-		!existsSync(lifeExpectancyPath) ||
-		Object.values(censusPaths).some((path) => !existsSync(path))
-	) {
+	const missing = Object.values(inputs).filter((path) => !existsSync(path));
+	if (missing.length > 0) {
 		throw new Error(
-			"Build the dataset manifest, ward population, UK local-authority population, greenhouse gas emissions, mobile coverage and census transport data before the API data catalogue.",
+			`Build the website's precompiled data before the API data catalogue. Missing: ${missing.join(", ")}`,
 		);
 	}
 	const outputDirectory = join(repositoryRoot, "api", "public");
@@ -122,21 +44,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		imdObservations,
 		nimdmObservations,
 		lifeExpectancyObservations,
-	} = compileDataCatalog(
-		manifestPath,
-		populationPath,
-		populationUkPath,
-		ghgEmissionsPath,
-		mobileCoveragePath,
-		censusPaths,
-		landAreaPath,
-		housePricePath,
-		imdPath,
-		nimdmPath,
-		wimdPath,
-		simdPath,
-		lifeExpectancyPath,
-	);
+	} = compileDataCatalog(inputs);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
 		outputDirectory,
