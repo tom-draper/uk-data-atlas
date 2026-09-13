@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:a1e76433a98620142f882bc1514a984523858bd9af6b798722e78c2bdbcad9b0",
+	"contentHash": "sha256:6fb587bde448a79cef8dfb7764e71e68723fe2ef439dee65d9c9e173e83d8761",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -667,8 +667,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 58068,
-				"sha256": "ca7f7a1af8c7a23eed623634e05d6a09e07d9377c71ac497ded467b587446f2a"
+				"bytes": 58384,
+				"sha256": "cd293efc4e7b5fe3d3e139ae7b52c67843ae696826ccae66abf28a9156288fe3"
 			}
 		},
 		{
@@ -1701,6 +1701,100 @@
 				"A position within Northern Ireland alone. The English, Welsh and Scottish indices use different methods, domains and dates, so a rank cannot be compared across nations.",
 				"The publisher labels these areas SOA2001. Super output areas were drawn for the 2001 census and reused unchanged for 2011, and every code matches the 2011 release.",
 				"NISRA publishes ranks, not deciles, for super output areas, so no decile measure is offered."
+			]
+		},
+		{
+			"id": "life-expectancy-male",
+			"label": "Male life expectancy at birth",
+			"valueKind": "quantity",
+			"unit": "years",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "life-expectancy",
+				"note": "The life expectancy of a combined population is not an average of its areas' life expectancies, weighted or not. It has to be recalculated from deaths and population by age, which this source does not publish.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "life-expectancy",
+					"periods": [
+						"2020-2022"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2021
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-WLS"
+						],
+						"recordCount": 340,
+						"note": "England, Wales and Northern Ireland. Scotland's local life expectancy is published separately by National Records of Scotland."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/life-expectancy-male"
+			},
+			"notes": [
+				"A period life expectancy for the three years 2020 to 2022, not a forecast for anyone born in them.",
+				"On the publisher's December 2021 local-authority codes. The four authorities created in April 2023 are not published and are not served; their predecessor districts are.",
+				"The source also publishes 95% confidence intervals and a series back to 2001 to 2003; neither is served yet."
+			]
+		},
+		{
+			"id": "life-expectancy-female",
+			"label": "Female life expectancy at birth",
+			"valueKind": "quantity",
+			"unit": "years",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "life-expectancy",
+				"note": "The life expectancy of a combined population is not an average of its areas' life expectancies, weighted or not. It has to be recalculated from deaths and population by age, which this source does not publish.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "life-expectancy",
+					"periods": [
+						"2020-2022"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2021
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-WLS"
+						],
+						"recordCount": 340,
+						"note": "England, Wales and Northern Ireland. Scotland's local life expectancy is published separately by National Records of Scotland."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/life-expectancy-female"
+			},
+			"notes": [
+				"A period life expectancy for the three years 2020 to 2022, not a forecast for anyone born in them.",
+				"On the publisher's December 2021 local-authority codes. The four authorities created in April 2023 are not published and are not served; their predecessor districts are.",
+				"The source also publishes 95% confidence intervals and a series back to 2001 to 2003; neither is served yet."
 			]
 		},
 		{
