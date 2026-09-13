@@ -25,6 +25,7 @@ import { mobileCoverageDatasetDefinition } from "./definitions/mobileCoverage";
 import { nhsWaitingDatasetDefinition } from "./definitions/nhsWaiting";
 import { nimdmDatasetDefinition } from "./definitions/nimdm";
 import { populationDatasetDefinition } from "./definitions/population";
+import { populationConstituencyDatasetDefinition } from "./definitions/populationConstituency";
 import { populationUkDatasetDefinition } from "./definitions/populationUk";
 import { qualificationDatasetDefinition } from "./definitions/qualification";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance";
@@ -62,6 +63,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	nhsWaitingDatasetDefinition,
 	nimdmDatasetDefinition,
 	populationDatasetDefinition,
+	populationConstituencyDatasetDefinition,
 	populationUkDatasetDefinition,
 	qualificationDatasetDefinition,
 	schoolPerformanceDatasetDefinition,
