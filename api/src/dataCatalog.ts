@@ -103,12 +103,24 @@ export type MeasureAggregation =
 			/** The denominator a caller has to weight by, and where to find it. */
 			weight: { description: string; datasetField: string };
 			available: false;
+	  }
+	| {
+			/**
+			 * No operation recovers a combined value. A median of medians is not
+			 * the median of the underlying sales, and no weight fixes that; the
+			 * same is true of a rank or a decile. The statistic is named so a
+			 * caller can see why rather than just that.
+			 */
+			kind: "non-aggregatable";
+			statistic: "median" | "rank" | "decile";
+			note: string;
+			available: false;
 	  };
 
 export type Measure = {
 	id: string;
 	label: string;
-	valueKind: "count" | "quantity" | "ratio";
+	valueKind: "count" | "quantity" | "ratio" | "currency";
 	unit: string;
 	aggregation: MeasureAggregation;
 	sources: MeasureSource[];
@@ -460,6 +472,91 @@ const localAuthorityFieldPeriods = (
 };
 
 /**
+ * The house price partition, restored to the codes its publisher used.
+ *
+ * The website remaps Salford's twenty wards onto their 2021 codes so the map
+ * joins to current boundaries, but those wards were redrawn in 2021: a price
+ * measured on the old ward is not a price for the new one. The API reverses
+ * the remap, so every value sits under the code it was published against.
+ * Keep this in step with SALFORD_WARD_CODE_REMAP in
+ * lib/data/house-price/loader.ts.
+ */
+const SALFORD_2021_CODE_TO_SOURCE_CODE: Record<string, string> = {
+	E05013018: "E05000759",
+	E05013020: "E05000760",
+	E05013021: "E05000761",
+	E05013022: "E05000762",
+	E05013023: "E05000763",
+	E05013024: "E05000764",
+	E05013025: "E05000765",
+	E05013019: "E05000766",
+	E05013026: "E05000767",
+	E05013030: "E05000768",
+	E05013027: "E05000769",
+	E05013028: "E05000770",
+	E05013029: "E05000771",
+	E05013032: "E05000772",
+	E05013033: "E05000773",
+	E05013034: "E05000774",
+	E05013035: "E05000775",
+	E05013036: "E05000776",
+	E05013031: "E05000777",
+	E05013037: "E05000778",
+};
+
+/**
+ * The last period published for a full calendar year. The workbook is a
+ * quarterly rolling series, and each year's figure here is the year ending
+ * December; the final edition stops at the year ending March 2023, which is
+ * not comparable and so is not published as a period.
+ */
+const LAST_DECEMBER_PERIOD = 2022;
+
+const housePricePeriods = (
+	path: string,
+): MeasureObservationArtifact["periods"] => {
+	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const edition = object(source["2023"], `${path}.2023`);
+	if (edition.boundaryType !== "ward") {
+		throw new Error(`${path}: expected ward-level house prices`);
+	}
+	const data = object(edition.data, `${path}.2023.data`);
+	const byPeriod = new Map<string, PopulationObservation[]>();
+	for (const [compiledCode, record] of Object.entries(data)) {
+		const areaCode =
+			SALFORD_2021_CODE_TO_SOURCE_CODE[compiledCode] ?? compiledCode;
+		if (!/^[EW]\d{8}$/.test(areaCode)) {
+			throw new Error(`${path}: unsupported ward code ${areaCode}`);
+		}
+		const prices = object(
+			object(record, `${path}.${compiledCode}`).prices,
+			`${path}.${compiledCode}.prices`,
+		);
+		for (const [year, price] of Object.entries(prices)) {
+			if (!/^\d{4}$/.test(year) || Number(year) > LAST_DECEMBER_PERIOD)
+				continue;
+			const records = byPeriod.get(year) ?? [];
+			records.push({
+				areaCode,
+				value: number(price, `${path}.${compiledCode}.prices.${year}`),
+				status: "observed",
+			});
+			byPeriod.set(year, records);
+		}
+	}
+	const periods = [...byPeriod.entries()]
+		.map(([period, records]) => ({
+			period,
+			records: records.sort((left, right) =>
+				left.areaCode.localeCompare(right.areaCode),
+			),
+		}))
+		.sort((left, right) => left.period.localeCompare(right.period));
+	if (periods.length === 0) throw new Error(`${path} has no house prices`);
+	return periods;
+};
+
+/**
  * Compile source-lineage metadata and one intentionally narrow, source-exact
  * population measure. It does not select a geometry release: the published
  * input records only declare the Ward 2023 code vintage, not a boundary month.
@@ -472,6 +569,7 @@ export const compileDataCatalog = (
 	mobileCoveragePath: string,
 	censusPaths: Record<"travel-to-work" | "car-availability", string>,
 	landAreaPath: string,
+	housePricePath: string,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -480,6 +578,7 @@ export const compileDataCatalog = (
 	mobileCoverageObservations: MeasureObservationArtifact[];
 	censusObservations: MeasureObservationArtifact[];
 	populationDensityObservations: MeasureObservationArtifact;
+	housePriceObservations: MeasureObservationArtifact;
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -959,6 +1058,53 @@ export const compileDataCatalog = (
 		],
 	};
 
+	const housePrice = datasets.find((dataset) => dataset.id === "house-price");
+	if (!housePrice)
+		throw new Error(`${manifestPath} has no house-price dataset`);
+	const housePriceByPeriod = housePricePeriods(housePricePath);
+	const housePriceContent = JSON.stringify({
+		schemaVersion: 1,
+		measureId: "house-price-median",
+		sourceGeography: { type: "ward", boundaryYear: 2020 },
+		periods: housePriceByPeriod,
+	});
+	const housePriceMeasure: Measure = {
+		id: "house-price-median",
+		label: "Median house price paid",
+		valueKind: "currency",
+		unit: "GBP",
+		aggregation: {
+			kind: "non-aggregatable",
+			statistic: "median",
+			note: "A median of ward medians is not the median of the underlying sales, and no weight recovers it. Combining areas needs the sales themselves, which this source does not publish.",
+			available: false,
+		},
+		sources: [
+			{
+				datasetId: "house-price",
+				periods: housePriceByPeriod.map((period) => period.period),
+				sourceGeography: { type: "ward", boundaryYear: 2020 },
+				coverage: {
+					kind: "partial",
+					countries: countriesFor(housePriceByPeriod.at(-1)?.records ?? []),
+					recordCount: housePriceByPeriod.at(-1)?.records.length ?? 0,
+					note: "Published for England and Wales only. A ward with too few sales in a period has no value for it, so the record count varies by period; the count here is the latest period's.",
+				},
+			},
+		],
+		availability: {
+			sourceExact: true,
+			conversion: false,
+			aggregation: false,
+		},
+		links: { data: "/v1/data/house-price-median" },
+		notes: [
+			"Each period is the year ending December of that year. The source is a quarterly rolling series whose last edition ends at March 2023; that partial year is not comparable and is not published here.",
+			"Ward codes are those the publisher used, which are mostly December 2020 ward codes. Two Leeds wards carry later codes in the source itself, so the partition is not an exact code set for any one release.",
+			"Medians of an even number of sales fall on a half penny in the workbook; values are rounded to the whole pound the publisher displays.",
+		],
+	};
+
 	const measure: Measure = {
 		id: "population-estimate",
 		label: "Population estimate",
@@ -1008,6 +1154,7 @@ export const compileDataCatalog = (
 		measures: [
 			measure,
 			densityMeasure,
+			housePriceMeasure,
 			emissionsMeasure,
 			...mobileMeasures,
 			...censusMeasures,
@@ -1044,6 +1191,7 @@ export const compileDataCatalog = (
 			measures: [
 				measure,
 				densityMeasure,
+				housePriceMeasure,
 				emissionsMeasure,
 				...mobileMeasures,
 				...censusMeasures,
@@ -1075,6 +1223,13 @@ export const compileDataCatalog = (
 			({ artifact }) => artifact,
 		),
 		censusObservations: censusObservations.map(({ artifact }) => artifact),
+		housePriceObservations: {
+			schemaVersion: 1,
+			contentHash: sha256(housePriceContent),
+			measureId: "house-price-median",
+			sourceGeography: { type: "ward", boundaryYear: 2020 },
+			periods: housePriceByPeriod,
+		},
 		populationDensityObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(densityContent),

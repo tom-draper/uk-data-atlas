@@ -64,6 +64,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 	const ghgEmissions = join(directory, "ghg-emissions.json");
 	const mobileCoverage = join(directory, "mobile-coverage.json");
 	const landArea = join(directory, "land-area.json");
+	const housePrice = join(directory, "house-price.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -80,6 +81,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 				dataset("travel-to-work", 2, 1, 2025),
 				dataset("car-availability", 2, 1, 2025),
 				dataset("land-area", 2, 1, 2024),
+				dataset("house-price", 3, 1, 2021),
 			],
 		}),
 	);
@@ -184,6 +186,23 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 			},
 		}),
 	);
+	writeFileSync(
+		housePrice,
+		JSON.stringify({
+			"2023": {
+				year: 2023,
+				boundaryYear: 2021,
+				boundaryType: "ward",
+				data: {
+					E05008945: {
+						prices: { "2021": 90000, "2022": 95000, "2023": 99000 },
+					},
+					// Compiled under Salford's 2021 code; published under E05000759.
+					E05013018: { prices: { "2022": 179500 } },
+				},
+			},
+		}),
+	);
 	return {
 		manifest,
 		population,
@@ -192,6 +211,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 		mobileCoverage,
 		censusPaths,
 		landArea,
+		housePrice,
 	};
 };
 
@@ -208,6 +228,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			mobileCoverage,
 			censusPaths,
 			landArea,
+			housePrice,
 		} = writeSources(directory);
 		const result = compileDataCatalog(
 			manifest,
@@ -217,8 +238,9 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			mobileCoverage,
 			censusPaths,
 			landArea,
+			housePrice,
 		);
-		assert.equal(result.catalog.datasets.length, 7);
+		assert.equal(result.catalog.datasets.length, 8);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -278,6 +300,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			mobileCoverage,
 			censusPaths,
 			landArea,
+			housePrice,
 		} = writeSources(
 			directory,
 			3,
@@ -291,6 +314,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			mobileCoverage,
 			censusPaths,
 			landArea,
+			housePrice,
 		),
 			/expected 3 records/,
 		);
@@ -312,6 +336,7 @@ test("rejects local-authority population data whose codes change between periods
 			mobileCoverage,
 			censusPaths,
 			landArea,
+			housePrice,
 		} = writeSources(directory);
 		const source = JSON.parse(readFileSync(populationUk, "utf8"));
 		delete source["2024"].data.N09000001;
@@ -325,6 +350,7 @@ test("rejects local-authority population data whose codes change between periods
 			mobileCoverage,
 			censusPaths,
 			landArea,
+			housePrice,
 		),
 			/local-authority codes change between periods/,
 		);
@@ -366,6 +392,7 @@ test("refuses to derive density when the denominator misses an area", () => {
 					sources.mobileCoverage,
 					sources.censusPaths,
 					sources.landArea,
+					sources.housePrice,
 				),
 			/no land area for W06000001/,
 		);
@@ -408,6 +435,7 @@ test("refuses to derive density from an area with no land", () => {
 					sources.mobileCoverage,
 					sources.censusPaths,
 					sources.landArea,
+					sources.housePrice,
 				),
 			/E06000001 has no land area/,
 		);
@@ -430,6 +458,7 @@ test("derives density and marks the values as derived, not observed", () => {
 			sources.mobileCoverage,
 			sources.censusPaths,
 			sources.landArea,
+			sources.housePrice,
 		);
 
 		const density = result.populationDensityObservations;
@@ -449,6 +478,51 @@ test("derives density and marks the values as derived, not observed", () => {
 			"population-uk",
 			"land-area",
 		]);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes house prices under the publisher's own codes and years", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const sources = writeSources(directory);
+		const result = compileDataCatalog(
+			sources.manifest,
+			sources.population,
+			sources.populationUk,
+			sources.ghgEmissions,
+			sources.mobileCoverage,
+			sources.censusPaths,
+			sources.landArea,
+			sources.housePrice,
+		);
+		const periods = result.housePriceObservations.periods;
+
+		// The year ending March 2023 is not a comparable period.
+		assert.deepEqual(
+			periods.map((period) => period.period),
+			["2021", "2022"],
+		);
+		// Salford's value is restored to the code it was published against,
+		// because its wards were redrawn in 2021.
+		assert.deepEqual(
+			periods[1]?.records.map((record) => record.areaCode),
+			["E05000759", "E05008945"],
+		);
+
+		const measure = result.catalog.measures.find(
+			(candidate) => candidate.id === "house-price-median",
+		);
+		assert.equal(measure?.aggregation.kind, "non-aggregatable");
+		assert.equal(
+			measure?.aggregation.kind === "non-aggregatable"
+				? measure.aggregation.statistic
+				: undefined,
+			"median",
+		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

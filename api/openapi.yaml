@@ -303,6 +303,12 @@ paths:
         reached by all four mobile network operators. Both are declared
         intensive: a share does not add over areas, and combining authorities
         needs the premises weight the measure names.
+        `house-price-median` covers ward-level median price paid for England
+        and Wales, 1995-2022, each period the year ending December, under the
+        ward codes the publisher used. It is declared `non-aggregatable` with
+        `statistic: median`: a median of medians is not the median of the
+        underlying sales, so aggregation and conversion both refuse it.
+
         `population-density` is the one derived measure: mid-year population
         divided by ONS Standard Area Measurement land area, which excludes
         inland water. Its values carry `status: "derived"` rather than
