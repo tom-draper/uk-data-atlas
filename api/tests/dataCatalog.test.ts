@@ -206,7 +206,10 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 						prices: { "2021": 90000, "2022": 95000, "2023": 99000 },
 					},
 					// Compiled under Salford's 2021 code; published under E05000759.
-					E05013018: { prices: { "2022": 179500 } },
+					E05013018: {
+						sourceWardCode: "E05000759",
+						prices: { "2022": 179500 },
+					},
 				},
 			},
 		}),
