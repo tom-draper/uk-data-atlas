@@ -125,7 +125,7 @@ export type MeasureAggregation =
 export type Measure = {
 	id: string;
 	label: string;
-	valueKind: "count" | "quantity" | "ratio" | "currency";
+	valueKind: "count" | "quantity" | "ratio" | "currency" | "ordinal";
 	unit: string;
 	aggregation: MeasureAggregation;
 	sources: MeasureSource[];
@@ -410,6 +410,7 @@ const localAuthorityFieldPeriods = (
 	path: string,
 	field: string,
 	boundaryYear: number,
+	geography: SourceGeography["type"] = "localAuthority",
 ): MeasureObservationArtifact["periods"] => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
 	const periods = Object.entries(source)
@@ -420,10 +421,10 @@ const localAuthorityFieldPeriods = (
 			if (
 				entry.year !== Number(period) ||
 				entry.boundaryYear !== boundaryYear ||
-				entry.boundaryType !== "localAuthority"
+				entry.boundaryType !== geography
 			) {
 				throw new Error(
-					`${path}.${period}: expected local-authority data on the ${boundaryYear} code vintage`,
+					`${path}.${period}: expected ${geography} data on the ${boundaryYear} code vintage`,
 				);
 			}
 			const data = object(entry.data, `${path}.${period}.data`);
@@ -575,6 +576,7 @@ export const compileDataCatalog = (
 	censusPaths: Record<"travel-to-work" | "car-availability", string>,
 	landAreaPath: string,
 	housePricePath: string,
+	imdPath: string,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -584,6 +586,7 @@ export const compileDataCatalog = (
 	censusObservations: MeasureObservationArtifact[];
 	populationDensityObservations: MeasureObservationArtifact;
 	housePriceObservations: MeasureObservationArtifact;
+	imdObservations: MeasureObservationArtifact[];
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -1110,6 +1113,104 @@ export const compileDataCatalog = (
 		],
 	};
 
+	/**
+	 * The English Index of Multiple Deprivation, as its published rank and
+	 * decile. Both are positions within England alone, so they are not
+	 * comparable with the Welsh, Scottish or Northern Irish indices, which use
+	 * their own methods, domains and dates.
+	 *
+	 * The composite score is not published as a measure: it is a model output
+	 * whose only published combinations over areas use method-specific
+	 * population weighting, and serving it bare would invite averaging.
+	 */
+	const imd = datasets.find((dataset) => dataset.id === "imd");
+	if (!imd) throw new Error(`${manifestPath} has no imd dataset`);
+	if (
+		imd.summary.boundaryYears.length !== 1 ||
+		imd.summary.boundaryYears[0] !== 2011
+	) {
+		throw new Error(`${manifestPath}: imd must declare boundary year 2011`);
+	}
+	const imdComparability =
+		"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.";
+	const imdMetrics = [
+		{
+			id: "imd-rank",
+			label: "Index of Multiple Deprivation rank",
+			field: "imdRank",
+			unit: "rank of 32,844 LSOAs, where 1 is the most deprived",
+			statistic: "rank" as const,
+			note: "A rank records an order, not a distance: the gap between ranks 1 and 2 need not equal the gap between 100 and 101. Averaging ranks over areas produces a number with no meaning.",
+			extra: "The published file itself contains 26 tied ranks; they are served as published rather than re-ranked.",
+		},
+		{
+			id: "imd-decile",
+			label: "Index of Multiple Deprivation decile",
+			field: "imdDecile",
+			unit: "decile, where 1 is the most deprived tenth of LSOAs",
+			statistic: "decile" as const,
+			note: "A decile is a band of ranks. Averaging deciles over areas produces a number with no meaning, and the share of a place's LSOAs in each decile is the defensible summary instead.",
+			extra: "Deciles divide England's 32,844 LSOAs into ten near-equal groups by rank.",
+		},
+	] as const;
+	const imdObservations = imdMetrics.map((metric) => {
+		const periods = localAuthorityFieldPeriods(
+			imdPath,
+			metric.field,
+			2011,
+			"lsoa",
+		);
+		const content = JSON.stringify({
+			schemaVersion: 1,
+			measureId: metric.id,
+			sourceGeography: { type: "lsoa", boundaryYear: 2011 },
+			periods,
+		});
+		const measure: Measure = {
+			id: metric.id,
+			label: metric.label,
+			valueKind: "ordinal",
+			unit: metric.unit,
+			aggregation: {
+				kind: "non-aggregatable",
+				statistic: metric.statistic,
+				note: metric.note,
+				available: false,
+			},
+			sources: [
+				{
+					datasetId: "imd",
+					periods: periods.map((period) => period.period),
+					sourceGeography: { type: "lsoa", boundaryYear: 2011 },
+					coverage: {
+						kind: "partial",
+						countries: countriesFor(periods[0]?.records ?? []),
+						recordCount: periods[0]?.records.length ?? 0,
+						note: "England only. The other three nations publish their own indices, which are not comparable with this one.",
+					},
+				},
+			],
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: { data: `/v1/data/${metric.id}` },
+			notes: [imdComparability, metric.extra],
+		};
+		return {
+			measure,
+			artifact: {
+				schemaVersion: 1 as const,
+				contentHash: sha256(content),
+				measureId: metric.id,
+				sourceGeography: { type: "lsoa" as const, boundaryYear: 2011 },
+				periods,
+			},
+		};
+	});
+	const imdMeasures = imdObservations.map(({ measure }) => measure);
+
 	const measure: Measure = {
 		id: "population-estimate",
 		label: "Population estimate",
@@ -1160,6 +1261,7 @@ export const compileDataCatalog = (
 			measure,
 			densityMeasure,
 			housePriceMeasure,
+			...imdMeasures,
 			emissionsMeasure,
 			...mobileMeasures,
 			...censusMeasures,
@@ -1197,6 +1299,7 @@ export const compileDataCatalog = (
 				measure,
 				densityMeasure,
 				housePriceMeasure,
+				...imdMeasures,
 				emissionsMeasure,
 				...mobileMeasures,
 				...censusMeasures,
@@ -1228,6 +1331,7 @@ export const compileDataCatalog = (
 			({ artifact }) => artifact,
 		),
 		censusObservations: censusObservations.map(({ artifact }) => artifact),
+		imdObservations: imdObservations.map(({ artifact }) => artifact),
 		housePriceObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(housePriceContent),

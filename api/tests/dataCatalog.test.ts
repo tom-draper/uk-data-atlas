@@ -65,6 +65,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 	const mobileCoverage = join(directory, "mobile-coverage.json");
 	const landArea = join(directory, "land-area.json");
 	const housePrice = join(directory, "house-price.json");
+	const imd = join(directory, "imd.json");
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -82,6 +83,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 				dataset("car-availability", 2, 1, 2025),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
+				dataset("imd", 3, 1, 2011),
 			],
 		}),
 	);
@@ -203,6 +205,22 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 			},
 		}),
 	);
+	writeFileSync(
+		imd,
+		JSON.stringify({
+			"2019": {
+				year: 2019,
+				boundaryYear: 2011,
+				boundaryType: "lsoa",
+				data: {
+					E01000001: { imdRank: 1, imdDecile: 1 },
+					// A tie, exactly as the published file carries 26 of them.
+					E01000002: { imdRank: 2, imdDecile: 1 },
+					E01000003: { imdRank: 2, imdDecile: 1 },
+				},
+			},
+		}),
+	);
 	return {
 		manifest,
 		population,
@@ -212,6 +230,7 @@ const writeSources = (directory: string, wardRecordCount = 2) => {
 		censusPaths,
 		landArea,
 		housePrice,
+		imd,
 	};
 };
 
@@ -229,6 +248,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			censusPaths,
 			landArea,
 			housePrice,
+			imd,
 		} = writeSources(directory);
 		const result = compileDataCatalog(
 			manifest,
@@ -239,8 +259,9 @@ test("publishes source-exact ward and UK local-authority population partitions",
 			censusPaths,
 			landArea,
 			housePrice,
+			imd,
 		);
-		assert.equal(result.catalog.datasets.length, 8);
+		assert.equal(result.catalog.datasets.length, 9);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -301,6 +322,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			censusPaths,
 			landArea,
 			housePrice,
+			imd,
 		} = writeSources(
 			directory,
 			3,
@@ -315,6 +337,7 @@ test("rejects a population source whose record count disagrees with its manifest
 			censusPaths,
 			landArea,
 			housePrice,
+			imd,
 		),
 			/expected 3 records/,
 		);
@@ -337,6 +360,7 @@ test("rejects local-authority population data whose codes change between periods
 			censusPaths,
 			landArea,
 			housePrice,
+			imd,
 		} = writeSources(directory);
 		const source = JSON.parse(readFileSync(populationUk, "utf8"));
 		delete source["2024"].data.N09000001;
@@ -351,6 +375,7 @@ test("rejects local-authority population data whose codes change between periods
 			censusPaths,
 			landArea,
 			housePrice,
+			imd,
 		),
 			/local-authority codes change between periods/,
 		);
@@ -393,6 +418,7 @@ test("refuses to derive density when the denominator misses an area", () => {
 					sources.censusPaths,
 					sources.landArea,
 					sources.housePrice,
+					sources.imd,
 				),
 			/no land area for W06000001/,
 		);
@@ -436,6 +462,7 @@ test("refuses to derive density from an area with no land", () => {
 					sources.censusPaths,
 					sources.landArea,
 					sources.housePrice,
+					sources.imd,
 				),
 			/E06000001 has no land area/,
 		);
@@ -459,6 +486,7 @@ test("derives density and marks the values as derived, not observed", () => {
 			sources.censusPaths,
 			sources.landArea,
 			sources.housePrice,
+			sources.imd,
 		);
 
 		const density = result.populationDensityObservations;
@@ -498,6 +526,7 @@ test("publishes house prices under the publisher's own codes and years", () => {
 			sources.censusPaths,
 			sources.landArea,
 			sources.housePrice,
+			sources.imd,
 		);
 		const periods = result.housePriceObservations.periods;
 
@@ -523,6 +552,48 @@ test("publishes house prices under the publisher's own codes and years", () => {
 				: undefined,
 			"median",
 		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes deprivation rank and decile as they were published", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const sources = writeSources(directory);
+		const result = compileDataCatalog(
+			sources.manifest,
+			sources.population,
+			sources.populationUk,
+			sources.ghgEmissions,
+			sources.mobileCoverage,
+			sources.censusPaths,
+			sources.landArea,
+			sources.housePrice,
+			sources.imd,
+		);
+		const [rank, decile] = result.imdObservations;
+
+		assert.equal(rank?.measureId, "imd-rank");
+		assert.deepEqual(rank?.sourceGeography, { type: "lsoa", boundaryYear: 2011 });
+		// Ties are served as published, not re-ranked into 1, 2, 3.
+		assert.deepEqual(
+			rank?.periods[0]?.records.map((record) => record.value),
+			[1, 2, 2],
+		);
+		assert.equal(decile?.measureId, "imd-decile");
+
+		for (const id of ["imd-rank", "imd-decile"]) {
+			const measure = result.catalog.measures.find(
+				(candidate) => candidate.id === id,
+			);
+			assert.equal(measure?.valueKind, "ordinal");
+			assert.equal(measure?.aggregation.kind, "non-aggregatable");
+			// The comparability limit is stated, not left to the caller.
+			assert.match(measure?.notes?.[0] ?? "", /within England alone/);
+		}
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

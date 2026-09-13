@@ -246,9 +246,16 @@ only **available** when its endpoint, contract and provenance are published.
       published against. Declared `non-aggregatable`: a median of medians is not
       the median of the underlying sales, and aggregation and conversion both
       refuse with that reason.
-- [ ] Return deprivation, election and other curated measures with their own
-      aggregation rules. Deprivation is published by LSOA, which the data
-      routes do not yet accept as a source geography.
+- [x] Return the English Index of Multiple Deprivation 2019 through
+      `GET /v1/data/imd-rank` and `GET /v1/data/imd-decile`: 32,844 LSOAs on
+      2011 codes. Both are declared `non-aggregatable` (a rank records an order,
+      and a decile is a band of ranks, so neither can be averaged), and each
+      states that it is a position within England alone and cannot be compared
+      with the other three nations' indices. The 26 tied ranks in the published
+      file are served as published. The composite score is not published as a
+      measure.
+- [ ] Return the Welsh, Scottish and Northern Irish deprivation indices, and
+      election and other curated measures, with their own aggregation rules.
 - [x] Export any published measure's source-exact pages as JSON, CSV or NDJSON,
       retaining row-level release, source, unit and geography provenance
       outside the API. A
@@ -1294,6 +1301,7 @@ pnpm start
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
+- `GET /v1/data/imd-decile?period=2019&geography=lsoa&boundaryYear=2011&release=2011-12-ew-bgc-v3&include=area`
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`

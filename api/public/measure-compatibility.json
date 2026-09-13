@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:b2c5c572d05693cdd9dbd796dadaf2a6f2ecef3d148a8f6567441b60e7d363d5",
+	"contentHash": "sha256:3b69a64337aacb4f75734b0487b4f999f76f60c21444eaabebd07bd97d227eb6",
 	"inputs": {
-		"dataCatalog": "sha256:b4eecbc816ab84a9e4615e623686b72f00f0428747bc637d5c7ec2bc6fc7b8a3",
+		"dataCatalog": "sha256:eed36dcfc35ba5098d4f9cdd72c81de5b28f8cd4d7615d3edda0dbd933d2aaaa",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -14,6 +14,8 @@
 			"car-availability-two": "sha256:dd4632c74375f010e3b786794fe0f896499b0d13161146fb72a5de9a6700410a",
 			"ghg-emissions": "sha256:5adf191291c17242e186a6015de015a512d311d621119fc6bb189e3bc477efcc",
 			"house-price-median": "sha256:23c9606dc8ea74c20429bf1791360a0f13b673281fc755effb48ba739753ab17",
+			"imd-decile": "sha256:4b374a910c0ab30ae55f253c84bc0bec6f8a954a704e2a78861db909c8fe63ee",
+			"imd-rank": "sha256:8320612d0617286f36f619c41172be9fbe57f2f1d02cd3e8f75c6422925059dd",
 			"mobile-4g-coverage": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
 			"mobile-5g-coverage": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
 			"population-density": "sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe440e451",
@@ -33,6 +35,8 @@
 			"localAuthority/2024-12-uk-bgc": "sha256:31265967f1dfba88b929c7a0656f06d8a0d544c118fdd9d201e1b4b8aecec6b1",
 			"localAuthority/2025-05-uk-bgc-v2": "sha256:5c832fa744ee66475a4f0d0cda3faea14eadd039abb6e9223e248e8445ac608a",
 			"localAuthority/2025-12-uk-bgc": "sha256:53eeb1c7f828f03e50c8f66081d88019ec9f9a31b2a56b41d2b3eff891e40b24",
+			"lsoa/2011-12-ew-bgc-v3": "sha256:f4e0776a1192b05ac9f672b11aa54de56f4fa810ac70fca271da7fdf359704cf",
+			"lsoa/2011-12-w-bgc": "sha256:f5754d1eef26a50551d62f6b0240d60e4f99989e2d1c9fda24b3886b0fa46e5a",
 			"ward/2020-12-uk-bgc": "sha256:4bfb5190bc06e7b52a261dbf246de956121ab74acad909a180946656468b0447",
 			"ward/2023-05-uk-bgc": "sha256:4910cadfe2df4877bbc96fe4f98a52c8c629401adf81ef47714d15524ffc32e4",
 			"ward/2023-12-uk-bgc": "sha256:21acf7576c2fac314f4daf78320f66133f2cf7b5dcb6534cb94e2b6edbc0f7db"
@@ -313,6 +317,234 @@
 								"E05009303",
 								"E05009304",
 								"E05009306"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "imd-rank",
+			"sources": [
+				{
+					"datasetId": "imd",
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2011
+					},
+					"periods": [
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2011-12-ew-bgc-v3",
+							"title": "Lower layer super output areas, December 2011 (England and Wales, generalised, clipped, v3)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 32844,
+							"candidateCodeCount": 34753,
+							"matchingCodeCount": 32844,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 1909,
+							"candidateOnlyCodeSample": [
+								"W01000001",
+								"W01000002",
+								"W01000003",
+								"W01000004",
+								"W01000005",
+								"W01000006",
+								"W01000007",
+								"W01000008",
+								"W01000009",
+								"W01000010",
+								"W01000011",
+								"W01000012",
+								"W01000013",
+								"W01000014",
+								"W01000015",
+								"W01000016",
+								"W01000017",
+								"W01000018",
+								"W01000019",
+								"W01000020"
+							]
+						},
+						{
+							"boundaryRelease": "2011-12-w-bgc",
+							"title": "Lower layer super output areas, December 2011 (Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-WLS"
+							],
+							"status": "no-code-overlap",
+							"sourceCodeCount": 32844,
+							"candidateCodeCount": 1909,
+							"matchingCodeCount": 0,
+							"matchedSourceShare": 0,
+							"unmatchedSourceCodeCount": 32844,
+							"unmatchedSourceCodeSample": [
+								"E01000001",
+								"E01000002",
+								"E01000003",
+								"E01000005",
+								"E01000006",
+								"E01000007",
+								"E01000008",
+								"E01000009",
+								"E01000010",
+								"E01000011",
+								"E01000012",
+								"E01000013",
+								"E01000014",
+								"E01000015",
+								"E01000016",
+								"E01000017",
+								"E01000018",
+								"E01000019",
+								"E01000020",
+								"E01000021"
+							],
+							"candidateOnlyCodeCount": 1909,
+							"candidateOnlyCodeSample": [
+								"W01000001",
+								"W01000002",
+								"W01000003",
+								"W01000004",
+								"W01000005",
+								"W01000006",
+								"W01000007",
+								"W01000008",
+								"W01000009",
+								"W01000010",
+								"W01000011",
+								"W01000012",
+								"W01000013",
+								"W01000014",
+								"W01000015",
+								"W01000016",
+								"W01000017",
+								"W01000018",
+								"W01000019",
+								"W01000020"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "imd-decile",
+			"sources": [
+				{
+					"datasetId": "imd",
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2011
+					},
+					"periods": [
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2011-12-ew-bgc-v3",
+							"title": "Lower layer super output areas, December 2011 (England and Wales, generalised, clipped, v3)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 32844,
+							"candidateCodeCount": 34753,
+							"matchingCodeCount": 32844,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 1909,
+							"candidateOnlyCodeSample": [
+								"W01000001",
+								"W01000002",
+								"W01000003",
+								"W01000004",
+								"W01000005",
+								"W01000006",
+								"W01000007",
+								"W01000008",
+								"W01000009",
+								"W01000010",
+								"W01000011",
+								"W01000012",
+								"W01000013",
+								"W01000014",
+								"W01000015",
+								"W01000016",
+								"W01000017",
+								"W01000018",
+								"W01000019",
+								"W01000020"
+							]
+						},
+						{
+							"boundaryRelease": "2011-12-w-bgc",
+							"title": "Lower layer super output areas, December 2011 (Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-WLS"
+							],
+							"status": "no-code-overlap",
+							"sourceCodeCount": 32844,
+							"candidateCodeCount": 1909,
+							"matchingCodeCount": 0,
+							"matchedSourceShare": 0,
+							"unmatchedSourceCodeCount": 32844,
+							"unmatchedSourceCodeSample": [
+								"E01000001",
+								"E01000002",
+								"E01000003",
+								"E01000005",
+								"E01000006",
+								"E01000007",
+								"E01000008",
+								"E01000009",
+								"E01000010",
+								"E01000011",
+								"E01000012",
+								"E01000013",
+								"E01000014",
+								"E01000015",
+								"E01000016",
+								"E01000017",
+								"E01000018",
+								"E01000019",
+								"E01000020",
+								"E01000021"
+							],
+							"candidateOnlyCodeCount": 1909,
+							"candidateOnlyCodeSample": [
+								"W01000001",
+								"W01000002",
+								"W01000003",
+								"W01000004",
+								"W01000005",
+								"W01000006",
+								"W01000007",
+								"W01000008",
+								"W01000009",
+								"W01000010",
+								"W01000011",
+								"W01000012",
+								"W01000013",
+								"W01000014",
+								"W01000015",
+								"W01000016",
+								"W01000017",
+								"W01000018",
+								"W01000019",
+								"W01000020"
 							]
 						}
 					],
