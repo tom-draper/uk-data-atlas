@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f4dfa91d0d92e5bb067021e495f3e9d278a2f531bfd745e3e530cd48aa08009e",
+	"contentHash": "sha256:65d7176f058abfaea7857b7746bb939c87891bdc9927217d405b67d103f83cd0",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1047,8 +1047,14 @@
 				"name": "Open Government Licence v3.0",
 				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
 			},
-			"description": "Deprivation scores, ranks and quintiles by data zone for Scotland.",
+			"description": "Published deprivation ranks, deciles and quintiles by data zone for Scotland.",
 			"inputs": [
+				{
+					"kind": "xlsxSheet",
+					"path": "deprivation/simd/SIMD+2020v2+-+datazone+lookup+-+updated+2025.xlsx#SIMD 2020v2 DZ lookup data",
+					"bytes": 1688516,
+					"sha256": "9817462b9190dad43bd5d418e959e8743847a3c6c613b5bd7fbff3d16bef3701"
+				},
 				{
 					"kind": "text",
 					"path": "deprivation/simd/SIMD+2020v2+-+indicators.csv",
@@ -1064,8 +1070,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 1235927,
-				"sha256": "b31197ad3651fe203dfc7fa3ec1dab8626b494b7a4af16e4b71b429360382bb9"
+				"bytes": 1235905,
+				"sha256": "77264cc4cc542930b6ee383ad9efc5b61b6ce23c55b5437565688bbd277f2f98"
 			}
 		},
 		{
@@ -1143,6 +1149,12 @@
 			"description": "Deprivation scores, ranks and deciles by lower super output area for Wales.",
 			"inputs": [
 				{
+					"kind": "odsContent",
+					"path": "deprivation/wimd/welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods",
+					"bytes": 4919850,
+					"sha256": "920ead6eba328d4310703aa83613f4eab536f95313a7b2e75a587f0e1a59f889"
+				},
+				{
 					"kind": "text",
 					"path": "deprivation/wimd/wimd2019.csv",
 					"bytes": 149322,
@@ -1157,8 +1169,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 301162,
-				"sha256": "c8b1bcecf5c863a49ed29ec5760b28eed80792f0fcad2d7d9d47e587ab2fea00"
+				"bytes": 301149,
+				"sha256": "459cfdf4e6d1ce145ebdb163f912d61e0532961eea3624d3f8ed14d7c0397ff0"
 			}
 		}
 	],
