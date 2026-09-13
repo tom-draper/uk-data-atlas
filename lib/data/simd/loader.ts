@@ -1,6 +1,5 @@
 import { SIMDDataset, SIMDDataZoneData } from "@/lib/types/simd";
 import { parseCsv } from "@/lib/helpers/parseCsv";
-import { parseNum, parsePct } from "@/lib/helpers/parseNumber";
 
 const COUNCIL_AREA_CODES: Record<string, string> = {
 	"Aberdeen City": "S12000033",
@@ -37,104 +36,62 @@ const COUNCIL_AREA_CODES: Record<string, string> = {
 	"West Lothian": "S12000040",
 };
 
+/**
+ * The published rank, decile and quintile, keyed by data zone code.
+ *
+ * These come from the Scottish Government's data zone lookup. The indicators
+ * file carries no rank, and the index is not a weighted sum of indicators, so
+ * nothing here is computed.
+ */
+export async function publishedSIMDRanks(
+	lookupCsv: string,
+): Promise<Map<string, { rank: number; decile: number; quintile: number }>> {
+	const { data } = await parseCsv(lookupCsv, { header: true });
+	const ranks = new Map<
+		string,
+		{ rank: number; decile: number; quintile: number }
+	>();
+	for (const row of data) {
+		const dzCode = row["DZ"]?.trim();
+		if (!dzCode?.startsWith("S01")) continue;
+		const rank = Number(row["SIMD2020v2_Rank"]);
+		const decile = Number(row["SIMD2020v2_Decile"]);
+		const quintile = Number(row["SIMD2020v2_Quintile"]);
+		if (![rank, decile, quintile].every(Number.isInteger))
+			throw new Error(`SIMD lookup: unreadable rank for ${dzCode}`);
+		ranks.set(dzCode, { rank, decile, quintile });
+	}
+	return ranks;
+}
+
 export async function loadSIMD(
 	read: (path: string) => Promise<string>,
+	lookupCsv: string,
 ): Promise<Record<string, SIMDDataset>> {
 	const { data } = await parseCsv(
 		await read("deprivation/simd/SIMD+2020v2+-+indicators.csv"),
 		{ header: true },
 	);
+	const published = await publishedSIMDRanks(lookupCsv);
 
-	const rows = data;
-	const hasRanks =
-		rows[0] &&
-		(rows[0]["SIMD2020v2_Rank"] !== undefined ||
-			rows[0]["SIMD2020_Rank"] !== undefined);
-
-	type Intermediate = {
-		dzCode: string;
-		dzName: string;
-		councilAreaCode: string;
-		councilAreaName: string;
-		score: number;
-		simdRank: number;
-		simdQuintile: number;
-		simdDecile: number;
-	};
-
-	const intermediates: Intermediate[] = [];
-
-	for (const row of rows) {
+	const records: Record<string, SIMDDataZoneData> = {};
+	for (const row of data) {
 		const dzCode = row["Data_Zone"]?.trim();
 		if (!dzCode || !dzCode.startsWith("S")) continue;
+		const ranks = published.get(dzCode);
+		if (!ranks)
+			throw new Error(`SIMD lookup: no published rank for ${dzCode}`);
 
 		const councilAreaName =
 			row["Council_area"]?.trim() || row["Council_Area"]?.trim() || "";
-		const councilAreaCode = COUNCIL_AREA_CODES[councilAreaName] || "";
-
-		let simdRank = 0,
-			simdQuintile = 0,
-			simdDecile = 0,
-			score = 0;
-
-		if (hasRanks) {
-			simdRank =
-				parseInt(row["SIMD2020v2_Rank"] ?? row["SIMD2020_Rank"]) || 0;
-			simdQuintile =
-				parseInt(
-					row["SIMD2020v2_Quintile"] ?? row["SIMD2020_Quintile"],
-				) || 0;
-			simdDecile =
-				parseInt(row["SIMD2020v2_Decile"] ?? row["SIMD2020_Decile"]) ||
-				0;
-		} else {
-			const income = parsePct(row["Income_rate"]);
-			const employment = parsePct(row["Employment_rate"]);
-			const health = parseNum(row["CIF"]);
-			const crime = parseNum(row["crime_rate"]);
-			const housing =
-				parsePct(row["overcrowded_rate"]) +
-				parsePct(row["nocentralheat_rate"]);
-			score =
-				income * 0.28 +
-				employment * 0.28 +
-				health * 0.14 +
-				crime * 0.005 +
-				housing * 0.02;
-		}
-
-		intermediates.push({
+		records[dzCode] = {
 			dzCode,
 			dzName: row["Intermediate_Zone"]?.trim() || "",
-			councilAreaCode,
+			councilAreaCode: COUNCIL_AREA_CODES[councilAreaName] || "",
 			councilAreaName,
-			score,
-			simdRank,
-			simdQuintile,
-			simdDecile,
-		});
-	}
-
-	if (!hasRanks && intermediates.length > 0) {
-		intermediates.sort((a, b) => b.score - a.score);
-		const total = intermediates.length;
-		intermediates.forEach((dz, i) => {
-			dz.simdRank = i + 1;
-			dz.simdQuintile = Math.min(5, Math.ceil(((i + 1) / total) * 5));
-			dz.simdDecile = Math.min(10, Math.ceil(((i + 1) / total) * 10));
-		});
-	}
-
-	const records: Record<string, SIMDDataZoneData> = {};
-	for (const dz of intermediates) {
-		records[dz.dzCode] = {
-			dzCode: dz.dzCode,
-			dzName: dz.dzName,
-			councilAreaCode: dz.councilAreaCode,
-			councilAreaName: dz.councilAreaName,
-			simdRank: dz.simdRank,
-			simdQuintile: dz.simdQuintile,
-			simdDecile: dz.simdDecile,
+			simdRank: ranks.rank,
+			simdQuintile: ranks.quintile,
+			simdDecile: ranks.decile,
 		};
 	}
 
