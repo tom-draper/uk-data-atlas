@@ -289,9 +289,11 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Return source-exact general- and local-election vote counts, party vote
       counts and turnout through `GET /v1/data/{measure-id}`. Election periods
       remain on the source boundary vintage; vote counts may be summed within
-      one election, while turnout is a non-aggregatable percentage. The local
-      archive's 2016–2019 files do not publish turnout, so those years are
-      absent from that measure rather than represented as zero.
+      one election, while turnout is a percentage that requires electorate
+      weighting to combine and is not yet aggregated by the API. Winning party
+      is categorical, not numeric, and is therefore not exposed as a numeric
+      measure. The local archive's 2016–2019 files do not publish turnout, so
+      those years are absent from that measure rather than represented as zero.
 - [x] Export any published measure's source-exact pages as JSON, CSV or NDJSON,
       retaining row-level release, source, unit and geography provenance
       outside the API. A
