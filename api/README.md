@@ -235,8 +235,16 @@ only **available** when its endpoint, contract and provenance are published.
       membership evidence; non-additive measures, incomplete locations and all
       conversions are rejected.
 - [ ] Return uncertainty intervals where the source publication supports them.
-- [ ] Return life expectancy by total, male and female where the source
-      publishes those series.
+      Life expectancy is the first published measure whose source carries 95%
+      confidence intervals, along with a series back to 2001 to 2003.
+- [x] Return life expectancy at birth through `GET /v1/data/life-expectancy-male`
+      and `GET /v1/data/life-expectancy-female`: 340 local areas in England,
+      Wales and Northern Ireland for 2020 to 2022, on the publisher's December
+      2021 codes. ONS publishes male and female series but no persons total,
+      so none is offered. The four authorities created in April 2023 are not
+      published; the website averages their predecessors, and those values are
+      marked on the compiled record and left out. Declared `non-aggregatable`:
+      a combined population's life expectancy is not an average of its areas'.
 - [x] Return median house price paid through `GET /v1/data/house-price-median`:
       ward-level, England and Wales, 1995-2022, each period the year ending
       December. The final edition's year ending March 2023 is not comparable
@@ -1315,6 +1323,7 @@ pnpm start
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
 - `GET /v1/data/imd-decile?period=2019&geography=lsoa&boundaryYear=2011&release=2011-12-ew-bgc-v3&include=area`
+- `GET /v1/data/life-expectancy-female/rankings?period=2020-2022&geography=localAuthority&boundaryYear=2021`
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`

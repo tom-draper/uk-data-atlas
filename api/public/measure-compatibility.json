@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:edbe89489b127a4d17e3629b5fd2cca1d9d4d3c25a20e390ddeee7e6185b4fac",
+	"contentHash": "sha256:59fccaf4c1c41329141bca9cd4e930f4c3238bd7ae3da0c16693ee46001556a3",
 	"inputs": {
-		"dataCatalog": "sha256:a1e76433a98620142f882bc1514a984523858bd9af6b798722e78c2bdbcad9b0",
+		"dataCatalog": "sha256:6fb587bde448a79cef8dfb7764e71e68723fe2ef439dee65d9c9e173e83d8761",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -16,6 +16,8 @@
 			"house-price-median": "sha256:23c9606dc8ea74c20429bf1791360a0f13b673281fc755effb48ba739753ab17",
 			"imd-decile": "sha256:4b374a910c0ab30ae55f253c84bc0bec6f8a954a704e2a78861db909c8fe63ee",
 			"imd-rank": "sha256:8320612d0617286f36f619c41172be9fbe57f2f1d02cd3e8f75c6422925059dd",
+			"life-expectancy-female": "sha256:b97b29c7c26f0cf5278b86df408d02ba4de9a7f22d66337b5b77f3c297fa9c37",
+			"life-expectancy-male": "sha256:729cad73bc487eea10591f09ce738ae81503dce63842e04c1ed6bfe32f43840b",
 			"mobile-4g-coverage": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
 			"mobile-5g-coverage": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
 			"nimdm-rank": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
@@ -37,6 +39,7 @@
 		"areaArtifacts": {
 			"dataZone/2011-12-sc-bfc": "sha256:62075d67d2c29754f57495650508bd7d0b7d820fd9f95c4d7d8629ade649dbc9",
 			"dataZone/2011-12-sc-nc": "sha256:115e5e21b45f210041b5de1af56d90ad020071816e76165c31ea2cdc8bfc920c",
+			"localAuthority/2021-12-uk-bgc": "sha256:bad319cb06dab4ba8ce6f1c9490a96c423f9745be9e0d80e9acfcf11b67842e6",
 			"localAuthority/2023-05-uk-bgc-v2": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19",
 			"localAuthority/2024-05-uk-bgc": "sha256:7ccc829d47ce7e7eed0d847bc285cad2e96abe768a3008506b3aefaa15b3f935",
 			"localAuthority/2024-12-uk-bgc": "sha256:31265967f1dfba88b929c7a0656f06d8a0d544c118fdd9d201e1b4b8aecec6b1",
@@ -832,6 +835,122 @@
 							"unmatchedSourceCodeSample": [],
 							"candidateOnlyCodeCount": 0,
 							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "life-expectancy-male",
+			"sources": [
+				{
+					"datasetId": "life-expectancy",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2021
+					},
+					"periods": [
+						"2020-2022"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2021-12-uk-bgc",
+							"title": "Local authority districts, December 2021 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 340,
+							"candidateCodeCount": 374,
+							"matchingCodeCount": 340,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 34,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"E09000001",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018",
+								"S12000019",
+								"S12000020",
+								"S12000021",
+								"S12000023",
+								"S12000026",
+								"S12000027",
+								"S12000028",
+								"S12000029",
+								"S12000030"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "life-expectancy-female",
+			"sources": [
+				{
+					"datasetId": "life-expectancy",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2021
+					},
+					"periods": [
+						"2020-2022"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2021-12-uk-bgc",
+							"title": "Local authority districts, December 2021 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 340,
+							"candidateCodeCount": 374,
+							"matchingCodeCount": 340,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 34,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"E09000001",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018",
+								"S12000019",
+								"S12000020",
+								"S12000021",
+								"S12000023",
+								"S12000026",
+								"S12000027",
+								"S12000028",
+								"S12000029",
+								"S12000030"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."

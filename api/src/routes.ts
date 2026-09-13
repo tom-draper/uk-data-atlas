@@ -198,6 +198,15 @@ const findCountryIdentity = (
 	return undefined;
 };
 
+/** How a non-aggregatable statistic reads in a sentence. */
+const statisticPhrase = (statistic: string) =>
+	({
+		median: "a median",
+		rank: "a rank",
+		decile: "a decile",
+		"life-expectancy": "a life expectancy",
+	})[statistic] ?? `a ${statistic}`;
+
 /** The same query with the cursor advanced, as a relative `Link` target. */
 const nextPageHref = (parsedUrl: URL, nextCursor: string) => {
 	const params = new URLSearchParams(parsedUrl.searchParams);
@@ -491,7 +500,7 @@ export const route = (
 				422,
 				"Operation Not Supported",
 				measure.aggregation.kind === "non-aggregatable"
-					? `This measure is a ${measure.aggregation.statistic} and cannot be combined over areas. ${measure.aggregation.note}`
+					? `This measure is ${statisticPhrase(measure.aggregation.statistic)} and cannot be combined over areas. ${measure.aggregation.note}`
 					: "This measure is not available for additive aggregation.",
 			);
 		}
@@ -676,7 +685,7 @@ export const route = (
 				422,
 				"Operation Not Supported",
 				measure.aggregation.kind === "non-aggregatable"
-					? `Only an extensive measure can be converted across releases. This measure is a ${measure.aggregation.statistic}: ${measure.aggregation.note}`
+					? `Only an extensive measure can be converted across releases. This measure is ${statisticPhrase(measure.aggregation.statistic)}: ${measure.aggregation.note}`
 					: "Only an extensive measure can be converted across releases; this measure's values do not add over areas.",
 			);
 		}

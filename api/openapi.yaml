@@ -324,6 +324,12 @@ paths:
         2017 for 890 super output areas, identified by NISRA codes such as
         `95AA01S1` rather than GSS codes.
 
+        `life-expectancy-male` and `life-expectancy-female` cover life
+        expectancy at birth for 2020 to 2022 in England, Wales and Northern
+        Ireland, on December 2021 local-authority codes. They are
+        `non-aggregatable`: a combined population's life expectancy has to be
+        recalculated from deaths and population, not averaged.
+
         `population-density` is the one derived measure: mid-year population
         divided by ONS Standard Area Measurement land area, which excludes
         inland water. Its values carry `status: "derived"` rather than

@@ -117,7 +117,7 @@ export type MeasureAggregation =
 			 * caller can see why rather than just that.
 			 */
 			kind: "non-aggregatable";
-			statistic: "median" | "rank" | "decile";
+			statistic: "median" | "rank" | "decile" | "life-expectancy";
 			note: string;
 			available: false;
 	  };
@@ -569,6 +569,7 @@ export const compileDataCatalog = (
 	nimdmPath: string,
 	wimdPath: string,
 	simdPath: string,
+	lifeExpectancyPath: string,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -580,6 +581,7 @@ export const compileDataCatalog = (
 	housePriceObservations: MeasureObservationArtifact;
 	imdObservations: MeasureObservationArtifact[];
 	nimdmObservations: MeasureObservationArtifact;
+	lifeExpectancyObservations: MeasureObservationArtifact[];
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -1346,6 +1348,119 @@ export const compileDataCatalog = (
 		],
 	};
 
+	/**
+	 * Life expectancy at birth, as ONS publishes it for local areas.
+	 *
+	 * ONS publishes male and female series but no persons total, so there is no
+	 * total measure. The loader also builds values for the four authorities
+	 * created in April 2023 by averaging their predecessors; those are marked on
+	 * the compiled record and left out, because no publisher reported them.
+	 */
+	const lifeExpectancySource = object(
+		object(
+			JSON.parse(readFileSync(lifeExpectancyPath, "utf8")),
+			lifeExpectancyPath,
+		).le,
+		`${lifeExpectancyPath}.le`,
+	);
+	if (lifeExpectancySource.boundaryType !== "localAuthority") {
+		throw new Error(
+			`${lifeExpectancyPath}: expected local-authority life expectancy`,
+		);
+	}
+	const lifeExpectancyData = object(
+		lifeExpectancySource.data,
+		`${lifeExpectancyPath}.le.data`,
+	);
+	const lifeExpectancyMeasures = (
+		[
+			["male", "maleBirthLE", "Male life expectancy at birth"],
+			["female", "femaleBirthLE", "Female life expectancy at birth"],
+		] as const
+	).map(([sex, field, label]) => {
+		const measureId = `life-expectancy-${sex}`;
+		const records = Object.entries(lifeExpectancyData)
+			.filter(
+				([, record]) =>
+					!Array.isArray(
+						object(record, `${lifeExpectancyPath}.le.data`)
+							.derivedFromPredecessors,
+					),
+			)
+			.map(([areaCode, record]) => {
+				if (!isPublishedAreaCode(areaCode))
+					throw new Error(
+						`${lifeExpectancyPath}: unsupported area code ${areaCode}`,
+					);
+				return {
+					areaCode,
+					value: number(
+						object(record, `${lifeExpectancyPath}.le.data.${areaCode}`)[field],
+						`${lifeExpectancyPath}.le.data.${areaCode}.${field}`,
+					),
+					status: "observed" as const,
+				};
+			})
+			.sort((left, right) => left.areaCode.localeCompare(right.areaCode));
+		const periods = [{ period: "2020-2022", records }];
+		const sourceGeography = {
+			type: "localAuthority" as const,
+			boundaryYear: 2021,
+		};
+		const content = JSON.stringify({
+			schemaVersion: 1,
+			measureId,
+			sourceGeography,
+			periods,
+		});
+		const measure: Measure = {
+			id: measureId,
+			label,
+			valueKind: "quantity",
+			unit: "years",
+			aggregation: {
+				kind: "non-aggregatable",
+				statistic: "life-expectancy",
+				note: "The life expectancy of a combined population is not an average of its areas' life expectancies, weighted or not. It has to be recalculated from deaths and population by age, which this source does not publish.",
+				available: false,
+			},
+			sources: [
+				{
+					datasetId: "life-expectancy",
+					periods: ["2020-2022"],
+					sourceGeography,
+					coverage: {
+						kind: "partial",
+						countries: countriesFor(records),
+						recordCount: records.length,
+						note: "England, Wales and Northern Ireland. Scotland's local life expectancy is published separately by National Records of Scotland.",
+					},
+				},
+			],
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: false,
+			},
+			links: { data: `/v1/data/${measureId}` },
+			notes: [
+				"A period life expectancy for the three years 2020 to 2022, not a forecast for anyone born in them.",
+				"On the publisher's December 2021 local-authority codes. The four authorities created in April 2023 are not published and are not served; their predecessor districts are.",
+				"The source also publishes 95% confidence intervals and a series back to 2001 to 2003; neither is served yet.",
+			],
+		};
+		return {
+			measure,
+			artifact: {
+				schemaVersion: 1 as const,
+				contentHash: sha256(content),
+				measureId,
+				sourceGeography,
+				periods,
+			},
+		};
+	});
+
 	const measure: Measure = {
 		id: "population-estimate",
 		label: "Population estimate",
@@ -1398,6 +1513,7 @@ export const compileDataCatalog = (
 			housePriceMeasure,
 			...imdMeasures,
 			nimdmMeasure,
+			...lifeExpectancyMeasures.map(({ measure }) => measure),
 			emissionsMeasure,
 			...mobileMeasures,
 			...censusMeasures,
@@ -1437,6 +1553,7 @@ export const compileDataCatalog = (
 				housePriceMeasure,
 				...imdMeasures,
 				nimdmMeasure,
+				...lifeExpectancyMeasures.map(({ measure }) => measure),
 				emissionsMeasure,
 				...mobileMeasures,
 				...censusMeasures,
@@ -1469,6 +1586,9 @@ export const compileDataCatalog = (
 		),
 		censusObservations: censusObservations.map(({ artifact }) => artifact),
 		imdObservations: imdObservations.map(({ artifact }) => artifact),
+		lifeExpectancyObservations: lifeExpectancyMeasures.map(
+			({ artifact }) => artifact,
+		),
 		nimdmObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(nimdmContent),
