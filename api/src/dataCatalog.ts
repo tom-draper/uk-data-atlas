@@ -589,6 +589,7 @@ export const compileDataCatalog = (
 	housePricePath: string,
 	imdPath: string,
 	nimdmPath: string,
+	wimdPath: string,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -1270,6 +1271,23 @@ export const compileDataCatalog = (
 			],
 			decileNotes: [
 				"Deciles divide England's 32,844 LSOAs into ten near-equal groups by rank.",
+			],
+		}),
+		...deprivationIndex({
+			datasetId: "wimd",
+			path: wimdPath,
+			label: "Welsh Index of Multiple Deprivation",
+			nation: "Wales",
+			otherNations: "English, Scottish and Northern Irish",
+			geography: "lsoa",
+			areaNoun: "LSOAs",
+			rankField: "wimdRank",
+			decileField: "wimdDecile",
+			rankNotes: [
+				"Taken from the Welsh Government's published ranks. The separately published scores are rounded to one decimal place, so ranking them does not reproduce these ranks.",
+			],
+			decileNotes: [
+				"Taken from the Welsh Government's published deciles.",
 			],
 		}),
 	];

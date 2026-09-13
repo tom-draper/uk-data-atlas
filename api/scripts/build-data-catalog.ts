@@ -34,6 +34,12 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		"precompiled",
 		"mobile-coverage.json",
 	);
+	const wimdPath = join(
+		repositoryRoot,
+		"data",
+		"precompiled",
+		"wimd.json",
+	);
 	const nimdmPath = join(
 		repositoryRoot,
 		"data",
@@ -82,6 +88,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		!existsSync(housePricePath) ||
 		!existsSync(imdPath) ||
 		!existsSync(nimdmPath) ||
+		!existsSync(wimdPath) ||
 		Object.values(censusPaths).some((path) => !existsSync(path))
 	) {
 		throw new Error(
@@ -111,6 +118,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		housePricePath,
 		imdPath,
 		nimdmPath,
+		wimdPath,
 	);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
