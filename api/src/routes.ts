@@ -33,6 +33,7 @@ import {
 	isCountryCode,
 } from "./aggregation";
 import { convertObservations } from "./conversion";
+import { attributionFor, attributionText } from "./attribution";
 import { measureCoverage } from "./measureCoverage";
 import { reconcileMembers } from "./memberReconciliation";
 import { rankObservations, type RankingOrder } from "./ranking";
@@ -404,6 +405,7 @@ export const route = (
 					"/v1/areas/{type}/{release}/{code}/relationships",
 					"/v1/areas/{type}/{release}/{code}/geometry",
 					"/v1/translations",
+					"/v1/attribution",
 					"/v1/locations",
 					"/v1/locations/{location-id}",
 					"/v1/locations/{location-id}/members",
@@ -1826,6 +1828,56 @@ export const route = (
 					location.memberCodes,
 					resolvedCodes,
 				),
+			}),
+		};
+	}
+
+	if (segments.length === 2 && segments[0] === "v1" && segments[1] === "attribution") {
+		if (!dataCatalog || !crosswalkInventory) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue and crosswalk inventory before generating attribution.",
+			);
+		}
+		const request = {
+			datasets: parsedUrl.searchParams.getAll("dataset"),
+			measures: parsedUrl.searchParams.getAll("measure"),
+			boundaryReleases: parsedUrl.searchParams.getAll("boundaryRelease"),
+			crosswalks: parsedUrl.searchParams.getAll("crosswalk"),
+		};
+		if (Object.values(request).every((values) => values.length === 0)) {
+			return problem(
+				400,
+				"Invalid Query",
+				"Name at least one resource to attribute, as dataset, measure, boundaryRelease or crosswalk. Each may be repeated.",
+			);
+		}
+		const attribution = attributionFor(
+			request,
+			dataCatalog,
+			registry,
+			crosswalkInventory,
+		);
+		if (attribution.status === "unknown") {
+			return problem(
+				404,
+				"Not Found",
+				`No published resource matches ${attribution.unknownResources.join(", ")}.`,
+			);
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				atlasRelease: { id: releaseId, href: "/v1/atlas-release" },
+				resources: attribution.resources,
+				licences: attribution.licences,
+				text: attributionText(
+					attribution.resources,
+					attribution.licences,
+					releaseId,
+				),
+				note: "Licence names are reproduced as the publisher states them and are not interpreted here. Where several apply, check each before reusing the combined work.",
 			}),
 		};
 	}
