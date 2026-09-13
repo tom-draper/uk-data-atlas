@@ -23,7 +23,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		nimdm: precompiled("nimdm.json"),
 		wimd: precompiled("wimd.json"),
 		simd: precompiled("simd.json"),
-		lifeExpectancy: precompiled("life-expectancy.json"),
+		lifeExpectancySeries: precompiled("life-expectancy-series.json"),
 	};
 	const missing = Object.values(inputs).filter((path) => !existsSync(path));
 	if (missing.length > 0) {

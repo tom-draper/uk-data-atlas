@@ -234,17 +234,21 @@ only **available** when its endpoint, contract and provenance are published.
       The response marks the value as derived and supplies its direct-code
       membership evidence; non-additive measures, incomplete locations and all
       conversions are rejected.
-- [ ] Return uncertainty intervals where the source publication supports them.
-      Life expectancy is the first published measure whose source carries 95%
-      confidence intervals, along with a series back to 2001 to 2003.
+- [x] Return uncertainty intervals where the source publication supports them.
+      A measure whose publisher reports intervals declares `uncertainty` (kind
+      and level), and each of its records carries `confidenceInterval` with the
+      published bounds. Intervals are never computed here. Life expectancy is
+      the first: ONS's 95% confidence interval on every estimate. Tabular
+      exports carry `lowerBound` and `upperBound`, empty where none is published.
 - [x] Return life expectancy at birth through `GET /v1/data/life-expectancy-male`
       and `GET /v1/data/life-expectancy-female`: 340 local areas in England,
-      Wales and Northern Ireland for 2020 to 2022, on the publisher's December
-      2021 codes. ONS publishes male and female series but no persons total,
-      so none is offered. The four authorities created in April 2023 are not
-      published; the website averages their predecessors, and those values are
-      marked on the compiled record and left out. Declared `non-aggregatable`:
-      a combined population's life expectancy is not an average of its areas'.
+      Wales and Northern Ireland, for every three-year period from 2001 to 2003
+      to 2020 to 2022, each with its 95% confidence interval. ONS restates the
+      whole series on December 2021 codes. It publishes male and female series
+      but no persons total, so none is offered, and it does not publish the four
+      authorities created in April 2023, so they are not served. Declared
+      `non-aggregatable`: a combined population's life expectancy is not an
+      average of its areas'.
 - [x] Return median house price paid through `GET /v1/data/house-price-median`:
       ward-level, England and Wales, 1995-2022, each period the year ending
       December. The final edition's year ending March 2023 is not comparable
@@ -1324,6 +1328,7 @@ pnpm start
 - `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
 - `GET /v1/data/imd-decile?period=2019&geography=lsoa&boundaryYear=2011&release=2011-12-ew-bgc-v3&include=area`
 - `GET /v1/data/life-expectancy-female/rankings?period=2020-2022&geography=localAuthority&boundaryYear=2021`
+- `GET /v1/data/life-expectancy-male/series?areaCode=E06000001&geography=localAuthority&boundaryYear=2021`
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`
