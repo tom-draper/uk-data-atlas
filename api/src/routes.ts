@@ -499,16 +499,23 @@ export const route = (
 				"Not Found",
 				"No published measure serves aggregation at that path.",
 			);
-		if (
-			measure.aggregation.kind !== "extensive" ||
-			!measure.aggregation.available
-		) {
+		const weightedAggregation =
+			measure.aggregation.kind === "intensive" &&
+			measure.aggregation.operation === "weighted-mean" &&
+			measure.aggregation.available
+				? measure.aggregation
+				: undefined;
+		const usesWeightedMean = weightedAggregation !== undefined;
+		const usesSum =
+			measure.aggregation.kind === "extensive" &&
+			measure.aggregation.available;
+		if (!usesSum && !usesWeightedMean) {
 			return problem(
 				422,
 				"Operation Not Supported",
 				measure.aggregation.kind === "non-aggregatable"
 					? `This measure is ${statisticPhrase(measure.aggregation.statistic)} and cannot be combined over areas. ${measure.aggregation.note}`
-					: "This measure is not available for additive aggregation.",
+					: "This measure is not available for aggregation.",
 			);
 		}
 		if (
@@ -622,6 +629,123 @@ export const route = (
 				"Invalid Query",
 				"Supply exactly one of locationId or areaCode.",
 			);
+		let aggregateValue = aggregate.value;
+		let weighting:
+			| {
+					measure: (typeof dataCatalog.measures)[number];
+					source: MeasureSource;
+					observations: ObservationArtifactReference;
+					total: number;
+			  }
+			| undefined;
+		if (weightedAggregation) {
+			const weightMeasureId = weightedAggregation.weight.measureId;
+			if (!weightMeasureId) {
+				return problem(
+					422,
+					"Operation Not Supported",
+					"This weighted measure does not publish a weight measure the API can aggregate with.",
+				);
+			}
+			const weightMeasure = dataCatalog.measures.find(
+				(candidate) => candidate.id === weightMeasureId,
+			);
+			const weightSource = weightMeasure?.sources.find(
+				(candidate) =>
+					candidate.periods.includes(period ?? "") &&
+					candidate.sourceGeography.type ===
+						source.sourceGeography.type &&
+					candidate.sourceGeography.boundaryYear ===
+						source.sourceGeography.boundaryYear,
+			);
+			if (!weightMeasure || !weightSource) {
+				return problem(
+					503,
+					"Catalogue Unavailable",
+					`No source-exact ${weightMeasureId} partition is available to weight ${measureId}.`,
+				);
+			}
+			const weightObservations = observationsFor(
+				weightMeasureId,
+				weightSource,
+				period as string,
+				{
+					populationObservations,
+					populationLocalAuthorityObservations,
+					measureObservations,
+				},
+			);
+			if (!weightObservations) {
+				return problem(
+					503,
+					"Catalogue Unavailable",
+					`The weight artifact for ${weightMeasureId} is missing, or does not contain the catalogue's declared source period.`,
+				);
+			}
+			const weightRecords =
+				weightObservations.records.filter(isNumericObservation);
+			if (weightRecords.length !== weightObservations.records.length) {
+				return problem(
+					503,
+					"Catalogue Unavailable",
+					`The weight artifact for ${weightMeasureId} does not contain numeric records.`,
+				);
+			}
+			const weightAggregate = location
+				? aggregateLocationMembers(location, weightRecords)
+				: aggregateCountryMembers(areaCode as string, weightRecords);
+			const valueCodes = new Set(
+				aggregate.members.map((record) => record.areaCode),
+			);
+			const weightsByCode = new Map(
+				weightAggregate.members.map((record) => [
+					record.areaCode,
+					record,
+				]),
+			);
+			if (
+				weightAggregate.members.length !== aggregate.members.length ||
+				[...valueCodes].some((code) => !weightsByCode.has(code))
+			) {
+				return problem(
+					422,
+					"Operation Not Supported",
+					"The published value and weight partitions do not cover the same source areas, so no partial weighted mean was calculated.",
+				);
+			}
+			const totalWeight = weightAggregate.members.reduce(
+				(total, record) => total + record.value,
+				0,
+			);
+			if (
+				!Number.isFinite(totalWeight) ||
+				totalWeight <= 0 ||
+				weightAggregate.members.some(
+					(record) =>
+						!Number.isFinite(record.value) || record.value < 0,
+				)
+			) {
+				return problem(
+					422,
+					"Operation Not Supported",
+					"The published weights must be finite, non-negative and sum to more than zero.",
+				);
+			}
+			aggregateValue =
+				aggregate.members.reduce(
+					(total, record) =>
+						total +
+						record.value *
+							(weightsByCode.get(record.areaCode)?.value ?? 0),
+					0,
+				) / totalWeight;
+			weighting = {
+				measure: weightMeasure,
+				source: weightSource,
+				observations: weightObservations,
+				total: totalWeight,
+			};
+		}
 		const country = location
 			? undefined
 			: findCountryIdentity(areaLookup, areaCode as string);
@@ -645,25 +769,60 @@ export const route = (
 						status: "not-applied",
 						note: "Input observations are source-exact; no geographic conversion was applied.",
 					},
+					...(weighting
+						? {
+								weight: sourceExactProvenance({
+									atlasRelease: releaseId,
+									measure: weighting.measure,
+									source: weighting.source,
+									period: period as string,
+									observations: weighting.observations,
+								}),
+							}
+						: {}),
 				},
 				aggregation: location
 					? {
-							operation: "sum",
+							operation: weighting ? "weighted-mean" : "sum",
 							membership: "direct-code-match",
 							inputRecordCount: aggregate.members.length,
-							note: "Every curated location member code was found in the published source partition.",
+							...(weighting
+								? {
+										weight: {
+											description:
+												weightedAggregation?.weight
+													.description ?? "",
+											total: weighting.total,
+										},
+									}
+								: {}),
+							note: weighting
+								? "Every curated location member code was found in both source-exact value and weight partitions."
+								: "Every curated location member code was found in the published source partition.",
 						}
 					: {
-							operation: "sum",
+							operation: weighting ? "weighted-mean" : "sum",
 							membership: "gss-country-code",
 							inputRecordCount: aggregate.members.length,
 							coverage: {
 								href: `/v1/measures/${measureId}/coverage`,
 								note: "The sum covers every area of this country published in this source partition. That is not a claim of national completeness; the coverage report states which boundary releases the partition is a complete code set for.",
 							},
-							note: "Country membership follows the first character of the GSS area code, which the coding scheme assigns by country.",
+							...(weighting
+								? {
+										weight: {
+											description:
+												weightedAggregation?.weight
+													.description ?? "",
+											total: weighting.total,
+										},
+									}
+								: {}),
+							note: weighting
+								? "Country membership follows the first character of the GSS area code, and every source-exact value has its published weight."
+								: "Country membership follows the first character of the GSS area code, which the coding scheme assigns by country.",
 						},
-				record: { value: aggregate.value, status: "derived" },
+				record: { value: aggregateValue, status: "derived" },
 			}),
 		};
 	}

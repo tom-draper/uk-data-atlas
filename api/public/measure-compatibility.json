@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:fd285337121c17341ddbf2aa5228ce5c7ea14ef420278a9aa4e7759d42518823",
+	"contentHash": "sha256:265648432ca2a19c2370b08d98a97979d2b56714acf9d3196647a012a56ac2bd",
 	"inputs": {
-		"dataCatalog": "sha256:f9daa5a98955fb87ca259933d05d87b01195d24f9f8694f1cd50ef0dd1f5aee5",
+		"dataCatalog": "sha256:bc1b741e3418c4d11befa3afca10e1bc0f582f211ce401bcecebd3a5d1252153",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -12,21 +12,36 @@
 			"car-availability-three-or-more": "sha256:7ab0829b50323a6ca07f29852f38c033085c084a267c3b0599fe1b56c86b39db",
 			"car-availability-total": "sha256:80649e7fe0ab15d1d98ff452fdf8a4ac7995219dc791912e333c30aa0ea016f0",
 			"car-availability-two": "sha256:dd4632c74375f010e3b786794fe0f896499b0d13161146fb72a5de9a6700410a",
+			"general-election-apni-vote-share": "sha256:d4c437d02cb0b1c80da69b2cb0733500e6e42a0d0d0a611af16a66a9d3e8d92b",
 			"general-election-apni-votes": "sha256:05fbb02fa642e76052a382d111a80bbd53bbd0c88368c2fc5319ace2ac99b0dc",
+			"general-election-brx-vote-share": "sha256:16de8ad566644dab907bd5df5fc72770b02dd752ebd17a77b2292d8a55013ecf",
 			"general-election-brx-votes": "sha256:9df8269db4c92885179f0855059f93818f7485e99212b0532a4863d21b37ba11",
+			"general-election-con-vote-share": "sha256:3cb74b78d2b1d0d6b9a6bbdad0a5f2847a8718b9e419e3af066f347147e3058f",
 			"general-election-con-votes": "sha256:3b786b22a55a5840f8838671eaf21ef3fb1974abc2d93d365087c27a0408c532",
+			"general-election-dup-vote-share": "sha256:e20acd952d71f2a0085bcd8fca7bfc081bf8ed50306a9e9dd1a5586f91675f9b",
 			"general-election-dup-votes": "sha256:7e9a884e9b7ec65951d24fffb16242f42dbf103b8d138eba351fb064051fc2b2",
+			"general-election-green-vote-share": "sha256:d375e1e085275fdf904c09707f6e1ecab664163456f12f69cd9bb160d134d9c9",
 			"general-election-green-votes": "sha256:8141102bda977c8756e5ecf5c493f3178d6c3e5534042e8c6285954e99ad356b",
+			"general-election-lab-vote-share": "sha256:18cb2215a98a20fabb96cc2122b47d0401a8be7168b03420ff3b4dde0bd13265",
 			"general-election-lab-votes": "sha256:3a1dceb38a10eed06724893512f255ec812d2ca90fc0469b897f4fe839a40c65",
+			"general-election-ld-vote-share": "sha256:b80df658f0f7b8adb18dcefa0e9bf8af9b1785c2eac8947bbbe55365532b4fa9",
 			"general-election-ld-votes": "sha256:34336525a7f977abc850dc577a6e3ad67193e9cc64470dd012a9bd8f8d3726a4",
+			"general-election-other-vote-share": "sha256:83b466eef160a554f7de4ffd6756f68ea0572b892d1ad3fd28ce47d7760be1cc",
 			"general-election-other-votes": "sha256:1439b689e76c04071209b1db5efe253676cac79e04af8de735016022e20cc582",
+			"general-election-pc-vote-share": "sha256:81353903740382caefdd2aa6157a1c5505f9f6279986c9f887609fba10864d8b",
 			"general-election-pc-votes": "sha256:a30cff9155dbd07dfd16a1cf12c5ee50279d0eee99b08dfaa3f4219191eacd59",
+			"general-election-ruk-vote-share": "sha256:8c9271cc3f5d2eebc72b1107df6e50da4b4889e0dc23e381acf441dfa1479179",
 			"general-election-ruk-votes": "sha256:7bf2afe2c8455baeead648f38232c3af1149c6024eeb8d4dd8d767d410cb0454",
+			"general-election-sdlp-vote-share": "sha256:6d692606577b71a8dab1492ce7dfd697db59b4b405971db7a3c959c3dd842fd9",
 			"general-election-sdlp-votes": "sha256:92e3e22d9e2faace1ae77dfca18c5c4f4b47a26bb5567860f7438cb4902b75b1",
+			"general-election-sf-vote-share": "sha256:8c8ac0913dbd59645de5b1e1605dfec7258f3edab41339f3ff0de391991a96c7",
 			"general-election-sf-votes": "sha256:b90bf4182582961f62c2b1bf3e7d45789a16079caba009d8af3e531c5cb8dc46",
+			"general-election-snp-vote-share": "sha256:f507c33ff57e87cec38ce61b991ce7677ffd803cc90a88faa2970a17c6b853de",
 			"general-election-snp-votes": "sha256:01d2527259256438209b906bb8ca253c491d7c219cca7d1a43d48c401f79e58e",
 			"general-election-turnout": "sha256:e9d0998691bc647cf49b72b44c6dc809c19b5110b664800071b4569be16510b0",
+			"general-election-ukip-vote-share": "sha256:34d7a5f10966ffcd3e6b6d197f38e5240812458cc64f8aee3393dfa93f271532",
 			"general-election-ukip-votes": "sha256:d2d017622df2f9e18272772d419d121271183a3afc4bbf71a38e424e11ee5e78",
+			"general-election-uup-vote-share": "sha256:6302e30c05f006f1dac5d52b40a1bbcd62c8cd77aae1cd11b2a81ded0a42597b",
 			"general-election-uup-votes": "sha256:d1ee2ee3870c8406f69962d561d82c97f7e21fcfe9f61f68e9e2cf47702a89a1",
 			"general-election-valid-votes": "sha256:5a7381947d58fee01479b253daa3899d971aeacc2d72d3bd1ec86f0f1e72ce25",
 			"general-election-winning-party": "sha256:021de8e176cbdd61ac79fd4a227ecef84720e3427691064cffd937066e748a0f",
@@ -1624,6 +1639,1251 @@
 		},
 		{
 			"measureId": "general-election-uup-votes",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-apni-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-brx-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-con-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-dup-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-green-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-lab-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-ld-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-other-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-pc-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-ruk-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-sdlp-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-sf-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-snp-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-ukip-vote-share",
+			"sources": [
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2010
+					},
+					"periods": [
+						"2010"
+					],
+					"candidates": [],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"2015",
+						"2017",
+						"2019"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "general-election",
+					"sourceGeography": {
+						"type": "constituency",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-07-uk-bgc",
+							"title": "Westminster parliamentary constituencies, July 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 650,
+							"candidateCodeCount": 650,
+							"matchingCodeCount": 650,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "general-election-uup-vote-share",
 			"sources": [
 				{
 					"datasetId": "general-election",

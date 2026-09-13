@@ -29,6 +29,7 @@ import type { ValidationReport } from "../src/validationReport";
 import type {
 	CategoricalObservation,
 	MeasureObservationArtifact,
+	MeasureSource,
 	PopulationLocalAuthorityObservationArtifact,
 	DataCatalog,
 	PopulationObservationArtifact,
@@ -1121,6 +1122,109 @@ test("ranks one source-exact partition with stable cursors", () => {
 			"/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc",
 		).status,
 		422,
+	);
+});
+
+test("aggregates an intensive measure with its published weight", () => {
+	const shareId = "fixture-party-vote-share";
+	const weightId = "fixture-valid-votes";
+	const source: MeasureSource = {
+		datasetId: "population",
+		periods: ["2024"],
+		sourceGeography: { type: "ward" as const, boundaryYear: 2023 },
+		coverage: {
+			kind: "partial" as const,
+			countries: ["GB-ENG"],
+			recordCount: 2,
+			note: "Fixture observations.",
+		},
+	};
+	const catalog: DataCatalog = {
+		...dataCatalog,
+		measures: [
+			...dataCatalog.measures,
+			{
+				id: weightId,
+				label: "Fixture valid votes",
+				valueKind: "count",
+				unit: "votes",
+				aggregation: {
+					kind: "extensive",
+					operation: "sum",
+					available: true,
+				},
+				sources: [source],
+				availability: {
+					sourceExact: true,
+					conversion: false,
+					aggregation: true,
+				},
+				links: { data: `/v1/data/${weightId}` },
+			},
+			{
+				id: shareId,
+				label: "Fixture party vote share",
+				valueKind: "ratio",
+				unit: "percent",
+				aggregation: {
+					kind: "intensive",
+					operation: "weighted-mean",
+					weight: {
+						description: "Valid ballot papers.",
+						datasetField: "validVotes",
+						measureId: weightId,
+					},
+					available: true,
+				},
+				sources: [source],
+				availability: {
+					sourceExact: true,
+					conversion: false,
+					aggregation: true,
+				},
+				links: { data: `/v1/data/${shareId}` },
+			},
+		],
+	};
+	const artifact = (
+		measureId: string,
+		values: number[],
+	): MeasureObservationArtifact => ({
+		schemaVersion: 1,
+		contentHash: `sha256:${measureId}`,
+		measureId,
+		sourceGeography: source.sourceGeography,
+		periods: [
+			{
+				period: "2024",
+				records: values.map((value, index) => ({
+					areaCode: `E0500000${index + 1}`,
+					value,
+					status: "observed" as const,
+				})),
+			},
+		],
+	});
+	const response = routeWithCatalog(
+		`/v1/data/${shareId}/aggregate?period=2024&geography=ward&boundaryYear=2023&areaCode=E92000001`,
+		catalog,
+		[
+			...measureObservations,
+			artifact(shareId, [25, 80]),
+			artifact(weightId, [100, 400]),
+		],
+	);
+	assert.equal(response.status, 200);
+	assert.equal(
+		"data" in response.body &&
+			(response.body.data as { record: { value: number } }).record.value,
+		69,
+	);
+	assert.deepEqual(
+		"data" in response.body &&
+			(response.body.data as { aggregation: { operation: string } })
+				.aggregation.operation,
+		"weighted-mean",
 	);
 });
 
