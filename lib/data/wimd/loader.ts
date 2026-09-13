@@ -1,4 +1,8 @@
 import { WIMDDataset, WIMDLSOAData } from "@/lib/types/wimd";
+import {
+	isMostDeprivedWIMD,
+	summariseDeprivationBy,
+} from "@/lib/helpers/datasetAggregation/deprivation";
 import { findHeaderLine, parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNum } from "@/lib/helpers/parseNumber";
 import { odsTableRows } from "@/lib/data/spreadsheet/ods";
@@ -134,21 +138,11 @@ export async function loadWIMD(
 		};
 	}
 
-	const ladGroups: Record<string, (typeof records)[string][]> = {};
-	for (const r of Object.values(records)) {
-		(ladGroups[r.ladCode] ??= []).push(r);
-	}
-	const ladStats: WIMDDataset["ladStats"] = {};
-	for (const [lad, lsoas] of Object.entries(ladGroups)) {
-		ladStats[lad] = {
-			averageWIMDScore:
-				lsoas.reduce((s, r) => s + r.wimdScore, 0) / lsoas.length,
-			averageWIMDRank:
-				lsoas.reduce((s, r) => s + r.wimdRank, 0) / lsoas.length,
-			averageWIMDDecile:
-				lsoas.reduce((s, r) => s + r.wimdDecile, 0) / lsoas.length,
-		};
-	}
+	const ladStats: WIMDDataset["ladStats"] = summariseDeprivationBy(
+		Object.values(records),
+		(record) => record.ladCode,
+		isMostDeprivedWIMD,
+	);
 
 	return {
 		2019: {

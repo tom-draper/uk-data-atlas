@@ -1,4 +1,8 @@
 import { NIMDMDataset, NIMDMLSOAData } from "@/lib/types/nimdm";
+import {
+	isMostDeprivedNIMDM,
+	summariseDeprivationBy,
+} from "@/lib/helpers/datasetAggregation/deprivation";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNumInt } from "@/lib/helpers/parseNumber";
 
@@ -68,17 +72,11 @@ export async function loadNIMDM(
 		};
 	}
 
-	const lgdGroups: Record<string, (typeof records)[string][]> = {};
-	for (const r of Object.values(records)) {
-		(lgdGroups[r.lgdCode] ??= []).push(r);
-	}
-	const lgdStats: NIMDMDataset["lgdStats"] = {};
-	for (const [lgd, soas] of Object.entries(lgdGroups)) {
-		lgdStats[lgd] = {
-			averageNIMDMRank:
-				soas.reduce((s, r) => s + r.nimdmRank, 0) / soas.length,
-		};
-	}
+	const lgdStats: NIMDMDataset["lgdStats"] = summariseDeprivationBy(
+		Object.values(records),
+		(record) => record.lgdCode,
+		isMostDeprivedNIMDM,
+	);
 
 	return {
 		2017: {

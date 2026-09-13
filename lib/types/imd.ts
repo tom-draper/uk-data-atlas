@@ -1,3 +1,5 @@
+import type { DeprivationSummary } from "./deprivation";
+
 export interface IMDLSOAData {
 	lsoaCode: string;
 	lsoaName: string;
@@ -29,7 +31,5 @@ export interface IMDDataset {
 	};
 }
 
-export interface AggregatedIMDData {
-	averageIMDScore: number;
-	averageIMDDecile: number;
-}
+/** A group of areas, summarised without averaging ranks or deciles. */
+export type AggregatedIMDData = DeprivationSummary;

@@ -1,3 +1,5 @@
+import type { DeprivationSummary } from "./deprivation";
+
 export interface SIMDDataZoneData {
 	dzCode: string;
 	dzName: string;
@@ -22,8 +24,5 @@ export interface SIMDDataset {
 	};
 }
 
-export interface AggregatedSIMDData {
-	averageSIMDRank: number;
-	averageSIMDQuintile: number;
-	averageSIMDDecile: number;
-}
+/** A group of areas, summarised without averaging ranks or deciles. */
+export type AggregatedSIMDData = DeprivationSummary;

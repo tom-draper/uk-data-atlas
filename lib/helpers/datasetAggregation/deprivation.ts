@@ -1,105 +1,114 @@
 import type { Features, PropertyKeys } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
-import type { AggregatedIMDData, IMDDataset } from "@/lib/types/imd";
-import type { AggregatedNIMDMData, NIMDMDataset } from "@/lib/types/nimdm";
-import type { AggregatedSIMDData, SIMDDataset } from "@/lib/types/simd";
-import type { AggregatedWIMDData, WIMDDataset } from "@/lib/types/wimd";
+import type { DeprivationSummary } from "@/lib/types/deprivation";
+import type { IMDDataset, IMDLSOAData } from "@/lib/types/imd";
+import type { NIMDMDataset, NIMDMLSOAData } from "@/lib/types/nimdm";
+import type { SIMDDataset, SIMDDataZoneData } from "@/lib/types/simd";
+import type { WIMDDataset, WIMDLSOAData } from "@/lib/types/wimd";
 
-export function aggregateSIMD(
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: SIMDDataset["data"],
-): AggregatedSIMDData | null {
-	let rank = 0,
-		quintile = 0,
-		decile = 0,
-		count = 0;
-	for (const feature of features) {
-		const record =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
-		if (!record) continue;
-		rank += record.simdRank;
-		quintile += record.simdQuintile;
-		decile += record.simdDecile;
-		count++;
+/**
+ * Whether an area is in its nation's most deprived tenth. Where the publisher
+ * gives a decile, that decile is used as published.
+ */
+export const isMostDeprivedIMD = (record: IMDLSOAData) =>
+	record.imdDecile === 1;
+export const isMostDeprivedWIMD = (record: WIMDLSOAData) =>
+	record.wimdDecile === 1;
+export const isMostDeprivedSIMD = (record: SIMDDataZoneData) =>
+	record.simdDecile === 1;
+
+/**
+ * NISRA publishes ranks but no deciles, so the most deprived tenth is read
+ * from the rank: a tenth of 890 super output areas is exactly 89.
+ */
+export const NIMDM_MOST_DEPRIVED_RANK = 89;
+export const isMostDeprivedNIMDM = (record: NIMDMLSOAData) =>
+	record.nimdmRank <= NIMDM_MOST_DEPRIVED_RANK;
+
+export function summariseDeprivation<TRecord>(
+	records: Iterable<TRecord>,
+	isMostDeprived: (record: TRecord) => boolean,
+): DeprivationSummary | null {
+	let areaCount = 0,
+		mostDeprivedCount = 0;
+	for (const record of records) {
+		areaCount++;
+		if (isMostDeprived(record)) mostDeprivedCount++;
 	}
-	return count === 0
-		? null
-		: {
-				averageSIMDRank: rank / count,
-				averageSIMDQuintile: quintile / count,
-				averageSIMDDecile: decile / count,
-			};
+	return areaCount === 0 ? null : { areaCount, mostDeprivedCount };
 }
 
-export function aggregateWIMD(
-	features: Features,
-	codeProperty: PropertyKeys,
-	data: WIMDDataset["data"],
-): AggregatedWIMDData | null {
-	let score = 0,
-		rank = 0,
-		decile = 0,
-		count = 0;
-	for (const feature of features) {
-		const record =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
-		if (!record) continue;
-		score += record.wimdScore;
-		rank += record.wimdRank;
-		decile += record.wimdDecile;
-		count++;
+/** Summarise records keyed by a parent code, such as a local authority. */
+export function summariseDeprivationBy<TRecord>(
+	records: Iterable<TRecord>,
+	parentCode: (record: TRecord) => string,
+	isMostDeprived: (record: TRecord) => boolean,
+): Record<string, DeprivationSummary> {
+	const groups: Record<string, TRecord[]> = {};
+	for (const record of records)
+		(groups[parentCode(record)] ??= []).push(record);
+	const summaries: Record<string, DeprivationSummary> = {};
+	for (const [code, group] of Object.entries(groups)) {
+		const summary = summariseDeprivation(group, isMostDeprived);
+		if (summary) summaries[code] = summary;
 	}
-	return count === 0
-		? null
-		: {
-				averageWIMDScore: score / count,
-				averageWIMDRank: rank / count,
-				averageWIMDDecile: decile / count,
-			};
+	return summaries;
 }
 
-export function aggregateNIMDM(
+function recordsFor<TRecord>(
 	features: Features,
 	codeProperty: PropertyKeys,
-	data: NIMDMDataset["data"],
-): AggregatedNIMDMData | null {
-	let rank = 0,
-		count = 0;
+	data: Record<string, TRecord>,
+): TRecord[] {
+	const seen = new Set<string>();
+	const records: TRecord[] = [];
 	for (const feature of features) {
-		const record =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
-		if (!record) continue;
-		rank += record.nimdmRank;
-		count++;
+		const code = getFeatureProp(feature.properties, codeProperty) ?? "";
+		// A split boundary can repeat a code; each area counts once.
+		if (seen.has(code)) continue;
+		seen.add(code);
+		const record = data[code];
+		if (record) records.push(record);
 	}
-	return count === 0
-		? null
-		: {
-				averageNIMDMRank: rank / count,
-			};
+	return records;
 }
 
-export function aggregateIMD(
+export const aggregateIMD = (
 	features: Features,
 	codeProperty: PropertyKeys,
 	data: IMDDataset["data"],
-): AggregatedIMDData | null {
-	let score = 0,
-		decile = 0,
-		count = 0;
-	for (const feature of features) {
-		const record =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
-		if (!record) continue;
-		score += record.imdScore;
-		decile += record.imdDecile;
-		count++;
-	}
-	return count === 0
-		? null
-		: {
-				averageIMDScore: score / count,
-				averageIMDDecile: decile / count,
-			};
-}
+) =>
+	summariseDeprivation(
+		recordsFor(features, codeProperty, data),
+		isMostDeprivedIMD,
+	);
+
+export const aggregateWIMD = (
+	features: Features,
+	codeProperty: PropertyKeys,
+	data: WIMDDataset["data"],
+) =>
+	summariseDeprivation(
+		recordsFor(features, codeProperty, data),
+		isMostDeprivedWIMD,
+	);
+
+export const aggregateSIMD = (
+	features: Features,
+	codeProperty: PropertyKeys,
+	data: SIMDDataset["data"],
+) =>
+	summariseDeprivation(
+		recordsFor(features, codeProperty, data),
+		isMostDeprivedSIMD,
+	);
+
+export const aggregateNIMDM = (
+	features: Features,
+	codeProperty: PropertyKeys,
+	data: NIMDMDataset["data"],
+) =>
+	summariseDeprivation(
+		recordsFor(features, codeProperty, data),
+		isMostDeprivedNIMDM,
+	);

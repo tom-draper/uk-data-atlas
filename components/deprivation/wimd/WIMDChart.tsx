@@ -7,7 +7,7 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
-import { resolveDeprivationStats } from "../deprivationStats";
+import { resolveDeprivation } from "../deprivationStats";
 
 const WIMD: DeprivationIndex = {
 	datasetType: "wimd",
@@ -17,6 +17,7 @@ const WIMD: DeprivationIndex = {
 		"Welsh Government. Welsh Index of Multiple Deprivation 2019. gov.wales",
 	metric: "score",
 	metricMaximum: 86.6,
+	areaNoun: "LSOAs",
 };
 
 interface WIMDChartProps {
@@ -40,19 +41,11 @@ export default function WIMDChart({
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
-	const stats = resolveDeprivationStats({
+	const resolved = resolveDeprivation({
 		aggregated: aggregatedData?.[dataset.year] ?? null,
 		ladStats: dataset.ladStats,
 		selectedArea,
-		fineArea: {
-			type: "lsoa",
-			records: dataset.data,
-			statsFor: (record) => ({
-				averageWIMDScore: record.wimdScore,
-				averageWIMDRank: record.wimdRank,
-				averageWIMDDecile: record.wimdDecile,
-			}),
-		},
+		fineArea: { type: "lsoa", records: dataset.data },
 	});
 
 	return (
@@ -60,9 +53,19 @@ export default function WIMDChart({
 			index={WIMD}
 			dataset={dataset}
 			activeDataset={activeDataset}
-			decile={stats?.averageWIMDDecile ?? null}
-			detail={
-				stats ? { kind: "score", value: stats.averageWIMDScore } : null
+			view={
+				resolved === null
+					? null
+					: resolved.kind === "summary"
+						? resolved
+						: {
+								kind: "area",
+								decile: resolved.record.wimdDecile,
+								detail: {
+									kind: "score",
+									value: resolved.record.wimdScore,
+								},
+							}
 			}
 			setActiveViz={setActiveViz}
 		/>

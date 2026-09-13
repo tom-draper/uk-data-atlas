@@ -7,7 +7,7 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
-import { resolveDeprivationStats } from "../deprivationStats";
+import { resolveDeprivation } from "../deprivationStats";
 
 const IMD: DeprivationIndex = {
 	datasetType: "imd",
@@ -17,6 +17,7 @@ const IMD: DeprivationIndex = {
 		"Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019. gov.uk",
 	metric: "score",
 	metricMaximum: 92.735,
+	areaNoun: "LSOAs",
 };
 
 interface IMDChartProps {
@@ -40,18 +41,11 @@ export default function IMDChart({
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
-	const stats = resolveDeprivationStats({
+	const resolved = resolveDeprivation({
 		aggregated: aggregatedData?.[dataset.year] ?? null,
 		ladStats: dataset.ladStats,
 		selectedArea,
-		fineArea: {
-			type: "lsoa",
-			records: dataset.data,
-			statsFor: (record) => ({
-				averageIMDScore: record.imdScore,
-				averageIMDDecile: record.imdDecile,
-			}),
-		},
+		fineArea: { type: "lsoa", records: dataset.data },
 	});
 
 	return (
@@ -59,9 +53,19 @@ export default function IMDChart({
 			index={IMD}
 			dataset={dataset}
 			activeDataset={activeDataset}
-			decile={stats?.averageIMDDecile ?? null}
-			detail={
-				stats ? { kind: "score", value: stats.averageIMDScore } : null
+			view={
+				resolved === null
+					? null
+					: resolved.kind === "summary"
+						? resolved
+						: {
+								kind: "area",
+								decile: resolved.record.imdDecile,
+								detail: {
+									kind: "score",
+									value: resolved.record.imdScore,
+								},
+							}
 			}
 			setActiveViz={setActiveViz}
 		/>
