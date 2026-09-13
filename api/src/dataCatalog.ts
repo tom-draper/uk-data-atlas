@@ -332,7 +332,18 @@ const populationRecords = (path: string): PopulationObservation[] => {
 	);
 };
 
+/**
+ * Northern Ireland's super output areas predate the GSS scheme and keep their
+ * NISRA codes, such as 95AA01S1: two digits for the region, two letters for
+ * the former district, then a ward and a split suffix.
+ */
+const NI_SUPER_OUTPUT_AREA_CODE = /^95[A-Z]{2}\d{2}[A-Z]\d$/;
+
+const isPublishedAreaCode = (code: string) =>
+	/^[ENSW]\d{8}$/.test(code) || NI_SUPER_OUTPUT_AREA_CODE.test(code);
+
 const countryForCode = (code: string): Country => {
+	if (NI_SUPER_OUTPUT_AREA_CODE.test(code)) return "GB-NIR";
 	const country = (
 		{
 			E: "GB-ENG",
@@ -432,7 +443,7 @@ const localAuthorityFieldPeriods = (
 				period,
 				records: Object.entries(data)
 					.map(([areaCode, record]) => {
-						if (!/^[ENSW]\d{8}$/.test(areaCode)) {
+						if (!isPublishedAreaCode(areaCode)) {
 							throw new Error(
 								`${path}: unsupported area code ${areaCode}`,
 							);
@@ -577,6 +588,7 @@ export const compileDataCatalog = (
 	landAreaPath: string,
 	housePricePath: string,
 	imdPath: string,
+	nimdmPath: string,
 ): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -587,6 +599,7 @@ export const compileDataCatalog = (
 	populationDensityObservations: MeasureObservationArtifact;
 	housePriceObservations: MeasureObservationArtifact;
 	imdObservations: MeasureObservationArtifact[];
+	nimdmObservations: MeasureObservationArtifact;
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -1211,6 +1224,63 @@ export const compileDataCatalog = (
 	});
 	const imdMeasures = imdObservations.map(({ measure }) => measure);
 
+	/**
+	 * The Northern Ireland Multiple Deprivation Measure 2017, as its published
+	 * rank. NISRA publishes ranks for super output areas but not deciles; the
+	 * deciles the website shows are its own division of the ranks, so they are
+	 * not published here.
+	 */
+	const nimdm = datasets.find((dataset) => dataset.id === "nimdm");
+	if (!nimdm) throw new Error(`${manifestPath} has no nimdm dataset`);
+	const nimdmPeriods = localAuthorityFieldPeriods(
+		nimdmPath,
+		"nimdmRank",
+		2011,
+		"superOutputArea",
+	);
+	const nimdmContent = JSON.stringify({
+		schemaVersion: 1,
+		measureId: "nimdm-rank",
+		sourceGeography: { type: "superOutputArea", boundaryYear: 2011 },
+		periods: nimdmPeriods,
+	});
+	const nimdmMeasure: Measure = {
+		id: "nimdm-rank",
+		label: "Northern Ireland Multiple Deprivation Measure rank",
+		valueKind: "ordinal",
+		unit: "rank of 890 super output areas, where 1 is the most deprived",
+		aggregation: {
+			kind: "non-aggregatable",
+			statistic: "rank",
+			note: "A rank records an order, not a distance. Averaging ranks over areas produces a number with no meaning.",
+			available: false,
+		},
+		sources: [
+			{
+				datasetId: "nimdm",
+				periods: nimdmPeriods.map((period) => period.period),
+				sourceGeography: { type: "superOutputArea", boundaryYear: 2011 },
+				coverage: {
+					kind: "partial",
+					countries: countriesFor(nimdmPeriods[0]?.records ?? []),
+					recordCount: nimdmPeriods[0]?.records.length ?? 0,
+					note: "Northern Ireland only. The other three nations publish their own indices, which are not comparable with this one.",
+				},
+			},
+		],
+		availability: {
+			sourceExact: true,
+			conversion: false,
+			aggregation: false,
+		},
+		links: { data: "/v1/data/nimdm-rank" },
+		notes: [
+			"A position within Northern Ireland alone. The English, Welsh and Scottish indices use different methods, domains and dates, so a rank cannot be compared across nations.",
+			"The publisher labels these areas SOA2001. Super output areas were drawn for the 2001 census and reused unchanged for 2011, and every code matches the 2011 release.",
+			"NISRA publishes ranks, not deciles, for super output areas, so no decile measure is offered.",
+		],
+	};
+
 	const measure: Measure = {
 		id: "population-estimate",
 		label: "Population estimate",
@@ -1262,6 +1332,7 @@ export const compileDataCatalog = (
 			densityMeasure,
 			housePriceMeasure,
 			...imdMeasures,
+			nimdmMeasure,
 			emissionsMeasure,
 			...mobileMeasures,
 			...censusMeasures,
@@ -1300,6 +1371,7 @@ export const compileDataCatalog = (
 				densityMeasure,
 				housePriceMeasure,
 				...imdMeasures,
+				nimdmMeasure,
 				emissionsMeasure,
 				...mobileMeasures,
 				...censusMeasures,
@@ -1332,6 +1404,13 @@ export const compileDataCatalog = (
 		),
 		censusObservations: censusObservations.map(({ artifact }) => artifact),
 		imdObservations: imdObservations.map(({ artifact }) => artifact),
+		nimdmObservations: {
+			schemaVersion: 1,
+			contentHash: sha256(nimdmContent),
+			measureId: "nimdm-rank",
+			sourceGeography: { type: "superOutputArea", boundaryYear: 2011 },
+			periods: nimdmPeriods,
+		},
 		housePriceObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(housePriceContent),

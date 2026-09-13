@@ -34,6 +34,12 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		"precompiled",
 		"mobile-coverage.json",
 	);
+	const nimdmPath = join(
+		repositoryRoot,
+		"data",
+		"precompiled",
+		"nimdm.json",
+	);
 	const imdPath = join(
 		repositoryRoot,
 		"data",
@@ -75,6 +81,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		!existsSync(landAreaPath) ||
 		!existsSync(housePricePath) ||
 		!existsSync(imdPath) ||
+		!existsSync(nimdmPath) ||
 		Object.values(censusPaths).some((path) => !existsSync(path))
 	) {
 		throw new Error(
@@ -92,6 +99,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		populationDensityObservations,
 		housePriceObservations,
 		imdObservations,
+		nimdmObservations,
 	} = compileDataCatalog(
 		manifestPath,
 		populationPath,
@@ -102,6 +110,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		landAreaPath,
 		housePricePath,
 		imdPath,
+		nimdmPath,
 	);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
@@ -127,6 +136,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		populationDensityObservations,
 		housePriceObservations,
 		...imdObservations,
+		nimdmObservations,
 	].map((observations) => {
 		const path = join(
 			outputDirectory,
@@ -155,6 +165,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 			populationDensityObservations,
 			housePriceObservations,
 			...imdObservations,
+			nimdmObservations,
 		].reduce(
 			(count, observations) =>
 				count +

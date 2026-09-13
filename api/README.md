@@ -254,8 +254,12 @@ only **available** when its endpoint, contract and provenance are published.
       with the other three nations' indices. The 26 tied ranks in the published
       file are served as published. The composite score is not published as a
       measure.
-- [ ] Return the Welsh, Scottish and Northern Irish deprivation indices, and
-      election and other curated measures, with their own aggregation rules.
+- [x] Return the Northern Ireland Multiple Deprivation Measure 2017 through
+      `GET /v1/data/nimdm-rank`: 890 super output areas under their NISRA codes,
+      which match the 2011 release exactly. NISRA publishes ranks but not
+      deciles for these areas, so no decile measure is offered.
+- [ ] Return the Welsh and Scottish deprivation indices, and election and other
+      curated measures, with their own aggregation rules.
 - [x] Export any published measure's source-exact pages as JSON, CSV or NDJSON,
       retaining row-level release, source, unit and geography provenance
       outside the API. A

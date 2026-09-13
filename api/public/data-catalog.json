@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:eed36dcfc35ba5098d4f9cdd72c81de5b28f8cd4d7615d3edda0dbd933d2aaaa",
+	"contentHash": "sha256:f4dfa91d0d92e5bb067021e495f3e9d278a2f531bfd745e3e530cd48aa08009e",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1468,6 +1468,51 @@
 			"notes": [
 				"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
 				"Deciles divide England's 32,844 LSOAs into ten near-equal groups by rank."
+			]
+		},
+		{
+			"id": "nimdm-rank",
+			"label": "Northern Ireland Multiple Deprivation Measure rank",
+			"valueKind": "ordinal",
+			"unit": "rank of 890 super output areas, where 1 is the most deprived",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "rank",
+				"note": "A rank records an order, not a distance. Averaging ranks over areas produces a number with no meaning.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "nimdm",
+					"periods": [
+						"2017"
+					],
+					"sourceGeography": {
+						"type": "superOutputArea",
+						"boundaryYear": 2011
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-NIR"
+						],
+						"recordCount": 890,
+						"note": "Northern Ireland only. The other three nations publish their own indices, which are not comparable with this one."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/nimdm-rank"
+			},
+			"notes": [
+				"A position within Northern Ireland alone. The English, Welsh and Scottish indices use different methods, domains and dates, so a rank cannot be compared across nations.",
+				"The publisher labels these areas SOA2001. Super output areas were drawn for the 2001 census and reused unchanged for 2011, and every code matches the 2011 release.",
+				"NISRA publishes ranks, not deciles, for super output areas, so no decile measure is offered."
 			]
 		},
 		{
