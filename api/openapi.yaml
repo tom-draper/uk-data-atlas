@@ -470,12 +470,12 @@ paths:
 
   /data/{measure-id}/aggregate:
     get:
-      operationId: aggregateSourceExactMeasureLocation
-      summary: Sum an extensive measure over a named location or a country
+      operationId: aggregateSourceExactMeasure
+      summary: Aggregate an extensive or explicitly weighted measure
       description: >
-        Returns a derived sum only for a measure declared extensive and
-        available for aggregation. Supply exactly one of `locationId` or
-        `areaCode`.
+        Returns a derived sum for a measure declared extensive, or a weighted
+        mean for a measure that publishes an available weight measure. Supply
+        exactly one of `locationId`, `areaCode`, or `regionCode`.
 
         With `locationId`, every curated member code must occur in the
         requested source partition; otherwise the request is rejected rather
@@ -490,6 +490,11 @@ paths:
         partition publishes, which is not a claim of national completeness: a
         partition holding no areas for the country is rejected rather than
         summed to zero.
+
+        With `regionCode`, callers must also name a code-set-compatible
+        `sourceRelease` and a published `crosswalk`. The regional crosswalk
+        must show complete one-to-one source-area membership; split or partial
+        overlap is rejected rather than used as an implicit conversion.
 
         This route does not select a boundary release or perform a code or
         geometry conversion.
@@ -520,16 +525,39 @@ paths:
           schema:
             type: string
           description: >
-            An id returned by `GET /locations`. Supply this or `areaCode`, not
-            both.
+            An id returned by `GET /locations`. Supply exactly one target
+            selector.
         - name: areaCode
           in: query
           required: false
           schema:
             type: string
           description: >
-            A country code, such as `E92000001`. Supply this or `locationId`,
-            not both.
+            A country code, such as `E92000001`. Supply exactly one target
+            selector.
+        - name: regionCode
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            An official English region code. Requires `crosswalk` and
+            `sourceRelease`; supply exactly one target selector.
+        - name: sourceRelease
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            The source boundary release named by the regional crosswalk. It
+            must be code-set compatible with the requested measure source.
+        - name: crosswalk
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            A regional membership crosswalk returned by `GET /crosswalks`.
       responses:
         "200":
           description: A derived sum with its direct-code membership evidence and source provenance.
@@ -543,9 +571,10 @@ paths:
           $ref: "#/components/responses/NotFound"
         "422":
           description: >
-            The measure is non-additive, aggregation is unavailable, the
-            location is not a complete direct match, or the partition holds no
-            areas for the requested country.
+            The measure is non-aggregatable, aggregation is unavailable, the
+            location is not a complete direct match, the regional relationship
+            is split or partial, or the partition holds no areas for the
+            requested target.
           content:
             application/problem+json:
               schema:

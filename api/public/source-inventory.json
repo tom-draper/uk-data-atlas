@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:89a70e58374f3ed45ad6cf80a055c0711ed418b45534453b33331ad66f521f4e",
+	"contentHash": "sha256:225bdb1f63ea807b1c68a9e27b38cc40225e144e075e9158901f52ea0b5cb395",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -1249,6 +1249,21 @@
 			"metadataHash": "sha256:03d8943c2a0c92c30816a743cd2343e249c39fa2578655882941d6c2de799777"
 		},
 		{
+			"key": "demographics/population-constituency",
+			"metadataId": "population-constituency",
+			"title": "Westminster parliamentary constituency population estimates, mid-2021 and mid-2022",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/parliamentaryconstituencymidyearpopulationestimates",
+			"temporalCoverage": "2021-2022",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:e966055d6ba8503e08ba36643ba81bff8f52c8efb3b70747d318065770601803"
+		},
+		{
 			"key": "demographics/population/england-wales",
 			"metadataId": "england-wales",
 			"title": "England and Wales population estimates",
@@ -1366,9 +1381,13 @@
 				{
 					"extension": ".csv",
 					"role": "source"
+				},
+				{
+					"extension": ".xlsx",
+					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:a5db50956725774cc24b805073d0cac65cc0852d3bfd9895d17f400e190770ae"
+			"metadataHash": "sha256:42204a7356f8234e4d3c7f666e7f4f14744b00129661e51d115cccab01cb1795"
 		},
 		{
 			"key": "deprivation/wimd",
@@ -1385,9 +1404,13 @@
 				{
 					"extension": ".csv",
 					"role": "derived"
+				},
+				{
+					"extension": ".ods",
+					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:6d535febd16ac4a462fe7ed2aaf338d777d9b58d694ebdf2cf3c18bb97206a2e"
+			"metadataHash": "sha256:1f77f7be5038d45a38b4190f2c5ed662c555e86bdcb6d58c00d915b73dc0f6ab"
 		},
 		{
 			"key": "economics/child-poverty",
@@ -1751,6 +1774,21 @@
 			"metadataHash": "sha256:37e2df6d1d556b07e8529c7d531aa70e0694e76584764287d3a20026bce85bfa"
 		},
 		{
+			"key": "geography/land-area",
+			"metadataId": "land-area",
+			"title": "Standard Area Measurements for local authority districts, December 2024",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/datasets/standard-area-measurements-for-the-local-authority-districts-december-2024-in-the-uk",
+			"temporalCoverage": "2024-12",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:7278e2d0e659c0aa7a8880f60fc76450e1ffc187ae5428957d62159f6a5f9263"
+		},
+		{
 			"key": "health/life-expectancy",
 			"metadataId": "life-expectancy",
 			"title": "Life expectancy for local areas in England, Northern Ireland and Wales",
@@ -2091,6 +2129,52 @@
 			"metadataHash": "sha256:8dd9be33ab7dab4a9a965f17dcc22f627dc0adf8c73e5f285780532ba8f45c06"
 		},
 		{
+			"key": "telecoms/mobile",
+			"metadataId": "mobile",
+			"title": "Connected Nations, mobile coverage, July 2025",
+			"publisher": "Ofcom",
+			"sourceUrl": "https://www.ofcom.org.uk/phones-and-broadband/coverage-and-speeds/connected-nations-20252/data-downloads-2025",
+			"temporalCoverage": "2025-07",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				},
+				{
+					"extension": ".csv",
+					"role": "reference"
+				}
+			],
+			"metadataHash": "sha256:91531461b704557eeb00514e6e2ad2c688c34c3d4b6c9f997c986b406da67fb8"
+		},
+		{
+			"key": "transport/car-availability",
+			"metadataId": "car-availability",
+			"title": "Car or van availability, England and Wales",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/datasets/TS045/editions/2021/versions/4",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:f2400fe1b6ec9971d70ad056f526087afe930fc179958ed380db9deb4e7a1d0b"
+		},
+		{
 			"key": "transport/road-safety",
 			"metadataId": "road-safety",
 			"title": "Road casualty statistics: provisional collisions, 2025",
@@ -2104,6 +2188,21 @@
 				}
 			],
 			"metadataHash": "sha256:19ed221152a06ccb3fd8eeb6df7c77b3c797c293de49a2a214b14509c0283317"
+		},
+		{
+			"key": "transport/travel-to-work",
+			"metadataId": "travel-to-work",
+			"title": "Method used to travel to workplace, England and Wales",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/datasets/TS061/editions/2021/versions/6",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:613ff501f2031561ad6c985a57dcf26074b3b9e8daa84b8473c626f1b9bbab44"
 		}
 	]
 }

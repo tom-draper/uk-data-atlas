@@ -97,6 +97,7 @@ export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 			side: "from" | "to";
 			input: string;
 			inputHash: string;
+			sourceCodePattern?: string;
 		}>;
 		areaProjection: "EPSG:6933";
 		clipping: string;

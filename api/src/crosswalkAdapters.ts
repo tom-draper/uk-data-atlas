@@ -42,6 +42,8 @@ export type AreaOverlapCrosswalkAdapter = {
 	weighting: AreaOverlapWeighting;
 	from: { geography: string; boundaryRelease: string };
 	to: { geography: string; boundaryRelease: string };
+	/** Limit a derived relationship to an explicit, documented source code set. */
+	sourceCodePattern?: string;
 	sliverWidthM: number;
 	minimumCoverage: number;
 };
@@ -93,6 +95,8 @@ const validAreaOverlapAdapter = (
 	adapter.weighting.normalisation === "per-source" &&
 	hasStrings(adapter.from, ["geography", "boundaryRelease"]) &&
 	hasStrings(adapter.to, ["geography", "boundaryRelease"]) &&
+	(adapter.sourceCodePattern === undefined ||
+		typeof adapter.sourceCodePattern === "string") &&
 	typeof adapter.sliverWidthM === "number" &&
 	adapter.sliverWidthM > 0 &&
 	typeof adapter.minimumCoverage === "number" &&

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:29dc114d1a0d62561345319ac989c88713d60e5630840af11364b42aeafa59c6",
+	"contentHash": "sha256:5576446ba0b841f3cb756c0bd7485f50bf7181c45660c1f166608add82250c41",
 	"crosswalks": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2",
@@ -269,6 +269,27 @@
 			"recordCount": 650,
 			"artifact": "crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap.json",
 			"contentHash": "sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7"
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "region",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"method": "area-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "area",
+				"normalisation": "per-source"
+			},
+			"recordCount": 296,
+			"artifact": "crosswalks/local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap.json",
+			"contentHash": "sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9"
 		}
 	]
 }

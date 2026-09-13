@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:186e7ede941e5dc61899ed00224a0c54d0945f831174278d09c801690433de3b",
+	"contentHash": "sha256:f3d75ca431c25041cbb9e07c39ccc694a89589db5a8958ede82b722b243120ed",
 	"boundaryRegistryHash": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 	"releases": [
 		{
@@ -612,6 +612,21 @@
 						"quality": "publisher-supplied",
 						"weighting": {
 							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
+						"direction": "from",
+						"counterpart": {
+							"geography": "region",
+							"boundaryRelease": "2025-12-en-bgc"
+						},
+						"method": "area-overlap",
+						"quality": "derived",
+						"weighting": {
+							"status": "provided",
+							"basis": "area",
+							"normalisation": "per-source"
 						}
 					}
 				]
@@ -1303,8 +1318,24 @@
 				"artifact": "areas/region/2025-12-en-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "area-overlap",
+						"quality": "derived",
+						"weighting": {
+							"status": "provided",
+							"basis": "area",
+							"normalisation": "per-source"
+						}
+					}
+				]
 			}
 		},
 		{

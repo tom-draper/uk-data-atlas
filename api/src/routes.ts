@@ -205,6 +205,37 @@ const findCountryIdentity = (
 	return undefined;
 };
 
+/**
+ * An area-overlap crosswalk is safe for direct regional membership only when
+ * every selected source area is wholly covered by exactly that one region.
+ * Split or partial overlaps remain conversion data and are never silently
+ * treated as a regional sum.
+ */
+const fullRegionMembership = (
+	crosswalk: CrosswalkArtifact,
+	regionCode: string,
+) => {
+	if (crosswalk.method !== "area-overlap") return undefined;
+	const matching = crosswalk.records.filter((record) =>
+		record.targets.some((target) => target.code === regionCode),
+	);
+	const memberCodes = matching.flatMap((record) => {
+		const target = record.targets.find(
+			(candidate) => candidate.code === regionCode,
+		);
+		return target &&
+			record.targets.length === 1 &&
+			record.source.coverage === 1 &&
+			target.sourceShare === 1
+			? [record.source.code]
+			: [];
+	});
+	return {
+		memberCodes,
+		unsafeSourceCount: matching.length - memberCodes.length,
+	};
+};
+
 /** How a non-aggregatable statistic reads in a sentence. */
 const statisticPhrase = (statistic: string) =>
 	({
@@ -533,11 +564,12 @@ export const route = (
 		const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
 		const locationId = parsedUrl.searchParams.get("locationId");
 		const areaCode = parsedUrl.searchParams.get("areaCode");
-		if (!locationId === !areaCode) {
+		const regionCode = parsedUrl.searchParams.get("regionCode");
+		if ([locationId, areaCode, regionCode].filter(Boolean).length !== 1) {
 			return problem(
 				400,
 				"Invalid Query",
-				"Supply exactly one of locationId, for a curated named location, or areaCode, for a country.",
+				"Supply exactly one of locationId, for a curated named location, areaCode, for a country, or regionCode with a regional crosswalk.",
 			);
 		}
 		if (areaCode && !isCountryCode(areaCode)) {
@@ -575,6 +607,86 @@ export const route = (
 				"Invalid Query",
 				`${measureId} has no published source for that period, geography and boundary year.`,
 			);
+		const regional = (() => {
+			if (!regionCode) return undefined;
+			const crosswalkId = parsedUrl.searchParams.get("crosswalk");
+			const sourceRelease = parsedUrl.searchParams.get("sourceRelease");
+			if (!crosswalkId || !sourceRelease) {
+				return problem(
+					400,
+					"Invalid Query",
+					"regionCode aggregation requires crosswalk and sourceRelease, so regional membership is explicit rather than inferred.",
+				);
+			}
+			if (!crosswalkLookup || !measureCompatibilityInventory) {
+				return problem(
+					503,
+					"Catalogue Unavailable",
+					"Build crosswalk and measure compatibility inventories before aggregating a region.",
+				);
+			}
+			const compatibility = measureCompatibilityInventory.measures
+				.find((candidate) => candidate.measureId === measureId)
+				?.sources.find(
+					(candidate) =>
+						candidate.datasetId === source.datasetId &&
+						candidate.sourceGeography.type ===
+							source.sourceGeography.type &&
+						candidate.sourceGeography.boundaryYear ===
+							source.sourceGeography.boundaryYear &&
+						candidate.periods.includes(period as string),
+				)
+				?.candidates.find(
+					(candidate) =>
+						candidate.boundaryRelease === sourceRelease &&
+						(candidate.status === "exact-code-set" ||
+							candidate.status === "code-set-compatible"),
+				);
+			if (!compatibility) {
+				return problem(
+					422,
+					"Operation Not Supported",
+					"The requested sourceRelease is not code-set compatible with this source partition.",
+				);
+			}
+			const crosswalk = crosswalkLookup.get(crosswalkId);
+			if (
+				!crosswalk ||
+				crosswalk.from.geography !== source.sourceGeography.type ||
+				crosswalk.from.boundaryRelease !== sourceRelease ||
+				crosswalk.to.geography !== "region"
+			) {
+				return problem(
+					422,
+					"Operation Not Supported",
+					"That crosswalk does not map the caller-selected compatible source release to regions.",
+				);
+			}
+			const membership = fullRegionMembership(crosswalk, regionCode);
+			if (!membership || membership.unsafeSourceCount > 0) {
+				return problem(
+					422,
+					"Operation Not Supported",
+					"The selected region is not represented by complete one-to-one source-area membership in that crosswalk.",
+				);
+			}
+			return {
+				crosswalk,
+				memberCodes: new Set(membership.memberCodes),
+				region: {
+					id: `region/${crosswalk.to.boundaryRelease}/${regionCode}`,
+					boundaryRelease: crosswalk.to.boundaryRelease,
+					code: regionCode,
+					...findArea(
+						areaLookup,
+						"region",
+						crosswalk.to.boundaryRelease,
+						regionCode,
+					),
+				},
+			};
+		})();
+		if (regional && "status" in regional) return regional;
 		const observations = observationsFor(
 			measureId,
 			source,
@@ -610,9 +722,22 @@ export const route = (
 				"The named location is not a complete direct code match for this source partition; no conversion or partial sum was applied.",
 			);
 		}
-		const byCountry = location
-			? undefined
-			: aggregateCountryMembers(areaCode as string, numericRecords);
+		const byCountry =
+			location || regional
+				? undefined
+				: aggregateCountryMembers(areaCode as string, numericRecords);
+		const byRegion = regional
+			? {
+					members: numericRecords.filter((record) =>
+						regional.memberCodes.has(record.areaCode),
+					),
+					value: numericRecords
+						.filter((record) =>
+							regional.memberCodes.has(record.areaCode),
+						)
+						.reduce((total, record) => total + record.value, 0),
+				}
+			: undefined;
 		// A country the partition does not reach would otherwise sum to zero,
 		// which reads as an observation rather than an absence.
 		if (byCountry && byCountry.members.length === 0) {
@@ -622,12 +747,19 @@ export const route = (
 				"This source partition publishes no areas for that country, so there is nothing to sum.",
 			);
 		}
-		const aggregate = byLocation ?? byCountry;
+		if (byRegion && byRegion.members.length === 0) {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"This source partition publishes no areas for that region, so there is nothing to combine.",
+			);
+		}
+		const aggregate = byLocation ?? byCountry ?? byRegion;
 		if (!aggregate)
 			return problem(
 				400,
 				"Invalid Query",
-				"Supply exactly one of locationId or areaCode.",
+				"Supply exactly one of locationId, areaCode or regionCode.",
 			);
 		let aggregateValue = aggregate.value;
 		let weighting:
@@ -693,7 +825,24 @@ export const route = (
 			}
 			const weightAggregate = location
 				? aggregateLocationMembers(location, weightRecords)
-				: aggregateCountryMembers(areaCode as string, weightRecords);
+				: regional
+					? {
+							members: weightRecords.filter((record) =>
+								regional.memberCodes.has(record.areaCode),
+							),
+							value: weightRecords
+								.filter((record) =>
+									regional.memberCodes.has(record.areaCode),
+								)
+								.reduce(
+									(total, record) => total + record.value,
+									0,
+								),
+						}
+					: aggregateCountryMembers(
+							areaCode as string,
+							weightRecords,
+						);
 			const valueCodes = new Set(
 				aggregate.members.map((record) => record.areaCode),
 			);
@@ -756,7 +905,11 @@ export const route = (
 				source,
 				period,
 				sourceGeography: source.sourceGeography,
-				...(location ? { location } : { area: country }),
+				...(location
+					? { location }
+					: regional
+						? { region: regional.region }
+						: { area: country }),
 				provenance: {
 					...sourceExactProvenance({
 						atlasRelease: releaseId,
@@ -800,28 +953,50 @@ export const route = (
 								? "Every curated location member code was found in both source-exact value and weight partitions."
 								: "Every curated location member code was found in the published source partition.",
 						}
-					: {
-							operation: weighting ? "weighted-mean" : "sum",
-							membership: "gss-country-code",
-							inputRecordCount: aggregate.members.length,
-							coverage: {
-								href: `/v1/measures/${measureId}/coverage`,
-								note: "The sum covers every area of this country published in this source partition. That is not a claim of national completeness; the coverage report states which boundary releases the partition is a complete code set for.",
+					: regional
+						? {
+								operation: weighting ? "weighted-mean" : "sum",
+								membership: "verified-full-area-overlap",
+								inputRecordCount: aggregate.members.length,
+								crosswalk: {
+									id: regional.crosswalk.id,
+									method: regional.crosswalk.method,
+									quality: regional.crosswalk.quality,
+								},
+								...(weighting
+									? {
+											weight: {
+												description:
+													weightedAggregation?.weight
+														.description ?? "",
+												total: weighting.total,
+											},
+										}
+									: {}),
+								note: "Regional membership comes from the caller-selected crosswalk; every included local authority is wholly covered by this one region.",
+							}
+						: {
+								operation: weighting ? "weighted-mean" : "sum",
+								membership: "gss-country-code",
+								inputRecordCount: aggregate.members.length,
+								coverage: {
+									href: `/v1/measures/${measureId}/coverage`,
+									note: "The sum covers every area of this country published in this source partition. That is not a claim of national completeness; the coverage report states which boundary releases the partition is a complete code set for.",
+								},
+								...(weighting
+									? {
+											weight: {
+												description:
+													weightedAggregation?.weight
+														.description ?? "",
+												total: weighting.total,
+											},
+										}
+									: {}),
+								note: weighting
+									? "Country membership follows the first character of the GSS area code, and every source-exact value has its published weight."
+									: "Country membership follows the first character of the GSS area code, which the coding scheme assigns by country.",
 							},
-							...(weighting
-								? {
-										weight: {
-											description:
-												weightedAggregation?.weight
-													.description ?? "",
-											total: weighting.total,
-										},
-									}
-								: {}),
-							note: weighting
-								? "Country membership follows the first character of the GSS area code, and every source-exact value has its published weight."
-								: "Country membership follows the first character of the GSS area code, which the coding scheme assigns by country.",
-						},
 				record: { value: aggregateValue, status: "derived" },
 			}),
 		};

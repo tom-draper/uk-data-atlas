@@ -290,10 +290,14 @@ only **available** when its endpoint, contract and provenance are published.
       counts and turnout through `GET /v1/data/{measure-id}`. Election periods
       remain on the source boundary vintage; vote counts may be summed within
       one election, while turnout is a percentage that requires electorate
-      weighting to combine and is not yet aggregated by the API. Winning party
-      is categorical, not numeric, and is therefore not exposed as a numeric
-      measure. The local archive's 2016–2019 files do not publish turnout, so
-      those years are absent from that measure rather than represented as zero.
+      weighting to combine and is not yet aggregated by the API. General
+      election party shares are explicit percentages of valid ballots and
+      aggregate with that published denominator; local candidate votes remain
+      counts because multi-member ballots make their total unsuitable as a
+      ballot-share denominator. Winning party is returned as a categorical
+      observation, not a numeric score. The local archive's 2016–2019 files do
+      not publish turnout, so those years are absent from that measure rather
+      than represented as zero.
 - [x] Export any published measure's source-exact pages as JSON, CSV or NDJSON,
       retaining row-level release, source, unit and geography provenance
       outside the API. A
@@ -320,18 +324,21 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight, and non-aggregatable values such as medians, ranks and
-      deciles cannot be combined at all, with the statistic named. Only
-      extensive measures aggregate or convert, so a caller cannot obtain a
-      silently wrong regional figure.
+      deciles cannot be combined at all, with the statistic named. Extensive
+      measures aggregate by sum; an intensive measure aggregates only when it
+      names a published weight measure. Conversion remains extensive-only.
 - [x] Sum an extensive measure over a curated named location or a country
       through `GET /v1/data/{measure-id}/aggregate`. Country membership follows
       the GSS code prefix, which the coding scheme assigns by country, so it is
       definitional rather than a geometric comparison. A location that is not a
       complete code match, a country the partition does not reach, and any
       non-additive measure are all rejected rather than summed.
-- [ ] Aggregate over a region. The local-authority boundary files carry no
-      region code, so this needs a derived containment relationship rather than
-      a published lookup, and would cover England only.
+- [x] Aggregate an extensive or explicitly weighted local-authority measure
+      over an English region through `GET /v1/data/{measure-id}/aggregate`.
+      Callers must name the 2025 local-authority-to-region crosswalk and a
+      code-set-compatible source release. The derived crosswalk records only
+      complete one-to-one area membership; no split or partial overlap is used
+      as an implicit geographic conversion.
 - [x] Convert an extensive measure across releases through
       `GET /v1/data/{measure-id}/convert`, using only the crosswalk the caller
       names. The response repeats that crosswalk's method, quality, weighting

@@ -734,6 +734,10 @@ const routeWithCatalog = (
 	url: string,
 	catalog: DataCatalog,
 	observations: RouteContext["measureObservations"],
+	overrides: Pick<
+		RouteContext,
+		"crosswalkLookup" | "measureCompatibilityInventory"
+	> = {},
 ) =>
 	route(
 		"GET",
@@ -742,7 +746,7 @@ const routeWithCatalog = (
 		geographyInventory,
 		areaLookup,
 		crosswalkInventory,
-		crosswalkLookup,
+		overrides.crosswalkLookup ?? crosswalkLookup,
 		undefined,
 		undefined,
 		undefined,
@@ -754,7 +758,8 @@ const routeWithCatalog = (
 		catalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
-		measureCompatibilityInventory,
+		overrides.measureCompatibilityInventory ??
+			measureCompatibilityInventory,
 		observations,
 	);
 
@@ -1122,6 +1127,145 @@ test("ranks one source-exact partition with stable cursors", () => {
 			"/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc",
 		).status,
 		422,
+	);
+});
+
+test("aggregates a region through an explicit complete crosswalk", () => {
+	const crosswalkId = "local-authority-to-region-fixture";
+	const regionalCrosswalk: CrosswalkArtifact = {
+		schemaVersion: 1,
+		contentHash: "sha256:regional-crosswalk",
+		id: crosswalkId,
+		method: "area-overlap",
+		quality: "derived",
+		weighting: {
+			status: "provided",
+			basis: "area",
+			normalisation: "per-source",
+		},
+		from: {
+			geography: "localAuthority",
+			boundaryRelease: "2025-12-uk-lad",
+		},
+		to: { geography: "region", boundaryRelease: "2025-12-en-rgn" },
+		provenance: {
+			inputs: [
+				{ side: "from", input: "fixture-lad", inputHash: "sha256:lad" },
+				{
+					side: "to",
+					input: "fixture-region",
+					inputHash: "sha256:region",
+				},
+			],
+			areaProjection: "EPSG:6933",
+			clipping: "fixture",
+		},
+		validation: {
+			sourceNameConflicts: [],
+			endpoints: {
+				from: {
+					status: "verified",
+					availableAreaCount: 1,
+					referencedCodeCount: 1,
+				},
+				to: {
+					status: "verified",
+					availableAreaCount: 1,
+					referencedCodeCount: 1,
+				},
+			},
+			overlap: {
+				candidatePairCount: 1,
+				intersectingPairCount: 1,
+				sliverPairCount: 0,
+				sliverWidthM: 100,
+				widestSliverWidthM: null,
+				narrowestOverlapWidthM: 1000,
+				minimumCoverage: 0.99,
+				minimumSourceCoverage: 1,
+				minimumTargetCoverage: 1,
+			},
+		},
+		records: [
+			{
+				source: {
+					code: "E06000001",
+					labels: ["Greater Manchester"],
+					areaM2: 1,
+					coverage: 1,
+				},
+				targets: [
+					{
+						code: "E12000002",
+						labels: ["North West"],
+						weight: 1,
+						overlapAreaM2: 1,
+						sourceShare: 1,
+						targetShare: 1,
+					},
+				],
+			},
+		],
+	};
+	const compatibility: MeasureCompatibilityInventory = {
+		...measureCompatibilityInventory,
+		measures: [
+			...measureCompatibilityInventory.measures,
+			{
+				measureId: "ghg-emissions",
+				sources: [
+					{
+						datasetId: "ghg-emissions",
+						sourceGeography: {
+							type: "localAuthority",
+							boundaryYear: 2025,
+						},
+						periods: ["2024"],
+						candidates: [
+							{
+								boundaryRelease: "2025-12-uk-lad",
+								title: "Fixture local authorities",
+								coverageCountries: ["GB-ENG"],
+								status: "exact-code-set",
+								sourceCodeCount: 1,
+								candidateCodeCount: 1,
+								matchingCodeCount: 1,
+								matchedSourceShare: 1,
+								unmatchedSourceCodeCount: 0,
+								unmatchedSourceCodeSample: [],
+								candidateOnlyCodeCount: 0,
+								candidateOnlyCodeSample: [],
+							},
+						],
+						note: "Fixture compatibility.",
+					},
+				],
+			},
+		],
+	};
+	const response = routeWithCatalog(
+		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&regionCode=E12000002&sourceRelease=2025-12-uk-lad&crosswalk=${crosswalkId}`,
+		dataCatalog,
+		measureObservations,
+		{
+			crosswalkLookup: new Map([
+				...crosswalkLookup,
+				[crosswalkId, regionalCrosswalk],
+			]),
+			measureCompatibilityInventory: compatibility,
+		},
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual(
+		"data" in response.body &&
+			(response.body.data as { record: unknown }).record,
+		{ value: 400, status: "derived" },
+	);
+	assert.equal(
+		"data" in response.body &&
+			(response.body.data as { aggregation: { membership: string } })
+				.aggregation.membership,
+		"verified-full-area-overlap",
 	);
 });
 
