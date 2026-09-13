@@ -27,7 +27,11 @@ import type {
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import { compareObservations } from "./comparison";
-import { aggregateLocationMembers } from "./aggregation";
+import {
+	aggregateCountryMembers,
+	aggregateLocationMembers,
+	isCountryCode,
+} from "./aggregation";
 import { convertObservations } from "./conversion";
 import { measureCoverage } from "./measureCoverage";
 import { reconcileMembers } from "./memberReconciliation";
@@ -164,6 +168,33 @@ const observationsFor = (
 				records,
 			}
 		: undefined;
+};
+
+/**
+ * The canonical identity of a country code, from the newest compiled country
+ * release. Countries are stable across releases, so the newest is a safe
+ * choice, and the release is reported alongside the name.
+ */
+const findCountryIdentity = (
+	areaLookup: AreaLookup | undefined,
+	code: string,
+) => {
+	const releases = [...(areaLookup?.keys() ?? [])]
+		.filter((key) => key.startsWith("country/"))
+		.sort()
+		.reverse();
+	for (const key of releases) {
+		const area = areaLookup?.get(key)?.get(code);
+		if (area) {
+			const boundaryRelease = key.slice("country/".length);
+			return {
+				id: `country/${boundaryRelease}/${code}`,
+				boundaryRelease,
+				...area,
+			};
+		}
+	}
+	return undefined;
 };
 
 /** The same query with the cursor advanced, as a relative `Link` target. */
@@ -433,11 +464,11 @@ export const route = (
 		segments[1] === "data" &&
 		segments[3] === "aggregate"
 	) {
-		if (!dataCatalog || !namedLocationLookup) {
+		if (!dataCatalog) {
 			return problem(
 				503,
 				"Catalogue Unavailable",
-				"Build the data catalogue and named location inventory before aggregating observations.",
+				"Build the data catalogue before aggregating observations.",
 			);
 		}
 		const measureId = segments[2] as string;
@@ -474,11 +505,32 @@ export const route = (
 		const geography = parsedUrl.searchParams.get("geography");
 		const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
 		const locationId = parsedUrl.searchParams.get("locationId");
-		if (!locationId) {
-			return problem(400, "Invalid Query", "locationId is required.");
+		const areaCode = parsedUrl.searchParams.get("areaCode");
+		if (!locationId === !areaCode) {
+			return problem(
+				400,
+				"Invalid Query",
+				"Supply exactly one of locationId, for a curated named location, or areaCode, for a country.",
+			);
 		}
-		const location = namedLocationLookup.get(locationId);
-		if (!location)
+		if (areaCode && !isCountryCode(areaCode)) {
+			return problem(
+				400,
+				"Invalid Query",
+				"areaCode currently supports a country code only, such as E92000001. Use locationId for a curated named location.",
+			);
+		}
+		if (locationId && !namedLocationLookup) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the named location inventory before aggregating over a location.",
+			);
+		}
+		const location = locationId
+			? namedLocationLookup?.get(locationId)
+			: undefined;
+		if (locationId && !location)
 			return problem(
 				404,
 				"Not Found",
@@ -512,17 +564,41 @@ export const route = (
 				"Catalogue Unavailable",
 				`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
 			);
-		const aggregate = aggregateLocationMembers(
-			location,
-			observations.records,
-		);
-		if (aggregate.unresolvedMemberCodes.length > 0) {
+		const byLocation = location
+			? aggregateLocationMembers(location, observations.records)
+			: undefined;
+		if (byLocation && byLocation.unresolvedMemberCodes.length > 0) {
 			return problem(
 				422,
 				"Operation Not Supported",
 				"The named location is not a complete direct code match for this source partition; no conversion or partial sum was applied.",
 			);
 		}
+		const byCountry = location
+			? undefined
+			: aggregateCountryMembers(
+					areaCode as string,
+					observations.records,
+				);
+		// A country the partition does not reach would otherwise sum to zero,
+		// which reads as an observation rather than an absence.
+		if (byCountry && byCountry.members.length === 0) {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"This source partition publishes no areas for that country, so there is nothing to sum.",
+			);
+		}
+		const aggregate = byLocation ?? byCountry;
+		if (!aggregate)
+			return problem(
+				400,
+				"Invalid Query",
+				"Supply exactly one of locationId or areaCode.",
+			);
+		const country = location
+			? undefined
+			: findCountryIdentity(areaLookup, areaCode as string);
 		return {
 			status: 200,
 			body: envelope(releaseId, {
@@ -530,7 +606,7 @@ export const route = (
 				source,
 				period,
 				sourceGeography: source.sourceGeography,
-				location,
+				...(location ? { location } : { area: country }),
 				provenance: {
 					...sourceExactProvenance({
 						atlasRelease: releaseId,
@@ -544,12 +620,23 @@ export const route = (
 						note: "Input observations are source-exact; no geographic conversion was applied.",
 					},
 				},
-				aggregation: {
-					operation: "sum",
-					membership: "direct-code-match",
-					inputRecordCount: aggregate.members.length,
-					note: "Every curated location member code was found in the published source partition.",
-				},
+				aggregation: location
+					? {
+							operation: "sum",
+							membership: "direct-code-match",
+							inputRecordCount: aggregate.members.length,
+							note: "Every curated location member code was found in the published source partition.",
+						}
+					: {
+							operation: "sum",
+							membership: "gss-country-code",
+							inputRecordCount: aggregate.members.length,
+							coverage: {
+								href: `/v1/measures/${measureId}/coverage`,
+								note: "The sum covers every area of this country published in this source partition. That is not a claim of national completeness; the coverage report states which boundary releases the partition is a complete code set for.",
+							},
+							note: "Country membership follows the first character of the GSS area code, which the coding scheme assigns by country.",
+						},
 				record: { value: aggregate.value, status: "derived" },
 			}),
 		};

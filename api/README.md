@@ -259,8 +259,15 @@ only **available** when its endpoint, contract and provenance are published.
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight. No measure offers the operation yet, so a caller cannot
       obtain a silently wrong regional figure.
-- [ ] Aggregate additive measures over parent areas or named locations; reject
-      invalid operations such as summing medians or averaging ranks.
+- [x] Sum an extensive measure over a curated named location or a country
+      through `GET /v1/data/{measure-id}/aggregate`. Country membership follows
+      the GSS code prefix, which the coding scheme assigns by country, so it is
+      definitional rather than a geometric comparison. A location that is not a
+      complete code match, a country the partition does not reach, and any
+      non-additive measure are all rejected rather than summed.
+- [ ] Aggregate over a region. The local-authority boundary files carry no
+      region code, so this needs a derived containment relationship rather than
+      a published lookup, and would cover England only.
 - [x] Convert an extensive measure across releases through
       `GET /v1/data/{measure-id}/convert`, using only the crosswalk the caller
       names. The response repeats that crosswalk's method, quality, weighting
@@ -1253,6 +1260,7 @@ pnpm start
 - `GET /v1/measures/ghg-emissions/coverage`
 - `GET /v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2024`
 - `GET /v1/measures/mobile-4g-coverage`
+- `GET /v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&areaCode=S92000003`
 - `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2025`
