@@ -5,6 +5,12 @@ export interface LifeExpectancyLADData {
 	ladName: string;
 	maleBirthLE: number;
 	femaleBirthLE: number;
+	/**
+	 * Set on an authority the publisher does not report, whose values the loader
+	 * built from these predecessors' estimates. Such a value is not a published
+	 * life expectancy.
+	 */
+	derivedFromPredecessors?: string[];
 }
 
 export interface LifeExpectancyDataset extends DatasetCoverage {

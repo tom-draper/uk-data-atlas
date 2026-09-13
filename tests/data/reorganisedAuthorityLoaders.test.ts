@@ -87,7 +87,11 @@ describe("2023 reorganised authority loader records", () => {
 				source.reduce((sum, code) => sum + data[code].maleBirthLE, 0) /
 				source.length;
 			expect(data[target].maleBirthLE).toBe(expectedMale);
+			// Marked, so nothing downstream mistakes it for a published estimate.
+			expect(data[target].derivedFromPredecessors).toEqual(source);
 		}
+		for (const code of predecessors)
+			expect(data[code]).not.toHaveProperty("derivedFromPredecessors");
 	});
 
 	it("sums every qualification category", () => {
