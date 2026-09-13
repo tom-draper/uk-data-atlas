@@ -54,9 +54,7 @@ export default function DecileChart({
 
 	const showData = hasData && !chartsLoading;
 	const displayDecile = decile ? 11 - decile : null;
-	const decileColor = displayDecile
-		? deprivationColor(barWidth / 100)
-		: "#9ca3af";
+	const decileColor = hasData ? deprivationColor(barWidth / 100) : "#9ca3af";
 	const primaryIsDecile = detail === null;
 
 	return (
@@ -78,11 +76,17 @@ export default function DecileChart({
 				hasData={showData}
 				value={detail?.value ?? displayDecile ?? ""}
 				unit={detail?.unit ?? "decile"}
-				secondary={detail ? `Decile ${displayDecile}` : undefined}
+				secondary={
+					detail && displayDecile
+						? `Decile ${displayDecile}`
+						: undefined
+				}
 				barWidth={barWidth}
 				barColor={decileColor}
 				valueColor={primaryIsDecile ? decileColor : undefined}
-				secondaryColor={detail ? decileColor : undefined}
+				secondaryColor={
+					detail && displayDecile ? decileColor : undefined
+				}
 			/>
 		</ChartCard>
 	);

@@ -65,21 +65,18 @@ export function aggregateNIMDM(
 	data: NIMDMDataset["data"],
 ): AggregatedNIMDMData | null {
 	let rank = 0,
-		decile = 0,
 		count = 0;
 	for (const feature of features) {
 		const record =
 			data[getFeatureProp(feature.properties, codeProperty) ?? ""];
 		if (!record) continue;
 		rank += record.nimdmRank;
-		decile += record.nimdmDecile;
 		count++;
 	}
 	return count === 0
 		? null
 		: {
 				averageNIMDMRank: rank / count,
-				averageNIMDMDecile: decile / count,
 			};
 }
 

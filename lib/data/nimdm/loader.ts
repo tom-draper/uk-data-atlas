@@ -16,8 +16,6 @@ const LGD_CODES: Record<string, string> = {
 	"Ards and North Down": "N09000011",
 };
 
-const TOTAL_SOAS = 890;
-
 function pick(row: Record<string, any>, ...keys: string[]): string {
 	for (const k of keys) {
 		const v = row[k];
@@ -61,15 +59,12 @@ export async function loadNIMDM(
 		);
 		if (!nimdmRank) continue;
 
-		const nimdmDecile = Math.ceil((nimdmRank / TOTAL_SOAS) * 10);
-
 		records[soaCode] = {
 			soaCode,
 			soaName: pick(row, "SOA2001_name", "SOA2011_name", "SOA Name"),
 			lgdCode,
 			lgdName,
 			nimdmRank,
-			nimdmDecile,
 		};
 	}
 
@@ -82,8 +77,6 @@ export async function loadNIMDM(
 		lgdStats[lgd] = {
 			averageNIMDMRank:
 				soas.reduce((s, r) => s + r.nimdmRank, 0) / soas.length,
-			averageNIMDMDecile:
-				soas.reduce((s, r) => s + r.nimdmDecile, 0) / soas.length,
 		};
 	}
 
@@ -99,7 +92,7 @@ export async function loadNIMDM(
 			metadata: {
 				source: "Northern Ireland Statistics and Research Agency. Northern Ireland Multiple Deprivation Measure 2017.",
 				notes: [
-					"Northern Ireland only. Decile 1 = most deprived 10% of Super Output Areas.",
+					"Northern Ireland only. NISRA publishes ranks, not deciles, for Super Output Areas; rank 1 is the most deprived.",
 				],
 			},
 		},

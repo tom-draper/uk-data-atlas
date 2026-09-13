@@ -55,7 +55,7 @@ export function DeprivationChart({
 			heading={`Deprivation (${index.label}) [${dataset.year}]`}
 			region={index.region}
 			decile={decile === null ? null : Math.round(decile)}
-			hasData={decile !== null}
+			hasData={decile !== null || hasDetail}
 			detail={
 				hasDetail
 					? {
