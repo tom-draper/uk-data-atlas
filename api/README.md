@@ -304,8 +304,14 @@ only **available** when its endpoint, contract and provenance are published.
       policy.
 - [ ] Compare two Atlas releases, identifying changed datasets, boundary
       releases, crosswalks, validation exceptions and named-location definitions.
-- [ ] Generate a ready-to-use attribution and licence block for selected
-      resources, suitable for a map, report or bulk download.
+- [x] Generate a ready-to-use attribution and licence block for selected
+      resources through `GET /v1/attribution`, suitable for a map, report or
+      bulk download. A measure is attributed through its source datasets; a
+      crosswalk is compiled here rather than obtained, so the boundary releases
+      at its endpoints are attributed instead and the crosswalk records them.
+      Licence names are reproduced as the publisher states them and are not
+      interpreted, because one source already carries two across its date
+      range.
 - [ ] Cached bulk exports and reproducible query snapshots.
 - [ ] Operational API keys, fair rate limits and managed services only when
       they add service value rather than restricting openly licensed data.
@@ -1267,6 +1273,7 @@ pnpm start
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
+- `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases/{type}/{release}`
 - `GET /v1/areas`

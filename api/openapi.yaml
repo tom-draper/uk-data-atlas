@@ -1593,6 +1593,74 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
+  /attribution:
+    get:
+      operationId: getAttribution
+      summary: Assemble the attribution and licence block for named resources
+      description: >
+        Collects the publisher, source and licence of every resource behind an
+        answer, and returns a plain-text block suitable for a map corner, a
+        report footer or a bulk-download README. Name at least one of
+        `dataset`, `measure`, `boundaryRelease` or `crosswalk`; each may be
+        repeated, and a resource named more than one way is listed once.
+
+        A measure is attributed through the datasets its observations come
+        from. A crosswalk is compiled by the Atlas rather than obtained, so it
+        carries no licence of its own and the boundary releases at its
+        endpoints are attributed instead, with the crosswalk listing them in
+        `derivedFrom`.
+
+        Licence names are reproduced exactly as the publisher states them and
+        are not interpreted. One catalogue source already carries two licences
+        across its date range, so which terms govern a combined work is the
+        caller's judgement rather than this API's.
+      parameters:
+        - name: dataset
+          in: query
+          required: false
+          schema:
+            type: array
+            items: { type: string }
+          description: A dataset id from `GET /datasets`. Repeatable.
+        - name: measure
+          in: query
+          required: false
+          schema:
+            type: array
+            items: { type: string }
+          description: A measure id from `GET /measures`. Repeatable.
+        - name: boundaryRelease
+          in: query
+          required: false
+          schema:
+            type: array
+            items: { type: string }
+          description: >
+            A `{geography}/{release}` identity, such as
+            `localAuthority/2025-05-uk-bgc-v2`. Repeatable.
+        - name: crosswalk
+          in: query
+          required: false
+          schema:
+            type: array
+            items: { type: string }
+          description: A crosswalk id from `GET /crosswalks`. Repeatable.
+      responses:
+        "200":
+          description: >
+            The resources, the distinct licences that apply, and a ready-to-use
+            plain-text attribution block.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /locations:
     get:
       operationId: listNamedLocations
