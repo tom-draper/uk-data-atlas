@@ -34,7 +34,7 @@ export type DeprivationView =
  */
 const TYPICAL_SHARE = 0.1;
 
-function summaryDisplay(summary: DeprivationSummary, areaNoun: string) {
+export function summaryDisplay(summary: DeprivationSummary, areaNoun: string) {
 	const share = summary.mostDeprivedCount / summary.areaCount;
 	const severity = Math.min(1, share / (TYPICAL_SHARE * 2));
 	return {
@@ -46,7 +46,7 @@ function summaryDisplay(summary: DeprivationSummary, areaNoun: string) {
 	};
 }
 
-function areaDisplay(
+export function areaDisplay(
 	index: DeprivationIndex,
 	decile: number | null,
 	detail: DeprivationDetail | null,
@@ -65,7 +65,9 @@ function areaDisplay(
 				),
 			)
 		: 0;
-	const displayDecile = decile === null ? null : 11 - Math.round(decile);
+	// Shown as published: every index, and the API, puts the most deprived
+	// tenth in decile 1. Colour comes from the rank or score, not from this.
+	const displayDecile = decile === null ? null : Math.round(decile);
 	return {
 		hasData: decile !== null || hasDetail,
 		value: hasDetail
