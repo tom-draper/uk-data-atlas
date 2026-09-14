@@ -60,6 +60,7 @@ paths:
                     - /v1/areas
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/areas/{type}/{release}/{code}/relationships
+                    - /v1/areas/{type}/{release}/{code}/capabilities
                     - /v1/areas/{type}/{release}/{code}/geometry
                     - /v1/crosswalks
                     - /v1/crosswalks/{crosswalk-id}
@@ -1532,6 +1533,31 @@ paths:
           $ref: "#/components/responses/NotFound"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+
+  /areas/{geography}/{release}/{code}/capabilities:
+    get:
+      operationId: getAreaCapabilities
+      summary: Report what the Atlas can serve for one exact area identity
+      description: >
+        Reports geometry, published relationship and crosswalk edges,
+        direct-code named-location membership, and measure sources assessed
+        against this exact boundary release. Measure compatibility is based on
+        area-code membership only and does not assert equal geometry.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The area identity and its availability matrix.
+          content:
+            application/json:
+              schema: { type: object }
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   /areas/{geography}/{release}/{code}/history:
     get:

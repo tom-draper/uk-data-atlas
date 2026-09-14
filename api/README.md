@@ -131,9 +131,11 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Complete the standard small-area hierarchies with explicit national
       coverage: OA → LSOA → MSOA → LAD where applicable, Scottish data zone
       and Northern Irish super output area equivalents.
-- [ ] Report an area's capability/availability matrix: supported geometry,
+- [x] Report an area's capability/availability matrix: supported geometry,
       parent/child relations, crosswalks, named-location membership, datasets
-      and measures for its exact release.
+      and measures for its exact release. The API reports explicit unavailable
+      and not-published states, and never upgrades code-set compatibility into
+      a geometry-equivalence claim.
 - [ ] Return an area-specific citation bundle with sources, licences, input and
       geometry hashes, validation results and the immutable Atlas release.
 - [ ] Resolve the most appropriate available boundary release for a requested
@@ -1490,6 +1492,7 @@ pnpm start
 - `GET /v1/areas`
 - `GET /v1/areas/{type}/{release}/{code}`
 - `GET /v1/areas/{type}/{release}/{code}/relationships`
+- `GET /v1/areas/{type}/{release}/{code}/capabilities`
 - `GET /v1/areas/{type}/{release}/{code}/geometry`
 - `GET /v1/crosswalks`
 - `GET /v1/crosswalks/{crosswalk-id}`
