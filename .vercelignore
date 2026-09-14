@@ -1,0 +1,9 @@
+# The API is its own Node service, not part of the website deployment.
+#
+# Vercel builds every file under a top-level api/ directory as a serverless
+# function, so without this the website deploy tried to compile the API's
+# source, tests and build scripts as individual endpoints, and failed on the
+# API's tsconfig asking for Node types. Nothing in the website imports from
+# api/ or reads api/public. Anchored to the root so a Next.js app/api route
+# would still deploy.
+/api
