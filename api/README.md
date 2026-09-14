@@ -155,8 +155,19 @@ only **available** when its endpoint, contract and provenance are published.
       than how far a vertex may move, and each area is generalised alone, so
       above `full` neighbours drawn together may disagree along a shared
       border.
-- [ ] Retrieve boundary JSON for a collection, for example all wards in a
-      constituency or local authority.
+- [x] Retrieve boundary JSON for a collection, for example all wards in a
+      local authority, through
+      `GET /v1/areas/{geography}/{release}/{code}/children/geometry`. One
+      FeatureCollection of every area a published crosswalk names as contained
+      by this one, each member carrying the crosswalk that places it there, so
+      membership stays a published claim rather than a point-in-polygon sweep
+      run at request time. Takes the same `tier`, which is what makes it usable
+      at scale: Birmingham's 69 wards are 3,423 vertices at `full` and 314 at
+      `low`. A member published as a relationship but with no servable geometry
+      is listed in `withoutGeometry` with its reason rather than passed over,
+      so `members` against `withGeometry` tells a partial collection from a
+      complete one. An area with no published containment relationship is a
+      404, not an empty collection.
 - [x] Return a bounding box, centroid, label point, area and perimeter for one
       area through `GET /v1/areas/{geography}/{release}/{code}/geometry/metadata`,
       without transferring its coordinates. Area is ellipsoidal, through the

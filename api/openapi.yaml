@@ -1122,6 +1122,127 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /areas/{geography}/{release}/{code}/children/geometry:
+    get:
+      operationId: getAreaChildrenGeometry
+      summary: Get every child of an area as one GeoJSON FeatureCollection
+      description: >
+        Returns the geometry of every area a published crosswalk names as
+        contained by this one, as a single FeatureCollection: all the wards in
+        a local authority in one request rather than one request each. Each
+        feature carries its own identity, the crosswalk that places it in the
+        collection, and its geometry provenance.
+
+
+        Membership is a published crosswalk's claim, not a geometric test run
+        at request time, so this returns what the Atlas has published rather
+        than what a point-in-polygon sweep would find. An area with no
+        published containment relationship is a 404, not an empty collection.
+
+
+        `tier` generalises every member, exactly as on the geometry route, and
+        is the reason this endpoint is usable at all for a large authority.
+        The method is reported once for the collection rather than on each
+        member; each member reports only what the tier cost it, so one that
+        lost an island can be told from one that did not. Note the caveat that
+        travels with it: members are generalised one at a time, so above `full`
+        neighbours in the same collection may disagree along a shared border.
+
+
+        A member that is published as a relationship but has no servable
+        geometry is listed in `withoutGeometry` with the reason, rather than
+        being passed over. `collection.members` and `collection.withGeometry`
+        disagreeing is how a caller tells a partial collection from a complete
+        one; the response is still a 200.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The official source code for the parent area.
+        - name: tier
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [full, high, medium, low]
+            default: full
+          description: >
+            The generalisation tier applied to every member, as on the geometry
+            route.
+      responses:
+        "200":
+          description: >
+            The children as a FeatureCollection, with any that could not be
+            drawn listed beside it.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaChildrenGeometryEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
+                data:
+                  type: FeatureCollection
+                  id: localAuthority/2023-05-uk-bgc-v2/E08000025/children
+                  parent:
+                    id: localAuthority/2023-05-uk-bgc-v2/E08000025
+                    geography: localAuthority
+                    boundaryRelease: 2023-05-uk-bgc-v2
+                    code: E08000025
+                    name: Birmingham
+                  collection:
+                    members: 69
+                    withGeometry: 69
+                    vertices: 314
+                    tier: low
+                    toleranceM: 1000
+                    minEffectiveAreaM2: 1000000
+                  withoutGeometry: []
+                  features:
+                    - type: Feature
+                      id: ward/2023-05-uk-bgc/E05011118
+                      properties:
+                        id: ward/2023-05-uk-bgc/E05011118
+                        geography: ward
+                        boundaryRelease: 2023-05-uk-bgc
+                        code: E05011118
+                        name: Acocks Green
+                        membership:
+                          id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
+                          method: clean-containment
+                          quality: publisher-supplied
+                        generalisation:
+                          vertices: 5
+                          verticesAtFullResolution: 32
+                          parts: 1
+                          partsAtFullResolution: 1
+                        geometrySource: { sourceCrs: "EPSG:4326" }
+                      geometry:
+                        type: Polygon
+                        coordinates: [[[-1.8, 52.44], [-1.82, 52.45]]]
+                meta:
+                  nextCursor: null
+        "400":
+          description: The `tier` requested is not one of the named tiers.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: >
+            Either no compiled area matches that identity, or no published
+            relationship names anything as contained by it.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/GeometryUnavailable"
+
   /areas/{geography}/{release}/{code}/geometry:
     get:
       operationId: getAreaGeometry
@@ -2537,6 +2658,114 @@ components:
                   $ref: "#/components/schemas/GeometrySource"
         geometry:
           $ref: "#/components/schemas/GeoJsonGeometry"
+
+    AreaChildrenGeometry:
+      type: object
+      required: [type, id, parent, collection, withoutGeometry, features]
+      properties:
+        type:
+          const: FeatureCollection
+        id:
+          type: string
+        parent:
+          $ref: "#/components/schemas/Area"
+        collection:
+          type: object
+          description: >
+            What the collection holds and on what terms. `generalisationMethod`
+            is present only above the `full` tier.
+          required:
+            [members, withGeometry, vertices, tier, toleranceM, minEffectiveAreaM2]
+          properties:
+            members:
+              type: integer
+              description: Areas the crosswalk names as contained by the parent.
+            withGeometry:
+              type: integer
+              description: Of those, how many could be drawn.
+            vertices:
+              type: integer
+            tier:
+              type: string
+              enum: [full, high, medium, low]
+            toleranceM: { type: number }
+            minEffectiveAreaM2: { type: number }
+            generalisationMethod:
+              type: object
+              required: [rule, threshold, parts, sharedBorders]
+              properties:
+                rule: { type: string }
+                threshold: { type: string }
+                parts: { type: string }
+                sharedBorders: { type: string }
+        withoutGeometry:
+          type: array
+          description: >
+            Members published as a relationship that could not be drawn, each
+            with the reason. Empty when the collection is complete.
+          items:
+            type: object
+            required: [id, geography, boundaryRelease, code, reason]
+            properties:
+              id: { type: string }
+              geography: { type: string }
+              boundaryRelease: { type: string }
+              code: { type: string }
+              reason: { type: string }
+        features:
+          type: array
+          items:
+            $ref: "#/components/schemas/AreaChildGeometryFeature"
+
+    AreaChildGeometryFeature:
+      type: object
+      required: [type, id, properties, geometry]
+      properties:
+        type:
+          const: Feature
+        id:
+          type: string
+        properties:
+          allOf:
+            - $ref: "#/components/schemas/Area"
+            - type: object
+              required: [membership, generalisation, geometrySource]
+              properties:
+                membership:
+                  type: object
+                  description: >
+                    The published crosswalk that places this area in the
+                    collection.
+                  required: [id, method, quality]
+                  properties:
+                    id: { type: string }
+                    method: { type: string }
+                    quality: { type: string }
+                    weighting: { type: object }
+                generalisation:
+                  type: object
+                  description: >
+                    What the collection's tier cost this member. The tier
+                    itself is stated once, on the collection.
+                  required:
+                    [vertices, verticesAtFullResolution, parts, partsAtFullResolution]
+                  properties:
+                    vertices: { type: integer }
+                    verticesAtFullResolution: { type: integer }
+                    parts: { type: integer }
+                    partsAtFullResolution: { type: integer }
+                geometrySource:
+                  $ref: "#/components/schemas/GeometrySource"
+        geometry:
+          $ref: "#/components/schemas/GeoJsonGeometry"
+
+    AreaChildrenGeometryEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/AreaChildrenGeometry"
 
     Generalisation:
       type: object
