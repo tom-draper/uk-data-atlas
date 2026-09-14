@@ -17,6 +17,7 @@ import { homelessnessDatasetDefinition } from "./definitions/homelessness";
 import { housePriceDatasetDefinition } from "./definitions/housePrice";
 import { imdDatasetDefinition } from "./definitions/imd";
 import { incomeDatasetDefinition } from "./definitions/income";
+import { jobsDatasetDefinition } from "./definitions/jobs";
 import { landAreaDatasetDefinition } from "./definitions/landArea";
 import { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy";
 import { lifeExpectancySeriesDatasetDefinition } from "./definitions/lifeExpectancySeries";
@@ -55,6 +56,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	housePriceDatasetDefinition,
 	imdDatasetDefinition,
 	incomeDatasetDefinition,
+	jobsDatasetDefinition,
 	landAreaDatasetDefinition,
 	lifeExpectancyDatasetDefinition,
 	lifeExpectancySeriesDatasetDefinition,
