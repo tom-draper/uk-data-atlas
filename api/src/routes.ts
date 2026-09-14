@@ -2098,17 +2098,6 @@ export const route = (
 			);
 		}
 		const matches = [...crosswalkLookup.values()].flatMap((crosswalk) => {
-			if (
-				crosswalk.from.geography !== source.geography ||
-				crosswalk.from.boundaryRelease !== source.boundaryRelease ||
-				crosswalk.to.geography !== target.geography ||
-				crosswalk.to.boundaryRelease !== target.boundaryRelease
-			)
-				return [];
-			const record = crosswalk.records.find(
-				(candidate) => candidate.source.code === source.code,
-			);
-			if (!record) return [];
 			const validForPurpose =
 				(purpose === "identity" &&
 					crosswalk.method === "official-lookup") ||
@@ -2116,20 +2105,115 @@ export const route = (
 					crosswalk.method === "clean-containment") ||
 				(purpose === "apportion" &&
 					crosswalk.method === "area-overlap");
-			return validForPurpose
-				? [
-						{
-							crosswalk: {
-								id: crosswalk.id,
-								method: crosswalk.method,
-								quality: crosswalk.quality,
-								weighting: crosswalk.weighting,
+			if (!validForPurpose) return [];
+			const crosswalkSummary = {
+				id: crosswalk.id,
+				method: crosswalk.method,
+				quality: crosswalk.quality,
+				weighting: crosswalk.weighting,
+				provenance: crosswalk.provenance,
+			};
+			if (
+				crosswalk.from.geography === source.geography &&
+				crosswalk.from.boundaryRelease === source.boundaryRelease &&
+				crosswalk.to.geography === target.geography &&
+				crosswalk.to.boundaryRelease === target.boundaryRelease
+			) {
+				const record = crosswalk.records.find(
+					(candidate) => candidate.source.code === source.code,
+				);
+				return record
+					? [
+							{
+								crosswalk: {
+									...crosswalkSummary,
+									direction: "forward",
+								},
+								source: record.source,
+								targets: record.targets,
 							},
-							source: record.source,
-							targets: record.targets,
-						},
-					]
-				: [];
+						]
+					: [];
+			}
+			if (
+				crosswalk.to.geography !== source.geography ||
+				crosswalk.to.boundaryRelease !== source.boundaryRelease ||
+				crosswalk.from.geography !== target.geography ||
+				crosswalk.from.boundaryRelease !== target.boundaryRelease
+			)
+				return [];
+			if (crosswalk.method === "area-overlap") {
+				const reverseRecords = crosswalk.records.flatMap((record) => {
+					const matchedTarget = record.targets.find(
+						(candidate) => candidate.code === source.code,
+					);
+					return matchedTarget ? [{ record, matchedTarget }] : [];
+				});
+				if (reverseRecords.length === 0) return [];
+				const reverseSource = {
+					code: source.code,
+					labels: [
+						...new Set(
+							reverseRecords.flatMap(
+								({ matchedTarget }) => matchedTarget.labels,
+							),
+						),
+					].sort(),
+				};
+				const coverage = reverseRecords.reduce(
+					(sum, { matchedTarget }) => sum + matchedTarget.targetShare,
+					0,
+				);
+				return coverage > 0
+					? [
+							{
+								crosswalk: {
+									...crosswalkSummary,
+									direction: "reverse",
+								},
+								source: reverseSource,
+								sourceCoverage: coverage,
+								targets: reverseRecords.map(
+									({ record, matchedTarget }) => ({
+										...record.source,
+										weight:
+											matchedTarget.targetShare /
+											coverage,
+										overlapAreaM2:
+											matchedTarget.overlapAreaM2,
+										// These shares are expressed against the reversed direction.
+										sourceShare: matchedTarget.targetShare,
+										targetShare: matchedTarget.sourceShare,
+									}),
+								),
+							},
+						]
+					: [];
+			}
+			const reverseRecords = crosswalk.records.flatMap((record) => {
+				const matchedTarget = record.targets.find(
+					(candidate) => candidate.code === source.code,
+				);
+				return matchedTarget ? [{ record, matchedTarget }] : [];
+			});
+			if (reverseRecords.length === 0) return [];
+			const reverseSource = {
+				code: source.code,
+				labels: [
+					...new Set(
+						reverseRecords.flatMap(
+							({ matchedTarget }) => matchedTarget.labels,
+						),
+					),
+				].sort(),
+			};
+			return [
+				{
+					crosswalk: { ...crosswalkSummary, direction: "reverse" },
+					source: reverseSource,
+					targets: reverseRecords.map(({ record }) => record.source),
+				},
+			];
 		});
 		return matches.length > 0
 			? {
