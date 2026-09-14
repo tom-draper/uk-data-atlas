@@ -111,6 +111,9 @@ test("refuses rather than dropping a source code the crosswalk lacks", () => {
 	assert.match(result.reason, /does not carry 1 of the source partition/);
 	assert.match(result.reason, /E05009999/);
 	assert.match(result.reason, /No partial conversion was applied/);
+	assert.equal(result.absence, "source-areas-not-mapped");
+	assert.equal(result.areaCount, 1);
+	assert.deepEqual(result.areaSample, ["E05009999"]);
 });
 
 test("refuses to apportion a split source with no weight", () => {
@@ -134,4 +137,6 @@ test("refuses to apportion a split source with no weight", () => {
 		result.reason,
 		/split across several targets with no published weight/,
 	);
+	assert.equal(result.absence, "unweighted-split");
+	assert.deepEqual(result.areaSample, ["E05000001"]);
 });

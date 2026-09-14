@@ -1902,6 +1902,34 @@ test("converts a measure only through a crosswalk the caller names", () => {
 		"detail" in wrongStart.body ? wrongStart.body.detail : "",
 		/starts at constituency/,
 	);
+	assert.equal(
+		"code" in wrongStart.body && wrongStart.body.code,
+		"conversion_not_available",
+	);
+	assert.equal(
+		"absence" in wrongStart.body && wrongStart.body.absence,
+		"crosswalk-geography-mismatch",
+	);
+
+	// A source area the crosswalk does not map would drop out of the total.
+	const unmapped = routeWithData(
+		`${base}&crosswalk=${containmentCrosswalk.id}`,
+	);
+	assert.equal(unmapped.status, 422);
+	assert.deepEqual(
+		"code" in unmapped.body && {
+			code: unmapped.body.code,
+			absence: unmapped.body.absence,
+			areaCount: unmapped.body.areaCount,
+			areaSample: unmapped.body.areaSample,
+		},
+		{
+			code: "conversion_not_available",
+			absence: "source-areas-not-mapped",
+			areaCount: 1,
+			areaSample: ["W05000001"],
+		},
+	);
 
 	// A share cannot be regrouped by adding it up.
 	const intensive = routeWithData(
@@ -1911,6 +1939,10 @@ test("converts a measure only through a crosswalk the caller names", () => {
 	assert.match(
 		"detail" in intensive.body ? intensive.body.detail : "",
 		/Only an extensive measure can be converted/,
+	);
+	assert.equal(
+		"code" in intensive.body && intensive.body.code,
+		"aggregation_not_supported",
 	);
 });
 

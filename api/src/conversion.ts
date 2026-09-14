@@ -27,7 +27,15 @@ export type ConversionResult =
 			records: ConvertedObservation[];
 			inputRecordCount: number;
 	  }
-	| { status: "refused"; reason: string };
+	| {
+			status: "refused";
+			/** Why no defensible conversion exists, for a machine to act on. */
+			absence: "source-areas-not-mapped" | "unweighted-split";
+			reason: string;
+			areaCount: number;
+			/** The first affected source codes, in partition order. */
+			areaSample: string[];
+	  };
 
 const targetsOf = (artifact: CrosswalkArtifact) =>
 	new Map(
@@ -54,6 +62,9 @@ export const convertObservations = (
 	if (unmatched.length > 0) {
 		return {
 			status: "refused",
+			absence: "source-areas-not-mapped",
+			areaCount: unmatched.length,
+			areaSample: unmatched.slice(0, 10),
 			reason: `The crosswalk does not carry ${unmatched.length} of the source partition's area codes, starting with ${unmatched.slice(0, 3).join(", ")}. No partial conversion was applied.`,
 		};
 	}
@@ -72,6 +83,11 @@ export const convertObservations = (
 	if (unweighted.length > 0) {
 		return {
 			status: "refused",
+			absence: "unweighted-split",
+			areaCount: unweighted.length,
+			areaSample: unweighted
+				.slice(0, 10)
+				.map((record) => record.areaCode),
 			reason: `${unweighted.length} source areas are split across several targets with no published weight. Apportioning them would require an assumption the crosswalk does not support.`,
 		};
 	}

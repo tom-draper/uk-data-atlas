@@ -151,16 +151,17 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Find published conversion paths between two area identities and rank
       them by source authority and exactness; support small, declared multi-step
       crosswalk composition without hiding intermediate mappings.
-- [ ] Return explicit absence states: abolished, unsupported geography, partial
-      coverage, or no sufficiently trustworthy conversion. Every area route
-      now answers an unresolved identity with a `code` and `absence`: an
-      unpublished geography or release, identities not compiled, or a code
-      that is `superseded`, `not-yet-current` or absent from the release,
-      with the releases that do hold it. Abolition is not claimed, because
-      code membership cannot tell it from a recode. A country or region
-      aggregate states its coverage against each matching boundary release:
-      `complete`, `partial` with `code: partial_coverage` and the missing
-      areas, or `not-assessed`. Conversion absence is still to follow.
+- [x] Return explicit absence states. Every area route answers an unresolved
+      identity with a `code` and `absence`: an unpublished geography or
+      release, identities not compiled, or a code that is `superseded`,
+      `not-yet-current` or absent from the release, with the releases that do
+      hold it. Abolition is not claimed, because code membership cannot tell
+      it from a recode. A country or region aggregate states its coverage
+      against each matching boundary release: `complete`, `partial` with
+      `code: partial_coverage` and the missing areas, or `not-assessed`. A
+      refused conversion carries `code: conversion_not_available` and whether
+      the crosswalk starts elsewhere, leaves source areas unmapped or splits
+      them with no weight.
 - [ ] Publish compiler-discovered relationship candidates only after endpoint
       validation and an explicit decision to promote them to crosswalks.
 
@@ -1188,7 +1189,9 @@ Use RFC 9457 Problem Details for errors. Important machine-readable codes:
 - `area_not_in_release` — the release does not hold the requested area code;
   `absence` says whether the code is superseded, not yet current, or unknown;
 - `conversion_required` — source and requested geography differ;
-- `conversion_not_available` — no defensible crosswalk exists;
+- `conversion_not_available` — no defensible crosswalk exists; `absence`
+  says whether the named crosswalk starts at another geography, leaves source
+  areas unmapped, or splits them with no published weight;
 - `conversion_not_authorised` — caller requested a non-approved method;
 - `aggregation_not_supported` — measure semantics make the operation invalid;
 - `partial_coverage` — result is possible only with missing/suppressed areas;
