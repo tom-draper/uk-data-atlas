@@ -602,6 +602,7 @@ export const route = (
 					"/v1/areas/{type}/{release}/{code}/children/geometry",
 					"/v1/areas/{type}/{release}/{code}/relationships",
 					"/v1/areas/{type}/{release}/{code}/neighbours",
+					"/v1/areas/{type}/{release}/{code}/capabilities",
 					"/v1/areas/{type}/{release}/{code}/geometry",
 					"/v1/areas/{type}/{release}/{code}/geometry/metadata",
 					"/v1/translations",
@@ -4206,6 +4207,213 @@ export const route = (
 					: "Geometry could not be loaded.",
 			);
 		}
+	}
+
+	if (
+		segments.length === 6 &&
+		segments[0] === "v1" &&
+		segments[1] === "areas" &&
+		segments[5] === "capabilities"
+	) {
+		const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
+			string,
+			string,
+			string,
+		];
+		const area = findArea(areaLookup, geography, boundaryRelease, code);
+		if (!area)
+			return problem(
+				404,
+				"Not Found",
+				"No compiled area matches that identity.",
+			);
+		const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
+		const geometry = (() => {
+			if (!areaGeometryCache)
+				return { status: "not-published" as const, href: geometryHref };
+			try {
+				return areaGeometryCache.get(geography, boundaryRelease, code)
+					? {
+							status: "available" as const,
+							href: geometryHref,
+							provenance: areaGeometryCache.provenance(
+								geography,
+								boundaryRelease,
+								code,
+							),
+						}
+					: { status: "not-found" as const, href: geometryHref };
+			} catch (error) {
+				return {
+					status: "unavailable" as const,
+					href: geometryHref,
+					reason:
+						error instanceof Error
+							? error.message
+							: "Geometry could not be loaded.",
+				};
+			}
+		})();
+		const relationships = crosswalkLookup
+			? relationshipsFor(
+					areaRelationshipIndex,
+					crosswalkLookup,
+					geography,
+					boundaryRelease,
+					code,
+				)
+			: [];
+		const relationCount = (relation: string) =>
+			relationships.filter((candidate) => candidate.relation === relation)
+				.length;
+		const crosswalks = [
+			...new Map(
+				relationships.map((relationship) => [
+					relationship.crosswalk.id,
+					relationship.crosswalk,
+				]),
+			).values(),
+		].map((crosswalk) => ({
+			...crosswalk,
+			href: `/v1/crosswalks/${crosswalk.id}`,
+		}));
+		const data =
+			dataCatalog && measureCompatibilityInventory
+				? {
+						status: "available" as const,
+						measures: dataCatalog.measures.flatMap((measure) => {
+							const coverage = measureCoverage(
+								dataCatalog,
+								measureCompatibilityInventory,
+								measure.id,
+							);
+							const sources =
+								coverage?.sources.flatMap(
+									(coveredSource, index) => {
+										const boundaryCoverage =
+											coveredSource.boundaryCoverage.find(
+												(candidate) =>
+													candidate.boundaryRelease ===
+													boundaryRelease,
+											);
+										const source = measure.sources[index];
+										if (!boundaryCoverage || !source)
+											return [];
+										return [
+											{
+												...coveredSource,
+												codeSetCompatibility:
+													boundaryCoverage,
+												periods: source.periods.map(
+													(period) => {
+														const observations =
+															observationsFor(
+																measure.id,
+																source,
+																period,
+																{
+																	populationObservations,
+																	populationLocalAuthorityObservations,
+																	measureObservations,
+																},
+															);
+														const record =
+															observations?.records.find(
+																(candidate) =>
+																	candidate.areaCode ===
+																	code,
+															);
+														return observations
+															? {
+																	period,
+																	artifact:
+																		observations.artifact,
+																	contentHash:
+																		observations.contentHash,
+																	availability:
+																		record
+																			? "present"
+																			: "absent",
+																	...(record
+																		? {
+																				status:
+																					record.status ??
+																					"unknown",
+																			}
+																		: {}),
+																}
+															: {
+																	period,
+																	availability:
+																		"not-published" as const,
+																};
+													},
+												),
+											},
+										];
+									},
+								) ?? [];
+							return sources.length > 0
+								? [
+										{
+											id: measure.id,
+											valueKind: measure.valueKind,
+											unit: measure.unit,
+											availability: measure.availability,
+											href: `/v1/measures/${measure.id}`,
+											sources,
+										},
+									]
+								: [];
+						}),
+						note: "Compatibility compares area-code membership only. It does not assert equal geometry between a source and this boundary release.",
+					}
+				: { status: "not-published" as const };
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				id: `${geography}/${boundaryRelease}/${code}`,
+				geography,
+				boundaryRelease,
+				...area,
+				capabilities: {
+					geometry,
+					relationships: crosswalkLookup
+						? {
+								status: "available" as const,
+								href: `/v1/areas/${geography}/${boundaryRelease}/${code}/relationships`,
+								count: relationships.length,
+								parents: {
+									count: relationCount("within"),
+									href: `/v1/areas/${geography}/${boundaryRelease}/${code}/parents`,
+								},
+								children: {
+									count: relationCount("contains"),
+									href: `/v1/areas/${geography}/${boundaryRelease}/${code}/children`,
+								},
+								crosswalks,
+							}
+						: { status: "not-published" as const },
+					namedLocations: namedLocationInventory
+						? {
+								status: "available" as const,
+								membership: "direct-code-match" as const,
+								locations: namedLocationInventory.locations
+									.filter((location) =>
+										location.memberCodes.includes(code),
+									)
+									.map((location) => ({
+										id: location.id,
+										label: location.label,
+										href: `/v1/locations/${location.id}/members?geography=${geography}&release=${boundaryRelease}`,
+									})),
+								note: "Named locations are editorial groupings. Membership is a direct code match and does not assert an official geography or equal geometry.",
+							}
+						: { status: "not-published" as const },
+					data,
+				},
+			}),
+		};
 	}
 
 	if (
