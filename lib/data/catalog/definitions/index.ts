@@ -16,6 +16,7 @@ export { homelessnessDatasetDefinition } from "./homelessness";
 export { housePriceDatasetDefinition } from "./housePrice";
 export { imdDatasetDefinition } from "./imd";
 export { incomeDatasetDefinition } from "./income";
+export { jobsDatasetDefinition } from "./jobs";
 export { landAreaDatasetDefinition } from "./landArea";
 export { lifeExpectancyDatasetDefinition } from "./lifeExpectancy";
 export { lifeExpectancySeriesDatasetDefinition } from "./lifeExpectancySeries";

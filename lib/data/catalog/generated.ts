@@ -16,6 +16,7 @@ import type { homelessnessDatasetDefinition } from "./definitions/homelessness";
 import type { housePriceDatasetDefinition } from "./definitions/housePrice";
 import type { imdDatasetDefinition } from "./definitions/imd";
 import type { incomeDatasetDefinition } from "./definitions/income";
+import type { jobsDatasetDefinition } from "./definitions/jobs";
 import type { landAreaDatasetDefinition } from "./definitions/landArea";
 import type { lifeExpectancyDatasetDefinition } from "./definitions/lifeExpectancy";
 import type { lifeExpectancySeriesDatasetDefinition } from "./definitions/lifeExpectancySeries";
@@ -73,6 +74,7 @@ export type CatalogueDataset =
 	| Awaited<ReturnType<typeof housePriceDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>[string]
+	| Awaited<ReturnType<typeof jobsDatasetDefinition.precompile>>[string]
 	| Awaited<ReturnType<typeof landAreaDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
@@ -166,6 +168,7 @@ export type CatalogueDatasetRecords = {
 	>;
 	imd: Awaited<ReturnType<typeof imdDatasetDefinition.precompile>>;
 	income: Awaited<ReturnType<typeof incomeDatasetDefinition.precompile>>;
+	jobs: Awaited<ReturnType<typeof jobsDatasetDefinition.precompile>>;
 	landArea: Awaited<ReturnType<typeof landAreaDatasetDefinition.precompile>>;
 	lifeExpectancy: Awaited<
 		ReturnType<typeof lifeExpectancyDatasetDefinition.precompile>
