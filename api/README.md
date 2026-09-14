@@ -141,8 +141,20 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Boundaries and spatial queries — next
 
-- [ ] Retrieve versioned area geometry as GeoJSON, with reproducible
-      simplification tiers and geometry provenance.
+- [x] Retrieve versioned area geometry as GeoJSON, with reproducible
+      simplification tiers and geometry provenance. `GET .../geometry?tier=`
+      takes `full`, `high` (10 m), `medium` (100 m) or `low` (1000 m), a tier
+      being the side of the smallest square of detail kept. The rule is
+      Visvalingam-Whyatt, measured in the same EPSG:6933 equal-area projection
+      as everything else here so a tier means the same thing in Cornwall and
+      Shetland, and a part or hole below the threshold is dropped whole rather
+      than left as a triangle. Highland goes from 45,124 vertices to 955 at
+      `low`, for 0.018% of its area. The response reports vertex and part
+      counts before and after, and carries the method with it. Two caveats
+      travel in that block: a tier bounds the size of feature dropped rather
+      than how far a vertex may move, and each area is generalised alone, so
+      above `full` neighbours drawn together may disagree along a shared
+      border.
 - [ ] Retrieve boundary JSON for a collection, for example all wards in a
       constituency or local authority.
 - [x] Return a bounding box, centroid, label point, area and perimeter for one

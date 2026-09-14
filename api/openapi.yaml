@@ -1138,8 +1138,28 @@ paths:
         there, and `geometrySource.corrections` names it when applied. A code that
         maps to more than one feature fragment in the source (e.g. an area
         split across islands) is returned as a single GeometryCollection
-        rather than picking one fragment. This is a raw geometry lookup, not
-        yet the tiled or simplified delivery the full proposal describes.
+        rather than picking one fragment.
+
+
+        `tier` generalises the geometry before it is served, for callers that
+        do not need every vertex: Highland is 45,124 of them. A tier is the
+        side of the smallest square of detail kept, and the rule is
+        Visvalingam-Whyatt, dropping the vertex whose triangle with its
+        neighbours is smallest until none below the tier's threshold remains.
+        Triangles are measured in the EPSG:6933 equal-area projection, so a
+        tier means the same thing anywhere in the country. A part or hole
+        smaller than the threshold is dropped whole rather than left as a
+        triangle, and `properties.generalisation` reports the vertex and part
+        counts both before and after.
+
+
+        A tier bounds the size of feature dropped; it does not promise that no
+        vertex moves further than its tolerance, since the same deviation
+        spans a larger triangle the further apart its neighbours lie. Each area
+        is generalised on its own, so above `full` two neighbours drawn
+        together may disagree along the border they share. Ask for `full` where
+        borders must meet exactly. This is still per-request simplification,
+        not the vector tiles the full proposal describes.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -1149,6 +1169,17 @@ paths:
           schema:
             type: string
           description: The official source code for this area on this boundary release.
+        - name: tier
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [full, high, medium, low]
+            default: full
+          description: >
+            The generalisation tier, as the side in metres of the smallest
+            square of detail kept: `full` (every vertex), `high` (10 m),
+            `medium` (100 m), `low` (1000 m).
       responses:
         "200":
           description: The matching area as a GeoJSON Feature.
@@ -1168,16 +1199,31 @@ paths:
                     boundaryRelease: 2024-07-uk-bgc
                     code: E14001262
                     name: Halifax
+                    generalisation:
+                      tier: full
+                      toleranceM: 0
+                      minEffectiveAreaM2: 0
+                      vertices: 1204
+                      verticesAtFullResolution: 1204
+                      parts: 1
+                      partsAtFullResolution: 1
                     geometrySource: { sourceCrs: "EPSG:4326" }
                   geometry:
                     type: Polygon
                     coordinates: [[[-1.9269, 53.7874], [-1.9146, 53.7815]]]
                 meta:
                   nextCursor: null
+        "400":
+          description: The `tier` requested is not one of the named tiers.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "404":
           description: >
-            Either no compiled area matches that identity, or the area exists
-            but no feature for its code was found in the raw geometry source.
+            Either no compiled area matches that identity, the area exists but
+            no feature for its code was found in the raw geometry source, or
+            every part of it is smaller than the requested tier keeps.
           content:
             application/problem+json:
               schema:
@@ -2483,12 +2529,61 @@ components:
           allOf:
             - $ref: "#/components/schemas/Area"
             - type: object
-              required: [geometrySource]
+              required: [generalisation, geometrySource]
               properties:
+                generalisation:
+                  $ref: "#/components/schemas/Generalisation"
                 geometrySource:
                   $ref: "#/components/schemas/GeometrySource"
         geometry:
           $ref: "#/components/schemas/GeoJsonGeometry"
+
+    Generalisation:
+      type: object
+      description: >
+        What was done to the geometry before it was served, and at what cost.
+        `method` is present only above the `full` tier, where something was
+        actually done; it includes the caveat that neighbours generalised
+        separately may disagree along a shared border.
+      required:
+        [
+          tier,
+          toleranceM,
+          minEffectiveAreaM2,
+          vertices,
+          verticesAtFullResolution,
+          parts,
+          partsAtFullResolution,
+        ]
+      properties:
+        tier:
+          type: string
+          enum: [full, high, medium, low]
+        toleranceM:
+          type: number
+          description: The side in metres of the smallest square of detail kept.
+        minEffectiveAreaM2:
+          type: number
+          description: >
+            The threshold actually applied, in square metres: a vertex is
+            dropped when its triangle is smaller than this.
+        vertices:
+          type: integer
+          description: Vertices in the geometry as served.
+        verticesAtFullResolution:
+          type: integer
+        parts:
+          type: integer
+        partsAtFullResolution:
+          type: integer
+        method:
+          type: object
+          required: [rule, threshold, parts, sharedBorders]
+          properties:
+            rule: { type: string }
+            threshold: { type: string }
+            parts: { type: string }
+            sharedBorders: { type: string }
 
     GeometrySource:
       type: object

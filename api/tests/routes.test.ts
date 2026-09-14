@@ -2102,6 +2102,17 @@ test("gets an area's geometry as a GeoJSON Feature", () => {
 				code: "E05000001",
 				name: "Example ward",
 				aliases: ["Enghraifft ward"],
+				// Full resolution by default, and no method block with it:
+				// nothing was done to the geometry to explain.
+				generalisation: {
+					tier: "full",
+					toleranceM: 0,
+					minEffectiveAreaM2: 0,
+					vertices: 1,
+					verticesAtFullResolution: 1,
+					parts: 0,
+					partsAtFullResolution: 0,
+				},
 				geometrySource: { sourceCrs: "EPSG:4326" },
 			},
 			geometry: { type: "Point", coordinates: [-2.24, 53.48] },
@@ -3541,6 +3552,114 @@ test("refuses to measure geometry that carries no polygon", () => {
 		// A point source can still be served as geometry; it just cannot be
 		// measured, and says so rather than reporting zero.
 		assert.equal(response.status, 422);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
+test("serves geometry at a named generalisation tier", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		const directory = join(
+			root,
+			"data",
+			"boundaries",
+			"ward",
+			"2025-01-en-ward",
+		);
+		mkdirSync(directory, { recursive: true });
+		// A square whose southern edge carries a run of small spikes.
+		const south: number[][] = [];
+		for (let i = 0; i <= 200; i += 1) {
+			south.push([-2 + i / 200, 54 + (i % 2 === 0 ? 0 : 0.0005)]);
+		}
+		writeFileSync(
+			join(directory, "wards.geojson"),
+			JSON.stringify({
+				type: "FeatureCollection",
+				features: [
+					{
+						properties: { WD25CD: "E05000001" },
+						geometry: {
+							type: "Polygon",
+							coordinates: [
+								[...south, [-1, 55], [-2, 55], [-2, 54]],
+							],
+						},
+					},
+				],
+			}),
+		);
+		const sources: GeometrySourceLookup = new Map([
+			[
+				"ward/2025-01-en-ward",
+				{
+					input: "boundaries/ward/2025-01-en-ward/wards.geojson",
+					crs: "EPSG:4326",
+					codeProperty: "WD25CD",
+				},
+			],
+		]);
+		const areaGeometryCache = new AreaGeometryCache(root, sources);
+		const get = (query: string) =>
+			route(
+				"GET",
+				`/v1/areas/ward/2025-01-en-ward/E05000001/geometry${query}`,
+				registry,
+				geographyInventory,
+				areaLookup,
+				crosswalkInventory,
+				crosswalkLookup,
+				undefined,
+				undefined,
+				undefined,
+				areaGeometryCache,
+			);
+
+		const full = get("");
+		const coarse = get("?tier=low");
+		assert.equal(full.status, 200);
+		assert.equal(coarse.status, 200);
+		type Generalisation = {
+			tier: string;
+			toleranceM: number;
+			vertices: number;
+			verticesAtFullResolution: number;
+			method?: Record<string, string>;
+		};
+		const properties = (response: typeof full) =>
+			(
+				("data" in response.body && response.body.data) as {
+					properties: { generalisation: Generalisation };
+				}
+			).properties;
+		const generalisation = properties(coarse).generalisation;
+		assert.equal(generalisation.tier, "low");
+		assert.equal(generalisation.toleranceM, 1000);
+		assert.ok(
+			generalisation.vertices < generalisation.verticesAtFullResolution,
+			"coarse tier kept every vertex",
+		);
+		// The count reported is the count delivered, not merely a claim.
+		const coarseGeometry = (
+			("data" in coarse.body && coarse.body.data) as {
+				geometry: { coordinates: number[][][] };
+			}
+		).geometry;
+		assert.equal(
+			coarseGeometry.coordinates.flat().length,
+			generalisation.vertices,
+		);
+		// A generalised response carries the terms it was made on, and says so
+		// about shared borders.
+		assert.match(generalisation.method!.sharedBorders!, /shared border/);
+
+		// The full tier is the default and explains nothing, having done nothing.
+		assert.equal(properties(full).generalisation.tier, "full");
+		assert.equal("method" in properties(full).generalisation, false);
+
+		const unknownTier = get("?tier=coarse");
+		assert.equal(unknownTier.status, 400);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}
