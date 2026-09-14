@@ -3013,9 +3013,9 @@ components:
       description: >
         RFC 9457 Problem Details. Some routes add extension members: a value
         request for an ambiguous place name adds `choices`, one whose place the
-        measure cannot answer adds `candidates`, and every area route whose
+        measure cannot answer adds `candidates`, every area route whose
         area identity resolves to nothing says why through `code` and
-        `absence`.
+        `absence`, and a refused conversion does the same.
       required: [type, title, status, detail]
       properties:
         type:
@@ -3043,12 +3043,19 @@ components:
             type: object
         code:
           type: string
-          enum: [unsupported_geography, area_not_in_release]
+          enum:
+            - unsupported_geography
+            - area_not_in_release
+            - aggregation_not_supported
+            - conversion_not_available
           description: >
             On a 404 from an area route: `unsupported_geography` when the
             geography or release is not published or its area identities are
             not compiled, and `area_not_in_release` when the release does not
-            hold the code.
+            hold the code. On a 422 from a conversion:
+            `aggregation_not_supported` when the measure's values do not add
+            over areas, and `conversion_not_available` when the named crosswalk
+            cannot convert the partition without dropping or assuming values.
         absence:
           type: string
           enum:
@@ -3059,9 +3066,15 @@ components:
             - not-yet-current
             - absent-from-release
             - unknown
+            - crosswalk-geography-mismatch
+            - source-areas-not-mapped
+            - unweighted-split
           description: >
-            Which absence left the area unresolved. A code is `superseded` when
-            only older releases of the geography hold it, `not-yet-current`
+            Which absence left the area or conversion unresolved. For a
+            conversion, the crosswalk starts at another geography, does not map
+            some source areas, or splits some across targets with no published
+            weight. For an area, a code is `superseded` when only older
+            releases of the geography hold it, `not-yet-current`
             when only newer ones do, `absent-from-release` when releases on
             both sides or undated releases hold it, and `unknown` when no
             compiled release does. The classification uses code membership
@@ -3079,6 +3092,15 @@ components:
               boundaryRelease: { type: string }
               name: { type: string }
               href: { type: string }
+        areaCount:
+          type: integer
+          description: >
+            With `source-areas-not-mapped` or `unweighted-split`: how many
+            source areas the conversion could not carry.
+        areaSample:
+          type: array
+          items: { type: string }
+          description: The first of those source area codes, at most ten.
         availableReleases:
           type: array
           description: With `unknown-release`, the releases published for the geography.

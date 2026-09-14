@@ -119,8 +119,12 @@ type Problem = {
 	candidates?: unknown[];
 	/** Extension member: a stable, machine-readable reason for the problem. */
 	code?: string;
-	/** Extension member: which kind of absence left an area unresolved. */
+	/** Extension member: which kind of absence left an area or answer unresolved. */
 	absence?: string;
+	/** Extension member: how many source areas a refusal concerns. */
+	areaCount?: number;
+	/** Extension member: the first source areas a refusal concerns. */
+	areaSample?: string[];
 	/** Extension member: the releases that do hold an absent area code. */
 	presentIn?: unknown[];
 	/** Extension member: the releases published for a geography. */
@@ -1604,6 +1608,7 @@ export const route = (
 				measure.aggregation.kind === "non-aggregatable"
 					? `Only an extensive measure can be converted across releases. This measure is ${statisticPhrase(measure.aggregation.statistic)}: ${measure.aggregation.note}`
 					: "Only an extensive measure can be converted across releases; this measure's values do not add over areas.",
+				{ code: "aggregation_not_supported" },
 			);
 		}
 		const crosswalkId = parsedUrl.searchParams.get("crosswalk");
@@ -1640,6 +1645,10 @@ export const route = (
 				422,
 				"Operation Not Supported",
 				`That crosswalk starts at ${artifact.from.geography}, but this source partition is published on ${source.sourceGeography.type} areas.`,
+				{
+					code: "conversion_not_available",
+					absence: "crosswalk-geography-mismatch",
+				},
 			);
 		}
 		const observations = observationsFor(
@@ -1669,7 +1678,12 @@ export const route = (
 		}
 		const converted = convertObservations(artifact, numericRecords);
 		if (converted.status === "refused") {
-			return problem(422, "Operation Not Supported", converted.reason);
+			return problem(422, "Operation Not Supported", converted.reason, {
+				code: "conversion_not_available",
+				absence: converted.absence,
+				areaCount: converted.areaCount,
+				areaSample: converted.areaSample,
+			});
 		}
 		const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
 		if (pageSize === undefined) {
