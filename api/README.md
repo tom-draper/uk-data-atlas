@@ -136,8 +136,15 @@ only **available** when its endpoint, contract and provenance are published.
       and measures for its exact release. The API reports explicit unavailable
       and not-published states, and never upgrades code-set compatibility into
       a geometry-equivalence claim.
-- [ ] Return an area-specific citation bundle with sources, licences, input and
-      geometry hashes, validation results and the immutable Atlas release.
+- [x] Return an area-specific citation bundle through
+      `GET /v1/areas/{type}/{release}/{code}/citation`: the immutable Atlas
+      release, the area identity artifact's hash, the boundary release's
+      publisher, licence and metadata hash, geometry provenance, validation
+      results and an attribution block. A named `measure` is cited through
+      the observation artifacts, with their hashes, that hold this area's
+      value, and only those datasets are credited; a named `crosswalk` must
+      map the area. Either is refused if it supplies nothing for the area.
+      Per-area geometry hashes are reported as not yet published.
 - [ ] Resolve the most appropriate available boundary release for a requested
       date, always returning the exact release selected rather than a mutable
       `latest` alias.
@@ -1493,6 +1500,7 @@ pnpm start
 - `GET /v1/areas/{type}/{release}/{code}`
 - `GET /v1/areas/{type}/{release}/{code}/relationships`
 - `GET /v1/areas/{type}/{release}/{code}/capabilities`
+- `GET /v1/areas/{type}/{release}/{code}/citation`
 - `GET /v1/areas/{type}/{release}/{code}/geometry`
 - `GET /v1/crosswalks`
 - `GET /v1/crosswalks/{crosswalk-id}`
