@@ -5002,3 +5002,45 @@ test("refuses to cite a resource that supplies nothing for the area", () => {
 		503,
 	);
 });
+
+test("explains why an area identity resolves to nothing", () => {
+	const unknownCode = route(
+		"GET",
+		"/v1/areas/ward/2025-01-en-ward/E05999999/relationships",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(unknownCode.status, 404);
+	assert.deepEqual(unknownCode.body, {
+		type: "https://api.ukdataatlas.com/problems/not-found",
+		title: "Not Found",
+		status: 404,
+		detail: "E05999999 is held by no compiled release of this geography.",
+		code: "area_not_in_release",
+		absence: "unknown",
+		presentIn: [],
+	});
+	const unknownRelease = route(
+		"GET",
+		"/v1/areas/ward/2019-12-en-ward/E05000001",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(unknownRelease.status, 404);
+	assert.deepEqual(unknownRelease.body, {
+		type: "https://api.ukdataatlas.com/problems/not-found",
+		title: "Not Found",
+		status: 404,
+		detail: "No ward boundary release is published as 2019-12-en-ward.",
+		code: "unsupported_geography",
+		absence: "unknown-release",
+		availableReleases: [
+			{
+				id: "2025-01-en-ward",
+				href: "/v1/boundary-releases/ward/2025-01-en-ward",
+			},
+		],
+	});
+});

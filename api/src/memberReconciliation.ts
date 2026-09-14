@@ -170,6 +170,23 @@ const coverageFor = (
 	};
 };
 
+/**
+ * Why one code does not resolve in one boundary release, with the releases
+ * that do hold it and the name it carries in each.
+ */
+export const explainCodeInRelease = (
+	areaLookup: AreaLookup,
+	geography: string,
+	boundaryRelease: string,
+	code: string,
+): { status: MemberCodeStatus; presentIn: Appearance[] } => {
+	const found = appearances(areaLookup, geography, code);
+	return {
+		status: statusFor(found, releaseOrder(boundaryRelease)),
+		presentIn: found,
+	};
+};
+
 export const reconcileMembers = (
 	areaLookup: AreaLookup,
 	geography: string,

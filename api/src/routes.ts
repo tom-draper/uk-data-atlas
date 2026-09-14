@@ -1,4 +1,5 @@
 import type { AreaInventory, AreaLookup } from "./areaInventory";
+import { explainAreaAbsence } from "./areaAbsence";
 import type { AreaGeometryCache } from "./areaGeometry";
 import { areaMetrics } from "./areaMetrics";
 import {
@@ -113,6 +114,15 @@ type Problem = {
 	choices?: unknown[];
 	/** Extension member: the places a name matched, and why none was served. */
 	candidates?: unknown[];
+	/** Extension member: a stable, machine-readable reason for the problem. */
+	code?: string;
+	/** Extension member: which kind of absence left an area unresolved. */
+	absence?: string;
+	/** Extension member: the releases that do hold an absent area code. */
+	presentIn?: unknown[];
+	/** Extension member: the releases published for a geography. */
+	availableReleases?: unknown[];
+	links?: Record<string, string>;
 };
 
 /**
@@ -609,6 +619,33 @@ export const route = (
 	if (method !== "GET") {
 		return problem(405, "Method Not Allowed", "This API is read-only.");
 	}
+
+	/**
+	 * A 404 for an area identity that says why it resolves to nothing: an
+	 * unpublished geography or release, identities not compiled, or a code the
+	 * release does not hold, with the releases that do.
+	 */
+	const areaNotFound = (
+		geography: string | undefined,
+		boundaryRelease: string | undefined,
+		code: string | undefined,
+	): ApiResponse => {
+		const { detail, ...absence } = explainAreaAbsence(
+			registry,
+			areaInventory,
+			areaLookup,
+			geography ?? "",
+			boundaryRelease ?? "",
+			code ?? "",
+		);
+		return {
+			status: 404,
+			body: {
+				...(problem(404, "Not Found", detail).body as Problem),
+				...absence,
+			},
+		};
+	};
 
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
 	const pathname = parsedUrl.pathname;
@@ -3712,11 +3749,7 @@ export const route = (
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
 		if (!area) {
-			return problem(
-				404,
-				"Not Found",
-				"No compiled area matches that identity.",
-			);
+			return areaNotFound(geography, boundaryRelease, code);
 		}
 		const sameCodeReleases = searchableAreas(areaLookup ?? new Map())
 			.filter(
@@ -3770,11 +3803,7 @@ export const route = (
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
 		if (!area) {
-			return problem(
-				404,
-				"Not Found",
-				"No compiled area matches that identity.",
-			);
+			return areaNotFound(geography, boundaryRelease, code);
 		}
 		if (!crosswalkLookup) {
 			return problem(
@@ -3815,12 +3844,7 @@ export const route = (
 			string,
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area)
-			return problem(
-				404,
-				"Not Found",
-				"No compiled area matches that identity.",
-			);
+		if (!area) return areaNotFound(geography, boundaryRelease, code);
 		if (!areaGeometryCache)
 			return problem(
 				503,
@@ -3932,12 +3956,7 @@ export const route = (
 			string,
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area)
-			return problem(
-				404,
-				"Not Found",
-				"No compiled area matches that identity.",
-			);
+		if (!area) return areaNotFound(geography, boundaryRelease, code);
 		if (!crosswalkLookup)
 			return problem(
 				503,
@@ -4095,12 +4114,7 @@ export const route = (
 			boundaryRelease as string,
 			code as string,
 		);
-		if (!area)
-			return problem(
-				404,
-				"Not Found",
-				"No compiled area matches that identity.",
-			);
+		if (!area) return areaNotFound(geography, boundaryRelease, code);
 		if (!areaGeometryCache)
 			return problem(
 				503,
@@ -4183,12 +4197,7 @@ export const route = (
 			boundaryRelease as string,
 			code as string,
 		);
-		if (!area)
-			return problem(
-				404,
-				"Not Found",
-				"No compiled area matches that identity.",
-			);
+		if (!area) return areaNotFound(geography, boundaryRelease, code);
 		if (!areaGeometryCache)
 			return problem(
 				503,
@@ -4277,12 +4286,7 @@ export const route = (
 			string,
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area)
-			return problem(
-				404,
-				"Not Found",
-				"No compiled area matches that identity.",
-			);
+		if (!area) return areaNotFound(geography, boundaryRelease, code);
 		if (!dataCatalog || !crosswalkInventory) {
 			return problem(
 				503,
@@ -4608,12 +4612,7 @@ export const route = (
 			string,
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area)
-			return problem(
-				404,
-				"Not Found",
-				"No compiled area matches that identity.",
-			);
+		if (!area) return areaNotFound(geography, boundaryRelease, code);
 		const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 		const geometry = (() => {
 			if (!areaGeometryCache)
@@ -4775,11 +4774,7 @@ export const route = (
 			code as string,
 		);
 		if (!area) {
-			return problem(
-				404,
-				"Not Found",
-				"No compiled area matches that identity.",
-			);
+			return areaNotFound(geography, boundaryRelease, code);
 		}
 		if (!crosswalkLookup) {
 			return problem(
@@ -4833,11 +4828,7 @@ export const route = (
 						...area,
 					}),
 				}
-			: problem(
-					404,
-					"Not Found",
-					"No compiled area matches that identity.",
-				);
+			: areaNotFound(geography, boundaryRelease, code);
 	}
 
 	if (
