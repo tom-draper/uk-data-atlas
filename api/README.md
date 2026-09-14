@@ -390,7 +390,7 @@ only **available** when its endpoint, contract and provenance are published.
       they add service value rather than restricting openly licensed data.
 - [ ] Publish an export manifest for every asynchronous or bulk download with
       its schema, query, row count, content hashes, provenance and Atlas release.
-- [ ] Report a measure/geography/release quality matrix before large queries,
+- [x] Report a measure/geography/release quality matrix before large queries,
       including observed, derived, missing and suppressed-value coverage.
 
 ### Examples this checklist is intended to answer
@@ -1333,6 +1333,7 @@ pnpm start
 - `GET /v1/measures/{measure-id}`
 - `GET /v1/measures/{measure-id}/compatibility`
 - `GET /v1/measures/{measure-id}/coverage`
+- `GET /v1/measures/{measure-id}/quality`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`

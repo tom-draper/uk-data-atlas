@@ -51,6 +51,7 @@ paths:
                     - /v1/measures/{measure-id}
                     - /v1/measures/{measure-id}/compatibility
                     - /v1/measures/{measure-id}/coverage
+                    - /v1/measures/{measure-id}/quality
                     - /v1/data/{measure-id}
                     - /v1/data/{measure-id}/series
                     - /v1/data/{measure-id}/rankings
@@ -283,6 +284,32 @@ paths:
       responses:
         "200":
           description: Source coverage and boundary code-coverage summary.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /measures/{measure-id}/quality:
+    get:
+      operationId: getMeasureQuality
+      summary: Preflight source, status and boundary quality for a measure
+      description: >
+        Reports every source partition and period before a data request,
+        including source record-status counts, immutable artifact hash,
+        aggregation availability and boundary code-set compatibility. It does
+        not infer missing areas or claim geometric equivalence from code sets.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The measure-quality matrix.
           content:
             application/json:
               schema:
