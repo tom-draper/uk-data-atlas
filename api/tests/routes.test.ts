@@ -1918,6 +1918,9 @@ test("keeps aggregation separate from the source-exact observation route", () =>
 test("aggregates an extensive measure only over a complete direct named-location match", () => {
 	const context: RouteContext = {
 		boundaryRegistry: registry,
+		// The compiled releases are what tell a member code of another vintage
+		// from one that is simply wrong, so aggregation needs them.
+		areaLookup,
 		namedLocationLookup: aggregationNamedLocationLookup,
 		dataCatalog,
 		populationObservations,
@@ -1943,7 +1946,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 			operation: "sum",
 			membership: "direct-code-match",
 			inputRecordCount: 2,
-			note: "Every curated location member code was found in the published source partition.",
+			note: "Every curated location member code that names an area in this partition was found in the published source partition.",
 		},
 	);
 	assert.deepEqual((data as { record: unknown }).record, {
@@ -1959,12 +1962,41 @@ test("aggregates an extensive measure only over a complete direct named-location
 		},
 	);
 
-	const incomplete = routeRequest(
+	// E05000999 names no area in any compiled release, so it matched nothing
+	// and could neither add to the sum nor be counted twice in it. The sum
+	// proceeds and names the code it passed over, rather than refusing a
+	// question it can answer.
+	const withLegacy = routeRequest(
 		"GET",
 		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=incomplete-test-wards",
 		context,
 	);
-	assert.equal(incomplete.status, 422);
+	assert.equal(withLegacy.status, 200);
+	const legacyData = withLegacy.body as {
+		data: {
+			aggregation: {
+				inputRecordCount: number;
+				memberCodesNotInPartition: {
+					otherVintage: string[];
+					legacyAliases: string[];
+				};
+			};
+		};
+	};
+	assert.equal(legacyData.data.aggregation.inputRecordCount, 1);
+	assert.deepEqual(legacyData.data.aggregation.memberCodesNotInPartition, {
+		otherVintage: [],
+		legacyAliases: ["E05000999"],
+	});
+
+	// Without the compiled releases there is nothing to classify against, so an
+	// unresolved code is refused rather than assumed to be harmless.
+	const unverifiable = routeRequest(
+		"GET",
+		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=incomplete-test-wards",
+		{ ...context, areaLookup: undefined },
+	);
+	assert.equal(unverifiable.status, 503);
 
 	const intensive = routeRequest(
 		"GET",
@@ -2853,6 +2885,15 @@ test("publishes curated named locations and reports unresolved legacy members", 
 			resolvedCount: 1,
 			unresolvedCount: 3,
 			complete: false,
+			// Two of the three absences are the wrong vintage, which a location
+			// spanning several of them always has. The third is in no release at
+			// all, and that is what stops the location covering its ground.
+			// Two absences are the wrong vintage and one is a legacy alias
+			// naming no compiled area. None is an unexplained gap, so the
+			// location still covers its ground.
+			coversLocation: true,
+			unexplained: [],
+			legacy: [{ code: "E08000000", status: "unknown", presentIn: [] }],
 			unresolved: [
 				{ code: "E08000000", status: "unknown", presentIn: [] },
 				{
@@ -2868,7 +2909,7 @@ test("publishes curated named locations and reports unresolved legacy members", 
 					presentIn: ["2019-12-uk-lad"],
 				},
 			],
-			note: "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry.",
+			note: "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. `complete` means every listed code resolved, which a location spanning several vintages never does; `coversLocation` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in `legacy`.",
 		},
 	});
 });
@@ -4189,4 +4230,59 @@ test("lists an area's neighbours with the border each shares", () => {
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}
+});
+
+test("sums a location whose members span several code vintages", () => {
+	// The shape every curated region has: an area that was one authority and
+	// became another. The location lists both, and no release holds both, so
+	// demanding that every listed code resolve refuses the location outright,
+	// for every vintage there is.
+	const locations = createNamedLocationLookup({
+		schemaVersion: 1,
+		contentHash: "sha256:vintage-locations",
+		source: {
+			artifact: "data/precompiled/gazetteer.core.json",
+			gazetteerVersion: 1,
+		},
+		locations: [
+			{
+				id: "spanning",
+				label: "Spanning",
+				kind: "editorial-grouping",
+				// E06000001 is current and carries the observation; E08000999
+				// was superseded before this partition and E08000998 has yet
+				// to take effect.
+				memberCodes: ["E06000001", "E08000999", "E08000998"],
+				bbox: [-2.5, 53.3, -2, 53.7],
+			},
+		],
+	});
+	const context: RouteContext = {
+		boundaryRegistry: registry,
+		// The lookup spanning three vintages, which is what lets a superseded
+		// code be told from a wrong one.
+		areaLookup: namedLocationAreaLookup,
+		namedLocationLookup: locations,
+		dataCatalog,
+		populationObservations,
+		populationLocalAuthorityObservations,
+		measureObservations,
+	};
+	const response = routeRequest(
+		"GET",
+		"/v1/data/population-estimate/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=spanning",
+		context,
+	);
+	assert.equal(
+		response.status,
+		200,
+		JSON.stringify(response.body).slice(0, 400),
+	);
+	const data = response.body as {
+		data: { aggregation: { inputRecordCount: number } };
+	};
+	// Only the code that exists in this partition is summed. The other two
+	// contribute nothing and withhold nothing: a release's areas are a
+	// partition, so the ground is covered exactly once.
+	assert.equal(data.data.aggregation.inputRecordCount, 1);
 });

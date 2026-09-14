@@ -48,7 +48,10 @@ import {
 import { convertObservations } from "./conversion";
 import { attributionFor, attributionText } from "./attribution";
 import { measureCoverage } from "./measureCoverage";
-import { reconcileMembers } from "./memberReconciliation";
+import {
+	reconcileMembers,
+	reconcileMembersForYear,
+} from "./memberReconciliation";
 import { rankObservations, type RankingOrder } from "./ranking";
 import {
 	exportMeasureRecords,
@@ -950,11 +953,81 @@ export const route = (
 		const byLocation = location
 			? aggregateLocationMembers(location, numericRecords)
 			: undefined;
-		if (byLocation && byLocation.unresolvedMemberCodes.length > 0) {
+		/*
+		 * A curated location lists every code it has ever been made of, so
+		 * against any one partition some are always the wrong vintage: the
+		 * North West carries the six Cumbria districts and the two unitaries
+		 * that replaced them, and no release holds both. Refusing on any
+		 * unresolved code refused the location outright, for every vintage.
+		 *
+		 * What must hold is that nothing is missed and nothing counted twice.
+		 * A code absent because it is superseded has its successor resolving in
+		 * its place, and one not yet current has its predecessor; either way
+		 * the ground is covered exactly once, because a release's areas are a
+		 * partition and only codes in that release are summed. An absence the
+		 * vintage does not explain is still refused.
+		 */
+		const locationCoverage =
+			location && byLocation && areaLookup
+				? reconcileMembersForYear(
+						areaLookup,
+						source.sourceGeography.type,
+						source.sourceGeography.boundaryYear,
+						location.memberCodes,
+						new Set(
+							byLocation.members.map((record) => record.areaCode),
+						),
+					)
+				: undefined;
+		// Telling a vintage mismatch from a bad code needs the compiled releases
+		// to compare against. Without them, fall back to refusing any unresolved
+		// code rather than guessing which kind it is.
+		if (
+			location &&
+			byLocation &&
+			!areaLookup &&
+			byLocation.unresolvedMemberCodes.length > 0
+		) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the area inventory before aggregating over a named location, so a member code of another vintage can be told from one that is wrong.",
+			);
+		}
+		if (locationCoverage && !locationCoverage.coversLocation) {
 			return problem(
 				422,
 				"Operation Not Supported",
-				"The named location is not a complete direct code match for this source partition; no conversion or partial sum was applied.",
+				`The named location does not cover this source partition by direct code match: ${locationCoverage.unexplained
+					.map((member) => `${member.code} (${member.status})`)
+					.join(", ")}. No conversion or partial sum was applied.`,
+			);
+		}
+		if (byLocation && location && byLocation.members.length === 0) {
+			// A country is carried as a map extent with no member codes, and is
+			// summed by its own GSS code rather than by membership.
+			if (location.memberCodes.length === 0) {
+				return problem(
+					422,
+					"Operation Not Supported",
+					`${location.label} carries no member codes: it names an extent rather than a set of areas. Aggregate a country with areaCode, such as areaCode=E92000001 for England.`,
+				);
+			}
+			const resolvedElsewhere = [
+				...new Set(
+					(locationCoverage?.unresolved ?? []).flatMap(
+						(member) => member.presentIn,
+					),
+				),
+			].sort();
+			return problem(
+				422,
+				"Operation Not Supported",
+				`Every member code of ${location.label} is the wrong vintage for this source partition, which is on ${source.sourceGeography.boundaryYear} ${source.sourceGeography.type} codes${
+					resolvedElsewhere.length > 0
+						? `; they resolve against ${resolvedElsewhere.join(", ")}`
+						: ""
+				}. The place is no longer one of these areas in its own right.`,
 			);
 		}
 		const byCountry =
@@ -1184,9 +1257,37 @@ export const route = (
 										},
 									}
 								: {}),
+							// Codes the sum passed over are named, so a value is
+							// never quietly partial. Those of another vintage
+							// have the code that replaced them standing in
+							// their place; legacy aliases name no compiled area
+							// at all and matched nothing.
+							...(locationCoverage &&
+							locationCoverage.unresolvedCount > 0
+								? {
+										memberCodesNotInPartition: {
+											otherVintage:
+												locationCoverage.unresolved
+													.filter(
+														(member) =>
+															member.status ===
+																"superseded" ||
+															member.status ===
+																"not-yet-current",
+													)
+													.map(
+														(member) => member.code,
+													),
+											legacyAliases:
+												locationCoverage.legacy.map(
+													(member) => member.code,
+												),
+										},
+									}
+								: {}),
 							note: weighting
-								? "Every curated location member code was found in both source-exact value and weight partitions."
-								: "Every curated location member code was found in the published source partition.",
+								? "Every curated location member code that names an area in this partition was found in both the source-exact value and weight partitions."
+								: "Every curated location member code that names an area in this partition was found in the published source partition.",
 						}
 					: regional
 						? {
