@@ -36,6 +36,7 @@ import {
 	type PopulationObservationArtifact,
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import type { ExportManifest } from "./exportManifest";
 import {
 	createAreaSearchIndex,
 	route,
@@ -185,6 +186,15 @@ export const readDataCatalog = (apiRoot: string): DataCatalog => {
 	return catalog;
 };
 
+export const readExportManifest = (apiRoot: string): ExportManifest => {
+	const path = join(apiRoot, "public", "export-manifest.json");
+	const manifest = JSON.parse(readFileSync(path, "utf8")) as ExportManifest;
+	if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.exports)) {
+		throw new Error(`Invalid export manifest at ${path}`);
+	}
+	return manifest;
+};
+
 export const readPopulationObservations = (
 	apiRoot: string,
 ): PopulationObservationArtifact => {
@@ -283,6 +293,12 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const namedLocationInventory = readNamedLocationInventory(apiRoot);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
 	const dataCatalog = readDataCatalog(apiRoot);
+	const exportManifest = readExportManifest(apiRoot);
+	if (exportManifest.dataCatalogHash !== dataCatalog.contentHash) {
+		throw new Error(
+			"Export manifest was not built from the current data catalogue.",
+		);
+	}
 	const geometrySources = readGeometrySourceLookup(apiRoot);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
 	return {
@@ -306,6 +322,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		namedLocationInventory,
 		namedLocationLookup: createNamedLocationLookup(namedLocationInventory),
 		dataCatalog,
+		exportManifest,
 		populationObservations: readPopulationObservations(apiRoot),
 		populationLocalAuthorityObservations:
 			readPopulationLocalAuthorityObservations(apiRoot),

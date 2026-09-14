@@ -1365,6 +1365,8 @@ pnpm start
 - `GET /v1/validation`
 - `GET /v1/validation/boundary-releases/{type}/{release}`
 - `GET /v1/validation/crosswalks/{crosswalk-id}`
+- `GET /v1/exports`
+- `GET /v1/exports/{export-id}`
 - `GET /v1/atlas-release`
 
 The build scans every `../data/**/meta.json`, so a newly added dataset becomes
@@ -1476,6 +1478,12 @@ with `?status=waived` for just the exceptions, and each boundary release and
 crosswalk's checks are also served at `/v1/validation` followed by the
 resource's own path. It covers geography only so far; measure checks such as
 unmatched records and preserved totals belong here once measures exist.
+
+`GET /v1/exports` lists every source partition as a whole, immutable JSON
+download. `GET /v1/exports/{export-id}` returns that exact observation
+artifact, not a reconstructed paginated query; its manifest entry records the
+source artifact hash and byte size. CSV, NDJSON and Parquet bulk products are
+still future work.
 
 The build's final step writes `public/atlas-release.json`, an immutable
 manifest that references every other build-time artifact (the boundary

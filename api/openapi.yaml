@@ -67,6 +67,8 @@ paths:
                     - /v1/validation
                     - /v1/validation/boundary-releases/{type}/{release}
                     - /v1/validation/crosswalks/{crosswalk-id}
+                    - /v1/exports
+                    - /v1/exports/{export-id}
                     - /v1/atlas-release
                 meta:
                   nextCursor: null
@@ -1588,6 +1590,51 @@ paths:
                         sliverPairCount: 1381
                 meta:
                   nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+  /exports:
+    get:
+      operationId: listBulkExports
+      summary: List release-pinned whole observation artifacts
+      description: >
+        Returns immutable JSON downloads for each published measure-source
+        partition. Every entry names the source artifact, its content hash,
+        byte size and the Atlas release that pins the export manifest.
+      responses:
+        "200":
+          description: The bulk-export manifest.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /exports/{export-id}:
+    get:
+      operationId: downloadBulkExport
+      summary: Download one immutable source observation artifact
+      description: >
+        Returns the exact JSON artifact listed by `/exports`, after checking
+        its content hash against the manifest. This response is intentionally
+        not wrapped in the usual API envelope.
+      parameters:
+        - name: export-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The complete source observation artifact.
+          headers:
+            Content-Disposition:
+              schema: { type: string }
+              description: Suggested immutable JSON filename.
+          content:
+            application/json:
+              schema: { type: object }
         "404":
           $ref: "#/components/responses/NotFound"
         "503":

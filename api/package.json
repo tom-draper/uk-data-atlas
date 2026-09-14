@@ -7,7 +7,7 @@
 		"node": ">=24 <25"
 	},
 	"scripts": {
-		"build": "pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:validation-report && pnpm build:atlas-release",
+		"build": "pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:validation-report && pnpm build:atlas-release",
 		"build:area-inventory": "tsx scripts/build-area-inventory.ts",
 		"build:atlas-release": "tsx scripts/build-atlas-release.ts",
 		"build:boundary-registry": "tsx scripts/build-boundary-registry.ts",
@@ -21,6 +21,7 @@
 		"build:geometry-source-registry": "tsx scripts/build-geometry-source-registry.ts",
 		"build:named-locations": "tsx scripts/build-named-locations.ts",
 		"build:data-catalog": "tsx scripts/build-data-catalog.ts",
+		"build:export-manifest": "tsx scripts/build-export-manifest.ts",
 		"build:measure-compatibility": "tsx scripts/build-measure-compatibility.ts",
 		"build:validation-report": "tsx scripts/build-validation-report.ts"
 	},

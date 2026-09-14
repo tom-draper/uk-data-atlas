@@ -31,6 +31,7 @@ import {
 	type PopulationObservationArtifact,
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import type { ExportManifest } from "./exportManifest";
 import { compareObservations } from "./comparison";
 import {
 	aggregateCountryMembers,
@@ -373,6 +374,7 @@ export type RouteContext = {
 	/** Every measure's observations bar the two population artifacts. */
 	measureObservations?: AnyMeasureObservationArtifact[];
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
+	exportManifest?: ExportManifest;
 };
 
 /**
@@ -404,6 +406,7 @@ export const route = (
 		populationLocalAuthorityObservations,
 		measureObservations,
 		measureCompatibilityInventory,
+		exportManifest,
 	} = context;
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -463,6 +466,8 @@ export const route = (
 					"/v1/validation",
 					"/v1/validation/boundary-releases/{type}/{release}",
 					"/v1/validation/crosswalks/{crosswalk-id}",
+					"/v1/exports",
+					"/v1/exports/{export-id}",
 					"/v1/atlas-release",
 				],
 			}),
@@ -2787,6 +2792,95 @@ export const route = (
 					"Catalogue Unavailable",
 					"Build the relationship candidate inventory before starting the API.",
 				);
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "exports"
+	) {
+		return exportManifest
+			? {
+					status: 200,
+					body: envelope(releaseId, {
+						...exportManifest,
+						note: "Each export is the immutable, source-exact JSON observation artifact used by the API.",
+					}),
+				}
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the export manifest before listing bulk exports.",
+				);
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "exports"
+	) {
+		if (!exportManifest || !dataCatalog) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue and export manifest before downloading bulk exports.",
+			);
+		}
+		const listedExport = exportManifest.exports.find(
+			(candidate) => candidate.id === segments[2],
+		);
+		if (!listedExport) {
+			return problem(
+				404,
+				"Not Found",
+				"No bulk export matches that identity.",
+			);
+		}
+		const measure = dataCatalog.measures.find(
+			(candidate) => candidate.id === listedExport.measureId,
+		);
+		const source = measure?.sources.find(
+			(candidate) =>
+				candidate.datasetId === listedExport.datasetId &&
+				candidate.sourceGeography.type ===
+					listedExport.sourceGeography.type &&
+				candidate.sourceGeography.boundaryYear ===
+					listedExport.sourceGeography.boundaryYear &&
+				candidate.periods.length === listedExport.periods.length &&
+				candidate.periods.every(
+					(period, index) => period === listedExport.periods[index],
+				),
+		);
+		const artifact =
+			measure && source
+				? isLegacyPopulationSource(measure.id, source)
+					? source.sourceGeography.type === "ward"
+						? populationObservations
+						: populationLocalAuthorityObservations
+					: findMeasureObservations(
+							measureObservations ?? [],
+							measure.id,
+							source,
+						)
+				: undefined;
+		if (!artifact || artifact.contentHash !== listedExport.contentHash) {
+			return problem(
+				503,
+				"Export Unavailable",
+				"The catalogued export artifact is unavailable or does not match its manifest hash.",
+			);
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, listedExport),
+			representation: {
+				contentType: "application/json",
+				body: `${JSON.stringify(artifact)}\n`,
+				headers: {
+					"content-disposition": `attachment; filename=\"${listedExport.artifact}.json\"`,
+				},
+			},
+		};
 	}
 
 	if (
