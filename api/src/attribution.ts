@@ -31,7 +31,7 @@ export type AttributionResult =
 			status: "resolved";
 			resources: AttributedResource[];
 			licences: Licence[];
-		  }
+	  }
 	| { status: "unknown"; unknownResources: string[] };
 
 const licenceKey = (licence: Licence) => `${licence.name} ${licence.url ?? ""}`;
@@ -189,10 +189,7 @@ export const attributionText = (
 	const section = (heading: string, entries: string[]) => {
 		if (entries.length === 0) return [];
 		if (entries.length === 1) return [`${heading}: ${entries[0]}.`];
-		return [
-			`${heading}:`,
-			...entries.map((entry) => `- ${entry}`),
-		];
+		return [`${heading}:`, ...entries.map((entry) => `- ${entry}`)];
 	};
 
 	return [

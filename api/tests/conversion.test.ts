@@ -3,9 +3,7 @@ import test from "node:test";
 import { convertObservations } from "../src/conversion";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 
-const artifact = (
-	records: CrosswalkArtifact["records"],
-): CrosswalkArtifact =>
+const artifact = (records: CrosswalkArtifact["records"]): CrosswalkArtifact =>
 	({
 		schemaVersion: 1,
 		id: "test-crosswalk",
@@ -30,9 +28,18 @@ const observed = (areaCode: string, value: number) => ({
 });
 
 const contained = artifact([
-	{ source: { code: "E05000001", labels: [] }, targets: [{ code: "E06000001", labels: [] }] },
-	{ source: { code: "E05000002", labels: [] }, targets: [{ code: "E06000001", labels: [] }] },
-	{ source: { code: "E05000003", labels: [] }, targets: [{ code: "E06000002", labels: [] }] },
+	{
+		source: { code: "E05000001", labels: [] },
+		targets: [{ code: "E06000001", labels: [] }],
+	},
+	{
+		source: { code: "E05000002", labels: [] },
+		targets: [{ code: "E06000001", labels: [] }],
+	},
+	{
+		source: { code: "E05000003", labels: [] },
+		targets: [{ code: "E06000002", labels: [] }],
+	},
 ]);
 
 test("regroups contained areas without changing the total", () => {
@@ -123,5 +130,8 @@ test("refuses to apportion a split source with no weight", () => {
 
 	assert.equal(result.status, "refused");
 	if (result.status !== "refused") return;
-	assert.match(result.reason, /split across several targets with no published weight/);
+	assert.match(
+		result.reason,
+		/split across several targets with no published weight/,
+	);
 });

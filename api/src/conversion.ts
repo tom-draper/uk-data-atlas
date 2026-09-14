@@ -107,8 +107,6 @@ export const convertObservations = (
 				status: "derived" as const,
 				inputAreaCount,
 			}))
-			.sort((left, right) =>
-				left.areaCode.localeCompare(right.areaCode),
-			),
+			.sort((left, right) => left.areaCode.localeCompare(right.areaCode)),
 	};
 };

@@ -17,7 +17,8 @@ const dataCatalog = {
 		{
 			id: "local-election",
 			label: "Local Election Results",
-			publisher: "House of Commons Library; Local Elections Archive Project",
+			publisher:
+				"House of Commons Library; Local Elections Archive Project",
 			sourceUrl: "https://example.com/elections",
 			licence: {
 				name: "Open Parliament Licence (2021-2025); CC BY-SA 3.0 (2016-2019)",
@@ -108,7 +109,11 @@ test("attributes a crosswalk through the boundary releases it was built from", (
 	// The crosswalk carries no licence of its own, so its endpoints appear.
 	assert.deepEqual(
 		result.resources.map((resource) => resource.id),
-		["ward/2023-05-uk-bgc", "localAuthority/2023-05-uk-bgc-v2", "ward-to-lad"],
+		[
+			"ward/2023-05-uk-bgc",
+			"localAuthority/2023-05-uk-bgc-v2",
+			"ward-to-lad",
+		],
 	);
 	const crosswalk = result.resources.at(-1);
 	assert.equal(crosswalk?.licence, undefined);
@@ -181,8 +186,14 @@ test("keeps entries on their own lines when a name contains a semicolon", () => 
 	// Two licences, one of which contains its own semicolon: joining them
 	// inline would read as three.
 	assert.equal(result.licences.length, 2);
-	assert.match(text, /Licences:\n- Open Government Licence v3\.0\n- Open Parliament/);
-	assert.match(text, /Compiled by the UK Data Atlas, release sha256:release\./);
+	assert.match(
+		text,
+		/Licences:\n- Open Government Licence v3\.0\n- Open Parliament/,
+	);
+	assert.match(
+		text,
+		/Compiled by the UK Data Atlas, release sha256:release\./,
+	);
 });
 
 test("names a single licence in the singular, inline", () => {
@@ -196,6 +207,9 @@ test("names a single licence in the singular, inline", () => {
 	if (result.status !== "resolved") return;
 
 	const text = attributionText(result.resources, result.licences, "sha256:x");
-	assert.match(text, /^Data: Population \u2014 Office for National Statistics\.$/m);
+	assert.match(
+		text,
+		/^Data: Population \u2014 Office for National Statistics\.$/m,
+	);
 	assert.match(text, /^Licence: Open Government Licence v3\.0\.$/m);
 });
