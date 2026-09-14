@@ -274,9 +274,16 @@ only **available** when its endpoint, contract and provenance are published.
       4,445 km of coast, and the Isle of Wight has no neighbours at all.
 - [ ] Compare two boundary releases to identify recodes, membership changes and
       geometry changes.
-- [ ] Report the overlap between two specified areas, including shared area and
-      each area's share, for investigating relationships such as constituency ↔
-      LAD without downloading both geometries.
+- [x] Report the overlap between two specified areas through
+      `GET /v1/areas/{type}/{release}/{code}/overlap?with=`, across geographies
+      and releases: the shared area, each area's share, and a relation judged
+      by the same sliver and coverage thresholds the area-overlap crosswalks
+      are compiled with, so the two cannot disagree. Aldershot is 31.6% in
+      Hart, exactly as the published crosswalk says, and two neighbouring
+      authorities from different releases meet as `boundary-only`: fifteen
+      slivers, the widest 18.7 m. A pair near the sliver threshold is
+      `indeterminate` rather than guessed, and any published relationship
+      between the two is listed beside the measurement.
 - [ ] Complete the geometry metadata above with the properties it does not yet
       carry: a geometry hash, validity checks and a generalisation tier. Source
       CRS, transformation, area and perimeter method, centroid and a
@@ -1514,6 +1521,7 @@ pnpm start
 - `GET /v1/areas/{type}/{release}/{code}/relationships`
 - `GET /v1/areas/{type}/{release}/{code}/capabilities`
 - `GET /v1/areas/{type}/{release}/{code}/citation`
+- `GET /v1/areas/{type}/{release}/{code}/overlap?with={type}/{release}/{code}`
 - `GET /v1/areas/{type}/{release}/{code}/geometry`
 - `GET /v1/crosswalks`
 - `GET /v1/crosswalks/{crosswalk-id}`

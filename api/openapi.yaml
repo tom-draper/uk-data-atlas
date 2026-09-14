@@ -1934,6 +1934,58 @@ paths:
         "503":
           $ref: "#/components/responses/GeometryUnavailable"
 
+  /areas/{geography}/{release}/{code}/overlap:
+    get:
+      operationId: getAreaOverlap
+      summary: Measure how one area overlaps another
+      description: >
+        Intersects this area with the area named in `with`, which may be of
+        another geography or boundary release, and returns the shared area,
+        each area's share of it, and a relation, so a constituency and a local
+        authority can be compared without downloading either geometry.
+
+        The relation follows the rules the published area-overlap crosswalks
+        are compiled with, stated in `method`. The intersection is judged by
+        its widest piece: narrower than `sliverWidthM` it is where two
+        independently generalised borders disagree, and the relation is
+        `boundary-only`; within a factor of two of that width it is
+        `indeterminate`, because a crosswalk compile would refuse to decide.
+        Otherwise an area covered to `minimumCoverage` is `within` the other,
+        the other `contains` it, both covered is `same-extent`, and anything
+        else `overlaps`. Areas that do not meet are `disjoint`.
+
+        This measures the generalised boundaries as published and is not an
+        official statement of how the areas relate. `publishedRelationships`
+        lists any published crosswalk relationship between the two, with its
+        method and quality.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+        - name: with
+          in: query
+          required: true
+          schema: { type: string }
+          description: >
+            The other area as `{geography}/{release}/{code}`, such as
+            `localAuthority/2024-05-uk-bgc/E07000092`.
+      responses:
+        "200":
+          description: Both areas, the overlap, its relation and the method.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /areas/{geography}/{release}/{code}/geometry:
     get:
       operationId: getAreaGeometry
