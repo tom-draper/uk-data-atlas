@@ -72,7 +72,7 @@ export const readGeographyInventory = (apiRoot: string): GeographyInventory => {
 	return inventory;
 };
 
-export const readAreaLookup = (apiRoot: string): AreaLookup => {
+export const readAreaInventory = (apiRoot: string): AreaInventory => {
 	const inventoryPath = join(apiRoot, "public", "area-inventory.json");
 	const inventory = JSON.parse(
 		readFileSync(inventoryPath, "utf8"),
@@ -80,6 +80,13 @@ export const readAreaLookup = (apiRoot: string): AreaLookup => {
 	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.releases)) {
 		throw new Error(`Invalid area inventory at ${inventoryPath}`);
 	}
+	return inventory;
+};
+
+export const readAreaLookup = (
+	apiRoot: string,
+	inventory = readAreaInventory(apiRoot),
+): AreaLookup => {
 	const artifacts = inventory.releases.flatMap((release) => {
 		if (release.status !== "available") return [];
 		const path = join(apiRoot, "public", release.artifact);
@@ -290,7 +297,8 @@ export const readMeasureCompatibility = (
 export type ApiCatalogues = Required<RouteContext>;
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
-	const areaLookup = readAreaLookup(apiRoot);
+	const areaInventory = readAreaInventory(apiRoot);
+	const areaLookup = readAreaLookup(apiRoot, areaInventory);
 	const namedLocationInventory = readNamedLocationInventory(apiRoot);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
 	const dataCatalog = readDataCatalog(apiRoot);
@@ -306,6 +314,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	return {
 		boundaryRegistry: readBoundaryRegistry(apiRoot),
 		geographyInventory: readGeographyInventory(apiRoot),
+		areaInventory,
 		areaLookup,
 		areaSearchIndex: createAreaSearchIndex(areaLookup),
 		areaRelationshipIndex: createAreaRelationshipIndex(

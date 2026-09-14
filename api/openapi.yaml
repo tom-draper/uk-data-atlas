@@ -61,6 +61,7 @@ paths:
                     - /v1/areas/{type}/{release}/{code}
                     - /v1/areas/{type}/{release}/{code}/relationships
                     - /v1/areas/{type}/{release}/{code}/capabilities
+                    - /v1/areas/{type}/{release}/{code}/citation
                     - /v1/areas/{type}/{release}/{code}/geometry
                     - /v1/crosswalks
                     - /v1/crosswalks/{crosswalk-id}
@@ -1558,6 +1559,70 @@ paths:
               schema: { type: object }
         "404":
           $ref: "#/components/responses/NotFound"
+
+  /areas/{geography}/{release}/{code}/citation:
+    get:
+      operationId: getAreaCitation
+      summary: Assemble a citation bundle for one exact area identity
+      description: >
+        Returns what a caller needs to cite an area as served by this Atlas
+        release: the immutable Atlas release, the content hash of the area
+        identity artifact, the boundary release's publisher, licence and
+        metadata hash, geometry provenance, the validation results for the
+        release and any cited crosswalk, and an attribution block.
+
+        Name a `measure` to cite the observation artifacts, with their content
+        hashes, that hold a value for this area in a source partition assessed
+        against this exact boundary release. Only those partitions' datasets
+        are attributed, together with any dataset a derived measure is
+        calculated from. Name a `crosswalk` to cite one that publishes a
+        relationship for this area. A resource that supplies nothing for the
+        area is refused rather than cited.
+
+        Per-area geometry hashes are not compiled yet and are reported as
+        `not-published`. The boundary release's `metadataHash` pins its
+        metadata, which names the source file but does not hash its contents.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+        - name: measure
+          in: query
+          required: false
+          schema:
+            type: array
+            items: { type: string }
+          description: A measure id from `GET /measures`. Repeatable.
+        - name: crosswalk
+          in: query
+          required: false
+          schema:
+            type: array
+            items: { type: string }
+          description: A crosswalk id from `GET /crosswalks`. Repeatable.
+      responses:
+        "200":
+          description: The area's citation bundle.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: >
+            A named measure holds no observation for this area in a source
+            assessed against this boundary release, or a named crosswalk
+            publishes no relationship for it.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
 
   /areas/{geography}/{release}/{code}/history:
     get:
