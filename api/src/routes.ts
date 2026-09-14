@@ -493,6 +493,7 @@ export const route = (
 					"/v1/areas/{type}/{release}/{code}/history",
 					"/v1/areas/{type}/{release}/{code}/parents",
 					"/v1/areas/{type}/{release}/{code}/children",
+					"/v1/areas/{type}/{release}/{code}/children/geometry",
 					"/v1/areas/{type}/{release}/{code}/relationships",
 					"/v1/areas/{type}/{release}/{code}/geometry",
 					"/v1/areas/{type}/{release}/{code}/geometry/metadata",
@@ -2783,6 +2784,168 @@ export const route = (
 				boundaryRelease,
 				...area,
 				relationships,
+			}),
+		};
+	}
+
+	if (
+		segments.length === 7 &&
+		segments[0] === "v1" &&
+		segments[1] === "areas" &&
+		segments[5] === "children" &&
+		segments[6] === "geometry"
+	) {
+		const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
+			string,
+			string,
+			string,
+		];
+		const area = findArea(areaLookup, geography, boundaryRelease, code);
+		if (!area)
+			return problem(
+				404,
+				"Not Found",
+				"No compiled area matches that identity.",
+			);
+		if (!crosswalkLookup)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the crosswalk inventory before looking up area membership.",
+			);
+		if (!areaGeometryCache)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the geometry source registry before retrieving geometry.",
+			);
+		const requestedTier = parsedUrl.searchParams.get("tier") ?? "full";
+		if (!isGeometryTier(requestedTier))
+			return problem(
+				400,
+				"Unknown Tier",
+				`No such generalisation tier: ${requestedTier}. Choose one of ${Object.keys(
+					GEOMETRY_TIERS,
+				).join(", ")}.`,
+			);
+		const children = relationshipsFor(
+			areaRelationshipIndex,
+			crosswalkLookup,
+			geography,
+			boundaryRelease,
+			code,
+		).filter((relationship) => relationship.relation === "contains");
+		if (children.length === 0)
+			return problem(
+				404,
+				"Not Found",
+				"No published relationship names anything as contained by that area.",
+			);
+		const features: unknown[] = [];
+		// A child can be published as a relationship and still have no servable
+		// geometry, and a whole release can be missing its geometry source.
+		// Both are listed rather than passed over, so a caller can tell a
+		// partial collection from a complete one.
+		const withoutGeometry: unknown[] = [];
+		let vertices = 0;
+		for (const child of children) {
+			const { counterpart, crosswalk } = child;
+			const note = (reason: string) => {
+				withoutGeometry.push({
+					id: counterpart.id,
+					geography: counterpart.geography,
+					boundaryRelease: counterpart.boundaryRelease,
+					code: counterpart.code,
+					reason,
+				});
+			};
+			let geometry;
+			try {
+				geometry = areaGeometryCache.get(
+					counterpart.geography,
+					counterpart.boundaryRelease,
+					counterpart.code,
+				);
+			} catch (error) {
+				note(
+					error instanceof Error
+						? error.message
+						: "Geometry could not be loaded.",
+				);
+				continue;
+			}
+			if (!geometry) {
+				note("No feature for this code in the raw geometry source.");
+				continue;
+			}
+			const simplified = simplifyGeometry(geometry, requestedTier);
+			if (!simplified) {
+				note(
+					`Every part is smaller than the ${requestedTier} tier keeps.`,
+				);
+				continue;
+			}
+			vertices += simplified.verticesAfter;
+			const childArea = findArea(
+				areaLookup,
+				counterpart.geography,
+				counterpart.boundaryRelease,
+				counterpart.code,
+			);
+			features.push({
+				type: "Feature",
+				id: counterpart.id,
+				properties: {
+					id: counterpart.id,
+					geography: counterpart.geography,
+					boundaryRelease: counterpart.boundaryRelease,
+					code: counterpart.code,
+					...(childArea ?? { labels: counterpart.labels }),
+					// Membership here is a published crosswalk's claim, not a
+					// geometric test run at request time.
+					membership: crosswalk,
+					// The tier itself is stated once for the collection; only
+					// what it cost this member is worth repeating, so that a
+					// member which lost parts can be told from one that did not.
+					generalisation: {
+						vertices: simplified.verticesAfter,
+						verticesAtFullResolution: simplified.verticesBefore,
+						parts: simplified.partsAfter,
+						partsAtFullResolution: simplified.partsBefore,
+					},
+					geometrySource: areaGeometryCache.provenance(
+						counterpart.geography,
+						counterpart.boundaryRelease,
+						counterpart.code,
+					),
+				},
+				geometry: simplified.geometry,
+			});
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				type: "FeatureCollection",
+				id: `${geography}/${boundaryRelease}/${code}/children`,
+				parent: {
+					id: `${geography}/${boundaryRelease}/${code}`,
+					geography,
+					boundaryRelease,
+					...area,
+				},
+				collection: {
+					members: children.length,
+					withGeometry: features.length,
+					vertices,
+					tier: requestedTier,
+					toleranceM: GEOMETRY_TIERS[requestedTier],
+					minEffectiveAreaM2: GEOMETRY_TIERS[requestedTier] ** 2,
+					...(requestedTier === "full"
+						? {}
+						: { generalisationMethod: GENERALISATION_METHOD }),
+				},
+				withoutGeometry,
+				features,
 			}),
 		};
 	}
