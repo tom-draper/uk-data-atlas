@@ -826,6 +826,207 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /places:
+    get:
+      operationId: resolvePlaces
+      summary: Find every place a name could mean
+      description: >
+        Turns a name into candidate places, each saying what kind of place it
+        is. A name is rarely one area: "Manchester" is a local authority, a
+        county and unitary authority, a major town, a travel to work area and a
+        ward, and "Newport" is thirteen codes across Wales, the Isle of Wight and
+        Shropshire. This never chooses among them.
+
+
+        Names match with case, accents, punctuation and the ampersand set aside,
+        so "Brighton & Hove" and "Ynys Mon" find what was published, and an
+        alias matches as well as a name. An administrative title is set aside
+        too, so "Bristol" finds the authority published as "Bristol, City of",
+        reported as `exact-without-title`. Names that merely begin with the
+        query follow, as `prefix`, once equal names leave room: "Richmond"
+        lists its wards and parish first, then Richmond upon Thames. A bare
+        area code, or a place reference, is looked up directly.
+
+
+        A place held in several releases is returned once, with its releases
+        newest first. Equal matches are listed headline geographies first, then
+        wards and smaller areas; that is a presentation order and asserts
+        nothing about which was meant. Curated named locations appear with
+        their member codes.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: A place name, an area code, or a place reference such as `localAuthority/E08000003`.
+          schema:
+            type: string
+          example: Manchester
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 10
+      responses:
+        "200":
+          description: The candidate places, best match first. Empty when nothing matches.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
+                data:
+                  query: Bristol
+                  candidates:
+                    - place: localAuthority/E06000023
+                      kind: area
+                      name: Bristol, City of
+                      geography: localAuthority
+                      code: E06000023
+                      match: exact-without-title
+                      boundaryReleases: [2025-12-uk-bgc, 2023-05-uk-bgc-v2]
+                    - place: majorTownAndCity/J01000015
+                      kind: area
+                      name: Bristol
+                      geography: majorTownAndCity
+                      code: J01000015
+                      match: exact
+                      boundaryReleases: [2015-12-en-bgc]
+                meta:
+                  nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /data/{measure-id}/value:
+    get:
+      operationId: getMeasureValueForPlace
+      summary: Answer a measure for a place given by name
+      description: >
+        Answers "what is the population of the North West?" in one call. The
+        place may be a name, an area code or a place reference from `/places`;
+        the period may be omitted, in which case the latest the chosen
+        partition publishes is used and the answer says so.
+
+
+        Nothing is computed here. Each place the name could mean is put to the
+        route that already serves that kind of place: `series` for an area,
+        `aggregate` for a curated location or a country. The value, its
+        provenance and every refusal are exactly what that route gives, and
+        `via` names the call that gives the answer directly, for citing or
+        repeating.
+
+
+        The candidate is chosen by what the measure can answer rather than by
+        guessing what was meant. Places matching the name exactly are tried
+        first; names merely beginning with it only when no exact match
+        answers. Answers resting on the same partition, period and area codes
+        are the same ground reached two ways and count once, keeping the
+        publisher's own observation over an aggregate of one member: Manchester
+        the authority and Manchester the curated location of that authority give
+        one answer. The other places the name matched are listed in
+        `otherMatches`, answered or not.
+
+
+        When the name gives more than one distinct answer the response is a 409
+        with a `choices` member: each place, its answer, and the request that
+        asks about it alone. "Newport" is the Welsh authority and several
+        wards. When the name matches places but the measure answers none, the
+        response is a 422 with a `candidates` member saying why for each, such
+        as a median, which cannot be summed over a region.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: place
+          in: query
+          required: true
+          schema:
+            type: string
+          example: North West
+        - name: period
+          in: query
+          required: false
+          description: A published period. Omit for the latest.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The answer, the place it is for, and the route that gives it.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
+                data:
+                  measure:
+                    id: population-estimate
+                    label: Population estimate
+                    valueKind: count
+                    unit: people
+                  question: { place: North West, period: "2022" }
+                  answer:
+                    period: "2022"
+                    periodDefaulted: false
+                    status: derived
+                    value: 7526285
+                    unit: people
+                  place:
+                    place: location/north-west
+                    kind: named-location
+                    name: North West
+                    geography: named-location
+                    code: north-west
+                    match: exact
+                  method: aggregate
+                  via: /v1/data/population-estimate/aggregate?locationId=north-west&geography=localAuthority&boundaryYear=2023&period=2022
+                  otherMatches:
+                    - place: region/E12000002
+                      kind: area
+                      name: North West
+                      geography: region
+                      code: E12000002
+                      match: exact
+                      served: false
+                      reason: population-estimate is not published for region areas.
+                meta:
+                  nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          description: No published measure has that id, or no place is called or coded that.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: >
+            The name gives more than one distinct answer. `choices` lists each
+            place with its answer and the request that asks about it alone.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: >
+            The name matches places, but the measure answers none of them.
+            `candidates` says why for each.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /data/{measure-id}/change:
     get:
       operationId: getSourceExactMeasureChange
@@ -2705,7 +2906,10 @@ components:
   schemas:
     Problem:
       type: object
-      description: RFC 9457 Problem Details.
+      description: >
+        RFC 9457 Problem Details. Two routes add extension members: a value
+        request for an ambiguous place name adds `choices`, and one whose place
+        the measure cannot answer adds `candidates`.
       required: [type, title, status, detail]
       properties:
         type:
@@ -2717,6 +2921,20 @@ components:
           type: integer
         detail:
           type: string
+        choices:
+          type: array
+          description: >
+            On a 409 Ambiguous Place: each place the name could mean, with its
+            answer and the request that asks about it alone.
+          items:
+            type: object
+        candidates:
+          type: array
+          description: >
+            On a 422 Place Not Served: each place the name matched, and why the
+            measure does not answer it.
+          items:
+            type: object
 
     Envelope:
       type: object
