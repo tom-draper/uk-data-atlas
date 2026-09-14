@@ -94,8 +94,10 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Expand parent/child coverage beyond currently published clean-containment
       relationships, for example constituency → wards where an authoritative or
       carefully qualified mapping exists.
-- [ ] Add purpose-aware reverse translation rather than requiring a caller to
-      reverse a directional crosswalk themselves.
+- [x] Add purpose-aware reverse translation rather than requiring a caller to
+      reverse a directional crosswalk themselves. Results state `forward` or
+      `reverse`, preserve the original crosswalk provenance, and normalise
+      reverse area-overlap weights against the queried target.
 - [ ] Publish a directional relationship graph: within, contains, overlaps,
       predecessor, successor, split-from, merged-from and equivalent-to, each with
       method, quality and provenance.
@@ -854,6 +856,13 @@ The API needs separate `purpose` values:
   return no single answer.
 - `apportion`: return weights and require the caller to acknowledge the chosen
   method, or use the data endpoint's conversion option.
+
+`GET /v1/translations` accepts the desired source and target in either order.
+Every match labels its direction relative to the published crosswalk and
+retains its original provenance. For a reverse `area-overlap` result,
+`sourceCoverage` is the share of the queried area represented by published
+overlaps; `weight` is normalised over that coverage, while `sourceShare` and
+`targetShare` are expressed in the returned direction.
 
 Bulk crosswalk records should be downloadable as Parquet/CSV/NDJSON with the
 metadata manifest alongside them. They should not be scraped from paginated

@@ -1664,11 +1664,15 @@ paths:
   /translations:
     get:
       operationId: translateAreaCode
-      summary: Translate one code through a published directional crosswalk
+      summary: Translate one code through a published crosswalk in either direction
       description: >
         `identity` permits publisher-supplied historical lookups only,
         `membership` permits clean containment only, and `apportion` permits
-        area-overlap crosswalks only. The route does not treat a shared code
+        area-overlap crosswalks only. The route finds a valid directional
+        crosswalk in either direction and marks every result `forward` or
+        `reverse`, retaining the original artifact's provenance. Reverse
+        area-overlap weights are normalised against the queried target and
+        report its source coverage. The route does not treat a shared code
         across releases as proof of unchanged geography.
       parameters:
         - name: sourceGeography
