@@ -91,6 +91,28 @@ only **available** when its endpoint, contract and provenance are published.
 
 - [ ] Resolve a canonical area page with validity, aliases, extent, provenance
       and links to geometry and relationships.
+- [x] Resolve a place name to every place it could mean through
+      `GET /v1/places?q=`, each candidate saying what kind of place it is and
+      none chosen. Names match with case, accents, punctuation and the
+      ampersand set aside and aliases included, so "Ynys Mon" finds the Isle of
+      Anglesey; an administrative title is set aside too, so "Bristol" finds
+      the authority published as "Bristol, City of". Names that merely begin
+      with the query follow equal ones. A place held in several releases comes
+      back once. Of some 83,000 places, "Manchester" is six geographies and a
+      curated location, and "Newport" thirteen codes.
+- [x] Answer a measure for a place given by name through
+      `GET /v1/data/{measure-id}/value?place=`, so "what is the population of
+      the North West?" is one request. Each place the name could mean is put to
+      the route that already serves it, series for an area and aggregate for a
+      curated location or country, so the value and every refusal are that
+      route's, and `via` names the call giving the answer directly. The place
+      is chosen by what the measure can answer, not by guessing what was meant:
+      exact matches first, answers on the same ground counted once with the
+      publisher's observation kept, and the period defaulting to the latest
+      published, said so. A name giving more than one answer is a 409 whose
+      choices each carry their value, as "Newport" does for the Welsh authority
+      and its namesake wards; a name the measure answers for no candidate is a
+      422 saying why for each.
 - [ ] Expand parent/child coverage beyond currently published clean-containment
       relationships, for example constituency → wards where an authoritative or
       carefully qualified mapping exists.
