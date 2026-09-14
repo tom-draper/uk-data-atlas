@@ -5044,3 +5044,98 @@ test("explains why an area identity resolves to nothing", () => {
 		],
 	});
 });
+
+test("flags a country total that leaves out areas a matching release holds", () => {
+	const url =
+		"/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&areaCode=E92000001";
+	const context = {
+		boundaryRegistry: registry,
+		areaLookup: createAreaLookup([
+			{
+				schemaVersion: 1,
+				contentHash: "sha256:fixture-lad",
+				geography: "localAuthority",
+				boundaryRelease: "2025-12-uk-lad",
+				codeProperty: "LAD25CD",
+				nameProperty: "LAD25NM",
+				areas: [
+					{ code: "E06000001", name: "Published" },
+					{ code: "E06000002", name: "Unpublished" },
+					{ code: "S12000001", name: "Another country" },
+				],
+			},
+		]),
+		dataCatalog,
+		measureObservations,
+		measureCompatibilityInventory: {
+			...measureCompatibilityInventory,
+			measures: [
+				{
+					measureId: "ghg-emissions",
+					sources: [
+						{
+							datasetId: "ghg-emissions",
+							sourceGeography: {
+								type: "localAuthority",
+								boundaryYear: 2025,
+							},
+							periods: ["2024"],
+							candidates: [
+								{
+									boundaryRelease: "2025-12-uk-lad",
+									title: "Fixture local authorities",
+									coverageCountries: ["GB-ENG", "GB-SCT"],
+									status: "code-set-compatible",
+									sourceCodeCount: 1,
+									candidateCodeCount: 3,
+									matchingCodeCount: 1,
+									matchedSourceShare: 1,
+									unmatchedSourceCodeCount: 0,
+									unmatchedSourceCodeSample: [],
+									candidateOnlyCodeCount: 2,
+									candidateOnlyCodeSample: [
+										"E06000002",
+										"S12000001",
+									],
+								},
+							],
+							note: "Fixture compatibility.",
+						},
+					],
+				},
+			],
+		},
+	} satisfies RouteContext;
+	const coverageOf = (response: ReturnType<typeof routeRequest>) => {
+		assert.equal(response.status, 200);
+		return (
+			response.body as {
+				data: { aggregation: { coverage: Record<string, unknown> } };
+			}
+		).data.aggregation.coverage;
+	};
+
+	const partial = coverageOf(routeRequest("GET", url, context));
+	assert.equal(partial.status, "partial");
+	assert.equal(partial.code, "partial_coverage");
+	assert.deepEqual(partial.assessments, [
+		{
+			boundaryRelease: "2025-12-uk-lad",
+			status: "partial",
+			expectedAreaCount: 2,
+			includedAreaCount: 1,
+			missingAreaCount: 1,
+			missingAreaSample: ["E06000002"],
+		},
+	]);
+
+	// Without a matching release, the areas a country should hold are unknown,
+	// and the total says so rather than passing for complete.
+	const unassessed = coverageOf(
+		routeRequest("GET", url, {
+			...context,
+			measureCompatibilityInventory: undefined,
+		}),
+	);
+	assert.equal(unassessed.status, "not-assessed");
+});

@@ -45,6 +45,9 @@ import {
 	aggregateCountryMembers,
 	aggregateLocationMembers,
 	isCountryCode,
+	assessCoverage,
+	countryCodeFor,
+	summariseCoverage,
 } from "./aggregation";
 import { convertObservations } from "./conversion";
 import { attributionFor, attributionText } from "./attribution";
@@ -1019,6 +1022,25 @@ export const route = (
 				"Invalid Query",
 				`${measureId} has no published source for that period, geography and boundary year.`,
 			);
+		// The boundary releases this partition is assessed to match, against
+		// which an aggregate's coverage can be judged.
+		const compatibleReleases = (
+			measureCompatibilityInventory?.measures
+				.find((candidate) => candidate.measureId === measureId)
+				?.sources.find(
+					(candidate) =>
+						candidate.datasetId === source.datasetId &&
+						candidate.sourceGeography.type ===
+							source.sourceGeography.type &&
+						candidate.sourceGeography.boundaryYear ===
+							source.sourceGeography.boundaryYear &&
+						candidate.periods.includes(period as string),
+				)?.candidates ?? []
+		).filter(
+			(candidate) =>
+				candidate.status === "exact-code-set" ||
+				candidate.status === "code-set-compatible",
+		);
 		const regional = (() => {
 			if (!regionCode) return undefined;
 			const crosswalkId = parsedUrl.searchParams.get("crosswalk");
@@ -1037,23 +1059,9 @@ export const route = (
 					"Build crosswalk and measure compatibility inventories before aggregating a region.",
 				);
 			}
-			const compatibility = measureCompatibilityInventory.measures
-				.find((candidate) => candidate.measureId === measureId)
-				?.sources.find(
-					(candidate) =>
-						candidate.datasetId === source.datasetId &&
-						candidate.sourceGeography.type ===
-							source.sourceGeography.type &&
-						candidate.sourceGeography.boundaryYear ===
-							source.sourceGeography.boundaryYear &&
-						candidate.periods.includes(period as string),
-				)
-				?.candidates.find(
-					(candidate) =>
-						candidate.boundaryRelease === sourceRelease &&
-						(candidate.status === "exact-code-set" ||
-							candidate.status === "code-set-compatible"),
-				);
+			const compatibility = compatibleReleases.find(
+				(candidate) => candidate.boundaryRelease === sourceRelease,
+			);
 			if (!compatibility) {
 				return problem(
 					422,
@@ -1084,6 +1092,7 @@ export const route = (
 			}
 			return {
 				crosswalk,
+				sourceRelease,
 				memberCodes: new Set(membership.memberCodes),
 				region: {
 					id: `region/${crosswalk.to.boundaryRelease}/${regionCode}`,
@@ -1236,6 +1245,56 @@ export const route = (
 				"This source partition publishes no areas for that region, so there is nothing to combine.",
 			);
 		}
+		/*
+		 * A country or region total sums whatever the partition publishes, so a
+		 * partition holding values for only some areas, as a local election
+		 * does for the wards that went to the polls, still answers. It must
+		 * then say so, by comparing what was summed with the areas a matching
+		 * boundary release holds. A named location is not assessed here: its
+		 * members are reconciled above, and an unexplained gap is refused.
+		 */
+		const coverage = byCountry
+			? summariseCoverage(
+					compatibleReleases.flatMap((candidate) => {
+						const expected = [
+							...(areaLookup
+								?.get(
+									`${source.sourceGeography.type}/${candidate.boundaryRelease}`,
+								)
+								?.keys() ?? []),
+						].filter((code) => countryCodeFor(code) === areaCode);
+						return expected.length > 0
+							? [
+									assessCoverage(
+										candidate.boundaryRelease,
+										expected,
+										new Set(
+											byCountry.members.map(
+												(record) => record.areaCode,
+											),
+										),
+									),
+								]
+							: [];
+					}),
+					"No compiled boundary release is assessed as a matching code set for this source partition, so the areas it should hold for this country are not known.",
+				)
+			: byRegion && regional
+				? summariseCoverage(
+						[
+							assessCoverage(
+								regional.sourceRelease,
+								regional.memberCodes,
+								new Set(
+									byRegion.members.map(
+										(record) => record.areaCode,
+									),
+								),
+							),
+						],
+						"",
+					)
+				: undefined;
 		const aggregate = byLocation ?? byCountry ?? byRegion;
 		if (!aggregate)
 			return problem(
@@ -1483,6 +1542,10 @@ export const route = (
 											},
 										}
 									: {}),
+								coverage: {
+									...coverage,
+									note: "Compares the source areas summed with every area the crosswalk places wholly in this region. `partial` means the partition publishes no value for some of them, so the total is not the region's.",
+								},
 								note: "Regional membership comes from the caller-selected crosswalk; every included local authority is wholly covered by this one region.",
 							}
 						: {
@@ -1490,8 +1553,9 @@ export const route = (
 								membership: "gss-country-code",
 								inputRecordCount: aggregate.members.length,
 								coverage: {
+									...coverage,
 									href: `/v1/measures/${measureId}/coverage`,
-									note: "The sum covers every area of this country published in this source partition. That is not a claim of national completeness; the coverage report states which boundary releases the partition is a complete code set for.",
+									note: "The sum covers every area of this country published in this source partition. Each assessment compares those areas with the country's areas in a boundary release the partition is assessed to match; `partial` means the release holds areas the partition publishes no value for, so the total is not a national one.",
 								},
 								...(weighting
 									? {
