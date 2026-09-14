@@ -1185,6 +1185,102 @@ paths:
         "503":
           $ref: "#/components/responses/GeometryUnavailable"
 
+  /areas/{geography}/{release}/{code}/geometry/metadata:
+    get:
+      operationId: getAreaGeometryMetadata
+      summary: Measure one area's geometry without transferring its coordinates
+      description: >
+        Returns the bounding box, centroid, label point, area and perimeter of
+        an area's geometry, so a caller can size, place or label an area
+        without downloading its rings. The same source, reprojection and
+        declared grid corrections apply as for the geometry itself, and
+        `geometrySource` records them.
+
+
+        Area is ellipsoidal, taken through EPSG:6933 (WGS 84 / NSIDC EASE-Grid
+        2.0 Global), a Lambert cylindrical equal-area projection on the WGS 84
+        ellipsoid, so projected area is area on the ellipsoid and no correction
+        is applied; holes are subtracted. Perimeter sums every ring, holes
+        included, each edge's ground length coming from the ellipsoid's radii
+        of curvature at its mid-latitude. The centroid is the centre of area in
+        that same projection, inverted back to WGS 84.
+
+
+        `labelPoint` is guaranteed to lie inside the geometry: the centroid
+        where that falls within the area, otherwise the midpoint of the widest
+        run of interior found on latitudes sampled across the bounding box.
+        `labelPointMethod` says which was used, so a caller can tell a centre of
+        mass from a point merely known to be inside.
+
+
+        These figures describe the boundary as that release publishes it, at its
+        own generalisation. They are not a published land-area statistic: a
+        coastline-clipped boundary still encloses inland water, so they differ
+        from the ONS Standard Area Measurement that `population-density` uses as
+        its denominator. The `method` block repeats this with every response.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The official source code for this area on this boundary release.
+      responses:
+        "200":
+          description: The area's measurements, with the method that produced them.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaGeometryMetadataEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
+                data:
+                  id: localAuthority/2023-05-uk-bgc-v2/E06000046
+                  geography: localAuthority
+                  boundaryRelease: 2023-05-uk-bgc-v2
+                  code: E06000046
+                  name: Isle of Wight
+                  boundingBox: [-1.5874, 50.5753, -1.0703, 50.7671]
+                  centroid: [-1.2977, 50.6746]
+                  labelPoint: [-1.2977, 50.6746]
+                  labelPointMethod: centroid
+                  area:
+                    m2: 379890000
+                    hectares: 37989
+                    km2: 379.89
+                  perimeter:
+                    m: 188700
+                    km: 188.7
+                  geometryExtent:
+                    parts: 2
+                    rings: 2
+                    vertices: 1589
+                  geometrySource: { sourceCrs: "EPSG:4326" }
+                meta:
+                  nextCursor: null
+        "404":
+          description: >
+            Either no compiled area matches that identity, or the area exists
+            but no feature for its code was found in the raw geometry source.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "422":
+          description: >
+            The area's geometry carries no polygon to measure, such as a
+            release held only as points. It can still be served by the geometry
+            endpoint; it is reported rather than measured as zero.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/GeometryUnavailable"
+
   /crosswalks:
     get:
       operationId: listCrosswalks
@@ -2437,6 +2533,106 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/AreaGeometry"
+
+    AreaGeometryMetadata:
+      allOf:
+        - $ref: "#/components/schemas/Area"
+        - type: object
+          required:
+            [
+              geography,
+              boundaryRelease,
+              boundingBox,
+              centroid,
+              labelPoint,
+              labelPointMethod,
+              area,
+              perimeter,
+              geometryExtent,
+              method,
+              geometrySource,
+            ]
+          properties:
+            geography:
+              type: string
+            boundaryRelease:
+              type: string
+            boundingBox:
+              type: array
+              description: >
+                [minLongitude, minLatitude, maxLongitude, maxLatitude] in WGS 84.
+              items:
+                type: number
+              minItems: 4
+              maxItems: 4
+            centroid:
+              type: array
+              description: "[longitude, latitude] in WGS 84."
+              items:
+                type: number
+              minItems: 2
+              maxItems: 2
+            labelPoint:
+              type: array
+              description: "[longitude, latitude] in WGS 84, always inside the geometry."
+              items:
+                type: number
+              minItems: 2
+              maxItems: 2
+            labelPointMethod:
+              type: string
+              enum: [centroid, interior-span]
+              description: >
+                `centroid` when the centre of area lies inside the geometry,
+                `interior-span` when it does not and a point inside was chosen
+                instead.
+            area:
+              type: object
+              description: One measurement, in three units.
+              required: [m2, hectares, km2]
+              properties:
+                m2: { type: number }
+                hectares: { type: number }
+                km2: { type: number }
+            perimeter:
+              type: object
+              required: [m, km]
+              properties:
+                m: { type: number }
+                km: { type: number }
+            geometryExtent:
+              type: object
+              description: >
+                How much geometry stands behind the measurements: a mainland
+                and its islands are many parts, and a ring of land has more
+                rings than parts.
+              required: [parts, rings, vertices]
+              properties:
+                parts: { type: integer }
+                rings: { type: integer }
+                vertices: { type: integer }
+            method:
+              type: object
+              description: >
+                The projection and rule behind each figure, carried with the
+                response so a measurement can be read on its own.
+              required: [area, perimeter, centroid, labelPoint, caveat]
+              properties:
+                area: { type: string }
+                perimeter: { type: string }
+                centroid: { type: string }
+                labelPoint: { type: string }
+                caveat: { type: string }
+            geometrySource:
+              $ref: "#/components/schemas/GeometrySource"
+
+    AreaGeometryMetadataEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/AreaGeometryMetadata"
 
     AreaRelationshipsEnvelope:
       allOf:
