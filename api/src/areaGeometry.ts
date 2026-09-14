@@ -14,8 +14,11 @@ import {
 	type GridOffset,
 } from "./gridOffset";
 import {
+	boundsIntersect,
+	boundsWithin,
 	containPoint,
 	geometryBounds,
+	geometryMeetsBounds,
 	pointInBounds,
 	type Coordinate,
 	type GeometryBounds,
@@ -54,6 +57,13 @@ type CachedRelease = {
 export type ContainingArea = {
 	code: string;
 	containment: Exclude<PointContainment, "outside">;
+};
+
+export type IntersectingArea = {
+	code: string;
+	/** `within` when the area lies entirely inside the box. */
+	relation: "within" | "overlaps";
+	bounds: GeometryBounds;
 };
 export class AreaGeometryCache {
 	private readonly releases = new Map<string, CachedRelease>();
@@ -230,6 +240,49 @@ export class AreaGeometryCache {
 			if (!bounds || !pointInBounds(point, bounds)) continue;
 			const containment = containPoint(point, geometry);
 			if (containment !== "outside") matches.push({ code, containment });
+		}
+		return matches.sort((left, right) =>
+			left.code.localeCompare(right.code),
+		);
+	}
+
+	/**
+	 * Find areas meeting a WGS84 box within one boundary release.
+	 *
+	 * Most areas are settled by their cached bounds alone. Bounds that fall
+	 * entirely inside the box put the area inside it too, exactly, since an
+	 * area never reaches past its own bounds; bounds that miss the box settle
+	 * it the other way. Only an area straddling an edge of the box needs its
+	 * rings walked, which is a thin band around the box however large the box
+	 * is.
+	 */
+	findIntersecting(
+		geography: string,
+		boundaryRelease: string,
+		box: GeometryBounds,
+	): IntersectingArea[] {
+		// As in findContaining: load and validate the release without needing
+		// a known code.
+		this.get(geography, boundaryRelease, "");
+		const identity = [geography, boundaryRelease].join("/");
+		const release = this.releases.get(identity);
+		if (!release) return [];
+		const matches: IntersectingArea[] = [];
+		for (const code of release.geometries.keys()) {
+			const geometry = this.get(geography, boundaryRelease, code);
+			if (!geometry) continue;
+			let bounds = release.bounds.get(code);
+			if (bounds === undefined && !release.bounds.has(code)) {
+				bounds = geometryBounds(geometry);
+				release.bounds.set(code, bounds);
+			}
+			if (!bounds || !boundsIntersect(bounds, box)) continue;
+			if (boundsWithin(bounds, box)) {
+				matches.push({ code, relation: "within", bounds });
+				continue;
+			}
+			if (geometryMeetsBounds(geometry, box))
+				matches.push({ code, relation: "overlaps", bounds });
 		}
 		return matches.sort((left, right) =>
 			left.code.localeCompare(right.code),

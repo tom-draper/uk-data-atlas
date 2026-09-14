@@ -187,8 +187,20 @@ only **available** when its endpoint, contract and provenance are published.
       with documented request limits and an efficient multi-geography strategy.
 - [ ] Find nearby areas for a coordinate outside a boundary, reporting distance
       and making clear that nearest is not the same as containing.
-- [ ] Retrieve the areas that intersect a bounded bbox for a chosen release,
-      for efficient map and analysis clients.
+- [x] Retrieve the areas that intersect a bounded bbox for a chosen release,
+      through `GET /v1/areas:intersects?bbox=west,south,east,north`. Each match
+      reports whether it lies `within` the box or merely `overlaps` it, both
+      tested against the box exactly rather than against the area's own
+      bounding box, so a crescent reaching into the query with nothing but its
+      bounding box is excluded, as is a box sitting in a lake. Identities come
+      back by default with their bounding boxes, and `tier` opts into the
+      coordinates, generalised as on the geometry route. Results are capped by
+      `limit`, 200 by default and 1000 at most, with `matched`, `returned` and
+      `truncated` saying whether the cap bit; the cap is on results rather than
+      on the box, since a national box is a fair analysis question and it is
+      the geometry that costs, not the extent. Verified against the point
+      lookup: a tiny box around a point returns what `areas:contains` returns
+      for it, in all four nations.
 - [ ] List an area's genuine neighbours, including shared-border length and an
       explicit choice to exclude point-only touches. This supports local
       comparison, map navigation and spatial modelling.

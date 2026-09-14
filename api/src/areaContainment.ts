@@ -157,3 +157,88 @@ export const containPoint = (
 	}
 	return "outside";
 };
+
+export const boundsIntersect = (left: GeometryBounds, right: GeometryBounds) =>
+	left[0] <= right[2] + EPSILON &&
+	right[0] <= left[2] + EPSILON &&
+	left[1] <= right[3] + EPSILON &&
+	right[1] <= left[3] + EPSILON;
+
+/** Every corner of `inner` lies within `outer`. */
+export const boundsWithin = (inner: GeometryBounds, outer: GeometryBounds) =>
+	inner[0] >= outer[0] - EPSILON &&
+	inner[1] >= outer[1] - EPSILON &&
+	inner[2] <= outer[2] + EPSILON &&
+	inner[3] <= outer[3] + EPSILON;
+
+/**
+ * Liang-Barsky: does any part of the segment fall inside the rectangle? The
+ * parametric range of the segment is clipped against each of the four edges in
+ * turn, and survives only where the two meet.
+ */
+const segmentMeetsBounds = (
+	[startLongitude, startLatitude]: Coordinate,
+	[endLongitude, endLatitude]: Coordinate,
+	bounds: GeometryBounds,
+) => {
+	const deltaLongitude = endLongitude - startLongitude;
+	const deltaLatitude = endLatitude - startLatitude;
+	let enter = 0;
+	let leave = 1;
+	const clip = (edge: number, distance: number) => {
+		// Parallel to this edge: inside it, or nowhere near it.
+		if (edge === 0) return distance >= -EPSILON;
+		const crossing = distance / edge;
+		if (edge < 0) {
+			if (crossing > leave) return false;
+			if (crossing > enter) enter = crossing;
+		} else {
+			if (crossing < enter) return false;
+			if (crossing < leave) leave = crossing;
+		}
+		return true;
+	};
+	return (
+		clip(-deltaLongitude, startLongitude - bounds[0]) &&
+		clip(deltaLongitude, bounds[2] - startLongitude) &&
+		clip(-deltaLatitude, startLatitude - bounds[1]) &&
+		clip(deltaLatitude, bounds[3] - startLatitude)
+	);
+};
+
+const ringsOf = (geometry: GeoJsonGeometry): Coordinate[][] => {
+	if (geometry.type === "GeometryCollection")
+		return (geometry.geometries ?? []).flatMap(ringsOf);
+	const polygons =
+		geometry.type === "Polygon"
+			? [geometry.coordinates]
+			: geometry.type === "MultiPolygon"
+				? geometry.coordinates
+				: [];
+	return (Array.isArray(polygons) ? polygons : []).flatMap((polygon) =>
+		(Array.isArray(polygon) ? polygon : []).map((ring) =>
+			coordinatesOf(ring),
+		),
+	);
+};
+
+/**
+ * Does the geometry meet the rectangle at all? Exact, not a bounding-box
+ * approximation.
+ *
+ * Either some edge of the geometry passes through the rectangle, or none does
+ * and the rectangle lies wholly inside or wholly outside, which one corner
+ * settles. Testing that corner against the geometry rather than against an
+ * outer ring is what keeps a rectangle sitting in a lake out of the answer.
+ */
+export const geometryMeetsBounds = (
+	geometry: GeoJsonGeometry,
+	bounds: GeometryBounds,
+): boolean => {
+	for (const ring of ringsOf(geometry)) {
+		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+			if (segmentMeetsBounds(ring[j]!, ring[i]!, bounds)) return true;
+		}
+	}
+	return containPoint([bounds[0], bounds[1]], geometry) !== "outside";
+};
