@@ -6,6 +6,7 @@ import test from "node:test";
 import type { Polygon } from "polygon-clipping";
 import {
 	compileAreaOverlapCrosswalk,
+	measurePairOverlap,
 	polygonAreaM2,
 	polygonWidthM,
 	projectEqualArea,
@@ -294,4 +295,79 @@ test("requires the geometry source registry to compile an area-overlap adapter",
 		});
 		assert.equal(inventory.crosswalks[0].recordCount, 2);
 	});
+});
+
+const rules = { sliverWidthM: 100, minimumCoverage: 0.99 };
+const polygon = (west: number, east: number, south = 0, north = D) => ({
+	type: "Polygon",
+	coordinates: [
+		[
+			[west, south],
+			[east, south],
+			[east, north],
+			[west, north],
+			[west, south],
+		],
+	],
+});
+
+test("measures the shared area of two areas and each one's share", () => {
+	const overlap = measurePairOverlap(
+		polygon(0, 2 * D),
+		polygon(D, 3 * D),
+		rules,
+	);
+	assert.equal(overlap.relation, "overlaps");
+	assert.equal(overlap.pieceCount, 1);
+	assert.ok(Math.abs(overlap.shareOfFirst - 0.5) < 1e-9);
+	assert.ok(Math.abs(overlap.shareOfSecond - 0.5) < 1e-9);
+	assert.ok(
+		Math.abs(overlap.overlapAreaM2 - polygonAreaM2(box(D, 2 * D))) < 1e-3,
+	);
+});
+
+test("tells containment from overlap at the crosswalk coverage threshold", () => {
+	assert.equal(
+		measurePairOverlap(polygon(0, D), polygon(0, 3 * D), rules).relation,
+		"within",
+	);
+	assert.equal(
+		measurePairOverlap(polygon(0, 3 * D), polygon(0, D), rules).relation,
+		"contains",
+	);
+	// A generalised copy a sliver narrower still covers the same extent.
+	const sameExtent = measurePairOverlap(
+		polygon(0, D),
+		polygon(0, D - SLIVER),
+		rules,
+	);
+	assert.equal(sameExtent.relation, "same-extent");
+	assert.equal(sameExtent.shareOfSecond, 1);
+});
+
+test("treats a sliver where two borders disagree as no overlap at all", () => {
+	const sliver = measurePairOverlap(
+		polygon(0, D),
+		polygon(D - SLIVER, 2 * D),
+		rules,
+	);
+	assert.equal(sliver.relation, "boundary-only");
+	assert.ok(sliver.overlapAreaM2 > 0);
+	assert.ok((sliver.widestPieceWidthM ?? Infinity) < 100);
+
+	assert.equal(
+		measurePairOverlap(polygon(0, D), polygon(2 * D, 3 * D), rules)
+			.relation,
+		"disjoint",
+	);
+});
+
+test("declines to classify a piece near the sliver threshold", () => {
+	// About 111 m wide: a crosswalk compile would refuse to decide it.
+	const nearThreshold = measurePairOverlap(
+		polygon(0, D),
+		polygon(D - 0.001, 2 * D),
+		rules,
+	);
+	assert.equal(nearThreshold.relation, "indeterminate");
 });
