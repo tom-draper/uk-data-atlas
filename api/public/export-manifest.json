@@ -1,0 +1,4162 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:16033536f6934e7fc6ca43cd62e42f362c1181cef4573f77959a92b20918c897",
+	"dataCatalogHash": "sha256:bc1b741e3418c4d11befa3afca10e1bc0f582f211ce401bcecebd3a5d1252153",
+	"exports": [
+		{
+			"id": "car-availability-none-observations",
+			"measureId": "car-availability-none",
+			"datasetId": "car-availability",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "car-availability-none-observations",
+			"contentHash": "sha256:b2ed897cf5e6edeadee4d0353b8b40750617b9a0c4045d345a986bafd30d5c7c",
+			"bytes": 19856,
+			"href": "/v1/exports/car-availability-none-observations"
+		},
+		{
+			"id": "car-availability-one-observations",
+			"measureId": "car-availability-one",
+			"datasetId": "car-availability",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "car-availability-one-observations",
+			"contentHash": "sha256:08af17be3f74bed459dd8da430cc4a992523058ce8f4ed02c42b0fc5f06690ed",
+			"bytes": 20009,
+			"href": "/v1/exports/car-availability-one-observations"
+		},
+		{
+			"id": "car-availability-three-or-more-observations",
+			"measureId": "car-availability-three-or-more",
+			"datasetId": "car-availability",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "car-availability-three-or-more-observations",
+			"contentHash": "sha256:7ab0829b50323a6ca07f29852f38c033085c084a267c3b0599fe1b56c86b39db",
+			"bytes": 19725,
+			"href": "/v1/exports/car-availability-three-or-more-observations"
+		},
+		{
+			"id": "car-availability-total-observations",
+			"measureId": "car-availability-total",
+			"datasetId": "car-availability",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "car-availability-total-observations",
+			"contentHash": "sha256:80649e7fe0ab15d1d98ff452fdf8a4ac7995219dc791912e333c30aa0ea016f0",
+			"bytes": 20091,
+			"href": "/v1/exports/car-availability-total-observations"
+		},
+		{
+			"id": "car-availability-two-observations",
+			"measureId": "car-availability-two",
+			"datasetId": "car-availability",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "car-availability-two-observations",
+			"contentHash": "sha256:dd4632c74375f010e3b786794fe0f896499b0d13161146fb72a5de9a6700410a",
+			"bytes": 19966,
+			"href": "/v1/exports/car-availability-two-observations"
+		},
+		{
+			"id": "general-election-apni-vote-share-constituency-2010-observations",
+			"measureId": "general-election-apni-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-apni-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:f77676b6c16953202a77618cd20ac2a70ba4cfe3be7121ddea0dd34108601222",
+			"bytes": 36304,
+			"href": "/v1/exports/general-election-apni-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-apni-vote-share-constituency-2019-observations",
+			"measureId": "general-election-apni-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-apni-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:02e073398e46d6e79dc944789551183561b216ede065cb68ee7534bd0d74812a",
+			"bytes": 108460,
+			"href": "/v1/exports/general-election-apni-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-apni-vote-share-constituency-2024-observations",
+			"measureId": "general-election-apni-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-apni-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:d4c437d02cb0b1c80da69b2cb0733500e6e42a0d0d0a611af16a66a9d3e8d92b",
+			"bytes": 36305,
+			"href": "/v1/exports/general-election-apni-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-apni-votes-constituency-2010-observations",
+			"measureId": "general-election-apni-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-apni-votes-constituency-2010-observations",
+			"contentHash": "sha256:33120564455aeacac29dd96cc54fa4485230dda6e8dba9e2c523c0999ddfa344",
+			"bytes": 36052,
+			"href": "/v1/exports/general-election-apni-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-apni-votes-constituency-2019-observations",
+			"measureId": "general-election-apni-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-apni-votes-constituency-2019-observations",
+			"contentHash": "sha256:b1a0bc7c67e0bd753e75d1dcf795a4ea1f665ac31c02360d03e4faaa94c1b1d0",
+			"bytes": 107724,
+			"href": "/v1/exports/general-election-apni-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-apni-votes-constituency-2024-observations",
+			"measureId": "general-election-apni-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-apni-votes-constituency-2024-observations",
+			"contentHash": "sha256:05fbb02fa642e76052a382d111a80bbd53bbd0c88368c2fc5319ace2ac99b0dc",
+			"bytes": 36063,
+			"href": "/v1/exports/general-election-apni-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-brx-vote-share-constituency-2010-observations",
+			"measureId": "general-election-brx-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-brx-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:5fd9df047e281adc1deb3b2edbed03e6119a2f50247382e1e336f965ddd33cfa",
+			"bytes": 36008,
+			"href": "/v1/exports/general-election-brx-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-brx-vote-share-constituency-2019-observations",
+			"measureId": "general-election-brx-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-brx-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:46f746d6e944a1739d6ae5fc892ea251c9e9ab91e475e08a9375a77e56bd0d29",
+			"bytes": 112085,
+			"href": "/v1/exports/general-election-brx-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-brx-vote-share-constituency-2024-observations",
+			"measureId": "general-election-brx-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-brx-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:16de8ad566644dab907bd5df5fc72770b02dd752ebd17a77b2292d8a55013ecf",
+			"bytes": 36008,
+			"href": "/v1/exports/general-election-brx-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-brx-votes-constituency-2010-observations",
+			"measureId": "general-election-brx-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-brx-votes-constituency-2010-observations",
+			"contentHash": "sha256:86e8a8eb7a79f49dd7d47baeed04be3f05fa2936bafe6f954fc2a00e6a60a6d4",
+			"bytes": 36003,
+			"href": "/v1/exports/general-election-brx-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-brx-votes-constituency-2019-observations",
+			"measureId": "general-election-brx-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-brx-votes-constituency-2019-observations",
+			"contentHash": "sha256:5f5e94c13a04d452d365ba3fc8522553a48e988794e68be71da87bb9bebd2387",
+			"bytes": 108341,
+			"href": "/v1/exports/general-election-brx-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-brx-votes-constituency-2024-observations",
+			"measureId": "general-election-brx-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-brx-votes-constituency-2024-observations",
+			"contentHash": "sha256:9df8269db4c92885179f0855059f93818f7485e99212b0532a4863d21b37ba11",
+			"bytes": 36003,
+			"href": "/v1/exports/general-election-brx-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-con-vote-share-constituency-2010-observations",
+			"measureId": "general-election-con-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-con-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:a0fc0aa69d99bd23767da181dc8f747915d8c89880abb76ebb2a3d6efbda8cc3",
+			"bytes": 46305,
+			"href": "/v1/exports/general-election-con-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-con-vote-share-constituency-2019-observations",
+			"measureId": "general-election-con-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-con-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:6434fb67048ec08e7f4526d03a33b39bfbb81c96e119c2163149eecf53893824",
+			"bytes": 138910,
+			"href": "/v1/exports/general-election-con-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-con-vote-share-constituency-2024-observations",
+			"measureId": "general-election-con-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-con-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:3cb74b78d2b1d0d6b9a6bbdad0a5f2847a8718b9e419e3af066f347147e3058f",
+			"bytes": 46449,
+			"href": "/v1/exports/general-election-con-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-con-votes-constituency-2010-observations",
+			"measureId": "general-election-con-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-con-votes-constituency-2010-observations",
+			"contentHash": "sha256:6c65cec9b75787ecb966acba0f029454db5b97935d6f2106d322b2bdfee32ec9",
+			"bytes": 38368,
+			"href": "/v1/exports/general-election-con-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-con-votes-constituency-2019-observations",
+			"measureId": "general-election-con-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-con-votes-constituency-2019-observations",
+			"contentHash": "sha256:07f86d3ff7d21bfaca419e7d7fc58209f1783e82654009c302ebe343acef6874",
+			"bytes": 114848,
+			"href": "/v1/exports/general-election-con-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-con-votes-constituency-2024-observations",
+			"measureId": "general-election-con-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-con-votes-constituency-2024-observations",
+			"contentHash": "sha256:3b786b22a55a5840f8838671eaf21ef3fb1974abc2d93d365087c27a0408c532",
+			"bytes": 38254,
+			"href": "/v1/exports/general-election-con-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-dup-vote-share-constituency-2010-observations",
+			"measureId": "general-election-dup-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-dup-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:68f0c30215abee54aa64bb34a413c374a0b6690ebc1728bbde37061c60d249b9",
+			"bytes": 36272,
+			"href": "/v1/exports/general-election-dup-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-dup-vote-share-constituency-2019-observations",
+			"measureId": "general-election-dup-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-dup-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:53029a77214a9eed52c6c54d653a4ef89528ecb1f3752672de31f6b3b450e10f",
+			"bytes": 108383,
+			"href": "/v1/exports/general-election-dup-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-dup-vote-share-constituency-2024-observations",
+			"measureId": "general-election-dup-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-dup-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:e20acd952d71f2a0085bcd8fca7bfc081bf8ed50306a9e9dd1a5586f91675f9b",
+			"bytes": 36269,
+			"href": "/v1/exports/general-election-dup-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-dup-votes-constituency-2010-observations",
+			"measureId": "general-election-dup-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-dup-votes-constituency-2010-observations",
+			"contentHash": "sha256:b9e2a37f16b5063d0867075f8a0eaa9bc93ff7807284402df9968008abadc7d0",
+			"bytes": 36060,
+			"href": "/v1/exports/general-election-dup-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-dup-votes-constituency-2019-observations",
+			"measureId": "general-election-dup-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-dup-votes-constituency-2019-observations",
+			"contentHash": "sha256:671c4bf6fa043fc977c9b979378f52f909025dd81eedce0076ef58c837be2187",
+			"bytes": 107749,
+			"href": "/v1/exports/general-election-dup-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-dup-votes-constituency-2024-observations",
+			"measureId": "general-election-dup-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-dup-votes-constituency-2024-observations",
+			"contentHash": "sha256:7e9a884e9b7ec65951d24fffb16242f42dbf103b8d138eba351fb064051fc2b2",
+			"bytes": 36059,
+			"href": "/v1/exports/general-election-dup-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-green-vote-share-constituency-2010-observations",
+			"measureId": "general-election-green-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-green-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:ad94e26c54e7744d9a1b8160675b4f09d07548b18d8f8b7ef018a4c3e728196c",
+			"bytes": 41600,
+			"href": "/v1/exports/general-election-green-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-green-vote-share-constituency-2019-observations",
+			"measureId": "general-election-green-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-green-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:4e990c511c7393433cdc2da4e7293bce525c3a7d117de99a85bbc50cfb9eb356",
+			"bytes": 132898,
+			"href": "/v1/exports/general-election-green-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-green-vote-share-constituency-2024-observations",
+			"measureId": "general-election-green-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-green-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:d375e1e085275fdf904c09707f6e1ecab664163456f12f69cd9bb160d134d9c9",
+			"bytes": 46209,
+			"href": "/v1/exports/general-election-green-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-green-votes-constituency-2010-observations",
+			"measureId": "general-election-green-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-green-votes-constituency-2010-observations",
+			"contentHash": "sha256:4b8338a98f96791fcec3d1970764016169be101de0be861643087e84c2c42184",
+			"bytes": 36739,
+			"href": "/v1/exports/general-election-green-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-green-votes-constituency-2019-observations",
+			"measureId": "general-election-green-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-green-votes-constituency-2019-observations",
+			"contentHash": "sha256:cc7f69d48242e4d318b172a1244a5f609fb28bb189cce78d526ddb30b2a521e6",
+			"bytes": 111719,
+			"href": "/v1/exports/general-election-green-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-green-votes-constituency-2024-observations",
+			"measureId": "general-election-green-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-green-votes-constituency-2024-observations",
+			"contentHash": "sha256:8141102bda977c8756e5ecf5c493f3178d6c3e5534042e8c6285954e99ad356b",
+			"bytes": 37889,
+			"href": "/v1/exports/general-election-green-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-lab-vote-share-constituency-2010-observations",
+			"measureId": "general-election-lab-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-lab-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:5df74b7f2ee8388337cfe1ed9b6d18de79e882f644b8f4cfab0e529680293347",
+			"bytes": 46306,
+			"href": "/v1/exports/general-election-lab-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-lab-vote-share-constituency-2019-observations",
+			"measureId": "general-election-lab-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-lab-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:503d38dba69e370b8f434281bfdee967a89172c3365f840e44fa89e4b17e7077",
+			"bytes": 138503,
+			"href": "/v1/exports/general-election-lab-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-lab-vote-share-constituency-2024-observations",
+			"measureId": "general-election-lab-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-lab-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:18cb2215a98a20fabb96cc2122b47d0401a8be7168b03420ff3b4dde0bd13265",
+			"bytes": 46302,
+			"href": "/v1/exports/general-election-lab-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-lab-votes-constituency-2010-observations",
+			"measureId": "general-election-lab-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-lab-votes-constituency-2010-observations",
+			"contentHash": "sha256:e5de7f1ade97ad4d488c2d0b1474de3a71dcd5334869757f864f890ca462650b",
+			"bytes": 38313,
+			"href": "/v1/exports/general-election-lab-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-lab-votes-constituency-2019-observations",
+			"measureId": "general-election-lab-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-lab-votes-constituency-2019-observations",
+			"contentHash": "sha256:204d2cb42dba23514e4d9bb111e55679e996c3c5487bbe4df5990681f3f9e063",
+			"bytes": 114748,
+			"href": "/v1/exports/general-election-lab-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-lab-votes-constituency-2024-observations",
+			"measureId": "general-election-lab-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-lab-votes-constituency-2024-observations",
+			"contentHash": "sha256:3a1dceb38a10eed06724893512f255ec812d2ca90fc0469b897f4fe839a40c65",
+			"bytes": 38416,
+			"href": "/v1/exports/general-election-lab-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-ld-vote-share-constituency-2010-observations",
+			"measureId": "general-election-ld-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-ld-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:8183a5826902336a515b6b23ab1c46679d18d1faa2b10c4fd7f473bb0307271d",
+			"bytes": 46464,
+			"href": "/v1/exports/general-election-ld-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-ld-vote-share-constituency-2019-observations",
+			"measureId": "general-election-ld-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-ld-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:a873d21e9a2691d19d064fa1859c41f7e042e3abca5c020309862bbff51e1faf",
+			"bytes": 138127,
+			"href": "/v1/exports/general-election-ld-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-ld-vote-share-constituency-2024-observations",
+			"measureId": "general-election-ld-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-ld-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:b80df658f0f7b8adb18dcefa0e9bf8af9b1785c2eac8947bbbe55365532b4fa9",
+			"bytes": 46236,
+			"href": "/v1/exports/general-election-ld-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-ld-votes-constituency-2010-observations",
+			"measureId": "general-election-ld-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-ld-votes-constituency-2010-observations",
+			"contentHash": "sha256:a74b23b2a21a833bfb46141cd6d20999de7bb183f4a67a9ffb1760ecae9a4627",
+			"bytes": 38182,
+			"href": "/v1/exports/general-election-ld-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-ld-votes-constituency-2019-observations",
+			"measureId": "general-election-ld-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-ld-votes-constituency-2019-observations",
+			"contentHash": "sha256:0818940ed2d97b1d9aa16ccf7916f60f15611a76701b1d5fab3f825ffece042a",
+			"bytes": 113187,
+			"href": "/v1/exports/general-election-ld-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-ld-votes-constituency-2024-observations",
+			"measureId": "general-election-ld-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-ld-votes-constituency-2024-observations",
+			"contentHash": "sha256:34336525a7f977abc850dc577a6e3ad67193e9cc64470dd012a9bd8f8d3726a4",
+			"bytes": 37957,
+			"href": "/v1/exports/general-election-ld-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-other-vote-share-constituency-2010-observations",
+			"measureId": "general-election-other-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-other-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:276d68c89b98e46dac9b9b2490c7139b874d3486bf13902d3209a0dcca3ac1cd",
+			"bytes": 45078,
+			"href": "/v1/exports/general-election-other-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-other-vote-share-constituency-2019-observations",
+			"measureId": "general-election-other-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-other-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:aff78821e676a95950583e7f9117aea7eafd3965a542c7cb7e73788012272458",
+			"bytes": 124468,
+			"href": "/v1/exports/general-election-other-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-other-vote-share-constituency-2024-observations",
+			"measureId": "general-election-other-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-other-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:83b466eef160a554f7de4ffd6756f68ea0572b892d1ad3fd28ce47d7760be1cc",
+			"bytes": 45270,
+			"href": "/v1/exports/general-election-other-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-other-votes-constituency-2010-observations",
+			"measureId": "general-election-other-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-other-votes-constituency-2010-observations",
+			"contentHash": "sha256:bad335c676a009af6815bbaa0e1bfe5f5d2af1540612ebd066b554741569a679",
+			"bytes": 37475,
+			"href": "/v1/exports/general-election-other-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-other-votes-constituency-2019-observations",
+			"measureId": "general-election-other-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-other-votes-constituency-2019-observations",
+			"contentHash": "sha256:d64c407c8d7e1d99856268029ec68bd06d2edeb6d9796f0c61656a6f41c11794",
+			"bytes": 109749,
+			"href": "/v1/exports/general-election-other-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-other-votes-constituency-2024-observations",
+			"measureId": "general-election-other-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-other-votes-constituency-2024-observations",
+			"contentHash": "sha256:1439b689e76c04071209b1db5efe253676cac79e04af8de735016022e20cc582",
+			"bytes": 37390,
+			"href": "/v1/exports/general-election-other-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-pc-vote-share-constituency-2010-observations",
+			"measureId": "general-election-pc-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-pc-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:1c0fb1cc3bf425cf80a5b6d0ab2249b5fb70f03b2150c330c15d19c73e2da2c8",
+			"bytes": 36656,
+			"href": "/v1/exports/general-election-pc-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-pc-vote-share-constituency-2019-observations",
+			"measureId": "general-election-pc-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-pc-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:4cd7162ca162892c25bc4a97a41e6fe6a595d168f4d71256703507eb61b8f13e",
+			"bytes": 109443,
+			"href": "/v1/exports/general-election-pc-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-pc-vote-share-constituency-2024-observations",
+			"measureId": "general-election-pc-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-pc-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:81353903740382caefdd2aa6157a1c5505f9f6279986c9f887609fba10864d8b",
+			"bytes": 36527,
+			"href": "/v1/exports/general-election-pc-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-pc-votes-constituency-2010-observations",
+			"measureId": "general-election-pc-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-pc-votes-constituency-2010-observations",
+			"contentHash": "sha256:a9b2b4b9246c48f35da1387ad957de7417e74a2ec9752aa112535b713b06ee39",
+			"bytes": 36124,
+			"href": "/v1/exports/general-election-pc-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-pc-votes-constituency-2019-observations",
+			"measureId": "general-election-pc-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-pc-votes-constituency-2019-observations",
+			"contentHash": "sha256:f7f675f16c3781c976c05efc1a6687f2aeb8b3d341e056606686126d8e65d831",
+			"bytes": 107922,
+			"href": "/v1/exports/general-election-pc-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-pc-votes-constituency-2024-observations",
+			"measureId": "general-election-pc-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-pc-votes-constituency-2024-observations",
+			"contentHash": "sha256:a30cff9155dbd07dfd16a1cf12c5ee50279d0eee99b08dfaa3f4219191eacd59",
+			"bytes": 36102,
+			"href": "/v1/exports/general-election-pc-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-ruk-vote-share-constituency-2010-observations",
+			"measureId": "general-election-ruk-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-ruk-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:60499901a432e777c8b8f9e51809197f1057d06a7307001d2c4bd1be109ce01a",
+			"bytes": 36008,
+			"href": "/v1/exports/general-election-ruk-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-ruk-vote-share-constituency-2019-observations",
+			"measureId": "general-election-ruk-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-ruk-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:c58522859d265c4825b644257d3e9b7470c2b50db8e4beb31d125f9298245436",
+			"bytes": 107568,
+			"href": "/v1/exports/general-election-ruk-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-ruk-vote-share-constituency-2024-observations",
+			"measureId": "general-election-ruk-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-ruk-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:8c9271cc3f5d2eebc72b1107df6e50da4b4889e0dc23e381acf441dfa1479179",
+			"bytes": 46043,
+			"href": "/v1/exports/general-election-ruk-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-ruk-votes-constituency-2010-observations",
+			"measureId": "general-election-ruk-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-ruk-votes-constituency-2010-observations",
+			"contentHash": "sha256:a3f405c63e24ce73aaecf82edabd30bc80e9ca5e7efe7bedb5627c8358e0f854",
+			"bytes": 36003,
+			"href": "/v1/exports/general-election-ruk-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-ruk-votes-constituency-2019-observations",
+			"measureId": "general-election-ruk-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-ruk-votes-constituency-2019-observations",
+			"contentHash": "sha256:16a7a52b3f380d64d4bcbc271523a9a5591ee11a6a8cc8a680e5d8ab7f33564f",
+			"bytes": 107563,
+			"href": "/v1/exports/general-election-ruk-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-ruk-votes-constituency-2024-observations",
+			"measureId": "general-election-ruk-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-ruk-votes-constituency-2024-observations",
+			"contentHash": "sha256:7bf2afe2c8455baeead648f38232c3af1149c6024eeb8d4dd8d767d410cb0454",
+			"bytes": 37882,
+			"href": "/v1/exports/general-election-ruk-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-sdlp-vote-share-constituency-2010-observations",
+			"measureId": "general-election-sdlp-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-sdlp-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:f9a38275ce36d511946503f6545770f54fd3c7f813c3ec73b8d4d89a9c046042",
+			"bytes": 36306,
+			"href": "/v1/exports/general-election-sdlp-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-sdlp-vote-share-constituency-2019-observations",
+			"measureId": "general-election-sdlp-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-sdlp-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:3b37fcf758ddfe8928d8408f804c3eb0fd675fdee1627a63366bd9a7996143b2",
+			"bytes": 108400,
+			"href": "/v1/exports/general-election-sdlp-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-sdlp-vote-share-constituency-2024-observations",
+			"measureId": "general-election-sdlp-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-sdlp-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:6d692606577b71a8dab1492ce7dfd697db59b4b405971db7a3c959c3dd842fd9",
+			"bytes": 36303,
+			"href": "/v1/exports/general-election-sdlp-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-sdlp-votes-constituency-2010-observations",
+			"measureId": "general-election-sdlp-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-sdlp-votes-constituency-2010-observations",
+			"contentHash": "sha256:379bcf487f75e4f1ff723e0af854a698320fdbe841dd59024041accd4cffa7d1",
+			"bytes": 36060,
+			"href": "/v1/exports/general-election-sdlp-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-sdlp-votes-constituency-2019-observations",
+			"measureId": "general-election-sdlp-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-sdlp-votes-constituency-2019-observations",
+			"contentHash": "sha256:9ec40039c6d4791842af6c927f92a24be317b47bb40f548ede3972b4f05e3800",
+			"bytes": 107721,
+			"href": "/v1/exports/general-election-sdlp-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-sdlp-votes-constituency-2024-observations",
+			"measureId": "general-election-sdlp-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-sdlp-votes-constituency-2024-observations",
+			"contentHash": "sha256:92e3e22d9e2faace1ae77dfca18c5c4f4b47a26bb5567860f7438cb4902b75b1",
+			"bytes": 36058,
+			"href": "/v1/exports/general-election-sdlp-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-sf-vote-share-constituency-2010-observations",
+			"measureId": "general-election-sf-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-sf-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:307f8888b3c3e114b2d52cfc7c8fe4b0361562e2d0acdc35d65948f884474d97",
+			"bytes": 36287,
+			"href": "/v1/exports/general-election-sf-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-sf-vote-share-constituency-2019-observations",
+			"measureId": "general-election-sf-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-sf-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:196d4f4cfc3e2c43a5ceb73ea646726c263b1b6577fdb9a342a49a3ba1ce40fd",
+			"bytes": 108407,
+			"href": "/v1/exports/general-election-sf-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-sf-vote-share-constituency-2024-observations",
+			"measureId": "general-election-sf-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-sf-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:8c8ac0913dbd59645de5b1e1605dfec7258f3edab41339f3ff0de391991a96c7",
+			"bytes": 36235,
+			"href": "/v1/exports/general-election-sf-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-sf-votes-constituency-2010-observations",
+			"measureId": "general-election-sf-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-sf-votes-constituency-2010-observations",
+			"contentHash": "sha256:29d376f21a5e8c00f9beefb4bb30a59ddded67ec7a8ab6800ebd835edc803631",
+			"bytes": 36060,
+			"href": "/v1/exports/general-election-sf-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-sf-votes-constituency-2019-observations",
+			"measureId": "general-election-sf-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-sf-votes-constituency-2019-observations",
+			"contentHash": "sha256:ede8d64fd80a451854b1ace7888002b1a75061142f2439e7a93d1e5451103c6c",
+			"bytes": 107736,
+			"href": "/v1/exports/general-election-sf-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-sf-votes-constituency-2024-observations",
+			"measureId": "general-election-sf-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-sf-votes-constituency-2024-observations",
+			"contentHash": "sha256:b90bf4182582961f62c2b1bf3e7d45789a16079caba009d8af3e531c5cb8dc46",
+			"bytes": 36054,
+			"href": "/v1/exports/general-election-sf-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-snp-vote-share-constituency-2010-observations",
+			"measureId": "general-election-snp-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-snp-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:9e3315a3a96da0af0765c3502c4f989803064b0a4bbebf70baeedd4eec09d25b",
+			"bytes": 36987,
+			"href": "/v1/exports/general-election-snp-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-snp-vote-share-constituency-2019-observations",
+			"measureId": "general-election-snp-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-snp-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:eefaafd38f245b48753ac7d9887cb8d56a680a7484b02b02f60f2ebeb268c33a",
+			"bytes": 110420,
+			"href": "/v1/exports/general-election-snp-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-snp-vote-share-constituency-2024-observations",
+			"measureId": "general-election-snp-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-snp-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:f507c33ff57e87cec38ce61b991ce7677ffd803cc90a88faa2970a17c6b853de",
+			"bytes": 36944,
+			"href": "/v1/exports/general-election-snp-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-snp-votes-constituency-2010-observations",
+			"measureId": "general-election-snp-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-snp-votes-constituency-2010-observations",
+			"contentHash": "sha256:6de40ef0dc69265089eab84281af36ec888817a6ff755044c165480c6f98d8a1",
+			"bytes": 36194,
+			"href": "/v1/exports/general-election-snp-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-snp-votes-constituency-2019-observations",
+			"measureId": "general-election-snp-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-snp-votes-constituency-2019-observations",
+			"contentHash": "sha256:53b02a7492f2a3a5ba1bad61aa1c340d757b8ecd93a1a2fad57946ae9d2ba3a0",
+			"bytes": 108264,
+			"href": "/v1/exports/general-election-snp-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-snp-votes-constituency-2024-observations",
+			"measureId": "general-election-snp-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-snp-votes-constituency-2024-observations",
+			"contentHash": "sha256:01d2527259256438209b906bb8ca253c491d7c219cca7d1a43d48c401f79e58e",
+			"bytes": 36227,
+			"href": "/v1/exports/general-election-snp-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-turnout-constituency-2010-observations",
+			"measureId": "general-election-turnout",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-turnout-constituency-2010-observations",
+			"contentHash": "sha256:a8e02411fa0a073495e5ca1e75fa09d54128184ec59e2c7b8a069b38bc9defa6",
+			"bytes": 46390,
+			"href": "/v1/exports/general-election-turnout-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-turnout-constituency-2019-observations",
+			"measureId": "general-election-turnout",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-turnout-constituency-2019-observations",
+			"contentHash": "sha256:6c629598d46dd9fd7cc598ab3a840666a5553e9c91a459d9bbcba50d255b1f49",
+			"bytes": 138657,
+			"href": "/v1/exports/general-election-turnout-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-turnout-constituency-2024-observations",
+			"measureId": "general-election-turnout",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-turnout-constituency-2024-observations",
+			"contentHash": "sha256:e9d0998691bc647cf49b72b44c6dc809c19b5110b664800071b4569be16510b0",
+			"bytes": 46449,
+			"href": "/v1/exports/general-election-turnout-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-ukip-vote-share-constituency-2010-observations",
+			"measureId": "general-election-ukip-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-ukip-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:3c245852561ecf30b6798c88ed3153db7e2b1a729c2429c8b8ef7216296dbabe",
+			"bytes": 45146,
+			"href": "/v1/exports/general-election-ukip-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-ukip-vote-share-constituency-2019-observations",
+			"measureId": "general-election-ukip-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-ukip-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:5d724c0637b47e1abe7591cf03645fbf93e4e6b2b3b814820fd1fa6ab267143b",
+			"bytes": 124092,
+			"href": "/v1/exports/general-election-ukip-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-ukip-vote-share-constituency-2024-observations",
+			"measureId": "general-election-ukip-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-ukip-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:34d7a5f10966ffcd3e6b6d197f38e5240812458cc64f8aee3393dfa93f271532",
+			"bytes": 36009,
+			"href": "/v1/exports/general-election-ukip-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-ukip-votes-constituency-2010-observations",
+			"measureId": "general-election-ukip-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-ukip-votes-constituency-2010-observations",
+			"contentHash": "sha256:07a1456f4f5fe383a0f0cc5179ed029d5619498ea21af144d85a62212528a584",
+			"bytes": 37544,
+			"href": "/v1/exports/general-election-ukip-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-ukip-votes-constituency-2019-observations",
+			"measureId": "general-election-ukip-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-ukip-votes-constituency-2019-observations",
+			"contentHash": "sha256:2401386cf44e4f84c82b980b0d6d09168cadc254ec9569642e4b9b919844f271",
+			"bytes": 110522,
+			"href": "/v1/exports/general-election-ukip-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-ukip-votes-constituency-2024-observations",
+			"measureId": "general-election-ukip-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-ukip-votes-constituency-2024-observations",
+			"contentHash": "sha256:d2d017622df2f9e18272772d419d121271183a3afc4bbf71a38e424e11ee5e78",
+			"bytes": 36004,
+			"href": "/v1/exports/general-election-ukip-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-uup-vote-share-constituency-2010-observations",
+			"measureId": "general-election-uup-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-uup-vote-share-constituency-2010-observations",
+			"contentHash": "sha256:6658f4e326d0bcaf1421a885de9405676a2ab4f444752e8cb751a9f5033f8d85",
+			"bytes": 36285,
+			"href": "/v1/exports/general-election-uup-vote-share-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-uup-vote-share-constituency-2019-observations",
+			"measureId": "general-election-uup-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-uup-vote-share-constituency-2019-observations",
+			"contentHash": "sha256:eb6f7b6bff446d48c63a6a1964c199bb531d8654aa1eaa3c1dbb641df1ab5a17",
+			"bytes": 108303,
+			"href": "/v1/exports/general-election-uup-vote-share-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-uup-vote-share-constituency-2024-observations",
+			"measureId": "general-election-uup-vote-share",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-uup-vote-share-constituency-2024-observations",
+			"contentHash": "sha256:6302e30c05f006f1dac5d52b40a1bbcd62c8cd77aae1cd11b2a81ded0a42597b",
+			"bytes": 36286,
+			"href": "/v1/exports/general-election-uup-vote-share-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-uup-votes-constituency-2010-observations",
+			"measureId": "general-election-uup-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-uup-votes-constituency-2010-observations",
+			"contentHash": "sha256:456e4bb85a11fff636bccf7599cabce7d0b09fce649ac86745dbb04bda00a831",
+			"bytes": 36056,
+			"href": "/v1/exports/general-election-uup-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-uup-votes-constituency-2019-observations",
+			"measureId": "general-election-uup-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-uup-votes-constituency-2019-observations",
+			"contentHash": "sha256:8c968ef1784bfdd4bfe84036ffa62de98362a5200f336dbe08a876752e6c773d",
+			"bytes": 107706,
+			"href": "/v1/exports/general-election-uup-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-uup-votes-constituency-2024-observations",
+			"measureId": "general-election-uup-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-uup-votes-constituency-2024-observations",
+			"contentHash": "sha256:d1ee2ee3870c8406f69962d561d82c97f7e21fcfe9f61f68e9e2cf47702a89a1",
+			"bytes": 36056,
+			"href": "/v1/exports/general-election-uup-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-valid-votes-constituency-2010-observations",
+			"measureId": "general-election-valid-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-valid-votes-constituency-2010-observations",
+			"contentHash": "sha256:c0593aca46690491128222f95fcc28c0e0489456261b2b9afff80855315eae85",
+			"bytes": 38605,
+			"href": "/v1/exports/general-election-valid-votes-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-valid-votes-constituency-2019-observations",
+			"measureId": "general-election-valid-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-valid-votes-constituency-2019-observations",
+			"contentHash": "sha256:09aad74b06e512ce96059d51ae6da569379c220f28ac98c49da3c630dee55f6f",
+			"bytes": 115365,
+			"href": "/v1/exports/general-election-valid-votes-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-valid-votes-constituency-2024-observations",
+			"measureId": "general-election-valid-votes",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-valid-votes-constituency-2024-observations",
+			"contentHash": "sha256:5a7381947d58fee01479b253daa3899d971aeacc2d72d3bd1ec86f0f1e72ce25",
+			"bytes": 38605,
+			"href": "/v1/exports/general-election-valid-votes-constituency-2024-observations"
+		},
+		{
+			"id": "general-election-winning-party-constituency-2010-observations",
+			"measureId": "general-election-winning-party",
+			"datasetId": "general-election",
+			"periods": [
+				"2010"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2010
+			},
+			"format": "json",
+			"artifact": "general-election-winning-party-constituency-2010-observations",
+			"contentHash": "sha256:5f0f21e014753fb7cdf7cc65aa4de33ed1504737f93eac8a4a62e6a7ac1f71dc",
+			"bytes": 40498,
+			"href": "/v1/exports/general-election-winning-party-constituency-2010-observations"
+		},
+		{
+			"id": "general-election-winning-party-constituency-2019-observations",
+			"measureId": "general-election-winning-party",
+			"datasetId": "general-election",
+			"periods": [
+				"2015",
+				"2017",
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "general-election-winning-party-constituency-2019-observations",
+			"contentHash": "sha256:6c30322746e08df3096f3958de5a117e551b709043888af2acd0d22bb184975d",
+			"bytes": 121170,
+			"href": "/v1/exports/general-election-winning-party-constituency-2019-observations"
+		},
+		{
+			"id": "general-election-winning-party-constituency-2024-observations",
+			"measureId": "general-election-winning-party",
+			"datasetId": "general-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "general-election-winning-party-constituency-2024-observations",
+			"contentHash": "sha256:021de8e176cbdd61ac79fd4a227ecef84720e3427691064cffd937066e748a0f",
+			"bytes": 40485,
+			"href": "/v1/exports/general-election-winning-party-constituency-2024-observations"
+		},
+		{
+			"id": "ghg-emissions-observations",
+			"measureId": "ghg-emissions",
+			"datasetId": "ghg-emissions",
+			"periods": [
+				"2005",
+				"2006",
+				"2007",
+				"2008",
+				"2009",
+				"2010",
+				"2011",
+				"2012",
+				"2013",
+				"2014",
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "ghg-emissions-observations",
+			"contentHash": "sha256:5adf191291c17242e186a6015de015a512d311d621119fc6bb189e3bc477efcc",
+			"bytes": 479490,
+			"href": "/v1/exports/ghg-emissions-observations"
+		},
+		{
+			"id": "house-price-median-observations",
+			"measureId": "house-price-median",
+			"datasetId": "house-price",
+			"periods": [
+				"1995",
+				"1996",
+				"1997",
+				"1998",
+				"1999",
+				"2000",
+				"2001",
+				"2002",
+				"2003",
+				"2004",
+				"2005",
+				"2006",
+				"2007",
+				"2008",
+				"2009",
+				"2010",
+				"2011",
+				"2012",
+				"2013",
+				"2014",
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2020
+			},
+			"format": "json",
+			"artifact": "house-price-median-observations",
+			"contentHash": "sha256:23c9606dc8ea74c20429bf1791360a0f13b673281fc755effb48ba739753ab17",
+			"bytes": 13453717,
+			"href": "/v1/exports/house-price-median-observations"
+		},
+		{
+			"id": "imd-decile-observations",
+			"measureId": "imd-decile",
+			"datasetId": "imd",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "lsoa",
+				"boundaryYear": 2011
+			},
+			"format": "json",
+			"artifact": "imd-decile-observations",
+			"contentHash": "sha256:4b374a910c0ab30ae55f253c84bc0bec6f8a954a704e2a78861db909c8fe63ee",
+			"bytes": 1809934,
+			"href": "/v1/exports/imd-decile-observations"
+		},
+		{
+			"id": "imd-rank-observations",
+			"measureId": "imd-rank",
+			"datasetId": "imd",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "lsoa",
+				"boundaryYear": 2011
+			},
+			"format": "json",
+			"artifact": "imd-rank-observations",
+			"contentHash": "sha256:8320612d0617286f36f619c41172be9fbe57f2f1d02cd3e8f75c6422925059dd",
+			"bytes": 1926917,
+			"href": "/v1/exports/imd-rank-observations"
+		},
+		{
+			"id": "life-expectancy-female-observations",
+			"measureId": "life-expectancy-female",
+			"datasetId": "life-expectancy-series",
+			"periods": [
+				"2001-2003",
+				"2002-2004",
+				"2003-2005",
+				"2004-2006",
+				"2005-2007",
+				"2006-2008",
+				"2007-2009",
+				"2008-2010",
+				"2009-2011",
+				"2010-2012",
+				"2011-2013",
+				"2012-2014",
+				"2013-2015",
+				"2014-2016",
+				"2015-2017",
+				"2016-2018",
+				"2017-2019",
+				"2018-2020",
+				"2019-2021",
+				"2020-2022"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "life-expectancy-female-observations",
+			"contentHash": "sha256:704b1201e886c001a2f43ab5ccf8383bdf86ab2fc09075f15ec9290b36432e12",
+			"bytes": 746405,
+			"href": "/v1/exports/life-expectancy-female-observations"
+		},
+		{
+			"id": "life-expectancy-male-observations",
+			"measureId": "life-expectancy-male",
+			"datasetId": "life-expectancy-series",
+			"periods": [
+				"2001-2003",
+				"2002-2004",
+				"2003-2005",
+				"2004-2006",
+				"2005-2007",
+				"2006-2008",
+				"2007-2009",
+				"2008-2010",
+				"2009-2011",
+				"2010-2012",
+				"2011-2013",
+				"2012-2014",
+				"2013-2015",
+				"2014-2016",
+				"2015-2017",
+				"2016-2018",
+				"2017-2019",
+				"2018-2020",
+				"2019-2021",
+				"2020-2022"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "life-expectancy-male-observations",
+			"contentHash": "sha256:bf1ff69f3624fd6191713864bba62ce7153521ceee2b30ed686c262e0a6a9f68",
+			"bytes": 746424,
+			"href": "/v1/exports/life-expectancy-male-observations"
+		},
+		{
+			"id": "local-election-candidate-votes-ward-2016-observations",
+			"measureId": "local-election-candidate-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-candidate-votes-ward-2016-observations",
+			"contentHash": "sha256:36ea1e857298fd17ac55e32c336f8a844d08b467de2411ed1490980b2a80d206",
+			"bytes": 128312,
+			"href": "/v1/exports/local-election-candidate-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-candidate-votes-ward-2017-observations",
+			"measureId": "local-election-candidate-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-candidate-votes-ward-2017-observations",
+			"contentHash": "sha256:01297188db4480ec0de17b67d618da07c16f3e367e56e973db594f0c02f97785",
+			"bytes": 80265,
+			"href": "/v1/exports/local-election-candidate-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-candidate-votes-ward-2018-observations",
+			"measureId": "local-election-candidate-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-candidate-votes-ward-2018-observations",
+			"contentHash": "sha256:2b5388be6da01b4aa6d40b0ccda49522078b67ec34a583052be94716a9976ccf",
+			"bytes": 159933,
+			"href": "/v1/exports/local-election-candidate-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-candidate-votes-ward-2019-observations",
+			"measureId": "local-election-candidate-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-candidate-votes-ward-2019-observations",
+			"contentHash": "sha256:31a80d8a9ed96447c8c13eb617bee236bd6d9e92d82340b0a83c9b07ab74b714",
+			"bytes": 304790,
+			"href": "/v1/exports/local-election-candidate-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-candidate-votes-ward-2021-observations",
+			"measureId": "local-election-candidate-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-candidate-votes-ward-2021-observations",
+			"contentHash": "sha256:f4da5851802fee78101a7321316916f2aafa0d3f62efebc75514bd71a8f6cd72",
+			"bytes": 144924,
+			"href": "/v1/exports/local-election-candidate-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-candidate-votes-ward-2022-observations",
+			"measureId": "local-election-candidate-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-candidate-votes-ward-2022-observations",
+			"contentHash": "sha256:a3f4b903c4843ec87faee9d2911f5f9e0a06eb3b508d376eeaf5102f92be6e97",
+			"bytes": 204770,
+			"href": "/v1/exports/local-election-candidate-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-candidate-votes-ward-2023-observations",
+			"measureId": "local-election-candidate-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-candidate-votes-ward-2023-observations",
+			"contentHash": "sha256:6c5399072bf1f1c52f08e8342c22b8b3b2d2c3cbb8a6068979af85e7c7073d56",
+			"bytes": 233819,
+			"href": "/v1/exports/local-election-candidate-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-candidate-votes-ward-2024-observations",
+			"measureId": "local-election-candidate-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-candidate-votes-ward-2024-observations",
+			"contentHash": "sha256:509a4f79e7a8e0798547d5c22331a49bfbf4c1f04825cc2f60092cf3c8a450ad",
+			"bytes": 110583,
+			"href": "/v1/exports/local-election-candidate-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-candidate-votes-ward-2025-observations",
+			"measureId": "local-election-candidate-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-candidate-votes-ward-2025-observations",
+			"contentHash": "sha256:067a4a1593dad107c4094b0f4f220655f04ed35d48a987877a5929542ef1e756",
+			"bytes": 29987,
+			"href": "/v1/exports/local-election-candidate-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-con-votes-ward-2016-observations",
+			"measureId": "local-election-con-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-con-votes-ward-2016-observations",
+			"contentHash": "sha256:a46a4e7d4ae61d6391bb397ed7eb0902e478899b87ed81e6acd9eb91f6df9e86",
+			"bytes": 126670,
+			"href": "/v1/exports/local-election-con-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-con-votes-ward-2017-observations",
+			"measureId": "local-election-con-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-con-votes-ward-2017-observations",
+			"contentHash": "sha256:4870741eb752ee5404b338b00bacaf69372d3b003b4b948300c49ba43760e6cf",
+			"bytes": 78822,
+			"href": "/v1/exports/local-election-con-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-con-votes-ward-2018-observations",
+			"measureId": "local-election-con-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-con-votes-ward-2018-observations",
+			"contentHash": "sha256:aaa1a8ca13c06f82b6533d29fed6e6f07462d96a5e4dc416c28dd707855f0978",
+			"bytes": 158069,
+			"href": "/v1/exports/local-election-con-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-con-votes-ward-2019-observations",
+			"measureId": "local-election-con-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-con-votes-ward-2019-observations",
+			"contentHash": "sha256:3784f8ff7b8cbd0bee7ad25e28c13b751705c2b2c8b4e33b565445a058499606",
+			"bytes": 302092,
+			"href": "/v1/exports/local-election-con-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-con-votes-ward-2021-observations",
+			"measureId": "local-election-con-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-con-votes-ward-2021-observations",
+			"contentHash": "sha256:29575e7fca00e31dc3c58f9e893759ef4476b3d8091691a95e4ad1c04f5652f7",
+			"bytes": 143393,
+			"href": "/v1/exports/local-election-con-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-con-votes-ward-2022-observations",
+			"measureId": "local-election-con-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-con-votes-ward-2022-observations",
+			"contentHash": "sha256:adc832b31eb328ea7bac699b0b51be969f9ad693ff34a00de28b7f94e2cda7fd",
+			"bytes": 201745,
+			"href": "/v1/exports/local-election-con-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-con-votes-ward-2023-observations",
+			"measureId": "local-election-con-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-con-votes-ward-2023-observations",
+			"contentHash": "sha256:880eb97fdc23c74b2b7fddc8402a717889f318a030925337c4959ebc634a1cd1",
+			"bytes": 230839,
+			"href": "/v1/exports/local-election-con-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-con-votes-ward-2024-observations",
+			"measureId": "local-election-con-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-con-votes-ward-2024-observations",
+			"contentHash": "sha256:eb9d8ac31806f22e9088e5dbd8e235991a4638cef4c0156ae5c0ad63dd4086af",
+			"bytes": 109065,
+			"href": "/v1/exports/local-election-con-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-con-votes-ward-2025-observations",
+			"measureId": "local-election-con-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-con-votes-ward-2025-observations",
+			"contentHash": "sha256:966eac42a1af4a41a2eddef160f1d27e662aee12652c367c45bbb12e077b5fa8",
+			"bytes": 29476,
+			"href": "/v1/exports/local-election-con-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-green-votes-ward-2016-observations",
+			"measureId": "local-election-green-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-green-votes-ward-2016-observations",
+			"contentHash": "sha256:bda6f49623de4959b5b91862ba6ab4037109f7ca9fa5b9bb6bb68c0f41ea82ea",
+			"bytes": 124234,
+			"href": "/v1/exports/local-election-green-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-green-votes-ward-2017-observations",
+			"measureId": "local-election-green-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-green-votes-ward-2017-observations",
+			"contentHash": "sha256:75e4a7e9deefc81ab1cc413cef55e76cd077775abb8c629fdc6ce400ea37a3f3",
+			"bytes": 77213,
+			"href": "/v1/exports/local-election-green-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-green-votes-ward-2018-observations",
+			"measureId": "local-election-green-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-green-votes-ward-2018-observations",
+			"contentHash": "sha256:eb98a87a767d0e90c2b74fae852e44dfea17214d98021abe735305d3501d013c",
+			"bytes": 154635,
+			"href": "/v1/exports/local-election-green-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-green-votes-ward-2019-observations",
+			"measureId": "local-election-green-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-green-votes-ward-2019-observations",
+			"contentHash": "sha256:a370692ec906b0a9331adafdfa51eac444d14756580428a47101bf77d541ddb4",
+			"bytes": 294889,
+			"href": "/v1/exports/local-election-green-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-green-votes-ward-2021-observations",
+			"measureId": "local-election-green-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-green-votes-ward-2021-observations",
+			"contentHash": "sha256:8d9ddef61fb27580256c6bee01ffae392285b9647d475aea6eb314a9f5aed2f6",
+			"bytes": 140772,
+			"href": "/v1/exports/local-election-green-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-green-votes-ward-2022-observations",
+			"measureId": "local-election-green-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-green-votes-ward-2022-observations",
+			"contentHash": "sha256:e6be81d254e4362e626ea863009f797c6d0af62d0bc20cb21e7e422458d89bf4",
+			"bytes": 198296,
+			"href": "/v1/exports/local-election-green-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-green-votes-ward-2023-observations",
+			"measureId": "local-election-green-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-green-votes-ward-2023-observations",
+			"contentHash": "sha256:7a244196b9ad064c800bcc9db9a2ec1a78bbfde15f8aee5fd443d21011ebd2d0",
+			"bytes": 226941,
+			"href": "/v1/exports/local-election-green-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-green-votes-ward-2024-observations",
+			"measureId": "local-election-green-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-green-votes-ward-2024-observations",
+			"contentHash": "sha256:dc4d568ba16234753db08b16f555e77777207c1dd366ff68bde895876c5b1b86",
+			"bytes": 107773,
+			"href": "/v1/exports/local-election-green-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-green-votes-ward-2025-observations",
+			"measureId": "local-election-green-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-green-votes-ward-2025-observations",
+			"contentHash": "sha256:96e76a2a3d5066f9b92f6c30c62ddcbe8e80b2b47766fbc153fae0db699ab5d0",
+			"bytes": 28976,
+			"href": "/v1/exports/local-election-green-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-ind-votes-ward-2016-observations",
+			"measureId": "local-election-ind-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-ind-votes-ward-2016-observations",
+			"contentHash": "sha256:a12e39c5a47a1acfc128c476254bf2078cb949c46a59595945866ff172b39259",
+			"bytes": 122279,
+			"href": "/v1/exports/local-election-ind-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-ind-votes-ward-2017-observations",
+			"measureId": "local-election-ind-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-ind-votes-ward-2017-observations",
+			"contentHash": "sha256:203cf3a12bc7ebe8d0de132f5d51d67b1552efb0a9135f1d17a795c0283e9e93",
+			"bytes": 78210,
+			"href": "/v1/exports/local-election-ind-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-ind-votes-ward-2018-observations",
+			"measureId": "local-election-ind-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-ind-votes-ward-2018-observations",
+			"contentHash": "sha256:c9d4782b201cf1fd514189a377a55376a7f17ab530388cc651e8b54ac7931c55",
+			"bytes": 152049,
+			"href": "/v1/exports/local-election-ind-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-ind-votes-ward-2019-observations",
+			"measureId": "local-election-ind-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-ind-votes-ward-2019-observations",
+			"contentHash": "sha256:265a3b51fe52c193e5a19a931830168c20ed926f11eed75fbb7d6f7c00c734e7",
+			"bytes": 292979,
+			"href": "/v1/exports/local-election-ind-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-ind-votes-ward-2021-observations",
+			"measureId": "local-election-ind-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-ind-votes-ward-2021-observations",
+			"contentHash": "sha256:ba779c7d2b7b9227dd190f006cb1d55458aacd5e9115ac9c254931c1e605f04c",
+			"bytes": 138601,
+			"href": "/v1/exports/local-election-ind-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-ind-votes-ward-2022-observations",
+			"measureId": "local-election-ind-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-ind-votes-ward-2022-observations",
+			"contentHash": "sha256:145eaec47e42fed725c5818c76087fc387bcd6bdca2f72b62e070a69d1cff932",
+			"bytes": 196180,
+			"href": "/v1/exports/local-election-ind-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-ind-votes-ward-2023-observations",
+			"measureId": "local-election-ind-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-ind-votes-ward-2023-observations",
+			"contentHash": "sha256:1076e6af302cc366e64827230f19966cad30725f7cdbb56864e492e38af3160a",
+			"bytes": 224525,
+			"href": "/v1/exports/local-election-ind-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-ind-votes-ward-2024-observations",
+			"measureId": "local-election-ind-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-ind-votes-ward-2024-observations",
+			"contentHash": "sha256:1aee4dcd8a3fb24f4836d07c3efe1ffd1cf4a495d3a7029d76cce956e82a610d",
+			"bytes": 105780,
+			"href": "/v1/exports/local-election-ind-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-ind-votes-ward-2025-observations",
+			"measureId": "local-election-ind-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-ind-votes-ward-2025-observations",
+			"contentHash": "sha256:8f43fcaffb962e4683f1e4d89ecd105164dba880c792ba9d19ffe8df9f396b04",
+			"bytes": 28793,
+			"href": "/v1/exports/local-election-ind-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-lab-votes-ward-2016-observations",
+			"measureId": "local-election-lab-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-lab-votes-ward-2016-observations",
+			"contentHash": "sha256:ebe59b5373fdf7e7024ad1efe1a6e09ffbc8076caa38a21024bb5827c66e2d61",
+			"bytes": 127084,
+			"href": "/v1/exports/local-election-lab-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-lab-votes-ward-2017-observations",
+			"measureId": "local-election-lab-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-lab-votes-ward-2017-observations",
+			"contentHash": "sha256:0f0f9506ff1ec07d10a9db5f0dd1198398534ecfe0eef8508d2a165eb739b08b",
+			"bytes": 78949,
+			"href": "/v1/exports/local-election-lab-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-lab-votes-ward-2018-observations",
+			"measureId": "local-election-lab-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-lab-votes-ward-2018-observations",
+			"contentHash": "sha256:8c5827c9585071fcd926ec88e373f72089acc9cca69f97fda73dccac5f8bcbe8",
+			"bytes": 158374,
+			"href": "/v1/exports/local-election-lab-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-lab-votes-ward-2019-observations",
+			"measureId": "local-election-lab-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-lab-votes-ward-2019-observations",
+			"contentHash": "sha256:0367d4baef5a8f1f7a90abb540a52e26a1274286b7ef5d806a1e4c7dd14cd8d6",
+			"bytes": 300125,
+			"href": "/v1/exports/local-election-lab-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-lab-votes-ward-2021-observations",
+			"measureId": "local-election-lab-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-lab-votes-ward-2021-observations",
+			"contentHash": "sha256:4c585de780d79e392c82302743cb8f48006b92b99a2bcf93f03416fe5aca8216",
+			"bytes": 143078,
+			"href": "/v1/exports/local-election-lab-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-lab-votes-ward-2022-observations",
+			"measureId": "local-election-lab-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-lab-votes-ward-2022-observations",
+			"contentHash": "sha256:10c0644e253edcd027dc676926fcf2952d0d586ac9dee3ca5c5cb0d71df4cc37",
+			"bytes": 202334,
+			"href": "/v1/exports/local-election-lab-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-lab-votes-ward-2023-observations",
+			"measureId": "local-election-lab-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-lab-votes-ward-2023-observations",
+			"contentHash": "sha256:241215e42ca486e73ba78ae42bb6537ea9e37a76fe2a0ab6f660721bc2fc45d5",
+			"bytes": 230161,
+			"href": "/v1/exports/local-election-lab-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-lab-votes-ward-2024-observations",
+			"measureId": "local-election-lab-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-lab-votes-ward-2024-observations",
+			"contentHash": "sha256:0341a5d59aca01a8b577353b3f3ee130a7c473674f3c3c1ef313add0a20a8874",
+			"bytes": 109497,
+			"href": "/v1/exports/local-election-lab-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-lab-votes-ward-2025-observations",
+			"measureId": "local-election-lab-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-lab-votes-ward-2025-observations",
+			"contentHash": "sha256:9f8a2fd7b47ea941918de3f31e7a2fa78ff5f179f432d98c748bfffb56f58220",
+			"bytes": 29253,
+			"href": "/v1/exports/local-election-lab-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-ld-votes-ward-2016-observations",
+			"measureId": "local-election-ld-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-ld-votes-ward-2016-observations",
+			"contentHash": "sha256:0a8fe589ee26d1cf5cc2405b2fa46f28a426e9a79ada73ebafcca8ffbd1908a9",
+			"bytes": 124813,
+			"href": "/v1/exports/local-election-ld-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-ld-votes-ward-2017-observations",
+			"measureId": "local-election-ld-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-ld-votes-ward-2017-observations",
+			"contentHash": "sha256:1f3f5e32091b61b6ad1489fa4d6f901a355bcc4bfbe5d9e5f6ce0ccdf6549747",
+			"bytes": 77954,
+			"href": "/v1/exports/local-election-ld-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-ld-votes-ward-2018-observations",
+			"measureId": "local-election-ld-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-ld-votes-ward-2018-observations",
+			"contentHash": "sha256:aab730e0b113cdb1ed73bada68faa85ad9fb28ebb2c35eaef18e4e1705feafa8",
+			"bytes": 155935,
+			"href": "/v1/exports/local-election-ld-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-ld-votes-ward-2019-observations",
+			"measureId": "local-election-ld-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-ld-votes-ward-2019-observations",
+			"contentHash": "sha256:8368e6b4f947eef82d8907cab049a14db1754cfff359818a14cd349adf4b8df1",
+			"bytes": 297256,
+			"href": "/v1/exports/local-election-ld-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-ld-votes-ward-2021-observations",
+			"measureId": "local-election-ld-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-ld-votes-ward-2021-observations",
+			"contentHash": "sha256:3040bd01d7f067257dac0f6722dc4f76a1584aebf60f8af1a9a936929aa2209c",
+			"bytes": 141405,
+			"href": "/v1/exports/local-election-ld-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-ld-votes-ward-2022-observations",
+			"measureId": "local-election-ld-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-ld-votes-ward-2022-observations",
+			"contentHash": "sha256:6116bc32ec98afb682ddfa9393ce50331a0843b68a8ff47b5024d2f57aa21cae",
+			"bytes": 199445,
+			"href": "/v1/exports/local-election-ld-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-ld-votes-ward-2023-observations",
+			"measureId": "local-election-ld-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-ld-votes-ward-2023-observations",
+			"contentHash": "sha256:34ac080dbe06cae73b67df3867ca8eca546f3f970d9141e6881fc0624d801322",
+			"bytes": 228213,
+			"href": "/v1/exports/local-election-ld-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-ld-votes-ward-2024-observations",
+			"measureId": "local-election-ld-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-ld-votes-ward-2024-observations",
+			"contentHash": "sha256:d93f8770ba86b6e620a234825c0a4e95dcf276035d4d886df423fecb5c0d2244",
+			"bytes": 108014,
+			"href": "/v1/exports/local-election-ld-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-ld-votes-ward-2025-observations",
+			"measureId": "local-election-ld-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-ld-votes-ward-2025-observations",
+			"contentHash": "sha256:266050e6524ecf3abc9f8186c95d6a9cd228e5c08d53a09f0b676ac22283d556",
+			"bytes": 29373,
+			"href": "/v1/exports/local-election-ld-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-other-votes-ward-2016-observations",
+			"measureId": "local-election-other-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-other-votes-ward-2016-observations",
+			"contentHash": "sha256:aa9ee5166e14b8a765451ba488b33906744d0fd567cfe66535704e8eb61b6557",
+			"bytes": 122509,
+			"href": "/v1/exports/local-election-other-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-other-votes-ward-2017-observations",
+			"measureId": "local-election-other-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-other-votes-ward-2017-observations",
+			"contentHash": "sha256:217656f11cfcb1846aa76f65368753e2bca05178b799c6d6e1122531d16ea860",
+			"bytes": 77080,
+			"href": "/v1/exports/local-election-other-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-other-votes-ward-2018-observations",
+			"measureId": "local-election-other-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-other-votes-ward-2018-observations",
+			"contentHash": "sha256:f9eae44ee0a3047f5a7cf3f115961c8a861f57eb7ea18adfb00c74d04b11bad4",
+			"bytes": 152352,
+			"href": "/v1/exports/local-election-other-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-other-votes-ward-2019-observations",
+			"measureId": "local-election-other-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-other-votes-ward-2019-observations",
+			"contentHash": "sha256:4ad348d858e49b95f797046b7be654b9e7d06683a9569ca17247d6a4078d3fa1",
+			"bytes": 291833,
+			"href": "/v1/exports/local-election-other-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-other-votes-ward-2021-observations",
+			"measureId": "local-election-other-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-other-votes-ward-2021-observations",
+			"contentHash": "sha256:cd1c592f5e5f57d04dabd5d219547cc7a8719161dd4b0c4c34cf28ec5d873895",
+			"bytes": 137525,
+			"href": "/v1/exports/local-election-other-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-other-votes-ward-2022-observations",
+			"measureId": "local-election-other-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-other-votes-ward-2022-observations",
+			"contentHash": "sha256:2e7ac9891c95d562570413aa20f6f36a8762c4e7f575441054d00674f302ee7c",
+			"bytes": 194560,
+			"href": "/v1/exports/local-election-other-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-other-votes-ward-2023-observations",
+			"measureId": "local-election-other-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-other-votes-ward-2023-observations",
+			"contentHash": "sha256:b552db84d79c776d38f41f0740a6f705f0f841c34a67a017f644068f54721660",
+			"bytes": 222500,
+			"href": "/v1/exports/local-election-other-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-other-votes-ward-2024-observations",
+			"measureId": "local-election-other-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-other-votes-ward-2024-observations",
+			"contentHash": "sha256:cdc01adcfeb6ac1153e7440fd43b505d1d895d0dba851eb41e1038ab11323dcf",
+			"bytes": 104910,
+			"href": "/v1/exports/local-election-other-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-other-votes-ward-2025-observations",
+			"measureId": "local-election-other-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-other-votes-ward-2025-observations",
+			"contentHash": "sha256:0c2252a70741878b38d22e8e57669138bfaa206db708ad7da643423f564205f0",
+			"bytes": 28460,
+			"href": "/v1/exports/local-election-other-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-pc-votes-ward-2016-observations",
+			"measureId": "local-election-pc-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-pc-votes-ward-2016-observations",
+			"contentHash": "sha256:f1fb343e37ab91c4e4f7bfb7aedaae7b0f1267a0e351f55e706297f97e6d5edf",
+			"bytes": 121794,
+			"href": "/v1/exports/local-election-pc-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-pc-votes-ward-2017-observations",
+			"measureId": "local-election-pc-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-pc-votes-ward-2017-observations",
+			"contentHash": "sha256:ad5f14ff6b5b42380586737ded5c666244e9f0f1bc3751a5aa1885a668148636",
+			"bytes": 77616,
+			"href": "/v1/exports/local-election-pc-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-pc-votes-ward-2018-observations",
+			"measureId": "local-election-pc-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-pc-votes-ward-2018-observations",
+			"contentHash": "sha256:aa7b8a56f9c1f7ebf05e697c66b2d522559427f612c87598fdbbe939c3508fe9",
+			"bytes": 151382,
+			"href": "/v1/exports/local-election-pc-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-pc-votes-ward-2019-observations",
+			"measureId": "local-election-pc-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-pc-votes-ward-2019-observations",
+			"contentHash": "sha256:7ea6e6d9bec99158936689e1a8ec1583ff17a55d0b688a9045722e584b1b3203",
+			"bytes": 290257,
+			"href": "/v1/exports/local-election-pc-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-pc-votes-ward-2021-observations",
+			"measureId": "local-election-pc-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-pc-votes-ward-2021-observations",
+			"contentHash": "sha256:c077ffd3da4975ebcfea762dbbc8253259a3525b97ba22dbd22212a3e3fce81c",
+			"bytes": 137522,
+			"href": "/v1/exports/local-election-pc-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-pc-votes-ward-2022-observations",
+			"measureId": "local-election-pc-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-pc-votes-ward-2022-observations",
+			"contentHash": "sha256:f7d4418188c53d63aafa8061887b71a64f4c823ed944715af26fac0331c62839",
+			"bytes": 194557,
+			"href": "/v1/exports/local-election-pc-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-pc-votes-ward-2023-observations",
+			"measureId": "local-election-pc-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-pc-votes-ward-2023-observations",
+			"contentHash": "sha256:75a020d3fa9e272fbfe0b4af34afe7b2996fb732f7d5a234799511bea5727b20",
+			"bytes": 222497,
+			"href": "/v1/exports/local-election-pc-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-pc-votes-ward-2024-observations",
+			"measureId": "local-election-pc-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-pc-votes-ward-2024-observations",
+			"contentHash": "sha256:52849668196b1589004a2e77e4218f6aca8a7d2b77efbf1454127004e5cb1805",
+			"bytes": 104907,
+			"href": "/v1/exports/local-election-pc-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-pc-votes-ward-2025-observations",
+			"measureId": "local-election-pc-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-pc-votes-ward-2025-observations",
+			"contentHash": "sha256:331e5c81cf1b3ef2e3a8f16508d494a593acccd1d42744415b79d7dab25da158",
+			"bytes": 28457,
+			"href": "/v1/exports/local-election-pc-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-ref-votes-ward-2016-observations",
+			"measureId": "local-election-ref-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-ref-votes-ward-2016-observations",
+			"contentHash": "sha256:a953a6811aac71ee002699e6d454c502e0def1a3887723c9574c7b053edc405f",
+			"bytes": 121793,
+			"href": "/v1/exports/local-election-ref-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-ref-votes-ward-2017-observations",
+			"measureId": "local-election-ref-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-ref-votes-ward-2017-observations",
+			"contentHash": "sha256:82b1b17bf2e822352a4c65de4af0a51e6b9ccbe4c5cd815b8865cf4784ce5523",
+			"bytes": 76803,
+			"href": "/v1/exports/local-election-ref-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-ref-votes-ward-2018-observations",
+			"measureId": "local-election-ref-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-ref-votes-ward-2018-observations",
+			"contentHash": "sha256:c81ab99325d14021e2e715262ad7732df0de4c4b139064ba3e805255795a9e32",
+			"bytes": 151383,
+			"href": "/v1/exports/local-election-ref-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-ref-votes-ward-2019-observations",
+			"measureId": "local-election-ref-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-ref-votes-ward-2019-observations",
+			"contentHash": "sha256:188875e4beac4e77533d44f10837b63bd3c29f533a0ee3b445b16876e834d748",
+			"bytes": 290258,
+			"href": "/v1/exports/local-election-ref-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-ref-votes-ward-2021-observations",
+			"measureId": "local-election-ref-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-ref-votes-ward-2021-observations",
+			"contentHash": "sha256:7ae930943ac60068fa5018e11ced8aeeb1dcbb46bd264e9447fe50be027c73f9",
+			"bytes": 137726,
+			"href": "/v1/exports/local-election-ref-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-ref-votes-ward-2022-observations",
+			"measureId": "local-election-ref-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-ref-votes-ward-2022-observations",
+			"contentHash": "sha256:c9b2366770353ed9be18cf05c8cc9c7bddba9cb55b5df6d719ea4434f6b79f01",
+			"bytes": 194745,
+			"href": "/v1/exports/local-election-ref-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-ref-votes-ward-2023-observations",
+			"measureId": "local-election-ref-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-ref-votes-ward-2023-observations",
+			"contentHash": "sha256:177b67a13d0edf23457152053211cb5f7de9dfed4f47d6b1f616b40f8d07ef9e",
+			"bytes": 223021,
+			"href": "/v1/exports/local-election-ref-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-ref-votes-ward-2024-observations",
+			"measureId": "local-election-ref-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-ref-votes-ward-2024-observations",
+			"contentHash": "sha256:5583bb9ab8753fa4ba068bedc4911f6a9f67f23f10ef9d5d9c072a74f6a69e06",
+			"bytes": 105497,
+			"href": "/v1/exports/local-election-ref-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-ref-votes-ward-2025-observations",
+			"measureId": "local-election-ref-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-ref-votes-ward-2025-observations",
+			"contentHash": "sha256:fa362f65626152eed364deba3a5573aa5f48ef9c49de4fba85b302fb34b3e67e",
+			"bytes": 29557,
+			"href": "/v1/exports/local-election-ref-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-turnout-ward-2021-observations",
+			"measureId": "local-election-turnout",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-turnout-ward-2021-observations",
+			"contentHash": "sha256:275949169803796f4f9b539a6b42a1eaaa40509dc3330a784705d7445b0d5943",
+			"bytes": 144315,
+			"href": "/v1/exports/local-election-turnout-ward-2021-observations"
+		},
+		{
+			"id": "local-election-turnout-ward-2022-observations",
+			"measureId": "local-election-turnout",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-turnout-ward-2022-observations",
+			"contentHash": "sha256:4f2626d8bb7d09beb2229ecd800e0f8b0c282c58332fb457a9a561172cccd0f8",
+			"bytes": 204218,
+			"href": "/v1/exports/local-election-turnout-ward-2022-observations"
+		},
+		{
+			"id": "local-election-turnout-ward-2023-observations",
+			"measureId": "local-election-turnout",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-turnout-ward-2023-observations",
+			"contentHash": "sha256:bf0e4f1c58188f069772839e71e167ee2cac1ac37ddc6a0cf5c542b3c8d87a46",
+			"bytes": 233299,
+			"href": "/v1/exports/local-election-turnout-ward-2023-observations"
+		},
+		{
+			"id": "local-election-turnout-ward-2024-observations",
+			"measureId": "local-election-turnout",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-turnout-ward-2024-observations",
+			"contentHash": "sha256:c7058a55e1c31fb4917d65960edd895e036b59f5f764fac7a1f5e25002caaa06",
+			"bytes": 131465,
+			"href": "/v1/exports/local-election-turnout-ward-2024-observations"
+		},
+		{
+			"id": "local-election-turnout-ward-2025-observations",
+			"measureId": "local-election-turnout",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-turnout-ward-2025-observations",
+			"contentHash": "sha256:a40407932d6d33332727c76243cef84805f0b32aed36642216d4c385d86f9dcd",
+			"bytes": 36095,
+			"href": "/v1/exports/local-election-turnout-ward-2025-observations"
+		},
+		{
+			"id": "local-election-ukip-votes-ward-2016-observations",
+			"measureId": "local-election-ukip-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-ukip-votes-ward-2016-observations",
+			"contentHash": "sha256:2ad864425c4b0e15b41ae9b363897fdf1e2bf40afbdc5e5a9ef25e5ea8a4fd4d",
+			"bytes": 124527,
+			"href": "/v1/exports/local-election-ukip-votes-ward-2016-observations"
+		},
+		{
+			"id": "local-election-ukip-votes-ward-2017-observations",
+			"measureId": "local-election-ukip-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-ukip-votes-ward-2017-observations",
+			"contentHash": "sha256:16557bd5190bd6d88ac555a6cb380bfa55e0a13b31693772b1c35766d9ecf86d",
+			"bytes": 77114,
+			"href": "/v1/exports/local-election-ukip-votes-ward-2017-observations"
+		},
+		{
+			"id": "local-election-ukip-votes-ward-2018-observations",
+			"measureId": "local-election-ukip-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-ukip-votes-ward-2018-observations",
+			"contentHash": "sha256:ea0c7e07ad187f7931b152c84b7f3a30c1e3bc730643d428ad61961f84264e57",
+			"bytes": 152382,
+			"href": "/v1/exports/local-election-ukip-votes-ward-2018-observations"
+		},
+		{
+			"id": "local-election-ukip-votes-ward-2019-observations",
+			"measureId": "local-election-ukip-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-ukip-votes-ward-2019-observations",
+			"contentHash": "sha256:b16efcc791d6ff149854a0f8c487c0a9e70772f68d4d13be4db9a754d0d1477c",
+			"bytes": 292853,
+			"href": "/v1/exports/local-election-ukip-votes-ward-2019-observations"
+		},
+		{
+			"id": "local-election-ukip-votes-ward-2021-observations",
+			"measureId": "local-election-ukip-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-ukip-votes-ward-2021-observations",
+			"contentHash": "sha256:2c658a4ad7f04417c03f8c58b0e4927db99a1887c000926efaf95e809586c4b2",
+			"bytes": 137524,
+			"href": "/v1/exports/local-election-ukip-votes-ward-2021-observations"
+		},
+		{
+			"id": "local-election-ukip-votes-ward-2022-observations",
+			"measureId": "local-election-ukip-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-ukip-votes-ward-2022-observations",
+			"contentHash": "sha256:776f2aa742182ebaedc1d420bf9677fd6a084021546f82951ffb428f9a7b6e69",
+			"bytes": 194559,
+			"href": "/v1/exports/local-election-ukip-votes-ward-2022-observations"
+		},
+		{
+			"id": "local-election-ukip-votes-ward-2023-observations",
+			"measureId": "local-election-ukip-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-ukip-votes-ward-2023-observations",
+			"contentHash": "sha256:1c30d9439781cc5f292a3766d9427e9caf900a7c8bb143bc5ba5849876d36a70",
+			"bytes": 222499,
+			"href": "/v1/exports/local-election-ukip-votes-ward-2023-observations"
+		},
+		{
+			"id": "local-election-ukip-votes-ward-2024-observations",
+			"measureId": "local-election-ukip-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-ukip-votes-ward-2024-observations",
+			"contentHash": "sha256:4fb664ee0fe607405603f2fdbed597a6aefbe4f23b5af6099a737c992f219284",
+			"bytes": 104909,
+			"href": "/v1/exports/local-election-ukip-votes-ward-2024-observations"
+		},
+		{
+			"id": "local-election-ukip-votes-ward-2025-observations",
+			"measureId": "local-election-ukip-votes",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-ukip-votes-ward-2025-observations",
+			"contentHash": "sha256:6f0b864cbe70a04cd71a02b342e96de4e079bb30d3f9d4f8ec4847a5f23e6ae8",
+			"bytes": 28459,
+			"href": "/v1/exports/local-election-ukip-votes-ward-2025-observations"
+		},
+		{
+			"id": "local-election-winning-party-ward-2016-observations",
+			"measureId": "local-election-winning-party",
+			"datasetId": "local-election",
+			"periods": [
+				"2016"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2016
+			},
+			"format": "json",
+			"artifact": "local-election-winning-party-ward-2016-observations",
+			"contentHash": "sha256:3f91e2c98df3a0e216db6a8e4fa78efbe4409f2f021f0aae66cbc157114a7b81",
+			"bytes": 137175,
+			"href": "/v1/exports/local-election-winning-party-ward-2016-observations"
+		},
+		{
+			"id": "local-election-winning-party-ward-2017-observations",
+			"measureId": "local-election-winning-party",
+			"datasetId": "local-election",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2017
+			},
+			"format": "json",
+			"artifact": "local-election-winning-party-ward-2017-observations",
+			"contentHash": "sha256:7bf45336e180c116e7b24faa0983e9035522973e0548132636ff0114b43d7f02",
+			"bytes": 86330,
+			"href": "/v1/exports/local-election-winning-party-ward-2017-observations"
+		},
+		{
+			"id": "local-election-winning-party-ward-2018-observations",
+			"measureId": "local-election-winning-party",
+			"datasetId": "local-election",
+			"periods": [
+				"2018"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2018
+			},
+			"format": "json",
+			"artifact": "local-election-winning-party-ward-2018-observations",
+			"contentHash": "sha256:fcb6fe8c387f8c201c1ee960064d0dd8456bd6a123145dd0a6c80c339860aee6",
+			"bytes": 170467,
+			"href": "/v1/exports/local-election-winning-party-ward-2018-observations"
+		},
+		{
+			"id": "local-election-winning-party-ward-2019-observations",
+			"measureId": "local-election-winning-party",
+			"datasetId": "local-election",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "local-election-winning-party-ward-2019-observations",
+			"contentHash": "sha256:4c9f5ff2eeec7197353d6329a61f149f6ae5661b9275f1462083875f6cb22038",
+			"bytes": 327135,
+			"href": "/v1/exports/local-election-winning-party-ward-2019-observations"
+		},
+		{
+			"id": "local-election-winning-party-ward-2021-observations",
+			"measureId": "local-election-winning-party",
+			"datasetId": "local-election",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "local-election-winning-party-ward-2021-observations",
+			"contentHash": "sha256:ea42d5a90836b5ef91770b5fa574e49dc28e00d87a6b366ed824d6095be40953",
+			"bytes": 154843,
+			"href": "/v1/exports/local-election-winning-party-ward-2021-observations"
+		},
+		{
+			"id": "local-election-winning-party-ward-2022-observations",
+			"measureId": "local-election-winning-party",
+			"datasetId": "local-election",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2022
+			},
+			"format": "json",
+			"artifact": "local-election-winning-party-ward-2022-observations",
+			"contentHash": "sha256:0f641d289c09a3f7c163ead0f5f750710c5963febe45063b4467bc753f7c9207",
+			"bytes": 218970,
+			"href": "/v1/exports/local-election-winning-party-ward-2022-observations"
+		},
+		{
+			"id": "local-election-winning-party-ward-2023-observations",
+			"measureId": "local-election-winning-party",
+			"datasetId": "local-election",
+			"periods": [
+				"2023"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "local-election-winning-party-ward-2023-observations",
+			"contentHash": "sha256:fee30f6d4862b4953f23d02a56dcd5b2c1ec144fa94aa570bf4d604be63e4422",
+			"bytes": 250435,
+			"href": "/v1/exports/local-election-winning-party-ward-2023-observations"
+		},
+		{
+			"id": "local-election-winning-party-ward-2024-observations",
+			"measureId": "local-election-winning-party",
+			"datasetId": "local-election",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "local-election-winning-party-ward-2024-observations",
+			"contentHash": "sha256:fad32d55006d96f222ee6c3db35ed934063cc68f4562c79130e128cae716a7d3",
+			"bytes": 118117,
+			"href": "/v1/exports/local-election-winning-party-ward-2024-observations"
+		},
+		{
+			"id": "local-election-winning-party-ward-2025-observations",
+			"measureId": "local-election-winning-party",
+			"datasetId": "local-election",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "local-election-winning-party-ward-2025-observations",
+			"contentHash": "sha256:3c2a78d86606d576910cacffed7e9cb4f07c118d5760703607c0e4210aca4211",
+			"bytes": 31946,
+			"href": "/v1/exports/local-election-winning-party-ward-2025-observations"
+		},
+		{
+			"id": "mobile-4g-coverage-observations",
+			"measureId": "mobile-4g-coverage",
+			"datasetId": "mobile-coverage",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "mobile-4g-coverage-observations",
+			"contentHash": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
+			"bytes": 21488,
+			"href": "/v1/exports/mobile-4g-coverage-observations"
+		},
+		{
+			"id": "mobile-5g-coverage-observations",
+			"measureId": "mobile-5g-coverage",
+			"datasetId": "mobile-coverage",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "mobile-5g-coverage-observations",
+			"contentHash": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
+			"bytes": 21293,
+			"href": "/v1/exports/mobile-5g-coverage-observations"
+		},
+		{
+			"id": "nimdm-rank-observations",
+			"measureId": "nimdm-rank",
+			"datasetId": "nimdm",
+			"periods": [
+				"2017"
+			],
+			"sourceGeography": {
+				"type": "superOutputArea",
+				"boundaryYear": 2011
+			},
+			"format": "json",
+			"artifact": "nimdm-rank-observations",
+			"contentHash": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
+			"bytes": 49972,
+			"href": "/v1/exports/nimdm-rank-observations"
+		},
+		{
+			"id": "population-constituency-observations",
+			"measureId": "population-estimate",
+			"datasetId": "population-constituency",
+			"periods": [
+				"2021",
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "constituency",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "population-constituency-observations",
+			"contentHash": "sha256:a05515bb0a5c4cf148f534ae1bb1c1b9b7401506731c07627ac93dc356e43d0a",
+			"bytes": 68809,
+			"href": "/v1/exports/population-constituency-observations"
+		},
+		{
+			"id": "population-density-observations",
+			"measureId": "population-density",
+			"datasetId": "population-uk",
+			"periods": [
+				"2011",
+				"2012",
+				"2013",
+				"2014",
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "population-density-observations",
+			"contentHash": "sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe440e451",
+			"bytes": 356302,
+			"href": "/v1/exports/population-density-observations"
+		},
+		{
+			"id": "population-local-authority-observations",
+			"measureId": "population-estimate",
+			"datasetId": "population-uk",
+			"periods": [
+				"2011",
+				"2012",
+				"2013",
+				"2014",
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "population-local-authority-observations",
+			"contentHash": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
+			"bytes": 302776,
+			"href": "/v1/exports/population-local-authority-observations"
+		},
+		{
+			"id": "population-observations",
+			"measureId": "population-estimate",
+			"datasetId": "population",
+			"periods": [
+				"2022"
+			],
+			"sourceGeography": {
+				"type": "ward",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "population-observations",
+			"contentHash": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
+			"bytes": 443663,
+			"href": "/v1/exports/population-observations"
+		},
+		{
+			"id": "simd-decile-observations",
+			"measureId": "simd-decile",
+			"datasetId": "simd",
+			"periods": [
+				"2020"
+			],
+			"sourceGeography": {
+				"type": "dataZone",
+				"boundaryYear": 2011
+			},
+			"format": "json",
+			"artifact": "simd-decile-observations",
+			"contentHash": "sha256:253414cf7ab82282c0e003f2d963804f8fe73e07bca29a5b9261049f6956925c",
+			"bytes": 384612,
+			"href": "/v1/exports/simd-decile-observations"
+		},
+		{
+			"id": "simd-rank-observations",
+			"measureId": "simd-rank",
+			"datasetId": "simd",
+			"periods": [
+				"2020"
+			],
+			"sourceGeography": {
+				"type": "dataZone",
+				"boundaryYear": 2011
+			},
+			"format": "json",
+			"artifact": "simd-rank-observations",
+			"contentHash": "sha256:7010ceb2e025a9e2a859509558f46b35a89394182f6aff3853b7b5f08a894830",
+			"bytes": 403733,
+			"href": "/v1/exports/simd-rank-observations"
+		},
+		{
+			"id": "travel-to-work-bicycle-observations",
+			"measureId": "travel-to-work-bicycle",
+			"datasetId": "travel-to-work",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "travel-to-work-bicycle-observations",
+			"contentHash": "sha256:050316e54d984231753d46c2fb62aaa504cd2b24af11672b7a6abaac0fc61b05",
+			"bytes": 19535,
+			"href": "/v1/exports/travel-to-work-bicycle-observations"
+		},
+		{
+			"id": "travel-to-work-car-observations",
+			"measureId": "travel-to-work-car",
+			"datasetId": "travel-to-work",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "travel-to-work-car-observations",
+			"contentHash": "sha256:516a3194ebb029a789b5e197a958f7a07b9a82d038b33c9f2d361e5dafcd1241",
+			"bytes": 20017,
+			"href": "/v1/exports/travel-to-work-car-observations"
+		},
+		{
+			"id": "travel-to-work-home-observations",
+			"measureId": "travel-to-work-home",
+			"datasetId": "travel-to-work",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "travel-to-work-home-observations",
+			"contentHash": "sha256:7eb903b8369bc2fcdb74020ddc2ea19fe052823fc07b1eb8778f50d1fb8da20f",
+			"bytes": 19973,
+			"href": "/v1/exports/travel-to-work-home-observations"
+		},
+		{
+			"id": "travel-to-work-motorcycle-observations",
+			"measureId": "travel-to-work-motorcycle",
+			"datasetId": "travel-to-work",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "travel-to-work-motorcycle-observations",
+			"contentHash": "sha256:d97f156f98e9992e3271b6912d231baaee31ba48e16b05aed2e2b2e6e031d3d1",
+			"bytes": 19354,
+			"href": "/v1/exports/travel-to-work-motorcycle-observations"
+		},
+		{
+			"id": "travel-to-work-on-foot-observations",
+			"measureId": "travel-to-work-on-foot",
+			"datasetId": "travel-to-work",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "travel-to-work-on-foot-observations",
+			"contentHash": "sha256:4fc78ab5d537cd9782c6e665c3c47f520d6cb2ac0701b1ed6fa66b0744c163fd",
+			"bytes": 19730,
+			"href": "/v1/exports/travel-to-work-on-foot-observations"
+		},
+		{
+			"id": "travel-to-work-other-observations",
+			"measureId": "travel-to-work-other",
+			"datasetId": "travel-to-work",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "travel-to-work-other-observations",
+			"contentHash": "sha256:c1384df82568336500267f46ca953350ec0fcd6688bb15ae06c17b75251a6e50",
+			"bytes": 19438,
+			"href": "/v1/exports/travel-to-work-other-observations"
+		},
+		{
+			"id": "travel-to-work-public-transport-observations",
+			"measureId": "travel-to-work-public-transport",
+			"datasetId": "travel-to-work",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "travel-to-work-public-transport-observations",
+			"contentHash": "sha256:c0b9aece424ea4ff7611ea29f06453b144eb75e2a8e7a986ece8345013df5d90",
+			"bytes": 19681,
+			"href": "/v1/exports/travel-to-work-public-transport-observations"
+		},
+		{
+			"id": "travel-to-work-taxi-observations",
+			"measureId": "travel-to-work-taxi",
+			"datasetId": "travel-to-work",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "travel-to-work-taxi-observations",
+			"contentHash": "sha256:2fb4efc651999afebcf88114f70fdb099dc374ad307a5b3740703ff4a9c033f1",
+			"bytes": 19351,
+			"href": "/v1/exports/travel-to-work-taxi-observations"
+		},
+		{
+			"id": "travel-to-work-total-observations",
+			"measureId": "travel-to-work-total",
+			"datasetId": "travel-to-work",
+			"periods": [
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "travel-to-work-total-observations",
+			"contentHash": "sha256:47b4206b4a59ff798cdddf5ebfeb981d33f5a35baedc6ffde1dcc2823d5bf506",
+			"bytes": 20103,
+			"href": "/v1/exports/travel-to-work-total-observations"
+		},
+		{
+			"id": "wimd-decile-observations",
+			"measureId": "wimd-decile",
+			"datasetId": "wimd",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "lsoa",
+				"boundaryYear": 2011
+			},
+			"format": "json",
+			"artifact": "wimd-decile-observations",
+			"contentHash": "sha256:b26d55f31599a26c3c54ee731ae25d9f884e2a3ba367bd886fcc2b22e2c527c0",
+			"bytes": 105415,
+			"href": "/v1/exports/wimd-decile-observations"
+		},
+		{
+			"id": "wimd-rank-observations",
+			"measureId": "wimd-rank",
+			"datasetId": "wimd",
+			"periods": [
+				"2019"
+			],
+			"sourceGeography": {
+				"type": "lsoa",
+				"boundaryYear": 2011
+			},
+			"format": "json",
+			"artifact": "wimd-rank-observations",
+			"contentHash": "sha256:2b2d1cf909f6bcd942f22e3e898adc183aa454dfce580475feb01ffced876654",
+			"bytes": 109843,
+			"href": "/v1/exports/wimd-rank-observations"
+		}
+	]
+}
