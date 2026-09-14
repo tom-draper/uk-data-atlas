@@ -130,9 +130,25 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Add sourced semantic classifications where available: combined authority,
       ceremonial county or historic county. Definitions currently remain
       transparently labelled `editorial-grouping`.
-- [ ] List all wards, local authorities or constituencies in a named location.
-      The response must state whether membership means direct code match, fully
-      contained, intersecting or weighted overlap.
+- [x] List all wards, local authorities or constituencies in a named location,
+      through `GET /v1/locations/{id}/members?geography=&release=&via=`. A
+      location is curated as local authority codes, so any other geography is
+      reached through a published crosswalk the caller names; asking without
+      `via` returns the crosswalks published for that geography and release
+      rather than choosing one. North Wales resolves to 232 wards, Greater
+      Manchester to 215, the North West to 829.
+
+
+      The response states what membership means, because it depends on the
+      crosswalk. `fully-contained` through a clean-containment crosswalk, where
+      the publisher places each area wholly inside one parent, so nothing is
+      counted in part. `weighted-overlap` through an area-overlap crosswalk,
+      where an area straddling the edge carries the share lying inside and is
+      marked partial: Merseyside's constituencies include Southport at 0.312
+      and Widnes and Halewood at 0.466, both of which reach into Lancashire and
+      Cheshire. Shares in two members of the same location add, so an area
+      split between them is whole rather than partial. Each member names the
+      authority it was found through.
 - [ ] Return a named location's boundary, bounding box and optional union
       geometry.
 - [ ] Compare location definitions and membership across releases.

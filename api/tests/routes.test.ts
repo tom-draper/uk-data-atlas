@@ -4286,3 +4286,116 @@ test("sums a location whose members span several code vintages", () => {
 	// partition, so the ground is covered exactly once.
 	assert.equal(data.data.aggregation.inputRecordCount, 1);
 });
+
+test("resolves a named location into another geography through a crosswalk", () => {
+	// The shared inventory lists only the constituency lookup; this test needs
+	// the containment crosswalk advertised as well, since the route offers the
+	// caller what the inventory publishes.
+	const inventory: CrosswalkInventory = {
+		...crosswalkInventory,
+		crosswalks: [
+			...crosswalkInventory.crosswalks,
+			{
+				id: containmentCrosswalk.id,
+				from: containmentCrosswalk.from,
+				to: containmentCrosswalk.to,
+				method: containmentCrosswalk.method,
+				quality: containmentCrosswalk.quality,
+				weighting: containmentCrosswalk.weighting,
+				recordCount: containmentCrosswalk.records.length,
+				artifact: `crosswalks/${containmentCrosswalk.id}.json`,
+				contentHash: containmentCrosswalk.contentHash,
+			},
+		],
+	};
+	const context: RouteContext = {
+		boundaryRegistry: registry,
+		areaLookup,
+		crosswalkInventory: inventory,
+		crosswalkLookup,
+		namedLocationLookup,
+	};
+	const ask = (query: string) =>
+		routeRequest(
+			"GET",
+			`/v1/locations/greater-manchester/members?${query}`,
+			context,
+		);
+
+	// A location is curated as local authority codes, so asking for wards
+	// without naming a crosswalk is answered with the ones to choose from
+	// rather than an empty list or a silent choice.
+	const unnamed = ask("geography=ward&release=2025-01-en-ward");
+	assert.equal(unnamed.status, 400);
+	assert.match(
+		(unnamed.body as { detail: string }).detail,
+		/ward-to-local-authority-2025/,
+	);
+
+	const resolved = ask(
+		"geography=ward&release=2025-01-en-ward&via=ward-to-local-authority-2025",
+	);
+	assert.equal(
+		resolved.status,
+		200,
+		JSON.stringify(resolved.body).slice(0, 300),
+	);
+	const data = ("data" in resolved.body && resolved.body.data) as {
+		membership: string;
+		membershipNote: string;
+		partialMembers: number;
+		parentGeography: string;
+		parentBoundaryRelease: string;
+		via: { id: string; method: string };
+		members: {
+			id: string;
+			code: string;
+			name: string;
+			through: { code: string };
+			weight?: number;
+		}[];
+	};
+	assert.equal(data.membership, "fully-contained");
+	assert.equal(data.via.id, "ward-to-local-authority-2025");
+	assert.equal(data.via.method, "clean-containment");
+	// The location's own codes are resolved against the release the crosswalk
+	// ends at, not the ward release the caller asked for.
+	assert.equal(data.parentGeography, "localAuthority");
+	assert.equal(data.parentBoundaryRelease, "2025-01-uk-lad");
+	assert.deepEqual(
+		data.members.map((member) => member.code),
+		["E05000001"],
+	);
+	// Each member names the authority it was found through, so the step is
+	// visible rather than implied.
+	assert.equal(data.members[0]!.through.code, "E08000001");
+	assert.equal(data.members[0]!.name, "Example ward");
+	// Containment reports no share: the ward is wholly inside.
+	assert.equal(data.members[0]!.weight, undefined);
+	assert.equal(data.partialMembers, 0);
+	assert.match(data.membershipNote, /wholly inside/);
+
+	// A crosswalk that does not start from the requested geography and release
+	// is not silently substituted.
+	assert.equal(
+		ask(
+			"geography=ward&release=2025-01-en-ward&via=constituency-2010-to-2024",
+		).status,
+		404,
+	);
+	assert.equal(
+		ask(
+			"geography=ward&release=1999-01-en-ward&via=ward-to-local-authority-2025",
+		).status,
+		404,
+	);
+
+	// The curated geography still resolves directly, with no crosswalk.
+	const direct = ask("geography=localAuthority&release=2025-01-uk-lad");
+	assert.equal(direct.status, 200);
+	assert.equal(
+		("data" in direct.body && direct.body.data) !== undefined &&
+			(direct.body as { data: { membership: string } }).data.membership,
+		"direct-code-match",
+	);
+});

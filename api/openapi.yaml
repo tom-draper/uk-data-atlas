@@ -2411,7 +2411,7 @@ paths:
   /locations/{location-id}/members:
     get:
       operationId: getNamedLocationMembers
-      summary: Resolve a named location's direct code members in one area release
+      summary: Resolve a named location's members in one geography and release
       description: >
         `release` is required because location definitions may include legacy
         codes. Missing members are returned explicitly; this route never
@@ -2422,6 +2422,32 @@ paths:
         releases that are the evidence. The classification is relative to the
         requested release and reports code membership only; it asserts nothing
         about geometry.
+
+
+        A location is curated as local authority codes, so asking for
+        `geography=localAuthority` matches them directly and `membership` is
+        `direct-code-match`. Any other geography has to be reached through a
+        published crosswalk, named with `via`: the wards of North Wales, the
+        constituencies of Merseyside. Asking without `via` returns a 400 that
+        lists the crosswalks published for that geography and release, so the
+        choice is the caller's and is made from what exists.
+
+
+        What membership means depends on the crosswalk named, and the response
+        says which. Through a `clean-containment` crosswalk it is
+        `fully-contained`: the publisher places each area wholly inside one
+        parent, so no area is counted in part. Through an `area-overlap`
+        crosswalk it is `weighted-overlap`: an area straddling the edge of the
+        location carries the `weight` lying inside and is marked `partial`,
+        and `partialMembers` counts them. Shares in two members of the same
+        location are added, so an area split between them is whole and not
+        partial.
+
+
+        Each member names the authority it was found `through`, and
+        `parentBoundaryRelease` names the release the location's own codes were
+        resolved against, which is the release the crosswalk ends at rather
+        than the one asked for.
       parameters:
         - name: location-id
           in: path
@@ -2432,15 +2458,36 @@ paths:
           schema:
             type: string
             default: localAuthority
+          description: >
+            The geography to resolve members in. Anything other than
+            `localAuthority` requires `via`.
         - name: release
           in: query
           required: true
           schema: { type: string }
+        - name: via
+          in: query
+          required: false
+          schema: { type: string }
+          description: >
+            The published crosswalk to resolve through, required for any
+            geography other than `localAuthority`. Omit it to be told which are
+            available.
+          example: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
       responses:
+        "400":
+          description: >
+            `release` is missing, or a geography other than `localAuthority`
+            was asked for without `via`. The detail lists the crosswalks
+            published for that geography and release.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "200":
           description: >
-            Directly resolved members, explicitly unresolved codes, and the
-            coverage that explains each one.
+            Resolved members, explicitly unresolved codes, and the coverage
+            that explains each one.
           content:
             application/json:
               schema: { type: object }

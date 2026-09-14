@@ -52,6 +52,11 @@ import {
 	reconcileMembers,
 	reconcileMembersForYear,
 } from "./memberReconciliation";
+import {
+	crosswalksTo,
+	membersThroughCrosswalk,
+	membershipKindFor,
+} from "./locationMembership";
 import { rankObservations, type RankingOrder } from "./ranking";
 import {
 	exportMeasureRecords,
@@ -140,6 +145,9 @@ const NEIGHBOUR_METHOD = {
 		"Perimeter less the border shared with the neighbours returned. For a landlocked area this is nothing; otherwise it is coastline, a national boundary, or a border with an area outside this release.",
 	limits: "Within one geography and release only. Two areas that genuinely touch on the ground but were drawn from different vertices are not found, which is why this is not offered across releases.",
 } as const;
+
+/** The geography a curated location's member codes are written in. */
+const MEMBER_GEOGRAPHY = "localAuthority";
 
 const DEFAULT_INTERSECTS_LIMIT = 200;
 const MAX_INTERSECTS_LIMIT = 1000;
@@ -2799,6 +2807,122 @@ export const route = (
 				"No compiled area release matches the requested member geography and release.",
 			);
 		}
+
+		/*
+		 * A location is curated as a list of local authority codes, so any
+		 * other geography has to be reached through a published crosswalk. The
+		 * caller names which, as everywhere else here: two crosswalks can join
+		 * the same pair of releases by different methods, and the one chosen
+		 * decides whether membership means wholly inside or partly overlapping.
+		 * Asking without naming one is answered with the list to choose from.
+		 */
+		if (geography !== MEMBER_GEOGRAPHY) {
+			if (!crosswalkInventory || !crosswalkLookup) {
+				return problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the crosswalk inventory before resolving a named location into another geography.",
+				);
+			}
+			const candidates = crosswalksTo(
+				crosswalkInventory,
+				geography,
+				boundaryRelease,
+				MEMBER_GEOGRAPHY,
+			);
+			const requested = parsedUrl.searchParams.get("via");
+			if (!requested) {
+				return problem(
+					400,
+					"Invalid Query",
+					candidates.length === 0
+						? `A named location is curated as ${MEMBER_GEOGRAPHY} codes, and no published crosswalk maps ${geography}/${boundaryRelease} to a ${MEMBER_GEOGRAPHY} release, so its members cannot be resolved there.`
+						: `Name the crosswalk to resolve members through, with via=. Published for ${geography}/${boundaryRelease}: ${candidates
+								.map(
+									(candidate) =>
+										`${candidate.id} (${candidate.method}, to ${candidate.to.boundaryRelease})`,
+								)
+								.join("; ")}.`,
+				);
+			}
+			const summary = candidates.find(
+				(candidate) => candidate.id === requested,
+			);
+			const crosswalk = summary
+				? crosswalkLookup.get(requested)
+				: undefined;
+			if (!summary || !crosswalk) {
+				return problem(
+					404,
+					"Not Found",
+					`No published crosswalk ${requested} maps ${geography}/${boundaryRelease} to a ${MEMBER_GEOGRAPHY} release.`,
+				);
+			}
+			// The location's own codes are resolved against the release the
+			// crosswalk ends at, not the one the caller asked for, which
+			// belongs to the geography being resolved into.
+			const parentRelease = crosswalk.to.boundaryRelease;
+			const parents =
+				areaLookup.get(`${MEMBER_GEOGRAPHY}/${parentRelease}`) ??
+				new Map();
+			const parentCodes = new Set(
+				location.memberCodes.filter((code) => parents.has(code)),
+			);
+			const coverage = reconcileMembers(
+				areaLookup,
+				MEMBER_GEOGRAPHY,
+				parentRelease,
+				location.memberCodes,
+				parentCodes,
+			);
+			const traversed = membersThroughCrosswalk(crosswalk, parentCodes);
+			const kind = membershipKindFor(crosswalk);
+			return {
+				status: 200,
+				body: envelope(releaseId, {
+					location,
+					geography,
+					boundaryRelease,
+					membership: kind,
+					membershipNote:
+						kind === "fully-contained"
+							? "Each area is placed wholly inside one member by the publisher's own lookup, so membership is exact and no area is counted in part."
+							: "Areas are matched by area overlap. One straddling the edge of the location is returned with the share of it that lies inside, and marked partial; it is not a whole member of this location.",
+					via: {
+						id: crosswalk.id,
+						method: crosswalk.method,
+						quality: crosswalk.quality,
+						weighting: crosswalk.weighting,
+						from: crosswalk.from,
+						to: crosswalk.to,
+						contentHash: summary.contentHash,
+					},
+					members: traversed.map((member) => ({
+						id: `${geography}/${boundaryRelease}/${member.code}`,
+						code: member.code,
+						...(areas.get(member.code) ?? {
+							name: member.labels[0] ?? member.code,
+						}),
+						through: {
+							id: `${MEMBER_GEOGRAPHY}/${parentRelease}/${member.throughCode}`,
+							code: member.throughCode,
+						},
+						...(member.weight === undefined
+							? {}
+							: { weight: member.weight }),
+						...(member.partial ? { partial: true } : {}),
+					})),
+					partialMembers: traversed.filter((member) => member.partial)
+						.length,
+					// How the location's own codes resolved in the release the
+					// crosswalk starts from, which is what the traversal saw.
+					parentGeography: MEMBER_GEOGRAPHY,
+					parentBoundaryRelease: parentRelease,
+					coverage,
+				}),
+			};
+		}
+
 		const members = location.memberCodes.flatMap((code) => {
 			const area = areas.get(code);
 			return area
