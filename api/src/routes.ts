@@ -4301,7 +4301,9 @@ export const route = (
 											return [];
 										return [
 											{
-												...coveredSource,
+												dataset: coveredSource.dataset,
+												sourceGeography:
+													coveredSource.sourceGeography,
 												codeSetCompatibility:
 													boundaryCoverage,
 												periods: source.periods.map(
@@ -4383,6 +4385,19 @@ export const route = (
 								status: "available" as const,
 								href: `/v1/areas/${geography}/${boundaryRelease}/${code}/relationships`,
 								count: relationships.length,
+								byRelation: Object.fromEntries(
+									[
+										...new Set(
+											relationships.map(
+												(relationship) =>
+													relationship.relation,
+											),
+										),
+									].map((relation) => [
+										relation,
+										relationCount(relation),
+									]),
+								),
 								parents: {
 									count: relationCount("within"),
 									href: `/v1/areas/${geography}/${boundaryRelease}/${code}/parents`,
