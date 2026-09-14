@@ -941,6 +941,128 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /areas:intersects:
+    get:
+      operationId: findAreasIntersectingBox
+      summary: Find the areas meeting a bounding box in one release
+      description: >
+        Returns every area of one geography and release that meets the given
+        WGS 84 box: the query a map makes when it pans, and the one an analysis
+        makes to scope a region before asking for anything heavier.
+
+
+        `relation` says how each area meets the box. `within` means the area
+        lies entirely inside it; `overlaps` means it meets the box without
+        being contained by it. Both are exact. An area is tested against the
+        box itself, not against its own bounding box, so a crescent whose
+        bounding box reaches into the query while its land does not is
+        excluded, as is a box sitting inside a lake within an area.
+
+
+        Identities come back by default, each with its own bounding box, and
+        the coordinates are opted into with `tier`, which generalises every
+        match exactly as the geometry route does. That keeps the cost of a wide
+        box bounded whether or not a caller wants geometry with it. The same
+        caveat applies: above `full`, matches are generalised one at a time and
+        neighbours drawn together may disagree along a shared border.
+
+
+        Results are capped at `limit`, 200 by default and 1000 at most, and
+        `matched` against `returned` with `truncated` says whether the cap bit.
+        The cap is on results rather than on the box: a box covering the whole
+        country is a reasonable analysis question, and it is the geometry that
+        is expensive, not the extent. A box matching nothing is an empty
+        answer, not an error; a geography and release the catalogue does not
+        carry is a 404.
+      parameters:
+        - name: bbox
+          in: query
+          required: true
+          schema:
+            type: string
+          description: >
+            `west,south,east,north` in WGS 84 degrees, with west < east and
+            south < north.
+          example: "-0.51,51.28,0.33,51.69"
+        - name: geography
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: release
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: tier
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [full, high, medium, low]
+          description: >
+            Omit for identities only. Set to a tier to include each match's
+            geometry, generalised to it.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 200
+      responses:
+        "200":
+          description: The areas meeting the box, and how each meets it.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AreaBoxSearchEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
+                data:
+                  bbox: [-0.51, 51.28, 0.33, 51.69]
+                  geography: localAuthority
+                  boundaryRelease: 2023-05-uk-bgc-v2
+                  matched: 57
+                  returned: 57
+                  limit: 200
+                  truncated: false
+                  relationRule: >-
+                    within when the area lies entirely inside the box, overlaps
+                    when it meets the box without being contained by it. Both
+                    are exact: an area is tested against the box itself, not
+                    against its bounding box.
+                  geometry: >-
+                    Not included. Pass tier to receive it, at the cost of the
+                    coordinates.
+                  matches:
+                    - id: localAuthority/2023-05-uk-bgc-v2/E09000007
+                      code: E09000007
+                      name: Camden
+                      relation: within
+                      boundingBox: [-0.2137, 51.5124, -0.1052, 51.5729]
+                      geometrySource: { sourceCrs: "EPSG:4326" }
+        "400":
+          description: >
+            The box is missing or malformed, the geography or release is
+            missing, or `tier` or `limit` is out of range.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: >
+            No compiled area release matches the requested geography and
+            release.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/GeometryUnavailable"
+
   /areas:contains:
     get:
       operationId: findContainingAreas
@@ -2658,6 +2780,96 @@ components:
                   $ref: "#/components/schemas/GeometrySource"
         geometry:
           $ref: "#/components/schemas/GeoJsonGeometry"
+
+    AreaBoxSearch:
+      type: object
+      required:
+        [
+          bbox,
+          geography,
+          boundaryRelease,
+          matched,
+          returned,
+          limit,
+          truncated,
+          relationRule,
+          matches,
+        ]
+      properties:
+        bbox:
+          type: array
+          items: { type: number }
+          minItems: 4
+          maxItems: 4
+        geography: { type: string }
+        boundaryRelease: { type: string }
+        matched:
+          type: integer
+          description: Areas meeting the box, before the limit is applied.
+        returned:
+          type: integer
+        limit:
+          type: integer
+        truncated:
+          type: boolean
+          description: Whether `matched` exceeded `limit`.
+        relationRule:
+          type: string
+        geometry:
+          type: string
+          description: >
+            Present only when no `tier` was asked for, saying how to get the
+            coordinates.
+        tier:
+          type: string
+          enum: [full, high, medium, low]
+        toleranceM: { type: number }
+        minEffectiveAreaM2: { type: number }
+        generalisationMethod:
+          type: object
+          required: [rule, threshold, parts, sharedBorders]
+          properties:
+            rule: { type: string }
+            threshold: { type: string }
+            parts: { type: string }
+            sharedBorders: { type: string }
+        matches:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/Area"
+              - type: object
+                required: [id, relation, boundingBox, geometrySource]
+                properties:
+                  id: { type: string }
+                  relation:
+                    type: string
+                    enum: [within, overlaps]
+                  boundingBox:
+                    type: array
+                    items: { type: number }
+                    minItems: 4
+                    maxItems: 4
+                  geometrySource:
+                    $ref: "#/components/schemas/GeometrySource"
+                  generalisation:
+                    type: object
+                    description: Present only when a `tier` was asked for.
+                    properties:
+                      vertices: { type: integer }
+                      verticesAtFullResolution: { type: integer }
+                      parts: { type: integer }
+                      partsAtFullResolution: { type: integer }
+                  geometry:
+                    $ref: "#/components/schemas/GeoJsonGeometry"
+
+    AreaBoxSearchEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/AreaBoxSearch"
 
     AreaChildrenGeometry:
       type: object
