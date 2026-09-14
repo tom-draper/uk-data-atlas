@@ -7,8 +7,9 @@
 		"node": ">=24 <25"
 	},
 	"scripts": {
-		"build": "pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:validation-report && pnpm build:atlas-release",
+		"build": "pnpm build:archive-atlas-release && pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:validation-report && pnpm build:atlas-release",
 		"build:area-inventory": "tsx scripts/build-area-inventory.ts",
+		"build:archive-atlas-release": "tsx scripts/archive-atlas-release.ts",
 		"build:atlas-release": "tsx scripts/build-atlas-release.ts",
 		"build:boundary-registry": "tsx scripts/build-boundary-registry.ts",
 		"build:crosswalk-inventory": "tsx scripts/build-crosswalk-inventory.ts",

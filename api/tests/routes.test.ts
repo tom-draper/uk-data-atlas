@@ -2961,6 +2961,46 @@ test("gets the atlas release manifest", () => {
 	);
 });
 
+test("lists and compares archived Atlas releases by immutable artifact hash", () => {
+	const previous: AtlasRelease = {
+		schemaVersion: 1,
+		releaseId: "sha256:previous-release",
+		artifacts: [
+			{
+				id: "boundary-registry",
+				path: "boundary-releases.json",
+				contentHash: "sha256:previous-registry",
+			},
+		],
+	};
+	const context = {
+		boundaryRegistry: registry,
+		atlasRelease,
+		atlasReleaseHistory: new Map([
+			[previous.releaseId, previous],
+			[atlasRelease.releaseId, atlasRelease],
+		]),
+	};
+	const releases = routeRequest("GET", "/v1/atlas-releases", context);
+	assert.equal(releases.status, 200);
+	assert.equal(
+		(("data" in releases.body ? releases.body.data : []) as unknown[])
+			.length,
+		2,
+	);
+	const comparison = routeRequest(
+		"GET",
+		`/v1/atlas-releases/compare?from=${previous.releaseId}`,
+		context,
+	);
+	assert.equal(comparison.status, 200);
+	assert.deepEqual(
+		"data" in comparison.body &&
+			(comparison.body.data as { summary: unknown }).summary,
+		{ added: 0, removed: 0, changed: 1, unchanged: 0 },
+	);
+});
+
 test("lists and downloads release-pinned whole observation artifacts", () => {
 	const measure = dataCatalog.measures.find(
 		(candidate) => candidate.id === "small-area-fixture",

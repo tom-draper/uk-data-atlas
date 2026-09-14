@@ -1377,6 +1377,9 @@ pnpm start
 - `GET /v1/exports`
 - `GET /v1/exports/{export-id}`
 - `GET /v1/atlas-release`
+- `GET /v1/atlas-releases`
+- `GET /v1/atlas-releases/{release-id}`
+- `GET /v1/atlas-releases/compare?from={release-id}&to={release-id}`
 
 The build scans every `../data/**/meta.json`, so a newly added dataset becomes
 visible to the source inventory on the next build without changing API code.
@@ -1503,6 +1506,12 @@ validation report and source inventory) by its content hash, plus a single
 `releaseId`; changing any one artifact changes it. This is a first, minimal
 step toward the release and provenance model described above, not the full
 versioned release history it will eventually anchor.
+
+At the start of every build, the previous manifest is archived under
+`public/atlas-releases/`. `GET /v1/atlas-releases/compare` provides a
+machine-readable, artifact-level change log between any archived release and
+the current release. It reports additions, removals and changed hashes; it
+does not infer dataset rows or boundary geometry changes from a hash alone.
 
 `public/geometry-sources.json` records, per compiled area release, where its
 raw GeoJSON lives, its CRS, and its code property, or an explicit

@@ -70,6 +70,9 @@ paths:
                     - /v1/exports
                     - /v1/exports/{export-id}
                     - /v1/atlas-release
+                    - /v1/atlas-releases
+                    - /v1/atlas-releases/{release-id}
+                    - /v1/atlas-releases/compare
                 meta:
                   nextCursor: null
 
@@ -1660,6 +1663,67 @@ paths:
                 $ref: "#/components/schemas/AtlasReleaseEnvelope"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
+
+  /atlas-releases:
+    get:
+      operationId: listAtlasReleases
+      summary: List the current and archived immutable Atlas releases
+      responses:
+        "200":
+          description: Release identities with artifact counts.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+
+  /atlas-releases/{release-id}:
+    get:
+      operationId: getArchivedAtlasRelease
+      summary: Get one current or archived Atlas release manifest
+      parameters:
+        - name: release-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The immutable release manifest.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AtlasReleaseEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /atlas-releases/compare:
+    get:
+      operationId: compareAtlasReleases
+      summary: Compare the hashes in two archived Atlas release manifests
+      description: >
+        Reports added, removed and changed published artifacts by immutable
+        content hash. It is deliberately an artifact-level changelog, not a
+        claim about individual records within a changed artifact.
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema: { type: string }
+        - name: to
+          in: query
+          required: false
+          description: Defaults to the current Atlas release.
+          schema: { type: string }
+      responses:
+        "200":
+          description: The immutable artifact-level change summary.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   /translations:
     get:
