@@ -92,7 +92,7 @@ export const multiPolygonAreaM2 = (multiPolygon: MultiPolygon) =>
 // Ground length of a short edge from the ellipsoid's radii of curvature at
 // its mid-latitude. Edges here are metres to a few kilometres long, where
 // this agrees with the geodesic to well under a part in a million.
-const edgeLengthM = ([lon1, lat1]: Pair, [lon2, lat2]: Pair) => {
+export const edgeLengthM = ([lon1, lat1]: Pair, [lon2, lat2]: Pair) => {
 	const sinLat = Math.sin((((lat1 + lat2) / 2) * Math.PI) / 180);
 	const w = Math.sqrt(1 - E2 * sinLat * sinLat);
 	const meridional = (A * (1 - E2)) / (w * w * w);
