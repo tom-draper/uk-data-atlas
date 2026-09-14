@@ -836,9 +836,19 @@ test("reports an area's exact-release capability and availability matrix", () =>
 						href: "/v1/datasets/population",
 					},
 					sourceGeography: { type: "ward", boundaryYear: 2023 },
-					codeSetCompatibility:
-						measureCompatibilityInventory.measures[0]?.sources[0]
-							?.candidates[0],
+					codeSetCompatibility: {
+						boundaryRelease: "2023-05-uk-bgc",
+						title: "Wards, May 2023",
+						coverageCountries: ["GB-ENG", "GB-WLS"],
+						status: "code-set-compatible",
+						sourceAreaCount: 2,
+						boundaryAreaCount: 3,
+						matchingSourceAreaCount: 2,
+						matchingSourceAreaShare: 1,
+						unmatchedSourceAreaCount: 0,
+						candidateOnlyAreaCount: 1,
+						eligibleForCodeJoin: true,
+					},
 					periods: [
 						{
 							period: "2022",
