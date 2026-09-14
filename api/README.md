@@ -152,7 +152,13 @@ only **available** when its endpoint, contract and provenance are published.
       them by source authority and exactness; support small, declared multi-step
       crosswalk composition without hiding intermediate mappings.
 - [ ] Return explicit absence states: abolished, unsupported geography, partial
-      coverage, or no sufficiently trustworthy conversion.
+      coverage, or no sufficiently trustworthy conversion. Every area route
+      now answers an unresolved identity with a `code` and `absence`: an
+      unpublished geography or release, identities not compiled, or a code
+      that is `superseded`, `not-yet-current` or absent from the release,
+      with the releases that do hold it. Abolition is not claimed, because
+      code membership cannot tell it from a recode. Partial coverage and
+      conversion absence are still to follow.
 - [ ] Publish compiler-discovered relationship candidates only after endpoint
       validation and an explicit decision to promote them to crosswalks.
 
@@ -1177,6 +1183,8 @@ Use RFC 9457 Problem Details for errors. Important machine-readable codes:
 
 - `ambiguous_area` — more than one area matches a code or name;
 - `unsupported_geography` — requested release/type is not available;
+- `area_not_in_release` — the release does not hold the requested area code;
+  `absence` says whether the code is superseded, not yet current, or unknown;
 - `conversion_required` — source and requested geography differ;
 - `conversion_not_available` — no defensible crosswalk exists;
 - `conversion_not_authorised` — caller requested a non-approved method;

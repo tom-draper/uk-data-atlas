@@ -3003,9 +3003,11 @@ components:
     Problem:
       type: object
       description: >
-        RFC 9457 Problem Details. Two routes add extension members: a value
-        request for an ambiguous place name adds `choices`, and one whose place
-        the measure cannot answer adds `candidates`.
+        RFC 9457 Problem Details. Some routes add extension members: a value
+        request for an ambiguous place name adds `choices`, one whose place the
+        measure cannot answer adds `candidates`, and every area route whose
+        area identity resolves to nothing says why through `code` and
+        `absence`.
       required: [type, title, status, detail]
       properties:
         type:
@@ -3031,6 +3033,59 @@ components:
             measure does not answer it.
           items:
             type: object
+        code:
+          type: string
+          enum: [unsupported_geography, area_not_in_release]
+          description: >
+            On a 404 from an area route: `unsupported_geography` when the
+            geography or release is not published or its area identities are
+            not compiled, and `area_not_in_release` when the release does not
+            hold the code.
+        absence:
+          type: string
+          enum:
+            - unknown-geography
+            - unknown-release
+            - release-not-compiled
+            - superseded
+            - not-yet-current
+            - absent-from-release
+            - unknown
+          description: >
+            Which absence left the area unresolved. A code is `superseded` when
+            only older releases of the geography hold it, `not-yet-current`
+            when only newer ones do, `absent-from-release` when releases on
+            both sides or undated releases hold it, and `unknown` when no
+            compiled release does. The classification uses code membership
+            only: a superseded code may have been abolished, merged or recoded,
+            and none of those is claimed.
+        presentIn:
+          type: array
+          description: >
+            With `area_not_in_release`: the compiled releases that do hold the
+            code, with the name it carries in each.
+          items:
+            type: object
+            required: [boundaryRelease, name, href]
+            properties:
+              boundaryRelease: { type: string }
+              name: { type: string }
+              href: { type: string }
+        availableReleases:
+          type: array
+          description: With `unknown-release`, the releases published for the geography.
+          items:
+            type: object
+            required: [id, href]
+            properties:
+              id: { type: string }
+              href: { type: string }
+        links:
+          type: object
+          additionalProperties: { type: string }
+          description: >
+            With `unknown-geography`, the geography list; with
+            `release-not-compiled`, the boundary release.
 
     Envelope:
       type: object
