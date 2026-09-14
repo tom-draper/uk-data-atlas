@@ -57,6 +57,21 @@ const emissionsYear = (year: number) => ({
 	},
 });
 
+/** A year of total jobs; Northern Ireland is left out unless asked for. */
+const jobsYear = (year: number, northernIreland: boolean) => ({
+	year,
+	boundaryYear: 2023,
+	boundaryType: "localAuthority",
+	data: {
+		E06000001: { ladCode: "E06000001", totalJobs: 45000 },
+		...(northernIreland
+			? { N09000001: { ladCode: "N09000001", totalJobs: 68000 } }
+			: {}),
+		S12000001: { ladCode: "S12000001", totalJobs: 30000 },
+		W06000001: { ladCode: "W06000001", totalJobs: 20000 },
+	},
+});
+
 const writeSources = (
 	directory: string,
 	wardRecordCount = 2,
@@ -66,6 +81,7 @@ const writeSources = (
 	const populationUk = join(directory, "population-uk.json");
 	const ghgEmissions = join(directory, "ghg-emissions.json");
 	const mobileCoverage = join(directory, "mobile-coverage.json");
+	const jobs = join(directory, "jobs.json");
 	const landArea = join(directory, "land-area.json");
 	const housePrice = join(directory, "house-price.json");
 	const imd = join(directory, "imd.json");
@@ -94,6 +110,7 @@ const writeSources = (
 				dataset("mobile-coverage", 2, 1, 2024),
 				dataset("travel-to-work", 2, 1, 2025),
 				dataset("car-availability", 2, 1, 2025),
+				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
 				dataset("imd", 3, 1, 2011),
@@ -190,6 +207,13 @@ const writeSources = (
 					W06000001: { breakdown: carBreakdown(50) },
 				},
 			},
+		}),
+	);
+	writeFileSync(
+		jobs,
+		JSON.stringify({
+			"2019": jobsYear(2019, false),
+			"2020": jobsYear(2020, true),
 		}),
 	);
 	writeFileSync(
@@ -424,6 +448,7 @@ const writeSources = (
 		mobileCoverage,
 		travelToWork: censusPaths["travel-to-work"],
 		carAvailability: censusPaths["car-availability"],
+		jobs,
 		landArea,
 		housePrice,
 		imd,
@@ -444,7 +469,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 16);
+		assert.equal(result.catalog.datasets.length, 17);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -741,6 +766,72 @@ test("derives density and marks the values as derived, not observed", () => {
 			"population-uk",
 			"land-area",
 		]);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes total jobs with Northern Ireland absent, not zero, outside its years", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const result = compileDataCatalog(writeSources(directory));
+		const periods = result.jobsObservations.periods;
+
+		assert.deepEqual(
+			periods.map((period) =>
+				period.records.map((record) => record.areaCode),
+			),
+			[
+				["E06000001", "S12000001", "W06000001"],
+				["E06000001", "N09000001", "S12000001", "W06000001"],
+			],
+		);
+		assert.deepEqual(periods[1]?.records[1], {
+			areaCode: "N09000001",
+			value: 68000,
+			status: "observed",
+		});
+
+		const measure = result.catalog.measures.find(
+			(candidate) => candidate.id === "total-jobs",
+		);
+		assert.equal(measure?.valueKind, "count");
+		assert.equal(measure?.aggregation.kind, "extensive");
+		assert.deepEqual(measure?.sources[0]?.coverage.countries, [
+			"GB-ENG",
+			"GB-NIR",
+			"GB-SCT",
+			"GB-WLS",
+		]);
+		assert.equal(measure?.sources[0]?.coverage.recordCount, 4);
+		assert.match(
+			measure?.sources[0]?.coverage.note ?? "",
+			/Northern Ireland is published for 2020 only/,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("refuses jobs where a British district is missing from a year", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const sources = writeSources(directory);
+		const source = JSON.parse(readFileSync(sources.jobs, "utf8"));
+		delete source["2019"].data.W06000001;
+		source["2020"].data.W06000002 = { totalJobs: 1000 };
+		writeFileSync(sources.jobs, JSON.stringify(source));
+
+		// Only a whole nation may be absent; anything else is a gap the
+		// coverage note does not describe.
+		assert.throws(
+			() => compileDataCatalog(sources),
+			/2019: GB-WLS districts do not match/,
+		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

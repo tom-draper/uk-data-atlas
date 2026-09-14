@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:ace67b3be18842e792b34506df68582f9d8c26e561f2708d6daad88314fc59b8",
+	"releaseId": "sha256:813e577c98d30d45607c1560a503d52cb313946eba66acf2a491d9962cb987b7",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,17 +25,17 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:08e5fa7acfad3a0d4073dba0b32990f8d8caf0e8c9d69365f10f6432cbb1117a"
+			"contentHash": "sha256:c24344b109a1e4dd2c36c523690099edb99c1e44c6512494efdef850e5c9da84"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:2c367f5fc3b2307ec92c87c15229f6d405d3696ea005455730676dec9c44b311"
+			"contentHash": "sha256:b8fa38dc3c863979ccc3460f9631e4b8307a877c41880a958a4afc7dc86d3f9f"
 		},
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:5046cd487a98aecd6582e1875aba6770dbf3e9c264a4a640e437d5b1265643e8"
+			"contentHash": "sha256:abfe174bb1ed2619aed2e93cb13425932ba14ecae6c84b4c219df1302f36ad6a"
 		},
 		{
 			"id": "population-observations",
@@ -75,7 +75,7 @@
 		{
 			"id": "source-inventory",
 			"path": "source-inventory.json",
-			"contentHash": "sha256:7718d0c91c8ba3ab557949b24102e797a9e680c78e96e1296f0374f56131dc48"
+			"contentHash": "sha256:4ad7729bcdada2acb27bbf96b6b5fe87cd6787ccac84bf75a23b3b04166e2ada"
 		},
 		{
 			"id": "observations/car-availability-none-observations",
@@ -1181,6 +1181,11 @@
 			"id": "observations/simd-rank-observations",
 			"path": "simd-rank-observations.json",
 			"contentHash": "sha256:6f4aff4cfaff3d733287d6611e3a564624504aa6570815a7e4486b6cd47267dd"
+		},
+		{
+			"id": "observations/total-jobs-observations",
+			"path": "total-jobs-observations.json",
+			"contentHash": "sha256:31bfb6e60d94a5b3e1eeafd7f937aa4aa19fb7441469f3e7bae5cd235f754e90"
 		},
 		{
 			"id": "observations/travel-to-work-bicycle-observations",

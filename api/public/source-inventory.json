@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:225bdb1f63ea807b1c68a9e27b38cc40225e144e075e9158901f52ea0b5cb395",
+	"contentHash": "sha256:0553ffe094de93ecfdf17e8d1ab1f54f14a52ea2bd8ccbc8829583ca1828f859",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -1682,6 +1682,21 @@
 				}
 			],
 			"metadataHash": "sha256:21e4fd11c94939cba3ae047669aebad4e209fcd92fc5dfa34d6567635995b3c1"
+		},
+		{
+			"key": "economics/jobs",
+			"metadataId": "jobs",
+			"title": "Total jobs by local authority district",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.nomisweb.co.uk/datasets/jd",
+			"temporalCoverage": "2011/2024",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:0d5bbb0d5099415e2ee7121082f458d9e202d20a1730d29be62b2986e3339005"
 		},
 		{
 			"key": "economics/unemployment/by-age-and-duration",
