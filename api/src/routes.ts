@@ -2,6 +2,11 @@ import type { AreaLookup } from "./areaInventory";
 import type { AreaGeometryCache } from "./areaGeometry";
 import { areaMetrics } from "./areaMetrics";
 import {
+	GEOMETRY_TIERS,
+	isGeometryTier,
+	simplifyGeometry,
+} from "./simplifyGeometry";
+import {
 	createAreaRelationshipIndex,
 	type AreaRelationshipIndex,
 } from "./areaRelationships";
@@ -97,6 +102,21 @@ const AREA_METRIC_METHOD = {
 	labelPoint:
 		"A point guaranteed inside the area. The centroid where that lies within the geometry, otherwise the midpoint of the widest run of interior found on latitudes sampled across the bounding box.",
 	caveat: "Measured from the boundary as that release publishes it, at its own generalisation. This is not a published land-area statistic: a coastline-clipped boundary still encloses inland water, so these figures differ from the ONS Standard Area Measurement used by population density.",
+} as const;
+
+/**
+ * Sent with any geometry that was generalised, so the drawing a caller holds
+ * carries the terms it was made on. The second half is the one that bites:
+ * areas are simplified one at a time, so two neighbours drawn together at the
+ * same tier need not agree along the border they share.
+ */
+const GENERALISATION_METHOD = {
+	rule: "Visvalingam-Whyatt. The vertex whose triangle with its two neighbours is smallest is dropped, repeatedly, until the smallest remaining triangle exceeds the tier's threshold. Triangles are measured in the EPSG:6933 equal-area projection, so the threshold is real square metres anywhere in the country.",
+	threshold:
+		"A tier is the side of the smallest square of detail kept, and its threshold is that square's area. It bounds the size of feature dropped. It is not a promise that no vertex moves further than the tolerance: the same deviation spans a larger triangle the further apart its neighbours are.",
+	parts: "A part or hole whose own area falls below the threshold is dropped whole, rather than surviving as a triangle. An area keeps its geometry type, so a MultiPolygon reduced to one part is still a MultiPolygon.",
+	sharedBorders:
+		"Each area is generalised alone, from its own vertices. Above the full tier, neighbours drawn together may disagree along a shared border. Ask for the full tier where borders must meet exactly.",
 } as const;
 
 const envelope = <T>(
@@ -2893,6 +2913,22 @@ export const route = (
 					"Not Found",
 					"No raw geometry matches that area identity.",
 				);
+			const requestedTier = parsedUrl.searchParams.get("tier") ?? "full";
+			if (!isGeometryTier(requestedTier))
+				return problem(
+					400,
+					"Unknown Tier",
+					`No such generalisation tier: ${requestedTier}. Choose one of ${Object.keys(
+						GEOMETRY_TIERS,
+					).join(", ")}.`,
+				);
+			const simplified = simplifyGeometry(geometry, requestedTier);
+			if (!simplified)
+				return problem(
+					404,
+					"Not Found",
+					`Every part of that area is smaller than the ${requestedTier} tier keeps. Ask for a finer tier.`,
+				);
 			return {
 				status: 200,
 				body: envelope(releaseId, {
@@ -2903,13 +2939,25 @@ export const route = (
 						geography,
 						boundaryRelease,
 						...area,
+						generalisation: {
+							tier: simplified.tier,
+							toleranceM: simplified.toleranceM,
+							minEffectiveAreaM2: simplified.minEffectiveAreaM2,
+							vertices: simplified.verticesAfter,
+							verticesAtFullResolution: simplified.verticesBefore,
+							parts: simplified.partsAfter,
+							partsAtFullResolution: simplified.partsBefore,
+							...(requestedTier === "full"
+								? {}
+								: { method: GENERALISATION_METHOD }),
+						},
 						geometrySource: areaGeometryCache.provenance(
 							geography as string,
 							boundaryRelease as string,
 							code as string,
 						),
 					},
-					geometry,
+					geometry: simplified.geometry,
 				}),
 			};
 		} catch (error) {
