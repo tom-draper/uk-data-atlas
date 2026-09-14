@@ -332,6 +332,11 @@ paths:
         `ghg-emissions` covers 2005–2024 Local Authority 2025 codes across all
         four nations, as net territorial emissions in kt CO2e; emissions per
         resident are not served, because a ratio cannot be summed over areas.
+        `total-jobs` covers 2011–2024 Local Authority 2023 codes, as jobs
+        counted at the workplace and rounded by ONS to the nearest thousand.
+        Great Britain is published for every year and Northern Ireland for
+        2020 to 2022 only; in the other years Northern Ireland has no records
+        rather than zero jobs, so a sum over it is refused, not reported as 0.
         `mobile-4g-coverage` and `mobile-5g-coverage` cover 2025 Local
         Authority 2024 codes across all four nations, as the share of premises
         reached by all four mobile network operators. Both are declared

@@ -307,6 +307,13 @@ only **available** when its endpoint, contract and provenance are published.
       all four UK nations, as net territorial emissions in kt CO2e. Emissions
       per resident are not served: a ratio cannot be summed over areas. The same code-compatible geometry join,
       provenance chain and tabular export as the population measure apply.
+- [x] Return total jobs through `GET /v1/data/total-jobs`: 2011-2024 Local
+      Authority 2023 codes, counted at the workplace and rounded by ONS to the
+      nearest thousand. Great Britain is published for every year and Northern
+      Ireland for 2020 to 2022 only. The build checks that any absence is a
+      whole nation, so a missing British district fails it, and Northern
+      Ireland's missing years are absent records, never zero. Jobs density is
+      not served: it is a ratio needing the working-age population as a weight.
 - [x] Return population estimates for a supported ward, local authority,
       constituency, country or named location. Ward and local authority come
       from their source partitions, country and named location from
@@ -1463,6 +1470,7 @@ pnpm start
 - `GET /v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2024`
 - `GET /v1/measures/mobile-4g-coverage`
 - `GET /v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&areaCode=S92000003`
+- `GET /v1/data/total-jobs/series?areaCode=E08000035&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2025`

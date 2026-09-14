@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:16033536f6934e7fc6ca43cd62e42f362c1181cef4573f77959a92b20918c897",
-	"dataCatalogHash": "sha256:bc1b741e3418c4d11befa3afca10e1bc0f582f211ce401bcecebd3a5d1252153",
+	"contentHash": "sha256:4720c0a2c1a49eb45a3f8b42cd60cdb9b29b5d37a6628d4d3a70ba9b83f2e090",
+	"dataCatalogHash": "sha256:b916f4f91a2d42b6a7869be6a71cc512f2f63c77099134824320cf3990b3fef6",
 	"exports": [
 		{
 			"id": "car-availability-none-observations",
@@ -3970,6 +3970,36 @@
 			"contentHash": "sha256:7010ceb2e025a9e2a859509558f46b35a89394182f6aff3853b7b5f08a894830",
 			"bytes": 403733,
 			"href": "/v1/exports/simd-rank-observations"
+		},
+		{
+			"id": "total-jobs-observations",
+			"measureId": "total-jobs",
+			"datasetId": "jobs",
+			"periods": [
+				"2011",
+				"2012",
+				"2013",
+				"2014",
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2023
+			},
+			"format": "json",
+			"artifact": "total-jobs-observations",
+			"contentHash": "sha256:93c7a2dab643ea59c3923092836616eaaa379994cf3b3a802557d848ca75e02a",
+			"bytes": 293173,
+			"href": "/v1/exports/total-jobs-observations"
 		},
 		{
 			"id": "travel-to-work-bicycle-observations",

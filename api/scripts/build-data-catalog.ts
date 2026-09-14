@@ -18,6 +18,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		mobileCoverage: precompiled("mobile-coverage.json"),
 		travelToWork: precompiled("travel-to-work.json"),
 		carAvailability: precompiled("car-availability.json"),
+		jobs: precompiled("jobs.json"),
 		landArea: precompiled("land-area.json"),
 		housePrice: precompiled("house-price.json"),
 		imd: precompiled("imd.json"),
@@ -41,6 +42,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		populationObservations,
 		populationLocalAuthorityObservations,
 		ghgEmissionsObservations,
+		jobsObservations,
 		mobileCoverageObservations,
 		censusObservations,
 		populationDensityObservations,
@@ -78,6 +80,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		`${JSON.stringify(populationConstituencyObservations)}\n`,
 	);
 	const measureObservationPaths = [
+		jobsObservations,
 		...mobileCoverageObservations,
 		...censusObservations,
 		populationDensityObservations,
@@ -124,6 +127,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		ghgEmissionsObservationsPath,
 		measureObservationPaths,
 		measureRecordCount: [
+			jobsObservations,
 			...mobileCoverageObservations,
 			...censusObservations,
 			populationDensityObservations,

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:bc1b741e3418c4d11befa3afca10e1bc0f582f211ce401bcecebd3a5d1252153",
+	"contentHash": "sha256:b916f4f91a2d42b6a7869be6a71cc512f2f63c77099134824320cf3990b3fef6",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -601,6 +601,37 @@
 			"compiled": {
 				"bytes": 186260,
 				"sha256": "09b265a1e9966e2374886bdc74bb420cd8c6cb6f355fc5c16ba0ed442d74d30a"
+			}
+		},
+		{
+			"id": "jobs",
+			"label": "Jobs",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.nomisweb.co.uk/datasets/jd",
+			"temporalCoverage": "2011-2024",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Total jobs by local authority district, 2011 to 2024, on April 2023 codes: employee jobs, self-employment jobs, government-supported trainees and HM Forces, counted at the workplace and rounded to the nearest thousand. Great Britain is complete for every year; Northern Ireland is published for 2020 to 2022 only.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "economics/jobs/total-jobs-lad-2011-2024.csv",
+					"bytes": 298425,
+					"sha256": "2625a71b6fbddc621e5a06443e7ebbd6b10ca3adfd93f130cedd5e21def0954b"
+				}
+			],
+			"summary": {
+				"datasetCount": 14,
+				"dataRecordCount": 4933,
+				"boundaryYears": [
+					2023
+				]
+			},
+			"compiled": {
+				"bytes": 390126,
+				"sha256": "5568cb420f9bb16e258e6708f4862082dab93c7522fd686bcc4112e3d47eeaaa"
 			}
 		},
 		{
@@ -7415,6 +7446,67 @@
 				"Values are net territorial emissions across every sector and gas. Land use, land use change and forestry is a net sink in most rural authorities, so their totals are lower than their gross emissions. No published authority-year is negative, but nothing in the method prevents it.",
 				"Emissions per resident are not served. They are a ratio, and a ratio cannot be summed over areas or compared between authorities of different size without recomputing it from the underlying totals.",
 				"Local authority totals exclude sources the publisher cannot attribute to an area, such as aviation and shipping, so they do not sum to the national inventory."
+			]
+		},
+		{
+			"id": "total-jobs",
+			"label": "Total jobs",
+			"valueKind": "count",
+			"unit": "jobs",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "jobs",
+					"periods": [
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 350,
+						"note": "Great Britain is published for every period. Northern Ireland is published for 2020, 2021, 2022 only, and has no records in the other periods rather than zero jobs, so the record count varies by period; the count here is the latest period's."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/total-jobs"
+			},
+			"notes": [
+				"Jobs located in the authority, counted at the workplace rather than where the worker lives: employee jobs, self-employment jobs, government-supported trainees and HM Forces. A person with two jobs counts twice, and a job held by a commuter counts where it is done.",
+				"Each value is rounded by the publisher to the nearest thousand. A sum over areas carries that rounding from every member, so it can differ from a published total for the same place by several thousand.",
+				"The publisher restates the whole series on April 2023 district codes with each release, so every period shares one code vintage and no conversion was applied.",
+				"Jobs density, jobs per resident aged 16 to 64, is published alongside this series but is not served: it is a ratio and would need the working-age population as a weight to combine over areas."
 			]
 		},
 		{
