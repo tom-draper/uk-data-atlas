@@ -8,6 +8,7 @@ import {
 	type AreaReleaseArtifact,
 } from "./areaInventory";
 import type { AtlasRelease } from "./atlasRelease";
+import { readArchivedAtlasReleases } from "./atlasReleaseHistory";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { readGeometrySourceLookup } from "./geometrySources";
 import {
@@ -293,6 +294,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const namedLocationInventory = readNamedLocationInventory(apiRoot);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
 	const dataCatalog = readDataCatalog(apiRoot);
+	const atlasRelease = readAtlasRelease(apiRoot);
 	const exportManifest = readExportManifest(apiRoot);
 	if (exportManifest.dataCatalogHash !== dataCatalog.contentHash) {
 		throw new Error(
@@ -315,7 +317,13 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		),
 		crosswalkInventory,
 		crosswalkLookup,
-		atlasRelease: readAtlasRelease(apiRoot),
+		atlasRelease,
+		atlasReleaseHistory: new Map(
+			[
+				...readArchivedAtlasReleases(join(apiRoot, "public")),
+				atlasRelease,
+			].map((release) => [release.releaseId, release]),
+		),
 		relationshipCandidateInventory:
 			readRelationshipCandidateInventory(apiRoot),
 		validationReport: readValidationReport(apiRoot),

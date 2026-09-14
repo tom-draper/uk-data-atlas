@@ -5,6 +5,7 @@ import {
 	type AreaRelationshipIndex,
 } from "./areaRelationships";
 import type { AtlasRelease } from "./atlasRelease";
+import { compareAtlasReleases } from "./atlasReleaseComparison";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	CrosswalkArtifact,
@@ -361,6 +362,7 @@ export type RouteContext = {
 	crosswalkInventory?: CrosswalkInventory;
 	crosswalkLookup?: CrosswalkLookup;
 	atlasRelease?: AtlasRelease;
+	atlasReleaseHistory?: Map<string, AtlasRelease>;
 	areaSearchIndex?: AreaSearchIndex;
 	areaRelationshipIndex?: AreaRelationshipIndex;
 	areaGeometryCache?: AreaGeometryCache;
@@ -394,6 +396,7 @@ export const route = (
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,
+		atlasReleaseHistory,
 		areaSearchIndex,
 		areaRelationshipIndex,
 		areaGeometryCache,
@@ -469,9 +472,93 @@ export const route = (
 					"/v1/exports",
 					"/v1/exports/{export-id}",
 					"/v1/atlas-release",
+					"/v1/atlas-releases",
+					"/v1/atlas-releases/{release-id}",
+					"/v1/atlas-releases/compare",
 				],
 			}),
 		};
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-releases"
+	) {
+		return atlasReleaseHistory
+			? {
+					status: 200,
+					body: envelope(
+						releaseId,
+						[...atlasReleaseHistory.values()]
+							.map((release) => ({
+								releaseId: release.releaseId,
+								href: `/v1/atlas-releases/${release.releaseId}`,
+								artifactCount: release.artifacts.length,
+								current: release.releaseId === releaseId,
+							}))
+							.sort((left, right) =>
+								left.releaseId.localeCompare(right.releaseId),
+							),
+					),
+				}
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the atlas release history before listing releases.",
+				);
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-releases" &&
+		segments[2] === "compare"
+	) {
+		if (!atlasReleaseHistory) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the atlas release history before comparing releases.",
+			);
+		}
+		const fromId = parsedUrl.searchParams.get("from");
+		const toId = parsedUrl.searchParams.get("to") ?? releaseId;
+		if (!fromId) {
+			return problem(
+				400,
+				"Invalid Query",
+				"from is required; to defaults to the current Atlas release.",
+			);
+		}
+		const from = atlasReleaseHistory.get(fromId);
+		const to = atlasReleaseHistory.get(toId);
+		if (!from || !to) {
+			return problem(
+				404,
+				"Not Found",
+				"One or both requested Atlas releases are not archived by this API instance.",
+			);
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, compareAtlasReleases(from, to)),
+		};
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-releases"
+	) {
+		const requested = atlasReleaseHistory?.get(segments[2] as string);
+		return requested
+			? { status: 200, body: envelope(releaseId, requested) }
+			: problem(
+					404,
+					"Not Found",
+					"No archived Atlas release matches that identity.",
+				);
 	}
 
 	if (
