@@ -145,8 +145,21 @@ only **available** when its endpoint, contract and provenance are published.
       simplification tiers and geometry provenance.
 - [ ] Retrieve boundary JSON for a collection, for example all wards in a
       constituency or local authority.
-- [ ] Return bounding boxes, centroids and land area in m², hectares and km²,
-      calculated with a documented projection and method.
+- [x] Return a bounding box, centroid, label point, area and perimeter for one
+      area through `GET /v1/areas/{geography}/{release}/{code}/geometry/metadata`,
+      without transferring its coordinates. Area is ellipsoidal, through the
+      EPSG:6933 equal-area projection, in m², hectares and km²; perimeter
+      follows the ellipsoid's radii of curvature, in m and km. The centroid is
+      the centre of area, which a crescent or a split island can place outside
+      itself, so a label point guaranteed to lie inside is returned beside it
+      and says which rule produced it. The method travels in the response.
+      This measures the boundary as the release publishes it, at its own
+      generalisation and with enclosed inland water included, so it is
+      deliberately not offered as land area: the ONS Standard Area Measurement
+      remains the published land-area statistic and the denominator
+      `population-density` divides by. Measured against it, Birmingham and the
+      Isle of Wight agree to about a part in a thousand, while Highland is 2%
+      larger, which is its lochs.
 - [ ] Expand point lookup beyond its current single geography/release scope,
       with documented request limits and an efficient multi-geography strategy.
 - [ ] Find nearby areas for a coordinate outside a boundary, reporting distance
@@ -161,9 +174,10 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Report the overlap between two specified areas, including shared area and
       each area's share, for investigating relationships such as constituency ↔
       LAD without downloading both geometries.
-- [ ] Expose geometry metadata without transferring coordinates: source CRS,
-      transformation, hash, validity checks, generalisation tier, area/perimeter
-      method, centroid and a guaranteed-inside label point.
+- [ ] Complete the geometry metadata above with the properties it does not yet
+      carry: a geometry hash, validity checks and a generalisation tier. Source
+      CRS, transformation, area and perimeter method, centroid and a
+      guaranteed-inside label point are already served.
 - [ ] Deliver vector tiles and cached exports for map-scale workloads.
 - [ ] Publish bulk, versioned CSV/NDJSON/Parquet downloads for area identities,
       aliases, hierarchy relations, named-location membership and crosswalks.

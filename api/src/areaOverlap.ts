@@ -45,6 +45,32 @@ export const projectEqualArea = ([lon, lat]: Pair): Pair => [
 	(A * authalicQ(Math.sin((lat * Math.PI) / 180))) / (2 * K0),
 ];
 
+const authalicQPrime = (sinLat: number) => {
+	const w = 1 - E2 * sinLat * sinLat;
+	return (1 - E2) * ((1 + E2 * sinLat * sinLat) / (w * w) + 1 / w);
+};
+
+/**
+ * The inverse of projectEqualArea. Longitude is linear in x and simply
+ * divides out; latitude needs authalicQ inverted, which Newton's method does
+ * in a handful of steps because the function increases monotonically in
+ * sin(latitude) and its derivative never vanishes on the ellipsoid.
+ */
+export const unprojectEqualArea = ([x, y]: Pair): Pair => {
+	const target = (2 * K0 * y) / A;
+	let sinLat = Math.max(-1, Math.min(1, target / (1 - E2 / 3)));
+	for (let step = 0; step < 12; step += 1) {
+		const delta =
+			(authalicQ(sinLat) - target) / authalicQPrime(sinLat) || 0;
+		sinLat = Math.max(-1, Math.min(1, sinLat - delta));
+		if (Math.abs(delta) < 1e-15) break;
+	}
+	return [
+		((x / (A * K0)) * 180) / Math.PI,
+		(Math.asin(sinLat) * 180) / Math.PI,
+	];
+};
+
 const ringAreaM2 = (ring: Ring) => {
 	const projected = ring.map(projectEqualArea);
 	let twiceArea = 0;
@@ -85,16 +111,17 @@ const ringPerimeterM = (ring: Ring) => {
 	return perimeter;
 };
 
+/** Every ring's ground length, holes included: the boundary drawn on land. */
+export const polygonPerimeterM = (polygon: Polygon) =>
+	polygon.reduce((total, ring) => total + ringPerimeterM(ring), 0);
+
 /**
  * Twice area over perimeter: the width of a strip with this polygon's area
  * and perimeter. Slivers left where two independently generalised boundaries
  * disagree are metres wide; real overlaps are hundreds of metres or more.
  */
 export const polygonWidthM = (polygon: Polygon) => {
-	const perimeter = polygon.reduce(
-		(total, ring) => total + ringPerimeterM(ring),
-		0,
-	);
+	const perimeter = polygonPerimeterM(polygon);
 	return perimeter === 0 ? 0 : (2 * polygonAreaM2(polygon)) / perimeter;
 };
 
