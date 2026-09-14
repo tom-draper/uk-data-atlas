@@ -314,6 +314,22 @@ only **available** when its endpoint, contract and provenance are published.
       `GET /v1/data/{measure-id}/compare`, with explicitly named baseline and
       comparison sides, a directed same-unit difference, and no relative
       difference for ratio measures.
+- [x] Rank areas by change between two periods through
+      `GET /v1/data/{measure-id}/change`, absolutely or as a proportion of the
+      start, with `areaCode` returning one area and its place among the rest.
+      Between 2011 and 2022 the City of London grew 56.7% and Tower Hamlets
+      26.9%, while Kensington and Chelsea lost 11,915 people; Redcar and
+      Cleveland cut emissions 93.8% from 2005 to 2024, the Teesside steelworks
+      having closed. Change is measured inside one source partition, whose
+      periods the publisher restates on a single set of codes, so an area code
+      names the same ground at both ends; pairing partitions on different codes
+      is not offered. A rank, decile or category is refused, since a move in a
+      position is not change in the area, as are a single-period partition and
+      rolling windows that share years. Relative change is refused for a ratio,
+      matching compare, and currency is nominal. Where intervals are published,
+      each record says whether the start and end intervals overlap: no male
+      life expectancy fell between 2001-2003 and 2020-2022, and the smallest
+      gains, such as Ceredigion's 0.65 years, sit within overlapping intervals.
 - [x] Sum a published extensive measure through
       `GET /v1/data/{measure-id}/aggregate` only when every member code in a
       curated named location occurs directly in one requested source partition.

@@ -826,6 +826,160 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /data/{measure-id}/change:
+    get:
+      operationId: getSourceExactMeasureChange
+      summary: Rank areas by change between two periods of one measure partition
+      description: >
+        Returns how each area changed between two periods, ranked: the question
+        "where did population grow fastest between 2011 and 2022?" Pass
+        `areaCode` for one area, which keeps its rank among all of them, so
+        "Manchester grew 13.2%, 42nd of 361" is a single call.
+
+
+        Change is measured inside one source partition, never across two. The
+        publisher restates every period of a partition on a single set of
+        codes, so an area code names the same ground at the start and the end.
+        Pairing periods from partitions on different codes would pair areas
+        that are not the same place, so it is not offered. Naming no partition
+        returns a 400 listing the partitions and how many periods each has.
+
+
+        `by=absolute` ranks the end value less the start, in the measure's
+        unit. `by=relative` ranks that as a proportion of the start, and is
+        refused for a ratio: change in a share is read in points, and a rise in
+        coverage from 2% to 3% is not usefully called 50%. An area whose start
+        is zero has no relative change and is left out of a relative ranking,
+        counted in `coverage.withoutRelativeChange`. Currency is nominal and
+        not adjusted for inflation.
+
+
+        Some changes are refused outright. A rank or decile is a position among
+        the other areas rather than a quantity, so a move in it is not change in
+        the area. A partition publishing one period has nothing to change
+        between. Rolling windows that share years, such as life expectancy for
+        2017-2019 and 2018-2020, are refused because most of the apparent change
+        is the same data counted twice.
+
+
+        Where the publisher gives intervals, each record says whether the start
+        and end intervals overlap. Intervals that do not overlap mean the change
+        is unlikely to be chance; intervals that do overlap do not show that it
+        is. Areas with a value in only one period are listed in
+        `coverage.onlyAtStart` and `coverage.onlyAtEnd` rather than paired with
+        anything.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: geography
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: boundaryYear
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: startPeriod
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "2011"
+        - name: endPeriod
+          in: query
+          required: true
+          description: A published period of the partition after `startPeriod`.
+          schema:
+            type: string
+          example: "2022"
+        - name: by
+          in: query
+          required: false
+          schema:
+            enum: [absolute, relative]
+            default: absolute
+        - name: order
+          in: query
+          required: false
+          description: "`desc` puts the largest rise first, `asc` the largest fall."
+          schema:
+            enum: [asc, desc]
+            default: desc
+        - name: areaCode
+          in: query
+          required: false
+          description: Return only this area, with its rank among all of them.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cursor-paginated competition ranks of change for the source partition.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
+                data:
+                  startPeriod: "2011"
+                  endPeriod: "2022"
+                  change:
+                    direction: end-minus-start
+                    basis: relative
+                    order: desc
+                    unit: proportion
+                    interpretation: Change in the source-published unit.
+                  coverage:
+                    areasRanked: 361
+                    areasWithBothPeriods: 361
+                    onlyAtStart: []
+                    onlyAtEnd: []
+                    withoutRelativeChange: 0
+                  records:
+                    - areaCode: E09000001
+                      rank: 1
+                      tieCount: 1
+                      start: { period: "2011", areaCode: E09000001, value: 7412, status: observed }
+                      end: { period: "2022", areaCode: E09000001, value: 11615, status: observed }
+                      absoluteChange: 4203
+                      relativeChange: 0.567
+                meta:
+                  nextCursor: "RTA5MDAwMDAx"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: >
+            The measure is a rank, decile or category; its partition publishes a
+            single period; the two periods overlap; or a geometry release,
+            conversion or aggregation was asked for.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /data/{measure-id}/compare:
     get:
       operationId: compareSourceExactMeasureAreas
