@@ -201,9 +201,21 @@ only **available** when its endpoint, contract and provenance are published.
       the geometry that costs, not the extent. Verified against the point
       lookup: a tiny box around a point returns what `areas:contains` returns
       for it, in all four nations.
-- [ ] List an area's genuine neighbours, including shared-border length and an
-      explicit choice to exclude point-only touches. This supports local
-      comparison, map navigation and spatial modelling.
+- [x] List an area's genuine neighbours, including shared-border length and an
+      explicit choice to exclude point-only touches, through
+      `GET /v1/areas/{geography}/{release}/{code}/neighbours`. Adjacency comes
+      from shared vertices rather than a distance threshold: adjacent areas in
+      one release are drawn from the same vertices, so a common border is the
+      same coordinates on both sides and matches exactly, and its length is
+      summed over those edges with the ellipsoidal lengths already used for
+      perimeter. Nobody picks a tolerance. `touches=edge` is the default and
+      `touches=any` adds areas meeting at a corner, which `border.pointOnlyTouches`
+      counts either way so their exclusion is visible. Corners are real: none
+      occur between local authorities, while about 3% of ward adjacencies are
+      one. The response also totals perimeter against shared border, which
+      names the coastline: Birmingham shares 100% of its perimeter over seven
+      neighbours, Belfast 94% with 4.1 km left on the lough, Highland 7% with
+      4,445 km of coast, and the Isle of Wight has no neighbours at all.
 - [ ] Compare two boundary releases to identify recodes, membership changes and
       geometry changes.
 - [ ] Report the overlap between two specified areas, including shared area and

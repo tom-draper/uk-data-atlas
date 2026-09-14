@@ -13,6 +13,7 @@ import {
 	readGridOffset,
 	type GridOffset,
 } from "./gridOffset";
+import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
 import {
 	boundsIntersect,
 	boundsWithin,
@@ -286,6 +287,57 @@ export class AreaGeometryCache {
 		}
 		return matches.sort((left, right) =>
 			left.code.localeCompare(right.code),
+		);
+	}
+
+	/**
+	 * Find the areas whose boundary meets this one's, within one release.
+	 *
+	 * Only areas whose bounds touch the target's can share anything with it, so
+	 * the boundary comparison runs against a handful of candidates rather than
+	 * the whole release. Nothing here is indexed across every area, which for a
+	 * ward release would be millions of edges held to answer one question.
+	 *
+	 * Returns undefined when the area itself has no geometry to compare.
+	 */
+	findNeighbours(
+		geography: string,
+		boundaryRelease: string,
+		code: string,
+	): Neighbour[] | undefined {
+		const geometry = this.get(geography, boundaryRelease, code);
+		if (!geometry) return undefined;
+		const identity = [geography, boundaryRelease].join("/");
+		const release = this.releases.get(identity);
+		if (!release) return undefined;
+		const boundsFor = (forCode: string, forGeometry: GeoJsonGeometry) => {
+			let bounds = release.bounds.get(forCode);
+			if (bounds === undefined && !release.bounds.has(forCode)) {
+				bounds = geometryBounds(forGeometry);
+				release.bounds.set(forCode, bounds);
+			}
+			return bounds;
+		};
+		const targetBounds = boundsFor(code, geometry);
+		if (!targetBounds) return [];
+		const target = borderIndex(geometry);
+		const neighbours: Neighbour[] = [];
+		for (const otherCode of release.geometries.keys()) {
+			if (otherCode === code) continue;
+			const other = this.get(geography, boundaryRelease, otherCode);
+			if (!other) continue;
+			const otherBounds = boundsFor(otherCode, other);
+			// Bounds that only touch still qualify: two areas meeting along a
+			// border have bounds that meet there too.
+			if (!otherBounds || !boundsIntersect(targetBounds, otherBounds))
+				continue;
+			const shared = sharedBorder(target, borderIndex(other));
+			if (shared) neighbours.push({ code: otherCode, ...shared });
+		}
+		return neighbours.sort(
+			(left, right) =>
+				right.sharedBorderM - left.sharedBorderM ||
+				left.code.localeCompare(right.code),
 		);
 	}
 }
