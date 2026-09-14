@@ -157,8 +157,10 @@ only **available** when its endpoint, contract and provenance are published.
       unpublished geography or release, identities not compiled, or a code
       that is `superseded`, `not-yet-current` or absent from the release,
       with the releases that do hold it. Abolition is not claimed, because
-      code membership cannot tell it from a recode. Partial coverage and
-      conversion absence are still to follow.
+      code membership cannot tell it from a recode. A country or region
+      aggregate states its coverage against each matching boundary release:
+      `complete`, `partial` with `code: partial_coverage` and the missing
+      areas, or `not-assessed`. Conversion absence is still to follow.
 - [ ] Publish compiler-discovered relationship candidates only after endpoint
       validation and an explicit decision to promote them to crosswalks.
 

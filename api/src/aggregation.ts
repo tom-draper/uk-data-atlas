@@ -59,3 +59,61 @@ export const aggregateCountryMembers = (
 		value: members.reduce((sum, record) => sum + record.value, 0),
 	};
 };
+
+const MISSING_SAMPLE_SIZE = 10;
+
+export type CoverageAssessment = {
+	boundaryRelease: string;
+	status: "complete" | "partial";
+	expectedAreaCount: number;
+	includedAreaCount: number;
+	missingAreaCount: number;
+	/** The first missing codes in order, so a partial sum can be checked. */
+	missingAreaSample: string[];
+};
+
+export type AggregateCoverage =
+	| {
+			status: "complete";
+			assessments: CoverageAssessment[];
+	  }
+	| {
+			status: "partial";
+			code: "partial_coverage";
+			assessments: CoverageAssessment[];
+	  }
+	| { status: "not-assessed"; reason: string };
+
+/** How many of the areas a release expects the aggregate actually summed. */
+export const assessCoverage = (
+	boundaryRelease: string,
+	expectedCodes: Iterable<string>,
+	includedCodes: Set<string>,
+): CoverageAssessment => {
+	const expected = [...new Set(expectedCodes)];
+	const missing = expected.filter((code) => !includedCodes.has(code)).sort();
+	return {
+		boundaryRelease,
+		status: missing.length === 0 ? "complete" : "partial",
+		expectedAreaCount: expected.length,
+		includedAreaCount: expected.length - missing.length,
+		missingAreaCount: missing.length,
+		missingAreaSample: missing.slice(0, MISSING_SAMPLE_SIZE),
+	};
+};
+
+/**
+ * One coverage verdict over every release the partition was compared with.
+ * An aggregate is partial if any of them expects an area it did not sum:
+ * a total that only one reading of its geography calls complete is not.
+ */
+export const summariseCoverage = (
+	assessments: CoverageAssessment[],
+	reasonIfNone: string,
+): AggregateCoverage => {
+	if (assessments.length === 0)
+		return { status: "not-assessed", reason: reasonIfNone };
+	return assessments.some((assessment) => assessment.status === "partial")
+		? { status: "partial", code: "partial_coverage", assessments }
+		: { status: "complete", assessments };
+};

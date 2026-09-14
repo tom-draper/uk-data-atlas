@@ -528,12 +528,20 @@ paths:
         drift between releases. The sum covers every area of that country the
         partition publishes, which is not a claim of national completeness: a
         partition holding no areas for the country is rejected rather than
-        summed to zero.
+        summed to zero. `aggregation.coverage` compares the areas summed with
+        the country's areas in each boundary release the partition is assessed
+        to match. It is `complete` when every such release is covered,
+        `partial` with `code: partial_coverage` and the missing counts when any
+        release holds areas the partition has no value for, as a local
+        election does for wards that did not go to the polls, and
+        `not-assessed` when no matching release is compiled.
 
         With `regionCode`, callers must also name a code-set-compatible
         `sourceRelease` and a published `crosswalk`. The regional crosswalk
         must show complete one-to-one source-area membership; split or partial
         overlap is rejected rather than used as an implicit conversion.
+        `aggregation.coverage` is `partial` when the partition has no value for
+        some of the areas the crosswalk places in the region.
 
         This route does not select a boundary release or perform a code or
         geometry conversion.
