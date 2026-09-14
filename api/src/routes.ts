@@ -199,6 +199,7 @@ const problem = (
 	status: number,
 	title: string,
 	detail: string,
+	extensions: Omit<Problem, "type" | "title" | "status" | "detail"> = {},
 ): ApiResponse => ({
 	status,
 	body: {
@@ -208,6 +209,7 @@ const problem = (
 		title,
 		status,
 		detail,
+		...extensions,
 	},
 });
 
@@ -641,13 +643,7 @@ export const route = (
 			boundaryRelease ?? "",
 			code ?? "",
 		);
-		return {
-			status: 404,
-			body: {
-				...(problem(404, "Not Found", detail).body as Problem),
-				...absence,
-			},
-		};
+		return problem(404, "Not Found", detail, absence);
 	};
 
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
@@ -2028,33 +2024,25 @@ export const route = (
 			);
 		}
 		if (outcome.outcome === "unserved") {
-			return {
-				status: 422,
-				body: {
-					...(problem(
-						422,
-						"Place Not Served",
-						`"${place}" matched ${outcome.attempts.length} place${outcome.attempts.length === 1 ? "" : "s"}, and ${measureId} answers none of them. Each candidate below says why.`,
-					).body as Problem),
-					candidates: outcome.attempts.map(describeAttempt),
-				},
-			};
+			return problem(
+				422,
+				"Place Not Served",
+				`"${place}" matched ${outcome.attempts.length} place${outcome.attempts.length === 1 ? "" : "s"}, and ${measureId} answers none of them. Each candidate below says why.`,
+				{ candidates: outcome.attempts.map(describeAttempt) },
+			);
 		}
 		if (outcome.outcome === "ambiguous") {
-			return {
-				status: 409,
-				body: {
-					...(problem(
-						409,
-						"Ambiguous Place",
-						`"${place}" names ${outcome.choices.length} places that ${measureId} answers differently. Each choice carries its answer; ask again with the place reference of the one meant.`,
-					).body as Problem),
+			return problem(
+				409,
+				"Ambiguous Place",
+				`"${place}" names ${outcome.choices.length} places that ${measureId} answers differently. Each choice carries its answer; ask again with the place reference of the one meant.`,
+				{
 					choices: outcome.choices.map((choice) => ({
 						...describeAttempt(choice),
 						ask: `/v1/data/${measureId}/value?place=${encodeURIComponent(choice.candidate.place)}${period ? `&period=${encodeURIComponent(period)}` : ""}`,
 					})),
 				},
-			};
+			);
 		}
 		const { chosen, attempts } = outcome;
 		return {
