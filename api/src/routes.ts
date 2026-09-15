@@ -31,7 +31,7 @@ import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./areaOverlap";
 import { attributionFor, attributionText } from "./attribution";
 import { measureCoverage } from "./measureCoverage";
 import { reconcileMembersForYear } from "./memberReconciliation";
-import { rankObservations, type RankingOrder } from "./ranking";
+import { rankObservations, readRankingOrder } from "./ranking";
 import { resolvePlaces } from "./placeResolver";
 import { valueForPlace } from "./placeValue";
 import {
@@ -202,13 +202,6 @@ const statisticPhrase = (statistic: string) =>
  * dependencies in one object prevents a newly added artifact from silently
  * shifting a long positional argument list at every call site.
  */
-const readRankingOrder = (value: string | null): RankingOrder | undefined =>
-	value === null || value === "desc"
-		? "desc"
-		: value === "asc"
-			? "asc"
-			: undefined;
-
 export const route = (
 	method: string | undefined,
 	url: string | undefined,

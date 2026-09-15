@@ -36,3 +36,13 @@ export const rankObservations = (
 		return { ...record, rank, tieCount: tieCounts.get(record.value) ?? 1 };
 	});
 };
+
+/** An `order` query value: descending unless asc is asked for. */
+export const readRankingOrder = (
+	value: string | null,
+): RankingOrder | undefined =>
+	value === null || value === "desc"
+		? "desc"
+		: value === "asc"
+			? "asc"
+			: undefined;
