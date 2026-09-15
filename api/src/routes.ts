@@ -3102,48 +3102,6 @@ export const route = (
 		segments.length === 6 &&
 		segments[0] === "v1" &&
 		segments[1] === "areas" &&
-		(segments[5] === "parents" || segments[5] === "children")
-	) {
-		const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
-			string,
-			string,
-			string,
-		];
-		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area) {
-			return areaNotFound(geography, boundaryRelease, code);
-		}
-		if (!crosswalkLookup) {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the crosswalk inventory before looking up area membership.",
-			);
-		}
-		const relation = segments[5] === "parents" ? "within" : "contains";
-		const relationships = relationshipsFor(
-			areaRelationshipIndex,
-			crosswalkLookup,
-			geography,
-			boundaryRelease,
-			code,
-		).filter((relationship) => relationship.relation === relation);
-		return {
-			status: 200,
-			body: envelope(releaseId, {
-				id: `${geography}/${boundaryRelease}/${code}`,
-				geography,
-				boundaryRelease,
-				...area,
-				relationships,
-			}),
-		};
-	}
-
-	if (
-		segments.length === 6 &&
-		segments[0] === "v1" &&
-		segments[1] === "areas" &&
 		segments[5] === "overlap"
 	) {
 		const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
