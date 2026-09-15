@@ -6,7 +6,7 @@ const counts = (total: number) =>
 
 // The shape of Table C2: a title, notes, a header, then force totals, rows
 // per partnership, and crimes unassigned to any partnership.
-const csv = `"Table C2: Number of police recorded crimes by Community Safety Partnership area, England and Wales, year ending June 2025",,
+const csv = `"Table C2: Number of police recorded crimes by Community Safety Partnership area, England and Wales, year ending March 2026 [note 1]",,
 Source: Police recorded crime from the Home Office,,
 "Police Force
 Area code","Police Force
@@ -60,6 +60,16 @@ describe("loadCrime", () => {
 		expect(dataset.data.E06000026).toMatchObject({
 			communitySafetyPartnershipCode: "E22000100",
 			totalRecordedCrime: 20000,
+		});
+	});
+
+	it("labels the dataset with the twelve months its title names", async () => {
+		const datasets = await loadCrime(read);
+
+		expect(Object.keys(datasets)).toEqual(["2026"]);
+		expect(datasets[2026]).toMatchObject({
+			id: "crime2026",
+			dataDate: "year ending March 2026",
 		});
 	});
 

@@ -181,7 +181,7 @@ const writeSources = (
 				dataset("claimant-count", 4, 1, 2024),
 				dataset("homelessness", 1, 1, 2025),
 				dataset("income", 2, 1, 2025),
-				dataset("crime", 1, 1, 2025),
+				dataset("crime", 1, 1, 2026),
 				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
@@ -425,10 +425,11 @@ const writeSources = (
 	writeFileSync(
 		crime,
 		JSON.stringify({
-			"2025": {
-				year: 2025,
-				boundaryYear: 2025,
+			"2026": {
+				year: 2026,
+				boundaryYear: 2026,
 				boundaryType: "localAuthority",
+				dataDate: "year ending March 2026",
 				data: {
 					E06000026: { ladCode: "E06000026", ...offences(20000) },
 				},
@@ -1501,7 +1502,7 @@ test("publishes recorded crime by community safety partnership", () => {
 			)?.periods;
 		assert.deepEqual(records("crime-total"), [
 			{
-				period: "year-ending-2025-06",
+				period: "year-ending-2026-03",
 				records: [
 					{ areaCode: "E22000100", value: 20000, status: "observed" },
 					{ areaCode: "E22000362", value: 10997, status: "observed" },

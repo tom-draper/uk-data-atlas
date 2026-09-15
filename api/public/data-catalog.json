@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:534ac0e0789d4dc8402f8a4b760608132d6556b4a4e5c88f01a58609ff45ea73",
+	"contentHash": "sha256:d56dd18995fe153a0d00d06bf6cbbf0b8477ca847b9e8f69d6a76e2e235fb7d1",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -234,7 +234,7 @@
 			"label": "Crime",
 			"publisher": "Office for National Statistics",
 			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/datasets/policeforceareadatatables",
-			"temporalCoverage": "2025",
+			"temporalCoverage": "2026",
 			"licence": {
 				"name": "Open Government Licence v3.0",
 				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
@@ -243,21 +243,21 @@
 			"inputs": [
 				{
 					"kind": "xlsxSheet",
-					"path": "economics/crime/policeforceareatablesyejune25final.xlsx#Table C2",
-					"bytes": 63253,
-					"sha256": "3457f27df2f85ec779b303e805b2460cc85eeb825cc6a205d3b4e2c61e8c39b5"
+					"path": "economics/crime/pfatablesyemarch2026.xlsx#Table C2",
+					"bytes": 63118,
+					"sha256": "1a09dd300b250632743dffac6cccd324b1d196c6ce898220f12b174c681053a3"
 				}
 			],
 			"summary": {
 				"datasetCount": 1,
 				"dataRecordCount": 294,
 				"boundaryYears": [
-					2025
+					2026
 				]
 			},
 			"compiled": {
-				"bytes": 470530,
-				"sha256": "76404068ec1be77961a6e3c4ffc3c3dbd8aaeafea7a3e7a23f082df089b9a9eb"
+				"bytes": 470215,
+				"sha256": "99a74097c3404b2ff606f779d9d5b1d2928b4cdfd63b2e012c63b1945af08db2"
 			}
 		},
 		{
@@ -8153,7 +8153,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8180,7 +8180,7 @@
 			},
 			"notes": [
 				"Every police recorded crime except fraud and computer misuse, which are recorded nationally rather than by force.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8200,7 +8200,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8227,7 +8227,7 @@
 			},
 			"notes": [
 				"Includes homicide, death or serious injury caused by illegal driving, violence with and without injury, and stalking and harassment.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8247,7 +8247,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8274,7 +8274,7 @@
 			},
 			"notes": [
 				"A subset of violence against the person.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8294,7 +8294,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8321,7 +8321,7 @@
 			},
 			"notes": [
 				"A subset of violence against the person.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8341,7 +8341,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8368,7 +8368,7 @@
 			},
 			"notes": [
 				"A subset of violence against the person.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8388,7 +8388,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8415,7 +8415,7 @@
 			},
 			"notes": [
 				"A subset of violence against the person.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8435,7 +8435,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8462,7 +8462,7 @@
 			},
 			"notes": [
 				"A subset of violence against the person.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8482,7 +8482,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8509,7 +8509,7 @@
 			},
 			"notes": [
 				"Recorded sexual offences, including rape.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8529,7 +8529,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8556,7 +8556,7 @@
 			},
 			"notes": [
 				"Theft with the use or threat of force.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8576,7 +8576,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8603,7 +8603,7 @@
 			},
 			"notes": [
 				"Includes burglary, vehicle offences, theft from the person, bicycle theft, shoplifting and all other theft.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8623,7 +8623,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8650,7 +8650,7 @@
 			},
 			"notes": [
 				"A subset of theft offences, made up of residential and non-residential burglary.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8670,7 +8670,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8697,7 +8697,7 @@
 			},
 			"notes": [
 				"A subset of burglary.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8717,7 +8717,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8744,7 +8744,7 @@
 			},
 			"notes": [
 				"A subset of burglary.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8764,7 +8764,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8791,7 +8791,7 @@
 			},
 			"notes": [
 				"A subset of theft offences.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8811,7 +8811,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8838,7 +8838,7 @@
 			},
 			"notes": [
 				"A subset of theft offences.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8858,7 +8858,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8885,7 +8885,7 @@
 			},
 			"notes": [
 				"A subset of theft offences.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8905,7 +8905,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8932,7 +8932,7 @@
 			},
 			"notes": [
 				"A subset of theft offences.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8952,7 +8952,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -8979,7 +8979,7 @@
 			},
 			"notes": [
 				"A subset of theft offences.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -8999,7 +8999,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -9025,7 +9025,7 @@
 				"data": "/v1/data/crime-criminal-damage-and-arson"
 			},
 			"notes": [
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -9045,7 +9045,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -9072,7 +9072,7 @@
 			},
 			"notes": [
 				"Drug offences are largely found through police activity, so their count reflects enforcement as much as prevalence.",
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -9092,7 +9092,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -9118,7 +9118,7 @@
 				"data": "/v1/data/crime-possession-of-weapons"
 			},
 			"notes": [
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -9138,7 +9138,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -9164,7 +9164,7 @@
 				"data": "/v1/data/crime-public-order-offences"
 			},
 			"notes": [
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
@@ -9184,7 +9184,7 @@
 				{
 					"datasetId": "crime",
 					"periods": [
-						"year-ending-2025-06"
+						"year-ending-2026-03"
 					],
 					"sourceGeography": {
 						"type": "communitySafetyPartnership",
@@ -9210,7 +9210,7 @@
 				"data": "/v1/data/crime-miscellaneous-crimes-against-society"
 			},
 			"notes": [
-				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Offences recorded by the police in the twelve months to March 2026, by the community safety partnership where they were committed.",
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."

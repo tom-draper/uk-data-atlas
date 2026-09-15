@@ -8,12 +8,12 @@ export const crimeDefinition: ChartDatasetDefinition<CrimeDataset> = {
 	chart: {
 		group: "Economics",
 		key: "economics-crime",
-		label: "Crime Rate [2025]",
+		label: "Crime Rate [2026]",
 		defaultVisible: true,
 		componentPath: "@/components/economics/crime/CrimeRateChart",
 		calculateStats: (m, g, d, l, id) =>
 			m.aggregate(crimeAggregation, g, d, l, id),
-		year: 2025,
+		year: 2026,
 	},
 	map: {
 		valueKey: "totalRecordedCrime",

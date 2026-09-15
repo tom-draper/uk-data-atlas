@@ -25,7 +25,7 @@
 		{
 			"path": "policeforceareatablesyejune25final.xlsx",
 			"role": "source",
-			"note": "Police force area tables for the year ending June 2025. Table C2, recorded crime by community safety partnership area, is the sheet the loader reads."
+			"note": "Police force area tables for the year ending June 2025. Kept for provenance; no loader reads it."
 		},
 		{
 			"path": "pfatablesfinaljun23.xlsx",
@@ -60,7 +60,7 @@
 		{
 			"path": "pfatablesyemarch2026.xlsx",
 			"role": "reference",
-			"note": "Police force area tables for the year ending March 2026. Kept for provenance; no loader reads it.",
+			"note": "Police force area tables for the year ending March 2026. Table C2, recorded crime by community safety partnership area, is the sheet the loader reads.",
 			"bytes": 656967
 		},
 		{

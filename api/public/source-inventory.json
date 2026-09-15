@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:a6fd435633b23bf7f9319d66912cf103dd3c4c2d14eaf25bcc52acd6e529eec4",
+	"contentHash": "sha256:b882042d05428709bd68ea461a9f71f16cf19cc12355f1db7de82a846bd8c61b",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -1507,7 +1507,7 @@
 					"role": "reference"
 				}
 			],
-			"metadataHash": "sha256:691db78e721e36954a861672090d931e74b3101dee58ba74a92f035013ccfa04"
+			"metadataHash": "sha256:2ebeebc8d4b2184ef97b790bb81dd7bd2c984fb3402d5c82fe034d39fe9e9322"
 		},
 		{
 			"key": "economics/fuel-poverty",
