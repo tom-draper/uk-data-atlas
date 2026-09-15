@@ -889,7 +889,12 @@ Implementation and documentation tasks:
 - [ ] Publish a deprecation policy, availability and freshness targets, and a
       status endpoint before offering a paid reliability commitment.
 - [ ] Add conditional request support (`ETag`, `Last-Modified` and the matching
-      request headers), clear cache semantics and quota headers.
+      request headers), clear cache semantics and quota headers. Every `200`
+      response now carries a strong `ETag`, the SHA-256 of its bytes, with
+      `Cache-Control: public, max-age=300, must-revalidate`; `If-None-Match`
+      returns `304`, `HEAD` is served, and errors are `no-store`. No
+      `Last-Modified` is sent, since a release records no build time, and
+      there are no quotas to report.
 
 Candidate read-only routes:
 
@@ -1986,7 +1991,9 @@ Atlas's core geography value without private state or universal conversion.
 - [ ] Supply one MapLibre/TypeScript reference implementation showing place
       resolution, explicit release choice, values, tiles and citation.
 - [ ] Add cache validators and immutable resource URLs before adding API-key
-      tiers; public correctness and inexpensive delivery come first.
+      tiers; public correctness and inexpensive delivery come first. Cache
+      validators are in place; resource URLs are not yet pinned to a release,
+      so a cached response is revalidated rather than kept indefinitely.
 
 **Exit criterion:** an external engineer can build a cited UK map from the
 reference guide without downloading publisher files, guessing a release or
