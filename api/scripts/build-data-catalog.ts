@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,
-	observationArtifactName,
-} from "../src/dataCatalog";
+} from "../src/catalog/compileDataCatalog";
+import { observationArtifactName } from "../src/dataCatalog";
 
 export const buildDataCatalog = (repositoryRoot: string) => {
 	const precompiled = (file: string) =>
