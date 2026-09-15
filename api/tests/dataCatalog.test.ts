@@ -5,9 +5,9 @@ import { tmpdir } from "node:os";
 import test from "node:test";
 import {
 	compileDataCatalog,
-	onApril2023Authorities,
 	type DataCatalogInputs,
 } from "../src/catalog/compileDataCatalog";
+import { onApril2023Authorities } from "../src/catalog/authorityChanges";
 
 const dataset = (
 	output: string,
