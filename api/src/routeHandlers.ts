@@ -15,6 +15,7 @@ import { handleAreaIdentityRoutes } from "./areaIdentityRoutes";
 import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
 import { handlePlaceRoutes } from "./placeRoutes";
 import { handleDataTransformRoutes } from "./dataTransformRoutes";
+import { handleMeasureQualityRoutes } from "./measureQualityRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 
@@ -32,6 +33,14 @@ type RouteFamily = {
  * home explicit while the legacy router is split into domain modules.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "measure-quality",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "measures" &&
+			segments[3] === "quality",
+		handle: handleMeasureQualityRoutes,
+	},
 	{
 		name: "data-transforms",
 		owns: (segments) => segments[0] === "v1" && segments[3] === "compare",
