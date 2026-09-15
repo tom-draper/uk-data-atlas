@@ -4,10 +4,10 @@ import {
 	type PlaceCandidate,
 	type PlaceIndex,
 } from "./placeResolver";
+import { MAX_PAGE_SIZE, readPageSize } from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
-const MAX_PAGE_SIZE = 500;
 const placeIndexes = new WeakMap<
 	object,
 	{ locations: unknown; index: PlaceIndex }
@@ -56,11 +56,7 @@ export const handlePlaceRoutes = ({
 			"Invalid Query",
 			"q is required: a place name, an area code, or a place reference such as localAuthority/E08000003.",
 		);
-	const rawLimit = parsedUrl.searchParams.get("limit") ?? "10";
-	const limit =
-		/^[1-9]\d*$/.test(rawLimit) && Number(rawLimit) <= MAX_PAGE_SIZE
-			? Number(rawLimit)
-			: undefined;
+	const limit = readPageSize(parsedUrl.searchParams.get("limit"), 10);
 	if (limit === undefined)
 		return problem(
 			400,

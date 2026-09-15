@@ -1,25 +1,11 @@
+import {
+	cursorFor,
+	keyFromCursor,
+	MAX_PAGE_SIZE,
+	readPageSize,
+} from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-
-const MAX_PAGE_SIZE = 500;
-
-const readPageSize = (value: string | null): number | undefined => {
-	if (value === null) return 100;
-	if (!/^[1-9]\d*$/.test(value)) return undefined;
-	const parsed = Number(value);
-	return parsed <= MAX_PAGE_SIZE ? parsed : undefined;
-};
-
-const cursorFor = (code: string) => Buffer.from(code).toString("base64url");
-
-const codeFromCursor = (cursor: string): string | undefined => {
-	try {
-		const code = Buffer.from(cursor, "base64url").toString("utf8");
-		return code.length > 0 && cursorFor(code) === cursor ? code : undefined;
-	} catch {
-		return undefined;
-	}
-};
 
 /** Published crosswalk metadata and stable record pagination. */
 export const handleCrosswalkRoutes = ({
@@ -92,7 +78,7 @@ export const handleCrosswalkRoutes = ({
 				`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
 			);
 		const cursor = parsedUrl.searchParams.get("cursor");
-		const cursorCode = cursor ? codeFromCursor(cursor) : undefined;
+		const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
 		if (cursor && !cursorCode)
 			return problem(400, "Invalid Query", "cursor is invalid.");
 		const offset = cursorCode
