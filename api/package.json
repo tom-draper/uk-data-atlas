@@ -32,6 +32,7 @@
 		"polygon-clipping": "0.15.7",
 		"proj4": "2.22.0",
 		"tsx": "^4.23.13",
-		"typescript": "^7.0.2"
+		"typescript": "^7.0.2",
+		"yaml": "^2.9.0"
 	}
 }

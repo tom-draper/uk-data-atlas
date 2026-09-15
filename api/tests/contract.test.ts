@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { parse } from "yaml";
 import { PROBLEM_CODES } from "../src/problemCodes";
 import { route } from "../src/routes";
 import { readApiCatalogues } from "../src/server";
@@ -142,4 +143,138 @@ test("gives every problem code a typed schema in the OpenAPI document", () => {
 			new RegExp(`enum: \\[${definition.statuses.join(", ")}\\]`),
 		);
 	}
+});
+
+type OpenApiExample = { value: unknown; "x-example-request"?: string };
+type OpenApiMedia = {
+	example?: unknown;
+	examples?: Record<string, OpenApiExample>;
+	"x-example-request"?: string;
+};
+
+// Parsed strictly, so a repeated key fails here rather than in a client's
+// code generator.
+const openapi = parse(
+	readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
+) as {
+	paths: Record<
+		string,
+		{
+			get?: {
+				responses: Record<
+					string,
+					{ content?: Record<string, OpenApiMedia> }
+				>;
+			};
+		}
+	>;
+	components: { schemas: Record<string, { examples?: unknown[] }> };
+};
+
+const responseExamples = Object.entries(openapi.paths).flatMap(
+	([path, item]) => {
+		const media = item.get?.responses["200"]?.content?.["application/json"];
+		if (!media) return [];
+		if (media.example !== undefined)
+			return [
+				{
+					name: path,
+					request: media["x-example-request"],
+					value: media.example,
+				},
+			];
+		return Object.entries(media.examples ?? {}).map(([name, example]) => ({
+			name: `${path} ${name}`,
+			request: example["x-example-request"],
+			value: example.value,
+		}));
+	},
+);
+
+/**
+ * Where an example departs from the live response. Examples are abridged, so
+ * a live object may carry more members and an example array lists only some
+ * of the live items, in any order. Identifiers, codes, names and prose must
+ * match exactly. Hashes and numbers change with every data build, so only
+ * their type is checked: an example shows what a count or hash looks like,
+ * not today's value.
+ */
+const departures = (example: unknown, live: unknown, at: string): string[] => {
+	if (typeof example === "string" && example.startsWith("sha256:"))
+		return typeof live === "string" && live.startsWith("sha256:")
+			? []
+			: [`${at}: expected a hash`];
+	if (typeof example === "number")
+		return typeof live === "number" ? [] : [`${at}: expected a number`];
+	if (example === null || typeof example !== "object")
+		return example === live
+			? []
+			: [`${at}: ${JSON.stringify(example)} is ${JSON.stringify(live)}`];
+	if (Array.isArray(example)) {
+		if (!Array.isArray(live)) return [`${at}: expected an array`];
+		if (example.length === 0)
+			return live.length === 0 ? [] : [`${at}: expected an empty array`];
+		return example.flatMap((item, index) => {
+			const attempts = live.map((candidate) =>
+				departures(item, candidate, `${at}[${index}]`),
+			);
+			if (attempts.some((attempt) => attempt.length === 0)) return [];
+			const closest = attempts.sort(
+				(left, right) => left.length - right.length,
+			)[0];
+			return closest ?? [`${at}[${index}]: no live item`];
+		});
+	}
+	if (live === null || typeof live !== "object" || Array.isArray(live))
+		return [`${at}: expected an object`];
+	return Object.entries(example).flatMap(([key, value]) =>
+		key in live
+			? departures(
+					value,
+					(live as Record<string, unknown>)[key],
+					`${at}.${key}`,
+				)
+			: [`${at}.${key}: not in the live response`],
+	);
+};
+
+test("names the request behind every OpenAPI response example", () => {
+	assert.ok(responseExamples.length > 0);
+	assert.deepEqual(
+		responseExamples
+			.filter((example) => !example.request)
+			.map((example) => example.name),
+		[],
+	);
+});
+
+test("matches every OpenAPI response example to the live response", () => {
+	const drifted = responseExamples.flatMap(({ name, request, value }) => {
+		if (!request) return [];
+		const response = route("GET", request, catalogues);
+		if (response.status !== 200)
+			return [`${name}: ${request} returned ${response.status}`];
+		return departures(value, response.body, "").map(
+			(departure) => `${name}${departure}`,
+		);
+	});
+	assert.deepEqual(drifted, []);
+});
+
+test("shows each problem code's live response as its OpenAPI example", () => {
+	const drifted = Object.entries(PROBLEM_CODES).flatMap(
+		([code, definition]) => {
+			const name = `${code
+				.split("_")
+				.map((word) => word[0]!.toUpperCase() + word.slice(1))
+				.join("")}Problem`;
+			const [example] = openapi.components.schemas[name]?.examples ?? [];
+			return departures(
+				example,
+				route("GET", definition.example, catalogues).body,
+				"",
+			).map((departure) => `${name}${departure}`);
+		},
+	);
+	assert.deepEqual(drifted, []);
 });
