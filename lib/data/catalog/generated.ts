@@ -28,6 +28,7 @@ import type { populationDatasetDefinition } from "./definitions/population";
 import type { populationConstituencyDatasetDefinition } from "./definitions/populationConstituency";
 import type { populationUkDatasetDefinition } from "./definitions/populationUk";
 import type { qualificationDatasetDefinition } from "./definitions/qualification";
+import type { roadCollisionsDatasetDefinition } from "./definitions/roadCollisions";
 import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance";
 import type { schoolPerformanceConstituencyDatasetDefinition } from "./definitions/schoolPerformanceConstituency";
 import type { schoolPerformanceDisadvantageDatasetDefinition } from "./definitions/schoolPerformanceDisadvantage";
@@ -101,6 +102,9 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<
 			ReturnType<typeof qualificationDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof roadCollisionsDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>
@@ -197,6 +201,9 @@ export type CatalogueDatasetRecords = {
 	>;
 	qualification: Awaited<
 		ReturnType<typeof qualificationDatasetDefinition.precompile>
+	>;
+	roadCollisions: Awaited<
+		ReturnType<typeof roadCollisionsDatasetDefinition.precompile>
 	>;
 	schoolPerformance: Awaited<
 		ReturnType<typeof schoolPerformanceDatasetDefinition.precompile>

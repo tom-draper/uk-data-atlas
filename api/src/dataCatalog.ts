@@ -1050,6 +1050,7 @@ export type DataCatalogInputs = {
 	broadband: string;
 	claimantCount: string;
 	homelessness: string;
+	roadCollisions: string;
 	income: string;
 	crime: string;
 	airQuality: string;
@@ -1080,6 +1081,7 @@ export const compileDataCatalog = ({
 	broadband: broadbandPath,
 	claimantCount: claimantCountPath,
 	homelessness: homelessnessPath,
+	roadCollisions: roadCollisionsPath,
 	income: incomePath,
 	crime: crimePath,
 	airQuality: airQualityPath,
@@ -2146,6 +2148,73 @@ export const compileDataCatalog = ({
 				"childrenInTemporaryAccommodation",
 				"children",
 				"Dependent children living in those households, counted as people rather than households.",
+			),
+		],
+	});
+	const collisions = (
+		id: string,
+		label: string,
+		field: string,
+		note: string,
+	): Indicator => ({
+		id,
+		label,
+		field,
+		valueKind: "count",
+		unit: "reported collisions",
+		aggregation: { kind: "extensive", operation: "sum", available: true },
+		notes: [note],
+	});
+	const roadCollisionsExcluded = Object.values(
+		JSON.parse(readFileSync(roadCollisionsPath, "utf8")) as Record<
+			string,
+			{ excluded?: Array<{ code: string; collisions: number }> }
+		>,
+	).flatMap((edition) => edition.excluded ?? []);
+	publishIndicators({
+		datasetId: "road-collisions",
+		path: roadCollisionsPath,
+		boundaryYear: 2024,
+		period: "2025-H1",
+		expectedCodes: [...populationCodes].filter(
+			(code) => countryForCode(code) !== "GB-NIR",
+		),
+		coverageNote:
+			"Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file.",
+		notes: [
+			"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
+			"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
+			...roadCollisionsExcluded.map(
+				({ code, collisions: count }) =>
+					`${count} collision${count === 1 ? " is" : "s are"} assigned to ${code}, which is not a local authority code, and ${count === 1 ? "is" : "are"} not counted in any authority.`,
+			),
+			"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
+			"These count collisions reported to the police, not casualties or unreported collisions.",
+		],
+		indicators: [
+			collisions(
+				"road-collisions",
+				"Reported road collisions",
+				"collisions",
+				"Every reported collision, whatever its severity.",
+			),
+			collisions(
+				"road-collisions-fatal",
+				"Fatal road collisions",
+				"fatal",
+				"Collisions in which someone died within 30 days, a subset of all reported collisions.",
+			),
+			collisions(
+				"road-collisions-serious",
+				"Serious road collisions",
+				"serious",
+				"Collisions whose most severe injury the police recorded as serious. Forces record injuries through two different systems, so this share varies by force as well as by collision; the Department for Transport publishes adjusted estimates for comparisons between forces, which are not served here.",
+			),
+			collisions(
+				"road-collisions-slight",
+				"Slight road collisions",
+				"slight",
+				"Collisions whose most severe injury the police recorded as slight, with the same caveat about recording systems as serious collisions.",
 			),
 		],
 	});

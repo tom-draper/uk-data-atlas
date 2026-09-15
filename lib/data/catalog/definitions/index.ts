@@ -28,6 +28,7 @@ export { populationDatasetDefinition } from "./population";
 export { populationConstituencyDatasetDefinition } from "./populationConstituency";
 export { populationUkDatasetDefinition } from "./populationUk";
 export { qualificationDatasetDefinition } from "./qualification";
+export { roadCollisionsDatasetDefinition } from "./roadCollisions";
 export { schoolPerformanceDatasetDefinition } from "./schoolPerformance";
 export { schoolPerformanceConstituencyDatasetDefinition } from "./schoolPerformanceConstituency";
 export { schoolPerformanceDisadvantageDatasetDefinition } from "./schoolPerformanceDisadvantage";

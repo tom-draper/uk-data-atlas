@@ -110,6 +110,14 @@
 				"local-election-ref-votes",
 				"local-election-ukip-votes"
 			]
+		},
+		{
+			"measureId": "road-collisions",
+			"components": [
+				"road-collisions-fatal",
+				"road-collisions-serious",
+				"road-collisions-slight"
+			]
 		}
 	]
 }

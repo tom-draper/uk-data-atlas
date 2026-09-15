@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:708f04397ddcc766ca53f31c43fa806b3e77d9698502932c7dcc19816e200ec4",
+	"contentHash": "sha256:ff7da31226d0266de4d0fea6a5cdf26f11afcd84cdf3da461e42737e8c31a041",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1082,6 +1082,37 @@
 			"compiled": {
 				"bytes": 63545,
 				"sha256": "14c808dd39e675b682ee5154042ac6bb39da2a41ad73ea7eb327e1c68141c4d2"
+			}
+		},
+		{
+			"id": "road-collisions",
+			"label": "Road Collisions by Local Authority",
+			"publisher": "Department for Transport",
+			"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/road-accidents-and-safety-statistics",
+			"temporalCoverage": "January-June 2025 (provisional)",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Provisional reported road collisions in Great Britain, January to June 2025, counted by the local authority DfT assigns each collision to and by the most severe injury the police recorded.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
+					"bytes": 9276946,
+					"sha256": "fc8b3eb17414318c8b1f39104f0f4516439ca2b51f942701e4f4c9eb3b34b366"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 349,
+				"boundaryYears": [
+					2024
+				]
+			},
+			"compiled": {
+				"bytes": 30900,
+				"sha256": "7362e4e5bff3d7364664a4d4f4b8a254fc94763d72b338fc256dbb03b2a1fc33"
 			}
 		},
 		{
@@ -7407,6 +7438,202 @@
 				"Dependent children living in those households, counted as people rather than households.",
 				"Households placed in temporary accommodation by the authority under homelessness legislation, at the end of January to March 2026. A household is counted by the authority that placed it, which may house it in another area.",
 				"The published rate per thousand households is not served: a rate does not add over areas and would need the number of households as a weight."
+			]
+		},
+		{
+			"id": "road-collisions",
+			"label": "Reported road collisions",
+			"valueKind": "count",
+			"unit": "reported collisions",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "road-collisions",
+					"periods": [
+						"2025-H1"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 349,
+						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. No value is published for 1 of the 350 authorities: E06000024."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/road-collisions"
+			},
+			"notes": [
+				"Every reported collision, whatever its severity.",
+				"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
+				"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
+				"16 collisions are assigned to EHEATHROW, which is not a local authority code, and are not counted in any authority.",
+				"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
+				"These count collisions reported to the police, not casualties or unreported collisions."
+			]
+		},
+		{
+			"id": "road-collisions-fatal",
+			"label": "Fatal road collisions",
+			"valueKind": "count",
+			"unit": "reported collisions",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "road-collisions",
+					"periods": [
+						"2025-H1"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 349,
+						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. No value is published for 1 of the 350 authorities: E06000024."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/road-collisions-fatal"
+			},
+			"notes": [
+				"Collisions in which someone died within 30 days, a subset of all reported collisions.",
+				"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
+				"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
+				"16 collisions are assigned to EHEATHROW, which is not a local authority code, and are not counted in any authority.",
+				"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
+				"These count collisions reported to the police, not casualties or unreported collisions."
+			]
+		},
+		{
+			"id": "road-collisions-serious",
+			"label": "Serious road collisions",
+			"valueKind": "count",
+			"unit": "reported collisions",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "road-collisions",
+					"periods": [
+						"2025-H1"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 349,
+						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. No value is published for 1 of the 350 authorities: E06000024."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/road-collisions-serious"
+			},
+			"notes": [
+				"Collisions whose most severe injury the police recorded as serious. Forces record injuries through two different systems, so this share varies by force as well as by collision; the Department for Transport publishes adjusted estimates for comparisons between forces, which are not served here.",
+				"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
+				"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
+				"16 collisions are assigned to EHEATHROW, which is not a local authority code, and are not counted in any authority.",
+				"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
+				"These count collisions reported to the police, not casualties or unreported collisions."
+			]
+		},
+		{
+			"id": "road-collisions-slight",
+			"label": "Slight road collisions",
+			"valueKind": "count",
+			"unit": "reported collisions",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "road-collisions",
+					"periods": [
+						"2025-H1"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 349,
+						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. No value is published for 1 of the 350 authorities: E06000024."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/road-collisions-slight"
+			},
+			"notes": [
+				"Collisions whose most severe injury the police recorded as slight, with the same caveat about recording systems as serious collisions.",
+				"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
+				"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
+				"16 collisions are assigned to EHEATHROW, which is not a local authority code, and are not counted in any authority.",
+				"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
+				"These count collisions reported to the police, not casualties or unreported collisions."
 			]
 		},
 		{

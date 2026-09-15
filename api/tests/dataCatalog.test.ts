@@ -198,6 +198,7 @@ const writeSources = (
 	const broadband = join(directory, "broadband.json");
 	const claimantCount = join(directory, "claimant-count.json");
 	const homelessness = join(directory, "homelessness.json");
+	const roadCollisions = join(directory, "road-collisions.json");
 	const income = join(directory, "income.json");
 	const crime = join(directory, "crime.json");
 	const unemployment = join(directory, "unemployment.json");
@@ -218,6 +219,7 @@ const writeSources = (
 				dataset("broadband", 4, 1, 2024),
 				dataset("claimant-count", 4, 1, 2024),
 				dataset("homelessness", 1, 1, 2025),
+				dataset("road-collisions", 2, 1, 2024),
 				dataset("income", 2, 1, 2025),
 				dataset("crime", 1, 1, 2026),
 				dataset("unemployment", 1, 1, 2024),
@@ -413,6 +415,30 @@ const writeSources = (
 						childrenInTemporaryAccommodation: 54,
 					},
 				},
+			},
+		}),
+	);
+	writeFileSync(
+		roadCollisions,
+		JSON.stringify({
+			"2025": {
+				year: 2025,
+				period: "January to June 2025",
+				boundaryYear: 2024,
+				boundaryType: "localAuthority",
+				data: Object.fromEntries(
+					["E06000001", "S12000001"].map((code) => [
+						code,
+						{
+							ladCode: code,
+							collisions: 6,
+							fatal: 1,
+							serious: 2,
+							slight: 3,
+						},
+					]),
+				),
+				excluded: [{ code: "EHEATHROW", collisions: 1 }],
 			},
 		}),
 	);
@@ -817,6 +843,7 @@ const writeSources = (
 		broadband,
 		claimantCount,
 		homelessness,
+		roadCollisions,
 		income,
 		crime,
 		unemployment,
@@ -842,7 +869,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 26);
+		assert.equal(result.catalog.datasets.length, 27);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -1567,6 +1594,49 @@ test("publishes a single-period indicator and names the authorities it has no va
 		assert.match(
 			fullFibre?.note ?? "",
 			/No value is published for 1 of the 4 authorities: S12000001\./,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes provisional half-year road collisions for Great Britain by severity", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const result = compileDataCatalog(writeSources(directory));
+		const measure = (id: string) =>
+			result.catalog.measures.find((candidate) => candidate.id === id);
+		assert.deepEqual(
+			result.indicatorObservations.find(
+				(artifact) => artifact.measureId === "road-collisions-fatal",
+			)?.periods,
+			[
+				{
+					period: "2025-H1",
+					records: [
+						{ areaCode: "E06000001", value: 1, status: "observed" },
+						{ areaCode: "S12000001", value: 1, status: "observed" },
+					],
+				},
+			],
+		);
+		const source = measure("road-collisions")?.sources[0];
+		assert.deepEqual(source?.sourceGeography, {
+			type: "localAuthority",
+			boundaryYear: 2024,
+		});
+		// Northern Ireland is outside the source, so only the missing Welsh
+		// authority is named.
+		assert.match(
+			source?.coverage.note ?? "",
+			/No value is published for 1 of the 3 authorities: W06000001\./,
+		);
+		assert.equal(measure("road-collisions")?.aggregation.kind, "extensive");
+		assert.match(
+			measure("road-collisions-serious")?.notes?.join(" ") ?? "",
+			/two different systems/,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
