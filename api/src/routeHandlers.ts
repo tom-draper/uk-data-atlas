@@ -12,6 +12,7 @@ import { handleMeasureCoverageRoutes } from "./measureCoverageRoutes";
 import { handleAreaHistoryRoutes } from "./areaHistoryRoutes";
 import { handleAreaRelationshipRoutes } from "./areaRelationshipRoutes";
 import { handleAreaIdentityRoutes } from "./areaIdentityRoutes";
+import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 
@@ -29,6 +30,14 @@ type RouteFamily = {
  * home explicit while the legacy router is split into domain modules.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "measure-compatibility",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "measures" &&
+			segments[3] === "compatibility",
+		handle: handleMeasureCompatibilityRoutes,
+	},
 	{
 		name: "area-identity",
 		owns: (segments) =>
