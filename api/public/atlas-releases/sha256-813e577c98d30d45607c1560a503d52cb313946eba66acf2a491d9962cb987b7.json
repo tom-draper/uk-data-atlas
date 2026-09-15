@@ -1,0 +1,1246 @@
+{
+	"schemaVersion": 1,
+	"releaseId": "sha256:813e577c98d30d45607c1560a503d52cb313946eba66acf2a491d9962cb987b7",
+	"artifacts": [
+		{
+			"id": "boundary-registry",
+			"path": "boundary-releases.json",
+			"contentHash": "sha256:07f06fd2970c65d03d11665dc7e2dcc4b791fc5d5d37afe08ebdb259ab1f279e"
+		},
+		{
+			"id": "derived-boundaries",
+			"path": "derived-boundaries.json",
+			"contentHash": "sha256:2a6a5311b47980dfb9d830497b84d1874a825d23b647068a1b5c0691d3c78972"
+		},
+		{
+			"id": "area-inventory",
+			"path": "area-inventory.json",
+			"contentHash": "sha256:6fca26591c2bfbc126aa0b9fe4272e644d2d1c75e13714ad7dc438a4cfa1fe1c"
+		},
+		{
+			"id": "named-locations",
+			"path": "named-locations.json",
+			"contentHash": "sha256:e2da69cbbf92e55d1e6806ee399dbffde610fcef925b1b01228371d42021bf28"
+		},
+		{
+			"id": "data-catalog",
+			"path": "data-catalog.json",
+			"contentHash": "sha256:c24344b109a1e4dd2c36c523690099edb99c1e44c6512494efdef850e5c9da84"
+		},
+		{
+			"id": "measure-compatibility",
+			"path": "measure-compatibility.json",
+			"contentHash": "sha256:b8fa38dc3c863979ccc3460f9631e4b8307a877c41880a958a4afc7dc86d3f9f"
+		},
+		{
+			"id": "export-manifest",
+			"path": "export-manifest.json",
+			"contentHash": "sha256:abfe174bb1ed2619aed2e93cb13425932ba14ecae6c84b4c219df1302f36ad6a"
+		},
+		{
+			"id": "population-observations",
+			"path": "population-observations.json",
+			"contentHash": "sha256:cbcb0587c7f697f90dad4b0250cf26c132e47788adf0096c104035c06b03adb4"
+		},
+		{
+			"id": "population-local-authority-observations",
+			"path": "population-local-authority-observations.json",
+			"contentHash": "sha256:c554cd5f1a371c6c1e76b368c484b9972427a84b734c77841d21a0adf94b8b6d"
+		},
+		{
+			"id": "geometry-sources",
+			"path": "geometry-sources.json",
+			"contentHash": "sha256:391a91f8ec7080865714fd8f21e5f2c528fb5b717c7ba8eac6ee60744cb6c8a5"
+		},
+		{
+			"id": "crosswalk-inventory",
+			"path": "crosswalk-inventory.json",
+			"contentHash": "sha256:0f947bed96fb281a900c1fbe8670a2426483715c8b4f6a212f989ce937af63fd"
+		},
+		{
+			"id": "relationship-candidates",
+			"path": "relationship-candidates.json",
+			"contentHash": "sha256:dc3719dbb15889246c9a2827d244f23ce480dcb587df9e95dbf95ccd01479571"
+		},
+		{
+			"id": "geography-inventory",
+			"path": "geography-inventory.json",
+			"contentHash": "sha256:60f7f181c719dd21a90e8991f91151c971074eb61d81ef2b2d988ec789b37927"
+		},
+		{
+			"id": "validation-report",
+			"path": "validation-report.json",
+			"contentHash": "sha256:a700d61753480bb94d965f6ae4641c9fdf24ed8316a44fbb16e6449c25a7e04b"
+		},
+		{
+			"id": "source-inventory",
+			"path": "source-inventory.json",
+			"contentHash": "sha256:4ad7729bcdada2acb27bbf96b6b5fe87cd6787ccac84bf75a23b3b04166e2ada"
+		},
+		{
+			"id": "observations/car-availability-none-observations",
+			"path": "car-availability-none-observations.json",
+			"contentHash": "sha256:8cc5218098204f7a5a0f1a8999a07163b4e5a9cfbb57ee801baf58cd29da0397"
+		},
+		{
+			"id": "observations/car-availability-one-observations",
+			"path": "car-availability-one-observations.json",
+			"contentHash": "sha256:01f63df16afb8b354d932c145deacdc80e2b9aa123b8f32752d36cb174b85593"
+		},
+		{
+			"id": "observations/car-availability-three-or-more-observations",
+			"path": "car-availability-three-or-more-observations.json",
+			"contentHash": "sha256:866ccf5fa2a1a86f31bad99fd1309c2b1e3cd74d48d3cb45f3b817fb41fbe59e"
+		},
+		{
+			"id": "observations/car-availability-total-observations",
+			"path": "car-availability-total-observations.json",
+			"contentHash": "sha256:e2200a3cc4cc5df6a6c17933d878bf0c171d170e538cd6c7be97024a3c8d2191"
+		},
+		{
+			"id": "observations/car-availability-two-observations",
+			"path": "car-availability-two-observations.json",
+			"contentHash": "sha256:2d6795c8795998c79144b38ac7d0dade67ca8b9b06061794cca3af1bca2f0ea7"
+		},
+		{
+			"id": "observations/general-election-apni-vote-share-constituency-2010-observations",
+			"path": "general-election-apni-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:c7f7203fe79fd08f0f383ce654deffdfb9218794d04cebcb0395e0aacd752415"
+		},
+		{
+			"id": "observations/general-election-apni-vote-share-constituency-2019-observations",
+			"path": "general-election-apni-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:4ed3b5f3caab52acdaf54c7c7c5159366f6afe238a143f9136a436f77c5a74b7"
+		},
+		{
+			"id": "observations/general-election-apni-vote-share-constituency-2024-observations",
+			"path": "general-election-apni-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:455e5c952a4ed70f6e6e3355e09bf53c5b1d18947d2399d4b1a9622a5fd77c4a"
+		},
+		{
+			"id": "observations/general-election-apni-votes-constituency-2010-observations",
+			"path": "general-election-apni-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:5873acbe732499b741baeef5057b897379ce67fd552ae4e9b4e953ce4c678aa7"
+		},
+		{
+			"id": "observations/general-election-apni-votes-constituency-2019-observations",
+			"path": "general-election-apni-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:132447cb25ceab53e16b03b3bb2169c542328c1c50b0e0a01268c9c0f79df0d9"
+		},
+		{
+			"id": "observations/general-election-apni-votes-constituency-2024-observations",
+			"path": "general-election-apni-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:41ad9bce9ddf8524924cc8b685279ad5ff352b3f880b9afd94e79653256ee107"
+		},
+		{
+			"id": "observations/general-election-brx-vote-share-constituency-2010-observations",
+			"path": "general-election-brx-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:8ae0f517f4abfc07d0b1b3f22522d52efff9ab74aaf961467b763caac33c7eda"
+		},
+		{
+			"id": "observations/general-election-brx-vote-share-constituency-2019-observations",
+			"path": "general-election-brx-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:66b02a139b366231cde58522d0bf25679b7d2f94cc26a9b82d5e02bcc6762eae"
+		},
+		{
+			"id": "observations/general-election-brx-vote-share-constituency-2024-observations",
+			"path": "general-election-brx-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:60c2fb701967206d0ae95c691e075693b3cd754b93d15c0160441a50aee44f17"
+		},
+		{
+			"id": "observations/general-election-brx-votes-constituency-2010-observations",
+			"path": "general-election-brx-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:040c4391a48ab6082bef22cfdfa346b8e448996ec73ae797c03ca6d06a3497ae"
+		},
+		{
+			"id": "observations/general-election-brx-votes-constituency-2019-observations",
+			"path": "general-election-brx-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:f2d5d26b99d9bdc779244ff79d48bc2aadc69fb23ebbb192803e822ee333cfeb"
+		},
+		{
+			"id": "observations/general-election-brx-votes-constituency-2024-observations",
+			"path": "general-election-brx-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:6c60c09ef581bd2757198fda3fad4b1fa4794f7f6e4702692b1bd30e51d31055"
+		},
+		{
+			"id": "observations/general-election-con-vote-share-constituency-2010-observations",
+			"path": "general-election-con-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:aa2026a6a66e85f5ba4e26dba2bb46f46d1d6667e5a5973bff09d70084110c4d"
+		},
+		{
+			"id": "observations/general-election-con-vote-share-constituency-2019-observations",
+			"path": "general-election-con-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:2ef60d44c45b046afba946fcc836ab10f9b7d9157bf6993627647a7c84cb103a"
+		},
+		{
+			"id": "observations/general-election-con-vote-share-constituency-2024-observations",
+			"path": "general-election-con-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:d6d822bb114ba0eb53d6f90a580f3a106960051e0079406735d400eab5175cac"
+		},
+		{
+			"id": "observations/general-election-con-votes-constituency-2010-observations",
+			"path": "general-election-con-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:62c3b7c6a5d2c9dbf4175d99c9279121f298247b7ea25b16ae3994497b5037e4"
+		},
+		{
+			"id": "observations/general-election-con-votes-constituency-2019-observations",
+			"path": "general-election-con-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:44989a3a94d2be114fee5c9c0dc6a6a1621d9985a8245b4b2a31d10a9379feab"
+		},
+		{
+			"id": "observations/general-election-con-votes-constituency-2024-observations",
+			"path": "general-election-con-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:10471cd3a4ddac01bd09542cc74ac3643beee3c9f13c4009cbcbe952de572ec8"
+		},
+		{
+			"id": "observations/general-election-dup-vote-share-constituency-2010-observations",
+			"path": "general-election-dup-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:02fa2c8cf53b219e1efc26899d80a30cdf18f7014d96fd8a729cd6e2d39ad63d"
+		},
+		{
+			"id": "observations/general-election-dup-vote-share-constituency-2019-observations",
+			"path": "general-election-dup-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:82253f2964c595bca6f2622418e9e705d2ecf86ed81a3e9455806ea52ceeb0f7"
+		},
+		{
+			"id": "observations/general-election-dup-vote-share-constituency-2024-observations",
+			"path": "general-election-dup-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:e89167c4165158f977b7cff0fea95e18380477c867392d861035beb4f4179a48"
+		},
+		{
+			"id": "observations/general-election-dup-votes-constituency-2010-observations",
+			"path": "general-election-dup-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:e8a0ff68e0a4cda7435cefae577f5eb0952c6294d37741acffd2d5712c191c15"
+		},
+		{
+			"id": "observations/general-election-dup-votes-constituency-2019-observations",
+			"path": "general-election-dup-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:ca47305d776b8ca16a2a204ba6adda80d6244691930228942c554a0373179920"
+		},
+		{
+			"id": "observations/general-election-dup-votes-constituency-2024-observations",
+			"path": "general-election-dup-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:e0dfab11916881cd9440eb9562ed4129c45bab242bb38704bab5dc8c0ab8fc88"
+		},
+		{
+			"id": "observations/general-election-green-vote-share-constituency-2010-observations",
+			"path": "general-election-green-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:83085a66544edf6dbd2c98958b22652a16b6de25000445e488f7e07a96eda30b"
+		},
+		{
+			"id": "observations/general-election-green-vote-share-constituency-2019-observations",
+			"path": "general-election-green-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:282944d1736749de3c2d73667e749cc693e1c1c2e975af11558519fa7376ae12"
+		},
+		{
+			"id": "observations/general-election-green-vote-share-constituency-2024-observations",
+			"path": "general-election-green-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:5b305cfd122453e710bc43478964b933175cb37d2d78697cf60e85e1048febb4"
+		},
+		{
+			"id": "observations/general-election-green-votes-constituency-2010-observations",
+			"path": "general-election-green-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:4f67ec25dc70394ce7b659f5fbcd7a9067051e58327c8331c30f4958e6fef205"
+		},
+		{
+			"id": "observations/general-election-green-votes-constituency-2019-observations",
+			"path": "general-election-green-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:01edb1e0a69975c34fc6d864776203693a2e9660c1095b642c10b3e82f4a69de"
+		},
+		{
+			"id": "observations/general-election-green-votes-constituency-2024-observations",
+			"path": "general-election-green-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:a3a2554a665b0aedbd09d06b4b57468edee6c828962583fe981d47338c745985"
+		},
+		{
+			"id": "observations/general-election-lab-vote-share-constituency-2010-observations",
+			"path": "general-election-lab-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:0185a3b0af9a6a38b4ee661e18e2b71a96ba9e8619d78efc82e1024f59f60e02"
+		},
+		{
+			"id": "observations/general-election-lab-vote-share-constituency-2019-observations",
+			"path": "general-election-lab-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:0ba5e112f57f037793c53fd5c5b2292da291ddb372477f5762f3db6be97579d6"
+		},
+		{
+			"id": "observations/general-election-lab-vote-share-constituency-2024-observations",
+			"path": "general-election-lab-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:eb381bdd03908dbdd017b0409465cbb7489bfaad89aba844905fa5bff0219b66"
+		},
+		{
+			"id": "observations/general-election-lab-votes-constituency-2010-observations",
+			"path": "general-election-lab-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:ec70e8e473e70de1ecf4b7978485d3d96698a4a339fb0db21e5e7264c6ca180c"
+		},
+		{
+			"id": "observations/general-election-lab-votes-constituency-2019-observations",
+			"path": "general-election-lab-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:68ccf85d60e0fd1c47aa6893a8bb4efa7a9240f4c2a3f12e14a85bc8891b27ac"
+		},
+		{
+			"id": "observations/general-election-lab-votes-constituency-2024-observations",
+			"path": "general-election-lab-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:82c21b4c4525bd5557ad8f6c33b56aa714740922d413ab058d688d0d2f9920a7"
+		},
+		{
+			"id": "observations/general-election-ld-vote-share-constituency-2010-observations",
+			"path": "general-election-ld-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:d6c272cdedd87a47d93c6f0d7dff32b7aea4a74940ce3b919f5e09fd072afa08"
+		},
+		{
+			"id": "observations/general-election-ld-vote-share-constituency-2019-observations",
+			"path": "general-election-ld-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:10994e1d6d3ee7e55c13a11eef1c5ed55df08b7d18ce04843b6496f27963523c"
+		},
+		{
+			"id": "observations/general-election-ld-vote-share-constituency-2024-observations",
+			"path": "general-election-ld-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:2ba26e005439e4904eea8a67b4a88f30ff7b3bb2c5b18fa273ea4c08d89e9fb1"
+		},
+		{
+			"id": "observations/general-election-ld-votes-constituency-2010-observations",
+			"path": "general-election-ld-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:e9cfe6cbf4c29a49062b7c1798c2f56a399bbaba6130e2792aefdf38b11ac7d7"
+		},
+		{
+			"id": "observations/general-election-ld-votes-constituency-2019-observations",
+			"path": "general-election-ld-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:e75d5979b6d45fa5e5d64a6e7b22af0ea852c82b340f915a5ac3293d7df93948"
+		},
+		{
+			"id": "observations/general-election-ld-votes-constituency-2024-observations",
+			"path": "general-election-ld-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:01d1df3e7e4cddd01d0c6965d2b67691126fb7bedb7afecba58f20e035675503"
+		},
+		{
+			"id": "observations/general-election-other-vote-share-constituency-2010-observations",
+			"path": "general-election-other-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:a6fc925d06e9622d07f18d44cf2ab51da370e42ad52970e551955430360053b5"
+		},
+		{
+			"id": "observations/general-election-other-vote-share-constituency-2019-observations",
+			"path": "general-election-other-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:3b7157c5fec16c8ee1c1a7f66010136af126cb3814da802ecf4c47534ef81f50"
+		},
+		{
+			"id": "observations/general-election-other-vote-share-constituency-2024-observations",
+			"path": "general-election-other-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:cf140b3c04c182d1a3d5ab6da15d99e55daef319cd71c8a49243382aef21f3fd"
+		},
+		{
+			"id": "observations/general-election-other-votes-constituency-2010-observations",
+			"path": "general-election-other-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:5415459b230f2869c86715a83a850ebecb535fb646e1c830e7ad529073a635c5"
+		},
+		{
+			"id": "observations/general-election-other-votes-constituency-2019-observations",
+			"path": "general-election-other-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:d91a7f5bc841f68f1cb61d7eab3f82560f4a6f656c923fbd655132868d2a7c89"
+		},
+		{
+			"id": "observations/general-election-other-votes-constituency-2024-observations",
+			"path": "general-election-other-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:4e670bd7ab3f775ec72b5ef10c7c7c7daeefce3cdcfc2b84c566d88586b9fa47"
+		},
+		{
+			"id": "observations/general-election-pc-vote-share-constituency-2010-observations",
+			"path": "general-election-pc-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:f68130efaf944abbc6dcd1523dd3895b8481fdd55830692235da4630de89ce31"
+		},
+		{
+			"id": "observations/general-election-pc-vote-share-constituency-2019-observations",
+			"path": "general-election-pc-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:2d6b85f94ef669d68a363f9cd35d95fe1dcc49ccd2e75cdb29b85f07d8b9488d"
+		},
+		{
+			"id": "observations/general-election-pc-vote-share-constituency-2024-observations",
+			"path": "general-election-pc-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:b6a2122ec37661c61a83acaf5cb1f056ae96c6debfb054766b9c2c9c46892730"
+		},
+		{
+			"id": "observations/general-election-pc-votes-constituency-2010-observations",
+			"path": "general-election-pc-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:49d89772086340ab24dc8917fb0cb36c467c0f1b5fc818855ae5575d6a921300"
+		},
+		{
+			"id": "observations/general-election-pc-votes-constituency-2019-observations",
+			"path": "general-election-pc-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:9854d9ef27060e0997bfeda458e888652f51ba3d4a653e422941b65e9a7da7c6"
+		},
+		{
+			"id": "observations/general-election-pc-votes-constituency-2024-observations",
+			"path": "general-election-pc-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:9b2dbcd0f50a37d127eef416bae2d7113718fb38b883c6ad7398a4bfc9682e3a"
+		},
+		{
+			"id": "observations/general-election-ruk-vote-share-constituency-2010-observations",
+			"path": "general-election-ruk-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:c9ff4f7acf367d0efe946c36fd5a676ba58b07c3cd6201cee1486f4fe41b14f3"
+		},
+		{
+			"id": "observations/general-election-ruk-vote-share-constituency-2019-observations",
+			"path": "general-election-ruk-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:c615a651672dcff3b06aed1d3ee8d66a0646a17474ad25754eae67d046873b3c"
+		},
+		{
+			"id": "observations/general-election-ruk-vote-share-constituency-2024-observations",
+			"path": "general-election-ruk-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:77b9343b3f2cbceaf346b38807163ece0b4c1d66e8856b0846594898f2257c4e"
+		},
+		{
+			"id": "observations/general-election-ruk-votes-constituency-2010-observations",
+			"path": "general-election-ruk-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:47e7c98b6e04cab6820a015e391db4bf9a08f3e1b3f2b27c9e69be42ecb8015c"
+		},
+		{
+			"id": "observations/general-election-ruk-votes-constituency-2019-observations",
+			"path": "general-election-ruk-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:03784486427e54542dbd153d2266722550b303312b944781fbc445e7c2d05bad"
+		},
+		{
+			"id": "observations/general-election-ruk-votes-constituency-2024-observations",
+			"path": "general-election-ruk-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:5c2a6c06b1586482961cee25a94e2d3e8e34da76bfdc721071e36495d55c5aac"
+		},
+		{
+			"id": "observations/general-election-sdlp-vote-share-constituency-2010-observations",
+			"path": "general-election-sdlp-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:1c7930526862110c1defddccc899894470988378fdb89770b5ed1a0307ef6451"
+		},
+		{
+			"id": "observations/general-election-sdlp-vote-share-constituency-2019-observations",
+			"path": "general-election-sdlp-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:4352736c210097a8b4420adea4adb9add4ecdaceb1e059725cd7aaa6e8df5d1b"
+		},
+		{
+			"id": "observations/general-election-sdlp-vote-share-constituency-2024-observations",
+			"path": "general-election-sdlp-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:da6627a982ff1bda011f2e09b4bf6f285c4769fc1f1a466d5749ccf824a80a99"
+		},
+		{
+			"id": "observations/general-election-sdlp-votes-constituency-2010-observations",
+			"path": "general-election-sdlp-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:9995c9ce8e6fb5cdbd54e755d93df2d7f01f3e8a963f034ef58bc673bc27c22c"
+		},
+		{
+			"id": "observations/general-election-sdlp-votes-constituency-2019-observations",
+			"path": "general-election-sdlp-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:d357b92b4164f47695d0823e5ea9b572f9e826e5d1f6f88a4c85e9d87f32226e"
+		},
+		{
+			"id": "observations/general-election-sdlp-votes-constituency-2024-observations",
+			"path": "general-election-sdlp-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:f83fc63bdd90d4bc9bdf8d082392a99d1d7827c6be667d30354e9a5e3ad33d2b"
+		},
+		{
+			"id": "observations/general-election-sf-vote-share-constituency-2010-observations",
+			"path": "general-election-sf-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:745302ec1c066dd3d681d5db85b208a7b2b35cca1024a173001a7632896c5636"
+		},
+		{
+			"id": "observations/general-election-sf-vote-share-constituency-2019-observations",
+			"path": "general-election-sf-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:de19b97307ac5abc608bf2ae0c2082c7926743942239b59f12d6cd4bb435dc61"
+		},
+		{
+			"id": "observations/general-election-sf-vote-share-constituency-2024-observations",
+			"path": "general-election-sf-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:52992debf68c5f212ba62a3085aba0d50646ef71a4e03dbc4ff26246f4267829"
+		},
+		{
+			"id": "observations/general-election-sf-votes-constituency-2010-observations",
+			"path": "general-election-sf-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:ac6df94024bd532386b857a69b5b884f9c87aae51acb1ed486838823645aa3db"
+		},
+		{
+			"id": "observations/general-election-sf-votes-constituency-2019-observations",
+			"path": "general-election-sf-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:7f61241f89a0e419c88c7ea913ca76911a27449aaec026c469de1aae743f39e7"
+		},
+		{
+			"id": "observations/general-election-sf-votes-constituency-2024-observations",
+			"path": "general-election-sf-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:c561ee701c8805bdafbce576121514b53abde1a0f30dd687c2b52a81e9c1c657"
+		},
+		{
+			"id": "observations/general-election-snp-vote-share-constituency-2010-observations",
+			"path": "general-election-snp-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:74129b8ac92d4dff6670c7c9a6cbe554341fdaeb778cd1bdcb5a6c20ae560cd8"
+		},
+		{
+			"id": "observations/general-election-snp-vote-share-constituency-2019-observations",
+			"path": "general-election-snp-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:13957335db1be8e5ce84b5755e4d959944d8f0669251af8456e3f35b6f43aa8c"
+		},
+		{
+			"id": "observations/general-election-snp-vote-share-constituency-2024-observations",
+			"path": "general-election-snp-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:8a4dcc86f926c76e6619420755e7d7116a65e1ad71895f250d0047fbaa9f6bdf"
+		},
+		{
+			"id": "observations/general-election-snp-votes-constituency-2010-observations",
+			"path": "general-election-snp-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:6c3bfc78d58f0292054200232519e4415350dce3c8f5108ea76aa0abf93c7457"
+		},
+		{
+			"id": "observations/general-election-snp-votes-constituency-2019-observations",
+			"path": "general-election-snp-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:89c0438a8e573d585a1952a834c75eae7abbd56e67df90a7511d1e6b3fb7f883"
+		},
+		{
+			"id": "observations/general-election-snp-votes-constituency-2024-observations",
+			"path": "general-election-snp-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:9d28598c9dd5d3d3a203cbd284ed38c8b0411c631de24fb7bc7339e40538267e"
+		},
+		{
+			"id": "observations/general-election-turnout-constituency-2010-observations",
+			"path": "general-election-turnout-constituency-2010-observations.json",
+			"contentHash": "sha256:fc2a9dc6e2afac8fabc9ae382c04e502ba2ecbe5e1ca2ddf956a1ef2083a2baa"
+		},
+		{
+			"id": "observations/general-election-turnout-constituency-2019-observations",
+			"path": "general-election-turnout-constituency-2019-observations.json",
+			"contentHash": "sha256:fd64da6d9c7626de034e8a394dab1109aea3a7a7babc08ba384f64b2d11766bc"
+		},
+		{
+			"id": "observations/general-election-turnout-constituency-2024-observations",
+			"path": "general-election-turnout-constituency-2024-observations.json",
+			"contentHash": "sha256:fdfb70c5a35e7776530b4439d8480e0c2f0bae3ba75daf45b3641cc1a26028da"
+		},
+		{
+			"id": "observations/general-election-ukip-vote-share-constituency-2010-observations",
+			"path": "general-election-ukip-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:2c26326390921e85a63258251511c90a82b99addd7b20ce024d3e8b0e7d1aecb"
+		},
+		{
+			"id": "observations/general-election-ukip-vote-share-constituency-2019-observations",
+			"path": "general-election-ukip-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:f457fc5d6fedea5b266ffc8df774c03288ed4d825547d0af88e409370a53a950"
+		},
+		{
+			"id": "observations/general-election-ukip-vote-share-constituency-2024-observations",
+			"path": "general-election-ukip-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:0945e85926a1179008fe872740d508722deaf8411c03b7a93c16f3c27f71d3b4"
+		},
+		{
+			"id": "observations/general-election-ukip-votes-constituency-2010-observations",
+			"path": "general-election-ukip-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:cb4c653b5650acd0ca9b85a8d4b12b1029234dcc1d2f3fc3b6d81e9b1e106059"
+		},
+		{
+			"id": "observations/general-election-ukip-votes-constituency-2019-observations",
+			"path": "general-election-ukip-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:ab9a45557d2efcc3a4742644315abaf4c6a5597b33ffc25de8a7e71287669d21"
+		},
+		{
+			"id": "observations/general-election-ukip-votes-constituency-2024-observations",
+			"path": "general-election-ukip-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:3e31bf1d8eb07196b98dc52de0fce0929aa1c84ea77156b31718adc9fdb86314"
+		},
+		{
+			"id": "observations/general-election-uup-vote-share-constituency-2010-observations",
+			"path": "general-election-uup-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:01e0814bfc59a126362bcb6336c705a8b655911b3061afc67bf7530a59550eb2"
+		},
+		{
+			"id": "observations/general-election-uup-vote-share-constituency-2019-observations",
+			"path": "general-election-uup-vote-share-constituency-2019-observations.json",
+			"contentHash": "sha256:05aba723ca8cb677959a5ca934ccea7e98494dfc16d644d819a6921e1dce5416"
+		},
+		{
+			"id": "observations/general-election-uup-vote-share-constituency-2024-observations",
+			"path": "general-election-uup-vote-share-constituency-2024-observations.json",
+			"contentHash": "sha256:837e043917b3af79114b07a406485dfecdf74b0b5728b46930d59ed2862ab571"
+		},
+		{
+			"id": "observations/general-election-uup-votes-constituency-2010-observations",
+			"path": "general-election-uup-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:7df0cf56b9ab9067206beba435896cfa1b21f5d08a084e2e71c30b80b66e2bc6"
+		},
+		{
+			"id": "observations/general-election-uup-votes-constituency-2019-observations",
+			"path": "general-election-uup-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:35fc56fc4f813bc968826be60322528a11508d2074b7e51572a2045f49f44d9d"
+		},
+		{
+			"id": "observations/general-election-uup-votes-constituency-2024-observations",
+			"path": "general-election-uup-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:cf24c37e6cb68025ea24581430ca0628a4ff60ca2d03b875f7c37b6159f67d73"
+		},
+		{
+			"id": "observations/general-election-valid-votes-constituency-2010-observations",
+			"path": "general-election-valid-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:5d03f17663bcaabd351d3d03b93a34f85eff214dbe21dfd3d80acaa7d3a28843"
+		},
+		{
+			"id": "observations/general-election-valid-votes-constituency-2019-observations",
+			"path": "general-election-valid-votes-constituency-2019-observations.json",
+			"contentHash": "sha256:bda75db46015b345d6c59104af7dc0e217ed95fb5eeb1bd2357fce6db4eceae5"
+		},
+		{
+			"id": "observations/general-election-valid-votes-constituency-2024-observations",
+			"path": "general-election-valid-votes-constituency-2024-observations.json",
+			"contentHash": "sha256:af5595078f9cc58336387d43860adcc06338afc31ab8fea1fa12119df6b867c6"
+		},
+		{
+			"id": "observations/general-election-winning-party-constituency-2010-observations",
+			"path": "general-election-winning-party-constituency-2010-observations.json",
+			"contentHash": "sha256:a6477a6bdf5e7c9b7bcd08c5d41ee068b6101907d8148ebf9e3b368c39ddff75"
+		},
+		{
+			"id": "observations/general-election-winning-party-constituency-2019-observations",
+			"path": "general-election-winning-party-constituency-2019-observations.json",
+			"contentHash": "sha256:983034b47bac20c052400f237b12689965527d3f059e7b720eaa0b7f0d9b3ba4"
+		},
+		{
+			"id": "observations/general-election-winning-party-constituency-2024-observations",
+			"path": "general-election-winning-party-constituency-2024-observations.json",
+			"contentHash": "sha256:dbf460f98aeb840e07c5f93848876b69982ab02147e806a6f9823da1141e3d0e"
+		},
+		{
+			"id": "observations/ghg-emissions-observations",
+			"path": "ghg-emissions-observations.json",
+			"contentHash": "sha256:cc6b1799ff22078c54cd500af0756bcb8c0de9fe0e8c0f866da23456ade8327f"
+		},
+		{
+			"id": "observations/house-price-median-observations",
+			"path": "house-price-median-observations.json",
+			"contentHash": "sha256:05804b0707038b3ea855508764bb2baa25f171c5f7067656defa12fd9bf47361"
+		},
+		{
+			"id": "observations/imd-decile-observations",
+			"path": "imd-decile-observations.json",
+			"contentHash": "sha256:059fd5f14f5c20e3939ffcc18a1c580eefd4bbd7f11db973c5f7f8c2bf614136"
+		},
+		{
+			"id": "observations/imd-rank-observations",
+			"path": "imd-rank-observations.json",
+			"contentHash": "sha256:399079a6a973b13e2627582c870fb6cfb706f6b82eafdc5800120a3c3beb4256"
+		},
+		{
+			"id": "observations/life-expectancy-female-observations",
+			"path": "life-expectancy-female-observations.json",
+			"contentHash": "sha256:b3d74ae30d27c390c2631b798a380122d85d14247f27b9e08d3322ebf479d90a"
+		},
+		{
+			"id": "observations/life-expectancy-male-observations",
+			"path": "life-expectancy-male-observations.json",
+			"contentHash": "sha256:1f2f70c0d61e150ca4bbd135dbc9d8b8ab56d86d4b3da759ed4ee3e592f30369"
+		},
+		{
+			"id": "observations/local-election-candidate-votes-ward-2016-observations",
+			"path": "local-election-candidate-votes-ward-2016-observations.json",
+			"contentHash": "sha256:fda87c7211fee40ec019d210407fb385b047741da1405f0a4fbcb37e250de7c7"
+		},
+		{
+			"id": "observations/local-election-candidate-votes-ward-2017-observations",
+			"path": "local-election-candidate-votes-ward-2017-observations.json",
+			"contentHash": "sha256:0d8ab38e99d412ff91b11f567e971ed5122c377b425a3da81793e3f139299034"
+		},
+		{
+			"id": "observations/local-election-candidate-votes-ward-2018-observations",
+			"path": "local-election-candidate-votes-ward-2018-observations.json",
+			"contentHash": "sha256:d42b70fed9567b651023408469a42e9debb4d4d6d58b222d8ebd7c2bb66f3947"
+		},
+		{
+			"id": "observations/local-election-candidate-votes-ward-2019-observations",
+			"path": "local-election-candidate-votes-ward-2019-observations.json",
+			"contentHash": "sha256:1c25535993e732d0be8f8b34e4902335c3de0228f7382a80459377c863a5ca54"
+		},
+		{
+			"id": "observations/local-election-candidate-votes-ward-2021-observations",
+			"path": "local-election-candidate-votes-ward-2021-observations.json",
+			"contentHash": "sha256:846a5cbbe1e4462b3bc579d3125954d8c3d5457932f9164d9f1f22b69754d301"
+		},
+		{
+			"id": "observations/local-election-candidate-votes-ward-2022-observations",
+			"path": "local-election-candidate-votes-ward-2022-observations.json",
+			"contentHash": "sha256:d318d1f445d93f17e8808168161e5ba8ffdf21c93778cb5db12e9ffa7da8f05e"
+		},
+		{
+			"id": "observations/local-election-candidate-votes-ward-2023-observations",
+			"path": "local-election-candidate-votes-ward-2023-observations.json",
+			"contentHash": "sha256:d2433211ee0bd7ac9c6d55120363dee1a8c6e4dcb8c8b80c68ad69f8a5adeea6"
+		},
+		{
+			"id": "observations/local-election-candidate-votes-ward-2024-observations",
+			"path": "local-election-candidate-votes-ward-2024-observations.json",
+			"contentHash": "sha256:3c5153993b2626b08b20fd247cdd694162d6cb395a197a66fa003a2d206599a8"
+		},
+		{
+			"id": "observations/local-election-candidate-votes-ward-2025-observations",
+			"path": "local-election-candidate-votes-ward-2025-observations.json",
+			"contentHash": "sha256:d0c62892f24d8a5921c9e088f608440e1ea8adbbf01aed6c5d3048daa87a36d0"
+		},
+		{
+			"id": "observations/local-election-con-votes-ward-2016-observations",
+			"path": "local-election-con-votes-ward-2016-observations.json",
+			"contentHash": "sha256:03f84880cbf3936da613a29f216b7234b3fd937fa09027867fe95a2761e5118b"
+		},
+		{
+			"id": "observations/local-election-con-votes-ward-2017-observations",
+			"path": "local-election-con-votes-ward-2017-observations.json",
+			"contentHash": "sha256:b22bb30700d91e1a167d4438bde425f4a2b962fac6dc8379f0482b939ab847bd"
+		},
+		{
+			"id": "observations/local-election-con-votes-ward-2018-observations",
+			"path": "local-election-con-votes-ward-2018-observations.json",
+			"contentHash": "sha256:495b5ab0c181b0f3320322c29cd960f3aaeafe57af7bdd6d0daf6f99c80c23d8"
+		},
+		{
+			"id": "observations/local-election-con-votes-ward-2019-observations",
+			"path": "local-election-con-votes-ward-2019-observations.json",
+			"contentHash": "sha256:4db2de2b2b6b84372138f527e51fe4e66d3903e23324db70a2e4d2d4d9285ead"
+		},
+		{
+			"id": "observations/local-election-con-votes-ward-2021-observations",
+			"path": "local-election-con-votes-ward-2021-observations.json",
+			"contentHash": "sha256:4cd7ede389252ac5fe86e194a9e9c36bb6bcc5c9c4e765d43b830673efef49bb"
+		},
+		{
+			"id": "observations/local-election-con-votes-ward-2022-observations",
+			"path": "local-election-con-votes-ward-2022-observations.json",
+			"contentHash": "sha256:2f834c1235912f8e1b4850cfce7e62411071dfbd482729806bba0fc6395e033f"
+		},
+		{
+			"id": "observations/local-election-con-votes-ward-2023-observations",
+			"path": "local-election-con-votes-ward-2023-observations.json",
+			"contentHash": "sha256:677c370f30252152ab726a6fe8229b6c6b6e1b5f6eb4dfd9a7cbed1fcf8bd30b"
+		},
+		{
+			"id": "observations/local-election-con-votes-ward-2024-observations",
+			"path": "local-election-con-votes-ward-2024-observations.json",
+			"contentHash": "sha256:0eadc19e8f041905c6139db9767035d44b3290bfb9e99280fbfa1240d185ed12"
+		},
+		{
+			"id": "observations/local-election-con-votes-ward-2025-observations",
+			"path": "local-election-con-votes-ward-2025-observations.json",
+			"contentHash": "sha256:e9131f7a3d1fc8f88d41fd5a4a7c685ba7440414d67ecffb8b46a9759df75493"
+		},
+		{
+			"id": "observations/local-election-green-votes-ward-2016-observations",
+			"path": "local-election-green-votes-ward-2016-observations.json",
+			"contentHash": "sha256:a360176b96dafc9973cb58ab0004f96dbf8241c51b73f8e9ee3a2dc856346622"
+		},
+		{
+			"id": "observations/local-election-green-votes-ward-2017-observations",
+			"path": "local-election-green-votes-ward-2017-observations.json",
+			"contentHash": "sha256:02e9b4eb4e3212a6a39978c363b17f1361a18b2bdfbc1e3229e53fba48545614"
+		},
+		{
+			"id": "observations/local-election-green-votes-ward-2018-observations",
+			"path": "local-election-green-votes-ward-2018-observations.json",
+			"contentHash": "sha256:321a7edd74d7e57fec67a11eb68f65addc7eed67f4c9ccf533ba3e48917992e4"
+		},
+		{
+			"id": "observations/local-election-green-votes-ward-2019-observations",
+			"path": "local-election-green-votes-ward-2019-observations.json",
+			"contentHash": "sha256:d7d88888271f3325ca6e8d805c965bfc0852cbe4df169b8217c63259dd446d78"
+		},
+		{
+			"id": "observations/local-election-green-votes-ward-2021-observations",
+			"path": "local-election-green-votes-ward-2021-observations.json",
+			"contentHash": "sha256:4f0c4ded274702cf0f7cb1a659987cb083b590da82f6b7aa708ae9a9a0be7c7e"
+		},
+		{
+			"id": "observations/local-election-green-votes-ward-2022-observations",
+			"path": "local-election-green-votes-ward-2022-observations.json",
+			"contentHash": "sha256:d0f1736eaa7ba9831b99070f2600c19e3af2962b1ac53ce6e99f33f5adc83480"
+		},
+		{
+			"id": "observations/local-election-green-votes-ward-2023-observations",
+			"path": "local-election-green-votes-ward-2023-observations.json",
+			"contentHash": "sha256:b8aed4e5c5e034abfff59656262e6412b51bf05a924f9c56b88f59db87de15c8"
+		},
+		{
+			"id": "observations/local-election-green-votes-ward-2024-observations",
+			"path": "local-election-green-votes-ward-2024-observations.json",
+			"contentHash": "sha256:40cf908c403f3235ea24a786e053254ce1c8b549e61d4f2568277a9a6d2763d7"
+		},
+		{
+			"id": "observations/local-election-green-votes-ward-2025-observations",
+			"path": "local-election-green-votes-ward-2025-observations.json",
+			"contentHash": "sha256:7d048e3cefdff1d45af005e9fb9ef55dd9d49376fa90217f7d304207ed1a62cd"
+		},
+		{
+			"id": "observations/local-election-ind-votes-ward-2016-observations",
+			"path": "local-election-ind-votes-ward-2016-observations.json",
+			"contentHash": "sha256:b6e709dbadea01eecf5c942559aab5f6481863fc0c3829c7ed9b080bf7e0cbb7"
+		},
+		{
+			"id": "observations/local-election-ind-votes-ward-2017-observations",
+			"path": "local-election-ind-votes-ward-2017-observations.json",
+			"contentHash": "sha256:9c726ce3a0dd2b4fad9bab9a8bac5664fe7b8ba340136137344e7a22e2b9cc3f"
+		},
+		{
+			"id": "observations/local-election-ind-votes-ward-2018-observations",
+			"path": "local-election-ind-votes-ward-2018-observations.json",
+			"contentHash": "sha256:fdf126303b27e766aea349ed44ec019434b0d001d39e83ee8a59db546f683d3a"
+		},
+		{
+			"id": "observations/local-election-ind-votes-ward-2019-observations",
+			"path": "local-election-ind-votes-ward-2019-observations.json",
+			"contentHash": "sha256:a98ac89ab84c8a62230a4b256fbbe27e9533ca1dc945bfdb4e7ae3b025594a25"
+		},
+		{
+			"id": "observations/local-election-ind-votes-ward-2021-observations",
+			"path": "local-election-ind-votes-ward-2021-observations.json",
+			"contentHash": "sha256:9ee5fa83d0c35e5a5a150f216f8bed1f329a3ce56cc023623bc9d19ae443b002"
+		},
+		{
+			"id": "observations/local-election-ind-votes-ward-2022-observations",
+			"path": "local-election-ind-votes-ward-2022-observations.json",
+			"contentHash": "sha256:fd80d5032e99967e32422653bc2940fca5e1574ed2956cd5d6905e1f6e36c47a"
+		},
+		{
+			"id": "observations/local-election-ind-votes-ward-2023-observations",
+			"path": "local-election-ind-votes-ward-2023-observations.json",
+			"contentHash": "sha256:e50f75e44a0a007f78d74a2d718a0aeff5d22960b551af0368c974fcb5e557ed"
+		},
+		{
+			"id": "observations/local-election-ind-votes-ward-2024-observations",
+			"path": "local-election-ind-votes-ward-2024-observations.json",
+			"contentHash": "sha256:b00d536aba2d37becdd0d0a4adbcf6542baa64cf09e84974a28d669aabea8cd9"
+		},
+		{
+			"id": "observations/local-election-ind-votes-ward-2025-observations",
+			"path": "local-election-ind-votes-ward-2025-observations.json",
+			"contentHash": "sha256:e8b8748e2eb13e24e6fc0f2a1d53805f2c25d219e3ba645d730348f418d4602d"
+		},
+		{
+			"id": "observations/local-election-lab-votes-ward-2016-observations",
+			"path": "local-election-lab-votes-ward-2016-observations.json",
+			"contentHash": "sha256:146e52d9080f11e4d4fc28f366638b0325190189173813d9ff7705b51c290d93"
+		},
+		{
+			"id": "observations/local-election-lab-votes-ward-2017-observations",
+			"path": "local-election-lab-votes-ward-2017-observations.json",
+			"contentHash": "sha256:e7fcd032129b876a79b8cef1c6a16d00edd8a5d443a460947f6ff6c5daee9d0b"
+		},
+		{
+			"id": "observations/local-election-lab-votes-ward-2018-observations",
+			"path": "local-election-lab-votes-ward-2018-observations.json",
+			"contentHash": "sha256:85cfaf7c82fcd33aeb9930c9f14e951f097bf004530aa6aa961f6d08c7e64416"
+		},
+		{
+			"id": "observations/local-election-lab-votes-ward-2019-observations",
+			"path": "local-election-lab-votes-ward-2019-observations.json",
+			"contentHash": "sha256:995079c734772873cd1a0c3bb2383075e20d6c0351da8ebbd42ec94b223fe3f0"
+		},
+		{
+			"id": "observations/local-election-lab-votes-ward-2021-observations",
+			"path": "local-election-lab-votes-ward-2021-observations.json",
+			"contentHash": "sha256:dbe5595a7e72102170313fb44a772483fbb752fd690edc3784050252e9726a82"
+		},
+		{
+			"id": "observations/local-election-lab-votes-ward-2022-observations",
+			"path": "local-election-lab-votes-ward-2022-observations.json",
+			"contentHash": "sha256:dcd03fbc75dc95bd120503cc3ae6f01f584b1029ea7bef1b9c87f7da142fd36e"
+		},
+		{
+			"id": "observations/local-election-lab-votes-ward-2023-observations",
+			"path": "local-election-lab-votes-ward-2023-observations.json",
+			"contentHash": "sha256:95a64558adafbb1ab3927f18fead18b5a7a11d9cb5364861b1e2de75a80e7d11"
+		},
+		{
+			"id": "observations/local-election-lab-votes-ward-2024-observations",
+			"path": "local-election-lab-votes-ward-2024-observations.json",
+			"contentHash": "sha256:cf5cd3c2342ce2a622a77c065fca8c6537fe75bf9acdec1d8f6d1bb92c327b07"
+		},
+		{
+			"id": "observations/local-election-lab-votes-ward-2025-observations",
+			"path": "local-election-lab-votes-ward-2025-observations.json",
+			"contentHash": "sha256:c0f628d7608b46827ae95a9fd447e06f47668fd4b4347d19207db785d6642c8c"
+		},
+		{
+			"id": "observations/local-election-ld-votes-ward-2016-observations",
+			"path": "local-election-ld-votes-ward-2016-observations.json",
+			"contentHash": "sha256:a039848b581ffb31939e13c01f4bf8b23ad274fd8c8df1dccb388aefa504c465"
+		},
+		{
+			"id": "observations/local-election-ld-votes-ward-2017-observations",
+			"path": "local-election-ld-votes-ward-2017-observations.json",
+			"contentHash": "sha256:a3df639a648b9d679eebd47b24a64dcab2019dfe0d53286443ec335f779a1d01"
+		},
+		{
+			"id": "observations/local-election-ld-votes-ward-2018-observations",
+			"path": "local-election-ld-votes-ward-2018-observations.json",
+			"contentHash": "sha256:4c8cf30ebbf61597d41e097e5bf3d00e0488f12c43a26bcf63e283260456e835"
+		},
+		{
+			"id": "observations/local-election-ld-votes-ward-2019-observations",
+			"path": "local-election-ld-votes-ward-2019-observations.json",
+			"contentHash": "sha256:fece51fec5527553678b8918da81cadea2d7d14f8a544d57f50671ecd62f655c"
+		},
+		{
+			"id": "observations/local-election-ld-votes-ward-2021-observations",
+			"path": "local-election-ld-votes-ward-2021-observations.json",
+			"contentHash": "sha256:ea9769d703b0d5133216e4de98eb09949a2e7dcade80ca311e93fdfc9198fcdd"
+		},
+		{
+			"id": "observations/local-election-ld-votes-ward-2022-observations",
+			"path": "local-election-ld-votes-ward-2022-observations.json",
+			"contentHash": "sha256:bf26fae73e84afc6d01070d24e861743d2bcf8a83e99ebbfcab34623af1e2c04"
+		},
+		{
+			"id": "observations/local-election-ld-votes-ward-2023-observations",
+			"path": "local-election-ld-votes-ward-2023-observations.json",
+			"contentHash": "sha256:6dd873148d677168875d3b644c53a2ff01c444051894a23b953361e5d7963a56"
+		},
+		{
+			"id": "observations/local-election-ld-votes-ward-2024-observations",
+			"path": "local-election-ld-votes-ward-2024-observations.json",
+			"contentHash": "sha256:cf1f097584280492b6fa765d8204cc58d085446c5c6b97e9e13ef2e5a48fd4c3"
+		},
+		{
+			"id": "observations/local-election-ld-votes-ward-2025-observations",
+			"path": "local-election-ld-votes-ward-2025-observations.json",
+			"contentHash": "sha256:3003489e617d4c0a32a7ef58e7c73ddbb4b21bbcb46c55be36ca586b95e40338"
+		},
+		{
+			"id": "observations/local-election-other-votes-ward-2016-observations",
+			"path": "local-election-other-votes-ward-2016-observations.json",
+			"contentHash": "sha256:7b6b3be3ef369d401c9f95cfc4bc57b60df639031d82631916ff4fdb088a5eef"
+		},
+		{
+			"id": "observations/local-election-other-votes-ward-2017-observations",
+			"path": "local-election-other-votes-ward-2017-observations.json",
+			"contentHash": "sha256:973f88988ee127feee425c731de445567cb0f49f9662c8589c617c4d4f84d947"
+		},
+		{
+			"id": "observations/local-election-other-votes-ward-2018-observations",
+			"path": "local-election-other-votes-ward-2018-observations.json",
+			"contentHash": "sha256:92e00dbff58caa04ecb394fc891e0a648fd3f1a0e25b30e6f872bed7bdab3ede"
+		},
+		{
+			"id": "observations/local-election-other-votes-ward-2019-observations",
+			"path": "local-election-other-votes-ward-2019-observations.json",
+			"contentHash": "sha256:68a52e9c4835e3ebfcb0d98c4d32f0867eec895e9b3d194263b99c8d06d525ad"
+		},
+		{
+			"id": "observations/local-election-other-votes-ward-2021-observations",
+			"path": "local-election-other-votes-ward-2021-observations.json",
+			"contentHash": "sha256:ce64cfc5b97a0928373b37c6cf53ab53a86a9d0af6ddda74e5ba051cb67631b9"
+		},
+		{
+			"id": "observations/local-election-other-votes-ward-2022-observations",
+			"path": "local-election-other-votes-ward-2022-observations.json",
+			"contentHash": "sha256:cadd2f5aff99be3b9eec38ff3695fe5a5821cd971b7904f59bcf0d5f21771fd7"
+		},
+		{
+			"id": "observations/local-election-other-votes-ward-2023-observations",
+			"path": "local-election-other-votes-ward-2023-observations.json",
+			"contentHash": "sha256:abcfaf7353d58edf31f274d59d87b8efdba110d0211e765864be356fa32fbf15"
+		},
+		{
+			"id": "observations/local-election-other-votes-ward-2024-observations",
+			"path": "local-election-other-votes-ward-2024-observations.json",
+			"contentHash": "sha256:236bd739df843df2126a4c8c12e32f5352de70ca939d4a25cb562332e72a460e"
+		},
+		{
+			"id": "observations/local-election-other-votes-ward-2025-observations",
+			"path": "local-election-other-votes-ward-2025-observations.json",
+			"contentHash": "sha256:1e5c7dc3b1cb191e8103d6ce1b0c69df02329ce5a16c0455d230b3a838b1dc9f"
+		},
+		{
+			"id": "observations/local-election-pc-votes-ward-2016-observations",
+			"path": "local-election-pc-votes-ward-2016-observations.json",
+			"contentHash": "sha256:9839461ec2c3072045fd2a5dc817b09332305a1123ec906156c51bc0d1c6f1d3"
+		},
+		{
+			"id": "observations/local-election-pc-votes-ward-2017-observations",
+			"path": "local-election-pc-votes-ward-2017-observations.json",
+			"contentHash": "sha256:fb23ba3acf1ede8582809b5d149fb0472f78a9dcec035b1f2b60d7905928e966"
+		},
+		{
+			"id": "observations/local-election-pc-votes-ward-2018-observations",
+			"path": "local-election-pc-votes-ward-2018-observations.json",
+			"contentHash": "sha256:4e0997871ff7d008dea936639bed0b76878c6865161e0a540ce06942074b6dbb"
+		},
+		{
+			"id": "observations/local-election-pc-votes-ward-2019-observations",
+			"path": "local-election-pc-votes-ward-2019-observations.json",
+			"contentHash": "sha256:6aba581ffb36d6058dd891c310f494ca5cf376b3392300e7c43c3b1f19a90e86"
+		},
+		{
+			"id": "observations/local-election-pc-votes-ward-2021-observations",
+			"path": "local-election-pc-votes-ward-2021-observations.json",
+			"contentHash": "sha256:3ecd760ab8396795276c9d6c8a4f9b561a7b93e8447b5cbf56e585c49ec361f5"
+		},
+		{
+			"id": "observations/local-election-pc-votes-ward-2022-observations",
+			"path": "local-election-pc-votes-ward-2022-observations.json",
+			"contentHash": "sha256:301d5c6b6277659abe340ca73be45c6a752b42f05ab2ffc5738d43516e864697"
+		},
+		{
+			"id": "observations/local-election-pc-votes-ward-2023-observations",
+			"path": "local-election-pc-votes-ward-2023-observations.json",
+			"contentHash": "sha256:b859f48b4d4c7add48f36c2b17712ce28c776d1ec1379d786c3458c704b9f7cc"
+		},
+		{
+			"id": "observations/local-election-pc-votes-ward-2024-observations",
+			"path": "local-election-pc-votes-ward-2024-observations.json",
+			"contentHash": "sha256:3466bea7b74a10ecb20e836150b6de2c073769883ac1775ad3a63e1a872d9a14"
+		},
+		{
+			"id": "observations/local-election-pc-votes-ward-2025-observations",
+			"path": "local-election-pc-votes-ward-2025-observations.json",
+			"contentHash": "sha256:416456eae20eecf66440128e05cb9a916adb91ec8ada36c2cca9fddc727559d1"
+		},
+		{
+			"id": "observations/local-election-ref-votes-ward-2016-observations",
+			"path": "local-election-ref-votes-ward-2016-observations.json",
+			"contentHash": "sha256:c014fc614f1165fd5d19a5505651b963e5fa519b83bf726851b4d03521031ecd"
+		},
+		{
+			"id": "observations/local-election-ref-votes-ward-2017-observations",
+			"path": "local-election-ref-votes-ward-2017-observations.json",
+			"contentHash": "sha256:0cd018a38cf37aeb3ef499bc8ed6f71850b751cc4226b30c993a67c0361374ed"
+		},
+		{
+			"id": "observations/local-election-ref-votes-ward-2018-observations",
+			"path": "local-election-ref-votes-ward-2018-observations.json",
+			"contentHash": "sha256:195439321c77b32dee39e77f9409c6a75011d0a94ace51202259fa0b6272f8be"
+		},
+		{
+			"id": "observations/local-election-ref-votes-ward-2019-observations",
+			"path": "local-election-ref-votes-ward-2019-observations.json",
+			"contentHash": "sha256:2b8847b87cf13c2ada29be99b0d52a7394a61ad778af074ce7d31e5f91b6b4ce"
+		},
+		{
+			"id": "observations/local-election-ref-votes-ward-2021-observations",
+			"path": "local-election-ref-votes-ward-2021-observations.json",
+			"contentHash": "sha256:cc6d4cc552dedc6b55a805c5e493629989e1cd76e932b1c7ab4fce76715e682b"
+		},
+		{
+			"id": "observations/local-election-ref-votes-ward-2022-observations",
+			"path": "local-election-ref-votes-ward-2022-observations.json",
+			"contentHash": "sha256:06aab716f91a6c7944429da029a536d00185c59ec155cc81e7684321da987414"
+		},
+		{
+			"id": "observations/local-election-ref-votes-ward-2023-observations",
+			"path": "local-election-ref-votes-ward-2023-observations.json",
+			"contentHash": "sha256:2a83aa41914d7d08fb450ac86578e1199ba47a4d3e689c83864e47f0c51b165c"
+		},
+		{
+			"id": "observations/local-election-ref-votes-ward-2024-observations",
+			"path": "local-election-ref-votes-ward-2024-observations.json",
+			"contentHash": "sha256:aeeeca04fbae40feb61e6896b51fb1fd6ec8b9aed63ba2ca820c6287825d8484"
+		},
+		{
+			"id": "observations/local-election-ref-votes-ward-2025-observations",
+			"path": "local-election-ref-votes-ward-2025-observations.json",
+			"contentHash": "sha256:663153a07e5b7dfabc47cd89d15b42cd6a87ee1db87ed7d21a8e526c5d855d3f"
+		},
+		{
+			"id": "observations/local-election-turnout-ward-2021-observations",
+			"path": "local-election-turnout-ward-2021-observations.json",
+			"contentHash": "sha256:63679c2f884bce0d448d23307fa0555cfae60dd5dd1428e694d5793b32b61c92"
+		},
+		{
+			"id": "observations/local-election-turnout-ward-2022-observations",
+			"path": "local-election-turnout-ward-2022-observations.json",
+			"contentHash": "sha256:9b11cf8e91e1a286dde2440195f295645db113f3821144aafb40ab7cac50636b"
+		},
+		{
+			"id": "observations/local-election-turnout-ward-2023-observations",
+			"path": "local-election-turnout-ward-2023-observations.json",
+			"contentHash": "sha256:47657dd25ea84dc638a45b68cc2aab840db93c7bfed5c49f409c1264509a75f9"
+		},
+		{
+			"id": "observations/local-election-turnout-ward-2024-observations",
+			"path": "local-election-turnout-ward-2024-observations.json",
+			"contentHash": "sha256:330316c665fbbefdf243bbf8b38dde4e93e64d8bf0aad9d69ffa7c28c36528f7"
+		},
+		{
+			"id": "observations/local-election-turnout-ward-2025-observations",
+			"path": "local-election-turnout-ward-2025-observations.json",
+			"contentHash": "sha256:11309e4962b6ebcb60992ff4d1fd2dd352f7d765b804a300d5153732ef7213df"
+		},
+		{
+			"id": "observations/local-election-ukip-votes-ward-2016-observations",
+			"path": "local-election-ukip-votes-ward-2016-observations.json",
+			"contentHash": "sha256:0510db802766adb6d6d9ce466fdef7c40b0e1594b055b8b45d93adac1523b111"
+		},
+		{
+			"id": "observations/local-election-ukip-votes-ward-2017-observations",
+			"path": "local-election-ukip-votes-ward-2017-observations.json",
+			"contentHash": "sha256:adff2181bff9982cb2ad3d89f68396ea5c1974f663a2f3ebe030be9e6443436b"
+		},
+		{
+			"id": "observations/local-election-ukip-votes-ward-2018-observations",
+			"path": "local-election-ukip-votes-ward-2018-observations.json",
+			"contentHash": "sha256:f3c91ad11e02738a5eab45d7632a0dd8b8f5d09a6a6d45872a638d8d50151889"
+		},
+		{
+			"id": "observations/local-election-ukip-votes-ward-2019-observations",
+			"path": "local-election-ukip-votes-ward-2019-observations.json",
+			"contentHash": "sha256:177de571e715b90d701a8d4bbb604f265cd6660e155f79bdf75acfd5bb2679fc"
+		},
+		{
+			"id": "observations/local-election-ukip-votes-ward-2021-observations",
+			"path": "local-election-ukip-votes-ward-2021-observations.json",
+			"contentHash": "sha256:62f4475f0c4f237f93c9e3fc4bed5f080b0aaff27c48b3e075b5fbc1c37a5a45"
+		},
+		{
+			"id": "observations/local-election-ukip-votes-ward-2022-observations",
+			"path": "local-election-ukip-votes-ward-2022-observations.json",
+			"contentHash": "sha256:acae657e424335a0994bcd7321de66dea70312873828633044e9f9f32845bb46"
+		},
+		{
+			"id": "observations/local-election-ukip-votes-ward-2023-observations",
+			"path": "local-election-ukip-votes-ward-2023-observations.json",
+			"contentHash": "sha256:bf0978c9115bb0b4581f80e4018e3ca93b73a36203641cfcde37d0608e22d9a4"
+		},
+		{
+			"id": "observations/local-election-ukip-votes-ward-2024-observations",
+			"path": "local-election-ukip-votes-ward-2024-observations.json",
+			"contentHash": "sha256:b25ab05d0d372c1c34aa766a98833aac90486aaea87cf4c98eccb284eedc9a6a"
+		},
+		{
+			"id": "observations/local-election-ukip-votes-ward-2025-observations",
+			"path": "local-election-ukip-votes-ward-2025-observations.json",
+			"contentHash": "sha256:4fbbb94afbd97772876f6541e470cfd327714d75f511464e658f86299b84699f"
+		},
+		{
+			"id": "observations/local-election-winning-party-ward-2016-observations",
+			"path": "local-election-winning-party-ward-2016-observations.json",
+			"contentHash": "sha256:4823a717dcedd73e6047448e79c45c1c15264cb2ac6bb3487827caee8c51f70e"
+		},
+		{
+			"id": "observations/local-election-winning-party-ward-2017-observations",
+			"path": "local-election-winning-party-ward-2017-observations.json",
+			"contentHash": "sha256:64aa8c4c6ce84da98ba30bca5233328fa6e17b29d09f1e056865a5a0e79125f1"
+		},
+		{
+			"id": "observations/local-election-winning-party-ward-2018-observations",
+			"path": "local-election-winning-party-ward-2018-observations.json",
+			"contentHash": "sha256:48c7b4061a5d8f00638d2fc0a506b2e4d207796f02b2cc4d8f89dbaa0030bb8d"
+		},
+		{
+			"id": "observations/local-election-winning-party-ward-2019-observations",
+			"path": "local-election-winning-party-ward-2019-observations.json",
+			"contentHash": "sha256:ee0ba0e55564e182d8d5334d1058e5f1a955507c0cc6016e934ddb6cad3f32bc"
+		},
+		{
+			"id": "observations/local-election-winning-party-ward-2021-observations",
+			"path": "local-election-winning-party-ward-2021-observations.json",
+			"contentHash": "sha256:455fb1dae8c635d5a0b2424d3e46d519df93ee157c3c937236be3ece32b48788"
+		},
+		{
+			"id": "observations/local-election-winning-party-ward-2022-observations",
+			"path": "local-election-winning-party-ward-2022-observations.json",
+			"contentHash": "sha256:3f88b79cbde1387d325c4a0686f5c9684b91a3af0ed3ba056e8f0eafa44d769e"
+		},
+		{
+			"id": "observations/local-election-winning-party-ward-2023-observations",
+			"path": "local-election-winning-party-ward-2023-observations.json",
+			"contentHash": "sha256:12ff2a3a8198c4942677f13170b662d999a5e5806b50a055182a6e20eb8dc382"
+		},
+		{
+			"id": "observations/local-election-winning-party-ward-2024-observations",
+			"path": "local-election-winning-party-ward-2024-observations.json",
+			"contentHash": "sha256:a048445ce9a7661b1693c12e3c48198750fb0fa62a8c6acae4d11f9d42599bba"
+		},
+		{
+			"id": "observations/local-election-winning-party-ward-2025-observations",
+			"path": "local-election-winning-party-ward-2025-observations.json",
+			"contentHash": "sha256:26bd0321203c6617e27460fe64d2eba0241fa57b6475e34826d38c6ffc9e2319"
+		},
+		{
+			"id": "observations/mobile-4g-coverage-observations",
+			"path": "mobile-4g-coverage-observations.json",
+			"contentHash": "sha256:1978b0d42ee36020d5c3a13d8358df41a7b5c0bdd5a593930e7766ccaf682e2e"
+		},
+		{
+			"id": "observations/mobile-5g-coverage-observations",
+			"path": "mobile-5g-coverage-observations.json",
+			"contentHash": "sha256:939d34606fb3fc15e426297f651437ba849c76ac4fb7eb44f57a3c73b137f69c"
+		},
+		{
+			"id": "observations/nimdm-rank-observations",
+			"path": "nimdm-rank-observations.json",
+			"contentHash": "sha256:d93bb829a56f05889cee8ac82d0ada31ba9f9a73eaf45a7ef90a58f6c4e9e9fa"
+		},
+		{
+			"id": "observations/population-constituency-observations",
+			"path": "population-constituency-observations.json",
+			"contentHash": "sha256:b5c8489f8024036e1a38f63f0f5a6542e28ea7e6b07cce785293995ec8d2a702"
+		},
+		{
+			"id": "observations/population-density-observations",
+			"path": "population-density-observations.json",
+			"contentHash": "sha256:df8044ba523153ea1f8716edbef83ad90ebf22611fd3b3f198572fe1443d68e9"
+		},
+		{
+			"id": "observations/simd-decile-observations",
+			"path": "simd-decile-observations.json",
+			"contentHash": "sha256:dc2c8859e59fbe20d6afdda77c7bc6c6532023eee03c1fa2fc097bc446a71cb6"
+		},
+		{
+			"id": "observations/simd-rank-observations",
+			"path": "simd-rank-observations.json",
+			"contentHash": "sha256:6f4aff4cfaff3d733287d6611e3a564624504aa6570815a7e4486b6cd47267dd"
+		},
+		{
+			"id": "observations/total-jobs-observations",
+			"path": "total-jobs-observations.json",
+			"contentHash": "sha256:31bfb6e60d94a5b3e1eeafd7f937aa4aa19fb7441469f3e7bae5cd235f754e90"
+		},
+		{
+			"id": "observations/travel-to-work-bicycle-observations",
+			"path": "travel-to-work-bicycle-observations.json",
+			"contentHash": "sha256:0870a738c062b38a793dc79818971967ae4f409cbe54986b1938f09320c9e4c3"
+		},
+		{
+			"id": "observations/travel-to-work-car-observations",
+			"path": "travel-to-work-car-observations.json",
+			"contentHash": "sha256:c8d3098050d984db4ff93e9ee2fb0ca0b1a4d5c1221a023e64340c462879ab7a"
+		},
+		{
+			"id": "observations/travel-to-work-home-observations",
+			"path": "travel-to-work-home-observations.json",
+			"contentHash": "sha256:0f651e81ba44c68351dc678df13639d5d3262fca942298f96be2f43587600b63"
+		},
+		{
+			"id": "observations/travel-to-work-motorcycle-observations",
+			"path": "travel-to-work-motorcycle-observations.json",
+			"contentHash": "sha256:ee2f2d36df016e15c75174af5607e87ebebe294fef466453d133331b8637fae9"
+		},
+		{
+			"id": "observations/travel-to-work-on-foot-observations",
+			"path": "travel-to-work-on-foot-observations.json",
+			"contentHash": "sha256:4622a328edc631d6c5f51f05ea6ac5b4ae3b05c4f0df08ab154745124e2d95f9"
+		},
+		{
+			"id": "observations/travel-to-work-other-observations",
+			"path": "travel-to-work-other-observations.json",
+			"contentHash": "sha256:d2296563c45f3813ed11bbad77e0c0cc9da7ceecd34fbb0b9084a6048b884d9e"
+		},
+		{
+			"id": "observations/travel-to-work-public-transport-observations",
+			"path": "travel-to-work-public-transport-observations.json",
+			"contentHash": "sha256:19f174681fc7816ac4670093a3cdc8a9a015aa679ffbe3b75958c4df689d087f"
+		},
+		{
+			"id": "observations/travel-to-work-taxi-observations",
+			"path": "travel-to-work-taxi-observations.json",
+			"contentHash": "sha256:0271759bb17d96fb35bca2bf0ca7c6690bf11eb17011f4e4a4f14b0cc3b23f61"
+		},
+		{
+			"id": "observations/travel-to-work-total-observations",
+			"path": "travel-to-work-total-observations.json",
+			"contentHash": "sha256:894bbe472cd7980fc6ade4938b7580820b9fb60982ba8834d745fbb737782ce0"
+		},
+		{
+			"id": "observations/wimd-decile-observations",
+			"path": "wimd-decile-observations.json",
+			"contentHash": "sha256:211bbf1fe03d5e7eb91a5a7815e610b49bdf11b9d83e7f08f0c8ae75b15f3e8c"
+		},
+		{
+			"id": "observations/wimd-rank-observations",
+			"path": "wimd-rank-observations.json",
+			"contentHash": "sha256:e66457960c0770d9a86d37e906f2ea28f2fd3c47c8b90168765b9175a79fddb2"
+		}
+	]
+}
