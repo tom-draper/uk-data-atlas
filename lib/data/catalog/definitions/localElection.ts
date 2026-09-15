@@ -28,12 +28,8 @@ export const localElectionDatasetDefinition: DatasetDefinition<LocalElectionData
 				"Open Parliament Licence (2021–2025); CC BY-SA 3.0 (2016–2019)",
 			licenceUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
 			description:
-				"Ward-level local election results for England and Wales. The 2016–2019 archive has candidate votes but not electorate or turnout, and excludes Scottish STV results.",
+				"Ward-level local election results for England and Wales. Party votes count each party's highest-polling candidate in a ward, the House of Commons Library's method for vote share in multi-member wards. The 2016–2019 archive has no electorate or turnout, and excludes Scottish STV results. The 2023 workbook has no ward codes, so they are matched by exact name to the ONS May 2023 ward list.",
 		},
 		precompile: async ({ text, xlsxSheet }) =>
-			loadLocalElection((source) =>
-				source.source === "xlsx"
-					? xlsxSheet(source.path, source.sheet)
-					: text(source.path),
-			),
+			loadLocalElection({ text, xlsxSheet }),
 	};

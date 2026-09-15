@@ -130,43 +130,8 @@
 		},
 		{
 			"check": "records-resolve",
-			"reason": "The 2023 workbook publishes no ward codes. The website assigns them by matching authority and ward names against the other years' results, so 462 codes come from wards last published in December 2022 and 132 from wards first published in May 2024, and no 2023 release holds all 594. These codes are inferred from names, not published by the source.",
-			"resources": [
-				"exports/local-election-candidate-votes-ward-2023-observations",
-				"exports/local-election-con-votes-ward-2023-observations",
-				"exports/local-election-green-votes-ward-2023-observations",
-				"exports/local-election-ind-votes-ward-2023-observations",
-				"exports/local-election-lab-votes-ward-2023-observations",
-				"exports/local-election-ld-votes-ward-2023-observations",
-				"exports/local-election-other-votes-ward-2023-observations",
-				"exports/local-election-pc-votes-ward-2023-observations",
-				"exports/local-election-ref-votes-ward-2023-observations",
-				"exports/local-election-turnout-ward-2023-observations",
-				"exports/local-election-ukip-votes-ward-2023-observations",
-				"exports/local-election-winning-party-ward-2023-observations"
-			]
-		},
-		{
-			"check": "records-resolve",
 			"reason": "The publisher's workbook gives Leeds's Garforth & Swillington and Temple Newsam their December 2021 codes, E05013830 and E05013831, among otherwise December 2020 codes. Values stay on the codes the publisher used.",
 			"resources": ["exports/house-price-median-observations"]
-		},
-		{
-			"check": "components-sum-to-total",
-			"reason": "The website's reader for the 2021 to 2024 workbooks keeps only the named party columns and has no Other column, so votes for other parties are dropped, such as 3,780 of the 7,701 cast in Leeds's Garforth & Swillington in 2021: the party measures fall short of the candidate vote total, and the Other measure reads zero where other candidates stood.",
-			"resources": [
-				"exports/local-election-candidate-votes-ward-2021-observations",
-				"exports/local-election-candidate-votes-ward-2022-observations",
-				"exports/local-election-candidate-votes-ward-2023-observations",
-				"exports/local-election-candidate-votes-ward-2024-observations"
-			]
-		},
-		{
-			"check": "components-sum-to-total",
-			"reason": "The 2025 total is read from the workbook's Ballots column, a count of ballot papers, not candidate votes, so party votes exceed it in 121 multi-member wards. As in 2021 to 2024, votes for parties outside the named columns are dropped, which leaves 319 wards short of it.",
-			"resources": [
-				"exports/local-election-candidate-votes-ward-2025-observations"
-			]
 		}
 	]
 }

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:e97db9d66337a4aae0527927a52779cc9e3e8cd4435cdded046aebf5534b25b3",
-	"dataCatalogHash": "sha256:8577de3d1aa2925a6e18e4099fcd5bb87101561f3a1bf0463ce121f814c07e3b",
+	"contentHash": "sha256:7d3a7768193db862db4925859ceb4256e76ce784131363c744e5a5f4bd8d1044",
+	"dataCatalogHash": "sha256:e7f5e112520c377dfb98f364955ac983bbfe67300d10876aff2f714ffa5e251d",
 	"exports": [
 		{
 			"id": "air-quality-grid-cells-observations",
@@ -2869,8 +2869,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-candidate-votes-ward-2016-observations",
-			"contentHash": "sha256:36ea1e857298fd17ac55e32c336f8a844d08b467de2411ed1490980b2a80d206",
-			"bytes": 128312,
+			"contentHash": "sha256:52809d551e11e4cff4c02249640c0161061cf2c120641bd04c133ec1b0dd32d0",
+			"bytes": 128286,
 			"href": "/v1/exports/local-election-candidate-votes-ward-2016-observations"
 		},
 		{
@@ -2886,8 +2886,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-candidate-votes-ward-2017-observations",
-			"contentHash": "sha256:01297188db4480ec0de17b67d618da07c16f3e367e56e973db594f0c02f97785",
-			"bytes": 80265,
+			"contentHash": "sha256:f15c12a0153fef1d6625d0a7d5a7adc57cb2a4cea88410c7da157f12e5d8b0ae",
+			"bytes": 80204,
 			"href": "/v1/exports/local-election-candidate-votes-ward-2017-observations"
 		},
 		{
@@ -2903,8 +2903,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-candidate-votes-ward-2018-observations",
-			"contentHash": "sha256:2b5388be6da01b4aa6d40b0ccda49522078b67ec34a583052be94716a9976ccf",
-			"bytes": 159933,
+			"contentHash": "sha256:af148340b0bb5da874f93a84e85c196eb11b096a0353266f9f7fac13111cd9a3",
+			"bytes": 159546,
 			"href": "/v1/exports/local-election-candidate-votes-ward-2018-observations"
 		},
 		{
@@ -2920,8 +2920,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-candidate-votes-ward-2019-observations",
-			"contentHash": "sha256:31a80d8a9ed96447c8c13eb617bee236bd6d9e92d82340b0a83c9b07ab74b714",
-			"bytes": 304790,
+			"contentHash": "sha256:c273818b44d61e1adae492754c48dd52197f29cb70cbb3b7647f39ade2195fc9",
+			"bytes": 304545,
 			"href": "/v1/exports/local-election-candidate-votes-ward-2019-observations"
 		},
 		{
@@ -2937,8 +2937,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-candidate-votes-ward-2021-observations",
-			"contentHash": "sha256:f4da5851802fee78101a7321316916f2aafa0d3f62efebc75514bd71a8f6cd72",
-			"bytes": 144924,
+			"contentHash": "sha256:58c23b8ca4f295c379773bd6fe7839ed0bfea15ce91494377a128a7263e198f4",
+			"bytes": 144982,
 			"href": "/v1/exports/local-election-candidate-votes-ward-2021-observations"
 		},
 		{
@@ -2954,8 +2954,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-candidate-votes-ward-2022-observations",
-			"contentHash": "sha256:a3f4b903c4843ec87faee9d2911f5f9e0a06eb3b508d376eeaf5102f92be6e97",
-			"bytes": 204770,
+			"contentHash": "sha256:8c171636e533467ab2b1e204b67d65e69c81e3bcec65ffb7387ecd37f2295655",
+			"bytes": 204649,
 			"href": "/v1/exports/local-election-candidate-votes-ward-2022-observations"
 		},
 		{
@@ -2971,8 +2971,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-candidate-votes-ward-2023-observations",
-			"contentHash": "sha256:6c5399072bf1f1c52f08e8342c22b8b3b2d2c3cbb8a6068979af85e7c7073d56",
-			"bytes": 233819,
+			"contentHash": "sha256:6cb7f55b273b19bfaf979890e8cc8e5e2e53d803384685e29bbe1cb6fba34c95",
+			"bytes": 277199,
 			"href": "/v1/exports/local-election-candidate-votes-ward-2023-observations"
 		},
 		{
@@ -2988,8 +2988,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-candidate-votes-ward-2024-observations",
-			"contentHash": "sha256:509a4f79e7a8e0798547d5c22331a49bfbf4c1f04825cc2f60092cf3c8a450ad",
-			"bytes": 110583,
+			"contentHash": "sha256:bc2d735b4c27c1a52a56c375cb51486242df1e8b1cf7cd950ecbae506a84094e",
+			"bytes": 110566,
 			"href": "/v1/exports/local-election-candidate-votes-ward-2024-observations"
 		},
 		{
@@ -3005,8 +3005,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-candidate-votes-ward-2025-observations",
-			"contentHash": "sha256:067a4a1593dad107c4094b0f4f220655f04ed35d48a987877a5929542ef1e756",
-			"bytes": 29987,
+			"contentHash": "sha256:f3882a79877bdec43f24dc61f2a27656c66e6156282ac5a60ae0c17fa6eee995",
+			"bytes": 29986,
 			"href": "/v1/exports/local-election-candidate-votes-ward-2025-observations"
 		},
 		{
@@ -3022,8 +3022,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-con-votes-ward-2016-observations",
-			"contentHash": "sha256:a46a4e7d4ae61d6391bb397ed7eb0902e478899b87ed81e6acd9eb91f6df9e86",
-			"bytes": 126670,
+			"contentHash": "sha256:44e62c1dbe44c81620d01b143fd2f5c8dc5242199db0d787f7c4713f7c61aacb",
+			"bytes": 126524,
 			"href": "/v1/exports/local-election-con-votes-ward-2016-observations"
 		},
 		{
@@ -3039,8 +3039,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-con-votes-ward-2017-observations",
-			"contentHash": "sha256:4870741eb752ee5404b338b00bacaf69372d3b003b4b948300c49ba43760e6cf",
-			"bytes": 78822,
+			"contentHash": "sha256:c5900ea481b344fd43a521c3738aedcda66424c18731912feccfaa974f1f99f7",
+			"bytes": 78754,
 			"href": "/v1/exports/local-election-con-votes-ward-2017-observations"
 		},
 		{
@@ -3056,8 +3056,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-con-votes-ward-2018-observations",
-			"contentHash": "sha256:aaa1a8ca13c06f82b6533d29fed6e6f07462d96a5e4dc416c28dd707855f0978",
-			"bytes": 158069,
+			"contentHash": "sha256:55f0001ee13b029f9aae980a02eecfd5596086b8e7511e67767a559a3c606816",
+			"bytes": 157718,
 			"href": "/v1/exports/local-election-con-votes-ward-2018-observations"
 		},
 		{
@@ -3073,8 +3073,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-con-votes-ward-2019-observations",
-			"contentHash": "sha256:3784f8ff7b8cbd0bee7ad25e28c13b751705c2b2c8b4e33b565445a058499606",
-			"bytes": 302092,
+			"contentHash": "sha256:e55258e1a9d9a0a9eb918a47bd30c607d463537bb78343185cfab5a01b33e883",
+			"bytes": 301013,
 			"href": "/v1/exports/local-election-con-votes-ward-2019-observations"
 		},
 		{
@@ -3090,8 +3090,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-con-votes-ward-2021-observations",
-			"contentHash": "sha256:29575e7fca00e31dc3c58f9e893759ef4476b3d8091691a95e4ad1c04f5652f7",
-			"bytes": 143393,
+			"contentHash": "sha256:4d1533729d8340239b3aa692556e8c880bdbe2040c0cc94dfae1dce22390fde1",
+			"bytes": 143450,
 			"href": "/v1/exports/local-election-con-votes-ward-2021-observations"
 		},
 		{
@@ -3107,8 +3107,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-con-votes-ward-2022-observations",
-			"contentHash": "sha256:adc832b31eb328ea7bac699b0b51be969f9ad693ff34a00de28b7f94e2cda7fd",
-			"bytes": 201745,
+			"contentHash": "sha256:d092fecd53f639b4fc7a75e24f2f6cc7af75f3fdada0638910cc101236e0a3f9",
+			"bytes": 201631,
 			"href": "/v1/exports/local-election-con-votes-ward-2022-observations"
 		},
 		{
@@ -3124,8 +3124,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-con-votes-ward-2023-observations",
-			"contentHash": "sha256:880eb97fdc23c74b2b7fddc8402a717889f318a030925337c4959ebc634a1cd1",
-			"bytes": 230839,
+			"contentHash": "sha256:cb45baf5430f3c7e4c32329792b5e653a791265ee471e62a288b736e2859696e",
+			"bytes": 273625,
 			"href": "/v1/exports/local-election-con-votes-ward-2023-observations"
 		},
 		{
@@ -3141,8 +3141,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-con-votes-ward-2024-observations",
-			"contentHash": "sha256:eb9d8ac31806f22e9088e5dbd8e235991a4638cef4c0156ae5c0ad63dd4086af",
-			"bytes": 109065,
+			"contentHash": "sha256:a25e7deea6e346ea89d4af5b20afad48df8a9ad1172e558ba78dbb7e38f8c816",
+			"bytes": 108858,
 			"href": "/v1/exports/local-election-con-votes-ward-2024-observations"
 		},
 		{
@@ -3175,8 +3175,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-green-votes-ward-2016-observations",
-			"contentHash": "sha256:bda6f49623de4959b5b91862ba6ab4037109f7ca9fa5b9bb6bb68c0f41ea82ea",
-			"bytes": 124234,
+			"contentHash": "sha256:121a03a7275d83678549ea995b5fe55adb8daa1b0ce3df1710230bb8317ae508",
+			"bytes": 124204,
 			"href": "/v1/exports/local-election-green-votes-ward-2016-observations"
 		},
 		{
@@ -3192,8 +3192,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-green-votes-ward-2017-observations",
-			"contentHash": "sha256:75e4a7e9deefc81ab1cc413cef55e76cd077775abb8c629fdc6ce400ea37a3f3",
-			"bytes": 77213,
+			"contentHash": "sha256:b0b87494bc0dc2244213ab5429186e410a05439902749361fe3c6c4b706fabca",
+			"bytes": 77212,
 			"href": "/v1/exports/local-election-green-votes-ward-2017-observations"
 		},
 		{
@@ -3209,8 +3209,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-green-votes-ward-2018-observations",
-			"contentHash": "sha256:eb98a87a767d0e90c2b74fae852e44dfea17214d98021abe735305d3501d013c",
-			"bytes": 154635,
+			"contentHash": "sha256:5728e44b1ff316f70226a16097f6e89696c522b0bd2f58c7a778b0367bf6a3b5",
+			"bytes": 154537,
 			"href": "/v1/exports/local-election-green-votes-ward-2018-observations"
 		},
 		{
@@ -3226,8 +3226,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-green-votes-ward-2019-observations",
-			"contentHash": "sha256:a370692ec906b0a9331adafdfa51eac444d14756580428a47101bf77d541ddb4",
-			"bytes": 294889,
+			"contentHash": "sha256:3b3b110ed24c95c5461bdead9e1f53905189d1187417c17c6d94f137fd03b136",
+			"bytes": 294802,
 			"href": "/v1/exports/local-election-green-votes-ward-2019-observations"
 		},
 		{
@@ -3243,8 +3243,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-green-votes-ward-2021-observations",
-			"contentHash": "sha256:8d9ddef61fb27580256c6bee01ffae392285b9647d475aea6eb314a9f5aed2f6",
-			"bytes": 140772,
+			"contentHash": "sha256:44e408a96888e366f07d09d2c6b1c4e81a9fdab34a82b3ee37b10e29bf331ef0",
+			"bytes": 140829,
 			"href": "/v1/exports/local-election-green-votes-ward-2021-observations"
 		},
 		{
@@ -3260,8 +3260,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-green-votes-ward-2022-observations",
-			"contentHash": "sha256:e6be81d254e4362e626ea863009f797c6d0af62d0bc20cb21e7e422458d89bf4",
-			"bytes": 198296,
+			"contentHash": "sha256:4afbbde01bd86d392022a13821998aa877e88ab07a60a31dbcb823b1d5590fba",
+			"bytes": 198184,
 			"href": "/v1/exports/local-election-green-votes-ward-2022-observations"
 		},
 		{
@@ -3277,8 +3277,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-green-votes-ward-2023-observations",
-			"contentHash": "sha256:7a244196b9ad064c800bcc9db9a2ec1a78bbfde15f8aee5fd443d21011ebd2d0",
-			"bytes": 226941,
+			"contentHash": "sha256:ca049b01ed3049bd85c797e996fa20ac494bc686adcb6b91180a4282034950d1",
+			"bytes": 268941,
 			"href": "/v1/exports/local-election-green-votes-ward-2023-observations"
 		},
 		{
@@ -3294,8 +3294,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-green-votes-ward-2024-observations",
-			"contentHash": "sha256:dc4d568ba16234753db08b16f555e77777207c1dd366ff68bde895876c5b1b86",
-			"bytes": 107773,
+			"contentHash": "sha256:8b74fbc188a58e86bfb2b271285d5458d2d46b3aaff2ff87e81c95e0af0304db",
+			"bytes": 107724,
 			"href": "/v1/exports/local-election-green-votes-ward-2024-observations"
 		},
 		{
@@ -3328,8 +3328,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ind-votes-ward-2016-observations",
-			"contentHash": "sha256:a12e39c5a47a1acfc128c476254bf2078cb949c46a59595945866ff172b39259",
-			"bytes": 122279,
+			"contentHash": "sha256:317ab293a61d3920aff7f0c4eda1d97019937abea4ead3bba0379508f38fb307",
+			"bytes": 122270,
 			"href": "/v1/exports/local-election-ind-votes-ward-2016-observations"
 		},
 		{
@@ -3345,8 +3345,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ind-votes-ward-2017-observations",
-			"contentHash": "sha256:203cf3a12bc7ebe8d0de132f5d51d67b1552efb0a9135f1d17a795c0283e9e93",
-			"bytes": 78210,
+			"contentHash": "sha256:efbcbfd4f21c217572add59bc7d085e3a4751f6ed184d95e48d91eb06e36e0fe",
+			"bytes": 78140,
 			"href": "/v1/exports/local-election-ind-votes-ward-2017-observations"
 		},
 		{
@@ -3362,8 +3362,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ind-votes-ward-2018-observations",
-			"contentHash": "sha256:c9d4782b201cf1fd514189a377a55376a7f17ab530388cc651e8b54ac7931c55",
-			"bytes": 152049,
+			"contentHash": "sha256:2e556e56f4188a4dabeedd84ccbef232942f6d5cbfc7e9e0be2e5db016b5629d",
+			"bytes": 152038,
 			"href": "/v1/exports/local-election-ind-votes-ward-2018-observations"
 		},
 		{
@@ -3379,8 +3379,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ind-votes-ward-2019-observations",
-			"contentHash": "sha256:265a3b51fe52c193e5a19a931830168c20ed926f11eed75fbb7d6f7c00c734e7",
-			"bytes": 292979,
+			"contentHash": "sha256:7ceaa9c1737dd2891559efd418d2cf30056152af16c261f2b93a7a36c408996c",
+			"bytes": 292857,
 			"href": "/v1/exports/local-election-ind-votes-ward-2019-observations"
 		},
 		{
@@ -3396,8 +3396,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ind-votes-ward-2021-observations",
-			"contentHash": "sha256:ba779c7d2b7b9227dd190f006cb1d55458aacd5e9115ac9c254931c1e605f04c",
-			"bytes": 138601,
+			"contentHash": "sha256:b74dd0d0700242ac2efc1633a06d38a8e6e10954265547683f49d8b179b6a2d3",
+			"bytes": 138658,
 			"href": "/v1/exports/local-election-ind-votes-ward-2021-observations"
 		},
 		{
@@ -3413,8 +3413,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ind-votes-ward-2022-observations",
-			"contentHash": "sha256:145eaec47e42fed725c5818c76087fc387bcd6bdca2f72b62e070a69d1cff932",
-			"bytes": 196180,
+			"contentHash": "sha256:8a842fbc42aca8d06b459105d390c861f2231172f58046525a99b58e86ab871d",
+			"bytes": 196064,
 			"href": "/v1/exports/local-election-ind-votes-ward-2022-observations"
 		},
 		{
@@ -3430,8 +3430,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ind-votes-ward-2023-observations",
-			"contentHash": "sha256:1076e6af302cc366e64827230f19966cad30725f7cdbb56864e492e38af3160a",
-			"bytes": 224525,
+			"contentHash": "sha256:8e34d6de4e104305b27500a4cbb611f54cbc237afbf2a1dba8b8507cb25409be",
+			"bytes": 266307,
 			"href": "/v1/exports/local-election-ind-votes-ward-2023-observations"
 		},
 		{
@@ -3447,8 +3447,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ind-votes-ward-2024-observations",
-			"contentHash": "sha256:1aee4dcd8a3fb24f4836d07c3efe1ffd1cf4a495d3a7029d76cce956e82a610d",
-			"bytes": 105780,
+			"contentHash": "sha256:7f1686e4b8604c7fe7d74598b939e522ef3cc073bb07b73ab7b8829ec662b772",
+			"bytes": 105763,
 			"href": "/v1/exports/local-election-ind-votes-ward-2024-observations"
 		},
 		{
@@ -3481,8 +3481,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-lab-votes-ward-2016-observations",
-			"contentHash": "sha256:ebe59b5373fdf7e7024ad1efe1a6e09ffbc8076caa38a21024bb5827c66e2d61",
-			"bytes": 127084,
+			"contentHash": "sha256:8d415e57faefcfe29bd25232007844a4314fcd00c14bff04b6e9ba705a95f963",
+			"bytes": 126992,
 			"href": "/v1/exports/local-election-lab-votes-ward-2016-observations"
 		},
 		{
@@ -3498,8 +3498,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-lab-votes-ward-2017-observations",
-			"contentHash": "sha256:0f0f9506ff1ec07d10a9db5f0dd1198398534ecfe0eef8508d2a165eb739b08b",
-			"bytes": 78949,
+			"contentHash": "sha256:b4081ab0dc37280e75d17b43919ab71d566ac01c9bb036ce711c1a41a76cb2fa",
+			"bytes": 78786,
 			"href": "/v1/exports/local-election-lab-votes-ward-2017-observations"
 		},
 		{
@@ -3515,8 +3515,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-lab-votes-ward-2018-observations",
-			"contentHash": "sha256:8c5827c9585071fcd926ec88e373f72089acc9cca69f97fda73dccac5f8bcbe8",
-			"bytes": 158374,
+			"contentHash": "sha256:36dafdac0de0a30d6195bb63ba4379904cbfb6f949306a6124d950f618e50d02",
+			"bytes": 158188,
 			"href": "/v1/exports/local-election-lab-votes-ward-2018-observations"
 		},
 		{
@@ -3532,8 +3532,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-lab-votes-ward-2019-observations",
-			"contentHash": "sha256:0367d4baef5a8f1f7a90abb540a52e26a1274286b7ef5d806a1e4c7dd14cd8d6",
-			"bytes": 300125,
+			"contentHash": "sha256:80cd1ffd11646243a7021d84cbabd8459cf99a8b3fe174f879d708c5aaba9b38",
+			"bytes": 299558,
 			"href": "/v1/exports/local-election-lab-votes-ward-2019-observations"
 		},
 		{
@@ -3549,8 +3549,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-lab-votes-ward-2021-observations",
-			"contentHash": "sha256:4c585de780d79e392c82302743cb8f48006b92b99a2bcf93f03416fe5aca8216",
-			"bytes": 143078,
+			"contentHash": "sha256:1dd3ff9813da31144986b2a54dbd7ffc46fa12e13e0104b126744c5b862ade17",
+			"bytes": 143136,
 			"href": "/v1/exports/local-election-lab-votes-ward-2021-observations"
 		},
 		{
@@ -3566,8 +3566,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-lab-votes-ward-2022-observations",
-			"contentHash": "sha256:10c0644e253edcd027dc676926fcf2952d0d586ac9dee3ca5c5cb0d71df4cc37",
-			"bytes": 202334,
+			"contentHash": "sha256:9eb701df3d30cc0e617713cacfb6d0ae078b59c29a0413d69f8f5062b0818898",
+			"bytes": 202219,
 			"href": "/v1/exports/local-election-lab-votes-ward-2022-observations"
 		},
 		{
@@ -3583,8 +3583,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-lab-votes-ward-2023-observations",
-			"contentHash": "sha256:241215e42ca486e73ba78ae42bb6537ea9e37a76fe2a0ab6f660721bc2fc45d5",
-			"bytes": 230161,
+			"contentHash": "sha256:48491b40a6cb8a94fbb490d74bb7ca2303f78c9734f006c20870ecc90b08dae1",
+			"bytes": 272744,
 			"href": "/v1/exports/local-election-lab-votes-ward-2023-observations"
 		},
 		{
@@ -3600,8 +3600,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-lab-votes-ward-2024-observations",
-			"contentHash": "sha256:0341a5d59aca01a8b577353b3f3ee130a7c473674f3c3c1ef313add0a20a8874",
-			"bytes": 109497,
+			"contentHash": "sha256:ae61a75bbc66815a3a96d197458b2ca59d9be98a5ec6bf54216447d6b1390b4a",
+			"bytes": 109341,
 			"href": "/v1/exports/local-election-lab-votes-ward-2024-observations"
 		},
 		{
@@ -3634,8 +3634,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ld-votes-ward-2016-observations",
-			"contentHash": "sha256:0a8fe589ee26d1cf5cc2405b2fa46f28a426e9a79ada73ebafcca8ffbd1908a9",
-			"bytes": 124813,
+			"contentHash": "sha256:957aa9667e29fbd18164cd857dc81925d93da18a979ae5b45cd357a419c09589",
+			"bytes": 124740,
 			"href": "/v1/exports/local-election-ld-votes-ward-2016-observations"
 		},
 		{
@@ -3651,8 +3651,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ld-votes-ward-2017-observations",
-			"contentHash": "sha256:1f3f5e32091b61b6ad1489fa4d6f901a355bcc4bfbe5d9e5f6ce0ccdf6549747",
-			"bytes": 77954,
+			"contentHash": "sha256:bb85fe83830df5c0484937aa68895863f4e76219dcb681fc1e6e76737ed9c9e0",
+			"bytes": 77933,
 			"href": "/v1/exports/local-election-ld-votes-ward-2017-observations"
 		},
 		{
@@ -3668,8 +3668,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ld-votes-ward-2018-observations",
-			"contentHash": "sha256:aab730e0b113cdb1ed73bada68faa85ad9fb28ebb2c35eaef18e4e1705feafa8",
-			"bytes": 155935,
+			"contentHash": "sha256:0e8f9836666a5dba365ac3a3e4d6984ec78f4d17cfb9e82892cd95c66819bc33",
+			"bytes": 155723,
 			"href": "/v1/exports/local-election-ld-votes-ward-2018-observations"
 		},
 		{
@@ -3685,8 +3685,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ld-votes-ward-2019-observations",
-			"contentHash": "sha256:8368e6b4f947eef82d8907cab049a14db1754cfff359818a14cd349adf4b8df1",
-			"bytes": 297256,
+			"contentHash": "sha256:f1f0b00a0006bfb408e102712bb4b6a5ed4da1337b7d46144822280e29493d23",
+			"bytes": 296917,
 			"href": "/v1/exports/local-election-ld-votes-ward-2019-observations"
 		},
 		{
@@ -3702,8 +3702,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ld-votes-ward-2021-observations",
-			"contentHash": "sha256:3040bd01d7f067257dac0f6722dc4f76a1584aebf60f8af1a9a936929aa2209c",
-			"bytes": 141405,
+			"contentHash": "sha256:246f66e56ce208fc4f454033bc4b747c9a523bf0eaee5e9e7ca191570ecc8acc",
+			"bytes": 141460,
 			"href": "/v1/exports/local-election-ld-votes-ward-2021-observations"
 		},
 		{
@@ -3719,8 +3719,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ld-votes-ward-2022-observations",
-			"contentHash": "sha256:6116bc32ec98afb682ddfa9393ce50331a0843b68a8ff47b5024d2f57aa21cae",
-			"bytes": 199445,
+			"contentHash": "sha256:5eb8c879ec207d48ed6d4cab9094303f7f44ad7e25b24b282936b2ddac10641a",
+			"bytes": 199330,
 			"href": "/v1/exports/local-election-ld-votes-ward-2022-observations"
 		},
 		{
@@ -3736,8 +3736,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ld-votes-ward-2023-observations",
-			"contentHash": "sha256:34ac080dbe06cae73b67df3867ca8eca546f3f970d9141e6881fc0624d801322",
-			"bytes": 228213,
+			"contentHash": "sha256:2cd78b4eb38f0cb52f07a24845c841bdbebf65beeef3e2765cc27ce974f3e520",
+			"bytes": 270485,
 			"href": "/v1/exports/local-election-ld-votes-ward-2023-observations"
 		},
 		{
@@ -3753,8 +3753,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ld-votes-ward-2024-observations",
-			"contentHash": "sha256:d93f8770ba86b6e620a234825c0a4e95dcf276035d4d886df423fecb5c0d2244",
-			"bytes": 108014,
+			"contentHash": "sha256:be00f1a8badabb061f3461a25ea553fa17f44d9399b8aacc0bb4415d36fe9596",
+			"bytes": 107937,
 			"href": "/v1/exports/local-election-ld-votes-ward-2024-observations"
 		},
 		{
@@ -3787,8 +3787,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-other-votes-ward-2016-observations",
-			"contentHash": "sha256:aa9ee5166e14b8a765451ba488b33906744d0fd567cfe66535704e8eb61b6557",
-			"bytes": 122509,
+			"contentHash": "sha256:e57a430886c0471d5c31c7804be27b86cbce6685cccd08c52a8ab66b09c53453",
+			"bytes": 122529,
 			"href": "/v1/exports/local-election-other-votes-ward-2016-observations"
 		},
 		{
@@ -3804,8 +3804,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-other-votes-ward-2017-observations",
-			"contentHash": "sha256:217656f11cfcb1846aa76f65368753e2bca05178b799c6d6e1122531d16ea860",
-			"bytes": 77080,
+			"contentHash": "sha256:5a8b7f8de5f8680733302967bb45a00204a90a0600e600fc696c9488496451a5",
+			"bytes": 77069,
 			"href": "/v1/exports/local-election-other-votes-ward-2017-observations"
 		},
 		{
@@ -3821,8 +3821,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-other-votes-ward-2018-observations",
-			"contentHash": "sha256:f9eae44ee0a3047f5a7cf3f115961c8a861f57eb7ea18adfb00c74d04b11bad4",
-			"bytes": 152352,
+			"contentHash": "sha256:819ceabe4caa15ea2941e08f7937601fadab408d2f87c2969d50e0e361f77619",
+			"bytes": 152368,
 			"href": "/v1/exports/local-election-other-votes-ward-2018-observations"
 		},
 		{
@@ -3838,8 +3838,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-other-votes-ward-2019-observations",
-			"contentHash": "sha256:4ad348d858e49b95f797046b7be654b9e7d06683a9569ca17247d6a4078d3fa1",
-			"bytes": 291833,
+			"contentHash": "sha256:5a2c6fa385268dbc1749a363d68f3ea02b1c780faeecd51d2a8f4bb63dc6cdd4",
+			"bytes": 291807,
 			"href": "/v1/exports/local-election-other-votes-ward-2019-observations"
 		},
 		{
@@ -3855,8 +3855,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-other-votes-ward-2021-observations",
-			"contentHash": "sha256:cd1c592f5e5f57d04dabd5d219547cc7a8719161dd4b0c4c34cf28ec5d873895",
-			"bytes": 137525,
+			"contentHash": "sha256:3b4f1255c5eba5505fdf6c20495a39a5f8f69b1160180f169fb29a29b5ecb98d",
+			"bytes": 138819,
 			"href": "/v1/exports/local-election-other-votes-ward-2021-observations"
 		},
 		{
@@ -3872,8 +3872,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-other-votes-ward-2022-observations",
-			"contentHash": "sha256:2e7ac9891c95d562570413aa20f6f36a8762c4e7f575441054d00674f302ee7c",
-			"bytes": 194560,
+			"contentHash": "sha256:5fa580f2fb3a9d454cf7776cbcc6222715f116a9e1396dbcb2b231fdb7347618",
+			"bytes": 195877,
 			"href": "/v1/exports/local-election-other-votes-ward-2022-observations"
 		},
 		{
@@ -3889,8 +3889,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-other-votes-ward-2023-observations",
-			"contentHash": "sha256:b552db84d79c776d38f41f0740a6f705f0f841c34a67a017f644068f54721660",
-			"bytes": 222500,
+			"contentHash": "sha256:ca8a72754e0cf0fab7a1527513f92396a22d8fa362cc02e90f4d151d7d9d447a",
+			"bytes": 265685,
 			"href": "/v1/exports/local-election-other-votes-ward-2023-observations"
 		},
 		{
@@ -3906,8 +3906,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-other-votes-ward-2024-observations",
-			"contentHash": "sha256:cdc01adcfeb6ac1153e7440fd43b505d1d895d0dba851eb41e1038ab11323dcf",
-			"bytes": 104910,
+			"contentHash": "sha256:f5b502b4237d92559872d4cffec55cb0b95f74a25516282f2d59919c2400d472",
+			"bytes": 105975,
 			"href": "/v1/exports/local-election-other-votes-ward-2024-observations"
 		},
 		{
@@ -3923,8 +3923,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-other-votes-ward-2025-observations",
-			"contentHash": "sha256:0c2252a70741878b38d22e8e57669138bfaa206db708ad7da643423f564205f0",
-			"bytes": 28460,
+			"contentHash": "sha256:1146fc07e1979594e4d798ddd3d7accf16a700ef0993c7d02416c79fb9282bd9",
+			"bytes": 28569,
 			"href": "/v1/exports/local-election-other-votes-ward-2025-observations"
 		},
 		{
@@ -3957,8 +3957,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-pc-votes-ward-2017-observations",
-			"contentHash": "sha256:ad5f14ff6b5b42380586737ded5c666244e9f0f1bc3751a5aa1885a668148636",
-			"bytes": 77616,
+			"contentHash": "sha256:f7ffa79e23b366e55aec8c161ac8dcf74b3cf0b95bd80fdb21d188483abb2333",
+			"bytes": 77570,
 			"href": "/v1/exports/local-election-pc-votes-ward-2017-observations"
 		},
 		{
@@ -4008,8 +4008,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-pc-votes-ward-2021-observations",
-			"contentHash": "sha256:c077ffd3da4975ebcfea762dbbc8253259a3525b97ba22dbd22212a3e3fce81c",
-			"bytes": 137522,
+			"contentHash": "sha256:d91bc21e5304e29194ae0a73a42b6e2a622302aca30c8ca657e5e8dd37dbcce2",
+			"bytes": 137577,
 			"href": "/v1/exports/local-election-pc-votes-ward-2021-observations"
 		},
 		{
@@ -4025,8 +4025,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-pc-votes-ward-2022-observations",
-			"contentHash": "sha256:f7d4418188c53d63aafa8061887b71a64f4c823ed944715af26fac0331c62839",
-			"bytes": 194557,
+			"contentHash": "sha256:0dec78a8717032d09aedfd9b5ba86563f3d8f18542d16d16db0a4fa89fc28f40",
+			"bytes": 195138,
 			"href": "/v1/exports/local-election-pc-votes-ward-2022-observations"
 		},
 		{
@@ -4042,8 +4042,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-pc-votes-ward-2023-observations",
-			"contentHash": "sha256:75a020d3fa9e272fbfe0b4af34afe7b2996fb732f7d5a234799511bea5727b20",
-			"bytes": 222497,
+			"contentHash": "sha256:4190b71d2a0091946f4795566ba3dcca164296608bf109813cb56968decd21d7",
+			"bytes": 263802,
 			"href": "/v1/exports/local-election-pc-votes-ward-2023-observations"
 		},
 		{
@@ -4161,8 +4161,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ref-votes-ward-2021-observations",
-			"contentHash": "sha256:7ae930943ac60068fa5018e11ced8aeeb1dcbb46bd264e9447fe50be027c73f9",
-			"bytes": 137726,
+			"contentHash": "sha256:44e6ce7497f97c836ccef7bf420588a6728fb35e581f4144962e5e3c10ad7d32",
+			"bytes": 137781,
 			"href": "/v1/exports/local-election-ref-votes-ward-2021-observations"
 		},
 		{
@@ -4178,8 +4178,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ref-votes-ward-2022-observations",
-			"contentHash": "sha256:c9b2366770353ed9be18cf05c8cc9c7bddba9cb55b5df6d719ea4434f6b79f01",
-			"bytes": 194745,
+			"contentHash": "sha256:e52fa540468db0b1a3950d5a820e95ce370a2ba58a3003c86c5c2d8c21053002",
+			"bytes": 194635,
 			"href": "/v1/exports/local-election-ref-votes-ward-2022-observations"
 		},
 		{
@@ -4195,8 +4195,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ref-votes-ward-2023-observations",
-			"contentHash": "sha256:177b67a13d0edf23457152053211cb5f7de9dfed4f47d6b1f616b40f8d07ef9e",
-			"bytes": 223021,
+			"contentHash": "sha256:1d6cb23cc52b2abfcf9db69b03f23c941d75bac360a84ddba6b890cc31409532",
+			"bytes": 264400,
 			"href": "/v1/exports/local-election-ref-votes-ward-2023-observations"
 		},
 		{
@@ -4212,8 +4212,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ref-votes-ward-2024-observations",
-			"contentHash": "sha256:5583bb9ab8753fa4ba068bedc4911f6a9f67f23f10ef9d5d9c072a74f6a69e06",
-			"bytes": 105497,
+			"contentHash": "sha256:d7113b0a4bb413168a715cea495ad5bce5e894766f0ac939dc50f1dbad51df2b",
+			"bytes": 105496,
 			"href": "/v1/exports/local-election-ref-votes-ward-2024-observations"
 		},
 		{
@@ -4246,8 +4246,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-turnout-ward-2021-observations",
-			"contentHash": "sha256:275949169803796f4f9b539a6b42a1eaaa40509dc3330a784705d7445b0d5943",
-			"bytes": 144315,
+			"contentHash": "sha256:ce0adf8a10d1e2da811af6765cd479b978f92dd12753d38272137b43e54a3abc",
+			"bytes": 144373,
 			"href": "/v1/exports/local-election-turnout-ward-2021-observations"
 		},
 		{
@@ -4263,8 +4263,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-turnout-ward-2022-observations",
-			"contentHash": "sha256:4f2626d8bb7d09beb2229ecd800e0f8b0c282c58332fb457a9a561172cccd0f8",
-			"bytes": 204218,
+			"contentHash": "sha256:2451eafb66237c2f0ff9acb08e2e9096101be45e62ddc610444fb561c75d9cf1",
+			"bytes": 204104,
 			"href": "/v1/exports/local-election-turnout-ward-2022-observations"
 		},
 		{
@@ -4280,8 +4280,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-turnout-ward-2023-observations",
-			"contentHash": "sha256:bf0e4f1c58188f069772839e71e167ee2cac1ac37ddc6a0cf5c542b3c8d87a46",
-			"bytes": 233299,
+			"contentHash": "sha256:0761a2fd7854b1ff6c55746e6bb34ed1c1f6c6229e011b361b68dc98388e9232",
+			"bytes": 276633,
 			"href": "/v1/exports/local-election-turnout-ward-2023-observations"
 		},
 		{
@@ -4331,8 +4331,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ukip-votes-ward-2016-observations",
-			"contentHash": "sha256:2ad864425c4b0e15b41ae9b363897fdf1e2bf40afbdc5e5a9ef25e5ea8a4fd4d",
-			"bytes": 124527,
+			"contentHash": "sha256:17292bf6b4bbc5670c592c3ef94a40758cb85ea52a2200178d652ade5cd60d4e",
+			"bytes": 124502,
 			"href": "/v1/exports/local-election-ukip-votes-ward-2016-observations"
 		},
 		{
@@ -4348,8 +4348,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ukip-votes-ward-2017-observations",
-			"contentHash": "sha256:16557bd5190bd6d88ac555a6cb380bfa55e0a13b31693772b1c35766d9ecf86d",
-			"bytes": 77114,
+			"contentHash": "sha256:6d21d13fc7582d98de789f0900e457c20cac290e5ffe96caf3d566d4c0dfe8a6",
+			"bytes": 77112,
 			"href": "/v1/exports/local-election-ukip-votes-ward-2017-observations"
 		},
 		{
@@ -4365,8 +4365,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ukip-votes-ward-2018-observations",
-			"contentHash": "sha256:ea0c7e07ad187f7931b152c84b7f3a30c1e3bc730643d428ad61961f84264e57",
-			"bytes": 152382,
+			"contentHash": "sha256:1b07bc1b7ccf54282997b08581523627f214c6be2fccabcdb2bd9be4aad4ffea",
+			"bytes": 152372,
 			"href": "/v1/exports/local-election-ukip-votes-ward-2018-observations"
 		},
 		{
@@ -4382,8 +4382,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ukip-votes-ward-2019-observations",
-			"contentHash": "sha256:b16efcc791d6ff149854a0f8c487c0a9e70772f68d4d13be4db9a754d0d1477c",
-			"bytes": 292853,
+			"contentHash": "sha256:6432aaee93566d3e8d7621dea25cca891544d187864f1ae3156e04b343a1ff0f",
+			"bytes": 292829,
 			"href": "/v1/exports/local-election-ukip-votes-ward-2019-observations"
 		},
 		{
@@ -4399,8 +4399,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ukip-votes-ward-2021-observations",
-			"contentHash": "sha256:2c658a4ad7f04417c03f8c58b0e4927db99a1887c000926efaf95e809586c4b2",
-			"bytes": 137524,
+			"contentHash": "sha256:ac58498eeedfc87b203081bdc9ea3a72f0446bb15867831e60c5cc807d368d59",
+			"bytes": 137683,
 			"href": "/v1/exports/local-election-ukip-votes-ward-2021-observations"
 		},
 		{
@@ -4416,8 +4416,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ukip-votes-ward-2022-observations",
-			"contentHash": "sha256:776f2aa742182ebaedc1d420bf9677fd6a084021546f82951ffb428f9a7b6e69",
-			"bytes": 194559,
+			"contentHash": "sha256:e935d5317fb39e56047c9131337ae813d5a3e75eca4f3cfc14ba89d301ef2937",
+			"bytes": 194473,
 			"href": "/v1/exports/local-election-ukip-votes-ward-2022-observations"
 		},
 		{
@@ -4433,8 +4433,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ukip-votes-ward-2023-observations",
-			"contentHash": "sha256:1c30d9439781cc5f292a3766d9427e9caf900a7c8bb143bc5ba5849876d36a70",
-			"bytes": 222499,
+			"contentHash": "sha256:6c3765872c830824363b4b76c18bed24d5a66d6ff9e33ad17347ebee6c45b2a0",
+			"bytes": 263866,
 			"href": "/v1/exports/local-election-ukip-votes-ward-2023-observations"
 		},
 		{
@@ -4450,8 +4450,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ukip-votes-ward-2024-observations",
-			"contentHash": "sha256:4fb664ee0fe607405603f2fdbed597a6aefbe4f23b5af6099a737c992f219284",
-			"bytes": 104909,
+			"contentHash": "sha256:588005d671d9e1527157d475f15acfeb6845e4e634d7b9ab0002e8226f8d4a30",
+			"bytes": 104930,
 			"href": "/v1/exports/local-election-ukip-votes-ward-2024-observations"
 		},
 		{
@@ -4467,8 +4467,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-ukip-votes-ward-2025-observations",
-			"contentHash": "sha256:6f0b864cbe70a04cd71a02b342e96de4e079bb30d3f9d4f8ec4847a5f23e6ae8",
-			"bytes": 28459,
+			"contentHash": "sha256:48de1e5818728dd548ce842ab609fd597b1821a0422b0441b468929cc33c0bee",
+			"bytes": 28461,
 			"href": "/v1/exports/local-election-ukip-votes-ward-2025-observations"
 		},
 		{
@@ -4484,8 +4484,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-winning-party-ward-2016-observations",
-			"contentHash": "sha256:3f91e2c98df3a0e216db6a8e4fa78efbe4409f2f021f0aae66cbc157114a7b81",
-			"bytes": 137175,
+			"contentHash": "sha256:739e174b13a2e9435179c0f8707dba27aa72d83e148944f11efd6f1d43542a6e",
+			"bytes": 137181,
 			"href": "/v1/exports/local-election-winning-party-ward-2016-observations"
 		},
 		{
@@ -4501,8 +4501,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-winning-party-ward-2017-observations",
-			"contentHash": "sha256:7bf45336e180c116e7b24faa0983e9035522973e0548132636ff0114b43d7f02",
-			"bytes": 86330,
+			"contentHash": "sha256:296c7ff13dfb0439c6689c03abe172ceecaafc00373f2cb09fe1988bb0364fe1",
+			"bytes": 86333,
 			"href": "/v1/exports/local-election-winning-party-ward-2017-observations"
 		},
 		{
@@ -4518,8 +4518,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-winning-party-ward-2018-observations",
-			"contentHash": "sha256:fcb6fe8c387f8c201c1ee960064d0dd8456bd6a123145dd0a6c80c339860aee6",
-			"bytes": 170467,
+			"contentHash": "sha256:531f9f1d63f34cfea22f3b8cb444f73b0ce50d9c9588a63ab5c96130ee9e455e",
+			"bytes": 170460,
 			"href": "/v1/exports/local-election-winning-party-ward-2018-observations"
 		},
 		{
@@ -4535,8 +4535,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-winning-party-ward-2019-observations",
-			"contentHash": "sha256:4c9f5ff2eeec7197353d6329a61f149f6ae5661b9275f1462083875f6cb22038",
-			"bytes": 327135,
+			"contentHash": "sha256:612b1c402544104fb9f30bf5745cc51e23de9601a06b0d275f8e1265f50efd95",
+			"bytes": 327198,
 			"href": "/v1/exports/local-election-winning-party-ward-2019-observations"
 		},
 		{
@@ -4552,8 +4552,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-winning-party-ward-2021-observations",
-			"contentHash": "sha256:ea42d5a90836b5ef91770b5fa574e49dc28e00d87a6b366ed824d6095be40953",
-			"bytes": 154843,
+			"contentHash": "sha256:783d927a5bcaaf6383cd5f68bb9471c9b905e00663060379a67f7b45efd43e98",
+			"bytes": 155071,
 			"href": "/v1/exports/local-election-winning-party-ward-2021-observations"
 		},
 		{
@@ -4569,8 +4569,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-winning-party-ward-2022-observations",
-			"contentHash": "sha256:0f641d289c09a3f7c163ead0f5f750710c5963febe45063b4467bc753f7c9207",
-			"bytes": 218970,
+			"contentHash": "sha256:b548f6cec57dda81bef64c374240da1aa70ae4bcefe4c8b07f0193a2bb2e1f4b",
+			"bytes": 218927,
 			"href": "/v1/exports/local-election-winning-party-ward-2022-observations"
 		},
 		{
@@ -4586,8 +4586,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-winning-party-ward-2023-observations",
-			"contentHash": "sha256:fee30f6d4862b4953f23d02a56dcd5b2c1ec144fa94aa570bf4d604be63e4422",
-			"bytes": 250435,
+			"contentHash": "sha256:d3354c4937e5c3d3a6ac3fa90fc0ae867b52f5308c2f30a55d96089032598b03",
+			"bytes": 297454,
 			"href": "/v1/exports/local-election-winning-party-ward-2023-observations"
 		},
 		{
@@ -4603,8 +4603,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-winning-party-ward-2024-observations",
-			"contentHash": "sha256:fad32d55006d96f222ee6c3db35ed934063cc68f4562c79130e128cae716a7d3",
-			"bytes": 118117,
+			"contentHash": "sha256:b48b1e0aaaa09371827fe874df6b360a7d3797a4e88348ff90317cddaa465c79",
+			"bytes": 118294,
 			"href": "/v1/exports/local-election-winning-party-ward-2024-observations"
 		},
 		{
@@ -4620,8 +4620,8 @@
 			},
 			"format": "json",
 			"artifact": "local-election-winning-party-ward-2025-observations",
-			"contentHash": "sha256:3c2a78d86606d576910cacffed7e9cb4f07c118d5760703607c0e4210aca4211",
-			"bytes": 31946,
+			"contentHash": "sha256:48840eb76f7d99d30f4b4ab58ad5e60ce4b2eadcc7d3f1b2a1ee2a17c6437c02",
+			"bytes": 31957,
 			"href": "/v1/exports/local-election-winning-party-ward-2025-observations"
 		},
 		{

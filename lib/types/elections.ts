@@ -59,13 +59,39 @@ interface BaseElectionDataset<D extends ElectionData> {
 	partyInfo: Party[];
 }
 
+/** A source ward row that could not be attached to one official ward code. */
+export interface LocalElectionExcludedWard {
+	wardName: string;
+	ladName: string;
+	/** The code the source gave, when it gave one. */
+	wardCode?: string;
+	reason:
+		| "no-ward-code"
+		| "code-shared-by-wards"
+		| "name-not-in-ward-list"
+		| "name-ambiguous"
+		| "no-candidates";
+}
+
 export interface LocalElectionDataset extends BaseElectionDataset<LocalElectionWardData> {
 	type: "localElection";
 	year: LocalElectionYear;
 	boundaryType: "ward";
 	boundaryYear: WardYear;
 	results: Record<string, string>;
+	/**
+	 * Party votes count each party's highest-polling candidate in a ward, and
+	 * totalVotes is their sum.
+	 */
 	data: Record<string, LocalElectionWardData>;
+	/**
+	 * `published` when the source gives each ward's code; `name-matched` when
+	 * codes were found by exact authority and ward name in the official ward
+	 * list for the boundary year, because the source gives none.
+	 */
+	wardCodes?: "published" | "name-matched";
+	/** Source ward rows left out because no single official code fits them. */
+	excludedWards?: LocalElectionExcludedWard[];
 	/** Selected-location card summary, emitted by the worker when available. */
 	locationAggregate?: AggregatedLocalElectionData;
 	/** Build artifact retained only until the worker selects one location. */
