@@ -7,6 +7,7 @@ import { handleLocationRoutes } from "./locationRoutes";
 import { handleAreaSearchRoutes } from "./areaSearchRoutes";
 import { handleAreaValidationRoutes } from "./areaValidationRoutes";
 import { handleAreaContainsRoutes } from "./areaContainsRoutes";
+import { handleCatalogueRoutes } from "./catalogueRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 
@@ -24,6 +25,14 @@ type RouteFamily = {
  * home explicit while the legacy router is split into domain modules.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "catalogue",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			(segments[1] === "datasets" ||
+				(segments[1] === "measures" && segments.length <= 3)),
+		handle: handleCatalogueRoutes,
+	},
 	{
 		name: "area-contains",
 		owns: (segments) =>
