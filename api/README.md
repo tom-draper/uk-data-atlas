@@ -458,9 +458,10 @@ only **available** when its endpoint, contract and provenance are published.
       one election, while turnout is a percentage that requires electorate
       weighting to combine and is not yet aggregated by the API. General
       election party shares are explicit percentages of valid ballots and
-      aggregate with that published denominator; local candidate votes remain
-      counts because multi-member ballots make their total unsuitable as a
-      ballot-share denominator. Winning party is returned as a categorical
+      aggregate with that published denominator. Local election votes count
+      each party's highest-polling candidate in a ward, and their total,
+      `local-election-effective-votes`, remains a count: multi-member ballots
+      make it unsuitable as a ballot-share denominator. Winning party is returned as a categorical
       observation, not a numeric score. The local archive's 2016–2019 files do
       not publish turnout, so those years are absent from that measure rather
       than represented as zero.

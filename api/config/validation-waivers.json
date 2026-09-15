@@ -64,7 +64,7 @@
 			"check": "records-resolve",
 			"reason": "The LEAP 2016 file gives 12 codes the December 2016 release does not hold: 7 retired wards that no compiled release holds (E05001607, E05002777, E05002780, E05002785, E05008530, E05008532, E05008537) and 5 wards first published in December 2018 or 2019. Results stay on the codes the source published.",
 			"resources": [
-				"exports/local-election-candidate-votes-ward-2016-observations",
+				"exports/local-election-effective-votes-ward-2016-observations",
 				"exports/local-election-con-votes-ward-2016-observations",
 				"exports/local-election-green-votes-ward-2016-observations",
 				"exports/local-election-ind-votes-ward-2016-observations",
@@ -81,7 +81,7 @@
 			"check": "records-resolve",
 			"reason": "The LEAP 2017 file gives 7 codes the December 2017 release does not hold: E05002780, which no compiled release holds, and 6 Welsh wards last published in December 2016. Results stay on the codes the source published.",
 			"resources": [
-				"exports/local-election-candidate-votes-ward-2017-observations",
+				"exports/local-election-effective-votes-ward-2017-observations",
 				"exports/local-election-con-votes-ward-2017-observations",
 				"exports/local-election-green-votes-ward-2017-observations",
 				"exports/local-election-ind-votes-ward-2017-observations",
@@ -98,7 +98,7 @@
 			"check": "records-resolve",
 			"reason": "The LEAP 2018 file gives 6 codes first published in December 2019 (E05012647, E05012648, E05012841, E05012842, E05012968, E05012969) that the December 2018 release does not hold. Results stay on the codes the source published.",
 			"resources": [
-				"exports/local-election-candidate-votes-ward-2018-observations",
+				"exports/local-election-effective-votes-ward-2018-observations",
 				"exports/local-election-con-votes-ward-2018-observations",
 				"exports/local-election-green-votes-ward-2018-observations",
 				"exports/local-election-ind-votes-ward-2018-observations",
@@ -115,7 +115,7 @@
 			"check": "records-resolve",
 			"reason": "The LEAP 2019 file gives Leeds's Garforth & Swillington and Temple Newsam their December 2021 codes, E05013830 and E05013831, which the December 2019 release does not hold. Results stay on the codes the source published.",
 			"resources": [
-				"exports/local-election-candidate-votes-ward-2019-observations",
+				"exports/local-election-effective-votes-ward-2019-observations",
 				"exports/local-election-con-votes-ward-2019-observations",
 				"exports/local-election-green-votes-ward-2019-observations",
 				"exports/local-election-ind-votes-ward-2019-observations",

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:e7f5e112520c377dfb98f364955ac983bbfe67300d10876aff2f714ffa5e251d",
+	"contentHash": "sha256:fc79fd926ec959a944d45022e618d3e77f32170fa59e880a9f54ecee68e8fb7e",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -4532,8 +4532,8 @@
 			]
 		},
 		{
-			"id": "local-election-candidate-votes",
-			"label": "Local election candidate votes",
+			"id": "local-election-effective-votes",
+			"label": "Local election effective votes",
 			"valueKind": "count",
 			"unit": "votes",
 			"aggregation": {
@@ -4551,7 +4551,7 @@
 						"type": "ward",
 						"boundaryYear": 2016
 					},
-					"observationArtifact": "local-election-candidate-votes-ward-2016-observations",
+					"observationArtifact": "local-election-effective-votes-ward-2016-observations",
 					"coverage": {
 						"kind": "partial",
 						"countries": [
@@ -4571,7 +4571,7 @@
 						"type": "ward",
 						"boundaryYear": 2017
 					},
-					"observationArtifact": "local-election-candidate-votes-ward-2017-observations",
+					"observationArtifact": "local-election-effective-votes-ward-2017-observations",
 					"coverage": {
 						"kind": "partial",
 						"countries": [
@@ -4591,7 +4591,7 @@
 						"type": "ward",
 						"boundaryYear": 2018
 					},
-					"observationArtifact": "local-election-candidate-votes-ward-2018-observations",
+					"observationArtifact": "local-election-effective-votes-ward-2018-observations",
 					"coverage": {
 						"kind": "partial",
 						"countries": [
@@ -4610,7 +4610,7 @@
 						"type": "ward",
 						"boundaryYear": 2019
 					},
-					"observationArtifact": "local-election-candidate-votes-ward-2019-observations",
+					"observationArtifact": "local-election-effective-votes-ward-2019-observations",
 					"coverage": {
 						"kind": "partial",
 						"countries": [
@@ -4629,7 +4629,7 @@
 						"type": "ward",
 						"boundaryYear": 2021
 					},
-					"observationArtifact": "local-election-candidate-votes-ward-2021-observations",
+					"observationArtifact": "local-election-effective-votes-ward-2021-observations",
 					"coverage": {
 						"kind": "partial",
 						"countries": [
@@ -4648,7 +4648,7 @@
 						"type": "ward",
 						"boundaryYear": 2022
 					},
-					"observationArtifact": "local-election-candidate-votes-ward-2022-observations",
+					"observationArtifact": "local-election-effective-votes-ward-2022-observations",
 					"coverage": {
 						"kind": "partial",
 						"countries": [
@@ -4668,7 +4668,7 @@
 						"type": "ward",
 						"boundaryYear": 2023
 					},
-					"observationArtifact": "local-election-candidate-votes-ward-2023-observations",
+					"observationArtifact": "local-election-effective-votes-ward-2023-observations",
 					"coverage": {
 						"kind": "partial",
 						"countries": [
@@ -4687,7 +4687,7 @@
 						"type": "ward",
 						"boundaryYear": 2024
 					},
-					"observationArtifact": "local-election-candidate-votes-ward-2024-observations",
+					"observationArtifact": "local-election-effective-votes-ward-2024-observations",
 					"coverage": {
 						"kind": "partial",
 						"countries": [
@@ -4706,7 +4706,7 @@
 						"type": "ward",
 						"boundaryYear": 2025
 					},
-					"observationArtifact": "local-election-candidate-votes-ward-2025-observations",
+					"observationArtifact": "local-election-effective-votes-ward-2025-observations",
 					"coverage": {
 						"kind": "partial",
 						"countries": [
@@ -4723,7 +4723,7 @@
 				"aggregation": true
 			},
 			"links": {
-				"data": "/v1/data/local-election-candidate-votes"
+				"data": "/v1/data/local-election-effective-votes"
 			},
 			"notes": [
 				"The sum across parties of each party's highest-polling candidate's votes in each ward, the House of Commons Library's basis for vote share in multi-member wards, applied to every polling year. It is not a count of ballot papers, and not every candidate's votes added up.",

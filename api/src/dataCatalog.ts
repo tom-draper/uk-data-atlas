@@ -3743,8 +3743,8 @@ export const compileDataCatalog = ({
 			geography: "ward",
 			label: "Local election",
 			countField: "totalVotes",
-			countId: "local-election-candidate-votes",
-			countLabel: "Local election candidate votes",
+			countId: "local-election-effective-votes",
+			countLabel: "Local election effective votes",
 			countNote:
 				"The sum across parties of each party's highest-polling candidate's votes in each ward, the House of Commons Library's basis for vote share in multi-member wards, applied to every polling year. It is not a count of ballot papers, and not every candidate's votes added up.",
 			partyVoteNote:
