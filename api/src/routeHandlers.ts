@@ -24,6 +24,7 @@ import { handleDataValueRoutes } from "./dataValueRoutes";
 import { handleDataChangeRoutes } from "./dataChangeRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
 import { handleDataRoutes } from "./dataRoutes";
+import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -39,6 +40,15 @@ type RouteFamily = {
  * the order below and makes a new route's home explicit.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "data-aggregate",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "aggregate",
+		handle: handleDataAggregateRoutes,
+	},
 	{
 		name: "data",
 		owns: (segments) =>
