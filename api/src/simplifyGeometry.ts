@@ -272,3 +272,18 @@ export const simplifyGeometry = (
 		partsAfter: countParts(simplified),
 	};
 };
+
+/**
+ * Sent with any geometry that was generalised, so the drawing a caller holds
+ * carries the terms it was made on. The second half is the one that bites:
+ * areas are simplified one at a time, so two neighbours drawn together at the
+ * same tier need not agree along the border they share.
+ */
+export const GENERALISATION_METHOD = {
+	rule: "Visvalingam-Whyatt. The vertex whose triangle with its two neighbours is smallest is dropped, repeatedly, until the smallest remaining triangle exceeds the tier's threshold. Triangles are measured in the EPSG:6933 equal-area projection, so the threshold is real square metres anywhere in the country.",
+	threshold:
+		"A tier is the side of the smallest square of detail kept, and its threshold is that square's area. It bounds the size of feature dropped. It is not a promise that no vertex moves further than the tolerance: the same deviation spans a larger triangle the further apart its neighbours are.",
+	parts: "A part or hole whose own area falls below the threshold is dropped whole, rather than surviving as a triangle. An area keeps its geometry type, so a MultiPolygon reduced to one part is still a MultiPolygon.",
+	sharedBorders:
+		"Each area is generalised alone, from its own vertices. Above the full tier, neighbours drawn together may disagree along a shared border. Ask for the full tier where borders must meet exactly.",
+} as const;
