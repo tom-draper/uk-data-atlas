@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import {
 	type DatasetCatalogueEntry,
@@ -16,6 +15,7 @@ import {
 	type AnyMeasureObservationArtifact,
 	type PopulationLocalAuthorityObservationArtifact,
 } from "../dataCatalog";
+import { type PopulationFile, sha256, string, number, object } from "./values";
 
 type DatasetManifest = {
 	version?: unknown;
@@ -29,8 +29,6 @@ type ManifestDataset = {
 	summary?: unknown;
 	compiled?: unknown;
 };
-
-type PopulationFile = Record<string, unknown>;
 
 type Source = {
 	name?: unknown;
@@ -58,30 +56,6 @@ type Summary = {
 type Compiled = {
 	bytes?: unknown;
 	sha256?: unknown;
-};
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
-
-const string = (value: unknown, context: string): string => {
-	if (typeof value !== "string" || value.trim().length === 0) {
-		throw new Error(`${context} must be a non-empty string`);
-	}
-	return value;
-};
-
-const number = (value: unknown, context: string): number => {
-	if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
-		throw new Error(`${context} must be a non-negative finite number`);
-	}
-	return value;
-};
-
-const object = (value: unknown, context: string): Record<string, unknown> => {
-	if (typeof value !== "object" || value === null || Array.isArray(value)) {
-		throw new Error(`${context} must be an object`);
-	}
-	return value as Record<string, unknown>;
 };
 
 const compileDataset = (
