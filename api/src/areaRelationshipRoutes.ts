@@ -13,7 +13,7 @@ export const handleAreaRelationshipRoutes = ({
 		segments.length !== 6 ||
 		segments[0] !== "v1" ||
 		segments[1] !== "areas" ||
-		!["parents", "children"].includes(segments[5]!)
+		!["parents", "children", "relationships"].includes(segments[5]!)
 	)
 		return undefined;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
@@ -49,10 +49,16 @@ export const handleAreaRelationshipRoutes = ({
 	const index =
 		areaRelationshipIndex ??
 		createAreaRelationshipIndex(crosswalkLookup.values());
-	const relation = segments[5] === "parents" ? "within" : "contains";
-	const relationships = (
-		index.get(`${geography}/${boundaryRelease}/${code}`) ?? []
-	).filter((candidate) => candidate.relation === relation);
+	const allRelationships =
+		index.get(`${geography}/${boundaryRelease}/${code}`) ?? [];
+	const relationships =
+		segments[5] === "relationships"
+			? allRelationships
+			: allRelationships.filter(
+					(candidate) =>
+						candidate.relation ===
+						(segments[5] === "parents" ? "within" : "contains"),
+				);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
