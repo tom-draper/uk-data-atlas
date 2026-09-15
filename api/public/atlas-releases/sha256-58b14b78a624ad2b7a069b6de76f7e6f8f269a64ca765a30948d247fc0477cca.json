@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c",
+	"releaseId": "sha256:58b14b78a624ad2b7a069b6de76f7e6f8f269a64ca765a30948d247fc0477cca",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,17 +25,17 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:793cb070e8b35e30929d083ebbeb7f2c97078c6e63809b85f8be03fb919904b1"
+			"contentHash": "sha256:618d2d9da5e3a9eab720e5cf52e06e378657da63dfb31f05041fa745e55ad543"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:e15523c92a75d8ea0ad4a9e0714ab12b1517d2c86bc598e6c7ffb69526f8277e"
+			"contentHash": "sha256:845cf1ffa182bd330ea624461fbf7c4b4baeadd54bf8caa8647337fab6405271"
 		},
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:a3f4235126ed395967328339b3b6378c6870ce60125c81329c08b89f06df982a"
+			"contentHash": "sha256:69cb25f5e9e1a964ddd7f9f96b6d81ff7c52046d6e60946ef609fd36b395afb8"
 		},
 		{
 			"id": "lookup-manifest",
@@ -75,7 +75,7 @@
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:a4156bc6a0e7bcc54ae1e4fdbed2105dfcd68c09dd485cc50ee3720c4e781fa8"
+			"contentHash": "sha256:08956e0e49cff8718756a5e663865a781a7c92bfc4ac02bec23bb3bb41bff521"
 		},
 		{
 			"id": "source-inventory",
@@ -1483,7 +1483,7 @@
 			"air-quality": "sha256:298235aea52aaa0bfdc40b99b8f4d069f4cc8f149d0c7618100d4798ba17391f",
 			"brexit": "sha256:0ec6e449c5f0b597e464066c65411e507fe5bbde99fa164d0d62babed779337c",
 			"brexit-constituency": "sha256:b9f2a2369e2ebaa243155e16f74fe20662a67972774a7a64c9069fb8d729a931",
-			"broadband": "sha256:649def260918c33238729a2fac1c45eee29e932b425d4a87632bb5dbd16552ea",
+			"broadband": "sha256:95513b81c98ad65373a13dc8157e9cea31987d0ee35320f4795e0721483f2bdc",
 			"car-availability": "sha256:a26f20bd33a83dd6f5e4eb1fb83eff957348fd1d1d9c09c51837e53b4134bc59",
 			"child-poverty": "sha256:021db577f4cce75b66f0ad6ff0d916c5440173ca6e7ef877516c47d511bd414c",
 			"claimant-count": "sha256:00825ac73352e77df3677f91a8e95f86cd4469d2a37d9790c1ae96c833c0c754",

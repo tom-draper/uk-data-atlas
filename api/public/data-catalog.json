@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4eed5a7f1ff14d6384ced20b2a3d1f7628f7f9a8165e3cead8cb8986a8bcac8b",
+	"contentHash": "sha256:bb74ed7f9fc98892754e3ec80f01ced497277057ff7097a898d49a7d5acebd65",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -132,8 +132,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 49880,
-				"sha256": "9b2914caf62d3b96625a3c932993f424fb6fee7bdf9ca2754a27a1dcb3f88463"
+				"bytes": 57924,
+				"sha256": "1cc7a6e0de21d0faf861a6cbf07e7a9171a92843f63fefd472f5afb30caaed3d"
 			}
 		},
 		{

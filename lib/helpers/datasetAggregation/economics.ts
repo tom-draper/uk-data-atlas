@@ -15,17 +15,22 @@ import type {
 	UnemploymentDataset,
 } from "@/lib/types/unemployment";
 
-/** Averages each available annual unemployment rate across selected LADs. */
+/**
+ * Each year's rate over the selected authorities, weighted by their
+ * economically active residents: a rate is unemployed over economically
+ * active, and that population is the level divided by the rate. A year no
+ * authority has both for is left out.
+ */
 export function aggregateUnemployment(
 	features: Features,
 	codeProperty: PropertyKeys,
 	dataset: UnemploymentDataset,
 ): AggregatedUnemploymentData | null {
-	const sums: Record<number, number> = {};
-	const counts: Record<number, number> = {};
+	const unemployed: Record<number, number> = {};
+	const active: Record<number, number> = {};
 	for (const year of dataset.years) {
-		sums[year] = 0;
-		counts[year] = 0;
+		unemployed[year] = 0;
+		active[year] = 0;
 	}
 
 	for (const feature of features) {
@@ -36,18 +41,18 @@ export function aggregateUnemployment(
 		if (!record) continue;
 		for (const year of dataset.years) {
 			const rate = record.rates[year];
-			if (rate != null) {
-				sums[year] += rate;
-				counts[year]++;
-			}
+			const level = record.levels?.[year];
+			if (rate == null || level == null || !(rate > 0)) continue;
+			unemployed[year] += level;
+			active[year] += (level / rate) * 100;
 		}
 	}
 
 	const rates: Record<number, number> = {};
 	let hasAny = false;
 	for (const year of dataset.years) {
-		if (counts[year] > 0) {
-			rates[year] = sums[year] / counts[year];
+		if (active[year] > 0) {
+			rates[year] = (unemployed[year] / active[year]) * 100;
 			hasAny = true;
 		}
 	}
