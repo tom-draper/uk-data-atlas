@@ -38,6 +38,7 @@ import {
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { ExportManifest } from "./exportManifest";
+import type { LookupManifest } from "./lookupExports";
 import {
 	createAreaSearchIndex,
 	route,
@@ -203,6 +204,15 @@ export const readExportManifest = (apiRoot: string): ExportManifest => {
 	return manifest;
 };
 
+export const readLookupManifest = (apiRoot: string): LookupManifest => {
+	const path = join(apiRoot, "public", "lookup-manifest.json");
+	const manifest = JSON.parse(readFileSync(path, "utf8")) as LookupManifest;
+	if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.lookups)) {
+		throw new Error(`Invalid lookup manifest at ${path}`);
+	}
+	return manifest;
+};
+
 export const readPopulationObservations = (
 	apiRoot: string,
 ): PopulationObservationArtifact => {
@@ -340,6 +350,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		namedLocationLookup: createNamedLocationLookup(namedLocationInventory),
 		dataCatalog,
 		exportManifest,
+		lookupManifest: readLookupManifest(apiRoot),
 		populationObservations: readPopulationObservations(apiRoot),
 		populationLocalAuthorityObservations:
 			readPopulationLocalAuthorityObservations(apiRoot),

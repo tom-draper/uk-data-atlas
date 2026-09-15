@@ -1,0 +1,5682 @@
+{
+	"schemaVersion": 1,
+	"contentHash": "sha256:67f2e1de51b89868fc95bac3156b1f1818b364b4db0977e737be475c9f7b69a3",
+	"lookups": [
+		{
+			"id": "areas-combinedAuthority-2025-12-en-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, combinedAuthority 2025-12-en-bgc",
+			"source": {
+				"artifact": "areas/combinedAuthority/2025-12-en-bgc.json",
+				"contentHash": "sha256:7d92965736e95d7e8a9bb0ec8cfdd1bf522d0958259ca8edc88338b0c2551446"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 15,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 973,
+					"contentHash": "sha256:ed2e74f9ddc2eb163164a2f0a5d077d59599de71a61ebf5fc951f2c8e40141b2",
+					"href": "/v1/lookups/areas-combinedAuthority-2025-12-en-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1919,
+					"contentHash": "sha256:b57cfc9308330b2c8cceb6b886de0bbce36e0a1af42ffcc350d1cd7b78303e60",
+					"href": "/v1/lookups/areas-combinedAuthority-2025-12-en-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-communitySafetyPartnership-2023-12-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, communitySafetyPartnership 2023-12-ew-bgc",
+			"source": {
+				"artifact": "areas/communitySafetyPartnership/2023-12-ew-bgc.json",
+				"contentHash": "sha256:252592fe688000dffd235746bd7cb327604ff28a23def38577e3e956e3ef0d12"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 314,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 20676,
+					"contentHash": "sha256:ba947154abc5022b685bfd52e44e0b704fcbda5983ba9016667e3eb32ab38945",
+					"href": "/v1/lookups/areas-communitySafetyPartnership-2023-12-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 41380,
+					"contentHash": "sha256:a0813bc65215bafa89be16526c3dd0977862cb1fc933c784edb079b83a96b478",
+					"href": "/v1/lookups/areas-communitySafetyPartnership-2023-12-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-constituency-2015-12-gb-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, constituency 2015-12-gb-bgc",
+			"source": {
+				"artifact": "areas/constituency/2015-12-gb-bgc.json",
+				"contentHash": "sha256:c5b97468289a1adb7c4415faa751ac06475931585b2e4f5871f201a1364cd9e3"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 626,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 34641,
+					"contentHash": "sha256:d06e84e1942c7370b523e15aa4246fd14123b5ad7bd84cae7bf677f7d544cf0e",
+					"href": "/v1/lookups/areas-constituency-2015-12-gb-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 75839,
+					"contentHash": "sha256:ac29f73c96642336850dfdfbd63dfce3356c1ae602c038ed62ab144c77221913",
+					"href": "/v1/lookups/areas-constituency-2015-12-gb-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-constituency-2016-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, constituency 2016-12-uk-bgc",
+			"source": {
+				"artifact": "areas/constituency/2016-12-uk-bgc.json",
+				"contentHash": "sha256:c105eb5c8b1abed048237a0071d3fb1e9c548dfd7788b3201e6e8e99bc427829"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 650,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 35949,
+					"contentHash": "sha256:fae72ecce962e13a07575467dbddbf9e416ebe841eeb89fd2727fb5553d72a97",
+					"href": "/v1/lookups/areas-constituency-2016-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 78729,
+					"contentHash": "sha256:ffb02edbac0a185ce11c0a79d1c2feb3698e0cac51f1e36739a005a6f1b019ab",
+					"href": "/v1/lookups/areas-constituency-2016-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-constituency-2017-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, constituency 2017-12-uk-bgc",
+			"source": {
+				"artifact": "areas/constituency/2017-12-uk-bgc.json",
+				"contentHash": "sha256:b8cd6f16148901af97bf4665c35132b9caeb3150747a684fccef27dc7090ae9a"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 650,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 35956,
+					"contentHash": "sha256:7ea999cc92a91bfdaf75f911aea054800fc9cc92d7935374279faea1cf8f0864",
+					"href": "/v1/lookups/areas-constituency-2017-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 78736,
+					"contentHash": "sha256:49b8aafbf0b9c6c33718b624d79f66ce8c1c560ac71751c73df05ded89e24044",
+					"href": "/v1/lookups/areas-constituency-2017-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-constituency-2019-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, constituency 2019-12-uk-bgc",
+			"source": {
+				"artifact": "areas/constituency/2019-12-uk-bgc.json",
+				"contentHash": "sha256:f23bb9b367674668a675dcc8c1853d57605b5dd5e634d5b5aa67f8b7a1b9da02"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 650,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 35949,
+					"contentHash": "sha256:7d25de81fb8552aa0c638d477a00f0f36bdaaaaef53eaf12143ce550c684ca9c",
+					"href": "/v1/lookups/areas-constituency-2019-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 78729,
+					"contentHash": "sha256:67d74c8eaa206b078ec5427c06f5c41df6dc55ea35ae9ffe6b8c08a96a8a9406",
+					"href": "/v1/lookups/areas-constituency-2019-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-constituency-2024-07-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, constituency 2024-07-uk-bgc",
+			"source": {
+				"artifact": "areas/constituency/2024-07-uk-bgc.json",
+				"contentHash": "sha256:77090f645fcaf7d5bf78e9973464e79ae9c5373ead42f1fecc14c39ba075db9d"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 650,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 37596,
+					"contentHash": "sha256:e012fa86703c202e70bc618eb4956697d7c806cdb907df530ccf97dc83cb3f12",
+					"href": "/v1/lookups/areas-constituency-2024-07-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 80468,
+					"contentHash": "sha256:f5a44ce367229771c068ba143643b9da9f2a1b6ce3234907b4158fbc399f5230",
+					"href": "/v1/lookups/areas-constituency-2024-07-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-country-2020-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, country 2020-12-uk-bgc",
+			"source": {
+				"artifact": "areas/country/2020-12-uk-bgc.json",
+				"contentHash": "sha256:896ce61d6c66d3929e8bf01a26b5c2e2afae655341925ea1e77baa9a79531e6a"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 4,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 220,
+					"contentHash": "sha256:072ee90edd14bb541b637b620acf3e5812a868896e251773428fb74b5af49f4c",
+					"href": "/v1/lookups/areas-country-2020-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 440,
+					"contentHash": "sha256:6b18bcd93c6f2d921c2d11f66d579fe00b8f2f9702e03624f98255bca0a6b32e",
+					"href": "/v1/lookups/areas-country-2020-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-country-2021-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, country 2021-12-uk-bgc",
+			"source": {
+				"artifact": "areas/country/2021-12-uk-bgc.json",
+				"contentHash": "sha256:9b15b8e2ac3def7348f305776a1bc3af5fb134c1c4b71d7b74e5766ad46aa3ff"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 4,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 255,
+					"contentHash": "sha256:f72f60a1886da7bf527d9321f5c47e97238f9df45dc6e739ae3fbeb395edfecb",
+					"href": "/v1/lookups/areas-country-2021-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 483,
+					"contentHash": "sha256:e2e18631843fa1808c3f9c9e14025c3c4e5a50575d89a44be5d6564b196d4d8f",
+					"href": "/v1/lookups/areas-country-2021-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-country-2022-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, country 2022-12-uk-bgc",
+			"source": {
+				"artifact": "areas/country/2022-12-uk-bgc.json",
+				"contentHash": "sha256:9550bb58df65e7b9041e005a8009cf5bfac297829de9d8c05f554e033f59524e"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 4,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 255,
+					"contentHash": "sha256:81a82ae552fbdcde2afa61d87282c968420454e6464c69846401f697069d9d44",
+					"href": "/v1/lookups/areas-country-2022-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 483,
+					"contentHash": "sha256:07dd265182bcd401e9463fedb5aaa8c343a54b2cd46d786e811dae3e99a5de80",
+					"href": "/v1/lookups/areas-country-2022-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-country-2023-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, country 2023-12-uk-bgc",
+			"source": {
+				"artifact": "areas/country/2023-12-uk-bgc.json",
+				"contentHash": "sha256:0d2d0d8adc930e47b3db20fe398e0b7ae4f2dc56f2a0f665edbf6d696eaa0e18"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 4,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 255,
+					"contentHash": "sha256:1c35345997c5ea563cb4fb00d4f88d580e77f6a820a25f1aa770fc258e006815",
+					"href": "/v1/lookups/areas-country-2023-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 483,
+					"contentHash": "sha256:6197d2f2be4e52dfa7626ea20a01200d7aa4400a53032c3e5f5656cc24797582",
+					"href": "/v1/lookups/areas-country-2023-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-country-2024-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, country 2024-12-uk-bgc",
+			"source": {
+				"artifact": "areas/country/2024-12-uk-bgc.json",
+				"contentHash": "sha256:695d7fcc0e5c209fb08842d037087abcdcc4b99855ba032bbfb60f1896916389"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 4,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 255,
+					"contentHash": "sha256:c6e10cb8a453c38bc684b98fa45374bf8c2dc206621eb75375082fc73567fe89",
+					"href": "/v1/lookups/areas-country-2024-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 483,
+					"contentHash": "sha256:ee2cffade084ef810f77d7783271f3b6f3843fa99ec8c4ea791167e200479f97",
+					"href": "/v1/lookups/areas-country-2024-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-country-2025-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, country 2025-12-uk-bgc",
+			"source": {
+				"artifact": "areas/country/2025-12-uk-bgc.json",
+				"contentHash": "sha256:ad95745b5a9d39fe05366e868d171ab20a3717c6099bdf5e75ba82432ae1b090"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 4,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 255,
+					"contentHash": "sha256:bbc61eab6f8dff1f1b20969d786645b20dd5ffcb0c1bac5611f9bd5412bcce86",
+					"href": "/v1/lookups/areas-country-2025-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 483,
+					"contentHash": "sha256:3caf65731576ba2d02e0879c3d07f5bc58b031af0fb8075a22dbabf258296bfd",
+					"href": "/v1/lookups/areas-country-2025-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-countyAndUnitaryAuthority-2025-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, countyAndUnitaryAuthority 2025-12-uk-bgc",
+			"source": {
+				"artifact": "areas/countyAndUnitaryAuthority/2025-12-uk-bgc.json",
+				"contentHash": "sha256:eef6157d89d36fc74beff83db1ed3da5f02e5a30af4769e6dc8cb3d59f9785ff"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 218,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 14403,
+					"contentHash": "sha256:c7bd1fe4687a3816d118ede91ebe6983206bc0be568b2f40b5aa13d607fd0d70",
+					"href": "/v1/lookups/areas-countyAndUnitaryAuthority-2025-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 28765,
+					"contentHash": "sha256:cb1fad95f52047e14cdd4baff93889ed7194c3e27ea4144ddc27164f99d823a8",
+					"href": "/v1/lookups/areas-countyAndUnitaryAuthority-2025-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-countyElectoralDivision-2023-05-en-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, countyElectoralDivision 2023-05-en-bgc",
+			"source": {
+				"artifact": "areas/countyElectoralDivision/2023-05-en-bgc.json",
+				"contentHash": "sha256:3b40121ed1e34a67b113a2aca3cf132a9ca9a7b6a00cd5882d34fbcd94f8861a"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 1367,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 95043,
+					"contentHash": "sha256:9ba36561767aedae2413d44265fb2242625070117bd1fbd9fab19c437cb74a48",
+					"href": "/v1/lookups/areas-countyElectoralDivision-2023-05-en-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 185163,
+					"contentHash": "sha256:97fe1f761a58ddeee342ca22258873ea81fb9f45f1f76098218f2c334a187342",
+					"href": "/v1/lookups/areas-countyElectoralDivision-2023-05-en-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-dataZone-2011-12-sc-bfc",
+			"kind": "area-identities",
+			"title": "Area identities, dataZone 2011-12-sc-bfc",
+			"source": {
+				"artifact": "areas/dataZone/2011-12-sc-bfc.json",
+				"contentHash": "sha256:62075d67d2c29754f57495650508bd7d0b7d820fd9f95c4d7d8629ade649dbc9"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 6976,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 408993,
+					"contentHash": "sha256:b9d2ccd3e7f85ef7aabc971f42a58cf76cbacf6b6852e9f7cdba24102c8df0d2",
+					"href": "/v1/lookups/areas-dataZone-2011-12-sc-bfc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 868363,
+					"contentHash": "sha256:9d63b96a58427c0d44bc6aacb36db0d6a6712c16f1a1ccd352e3ae6c4d418a41",
+					"href": "/v1/lookups/areas-dataZone-2011-12-sc-bfc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-dataZone-2011-12-sc-nc",
+			"kind": "area-identities",
+			"title": "Area identities, dataZone 2011-12-sc-nc",
+			"source": {
+				"artifact": "areas/dataZone/2011-12-sc-nc.json",
+				"contentHash": "sha256:115e5e21b45f210041b5de1af56d90ad020071816e76165c31ea2cdc8bfc920c"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 6976,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 399896,
+					"contentHash": "sha256:eff9a347aa641e8f7bba4980c1dcdd56c8c8713ea5d769a93b2dc80025aaef9d",
+					"href": "/v1/lookups/areas-dataZone-2011-12-sc-nc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 859266,
+					"contentHash": "sha256:7bba0f516df258de91089d6dc2e5940b872adb736592db2f03bf6957df85a8d3",
+					"href": "/v1/lookups/areas-dataZone-2011-12-sc-nc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-fireAndRescueAuthority-2021-05-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, fireAndRescueAuthority 2021-05-ew-bgc",
+			"source": {
+				"artifact": "areas/fireAndRescueAuthority/2021-05-ew-bgc.json",
+				"contentHash": "sha256:4481ca340f19e728cdb4cc4f020e89fad8a4427a7051372260179bcdcfbaf6a2"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 47,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 3076,
+					"contentHash": "sha256:79f39bee1db2fa0aa77d52e7df8ca52dcda2dd6c296fe883ca81d0d973a5e70f",
+					"href": "/v1/lookups/areas-fireAndRescueAuthority-2021-05-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 6134,
+					"contentHash": "sha256:411660ee3e66ef51d56dd7924a436e477026a42c9a946f805a91e36e388312f0",
+					"href": "/v1/lookups/areas-fireAndRescueAuthority-2021-05-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-integratedCareBoard-2026-04-en-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, integratedCareBoard 2026-04-en-bgc",
+			"source": {
+				"artifact": "areas/integratedCareBoard/2026-04-en-bgc.json",
+				"contentHash": "sha256:d75788fc39d335523e54c5122d58296f13ffa8104e3c0312858fe747e06fc7dc"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 36,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 3448,
+					"contentHash": "sha256:9352da7d311fe7d4478cced6b02fbd1f34819f73592b32f364ef089ee2336acb",
+					"href": "/v1/lookups/areas-integratedCareBoard-2026-04-en-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 5772,
+					"contentHash": "sha256:ba0aa471f5fe33833a289c06345e43c3b22eff3e2e7946f9d84639e19bd49144",
+					"href": "/v1/lookups/areas-integratedCareBoard-2026-04-en-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-itl1-2021-01-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, itl1 2021-01-uk-bgc",
+			"source": {
+				"artifact": "areas/itl1/2021-01-uk-bgc.json",
+				"contentHash": "sha256:2b735f9e8be9fb74c08677b89e66a420f6ec9bea66b5e2da9e42aed77e8ba079"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 12,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 545,
+					"contentHash": "sha256:981590a6e0a39688b06f51db20c261461a7b18459d0e157cc0d3e56b01b9af51",
+					"href": "/v1/lookups/areas-itl1-2021-01-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1293,
+					"contentHash": "sha256:84b240b5f2ab7691849cf9ac6f45ccb2cafa22a2c923e23683a3051cf9bc1448",
+					"href": "/v1/lookups/areas-itl1-2021-01-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-itl2-2021-01-uk-bgc-v2",
+			"kind": "area-identities",
+			"title": "Area identities, itl2 2021-01-uk-bgc-v2",
+			"source": {
+				"artifact": "areas/itl2/2021-01-uk-bgc-v2.json",
+				"contentHash": "sha256:f7db77090ed6f22004e4cb1ee41e949acd602413ca6b0916a558e055e4ae2cbe"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 41,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 2173,
+					"contentHash": "sha256:e3c4c874bcd0382ec1a7ae45ddcc87879862cfb53899f706f8f8de6bfc4808eb",
+					"href": "/v1/lookups/areas-itl2-2021-01-uk-bgc-v2?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 4823,
+					"contentHash": "sha256:0010c1b4f1a82da9a8ec8e786192ab4f33400cd9727285a2b70dedc2af037335",
+					"href": "/v1/lookups/areas-itl2-2021-01-uk-bgc-v2?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-itl3-2021-01-uk-bgc-v3",
+			"kind": "area-identities",
+			"title": "Area identities, itl3 2021-01-uk-bgc-v3",
+			"source": {
+				"artifact": "areas/itl3/2021-01-uk-bgc-v3.json",
+				"contentHash": "sha256:05216534aca243529eee2f921933d8b04d831aa0899317a48dadfccd17f6be70"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 179,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 8822,
+					"contentHash": "sha256:8e188748bca9e5c3831fae3ddac324b64b41403d3020c1f16d125faffff42859",
+					"href": "/v1/lookups/areas-itl3-2021-01-uk-bgc-v3?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 20562,
+					"contentHash": "sha256:5e2d4343bd63a4a6c772cfc5a75840f34a3649b79d6436348e795e87ee688d3d",
+					"href": "/v1/lookups/areas-itl3-2021-01-uk-bgc-v3?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2016-12-gb-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2016-12-gb-bgc",
+			"source": {
+				"artifact": "areas/localAuthority/2016-12-gb-bgc.json",
+				"contentHash": "sha256:2ca2840c27a5bb8acadff68a7e48425c6a910b57b41a7b11dcc020d0eeaf3665"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 380,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 20370,
+					"contentHash": "sha256:11e360324dddfcae900f48cba47a5141f0c550c6b01a508b29dbde64076c1996",
+					"href": "/v1/lookups/areas-localAuthority-2016-12-gb-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 45430,
+					"contentHash": "sha256:a5ff1481835ae8c05716f61545df687f81dea865812322a0c195b819ccfbd51a",
+					"href": "/v1/lookups/areas-localAuthority-2016-12-gb-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2018-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2018-12-uk-bgc",
+			"source": {
+				"artifact": "areas/localAuthority/2018-12-uk-bgc.json",
+				"contentHash": "sha256:4d720a8e3e6c4b149e96eea216290f433540ce4616490f72b424dede0b68fea5"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 391,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 20898,
+					"contentHash": "sha256:0455024ccf739955a1699237b615f5a79afb121085fb5fb1e19b94bfc17b2e33",
+					"href": "/v1/lookups/areas-localAuthority-2018-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 46650,
+					"contentHash": "sha256:4463391356f8bedb18a31be69ed44ff5d750e06a6de05de08358abf6427feb5a",
+					"href": "/v1/lookups/areas-localAuthority-2018-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2019-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2019-12-uk-bgc",
+			"source": {
+				"artifact": "areas/localAuthority/2019-12-uk-bgc.json",
+				"contentHash": "sha256:ee6cec9445fd13f8b3607068ae9d2e3b8f5163e8f5611686d47504b4b02e0d56"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 382,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 20448,
+					"contentHash": "sha256:a724b1202b5db488b2e2f98e0ba16256d84c79831d196d383030cc37beb29d64",
+					"href": "/v1/lookups/areas-localAuthority-2019-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 45604,
+					"contentHash": "sha256:35545c5ab7cc58f68336ff5c8c07ae264188ffa5e733ac39e6c0f7ff92dffb86",
+					"href": "/v1/lookups/areas-localAuthority-2019-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2021-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2021-12-uk-bgc",
+			"source": {
+				"artifact": "areas/localAuthority/2021-12-uk-bgc.json",
+				"contentHash": "sha256:bad319cb06dab4ba8ce6f1c9490a96c423f9745be9e0d80e9acfcf11b67842e6"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 374,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 20217,
+					"contentHash": "sha256:49da17d777fd4b7f7cb39a7794c5023d049bb0adcb42f519243c2e983241abf5",
+					"href": "/v1/lookups/areas-localAuthority-2021-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 44875,
+					"contentHash": "sha256:e584acbba54443b94846d62050719ea0551b8da69906ba8e86720c1c8593f30f",
+					"href": "/v1/lookups/areas-localAuthority-2021-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2022-12-uk-bgc-v2",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2022-12-uk-bgc-v2",
+			"source": {
+				"artifact": "areas/localAuthority/2022-12-uk-bgc-v2.json",
+				"contentHash": "sha256:e3f8f29fcc848605b8e780a3dd4ab3b711167064d4e869997237ee81c2285060"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 374,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 21162,
+					"contentHash": "sha256:1c5d33b0dc33f0a4ed788e1b138d2ece69f72560f172cc378596aa8a3604c2b3",
+					"href": "/v1/lookups/areas-localAuthority-2022-12-uk-bgc-v2?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 45790,
+					"contentHash": "sha256:6a5fd21fc15a56fac5f9debf0783ab47d2cf725990b639b86f3fe8c53577657c",
+					"href": "/v1/lookups/areas-localAuthority-2022-12-uk-bgc-v2?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2023-05-uk-bgc-v2",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2023-05-uk-bgc-v2",
+			"source": {
+				"artifact": "areas/localAuthority/2023-05-uk-bgc-v2.json",
+				"contentHash": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 361,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 20636,
+					"contentHash": "sha256:a9aa6fcc021ffdc0ca995ec0fe351e84a6bbd4e9a4190687ab361d97da10e240",
+					"href": "/v1/lookups/areas-localAuthority-2023-05-uk-bgc-v2?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 44436,
+					"contentHash": "sha256:cf4847fb667950aa78e538cd26335c1d9f872601b7e6345c1900087d35a78d9b",
+					"href": "/v1/lookups/areas-localAuthority-2023-05-uk-bgc-v2?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2024-05-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2024-05-uk-bgc",
+			"source": {
+				"artifact": "areas/localAuthority/2024-05-uk-bgc.json",
+				"contentHash": "sha256:7ccc829d47ce7e7eed0d847bc285cad2e96abe768a3008506b3aefaa15b3f935"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 361,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 19553,
+					"contentHash": "sha256:fa8d0af51b92a7e5a7a7f8c73012a16a5c38c05edc60d4969a69c917970b3d20",
+					"href": "/v1/lookups/areas-localAuthority-2024-05-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 43353,
+					"contentHash": "sha256:0e4aac73f940960ed427ff7705f633204537f1c28cb8bdcca446dcb96ae0aca3",
+					"href": "/v1/lookups/areas-localAuthority-2024-05-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2024-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2024-12-uk-bgc",
+			"source": {
+				"artifact": "areas/localAuthority/2024-12-uk-bgc.json",
+				"contentHash": "sha256:31265967f1dfba88b929c7a0656f06d8a0d544c118fdd9d201e1b4b8aecec6b1"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 361,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 19553,
+					"contentHash": "sha256:d3e239c4e4d964ebf461f94e757e1d8f05de7d9d3b84c122866bbc0ff1d8078a",
+					"href": "/v1/lookups/areas-localAuthority-2024-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 43353,
+					"contentHash": "sha256:1fe421f22c1a40f41dd881ee1d6796b7046c26b035ed84959389b04a046d6e8d",
+					"href": "/v1/lookups/areas-localAuthority-2024-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2025-05-uk-bgc-v2",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2025-05-uk-bgc-v2",
+			"source": {
+				"artifact": "areas/localAuthority/2025-05-uk-bgc-v2.json",
+				"contentHash": "sha256:5c832fa744ee66475a4f0d0cda3faea14eadd039abb6e9223e248e8445ac608a"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 361,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 20636,
+					"contentHash": "sha256:1d6aa46b801899ed902c183d21d19ea39f77431c2e9390bd94371d152744ae73",
+					"href": "/v1/lookups/areas-localAuthority-2025-05-uk-bgc-v2?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 44436,
+					"contentHash": "sha256:d720113d4f11e6067382e12c205c13985e0f89a5af67b336d2cf34a9360d18ea",
+					"href": "/v1/lookups/areas-localAuthority-2025-05-uk-bgc-v2?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2025-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2025-12-uk-bgc",
+			"source": {
+				"artifact": "areas/localAuthority/2025-12-uk-bgc.json",
+				"contentHash": "sha256:53eeb1c7f828f03e50c8f66081d88019ec9f9a31b2a56b41d2b3eff891e40b24"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 361,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 19553,
+					"contentHash": "sha256:4a1e14039a9dcc3d923eea9cc96245c60bcb15fe767803b5b41d566d714b3ad1",
+					"href": "/v1/lookups/areas-localAuthority-2025-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 43353,
+					"contentHash": "sha256:2c1cea177a4430b32d31e133442be2b5a49f291af830b5082b04ce05581f227f",
+					"href": "/v1/lookups/areas-localAuthority-2025-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localAuthority-2026-05-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localAuthority 2026-05-uk-bgc",
+			"source": {
+				"artifact": "areas/localAuthority/2026-05-uk-bgc.json",
+				"contentHash": "sha256:bf3b8365d5ae3b30c1d34059f4eb573f92632351c52b956f8f72d13bf3891ce1"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 361,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 19553,
+					"contentHash": "sha256:ce6840b12c45027ed4db63706a4eb38fddfda510e34b40b3e278742c11004f61",
+					"href": "/v1/lookups/areas-localAuthority-2026-05-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 43353,
+					"contentHash": "sha256:d3bf37b562baabb2039b6107e86323505d85d6cb0f52571156e03a8a08b41590",
+					"href": "/v1/lookups/areas-localAuthority-2026-05-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localHealthBoard-2023-12-w-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localHealthBoard 2023-12-w-bgc",
+			"source": {
+				"artifact": "areas/localHealthBoard/2023-12-w-bgc.json",
+				"contentHash": "sha256:cf79e42dd16032838db099cdb0c1fc57542c45f0dcfa56cd4238e483503cdb8d"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 7,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 845,
+					"contentHash": "sha256:3308889e379ae294d0a4dcd78254cdcd3d5c1f7944f90769add84bf3404b2f3e",
+					"href": "/v1/lookups/areas-localHealthBoard-2023-12-w-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1277,
+					"contentHash": "sha256:ccb80c8c504b58c6e3ec87999d53ba377197047f33f8c23f46932a995b42f015",
+					"href": "/v1/lookups/areas-localHealthBoard-2023-12-w-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-localPlanningAuthority-2019-04-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, localPlanningAuthority 2019-04-uk-bgc",
+			"source": {
+				"artifact": "areas/localPlanningAuthority/2019-04-uk-bgc.json",
+				"contentHash": "sha256:3fb8321da62654e2907bf72818a76cc46b201e9729019797d2051a0ed76b222f"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 400,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 26531,
+					"contentHash": "sha256:39bb0eae5763f4fd96e7e85310ee4e18b4977964c67ab3e7fb5678f815823d01",
+					"href": "/v1/lookups/areas-localPlanningAuthority-2019-04-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 52875,
+					"contentHash": "sha256:55b1a04b40ea0b8670062837c7e29078be369c23ea1da3e39daf83dc4e6aead0",
+					"href": "/v1/lookups/areas-localPlanningAuthority-2019-04-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-lsoa-2011-12-ew-bgc-v3",
+			"kind": "area-identities",
+			"title": "Area identities, lsoa 2011-12-ew-bgc-v3",
+			"source": {
+				"artifact": "areas/lsoa/2011-12-ew-bgc-v3.json",
+				"contentHash": "sha256:f4e0776a1192b05ac9f672b11aa54de56f4fa810ac70fca271da7fdf359704cf"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 34753,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1778144,
+					"contentHash": "sha256:e330d2a3c61e1b8356b37b11d783453032308c179646aef9b2bdebe88f8a0f5d",
+					"href": "/v1/lookups/areas-lsoa-2011-12-ew-bgc-v3?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 4074676,
+					"contentHash": "sha256:841e73f53fb2ce8cbac03fbc98d5ae095a87ab868f9f9af1ba962c6d538fe0e3",
+					"href": "/v1/lookups/areas-lsoa-2011-12-ew-bgc-v3?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-lsoa-2011-12-w-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, lsoa 2011-12-w-bgc",
+			"source": {
+				"artifact": "areas/lsoa/2011-12-w-bgc.json",
+				"contentHash": "sha256:f5754d1eef26a50551d62f6b0240d60e4f99989e2d1c9fda24b3886b0fa46e5a"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 1909,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 112497,
+					"contentHash": "sha256:8668a67b395f6ed278e744bf490ddab780c5eb70b9730c1325977e2e2eebbfac",
+					"href": "/v1/lookups/areas-lsoa-2011-12-w-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 241325,
+					"contentHash": "sha256:8cd95494fc669079ee0efb7891704e50722543a0f65916ec661696c5c8d5de54",
+					"href": "/v1/lookups/areas-lsoa-2011-12-w-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-majorTownAndCity-2015-12-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, majorTownAndCity 2015-12-ew-bgc",
+			"source": {
+				"artifact": "areas/majorTownAndCity/2015-12-ew-bgc.json",
+				"contentHash": "sha256:f6fc88fb2fd7e339347145da67b745cc86e9c55c8e6c097e247d1f43226382b5"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 112,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 6006,
+					"contentHash": "sha256:d030ada0235045585d14699613e70d94e28bfbe54d4f84190bfc1a4405e191be",
+					"href": "/v1/lookups/areas-majorTownAndCity-2015-12-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 13354,
+					"contentHash": "sha256:849e37a32246e26b881f5da7ed9a083401c31a26d409197ec1ecd2af43fb62bf",
+					"href": "/v1/lookups/areas-majorTownAndCity-2015-12-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-msoa-2021-12-ew-bgc-v3",
+			"kind": "area-identities",
+			"title": "Area identities, msoa 2021-12-ew-bgc-v3",
+			"source": {
+				"artifact": "areas/msoa/2021-12-ew-bgc-v3.json",
+				"contentHash": "sha256:0d4a26cead705fd1898991749b0b832e73dba1117a8e127fea3463884f51a6bd"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 7264,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 366776,
+					"contentHash": "sha256:9a5133dd4d8d5a09b49afe3f7d2afaed13b73cd1bee96f0eecbbc6b037031137",
+					"href": "/v1/lookups/areas-msoa-2021-12-ew-bgc-v3?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 846676,
+					"contentHash": "sha256:565716cbb31391bec2c8e824a14f59d4e7dd658c6aeeaeab400c86881755f80b",
+					"href": "/v1/lookups/areas-msoa-2021-12-ew-bgc-v3?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-nationalPark-2020-12-gb-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, nationalPark 2020-12-gb-bgc",
+			"source": {
+				"artifact": "areas/nationalPark/2020-12-gb-bgc.json",
+				"contentHash": "sha256:8cc59a5393d710f825367be5f0113fbf545681300ffb51042ba9477a6a0f1d5f"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 15,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1146,
+					"contentHash": "sha256:0b526e67ff28bf003ce8592306d2c61372c6f8b36d52cae27caa2f9695221d8e",
+					"href": "/v1/lookups/areas-nationalPark-2020-12-gb-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 2098,
+					"contentHash": "sha256:c01988725bb1e43c9bb51b7b4175bd760496966ca45f4046008f24aee9b19046",
+					"href": "/v1/lookups/areas-nationalPark-2020-12-gb-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-nhsEnglandRegion-2022-07-en-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, nhsEnglandRegion 2022-07-en-bgc",
+			"source": {
+				"artifact": "areas/nhsEnglandRegion/2022-07-en-bgc.json",
+				"contentHash": "sha256:1c82e1c615e25967dad1de38e891ce802a37dee7d6e21c292ab23979ad5df2d6"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 7,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 435,
+					"contentHash": "sha256:c5d9145bf26808fd1a7c7b7fb036260f597d1ebd10cd41e7d3fd0707b518ab38",
+					"href": "/v1/lookups/areas-nhsEnglandRegion-2022-07-en-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 853,
+					"contentHash": "sha256:1258b3eaa228c4b10b45784a3022e10013511db4faf746e351dfe16de7d67123",
+					"href": "/v1/lookups/areas-nhsEnglandRegion-2022-07-en-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-parish-2019-04-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, parish 2019-04-ew-bgc",
+			"source": {
+				"artifact": "areas/parish/2019-04-ew-bgc.json",
+				"contentHash": "sha256:044f6290db966762eb4ea2ed49c92d842f1b6e44114d04531797f8c732caca11"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 11556,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 521716,
+					"contentHash": "sha256:de150ad9efe8107b1af6ec8b489cffe9b6f764e99e8fcf9721e5da6829b1dc32",
+					"href": "/v1/lookups/areas-parish-2019-04-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1283828,
+					"contentHash": "sha256:bb484241e97b7c3ead89ee6717fca87d5cb00588db98eb150eefcc8df0546a22",
+					"href": "/v1/lookups/areas-parish-2019-04-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-parish-2021-12-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, parish 2021-12-ew-bgc",
+			"source": {
+				"artifact": "areas/parish/2021-12-ew-bgc.json",
+				"contentHash": "sha256:e22c38029fb140f8a70d078777bee9263bf8f506559b38fe6e0741bfc9b5d6a7"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 11562,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 522043,
+					"contentHash": "sha256:dbdeae103cd38ee88e6fd058e82ccb0ba4b0daa4c5ea2a4473b2e5a8c698891c",
+					"href": "/v1/lookups/areas-parish-2021-12-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1284557,
+					"contentHash": "sha256:3f46dde1935c1ba142d23c26e145df1bbd0f8181965a7b432f7d1a6ffad296b8",
+					"href": "/v1/lookups/areas-parish-2021-12-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-parish-2022-12-ew-bgc-v3",
+			"kind": "area-identities",
+			"title": "Area identities, parish 2022-12-ew-bgc-v3",
+			"source": {
+				"artifact": "areas/parish/2022-12-ew-bgc-v3.json",
+				"contentHash": "sha256:10852496c1c66a04ce11c37d7d2616cca2273a048edb81f040ae1366eae75ad9"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 11567,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 557085,
+					"contentHash": "sha256:a54bfe4e65754bbb10bbd2686fbe3ce42f1c1f31e6891060871463e3431f4d65",
+					"href": "/v1/lookups/areas-parish-2022-12-ew-bgc-v3?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1319929,
+					"contentHash": "sha256:5d7b9959eab0a24956be2d40b2397fccfd3dfa15529afaa00256497738c016ce",
+					"href": "/v1/lookups/areas-parish-2022-12-ew-bgc-v3?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-parish-2023-12-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, parish 2023-12-ew-bgc",
+			"source": {
+				"artifact": "areas/parish/2023-12-ew-bgc.json",
+				"contentHash": "sha256:c938c548dd7b2568e6bd1b3cacf28470db99b3e97be847752a111db3d0f57a3e"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 11548,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 521846,
+					"contentHash": "sha256:3abc8cf4609a755fd9226b8bb8a6c227180dc90f00f178fdfc6649df28392879",
+					"href": "/v1/lookups/areas-parish-2023-12-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1283444,
+					"contentHash": "sha256:8bd5f9b19373905cbd99bfe332044432a3775a0fb3aaddd74e345d818adf5236",
+					"href": "/v1/lookups/areas-parish-2023-12-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-parish-2024-12-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, parish 2024-12-ew-bgc",
+			"source": {
+				"artifact": "areas/parish/2024-12-ew-bgc.json",
+				"contentHash": "sha256:39f278823a7387126188d2e32b15a02e4424b44243b9788ec29e4eea4b4ac081"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 11541,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 521602,
+					"contentHash": "sha256:e1038eb2088449df8d71dc946e79ca34511687208a9efed92dc66924a2a06d73",
+					"href": "/v1/lookups/areas-parish-2024-12-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1282742,
+					"contentHash": "sha256:b70765733946e4e842ec977a17470671aac00cfa1f403194aaea8c230e048925",
+					"href": "/v1/lookups/areas-parish-2024-12-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-parish-2025-05-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, parish 2025-05-ew-bgc",
+			"source": {
+				"artifact": "areas/parish/2025-05-ew-bgc.json",
+				"contentHash": "sha256:37f00a79a140608e407e4045158ec1071701a8cf26b4cfbbacec9bdb16b4a573"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 11539,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 521510,
+					"contentHash": "sha256:53c017a457160c16028396cba71bbd2f50cf36557b2ee24d2cd746b17d8b3039",
+					"href": "/v1/lookups/areas-parish-2025-05-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1282524,
+					"contentHash": "sha256:c25a0d03d682f7cfa4ff505a8ab50a73d216e3ab27f1989b38adcd12308ec486",
+					"href": "/v1/lookups/areas-parish-2025-05-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-parish-2026-05-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, parish 2026-05-ew-bgc",
+			"source": {
+				"artifact": "areas/parish/2026-05-ew-bgc.json",
+				"contentHash": "sha256:382f7beae051ccaeb788957598c3b5b0f77636e9a33b24d0b65d67e789c21740"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 11542,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 521652,
+					"contentHash": "sha256:5432026b2641659aecb52a8c609bc970fa5be6b4981f541913c1fe77d1ab7860",
+					"href": "/v1/lookups/areas-parish-2026-05-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1282864,
+					"contentHash": "sha256:e6332ca3420ae3f92984c0769bd716a98289142ec5ee3d5e20da6c4ddefee61f",
+					"href": "/v1/lookups/areas-parish-2026-05-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-policeForceArea-2023-12-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, policeForceArea 2023-12-ew-bgc",
+			"source": {
+				"artifact": "areas/policeForceArea/2023-12-ew-bgc.json",
+				"contentHash": "sha256:021fe2482e8a1b30714e6bf76755aa0c1158753ffd55ef2e4a4f7aa3028d9d46"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 43,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 2375,
+					"contentHash": "sha256:99c5ad0dd864556bb49e468876519ff0734e853c001be3b299fda6a2397c72b6",
+					"href": "/v1/lookups/areas-policeForceArea-2023-12-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 5167,
+					"contentHash": "sha256:af07667eb0146fa2f7c02abc5ca16d5a846a1a2e641a0efbb7322490d5ca30c3",
+					"href": "/v1/lookups/areas-policeForceArea-2023-12-ew-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-region-2025-12-en-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, region 2025-12-en-bgc",
+			"source": {
+				"artifact": "areas/region/2025-12-en-bgc.json",
+				"contentHash": "sha256:f14c1baeda8c351d90886f6731e8c254594ad5f873a68cd7cb3ad61a9258536c"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 9,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 599,
+					"contentHash": "sha256:e6aac62cb66a8031cca29b9cd4aebce4b810fd884be9741f00cef20b0ace9723",
+					"href": "/v1/lookups/areas-region-2025-12-en-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1167,
+					"contentHash": "sha256:9c4a4f477dbcde7545205f094301ad9cf4844e980743c038df59d03d3800b06a",
+					"href": "/v1/lookups/areas-region-2025-12-en-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-scottishParliamentaryConstituency-2021-05-sc-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, scottishParliamentaryConstituency 2021-05-sc-bgc",
+			"source": {
+				"artifact": "areas/scottishParliamentaryConstituency/2021-05-sc-bgc.json",
+				"contentHash": "sha256:fbeca10090780d1c226f92ace344efac371aaef488abab05473d16fe0714aeb9"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 73,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 5883,
+					"contentHash": "sha256:bfcf3fb882a7c30a956b6eddad6c8d38f2f3f149f158f84cc7a98595c672f7df",
+					"href": "/v1/lookups/areas-scottishParliamentaryConstituency-2021-05-sc-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 10645,
+					"contentHash": "sha256:d53bb47aaca4700d09d1d20cecaa02889ca8e5d00773631c20538189d99e101c",
+					"href": "/v1/lookups/areas-scottishParliamentaryConstituency-2021-05-sc-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-scottishParliamentaryRegion-2022-12-sc-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, scottishParliamentaryRegion 2022-12-sc-bgc",
+			"source": {
+				"artifact": "areas/scottishParliamentaryRegion/2022-12-sc-bgc.json",
+				"contentHash": "sha256:4ad159b2564010c8a5d514ebb5af83c728be6def622efae640156bfdcd1d0aee"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 602,
+					"contentHash": "sha256:fb09287c4a8a80bb4b01e5516657df9121f737146c418fe98dfe83eaa0abadca",
+					"href": "/v1/lookups/areas-scottishParliamentaryRegion-2022-12-sc-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1086,
+					"contentHash": "sha256:5b2c5e7ccce37f4950203091e8a666ba128d7bb812e5bbb2178fae9f104056e9",
+					"href": "/v1/lookups/areas-scottishParliamentaryRegion-2022-12-sc-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-seneddConstituency-2022-12-w-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, seneddConstituency 2022-12-w-bgc",
+			"source": {
+				"artifact": "areas/seneddConstituency/2022-12-w-bgc.json",
+				"contentHash": "sha256:c4d736b36a3069f96b52a256785a99e8eff092f9484a56fbae61de9f744ea2c1"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 40,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 2788,
+					"contentHash": "sha256:768beada8b837cae41e52344bd120dbf010ba991fafd52562c10fa5da3a80b7c",
+					"href": "/v1/lookups/areas-seneddConstituency-2022-12-w-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 5440,
+					"contentHash": "sha256:a6a7fd7074fb2398b35f23dd6572d4a3ffe9ccf237b948fe701e196474079ce1",
+					"href": "/v1/lookups/areas-seneddConstituency-2022-12-w-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-seneddElectoralRegion-2022-12-w-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, seneddElectoralRegion 2022-12-w-bgc",
+			"source": {
+				"artifact": "areas/seneddElectoralRegion/2022-12-w-bgc.json",
+				"contentHash": "sha256:478a17c73030d094f8acf3bcc726c03743d0698a8ee420b34b610f99d170b95b"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 5,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 453,
+					"contentHash": "sha256:7e1db337856a66e07fbc51d828f9c728ee200a79e61368ef5ed586645b988f42",
+					"href": "/v1/lookups/areas-seneddElectoralRegion-2022-12-w-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 749,
+					"contentHash": "sha256:d8cf24b43a98b224985d7406bcce8007a08a6255644bdccbf27110e199cb7b6e",
+					"href": "/v1/lookups/areas-seneddElectoralRegion-2022-12-w-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-subIntegratedCareBoardLocation-2026-04-en-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, subIntegratedCareBoardLocation 2026-04-en-bgc",
+			"source": {
+				"artifact": "areas/subIntegratedCareBoardLocation/2026-04-en-bgc.json",
+				"contentHash": "sha256:457135a025b2e98ef1f00f98d5838accfe6d0edddafc59c3273e12146a170a43"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 106,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 9949,
+					"contentHash": "sha256:c79a688083e9dc4a470f940738ad7cbe9df904adff7c3200338a3de286283287",
+					"href": "/v1/lookups/areas-subIntegratedCareBoardLocation-2026-04-en-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 16889,
+					"contentHash": "sha256:44a4a3e2863da58239483b0d37fcb87b9654cb2d6a6e47620e8a41c85efeb74b",
+					"href": "/v1/lookups/areas-subIntegratedCareBoardLocation-2026-04-en-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-superOutputArea-2011-ni",
+			"kind": "area-identities",
+			"title": "Area identities, superOutputArea 2011-ni",
+			"source": {
+				"artifact": "areas/superOutputArea/2011-ni.json",
+				"contentHash": "sha256:df39bfd3e54d1273c19875246b49b83eafee7d6373e5670f6b39a95463a28221"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 890,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 41081,
+					"contentHash": "sha256:410cd0148b52b32717df8e4f80234588bb4e426860b7d29904a679c3381c6501",
+					"href": "/v1/lookups/areas-superOutputArea-2011-ni?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 99777,
+					"contentHash": "sha256:18abb3fe7d9611f71d456d19623071bf593cca63a6a0fa285aaa80f597418163",
+					"href": "/v1/lookups/areas-superOutputArea-2011-ni?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-travelToWorkArea-2011-12-uk-gcb",
+			"kind": "area-identities",
+			"title": "Area identities, travelToWorkArea 2011-12-uk-gcb",
+			"source": {
+				"artifact": "areas/travelToWorkArea/2011-12-uk-gcb.json",
+				"contentHash": "sha256:ae2f042158da9319b69244705709ef78fedba643ef5626603063b17dd6d18e4f"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 228,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 12820,
+					"contentHash": "sha256:6c978a2a6a24d35517582dd2cb7ea4b7b1a333ceca176b1128a7dc1679b26fd4",
+					"href": "/v1/lookups/areas-travelToWorkArea-2011-12-uk-gcb?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 27824,
+					"contentHash": "sha256:93ac8b11769b09e3ced7c8a43da18b2863d0effbe660f0c6496ab457d2e10dae",
+					"href": "/v1/lookups/areas-travelToWorkArea-2011-12-uk-gcb?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2016-12-gb-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2016-12-gb-bgc",
+			"source": {
+				"artifact": "areas/ward/2016-12-gb-bgc.json",
+				"contentHash": "sha256:db5d9a79b319ea350ec428522a5e0f57de2fdc3559983b58657fc07f69e7b3b4"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8668,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 391141,
+					"contentHash": "sha256:bb5d37f065a11cd0c6f307b3b06ce6ad5d14dea6dcd1eea0da14e7e8fca2ad9e",
+					"href": "/v1/lookups/areas-ward-2016-12-gb-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 962929,
+					"contentHash": "sha256:5e9f7dfa3e51b7986acd70ad0cbc045916c5a3cc1f1cbe68d06bbacf58c22c15",
+					"href": "/v1/lookups/areas-ward-2016-12-gb-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2017-12-gb-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2017-12-gb-bgc",
+			"source": {
+				"artifact": "areas/ward/2017-12-gb-bgc.json",
+				"contentHash": "sha256:493711bf119a2a76fd053b49c419dfc25a28a1079cba4ab45cba6455c9b561ea"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8669,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 391400,
+					"contentHash": "sha256:8ed19ee1e6780ff2edffdf7752851939ac2b41cca8b62b7fd3cbd41f916df8c7",
+					"href": "/v1/lookups/areas-ward-2017-12-gb-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 963248,
+					"contentHash": "sha256:d74dbdb77cf6877c0c959a92f4b4d9c36ab7fa9eab14214e428c45b0be3ead61",
+					"href": "/v1/lookups/areas-ward-2017-12-gb-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2018-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2018-12-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2018-12-uk-bgc.json",
+				"contentHash": "sha256:7063d16729f25bbbb7b81c1d238ee0dfdc3ce4a2b4383e0ba124ad103ec256c4"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 9114,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 410638,
+					"contentHash": "sha256:41925d5016d7020dfbab824b4a19b3465f93a6b7fa35929f09cb3de2d92cfd81",
+					"href": "/v1/lookups/areas-ward-2018-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 1011852,
+					"contentHash": "sha256:436b03e439c2528f370f1da332440e7af9779924430335ba7c9b16e69a3c039b",
+					"href": "/v1/lookups/areas-ward-2018-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2019-12-gb-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2019-12-gb-bgc",
+			"source": {
+				"artifact": "areas/ward/2019-12-gb-bgc.json",
+				"contentHash": "sha256:fd8f10cc8648b485089e8710e7bbc31f8d8fd6d4a83678abfe71234e9b6a055b"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8425,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 383478,
+					"contentHash": "sha256:9758d1e923eccb937db8876d0dfcebf63b8b7ede8333760197e13308555cc935",
+					"href": "/v1/lookups/areas-ward-2019-12-gb-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 939170,
+					"contentHash": "sha256:d8f9402b9ee75bcc27514cf45b3268048be30700aa11fa5063d554e9906b5285",
+					"href": "/v1/lookups/areas-ward-2019-12-gb-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2020-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2020-12-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2020-12-uk-bgc.json",
+				"contentHash": "sha256:4bfb5190bc06e7b52a261dbf246de956121ab74acad909a180946656468b0447"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8887,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 408800,
+					"contentHash": "sha256:2eb98b864f56f394d8218574f18a7de98c19a87d64c5c13fa4436981f3c7d53e",
+					"href": "/v1/lookups/areas-ward-2020-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 995866,
+					"contentHash": "sha256:b19e93c7764063d9f0091d72e97ca4379145117645067b0038ed9cf03db00157",
+					"href": "/v1/lookups/areas-ward-2020-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2021-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2021-12-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2021-12-uk-bgc.json",
+				"contentHash": "sha256:40aad610bb225c00de198f96c6b816eed8d7dec14a330a113c3f8c8e0c62684d"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8694,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 400965,
+					"contentHash": "sha256:96eddcac0f6580fdeb3fbeb6fca8e32e16bf11e506eca112957d3f51d8bcb132",
+					"href": "/v1/lookups/areas-ward-2021-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 975259,
+					"contentHash": "sha256:ca22dfd2b6bd158a74e90a6aff065d8b390394fa6dd4c6521a5ea3b7903a593b",
+					"href": "/v1/lookups/areas-ward-2021-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2022-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2022-12-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2022-12-uk-bgc.json",
+				"contentHash": "sha256:6193af5fbe8a02f789beb8b7adabba6ceca36c585d09c23a43c7ca0d7aad0b61"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8482,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 394643,
+					"contentHash": "sha256:4077f9f28fe0becb8a5aaf166906262255f261e73064ca09edf0d2eb0895560c",
+					"href": "/v1/lookups/areas-ward-2022-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 954901,
+					"contentHash": "sha256:eba639ab4c310ea832e9f037e8ca2665c489d3118452abf4500b33dacb1ddc40",
+					"href": "/v1/lookups/areas-ward-2022-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2023-05-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2023-05-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2023-05-uk-bgc.json",
+				"contentHash": "sha256:4910cadfe2df4877bbc96fe4f98a52c8c629401adf81ef47714d15524ffc32e4"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8441,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 394269,
+					"contentHash": "sha256:ff040c40441ccc64273d232d481634d6907a85f6c2f40f6b9976789c6fa39ea2",
+					"href": "/v1/lookups/areas-ward-2023-05-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 951767,
+					"contentHash": "sha256:a727f5f2ce189815969a207d9481f340afbebe6ecfa4473cc84e3857d8cc1b7c",
+					"href": "/v1/lookups/areas-ward-2023-05-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2023-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2023-12-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2023-12-uk-bgc.json",
+				"contentHash": "sha256:21acf7576c2fac314f4daf78320f66133f2cf7b5dcb6534cb94e2b6edbc0f7db"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8441,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 394269,
+					"contentHash": "sha256:923ab12014baf5da11caed2cf1964c6d9556e3243b7d91e52609fc08f3c1a7ba",
+					"href": "/v1/lookups/areas-ward-2023-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 951767,
+					"contentHash": "sha256:5723058b9ccf6333e2045227ad0f364d9d2f30475a0b079ab43e7ab9773faa4f",
+					"href": "/v1/lookups/areas-ward-2023-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2024-05-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2024-05-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2024-05-uk-bgc.json",
+				"contentHash": "sha256:54728c4277fb31cf1145e28113ae7eead0552d5cc4cbc4b64ee9bcde2250e814"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8396,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 392740,
+					"contentHash": "sha256:8b943aee79e69f359e972d1f1cf122064c22002b915c1e53948ea25e1419f649",
+					"href": "/v1/lookups/areas-ward-2024-05-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 947268,
+					"contentHash": "sha256:1f5f4e890fc1597fea724c96fc012b2d908543d73002dd6a4e65148a480745e2",
+					"href": "/v1/lookups/areas-ward-2024-05-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2024-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2024-12-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2024-12-uk-bgc.json",
+				"contentHash": "sha256:f82398b92702e504d468d6d9e51fe3bc6ccbb3acea467316e783c427cfb0d360"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8396,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 392763,
+					"contentHash": "sha256:a1b1055efab8ac2b8c04e89a55a4aad87bba6baeca46e27a7b2f658ee4952ea0",
+					"href": "/v1/lookups/areas-ward-2024-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 947293,
+					"contentHash": "sha256:162c1889dfbccbc8a75db81e6c05c5a5972333e6bf3342a015fe3dd5400162e5",
+					"href": "/v1/lookups/areas-ward-2024-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2025-05-uk-bgc-v2",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2025-05-uk-bgc-v2",
+			"source": {
+				"artifact": "areas/ward/2025-05-uk-bgc-v2.json",
+				"contentHash": "sha256:9d7f064949d3c1365ce93799434e2432a01b143cec654f08ca5b006eb62240ab"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8405,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 418549,
+					"contentHash": "sha256:561202259eaa6fb295909d4439c84a472543143d3095055ca052026bf662484a",
+					"href": "/v1/lookups/areas-ward-2025-05-uk-bgc-v2?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 973669,
+					"contentHash": "sha256:f0c7ed3b7f45e9c26ecfc6392141e6140e5d56cd6585235b3d3f81784455bab8",
+					"href": "/v1/lookups/areas-ward-2025-05-uk-bgc-v2?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2025-12-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2025-12-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2025-12-uk-bgc.json",
+				"contentHash": "sha256:ade2418945df73ca0c7428d9ebc698da4ea0aab5c8710409b1c203e985b12d2e"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8405,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 393334,
+					"contentHash": "sha256:f3cb65b0dbb47c3eea5d5ea9f71a4bab33e386eff70498f62f08833a626fbf40",
+					"href": "/v1/lookups/areas-ward-2025-12-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 948454,
+					"contentHash": "sha256:0c1bf1ab0da8f48d0dd9dd5bf91e05bf03a0885822e7c051955e913b8f89f9bb",
+					"href": "/v1/lookups/areas-ward-2025-12-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-ward-2026-05-uk-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, ward 2026-05-uk-bgc",
+			"source": {
+				"artifact": "areas/ward/2026-05-uk-bgc.json",
+				"contentHash": "sha256:d9acf073575215e957ed17fa97a37e964bb2b8af0992bf6935efe8bf60fe6567"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 8413,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 394276,
+					"contentHash": "sha256:cbefbbf9dd6b24f6d3b030e8b44327e87510f94b174392c00fdf9c555ce3c3e7",
+					"href": "/v1/lookups/areas-ward-2026-05-uk-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 949900,
+					"contentHash": "sha256:a17f318c7f95e82c2d96896134fb913fe1641541630506c38fc0e59468cb5daf",
+					"href": "/v1/lookups/areas-ward-2026-05-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-constituency-2010-to-2024-official-lookup-v2",
+			"kind": "crosswalk",
+			"title": "Crosswalk, constituency-2010-to-2024-official-lookup-v2",
+			"source": {
+				"artifact": "crosswalks/constituency-2010-to-2024-official-lookup-v2.json",
+				"contentHash": "sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 1407,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 250981,
+					"contentHash": "sha256:e7299d94de1e7122d18c497f762802324b9f41548dd52363571ec8227bd528a4",
+					"href": "/v1/lookups/crosswalk-constituency-2010-to-2024-official-lookup-v2?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 596701,
+					"contentHash": "sha256:908b28e2bc029e4cce3bbdd3baeaa15cf36af382450b152755a696c3964cdf99",
+					"href": "/v1/lookups/crosswalk-constituency-2010-to-2024-official-lookup-v2?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+			"kind": "crosswalk",
+			"title": "Crosswalk, constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+			"source": {
+				"artifact": "crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap.json",
+				"contentHash": "sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": true,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": true,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": true,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": true,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 948,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 218805,
+					"contentHash": "sha256:5e2afd3ace7e659f09c19a46a8477d489308a7fa5e729e4f31bae455a2a4ebf6",
+					"href": "/v1/lookups/crosswalk-constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 436571,
+					"contentHash": "sha256:70835128dbb495e3df3044d867a17c4b136b54e06906ce66887be1eb11020e50",
+					"href": "/v1/lookups/crosswalk-constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
+			"kind": "crosswalk",
+			"title": "Crosswalk, local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
+			"source": {
+				"artifact": "crosswalks/local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap.json",
+				"contentHash": "sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": true,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": true,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": true,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": true,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 296,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 59802,
+					"contentHash": "sha256:23d7b622e6f0017c9802fd3a295761b1b24cc197315e88ee1ad500b901443fc0",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 127698,
+					"contentHash": "sha256:3ccc6365b1d8ec995573eab7edb05f2e47de14514d1844a6c46ad7f015e98960",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
+			"source": {
+				"artifact": "crosswalks/parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment.json",
+				"contentHash": "sha256:c8d19d3dfe19c5eaf9bc3ac78859509762ed8181ce1eb8bdc861c7d4d267b0d6"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 11556,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 2234201,
+					"contentHash": "sha256:ed7303480e04c0c082bd95db164a5465a71d85283b0283f986618c5e69a12637",
+					"href": "/v1/lookups/crosswalk-parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 5075775,
+					"contentHash": "sha256:d00199d0c804d29b9f221ac4eac04b022289446d7083b3572bbf6091b610e244",
+					"href": "/v1/lookups/crosswalk-parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"source": {
+				"artifact": "crosswalks/parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment.json",
+				"contentHash": "sha256:cb85845ce9f69e91479b0ec3d6ba7a1da513979c8aa82cd3f40a9a8d7327fba8"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 11542,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 2239095,
+					"contentHash": "sha256:a6ac5ecd4351b6c188ed6cf55dc2b469914ca96146b7f84aab0cd32aa52b0e73",
+					"href": "/v1/lookups/crosswalk-parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 5077243,
+					"contentHash": "sha256:b17550a8aac767e879d00cda43bc6df6a790f819a1c9069463d8a230dae0a103",
+					"href": "/v1/lookups/crosswalk-parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment",
+			"source": {
+				"artifact": "crosswalks/sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment.json",
+				"contentHash": "sha256:5c743f37c431e28fd11dcee3ac6ffde00d83969bff1cda23348bf67ec3ef0a3e"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 106,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 32052,
+					"contentHash": "sha256:d1e59c304d3522b704fdcc462f8d736ccc8c484bb6a391fd675c2ed106d6b945",
+					"href": "/v1/lookups/crosswalk-sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 57928,
+					"contentHash": "sha256:6eefbd558489320a28465393cad527a4d34f216e8beee063a72397aded24baeb",
+					"href": "/v1/lookups/crosswalk-sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",
+			"source": {
+				"artifact": "crosswalks/ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment.json",
+				"contentHash": "sha256:95f3b0a1dda67fd49a087cbf7778a02012c3c3a4ce57f9b9583d4c8ba6b1c0fe"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 8668,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1650124,
+					"contentHash": "sha256:ca78f95cfde1174afde978e04496f0e4612ee3a8249e214056d690038b437f44",
+					"href": "/v1/lookups/crosswalk-ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3781800,
+					"contentHash": "sha256:38e19bba0825994507f410635b4a2b4b6e9d6fd5c80ad5b7ffdeb013c448b531",
+					"href": "/v1/lookups/crosswalk-ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment",
+			"source": {
+				"artifact": "crosswalks/ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment.json",
+				"contentHash": "sha256:e626bb041a23477c29e319aa7661ea0ef496d443b4fabed69fcfcad3fb649824"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 8482,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1676233,
+					"contentHash": "sha256:7d9a3e281b6d0c38846b7ef6e0022895fc5e9092301d23955f1f009e9a25d2f0",
+					"href": "/v1/lookups/crosswalk-ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3761835,
+					"contentHash": "sha256:e0e8ba7ddfffd455b828d4faa7fd2a96dc3b0e9b911c65dfc9cec387b1eda9c0",
+					"href": "/v1/lookups/crosswalk-ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+			"source": {
+				"artifact": "crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment.json",
+				"contentHash": "sha256:36a3e0270fa4a0f380c54bd692270fe029cbb1f1213b2e5e9c01d193969e2e7b"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 8441,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1670126,
+					"contentHash": "sha256:d0e93ad70db948f0a7ff2a7c877f6260b7bc49269e15b6018265515fcdd718cc",
+					"href": "/v1/lookups/crosswalk-ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3745588,
+					"contentHash": "sha256:cccbc823b3681f20b949a51b2c37188cdc68ec577e6f49f0efc4f1abc4d87460",
+					"href": "/v1/lookups/crosswalk-ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
+			"source": {
+				"artifact": "crosswalks/ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment.json",
+				"contentHash": "sha256:a32826251863eb3ee2e655fc77434a3d673ccd7d3434be6e4b203242dcc6e6c1"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 8396,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1611450,
+					"contentHash": "sha256:fe99a865afba09343b2ff6b04f08000d1547b66fe246400731c2eb68bd604ba9",
+					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3675842,
+					"contentHash": "sha256:f3348de52339f402c3f4c012f2605275bf32621d49af14d25c5ac5a54b8a20f2",
+					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
+			"source": {
+				"artifact": "crosswalks/ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment.json",
+				"contentHash": "sha256:8778de2502c480103ffebea0b260604974248b847206ee93e884864d876cf9a9"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 8396,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1611450,
+					"contentHash": "sha256:a1b03189e52841ecb91476475155d91ef0966fec95174ff1a4b2d75f3169ebe6",
+					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3675842,
+					"contentHash": "sha256:ea375c0a3513c4912d16ca41521cbca1d2232807ac61345060f9599c2f63a79f",
+					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+			"source": {
+				"artifact": "crosswalks/ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment.json",
+				"contentHash": "sha256:00e936a48aa1cda9697cc8d00ec20de46242f8be3a84c5775494d70e2534df03"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 8405,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1663827,
+					"contentHash": "sha256:6924d2f5d233188af80099edafb9449c80a4e993a364bb0173d8665bddfa485b",
+					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3730429,
+					"contentHash": "sha256:497650237e737c3399cfa06cf102932566c4a3aa67c50fe519b56988c70d36b5",
+					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+			"source": {
+				"artifact": "crosswalks/ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment.json",
+				"contentHash": "sha256:19a7fa13d61a32b9f259f323dfba81e6ee6e64e69fdda4f496777802322af6db"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 8405,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1613397,
+					"contentHash": "sha256:c5efa606d053b563d0c2f5e130eca63d90d08dd3bb8ac954cd994ce6ef336842",
+					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3679999,
+					"contentHash": "sha256:159a51bd0e823a9d6c83bc8edb1e0e1f37011cb0cf8aef563b6662f8c520b23d",
+					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"source": {
+				"artifact": "crosswalks/ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment.json",
+				"contentHash": "sha256:8fa7a59290a4dc0592ecf5aaa15baa30220ab6c322c5282f400ec3013f903e5d"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 8413,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1615482,
+					"contentHash": "sha256:adbed77bac69fb8d4f567d8d59ecee24edec0e954fd1e2665cf9ce4ba8011f7b",
+					"href": "/v1/lookups/crosswalk-ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3684028,
+					"contentHash": "sha256:98d73e1c570a3bb727e0c6e1796ba9e926ba809b02b89b52ab6cdbafe63e7ee1",
+					"href": "/v1/lookups/crosswalk-ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+			"source": {
+				"artifact": "crosswalks/ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment.json",
+				"contentHash": "sha256:adb170e664942be14538d66636aed63ca18b50cafe401fd7eeb7fa10b1e07925"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 8405,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1585766,
+					"contentHash": "sha256:7e3d10a84574a64c43e1dd874a1c52952d8adb0c73a503ab27af915e99ad62a8",
+					"href": "/v1/lookups/crosswalk-ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3652368,
+					"contentHash": "sha256:b0b0ed386840e620c4600feac9be2cbb6a4e331e92569ae43e5dc7b38095180a",
+					"href": "/v1/lookups/crosswalk-ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "named-location-members",
+			"kind": "named-location-members",
+			"title": "Named location membership",
+			"source": {
+				"artifact": "named-locations.json",
+				"contentHash": "sha256:f10fdbba3c8ee574ff8e3a12310f02f4beb50027d363ce109b85fc9284857149"
+			},
+			"columns": [
+				{
+					"name": "locationId",
+					"type": "string",
+					"required": true,
+					"description": "The named location's id."
+				},
+				{
+					"name": "label",
+					"type": "string",
+					"required": true,
+					"description": "The named location's label."
+				},
+				{
+					"name": "kind",
+					"type": "string",
+					"required": true,
+					"description": "How the location is defined; editorial-grouping is a curated grouping, not an official area."
+				},
+				{
+					"name": "memberCode",
+					"type": "string",
+					"required": true,
+					"description": "The official code of one member area."
+				}
+			],
+			"rowCount": 719,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 37772,
+					"contentHash": "sha256:811a7324e90a1055e3521e1d699fd54bcd7a952e9faf390f271c78c356e992d1",
+					"href": "/v1/lookups/named-location-members?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 74404,
+					"contentHash": "sha256:2c1035656190dc62a133490ca5b0eede2885bf692f21cf9076016c8ba4880c94",
+					"href": "/v1/lookups/named-location-members?format=ndjson"
+				}
+			}
+		}
+	]
+}
