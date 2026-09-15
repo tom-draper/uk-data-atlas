@@ -71,7 +71,7 @@ paths:
                     - /v1/geographies
                     - /v1/boundary-releases
                     - /v1/boundary-releases:resolve
-                    - /v1/boundary-releases/{type}/{release}
+                    - /v1/boundary-releases/{geography}/{release}
                     - /v1/geography-inventory
                     - /v1/datasets
                     - /v1/datasets/{dataset-id}
@@ -86,17 +86,17 @@ paths:
                     - /v1/data/{measure-id}/compare
                     - /v1/data/{measure-id}/aggregate
                     - /v1/areas
-                    - /v1/areas/{type}/{release}/{code}
-                    - /v1/areas/{type}/{release}/{code}/relationships
-                    - /v1/areas/{type}/{release}/{code}/capabilities
-                    - /v1/areas/{type}/{release}/{code}/citation
-                    - /v1/areas/{type}/{release}/{code}/geometry
+                    - /v1/areas/{geography}/{release}/{code}
+                    - /v1/areas/{geography}/{release}/{code}/relationships
+                    - /v1/areas/{geography}/{release}/{code}/capabilities
+                    - /v1/areas/{geography}/{release}/{code}/citation
+                    - /v1/areas/{geography}/{release}/{code}/geometry
                     - /v1/crosswalks
                     - /v1/crosswalks/{crosswalk-id}
                     - /v1/crosswalks/{crosswalk-id}/records
                     - /v1/relationship-candidates
                     - /v1/validation
-                    - /v1/validation/boundary-releases/{type}/{release}
+                    - /v1/validation/boundary-releases/{geography}/{release}
                     - /v1/validation/crosswalks/{crosswalk-id}
                     - /v1/exports
                     - /v1/exports/{export-id}
@@ -2483,7 +2483,7 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
-  /crosswalks/{crosswalkId}:
+  /crosswalks/{crosswalk-id}:
     get:
       operationId: getCrosswalk
       tags: ["Geography"]
@@ -2491,7 +2491,7 @@ paths:
       description: >
         Returns the crosswalk's method, quality, weighting, endpoints,
         provenance and validation facts, but not its full record set. Fetch
-        `/crosswalks/{crosswalkId}/records` for the mappings themselves.
+        `/crosswalks/{crosswalk-id}/records` for the mappings themselves.
       parameters:
         - $ref: "#/components/parameters/CrosswalkId"
       responses:
@@ -2572,7 +2572,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-  /crosswalks/{crosswalkId}/records:
+  /crosswalks/{crosswalk-id}/records:
     get:
       operationId: listCrosswalkRecords
       tags: ["Geography"]
@@ -2834,7 +2834,7 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
-  /validation/crosswalks/{crosswalkId}:
+  /validation/crosswalks/{crosswalk-id}:
     get:
       operationId: getCrosswalkValidation
       tags: ["Governance"]
@@ -3627,7 +3627,7 @@ components:
         type: string
       description: A boundary release id, e.g. `2024-07-uk-bgc`.
     CrosswalkId:
-      name: crosswalkId
+      name: crosswalk-id
       in: path
       required: true
       schema:
@@ -5248,7 +5248,7 @@ components:
           description: >
             `atlas` for checks across the Atlas's own artifacts; otherwise
             the validated resource's API path, such as
-            `crosswalks/{crosswalkId}`. A measure source partition is
+            `crosswalks/{crosswalk-id}`. A measure source partition is
             identified by the export that serves it, as
             `exports/{export-id}`.
         kind:

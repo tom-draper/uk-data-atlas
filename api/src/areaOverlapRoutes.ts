@@ -41,7 +41,7 @@ export const handleAreaOverlapRoutes = ({
 		return problem(
 			400,
 			"Invalid Query",
-			"with must name the other area as {type}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092.",
+			"with must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092.",
 		);
 	}
 	const [otherGeography, otherRelease, otherCode] = other as [

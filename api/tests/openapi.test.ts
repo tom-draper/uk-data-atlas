@@ -54,10 +54,6 @@ const duplicates = (values: string[]) => [
 	),
 ];
 
-// Parameter names differ between the spec ({geography}) and the index
-// ({type}), and are not part of the route shape.
-const routeShape = (path: string) => path.replaceAll(/\{[^}]+\}/g, "{}");
-
 const registry: BoundaryRegistry = {
 	schemaVersion: 1,
 	contentHash: "sha256:registry",
@@ -82,9 +78,11 @@ test("documents exactly the routes advertised by the API index", () => {
 	const response = route("GET", "/v1", { boundaryRegistry: registry });
 	assert.equal(response.status, 200);
 	const { links } = (response.body as { data: { links: string[] } }).data;
-	const advertised = ["/v1", ...links].map(routeShape).sort();
+	// Placeholders are compared by name too, so the index and the spec
+	// cannot drift into two vocabularies for the same path.
+	const advertised = ["/v1", ...links].sort();
 	const documented = specPaths()
-		.map((path) => routeShape(path === "/" ? "/v1" : `/v1${path}`))
+		.map((path) => (path === "/" ? "/v1" : `/v1${path}`))
 		.sort();
 	assert.deepEqual(documented, advertised);
 });
