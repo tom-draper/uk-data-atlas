@@ -1,12 +1,13 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:a4ff9536e45380056c2cd400a134c65bbd3ae07b7869ad252f2beda7ca64920e",
+	"contentHash": "sha256:8a58f8aa100632d1643b21751893cc8cd8dcc6ca462590d4c08bbfeaf25ee226",
 	"inputs": {
-		"dataCatalog": "sha256:2ad8a9887042a9edccd30ac662ae4810c0c9246fd8a5277675d525326d0a78bd",
+		"dataCatalog": "sha256:8577de3d1aa2925a6e18e4099fcd5bb87101561f3a1bf0463ce121f814c07e3b",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
 		"measureObservations": {
+			"air-quality-grid-cells": "sha256:521134e2174cf4ca62658cd8588bf89df0b26e1a71c2e128190b9aa13a1fa454",
 			"broadband-full-fibre-availability": "sha256:adcae0059870335e3a59ebe6af47078bec1664a5d31d05bd75753f3a7439ab4d",
 			"broadband-gigabit-availability": "sha256:fe88864a232bf7ad1e3c4dff26ff0b53f0135423b0b8d447070f9b6fdd2d30ec",
 			"broadband-superfast-availability": "sha256:243141fab55c79b0592d9c646a0a282cbac6f10adbf226b8ceb28132e9390fc5",
@@ -116,6 +117,11 @@
 			"mobile-4g-coverage": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
 			"mobile-5g-coverage": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
 			"nimdm-rank": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
+			"no2-background-mean": "sha256:7adfb60a58219c850a970725ac92f11090dfb51355af51b2cdb4c930a9d208d9",
+			"pm10-background-mean": "sha256:1eeb02a339bf2eab6a6f3086368203c964150e174c852d7b5051060b867949e0",
+			"pm25-background-mean": "sha256:05ea9f34f17bcab62ef68a5e55b2fefcde27fc77f5523f545d4201c89175487d",
+			"pm25-population-weighted": "sha256:f436387b14c8589c62eac2028ed0f11e72e6f33f07563cf8d8f10dbcbf7b10b9",
+			"pm25-population-weighted-anthropogenic": "sha256:02055e23ef645620d8478b114768670375be0461c954a8809187ceb9a7f42aa4",
 			"population-density": "sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe440e451",
 			"population-estimate": "sha256:a05515bb0a5c4cf148f534ae1bb1c1b9b7401506731c07627ac93dc356e43d0a",
 			"qualification-apprenticeship": "sha256:9eee5aea263f73c18773f7cded5c1e09b49420902a4e1175f47d19f2827037d1",
@@ -13605,6 +13611,342 @@
 							"sourceCodeCount": 314,
 							"candidateCodeCount": 314,
 							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "air-quality-grid-cells",
+			"sources": [
+				{
+					"datasetId": "air-quality",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "no2-background-mean",
+			"sources": [
+				{
+					"datasetId": "air-quality",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "pm10-background-mean",
+			"sources": [
+				{
+					"datasetId": "air-quality",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "pm25-background-mean",
+			"sources": [
+				{
+					"datasetId": "air-quality",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "pm25-population-weighted",
+			"sources": [
+				{
+					"datasetId": "air-quality",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "pm25-population-weighted-anthropogenic",
+			"sources": [
+				{
+					"datasetId": "air-quality",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2024"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],

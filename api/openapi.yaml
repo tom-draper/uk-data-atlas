@@ -485,6 +485,12 @@ paths:
         on Local Authority 2019 codes for every period from 1996-97 to 2021 and
         on Local Authority 2021 codes for 2020 and 2021; periods to 2003-04 are
         financial years.
+        `no2-background-mean`, `pm10-background-mean` and `pm25-background-mean`
+        cover 2024 Local Authority 2024 codes across all four nations, as area
+        means of Defra's 1x1 km PCM background maps, derived by this Atlas and
+        aggregated weighted by `air-quality-grid-cells`;
+        `pm25-population-weighted` and its `-anthropogenic` part are Defra's
+        published population-weighted concentrations.
         This route never selects a May/December boundary release, converts
         values, or aggregates them. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the

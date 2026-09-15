@@ -537,6 +537,13 @@ only **available** when its endpoint, contract and provenance are published.
       years both are estimated, and no resident is counted twice. Rates for
       the April 2023 authorities, which the model never estimated, are not
       served.
+- [x] Return Defra's modelled 2024 background air pollution for every UK local
+      authority: `GET /v1/data/{no2,pm10,pm25}-background-mean`, the mean of
+      the PCM model's 1x1 km cells within each authority, served as derived
+      with `air-quality-grid-cells` as their weight, so a country or region
+      aggregate is the exact area mean; and `GET /v1/data/pm25-population-weighted`
+      with its anthropogenic part, Defra's own table as published. Wales's
+      background NO2 averages 2.48 µg/m³ across its area.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight, and non-aggregatable values such as medians, ranks and
@@ -1586,6 +1593,7 @@ pnpm start
 - `GET /v1/data/median-annual-pay/series?areaCode=E08000003&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/crime-total?period=year-ending-2026-03&geography=communitySafetyPartnership&boundaryYear=2023&release=2023-12-ew-bgc`
 - `GET /v1/data/unemployment-rate/series?areaCode=E08000003&geography=localAuthority&boundaryYear=2019`
+- `GET /v1/data/no2-background-mean/aggregate?period=2024&geography=localAuthority&boundaryYear=2024&areaCode=W92000004`
 - `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&areaCode=W92000004`
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
