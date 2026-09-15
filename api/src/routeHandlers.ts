@@ -5,6 +5,7 @@ import { handleBulkRoutes } from "./bulkRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
 import { handleLocationRoutes } from "./locationRoutes";
 import { handleAreaSearchRoutes } from "./areaSearchRoutes";
+import { handleAreaValidationRoutes } from "./areaValidationRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 
@@ -22,6 +23,12 @@ type RouteFamily = {
  * home explicit while the legacy router is split into domain modules.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "area-validation",
+		owns: (segments) =>
+			segments[0] === "v1" && segments[1] === "areas:validate",
+		handle: handleAreaValidationRoutes,
+	},
 	{
 		name: "area-search",
 		owns: (segments) =>
