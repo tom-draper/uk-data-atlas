@@ -600,10 +600,11 @@ only **available** when its endpoint, contract and provenance are published.
       the nations its catalogue entry declares, and carry values its measure
       allows. A declared total, such as recorded crime or households by car
       availability, must equal the sum of its components in every area and
-      period. The first build found 95 exceptions, each now published with
-      its reason: 2016 to 2023 ward election codes from outside their year's
-      release, 2023 ward codes inferred from names, and party votes that do
-      not add up to 2021 to 2025 local election totals.
+      period. The first build found 95 exceptions. Fixing the local election
+      loader cleared 17: 2023 ward codes inferred from other years' names, and
+      party votes that did not add up to 2021 to 2025 totals. The rest are
+      published with their reasons, such as 2016 to 2019 ward election codes
+      from outside their year's release.
 - [ ] Machine-readable change log, release notifications and deprecation
       policy.
 - [ ] Compare two Atlas releases, identifying changed datasets, boundary

@@ -620,6 +620,10 @@ const electionFieldPeriods = (
 	records: PopulationObservation[];
 	unaddressableRecordCount: number;
 	otherGeographyRecordCount: number;
+	/** Whether the source published the area codes or they were matched by name. */
+	areaCodes: "published" | "name-matched";
+	/** Source areas left out upstream because no single official code fits. */
+	excludedAreaCount: number;
 }> => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
 	const periods = Object.entries(source)
@@ -724,6 +728,13 @@ const electionFieldPeriods = (
 					(areaCode) => areaCode === "NA",
 				).length,
 				otherGeographyRecordCount,
+				areaCodes:
+					entry.wardCodes === "name-matched"
+						? ("name-matched" as const)
+						: ("published" as const),
+				excludedAreaCount: Array.isArray(entry.excludedWards)
+					? entry.excludedWards.length
+					: 0,
 			};
 		})
 		.sort((left, right) => left.period.localeCompare(right.period));
@@ -3333,6 +3344,8 @@ export const compileDataCatalog = ({
 		countId: string;
 		countLabel: string;
 		countNote: string;
+		/** How a party's votes in one area are counted, when it needs saying. */
+		partyVoteNote?: string;
 		turnoutPeriods: "all" | "reported";
 		partyShareDenominator?: {
 			field: string;
@@ -3480,6 +3493,7 @@ export const compileDataCatalog = ({
 				},
 				notes: [
 					`Votes for ${partyNames[party] ?? party}. An area where the party did not stand is recorded as zero votes; this is a count, not a vote share.`,
+					...(election.partyVoteNote ? [election.partyVoteNote] : []),
 				],
 			})),
 			...(partyShareDenominator
@@ -3534,6 +3548,13 @@ export const compileDataCatalog = ({
 								total + period.otherGeographyRecordCount,
 							0,
 						);
+					const excludedAreaCount = sourcePeriods.reduce(
+						(total, period) => total + period.excludedAreaCount,
+						0,
+					);
+					const nameMatched = sourcePeriods.some(
+						(period) => period.areaCodes === "name-matched",
+					);
 					const sourceGeography = {
 						type: election.geography,
 						boundaryYear,
@@ -3550,7 +3571,11 @@ export const compileDataCatalog = ({
 								sourcePeriods[0]?.records ?? [],
 							),
 							recordCount: sourcePeriods[0]?.records.length ?? 0,
-							note: `Source-exact ${election.label.toLowerCase()} records for the listed polling years. Record coverage varies with the areas that held an election.${sourceUnaddressableRecordCount > 0 ? " Rows with the literal, unaddressable code NA are excluded." : ""}${sourceOtherGeographyRecordCount > 0 ? " County-electoral-division rows are excluded from this ward measure pending historical boundary releases." : ""}`,
+							note: `${
+								nameMatched
+									? `${election.label} records for the listed polling years. The source publishes no area codes, so each code was found by exact authority and area name in the official ${boundaryYear} boundary release.`
+									: `Source-exact ${election.label.toLowerCase()} records for the listed polling years.`
+							} Record coverage varies with the areas that held an election.${sourceUnaddressableRecordCount > 0 ? " Rows with the literal, unaddressable code NA are excluded." : ""}${excludedAreaCount > 0 ? ` ${excludedAreaCount} source area${excludedAreaCount === 1 ? " is" : "s are"} excluded because no single official code fits ${excludedAreaCount === 1 ? "it" : "them"}.` : ""}${sourceOtherGeographyRecordCount > 0 ? " County-electoral-division rows are excluded from this ward measure pending historical boundary releases." : ""}`,
 						},
 					};
 				});
@@ -3721,7 +3746,9 @@ export const compileDataCatalog = ({
 			countId: "local-election-candidate-votes",
 			countLabel: "Local election candidate votes",
 			countNote:
-				"Candidate votes counted in each ward. Multi-member wards can allow each voter more than one vote, so this is not necessarily a count of ballot papers.",
+				"The sum across parties of each party's highest-polling candidate's votes in each ward, the House of Commons Library's basis for vote share in multi-member wards, applied to every polling year. It is not a count of ballot papers, and not every candidate's votes added up.",
+			partyVoteNote:
+				"Only the party's highest-polling candidate in a ward counts, so a party fielding several candidates in a multi-member ward is counted once. Independents are counted the same way, and every other party or group as its own party within Other candidates.",
 			turnoutPeriods: "reported",
 		}),
 		...electionWinnerMeasures({
