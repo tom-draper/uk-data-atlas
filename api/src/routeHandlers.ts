@@ -2,6 +2,7 @@ import type { ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
+import { handleCrosswalkRoutes } from "./crosswalkRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 
@@ -19,6 +20,12 @@ type RouteFamily = {
  * home explicit while the legacy router is split into domain modules.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "crosswalks",
+		owns: (segments) =>
+			segments[0] === "v1" && segments[1] === "crosswalks",
+		handle: handleCrosswalkRoutes,
+	},
 	{
 		name: "bulk",
 		owns: (segments) =>
