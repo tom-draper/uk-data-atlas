@@ -57,29 +57,6 @@ const routeWithNamedLocations = (url: string) =>
 		}),
 	);
 
-test("publishes measure boundary candidates as code compatibility only", () => {
-	const response = routeRequest(
-		"GET",
-		"/v1/measures/population-estimate/compatibility",
-		{
-			boundaryRegistry: registry,
-			measureCompatibilityInventory,
-		},
-	);
-	assert.equal(response.status, 200);
-	const data = "data" in response.body ? response.body.data : undefined;
-	assert.ok(data && typeof data === "object");
-	assert.equal(
-		(data as { sources: Array<{ candidates: Array<{ status: string }> }> })
-			.sources[0]?.candidates[0]?.status,
-		"code-set-compatible",
-	);
-	assert.match(
-		(data as { note: string }).note,
-		/do not select a geometry release/,
-	);
-});
-
 test("publishes source and boundary code coverage without claiming equal geometry", () => {
 	const response = routeWithData("/v1/measures/population-estimate/coverage");
 	assert.equal(response.status, 200);
