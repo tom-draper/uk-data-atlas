@@ -45,11 +45,17 @@ describe("2023 reorganised authority loader records", () => {
 		expect(data.S12000044).toBeUndefined();
 	});
 
-	it("averages predecessor unemployment rate estimates", () => {
+	it("weights predecessor unemployment rates by economically active residents", () => {
 		const data = Object.fromEntries(
 			predecessors.map((code, index) => [
 				code,
-				{ ladCode: code, ladName: code, rates: { 2020: index + 1 } },
+				{
+					ladCode: code,
+					ladName: code,
+					// Every other district is ten times the size of its neighbour.
+					rates: { 2020: index % 2 === 0 ? 2 : 10 },
+					levels: { 2020: index % 2 === 0 ? 2000 : 1000 },
+				},
 			]),
 		) as Record<string, UnemploymentLADData>;
 
@@ -58,11 +64,42 @@ describe("2023 reorganised authority loader records", () => {
 		for (const [target, { predecessors: source }] of Object.entries(
 			APRIL_2023_LAD_MERGERS,
 		)) {
-			const expected =
-				source.reduce((sum, code) => sum + data[code].rates[2020]!, 0) /
-				source.length;
-			expect(data[target].rates[2020]).toBe(expected);
+			const unemployed = source.reduce(
+				(sum, code) => sum + data[code].levels![2020]!,
+				0,
+			);
+			const active = source.reduce(
+				(sum, code) =>
+					sum +
+					(data[code].levels![2020]! / data[code].rates[2020]!) * 100,
+				0,
+			);
+			expect(data[target].rates[2020]).toBe(
+				Number(((unemployed / active) * 100).toFixed(1)),
+			);
+			expect(data[target].levels![2020]).toBe(unemployed);
+			expect(data[target].derivedFromPredecessors).toEqual([...source]);
 		}
+	});
+
+	it("gives a merged authority no rate for a year a predecessor is unestimated", () => {
+		const data = Object.fromEntries(
+			predecessors.map((code) => [
+				code,
+				{
+					ladCode: code,
+					ladName: code,
+					rates: { 2020: 4 },
+					levels: { 2020: 100 },
+				},
+			]),
+		) as Record<string, UnemploymentLADData>;
+		data.E07000026.rates[2020] = null;
+
+		addMergedUnemploymentAuthorities(data, [2020]);
+
+		expect(data.E06000063.rates[2020]).toBeNull();
+		expect(data.E06000064.rates[2020]).toBe(4);
 	});
 
 	it("averages predecessor life-expectancy estimates", () => {
