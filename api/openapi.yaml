@@ -43,6 +43,7 @@ paths:
                   links:
                     - /v1/geographies
                     - /v1/boundary-releases
+                    - /v1/boundary-releases:resolve
                     - /v1/boundary-releases/{type}/{release}
                     - /v1/geography-inventory
                     - /v1/datasets
@@ -111,6 +112,72 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BoundaryReleaseListEnvelope"
+
+  /boundary-releases:resolve:
+    get:
+      operationId: resolveBoundaryReleaseForDate
+      summary: Select the boundary release to use for a date
+      description: >
+        Returns the latest release of a geography dated on or before `date`
+        that covers `country` when one is given, as an exact release id rather
+        than a moving `latest` alias. Releases are snapshots dated to a month,
+        so a day narrows nothing, and the answer is the latest snapshot at that
+        date rather than a statement of which boundaries were legally in force.
+
+        `previous` and `next` are the neighbouring releases covering the same
+        country; a change after the selected release shows first in `next`.
+        `sameMonth` is true when the date falls in the release's own month, so
+        a change that month may lie either side of it. `notCovering` lists
+        later releases passed over because they miss the country.
+
+        Releases of the same month are told apart only where one is plainly
+        better: a subset derived from another is set aside for its source, and
+        without `country` a release covering fewer countries is set aside.
+        Each is listed in `setAside` with its reason. Variants differing in any
+        other way, such as clipping, are a 409 listing each in `choices`.
+      parameters:
+        - name: geography
+          in: query
+          required: true
+          schema: { type: string }
+        - name: date
+          in: query
+          required: true
+          schema: { type: string }
+          description: A calendar date as `YYYY-MM-DD`, or a month as `YYYY-MM`.
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [GB-ENG, GB-NIR, GB-SCT, GB-WLS]
+      responses:
+        "200":
+          description: The selected release, its neighbours and the basis of the choice.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          description: >
+            No release can be selected: `code` is `unsupported_geography` for
+            an unknown geography, otherwise `no_release_for_date` with
+            `absence` saying whether the date precedes the first release,
+            no release covers the country, or none is dated to a month.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: >
+            Several releases share the selected month and differ in more than
+            coverage; `choices` lists them.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
 
   /boundary-releases/{geography}/{release}:
     get:
@@ -3100,6 +3167,8 @@ components:
             - area_not_in_release
             - aggregation_not_supported
             - conversion_not_available
+            - no_release_for_date
+            - ambiguous_release
           description: >
             On a 404 from an area route: `unsupported_geography` when the
             geography or release is not published or its area identities are
@@ -3108,6 +3177,8 @@ components:
             `aggregation_not_supported` when the measure's values do not add
             over areas, and `conversion_not_available` when the named crosswalk
             cannot convert the partition without dropping or assuming values.
+            From a release resolution: `no_release_for_date` and
+            `ambiguous_release`.
         absence:
           type: string
           enum:
@@ -3121,6 +3192,9 @@ components:
             - crosswalk-geography-mismatch
             - source-areas-not-mapped
             - unweighted-split
+            - before-first-release
+            - country-not-covered
+            - no-dated-release
           description: >
             Which absence left the area or conversion unresolved. For a
             conversion, the crosswalk starts at another geography, does not map
