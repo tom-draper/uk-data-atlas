@@ -117,3 +117,12 @@ export const summariseCoverage = (
 		? { status: "partial", code: "partial_coverage", assessments }
 		: { status: "complete", assessments };
 };
+
+/** How a non-aggregatable statistic reads in a sentence. */
+export const statisticPhrase = (statistic: string) =>
+	({
+		median: "a median",
+		rank: "a rank",
+		decile: "a decile",
+		"life-expectancy": "a life expectancy",
+	})[statistic] ?? `a ${statistic}`;

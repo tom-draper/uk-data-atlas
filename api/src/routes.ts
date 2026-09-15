@@ -23,6 +23,7 @@ import {
 	aggregateLocationMembers,
 	isCountryCode,
 	assessCoverage,
+	statisticPhrase,
 	countryCodeFor,
 	summariseCoverage,
 } from "./aggregation";
@@ -187,15 +188,6 @@ const fullRegionMembership = (
 		unsafeSourceCount: matching.length - memberCodes.length,
 	};
 };
-
-/** How a non-aggregatable statistic reads in a sentence. */
-const statisticPhrase = (statistic: string) =>
-	({
-		median: "a median",
-		rank: "a rank",
-		decile: "a decile",
-		"life-expectancy": "a life expectancy",
-	})[statistic] ?? `a ${statistic}`;
 
 /**
  * Route a request against named, independently-built catalogues. Keeping the
