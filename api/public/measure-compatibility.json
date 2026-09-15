@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:8d9bd4bd9ae6347b1a8223794486dba7514e3d5085015465cef3aa143183eba0",
+	"contentHash": "sha256:6f990ea0ff337ec5fbf4c550a017b646000f51986eed96d78545e2f49ba2785d",
 	"inputs": {
-		"dataCatalog": "sha256:e7f5e112520c377dfb98f364955ac983bbfe67300d10876aff2f714ffa5e251d",
+		"dataCatalog": "sha256:fc79fd926ec959a944d45022e618d3e77f32170fa59e880a9f54ecee68e8fb7e",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -100,8 +100,8 @@
 			"imd-rank": "sha256:8320612d0617286f36f619c41172be9fbe57f2f1d02cd3e8f75c6422925059dd",
 			"life-expectancy-female": "sha256:704b1201e886c001a2f43ab5ccf8383bdf86ab2fc09075f15ec9290b36432e12",
 			"life-expectancy-male": "sha256:bf1ff69f3624fd6191713864bba62ce7153521ceee2b30ed686c262e0a6a9f68",
-			"local-election-candidate-votes": "sha256:f3882a79877bdec43f24dc61f2a27656c66e6156282ac5a60ae0c17fa6eee995",
 			"local-election-con-votes": "sha256:966eac42a1af4a41a2eddef160f1d27e662aee12652c367c45bbb12e077b5fa8",
+			"local-election-effective-votes": "sha256:a7e0c7bdf9f895b6735ec621d47ccf5b42398058dcc155d14e98c855239f7365",
 			"local-election-green-votes": "sha256:96e76a2a3d5066f9b92f6c30c62ddcbe8e80b2b47766fbc153fae0db699ab5d0",
 			"local-election-ind-votes": "sha256:8f43fcaffb962e4683f1e4d89ecd105164dba880c792ba9d19ffe8df9f396b04",
 			"local-election-lab-votes": "sha256:9f8a2fd7b47ea941918de3f31e7a2fa78ff5f179f432d98c748bfffb56f58220",
@@ -3121,7 +3121,7 @@
 			]
 		},
 		{
-			"measureId": "local-election-candidate-votes",
+			"measureId": "local-election-effective-votes",
 			"sources": [
 				{
 					"datasetId": "local-election",

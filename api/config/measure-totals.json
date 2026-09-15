@@ -98,7 +98,7 @@
 			]
 		},
 		{
-			"measureId": "local-election-candidate-votes",
+			"measureId": "local-election-effective-votes",
 			"components": [
 				"local-election-con-votes",
 				"local-election-green-votes",

@@ -7,10 +7,10 @@
 		"crosswalkInventory": "sha256:5576446ba0b841f3cb756c0bd7485f50bf7181c45660c1f166608add82250c41",
 		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
 		"geographyInventory": "sha256:f3d75ca431c25041cbb9e07c39ccc694a89589db5a8958ede82b722b243120ed",
-		"dataCatalog": "sha256:e7f5e112520c377dfb98f364955ac983bbfe67300d10876aff2f714ffa5e251d",
-		"exportManifest": "sha256:7d3a7768193db862db4925859ceb4256e76ce784131363c744e5a5f4bd8d1044",
-		"measureTotals": "sha256:f0a1b166946f866ca0fe9b8b3f116c2fcd8e66c8eb31cca29c672ed1dcabc909",
-		"waivers": "sha256:bf372a5476415495217f91450b784a7e45e859cebd1eeeb66c57c7c581adecd8"
+		"dataCatalog": "sha256:fc79fd926ec959a944d45022e618d3e77f32170fa59e880a9f54ecee68e8fb7e",
+		"exportManifest": "sha256:5a1f3a46ae840f6859d18477daa16934200fa468a235f0e2088e37ac33685503",
+		"measureTotals": "sha256:9a8f9eb8c568e5a99a296ca4e509a098bde9669f186d41a881340de6209fb9de",
+		"waivers": "sha256:076a0b4ff6727a3e37468a2403319c3ca07f0d7da0eed2d846ce155c9840df37"
 	},
 	"summary": {
 		"resourceCount": 537,
@@ -3976,7 +3976,7 @@
 			]
 		},
 		{
-			"id": "measures/local-election-candidate-votes",
+			"id": "measures/local-election-con-votes",
 			"kind": "measure",
 			"status": "passed",
 			"checks": [
@@ -3990,7 +3990,7 @@
 			]
 		},
 		{
-			"id": "measures/local-election-con-votes",
+			"id": "measures/local-election-effective-votes",
 			"kind": "measure",
 			"status": "passed",
 			"checks": [
@@ -11263,472 +11263,6 @@
 			]
 		},
 		{
-			"id": "exports/local-election-candidate-votes-ward-2016-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 2210
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No compiled ward release for 2016 holds every code: 2016-12-gb-bgc lacks 12 (E05001607, E05002777, E05002780, E05002785, E05008530 and 7 more).",
-					"measured": {
-						"areaCodeCount": 2210,
-						"boundaryRelease": null,
-						"unresolvedCount": 12
-					},
-					"waiver": {
-						"reason": "The LEAP 2016 file gives 12 codes the December 2016 release does not hold: 7 retired wards that no compiled release holds (E05001607, E05002777, E05002780, E05002785, E05008530, E05008532, E05008537) and 5 wards first published in December 2018 or 2019. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 2210,
-						"minimum": 0,
-						"maximum": 10190
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
-						"comparedCount": 2210,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/local-election-candidate-votes-ward-2017-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 1392
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No compiled ward release for 2017 holds every code: 2017-12-gb-bgc lacks 7 (E05002780, W05000859, W05000868, W05000869, W05000870 and 2 more).",
-					"measured": {
-						"areaCodeCount": 1392,
-						"boundaryRelease": null,
-						"unresolvedCount": 7
-					},
-					"waiver": {
-						"reason": "The LEAP 2017 file gives 7 codes the December 2017 release does not hold: E05002780, which no compiled release holds, and 6 Welsh wards last published in December 2016. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 1392,
-						"minimum": 0,
-						"maximum": 7805
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
-						"comparedCount": 1392,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/local-election-candidate-votes-ward-2018-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 2748
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No compiled ward release for 2018 holds every code: 2018-12-uk-bgc lacks 6 (E05012647, E05012648, E05012841, E05012842, E05012968 and 1 more).",
-					"measured": {
-						"areaCodeCount": 2748,
-						"boundaryRelease": null,
-						"unresolvedCount": 6
-					},
-					"waiver": {
-						"reason": "The LEAP 2018 file gives 6 codes first published in December 2019 (E05012647, E05012648, E05012841, E05012842, E05012968, E05012969) that the December 2018 release does not hold. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 2748,
-						"minimum": 0,
-						"maximum": 9664
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
-						"comparedCount": 2748,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/local-election-candidate-votes-ward-2019-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 5273
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
-					"measured": {
-						"areaCodeCount": 5273,
-						"boundaryRelease": null,
-						"unresolvedCount": 2
-					},
-					"waiver": {
-						"reason": "The LEAP 2019 file gives Leeds's Garforth & Swillington and Temple Newsam their December 2021 codes, E05013830 and E05013831, which the December 2019 release does not hold. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 5273,
-						"minimum": 0,
-						"maximum": 8191
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
-						"comparedCount": 5273,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/local-election-candidate-votes-ward-2021-observations",
-			"kind": "measure-source",
-			"status": "passed",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 2497
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "passed",
-					"measured": {
-						"areaCodeCount": 2497,
-						"boundaryRelease": "2021-12-uk-bgc",
-						"unresolvedCount": 0
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 2497,
-						"minimum": 385,
-						"maximum": 10098
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
-						"comparedCount": 2497,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/local-election-candidate-votes-ward-2022-observations",
-			"kind": "measure-source",
-			"status": "passed",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 3531
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "passed",
-					"measured": {
-						"areaCodeCount": 3531,
-						"boundaryRelease": "2022-12-uk-bgc",
-						"unresolvedCount": 0
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 3531,
-						"minimum": 272,
-						"maximum": 8575
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
-						"comparedCount": 3531,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/local-election-candidate-votes-ward-2023-observations",
-			"kind": "measure-source",
-			"status": "passed",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 4792
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "passed",
-					"measured": {
-						"areaCodeCount": 4792,
-						"boundaryRelease": "2023-05-uk-bgc",
-						"unresolvedCount": 0
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 4792,
-						"minimum": 192,
-						"maximum": 8361
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
-						"comparedCount": 4792,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/local-election-candidate-votes-ward-2024-observations",
-			"kind": "measure-source",
-			"status": "passed",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 1903
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "passed",
-					"measured": {
-						"areaCodeCount": 1903,
-						"boundaryRelease": "2024-05-uk-bgc",
-						"unresolvedCount": 0
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 1903,
-						"minimum": 496,
-						"maximum": 8451
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
-						"comparedCount": 1903,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/local-election-candidate-votes-ward-2025-observations",
-			"kind": "measure-source",
-			"status": "passed",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 513
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "passed",
-					"measured": {
-						"areaCodeCount": 513,
-						"boundaryRelease": "2025-05-uk-bgc-v2",
-						"unresolvedCount": 0
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 513,
-						"minimum": 621,
-						"maximum": 6875
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
-						"comparedCount": 513,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/local-election-con-votes-ward-2016-observations",
 			"kind": "measure-source",
 			"status": "waived",
@@ -12100,6 +11634,472 @@
 						"recordCount": 513,
 						"minimum": 0,
 						"maximum": 2335
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/local-election-effective-votes-ward-2016-observations",
+			"kind": "measure-source",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 2210
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "waived",
+					"detail": "No compiled ward release for 2016 holds every code: 2016-12-gb-bgc lacks 12 (E05001607, E05002777, E05002780, E05002785, E05008530 and 7 more).",
+					"measured": {
+						"areaCodeCount": 2210,
+						"boundaryRelease": null,
+						"unresolvedCount": 12
+					},
+					"waiver": {
+						"reason": "The LEAP 2016 file gives 12 codes the December 2016 release does not hold: 7 retired wards that no compiled release holds (E05001607, E05002777, E05002780, E05002785, E05008530, E05008532, E05008537) and 5 wards first published in December 2018 or 2019. Results stay on the codes the source published."
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 2210,
+						"minimum": 0,
+						"maximum": 10190
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
+						"comparedCount": 2210,
+						"mismatchCount": 0,
+						"maxDifference": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/local-election-effective-votes-ward-2017-observations",
+			"kind": "measure-source",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 1392
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "waived",
+					"detail": "No compiled ward release for 2017 holds every code: 2017-12-gb-bgc lacks 7 (E05002780, W05000859, W05000868, W05000869, W05000870 and 2 more).",
+					"measured": {
+						"areaCodeCount": 1392,
+						"boundaryRelease": null,
+						"unresolvedCount": 7
+					},
+					"waiver": {
+						"reason": "The LEAP 2017 file gives 7 codes the December 2017 release does not hold: E05002780, which no compiled release holds, and 6 Welsh wards last published in December 2016. Results stay on the codes the source published."
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1392,
+						"minimum": 0,
+						"maximum": 7805
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
+						"comparedCount": 1392,
+						"mismatchCount": 0,
+						"maxDifference": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/local-election-effective-votes-ward-2018-observations",
+			"kind": "measure-source",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 2748
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "waived",
+					"detail": "No compiled ward release for 2018 holds every code: 2018-12-uk-bgc lacks 6 (E05012647, E05012648, E05012841, E05012842, E05012968 and 1 more).",
+					"measured": {
+						"areaCodeCount": 2748,
+						"boundaryRelease": null,
+						"unresolvedCount": 6
+					},
+					"waiver": {
+						"reason": "The LEAP 2018 file gives 6 codes first published in December 2019 (E05012647, E05012648, E05012841, E05012842, E05012968, E05012969) that the December 2018 release does not hold. Results stay on the codes the source published."
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 2748,
+						"minimum": 0,
+						"maximum": 9664
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
+						"comparedCount": 2748,
+						"mismatchCount": 0,
+						"maxDifference": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/local-election-effective-votes-ward-2019-observations",
+			"kind": "measure-source",
+			"status": "waived",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 5273
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "waived",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"measured": {
+						"areaCodeCount": 5273,
+						"boundaryRelease": null,
+						"unresolvedCount": 2
+					},
+					"waiver": {
+						"reason": "The LEAP 2019 file gives Leeds's Garforth & Swillington and Temple Newsam their December 2021 codes, E05013830 and E05013831, which the December 2019 release does not hold. Results stay on the codes the source published."
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 5273,
+						"minimum": 0,
+						"maximum": 8191
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
+						"comparedCount": 5273,
+						"mismatchCount": 0,
+						"maxDifference": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/local-election-effective-votes-ward-2021-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 2497
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 2497,
+						"boundaryRelease": "2021-12-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 2497,
+						"minimum": 385,
+						"maximum": 10098
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
+						"comparedCount": 2497,
+						"mismatchCount": 0,
+						"maxDifference": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/local-election-effective-votes-ward-2022-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 3531
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 3531,
+						"boundaryRelease": "2022-12-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 3531,
+						"minimum": 272,
+						"maximum": 8575
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
+						"comparedCount": 3531,
+						"mismatchCount": 0,
+						"maxDifference": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/local-election-effective-votes-ward-2023-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 4792
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 4792,
+						"boundaryRelease": "2023-05-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 4792,
+						"minimum": 192,
+						"maximum": 8361
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
+						"comparedCount": 4792,
+						"mismatchCount": 0,
+						"maxDifference": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/local-election-effective-votes-ward-2024-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 1903
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 1903,
+						"boundaryRelease": "2024-05-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1903,
+						"minimum": 496,
+						"maximum": 8451
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
+						"comparedCount": 1903,
+						"mismatchCount": 0,
+						"maxDifference": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/local-election-effective-votes-ward-2025-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 513
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 513,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 513,
+						"minimum": 621,
+						"maximum": 6875
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "local-election-con-votes, local-election-green-votes, local-election-ind-votes, local-election-lab-votes, local-election-ld-votes, local-election-other-votes, local-election-pc-votes, local-election-ref-votes, local-election-ukip-votes",
+						"comparedCount": 513,
+						"mismatchCount": 0,
+						"maxDifference": 0
 					}
 				}
 			]
@@ -17420,5 +17420,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:179a1995aa995edb35553623c00ff4f5b8fdd237cab276dc3a1308146315725e"
+	"contentHash": "sha256:6a7509b02df076313ed9c9fc9f2998f5a23b7e6f75a6161571b74b15e0642883"
 }
