@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:429d28b04d856b5da65ace3ff3f02528d2417a931bb6ed229ca8d89ed69f7548",
-	"dataCatalogHash": "sha256:534ac0e0789d4dc8402f8a4b760608132d6556b4a4e5c88f01a58609ff45ea73",
+	"contentHash": "sha256:121b08154fd2597ca7980a9251a5d3c325503cd0f14ee1439be57cecbbf4ad46",
+	"dataCatalogHash": "sha256:d56dd18995fe153a0d00d06bf6cbbf0b8477ca847b9e8f69d6a76e2e235fb7d1",
 	"exports": [
 		{
 			"id": "broadband-full-fibre-availability-observations",
@@ -195,7 +195,7 @@
 			"measureId": "crime-bicycle-theft",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -203,8 +203,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-bicycle-theft-observations",
-			"contentHash": "sha256:276d463d54cdaac941273227c77fda70ac4004564a2f75df0f0370722d041ba3",
-			"bytes": 18011,
+			"contentHash": "sha256:8e84f5a659a7a838e6359f1a139f41256cb31ebc344f0c25d7275a80430d285e",
+			"bytes": 18000,
 			"href": "/v1/exports/crime-bicycle-theft-observations"
 		},
 		{
@@ -212,7 +212,7 @@
 			"measureId": "crime-burglary",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -220,8 +220,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-burglary-observations",
-			"contentHash": "sha256:65f4474203e90b85a6a14cce098e3fd768c62000ea866420bd1e677b3880f0ac",
-			"bytes": 18239,
+			"contentHash": "sha256:815154678d09c6593a86fd31c61ce39df01894aa1189831eff2408863a307eac",
+			"bytes": 18223,
 			"href": "/v1/exports/crime-burglary-observations"
 		},
 		{
@@ -229,7 +229,7 @@
 			"measureId": "crime-criminal-damage-and-arson",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -237,8 +237,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-criminal-damage-and-arson-observations",
-			"contentHash": "sha256:984069449a3b4c6e563450f445b7a3a8b737330aaf4d9a3da4b020af8105c2b7",
-			"bytes": 18355,
+			"contentHash": "sha256:633295ffc2a0f628ad54529bb0d50b273a4137c53d2a922e8cd85701cd3da2d4",
+			"bytes": 18336,
 			"href": "/v1/exports/crime-criminal-damage-and-arson-observations"
 		},
 		{
@@ -246,7 +246,7 @@
 			"measureId": "crime-death-or-serious-injury-by-illegal-driving",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -254,8 +254,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-death-or-serious-injury-by-illegal-driving-observations",
-			"contentHash": "sha256:bbbe97340c7da4a5b9590f1b92d65126fa123272b6a7b8bbf2e3a2ceb9004e7b",
-			"bytes": 17636,
+			"contentHash": "sha256:42159d68c423189b287f92159cbfe9c81079e1db65aa1018d9f51bd48f36459c",
+			"bytes": 17639,
 			"href": "/v1/exports/crime-death-or-serious-injury-by-illegal-driving-observations"
 		},
 		{
@@ -263,7 +263,7 @@
 			"measureId": "crime-drug-offences",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -271,7 +271,7 @@
 			},
 			"format": "json",
 			"artifact": "crime-drug-offences-observations",
-			"contentHash": "sha256:2c138aa97aaa44aed910c626cc67327baaa70888821e062483a90a0ce2acd7d2",
+			"contentHash": "sha256:f925a1044616e7be342c0c857c8e618011b39fcc308ce3c6bb90a25c965f4136",
 			"bytes": 18223,
 			"href": "/v1/exports/crime-drug-offences-observations"
 		},
@@ -280,7 +280,7 @@
 			"measureId": "crime-homicide",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -288,7 +288,7 @@
 			},
 			"format": "json",
 			"artifact": "crime-homicide-observations",
-			"contentHash": "sha256:854ab6a2cfbca8851b84b6d438614d4fe0f7494485ef8794a05d8f25bb5bfd75",
+			"contentHash": "sha256:032bfd97f5248a92907c422e23ff0e7bf0925432a028bf63ba7012a506a1e23b",
 			"bytes": 17543,
 			"href": "/v1/exports/crime-homicide-observations"
 		},
@@ -297,7 +297,7 @@
 			"measureId": "crime-miscellaneous-crimes-against-society",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -305,8 +305,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-miscellaneous-crimes-against-society-observations",
-			"contentHash": "sha256:7b79dd5197eb1b9978736f45aa9f449a2ba673c15c9f9c5589e245bf65b007e2",
-			"bytes": 18202,
+			"contentHash": "sha256:2b5a7f38001432a645381f146df4b01217e2c3e6574acc5d2690063292a52487",
+			"bytes": 18196,
 			"href": "/v1/exports/crime-miscellaneous-crimes-against-society-observations"
 		},
 		{
@@ -314,7 +314,7 @@
 			"measureId": "crime-non-residential-burglary",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -322,8 +322,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-non-residential-burglary-observations",
-			"contentHash": "sha256:4d9b2eff26f06501a26d74019cb0c39f5c4f393f866525fbd561981517a20c7f",
-			"bytes": 18091,
+			"contentHash": "sha256:dccf4f8235cc5294c0aebe2f252113ff6b8db6de4f2389d518ec17f44555c41b",
+			"bytes": 18081,
 			"href": "/v1/exports/crime-non-residential-burglary-observations"
 		},
 		{
@@ -331,7 +331,7 @@
 			"measureId": "crime-other-theft",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -339,8 +339,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-other-theft-observations",
-			"contentHash": "sha256:c546f589ae3d37c34f60c030669c610f898486cabc909b4a0e713b542a16e461",
-			"bytes": 18303,
+			"contentHash": "sha256:cb4fd35d5f6f4761f73f94087da306305fce16ce1cf6dd25bb790b460f4b8e28",
+			"bytes": 18289,
 			"href": "/v1/exports/crime-other-theft-observations"
 		},
 		{
@@ -348,7 +348,7 @@
 			"measureId": "crime-possession-of-weapons",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -356,8 +356,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-possession-of-weapons-observations",
-			"contentHash": "sha256:e3bd7781ba5e22dfb26a0d4b57f43120c99d6d73ca7595ebb93acf91e84542b0",
-			"bytes": 18057,
+			"contentHash": "sha256:7c0f060ad9c6b5f85317402b8197f7730001e7299be95f93e675ac1c8fc92f21",
+			"bytes": 18063,
 			"href": "/v1/exports/crime-possession-of-weapons-observations"
 		},
 		{
@@ -365,7 +365,7 @@
 			"measureId": "crime-public-order-offences",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -373,8 +373,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-public-order-offences-observations",
-			"contentHash": "sha256:0a05e4275c12f782eba2f35bae2310872a2a2c46728840e5ae644adb9d8af716",
-			"bytes": 18328,
+			"contentHash": "sha256:ab98ac90da6f73ae018e7becb6d490997f82ea858eef77f1a39eb0256b88a0a0",
+			"bytes": 18317,
 			"href": "/v1/exports/crime-public-order-offences-observations"
 		},
 		{
@@ -382,7 +382,7 @@
 			"measureId": "crime-residential-burglary",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -390,8 +390,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-residential-burglary-observations",
-			"contentHash": "sha256:c3827700ffb398f4164adabb50e912f98c3702b2b04c14d1fd5592015b7b1498",
-			"bytes": 18209,
+			"contentHash": "sha256:dc8a2a7c16acbbb7fb870d2fa936450da15870089bf4dac68775ea877d948c97",
+			"bytes": 18194,
 			"href": "/v1/exports/crime-residential-burglary-observations"
 		},
 		{
@@ -399,7 +399,7 @@
 			"measureId": "crime-robbery",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -407,8 +407,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-robbery-observations",
-			"contentHash": "sha256:42dd6dbafda9bc6b11e6d70c4c12f631f9a2e88ec0e42f60756ca8783a868c17",
-			"bytes": 18015,
+			"contentHash": "sha256:91f054030376cf49a5cc87830842909554e19126e1bbb4395a7189e7c8cbe1b1",
+			"bytes": 18025,
 			"href": "/v1/exports/crime-robbery-observations"
 		},
 		{
@@ -416,7 +416,7 @@
 			"measureId": "crime-sexual-offences",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -424,8 +424,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-sexual-offences-observations",
-			"contentHash": "sha256:dd544b005e7de460dfeab280c2fdbf87d6cca7d05fcbf57c0f2e5113a3b80b70",
-			"bytes": 18222,
+			"contentHash": "sha256:55d0271776ae285f3ff8c686de044deecb81e2952f51a3c192809cbccc82d185",
+			"bytes": 18217,
 			"href": "/v1/exports/crime-sexual-offences-observations"
 		},
 		{
@@ -433,7 +433,7 @@
 			"measureId": "crime-shoplifting",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -441,8 +441,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-shoplifting-observations",
-			"contentHash": "sha256:1d8a6e44ba26fa17a16af89c5ba1b0031973d68465c3205997ebcf31f39e9edb",
-			"bytes": 18348,
+			"contentHash": "sha256:9342ff1ceea2efda7defa6eb7d333a4bb956f155480dc4f435a5c63b8b98d816",
+			"bytes": 18334,
 			"href": "/v1/exports/crime-shoplifting-observations"
 		},
 		{
@@ -450,7 +450,7 @@
 			"measureId": "crime-stalking-and-harassment",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -458,8 +458,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-stalking-and-harassment-observations",
-			"contentHash": "sha256:b2688056f1ed9f453dc6d3eff47106b18a4b8af46acc1891d02c6e259b966b2c",
-			"bytes": 18399,
+			"contentHash": "sha256:4ebe6f879927d87d4f5b0abe6f5df0458dd8f07341a0eeec94950ff3f6896a00",
+			"bytes": 18393,
 			"href": "/v1/exports/crime-stalking-and-harassment-observations"
 		},
 		{
@@ -467,7 +467,7 @@
 			"measureId": "crime-theft-from-the-person",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -475,8 +475,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-theft-from-the-person-observations",
-			"contentHash": "sha256:cb9c6fcd646a63641eb6bcc9d4ebed55db04ed986b44cefe2240ba1b155e9ed2",
-			"bytes": 17996,
+			"contentHash": "sha256:ba0233766fc468b1eff84eea21cc65362346bbbf801e130e7534539fd3c019e6",
+			"bytes": 17971,
 			"href": "/v1/exports/crime-theft-from-the-person-observations"
 		},
 		{
@@ -484,7 +484,7 @@
 			"measureId": "crime-theft-offences",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -492,8 +492,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-theft-offences-observations",
-			"contentHash": "sha256:1110f0a32c8f6eb06d6b66f274b915ecf838e819ae472270949e0395a6c200e1",
-			"bytes": 18512,
+			"contentHash": "sha256:c28f9a421b0af11cde512271d3bafa1aa6a3f6ac036c8ef43437f7ba0a47c434",
+			"bytes": 18500,
 			"href": "/v1/exports/crime-theft-offences-observations"
 		},
 		{
@@ -501,7 +501,7 @@
 			"measureId": "crime-total",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -509,8 +509,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-total-observations",
-			"contentHash": "sha256:22e426f4439ea07097be913c393d90efe0b89bcfcd3c79c5fa3061a5dedb8585",
-			"bytes": 18648,
+			"contentHash": "sha256:18ca75dda9af4fff27a6331711fe09eaa8c082f22d04f94a3850f129631a9dc3",
+			"bytes": 18640,
 			"href": "/v1/exports/crime-total-observations"
 		},
 		{
@@ -518,7 +518,7 @@
 			"measureId": "crime-vehicle-offences",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -526,8 +526,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-vehicle-offences-observations",
-			"contentHash": "sha256:ebb0c405edf1aa0b2e31094783df5e6f969fdcc391eca7e61ae2321ead384284",
-			"bytes": 18268,
+			"contentHash": "sha256:d4af3c362d722db709f6e88e4cc21a27e58e04c530083dec059c9a8bd0639e5d",
+			"bytes": 18252,
 			"href": "/v1/exports/crime-vehicle-offences-observations"
 		},
 		{
@@ -535,7 +535,7 @@
 			"measureId": "crime-violence-against-the-person",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -543,8 +543,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-violence-against-the-person-observations",
-			"contentHash": "sha256:643b6f879a9ea86b45092586619cd3b6e5bc9640e26f511a0fd51deb5581d934",
-			"bytes": 18540,
+			"contentHash": "sha256:ee49d971ab747ac82e53a082115b2c807044e62b8960b74218356836f34f69cc",
+			"bytes": 18533,
 			"href": "/v1/exports/crime-violence-against-the-person-observations"
 		},
 		{
@@ -552,7 +552,7 @@
 			"measureId": "crime-violence-with-injury",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -560,8 +560,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-violence-with-injury-observations",
-			"contentHash": "sha256:c2e683d679e4a7983f4e2980d3fe699dbf9b52cb3d6f424691250b8231e38077",
-			"bytes": 18368,
+			"contentHash": "sha256:49e643c012842ae296213e2f914878b0b2455d323f560d1c90616b6bc3421f0c",
+			"bytes": 18352,
 			"href": "/v1/exports/crime-violence-with-injury-observations"
 		},
 		{
@@ -569,7 +569,7 @@
 			"measureId": "crime-violence-without-injury",
 			"datasetId": "crime",
 			"periods": [
-				"year-ending-2025-06"
+				"year-ending-2026-03"
 			],
 			"sourceGeography": {
 				"type": "communitySafetyPartnership",
@@ -577,8 +577,8 @@
 			},
 			"format": "json",
 			"artifact": "crime-violence-without-injury-observations",
-			"contentHash": "sha256:ebf45ef894741fa8bb184cbbcf7b51ac59c71fc8d31708cdff92c9eaf3b9d0d1",
-			"bytes": 18441,
+			"contentHash": "sha256:c4b4358ff791e5ca3f1cd241e34567332de856de3843e761095d9c50820b8e5c",
+			"bytes": 18430,
 			"href": "/v1/exports/crime-violence-without-injury-observations"
 		},
 		{

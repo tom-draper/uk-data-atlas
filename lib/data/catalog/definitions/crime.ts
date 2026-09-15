@@ -12,7 +12,7 @@ export const crimeDatasetDefinition: DatasetDefinition<CrimeDataset> = {
 		source: "Office for National Statistics",
 		sourceUrl:
 			"https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/datasets/policeforceareadatatables",
-		year: "2025",
+		year: "2026",
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",

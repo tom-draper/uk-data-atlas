@@ -6,9 +6,18 @@ import {
 } from "@/lib/types/crime";
 import { parseCsv, findHeaderLine } from "@/lib/helpers/parseCsv";
 
-const extractYearFromTitle = (title: string): number => {
-	const match = title.match(/(\d{4})/);
-	return match ? parseInt(match[1]) : new Date().getFullYear();
+/**
+ * The twelve months a table covers, from its title, such as "year ending March
+ * 2026". Refused if absent, so a new edition cannot be mislabelled with the
+ * period of the one it replaced.
+ */
+const periodFromTitle = (title: string) => {
+	const match = title.match(/year ending ([A-Z][a-z]+) (\d{4})/);
+	if (!match) throw new Error(`Crime table title names no period: ${title}`);
+	return {
+		dataDate: `year ending ${match[1]} ${match[2]}`,
+		year: Number(match[2]),
+	};
 };
 
 /** The count columns, in table order from the seventh column. */
@@ -71,10 +80,8 @@ const count = (value: string | undefined, context: string): number => {
 export async function loadCrime(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, CrimeDataset>> {
-	const csvText = await read(
-		"economics/crime/policeforceareatablesyejune25final.xlsx",
-	);
-	const year = extractYearFromTitle(csvText.split("\n")[0] ?? "");
+	const csvText = await read("economics/crime/pfatablesyemarch2026.xlsx");
+	const { dataDate, year } = periodFromTitle(csvText.split("\n")[0] ?? "");
 
 	const headerLine = findHeaderLine(csvText, "police force area code");
 	const { data: rows } = await parseCsv<string[]>(csvText, {
@@ -164,7 +171,7 @@ export async function loadCrime(
 			type: "crime",
 			boundaryType: "localAuthority",
 			boundaryYear: year,
-			dataDate: `year ending June ${year}`,
+			dataDate,
 			jurisdiction: "England and Wales",
 			data: records,
 			partnerships,

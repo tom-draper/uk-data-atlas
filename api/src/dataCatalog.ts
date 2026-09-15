@@ -2172,18 +2172,50 @@ export const compileDataCatalog = ({
 	 * only unit every count belongs to. The compiled dataset's authority view
 	 * is not served: it has no value where a partnership spans authorities.
 	 */
+	const crimeEdition = Object.values(
+		JSON.parse(readFileSync(crimePath, "utf8")) as Record<
+			string,
+			{ year?: unknown; dataDate?: unknown }
+		>,
+	);
+	const crimeMonths = [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December",
+	];
+	// The period is read from the edition rather than written here, so a
+	// refreshed table cannot be served under the months of the one before.
+	const crimeEnding = /^year ending ([A-Z][a-z]+) (\d{4})$/.exec(
+		String(crimeEdition[0]?.dataDate),
+	);
+	const crimeMonth = crimeMonths.indexOf(crimeEnding?.[1] ?? "") + 1;
+	if (crimeEdition.length !== 1 || !crimeEnding || crimeMonth === 0)
+		throw new Error(
+			`${crimePath}: expected one edition naming the twelve months it covers`,
+		);
+	const crimeYear = Number(crimeEnding[2]);
+	const crimePeriod = `year-ending-${crimeYear}-${String(crimeMonth).padStart(2, "0")}`;
 	publishIndicators({
 		datasetId: "crime",
 		path: crimePath,
-		boundaryYear: 2025,
+		boundaryYear: crimeYear,
 		table: "partnerships",
 		geography: "communitySafetyPartnership",
 		partitionBoundaryYear: 2023,
-		period: "year-ending-2025-06",
+		period: crimePeriod,
 		coverageNote:
 			"Published source records cover every community safety partnership in England and Wales.",
 		notes: [
-			"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+			`Offences recorded by the police in the twelve months to ${crimeEnding[1]} ${crimeYear}, by the community safety partnership where they were committed.`,
 			"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 			"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 			"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime.",
