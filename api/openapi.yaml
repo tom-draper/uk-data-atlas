@@ -466,6 +466,9 @@ paths:
         across all four nations, as the share of premises able to receive each
         service; like mobile coverage it is weighted by premises and is not
         offered for aggregation.
+        `claimant-count` and `claimant-count-16-to-24` cover April 2026 Local
+        Authority 2024 codes across all four nations, as counts of Universal
+        Credit and Jobseeker's Allowance claimants rounded to the nearest five.
         This route never selects a May/December boundary release, converts
         values, or aggregates them. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the

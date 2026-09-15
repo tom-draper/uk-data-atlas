@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:47f6177b9e054534445dc52d7b92c7a12cb6f8942efd9d781248ca01e621d644",
+	"contentHash": "sha256:4d9d35dc4e1d6ce9e1cbe2d3009cabf6d59da9fc04fd6925c2543c777af8420d",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -7815,6 +7815,104 @@
 				"Availability, not take-up: a premises counts where the service can be ordered, whether or not anyone there has it.",
 				"This is a share of premises, so it does not add over areas. Combining authorities needs a mean weighted by premises, which the source publishes but this measure does not serve; averaging the percentages flat would weigh a small authority as heavily as a city.",
 				"Ofcom's July 2025 Connected Nations snapshot, on local authority codes shared by every release from May 2023 to December 2024."
+			]
+		},
+		{
+			"id": "claimant-count",
+			"label": "Claimant count",
+			"valueKind": "count",
+			"unit": "claimants aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "claimant-count",
+					"periods": [
+						"2026-04"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Published source records cover every authority in all four UK nations."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/claimant-count"
+			},
+			"notes": [
+				"Every claimant aged 16 and over.",
+				"People claiming Universal Credit or Jobseeker's Allowance principally for the reason of being unemployed, in April 2026. It counts claimants, not unemployment: the survey measure of unemployment includes people who claim nothing and excludes some who do.",
+				"Counts are rounded by the publisher to the nearest five, so a sum over areas carries that rounding from every member.",
+				"The published rates, claimants as a share of residents aged 16 to 64, are not served: a rate does not add over areas and would need the working-age population as a weight.",
+				"The compiled dataset holds the four authorities created in April 2023 beside the districts they replaced; the districts are dropped after checking each authority is their exact sum, so no claimant is counted twice."
+			]
+		},
+		{
+			"id": "claimant-count-16-to-24",
+			"label": "Claimant count aged 16 to 24",
+			"valueKind": "count",
+			"unit": "claimants aged 16 to 24",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "claimant-count",
+					"periods": [
+						"2026-04"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Published source records cover every authority in all four UK nations."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/claimant-count-16-to-24"
+			},
+			"notes": [
+				"Claimants aged 16 to 24, a subset of the claimant count.",
+				"People claiming Universal Credit or Jobseeker's Allowance principally for the reason of being unemployed, in April 2026. It counts claimants, not unemployment: the survey measure of unemployment includes people who claim nothing and excludes some who do.",
+				"Counts are rounded by the publisher to the nearest five, so a sum over areas carries that rounding from every member.",
+				"The published rates, claimants as a share of residents aged 16 to 64, are not served: a rate does not add over areas and would need the working-age population as a weight.",
+				"The compiled dataset holds the four authorities created in April 2023 beside the districts they replaced; the districts are dropped after checking each authority is their exact sum, so no claimant is counted twice."
 			]
 		},
 		{

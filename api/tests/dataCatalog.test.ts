@@ -160,6 +160,7 @@ const writeSources = (
 		ethnicity: join(directory, "ethnicity.json"),
 	};
 	const broadband = join(directory, "broadband.json");
+	const claimantCount = join(directory, "claimant-count.json");
 	writeFileSync(
 		manifest,
 		JSON.stringify({
@@ -174,6 +175,7 @@ const writeSources = (
 				dataset("qualification", 2, 1, 2025),
 				dataset("ethnicity", 2, 1, 2024),
 				dataset("broadband", 4, 1, 2024),
+				dataset("claimant-count", 4, 1, 2024),
 				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
@@ -318,6 +320,29 @@ const writeSources = (
 								pctUltrafast: 70,
 								pctFullFibre: index === 2 ? null : 60,
 								pctGigabit: 65,
+							},
+						],
+					),
+				),
+			},
+		}),
+	);
+	writeFileSync(
+		claimantCount,
+		JSON.stringify({
+			"2026": {
+				year: 2026,
+				month: "Apr 2026",
+				boundaryYear: 2024,
+				boundaryType: "localAuthority",
+				data: Object.fromEntries(
+					["E06000001", "N09000001", "S12000001", "W06000001"].map(
+						(code) => [
+							code,
+							{
+								ladCode: code,
+								totalCount: 1000,
+								youthCount: 200,
 							},
 						],
 					),
@@ -567,6 +592,7 @@ const writeSources = (
 		qualification: censusPaths.qualification,
 		ethnicity: censusPaths.ethnicity,
 		broadband,
+		claimantCount,
 		jobs,
 		landArea,
 		housePrice,
@@ -588,7 +614,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 20);
+		assert.equal(result.catalog.datasets.length, 21);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
