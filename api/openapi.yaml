@@ -1056,7 +1056,7 @@ paths:
                       geography: majorTownAndCity
                       code: J01000015
                       match: exact
-                      boundaryReleases: [2015-12-en-bgc]
+                      boundaryReleases: [2015-12-ew-bgc]
                 meta:
                   nextCursor: null
         "400":
@@ -2020,7 +2020,9 @@ paths:
                           verticesAtFullResolution: 32
                           parts: 1
                           partsAtFullResolution: 1
-                        geometrySource: { sourceCrs: "EPSG:4326" }
+                        geometrySource:
+                          sourceCrs: "EPSG:27700"
+                          transformation: { name: "OSGB36 to WGS 84 (6)", epsg: "EPSG:1314", accuracyM: 2 }
                       geometry:
                         type: Polygon
                         coordinates: [[[-1.8, 52.44], [-1.82, 52.45]]]
@@ -2665,7 +2667,7 @@ paths:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
                 data:
-                  - id: parish-2019-04-ew-bgc-to-local-authority-unavailable
+                  - id: parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc
                     input: boundaries/parish/2019-04-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_April_2019_GCB_EW_2022_7767177223882237005.geojson
                     from:
                       geography: parish
@@ -2674,21 +2676,22 @@ paths:
                       nameProperty: parncp19nm
                     to:
                       geography: localAuthority
+                      boundaryRelease: 2019-12-uk-bgc
                       codeProperty: lad19cd
                       nameProperty: lad19nm
-                    status: not-available
+                    status: eligible
                     validation:
                       endpoints:
                         from: { status: verified, availableAreaCount: 11556, referencedCodeCount: 11556 }
-                        to: { status: not-available, reason: "No compiled target release has lad19cd/lad19nm fields." }
+                        to: { status: verified, availableAreaCount: 382, referencedCodeCount: 339 }
                       relationship:
                         sourceFeatureCount: 11556
                         sourceCodeCount: 11556
                         targetCodeCount: 339
                         multiTargetSourceCount: 0
                         missingValueFeatureCount: 0
-                      reasons:
-                        - "No compiled target release has lad19cd/lad19nm fields."
+                      reasons: []
+                    publishedCrosswalkId: parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment
                 meta:
                   nextCursor: null
         "503":
