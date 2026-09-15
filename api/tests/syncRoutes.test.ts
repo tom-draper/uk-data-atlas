@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { RouteContext, RouteRequest } from "../src/routing";
+import { handleRoute } from "../src/routeHandlers";
 import { handleSyncRoutes } from "../src/syncRoutes";
 
 const context = (overrides: Partial<RouteContext> = {}): RouteContext => ({
@@ -27,6 +28,19 @@ const request = (
 
 test("leaves resources outside the sync domain for another handler", () => {
 	assert.equal(handleSyncRoutes(request("/v1/geographies")), undefined);
+});
+
+test("dispatches only the route family that owns a resource", () => {
+	const atlasRelease = {
+		schemaVersion: 1 as const,
+		releaseId: "current-release",
+		artifacts: [],
+	};
+	assert.equal(
+		handleRoute(request("/v1/atlas-release", { atlasRelease }))?.status,
+		200,
+	);
+	assert.equal(handleRoute(request("/v1/geographies")), undefined);
 });
 
 test("serves the current immutable Atlas release", () => {

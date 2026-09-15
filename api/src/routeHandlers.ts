@@ -5,16 +5,39 @@ import { handleSyncRoutes } from "./syncRoutes";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
+type RouteFamily = {
+	name: string;
+	owns: (segments: string[]) => boolean;
+	handle: RouteHandler;
+};
+
 /**
- * Handlers claim only the paths in their resource domain. This makes the
- * router's fall-through explicit and lets route families move independently.
+ * Each family declares the resources it owns before it handles a request.
+ * This keeps dispatch independent of handler order and makes a new route's
+ * home explicit while the legacy router is split into domain modules.
  */
-const handlers: RouteHandler[] = [handleSyncRoutes, handleGovernanceRoutes];
+const routeFamilies: RouteFamily[] = [
+	{
+		name: "sync",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			["atlas-release", "atlas-releases", "validation"].includes(
+				segments[1] ?? "",
+			),
+		handle: handleSyncRoutes,
+	},
+	{
+		name: "governance",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			["attribution", "relationship-candidates"].includes(
+				segments[1] ?? "",
+			),
+		handle: handleGovernanceRoutes,
+	},
+];
 
 export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
-	for (const handler of handlers) {
-		const response = handler(request);
-		if (response) return response;
-	}
-	return undefined;
+	const family = routeFamilies.find(({ owns }) => owns(request.segments));
+	return family?.handle(request);
 };
