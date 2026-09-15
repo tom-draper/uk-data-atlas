@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:58b14b78a624ad2b7a069b6de76f7e6f8f269a64ca765a30948d247fc0477cca",
+	"releaseId": "sha256:b48c519f214d4e9ee2d9f29db1c624425022dfbb7fb1b366a8b446e456cb101c",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,17 +25,17 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:618d2d9da5e3a9eab720e5cf52e06e378657da63dfb31f05041fa745e55ad543"
+			"contentHash": "sha256:03d40814bb221ece93a48e0fbcb10512a5b7eecf5bc51bc902f506318ddad9e8"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:845cf1ffa182bd330ea624461fbf7c4b4baeadd54bf8caa8647337fab6405271"
+			"contentHash": "sha256:5e94d4adb123ffc2606fdd2148dded276a6ce00891f415982aa74e4eb7836075"
 		},
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:69cb25f5e9e1a964ddd7f9f96b6d81ff7c52046d6e60946ef609fd36b395afb8"
+			"contentHash": "sha256:5e5edd17b7eaf9e0e1e86c6d0fbebe8d4d59fc3ba257f5bc8c8916f0a006599d"
 		},
 		{
 			"id": "lookup-manifest",
@@ -75,7 +75,7 @@
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:08956e0e49cff8718756a5e663865a781a7c92bfc4ac02bec23bb3bb41bff521"
+			"contentHash": "sha256:528cd7c43c5e075d94ce38b31bbd7d924e6b47ea0a5b80d0c7e36078911b5636"
 		},
 		{
 			"id": "source-inventory",
@@ -1333,19 +1333,9 @@
 			"contentHash": "sha256:b544573bf23f891f5f29850084fb8aa8b2683ca6f357d67bbdf1fd3b1ae2d904"
 		},
 		{
-			"id": "observations/road-collisions-fatal-lsoa-2021-observations",
-			"path": "road-collisions-fatal-lsoa-2021-observations.json",
-			"contentHash": "sha256:22c759c03973a7f5ed1bbcaea96a59adffaa2e79bad422dc13681948b4ea727d"
-		},
-		{
 			"id": "observations/road-collisions-fatal-observations",
 			"path": "road-collisions-fatal-observations.json",
 			"contentHash": "sha256:e6cd84a8ce47313c2770c818853e5b9a61a06c504a24d5514f53e3d6dc40257c"
-		},
-		{
-			"id": "observations/road-collisions-lsoa-2021-observations",
-			"path": "road-collisions-lsoa-2021-observations.json",
-			"contentHash": "sha256:9444bcedc157e73bc4d8bd6bddd3a8d54d60c1bd528aa297d16e8779bdd28c7b"
 		},
 		{
 			"id": "observations/road-collisions-observations",
@@ -1353,19 +1343,9 @@
 			"contentHash": "sha256:3029cbae4bba2a059c0222c2596eab6c860974e02d8d79a568d84a7d5e1e087a"
 		},
 		{
-			"id": "observations/road-collisions-serious-lsoa-2021-observations",
-			"path": "road-collisions-serious-lsoa-2021-observations.json",
-			"contentHash": "sha256:bf159a4ca26442b76e90a0dddabc741a8565f715e08703b571c40f8d28d4341e"
-		},
-		{
 			"id": "observations/road-collisions-serious-observations",
 			"path": "road-collisions-serious-observations.json",
 			"contentHash": "sha256:1dad5f4629269050293124f3d5a468020de8d705af58caf4a5add00f93fb4c64"
-		},
-		{
-			"id": "observations/road-collisions-slight-lsoa-2021-observations",
-			"path": "road-collisions-slight-lsoa-2021-observations.json",
-			"contentHash": "sha256:047d088ea9c765f97df358994a90822d82b0dd419bb36a01172421d0524de17a"
 		},
 		{
 			"id": "observations/road-collisions-slight-observations",
@@ -1509,7 +1489,7 @@
 			"population-constituency": "sha256:c54929dfd810cb5b7b7c25c4c73869dbca897ded550de597464fa0a0bd70a116",
 			"population-uk": "sha256:69125d0b67f73ab3e20006b9200c14670f129bc93cffaf7299de25ab6cef6f5c",
 			"qualification": "sha256:678346dd068e28442096451dd673b3843c163896107ca7ea2022c297e0b54e89",
-			"road-collisions": "sha256:dc3f80e5a7c0cc5346ec2fb92866a422b0024f63cfe5298d63cbe439bd8d1821",
+			"road-collisions": "sha256:fb9a92b5fd380fa271478bde943847115b5197429c12c412d8f2564d99194eb1",
 			"school-performance": "sha256:da8b1666da221a5f1ad96509f78c7bf43a4fa7864f784a39a75ff55caf3dbd27",
 			"school-performance-constituency": "sha256:9048816ad866186b5308defdf298d2ff37e89972297b8f2efc40ff10bbde0ad6",
 			"school-performance-disadvantage": "sha256:13002d4b1b74e918d570d422d1607309b1251b2b55d810241b6cee7c3e914455",
@@ -1644,10 +1624,10 @@
 			"qualification-none": "sha256:04908c538f7097232533da0d77d28fb798f38310e5af56d88263a45ad80f5bec",
 			"qualification-other": "sha256:20ca7ffcd68af515737fa3a412ee8e1868c53a7ea373f2d06f411032ceb3d185",
 			"qualification-total": "sha256:5e21521246e6557a8feba5c9a4d70dfbe71b56a3c2196b9a28e08feac73373ae",
-			"road-collisions": "sha256:28550e5a1a8b346ff6521ba55110474c4434b1aedfa35df20c360903ccb1705b",
-			"road-collisions-fatal": "sha256:8e5eed94a4f43035cb97ff1fe2fc50775a0975e5285d30139c119269f1f9224b",
-			"road-collisions-serious": "sha256:7dfc1e835645651f277bf603b89dbad5edbf3a63c24a1255ca23a5a334bc9696",
-			"road-collisions-slight": "sha256:77d3e7f26389833a53e638d59129bb5b7f125adaac2d5d6ccea8e6ed2c144c4b",
+			"road-collisions": "sha256:b568bdff2d759ef0341b379244e19e382c9c2990b4d7d30e90f195339d9411ee",
+			"road-collisions-fatal": "sha256:4d7f96776117c2f15b932477b4e9ab4de8af76316067b79561bdddece1e2facc",
+			"road-collisions-serious": "sha256:aad858517ea5fce14035c0101d636dc5dc73424e732572f6c81302c9c11f4d54",
+			"road-collisions-slight": "sha256:b1afe52ffe89a404bcde22ccc86f947cacd7af8d8672f6ed5ab4a844bff1158d",
 			"simd-decile": "sha256:f8e9fa7e0b4d658738bb824064971af2fb88f67fefac7005cce53c30b853ee59",
 			"simd-rank": "sha256:30ebd1a5b5385ae68207832de6bfcb65b268b1e29be74d17ddd41def9dff45e4",
 			"temporary-accommodation-children": "sha256:2b6a22efe716ad91d9181f66e3d43593dcdedf90a8b8626edd734d85facd210e",
@@ -2373,13 +2353,9 @@
 			"qualification-none-observations": "sha256:971cd8b39111588e94c4ef4101a9eaf2d1187e4f0026228d9ef95b8083806866",
 			"qualification-other-observations": "sha256:b2a98208f42556cc4bfd7a33895ce683048bd500725e0123a2e3472ad335dade",
 			"qualification-total-observations": "sha256:a2d5896f8035cd3ee6f64312d0eafa7b0084efb0f8d734154ef77f28f4c6ba01",
-			"road-collisions-fatal-lsoa-2021-observations": "sha256:76c147b34d20757be690484184275f133544c9fb2b50b6a378cba2eea2c79051",
 			"road-collisions-fatal-observations": "sha256:7c91c62b0e72e36298a13c813317ec86882ddd7dbff06600bd320ae3c3adc185",
-			"road-collisions-lsoa-2021-observations": "sha256:bc4eaf2d71f6ddefebaf818486592c060f223215d5318adb49c155358befd201",
 			"road-collisions-observations": "sha256:5cbf68b98c5f984339ad71e011b195f47c8ce833c0f8505da178854bc468da6c",
-			"road-collisions-serious-lsoa-2021-observations": "sha256:c67b6634dd1efbd4aefbdc5452b3210688ad02e0ba03db4d1a536fbb6a05fa86",
 			"road-collisions-serious-observations": "sha256:e64aad8522d0c0d56262e5d99b3942ef425f15d42e07271191e9701e2faaabf7",
-			"road-collisions-slight-lsoa-2021-observations": "sha256:12400a02b1dda26cfa52162d202de9be99756027e4bbf1b86ef3e6dbe7e173d0",
 			"road-collisions-slight-observations": "sha256:b901066f12cae2f13fffc09e5198cc43cee2953edf0bc9e10100235c425b3eb6",
 			"simd-decile-observations": "sha256:59897c3e568cae6f5c5316bbe42cb10101c77fb4a75cca4cabf0987f2dea8e55",
 			"simd-rank-observations": "sha256:c271c00bdfde3435a7ac2e6fc6bae674f33fc72ec5640e6a78a31cce164d88da",

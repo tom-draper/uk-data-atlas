@@ -1,13 +1,30 @@
 import type {
+	RoadCollisionCounts,
 	RoadCollisionsDataset,
 	RoadCollisionsLADData,
+	RoadCollisionsLSOAData,
 } from "@/lib/types/roadCollisions";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 
 const SOURCE =
 	"transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv";
-// The authority codes in the file resolve against the 2024 releases.
+// The authority codes in the file resolve against the 2024 releases, and the
+// LSOA codes against the December 2021 release.
 const BOUNDARY_YEAR = 2024;
+const LSOA_BOUNDARY_YEAR = 2021;
+const NATIONS: Record<string, string> = {
+	E: "GB-ENG",
+	W: "GB-WLS",
+	S: "GB-SCT",
+};
+
+const count = (
+	record: RoadCollisionCounts,
+	severity: "fatal" | "serious" | "slight",
+) => {
+	record.collisions += 1;
+	record[severity] += 1;
+};
 const MONTHS = [
 	"January",
 	"February",
@@ -39,6 +56,8 @@ export async function loadRoadCollisionsByAuthority(
 ): Promise<Record<string, RoadCollisionsDataset>> {
 	const { data } = await parseCsv(await read(SOURCE), { header: true });
 	const records: Record<string, RoadCollisionsLADData> = {};
+	const lsoas: Record<string, RoadCollisionsLSOAData> = {};
+	const withoutLsoa: Record<string, number> = {};
 	const excluded = new Map<string, number>();
 	const months = new Set<string>();
 	let year: number | undefined;
@@ -57,19 +76,36 @@ export async function loadRoadCollisionsByAuthority(
 		}
 		year = Number(rowYear);
 		months.add(month);
+		const lsoaCode = row["lsoa_of_accident_location"]?.trim() ?? "";
+		if (/^[EW]01\d{6}$/.test(lsoaCode)) {
+			count(
+				(lsoas[lsoaCode] ??= {
+					lsoaCode,
+					collisions: 0,
+					fatal: 0,
+					serious: 0,
+					slight: 0,
+				}),
+				severity,
+			);
+		} else {
+			const nation = NATIONS[code[0] ?? ""] ?? "unknown";
+			withoutLsoa[nation] = (withoutLsoa[nation] ?? 0) + 1;
+		}
 		if (!/^[EWS]\d{8}$/.test(code)) {
 			excluded.set(code, (excluded.get(code) ?? 0) + 1);
 			continue;
 		}
-		const record = (records[code] ??= {
-			ladCode: code,
-			collisions: 0,
-			fatal: 0,
-			serious: 0,
-			slight: 0,
-		});
-		record.collisions += 1;
-		record[severity] += 1;
+		count(
+			(records[code] ??= {
+				ladCode: code,
+				collisions: 0,
+				fatal: 0,
+				serious: 0,
+				slight: 0,
+			}),
+			severity,
+		);
 	}
 	if (year === undefined) throw new Error(`${SOURCE}: no collisions`);
 	const covered = [...months].map(Number).sort((left, right) => left - right);
@@ -90,6 +126,9 @@ export async function loadRoadCollisionsByAuthority(
 			excluded: [...excluded]
 				.map(([code, collisions]) => ({ code, collisions }))
 				.sort((left, right) => left.code.localeCompare(right.code)),
+			lsoaBoundaryYear: LSOA_BOUNDARY_YEAR,
+			lsoas,
+			withoutLsoa,
 		},
 	};
 }

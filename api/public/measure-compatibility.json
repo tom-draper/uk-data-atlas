@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:0d7e586a0e9b94bdb9a6b3df1bff2495e84fee168af55496ec922cff456bc0a2",
+	"contentHash": "sha256:7a760e6e0a584afb170bec86fcd9a02fdf1f435b6b90351c1fff283577b33c0c",
 	"inputs": {
-		"dataCatalog": "sha256:ff7da31226d0266de4d0fea6a5cdf26f11afcd84cdf3da461e42737e8c31a041",
+		"dataCatalog": "sha256:4eed5a7f1ff14d6384ced20b2a3d1f7628f7f9a8165e3cead8cb8986a8bcac8b",
 		"boundaryRegistry": "sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -132,10 +132,10 @@
 			"qualification-none": "sha256:2fccb82d7d0829f1b0c583e70b1c47627a4b2183d6788d2bdf058ca3a06a4399",
 			"qualification-other": "sha256:b7c69d573d116344e331bf3be27fd7a352a5854a5e25f541f24dcd739c1b23c2",
 			"qualification-total": "sha256:4f43e906c768c6351ceb23db021824e66e7b9c028c1538fe03d88ac803244673",
-			"road-collisions": "sha256:cefc9f7823d55589f4cf86b2e91ba63e5638b2d02380465564b31bebf1a7e1fa",
-			"road-collisions-fatal": "sha256:a941910ee8ecf4d9df3b2922ee238711480a4d32fb9a1476fb4650d3c8305c5f",
-			"road-collisions-serious": "sha256:3f7beab6622f0932b0d16562709f4d97f3e00898e443c3802c0f082dcc5746bc",
-			"road-collisions-slight": "sha256:8b836bb96ecd1986c0710a87a4ea3d035ebfd186aaa951643512a930e66ea5ca",
+			"road-collisions": "sha256:002d2cf672cbf6028386f66cdf19312f917b90a0d3c56848a440256245d176ef",
+			"road-collisions-fatal": "sha256:b759703836f985a7939154e0b711a769fa860c538e43bfc7fab7073092b5a35d",
+			"road-collisions-serious": "sha256:d776ae75f9bda75695b3a9d91d7bf8687473fe0f0aaac8e19c96b8a948eafcb2",
+			"road-collisions-slight": "sha256:e788e7b64a9519085f33a6ac1720a7a07dfe6262a4c21e0dcdaf275cedfcb8d8",
 			"simd-decile": "sha256:253414cf7ab82282c0e003f2d963804f8fe73e07bca29a5b9261049f6956925c",
 			"simd-rank": "sha256:7010ceb2e025a9e2a859509558f46b35a89394182f6aff3853b7b5f08a894830",
 			"temporary-accommodation-children": "sha256:16299aa97146b7337b7c8d7f762c50041a5fa3e1dca05a1e97a43970c9ef1cb1",
@@ -171,6 +171,7 @@
 			"localAuthority/2025-12-uk-bgc": "sha256:53eeb1c7f828f03e50c8f66081d88019ec9f9a31b2a56b41d2b3eff891e40b24",
 			"lsoa/2011-12-ew-bgc-v3": "sha256:f4e0776a1192b05ac9f672b11aa54de56f4fa810ac70fca271da7fdf359704cf",
 			"lsoa/2011-12-w-bgc": "sha256:f5754d1eef26a50551d62f6b0240d60e4f99989e2d1c9fda24b3886b0fa46e5a",
+			"lsoa/2021-12-ew-bgc-v5": "sha256:c6fa67b6497572a7d37d49265e2dedd86e18b195733f48b1adb52631e7c8bb3d",
 			"superOutputArea/2011-ni": "sha256:df39bfd3e54d1273c19875246b49b83eafee7d6373e5670f6b39a95463a28221",
 			"ward/2016-12-gb-bgc": "sha256:db5d9a79b319ea350ec428522a5e0f57de2fdc3559983b58657fc07f69e7b3b4",
 			"ward/2017-12-gb-bgc": "sha256:493711bf119a2a76fd053b49c419dfc25a28a1079cba4ab45cba6455c9b561ea",
@@ -11825,6 +11826,57 @@
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "road-collisions",
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2021
+					},
+					"periods": [
+						"2025-H1"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2021-12-ew-bgc-v5",
+							"title": "Lower layer super output areas, December 2021 (England and Wales, generalised, clipped, v5)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 20623,
+							"candidateCodeCount": 35672,
+							"matchingCodeCount": 20623,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 15049,
+							"candidateOnlyCodeSample": [
+								"E01000002",
+								"E01000003",
+								"E01000006",
+								"E01000012",
+								"E01000018",
+								"E01000019",
+								"E01000020",
+								"E01000022",
+								"E01000024",
+								"E01000025",
+								"E01000028",
+								"E01000029",
+								"E01000038",
+								"E01000040",
+								"E01000042",
+								"E01000046",
+								"E01000055",
+								"E01000074",
+								"E01000075",
+								"E01000076"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
 				}
 			]
 		},
@@ -11903,6 +11955,57 @@
 								"N09000009",
 								"N09000010",
 								"N09000011"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "road-collisions",
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2021
+					},
+					"periods": [
+						"2025-H1"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2021-12-ew-bgc-v5",
+							"title": "Lower layer super output areas, December 2021 (England and Wales, generalised, clipped, v5)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 20623,
+							"candidateCodeCount": 35672,
+							"matchingCodeCount": 20623,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 15049,
+							"candidateOnlyCodeSample": [
+								"E01000002",
+								"E01000003",
+								"E01000006",
+								"E01000012",
+								"E01000018",
+								"E01000019",
+								"E01000020",
+								"E01000022",
+								"E01000024",
+								"E01000025",
+								"E01000028",
+								"E01000029",
+								"E01000038",
+								"E01000040",
+								"E01000042",
+								"E01000046",
+								"E01000055",
+								"E01000074",
+								"E01000075",
+								"E01000076"
 							]
 						}
 					],
@@ -11989,6 +12092,57 @@
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "road-collisions",
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2021
+					},
+					"periods": [
+						"2025-H1"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2021-12-ew-bgc-v5",
+							"title": "Lower layer super output areas, December 2021 (England and Wales, generalised, clipped, v5)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 20623,
+							"candidateCodeCount": 35672,
+							"matchingCodeCount": 20623,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 15049,
+							"candidateOnlyCodeSample": [
+								"E01000002",
+								"E01000003",
+								"E01000006",
+								"E01000012",
+								"E01000018",
+								"E01000019",
+								"E01000020",
+								"E01000022",
+								"E01000024",
+								"E01000025",
+								"E01000028",
+								"E01000029",
+								"E01000038",
+								"E01000040",
+								"E01000042",
+								"E01000046",
+								"E01000055",
+								"E01000074",
+								"E01000075",
+								"E01000076"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
 				}
 			]
 		},
@@ -12067,6 +12221,57 @@
 								"N09000009",
 								"N09000010",
 								"N09000011"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "road-collisions",
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2021
+					},
+					"periods": [
+						"2025-H1"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2021-12-ew-bgc-v5",
+							"title": "Lower layer super output areas, December 2021 (England and Wales, generalised, clipped, v5)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 20623,
+							"candidateCodeCount": 35672,
+							"matchingCodeCount": 20623,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 15049,
+							"candidateOnlyCodeSample": [
+								"E01000002",
+								"E01000003",
+								"E01000006",
+								"E01000012",
+								"E01000018",
+								"E01000019",
+								"E01000020",
+								"E01000022",
+								"E01000024",
+								"E01000025",
+								"E01000028",
+								"E01000029",
+								"E01000038",
+								"E01000040",
+								"E01000042",
+								"E01000046",
+								"E01000055",
+								"E01000074",
+								"E01000075",
+								"E01000076"
 							]
 						}
 					],

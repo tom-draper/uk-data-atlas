@@ -439,6 +439,17 @@ const writeSources = (
 					]),
 				),
 				excluded: [{ code: "EHEATHROW", collisions: 1 }],
+				lsoaBoundaryYear: 2021,
+				lsoas: {
+					E01000001: {
+						lsoaCode: "E01000001",
+						collisions: 4,
+						fatal: 0,
+						serious: 1,
+						slight: 3,
+					},
+				},
+				withoutLsoa: { "GB-SCT": 6, "GB-ENG": 2 },
 			},
 		}),
 	);
@@ -1610,7 +1621,9 @@ test("publishes provisional half-year road collisions for Great Britain by sever
 			result.catalog.measures.find((candidate) => candidate.id === id);
 		assert.deepEqual(
 			result.indicatorObservations.find(
-				(artifact) => artifact.measureId === "road-collisions-fatal",
+				(artifact) =>
+					artifact.measureId === "road-collisions-fatal" &&
+					artifact.sourceGeography.type === "localAuthority",
 			)?.periods,
 			[
 				{
@@ -1637,6 +1650,44 @@ test("publishes provisional half-year road collisions for Great Britain by sever
 		assert.match(
 			measure("road-collisions-serious")?.notes?.join(" ") ?? "",
 			/two different systems/,
+		);
+
+		// The LSOA counts are a second partition of the same measure, with
+		// their own artifact, and notes shared by both appear once.
+		const lsoa = measure("road-collisions")?.sources[1];
+		assert.equal(measure("road-collisions")?.sources.length, 2);
+		assert.deepEqual(lsoa?.sourceGeography, {
+			type: "lsoa",
+			boundaryYear: 2021,
+		});
+		assert.equal(
+			lsoa?.observationArtifact,
+			"road-collisions-lsoa-2021-observations",
+		);
+		assert.match(
+			lsoa?.coverage.note ?? "",
+			/its 6 collisions are not in this partition\. 2 collisions in England and Wales have no LSOA code/,
+		);
+		assert.equal(
+			measure("road-collisions")?.notes?.filter((note) =>
+				note.startsWith("Provisional"),
+			).length,
+			1,
+		);
+		assert.deepEqual(
+			result.indicatorObservations.find(
+				(artifact) =>
+					artifact.measureId === "road-collisions-serious" &&
+					artifact.sourceGeography.type === "lsoa",
+			)?.periods,
+			[
+				{
+					period: "2025-H1",
+					records: [
+						{ areaCode: "E01000001", value: 1, status: "observed" },
+					],
+				},
+			],
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

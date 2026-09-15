@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:ff7da31226d0266de4d0fea6a5cdf26f11afcd84cdf3da461e42737e8c31a041",
+	"contentHash": "sha256:4eed5a7f1ff14d6384ced20b2a3d1f7628f7f9a8165e3cead8cb8986a8bcac8b",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1111,8 +1111,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 30900,
-				"sha256": "7362e4e5bff3d7364664a4d4f4b8a254fc94763d72b338fc256dbb03b2a1fc33"
+				"bytes": 1784264,
+				"sha256": "1428f7f327e26227711b6f06d760d28be62b59a153bb1c817e352f0fe429560f"
 			}
 		},
 		{
@@ -7468,7 +7468,27 @@
 							"GB-WLS"
 						],
 						"recordCount": 349,
-						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. No value is published for 1 of the 350 authorities: E06000024."
+						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. 16 collisions assigned to EHEATHROW, which is not a local authority code, are not counted in any authority. An authority with no collision records has no value rather than zero, since its collisions may not yet have been reported. No value is published for 1 of the 350 authorities: E06000024."
+					}
+				},
+				{
+					"datasetId": "road-collisions",
+					"observationArtifact": "road-collisions-lsoa-2021-observations",
+					"periods": [
+						"2025-H1"
+					],
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2021
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 20623,
+						"note": "Published for England and Wales on December 2021 LSOAs. Scotland has no LSOAs, so its 1820 collisions are not in this partition. 3 collisions in England and Wales have no LSOA code and are not counted. An LSOA with no collision records has no value rather than zero: most had none, but a provisional file cannot tell that apart from collisions not yet reported."
 					}
 				}
 			],
@@ -7483,9 +7503,7 @@
 			"notes": [
 				"Every reported collision, whatever its severity.",
 				"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
-				"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
-				"16 collisions are assigned to EHEATHROW, which is not a local authority code, and are not counted in any authority.",
-				"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
+				"Each collision is counted in the area the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
 				"These count collisions reported to the police, not casualties or unreported collisions."
 			]
 		},
@@ -7517,7 +7535,27 @@
 							"GB-WLS"
 						],
 						"recordCount": 349,
-						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. No value is published for 1 of the 350 authorities: E06000024."
+						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. 16 collisions assigned to EHEATHROW, which is not a local authority code, are not counted in any authority. An authority with no collision records has no value rather than zero, since its collisions may not yet have been reported. No value is published for 1 of the 350 authorities: E06000024."
+					}
+				},
+				{
+					"datasetId": "road-collisions",
+					"observationArtifact": "road-collisions-fatal-lsoa-2021-observations",
+					"periods": [
+						"2025-H1"
+					],
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2021
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 20623,
+						"note": "Published for England and Wales on December 2021 LSOAs. Scotland has no LSOAs, so its 1820 collisions are not in this partition. 3 collisions in England and Wales have no LSOA code and are not counted. An LSOA with no collision records has no value rather than zero: most had none, but a provisional file cannot tell that apart from collisions not yet reported."
 					}
 				}
 			],
@@ -7532,9 +7570,7 @@
 			"notes": [
 				"Collisions in which someone died within 30 days, a subset of all reported collisions.",
 				"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
-				"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
-				"16 collisions are assigned to EHEATHROW, which is not a local authority code, and are not counted in any authority.",
-				"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
+				"Each collision is counted in the area the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
 				"These count collisions reported to the police, not casualties or unreported collisions."
 			]
 		},
@@ -7566,7 +7602,27 @@
 							"GB-WLS"
 						],
 						"recordCount": 349,
-						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. No value is published for 1 of the 350 authorities: E06000024."
+						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. 16 collisions assigned to EHEATHROW, which is not a local authority code, are not counted in any authority. An authority with no collision records has no value rather than zero, since its collisions may not yet have been reported. No value is published for 1 of the 350 authorities: E06000024."
+					}
+				},
+				{
+					"datasetId": "road-collisions",
+					"observationArtifact": "road-collisions-serious-lsoa-2021-observations",
+					"periods": [
+						"2025-H1"
+					],
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2021
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 20623,
+						"note": "Published for England and Wales on December 2021 LSOAs. Scotland has no LSOAs, so its 1820 collisions are not in this partition. 3 collisions in England and Wales have no LSOA code and are not counted. An LSOA with no collision records has no value rather than zero: most had none, but a provisional file cannot tell that apart from collisions not yet reported."
 					}
 				}
 			],
@@ -7581,9 +7637,7 @@
 			"notes": [
 				"Collisions whose most severe injury the police recorded as serious. Forces record injuries through two different systems, so this share varies by force as well as by collision; the Department for Transport publishes adjusted estimates for comparisons between forces, which are not served here.",
 				"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
-				"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
-				"16 collisions are assigned to EHEATHROW, which is not a local authority code, and are not counted in any authority.",
-				"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
+				"Each collision is counted in the area the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
 				"These count collisions reported to the police, not casualties or unreported collisions."
 			]
 		},
@@ -7615,7 +7669,27 @@
 							"GB-WLS"
 						],
 						"recordCount": 349,
-						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. No value is published for 1 of the 350 authorities: E06000024."
+						"note": "Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file. 16 collisions assigned to EHEATHROW, which is not a local authority code, are not counted in any authority. An authority with no collision records has no value rather than zero, since its collisions may not yet have been reported. No value is published for 1 of the 350 authorities: E06000024."
+					}
+				},
+				{
+					"datasetId": "road-collisions",
+					"observationArtifact": "road-collisions-slight-lsoa-2021-observations",
+					"periods": [
+						"2025-H1"
+					],
+					"sourceGeography": {
+						"type": "lsoa",
+						"boundaryYear": 2021
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 20623,
+						"note": "Published for England and Wales on December 2021 LSOAs. Scotland has no LSOAs, so its 1820 collisions are not in this partition. 3 collisions in England and Wales have no LSOA code and are not counted. An LSOA with no collision records has no value rather than zero: most had none, but a provisional file cannot tell that apart from collisions not yet reported."
 					}
 				}
 			],
@@ -7630,9 +7704,7 @@
 			"notes": [
 				"Collisions whose most severe injury the police recorded as slight, with the same caveat about recording systems as serious collisions.",
 				"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
-				"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
-				"16 collisions are assigned to EHEATHROW, which is not a local authority code, and are not counted in any authority.",
-				"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
+				"Each collision is counted in the area the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
 				"These count collisions reported to the police, not casualties or unreported collisions."
 			]
 		},
