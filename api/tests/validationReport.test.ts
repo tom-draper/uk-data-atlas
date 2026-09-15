@@ -10,9 +10,13 @@ import type {
 	CrosswalkArtifact,
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
+import type { Measure, MeasureObservationArtifact } from "../src/dataCatalog";
 import type { RelationshipCandidate } from "../src/relationshipCandidates";
 import {
 	compileValidationReport,
+	type MeasureTotal,
+	type ObservationArtifact,
+	readMeasureTotals,
 	readValidationWaivers,
 	type ValidationInputs,
 	type ValidationWaiver,
@@ -175,6 +179,55 @@ const eligibleCandidate: RelationshipCandidate = {
 	},
 };
 
+const lsoaCodes = ["E01000001", "E01000002"];
+
+const censusGeography = { type: "lsoa" as const, boundaryYear: 2025 };
+
+const measure = (id: string, overrides: Partial<Measure> = {}): Measure => ({
+	id,
+	label: id,
+	valueKind: "count",
+	unit: "households",
+	aggregation: { kind: "extensive", operation: "sum", available: true },
+	sources: [
+		{
+			datasetId: "census",
+			periods: ["2021"],
+			sourceGeography: censusGeography,
+			coverage: {
+				kind: "source-reported",
+				countries: ["GB-ENG"],
+				recordCount: 2,
+				note: "Every area.",
+			},
+		},
+	],
+	availability: { sourceExact: true, conversion: false, aggregation: true },
+	links: { data: `/v1/data/${id}` },
+	...overrides,
+});
+
+const observations = (
+	measureId: string,
+	values: number[],
+	codes = lsoaCodes,
+): MeasureObservationArtifact =>
+	hashed({
+		schemaVersion: 1 as const,
+		measureId,
+		sourceGeography: censusGeography,
+		periods: [
+			{
+				period: "2021",
+				records: codes.map((areaCode, index) => ({
+					areaCode,
+					value: values[index],
+					status: "observed" as const,
+				})),
+			},
+		],
+	});
+
 const inputs = (
 	overrides: {
 		crs?: string;
@@ -184,17 +237,34 @@ const inputs = (
 		waivers?: ValidationWaiver[];
 		wardCodes?: string[];
 		geometryCorrections?: string[];
+		measures?: Measure[];
+		observations?: ObservationArtifact[];
+		measureTotals?: MeasureTotal[];
+		catalogueHash?: string;
 	} = {},
 ): ValidationInputs => {
 	const areaArtifacts = [
 		areaArtifact("ward", overrides.wardCodes ?? ["W1", "W2"]),
 		areaArtifact("localAuthority", ["L1"]),
+		areaArtifact("lsoa", lsoaCodes),
+	];
+	const geographies = ["ward", "localAuthority", "lsoa"];
+	const measures = overrides.measures ?? [
+		measure("cars-total"),
+		measure("cars-none"),
+		measure("cars-some"),
+	];
+	const observationArtifacts = overrides.observations ?? [
+		observations("cars-total", [5, 7]),
+		observations("cars-none", [2, 3]),
+		observations("cars-some", [3, 4]),
 	];
 	const crosswalks = overrides.crosswalks ?? [containment(), overlap()];
 	const release = (geography: string) => ({
 		id: "2025",
 		geography,
 		title: geography,
+		temporalCoverage: "2025",
 		coverage: { countries: ["GB-ENG"] },
 		source: {
 			publisher: "ONS",
@@ -207,7 +277,7 @@ const inputs = (
 		boundaryRegistry: {
 			schemaVersion: 1,
 			contentHash: "sha256:registry",
-			releases: [release("ward"), release("localAuthority")],
+			releases: geographies.map(release),
 		},
 		areaInventory: {
 			schemaVersion: 1,
@@ -229,19 +299,21 @@ const inputs = (
 		geometrySources: {
 			schemaVersion: 1,
 			contentHash: "sha256:geometry",
-			releases: ["ward/2025", "localAuthority/2025"].map((id) => ({
-				id,
-				status: "available",
-				input: `${id}.geojson`,
-				crs:
-					id === "ward/2025"
-						? (overrides.crs ?? "EPSG:4326")
-						: "EPSG:4326",
-				codeProperty: "CD",
-				...(id === "ward/2025" && overrides.geometryCorrections
-					? { corrections: overrides.geometryCorrections }
-					: {}),
-			})),
+			releases: geographies
+				.map((geography) => `${geography}/2025`)
+				.map((id) => ({
+					id,
+					status: "available",
+					input: `${id}.geojson`,
+					crs:
+						id === "ward/2025"
+							? (overrides.crs ?? "EPSG:4326")
+							: "EPSG:4326",
+					codeProperty: "CD",
+					...(id === "ward/2025" && overrides.geometryCorrections
+						? { corrections: overrides.geometryCorrections }
+						: {}),
+				})),
 		},
 		crosswalkInventory: {
 			schemaVersion: 1,
@@ -268,7 +340,7 @@ const inputs = (
 			schemaVersion: 1,
 			contentHash: "sha256:geography",
 			boundaryRegistryHash: "sha256:registry",
-			releases: ["ward", "localAuthority"].map((geography) => ({
+			releases: geographies.map((geography) => ({
 				id: "2025",
 				geography,
 				countries: ["GB-ENG"],
@@ -282,6 +354,59 @@ const inputs = (
 			})),
 			geographies: [],
 		},
+		dataCatalog: {
+			schemaVersion: 1,
+			contentHash: "sha256:catalogue",
+			source: {
+				artifact: "data/precompiled/dataset-manifest.json",
+				manifestVersion: 1,
+			},
+			datasets: [
+				{
+					id: "census",
+					label: "Census",
+					publisher: "ONS",
+					sourceUrl: "https://example.com",
+					temporalCoverage: "2021",
+					licence: { name: "OGL" },
+					inputs: [],
+					summary: {
+						datasetCount: 1,
+						dataRecordCount: 2,
+						boundaryYears: [2025],
+					},
+					compiled: { bytes: 1, sha256: "compiled" },
+				},
+			],
+			measures,
+		},
+		exportManifest: {
+			schemaVersion: 1,
+			contentHash: "sha256:exports",
+			dataCatalogHash: overrides.catalogueHash ?? "sha256:catalogue",
+			exports: observationArtifacts.map((artifact) => ({
+				id: `${artifact.measureId}-observations`,
+				measureId: artifact.measureId,
+				datasetId: "census",
+				periods: ["2021"],
+				sourceGeography: censusGeography,
+				format: "json" as const,
+				artifact: `${artifact.measureId}-observations`,
+				contentHash: artifact.contentHash,
+				bytes: 1,
+				href: `/v1/exports/${artifact.measureId}-observations`,
+			})),
+		},
+		observationArtifacts: Object.fromEntries(
+			observationArtifacts.map((artifact) => [
+				`${artifact.measureId}-observations`,
+				artifact,
+			]),
+		),
+		measureTotals: overrides.measureTotals ?? [
+			{ measureId: "cars-total", components: ["cars-none", "cars-some"] },
+		],
+		measureTotalsHash: "sha256:totals",
 		waivers: overrides.waivers ?? [],
 		waiversHash: "sha256:waivers",
 	};
@@ -294,9 +419,16 @@ test("passes every check on consistent artifacts and recomputes their figures", 
 		[
 			["atlas", "passed"],
 			["boundary-releases/localAuthority/2025", "passed"],
+			["boundary-releases/lsoa/2025", "passed"],
 			["boundary-releases/ward/2025", "passed"],
 			["crosswalks/ward-to-lad", "passed"],
 			["crosswalks/ward-to-lad-area-overlap", "passed"],
+			["measures/cars-none", "passed"],
+			["measures/cars-some", "passed"],
+			["measures/cars-total", "passed"],
+			["exports/cars-none-observations", "passed"],
+			["exports/cars-some-observations", "passed"],
+			["exports/cars-total-observations", "passed"],
 		],
 	);
 	assert.deepEqual(
@@ -325,12 +457,14 @@ test("passes every check on consistent artifacts and recomputes their figures", 
 	assert.equal(report.summary.waivedCount, 0);
 	assert.equal(report.summary.checkCount, report.summary.passedCount);
 	assert.deepEqual(report.summary.coverage, {
-		boundaryReleases: 2,
-		areaIdentities: 2,
-		servableGeometry: 2,
+		boundaryReleases: 3,
+		areaIdentities: 3,
+		servableGeometry: 3,
 		withRelationships: 0,
 		crosswalks: 2,
 		weightedCrosswalks: 1,
+		measures: 3,
+		measureSources: 3,
 	});
 	assert.match(report.contentHash, /^sha256:[a-f0-9]{64}$/);
 });
@@ -367,7 +501,7 @@ test("fails on an unwaived exception and publishes a waived one with its reason"
 		},
 	);
 	assert.equal(report.summary.waivedCount, 1);
-	assert.equal(report.summary.coverage.servableGeometry, 1);
+	assert.equal(report.summary.coverage.servableGeometry, 2);
 });
 
 test("passes British National Grid geometry and records its transformation", () => {
@@ -386,7 +520,7 @@ test("passes British National Grid geometry and records its transformation", () 
 			},
 		},
 	);
-	assert.equal(report.summary.coverage.servableGeometry, 2);
+	assert.equal(report.summary.coverage.servableGeometry, 3);
 	const corrected = compileValidationReport(
 		inputs({
 			crs: "EPSG:27700",
@@ -512,6 +646,246 @@ test("reads waivers and rejects one without a known check or a reason", () => {
 			assert.throws(
 				() => readValidationWaivers(path),
 				/Invalid validation waiver/,
+			);
+		}
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("checks each measure source against its artifact, boundaries and components", () => {
+	const report = compileValidationReport(inputs());
+	const total = report.resources.find(
+		(resource) => resource.id === "exports/cars-total-observations",
+	);
+	assert.equal(total?.kind, "measure-source");
+	assert.deepEqual(total?.checks, [
+		{
+			id: "artifact-integrity",
+			status: "passed",
+			measured: { periodCount: 1, recordCount: 2 },
+		},
+		{
+			id: "records-resolve",
+			status: "passed",
+			measured: {
+				areaCodeCount: 2,
+				boundaryRelease: "2025",
+				unresolvedCount: 0,
+			},
+		},
+		{
+			id: "countries-declared",
+			status: "passed",
+			measured: { countries: "GB-ENG" },
+		},
+		{
+			id: "values-valid",
+			status: "passed",
+			measured: { recordCount: 2, minimum: 5, maximum: 7 },
+		},
+		{
+			id: "components-sum-to-total",
+			status: "passed",
+			measured: {
+				components: "cars-none, cars-some",
+				comparedCount: 2,
+				mismatchCount: 0,
+				maxDifference: 0,
+			},
+		},
+	]);
+	assert.deepEqual(
+		report.resources.find(
+			(resource) => resource.id === "measures/cars-total",
+		)?.checks,
+		[
+			{
+				id: "measure-definition",
+				status: "passed",
+				measured: { sourceCount: 1 },
+			},
+		],
+	);
+	assert.equal(report.inputs.dataCatalog, "sha256:catalogue");
+	assert.equal(report.inputs.measureTotals, "sha256:totals");
+});
+
+test("fails an edited observation artifact and components that no longer add up", () => {
+	const edited = observations("cars-none", [2, 3]);
+	edited.periods[0].records[1].value = 4;
+	assert.throws(
+		() =>
+			compileValidationReport(
+				inputs({
+					observations: [
+						observations("cars-total", [5, 7]),
+						edited,
+						observations("cars-some", [3, 4]),
+					],
+				}),
+			),
+		(error: Error) =>
+			/exports\/cars-none-observations fails artifact-integrity: The artifact is inconsistent: its content does not reproduce its hash\./.test(
+				error.message,
+			) &&
+			/exports\/cars-total-observations fails components-sum-to-total: The components do not add up to the total: components differ from the total in 1 of 2 area-periods: 2021 E01000002 \(7 against 8\)\./.test(
+				error.message,
+			),
+	);
+	assert.throws(
+		() =>
+			compileValidationReport(
+				inputs({
+					measureTotals: [
+						{
+							measureId: "cars-total",
+							components: ["cars-none", "cars-all"],
+						},
+					],
+				}),
+			),
+		/Measure total cars-total names cars-all, which is not in the catalogue\./,
+	);
+});
+
+test("fails codes that no boundary release holds, or that belong to an undeclared nation", () => {
+	const codes = ["E01000001", "W01000002"];
+	const measures = [
+		measure("cars-total"),
+		measure("cars-none"),
+		measure("cars-some"),
+	];
+	assert.throws(
+		() =>
+			compileValidationReport(
+				inputs({
+					measures,
+					observations: [
+						observations("cars-total", [5, 7], codes),
+						observations("cars-none", [2, 3], codes),
+						observations("cars-some", [3, 4], codes),
+					],
+				}),
+			),
+		(error: Error) =>
+			/exports\/cars-total-observations fails records-resolve: No compiled lsoa release for 2025 holds every code: 2025 lacks 1 \(W01000002\)\./.test(
+				error.message,
+			) &&
+			/exports\/cars-total-observations fails countries-declared: Records cover GB-ENG, GB-WLS, but the catalogue declares GB-ENG\./.test(
+				error.message,
+			),
+	);
+	const report = compileValidationReport(
+		inputs({
+			observations: [
+				observations("cars-total", [5, 7], codes),
+				observations("cars-none", [2, 3], codes),
+				observations("cars-some", [3, 4], codes),
+			],
+			measures: measures.map((entry) => ({
+				...entry,
+				sources: entry.sources.map((source) => ({
+					...source,
+					coverage: {
+						...source.coverage,
+						countries: ["GB-ENG", "GB-WLS"],
+					},
+				})),
+			})),
+			waivers: [
+				{
+					check: "records-resolve",
+					reason: "Published on a newer code.",
+					resources: [
+						"exports/cars-none-observations",
+						"exports/cars-some-observations",
+						"exports/cars-total-observations",
+					],
+				},
+			],
+		}),
+	);
+	assert.deepEqual(
+		report.resources
+			.find(
+				(resource) => resource.id === "exports/cars-none-observations",
+			)
+			?.checks.find((entry) => entry.id === "records-resolve")?.measured,
+		{ areaCodeCount: 2, boundaryRelease: null, unresolvedCount: 1 },
+	);
+});
+
+test("fails invalid values and an inconsistent measure definition", () => {
+	const decile = measure("imd-decile", {
+		valueKind: "ordinal",
+		unit: "decile",
+		aggregation: {
+			kind: "non-aggregatable",
+			statistic: "decile",
+			note: "A band of ranks.",
+			available: false,
+		},
+		availability: {
+			sourceExact: true,
+			conversion: false,
+			aggregation: true,
+		},
+	});
+	assert.throws(
+		() =>
+			compileValidationReport(
+				inputs({
+					measures: [measure("cars-none"), decile],
+					observations: [
+						observations("cars-none", [2.5, -1]),
+						observations("imd-decile", [1, 11]),
+					],
+					measureTotals: [],
+				}),
+			),
+		(error: Error) =>
+			/exports\/cars-none-observations fails values-valid: 2 records are invalid: 2021 E01000001 counts 2\.5, which is not a whole number of at least 0, 2021 E01000002 counts -1, which is not a whole number of at least 0\./.test(
+				error.message,
+			) &&
+			/exports\/imd-decile-observations fails values-valid: 1 records are invalid: 2021 E01000002 is 11, not a decile from 1 to 10\./.test(
+				error.message,
+			) &&
+			/measures\/imd-decile fails measure-definition: The definition is inconsistent: its availability and its non-aggregatable aggregation disagree on whether it can be aggregated\./.test(
+				error.message,
+			),
+	);
+});
+
+test("fails an export manifest built from an older data catalogue", () => {
+	assert.throws(
+		() => compileValidationReport(inputs({ catalogueHash: "sha256:old" })),
+		/atlas fails registry-links: Built against an older data catalogue: export manifest\./,
+	);
+});
+
+test("reads measure totals and rejects one without components", () => {
+	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		const path = join(directory, "measure-totals.json");
+		const write = (totals: unknown[]) =>
+			writeFileSync(path, JSON.stringify({ schemaVersion: 1, totals }));
+		const total = {
+			measureId: "cars-total",
+			components: ["cars-none", "cars-some"],
+		};
+		write([total]);
+		const { measureTotals, measureTotalsHash } = readMeasureTotals(path);
+		assert.deepEqual(measureTotals, [total]);
+		assert.match(measureTotalsHash, /^sha256:[a-f0-9]{64}$/);
+		for (const invalid of [
+			{ ...total, components: ["cars-none"] },
+			{ ...total, measureId: "" },
+		]) {
+			write([invalid]);
+			assert.throws(
+				() => readMeasureTotals(path),
+				/Invalid measure total/,
 			);
 		}
 	} finally {

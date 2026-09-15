@@ -3478,9 +3478,9 @@ const validationReport: ValidationReport = {
 	contentHash: "sha256:validation",
 	inputs: { boundaryRegistry: "sha256:registry" },
 	summary: {
-		resourceCount: 2,
-		checkCount: 2,
-		passedCount: 1,
+		resourceCount: 4,
+		checkCount: 4,
+		passedCount: 3,
 		waivedCount: 1,
 		coverage: {
 			boundaryReleases: 1,
@@ -3489,6 +3489,8 @@ const validationReport: ValidationReport = {
 			withRelationships: 1,
 			crosswalks: 1,
 			weightedCrosswalks: 0,
+			measures: 1,
+			measureSources: 1,
 		},
 	},
 	resources: [
@@ -3510,6 +3512,24 @@ const validationReport: ValidationReport = {
 			kind: "crosswalk",
 			status: "passed",
 			checks: [{ id: "artifact-integrity", status: "passed" }],
+		},
+		{
+			id: "measures/crime-total",
+			kind: "measure",
+			status: "passed",
+			checks: [{ id: "measure-definition", status: "passed" }],
+		},
+		{
+			id: "exports/crime-total-observations",
+			kind: "measure-source",
+			status: "passed",
+			checks: [
+				{
+					id: "components-sum-to-total",
+					status: "passed",
+					measured: { comparedCount: 314, mismatchCount: 0 },
+				},
+			],
 		},
 	],
 };
@@ -3568,11 +3588,31 @@ test("serves one resource's validation at the resource's own path", () => {
 		validationReport,
 	);
 	assert.equal(crosswalk.status, 200);
-	assert.equal(
-		validationRoute("/v1/validation/crosswalks/unknown", validationReport)
-			.status,
-		404,
+	assert.deepEqual(
+		"data" in crosswalk.body && crosswalk.body.data,
+		validationReport.resources[1],
 	);
+	for (const [path, resource] of [
+		["/v1/validation/measures/crime-total", validationReport.resources[2]],
+		[
+			"/v1/validation/exports/crime-total-observations",
+			validationReport.resources[3],
+		],
+	] as const) {
+		const response = validationRoute(path, validationReport);
+		assert.equal(response.status, 200);
+		assert.deepEqual(
+			"data" in response.body && response.body.data,
+			resource,
+		);
+	}
+	for (const path of [
+		"/v1/validation/crosswalks/unknown",
+		"/v1/validation/measures/unknown",
+		"/v1/validation/exports/crime-total-observations/records",
+	]) {
+		assert.equal(validationRoute(path, validationReport).status, 404);
+	}
 	assert.equal(
 		validationRoute("/v1/validation/areas/ward", validationReport).status,
 		404,

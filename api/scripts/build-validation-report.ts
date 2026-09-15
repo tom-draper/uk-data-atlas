@@ -7,11 +7,15 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "../src/crosswalkInventory";
+import type { DataCatalog } from "../src/dataCatalog";
+import type { ExportManifest } from "../src/exportManifest";
 import type { GeographyInventory } from "../src/geographyInventory";
 import type { GeometrySourceRegistry } from "../src/geometrySourceRegistry";
 import type { RelationshipCandidateInventory } from "../src/relationshipCandidates";
 import {
 	compileValidationReport,
+	type ObservationArtifact,
+	readMeasureTotals,
 	readValidationWaivers,
 } from "../src/validationReport";
 
@@ -28,6 +32,7 @@ export const buildValidationReport = (repositoryRoot: string) => {
 	const crosswalkInventory = read<CrosswalkInventory>(
 		"crosswalk-inventory.json",
 	);
+	const exportManifest = read<ExportManifest>("export-manifest.json");
 	const report = compileValidationReport({
 		boundaryRegistry: read<BoundaryRegistry>("boundary-releases.json"),
 		areaInventory,
@@ -46,6 +51,17 @@ export const buildValidationReport = (repositoryRoot: string) => {
 		),
 		geographyInventory: read<GeographyInventory>(
 			"geography-inventory.json",
+		),
+		dataCatalog: read<DataCatalog>("data-catalog.json"),
+		exportManifest,
+		observationArtifacts: Object.fromEntries(
+			exportManifest.exports.map((entry) => [
+				entry.id,
+				read<ObservationArtifact>(`${entry.artifact}.json`),
+			]),
+		),
+		...readMeasureTotals(
+			join(repositoryRoot, "api", "config", "measure-totals.json"),
 		),
 		...readValidationWaivers(
 			join(repositoryRoot, "api", "config", "validation-waivers.json"),

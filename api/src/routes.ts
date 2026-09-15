@@ -734,6 +734,8 @@ export const route = (
 					"/v1/validation",
 					"/v1/validation/boundary-releases/{type}/{release}",
 					"/v1/validation/crosswalks/{crosswalk-id}",
+					"/v1/validation/measures/{measure-id}",
+					"/v1/validation/exports/{export-id}",
 					"/v1/exports",
 					"/v1/exports/{export-id}",
 					"/v1/atlas-release",
@@ -5476,7 +5478,10 @@ export const route = (
 		segments[0] === "v1" &&
 		segments[1] === "validation" &&
 		((segments[2] === "boundary-releases" && segments.length === 5) ||
-			(segments[2] === "crosswalks" && segments.length === 4));
+			(segments.length === 4 &&
+				["crosswalks", "measures", "exports"].includes(
+					segments[2] ?? "",
+				)));
 	if (
 		(segments.length === 2 &&
 			segments[0] === "v1" &&

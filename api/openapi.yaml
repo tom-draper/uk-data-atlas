@@ -2632,8 +2632,9 @@ paths:
       operationId: getValidationReport
       summary: Report every release gate, including waived exceptions
       description: >
-        The build checks each boundary release, each crosswalk and the links
-        between the Atlas's own artifacts, recomputing what it can from the
+        The build checks each boundary release, each crosswalk, each measure,
+        each measure's source partitions and the links between the Atlas's
+        own artifacts, recomputing what it can from the
         published artifacts rather than trusting each compiler's claims. A
         check either passes or is waived: the build fails on any exception
         without a recorded reason, and on any waiver that no longer matches
@@ -2663,17 +2664,19 @@ paths:
                     crosswalkInventory: "sha256:29dc114d1a0d62561345319ac989c88713d60e5630840af11364b42aeafa59c6"
                     waivers: "sha256:69c839c2cd9886dbdef9a598b99e16024ad7e53404a65db5010dccc6d85d23ef"
                   summary:
-                    resourceCount: 86
-                    checkCount: 357
-                    passedCount: 353
-                    waivedCount: 4
+                    resourceCount: 537
+                    checkCount: 1751
+                    passedCount: 1652
+                    waivedCount: 99
                     coverage:
                       boundaryReleases: 71
                       areaIdentities: 71
                       servableGeometry: 69
-                      withRelationships: 22
-                      crosswalks: 14
-                      weightedCrosswalks: 1
+                      withRelationships: 23
+                      crosswalks: 15
+                      weightedCrosswalks: 2
+                      measures: 144
+                      measureSources: 306
                   resources:
                     - id: atlas
                       kind: atlas
@@ -2784,6 +2787,114 @@ paths:
                         widestSliverWidthM: 15.1
                         narrowestOverlapWidthM: 332.1
                         sliverPairCount: 1381
+                meta:
+                  nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /validation/measures/{measure-id}:
+    get:
+      operationId: getMeasureValidation
+      summary: Get one measure's definition check
+      description: >
+        Checks that a measure's definition agrees with itself and with the
+        catalogue: its availability matches its aggregation, a categorical
+        value has categorical aggregation, every dataset it names exists,
+        an export serves each of its sources, and a weighted mean has a
+        summable weight measure on the same geography and periods. Each
+        source partition's own checks are served under
+        `/validation/exports/{export-id}`.
+      parameters:
+        - name: measure-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The measure's checks.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResourceEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
+                data:
+                  id: measures/crime-total
+                  kind: measure
+                  status: passed
+                  checks:
+                    - id: measure-definition
+                      status: passed
+                      measured: { sourceCount: 1 }
+                meta:
+                  nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /validation/exports/{export-id}:
+    get:
+      operationId: getMeasureSourceValidation
+      summary: Get one measure source partition's checks
+      description: >
+        Each export serves one source partition of a measure, and is checked
+        from the observation artifact itself. `artifact-integrity`: the
+        content reproduces its hash, which matches the export manifest, and
+        its measure, geography, periods, latest-period record count and
+        unique area codes match the catalogue. `records-resolve`: one
+        compiled boundary release of the source geography and boundary year
+        holds every area code, in every period. `countries-declared`: the
+        codes cover exactly the nations the catalogue declares.
+        `values-valid`: every record suits its measure, such as whole,
+        non-negative counts, percentages from 0 to 100, deciles from 1 to 10
+        and published intervals that contain their value. A measure declared
+        as the sum of others adds `components-sum-to-total`, comparing each
+        area and period with its components in the same source partitions.
+      parameters:
+        - name: export-id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The source partition's checks.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResourceEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
+                data:
+                  id: exports/house-price-median-observations
+                  kind: measure-source
+                  status: waived
+                  checks:
+                    - id: artifact-integrity
+                      status: passed
+                      measured: { periodCount: 28, recordCount: 225225 }
+                    - id: records-resolve
+                      status: waived
+                      detail: "No compiled ward release for 2020 holds every code: 2020-12-uk-bgc lacks 2 (E05013830, E05013831)."
+                      measured:
+                        areaCodeCount: 8049
+                        boundaryRelease: null
+                        unresolvedCount: 2
+                      waiver:
+                        reason: The publisher's workbook gives Leeds's Garforth & Swillington and Temple Newsam their December 2021 codes, E05013830 and E05013831, among otherwise December 2020 codes. Values stay on the codes the publisher used.
+                    - id: countries-declared
+                      status: passed
+                      measured: { countries: "GB-ENG, GB-WLS" }
+                    - id: values-valid
+                      status: passed
+                      measured:
+                        recordCount: 225225
+                        minimum: 10000
+                        maximum: 4041000
                 meta:
                   nextCursor: null
         "404":
@@ -4669,6 +4780,11 @@ components:
             - weights-sum-to-one
             - area-coverage
             - sliver-separation
+            - measure-definition
+            - records-resolve
+            - countries-declared
+            - values-valid
+            - components-sum-to-total
         status:
           enum: [passed, waived]
         detail:
@@ -4695,9 +4811,11 @@ components:
           description: >
             `atlas` for checks across the Atlas's own artifacts; otherwise
             the validated resource's API path, such as
-            `crosswalks/{crosswalkId}`.
+            `crosswalks/{crosswalkId}`. A measure source partition is
+            identified by the export that serves it, as
+            `exports/{export-id}`.
         kind:
-          enum: [atlas, boundary-release, crosswalk]
+          enum: [atlas, boundary-release, crosswalk, measure, measure-source]
         status:
           enum: [passed, waived]
           description: waived when any of its checks is waived.
@@ -4737,7 +4855,8 @@ components:
                 How many boundary releases each capability reaches.
                 servableGeometry counts releases with servable geometry for
                 at least some areas; their geometry-servable checks name any
-                areas refused.
+                areas refused. measures and measureSources count the checked
+                measures and their source partitions.
               required:
                 - boundaryReleases
                 - areaIdentities
@@ -4745,6 +4864,8 @@ components:
                 - withRelationships
                 - crosswalks
                 - weightedCrosswalks
+                - measures
+                - measureSources
               properties:
                 boundaryReleases:
                   type: integer
@@ -4757,6 +4878,10 @@ components:
                 crosswalks:
                   type: integer
                 weightedCrosswalks:
+                  type: integer
+                measures:
+                  type: integer
+                measureSources:
                   type: integer
         resources:
           type: array

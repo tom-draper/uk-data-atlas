@@ -6,6 +6,15 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "./crosswalkInventory";
+import {
+	countryForCode,
+	type CategoricalObservation,
+	type DataCatalog,
+	type Measure,
+	type MeasureSource,
+	type PopulationObservation,
+} from "./dataCatalog";
+import type { BulkExport, ExportManifest } from "./exportManifest";
 import type { GeographyInventory } from "./geographyInventory";
 import type { GeometrySourceRegistry } from "./geometrySourceRegistry";
 import { canServeAsWgs84, geometryProvenance } from "./reprojection";
@@ -26,6 +35,11 @@ export const VALIDATION_CHECKS = [
 	"weights-sum-to-one",
 	"area-coverage",
 	"sliver-separation",
+	"measure-definition",
+	"records-resolve",
+	"countries-declared",
+	"values-valid",
+	"components-sum-to-total",
 ] as const;
 
 export type ValidationCheckId = (typeof VALIDATION_CHECKS)[number];
@@ -41,7 +55,16 @@ export type ValidationCheck = {
 
 export type ValidationResource = {
 	id: string;
-	kind: "atlas" | "boundary-release" | "crosswalk";
+	/**
+	 * A `measure-source` is one source partition of a measure, identified by
+	 * the export that serves its observation artifact.
+	 */
+	kind:
+		| "atlas"
+		| "boundary-release"
+		| "crosswalk"
+		| "measure"
+		| "measure-source";
 	status: "passed" | "waived";
 	checks: ValidationCheck[];
 };
@@ -62,6 +85,8 @@ export type ValidationReport = {
 			withRelationships: number;
 			crosswalks: number;
 			weightedCrosswalks: number;
+			measures: number;
+			measureSources: number;
 		};
 	};
 	resources: ValidationResource[];
@@ -73,6 +98,34 @@ export type ValidationWaiver = {
 	resources: string[];
 };
 
+/**
+ * A measure whose value in every area is the sum of other measures in the same
+ * source partitions, such as households counted by how many cars they have.
+ */
+export type MeasureTotal = {
+	measureId: string;
+	components: string[];
+};
+
+/**
+ * An observation artifact as published. The ward population artifact predates
+ * the per-period shape and carries one period at the top level.
+ */
+export type ObservationArtifact = {
+	schemaVersion: 1;
+	contentHash: string;
+	measureId: string;
+	sourceGeography: MeasureSource["sourceGeography"];
+} & (
+	| {
+			periods: Array<{
+				period: string;
+				records: Array<PopulationObservation | CategoricalObservation>;
+			}>;
+	  }
+	| { period: string; records: PopulationObservation[] }
+);
+
 export type ValidationInputs = {
 	boundaryRegistry: BoundaryRegistry;
 	areaInventory: AreaInventory;
@@ -82,6 +135,12 @@ export type ValidationInputs = {
 	crosswalkArtifacts: CrosswalkArtifact[];
 	relationshipCandidates: RelationshipCandidateInventory;
 	geographyInventory: GeographyInventory;
+	dataCatalog: DataCatalog;
+	exportManifest: ExportManifest;
+	/** Observation artifacts keyed by the id of the export that serves them. */
+	observationArtifacts: Record<string, ObservationArtifact>;
+	measureTotals: MeasureTotal[];
+	measureTotalsHash: string;
 	waivers: ValidationWaiver[];
 	waiversHash: string;
 };
@@ -146,6 +205,35 @@ export const readValidationWaivers = (path: string) => {
 	return { waivers, waiversHash: sha256(content) };
 };
 
+export const readMeasureTotals = (path: string) => {
+	const content = readFileSync(path, "utf8");
+	const file = JSON.parse(content) as {
+		schemaVersion?: unknown;
+		totals?: unknown;
+	};
+	if (file.schemaVersion !== 1 || !Array.isArray(file.totals)) {
+		throw new Error(`Invalid measure totals at ${path}`);
+	}
+	const isId = (value: unknown) =>
+		typeof value === "string" && value.trim().length > 0;
+	const measureTotals = file.totals.map((total: unknown) => {
+		const { measureId, components } = (total ?? {}) as Record<
+			string,
+			unknown
+		>;
+		if (
+			!isId(measureId) ||
+			!Array.isArray(components) ||
+			components.length < 2 ||
+			!components.every(isId)
+		) {
+			throw new Error(`Invalid measure total at ${path}`);
+		}
+		return { measureId, components } as MeasureTotal;
+	});
+	return { measureTotals, measureTotalsHash: sha256(content) };
+};
+
 const atlasFindings = (inputs: ValidationInputs): Finding[] => {
 	const registryHash = inputs.boundaryRegistry.contentHash;
 	const staleInventories = [
@@ -154,6 +242,9 @@ const atlasFindings = (inputs: ValidationInputs): Finding[] => {
 	]
 		.filter(([, hash]) => hash !== registryHash)
 		.map(([name]) => name);
+	const staleExports =
+		inputs.exportManifest.dataCatalogHash !==
+		inputs.dataCatalog.contentHash;
 	const releaseIds = new Set(
 		inputs.boundaryRegistry.releases.map(
 			(release) => `${release.geography}/${release.id}`,
@@ -192,8 +283,17 @@ const atlasFindings = (inputs: ValidationInputs): Finding[] => {
 	return [
 		check(
 			"registry-links",
-			staleInventories.length === 0,
-			`Built against an older boundary registry: ${staleInventories.join(", ")}.`,
+			staleInventories.length === 0 && !staleExports,
+			[
+				staleInventories.length > 0
+					? `Built against an older boundary registry: ${staleInventories.join(", ")}.`
+					: undefined,
+				staleExports
+					? "Built against an older data catalogue: export manifest."
+					: undefined,
+			]
+				.filter((part) => part !== undefined)
+				.join(" "),
 		),
 		check(
 			"release-coverage",
@@ -557,6 +657,518 @@ const crosswalkFindings = (
 	return findings;
 };
 
+type Geography = { type: string; boundaryYear: number };
+
+const sameGeography = (left: Geography, right: Geography) =>
+	left.type === right.type && left.boundaryYear === right.boundaryYear;
+
+const describeGeography = (geography: Geography) =>
+	`${geography.type} ${geography.boundaryYear}`;
+
+const exportFor = (
+	inputs: ValidationInputs,
+	measureId: string,
+	source: { datasetId: string; sourceGeography: Geography },
+) =>
+	inputs.exportManifest.exports.find(
+		(entry) =>
+			entry.measureId === measureId &&
+			entry.datasetId === source.datasetId &&
+			sameGeography(entry.sourceGeography, source.sourceGeography),
+	);
+
+const periodsOf = (artifact: ObservationArtifact) =>
+	"periods" in artifact
+		? artifact.periods
+		: [{ period: artifact.period, records: artifact.records }];
+
+const areaCodeSets = new WeakMap<AreaReleaseArtifact, Set<string>>();
+const areaCodesOf = (artifact: AreaReleaseArtifact) => {
+	let codes = areaCodeSets.get(artifact);
+	if (!codes) {
+		codes = new Set(artifact.areas.map((area) => area.code));
+		areaCodeSets.set(artifact, codes);
+	}
+	return codes;
+};
+
+// Counts are whole numbers, so any real difference is at least 1; this only
+// absorbs floating-point error in a quantity.
+const TOTAL_TOLERANCE = 1e-9;
+
+const measureFindings = (
+	inputs: ValidationInputs,
+	measure: Measure,
+): Finding[] => {
+	const { aggregation } = measure;
+	const datasetIds = new Set(
+		inputs.dataCatalog.datasets.map((dataset) => dataset.id),
+	);
+	const problems: string[] = [];
+	if (measure.availability.aggregation !== aggregation.available) {
+		problems.push(
+			`its availability and its ${aggregation.kind} aggregation disagree on whether it can be aggregated`,
+		);
+	}
+	if (
+		(measure.valueKind === "categorical") !==
+		(aggregation.kind === "categorical")
+	) {
+		problems.push(
+			`a ${measure.valueKind} value has ${aggregation.kind} aggregation`,
+		);
+	}
+	if (measure.links.data !== `/v1/data/${measure.id}`) {
+		problems.push(`its data link is ${measure.links.data}`);
+	}
+	const unknownDatasets = [
+		...new Set([
+			...measure.sources.map((source) => source.datasetId),
+			...(measure.derivedFrom?.datasetIds ?? []),
+		]),
+	].filter((id) => !datasetIds.has(id));
+	if (unknownDatasets.length > 0) {
+		problems.push(
+			`it names datasets the catalogue does not hold: ${listed(unknownDatasets)}`,
+		);
+	}
+	const unexported = measure.sources.filter(
+		(source) => !exportFor(inputs, measure.id, source),
+	);
+	if (unexported.length > 0) {
+		problems.push(
+			`no export serves its sources ${listed(
+				unexported.map(
+					(source) =>
+						`${source.datasetId} on ${describeGeography(source.sourceGeography)}`,
+				),
+			)}`,
+		);
+	}
+	if (aggregation.kind === "intensive" && aggregation.available) {
+		const weight = inputs.dataCatalog.measures.find(
+			(candidate) => candidate.id === aggregation.weight.measureId,
+		);
+		if (!weight) {
+			problems.push(
+				aggregation.weight.measureId
+					? `its weight measure ${aggregation.weight.measureId} is not in the catalogue`
+					: "its weighted mean is available without a weight measure",
+			);
+		} else {
+			if (weight.aggregation.kind !== "extensive") {
+				problems.push(`its weight ${weight.id} cannot be summed`);
+			}
+			const unweighted = measure.sources.filter(
+				(source) =>
+					!weight.sources.some(
+						(candidate) =>
+							sameGeography(
+								candidate.sourceGeography,
+								source.sourceGeography,
+							) &&
+							source.periods.every((period) =>
+								candidate.periods.includes(period),
+							),
+					),
+			);
+			if (unweighted.length > 0) {
+				problems.push(
+					`${weight.id} has no partition to weight its sources on ${listed(
+						unweighted.map((source) =>
+							describeGeography(source.sourceGeography),
+						),
+					)}`,
+				);
+			}
+		}
+	}
+	return [
+		check(
+			"measure-definition",
+			problems.length === 0,
+			`The definition is inconsistent: ${problems.join("; ")}.`,
+			{ sourceCount: measure.sources.length },
+		),
+	];
+};
+
+const totalFinding = (
+	inputs: ValidationInputs,
+	source: MeasureSource,
+	periods: ReturnType<typeof periodsOf>,
+	total: MeasureTotal,
+): Finding => {
+	const problems: string[] = [];
+	const components = total.components.flatMap((id) => {
+		const entry = exportFor(inputs, id, source);
+		const artifact = entry && inputs.observationArtifacts[entry.id];
+		if (!artifact) {
+			problems.push(
+				`${id} has no partition from ${source.datasetId} on ${describeGeography(source.sourceGeography)}`,
+			);
+			return [];
+		}
+		const values = new Map(
+			periodsOf(artifact).map((period) => [
+				period.period,
+				new Map(
+					period.records.flatMap((record) =>
+						"value" in record
+							? [[record.areaCode, record.value] as const]
+							: [],
+					),
+				),
+			]),
+		);
+		return [{ id, values }];
+	});
+	const missing: string[] = [];
+	const differences: string[] = [];
+	let comparedCount = 0;
+	let maxDifference = 0;
+	if (problems.length === 0) {
+		for (const period of periods) {
+			const totalCodes = new Set(
+				period.records.map((record) => record.areaCode),
+			);
+			for (const component of components) {
+				const values = component.values.get(period.period);
+				if (!values) {
+					problems.push(
+						`${component.id} has no ${period.period} period`,
+					);
+					continue;
+				}
+				const extra = [...values.keys()].filter(
+					(code) => !totalCodes.has(code),
+				);
+				if (extra.length > 0) {
+					problems.push(
+						`${component.id} has ${period.period} values for areas with no total: ${listed(extra, 5)}`,
+					);
+				}
+			}
+			for (const record of period.records) {
+				if (!("value" in record)) continue;
+				const parts = components.map((component) =>
+					component.values.get(period.period)?.get(record.areaCode),
+				);
+				if (parts.some((part) => part === undefined)) {
+					missing.push(`${period.period} ${record.areaCode}`);
+					continue;
+				}
+				comparedCount += 1;
+				const sum = parts.reduce<number>(
+					(runningTotal, part) => runningTotal + (part ?? 0),
+					0,
+				);
+				const difference = Math.abs(sum - record.value);
+				if (
+					difference >
+					TOTAL_TOLERANCE * Math.max(1, Math.abs(record.value))
+				) {
+					maxDifference = Math.max(maxDifference, difference);
+					differences.push(
+						`${period.period} ${record.areaCode} (${record.value} against ${Number(sum.toPrecision(12))})`,
+					);
+				}
+			}
+		}
+	}
+	const findings = [
+		...problems,
+		...(missing.length > 0
+			? [`components have no value for ${listed(missing, 5)}`]
+			: []),
+		...(differences.length > 0
+			? [
+					`components differ from the total in ${differences.length} of ${comparedCount} area-periods: ${listed(differences, 5)}`,
+				]
+			: []),
+	];
+	return check(
+		"components-sum-to-total",
+		findings.length === 0,
+		`The components do not add up to the total: ${findings.join("; ")}.`,
+		{
+			components: total.components.join(", "),
+			comparedCount,
+			mismatchCount: differences.length,
+			maxDifference: Number(maxDifference.toPrecision(12)),
+		},
+	);
+};
+
+const measureSourceFindings = (
+	inputs: ValidationInputs,
+	entry: BulkExport,
+): Finding[] => {
+	const artifact = inputs.observationArtifacts[entry.id];
+	const measure = inputs.dataCatalog.measures.find(
+		(candidate) => candidate.id === entry.measureId,
+	);
+	const source = measure?.sources.find(
+		(candidate) =>
+			candidate.datasetId === entry.datasetId &&
+			sameGeography(candidate.sourceGeography, entry.sourceGeography),
+	);
+	if (!artifact || !measure || !source) {
+		return [
+			check(
+				"artifact-integrity",
+				false,
+				artifact
+					? `No catalogue source matches ${entry.measureId} from ${entry.datasetId} on ${describeGeography(entry.sourceGeography)}.`
+					: `No observation artifact was read for ${entry.artifact}.`,
+			),
+		];
+	}
+	const periods = periodsOf(artifact);
+	const recordCount = periods.reduce(
+		(count, period) => count + period.records.length,
+		0,
+	);
+
+	const { contentHash, ...content } = artifact;
+	const repeated = periods.flatMap((period) => {
+		const seen = new Set<string>();
+		return period.records.flatMap((record) => {
+			const repeat = seen.has(record.areaCode);
+			seen.add(record.areaCode);
+			return repeat ? [`${period.period} ${record.areaCode}`] : [];
+		});
+	});
+	// The catalogue counts the latest period, since coverage can vary by period.
+	const latestCount = periods.at(-1)?.records.length ?? 0;
+	const periodIds = periods.map((period) => period.period);
+	const integrityProblems = [
+		sha256(JSON.stringify(content)) === contentHash
+			? undefined
+			: "its content does not reproduce its hash",
+		entry.contentHash === contentHash
+			? undefined
+			: "its hash differs from the export manifest",
+		artifact.measureId === measure.id &&
+		sameGeography(artifact.sourceGeography, source.sourceGeography)
+			? undefined
+			: `it holds ${artifact.measureId} on ${describeGeography(artifact.sourceGeography)}`,
+		periodIds.join(",") === source.periods.join(",")
+			? undefined
+			: `its periods (${listed(periodIds)}) differ from the catalogue's (${listed(source.periods)})`,
+		source.coverage.recordCount === latestCount
+			? undefined
+			: `the catalogue counts ${source.coverage.recordCount} records but its latest period has ${latestCount}`,
+		repeated.length === 0
+			? undefined
+			: `area codes repeat within a period: ${listed(repeated)}`,
+	].filter((problem) => problem !== undefined);
+
+	const codes = [
+		...new Set(
+			periods.flatMap((period) =>
+				period.records.map((record) => record.areaCode),
+			),
+		),
+	].sort();
+	const { type, boundaryYear } = source.sourceGeography;
+	const resolution = inputs.boundaryRegistry.releases
+		.filter(
+			(release) =>
+				release.geography === type &&
+				release.temporalCoverage === String(boundaryYear),
+		)
+		.sort((left, right) => left.id.localeCompare(right.id))
+		.flatMap((release) => {
+			const areas = inputs.areaArtifacts.find(
+				(candidate) =>
+					candidate.geography === type &&
+					candidate.boundaryRelease === release.id,
+			);
+			if (!areas) return [];
+			const known = areaCodesOf(areas);
+			return [
+				{
+					id: release.id,
+					unresolved: codes.filter((code) => !known.has(code)),
+				},
+			];
+		});
+	const resolvedBy = resolution.find(
+		(release) => release.unresolved.length === 0,
+	);
+
+	const unsupported: string[] = [];
+	const countries = new Set<string>();
+	for (const code of codes) {
+		try {
+			countries.add(countryForCode(code));
+		} catch {
+			unsupported.push(code);
+		}
+	}
+	const foundCountries = [...countries].sort();
+	const declaredCountries = [...source.coverage.countries].sort();
+
+	const invalid: string[] = [];
+	const categorical = measure.valueKind === "categorical";
+	const percentage =
+		measure.unit === "percent" || measure.unit.startsWith("% ");
+	const statistic =
+		measure.aggregation.kind === "non-aggregatable"
+			? measure.aggregation.statistic
+			: undefined;
+	const categories = new Set<string>();
+	let minimum = Number.POSITIVE_INFINITY;
+	let maximum = Number.NEGATIVE_INFINITY;
+	for (const period of periods) {
+		for (const record of period.records) {
+			const fail = (reason: string) =>
+				invalid.push(`${period.period} ${record.areaCode} ${reason}`);
+			if (record.status !== "observed" && record.status !== "derived") {
+				fail(`has status ${String(record.status)}`);
+			} else if (measure.derivedFrom && record.status !== "derived") {
+				fail("is marked observed on a derived measure");
+			}
+			if (categorical) {
+				if (
+					!("category" in record) ||
+					typeof record.category !== "string" ||
+					record.category.trim().length === 0
+				) {
+					fail("has no category");
+				} else {
+					categories.add(record.category);
+				}
+				if ("value" in record)
+					fail("carries a value on a categorical measure");
+				continue;
+			}
+			if (
+				!("value" in record) ||
+				typeof record.value !== "number" ||
+				!Number.isFinite(record.value)
+			) {
+				fail("has no finite value");
+				continue;
+			}
+			const { value } = record;
+			minimum = Math.min(minimum, value);
+			maximum = Math.max(maximum, value);
+			if (
+				measure.valueKind === "count" &&
+				!(Number.isInteger(value) && value >= 0)
+			) {
+				fail(
+					`counts ${value}, which is not a whole number of at least 0`,
+				);
+			}
+			if (
+				measure.valueKind === "ratio" &&
+				(value < 0 || (percentage && value > 100))
+			) {
+				fail(
+					`is ${value}, outside ${percentage ? "0 to 100" : "0 or more"}`,
+				);
+			}
+			if (measure.valueKind === "currency" && value < 0) {
+				fail(`is a negative amount, ${value}`);
+			}
+			if (measure.valueKind === "ordinal") {
+				const ceiling =
+					statistic === "decile"
+						? 10
+						: statistic === "rank"
+							? period.records.length
+							: undefined;
+				if (
+					!Number.isInteger(value) ||
+					value < 1 ||
+					(ceiling !== undefined && value > ceiling)
+				) {
+					fail(
+						ceiling === undefined
+							? `is ${value}, not a whole number of at least 1`
+							: `is ${value}, not a ${statistic} from 1 to ${ceiling}`,
+					);
+				}
+			}
+			const interval = record.confidenceInterval;
+			if (interval) {
+				if (!measure.uncertainty) {
+					fail("carries an interval its measure does not declare");
+				} else if (!(
+					interval.lower <= value && value <= interval.upper
+				)) {
+					fail(
+						`lies outside its interval, ${interval.lower} to ${interval.upper}`,
+					);
+				}
+			}
+		}
+	}
+
+	const findings = [
+		check(
+			"artifact-integrity",
+			integrityProblems.length === 0,
+			`The artifact is inconsistent: ${integrityProblems.join("; ")}.`,
+			{ periodCount: periods.length, recordCount },
+		),
+		check(
+			"records-resolve",
+			resolvedBy !== undefined,
+			resolution.length === 0
+				? `No ${type} boundary release for ${boundaryYear} has compiled areas.`
+				: `No compiled ${type} release for ${boundaryYear} holds every code: ${resolution
+						.map(
+							(release) =>
+								`${release.id} lacks ${release.unresolved.length} (${listed(release.unresolved, 5)})`,
+						)
+						.join("; ")}.`,
+			{
+				areaCodeCount: codes.length,
+				boundaryRelease: resolvedBy?.id ?? null,
+				unresolvedCount: resolvedBy
+					? 0
+					: resolution.length > 0
+						? Math.min(
+								...resolution.map(
+									(release) => release.unresolved.length,
+								),
+							)
+						: codes.length,
+			},
+		),
+		check(
+			"countries-declared",
+			unsupported.length === 0 &&
+				foundCountries.join(",") === declaredCountries.join(","),
+			unsupported.length > 0
+				? `Codes belong to no UK nation: ${listed(unsupported)}.`
+				: `Records cover ${foundCountries.join(", ")}, but the catalogue declares ${declaredCountries.join(", ")}.`,
+			{ countries: foundCountries.join(", ") },
+		),
+		check(
+			"values-valid",
+			invalid.length === 0,
+			`${invalid.length} records are invalid: ${listed(invalid, 5)}.`,
+			categorical
+				? { recordCount, categoryCount: categories.size }
+				: {
+						recordCount,
+						minimum: recordCount > 0 ? minimum : null,
+						maximum: recordCount > 0 ? maximum : null,
+					},
+		),
+	];
+	const total = inputs.measureTotals.find(
+		(candidate) => candidate.measureId === measure.id,
+	);
+	if (total) findings.push(totalFinding(inputs, source, periods, total));
+	return findings;
+};
+
 export const compileValidationReport = (
 	inputs: ValidationInputs,
 ): ValidationReport => {
@@ -584,10 +1196,44 @@ export const compileValidationReport = (
 				kind: "crosswalk" as const,
 				findings: crosswalkFindings(inputs, crosswalk),
 			})),
+		...[...inputs.dataCatalog.measures]
+			.sort((left, right) => left.id.localeCompare(right.id))
+			.map((measure) => ({
+				id: `measures/${measure.id}`,
+				kind: "measure" as const,
+				findings: measureFindings(inputs, measure),
+			})),
+		...[...inputs.exportManifest.exports]
+			.sort((left, right) => left.id.localeCompare(right.id))
+			.map((entry) => ({
+				id: `exports/${entry.id}`,
+				kind: "measure-source" as const,
+				findings: measureSourceFindings(inputs, entry),
+			})),
 	];
 
 	const waiverFor = new Map<string, ValidationWaiver>();
 	const problems: string[] = [];
+	const measures = new Map(
+		inputs.dataCatalog.measures.map((measure) => [measure.id, measure]),
+	);
+	const totalled = new Set<string>();
+	for (const total of inputs.measureTotals) {
+		if (totalled.has(total.measureId)) {
+			problems.push(`Duplicate measure total: ${total.measureId}.`);
+		}
+		totalled.add(total.measureId);
+		for (const id of [total.measureId, ...total.components]) {
+			const measure = measures.get(id);
+			if (measure?.aggregation.kind !== "extensive") {
+				problems.push(
+					measure
+						? `Measure total ${total.measureId} names ${id}, which cannot be summed.`
+						: `Measure total ${total.measureId} names ${id}, which is not in the catalogue.`,
+				);
+			}
+		}
+	}
 	for (const waiver of inputs.waivers) {
 		for (const resource of waiver.resources) {
 			const key = `${waiver.check} ${resource}`;
@@ -657,6 +1303,9 @@ export const compileValidationReport = (
 			crosswalkInventory: inputs.crosswalkInventory.contentHash,
 			relationshipCandidates: inputs.relationshipCandidates.contentHash,
 			geographyInventory: inputs.geographyInventory.contentHash,
+			dataCatalog: inputs.dataCatalog.contentHash,
+			exportManifest: inputs.exportManifest.contentHash,
+			measureTotals: inputs.measureTotalsHash,
 			waivers: inputs.waiversHash,
 		},
 		summary: {
@@ -683,6 +1332,8 @@ export const compileValidationReport = (
 				weightedCrosswalks: inputs.crosswalkInventory.crosswalks.filter(
 					(crosswalk) => crosswalk.weighting.status === "provided",
 				).length,
+				measures: inputs.dataCatalog.measures.length,
+				measureSources: inputs.exportManifest.exports.length,
 			},
 		},
 		resources,
