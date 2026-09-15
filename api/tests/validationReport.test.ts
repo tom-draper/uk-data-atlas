@@ -20,7 +20,7 @@ import {
 	readValidationWaivers,
 	type ValidationInputs,
 	type ValidationWaiver,
-} from "../src/validationReport";
+} from "../src/validation/compileValidationReport";
 
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;

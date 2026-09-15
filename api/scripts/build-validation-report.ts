@@ -17,7 +17,7 @@ import {
 	type ObservationArtifact,
 	readMeasureTotals,
 	readValidationWaivers,
-} from "../src/validationReport";
+} from "../src/validation/compileValidationReport";
 
 export const buildValidationReport = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "api", "public");
