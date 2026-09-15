@@ -1,6 +1,7 @@
 import type { ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
+import { handleBulkRoutes } from "./bulkRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 
@@ -18,6 +19,13 @@ type RouteFamily = {
  * home explicit while the legacy router is split into domain modules.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "bulk",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			["exports", "lookups"].includes(segments[1] ?? ""),
+		handle: handleBulkRoutes,
+	},
 	{
 		name: "boundaries",
 		owns: (segments) =>
