@@ -1500,6 +1500,64 @@ paths:
         "503":
           $ref: "#/components/responses/GeometryUnavailable"
 
+  /areas:validate:
+    get:
+      operationId: validateAreaValues
+      summary: Validate a batch of area codes or names against one release
+      description: >
+        Checks each `value` against one exact boundary release before a caller
+        joins data to it, and says for every value what it names or why it
+        names nothing. At most 500 values may be sent in one request.
+
+        A value shaped like an area code is `valid` when the release holds it.
+        Otherwise it is `superseded` or `not-yet-current` when only older or
+        newer releases of the geography hold it, `absent-from-release` when
+        releases on both sides do, `other-geography` when only another
+        geography holds it, `unknown` when nothing does, and `malformed-code`
+        when it is a letter followed by other than eight digits.
+
+        Any other value is a name. It is `matched` only exactly, through a
+        published alias, or with an administrative title such as "City of" set
+        aside, never by prefix or similarity. A name meaning several areas is
+        `ambiguous` and lists them all; an `unmatched` name lists the other
+        releases of the geography where it does match.
+
+        Each result says in `normalised` whether the value was trimmed or
+        re-cased to be read, and in `duplicateOf` whether it repeats an earlier
+        value. `summary.joinable` is true only when every value names exactly
+        one area of the release.
+      parameters:
+        - name: geography
+          in: query
+          required: true
+          schema: { type: string }
+        - name: release
+          in: query
+          required: true
+          schema: { type: string }
+          description: >
+            An exact boundary release id. `GET /boundary-releases:resolve`
+            selects one for a date.
+        - name: value
+          in: query
+          required: true
+          schema:
+            type: array
+            maxItems: 500
+            items: { type: string }
+          description: A code or name to validate. Repeatable, in input order.
+      responses:
+        "200":
+          description: A result for every value, in input order, and a summary.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /areas:contains:
     get:
       operationId: findContainingAreas
