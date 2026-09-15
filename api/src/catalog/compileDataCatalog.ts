@@ -8,7 +8,7 @@ import type {
 } from "../dataCatalog";
 import { sha256 } from "./values";
 import {
-	type CompiledMeasure,
+	type CatalogManifest,
 	type DatasetManifest,
 	compileDataset,
 } from "./manifest";
@@ -71,9 +71,10 @@ export type DataCatalogInputs = {
 };
 
 /**
- * Compile source-lineage metadata and one intentionally narrow, source-exact
- * population measure. It does not select a geometry release: the published
- * input records only declare the Ward 2023 code vintage, not a boundary month.
+ * Compile source-lineage metadata and every published measure, each from its
+ * own module. The modules run in a fixed order, so a malformed input is always
+ * reported by the same check. No measure selects a geometry release: the
+ * published inputs declare code vintages, not boundary months.
  */
 export const compileDataCatalog = ({
 	manifest: manifestPath,
@@ -138,8 +139,9 @@ export const compileDataCatalog = ({
 	) {
 		throw new Error(`${manifestPath} has duplicate dataset outputs`);
 	}
+	const catalogManifest: CatalogManifest = { manifestPath, datasets };
 	const population = compilePopulation(
-		{ manifestPath, datasets },
+		catalogManifest,
 		populationPath,
 		populationUkPath,
 		populationConstituencyPath,
@@ -149,21 +151,14 @@ export const compileDataCatalog = ({
 			(record) => record.areaCode,
 		),
 	);
-	const emissions = compileEmissions(
-		{ manifestPath, datasets },
-		ghgEmissionsPath,
-	);
-	const jobs = compileJobs(
-		{ manifestPath, datasets },
-		jobsPath,
-		populationCodes,
-	);
+	const emissions = compileEmissions(catalogManifest, ghgEmissionsPath);
+	const jobs = compileJobs(catalogManifest, jobsPath, populationCodes);
 	const mobileCoverage = compileMobileCoverage(
-		{ manifestPath, datasets },
+		catalogManifest,
 		mobileCoveragePath,
 	);
 	const census = compileCensus(
-		{ manifestPath, datasets },
+		catalogManifest,
 		travelToWorkPath,
 		carAvailabilityPath,
 		qualificationPath,
@@ -174,78 +169,68 @@ export const compileDataCatalog = ({
 		code.startsWith("E"),
 	);
 	const england2025 = england2023.map((code) => RECODED_2025[code] ?? code);
-	const indicatorObservations: CompiledMeasure[] = [];
-
-	indicatorObservations.push(
-		...compileBroadband(
-			{ manifestPath, datasets },
-			broadbandPath,
-			populationCodes,
-		),
-	);
-	indicatorObservations.push(
+	const indicatorObservations = [
+		...compileBroadband(catalogManifest, broadbandPath, populationCodes),
 		...compileClaimantCount(
-			{ manifestPath, datasets },
+			catalogManifest,
 			claimantCountPath,
 			populationCodes,
 		),
-	);
-	indicatorObservations.push(
-		...compileHomelessness(
-			{ manifestPath, datasets },
-			homelessnessPath,
-			england2025,
-		),
-	);
-	indicatorObservations.push(
+		...compileHomelessness(catalogManifest, homelessnessPath, england2025),
 		...compileRoadCollisions(
-			{ manifestPath, datasets },
+			catalogManifest,
 			roadCollisionsPath,
 			populationCodes,
 		),
-	);
-	indicatorObservations.push(
-		...compileIncome({ manifestPath, datasets }, incomePath, england2025),
-	);
-	indicatorObservations.push(
-		...compileCrime({ manifestPath, datasets }, crimePath),
-	);
+		...compileIncome(catalogManifest, incomePath, england2025),
+		...compileCrime(catalogManifest, crimePath),
+	];
 	const unemployment = compileUnemployment(
-		{ manifestPath, datasets },
+		catalogManifest,
 		unemploymentPath,
 		populationCodes,
 	);
+	// Air quality is published with the indicators but has always been
+	// compiled after unemployment, so a malformed input fails the same check.
 	indicatorObservations.push(
-		...compileAirQuality(
-			{ manifestPath, datasets },
-			airQualityPath,
-			populationCodes,
-		),
+		...compileAirQuality(catalogManifest, airQualityPath, populationCodes),
 	);
 	const indicatorMeasures = mergeMeasurePartitions(indicatorObservations);
 
 	const density = compilePopulationDensity(
-		{ manifestPath, datasets },
+		catalogManifest,
 		landAreaPath,
 		population.localAuthorityObservations.periods,
 	);
-	const housePrice = compileHousePrice(
-		{ manifestPath, datasets },
-		housePricePath,
-	);
+	const housePrice = compileHousePrice(catalogManifest, housePricePath);
 	const deprivation = compileDeprivationIndices(
-		{ manifestPath, datasets },
+		catalogManifest,
 		imdPath,
 		wimdPath,
 		simdPath,
 	);
-	const nimdm = compileNimdm({ manifestPath, datasets }, nimdmPath);
+	const nimdm = compileNimdm(catalogManifest, nimdmPath);
 	const lifeExpectancy = compileLifeExpectancy(lifeExpectancySeriesPath);
 	const elections = compileElections(
-		{ manifestPath, datasets },
+		catalogManifest,
 		generalElectionPath,
 		localElectionPath,
 	);
+	const measures = [
+		population.measure,
+		...elections.measures,
+		density.measure,
+		housePrice.measure,
+		...deprivation.measures,
+		nimdm.measure,
+		...lifeExpectancy.measures,
+		emissions.measure,
+		jobs.measure,
+		...mobileCoverage.measures,
+		...indicatorMeasures,
+		...unemployment.measures,
+		...census.measures,
+	];
 	const catalogContent = JSON.stringify({
 		schemaVersion: 1,
 		source: {
@@ -253,21 +238,7 @@ export const compileDataCatalog = ({
 			manifestVersion: manifest.version,
 		},
 		datasets,
-		measures: [
-			population.measure,
-			...elections.measures,
-			density.measure,
-			housePrice.measure,
-			...deprivation.measures,
-			nimdm.measure,
-			...lifeExpectancy.measures,
-			emissions.measure,
-			jobs.measure,
-			...mobileCoverage.measures,
-			...indicatorMeasures,
-			...unemployment.measures,
-			...census.measures,
-		],
+		measures,
 	});
 	return {
 		catalog: {
@@ -278,21 +249,7 @@ export const compileDataCatalog = ({
 				manifestVersion: manifest.version,
 			},
 			datasets,
-			measures: [
-				population.measure,
-				...elections.measures,
-				density.measure,
-				housePrice.measure,
-				...deprivation.measures,
-				nimdm.measure,
-				...lifeExpectancy.measures,
-				emissions.measure,
-				jobs.measure,
-				...mobileCoverage.measures,
-				...indicatorMeasures,
-				...unemployment.measures,
-				...census.measures,
-			],
+			measures,
 		},
 		populationConstituencyObservations: population.constituencyObservations,
 		populationObservations: population.wardObservations,
