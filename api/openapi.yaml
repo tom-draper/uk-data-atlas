@@ -3229,7 +3229,7 @@ components:
             - no_release_for_date
             - ambiguous_release
           description: >
-            On a 404 from an area route: `unsupported_geography` when the
+            On a 404 from an area or boundary release route: `unsupported_geography` when the
             geography or release is not published or its area identities are
             not compiled, and `area_not_in_release` when the release does not
             hold the code. On a 422 from an aggregate or a conversion:
