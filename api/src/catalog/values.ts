@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 
-export type PopulationFile = Record<string, unknown>;
+/** A parsed file from the website's data/precompiled, keyed by period or edition. */
+export type PrecompiledFile = Record<string, unknown>;
 
 export const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;

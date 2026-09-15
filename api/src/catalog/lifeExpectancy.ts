@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import type { Measure } from "../dataCatalog";
 import { isPublishedAreaCode, countriesFor } from "./countries";
-import { type PopulationFile, sha256, number, object } from "./values";
+import { type PrecompiledFile, sha256, number, object } from "./values";
 
 /**
  * Life expectancy at birth, as ONS publishes it for local areas: every
@@ -15,7 +15,7 @@ import { type PopulationFile, sha256, number, object } from "./values";
 export const compileLifeExpectancy = (lifeExpectancySeriesPath: string) => {
 	const lifeExpectancySource = JSON.parse(
 		readFileSync(lifeExpectancySeriesPath, "utf8"),
-	) as PopulationFile;
+	) as PrecompiledFile;
 	const lifeExpectancyPeriods = Object.entries(lifeExpectancySource)
 		.map(([key, value]) => {
 			const entry = object(value, `${lifeExpectancySeriesPath}.${key}`);

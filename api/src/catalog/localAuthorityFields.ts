@@ -4,7 +4,7 @@ import type {
 	PopulationObservation,
 	MeasureObservationArtifact,
 } from "../dataCatalog";
-import { type PopulationFile, object } from "./values";
+import { type PrecompiledFile, object } from "./values";
 import { isPublishedAreaCode } from "./countries";
 
 /**
@@ -21,7 +21,7 @@ export const localAuthorityFieldPeriods = (
 	boundaryYear: number,
 	geography: SourceGeography["type"] = "localAuthority",
 ): MeasureObservationArtifact["periods"] => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
 			if (!/^\d{4}$/.test(period))
@@ -107,7 +107,7 @@ export const localAuthorityFieldWithGaps = (
 	 */
 	table: "data" | "partnerships" | "lsoas" = "data",
 ) => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const entries = Object.entries(source);
 	if (entries.length !== 1)
 		throw new Error(`${path}: expected a single period`);

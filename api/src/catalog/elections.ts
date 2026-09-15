@@ -6,7 +6,7 @@ import type {
 	PopulationObservation,
 	CategoricalObservation,
 } from "../dataCatalog";
-import { type PopulationFile, sha256, string, number, object } from "./values";
+import { type PrecompiledFile, sha256, string, number, object } from "./values";
 import { countriesFor } from "./countries";
 import type { CatalogManifest } from "./manifest";
 
@@ -50,7 +50,7 @@ const electionFieldPeriods = (
 	 */
 	correctedCodes: Array<[string, string]>;
 }> => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
 			if (!/^\d{4}$/.test(period))
@@ -189,7 +189,7 @@ const electionWinnerPeriods = (
 	boundaryYear: number;
 	records: CategoricalObservation[];
 }> => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
 			const entry = object(value, `${path}.${period}`);
@@ -330,7 +330,7 @@ export const compileElections = (
 				Object.values(
 					JSON.parse(
 						readFileSync(election.path, "utf8"),
-					) as PopulationFile,
+					) as PrecompiledFile,
 				).flatMap((value) =>
 					Object.values(
 						object(value, election.path).data as Record<

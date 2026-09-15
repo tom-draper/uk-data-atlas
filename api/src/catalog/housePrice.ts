@@ -4,7 +4,7 @@ import type {
 	PopulationObservation,
 	MeasureObservationArtifact,
 } from "../dataCatalog";
-import { type PopulationFile, sha256, number, object } from "./values";
+import { type PrecompiledFile, sha256, number, object } from "./values";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
 import { countriesFor } from "./countries";
 
@@ -28,7 +28,7 @@ const LAST_DECEMBER_PERIOD = 2022;
 const housePricePeriods = (
 	path: string,
 ): MeasureObservationArtifact["periods"] => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const edition = object(source["2023"], `${path}.2023`);
 	if (edition.boundaryType !== "ward") {
 		throw new Error(`${path}: expected ward-level house prices`);
