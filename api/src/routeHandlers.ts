@@ -26,6 +26,7 @@ import { handleDataConversionRoutes } from "./dataConversionRoutes";
 import { handleDataRoutes } from "./dataRoutes";
 import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 import { handleAreaIntersectsRoutes } from "./areaIntersectsRoutes";
+import { handleTranslationRoutes } from "./translationRoutes";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -41,6 +42,14 @@ type RouteFamily = {
  * the order below and makes a new route's home explicit.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "translations",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "translations",
+		handle: handleTranslationRoutes,
+	},
 	{
 		name: "area-intersects",
 		owns: (segments) =>
