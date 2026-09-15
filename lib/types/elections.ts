@@ -9,6 +9,11 @@ export interface LocalElectionWardData {
 	turnoutPercent: number;
 	wardName: string;
 	wardCode: string;
+	/**
+	 * The code the source gave, when it is not the code of the ward the
+	 * election was held in; the source config says why each one differs.
+	 */
+	sourceWardCode?: string;
 	electorate: number;
 	partyVotes: PartyVotes;
 }

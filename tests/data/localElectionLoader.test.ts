@@ -143,6 +143,24 @@ E05000003,Southfield,Example Council,GREEN,0`,
 		]);
 	});
 
+	it("records a corrected ward code alongside the code the source gave", () => {
+		const dataset = parseLocalElectionTable(
+			`Ward code,Ward name,Local authority name,Local authority code,Turnout (%),Electorate
+E05099999,Park,Example Council,E06000001,40,2000`,
+			`Ward code,Ward name,Local authority name,Party name,Votes
+E05099999,Park,Example Council,LAB,450`,
+			{ ...codedConfig, wardCodeMap: { E05099999: "E05000001" } },
+		);
+
+		expect(dataset.data).toEqual({
+			E05000001: expect.objectContaining({
+				wardCode: "E05000001",
+				sourceWardCode: "E05099999",
+				partyVotes: { LAB: 450 },
+			}),
+		});
+	});
+
 	it("matches a workbook without codes to the official ward list by exact name", () => {
 		const wardList = wardCodesByName(
 			JSON.stringify({

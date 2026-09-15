@@ -624,6 +624,11 @@ const electionFieldPeriods = (
 	areaCodes: "published" | "name-matched";
 	/** Source areas left out upstream because no single official code fits. */
 	excludedAreaCount: number;
+	/**
+	 * Areas the source gave a code other than that of the area the election
+	 * was held in, as [source code, served code].
+	 */
+	correctedCodes: Array<[string, string]>;
 }> => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
 	const periods = Object.entries(source)
@@ -735,6 +740,18 @@ const electionFieldPeriods = (
 				excludedAreaCount: Array.isArray(entry.excludedWards)
 					? entry.excludedWards.length
 					: 0,
+				correctedCodes: Object.entries(data)
+					.filter(
+						([areaCode, record]) =>
+							electionCodeKind(areaCode) === geography &&
+							typeof (record as { sourceWardCode?: unknown })
+								.sourceWardCode === "string",
+					)
+					.map(([areaCode, record]): [string, string] => [
+						(record as { sourceWardCode: string }).sourceWardCode,
+						areaCode,
+					])
+					.sort(([left], [right]) => left.localeCompare(right)),
 			};
 		})
 		.sort((left, right) => left.period.localeCompare(right.period));
@@ -3552,6 +3569,9 @@ export const compileDataCatalog = ({
 						(total, period) => total + period.excludedAreaCount,
 						0,
 					);
+					const correctedCodes = sourcePeriods.flatMap(
+						(period) => period.correctedCodes,
+					);
 					const nameMatched = sourcePeriods.some(
 						(period) => period.areaCodes === "name-matched",
 					);
@@ -3574,8 +3594,8 @@ export const compileDataCatalog = ({
 							note: `${
 								nameMatched
 									? `${election.label} records for the listed polling years. The source publishes no area codes, so each code was found by exact authority and area name in the official ${boundaryYear} boundary release.`
-									: `Source-exact ${election.label.toLowerCase()} records for the listed polling years.`
-							} Record coverage varies with the areas that held an election.${sourceUnaddressableRecordCount > 0 ? " Rows with the literal, unaddressable code NA are excluded." : ""}${excludedAreaCount > 0 ? ` ${excludedAreaCount} source area${excludedAreaCount === 1 ? " is" : "s are"} excluded because no single official code fits ${excludedAreaCount === 1 ? "it" : "them"}.` : ""}${sourceOtherGeographyRecordCount > 0 ? " County-electoral-division rows are excluded from this ward measure pending historical boundary releases." : ""}`,
+									: `${correctedCodes.length > 0 ? `${election.label}` : `Source-exact ${election.label.toLowerCase()}`} records for the listed polling years.`
+							} Record coverage varies with the areas that held an election.${correctedCodes.length > 0 ? ` The source gives ${correctedCodes.length} area${correctedCodes.length === 1 ? "" : "s"} a code other than that of the area the election was held in, and ${correctedCodes.length === 1 ? "it is" : "they are"} served under the code in force at the election: ${correctedCodes.map(([source, served]) => `${source} as ${served}`).join(", ")}.` : ""}${sourceUnaddressableRecordCount > 0 ? " Rows with the literal, unaddressable code NA are excluded." : ""}${excludedAreaCount > 0 ? ` ${excludedAreaCount} source area${excludedAreaCount === 1 ? " is" : "s are"} excluded because no single official code fits ${excludedAreaCount === 1 ? "it" : "them"}.` : ""}${sourceOtherGeographyRecordCount > 0 ? " County-electoral-division rows are excluded from this ward measure pending historical boundary releases." : ""}`,
 						},
 					};
 				});
