@@ -10,14 +10,13 @@ export const airQualityDatasetDefinition: DatasetDefinition<AirQualityDataset> =
 		source: {
 			name: "Air Quality",
 			source: "Department for Environment, Food and Rural Affairs",
-			sourceUrl:
-				"https://www.gov.uk/government/statistics/air-quality-statistics",
-			year: "2022",
+			sourceUrl: "https://uk-air.defra.gov.uk/data/pcm-data",
+			year: "2024",
 			licence: "Open Government Licence v3.0",
 			licenceUrl:
 				"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 			description:
-				"Annual mean concentrations of nitrogen dioxide (NO2) by local authority district.",
+				"Modelled 2024 annual mean background NO2, PM10 and PM2.5 by local authority, averaged from Defra's 1x1 km PCM maps, with Defra's population-weighted PM2.5.",
 		},
 		precompile: ({ text }) => loadAirQuality(text),
 	};

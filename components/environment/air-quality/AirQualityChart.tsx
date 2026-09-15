@@ -120,7 +120,7 @@ export default function AirQualityChart({
 			heading={`Air Quality, NO₂ [${dataset.year}]`}
 			accent={stats ? ACCENT : null}
 			isActive={isActive}
-			title="DEFRA. Air Quality Statistics in the UK. uk-air.defra.gov.uk"
+			title="Defra. Pollution Climate Mapping background maps, 2024. uk-air.defra.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,

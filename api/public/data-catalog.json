@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:9466fedea5368eb02b1b6ea456fee377e9583ceddd6b40c23079fc88aaa1e0fd",
+	"contentHash": "sha256:2ad8a9887042a9edccd30ac662ae4810c0c9246fd8a5277675d525326d0a78bd",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -10,31 +10,37 @@
 			"id": "air-quality",
 			"label": "Air Quality",
 			"publisher": "Department for Environment, Food and Rural Affairs",
-			"sourceUrl": "https://www.gov.uk/government/statistics/air-quality-statistics",
-			"temporalCoverage": "2022",
+			"sourceUrl": "https://uk-air.defra.gov.uk/data/pcm-data",
+			"temporalCoverage": "2024",
 			"licence": {
 				"name": "Open Government Licence v3.0",
 				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
 			},
-			"description": "Annual mean concentrations of nitrogen dioxide (NO2) by local authority district.",
+			"description": "Modelled 2024 annual mean background NO2, PM10 and PM2.5 by local authority, averaged from Defra's 1x1 km PCM maps, with Defra's population-weighted PM2.5.",
 			"inputs": [
 				{
 					"kind": "text",
-					"path": "environment/air-quality/no2-lad-2022.csv",
-					"bytes": 7902,
-					"sha256": "e2e3dd26fcc279a82d284fda1f02d383820632b1f4d5130dfc0e872c45e064d1"
+					"path": "environment/air-quality/pcm-background-by-local-authority-2024.csv",
+					"bytes": 16025,
+					"sha256": "433a690b5d67b88e86543c0e4696a87239f34a1afa5d024956bb0eb285d24e31"
+				},
+				{
+					"kind": "text",
+					"path": "environment/air-quality/popwmpm252024byUKlocalauthority.csv",
+					"bytes": 16217,
+					"sha256": "efd73a3c77237b9a698e88276590d1332e0d60c228431e3ca644c1451735fd2b"
 				}
 			],
 			"summary": {
 				"datasetCount": 1,
-				"dataRecordCount": 216,
+				"dataRecordCount": 361,
 				"boundaryYears": [
 					2024
 				]
 			},
 			"compiled": {
-				"bytes": 23043,
-				"sha256": "0861e43b1f03622816ae8ce417f4a95edd6357dfcd90610709b2d2ad6e324ebb"
+				"bytes": 72571,
+				"sha256": "8520b94c71e1e6f1a2d1209fddeae30ea4e8c79487eef04d3402454ee85126db"
 			}
 		},
 		{

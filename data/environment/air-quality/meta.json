@@ -1,0 +1,46 @@
+{
+	"id": "air-quality",
+	"title": "Defra PCM modelled background air pollution, 2024",
+	"description": "Defra's Pollution Climate Mapping (PCM) model of 2024 annual mean background concentrations of nitrogen dioxide (NO2), PM10 and PM2.5 on a 1x1 km grid across the United Kingdom, with Defra's published population-weighted annual mean PM2.5 for each local authority.",
+	"topics": ["environment", "air-quality", "pollution"],
+	"publisher": "Department for Environment, Food and Rural Affairs",
+	"sourceUrl": "https://uk-air.defra.gov.uk/data/pcm-data",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-15",
+	"temporalCoverage": "2024",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"]
+	},
+	"files": [
+		{
+			"path": "mapno22024.csv",
+			"role": "source",
+			"note": "PCM annual mean NO2 background map for 2024, µg m-3, from https://uk-air.defra.gov.uk/datastore/pcm/mapno22024.csv. Four header rows (pollutant, year, metric, units), a blank row, then gridcode, x, y and the value for each 1x1 km cell, with x and y the cell centre on the British National Grid: 254,905 cells covering the UK, Northern Ireland included."
+		},
+		{
+			"path": "mappm102024g.csv",
+			"role": "source",
+			"note": "PCM annual mean PM10 background map for 2024, µg m-3 in gravimetric units, from https://uk-air.defra.gov.uk/datastore/pcm/mappm102024g.csv. Same layout as the NO2 map; one cell off the west coast (gridcode 534070) is MISSING here and in the PM2.5 map but modelled for NO2."
+		},
+		{
+			"path": "mappm252024g.csv",
+			"role": "source",
+			"note": "PCM annual mean PM2.5 background map for 2024, µg m-3, from https://uk-air.defra.gov.uk/datastore/pcm/mappm252024g.csv. Same layout as the PM10 map."
+		},
+		{
+			"path": "popwmpm252024byUKlocalauthority.csv",
+			"role": "source",
+			"note": "Defra's population-weighted annual mean PM2.5 for 2024 for each of the 361 UK local authorities on April 2023 codes, as total, non-anthropogenic and anthropogenic concentrations, from https://uk-air.defra.gov.uk/datastore/pcm/popwmpm252024byUKlocalauthority.csv. Defra advises the total for health burden calculations."
+		},
+		{
+			"path": "pcm-background-by-local-authority-2024.csv",
+			"role": "derived",
+			"derivedFrom": "mapno22024.csv",
+			"note": "Built by scripts/compile-air-quality.mts from the three PCM maps: each cell is given to the December 2024 local authority (generalised clipped boundaries) containing its centre, brought from the British National Grid through EPSG:1314, and an authority's value is the unweighted mean of its cells, the average background concentration across its area. Every authority receives cells, the fewest being the City of London's 3; 10,626 coastal cells whose centres fall offshore of the generalised coastline are assigned to none. These area means are not population weighted: against Defra's population-weighted PM2.5 they correlate at 0.995 and run 0.21 µg m-3 lower on average, most in large rural authorities where people live in the more polluted places."
+		}
+	]
+}
