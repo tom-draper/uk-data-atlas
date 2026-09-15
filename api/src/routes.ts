@@ -2359,33 +2359,6 @@ export const route = (
 	if (
 		segments.length === 4 &&
 		segments[0] === "v1" &&
-		segments[1] === "measures" &&
-		segments[3] === "coverage"
-	) {
-		if (!dataCatalog || !measureCompatibilityInventory) {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the data catalogue and measure compatibility before retrieving measure coverage.",
-			);
-		}
-		const coverage = measureCoverage(
-			dataCatalog,
-			measureCompatibilityInventory,
-			segments[2] as string,
-		);
-		return coverage
-			? { status: 200, body: envelope(releaseId, coverage) }
-			: problem(
-					404,
-					"Not Found",
-					"No published measure coverage record matches that id.",
-				);
-	}
-
-	if (
-		segments.length === 4 &&
-		segments[0] === "v1" &&
 		segments[1] === "data" &&
 		segments[3] === "series"
 	) {
