@@ -14,17 +14,20 @@ const documentedPaths = readFileSync(
 		return match ? [match[1]!] : [];
 	});
 
+// The spec writes the index as `/` and every other path relative to `/v1`.
 const segmentsFor = (path: string) =>
-	`/v1${path}`
+	(path === "/" ? "/v1" : `/v1${path}`)
 		.replaceAll(/\{[^}]+\}/g, "placeholder")
 		.split("/")
 		.filter(Boolean);
 
-test("no documented path is claimed by more than one route family", () => {
+test("every documented path is owned by exactly one route family", () => {
 	assert.ok(documentedPaths.length > 0);
-	const contested = documentedPaths.flatMap((path) => {
+	const misowned = documentedPaths.flatMap((path) => {
 		const families = routeFamiliesOwning(segmentsFor(path));
-		return families.length > 1 ? [`${path}: ${families.join(", ")}`] : [];
+		return families.length === 1
+			? []
+			: [`${path}: ${families.join(", ") || "no family"}`];
 	});
-	assert.deepEqual(contested, []);
+	assert.deepEqual(misowned, []);
 });
