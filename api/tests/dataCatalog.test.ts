@@ -162,6 +162,7 @@ const writeSources = (
 	const broadband = join(directory, "broadband.json");
 	const claimantCount = join(directory, "claimant-count.json");
 	const homelessness = join(directory, "homelessness.json");
+	const income = join(directory, "income.json");
 	writeFileSync(
 		manifest,
 		JSON.stringify({
@@ -178,6 +179,7 @@ const writeSources = (
 				dataset("broadband", 4, 1, 2024),
 				dataset("claimant-count", 4, 1, 2024),
 				dataset("homelessness", 1, 1, 2025),
+				dataset("income", 2, 1, 2025),
 				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
@@ -367,6 +369,27 @@ const writeSources = (
 						householdsPerThousand: 0.7,
 						householdsWithChildren: 30,
 						childrenInTemporaryAccommodation: 54,
+					},
+				},
+			},
+		}),
+	);
+	writeFileSync(
+		income,
+		JSON.stringify({
+			"2025": {
+				year: 2025,
+				boundaryYear: 2025,
+				boundaryType: "localAuthority",
+				data: {
+					// A region total published in the same table, not an authority.
+					E12000001: {
+						annual: { median: 30000 },
+						hourly: { median: 15 },
+					},
+					E06000001: {
+						annual: { median: 29000 },
+						hourly: { median: null },
 					},
 				},
 			},
@@ -616,6 +639,7 @@ const writeSources = (
 		broadband,
 		claimantCount,
 		homelessness,
+		income,
 		jobs,
 		landArea,
 		housePrice,
@@ -637,7 +661,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 22);
+		assert.equal(result.catalog.datasets.length, 23);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -1362,6 +1386,40 @@ test("publishes a single-period indicator and names the authorities it has no va
 		assert.match(
 			fullFibre?.note ?? "",
 			/No value is published for 1 of the 4 authorities: S12000001\./,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes median pay for authorities only, naming suppressed estimates", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const result = compileDataCatalog(writeSources(directory));
+		const periods = (id: string) =>
+			result.indicatorObservations.find(
+				(artifact) => artifact.measureId === id,
+			)?.periods;
+		assert.deepEqual(periods("median-annual-pay"), [
+			{
+				period: "2025",
+				records: [
+					{ areaCode: "E06000001", value: 29000, status: "observed" },
+				],
+			},
+		]);
+		assert.deepEqual(periods("median-hourly-pay"), [
+			{ period: "2025", records: [] },
+		]);
+		const hourly = result.catalog.measures.find(
+			(measure) => measure.id === "median-hourly-pay",
+		);
+		assert.equal(hourly?.aggregation.kind, "non-aggregatable");
+		assert.match(
+			hourly?.sources[0]?.coverage.note ?? "",
+			/No value is published for 1 of the 1 authorities: E06000001\./,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

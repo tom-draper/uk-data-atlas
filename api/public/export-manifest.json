@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:602cde4a6e550c28a82bce5449ec9994e76145a07d2d2215cb89589ff8ffdd74",
-	"dataCatalogHash": "sha256:d8e030957866da942c0a78d6de607aa257208e4fb2340ffce803c628ff7e1ba6",
+	"contentHash": "sha256:f61dafa34feb6d593194df9ba4aae94bdfb92e2755320b6dd56c823deb4b0a98",
+	"dataCatalogHash": "sha256:4c3ef9310033c0714629fcfed650d8548bf1929b32f1932d1a403aac34c615ee",
 	"exports": [
 		{
 			"id": "broadband-full-fibre-availability-observations",
@@ -4215,6 +4215,40 @@
 			"contentHash": "sha256:3c2a78d86606d576910cacffed7e9cb4f07c118d5760703607c0e4210aca4211",
 			"bytes": 31946,
 			"href": "/v1/exports/local-election-winning-party-ward-2025-observations"
+		},
+		{
+			"id": "median-annual-pay-observations",
+			"measureId": "median-annual-pay",
+			"datasetId": "income",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "median-annual-pay-observations",
+			"contentHash": "sha256:f3bbbdd0663c126fc6906cc1228901d2d82e06323e8438a406fddce61fd8d575",
+			"bytes": 17592,
+			"href": "/v1/exports/median-annual-pay-observations"
+		},
+		{
+			"id": "median-hourly-pay-observations",
+			"measureId": "median-hourly-pay",
+			"datasetId": "income",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "median-hourly-pay-observations",
+			"contentHash": "sha256:2f12b78aa9e194bbc08b11c899bdfffdbd3f608ddf1157e977721f6b234ec45d",
+			"bytes": 17550,
+			"href": "/v1/exports/median-hourly-pay-observations"
 		},
 		{
 			"id": "mobile-4g-coverage-observations",

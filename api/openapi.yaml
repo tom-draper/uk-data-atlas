@@ -473,6 +473,9 @@ paths:
         `-children` cover January to March 2026 Local Authority 2025 codes for
         England; authorities that submitted no return have no record, so an
         England total over them is reported with partial coverage.
+        `median-annual-pay` and `median-hourly-pay` cover 2025 provisional
+        Local Authority 2025 codes for England, as median gross pay of employee
+        jobs by where the employee lives; a median is not aggregatable.
         This route never selects a May/December boundary release, converts
         values, or aggregates them. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the
