@@ -1,5 +1,6 @@
 import type { ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { handleIndexRoutes } from "./indexRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
@@ -49,6 +50,11 @@ type RouteFamily = {
  * the order below and makes a new route's home explicit.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "index",
+		owns: (segments) => segments.length === 1 && segments[0] === "v1",
+		handle: handleIndexRoutes,
+	},
 	{
 		name: "area-capabilities",
 		owns: (segments) =>
