@@ -7,7 +7,7 @@ import {
 	compileDataCatalog,
 	onApril2023Authorities,
 	type DataCatalogInputs,
-} from "../src/dataCatalog";
+} from "../src/catalog/compileDataCatalog";
 
 const dataset = (
 	output: string,

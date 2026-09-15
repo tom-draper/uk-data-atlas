@@ -7,13 +7,13 @@ import type {
 	CrosswalkInventory,
 } from "./crosswalkInventory";
 import {
-	countryForCode,
 	type CategoricalObservation,
 	type DataCatalog,
 	type Measure,
 	type MeasureSource,
 	type PopulationObservation,
 } from "./dataCatalog";
+import { countryForCode } from "./catalog/compileDataCatalog";
 import type { BulkExport, ExportManifest } from "./exportManifest";
 import type { GeographyInventory } from "./geographyInventory";
 import type { GeometrySourceRegistry } from "./geometrySourceRegistry";
