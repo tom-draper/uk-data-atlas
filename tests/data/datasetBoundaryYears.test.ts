@@ -42,6 +42,8 @@ describe("every chart dataset has a boundary to draw on", () => {
 				);
 
 			expect(unserved).toEqual([]);
-		});
+			// Parses the whole precompiled file, up to 17 MB, to read each
+			// entry's boundary year; slow when the suite runs in parallel.
+		}, 20_000);
 	}
 });
