@@ -30,11 +30,29 @@ const sourcePath = (directory: string) => {
 			x !== null &&
 			(x as { role?: unknown }).role === "source" &&
 			typeof (x as { path?: unknown }).path === "string" &&
-			(x as { path: string }).path.toLowerCase().endsWith(".geojson"),
+			/\.(geojson|shp)$/i.test((x as { path: string }).path),
 	) as { path: string } | undefined;
 	return f ? join(directory, f.path) : undefined;
 };
+// The projections a Shapefile's .prj names, by EPSG code. An unrecognised
+// projection is reported by its own name, so it cannot be served until a
+// transformation for it is declared.
+const PRJ_CRS: Record<string, string> = {
+	British_National_Grid: "EPSG:27700",
+	OSGB_1936_British_National_Grid: "EPSG:27700",
+	TM65_Irish_Grid: "EPSG:29902",
+	GCS_WGS_1984: "EPSG:4326",
+};
+const shapefileCrs = (path: string) => {
+	const prj = path.replace(/\.shp$/i, ".prj");
+	if (!existsSync(prj)) return "unknown";
+	const name = readFileSync(prj, "utf8").match(
+		/^(?:PROJCS|GEOGCS)\["([^"]+)"/,
+	)?.[1];
+	return (name && PRJ_CRS[name]) ?? `PRJ:${name ?? "unknown"}`;
+};
 const crs = (path: string) => {
+	if (path.toLowerCase().endsWith(".shp")) return shapefileCrs(path);
 	const fd = openSync(path, "r");
 	const b = Buffer.alloc(65536);
 	const n = readSync(fd, b, 0, b.length, 0);
@@ -71,7 +89,7 @@ export const createGeometrySourceRegistry = (
 			return {
 				id: a.geography + "/" + a.boundaryRelease,
 				status: "not-available",
-				reason: "No declared raw GeoJSON source is available.",
+				reason: "No declared raw GeoJSON or Shapefile source is available.",
 			};
 		const corrections = declaredCorrections(dir);
 		return {

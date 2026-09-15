@@ -13,6 +13,7 @@ import {
 	readGridOffset,
 	type GridOffset,
 } from "./gridOffset";
+import { readShapefileFeatures } from "./shapefile";
 import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
 import {
 	boundsIntersect,
@@ -81,9 +82,7 @@ export class AreaGeometryCache {
 		const source = this.sources.get(identity);
 		if (!source)
 			throw new Error(
-				"No raw GeoJSON geometry source is available for " +
-					identity +
-					".",
+				"No raw geometry source is available for " + identity + ".",
 			);
 		if (!canServeAsWgs84(source.crs))
 			throw new Error(
@@ -145,12 +144,13 @@ export class AreaGeometryCache {
 		let release = this.releases.get(identity);
 		if (!release) {
 			const source = this.source(geography, boundaryRelease);
-			const data = JSON.parse(
-				readFileSync(
-					join(this.repositoryRoot, "data", source.input),
-					"utf8",
-				),
-			) as Collection;
+			const inputPath = join(this.repositoryRoot, "data", source.input);
+			const data: Collection = inputPath.toLowerCase().endsWith(".shp")
+				? {
+						type: "FeatureCollection",
+						features: readShapefileFeatures(inputPath),
+					}
+				: (JSON.parse(readFileSync(inputPath, "utf8")) as Collection);
 			if (
 				data.type !== "FeatureCollection" ||
 				!Array.isArray(data.features)

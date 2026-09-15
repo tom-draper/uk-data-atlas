@@ -1664,10 +1664,14 @@ selection rule. The build writes the selected GeoJSON under
 from the raw England-and-Wales GeoJSON by official code prefix; no generated
 TopoJSON is read by this API build.
 
-For canonical identities only, a declared Shapefile source can also be read
-through its companion dBase (`.dbf`) attributes. This avoids using generated
-topologies for identity lookup while deliberately leaving geometry conversion
-to a future, separately validated compiler.
+A declared Shapefile source is read directly, identities from its companion
+dBase (`.dbf`) attributes and geometry from the `.shp`, so no generated
+topology stands in for either. Its CRS comes from the `.prj`; a projection
+the API has no declared transformation for is recorded by name and refused.
+The reader handles polygon shapes only, reverses rings into GeoJSON winding
+order and places each hole in the ring that contains it. Scottish data zones
+read this way match the publisher's own `Shape_Area` to within five parts
+per billion.
 
 The first crosswalk build is a published, many-to-many constituency lookup
 from the constituencies in force from 2010 to 2024 to the July 2024 release.
@@ -1805,13 +1809,18 @@ rather than precompiling per-area geometry artifacts. A source code that maps
 to more than one feature fragment (an area split across islands, for
 example) is returned as a single `GeometryCollection` instead of an
 arbitrarily chosen fragment. Geometry is always served in WGS84. Sources in
-British National Grid (EPSG:27700), 25 of the current releases, are
+British National Grid (EPSG:27700), 26 of the current releases, are
 reprojected one requested area at a time through EPSG:1314, OSGB36 to WGS 84
 (6): the seven-parameter Helmert transformation the website build already
 uses, which EPSG states as accurate to 2 m within Great Britain. Checked
 against the ONS's own WGS84 release of the same boundaries, reprojected Great
 Britain authorities land a median 1 to 2 m away, and no authority's median
-exceeds 5 m, well inside these files' 20 m generalisation.
+exceeds 5 m, well inside these files' 20 m generalisation. Northern
+Ireland's 2011 super output areas are published on the Irish Grid (EPSG:29902)
+and reprojected through EPSG:1641, TM65 to WGS 84 (2), which EPSG states as
+accurate to 1 m; the API's output matches PROJ's to nine decimal places of a
+degree, and every area lands within 7 m of the website's independently
+produced map.
 
 Northern Ireland is the exception. In the ONS's UK-wide British National Grid
 files it sits a linear transform away from its true grid position, about 66 m

@@ -100,7 +100,7 @@ test("marks a release not-available when no raw source exists", () => {
 			{
 				id: "ward/2025",
 				status: "not-available",
-				reason: "No declared raw GeoJSON source is available.",
+				reason: "No declared raw GeoJSON or Shapefile source is available.",
 			},
 		]);
 	} finally {

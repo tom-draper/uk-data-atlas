@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:6b9878d6096a0a8d95444f9c50891d16f52349c2f743e53a7c2696a9bfbc59f5",
+	"contentHash": "sha256:8a9df2fa7a6b8671d653e1864deb6c66528b04c8773c207b01d52d29ac4112c4",
 	"releases": [
 		{
 			"id": "combinedAuthority/2025-12-en-bgc",
@@ -150,8 +150,11 @@
 		},
 		{
 			"id": "dataZone/2011-12-sc-bfc",
-			"status": "not-available",
-			"reason": "No declared raw GeoJSON source is available."
+			"status": "available",
+			"input": "boundaries/data-zone/2011-12-sc-bfc/shapefile/SG_DataZone_Bdry_2011.shp",
+			"inputHash": "sha256:892c5462d07c76cf3975b908932d0edf8217b4d1eedc8a4e0ffaf974b014155c",
+			"crs": "EPSG:27700",
+			"codeProperty": "DataZone"
 		},
 		{
 			"id": "fireAndRescueAuthority/2021-05-ew-bgc",
@@ -475,8 +478,11 @@
 		},
 		{
 			"id": "superOutputArea/2011-ni",
-			"status": "not-available",
-			"reason": "No declared raw GeoJSON source is available."
+			"status": "available",
+			"input": "boundaries/super-output-area/2011-ni/shapefile/SOA2011.shp",
+			"inputHash": "sha256:f3f02ca5934208c51e0ad3d5cf1be5353bd652314c42e7d4e56a51b899d08c01",
+			"crs": "EPSG:29902",
+			"codeProperty": "SOA_CODE"
 		},
 		{
 			"id": "travelToWorkArea/2011-12-uk-gcb",

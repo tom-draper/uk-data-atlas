@@ -40,6 +40,40 @@ test("matches PROJ for British National Grid points across Great Britain", () =>
 	}
 });
 
+// Reference values from PROJ's cs2cs for EPSG:29902 to EPSG:4326, which runs
+// EPSG:1641 (TM65 to WGS 84 (2)): Belfast, near Sligo, and north of Ballycastle.
+const IRISH_GRID_REFERENCES: Array<[[number, number], [number, number]]> = [
+	[
+		[333500, 373500],
+		[-5.935443406, 54.592112534],
+	],
+	[
+		[189000, 310000],
+		[-8.168639858, 54.039154941],
+	],
+	[
+		[360000, 450000],
+		[-5.483339555, 55.270946743],
+	],
+];
+
+test("matches PROJ for Irish Grid points across Northern Ireland", () => {
+	for (const [grid, [lon, lat]] of IRISH_GRID_REFERENCES) {
+		const { coordinates } = toWgs84Geometry(
+			{ type: "Point", coordinates: grid },
+			"EPSG:29902",
+		) as { coordinates: [number, number] };
+		assert.ok(Math.abs(coordinates[0] - lon) < 1e-7, `${grid} longitude`);
+		assert.ok(Math.abs(coordinates[1] - lat) < 1e-7, `${grid} latitude`);
+	}
+	assert.deepEqual(geometryProvenance("EPSG:29902").transformation, {
+		name: "TM65 to WGS 84 (2)",
+		epsg: "EPSG:1641",
+		accuracyM: 1,
+		areaOfUse: "Ireland and Northern Ireland onshore.",
+	});
+});
+
 test("reprojects every coordinate of nested and collected geometries", () => {
 	const collection = toWgs84Geometry(
 		{

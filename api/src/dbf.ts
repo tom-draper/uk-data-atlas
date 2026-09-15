@@ -25,7 +25,13 @@ const readFields = (buffer: Buffer, headerLength: number): DbfField[] => {
 	return fields;
 };
 
-export const readDbfRecords = (path: string): Array<Record<string, string>> => {
+/**
+ * Every record in file order, with a deleted record as `undefined`, so the
+ * rows stay aligned with a Shapefile's shapes.
+ */
+export const readDbfRows = (
+	path: string,
+): Array<Record<string, string> | undefined> => {
 	const buffer = readFileSync(path);
 	if (buffer.length < 33) throw new Error(`${path}: file is too short`);
 	const recordCount = buffer.readUInt32LE(4);
@@ -59,7 +65,10 @@ export const readDbfRecords = (path: string): Array<Record<string, string>> => {
 			}),
 		);
 		return record;
-	}).filter(
+	});
+};
+
+export const readDbfRecords = (path: string): Array<Record<string, string>> =>
+	readDbfRows(path).filter(
 		(record): record is Record<string, string> => record !== undefined,
 	);
-};

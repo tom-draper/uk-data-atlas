@@ -38,6 +38,16 @@ const britishNationalGrid = proj4(
 	"+proj=longlat +datum=WGS84 +no_defs",
 );
 
+// Irish Grid on TM65, the grid the Northern Ireland super output areas are
+// published on, to WGS 84 through EPSG's seven-parameter transformation.
+const irishGrid = proj4(
+	"+proj=tmerc +lat_0=53.5 +lon_0=-8 +k=1.000035 +x_0=200000 +y_0=250000 " +
+		"+a=6377340.189 +rf=299.3249646 " +
+		"+towgs84=482.5,-130.6,564.6,-1.042,-0.214,-0.631,8.15 " +
+		"+units=m +no_defs",
+	"+proj=longlat +datum=WGS84 +no_defs",
+);
+
 // Seven decimal places of a degree is about a centimetre here, far finer
 // than the transformation's accuracy, and keeps responses free of float noise.
 const round = (value: number) => Math.round(value * 1e7) / 1e7;
@@ -52,6 +62,18 @@ const REPROJECTIONS: Record<string, Reprojection> = {
 		},
 		toWgs84: (position) => {
 			const [lon, lat] = britishNationalGrid.forward(position);
+			return [round(lon), round(lat)];
+		},
+	},
+	"EPSG:29902": {
+		transformation: {
+			name: "TM65 to WGS 84 (2)",
+			epsg: "EPSG:1641",
+			accuracyM: 1,
+			areaOfUse: "Ireland and Northern Ireland onshore.",
+		},
+		toWgs84: (position) => {
+			const [lon, lat] = irishGrid.forward(position);
 			return [round(lon), round(lat)];
 		},
 	},

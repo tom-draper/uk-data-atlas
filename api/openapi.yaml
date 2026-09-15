@@ -2666,12 +2666,12 @@ paths:
                   summary:
                     resourceCount: 537
                     checkCount: 1751
-                    passedCount: 1652
-                    waivedCount: 99
+                    passedCount: 1671
+                    waivedCount: 80
                     coverage:
                       boundaryReleases: 71
                       areaIdentities: 71
-                      servableGeometry: 69
+                      servableGeometry: 71
                       withRelationships: 23
                       crosswalks: 15
                       weightedCrosswalks: 2
@@ -2714,7 +2714,7 @@ paths:
                 data:
                   id: boundary-releases/dataZone/2011-12-sc-bfc
                   kind: boundary-release
-                  status: waived
+                  status: passed
                   checks:
                     - id: licence-recorded
                       status: passed
@@ -2722,10 +2722,11 @@ paths:
                       status: passed
                       measured: { areaCount: 6976 }
                     - id: geometry-servable
-                      status: waived
-                      detail: No declared raw GeoJSON source is available.
-                      waiver:
-                        reason: Held only as Shapefile and MapInfo sources. Identities are read from the Shapefile attribute table, but no compiler reads Shapefile geometry yet.
+                      status: passed
+                      measured:
+                        crs: EPSG:27700
+                        transformation: OSGB36 to WGS 84 (6)
+                        transformationAccuracyM: 2
                     - id: candidates-reviewed
                       status: passed
                 meta:
