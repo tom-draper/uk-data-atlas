@@ -3001,6 +3001,118 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /lookups:
+    get:
+      operationId: listBulkLookups
+      summary: List whole lookup tables for download
+      description: >
+        Returns every bulk lookup: each boundary release's area identities
+        with their aliases, each crosswalk flattened to one row per source and
+        target (clean-containment crosswalks are the published hierarchy), and
+        named-location membership. Each lists its columns, row count, the
+        published artifact it is rendered from with that artifact's hash, and
+        the byte size and hash of every format, under the Atlas release that
+        pins the manifest.
+      responses:
+        "200":
+          description: The bulk-lookup manifest.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LookupManifestEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:dfa67bf7df94ff5b655985b008aec8f28e235746fe0a15f4ca4853d172621eff"
+                data:
+                  schemaVersion: 1
+                  contentHash: "sha256:67f2e1de51b89868fc95bac3156b1f1818b364b4db0977e737be475c9f7b69a3"
+                  lookups:
+                    - id: areas-ward-2024-12-uk-bgc
+                      kind: area-identities
+                      title: "Area identities, ward 2024-12-uk-bgc"
+                      source:
+                        artifact: areas/ward/2024-12-uk-bgc.json
+                        contentHash: "sha256:f82398b92702e504d468d6d9e51fe3bc6ccbb3acea467316e783c427cfb0d360"
+                      columns:
+                          - name: geography
+                            type: "string"
+                            required: true
+                            description: "The geography the release publishes."
+                          - name: boundaryRelease
+                            type: "string"
+                            required: true
+                            description: "The boundary release."
+                          - name: code
+                            type: "string"
+                            required: true
+                            description: "The official area code."
+                          - name: name
+                            type: "string"
+                            required: true
+                            description: "The area's name in the release."
+                          - name: aliases
+                            type: "string[]"
+                            required: false
+                            description: "Other names the release gives the area, such as a Welsh name."
+                      rowCount: 8396
+                      formats:
+                          csv:
+                            contentType: "text/csv; charset=utf-8"
+                            bytes: 392763
+                            contentHash: "sha256:a1b1055efab8ac2b8c04e89a55a4aad87bba6baeca46e27a7b2f658ee4952ea0"
+                            href: "/v1/lookups/areas-ward-2024-12-uk-bgc?format=csv"
+                          ndjson:
+                            contentType: "application/x-ndjson; charset=utf-8"
+                            bytes: 947293
+                            contentHash: "sha256:162c1889dfbccbc8a75db81e6c05c5a5972333e6bf3342a015fe3dd5400162e5"
+                            href: "/v1/lookups/areas-ward-2024-12-uk-bgc?format=ndjson"
+                  note: Each lookup is rendered from the published artifact its source names, and its bytes match the hash listed for the format.
+                meta:
+                  nextCursor: null
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /lookups/{lookup-id}:
+    get:
+      operationId: downloadBulkLookup
+      summary: Download one whole lookup table as CSV or NDJSON
+      description: >
+        Renders the lookup from its source artifact and returns it only if
+        the bytes match the hash its manifest lists for the format. In CSV a
+        list column is joined with " | " and a cell is quoted only when it
+        holds a comma, quote or line break; in NDJSON each line is one row
+        with every column, lists as arrays and empty values as null. This
+        response is intentionally not wrapped in the usual API envelope.
+      parameters:
+        - name: lookup-id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: format
+          in: query
+          required: false
+          schema:
+            enum: [csv, ndjson]
+            default: csv
+      responses:
+        "200":
+          description: The whole lookup table.
+          headers:
+            Content-Disposition:
+              schema: { type: string }
+              description: Suggested filename, the lookup id with the format's extension.
+          content:
+            text/csv:
+              schema: { type: string }
+            application/x-ndjson:
+              schema: { type: string }
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /atlas-release:
     get:
       operationId: getAtlasRelease
@@ -5106,6 +5218,84 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/ExportManifest"
+
+    LookupFormat:
+      type: object
+      required: [contentType, bytes, contentHash, href]
+      properties:
+        contentType:
+          type: string
+        bytes:
+          type: integer
+        contentHash:
+          type: string
+          description: SHA-256 of the rendered bytes, which a download is checked against.
+        href:
+          type: string
+
+    LookupManifest:
+      type: object
+      required: [schemaVersion, contentHash, lookups]
+      properties:
+        schemaVersion:
+          const: 1
+        contentHash:
+          type: string
+        lookups:
+          type: array
+          items:
+            type: object
+            required: [id, kind, title, source, columns, rowCount, formats]
+            properties:
+              id:
+                type: string
+              kind:
+                enum: [area-identities, crosswalk, named-location-members]
+              title:
+                type: string
+              source:
+                type: object
+                required: [artifact, contentHash]
+                properties:
+                  artifact:
+                    type: string
+                  contentHash:
+                    type: string
+              columns:
+                type: array
+                items:
+                  type: object
+                  required: [name, type, required, description]
+                  properties:
+                    name:
+                      type: string
+                    type:
+                      enum: [string, number, "string[]"]
+                    required:
+                      type: boolean
+                      description: True when every row has a value, which the build checks.
+                    description:
+                      type: string
+              rowCount:
+                type: integer
+              formats:
+                type: object
+                required: [csv, ndjson]
+                properties:
+                  csv:
+                    $ref: "#/components/schemas/LookupFormat"
+                  ndjson:
+                    $ref: "#/components/schemas/LookupFormat"
+        note:
+          type: string
+
+    LookupManifestEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/LookupManifest"
 
     ValidationReportEnvelope:
       allOf:

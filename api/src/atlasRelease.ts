@@ -30,6 +30,7 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "data-catalog", path: "data-catalog.json" },
 	{ id: "measure-compatibility", path: "measure-compatibility.json" },
 	{ id: "export-manifest", path: "export-manifest.json" },
+	{ id: "lookup-manifest", path: "lookup-manifest.json" },
 	{ id: "population-observations", path: "population-observations.json" },
 	{
 		id: "population-local-authority-observations",

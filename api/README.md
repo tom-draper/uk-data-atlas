@@ -298,9 +298,11 @@ only **available** when its endpoint, contract and provenance are published.
       guaranteed-inside label point, and the source file with its SHA-256 are
       already served.
 - [ ] Deliver vector tiles and cached exports for map-scale workloads.
-- [ ] Publish bulk, versioned CSV/NDJSON/Parquet downloads for area identities,
-      aliases, hierarchy relations, named-location membership and crosswalks.
-      Users should not need thousands of API calls to reproduce a lookup.
+- [x] Publish bulk, versioned CSV and NDJSON downloads for area identities,
+      aliases, hierarchy relations, named-location membership and crosswalks
+      through `GET /v1/lookups`, so no one needs thousands of API calls to
+      reproduce a lookup. Hierarchy is the clean-containment crosswalks, one
+      row per child and parent. Parquet is not offered yet.
 - [ ] Support bounded custom-polygon overlap queries (for example “which wards
       overlap this drawn area?”), with area shares and method/provenance. Keep
       this asynchronous and rate-limited; it is not a general GIS service.
@@ -2201,6 +2203,8 @@ pnpm start
 - `GET /v1/validation/exports/{export-id}`
 - `GET /v1/exports`
 - `GET /v1/exports/{export-id}`
+- `GET /v1/lookups`
+- `GET /v1/lookups/{lookup-id}`
 - `GET /v1/atlas-release`
 - `GET /v1/atlas-releases`
 - `GET /v1/atlas-releases/{release-id}`
@@ -2357,8 +2361,30 @@ An export's `schema.version` is the artifact's own `schemaVersion`. Adding an
 optional field to records, or a new field to a manifest entry, does not change
 it; removing or renaming a field, changing its type or meaning, or changing
 the layout increments it, and the old version stays readable from the Atlas
-release that published it. CSV, NDJSON and Parquet bulk products are still
-future work.
+release that published it. CSV, NDJSON and Parquet downloads of observations
+are still future work.
+
+`GET /v1/lookups` lists the whole reference tables a user would otherwise
+rebuild call by call: every boundary release's area identities with their
+aliases, every crosswalk flattened to one row per source and target, and the
+membership of every named location. `GET /v1/lookups/{lookup-id}` returns one
+as CSV, the default, or NDJSON with `?format=ndjson`. A list column, such as
+an area's aliases, is joined with " | " in CSV and is an array in NDJSON; a
+CSV cell is quoted only when it holds a comma, quote or line break, and a
+column a row has no value for is empty in CSV and null in NDJSON. Each row
+carries its geography and release, or its crosswalk and both sides, so a
+downloaded file can be read without the manifest.
+
+The files are not stored twice. `public/lookup-manifest.json` records, for
+each lookup, the published artifact it is read from and that artifact's hash,
+its columns, its row count, and the byte size and SHA-256 of each rendered
+format; the build fails if a column marked required is empty in any row. The
+server renders a download from the artifact it has loaded and serves it only
+if the bytes match the manifest's hash, so every download of a lookup in a
+given Atlas release is byte-identical. The Atlas release pins the lookup
+manifest by hash, so a change in how any lookup renders makes a new release.
+All 87 lookups, 108 MB across both
+formats, were checked this way against a running server.
 
 The build's final step writes `public/atlas-release.json`, an immutable
 manifest that references every other build-time artifact (the boundary

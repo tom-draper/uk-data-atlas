@@ -32,6 +32,15 @@ import type {
 } from "./namedLocations";
 import type { ValidationReport } from "./validationReport";
 import {
+	areaIdentityTable,
+	crosswalkTable,
+	type LookupFormat,
+	type LookupManifest,
+	lookupBodyHash,
+	namedLocationMembersTable,
+	renderLookup,
+} from "./lookupExports";
+import {
 	type DataCatalog,
 	findMeasureObservations,
 	isNumericObservation,
@@ -557,6 +566,7 @@ export type RouteContext = {
 	measureObservations?: AnyMeasureObservationArtifact[];
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
 	exportManifest?: ExportManifest;
+	lookupManifest?: LookupManifest;
 };
 
 /**
@@ -641,6 +651,7 @@ export const route = (
 		measureObservations,
 		measureCompatibilityInventory,
 		exportManifest,
+		lookupManifest,
 	} = context;
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
@@ -738,6 +749,8 @@ export const route = (
 					"/v1/validation/exports/{export-id}",
 					"/v1/exports",
 					"/v1/exports/{export-id}",
+					"/v1/lookups",
+					"/v1/lookups/{lookup-id}",
 					"/v1/atlas-release",
 					"/v1/atlas-releases",
 					"/v1/atlas-releases/{release-id}",
@@ -5455,6 +5468,114 @@ export const route = (
 				body: `${JSON.stringify(artifact)}\n`,
 				headers: {
 					"content-disposition": `attachment; filename=\"${listedExport.artifact}.json\"`,
+				},
+			},
+		};
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "lookups"
+	) {
+		return lookupManifest
+			? {
+					status: 200,
+					body: envelope(releaseId, {
+						...lookupManifest,
+						note: "Each lookup is rendered from the published artifact its source names, and its bytes match the hash listed for the format.",
+					}),
+				}
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the lookup manifest before listing bulk lookups.",
+				);
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "lookups"
+	) {
+		if (!lookupManifest) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the lookup manifest before downloading bulk lookups.",
+			);
+		}
+		const entry = lookupManifest.lookups.find(
+			(candidate) => candidate.id === segments[2],
+		);
+		if (!entry) {
+			return problem(
+				404,
+				"Not Found",
+				"No bulk lookup matches that identity.",
+			);
+		}
+		const format = parsedUrl.searchParams.get("format") ?? "csv";
+		if (format !== "csv" && format !== "ndjson") {
+			return problem(
+				400,
+				"Invalid Query",
+				"format must be csv or ndjson.",
+			);
+		}
+		const table = (() => {
+			if (entry.kind === "area-identities") {
+				const release = areaInventory?.releases.find(
+					(candidate) =>
+						candidate.status === "available" &&
+						candidate.artifact === entry.source.artifact,
+				);
+				const areas =
+					release &&
+					areaLookup?.get(`${release.geography}/${release.id}`);
+				return release && areas && release.status === "available"
+					? areaIdentityTable({
+							geography: release.geography,
+							boundaryRelease: release.id,
+							artifact: release.artifact,
+							contentHash: release.contentHash,
+							areas: areas.values(),
+						})
+					: undefined;
+			}
+			if (entry.kind === "crosswalk") {
+				const summary = crosswalkInventory?.crosswalks.find(
+					(candidate) => candidate.artifact === entry.source.artifact,
+				);
+				const crosswalk = summary && crosswalkLookup?.get(summary.id);
+				return crosswalk && summary
+					? crosswalkTable(crosswalk, summary.artifact)
+					: undefined;
+			}
+			return namedLocationInventory
+				? namedLocationMembersTable(
+						namedLocationInventory,
+						entry.source.artifact,
+					)
+				: undefined;
+		})();
+		const rendered = table && renderLookup(table, format as LookupFormat);
+		const listed = entry.formats[format as LookupFormat];
+		if (!rendered || lookupBodyHash(rendered.body) !== listed.contentHash) {
+			return problem(
+				503,
+				"Lookup Unavailable",
+				"The lookup's source artifact is unavailable or no longer renders the bytes its manifest lists.",
+			);
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, entry),
+			representation: {
+				contentType: rendered.contentType,
+				body: rendered.body,
+				headers: {
+					"content-disposition": `attachment; filename=\"${entry.id}.${format === "csv" ? "csv" : "ndjson"}\"`,
 				},
 			},
 		};
