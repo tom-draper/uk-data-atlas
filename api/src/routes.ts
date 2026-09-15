@@ -44,6 +44,7 @@ export const route = (
 			releaseId,
 			parsedUrl,
 			segments: segments as string[],
+			dispatch: (nextUrl) => route("GET", nextUrl, context),
 		}) ?? problem(404, "Not Found", "No API resource matches that path.")
 	);
 };

@@ -38,6 +38,7 @@ const request = (
 		releaseId: "current-release",
 		parsedUrl,
 		segments: parsedUrl.pathname.split("/").filter(Boolean),
+		dispatch: (url) => routeRequest("GET", url, context(overrides)),
 	};
 };
 
