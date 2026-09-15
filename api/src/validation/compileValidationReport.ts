@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import type { AreaInventory, AreaReleaseArtifact } from "../areaInventory";
 import type { BoundaryRegistry } from "../boundaryRegistry";
@@ -25,6 +24,7 @@ import {
 	type ValidationResource,
 	type ValidationReport,
 } from "../validationReport";
+import { type Finding, sha256, listed, check } from "./findings";
 
 export type ValidationWaiver = {
 	check: ValidationCheckId;
@@ -79,36 +79,9 @@ export type ValidationInputs = {
 	waiversHash: string;
 };
 
-export type Finding = {
-	id: ValidationCheckId;
-	passed: boolean;
-	detail?: string;
-	measured?: Record<string, number | string | null>;
-};
-
 // Weights are published to six decimal places, so a record of n targets can
 // miss 1 by up to n * 5e-7 through rounding alone.
 export const WEIGHT_SUM_TOLERANCE = 1e-5;
-
-export const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
-
-export const listed = (values: string[], limit = 10) =>
-	values.length > limit
-		? `${values.slice(0, limit).join(", ")} and ${values.length - limit} more`
-		: values.join(", ");
-
-export const check = (
-	id: ValidationCheckId,
-	passed: boolean,
-	detail?: string,
-	measured?: Finding["measured"],
-): Finding => ({
-	id,
-	passed,
-	...(passed || detail === undefined ? {} : { detail }),
-	...(measured ? { measured } : {}),
-});
 
 export const readValidationWaivers = (path: string) => {
 	const content = readFileSync(path, "utf8");
