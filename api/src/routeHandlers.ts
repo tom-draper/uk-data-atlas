@@ -27,6 +27,7 @@ import { handleDataRoutes } from "./dataRoutes";
 import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 import { handleAreaIntersectsRoutes } from "./areaIntersectsRoutes";
 import { handleTranslationRoutes } from "./translationRoutes";
+import { handleAreaOverlapRoutes } from "./areaOverlapRoutes";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -42,6 +43,15 @@ type RouteFamily = {
  * the order below and makes a new route's home explicit.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "area-overlap",
+		owns: (segments) =>
+			segments.length === 6 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments[5] === "overlap",
+		handle: handleAreaOverlapRoutes,
+	},
 	{
 		name: "translations",
 		owns: (segments) =>
