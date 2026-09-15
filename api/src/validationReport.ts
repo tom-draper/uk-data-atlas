@@ -949,6 +949,14 @@ const measureSourceFindings = (
 		entry.contentHash === contentHash
 			? undefined
 			: "its hash differs from the export manifest",
+		entry.recordCount === recordCount &&
+		periods.every(
+			(period) =>
+				entry.recordCountByPeriod[period.period] ===
+				period.records.length,
+		)
+			? undefined
+			: "its record counts differ from the export manifest",
 		artifact.measureId === measure.id &&
 		sameGeography(artifact.sourceGeography, source.sourceGeography)
 			? undefined

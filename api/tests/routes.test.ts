@@ -3231,6 +3231,8 @@ test("lists and downloads release-pinned whole observation artifacts", () => {
 		schemaVersion: 1 as const,
 		contentHash: "sha256:export-manifest",
 		dataCatalogHash: dataCatalog.contentHash,
+		fields: {},
+		datasets: {},
 		exports: [
 			{
 				id: "small-area-fixture",
@@ -3243,6 +3245,18 @@ test("lists and downloads release-pinned whole observation artifacts", () => {
 				contentHash: "sha256:small-area-observations",
 				bytes: 123,
 				href: "/v1/exports/small-area-fixture",
+				recordCount: 2,
+				recordCountByPeriod: { [source.periods[0]]: 2 },
+				schema: {
+					version: 1,
+					layout: "periods" as const,
+					recordType: "numeric" as const,
+					fields: [],
+				},
+				provenance: {
+					measure: `/v1/measures/${measure.id}`,
+					datasets: [],
+				},
 			},
 		],
 	};
