@@ -42,7 +42,8 @@ export interface ElectionTableSourceConfig extends ElectionSourceBase {
 		name: string;
 		ladName: string;
 	};
-	// Remap ward codes in source data to match the boundary file for that year
+	// Corrections from a code the source gives to the code of the ward the
+	// election was actually held in. Each corrected record keeps sourceWardCode.
 	wardCodeMap?: Record<string, string>;
 }
 
@@ -177,8 +178,13 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 				votes: "Votes",
 			},
 		},
-		// The HoC dataset uses post-2022 ward codes for some areas that had boundary
-		// reviews. Remap to their Dec 2021 boundary equivalents so they match the map.
+		// The workbook gives these wards the codes first issued in December 2022
+		// for the wards that replaced them after boundary reviews in these five
+		// councils, which took effect at the May 2022 elections. The 2021 votes
+		// were cast in the earlier wards, so they are recorded under the codes in
+		// force at the election, and every other 2021 ward in these councils
+		// already carries one. Each record keeps the workbook's code as
+		// sourceWardCode.
 		wardCodeMap: {
 			E05013874: "E05002328", // Park (Reading)
 			E05013955: "E05004793", // Harpenden West

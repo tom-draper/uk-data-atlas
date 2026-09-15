@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:fdc01fff0c7dd68e9fa6791f820b63a62b03c7cbb3a0dea7d09d749eadd73cd4",
+	"contentHash": "sha256:708f04397ddcc766ca53f31c43fa806b3e77d9698502932c7dcc19816e200ec4",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -857,8 +857,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 6900889,
-				"sha256": "2d5d5cf4c39a12320e0a2c4432c1f771f94c92b406f37567455b68097ed8b5af"
+				"bytes": 6901208,
+				"sha256": "1d0a86e92a70218193470f497bfed8a84dbd098efd6b3c8aaf6f531503ade818"
 			}
 		},
 		{
@@ -3942,7 +3942,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4067,7 +4067,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4266,7 +4266,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4465,7 +4465,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4664,7 +4664,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -4863,7 +4863,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -5062,7 +5062,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -5261,7 +5261,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -5460,7 +5460,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -5659,7 +5659,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{
@@ -5858,7 +5858,7 @@
 							"GB-ENG"
 						],
 						"recordCount": 2497,
-						"note": "Source-exact local election records for the listed polling years. Record coverage varies with the areas that held an election. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
+						"note": "Local election records for the listed polling years. Record coverage varies with the areas that held an election. The source gives 11 areas a code other than that of the area the election was held in, and they are served under the code in force at the election: E05013874 as E05002328, E05013955 as E05004793, E05013963 as E05004802, E05014120 as E05000916, E05014136 as E05000930, E05014147 as E05004541, E05014148 as E05004542, E05014152 as E05000670, E05014156 as E05000674, E05014159 as E05000677, E05014163 as E05000681. County-electoral-division rows are excluded from this ward measure pending historical boundary releases."
 					}
 				},
 				{

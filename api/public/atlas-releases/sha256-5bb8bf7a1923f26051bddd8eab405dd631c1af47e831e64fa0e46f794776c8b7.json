@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:ddfd6b3f2add47ebaa421c09f283a295d98ac723fe7d20505e469dcbb3f79074",
+	"releaseId": "sha256:5bb8bf7a1923f26051bddd8eab405dd631c1af47e831e64fa0e46f794776c8b7",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,17 +25,17 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:4409281f400b22b7b1a238d2028435933dd8a09c6db3997947031dd0478a653f"
+			"contentHash": "sha256:8013ee6f28a0aa7b3aac61f616ec255d6d25007780b0ca5ed32a5ece1f1ea0b3"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:8467a774ae7078d873a25bdd17921ceee2890fda9545e0b528c47333a1e31073"
+			"contentHash": "sha256:21dafceb93e47781ea4b0d2d90bbc6da362bf30f4fb7efc4c8fe5cff74f44eae"
 		},
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:1a44c6b129e14ff117aa1acd42860c057286d9e824fc4416281449f4cd90ec58"
+			"contentHash": "sha256:2ec6fe99b310d2435f404e4d151af390374db1c6aa3f9c5a7df2c6017dabe0df"
 		},
 		{
 			"id": "population-observations",
@@ -70,7 +70,7 @@
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:3b3f7a517eee41089c65c1c567fa2074e0d13344b0847dbaf44df5275cb72746"
+			"contentHash": "sha256:51777443b187fdf43680609ed737eb81cd99794ea737a4ba826e32a0755c7848"
 		},
 		{
 			"id": "source-inventory",

@@ -265,9 +265,13 @@ export const parseLocalElectionTable = (
 			);
 		}
 		const { partyVotes, totalVotes, winner } = effectiveVotes(candidates);
+		const sourceWardCode = fields.code ? cell(row, fields.code) : "";
 		results[wardCode] = winner;
 		data[wardCode] = {
 			wardCode,
+			...(sourceWardCode && sourceWardCode !== wardCode
+				? { sourceWardCode }
+				: {}),
 			wardName,
 			ladName,
 			ladCode: cell(row, fields.ladCode) || "Unknown",
