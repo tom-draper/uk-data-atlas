@@ -18,7 +18,6 @@ import {
 	type AreaRelationshipIndex,
 } from "./areaRelationships";
 import type { AtlasRelease } from "./atlasRelease";
-import { compareAtlasReleases } from "./atlasReleaseComparison";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	CrosswalkArtifact,
@@ -30,7 +29,6 @@ import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
 } from "./namedLocations";
-import type { ProblemCode } from "./problemCodes";
 import type { ValidationReport } from "./validationReport";
 import {
 	areaIdentityTable,
@@ -105,53 +103,16 @@ import {
 	type CallerSelectedGeometry,
 	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
+import { handleRoute } from "./routeHandlers";
+import {
+	envelope,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
+
+export { type ApiResponse } from "./routeResponse";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
-
-type Envelope<T> = {
-	apiVersion: "v1";
-	atlasRelease: string;
-	data: T;
-	meta: { nextCursor: string | null };
-};
-
-export type ApiResponse = {
-	status: number;
-	body: Envelope<unknown> | Problem;
-	representation?: {
-		contentType: string;
-		body: string;
-		headers?: Record<string, string>;
-	};
-};
-
-type Problem = {
-	type: string;
-	title: string;
-	status: number;
-	detail: string;
-	/** Extension member: the answers an ambiguous place name could mean. */
-	choices?: unknown[];
-	/** Extension member: the places a name matched, and why none was served. */
-	candidates?: unknown[];
-	/** Extension member: a stable, machine-readable reason for the problem. */
-	code?: ProblemCode;
-	/** Extension member: which kind of absence left an area or answer unresolved. */
-	absence?: string;
-	/** Extension member: how many source areas a refusal concerns. */
-	areaCount?: number;
-	/** Extension member: the first source areas a refusal concerns. */
-	areaSample?: string[];
-	/** Extension member: the releases that do hold an absent area code. */
-	presentIn?: unknown[];
-	/** Extension member: the releases published for a geography. */
-	availableReleases?: unknown[];
-	/** Extension member: the earliest release, when a date precedes it. */
-	earliest?: unknown;
-	/** Extension member: releases dated to a year only, never chosen by date. */
-	undated?: string[];
-	links?: Record<string, string>;
-};
 
 /**
  * Travels with every measurement, so a figure taken from one response can be
@@ -215,35 +176,6 @@ const MEMBER_GEOGRAPHY = "localAuthority";
 
 const DEFAULT_INTERSECTS_LIMIT = 200;
 const MAX_INTERSECTS_LIMIT = 1000;
-
-const envelope = <T>(
-	atlasRelease: string,
-	data: T,
-	nextCursor: string | null = null,
-): Envelope<T> => ({
-	apiVersion: "v1",
-	atlasRelease,
-	data,
-	meta: { nextCursor },
-});
-
-const problem = (
-	status: number,
-	title: string,
-	detail: string,
-	extensions: Omit<Problem, "type" | "title" | "status" | "detail"> = {},
-): ApiResponse => ({
-	status,
-	body: {
-		type: `https://api.ukdataatlas.com/problems/${title
-			.toLowerCase()
-			.replaceAll(" ", "-")}`,
-		title,
-		status,
-		detail,
-		...extensions,
-	},
-});
 
 const decodePathSegment = (segment: string) => {
 	try {
@@ -570,6 +502,13 @@ export type RouteContext = {
 	lookupManifest?: LookupManifest;
 };
 
+export type RouteRequest = {
+	context: RouteContext;
+	releaseId: string;
+	parsedUrl: URL;
+	segments: string[];
+};
+
 /**
  * Route a request against named, independently-built catalogues. Keeping the
  * dependencies in one object prevents a newly added artifact from silently
@@ -638,7 +577,6 @@ export const route = (
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,
-		atlasReleaseHistory,
 		areaSearchIndex,
 		areaRelationshipIndex,
 		areaGeometryCache,
@@ -690,6 +628,13 @@ export const route = (
 			"The request path contains invalid encoding.",
 		);
 	}
+	const handledResponse = handleRoute({
+		context,
+		releaseId,
+		parsedUrl,
+		segments: segments as string[],
+	});
+	if (handledResponse) return handledResponse;
 
 	if (segments.length === 1 && segments[0] === "v1") {
 		return {
@@ -759,87 +704,6 @@ export const route = (
 				],
 			}),
 		};
-	}
-
-	if (
-		segments.length === 2 &&
-		segments[0] === "v1" &&
-		segments[1] === "atlas-releases"
-	) {
-		return atlasReleaseHistory
-			? {
-					status: 200,
-					body: envelope(
-						releaseId,
-						[...atlasReleaseHistory.values()]
-							.map((release) => ({
-								releaseId: release.releaseId,
-								href: `/v1/atlas-releases/${release.releaseId}`,
-								artifactCount: release.artifacts.length,
-								current: release.releaseId === releaseId,
-							}))
-							.sort((left, right) =>
-								left.releaseId.localeCompare(right.releaseId),
-							),
-					),
-				}
-			: problem(
-					503,
-					"Catalogue Unavailable",
-					"Build the atlas release history before listing releases.",
-				);
-	}
-
-	if (
-		segments.length === 3 &&
-		segments[0] === "v1" &&
-		segments[1] === "atlas-releases" &&
-		segments[2] === "compare"
-	) {
-		if (!atlasReleaseHistory) {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the atlas release history before comparing releases.",
-			);
-		}
-		const fromId = parsedUrl.searchParams.get("from");
-		const toId = parsedUrl.searchParams.get("to") ?? releaseId;
-		if (!fromId) {
-			return problem(
-				400,
-				"Invalid Query",
-				"from is required; to defaults to the current Atlas release.",
-			);
-		}
-		const from = atlasReleaseHistory.get(fromId);
-		const to = atlasReleaseHistory.get(toId);
-		if (!from || !to) {
-			return problem(
-				404,
-				"Not Found",
-				"One or both requested Atlas releases are not archived by this API instance.",
-			);
-		}
-		return {
-			status: 200,
-			body: envelope(releaseId, compareAtlasReleases(from, to)),
-		};
-	}
-
-	if (
-		segments.length === 3 &&
-		segments[0] === "v1" &&
-		segments[1] === "atlas-releases"
-	) {
-		const requested = atlasReleaseHistory?.get(segments[2] as string);
-		return requested
-			? { status: 200, body: envelope(releaseId, requested) }
-			: problem(
-					404,
-					"Not Found",
-					"No archived Atlas release matches that identity.",
-				);
 	}
 
 	if (
@@ -3751,60 +3615,6 @@ export const route = (
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
-		segments[1] === "attribution"
-	) {
-		if (!dataCatalog || !crosswalkInventory) {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the data catalogue and crosswalk inventory before generating attribution.",
-			);
-		}
-		const request = {
-			datasets: parsedUrl.searchParams.getAll("dataset"),
-			measures: parsedUrl.searchParams.getAll("measure"),
-			boundaryReleases: parsedUrl.searchParams.getAll("boundaryRelease"),
-			crosswalks: parsedUrl.searchParams.getAll("crosswalk"),
-		};
-		if (Object.values(request).every((values) => values.length === 0)) {
-			return problem(
-				400,
-				"Invalid Query",
-				"Name at least one resource to attribute, as dataset, measure, boundaryRelease or crosswalk. Each may be repeated.",
-			);
-		}
-		const attribution = attributionFor(
-			request,
-			dataCatalog,
-			registry,
-			crosswalkInventory,
-		);
-		if (attribution.status === "unknown") {
-			return problem(
-				404,
-				"Not Found",
-				`No published resource matches ${attribution.unknownResources.join(", ")}.`,
-			);
-		}
-		return {
-			status: 200,
-			body: envelope(releaseId, {
-				atlasRelease: { id: releaseId, href: "/v1/atlas-release" },
-				resources: attribution.resources,
-				licences: attribution.licences,
-				text: attributionText(
-					attribution.resources,
-					attribution.licences,
-					releaseId,
-				),
-				note: "Licence names are reproduced as the publisher states them and are not interpreted here. Where several apply, check each before reusing the combined work.",
-			}),
-		};
-	}
-
-	if (
-		segments.length === 2 &&
-		segments[0] === "v1" &&
 		segments[1] === "geographies"
 	) {
 		const releasesByGeography = new Map<
@@ -5368,26 +5178,6 @@ export const route = (
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
-		segments[1] === "relationship-candidates"
-	) {
-		return relationshipCandidateInventory
-			? {
-					status: 200,
-					body: envelope(
-						releaseId,
-						relationshipCandidateInventory.candidates,
-					),
-				}
-			: problem(
-					503,
-					"Catalogue Unavailable",
-					"Build the relationship candidate inventory before starting the API.",
-				);
-	}
-
-	if (
-		segments.length === 2 &&
-		segments[0] === "v1" &&
 		segments[1] === "exports"
 	) {
 		return exportManifest
@@ -5579,78 +5369,6 @@ export const route = (
 					"content-disposition": `attachment; filename=\"${entry.id}.${format === "csv" ? "csv" : "ndjson"}\"`,
 				},
 			},
-		};
-	}
-
-	if (
-		segments.length === 2 &&
-		segments[0] === "v1" &&
-		segments[1] === "atlas-release"
-	) {
-		return atlasRelease
-			? { status: 200, body: envelope(releaseId, atlasRelease) }
-			: problem(
-					503,
-					"Catalogue Unavailable",
-					"Build the atlas release manifest before starting the API.",
-				);
-	}
-
-	const isValidationResource =
-		segments[0] === "v1" &&
-		segments[1] === "validation" &&
-		((segments[2] === "boundary-releases" && segments.length === 5) ||
-			(segments.length === 4 &&
-				["crosswalks", "measures", "exports"].includes(
-					segments[2] ?? "",
-				)));
-	if (
-		(segments.length === 2 &&
-			segments[0] === "v1" &&
-			segments[1] === "validation") ||
-		isValidationResource
-	) {
-		if (!validationReport) {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the validation report before starting the API.",
-			);
-		}
-		if (isValidationResource) {
-			// Resource ids repeat the validated resource's own API path.
-			const id = segments.slice(2).join("/");
-			const resource = validationReport.resources.find(
-				(candidate) => candidate.id === id,
-			);
-			return resource
-				? { status: 200, body: envelope(releaseId, resource) }
-				: problem(
-						404,
-						"Not Found",
-						"No validated resource matches that identity.",
-					);
-		}
-		const status = parsedUrl.searchParams.get("status");
-		if (status !== null && status !== "passed" && status !== "waived") {
-			return problem(
-				400,
-				"Invalid Query",
-				"status must be passed or waived.",
-			);
-		}
-		const { resources, ...report } = validationReport;
-		return {
-			status: 200,
-			body: envelope(releaseId, {
-				...report,
-				resources:
-					status === null
-						? resources
-						: resources.filter(
-								(resource) => resource.status === status,
-							),
-			}),
 		};
 	}
 
