@@ -2,7 +2,8 @@ import type { BoundaryGeojson, CustomDataset } from "@lib/types";
 import type { ColorRange } from "@/lib/types/common";
 import type { MapOptions } from "@lib/types/mapOptions";
 import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
-import { getPointsInBounds } from "@/lib/helpers/locationPoints";
+import { gazetteer } from "@/lib/data/gazetteer/static";
+import { getPointsInLocation } from "@/lib/helpers/locationPoints";
 import { nullFallback } from "../mapManager/expressions";
 import { valueGeojson, type MapRenderContext } from "./context";
 
@@ -62,12 +63,16 @@ export function renderCustomPoints(
 	ctx: MapRenderContext,
 	dataset: CustomDataset,
 	mapOptions: MapOptions,
-	bounds: [number, number, number, number] | null = null,
+	location: string | null = null,
 	isDark = false,
 ): void {
 	const excludedValues = new Set(mapOptions.custom.excludedPointValues ?? []);
 	const selectedValue = mapOptions.custom.selectedPointValue;
-	const locationPoints = getPointsInBounds(dataset.points ?? [], bounds);
+	const locationPoints = getPointsInLocation(
+		dataset.points ?? [],
+		location,
+		gazetteer,
+	);
 	const points = locationPoints.filter(
 		(point) =>
 			!excludedValues.has(point.value) &&
