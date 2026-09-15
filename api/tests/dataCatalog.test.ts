@@ -201,6 +201,7 @@ const writeSources = (
 	const income = join(directory, "income.json");
 	const crime = join(directory, "crime.json");
 	const unemployment = join(directory, "unemployment.json");
+	const airQuality = join(directory, "air-quality.json");
 	writeFileSync(
 		manifest,
 		JSON.stringify({
@@ -220,6 +221,7 @@ const writeSources = (
 				dataset("income", 2, 1, 2025),
 				dataset("crime", 1, 1, 2026),
 				dataset("unemployment", 1, 1, 2024),
+				dataset("air-quality", 4, 1, 2024),
 				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
@@ -546,6 +548,32 @@ const writeSources = (
 		}),
 	);
 	writeFileSync(
+		airQuality,
+		JSON.stringify({
+			"2024": {
+				year: 2024,
+				boundaryYear: 2024,
+				boundaryType: "localAuthority",
+				data: Object.fromEntries(
+					["E06000001", "N09000001", "S12000001", "W06000001"].map(
+						(code, index) => [
+							code,
+							{
+								ladCode: code,
+								gridCells: 100 * (index + 1),
+								no2Mean: 10 + index,
+								pm10Mean: 9,
+								pm25Mean: 5,
+								pm25PopulationWeighted: 5.5,
+								pm25PopulationWeightedAnthropogenic: 5,
+							},
+						],
+					),
+				),
+			},
+		}),
+	);
+	writeFileSync(
 		jobs,
 		JSON.stringify({
 			"2019": jobsYear(2019, false),
@@ -792,6 +820,7 @@ const writeSources = (
 		income,
 		crime,
 		unemployment,
+		airQuality,
 		jobs,
 		landArea,
 		housePrice,
@@ -813,7 +842,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 25);
+		assert.equal(result.catalog.datasets.length, 26);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -1665,6 +1694,47 @@ test("publishes modelled unemployment in the two code vintages the workbook hold
 				status: "observed",
 				confidenceInterval: { lower: 4.5, upper: 7.5 },
 			},
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes grid area means as derived, weighted by their grid cells", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const result = compileDataCatalog(writeSources(directory));
+		const measure = (id: string) =>
+			result.catalog.measures.find((candidate) => candidate.id === id);
+		const statuses = (id: string) => [
+			...new Set(
+				result.indicatorObservations
+					.find((artifact) => artifact.measureId === id)
+					?.periods[0]?.records.map((record) => record.status),
+			),
+		];
+
+		const no2 = measure("no2-background-mean");
+		assert.deepEqual(no2?.aggregation, {
+			kind: "intensive",
+			operation: "weighted-mean",
+			weight: {
+				description:
+					"The authority's count of 1x1 km grid cells, over which its mean is taken, so a weighted mean is the area mean over the combined authorities.",
+				datasetField: "gridCells",
+				measureId: "air-quality-grid-cells",
+			},
+			available: true,
+		});
+		assert.deepEqual(statuses("no2-background-mean"), ["derived"]);
+		assert.deepEqual(statuses("air-quality-grid-cells"), ["derived"]);
+		// Defra's own table is served as published, and not combined.
+		assert.deepEqual(statuses("pm25-population-weighted"), ["observed"]);
+		assert.equal(
+			measure("pm25-population-weighted")?.availability.aggregation,
+			false,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

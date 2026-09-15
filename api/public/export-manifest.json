@@ -1,8 +1,25 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f9491c080517d25696b73c84ce6fd8cc76fbf1d747a12835e6517ac0c4f66bf5",
-	"dataCatalogHash": "sha256:2ad8a9887042a9edccd30ac662ae4810c0c9246fd8a5277675d525326d0a78bd",
+	"contentHash": "sha256:e97db9d66337a4aae0527927a52779cc9e3e8cd4435cdded046aebf5534b25b3",
+	"dataCatalogHash": "sha256:8577de3d1aa2925a6e18e4099fcd5bb87101561f3a1bf0463ce121f814c07e3b",
 	"exports": [
+		{
+			"id": "air-quality-grid-cells-observations",
+			"measureId": "air-quality-grid-cells",
+			"datasetId": "air-quality",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "air-quality-grid-cells-observations",
+			"contentHash": "sha256:521134e2174cf4ca62658cd8588bf89df0b26e1a71c2e128190b9aa13a1fa454",
+			"bytes": 20420,
+			"href": "/v1/exports/air-quality-grid-cells-observations"
+		},
 		{
 			"id": "broadband-full-fibre-availability-observations",
 			"measureId": "broadband-full-fibre-availability",
@@ -4691,6 +4708,91 @@
 			"contentHash": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
 			"bytes": 49972,
 			"href": "/v1/exports/nimdm-rank-observations"
+		},
+		{
+			"id": "no2-background-mean-observations",
+			"measureId": "no2-background-mean",
+			"datasetId": "air-quality",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "no2-background-mean-observations",
+			"contentHash": "sha256:7adfb60a58219c850a970725ac92f11090dfb51355af51b2cdb4c930a9d208d9",
+			"bytes": 20869,
+			"href": "/v1/exports/no2-background-mean-observations"
+		},
+		{
+			"id": "pm10-background-mean-observations",
+			"measureId": "pm10-background-mean",
+			"datasetId": "air-quality",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "pm10-background-mean-observations",
+			"contentHash": "sha256:1eeb02a339bf2eab6a6f3086368203c964150e174c852d7b5051060b867949e0",
+			"bytes": 21019,
+			"href": "/v1/exports/pm10-background-mean-observations"
+		},
+		{
+			"id": "pm25-background-mean-observations",
+			"measureId": "pm25-background-mean",
+			"datasetId": "air-quality",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "pm25-background-mean-observations",
+			"contentHash": "sha256:05ea9f34f17bcab62ef68a5e55b2fefcde27fc77f5523f545d4201c89175487d",
+			"bytes": 20776,
+			"href": "/v1/exports/pm25-background-mean-observations"
+		},
+		{
+			"id": "pm25-population-weighted-anthropogenic-observations",
+			"measureId": "pm25-population-weighted-anthropogenic",
+			"datasetId": "air-quality",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "pm25-population-weighted-anthropogenic-observations",
+			"contentHash": "sha256:02055e23ef645620d8478b114768670375be0461c954a8809187ceb9a7f42aa4",
+			"bytes": 21888,
+			"href": "/v1/exports/pm25-population-weighted-anthropogenic-observations"
+		},
+		{
+			"id": "pm25-population-weighted-observations",
+			"measureId": "pm25-population-weighted",
+			"datasetId": "air-quality",
+			"periods": [
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "pm25-population-weighted-observations",
+			"contentHash": "sha256:f436387b14c8589c62eac2028ed0f11e72e6f33f07563cf8d8f10dbcbf7b10b9",
+			"bytes": 21871,
+			"href": "/v1/exports/pm25-population-weighted-observations"
 		},
 		{
 			"id": "population-constituency-observations",
