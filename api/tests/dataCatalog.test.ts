@@ -159,6 +159,7 @@ const writeSources = (
 		qualification: join(directory, "qualification.json"),
 		ethnicity: join(directory, "ethnicity.json"),
 	};
+	const broadband = join(directory, "broadband.json");
 	writeFileSync(
 		manifest,
 		JSON.stringify({
@@ -172,6 +173,7 @@ const writeSources = (
 				dataset("car-availability", 2, 1, 2025),
 				dataset("qualification", 2, 1, 2025),
 				dataset("ethnicity", 2, 1, 2024),
+				dataset("broadband", 4, 1, 2024),
 				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
@@ -296,6 +298,30 @@ const writeSources = (
 					E06000001: ethnicGroups(900),
 					W06000001: ethnicGroups(700),
 				},
+			},
+		}),
+	);
+	writeFileSync(
+		broadband,
+		JSON.stringify({
+			"2025": {
+				year: 2025,
+				boundaryYear: 2024,
+				boundaryType: "localAuthority",
+				data: Object.fromEntries(
+					["E06000001", "N09000001", "S12000001", "W06000001"].map(
+						(code, index) => [
+							code,
+							{
+								ladCode: code,
+								pctSuperfast: 90 + index,
+								pctUltrafast: 70,
+								pctFullFibre: index === 2 ? null : 60,
+								pctGigabit: 65,
+							},
+						],
+					),
+				),
 			},
 		}),
 	);
@@ -540,6 +566,7 @@ const writeSources = (
 		carAvailability: censusPaths["car-availability"],
 		qualification: censusPaths.qualification,
 		ethnicity: censusPaths.ethnicity,
+		broadband,
 		jobs,
 		landArea,
 		housePrice,
@@ -561,7 +588,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 19);
+		assert.equal(result.catalog.datasets.length, 20);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -1235,6 +1262,58 @@ test("publishes census qualifications and ethnic groups as counts on April 2023 
 				type: "localAuthority",
 				boundaryYear: 2023,
 			});
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes a single-period indicator and names the authorities it has no value for", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const result = compileDataCatalog(writeSources(directory));
+		const measure = (id: string) =>
+			result.catalog.measures.find((candidate) => candidate.id === id);
+		const records = (id: string) =>
+			result.indicatorObservations.find(
+				(artifact) => artifact.measureId === id,
+			)?.periods;
+
+		assert.deepEqual(records("broadband-superfast-availability"), [
+			{
+				period: "2025-07",
+				records: [
+					{ areaCode: "E06000001", value: 90, status: "observed" },
+					{ areaCode: "N09000001", value: 91, status: "observed" },
+					{ areaCode: "S12000001", value: 92, status: "observed" },
+					{ areaCode: "W06000001", value: 93, status: "observed" },
+				],
+			},
+		]);
+		assert.equal(
+			measure("broadband-superfast-availability")?.sources[0]?.coverage
+				.kind,
+			"source-reported",
+		);
+		// A share is weighted, never summed, and is not offered for aggregation.
+		assert.equal(
+			measure("broadband-gigabit-availability")?.aggregation.kind,
+			"intensive",
+		);
+		assert.equal(
+			measure("broadband-gigabit-availability")?.availability.aggregation,
+			false,
+		);
+
+		const fullFibre = measure("broadband-full-fibre-availability")
+			?.sources[0]?.coverage;
+		assert.equal(fullFibre?.kind, "partial");
+		assert.equal(fullFibre?.recordCount, 3);
+		assert.match(
+			fullFibre?.note ?? "",
+			/No value is published for 1 of the 4 authorities: S12000001\./,
+		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

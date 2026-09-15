@@ -1,8 +1,76 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:e3a4512d789782da3ad458515e0211df56771cb3a70677e8ef9e61745c1abbbc",
-	"dataCatalogHash": "sha256:87577e2fe8ae492a906a7652d36585f196ecb0d9303a46abd156b26d8cb3bbd0",
+	"contentHash": "sha256:d45b1c175059b4f71bacbb2b3802c757c7c5dff7e80bdce4d0f5a2bc28b9cb07",
+	"dataCatalogHash": "sha256:47f6177b9e054534445dc52d7b92c7a12cb6f8942efd9d781248ca01e621d644",
 	"exports": [
+		{
+			"id": "broadband-full-fibre-availability-observations",
+			"measureId": "broadband-full-fibre-availability",
+			"datasetId": "broadband",
+			"periods": [
+				"2025-07"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "broadband-full-fibre-availability-observations",
+			"contentHash": "sha256:adcae0059870335e3a59ebe6af47078bec1664a5d31d05bd75753f3a7439ab4d",
+			"bytes": 21141,
+			"href": "/v1/exports/broadband-full-fibre-availability-observations"
+		},
+		{
+			"id": "broadband-gigabit-availability-observations",
+			"measureId": "broadband-gigabit-availability",
+			"datasetId": "broadband",
+			"periods": [
+				"2025-07"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "broadband-gigabit-availability-observations",
+			"contentHash": "sha256:fe88864a232bf7ad1e3c4dff26ff0b53f0135423b0b8d447070f9b6fdd2d30ec",
+			"bytes": 21134,
+			"href": "/v1/exports/broadband-gigabit-availability-observations"
+		},
+		{
+			"id": "broadband-superfast-availability-observations",
+			"measureId": "broadband-superfast-availability",
+			"datasetId": "broadband",
+			"periods": [
+				"2025-07"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "broadband-superfast-availability-observations",
+			"contentHash": "sha256:243141fab55c79b0592d9c646a0a282cbac6f10adbf226b8ceb28132e9390fc5",
+			"bytes": 21146,
+			"href": "/v1/exports/broadband-superfast-availability-observations"
+		},
+		{
+			"id": "broadband-ultrafast-availability-observations",
+			"measureId": "broadband-ultrafast-availability",
+			"datasetId": "broadband",
+			"periods": [
+				"2025-07"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "broadband-ultrafast-availability-observations",
+			"contentHash": "sha256:df11d8eb2fe0d96b5075d1e21287c569ad9a4c32e611a627c0c32786f0759a99",
+			"bytes": 21138,
+			"href": "/v1/exports/broadband-ultrafast-availability-observations"
+		},
 		{
 			"id": "car-availability-none-observations",
 			"measureId": "car-availability-none",

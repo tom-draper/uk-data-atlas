@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:87577e2fe8ae492a906a7652d36585f196ecb0d9303a46abd156b26d8cb3bbd0",
+	"contentHash": "sha256:47f6177b9e054534445dc52d7b92c7a12cb6f8942efd9d781248ca01e621d644",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -7607,6 +7607,214 @@
 			"notes": [
 				"Premises with an outdoor 5G signal from all four mobile network operators, at the publisher's high-confidence threshold. 5G is reported outdoors only.",
 				"This is a share of premises, so it does not add over areas. Combining authorities needs a premises-weighted mean, and the weight is not served here; averaging the percentages flat would weigh the Isles of Scilly as heavily as Birmingham."
+			]
+		},
+		{
+			"id": "broadband-superfast-availability",
+			"label": "Superfast broadband availability",
+			"valueKind": "ratio",
+			"unit": "% of premises",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The authority's count of all premises, which the published availability percentages are computed against.",
+					"datasetField": "All Premises"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "broadband",
+					"periods": [
+						"2025-07"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Published source records cover every authority in all four UK nations."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/broadband-superfast-availability"
+			},
+			"notes": [
+				"Premises able to receive download speeds of at least 30 Mbit/s.",
+				"Availability, not take-up: a premises counts where the service can be ordered, whether or not anyone there has it.",
+				"This is a share of premises, so it does not add over areas. Combining authorities needs a mean weighted by premises, which the source publishes but this measure does not serve; averaging the percentages flat would weigh a small authority as heavily as a city.",
+				"Ofcom's July 2025 Connected Nations snapshot, on local authority codes shared by every release from May 2023 to December 2024."
+			]
+		},
+		{
+			"id": "broadband-ultrafast-availability",
+			"label": "Ultrafast broadband availability",
+			"valueKind": "ratio",
+			"unit": "% of premises",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The authority's count of all premises, which the published availability percentages are computed against.",
+					"datasetField": "All Premises"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "broadband",
+					"periods": [
+						"2025-07"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Published source records cover every authority in all four UK nations."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/broadband-ultrafast-availability"
+			},
+			"notes": [
+				"Premises able to receive download speeds of at least 100 Mbit/s.",
+				"Availability, not take-up: a premises counts where the service can be ordered, whether or not anyone there has it.",
+				"This is a share of premises, so it does not add over areas. Combining authorities needs a mean weighted by premises, which the source publishes but this measure does not serve; averaging the percentages flat would weigh a small authority as heavily as a city.",
+				"Ofcom's July 2025 Connected Nations snapshot, on local authority codes shared by every release from May 2023 to December 2024."
+			]
+		},
+		{
+			"id": "broadband-full-fibre-availability",
+			"label": "Full fibre availability",
+			"valueKind": "ratio",
+			"unit": "% of premises",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The authority's count of all premises, which the published availability percentages are computed against.",
+					"datasetField": "All Premises"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "broadband",
+					"periods": [
+						"2025-07"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Published source records cover every authority in all four UK nations."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/broadband-full-fibre-availability"
+			},
+			"notes": [
+				"Premises where a full fibre connection, fibre all the way to the premises, is available.",
+				"Availability, not take-up: a premises counts where the service can be ordered, whether or not anyone there has it.",
+				"This is a share of premises, so it does not add over areas. Combining authorities needs a mean weighted by premises, which the source publishes but this measure does not serve; averaging the percentages flat would weigh a small authority as heavily as a city.",
+				"Ofcom's July 2025 Connected Nations snapshot, on local authority codes shared by every release from May 2023 to December 2024."
+			]
+		},
+		{
+			"id": "broadband-gigabit-availability",
+			"label": "Gigabit broadband availability",
+			"valueKind": "ratio",
+			"unit": "% of premises",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The authority's count of all premises, which the published availability percentages are computed against.",
+					"datasetField": "All Premises"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "broadband",
+					"periods": [
+						"2025-07"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Published source records cover every authority in all four UK nations."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/broadband-gigabit-availability"
+			},
+			"notes": [
+				"Premises able to receive download speeds of at least 1 Gbit/s, by any technology.",
+				"Availability, not take-up: a premises counts where the service can be ordered, whether or not anyone there has it.",
+				"This is a share of premises, so it does not add over areas. Combining authorities needs a mean weighted by premises, which the source publishes but this measure does not serve; averaging the percentages flat would weigh a small authority as heavily as a city.",
+				"Ofcom's July 2025 Connected Nations snapshot, on local authority codes shared by every release from May 2023 to December 2024."
 			]
 		},
 		{
