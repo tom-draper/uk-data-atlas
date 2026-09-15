@@ -122,6 +122,15 @@ for (const pollutant of pollutants)
 		total.cells += 1;
 	}
 
+// The cell count is served as the weight that combines authorities' area
+// means, which is only exact if every pollutant's mean is over those cells.
+for (const [code, total] of totals)
+	for (const pollutant of pollutants)
+		if (total[pollutant].cells !== total.cells)
+			throw new Error(
+				`${code}: ${pollutant} is modelled for ${total[pollutant].cells} of its ${total.cells} cells`,
+			);
+
 const round = (value: number) => value.toFixed(2);
 const lines = ["ladCode,ladName,gridCells,no2Mean,pm10Mean,pm25Mean"];
 for (const code of [...names.keys()].sort()) {
