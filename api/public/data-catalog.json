@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:dcbafd99ca37591ce2ff38fa407522bf20cb389b88f8fc5dc72d206bd92cffb2",
+	"contentHash": "sha256:ada02d0946574a8be7318195d502d1e43edeaeaefbeb8c6afecbaa513be7b4c7",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -7627,7 +7627,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -7635,7 +7635,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -7652,7 +7652,7 @@
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
 				"Driving and being a passenger are one category here; the census counts them apart.",
 				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -7673,7 +7673,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -7681,7 +7681,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -7698,7 +7698,7 @@
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
 				"Driving and being a passenger are one category here; the census counts them apart.",
 				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -7719,7 +7719,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -7727,7 +7727,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -7744,7 +7744,7 @@
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
 				"Driving and being a passenger are one category here; the census counts them apart.",
 				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -7765,7 +7765,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -7773,7 +7773,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -7790,7 +7790,7 @@
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
 				"Driving and being a passenger are one category here; the census counts them apart.",
 				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -7811,7 +7811,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -7819,7 +7819,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -7836,7 +7836,7 @@
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
 				"Driving and being a passenger are one category here; the census counts them apart.",
 				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -7857,7 +7857,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -7865,7 +7865,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -7882,7 +7882,7 @@
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
 				"Driving and being a passenger are one category here; the census counts them apart.",
 				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -7903,7 +7903,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -7911,7 +7911,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -7928,7 +7928,7 @@
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
 				"Driving and being a passenger are one category here; the census counts them apart.",
 				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -7949,7 +7949,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -7957,7 +7957,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -7974,7 +7974,7 @@
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
 				"Driving and being a passenger are one category here; the census counts them apart.",
 				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -7995,7 +7995,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -8003,7 +8003,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -8020,7 +8020,7 @@
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
 				"Driving and being a passenger are one category here; the census counts them apart.",
 				"Working mainly at or from home is a method of travel in the census, not an absence of one.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -8041,7 +8041,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -8049,7 +8049,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -8065,7 +8065,7 @@
 			"notes": [
 				"Households, not people. A household with four residents and one car counts once.",
 				"The top category is open-ended, so the table gives no count of vehicles.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -8086,7 +8086,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -8094,7 +8094,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -8110,7 +8110,7 @@
 			"notes": [
 				"Households, not people. A household with four residents and one car counts once.",
 				"The top category is open-ended, so the table gives no count of vehicles.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -8131,7 +8131,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -8139,7 +8139,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -8155,7 +8155,7 @@
 			"notes": [
 				"Households, not people. A household with four residents and one car counts once.",
 				"The top category is open-ended, so the table gives no count of vehicles.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -8176,7 +8176,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -8184,7 +8184,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -8200,7 +8200,7 @@
 			"notes": [
 				"Households, not people. A household with four residents and one car counts once.",
 				"The top category is open-ended, so the table gives no count of vehicles.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		},
 		{
@@ -8221,7 +8221,7 @@
 					],
 					"sourceGeography": {
 						"type": "localAuthority",
-						"boundaryYear": 2025
+						"boundaryYear": 2023
 					},
 					"coverage": {
 						"kind": "partial",
@@ -8229,7 +8229,7 @@
 							"GB-ENG",
 							"GB-WLS"
 						],
-						"recordCount": 335,
+						"recordCount": 318,
 						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
 					}
 				}
@@ -8245,7 +8245,7 @@
 			"notes": [
 				"Households, not people. A household with four residents and one car counts once.",
 				"The top category is open-ended, so the table gives no count of vehicles.",
-				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count."
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		}
 	]

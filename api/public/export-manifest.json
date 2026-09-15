@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:40f525dcfa1c1d5e7218a576341abb7338047c9410ffb73d8ed1dcde307daef2",
-	"dataCatalogHash": "sha256:dcbafd99ca37591ce2ff38fa407522bf20cb389b88f8fc5dc72d206bd92cffb2",
+	"contentHash": "sha256:9e9379e9007a9dca006124d7c36ca8c23f1b6ea5815c25dd4ea9e56892cbcefb",
+	"dataCatalogHash": "sha256:ada02d0946574a8be7318195d502d1e43edeaeaefbeb8c6afecbaa513be7b4c7",
 	"exports": [
 		{
 			"id": "car-availability-none-observations",
@@ -12,12 +12,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "car-availability-none-observations",
-			"contentHash": "sha256:b2ed897cf5e6edeadee4d0353b8b40750617b9a0c4045d345a986bafd30d5c7c",
-			"bytes": 19856,
+			"contentHash": "sha256:8878a28b3af4dadf0462248921f347f2ba32f7f6dc668207e13ba545d589b123",
+			"bytes": 18866,
 			"href": "/v1/exports/car-availability-none-observations"
 		},
 		{
@@ -29,12 +29,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "car-availability-one-observations",
-			"contentHash": "sha256:08af17be3f74bed459dd8da430cc4a992523058ce8f4ed02c42b0fc5f06690ed",
-			"bytes": 20009,
+			"contentHash": "sha256:37389ecc2d794b56c1fdbea1aa017426948bd95f2682b618aedba17223327500",
+			"bytes": 19008,
 			"href": "/v1/exports/car-availability-one-observations"
 		},
 		{
@@ -46,12 +46,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "car-availability-three-or-more-observations",
-			"contentHash": "sha256:7ab0829b50323a6ca07f29852f38c033085c084a267c3b0599fe1b56c86b39db",
-			"bytes": 19725,
+			"contentHash": "sha256:4bf1b294b5251efb90e55ad39bfd764e0e63b893791f6f47ed8acd4f98593a52",
+			"bytes": 18738,
 			"href": "/v1/exports/car-availability-three-or-more-observations"
 		},
 		{
@@ -63,12 +63,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "car-availability-total-observations",
-			"contentHash": "sha256:80649e7fe0ab15d1d98ff452fdf8a4ac7995219dc791912e333c30aa0ea016f0",
-			"bytes": 20091,
+			"contentHash": "sha256:f6cb5f3a58a5a96affc099145407e6d68b8668d64571ef7953a8ed81545d9865",
+			"bytes": 19088,
 			"href": "/v1/exports/car-availability-total-observations"
 		},
 		{
@@ -80,12 +80,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "car-availability-two-observations",
-			"contentHash": "sha256:dd4632c74375f010e3b786794fe0f896499b0d13161146fb72a5de9a6700410a",
-			"bytes": 19966,
+			"contentHash": "sha256:adad4e413f97ea41d283144d57c33266a18e21e09f5143178006223887910eb2",
+			"bytes": 18969,
 			"href": "/v1/exports/car-availability-two-observations"
 		},
 		{
@@ -4010,12 +4010,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "travel-to-work-bicycle-observations",
-			"contentHash": "sha256:050316e54d984231753d46c2fb62aaa504cd2b24af11672b7a6abaac0fc61b05",
-			"bytes": 19535,
+			"contentHash": "sha256:f0cfffb4acdbb0dd330d18eec798f8eaec68e75e943f55a29323c3da36a2132f",
+			"bytes": 18560,
 			"href": "/v1/exports/travel-to-work-bicycle-observations"
 		},
 		{
@@ -4027,12 +4027,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "travel-to-work-car-observations",
-			"contentHash": "sha256:516a3194ebb029a789b5e197a958f7a07b9a82d038b33c9f2d361e5dafcd1241",
-			"bytes": 20017,
+			"contentHash": "sha256:2b4af3c04484e4a87254ce9c9860f5bc8f36d621d05df62d75cee150f2a8e937",
+			"bytes": 19014,
 			"href": "/v1/exports/travel-to-work-car-observations"
 		},
 		{
@@ -4044,12 +4044,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "travel-to-work-home-observations",
-			"contentHash": "sha256:7eb903b8369bc2fcdb74020ddc2ea19fe052823fc07b1eb8778f50d1fb8da20f",
-			"bytes": 19973,
+			"contentHash": "sha256:2f866664421d87d97bdefe0f89db6db67ad56837c5e0843f06e6003148f55300",
+			"bytes": 18977,
 			"href": "/v1/exports/travel-to-work-home-observations"
 		},
 		{
@@ -4061,12 +4061,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "travel-to-work-motorcycle-observations",
-			"contentHash": "sha256:d97f156f98e9992e3271b6912d231baaee31ba48e16b05aed2e2b2e6e031d3d1",
-			"bytes": 19354,
+			"contentHash": "sha256:93c31abd68a1ecfd832e205d442516c29f59bac7ade3f049d768ac910a94abda",
+			"bytes": 18390,
 			"href": "/v1/exports/travel-to-work-motorcycle-observations"
 		},
 		{
@@ -4078,12 +4078,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "travel-to-work-on-foot-observations",
-			"contentHash": "sha256:4fc78ab5d537cd9782c6e665c3c47f520d6cb2ac0701b1ed6fa66b0744c163fd",
-			"bytes": 19730,
+			"contentHash": "sha256:0810fd16cc6fd74cb2da4f312c8063c5f989a891fd91ee83d72ac9728b8dc0da",
+			"bytes": 18744,
 			"href": "/v1/exports/travel-to-work-on-foot-observations"
 		},
 		{
@@ -4095,12 +4095,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "travel-to-work-other-observations",
-			"contentHash": "sha256:c1384df82568336500267f46ca953350ec0fcd6688bb15ae06c17b75251a6e50",
-			"bytes": 19438,
+			"contentHash": "sha256:27e2cc1254241fc0d2fe83820ba504579f40b67b15cb417ae63c23b1daf6d182",
+			"bytes": 18469,
 			"href": "/v1/exports/travel-to-work-other-observations"
 		},
 		{
@@ -4112,12 +4112,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "travel-to-work-public-transport-observations",
-			"contentHash": "sha256:c0b9aece424ea4ff7611ea29f06453b144eb75e2a8e7a986ece8345013df5d90",
-			"bytes": 19681,
+			"contentHash": "sha256:859730f60d3ae9d4fa711e961c5febc4e51912d9f790da9575562f162e4f2628",
+			"bytes": 18704,
 			"href": "/v1/exports/travel-to-work-public-transport-observations"
 		},
 		{
@@ -4129,12 +4129,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "travel-to-work-taxi-observations",
-			"contentHash": "sha256:2fb4efc651999afebcf88114f70fdb099dc374ad307a5b3740703ff4a9c033f1",
-			"bytes": 19351,
+			"contentHash": "sha256:63d245befe59e5ac80fbf49173c0f464a43333c164818a9c180c839d59fd6a26",
+			"bytes": 18388,
 			"href": "/v1/exports/travel-to-work-taxi-observations"
 		},
 		{
@@ -4146,12 +4146,12 @@
 			],
 			"sourceGeography": {
 				"type": "localAuthority",
-				"boundaryYear": 2025
+				"boundaryYear": 2023
 			},
 			"format": "json",
 			"artifact": "travel-to-work-total-observations",
-			"contentHash": "sha256:47b4206b4a59ff798cdddf5ebfeb981d33f5a35baedc6ffde1dcc2823d5bf506",
-			"bytes": 20103,
+			"contentHash": "sha256:fabb74da43af5105c8624f0fbf7f29e31ed6273c7f5a8c0cd8469dfcd2a00d30",
+			"bytes": 19100,
 			"href": "/v1/exports/travel-to-work-total-observations"
 		},
 		{
