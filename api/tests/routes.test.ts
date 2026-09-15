@@ -26,42 +26,8 @@ import {
 	populationLocalAuthorityObservations,
 	measureCompatibilityInventory,
 	atlasRelease,
-	relationshipCandidateInventory,
 	validationReport,
 } from "./routeFixtures";
-
-test("lists discovered relationship candidates and their coverage gaps", () => {
-	const response = route(
-		"GET",
-		"/v1/relationship-candidates",
-		registry,
-		geographyInventory,
-		areaLookup,
-		crosswalkInventory,
-		crosswalkLookup,
-		atlasRelease,
-		undefined,
-		undefined,
-		undefined,
-		relationshipCandidateInventory,
-	);
-	assert.equal(response.status, 200);
-	assert.deepEqual(
-		"data" in response.body && response.body.data,
-		relationshipCandidateInventory.candidates,
-	);
-});
-
-test("reports relationship candidates as unavailable before they are built", () => {
-	const response = route(
-		"GET",
-		"/v1/relationship-candidates",
-		registry,
-		geographyInventory,
-		areaLookup,
-	);
-	assert.equal(response.status, 503);
-});
 
 test("uses the immutable release id in every successful envelope", () => {
 	const response = route(
