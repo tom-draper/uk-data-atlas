@@ -12,12 +12,12 @@ import type { ExportManifest } from "../src/exportManifest";
 import type { GeographyInventory } from "../src/geographyInventory";
 import type { GeometrySourceRegistry } from "../src/geometrySourceRegistry";
 import type { RelationshipCandidateInventory } from "../src/relationshipCandidates";
+import { compileValidationReport } from "../src/validation/compileValidationReport";
 import {
-	compileValidationReport,
 	type ObservationArtifact,
 	readMeasureTotals,
 	readValidationWaivers,
-} from "../src/validation/compileValidationReport";
+} from "../src/validation/inputs";
 
 export const buildValidationReport = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "api", "public");
