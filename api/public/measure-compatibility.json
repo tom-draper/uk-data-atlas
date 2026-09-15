@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:352759c3888c323231ee1613b895fc5abdf3d8aabc533afe69329db87ee5e6e6",
+	"contentHash": "sha256:ae8ced007eb5e5fd2e525536d21bb33d5db32956e91415d0280d65079a065ae7",
 	"inputs": {
-		"dataCatalog": "sha256:47f6177b9e054534445dc52d7b92c7a12cb6f8942efd9d781248ca01e621d644",
+		"dataCatalog": "sha256:4d9d35dc4e1d6ce9e1cbe2d3009cabf6d59da9fc04fd6925c2543c777af8420d",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -16,6 +16,8 @@
 			"car-availability-three-or-more": "sha256:4bf1b294b5251efb90e55ad39bfd764e0e63b893791f6f47ed8acd4f98593a52",
 			"car-availability-total": "sha256:f6cb5f3a58a5a96affc099145407e6d68b8668d64571ef7953a8ed81545d9865",
 			"car-availability-two": "sha256:adad4e413f97ea41d283144d57c33266a18e21e09f5143178006223887910eb2",
+			"claimant-count": "sha256:7a82fb1dac37f30966c2592af704efa6043b6ff1489bc76b10280cb724bd4921",
+			"claimant-count-16-to-24": "sha256:7093e47efacadacecd7cfff7849c81366d1bb29be00e5e97109173dbf929fcd7",
 			"ethnicity-african": "sha256:07964ca593926c2115c3dc3a7225398408d5fbc58a0c3ae7b6a7ed88d0056f5d",
 			"ethnicity-any-other": "sha256:c40d0e872921cd345146547f30e51d0877227a0155338cb494f34e284cfb63c0",
 			"ethnicity-arab": "sha256:88f2da7f45a21b3db5f7c2d40054459f489f75d41782cacc9894ff5773a38f21",
@@ -12130,6 +12132,118 @@
 					},
 					"periods": [
 						"2025-07"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "claimant-count",
+			"sources": [
+				{
+					"datasetId": "claimant-count",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2026-04"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2024-05-uk-bgc",
+							"title": "Local authority districts, May 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2024-12-uk-bgc",
+							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "claimant-count-16-to-24",
+			"sources": [
+				{
+					"datasetId": "claimant-count",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2024
+					},
+					"periods": [
+						"2026-04"
 					],
 					"candidates": [
 						{
