@@ -38,6 +38,7 @@ import {
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { ExportManifest } from "./exportManifest";
+import { httpResponse } from "./httpResponse";
 import type { LookupManifest } from "./lookupExports";
 import {
 	createAreaSearchIndex,
@@ -361,18 +362,9 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 
 export const createApiServer = (catalogues: ApiCatalogues) =>
 	createServer((request, response) => {
-		const result = route(request.method, request.url, catalogues);
-		response.writeHead(result.status, {
-			"cache-control": "public, max-age=300",
-			"content-type":
-				result.status >= 400
-					? "application/problem+json"
-					: (result.representation?.contentType ??
-						"application/json"),
-			"x-content-type-options": "nosniff",
-			...result.representation?.headers,
-		});
-		response.end(
-			result.representation?.body ?? `${JSON.stringify(result.body)}\n`,
+		const { status, headers, body } = httpResponse(request, (method) =>
+			route(method, request.url, catalogues),
 		);
+		response.writeHead(status, headers);
+		response.end(body);
 	});

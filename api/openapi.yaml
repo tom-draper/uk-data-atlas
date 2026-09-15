@@ -17,6 +17,16 @@ info:
     `Envelope`. Its `atlasRelease` field is the immutable `releaseId` from
     `GET /atlas-release`, so clients can identify the exact set of artifacts
     that produced a response.
+
+    Caching and conditional requests apply to every route. A `200` response
+    carries a strong `ETag`, the SHA-256 of the exact bytes served, and
+    `Cache-Control: public, max-age=300, must-revalidate`. A `GET` or `HEAD`
+    whose `If-None-Match` matches that tag receives `304 Not Modified` with no
+    body. `HEAD` is answered as `GET` without the body. Errors carry
+    `Cache-Control: no-store` and no `ETag`. No `Last-Modified` is sent: a
+    release records no build time, so the `ETag` is the only validator. A
+    response can change only when the server loads a different Atlas release,
+    and its `ETag` then changes with it.
   license:
     name: Proposal; no licence has been assigned yet
 servers:
