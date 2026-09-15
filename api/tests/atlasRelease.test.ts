@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -111,6 +112,60 @@ test("fails loudly when a referenced artifact is missing", () => {
 	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
 		assert.throws(() => createAtlasRelease(directory), /boundary-registry/);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("fingerprints the resources inside the artifacts without changing the release id", () => {
+	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		writeArtifacts(directory);
+		const bare = createAtlasRelease(directory);
+		writeFileSync(
+			join(directory, "crosswalk-inventory.json"),
+			JSON.stringify({
+				crosswalks: [
+					{ id: "ward-to-lad", contentHash: "sha256:crosswalk" },
+				],
+			}),
+		);
+		writeFileSync(
+			join(directory, "validation-report.json"),
+			JSON.stringify({
+				resources: [
+					{
+						id: "exports/house-price",
+						checks: [
+							{ id: "values-valid", status: "passed" },
+							{
+								id: "records-resolve",
+								status: "waived",
+								detail: "Two codes.",
+								waiver: { reason: "Published codes." },
+							},
+						],
+					},
+				],
+			}),
+		);
+		const release = createAtlasRelease(directory);
+		assert.notEqual(release.releaseId, bare.releaseId);
+		assert.deepEqual(release.resources?.crosswalks, {
+			"ward-to-lad": "sha256:crosswalk",
+		});
+		assert.deepEqual(
+			Object.keys(release.resources?.validationExceptions ?? {}),
+			["exports/house-price records-resolve"],
+		);
+		assert.deepEqual(bare.resources?.datasets, {});
+		// The id covers the artifacts alone, which the fingerprints are read from.
+		assert.equal(
+			release.releaseId,
+			`sha256:${createHash("sha256")
+				.update(JSON.stringify({ artifacts: release.artifacts }))
+				.digest("hex")}`,
+		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

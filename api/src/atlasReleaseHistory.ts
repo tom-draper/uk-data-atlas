@@ -35,10 +35,23 @@ export const archiveCurrentAtlasRelease = (publicDirectory: string) => {
 	);
 	if (existsSync(archivePath)) {
 		const archived = readRelease(archivePath);
-		if (archived.releaseId !== release.releaseId) {
+		if (
+			archived.releaseId !== release.releaseId ||
+			JSON.stringify(archived.artifacts) !==
+				JSON.stringify(release.artifacts)
+		) {
 			throw new Error(
 				`Conflicting archived atlas release at ${archivePath}`,
 			);
+		}
+		// Fingerprints are read from the same artifacts, so an archive made
+		// before they were recorded can gain them without changing the release.
+		if (!archived.resources && release.resources) {
+			writeFileSync(
+				archivePath,
+				`${JSON.stringify(release, null, "\t")}\n`,
+			);
+			return release;
 		}
 		return archived;
 	}

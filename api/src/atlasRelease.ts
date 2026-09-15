@@ -13,10 +13,33 @@ export type AtlasReleaseArtifactRef = {
 	contentHash: string;
 };
 
+export const RESOURCE_KINDS = [
+	"datasets",
+	"measures",
+	"boundaryReleases",
+	"areaIdentities",
+	"geometrySources",
+	"crosswalks",
+	"validationExceptions",
+	"namedLocations",
+	"exports",
+	"lookups",
+] as const;
+
+export type ResourceKind = (typeof RESOURCE_KINDS)[number];
+
 export type AtlasRelease = {
 	schemaVersion: 1;
 	releaseId: string;
 	artifacts: AtlasReleaseArtifactRef[];
+	/**
+	 * A fingerprint for every resource inside the artifacts, keyed by kind and
+	 * resource id, so a comparison can say which ones changed. Every value is
+	 * computed from an artifact the release already hashes, so it does not
+	 * enter the release id. Releases archived before fingerprints were
+	 * recorded have none.
+	 */
+	resources?: Partial<Record<ResourceKind, Record<string, string>>>;
 };
 
 const sha256 = (content: string) =>
@@ -73,6 +96,109 @@ const cataloguedObservationArtifacts = (
 	);
 };
 
+type Entries = Array<Record<string, unknown>>;
+
+const entriesOf = (value: unknown, key: string): Entries => {
+	const list = (value as Record<string, unknown> | null)?.[key];
+	return Array.isArray(list)
+		? list.filter(
+				(entry): entry is Record<string, unknown> =>
+					typeof entry === "object" && entry !== null,
+			)
+		: [];
+};
+
+const fingerprints = (
+	entries: Entries,
+	id: (entry: Record<string, unknown>) => string,
+	fingerprint: (entry: Record<string, unknown>) => string = (entry) =>
+		sha256(JSON.stringify(entry)),
+) =>
+	Object.fromEntries(
+		entries
+			.map((entry) => [id(entry), fingerprint(entry)] as const)
+			.sort(([left], [right]) => left.localeCompare(right)),
+	);
+
+/** Fingerprints every resource inside the release's artifacts. */
+export const releaseResources = (
+	publicDirectory: string,
+): Record<ResourceKind, Record<string, string>> => {
+	const read = (path: string): unknown => {
+		const fullPath = join(publicDirectory, path);
+		return existsSync(fullPath)
+			? JSON.parse(readFileSync(fullPath, "utf8"))
+			: undefined;
+	};
+	const identity = (entry: Record<string, unknown>) =>
+		`${String(entry.geography)}/${String(entry.id)}`;
+	const catalogue = read("data-catalog.json");
+	const validation = read("validation-report.json");
+	return {
+		datasets: fingerprints(entriesOf(catalogue, "datasets"), (entry) =>
+			String(entry.id),
+		),
+		measures: fingerprints(entriesOf(catalogue, "measures"), (entry) =>
+			String(entry.id),
+		),
+		boundaryReleases: fingerprints(
+			entriesOf(read("boundary-releases.json"), "releases"),
+			identity,
+		),
+		areaIdentities: fingerprints(
+			entriesOf(read("area-inventory.json"), "releases"),
+			identity,
+			(entry) =>
+				typeof entry.contentHash === "string"
+					? entry.contentHash
+					: sha256(JSON.stringify(entry)),
+		),
+		geometrySources: fingerprints(
+			entriesOf(read("geometry-sources.json"), "releases"),
+			(entry) => String(entry.id),
+		),
+		crosswalks: fingerprints(
+			entriesOf(read("crosswalk-inventory.json"), "crosswalks"),
+			(entry) => String(entry.id),
+			(entry) => String(entry.contentHash),
+		),
+		// A waived check is an exception; its finding and its reason are both
+		// part of what a reader needs to notice changing.
+		validationExceptions: Object.fromEntries(
+			entriesOf(validation, "resources")
+				.flatMap((resource) =>
+					entriesOf(resource, "checks")
+						.filter((check) => check.status === "waived")
+						.map(
+							(check) =>
+								[
+									`${String(resource.id)} ${String(check.id)}`,
+									sha256(
+										JSON.stringify({
+											detail: check.detail,
+											waiver: check.waiver,
+										}),
+									),
+								] as const,
+						),
+				)
+				.sort(([left], [right]) => left.localeCompare(right)),
+		),
+		namedLocations: fingerprints(
+			entriesOf(read("named-locations.json"), "locations"),
+			(entry) => String(entry.id),
+		),
+		exports: fingerprints(
+			entriesOf(read("export-manifest.json"), "exports"),
+			(entry) => String(entry.id),
+		),
+		lookups: fingerprints(
+			entriesOf(read("lookup-manifest.json"), "lookups"),
+			(entry) => String(entry.id),
+		),
+	};
+};
+
 export const createAtlasRelease = (publicDirectory: string): AtlasRelease => {
 	const artifactReference = ({ id, path }: { id: string; path: string }) => {
 		const fullPath = join(publicDirectory, path);
@@ -94,5 +220,10 @@ export const createAtlasRelease = (publicDirectory: string): AtlasRelease => {
 		),
 	];
 	const releaseId = sha256(JSON.stringify({ artifacts }));
-	return { schemaVersion: 1, releaseId, artifacts };
+	return {
+		schemaVersion: 1,
+		releaseId,
+		artifacts,
+		resources: releaseResources(publicDirectory),
+	};
 };
