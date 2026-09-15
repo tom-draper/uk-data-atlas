@@ -40,13 +40,8 @@ import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { ExportManifest } from "./exportManifest";
 import { httpResponse } from "./httpResponse";
 import type { LookupManifest } from "./lookupExports";
-import {
-	createAreaSearchIndex,
-	route,
-	type AreaSearchIndex,
-	type CrosswalkLookup,
-	type RouteContext,
-} from "./routes";
+import { createAreaSearchIndex, route } from "./routes";
+import type { CrosswalkLookup, RouteContext } from "./routing";
 
 const registryPath = (apiRoot: string) =>
 	join(apiRoot, "public", "boundary-releases.json");

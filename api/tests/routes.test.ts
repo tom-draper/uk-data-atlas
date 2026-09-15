@@ -8,11 +8,8 @@ import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
 } from "../src/areaGeometry";
-import {
-	route as routeRequest,
-	type CrosswalkLookup,
-	type RouteContext,
-} from "../src/routes";
+import { route as routeRequest } from "../src/routes";
+import type { CrosswalkLookup, RouteContext } from "../src/routing";
 import type { AtlasRelease } from "../src/atlasRelease";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type {

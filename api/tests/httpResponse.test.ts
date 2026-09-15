@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import test from "node:test";
 import { entityTag, httpResponse, matchesEntityTag } from "../src/httpResponse";
-import type { ApiResponse } from "../src/routes";
+import type { ApiResponse } from "../src/routeResponse";
 
 const ok: ApiResponse = {
 	status: 200,

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import type { IncomingHttpHeaders } from "node:http";
-import type { ApiResponse } from "./routes";
+import type { ApiResponse } from "./routeResponse";
 
 export type HttpResponse = {
 	status: number;

@@ -1,4 +1,4 @@
-import type { AreaInventory, AreaLookup } from "./areaInventory";
+import type { AreaLookup } from "./areaInventory";
 import { explainAreaAbsence } from "./areaAbsence";
 import { selectReleaseForDate } from "./releaseForDate";
 import {
@@ -17,24 +17,16 @@ import {
 	createAreaRelationshipIndex,
 	type AreaRelationshipIndex,
 } from "./areaRelationships";
-import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "./crosswalkInventory";
-import type { GeographyInventory } from "./geographyInventory";
-import type { RelationshipCandidateInventory } from "./relationshipCandidates";
-import type {
-	NamedLocationInventory,
-	NamedLocationLookup,
-} from "./namedLocations";
-import type { ValidationReport } from "./validationReport";
+import type { NamedLocationInventory } from "./namedLocations";
 import {
 	areaIdentityTable,
 	crosswalkTable,
 	type LookupFormat,
-	type LookupManifest,
 	lookupBodyHash,
 	namedLocationMembersTable,
 	renderLookup,
@@ -52,8 +44,6 @@ import {
 	type PopulationLocalAuthorityObservationArtifact,
 	type PopulationObservationArtifact,
 } from "./dataCatalog";
-import type { MeasureCompatibilityInventory } from "./measureCompatibility";
-import type { ExportManifest } from "./exportManifest";
 import { compareObservations } from "./comparison";
 import {
 	aggregateCountryMembers,
@@ -104,15 +94,15 @@ import {
 	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
 import { handleRoute } from "./routeHandlers";
-import {
-	envelope,
-	problem,
-	type ApiResponse,
-} from "./routeResponse";
+import type {
+	AreaSearchIndex,
+	AreaSearchResult,
+	CrosswalkLookup,
+	RouteContext,
+} from "./routing";
+import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 export { type ApiResponse } from "./routeResponse";
-
-export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
 /**
  * Travels with every measurement, so a figure taken from one response can be
@@ -361,15 +351,6 @@ const codeFromCursor = (cursor: string): string | undefined => {
 	}
 };
 
-export type AreaSearchResult = {
-	id: string;
-	geography: string;
-	boundaryRelease: string;
-	code: string;
-	name: string;
-	aliases?: string[];
-};
-
 const searchableAreas = (areaLookup: AreaLookup): AreaSearchResult[] =>
 	[...areaLookup.entries()]
 		.flatMap(([identity, areas]) => {
@@ -384,8 +365,6 @@ const searchableAreas = (areaLookup: AreaLookup): AreaSearchResult[] =>
 			}));
 		})
 		.sort((left, right) => left.id.localeCompare(right.id));
-
-export type AreaSearchIndex = AreaSearchResult[];
 
 export const createAreaSearchIndex = (
 	areaLookup: AreaLookup,
@@ -474,40 +453,6 @@ const relationshipsFor = (
 			? createAreaRelationshipIndex(crosswalkLookup.values())
 			: undefined)
 	)?.get(`${geography}/${boundaryRelease}/${code}`) ?? [];
-
-export type RouteContext = {
-	boundaryRegistry: BoundaryRegistry;
-	geographyInventory?: GeographyInventory;
-	/** Each boundary release's identity artifact and its content hash. */
-	areaInventory?: AreaInventory;
-	areaLookup?: AreaLookup;
-	crosswalkInventory?: CrosswalkInventory;
-	crosswalkLookup?: CrosswalkLookup;
-	atlasRelease?: AtlasRelease;
-	atlasReleaseHistory?: Map<string, AtlasRelease>;
-	areaSearchIndex?: AreaSearchIndex;
-	areaRelationshipIndex?: AreaRelationshipIndex;
-	areaGeometryCache?: AreaGeometryCache;
-	relationshipCandidateInventory?: RelationshipCandidateInventory;
-	validationReport?: ValidationReport;
-	namedLocationInventory?: NamedLocationInventory;
-	namedLocationLookup?: NamedLocationLookup;
-	dataCatalog?: DataCatalog;
-	populationObservations?: PopulationObservationArtifact;
-	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
-	/** Every measure's observations bar the two population artifacts. */
-	measureObservations?: AnyMeasureObservationArtifact[];
-	measureCompatibilityInventory?: MeasureCompatibilityInventory;
-	exportManifest?: ExportManifest;
-	lookupManifest?: LookupManifest;
-};
-
-export type RouteRequest = {
-	context: RouteContext;
-	releaseId: string;
-	parsedUrl: URL;
-	segments: string[];
-};
 
 /**
  * Route a request against named, independently-built catalogues. Keeping the
