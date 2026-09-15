@@ -78,6 +78,7 @@ export type SourceGeography = {
 		| "ward"
 		| "localAuthority"
 		| "constituency"
+		| "communitySafetyPartnership"
 		| "lsoa"
 		| "dataZone"
 		| "superOutputArea";
@@ -844,6 +845,11 @@ const localAuthorityFieldWithGaps = (
 	field: string,
 	boundaryYear: number,
 	isAuthority: (code: string) => boolean = () => true,
+	/**
+	 * The table to read. Crime keeps its per-partnership records beside the
+	 * authority ones, under `partnerships`, in the same dataset.
+	 */
+	table: "data" | "partnerships" = "data",
 ) => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
 	const entries = Object.entries(source);
@@ -861,7 +867,7 @@ const localAuthorityFieldWithGaps = (
 	const records: PopulationObservation[] = [];
 	const absent: string[] = [];
 	for (const [areaCode, record] of Object.entries(
-		object(entry.data, `${path}.${period}.data`),
+		object(entry[table], `${path}.${period}.${table}`),
 	)) {
 		if (!isPublishedAreaCode(areaCode))
 			throw new Error(`${path}: unsupported area code ${areaCode}`);
@@ -1007,6 +1013,7 @@ export type DataCatalogInputs = {
 	claimantCount: string;
 	homelessness: string;
 	income: string;
+	crime: string;
 	jobs: string;
 	landArea: string;
 	housePrice: string;
@@ -1034,6 +1041,7 @@ export const compileDataCatalog = ({
 	claimantCount: claimantCountPath,
 	homelessness: homelessnessPath,
 	income: incomePath,
+	crime: crimePath,
 	jobs: jobsPath,
 	landArea: landAreaPath,
 	housePrice: housePricePath,
@@ -1806,8 +1814,17 @@ export const compileDataCatalog = ({
 		path: string;
 		boundaryYear: number;
 		period: string;
-		expectedCodes: string[];
+		/**
+		 * The codes a complete partition holds. Without it the partition is
+		 * not checked here, and the compatibility report is what compares it
+		 * with the boundary releases.
+		 */
+		expectedCodes?: string[];
 		isAuthority?: (code: string) => boolean;
+		geography?: SourceGeography["type"];
+		/** The code vintage the partition is labelled with, when not the dataset's. */
+		partitionBoundaryYear?: number;
+		table?: "data" | "partnerships";
 		mergeApril2023?: boolean;
 		coverageNote: string;
 		notes: string[];
@@ -1825,13 +1842,17 @@ export const compileDataCatalog = ({
 			throw new Error(
 				`${manifestPath}: ${spec.datasetId} must declare boundary year ${spec.boundaryYear}`,
 			);
-		const expected = new Set(spec.expectedCodes);
+		const geography = spec.geography ?? "localAuthority";
+		const partitionBoundaryYear =
+			spec.partitionBoundaryYear ?? spec.boundaryYear;
+		const expected = new Set(spec.expectedCodes ?? []);
 		for (const indicator of spec.indicators) {
 			const read = localAuthorityFieldWithGaps(
 				spec.path,
 				indicator.field,
 				spec.boundaryYear,
 				spec.isAuthority,
+				spec.table,
 			);
 			let records = read.records;
 			if (spec.mergeApril2023) {
@@ -1843,15 +1864,15 @@ export const compileDataCatalog = ({
 					[...expected].filter((code) => present.has(code)),
 				).records;
 			}
-			const unexpected = records.filter(
-				(record) => !expected.has(record.areaCode),
-			);
+			const unexpected = spec.expectedCodes
+				? records.filter((record) => !expected.has(record.areaCode))
+				: [];
 			if (unexpected.length > 0)
 				throw new Error(
-					`${spec.path}: ${indicator.id} has codes outside its ${spec.boundaryYear} authority set, starting with ${unexpected[0]!.areaCode}`,
+					`${spec.path}: ${indicator.id} has codes outside its ${partitionBoundaryYear} ${geography} set, starting with ${unexpected[0]!.areaCode}`,
 				);
 			const published = new Set(records.map((record) => record.areaCode));
-			const missing = spec.expectedCodes
+			const missing = (spec.expectedCodes ?? [])
 				.filter((code) => !published.has(code))
 				.sort();
 			const periods = [{ period: spec.period, records }];
@@ -1859,8 +1880,8 @@ export const compileDataCatalog = ({
 				schemaVersion: 1,
 				measureId: indicator.id,
 				sourceGeography: {
-					type: "localAuthority",
-					boundaryYear: spec.boundaryYear,
+					type: geography,
+					boundaryYear: partitionBoundaryYear,
 				},
 				periods,
 			});
@@ -1876,8 +1897,8 @@ export const compileDataCatalog = ({
 							datasetId: spec.datasetId,
 							periods: [spec.period],
 							sourceGeography: {
-								type: "localAuthority",
-								boundaryYear: spec.boundaryYear,
+								type: geography,
+								boundaryYear: partitionBoundaryYear,
 							},
 							coverage: {
 								kind:
@@ -1906,8 +1927,8 @@ export const compileDataCatalog = ({
 					contentHash: sha256(content),
 					measureId: indicator.id,
 					sourceGeography: {
-						type: "localAuthority",
-						boundaryYear: spec.boundaryYear,
+						type: geography,
+						boundaryYear: partitionBoundaryYear,
 					},
 					periods,
 				},
@@ -2127,6 +2148,184 @@ export const compileDataCatalog = ({
 				"hourly.median",
 				"£ per hour",
 				"Gross hourly pay includes overtime pay and overtime hours; the publisher's separate table excluding overtime is not served.",
+			),
+		],
+	});
+	const offence = (
+		id: string,
+		label: string,
+		field: string,
+		note: string | undefined,
+	): Indicator => ({
+		id,
+		label,
+		field,
+		valueKind: "count",
+		unit: "offences",
+		aggregation: { kind: "extensive", operation: "sum", available: true },
+		notes: note ? [note] : [],
+	});
+	/**
+	 * Recorded crime, on the geography it is published for. Table C2 counts
+	 * crime by community safety partnership, and a partnership can cover
+	 * several authorities or share one with others, so the partnership is the
+	 * only unit every count belongs to. The compiled dataset's authority view
+	 * is not served: it has no value where a partnership spans authorities.
+	 */
+	publishIndicators({
+		datasetId: "crime",
+		path: crimePath,
+		boundaryYear: 2025,
+		table: "partnerships",
+		geography: "communitySafetyPartnership",
+		partitionBoundaryYear: 2023,
+		period: "year-ending-2025-06",
+		coverageNote:
+			"Published source records cover every community safety partnership in England and Wales.",
+		notes: [
+			"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+			"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+			"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+			"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime.",
+		],
+		indicators: [
+			offence(
+				"crime-total",
+				"Total recorded crime, excluding fraud",
+				"totalRecordedCrime",
+				"Every police recorded crime except fraud and computer misuse, which are recorded nationally rather than by force.",
+			),
+			offence(
+				"crime-violence-against-the-person",
+				"Violence against the person",
+				"violenceAgainstPerson",
+				"Includes homicide, death or serious injury caused by illegal driving, violence with and without injury, and stalking and harassment.",
+			),
+			offence(
+				"crime-homicide",
+				"Homicide",
+				"homicide",
+				"A subset of violence against the person.",
+			),
+			offence(
+				"crime-death-or-serious-injury-by-illegal-driving",
+				"Death or serious injury caused by illegal driving",
+				"deathSeriesInjuryUnlawfulDriving",
+				"A subset of violence against the person.",
+			),
+			offence(
+				"crime-violence-with-injury",
+				"Violence with injury",
+				"violenceWithInjury",
+				"A subset of violence against the person.",
+			),
+			offence(
+				"crime-violence-without-injury",
+				"Violence without injury",
+				"violenceWithoutInjury",
+				"A subset of violence against the person.",
+			),
+			offence(
+				"crime-stalking-and-harassment",
+				"Stalking and harassment",
+				"stalkingHarassment",
+				"A subset of violence against the person.",
+			),
+			offence(
+				"crime-sexual-offences",
+				"Sexual offences",
+				"sexualOffences",
+				"Recorded sexual offences, including rape.",
+			),
+			offence(
+				"crime-robbery",
+				"Robbery",
+				"robbery",
+				"Theft with the use or threat of force.",
+			),
+			offence(
+				"crime-theft-offences",
+				"Theft offences",
+				"theftOffences",
+				"Includes burglary, vehicle offences, theft from the person, bicycle theft, shoplifting and all other theft.",
+			),
+			offence(
+				"crime-burglary",
+				"Burglary",
+				"burglary",
+				"A subset of theft offences, made up of residential and non-residential burglary.",
+			),
+			offence(
+				"crime-residential-burglary",
+				"Residential burglary",
+				"residentialBurglary",
+				"A subset of burglary.",
+			),
+			offence(
+				"crime-non-residential-burglary",
+				"Non-residential burglary",
+				"nonResidentialBurglary",
+				"A subset of burglary.",
+			),
+			offence(
+				"crime-vehicle-offences",
+				"Vehicle offences",
+				"vehicleOffences",
+				"A subset of theft offences.",
+			),
+			offence(
+				"crime-theft-from-the-person",
+				"Theft from the person",
+				"theftFromPerson",
+				"A subset of theft offences.",
+			),
+			offence(
+				"crime-bicycle-theft",
+				"Bicycle theft",
+				"bicycleTheft",
+				"A subset of theft offences.",
+			),
+			offence(
+				"crime-shoplifting",
+				"Shoplifting",
+				"shoplifting",
+				"A subset of theft offences.",
+			),
+			offence(
+				"crime-other-theft",
+				"All other theft offences",
+				"otherTheftOffences",
+				"A subset of theft offences.",
+			),
+			offence(
+				"crime-criminal-damage-and-arson",
+				"Criminal damage and arson",
+				"criminalDamageArson",
+				undefined,
+			),
+			offence(
+				"crime-drug-offences",
+				"Drug offences",
+				"drugOffences",
+				"Drug offences are largely found through police activity, so their count reflects enforcement as much as prevalence.",
+			),
+			offence(
+				"crime-possession-of-weapons",
+				"Possession of weapons offences",
+				"possessionWeapons",
+				undefined,
+			),
+			offence(
+				"crime-public-order-offences",
+				"Public order offences",
+				"publicOrderOffences",
+				undefined,
+			),
+			offence(
+				"crime-miscellaneous-crimes-against-society",
+				"Miscellaneous crimes against society",
+				"miscellaneousCrimes",
+				undefined,
 			),
 		],
 	});

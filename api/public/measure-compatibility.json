@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:3830078bc601f2a930a5b53cf80be7b403614066fa0bb8fe4b67148f2dfa1f67",
+	"contentHash": "sha256:d11281e8c4aff5399b0272b96f941f957dde772dd2519ac00aa8ea69e297d70e",
 	"inputs": {
-		"dataCatalog": "sha256:f20a13c846fa02032c44f18918a5c003aecff16ef09a2efb6a72208c75d11204",
+		"dataCatalog": "sha256:534ac0e0789d4dc8402f8a4b760608132d6556b4a4e5c88f01a58609ff45ea73",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -18,6 +18,29 @@
 			"car-availability-two": "sha256:adad4e413f97ea41d283144d57c33266a18e21e09f5143178006223887910eb2",
 			"claimant-count": "sha256:7a82fb1dac37f30966c2592af704efa6043b6ff1489bc76b10280cb724bd4921",
 			"claimant-count-16-to-24": "sha256:7093e47efacadacecd7cfff7849c81366d1bb29be00e5e97109173dbf929fcd7",
+			"crime-bicycle-theft": "sha256:276d463d54cdaac941273227c77fda70ac4004564a2f75df0f0370722d041ba3",
+			"crime-burglary": "sha256:65f4474203e90b85a6a14cce098e3fd768c62000ea866420bd1e677b3880f0ac",
+			"crime-criminal-damage-and-arson": "sha256:984069449a3b4c6e563450f445b7a3a8b737330aaf4d9a3da4b020af8105c2b7",
+			"crime-death-or-serious-injury-by-illegal-driving": "sha256:bbbe97340c7da4a5b9590f1b92d65126fa123272b6a7b8bbf2e3a2ceb9004e7b",
+			"crime-drug-offences": "sha256:2c138aa97aaa44aed910c626cc67327baaa70888821e062483a90a0ce2acd7d2",
+			"crime-homicide": "sha256:854ab6a2cfbca8851b84b6d438614d4fe0f7494485ef8794a05d8f25bb5bfd75",
+			"crime-miscellaneous-crimes-against-society": "sha256:7b79dd5197eb1b9978736f45aa9f449a2ba673c15c9f9c5589e245bf65b007e2",
+			"crime-non-residential-burglary": "sha256:4d9b2eff26f06501a26d74019cb0c39f5c4f393f866525fbd561981517a20c7f",
+			"crime-other-theft": "sha256:c546f589ae3d37c34f60c030669c610f898486cabc909b4a0e713b542a16e461",
+			"crime-possession-of-weapons": "sha256:e3bd7781ba5e22dfb26a0d4b57f43120c99d6d73ca7595ebb93acf91e84542b0",
+			"crime-public-order-offences": "sha256:0a05e4275c12f782eba2f35bae2310872a2a2c46728840e5ae644adb9d8af716",
+			"crime-residential-burglary": "sha256:c3827700ffb398f4164adabb50e912f98c3702b2b04c14d1fd5592015b7b1498",
+			"crime-robbery": "sha256:42dd6dbafda9bc6b11e6d70c4c12f631f9a2e88ec0e42f60756ca8783a868c17",
+			"crime-sexual-offences": "sha256:dd544b005e7de460dfeab280c2fdbf87d6cca7d05fcbf57c0f2e5113a3b80b70",
+			"crime-shoplifting": "sha256:1d8a6e44ba26fa17a16af89c5ba1b0031973d68465c3205997ebcf31f39e9edb",
+			"crime-stalking-and-harassment": "sha256:b2688056f1ed9f453dc6d3eff47106b18a4b8af46acc1891d02c6e259b966b2c",
+			"crime-theft-from-the-person": "sha256:cb9c6fcd646a63641eb6bcc9d4ebed55db04ed986b44cefe2240ba1b155e9ed2",
+			"crime-theft-offences": "sha256:1110f0a32c8f6eb06d6b66f274b915ecf838e819ae472270949e0395a6c200e1",
+			"crime-total": "sha256:22e426f4439ea07097be913c393d90efe0b89bcfcd3c79c5fa3061a5dedb8585",
+			"crime-vehicle-offences": "sha256:ebb0c405edf1aa0b2e31094783df5e6f969fdcc391eca7e61ae2321ead384284",
+			"crime-violence-against-the-person": "sha256:643b6f879a9ea86b45092586619cd3b6e5bc9640e26f511a0fd51deb5581d934",
+			"crime-violence-with-injury": "sha256:c2e683d679e4a7983f4e2980d3fe699dbf9b52cb3d6f424691250b8231e38077",
+			"crime-violence-without-injury": "sha256:ebf45ef894741fa8bb184cbbcf7b51ac59c71fc8d31708cdff92c9eaf3b9d0d1",
 			"ethnicity-african": "sha256:07964ca593926c2115c3dc3a7225398408d5fbc58a0c3ae7b6a7ed88d0056f5d",
 			"ethnicity-any-other": "sha256:c40d0e872921cd345146547f30e51d0877227a0155338cb494f34e284cfb63c0",
 			"ethnicity-arab": "sha256:88f2da7f45a21b3db5f7c2d40054459f489f75d41782cacc9894ff5773a38f21",
@@ -122,6 +145,7 @@
 			"wimd-rank": "sha256:2b2d1cf909f6bcd942f22e3e898adc183aa454dfce580475feb01ffced876654"
 		},
 		"areaArtifacts": {
+			"communitySafetyPartnership/2023-12-ew-bgc": "sha256:252592fe688000dffd235746bd7cb327604ff28a23def38577e3e956e3ef0d12",
 			"constituency/2019-12-uk-bgc": "sha256:f23bb9b367674668a675dcc8c1853d57605b5dd5e634d5b5aa67f8b7a1b9da02",
 			"constituency/2024-07-uk-bgc": "sha256:77090f645fcaf7d5bf78e9973464e79ae9c5373ead42f1fecc14c39ba075db9d",
 			"dataZone/2011-12-sc-bfc": "sha256:62075d67d2c29754f57495650508bd7d0b7d820fd9f95c4d7d8629ade649dbc9",
@@ -12778,6 +12802,811 @@
 								"S12000013",
 								"S12000014"
 							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-total",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-violence-against-the-person",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-homicide",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-death-or-serious-injury-by-illegal-driving",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-violence-with-injury",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-violence-without-injury",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-stalking-and-harassment",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-sexual-offences",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-robbery",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-theft-offences",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-burglary",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-residential-burglary",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-non-residential-burglary",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-vehicle-offences",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-theft-from-the-person",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-bicycle-theft",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-shoplifting",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-other-theft",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-criminal-damage-and-arson",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-drug-offences",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-possession-of-weapons",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-public-order-offences",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "crime-miscellaneous-crimes-against-society",
+			"sources": [
+				{
+					"datasetId": "crime",
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-12-ew-bgc",
+							"title": "Community safety partnerships, December 2023 (England and Wales, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 314,
+							"candidateCodeCount": 314,
+							"matchingCodeCount": 314,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."

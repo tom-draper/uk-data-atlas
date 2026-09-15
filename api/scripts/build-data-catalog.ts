@@ -24,6 +24,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		claimantCount: precompiled("claimant-count.json"),
 		homelessness: precompiled("homelessness.json"),
 		income: precompiled("income.json"),
+		crime: precompiled("crime.json"),
 		jobs: precompiled("jobs.json"),
 		landArea: precompiled("land-area.json"),
 		housePrice: precompiled("house-price.json"),
