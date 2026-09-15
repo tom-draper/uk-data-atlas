@@ -306,9 +306,17 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Data ingestion and geography matching — next
 
-- [ ] Validate batches of supplied codes/names quickly, reporting invalid,
-      abolished, ambiguous and unsupported values before a caller submits a
-      full matching or upload job.
+- [x] Validate batches of supplied codes or names through
+      `GET /v1/areas:validate?geography=&release=&value=`, up to 500 at a time
+      against one exact release. A code is `valid`, or `superseded`,
+      `not-yet-current`, held only by another geography, unknown or malformed;
+      a name matches exactly, through an alias or without a title such as
+      "City of", and is otherwise `ambiguous` with every candidate or
+      `unmatched` with the releases where it does match. Trimming, re-casing
+      and repeats are reported rather than hidden. Against the May 2025 local
+      authorities, "Bristol" finds "Bristol, City of", "Ynys Mon" finds the
+      Isle of Anglesey, and Allerdale's code is superseded, its name matching
+      five older releases.
 - [ ] Accept a column of supplied codes or place names and return an auditable
       match report: candidate geography/release, exact/alias/fuzzy match method,
       ambiguity, unmatched values and recommended next action.
@@ -1526,6 +1534,7 @@ pnpm start
 - `GET /v1/boundary-releases:resolve?geography={type}&date={YYYY-MM-DD}`
 - `GET /v1/boundary-releases/{type}/{release}`
 - `GET /v1/areas`
+- `GET /v1/areas:validate?geography={type}&release={release}&value={code-or-name}`
 - `GET /v1/areas/{type}/{release}/{code}`
 - `GET /v1/areas/{type}/{release}/{code}/relationships`
 - `GET /v1/areas/{type}/{release}/{code}/capabilities`

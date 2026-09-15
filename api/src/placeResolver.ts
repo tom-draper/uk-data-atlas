@@ -112,7 +112,7 @@ export const normalisePlaceName = (value: string) =>
  * carries none. Publishers write "Bristol, City of" and "Kingston upon Hull,
  * City of"; nobody searches for either.
  */
-const withoutTitle = (normalised: string) => {
+export const withoutTitle = (normalised: string) => {
 	const stripped = normalised
 		.replace(/\b(city|county|borough|royal borough) of\b/g, " ")
 		.replace(/\s+/g, " ")
