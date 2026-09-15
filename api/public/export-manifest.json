@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:e97db9d66337a4aae0527927a52779cc9e3e8cd4435cdded046aebf5534b25b3",
-	"dataCatalogHash": "sha256:8577de3d1aa2925a6e18e4099fcd5bb87101561f3a1bf0463ce121f814c07e3b",
+	"contentHash": "sha256:cf53ab20e7727c49726ac7f334ebe1592a68ffe1e5d0679db97dbb536068beae",
+	"dataCatalogHash": "sha256:42ccfdb4f30fac06f6183875fde28b0b9c96bdd1274ebaedca2e3eae9563e66a",
 	"exports": [
 		{
 			"id": "air-quality-grid-cells-observations",

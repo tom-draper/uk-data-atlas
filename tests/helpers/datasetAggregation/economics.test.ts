@@ -9,27 +9,35 @@ import {
 import { CODE_KEY, features } from "./fixtures";
 
 describe("aggregateUnemployment", () => {
+	// E1 has 10,000 economically active residents in 2022 (400 at 4%), E2
+	// 50,000 (3,000 at 6%).
 	const dataset = {
 		years: [2022, 2023],
 		latestYear: 2023,
 		data: {
-			E1: { rates: { 2022: 4, 2023: 5 } },
-			E2: { rates: { 2022: 6, 2023: null } },
+			E1: {
+				rates: { 2022: 4, 2023: 5 },
+				levels: { 2022: 400, 2023: 500 },
+			},
+			E2: {
+				rates: { 2022: 6, 2023: null },
+				levels: { 2022: 3000, 2023: null },
+			},
 		},
 	} as any;
 
-	it("averages each year over the areas reporting a rate that year", () => {
+	it("weights each year's rate by the economically active residents reporting it", () => {
 		const result = aggregateUnemployment(
 			features(["E1", "E2"]),
 			CODE_KEY,
 			dataset,
 		);
 
-		expect(result).toEqual({
-			years: [2022, 2023],
-			latestYear: 2023,
-			rates: { 2022: 5, 2023: 5 },
-		});
+		// 3,400 of 60,000, not the flat mean of 5%.
+		expect(result?.years).toEqual([2022, 2023]);
+		expect(result?.latestYear).toBe(2023);
+		expect(result?.rates[2022]).toBeCloseTo(5.6667, 4);
+		expect(result?.rates[2023]).toBeCloseTo(5, 10);
 	});
 
 	it("omits a year no covered area reports", () => {

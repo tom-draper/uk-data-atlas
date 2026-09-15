@@ -5,6 +5,8 @@ export interface BroadbandLADData {
 	pctUltrafast: number | null;
 	pctFullFibre: number | null;
 	pctGigabit: number | null;
+	/** All premises in the authority, which every percentage is a share of. */
+	premisesCount: number | null;
 }
 
 export interface BroadbandDataset {
