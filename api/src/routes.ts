@@ -10,7 +10,6 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "./crosswalkInventory";
-import type { NamedLocationInventory } from "./namedLocations";
 import {
 	type DataCatalog,
 	isNumericObservation,
@@ -32,13 +31,8 @@ import { attributionFor, attributionText } from "./attribution";
 import { measureCoverage } from "./measureCoverage";
 import { reconcileMembersForYear } from "./memberReconciliation";
 import { rankObservations, type RankingOrder } from "./ranking";
-import {
-	createPlaceIndex,
-	resolvePlaces,
-	type PlaceCandidate,
-	type PlaceIndex,
-} from "./placeResolver";
-import { valueForPlace, type Attempt } from "./placeValue";
+import { resolvePlaces } from "./placeResolver";
+import { valueForPlace } from "./placeValue";
 import {
 	changeRefusal,
 	changeValue,
@@ -71,6 +65,11 @@ import {
 	findArea,
 	relationshipsFor,
 } from "./areaResources";
+import {
+	describeAttempt,
+	describeCandidate,
+	placeIndexFor,
+} from "./placeResponses";
 import { handleRoute } from "./routeHandlers";
 import type { RouteContext } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
@@ -224,56 +223,6 @@ const readRankingOrder = (value: string | null): RankingOrder | undefined =>
  * dependencies in one object prevents a newly added artifact from silently
  * shifting a long positional argument list at every call site.
  */
-/*
- * The place index is built from the whole compiled area inventory, some eighty
- * thousand places, which takes the better part of a second. It is built on the
- * first request that needs it and kept for as long as that inventory is.
- */
-const placeIndexes = new WeakMap<
-	object,
-	{ locations: unknown; index: PlaceIndex }
->();
-
-const placeIndexFor = (
-	areaLookup: AreaLookup,
-	namedLocationInventory: NamedLocationInventory | undefined,
-) => {
-	const cached = placeIndexes.get(areaLookup);
-	if (cached && cached.locations === namedLocationInventory) {
-		return cached.index;
-	}
-	const index = createPlaceIndex(areaLookup, namedLocationInventory);
-	placeIndexes.set(areaLookup, { locations: namedLocationInventory, index });
-	return index;
-};
-
-const describeCandidate = (candidate: PlaceCandidate) => ({
-	place: candidate.place,
-	kind: candidate.kind,
-	name: candidate.name,
-	geography: candidate.geography,
-	code: candidate.code,
-	match: candidate.match,
-	...(candidate.matchedLabel !== candidate.name
-		? { matchedLabel: candidate.matchedLabel }
-		: {}),
-});
-
-const describeAttempt = (attempt: Attempt) =>
-	attempt.served
-		? {
-				...describeCandidate(attempt.candidate),
-				served: true,
-				method: attempt.method,
-				answer: attempt.answer,
-				via: attempt.via,
-			}
-		: {
-				...describeCandidate(attempt.candidate),
-				served: false,
-				reason: attempt.reason,
-			};
-
 export const route = (
 	method: string | undefined,
 	url: string | undefined,

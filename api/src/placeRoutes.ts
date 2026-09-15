@@ -1,40 +1,8 @@
-import {
-	createPlaceIndex,
-	resolvePlaces,
-	type PlaceCandidate,
-	type PlaceIndex,
-} from "./placeResolver";
+import { resolvePlaces } from "./placeResolver";
+import { describeCandidate, placeIndexFor } from "./placeResponses";
 import { MAX_PAGE_SIZE, readPageSize } from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-
-const placeIndexes = new WeakMap<
-	object,
-	{ locations: unknown; index: PlaceIndex }
->();
-
-const indexFor = (
-	areaLookup: NonNullable<RouteRequest["context"]["areaLookup"]>,
-	locations: RouteRequest["context"]["namedLocationInventory"],
-) => {
-	const cached = placeIndexes.get(areaLookup);
-	if (cached && cached.locations === locations) return cached.index;
-	const index = createPlaceIndex(areaLookup, locations);
-	placeIndexes.set(areaLookup, { locations, index });
-	return index;
-};
-
-const describe = (candidate: PlaceCandidate) => ({
-	place: candidate.place,
-	kind: candidate.kind,
-	name: candidate.name,
-	geography: candidate.geography,
-	code: candidate.code,
-	match: candidate.match,
-	...(candidate.matchedLabel !== candidate.name
-		? { matchedLabel: candidate.matchedLabel }
-		: {}),
-});
 
 /** Resolve an area code or place name without selecting one ambiguous meaning. */
 export const handlePlaceRoutes = ({
@@ -70,7 +38,7 @@ export const handlePlaceRoutes = ({
 			"Build the area inventory before resolving place names.",
 		);
 	const candidates = resolvePlaces(
-		indexFor(context.areaLookup, context.namedLocationInventory),
+		placeIndexFor(context.areaLookup, context.namedLocationInventory),
 		query,
 		limit,
 	);
@@ -79,7 +47,7 @@ export const handlePlaceRoutes = ({
 		body: envelope(releaseId, {
 			query,
 			candidates: candidates.map((candidate) => ({
-				...describe(candidate),
+				...describeCandidate(candidate),
 				boundaryReleases: candidate.boundaryReleases,
 				...(candidate.memberCodes
 					? { memberCodes: candidate.memberCodes }
