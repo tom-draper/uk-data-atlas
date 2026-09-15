@@ -2008,9 +2008,15 @@ sector or property workflow is already supported.
 - [ ] Name the one or two measures and one analysis geography used in the trend
       scenario. Population is the natural starting point; choose a second only
       when its source and conversion evidence is equally strong.
-- [ ] Reconcile the OpenAPI description, examples and capability checklist with
+- [x] Reconcile the OpenAPI description, examples and capability checklist with
       the current implementation so `available`, `next` and `later` are factual
-      product states.
+      product states. Each checkbox was checked against the routes, and the
+      figures quoted in the items were rerun against the compiled catalogues;
+      those that differ between boundary releases now name the release they
+      were measured on. A few, such as the share of ward adjacencies that are
+      corners, were not rerun. OpenAPI examples are held to their live
+      responses by `tests/contract.test.ts`, and the P0 tickets below record
+      how far each has got.
 - [ ] Measure time-to-first-correct-map, time-to-defensible-trend and time-to-
       release-pinned-sync in the reference clients. These are the activation
       metrics, not raw request count or catalogue size.
@@ -2142,37 +2148,64 @@ surface area. They follow Phase 0 and Phase 1 only.
    discovery or its documented task group. Resolve the current public template
    drift too: OpenAPI used `{geography}` where root discovery advertised
    `{type}`; publish one canonical placeholder vocabulary.
+   *Done.* `tests/openapi.test.ts` requires the OpenAPI paths to be exactly
+   the index's links, placeholder names included, and `tests/contract.test.ts`
+   serves every link and every README example against the compiled
+   catalogues. Every path now names its placeholders `{geography}`,
+   `{release}`, `{code}` and kebab-case ids.
 2. **Remove documentation drift.** Keep the conceptual resource model clearly
    labelled as non-binding, and either generate the standalone endpoint list
    below from OpenAPI or replace it with an OpenAPI-derived task index. Do not
    maintain a second hand-written inventory of several dozen URLs.
+   *Partly done.* The conceptual model is labelled non-binding, and the
+   endpoint list is checked against the index by test, but it is still
+   written by hand rather than generated.
 3. **Make operations navigable.** Add the task tags, plain-language summaries,
    parameter descriptions, response examples and error references described in
    [API UX and contract clarity](#api-ux-and-contract-clarity). Link the root
    response to the authoritative OpenAPI description and a human documentation
    landing page.
+   *Partly done.* All 60 operations carry a task tag and a summary, and 56
+   document their error responses. Only 24 have a response example, 81
+   parameters have no description, and the root response does not yet link
+   to the OpenAPI description.
 4. **Document the data identity model.** For `/data/{measure}` and every
    derivative route, make source geography, `boundaryYear`, optional
    code-compatible geometry `release`, observation `period` and immutable
    `atlasRelease` unambiguous in OpenAPI and examples. Add negative tests that
    prove a geometry selection cannot be mistaken for a value conversion.
+   *Partly done.* Series, rankings and aggregate refuse a geometry `release`
+   by test, and the observation route's join states that no conversion was
+   applied; the OpenAPI descriptions have not been audited for the four
+   identities route by route.
 5. **Make errors usable by clients.** Replace loosely documented Problem
    Details extensions with typed schemas, stable `code` values and examples for
    ambiguous place, absence state, incompatible geometry, unsupported
    conversion, partial coverage, invalid format and cursor failures. Test both
    JSON and tabular error representation policy.
+   *Partly done.* `src/problemCodes.ts` gives absence states, unsupported
+   geography, unsupported aggregation and conversion, partial coverage and
+   ambiguous release a typed schema and a tested example. Ambiguous place,
+   incompatible geometry, invalid format and cursor failures have no code
+   yet, and tabular error representation is not tested.
 6. **Make delivery semantics consistent.** Audit the implementation against
    the documented `format`/`Accept`, pagination, `Link`, content type,
    `Cache-Control`, provenance and content-hash rules. Implement or remove any
    claim that does not hold. Add representation and pagination contract tests.
+   *Partly done.* Conditional requests and caching are implemented and
+   documented once in the OpenAPI description; `format`, `Accept`,
+   pagination and `Link` behaviour have not been audited against it.
 7. **Clarify existing convenience resources.** In OpenAPI and docs, label
    `/locations` as curated area collections and `/data/{measure}/value` as a
    by-place convenience dispatcher. Add examples showing `/places` first when
    ambiguity matters; do not rename either v1 path.
+   *Not started.* OpenAPI still summarises them as named locations and as a
+   measure for a place given by name.
 8. **Turn tutorials into integration tests.** Write small, executable
    TypeScript or shell examples for the three golden paths using only the
    published OpenAPI contract. A broken example blocks release rather than
    becoming a support burden.
+   *Not started.*
 
 ### P1 — prove the correct-map product
 
