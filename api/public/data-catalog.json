@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7edad575dc52faa377be036f0bea752ea6c043a74cc0ba04fe2c6a534565e8af",
+	"contentHash": "sha256:9466fedea5368eb02b1b6ea456fee377e9583ceddd6b40c23079fc88aaa1e0fd",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -9220,6 +9220,210 @@
 				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
 				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
 				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "unemployment-rate",
+			"label": "Unemployment rate",
+			"valueKind": "ratio",
+			"unit": "% of economically active residents aged 16 and over",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "Economically active residents aged 16 and over, which the publisher does not state but which is the level divided by the rate.",
+					"datasetField": "levels / rates"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "unemployment",
+					"periods": [
+						"1996-97",
+						"1997-98",
+						"1998-99",
+						"1999-00",
+						"2000-01",
+						"2001-02",
+						"2002-03",
+						"2003-04",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "unemployment-rate-localAuthority-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 369,
+						"note": "Great Britain's local authorities as they stood in April 2019, for every period from April 1996 to March 1997 to 2021. The City of London and the Isles of Scilly were never estimated, and an authority has no value for a period before the model covered it; the count here is the latest period's."
+					}
+				},
+				{
+					"datasetId": "unemployment",
+					"periods": [
+						"2020",
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "unemployment-rate-localAuthority-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Great Britain's local authorities as they stood in April 2021, for 2020 and 2021, the years the model estimated Buckinghamshire and North and West Northamptonshire alongside every other authority. The City of London and the Isles of Scilly were never estimated."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/unemployment-rate"
+			},
+			"uncertainty": {
+				"kind": "confidence-interval",
+				"level": 0.95,
+				"note": "The publisher's 95% confidence interval. The two Northamptonshire authorities and Buckinghamshire are published without one."
+			},
+			"notes": [
+				"Unemployed residents aged 16 and over as a share of the economically active: those in work or looking for it. A rate does not add over areas.",
+				"ONS model-based estimates, combining Annual Population Survey unemployment with the claimant count averaged over twelve months. They are the final edition: ONS discontinued the series in August 2022, and current local estimates are published in its LI01 tables instead.",
+				"Periods to 2003 are financial years, labelled like 1996-97; periods from 2004 are calendar years. Survey responses from January 2020 to March 2022 were reweighted by the publisher in June 2022.",
+				"Buckinghamshire and the two Northamptonshire authorities are served only in the April 2021 partition, and the districts they replaced only in the April 2019 one, so no partition counts anyone twice. The model's estimate for a new authority is its own, and need not equal its districts' combined estimate."
+			]
+		},
+		{
+			"id": "unemployment-level",
+			"label": "Unemployed residents",
+			"valueKind": "count",
+			"unit": "unemployed residents aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "unemployment",
+					"periods": [
+						"1996-97",
+						"1997-98",
+						"1998-99",
+						"1999-00",
+						"2000-01",
+						"2001-02",
+						"2002-03",
+						"2003-04",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2019
+					},
+					"observationArtifact": "unemployment-level-localAuthority-2019-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 369,
+						"note": "Great Britain's local authorities as they stood in April 2019, for every period from April 1996 to March 1997 to 2021. The City of London and the Isles of Scilly were never estimated, and an authority has no value for a period before the model covered it; the count here is the latest period's."
+					}
+				},
+				{
+					"datasetId": "unemployment",
+					"periods": [
+						"2020",
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2021
+					},
+					"observationArtifact": "unemployment-level-localAuthority-2021-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Great Britain's local authorities as they stood in April 2021, for 2020 and 2021, the years the model estimated Buckinghamshire and North and West Northamptonshire alongside every other authority. The City of London and the Isles of Scilly were never estimated."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/unemployment-level"
+			},
+			"uncertainty": {
+				"kind": "confidence-interval",
+				"level": 0.95,
+				"note": "The publisher's 95% confidence interval. The two Northamptonshire authorities and Buckinghamshire are published without one."
+			},
+			"notes": [
+				"A sum of these modelled levels is itself an estimate. Its uncertainty is not the sum of its members' intervals, so no interval is given for a sum.",
+				"ONS model-based estimates, combining Annual Population Survey unemployment with the claimant count averaged over twelve months. They are the final edition: ONS discontinued the series in August 2022, and current local estimates are published in its LI01 tables instead.",
+				"Periods to 2003 are financial years, labelled like 1996-97; periods from 2004 are calendar years. Survey responses from January 2020 to March 2022 were reweighted by the publisher in June 2022.",
+				"Buckinghamshire and the two Northamptonshire authorities are served only in the April 2021 partition, and the districts they replaced only in the April 2019 one, so no partition counts anyone twice. The model's estimate for a new authority is its own, and need not equal its districts' combined estimate."
 			]
 		},
 		{

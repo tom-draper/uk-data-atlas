@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5a3c00d8e8aceb88793e327645cfead368ef1c89558594f8f8fbc024e4e05fe8",
+	"contentHash": "sha256:9e5577d0d62beecd5f25b41cfb21ab3b2f1dc7f39c4279f24f649558d47685e9",
 	"inputs": {
-		"dataCatalog": "sha256:7edad575dc52faa377be036f0bea752ea6c043a74cc0ba04fe2c6a534565e8af",
+		"dataCatalog": "sha256:9466fedea5368eb02b1b6ea456fee377e9583ceddd6b40c23079fc88aaa1e0fd",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -141,6 +141,8 @@
 			"travel-to-work-public-transport": "sha256:859730f60d3ae9d4fa711e961c5febc4e51912d9f790da9575562f162e4f2628",
 			"travel-to-work-taxi": "sha256:63d245befe59e5ac80fbf49173c0f464a43333c164818a9c180c839d59fd6a26",
 			"travel-to-work-total": "sha256:fabb74da43af5105c8624f0fbf7f29e31ed6273c7f5a8c0cd8469dfcd2a00d30",
+			"unemployment-level": "sha256:af7f726398550844b07c232910ddd7e1d21b5f0d0a93f9194ea2babfb90e7926",
+			"unemployment-rate": "sha256:1e1680ad5f54bb9131a8cdf98ad9dc90d66ef75d460338a7cacedb2e5c13d962",
 			"wimd-decile": "sha256:b26d55f31599a26c3c54ee731ae25d9f884e2a3ba367bd886fcc2b22e2c527c0",
 			"wimd-rank": "sha256:2b2d1cf909f6bcd942f22e3e898adc183aa454dfce580475feb01ffced876654"
 		},
@@ -150,6 +152,7 @@
 			"constituency/2024-07-uk-bgc": "sha256:77090f645fcaf7d5bf78e9973464e79ae9c5373ead42f1fecc14c39ba075db9d",
 			"dataZone/2011-12-sc-bfc": "sha256:62075d67d2c29754f57495650508bd7d0b7d820fd9f95c4d7d8629ade649dbc9",
 			"dataZone/2011-12-sc-nc": "sha256:115e5e21b45f210041b5de1af56d90ad020071816e76165c31ea2cdc8bfc920c",
+			"localAuthority/2019-12-uk-bgc": "sha256:ee6cec9445fd13f8b3607068ae9d2e3b8f5163e8f5611686d47504b4b02e0d56",
 			"localAuthority/2021-12-uk-bgc": "sha256:bad319cb06dab4ba8ce6f1c9490a96c423f9745be9e0d80e9acfcf11b67842e6",
 			"localAuthority/2023-05-uk-bgc-v2": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19",
 			"localAuthority/2024-05-uk-bgc": "sha256:7ccc829d47ce7e7eed0d847bc285cad2e96abe768a3008506b3aefaa15b3f935",
@@ -13607,6 +13610,266 @@
 							"unmatchedSourceCodeSample": [],
 							"candidateOnlyCodeCount": 0,
 							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "unemployment-rate",
+			"sources": [
+				{
+					"datasetId": "unemployment",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"1996-97",
+						"1997-98",
+						"1998-99",
+						"1999-00",
+						"2000-01",
+						"2001-02",
+						"2002-03",
+						"2003-04",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Local authority districts, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 356,
+							"candidateCodeCount": 382,
+							"matchingCodeCount": 356,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 26,
+							"candidateOnlyCodeSample": [
+								"E06000047",
+								"E06000049",
+								"E06000050",
+								"E06000051",
+								"E06000052",
+								"E06000053",
+								"E06000054",
+								"E06000056",
+								"E06000057",
+								"E06000058",
+								"E06000059",
+								"E07000244",
+								"E07000245",
+								"E07000246",
+								"E09000001",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "unemployment",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2021
+					},
+					"periods": [
+						"2020",
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2021-12-uk-bgc",
+							"title": "Local authority districts, December 2021 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 374,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 13,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"E09000001",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "unemployment-level",
+			"sources": [
+				{
+					"datasetId": "unemployment",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2019
+					},
+					"periods": [
+						"1996-97",
+						"1997-98",
+						"1998-99",
+						"1999-00",
+						"2000-01",
+						"2001-02",
+						"2002-03",
+						"2003-04",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Local authority districts, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 357,
+							"candidateCodeCount": 382,
+							"matchingCodeCount": 357,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 25,
+							"candidateOnlyCodeSample": [
+								"E06000047",
+								"E06000049",
+								"E06000050",
+								"E06000051",
+								"E06000052",
+								"E06000053",
+								"E06000054",
+								"E06000056",
+								"E06000057",
+								"E06000059",
+								"E07000244",
+								"E07000245",
+								"E07000246",
+								"E09000001",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "unemployment",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2021
+					},
+					"periods": [
+						"2020",
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2021-12-uk-bgc",
+							"title": "Local authority districts, December 2021 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 374,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 13,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"E09000001",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."

@@ -480,6 +480,11 @@ paths:
         Safety Partnership 2023 codes for England and Wales, as offence counts
         excluding fraud; offences unassigned to a partnership are not included,
         so partnership sums fall short of force and national totals.
+        `unemployment-rate` and `unemployment-level` are ONS's final
+        model-based estimates for Great Britain with 95% confidence intervals,
+        on Local Authority 2019 codes for every period from 1996-97 to 2021 and
+        on Local Authority 2021 codes for 2020 and 2021; periods to 2003-04 are
+        financial years.
         This route never selects a May/December boundary release, converts
         values, or aggregates them. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the
