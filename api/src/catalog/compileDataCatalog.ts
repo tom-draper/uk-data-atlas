@@ -1,9 +1,7 @@
 import { readFileSync } from "node:fs";
 import type {
 	Country,
-	SourceGeography,
 	MeasureSource,
-	MeasureAggregation,
 	Measure,
 	DataCatalog,
 	PopulationObservation,
@@ -13,12 +11,13 @@ import type {
 	PopulationLocalAuthorityObservationArtifact,
 } from "../dataCatalog";
 import { type PopulationFile, sha256, number, object } from "./values";
-import { type DatasetManifest, compileDataset } from "./manifest";
-import { countryForCode, countriesFor } from "./countries";
 import {
-	localAuthorityFieldPeriods,
-	localAuthorityFieldWithGaps,
-} from "./localAuthorityFields";
+	type CompiledMeasure,
+	type DatasetManifest,
+	compileDataset,
+} from "./manifest";
+import { countryForCode, countriesFor } from "./countries";
+import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import {
 	APRIL_2023_LAD_MERGERS,
 	APRIL_2020_2021_LAD_MERGERS,
@@ -31,6 +30,11 @@ import { compileHousePrice } from "./housePrice";
 import { compileLifeExpectancy } from "./lifeExpectancy";
 import { compileDeprivationIndices } from "./deprivation";
 import { compilePopulationDensity } from "./populationDensity";
+import {
+	type Indicator,
+	mergeMeasurePartitions,
+	publishIndicators,
+} from "./indicators";
 
 const recordsFromData = (
 	data: Record<string, unknown>,
@@ -923,179 +927,11 @@ export const compileDataCatalog = ({
 	});
 	const censusMeasures = censusObservations.map(({ measure }) => measure);
 
-	/**
-	 * Single-period local-authority indicators, each checked against the code
-	 * set it claims before it is published.
-	 *
-	 * Every value must name an authority of the expected set, and any authority
-	 * of that set without a value is listed in the coverage note by code rather
-	 * than left for a caller to discover as a short total. A dataset compiled
-	 * with the April 2023 authorities beside the districts they replaced is
-	 * reduced to the authorities first, as the census partitions are.
-	 */
 	const england2023 = [...populationCodes].filter((code) =>
 		code.startsWith("E"),
 	);
 	const england2025 = england2023.map((code) => RECODED_2025[code] ?? code);
-	type Indicator = {
-		id: string;
-		label: string;
-		field: string;
-		valueKind: Measure["valueKind"];
-		unit: string;
-		aggregation: MeasureAggregation;
-		notes: string[];
-		/**
-		 * `derived` for values the compiled dataset computed rather than read
-		 * from the publisher, such as a mean over a published grid.
-		 */
-		status?: PopulationObservation["status"];
-	};
-	const indicatorObservations: Array<{
-		measure: Measure;
-		artifact: MeasureObservationArtifact;
-	}> = [];
-	const publishIndicators = (spec: {
-		datasetId: string;
-		path: string;
-		boundaryYear: number;
-		period: string;
-		/**
-		 * The codes a complete partition holds. Without it the partition is
-		 * not checked here, and the compatibility report is what compares it
-		 * with the boundary releases.
-		 */
-		expectedCodes?: string[];
-		isAuthority?: (code: string) => boolean;
-		geography?: SourceGeography["type"];
-		/** The code vintage the partition is labelled with, when not the dataset's. */
-		partitionBoundaryYear?: number;
-		table?: "data" | "partnerships" | "lsoas";
-		/**
-		 * The observation artifact's name after the measure id, for a further
-		 * partition of measures another call has already published.
-		 */
-		artifactStem?: string;
-		mergeApril2023?: boolean;
-		coverageNote: string;
-		notes: string[];
-		indicators: Indicator[];
-	}) => {
-		const dataset = datasets.find(
-			(candidate) => candidate.id === spec.datasetId,
-		);
-		if (!dataset)
-			throw new Error(`${manifestPath} has no ${spec.datasetId} dataset`);
-		if (
-			dataset.summary.boundaryYears.length !== 1 ||
-			dataset.summary.boundaryYears[0] !== spec.boundaryYear
-		)
-			throw new Error(
-				`${manifestPath}: ${spec.datasetId} must declare boundary year ${spec.boundaryYear}`,
-			);
-		const geography = spec.geography ?? "localAuthority";
-		const partitionBoundaryYear =
-			spec.partitionBoundaryYear ?? spec.boundaryYear;
-		const expected = new Set(spec.expectedCodes ?? []);
-		for (const indicator of spec.indicators) {
-			const read = localAuthorityFieldWithGaps(
-				spec.path,
-				indicator.field,
-				spec.boundaryYear,
-				spec.isAuthority,
-				spec.table,
-			);
-			let records = indicator.status
-				? read.records.map((record) => ({
-						...record,
-						status: indicator.status!,
-					}))
-				: read.records;
-			if (spec.mergeApril2023) {
-				const present = new Set(
-					records.map((record) => record.areaCode),
-				);
-				records = onApril2023Authorities(
-					{ period: spec.period, records },
-					[...expected].filter((code) => present.has(code)),
-				).records;
-			}
-			const unexpected = spec.expectedCodes
-				? records.filter((record) => !expected.has(record.areaCode))
-				: [];
-			if (unexpected.length > 0)
-				throw new Error(
-					`${spec.path}: ${indicator.id} has codes outside its ${partitionBoundaryYear} ${geography} set, starting with ${unexpected[0]!.areaCode}`,
-				);
-			const published = new Set(records.map((record) => record.areaCode));
-			const missing = (spec.expectedCodes ?? [])
-				.filter((code) => !published.has(code))
-				.sort();
-			const periods = [{ period: spec.period, records }];
-			const content = JSON.stringify({
-				schemaVersion: 1,
-				measureId: indicator.id,
-				sourceGeography: {
-					type: geography,
-					boundaryYear: partitionBoundaryYear,
-				},
-				periods,
-			});
-			indicatorObservations.push({
-				measure: {
-					id: indicator.id,
-					label: indicator.label,
-					valueKind: indicator.valueKind,
-					unit: indicator.unit,
-					aggregation: indicator.aggregation,
-					sources: [
-						{
-							datasetId: spec.datasetId,
-							...(spec.artifactStem
-								? {
-										observationArtifact: `${indicator.id}-${spec.artifactStem}-observations`,
-									}
-								: {}),
-							periods: [spec.period],
-							sourceGeography: {
-								type: geography,
-								boundaryYear: partitionBoundaryYear,
-							},
-							coverage: {
-								kind:
-									missing.length === 0
-										? "source-reported"
-										: "partial",
-								countries: countriesFor(records),
-								recordCount: records.length,
-								note:
-									missing.length === 0
-										? spec.coverageNote
-										: `${spec.coverageNote} No value is published for ${missing.length} of the ${expected.size} authorities: ${missing.join(", ")}.`,
-							},
-						},
-					],
-					availability: {
-						sourceExact: true,
-						conversion: false,
-						aggregation: indicator.aggregation.available,
-					},
-					links: { data: `/v1/data/${indicator.id}` },
-					notes: [...indicator.notes, ...spec.notes],
-				},
-				artifact: {
-					schemaVersion: 1,
-					contentHash: sha256(content),
-					measureId: indicator.id,
-					sourceGeography: {
-						type: geography,
-						boundaryYear: partitionBoundaryYear,
-					},
-					periods,
-				},
-			});
-		}
-	};
+	const indicatorObservations: CompiledMeasure[] = [];
 
 	const premisesShare = (
 		id: string,
@@ -1120,46 +956,51 @@ export const compileDataCatalog = ({
 		},
 		notes: [note],
 	});
-	publishIndicators({
-		datasetId: "broadband",
-		path: broadbandPath,
-		boundaryYear: 2024,
-		period: "2025-07",
-		expectedCodes: [...populationCodes],
-		coverageNote:
-			"Published source records cover every authority in all four UK nations.",
-		notes: [
-			"Availability, not take-up: a premises counts where the service can be ordered, whether or not anyone there has it.",
-			"This is a share of premises, so it does not add over areas. Combining authorities needs a mean weighted by premises, which the source publishes but this measure does not serve; averaging the percentages flat would weigh a small authority as heavily as a city.",
-			"Ofcom's July 2025 Connected Nations snapshot, on local authority codes shared by every release from May 2023 to December 2024.",
-		],
-		indicators: [
-			premisesShare(
-				"broadband-superfast-availability",
-				"Superfast broadband availability",
-				"pctSuperfast",
-				"Premises able to receive download speeds of at least 30 Mbit/s.",
-			),
-			premisesShare(
-				"broadband-ultrafast-availability",
-				"Ultrafast broadband availability",
-				"pctUltrafast",
-				"Premises able to receive download speeds of at least 100 Mbit/s.",
-			),
-			premisesShare(
-				"broadband-full-fibre-availability",
-				"Full fibre availability",
-				"pctFullFibre",
-				"Premises where a full fibre connection, fibre all the way to the premises, is available.",
-			),
-			premisesShare(
-				"broadband-gigabit-availability",
-				"Gigabit broadband availability",
-				"pctGigabit",
-				"Premises able to receive download speeds of at least 1 Gbit/s, by any technology.",
-			),
-		],
-	});
+	indicatorObservations.push(
+		...publishIndicators(
+			{ manifestPath, datasets },
+			{
+				datasetId: "broadband",
+				path: broadbandPath,
+				boundaryYear: 2024,
+				period: "2025-07",
+				expectedCodes: [...populationCodes],
+				coverageNote:
+					"Published source records cover every authority in all four UK nations.",
+				notes: [
+					"Availability, not take-up: a premises counts where the service can be ordered, whether or not anyone there has it.",
+					"This is a share of premises, so it does not add over areas. Combining authorities needs a mean weighted by premises, which the source publishes but this measure does not serve; averaging the percentages flat would weigh a small authority as heavily as a city.",
+					"Ofcom's July 2025 Connected Nations snapshot, on local authority codes shared by every release from May 2023 to December 2024.",
+				],
+				indicators: [
+					premisesShare(
+						"broadband-superfast-availability",
+						"Superfast broadband availability",
+						"pctSuperfast",
+						"Premises able to receive download speeds of at least 30 Mbit/s.",
+					),
+					premisesShare(
+						"broadband-ultrafast-availability",
+						"Ultrafast broadband availability",
+						"pctUltrafast",
+						"Premises able to receive download speeds of at least 100 Mbit/s.",
+					),
+					premisesShare(
+						"broadband-full-fibre-availability",
+						"Full fibre availability",
+						"pctFullFibre",
+						"Premises where a full fibre connection, fibre all the way to the premises, is available.",
+					),
+					premisesShare(
+						"broadband-gigabit-availability",
+						"Gigabit broadband availability",
+						"pctGigabit",
+						"Premises able to receive download speeds of at least 1 Gbit/s, by any technology.",
+					),
+				],
+			},
+		),
+	);
 	const claimants = (
 		id: string,
 		label: string,
@@ -1175,38 +1016,43 @@ export const compileDataCatalog = ({
 		aggregation: { kind: "extensive", operation: "sum", available: true },
 		notes: [note],
 	});
-	publishIndicators({
-		datasetId: "claimant-count",
-		path: claimantCountPath,
-		boundaryYear: 2024,
-		period: "2026-04",
-		expectedCodes: [...populationCodes],
-		mergeApril2023: true,
-		coverageNote:
-			"Published source records cover every authority in all four UK nations.",
-		notes: [
-			"People claiming Universal Credit or Jobseeker's Allowance principally for the reason of being unemployed, in April 2026. It counts claimants, not unemployment: the survey measure of unemployment includes people who claim nothing and excludes some who do.",
-			"Counts are rounded by the publisher to the nearest five, so a sum over areas carries that rounding from every member.",
-			"The published rates, claimants as a share of residents aged 16 to 64, are not served: a rate does not add over areas and would need the working-age population as a weight.",
-			"The compiled dataset holds the four authorities created in April 2023 beside the districts they replaced; the districts are dropped after checking each authority is their exact sum, so no claimant is counted twice.",
-		],
-		indicators: [
-			claimants(
-				"claimant-count",
-				"Claimant count",
-				"totalCount",
-				"claimants aged 16 and over",
-				"Every claimant aged 16 and over.",
-			),
-			claimants(
-				"claimant-count-16-to-24",
-				"Claimant count aged 16 to 24",
-				"youthCount",
-				"claimants aged 16 to 24",
-				"Claimants aged 16 to 24, a subset of the claimant count.",
-			),
-		],
-	});
+	indicatorObservations.push(
+		...publishIndicators(
+			{ manifestPath, datasets },
+			{
+				datasetId: "claimant-count",
+				path: claimantCountPath,
+				boundaryYear: 2024,
+				period: "2026-04",
+				expectedCodes: [...populationCodes],
+				mergeApril2023: true,
+				coverageNote:
+					"Published source records cover every authority in all four UK nations.",
+				notes: [
+					"People claiming Universal Credit or Jobseeker's Allowance principally for the reason of being unemployed, in April 2026. It counts claimants, not unemployment: the survey measure of unemployment includes people who claim nothing and excludes some who do.",
+					"Counts are rounded by the publisher to the nearest five, so a sum over areas carries that rounding from every member.",
+					"The published rates, claimants as a share of residents aged 16 to 64, are not served: a rate does not add over areas and would need the working-age population as a weight.",
+					"The compiled dataset holds the four authorities created in April 2023 beside the districts they replaced; the districts are dropped after checking each authority is their exact sum, so no claimant is counted twice.",
+				],
+				indicators: [
+					claimants(
+						"claimant-count",
+						"Claimant count",
+						"totalCount",
+						"claimants aged 16 and over",
+						"Every claimant aged 16 and over.",
+					),
+					claimants(
+						"claimant-count-16-to-24",
+						"Claimant count aged 16 to 24",
+						"youthCount",
+						"claimants aged 16 to 24",
+						"Claimants aged 16 to 24, a subset of the claimant count.",
+					),
+				],
+			},
+		),
+	);
 	const inTemporaryAccommodation = (
 		id: string,
 		label: string,
@@ -1222,42 +1068,47 @@ export const compileDataCatalog = ({
 		aggregation: { kind: "extensive", operation: "sum", available: true },
 		notes: [note],
 	});
-	publishIndicators({
-		datasetId: "homelessness",
-		path: homelessnessPath,
-		boundaryYear: 2025,
-		period: "2026-Q1",
-		expectedCodes: england2025,
-		coverageNote:
-			"Published source records cover English authorities only; an authority that did not submit a return for the quarter has no value rather than zero.",
-		notes: [
-			"Households placed in temporary accommodation by the authority under homelessness legislation, at the end of January to March 2026. A household is counted by the authority that placed it, which may house it in another area.",
-			"The published rate per thousand households is not served: a rate does not add over areas and would need the number of households as a weight.",
-		],
-		indicators: [
-			inTemporaryAccommodation(
-				"temporary-accommodation-households",
-				"Households in temporary accommodation",
-				"householdsInTemporaryAccommodation",
-				"households",
-				"Every household in temporary accommodation, with or without children.",
-			),
-			inTemporaryAccommodation(
-				"temporary-accommodation-households-with-children",
-				"Households with children in temporary accommodation",
-				"householdsWithChildren",
-				"households",
-				"Households with dependent children, a subset of all households in temporary accommodation.",
-			),
-			inTemporaryAccommodation(
-				"temporary-accommodation-children",
-				"Children in temporary accommodation",
-				"childrenInTemporaryAccommodation",
-				"children",
-				"Dependent children living in those households, counted as people rather than households.",
-			),
-		],
-	});
+	indicatorObservations.push(
+		...publishIndicators(
+			{ manifestPath, datasets },
+			{
+				datasetId: "homelessness",
+				path: homelessnessPath,
+				boundaryYear: 2025,
+				period: "2026-Q1",
+				expectedCodes: england2025,
+				coverageNote:
+					"Published source records cover English authorities only; an authority that did not submit a return for the quarter has no value rather than zero.",
+				notes: [
+					"Households placed in temporary accommodation by the authority under homelessness legislation, at the end of January to March 2026. A household is counted by the authority that placed it, which may house it in another area.",
+					"The published rate per thousand households is not served: a rate does not add over areas and would need the number of households as a weight.",
+				],
+				indicators: [
+					inTemporaryAccommodation(
+						"temporary-accommodation-households",
+						"Households in temporary accommodation",
+						"householdsInTemporaryAccommodation",
+						"households",
+						"Every household in temporary accommodation, with or without children.",
+					),
+					inTemporaryAccommodation(
+						"temporary-accommodation-households-with-children",
+						"Households with children in temporary accommodation",
+						"householdsWithChildren",
+						"households",
+						"Households with dependent children, a subset of all households in temporary accommodation.",
+					),
+					inTemporaryAccommodation(
+						"temporary-accommodation-children",
+						"Children in temporary accommodation",
+						"childrenInTemporaryAccommodation",
+						"children",
+						"Dependent children living in those households, counted as people rather than households.",
+					),
+				],
+			},
+		),
+	);
 	const collisions = (
 		id: string,
 		label: string,
@@ -1314,25 +1165,30 @@ export const compileDataCatalog = ({
 		"Each collision is counted in the area the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
 		"These count collisions reported to the police, not casualties or unreported collisions.",
 	];
-	publishIndicators({
-		datasetId: "road-collisions",
-		path: roadCollisionsPath,
-		boundaryYear: 2024,
-		period: "2025-H1",
-		expectedCodes: [...populationCodes].filter(
-			(code) => countryForCode(code) !== "GB-NIR",
+	indicatorObservations.push(
+		...publishIndicators(
+			{ manifestPath, datasets },
+			{
+				datasetId: "road-collisions",
+				path: roadCollisionsPath,
+				boundaryYear: 2024,
+				period: "2025-H1",
+				expectedCodes: [...populationCodes].filter(
+					(code) => countryForCode(code) !== "GB-NIR",
+				),
+				coverageNote: [
+					"Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file.",
+					...(roadCollisionsEdition?.excluded ?? []).map(
+						({ code, collisions: count }) =>
+							`${collisionCount(count)} assigned to ${code}, which is not a local authority code, ${count === 1 ? "is" : "are"} not counted in any authority.`,
+					),
+					"An authority with no collision records has no value rather than zero, since its collisions may not yet have been reported.",
+				].join(" "),
+				notes: roadCollisionNotes,
+				indicators: roadCollisionIndicators,
+			},
 		),
-		coverageNote: [
-			"Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file.",
-			...(roadCollisionsEdition?.excluded ?? []).map(
-				({ code, collisions: count }) =>
-					`${collisionCount(count)} assigned to ${code}, which is not a local authority code, ${count === 1 ? "is" : "are"} not counted in any authority.`,
-			),
-			"An authority with no collision records has no value rather than zero, since its collisions may not yet have been reported.",
-		].join(" "),
-		notes: roadCollisionNotes,
-		indicators: roadCollisionIndicators,
-	});
+	);
 	const scottishWithoutLsoa =
 		roadCollisionsEdition?.withoutLsoa?.["GB-SCT"] ?? 0;
 	const otherWithoutLsoa = Object.entries(
@@ -1340,27 +1196,32 @@ export const compileDataCatalog = ({
 	)
 		.filter(([nation]) => nation !== "GB-SCT")
 		.reduce((total, [, count]) => total + count, 0);
-	publishIndicators({
-		datasetId: "road-collisions",
-		path: roadCollisionsPath,
-		boundaryYear: 2024,
-		geography: "lsoa",
-		partitionBoundaryYear: 2021,
-		table: "lsoas",
-		artifactStem: "lsoa-2021",
-		period: "2025-H1",
-		coverageNote: [
-			`Published for England and Wales on December 2021 LSOAs. Scotland has no LSOAs, so its ${collisionCount(scottishWithoutLsoa)} are not in this partition.`,
-			...(otherWithoutLsoa > 0
-				? [
-						`${collisionCount(otherWithoutLsoa)} in England and Wales ${otherWithoutLsoa === 1 ? "has" : "have"} no LSOA code and ${otherWithoutLsoa === 1 ? "is" : "are"} not counted.`,
-					]
-				: []),
-			"An LSOA with no collision records has no value rather than zero: most had none, but a provisional file cannot tell that apart from collisions not yet reported.",
-		].join(" "),
-		notes: roadCollisionNotes,
-		indicators: roadCollisionIndicators,
-	});
+	indicatorObservations.push(
+		...publishIndicators(
+			{ manifestPath, datasets },
+			{
+				datasetId: "road-collisions",
+				path: roadCollisionsPath,
+				boundaryYear: 2024,
+				geography: "lsoa",
+				partitionBoundaryYear: 2021,
+				table: "lsoas",
+				artifactStem: "lsoa-2021",
+				period: "2025-H1",
+				coverageNote: [
+					`Published for England and Wales on December 2021 LSOAs. Scotland has no LSOAs, so its ${collisionCount(scottishWithoutLsoa)} are not in this partition.`,
+					...(otherWithoutLsoa > 0
+						? [
+								`${collisionCount(otherWithoutLsoa)} in England and Wales ${otherWithoutLsoa === 1 ? "has" : "have"} no LSOA code and ${otherWithoutLsoa === 1 ? "is" : "are"} not counted.`,
+							]
+						: []),
+					"An LSOA with no collision records has no value rather than zero: most had none, but a provisional file cannot tell that apart from collisions not yet reported.",
+				].join(" "),
+				notes: roadCollisionNotes,
+				indicators: roadCollisionIndicators,
+			},
+		),
+	);
 	const medianPay = (
 		id: string,
 		label: string,
@@ -1381,40 +1242,45 @@ export const compileDataCatalog = ({
 		},
 		notes: [note],
 	});
-	publishIndicators({
-		datasetId: "income",
-		path: incomePath,
-		boundaryYear: 2025,
-		period: "2025",
-		expectedCodes: england2025,
-		// The table interleaves county, region and England totals with the
-		// authorities; only unitary, district, metropolitan and London borough
-		// rows are authorities.
-		isAuthority: (code) => /^E0[6-9]/.test(code),
-		coverageNote:
-			"Published source records cover English authorities only. An authority whose estimate the publisher suppressed as unreliable has no value.",
-		notes: [
-			"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives in, not where they work. Every employee job counts, full and part time; the self-employed are not included.",
-			"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
-			"Provisional results are revised when the following year's survey is published.",
-		],
-		indicators: [
-			medianPay(
-				"median-annual-pay",
-				"Median gross annual pay",
-				"annual.median",
-				"£ per year",
-				"Annual pay is estimated only for employees who have been in the same job for at least a year.",
-			),
-			medianPay(
-				"median-hourly-pay",
-				"Median gross hourly pay",
-				"hourly.median",
-				"£ per hour",
-				"Gross hourly pay includes overtime pay and overtime hours; the publisher's separate table excluding overtime is not served.",
-			),
-		],
-	});
+	indicatorObservations.push(
+		...publishIndicators(
+			{ manifestPath, datasets },
+			{
+				datasetId: "income",
+				path: incomePath,
+				boundaryYear: 2025,
+				period: "2025",
+				expectedCodes: england2025,
+				// The table interleaves county, region and England totals with the
+				// authorities; only unitary, district, metropolitan and London borough
+				// rows are authorities.
+				isAuthority: (code) => /^E0[6-9]/.test(code),
+				coverageNote:
+					"Published source records cover English authorities only. An authority whose estimate the publisher suppressed as unreliable has no value.",
+				notes: [
+					"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives in, not where they work. Every employee job counts, full and part time; the self-employed are not included.",
+					"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
+					"Provisional results are revised when the following year's survey is published.",
+				],
+				indicators: [
+					medianPay(
+						"median-annual-pay",
+						"Median gross annual pay",
+						"annual.median",
+						"£ per year",
+						"Annual pay is estimated only for employees who have been in the same job for at least a year.",
+					),
+					medianPay(
+						"median-hourly-pay",
+						"Median gross hourly pay",
+						"hourly.median",
+						"£ per hour",
+						"Gross hourly pay includes overtime pay and overtime hours; the publisher's separate table excluding overtime is not served.",
+					),
+				],
+			},
+		),
+	);
 	const offence = (
 		id: string,
 		label: string,
@@ -1468,163 +1334,168 @@ export const compileDataCatalog = ({
 		);
 	const crimeYear = Number(crimeEnding[2]);
 	const crimePeriod = `year-ending-${crimeYear}-${String(crimeMonth).padStart(2, "0")}`;
-	publishIndicators({
-		datasetId: "crime",
-		path: crimePath,
-		boundaryYear: crimeYear,
-		table: "partnerships",
-		geography: "communitySafetyPartnership",
-		partitionBoundaryYear: 2023,
-		period: crimePeriod,
-		coverageNote:
-			"Published source records cover every community safety partnership in England and Wales.",
-		notes: [
-			`Offences recorded by the police in the twelve months to ${crimeEnding[1]} ${crimeYear}, by the community safety partnership where they were committed.`,
-			"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
-			"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
-			"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime.",
-		],
-		indicators: [
-			offence(
-				"crime-total",
-				"Total recorded crime, excluding fraud",
-				"totalRecordedCrime",
-				"Every police recorded crime except fraud and computer misuse, which are recorded nationally rather than by force.",
-			),
-			offence(
-				"crime-violence-against-the-person",
-				"Violence against the person",
-				"violenceAgainstPerson",
-				"Includes homicide, death or serious injury caused by illegal driving, violence with and without injury, and stalking and harassment.",
-			),
-			offence(
-				"crime-homicide",
-				"Homicide",
-				"homicide",
-				"A subset of violence against the person.",
-			),
-			offence(
-				"crime-death-or-serious-injury-by-illegal-driving",
-				"Death or serious injury caused by illegal driving",
-				"deathSeriesInjuryUnlawfulDriving",
-				"A subset of violence against the person.",
-			),
-			offence(
-				"crime-violence-with-injury",
-				"Violence with injury",
-				"violenceWithInjury",
-				"A subset of violence against the person.",
-			),
-			offence(
-				"crime-violence-without-injury",
-				"Violence without injury",
-				"violenceWithoutInjury",
-				"A subset of violence against the person.",
-			),
-			offence(
-				"crime-stalking-and-harassment",
-				"Stalking and harassment",
-				"stalkingHarassment",
-				"A subset of violence against the person.",
-			),
-			offence(
-				"crime-sexual-offences",
-				"Sexual offences",
-				"sexualOffences",
-				"Recorded sexual offences, including rape.",
-			),
-			offence(
-				"crime-robbery",
-				"Robbery",
-				"robbery",
-				"Theft with the use or threat of force.",
-			),
-			offence(
-				"crime-theft-offences",
-				"Theft offences",
-				"theftOffences",
-				"Includes burglary, vehicle offences, theft from the person, bicycle theft, shoplifting and all other theft.",
-			),
-			offence(
-				"crime-burglary",
-				"Burglary",
-				"burglary",
-				"A subset of theft offences, made up of residential and non-residential burglary.",
-			),
-			offence(
-				"crime-residential-burglary",
-				"Residential burglary",
-				"residentialBurglary",
-				"A subset of burglary.",
-			),
-			offence(
-				"crime-non-residential-burglary",
-				"Non-residential burglary",
-				"nonResidentialBurglary",
-				"A subset of burglary.",
-			),
-			offence(
-				"crime-vehicle-offences",
-				"Vehicle offences",
-				"vehicleOffences",
-				"A subset of theft offences.",
-			),
-			offence(
-				"crime-theft-from-the-person",
-				"Theft from the person",
-				"theftFromPerson",
-				"A subset of theft offences.",
-			),
-			offence(
-				"crime-bicycle-theft",
-				"Bicycle theft",
-				"bicycleTheft",
-				"A subset of theft offences.",
-			),
-			offence(
-				"crime-shoplifting",
-				"Shoplifting",
-				"shoplifting",
-				"A subset of theft offences.",
-			),
-			offence(
-				"crime-other-theft",
-				"All other theft offences",
-				"otherTheftOffences",
-				"A subset of theft offences.",
-			),
-			offence(
-				"crime-criminal-damage-and-arson",
-				"Criminal damage and arson",
-				"criminalDamageArson",
-				undefined,
-			),
-			offence(
-				"crime-drug-offences",
-				"Drug offences",
-				"drugOffences",
-				"Drug offences are largely found through police activity, so their count reflects enforcement as much as prevalence.",
-			),
-			offence(
-				"crime-possession-of-weapons",
-				"Possession of weapons offences",
-				"possessionWeapons",
-				undefined,
-			),
-			offence(
-				"crime-public-order-offences",
-				"Public order offences",
-				"publicOrderOffences",
-				undefined,
-			),
-			offence(
-				"crime-miscellaneous-crimes-against-society",
-				"Miscellaneous crimes against society",
-				"miscellaneousCrimes",
-				undefined,
-			),
-		],
-	});
+	indicatorObservations.push(
+		...publishIndicators(
+			{ manifestPath, datasets },
+			{
+				datasetId: "crime",
+				path: crimePath,
+				boundaryYear: crimeYear,
+				table: "partnerships",
+				geography: "communitySafetyPartnership",
+				partitionBoundaryYear: 2023,
+				period: crimePeriod,
+				coverageNote:
+					"Published source records cover every community safety partnership in England and Wales.",
+				notes: [
+					`Offences recorded by the police in the twelve months to ${crimeEnding[1]} ${crimeYear}, by the community safety partnership where they were committed.`,
+					"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+					"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+					"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime.",
+				],
+				indicators: [
+					offence(
+						"crime-total",
+						"Total recorded crime, excluding fraud",
+						"totalRecordedCrime",
+						"Every police recorded crime except fraud and computer misuse, which are recorded nationally rather than by force.",
+					),
+					offence(
+						"crime-violence-against-the-person",
+						"Violence against the person",
+						"violenceAgainstPerson",
+						"Includes homicide, death or serious injury caused by illegal driving, violence with and without injury, and stalking and harassment.",
+					),
+					offence(
+						"crime-homicide",
+						"Homicide",
+						"homicide",
+						"A subset of violence against the person.",
+					),
+					offence(
+						"crime-death-or-serious-injury-by-illegal-driving",
+						"Death or serious injury caused by illegal driving",
+						"deathSeriesInjuryUnlawfulDriving",
+						"A subset of violence against the person.",
+					),
+					offence(
+						"crime-violence-with-injury",
+						"Violence with injury",
+						"violenceWithInjury",
+						"A subset of violence against the person.",
+					),
+					offence(
+						"crime-violence-without-injury",
+						"Violence without injury",
+						"violenceWithoutInjury",
+						"A subset of violence against the person.",
+					),
+					offence(
+						"crime-stalking-and-harassment",
+						"Stalking and harassment",
+						"stalkingHarassment",
+						"A subset of violence against the person.",
+					),
+					offence(
+						"crime-sexual-offences",
+						"Sexual offences",
+						"sexualOffences",
+						"Recorded sexual offences, including rape.",
+					),
+					offence(
+						"crime-robbery",
+						"Robbery",
+						"robbery",
+						"Theft with the use or threat of force.",
+					),
+					offence(
+						"crime-theft-offences",
+						"Theft offences",
+						"theftOffences",
+						"Includes burglary, vehicle offences, theft from the person, bicycle theft, shoplifting and all other theft.",
+					),
+					offence(
+						"crime-burglary",
+						"Burglary",
+						"burglary",
+						"A subset of theft offences, made up of residential and non-residential burglary.",
+					),
+					offence(
+						"crime-residential-burglary",
+						"Residential burglary",
+						"residentialBurglary",
+						"A subset of burglary.",
+					),
+					offence(
+						"crime-non-residential-burglary",
+						"Non-residential burglary",
+						"nonResidentialBurglary",
+						"A subset of burglary.",
+					),
+					offence(
+						"crime-vehicle-offences",
+						"Vehicle offences",
+						"vehicleOffences",
+						"A subset of theft offences.",
+					),
+					offence(
+						"crime-theft-from-the-person",
+						"Theft from the person",
+						"theftFromPerson",
+						"A subset of theft offences.",
+					),
+					offence(
+						"crime-bicycle-theft",
+						"Bicycle theft",
+						"bicycleTheft",
+						"A subset of theft offences.",
+					),
+					offence(
+						"crime-shoplifting",
+						"Shoplifting",
+						"shoplifting",
+						"A subset of theft offences.",
+					),
+					offence(
+						"crime-other-theft",
+						"All other theft offences",
+						"otherTheftOffences",
+						"A subset of theft offences.",
+					),
+					offence(
+						"crime-criminal-damage-and-arson",
+						"Criminal damage and arson",
+						"criminalDamageArson",
+						undefined,
+					),
+					offence(
+						"crime-drug-offences",
+						"Drug offences",
+						"drugOffences",
+						"Drug offences are largely found through police activity, so their count reflects enforcement as much as prevalence.",
+					),
+					offence(
+						"crime-possession-of-weapons",
+						"Possession of weapons offences",
+						"possessionWeapons",
+						undefined,
+					),
+					offence(
+						"crime-public-order-offences",
+						"Public order offences",
+						"publicOrderOffences",
+						undefined,
+					),
+					offence(
+						"crime-miscellaneous-crimes-against-society",
+						"Miscellaneous crimes against society",
+						"miscellaneousCrimes",
+						undefined,
+					),
+				],
+			},
+		),
+	);
 	/**
 	 * ONS's final model-based unemployment estimates, in the two code vintages
 	 * the workbook itself holds.
@@ -1947,95 +1818,73 @@ export const compileDataCatalog = ({
 	 * population-weighted PM2.5 is served as published. Both are on the April
 	 * 2023 authorities, which every 2024 release shares, and must name all 361.
 	 */
-	publishIndicators({
-		datasetId: "air-quality",
-		path: airQualityPath,
-		boundaryYear: 2024,
-		period: "2024",
-		expectedCodes: [...populationCodes],
-		coverageNote:
-			"Every local authority in all four UK nations has a value.",
-		notes: [
-			"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
-			"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none.",
-		],
-		indicators: [
+	indicatorObservations.push(
+		...publishIndicators(
+			{ manifestPath, datasets },
 			{
-				id: "air-quality-grid-cells",
-				label: "PCM grid cells",
-				field: "gridCells",
-				valueKind: "count",
-				unit: "1x1 km grid cells",
-				status: "derived",
-				aggregation: {
-					kind: "extensive",
-					operation: "sum",
-					available: true,
-				},
+				datasetId: "air-quality",
+				path: airQualityPath,
+				boundaryYear: 2024,
+				period: "2024",
+				expectedCodes: [...populationCodes],
+				coverageNote:
+					"Every local authority in all four UK nations has a value.",
 				notes: [
-					"How many of Defra's 1x1 km PCM cells have their centre in the authority, roughly its land area in square kilometres. It is the weight for the area means.",
+					"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
+					"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none.",
+				],
+				indicators: [
+					{
+						id: "air-quality-grid-cells",
+						label: "PCM grid cells",
+						field: "gridCells",
+						valueKind: "count",
+						unit: "1x1 km grid cells",
+						status: "derived",
+						aggregation: {
+							kind: "extensive",
+							operation: "sum",
+							available: true,
+						},
+						notes: [
+							"How many of Defra's 1x1 km PCM cells have their centre in the authority, roughly its land area in square kilometres. It is the weight for the area means.",
+						],
+					},
+					areaMean(
+						"no2-background-mean",
+						"Background nitrogen dioxide, area mean",
+						"no2Mean",
+						"nitrogen dioxide (NO2)",
+					),
+					areaMean(
+						"pm10-background-mean",
+						"Background PM10, area mean",
+						"pm10Mean",
+						"PM10, in gravimetric units,",
+					),
+					areaMean(
+						"pm25-background-mean",
+						"Background PM2.5, area mean",
+						"pm25Mean",
+						"PM2.5",
+					),
+					populationWeightedPm25(
+						"pm25-population-weighted",
+						"Population-weighted PM2.5",
+						"pm25PopulationWeighted",
+						"Defra's published population-weighted annual mean PM2.5 for 2024, total of anthropogenic and non-anthropogenic, which Defra advises for estimating the health burden of long-term exposure.",
+					),
+					populationWeightedPm25(
+						"pm25-population-weighted-anthropogenic",
+						"Population-weighted anthropogenic PM2.5",
+						"pm25PopulationWeightedAnthropogenic",
+						"The anthropogenic part of Defra's population-weighted PM2.5 for 2024, excluding natural sources such as sea salt.",
+					),
 				],
 			},
-			areaMean(
-				"no2-background-mean",
-				"Background nitrogen dioxide, area mean",
-				"no2Mean",
-				"nitrogen dioxide (NO2)",
-			),
-			areaMean(
-				"pm10-background-mean",
-				"Background PM10, area mean",
-				"pm10Mean",
-				"PM10, in gravimetric units,",
-			),
-			areaMean(
-				"pm25-background-mean",
-				"Background PM2.5, area mean",
-				"pm25Mean",
-				"PM2.5",
-			),
-			populationWeightedPm25(
-				"pm25-population-weighted",
-				"Population-weighted PM2.5",
-				"pm25PopulationWeighted",
-				"Defra's published population-weighted annual mean PM2.5 for 2024, total of anthropogenic and non-anthropogenic, which Defra advises for estimating the health burden of long-term exposure.",
-			),
-			populationWeightedPm25(
-				"pm25-population-weighted-anthropogenic",
-				"Population-weighted anthropogenic PM2.5",
-				"pm25PopulationWeightedAnthropogenic",
-				"The anthropogenic part of Defra's population-weighted PM2.5 for 2024, excluding natural sources such as sea salt.",
-			),
-		],
-	});
-	// A measure published in more than one partition, such as road collisions
-	// by local authority and by LSOA, is one measure with a source for each.
-	const indicatorMeasures = [
-		...indicatorObservations
-			.reduce((measures, { measure }) => {
-				const published = measures.get(measure.id);
-				measures.set(
-					measure.id,
-					published
-						? {
-								...published,
-								sources: [
-									...published.sources,
-									...measure.sources,
-								],
-								notes: [
-									...new Set([
-										...(published.notes ?? []),
-										...(measure.notes ?? []),
-									]),
-								],
-							}
-						: measure,
-				);
-				return measures;
-			}, new Map<string, Measure>())
-			.values(),
-	];
+		),
+	);
+	const indicatorMeasures = mergeMeasurePartitions(indicatorObservations);
 
 	const density = compilePopulationDensity(
 		{ manifestPath, datasets },
