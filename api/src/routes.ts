@@ -1,12 +1,5 @@
 import type { AreaLookup } from "./areaInventory";
 import { explainAreaAbsence } from "./areaAbsence";
-import { selectReleaseForDate } from "./releaseForDate";
-import {
-	MAX_BATCH_VALUES,
-	summariseBatch,
-	validateBatch,
-} from "./batchValidation";
-import type { AreaGeometryCache } from "./areaGeometry";
 import { areaMetrics } from "./areaMetrics";
 import {
 	GEOMETRY_TIERS,
@@ -24,21 +17,12 @@ import type {
 } from "./crosswalkInventory";
 import type { NamedLocationInventory } from "./namedLocations";
 import {
-	areaIdentityTable,
-	crosswalkTable,
-	type LookupFormat,
-	lookupBodyHash,
-	namedLocationMembersTable,
-	renderLookup,
-} from "./lookupExports";
-import {
 	type DataCatalog,
 	isNumericObservation,
 	type MeasureSource,
 	type PopulationObservation,
 } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
-import { compareObservations } from "./comparison";
 import {
 	aggregateCountryMembers,
 	aggregateLocationMembers,
@@ -51,15 +35,7 @@ import { convertObservations } from "./conversion";
 import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./areaOverlap";
 import { attributionFor, attributionText } from "./attribution";
 import { measureCoverage } from "./measureCoverage";
-import {
-	reconcileMembers,
-	reconcileMembersForYear,
-} from "./memberReconciliation";
-import {
-	crosswalksTo,
-	membersThroughCrosswalk,
-	membershipKindFor,
-} from "./locationMembership";
+import { reconcileMembersForYear } from "./memberReconciliation";
 import { rankObservations, type RankingOrder } from "./ranking";
 import {
 	createPlaceIndex,
@@ -154,9 +130,6 @@ const NEIGHBOUR_METHOD = {
 		"Perimeter less the border shared with the neighbours returned. For a landlocked area this is nothing; otherwise it is coastline, a national boundary, or a border with an area outside this release.",
 	limits: "Within one geography and release only. Two areas that genuinely touch on the ground but were drawn from different vertices are not found, which is why this is not offered across releases.",
 } as const;
-
-/** The geography a curated location's member codes are written in. */
-const MEMBER_GEOGRAPHY = "localAuthority";
 
 const DEFAULT_INTERSECTS_LIMIT = 200;
 const MAX_INTERSECTS_LIMIT = 1000;
@@ -260,20 +233,6 @@ const readRankingOrder = (value: string | null): RankingOrder | undefined =>
 			? "asc"
 			: undefined;
 
-const readCoordinate = (
-	value: string | null,
-	minimum: number,
-	maximum: number,
-): number | undefined => {
-	if (value === null || value.trim().length === 0) return undefined;
-	const coordinate = Number(value);
-	return Number.isFinite(coordinate) &&
-		coordinate >= minimum &&
-		coordinate <= maximum
-		? coordinate
-		: undefined;
-};
-
 const cursorFor = (code: string) => Buffer.from(code).toString("base64url");
 
 const codeFromCursor = (cursor: string): string | undefined => {
@@ -303,17 +262,6 @@ const searchableAreas = (areaLookup: AreaLookup): AreaSearchResult[] =>
 export const createAreaSearchIndex = (
 	areaLookup: AreaLookup,
 ): AreaSearchIndex => searchableAreas(areaLookup);
-
-const matchesAreaQuery = (area: AreaSearchResult, query: string) => {
-	const normalizedQuery = query.toLocaleLowerCase();
-	return (
-		area.code.toLocaleLowerCase().startsWith(normalizedQuery) ||
-		area.name.toLocaleLowerCase().startsWith(normalizedQuery) ||
-		area.aliases?.some((alias) =>
-			alias.toLocaleLowerCase().startsWith(normalizedQuery),
-		) === true
-	);
-};
 
 const findArea = (
 	areaLookup: AreaLookup | undefined,
@@ -450,16 +398,13 @@ export const route = (
 ): ApiResponse => {
 	const {
 		boundaryRegistry: registry,
-		geographyInventory,
 		areaInventory,
 		areaLookup,
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,
-		areaSearchIndex,
 		areaRelationshipIndex,
 		areaGeometryCache,
-		relationshipCandidateInventory,
 		validationReport,
 		namedLocationInventory,
 		namedLocationLookup,
@@ -468,8 +413,6 @@ export const route = (
 		populationLocalAuthorityObservations,
 		measureObservations,
 		measureCompatibilityInventory,
-		exportManifest,
-		lookupManifest,
 	} = context;
 	const releaseId = atlasRelease?.releaseId ?? registry.contentHash;
 	if (method !== "GET") {
