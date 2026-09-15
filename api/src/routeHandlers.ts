@@ -19,6 +19,7 @@ import { handleMeasureQualityRoutes } from "./measureQualityRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 import { handleDataSeriesRoutes } from "./dataSeriesRoutes";
+import { handleDataRankingRoutes } from "./dataRankingRoutes";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -34,6 +35,15 @@ type RouteFamily = {
  * the order below and makes a new route's home explicit.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "data-rankings",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "rankings",
+		handle: handleDataRankingRoutes,
+	},
 	{
 		name: "data-series",
 		owns: (segments) =>
