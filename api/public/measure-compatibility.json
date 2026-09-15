@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:ae8ced007eb5e5fd2e525536d21bb33d5db32956e91415d0280d65079a065ae7",
+	"contentHash": "sha256:54ff185ff3858373a27f9a9bcd4ed77754b79c82fa5da87dd423cd29a22e5e05",
 	"inputs": {
-		"dataCatalog": "sha256:4d9d35dc4e1d6ce9e1cbe2d3009cabf6d59da9fc04fd6925c2543c777af8420d",
+		"dataCatalog": "sha256:d8e030957866da942c0a78d6de607aa257208e4fb2340ffce803c628ff7e1ba6",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -103,6 +103,9 @@
 			"qualification-total": "sha256:4f43e906c768c6351ceb23db021824e66e7b9c028c1538fe03d88ac803244673",
 			"simd-decile": "sha256:253414cf7ab82282c0e003f2d963804f8fe73e07bca29a5b9261049f6956925c",
 			"simd-rank": "sha256:7010ceb2e025a9e2a859509558f46b35a89394182f6aff3853b7b5f08a894830",
+			"temporary-accommodation-children": "sha256:16299aa97146b7337b7c8d7f762c50041a5fa3e1dca05a1e97a43970c9ef1cb1",
+			"temporary-accommodation-households": "sha256:5aa6c8b3db98800ec9a41c15667dba12007051beb863816661783f1f14e9dd5c",
+			"temporary-accommodation-households-with-children": "sha256:6027dc6bd5f79e7afdceca954fcbe6784f179d8841fbdba9dba8d7378e5acf15",
 			"total-jobs": "sha256:93c7a2dab643ea59c3923092836616eaaa379994cf3b3a802557d848ca75e02a",
 			"travel-to-work-bicycle": "sha256:f0cfffb4acdbb0dd330d18eec798f8eaec68e75e943f55a29323c3da36a2132f",
 			"travel-to-work-car": "sha256:2b4af3c04484e4a87254ce9c9860f5bc8f36d621d05df62d75cee150f2a8e937",
@@ -12283,6 +12286,300 @@
 							"unmatchedSourceCodeSample": [],
 							"candidateOnlyCodeCount": 0,
 							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "temporary-accommodation-households",
+			"sources": [
+				{
+					"datasetId": "homelessness",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2026-Q1"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 284,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 284,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 77,
+							"candidateOnlyCodeSample": [
+								"E06000003",
+								"E06000012",
+								"E06000023",
+								"E06000039",
+								"E07000066",
+								"E07000069",
+								"E07000083",
+								"E07000105",
+								"E07000112",
+								"E07000124",
+								"E07000128",
+								"E07000194",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 284,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 284,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 77,
+							"candidateOnlyCodeSample": [
+								"E06000003",
+								"E06000012",
+								"E06000023",
+								"E06000039",
+								"E07000066",
+								"E07000069",
+								"E07000083",
+								"E07000105",
+								"E07000112",
+								"E07000124",
+								"E07000128",
+								"E07000194",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "temporary-accommodation-households-with-children",
+			"sources": [
+				{
+					"datasetId": "homelessness",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2026-Q1"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 284,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 284,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 77,
+							"candidateOnlyCodeSample": [
+								"E06000003",
+								"E06000012",
+								"E06000023",
+								"E06000039",
+								"E07000066",
+								"E07000069",
+								"E07000083",
+								"E07000105",
+								"E07000112",
+								"E07000124",
+								"E07000128",
+								"E07000194",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 284,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 284,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 77,
+							"candidateOnlyCodeSample": [
+								"E06000003",
+								"E06000012",
+								"E06000023",
+								"E06000039",
+								"E07000066",
+								"E07000069",
+								"E07000083",
+								"E07000105",
+								"E07000112",
+								"E07000124",
+								"E07000128",
+								"E07000194",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "temporary-accommodation-children",
+			"sources": [
+				{
+					"datasetId": "homelessness",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2026-Q1"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 284,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 284,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 77,
+							"candidateOnlyCodeSample": [
+								"E06000003",
+								"E06000012",
+								"E06000023",
+								"E06000039",
+								"E07000066",
+								"E07000069",
+								"E07000083",
+								"E07000105",
+								"E07000112",
+								"E07000124",
+								"E07000128",
+								"E07000194",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 284,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 284,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 77,
+							"candidateOnlyCodeSample": [
+								"E06000003",
+								"E06000012",
+								"E06000023",
+								"E06000039",
+								"E07000066",
+								"E07000069",
+								"E07000083",
+								"E07000105",
+								"E07000112",
+								"E07000124",
+								"E07000128",
+								"E07000194",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
